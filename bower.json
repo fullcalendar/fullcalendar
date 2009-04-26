@@ -1,0 +1,14 @@
+{
+  "name": "fullcalendar",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": "*"
+  },
+  "ignore": [
+    "*",
+    "**/.*",
+    "!/*.js",
+    "!/*.css",
+    "!/bower.json"
+  ]
+}

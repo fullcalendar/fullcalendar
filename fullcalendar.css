@@ -1,0 +1,135 @@
+
+/* top area w/ month title and buttons */
+
+.full-calendar-header {
+	text-align: left;
+	}
+	
+.full-calendar-buttons {
+	float: right;
+	}
+	
+.full-calendar-buttons input {
+	vertical-align: middle;
+	font-size: 1.0em;
+	}
+	
+.full-calendar-prev,
+.full-calendar-next {
+	width: 40px;
+	margin-left: 5px;
+	}
+	
+	
+	
+/* table & borders */
+	
+.full-calendar-month {
+	clear: both;
+	overflow: hidden; /*
+	^ prevents draggable events from leaving.
+	  reason for our long-winded border css.
+	  borders now look consistent across doctypes. */
+	border: 1px solid #ccc;    /* border color & style */
+	}
+
+.full-calendar-month table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+	
+.full-calendar-month th.day-heading,
+.full-calendar-month td.day {
+	padding: 0;
+	vertical-align: top;
+	border-style: solid;       /* border style */
+	border-color: #ccc;        /* border color */
+	border-width: 1px 0 0 1px;
+	}
+	
+.full-calendar-month tr.day-headings th {
+	border-top: 0;
+	}
+	
+.full-calendar-month th.sun,
+.full-calendar-month td.sun {
+	border-left: 0;
+	}
+	
+	
+	
+/* day styling */
+	
+.full-calendar-month td.today {
+	background: #FFFFCC;
+	}
+	
+.full-calendar-month .day-number {
+	text-align: right;
+	padding-right: 2px;
+	}
+	
+.full-calendar-month .other-month .day-number {
+	color: #bbb;
+	}
+	
+.full-calendar-month .day-content {
+	padding: 2px 2px 0; /* distance between events and day edges */
+	}
+	
+.full-calendar-month td.day {
+	/* FullCalendar automatically chooses a height, but this can be overridden: */
+	/* height: 100px !important; */
+	}
+	
+
+
+/* event styling */
+	
+.full-calendar-month .event {
+	margin-bottom: 2px;
+	font-size: .85em;
+	cursor: pointer;
+	text-align: left;
+	}
+	
+.full-calendar-month .ui-draggable-dragging td {
+	cursor: move;
+	}
+	
+.full-calendar-month .event td {
+	background: #C1D9EC;
+	padding: 0;
+	}
+	
+.full-calendar-month .event td.ne,
+.full-calendar-month .event td.nw,
+.full-calendar-month .event td.se,
+.full-calendar-month .event td.sw {
+	background: none;
+	width: 1px;  /* <-- remove if you dont want "rounded" corners */
+	height: 1px; /* <--                                           */
+	}
+	
+.full-calendar-month .nobg td {
+	background: none;
+	}
+	
+.full-calendar-month .event td.c {
+	padding: 0 2px;
+	}
+	
+.full-calendar-month .event-time {
+	font-weight: bold;
+	}
+	
+	
+	
+/* the rectangle that covers a day when dragging an event */
+	
+.full-calendar-month .over-day {
+	background: #ADDBFF;
+	opacity: .2;
+	filter: alpha(opacity=20);
+	}
+	
