@@ -5,6 +5,7 @@
  * use fullcalendar.css for basic styling
  * requires jQuery UI core and draggables ONLY if you plan to do drag & drop
  *
+ * Copyright (c) 2009 Adam Shaw
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
