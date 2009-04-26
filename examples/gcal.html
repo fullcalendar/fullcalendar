@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<style type='text/css'>
+
+	body {
+		margin-top: 50px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+		
+	#loading {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+<link rel='stylesheet' type='text/css' href='../full_calendar.css' />
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../full_calendar.js'></script>
+<script type='text/javascript' src='../gcal.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		$('#calendar').gcalFullCalendar({
+			// US Holidays
+			events: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
+			eventClick: function(event) {
+				window.open(event.url, 'gcalevent', 'width=700,height=600');
+				return false;
+			},
+			loading: function(bool) {
+				if (bool) $('#loading').show();
+				else $('#loading').hide();
+			}
+		});
+		
+	});
+
+</script>
+</head>
+<body>
+<div id='loading' style='display:none'>loading...</div>
+<div id='calendar'></div>
+</body>
+</html>
