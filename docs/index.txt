@@ -6,19 +6,22 @@ Usage
 
 .. code-block:: javascript
 
-   .fullCalendar({
+   $('#myCalendar').fullCalendar({
       // initializes a calendar
       // see options, data provider, and triggered events below
-   })
+   });
    
-   .fullCalendar('nextMonth')    // move the calendar one month ahead
+   $('#myCalendar').fullCalendar('nextMonth');    // move ahead one month
    
-   .fullCalendar('currentMonth') // move to current month
+   $('#myCalendar').fullCalendar('currentMonth'); // go to current month
    
-   .fullCalendar('prevMonth')    // move back one month
+   $('#myCalendar').fullCalendar('prevMonth');    // move back one month
    
-   .fullCalendar('gotoMonth', year, month)
+   $('#myCalendar').fullCalendar('gotoMonth', year, month);
       // go to an arbitrary month. 'month' is zero-based
+      
+   $('#myCalender').fullCalendar('refresh');
+      // re-fetch events for the current month
       
    
 Options
@@ -105,12 +108,16 @@ Event Data Provider
          }
          
    **startParam**: string, default:``"start"``
-      This GET parameter will be inserted into the URL when ``event`` is a URL
-      string. Example of a resulting URL: ``/myjsonscript?start=1238562000``
+      A GET parameter of this name will be inserted into the URL when fetching
+      events from a JSON script (when ``event`` is a URL string). The value
+      of this GET parameter will be a UNIX timestamp denoting the start of the
+      first visible day (inclusive).
       
    **endParam**: string, default:``"end"``
-      This GET parameter will be inserted into the URL when ``event`` is a URL
-      string. Example of a resulting URL: ``/myjsonscript?end=1240691444``
+      A GET parameter of this name will be inserted into the URL when fetching
+      events from a JSON script (when ``event`` is a URL string). The value
+      of this GET parameter will be a UNIX timestamp denoting the end of the
+      last visible day (exclusive).
          
       
 .. _TriggeredEvents:

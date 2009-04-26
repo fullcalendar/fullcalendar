@@ -1,16 +1,18 @@
 /*
  * FullCalendar
- * Date:
- * Revision:
+ * http://arshaw.com/fullcalendar/
  *
- * Examples and documentation at: http://arshaw.com/fullcalendar/
+ * use fullcalendar.css for basic styling
+ * requires jQuery UI core and draggables ONLY if you plan to do drag & drop
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
+ * Date:
+ * Revision:
  */
-
+ 
 (function($) {
 
 	$.fn.fullCalendar = function(options) {
@@ -26,17 +28,14 @@
 		options = options || {};
 		
 		var showTime = typeof options.showTime == 'undefined' ? 'guess' : options.showTime;
-		var startParam = options.startParam || 'start';
-		var endParam = options.endParam || 'end';
 		var bo = options.buttons;
 		
 		this.each(function() {
 		
-		
-		
 			var date = options.year ? new Date(options.year, options.month || 0, 1) : new Date();
 			var start, end, today, numWeeks;
-			var events = $.isArray(options.events) ? cleanEvents(options.events) : null;
+			var events = typeof options.events != 'string' && !$.isFunction(options.events) ?
+				cleanEvents(options.events) : null;
 			var ignoreResizes = false;
 		
 			function updateMonth() {
@@ -65,7 +64,11 @@
 			}
 			
 			$.data(this, 'fullCalendar', {
-				today:today, prevMonth:prevMonth, nextMonth:nextMonth, gotoMonth:gotoMonth
+				today: today,
+				prevMonth: prevMonth,
+				nextMonth: nextMonth,
+				gotoMonth: gotoMonth,
+				refresh: updateMonth
 			});
 			
 			
@@ -234,8 +237,8 @@
 				if (typeof options.events == 'string') {
 					if (options.loading) options.loading(true);
 					var jsonOptions = {};
-					jsonOptions[startParam] = Math.round(start.getTime() / 1000);
-					jsonOptions[endParam] = Math.round(end.getTime() / 1000);
+					jsonOptions[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
+					jsonOptions[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
 					$.getJSON(options.events, jsonOptions, function(data) {
 						events = cleanEvents(data);
 						renderEvents(events);
@@ -251,7 +254,7 @@
 							if (options.loading) options.loading(false);
 						});
 				}
-				else renderEvents(events);
+				else if (events) renderEvents(events);
 				
 				ignoreResizes = false;
 			
@@ -720,15 +723,5 @@
 			":" + zeropad(date.getUTCSeconds()) +
 			"Z";
 	};
-	
-	
-	
-	// general utils
-	
-	if (!$.isArray) { // not in jQuery pre 1.3
-		$.isArray = function(obj) {
-			return toString.call(obj) === "[object Array]";
-		};
-	}
 
 })(jQuery);

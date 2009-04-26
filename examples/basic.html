@@ -9,12 +9,6 @@
 		font-size: 14px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		}
-		
-	#loading {
-		position: absolute;
-		top: 5px;
-		right: 5px;
-		}
 
 	#calendar {
 		width: 900px;
@@ -31,17 +25,42 @@
 
 	$(document).ready(function() {
 	
+		var d = new Date();
+		var y = d.getFullYear();
+		var m = d.getMonth();
+	
 		$('#calendar').fullCalendar({
 			draggable: true,
-			events: "json_events.php",
-			eventDrop: function(event, delta) {
-				alert(event.title + ' was moved ' + delta + ' days\n' +
-					'(should probably update your database)');
-			},
-			loading: function(bool) {
-				if (bool) $('#loading').show();
-				else $('#loading').hide();
-			}
+			events: [
+				{
+					id: 1,
+					title: "Long Event",
+					start: new Date(y, m, 6),
+					end: new Date(y, m, 11)
+				},
+				{
+					id: 2,
+					title: "Repeating Event",
+					start: new Date(y, m, 2)
+				},
+				{
+					id: 2,
+					title: "Repeating Event",
+					start: new Date(y, m, 9)
+				},
+				{
+					id: 3,
+					title: "Meeting",
+					start: new Date(y, m, 20, 9, 0)
+				},
+				{
+					id: 4,
+					title: "Click for Facebook",
+					start: new Date(y, m, 27),
+					end: new Date(y, m, 29),
+					url: "http://facebook.com/"
+				}
+			]
 		});
 		
 	});
@@ -49,8 +68,6 @@
 </script>
 </head>
 <body>
-<div id='loading' style='display:none'>loading...</div>
 <div id='calendar'></div>
-<p>json_events.php needs to be running in the same directory.</p>
 </body>
 </html>
