@@ -1,3 +1,24 @@
+/*
+ * gcalFullCalendar extension for fullCalendar
+ * http://arshaw.com/fullcalendar/
+ *
+ * Same usage/options as fullCalendar.
+ * However, enter your Google Calendar's public feed URL in the 'events' option.
+ * Here is how to find it in the Google Calendar interface:
+ *
+ * -> click the arrow next to your calendar's name
+ * -> click "Share this calendar"
+ * -> check "Make this calendar public" and then Save
+ * -> click the arrow again, then click "Calendar settings"
+ * -> in the "Calendar Address" section, click the XML rectangle
+ * -> the URL is displayed
+ *
+ * Copyright (c) 2009 Adam Shaw
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ */
+ 
 (function($) {
 
 	$.fn.gcalFullCalendar = function(options) {
