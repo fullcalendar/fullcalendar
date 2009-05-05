@@ -240,6 +240,7 @@
 					var jsonOptions = {};
 					jsonOptions[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
 					jsonOptions[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
+					jsonOptions['_t'] = (new Date()).getTime();
 					$.getJSON(options.events, jsonOptions, function(data) {
 						events = cleanEvents(data);
 						renderEvents(events);
