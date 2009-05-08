@@ -35,7 +35,7 @@
 				{
 					id: 1,
 					title: "Long Event",
-					start: new Date(y, m, 6),
+					start: new Date(y, m, 6, 14, 0),
 					end: new Date(y, m, 11)
 				},
 				{
@@ -60,7 +60,14 @@
 					end: new Date(y, m, 29),
 					url: "http://facebook.com/"
 				}
-			]
+			],
+			weekStart: 1,
+			rightToLeft: true,
+			fixedWeeks: false,
+			title: true,
+			eventDrop: function(event, delta) {
+				//alert(delta);
+			}
 		});
 		
 	});
