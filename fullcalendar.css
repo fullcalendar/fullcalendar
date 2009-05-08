@@ -2,22 +2,40 @@
 /* top area w/ month title and buttons */
 
 .full-calendar-header {
-	text-align: left;
+	}
+	
+.full-calendar-title {
+	float: left;
+	margin-top: 0;
+	}
+	
+.r2l .full-calendar-title {
+	float: right;
 	}
 	
 .full-calendar-buttons {
 	float: right;
+	margin-bottom: 1em;
+	}
+	
+.r2l .full-calendar-buttons {
+	float: left;
 	}
 	
 .full-calendar-buttons input {
 	vertical-align: middle;
 	font-size: 1.0em;
+	margin-left: 5px;
+	}
+	
+.r2l .full-calendar-buttons input {
+	float: right;
+	margin: 0 5px 0 0;
 	}
 	
 .full-calendar-prev,
 .full-calendar-next {
 	width: 40px;
-	margin-left: 5px;
 	}
 	
 	
@@ -31,6 +49,7 @@
 	  reason for our long-winded border css.
 	  borders now look consistent across doctypes. */
 	border: 1px solid #ccc;    /* border color & style */
+	text-align: left;
 	}
 
 .full-calendar-month table {
@@ -38,7 +57,7 @@
 	border-spacing: 0;
 	}
 	
-.full-calendar-month th.day-heading,
+.full-calendar-month th,
 .full-calendar-month td.day {
 	padding: 0;
 	vertical-align: top;
@@ -47,12 +66,13 @@
 	border-width: 1px 0 0 1px;
 	}
 	
-.full-calendar-month tr.day-headings th {
+.full-calendar-month th {
 	border-top: 0;
+	text-align: center;
 	}
 	
-.full-calendar-month th.sun,
-.full-calendar-month td.sun {
+.full-calendar-month th.first,  /* left edge? */
+.full-calendar-month td.first {
 	border-left: 0;
 	}
 	
@@ -66,7 +86,11 @@
 	
 .full-calendar-month .day-number {
 	text-align: right;
-	padding-right: 2px;
+	padding: 0 2px;
+	}
+	
+.r2l .full-calendar-month .day-number {
+	text-align: left;
 	}
 	
 .full-calendar-month .other-month .day-number {
@@ -91,6 +115,10 @@
 	font-size: .85em;
 	cursor: pointer;
 	text-align: left;
+	}
+	
+.r2l .full-calendar-month .event {
+	text-align: right;
 	}
 	
 .full-calendar-month .ui-draggable-dragging td {

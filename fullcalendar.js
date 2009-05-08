@@ -29,7 +29,19 @@
 		options = options || {};
 		
 		var showTime = typeof options.showTime == 'undefined' ? 'guess' : options.showTime;
-		var bo = options.buttons;
+		var bo = typeof options.buttons == 'undefined' ? true : options.buttons;
+		var weekStart = (options.weekStart || 0) % 7;
+		
+		var r2l = options.rightToLeft;
+		var dis, dit; // day index sign / translate
+		if (r2l) {
+			dis = -1;
+			dit = 6;
+			this.addClass('r2l');
+		}else{
+			dis = 1;
+			dit = 0;
+		}
 		
 		this.each(function() {
 		
@@ -80,40 +92,31 @@
 			var titleElement, todayButton, monthElement;
 			var header = $("<div class='full-calendar-header'/>").appendTo(this);
 			
-			if (bo != false) {
-				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
-				todayButton =
-					$("<input type='button' class='full-calendar-today' value='today'/>")
-						.click(today);
-				var prevButton =
-					$("<input type='button' class='full-calendar-prev' value='&lt;'/>")
-						.click(prevMonth);
-				var nextButton =
-					$("<input type='button' class='full-calendar-next' value='&gt;'/>")
-						.click(nextMonth);
-				if (typeof bo == 'object') {
-					if (bo.today != false) {
-						if (typeof bo.today == 'string') todayButton.val(bo.today);
-						buttons.append(todayButton);
-					}
-					if (bo.prev != false) {
-						if (typeof bo.prev == 'string') prevButton.val(bo.prev);
-						buttons.append(prevButton);
-					}
-					if (bo.next != false) {
-						if (typeof bo.next == 'string') nextButton.val(bo.next);
-						buttons.append(nextButton);
-					}
-				}else{
-					buttons
-						.append(todayButton)
-						.append(prevButton)
-						.append(nextButton);
-				}
-			}
-		
 			if (options.title !== false)
 				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
+			
+			if (bo) {
+				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
+				var prevButton, nextButton;
+				if (bo == true || bo.today != false) {
+					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>")
+						.appendTo(buttons)
+						.click(today);
+					if (typeof bo.today == 'string') todayButton.val(bo.today);
+				}
+				if (bo == true || bo.prev != false) {
+					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>")
+						.appendTo(buttons)
+						.click(prevMonth);
+					if (typeof bo.prev == 'string') prevButton.val(bo.prev);
+				}
+				if (bo == true || bo.next != false) {
+					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>")
+						.appendTo(buttons)
+						.click(nextMonth);
+					if (typeof bo.next == 'string') nextButton.val(bo.next);
+				}
+			}
 		
 			monthElement = $("<div class='full-calendar-month' style='position:relative'/>").appendTo(this);
 			
@@ -122,7 +125,7 @@
 			
 			
 			
-			var tbody, glass, monthTitle;
+			var thead, tbody, glass, monthTitle;
 			
 			function render() {
 		
@@ -136,10 +139,10 @@
 			
 				clearTime(date);
 				start = cloneDate(date);
-				addDays(start, -start.getDay());
+				addDays(start, -start.getDay() + weekStart);
 				end = cloneDate(date);
 				addMonths(end, 1);
-				addDays(end, (7 - end.getDay()) % 7);
+				addDays(end, (7 - end.getDay() + weekStart) % 7);
 				numWeeks = Math.round((end.getTime() - start.getTime()) / 604800000);
 				if (options.fixedWeeks != false) {
 					addDays(end, (6 - numWeeks) * 7);
@@ -156,32 +159,40 @@
 				}
 			
 				if (!tbody) {
-			
-					tbody = "<tbody><tr class='day-headings'>";
-					for (var i=0; i<7; i++) { 
-						tbody +=
-							"<th class='day-heading " + dayAbbrevs[i].toLowerCase() + "'>" +
-							(options.abbrevDayHeadings!=false ? dayAbbrevs[i] : dayNames[i]) +
+				
+					var table = $("<table style='width:100%'/>").appendTo(monthElement);
+				
+					thead = "<thead><tr>";
+					for (var i=0; i<7; i++) {
+						var j = (i * dis + dit + weekStart) % 7;
+						thead +=
+							"<th class='" + dayAbbrevs[j].toLowerCase() +
+							(i==0 ? ' first' : '') + "'>" +
+							(options.abbrevDayHeadings!=false ? dayAbbrevs[j] : dayNames[j]) +
 							"</th>";
 					}
+					thead = $(thead + "</tr></thead>").appendTo(table);
+					
+					tbody = "<tbody>";
 					var d = cloneDate(start);
 					for (var i=0; i<numWeeks; i++) {
 						tbody += "<tr class='week"+(i+1)+"'>";
+						var tds = "";
 						for (var j=0; j<7; j++) {
-							tbody +=
-								"<td class='day " + dayAbbrevs[j].toLowerCase() +
+							var s =
+								"<td class='day " + dayAbbrevs[(j + weekStart) % 7].toLowerCase() +
+								(j==dit ? ' first' : '') +
 								(d.getMonth() == month ? '' : ' other-month') +
 								(d.getTime() == today.getTime() ? ' today' : '') +
 								"'><div class='day-number'>" + d.getDate() + "</div>" +
 								"<div class='day-content'><div/></div></td>";
+							if (r2l) tds = s + tds;
+							else tds += s;
 							addDays(d, 1);
 						}
-						tbody += "</tr>";
+						tbody += tds + "</tr>";
 					}
-					tbody += "</tr></tbody>";
-					tbody = $(tbody)
-						.appendTo($("<table style='width:100%'/>")
-							.appendTo(monthElement));
+					tbody = $(tbody + "</tbody>").appendTo(table);
 						
 					glass = $("<div style='position:absolute;top:0;left:0;z-index:1;width:100%' />")
 						.appendTo(monthElement)
@@ -195,9 +206,9 @@
 				
 				}else{
 			
-					var diff = numWeeks - (tbody.find('tr').length - 1);
+					var diff = numWeeks - tbody.find('tr').length;
 					if (diff < 0) {
-						tbody.find('tr:gt(' + numWeeks + ')').remove();
+						tbody.find('tr:gt(' + (numWeeks-1) + ')').remove();
 					}
 					else if (diff > 0) {
 						var trs = "";
@@ -205,7 +216,9 @@
 							trs += "<tr class='week"+(numWeeks+i)+"'>";
 							for (var j=0; j<7; j++) {
 								trs +=
-									"<td class='day " + dayAbbrevs[j].toLowerCase() + "'>" +
+									"<td class='day " +
+									dayAbbrevs[(j * dis + dit + weekStart) % 7].toLowerCase() +
+									(j==0 ? ' first' : '') + "'>" +
 									"<div class='day-number'></div>" +
 									"<div class='day-content'><div/></div>" +
 									"</td>";
@@ -216,19 +229,22 @@
 					}
 				
 					var d = cloneDate(start);
-					tbody.find('td').each(function() {
-						if (d.getMonth() == month) {
-							$(this).removeClass('other-month');
-						}else{
-							$(this).addClass('other-month');
+					tbody.find('tr').each(function() {
+						for (var i=0; i<7; i++) {
+							var td = this.childNodes[i * dis + dit];
+							if (d.getMonth() == month) {
+								$(td).removeClass('other-month');
+							}else{
+								$(td).addClass('other-month');
+							}
+							if (d.getTime() == today.getTime()) {
+								$(td).addClass('today');
+							}else{
+								$(td).removeClass('today');
+							}
+							$(td.childNodes[0]).text(d.getDate());
+							addDays(d, 1);
 						}
-						if (d.getTime() == today.getTime()) {
-							$(this).addClass('today');
-						}else{
-							$(this).removeClass('today');
-						}
-						$(this.childNodes[0]).text(d.getDate());
-						addDays(d, 1);
 					});
 			
 				}
@@ -240,7 +256,7 @@
 					var jsonOptions = {};
 					jsonOptions[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
 					jsonOptions[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
-					jsonOptions['_t'] = (new Date()).getTime();
+					jsonOptions[options.cacheParam || '_t'] = (new Date()).getTime();
 					$.getJSON(options.events, jsonOptions, function(data) {
 						events = cleanEvents(data);
 						renderEvents(events);
@@ -345,7 +361,7 @@
 			function _renderEvents() {
 				for (var i=0; i<eventMatrix.length; i++) {
 					var levels = eventMatrix[i];
-					var tr = tbody.find('tr:eq('+(i+1)+')');
+					var tr = tbody.find('tr:eq('+i+')');
 					var innerDiv = tr.find('td:first div.day-content div');
 					var top = innerDiv.position().top;
 					var height = 0;
@@ -355,28 +371,42 @@
 						for (var k=0; k<segs.length; k++) {
 							var seg = segs[k];
 							var event = seg.event;
-							var left1 = seg.isStart ?
-								tr.find('td:eq('+seg.start.getDay()+') div.day-content div').position().left :
-								tbody.position().left;
-							var left2 = seg.isEnd ?
-								tr.find('td:eq('+((seg.end.getDay()+6)%7)+') div.day-content div') :
-								tbody;
+							var left1, left2, roundW, roundE;
+							if (r2l) {
+								left2 = seg.isStart ?
+									tr.find('td:eq('+((seg.start.getDay()-weekStart+7)%7*dis+dit)+') div.day-content div') :
+									tbody;
+								left1 = seg.isEnd ?
+									tr.find('td:eq('+((seg.end.getDay()+6-weekStart)%7*dis+dit)+') div.day-content div').position().left :
+									tbody.position().left;
+								roundW = seg.isEnd;
+								roundE = seg.isStart;
+							}else{
+								left1 = seg.isStart ?
+									tr.find('td:eq('+((seg.start.getDay()-weekStart+7)%7)+') div.day-content div').position().left :
+									tbody.position().left;
+								left2 = seg.isEnd ?
+									tr.find('td:eq('+((seg.end.getDay()+6-weekStart)%7)+') div.day-content div') :
+									tbody;
+								roundW = seg.isStart;
+								roundE = seg.isEnd;
+							}
 							left2 = left2.position().left + left2.width();
 							var element = $("<table class='event' />")
 								.append("<tr>" +
-									(seg.isStart ? "<td class='nw'/>" : '') +
+									(roundW ? "<td class='nw'/>" : '') +
 									"<td class='n'/>" +
-									(seg.isEnd ? "<td class='ne'/>" : '') + "</tr>")
+									(roundE ? "<td class='ne'/>" : '') + "</tr>")
 								.append("<tr>" +
-									(seg.isStart ? "<td class='w'/>" : '') +
+									(roundW ? "<td class='w'/>" : '') +
 									"<td class='c'/>" +
-									(seg.isEnd ? "<td class='e'/>" : '') + "</tr>")
+									(roundE ? "<td class='e'/>" : '') + "</tr>")
 								.append("<tr>" +
-									(seg.isStart ? "<td class='sw'/>" : '') +
+									(roundW ? "<td class='sw'/>" : '') +
 									"<td class='s'/>" +
-									(seg.isEnd ? "<td class='se'/>" : '') + "</tr>");
+									(roundE ? "<td class='se'/>" : '') + "</tr>");
 							buildEventText(element.find('td.c'), event,
-								typeof event.showTime == 'undefined' ? showTime : event.showTime);
+								typeof event.showTime == 'undefined' ? showTime : event.showTime, r2l);
 							if (options.eventRender) {
 								var res = options.eventRender(event, element);
 								if (typeof res != 'undefined') {
@@ -529,7 +559,7 @@
 				dayX0 = o.left;
 				dayY0 = o.top;
 				dayY = [];
-				tbody.find('tr:gt(0)').each(function() {
+				tbody.find('tr').each(function() {
 					tr = $(this);
 					dayY.push(tr.position().top);
 				});
@@ -553,7 +583,7 @@
 				else if (!currTD || r != currR || c != currC) {
 					currR = r;
 					currC = c;
-					currTD = tbody.find('tr:eq('+(r+1)+') td:eq('+c+')').get(0);
+					currTD = tbody.find('tr:eq('+r+') td:eq('+c+')').get(0);
 					currTDX = dayX[c];
 					currTDY = dayY[r];
 					currTDW = dayX[c+1] - currTDX;
@@ -573,10 +603,14 @@
 			}
 		
 			function dayDelta(node1, node2) {
-				var i1, i2, tds = tbody.get(0).getElementsByTagName('td');
-				for (var i=0; i<tds.length; i++) {
-					if (tds[i] == node1) i1 = i;
-					if (tds[i] == node2) i2 = i;
+				var i1, i2, trs = tbody.get(0).getElementsByTagName('tr');
+				for (var i=0; i<trs.length; i++) {
+					var tr = trs[i];
+					for (var j=0; j<7; j++) {
+						var td = tr.childNodes[j];
+						if (td == node1) i1 = i*7 + j*dis + dit;
+						if (td == node2) i2 = i*7 + j*dis + dit;
+					}
 				}
 				return i2 - i1;
 			}
@@ -589,7 +623,7 @@
 			function resizeTable() {
 				var cellw = Math.floor(tbody.width() / 7);
 				var cellh = Math.round(cellw * .85);
-				tbody.find('th:lt(6)').width(cellw);
+				thead.find('th:lt(6)').width(cellw);
 				tbody.find('td').height(cellh);
 				glass.height(monthElement.height());
 			}
@@ -624,18 +658,21 @@
 	
 	// event utils
 	
-	function buildEventText(element, event, showTime) {
+	function buildEventText(element, event, showTime, r2l) {
 		if (showTime != false) {
 			var h = event.start.getHours();
 			var m = event.start.getMinutes();
 			if (showTime == true || showTime == 'guess' &&
 				(h || m || event.end.getHours() || event.end.getMinutes())) {
-				element.append($("<span class='event-time' />")
-					.text((h%12 || 12) + (h<12 ? 'a' : 'p') + ' '));
+					var timeText = (h%12 || 12) + (h<12 ? 'a' : 'p');
+					if (r2l) timeText = ' ' + timeText;
+					else timeText += ' ';
+					element.append($("<span class='event-time' />").text(timeText));
 				}
 		}
-		element.append($("<span class='event-title' />")
-			.text(event.title));
+		var et = $("<span class='event-title' />").text(event.title)
+		if (r2l) element.prepend(et);
+		else element.append(et);
 	}
 
 	
