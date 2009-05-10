@@ -1,9 +1,8 @@
 
 /* top area w/ month title and buttons */
-	
+
 .full-calendar-title {
-	float: left;
-	margin: 0 0 1em;
+	text-align: left;
 	}
 	
 .full-calendar-buttons {
@@ -142,7 +141,7 @@
 /* right-to-left support */
 
 .r2l .full-calendar-title {
-	float: right;
+	text-align: right;
 	}
 	
 .r2l .full-calendar-buttons {

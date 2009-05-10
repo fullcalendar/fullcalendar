@@ -1,5 +1,5 @@
 /*
- * FullCalendar
+ * FullCalendar v1.1
  * http://arshaw.com/fullcalendar/
  *
  * use fullcalendar.css for basic styling
@@ -10,8 +10,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date:
- * Revision:
+ * Date: 2009-05-10 23:31:03 -0500 (Sun, 10 May 2009)
+ * Revision: 13
  */
  
 (function($) {
@@ -96,9 +96,6 @@
 			var titleElement, todayButton, monthElement, monthElementWidth;
 			var header = $("<div class='full-calendar-header'/>").appendTo(this);
 			
-			if (options.title !== false)
-				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
-			
 			if (bo) {
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				var prevButton, nextButton;
@@ -123,9 +120,13 @@
 					else buttons.append(nextButton);
 				}
 			}
+			
+			if (options.title !== false)
+				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
 		
 			monthElement = $("<div class='full-calendar-month' style='position:relative'/>")
 				.appendTo($("<div class='full-calendar-month-wrap'/>").appendTo(this));
+
 			
 			
 			
