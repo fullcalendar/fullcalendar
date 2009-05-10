@@ -28,10 +28,6 @@
 		
 		options = options || {};
 		
-		var showTime = typeof options.showTime == 'undefined' ? 'guess' : options.showTime;
-		var bo = typeof options.buttons == 'undefined' ? true : options.buttons;
-		var weekStart = (options.weekStart || 0) % 7;
-		
 		var r2l = options.rightToLeft;
 		var dis, dit; // day index sign / translate
 		if (r2l) {
@@ -42,6 +38,14 @@
 			dis = 1;
 			dit = 0;
 		}
+		
+		var showTime = typeof options.showTime == 'undefined' ? 'guess' : options.showTime;
+		var bo = typeof options.buttons == 'undefined' ? true : options.buttons;
+		var weekStart = (options.weekStart || 0) % 7;
+		var timeFormat = options.timeFormat || 'gx';
+		var titleFormat = options.titleFormat || (r2l ? 'Y F' : 'F Y');
+		
+		var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
 		
 		this.each(function() {
 		
@@ -89,7 +93,7 @@
 			
 			
 		
-			var titleElement, todayButton, monthElement;
+			var titleElement, todayButton, monthElement, monthElementWidth;
 			var header = $("<div class='full-calendar-header'/>").appendTo(this);
 			
 			if (options.title !== false)
@@ -99,26 +103,30 @@
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				var prevButton, nextButton;
 				if (bo == true || bo.today != false) {
-					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>")
-						.appendTo(buttons)
-						.click(today);
+					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>").click(today);
 					if (typeof bo.today == 'string') todayButton.val(bo.today);
 				}
 				if (bo == true || bo.prev != false) {
-					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>")
-						.appendTo(buttons)
-						.click(prevMonth);
+					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>").click(prevMonth);
 					if (typeof bo.prev == 'string') prevButton.val(bo.prev);
 				}
 				if (bo == true || bo.next != false) {
-					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>")
-						.appendTo(buttons)
-						.click(nextMonth);
+					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>").click(nextMonth);
 					if (typeof bo.next == 'string') nextButton.val(bo.next);
+				}
+				if (r2l) {
+					if (nextButton) nextButton.appendTo(buttons);
+					if (prevButton) prevButton.appendTo(buttons);
+					if (todayButton) todayButton.appendTo(buttons);
+				}else{
+					if (todayButton) todayButton.appendTo(buttons);
+					if (prevButton) prevButton.appendTo(buttons);
+					if (nextButton) nextButton.appendTo(buttons);
 				}
 			}
 		
-			monthElement = $("<div class='full-calendar-month' style='position:relative'/>").appendTo(this);
+			monthElement = $("<div class='full-calendar-month' style='position:relative'/>")
+				.appendTo($("<div class='full-calendar-month-wrap'/>").appendTo(this));
 			
 			
 			
@@ -134,7 +142,7 @@
 				clearTime(date);
 				var year = date.getFullYear();
 				var month = date.getMonth();
-				monthTitle = monthNames[month] + ' ' + year;
+				monthTitle = formatTitle(date);
 				if (titleElement) titleElement.text(monthTitle);
 			
 				clearTime(date);
@@ -250,6 +258,17 @@
 				}
 			
 				resizeTable();
+				
+				if (sniffBugs) {
+					var tr = tbody.find('tr');
+					var td = tr.find('td');
+					var trTop = tr.position().top;
+					var tdTop = td.position().top;
+					tdTopBug = tdTop < 0;
+					trTopBug = trTop != tdTop;
+					tbodyTopBug = tbody.position().top != trTop;
+					sniffBugs = false;
+				}
 			
 				if (typeof options.events == 'string') {
 					if (options.loading) options.loading(true);
@@ -320,7 +339,9 @@
 							});
 						}
 					});
-					segs.sort(function(a, b) { return b.msLength - a.msLength; });
+					segs.sort(function(a, b) {
+						return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
+					});
 					var levels = [];
 					$.each(segs, function(j, seg) {
 						var l = 0; // level index
@@ -362,8 +383,12 @@
 				for (var i=0; i<eventMatrix.length; i++) {
 					var levels = eventMatrix[i];
 					var tr = tbody.find('tr:eq('+i+')');
-					var innerDiv = tr.find('td:first div.day-content div');
+					var td = tr.find('td:first');
+					var innerDiv = td.find('div.day-content div').css('position', 'relative');
 					var top = innerDiv.position().top;
+					if (tdTopBug) top -= td.position().top;
+					if (trTopBug) top += tr.position().top;
+					if (tbodyTopBug) top += tbody.position().top;
 					var height = 0;
 					for (var j=0; j<levels.length; j++) {
 						var segs = levels[j];
@@ -405,8 +430,7 @@
 									(roundW ? "<td class='sw'/>" : '') +
 									"<td class='s'/>" +
 									(roundE ? "<td class='se'/>" : '') + "</tr>");
-							buildEventText(element.find('td.c'), event,
-								typeof event.showTime == 'undefined' ? showTime : event.showTime, r2l);
+							buildEventText(event, element.find('td.c'));
 							if (options.eventRender) {
 								var res = options.eventRender(event, element);
 								if (typeof res != 'undefined') {
@@ -473,7 +497,7 @@
 		
 			function draggableEvent(event, element) {
 				element.draggable({
-					zIndex: 3,
+					zIndex: 4,
 					delay: 50,
 					opacity: options.eventDragOpacity,
 					revertDuration: options.eventRevertDuration,
@@ -561,7 +585,8 @@
 				dayY = [];
 				tbody.find('tr').each(function() {
 					tr = $(this);
-					dayY.push(tr.position().top);
+					dayY.push(tr.position().top +
+						(trTopBug ? tbody.position().top : 0));
 				});
 				dayY.push(dayY[dayY.length-1] + tr.height());
 				dayX = [];
@@ -621,11 +646,15 @@
 		
 		
 			function resizeTable() {
-				var cellw = Math.floor(tbody.width() / 7);
+				var tbodyw = tbody.width();
+				var cellw = Math.floor(tbodyw / 7);
 				var cellh = Math.round(cellw * .85);
-				thead.find('th:lt(6)').width(cellw);
+				thead.find('th')
+					.filter(':lt(6)').width(cellw).end()
+					.filter(':eq(6)').width(tbodyw - cellw*6);
 				tbody.find('td').height(cellh);
 				glass.height(monthElement.height());
+				monthElementWidth = monthElement.width();
 			}
 		
 			function clearEvents() {
@@ -633,17 +662,75 @@
 					eventElements[i][1].remove();
 				eventElements = [];
 			}
+			
+			
+			
+			
+			
+			function buildEventText(event, element) {
+				$("<span class='event-title' />")
+					.text(event.title)
+					.appendTo(element);
+				var st = typeof event.showTime == 'undefined' ? showTime : event.showTime;
+				if (st != false) {
+					var h = event.start.getHours();
+					var m = event.start.getMinutes();
+					if (st == true || st == 'guess' && (h || m || event.end.getHours() || event.end.getMinutes())) {
+						var s = '';
+						for (var i=0; i<timeFormat.length; i++) {
+							var c = timeFormat.charAt(i);
+							if (c == 'a') s += h<12 ? 'am' : 'pm';
+							else if (c == 'A') s += h<12 ? 'AM' : 'PM';
+							else if (c == 'x') s += h<12 ? 'a' : 'p';
+							else if (c == 'X') s += h<12 ? 'A' : 'P';
+							else if (c == 'g') s += h%12 || 12;
+							else if (c == 'G') s += h;
+							else if (c == 'h') s += zeroPad(h%12 || 12);
+							else if (c == 'H') s += zeroPad(h);
+							else if (c == 'i') s += zeroPad(m);
+							else s += c;
+						}
+						var timeElement = $("<span class='event-time' />");
+						if (r2l) element.append(timeElement.text(' ' + s));
+						else element.prepend(timeElement.text(s + ' '));
+					}
+				}
+			}
+			
+			function formatTitle(d) {
+				var m = d.getMonth();
+				var s = '';
+				for (var i=0; i<titleFormat.length; i++) {
+					var c = titleFormat.charAt(i);
+					if (c == 'F') s += monthNames[m];
+					else if (c == 'm') s += zeroPad(m);
+					else if (c == 'M') s += monthAbbrevs[m];
+					else if (c == 'n') s += m;
+					else if (c == 'Y') s += d.getFullYear();
+					else if (c == 'y') s += (d.getFullYear()+'').substring(2);
+					else s += c;
+				}
+				return s;
+			}
 		
 		
 		
 		
-		
-		
+			var e = this;
+			var resizeID = 0;
 			$(window).resize(function() {
 				if (!ignoreResizes) {
-					clearEvents();
-					resizeTable();
-					_renderEvents();
+					var rid = ++resizeID;
+					setTimeout(function() {
+						if (rid == resizeID) {
+							if (monthElement.width() != monthElementWidth) {
+								clearEvents();
+								resizeTable();
+								_renderEvents();
+								if (options.resize) options.resize.call(e);
+							}
+						}
+					}, 200);
 				}
 			});
 		
@@ -656,25 +743,16 @@
 	
 	
 	
-	// event utils
+	// string utilities
 	
-	function buildEventText(element, event, showTime, r2l) {
-		if (showTime != false) {
-			var h = event.start.getHours();
-			var m = event.start.getMinutes();
-			if (showTime == true || showTime == 'guess' &&
-				(h || m || event.end.getHours() || event.end.getMinutes())) {
-					var timeText = (h%12 || 12) + (h<12 ? 'a' : 'p');
-					if (r2l) timeText = ' ' + timeText;
-					else timeText += ' ';
-					element.append($("<span class='event-time' />").text(timeText));
-				}
-		}
-		var et = $("<span class='event-title' />").text(event.title)
-		if (r2l) element.prepend(et);
-		else element.append(et);
+	function zeroPad(n) {
+		if (n < 10) return '0' + n;
+		return n;
 	}
-
+	
+	
+	
+	// event utils
 	
 	function cleanEvents(events) {
 		$.each(events, function(i, event) {
@@ -691,6 +769,7 @@
 	// date utils
 	
 	var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+	var monthAbbrevs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 	var dayAbbrevs = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 	

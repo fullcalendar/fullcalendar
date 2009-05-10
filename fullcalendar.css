@@ -1,36 +1,20 @@
 
 /* top area w/ month title and buttons */
-
-.full-calendar-header {
-	}
 	
 .full-calendar-title {
 	float: left;
-	margin-top: 0;
-	}
-	
-.r2l .full-calendar-title {
-	float: right;
+	margin: 0 0 1em;
 	}
 	
 .full-calendar-buttons {
 	float: right;
-	margin-bottom: 1em;
-	}
-	
-.r2l .full-calendar-buttons {
-	float: left;
+	margin: 0 0 1em;
 	}
 	
 .full-calendar-buttons input {
 	vertical-align: middle;
-	font-size: 1.0em;
-	margin-left: 5px;
-	}
-	
-.r2l .full-calendar-buttons input {
-	float: right;
-	margin: 0 5px 0 0;
+	margin: 0 0 0 5px;
+	font-size: 1em;
 	}
 	
 .full-calendar-prev,
@@ -40,16 +24,16 @@
 	
 	
 	
-/* table & borders */
+/* table layout & outer border */
+
+.full-calendar-month-wrap {
+	clear: both;
+	border: 1px solid #ccc; /* outer border color & style */
+	}
 	
 .full-calendar-month {
-	clear: both;
-	overflow: hidden; /*
-	^ prevents draggable events from leaving.
-	  reason for our long-winded border css.
-	  borders now look consistent across doctypes. */
-	border: 1px solid #ccc;    /* border color & style */
-	text-align: left;
+	width: 100%;
+	overflow: hidden;
 	}
 
 .full-calendar-month table {
@@ -57,12 +41,16 @@
 	border-spacing: 0;
 	}
 	
+	
+	
+/* cell styling */
+	
 .full-calendar-month th,
 .full-calendar-month td.day {
 	padding: 0;
 	vertical-align: top;
-	border-style: solid;       /* border style */
-	border-color: #ccc;        /* border color */
+	border-style: solid; /* inner border style */
+	border-color: #ccc;  /* inner border color */
 	border-width: 1px 0 0 1px;
 	}
 	
@@ -71,14 +59,10 @@
 	text-align: center;
 	}
 	
-.full-calendar-month th.first,  /* left edge? */
+.full-calendar-month th.first,
 .full-calendar-month td.first {
 	border-left: 0;
 	}
-	
-	
-	
-/* day styling */
 	
 .full-calendar-month td.today {
 	background: #FFFFCC;
@@ -87,10 +71,6 @@
 .full-calendar-month .day-number {
 	text-align: right;
 	padding: 0 2px;
-	}
-	
-.r2l .full-calendar-month .day-number {
-	text-align: left;
 	}
 	
 .full-calendar-month .other-month .day-number {
@@ -115,10 +95,6 @@
 	font-size: .85em;
 	cursor: pointer;
 	text-align: left;
-	}
-	
-.r2l .full-calendar-month .event {
-	text-align: right;
 	}
 	
 .full-calendar-month .ui-draggable-dragging td {
@@ -159,5 +135,29 @@
 	background: #ADDBFF;
 	opacity: .2;
 	filter: alpha(opacity=20);
+	}
+	
+	
+	
+/* right-to-left support */
+
+.r2l .full-calendar-title {
+	float: right;
+	}
+	
+.r2l .full-calendar-buttons {
+	float: left;
+	}
+	
+.r2l .full-calendar-buttons input {
+	margin: 0 5px 0 0;
+	}
+	
+.r2l .full-calendar-month .day-number {
+	text-align: left;
+	}
+	
+.r2l .full-calendar-month .event {
+	text-align: right;
 	}
 	
