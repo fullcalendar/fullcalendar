@@ -1,36 +1,38 @@
 
 /* top area w/ month title and buttons */
 
-.full-calendar-header {
+.full-calendar-title {
 	text-align: left;
 	}
 	
 .full-calendar-buttons {
 	float: right;
+	margin: 0 0 1em;
 	}
 	
 .full-calendar-buttons input {
 	vertical-align: middle;
-	font-size: 1.0em;
+	margin: 0 0 0 5px;
+	font-size: 1em;
 	}
 	
 .full-calendar-prev,
 .full-calendar-next {
 	width: 40px;
-	margin-left: 5px;
 	}
 	
 	
 	
-/* table & borders */
+/* table layout & outer border */
+
+.full-calendar-month-wrap {
+	clear: both;
+	border: 1px solid #ccc; /* outer border color & style */
+	}
 	
 .full-calendar-month {
-	clear: both;
-	overflow: hidden; /*
-	^ prevents draggable events from leaving.
-	  reason for our long-winded border css.
-	  borders now look consistent across doctypes. */
-	border: 1px solid #ccc;    /* border color & style */
+	width: 100%;
+	overflow: hidden;
 	}
 
 .full-calendar-month table {
@@ -38,27 +40,28 @@
 	border-spacing: 0;
 	}
 	
-.full-calendar-month th.day-heading,
+	
+	
+/* cell styling */
+	
+.full-calendar-month th,
 .full-calendar-month td.day {
 	padding: 0;
 	vertical-align: top;
-	border-style: solid;       /* border style */
-	border-color: #ccc;        /* border color */
+	border-style: solid; /* inner border style */
+	border-color: #ccc;  /* inner border color */
 	border-width: 1px 0 0 1px;
 	}
 	
-.full-calendar-month tr.day-headings th {
+.full-calendar-month th {
 	border-top: 0;
+	text-align: center;
 	}
 	
-.full-calendar-month th.sun,
-.full-calendar-month td.sun {
+.full-calendar-month th.first,
+.full-calendar-month td.first {
 	border-left: 0;
 	}
-	
-	
-	
-/* day styling */
 	
 .full-calendar-month td.today {
 	background: #FFFFCC;
@@ -66,7 +69,7 @@
 	
 .full-calendar-month .day-number {
 	text-align: right;
-	padding-right: 2px;
+	padding: 0 2px;
 	}
 	
 .full-calendar-month .other-month .day-number {
@@ -131,5 +134,29 @@
 	background: #ADDBFF;
 	opacity: .2;
 	filter: alpha(opacity=20);
+	}
+	
+	
+	
+/* right-to-left support */
+
+.r2l .full-calendar-title {
+	text-align: right;
+	}
+	
+.r2l .full-calendar-buttons {
+	float: left;
+	}
+	
+.r2l .full-calendar-buttons input {
+	margin: 0 5px 0 0;
+	}
+	
+.r2l .full-calendar-month .day-number {
+	text-align: left;
+	}
+	
+.r2l .full-calendar-month .event {
+	text-align: right;
 	}
 	
