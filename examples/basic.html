@@ -4,14 +4,14 @@
 <style type='text/css'>
 
 	body {
-		margin-top: 50px;
+		margin-top: 40px;
 		text-align: center;
 		font-size: 14px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		}
 
 	#calendar {
-		width: 75%;
+		width: 900px;
 		margin: 0 auto;
 		}
 
@@ -48,45 +48,19 @@
 					title: "Repeating Event",
 					start: new Date(y, m, 9)
 				},
-				/*{
+				{
 					id: 3,
 					title: "Meeting",
 					start: new Date(y, m, 20, 9, 0)
-				},*/
+				},
 				{
 					id: 4,
 					title: "Click for Facebook",
 					start: new Date(y, m, 27, 16),
 					end: new Date(y, m, 29),
 					url: "http://facebook.com/"
-				},
-				{
-					id: 5,
-					title: "Click for Facebook",
-					start: new Date(y, m, 27, 8),
-					end: new Date(y, m, 29),
-					url: "http://facebook.com/"
-				},
-				{
-					id: 6,
-					title: "Click for Facebook",
-					start: new Date(y, m, 27, 14),
-					end: new Date(y, m, 29),
-					url: "http://facebook.com/"
 				}
-			],
-			//titleFormat: 'My',
-			weekStart: 1,
-			//rightToLeft: true,
-			//fixedWeeks: false,
-			//title: true,
-			//timeFormat: 'xg',
-			eventDrop: function(event, delta) {
-				//alert(delta);
-			},
-			resize: function() {
-				//alert(this);
-			}
+			]
 		});
 		
 	});

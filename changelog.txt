@@ -1,0 +1,23 @@
+
+version 1.1 (5/10/09)
+	- Added the following options:
+		- weekStart
+		- rightToLeft
+		- titleFormat
+		- timeFormat
+		- cacheParam
+		- resize
+	- Fixed rendering bugs
+		- Opera 9.25 (events placement & window resizing)
+		- IE6 (window resizing)
+	- Optimized window resizing for ALL browsers
+	- Events on same day now sorted by start time (but first by timespan)
+	- Correct z-index when dragging
+	- Dragging contained in overflow DIV for IE6
+	- Modified fullcalendar.css
+		- for right-to-left support
+		- for variable start-of-week
+		- for IE6 resizing bug
+		- for THEAD and TBODY (in 1.0, just used TBODY, restructured in 1.1)
+		- IF UPGRADING FROM FULLCALENDAR 1.0, YOU MUST UPGRADE FULLCALENDAR.CSS
+		  !!!!!!!!!!!

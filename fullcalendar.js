@@ -103,25 +103,24 @@
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				var prevButton, nextButton;
 				if (bo == true || bo.today != false) {
-					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>").click(today);
+					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>")
+						.click(today);
 					if (typeof bo.today == 'string') todayButton.val(bo.today);
+					buttons.append(todayButton);
 				}
 				if (bo == true || bo.prev != false) {
-					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>").click(prevMonth);
+					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>")
+						.click(prevMonth);
 					if (typeof bo.prev == 'string') prevButton.val(bo.prev);
+					if (r2l) buttons.prepend(prevButton);
+					else buttons.append(prevButton);
 				}
 				if (bo == true || bo.next != false) {
-					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>").click(nextMonth);
+					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>")
+						.click(nextMonth);
 					if (typeof bo.next == 'string') nextButton.val(bo.next);
-				}
-				if (r2l) {
-					if (nextButton) nextButton.appendTo(buttons);
-					if (prevButton) prevButton.appendTo(buttons);
-					if (todayButton) todayButton.appendTo(buttons);
-				}else{
-					if (todayButton) todayButton.appendTo(buttons);
-					if (prevButton) prevButton.appendTo(buttons);
-					if (nextButton) nextButton.appendTo(buttons);
+					if (r2l) buttons.prepend(nextButton);
+					else buttons.append(nextButton);
 				}
 			}
 		
@@ -275,7 +274,7 @@
 					var jsonOptions = {};
 					jsonOptions[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
 					jsonOptions[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
-					jsonOptions[options.cacheParam || '_t'] = (new Date()).getTime();
+					jsonOptions[options.cacheParam || '_'] = (new Date()).getTime();
 					$.getJSON(options.events, jsonOptions, function(data) {
 						events = cleanEvents(data);
 						renderEvents(events);
