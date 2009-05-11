@@ -40,6 +40,13 @@ Options
    **fixedWeeks**: boolean, default:``true``
       If ``true``, the calendar will always be 6 weeks tall. If ``false``, the
       calendar's height will vary per month.
+      
+   **weekStart**: integer, default:``0``
+      The day-of-week each week begins. 0 = Sunday (default),
+      1 = Monday (for UK users), 2 = Tuesday, etc.
+      
+   **rightToLeft**: boolean, default:``false``
+      Displays the calendar right-to-left (for Arabic and Hebrew languages)
    
    **abbrevDayHeadings**: boolean, default:``true``
       Whether to display "Sun" versus "Sunday" for days of the week.
@@ -47,6 +54,18 @@ Options
    **title**: boolean, default:``true``
       Determines whether a title such as "January 2009" will be displayed at the
       top of the calendar.
+      
+   **titleFormat**: string, default:``"Y F"``
+      A string defining format of the title above the calendar. The default
+      "Y F" creates strings such as "January 2009". Use the following
+      codes in your format string (similar to the PHP's date function):
+      
+         * **F** - January through December
+         * **m** - 01 through 12 (leading zeros)
+         * **M** - Jan through Dec
+         * **n** - 1 through 12
+         * **Y** - Examples: 1999 or 2003
+         * **y** - Examples: 99 or 03
    
    **buttons**: boolean/hash, default:``true``
       Determines whether navigation buttons will be displayed at the top of the
@@ -55,9 +74,23 @@ Options
       each button's text.
       
    **showTime**: boolean/ ``"guess"``, default:``"guess"``
-      Determines if times such as "8a" or "1p" will be displayed before each
-      event's title. ``"guess"`` displays times only for events with non-zero
-      start or end times.
+      Determines if times will be displayed before each event's title.
+      ``"guess"`` displays times only for events with non-zero start or end times.
+      
+   **timeFormat**: string, default: ``"gx"``
+      A string defining the format of dislayed of event times. The default "gx"
+      creates a string such as "9a". Use the following codes in your format
+      string (similar to PHP's date function):
+      
+         * **a** - am or pm
+         * **A** - AM or PM
+         * **x** - a or p
+         * **X** - A or P
+         * **g** - 1 through 12 (hour)
+         * **G** - 0 through 23 (hour, military time)
+         * **h** - 01 through 12 (hour, leading zeros)
+         * **H** - 00 through 23 (hour, military time and leading zeros)
+         * **i** - 00 to 59 (minute, leading zeros)
    
    **eventDragOpacity**: float
       The opacity of an event element while it is being dragged (0.0 - 1.0)
@@ -118,7 +151,11 @@ Event Data Provider
       events from a JSON script (when ``event`` is a URL string). The value
       of this GET parameter will be a UNIX timestamp denoting the end of the
       last visible day (exclusive).
-         
+      
+   **cacheParam**: string, default:``"_"``
+      When using a JSON url, a parameter of this name will
+      automatically be inserted into the URL to prevent the browser from
+      caching the response. The value will be the current millisecond time.
       
 .. _TriggeredEvents:
       
@@ -133,6 +170,12 @@ Triggered Events
    **loading**: function(isLoading)
       Triggered with a ``true`` argument when the calendar begins fetching
       events via AJAX. Triggered with ``false`` when done.
+      
+   **resize**: function()
+      Triggered after the calendar has recovered from a resize (due to the window
+      pane being resized).
+      
+      ``this`` is set to the main element
       
    **dayClick**: function(dayDate)
       Triggered when the user clicks on a day. ``dayDate`` is a Date object with
