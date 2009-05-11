@@ -96,9 +96,6 @@
 			var titleElement, todayButton, monthElement, monthElementWidth;
 			var header = $("<div class='full-calendar-header'/>").appendTo(this);
 			
-			if (options.title !== false)
-				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
-			
 			if (bo) {
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				var prevButton, nextButton;
@@ -123,9 +120,13 @@
 					else buttons.append(nextButton);
 				}
 			}
+			
+			if (options.title !== false)
+				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
 		
 			monthElement = $("<div class='full-calendar-month' style='position:relative'/>")
 				.appendTo($("<div class='full-calendar-month-wrap'/>").appendTo(this));
+
 			
 			
 			
