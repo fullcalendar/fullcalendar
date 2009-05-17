@@ -27,7 +27,7 @@
 		if (options && typeof options.events == 'string') {
 			feedURL = options.events;
 		}
-		else return this;
+		else return this.fullCalendar(options);
 		
 		feedURL = feedURL.replace(/\/basic$/, '/full');
 		
