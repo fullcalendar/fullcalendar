@@ -47,13 +47,32 @@
 		
 		var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
 		
+		
+		var eventSources;
+		var eo = options.events;
+		if (eo) {
+			if (typeof eo == 'string' || $.isFunction(eo)) {
+				eventSources = [eo];
+			}else{
+				var item = eo[0];
+				if (item) {
+					if (typeof item == 'string' || $.isFunction(item))
+						eventSources = eo;
+					else {
+						eventSources = [eo];
+					}
+				}
+			}
+		}
+		else eventSources = [];
+		
+		
 		this.each(function() {
 		
 			var date = options.year ? new Date(options.year, options.month || 0, 1) : new Date();
 			var start, end, today, numWeeks;
-			var events = typeof options.events != 'string' && !$.isFunction(options.events) ?
-				cleanEvents(options.events) : null;
 			var ignoreResizes = false;
+			var events;
 		
 			function updateMonth() {
 				clearEvents();
@@ -80,12 +99,41 @@
 				updateMonth();
 			}
 			
+			/*function updateEvent(event) {
+			}
+			
+			function removeEvent(event) {
+				var eventId = typeof event == 'object' ? event.id : event;
+				var newEvents = [];
+				for (var i=0; i<events.length; i++) {
+					if (events[i]) {
+						newEvents.push(events[i]);
+					}
+				}
+				events = newEvents;
+				renderEvents();
+			}
+			
+			function removeEventsNoId() {
+				var newEvents = [];
+				for (var i=0; i<events.length; i++) {
+					if (events[i].id || typeof events[i].id == 'number') {
+						newEvents.push(events[i]);
+					}
+				}
+				events = newEvents;
+				renderEvents();
+			}*/
+			
 			$.data(this, 'fullCalendar', {
 				today: today,
 				prevMonth: prevMonth,
 				nextMonth: nextMonth,
 				gotoMonth: gotoMonth,
 				refresh: updateMonth
+				//updateEvent: updateEvent,
+				//removeEvent: removeEvent,
+				//removeUnsavedEvents: removeUnsavedEvents
 			});
 			
 			
@@ -269,29 +317,37 @@
 					tbodyTopBug = tbody.position().top != trTop;
 					sniffBugs = false;
 				}
-			
-				if (typeof options.events == 'string') {
-					if (options.loading) options.loading(true);
-					var jsonOptions = {};
-					jsonOptions[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
-					jsonOptions[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
-					jsonOptions[options.cacheParam || '_'] = (new Date()).getTime();
-					$.getJSON(options.events, jsonOptions, function(data) {
-						events = cleanEvents(data);
-						renderEvents(events);
+				
+				
+				events = [];
+				var completed = eventSources.length;
+				var reportEvents = function(a) {
+					events = events.concat(cleanEvents(a));
+					if (--completed == 0) {
 						if (options.loading) options.loading(false);
-					});
+						renderEvents(events);
+					}
+				};
+				if (options.loading) options.loading(true);
+				for (var i=0; i<eventSources.length; i++) {
+					var src = eventSources[i];
+					if (typeof src == 'string') {
+						var params = {};
+						params[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
+						params[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
+						params[options.cacheParam || '_'] = (new Date()).getTime();
+						$.getJSON(src, params, reportEvents);
+					}
+					else if ($.isFunction(src)) {
+						src(start, end, reportEvents);
+					}
+					else if (src) {
+						reportEvents(src);
+					}
 				}
-				else if ($.isFunction(options.events)) {
-					if (options.loading) options.loading(true);
-					options.events(start, end,
-						function(data) {
-							events = cleanEvents(data);
-							renderEvents(events);
-							if (options.loading) options.loading(false);
-						});
-				}
-				else if (events) renderEvents(events);
+				
+				
+				
 				
 				ignoreResizes = false;
 			
@@ -339,9 +395,7 @@
 							});
 						}
 					});
-					segs.sort(function(a, b) {
-						return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
-					});
+					segs.sort(segSort);
 					var levels = [];
 					$.each(segs, function(j, seg) {
 						var l = 0; // level index
@@ -431,6 +485,7 @@
 									"<td class='s'/>" +
 									(roundE ? "<td class='se'/>" : '') + "</tr>");
 							buildEventText(event, element.find('td.c'));
+							if (event.cssClass) element.addClass(event.cssClass);
 							if (options.eventRender) {
 								var res = options.eventRender(event, element);
 								if (typeof res != 'undefined') {
@@ -746,8 +801,7 @@
 	// string utilities
 	
 	function zeroPad(n) {
-		if (n < 10) return '0' + n;
-		return n;
+		return (n < 10 ? '0' : '') + n;
 	}
 	
 	
@@ -762,6 +816,10 @@
 			if (!event.end) event.end = addDays(cloneDate(event.start), 1);
 		});
 		return events;
+	}
+	
+	function segSort(a, b) {
+		return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 	}
 	
 	
@@ -832,13 +890,12 @@
 
 	$.ISO8601String = function(date) {
 		// derived from http://delete.me.uk/2005/03/iso8601.html
-		var zeropad = function (num) { return ((num < 10) ? '0' : '') + num; }
 		return date.getUTCFullYear() +
-			"-" + zeropad(date.getUTCMonth() + 1) +
-			"-" + zeropad(date.getUTCDate()) +
-			"T" + zeropad(date.getUTCHours()) +
-			":" + zeropad(date.getUTCMinutes()) +
-			":" + zeropad(date.getUTCSeconds()) +
+			"-" + zeroPad(date.getUTCMonth() + 1) +
+			"-" + zeroPad(date.getUTCDate()) +
+			"T" + zeroPad(date.getUTCHours()) +
+			":" + zeroPad(date.getUTCMinutes()) +
+			":" + zeroPad(date.getUTCSeconds()) +
 			"Z";
 	};
 
