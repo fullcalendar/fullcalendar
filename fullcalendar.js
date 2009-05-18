@@ -20,10 +20,14 @@
 		
 		if (typeof options == 'string') {
 			var args = Array.prototype.slice.call(arguments, 1);
+			var ret; // ugly
 			this.each(function() {
-				$.data(this, 'fullCalendar')[options].apply(this, args);
+				var r = $.data(this, 'fullCalendar')[options].apply(this, args);
+				if (typeof ret == 'undefined') ret = r;
 			});
-			return this;
+			if (typeof ret == 'undefined')
+				return this;
+			return ret;
 		}
 		
 		options = options || {};
@@ -44,35 +48,33 @@
 		var weekStart = (options.weekStart || 0) % 7;
 		var timeFormat = options.timeFormat || 'gx';
 		var titleFormat = options.titleFormat || (r2l ? 'Y F' : 'F Y');
-		
 		var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
-		
-		
-		var eventSources;
-		var eo = options.events;
-		if (eo) {
-			if (typeof eo == 'string' || $.isFunction(eo)) {
-				eventSources = [eo];
-			}else{
-				var item = eo[0];
-				if (item) {
-					if (typeof item == 'string' || $.isFunction(item))
-						eventSources = eo;
-					else {
-						eventSources = [eo];
-					}
-				}
-			}
-		}
-		else eventSources = [];
-		
 		
 		this.each(function() {
 		
 			var date = options.year ? new Date(options.year, options.month || 0, 1) : new Date();
 			var start, end, today, numWeeks;
 			var ignoreResizes = false;
-			var events;
+			var events = [];
+			
+			var eventSources;
+			var eo = options.events;
+			if (eo) {
+				if (typeof eo == 'string' || $.isFunction(eo)) {
+					eventSources = [eo];
+				}else{
+					var item = eo[0];
+					if (item) {
+						if (typeof item == 'string' || $.isFunction(item))
+							eventSources = eo;
+						else {
+							eventSources = [eo];
+						}
+					}
+				}
+			}
+			else eventSources = [];
+			
 		
 			function updateMonth() {
 				clearEvents();
@@ -99,41 +101,80 @@
 				updateMonth();
 			}
 			
-			/*function updateEvent(event) {
-			}
-			
-			function removeEvent(event) {
-				var eventId = typeof event == 'object' ? event.id : event;
-				var newEvents = [];
-				for (var i=0; i<events.length; i++) {
-					if (events[i]) {
-						newEvents.push(events[i]);
-					}
-				}
-				events = newEvents;
-				renderEvents();
-			}
-			
-			function removeEventsNoId() {
-				var newEvents = [];
-				for (var i=0; i<events.length; i++) {
-					if (events[i].id || typeof events[i].id == 'number') {
-						newEvents.push(events[i]);
-					}
-				}
-				events = newEvents;
-				renderEvents();
-			}*/
-			
 			$.data(this, 'fullCalendar', {
 				today: today,
 				prevMonth: prevMonth,
 				nextMonth: nextMonth,
 				gotoMonth: gotoMonth,
-				refresh: updateMonth
-				//updateEvent: updateEvent,
-				//removeEvent: removeEvent,
-				//removeUnsavedEvents: removeUnsavedEvents
+				refresh: updateMonth,
+				
+				addEvent: function(event) {
+					events.push(normalizeEvent(event));
+					clearEvents();
+					renderEvents();
+				},
+				
+				updateEvent: function(event) {
+					event.start = cleanDate(event.start);
+					event.end = cleanDate(event.end);
+					var startDelta = event.start - event._start;
+					var msLength = event.end - event.start;
+					event._start = cloneDate(event.start);
+					for (var i=0; i<events.length; i++) {
+						var e = events[i];
+						if (e.id === event.id && e !== event) {
+							e.start = new Date(e.start.getTime() + startDelta);
+							e.end = new Date(e.start.getTime() + msLength);
+							e._start = cloneDate(e.start);
+							for (var k in event) {
+								if (k && k != 'start' && k != 'end' && k.charAt(0) != '_') {
+									e[k] = event[k];
+								}
+							}
+						}
+					}
+					clearEvents();
+					renderEvents();
+				},
+				
+				removeEvent: function(eventId) {
+					if (typeof eventId == 'object') {
+						eventId = eventId.id;
+					}
+					var newEvents = [];
+					for (var i=0; i<events.length; i++) {
+						if (events[i].id !== eventId) {
+							newEvents.push(events[i]);
+						}
+					}
+					events = newEvents;
+					// remove from static event sources
+					for (var i=0; i<eventSources.length; i++) {
+						var src = eventSources[i];
+						if (typeof src != 'string' && !$.isFunction(src)) {
+							var newSrc = [];
+							for (var j=0; j<src.length; j++) {
+								if (src[j].id !== eventId) {
+									newSrc.push(src[j]);
+								}
+							}
+							eventSources[i] = newSrc;
+						}
+					}
+					clearEvents();
+					renderEvents();
+				},
+				
+				getEventsById: function(eventId) {
+					var res = [];
+					for (var i=0; i<events.length; i++) {
+						if (events[i].id === eventId) {
+							res.push(events[i]);
+						}
+					}
+					return res;
+				}
+				
 			});
 			
 			
@@ -322,7 +363,8 @@
 				events = [];
 				var completed = eventSources.length;
 				var reportEvents = function(a) {
-					events = events.concat(cleanEvents(a));
+					for (var i=0; i<a.length; i++) normalizeEvent(a[i]);
+					events = events.concat(a);
 					if (--completed == 0) {
 						if (options.loading) options.loading(false);
 						renderEvents(events);
@@ -589,6 +631,7 @@
 								if (event == events[i] || typeof event.id != 'undefined' && event.id == events[i].id) {
 									addDays(events[i].start, delta, true);
 									addDays(events[i].end, delta, true);
+									events[i]._start = cloneDate(events[i].start);
 								}
 							}
 							if (options.eventDrop)
@@ -808,14 +851,16 @@
 	
 	// event utils
 	
-	function cleanEvents(events) {
-		$.each(events, function(i, event) {
-			if (event.date) event.start = event.date;
-			event.start = cleanDate(event.start);
-			event.end = cleanDate(event.end);
-			if (!event.end) event.end = addDays(cloneDate(event.start), 1);
-		});
-		return events;
+	function normalizeEvent(event) {
+		if (event.date) {
+			event.start = event.date;
+			event.date = undefined; // can i do this?
+		}
+		event.start = cleanDate(event.start);
+		event._start = cloneDate(event.start);
+		event.end = cleanDate(event.end);
+		if (!event.end) event.end = addDays(cloneDate(event.start), 1);
+		return event;
 	}
 	
 	function segSort(a, b) {
