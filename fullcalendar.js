@@ -108,6 +108,8 @@
 				gotoMonth: gotoMonth,
 				refresh: updateMonth,
 				
+				// event crud
+				
 				addEvent: function(event) {
 					events.push(normalizeEvent(event));
 					clearEvents();
@@ -173,6 +175,26 @@
 						}
 					}
 					return res;
+				},
+				
+				// event source crud
+				
+				addEventSource: function(src) {
+					eventSources.push(src);
+					clearEvents();
+					renderEvents();
+				},
+				
+				removeEventSource: function(src) {
+					var newSources = [];
+					for (var i=0; i<eventSources.length; i++) {
+						if (src !== eventSources[i]) {
+							newSources.push(eventSources[i]);
+						}
+					}
+					eventSources = newSources;
+					clearEvents();
+					renderEvents();
 				}
 				
 			});
@@ -236,7 +258,7 @@
 			
 				clearTime(date);
 				start = cloneDate(date);
-				addDays(start, -start.getDay() + weekStart);
+				addDays(start, -((start.getDay() - weekStart + 7) % 7));
 				end = cloneDate(date);
 				addMonths(end, 1);
 				addDays(end, (7 - end.getDay() + weekStart) % 7);
