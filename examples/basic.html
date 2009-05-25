@@ -33,14 +33,14 @@
 				start: "2009-05-18"
 			});*/
 			
-			$('#calendar').fullCalendar("removeEvent", 3);
+			//$('#calendar').fullCalendar("removeEvent", 3);
 			
-			/*var events = $('#calendar').fullCalendar('getEventsById', 2);
+			var events = $('#calendar').fullCalendar('getEventsById', 2);
 			var ev1 = events[0];
 			ev1.title = "yo";
 			ev1.start = '2009-05-14';
 			ev1.end = '2009-05-16';
-			$('#calendar').fullCalendar('updateEvent', ev1);*/
+			$('#calendar').fullCalendar('updateEvent', ev1);
 			
 		});
 	
@@ -79,8 +79,7 @@
 					end: new Date(y, m, 29),
 					url: "http://facebook.com/"
 				}
-			],
-			rightToLeft: false
+			]
 		});
 		
 	});
