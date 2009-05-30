@@ -17,18 +17,29 @@
 (function($) {
 
 	$.fn.fullCalendar = function(options) {
+	
+	
+		//
+		// Calls methods of a pre-existing instance
+		//
 		
 		if (typeof options == 'string') {
 			var args = Array.prototype.slice.call(arguments, 1);
-			var ret; // ugly
+			var res;
 			this.each(function() {
 				var r = $.data(this, 'fullCalendar')[options].apply(this, args);
-				if (typeof ret == 'undefined') ret = r;
+				if (typeof res == 'undefined') res = r;
 			});
-			if (typeof ret == 'undefined')
-				return this;
-			return ret;
+			if (typeof res != 'undefined')
+				return res;
+			return this;
 		}
+		
+		
+		
+		//
+		// Process options
+		//
 		
 		options = options || {};
 		
@@ -48,77 +59,94 @@
 		var weekStart = (options.weekStart || 0) % 7;
 		var timeFormat = options.timeFormat || 'gx';
 		var titleFormat = options.titleFormat || (r2l ? 'Y F' : 'F Y');
+		
+		
+		
+		//
+		// Rendering bug detection variables
+		//
+		
 		var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
+		
+		
 		
 		this.each(function() {
 		
-			var date = options.year ? new Date(options.year, options.month || 0, 1) : new Date();
-			var start, end, today, numWeeks;
+		
+			//
+			// Instance variables
+			//
+			
+			var date = options.year ? // holds the year & month of current month
+				new Date(options.year, options.month || 0, 1) :
+				new Date();
+			var start, end; // first & last VISIBLE dates
+			var today;
+			var numWeeks;
 			var ignoreResizes = false;
+			
 			var events = [];
+			var eventSources = options.eventSources || [];
+			if (options.events) eventSources.push(options.events);
 			
-			var eventSources;
-			var eo = options.events;
-			if (eo) {
-				if (typeof eo == 'string' || $.isFunction(eo)) {
-					eventSources = [eo];
-				}else{
-					var item = eo[0];
-					if (item) {
-						if (typeof item == 'string' || $.isFunction(item))
-							eventSources = eo;
-						else {
-							eventSources = [eo];
-						}
-					}
-				}
-			}
-			else eventSources = [];
 			
+			
+			//
+			// Month navigation functions
+			//
 		
-			function updateMonth() {
-				clearEvents();
+			function refreshMonth() {
+				clearEventElements();
 				render();
-			}
-		
-			function today() {
-				date = new Date();
-				updateMonth();
 			}
 		
 			function prevMonth() {
 				addMonths(date, -1);
-				updateMonth();
+				refreshMonth();
 			}
 		
 			function nextMonth() {
 				addMonths(date, 1);
-				updateMonth();
+				refreshMonth();
+			}
+			
+			function gotoToday() {
+				date = new Date();
+				refreshMonth();
 			}
 		
 			function gotoMonth(year, month) {
 				date = new Date(year, month, 1);
-				updateMonth();
+				refreshMonth();
 			}
 			
+			
+			
+			//
+			// Publicly accessible methods
+			//
+			
 			$.data(this, 'fullCalendar', {
-				today: today,
+				refresh: refreshMonth,
 				prevMonth: prevMonth,
 				nextMonth: nextMonth,
+				today: gotoToday,
 				gotoMonth: gotoMonth,
-				refresh: updateMonth,
 				
-				// event crud
 				
+				//
+				// Event CRUD
+				//
+			
 				addEvent: function(event) {
 					events.push(normalizeEvent(event));
-					clearEvents();
+					clearEventElements();
 					renderEvents();
 				},
-				
+			
 				updateEvent: function(event) {
-					event.start = cleanDate(event.start);
-					event.end = cleanDate(event.end);
+					event.start = $.fullCalendar.parseDate(event.start);
+					event.end = $.fullCalendar.parseDate(event.end);
 					var startDelta = event.start - event._start;
 					var msLength = event.end - event.start;
 					event._start = cloneDate(event.start);
@@ -126,8 +154,8 @@
 						var e = events[i];
 						if (e.id === event.id && e !== event) {
 							e.start = new Date(e.start.getTime() + startDelta);
-							e.end = new Date(e.start.getTime() + msLength);
 							e._start = cloneDate(e.start);
+							e.end = new Date(e.start.getTime() + msLength);
 							for (var k in event) {
 								if (k && k != 'start' && k != 'end' && k.charAt(0) != '_') {
 									e[k] = event[k];
@@ -135,14 +163,16 @@
 							}
 						}
 					}
-					clearEvents();
+					clearEventElements();
 					renderEvents();
 				},
-				
+			
 				removeEvent: function(eventId) {
 					if (typeof eventId == 'object') {
 						eventId = eventId.id;
 					}
+					
+					// remove from the 'events' array
 					var newEvents = [];
 					for (var i=0; i<events.length; i++) {
 						if (events[i].id !== eventId) {
@@ -150,6 +180,7 @@
 						}
 					}
 					events = newEvents;
+					
 					// remove from static event sources
 					for (var i=0; i<eventSources.length; i++) {
 						var src = eventSources[i];
@@ -163,10 +194,11 @@
 							eventSources[i] = newSrc;
 						}
 					}
-					clearEvents();
+					
+					clearEventElements();
 					renderEvents();
 				},
-				
+			
 				getEventsById: function(eventId) {
 					var res = [];
 					for (var i=0; i<events.length; i++) {
@@ -177,15 +209,23 @@
 					return res;
 				},
 				
-				// event source crud
 				
+			
+				//
+				// Event Source CRUD
+				//
+			
 				addEventSource: function(src) {
 					eventSources.push(src);
-					clearEvents();
-					renderEvents();
+					fetchEventSource(src, function() {
+						clearEventElements();
+						renderEvents();
+					});
 				},
-				
+			
 				removeEventSource: function(src) {
+			
+					// remove from 'eventSources' array
 					var newSources = [];
 					for (var i=0; i<eventSources.length; i++) {
 						if (src !== eventSources[i]) {
@@ -193,7 +233,17 @@
 						}
 					}
 					eventSources = newSources;
-					clearEvents();
+				
+					// remove events from 'events' array
+					var newEvents = [];
+					for (var i=0; i<events.length; i++) {
+						if (events[i].source !== src) {
+							newEvents.push(events[i]);
+						}
+					}
+					events = newEvents;
+				
+					clearEventElements();
 					renderEvents();
 				}
 				
@@ -203,16 +253,26 @@
 			
 			
 			
+			/*******************************************************************/
+			//
+			//		Header & Table Rendering
+			//
+			/*******************************************************************/
+			
+			
+			//
+			// Build one-time DOM elements (header, month container)
+			//
 		
 			var titleElement, todayButton, monthElement, monthElementWidth;
 			var header = $("<div class='full-calendar-header'/>").appendTo(this);
 			
-			if (bo) {
+			if (bo) { // "button options"
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				var prevButton, nextButton;
 				if (bo == true || bo.today != false) {
 					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>")
-						.click(today);
+						.click(gotoToday);
 					if (typeof bo.today == 'string') todayButton.val(bo.today);
 					buttons.append(todayButton);
 				}
@@ -237,14 +297,13 @@
 		
 			monthElement = $("<div class='full-calendar-month' style='position:relative'/>")
 				.appendTo($("<div class='full-calendar-month-wrap'/>").appendTo(this));
-
 			
 			
+			//
+			// Build the TABLE cells for the current month. (calls event fetch+render code)
+			//
 			
-			
-			
-			
-			var thead, tbody, glass, monthTitle;
+			var thead, tbody, glass;
 			
 			function render() {
 		
@@ -253,7 +312,7 @@
 				clearTime(date);
 				var year = date.getFullYear();
 				var month = date.getMonth();
-				monthTitle = formatTitle(date);
+				var monthTitle = $.fullCalendar.formatDate(date, titleFormat);
 				if (titleElement) titleElement.text(monthTitle);
 			
 				clearTime(date);
@@ -276,8 +335,13 @@
 						todayButton.css('visibility', 'visible');
 					}
 				}
+				
+				var dayNames = $.fullCalendar.dayNames;
+				var dayAbbrevs = $.fullCalendar.dayAbbrevs;
 			
 				if (!tbody) {
+				
+					// first time, build all cells from scratch
 				
 					var table = $("<table style='width:100%'/>").appendTo(monthElement);
 				
@@ -313,6 +377,8 @@
 					}
 					tbody = $(tbody + "</tbody>").appendTo(table);
 						
+					// a protective coating over the TABLE
+					// intercepts mouse clicks and prevents text-selection
 					glass = $("<div style='position:absolute;top:0;left:0;z-index:1;width:100%' />")
 						.appendTo(monthElement)
 						.click(function(ev, ui) {
@@ -324,9 +390,12 @@
 						});
 				
 				}else{
+				
+					// NOT first time, reuse as many cells as possible
 			
 					var diff = numWeeks - tbody.find('tr').length;
 					if (diff < 0) {
+						// remove extra rows
 						tbody.find('tr:gt(' + (numWeeks-1) + ')').remove();
 					}
 					else if (diff > 0) {
@@ -347,6 +416,7 @@
 						if (trs) tbody.append(trs);
 					}
 				
+					// re-label and re-class existing cells
 					var d = cloneDate(start);
 					tbody.find('tr').each(function() {
 						for (var i=0; i<7; i++) {
@@ -368,9 +438,11 @@
 			
 				}
 			
-				resizeTable();
+				setCellSizes();
 				
 				if (sniffBugs) {
+					// nasty bugs in opera 9.25
+					// position() returning relative to direct parent
 					var tr = tbody.find('tr');
 					var td = tr.find('td');
 					var trTop = tr.position().top;
@@ -381,37 +453,7 @@
 					sniffBugs = false;
 				}
 				
-				
-				events = [];
-				var completed = eventSources.length;
-				var reportEvents = function(a) {
-					for (var i=0; i<a.length; i++) normalizeEvent(a[i]);
-					events = events.concat(a);
-					if (--completed == 0) {
-						if (options.loading) options.loading(false);
-						renderEvents(events);
-					}
-				};
-				if (options.loading) options.loading(true);
-				for (var i=0; i<eventSources.length; i++) {
-					var src = eventSources[i];
-					if (typeof src == 'string') {
-						var params = {};
-						params[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
-						params[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
-						params[options.cacheParam || '_'] = (new Date()).getTime();
-						$.getJSON(src, params, reportEvents);
-					}
-					else if ($.isFunction(src)) {
-						src(start, end, reportEvents);
-					}
-					else if (src) {
-						reportEvents(src);
-					}
-				}
-				
-				
-				
+				fetchEvents(renderEvents);
 				
 				ignoreResizes = false;
 			
@@ -421,9 +463,37 @@
 			}
 			
 			
+			//
+			// Adjust dimensions of the cells, based on container's width
+			//
+			
+			function setCellSizes() {
+				var tbodyw = tbody.width();
+				var cellw = Math.floor(tbodyw / 7);
+				var cellh = Math.round(cellw * .85);
+				thead.find('th')
+					.filter(':lt(6)').width(cellw).end()
+					.filter(':eq(6)').width(tbodyw - cellw*6);
+				tbody.find('td').height(cellh);
+				glass.height(monthElement.height());
+				monthElementWidth = monthElement.width();
+			}
 			
 			
 			
+			
+			
+			
+			/*******************************************************************/
+			//
+			//		Event Rendering
+			//
+			/*******************************************************************/
+			
+			
+			//
+			// Render the 'events' array. First, break up into segments
+			//
 			
 			var eventMatrix = [];
 		
@@ -493,7 +563,9 @@
 			}
 		
 		
-		
+			//
+			// Do the REAL rendering of the segments
+			//
 		
 			var eventElements = []; // [[event, element], ...]
 		
@@ -535,7 +607,14 @@
 								roundE = seg.isEnd;
 							}
 							left2 = left2.position().left + left2.width();
-							var element = $("<table class='event' />")
+							var cl = event.className;
+							if (typeof cl == 'string') {
+								cl = ' ' + cl;
+							}
+							else if (typeof cl == 'object') {
+								cl = ' ' + cl.join(' ');
+							}
+							var element = $("<table class='event" + (cl || '') + "' />")
 								.append("<tr>" +
 									(roundW ? "<td class='nw'/>" : '') +
 									"<td class='n'/>" +
@@ -549,7 +628,6 @@
 									"<td class='s'/>" +
 									(roundE ? "<td class='se'/>" : '') + "</tr>");
 							buildEventText(event, element.find('td.c'));
-							if (event.cssClass) element.addClass(event.cssClass);
 							if (options.eventRender) {
 								var res = options.eventRender(event, element);
 								if (typeof res != 'undefined') {
@@ -576,9 +654,33 @@
 					innerDiv.height(height);
 				}
 			}
+			
+			
+			//
+			// create the text-contents of an event segment
+			//
+			
+			function buildEventText(event, element) {
+				$("<span class='event-title' />")
+					.text(event.title)
+					.appendTo(element);
+				var st = typeof event.showTime == 'undefined' ? showTime : event.showTime;
+				if (st != false) {
+					if (st == true || st == 'guess' &&
+						(event.start.getHours() || event.start.getMinutes() ||
+						 event.end.getHours() || event.end.getMinutes())) {
+							var timeStr = $.fullCalendar.formatDate(event.start, timeFormat);
+							var timeElement = $("<span class='event-time' />");
+							if (r2l) element.append(timeElement.text(' ' + timeStr));
+							else element.prepend(timeElement.text(timeStr + ' '));
+						}
+				}
+			}
 		
 		
-		
+			//
+			// Attach event handlers to an event segment
+			//
 		
 			function initEventElement(event, element) {
 				element.click(function(ev) {
@@ -607,9 +709,34 @@
 				}
 				eventElements.push([event, element]);
 			}
+			
+			
+			//
+			// Remove all event segments from DOM
+			//
+			
+			function clearEventElements() {
+				for (var i=0; i<eventElements.length; i++)
+					eventElements[i][1].remove();
+				eventElements = [];
+			}
 		
 		
 		
+		
+		
+		
+		
+			/*******************************************************************/
+			//
+			//		Drag & Drop		(and cell-coordinate stuff)
+			//
+			/*******************************************************************/
+			
+		
+			//
+			// Attach jQuery UI draggable
+			//
 		
 			var dragStartTD, dragTD;
 			var dayOverlay;
@@ -658,7 +785,7 @@
 							}
 							if (options.eventDrop)
 								options.eventDrop.call(this, event, delta, ev, ui);
-							clearEvents();
+							clearEventElements();
 							renderEvents();
 						}
 						dayOverlay.hide();
@@ -667,6 +794,11 @@
 					}
 				});
 			}
+			
+			
+			//
+			// Called DURING dragging, on every mouse move
+			//
 		
 			function eventDrag(node, ev, ui) {
 				var oldTD = dragTD;
@@ -690,9 +822,9 @@
 			}
 		
 		
-		
-		
-		
+			//
+			// Record positions & dimensions of each TD
+			//
 		
 			var dayX, dayY, dayX0, dayY0;
 			var currTD, currR, currC;
@@ -717,6 +849,10 @@
 				dayX.push(dayX[dayX.length-1] + td.width());
 				currTD = null;
 			}
+			
+			//
+			// Returns TD underneath coordinate (optimized)
+			//
 		
 			function dayTD(x, y) {
 				var r=-1, c=-1;
@@ -737,115 +873,128 @@
 				}
 				return currTD;
 			}
+			
+			//
+			// Get a TD's date
+			//
 		
-			function dayDate(node) {
+			function dayDate(td) {
 				var i, tds = tbody.get(0).getElementsByTagName('td');
 				for (i=0; i<tds.length; i++) {
-					if (tds[i] == node) break;
+					if (tds[i] == td) break;
 				}
 				var d = cloneDate(start);
 				return addDays(d, i);
 			}
+			
+			//
+			// Return the # of days between 2 TD's
+			//
 		
-			function dayDelta(node1, node2) {
+			function dayDelta(td1, td2) {
 				var i1, i2, trs = tbody.get(0).getElementsByTagName('tr');
 				for (var i=0; i<trs.length; i++) {
 					var tr = trs[i];
 					for (var j=0; j<7; j++) {
 						var td = tr.childNodes[j];
-						if (td == node1) i1 = i*7 + j*dis + dit;
-						if (td == node2) i2 = i*7 + j*dis + dit;
+						if (td == td1) i1 = i*7 + j*dis + dit;
+						if (td == td2) i2 = i*7 + j*dis + dit;
 					}
 				}
 				return i2 - i1;
 			}
-		
-		
-		
-		
-		
-		
-			function resizeTable() {
-				var tbodyw = tbody.width();
-				var cellw = Math.floor(tbodyw / 7);
-				var cellh = Math.round(cellw * .85);
-				thead.find('th')
-					.filter(':lt(6)').width(cellw).end()
-					.filter(':eq(6)').width(tbodyw - cellw*6);
-				tbody.find('td').height(cellh);
-				glass.height(monthElement.height());
-				monthElementWidth = monthElement.width();
-			}
-		
-			function clearEvents() {
-				for (var i=0; i<eventElements.length; i++)
-					eventElements[i][1].remove();
-				eventElements = [];
-			}
 			
 			
 			
 			
 			
-			function buildEventText(event, element) {
-				$("<span class='event-title' />")
-					.text(event.title)
-					.appendTo(element);
-				var st = typeof event.showTime == 'undefined' ? showTime : event.showTime;
-				if (st != false) {
-					var h = event.start.getHours();
-					var m = event.start.getMinutes();
-					if (st == true || st == 'guess' && (h || m || event.end.getHours() || event.end.getMinutes())) {
-						var s = '';
-						for (var i=0; i<timeFormat.length; i++) {
-							var c = timeFormat.charAt(i);
-							if (c == 'a') s += h<12 ? 'am' : 'pm';
-							else if (c == 'A') s += h<12 ? 'AM' : 'PM';
-							else if (c == 'x') s += h<12 ? 'a' : 'p';
-							else if (c == 'X') s += h<12 ? 'A' : 'P';
-							else if (c == 'g') s += h%12 || 12;
-							else if (c == 'G') s += h;
-							else if (c == 'h') s += zeroPad(h%12 || 12);
-							else if (c == 'H') s += zeroPad(h);
-							else if (c == 'i') s += zeroPad(m);
-							else s += c;
+			
+			
+			/*******************************************************************/
+			//
+			//		Event Sources & Fetching
+			//
+			/*******************************************************************/
+			
+			
+			//
+			// Fetch from ALL sources. Clear 'events' array and populate
+			//
+			
+			function fetchEvents(callback) {
+				events = [];
+				var queued = eventSources.length;
+				var sourceDone = function() {
+					if (--queued == 0) {
+						if (options.loading) {
+							options.loading(false);
 						}
-						var timeElement = $("<span class='event-time' />");
-						if (r2l) element.append(timeElement.text(' ' + s));
-						else element.prepend(timeElement.text(s + ' '));
+						if (callback) {
+							callback(events);
+						}
 					}
+				};
+				if (options.loading) {
+					options.loading(true);
+				}
+				for (var i=0; i<eventSources.length; i++) {
+					fetchEventSource(eventSources[i], sourceDone);
 				}
 			}
 			
-			function formatTitle(d) {
-				var m = d.getMonth();
-				var s = '';
-				for (var i=0; i<titleFormat.length; i++) {
-					var c = titleFormat.charAt(i);
-					if (c == 'F') s += monthNames[m];
-					else if (c == 'm') s += zeroPad(m);
-					else if (c == 'M') s += monthAbbrevs[m];
-					else if (c == 'n') s += m;
-					else if (c == 'Y') s += d.getFullYear();
-					else if (c == 'y') s += (d.getFullYear()+'').substring(2);
-					else s += c;
+			
+			//
+			// Fetch from a particular source. Append to the 'events' array
+			//
+			
+			function fetchEventSource(src, callback) {
+				var reportEvents = function(a) {
+					for (var i=0; i<a.length; i++) {
+						normalizeEvent(a[i]);
+						a[i].source = src;
+					}
+					events = events.concat(a);
+					if (callback) {
+						callback(a);
+					}
+				};
+				if (typeof src == 'string') {
+					var params = {};
+					params[options.startParam || 'start'] = Math.round(start.getTime() / 1000);
+					params[options.endParam || 'end'] = Math.round(end.getTime() / 1000);
+					params[options.cacheParam || '_'] = (new Date()).getTime();
+					$.getJSON(src, params, reportEvents);
 				}
-				return s;
+				else if ($.isFunction(src)) {
+					src(start, end, reportEvents);
+				}
+				else {
+					reportEvents(src);
+				}
 			}
-		
-		
-		
+			
+			
+			
+			
+			
+			
+			/*******************************************************************/
+			//
+			//		Begin "Main" Execution
+			//
+			/*******************************************************************/
 		
 			var e = this;
 			var resizeID = 0;
-			$(window).resize(function() {
+			$(window).resize(function() {   // re-render table on window resize
 				if (!ignoreResizes) {
-					var rid = ++resizeID;
+					var rid = ++resizeID;   // add a delay
 					setTimeout(function() {
 						if (rid == resizeID) {
+							// if the month width changed
 							if (monthElement.width() != monthElementWidth) {
-								clearEvents();
-								resizeTable();
+								clearEventElements();
+								setCellSizes();
 								_renderEvents();
 								if (options.resize) options.resize.call(e);
 							}
@@ -854,7 +1003,10 @@
 				}
 			});
 		
-			render();
+			render(); // let's begin...
+			
+			
+			
 			
 		});
 		
@@ -863,24 +1015,26 @@
 	
 	
 	
-	// string utilities
 	
-	function zeroPad(n) {
-		return (n < 10 ? '0' : '') + n;
-	}
+	/***************************************************************************/
+	//
+	//		Utilities
+	//
+	/***************************************************************************/
 	
 	
-	
+	//
 	// event utils
+	//
 	
 	function normalizeEvent(event) {
 		if (event.date) {
 			event.start = event.date;
-			event.date = undefined; // can i do this?
+			delete event.date;
 		}
-		event.start = cleanDate(event.start);
+		event.start = $.fullCalendar.parseDate(event.start);
 		event._start = cloneDate(event.start);
-		event.end = cleanDate(event.end);
+		event.end = $.fullCalendar.parseDate(event.end);
 		if (!event.end) event.end = addDays(cloneDate(event.start), 1);
 		return event;
 	}
@@ -890,13 +1044,18 @@
 	}
 	
 	
+	//
+	// string utils
+	//
 	
+	function zeroPad(n) {
+		return (n < 10 ? '0' : '') + n;
+	}
+	
+	
+	//
 	// date utils
-	
-	var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-	var monthAbbrevs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-	var dayAbbrevs = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+	//
 	
 	function addMonths(d, n, keepTime) {
 		d.setMonth(d.getMonth() + n);
@@ -922,48 +1081,99 @@
 		return new Date(+d);
 	}
 	
-	function cleanDate(d) {
-		if (typeof d == 'string')
-			return $.parseISO8601(d, true) || Date.parse(d) || new Date(parseInt(d));
-		if (typeof d == 'number')
-			return new Date(d * 1000);
-		return d;
-	}
 	
-	$.parseISO8601 = function(s, ignoreTimezone) {
-		// derived from http://delete.me.uk/2005/03/iso8601.html
-		var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
-		    "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-		    "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-		var d = s.match(new RegExp(regexp));
-		if (!d) return null;
-		var offset = 0;
-		var date = new Date(d[1], 0, 1);
-		if (d[3]) { date.setMonth(d[3] - 1); }
-		if (d[5]) { date.setDate(d[5]); }
-		if (d[7]) { date.setHours(d[7]); }
-		if (d[8]) { date.setMinutes(d[8]); }
-		if (d[10]) { date.setSeconds(d[10]); }
-		if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
-		if (!ignoreTimezone) {
-			if (d[14]) {
-				offset = (Number(d[16]) * 60) + Number(d[17]);
-				offset *= ((d[15] == '-') ? 1 : -1);
+	//
+	// globally accessible date formatting & parsing
+	//
+	
+	$.fullCalendar = {
+	
+		monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+		monthAbbrevs: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+		dayNames: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+		dayAbbrevs: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+	
+		formatDate: function(d, format) {
+			var f = $.fullCalendar.dateFormatters;
+			var s = '';
+			for (var i=0; i<format.length; i++) {
+				var c = format.charAt(i);
+				if (f[c]) {
+					s += f[c](d);
+				}else{
+					s += c;
+				}
 			}
-			offset -= date.getTimezoneOffset();
+			return s;
+		},
+		
+		dateFormatters: {
+			'a': function(d) { return d.getHours() < 12 ? 'am' : 'pm' },
+			'A': function(d) { return d.getHours() < 12 ? 'AM' : 'PM' },
+			'x': function(d) { return d.getHours() < 12 ? 'a' : 'p' },
+			'X': function(d) { return d.getHours() < 12 ? 'A' : 'P' },
+			'g': function(d) { return d.getHours() % 12 || 12 },
+			'G': function(d) { return d.getHours() },
+			'h': function(d) { return zeroPad(d.getHours() %12 || 12) },
+			'H': function(d) { return zeroPad(d.getHours()) },
+			'i': function(d) { return zeroPad(d.getMinutes()) },
+			'F': function(d) { return $.fullCalendar.monthNames[d.getMonth()] },
+			'm': function(d) { return zeroPad(d.getMonth() + 1) },
+			'M': function(d) { return $.fullCalendar.monthAbbrevs[d.getMonth()] },
+			'n': function(d) { return d.getMonth() + 1 },
+			'Y': function(d) { return d.getFullYear() },
+			'y': function(d) { return (d.getFullYear()+'').substring(2) },
+			'c': function(d) {
+				// ISO8601. derived from http://delete.me.uk/2005/03/iso8601.html
+				return d.getUTCFullYear() +
+					"-" + zeroPad(d.getUTCMonth() + 1) +
+					"-" + zeroPad(d.getUTCDate()) +
+					"T" + zeroPad(d.getUTCHours()) +
+					":" + zeroPad(d.getUTCMinutes()) +
+					":" + zeroPad(d.getUTCSeconds()) +
+					"Z";
+			}
+		},
+		
+		parseDate: function(s) {
+			if (typeof s == 'object')
+				return s; // already a Date object
+			if (typeof s == 'undefined')
+				return null;
+			if (typeof s == 'number')
+				return new Date(s * 1000);
+			return $.fullCalendar.parseISO8601(s, true) ||
+			       Date.parse(s) ||
+			       new Date(parseInt(s) * 1000);
+		},
+		
+		parseISO8601: function(s, ignoreTimezone) {
+			// derived from http://delete.me.uk/2005/03/iso8601.html
+			var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+				"(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+				"(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
+			var d = s.match(new RegExp(regexp));
+			if (!d) return null;
+			var offset = 0;
+			var date = new Date(d[1], 0, 1);
+			if (d[3]) { date.setMonth(d[3] - 1); }
+			if (d[5]) { date.setDate(d[5]); }
+			if (d[7]) { date.setHours(d[7]); }
+			if (d[8]) { date.setMinutes(d[8]); }
+			if (d[10]) { date.setSeconds(d[10]); }
+			if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
+			if (!ignoreTimezone) {
+				if (d[14]) {
+					offset = (Number(d[16]) * 60) + Number(d[17]);
+					offset *= ((d[15] == '-') ? 1 : -1);
+				}
+				offset -= date.getTimezoneOffset();
+			}
+			return new Date(Number(date) + (offset * 60 * 1000));
 		}
-		return new Date(Number(date) + (offset * 60 * 1000));
+	
 	};
-
-	$.ISO8601String = function(date) {
-		// derived from http://delete.me.uk/2005/03/iso8601.html
-		return date.getUTCFullYear() +
-			"-" + zeroPad(date.getUTCMonth() + 1) +
-			"-" + zeroPad(date.getUTCDate()) +
-			"T" + zeroPad(date.getUTCHours()) +
-			":" + zeroPad(date.getUTCMinutes()) +
-			":" + zeroPad(date.getUTCSeconds()) +
-			"Z";
-	};
+	
+	// additional FullCalendar "extensions" should be attached to $.fullCalendar
 
 })(jQuery);
