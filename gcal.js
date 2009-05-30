@@ -21,56 +21,45 @@
  
 (function($) {
 
-	$.fn.gcalFullCalendar = function(options) {
+	$.fullCalendar.gcalFeed = function(feedUrl, options) {
 		
-		var feedURL;
-		if (options && typeof options.events == 'string') {
-			feedURL = options.events;
-		}
-		else return this.fullCalendar(options);
+		feedUrl = feedUrl.replace(/\/basic$/, '/full');
+		options = options || {};
+		var draggable = options.draggable || false;
 		
-		feedURL = feedURL.replace(/\/basic$/, '/full');
-		
-		$.extend(options, {
-		
-			events: function(start, end, callback) {
-				$.getJSON(feedURL + "?alt=json-in-script&callback=?",
-					{
-						'start-min': $.ISO8601String(start),
-						'start-max': $.ISO8601String(end),
-						'singleevents': true
-					},
-					function(data) {
-						var events = [];
-						if (data.feed.entry)
-							$.each(data.feed.entry, function(i, entry) {
-								var url;
-								$.each(entry['link'], function(j, link) {
-									if (link.type == 'text/html') url = link.href;
-								});
-								events.push({
-									id: entry['gCal$uid']['value'],
-									url: url,
-									title: entry['title']['$t'],
-									start: $.parseISO8601(entry['gd$when'][0]['startTime'], true),
-									end: $.parseISO8601(entry['gd$when'][0]['endTime'], true),
-									location: entry['gd$where'][0]['valueString'],
-									description: entry['content']['$t'],
-									allDay: entry['gd$when'][0]['startTime'].indexOf('T') == -1,
-									draggable: false
-								});
+		return function(start, end, callback) {
+			$.getJSON(feedUrl + "?alt=json-in-script&callback=?",
+				{
+					'start-min': $.fullCalendar.formatDate(start, 'c'),
+					'start-max': $.fullCalendar.formatDate(end, 'c'),
+					'singleevents': true
+				},
+				function(data) {
+					var events = [];
+					if (data.feed.entry)
+						$.each(data.feed.entry, function(i, entry) {
+							var url;
+							$.each(entry['link'], function(j, link) {
+								if (link.type == 'text/html') url = link.href;
 							});
-						callback(events);
-					});
-			},
+							var showTime = entry['gd$when'][0]['startTime'].indexOf('T') != -1;
+							events.push({
+								id: entry['gCal$uid']['value'],
+								url: url,
+								title: entry['title']['$t'],
+								start: $.fullCalendar.parseDate(entry['gd$when'][0]['startTime']),
+								end: $.fullCalendar.parseDate(entry['gd$when'][0]['endTime']),
+								location: entry['gd$where'][0]['valueString'],
+								description: entry['content']['$t'],
+								showTime: showTime,
+								className: [showTime ? 'nobg' : null, options.className],
+								draggable: draggable
+							});
+						});
+					callback(events);
+				});
+		}
 			
-			eventRender: function(event, element) {
-				if (!event.allDay) element.addClass('nobg');
-			}
-			
-		});
-		
-		return this.fullCalendar(options);
-	};
+	}
 
 })(jQuery);

@@ -1,31 +1,21 @@
 
-.. highlight:: javascript
+Main Usage
+==========
 
-Usage
-=====
+The following code initializes a FullCalendar within an element with ID 'calendar'::
 
-.. code-block:: javascript
-
-   $('#myCalendar').fullCalendar({
-      // initializes a calendar
-      // see options, data provider, and triggered events below
-   });
+   $('#calendar').fullCalendar({
    
-   $('#myCalendar').fullCalendar('nextMonth');    // move ahead one month
+      // put your options here
    
-   $('#myCalendar').fullCalendar('currentMonth'); // go to current month
+   })
    
-   $('#myCalendar').fullCalendar('prevMonth');    // move back one month
    
-   $('#myCalendar').fullCalendar('gotoMonth', year, month);
-      // go to an arbitrary month. 'month' is zero-based
-      
-   $('#myCalender').fullCalendar('refresh');
-      // re-fetch events for the current month
-      
    
-Options
-=======
+.. _GeneralOptions:
+   
+General Options
+===============
 
    **year**, **month**: integers
       The month that will be displayed when the calendar first loads.
@@ -35,18 +25,11 @@ Options
       Determines if all events on the calendar can be dragged & dropped. If
       ``true``, requires `jQuery UI <http://jqueryui.com/>`_ core and draggables.
       Can be overridden on a per-event basis with the ``draggable`` property of
-      each :ref:`CalEvent <CalEvent>` object.
+      each :ref:`CalEvent <CalEvents>`.
    
    **fixedWeeks**: boolean, default:``true``
       If ``true``, the calendar will always be 6 weeks tall. If ``false``, the
       calendar's height will vary per month.
-      
-   **weekStart**: integer, default:``0``
-      The day-of-week each week begins. 0 = Sunday (default),
-      1 = Monday (for UK users), 2 = Tuesday, etc.
-      
-   **rightToLeft**: boolean, default:``false``
-      Displays the calendar right-to-left (for Arabic and Hebrew languages)
    
    **abbrevDayHeadings**: boolean, default:``true``
       Whether to display "Sun" versus "Sunday" for days of the week.
@@ -55,42 +38,28 @@ Options
       Determines whether a title such as "January 2009" will be displayed at the
       top of the calendar.
       
-   **titleFormat**: string, default:``"Y F"``
-      A string defining format of the title above the calendar. The default
-      "Y F" creates strings such as "January 2009". Use the following
-      codes in your format string (similar to the PHP's date function):
-      
-         * **F** - January through December
-         * **m** - 01 through 12 (leading zeros)
-         * **M** - Jan through Dec
-         * **n** - 1 through 12
-         * **Y** - Examples: 1999 or 2003
-         * **y** - Examples: 99 or 03
+   **titleFormat**: string, default:``"F Y"``
+      A string defining the format of the title above the calendar. The default
+      "F Y" creates strings such as "January 2009". Consult the
+      :ref:`$.fullCalendar.formatDate <formatDate>` documentation for a full
+      list of commands.
    
    **buttons**: boolean/hash, default:``true``
       Determines whether navigation buttons will be displayed at the top of the
-      calendar. A hash with keys 'today', 'prev', and 'next' will determine if
-      each individual button is displayed. Strings can be provided to change
-      each button's text.
+      calendar. A hash such as ``{today:false, prev:true, next:true}`` can be
+      provided to display only certain buttons. A hash such as
+      ``{today:false, prev:"Last Month", next:"Next Month"}`` can be provided
+      to display only certain buttons AND change a button's text.
       
    **showTime**: boolean/ ``"guess"``, default:``"guess"``
       Determines if times will be displayed before each event's title.
       ``"guess"`` displays times only for events with non-zero start or end times.
       
    **timeFormat**: string, default: ``"gx"``
-      A string defining the format of dislayed of event times. The default "gx"
-      creates a string such as "9a". Use the following codes in your format
-      string (similar to PHP's date function):
-      
-         * **a** - am or pm
-         * **A** - AM or PM
-         * **x** - a or p
-         * **X** - A or P
-         * **g** - 1 through 12 (hour)
-         * **G** - 0 through 23 (hour, military time)
-         * **h** - 01 through 12 (hour, leading zeros)
-         * **H** - 00 through 23 (hour, military time and leading zeros)
-         * **i** - 00 to 59 (minute, leading zeros)
+      A string defining the format of dislayed event times. The default "gx"
+      creates a string such as "9a". Consult the
+      :ref:`$.fullCalendar.formatDate <formatDate>`
+      documentation for a full list of commands.
    
    **eventDragOpacity**: float
       The opacity of an event element while it is being dragged (0.0 - 1.0)
@@ -99,21 +68,91 @@ Options
       Controls the duration (in milliseconds) of the animation of an event
       snapping back into place.
       
-
-.. _EventDataProvider:
+   
+   
+.. _TriggeredActions:   
       
-Event Data Provider
-===================
+Triggered Actions
+=================
+
+The following options are *functions* that get executed every time something
+special happens:
+   
+   **monthDisplay**: function(year, month, monthTitle)
+      Triggered once when the calendar loads and every time the
+      calendar's month is changed. ``month`` is zero-based. ``monthTitle``
+      contains the new title of the month (ex: "January 2009")
+      
+   **loading**: function(isLoading)
+      Triggered with a ``true`` argument when the calendar begins fetching
+      events via AJAX. Triggered with ``false`` when done.
+      
+   **resize**: function()
+      Triggered after the calendar has recovered from a resize (due to the window
+      being resized).
+      
+      ``this`` is set to the main element
+      
+   **dayClick**: function(dayDate)
+      Triggered when the user clicks on a day. ``dayDate`` is a Date object with
+      it's time set to 00:00:00.
+      
+      ``this`` is set to the TD element of the clicked day.
+      
+   **eventRender**: function(calEvent, element)
+      Triggered before an element is rendered for the given :ref:`CalEvent <CalEvents>`.
+      ``element`` is the jQuery element that will be used by default. You can modify
+      this element or return a brand new element that will be used instead.
+      
+      This function is great for attaching other jQuery plugins to each event
+      element, such as a `qTip <http://craigsworks.com/projects/qtip/docs/>`_
+      tooltip effect.
+      
+   **eventClick**, **eventMouseover**, **eventMouseout**: function(calEvent, jsEvent)
+      Triggered on click/mouseover/mouseout actions for an event.
+      ``calEvent`` holds that event's information (date, title, etc).
+      ``jsEvent`` holds the native javascript event (with information about click position, etc).
+      
+      ``this`` is set to the event's element
+      
+      For ``eventClick``, return ``false`` to prevent the browser from going to
+      the event's URL.
+      
+   **eventDragStart**, **eventDragStop**: function(calEvent, jsEvent, ui)
+      Triggered before/after an event is dragged (but not necessarily moved to a new day).
+      ``calEvent`` holds that event's information (date, title, etc).
+      ``jsEvent`` holds the native javascript event (with information about click position, etc).
+      ``ui`` holds the jQuery UI object.
+      
+      ``this`` is set to the event's element
+      
+   **eventDrop**: function(calEvent, dayDelta, jsEvent, ui)
+      Triggered when dragging stops and the event has moved to a *different* day.
+      ``dayDelta`` holds the number of days the event was moved forward (a positive number)
+      or backwards (a negative number).
+      
+      ``dayDelta`` is elegant for dealing with multi-day and repeating events.
+      If updating a remote database, just add the ``dayDelta`` to the start
+      and end times of all events with the given ``calEvent.id``
+   
+
+
+.. _EventSources:
+      
+Event Feeds and Sources
+=======================
+
+The following options determine *how* events get on the calendar:
       
    **events**: array/string/function
-      An array of :ref:`CalEvent` can be used to hardcode events into the
+      An array of :ref:`CalEvents <CalEvents>` can be used to hardcode events into the
       calendar.
       
       Or, a URL can be provided. This URL should return JSON for an array of
-      :ref:`CalEvent`. GET parameters, determined by the ``startParam`` and
-      ``endParam`` options, will be inserted into the URL. These parameters
-      indicate the UNIX timestamp of the start of the first visible day
-      (inclusive) and the end of the last visible day (exclusive).
+      :ref:`CalEvents <CalEvents>`. GET parameters, determined by the
+      ``startParam`` and ``endParam`` options, will be inserted into the URL.
+      These parameters indicate the UNIX timestamp of the start of the first
+      visible day (inclusive) and the end of the last visible day (exclusive).
       
       Or, a function can be provided for custom fetching. The function is
       queried every time event data is needed. The function is passed a ``start``
@@ -140,91 +179,48 @@ Event Data Provider
             
          }
          
+   **eventSources**: array
+      Similar to the ``events`` options, except one may specify *multiple* sources.
+      For example, one may specify an array of JSON URL's, an array of custom
+      functions, an array of hardcoded event arrays, or any combination.
+         
    **startParam**: string, default:``"start"``
       A GET parameter of this name will be inserted into the URL when fetching
-      events from a JSON script (when ``event`` is a URL string). The value
-      of this GET parameter will be a UNIX timestamp denoting the start of the
-      first visible day (inclusive).
+      events from a JSON script. The value of this GET parameter will be a UNIX
+      timestamp denoting the start of the first visible day (inclusive).
       
    **endParam**: string, default:``"end"``
       A GET parameter of this name will be inserted into the URL when fetching
-      events from a JSON script (when ``event`` is a URL string). The value
-      of this GET parameter will be a UNIX timestamp denoting the end of the
-      last visible day (exclusive).
+      events from a JSON script. The value of this GET parameter will be a UNIX
+      timestamp denoting the end of the last visible day (exclusive).
       
    **cacheParam**: string, default:``"_"``
       When using a JSON url, a parameter of this name will
       automatically be inserted into the URL to prevent the browser from
       caching the response. The value will be the current millisecond time.
       
-.. _TriggeredEvents:
-      
-Triggered Events
-================
+The following methods can be called on a FullCalendar that has already
+been initialized:
    
-   **monthDisplay**: function(year, month, monthTitle)
-      Triggered once when the calendar loads and every time the
-      calendar's month is changed. ``month`` is zero-based. ``monthTitle``
-      contains the new title of the month (ex: "January 2009")
+   **.fullCalendar(** ``'addEventSource'``, **source)**
+      Adds an event source. ``source`` may be an array/string/function just as in
+      the ``events`` option. Events will be immediately fetched from this source
+      and placed on the calendar.
+   
+   **.fullCalendar(** ``'removeEventSource'``, **source)**
+      Remove an event source. ``source`` must be the original array/string/function.
       
-   **loading**: function(isLoading)
-      Triggered with a ``true`` argument when the calendar begins fetching
-      events via AJAX. Triggered with ``false`` when done.
-      
-   **resize**: function()
-      Triggered after the calendar has recovered from a resize (due to the window
-      pane being resized).
-      
-      ``this`` is set to the main element
-      
-   **dayClick**: function(dayDate)
-      Triggered when the user clicks on a day. ``dayDate`` is a Date object with
-      it's time set to 00:00:00.
-      
-      ``this`` is set to the TD element of the clicked day.
-      
-   **eventRender**: function(calEvent, element)
-      Triggered before an element is rendered for the given ``calEvent``.
-      ``element`` is the jQuery element that will be used by default. You can modify
-      this element or return a brand new element that will be used instead.
-      
-   **eventClick**, **eventMouseover**, **eventMouseout**: function(calEvent, domEvent)
-      Triggered on click/mouseover/mouseout actions for an event.
-      ``calEvent`` holds that event's information (date, title, etc).
-      ``domEvent`` holds the native DOM event (with information about click position, etc).
-      
-      ``this`` is set to the event's TABLE element
-      
-      For ``eventClick``, return ``false`` to prevent the browser from going to
-      calEvent's URL.
-      
-   **eventDragStart**, **eventDragStop**: function(calEvent, domEvent, ui)
-      Triggered before/after an event is dragged (but not necessarily moved to a new day).
-      ``calEvent`` holds that event's information (date, title, etc).
-      ``domEvent`` holds the native DOM event (with information about click position, etc).
-      ``ui`` holds the jQuery UI object.
-      
-      ``this`` is set to the event's TABLE element
-      
-   **eventDrop**: function(calEvent, dayDelta, domEvent, ui)
-      Triggered when dragging stops and the event has moved to a *different* day.
-      ``dayDelta`` holds the number of days the event was moved forward (a positive number)
-      or backwards (a negative number).
-      
-      ``dayDelta`` is elegant for dealing with multi-day and repeating events.
-      If updating a remote database, just add the ``dayDelta`` to the start
-      and end times of all events with the given ``calEvent.id``
-      
-      
-.. _CalEvent:
+     
+     
+.. _CalEvents: 
 
 CalEvent Objects
 ================
 
-A ``CalEvent`` is a data structure that frequents FullCalendar's API. It is
-used when a custom event-fetcher needs to report to the :ref:`EventDataProvider`.
-It is also used in various :ref:`TriggeredEvents`. Here are the properties of a
-``CalEvent``\:
+A CalEvent is a data structure that frequents FullCalendar's API. It is the
+standardized currency used in :ref:`EventSources`. It is also passed to various
+:ref:`Triggered Actions <TriggeredActions>`. Here are the properties of a
+CalEvent:
 
    **id**: integer/string,
       Uniquely identifies the given event. Absolutely essential for multi-day
@@ -240,7 +236,7 @@ It is also used in various :ref:`TriggeredEvents`. Here are the properties of a
       A javascript Date object indicating the date/time an event begins.
       Events with ambiguous time-of-day should use 00:00:00.
       
-      When reporting to the :ref:`EventDataProvider`, for convenience,
+      In an :ref:`Event Source <EventSources>`, for convenience,
       one can also use a string in IETF format (ex: "Wed, 18 Oct 2009 13:00:00 EST"),
       a string in ISO8601 format (ex: "2009-11-05T13:15:30Z") or an integer
       UNIX timestamp.
@@ -249,9 +245,9 @@ It is also used in various :ref:`TriggeredEvents`. Here are the properties of a
       A javascript Date object indicating the date/time an event ends
       (exclusively). If an event has an ambiguous end time, ``end`` should be
       set to midnight of the next day. This is implied if ``end`` is omitted.
-      (For convenience with the :ref:`EventDataProvider`).
+      (For convenience with an :ref:`Event Source <EventSources>`).
       
-      IETF and ISO8601 strings can be used for the :ref:`EventDataProvider`.
+      IETF and ISO8601 strings can be used with an :ref:`Event Source <EventSources>`.
       
    **draggable**: boolean (optional)
       Overrides the master ``draggable`` property for this single event.
@@ -259,20 +255,189 @@ It is also used in various :ref:`TriggeredEvents`. Here are the properties of a
    **showTime**: boolean/ ``"guess"`` (optional)
       Overrides the master ``showTime`` property for this single event.
       
-When giving events to the :ref:`EventDataProvider`, one can include other
-properties beyond the ones listed. This is useful if you want to earmark your
-events with additional data to be retrieved later during a
-:ref:`Triggered Event <TriggeredEvents>`.
+   **className**: string/array (optional)
+      A CSS class (or array of classes) that will be attached to this event's
+      element.
+      
+   **source**: array/string/function (automatic)
+      A reference to the original array, JSON URL, or function the event
+      came from. Do not worry about populating this value, FullCalendar will
+      do this automatically.
+      
+The following methods can be called on a FullCalendar that has already been
+initialized. These methods get/add/remove/update the event elements that
+currently reside on the calendar. Note that when you are using a JSON feed or custom
+event source, your event is never *permanently* deleted, because it may be
+refetched from the source at a later time. It is up to the developer to delete
+the event(s) from any database.
 
+   **.fullCalendar(** ``'addEvent'``, **calEvent)**
+      Add an event to the current month on-the-fly. ``calEvent`` is an object
+      containing at least an id, title, and start date.
+   
+   **.fullCalendar(** ``'updateEvent'``, **calEvent)**
+      Report modifications to the given :ref:`CalEvent <CalEvents>` and redraw.
+      ``calEvent`` must be the *actual CalEvent object*, as retrieved from a
+      :ref:`Triggered Action <TriggeredActions>` or ``getEventsById`` (see below).
+      A set of repeating events will all be affected.
+   
+   **.fullCalendar(** ``'removeEvent'``, **calEventOrId)**
+      Remove elements belonging to the given :ref:`CalEvent <CalEvents>`. If the
+      event is repeating, all occurences of the event will be removed. The
+      second argument may be a CalEvent's ID, or the CalEvent object itself.
+   
+   **.fullCalendar(** ``'getEventsById'`` , **eventId)**
+      Returns a list of :ref:`CalEvents <CalEvents>` with the given ID that are
+      currently being displayed.
+      
+   
+   
+   
+Navigation Methods
+==================
 
-Extras
+The following methods may be called on a FullCalendar that has already been
+initialized:
+   
+   **.fullCalendar(** ``'prevMonth'`` **)**
+      Visits the previous month.
+   
+   **.fullCalendar(** ``'nextMonth'`` **)**
+      Visits the next month.
+   
+   **.fullCalendar(** ``'gotoMonth'``, **year, month)**
+      Visits an arbitrary month. ``month`` is zero-based (0 is January, 1 is
+      February, etc).
+   
+   **.fullCalendar(** ``'today'`` **)**
+      Visits the current month.
+   
+   **.fullCalendar(** ``'refresh'`` **)**
+      Refetch and redraw the events for the current month.
+      
+      
+      
+Locale
 ======
 
-FullCalendar provides some extra date utilities\:
+Use the following options to change the calendar's locale:
+      
+   **weekStart**: integer, default:``0``
+      The day-of-week each week begins. 0 = Sunday (default),
+      1 = Monday (for UK users), 2 = Tuesday, etc.
+      
+   **rightToLeft**: boolean, default:``false``
+      Displays the calendar right-to-left (for Arabic and Hebrew)
+      
+The following *variables* may be reassigned or modified to globally change the
+text for months and days:
+      
+   **$.fullCalendar.monthNames**
+      Default: ``['January', 'February', 'March', ...]``
+   
+   **$.fullCalendar.monthAbbrevs**
+      Default: ``['Jan', 'Feb', 'Mar', ...]``
+   
+   **$.fullCalendar.dayNames**
+      Default: ``['Sunday', 'Monday', 'Tuesday', ...]``
+   
+   **$.fullCalendar.dayAbbrevs**
+      Default: ``['Sun', 'Mon', 'Tue', ...]``
+      
+Notice these variables are attached to the main **$** jQuery object.
+      
+The :ref:`GeneralOptions` ``titleFormat`` and ``timeFormat`` may also be of
+interest to those wanting to change locale.
+   
+   
 
-   **$.parseISO8601(string, ignoreTimezone)**
-      Parses an ISO8601 string and returns a ``Date`` object
+Date Parsing and Formatting
+===========================
+
+The following utilities are always available. These typically come in handy
+when creating a custom event source:
+
+.. _formatDate:
+
+   **$.fullCalendar.formatDate(date, format)**
+      Format a javascript Date object into a string. ``format`` may contain
+      one or more of the following commands (similar to PHP's date function):
+   
+      * **F** - January through December
+      * **M** - Jan through Dec
+      * **n** - 1 through 12 (month)
+      * **m** - 01 through 12 (month, leading zeros)
+      * **Y** - Examples: 1999 or 2003
+      * **y** - Examples: 99 or 03
+      * **a** - am or pm
+      * **A** - AM or PM
+      * **x** - a or p
+      * **X** - A or P
+      * **g** - 1 through 12 (hour)
+      * **G** - 0 through 23 (hour, military time)
+      * **h** - 01 through 12 (hour, leading zeros)
+      * **H** - 00 through 23 (hour, military time and leading zeros)
+      * **i** - 00 to 59 (minute, leading zeros)
       
-   **$.ISO8601String(date)**
-      Takes a ``Date`` object and returns an ISO8601 string
+   **$.fullCalendar.parseDate(string)**
+      Parse a string and return a javascript Date object. The string may be
+      in ISO8601 format, IETF format, or a UNIX timestamp.
+
+   **$.fullCalendar.parseISO8601(string, ignoreTimezone)**
+      Parse an ISO8601 string into a javascript Date object.
       
+Notice these functions are attached to the main **$** jQuery object.
+
+
+
+Google Calendar
+===============
+
+To integrate with your Google Calendar, you must first **make your calendar public**:
+
+#. In the Google Calendar interface, locate the "My Calendar" box on the left.
+
+#. Click the arrow next to the calendar you need.
+
+#. A menu will appear. Click "Share this calendar."
+
+#. Check "Make this calendar public."
+
+#. Make sure "Share only my free/busy information" is *unchecked*.
+
+#. Click "Save."
+
+Then, you must obtain your calendar's **XML feed URL**.
+
+#. In the Google Calendar interface, locate the "My Calendar" box on the left
+
+#. Click the arrow next to the calendar you need.
+
+#. A menu will appear. Click "Calendar settings."
+
+#. In the "Calendar Address" section of the screen, click the XML badge.
+
+#. Your feed's URL will appear.
+
+The API for integrating a Google Calendar feed has changed since
+FullCalendar 1.1. The ``$.fullCalendar.gcalFeed`` function now produces
+an event source that can be passed to the ``events`` or ``eventSources``
+option::
+
+   $('#calendar').fullCalendar({
+      
+      events: $.fullCalendar.gcalFeed(
+         "http://www.google.com/calendar/feeds/...",   // feed URL
+         { className: 'gcal-events' }                  // optional options
+      )
+      
+   });
+   
+Here is a list of available options:
+
+* **className** - CSS class to attach to each event from this Google Calendar
+
+* **draggable** - whether to allow dragging (default: ``false``)
+   
+See *gcal.html* in the *examples* directory for a complete example.
+
