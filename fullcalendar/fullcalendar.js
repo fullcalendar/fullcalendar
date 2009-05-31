@@ -1,4 +1,4 @@
-/*
+/*!
  * FullCalendar
  * http://arshaw.com/fullcalendar/
  *
