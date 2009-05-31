@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
+<style type='text/css'>
+
+	.full-calendar-month .rep td { background: green }
+	.full-calendar-month .cool td { color: yellow }
+	.full-calendar-month .long td { background: red }
+
+</style>
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/ui.core.js'></script>
+<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
+<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {
+
+	$('#calendar').fullCalendar({
+	
+		year: 2009,
+		month: 3,
+		
+		draggable: true,
+		
+		fixedWeeks: false,
+		
+		abbrevDayHeadings: false,
+		
+		//title: false,
+		titleFormat: 'm/Y', //'n/Y', //'M y',
+		
+		//buttons: false,
+		buttons: { today:false, prev:"prev", next:"next" },
+		
+		showTime: true,
+		timeFormat: 'H:i', //'ha', //'GA', //'gX',
+		
+		eventDragOpacity: .5,
+		eventRevertDuration: 2000,
+		
+		// test for CalEvent.source
+		eventDrop: function(event) {
+			$.jGrowl(event.source);
+		},
+		
+		events: [
+			{
+				id: 1,
+				title: "Long Event",
+				start: new Date(2009, 3, 6, 14, 0),
+				end: new Date(2009, 3, 11),
+				showTime: false,                  // showTime
+				className: 'long',
+				draggable: false                  // draggable
+			},
+			{
+				id: 2,
+				title: "Repeating Event",
+				start: new Date(2009, 3, 2),
+				className: 'rep cool'
+			},
+			{
+				id: 2,
+				title: "Repeating Event",
+				start: new Date(2009, 3, 9),
+				className: ['rep', 'cool']
+			},
+			{
+				id: 3,
+				title: "Meeting",
+				date: new Date(2009, 3, 20, 9, 30) // date alias
+			},
+			{
+				id: 4,
+				title: "Click for Facebook",
+				start: new Date(2009, 3, 27, 16),
+				end: new Date(2009, 3, 29),
+				url: "http://facebook.com/"
+			}
+		]
+		
+	});
+
+});
+
+</script>
+</head>
+<body style='font-size:14px;font-family:Arial'>
+<div id='calendar' style='width:75%'></div>
+</body>
+</html>

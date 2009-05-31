@@ -1,11 +1,25 @@
 
-version 1.2
-	- cssClass attribute for CalEvents
-	- multiple event sources (using an array for the 'events' option)
-	- the 'events' option for fullCalendar() and gcalFullCalendar() is now optional
-	- bugs w/ month date formatting
-	   - change behavior for parsing number strings (now as unix timestamp)
-	- allow multiple classes in cssClass
+version 1.2 (5/31/09)
+	- expanded API
+		- 'className' CalEvent attribute
+		- 'source' CalEvent attribute
+		- dynamically get/add/remove/update events of current month
+		- locale improvements: change month/day name text
+		- better date formatting ($.fullCalendar.formatDate)
+		- multiple 'event sources' allowed
+			- dynamically add/remove event sources
+	- docs have been reworked (include addition of Google Calendar docs)
+	- changed behavior of parseDate for number strings
+	  (now interpets as unix timestamp, not MS times)
+	- bugfixes
+		- rightToLeft month start bug
+		- off-by-one errors with month formatting commands
+		- events from previous months sticking when clicking prev/next quickly
+	- Google Calendar API changed to work w/ multiple event sources
+		- can also provide 'className' and 'draggable' options
+	- date utilties moved from $ properties to $.fullCalendar
+	- minified version of fullcalendar.js
+	- test suit (available from svn)
 
 version 1.1 (5/10/09)
 	- Added the following options:

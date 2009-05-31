@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
+<style type='text/css'>
+
+	.newclass { color: red }
+
+</style>
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/ui.core.js'></script>
+<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
+<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {
+
+	$('#calendar').fullCalendar({
+	
+		title: false,
+		buttons: false,
+		monthDisplay: function(year, month, title) {
+			$('h3').text(title);
+		},
+		
+		draggable: true
+		
+	});
+
+});
+
+function addTestEvents() {
+
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth()+1;
+	if (m<10) m = '0' + m;
+	
+	$('#calendar').fullCalendar('addEvent', {
+		id: 99,
+		title: 'Some event',
+		start: y+'-'+m+'-02'
+	});
+	
+	$('#calendar').fullCalendar('addEvent', {
+		id: 99,
+		title: 'Some event',
+		start: y+'-'+m+'-09'
+	});
+	
+	$('#calendar').fullCalendar('addEvent', {
+		id: 5,
+		title: 'Birthday',
+		start: y+'-'+m+'-20'
+	});
+	
+}
+
+function updateTestEvents() {
+
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth()+1;
+	if (m<10) m = '0' + m;
+
+	var reps = $('#calendar').fullCalendar('getEventsById', 99);
+	var e = reps[1];
+	e.title = "Better Title!";
+	e.start = y+'-'+m+'-11';
+	e.end = y+'-'+m+'-13';
+	e.className = 'newclass';
+	e.draggable = false;
+	e.showTime = true;
+	$('#calendar').fullCalendar('updateEvent', e);
+	
+}
+
+function removeTestEvents(therepeating) {
+	if (therepeating) {
+		$('#calendar').fullCalendar('removeEvent', 99);
+	}else{
+		$('#calendar').fullCalendar('removeEvent', 5);
+	}
+}
+
+</script>
+</head>
+<body style='font-size:14px;font-family:Arial'>
+
+<div style='float:right'>
+<input type='button' value='add test events' onclick='addTestEvents()' /><br />
+<input type='button' value='update test events' onclick='updateTestEvents()' /><br />
+<input type='button' value='delete repeating events' onclick='removeTestEvents(true)' /><br />
+<input type='button' value='delete single event' onclick='removeTestEvents(false)' /><br />
+</div>
+
+<h3></h3>
+<p>
+<a href='#' onclick="$('#calendar').fullCalendar('today')">today</a> &nbsp;
+<a href='#' onclick="$('#calendar').fullCalendar('prevMonth')">prev</a> &nbsp;
+<a href='#' onclick="$('#calendar').fullCalendar('nextMonth')">next</a> &nbsp;
+<a href='#' onclick="$('#calendar').fullCalendar('gotoMonth', 1986, 5)">June 1986</a>
+</p>
+<div id='calendar' style='width:75%'></div>
+</body>
+</html>

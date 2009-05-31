@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
+<style type='text/css'>
+
+	.full-calendar-month .static td {
+		background: blue;
+		color: yellow;
+	}
+	
+	.full-calendar-month .gcal td {
+		background: lightgreen;
+	}
+
+</style>
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/ui.core.js'></script>
+<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
+<script type='text/javascript' src='../fullcalendar/gcal.js'></script>
+<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {
+
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth();
+	
+	var gcalSource = $.fullCalendar.gcalFeed(
+		'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
+		{draggable: true, className: 'gcal'}
+	);
+	
+	var staticSource = [
+		{
+			id: 1,
+			title: "Long Event",
+			start: new Date(y, m, 6, 14, 0),
+			end: new Date(y, m, 11),
+			className: 'static'
+		},
+		{
+			id: 2,
+			title: "Repeating Event",
+			start: new Date(y, m, 2),
+			className: 'static'
+		},
+		{
+			id: 2,
+			title: "Repeating Event",
+			start: new Date(y, m, 9),
+			className: 'static'
+		},
+		{
+			id: 3,
+			title: "Meeting",
+			start: new Date(y, m, 20, 9, 0),
+			className: 'static'
+		},
+		{
+			id: 4,
+			title: "Click for Facebook",
+			start: new Date(y, m, 27, 16),
+			end: new Date(y, m, 29),
+			url: "http://facebook.com/",
+			className: 'static'
+		}
+	];
+	
+	var jsonSource = "../examples/json_events.php";
+
+	$('#calendar').fullCalendar({
+	
+		draggable: true,
+		
+		eventSources: [staticSource, gcalSource],
+		
+		loading: function(bool) {
+			if (bool) {
+				$('#loading').css('visibility', 'visible');
+			}else{
+				$('#loading').css('visibility', 'hidden');
+			}
+		}
+		
+	});
+	
+	window.addStaticSource = function() {
+		$('#calendar').fullCalendar('addEventSource', staticSource);
+	};
+	
+	window.addJsonSource = function() {
+		$('#calendar').fullCalendar('addEventSource', jsonSource);
+	};
+	
+	window.addGcalSource = function() {
+		$('#calendar').fullCalendar('addEventSource', gcalSource);
+	};
+	
+	window.removeStaticSource = function() {
+		$('#calendar').fullCalendar('removeEventSource', staticSource);
+	};
+	
+	window.removeJsonSource = function() {
+		$('#calendar').fullCalendar('removeEventSource', jsonSource);
+	};
+	
+	window.removeGcalSource = function() {
+		$('#calendar').fullCalendar('removeEventSource', gcalSource);
+	};
+
+});
+
+</script>
+</head>
+<body style='font-size:14px;font-family:Arial'>
+
+<div style='float:right'>
+<input type='button' value='add static event source' onclick='addStaticSource()' /><br />
+<input type='button' value='* add json event source' onclick='addJsonSource()' /><br />
+<input type='button' value='add gcal event source' onclick='addGcalSource()' /><br />
+<br />
+<input type='button' value='remove static event source' onclick='removeStaticSource()' /><br />
+<input type='button' value='remove json event source' onclick='removeJsonSource()' /><br />
+<input type='button' value='remove gcal event source' onclick='removeGcalSource()' /><br />
+<br />
+<input type='button' value='refresh' onclick="$('#calendar').fullCalendar('refresh')" />
+</div>
+
+<div style='visibility:hidden' id='loading'>loading...</div>
+<div id='calendar' style='float:left;width:75%'></div>
+</body>
+</html>

@@ -2,7 +2,7 @@
 Main Usage
 ==========
 
-The following code initializes a FullCalendar within an element with ID 'calendar'::
+The following code initializes a FullCalendar within an element of ID 'calendar'::
 
    $('#calendar').fullCalendar({
    
@@ -101,8 +101,9 @@ special happens:
       
    **eventRender**: function(calEvent, element)
       Triggered before an element is rendered for the given :ref:`CalEvent <CalEvents>`.
-      ``element`` is the jQuery element that will be used by default. You can modify
+      ``element`` is the jQuery element that will be used by default. You may modify
       this element or return a brand new element that will be used instead.
+      Returning ``false`` will prevent the event from being rendered at all.
       
       This function is great for attaching other jQuery plugins to each event
       element, such as a `qTip <http://craigsworks.com/projects/qtip/docs/>`_
@@ -265,11 +266,10 @@ CalEvent:
       do this automatically.
       
 The following methods can be called on a FullCalendar that has already been
-initialized. These methods get/add/remove/update the event elements that
-currently reside on the calendar. Note that when you are using a JSON feed or custom
-event source, your event is never *permanently* deleted, because it may be
-refetched from the source at a later time. It is up to the developer to delete
-the event(s) from any database.
+initialized. These methods get/add/update/remove events on the current month.
+For JSON and custom event sources, changes are never *permanent* because they
+may be overwritten by a refetch. The developer is responsible for updating
+any remote databases.
 
    **.fullCalendar(** ``'addEvent'``, **calEvent)**
       Add an event to the current month on-the-fly. ``calEvent`` is an object

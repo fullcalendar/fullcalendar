@@ -5,30 +5,33 @@ FILES =\
 	examples\
 	changelog.txt
 	
+VER = `cat version.txt`
+VVER = `cat ../version.txt`
+DATE = `svn info | grep Date: | sed 's/.*: //g'`
+REV = `svn info | grep Rev: | sed 's/.*: //g'`
+	
 min:
 	@java -jar build/yuicompressor-2.4.2.jar -o build/fullcalendar.min.js fullcalendar/fullcalendar.js
-	sed -i "s/* FullCalendar/& v`cat version.txt`/" build/fullcalendar.min.js
-	sed -i "s/* Date:/& `svn info fullcalendar/fullcalendar.js | grep Date: | sed 's/.*: //g'`/" build/fullcalendar.min.js
-	sed -i "s/* Revision:/& `svn info fullcalendar/fullcalendar.js | grep Rev: | sed 's/.*: //g'`/" build/fullcalendar.min.js
 	
 zip:
-	@mkdir -p build/F
-	@cp -rt build/F ${FILES} .svn
-	@for f in build/F/fullcalendar/*.js; do\
-		sed -i "s/* FullCalendar/& v`cat version.txt`/" $$f;\
-		sed -i "s/* Date:/& `svn info $$f | grep Date: | sed 's/.*: //g'`/" $$f;\
-		sed -i "s/* Revision:/& `svn info $$f | grep Rev: | sed 's/.*: //g'`/" $$f;\
-		done
-	@rm -rf `find build/F -type d -name .svn`
+	@mkdir -p build/fullcalendar-${VER}
+	@cp -rt build/fullcalendar-${VER} ${FILES}
 	@if [ -e build/fullcalendar.min.js ];\
-		then cp build/fullcalendar.min.js build/F/fullcalendar;\
-		else echo "WARNING: fullcalendar.js not yet minified.";\
+		then cp build/fullcalendar.min.js build/fullcalendar-${VER}/fullcalendar;\
+		else echo "\n!!! WARNING: fullcalendar.js not yet minified.\n";\
 		fi
-	@cd build/F; zip -r fullcalendar-`cat ../../version.txt`.zip *
-	@mv build/F/fullcalendar-*.zip dist
-	@rm -rf build/F
+	@rm -rf `find build -type d -name .svn`
+	@for f in build/fullcalendar-${VER}/fullcalendar/*.js; do\
+		sed -i "s/* FullCalendar/& v${VER}/" $$f;\
+		sed -i "s/* Date:/& ${DATE}/" $$f;\
+		sed -i "s/* Revision:/& ${REV}/" $$f;\
+		done
+	@cd build; zip -r fullcalendar-${VVER}.zip fullcalendar-${VVER}
+	@mv build/fullcalendar-${VER}.zip dist
+	@rm -rf build/fullcalendar-${VER}
 	@rm -f build/fullcalendar.min.js
 	
 clean:
 	@rm -rf dist/*
+	@rm -rf build/fullcalendar-*
 	@rm -f build/*.js
