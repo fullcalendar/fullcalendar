@@ -31,3 +31,4 @@ zip:
 	
 clean:
 	@rm -rf dist/*
+	@rm -f build/*.js
