@@ -126,6 +126,15 @@
 	font-weight: bold;
 	}
 	
+	/* To change the color of events on a per-class basis (such as with the
+	 * "className" attribute of a CalEvent), do something like this:
+	 *
+	 * .full-calendar-month .myclass td {
+	 *    background: green;
+	 *    }
+	 */
+	
+	
 	
 	
 /* the rectangle that covers a day when dragging an event */

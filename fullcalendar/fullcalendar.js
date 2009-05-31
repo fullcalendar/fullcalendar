@@ -218,7 +218,13 @@
 			
 				addEventSource: function(src) {
 					eventSources.push(src);
+					if (options.loading) {
+						options.loading(true);
+					}
 					fetchEventSource(src, function() {
+						if (options.loading) {
+							options.loading(false);
+						}
 						clearEventElements();
 						renderEvents();
 					});
@@ -530,7 +536,7 @@
 							});
 						}
 					});
-					segs.sort(segSort);
+					segs.sort(segCmp);
 					var levels = [];
 					$.each(segs, function(j, seg) {
 						var l = 0; // level index
@@ -784,14 +790,16 @@
 									events[i]._start = cloneDate(events[i].start);
 								}
 							}
-							if (options.eventDrop)
+							if (options.eventDrop) {
 								options.eventDrop.call(this, event, delta, ev, ui);
+							}
 							clearEventElements();
 							renderEvents();
 						}
 						dayOverlay.hide();
-						if (options.eventDragStop)
+						if (options.eventDragStop) {
 							options.eventDragStop.call(this, event, ev, ui);
+						}
 					}
 				});
 			}
@@ -880,12 +888,16 @@
 			//
 		
 			function dayDate(td) {
-				var i, tds = tbody.get(0).getElementsByTagName('td');
-				for (i=0; i<tds.length; i++) {
-					if (tds[i] == td) break;
+				var i, trs = tbody.get(0).getElementsByTagName('tr');
+				for (i=0; i<trs.length; i++) {
+					var tr = trs[i];
+					for (var j=0; j<7; j++) {
+						if (tr.childNodes[j] == td) {
+							var d = cloneDate(start);
+							return addDays(d, i*7 + j*dis + dit);
+						}
+					}
 				}
-				var d = cloneDate(start);
-				return addDays(d, i);
 			}
 			
 			//
@@ -924,22 +936,24 @@
 			
 			function fetchEvents(callback) {
 				events = [];
-				var queued = eventSources.length;
-				var sourceDone = function() {
-					if (--queued == 0) {
-						if (options.loading) {
-							options.loading(false);
+				if (eventSources.length > 0) {
+					var queued = eventSources.length;
+					var sourceDone = function() {
+						if (--queued == 0) {
+							if (options.loading) {
+								options.loading(false);
+							}
+							if (callback) {
+								callback(events);
+							}
 						}
-						if (callback) {
-							callback(events);
-						}
+					};
+					if (options.loading) {
+						options.loading(true);
 					}
-				};
-				if (options.loading) {
-					options.loading(true);
-				}
-				for (var i=0; i<eventSources.length; i++) {
-					fetchEventSource(eventSources[i], sourceDone);
+					for (var i=0; i<eventSources.length; i++) {
+						fetchEventSource(eventSources[i], sourceDone);
+					}
 				}
 			}
 			
@@ -949,12 +963,16 @@
 			//
 			
 			function fetchEventSource(src, callback) {
+				var y = date.getFullYear();
+				var m = date.getMonth();
 				var reportEvents = function(a) {
-					for (var i=0; i<a.length; i++) {
-						normalizeEvent(a[i]);
-						a[i].source = src;
+					if (date.getFullYear() == y && date.getMonth() == m) {
+						for (var i=0; i<a.length; i++) {
+							normalizeEvent(a[i]);
+							a[i].source = src;
+						}
+						events = events.concat(a);
 					}
-					events = events.concat(a);
 					if (callback) {
 						callback(a);
 					}
@@ -1040,7 +1058,7 @@
 		return event;
 	}
 	
-	function segSort(a, b) {
+	function segCmp(a, b) {
 		return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 	}
 	

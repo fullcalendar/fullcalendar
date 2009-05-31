@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/ui.core.js'></script>
+<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
+<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {
+
+	$.fullCalendar.monthNames = ["januari", "februari", "maart", "april", "mei", "juni","juli", "augustus", "september", "oktober", "november", "december"];
+	$.fullCalendar.monthAbbrevs = ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug","sep", "okt", "nov", "dec"];
+	$.fullCalendar.dayNames = ['zondag', 'maandag', 'dinsdag', 'woensdag','donderdag', 'vrijdag', 'zaterdag'];
+	$.fullCalendar.dayAbbrevs = ["zo", "ma", "di", "wo", "do", "vr", "za", "zo"];
+
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth();
+
+	$('#calendar').fullCalendar({
+	
+		abbrevDayHeadings: false,
+		
+		weekStart: 1,
+		
+		rightToLeft: true,
+		
+		events: [
+			{
+				id: 1,
+				title: "Long Event",
+				start: new Date(y, m, 6, 14, 0),
+				end: new Date(y, m, 11)
+			},
+			{
+				id: 2,
+				title: "Repeating Event",
+				start: new Date(y, m, 2)
+			},
+			{
+				id: 2,
+				title: "Repeating Event",
+				start: new Date(y, m, 9)
+			},
+			{
+				id: 3,
+				title: "Meeting",
+				start: new Date(y, m, 20, 9, 0)
+			},
+			{
+				id: 4,
+				title: "Click for Facebook",
+				start: new Date(y, m, 27, 16),
+				end: new Date(y, m, 29),
+				url: "http://facebook.com/"
+			}
+		],
+		
+		draggable: true,
+		
+		dayClick: function(date) {
+			$(this).css('background', 'lightblue');
+			$.jGrowl("<b>dayClick</b><br />" +
+				date + "<br />" +
+				this.nodeName);
+		},
+		
+		eventDrop: function(event, delta, ev, ui) {
+			$.jGrowl("<b>eventDrop</b><br />" +
+				delta + "<br />" +
+				event.title + "<br />" +
+				ev.pageX + "," + ev.pageY + "<br />" +
+				ui);
+		}
+		
+	});
+
+});
+
+</script>
+</head>
+<body style='font-size:14px;font-family:Arial'>
+<div id='calendar' style='width:75%'></div>
+</body>
+</html>
