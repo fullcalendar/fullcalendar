@@ -363,12 +363,12 @@ when creating a custom event source:
       Format a javascript Date object into a string. ``format`` may contain
       one or more of the following commands (similar to PHP's date function):
    
+      * **Y** - Examples: 1999 or 2003
+      * **y** - Examples: 99 or 03
       * **F** - January through December
       * **M** - Jan through Dec
       * **n** - 1 through 12 (month)
       * **m** - 01 through 12 (month, leading zeros)
-      * **Y** - Examples: 1999 or 2003
-      * **y** - Examples: 99 or 03
       * **a** - am or pm
       * **A** - AM or PM
       * **x** - a or p

@@ -20,7 +20,7 @@
 	
 	
 		//
-		// Calls methods of a pre-existing instance
+		// Calls methods on a pre-existing instance
 		//
 		
 		if (typeof options == 'string') {
@@ -30,8 +30,9 @@
 				var r = $.data(this, 'fullCalendar')[options].apply(this, args);
 				if (typeof res == 'undefined') res = r;
 			});
-			if (typeof res != 'undefined')
+			if (typeof res != 'undefined') {
 				return res;
+			}
 			return this;
 		}
 		
@@ -300,7 +301,7 @@
 			
 			
 			//
-			// Build the TABLE cells for the current month. (calls event fetch+render code)
+			// Build the TABLE cells for the current month. (calls event fetching & rendering code)
 			//
 			
 			var thead, tbody, glass;
