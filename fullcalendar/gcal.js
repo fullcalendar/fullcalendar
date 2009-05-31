@@ -1,5 +1,5 @@
 /*!
- * FullCalendar Google Calendar Extension
+ * FullCalendar v1.2 Google Calendar Extension
  *
  * Visit http://arshaw.com/fullcalendar/docs/#google-calendar
  * for docs and examples.
@@ -9,8 +9,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date:
- * Revision:
+ * Date: 2009-05-31 15:56:02 -0500 (Sun, 31 May 2009)
+ * Revision: 23
  */
  
 (function($) {
