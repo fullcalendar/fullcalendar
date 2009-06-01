@@ -10,16 +10,23 @@
 	margin: 0 0 1em;
 	}
 	
-.full-calendar-buttons input {
+.full-calendar-buttons button {
 	vertical-align: middle;
 	margin: 0 0 0 5px;
 	font-size: 1em;
 	}
 	
-.full-calendar-prev,
-.full-calendar-next {
-	width: 40px;
+.full-calendar-buttons button span {
+	padding: 0 10px;
 	}
+	
+	/* To always display the "today" button:
+	 *
+	 * .full-calendar-buttons button.today {
+	 *    visibility: visible !important;
+	 *    }
+	 */
+	
 	
 	
 	
@@ -42,14 +49,15 @@
 	
 	
 	
+	
 /* cell styling */
 	
 .full-calendar-month th,
 .full-calendar-month td.day {
 	padding: 0;
 	vertical-align: top;
-	border-style: solid; /* inner border style */
-	border-color: #ccc;  /* inner border color */
+	border-style: solid;    /* inner border style */
+	border-color: #ccc;     /* inner border color */
 	border-width: 1px 0 0 1px;
 	}
 	
@@ -80,10 +88,14 @@
 	padding: 2px 2px 0; /* distance between events and day edges */
 	}
 	
-.full-calendar-month td.day {
-	/* FullCalendar automatically chooses a height, but this can be overridden: */
-	/* height: 100px !important; */
-	}
+	/* FullCalendar automatically chooses a cell's height,
+	 * but this can be overridden:
+	 *
+	 * .full-calendar-month td.day {
+	 *    height: 100px !important;
+	 *    }
+	 */
+	 
 	
 
 
@@ -142,8 +154,9 @@
 .full-calendar-month .over-day {
 	background: #ADDBFF;
 	opacity: .2;
-	filter: alpha(opacity=20);
+	filter: alpha(opacity=20); /* for IE */
 	}
+	
 	
 	
 	
@@ -157,7 +170,7 @@
 	float: left;
 	}
 	
-.r2l .full-calendar-buttons input {
+.r2l .full-calendar-buttons button {
 	margin: 0 5px 0 0;
 	}
 	

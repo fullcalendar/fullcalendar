@@ -26,7 +26,7 @@ $(document).ready(function() {
 		
 		draggable: true,
 		
-		fixedWeeks: false,
+		fixedWeeks: true,
 		
 		abbrevDayHeadings: false,
 		
@@ -34,10 +34,14 @@ $(document).ready(function() {
 		titleFormat: 'm/Y', //'n/Y', //'M y',
 		
 		//buttons: false,
-		buttons: { today:false, prev:"prev", next:"next" },
+		//buttons: { today:false },
+		//buttons: { today:false, prevMonth:"prev", nextMonth:"next" },
+		//buttons: { today:true, prevMonth:false, nextMonth:"next" },
+		//buttons: { prevYear:true, nextYear:true },
+		//buttons: { today:true, prevYear:"py", prevMonth:true, nextMonth:true, nextYear:"ny" },
 		
 		showTime: true,
-		timeFormat: 'H:i', //'ha', //'GA', //'gX',
+		timeFormat: 'ha', //'H:i', //'GA', //'gX',
 		
 		eventDragOpacity: .5,
 		eventRevertDuration: 2000,

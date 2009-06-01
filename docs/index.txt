@@ -45,11 +45,25 @@ General Options
       list of commands.
    
    **buttons**: boolean/hash, default:``true``
-      Determines whether navigation buttons will be displayed at the top of the
-      calendar. A hash such as ``{today:false, prev:true, next:true}`` can be
-      provided to display only certain buttons. A hash such as
-      ``{today:false, prev:"Last Month", next:"Next Month"}`` can be provided
-      to display only certain buttons AND change a button's text.
+      ``true`` will display a previous-month, next-month, and "today" button.
+      The "today" button will only be visible for months other than the current.
+      
+      ``false`` will display absolutely no buttons.
+      
+      An object hash can be provided to display only *certain* buttons. The hash
+      can have the following properties::
+      
+         {
+            today:     bool/string,
+            prevYear:  bool/string,
+            prevMonth: bool/string,
+            nextMonth: bool/string,
+            nextYear:  bool/string
+         }
+         
+      A value of ``false`` will not display the button. A value of ``true`` will
+      display the button with some default text. A *string* value will display
+      the button *and* customize its text.
       
    **showTime**: boolean/ ``"guess"``, default:``"guess"``
       Determines if times will be displayed before each event's title.
@@ -308,9 +322,15 @@ initialized:
    **.fullCalendar(** ``'gotoMonth'``, **year, month)**
       Visits an arbitrary month. ``month`` is zero-based (0 is January, 1 is
       February, etc).
-   
+      
    **.fullCalendar(** ``'today'`` **)**
       Visits the current month.
+      
+   **.fullCalendar(** ``'prevYear'`` **)**
+      Moves one year back.
+      
+   **.fullCalendar(** ``'nextYear'`` **)**
+      Moves one year ahead.
    
    **.fullCalendar(** ``'refresh'`` **)**
       Refetch and redraw the events for the current month.
