@@ -8,6 +8,7 @@ version 1.2 (5/31/09)
 		- better date formatting ($.fullCalendar.formatDate)
 		- multiple 'event sources' allowed
 			- dynamically add/remove event sources
+	- options for prevYear and nextYear buttons
 	- docs have been reworked (include addition of Google Calendar docs)
 	- changed behavior of parseDate for number strings
 	  (now interpets as unix timestamp, not MS times)
@@ -17,9 +18,13 @@ version 1.2 (5/31/09)
 		- events from previous months sticking when clicking prev/next quickly
 	- Google Calendar API changed to work w/ multiple event sources
 		- can also provide 'className' and 'draggable' options
-	- date utilties moved from $ properties to $.fullCalendar
+	- date utilties moved from $ to $.fullCalendar
+	- more documentation in source code
 	- minified version of fullcalendar.js
 	- test suit (available from svn)
+	- top buttons now use <button> w/ an inner <span> for better css cusomization
+		- thus CSS has changed. IF UPGRADING FROM PREVIOUS VERSIONS,
+		  UPGRADE YOUR FULLCALENDAR.CSS FILE!!!
 
 version 1.1 (5/10/09)
 	- Added the following options:

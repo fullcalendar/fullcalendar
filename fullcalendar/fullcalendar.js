@@ -121,6 +121,16 @@
 				refreshMonth();
 			}
 			
+			function prevYear() {
+				addYears(date, -1);
+				refreshMonth();
+			}
+			
+			function nextYear() {
+				addYears(date, 1);
+				refreshMonth();
+			}
+			
 			
 			
 			//
@@ -133,6 +143,8 @@
 				nextMonth: nextMonth,
 				today: gotoToday,
 				gotoMonth: gotoMonth,
+				prevYear: prevYear,
+				nextYear: nextYear,
 				
 				
 				//
@@ -276,31 +288,53 @@
 			
 			if (bo) { // "button options"
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
-				var prevButton, nextButton;
-				if (bo == true || bo.today != false) {
-					todayButton = $("<input type='button' class='full-calendar-today' value='today'/>")
+				if (bo == true || bo.today !== false) {
+					todayButton = $("<button class='today' />")
+						.append($("<span />").html(
+							typeof bo.today == 'string' ?
+								bo.today : "today"))
 						.click(gotoToday);
-					if (typeof bo.today == 'string') todayButton.val(bo.today);
 					buttons.append(todayButton);
 				}
-				if (bo == true || bo.prev != false) {
-					prevButton = $("<input type='button' class='full-calendar-prev' value='" + (r2l ? "&gt;" : "&lt;") + "'/>")
-						.click(prevMonth);
-					if (typeof bo.prev == 'string') prevButton.val(bo.prev);
-					if (r2l) buttons.prepend(prevButton);
-					else buttons.append(prevButton);
+				if (bo.prevYear) {
+					var b = $("<button class='prev-year' />")
+						.append($("<span />")
+							.html(typeof bo.prevYear == 'string' ?
+								bo.prevYear : "&laquo;"))
+						.click(prevYear);
+					if (r2l) buttons.prepend(b);
+					else buttons.append(b);
 				}
-				if (bo == true || bo.next != false) {
-					nextButton = $("<input type='button' class='full-calendar-next' value='" + (r2l ? "&lt;" : "&gt;") + "'/>")
+				if (bo == true || bo.prevMonth !== false) {
+					var b = $("<button class='prev-month' />")
+						.append($("<span />")
+							.html(typeof bo.prevMonth == 'string' ?
+								bo.prevMonth : (r2l ? "&gt;" : "&lt;")))
+						.click(prevMonth);
+					if (r2l) buttons.prepend(b);
+					else buttons.append(b);
+				}
+				if (bo == true || bo.nextMonth !== false) {
+					var b = $("<button class='next-month' />")
+						.append($("<span />").html(typeof bo.nextMonth == 'string' ?
+							bo.nextMonth : (r2l ? "&lt;" : "&gt;")))
 						.click(nextMonth);
-					if (typeof bo.next == 'string') nextButton.val(bo.next);
-					if (r2l) buttons.prepend(nextButton);
-					else buttons.append(nextButton);
+					if (r2l) buttons.prepend(b);
+					else buttons.append(b);
+				}
+				if (bo.nextYear) {
+					var b = $("<button class='next-year' />")
+						.append($("<span />").html(typeof bo.nextYear == 'string'
+							? bo.nextYear : "&raquo;"))
+						.click(nextYear);
+					if (r2l) buttons.prepend(b);
+					else buttons.append(b);
 				}
 			}
 			
-			if (options.title !== false)
+			if (options.title !== false) {
 				titleElement = $("<h2 class='full-calendar-title'/>").appendTo(header);
+			}
 		
 			monthElement = $("<div class='full-calendar-month' style='position:relative'/>")
 				.appendTo($("<div class='full-calendar-month-wrap'/>").appendTo(this));
@@ -1078,6 +1112,12 @@
 	
 	function addMonths(d, n, keepTime) {
 		d.setMonth(d.getMonth() + n);
+		if (keepTime) return d;
+		return clearTime(d);
+	}
+	
+	function addYears(d, n, keepTime) {
+		d.setFullYear(d.getFullYear() + n);
 		if (keepTime) return d;
 		return clearTime(d);
 	}
