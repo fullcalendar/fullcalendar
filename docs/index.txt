@@ -398,6 +398,7 @@ when creating a custom event source:
       * **h** - 01 through 12 (hour, leading zeros)
       * **H** - 00 through 23 (hour, military time and leading zeros)
       * **i** - 00 to 59 (minute, leading zeros)
+      * **c** - 2009-06-07T05:28:21Z (ISO8601)
       
    **$.fullCalendar.parseDate(string)**
       Parse a string and return a javascript Date object. The string may be

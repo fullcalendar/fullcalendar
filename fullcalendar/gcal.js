@@ -37,6 +37,17 @@
 								if (link.type == 'text/html') url = link.href;
 							});
 							var showTime = entry['gd$when'][0]['startTime'].indexOf('T') != -1;
+							var classNames = [];
+							if (showTime) {
+								classNames.push('nobg');
+							}
+							if (options.className) {
+								if (typeof options.className == 'string') {
+									classNames.push(options.className);
+								}else{
+									classNames = classNames.concat(options.className);
+								}
+							}
 							events.push({
 								id: entry['gCal$uid']['value'],
 								url: url,
@@ -46,7 +57,7 @@
 								location: entry['gd$where'][0]['valueString'],
 								description: entry['content']['$t'],
 								showTime: showTime,
-								className: [showTime ? 'nobg' : null, options.className],
+								className: classNames,
 								draggable: draggable
 							});
 						});
