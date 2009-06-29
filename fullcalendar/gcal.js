@@ -1,5 +1,5 @@
 /*!
- * FullCalendar Google Calendar Extension
+ * FullCalendar v1.2.1 Google Calendar Extension
  *
  * Visit http://arshaw.com/fullcalendar/docs/#google-calendar
  * for docs and examples.
@@ -9,8 +9,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date:
- * Revision:
+ * Date: 2009-07-18 19:04:35 -0700 (Sat, 18 Jul 2009)
+ * Revision: 28
  */
  
 (function($) {
@@ -26,7 +26,8 @@
 				{
 					'start-min': $.fullCalendar.formatDate(start, 'c'),
 					'start-max': $.fullCalendar.formatDate(end, 'c'),
-					'singleevents': true
+					'singleevents': true,
+					'max-results': 9999
 				},
 				function(data) {
 					var events = [];
