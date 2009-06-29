@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.2
+ * FullCalendar v1.2.1
  * http://arshaw.com/fullcalendar/
  *
  * use fullcalendar.css for basic styling
@@ -10,8 +10,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date: 2009-05-31 15:56:02 -0500 (Sun, 31 May 2009)
- * Revision: 23
+ * Date: 2009-07-18 19:04:35 -0700 (Sat, 18 Jul 2009)
+ * Revision: 28
  */
  
 (function($) {
@@ -230,13 +230,9 @@
 			
 				addEventSource: function(src) {
 					eventSources.push(src);
-					if (options.loading) {
-						options.loading(true);
-					}
+					pushLoading();
 					fetchEventSource(src, function() {
-						if (options.loading) {
-							options.loading(false);
-						}
+						popLoading();
 						clearEventElements();
 						renderEvents();
 					});
@@ -498,8 +494,9 @@
 				
 				ignoreResizes = false;
 			
-				if (options.monthDisplay)
+				if (options.monthDisplay) {
 					options.monthDisplay(date.getFullYear(), date.getMonth(), monthTitle);
+				}
 			
 			}
 			
@@ -974,17 +971,13 @@
 					var queued = eventSources.length;
 					var sourceDone = function() {
 						if (--queued == 0) {
-							if (options.loading) {
-								options.loading(false);
-							}
+							popLoading();
 							if (callback) {
 								callback(events);
 							}
 						}
 					};
-					if (options.loading) {
-						options.loading(true);
-					}
+					pushLoading();
 					for (var i=0; i<eventSources.length; i++) {
 						fetchEventSource(eventSources[i], sourceDone);
 					}
@@ -1027,6 +1020,25 @@
 			}
 			
 			
+			//
+			// methods for reporting loading state
+			//
+			
+			var loadingLevel = 0;
+			
+			function pushLoading() {
+				if (!loadingLevel++ && options.loading) {
+					options.loading(true);
+				}
+			}
+			
+			function popLoading() {
+				if (!--loadingLevel && options.loading) {
+					options.loading(false);
+				}
+			}
+			
+			
 			
 			
 			
@@ -1037,26 +1049,33 @@
 			//
 			/*******************************************************************/
 		
-			var e = this;
+			var e = $(this);
+			var _e = this;
 			var resizeID = 0;
 			$(window).resize(function() {   // re-render table on window resize
 				if (!ignoreResizes) {
 					var rid = ++resizeID;   // add a delay
 					setTimeout(function() {
 						if (rid == resizeID) {
-							// if the month width changed
-							if (monthElement.width() != monthElementWidth) {
-								clearEventElements();
-								setCellSizes();
-								_renderEvents();
-								if (options.resize) options.resize.call(e);
+							// if calendar is visible
+							if (e.css('display') != 'none') {
+								// if the month width changed
+								if (monthElement.width() != monthElementWidth) {
+									clearEventElements();
+									setCellSizes();
+									_renderEvents();
+									if (options.resize) options.resize.call(_e);
+								}
 							}
 						}
 					}, 200);
 				}
 			});
 		
-			render(); // let's begin...
+			// let's begin...
+			if (e.css('display') != 'none') {
+				render();
+			}
 			
 			
 			
@@ -1088,7 +1107,9 @@
 		event.start = $.fullCalendar.parseDate(event.start);
 		event._start = cloneDate(event.start);
 		event.end = $.fullCalendar.parseDate(event.end);
-		if (!event.end) event.end = addDays(cloneDate(event.start), 1);
+		if (!event.end || event.end <= event.start) {
+			event.end = addDays(cloneDate(event.start), 1);
+		}
 		return event;
 	}
 	

@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.2 Google Calendar Extension
+ * FullCalendar v1.2.1 Google Calendar Extension
  *
  * Visit http://arshaw.com/fullcalendar/docs/#google-calendar
  * for docs and examples.
@@ -9,8 +9,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date: 2009-05-31 15:56:02 -0500 (Sun, 31 May 2009)
- * Revision: 23
+ * Date: 2009-07-18 19:04:35 -0700 (Sat, 18 Jul 2009)
+ * Revision: 28
  */
  
 (function($) {
@@ -26,7 +26,8 @@
 				{
 					'start-min': $.fullCalendar.formatDate(start, 'c'),
 					'start-max': $.fullCalendar.formatDate(end, 'c'),
-					'singleevents': true
+					'singleevents': true,
+					'max-results': 9999
 				},
 				function(data) {
 					var events = [];
@@ -37,6 +38,17 @@
 								if (link.type == 'text/html') url = link.href;
 							});
 							var showTime = entry['gd$when'][0]['startTime'].indexOf('T') != -1;
+							var classNames = [];
+							if (showTime) {
+								classNames.push('nobg');
+							}
+							if (options.className) {
+								if (typeof options.className == 'string') {
+									classNames.push(options.className);
+								}else{
+									classNames = classNames.concat(options.className);
+								}
+							}
 							events.push({
 								id: entry['gCal$uid']['value'],
 								url: url,
@@ -46,7 +58,7 @@
 								location: entry['gd$where'][0]['valueString'],
 								description: entry['content']['$t'],
 								showTime: showTime,
-								className: [showTime ? 'nobg' : null, options.className],
+								className: classNames,
 								draggable: draggable
 							});
 						});
