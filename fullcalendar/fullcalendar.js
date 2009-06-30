@@ -494,8 +494,9 @@
 				
 				ignoreResizes = false;
 			
-				if (options.monthDisplay)
+				if (options.monthDisplay) {
 					options.monthDisplay(date.getFullYear(), date.getMonth(), monthTitle);
+				}
 			
 			}
 			
