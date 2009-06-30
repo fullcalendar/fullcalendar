@@ -1,4 +1,11 @@
 
+version 1.2.1 (6/29/09)
+	- bugfixes
+		- allows and corrects invalid end dates for events
+		- doesn't throw an error in IE while rendering when display:none
+		- fixed 'loading' callback when used w/ multiple addEventSource calls
+		- gcal className can now be an array
+
 version 1.2 (5/31/09)
 	- expanded API
 		- 'className' CalEvent attribute
@@ -48,3 +55,4 @@ version 1.1 (5/10/09)
 		- for THEAD and TBODY (in 1.0, just used TBODY, restructured in 1.1)
 		- IF UPGRADING FROM FULLCALENDAR 1.0, YOU MUST UPGRADE FULLCALENDAR.CSS
 		  !!!!!!!!!!!
+		  

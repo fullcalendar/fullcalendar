@@ -257,8 +257,11 @@ CalEvent:
       UNIX timestamp.
       
    **end**: date (optional)
-      A javascript Date object indicating the date/time an event ends
-      (exclusively). If an event has an ambiguous end time, ``end`` should be
+      A javascript Date object indicating the date/time an event ends. This is
+      an **exclusive** value!!! **Example:** if an event spans two whole days,
+      ``end`` must be the time 00:00:00 of the *third* day.
+      
+      If an event has an ambiguous end time, ``end`` should be
       set to midnight of the next day. This is implied if ``end`` is omitted.
       (For convenience with an :ref:`Event Source <EventSources>`).
       
