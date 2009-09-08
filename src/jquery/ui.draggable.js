@@ -1,5 +1,5 @@
 /*
- * jQuery UI Draggable 1.7
+ * jQuery UI Draggable 1.7.2
  *
  * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -400,7 +400,7 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 }));
 
 $.extend($.ui.draggable, {
-	version: "1.7",
+	version: "1.7.2",
 	eventPrefix: "drag",
 	defaults: {
 		addClasses: true,

@@ -1,32 +1,17 @@
-/*!
- * FullCalendar Google Calendar Extension
- *
- * Visit http://arshaw.com/fullcalendar/docs/#google-calendar
- * for docs and examples.
- *
- * Copyright (c) 2009 Adam Shaw
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
- *
- * Date:
- * Revision:
- */
- 
 (function($) {
 
 	$.fullCalendar.gcalFeed = function(feedUrl, options) {
 		
 		feedUrl = feedUrl.replace(/\/basic$/, '/full');
 		options = options || {};
-		var draggable = options.draggable || false;
 		
 		return function(start, end, callback) {
 			$.getJSON(feedUrl + "?alt=json-in-script&callback=?",
 				{
-					'start-min': $.fullCalendar.formatDate(start, 'c'),
-					'start-max': $.fullCalendar.formatDate(end, 'c'),
-					'singleevents': true
+					'start-min': $.fullCalendar.formatDate(start, 'u'),
+					'start-max': $.fullCalendar.formatDate(end, 'u'),
+					'singleevents': true,
+					'max-results': 1000
 				},
 				function(data) {
 					var events = [];
@@ -34,12 +19,19 @@
 						$.each(data.feed.entry, function(i, entry) {
 							var url;
 							$.each(entry['link'], function(j, link) {
-								if (link.type == 'text/html') url = link.href;
+								if (link.type == 'text/html') {
+									url = link.href;
+								}
 							});
-							var showTime = entry['gd$when'][0]['startTime'].indexOf('T') != -1;
+							var startStr = entry['gd$when'][0]['startTime'];
+							var start = $.fullCalendar.parseDate(startStr);
+							var end = $.fullCalendar.parseDate(entry['gd$when'][0]['endTime']);
+							var hasTime = startStr.indexOf('T') != -1;
 							var classNames = [];
-							if (showTime) {
-								classNames.push('nobg');
+							if (hasTime) {
+								classNames.push('fc-event-nobg');
+							}else{
+								end = new Date(end - 1);
 							}
 							if (options.className) {
 								if (typeof options.className == 'string') {
@@ -53,12 +45,12 @@
 								url: url,
 								title: entry['title']['$t'],
 								start: $.fullCalendar.parseDate(entry['gd$when'][0]['startTime']),
-								end: $.fullCalendar.parseDate(entry['gd$when'][0]['endTime']),
+								end: end,
 								location: entry['gd$where'][0]['valueString'],
 								description: entry['content']['$t'],
-								showTime: showTime,
+								hasTime: hasTime,
 								className: classNames,
-								draggable: draggable
+								editable: options.editable || false
 							});
 						});
 					callback(events);
