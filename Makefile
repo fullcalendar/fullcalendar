@@ -1,38 +1,31 @@
 
-FILES =\
-	fullcalendar\
-	jquery\
-	examples\
-	changelog.txt
-	
 VER = `cat version.txt`
-VVER = `cat ../version.txt`
 DATE = `svn info | grep Date: | sed 's/.*: //g'`
 REV = `svn info | grep Rev: | sed 's/.*: //g'`
+
+JS_SRC_FILES =\
+	main.js\
+	grid.js\
+	view.js\
+	util.js
 	
-min:
-	@java -jar build/yuicompressor-2.4.2.jar -o build/fullcalendar.min.js fullcalendar/fullcalendar.js
-	
+CSS_SRC_FILES =\
+	main.css\
+	grid.css
+
+OTHER_FILES =\
+	src/gcal.js\
+	src/jquery\
+	examples\
+	changelog.txt
+
 zip:
-	@mkdir -p build/fullcalendar-${VER}
-	@cp -rt build/fullcalendar-${VER} ${FILES}
-	@if [ -e build/fullcalendar.min.js ];\
-		then cp build/fullcalendar.min.js build/fullcalendar-${VER}/fullcalendar;\
-		else echo "\n!!! WARNING: fullcalendar.js not yet minified.\n";\
-		fi
-	@rm -rf `find build/fullcalendar-* -type d -name .svn`
-	@for f in build/fullcalendar-${VER}/fullcalendar/*.js; do\
-		sed -i "s/* FullCalendar/& v${VER}/" $$f;\
-		sed -i "s/* Date:/& ${DATE}/" $$f;\
-		sed -i "s/* Revision:/& ${REV}/" $$f;\
-		done
-	@cd build; zip -r fullcalendar-${VVER}.zip fullcalendar-${VVER}
-	@mkdir -p dist
-	@mv build/fullcalendar-${VER}.zip dist
-	@rm -rf build/fullcalendar-${VER}
-	@rm -f build/fullcalendar.min.js
-	
-clean:
-	@rm -rf dist/*
-	@rm -rf build/fullcalendar-*
-	@rm -f build/*.js
+	mkdir -p build/fullcalendar-${VER}/uncompressed
+	cd src; cat misc/head.txt ${JS_SRC_FILES} misc/foot.txt >\
+		../build/fullcalendar-`cat ../version.txt`/uncompressed/fullcalendar.js
+	cd src/css; cat ${CSS_SRC_FILES} >\
+		../../build/fullcalendar-`cat ../../version.txt`/fullcalendar.css
+	java -jar build/yuicompressor-2.4.2.jar\
+		-o build/fullcalendar-${VER}/fullcalendar.js\
+		build/fullcalendar-${VER}/uncompressed/fullcalendar.js
+	cp -rt build/fullcalendar-${VER} ${OTHER_FILES}
