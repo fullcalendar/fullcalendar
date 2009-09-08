@@ -1,0 +1,218 @@
+/* */
+#Firebug div, #Firebug h3, #Firebug span, #Firebug input, #Firebug textarea, #Firebug select, #Firebug option, #Firebug a, #Firebug strong, #Firebug em, #Firebug label, #Firebug center { 
+	position:static; float:none; width:auto; height:auto; text-align:left; border:0; overflow:visible; background:transparent none repeat left top; color:#111; font-size:1em; font-weight:normal; font-style:normal; font-family:sans-serif; margin:0; padding:0;  min-height:0;
+}
+#Firebug input, #Firebug select, #Firebug textarea { background:#fff; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; border:1px outset #aaa; padding:2px }
+#Firebug center { text-align:center; }
+#Firebug strong { font-weight:bold; }
+#Firebug em { font-style:italic; }
+/* */
+
+#FirebugIFrame { position:fixed !important; position:absolute; z-index:99999998; left:0; bottom:0; width:100%; height:295px; background:#fff; border-width:0px; }
+
+#Firebug { position:fixed !important; position:absolute; z-index:99999999; left:0; bottom:0; width:100%; height:295px; background:#fff; overflow:hidden; }
+#Firebug .Resizer { position:absolute; top:0; width:100%; height:5px; background:transparent; *background:url(spacer.gif); cursor:n-resize; -moz-user-select:none; }
+#Firebug .Header { height:38px; background:#ccc url(firebug.gif) 0 -85px; }
+#Firebug .Left, #Firebug > .Right { background:#fff; height:257px;}
+#Firebug .Left { float:left; width:100%; }
+#Firebug .Right { float:left; display:none; width:30%; overflow:hidden; }
+#Firebug .Right .Container { height:100%; border-left:1px solid #ccc; }
+
+/*
+ * buttonset
+ */
+
+#Firebug .ButtonContainer { padding:8px 0 5px 10px; *margin-top:-3px; _margin-top:0; }
+#Firebug .ButtonContainer .Button { cursor:pointer; font:12px "MS Sans Serif", Geneva, sans-serif; color:#000; margin-right:5px; padding:4px 4px 4px 4px; border:1px solid transparent !important; border-color:#ccc; text-decoration:none; }
+#Firebug .ButtonContainer .Button:hover {  border:1px outset #aaa !important; }
+#Firebug .ButtonContainer .Button:active { border-style:inset !important; background-color:#ccc; }
+#Firebug .ButtonContainer .Enabled { border:1px outset #aaa !important; }
+#Firebug .ButtonContainer .Logo { text-decoration:none; padding-left:24px; background:url(firebug.gif) no-repeat 5px 3px; border:0 !important; opacity:0.7; filter:Alpha(Opacity=70); }
+#Firebug .ButtonContainer .Logo:hover, #Firebug .ButtonContainer .Logo:active { border:0 !important; background-color:transparent; opacity:1; filter:Alpha(Opacity=100); }
+#Firebug .ButtonContainer .Maximize, #Firebug .ButtonContainer .Minimize, #Firebug .ButtonContainer .NewWindow, #Firebug .ButtonContainer .Dock, #Firebug .ButtonContainer .Close { position:absolute; right:0; top:12px; padding:6px 8px 8px 8px; background:url(firebug.gif) no-repeat -3px -48px; border:0 !important; opacity:0.7; filter:Alpha(Opacity:80); *padding:0px 7px 1px 7px; }
+#Firebug .ButtonContainer .Maximize:hover, #Firebug .ButtonContainer .Maximize:active, #Firebug .ButtonContainer .NewWindow:hover, #Firebug .ButtonContainer .NewWindow:active,  #Firebug .ButtonContainer .Dock:hover, #Firebug .ButtonContainer .Dock:active, #Firebug .ButtonContainer .Minimize:hover, #Firebug .ButtonContainer .Minimize:active, #Firebug .ButtonContainer .Close:hover, #Firebug .ButtonContainer .Close:active { border:0 !important; background-color:transparent; opacity:1; filter:Alpha(Opacity:100); }
+#Firebug .ButtonContainer .Minimize { background-position:-3px -20px; right:40px; }
+#Firebug .ButtonContainer .Maximize { display:none; background-position:-3px -34px; right:40px; }
+#Firebug .ButtonContainer .NewWindow { background-position:-3px -123px; right:20px; }
+#Firebug .ButtonContainer .Dock { background-position:-3px -137px; }
+#Firebug .ButtonContainer .ButtonSet { border-left:1px solid #ccc; padding:0 0 0 3px; display:inline; }
+
+/*
+ * navigation
+ */
+
+#Firebug .Nav { height:23px; background:url(firebug.gif) repeat-x 0 -62px; padding-left:10px; }
+#Firebug .Nav .Tab { display:block; width:auto; float:left; padding:3px 6px 2px 6px; cursor:pointer; border:1px outset transparent !important; border:0; font:bold 11px Arial, Helvetica, sans-serif; color:#666; }
+#Firebug .Nav .Tab:hover, #Firebug .Nav .Selected { border:1px outset #ccc !important; border-top-color:transparent !important;  }
+#Firebug .Nav .Selected { color:#111; cursor:default; background-color:#f2f2f2; }
+#Firebug .Nav .Settings { float:right; }
+#Firebug .Nav .Settings .Options { text-decoration:none; padding-left:24px; background:url(firebug.gif) no-repeat 65px -151px; border:0 !important; opacity:0.7; filter:Alpha(Opacity=70); }
+#Firebug .Nav .Settings .Options:hover, #Firebug .ButtonContainer .Options:active { border:0 !important; background-color:transparent; opacity:1; filter:Alpha(Opacity=100); }
+
+
+/*
+ * inspector
+ */
+
+#FirebugBorderInspector { display:none; z-index:99999998; position:absolute; top:0; left:0; border:2px solid #0000ff; background:transparent; *background:url(spacer.gif); opacity:0.5; filter:Alpha(Opacity=50); padding:0; margin:0; }
+#FirebugBGInspector { display:none; z-index:99999998; position:absolute; top:0; left:0; background:rgb(0,150,255); opacity:0.5; filter:Alpha(Opacity=50); padding:0; margin:0; }
+
+/*
+ * dom
+ */
+
+#Firebug .DOMRow { width:100% !important; width:90%; }
+#Firebug .DOMRow .DOMRowLeft { float:left; width:30%; overflow:hidden; }
+#Firebug .DOMRow .DOMRowLeft a { padding-left:15px; }
+#Firebug .DOMRow .DOMRowRight { float:left; width:60%; *width:60%; _overflow:hidden; white-space:nowrap; }
+#Firebug .DOMRow .DOMRowLeft .Object {  background:url(tree_open.gif) no-repeat left center;  cursor:pointer;  }
+#Firebug .DOMRow .DOMRowLeft .Object:hover { text-decoration:underline; color:#0000ff; }
+#Firebug .DOMRow .DOMRowLeft .Opened {  background-image:url(tree_close.gif) }
+#Firebug .DOMRow .DOMRowSubContainer { display:none; padding-left:25px; }
+
+/*
+ * console
+ */
+#Firebug .Left .Console { overflow:hidden; }
+#Firebug .Left .Console .Monitor { height:210px; border-bottom:1px solid #ccc; overflow:scroll; overflow-x:hidden; }
+#Firebug .Left .Console .Monitor .Error { background:#ffeff1; color:#ff0000; }
+#Firebug .Left .Console .Monitor .Error strong { color:#ff0000; }
+#Firebug .Left .Console .Monitor .Row { padding:2px 5px 2px 5px; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; overflow:hidden; border-bottom:1px solid #e5e5e5; }
+#Firebug .Left .Console .Monitor .Arrow { color:rgb(0,0,255); white-space:nowrap; }
+
+#Firebug .Left .Console .InputArrow { position:absolute; left:0px; width:20px; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; color:#0000ff; padding:2px 4px 0 4px; }
+#Firebug .Left .Console .InputContainer { margin-left:35px; margin-right:5px; }
+#Firebug .Left .Console .Input { width:100% !important; margin-top:2px; width:98%; overflow:hidden; border:0; font:12px  Verdana, Geneva, Arial, Helvetica, sans-serif; }
+#Firebug .Console .MLButton { cursor:pointer; position:absolute; top:276px; right:-22px; width:20px; padding:4px 10px 10px 10px; font-size:1px; *padding:2px 10px 10px 10px; background:url(firebug.gif) no-repeat -3px -34px; opacity:0.8; filter:Alpha(Opacity:80); }
+#Firebug .Console .MLButton:hover { opacity:1; filter:Alpha(Opacity:100); }
+#Firebug .Console .CloseML { background-position:-3px -20px; }
+
+#Firebug .Right .Console { background:#eee; }
+#Firebug .Right .Console .Input { width:100%; _width:98%; height:228px; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; background:#fff; border:0; border-bottom:1px solid #ccc; margin-bottom:2px; *overflow:scroll; }
+#Firebug .Right .Console .Button { cursor:pointer; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; padding:1px 4px 1px 4px; margin:0 4px 0 4px; background:#eee; border:1px solid #eee;  text-decoration:none; *display:block; *width:auto; *float:left; *margin-top:-1px; }
+#Firebug .Right .Console .Button:hover { border:1px outset #ccc; background:#fff; }
+#Firebug .Right .Console .Button:active { border:1px inset #ccc; background:#ccc; }
+
+#Firebug .Left .Console .Monitor .Warn { background:url(warningIcon.png) #00FFFF no-repeat 2px center; padding-left:20px; }
+#Firebug .Left .Console .Monitor .Info { background:url(infoIcon.png) #fff no-repeat 2px center; padding-left:20px; }
+#Firebug .Left .Console .Monitor .Error { background:url(errorIcon.png) #FFFFE0 no-repeat 2px center; padding-left:20px; }
+
+
+/*
+ * html
+ */
+
+#Firebug .Left .HTML { display:none; height:250px; overflow:scroll; padding:0 10px 2px 10px; }
+#Firebug .Left .HTML .Block { padding:0 0 0 0px; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif;  }
+#Firebug .Left .HTML .Block .Spacer { cursor:default; padding:2px 2px 2px 15px; }
+#Firebug .Left .HTML .Block .Link { display:block; color:#333; padding:2px 2px 2px 0; }
+#Firebug .Left .HTML .Block .Link .Content { padding:2px 2px 2px 2px; }
+#Firebug .Left .HTML .Block .Link .TagName { cursor:pointer; }
+#Firebug .Left .HTML .Block .Parent { font-weight:bold; color:#111; text-decoration:none; }
+#Firebug .Left .HTML .Block .Parent .Spacer { background:#fff center no-repeat; }
+#Firebug .Left .HTML .Block .Parent .Spacer { background-image:url(tree_open.gif); }
+#Firebug .Left .HTML .Block .Open .Spacer { background-image:url(tree_close.gif) }
+#Firebug .Left .HTML .Block .Selected { background-color:#4473c4; }
+#Firebug .Left .HTML .Block .Selected * { color:#fff; }
+#Firebug .Left .HTML .Block .SubContainer { padding-left:20px; height:0; font-size:0px; }
+#Firebug .Left .HTML .Block .OpenSubContainer { height:auto; }
+#Firebug .Left .HTML .Unvisible { opacity:0.5; filter:Alpha(Opacity=50); }
+
+#Firebug .Right .HTML { display:none; }
+#Firebug .Right .HTML .Content { overflow:scroll; height:235px; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; }
+#Firebug .Right .HTML .Content .CSSItem { padding:5px; color:#333; height:6px }
+#Firebug .Right .HTML .Content .CSSProperty { width:45%; float:left; overflow:hidden; }
+#Firebug .Right .HTML .Content .CSSValue { width:55%; float:left; white-space:nowrap; overflow:visible !important;  overflow:hidden;  }
+#Firebug .Right .HTML .Content .CSSValue input { font:11px ArArial, Helvetica, sans-serif; color:#333; 3px 0 0 -3px; }
+#Firebug .Right .HTML .Content .CSSItem center { color:rgb(0,150,0); padding:0 0 3px 0; font:bold 12px Arial, Helvetica, sans-serif; }
+#Firebug .ButtonContainer .HTML { display:none; }
+
+/*
+ * CSS
+ */
+
+#Firebug .Left .CSS { display:none; padding:5px; height:225px; overflow:scroll; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; }
+#Firebug .Right .CSS { display:none; }
+#Firebug .Left .CSS .Selector { margin-top:10px }
+#Firebug .Left .CSS .CSSText { padding-left:20px; }
+#Firebug .Left .CSS .CSSProperty { color:#005500; margin-top:10px; }
+#Firebug .Left .CSS .CSSValue { padding-left:5px; color:#000088; }
+#Firebug .ButtonContainer .CSS { display:none; }
+
+#Firebug .Right .CSS { background:#eee; }
+#Firebug .Right .CSS .Input { width:100%; _width:98%; height:205px; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; background:#fff; border:0; border-bottom:1px solid #ccc; margin-bottom:2px; *overflow:scroll; }
+#Firebug .Right .CSS .Button { cursor:pointer; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; padding:1px 4px 1px 4px; margin:0 4px 0 4px; background:#eee; border:1px solid #eee;  text-decoration:none; *display:block; *width:auto; *float:left; *margin-top:-1px; }
+#Firebug .Right .CSS .Button:hover { border:1px outset #ccc; background:#fff; }
+#Firebug .Right .CSS .Button:active { border:1px inset #ccc; background:#ccc; }
+
+/*
+ * Scripts
+ */
+
+#Firebug .Left .Scripts { display:none; height:225px; *height:235px; overflow:scroll; font:12px Verdana, Geneva, Arial, Helvetica, sans-serif; white-space:pre; }
+#Firebug .Left .Scripts .LineNumber { float:left; width:30px; height:20px; padding:0 2px 0 0; background:#eee; color:#666; font-family:Courier; text-align:right; border-right:1px solid #ccc; }
+#Firebug .Left .Scripts .CodeContainer { padding:5px; }
+#Firebug .Left .Scripts .Code { height:20px; }
+#Firebug .Left .Scripts .CodeContainer, #Firebug .Left .Scripts .Code { word-wrap:normal; white-space:pre; }
+#Firebug .Right .Scripts { display:none; }
+#Firebug .ButtonContainer .Scripts { display:none; }
+
+/*
+ * DOM
+ */
+
+#Firebug .Left .DOM { display:none; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; padding:5px; overflow:scroll; height:225px; }
+#Firebug .Left .DOM .Object { font-weight:bold; }
+#Firebug .Right .DOM { display:none; overflow:scroll; }
+#Firebug .ButtonContainer .DOM { display:none; }
+#Firebug .ButtonContainer .DOM label { font:11px Verdana, Geneva, Arial, Helvetica, sans-serif;  }
+
+/*
+ * XHR
+ */
+
+#Firebug .Left .XHR { display:none; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; padding:5px; overflow:scroll; height:225px; }
+#Firebug .Left .XHR .Block { float:left; width:30%; } 
+#Firebug .Left .XHR .BlockContent { padding:3px; border-right:1px dotted #aaa; }
+#Firebug .Left .XHR .Block strong { display:block; text-align:center; padding:3px; background:rgb(200,225,255); color:rgb(50,50,50); }
+#Firebug .Left .XHR .Block span { display:block; text-align:center; overflow:hidden; }
+#Firebug .Left .XHR .Block span a { cursor:pointer; color:rgb(0,0,200); }
+#Firebug .Right .XHR { display:none; overflow:scroll; }
+#Firebug .ButtonContainer .XHR { display:none; }
+#Firebug .ButtonContainer .XHR label { font:11px Verdana, Geneva, Arial, Helvetica, sans-serif;  }
+
+#Firebug .Left .STR { display:none; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; padding:5px; overflow:scroll; height:225px; }
+
+/*
+ * settings
+ */
+#Firebug .SettingsDiv {position:absolute;width:190px;top:60px;border:1px outset #000;-x-system-font:none;color:#000;font-family:"MS Sans Serif",Geneva,sans-serif;font-size:12px;font-size-adjust:none;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:normal;line-height:normal;display:none;background-color:#FFF;}
+#Firebug .SettingsDiv .Header {background:#CCC url(firebug.gif) repeat scroll 0 -85px;height:30px;border-bottom:1px inset #000;}
+#Firebug .SettingsDiv .Header .Title {padding-top:10px;text-align:center;}
+#Firebug .SettingsDiv .Content {padding:5px;}
+#Firebug .SettingsDiv .Content .SettingsCBX{position:relative;top:2px;margin: 4px 5px 0 0; border:0 !important; padding:0 !important; height: 15px !important;}
+#Firebug .SettingsDiv .Content .SettingsTextbox{position:relative;top:2px;margin: 4px 5px 0 0; border:0 !important; padding:0 !important; height: 15px !important; width:35px !important; border:1px solid #000000 !important;}
+#Firebug .SettingsDiv .Content .ButtonsLeft {float:left;padding:10px 0px 5px 0px;}
+#Firebug .SettingsDiv .Content .ButtonsRight {float:right;padding:10px 0px 5px 0px;}
+#Firebug .SettingsDiv .Content .ProgressDiv {background-color:#FFF;width:100%;height:100%;position:absolute;left:0;top:0;z-index:1;opacity:.8;filter:alpha(opacity=80);display:none;}
+#Firebug .SettingsDiv .Content .Progress {background-image:url(progress.gif);width:66px;height:66px;position:absolute;top:50%;left:50%;margin-left:-33px;margin-top:-33px;}
+ 
+/*
+ * element highlighting
+ */
+#Firebug .Italic { font-style:italic; }
+#Firebug .Strong { font-weight:bold; }
+#Firebug .NormalWeight { font-weight:normal; }
+#Firebug .Green { color:#008800; }
+#Firebug .Gray { color:#666; }
+#Firebug .Blue { color:#0000ee; }
+#Firebug .DarkBlue { color:#000099; }
+#Firebug .Red { color:#ee0000; }
+#Firebug .Maroon { color:#800000; font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; }
+#Firebug .Null { font:11px Verdana, Geneva, Arial, Helvetica, sans-serif; color:#fff; padding:0 2px 0 2px; background:#999; border:1px solid #666; }
+#Firebug .ObjectLink, #Firebug .ObjectLinkHover { cursor:pointer; }
+#Firebug .ObjectLinkHover { border-bottom:1px solid #008800; }
+
+#Firebug .Clear { clear:both; height:0px; font-size:0px; }
+
+#firebugIconDiv { width:38px;height:38px;right:15pt;bottom:5pt;border:2px solid #000;display:none;position:fixed;background-image:url(firebug_logo.png);text-decoration:underline;cursor:pointer;filter:alpha(opacity:60);opacity:.6;z-index:99999998;}
