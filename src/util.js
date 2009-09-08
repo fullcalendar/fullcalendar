@@ -199,7 +199,7 @@ var dateFormatters = {
 		var date = d.getDate();
 		if (date > 10 && date < 20) return 'th';
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
-	},
+	}
 };
 
 
