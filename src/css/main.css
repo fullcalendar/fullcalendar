@@ -1,0 +1,279 @@
+
+.fc,
+.fc .fc-header,
+.fc .fc-content {
+	font-size: 1em;
+	}
+	
+.fc table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+	
+.fc td, .fc th {
+	padding: 0;
+	vertical-align: top;
+	}
+
+
+
+/* Header
+------------------------------------------------------------------------*/
+	
+table.fc-header {
+	width: 100%;
+	}
+	
+.fc-header-left {
+	width: 25%;
+	}
+	
+.fc-header-left table {
+	float: left;
+	}
+	
+.fc-header-center {
+	width: 50%;
+	}
+	
+.fc-header-center table {
+	margin: 0 auto;
+	}
+	
+.fc-header-right {
+	width: 25%;
+	}
+	
+.fc-header-right table {
+	float: right;
+	}
+	
+.fc-header-title {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+	
+.fc-header-space {
+	padding-left: 10px;
+	}
+	
+/* right-to-left */
+
+.fc-rtl .fc-header-title {
+	direction: rtl;
+	}
+	
+/* button rounded corners  */
+	
+.fc-header .fc-state-default {
+	border-width: 1px 0;
+	padding: 0 1px;
+	}
+	
+.fc-header .fc-state-default a {
+	display: block;
+	position: relative;
+	margin: 0 -1px;
+	border-width: 0 1px;
+	width: 100%;
+	}
+	
+.fc-header .fc-state-default span {
+	display: block;
+	}
+	
+.fc-header .fc-corner-left {
+	margin-left: 1px;
+	padding-left: 0;
+	}
+	
+.fc-header .fc-corner-right {
+	margin-right: 1px;
+	padding-right: 0;
+	}
+	
+.fc-header .fc-no-left {
+	padding-left: 0;
+	}
+	
+.fc-header .ui-no-left {
+	border-left: 0;
+	}
+	
+/* default button state */
+	
+.fc-header .fc-state-default,
+.fc-header .ui-state-default {
+	margin-bottom: 10px;
+	cursor: pointer;
+	}
+	
+.fc-header .fc-state-default,
+.fc-header .fc-state-default a {
+	border-style: solid;
+	border-color: #6E6E6E;
+	color: #333;
+	}
+
+.fc-header .fc-state-default span {
+	border-width: 1px 0 0 1px;
+	border-style: solid;
+	border-color: #fff;
+	background: #F0F0F0;
+	}
+	
+.fc-header .fc-state-default span,
+.fc-header .ui-state-default {
+	padding: 4px 6px;
+	}
+	
+/* active button state */
+	
+.fc-header .fc-state-active a {
+	color: #fff;
+	}
+	
+.fc-header .fc-state-active span {
+	background: #787878;
+	border-color: #777;
+	}
+	
+/* down button state */
+
+.fc-header .fc-state-down span {
+	background: #787878;
+	border-color: #777;
+	}
+	
+/* disabled button state */
+	
+.fc-header .fc-state-disabled,
+.fc-header .fc-state-disabled a {
+	border-color: #ccc;
+	}
+	
+.fc-header .fc-state-disabled a {
+	color: #999;
+	}
+	
+.fc-header .fc-state-disabled span {
+	border-color: #fff;
+	background: #F0F0F0;
+	}
+	
+	
+	
+/* Content Area & Global Cell Styles
+------------------------------------------------------------------------*/
+	
+.fc-widget-content {
+	border: 1px solid #ccc; /* outer border color */
+	}
+	
+.fc-content {
+	clear: both;
+	}
+	
+.fc-content .fc-state-default {
+	border-style: solid;
+	border-color: #ccc; /* inner border color */
+	}
+	
+.fc-content .fc-state-highlight { /* today */
+	background: #FFFFCC;
+	}
+	
+.fc-content td.fc-not-today {
+	background: none;
+	}
+	
+.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+	background: #ADDBFF;
+	opacity: .2;
+	filter: alpha(opacity=20); /* for IE */
+	}
+	
+.fc-view { /* prevents dragging outside of widget */
+	width: 100%;
+	overflow: hidden;
+	}
+	
+	
+	
+/* Global Event Styles
+------------------------------------------------------------------------*/
+
+.fc-event,
+.fc-event a,
+.fc-agenda .fc-event-time {
+	color: #fff;
+	border-style: solid;
+	border-color: blue;
+	background-color: blue;
+	}
+	
+.fc-event-nobg,
+.fc-event-nobg a,
+.fc-agenda .fc-event-nobg .fc-event-time {
+	border-style: none;
+	background: none;
+	color: inherit;
+	}
+	
+.fc-event a {
+	overflow: hidden;
+	font-size: 11px;
+	text-decoration: none;
+	cursor: pointer;
+	}
+	
+.fc-event-time,
+.fc-event-title {
+	padding: 0 1px;
+	}
+
+.fc-event a { /* prep for rounded corners */
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	}
+	
+	
+	
+/* Horizontal Events
+------------------------------------------------------------------------*/
+
+.fc-event-hori {
+	border-width: 1px 0;
+	margin-bottom: 1px;
+	}
+	
+.fc-event-hori a {
+	border-width: 0;
+	}
+	
+.fc-content .fc-corner-left {
+	margin-left: 1px;
+	}
+	
+.fc-content .fc-corner-left a {
+	margin-left: -1px;
+	border-left-width: 1px;
+	}
+	
+.fc-content .fc-corner-right {
+	margin-right: 1px;
+	}
+	
+.fc-content .fc-corner-right a {
+	margin-right: -1px;
+	border-right-width: 1px;
+	}
+	
+.fc-event-hori .ui-resizable-handle {
+	_height: 10px; /* IE6 had 0 height */
+	}
+	
+
+	
