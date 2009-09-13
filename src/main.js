@@ -26,7 +26,7 @@ var defaults = {
 	eventTimeFormat: 'h(:mm)t',
 	titleFormat: {
 		month: 'MMMM yyyy',
-		week: "MMM d[ yyyy]{ '&#8212;' [MMM ]d yyyy}",
+		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
 	},
 	columnFormat: {
@@ -208,7 +208,7 @@ $.fn.fullCalendar = function(options) {
 				header.find('h2.fc-header-title').html(view.title);
 			}
 			view.eventsDirty = false;
-			view.trigger('viewDisplay', _element, date);
+			view.trigger('viewDisplay', _element);
 		}
 		
 		function eventsDirtyExcept(exceptView) {
@@ -294,14 +294,14 @@ $.fn.fullCalendar = function(options) {
 		var loadingLevel = 0;
 		
 		function pushLoading() {
-			if (!loadingLevel++ && options.loading) {
-				options.loading(true);
+			if (!loadingLevel++) {
+				view.trigger('loading', _element, true);
 			}
 		}
 		
 		function popLoading() {
-			if (!--loadingLevel && options.loading) {
-				options.loading(false);
+			if (!--loadingLevel) {
+				view.trigger('loading', _element, false);
 			}
 		}
 		
@@ -327,6 +327,12 @@ $.fn.fullCalendar = function(options) {
 			today: function() {
 				date = new Date();
 				render();
+			},
+			
+			gotoDate: function() {
+			},
+			
+			moveDate: function() {
 			},
 			
 			//
@@ -384,6 +390,9 @@ $.fn.fullCalendar = function(options) {
 				}
 			},
 			
+			rerender: function() {
+			},
+			
 			clientEventsByID: eventsByID,
 			removeEvents: removeEvents,
 			
@@ -407,6 +416,9 @@ $.fn.fullCalendar = function(options) {
 					return e.source != source;
 				});
 				eventsChanged();
+			},
+			
+			refetch: function() {
 			}
 			
 		};

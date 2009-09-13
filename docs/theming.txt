@@ -1,0 +1,24 @@
+
+Theming
+=======
+
+FullCalendar can be used with jQuery UI themes. Themes provide a more stylized
+look for the calendar and can easily be created using the jQuery UI ThemeRoller.
+
+In order for themes to work, you must include the theme's CSS file AND
+fullcalendar.css on the current page. You must also enable the ``theme`` option.
+Here is the full list of theme-related options:
+
+	theme: Boolean (default: false)
+		Enables/disables use of jQuery UI themes
+	
+	buttonIcons: Object
+		Determines which icons appear within header buttons. If a button
+		does not have an entry, it falls back to using buttonText.
+	
+		Here is the default value for buttonIcons:
+		
+			{
+				prev: 'circle-triangle-w',
+				next: 'circle-triangle-e'
+			}

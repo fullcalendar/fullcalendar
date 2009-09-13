@@ -28,7 +28,7 @@ var viewMethods = {
 	
 	trigger: function(name, thisObj) {
 		if (this.options[name]) {
-			return this.options[name].apply(thisObj, Array.prototype.slice.call(arguments, 2).concat([this]));
+			return this.options[name].apply(thisObj || this, Array.prototype.slice.call(arguments, 2).concat([this]));
 		}
 	},
 	

@@ -1,0 +1,118 @@
+
+Feeds and Sources
+=================
+
+The following options determine *how* events get on the calendar:
+
+	**events**: Array/String/Function
+		An array of :ref:`CalEvents <CalEvents>` can be used to hardcode events into the
+		calendar.
+		
+		Or, a URL can be provided. This URL should return JSON for an array of
+		:ref:`CalEvents <CalEvents>`. GET parameters, determined by the
+		``startParam`` and ``endParam`` options, will be inserted into the URL.
+		These parameters indicate the UNIX timestamp of the start of the first
+		visible day (inclusive) and the end of the last visible day (exclusive).
+		
+		Or, a function can be provided for custom fetching. The function is
+		queried every time event data is needed. The function is passed a ``start``
+		Date object, an ``end`` Date object, and a function to be called when
+		fetching is complete. Here is the general form::
+		
+			events: function(start, end, callback) {
+			
+				// do some asynchronous ajax
+				$.getJSON("/myscript",
+					{
+						start: start.getTime(),
+						end: end.getTime()
+					},
+					function(result) {
+					
+						// format the result into an array of 'CalEvent' objects
+						// (not seen here)
+						
+						// then, pass the 'calevent' array to the callback
+						callback(calevents);
+					
+					});
+			
+			}
+
+	**eventSources**: Array
+		Similar to the ``events`` options, except one may specify *multiple* sources.
+		For example, one may specify an array of JSON URL's, an array of custom
+		functions, an array of hardcoded event arrays, or any combination.
+
+	**startParam**: String, default:``"start"``
+		A GET parameter of this name will be inserted into the URL when fetching
+		events from a JSON script. The value of this GET parameter will be a UNIX
+		timestamp denoting the start of the first visible day (inclusive).
+
+	**endParam**: String, default:``"end"``
+		A GET parameter of this name will be inserted into the URL when fetching
+		events from a JSON script. The value of this GET parameter will be a UNIX
+		timestamp denoting the end of the last visible day (exclusive).
+
+	**cacheParam**: String, default:``"_"``
+		When using a JSON url, a parameter of this name will
+		automatically be inserted into the URL to prevent the browser from
+		caching the response. The value will be the current millisecond time.
+
+.. _CalEvents:
+
+CalEvent Objects
+================
+
+A CalEvent is a data structure that frequents FullCalendar's API. It is the
+standardized currency used in :ref:`EventSources`. It is also passed to various
+:ref:`Triggered Actions <TriggeredActions>`. Here are the properties of a
+CalEvent:
+
+	**id**: Integer/String
+		Uniquely identifies the given event. Absolutely essential for multi-day
+		and repeating events to be dragged and dropped correctly.
+
+	**title**: String
+		The text on an event's element
+
+	**date**: Date
+		Alias for ``start``
+
+	**start**: Date
+		A javascript Date object indicating the date/time an event begins.
+		
+		In an :ref:`Event Source <EventSources>`, for convenience,
+		one can also use a string in IETF format (ex: "Wed, 18 Oct 2009 13:00:00 EST"),
+		a string in ISO8601 format (ex: "2009-11-05T13:15:30Z") or an integer
+		UNIX timestamp.
+
+	**end**: Date (optional)
+		A javascript Date object indicating the date/time an event ends.
+		If the event is an all-day event, specify the inclusive last day
+		of the event. (This is different from previous versions of FullCalendar).
+		
+		For example, an all-day event with start on Nov 10 and end on Nov 12
+		would span 3 days.
+		
+		As with ``start``, IETF and ISO8601 strings can be used with an
+		:ref:`Event Source <EventSources>`.
+	
+	**allDay**: Boolean (optional, defaults to ``true``)
+		Determines whether an event's time is displayed (such as 3pm).
+		``false`` will show the time, ``true`` will not.
+
+	**className**: String/Array (optional)
+		A CSS class (or array of classes) that will be attached to this event's
+		element.
+		
+	**editable**: Boolean (optional)
+		Overrides the master ``editable`` property for this single event.
+
+	**source**: Array/String/Function (automatically populated)
+		A reference to the original array, JSON URL, or function the event
+		came from. Do not worry about populating this value, FullCalendar will
+		do this automatically.
+		
+		
+link to methods...

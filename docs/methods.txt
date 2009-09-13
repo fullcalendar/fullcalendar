@@ -1,0 +1,81 @@
+
+Methods
+=======
+
+The folling are a list of methods that can be called on an FullCalendar-initialized
+jQuery object:
+
+	prev			.fullCalendar('prev')
+		Moves the calendar one step back (either by a month, week, or day).
+
+	next			.fullCalendar('next')
+		Moves the calendar one step forward (either by a month, week, or day).
+		
+	today			.fullCalendar('today')
+		Moves the calendar to the current date.
+	
+	gotoDate		.fullCalendar('gotoDate', year, month, date)
+		Moves the calendar to an arbitrary year/month/date.
+		
+		``month`` is 1-based, meaning January=1, February=2, etc
+		(different from previous versions of FullCalendar)
+	
+	moveDate		.fullCalendar('moveDate', years, months, days)
+		Moves the calendar forward/backward an arbitrary amount of time
+	
+	updateEvent		.fullCalendar('renderEvent', calEvent)
+		Reports changes to the given calEvent. This will cause the event
+		to be rerendered on the calendar.
+		
+		If there are repeating events on the calendar with the
+		same ID, these events will be changed as well.
+		
+		``calEvent`` must be an object retrieved from a triggered event
+		or from clientEvents.
+	
+	renderEvent		.fullCalendar('renderEvent', calEvent, stick)
+		Renders a new event on the calendar. ``calEvent`` must have
+		at least a ``title`` and a ``start``.
+		
+		By default the event will disappear once the user switches views
+		or clicks prev/next. However, specifying ``stick`` as ``true``
+		will cause the event to be permanently fixed to the calendar.
+	
+	removeEvents	.fullCalendar('removeEvent', idOrFilter)
+		If the second argument is omitted, all events are removed.
+		
+		If the second argument is a calEvent ID, all events with
+		the same ID will be removed.
+		
+		The second argument may be a filter function that accepts
+		one calEvent argument and returns ``true`` or ``false`` about
+		whether is should be removed.
+		
+	clientEvents	.fullCalendar('clientEvents', idOrFilter)
+		This method will return calEvents that FullCalendar has stored on
+		the client-side (javascript in the browser).
+		
+		If the second argument is omitted, all events will be returned.
+		
+		If the second argument is a calEvent ID, all events with the
+		same ID will be returned.
+		
+		The second argument may also be a filter function that accepts
+		one calEvent argument and returns ``true`` or ``false`` about
+		whether it should be included in the result set.
+
+	addEventSource		.fullCalendar('addEventSource', source)
+		Adds an event source. ``source`` may be an array/string/function just as in
+		the ``events`` option. Events will be immediately fetched from this source
+		and placed on the calendar.
+
+	removeEventSource	.fullCalendar('removeEventSource', source)
+		Remove an event source. ``source`` must be a reference to the
+		original array/string/function.
+
+	rerenderEvents		.fullCalendar('rerenderEvents')
+		Rerenders all events on the screen.
+
+	refetchEvents		.fullCalendar('refetchEvents')
+		Refetches events from all event sources and rerenders them on the screen.
+		

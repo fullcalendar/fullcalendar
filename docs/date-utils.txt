@@ -1,0 +1,63 @@
+
+Date Utilities
+==============
+
+formatDate		$.fullCalendar.formatDate(date, formatString, options)
+	The format can be combinations of the following:
+	
+		s		seconds
+		ss		seconds, 2 digits
+		m		minutes
+		mm		minutes, 2 digits
+		h		hours
+		hh		hours, 2 digits
+		H		hours, military time
+		HH		hours, milirary time, 2 digits
+		d		date number
+		dd		date number, 2 digits
+		ddd		date name, short
+		dddd	date name, full
+		M		month number
+		MM		month number, 2 digits
+		MMM		month name, short
+		MMMM	month name, full
+		yy		year, 2 digits
+		yyyy	year, 4 digits
+		t		'a' or 'p'
+		tt		'am' or 'pm'
+		T		'A' or 'P'
+		TT		'AM' or 'PM'
+		u		ISO8601 format
+		S		'st', 'nd', 'rd', 'th' for the date
+	
+	Special Characters:
+	
+		'...'
+		literal text
+		
+		''
+		single quote (represented by two single quotes)
+		
+		(...)
+		only displays format if one of the enclosed variables is non-zero
+		
+	``options`` can override any of the Locale Options
+	
+formatDates		$.fullCalendar.formatDates(date1, date2, formatString, options)
+	Similar to formatDate, but accepts *two* dates, leveraging the following
+	special characters in ``formatString``:
+	
+		{...}
+		switches to formatting the 2nd date
+		
+		[...]
+		only displays format if the current date is different from the
+		alternate date in the same regards
+
+parseDate		$.fullCalendar.parseDate(string)
+	Parse a string and return a javascript Date object.
+	The string may be in ISO8601 format, IETF format, or a UNIX timestamp.
+
+parseISO8601	$.fullCalendar.parseISO8601(string, ignoreTimezone)
+	Parse an ISO8601 string into a javascript Date object.
+	
