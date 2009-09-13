@@ -35,7 +35,7 @@ html:
 arshaw:
 	mkdir -p build/html build/doctrees
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) build/html
-	cp -r build/html/* /var/www/arshaw/pages/fullcalendar/docs/
+	cp -r build/html/* /var/www/arshaw/pages/fullcalendar/docs12/
 	@echo
 	@echo "Build finished. The HTML pages are in build/html."
 
