@@ -1,0 +1,51 @@
+
+Google Calendar
+===============
+
+To integrate with your Google Calendar, you must first **make your calendar public**:
+
+#. In the Google Calendar interface, locate the "My Calendar" box on the left.
+
+#. Click the arrow next to the calendar you need.
+
+#. A menu will appear. Click "Share this calendar."
+
+#. Check "Make this calendar public."
+
+#. Make sure "Share only my free/busy information" is *unchecked*.
+
+#. Click "Save."
+
+Then, you must obtain your calendar's **XML feed URL**.
+
+#. In the Google Calendar interface, locate the "My Calendar" box on the left
+
+#. Click the arrow next to the calendar you need.
+
+#. A menu will appear. Click "Calendar settings."
+
+#. In the "Calendar Address" section of the screen, click the XML badge.
+
+#. Your feed's URL will appear.
+
+The API for integrating a Google Calendar feed has changed since
+FullCalendar 1.1. The ``$.fullCalendar.gcalFeed`` function now produces
+an event source that can be passed to the ``events`` or ``eventSources``
+option::
+
+   $('#calendar').fullCalendar({
+      
+      events: $.fullCalendar.gcalFeed(
+         "http://www.google.com/calendar/feeds/...",   // feed URL
+         { className: 'gcal-events' }                  // optional options
+      )
+      
+   });
+   
+Here is a list of available options:
+
+* **className** - CSS class to attach to each event from this Google Calendar
+
+* **draggable** - whether to allow dragging (default: ``false``)
+   
+See *gcal.html* in the *examples* directory for a complete example.

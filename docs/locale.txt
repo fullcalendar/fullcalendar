@@ -1,0 +1,34 @@
+
+Locale
+=======================================
+
+firstDay			Integer		default: 0
+	The day-of-week each week begins. 0 = Sunday (default),
+	1 = Monday (for UK users), 2 = Tuesday, etc.
+  
+isRTL				Boolean		default: false
+	Displays the calendar right-to-left (for languages such as Arabic and Hebrew)
+  
+monthNames			Array		default: ['January','February','March'...
+	Full names of months.
+
+monthNamesShort		Array		default: ['Jan','Feb','Mar'...
+	Abbreviated names of months.
+
+dayNames			Array		default: ['Sunday','Monday','Tuesday'...
+	Full names of days-of-week.
+
+dayNamesShort		Array		default: ['Sun','Mon','Tue'...
+	Abbreviated names of days-of-week.
+
+buttonText
+	Text that will be displayed on buttons of the header. Default:
+	
+		{
+			prev: '&#9668;',
+			next: '&#9658;',
+			today: 'today',
+			month: 'month',
+			week: 'week',
+			day: 'day'
+		}
