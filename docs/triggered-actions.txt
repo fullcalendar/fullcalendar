@@ -1,121 +1,126 @@
 
+.. _triggered-actions:
+
 Triggered Actions
 =================
 
 The following options are *functions* that get executed every time something
 special happens. For every triggered action, a final ``view`` parameter is
-always available (more below). 
+always available (:ref:`more below <view-object>`). 
 
-	**viewDisplay**: function(view)
-		Triggered once when the calendar loads and every time the
-		calendar's view is changed. This includes after the prev or next
-		button is pressed.
+**viewDisplay**: function(*view*)
+	Triggered once when the calendar loads and every time the
+	calendar's view is changed. This includes when the prev or next
+	button is pressed.
 
-	**loading**: function(isLoading, view)
-		Triggered with a ``true`` argument when the calendar begins fetching
-		events via AJAX. Triggered with ``false`` when done.
+**loading**: function(*isLoading, view*)
+	Triggered with a ``true`` argument when the calendar begins fetching
+	events via AJAX. Triggered with ``false`` when done.
 
-	**windowResize**: function(view)
-		Triggered after the calendar has recovered from a resize due to the
-		containing window being resized.
-		
-		``this`` is set to the main element
-
-	**dayClick**: function(dayDate, view)
-		Triggered when the user clicks on a day. ``dayDate`` is a Date object with
-		it's time set to 00:00:00.
-		
-		``this`` is set to the TD element of the clicked day.
-
-	**eventRender**: function(calEvent, element, view)
-		Triggered before an element is rendered for the given :ref:`CalEvent <CalEvents>`.
-		``element`` is the jQuery element that will be used by default. You may modify
-		this element or return a brand new element that will be used instead.
-		Returning ``false`` will prevent the event from being rendered at all.
-		
-		This function is great for attaching other jQuery plugins to each event
-		element, such as a `qTip <http://craigsworks.com/projects/qtip/docs/>`_
-		tooltip effect.
-
-	**eventClick**, **eventMouseover**, **eventMouseout**: function(calEvent, jsEvent, view)
-		Triggered on click/mouseover/mouseout actions for an event.
-		``calEvent`` holds that event's information (date, title, etc).
-		``jsEvent`` holds the native javascript event (with information about click position, etc).
-		
-		``this`` is set to the event's element
-		
-		For ``eventClick``, return ``false`` to prevent the browser from going to
-		the event's URL.
-
-	**eventDragStart**, **eventDragStop**: function(calEvent, jsEvent, ui, view)
-		Triggered before/after an event is dragged (but not necessarily moved to a new day).
-		``calEvent`` holds that event's information (date, title, etc).
-		``jsEvent`` holds the native javascript event (with information about click position, etc).
-		``ui`` holds the jQuery UI object.
-		
-		``this`` is set to the event's element
-
-	**eventDrop**: function(calEvent, dayDelta, minuteDelta, jsEvent, ui, view)
-		Triggered when dragging stops and the event has moved to a *different* day.
-		
-		``dayDelta`` holds the number of days the event was moved forward (a positive number)
-		or backwards (a negative number).
-		
-		``minuteDelta`` will always be ``0`` and is reserved for a future release
-		of FullCalendar where there will be an agenda view.
-		
-		``dayDelta`` and ``minuteDelta`` are elegant for dealing with multi-day and
-		repeating events. If updating a remote database, just add these values to the
-		start and end times of all events with the given ``calEvent.id``
+**windowResize**: function(*view*)
+	Triggered after the calendar's dimensions have been changed due to
+	the containing window being resized.
 	
-	**eventResizeStart**, **eventResizeStop**: function(calEvent, jsEvent, ui, view)
-		Triggered before/after an event is resized (but not necessarily changed).
-		``calEvent`` holds that event's information (date, title, etc).
-		``jsEvent`` holds the native javascript event (with information about click position, etc).
-		``ui`` holds the jQuery UI object.
-		
-		``this`` is set to the event's element
-	
-	**eventResized**: function(event, dayDelta, minuteDelta, jsEvent, ui, view)
-		Triggered when an event is resized and **changed** in duration.
-		
-		``dayDelta`` holds the number of days the event's end time was moved
-		forward (a positive number) or backwards (a negative number).
-		
-		``minuteDelta`` will always be ``0`` and is reserved for a future release
-		of FullCalendar where there will be an agenda view.
+	``this`` is set to the main element.
 
+**dayClick**: function(*dayDate, view*)
+	Triggered when the user clicks on a day. ``dayDate`` is a Date object with
+	it's time set to 00:00:00.
+	
+	``this`` is set to the TD element of the clicked day.
+
+**eventRender**: function(*calEvent, element, view*)
+	Triggered before an element is rendered for the given :ref:`CalEvent <CalEvents>`.
+	``element`` is the jQuery element that will be used by default. You may modify
+	this element or return a brand new element that will be used instead.
+	Returning ``false`` will prevent the event from being rendered at all.
+	
+	This function is great for attaching other jQuery plugins to each event
+	element, such as a `qTip <http://craigsworks.com/projects/qtip/docs/>`_
+	tooltip effect.
+
+**eventClick**, **eventMouseover**, **eventMouseout**: function(*calEvent, jsEvent, view*)
+	Triggered on click/mouseover/mouseout actions for an event.
+	``calEvent`` holds that event's information (date, title, etc).
+	``jsEvent`` holds the native javascript event (with information about click position, etc).
+	
+	``this`` is set to the event's element
+	
+	For ``eventClick``, return ``false`` to prevent the browser from going to
+	the event's URL.
+
+**eventDragStart**, **eventDragStop**: function(*calEvent, jsEvent, ui, view*)
+	Triggered before/after an event is dragged (but not necessarily moved to a new day).
+	``calEvent`` holds that event's information (date, title, etc).
+	``jsEvent`` holds the native javascript event (with information about click position, etc).
+	``ui`` holds the jQuery UI object.
+	
+	``this`` is set to the event's element
+
+**eventDrop**: function(*calEvent, dayDelta, minuteDelta, jsEvent, ui, view*)
+	Triggered when dragging stops and the event has moved to a *different* day.
+	
+	``dayDelta`` holds the number of days the event was moved forward (a positive number)
+	or backwards (a negative number).
+	
+	``minuteDelta`` will always be ``0`` and is reserved for a future release
+	of FullCalendar where there will be an agenda view.
+	
+	``dayDelta`` and ``minuteDelta`` are elegant for dealing with multi-day and
+	repeating events. If updating a remote database, just add these values to the
+	start and end times of all events with the given ``calEvent.id``
+
+**eventResizeStart**, **eventResizeStop**: function(*calEvent, jsEvent, ui, view*)
+	Triggered before/after an event is resized (but not necessarily changed).
+	``calEvent`` holds that event's information (date, title, etc).
+	``jsEvent`` holds the native javascript event (with information about click position, etc).
+	``ui`` holds the jQuery UI object.
+	
+	``this`` is set to the event's element
+
+**eventResized**: function(*event, dayDelta, minuteDelta, jsEvent, ui, view*)
+	Triggered when an event is resized and *changed in duration*.
+	
+	``dayDelta`` holds the number of days the event's end time was moved
+	forward (a positive number) or backwards (a negative number).
+	
+	``minuteDelta`` will always be ``0`` and is reserved for a future release
+	of FullCalendar where there will be an agenda view.
+
+
+.. _view-object:
 	
 View Object
 ===========
 
-The final parameter of every callback is a *view* object. It has the following properties:
+The final parameter of every triggered action is a *view* object. It contains information about the
+current view (whether month/basicWeek/basicDay) and contains the following properties:
 
-	**name**: String
-		Name of one of the available views (month, basicWeek, basicDay)
+**name**: String
+	Name of one of the available views (month, basicWeek, basicDay)
+
+**title**: String
+	Title text that is displayed at the top of the header
+	(such as "September 2009" or "Sep 7 - 13 2009").
+
+**start**: Date
+	The Date of the first day of the month/week.
+	If day-view, the Date of the single day.
+
+**end**: Date
+	The Date of the day *after* the last day of the month/week.
+	If day-view, the Date *after* the single day.
 	
-	**title**: String
-		Title text that is displayed at the top of the header
-		(such as "September 2009" or "Sep 7 - 13 2009").
+	Because this is an *exclusive* value, if the calendar has a
+	month-view on October 2009, ``end`` will be November 1st.
+
+**visStart**: Date
+	The Date of the first *visible* day of the view. In month-view,
+	this value is often before the 1st day of the month, because most
+	months do not begin on a Monday.
 	
-	**start**: Date
-		The Date of the first day of the month/week.
-		If day-view, the Date of the single day.
-	
-	**end**: Date
-		The Date of the day **after** the last day of the month/week.
-		If day-view, the Date **after** the single day.
-		
-		Because this is an **exclusive** value, if the calendar has a
-		month-view on October 2009, ``end`` will be November 1st.
-	
-	**visStart**:
-		The Date of the first **visible** day of the view. In month-view,
-		this value is often before the 1st day of the month, because most
-		months do not begin on a Monday.
-		
-		In week and day views, this value will always be the same as ``start``.
-	
-	**visEnd**:
-		The Date of the day **after** the last visible day
-		(because it is exclusive like ``end``).
+	In week and day views, this value will always be the same as ``start``.
+
+**visEnd**: Date
+	The Date of the day *after* the last visible day
+	(because it is exclusive like ``end``).

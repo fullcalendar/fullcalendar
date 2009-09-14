@@ -28,10 +28,8 @@ Then, you must obtain your calendar's **XML feed URL**.
 
 #. Your feed's URL will appear.
 
-The API for integrating a Google Calendar feed has changed since
-FullCalendar 1.1. The ``$.fullCalendar.gcalFeed`` function now produces
-an event source that can be passed to the ``events`` or ``eventSources``
-option::
+The ``$.fullCalendar.gcalFeed`` function produces an event source that can be
+passed to the ``events`` or ``eventSources`` options::
 
    $('#calendar').fullCalendar({
       
@@ -46,6 +44,6 @@ Here is a list of available options:
 
 * **className** - CSS class to attach to each event from this Google Calendar
 
-* **draggable** - whether to allow dragging (default: ``false``)
+* **editable** - whether to allow dragging/resizing (default: ``false``)
    
 See *gcal.html* in the *examples* directory for a complete example.

@@ -2,7 +2,7 @@
 Usage
 =====
 
-The following code initializes a FullCalendar within an element of ID 'calendar'::
+The following code initializes a FullCalendar within an element::
 
 	$('#calendar').fullCalendar({
 		
@@ -11,58 +11,43 @@ The following code initializes a FullCalendar within an element of ID 'calendar'
 	})
 	
 
-Available Views
-===============
-
-**month** - see example
-
-**basicWeek** - see example
-
-**basicDay** - see example
-
-
-Basic Display Options
-=====================
+Basic Options
+=============
 
 **year, month, date**: Integers
 	The initial year/month/date when the calendar loads.
-	
-	``month`` is 1-based, meaning January=1, February=2, etc
-	(different from previous versions)
-	
+	``month`` is 0-based, meaning January=0, February=1, etc.
 	If ommitted, the calendar starts on the current date.
 
-**header**: Object, *Default*: ``{ left:'title', center:'', right:'prev,next' }``
-	Defines the buttons/text at the top of the calendar. Must be an
-	object with properties left, center, and right. Omitting a property
-	will cause it to inherit from the default.
-	
-	Property values contain a comma-separated string with any of the
-	following items:
+**header**: Object/``false``, *Default*: ``{ left:'title', center:'', right:'prev,next' }``
+	Defines the buttons/text at the top of the calendar.
+	``false`` will display no header.
+	An object can be supplied with properties ``left``, ``center``, and ``right``.
+	These properties contain strings with comma separated values,
+	containing any of the following:
 	
 		``title``
 			text containing the current date or date-range
 		
 		``prev``
-			button for moving the calendar back one month/week/day,
-			depending on the current view
+			button for moving the calendar back one month/week/day
 		
 		``next``
-			button for moving the calendar forward one month/week/day,
-			depending on the current view
+			button for moving the calendar forward one month/week/day
+			
+		*a blank space*
+			visual gap between buttons/text
 		
-		*a view name...*
+		*a view name*
 			button that will switch the calendar to any of the
-			available views
-		
-	Using an empty space as a separator instead of a comma will cause
-	adjacent buttons/text to be separated by a visual gap.
+			:ref:`available-views`
 	
-	Specifying an empty string for left, center, or right will cause
-	the area to be empty.
+	Specifying an empty string for a property will cause it display no text/buttons.
+	
+	To change the text within a button, see the :ref:`buttonText<locale>` option.
 	
 **defaultView**: String, *Default*: ``'month'``
-	The initial view then the calendar loads. Any of the available views.
+	The initial view when the calendar loads. Any of the :ref:`available-views`.
 
 **aspectRatio**: Float, *Default*: ``1.35``
 	A calendar is a block-level element that fills its entire avaiable width.
@@ -75,44 +60,44 @@ Basic Display Options
 	
 		``'fixed'``
 			The calendar will always be 6 weeks tall.
-			The aspectRatio will always be maintained.
+			The ``aspectRatio`` will always be maintained.
 		
 		``'liquid'``
 			The calendar will have either 4, 5, or 6 weeks, depending on the month.
 			The height of the weeks will stretch to fill the available height,
-			as determined by aspectRatio.
+			as determined by ``aspectRatio``.
 		
 		``'variable'``
 			The calendar will have either 4, 5, or 6 weeks, depending on the month.
-			The aspectRatio will NOT be maintained however. Each week will have
-			a constant height, meaning the calendar will change height month-to-month.
+			The ``aspectRatio`` will NOT be maintained however. Each week will have
+			a constant height, meaning the calendar's height will change month-to-month.
 	
 	
 Event Editing
 =============
 
 **editable**: Boolean, *Default*: ``false``
-	Whether the events on the calendar can be modified, i.e,
-	if the events will be draggable and resizable.
-	This can be overridden on a per-event basis with an event's
-	editable property.
+	Determines whether the events on the calendar can be modified, i.e,
+	if the events will be *draggable* and *resizable*.
+	This can be overridden on a per-event basis with a :ref:`CalEvent's <CalEvent>`
+	``editable`` property.
 	
-	For dragging, the jQuery UI draggable library is required.
-	For resizing, the jQuery UI resizable library is required.
-	Both require the jQuery UI core.
+	For dragging, the `jQuery UI draggable <http://jqueryui.com/demos/draggable/>`_ library is required.
+	
+	For resizing, the `jQuery UI resizable <http://jqueryui.com/demos/resizable/>`_ library is required.
 	
 **disableDragging**: Boolean, *Default*: ``false``
-	Disables all event dragging, even when events are editable
+	Disables all event dragging, even when events are editable.
 
 **disableResizing**: Boolean, *Default*: ``false``
-	Disables all event resizing, even when events are editable
+	Disables all event resizing, even when events are editable.
 	
 **dragOpacity**: Float, *Default*: ``1.0``
 	The opacity of an event when it is being dragged.
 
 **dragRevertDuration**: Float, *Default*: ``500``
 	The time in milliseconds it takes for an event to revert to its
-	original position after un unsuccessful drag.
+	original position after an unsuccessful drag.
 	
 	
 Time & Date Formatting
@@ -120,33 +105,45 @@ Time & Date Formatting
 
 **titleFormat**: String/Object
 	Determines the text that will be displayed in the header's title
-	using formatDates' format string. A string will set the title format
-	for ALL views. An object hash will set the format on a per-view basis.
+	using :ref:`formatDates' <formatDates>`' format string. A string will set the title format
+	for *all* views. An object hash will set the format on a per-view basis.
 	Here is the default, showing example outputs for each view::
 	
 		{
-			month: 'MMMM yyyy', // September 2009
+			month: 'MMMM yyyy',                            // September 2009
 			week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}", // Sep 7 - 13 2009
-			day: 'dddd, MMM d, yyyy' // Tuesday, Sep 8, 2009
+			day: 'dddd, MMM d, yyyy'                       // Tuesday, Sep 8, 2009
 		}
 
 **columnFormat**: String/Object
-	Determines the text that will be displayed on a view's column headers
-	using formatDates' format string. A string will set the column header format
-	for ALL views. An object hash will set the format on a per-view basis.
+	Determines the text that will be displayed on a view's column headings
+	using :ref:`formatDates' <formatDates>` format string. A string will set the column header format
+	for *all* views. An object hash will set the format on a per-view basis.
 	Here is the default, showing example outputs for each view::
 	
 		{
-			month: 'ddd', // Mon
+			month: 'ddd',    // Mon
 			week: 'ddd M/d', // Mon 9/7
-			day: 'dddd M/d' // Monday 9/7
+			day: 'dddd M/d'  // Monday 9/7
 		}
 
-**timeFormat**: String, Default: ``'h(:mm)t'``
+**timeFormat**: String, *Default*: ``'h(:mm)t'``
 	Determines the time-text that will be displayed on an event
-	using formatDates' format string. The default format outputs text
-	such as 9a or 5:30p.
+	using :ref:`formatDates' <formatDates>` format string. The default format outputs text
+	such as '9a' or '5:30p'.
 	
-	Time-text will only be displayed for event objects that have
-	allDay equal to false.
+	Time-text will only be displayed for :ref:`CalEvent` that have
+	``allDay`` equal to ``false``.
+	
+	
+.. _available-views:
+	
+Available Views
+===============
+
+**month** - `see example <http://google.com/>`_
+
+**basicWeek** - `see example <http://google.com/>`_
+
+**basicDay** - `see example <http://google.com/>`_
 	
