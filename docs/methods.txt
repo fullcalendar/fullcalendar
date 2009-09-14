@@ -2,80 +2,77 @@
 Methods
 =======
 
-The folling are a list of methods that can be called on an FullCalendar-initialized
+The following are methods that can be called on a FullCalendar-initialized
 jQuery object:
 
-	prev			.fullCalendar('prev')
-		Moves the calendar one step back (either by a month, week, or day).
+**prev** - .fullCalendar('prev')
+	Moves the calendar one step back (either by a month, week, or day).
 
-	next			.fullCalendar('next')
-		Moves the calendar one step forward (either by a month, week, or day).
-		
-	today			.fullCalendar('today')
-		Moves the calendar to the current date.
+**next** - .fullCalendar('next')
+	Moves the calendar one step forward (either by a month, week, or day).
 	
-	gotoDate		.fullCalendar('gotoDate', year, month, date)
-		Moves the calendar to an arbitrary year/month/date.
-		
-		``month`` is 1-based, meaning January=1, February=2, etc
-		(different from previous versions of FullCalendar)
+**today** - .fullCalendar('today')
+	Moves the calendar to the current date.
 	
-	moveDate		.fullCalendar('moveDate', years, months, days)
-		Moves the calendar forward/backward an arbitrary amount of time
+**gotoDate** - .fullCalendar('gotoDate', *year, [month, [date]]*)
+	Moves the calendar to an arbitrary year/month/date.
 	
-	updateEvent		.fullCalendar('renderEvent', calEvent)
-		Reports changes to the given calEvent. This will cause the event
-		to be rerendered on the calendar.
-		
-		If there are repeating events on the calendar with the
-		same ID, these events will be changed as well.
-		
-		``calEvent`` must be an object retrieved from a triggered event
-		or from clientEvents.
+	``month`` is 0-based, meaning January=0, February=1, etc.
 	
-	renderEvent		.fullCalendar('renderEvent', calEvent, stick)
-		Renders a new event on the calendar. ``calEvent`` must have
-		at least a ``title`` and a ``start``.
-		
-		By default the event will disappear once the user switches views
-		or clicks prev/next. However, specifying ``stick`` as ``true``
-		will cause the event to be permanently fixed to the calendar.
+**moveDate** - .fullCalendar('moveDate', *years, [months, [days]]*)
+	Moves the calendar forward/backward an arbitrary amount of time.
 	
-	removeEvents	.fullCalendar('removeEvent', idOrFilter)
-		If the second argument is omitted, all events are removed.
-		
-		If the second argument is a calEvent ID, all events with
-		the same ID will be removed.
-		
-		The second argument may be a filter function that accepts
-		one calEvent argument and returns ``true`` or ``false`` about
-		whether is should be removed.
-		
-	clientEvents	.fullCalendar('clientEvents', idOrFilter)
-		This method will return calEvents that FullCalendar has stored on
-		the client-side (javascript in the browser).
-		
-		If the second argument is omitted, all events will be returned.
-		
-		If the second argument is a calEvent ID, all events with the
-		same ID will be returned.
-		
-		The second argument may also be a filter function that accepts
-		one calEvent argument and returns ``true`` or ``false`` about
-		whether it should be included in the result set.
+**updateEvent** - .fullCalendar('updateEvent', *calEvent*)
+	Reports changes about a modified :ref:`CalEvent <CalEvent>`. This will cause the event
+	to be rerendered on the calendar.
+	If there are repeating events on the calendar with the
+	same ID, these events will be changed as well.
+	
+	``calEvent`` must be a :ref:`CalEvent <CalEvent>` retrieved from a
+	:ref:`Triggered Action<triggered-actions>` or from the ``clientEvents`` method.
+	
+**renderEvent** - .fullCalendar('renderEvent', *calEvent, [stick]*)
+	Renders a new event on the calendar. ``calEvent`` must have
+	at least a ``title`` and a ``start``.
+	
+	By default, the event will disappear once the user switches views
+	or clicks prev/next. However, specifying ``stick`` as ``true``
+	will cause the event to be permanently fixed to the calendar.
+	
+**removeEvents** - .fullCalendar('removeEvents', *[idOrFilter]*)
+	If the second argument is omitted, all events are removed.
+	If the second argument is a :ref:`CalEvent's <CalEvent>` ID, all events with
+	the same ID will be removed.
+	
+	The second argument may also be a filter function that accepts
+	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` or ``false`` about
+	whether it should be removed.
+	
+**clientEvents** - .fullCalendar('clientEvents', *[idOrFilter]*)
+	This method will return :ref:`CalEvents <CalEvent>` that FullCalendar has stored on
+	the client-side (browser).
+	
+	If the second argument is omitted, all events will be returned.
+	If the second argument is a :ref:`CalEvent's <CalEvent>` ID, all events with the
+	same ID will be returned.
+	
+	The second argument may also be a filter function that accepts
+	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` or ``false`` about
+	whether it should be included in the result set.
 
-	addEventSource		.fullCalendar('addEventSource', source)
-		Adds an event source. ``source`` may be an array/string/function just as in
-		the ``events`` option. Events will be immediately fetched from this source
-		and placed on the calendar.
+**addEventSource** - .fullCalendar('addEventSource', *source*)
+	Adds an :ref:`Event Source <event-sources>`. ``source`` may be an array/string/function just as in
+	the ``events`` option. Events will be immediately fetched from this source
+	and placed on the calendar.
 
-	removeEventSource	.fullCalendar('removeEventSource', source)
-		Remove an event source. ``source`` must be a reference to the
-		original array/string/function.
+**removeEventSource** - .fullCalendar('removeEventSource', *source*)
+	Removes an :ref:`Event Source <event-sources>`. ``source`` must be a reference to the
+	original array/string/function. Events from the source will immediately be
+	removed from the calendar.
 
-	rerenderEvents		.fullCalendar('rerenderEvents')
-		Rerenders all events on the screen.
+**rerenderEvents** - .fullCalendar(``'rerenderEvents'``)
+	Rerenders all events on the screen.
 
-	refetchEvents		.fullCalendar('refetchEvents')
-		Refetches events from all event sources and rerenders them on the screen.
-		
+**refetchEvents** - .fullCalendar(``'refetchEvents'``)
+	Refetches events from all event sources and rerenders them on the screen.
+	
