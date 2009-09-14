@@ -8,7 +8,7 @@ var viewMethods = {
 	// - end
 	// - visStart
 	// - visEnd
-	// - eventEnd(event)
+	// - defaultEventEnd(event)
 	// - visEventEnd(event)
 	//
 	// - render
@@ -26,10 +26,20 @@ var viewMethods = {
 	
 	
 	
+	// trigger event handlers, always append view as last arg
+	
 	trigger: function(name, thisObj) {
 		if (this.options[name]) {
 			return this.options[name].apply(thisObj || this, Array.prototype.slice.call(arguments, 2).concat([this]));
 		}
+	},
+	
+	
+	
+	//
+	
+	eventEnd: function(event) {
+		return event.end || this.defaultEventEnd(event);
 	},
 	
 	
@@ -60,21 +70,6 @@ var viewMethods = {
 		}else{
 			eventElementsByID[event._id] = [element];
 		}
-	},
-	
-	
-	
-	// get events within visStart and visEnd TODO: need this? move it somewhere else?
-	
-	visibleEvents: function(events) {
-		var res=[], i, len=events.length, event;
-		for (i=0; i<len; i++) {
-			event = events[i];
-			if (this.visEventEnd(event) > this.visStart && event.start < this.visEnd) {
-				res.push(event);
-			}
-		}
-		return res;
 	},
 	
 	
@@ -115,7 +110,7 @@ var viewMethods = {
 		var i, event2, events = this.eventsByID[event._id];
 		for (i=0; i<events.length; i++) {
 			event2 = events[i];
-			event2.hasTime = event.hasTime;
+			event2.allDay = event.allDay;
 			addMinutes(addDays(event2.start, days, true), minutes);
 			if (event.end) {
 				event2.end = addMinutes(addDays(this.eventEnd(event2), days, true), minutes);
@@ -239,25 +234,9 @@ function stackSegs(segs) {
 		}else{
 			levels[j] = [seg];
 		}
-		seg.after = 0;
+		//seg.after = 0;
 	}
 	return levels;
-}
-
-function segAfters(levels) { // TODO: put in agenda.js
-	var i, j, k, level, seg, seg2;
-	for (i=levels.length-1; i>0; i--) {
-		level = levels[i];
-		for (j=0; j<level.length; j++) {
-			seg = level[j];
-			for (k=0; k<segLevels[i-1].length; k++) {
-				seg2 = segLevels[i-1][k];
-				if (segsCollide(seg, seg2)) {
-					seg2.after = Math.max(seg2.after, seg.after+1);
-				}
-			}
-		}
-	}
 }
 
 function segCmp(a, b) {

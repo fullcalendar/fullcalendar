@@ -26,12 +26,12 @@
 							var startStr = entry['gd$when'][0]['startTime'];
 							var start = $.fullCalendar.parseDate(startStr);
 							var end = $.fullCalendar.parseDate(entry['gd$when'][0]['endTime']);
-							var hasTime = startStr.indexOf('T') != -1;
+							var allDay = startStr.indexOf('T') == -1;
 							var classNames = [];
-							if (hasTime) {
-								classNames.push('fc-event-nobg');
+							if (allDay) {
+								end = new Date(end - 1); // make in inclusive
 							}else{
-								end = new Date(end - 1);
+								classNames.push('fc-event-nobg');
 							}
 							if (options.className) {
 								if (typeof options.className == 'string') {
@@ -48,7 +48,7 @@
 								end: end,
 								location: entry['gd$where'][0]['valueString'],
 								description: entry['content']['$t'],
-								hasTime: hasTime,
+								allDay: allDay,
 								className: classNames,
 								editable: options.editable || false
 							});

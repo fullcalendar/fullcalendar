@@ -81,15 +81,16 @@ function Grid(element, options, methods) {
 	// initialize superclass
 	view = $.extend(this, viewMethods, methods, {
 		renderGrid: renderGrid,
+		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		updateSize: updateSize,
-		eventEnd: function(event) {
-			return event.end || cloneDate(event.start);
+		defaultEventEnd: function(event) {
+			return cloneDate(event.start);
 		},
 		visEventEnd: function(event) {
 			if (event.end) {
 				var end = cloneDate(event.end);
-				return (!event.hasTime || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
+				return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
 			}else{
 				return addDays(cloneDate(event.start), 1);
 			}
@@ -108,13 +109,12 @@ function Grid(element, options, methods) {
 	}
 
 	function renderGrid(r, c, colFormat, showNumbers, fetchEvents) {
-		//console.log('renderGrid!');
 		rowCnt = r;
 		colCnt = c;
 	
 		var month = view.start.getMonth(),
 			today = clearTime(new Date()),
-			s, s2, s3, i, j, d = cloneDate(view.visStart);
+			s, i, j, d = cloneDate(view.visStart);
 		
 		// update option-derived variables
 		tm = options.theme ? 'ui' : 'fc'; 
@@ -131,28 +131,23 @@ function Grid(element, options, methods) {
 		
 			var table = $("<table/>").appendTo(element);
 			
-			s = '';
+			s = "<thead><tr>";
 			for (i=0; i<colCnt; i++) {
-				s2 = "<th class='fc-" +
+				s += "<th class='fc-" +
 					dayIDs[d.getDay()] + ' ' + // needs to be first
-					tm + '-state-default ' +
+					tm + '-state-default' +
 					(i==dit ? ' fc-left' : '') +
-					"'>" + formatDate(d, colFormat, options) + "</th>"; // TODO: optionize
-				//if (rtl) {
-				//	s = s2 + s;
-				//}else{
-					s += s2;
-				//}
+					"'>" + formatDate(d, colFormat, options) + "</th>";
 				addDays(d, 1);
 			}
-			thead = $("<thead><tr>" + s + "</tr></thead>").appendTo(table);
+			thead = $(s + "</tr></thead>").appendTo(table);
 			
 			s = "<tbody>";
 			d = cloneDate(view.visStart);
 			for (i=0; i<rowCnt; i++) {
-				s2 = '';
+				s += "<tr class='fc-week" + i + "'>";
 				for (j=0; j<colCnt; j++) {
-					s3 = "<td class='fc-" +
+					s += "<td class='fc-" +
 						dayIDs[d.getDay()] + ' ' + // needs to be first
 						tm + '-state-default fc-day' + (i*colCnt+j) +
 						(j==dit ? ' fc-left' : '') +
@@ -162,14 +157,9 @@ function Grid(element, options, methods) {
 						' fc-not-today') + "'>" +
 						(showNumbers ? "<div class='fc-day-number'>" + d.getDate() + "</div>" : '') +
 						"<div class='fc-day-content'><div>&nbsp;</div></div></td>";
-					//if (rtl) {
-					//	s2 = s3 + s2;
-					//}else{
-						s2 += s3;
-					//}
 					addDays(d, 1);
 				}
-				s += "<tr class='fc-week" + i + "'>" + s2 + "</tr>";
+				s += "</tr>";
 			}
 			tbody = $(s + "</tbody>").appendTo(table);
 			tbody.find('td').click(dayClick);
@@ -182,60 +172,67 @@ function Grid(element, options, methods) {
 			if (rowCnt < prevRowCnt) {
 				tbody.find('tr:gt(' + (rowCnt-1) + ')').remove(); // remove extra rows
 			}
-			else if (rowCnt > prevRowCnt) {
+			else if (rowCnt > prevRowCnt) { // needs to create new rows...
 				s = '';
 				for (i=prevRowCnt; i<rowCnt; i++) {
-					s2 = '';
+					s += "<tr class='fc-week" + i + "'>";
 					for (j=0; j<colCnt; j++) {
-						s3 = "<td class='fc-" +
-							dayIDs[(j * dis + dit + weekStart) % 7] + ' ' + // needs to be first
-							tm + '-state-default fc-new fc-day' + (i*colCnt + j) +
+						s += "<td class='fc-" +
+							dayIDs[d.getDay()] + ' ' + // needs to be first
+							tm + '-state-default fc-new fc-day' + (i*colCnt+j) +
 							(j==dit ? ' fc-left' : '') + "'>" +
 							(showNumbers ? "<div class='fc-day-number'></div>" : '') +
 							"<div class='fc-day-content'><div>&nbsp;</div></div>" +
 							"</td>";
-						//if (rtl) {
-						//	s2 = s3 + s2;
-						//}else{
-							s2 += s3;
-						//}
+						addDays(d, 1);
 					}
-					s += "<tr class='fc-week" + i + "'>" + s2 + "</tr>";
+					s += "</tr>";
 				}
 				tbody.append(s);
 			}
 			tbody.find('td.fc-new').removeClass('fc-new').click(dayClick);
 			
 			// re-label and re-class existing cells
-			tbody.find('tr').each(function() {
-				for (i=0; i<colCnt; i++) {
-					var td = $(this.childNodes[i]); // * dis + dit TODO: clean
-					if (rowCnt > 1) {
-						if (d.getMonth() == month) {
-							td.removeClass('fc-other-month');
-						}else{
-							td.addClass('fc-other-month');
-						}
-					}
-					if (+d == +today) {
-						td.removeClass('fc-not-today')
-							.addClass('fc-today')
-							.addClass(tm + '-state-highlight');
+			d = cloneDate(view.visStart);
+			tbody.find('td').each(function() {
+				var td = $(this);
+				if (rowCnt > 1) {
+					if (d.getMonth() == month) {
+						td.removeClass('fc-other-month');
 					}else{
-						td.addClass('fc-not-today')
-							.removeClass('fc-today')
-							.removeClass(tm + '-state-highlight');
+						td.addClass('fc-other-month');
 					}
-					td.find('div.fc-day-number').text(d.getDate());
-					addDays(d, 1);
 				}
+				if (+d == +today) {
+					td.removeClass('fc-not-today')
+						.addClass('fc-today')
+						.addClass(tm + '-state-highlight');
+				}else{
+					td.addClass('fc-not-today')
+						.removeClass('fc-today')
+						.removeClass(tm + '-state-highlight');
+				}
+				td.find('div.fc-day-number').text(d.getDate());
+				addDays(d, 1);
 			});
 			
-			if (colCnt == 1) {
-				var startDay = this.visStart.getDay();
-				var td = tbody.find('td')[0];
-				td.className = td.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[startDay]);
-				thead.find('th').text(formatDate(this.start, colFormat, options));
+			if (rowCnt == 1) { // more likely changed (week or day view)
+			
+				// redo column header text and class
+				d = cloneDate(view.visStart);
+				thead.find('th').each(function() {
+					$(this).text(formatDate(d, colFormat, options));
+					this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
+					addDays(d, 1);
+				});
+				
+				// redo cell day-of-weeks
+				d = cloneDate(view.visStart);
+				tbody.find('td').each(function() {
+					this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
+					addDays(d, 1);
+				});
+				
 			}
 		
 		}
@@ -297,7 +294,7 @@ function Grid(element, options, methods) {
 	
 	function renderEvents(events) {
 		view.reportEvents(events);
-		renderSegs(cachedSegs = compileSegs(events)); // view.visibleEvents(
+		renderSegs(cachedSegs = compileSegs(events));
 	}
 	
 	
@@ -388,10 +385,9 @@ function Grid(element, options, methods) {
 					}
 					eventElement = $("<div class='" + eventClasses.join(' ') + "'/>")
 						.append(eventAnchor = $("<a/>")
-							.append(event.hasTime ?
+							.append(event.allDay ? null :
 								$("<span class='fc-event-time'/>")
-									.html(formatDate(event.start, options.eventTimeFormat, options)) :
-								null)
+									.html(formatDates(event.start, event.end, options.timeFormat, options)))
 							.append($("<span class='fc-event-title'/>")
 								.text(event.title)));
 					if (event.url) {

@@ -78,7 +78,7 @@ always available (:ref:`more below <view-object>`).
 	
 	``this`` is set to the event's element
 
-**eventResized**: function(*event, dayDelta, minuteDelta, jsEvent, ui, view*)
+**eventResize**: function(*calEvent, dayDelta, minuteDelta, jsEvent, ui, view*)
 	Triggered when an event is resized and *changed in duration*.
 	
 	``dayDelta`` holds the number of days the event's end time was moved

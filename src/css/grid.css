@@ -6,12 +6,12 @@
 	width: 100%;
 	}
 	
-.fc-grid th {
+.fc .fc-grid th {
 	border-width: 0 0 0 1px;
 	text-align: center;
 	}
 	
-.fc-grid td {
+.fc .fc-grid td {
 	border-width: 1px 0 0 1px;
 	}
 	

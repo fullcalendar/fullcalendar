@@ -1,4 +1,20 @@
 
+function segAfters(levels) { // TODO: put in agenda.js
+	var i, j, k, level, seg, seg2;
+	for (i=levels.length-1; i>0; i--) {
+		level = levels[i];
+		for (j=0; j<level.length; j++) {
+			seg = level[j];
+			for (k=0; k<segLevels[i-1].length; k++) {
+				seg2 = segLevels[i-1][k];
+				if (segsCollide(seg, seg2)) {
+					seg2.after = Math.max(seg2.after, seg.after+1);
+				}
+			}
+		}
+	}
+}
+
 /********************************* week view ***********************************/
 
 $.fullCalendar.views.week = function(element, options) {

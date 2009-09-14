@@ -4,14 +4,14 @@
 
 var DAY_MS = 86400000;
 
-function addMonths(d, n, keepTime) {
-	d.setMonth(d.getMonth() + n);
+function addYears(d, n, keepTime) {
+	d.setFullYear(d.getFullYear() + n);
 	if (keepTime) return d;
 	return clearTime(d);
 }
 
-function addYears(d, n, keepTime) {
-	d.setFullYear(d.getFullYear() + n);
+function addMonths(d, n, keepTime) {
+	d.setMonth(d.getMonth() + n);
 	if (keepTime) return d;
 	return clearTime(d);
 }
