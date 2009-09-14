@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+<link rel='stylesheet' type='text/css' href='../examples/redmond/theme.css' />
 <script type='text/javascript' src='loader.js'></script>
 <script type='text/javascript'>
 
@@ -10,15 +11,19 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
+		
+			theme: true,
+			editable: true,
+			
 			header: {
 				center: 'month,basicWeek,basicDay'
 			},
-			editable: true,
 			
-			isRTL: true,
-			weekMode: 'variable',
-			
-			// TODO: add drag & resize tests
+			buttonIcons: {
+				prev: 'triangle-1-w',
+				next: 'triangle-1-e',
+				today: 'home'
+			},
 			
 			events: [
 				{

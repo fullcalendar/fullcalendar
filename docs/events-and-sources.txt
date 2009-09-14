@@ -77,6 +77,11 @@ CalEvent:
 
 **title**: String
 	The text on an event's element
+	
+**allDay**: Boolean (optional, defaults to ``true``)
+	Determines whether the start-date and end-date's times should be ignored.
+	If ``true``, times will be ignored. If ``false``, times will be considered,
+	displaying them on each event (like the text '3pm').
 
 **date**: Date
 	Alias for ``start``
@@ -91,18 +96,17 @@ CalEvent:
 
 **end**: Date (optional)
 	A javascript Date object indicating the date/time an event ends.
-	If the event is an all-day event, specifies the inclusive last day
-	of the event. (This is different from previous versions of FullCalendar).
+	As with ``start``, IETF and ISO8601 strings can be used.
 	
-	For example, an all-day event with start on *Nov 10* and end on *Nov 12*
-	would span *3 days*.
+	**If an event is all-day...**
 	
-	As with ``start``, IETF and ISO8601 strings can be used with an
-	:ref:`Event Source <event-sources>`.
-
-**allDay**: Boolean (optional, defaults to ``true``)
-	Determines whether an event's time is displayed (such as 3pm).
-	``false`` will show the time, ``true`` will not.
+	the end date is *inclusive*. This means an event with ``start`` *Nov 10* and
+	``end`` *Nov 12* will span *3 days* on the calendar.
+	
+	**If an event is NOT all-day...**
+	
+	the end date is *exclusive*. This is only a gotcha when your ``end`` has time 00:00.
+	It means your event ends on midnight, and it will *not* span through the next day.
 
 **className**: String/Array (optional)
 	A CSS class (or array of classes) that will be attached to this event's

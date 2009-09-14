@@ -1,145 +1,144 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
-<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
-<style type='text/css'>
-
-	.full-calendar-month .static td {
-		background: blue;
-		color: yellow;
-	}
-	
-	.full-calendar-month .gcal td {
-		background: lightgreen;
-	}
-
-</style>
-
-<!--
-<script type='text/javascript' src='legacy_jquery/jquery.js'></script>
-<script type='text/javascript' src='legacy_jquery/ui.core.js'></script>
-<script type='text/javascript' src='legacy_jquery/ui.draggable.js'></script>
--->
-
-<script type='text/javascript' src='../jquery/jquery.js'></script>
-<script type='text/javascript' src='../jquery/ui.core.js'></script>
-<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
-
-<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
-<!--<script type='text/javascript' src='../build/fullcalendar.min.js'></script>-->
-<script type='text/javascript' src='../fullcalendar/gcal.js'></script>
-<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript' src='loader.js'></script>
 <script type='text/javascript'>
 
-$(document).ready(function() {
-
+	var cal;
 	var d = new Date();
 	var y = d.getFullYear();
 	var m = d.getMonth();
 	
-	var gcalSource = $.fullCalendar.gcalFeed(
-		'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
-		{draggable: true, className: 'gcal'}
-	);
+	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 	
-	var staticSource = [
+	var jsonFeed = "../examples/json_events.php";
+	
+	var staticEvents = [
 		{
 			id: 1,
 			title: "Long Event",
-			start: new Date(y, m, 6, 14, 0),
-			end: new Date(y, m, 11),
-			className: 'static'
+			date: new Date(y, m, 6), //!
+			end: new Date(y, m, 10),
+			className: 'red-event'
 		},
 		{
 			id: 2,
-			title: "Repeating Event",
-			start: new Date(y, m, 2),
-			className: 'static'
+			title: "Repeating",
+			start: new Date(y, m, 2)
 		},
 		{
 			id: 2,
-			title: "Repeating Event",
-			start: new Date(y, m, 9),
-			className: 'static'
+			title: "Repeating",
+			start: new Date(y, m, 9)
 		},
 		{
 			id: 3,
 			title: "Meeting",
 			start: new Date(y, m, 20, 9, 0),
-			className: 'static'
+			end: new Date(y, m, 21, 0, 0),
+			allDay: false,
+			//className: 'yellow-event black-text-event',
+			className: ['yellow-event', 'black-text-event'],
+			editable: false
 		},
 		{
 			id: 4,
 			title: "Click for Facebook",
-			start: new Date(y, m, 27, 16),
-			end: new Date(y, m, 29),
-			url: "http://facebook.com/",
-			className: 'static'
+			start: new Date(y, m, 27),
+			end: new Date(y, m, 28),
+			url: "http://facebook.com/"
+		},
+		{
+			id: 5,
+			title: "timed event1",
+			start: new Date (y, m, 31, 17, 30),
+			allDay: false
+		},
+		{
+			id: 6,
+			title: "timed event1",
+			start: new Date (y, m+1, 2, 14, 15),
+			allDay: false
+		},
+		{
+			id: 7,
+			title: "timed event1",
+			start: new Date (y, m+1, 4, 15, 00),
+			end: new Date(y, m+1, 4, 17, 00),
+			allDay: false
 		}
 	];
 	
-	var jsonSource = "../examples/json_events.php";
-
-	$('#calendar').fullCalendar({
-	
-		draggable: true,
-		
-		eventSources: [staticSource, gcalSource],
-		
-		loading: function(bool) {
-			if (bool) {
-				$('#loading').css('visibility', 'visible');
-			}else{
-				$('#loading').css('visibility', 'hidden');
+	var customSource = function(start, end, callback) {
+		callback([
+			{
+				title: 'FIRST',
+				start: start
+			},
+			{
+				title: 'LAST',
+				start: new Date(end - 1)
 			}
-		}
-		
-	});
-	
-	window.addStaticSource = function() {
-		$('#calendar').fullCalendar('addEventSource', staticSource);
-	};
-	
-	window.addJsonSource = function() {
-		$('#calendar').fullCalendar('addEventSource', jsonSource);
-	};
-	
-	window.addGcalSource = function() {
-		$('#calendar').fullCalendar('addEventSource', gcalSource);
-	};
-	
-	window.removeStaticSource = function() {
-		$('#calendar').fullCalendar('removeEventSource', staticSource);
-	};
-	
-	window.removeJsonSource = function() {
-		$('#calendar').fullCalendar('removeEventSource', jsonSource);
-	};
-	
-	window.removeGcalSource = function() {
-		$('#calendar').fullCalendar('removeEventSource', gcalSource);
+		]);
 	};
 
-});
+	$(document).ready(function() {
+		cal = $('#calendar').fullCalendar({
+			editable: true,
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,basicWeek,basicDay'
+			},
+			//events: staticEvents,
+			eventSources: [
+				staticEvents,
+				jsonFeed,
+				gcalFeed,
+				customSource
+			],
+			loading: function(bool) {
+				if (bool) {
+					$('#loading').show();
+				}else{
+					$('#loading').hide();
+				}
+			}
+			/*
+			,
+			startParam: 'mystart',
+			endParam: 'myend',
+			cacheParam: 'uniq'
+			*/
+		});
+	});
 
 </script>
+<style>
+
+	.red-event a {
+		background: red;
+	}
+	
+	.yellow-event a {
+		background: yellow;
+	}
+	
+	.black-text-event a {
+		color: #000;
+	}
+
+	button {
+		font-size: 11px;
+	}
+
+</style>
 </head>
-<body style='font-size:14px;font-family:Arial'>
-
-<div style='float:right'>
-<input type='button' value='add static event source' onclick='addStaticSource()' /><br />
-<input type='button' value='* add json event source' onclick='addJsonSource()' /><br />
-<input type='button' value='add gcal event source' onclick='addGcalSource()' /><br />
-<br />
-<input type='button' value='remove static event source' onclick='removeStaticSource()' /><br />
-<input type='button' value='remove json event source' onclick='removeJsonSource()' /><br />
-<input type='button' value='remove gcal event source' onclick='removeGcalSource()' /><br />
-<br />
-<input type='button' value='refresh' onclick="$('#calendar').fullCalendar('refresh')" />
-</div>
-
-<div style='visibility:hidden' id='loading'>loading...</div>
-<div id='calendar' style='float:left;width:75%'></div>
+<body style='font-size:12px'>
+<div id='loading' style='position:absolute;top:0;left:0;display:none'>loading...</div>
+<p>
+<button onclick="cal.fullCalendar('refetchEvents')">refetch</button>
+</p>
+<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>

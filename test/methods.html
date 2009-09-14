@@ -1,110 +1,150 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
-<link rel='stylesheet' type='text/css' href='jgrowl/jgrowl.css' />
-<style type='text/css'>
-
-	.newclass { color: red }
-
-</style>
-<script type='text/javascript' src='../jquery/jquery.js'></script>
-<script type='text/javascript' src='../jquery/ui.core.js'></script>
-<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
-<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
-<script type='text/javascript' src='jgrowl/jgrowl.js'></script>
+<script type='text/javascript' src='loader.js'></script>
 <script type='text/javascript'>
 
-$(document).ready(function() {
-
-	$('#calendar').fullCalendar({
-	
-		title: false,
-		buttons: false,
-		monthDisplay: function(year, month, title) {
-			$('h3').text(title);
-		},
-		
-		draggable: true
-		
-	});
-
-});
-
-function addTestEvents() {
-
+	var cal;
 	var d = new Date();
 	var y = d.getFullYear();
-	var m = d.getMonth()+1;
-	if (m<10) m = '0' + m;
+	var m = d.getMonth();
 	
-	$('#calendar').fullCalendar('addEvent', {
-		id: 99,
-		title: 'Some event',
-		start: y+'-'+m+'-02'
+	var staticEvents;
+
+	$(document).ready(function() {
+		cal = $('#calendar').fullCalendar({
+			editable: true,
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,basicWeek,basicDay'
+			},
+			events: staticEvents = [
+				{
+					id: 1,
+					title: "Long Event",
+					start: new Date(y, m, 6),
+					end: new Date(y, m, 10)
+				},
+				{
+					id: 2,
+					title: "Repeating",
+					start: new Date(y, m, 2)
+				},
+				{
+					id: 2,
+					title: "Repeating",
+					start: new Date(y, m, 9)
+				},
+				{
+					id: 3,
+					title: "Meeting",
+					start: new Date(y, m, 20, 9, 0),
+					end: new Date(y, m, 21, 0, 0),
+					allDay: false
+				},
+				{
+					id: 4,
+					title: "Click for Facebook",
+					start: new Date(y, m, 27),
+					end: new Date(y, m, 28),
+					url: "http://facebook.com/"
+				},
+				{
+					id: 5,
+					title: "timed event1",
+					start: new Date (y, m, 31, 17, 30),
+					allDay: false
+				},
+				{
+					id: 6,
+					title: "timed event1",
+					start: new Date (y, m+1, 2, 14, 15),
+					allDay: false
+				},
+				{
+					id: 7,
+					title: "timed event1",
+					start: new Date (y, m+1, 4, 15, 00),
+					end: new Date(y, m+1, 4, 17, 00),
+					allDay: false
+				}
+			]
+		});
 	});
 	
-	$('#calendar').fullCalendar('addEvent', {
-		id: 99,
-		title: 'Some event',
-		start: y+'-'+m+'-09'
-	});
-	
-	$('#calendar').fullCalendar('addEvent', {
-		id: 5,
-		title: 'Birthday',
-		start: y+'-'+m+'-20'
-	});
-	
-}
-
-function updateTestEvents() {
-
-	var d = new Date();
-	var y = d.getFullYear();
-	var m = d.getMonth()+1;
-	if (m<10) m = '0' + m;
-
-	var reps = $('#calendar').fullCalendar('getEventsById', 99);
-	var e = reps[1];
-	e.title = "Better Title!";
-	e.start = y+'-'+m+'-11';
-	e.end = y+'-'+m+'-13';
-	e.className = 'newclass';
-	e.draggable = false;
-	e.showTime = true;
-	$('#calendar').fullCalendar('updateEvent', e);
-	
-}
-
-function removeTestEvents(therepeating) {
-	if (therepeating) {
-		$('#calendar').fullCalendar('removeEvent', 99);
-	}else{
-		$('#calendar').fullCalendar('removeEvent', 5);
+	function updateEventStart() {
+		var event = cal.fullCalendar('clientEvents', 3)[0];
+		event.start = new Date(y, m, 25, 10, 30);
+		event.end = new Date(y, m, 26);
+		cal.fullCalendar('updateEvent', event);
 	}
-}
+	
+	function updateRepeatingEvent() {
+		var event = cal.fullCalendar('clientEvents', 2)[0];
+		event.start = new Date(y, m, 4, 13, 30);
+		event.end = new Date(y, m, 5, 1, 0);
+		event.allDay = false;
+		event.title = "repeat yo";
+		cal.fullCalendar('updateEvent', event);
+		console.log(cal.fullCalendar('clientEvents', 2));
+	}
+	
+	function renderEvent(stick) {
+		cal.fullCalendar('renderEvent', {
+			start: new Date(y, m, 16),
+			title: 'heyman'
+		}, stick);
+	}
+	
+	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
+	
+	var jsonFeed = "../examples/json_events.php";
 
 </script>
+<style>
+
+	button {
+		font-size: 11px;
+	}
+
+</style>
 </head>
-<body style='font-size:14px;font-family:Arial'>
-
-<div style='float:right'>
-<input type='button' value='add test events' onclick='addTestEvents()' /><br />
-<input type='button' value='update test events' onclick='updateTestEvents()' /><br />
-<input type='button' value='delete repeating events' onclick='removeTestEvents(true)' /><br />
-<input type='button' value='delete single event' onclick='removeTestEvents(false)' /><br />
-</div>
-
-<h3></h3>
+<body style='font-size:12px'>
 <p>
-<a href='#' onclick="$('#calendar').fullCalendar('today')">today</a> &nbsp;
-<a href='#' onclick="$('#calendar').fullCalendar('prevMonth')">prev</a> &nbsp;
-<a href='#' onclick="$('#calendar').fullCalendar('nextMonth')">next</a> &nbsp;
-<a href='#' onclick="$('#calendar').fullCalendar('prevYear')">prevyear</a> &nbsp;
-<a href='#' onclick="$('#calendar').fullCalendar('nextYear')">nextyear</a> &nbsp;
-<a href='#' onclick="$('#calendar').fullCalendar('gotoMonth', 1986, 5)">June 1986</a>
+
+<button onclick="cal.fullCalendar('prev')">prev</button>
+<button onclick="cal.fullCalendar('next')">next</button>
+<button onclick="cal.fullCalendar('today')">today</button>
+<button onclick="cal.fullCalendar('gotoDate', 1999, 9, 31)">Oct 31 1999</button>
+<button onclick="cal.fullCalendar('moveDate', 1, 1, 1)">+1 +1 +1</button>
+<button onclick="cal.fullCalendar('moveDate', -1, -1, -1)">-1 -1 -1</button>
+
+<button onclick="updateEventStart()">update event start</button>
+<button onclick="updateRepeatingEvent()">update repeating event</button>
+<button onclick="renderEvent(false)">render new event</button>
+<button onclick="renderEvent(true)">render new sticky event</button>
+<br />
+
+<button onclick="cal.fullCalendar('removeEvents')">remove all</button>
+<button onclick="cal.fullCalendar('removeEvents', 2)">remove repeating events</button>
+<button onclick="cal.fullCalendar('removeEvents', function(e){return !e.allDay})">remove timed events</button>
+<button onclick="console.log(cal.fullCalendar('clientEvents'))">log events</button>
+<button onclick="console.log(cal.fullCalendar('clientEvents', '2'))">log repeating events</button>
+<button onclick="console.log(cal.fullCalendar('clientEvents', function(e){return e.allDay}))">log all-day events</button>
+<br />
+
+<button onclick="cal.fullCalendar('addEventSource', staticEvents)">+ static events</button>
+<button onclick="cal.fullCalendar('removeEventSource', staticEvents)">- static events</button>
+<button onclick="cal.fullCalendar('addEventSource', gcalFeed)">+ gcal</button>
+<button onclick="cal.fullCalendar('removeEventSource', gcalFeed)">- gcal</button>
+<button onclick="cal.fullCalendar('addEventSource', jsonFeed)">+ json</button>
+<button onclick="cal.fullCalendar('removeEventSource', jsonFeed)">- json</button>
+
+<button onclick="cal.fullCalendar('rerenderEvents')">rerender</button>
+<button onclick="cal.fullCalendar('refetchEvents')">refetch</button>
+
 </p>
-<div id='calendar' style='width:75%'></div>
+<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>

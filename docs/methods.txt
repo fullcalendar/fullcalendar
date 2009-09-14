@@ -35,8 +35,8 @@ jQuery object:
 	Renders a new event on the calendar. ``calEvent`` must have
 	at least a ``title`` and a ``start``.
 	
-	By default, the event will disappear once the user switches views
-	or clicks prev/next. However, specifying ``stick`` as ``true``
+	By default, the event will disappear once the calendar refetches its event
+	sources (example: when prev/next is clicked). However, specifying ``stick`` as ``true``
 	will cause the event to be permanently fixed to the calendar.
 	
 **removeEvents** - .fullCalendar('removeEvents', *[idOrFilter]*)

@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript'>
+
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth();
+
+	$(document).ready(function() {
+		$('#calendar').fullCalendar({
+			editable: true,
+			eventSources: [
+				$.fullCalendar.gcalFeed(
+					"http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+					{
+						//editable: true,
+						className: 'holiday'
+					}
+				),
+				/*$.fullCalendar.gcalFeed(
+					"http://www.google.com/calendar/feeds/mike%40maddogsportsbar.com/private-4ad75f9427058f8fe6525c0857c59fbc/basic",
+					{
+						className: 'maddog'
+					}
+				),*/
+				[
+					{
+						id: 1,
+						title: "Long Event",
+						start: new Date(y, m, 6),
+						end: new Date(y, m, 10)
+					},
+					{
+						id: 2,
+						title: "Repeating",
+						start: new Date(y, m, 2)
+					},
+					{
+						id: 2,
+						title: "Repeating",
+						start: new Date(y, m, 9)
+					},
+					{
+						id: 3,
+						title: "Meeting",
+						start: new Date(y, m, 20, 9, 0),
+						end: new Date(y, m, 20, 10, 0),
+						allDay: false
+					},
+					{
+						id: 4,
+						title: "Click for Facebook",
+						start: new Date(y, m, 27),
+						end: new Date(y, m, 28),
+						url: "http://facebook.com/"
+					},
+					{
+						id: 5,
+						title: "timed event1",
+						start: new Date (y, m, 31, 17, 30),
+						allDay: false
+					},
+					{
+						id: 6,
+						title: "timed event1",
+						start: new Date (y, m+1, 2, 14, 15),
+						allDay: false
+					},
+					{
+						id: 7,
+						title: "timed event1",
+						start: new Date (y, m+1, 4, 15, 00),
+						end: new Date(y, m+1, 4, 17, 00),
+						allDay: false
+					}
+				]
+			]
+		});
+	});
+
+</script>
+<style>
+
+	.holiday,
+	.holiday a {
+		background: green;
+		border-color: green;
+		}
+		
+	.maddog,
+	.maddog a {
+		background: red;
+		border-color: red;
+		}
+		
+		
+
+	/* rescued from fullcalendar.css (not used here) */
+	
+	.fc-event-nobg,
+	.fc-event-nobg a,
+	.fc-agenda .fc-event-nobg .fc-event-time {
+		border-style: none;
+		background: none;
+		color: inherit;
+		}
+
+</style>
+</head>
+<body style='font-size:12px'>
+<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
+</body>
+</html>

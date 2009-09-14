@@ -12,9 +12,9 @@ var defaults = {
 	defaultView: 'month',
 	aspectRatio: 1.35,
 	header: {
-		left: 'prev,next today',
-		center: 'title',
-		right: 'month,basicWeek,basicDay'
+		left: 'title',
+		center: '',
+		right: 'today prev,next'
 	},
 	
 	// event ajax
@@ -23,7 +23,7 @@ var defaults = {
 	cacheParam: '_',
 	
 	// time formats
-	eventTimeFormat: 'h(:mm)t',
+	timeFormat: 'h(:mm)t', // for events
 	titleFormat: {
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
@@ -62,9 +62,9 @@ var defaults = {
 // right-to-left defaults
 var rtlDefaults = {
 	header: {
-		left: 'basicDay,basicWeek,month',
-		center: 'title',
-		right: 'today next,prev'
+		left: 'next,prev today',
+		center: '',
+		right: 'title'
 	},
 	buttonText: {
 		prev: '&#9658;',
@@ -254,7 +254,7 @@ $.fn.fullCalendar = function(options) {
 		// Fetch from a particular source. Append to the 'events' array
 		function fetchEventSource(src, callback) {
 			var prevDate = cloneDate(date),
-				reportEvents = function(a, dontPopLoading) {
+				reportEvents = function(a) {
 					if (+date == +prevDate) {
 						for (var i=0; i<a.length; i++) {
 							normalizeEvent(a[i]);
@@ -262,12 +262,13 @@ $.fn.fullCalendar = function(options) {
 						}
 						events = events.concat(a);
 					}
-					if (!dontPopLoading) {
-						popLoading();
-					}
 					if (callback) {
 						callback(a);
 					}
+				},
+				reportPopEvents = function(a) {
+					reportEvents(a);
+					popLoading();
 				};
 			if (typeof src == 'string') {
 				var params = {};
@@ -275,14 +276,14 @@ $.fn.fullCalendar = function(options) {
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
 				params[options.cacheParam] = (new Date()).getTime();
 				pushLoading();
-				$.getJSON(src, params, reportEvents);
+				$.getJSON(src, params, reportPopEvents);
 			}
 			else if ($.isFunction(src)) {
 				pushLoading();
-				src(cloneDate(eventStart), cloneDate(eventEnd), reportEvents);
+				src(cloneDate(eventStart), cloneDate(eventEnd), reportPopEvents);
 			}
 			else {
-				reportEvents(src, true); // src is an array
+				reportEvents(src); // src is an array
 			}
 		}
 		
@@ -329,72 +330,122 @@ $.fn.fullCalendar = function(options) {
 				render();
 			},
 			
-			gotoDate: function() {
+			gotoDate: function(year, month, dateNum) {
+				if (typeof year != 'undefined') {
+					date.setYear(year);
+				}
+				if (typeof month != 'undefined') {
+					date.setMonth(month);
+				}
+				if (typeof dateNum != 'undefined') {
+					date.setDate(dateNum);
+				}
+				render();
 			},
 			
-			moveDate: function() {
+			moveDate: function(years, months, days) {
+				if (typeof years != 'undefined') {
+					addYears(date, years);
+				}
+				if (typeof months != 'undefined') {
+					addMonths(date, months);
+				}
+				if (typeof days != 'undefined') {
+					addDays(date, days);
+				}
+				render();
 			},
 			
 			//
 			// Event Rendering
 			//
 			
-			renderEvent: function(event, stick) {
-				if (typeof event != 'object') {
-					event = eventsByID(event)[0]; // assumed to be ID
-					if (!event) return;
-				}else{
-					normalizeEvent(event);
-				}
+			updateEvent: function(event) {
 				var startDelta = event.start - event._start,
-					msDuration = event.end - event.start,
-					i, len = events.length, e,
-					found = false;
+					endDelta = event.end ? (event.end - (event._end || view.defaultEventEnd(event))) : 0,
+					i, len = events.length, e;
 				for (i=0; i<len; i++) {
 					e = events[i];
-					if (e._id == event._id) {
-						if (e != event) {
-							e._start = cloneDate(e.start = new Date(+e.start + startDelta));
-							e.end = new Date(+e.start + msDuration);
-							e.title = event.title;
-							e.hasTime = event.hasTime;
-							if (stick && !event.source) {
-								(event.source = eventSources[0]).push(event);
+					if (e._id == event._id && e != event) {
+						e.start = new Date(+e.start + startDelta);
+						if (event.end) {
+							if (e.end) {
+								e.end = new Date(+e.end + endDelta);
+							}else{
+								e.end = new Date(+view.defaultEventEnd(e) + endDelta);
 							}
+						}else{
+							e.end = null;
 						}
-						found = true;
+						e.title = event.title;
+						e.allDay = event.allDay;
+						normalizeEvent(e);
 					}
 				}
-				if (!found) {
+				normalizeEvent(event);
+				eventsChanged();
+			},
+			
+			renderEvent: function(event, stick) {
+				normalizeEvent(event);
+				if (!event.source) {
+					if (stick) {
+						(event.source = eventSources[0]).push(event);
+					}
 					events.push(event);
 				}
 				eventsChanged();
 			},
 			
-			removeEvent: function(id) {
-				if (typeof id == 'object') {
-					id = id._id;
+			removeEvents: function(filter) {
+				if (!filter) { // remove all
+					events = [];
+					// clear all array sources
+					for (var i=0; i<eventSources.length; i++) {
+						if (typeof eventSources[i] == 'object') {
+							eventSources[i] = [];
+						}
+					}
 				}else{
-					id += '';
+					if (!$.isFunction(filter)) { // an event ID
+						var id = filter + '';
+						filter = function(e) {
+							return e._id == id;
+						};
+					}
+					events = filterArray(events, function(e) {
+						return !filter(e);
+					});
+					// remove events from array sources
+					for (var i=0; i<eventSources.length; i++) {
+						if (typeof eventSources[i] == 'object') {
+							eventSources[i] = filterArray(eventSources[i], function(e) {
+								return !filter(e);
+							});
+						}
+					}
 				}
-				removeEvents(function(e) {
-					return e._id != id;
-				});
+				eventsChanged();
 			},
 			
 			clientEvents: function(filter) {
-				if (filter) {
+				if ($.isFunction(filter)) {
 					return filterArray(events, filter);
-				}else{
+				}
+				else if (filter) { // an event ID
+					filter += '';
+					return filterArray(events, function(e) {
+						return e._id == filter;
+					});
+				}
+				else {
 					return events;
 				}
 			},
 			
-			rerender: function() {
+			rerenderEvents: function() {
+				view.rerenderEvents();
 			},
-			
-			clientEventsByID: eventsByID,
-			removeEvents: removeEvents,
 			
 			//
 			// Event Source
@@ -418,45 +469,13 @@ $.fn.fullCalendar = function(options) {
 				eventsChanged();
 			},
 			
-			refetch: function() {
+			refetchEvents: function() {
+				fetchEvents(eventsChanged);
 			}
 			
 		};
 		
 		$.data(this, 'fullCalendar', publicMethods);
-		
-		function eventsByID(id) {
-			id += '';
-			return filterArray(events, function(e) {
-				e._id == id;
-			});
-		}
-		
-		function removeEvents(filter) {
-			var i, len = eventSources.length;
-			if (filter) {
-				events = filterArray(events, function(e) {
-					return !filter(e);
-				});
-				// remove events from array sources
-				for (i=0; i<len; i++) {
-					if (typeof eventSources[i] == 'object') {
-						eventSources[i] = filterArray(eventSources[i], function(e) {
-							return !filter(e);
-						});
-					}
-				}
-			}else{
-				events = [];
-				// clear all array sources
-				for (i=0; i<len; i++) {
-					if (typeof eventSources[i] == 'object') {
-						eventSources[i] = [];
-					}
-				}
-			}
-			eventsChanged();
-		}
 		
 		
 		
@@ -489,47 +508,58 @@ $.fn.fullCalendar = function(options) {
 							tr.append("<td><h2 class='fc-header-title'/></td>");
 							prevTitle = true;
 						}else{
-							var button,
-								icon = options.theme ? options.buttonIcons[buttonNameShort] : null,
-								text = options.buttonText[buttonNameShort];
-							if (icon) {
-								button = $("<div class='fc-button-" + buttonName + " ui-state-default'>" +
-									"<a><span class='ui-icon ui-icon-" + icon + "'/></a></div>");
+							var buttonClick;
+							if (publicMethods[buttonNameShort]) {
+								buttonClick = publicMethods[buttonNameShort];
 							}
-							else if (text) {
-								button = $("<div class='fc-button-" + buttonName + " " + tm + "-state-default'>" +
-									"<a><span>" + text + "</span></a></div>");
+							else if (views[buttonName]) {
+								buttonClick = function() { switchView(buttonName) };
 							}
-							if (button) {
-								button
-									.mousedown(function() {
-										button.addClass(tm + '-state-down');
-									})
-									.mouseup(function() {
-										button.removeClass(tm + '-state-down');
-									})
-									.hover(function() {
-										button.addClass(tm + '-state-hover');
-									},
-									function() {
-										button.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down');
-									})
-									.appendTo($("<td/>").appendTo(tr));
-								if (publicMethods[buttonNameShort]) {
-									button.click(publicMethods[buttonNameShort]);
+							if (buttonClick) {
+								var button,
+									icon = options.theme ? options.buttonIcons[buttonNameShort] : null,
+									text = options.buttonText[buttonNameShort];
+								if (icon) {
+									button = $("<div class='fc-button-" + buttonName + " ui-state-default'>" +
+										"<a><span class='ui-icon ui-icon-" + icon + "'/></a></div>");
 								}
-								else if (views[buttonName]) {
-									button.click(function() {
-										switchView(buttonName);
-									});
+								else if (text) {
+									button = $("<div class='fc-button-" + buttonName + " " + tm + "-state-default'>" +
+										"<a><span>" + text + "</span></a></div>");
 								}
-								if (j == 0 || prevTitle) {
-									button.addClass(tm + '-corner-left');
-								}else{
-									button.addClass(tm + '-no-left');
+								if (button) {
+									button
+										.mousedown(function() {
+											button.addClass(tm + '-state-down');
+										})
+										.mouseup(function() {
+											button.removeClass(tm + '-state-down');
+										})
+										.hover(
+											function() {
+												button.addClass(tm + '-state-hover');
+											},
+											function() {
+												button.removeClass(tm + '-state-hover')
+													.removeClass(tm + '-state-down');
+											}
+										)
+										.appendTo($("<td/>").appendTo(tr));
+									if (publicMethods[buttonNameShort]) {
+										button.click(publicMethods[buttonNameShort]);
+									}
+									else if (views[buttonName]) {
+										button.click(function() {
+											switchView(buttonName);
+										});
+									}
+									if (j == 0 || prevTitle) {
+										button.addClass(tm + '-corner-left');
+									}else{
+										button.addClass(tm + '-no-left');
+									}
+									prevTitle = false;
 								}
-								prevTitle = false;
 							}
 						}
 					});
@@ -572,6 +602,8 @@ $.fn.fullCalendar = function(options) {
 	
 	});
 	
+	return this;
+	
 };
 
 
@@ -583,7 +615,20 @@ var fakeID = 0;
 
 function normalizeEvent(event) {
 	event._id = event._id || (typeof event.id == 'undefined' ? '_fc' + fakeID++ : event.id + '');
+	if (event.date) {
+		if (!event.start) {
+			event.start = event.date;
+		}
+		delete event.date;
+	}
 	event._start = cloneDate(event.start = parseDate(event.start));
 	event.end = parseDate(event.end);
+	if (event.end && event.end < event.start) {
+		event.end = cloneDate(event.start);
+	}
+	event._end = event.end ? cloneDate(event.end) : null;
+	if (typeof event.allDay == 'undefined') {
+		event.allDay = true;
+	}
 }
 
