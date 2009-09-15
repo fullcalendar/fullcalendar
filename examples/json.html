@@ -1,6 +1,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+<!--<src>-->
+<link rel='stylesheet' type='text/css' href='../src/css/main.css' />
+<link rel='stylesheet' type='text/css' href='../src/css/grid.css' />
+<link rel='stylesheet' type='text/css' href='../src/css/agenda.css' />
+<script type='text/javascript' src='../src/jquery/jquery.js'></script>
+<script type='text/javascript' src='../src/jquery/ui.core.js'></script>
+<script type='text/javascript' src='../src/jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../src/jquery/ui.resizable.js'></script>
+<script type='text/javascript' src='../src/main.js'></script>
+<script type='text/javascript' src='../src/grid.js'></script>
+<script type='text/javascript' src='../src/view.js'></script>
+<script type='text/javascript' src='../src/util.js'></script>
+<!--</src>-->
+<!--
+<dist>
+<link rel='stylesheet' type='text/css' href='../fullcalendar.css' />
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/ui.core.js'></script>
+<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
+<script type='text/javascript' src='../jquery/ui.resizable.js'></script>
+<script type='text/javascript' src='../fullcalendar.js'></script>
+</dist>
+-->
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		$('#calendar').fullCalendar({
+		
+			editable: true,
+			
+			events: "json-events.php",
+			
+			eventDrop: function(event, delta) {
+				alert(event.title + ' was moved ' + delta + ' days\n' +
+					'(should probably update your database)');
+			},
+			
+			loading: function(bool) {
+				if (bool) $('#loading').show();
+				else $('#loading').hide();
+			}
+			
+		});
+		
+	});
+
+</script>
 <style type='text/css'>
 
 	body {
@@ -22,35 +70,10 @@
 		}
 
 </style>
-<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
-<script type='text/javascript' src='../jquery/jquery.js'></script>
-<script type='text/javascript' src='../jquery/ui.core.js'></script>
-<script type='text/javascript' src='../jquery/ui.draggable.js'></script>
-<script type='text/javascript' src='../fullcalendar/fullcalendar.js'></script>
-<script type='text/javascript'>
-
-	$(document).ready(function() {
-	
-		$('#calendar').fullCalendar({
-			draggable: true,
-			events: "json_events.php",
-			eventDrop: function(event, delta) {
-				alert(event.title + ' was moved ' + delta + ' days\n' +
-					'(should probably update your database)');
-			},
-			loading: function(bool) {
-				if (bool) $('#loading').show();
-				else $('#loading').hide();
-			}
-		});
-		
-	});
-
-</script>
 </head>
 <body>
 <div id='loading' style='display:none'>loading...</div>
 <div id='calendar'></div>
-<p>json_events.php needs to be running in the same directory.</p>
+<p>json-events.php needs to be running in the same directory.</p>
 </body>
 </html>

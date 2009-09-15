@@ -1,4 +1,67 @@
 
+version 1.3 (9/15/09)
+	- different 'views': month/basicWeek/basicDay
+	- more flexible 'header' system for buttons
+	- themable by jQuery UI themes
+	- resizable events (require jQuery UI resizable plugin)
+	- reworked options/API to support idea of multiple views / be consistent with jQuery UI datepicker
+	- refactoring of entire codebase for future of development
+		- broken into different JS files, assembled w/ build scripts
+		- new test suite for new features, uses firebug-lite
+	- Options
+		- added:
+			date
+			defaultView
+			aspectRatio
+			disableResizing
+			monthNames (use instead of $.fullCalendar.monthNames)
+			monthNamesShort (use instead of $.fullCalendar.monthAbbrevs)
+			dayNames (use instead of $.fullCalendar.dayNames)
+			dayNamesShort (use instead of $.fullCalendar.dayAbbrevs)
+			theme
+			buttonText
+			buttonIcons
+		- superseded:
+			editable/disableDragging <- draggable
+			weekMode <- fixedWeeks
+			columnFormat <- abbrevDayHeadings
+			header <- buttons/title 
+			dragOpacity <- eventDragOpacity
+			dragRevertDuration <- eventRevertDuration
+			firstDay <- weekStart
+			isRTL <- rightToLeft
+		- removed:
+			showTime (use 'allDay' CalEvent property instead)
+	- Triggered Actions
+		- added:
+			eventResizeStart
+			eventResizeStop
+			eventResize
+		- superseded:
+			viewDisplay <- monthDisplay
+			windowResize <- resize
+	- CalEvent Properties
+		- superseded:
+			allDay <- showTime
+			editable <- draggable
+		- 'end' is now INCLUSIVE when allDay=true
+	- Methods:
+		- added:
+			renderEvent
+		- superseded:
+			prev <- prevMonth
+			next <- nextMonth
+			moveDate <- prevYear/nextYear
+			rerenderEvents/refetchEvents <- refresh
+			removeEvents <- removeEvent
+			clientEvents <- getEventsByID
+	- Utilities:
+		- 'formatDate' format string completely changed (inspired by jqueryui datepicker + datejs)
+		- 'formatDates' added to support date-ranges
+	- gcalFeed Options:
+		- superseded:
+			draggable <- editable
+
 version 1.2.1 (6/29/09)
 	- bugfixes
 		- allows and corrects invalid end dates for events
@@ -55,4 +118,3 @@ version 1.1 (5/10/09)
 		- for THEAD and TBODY (in 1.0, just used TBODY, restructured in 1.1)
 		- IF UPGRADING FROM FULLCALENDAR 1.0, YOU MUST UPGRADE FULLCALENDAR.CSS
 		  !!!!!!!!!!!
-		  
