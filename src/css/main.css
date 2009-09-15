@@ -216,6 +216,7 @@ table.fc-header {
 	overflow: hidden;
 	font-size: 11px;
 	text-decoration: none;
+	text-align: left;
 	cursor: pointer;
 	}
 	
