@@ -141,9 +141,9 @@ Time & Date Formatting
 Available Views
 ===============
 
-**month** - `see example <http://google.com/>`_
+**month** - `see example <../../media/fullcalendar-views/month.html>`_
 
-**basicWeek** - `see example <http://google.com/>`_
+**basicWeek** - `see example <../../media/fullcalendar-views/basicWeek.html>`_
 
-**basicDay** - `see example <http://google.com/>`_
+**basicDay** - `see example <../../media/fullcalendar-views/basicDay.html>`_
 	
