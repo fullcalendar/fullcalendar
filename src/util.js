@@ -319,14 +319,3 @@ function zeroPad(n) {
 function strProp(s, prop) {
 	return typeof s == 'string' ? s : s[prop];
 }
-
-function filterArray(a, test) {
-	var res = [],
-		i, len = a.length;
-	for (i=0; i<len; i++) {
-		if (test(a[i])) {
-			res.push(a[i]);
-		}
-	}
-	return res;
-}

@@ -413,15 +413,11 @@ $.fn.fullCalendar = function(options) {
 							return e._id == id;
 						};
 					}
-					events = filterArray(events, function(e) {
-						return !filter(e);
-					});
+					events = $.grep(events, filter, true);
 					// remove events from array sources
 					for (var i=0; i<eventSources.length; i++) {
 						if (typeof eventSources[i] == 'object') {
-							eventSources[i] = filterArray(eventSources[i], function(e) {
-								return !filter(e);
-							});
+							eventSources[i] = $.grep(eventSources[i], filter, true);
 						}
 					}
 				}
@@ -430,11 +426,11 @@ $.fn.fullCalendar = function(options) {
 			
 			clientEvents: function(filter) {
 				if ($.isFunction(filter)) {
-					return filterArray(events, filter);
+					return $.grep(events, filter);
 				}
 				else if (filter) { // an event ID
 					filter += '';
-					return filterArray(events, function(e) {
+					return $.grep(events, function(e) {
 						return e._id == filter;
 					});
 				}
@@ -459,11 +455,11 @@ $.fn.fullCalendar = function(options) {
 			},
 		
 			removeEventSource: function(source) {
-				eventSources = filterArray(eventSources, function(src) {
+				eventSources = $.grep(eventSources, function(src) {
 					return src != source;
 				});
 				// remove all client events from that source
-				events = filterArray(events, function(e) {
+				events = $.grep(events, function(e) {
 					return e.source != source;
 				});
 				eventsChanged();

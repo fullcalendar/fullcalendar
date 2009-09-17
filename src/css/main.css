@@ -273,26 +273,28 @@ table.fc-header {
 	}
 	
 /* resizable */
+
+.fc-event-hori .ui-resizable-handle {
+	_height: 14px !important; /* IE6 had 0 height */
+	}
 	
 .fc-event-hori .ui-resizable-e {
-	top: 0;
-	right: -5px;
-	width: 7px;
-	height: 100%;
+	top: 0           !important;
+	right: -5px      !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	border: 0        !important;
+	background: none !important;
 	cursor: e-resize;
 	}
 	
 .fc-event-hori .ui-resizable-w {
-	top: 0;
-	left: -5px;
-	width: 7px;
-	height: 100%;
+	top: 0           !important;
+	left: -5px       !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	border: 0        !important;
+	background: none !important;
 	cursor: w-resize;
 	}
-	
-.fc-event-hori .ui-resizable-handle {
-	_height: 14px; /* IE6 had 0 height */
-	}
-	
-
 	

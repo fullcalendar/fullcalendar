@@ -41,24 +41,24 @@ jQuery object:
 	
 **removeEvents** - .fullCalendar('removeEvents', *[idOrFilter]*)
 	If the second argument is omitted, all events are removed.
-	If the second argument is a :ref:`CalEvent's <CalEvent>` ID, all events with
+	If the second argument is an ID, all events with
 	the same ID will be removed.
 	
 	The second argument may also be a filter function that accepts
-	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` or ``false`` about
-	whether it should be removed.
+	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` if it
+	should be removed.
 	
 **clientEvents** - .fullCalendar('clientEvents', *[idOrFilter]*)
-	This method will return :ref:`CalEvents <CalEvent>` that FullCalendar has stored on
-	the client-side (browser).
+	This method will return an array of :ref:`CalEvents <CalEvent>` that
+	FullCalendar has stored on the client-side (browser).
 	
 	If the second argument is omitted, all events will be returned.
-	If the second argument is a :ref:`CalEvent's <CalEvent>` ID, all events with the
+	If the second argument is an ID, all events with the
 	same ID will be returned.
 	
 	The second argument may also be a filter function that accepts
-	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` or ``false`` about
-	whether it should be included in the result set.
+	one :ref:`CalEvent <CalEvent>` argument and returns ``true`` if it should
+	be included in the result set.
 
 **addEventSource** - .fullCalendar('addEventSource', *source*)
 	Adds an :ref:`Event Source <event-sources>`. ``source`` may be an array/string/function just as in
