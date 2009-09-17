@@ -39,7 +39,7 @@ function includeCSS(href) {
 }
 
 var _build = queryStringParam('build');
-var _uncompressed = queryStringParam('uncompressed');
+var _minified = queryStringParam('minified');
 var _legacy = queryStringParam('legacy');
 
 if (_build) {
@@ -69,8 +69,8 @@ else {
 }
 
 if (_build) {
-	if (_uncompressed) {
-		includeJS('../build/fullcalendar/uncompressed/fullcalendar.js');
+	if (_minified) {
+		includeJS('../build/fullcalendar/fullcalendar.min.js');
 	}else{
 		includeJS('../build/fullcalendar/fullcalendar.js');
 	}
@@ -95,8 +95,8 @@ window.onload = function() {
 			"<input type='checkbox' id='build' name='build'" + (_build ? " checked='checked'" : '') +
 				" style='vertical-align:middle' onclick='$(this).parent().submit()' />" +
 			"<br />" +
-			"<label for='uncompressed'>uncompressed</label> " +
-			"<input type='checkbox' id='uncompressed' name='uncompressed'" + (_uncompressed ? " checked='checked'" : '') +
+			"<label for='minified'>minified</label> " +
+			"<input type='checkbox' id='minified' name='minified'" + (_minified ? " checked='checked'" : '') +
 				" style='vertical-align:middle' onclick='$(this).parent().submit()' />" +
 			"<br />" +
 			"<label for='legacy'>legacy</label> " +

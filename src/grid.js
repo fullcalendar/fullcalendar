@@ -62,6 +62,7 @@ views.basicDay = function(element, options) {
 
 
 // flags for [Opera] rendering bugs
+
 var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
 
 var tdHeightBug;
@@ -100,7 +101,8 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/********************************* grid rendering *************************************/
+	/* Grid Rendering
+	-----------------------------------------------------------------------------*/
 	
 	
 	element.addClass('fc-grid').css('position', 'relative');
@@ -289,7 +291,8 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/******************************** event rendering *****************************/
+	/* Event Rendering
+	-----------------------------------------------------------------------------*/
 	
 	
 	function renderEvents(events) {
@@ -451,7 +454,8 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/***************************** draggable *********************************/
+	/* Draggable
+	-----------------------------------------------------------------------------*/
 	
 	
 	function draggableEvent(event, eventElement) {
@@ -507,7 +511,8 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/******************************* resizable *****************************/
+	/* Resizable
+	-----------------------------------------------------------------------------*/
 	
 	
 	function resizableEvent(event, eventElement) {
