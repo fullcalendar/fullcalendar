@@ -1,4 +1,15 @@
 
+.fc-event,
+.fc-event a,
+.fc-agenda .fc-event-time {
+	color: #fff;
+	border-style: solid;
+	border-color: blue;
+	background-color: blue;
+	}
+
+
+
 	
 /* header styles */
 	

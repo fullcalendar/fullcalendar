@@ -57,7 +57,7 @@ always available (:ref:`more below <view-object>`).
 	
 	``this`` is set to the event's element
 
-**eventDrop**: function(*calEvent, dayDelta, minuteDelta, jsEvent, ui, view*)
+**eventDrop**: function(*calEvent, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view*)
 	Triggered when dragging stops and the event has moved to a *different* day.
 	
 	``dayDelta`` holds the number of days the event was moved forward (a positive number)
@@ -69,6 +69,9 @@ always available (:ref:`more below <view-object>`).
 	``dayDelta`` and ``minuteDelta`` are elegant for dealing with multi-day and
 	repeating events. If updating a remote database, just add these values to the
 	start and end times of all events with the given ``calEvent.id``
+	
+	``revertFunc`` is a function that, if called, reverts the event's start/end date to
+	the values *before* the drag. This is useful if an ajax call should fail.
 
 **eventResizeStart**, **eventResizeStop**: function(*calEvent, jsEvent, ui, view*)
 	Triggered before/after an event is resized (but not necessarily changed).
@@ -78,7 +81,7 @@ always available (:ref:`more below <view-object>`).
 	
 	``this`` is set to the event's element
 
-**eventResize**: function(*calEvent, dayDelta, minuteDelta, jsEvent, ui, view*)
+**eventResize**: function(*calEvent, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view*)
 	Triggered when an event is resized and *changed in duration*.
 	
 	``dayDelta`` holds the number of days the event's end time was moved
@@ -86,6 +89,9 @@ always available (:ref:`more below <view-object>`).
 	
 	``minuteDelta`` will always be ``0`` and is reserved for a future release
 	of FullCalendar where there will be an agenda view.
+	
+	``revertFunc`` is a function that, if called, reverts the event's start/end date to
+	the values *before* the drag. This is useful if an ajax call should fail.
 
 
 .. _view-object:

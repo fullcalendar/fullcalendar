@@ -17,6 +17,11 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	
+	// editing
+	//editable: false,
+	//disableDragging: false,
+	//disableResizing: false,
+	
 	// event ajax
 	startParam: 'start',
 	endParam: 'end',
@@ -35,16 +40,16 @@ var defaults = {
 		day: 'dddd M/d'
 	},
 	
-	// regional
+	// locale
 	isRTL: false,
-	weekStart: 0,
+	firstDay: 0,
 	monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'],
 	monthNamesShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
 	dayNames: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
 	dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
 	buttonText: {
-		prev: '&#9668;',
-		next: '&#9658;',
+		prev: '&nbsp;&#9668;&nbsp;',
+		next: '&nbsp;&#9658;&nbsp;',
 		today: 'today',
 		month: 'month',
 		week: 'week',
@@ -57,6 +62,7 @@ var defaults = {
 		prev: 'circle-triangle-w',
 		next: 'circle-triangle-e'
 	}
+	
 };
 
 // right-to-left defaults
@@ -67,8 +73,8 @@ var rtlDefaults = {
 		right: 'title'
 	},
 	buttonText: {
-		prev: '&#9658;',
-		next: '&#9668;'
+		prev: '&nbsp;&#9658;&nbsp;',
+		next: '&nbsp;&#9668;&nbsp;'
 	}
 };
 
@@ -86,12 +92,15 @@ $.fn.fullCalendar = function(options) {
 
 	// method calling
 	if (typeof options == 'string') {
-		var args = Array.prototype.slice.call(arguments, 1), res;
+		var args = Array.prototype.slice.call(arguments, 1),
+			res;
 		this.each(function() {
 			var r = $.data(this, 'fullCalendar')[options].apply(this, args);
-			if (typeof res == 'undefined') res = r;
+			if (res == undefined) {
+				res = r;
+			}
 		});
-		if (typeof res != 'undefined') {
+		if (res != undefined) {
 			return res;
 		}
 		return this;
@@ -111,10 +120,10 @@ $.fn.fullCalendar = function(options) {
 	// initialize options
 	options = $.extend(true, {},
 		defaults,
-		(options.isRTL || typeof options.isRTL == 'undefined' && defaults.isRTL) ? rtlDefaults : {},
+		(options.isRTL || options.isRTL==undefined && defaults.isRTL) ? rtlDefaults : {},
 		options
 	);
-	var tm = options.theme ? 'ui' : 'fc';
+	var tm = options.theme ? 'ui' : 'fc'; // for making theme classes
 	
 	
 	this.each(function() {
@@ -139,13 +148,13 @@ $.fn.fullCalendar = function(options) {
 			viewName, view, // the current view
 			prevView,
 			viewInstances = {};
-		if (options.year) {
+		if (options.year != undefined) {
 			date.setYear(options.year);
 		}
-		if (options.month) {
+		if (options.month != undefined) {
 			date.setMonth(options.month);
 		}
-		if (options.date) {
+		if (options.date != undefined) {
 			date.setDate(options.date);
 		}
 		
@@ -164,35 +173,40 @@ $.fn.fullCalendar = function(options) {
 						$("<div class='fc-view fc-view-" + v + "'/>").appendTo(content),
 						options);
 				}
-				if (prevView) {
-					prevView.element.hide();
-					if (prevView.eventsChanged) {
-						eventsDirtyExcept(prevView);
-						prevView.eventsChanged = false;
-					}
+				if (prevView && prevView.eventsChanged) {
+					// if previous view's events have been changed, mark future views' events as dirty
+					eventsDirtyExcept(prevView);
+					prevView.eventsChanged = false;
 				}
 				if (header) {
+					// update 'active' view button
 					header.find('div.fc-button-' + viewName).removeClass(tm + '-state-active');
 					header.find('div.fc-button-' + v).addClass(tm + '-state-active');
 				}
 				view.name = viewName = v;
 				render();
+				if (prevView) {
+					// hide the old element AFTER the new has been rendered, preserves scrollbars
+					prevView.element.hide();
+				}
 			}
 		}
 		
 		function render(inc) {
-			if (inc || !view.date || +view.date != +date) {
-				ignoreResizes = true;
+			if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
+				ignoreWindowResizes = true;
 				view.render(date, inc || 0, function(callback) {
+					// dont refetch if new view contains the same events (or a subset)
 					if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
 						fetchEvents(callback);
 					}else{
-						callback(events);
+						callback(events); // no refetching
 					}
 				});
-				ignoreResizes = false;
+				ignoreWindowResizes = false;
 				view.date = cloneDate(date);
 				if (header) {
+					// enable/disable 'today' button
 					var today = new Date();
 					if (today >= view.start && today < view.end) {
 						header.find('div.fc-button-today').addClass(tm + '-state-disabled');
@@ -202,15 +216,18 @@ $.fn.fullCalendar = function(options) {
 				}
 			}
 			else if (view.eventsDirty) {
+				// ensure events are rerendered if another view messed with them
 				view.rerenderEvents();
 			}
 			if (header) {
+				// update title text
 				header.find('h2.fc-header-title').html(view.title);
 			}
 			view.eventsDirty = false;
 			view.trigger('viewDisplay', _element);
 		}
 		
+		// marks other views' events as dirty
 		function eventsDirtyExcept(exceptView) {
 			$.each(viewInstances, function() {
 				if (this != exceptView) {
@@ -219,6 +236,7 @@ $.fn.fullCalendar = function(options) {
 			});
 		}
 		
+		// called when any event objects have been added/removed/changed, rerenders
 		function eventsChanged() {
 			view.clearEvents();
 			view.renderEvents(events);
@@ -253,20 +271,21 @@ $.fn.fullCalendar = function(options) {
 		
 		// Fetch from a particular source. Append to the 'events' array
 		function fetchEventSource(src, callback) {
-			var prevDate = cloneDate(date),
+			var prevViewName = view.name,
+				prevDate = cloneDate(date),
 				reportEvents = function(a) {
-					if (+date == +prevDate) {
+					if (prevViewName == view.name && +prevDate == +date) { // protects from fast switching
 						for (var i=0; i<a.length; i++) {
 							normalizeEvent(a[i]);
 							a[i].source = src;
 						}
 						events = events.concat(a);
-					}
-					if (callback) {
-						callback(a);
+						if (callback) {
+							callback(a);
+						}
 					}
 				},
-				reportPopEvents = function(a) {
+				reportEventsAndPop = function(a) {
 					reportEvents(a);
 					popLoading();
 				};
@@ -276,11 +295,11 @@ $.fn.fullCalendar = function(options) {
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
 				params[options.cacheParam] = (new Date()).getTime();
 				pushLoading();
-				$.getJSON(src, params, reportPopEvents);
+				$.getJSON(src, params, reportEventsAndPop);
 			}
 			else if ($.isFunction(src)) {
 				pushLoading();
-				src(cloneDate(eventStart), cloneDate(eventEnd), reportPopEvents);
+				src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
 			}
 			else {
 				reportEvents(src); // src is an array
@@ -331,39 +350,41 @@ $.fn.fullCalendar = function(options) {
 			},
 			
 			gotoDate: function(year, month, dateNum) {
-				if (typeof year != 'undefined') {
+				if (year != undefined) {
 					date.setYear(year);
 				}
-				if (typeof month != 'undefined') {
+				if (month != undefined) {
 					date.setMonth(month);
 				}
-				if (typeof dateNum != 'undefined') {
+				if (dateNum != undefined) {
 					date.setDate(dateNum);
 				}
 				render();
 			},
 			
-			moveDate: function(years, months, days) {
-				if (typeof years != 'undefined') {
+			incrementDate: function(years, months, days) {
+				if (years != undefined) {
 					addYears(date, years);
 				}
-				if (typeof months != 'undefined') {
+				if (months != undefined) {
 					addMonths(date, months);
 				}
-				if (typeof days != 'undefined') {
+				if (days != undefined) {
 					addDays(date, days);
 				}
 				render();
 			},
 			
 			//
-			// Event Rendering
+			// Event Manipulation
 			//
 			
-			updateEvent: function(event) {
-				var startDelta = event.start - event._start,
-					endDelta = event.end ? (event.end - (event._end || view.defaultEventEnd(event))) : 0,
-					i, len = events.length, e;
+			updateEvent: function(event) { // update an existing event
+				var i, len = events.length, e,
+					startDelta = event.start - event._start,
+					endDelta = event.end ?
+						(event.end - (event._end || view.defaultEventEnd(event))) // event._end would be null if event.end
+						: 0;                                                      // was null and event was just resized
 				for (i=0; i<len; i++) {
 					e = events[i];
 					if (e._id == event._id && e != event) {
@@ -379,6 +400,8 @@ $.fn.fullCalendar = function(options) {
 						}
 						e.title = event.title;
 						e.allDay = event.allDay;
+						e.className = event.className;
+						e.editable = event.editable;
 						normalizeEvent(e);
 					}
 				}
@@ -386,7 +409,7 @@ $.fn.fullCalendar = function(options) {
 				eventsChanged();
 			},
 			
-			renderEvent: function(event, stick) {
+			renderEvent: function(event, stick) { // render a new event
 				normalizeEvent(event);
 				if (!event.source) {
 					if (stick) {
@@ -434,22 +457,20 @@ $.fn.fullCalendar = function(options) {
 						return e._id == filter;
 					});
 				}
-				else {
-					return events;
-				}
+				return events; // else, return all
 			},
 			
 			rerenderEvents: function() {
-				view.rerenderEvents();
+				view.rerenderEvents(); 
 			},
 			
 			//
 			// Event Source
 			//
 		
-			addEventSource: function(src) {
-				eventSources.push(src);
-				fetchEventSource(src, function() {
+			addEventSource: function(source) {
+				eventSources.push(source);
+				fetchEventSource(source, function() {
 					eventsChanged();
 				});
 			},
@@ -490,19 +511,21 @@ $.fn.fullCalendar = function(options) {
 		}
 		function buildSection(buttonStr) {
 			if (buttonStr) {
-				var tr = $("<tr/>"),
-					prevTitle = false;
+				var tr = $("<tr/>");
 				$.each(buttonStr.split(' '), function(i) {
 					if (i > 0) {
 						tr.append("<td><span class='fc-header-space'/></td>");
 					}
+					var prevButton;
 					$.each(this.split(','), function(j) {
 						var buttonName = this,
 							buttonNameShort = this.replace(/^(basic|agenda)/, '').toLowerCase();
 						if (buttonName == 'title') {
-							tr.find('> :last div').addClass(tm + '-corner-right');
 							tr.append("<td><h2 class='fc-header-title'/></td>");
-							prevTitle = true;
+							if (prevButton) {
+								prevButton.addClass(tm + '-corner-right');
+							}
+							prevButton = null;
 						}else{
 							var buttonClick;
 							if (publicMethods[buttonNameShort]) {
@@ -512,6 +535,9 @@ $.fn.fullCalendar = function(options) {
 								buttonClick = function() { switchView(buttonName) };
 							}
 							if (buttonClick) {
+								if (prevButton) {
+									prevButton.addClass(tm + '-no-right');
+								}
 								var button,
 									icon = options.theme ? options.buttonIcons[buttonNameShort] : null,
 									text = options.buttonText[buttonNameShort];
@@ -549,17 +575,19 @@ $.fn.fullCalendar = function(options) {
 											switchView(buttonName);
 										});
 									}
-									if (j == 0 || prevTitle) {
-										button.addClass(tm + '-corner-left');
+									if (prevButton) {
+										prevButton.addClass(tm + '-no-right');
 									}else{
-										button.addClass(tm + '-no-left');
+										button.addClass(tm + '-corner-left');
 									}
-									prevTitle = false;
+									prevButton = button;
 								}
 							}
 						}
 					});
-					tr.find('> :last div').addClass(tm + '-corner-right');
+					if (prevButton) {
+						prevButton.addClass(tm + '-corner-right');
+					}
 				});
 				return $("<table/>").append(tr);
 			}
@@ -571,11 +599,11 @@ $.fn.fullCalendar = function(options) {
 		-----------------------------------------------------------------------------*/
 		
 		var elementWidth,
-			ignoreResizes = false,
+			ignoreWindowResizes = false,
 			resizeCnt = 0;
 		
 		$(window).resize(function() {
-			if (!ignoreResizes) {
+			if (!ignoreWindowResizes) {
 				var rcnt = ++resizeCnt; // add a delay
 				setTimeout(function() {
 					if (rcnt == resizeCnt) {
@@ -610,7 +638,7 @@ $.fn.fullCalendar = function(options) {
 var fakeID = 0;
 
 function normalizeEvent(event) {
-	event._id = event._id || (typeof event.id == 'undefined' ? '_fc' + fakeID++ : event.id + '');
+	event._id = event._id || (event.id == undefined ? '_fc' + fakeID++ : event.id + '');
 	if (event.date) {
 		if (!event.start) {
 			event.start = event.date;
@@ -620,10 +648,10 @@ function normalizeEvent(event) {
 	event._start = cloneDate(event.start = parseDate(event.start));
 	event.end = parseDate(event.end);
 	if (event.end && event.end < event.start) {
-		event.end = cloneDate(event.start);
+		event.end = null;
 	}
 	event._end = event.end ? cloneDate(event.end) : null;
-	if (typeof event.allDay == 'undefined') {
+	if (event.allDay == undefined) {
 		event.allDay = true;
 	}
 }

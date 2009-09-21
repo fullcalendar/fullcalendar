@@ -27,8 +27,8 @@ Locale Options
 	Text that will be displayed on buttons of the header. Default::
 	
 		{
-			prev: '&#9668;', // left triangle
-			next: '&#9658;', // right triangle
+			prev: '&nbsp;&#9668;&nbsp;', // left triangle
+			next: '&nbsp;&#9658;&nbsp;', // right triangle
 			today: 'today',
 			month: 'month',
 			week: 'week',

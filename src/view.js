@@ -1,19 +1,30 @@
 
+/* Methods & Utilities for All Views
+-----------------------------------------------------------------------------*/
+
 var viewMethods = {
 
-	//
-	// Objects inheriting these methods must implement the following properties/methods:
-	// - title
-	// - start
-	// - end
-	// - visStart
-	// - visEnd
-	// - defaultEventEnd(event)
-	// - visEventEnd(event)
-	//
-	// - render
-	// - rerenderEvents
-	//
+	/*
+	 * Objects inheriting these methods must implement the following properties/methods:
+	 * - title
+	 * - start
+	 * - end
+	 * - visStart
+	 * - visEnd
+	 * - defaultEventEnd(event)
+	 * - visEventEnd(event)
+	 * - render(events)
+	 * - rerenderEvents()
+	 *
+	 *
+	 * z-index reservations:
+	 * 1. day-overlay
+	 * 2. events
+	 * 3. dragging/resizing events
+	 *
+	 */
+	
+	
 
 	init: function(element, options) {
 		this.element = element;
@@ -26,7 +37,7 @@ var viewMethods = {
 	
 	
 	
-	// trigger event handlers, always append view as last arg
+	// triggers an event handler, always append view as last arg
 	
 	trigger: function(name, thisObj) {
 		if (this.options[name]) {
@@ -36,7 +47,7 @@ var viewMethods = {
 	
 	
 	
-	//
+	// returns a Date object for an event's end
 	
 	eventEnd: function(event) {
 		return event.end || this.defaultEventEnd(event);
@@ -44,14 +55,13 @@ var viewMethods = {
 	
 	
 	
-	// event/element creation reporting
+	// report when view receives new events
 	
-	reportEvents: function(events) {
+	reportEvents: function(events) { // events are already normalized at this point
 		var i, len=events.length, event,
-			fakeID = 0,
 			eventsByID = this.eventsByID = {},
 			cachedEvents = this.cachedEvents = [];
-		for (i=0; i<len; i++) { // TODO: move _id creation to more global 'cleanEvents'
+		for (i=0; i<len; i++) {
 			event = events[i];
 			if (eventsByID[event._id]) {
 				eventsByID[event._id].push(event);
@@ -61,6 +71,10 @@ var viewMethods = {
 			cachedEvents.push(event);
 		}
 	},
+	
+	
+	
+	// report when view creates an element for an event
 
 	reportEventElement: function(event, element) {
 		this.eventElements.push(element);
@@ -76,7 +90,7 @@ var viewMethods = {
 	
 	// event element manipulation
 	
-	clearEvents: function() { // just remove ELEMENTS
+	clearEvents: function() { // only remove ELEMENTS
 		$.each(this.eventElements, function() {
 			this.remove();
 		});
@@ -89,12 +103,13 @@ var viewMethods = {
 	},
 	
 	hideEvents: function(event, exceptElement) {
-		this._eee(event, exceptElement, 'hide'); // fadeOut
+		this._eee(event, exceptElement, 'hide');
 	},
 	
 	_eee: function(event, exceptElement, funcName) { // event-element-each
-		var elements = this.eventElementsByID[event._id];
-		for (var i=0; i<elements.length; i++) {
+		var elements = this.eventElementsByID[event._id],
+			i, len = elements.length;
+		for (i=0; i<len; i++) {
 			if (elements[i] != exceptElement) {
 				elements[i][funcName]();
 			}
@@ -105,41 +120,41 @@ var viewMethods = {
 	
 	// event modification reporting
 	
-	moveEvent: function(event, days, minutes) { // and actually DO the date change too
+	moveEvent: function(event, days, minutes) { // actually DO the date changes
 		minutes = minutes || 0;
-		var i, event2, events = this.eventsByID[event._id];
-		for (i=0; i<events.length; i++) {
-			event2 = events[i];
-			event2.allDay = event.allDay;
-			addMinutes(addDays(event2.start, days, true), minutes);
-			if (event.end) {
-				event2.end = addMinutes(addDays(this.eventEnd(event2), days, true), minutes);
-			}else{
-				event2.end = null;
+		var events = this.eventsByID[event._id],
+			i, len=events.length, e;
+		for (i=0; i<len; i++) {
+			e = events[i];
+			e.allDay = event.allDay;
+			addMinutes(addDays(e.start, days, true), minutes);
+			if (e.end) {
+				e.end = addMinutes(addDays(e.end, days, true), minutes);
 			}
-			normalizeEvent(event2);
+			normalizeEvent(e);
 		}
 		this.eventsChanged = true;
 	},
 	
-	resizeEvent: function(event, days, minutes) { // and actually DO the date change too
+	resizeEvent: function(event, days, minutes) { // actually DO the date changes
 		minutes = minutes || 0;
-		var i, event2, events = this.eventsByID[event._id];
-		for (i=0; i<events.length; i++) {
-			event2 = events[i];
-			event2.end = addMinutes(addDays(this.eventEnd(event2), days, true), minutes);
-			normalizeEvent(event2);
+		var events = this.eventsByID[event._id],
+			i, len=events.length, e;
+		for (i=0; i<len; i++) {
+			e = events[i];
+			e.end = addMinutes(addDays(this.eventEnd(e), days, true), minutes);
+			normalizeEvent(e);
 		}
 		this.eventsChanged = true;
 	},
 	
 	
 	
-	// semi-transparent overlay (for days while dragging)
+	// semi-transparent overlay (while dragging)
 	
 	showOverlay: function(props) {
 		if (!this.dayOverlay) {
-			this.dayOverlay = $("<div class='fc-cell-overlay' style='position:absolute;display:none'/>")
+			this.dayOverlay = $("<div class='fc-cell-overlay' style='position:absolute;z-index:1;display:none'/>")
 				.appendTo(this.element);
 		}
 		var o = this.element.offset();
@@ -217,7 +232,7 @@ function stackSegs(segs) {
 			collide = false;
 			if (levels[j]) {
 				for (k=0; k<levels[j].length; k++) {
-					if (seg.end > levels[j][k].start && seg.start < levels[j][k].end) {
+					if (segsCollide(levels[j][k], seg)) {
 						collide = true;
 						break;
 					}
@@ -246,3 +261,4 @@ function segCmp(a, b) {
 function segsCollide(seg1, seg2) {
 	return seg1.end > seg2.start && seg1.start < seg2.end;
 }
+

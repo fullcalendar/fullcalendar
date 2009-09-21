@@ -1,3 +1,12 @@
+/*
+ * FullCalendar Stylesheet
+ *
+ * Feel free to edit this file to customize the look of FullCalendar.
+ * When upgrading to newer versions, please upgrade this file as well,
+ * porting over any customizations afterwards.
+ *
+ */
+
 
 .fc,
 .fc .fc-header,
@@ -62,25 +71,60 @@ table.fc-header {
 .fc-rtl .fc-header-title {
 	direction: rtl;
 	}
-	
-/* button rounded corners  */
+
+
+
+/* Buttons
+------------------------------------------------------------------------*/
+
+.fc-header .fc-state-default,
+.fc-header .ui-state-default {
+	margin-bottom: 1em;
+	cursor: pointer;
+	}
 	
 .fc-header .fc-state-default {
 	border-width: 1px 0;
 	padding: 0 1px;
 	}
 	
+.fc-header .fc-state-default,
+.fc-header .fc-state-default a {
+	border-style: solid;
+	}
+	
 .fc-header .fc-state-default a {
 	display: block;
 	position: relative;
-	margin: 0 -1px;
 	border-width: 0 1px;
+	margin: 0 -1px;
 	width: 100%;
+	text-decoration: none;
 	}
 	
 .fc-header .fc-state-default span {
 	display: block;
+	border-style: solid;
+	border-width: 1px 0 1px 1px;
+	padding: 3px 5px;
 	}
+	
+.fc-header .ui-state-default {
+	padding: 4px 6px;
+	}
+	
+/* for adjacent buttons */
+	
+.fc-header .fc-no-right {
+	padding-right: 0;
+	border-right: 0;
+	}
+	
+.fc-header .ui-no-right {
+	border-right: 0;
+	}
+	
+/* for fake rounded corners */
 	
 .fc-header .fc-corner-left {
 	margin-left: 1px;
@@ -92,73 +136,45 @@ table.fc-header {
 	padding-right: 0;
 	}
 	
-.fc-header .fc-no-left {
-	padding-left: 0;
-	}
-	
-.fc-header .ui-no-left {
-	border-left: 0;
-	}
-	
-/* default button state */
-	
-.fc-header .fc-state-default,
-.fc-header .ui-state-default {
-	margin-bottom: 10px;
-	cursor: pointer;
-	}
+/* DEFAULT button COLORS */
 	
 .fc-header .fc-state-default,
 .fc-header .fc-state-default a {
-	border-style: solid;
-	border-color: #6E6E6E;
+	border-color: #777; /* outer border */
 	color: #333;
 	}
 
 .fc-header .fc-state-default span {
-	border-width: 1px 0 0 1px;
-	border-style: solid;
-	border-color: #fff;
-	background: #F0F0F0;
+	border-color: #fff #fff #cecece; /* inner border */
+	background: #e8e8e8;
 	}
 	
-.fc-header .fc-state-default span,
-.fc-header .ui-state-default {
-	padding: 4px 6px;
-	}
-	
-/* active button state */
+/* PRESSED button COLORS (down and active) */
 	
 .fc-header .fc-state-active a {
 	color: #fff;
 	}
 	
+.fc-header .fc-state-down span,
 .fc-header .fc-state-active span {
-	background: #787878;
-	border-color: #777;
+	background: #888;
+	border-color: #808080 #808080 #909090; /* inner border */
 	}
 	
-/* down button state */
-
-.fc-header .fc-state-down span {
-	background: #787878;
-	border-color: #777;
-	}
-	
-/* disabled button state */
-	
-.fc-header .fc-state-disabled,
-.fc-header .fc-state-disabled a {
-	border-color: #ccc;
-	}
+/* DISABLED button COLORS */
 	
 .fc-header .fc-state-disabled a {
 	color: #999;
 	}
 	
+.fc-header .fc-state-disabled,
+.fc-header .fc-state-disabled a {
+	border-color: #ccc; /* outer border */
+	}
+	
 .fc-header .fc-state-disabled span {
-	border-color: #fff;
-	background: #F0F0F0;
+	border-color: #fff #fff #f0f0f0; /* inner border */
+	background: #f0f0f0;
 	}
 	
 	
@@ -180,15 +196,15 @@ table.fc-header {
 	}
 	
 .fc-content .fc-state-highlight { /* today */
-	background: #FFFFCC;
+	background: #ffc;
 	}
 	
-.fc-content td.fc-not-today {
+.fc-content .fc-not-today {
 	background: none;
 	}
 	
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
-	background: #ADDBFF;
+	background: #9cf;
 	opacity: .2;
 	filter: alpha(opacity=20); /* for IE */
 	}
@@ -204,19 +220,32 @@ table.fc-header {
 ------------------------------------------------------------------------*/
 
 .fc-event,
-.fc-event a,
-.fc-agenda .fc-event-time {
+.fc-event a {
 	color: #fff;
 	border-style: solid;
-	border-color: blue;
-	background-color: blue;
+	border-color: #36c;     /* DEFAULT EVENT COLOR */
+	background-color: #36c; /*                     */
 	}
+	
+	/* Use the 'className' CalEvent property and the following
+	 * example CSS to change event color on a per-event basis:
+	 *
+	 * .my-event-class,
+	 * .my-event-class a {
+	 *     border-color: red;
+	 *     background-color: red;
+	 *     }
+	 */
 	
 .fc-event a {
 	overflow: hidden;
-	font-size: 11px;
+	font-size: .85em;
 	text-decoration: none;
 	text-align: left;
+	cursor: pointer;
+	}
+	
+.fc-event-editable {
 	cursor: pointer;
 	}
 	
@@ -224,12 +253,20 @@ table.fc-header {
 .fc-event-title {
 	padding: 0 1px;
 	}
+	
+/* for fake rounded corners */
 
-.fc-event a { /* prep for rounded corners */
+.fc-event a {
 	display: block;
 	position: relative;
 	width: 100%;
 	height: 100%;
+	}
+	
+/* right-to-left */
+
+.fc-rtl .fc-event a {
+	text-align: right;
 	}
 	
 /* resizable */
@@ -238,6 +275,8 @@ table.fc-header {
 	display: block;
 	position: absolute;
 	z-index: 99999;
+	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
+	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
 	}
 	
 	
@@ -253,6 +292,8 @@ table.fc-header {
 .fc-event-hori a {
 	border-width: 0;
 	}
+	
+/* for fake rounded corners */
 	
 .fc-content .fc-corner-left {
 	margin-left: 1px;
@@ -279,22 +320,19 @@ table.fc-header {
 	}
 	
 .fc-event-hori .ui-resizable-e {
-	top: 0           !important;
-	right: -5px      !important;
+	top: 0           !important; /* importants override pre jquery ui 1.7 styles */
+	right: -3px      !important;
 	width: 7px       !important;
 	height: 100%     !important;
-	border: 0        !important;
-	background: none !important;
 	cursor: e-resize;
 	}
 	
 .fc-event-hori .ui-resizable-w {
 	top: 0           !important;
-	left: -5px       !important;
+	left: -3px       !important;
 	width: 7px       !important;
 	height: 100%     !important;
-	border: 0        !important;
-	background: none !important;
 	cursor: w-resize;
 	}
+	
 	

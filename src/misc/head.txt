@@ -2,8 +2,9 @@
  * FullCalendar
  * http://arshaw.com/fullcalendar/
  *
- * use fullcalendar.css for basic styling
- * requires jQuery UI core and draggables ONLY if you plan to do drag & drop
+ * Use fullcalendar.css for basic styling.
+ * For event drag & drop, required jQuery UI draggable.
+ * For event resizing, requires jQuery UI resizable.
  *
  * Copyright (c) 2009 Adam Shaw
  * Dual licensed under the MIT and GPL licenses:
@@ -15,3 +16,4 @@
  */
  
 (function($) {
+

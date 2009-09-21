@@ -20,20 +20,20 @@
 			
 			viewDisplay: function(view) {
 				console.log('viewDisplay');
-				console.log(view);
-				console.log(this);
+				//console.log(view);
+				//console.log(this);
 			},
 			
 			//loading: // see sources.html
 			
 			windowResize: function(view) {
 				console.log('windowResize - ' + view.title);
-				console.log(this);
+				//console.log(this);
 			},
 			
 			dayClick: function(dayDate, view) {
 				console.log('dayClick - ' + dayDate + ' - ' + view.title);
-				console.log(this);
+				//console.log(this);
 			},
 			
 			eventRender: function(event, element, view) {
@@ -45,16 +45,16 @@
 				}
 				else if (event.id == 1) {
 					element.css('border-color', 'red');
-					console.log('renderEvent (' + event.title + ') - ' + view.title);
+					//console.log('renderEvent (' + event.title + ') - ' + view.title);
 				}
 			},
 			
 			eventClick: function(event, jsEvent, view) {
 				console.log('EVENT CLICK ' + event.title);
-				console.log(jsEvent);
-				console.log(view);
-				console.log(this);
-				return false;
+				//console.log(jsEvent);
+				//console.log(view);
+				//console.log(this);
+				//return false;
 			},
 			/*
 			eventMouseover: function(event, jsEvent, view) {
@@ -73,20 +73,23 @@
 			
 			eventDragStart: function(event, jsEvent, ui, view) {
 				console.log('DRAG START ' + event.title);
-				console.log(this);
+				//console.log(this);
 			},
 			eventDragStop: function(event, jsEvent, ui, view) {
 				console.log('DRAG STOP ' + event.title);
-				console.log(this);
+				//console.log(this);
 			},
-			eventDrop: function(event, dayDelta, minuteDelta, jsEvent, ui, view) {
+			eventDrop: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
 				console.log('DROP ' + event.title);
 				console.log(dayDelta + ' days');
 				console.log(minuteDelta + ' minutes');
-				console.log(jsEvent);
-				console.log(ui);
-				console.log(view.title);
-				console.log(this);
+				/*setTimeout(function() {
+					revertFunc();
+				}, 2000);*/
+				//console.log(jsEvent);
+				//console.log(ui);
+				//console.log(view.title);
+				//console.log(this);
 			},
 			
 			eventResizeStart: function(event, jsEvent, ui, view) {
@@ -97,14 +100,17 @@
 				console.log('RESIZE STOP ' + event.title);
 				console.log(this);
 			},
-			eventResize: function(event, dayDelta, minuteDelta, jsEvent, ui, view) {
+			eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
 				console.log('RESIZE!! ' + event.title);
 				console.log(dayDelta + ' days');
 				console.log(minuteDelta + ' minutes');
-				console.log(jsEvent);
-				console.log(ui);
-				console.log(view.title);
-				console.log(this);
+				/*setTimeout(function() {
+					revertFunc();
+				}, 2000);*/
+				//console.log(jsEvent);
+				//console.log(ui);
+				//console.log(view.title);
+				//console.log(this);
 			},
 			
 			events: [
@@ -144,10 +150,10 @@
 				},
 				{
 					id: 4,
-					title: "Click for Facebook",
+					title: "Click for Google",
 					start: new Date(y, m, 27),
 					end: new Date(y, m, 28),
-					url: "http://facebook.com/"
+					url: "http://google.com/"
 				},
 				{
 					id: 5,
