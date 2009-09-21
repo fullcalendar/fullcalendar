@@ -19,12 +19,12 @@ jQuery object:
 	
 	``month`` is 0-based, meaning January=0, February=1, etc.
 	
-**moveDate** - .fullCalendar('moveDate', *years, [months, [days]]*)
+**incrementDate** - .fullCalendar('incrementDate', *years, [months, [days]]*)
 	Moves the calendar forward/backward an arbitrary amount of time.
 	
 **updateEvent** - .fullCalendar('updateEvent', *calEvent*)
-	Reports changes about a modified :ref:`CalEvent <CalEvent>`. This will cause the event
-	to be rerendered on the calendar.
+	Reports changes to a :ref:`CalEvent's <CalEvent>` standard properties.
+	This will cause the event to be rerendered on the calendar.
 	If there are repeating events on the calendar with the
 	same ID, these events will be changed as well.
 	

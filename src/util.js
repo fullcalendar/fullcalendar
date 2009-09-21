@@ -38,9 +38,8 @@ function clearTime(d) {
 function cloneDate(d, dontKeepTime) {
 	if (dontKeepTime) {
 		return clearTime(new Date(+d));
-	}else{
-		return new Date(+d);
 	}
+	return new Date(+d);
 }
 
 
@@ -49,23 +48,24 @@ function cloneDate(d, dontKeepTime) {
 -----------------------------------------------------------------------------*/
 
 var parseDate = fc.parseDate = function(s) {
-	if (typeof s == 'object')
-		return s; // already a Date object
-	if (typeof s == 'undefined')
-		return null;
-	if (typeof s == 'number')
+	if (typeof s == 'object') { // already a Date object
+		return s;
+	}
+	if (typeof s == 'number') { // a UNIX timestamp
 		return new Date(s * 1000);
-	return parseISO8601(s, true) ||
-		   Date.parse(s) ||
-		   new Date(parseInt(s) * 1000);
+	}
+	if (typeof s == 'string') {
+		if (s.match(/^\d+$/)) { // a UNIX timestamp
+			return new Date(parseInt(s) * 1000);
+		}
+		return parseISO8601(s, true) || Date.parse(s) || null;
+	}
+	return null;
 }
 
 var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
-		"(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-		"(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-	var d = s.match(new RegExp(regexp));
+	var d = s.match(parseISO8601Regex);
 	if (!d) return null;
 	var offset = 0;
 	var date = new Date(d[1], 0, 1);
@@ -84,6 +84,11 @@ var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	}
 	return new Date(Number(date) + (offset * 60 * 1000));
 }
+
+var parseISO8601Regex = new RegExp(
+	"([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+	"(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+	"(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?");
 
 
 
@@ -252,26 +257,23 @@ function HoverMatrix(changeCallback) {
 		prevRowE, prevColE,
 		origRow, origCol,
 		currRow, currCol;
-		
-	// this.cell = null;
 	
-	this.row = function(e) {
+	this.row = function(e, topBug) {
 		prevRowE = $(e);
-		tops.push(prevRowE.offset().top);
+		tops.push(prevRowE.offset().top + (topBug ? prevRowE.parent().position().top : 0));
 	};
 	
 	this.col = function(e) {
 		prevColE = $(e);
 		lefts.push(prevColE.offset().left);
 	};
-	
-	this.start = function() {
-		tops.push(tops[tops.length-1] + prevRowE.outerHeight());
-		lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
-		origRow = currRow = currCol = -1;
-	};
 
 	this.mouse = function(x, y) {
+		if (origRow == undefined) {
+			tops.push(tops[tops.length-1] + prevRowE.outerHeight());
+			lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
+			currRow = currCol = -1;
+		}
 		var r, c;
 		for (r=0; r<tops.length && y>=tops[r]; r++) ;
 		for (c=0; c<lefts.length && x>=lefts[c]; c++) ;
@@ -283,7 +285,7 @@ function HoverMatrix(changeCallback) {
 			if (r == -1 || c == -1) {
 				this.cell = null;
 			}else{
-				if (origRow == -1) {
+				if (origRow == undefined) {
 					origRow = r;
 					origCol = c;
 				}
@@ -310,7 +312,8 @@ function HoverMatrix(changeCallback) {
 /* Misc Utils
 -----------------------------------------------------------------------------*/
 
-var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var undefined,
+	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
@@ -319,3 +322,4 @@ function zeroPad(n) {
 function strProp(s, prop) {
 	return typeof s == 'string' ? s : s[prop];
 }
+

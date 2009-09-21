@@ -1,4 +1,7 @@
 
+/* Grid-based Views: month, basicWeek, basicDay
+-----------------------------------------------------------------------------*/
+
 setDefaults({
 	weekMode: 'fixed'
 });
@@ -17,8 +20,8 @@ views.month = function(element, options) {
 				strProp(options.titleFormat, 'month'),
 				options
 			);
-			addDays(this.visStart = cloneDate(start), -((start.getDay() - options.weekStart + 7) % 7));
-			addDays(this.visEnd = cloneDate(this.end), (7 - this.visEnd.getDay() + options.weekStart) % 7);
+			addDays(this.visStart = cloneDate(start), -((start.getDay() - options.firstDay + 7) % 7));
+			addDays(this.visEnd = cloneDate(this.end), (7 - this.visEnd.getDay() + options.firstDay) % 7);
 			var rowCnt = Math.round((this.visEnd - this.visStart) / (DAY_MS * 7));
 			if (options.weekMode == 'fixed') {
 				addDays(this.visEnd, (6 - rowCnt) * 7);
@@ -36,7 +39,7 @@ views.basicWeek = function(element, options) {
 				addDays(date, delta * 7);
 			}
 			this.title = formatDates(
-				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.weekStart + 7) % 7)),
+				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
 				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
 				strProp(options.titleFormat, 'week'),
 				options
@@ -61,18 +64,16 @@ views.basicDay = function(element, options) {
 }
 
 
-// flags for [Opera] rendering bugs
+// rendering bugs
 
-var tdTopBug, trTopBug, tbodyTopBug, sniffBugs = true;
-
-var tdHeightBug;
-
-var sniffedEventLeftBug, eventLeftDiff=0;
+var tdTopBug, trTopBug, tbodyTopBug,
+	tdHeightBug,
+	rtlLeftDiff;
 
 
 function Grid(element, options, methods) {
 	
-	var tm, weekStart,
+	var tm, firstDay,
 		rtl, dis, dit,  // day index sign / translate
 		rowCnt, colCnt,
 		colWidth,
@@ -85,10 +86,10 @@ function Grid(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		updateSize: updateSize,
-		defaultEventEnd: function(event) {
+		defaultEventEnd: function(event) { // calculates an end if event doesnt have one, mostly for resizing
 			return cloneDate(event.start);
 		},
-		visEventEnd: function(event) {
+		visEventEnd: function(event) { // returns exclusive 'visible' end, for rendering
 			if (event.end) {
 				var end = cloneDate(event.end);
 				return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
@@ -113,14 +114,14 @@ function Grid(element, options, methods) {
 	function renderGrid(r, c, colFormat, showNumbers, fetchEvents) {
 		rowCnt = r;
 		colCnt = c;
-	
+		
 		var month = view.start.getMonth(),
 			today = clearTime(new Date()),
 			s, i, j, d = cloneDate(view.visStart);
 		
 		// update option-derived variables
 		tm = options.theme ? 'ui' : 'fc'; 
-		weekStart = options.weekStart;
+		firstDay = options.firstDay;
 		if (rtl = options.isRTL) {
 			dis = -1;
 			dit = colCnt - 1;
@@ -138,7 +139,7 @@ function Grid(element, options, methods) {
 				s += "<th class='fc-" +
 					dayIDs[d.getDay()] + ' ' + // needs to be first
 					tm + '-state-default' +
-					(i==dit ? ' fc-left' : '') +
+					(i==dit ? ' fc-leftmost' : '') +
 					"'>" + formatDate(d, colFormat, options) + "</th>";
 				addDays(d, 1);
 			}
@@ -152,7 +153,7 @@ function Grid(element, options, methods) {
 					s += "<td class='fc-" +
 						dayIDs[d.getDay()] + ' ' + // needs to be first
 						tm + '-state-default fc-day' + (i*colCnt+j) +
-						(j==dit ? ' fc-left' : '') +
+						(j==dit ? ' fc-leftmost' : '') +
 						(rowCnt>1 && d.getMonth() != month ? ' fc-other-month' : '') +
 						(+d == +today ?
 						' fc-today '+tm+'-state-highlight' :
@@ -182,7 +183,7 @@ function Grid(element, options, methods) {
 						s += "<td class='fc-" +
 							dayIDs[d.getDay()] + ' ' + // needs to be first
 							tm + '-state-default fc-new fc-day' + (i*colCnt+j) +
-							(j==dit ? ' fc-left' : '') + "'>" +
+							(j==dit ? ' fc-leftmost' : '') + "'>" +
 							(showNumbers ? "<div class='fc-day-number'></div>" : '') +
 							"<div class='fc-day-content'><div>&nbsp;</div></div>" +
 							"</td>";
@@ -218,7 +219,7 @@ function Grid(element, options, methods) {
 				addDays(d, 1);
 			});
 			
-			if (rowCnt == 1) { // more likely changed (week or day view)
+			if (rowCnt == 1) { // more changes likely (week or day view)
 			
 				// redo column header text and class
 				d = cloneDate(view.visStart);
@@ -245,16 +246,25 @@ function Grid(element, options, methods) {
 	};
 	
 	
+	function dayClick() {
+		var date = addDays(
+			cloneDate(view.visStart),
+			parseInt(this.className.match(/fc\-day(\d+)/)[1])
+		);
+		view.trigger('dayClick', this, date);
+	}
+	
+	
 	function updateSize() {
-		var width = element.width();
-		var height = Math.round(width / options.aspectRatio);
+		var width = element.width(),
+			height = Math.round(width / options.aspectRatio),
+			leftTDs = tbody.find('tr td:first-child'),
+			tbodyHeight = height - thead.height(),
+			rowHeight1, rowHeight2;
 		setOuterWidth(
 			thead.find('th').slice(0, -1),
 			colWidth = Math.floor(width / colCnt)
 		);
-		var leftTDs = tbody.find('tr td:first-child');
-		var tbodyHeight = height - thead.height();
-		var rowHeight1, rowHeight2;
 		if (options.weekMode == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
@@ -262,18 +272,19 @@ function Grid(element, options, methods) {
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
 
-		if (sniffBugs) {
+		if (tdTopBug == undefined) {
 			// nasty bugs in opera 9.25
 			// position() returning relative to direct parent
-			var tr = tbody.find('tr:first');
-			var td = tr.find('td:first');
-			var trTop = tr.position().top;
-			var tdTop = td.position().top;
+			var tr = tbody.find('tr:first'),
+				td = tr.find('td:first'),
+				trTop = tr.position().top,
+				tdTop = td.position().top;
 			tdTopBug = tdTop < 0;
 			trTopBug = trTop != tdTop;
 			tbodyTopBug = tbody.position().top != trTop;
-			sniffBugs = false;
-			//
+		}
+		if (tdHeightBug == undefined) {
+			// bug in firefox where cell height includes padding
 			td.height(rowHeight1);
 			tdHeightBug = rowHeight1 != td.height();
 		}
@@ -285,8 +296,6 @@ function Grid(element, options, methods) {
 			setOuterHeight(leftTDs.slice(0, -1), rowHeight1);
 			setOuterHeight(leftTDs.slice(-1), rowHeight2);
 		}
-		
-		//alert(tbodyHeight + ' === ' + tbody.height());
 	}
 	
 	
@@ -302,7 +311,6 @@ function Grid(element, options, methods) {
 	
 	
 	function rerenderEvents(skipCompile) {
-		//console.log('rerender events');
 		view.clearEvents();
 		if (skipCompile) {
 			renderSegs(cachedSegs);
@@ -336,7 +344,7 @@ function Grid(element, options, methods) {
 			k, seg,
 			event,
 			eventClasses,
-			startE, endE,
+			startElm, endElm,
 			left1, left2,
 			eventElement, eventAnchor,
 			triggerRes;
@@ -346,9 +354,15 @@ function Grid(element, options, methods) {
 			td = tr.find('td:first');
 			innerDiv = td.find('div.fc-day-content div').css('position', 'relative');
 			top = innerDiv.position().top;
-			if (tdTopBug) top -= td.position().top;
-			if (trTopBug) top += tr.position().top;
-			if (tbodyTopBug) top += tbody.position().top;
+			if (tdTopBug) {
+				top -= td.position().top;
+			}
+			if (trTopBug) {
+				top += tr.position().top;
+			}
+			if (tbodyTopBug) {
+				top += tbody.position().top;
+			}
 			weekHeight = 0;
 			for (j=0; j<levels.length; j++) {
 				segs = levels[j];
@@ -361,15 +375,15 @@ function Grid(element, options, methods) {
 						eventClasses = eventClasses.split(' ');
 					}
 					eventClasses.push('fc-event', 'fc-event-hori');
-					startE = seg.isStart ?
-						tr.find('td:eq('+((seg.start.getDay()-weekStart+colCnt)%colCnt)+') div.fc-day-content div') :
+					startElm = seg.isStart ?
+						tr.find('td:eq('+((seg.start.getDay()-firstDay+colCnt)%colCnt)+') div.fc-day-content div') :
 						tbody;
-					endE = seg.isEnd ?
-						tr.find('td:eq('+((seg.end.getDay()-weekStart+colCnt-1)%colCnt)+') div.fc-day-content div') :
+					endElm = seg.isEnd ?
+						tr.find('td:eq('+((seg.end.getDay()-firstDay+colCnt-1)%colCnt)+') div.fc-day-content div') :
 						tbody;
 					if (rtl) {
-						left1 = endE.position().left;
-						left2 = startE.position().left + startE.width();
+						left1 = endElm.position().left;
+						left2 = startElm.position().left + startElm.width();
 						if (seg.isStart) {
 							eventClasses.push('fc-corner-right');
 						}
@@ -377,8 +391,8 @@ function Grid(element, options, methods) {
 							eventClasses.push('fc-corner-left');
 						}
 					}else{
-						left1 = startE.position().left;
-						left2 = endE.position().left + endE.width();
+						left1 = startElm.position().left;
+						left2 = endElm.position().left + endElm.width();
 						if (seg.isStart) {
 							eventClasses.push('fc-corner-left');
 						}
@@ -388,7 +402,7 @@ function Grid(element, options, methods) {
 					}
 					eventElement = $("<div class='" + eventClasses.join(' ') + "'/>")
 						.append(eventAnchor = $("<a/>")
-							.append(event.allDay ? null :
+							.append(event.allDay || !seg.isStart ? null :
 								$("<span class='fc-event-time'/>")
 									.html(formatDates(event.start, event.end, options.timeFormat, options)))
 							.append($("<span class='fc-event-title'/>")
@@ -405,22 +419,20 @@ function Grid(element, options, methods) {
 							.css({
 								position: 'absolute',
 								top: top,
-								left: left1 + eventLeftDiff,
-								zIndex: 3
+								left: left1 + (rtlLeftDiff||0),
+								zIndex: 2
 							})
 							.appendTo(element);
 						setOuterWidth(eventElement, left2-left1, true);
-						if (!sniffedEventLeftBug) {
-							if (rtl) {
-								eventLeftDiff = left1 - eventElement.position().left;
-								if (eventLeftDiff) {
-									eventElement.css('left', left1 + eventLeftDiff);
-								}
+						if (rtl && rtlLeftDiff == undefined) {
+							// bug in IE6 where offsets are miscalculated with direction:rtl
+							rtlLeftDiff = left1 - eventElement.position().left;
+							if (rtlLeftDiff) {
+								eventElement.css('left', left1 + rtlLeftDiff);
 							}
-							sniffedEventLeftBug = true;
 						}
 						eventElementHandlers(event, eventElement);
-						if (event.editable || typeof event.editable == 'undefined' && options.editable) {
+						if (event.editable || event.editable == undefined && options.editable) {
 							draggableEvent(event, eventElement);
 							resizableEvent(event, eventElement);
 						}
@@ -447,7 +459,7 @@ function Grid(element, options, methods) {
 					view.trigger('eventMouseover', this, event, ev);
 				},
 				function(ev) {
-					view.trigger('eventMouseover', this, event, ev);
+					view.trigger('eventMouseout', this, event, ev);
 				}
 			);
 	}
@@ -462,8 +474,8 @@ function Grid(element, options, methods) {
 		if (!options.disableDragging && eventElement.draggable) {
 			var matrix;
 			eventElement.draggable({
-				zIndex: 4,
-				delay: 50,
+				zIndex: 3,
+				delay: 100,
 				opacity: options.dragOpacity,
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
@@ -476,7 +488,7 @@ function Grid(element, options, methods) {
 						}
 					});
 					tbody.find('tr').each(function() {
-						matrix.row(this);
+						matrix.row(this, tbodyTopBug);
 					});
 					var tds = tbody.find('tr:first td');
 					if (rtl) {
@@ -485,9 +497,9 @@ function Grid(element, options, methods) {
 					tds.each(function() {
 						matrix.col(this);
 					});
-					matrix.start();
 					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
+					matrix.mouse(ev.pageX, ev.pageY);
 				},
 				drag: function(ev) {
 					matrix.mouse(ev.pageX, ev.pageY);
@@ -501,7 +513,11 @@ function Grid(element, options, methods) {
 					}else{
 						var dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
 						view.moveEvent(event, dayDelta);
-						view.trigger('eventDrop', this, event, dayDelta, 0, ev, ui);
+						view.trigger('eventDrop', this, event, dayDelta, 0, function() {
+							view.moveEvent(event, -dayDelta);
+							rerenderEvents();
+						}, ev, ui);
+						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
 						rerenderEvents();
 					}
 				}
@@ -522,36 +538,29 @@ function Grid(element, options, methods) {
 				grid: [colWidth, 0],
 				containment: element,
 				start: function(ev, ui) {
-					eventElement.css('z-index', 4);
+					eventElement.css('z-index', 3);
 					view.hideEvents(event, eventElement);
 					view.trigger('eventResizeStart', this, event, ev, ui);
 				},
 				stop: function(ev, ui) {
 					view.trigger('eventResizeStop', this, event, ev, ui);
-					var dayDelta = Math.round((Math.max(colWidth, ui.size.width) - ui.originalSize.width) / colWidth);
+					// ui.size.width wasn't working with grid correctly, use .width()
+					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
 					if (dayDelta) {
 						view.resizeEvent(event, dayDelta);
-						view.trigger('eventResize', this, event, dayDelta, 0, ev, ui);
+						view.trigger('eventResize', this, event, dayDelta, 0, function() {
+							view.resizeEvent(event, -dayDelta);
+							rerenderEvents();
+						}, ev, ui);
 						rerenderEvents();
 					}else{
 						view.showEvents(event, eventElement);
 					}
-					eventElement.css('z-index', 3);
+					eventElement.css('z-index', 2);
 				}
 			});
 		}
 	}
-	
-	
-	
-	
-	//
-	
-	function dayClick() {
-		var dayIndex = parseInt(this.className.match(/fc\-day(\d+)/)[1]);
-		var date = addDays(cloneDate(view.visStart), dayIndex);
-		view.trigger('dayClick', this, date);
-	}
-	
 
 };
+
