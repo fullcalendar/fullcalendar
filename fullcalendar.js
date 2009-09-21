@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.2.1
+ * FullCalendar v1.2.2
  * http://arshaw.com/fullcalendar/
  *
  * use fullcalendar.css for basic styling

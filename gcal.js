@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.2.1 Google Calendar Extension
+ * FullCalendar v1.2.2 Google Calendar Extension
  *
  * Visit http://arshaw.com/fullcalendar/docs/#google-calendar
  * for docs and examples.
