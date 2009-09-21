@@ -275,7 +275,7 @@ table.fc-header {
 	display: block;
 	position: absolute;
 	z-index: 99999;
-	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
+	border: 0; /* important overrides pre jquery ui 1.7 styles */
 	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
 	}
 	
@@ -314,10 +314,6 @@ table.fc-header {
 	}
 	
 /* resizable */
-
-.fc-event-hori .ui-resizable-handle {
-	_height: 14px !important; /* IE6 had 0 height */
-	}
 	
 .fc-event-hori .ui-resizable-e {
 	top: 0           !important; /* importants override pre jquery ui 1.7 styles */
@@ -333,6 +329,10 @@ table.fc-header {
 	width: 7px       !important;
 	height: 100%     !important;
 	cursor: w-resize;
+	}
+	
+.fc-event-hori .ui-resizable-handle {
+	_padding-bottom: 14px; /* IE6 had 0 height */
 	}
 	
 	

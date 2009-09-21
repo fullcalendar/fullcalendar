@@ -74,5 +74,5 @@ jQuery object:
 	Rerenders all events on the screen.
 
 **refetchEvents** - .fullCalendar(``'refetchEvents'``)
-	Refetches events from all event sources and rerenders them on the screen.
+	Refetches events from all sources and rerenders them on the screen.
 	

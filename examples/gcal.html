@@ -15,7 +15,7 @@
 <dist>
 <link rel='stylesheet' type='text/css' href='../fullcalendar.css' />
 <script type='text/javascript' src='../jquery/jquery.js'></script>
-<script type='text/javascript' src='../fullcalendar.js'></script>
+<script type='text/javascript' src='../fullcalendar.min.js'></script>
 <script type='text/javascript' src='../gcal.js'></script>
 </dist>
 -->
@@ -29,6 +29,7 @@
 			events: $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'),
 			
 			eventClick: function(event) {
+				// opens events in a popup window
 				window.open(event.url, 'gcalevent', 'width=700,height=600');
 				return false;
 			},
@@ -48,7 +49,7 @@
 	body {
 		margin-top: 40px;
 		text-align: center;
-		font-size: 14px;
+		font-size: 13px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		}
 		

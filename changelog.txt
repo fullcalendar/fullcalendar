@@ -1,5 +1,5 @@
 
-version 1.3 (9/15/09)
+version 1.3 (9/21/09)
 	- different 'views': month/basicWeek/basicDay
 	- more flexible 'header' system for buttons
 	- themable by jQuery UI themes

@@ -256,15 +256,12 @@ function Grid(element, options, methods) {
 	
 	
 	function updateSize() {
-		var width = element.width(),
-			height = Math.round(width / options.aspectRatio),
+	
+		var height = Math.round(element.width() / options.aspectRatio),
 			leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = height - thead.height(),
 			rowHeight1, rowHeight2;
-		setOuterWidth(
-			thead.find('th').slice(0, -1),
-			colWidth = Math.floor(width / colCnt)
-		);
+		
 		if (options.weekMode == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
@@ -283,6 +280,7 @@ function Grid(element, options, methods) {
 			trTopBug = trTop != tdTop;
 			tbodyTopBug = tbody.position().top != trTop;
 		}
+		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
 			td.height(rowHeight1);
@@ -296,6 +294,12 @@ function Grid(element, options, methods) {
 			setOuterHeight(leftTDs.slice(0, -1), rowHeight1);
 			setOuterHeight(leftTDs.slice(-1), rowHeight2);
 		}
+		
+		setOuterWidth(
+			thead.find('th').slice(0, -1),
+			colWidth = Math.floor(element.width() / colCnt)
+		);
+		
 	}
 	
 	
@@ -370,9 +374,15 @@ function Grid(element, options, methods) {
 				for (k=0; k<segs.length; k++) {
 					seg = segs[k];
 					event = seg.event;
-					eventClasses = event.className || [];
-					if (typeof eventClasses == 'string') {
+					eventClasses = event.className;
+					if (typeof eventClasses == 'object') { // an array
+						eventClasses = eventClasses.slice(0);
+					}
+					else if (typeof eventClasses == 'string') {
 						eventClasses = eventClasses.split(' ');
+					}
+					else {
+						eventClasses = [];
 					}
 					eventClasses.push('fc-event', 'fc-event-hori');
 					startElm = seg.isStart ?
@@ -434,7 +444,9 @@ function Grid(element, options, methods) {
 						eventElementHandlers(event, eventElement);
 						if (event.editable || event.editable == undefined && options.editable) {
 							draggableEvent(event, eventElement);
-							resizableEvent(event, eventElement);
+							if (seg.isEnd) {
+								resizableEvent(event, eventElement);
+							}
 						}
 						view.reportEventElement(event, eventElement);
 						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
@@ -475,7 +487,7 @@ function Grid(element, options, methods) {
 			var matrix;
 			eventElement.draggable({
 				zIndex: 3,
-				delay: 100,
+				delay: 50,
 				opacity: options.dragOpacity,
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
@@ -535,7 +547,8 @@ function Grid(element, options, methods) {
 		if (!options.disableResizing && eventElement.resizable) {
 			eventElement.resizable({
 				handles: rtl ? 'w' : 'e',
-				grid: [colWidth, 0],
+				grid: colWidth,
+				minWidth: colWidth/2, // need this or else IE throws errors when too small
 				containment: element,
 				start: function(ev, ui) {
 					eventElement.css('z-index', 3);

@@ -19,6 +19,13 @@
 				center: 'title',
 				right: 'month,basicWeek,basicDay'
 			},
+			loading: function(bool) {
+				if (bool) {
+					$('#loading').show();
+				}else{
+					$('#loading').hide();
+				}
+			},
 			events: staticEvents = [
 				{
 					id: 1,
@@ -77,17 +84,20 @@
 		var event = cal.fullCalendar('clientEvents', 3)[0];
 		event.start = new Date(y, m, 25, 10, 30);
 		event.end = new Date(y, m, 26);
+		//event.allDay = true;
 		cal.fullCalendar('updateEvent', event);
 	}
 	
 	function updateRepeatingEvent() {
 		var event = cal.fullCalendar('clientEvents', 2)[0];
 		event.start = new Date(y, m, 4, 13, 30);
-		event.end = new Date(y, m, 5, 1, 0);
+		event.end = new Date(y, m, 5, 2, 0);
 		event.allDay = false;
 		event.title = "repeat yo";
+		//event.editable = false;
+		event.url = "http://google.com/";
 		cal.fullCalendar('updateEvent', event);
-		console.log(cal.fullCalendar('clientEvents', 2));
+		//console.log(cal.fullCalendar('clientEvents', 2));
 	}
 	
 	function renderEvent(stick) {
@@ -99,7 +109,7 @@
 	
 	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 	
-	var jsonFeed = "../examples/json_events.php";
+	var jsonFeed = "../examples/json-events.php";
 
 </script>
 <style>
@@ -117,8 +127,8 @@
 <button onclick="cal.fullCalendar('next')">next</button>
 <button onclick="cal.fullCalendar('today')">today</button>
 <button onclick="cal.fullCalendar('gotoDate', 1999, 9, 31)">Oct 31 1999</button>
-<button onclick="cal.fullCalendar('moveDate', 1, 1, 1)">+1 +1 +1</button>
-<button onclick="cal.fullCalendar('moveDate', -1, -1, -1)">-1 -1 -1</button>
+<button onclick="cal.fullCalendar('incrementDate', 1, 1, 1)">+1 +1 +1</button>
+<button onclick="cal.fullCalendar('incrementDate', -1, -1, -1)">-1 -1 -1</button>
 
 <button onclick="updateEventStart()">update event start</button>
 <button onclick="updateRepeatingEvent()">update repeating event</button>
@@ -145,6 +155,7 @@
 <button onclick="cal.fullCalendar('refetchEvents')">refetch</button>
 
 </p>
+<div id='loading' style='position:absolute;display:none'>loading...</div>
 <div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>
