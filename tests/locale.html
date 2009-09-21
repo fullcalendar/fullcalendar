@@ -10,15 +10,44 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
+		
 			header: {
 				center: 'month,basicWeek,basicDay'
 			},
+			
 			editable: true,
 			
 			isRTL: true,
+			firstDay: 1,
+			
+			monthNames: ["januari", "februari", "maart", "april", "mei", "juni","juli", "augustus", "september", "oktober", "november", "december"],
+			monthNamesShort: ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug","sep", "okt", "nov", "dec"],
+			dayNames: ['zondag', 'maandag', 'dinsdag', 'woensdag','donderdag', 'vrijdag', 'zaterdag'],
+			dayNamesShort: ["zo", "ma", "di", "wo", "do", "vr", "za", "zo"],
+			
+			timeFormat: 'H(:mm)t',
+			
 			weekMode: 'variable',
 			
 			// TODO: add drag & resize tests
+			
+			dayClick: function(dayDate, view) {
+				console.log('dayClick - ' + dayDate + ' - ' + view.title);
+			},
+			
+			eventDrop: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+				console.log('DROP ' + event.title);
+				console.log(dayDelta + ' days');
+				console.log(event.start);
+				//console.log(minuteDelta + ' minutes');
+			},
+			
+			eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+				console.log('RESIZE!! ' + event.title);
+				console.log(dayDelta + ' days');
+				console.log(event.end);
+				//console.log(minuteDelta + ' minutes');
+			},
 			
 			events: [
 				{
@@ -76,7 +105,7 @@
 
 </script>
 </head>
-<body style='font-size:14px'>
+<body style='font-size:12px'>
 <div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>

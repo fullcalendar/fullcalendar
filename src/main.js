@@ -215,14 +215,21 @@ $.fn.fullCalendar = function(options) {
 					}
 				}
 			}
+			else if (view.sizeDirty) {
+				view.updateSize();
+				view.rerenderEvents();
+			}
 			else if (view.eventsDirty) {
 				// ensure events are rerendered if another view messed with them
-				view.rerenderEvents();
+				// pass in 'events' b/c event might have been added/removed
+				view.clearEvents();
+				view.renderEvents(events);
 			}
 			if (header) {
 				// update title text
 				header.find('h2.fc-header-title').html(view.title);
 			}
+			view.sizeDirty = false;
 			view.eventsDirty = false;
 			view.trigger('viewDisplay', _element);
 		}
@@ -232,6 +239,15 @@ $.fn.fullCalendar = function(options) {
 			$.each(viewInstances, function() {
 				if (this != exceptView) {
 					this.eventsDirty = true;
+				}
+			});
+		}
+		
+		// marks other views' sizes as dirty
+		function sizesDirtyExcept(exceptView) {
+			$.each(viewInstances, function() {
+				if (this != exceptView) {
+					this.sizeDirty = true;
 				}
 			});
 		}
@@ -399,6 +415,7 @@ $.fn.fullCalendar = function(options) {
 							e.end = null;
 						}
 						e.title = event.title;
+						e.url = event.url;
 						e.allDay = event.allDay;
 						e.className = event.className;
 						e.editable = event.editable;
@@ -612,6 +629,7 @@ $.fn.fullCalendar = function(options) {
 							elementWidth = newWidth;
 							view.updateSize();
 							view.rerenderEvents(true);
+							sizesDirtyExcept(view);
 							view.trigger('windowResize', _element);
 						}
 					}
