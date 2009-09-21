@@ -26,7 +26,8 @@
 				{
 					'start-min': $.fullCalendar.formatDate(start, 'c'),
 					'start-max': $.fullCalendar.formatDate(end, 'c'),
-					'singleevents': true
+					'singleevents': true,
+					'max-results': 9999
 				},
 				function(data) {
 					var events = [];

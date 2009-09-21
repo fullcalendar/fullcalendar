@@ -1,4 +1,7 @@
 
+version 1.2.2 (9/21/09)
+	- backport of gcal max-results bug
+
 version 1.2.1 (6/29/09)
 	- bugfixes
 		- allows and corrects invalid end dates for events
