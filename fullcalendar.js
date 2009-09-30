@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.3
+ * FullCalendar v1.3.1
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -40,6 +40,8 @@ var defaults = {
 	//editable: false,
 	//disableDragging: false,
 	//disableResizing: false,
+	
+	allDayDefault: true,
 	
 	// event ajax
 	startParam: 'start',
@@ -182,7 +184,7 @@ $.fn.fullCalendar = function(options) {
 		/* View Rendering
 		-----------------------------------------------------------------------------*/
 		
-		function switchView(v) {
+		function changeView(v) {
 			if (v != viewName) {
 				prevView = view;
 				if (viewInstances[v]) {
@@ -212,45 +214,47 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		function render(inc) {
-			if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
-				ignoreWindowResizes = true;
-				view.render(date, inc || 0, function(callback) {
-					// dont refetch if new view contains the same events (or a subset)
-					if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
-						fetchEvents(callback);
-					}else{
-						callback(events); // no refetching
-					}
-				});
-				ignoreWindowResizes = false;
-				view.date = cloneDate(date);
-				if (header) {
-					// enable/disable 'today' button
-					var today = new Date();
-					if (today >= view.start && today < view.end) {
-						header.find('div.fc-button-today').addClass(tm + '-state-disabled');
-					}else{
-						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+			if (_element.offsetWidth !== 0) { // visible on the screen
+				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
+					ignoreWindowResizes = true;
+					view.render(date, inc || 0, function(callback) {
+						// dont refetch if new view contains the same events (or a subset)
+						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
+							fetchEvents(callback);
+						}else{
+							callback(events); // no refetching
+						}
+					});
+					ignoreWindowResizes = false;
+					view.date = cloneDate(date);
+					if (header) {
+						// enable/disable 'today' button
+						var today = new Date();
+						if (today >= view.start && today < view.end) {
+							header.find('div.fc-button-today').addClass(tm + '-state-disabled');
+						}else{
+							header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+						}
 					}
 				}
+				else if (view.sizeDirty) {
+					view.updateSize();
+					view.rerenderEvents();
+				}
+				else if (view.eventsDirty) {
+					// ensure events are rerendered if another view messed with them
+					// pass in 'events' b/c event might have been added/removed
+					view.clearEvents();
+					view.renderEvents(events);
+				}
+				if (header) {
+					// update title text
+					header.find('h2.fc-header-title').html(view.title);
+				}
+				view.sizeDirty = false;
+				view.eventsDirty = false;
+				view.trigger('viewDisplay', _element);
 			}
-			else if (view.sizeDirty) {
-				view.updateSize();
-				view.rerenderEvents();
-			}
-			else if (view.eventsDirty) {
-				// ensure events are rerendered if another view messed with them
-				// pass in 'events' b/c event might have been added/removed
-				view.clearEvents();
-				view.renderEvents(events);
-			}
-			if (header) {
-				// update title text
-				header.find('h2.fc-header-title').html(view.title);
-			}
-			view.sizeDirty = false;
-			view.eventsDirty = false;
-			view.trigger('viewDisplay', _element);
 		}
 		
 		// marks other views' events as dirty
@@ -311,7 +315,7 @@ $.fn.fullCalendar = function(options) {
 				reportEvents = function(a) {
 					if (prevViewName == view.name && +prevDate == +date) { // protects from fast switching
 						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i]);
+							normalizeEvent(a[i], options);
 							a[i].source = src;
 						}
 						events = events.concat(a);
@@ -367,6 +371,9 @@ $.fn.fullCalendar = function(options) {
 		
 		var publicMethods = {
 		
+			render: render,
+			changeView: changeView,
+			
 			//
 			// Navigation
 			//
@@ -438,15 +445,15 @@ $.fn.fullCalendar = function(options) {
 						e.allDay = event.allDay;
 						e.className = event.className;
 						e.editable = event.editable;
-						normalizeEvent(e);
+						normalizeEvent(e, options);
 					}
 				}
-				normalizeEvent(event);
+				normalizeEvent(event, options);
 				eventsChanged();
 			},
 			
 			renderEvent: function(event, stick) { // render a new event
-				normalizeEvent(event);
+				normalizeEvent(event, options);
 				if (!event.source) {
 					if (stick) {
 						(event.source = eventSources[0]).push(event);
@@ -568,7 +575,7 @@ $.fn.fullCalendar = function(options) {
 								buttonClick = publicMethods[buttonNameShort];
 							}
 							else if (views[buttonName]) {
-								buttonClick = function() { switchView(buttonName) };
+								buttonClick = function() { changeView(buttonName) };
 							}
 							if (buttonClick) {
 								if (prevButton) {
@@ -608,7 +615,7 @@ $.fn.fullCalendar = function(options) {
 									}
 									else if (views[buttonName]) {
 										button.click(function() {
-											switchView(buttonName);
+											changeView(buttonName);
 										});
 									}
 									if (prevButton) {
@@ -639,7 +646,7 @@ $.fn.fullCalendar = function(options) {
 			resizeCnt = 0;
 		
 		$(window).resize(function() {
-			if (!ignoreWindowResizes) {
+			if (!ignoreWindowResizes && view.date) { // view.date means the view has been rendered
 				var rcnt = ++resizeCnt; // add a delay
 				setTimeout(function() {
 					if (rcnt == resizeCnt) {
@@ -658,7 +665,7 @@ $.fn.fullCalendar = function(options) {
 		
 		
 		// let's begin...
-		switchView(options.defaultView);
+		changeView(options.defaultView);
 		elementWidth = element.width();
 	
 	});
@@ -674,7 +681,7 @@ $.fn.fullCalendar = function(options) {
 
 var fakeID = 0;
 
-function normalizeEvent(event) {
+function normalizeEvent(event, options) {
 	event._id = event._id || (event.id == undefined ? '_fc' + fakeID++ : event.id + '');
 	if (event.date) {
 		if (!event.start) {
@@ -689,7 +696,7 @@ function normalizeEvent(event) {
 	}
 	event._end = event.end ? cloneDate(event.end) : null;
 	if (event.allDay == undefined) {
-		event.allDay = true;
+		event.allDay = options.allDayDefault;
 	}
 }
 
@@ -706,6 +713,7 @@ views.month = function(element, options) {
 		render: function(date, delta, fetchEvents) {
 			if (delta) {
 				addMonths(date, delta);
+				date.setDate(1);
 			}
 			var start = this.start = cloneDate(date, true);
 			start.setDate(1);
@@ -1405,7 +1413,7 @@ var viewMethods = {
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, days, true), minutes);
 			}
-			normalizeEvent(e);
+			normalizeEvent(e, this.options);
 		}
 		this.eventsChanged = true;
 	},
@@ -1417,7 +1425,7 @@ var viewMethods = {
 		for (i=0; i<len; i++) {
 			e = events[i];
 			e.end = addMinutes(addDays(this.eventEnd(e), days, true), minutes);
-			normalizeEvent(e);
+			normalizeEvent(e, this.options);
 		}
 		this.eventsChanged = true;
 	},
@@ -1540,24 +1548,45 @@ function segsCollide(seg1, seg2) {
 /* Date Math
 -----------------------------------------------------------------------------*/
 
-var DAY_MS = 86400000;
+var DAY_MS = 86400000,
+	HOUR_MS = 3600000;
 
 function addYears(d, n, keepTime) {
 	d.setFullYear(d.getFullYear() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	return d;
 }
 
-function addMonths(d, n, keepTime) {
-	d.setMonth(d.getMonth() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+function addMonths(d, n, keepTime) { // prevents day overflow/underflow
+	var m = d.getMonth() + n,
+		check = cloneDate(d);
+	check.setDate(1);
+	check.setMonth(m);
+	d.setMonth(m);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	while (d.getMonth() != check.getMonth()) {
+		d.setDate(d.getDate() + (d < check ? 1 : -1));
+	}
+	return d;
 }
 
-function addDays(d, n, keepTime) {
-	d.setDate(d.getDate() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+function addDays(d, n, keepTime) { // deals with daylight savings
+	var dd = d.getDate() + n,
+		check = cloneDate(d);
+	check.setHours(12); // set to middle of day
+	check.setDate(dd);
+	d.setDate(dd);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	while (d.getDate() != check.getDate()) {
+		d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+	}
+	return d;
 }
 
 function addMinutes(d, n) {

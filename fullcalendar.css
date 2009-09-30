@@ -1,5 +1,5 @@
 /*
- * FullCalendar v1.3 Stylesheet
+ * FullCalendar v1.3.1 Stylesheet
  *
  * Feel free to edit this file to customize the look of FullCalendar.
  * When upgrading to newer versions, please upgrade this file as well,
@@ -221,10 +221,10 @@ table.fc-header {
 
 .fc-event,
 .fc-event a {
-	color: #fff;
-	border-style: solid;
-	border-color: #36c;     /* DEFAULT EVENT COLOR */
-	background-color: #36c; /*                     */
+	border-style: solid; 
+	border-color: #36c;     /* default BORDER color (probably the same as background-color) */
+	background-color: #36c; /* default BACKGROUND color */
+	color: #fff;            /* default TEXT color */
 	}
 	
 	/* Use the 'className' CalEvent property and the following
@@ -232,8 +232,9 @@ table.fc-header {
 	 *
 	 * .my-event-class,
 	 * .my-event-class a {
-	 *     border-color: red;
-	 *     background-color: red;
+	 *     border-color: black;
+	 *     background-color: black;
+	 *     color: red;
 	 *     }
 	 */
 	
