@@ -22,6 +22,8 @@ var defaults = {
 	//disableDragging: false,
 	//disableResizing: false,
 	
+	allDayDefault: true,
+	
 	// event ajax
 	startParam: 'start',
 	endParam: 'end',
@@ -163,7 +165,7 @@ $.fn.fullCalendar = function(options) {
 		/* View Rendering
 		-----------------------------------------------------------------------------*/
 		
-		function switchView(v) {
+		function changeView(v) {
 			if (v != viewName) {
 				prevView = view;
 				if (viewInstances[v]) {
@@ -193,45 +195,47 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		function render(inc) {
-			if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
-				ignoreWindowResizes = true;
-				view.render(date, inc || 0, function(callback) {
-					// dont refetch if new view contains the same events (or a subset)
-					if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
-						fetchEvents(callback);
-					}else{
-						callback(events); // no refetching
-					}
-				});
-				ignoreWindowResizes = false;
-				view.date = cloneDate(date);
-				if (header) {
-					// enable/disable 'today' button
-					var today = new Date();
-					if (today >= view.start && today < view.end) {
-						header.find('div.fc-button-today').addClass(tm + '-state-disabled');
-					}else{
-						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+			if (_element.offsetWidth !== 0) { // visible on the screen
+				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
+					ignoreWindowResizes = true;
+					view.render(date, inc || 0, function(callback) {
+						// dont refetch if new view contains the same events (or a subset)
+						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
+							fetchEvents(callback);
+						}else{
+							callback(events); // no refetching
+						}
+					});
+					ignoreWindowResizes = false;
+					view.date = cloneDate(date);
+					if (header) {
+						// enable/disable 'today' button
+						var today = new Date();
+						if (today >= view.start && today < view.end) {
+							header.find('div.fc-button-today').addClass(tm + '-state-disabled');
+						}else{
+							header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+						}
 					}
 				}
+				else if (view.sizeDirty) {
+					view.updateSize();
+					view.rerenderEvents();
+				}
+				else if (view.eventsDirty) {
+					// ensure events are rerendered if another view messed with them
+					// pass in 'events' b/c event might have been added/removed
+					view.clearEvents();
+					view.renderEvents(events);
+				}
+				if (header) {
+					// update title text
+					header.find('h2.fc-header-title').html(view.title);
+				}
+				view.sizeDirty = false;
+				view.eventsDirty = false;
+				view.trigger('viewDisplay', _element);
 			}
-			else if (view.sizeDirty) {
-				view.updateSize();
-				view.rerenderEvents();
-			}
-			else if (view.eventsDirty) {
-				// ensure events are rerendered if another view messed with them
-				// pass in 'events' b/c event might have been added/removed
-				view.clearEvents();
-				view.renderEvents(events);
-			}
-			if (header) {
-				// update title text
-				header.find('h2.fc-header-title').html(view.title);
-			}
-			view.sizeDirty = false;
-			view.eventsDirty = false;
-			view.trigger('viewDisplay', _element);
 		}
 		
 		// marks other views' events as dirty
@@ -292,7 +296,7 @@ $.fn.fullCalendar = function(options) {
 				reportEvents = function(a) {
 					if (prevViewName == view.name && +prevDate == +date) { // protects from fast switching
 						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i]);
+							normalizeEvent(a[i], options);
 							a[i].source = src;
 						}
 						events = events.concat(a);
@@ -348,6 +352,9 @@ $.fn.fullCalendar = function(options) {
 		
 		var publicMethods = {
 		
+			render: render,
+			changeView: changeView,
+			
 			//
 			// Navigation
 			//
@@ -419,15 +426,15 @@ $.fn.fullCalendar = function(options) {
 						e.allDay = event.allDay;
 						e.className = event.className;
 						e.editable = event.editable;
-						normalizeEvent(e);
+						normalizeEvent(e, options);
 					}
 				}
-				normalizeEvent(event);
+				normalizeEvent(event, options);
 				eventsChanged();
 			},
 			
 			renderEvent: function(event, stick) { // render a new event
-				normalizeEvent(event);
+				normalizeEvent(event, options);
 				if (!event.source) {
 					if (stick) {
 						(event.source = eventSources[0]).push(event);
@@ -549,7 +556,7 @@ $.fn.fullCalendar = function(options) {
 								buttonClick = publicMethods[buttonNameShort];
 							}
 							else if (views[buttonName]) {
-								buttonClick = function() { switchView(buttonName) };
+								buttonClick = function() { changeView(buttonName) };
 							}
 							if (buttonClick) {
 								if (prevButton) {
@@ -589,7 +596,7 @@ $.fn.fullCalendar = function(options) {
 									}
 									else if (views[buttonName]) {
 										button.click(function() {
-											switchView(buttonName);
+											changeView(buttonName);
 										});
 									}
 									if (prevButton) {
@@ -620,7 +627,7 @@ $.fn.fullCalendar = function(options) {
 			resizeCnt = 0;
 		
 		$(window).resize(function() {
-			if (!ignoreWindowResizes) {
+			if (!ignoreWindowResizes && view.date) { // view.date means the view has been rendered
 				var rcnt = ++resizeCnt; // add a delay
 				setTimeout(function() {
 					if (rcnt == resizeCnt) {
@@ -639,7 +646,7 @@ $.fn.fullCalendar = function(options) {
 		
 		
 		// let's begin...
-		switchView(options.defaultView);
+		changeView(options.defaultView);
 		elementWidth = element.width();
 	
 	});
@@ -655,7 +662,7 @@ $.fn.fullCalendar = function(options) {
 
 var fakeID = 0;
 
-function normalizeEvent(event) {
+function normalizeEvent(event, options) {
 	event._id = event._id || (event.id == undefined ? '_fc' + fakeID++ : event.id + '');
 	if (event.date) {
 		if (!event.start) {
@@ -670,7 +677,7 @@ function normalizeEvent(event) {
 	}
 	event._end = event.end ? cloneDate(event.end) : null;
 	if (event.allDay == undefined) {
-		event.allDay = true;
+		event.allDay = options.allDayDefault;
 	}
 }
 

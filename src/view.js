@@ -131,7 +131,7 @@ var viewMethods = {
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, days, true), minutes);
 			}
-			normalizeEvent(e);
+			normalizeEvent(e, this.options);
 		}
 		this.eventsChanged = true;
 	},
@@ -143,7 +143,7 @@ var viewMethods = {
 		for (i=0; i<len; i++) {
 			e = events[i];
 			e.end = addMinutes(addDays(this.eventEnd(e), days, true), minutes);
-			normalizeEvent(e);
+			normalizeEvent(e, this.options);
 		}
 		this.eventsChanged = true;
 	},

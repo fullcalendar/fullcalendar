@@ -1,4 +1,14 @@
 
+version 1.3.1 (9/30/09)
+	- Important Bugfixes (please upgrade from 1.3!)
+		- When current date was late in the month, for long months, and prev/next buttons
+		  were clicked in month-view, some months would be skipped/repeated
+		- In certain time zones, daylight savings time would cause certain days
+		  to be misnumbered in month-view
+	- Subtle change in way week interval is chosen when switching from month to basicWeek/basicDay view
+	- Added 'allDayDefault' option
+	- Added 'changeView' and 'render' methods
+
 version 1.3 (9/21/09)
 	- different 'views': month/basicWeek/basicDay
 	- more flexible 'header' system for buttons
