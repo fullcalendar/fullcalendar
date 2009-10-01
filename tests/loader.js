@@ -83,10 +83,7 @@ if (_build) {
 	includeJS('../src/gcal.js');
 }
 
-var _userAgent = navigator.userAgent.toLowerCase();
-if (!/mozilla/.test(_userAgent) || /(compatible|webkit)/.test(_userAgent) || !window.console || !window.console.log) {
-	includeJS('firebug-lite/firebug-lite-compressed.js');
-}
+includeJS('firebug-lite/firebug-lite-compressed.js');
 
 window.onload = function() {
 	$('body').append(

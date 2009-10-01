@@ -11,6 +11,7 @@ views.month = function(element, options) {
 		render: function(date, delta, fetchEvents) {
 			if (delta) {
 				addMonths(date, delta);
+				date.setDate(1);
 			}
 			var start = this.start = cloneDate(date, true);
 			start.setDate(1);

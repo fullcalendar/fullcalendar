@@ -2,24 +2,45 @@
 /* Date Math
 -----------------------------------------------------------------------------*/
 
-var DAY_MS = 86400000;
+var DAY_MS = 86400000,
+	HOUR_MS = 3600000;
 
 function addYears(d, n, keepTime) {
 	d.setFullYear(d.getFullYear() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	return d;
 }
 
-function addMonths(d, n, keepTime) {
-	d.setMonth(d.getMonth() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+function addMonths(d, n, keepTime) { // prevents day overflow/underflow
+	var m = d.getMonth() + n,
+		check = cloneDate(d);
+	check.setDate(1);
+	check.setMonth(m);
+	d.setMonth(m);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	while (d.getMonth() != check.getMonth()) {
+		d.setDate(d.getDate() + (d < check ? 1 : -1));
+	}
+	return d;
 }
 
-function addDays(d, n, keepTime) {
-	d.setDate(d.getDate() + n);
-	if (keepTime) return d;
-	return clearTime(d);
+function addDays(d, n, keepTime) { // deals with daylight savings
+	var dd = d.getDate() + n,
+		check = cloneDate(d);
+	check.setHours(12); // set to middle of day
+	check.setDate(dd);
+	d.setDate(dd);
+	if (!keepTime) {
+		clearTime(d);
+	}
+	while (d.getDate() != check.getDate()) {
+		d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+	}
+	return d;
 }
 
 function addMinutes(d, n) {
