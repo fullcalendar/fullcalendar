@@ -1,198 +1,193 @@
 
-function segAfters(levels) { // TODO: put in agenda.js
-	var i, j, k, level, seg, seg2;
-	for (i=levels.length-1; i>0; i--) {
-		level = levels[i];
-		for (j=0; j<level.length; j++) {
-			seg = level[j];
-			for (k=0; k<segLevels[i-1].length; k++) {
-				seg2 = segLevels[i-1][k];
-				if (segsCollide(seg, seg2)) {
-					seg2.after = Math.max(seg2.after, seg.after+1);
-				}
+/* Agenda Views: agendaWeek/agendaDay
+-----------------------------------------------------------------------------*/
+
+setDefaults({
+	slotMinutes: 30,
+	defaultEventMinutes: 120,
+	agendaTimeFormat: 'g:i{ - g:i}', // todo: merge into object w/ timeFormat
+	axisFormat: 'htt',
+	agendaDragOpacity: .5 // maybe merge into object
+});
+
+views.agendaWeek = function(element, options) {
+	return new Agenda(element, options, {
+		render: function(date, delta, fetchEvents) {
+			if (delta) {
+				addDays(date, delta * 7);
 			}
+			this.title = formatDates(
+				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
+				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
+				strProp(options.titleFormat, 'week'),
+				options
+			);
+			this.renderAgenda(7, strProp(options.columnFormat, 'week'), fetchEvents);
 		}
-	}
-}
-
-/********************************* week view ***********************************/
-
-$.fullCalendar.views.week = function(element, options) {
-
-	var agenda = new Agenda(element, options);
-	
-	safeExtend(options, {
-		weekTitleFormat: 'M j Y{ - M j Y}' // TODO: shift around
 	});
-	
-	agenda.render = function(date, delta, fetchEvents) {
-	
-		if (delta) {
-			addDays(date, delta * 7);
-		}
-		
-		this.start = addDays(cloneDate(date), -date.getDay());
-		this.end = addDays(cloneDate(this.start), 7);
-		this.title = formatDates(this.start, this.end, options.weekTitleFormat);
-		
-		this.renderAgenda(fetchEvents);
-	
-	};
-	
-	return agenda;
 };
 
-/******************************* day view *************************************/
-
-$.fullCalendar.views.day = function(element, options) {
-
-	var agenda = new Agenda(element, options);
-	
-	safeExtend(options, {
-		dayTitleFormat: 'l F j Y' // TODO: shift around
-	});
-	
-	agenda.render = function(date, delta, fetchEvents) {
-	
-		if (delta) {
-			addDays(date, delta);
+views.agendaDay = function(element, options) {
+	return new Agenda(element, options, {
+		render: function(date, delta, fetchEvents) {
+			if (delta) {
+				addDays(date, delta);
+			}
+			this.title = formatDate(date, strProp(options.titleFormat, 'day'), options);
+			this.start = this.visStart = cloneDate(date, true);
+			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
+			this.renderAgenda(1, strProp(options.columnFormat, 'day'), fetchEvents);
 		}
-		
-		this.start = cloneDate(date, true);
-		this.end = addDays(cloneDate(date), 1);
-		this.title = formatDate(date, options.dayTitleFormat);
-		
-		this.renderAgenda(fetchEvents);
-	
-	};
-	
-	return agenda;
+	});
 };
 
-/*********************** shared by month and day views *************************/
+function Agenda(element, options, methods) {
 
-function Agenda(element, options) {
-
-	safeExtend(options, {
-		slotMinutes: 30,
-		defaultEventMinutes: 120,
-		agendaEventTimeFormat: 'g:i{ - g:i}',
-		agendaSideTimeFormat: 'ga',
-		agendaEventDragOpacity: .5
-	});
-
-	var view = this,
-		head, body, panel, bg,
-		dayCnt,
-		dayWidth, slotHeight,
-		timeWidth,
-		cachedEvents,
+	var head, body, bodyContent, bodyTable, bg,
+		colCnt,
+		timeWidth, colWidth, rowHeight,
 		cachedSlotSegs, cachedDaySegs,
-		eventElements = [],
-		eventElementsByID = {},
-		eventsByID = {};
+		tm, firstDay,
+		rtl, dis, dit,  // day index sign / translate
+		// ...
+		
+	view = $.extend(this, viewMethods, methods, {
+		renderAgenda: renderAgenda,
+		renderEvents: renderEvents,
+		rerenderEvents: rerenderEvents,
+		updateSize: updateSize,
+		defaultEventEnd: function(event) {
+			return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
+		},
+		visEventEnd: function(event) {
+			return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
+		}
+	});
+	view.init(element, options);
+	
+	
+	
+	/* Time-slot rendering
+	-----------------------------------------------------------------------------*/
+	
 	
 	element.addClass('fc-agenda').css('position', 'relative');
+	if (element.disableSelection) {
+		element.disableSelection();
+	}
 	
-	
-	
-	/******************************** cell rendering ********************************/
-	
-	
-	this.renderAgenda = function(fetchEvents) { // TODO: get z-indexes sorted out
+	function renderAgenda(c, colFormat, fetchEvents) { // TODO: get z-indexes sorted out
+		colCnt = c;
 		
-		var start = view.start,
-			end = view.end,
-			today = getToday(),
-			todayI = -1,
-			tm = options.theme ? 'ui' : 'fc',
-			slotNormal = options.slotMinutes % 15 == 0,
-			dayAbbrevs = $.fullCalendar.dayAbbrevs;
+		// update option-derived variables
+		tm = options.theme ? 'ui' : 'fc'; 
+		firstDay = options.firstDay;
+		if (rtl = options.isRTL) {
+			dis = -1;
+			dit = colCnt - 1;
+		}else{
+			dis = 1;
+			dit = 0;
+		}
 		
-		if (!head) { // first time rendering, build from scratch TODO: need all the nbsp's?
+		var d0 = rtl ? addDays(cloneDate(view.visEnd), -1) : cloneDate(view.visStart),
+			d = cloneDate(d0),
+			today = clearTime(new Date());
+		
+		if (!head) { // first time rendering, build from scratch
+		
+			var i,
+				minutes,
+				slotNormal = options.slotMinutes % 15 == 0, //...
 			
 			// head
-			var i, d, dDay, dMinutes,
-				s = "<div class='fc-agenda-head' style='position:relative;z-index:3'>" +
-					"<table style='width:100%' cellpadding='0' cellspacing='0'>" +
-						"<tr class='fc-first'>" +
-							"<th class='fc-first " + tm + "-state-default'>&nbsp;</th>";
-			dayCnt = 0;
-			for (d=cloneDate(start); d<end; addDays(d, 1)) {
+			s = "<div class='fc-agenda-head' style='position:relative;z-index:3'>" +
+				"<table style='width:100%'>" +
+				"<tr class='fc-first'>" +
+				"<th class='fc-leftmost " +
+					tm + "-state-default'>&nbsp;</th>";
+			for (i=0; i<colCnt; i++) {
 				s += "<th class='fc-" +
 					dayIDs[d.getDay()] + ' ' + // needs to be first
 					tm + '-state-default' +
-					"'>" + dayAbbrevs[d.getDay()] + "</th>";
-				if (+d == +today) {
-					todayI = dayCnt;
-				}
-				dayCnt++;
+					"'>" + formatDate(d, colFormat, options) + "</th>";
+				addDays(d, dis);
 			}
-			s += "<th class='fc-last " + tm + "-state-default'>&nbsp;</th></tr>" +
-				"<tr class='fc-last'>" +
-					"<th class='fc-first " + tm + "-state-default' style='font-weight:normal;text-align:right;padding:4px 2px'>all day</th>" +
-					"<td colspan='" + dayCnt + "' class='" + tm + "-state-default'>" +
-						"<div class='fc-day-content'><div/></div></td>" +
-					"<th class='fc-last " + tm + "-state-default'>&nbsp;</th>" +
-				"</tr></table></div>";
+			s+= "<th class='" + tm + "-state-default'>&nbsp;</th></tr>" +
+				"<tr class='fc-all-day'>" +
+					"<th class='fc-axis fc-leftmost " + tm + "-state-default'>all day</th>" +
+					"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
+						"<div class='fc-day-content'><div>&nbsp;</div></div></td>" +
+					"<th class='" + tm + "-state-default'>&nbsp;</th>" +
+				"</tr><tr class='fc-divider'><th colspan='" + (colCnt+2) + "' class='" +
+					tm + "-state-default fc-leftmost'></th></tr></table></div>";
 			head = $(s).appendTo(element);
+			head.find('td').click(slotClick);
 			
-			// body & event panel
-			s = "<div style='position:relative;overflow:hidden'>" +
-				"<table cellpadding='0' cellspacing='0'>";
-			d = getToday();
-			dDay = d.getDay();
-			for (i=0; d.getDay()==dDay; i++, addMinutes(d, options.slotMinutes)) {
-				dMinutes = d.getMinutes();
+			// body
+			d = new Date(1970, 0, 1);
+			s = "<table>";
+			for (i=0; d.getDate() != 2; i++) {
+				minutes = d.getMinutes();
 				s += "<tr class='" +
-					(i==0 ? 'fc-first' : (dMinutes==0 ? '' : 'fc-minor')) +
-					"'><th class='" + tm + "-state-default'>" +
-						(!slotNormal || dMinutes==0 ? formatDate(d, options.agendaSideTimeFormat) : '&nbsp;') + 
-						"</th><td class='fc-slot " + tm + "-state-default'>&nbsp;</td></tr>";
+					(i==0 ? 'fc-first' : (minutes==0 ? '' : 'fc-minor')) +
+					"'><th class='fc-axis fc-leftmost " + tm + "-state-default'>" +
+					((!slotNormal || minutes==0) ? formatDate(d, options.axisFormat) : '&nbsp;') + 
+					"</th><td class='fc-slot" + i + ' ' +
+						tm + "-state-default'><div class='fc-day-content'><div>&nbsp;</div></div></td></tr>";
+				addMinutes(d, options.slotMinutes);
 			}
-			s += "</table></div>";
-			body = $("<div class='fc-agenda-body' style='position:relative;z-index:2'/>")
-				.append(panel = $(s))
+			s += "</table>";
+			body = $("<div class='fc-agenda-body' style='position:relative;z-index:2;overflow:auto'/>")
+				.append(bodyContent = $("<div style='position:relative;overflow:hidden'>")
+					.append(bodyTable = $(s)))
 				.appendTo(element);
+			body.find('td').click(slotClick);
 			
 			// background stripes
-			s = "<div class='fc-agenda-bg' style='position:absolute;top:0;z-index:1'>" +
-				"<table style='width:100%;height:100%' cellpadding='0' cellspacing='0'><tr>";
-			for (i=0; i<dayCnt; i++) {
+			d = cloneDate(d0);
+			s = "<div class='fc-agenda-bg' style='position:absolute;z-index:1'>" +
+				"<table style='width:100%;height:100%'><tr class='fc-first'>";
+			for (i=0; i<colCnt; i++) {
 				s += "<td class='fc-" +
 					dayIDs[i] + ' ' + // needs to be first
-					tm + '-state-default ' + 
-					(i==todayI ? tm + '-state-highlight fc-today' : 'fc-not-today') +
+					tm + '-state-default ' +
+					(i==0 ? 'fc-leftmost ' : '') +
+					(+d == +today ? tm + '-state-highlight fc-today' : 'fc-not-today') +
 					"'><div class='fc-day-content'><div>&nbsp;</div></div></td>";
+				addDays(d, dis);
 			}
 			s += "</tr></table></div>";
 			bg = $(s).appendTo(element);
 			
 		}else{ // skeleton already built, just modify it
 		
-			clearEvents();
+			view.clearEvents();
+			
+			// redo column header text and class
+			head.find('tr:first th').slice(1, -1).each(function() {
+				$(this).text(formatDate(d, colFormat, options));
+				this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
+				addDays(d, dis);
+			});
 			
 			// change classes of background stripes
-			todayI = Math.round((today - start) / msInDay);
-			bg.find('td').each(function(i) {
-				if (i == todayI) {
-					$(this).removeClass('fc-not-today')
+			d = cloneDate(d0);
+			bg.find('td').each(function() {
+				this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
+				if (+d == +today) {
+					$(this)
+						.removeClass('fc-not-today')
 						.addClass('fc-today')
 						.addClass(tm + '-state-highlight');
 				}else{
-					$(this).addClass('fc-not-today')
+					$(this)
+						.addClass('fc-not-today')
 						.removeClass('fc-today')
 						.removeClass(tm + '-state-highlight');
 				}
+				addDays(d, dis);
 			});
-			
-			// if 1-day view, change day-of-week class and header text
-			if (dayCnt == 1) {
-				var th = head.find('th:eq(1)').html(dayAbbrevs[start.getDay()])[0],
-					td = bg.find('td')[0];
-				th.className = th.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[start.getDay()]);
-				td.className = td.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[start.getDay()]);
-			}
 		
 		}
 		
@@ -204,42 +199,66 @@ function Agenda(element, options) {
 	
 	function updateSize() {
 		
-		// align first 'time' column
-		timeWidth = body.find('th:first').outerWidth();
-		head.find('th:first').width(timeWidth);
+		bodyTable.width('');
+		body.height(Math.round(body.width() / options.aspectRatio) - head.height());
 		
-		// set table width (100% in css wasn't working in IE)
-		var panelWidth = body[0].clientWidth || body.width(); // first time, there are no scrollbars!? for IE6?
-		body.find('table').width(panelWidth);
+		// need this for IE6/7. triggers clientWidth to be calculated for 
+		// later user in this function. this is ridiculous
+		body[0].clientWidth;
 		
-		// align spacer column to scrollbar width
-		setOuterWidth(head.find('th:last'), body.width() - panelWidth);
+		var topTDs = head.find('tr:first th'),
+			stripeTDs = bg.find('td'),
+			contentWidth = body[0].clientWidth;
+		bodyTable.width(contentWidth);
 		
-		// position background stripe container
+		// time-axis width
+		timeWidth = 0;
+		setOuterWidth(
+			head.find('th.fc-axis').add(body.find('th.fc-axis:first'))
+				.width('')
+				.each(function() {
+					timeWidth = Math.max(timeWidth, $(this).outerWidth());
+				})
+				.add(stripeTDs.eq(0)),
+			timeWidth
+		);
+		
+		// column width
+		colWidth = Math.floor((contentWidth - timeWidth) / colCnt);
+		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
+		setOuterWidth(topTDs.slice(1, -2), colWidth);
+		setOuterWidth(topTDs.slice(-2, -1), contentWidth - timeWidth - colWidth*(colCnt-1));
+		
 		bg.css({
+			top: head.find('tr').height(),
 			left: timeWidth,
-			width: panelWidth - timeWidth,
+			width: contentWidth - timeWidth,
 			height: element.height()
 		});
 		
-		// align other columns
-		dayWidth = Math.floor((panelWidth - timeWidth) / dayCnt);
-		var topCells = head.find('tr:first th:gt(0)'),
-			bgCells = bg.find('td');
-		for (var i=0, len=bgCells.length-1; i<len; i++) { // TODO: use slice
-			setOuterWidth(topCells.eq(i), dayWidth);
-			setOuterWidth(bgCells.eq(i), dayWidth);
-		}
-		
-		slotHeight = body.find('tr:eq(1)').height(); // use second, first prob doesn't have a border
-		
-		// body height
-		body.height(Math.round(body.width() / contentAspectRatio) - head.height());
-		// but this will add scrollbars...
-		// TODO: bug, iE6 view heights dont match up
-		// also, no scrollbars
-		
+		rowHeight = body.find('tr:eq(1)').height(); // use second, first prob doesn't have a border
 	}
+	
+	function slotClick(ev) {
+		var col = Math.floor((ev.pageX - bg.offset().left) / colWidth),
+			date = addDays(cloneDate(view.visStart), dit + dis*col),
+			rowMatch = this.className.match(/fc-slot(\d+)/);
+		if (rowMatch) {
+			var mins = parseInt(rowMatch[1]) * options.slotMinutes,
+				hours = Math.floor(mins/60);
+			date.setHours(hours);
+			date.setMinutes(mins % 60);
+			view.trigger('dayClick', this, date, false, ev);
+		}else{
+			view.trigger('dayClick', this, date, true, ev);
+		}
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -247,6 +266,7 @@ function Agenda(element, options) {
 	
 	
 	function renderEvents(events) {
+		return;
 		
 		var i, len=events.length, event,
 			fakeID=0, nextDay,
@@ -287,6 +307,7 @@ function Agenda(element, options) {
 	
 	
 	function rerenderEvents(skipCompile) {
+		return;
 		clearEvents();
 		if (skipCompile) {
 			renderSlotSegs(cachedSlotSegs);
@@ -294,16 +315,6 @@ function Agenda(element, options) {
 		}else{
 			renderEvents(cachedEvents);
 		}
-	}
-	
-	
-	function clearEvents() {
-		for (var i=0; i<eventElements.length; i++) {
-			eventElements[i].remove();
-		}
-		eventElements = [];
-		eventElementsByID = {};
-		eventsByID = {};
 	}
 	
 	
@@ -629,33 +640,6 @@ function Agenda(element, options) {
 	}
 	
 	
-	// hover effect when dragging events over top days
-	
-	var dayOverlay;
-	
-	function showDayOverlay(props) {
-		if (!dayOverlay) {
-			dayOverlay = $("<div class='fc-day-overlay' style='position:absolute;display:none'/>")
-				.appendTo(element);
-		}
-		var o = element.offset();
-		dayOverlay
-			.css({
-				top: props.top - o.top,
-				left: props.left - o.left,
-				width: props.width,
-				height: props.height
-			})
-			.show();
-	}
-	
-	function hideDayOverlay() {
-		if (dayOverlay) {
-			dayOverlay.hide();
-		}
-	}
-	
-	
 	
 	/************************************* resizable **************************************/
 	
@@ -710,55 +694,6 @@ function Agenda(element, options) {
 	
 	
 	/**************************************** misc **************************************/
-	
-	
-	function reportEventElement(event, eventElement) {
-		eventElements.push(eventElement);
-		if (eventElementsByID[event._id]) {
-			eventElementsByID[event._id].push(eventElement);
-		}else{
-			eventElementsByID[event._id] = [eventElement];
-		}
-	}
-	
-	
-	function hideSimilarEvents(event, eventElement) {
-		var elements = eventElementsByID[event._id];
-		for (var i=0; i<elements.length; i++) {
-			if (elements[i] != eventElement) {
-				elements[i].hide();
-			}
-		}
-	}
-	
-	
-	function reportEventMove(event, days, keepTime, minutes) {
-		minutes = minutes || 0;
-		var events = eventsByID[event._id];
-		for (var i=0, event2; i<events.length; i++) {
-			event2 = events[i];
-			event2.hasTime = event.hasTime;
-			addMinutes(addDays(event2.start, days, keepTime), minutes);
-			if (event.end) {
-				event2.end = addMinutes(addDays(event2.end || event2._end, days, keepTime), minutes);
-			}else{
-				event2.end = event2._end = null;
-					// hopefully renderEvents() will always be called after this
-					// to reset _end.... TODO?
-			}
-		}
-	}
-	
-	
-	function reportEventResize(event, days, keepTime, minutes) {
-		minutes = minutes || 0;
-		var events = eventsByID[event._id];
-		for (var i=0, event2; i<events.length; i++) {
-			event2 = events[i];
-			event2.end = addMinutes(addDays(event2.end || event2._end, days, keepTime), minutes);
-		}
-	}
-	
 	
 	// get the Y coordinate of the given time on the given day
 	
@@ -846,47 +781,18 @@ function compileSlotSegs(events, start, end) {
 }
 
 
-// TODO: move to month.js
-
-function sliceSegs(events, start, end) {
-	var segs = [],
-		i, len=events.length, event,
-		eventStart, eventEnd,
-		segStart, segEnd,
-		isStart, isEnd;
-	for (i=0; i<len; i++) {
-		event = events[i];
-		eventStart = event.start;
-		eventEnd = event._end;
-		if (eventEnd > start && eventStart < end) {
-			if (eventStart < start) {
-				segStart = cloneDate(start);
-				isStart = false;
-			}else{
-				segStart = eventStart;
-				isStart = true;
+function segAfters(levels) { // TODO: put in agenda.js
+	var i, j, k, level, seg, seg2;
+	for (i=levels.length-1; i>0; i--) {
+		level = levels[i];
+		for (j=0; j<level.length; j++) {
+			seg = level[j];
+			for (k=0; k<segLevels[i-1].length; k++) {
+				seg2 = segLevels[i-1][k];
+				if (segsCollide(seg, seg2)) {
+					seg2.after = Math.max(seg2.after, seg.after+1);
+				}
 			}
-			if (eventEnd > end) {
-				segEnd = cloneDate(end);
-				isEnd = false;
-			}else{
-				segEnd = eventEnd;
-				isEnd = true;
-			}
-			segs.push({
-				event: event,
-				start: segStart,
-				end: segEnd,
-				isStart: isStart,
-				isEnd: isEnd,
-				msLength: segEnd - segStart
-			});
 		}
 	}
-	return segs.sort(segCmp);
-}
-
-
-function segCmp(a, b) {
-	return  (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 }

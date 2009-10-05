@@ -113,7 +113,7 @@ $.fn.fullCalendar = function(options) {
 	delete options.eventSources;
 	if (options.events) {
 		eventSources.push(options.events);
-		delete options.event;
+		delete options.events;
 	}
 	
 	// first event source reserved for 'sticky' events
@@ -137,7 +137,7 @@ $.fn.fullCalendar = function(options) {
 		// element
 		var _element = this,
 			element = $(this).addClass('fc'),
-			content = $("<div class='fc-content " + tm + "-widget-content'/>").appendTo(this);
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").appendTo(this); // relative for ie6
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
 		}
@@ -148,7 +148,6 @@ $.fn.fullCalendar = function(options) {
 		// view managing
 		var date = new Date(),
 			viewName, view, // the current view
-			prevView,
 			viewInstances = {};
 		if (options.year != undefined) {
 			date.setYear(options.year);
@@ -167,18 +166,20 @@ $.fn.fullCalendar = function(options) {
 		
 		function changeView(v) {
 			if (v != viewName) {
-				prevView = view;
+				lockContentSize();
+				if (view) {
+					if (view.eventsChanged) {
+						eventsDirtyExcept(view);
+						view.eventsChanged = false;
+					}
+					view.element.hide();
+				}
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
 						$("<div class='fc-view fc-view-" + v + "'/>").appendTo(content),
 						options);
-				}
-				if (prevView && prevView.eventsChanged) {
-					// if previous view's events have been changed, mark future views' events as dirty
-					eventsDirtyExcept(prevView);
-					prevView.eventsChanged = false;
 				}
 				if (header) {
 					// update 'active' view button
@@ -187,10 +188,7 @@ $.fn.fullCalendar = function(options) {
 				}
 				view.name = viewName = v;
 				render();
-				if (prevView) {
-					// hide the old element AFTER the new has been rendered, preserves scrollbars
-					prevView.element.hide();
-				}
+				unlockContentSize();
 			}
 		}
 		
@@ -622,6 +620,20 @@ $.fn.fullCalendar = function(options) {
 		/* Resizing
 		-----------------------------------------------------------------------------*/
 		
+		function lockContentSize() {
+			content.css({
+				overflow: 'hidden',
+				height: Math.round(content.width() / options.aspectRatio)
+			});
+		}
+		
+		function unlockContentSize() {
+			content.css({
+				overflow: '',
+				height: ($.browser.msie && $.browser.version == '6.0') ? 1 : ''
+			});
+		}
+		
 		var elementWidth,
 			ignoreWindowResizes = false,
 			resizeCnt = 0;
@@ -630,11 +642,13 @@ $.fn.fullCalendar = function(options) {
 			if (!ignoreWindowResizes && view.date) { // view.date means the view has been rendered
 				var rcnt = ++resizeCnt; // add a delay
 				setTimeout(function() {
-					if (rcnt == resizeCnt) {
+					if (rcnt == resizeCnt && !ignoreWindowResizes) {
 						var newWidth = element.width();
 						if (newWidth != elementWidth) {
 							elementWidth = newWidth;
+							lockContentSize();
 							view.updateSize();
+							unlockContentSize();
 							view.rerenderEvents(true);
 							sizesDirtyExcept(view);
 							view.trigger('windowResize', _element);

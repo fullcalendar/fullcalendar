@@ -116,10 +116,6 @@ function Grid(element, options, methods) {
 		rowCnt = r;
 		colCnt = c;
 		
-		var month = view.start.getMonth(),
-			today = clearTime(new Date()),
-			s, i, j, d = cloneDate(view.visStart);
-		
 		// update option-derived variables
 		tm = options.theme ? 'ui' : 'fc'; 
 		firstDay = options.firstDay;
@@ -130,6 +126,10 @@ function Grid(element, options, methods) {
 			dis = 1;
 			dit = 0;
 		}
+		
+		var month = view.start.getMonth(),
+			today = clearTime(new Date()),
+			s, i, j, d = cloneDate(view.visStart);
 		
 		if (!tbody) { // first time, build all cells from scratch
 		
@@ -247,12 +247,12 @@ function Grid(element, options, methods) {
 	};
 	
 	
-	function dayClick() {
+	function dayClick(ev) {
 		var date = addDays(
 			cloneDate(view.visStart),
 			parseInt(this.className.match(/fc\-day(\d+)/)[1])
 		);
-		view.trigger('dayClick', this, date);
+		view.trigger('dayClick', this, date, true, ev);
 	}
 	
 	

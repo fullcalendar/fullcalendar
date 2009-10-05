@@ -47,6 +47,7 @@ if (_build) {
 }else{
 	includeCSS('../src/css/main.css');
 	includeCSS('../src/css/grid.css');
+	includeCSS('../src/css/agenda.css');
 }
 
 if (_legacy) {
@@ -78,6 +79,7 @@ if (_build) {
 }else{
 	includeJS('../src/main.js');
 	includeJS('../src/grid.js');
+	includeJS('../src/agenda.js');
 	includeJS('../src/view.js');
 	includeJS('../src/util.js');
 	includeJS('../src/gcal.js');

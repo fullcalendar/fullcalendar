@@ -14,6 +14,10 @@
 	font-size: 1em;
 	}
 	
+.fc {
+	direction: ltr;
+	}
+	
 .fc table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -145,7 +149,7 @@ table.fc-header {
 	}
 
 .fc-header .fc-state-default span {
-	border-color: #fff #fff #cecece; /* inner border */
+	border-color: #fff #fff #d1d1d1; /* inner border */
 	background: #e8e8e8;
 	}
 	
