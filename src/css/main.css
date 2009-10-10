@@ -224,6 +224,7 @@ table.fc-header {
 ------------------------------------------------------------------------*/
 
 .fc-event,
+.fc-agenda .fc-event-time,
 .fc-event a {
 	border-style: solid; 
 	border-color: #36c;     /* default BORDER color (probably the same as background-color) */

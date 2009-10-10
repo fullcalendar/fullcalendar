@@ -30,7 +30,6 @@ var defaults = {
 	cacheParam: '_',
 	
 	// time formats
-	timeFormat: 'h(:mm)t', // for events
 	titleFormat: {
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
@@ -40,6 +39,9 @@ var defaults = {
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d'
+	},
+	timeFormat: { // for event elements
+		'': 'h(:mm)t' // default
 	},
 	
 	// locale
@@ -166,7 +168,7 @@ $.fn.fullCalendar = function(options) {
 		
 		function changeView(v) {
 			if (v != viewName) {
-				lockContentSize();
+				fixContentSize();
 				if (view) {
 					if (view.eventsChanged) {
 						eventsDirtyExcept(view);
@@ -188,14 +190,14 @@ $.fn.fullCalendar = function(options) {
 				}
 				view.name = viewName = v;
 				render();
-				unlockContentSize();
+				unfixContentSize();
 			}
 		}
 		
 		function render(inc) {
 			if (_element.offsetWidth !== 0) { // visible on the screen
 				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
-					ignoreWindowResizes = true;
+					fixContentSize();
 					view.render(date, inc || 0, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
 						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
@@ -204,7 +206,7 @@ $.fn.fullCalendar = function(options) {
 							callback(events); // no refetching
 						}
 					});
-					ignoreWindowResizes = false;
+					unfixContentSize();
 					view.date = cloneDate(date);
 					if (header) {
 						// enable/disable 'today' button
@@ -620,35 +622,47 @@ $.fn.fullCalendar = function(options) {
 		/* Resizing
 		-----------------------------------------------------------------------------*/
 		
-		function lockContentSize() {
-			content.css({
-				overflow: 'hidden',
-				height: Math.round(content.width() / options.aspectRatio)
-			});
-		}
-		
-		function unlockContentSize() {
-			content.css({
-				overflow: '',
-				height: ($.browser.msie && $.browser.version == '6.0') ? 1 : ''
-			});
-		}
-		
 		var elementWidth,
-			ignoreWindowResizes = false,
+			contentSizeFixed = false,
 			resizeCnt = 0;
 		
+		function fixContentSize() {
+			if (!contentSizeFixed) {
+				contentSizeFixed = true;
+				content.css({
+					overflow: 'hidden',
+					height: Math.round(content.width() / options.aspectRatio)
+				});
+			}
+		}
+		
+		function unfixContentSize() {
+			if (contentSizeFixed) {
+				content.css({
+					overflow: 'visible',
+					height: ''
+				});
+				if ($.browser.msie && ($.browser.version=='6.0' || $.browser.version=='7.0')) {
+					// in IE6/7 the inside of the content div was invisible
+					// bizarre hack to get this work... need both lines
+					content[0].clientHeight;
+					content.hide().show();
+				}
+				contentSizeFixed = false;
+			}
+		}
+		
 		$(window).resize(function() {
-			if (!ignoreWindowResizes && view.date) { // view.date means the view has been rendered
+			if (!contentSizeFixed && view.date) { // view.date means the view has been rendered
 				var rcnt = ++resizeCnt; // add a delay
 				setTimeout(function() {
-					if (rcnt == resizeCnt && !ignoreWindowResizes) {
+					if (rcnt == resizeCnt && !contentSizeFixed) {
 						var newWidth = element.width();
 						if (newWidth != elementWidth) {
 							elementWidth = newWidth;
-							lockContentSize();
+							fixContentSize();
 							view.updateSize();
-							unlockContentSize();
+							unfixContentSize();
 							view.rerenderEvents(true);
 							sizesDirtyExcept(view);
 							view.trigger('windowResize', _element);
@@ -686,7 +700,7 @@ function normalizeEvent(event, options) {
 	}
 	event._start = cloneDate(event.start = parseDate(event.start));
 	event.end = parseDate(event.end);
-	if (event.end && event.end < event.start) {
+	if (event.end && event.end <= event.start) {
 		event.end = null;
 	}
 	event._end = event.end ? cloneDate(event.end) : null;

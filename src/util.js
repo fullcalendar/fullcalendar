@@ -3,7 +3,8 @@
 -----------------------------------------------------------------------------*/
 
 var DAY_MS = 86400000,
-	HOUR_MS = 3600000;
+	HOUR_MS = 3600000,
+	MINUTE_MS = 60000;
 
 function addYears(d, n, keepTime) {
 	d.setFullYear(d.getFullYear() + n);
@@ -338,9 +339,5 @@ var undefined,
 
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
-}
-
-function strProp(s, prop) {
-	return typeof s == 'string' ? s : s[prop];
 }
 

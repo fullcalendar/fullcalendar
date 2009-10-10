@@ -1,13 +1,24 @@
 
+// todo: scrolling
+// todo: check all other options
+// cleanup CSS
+// optimize moveEvent/resizeEvent, to return revert function
+
+
 /* Agenda Views: agendaWeek/agendaDay
 -----------------------------------------------------------------------------*/
 
 setDefaults({
+	allDayHeader: true,
 	slotMinutes: 30,
 	defaultEventMinutes: 120,
-	agendaTimeFormat: 'g:i{ - g:i}', // todo: merge into object w/ timeFormat
 	axisFormat: 'htt',
-	agendaDragOpacity: .5 // maybe merge into object
+	timeFormat: {
+		agenda: 'h:mm{ - h:mm}'
+	},
+	dragOpacity: {
+		agenda: .5
+	}
 });
 
 views.agendaWeek = function(element, options) {
@@ -19,10 +30,10 @@ views.agendaWeek = function(element, options) {
 			this.title = formatDates(
 				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
 				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
-				strProp(options.titleFormat, 'week'),
+				this.option('titleFormat'),
 				options
 			);
-			this.renderAgenda(7, strProp(options.columnFormat, 'week'), fetchEvents);
+			this.renderAgenda(7, this.option('columnFormat'), fetchEvents);
 		}
 	});
 };
@@ -33,10 +44,10 @@ views.agendaDay = function(element, options) {
 			if (delta) {
 				addDays(date, delta);
 			}
-			this.title = formatDate(date, strProp(options.titleFormat, 'day'), options);
+			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderAgenda(1, strProp(options.columnFormat, 'day'), fetchEvents);
+			this.renderAgenda(1, this.option('columnFormat'), fetchEvents);
 		}
 	});
 };
@@ -45,8 +56,8 @@ function Agenda(element, options, methods) {
 
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
-		timeWidth, colWidth, rowHeight,
-		cachedSlotSegs, cachedDaySegs,
+		timeWidth, colWidth, rowHeight, // todo: timeWidth -> axisWidth, rowHeight->slotHeight ?
+		cachedDaySegs, cachedSlotSegs,
 		tm, firstDay,
 		rtl, dis, dit,  // day index sign / translate
 		// ...
@@ -57,10 +68,26 @@ function Agenda(element, options, methods) {
 		rerenderEvents: rerenderEvents,
 		updateSize: updateSize,
 		defaultEventEnd: function(event) {
-			return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
+			var start = cloneDate(event.start);
+			if (event.allDay) {
+				return start;
+			}
+			return addMinutes(start, options.defaultEventMinutes);
 		},
 		visEventEnd: function(event) {
-			return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
+			if (event.allDay) {
+				if (event.end) {
+					var end = cloneDate(event.end);
+					return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
+				}else{
+					return addDays(cloneDate(event.start), 1);
+				}
+			}
+			if (event.end) {
+				return cloneDate(event.end);
+			}else{
+				return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
+			}
 		}
 	});
 	view.init(element, options);
@@ -76,7 +103,7 @@ function Agenda(element, options, methods) {
 		element.disableSelection();
 	}
 	
-	function renderAgenda(c, colFormat, fetchEvents) { // TODO: get z-indexes sorted out
+	function renderAgenda(c, colFormat, fetchEvents) {
 		colCnt = c;
 		
 		// update option-derived variables
@@ -101,9 +128,9 @@ function Agenda(element, options, methods) {
 				slotNormal = options.slotMinutes % 15 == 0, //...
 			
 			// head
-			s = "<div class='fc-agenda-head' style='position:relative;z-index:3'>" +
+			s = "<div class='fc-agenda-head' style='position:relative;z-index:4'>" +
 				"<table style='width:100%'>" +
-				"<tr class='fc-first'>" +
+				"<tr class='fc-first" + (options.allDayHeader ? '' : ' fc-last') + "'>" +
 				"<th class='fc-leftmost " +
 					tm + "-state-default'>&nbsp;</th>";
 			for (i=0; i<colCnt; i++) {
@@ -113,14 +140,17 @@ function Agenda(element, options, methods) {
 					"'>" + formatDate(d, colFormat, options) + "</th>";
 				addDays(d, dis);
 			}
-			s+= "<th class='" + tm + "-state-default'>&nbsp;</th></tr>" +
-				"<tr class='fc-all-day'>" +
-					"<th class='fc-axis fc-leftmost " + tm + "-state-default'>all day</th>" +
-					"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
-						"<div class='fc-day-content'><div>&nbsp;</div></div></td>" +
-					"<th class='" + tm + "-state-default'>&nbsp;</th>" +
-				"</tr><tr class='fc-divider'><th colspan='" + (colCnt+2) + "' class='" +
-					tm + "-state-default fc-leftmost'></th></tr></table></div>";
+			s+= "<th class='" + tm + "-state-default'>&nbsp;</th></tr>";
+			if (options.allDayHeader) {
+				s+= "<tr class='fc-all-day'>" +
+						"<th class='fc-axis fc-leftmost " + tm + "-state-default'>all day</th>" +
+						"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
+							"<div class='fc-day-content'><div>&nbsp;</div></div></td>" +
+						"<th class='" + tm + "-state-default'>&nbsp;</th>" +
+					"</tr><tr class='fc-divider fc-last'><th colspan='" + (colCnt+2) + "' class='" +
+						tm + "-state-default fc-leftmost'><div/></th></tr>";
+			}
+			s+= "</table></div>";
 			head = $(s).appendTo(element);
 			head.find('td').click(slotClick);
 			
@@ -134,7 +164,7 @@ function Agenda(element, options, methods) {
 					"'><th class='fc-axis fc-leftmost " + tm + "-state-default'>" +
 					((!slotNormal || minutes==0) ? formatDate(d, options.axisFormat) : '&nbsp;') + 
 					"</th><td class='fc-slot" + i + ' ' +
-						tm + "-state-default'><div class='fc-day-content'><div>&nbsp;</div></div></td></tr>";
+						tm + "-state-default'><div>&nbsp;</div></td></tr>";
 				addMinutes(d, options.slotMinutes);
 			}
 			s += "</table>";
@@ -214,7 +244,7 @@ function Agenda(element, options, methods) {
 		// time-axis width
 		timeWidth = 0;
 		setOuterWidth(
-			head.find('th.fc-axis').add(body.find('th.fc-axis:first'))
+			head.find('tr:lt(2) th:first').add(body.find('tr:first th'))
 				.width('')
 				.each(function() {
 					timeWidth = Math.max(timeWidth, $(this).outerWidth());
@@ -256,66 +286,133 @@ function Agenda(element, options, methods) {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	/********************************** event rendering *********************************/
+	/* Event Rendering
+	-----------------------------------------------------------------------------*/
 	
 	
 	function renderEvents(events) {
-		return;
+		view.reportEvents(events);
 		
-		var i, len=events.length, event,
-			fakeID=0, nextDay,
-			slotEvents=[], dayEvents=[];
-			
+		var i, len=events.length,
+			dayEvents=[],
+			slotEvents=[];
 		for (i=0; i<len; i++) {
-			event = events[i];
-			event._id = typeof event.id == 'undefined' ? '_fc' + fakeID++ : event.id + '';
-			if (eventsByID[event._id]) {
-				eventsByID[event._id].push(event);
+			if (events[i].allDay) {
+				dayEvents.push(events[i]);
 			}else{
-				eventsByID[event._id] = [event];
-			}
-			if (event.hasTime) {
-				event._end = event.end || addMinutes(cloneDate(event.start), options.defaultEventMinutes);
-			}else{
-				event._end = addDays(cloneDate(event.end || event.start), 1);
-			}
-			if (event.start < view.end && event._end > view.start) {
-				if (event.hasTime) {
-					event._end = event.end || addMinutes(cloneDate(event.start), options.defaultEventMinutes);
-					slotEvents.push(event);
-				}else{
-					event._end = addDays(cloneDate(event.end || event.start), 1);
-					dayEvents.push(event);
-				}
+				slotEvents.push(events[i]);
 			}
 		}
 		
-		cachedEvents = events;
-		cachedSlotSegs = compileSlotSegs(slotEvents, view.start, view.end);
-		cachedDaySegs = levelizeSegs(sliceSegs(dayEvents, view.start, view.end));
-		
-		renderSlotSegs(cachedSlotSegs);
-		renderDaySegs(cachedDaySegs);
-		
+		renderDaySegs(cachedDaySegs = stackSegs(view.sliceSegs(dayEvents, view.visStart, view.visEnd)));
+		renderSlotSegs(cachedSlotSegs = compileSlotSegs(slotEvents));
 	}
 	
 	
 	function rerenderEvents(skipCompile) {
-		return;
-		clearEvents();
+		view.clearEvents();
 		if (skipCompile) {
-			renderSlotSegs(cachedSlotSegs);
 			renderDaySegs(cachedDaySegs);
+			renderSlotSegs(cachedSlotSegs);
 		}else{
-			renderEvents(cachedEvents);
+			renderEvents(view.cachedEvents);
 		}
 	}
+	
+	
+	function compileSlotSegs(events) {
+		var d1 = cloneDate(view.visStart),
+			d2 = addDays(cloneDate(d1), 1),
+			levels,
+			segCols = [],
+			i=0;
+		for (; i<colCnt; i++) {
+			levels = stackSegs(view.sliceSegs(events, d1, d2));
+			countForwardSegs(levels);
+			segCols.push(levels);
+			addDays(d1, 1);
+			addDays(d2, 1);
+		}
+		return segCols;
+	}
+	
+	
+	
+	// renders 'all-day' events at the top
+	
+	function renderDaySegs(segRow) {
+		if (options.allDayHeader) {
+			var td = head.find('td'),
+				tdInner = td.find('div div'),
+				top = tdInner.position().top,
+				rowHeight = 0,
+				i, len=segRow.length, level,
+				levelHeight,
+				j, seg,
+				event,
+				eventClasses,
+				leftDay, leftRounded,
+				rightDay, rightRounded,
+				left, right,
+				eventElement, anchorElement;
+			for (i=0; i<len; i++) {
+				level = segRow[i];
+				levelHeight = 0;
+				for (j=0; j<level.length; j++) {
+					seg = level[j];
+					event = seg.event;
+					eventClasses = ['fc-event', 'fc-event-hori'];
+					if (rtl) {
+						leftDay = seg.end.getDay() - 1;
+						leftRounded = seg.isEnd;
+						rightDay = seg.start.getDay();
+						rightRounded = seg.isStart;
+					}else{
+						leftDay = seg.start.getDay();
+						leftRounded = seg.isStart;
+						rightDay = seg.end.getDay() - 1;
+						rightRounded = seg.isEnd;
+					}
+					if (leftRounded) {
+						eventClasses.push('fc-corner-left');
+						left = bg.find('td:eq('+(((leftDay-firstDay+colCnt)%colCnt)*dis+dit)+') div div').position().left + timeWidth;
+					}else{
+						left = timeWidth;
+					}
+					if (rightRounded) {
+						eventClasses.push('fc-corner-right');
+						right = bg.find('td:eq('+(((rightDay-firstDay+colCnt)%colCnt)*dis+dit)+') div div');
+						right = right.position().left + right.width() + timeWidth;
+					}else{
+						right = timeWidth + bg.width();
+					}
+					eventElement = $("<div class='" + eventClasses.join(' ') + "'/>")
+						.append(anchorElement = $("<a/>")
+							.append($("<span class='fc-event-title' />")
+								.text(event.title)))
+						.css({
+							position: 'absolute',
+							top: top,
+							left: left,
+							zIndex: 8
+						})
+						.appendTo(head);
+					setOuterWidth(eventElement, right-left, true);
+					if (seg.isEnd) {
+						view.resizableDayEvent(event, eventElement, colWidth);
+					}
+					draggableDayEvent(event, eventElement, seg.isStart);
+					view.reportEventElement(event, eventElement);
+					levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
+				}
+				top += levelHeight;
+				rowHeight += levelHeight;
+			}
+			tdInner.height(rowHeight);
+			updateSize(); // tdInner might have pushed the body down, so resize
+		}
+	}
+	
 	
 	
 	// renders events in the 'time slots' at the bottom
@@ -324,9 +421,11 @@ function Agenda(element, options, methods) {
 		var colI, colLen=segCols.length, col,
 			levelI, level,
 			segI, seg,
-			event, start, end,
+			forward,
+			event,
 			top, bottom,
-			tdInner, left, width,
+			tdInner,
+			width, left,
 			eventElement, anchorElement, timeElement, titleElement;
 		for (colI=0; colI<colLen; colI++) {
 			col = segCols[colI];
@@ -334,35 +433,38 @@ function Agenda(element, options, methods) {
 				level = col[levelI];
 				for (segI=0; segI<level.length; segI++) {
 					seg = level[segI];
+					forward = seg.forward || 0;
 					event = seg.event;
-					top = timeCoord(seg.start, seg.start);
-					bottom = timeCoord(seg.start, seg.end);
-					tdInner = bg.find('td:eq('+colI+') div div');
+					top = timePosition(seg.start, seg.start);
+					bottom = timePosition(seg.start, seg.end);
+					tdInner = bg.find('td:eq(' + (colI*dis + dit) + ') div div');
 					availWidth = tdInner.width();
-					left = timeWidth + tdInner.position().left + // leftmost possible
-						(availWidth / (levelI + seg.right + 1) * levelI); // indentation
-					if (levelI == 0) {
-						if (seg.right == 0) {
+					if (levelI) {
+						// indented and thin
+						width = availWidth / (levelI + forward + 1);
+					}else{
+						if (forward) {
+							// moderately wide, aligned left still
+							width = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+						}else{
 							// can be entire width, aligned left
 							width = availWidth * .96;
-						}else{
-							// moderately wide, aligned left still
-							width = ((availWidth / (seg.right + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
 						}
-					}else{
-						// indented and thinner
-						width = availWidth / (levelI + seg.right + 1);
 					}
+					left = timeWidth + tdInner.position().left +       // leftmost possible
+						(availWidth / (levelI + forward + 1) * levelI) // indentation
+						* dis + (rtl ? availWidth - width : 0);        // rtl
 					eventElement = $("<div class='fc-event fc-event-vert' />")
 						.append(anchorElement = $("<a><span class='fc-event-bg'/></a>")
 							.append(titleElement = $("<span class='fc-event-title'/>")
 								.text(event.title)))
 						.css({
 							position: 'absolute',
-							zIndex: 1000,
+							zIndex: 8,
 							top: top,
 							left: left
-						});
+						})
+						.appendTo(bodyContent);
 					if (event.url) {
 						anchorElement.attr('href', event.url);
 					}
@@ -371,7 +473,7 @@ function Agenda(element, options, methods) {
 						// add the time header
 						anchorElement
 							.prepend(timeElement = $("<span class='fc-event-time'/>")
-								.text(formatDates(event.start, event.end, options.agendaEventTimeFormat)))
+								.text(formatDates(event.start, event.end, view.option('timeFormat'))))
 					}else{
 						timeElement = null;
 					}
@@ -379,420 +481,312 @@ function Agenda(element, options, methods) {
 						eventElement.addClass('fc-corner-bottom');
 						resizableSlotEvent(event, eventElement, timeElement);
 					}
-					eventElement.appendTo(panel);
 					setOuterWidth(eventElement, width, true);
 					setOuterHeight(eventElement, bottom-top, true);
 					if (timeElement && eventElement.height() - titleElement.position().top < 10) {
-						// event title doesn't have enough room, but next to the time
-						timeElement.text(formatDate(event.start, options.agendaEventTimeFormat) + ' - ' + event.title);
+						// event title doesn't have enough room, put next to the time
+						timeElement.text(formatDate(event.start, view.option('timeFormat')) + ' - ' + event.title);
 						titleElement.remove();
 					}
 					draggableSlotEvent(event, eventElement, timeElement);
-					reportEventElement(event, eventElement);
+					view.reportEventElement(event, eventElement);
 				}
 			}
 		}
 	}
-	
-	
-	// renders 'all-day' events at the top
-	
-	function renderDaySegs(segRow) {
-		var td = head.find('td');
-		var tdInner = td.find('div div');
-		var top = tdInner.position().top,
-			rowHeight = 0,
-			i, len=segRow.length, level,
-			levelHeight,
-			j, seg,
-			event, left, right,
-			eventElement, anchorElement;
-		for (i=0; i<len; i++) {
-			level = segRow[i];
-			levelHeight = 0;
-			for (j=0; j<level.length; j++) {
-				seg = level[j];
-				event = seg.event;
-				left = seg.isStart ?
-					bg.find('td:eq('+((seg.start.getDay()+dayCnt)%dayCnt)+') div div') :
-					bg.find('td:eq('+((seg.start.getDay()+dayCnt)%dayCnt)+')');
-				left = left.position().left;
-				right = seg.isEnd ?
-					bg.find('td:eq('+((seg.end.getDay()-1+dayCnt)%dayCnt)+') div div') :
-					bg.find('td:eq('+((seg.end.getDay()-1+dayCnt)%dayCnt)+')');
-				right = right.position().left + right.outerWidth();
-				eventElement = $("<div class='fc-event fc-event-hori' />")
-					.append(anchorElement = $("<a/>")
-						.append($("<span class='fc-event-title' />")
-							.text(event.title)))
-					.css({
-						position: 'absolute',
-						top: top,
-						left: timeWidth + left
-					});
-				if (seg.isStart) {
-					eventElement.addClass('fc-corner-left');
-				}
-				if (seg.isEnd) {
-					eventElement.addClass('fc-corner-right');
-				}
-				if (event.url) {
-					anchorElement.attr('href', event.url);
-				}
-				eventElement.appendTo(head);
-				setOuterWidth(eventElement, right-left, true);
-				draggableDayEvent(event, eventElement);
-				//resizableDayEvent(event, eventElement);
-				reportEventElement(event, eventElement);
-				levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
-			}
-			top += levelHeight;
-			rowHeight += levelHeight;
-		}
-		tdInner.height(rowHeight);
-		//bg.height(element.height()); // tdInner might have pushed the body down, so resize
-		//updateSize();
-	}
+
 	
 	
 	
-	/******************************************* draggable *****************************************/
+	/* Event Dragging
+	-----------------------------------------------------------------------------*/
 	
 	
-	// when event starts out IN TIMESLOTS
 	
-	function draggableSlotEvent(event, eventElement, timeElement) {
-		var origPosition, origMarginTop,
-			prevSlotDelta, slotDelta,
+	// when event starts out FULL-DAY
+	
+	function draggableDayEvent(event, eventElement, isStart) {
+		var origPosition, origWidth,
+			resetElement,
+			allDay=true,
 			matrix;
 		eventElement.draggable({
-			zIndex: 1001,
-			scroll: false,
-			grid: [dayWidth, slotHeight],
-			axis: dayCnt==1 ? 'y' : false,
-			cancel: '.ui-resizable-handle',
-			opacity: .5,
-			start: function(ev, ui) {
-				if ($.browser.msie) {
-					eventElement.find('span.fc-event-bg').hide();
-				}
+			zIndex: 9,
+			opacity: view.option('month'), // use whatever the month view was using
+			start: function(ev) {
 				origPosition = eventElement.position();
-				origMarginTop = parseInt(eventElement.css('margin-top')) || 0;
-				prevSlotDelta = 0;
-				matrix = new HoverMatrix(function(cell) {
-					if (event.hasTime) {
-						// event is an original slot-event
-						if (cell && cell.row == 0) {
-							// but needs to convert to temporary full-day-event
-							var topDiff = panel.offset().top - head.offset().top;
-							eventElement.css('margin-top', origMarginTop + topDiff)
-								.appendTo(head);
-							// TODO: bug in IE8 w/ above technique, draggable ends immediately
-							event.hasTime = false;
-							if (timeElement) {
-								timeElement.hide();
-							}
-							eventElement.draggable('option', 'grid', null);
-						}
-					}else{
-						// event is a temporary full-day-event
-						if (cell && cell.row == 1) {
-							// but needs to convert to original slot-event
-							eventElement.css('margin-top', origMarginTop)
-								.appendTo(panel);
-							event.hasTime = true;
-							if (timeElement) {
-								timeElement.css('display', ''); // show() was causing display=inline
-							}
-							eventElement.draggable('option', 'grid', [dayWidth, slotHeight]);
-						}
+				origWidth = eventElement.width();
+				resetElement = function() {
+					if (!allDay) {
+						eventElement
+							.width(origWidth)
+							.height('')
+							.draggable('option', 'grid', null);
+						allDay = true;
 					}
-					if (cell && cell.row == 0) {
-						showDayOverlay(cell);
-					}else{
-						hideDayOverlay();
+				};
+				matrix = new HoverMatrix(function(cell) {
+					eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
+					if (cell) {
+						if (!cell.row) { // on full-days
+							resetElement();
+							view.showOverlay(cell);
+						}else{ // mouse is over bottom slots
+							if (isStart && allDay) {
+								// convert event to temporary slot-event
+								setOuterHeight(
+									eventElement.width(colWidth - 10), // don't use entire width
+									rowHeight * Math.round(
+										(event.end ? ((event.end - event.start)/MINUTE_MS) : options.defaultEventMinutes)
+										/options.slotMinutes)
+								);
+								eventElement.draggable('option', 'grid', [colWidth, 1]);
+								allDay = false;
+							}
+							view.hideOverlay();
+						}
+					}else{ // mouse is outside of everything
+						view.hideOverlay();
 					}
 				});
+				view.hideEvents(event, eventElement);
 				matrix.row(head.find('td'));
 				bg.find('td').each(function() {
 					matrix.col(this);
 				});
 				matrix.row(body);
-				matrix.start();
-				hideSimilarEvents(event, eventElement);
+				matrix.mouse(ev.pageX, ev.pageY);
 			},
 			drag: function(ev, ui) {
-				slotDelta = Math.round((ui.position.top - origPosition.top) / slotHeight);
+				matrix.mouse(ev.pageX, ev.pageY);
+			},
+			stop: function(ev, ui) {
+				view.hideOverlay();
+				var cell = matrix.cell,
+					dayDelta = dis * (
+						allDay ? // can't trust cell.colDelta when using slot grid
+						(cell ? cell.colDelta : 0) :
+						Math.floor((ui.position.left - origPosition.left) / colWidth)
+					);
+				if (!cell || !dayDelta && !cell.rowDelta) {
+					// over nothing (has reverted)
+					resetElement();
+					view.showEvents(event, eventElement);
+				}else{
+					view.eventDrop(
+						this, event, dayDelta,
+						allDay ? 0 : // minute delta
+							Math.round((eventElement.offset().top - bodyContent.offset().top) / rowHeight)
+							* options.slotMinutes
+							- (event.start.getHours() * 60 + event.start.getMinutes()),
+						allDay, ev, ui
+					);
+				}
+			}
+		});
+	}
+	
+	
+	
+	// when event starts out IN TIMESLOTS
+	
+	function draggableSlotEvent(event, eventElement, timeElement) {
+		var origPosition,
+			resetElement,
+			prevSlotDelta, slotDelta,
+			allDay=false,
+			matrix;
+		eventElement.draggable({
+			zIndex: 9,
+			scroll: false,
+			grid: [colWidth, rowHeight],
+			axis: colCnt==1 ? 'y' : false,
+			opacity: view.option('dragOpacity'),
+			start: function(ev, ui) {
+				if ($.browser.msie) {
+					eventElement.find('span.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
+				}
+				origPosition = eventElement.position();
+				resetElement = function() {
+					// convert back to original slot-event
+					if (allDay) {
+						if (timeElement) {
+							timeElement.css('display', ''); // show() was causing display=inline
+						}
+						eventElement.draggable('option', 'grid', [colWidth, rowHeight]);
+						allDay = false;
+					}
+				};
+				prevSlotDelta = 0;
+				matrix = new HoverMatrix(function(cell) {
+					eventElement.draggable('option', 'revert', !cell);
+					if (cell) {
+						if (!cell.row && options.allDayHeader) { // over full days
+							if (!allDay) {
+								// convert to temporary all-day event
+								allDay = true;
+								if (timeElement) {
+									timeElement.hide();
+								}
+								eventElement.draggable('option', 'grid', null);
+							}
+							view.showOverlay(cell);
+						}else{ // on slots
+							resetElement();
+							view.hideOverlay();
+						}
+					}else{
+						view.hideOverlay();
+					}
+				});
+				if (options.allDayHeader) {
+					matrix.row(head.find('td'));
+				}
+				bg.find('td').each(function() {
+					matrix.col(this);
+				});
+				matrix.row(body);
+				matrix.mouse(ev.pageX, ev.pageY);
+				view.hideEvents(event, eventElement);
+			},
+			drag: function(ev, ui) {
+				slotDelta = Math.round((ui.position.top - origPosition.top) / rowHeight);
 				if (slotDelta != prevSlotDelta) {
-					if (timeElement && event.hasTime) {
+					if (timeElement && !allDay) {
 						// update time header
-						var newStart = addMinutes(cloneDate(event.start), slotDelta * options.slotMinutes),
+						var minuteDelta = slotDelta*options.slotMinutes,
+							newStart = addMinutes(cloneDate(event.start), minuteDelta),
 							newEnd;
 						if (event.end) {
-							newEnd = addMinutes(cloneDate(event.end), slotDelta * options.slotMinutes);
+							newEnd = addMinutes(cloneDate(event.end), minuteDelta);
 						}
-						timeElement.text(formatDates(newStart, newEnd, options.agendaEventTimeFormat));
+						timeElement.text(formatDates(newStart, newEnd, view.option('timeFormat')));
 					}
 					prevSlotDelta = slotDelta;
 				}
 				matrix.mouse(ev.pageX, ev.pageY);
 			},
 			stop: function(ev, ui) {
-				if (event.hasTime) {
-					if (matrix.cell) {
-						// over slots
-						var dayDelta = Math.round((ui.position.left - origPosition.left) / dayWidth);
-						reportEventMove(event, dayDelta, true, slotDelta * options.slotMinutes);
+				view.hideOverlay();
+				var cell = matrix.cell,
+					dayDelta = dis * (
+						allDay ? // can't trust cell.colDelta when using slot grid
+						(cell ? cell.colDelta : 0) : 
+						Math.floor((ui.position.left - origPosition.left) / colWidth)
+					);
+				if (!cell || !slotDelta && !dayDelta) {
+					resetElement();
+					if ($.browser.msie) {
+						eventElement
+							.css('filter', '') // clear IE opacity side-effects
+							.find('span.fc-event-bg').css('display', ''); // .show() made display=inline
 					}
+					eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
+					view.showEvents(event, eventElement);
 				}else{
-					// over full-days
-					if (!matrix.cell) {
-						// was being dragged over full-days, but finished over nothing, reset
-						event.hasTime = true;
-					}else{
-						event.end = null;
-						reportEventMove(event, matrix.cell.colDelta);
-					}
+					view.eventDrop(
+						this, event, dayDelta,
+						allDay ? 0 : slotDelta * options.slotMinutes, // minute delta
+						allDay, ev, ui
+					);
 				}
-				hideDayOverlay();
-				rerenderEvents();
 			}
 		});
 		
 	}
 	
 	
-	// when event starts out FULL-DAY
-	
-	function draggableDayEvent(event, eventElement) {
-		var origWidth, matrix;
-		eventElement.draggable({
-			zIndex: 1001,
-			start: function() {
-				origWidth = eventElement.width();
-				matrix = new HoverMatrix(function(cell) {
-					if (!cell) {
-						// mouse is outside of everything
-						hideDayOverlay();
-					}else{
-						if (cell.row == 0) {
-							// on full-days
-							if (event.hasTime) {
-								// and needs to be original full-day event
-								eventElement
-									.width(origWidth)
-									.height('')
-									.draggable('option', 'grid', null);
-								event.hasTime = false;
-							}
-							showDayOverlay(cell);
-						}else{
-							// mouse is over bottom slots
-							if (!event.hasTime) {
-								// convert event to temporary slot-event
-								//if (+cloneDate(event.start, true) == +cloneDate(event._end, true)) {
-									// only change styles if a 1-day event
-									eventElement
-										.width(dayWidth - 10) // don't use entire width
-										.height(slotHeight * Math.round(options.defaultEventMinutes/options.slotMinutes) - 2);
-								//}
-								eventElement.draggable('option', 'grid', [dayWidth, 1]);
-								event.hasTime = true;
-							}
-							hideDayOverlay();
-						}
-					}
-				});
-				matrix.row(head.find('td'));
-				bg.find('td').each(function() {
-					matrix.col(this);
-				});
-				matrix.row(body);
-				matrix.start();
-				hideSimilarEvents(event, eventElement);
-			},
-			drag: function(ev, ui) {
-				matrix.mouse(ev.pageX, ev.pageY);
-			},
-			stop: function() {
-				var cell = matrix.cell;
-				if (!cell) {
-					// over nothing
-					if (event.hasTime) {
-						// event was on the slots before going out, convert back
-						event.hasTime = false;
-					}
-				}else{
-					if (!event.hasTime) {
-						// event has been dropped on a full-day
-						reportEventMove(event, cell.colDelta);
-					}else{
-						// event has been dropped on the slots
-						var slots = Math.floor((eventElement.offset().top - panel.offset().top) / slotHeight);
-						event.end = null;
-						reportEventMove(event, cell.colDelta, false, slots * options.slotMinutes);
-					}
-				}
-				hideDayOverlay();
-				rerenderEvents();
-			}
-		});
-	}
 	
 	
+	/* Event Resizing
+	-----------------------------------------------------------------------------*/
 	
-	/************************************* resizable **************************************/
-	
+	// for TIMESLOT events
 
 	function resizableSlotEvent(event, eventElement, timeElement) {
-		var prevSlotDelta, slotDelta, newEnd;
+		var slotDelta, prevSlotDelta;
 		eventElement
 			.resizable({
 				handles: 's',
-				grid: [0, slotHeight],
+				grid: rowHeight,
 				start: function() {
-					prevSlotDelta = 0;
-					hideSimilarEvents(event, eventElement);
+					slotDelta = prevSlotDelta = 0;
+					view.hideEvents(event, eventElement);
 					if ($.browser.msie && $.browser.version == '6.0') {
 						eventElement.css('overflow', 'hidden');
 					}
+					eventElement.css('z-index', 9);
 				},
 				resize: function(ev, ui) {
-					slotDelta = Math.round((Math.max(slotHeight, ui.size.height) - ui.originalSize.height) / slotHeight);
+					// don't rely on ui.size.height, doesn't take grid into account
+					slotDelta = Math.round((Math.max(rowHeight, eventElement.height()) - ui.originalSize.height) / rowHeight);
 					if (slotDelta != prevSlotDelta) {
-						newEnd = addMinutes(cloneDate(event._end), options.slotMinutes * slotDelta);
 						if (timeElement) {
-							timeElement.text(formatDates(event.start, newEnd, options.agendaEventTimeFormat));
+							timeElement.text(
+								formatDates(
+									event.start,
+									(!slotDelta && !event.end) ? null : // no change, so don't display time range
+										addMinutes(view.eventEnd(event), options.slotMinutes*slotDelta),
+									view.option('timeFormat')
+								)
+							);
 						}
 						prevSlotDelta = slotDelta;
 					}
 				},
 				stop: function(ev, ui) {
-					reportEventResize(event, 0, true, options.slotMinutes * slotDelta);
-					rerenderEvents();
+					if (slotDelta) {
+						view.eventResize(this, event, 0, options.slotMinutes*slotDelta, ev, ui);
+					}else{
+						eventElement.css('z-index', 8);
+						view.showEvents(event, eventElement);
+						// BUG: if event was really short, need to put title back in span
+					}
 				}
 			})
 			.find('div.ui-resizable-s').text('=');
 	}
 	
 	
-	function resizableDayEvent(event, eventElement) {
-		eventElement.resizable({
-			handles: 'e',
-			grid: [dayWidth, 0],
-			start: function() {
-				hideSimilarEvents(event, eventElement);
-			},
-			stop: function(ev, ui) {
-				var dayDelta = Math.round((Math.max(dayWidth, ui.size.width) - ui.originalSize.width) / dayWidth);
-				reportEventResize(event, dayDelta);
-				rerenderEvents();
-			}
-		});
-	}
+	// ALL-DAY event resizing w/ 'view' methods...
 	
 	
 	
-	/**************************************** misc **************************************/
 	
-	// get the Y coordinate of the given time on the given day
+	/* Misc
+	-----------------------------------------------------------------------------*/
 	
-	function timeCoord(day, time) {
-		var nextDay = addDays(cloneDate(day), 1);
-		if (time < nextDay) {
-			var slotMinutes = options.slotMinutes;
-			var minutes = time.getHours()*60 + time.getMinutes();
-			var slotI = Math.floor(minutes / slotMinutes);
-			var td = body.find('tr:eq(' + slotI + ') td');
-			return Math.round(td.position().top + slotHeight * ((minutes % slotMinutes) / slotMinutes));
-		}else{
-			return panel.height();
+	// get the Y coordinate of the given time on the given day (both Date objects)
+	
+	function timePosition(day, time) {
+		if (time > day && time.getDay() != day.getDay()) {
+			return bodyContent.height();
 		}
+		var slotMinutes = options.slotMinutes,
+			minutes = time.getHours()*60 + time.getMinutes(),
+			slotI = Math.floor(minutes / slotMinutes),
+			innerDiv = body.find('tr:eq(' + slotI + ') td div');
+		return Math.max(0, Math.round(innerDiv.position().top - 1 + rowHeight * ((minutes % slotMinutes) / slotMinutes)));
 	}
 
 }
 
 
-function compileSlotSegs(events, start, end) {
+// count the number of colliding, higher-level segments (for event squishing)
 
-	// slice by day
-	var segCols = [],
-		d1 = cloneDate(start),
-		d2 = addDays(cloneDate(start), 1);
-	for (; d1<end; addDays(d1, 1), addDays(d2, 1)) {
-		segCols.push(sliceSegs(events, d1, d2));
-	}
-	
-	var segLevelCols = [],
-		segLevels,
-		segs,
-		segI, seg,
-		levelI, level,
-		collide,
-		segI2, seg2;
-		
-	for (var i=0; i<segCols.length; i++) {
-	
-		// divide segments into levels
-		segLevels = segLevelCols[i] = [];
-		segs = segCols[i];
-		for (segI=0; segI<segs.length; segI++) {
-			seg = segs[segI];
-			for (levelI=0; true; levelI++) {
-				level = segLevels[levelI];
-				if (!level) {
-					segLevels[levelI] = [seg];
-					break;
-				}else{
-					collide = false;
-					for (segI2=0; segI2<level.length; segI2++) {
-						if (segsCollide(level[segI2], seg)) {
-							collide = true;
-							break;
-						}
-					}
-					if (!collide) {
-						level.push(seg);
-						break;
-					}
-				}
-			}
-			seg.right = 0;
-		}
-		
-		// determine # of segments to the 'right' of each segment
-		for (levelI=segLevels.length-1; levelI>0; levelI--) {
-			level = segLevels[levelI];
-			for (segI=0; segI<level.length; segI++) {
-				seg = level[segI];
-				for (segI2=0; segI2<segLevels[levelI-1].length; segI2++) {
-					seg2 = segLevels[levelI-1][segI2];
-					if (segsCollide(seg, seg2)) {
-						seg2.right = Math.max(seg2.right, seg.right+1);
-					}
-				}
-			}
-		}
-		
-	}
-	
-	return segLevelCols;
-	
-}
-
-
-function segAfters(levels) { // TODO: put in agenda.js
-	var i, j, k, level, seg, seg2;
+function countForwardSegs(levels) {
+	var i, j, k, level, segForward, segBack;
 	for (i=levels.length-1; i>0; i--) {
 		level = levels[i];
 		for (j=0; j<level.length; j++) {
-			seg = level[j];
-			for (k=0; k<segLevels[i-1].length; k++) {
-				seg2 = segLevels[i-1][k];
-				if (segsCollide(seg, seg2)) {
-					seg2.after = Math.max(seg2.after, seg.after+1);
+			segForward = level[j];
+			for (k=0; k<levels[i-1].length; k++) {
+				segBack = levels[i-1][k];
+				if (segsCollide(segForward, segBack)) {
+					segBack.forward = Math.max(segBack.forward||0, (segForward.forward||0)+1);
 				}
 			}
 		}
 	}
 }
+

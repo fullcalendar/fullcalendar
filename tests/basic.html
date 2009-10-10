@@ -12,10 +12,14 @@
 		var m = d.getMonth();
 		
 		$('#calendar').fullCalendar({
+			slotMinutes: 30,
+			//allDayHeader: false,
 			//weekMode: 'variable',
-			theme: true,
+			//theme: true,
+			//firstDay: 1,
 			//isRTL: true,
 			editable: true,
+			//dragOpacity: .5,
 			defaultView: 'agendaWeek',
 			header: {
 				left: 'prev,next today',
@@ -27,20 +31,26 @@
 					id: 1,
 					title: "Long Event",
 					start: new Date(y, m, 6, 14, 0),
-					end: new Date(y, m, 11),
+					end: new Date(y, m, 11)
+					//allDay: false
+				},
+				{
+					id: 2,
+					title: "Repeating Event111",
+					start: new Date(y, m, 8),
+					allDay: true
+				},
+				{
+					id: 2,
+					title: "Repeating Event222",
+					start: new Date(y, m, 9, 5, 0),
 					allDay: false
 				},
 				{
-					id: 2,
-					title: "Repeating Event",
-					start: new Date(y, m, 2),
-					allDay: true
-				},
-				{
-					id: 2,
-					title: "Repeating Event",
-					start: new Date(y, m, 9),
-					allDay: true
+					id: 345,
+					title: "Hey Hey",
+					start: new Date(y, m, 9, 4, 0),
+					allDay: false
 				},
 				{
 					id: 3,

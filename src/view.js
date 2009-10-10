@@ -4,6 +4,8 @@
 
 var viewMethods = {
 
+	// TODO: maybe change the 'vis' variables to 'excl'
+
 	/*
 	 * Objects inheriting these methods must implement the following properties/methods:
 	 * - title
@@ -18,9 +20,9 @@ var viewMethods = {
 	 *
 	 *
 	 * z-index reservations:
-	 * 1. day-overlay
-	 * 2. events
-	 * 3. dragging/resizing events
+	 * 3 - day-overlay
+	 * 8 - events
+	 * 9 - dragging/resizing events
 	 *
 	 */
 	
@@ -50,7 +52,7 @@ var viewMethods = {
 	// returns a Date object for an event's end
 	
 	eventEnd: function(event) {
-		return event.end || this.defaultEventEnd(event);
+		return event.end ? cloneDate(event.end) : this.defaultEventEnd(event); // TODO: make sure always using copies
 	},
 	
 	
@@ -120,32 +122,57 @@ var viewMethods = {
 	
 	// event modification reporting
 	
-	moveEvent: function(event, days, minutes) { // actually DO the date changes
-		minutes = minutes || 0;
-		var events = this.eventsByID[event._id],
-			i, len=events.length, e;
-		for (i=0; i<len; i++) {
+	eventDrop: function(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
+		var view = this,
+			oldAllDay = event.allDay;
+		view.moveEvents(view.eventsByID[event._id], dayDelta, minuteDelta, allDay);
+		view.trigger('eventDrop', e, event, dayDelta, minuteDelta, allDay, function() { // TODO: change docs
+			// TODO: investigate cases where this inverse technique might not work
+			view.moveEvents(view.eventsByID[event._id], -dayDelta, -minuteDelta, oldAllDay);
+			view.rerenderEvents();
+		}, ev, ui);
+		view.eventsChanged = true;
+		view.rerenderEvents();
+	},
+	
+	eventResize: function(e, event, dayDelta, minuteDelta, ev, ui) {
+		var view = this;
+		view.elongateEvents(view.eventsByID[event._id], dayDelta, minuteDelta);
+		view.trigger('eventResize', e, event, dayDelta, minuteDelta, function() {
+			// TODO: investigate cases where this inverse technique might not work
+			view.elongateEvents(view.eventsByID[event._id], -dayDelta, -minuteDelta);
+			view.rerenderEvents();
+		}, ev, ui);
+		view.eventsChanged = true;
+		view.rerenderEvents();
+	},
+	
+	
+	
+	// event modification
+	
+	moveEvents: function(events, dayDelta, minuteDelta, allDay) {
+		minuteDelta = minuteDelta || 0;
+		for (var e, len=events.length, i=0; i<len; i++) {
 			e = events[i];
-			e.allDay = event.allDay;
-			addMinutes(addDays(e.start, days, true), minutes);
+			if (allDay != undefined) {
+				e.allDay = allDay;
+			}
+			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
 			if (e.end) {
-				e.end = addMinutes(addDays(e.end, days, true), minutes);
+				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
 			}
 			normalizeEvent(e, this.options);
 		}
-		this.eventsChanged = true;
 	},
 	
-	resizeEvent: function(event, days, minutes) { // actually DO the date changes
-		minutes = minutes || 0;
-		var events = this.eventsByID[event._id],
-			i, len=events.length, e;
-		for (i=0; i<len; i++) {
+	elongateEvents: function(events, dayDelta, minuteDelta) {
+		minuteDelta = minuteDelta || 0;
+		for (var e, len=events.length, i=0; i<len; i++) {
 			e = events[i];
-			e.end = addMinutes(addDays(this.eventEnd(e), days, true), minutes);
+			e.end = addMinutes(addDays(this.eventEnd(e), dayDelta, true), minuteDelta);
 			normalizeEvent(e, this.options);
 		}
-		this.eventsChanged = true;
 	},
 	
 	
@@ -154,7 +181,7 @@ var viewMethods = {
 	
 	showOverlay: function(props) {
 		if (!this.dayOverlay) {
-			this.dayOverlay = $("<div class='fc-cell-overlay' style='position:absolute;z-index:1;display:none'/>")
+			this.dayOverlay = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3;display:none'/>")
 				.appendTo(this.element);
 		}
 		var o = this.element.offset();
@@ -172,6 +199,58 @@ var viewMethods = {
 		if (this.dayOverlay) {
 			this.dayOverlay.hide();
 		}
+	},
+	
+	
+	
+	// common horizontal event resizing
+
+	resizableDayEvent: function(event, eventElement, colWidth) {
+		var view = this;
+		if (!view.options.disableResizing && eventElement.resizable) {
+			eventElement.resizable({
+				handles: view.options.isRTL ? 'w' : 'e',
+				grid: colWidth,
+				minWidth: colWidth/2, // need this or else IE throws errors when too small
+				containment: view.element,
+				start: function(ev, ui) {
+					eventElement.css('z-index', 9);
+					view.hideEvents(event, eventElement);
+					view.trigger('eventResizeStart', this, event, ev, ui);
+				},
+				stop: function(ev, ui) {
+					view.trigger('eventResizeStop', this, event, ev, ui);
+					// ui.size.width wasn't working with grid correctly, use .width()
+					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
+					if (dayDelta) {
+						view.eventResize(this, event, dayDelta, 0, ev, ui);
+					}else{
+						eventElement.css('z-index', 8);
+						view.showEvents(event, eventElement);
+					}
+				}
+			});
+		}
+	},
+	
+	
+	
+	// get a property from the 'options' object, using smart view naming
+	
+	option: function(name) {
+		var v = this.options[name];
+		if (typeof v == 'object') {
+			var parts = this.name.split(/(?=[A-Z])/),
+				i=parts.length-1, res;
+			for (; i>=0; i--) {
+				res = v[parts[i].toLowerCase()];
+				if (res != undefined) {
+					return res;
+				}
+			}
+			return v[''];
+		}
+		return v;
 	},
 	
 	
@@ -212,14 +291,17 @@ var viewMethods = {
 					msLength: segEnd - segStart
 				});
 			}
-		}
+		} 
 		return segs.sort(segCmp);
 	}
+	
 
 };
 
 
-// more event rendering utilities
+
+
+// event rendering calculation utilities
 
 function stackSegs(segs) {
 	var levels = [],

@@ -11,7 +11,6 @@
 
 .fc .fc-axis {
 	width: 50px;
-	height: 1.6em;
 	padding: 0 4px 0 0;
 	vertical-align: middle;
 	white-space: nowrap;
@@ -28,7 +27,7 @@
 	}
 	
 .fc-agenda-head tr.fc-all-day th {
-	height: 2em;
+	height: 35px;
 	}
 	
 .fc-agenda tr.fc-first th,
@@ -47,6 +46,10 @@
 .fc .fc-agenda-body td {
 	background: none;
 	}
+	
+.fc .fc-agenda-body td div {
+	height: 20px;
+	}
 
 
 
@@ -57,14 +60,33 @@
 	}
 	
 	
-	
-.fc .fc-divider th {
-	height: 3px;
-	border-bottom-width: 1px;
+
+.fc .fc-divider div {
+	font-size: 1px; /* for IE6/7 */
+	height: 2px;
 	}
+	
+	
 	
 .fc .fc-divider .fc-state-default {
 	background: #eee;
+	}
+	
+	
+	
+.fc-agenda-head tr.fc-last th {
+	border-bottom-width: 1px;
+	}
+	
+	
+	
+	
+.fc-agenda .fc-day-content {
+	padding: 2px 2px 0;
+	}
+	
+.fc-agenda-head .fc-day-content {
+	padding-bottom: 10px;
 	}
 
 	
@@ -205,6 +227,7 @@
 	_white-space: normal;
 	overflow: hidden;
 	font-size: 10px;
+	border: 0;
 	}
 	
 .fc-event-vert span.fc-event-title {

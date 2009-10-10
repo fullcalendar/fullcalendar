@@ -18,7 +18,7 @@ views.month = function(element, options) {
 			this.title = formatDates(
 				start,
 				addDays(cloneDate(this.end = addMonths(cloneDate(start), 1)), -1),
-				strProp(options.titleFormat, 'month'),
+				this.option('titleFormat'),
 				options
 			);
 			addDays(this.visStart = cloneDate(start), -((start.getDay() - options.firstDay + 7) % 7));
@@ -28,7 +28,7 @@ views.month = function(element, options) {
 				addDays(this.visEnd, (6 - rowCnt) * 7);
 				rowCnt = 6;
 			}
-			this.renderGrid(rowCnt, 7, strProp(options.columnFormat, 'month'), true, fetchEvents);
+			this.renderGrid(rowCnt, 7, this.option('columnFormat'), true, fetchEvents);
 		}
 	});
 }
@@ -42,10 +42,10 @@ views.basicWeek = function(element, options) {
 			this.title = formatDates(
 				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
 				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
-				strProp(options.titleFormat, 'week'),
+				this.option('titleFormat'),
 				options
 			);
-			this.renderGrid(1, 7, strProp(options.columnFormat, 'week'), false, fetchEvents);
+			this.renderGrid(1, 7, this.option('columnFormat'), false, fetchEvents);
 		}
 	});
 };
@@ -56,10 +56,10 @@ views.basicDay = function(element, options) {
 			if (delta) {
 				addDays(date, delta);
 			}
-			this.title = formatDate(date, strProp(options.titleFormat, 'day'), options);
+			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderGrid(1, 1, strProp(options.columnFormat, 'day'), false, fetchEvents);
+			this.renderGrid(1, 1, this.option('columnFormat'), false, fetchEvents);
 		}
 	});
 }
@@ -326,10 +326,11 @@ function Grid(element, options, methods) {
 	
 	
 	function compileSegs(events) {
-		var d1 = cloneDate(view.visStart);
-		var d2 = addDays(cloneDate(d1), colCnt);
-		var rows = [];
-		for (var i=0; i<rowCnt; i++) {
+		var d1 = cloneDate(view.visStart),
+			d2 = addDays(cloneDate(d1), colCnt),
+			rows = [],
+			i=0;
+		for (; i<rowCnt; i++) {
 			rows.push(stackSegs(view.sliceSegs(events, d1, d2)));
 			addDays(d1, 7);
 			addDays(d2, 7);
@@ -350,7 +351,7 @@ function Grid(element, options, methods) {
 			event,
 			eventClasses,
 			startElm, endElm,
-			left1, left2,
+			left, right,
 			eventElement, eventAnchor,
 			triggerRes;
 		for (i=0; i<len; i++) {
@@ -387,14 +388,14 @@ function Grid(element, options, methods) {
 					}
 					eventClasses.push('fc-event', 'fc-event-hori');
 					startElm = seg.isStart ?
-						tr.find('td:eq('+((seg.start.getDay()-firstDay+colCnt)%colCnt)+') div.fc-day-content div') :
+						tr.find('td:eq('+((seg.start.getDay()-firstDay+colCnt)%colCnt)+') div div') :
 						tbody;
 					endElm = seg.isEnd ?
-						tr.find('td:eq('+((seg.end.getDay()-firstDay+colCnt-1)%colCnt)+') div.fc-day-content div') :
+						tr.find('td:eq('+((seg.end.getDay()-firstDay+colCnt-1)%colCnt)+') div div') :
 						tbody;
 					if (rtl) {
-						left1 = endElm.position().left;
-						left2 = startElm.position().left + startElm.width();
+						left = endElm.position().left;
+						right = startElm.position().left + startElm.width();
 						if (seg.isStart) {
 							eventClasses.push('fc-corner-right');
 						}
@@ -402,8 +403,8 @@ function Grid(element, options, methods) {
 							eventClasses.push('fc-corner-left');
 						}
 					}else{
-						left1 = startElm.position().left;
-						left2 = endElm.position().left + endElm.width();
+						left = startElm.position().left;
+						right = endElm.position().left + endElm.width();
 						if (seg.isStart) {
 							eventClasses.push('fc-corner-left');
 						}
@@ -415,7 +416,7 @@ function Grid(element, options, methods) {
 						.append(eventAnchor = $("<a/>")
 							.append(event.allDay || !seg.isStart ? null :
 								$("<span class='fc-event-time'/>")
-									.html(formatDates(event.start, event.end, options.timeFormat, options)))
+									.html(formatDates(event.start, event.end, view.option('timeFormat'), options)))
 							.append($("<span class='fc-event-title'/>")
 								.text(event.title)));
 					if (event.url) {
@@ -430,23 +431,23 @@ function Grid(element, options, methods) {
 							.css({
 								position: 'absolute',
 								top: top,
-								left: left1 + (rtlLeftDiff||0),
-								zIndex: 2
+								left: left + (rtlLeftDiff||0),
+								zIndex: 8
 							})
 							.appendTo(element);
-						setOuterWidth(eventElement, left2-left1, true);
+						setOuterWidth(eventElement, right-left, true);
 						if (rtl && rtlLeftDiff == undefined) {
 							// bug in IE6 where offsets are miscalculated with direction:rtl
-							rtlLeftDiff = left1 - eventElement.position().left;
+							rtlLeftDiff = left - eventElement.position().left;
 							if (rtlLeftDiff) {
-								eventElement.css('left', left1 + rtlLeftDiff);
+								eventElement.css('left', left + rtlLeftDiff);
 							}
 						}
 						eventElementHandlers(event, eventElement);
 						if (event.editable || event.editable == undefined && options.editable) {
 							draggableEvent(event, eventElement);
 							if (seg.isEnd) {
-								resizableEvent(event, eventElement);
+								view.resizableDayEvent(event, eventElement, colWidth);
 							}
 						}
 						view.reportEventElement(event, eventElement);
@@ -479,7 +480,7 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/* Draggable
+	/* Event Dragging
 	-----------------------------------------------------------------------------*/
 	
 	
@@ -487,9 +488,9 @@ function Grid(element, options, methods) {
 		if (!options.disableDragging && eventElement.draggable) {
 			var matrix;
 			eventElement.draggable({
-				zIndex: 3,
+				zIndex: 9,
 				delay: 50,
-				opacity: options.dragOpacity,
+				opacity: view.option('dragOpacity'),
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
 					matrix = new HoverMatrix(function(cell) {
@@ -518,20 +519,17 @@ function Grid(element, options, methods) {
 					matrix.mouse(ev.pageX, ev.pageY);
 				},
 				stop: function(ev, ui) {
+					if ($.browser.msie) {
+						eventElement.css('filter', ''); // clear IE opacity side-effects
+					}
 					view.hideOverlay();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
 					var cell = matrix.cell;
 					if (!cell || !cell.rowDelta && !cell.colDelta) {
 						view.showEvents(event, eventElement);
 					}else{
-						var dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
-						view.moveEvent(event, dayDelta);
-						view.trigger('eventDrop', this, event, dayDelta, 0, function() {
-							view.moveEvent(event, -dayDelta);
-							rerenderEvents();
-						}, ev, ui);
 						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
-						rerenderEvents();
+						view.eventDrop(this, event, cell.rowDelta*7+cell.colDelta*dis, 0, event.allDay, ev, ui);
 					}
 				}
 			});
@@ -539,42 +537,7 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	
-	/* Resizable
-	-----------------------------------------------------------------------------*/
-	
-	
-	function resizableEvent(event, eventElement) {
-		if (!options.disableResizing && eventElement.resizable) {
-			eventElement.resizable({
-				handles: rtl ? 'w' : 'e',
-				grid: colWidth,
-				minWidth: colWidth/2, // need this or else IE throws errors when too small
-				containment: element,
-				start: function(ev, ui) {
-					eventElement.css('z-index', 3);
-					view.hideEvents(event, eventElement);
-					view.trigger('eventResizeStart', this, event, ev, ui);
-				},
-				stop: function(ev, ui) {
-					view.trigger('eventResizeStop', this, event, ev, ui);
-					// ui.size.width wasn't working with grid correctly, use .width()
-					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
-					if (dayDelta) {
-						view.resizeEvent(event, dayDelta);
-						view.trigger('eventResize', this, event, dayDelta, 0, function() {
-							view.resizeEvent(event, -dayDelta);
-							rerenderEvents();
-						}, ev, ui);
-						rerenderEvents();
-					}else{
-						view.showEvents(event, eventElement);
-					}
-					eventElement.css('z-index', 2);
-				}
-			});
-		}
-	}
+	// event resizing w/ 'view' methods...
 
 };
 
