@@ -12,20 +12,10 @@
 		var m = d.getMonth();
 		
 		$('#calendar').fullCalendar({
-			slotMinutes: 30,
-			//allDayHeader: false,
-			//weekMode: 'variable',
-			//theme: true,
-			//firstDay: 1,
-			//isRTL: true,
-			editable: true,
-			//dragOpacity: .5,
-			defaultView: 'agendaWeek',
 			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
+			editable: true,
 			events: [
 				{
 					id: 1,
@@ -50,7 +40,8 @@
 					id: 345,
 					title: "Hey Hey",
 					start: new Date(y, m, 9, 4, 0),
-					allDay: false
+					allDay: false,
+					className: 'adam shaw'
 				},
 				{
 					id: 3,
@@ -66,10 +57,7 @@
 					url: "http://facebook.com/",
 					allDay: false
 				}
-			],
-			dayClick: function(date, allDay) {
-				alert(date + ' allDay:' + allDay);
-			}
+			]
 		});
 		
 	});
@@ -85,7 +73,7 @@
 		}
 
 	#calendar {
-		width: 80%;
+		width: 900px;
 		margin: 0 auto;
 		}
 

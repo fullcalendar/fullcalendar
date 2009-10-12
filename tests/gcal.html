@@ -10,6 +10,9 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
+			header: {
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
 			editable: true,
 			eventSources: [
 				$.fullCalendar.gcalFeed(

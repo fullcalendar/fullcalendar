@@ -12,9 +12,9 @@ var defaults = {
 	defaultView: 'month',
 	aspectRatio: 1.35,
 	header: {
-		left: 'title',
-		center: '',
-		right: 'today prev,next'
+		left: 'prev,next today',
+		center: 'title',
+		right: 'month,agendaWeek,agendaDay'
 	},
 	
 	// editing
@@ -72,9 +72,9 @@ var defaults = {
 // right-to-left defaults
 var rtlDefaults = {
 	header: {
-		left: 'next,prev today',
-		center: '',
-		right: 'title'
+		left: 'agendaDay,agendaWeek,month',
+		center: 'title',
+		right: 'today next,prev'
 	},
 	buttonText: {
 		prev: '&nbsp;&#9658;&nbsp;',
@@ -542,8 +542,7 @@ $.fn.fullCalendar = function(options) {
 					}
 					var prevButton;
 					$.each(this.split(','), function(j) {
-						var buttonName = this,
-							buttonNameShort = this.replace(/^(basic|agenda)/, '').toLowerCase();
+						var buttonName = this;
 						if (buttonName == 'title') {
 							tr.append("<td><h2 class='fc-header-title'/></td>");
 							if (prevButton) {
@@ -552,8 +551,8 @@ $.fn.fullCalendar = function(options) {
 							prevButton = null;
 						}else{
 							var buttonClick;
-							if (publicMethods[buttonNameShort]) {
-								buttonClick = publicMethods[buttonNameShort];
+							if (publicMethods[buttonName]) {
+								buttonClick = publicMethods[buttonName];
 							}
 							else if (views[buttonName]) {
 								buttonClick = function() { changeView(buttonName) };
@@ -563,8 +562,8 @@ $.fn.fullCalendar = function(options) {
 									prevButton.addClass(tm + '-no-right');
 								}
 								var button,
-									icon = options.theme ? options.buttonIcons[buttonNameShort] : null,
-									text = options.buttonText[buttonNameShort];
+									icon = options.theme ? viewOption(options, 'buttonIcons', buttonName) : null,
+									text = viewOption(options, 'buttonText', buttonName);
 								if (icon) {
 									button = $("<div class='fc-button-" + buttonName + " ui-state-default'>" +
 										"<a><span class='ui-icon ui-icon-" + icon + "'/></a></div>");
@@ -575,6 +574,7 @@ $.fn.fullCalendar = function(options) {
 								}
 								if (button) {
 									button
+										.click(buttonClick)
 										.mousedown(function() {
 											button.addClass(tm + '-state-down');
 										})
@@ -591,14 +591,6 @@ $.fn.fullCalendar = function(options) {
 											}
 										)
 										.appendTo($("<td/>").appendTo(tr));
-									if (publicMethods[buttonNameShort]) {
-										button.click(publicMethods[buttonNameShort]);
-									}
-									else if (views[buttonName]) {
-										button.click(function() {
-											changeView(buttonName);
-										});
-									}
 									if (prevButton) {
 										prevButton.addClass(tm + '-no-right');
 									}else{
@@ -685,6 +677,29 @@ $.fn.fullCalendar = function(options) {
 
 
 
+// TODO: rename
+
+function viewOption(options, property, viewName) {
+	var v = options[property];
+	if (typeof v == 'object') {
+		if (v[viewName] != undefined) {
+			return v[viewName];
+		}
+		var parts = viewName.split(/(?=[A-Z])/),
+			i=parts.length-1, res;
+		for (; i>=0; i--) {
+			res = v[parts[i].toLowerCase()];
+			if (res != undefined) {
+				return res;
+			}
+		}
+		return v[''];
+	}
+	return v;
+}
+
+
+
 /* Important Event Utilities
 -----------------------------------------------------------------------------*/
 
@@ -706,6 +721,13 @@ function normalizeEvent(event, options) {
 	event._end = event.end ? cloneDate(event.end) : null;
 	if (event.allDay == undefined) {
 		event.allDay = options.allDayDefault;
+	}
+	if (event.className) {
+		if (typeof event.className == 'string') {
+			event.className = event.className.split(/\s+/);
+		}
+	}else{
+		event.className = [];
 	}
 }
 

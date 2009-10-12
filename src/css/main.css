@@ -281,7 +281,7 @@ table.fc-header {
 	display: block;
 	position: absolute;
 	z-index: 99999;
-	border: 0; /* important overrides pre jquery ui 1.7 styles */
+	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
 	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
 	}
 	

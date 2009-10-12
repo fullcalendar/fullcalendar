@@ -11,9 +11,7 @@
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,basicWeek,basicDay'
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
 			weekMode: 'variable',
@@ -31,8 +29,8 @@
 				//console.log(this);
 			},
 			
-			dayClick: function(dayDate, view) {
-				console.log('dayClick - ' + dayDate + ' - ' + view.title);
+			dayClick: function(dayDate, allDay, ev, view) {
+				console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
 				//console.log(this);
 			},
 			

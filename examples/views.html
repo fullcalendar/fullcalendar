@@ -4,12 +4,14 @@
 <!--<src>-->
 <link rel='stylesheet' type='text/css' href='../src/css/main.css' />
 <link rel='stylesheet' type='text/css' href='../src/css/grid.css' />
+<link rel='stylesheet' type='text/css' href='../src/css/agenda.css' />
 <script type='text/javascript' src='../src/jquery/jquery.js'></script>
 <script type='text/javascript' src='../src/jquery/ui.core.js'></script>
 <script type='text/javascript' src='../src/jquery/ui.draggable.js'></script>
 <script type='text/javascript' src='../src/jquery/ui.resizable.js'></script>
 <script type='text/javascript' src='../src/main.js'></script>
 <script type='text/javascript' src='../src/grid.js'></script>
+<script type='text/javascript' src='../src/agenda.js'></script>
 <script type='text/javascript' src='../src/view.js'></script>
 <script type='text/javascript' src='../src/util.js'></script>
 <!--</src>-->
@@ -34,9 +36,15 @@
 		$('#calendar').fullCalendar({
 			editable: true,
 			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,basicWeek,basicDay'
+				left: 'title',
+				center: 'month,agendaWeek,basicWeek,agendaDay,basicDay',
+				right: 'today prev,next'
+			},
+			buttonText: {
+				agendaWeek: 'agendaWeek',
+				basicWeek: 'basicWeek',
+				agendaDay: 'agendaDay',
+				basicDay: 'basicDay'
 			},
 			events: [
 				{
@@ -85,7 +93,6 @@
 		text-align: center;
 		font-size: 14px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		text-align: left;
 		}
 
 	#calendar {

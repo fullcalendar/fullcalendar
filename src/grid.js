@@ -241,7 +241,7 @@ function Grid(element, options, methods) {
 		
 		}
 		
-		updateSize();
+		updateSize(); // BUG: quirky widths with weekMode:variable
 		fetchEvents(renderEvents);
 	
 	};
@@ -349,7 +349,7 @@ function Grid(element, options, methods) {
 			levelHeight,
 			k, seg,
 			event,
-			eventClasses,
+			className,
 			startElm, endElm,
 			left, right,
 			eventElement, eventAnchor,
@@ -376,17 +376,7 @@ function Grid(element, options, methods) {
 				for (k=0; k<segs.length; k++) {
 					seg = segs[k];
 					event = seg.event;
-					eventClasses = event.className;
-					if (typeof eventClasses == 'object') { // an array
-						eventClasses = eventClasses.slice(0);
-					}
-					else if (typeof eventClasses == 'string') {
-						eventClasses = eventClasses.split(' ');
-					}
-					else {
-						eventClasses = [];
-					}
-					eventClasses.push('fc-event', 'fc-event-hori');
+					className = 'fc-event fc-event-hori ';
 					startElm = seg.isStart ?
 						tr.find('td:eq('+((seg.start.getDay()-firstDay+colCnt)%colCnt)+') div div') :
 						tbody;
@@ -397,22 +387,22 @@ function Grid(element, options, methods) {
 						left = endElm.position().left;
 						right = startElm.position().left + startElm.width();
 						if (seg.isStart) {
-							eventClasses.push('fc-corner-right');
+							className += 'fc-corner-right ';
 						}
 						if (seg.isEnd) {
-							eventClasses.push('fc-corner-left');
+							className += 'fc-corner-left ';
 						}
 					}else{
 						left = startElm.position().left;
 						right = endElm.position().left + endElm.width();
 						if (seg.isStart) {
-							eventClasses.push('fc-corner-left');
+							className += 'fc-corner-left ';
 						}
 						if (seg.isEnd) {
-							eventClasses.push('fc-corner-right');
+							className += 'fc-corner-right ';
 						}
 					}
-					eventElement = $("<div class='" + eventClasses.join(' ') + "'/>")
+					eventElement = $("<div class='" + className + event.className.join(' ') + "'/>")
 						.append(eventAnchor = $("<a/>")
 							.append(event.allDay || !seg.isStart ? null :
 								$("<span class='fc-event-time'/>")
@@ -443,7 +433,7 @@ function Grid(element, options, methods) {
 								eventElement.css('left', left + rtlLeftDiff);
 							}
 						}
-						eventElementHandlers(event, eventElement);
+						view.eventElementHandlers(event, eventElement);
 						if (event.editable || event.editable == undefined && options.editable) {
 							draggableEvent(event, eventElement);
 							if (seg.isEnd) {
@@ -461,23 +451,6 @@ function Grid(element, options, methods) {
 		}
 	}
 	
-	function eventElementHandlers(event, eventElement) {
-		eventElement
-			.click(function(ev) {
-				if (!eventElement.hasClass('ui-draggable-dragging')) {
-					return view.trigger('eventClick', this, event, ev);
-				}
-			})
-			.hover(
-				function(ev) {
-					view.trigger('eventMouseover', this, event, ev);
-				},
-				function(ev) {
-					view.trigger('eventMouseout', this, event, ev);
-				}
-			);
-	}
-	
 	
 	
 	/* Event Dragging
@@ -493,6 +466,8 @@ function Grid(element, options, methods) {
 				opacity: view.option('dragOpacity'),
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
+					view.hideEvents(event, eventElement);
+					view.trigger('eventDragStart', eventElement, event, ev, ui);
 					matrix = new HoverMatrix(function(cell) {
 						eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
 						if (cell) {
@@ -511,8 +486,6 @@ function Grid(element, options, methods) {
 					tds.each(function() {
 						matrix.col(this);
 					});
-					view.hideEvents(event, eventElement);
-					view.trigger('eventDragStart', eventElement, event, ev, ui);
 					matrix.mouse(ev.pageX, ev.pageY);
 				},
 				drag: function(ev) {

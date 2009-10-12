@@ -1,33 +1,14 @@
 
-/*.fc-event,
-.fc-event a,
-.fc-agenda .fc-event-time {
-	color: #fff;
-	border-style: solid;
-	border-color: blue;
-	background-color: blue;
-	}*/
+/* Agenda Week View, Agenda Day View
+------------------------------------------------------------------------*/
 
-
-.fc .fc-axis {
-	width: 50px;
-	padding: 0 4px 0 0;
-	vertical-align: middle;
-	white-space: nowrap;
-	text-align: right;
-	font-weight: normal;
-	}
-	
-	
-	
-	
 .fc .fc-agenda th,
 .fc .fc-agenda td {
 	border-width: 1px 0 0 1px;
 	}
 	
-.fc-agenda-head tr.fc-all-day th {
-	height: 35px;
+.fc .fc-agenda .fc-leftmost {
+	border-left: 0;
 	}
 	
 .fc-agenda tr.fc-first th,
@@ -35,160 +16,68 @@
 	border-top: 0;
 	}
 	
-.fc .fc-agenda .fc-leftmost {
-	border-left: 0;
+.fc-agenda-head tr.fc-last th {
+	border-bottom-width: 1px;
 	}
 	
-	
-	
-
 .fc .fc-agenda-head td,
 .fc .fc-agenda-body td {
 	background: none;
 	}
 	
-.fc .fc-agenda-body td div {
-	height: 20px;
-	}
-
-
-
-	
-.fc .fc-agenda-body tr.fc-minor th,
-.fc .fc-agenda-body tr.fc-minor td {
-	border-top-style: dotted;
+.fc-agenda-head th {
+	text-align: center;
 	}
 	
+/* the time axis running down the left side */
 	
-
+.fc-agenda .fc-axis {
+	width: 50px;
+	padding: 0 4px;
+	vertical-align: middle;
+	white-space: nowrap;
+	text-align: right;
+	font-weight: normal;
+	}
+	
+/* all-day event cells at top */
+	
+.fc-agenda-head tr.fc-all-day th {
+	height: 35px;
+	}
+	
+.fc-agenda-head td {
+	padding-bottom: 10px;
+	}
+	
 .fc .fc-divider div {
 	font-size: 1px; /* for IE6/7 */
 	height: 2px;
 	}
 	
-	
-	
 .fc .fc-divider .fc-state-default {
-	background: #eee;
-	}
-	
-	
-	
-.fc-agenda-head tr.fc-last th {
-	border-bottom-width: 1px;
-	}
-	
-	
-	
-	
-.fc-agenda .fc-day-content {
-	padding: 2px 2px 0;
-	}
-	
-.fc-agenda-head .fc-day-content {
-	padding-bottom: 10px;
+	background: #eee; /* color for divider between all-day and time-slot events */
 	}
 
+/* body styles */
 	
-	
-	
-	
-/* header styles */
-/*	
-.fc .fc-agenda-head th.fc-first {
-	border-left: 0;
+.fc .fc-agenda-body td div {
+	height: 20px; /* slot height */
 	}
 	
-.fc .fc-agenda-head th,
-.fc .fc-agenda-head td {
-	border-width: 1px 0 0 1px;
-	}
-
-.fc-agenda-head tr.fc-first th {
-	border-width: 0 0 0 1px;
-	}
-	
-.fc-agenda-head tr.fc-last th,
-.fc-agenda-head tr.fc-last td {
-	border-bottom-width: 2px;
-	}
-	
-.fc-agenda-head tr.fc-last th {
-	#border-width: 1px 0 1px 1px;
-	background-image: none;
-	}
-	
-.fc-agenda-head tr.fc-last th.fc-first {
-	#border-width: 0 2px 1px 0;
-	}
-	
-.fc-agenda-head tr.fc-last th.fc-last {
-	#border-width: 0 0 0 3px;
-	}
-	
-.fc .fc-agenda-head td {
-	#border-width: 3px 0 3px 1px;
-	background: none;
-	}
-	
-.fc-agenda-body {
-	#width: 100%;
-	overflow: auto;
-	}
-*/
-	
-	
-
-/*
-.fc .fc-agenda-body th {
-	border-width: 1px 0 0 0;
-	background-image: none;
-	text-align: right;
-	font-weight: normal;
-	vertical-align: middle;
-	width: 48px;
-	height: 22px;
-	padding-right: 2px;
-	}
-	
-.fc .fc-agenda-body td {
-	border-width: 1px 0 0 1px;
-	background: none;
-	}
-
 .fc .fc-agenda-body tr.fc-minor th,
 .fc .fc-agenda-body tr.fc-minor td {
 	border-top-style: dotted;
 	}
 	
-.fc .fc-agenda-body tr.fc-first th,
-.fc .fc-agenda-body tr.fc-first td {
-	border-top: 0;
-	}
-	
-	
-	
-.fc .fc-agenda-bg td {
-	border-style: double;
-	border-width: 0 0 0 3px;
-	}
-	
-.fc .fc-agenda-bg td.fc-not-today {
-	background: none;
-	}
-	
-	
-	
 .fc-agenda .fc-day-content {
-	padding: 2px 1px 14px;
+	padding: 2px 2px 0; /* distance between events and day edges */
 	}
-*/
 	
-	
-	
-	
-	
-/* vertical events */
+
+
+/* Vertical Events
+------------------------------------------------------------------------*/
 
 .fc-event-vert {
 	border-width: 0 1px;
@@ -197,6 +86,8 @@
 .fc-event-vert a {
 	border-width: 0;
 	}
+	
+/* for fake rounded corners */
 	
 .fc-content .fc-corner-top {
 	margin-top: 1px;
@@ -216,6 +107,8 @@
 	border-bottom-width: 1px;
 	}
 	
+/* event content */
+	
 .fc-event-vert span {
 	display: block;
 	position: relative;
@@ -226,15 +119,15 @@
 	white-space: nowrap;
 	_white-space: normal;
 	overflow: hidden;
-	font-size: 10px;
 	border: 0;
+	font-size: 10px;
 	}
 	
 .fc-event-vert span.fc-event-title {
 	line-height: 13px;
 	}
 	
-.fc-event-vert span.fc-event-bg {
+.fc-event-vert span.fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
 	position: absolute;
 	z-index: 1;
 	top: 0;
@@ -243,14 +136,20 @@
 	height: 100%;
 	background: #fff;
 	opacity: .3;
-	filter: alpha(opacity=30);
+	filter: alpha(opacity=30); /* for IE */
 	}
 	
+/* resizable */
+	
 .fc-event-vert .ui-resizable-s {
+	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
+	width: 100%      !important;
+	height: 8px      !important;
+	line-height: 8px !important;
+	font-size: 11px  !important;
 	font-family: monospace;
-	height: 8px;
-	font-size: 11px;
-	line-height: 8px;
-	bottom: 0;
 	text-align: center;
+	cursor: s-resize;
 	}
+	
+	

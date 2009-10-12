@@ -212,7 +212,8 @@ var viewMethods = {
 				handles: view.options.isRTL ? 'w' : 'e',
 				grid: colWidth,
 				minWidth: colWidth/2, // need this or else IE throws errors when too small
-				containment: view.element,
+				containment: view.element.parent().parent(), // the main element...
+				             // ... a fix. wouldn't allow extending to last column in agenda views (jq ui bug?)
 				start: function(ev, ui) {
 					eventElement.css('z-index', 9);
 					view.hideEvents(event, eventElement);
@@ -235,22 +236,33 @@ var viewMethods = {
 	
 	
 	
+	// attaches eventClick, eventMouseover, eventMouseout
+	
+	eventElementHandlers: function(event, eventElement) {
+		var view = this;
+		eventElement
+			.click(function(ev) {
+				if (!eventElement.hasClass('ui-draggable-dragging') &&
+					!eventElement.hasClass('ui-resizable-resizing')) {
+						return view.trigger('eventClick', this, event, ev);
+					}
+			})
+			.hover(
+				function(ev) {
+					view.trigger('eventMouseover', this, event, ev);
+				},
+				function(ev) {
+					view.trigger('eventMouseout', this, event, ev);
+				}
+			);
+	},
+	
+	
+	
 	// get a property from the 'options' object, using smart view naming
 	
-	option: function(name) {
-		var v = this.options[name];
-		if (typeof v == 'object') {
-			var parts = this.name.split(/(?=[A-Z])/),
-				i=parts.length-1, res;
-			for (; i>=0; i--) {
-				res = v[parts[i].toLowerCase()];
-				if (res != undefined) {
-					return res;
-				}
-			}
-			return v[''];
-		}
-		return v;
+	option: function(name, viewName) {
+		return viewOption(this.options, name, this.name || viewName);
 	},
 	
 	
@@ -331,7 +343,6 @@ function stackSegs(segs) {
 		}else{
 			levels[j] = [seg];
 		}
-		//seg.after = 0;
 	}
 	return levels;
 }
