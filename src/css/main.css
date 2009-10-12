@@ -117,6 +117,11 @@ table.fc-header {
 	padding: 4px 6px;
 	}
 	
+.fc-header .fc-state-default span,
+.fc-header .ui-state-default span {
+	white-space: nowrap;
+	}
+	
 /* for adjacent buttons */
 	
 .fc-header .fc-no-right {

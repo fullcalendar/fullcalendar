@@ -54,6 +54,8 @@ var defaults = {
 	buttonText: {
 		prev: '&nbsp;&#9668;&nbsp;',
 		next: '&nbsp;&#9658;&nbsp;',
+		prevYear: 'prev year',
+		nextYear: 'next year',
 		today: 'today',
 		month: 'month',
 		week: 'week',
@@ -365,6 +367,16 @@ $.fn.fullCalendar = function(options) {
 			
 			next: function() {
 				render(1);
+			},
+			
+			prevYear: function() {
+				addYears(date, -1);
+				render();
+			},
+			
+			nextYear: function() {
+				addYears(date, 1);
+				render();
 			},
 			
 			today: function() {
