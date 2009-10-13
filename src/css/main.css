@@ -126,6 +126,10 @@ table.fc-header {
 	
 .fc-header .fc-no-right {
 	padding-right: 0;
+	}
+	
+.fc-header .fc-no-right a {
+	margin-right: 0;
 	border-right: 0;
 	}
 	

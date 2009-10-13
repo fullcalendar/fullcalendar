@@ -67,9 +67,7 @@ views.basicDay = function(element, options) {
 
 // rendering bugs
 
-var tdTopBug, trTopBug, tbodyTopBug,
-	tdHeightBug,
-	rtlLeftDiff;
+var tdHeightBug, rtlLeftDiff;
 
 
 function Grid(element, options, methods) {
@@ -269,21 +267,13 @@ function Grid(element, options, methods) {
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-
-		if (tdTopBug == undefined) {
-			// nasty bugs in opera 9.25
-			// position() returning relative to direct parent
-			var tr = tbody.find('tr:first'),
-				td = tr.find('td:first'),
-				trTop = tr.position().top,
-				tdTop = td.position().top;
-			tdTopBug = tdTop < 0;
-			trTopBug = trTop != tdTop;
-			tbodyTopBug = tbody.position().top != trTop;
-		}
+		
+		reportTBody(tbody);
 		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
+			var tr = tbody.find('tr:first'),
+				td = tr.find('td:first');
 			td.height(rowHeight1);
 			tdHeightBug = rowHeight1 != td.height();
 		}
@@ -344,7 +334,7 @@ function Grid(element, options, methods) {
 			tr, td,
 			innerDiv,
 			top,
-			weekHeight,
+			rowContentHeight,
 			j, segs,
 			levelHeight,
 			k, seg,
@@ -359,17 +349,8 @@ function Grid(element, options, methods) {
 			tr = tbody.find('tr:eq('+i+')');
 			td = tr.find('td:first');
 			innerDiv = td.find('div.fc-day-content div').css('position', 'relative');
-			top = innerDiv.position().top;
-			if (tdTopBug) {
-				top -= td.position().top;
-			}
-			if (trTopBug) {
-				top += tr.position().top;
-			}
-			if (tbodyTopBug) {
-				top += tbody.position().top;
-			}
-			weekHeight = 0;
+			top = safePosition(innerDiv, td, tr, tbody).top;
+			rowContentHeight = 0;
 			for (j=0; j<levels.length; j++) {
 				segs = levels[j];
 				levelHeight = 0;
@@ -444,10 +425,10 @@ function Grid(element, options, methods) {
 						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
 					}
 				}
-				weekHeight += levelHeight;
+				rowContentHeight += levelHeight;
 				top += levelHeight;
 			}
-			innerDiv.height(weekHeight);
+			innerDiv.height(rowContentHeight);
 		}
 	}
 	
@@ -477,7 +458,7 @@ function Grid(element, options, methods) {
 						}
 					});
 					tbody.find('tr').each(function() {
-						matrix.row(this, tbodyTopBug);
+						matrix.row(this);
 					});
 					var tds = tbody.find('tr:first td');
 					if (rtl) {
@@ -492,13 +473,13 @@ function Grid(element, options, methods) {
 					matrix.mouse(ev.pageX, ev.pageY);
 				},
 				stop: function(ev, ui) {
-					if ($.browser.msie) {
-						eventElement.css('filter', ''); // clear IE opacity side-effects
-					}
 					view.hideOverlay();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
 					var cell = matrix.cell;
 					if (!cell || !cell.rowDelta && !cell.colDelta) {
+						if ($.browser.msie) {
+							eventElement.css('filter', ''); // clear IE opacity side-effects
+						}
 						view.showEvents(event, eventElement);
 					}else{
 						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link

@@ -210,15 +210,6 @@ $.fn.fullCalendar = function(options) {
 					});
 					unfixContentSize();
 					view.date = cloneDate(date);
-					if (header) {
-						// enable/disable 'today' button
-						var today = new Date();
-						if (today >= view.start && today < view.end) {
-							header.find('div.fc-button-today').addClass(tm + '-state-disabled');
-						}else{
-							header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
-						}
-					}
 				}
 				else if (view.sizeDirty) {
 					view.updateSize();
@@ -233,6 +224,13 @@ $.fn.fullCalendar = function(options) {
 				if (header) {
 					// update title text
 					header.find('h2.fc-header-title').html(view.title);
+					// enable/disable 'today' button
+					var today = new Date();
+					if (today >= view.start && today < view.end) {
+						header.find('div.fc-button-today').addClass(tm + '-state-disabled');
+					}else{
+						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+					}
 				}
 				view.sizeDirty = false;
 				view.eventsDirty = false;
@@ -574,8 +572,8 @@ $.fn.fullCalendar = function(options) {
 									prevButton.addClass(tm + '-no-right');
 								}
 								var button,
-									icon = options.theme ? viewOption(options, 'buttonIcons', buttonName) : null,
-									text = viewOption(options, 'buttonText', buttonName);
+									icon = options.theme ? smartProperty(options.buttonIcons, buttonName) : null,
+									text = smartProperty(options.buttonText, buttonName);
 								if (icon) {
 									button = $("<div class='fc-button-" + buttonName + " ui-state-default'>" +
 										"<a><span class='ui-icon ui-icon-" + icon + "'/></a></div>");
@@ -586,7 +584,11 @@ $.fn.fullCalendar = function(options) {
 								}
 								if (button) {
 									button
-										.click(buttonClick)
+										.click(function() {
+											if (!button.hasClass(tm + '-state-disabled')) {
+												buttonClick();
+											}
+										})
 										.mousedown(function() {
 											button.addClass(tm + '-state-down');
 										})
@@ -686,29 +688,6 @@ $.fn.fullCalendar = function(options) {
 	return this;
 	
 };
-
-
-
-// TODO: rename
-
-function viewOption(options, property, viewName) {
-	var v = options[property];
-	if (typeof v == 'object') {
-		if (v[viewName] != undefined) {
-			return v[viewName];
-		}
-		var parts = viewName.split(/(?=[A-Z])/),
-			i=parts.length-1, res;
-		for (; i>=0; i--) {
-			res = v[parts[i].toLowerCase()];
-			if (res != undefined) {
-				return res;
-			}
-		}
-		return v[''];
-	}
-	return v;
-}
 
 
 

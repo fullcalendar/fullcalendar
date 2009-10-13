@@ -262,7 +262,11 @@ var viewMethods = {
 	// get a property from the 'options' object, using smart view naming
 	
 	option: function(name, viewName) {
-		return viewOption(this.options, name, this.name || viewName);
+		var v = this.options[name];
+		if (typeof v == 'object') {
+			return smartProperty(v, viewName || this.name);
+		}
+		return v;
 	},
 	
 	

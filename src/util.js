@@ -270,6 +270,29 @@ function setOuterHeight(element, height, includeMargins) {
 
 
 
+/* Position Calculation
+-----------------------------------------------------------------------------*/
+// nasty bugs in opera 9.25
+// position() returning relative to direct parent
+
+var operaPositionBug;
+
+function reportTBody(tbody) {
+	if (operaPositionBug == undefined) {
+		operaPositionBug = tbody.position().top != tbody.find('tr').position().top;
+	}
+}
+
+function safePosition(element, td, tr, tbody) {
+	var position = element.position();
+	if (operaPositionBug) {
+		position.top += tbody.position().top + tr.position().top - td.position().top;
+	}
+	return position;
+}
+
+
+
 /* Hover Matrix
 -----------------------------------------------------------------------------*/
 
@@ -282,7 +305,9 @@ function HoverMatrix(changeCallback) {
 	
 	this.row = function(e, topBug) {
 		prevRowE = $(e);
-		tops.push(prevRowE.offset().top + (topBug ? prevRowE.parent().position().top : 0));
+		tops.push(prevRowE.offset().top + (
+			(operaPositionBug && prevRowE.is('tr')) ? prevRowE.parent().position().top : 0
+		));
 	};
 	
 	this.col = function(e) {
@@ -340,4 +365,20 @@ var undefined,
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
 }
+
+function smartProperty(obj, name) { // get a camel-cased/namespaced property
+	if (obj[name] != undefined) {
+		return obj[name];
+	}
+	var parts = name.split(/(?=[A-Z])/),
+		i=parts.length-1, res;
+	for (; i>=0; i--) {
+		res = obj[parts[i].toLowerCase()];
+		if (res != undefined) {
+			return res;
+		}
+	}
+	return obj[''];
+}
+
 
