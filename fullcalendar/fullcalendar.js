@@ -1,5 +1,5 @@
 /*!
- * FullCalendar
+ * FullCalendar v1.2.3
  * http://arshaw.com/fullcalendar/
  *
  * use fullcalendar.css for basic styling
@@ -10,8 +10,8 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date:
- * Revision:
+ * Date: 2009-09-21 02:53:03 -0700 (Mon, 21 Sep 2009)
+ * Revision: 44
  */
  
 (function($) {
