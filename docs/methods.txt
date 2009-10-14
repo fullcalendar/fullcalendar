@@ -19,8 +19,14 @@ jQuery object:
 	
 	``month`` is 0-based, meaning January=0, February=1, etc.
 	
+	This method can also be called with a single argument, a Date object.
+	
 **incrementDate** - .fullCalendar('incrementDate', *years, [months, [days]]*)
 	Moves the calendar forward/backward an arbitrary amount of time.
+	
+**changeView** - .fullCalendar('changeView', *viewName*)
+	Immediately switches to a different view. ``viewName`` must be one of the
+	:ref:`available-views`.
 	
 **updateEvent** - .fullCalendar('updateEvent', *calEvent*)
 	Reports changes to a :ref:`CalEvent's <CalEvent>` standard properties.
@@ -75,4 +81,9 @@ jQuery object:
 
 **refetchEvents** - .fullCalendar(``'refetchEvents'``)
 	Refetches events from all sources and rerenders them on the screen.
+	
+**render** - .fullCalendar(``'render'``)
+	Immediately renders the calendar. This method is automatically called if the $().fullCalendar
+	plugin is called on a visible element. However, if a hidden/invisible element is initialized
+	with FullCalendar, this method must be explicitly called as soon as the element becomes visible.
 	

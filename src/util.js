@@ -15,31 +15,35 @@ function addYears(d, n, keepTime) {
 }
 
 function addMonths(d, n, keepTime) { // prevents day overflow/underflow
-	var m = d.getMonth() + n,
-		check = cloneDate(d);
-	check.setDate(1);
-	check.setMonth(m);
-	d.setMonth(m);
-	if (!keepTime) {
-		clearTime(d);
-	}
-	while (d.getMonth() != check.getMonth()) {
-		d.setDate(d.getDate() + (d < check ? 1 : -1));
+	if (+d) { // prevent infinite looping on invalid dates
+		var m = d.getMonth() + n,
+			check = cloneDate(d);
+		check.setDate(1);
+		check.setMonth(m);
+		d.setMonth(m);
+		if (!keepTime) {
+			clearTime(d);
+		}
+		while (d.getMonth() != check.getMonth()) {
+			d.setDate(d.getDate() + (d < check ? 1 : -1));
+		}
 	}
 	return d;
 }
 
 function addDays(d, n, keepTime) { // deals with daylight savings
-	var dd = d.getDate() + n,
-		check = cloneDate(d);
-	check.setHours(12); // set to middle of day
-	check.setDate(dd);
-	d.setDate(dd);
-	if (!keepTime) {
-		clearTime(d);
-	}
-	while (d.getDate() != check.getDate()) {
-		d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+	if (+d) { // prevent infinite looping on invalid dates
+		var dd = d.getDate() + n,
+			check = cloneDate(d);
+		check.setHours(12); // set to middle of day
+		check.setDate(dd);
+		d.setDate(dd);
+		if (!keepTime) {
+			clearTime(d);
+		}
+		while (d.getDate() != check.getDate()) {
+			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+		}
 	}
 	return d;
 }
@@ -80,14 +84,14 @@ var parseDate = fc.parseDate = function(s) {
 		if (s.match(/^\d+$/)) { // a UNIX timestamp
 			return new Date(parseInt(s) * 1000);
 		}
-		return parseISO8601(s, true) || Date.parse(s) || null;
+		return parseISO8601(s, true) || new Date(s) || null;
 	}
 	return null;
 }
 
 var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	var d = s.match(parseISO8601Regex);
+	var d = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
 	if (!d) return null;
 	var offset = 0;
 	var date = new Date(d[1], 0, 1);
@@ -106,11 +110,6 @@ var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	}
 	return new Date(Number(date) + (offset * 60 * 1000));
 }
-
-var parseISO8601Regex = new RegExp(
-	"([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
-	"(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-	"(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?");
 
 
 
@@ -277,7 +276,7 @@ function setOuterHeight(element, height, includeMargins) {
 
 var operaPositionBug;
 
-function reportTBody(tbody) {
+function reportTBody(tbody) { // TODO: have agenda use this too
 	if (operaPositionBug == undefined) {
 		operaPositionBug = tbody.position().top != tbody.find('tr').position().top;
 	}

@@ -383,14 +383,18 @@ $.fn.fullCalendar = function(options) {
 			},
 			
 			gotoDate: function(year, month, dateNum) {
-				if (year != undefined) {
-					date.setYear(year);
-				}
-				if (month != undefined) {
-					date.setMonth(month);
-				}
-				if (dateNum != undefined) {
-					date.setDate(dateNum);
+				if (typeof year == 'object') {
+					date = cloneDate(year); // provided 1 argument, a Date
+				}else{
+					if (year != undefined) {
+						date.setYear(year);
+					}
+					if (month != undefined) {
+						date.setMonth(month);
+					}
+					if (dateNum != undefined) {
+						date.setDate(dateNum);
+					}
 				}
 				render();
 			},
