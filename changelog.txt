@@ -1,4 +1,7 @@
 
+version 1.2.3 (10/13/09)
+	- fixed <button> postback bug when calendar is within a <form>
+
 version 1.2.2 (9/21/09)
 	- backport of gcal max-results bug
 

@@ -285,7 +285,7 @@
 			if (bo) { // "button options"
 				var buttons = $("<div class='full-calendar-buttons'/>").appendTo(header);
 				if (bo == true || bo.today !== false) {
-					todayButton = $("<button class='today' />")
+					todayButton = $("<button class='today' type='button' />")
 						.append($("<span />").html(
 							typeof bo.today == 'string' ?
 								bo.today : "today"))
@@ -293,7 +293,7 @@
 					buttons.append(todayButton);
 				}
 				if (bo.prevYear) {
-					var b = $("<button class='prev-year' />")
+					var b = $("<button class='prev-year' type='button' />")
 						.append($("<span />")
 							.html(typeof bo.prevYear == 'string' ?
 								bo.prevYear : "&laquo;"))
@@ -302,7 +302,7 @@
 					else buttons.append(b);
 				}
 				if (bo == true || bo.prevMonth !== false) {
-					var b = $("<button class='prev-month' />")
+					var b = $("<button class='prev-month' type='button' />")
 						.append($("<span />")
 							.html(typeof bo.prevMonth == 'string' ?
 								bo.prevMonth : (r2l ? "&gt;" : "&lt;")))
@@ -311,7 +311,7 @@
 					else buttons.append(b);
 				}
 				if (bo == true || bo.nextMonth !== false) {
-					var b = $("<button class='next-month' />")
+					var b = $("<button class='next-month' type='button' />")
 						.append($("<span />").html(typeof bo.nextMonth == 'string' ?
 							bo.nextMonth : (r2l ? "&lt;" : "&gt;")))
 						.click(nextMonth);
@@ -319,7 +319,7 @@
 					else buttons.append(b);
 				}
 				if (bo.nextYear) {
-					var b = $("<button class='next-year' />")
+					var b = $("<button class='next-year' type='button' />")
 						.append($("<span />").html(typeof bo.nextYear == 'string'
 							? bo.nextYear : "&raquo;"))
 						.click(nextYear);
