@@ -78,7 +78,7 @@ CalEvent:
 **title**: String
 	The text on an event's element
 	
-**allDay**: Boolean (optional, defaults to ``true``)
+**allDay**: Boolean (optional, defaults to ``true``, see :ref:`allDayDefault <allDayDefault>` option)
 	Determines whether the start-date and end-date's times should be ignored.
 	If ``true``, times will be ignored. If ``false``, times will be considered,
 	displaying them on each event (like the text '3pm').
@@ -107,7 +107,13 @@ CalEvent:
 	
 	the end date is *exclusive*. This is only a gotcha when your ``end`` has time 00:00.
 	It means your event ends on midnight, and it will *not* span through the next day.
-
+	
+**url**: String (optional)
+	A URL that will be visited when this event is clicked by the user.
+	By default, the new page will be opened in the current window, but one
+	may specify an ``eventClick`` :ref:`Triggered Action <triggered-actions>` for
+	more complex behavior (just remember to return ``false`` to prevent the default action).
+	
 **className**: String/Array (optional)
 	A CSS class (or array of classes) that will be attached to this event's
 	element.

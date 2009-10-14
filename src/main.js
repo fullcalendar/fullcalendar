@@ -208,15 +208,6 @@ $.fn.fullCalendar = function(options) {
 					});
 					ignoreWindowResizes = false;
 					view.date = cloneDate(date);
-					if (header) {
-						// enable/disable 'today' button
-						var today = new Date();
-						if (today >= view.start && today < view.end) {
-							header.find('div.fc-button-today').addClass(tm + '-state-disabled');
-						}else{
-							header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
-						}
-					}
 				}
 				else if (view.sizeDirty) {
 					view.updateSize();
@@ -231,6 +222,13 @@ $.fn.fullCalendar = function(options) {
 				if (header) {
 					// update title text
 					header.find('h2.fc-header-title').html(view.title);
+					// enable/disable 'today' button
+					var today = new Date();
+					if (today >= view.start && today < view.end) {
+						header.find('div.fc-button-today').addClass(tm + '-state-disabled');
+					}else{
+						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
+					}
 				}
 				view.sizeDirty = false;
 				view.eventsDirty = false;
@@ -373,14 +371,18 @@ $.fn.fullCalendar = function(options) {
 			},
 			
 			gotoDate: function(year, month, dateNum) {
-				if (year != undefined) {
-					date.setYear(year);
-				}
-				if (month != undefined) {
-					date.setMonth(month);
-				}
-				if (dateNum != undefined) {
-					date.setDate(dateNum);
+				if (typeof year == 'object') {
+					date = cloneDate(year); // provided 1 argument, a Date
+				}else{
+					if (year != undefined) {
+						date.setYear(year);
+					}
+					if (month != undefined) {
+						date.setMonth(month);
+					}
+					if (dateNum != undefined) {
+						date.setDate(dateNum);
+					}
 				}
 				render();
 			},

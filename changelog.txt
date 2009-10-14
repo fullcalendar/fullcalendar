@@ -1,4 +1,13 @@
 
+version 1.3.2 (10/13/09)
+	- Bugfixes (please upgrade from 1.3.1!)
+		- squashed potential infinite loop when addMonths and addDays
+		  is called with an invalid date
+		- $.fullCalendar.parseDate() now correctly parses IETF format
+		- when switching views, the 'today' button sticks inactive, fixed
+	- gotoDate now can accept a single Date argument
+	- documentation for changes in 1.3.1 and 1.3.2 now on website
+
 version 1.3.1 (9/30/09)
 	- Important Bugfixes (please upgrade from 1.3!)
 		- When current date was late in the month, for long months, and prev/next buttons

@@ -72,6 +72,12 @@ Basic Options
 			The ``aspectRatio`` will NOT be maintained however. Each week will have
 			a constant height, meaning the calendar's height will change month-to-month.
 	
+.. _allDayDefault:
+
+**allDayDefault**: Boolean, *Default*: ``true``
+	Determines the default value for each :ref:`CalEvent's <CalEvent>` ``allDay`` property,
+	when it is unspecified.
+	
 	
 Event Editing
 =============
