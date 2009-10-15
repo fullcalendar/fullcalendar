@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------*/
 
 setDefaults({
-	allDayHeader: true,
+	allDaySlot: true,
 	allDayText: 'all-day',
 	firstHour: 6,
 	slotMinutes: 30,
@@ -127,7 +127,7 @@ function Agenda(element, options, methods) {
 			// head
 			s = "<div class='fc-agenda-head' style='position:relative;z-index:4'>" +
 				"<table style='width:100%'>" +
-				"<tr class='fc-first" + (options.allDayHeader ? '' : ' fc-last') + "'>" +
+				"<tr class='fc-first" + (options.allDaySlot ? '' : ' fc-last') + "'>" +
 				"<th class='fc-leftmost " +
 					tm + "-state-default'>&nbsp;</th>";
 			for (i=0; i<colCnt; i++) {
@@ -138,7 +138,7 @@ function Agenda(element, options, methods) {
 				addDays(d, dis);
 			}
 			s+= "<th class='" + tm + "-state-default'>&nbsp;</th></tr>";
-			if (options.allDayHeader) {
+			if (options.allDaySlot) {
 				s+= "<tr class='fc-all-day'>" +
 						"<th class='fc-axis fc-leftmost " + tm + "-state-default'>" + options.allDayText + "</th>" +
 						"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
@@ -342,7 +342,7 @@ function Agenda(element, options, methods) {
 	// renders 'all-day' events at the top
 	
 	function renderDaySegs(segRow) {
-		if (options.allDayHeader) {
+		if (options.allDaySlot) {
 			var td = head.find('td'),
 				tdInner = td.find('div div'),
 				tr = td.parent(),
@@ -659,7 +659,7 @@ function Agenda(element, options, methods) {
 					matrix = new HoverMatrix(function(cell) {
 						eventElement.draggable('option', 'revert', !cell);
 						if (cell) {
-							if (!cell.row && options.allDayHeader) { // over full days
+							if (!cell.row && options.allDaySlot) { // over full days
 								if (!allDay) {
 									// convert to temporary all-day event
 									allDay = true;
@@ -675,7 +675,7 @@ function Agenda(element, options, methods) {
 							view.hideOverlay();
 						}
 					});
-					if (options.allDayHeader) {
+					if (options.allDaySlot) {
 						matrix.row(head.find('td'));
 					}
 					bg.find('td').each(function() {

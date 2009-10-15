@@ -556,7 +556,7 @@ $.fn.fullCalendar = function(options) {
 					}
 					var prevButton;
 					$.each(this.split(','), function(j) {
-						var buttonName = this;
+						var buttonName = this; // TODO: make this an arg one line above
 						if (buttonName == 'title') {
 							tr.append("<td><h2 class='fc-header-title'/></td>");
 							if (prevButton) {

@@ -10,6 +10,7 @@ The following code initializes a FullCalendar within an element::
 		
 	})
 	
+.. _BasicOptions:
 
 Basic Options
 =============
@@ -18,8 +19,11 @@ Basic Options
 	The initial year/month/date when the calendar loads.
 	``month`` is 0-based, meaning January=0, February=1, etc.
 	If ommitted, the calendar starts on the current date.
+	
+**defaultView**: String, *Default*: ``'month'``
+	The initial view when the calendar loads. Any of the :ref:`available-views`.
 
-**header**: Object/``false``, *Default*: ``{ left:'title', center:'', right:'prev,next' }``
+**header**: Object/``false``, *Default*: ``{ left:'title', center:'', right:'today prev,next' }``
 	Defines the buttons/text at the top of the calendar.
 	``false`` will display no header.
 	An object can be supplied with properties ``left``, ``center``, and ``right``.
@@ -35,6 +39,15 @@ Basic Options
 		``next``
 			button for moving the calendar forward one month/week/day
 			
+		``prevYear``
+			button for moving the calendar back on year
+			
+		``nextYear``
+			button for moving the calendar forward one year
+			
+		``today``
+			button for moving the calendar to the current month/week/day
+			
 		*a blank space*
 			visual gap between buttons/text
 		
@@ -44,15 +57,30 @@ Basic Options
 	
 	Specifying an empty string for a property will cause it display no text/buttons.
 	
-	To change the text within a button, see the :ref:`buttonText<locale>` option.
+**buttonText**: Object
+	Text that will be displayed on buttons of the header. Default::
 	
-**defaultView**: String, *Default*: ``'month'``
-	The initial view when the calendar loads. Any of the :ref:`available-views`.
+		{
+			prev: '&nbsp;&#9668;&nbsp;', // left triangle
+			next: '&nbsp;&#9658;&nbsp;', // right triangle
+			prevYear: 'prev year',
+			nextYear: 'next year',
+			today: 'today',
+			month: 'month',
+			week: 'week',
+			day: 'day'
+		}
 
 **aspectRatio**: Float, *Default*: ``1.35``
 	A calendar is a block-level element that fills its entire avaiable width.
 	The calendar's height, however, is determined by this ratio of width-to-height.
 	(Hint: larger numbers make smaller heights).
+	
+.. _allDayDefault:
+
+**allDayDefault**: Boolean, *Default*: ``true``
+	Determines the default value for each :ref:`CalEvent's <CalEvent>` ``allDay`` property,
+	when it is unspecified.
 
 **weekMode**: String, *Default*: ``'fixed'``
 	Determines the number of weeks displayed in a month view.
@@ -72,11 +100,24 @@ Basic Options
 			The ``aspectRatio`` will NOT be maintained however. Each week will have
 			a constant height, meaning the calendar's height will change month-to-month.
 	
-.. _allDayDefault:
-
-**allDayDefault**: Boolean, *Default*: ``true``
-	Determines the default value for each :ref:`CalEvent's <CalEvent>` ``allDay`` property,
-	when it is unspecified.
+**allDaySlot**: Boolean, *Default*: ``true``
+	In the agenda views, determines if the "all-day" slot is displayed at the top
+	of the calendar. When hidden with ``false``, all-day events will not be displayed
+	at all.
+	
+**allDayText**: Boolean, *Default*: ``'all-day'``
+	In the agenda views, the text titling the "all-day" slot at the top of the calendar.
+	
+**firstHour**: Integer, *Default*: 6
+	In the agenda views, determines the first hour that will be visible in the
+	scroll pane. Values must be from 0-23, where 0=midnight, 1=1am, etc.
+	
+**slotMinutes**: Integer, *Default*: 30
+	In the agenda views, the frequency for displaying time slots, in minutes.
+	
+**defaultEventMinutes**: Integer, *Default*: 120
+	In the agenda views, when a :ref:`CalEvent <CalEvent>` has an unspecified end date,
+	determines the length (in minutes) the event appears to be.
 	
 	
 Event Editing
@@ -97,13 +138,26 @@ Event Editing
 
 **disableResizing**: Boolean, *Default*: ``false``
 	Disables all event resizing, even when events are editable.
-	
-**dragOpacity**: Float, *Default*: ``1.0``
-	The opacity of an event when it is being dragged.
 
 **dragRevertDuration**: Float, *Default*: ``500``
 	The time in milliseconds it takes for an event to revert to its
 	original position after an unsuccessful drag.
+	
+**dragOpacity**: Float
+	The opacity of an event when it is being dragged. Values range
+	from 0.0 to 1.0.
+	
+	Specify a single number to affect all views, or an
+	:ref:`ViewHash` to target specific views. Here is the default
+	(a View Hash)::
+	
+		{	
+			// for agendaWeek and agendaDay
+			agenda: .5,
+			
+			// for all other views
+			'': 1.0
+		}
 	
 	
 Time & Date Formatting
@@ -111,9 +165,11 @@ Time & Date Formatting
 
 **titleFormat**: String/Object
 	Determines the text that will be displayed in the header's title
-	using :ref:`formatDates' <formatDates>`' format string. A string will set the title format
-	for *all* views. An object hash will set the format on a per-view basis.
-	Here is the default, showing example outputs for each view::
+	using the :ref:`formatDates <formatDates>` format.
+	
+	A single string will set the title format for *all* views.
+	A :ref:`ViewHash` may be provided to target specific views.
+	Here is the default (a View Hash), showing example output::
 	
 		{
 			month: 'MMMM yyyy',                            // September 2009
@@ -122,10 +178,12 @@ Time & Date Formatting
 		}
 
 **columnFormat**: String/Object
-	Determines the text that will be displayed on a view's column headings
-	using :ref:`formatDates' <formatDates>` format string. A string will set the column header format
-	for *all* views. An object hash will set the format on a per-view basis.
-	Here is the default, showing example outputs for each view::
+	Determines the text that will be displayed on the calendar's column headings
+	using the :ref:`formatDates <formatDates>` format.
+	
+	A single string will set the title format for *all* views.
+	A :ref:`ViewHash` may be provided to target specific views.
+	Here is the default (a View Hash), showing example output::
 	
 		{
 			month: 'ddd',    // Mon
@@ -133,13 +191,28 @@ Time & Date Formatting
 			day: 'dddd M/d'  // Monday 9/7
 		}
 
-**timeFormat**: String, *Default*: ``'h(:mm)t'``
+**timeFormat**: String/Object
 	Determines the time-text that will be displayed on an event
-	using :ref:`formatDates' <formatDates>` format string. The default format outputs text
-	such as '9a' or '5:30p'.
+	using the :ref:`formatDates <formatDates>` format.
 	
-	Time-text will only be displayed for :ref:`CalEvent` that have
-	``allDay`` equal to ``false``.
+	Time-text will only be displayed for :ref:`CalEvents <CalEvent>`
+	that have ``allDay`` equal to ``false``.
+	
+	A single string will change the time-text for applicable events in *all* views.
+	A :ref:`ViewHash` may be provided to target specific views.
+	Here is the default (a View Hash), showing example output::
+	
+		{	
+			// for agendaWeek and agendaDay
+			agenda: 'h:mm{ - h:mm}', // 5:00 - 6:30
+			
+			// for all other views
+			'': 'h(:mm)t'            // 7pm
+		}
+	
+**axisFormat**: String, *Default*: ``h(:mm)tt``
+	Determines the time-text that will be displayed on the left vertical axis
+	of the agenda views.
 	
 	
 .. _available-views:
@@ -152,4 +225,36 @@ Available Views
 **basicWeek** - `see example <../../media/fullcalendar-views/basicWeek.html>`_
 
 **basicDay** - `see example <../../media/fullcalendar-views/basicDay.html>`_
+
+**agendaWeek** - `see example <../../media/fullcalendar-views/agendaWeek.html>`_
+
+**agendaDay** - `see example <../../media/fullcalendar-views/agendaDay.html>`_
+
+
+.. _ViewHash:
+
+View Hash
+=========
+
+A "View Hash" is an object that specifies options for specific calendar views.
+It can contain any of the following properties::
+
+	{
+		month:      // month view
+		week:       // basicWeek & agendaWeek views
+		day:        // basicDay & agendaDay views
+		
+		agenda:     // agendaDay & agendaWeek views
+		agendaDay:  // agendaDay view
+		agendaWeek: // agendaWeek view
+		
+		basic:      // basicWeek & basicDay views
+		basicWeek:  // basicWeek view
+		basicDay:   // basicDay view
+		
+		'':         // (an empty string) when no other properties match
+	}
+	
+Currently the only options that support View Hashes are
+``dragOpacity``, ``titleFormat``, ``columnFormat``, and ``timeFormat``.
 	

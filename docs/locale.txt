@@ -23,14 +23,5 @@ Locale Options
 **dayNamesShort**: Array, *Default*: ``['Sun','Mon','Tue'...``
 	Abbreviated names of days-of-week.
 
-**buttonText**: Object
-	Text that will be displayed on buttons of the header. Default::
-	
-		{
-			prev: '&nbsp;&#9668;&nbsp;', // left triangle
-			next: '&nbsp;&#9658;&nbsp;', // right triangle
-			today: 'today',
-			month: 'month',
-			week: 'week',
-			day: 'day'
-		}
+The ``buttonText`` and ``allDayText`` options in :ref:`BasicOptions`
+might also be of interest.
