@@ -78,8 +78,10 @@
 	
 	function updateEventStart() {
 		var event = cal.fullCalendar('clientEvents', 777)[0];
-		event.start = new Date(y, m, 25, 10, 30);
-		event.end = new Date(y, m, 26);
+		event.start = new Date(y, m, d, 13, 30);
+		event.end = new Date(y, m, d, 14, 50);
+		//event.start = new Date(y, m, 25, 10, 30); // move big days
+		//event.end = new Date(y, m, 26);
 		//event.allDay = true;
 		cal.fullCalendar('updateEvent', event);
 	}
@@ -88,7 +90,7 @@
 		var event = cal.fullCalendar('clientEvents', 999)[0];
 		event.start = new Date(y, m, 4, 13, 30);
 		event.end = new Date(y, m, 5, 2, 0);
-		event.allDay = false;
+		event.allDay = true;
 		event.title = "repeat yo";
 		//event.editable = false;
 		event.url = "http://google.com/";

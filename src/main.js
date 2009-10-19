@@ -83,6 +83,10 @@ var rtlDefaults = {
 		next: '&nbsp;&#9668;&nbsp;',
 		prevYear: '&nbsp;&gt;&gt;&nbsp;',
 		nextYear: '&nbsp;&lt;&lt;&nbsp;'
+	},
+	buttonIcons: {
+		prev: 'circle-triangle-e',
+		next: 'circle-triangle-w'
 	}
 };
 
@@ -560,8 +564,7 @@ $.fn.fullCalendar = function(options) {
 						tr.append("<td><span class='fc-header-space'/></td>");
 					}
 					var prevButton;
-					$.each(this.split(','), function(j) {
-						var buttonName = this; // TODO: make this an arg one line above
+					$.each(this.split(','), function(j, buttonName) {
 						if (buttonName == 'title') {
 							tr.append("<td><h2 class='fc-header-title'/></td>");
 							if (prevButton) {
@@ -658,6 +661,8 @@ $.fn.fullCalendar = function(options) {
 					overflow: 'hidden',
 					height: Math.round(content.width() / options.aspectRatio)
 				});
+				// TODO: previous action might have caused scrollbars
+				// which will make the window width more narrow, possibly changing the aspect ratio
 			}
 		}
 		

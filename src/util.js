@@ -276,7 +276,7 @@ function setOuterHeight(element, height, includeMargins) {
 
 var operaPositionBug;
 
-function reportTBody(tbody) { // TODO: have agenda use this too
+function reportTBody(tbody) {
 	if (operaPositionBug == undefined) {
 		operaPositionBug = tbody.position().top != tbody.find('tr').position().top;
 	}

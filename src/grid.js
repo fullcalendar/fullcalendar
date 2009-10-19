@@ -239,7 +239,7 @@ function Grid(element, options, methods) {
 		
 		}
 		
-		updateSize(); // BUG: quirky widths with weekMode:variable
+		updateSize();
 		fetchEvents(renderEvents);
 	
 	};

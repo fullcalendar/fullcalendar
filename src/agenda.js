@@ -52,7 +52,7 @@ function Agenda(element, options, methods) {
 
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
-		axisWidth, colWidth, slotHeight, // todo: axisWidth -> axisWidth, slotHeight->slotHeight ?
+		axisWidth, colWidth, slotHeight,
 		cachedDaySegs, cachedSlotSegs,
 		tm, firstDay,
 		rtl, dis, dit,  // day index sign / translate
@@ -229,7 +229,15 @@ function Agenda(element, options, methods) {
 		var d0 = new Date(1970, 0, 1),
 			scrollDate = cloneDate(d0);
 		scrollDate.setHours(options.firstHour);
-		body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
+		var go = function() {
+			body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
+				// TODO: +1 doesn't apply when firstHour=0
+		}
+		if ($.browser.opera) {
+			setTimeout(go, 0); // opera 10 (and earlier?) needs this
+		}else{
+			go();
+		}
 	}
 	
 	
@@ -254,8 +262,7 @@ function Agenda(element, options, methods) {
 				.width('')
 				.each(function() {
 					axisWidth = Math.max(axisWidth, $(this).outerWidth());
-				})
-				.add(stripeTDs.eq(0)),
+				}),
 			axisWidth
 		);
 		
@@ -273,6 +280,10 @@ function Agenda(element, options, methods) {
 		});
 		
 		slotHeight = body.find('tr:first div').height() + 1;
+		
+		// TODO:
+		//reportTBody(bodyTable.find('tbody'));
+		// Opera 9.25 doesn't detect the bug when called from agenda
 	}
 	
 	function slotClick(ev) {

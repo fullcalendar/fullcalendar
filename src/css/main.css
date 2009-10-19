@@ -252,12 +252,15 @@ table.fc-header {
 	 *     color: red;
 	 *     }
 	 */
+	 
+.fc-event {
+	text-align: left;
+	}
 	
 .fc-event a {
 	overflow: hidden;
 	font-size: .85em;
 	text-decoration: none;
-	text-align: left;
 	cursor: pointer;
 	}
 	

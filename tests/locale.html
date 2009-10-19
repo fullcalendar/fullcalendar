@@ -31,13 +31,15 @@
 			
 			weekMode: 'variable',
 			
-			dayClick: function(dayDate, view) {
-				console.log('dayClick - ' + dayDate + ' - ' + view.title);
+			dayClick: function(dayDate, allDay, ev, view) {
+				console.log('dayClick - ' + dayDate + ' - allDay:' + allDay + ' --- ' + view.title);
 			},
 			
-			eventDrop: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+			eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
 				console.log('DROP ' + event.title);
 				console.log(dayDelta + ' days');
+				console.log(minuteDelta + ' minutes');
+				console.log('allDay: ' + allDay);
 				console.log(event.start);
 				//console.log(minuteDelta + ' minutes');
 			},
@@ -45,6 +47,7 @@
 			eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
 				console.log('RESIZE!! ' + event.title);
 				console.log(dayDelta + ' days');
+				console.log(minuteDelta + ' minutes');
 				console.log(event.end);
 				//console.log(minuteDelta + ' minutes');
 			},

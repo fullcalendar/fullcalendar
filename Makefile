@@ -6,12 +6,14 @@ REV = `svn info | grep Rev: | sed 's/.*: //g'`
 JS_SRC_FILES =\
 	main.js\
 	grid.js\
+	agenda.js\
 	view.js\
 	util.js
 	
 CSS_SRC_FILES =\
 	main.css\
-	grid.css
+	grid.css\
+	agenda.css
 
 OTHER_FILES =\
 	src/gcal.js\
