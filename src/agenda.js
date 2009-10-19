@@ -63,6 +63,7 @@ function Agenda(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		updateSize: updateSize,
+		shown: resetScroll,
 		defaultEventEnd: function(event) {
 			var start = cloneDate(event.start);
 			if (event.allDay) {
@@ -115,7 +116,6 @@ function Agenda(element, options, methods) {
 		
 		var d0 = rtl ? addDays(cloneDate(view.visEnd), -1) : cloneDate(view.visStart),
 			d = cloneDate(d0),
-			scrollDate = cloneDate(d0),
 			today = clearTime(new Date());
 		
 		if (!head) { // first time rendering, build from scratch
@@ -219,13 +219,18 @@ function Agenda(element, options, methods) {
 		}
 		
 		updateSize();
-		
-		scrollDate.setHours(options.firstHour);
-		body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
-		
+		resetScroll();
 		fetchEvents(renderEvents);
 		
 	};
+	
+	
+	function resetScroll() {
+		var d0 = new Date(1970, 0, 1),
+			scrollDate = cloneDate(d0);
+		scrollDate.setHours(options.firstHour);
+		body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
+	}
 	
 	
 	function updateSize() {

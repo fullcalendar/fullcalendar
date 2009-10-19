@@ -4,13 +4,16 @@
 <script type='text/javascript' src='loader.js'></script>
 <script type='text/javascript'>
 
-	var d = new Date();
-	var y = d.getFullYear();
-	var m = d.getMonth();
+	var date = new Date();
+	var d = date.getDate();
+	var m = date.getMonth();
+	var y = date.getFullYear();
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			header: {
+				left: 'prev,next today',
+				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
@@ -31,17 +34,18 @@
 			
 			dayClick: function(dayDate, allDay, ev, view) {
 				console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
+				//console.log(ev);
 				//console.log(this);
 			},
 			
 			eventRender: function(event, element, view) {
-				if (event.id == 555) {
+				if (event.id == 888) {
 					return false;
 				}
-				else if (event.id == 666) {
+				else if (event.id == 777) {
 					return $("<div style='background:green'/>").text(event.title);
 				}
-				else if (event.id == 1) {
+				else if (event.id == 999) {
 					element.css('border-color', 'red');
 					//console.log('renderEvent (' + event.title + ') - ' + view.title);
 				}
@@ -77,10 +81,11 @@
 				console.log('DRAG STOP ' + event.title);
 				//console.log(this);
 			},
-			eventDrop: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+			eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
 				console.log('DROP ' + event.title);
 				console.log(dayDelta + ' days');
 				console.log(minuteDelta + ' minutes');
+				console.log('allday: ' + allDay);
 				/*setTimeout(function() {
 					revertFunc();
 				}, 2000);*/
@@ -113,64 +118,49 @@
 			
 			events: [
 				{
-					id: 555,
-					title: "Rejected Event",
-					start: new Date(y, m, 5)
+					title: 'All Day Event',
+					start: new Date(y, m, 1)
 				},
 				{
-					id: 666,
-					title: "Homemade Elm Event",
-					start: new Date(y, m, 6)
+					title: 'Long Event',
+					start: new Date(y, m, d-5),
+					end: new Date(y, m, d-2)
 				},
 				{
-					id: 1,
-					title: "Long Event",
-					start: new Date(y, m, 6),
-					end: new Date(y, m, 10)
-				},
-				{
-					id: 2,
-					title: "Repeating",
-					start: new Date(y, m, 2)
-				},
-				{
-					id: 2,
-					title: "Repeating",
-					start: new Date(y, m, 9),
-					end: new Date(y, m, 10)
-				},
-				{
-					id: 3,
-					title: "Meeting",
-					start: new Date(y, m, 20, 9, 0),
-					end: new Date(y, m, 20, 10, 0),
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
 					allDay: false
 				},
 				{
-					id: 4,
-					title: "Click for Google",
-					start: new Date(y, m, 27),
-					end: new Date(y, m, 28),
-					url: "http://google.com/"
-				},
-				{
-					id: 5,
-					title: "timed event1",
-					start: new Date (y, m, 31, 17, 30),
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
 					allDay: false
 				},
 				{
-					id: 6,
-					title: "timed event1",
-					start: new Date (y, m+1, 2, 14, 15),
+					id: 888,
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30)
+				},
+				{
+					id: 777,
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
 					allDay: false
 				},
 				{
-					id: 7,
-					title: "timed event1",
-					start: new Date (y, m+1, 4, 15, 00),
-					end: new Date(y, m+1, 4, 17, 00),
+					title: 'Birthday Party',
+					start: new Date(y, m, d+1, 19, 0),
+					end: new Date(y, m, d+1, 22, 30),
 					allDay: false
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, 28),
+					end: new Date(y, m, 29),
+					url: 'http://google.com/'
 				}
 			]
 		});

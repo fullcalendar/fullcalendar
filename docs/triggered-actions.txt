@@ -23,9 +23,15 @@ always available (:ref:`more below <view-object>`).
 	
 	``this`` is set to the main element.
 
-**dayClick**: function(*dayDate, view*)
-	Triggered when the user clicks on a day. ``dayDate`` is a Date object with
-	it's time set to 00:00:00.
+**dayClick**: function(*dayDate, allDay, jsEvent, view*)
+	Triggered when the user clicks on a day. ``dayDate`` is a Date object holding the
+	current date and time (if in an agenda view) of the clicked area.
+	
+	``allDay`` will be ``true`` when the user clicks on a day in month-view
+	or the "all-day" slot in the agenda views. It will be ``false`` when the user
+	clicks on a slot in the agenda views.
+	
+	``jsEvent`` is the native javascript event (with information about click position, etc).
 	
 	``this`` is set to the TD element of the clicked day.
 
@@ -50,25 +56,29 @@ always available (:ref:`more below <view-object>`).
 	the event's URL.
 
 **eventDragStart**, **eventDragStop**: function(*calEvent, jsEvent, ui, view*)
-	Triggered before/after an event is dragged (but not necessarily moved to a new day).
+	Triggered before/after an event is dragged (but not necessarily moved to a new day/time).
 	``calEvent`` holds that event's information (date, title, etc).
 	``jsEvent`` holds the native javascript event (with information about click position, etc).
 	``ui`` holds the jQuery UI object.
 	
 	``this`` is set to the event's element
 
-**eventDrop**: function(*calEvent, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view*)
-	Triggered when dragging stops and the event has moved to a *different* day.
+**eventDrop**: function(*calEvent, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view*)
+	Triggered when dragging stops and the event has moved to a *different* day/time.
 	
 	``dayDelta`` holds the number of days the event was moved forward (a positive number)
 	or backwards (a negative number).
 	
-	``minuteDelta`` will always be ``0`` and is reserved for a future release
-	of FullCalendar where there will be an agenda view.
+	``minuteDelta`` holds the number of minutes the event was moved forward (a positive number)
+	or backwards (a negative number). Only applies to the agenda views.
 	
 	``dayDelta`` and ``minuteDelta`` are elegant for dealing with multi-day and
 	repeating events. If updating a remote database, just add these values to the
 	start and end times of all events with the given ``calEvent.id``
+	
+	``allDay`` is ``true`` if the event has been dropped on a day in month-view or the
+	"all-day" slot in the agenda views. It will be ``false`` if dropped on a slot
+	in the agenda views.
 	
 	``revertFunc`` is a function that, if called, reverts the event's start/end date to
 	the values *before* the drag. This is useful if an ajax call should fail.
@@ -87,8 +97,9 @@ always available (:ref:`more below <view-object>`).
 	``dayDelta`` holds the number of days the event's end time was moved
 	forward (a positive number) or backwards (a negative number).
 	
-	``minuteDelta`` will always be ``0`` and is reserved for a future release
-	of FullCalendar where there will be an agenda view.
+	``minuteDelta`` holds the number of minutes the event's end time was moved
+	forward (a positive number) or backwards (a negative number).
+	Only applies to the agenda views.
 	
 	``revertFunc`` is a function that, if called, reverts the event's start/end date to
 	the values *before* the drag. This is useful if an ajax call should fail.

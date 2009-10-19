@@ -1,4 +1,22 @@
 
+version 1.4 (10/19/09)
+	- agendaWeek and agendaDay views !!!
+	- added some options for agenda views:
+		- allDaySlot
+		- allDayText
+		- firstHour
+		- slotMinutes
+		- defaultEventMinutes
+		- axisFormat
+	- modified some existing options/triggers to work with agenda views:
+		- dragOpacity and timeFormat can now accept a "View Hash" (a new concept)
+		- dayClick now has an allDay parameter
+		- eventDrop now has an an allDay parameter
+		  (this will affect those who use revertFunc, adjust parameter list)
+	- added 'prevYear' and 'nextYear' for buttons in header
+	- minor change for theme users, ui-state-hover not applied to active/inactive buttons
+	- added event-color-changing example in docs
+
 version 1.3.2 (10/13/09)
 	- Bugfixes (please upgrade from 1.3.1!)
 		- squashed potential infinite loop when addMonths and addDays

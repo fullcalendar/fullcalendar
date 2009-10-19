@@ -1,0 +1,59 @@
+
+Changing Event Colors
+=====================
+
+You can modify the default color that affects *all* events by adding some
+css in the following form:
+
+.. code-block:: css
+
+	.fc-event,
+	.fc-agenda .fc-event-time,
+	.fc-event a {
+		background-color: black; /* background color */
+		border-color: black;     /* border color (often same as background-color) */
+		color: red;              /* text color */
+		}
+	
+You can also change the color for *certain* events by using the ``className`` property
+of each :ref:`CalEvent Object <CalEvent>`. Here is an example of the CSS you would write
+if your className was ``"holiday"``:
+
+.. code-block:: css
+
+	.holiday,
+	.fc-agenda .holiday .fc-event-time,
+	.holiday a {
+		background-color: green; /* background color */
+		border-color: green;     /* border color (often same as background-color) */
+		color: yellow;           /* text color */
+	    }
+
+If you are using the "default" and "className" techniques together,
+make sure the CSS for the "default" technique *comes first*.
+
+
+Theming
+=======
+
+FullCalendar can be used with jQuery UI themes. Themes provide a more stylized
+look for the calendar and can easily be created using the
+`jQuery UI ThemeRoller <http://jqueryui.com/themeroller/>`_.
+
+In order for themes to work, you must include the theme's CSS file and
+*fullcalendar.css* on the current page. You must also enable the ``theme`` option.
+Here is the full list of theme-related options:
+
+**theme**: Boolean, *Default*: ``false``
+	Enables/disables use of jQuery UI themes
+
+**buttonIcons**: Object
+	Determines which icons appear within header buttons. If a button
+	does not have an entry, it falls back to using ``buttonText``.
+	
+	Here is the default value for ``buttonIcons``::
+	
+		{
+			prev: 'circle-triangle-w',
+			next: 'circle-triangle-e'
+		}

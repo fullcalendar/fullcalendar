@@ -244,10 +244,11 @@ table.fc-header {
 	/* Use the 'className' CalEvent property and the following
 	 * example CSS to change event color on a per-event basis:
 	 *
-	 * .my-event-class,
-	 * .my-event-class a {
-	 *     border-color: black;
+	 * .myclass,
+	 * .fc-agenda .myclass .fc-event-time,
+	 * .myclass a {
 	 *     background-color: black;
+	 *     border-color: black;
 	 *     color: red;
 	 *     }
 	 */

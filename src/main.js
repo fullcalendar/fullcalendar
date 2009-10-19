@@ -12,9 +12,9 @@ var defaults = {
 	defaultView: 'month',
 	aspectRatio: 1.35,
 	header: {
-		left: 'prev,next today',
-		center: 'title',
-		right: 'month,agendaWeek,agendaDay'
+		left: 'title',
+		center: '',
+		right: 'today prev,next'
 	},
 	
 	// editing
@@ -54,8 +54,8 @@ var defaults = {
 	buttonText: {
 		prev: '&nbsp;&#9668;&nbsp;',
 		next: '&nbsp;&#9658;&nbsp;',
-		prevYear: 'prev year',
-		nextYear: 'next year',
+		prevYear: '&nbsp;&lt;&lt;&nbsp;',
+		nextYear: '&nbsp;&gt;&gt;&nbsp;',
 		today: 'today',
 		month: 'month',
 		week: 'week',
@@ -74,13 +74,15 @@ var defaults = {
 // right-to-left defaults
 var rtlDefaults = {
 	header: {
-		left: 'agendaDay,agendaWeek,month',
-		center: 'title',
-		right: 'today next,prev'
+		left: 'next,prev today',
+		center: '',
+		right: 'title'
 	},
 	buttonText: {
 		prev: '&nbsp;&#9658;&nbsp;',
-		next: '&nbsp;&#9668;&nbsp;'
+		next: '&nbsp;&#9668;&nbsp;',
+		prevYear: '&nbsp;&gt;&gt;&nbsp;',
+		nextYear: '&nbsp;&lt;&lt;&nbsp;'
 	}
 };
 
@@ -180,6 +182,9 @@ $.fn.fullCalendar = function(options) {
 				}
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
+					if (view.shown) {
+						view.shown();
+					}
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
 						$("<div class='fc-view fc-view-" + v + "'/>").appendTo(content),
@@ -569,7 +574,10 @@ $.fn.fullCalendar = function(options) {
 								buttonClick = publicMethods[buttonName];
 							}
 							else if (views[buttonName]) {
-								buttonClick = function() { changeView(buttonName) };
+								buttonClick = function() {
+									button.removeClass(tm + '-state-hover');
+									changeView(buttonName)
+								};
 							}
 							if (buttonClick) {
 								if (prevButton) {
@@ -594,17 +602,24 @@ $.fn.fullCalendar = function(options) {
 											}
 										})
 										.mousedown(function() {
-											button.addClass(tm + '-state-down');
+											button
+												.not('.' + tm + '-state-active')
+												.not('.' + tm + '-state-disabled')
+												.addClass(tm + '-state-down');
 										})
 										.mouseup(function() {
 											button.removeClass(tm + '-state-down');
 										})
 										.hover(
 											function() {
-												button.addClass(tm + '-state-hover');
+												button
+													.not('.' + tm + '-state-active')
+													.not('.' + tm + '-state-disabled')
+													.addClass(tm + '-state-hover');
 											},
 											function() {
-												button.removeClass(tm + '-state-hover')
+												button
+													.removeClass(tm + '-state-hover')
 													.removeClass(tm + '-state-down');
 											}
 										)

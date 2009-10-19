@@ -61,10 +61,10 @@ Basic Options
 	Text that will be displayed on buttons of the header. Default::
 	
 		{
-			prev: '&nbsp;&#9668;&nbsp;', // left triangle
-			next: '&nbsp;&#9658;&nbsp;', // right triangle
-			prevYear: 'prev year',
-			nextYear: 'next year',
+			prev: '&nbsp;&#9668;&nbsp;',      // left triangle
+			next: '&nbsp;&#9658;&nbsp;',      // right triangle
+			prevYear: '&nbsp;&lt;&lt;&nbsp;', // <<
+			nextYear: '&nbsp;&gt;&gt;&nbsp;', // >>
 			today: 'today',
 			month: 'month',
 			week: 'week',
@@ -103,7 +103,7 @@ Basic Options
 **allDaySlot**: Boolean, *Default*: ``true``
 	In the agenda views, determines if the "all-day" slot is displayed at the top
 	of the calendar. When hidden with ``false``, all-day events will not be displayed
-	at all.
+	in agenda views.
 	
 **allDayText**: Boolean, *Default*: ``'all-day'``
 	In the agenda views, the text titling the "all-day" slot at the top of the calendar.
@@ -147,7 +147,7 @@ Event Editing
 	The opacity of an event when it is being dragged. Values range
 	from 0.0 to 1.0.
 	
-	Specify a single number to affect all views, or an
+	Specify a single number to affect all views, or a
 	:ref:`ViewHash` to target specific views. Here is the default
 	(a View Hash)::
 	
