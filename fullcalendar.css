@@ -1,5 +1,5 @@
 /*
- * FullCalendar v1.3.2 Stylesheet
+ * FullCalendar v1.4 Stylesheet
  *
  * Feel free to edit this file to customize the look of FullCalendar.
  * When upgrading to newer versions, please upgrade this file as well,
@@ -12,6 +12,10 @@
 .fc .fc-header,
 .fc .fc-content {
 	font-size: 1em;
+	}
+	
+.fc {
+	direction: ltr;
 	}
 	
 .fc table {
@@ -113,10 +117,19 @@ table.fc-header {
 	padding: 4px 6px;
 	}
 	
+.fc-header .fc-state-default span,
+.fc-header .ui-state-default span {
+	white-space: nowrap;
+	}
+	
 /* for adjacent buttons */
 	
 .fc-header .fc-no-right {
 	padding-right: 0;
+	}
+	
+.fc-header .fc-no-right a {
+	margin-right: 0;
 	border-right: 0;
 	}
 	
@@ -145,7 +158,7 @@ table.fc-header {
 	}
 
 .fc-header .fc-state-default span {
-	border-color: #fff #fff #cecece; /* inner border */
+	border-color: #fff #fff #d1d1d1; /* inner border */
 	background: #e8e8e8;
 	}
 	
@@ -220,6 +233,7 @@ table.fc-header {
 ------------------------------------------------------------------------*/
 
 .fc-event,
+.fc-agenda .fc-event-time,
 .fc-event a {
 	border-style: solid; 
 	border-color: #36c;     /* default BORDER color (probably the same as background-color) */
@@ -230,19 +244,23 @@ table.fc-header {
 	/* Use the 'className' CalEvent property and the following
 	 * example CSS to change event color on a per-event basis:
 	 *
-	 * .my-event-class,
-	 * .my-event-class a {
-	 *     border-color: black;
+	 * .myclass,
+	 * .fc-agenda .myclass .fc-event-time,
+	 * .myclass a {
 	 *     background-color: black;
+	 *     border-color: black;
 	 *     color: red;
 	 *     }
 	 */
+	 
+.fc-event {
+	text-align: left;
+	}
 	
 .fc-event a {
 	overflow: hidden;
 	font-size: .85em;
 	text-decoration: none;
-	text-align: left;
 	cursor: pointer;
 	}
 	
@@ -276,7 +294,7 @@ table.fc-header {
 	display: block;
 	position: absolute;
 	z-index: 99999;
-	border: 0; /* important overrides pre jquery ui 1.7 styles */
+	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
 	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
 	}
 	
@@ -395,4 +413,158 @@ table.fc-header {
 .fc-rtl .fc-grid .fc-event-time {
 	float: right;
 	}
+	
+/* Agenda Week View, Agenda Day View
+------------------------------------------------------------------------*/
+
+.fc .fc-agenda th,
+.fc .fc-agenda td {
+	border-width: 1px 0 0 1px;
+	}
+	
+.fc .fc-agenda .fc-leftmost {
+	border-left: 0;
+	}
+	
+.fc-agenda tr.fc-first th,
+.fc-agenda tr.fc-first td {
+	border-top: 0;
+	}
+	
+.fc-agenda-head tr.fc-last th {
+	border-bottom-width: 1px;
+	}
+	
+.fc .fc-agenda-head td,
+.fc .fc-agenda-body td {
+	background: none;
+	}
+	
+.fc-agenda-head th {
+	text-align: center;
+	}
+	
+/* the time axis running down the left side */
+	
+.fc-agenda .fc-axis {
+	width: 50px;
+	padding: 0 4px;
+	vertical-align: middle;
+	white-space: nowrap;
+	text-align: right;
+	font-weight: normal;
+	}
+	
+/* all-day event cells at top */
+	
+.fc-agenda-head tr.fc-all-day th {
+	height: 35px;
+	}
+	
+.fc-agenda-head td {
+	padding-bottom: 10px;
+	}
+	
+.fc .fc-divider div {
+	font-size: 1px; /* for IE6/7 */
+	height: 2px;
+	}
+	
+.fc .fc-divider .fc-state-default {
+	background: #eee; /* color for divider between all-day and time-slot events */
+	}
+
+/* body styles */
+	
+.fc .fc-agenda-body td div {
+	height: 20px; /* slot height */
+	}
+	
+.fc .fc-agenda-body tr.fc-minor th,
+.fc .fc-agenda-body tr.fc-minor td {
+	border-top-style: dotted;
+	}
+	
+.fc-agenda .fc-day-content {
+	padding: 2px 2px 0; /* distance between events and day edges */
+	}
+	
+
+
+/* Vertical Events
+------------------------------------------------------------------------*/
+
+.fc-event-vert {
+	border-width: 0 1px;
+	}
+	
+.fc-event-vert a {
+	border-width: 0;
+	}
+	
+/* for fake rounded corners */
+	
+.fc-content .fc-corner-top {
+	margin-top: 1px;
+	}
+	
+.fc-content .fc-corner-top a {
+	margin-top: -1px;
+	border-top-width: 1px;
+	}
+	
+.fc-content .fc-corner-bottom {
+	margin-bottom: 1px;
+	}
+	
+.fc-content .fc-corner-bottom a {
+	margin-bottom: -1px;
+	border-bottom-width: 1px;
+	}
+	
+/* event content */
+	
+.fc-event-vert span {
+	display: block;
+	position: relative;
+	z-index: 2;
+	}
+	
+.fc-event-vert span.fc-event-time {
+	white-space: nowrap;
+	_white-space: normal;
+	overflow: hidden;
+	border: 0;
+	font-size: 10px;
+	}
+	
+.fc-event-vert span.fc-event-title {
+	line-height: 13px;
+	}
+	
+.fc-event-vert span.fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	opacity: .3;
+	filter: alpha(opacity=30); /* for IE */
+	}
+	
+/* resizable */
+	
+.fc-event-vert .ui-resizable-s {
+	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
+	width: 100%      !important;
+	height: 8px      !important;
+	line-height: 8px !important;
+	font-size: 11px  !important;
+	font-family: monospace;
+	text-align: center;
+	cursor: s-resize;
+	}
+	
 	
