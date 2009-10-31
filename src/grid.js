@@ -13,22 +13,39 @@ views.month = function(element, options) {
 				addMonths(date, delta);
 				date.setDate(1);
 			}
+			// start/end
 			var start = this.start = cloneDate(date, true);
 			start.setDate(1);
-			this.title = formatDates(
+			this.end = addMonths(cloneDate(start), 1);
+			// visStart/visEnd
+			var visStart = this.visStart = cloneDate(start),
+				visEnd = this.visEnd = cloneDate(this.end),
+				nwe = options.weekends ? 0 : 1;
+			if (nwe) {
+				skipWeekend(visStart);
+				skipWeekend(visEnd, -1, true);
+			}
+			addDays(visStart, -((visStart.getDay() - Math.max(options.firstDay, nwe) + 7) % 7));
+			addDays(visEnd, (7 - visEnd.getDay() + Math.max(options.firstDay, nwe)) % 7);
+			// row count
+			var rowCnt = Math.round((visEnd - visStart) / (DAY_MS * 7));
+			if (options.weekMode == 'fixed') {
+				addDays(visEnd, (6 - rowCnt) * 7);
+				rowCnt = 6;
+			}
+			// title
+			this.title = formatDate(
 				start,
-				addDays(cloneDate(this.end = addMonths(cloneDate(start), 1)), -1),
 				this.option('titleFormat'),
 				options
 			);
-			addDays(this.visStart = cloneDate(start), -((start.getDay() - options.firstDay + 7) % 7));
-			addDays(this.visEnd = cloneDate(this.end), (7 - this.visEnd.getDay() + options.firstDay) % 7);
-			var rowCnt = Math.round((this.visEnd - this.visStart) / (DAY_MS * 7));
-			if (options.weekMode == 'fixed') {
-				addDays(this.visEnd, (6 - rowCnt) * 7);
-				rowCnt = 6;
-			}
-			this.renderGrid(rowCnt, 7, this.option('columnFormat'), true, fetchEvents);
+			// render
+			this.renderGrid(
+				rowCnt, options.weekends ? 7 : 5,
+				this.option('columnFormat'),
+				true,
+				fetchEvents
+			);
 		}
 	});
 }
@@ -39,13 +56,28 @@ views.basicWeek = function(element, options) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
+			var visStart = this.visStart = cloneDate(
+					this.start = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7))
+				),
+				visEnd = this.visEnd = cloneDate(
+					this.end = addDays(cloneDate(visStart), 7)
+				);
+			if (!options.weekends) {
+				skipWeekend(visStart);
+				skipWeekend(visEnd, -1, true);
+			}
 			this.title = formatDates(
-				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
-				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
+				visStart,
+				addDays(cloneDate(visEnd), -1),
 				this.option('titleFormat'),
 				options
 			);
-			this.renderGrid(1, 7, this.option('columnFormat'), false, fetchEvents);
+			this.renderGrid(
+				1, options.weekends ? 7 : 5,
+				this.option('columnFormat'),
+				false,
+				fetchEvents
+			);
 		}
 	});
 };
@@ -55,6 +87,9 @@ views.basicDay = function(element, options) {
 		render: function(date, delta, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
+				if (!options.weekends) {
+					skipWeekend(date, delta < 0 ? -1 : 1);
+				}
 			}
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
@@ -73,6 +108,7 @@ var tdHeightBug, rtlLeftDiff;
 function Grid(element, options, methods) {
 	
 	var tm, firstDay,
+		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
 		rowCnt, colCnt,
 		colWidth,
@@ -115,7 +151,8 @@ function Grid(element, options, methods) {
 		colCnt = c;
 		
 		// update option-derived variables
-		tm = options.theme ? 'ui' : 'fc'; 
+		tm = options.theme ? 'ui' : 'fc';
+		nwe = options.weekends ? 0 : 1;
 		firstDay = options.firstDay;
 		if (rtl = options.isRTL) {
 			dis = -1;
@@ -141,6 +178,9 @@ function Grid(element, options, methods) {
 					(i==dit ? ' fc-leftmost' : '') +
 					"'>" + formatDate(d, colFormat, options) + "</th>";
 				addDays(d, 1);
+				if (nwe) {
+					skipWeekend(d);
+				}
 			}
 			thead = $(s + "</tr></thead>").appendTo(table);
 			
@@ -160,6 +200,9 @@ function Grid(element, options, methods) {
 						(showNumbers ? "<div class='fc-day-number'>" + d.getDate() + "</div>" : '') +
 						"<div class='fc-day-content'><div>&nbsp;</div></div></td>";
 					addDays(d, 1);
+					if (nwe) {
+						skipWeekend(d);
+					}
 				}
 				s += "</tr>";
 			}
@@ -187,6 +230,9 @@ function Grid(element, options, methods) {
 							"<div class='fc-day-content'><div>&nbsp;</div></div>" +
 							"</td>";
 						addDays(d, 1);
+						if (nwe) {
+							skipWeekend(d);
+						}
 					}
 					s += "</tr>";
 				}
@@ -216,6 +262,9 @@ function Grid(element, options, methods) {
 				}
 				td.find('div.fc-day-number').text(d.getDate());
 				addDays(d, 1);
+				if (nwe) {
+					skipWeekend(d);
+				}
 			});
 			
 			if (rowCnt == 1) { // more changes likely (week or day view)
@@ -226,6 +275,9 @@ function Grid(element, options, methods) {
 					$(this).text(formatDate(d, colFormat, options));
 					this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
 					addDays(d, 1);
+					if (nwe) {
+						skipWeekend(d);
+					}
 				});
 				
 				// redo cell day-of-weeks
@@ -233,6 +285,9 @@ function Grid(element, options, methods) {
 				tbody.find('td').each(function() {
 					this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
 					addDays(d, 1);
+					if (nwe) {
+						skipWeekend(d);
+					}
 				});
 				
 			}
@@ -246,10 +301,11 @@ function Grid(element, options, methods) {
 	
 	
 	function dayClick(ev) {
-		var date = addDays(
-			cloneDate(view.visStart),
-			parseInt(this.className.match(/fc\-day(\d+)/)[1])
-		);
+		var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
+			date = addDays(
+				cloneDate(view.visStart),
+				Math.floor(n/colCnt) * 7 + n % colCnt
+			);
 		view.trigger('dayClick', this, date, true, ev);
 	}
 	
@@ -359,10 +415,10 @@ function Grid(element, options, methods) {
 					event = seg.event;
 					className = 'fc-event fc-event-hori ';
 					startElm = seg.isStart ?
-						tr.find('td:eq('+((seg.start.getDay()-firstDay+colCnt)%colCnt)+') div div') :
+						tr.find('td:eq('+((seg.start.getDay()-Math.max(firstDay,nwe)+colCnt)%colCnt)+') div div') :
 						tbody;
 					endElm = seg.isEnd ?
-						tr.find('td:eq('+((seg.end.getDay()-firstDay+colCnt-1)%colCnt)+') div div') :
+						tr.find('td:eq('+((seg.end.getDay()-Math.max(firstDay,nwe)+colCnt-1)%colCnt)+') div div') :
 						tbody;
 					if (rtl) {
 						left = endElm.position().left;

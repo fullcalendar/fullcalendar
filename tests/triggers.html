@@ -11,6 +11,8 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
+			weekends: false,
+			
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -21,6 +23,8 @@
 			
 			viewDisplay: function(view) {
 				console.log('viewDisplay');
+				console.log(view.start + ' - ' + view.end);
+				console.log(view.visStart + ' - ' + view.visEnd);
 				//console.log(view);
 				//console.log(this);
 			},
@@ -33,7 +37,8 @@
 			},
 			
 			dayClick: function(dayDate, allDay, ev, view) {
-				console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
+				alert(dayDate);
+				//console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
 				//console.log(ev);
 				//console.log(this);
 			},

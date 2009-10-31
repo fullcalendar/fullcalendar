@@ -47,6 +47,7 @@ function addDays(d, n, keepTime) { // deals with daylight savings
 	}
 	return d;
 }
+fc.addDays = addDays;
 
 function addMinutes(d, n) {
 	d.setMinutes(d.getMinutes() + n);
@@ -66,6 +67,22 @@ function cloneDate(d, dontKeepTime) {
 		return clearTime(new Date(+d));
 	}
 	return new Date(+d);
+}
+
+function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
+	var i=0, d;
+	do {
+		d = new Date(1970, i++, 1);
+	} while (d.getHours() != 0);
+	return d;
+}
+
+function skipWeekend(date, inc, excl) {
+	inc = inc || 1;
+	while (date.getDay()==0 || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
+		addDays(date, inc);
+	}
+	return date;
 }
 
 

@@ -81,6 +81,9 @@ Basic Options
 **allDayDefault**: Boolean, *Default*: ``true``
 	Determines the default value for each :ref:`CalEvent's <CalEvent>` ``allDay`` property,
 	when it is unspecified.
+	
+**weekends**: Boolean, *Default*: ``true``
+	Whether to include Saturday/Sunday columns in any of the views.
 
 **weekMode**: String, *Default*: ``'fixed'``
 	Determines the number of weeks displayed in a month view.

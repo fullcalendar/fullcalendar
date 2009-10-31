@@ -16,6 +16,7 @@ var defaults = {
 		center: '',
 		right: 'today prev,next'
 	},
+	weekends: true,
 	
 	// editing
 	//editable: false,
@@ -159,10 +160,14 @@ $.fn.fullCalendar = function(options) {
 		var date = new Date(),
 			viewName, view, // the current view
 			viewInstances = {};
-		if (options.year != undefined) {
-			date.setYear(options.year);
+			
+		if (options.year != undefined && options.year != date.getFullYear()) {
+			date.setDate(1);
+			date.setMonth(0);
+			date.setFullYear(options.year);
 		}
-		if (options.month != undefined) {
+		if (options.month != undefined && options.month != date.getMonth()) {
+			date.setDate(1);
 			date.setMonth(options.month);
 		}
 		if (options.date != undefined) {
@@ -396,7 +401,7 @@ $.fn.fullCalendar = function(options) {
 					date = cloneDate(year); // provided 1 argument, a Date
 				}else{
 					if (year != undefined) {
-						date.setYear(year);
+						date.setFullYear(year);
 					}
 					if (month != undefined) {
 						date.setMonth(month);

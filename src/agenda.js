@@ -23,13 +23,23 @@ views.agendaWeek = function(element, options) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
+			var visStart = this.visStart = cloneDate(
+					this.start = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7))
+				),
+				visEnd = this.visEnd = cloneDate(
+					this.end = addDays(cloneDate(visStart), 7)
+				);
+			if (!options.weekends) {
+				skipWeekend(visStart);
+				skipWeekend(visEnd, -1, true);
+			}
 			this.title = formatDates(
-				this.start = this.visStart = addDays(cloneDate(date), -((date.getDay() - options.firstDay + 7) % 7)),
-				addDays(cloneDate(this.end = this.visEnd = addDays(cloneDate(this.start), 7)), -1),
+				visStart,
+				addDays(cloneDate(visEnd), -1),
 				this.option('titleFormat'),
 				options
 			);
-			this.renderAgenda(7, this.option('columnFormat'), fetchEvents);
+			this.renderAgenda(options.weekends ? 7 : 5, this.option('columnFormat'), fetchEvents);
 		}
 	});
 };
@@ -39,6 +49,9 @@ views.agendaDay = function(element, options) {
 		render: function(date, delta, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
+				if (!options.weekends) {
+					skipWeekend(date, delta < 0 ? -1 : 1);
+				}
 			}
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
@@ -55,6 +68,7 @@ function Agenda(element, options, methods) {
 		axisWidth, colWidth, slotHeight,
 		cachedDaySegs, cachedSlotSegs,
 		tm, firstDay,
+		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
 		// ...
 		
@@ -104,7 +118,8 @@ function Agenda(element, options, methods) {
 		colCnt = c;
 		
 		// update option-derived variables
-		tm = options.theme ? 'ui' : 'fc'; 
+		tm = options.theme ? 'ui' : 'fc';
+		nwe = options.weekends ? 0 : 1;
 		firstDay = options.firstDay;
 		if (rtl = options.isRTL) {
 			dis = -1;
@@ -136,10 +151,13 @@ function Agenda(element, options, methods) {
 					tm + '-state-default' +
 					"'>" + formatDate(d, colFormat, options) + "</th>";
 				addDays(d, dis);
+				if (nwe) {
+					skipWeekend(d, dis);
+				}
 			}
-			s+= "<th class='" + tm + "-state-default'>&nbsp;</th></tr>";
+			s += "<th class='" + tm + "-state-default'>&nbsp;</th></tr>";
 			if (options.allDaySlot) {
-				s+= "<tr class='fc-all-day'>" +
+				s += "<tr class='fc-all-day'>" +
 						"<th class='fc-axis fc-leftmost " + tm + "-state-default'>" + options.allDayText + "</th>" +
 						"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
 							"<div class='fc-day-content'><div>&nbsp;</div></div></td>" +
@@ -152,7 +170,7 @@ function Agenda(element, options, methods) {
 			head.find('td').click(slotClick);
 			
 			// body
-			d = new Date(1970, 0, 1);
+			d = zeroDate();
 			s = "<table>";
 			for (i=0; d.getDate() != 2; i++) {
 				minutes = d.getMinutes();
@@ -183,6 +201,9 @@ function Agenda(element, options, methods) {
 					(+d == +today ? tm + '-state-highlight fc-today' : 'fc-not-today') +
 					"'><div class='fc-day-content'><div>&nbsp;</div></div></td>";
 				addDays(d, dis);
+				if (nwe) {
+					skipWeekend(d, dis);
+				}
 			}
 			s += "</tr></table></div>";
 			bg = $(s).appendTo(element);
@@ -196,6 +217,9 @@ function Agenda(element, options, methods) {
 				$(this).text(formatDate(d, colFormat, options));
 				this.className = this.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
 				addDays(d, dis);
+				if (nwe) {
+					skipWeekend(d, dis);
+				}
 			});
 			
 			// change classes of background stripes
@@ -214,6 +238,9 @@ function Agenda(element, options, methods) {
 						.removeClass(tm + '-state-highlight');
 				}
 				addDays(d, dis);
+				if (nwe) {
+					skipWeekend(d, dis);
+				}
 			});
 		
 		}
@@ -226,7 +253,7 @@ function Agenda(element, options, methods) {
 	
 	
 	function resetScroll() {
-		var d0 = new Date(1970, 0, 1),
+		var d0 = zeroDate(),
 			scrollDate = cloneDate(d0);
 		scrollDate.setHours(options.firstHour);
 		var go = function() {
@@ -394,13 +421,13 @@ function Agenda(element, options, methods) {
 					}
 					if (leftRounded) {
 						className += 'fc-corner-left ';
-						left = bg.find('td:eq('+(((leftDay-firstDay+colCnt)%colCnt)*dis+dit)+') div div').position().left + axisWidth;
+						left = bg.find('td:eq('+(((leftDay-Math.max(firstDay,nwe)+colCnt)%colCnt)*dis+dit)+') div div').position().left + axisWidth;
 					}else{
 						left = axisWidth;
 					}
 					if (rightRounded) {
 						className += 'fc-corner-right ';
-						right = bg.find('td:eq('+(((rightDay-firstDay+colCnt)%colCnt)*dis+dit)+') div div');
+						right = bg.find('td:eq('+(((rightDay-Math.max(firstDay,nwe)+colCnt)%colCnt)*dis+dit)+') div div');
 						right = right.position().left + right.width() + axisWidth;
 					}else{
 						right = axisWidth + bg.width();

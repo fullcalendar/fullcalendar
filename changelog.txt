@@ -1,4 +1,12 @@
 
+version 1.4.1 (10/31/09)
+	- can exclude weekends with new 'weekends' option
+	- gcal feed 'currentTimezone' option
+	- bugfixes
+		- year/month/date option sometimes wouldn't set correctly (depending on current date)
+		- daylight savings issue caused agenda views to start at 1am (for BST users)
+	- cleanup of gcal.js code
+
 version 1.4 (10/19/09)
 	- agendaWeek and agendaDay views
 	- added some options for agenda views:
