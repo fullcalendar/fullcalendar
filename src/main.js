@@ -213,9 +213,8 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		function render(inc, forceUpdateSize) {
-			if (_element.offsetWidth !== 0) { // visible on the screen
-				if (!elementWidth) {
-					elementWidth = element.width();
+			if ((elementWidth = _element.offsetWidth) !== 0) { // visible on the screen
+				if (!contentHeight) {
 					contentHeight = calculateContentHeight();
 				}
 				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
@@ -286,9 +285,13 @@ $.fn.fullCalendar = function(options) {
 		// called when we know the element size has changed
 		function sizeChanged(fix) {
 			contentHeight = calculateContentHeight();
-			if (fix) fixContentSize();
+			if (fix) {
+				fixContentSize();
+			}
 			view.updateSize(contentHeight);
-			if (fix) unfixContentSize();
+			if (fix) {
+				unfixContentSize();
+			}
 			sizesDirtyExcept(view);
 			view.rerenderEvents(true);
 		}
@@ -403,7 +406,14 @@ $.fn.fullCalendar = function(options) {
 				return view;
 			},
 			
+			getDate: function() {
+				return date;
+			},
+			
 			option: function(name, value) {
+				if (value == undefined) {
+					return options[name];
+				}
 				if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
 					options[name] = value;
 					sizeChanged();
@@ -751,6 +761,15 @@ $.fn.fullCalendar = function(options) {
 		
 		// let's begin...
 		changeView(options.defaultView);
+		
+		// in IE, when in 0x0 iframe, initial resize never gets called, so do this...
+		if ($.browser.msie && !$('body').width()) {
+			setTimeout(function() {
+				render();
+				content.hide().show(); // needed for IE 6
+				view.rerenderEvents(); // needed for IE 7
+			}, 0);
+		}
 	
 	});
 	

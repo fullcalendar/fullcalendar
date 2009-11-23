@@ -111,6 +111,14 @@
 		console.log(view.start + ' --- ' + view.end + ' "' + view.title + '"');
 	}
 	
+	function getDate() {
+		console.log(cal.fullCalendar('getDate'));
+	}
+	
+	function optionGetter() {
+		console.log(cal.fullCalendar('option', 'editable'));
+	}
+	
 	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 	
 	var jsonFeed = "../examples/json-events.php";
@@ -163,8 +171,10 @@
 <button onclick="cal.fullCalendar('changeView', 'month')">change to month</button>
 <button onclick="cal.fullCalendar('changeView', 'basicWeek')">change to basicWeek</button>
 <button onclick="cal.fullCalendar('changeView', 'basicDay')">change to basicDay</button>
-<button onclick="getView()">view info</button>
-<button onclick="cal.width(1100)" onclick=''>change size</button>
+<button onclick="getView()">getView</button>
+<button onclick="getDate()">getDate</button>
+<button onclick="optionGetter()">option getter</button>
+<button onclick="cal.width(1100)">change size</button>
 <button onclick="cal.fullCalendar('render')">render</button>
 
 </p>
