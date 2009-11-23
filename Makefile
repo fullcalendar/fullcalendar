@@ -1,7 +1,6 @@
 
 VER = `cat version.txt`
-DATE = `svn info | grep Date: | sed 's/.*: //g'`
-REV = `svn info | grep Rev: | sed 's/.*: //g'`
+DATE = `git log -1 | grep Date: | sed 's/[^:]*: *//'`
 
 JS_SRC_FILES =\
 	main.js\
@@ -29,13 +28,11 @@ zip:
 	@echo "building js & css..."
 	@cd src; cat misc/head.txt ${JS_SRC_FILES} misc/foot.txt > ../build/fullcalendar/fullcalendar.js
 	@cd src/css; cat ${CSS_SRC_FILES} > ../../build/fullcalendar/fullcalendar.css
-	@for f in build/fullcalendar/*; do\
+	@cp -rt build/fullcalendar ${OTHER_FILES}
+	@for f in build/fullcalendar/*.*; do\
 		sed -i "s/* FullCalendar/& v${VER}/" $$f;\
 		sed -i "s/* Date:/& ${DATE}/" $$f;\
-		sed -i "s/* Revision:/& ${REV}/" $$f;\
 		done
-	@cp -rt build/fullcalendar ${OTHER_FILES}
-	@find build/fullcalendar -type d -name .svn | xargs rm -rf
 	
 	@echo "compressing js..."
 	@java -jar build/yuicompressor-2.4.2.jar -o build/fullcalendar/fullcalendar.min.js build/fullcalendar/fullcalendar.js
