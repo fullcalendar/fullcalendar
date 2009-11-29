@@ -195,7 +195,7 @@ function Agenda(element, options, methods) {
 				"<table style='width:100%;height:100%'><tr class='fc-first'>";
 			for (i=0; i<colCnt; i++) {
 				s += "<td class='fc-" +
-					dayIDs[i] + ' ' + // needs to be first
+					dayIDs[d.getDay()] + ' ' + // needs to be first
 					tm + '-state-default ' +
 					(i==0 ? 'fc-leftmost ' : '') +
 					(+d == +today ? tm + '-state-highlight fc-today' : 'fc-not-today') +
@@ -461,6 +461,7 @@ function Agenda(element, options, methods) {
 							}
 						}
 						view.reportEventElement(event, eventElement);
+						view.trigger('eventAfterRender', event, event, eventElement);
 						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
 					}
 				}
@@ -500,6 +501,7 @@ function Agenda(element, options, methods) {
 					bottom = timePosition(seg.start, seg.end);
 					tdInner = bg.find('td:eq(' + (colI*dis + dit) + ') div div');
 					availWidth = tdInner.width();
+					availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
 					if (levelI) {
 						// indented and thin
 						width = availWidth / (levelI + forward + 1);
@@ -509,7 +511,7 @@ function Agenda(element, options, methods) {
 							width = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
 						}else{
 							// can be entire width, aligned left
-							width = availWidth * .96;
+							width = availWidth;
 						}
 					}
 					left = axisWidth + tdInner.position().left +       // leftmost possible
@@ -560,6 +562,7 @@ function Agenda(element, options, methods) {
 						}
 					}
 					view.reportEventElement(event, eventElement);
+					view.trigger('eventAfterRender', event, event, eventElement);
 				}
 			}
 		}

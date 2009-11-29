@@ -1,3 +1,4 @@
 build/fullcalendar
 build/fullcalendar-*
 dist
+docs/build

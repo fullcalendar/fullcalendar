@@ -478,6 +478,7 @@ function Grid(element, options, methods) {
 							}
 						}
 						view.reportEventElement(event, eventElement);
+						view.trigger('eventAfterRender', event, event, eventElement);
 						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
 					}
 				}

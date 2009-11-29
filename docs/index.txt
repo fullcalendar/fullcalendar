@@ -210,7 +210,7 @@ Time & Date Formatting
 			agenda: 'h:mm{ - h:mm}', // 5:00 - 6:30
 			
 			// for all other views
-			'': 'h(:mm)t'            // 7pm
+			'': 'h(:mm)t'            // 7p
 		}
 	
 **axisFormat**: String, *Default*: ``h(:mm)tt``

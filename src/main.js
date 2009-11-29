@@ -210,7 +210,7 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		
-		function render(inc) {
+		function render(inc, updateSize) {
 			if (_element.offsetWidth !== 0) { // visible on the screen
 				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
@@ -225,7 +225,7 @@ $.fn.fullCalendar = function(options) {
 					unfixContentSize();
 					view.date = cloneDate(date);
 				}
-				else if (view.sizeDirty) {
+				else if (view.sizeDirty || updateSize) {
 					view.updateSize();
 					view.rerenderEvents();
 				}
@@ -366,8 +366,15 @@ $.fn.fullCalendar = function(options) {
 		
 		var publicMethods = {
 		
-			render: render,
+			render: function() {
+				render(0, true); // true forces size to updated
+			},
+			
 			changeView: changeView,
+			
+			getView: function() {
+				return view;
+			},
 			
 			//
 			// Navigation
@@ -688,22 +695,27 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		$(window).resize(function() {
-			if (!contentSizeFixed && view.date) { // view.date means the view has been rendered
-				var rcnt = ++resizeCnt; // add a delay
-				setTimeout(function() {
-					if (rcnt == resizeCnt && !contentSizeFixed) {
-						var newWidth = element.width();
-						if (newWidth != elementWidth) {
-							elementWidth = newWidth;
-							fixContentSize();
-							view.updateSize();
-							unfixContentSize();
-							view.rerenderEvents(true);
-							sizesDirtyExcept(view);
-							view.trigger('windowResize', _element);
+			if (!contentSizeFixed) {
+				if (view.date) { // view has already been rendered
+					var rcnt = ++resizeCnt; // add a delay
+					setTimeout(function() {
+						if (rcnt == resizeCnt && !contentSizeFixed) {
+							var newWidth = element.width();
+							if (newWidth != elementWidth) {
+								elementWidth = newWidth;
+								fixContentSize();
+								view.updateSize();
+								unfixContentSize();
+								view.rerenderEvents(true);
+								sizesDirtyExcept(view);
+								view.trigger('windowResize', _element);
+							}
 						}
-					}
-				}, 200);
+					}, 200);
+				}else{
+					render(); // render for first time
+					// was probably in a 0x0 iframe that has just been resized
+				}
 			}
 		});
 		

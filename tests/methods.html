@@ -14,7 +14,7 @@
 	$(document).ready(function() {
 		cal = $('#calendar').fullCalendar({
 			editable: true,
-			weekends: false,
+			//weekends: false,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -106,6 +106,11 @@
 		}, stick);
 	}
 	
+	function getView() {
+		var view = cal.fullCalendar('getView');
+		console.log(view.start + ' --- ' + view.end + ' "' + view.title + '"');
+	}
+	
 	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 	
 	var jsonFeed = "../examples/json-events.php";
@@ -151,13 +156,15 @@
 <button onclick="cal.fullCalendar('addEventSource', jsonFeed)">+ json</button>
 <button onclick="cal.fullCalendar('removeEventSource', jsonFeed)">- json</button>
 
-<button onclick="cal.fullCalendar('rerenderEvents')">rerender</button>
-<button onclick="cal.fullCalendar('refetchEvents')">refetch</button>
+<button onclick="cal.fullCalendar('rerenderEvents')">rerender events</button>
+<button onclick="cal.fullCalendar('refetchEvents')">refetch events</button>
 <br />
 
 <button onclick="cal.fullCalendar('changeView', 'month')">change to month</button>
 <button onclick="cal.fullCalendar('changeView', 'basicWeek')">change to basicWeek</button>
 <button onclick="cal.fullCalendar('changeView', 'basicDay')">change to basicDay</button>
+<button onclick="getView()">view info</button>
+<button onclick="cal.width(1100)" onclick=''>change size</button>
 <button onclick="cal.fullCalendar('render')">render</button>
 
 </p>

@@ -11,7 +11,7 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
-			weekends: false,
+			//weekends: false,
 			
 			header: {
 				left: 'prev,next today',
@@ -54,6 +54,11 @@
 					element.css('border-color', 'red');
 					//console.log('renderEvent (' + event.title + ') - ' + view.title);
 				}
+			},
+			
+			eventAfterRender: function(event, element, view) {
+				console.log('after render for "' + event.title + '":');
+				console.log(element);
 			},
 			
 			eventClick: function(event, jsEvent, view) {
