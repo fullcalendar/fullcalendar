@@ -148,7 +148,9 @@ $.fn.fullCalendar = function(options) {
 		// element
 		var _element = this,
 			element = $(this).addClass('fc'),
-			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").appendTo(this); // relative for ie6
+			elementWidth,
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").appendTo(this), // relative for ie6
+			contentHeight;
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
 		}
@@ -210,11 +212,15 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		
-		function render(inc, updateSize) {
+		function render(inc, forceUpdateSize) {
 			if (_element.offsetWidth !== 0) { // visible on the screen
+				if (!elementWidth) {
+					elementWidth = element.width();
+					contentHeight = calculateContentHeight();
+				}
 				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
-					view.render(date, inc || 0, function(callback) {
+					view.render(date, inc || 0, contentHeight, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
 						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
 							fetchEvents(callback);
@@ -225,8 +231,8 @@ $.fn.fullCalendar = function(options) {
 					unfixContentSize();
 					view.date = cloneDate(date);
 				}
-				else if (view.sizeDirty || updateSize) {
-					view.updateSize();
+				else if (view.sizeDirty || forceUpdateSize) {
+					view.updateSize(contentHeight);
 					view.rerenderEvents();
 				}
 				else if (view.eventsDirty) {
@@ -261,6 +267,13 @@ $.fn.fullCalendar = function(options) {
 			});
 		}
 		
+		// called when any event objects have been added/removed/changed, rerenders
+		function eventsChanged() {
+			view.clearEvents();
+			view.renderEvents(events);
+			eventsDirtyExcept(view);
+		}
+		
 		// marks other views' sizes as dirty
 		function sizesDirtyExcept(exceptView) {
 			$.each(viewInstances, function() {
@@ -270,11 +283,25 @@ $.fn.fullCalendar = function(options) {
 			});
 		}
 		
-		// called when any event objects have been added/removed/changed, rerenders
-		function eventsChanged() {
-			view.clearEvents();
-			view.renderEvents(events);
-			eventsDirtyExcept(view);
+		// called when we know the element size has changed
+		function sizeChanged(fix) {
+			contentHeight = calculateContentHeight();
+			if (fix) fixContentSize();
+			view.updateSize(contentHeight);
+			if (fix) unfixContentSize();
+			sizesDirtyExcept(view);
+			view.rerenderEvents(true);
+		}
+		
+		// calculate what the height of the content should be
+		function calculateContentHeight() {
+			if (options.contentHeight) {
+				return options.contentHeight;
+			}
+			else if (options.height) {
+				return options.height - (header ? header.height() : 0) - horizontalSides(content);
+			}
+			return elementWidth / options.aspectRatio;
 		}
 		
 		
@@ -374,6 +401,13 @@ $.fn.fullCalendar = function(options) {
 			
 			getView: function() {
 				return view;
+			},
+			
+			option: function(name, value) {
+				if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
+					options[name] = value;
+					sizeChanged();
+				}
 			},
 			
 			//
@@ -578,7 +612,7 @@ $.fn.fullCalendar = function(options) {
 					var prevButton;
 					$.each(this.split(','), function(j, buttonName) {
 						if (buttonName == 'title') {
-							tr.append("<td><h2 class='fc-header-title'/></td>");
+							tr.append("<td><h2 class='fc-header-title'>&nbsp;</h2></td>");
 							if (prevButton) {
 								prevButton.addClass(tm + '-corner-right');
 							}
@@ -662,8 +696,7 @@ $.fn.fullCalendar = function(options) {
 		/* Resizing
 		-----------------------------------------------------------------------------*/
 		
-		var elementWidth,
-			contentSizeFixed = false,
+		var contentSizeFixed = false,
 			resizeCnt = 0;
 		
 		function fixContentSize() {
@@ -671,7 +704,7 @@ $.fn.fullCalendar = function(options) {
 				contentSizeFixed = true;
 				content.css({
 					overflow: 'hidden',
-					height: Math.round(content.width() / options.aspectRatio)
+					height: contentHeight
 				});
 				// TODO: previous action might have caused scrollbars
 				// which will make the window width more narrow, possibly changing the aspect ratio
@@ -703,11 +736,7 @@ $.fn.fullCalendar = function(options) {
 							var newWidth = element.width();
 							if (newWidth != elementWidth) {
 								elementWidth = newWidth;
-								fixContentSize();
-								view.updateSize();
-								unfixContentSize();
-								view.rerenderEvents(true);
-								sizesDirtyExcept(view);
+								sizeChanged(true);
 								view.trigger('windowResize', _element);
 							}
 						}
@@ -722,7 +751,6 @@ $.fn.fullCalendar = function(options) {
 		
 		// let's begin...
 		changeView(options.defaultView);
-		elementWidth = element.width();
 	
 	});
 	

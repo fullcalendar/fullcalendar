@@ -8,7 +8,7 @@ setDefaults({
 
 views.month = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, fetchEvents) {
+		render: function(date, delta, height, fetchEvents) {
 			if (delta) {
 				addMonths(date, delta);
 				date.setDate(1);
@@ -44,6 +44,7 @@ views.month = function(element, options) {
 				rowCnt, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
 				true,
+				height,
 				fetchEvents
 			);
 		}
@@ -52,7 +53,7 @@ views.month = function(element, options) {
 
 views.basicWeek = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, fetchEvents) {
+		render: function(date, delta, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -76,6 +77,7 @@ views.basicWeek = function(element, options) {
 				1, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
 				false,
+				height,
 				fetchEvents
 			);
 		}
@@ -84,7 +86,7 @@ views.basicWeek = function(element, options) {
 
 views.basicDay = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, fetchEvents) {
+		render: function(date, delta, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -94,7 +96,7 @@ views.basicDay = function(element, options) {
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderGrid(1, 1, this.option('columnFormat'), false, fetchEvents);
+			this.renderGrid(1, 1, this.option('columnFormat'), false, height, fetchEvents);
 		}
 	});
 }
@@ -146,7 +148,7 @@ function Grid(element, options, methods) {
 		element.disableSelection();
 	}
 
-	function renderGrid(r, c, colFormat, showNumbers, fetchEvents) {
+	function renderGrid(r, c, colFormat, showNumbers, height, fetchEvents) {
 		rowCnt = r;
 		colCnt = c;
 		
@@ -294,7 +296,7 @@ function Grid(element, options, methods) {
 		
 		}
 		
-		updateSize();
+		updateSize(height);
 		fetchEvents(renderEvents);
 	
 	};
@@ -310,10 +312,9 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function updateSize() {
-	
-		var height = Math.round(element.width() / options.aspectRatio),
-			leftTDs = tbody.find('tr td:first-child'),
+	function updateSize(height) {
+		
+		var leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = height - thead.height(),
 			rowHeight1, rowHeight2;
 		

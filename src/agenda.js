@@ -19,7 +19,7 @@ setDefaults({
 
 views.agendaWeek = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, fetchEvents) {
+		render: function(date, delta, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -39,14 +39,14 @@ views.agendaWeek = function(element, options) {
 				this.option('titleFormat'),
 				options
 			);
-			this.renderAgenda(options.weekends ? 7 : 5, this.option('columnFormat'), fetchEvents);
+			this.renderAgenda(options.weekends ? 7 : 5, this.option('columnFormat'), height, fetchEvents);
 		}
 	});
 };
 
 views.agendaDay = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, fetchEvents) {
+		render: function(date, delta, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -56,7 +56,7 @@ views.agendaDay = function(element, options) {
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderAgenda(1, this.option('columnFormat'), fetchEvents);
+			this.renderAgenda(1, this.option('columnFormat'), height, fetchEvents);
 		}
 	});
 };
@@ -67,6 +67,7 @@ function Agenda(element, options, methods) {
 		colCnt,
 		axisWidth, colWidth, slotHeight,
 		cachedDaySegs, cachedSlotSegs,
+		cachedHeight,
 		tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
@@ -114,7 +115,7 @@ function Agenda(element, options, methods) {
 		element.disableSelection();
 	}
 	
-	function renderAgenda(c, colFormat, fetchEvents) {
+	function renderAgenda(c, colFormat, height, fetchEvents) {
 		colCnt = c;
 		
 		// update option-derived variables
@@ -245,7 +246,7 @@ function Agenda(element, options, methods) {
 		
 		}
 		
-		updateSize();
+		updateSize(height);
 		resetScroll();
 		fetchEvents(renderEvents);
 		
@@ -268,10 +269,11 @@ function Agenda(element, options, methods) {
 	}
 	
 	
-	function updateSize() {
+	function updateSize(height) {
+		cachedHeight = height;
 		
 		bodyTable.width('');
-		body.height(Math.round(body.width() / options.aspectRatio) - head.height());
+		body.height(height - head.height());
 		
 		// need this for IE6/7. triggers clientWidth to be calculated for 
 		// later user in this function. this is ridiculous
@@ -303,7 +305,7 @@ function Agenda(element, options, methods) {
 			top: head.find('tr').height(),
 			left: axisWidth,
 			width: contentWidth - axisWidth,
-			height: element.height()
+			height: height
 		});
 		
 		slotHeight = body.find('tr:first div').height() + 1;
@@ -469,7 +471,7 @@ function Agenda(element, options, methods) {
 				rowContentHeight += levelHeight;
 			}
 			tdInner.height(rowContentHeight);
-			updateSize(); // tdInner might have pushed the body down, so resize
+			updateSize(cachedHeight); // tdInner might have pushed the body down, so resize
 		}
 	}
 	

@@ -253,35 +253,39 @@ var dateFormatters = {
 function setOuterWidth(element, width, includeMargins) {
 	element.each(function() {
 		var e = $(this);
-		var w = width - (
-			(parseInt(e.css('border-left-width')) || 0) +
-			(parseInt(e.css('padding-left')) || 0) +
-			(parseInt(e.css('padding-right')) || 0) +
-			(parseInt(e.css('border-right-width')) || 0));
+		var w = width - horizontalSides(e);
 		if (includeMargins) {
-			w -=
-				(parseInt(e.css('margin-left')) || 0) +
+			w -= (parseInt(e.css('margin-left')) || 0) +
 				(parseInt(e.css('margin-right')) || 0);
 		}
 		e.width(w);
 	});
 }
 
+function horizontalSides(e) {
+	return (parseInt(e.css('border-left-width')) || 0) +
+		(parseInt(e.css('padding-left')) || 0) +
+		(parseInt(e.css('padding-right')) || 0) +
+		(parseInt(e.css('border-right-width')) || 0);
+}
+
 function setOuterHeight(element, height, includeMargins) {
 	element.each(function() {
 		var e = $(this);
-		var h = height - (
-			(parseInt(e.css('border-top-width')) || 0) +
-			(parseInt(e.css('padding-top')) || 0) +
-			(parseInt(e.css('padding-bottom')) || 0) +
-			(parseInt(e.css('border-bottom-width')) || 0));
+		var h = height - verticalSides(e);
 		if (includeMargins) {
-			h -=
-				(parseInt(e.css('margin-top')) || 0) +
+			h -= (parseInt(e.css('margin-top')) || 0) +
 				(parseInt(e.css('margin-bottom')) || 0);
 		}
 		e.height(h);
 	});
+}
+
+function verticalSides(e) {
+	return (parseInt(e.css('border-top-width')) || 0) +
+		(parseInt(e.css('padding-top')) || 0) +
+		(parseInt(e.css('padding-bottom')) || 0) +
+		(parseInt(e.css('border-bottom-width')) || 0);
 }
 
 
