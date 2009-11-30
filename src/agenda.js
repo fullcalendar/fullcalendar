@@ -71,6 +71,7 @@ function Agenda(element, options, methods) {
 		tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
+		minMinute, maxMinute,
 		// ...
 		
 	view = $.extend(this, viewMethods, methods, {
@@ -129,6 +130,8 @@ function Agenda(element, options, methods) {
 			dis = 1;
 			dit = 0;
 		}
+		minMinute = parseTime(options.minTime || 0);
+		maxMinute = parseTime(options.maxTime || 24);
 		
 		var d0 = rtl ? addDays(cloneDate(view.visEnd), -1) : cloneDate(view.visStart),
 			d = cloneDate(d0),
@@ -172,8 +175,10 @@ function Agenda(element, options, methods) {
 			
 			// body
 			d = zeroDate();
+			var maxd = addMinutes(cloneDate(d), maxMinute);
+			addMinutes(d, minMinute);
 			s = "<table>";
-			for (i=0; d.getDate() != 2; i++) {
+			for (i=0; d < maxd; i++) {
 				minutes = d.getMinutes();
 				s += "<tr class='" +
 					(i==0 ? 'fc-first' : (minutes==0 ? '' : 'fc-minor')) +
@@ -323,7 +328,7 @@ function Agenda(element, options, methods) {
 			var mins = parseInt(rowMatch[1]) * options.slotMinutes,
 				hours = Math.floor(mins/60);
 			date.setHours(hours);
-			date.setMinutes(mins % 60);
+			date.setMinutes(mins%60 + minMinute);
 			view.trigger('dayClick', this, date, false, ev);
 		}else{
 			view.trigger('dayClick', this, date, true, ev);
@@ -367,17 +372,15 @@ function Agenda(element, options, methods) {
 	
 	
 	function compileSlotSegs(events) {
-		var d1 = cloneDate(view.visStart),
-			d2 = addDays(cloneDate(d1), 1),
+		var d = addMinutes(cloneDate(view.visStart), minMinute),
 			levels,
 			segCols = [],
 			i=0;
 		for (; i<colCnt; i++) {
-			levels = stackSegs(view.sliceSegs(events, d1, d2));
+			levels = stackSegs(view.sliceSegs(events, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
 			countForwardSegs(levels);
 			segCols.push(levels);
-			addDays(d1, 1);
-			addDays(d2, 1);
+			addDays(d, 1, true);
 		}
 		return segCols;
 	}
@@ -661,6 +664,7 @@ function Agenda(element, options, methods) {
 							allDay ? 0 : // minute delta
 								Math.round((eventElement.offset().top - bodyContent.offset().top) / slotHeight)
 								* options.slotMinutes
+								+ minMinute
 								- (event.start.getHours() * 60 + event.start.getMinutes()),
 							allDay, ev, ui
 						);
@@ -844,12 +848,16 @@ function Agenda(element, options, methods) {
 	
 	// get the Y coordinate of the given time on the given day (both Date objects)
 	
-	function timePosition(day, time) {
-		if (time > day && time.getDay() != day.getDay()) {
+	function timePosition(day, time) { // both date object. day holds 00:00 of current day
+		day = cloneDate(day, true);
+		if (time < addMinutes(cloneDate(day), minMinute)) {
+			return 0;
+		}
+		if (time >= addMinutes(cloneDate(day), maxMinute)) {
 			return bodyContent.height();
 		}
 		var slotMinutes = options.slotMinutes,
-			minutes = time.getHours()*60 + time.getMinutes(),
+			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
 			slotI = Math.floor(minutes / slotMinutes),
 			tr = body.find('tr:eq(' + slotI + ')'),
 			td = tr.find('td'),

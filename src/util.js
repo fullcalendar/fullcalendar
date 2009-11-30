@@ -128,6 +128,26 @@ var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	return new Date(Number(date) + (offset * 60 * 1000));
 }
 
+var parseTime = fc.parseTime = function(s) { // returns minutes since start of day
+	if (typeof s == 'number') { // an hour
+		return s * 60;
+	}
+	if (typeof s == 'object') { // a Date object
+		return s.getHours() * 60 + s.getMinutes();
+	}
+	var m = s.match(/(\d+)(?::(\d+))?\s*(\w+)?/);
+	if (m) {
+		var h = parseInt(m[1]);
+		if (m[3]) {
+			h %= 12;
+			if (m[3].toLowerCase().charAt(0) == 'p') {
+				h += 12;
+			}
+		}
+		return h * 60 + (m[2] ? parseInt(m[2]) : 0);
+	}
+};
+
 
 
 /* Date Formatting
