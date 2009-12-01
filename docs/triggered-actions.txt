@@ -44,6 +44,9 @@ always available (:ref:`more below <view-object>`).
 	This function is great for attaching other jQuery plugins to each event
 	element, such as a `qTip <http://craigsworks.com/projects/qtip/docs/>`_
 	tooltip effect.
+	
+**eventAfterRender**: function(calEvent, element, view)
+	Triggered after an event is rendered on the calendar and its position has been chosen.
 
 **eventClick**, **eventMouseover**, **eventMouseout**: function(*calEvent, jsEvent, view*)
 	Triggered on click/mouseover/mouseout actions for an event.

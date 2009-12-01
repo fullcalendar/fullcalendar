@@ -14,7 +14,9 @@ setDefaults({
 	},
 	dragOpacity: {
 		agenda: .5
-	}
+	},
+	minTime: 0,
+	maxTime: 24
 });
 
 views.agendaWeek = function(element, options) {
@@ -130,8 +132,8 @@ function Agenda(element, options, methods) {
 			dis = 1;
 			dit = 0;
 		}
-		minMinute = parseTime(options.minTime || 0);
-		maxMinute = parseTime(options.maxTime || 24);
+		minMinute = parseTime(options.minTime);
+		maxMinute = parseTime(options.maxTime);
 		
 		var d0 = rtl ? addDays(cloneDate(view.visEnd), -1) : cloneDate(view.visStart),
 			d = cloneDate(d0),

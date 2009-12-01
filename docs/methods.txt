@@ -28,6 +28,16 @@ jQuery object:
 	Immediately switches to a different view. ``viewName`` must be one of the
 	:ref:`available-views`.
 	
+**getView** - .fullCalendar('getView')
+	Returns the :ref:`View Object <view-object>` for the current view.
+	This is useful if you want to get information about the calendar's title
+	or start/end dates.
+	
+**getDate** - .fullCalendar('getDate')
+	Returns a Date object for the current date of the calendar. For month view,
+	it will always be sometime between the first and last day of the month. For week view,
+	it will always be sometime between the first and last day of the week.
+	
 **updateEvent** - .fullCalendar('updateEvent', *calEvent*)
 	Reports changes to a :ref:`CalEvent's <CalEvent>` standard properties.
 	This will cause the event to be rerendered on the calendar.
@@ -83,7 +93,25 @@ jQuery object:
 	Refetches events from all sources and rerenders them on the screen.
 	
 **render** - .fullCalendar(``'render'``)
-	Immediately renders the calendar. This method is automatically called if the $().fullCalendar
-	plugin is called on a visible element. However, if a hidden/invisible element is initialized
-	with FullCalendar, this method must be explicitly called as soon as the element becomes visible.
+	Immediately renders the calendar if is is not already visible.
+	If the calendar *is* already visible, readjusts its size.
+	
+	This method is useful in the scenario where a tab setup might hide/show
+	a calendar. Call this method whenever the calendar's tab is shown.
+	
+	
+Dynamically Getting/Setting Properties
+--------------------------------------
+
+You may dynamically *retrieve* any of a FullCalendar's options using the following form::
+	
+	$('#calendar').fullCalendar('option', 'optionName'); // returns the value
+	
+You may dynamically *set* some of FullCalendar's options using the following form::
+
+	$('#calendar').fullCalendar('option', 'optionName', 'optionValue');
+	
+**HOWEVER**, setting only works for the three following options: **apsectRatio**, **contentHeight**, and **height**.
+
+The next version of FullCalendar will have more advancements in this area.
 	
