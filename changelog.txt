@@ -1,4 +1,17 @@
 
+version 1.4.2 (12/02/09)
+	- eventAfterRender trigger
+	- getDate & getView methods
+	- height & contentHeight options (explicitly sets the pixel height)
+	- minTime & maxTime options (restricts shown hours in agenda view)
+	- getters [for all options] and setters [for height, contentHeight, and aspectRatio ONLY! stay tuned..]
+	- render method now readjusts calendar's size
+	- bugfixes
+		- lightbox scripts that use iframes (like fancybox)
+		- day-of-week classNames were off when firstDay=1
+		- guaranteed space on right side of agenda events (even when stacked)
+		- accepts ISO8601 dates with a space (instead of 'T')
+
 version 1.4.1 (10/31/09)
 	- can exclude weekends with new 'weekends' option
 	- gcal feed 'currentTimezone' option

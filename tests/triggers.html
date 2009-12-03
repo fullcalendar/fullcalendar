@@ -36,6 +36,8 @@
 				//console.log(this);
 			},
 			
+			minTime: '5',
+			maxTime: '21:30',
 			dayClick: function(dayDate, allDay, ev, view) {
 				alert(dayDate);
 				//console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
@@ -57,8 +59,8 @@
 			},
 			
 			eventAfterRender: function(event, element, view) {
-				console.log('after render for "' + event.title + '":');
-				console.log(element);
+				//console.log('after render for "' + event.title + '":');
+				//console.log(element);
 			},
 			
 			eventClick: function(event, jsEvent, view) {
@@ -68,6 +70,7 @@
 				//console.log(this);
 				//return false;
 			},
+			
 			/*
 			eventMouseover: function(event, jsEvent, view) {
 				console.log('MOUSEOVER ' + event.title);

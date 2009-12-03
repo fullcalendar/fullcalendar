@@ -415,8 +415,10 @@ $.fn.fullCalendar = function(options) {
 					return options[name];
 				}
 				if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-					options[name] = value;
-					sizeChanged();
+					if (!contentSizeFixed) {
+						options[name] = value;
+						sizeChanged();
+					}
 				}
 			},
 			
