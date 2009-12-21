@@ -28,7 +28,7 @@ var defaults = {
 	// event ajax
 	startParam: 'start',
 	endParam: 'end',
-	cacheParam: '_',
+	cache: false,
 	
 	// time formats
 	titleFormat: {
@@ -147,9 +147,9 @@ $.fn.fullCalendar = function(options) {
 		
 		// element
 		var _element = this,
-			element = $(this).addClass('fc'),
+			element = $(_element).addClass('fc'),
 			elementWidth,
-			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").appendTo(this), // relative for ie6
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element), // relative for ie6
 			contentHeight;
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
@@ -338,16 +338,17 @@ $.fn.fullCalendar = function(options) {
 			var prevViewName = view.name,
 				prevDate = cloneDate(date),
 				reportEvents = function(a) {
-					if (prevViewName == view.name && +prevDate == +date) { // protects from fast switching
-						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i], options);
-							a[i].source = src;
+					if (prevViewName == view.name && +prevDate == +date && // protects from fast switching
+						$.inArray(src, eventSources) != -1) {              // makes sure source hasn't been removed
+							for (var i=0; i<a.length; i++) {
+								normalizeEvent(a[i], options);
+								a[i].source = src;
+							}
+							events = events.concat(a);
+							if (callback) {
+								callback(a);
+							}
 						}
-						events = events.concat(a);
-						if (callback) {
-							callback(a);
-						}
-					}
 				},
 				reportEventsAndPop = function(a) {
 					reportEvents(a);
@@ -357,9 +358,17 @@ $.fn.fullCalendar = function(options) {
 				var params = {};
 				params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
-				params[options.cacheParam] = (new Date()).getTime();
+				if (options.cacheParam) {
+					params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
+				}
 				pushLoading();
-				$.getJSON(src, params, reportEventsAndPop);
+				$.ajax({
+					url: src,
+					dataType: 'json',
+					data: params,
+					cache: options.cache,
+					success: reportEventsAndPop
+				});
 			}
 			else if ($.isFunction(src)) {
 				pushLoading();
@@ -420,6 +429,15 @@ $.fn.fullCalendar = function(options) {
 						sizeChanged();
 					}
 				}
+			},
+			
+			destroy: function() {
+				$(window).unbind('resize', windowResize);
+				if (header) {
+					header.remove();
+				}
+				content.remove();
+				$.removeData(_element, 'fullCalendar');
 			},
 			
 			//
@@ -739,7 +757,7 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		
-		$(window).resize(function() {
+		function windowResize() {
 			if (!contentSizeFixed) {
 				if (view.date) { // view has already been rendered
 					var rcnt = ++resizeCnt; // add a delay
@@ -758,7 +776,8 @@ $.fn.fullCalendar = function(options) {
 					// was probably in a 0x0 iframe that has just been resized
 				}
 			}
-		});
+		};
+		$(window).resize(windowResize);
 		
 		
 		// let's begin...

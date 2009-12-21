@@ -24,8 +24,9 @@
 				'singleevents': true,
 				'max-results': 9999
 			};
-			if (options.currentTimezone) {
-				params.ctz = options.currentTimezone.replace(' ', '_');
+			var ctz = options.currentTimezone;
+			if (ctz) {
+				params.ctz = ctz = ctz.replace(' ', '_');
 			}
 			$.getJSON(feedUrl + "?alt=json-in-script&callback=?", params, function(data) {
 				var events = [];
@@ -39,6 +40,9 @@
 						$.each(entry.link, function() {
 							if (this.type == 'text/html') {
 								url = this.href;
+								if (ctz) {
+									url += (url.indexOf('?') == -1 ? '?' : '&') + 'ctz=' + ctz;
+								}
 							}
 						});
 						if (allDay) {

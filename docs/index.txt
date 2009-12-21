@@ -116,7 +116,7 @@ Basic Options
 	of the calendar. When hidden with ``false``, all-day events will not be displayed
 	in agenda views.
 	
-**allDayText**: Boolean, *Default*: ``'all-day'``
+**allDayText**: String, *Default*: ``'all-day'``
 	In the agenda views, the text titling the "all-day" slot at the top of the calendar.
 	
 **firstHour**: Integer, *Default*: 6

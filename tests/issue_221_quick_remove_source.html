@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript'>
+
+	var date = new Date();
+	var d = date.getDate();
+	var m = date.getMonth();
+	var y = date.getFullYear();
+	
+	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
+
+	$(document).ready(function() {
+	
+		var cal = $('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
+			loading: function(bool) {
+				if (bool) {
+					$('#loading').show();
+				}else{
+					$('#loading').hide();
+				}
+			}
+		});
+		
+		cal.fullCalendar('addEventSource', gcalFeed);
+		cal.fullCalendar('removeEventSource', gcalFeed);
+		
+		// events should not be rendered when jsonp returns!
+		
+	});
+
+</script>
+<style>
+
+	.red-event a {
+		background: red;
+	}
+	
+	.yellow-event a {
+		background: yellow;
+	}
+	
+	.black-text-event a {
+		color: #000;
+	}
+
+	button {
+		font-size: 11px;
+	}
+
+</style>
+</head>
+<body style='font-size:12px'>
+<div id='loading' style='position:absolute;top:0;left:0;display:none'>loading...</div>
+<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
+</body>
+</html>

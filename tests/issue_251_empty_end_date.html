@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../examples/redmond/theme.css' />
+<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
+			editable: true,
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, 1),
+					end: 'h' // shouldn't choke on empty string
+				}
+			]
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

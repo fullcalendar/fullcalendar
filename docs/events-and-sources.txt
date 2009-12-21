@@ -29,13 +29,13 @@ The following options determine *how* events get on the calendar:
 					start: start.getTime(),
 					end: end.getTime()
 				},
-				function(result) {
+				function(events) {
 				
-					// format the result into an array of CalEvents
+					// make sure the events are official CalEvent objects
 					// (not seen here)
 					
-					// then, pass the CalEvent array to the callback
-					callback(calevents);
+					// then, pass the events to the callback
+					callback(events);
 				
 				});
 		

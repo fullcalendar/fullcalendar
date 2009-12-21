@@ -32,22 +32,28 @@ function addMonths(d, n, keepTime) { // prevents day overflow/underflow
 }
 
 function addDays(d, n, keepTime) { // deals with daylight savings
-	if (+d) { // prevent infinite looping on invalid dates
+	if (+d) {
 		var dd = d.getDate() + n,
 			check = cloneDate(d);
-		check.setHours(12); // set to middle of day
+		check.setHours(9); // set to middle of day
 		check.setDate(dd);
 		d.setDate(dd);
 		if (!keepTime) {
 			clearTime(d);
 		}
-		while (d.getDate() != check.getDate()) {
-			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
-		}
+		fixDate(d, check);
 	}
 	return d;
 }
 fc.addDays = addDays;
+
+function fixDate(d, check) { // force d to be on check's YMD, for daylight savings purposes
+	if (+d) { // prevent infinite looping on invalid dates
+		while (d.getDate() != check.getDate()) {
+			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+		}
+	}
+}
 
 function addMinutes(d, n) {
 	d.setMinutes(d.getMinutes() + n);
@@ -101,31 +107,50 @@ var parseDate = fc.parseDate = function(s) {
 		if (s.match(/^\d+$/)) { // a UNIX timestamp
 			return new Date(parseInt(s) * 1000);
 		}
-		return parseISO8601(s, true) || new Date(s) || null;
+		return parseISO8601(s, true) || (s ? new Date(s) : null);
 	}
 	return null;
 }
 
 var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	var d = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
-	if (!d) return null;
-	var offset = 0;
-	var date = new Date(d[1], 0, 1);
-	if (d[3]) { date.setMonth(d[3] - 1); }
-	if (d[5]) { date.setDate(d[5]); }
-	if (d[7]) { date.setHours(d[7]); }
-	if (d[8]) { date.setMinutes(d[8]); }
-	if (d[10]) { date.setSeconds(d[10]); }
-	if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
+	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
+	if (!m) {
+		return null;
+	}
+	var date = new Date(m[1], 0, 1),
+		check = new Date(m[1], 0, 1, 9, 0),
+		offset = 0;
+	if (m[3]) {
+		date.setMonth(m[3] - 1);
+		check.setMonth(m[3] - 1);
+	}
+	if (m[5]) {
+		date.setDate(m[5]);
+		check.setDate(m[5]);
+	}
+	fixDate(date, check);
+	if (m[7]) {
+		date.setHours(m[7]);
+	}
+	if (m[8]) {
+		date.setMinutes(m[8]);
+	}
+	if (m[10]) {
+		date.setSeconds(m[10]);
+	}
+	if (m[12]) {
+		date.setMilliseconds(Number("0." + m[12]) * 1000);
+	}
+	fixDate(date, check);
 	if (!ignoreTimezone) {
-		if (d[14]) {
-			offset = (Number(d[16]) * 60) + Number(d[17]);
-			offset *= ((d[15] == '-') ? 1 : -1);
+		if (m[14]) {
+			offset = Number(m[16]) * 60 + Number(m[17]);
+			offset *= m[15] == '-' ? 1 : -1;
 		}
 		offset -= date.getTimezoneOffset();
 	}
-	return new Date(Number(date) + (offset * 60 * 1000));
+	return new Date(+date + (offset * 60 * 1000));
 }
 
 var parseTime = fc.parseTime = function(s) { // returns minutes since start of day
