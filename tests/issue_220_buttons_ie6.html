@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript'>DISABLE_FIREBUG_LITE=true</script>
+<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			}
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin: 0;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+</style>
+</head>
+<body>
+<div style='height:108px;position:relative'></div>
+<div style='position:relative;margin-top:-50px;width:900px;z-index:2'>
+<div style='position:relative;padding:3px'>
+
+<div style='margin: 10px 20px 0'>Nav</div>
+
+<div style='margin:20px 0 0;padding:0 20px'>
+
+<p>
+this is a paragraph
+</p>
+
+<div id='calendar' style='margin:3em 0;direction:ltr'></div>
+
+</div>
+
+</div>
+</div>
+</body>
+</html>

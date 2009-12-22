@@ -68,7 +68,7 @@ function Agenda(element, options, methods) {
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
 		axisWidth, colWidth, slotHeight,
-		cachedDaySegs, cachedSlotSegs,
+		cachedDaySegs=[], cachedSlotSegs=[],
 		cachedHeight,
 		tm, firstDay,
 		nwe,            // no weekends (int)

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../examples/redmond/theme.css' />
+<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		$('#calendar').fullCalendar({
+			year: 2009,
+			month: 10,
+			date: 22, 
+			//defaultView: 'agendaWeek', // error also occured with month view
+			editable: true,
+			events: "../examples/json-events.php"		
+		});
+		
+		$('#calendar').fullCalendar('option', 'height', $(window).height()-80);
+		// shouldn't throw an error
+		
+	});
+
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

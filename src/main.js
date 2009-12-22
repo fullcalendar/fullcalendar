@@ -28,7 +28,6 @@ var defaults = {
 	// event ajax
 	startParam: 'start',
 	endParam: 'end',
-	cache: false,
 	
 	// time formats
 	titleFormat: {
@@ -304,7 +303,7 @@ $.fn.fullCalendar = function(options) {
 			else if (options.height) {
 				return options.height - (header ? header.height() : 0) - horizontalSides(content);
 			}
-			return elementWidth / options.aspectRatio;
+			return elementWidth / Math.max(options.aspectRatio, .5);
 		}
 		
 		
@@ -366,7 +365,7 @@ $.fn.fullCalendar = function(options) {
 					url: src,
 					dataType: 'json',
 					data: params,
-					cache: options.cache,
+					cache: false,
 					success: reportEventsAndPop
 				});
 			}
@@ -830,4 +829,5 @@ function normalizeEvent(event, options) {
 		event.className = [];
 	}
 }
+// TODO: if there is no title or start date, return false to indicate an invalid event
 

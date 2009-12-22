@@ -101,7 +101,6 @@ table.fc-header {
 	
 .fc-header .fc-state-default a {
 	display: block;
-	position: relative;
 	border-width: 0 1px;
 	margin: 0 -1px;
 	width: 100%;

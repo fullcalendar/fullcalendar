@@ -115,7 +115,7 @@ function Grid(element, options, methods) {
 		rowCnt, colCnt,
 		colWidth,
 		thead, tbody,
-		cachedSegs, //...
+		cachedSegs=[], //...
 		
 	// initialize superclass
 	view = $.extend(this, viewMethods, methods, {

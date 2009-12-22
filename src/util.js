@@ -109,6 +109,7 @@ var parseDate = fc.parseDate = function(s) {
 		}
 		return parseISO8601(s, true) || (s ? new Date(s) : null);
 	}
+	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
 	return null;
 }
 
