@@ -99,6 +99,12 @@ jQuery object:
 	This method is useful in the scenario where a tab setup might hide/show
 	a calendar. Call this method whenever the calendar's tab is shown.
 	
+**destroy** - .fullCalendar(``'destroy'``)
+	Restores the element to the state before FullCalendar was initialized. Removes elements,
+	events handlers, and data.
+	
+	*Available in v1.4.3 and later*
+	
 	
 .. _option-getters-setters:
 	

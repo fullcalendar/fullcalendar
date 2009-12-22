@@ -1,4 +1,16 @@
 
+version 1.4.3 (12/22/09)
+	- added destroy method
+	- Google Calendar event pages respect currentTimezone
+	- caching now handled by jQuery's ajax	
+	- protection from setting aspectRatio to zero
+	- bugfixes
+		- parseISO8601 and DST caused certain events to display day before
+		- button positioning problem in IE6
+		- ajax event source removed after recently being added, events still displayed
+		- event not displayed when end is an empty string
+		- dynamically setting calendar height when no events have been fetched, throws error
+
 version 1.4.2 (12/02/09)
 	- eventAfterRender trigger
 	- getDate & getView methods
