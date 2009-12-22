@@ -1,12 +1,12 @@
 /*
- * FullCalendar v1.4.2 Google Calendar Extension
+ * FullCalendar v1.4.3 Google Calendar Extension
  *
  * Copyright (c) 2009 Adam Shaw
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date: Wed Dec 2 22:03:57 2009 -0800
+ * Date: Tue Dec 22 00:41:38 2009 -0800
  *
  */
 
@@ -24,8 +24,9 @@
 				'singleevents': true,
 				'max-results': 9999
 			};
-			if (options.currentTimezone) {
-				params.ctz = options.currentTimezone.replace(' ', '_');
+			var ctz = options.currentTimezone;
+			if (ctz) {
+				params.ctz = ctz = ctz.replace(' ', '_');
 			}
 			$.getJSON(feedUrl + "?alt=json-in-script&callback=?", params, function(data) {
 				var events = [];
@@ -39,6 +40,9 @@
 						$.each(entry.link, function() {
 							if (this.type == 'text/html') {
 								url = this.href;
+								if (ctz) {
+									url += (url.indexOf('?') == -1 ? '?' : '&') + 'ctz=' + ctz;
+								}
 							}
 						});
 						if (allDay) {

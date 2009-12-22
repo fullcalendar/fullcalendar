@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.4.2
+ * FullCalendar v1.4.3
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date: Wed Dec 2 22:03:57 2009 -0800
+ * Date: Tue Dec 22 00:41:38 2009 -0800
  *
  */
  
@@ -47,7 +47,6 @@ var defaults = {
 	// event ajax
 	startParam: 'start',
 	endParam: 'end',
-	cacheParam: '_',
 	
 	// time formats
 	titleFormat: {
@@ -166,9 +165,9 @@ $.fn.fullCalendar = function(options) {
 		
 		// element
 		var _element = this,
-			element = $(this).addClass('fc'),
+			element = $(_element).addClass('fc'),
 			elementWidth,
-			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").appendTo(this), // relative for ie6
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element), // relative for ie6
 			contentHeight;
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
@@ -323,7 +322,7 @@ $.fn.fullCalendar = function(options) {
 			else if (options.height) {
 				return options.height - (header ? header.height() : 0) - horizontalSides(content);
 			}
-			return elementWidth / options.aspectRatio;
+			return elementWidth / Math.max(options.aspectRatio, .5);
 		}
 		
 		
@@ -357,16 +356,17 @@ $.fn.fullCalendar = function(options) {
 			var prevViewName = view.name,
 				prevDate = cloneDate(date),
 				reportEvents = function(a) {
-					if (prevViewName == view.name && +prevDate == +date) { // protects from fast switching
-						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i], options);
-							a[i].source = src;
+					if (prevViewName == view.name && +prevDate == +date && // protects from fast switching
+						$.inArray(src, eventSources) != -1) {              // makes sure source hasn't been removed
+							for (var i=0; i<a.length; i++) {
+								normalizeEvent(a[i], options);
+								a[i].source = src;
+							}
+							events = events.concat(a);
+							if (callback) {
+								callback(a);
+							}
 						}
-						events = events.concat(a);
-						if (callback) {
-							callback(a);
-						}
-					}
 				},
 				reportEventsAndPop = function(a) {
 					reportEvents(a);
@@ -376,9 +376,17 @@ $.fn.fullCalendar = function(options) {
 				var params = {};
 				params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
-				params[options.cacheParam] = (new Date()).getTime();
+				if (options.cacheParam) {
+					params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
+				}
 				pushLoading();
-				$.getJSON(src, params, reportEventsAndPop);
+				$.ajax({
+					url: src,
+					dataType: 'json',
+					data: params,
+					cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
+					success: reportEventsAndPop
+				});
 			}
 			else if ($.isFunction(src)) {
 				pushLoading();
@@ -439,6 +447,15 @@ $.fn.fullCalendar = function(options) {
 						sizeChanged();
 					}
 				}
+			},
+			
+			destroy: function() {
+				$(window).unbind('resize', windowResize);
+				if (header) {
+					header.remove();
+				}
+				content.remove();
+				$.removeData(_element, 'fullCalendar');
 			},
 			
 			//
@@ -758,7 +775,7 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		
-		$(window).resize(function() {
+		function windowResize() {
 			if (!contentSizeFixed) {
 				if (view.date) { // view has already been rendered
 					var rcnt = ++resizeCnt; // add a delay
@@ -777,7 +794,8 @@ $.fn.fullCalendar = function(options) {
 					// was probably in a 0x0 iframe that has just been resized
 				}
 			}
-		});
+		};
+		$(window).resize(windowResize);
 		
 		
 		// let's begin...
@@ -830,6 +848,7 @@ function normalizeEvent(event, options) {
 		event.className = [];
 	}
 }
+// TODO: if there is no title or start date, return false to indicate an invalid event
 
 
 /* Grid-based Views: month, basicWeek, basicDay
@@ -948,7 +967,7 @@ function Grid(element, options, methods) {
 		rowCnt, colCnt,
 		colWidth,
 		thead, tbody,
-		cachedSegs, //...
+		cachedSegs=[], //...
 		
 	// initialize superclass
 	view = $.extend(this, viewMethods, methods, {
@@ -1456,7 +1475,7 @@ function Agenda(element, options, methods) {
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
 		axisWidth, colWidth, slotHeight,
-		cachedDaySegs, cachedSlotSegs,
+		cachedDaySegs=[], cachedSlotSegs=[],
 		cachedHeight,
 		tm, firstDay,
 		nwe,            // no weekends (int)
@@ -2673,22 +2692,28 @@ function addMonths(d, n, keepTime) { // prevents day overflow/underflow
 }
 
 function addDays(d, n, keepTime) { // deals with daylight savings
-	if (+d) { // prevent infinite looping on invalid dates
+	if (+d) {
 		var dd = d.getDate() + n,
 			check = cloneDate(d);
-		check.setHours(12); // set to middle of day
+		check.setHours(9); // set to middle of day
 		check.setDate(dd);
 		d.setDate(dd);
 		if (!keepTime) {
 			clearTime(d);
 		}
-		while (d.getDate() != check.getDate()) {
-			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
-		}
+		fixDate(d, check);
 	}
 	return d;
 }
 fc.addDays = addDays;
+
+function fixDate(d, check) { // force d to be on check's YMD, for daylight savings purposes
+	if (+d) { // prevent infinite looping on invalid dates
+		while (d.getDate() != check.getDate()) {
+			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+		}
+	}
+}
 
 function addMinutes(d, n) {
 	d.setMinutes(d.getMinutes() + n);
@@ -2742,31 +2767,52 @@ var parseDate = fc.parseDate = function(s) {
 		if (s.match(/^\d+$/)) { // a UNIX timestamp
 			return new Date(parseInt(s) * 1000);
 		}
-		return parseISO8601(s, true) || new Date(s) || null;
+		return parseISO8601(s, true) || (s ? new Date(s) : null);
 	}
+	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
 	return null;
 }
 
 var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	var d = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
-	if (!d) return null;
-	var offset = 0;
-	var date = new Date(d[1], 0, 1);
-	if (d[3]) { date.setMonth(d[3] - 1); }
-	if (d[5]) { date.setDate(d[5]); }
-	if (d[7]) { date.setHours(d[7]); }
-	if (d[8]) { date.setMinutes(d[8]); }
-	if (d[10]) { date.setSeconds(d[10]); }
-	if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
+	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
+	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
+	if (!m) {
+		return null;
+	}
+	var date = new Date(m[1], 0, 1),
+		check = new Date(m[1], 0, 1, 9, 0),
+		offset = 0;
+	if (m[3]) {
+		date.setMonth(m[3] - 1);
+		check.setMonth(m[3] - 1);
+	}
+	if (m[5]) {
+		date.setDate(m[5]);
+		check.setDate(m[5]);
+	}
+	fixDate(date, check);
+	if (m[7]) {
+		date.setHours(m[7]);
+	}
+	if (m[8]) {
+		date.setMinutes(m[8]);
+	}
+	if (m[10]) {
+		date.setSeconds(m[10]);
+	}
+	if (m[12]) {
+		date.setMilliseconds(Number("0." + m[12]) * 1000);
+	}
+	fixDate(date, check);
 	if (!ignoreTimezone) {
-		if (d[14]) {
-			offset = (Number(d[16]) * 60) + Number(d[17]);
-			offset *= ((d[15] == '-') ? 1 : -1);
+		if (m[14]) {
+			offset = Number(m[16]) * 60 + Number(m[17]);
+			offset *= m[15] == '-' ? 1 : -1;
 		}
 		offset -= date.getTimezoneOffset();
 	}
-	return new Date(Number(date) + (offset * 60 * 1000));
+	return new Date(+date + (offset * 60 * 1000));
 }
 
 var parseTime = fc.parseTime = function(s) { // returns minutes since start of day
