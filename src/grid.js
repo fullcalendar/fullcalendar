@@ -397,10 +397,47 @@ function Grid(element, options, methods) {
 			k, seg,
 			event,
 			className,
-			startElm, endElm,
+			//startElm, endElm,
 			left, right,
 			eventElement, eventAnchor,
 			triggerRes;
+		
+		function tbodyLeft() {
+			return 0;
+		}
+		
+		var tbodyw;
+		function tbodyRight() {
+			if (tbodyw == undefined) {
+				tbodyw = tbody.width();
+			}
+			return tbodyw;
+		}
+		
+		var dayContentElements = [];
+		function dayContentElement(dayOfWeek) {
+			if (dayContentElements[dayOfWeek] == undefined) {
+				dayContentElements[dayOfWeek] = tr.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
+			}
+			return dayContentElements[dayOfWeek];
+		}
+		
+		var dayContentLefts = [];
+		function dayContentLeft(dayOfWeek) {
+			if (dayContentLefts[dayOfWeek] == undefined) {
+				dayContentLefts[dayOfWeek] = dayContentElement(dayOfWeek).position().left;
+			}
+			return dayContentLefts[dayOfWeek];
+		}
+		
+		var dayContentRights = [];
+		function dayContentRight(dayOfWeek) {
+			if (dayContentRights[dayOfWeek] == undefined) {
+				dayContentRights[dayOfWeek] = dayContentLeft(dayOfWeek) + dayContentElement(dayOfWeek).width();
+			}
+			return dayContentRights[dayOfWeek];
+		}
+		
 		for (i=0; i<len; i++) {
 			levels = segRows[i];
 			tr = tbody.find('tr:eq('+i+')');
@@ -415,15 +452,19 @@ function Grid(element, options, methods) {
 					seg = segs[k];
 					event = seg.event;
 					className = 'fc-event fc-event-hori ';
+					/*
 					startElm = seg.isStart ?
 						tr.find('td:eq('+((seg.start.getDay()-Math.max(firstDay,nwe)+colCnt)%colCnt)+') div div') :
 						tbody;
 					endElm = seg.isEnd ?
 						tr.find('td:eq('+((seg.end.getDay()-Math.max(firstDay,nwe)+colCnt-1)%colCnt)+') div div') :
 						tbody;
+					*/
 					if (rtl) {
-						left = endElm.position().left;
-						right = startElm.position().left + startElm.width();
+						left = seg.isEnd ? tbodyLeft() : dayContentLeft(seg.end.getDay()-1);
+						right = seg.isStart ? tbodyRight() : dayContentRight(seg.start.getDay());
+						//left = endElm.position().left;
+						//right = startElm.position().left + startElm.width();
 						if (seg.isStart) {
 							className += 'fc-corner-right ';
 						}
@@ -431,8 +472,10 @@ function Grid(element, options, methods) {
 							className += 'fc-corner-left ';
 						}
 					}else{
-						left = startElm.position().left;
-						right = endElm.position().left + endElm.width();
+						left = seg.isStart ? dayContentLeft(seg.start.getDay()) : tbodyLeft();
+						right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : tbodyRight();
+						//left = startElm.position().left;
+						//right = endElm.position().left + endElm.width();
 						if (seg.isStart) {
 							className += 'fc-corner-left ';
 						}
