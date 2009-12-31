@@ -14,7 +14,6 @@ var viewMethods = {
 	 * - visStart
 	 * - visEnd
 	 * - defaultEventEnd(event)
-	 * - visEventEnd(event)
 	 * - render(events)
 	 * - rerenderEvents()
 	 *
@@ -31,7 +30,6 @@ var viewMethods = {
 	init: function(element, options) {
 		this.element = element;
 		this.options = options;
-		this.cachedEvents = [];
 		this.eventsByID = {};
 		this.eventElements = [];
 		this.eventElementsByID = {};
@@ -61,8 +59,7 @@ var viewMethods = {
 	
 	reportEvents: function(events) { // events are already normalized at this point
 		var i, len=events.length, event,
-			eventsByID = this.eventsByID = {},
-			cachedEvents = this.cachedEvents = [];
+			eventsByID = this.eventsByID = {};
 		for (i=0; i<len; i++) {
 			event = events[i];
 			if (eventsByID[event._id]) {
@@ -70,7 +67,6 @@ var viewMethods = {
 			}else{
 				eventsByID[event._id] = [event];
 			}
-			cachedEvents.push(event);
 		}
 	},
 	
@@ -92,10 +88,7 @@ var viewMethods = {
 	
 	// event element manipulation
 	
-	clearEvents: function() { // only remove ELEMENTS
-		$.each(this.eventElements, function() {
-			this.remove();
-		});
+	_clearEvents: function() { // only resets hashes
 		this.eventElements = [];
 		this.eventElementsByID = {};
 	},
@@ -273,7 +266,7 @@ var viewMethods = {
 	
 	// event rendering utilities
 	
-	sliceSegs: function(events, start, end) {
+	sliceSegs: function(events, visEventEnds, start, end) {
 		var segs = [],
 			i, len=events.length, event,
 			eventStart, eventEnd,
@@ -282,7 +275,7 @@ var viewMethods = {
 		for (i=0; i<len; i++) {
 			event = events[i];
 			eventStart = event.start;
-			eventEnd = this.visEventEnd(event);
+			eventEnd = visEventEnds[i];
 			if (eventEnd > start && eventStart < end) {
 				if (eventStart < start) {
 					segStart = cloneDate(start);

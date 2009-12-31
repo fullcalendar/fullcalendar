@@ -296,42 +296,38 @@ var dateFormatters = {
 /* Element Dimensions
 -----------------------------------------------------------------------------*/
 
-function setOuterWidth(element, width, includeMargins) {
+function setOuterWidth(element, width, includeMargins) { // TODO: probably eventually remove this
 	element.each(function() {
 		var e = $(this);
-		var w = width - horizontalSides(e);
-		if (includeMargins) {
-			w -= (parseInt(e.css('margin-left')) || 0) +
-				(parseInt(e.css('margin-right')) || 0);
-		}
-		e.width(w);
+		e.width(width - hsides(e, includeMargins));
 	});
 }
 
-function horizontalSides(e) {
+function hsides(e, includeMargins) {
 	return (parseInt(e.css('border-left-width')) || 0) +
 		(parseInt(e.css('padding-left')) || 0) +
 		(parseInt(e.css('padding-right')) || 0) +
-		(parseInt(e.css('border-right-width')) || 0);
+		(parseInt(e.css('border-right-width')) || 0) +
+		(includeMargins ?
+			(parseInt(e.css('margin-left')) || 0) + (parseInt(e.css('margin-right')) || 0)
+			: 0);
 }
 
-function setOuterHeight(element, height, includeMargins) {
+function setOuterHeight(element, height, includeMargins) { // TODO: probably eventually remove this
 	element.each(function() {
 		var e = $(this);
-		var h = height - verticalSides(e);
-		if (includeMargins) {
-			h -= (parseInt(e.css('margin-top')) || 0) +
-				(parseInt(e.css('margin-bottom')) || 0);
-		}
-		e.height(h);
+		e.height(height - vsides(e, includeMargins));
 	});
 }
 
-function verticalSides(e) {
+function vsides(e, includeMargins) {
 	return (parseInt(e.css('border-top-width')) || 0) +
 		(parseInt(e.css('padding-top')) || 0) +
 		(parseInt(e.css('padding-bottom')) || 0) +
-		(parseInt(e.css('border-bottom-width')) || 0);
+		(parseInt(e.css('border-bottom-width')) || 0) +
+		(includeMargins ?
+			(parseInt(e.css('margin-top')) || 0) + (parseInt(e.css('margin-bottom')) || 0)
+			: 0);
 }
 
 
@@ -432,7 +428,7 @@ function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
 }
 
-function smartProperty(obj, name) { // get a camel-cased/namespaced property
+function smartProperty(obj, name) { // get a camel-cased/namespaced property of an object
 	if (obj[name] != undefined) {
 		return obj[name];
 	}
@@ -445,6 +441,15 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property
 		}
 	}
 	return obj[''];
+}
+
+function htmlEscape(s) {
+	return s
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/'/g, '&#039;')
+		.replace(/"/g, '&quot;')
 }
 
 

@@ -21,7 +21,7 @@ setDefaults({
 
 views.agendaWeek = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, height, fetchEvents) {
+		render: function(date, delta, width, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -41,14 +41,19 @@ views.agendaWeek = function(element, options) {
 				this.option('titleFormat'),
 				options
 			);
-			this.renderAgenda(options.weekends ? 7 : 5, this.option('columnFormat'), height, fetchEvents);
+			this.renderAgenda(
+				options.weekends ? 7 : 5,
+				this.option('columnFormat'),
+				width, height,
+				fetchEvents
+			);
 		}
 	});
 };
 
 views.agendaDay = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, height, fetchEvents) {
+		render: function(date, delta, width, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -58,7 +63,12 @@ views.agendaDay = function(element, options) {
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderAgenda(1, this.option('columnFormat'), height, fetchEvents);
+			this.renderAgenda(
+				1,
+				this.option('columnFormat'),
+				width, height,
+				fetchEvents
+			);
 		}
 	});
 };
@@ -68,8 +78,8 @@ function Agenda(element, options, methods) {
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
 		axisWidth, colWidth, slotHeight,
+		viewWidth, viewHeight,
 		cachedDaySegs=[], cachedSlotSegs=[],
-		cachedHeight,
 		tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
@@ -88,21 +98,6 @@ function Agenda(element, options, methods) {
 				return start;
 			}
 			return addMinutes(start, options.defaultEventMinutes);
-		},
-		visEventEnd: function(event) {
-			if (event.allDay) {
-				if (event.end) {
-					var end = cloneDate(event.end);
-					return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
-				}else{
-					return addDays(cloneDate(event.start), 1);
-				}
-			}
-			if (event.end) {
-				return cloneDate(event.end);
-			}else{
-				return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
-			}
 		}
 	});
 	view.init(element, options);
@@ -118,7 +113,7 @@ function Agenda(element, options, methods) {
 		element.disableSelection();
 	}
 	
-	function renderAgenda(c, colFormat, height, fetchEvents) {
+	function renderAgenda(c, colFormat, width, height, fetchEvents) {
 		colCnt = c;
 		
 		// update option-derived variables
@@ -218,7 +213,7 @@ function Agenda(element, options, methods) {
 			
 		}else{ // skeleton already built, just modify it
 		
-			view.clearEvents();
+			clearEvents();
 			
 			// redo column header text and class
 			head.find('tr:first th').slice(1, -1).each(function() {
@@ -253,7 +248,7 @@ function Agenda(element, options, methods) {
 		
 		}
 		
-		updateSize(height);
+		updateSize(width, height);
 		resetScroll();
 		fetchEvents(renderEvents);
 		
@@ -276,8 +271,9 @@ function Agenda(element, options, methods) {
 	}
 	
 	
-	function updateSize(height) {
-		cachedHeight = height;
+	function updateSize(width, height) {
+		viewWidth = width;
+		viewHeight = height;
 		
 		bodyTable.width('');
 		body.height(height - head.height());
@@ -342,10 +338,10 @@ function Agenda(element, options, methods) {
 	/* Event Rendering
 	-----------------------------------------------------------------------------*/
 	
+	var cachedEvents;
 	
 	function renderEvents(events) {
-		view.reportEvents(events);
-		
+		view.reportEvents(cachedEvents = events);
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -356,30 +352,33 @@ function Agenda(element, options, methods) {
 				slotEvents.push(events[i]);
 			}
 		}
-		
-		renderDaySegs(cachedDaySegs = stackSegs(view.sliceSegs(dayEvents, view.visStart, view.visEnd)));
+		renderDaySegs(cachedDaySegs = stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
 		renderSlotSegs(cachedSlotSegs = compileSlotSegs(slotEvents));
 	}
 	
 	
-	function rerenderEvents(skipCompile) {
-		view.clearEvents();
-		if (skipCompile) {
-			renderDaySegs(cachedDaySegs);
-			renderSlotSegs(cachedSlotSegs);
-		}else{
-			renderEvents(view.cachedEvents);
-		}
+	function rerenderEvents() {
+		clearEvents();
+		renderEvents(cachedEvents);
+	}
+	
+	
+	function clearEvents() {
+		$.each(view.eventElements, function() { // TODO: move away from this, empty a container instead
+			this.remove();
+		});
+		view._clearEvents(); // only clears the hashes
 	}
 	
 	
 	function compileSlotSegs(events) {
 		var d = addMinutes(cloneDate(view.visStart), minMinute),
+			ends = $.map(events, visEventEnd),
 			levels,
 			segCols = [],
 			i=0;
 		for (; i<colCnt; i++) {
-			levels = stackSegs(view.sliceSegs(events, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
+			levels = stackSegs(view.sliceSegs(events, ends, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
 			countForwardSegs(levels);
 			segCols.push(levels);
 			addDays(d, 1, true);
@@ -476,7 +475,7 @@ function Agenda(element, options, methods) {
 				rowContentHeight += levelHeight;
 			}
 			tdInner.height(rowContentHeight);
-			updateSize(cachedHeight); // tdInner might have pushed the body down, so resize
+			updateSize(viewWidth, viewHeight); // tdInner might have pushed the body down, so resize
 		}
 	}
 	
@@ -572,6 +571,23 @@ function Agenda(element, options, methods) {
 					view.trigger('eventAfterRender', event, event, eventElement);
 				}
 			}
+		}
+	}
+	
+	
+	function visEventEnd(event) { // returns exclusive 'visible' end, for rendering
+		if (event.allDay) {
+			if (event.end) {
+				var end = cloneDate(event.end);
+				return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
+			}else{
+				return addDays(cloneDate(event.start), 1);
+			}
+		}
+		if (event.end) {
+			return cloneDate(event.end);
+		}else{
+			return addMinutes(cloneDate(event.start), options.defaultEventMinutes);
 		}
 	}
 
