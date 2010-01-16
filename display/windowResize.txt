@@ -1,0 +1,27 @@
+
+windowResize *1.3*
+==================
+
+Triggered after the calendar's dimensions have been changed due to the browser window being resized.
+
+<div class='spec' markdown='1'>
+function( *view* ) { }
+</div>
+
+The calendar has automatically adapted to the new size when windowResize is triggered.
+
+`view` is a [View Object](../views/View_Object).
+
+Within the callback function, `this` will be set to the calendar's main element.
+
+Example:
+
+	$('#calendar').fullCalendar({
+		windowResize: function(view) {
+			alert('The calendar has adjusted to a window resize');
+		}
+	});
+
+<div class='version-info' markdown='1'>
+In version 1.1 through 1.2.1, this option was known as *resize*.
+</div>

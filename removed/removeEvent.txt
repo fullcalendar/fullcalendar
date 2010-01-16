@@ -1,0 +1,13 @@
+
+removeEvent
+===========
+
+<div class='removed-notice' markdown='1'>
+In version 1.3, this method was removed in favor of [removeEvents](../event_data/removeEvents).
+</div>
+
+Remove an event with a given ID.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'removeEvent', *id* )
+</div>

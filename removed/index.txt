@@ -1,0 +1,21 @@
+
+Renamed/Removed
+---------------
+
+- prevMonth
+- nextMonth
+- draggable
+- fixedWeeks
+- abbrevDayHeadings
+- buttons
+- title
+- eventDragOpacity
+- eventRevertDuration
+- weekStart
+- rightToLeft
+- addEvent
+- removeEvent
+- getEventsById
+- refresh
+- monthDisplay
+- resize

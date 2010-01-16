@@ -1,0 +1,17 @@
+
+Current Date
+============
+
+<ul>
+<li>year</li>
+<li>month</li>
+<li>date</li>
+<li class='method'><a href='prev'>prev</a> <em>(method)</em></li>
+<li class='method'><a href='next'>next</a> <em>(method)</em></li>
+<li class='method'><a href='prevYear'>prevYear</a> <em>(method)</em></li>
+<li class='method'><a href='nextYear'>nextYear</a> <em>(method)</em></li>
+<li class='method'><a href='today'>today</a> <em>(method)</em></li>
+<li class='method'><a href='gotoDate'>gotoDate</a> <em>(method)</em></li>
+<li class='method'><a href='incrementDate'>incrementDate</a> <em>(method)</em></li>
+<li class='method'><a href='getDate'>getDate</a> <em>(method)</em></li>
+</ul>

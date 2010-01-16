@@ -1,0 +1,14 @@
+
+Agenda Options
+==============
+
+The following options only apply to the `agendaWeek` and `agendaDay` views:
+
+- allDaySlot
+- allDayText
+- axisFormat
+- slotMinutes
+- defaultEventMinutes
+- firstHour
+- minTime
+- maxTime

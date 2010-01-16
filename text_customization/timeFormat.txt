@@ -1,0 +1,35 @@
+
+timeFormat *1.1*
+================
+
+Determines the time-text that will be displayed on each event.
+
+<div class='spec' markdown='1'>
+String/[View Option Hash](../views/View_Option_Hash), *default*:
+
+	{
+		// for agendaWeek and agendaDay
+		agenda: 'h:mm{ - h:mm}', // 5:00 - 6:30
+
+		// for all other views
+		'': 'h(:mm)t'            // 7p
+	}
+
+</div>
+
+Uses [formatDate](../utilities/formatDate)/[formatDates](../utilities/formatDates) formatting rules.
+
+Time-text will only be displayed for [Event Objects](../event_data/Event_Object) that have `allDay` equal to `false`.
+
+A single format string will change the time-text for events in all views.
+A [View Option Hash](../views/View_Option_Hash) may be provided to target specific views (which is what the default does).
+
+Here is an example of displaying all events in a 24-hour format:
+
+	$('#calendar').fullCalendar({
+		timeFormat: 'H(:mm)' // uppercase H for military time
+	});
+	
+<div class='version-info'>
+A View Option Hash can only be provided in version 1.4 and later.
+</div>

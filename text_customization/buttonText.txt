@@ -1,0 +1,30 @@
+
+buttonText *1.3*
+================
+
+Text that will be displayed on buttons of the header.
+
+<div class='spec' markdown='1'>
+Object, *default*:
+
+	{
+		prev:     '&nbsp;&#9668;&nbsp;',  // left triangle
+		next:     '&nbsp;&#9658;&nbsp;',  // right triangle
+		prevYear: '&nbsp;&lt;&lt;&nbsp;', // <<
+		nextYear: '&nbsp;&gt;&gt;&nbsp;', // >>
+		today:    'today',
+		month:    'month',
+		week:     'week',
+		day:      'day'
+	}
+</div>
+
+If you wanted to change the prev/next buttons to use &lt; and &gt; characters,
+here what you would do:
+
+	$('#calendar').fullCalendar({
+		buttonText: {
+			prev: '&lt;',
+			next: '&gt;'
+		}
+	});

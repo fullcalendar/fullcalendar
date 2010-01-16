@@ -1,0 +1,84 @@
+
+Google Calendar
+===============
+
+FullCalendar can be made to display events from a public [Google Calendar](http://calendar.google.com/).
+Google Calendar can serve as a backend that manages and persistently stores event data
+(a feature that FullCalendar currently lacks).
+
+**To get started, you must first make your Google Calendar public:**
+
+1. In the Google Calendar interface, locate the "My Calendar" box on the left.
+2. Click the arrow next to the calendar you need.
+3. A menu will appear. Click "Share this calendar."
+4. Check "Make this calendar public."
+5. Make sure "Share only my free/busy information" is **unchecked**.
+6. Click "Save."
+
+**Then, you must obtain your calendar's XML feed URL:**
+
+1. In the Google Calendar interface, locate the "My Calendar" box on the left
+2. Click the arrow next to the calendar you need.
+3. A menu will appear. Click "Calendar settings."
+4. In the "Calendar Address" section of the screen, click the XML badge.
+5. Your feed's URL will appear.
+
+**Now it's time to initialize your calendar in JavaScript.**
+You will use the `$.fullCalendar.gcalFeed` function with the `events` option, like so:
+
+	$(document).ready(function() {
+	
+		// page is now ready, initialize the calendar...
+
+		$('#calendar').fullCalendar({
+			events: $.fullCalendar.gcalFeed(
+				"http://www.google.com/your_feed_url/"
+			)
+		});
+	
+	});
+
+If you wanted to import more than one Google Calendar, you would use the `events` option.
+
+
+
+Options
+-------
+
+You can tweak the way FullCalendar imports your Google Calendar events through these options:
+
+- **className** - CSS class to attach to each event
+- **editable** - whether to allow dragging/resizing (default: `false`)
+- **currentTimezone** - a string like "America/Chicago".
+  Consult [http://php.net/manual/en/timezones.php](http://php.net/manual/en/timezones.php) for a full list.
+  
+Here is an example of how you'd use these options:
+
+	$('#calendar').fullCalendar({
+		events: $.fullCalendar.gcalFeed(
+			"http://www.google.com/your_feed_url/",
+			{
+				// put your options here
+				className:       'gcal-event',
+				editable:        true,
+				currentTimezone: 'America/Chicago'
+			}
+		)
+	});
+
+
+
+Timezones Gotchas
+-----------------
+
+Sometimes it can be confusing as to why FullCalendar displays event times differently than the Google Calendar interface.
+There are the two factors involved in this:
+
+- *the calendar's timezone*, accessed through "Calendar settings" after clicking the arrow next to the calendar's name
+- *your Google Account's timezone*, accessed through the "Settings" link at the top right of the Google Calendar screen (near the "Sign out" link)
+
+When both timezones are the same, you should have no problems. When they are different, FullCalendar will display times in the *calendar's* timezone.
+Thus, times will be different than what you see in the Google Calendar interface because they are being adjusted to the GMT of the calendar.
+The solution is to use the `currentTimezone` option. If this is set to the same timezone as your Google Account, all dates should appear consistent.
+
+

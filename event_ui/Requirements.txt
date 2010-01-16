@@ -1,0 +1,21 @@
+
+Requirements for Event Dragging & Resizing
+==========================================
+
+Event dragging and resizing requires the following jQuery UI modules:
+
+- jQuery UI core
+- [Draggable](http://jqueryui.com/demos/draggable/) (the Droppable module is **not** required)
+- [Resizable](http://jqueryui.com/demos/resizable/)
+
+These modules can be conveniently bundled/compressed/downloaded at the jQuery UI
+[downloads page](http://jqueryui.com/download).
+They are also included in the FullCalendar download in the "jquery" directory,
+though as uncompressed files.
+
+After you have gathered the dependencies, **you still need to enable dragging/resizing**
+by settings the [editable]() option to `true`.
+
+<p class='abstract' style='display:none'>
+jQuery UI dependencies.
+</p>

@@ -1,0 +1,15 @@
+
+monthDisplay
+============
+
+<div class='removed-notice' markdown='1'>
+In version 1.3, this callback was removed in favor of [viewDisplay](../display/viewDisplay).
+</div>
+
+Triggered once when the calendar loads and every time the calendar's month is changed.
+
+<div class='spec' markdown='1'>
+function( *year*, *month*, *monthTitle* )
+</div>
+
+`month` is **zero-based**. `monthTitle` contains the new title of the month (ex: "January 2009")

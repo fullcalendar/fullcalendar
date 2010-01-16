@@ -1,0 +1,17 @@
+
+formatDates *1.3*
+=================
+
+Formats a date range (two Date objects) into a string.
+
+<div class='spec' markdown='1'>
+$.fullCalendar.formatDates( *date1*, *date2*, *formatString* [, *options* ] ) -> String
+</div>
+
+`formatDates` uses all the commands from [formatDate](), but with two more special forms:
+
+`{...}`
+:	switches to formatting the 2nd date
+
+`[...]`
+:	only displays the enclosed format if the current date is different from the alternate date in the same regards

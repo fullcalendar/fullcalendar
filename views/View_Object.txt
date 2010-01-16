@@ -1,0 +1,30 @@
+
+View Object
+===========
+
+An object that is passed to every callback, containing info about the current view.
+
+It will be populated with the following properties:
+
+`name`
+:	Name of one of the [Available Views]() (a string).
+
+`title`
+:	Title text that is displayed at the top of the header (such as “September 2009” or “Sep 7 - 13 2009”).
+
+`start`
+:	A Date object of the first day of the month/week. If day-view, the date of the single day.
+   
+`end`
+:	A Date object of the day after the last day of the month/week. If day-view, the Date after the single day.
+
+	Because this is an exclusive value, if the calendar has a month-view on October 2009, `end` will be November 1st.
+	
+`visStart`
+:	A Date object of the first visible day of the view. In month-view, this value is often before the 1st day of the month,
+	because most months do not begin on a Monday.
+
+	In week and day views, this value will always be the same as `start`.
+
+`visEnd`
+:	A Date object of the day after the last visible day (because it is exclusive like `end`).

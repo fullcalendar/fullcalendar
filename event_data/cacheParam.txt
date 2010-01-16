@@ -1,0 +1,11 @@
+
+cacheParam *1.1*
+================
+
+A GET parameter of this name will be inserted into each JSON feed's URL to prevent caching.
+
+<div class='spec' markdown='1'>
+String, *default*: `'_'`
+</div>
+
+The value will be the current millisecond time.

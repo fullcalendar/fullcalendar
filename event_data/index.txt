@@ -1,0 +1,24 @@
+
+Event Data
+==========
+
+<ul>
+<li class='article'>Event Object</li>
+<li><a href='events_array'>events</a> <em>(as an array)</em></li>
+<li><a href='events_json_feed'>events</a> <em>(as a json feed)</em></li>
+<li><a href='events_function'>events</a> <em>(as a function)</em></li>
+<li>eventSources</li>
+<li>allDayDefault</li>
+<li>startParam</li>
+<li>endParam</li>
+<li>cacheParam</li>
+<li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>
+<li class='method'><a href='updateEvent'>updateEvent</a> <em>(method)</em></li>
+<li class='method'><a href='clientEvents'>clientEvents</a> <em>(method)</em></li>
+<li class='method'><a href='removeEvents'>removeEvents</a> <em>(method)</em></li>
+<li class='method'><a href='refetchEvents'>refetchEvents</a> <em>(method)</em></li>
+<li class='method'><a href='addEventSource'>addEventSource</a> <em>(method)</em></li>
+<li class='method'><a href='removeEventSource'>removeEventSource</a> <em>(method)</em></li>
+</ul>
+
+See also: [renderEvent]() (for adding an event)

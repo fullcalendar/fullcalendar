@@ -1,0 +1,7 @@
+
+rightToLeft
+===========
+
+<div class='removed-notice' markdown='1'>
+In version 1.3, this option was renamed to [isRTL](../display/isRTL).
+</div>

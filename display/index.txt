@@ -1,0 +1,20 @@
+
+General Display
+===============
+
+<ul>
+<li>header</li>
+<li>theme</li>
+<li>buttonIcons</li>
+<li>firstDay</li>
+<li>isRTL</li>
+<li>weekends</li>
+<li>weekMode</li>
+<li>height</li>
+<li>contentHeight</li>
+<li>aspectRatio</li>
+<li class='callback'><a href='viewDisplay'>viewDisplay</a> <em>(callback)</em></li>
+<li class='callback'><a href='windowResize'>windowResize</a> <em>(callback)</em></li>
+<li class='method'><a href='render'>render</a> <em>(method)</em></li>
+<li class='method'><a href='destroy'>destroy</a> <em>(method)</em></li>
+</ul>

@@ -1,0 +1,18 @@
+
+Event Dragging & Resizing
+=========================
+
+<ul>
+<li class='article'>Requirements</li>
+<li>editable</li>
+<li>disableDragging</li>
+<li>disableResizing</li>
+<li>dragRevertDuration</li>
+<li>dragOpacity</li>
+<li class='callback'><a href='eventDragStart'>eventDragStart</a> <em>(callback)</em></li>
+<li class='callback'><a href='eventDragStop'>eventDragStop</a> <em>(callback)</em></li>
+<li class='callback'><a href='eventDrop'>eventDrop</a> <em>(callback)</em></li>
+<li class='callback'><a href='eventResizeStart'>eventResizeStart</a> <em>(callback)</em></li>
+<li class='callback'><a href='eventResizeStop'>eventResizeStop</a> <em>(callback)</em></li>
+<li class='callback'><a href='eventResize'>eventResize</a> <em>(callback)</em></li>
+</ul>

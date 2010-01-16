@@ -1,0 +1,16 @@
+
+dayNames *1.3*
+==============
+
+Full names of days-of-week.
+
+<div class='spec' markdown='1'>
+Array, *default*:
+
+	['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+	 'Thursday', 'Friday', 'Saturday']
+</div>
+
+<div class='version-info' markdown='1'>
+Prior to version 1.3, this was possible by setting $.fullCalendar.dayNames
+</div>

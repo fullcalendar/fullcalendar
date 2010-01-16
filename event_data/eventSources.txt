@@ -1,0 +1,21 @@
+
+eventSources *1.2*
+==================
+
+A way to specify multiple event sources.
+
+<div class='spec' markdown='1'>
+Array
+</div>
+
+This option is used instead of the `events` option.
+It can take an Array of Arrays/Functions/URLs (anything that the `events` option would take).
+
+Here is an example calendar that displays two [JSON feeds](events_json_feed):
+
+	$('#calendar').fullCalendar({
+		eventSources: [
+			'/feed1.php',
+			'/feed2.php'
+		]
+	});

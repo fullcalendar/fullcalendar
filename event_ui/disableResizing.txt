@@ -1,0 +1,9 @@
+
+disableResizing *1.3*
+=====================
+
+Disables all event resizing, even when events are editable.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: `false`
+</div>

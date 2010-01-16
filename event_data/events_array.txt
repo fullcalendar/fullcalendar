@@ -1,0 +1,26 @@
+
+events (as an array)
+====================
+
+An array of [Event Objects](Event_Object) that will be displayed on the calendar.
+
+Here is an example of how to specify an array of events:
+
+	$('#calendar').fullCalendar({
+		events: [
+			{
+				title  : 'event1',
+				start  : '2010-01-01'
+			},
+			{
+				title  : 'event2',
+				start  : '2010-01-05',
+				end    : '2010-01-07'
+			},
+			{
+				title  : 'event3',
+				start  : '2010-01-09 12:30:00',
+				allDay : false // will make the time show
+			}
+		]
+	});

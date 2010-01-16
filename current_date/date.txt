@@ -1,0 +1,16 @@
+
+date *1.3*
+==========
+
+The initial date-of-the-month when the calendar loads.
+
+<div class='spec' markdown='1'>
+Integer
+</div>
+
+This option only matters for the week & day views. Month view does not need this option,
+because month view always displays the entire month from start to finish.
+
+If `date` is unspecified, and `year`/`month` are set to the current year/month, then the
+calendar will start on the current date. If `date` is unspecified, and `year`/`month` are *not*
+set to the current year/month, then the calendar will start on the first of the month.
