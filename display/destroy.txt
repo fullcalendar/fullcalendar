@@ -8,4 +8,4 @@ Restores the element to the state before FullCalendar was initialized.
 .fullCalendar( 'destroy' )
 </div>
 
-Removes elements, events handlers, and data.
+Removes elements, events handlers, and internal data.

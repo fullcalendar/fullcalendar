@@ -21,4 +21,4 @@ Event Data
 <li class='method'><a href='removeEventSource'>removeEventSource</a> <em>(method)</em></li>
 </ul>
 
-See also: [renderEvent]() (for adding an event)
+See also: [renderEvent](../event_rendering/renderEvent) (for adding an event)

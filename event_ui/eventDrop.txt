@@ -24,7 +24,7 @@ It will be `false` if dropped on a slot in the agenda views (meaning it has been
 `revertFunc` is a function that, if called, reverts the event's start/end date to the values before the drag.
 This is useful if an ajax call should fail.
 
-`jsEvent` holds the native javascript event with low-level information such as
+`jsEvent` holds the native JavaScript event with low-level information such as
 mouse coordinates.
 
 `ui` holds the [jQuery UI object](http://jqueryui.com/demos/draggable/).
@@ -42,9 +42,7 @@ Here is an example demonstrating most of these arguments:
 			
 			alert(
 				event.title + " was moved " +
-				(dayDelta < 0 ? "back" : "forward") +
 				dayDelta + " days and " +
-				(minuteDelta < 0 ? "back" : "forward") +
 				minuteDelta + " minutes."
 			);
 			

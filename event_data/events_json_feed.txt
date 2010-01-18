@@ -20,7 +20,7 @@ Consider the following script:
 		events: "/myfeed.php"
 	});
 	
-Here is a URL that might be visited:
+Here is a URL that FullCalendar might visit:
 	
 `/myfeed.php?start=1262332800&end=1265011200&_=1263178646`
 

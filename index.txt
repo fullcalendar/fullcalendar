@@ -5,7 +5,7 @@
 - [Views](views)
 - [Agenda Options](agenda)
 - [Current Date](current_date)
-- [Text/Time Customization](text_customization)
+- [Text/Time Customization](text)
 - [Clicking & Hovering](mouse)
 - [Event Data](event_data)
 - [Event Rendering](event_rendering)

@@ -2,10 +2,11 @@
 Event Object
 ============
 
-A standard object that FullCalendar uses to store information about an event.
+A standard object that FullCalendar uses to store information about a calendar event.
 
-An Event Object has a number of properties, although only two of them are required
-for `events`/`eventSources` (the `title` and `start` properties). Here they are:
+An Event Object has a number of properties. When passing new Event Objects to 
+`events` and `eventSources`, only the `title` and `start` properties are required.
+Here is the full list of properties:
 
 **id**: String/Integer (optional)
 :	Uniquely identifies the given event. Different instances of repeating events should all have the same `id`.
@@ -46,13 +47,13 @@ for `events`/`eventSources` (the `title` and `start` properties). Here they are:
 	
 **url**: String (optional)
 :	A URL that will be visited when this event is clicked by the user.
-	For more information on controlling this behavior, see the [eventClick](../clicking_hovering/eventClick) callback.
+	For more information on controlling this behavior, see the [eventClick](../mouse/eventClick) callback.
 	
 **className**: String/Array (optional)
 :	A CSS class (or array of classes) that will be attached to this event's element.
 
 **editable**: `true` or `false` (optional)
-:	Overrides the master [editable]() option for this single event.
+:	Overrides the master [editable](../event_ui/editable) option for this single event.
 
 **source**: Array/String/Function (automatically populated)
 :	A reference to the event source (as specified in `events` or `eventSources`)
@@ -67,8 +68,10 @@ For example, developers often include a `description` field for use in callbacks
 as [eventRender](../event_rendering/eventRender).
 
 <div class='version-info' markdown='1'>
-Prior to version 1.3, the *allDay* property did not exist. *showTime* was used instead,
-and was set to *true* to guarantee that an event's time was shown.
+Prior to version 1.3, the *end* date was always exclusive, even when *allDay* was set to *true*.
+
+Prior to version 1.3, the *allDay* property did not exist. *showTime* was used instead.
+It was set to *true* to show times and *false* to hide them.
 
 The *className* and *source* properties did not exist prior to version 1.2.
 </div>

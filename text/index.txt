@@ -13,6 +13,6 @@ Text/Time Customization
 <li>dayNamesShort</li>
 </ul>
 
-Related agenda-view options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
+Related agenda options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
 
-Essential for date/time formatting: [formatDate commands](../utilities/formatDate).
+Essential for date/time formatting: [formatDate](../utilities/formatDate) commands.

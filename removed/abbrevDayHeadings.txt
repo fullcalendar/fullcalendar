@@ -3,7 +3,7 @@ abbrevDayHeadings
 =================
 
 <div class='removed-notice' markdown='1'>
-This option was removed in version 1.3. Use [columnFormat](../text_customization/columnFormat) instead.
+This option was removed in version 1.3. Use [columnFormat](../text/columnFormat) instead.
 </div>
 
 Whether to display "Sun" versus "Sunday" for days of the week.

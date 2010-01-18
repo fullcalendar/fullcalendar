@@ -2,7 +2,7 @@
 axisFormat *1.4*
 ================
 
-Determines the time-text that will be displayed on the left vertical axis of the agenda views.
+Determines the time-text that will be displayed on the vertical axis of the agenda views.
 
 <div class='spec' markdown='1'>
 String, *default*: `'h(:mm)tt'`

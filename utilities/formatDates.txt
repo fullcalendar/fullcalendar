@@ -8,7 +8,7 @@ Formats a date range (two Date objects) into a string.
 $.fullCalendar.formatDates( *date1*, *date2*, *formatString* [, *options* ] ) -> String
 </div>
 
-`formatDates` uses all the commands from [formatDate](), but with two more special forms:
+`formatDates` uses all the commands from [formatDate](), but with two special forms:
 
 `{...}`
 :	switches to formatting the 2nd date

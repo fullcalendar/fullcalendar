@@ -17,9 +17,9 @@ Example usage of `contentHeight`:
 	});
 
 
-setter
+Setter
 ------
 
-You may dynamically set a calendar's contentHeight after initialization:
+You can dynamically set a calendar's contentHeight after initialization:
 
 	$('#calendar').fullCalendar('option', 'contentHeight', 650);

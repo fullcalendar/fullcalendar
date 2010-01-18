@@ -10,7 +10,7 @@ $.fullCalendar.formatDate( *date*, *formatString* [, *options* ] ) -> String
 
 Prior to version 1.3, formatDate accepted a very different format. [See here](formatDate_pre_13).
 
-`formatString` can be combinations of any of the following commands:
+`formatString` is a combination of any of the following commands:
 
 - **s** - seconds
 - **ss** - seconds, 2 digits
@@ -51,8 +51,8 @@ Special Characters:
 
 
 The `options` parameter can be used to override default locale options, such as
-[monthNames](../text_customization/monthNames),
-[monthNamesShort](../text_customization/monthNamesShort),
-[dayNames](../text_customization/dayNames),
-and [dayNamesShort](../text_customization/dayNamesShort).
+[monthNames](../text/monthNames),
+[monthNamesShort](../text/monthNamesShort),
+[dayNames](../text/dayNames),
+and [dayNamesShort](../text/dayNamesShort).
 

@@ -24,3 +24,6 @@ Here is an example of how to specify an array of events:
 			}
 		]
 	});
+	
+Make sure you do not have a comma after the last event in your array!
+It will make Internet Explorer choke.

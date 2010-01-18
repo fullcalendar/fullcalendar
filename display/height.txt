@@ -17,9 +17,9 @@ Example usage of `height`:
 	});
 
 
-setter
+Setter
 ------
 
-You may dynamically set a calendar's height after initialization:
+You can dynamically set a calendar's height after initialization:
 
 	$('#calendar').fullCalendar('option', 'height', 700);

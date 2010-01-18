@@ -19,3 +19,14 @@ Here is an example calendar that displays two [JSON feeds](events_json_feed):
 			'/feed2.php'
 		]
 	});
+	
+Here is how you would display two Google Calendars:
+
+	$('#calendar').fullCalendar({
+		eventSources: [
+			$.fullCalendar.gcalFeed("http://www.google.com/feed1"),
+			$.fullCalendar.gcalFeed("http://www.google.com/feed2")
+		]
+	});
+	
+More info on displaying Google Calendars can be found [here](../google_calendar).

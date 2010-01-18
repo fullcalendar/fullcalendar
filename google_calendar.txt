@@ -2,8 +2,8 @@
 Google Calendar
 ===============
 
-FullCalendar can be made to display events from a public [Google Calendar](http://calendar.google.com/).
-Google Calendar can serve as a backend that manages and persistently stores event data
+FullCalendar can display events from a public [Google Calendar](http://calendar.google.com/).
+It can serve as a backend that manages and persistently stores event data
 (a feature that FullCalendar currently lacks).
 
 **To get started, you must first make your Google Calendar public:**
@@ -38,7 +38,8 @@ You will use the `$.fullCalendar.gcalFeed` function with the `events` option, li
 	
 	});
 
-If you wanted to import more than one Google Calendar, you would use the `events` option.
+If you wanted to import more than one Google Calendar, you would use the
+[eventSources](event_data/eventSources) option instead.
 
 
 

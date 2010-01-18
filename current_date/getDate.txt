@@ -5,7 +5,7 @@ getDate *1.4.2*
 Returns a Date object for the current date of the calendar.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'getDate' ) -> Date object
+.fullCalendar( 'getDate' ) -> Date
 </div>
 
 For month view, it will always be sometime between the first and last day of the month.

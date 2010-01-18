@@ -10,11 +10,11 @@ function( *view* ) { }
 
 The calendar has automatically adapted to the new size when windowResize is triggered.
 
-`view` is a [View Object](../views/View_Object).
+`view` is the current [View Object](../views/View_Object).
 
 Within the callback function, `this` will be set to the calendar's main element.
 
-Example:
+Example usage of windowResize:
 
 	$('#calendar').fullCalendar({
 		windowResize: function(view) {

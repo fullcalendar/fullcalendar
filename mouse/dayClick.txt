@@ -18,7 +18,7 @@ agendaWeek or agendaDay views. Otherwise, it will be `true`.
 
 `view` is set to the current [View Object](../views/View_Object).
 
-Within the callback function, `this` is set to the TD element of the clicked day.
+Within the callback function, `this` is set to the `<td>` of the clicked day.
 
 Here is an example that demonstrates all of these variables:
 

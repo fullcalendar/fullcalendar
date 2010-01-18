@@ -19,10 +19,10 @@ The following example will initialize a calendar who's width is twice its height
 	});
 	
 	
-setter
+Setter
 ------
 
-You may dynamically set a calendar's aspectRatio after initialization:
+You can dynamically set a calendar's aspectRatio after initialization:
 
 	$('#calendar').fullCalendar('option', 'aspectRatio', 1.8);
 	

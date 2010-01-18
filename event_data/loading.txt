@@ -10,6 +10,6 @@ function( *isLoading*, *view* )
 
 Triggered with a `true` argument when the calendar begins fetching events via AJAX. Triggered with `false` when done.
 
-Last argument is the current [View Object](../views/View_Object).
+`view` is the current [View Object](../views/View_Object).
 
 This function is often used to show/hide a loading indicator.

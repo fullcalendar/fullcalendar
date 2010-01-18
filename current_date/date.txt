@@ -2,7 +2,7 @@
 date *1.3*
 ==========
 
-The initial date-of-the-month when the calendar loads.
+The initial date-of-month when the calendar loads.
 
 <div class='spec' markdown='1'>
 Integer

@@ -2,7 +2,7 @@
 dragOpacity *1.3*
 =================
 
-The opacity of an event when it is being dragged.
+The opacity of an event while it is being dragged.
 
 <div class='spec' markdown='1'>
 Float/[View Option Hash](../views/View_Option_Hash), *default*:
@@ -22,7 +22,7 @@ Specify a single number to affect all views, or a [View Option Hash](../views/Vi
 (which is what the default does).
 
 <div class='version-info' markdown='1'>
-A View Option Hash can only be provided in version 1.4 and later.
+A *View Option Hash* can only be provided in versions 1.4 and later.
 
-Prior to version 1.3, this option was known as *eventDragOpacity*
+Prior to version 1.3, this option was known as *eventDragOpacity*.
 </div>

@@ -17,19 +17,28 @@ String/[View Option Hash](../views/View_Option_Hash), *default*:
 
 </div>
 
+A single format string will change the time-text for events in all views.
+A [View Option Hash](../views/View_Option_Hash) may be provided to target specific views (this is what the default does).
+
 Uses [formatDate](../utilities/formatDate)/[formatDates](../utilities/formatDates) formatting rules.
+(The formatting rules were much different in versions before 1.3. [See here](../utilities/formatDate_pre_13))
 
 Time-text will only be displayed for [Event Objects](../event_data/Event_Object) that have `allDay` equal to `false`.
-
-A single format string will change the time-text for events in all views.
-A [View Option Hash](../views/View_Option_Hash) may be provided to target specific views (which is what the default does).
 
 Here is an example of displaying all events in a 24-hour format:
 
 	$('#calendar').fullCalendar({
-		timeFormat: 'H(:mm)' // uppercase H for military time
+		events: [
+			{
+				title:  'My Event',
+				start:   '2010-01-01T14:30:00',
+				allDay: false
+			}
+			// other events here...
+		],
+		timeFormat: 'H(:mm)' // uppercase H for 24-hour clock
 	});
 	
-<div class='version-info'>
-A View Option Hash can only be provided in version 1.4 and later.
+<div class='version-info' markdown='1'>
+A *View Option Hash* can only be provided in version 1.4 and later.
 </div>

@@ -5,7 +5,7 @@ clientEvents *1.3*
 Retrieves events that FullCalendar has in memory.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'clientEvents' [, *idOrFilter* ] )
+.fullCalendar( 'clientEvents' [, *idOrFilter* ] ) -> Array
 </div>
 
 This method will return an array of [Event Objects](Event_Object) that FullCalendar has stored

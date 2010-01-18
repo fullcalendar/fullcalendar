@@ -2,7 +2,7 @@
 buttonIcons *1.3*
 =================
 
-Determines which theme icons appear within the header buttons.
+Determines which theme icons appear on the header buttons.
 
 <div class='spec' markdown='1'>
 Object, *default:*
@@ -13,10 +13,10 @@ Object, *default:*
 	}
 </div>
 
-This option only applies to calendars that have the [theme]() option enabled.
+This option only applies to calendars that have jQuery UI theming enabled with the [theme]() option.
 
 A hash must be supplied that maps button names (from the [header]()) to icon strings.
 The icon strings determine the CSS class that will be used on the button. For example, the
 string `'circle-triangle-w'` will result in the class `'ui-icon-triangle-w'`.
 	
-If a button does not have an entry, it falls back to using [buttonText](../text_customization/buttonText).
+If a button does not have an entry, it falls back to using [buttonText](../text/buttonText).

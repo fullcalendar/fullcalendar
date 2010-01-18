@@ -14,11 +14,12 @@ String/[View Option Hash](../views/View_Option_Hash), *default*:
 	}
 </div>
 
-Uses [formatDate](../utilities/formatDate)/[formatDates](../utilities/formatDates) formatting rules.
-
 A single string will set the title format for all views.
 A [View Option Hash](../views/View_Option_Hash) may be provided to target specific views (this is what the default does).
 
-<div class='version-info'>
-A View Option Hash can only be provided in version 1.4 and later.
+Uses [formatDate](../utilities/formatDate)/[formatDates](../utilities/formatDates) formatting rules.
+(The formatting rules were much different in versions before 1.3. [See here](../utilities/formatDate_pre_13))
+
+<div class='version-info' markdown='1'>
+A *View Option Hash* can only be provided in version 1.4 and later.
 </div>

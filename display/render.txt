@@ -22,5 +22,5 @@ This is okay, because FullCalendar is smart enough to only render calendars that
 
 <div class='version-info' markdown='1'>
 Prior to version 1.4.2, the *render* method did not readjust the size of the calendar. It only
-render the calendar if it was not already rendered.
+rendered the calendar if it was not already rendered.
 </div>

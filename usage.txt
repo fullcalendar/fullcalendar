@@ -10,8 +10,8 @@ Make sure you are including the FullCalendar stylesheet, as well as the FullCale
 	<script type='text/javascript' src='jquery.js'></script>
 	<script type='text/javascript' src='fullcalendar.js'></script>
 	
-If you plan to do drag & drop, you also need to get your hands on the [jQuery UI](http://jqueryui.com/download)
-"Core" and "Draggable" (more information [here](event_ui/Requirements)).
+If you plan on doing dragging or resizing, you need some additional [jQuery UI](http://jqueryui.com/download) files
+(more information [here](event_ui/Requirements)).
 
 Once you have your dependencies, you need to write the JavaScript code that initializes the calendar.
 This code must be executed *after* the page has initialized. The best way to do this is with jQuery's

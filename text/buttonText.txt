@@ -20,7 +20,7 @@ Object, *default*:
 </div>
 
 If you wanted to change the prev/next buttons to use &lt; and &gt; characters,
-here what you would do:
+here is what you would do:
 
 	$('#calendar').fullCalendar({
 		buttonText: {

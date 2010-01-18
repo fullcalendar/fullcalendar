@@ -11,11 +11,11 @@ function( *view* ) { }
 The calendar's date-range changes whenever the user switches to a new view
 (for example, if they switch from "month" to "agendaWeek") or when they click the prev/next buttons.
 
-`view` is a [View Object](../views/View_Object).
+`view` is the current [View Object](../views/View_Object).
 
 Within the callback function, `this` will be set to the calendar's main element.
 
-Example:
+Example usage of viewDisplay:
 
 	$('#calendar').fullCalendar({
 		viewDisplay: function(view) {

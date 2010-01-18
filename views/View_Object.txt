@@ -1,6 +1,6 @@
 
-View Object
-===========
+View Object *1.3*
+=================
 
 An object that is passed to every callback, containing info about the current view.
 
@@ -10,13 +10,13 @@ It will be populated with the following properties:
 :	Name of one of the [Available Views]() (a string).
 
 `title`
-:	Title text that is displayed at the top of the header (such as “September 2009” or “Sep 7 - 13 2009”).
+:	Title text that is displayed at the top of the header (such as "September 2009" or "Sep 7 - 13 2009").
 
 `start`
-:	A Date object of the first day of the month/week. If day-view, the date of the single day.
+:	A Date object of the first day of the month/week. If in day-view, the date of the single day.
    
 `end`
-:	A Date object of the day after the last day of the month/week. If day-view, the Date after the single day.
+:	A Date object of the day after the last day of the month/week. If in day-view, the Date after the single day.
 
 	Because this is an exclusive value, if the calendar has a month-view on October 2009, `end` will be November 1st.
 	

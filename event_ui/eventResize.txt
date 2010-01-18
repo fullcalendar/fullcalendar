@@ -24,7 +24,7 @@ This is useful if an ajax call should fail.
 `jsEvent` holds the native javascript event with low-level information such as
 mouse coordinates.
 
-`ui` holds the [jQuery UI object](http://jqueryui.com/demos/draggable/).
+`ui` holds the [jQuery UI object](http://jqueryui.com/demos/resizable/).
 
 `view` holds the current [View Object](../views/View_Object).
 
@@ -38,11 +38,8 @@ Here is an example demonstrating most of these arguments:
 		eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
 			
 			alert(
-				"The end date of " + event.title +
-				"has been moved " +
-				(dayDelta < 0 ? "back" : "forward") +
+				"The end date of " + event.title + "has been moved " +
 				dayDelta + " days and " +
-				(minuteDelta < 0 ? "back : "forward") +
 				minuteDelta + " minutes."
 			);
 			
