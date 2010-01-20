@@ -127,7 +127,8 @@ function Grid(element, options, methods) {
 		segmentContainer,
 		dayContentElements=[],
 		dayContentLefts=[],
-		dayContentRights=[], // ...
+		dayContentRights=[],
+		// ...
 		
 	// initialize superclass
 	view = $.extend(this, viewMethods, methods, {

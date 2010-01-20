@@ -79,11 +79,18 @@ function Agenda(element, options, methods) {
 		colCnt,
 		axisWidth, colWidth, slotHeight,
 		viewWidth, viewHeight,
-		cachedDaySegs=[], cachedSlotSegs=[],
+		cachedEvents=[],
+		daySegmentContainer,
+		daySegments=[],
+		slotSegmentContainer,
+		slotSegments=[],
 		tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
 		minMinute, maxMinute,
+		dayContentElements=[],
+		dayContentLefts=[],
+		dayContentRights=[],
 		// ...
 		
 	view = $.extend(this, viewMethods, methods, {
@@ -170,6 +177,9 @@ function Agenda(element, options, methods) {
 			head = $(s).appendTo(element);
 			head.find('td').click(slotClick);
 			
+			// all-day event container
+			daySegmentContainer = $("<div/>").appendTo(head);
+			
 			// body
 			d = zeroDate();
 			var maxd = addMinutes(cloneDate(d), maxMinute);
@@ -191,6 +201,9 @@ function Agenda(element, options, methods) {
 					.append(bodyTable = $(s)))
 				.appendTo(element);
 			body.find('td').click(slotClick);
+			
+			// slot event container
+			slotSegmentContainer = $("<div/>").appendTo(bodyContent);
 			
 			// background stripes
 			d = cloneDate(d0);
@@ -274,6 +287,8 @@ function Agenda(element, options, methods) {
 	function updateSize(width, height) {
 		viewWidth = width;
 		viewHeight = height;
+		dayContentLefts = [];
+		dayContentRights = [];
 		
 		bodyTable.width('');
 		body.height(height - head.height());
@@ -338,8 +353,6 @@ function Agenda(element, options, methods) {
 	/* Event Rendering
 	-----------------------------------------------------------------------------*/
 	
-	var cachedEvents;
-	
 	function renderEvents(events) {
 		view.reportEvents(cachedEvents = events);
 		var i, len=events.length,
@@ -352,8 +365,8 @@ function Agenda(element, options, methods) {
 				slotEvents.push(events[i]);
 			}
 		}
-		renderDaySegs(cachedDaySegs = stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
-		renderSlotSegs(cachedSlotSegs = compileSlotSegs(slotEvents));
+		renderDaySegs(daySegments = stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
+		renderSlotSegs(slotSegments = compileSlotSegs(slotEvents));
 	}
 	
 	
@@ -388,9 +401,159 @@ function Agenda(element, options, methods) {
 	
 	
 	
+	
+	
+	/* cell/cell-content positioning calculating/caching
+	-----------------------------------------------------------------------------*/
+	
+	// DERIVED FROM grid.js
+	
+	function dayContentElement(dayOfWeek) {
+		if (dayContentElements[dayOfWeek] == undefined) {
+			dayContentElements[dayOfWeek] = bg.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
+		}
+		return dayContentElements[dayOfWeek];
+	}
+	
+	
+	function dayContentLeft(dayOfWeek) {
+		if (dayContentLefts[dayOfWeek] == undefined) {
+			dayContentLefts[dayOfWeek] = dayContentElement(dayOfWeek).position().left + axisWidth;
+		}
+		return dayContentLefts[dayOfWeek];
+	}
+	
+	
+	function dayContentRight(dayOfWeek) {
+		if (dayContentRights[dayOfWeek] == undefined) {
+			dayContentRights[dayOfWeek] = dayContentLeft(dayOfWeek) + dayContentElement(dayOfWeek).width();
+		}
+		return dayContentRights[dayOfWeek];
+	}
+	
+	
+	
+	
+	
 	// renders 'all-day' events at the top
 	
 	function renderDaySegs(segRow) {
+		if (options.allDaySlot) {
+			var html='',
+				td = head.find('td'),
+				tdInner = td.find('div div'),
+				tr = td.parent(),
+				top = safePosition(tdInner, td, tr, tr.parent()).top,
+				rowContentHeight = 0,
+				i, len=segRow.length, level,
+				levelHeight,
+				j, seg,
+				event,
+				className,
+				left, right,
+				triggerRes,
+				l=0,
+				_eventElements,
+				eventLefts=[], eventRights=[],
+				eventHSides=[],
+				eventOuterHeights=[];
+			for (i=0; i<len; i++) {
+				level = segRow[i];
+				for (j=0; j<level.length; j++) {
+					seg = level[j];
+					event = seg.event;
+					className = 'fc-event fc-event-hori ';
+					if (rtl) {
+						if (seg.isStart) {
+							className += 'fc-corner-right ';
+						}
+						if (seg.isEnd) {
+							className += 'fc-corner-left ';
+						}
+						left = seg.isEnd ? 0 : dayContentLeft(seg.end.getDay()-1);
+						right = seg.isStart ? viewWidth : dayContentRight(seg.start.getDay());
+					}else{
+						if (seg.isStart) {
+							className += 'fc-corner-left ';
+						}
+						if (seg.isEnd) {
+							className += 'fc-corner-right ';
+						}
+						left = seg.isStart ? dayContentLeft(seg.start.getDay()) : 0;
+						right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : viewWidth;
+					}
+					eventLefts[l] = left;
+					eventRights[l] = right;
+					html +=
+						"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
+							"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+								(!event.allDay && seg.isStart ?
+									"<span class='fc-event-time'>" +
+										htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'), options)) +
+									"</span>"
+								:'') +
+								"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+							"</a>" +
+						"</div>";
+					l++;
+				}
+			}
+			daySegmentContainer.html(html);
+			_eventElements = daySegmentContainer[0].childNodes;
+			l = 0;
+			for (i=0; i<len; i++) {
+				level = segRow[i];
+				for (j=0; j<level.length; j++) {
+					seg = level[j];
+					event = seg.event;
+					eventElement = $(_eventElements[l]);
+					triggerRes = view.trigger('eventRender', event, event, eventElement);
+					if (triggerRes !== false) {
+						if (triggerRes && typeof triggerRes != 'boolean') {
+							eventElement = $(triggerRes).appendTo(segmentContainer);
+						}
+						eventOuterHeights[l] = eventElement.outerHeight(true);
+						eventHSides[l] = hsides(eventElement, true);
+						seg.element = eventElement;
+						//bootstrapEventHandlers(event, seg, eventElement);
+						view.reportEventElement(event, eventElement);
+					}
+					l++;
+				}
+			}
+			l = 0;
+			for (i=0; i<len; i++) {
+				level = segRow[i];
+				levelHeight = 0;
+				for (j=0; j<level.length; j++) {
+					seg = level[j];
+					if (eventElement = seg.element) {
+						eventElement.css('top', top);
+						if (rtl && rtlLeftDiff == undefined) {
+							// bug in IE6 where offsets are miscalculated with direction:rtl
+							rtlLeftDiff = eventLefts[l] - eventElement.position().left;
+							if (rtlLeftDiff) {
+								eventElement.css('left', eventLefts[l] + rtlLeftDiff);
+							}
+						}
+						eventElement.width(eventRights[l] - eventLefts[l] - eventHSides[l]);
+						view.trigger('eventAfterRender', event, event, eventElement);
+						levelHeight = Math.max(levelHeight, eventOuterHeights[l]);
+					}
+					l++;
+				}
+				rowContentHeight += levelHeight;
+				top += levelHeight;
+			}
+			tdInner.height(rowContentHeight);
+			updateSize(viewWidth, viewHeight); // tdInner might have pushed the body down, so resize
+		}
+	}
+	
+	
+	/*
+	// the original function
+	function renderDaySegs2(segRow) {
 		if (options.allDaySlot) {
 			var td = head.find('td'),
 				tdInner = td.find('div div'),
@@ -478,12 +641,70 @@ function Agenda(element, options, methods) {
 			updateSize(viewWidth, viewHeight); // tdInner might have pushed the body down, so resize
 		}
 	}
+	*/
 	
 	
 	
 	// renders events in the 'time slots' at the bottom
 	
 	function renderSlotSegs(segCols) {
+		renderSlotSegs2(segCols);
+		/*
+		var html='',
+			colI, colLen=segCols.length, col,
+			levelI, level,
+			segI, seg,
+			forward,
+			event,
+			top, bottom,
+			tdInner,
+			width, left,
+			eventElement,
+			className,
+			l=0,
+			eventLefts=[],
+			eventOuterWidths=[],
+			triggerRes;
+		for (colI=0; colI<colLen; colI++) {
+			col = segCols[colI];
+			for (levelI=0; levelI<col.length; levelI++) {
+				level = col[levelI];
+				for (segI=0; segI<level.length; segI++) {
+					seg = level[segI];
+					forward = seg.forward || 0;
+					event = seg.event;
+					top = timePosition(seg.start, seg.start);
+					bottom = timePosition(seg.start, seg.end);
+					tdInner = bg.find('td:eq(' + (colI*dis + dit) + ') div div');
+					availWidth = tdInner.width();
+					availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
+					if (levelI) {
+						// indented and thin
+						width = availWidth / (levelI + forward + 1);
+					}else{
+						if (forward) {
+							// moderately wide, aligned left still
+							width = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+						}else{
+							// can be entire width, aligned left
+							width = availWidth;
+						}
+					}
+					left = axisWidth + tdInner.position().left +       // leftmost possible
+						(availWidth / (levelI + forward + 1) * levelI) // indentation
+						* dis + (rtl ? availWidth - width : 0);        // rtl
+					eventLefts[l] = left;
+					eventOuterWidths[l] = width;
+				}
+			}
+		}
+		*/
+	}
+	
+	
+	
+	// the original function
+	function renderSlotSegs2(segCols) {
 		var colI, colLen=segCols.length, col,
 			levelI, level,
 			segI, seg,
@@ -573,6 +794,9 @@ function Agenda(element, options, methods) {
 			}
 		}
 	}
+	
+	
+	
 	
 	
 	function visEventEnd(event) { // returns exclusive 'visible' end, for rendering
