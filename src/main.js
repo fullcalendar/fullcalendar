@@ -216,7 +216,7 @@ $.fn.fullCalendar = function(options) {
 				if (!contentHeight) {
 					contentHeight = calculateContentHeight();
 				}
-				if (inc || !view.date || +view.date != +date) { // !view.date means it hasn't been rendered yet
+				if (inc || !view.date || date < view.visStart || date > view.visEnd ) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
 					view.render(date, inc || 0, contentHeight, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
@@ -480,9 +480,7 @@ $.fn.fullCalendar = function(options) {
 						date.setDate(dateNum);
 					}
 				}
-				if(date < view.visStart || date > view.visEnd ){
-					render();
-				}
+				render();
 			},
 			
 			incrementDate: function(years, months, days) {
