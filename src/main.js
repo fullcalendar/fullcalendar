@@ -365,7 +365,7 @@ $.fn.fullCalendar = function(options) {
 					url: src,
 					dataType: 'json',
 					data: params,
-					cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
+					cache: options.cacheEvents || options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
 					success: reportEventsAndPop
 				});
 			}
