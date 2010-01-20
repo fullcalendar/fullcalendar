@@ -480,7 +480,9 @@ $.fn.fullCalendar = function(options) {
 						date.setDate(dateNum);
 					}
 				}
-				render();
+				if(date < view.visStart || date > view.visEnd ){
+					render();
+				}
 			},
 			
 			incrementDate: function(years, months, days) {
