@@ -4,7 +4,8 @@
 
 var DAY_MS = 86400000,
 	HOUR_MS = 3600000,
-	MINUTE_MS = 60000;
+	MINUTE_MS = 60000,
+	arrayPop = Array.prototype.pop; // for eachLeaf
 
 function addYears(d, n, keepTime) {
 	d.setFullYear(d.getFullYear() + n);
@@ -296,7 +297,7 @@ var dateFormatters = {
 /* Element Dimensions
 -----------------------------------------------------------------------------*/
 
-function setOuterWidth(element, width, includeMargins) { // TODO: probably eventually remove this
+function setOuterWidth(element, width, includeMargins) {
 	element.each(function() {
 		var e = $(this);
 		e.width(width - hsides(e, includeMargins));
@@ -313,7 +314,7 @@ function hsides(e, includeMargins) {
 			: 0);
 }
 
-function setOuterHeight(element, height, includeMargins) { // TODO: probably eventually remove this
+function setOuterHeight(element, height, includeMargins) {
 	element.each(function() {
 		var e = $(this);
 		e.height(height - vsides(e, includeMargins));
@@ -335,22 +336,22 @@ function vsides(e, includeMargins) {
 /* Position Calculation
 -----------------------------------------------------------------------------*/
 // nasty bugs in opera 9.25
-// position() returning relative to direct parent
+// position()'s top returning incorrectly with TR/TD or elements within TD
 
-var operaPositionBug;
+var topBug;
 
-function reportTBody(tbody) {
-	if (operaPositionBug == undefined) {
-		operaPositionBug = tbody.position().top != tbody.find('tr').position().top;
+function topCorrect(tr, td) {
+	if (topBug !== false && tr.is('tr')) {
+		var tbody = tr.parent(),
+			trTop = tr.position().top;
+		if (topBug == undefined) {
+			topBug = trTop != tr.children().position().top;
+		}
+		if (topBug) {
+			return tbody.position().top + trTop - (td ? td.position().top : 0);
+		}
 	}
-}
-
-function safePosition(element, td, tr, tbody) {
-	var position = element.position();
-	if (operaPositionBug) {
-		position.top += tbody.position().top + tr.position().top - td.position().top;
-	}
-	return position;
+	return 0;
 }
 
 
@@ -360,24 +361,23 @@ function safePosition(element, td, tr, tbody) {
 
 function HoverMatrix(changeCallback) {
 
-	var tops=[], lefts=[],
+	var t=this,
+		tops=[], lefts=[],
 		prevRowE, prevColE,
 		origRow, origCol,
 		currRow, currCol;
 	
-	this.row = function(e, topBug) {
+	t.row = function(e) {
 		prevRowE = $(e);
-		tops.push(prevRowE.offset().top + (
-			(operaPositionBug && prevRowE.is('tr')) ? prevRowE.parent().position().top : 0
-		));
+		tops.push(prevRowE.offset().top + topCorrect(prevRowE));
 	};
 	
-	this.col = function(e) {
+	t.col = function(e) {
 		prevColE = $(e);
 		lefts.push(prevColE.offset().left);
 	};
 
-	this.mouse = function(x, y) {
+	t.mouse = function(x, y) {
 		if (origRow == undefined) {
 			tops.push(tops[tops.length-1] + prevRowE.outerHeight());
 			lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
@@ -392,13 +392,13 @@ function HoverMatrix(changeCallback) {
 			currRow = r;
 			currCol = c;
 			if (r == -1 || c == -1) {
-				this.cell = null;
+				t.cell = null;
 			}else{
 				if (origRow == undefined) {
 					origRow = r;
 					origCol = c;
 				}
-				this.cell = {
+				t.cell = {
 					row: r,
 					col: c,
 					top: tops[r],
@@ -410,7 +410,7 @@ function HoverMatrix(changeCallback) {
 					colDelta: c-origCol
 				};
 			}
-			changeCallback(this.cell);
+			changeCallback(t.cell);
 		}
 	};
 
@@ -451,5 +451,51 @@ function htmlEscape(s) {
 		.replace(/'/g, '&#039;')
 		.replace(/"/g, '&quot;')
 }
+
+function eachLeaf(node, callback, leafIndex, indexTrail) {
+	if (node.pop == arrayPop) { // is an array?
+		for (var i=0, len=node.length; i<len; i++) {
+			leafIndex = eachLeaf(node[i], callback, leafIndex||0, [i].concat(indexTrail||[]));
+		}
+		return leafIndex;
+	}
+	callback.apply(node, [leafIndex, node].concat(indexTrail));
+	return leafIndex + 1;
+}
+
+
+
+
+function HorizontalPositionCache(getElement) {
+
+	var t = this,
+		elements = {},
+		lefts = {},
+		rights = {};
+		
+	function e(i) {
+		return elements[i] =
+			elements[i] || getElement(i);
+	}
+	
+	t.left = function(i) {
+		return lefts[i] =
+			lefts[i] == undefined ? e(i).position().left : lefts[i];
+	};
+	
+	t.right = function(i) {
+		return rights[i] =
+			rights[i] == undefined ? t.left(i) + e(i).width() : rights[i];
+	};
+	
+	t.clear = function() {
+		elements = {};
+		lefts = {};
+		rights = {};
+	};
+	
+}
+
+
 
 

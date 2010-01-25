@@ -110,7 +110,7 @@ views.basicDay = function(element, options) {
 
 // rendering bugs
 
-var tdHeightBug, rtlLeftDiff;
+var tdHeightBug;
 
 
 function Grid(element, options, methods) {
@@ -125,9 +125,9 @@ function Grid(element, options, methods) {
 		cachedEvents=[],
 		segments=[],
 		segmentContainer,
-		dayContentElements=[],
-		dayContentLefts=[],
-		dayContentRights=[],
+		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
+			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div')
+		}),
 		// ...
 		
 	// initialize superclass
@@ -135,6 +135,7 @@ function Grid(element, options, methods) {
 		renderGrid: renderGrid,
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
+		clearEvents: clearEvents,
 		updateSize: updateSize,
 		defaultEventEnd: function(event) { // calculates an end if event doesnt have one, mostly for resizing
 			return cloneDate(event.start);
@@ -322,8 +323,7 @@ function Grid(element, options, methods) {
 	function updateSize(width, height) { // does not render/position the events
 		viewWidth = width;
 		viewHeight = height;
-		dayContentLefts = [];
-		dayContentRights = [];
+		dayContentPositions.clear();
 		
 		var leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = viewHeight - thead.height(),
@@ -335,8 +335,6 @@ function Grid(element, options, methods) {
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-		
-		reportTBody(tbody);
 		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
@@ -359,36 +357,6 @@ function Grid(element, options, methods) {
 			colWidth = Math.floor(viewWidth / colCnt)
 		);
 		
-	}
-
-
-
-	/* cell/cell-content positioning calculating/caching
-	-----------------------------------------------------------------------------*/
-	
-	
-	
-	function dayContentElement(dayOfWeek) {
-		if (dayContentElements[dayOfWeek] == undefined) {
-			dayContentElements[dayOfWeek] = tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
-		}
-		return dayContentElements[dayOfWeek];
-	}
-	
-	
-	function dayContentLeft(dayOfWeek) {
-		if (dayContentLefts[dayOfWeek] == undefined) {
-			dayContentLefts[dayOfWeek] = dayContentElement(dayOfWeek).position().left;
-		}
-		return dayContentLefts[dayOfWeek];
-	}
-	
-	
-	function dayContentRight(dayOfWeek) {
-		if (dayContentRights[dayOfWeek] == undefined) {
-			dayContentRights[dayOfWeek] = dayContentLeft(dayOfWeek) + dayContentElement(dayOfWeek).width();
-		}
-		return dayContentRights[dayOfWeek];
 	}
 
 	
@@ -430,233 +398,21 @@ function Grid(element, options, methods) {
 	
 	
 	
-	function renderSegs(segRows) {
-		//renderSegs2(segRows);
-		//return;
-		var html='',
-			i, len = segRows.length, levels,
-			tr, td,
-			innerDiv,
-			top,
-			rowContentHeight,
-			j, segs,
-			levelHeight,
-			k, seg,
-			event,
-			className,
-			left, right,
-			eventElement,
-			triggerRes,
-			l=0,
-			_eventElements,
-			eventLefts=[], eventRights=[],
-			eventHSides=[],
-			eventOuterHeights=[];
-		for (i=0; i<len; i++) {
-			levels = segRows[i];
-			for (j=0; j<levels.length; j++) {
-				segs = levels[j];
-				for (k=0; k<segs.length; k++) {
-					seg = segs[k];
-					event = seg.event;
-					className = 'fc-event fc-event-hori ';
-					if (rtl) {
-						if (seg.isStart) {
-							className += 'fc-corner-right ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-left ';
-						}
-						left = seg.isEnd ? 0 : dayContentLeft(seg.end.getDay()-1);
-						right = seg.isStart ? viewWidth : dayContentRight(seg.start.getDay());
-					}else{
-						if (seg.isStart) {
-							className += 'fc-corner-left ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-right ';
-						}
-						left = seg.isStart ? dayContentLeft(seg.start.getDay()) : 0;
-						right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : viewWidth;
-					}
-					eventLefts[l] = left;
-					eventRights[l] = right;
-					html +=
-						"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
-							"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
-								(!event.allDay && seg.isStart ?
-									"<span class='fc-event-time'>" +
-										htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'), options)) +
-									"</span>"
-								:'') +
-								"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
-							"</a>" +
-						"</div>";
-					l++;
-				}
-			}
-		}
-		segmentContainer.html(html);
-		_eventElements = segmentContainer[0].childNodes;
-		l = 0;
-		for (i=0; i<len; i++) {
-			levels = segRows[i];
-			for (j=0; j<levels.length; j++) {
-				segs = levels[j];
-				for (k=0; k<segs.length; k++) {
-					seg = segs[k];
-					event = seg.event;
-					eventElement = $(_eventElements[l]);
-					triggerRes = view.trigger('eventRender', event, event, eventElement);
-					if (triggerRes !== false) {
-						if (triggerRes && typeof triggerRes != 'boolean') {
-							eventElement = $(triggerRes).appendTo(segmentContainer);
-						}
-						eventOuterHeights[l] = eventElement.outerHeight(true);
-						eventHSides[l] = hsides(eventElement, true);
-						seg.element = eventElement;
-						bootstrapEventHandlers(event, seg, eventElement);
-						view.reportEventElement(event, eventElement);
-					}
-					l++;
-				}
-			}
-		}
-		l = 0;
-		for (i=0; i<len; i++) {
-			levels = segRows[i];
-			tr = tbody.find('tr:eq('+i+')');
-			td = tr.find('td:first');
-			innerDiv = td.find('div.fc-day-content div').css('position', 'relative');
-			top = safePosition(innerDiv, td, tr, tbody).top;
-			rowContentHeight = 0;
-			for (j=0; j<levels.length; j++) {
-				segs = levels[j];
-				levelHeight = 0;
-				for (k=0; k<segs.length; k++) {
-					seg = segs[k];
-					if (eventElement = seg.element) {
-						eventElement.css('top', top);
-						if (rtl && rtlLeftDiff == undefined) {
-							// bug in IE6 where offsets are miscalculated with direction:rtl
-							rtlLeftDiff = eventLefts[l] - eventElement.position().left;
-							if (rtlLeftDiff) {
-								eventElement.css('left', eventLefts[l] + rtlLeftDiff);
-							}
-						}
-						eventElement.width(eventRights[l] - eventLefts[l] - eventHSides[l]);
-						view.trigger('eventAfterRender', event, event, eventElement);
-						levelHeight = Math.max(levelHeight, eventOuterHeights[l]);
-					}
-					l++;
-				}
-				rowContentHeight += levelHeight;
-				top += levelHeight;
-			}
-			innerDiv.height(rowContentHeight);
-		}
+	function renderSegs(segCols) {
+		_renderDaySegs(
+			segCols,
+			view,
+			0,
+			viewWidth,
+			function(i) {
+				return tbody.find('tr:eq('+i+')');
+			},
+			dayContentPositions.left,
+			dayContentPositions.right,
+			segmentContainer,
+			bootstrapEventHandlers
+		);
 	}
-	
-	
-	/*
-	// the original function
-	function renderSegs2(segRows) {
-		var i, len = segRows.length, levels,
-			tr, td,
-			innerDiv,
-			top,
-			rowContentHeight,
-			j, segs,
-			levelHeight,
-			k, seg,
-			event,
-			className,
-			left, right,
-			eventElement, eventAnchor,
-			triggerRes;
-		for (i=0; i<len; i++) {
-			levels = segRows[i];
-			tr = tbody.find('tr:eq('+i+')');
-			td = tr.find('td:first');
-			innerDiv = td.find('div.fc-day-content div').css('position', 'relative');
-			top = safePosition(innerDiv, td, tr, tbody).top;
-			rowContentHeight = 0;
-			for (j=0; j<levels.length; j++) {
-				segs = levels[j];
-				levelHeight = 0;
-				for (k=0; k<segs.length; k++) {
-					seg = segs[k];
-					event = seg.event;
-					className = 'fc-event fc-event-hori ';
-					if (rtl) {
-						left = seg.isEnd ? 0 : dayContentLeft(seg.end.getDay()-1);
-						right = seg.isStart ? viewWidth : dayContentRight(seg.start.getDay());
-						if (seg.isStart) {
-							className += 'fc-corner-right ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-left ';
-						}
-					}else{
-						left = seg.isStart ? dayContentLeft(seg.start.getDay()) : 0;
-						right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : viewWidth;
-						if (seg.isStart) {
-							className += 'fc-corner-left ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-right ';
-						}
-					}
-					eventElement = $("<div class='" + className + event.className.join(' ') + "'/>")
-						.append(eventAnchor = $("<a/>")
-							.append(event.allDay || !seg.isStart ? null :
-								$("<span class='fc-event-time'/>")
-									.html(formatDates(event.start, event.end, view.option('timeFormat'), options)))
-							.append($("<span class='fc-event-title'/>")
-								.text(event.title)));
-					if (event.url) {
-						eventAnchor.attr('href', event.url);
-					}
-					triggerRes = view.trigger('eventRender', event, event, eventElement);
-					if (triggerRes !== false) {
-						if (triggerRes && typeof triggerRes != 'boolean') {
-							eventElement = $(triggerRes);
-						}
-						eventElement
-							.css({
-								position: 'absolute',
-								top: top,
-								left: left + (rtlLeftDiff||0),
-								zIndex: 8
-							})
-							.appendTo(element);
-						setOuterWidth(eventElement, right-left, true);
-						if (rtl && rtlLeftDiff == undefined) {
-							// bug in IE6 where offsets are miscalculated with direction:rtl
-							rtlLeftDiff = left - eventElement.position().left;
-							if (rtlLeftDiff) {
-								eventElement.css('left', left + rtlLeftDiff);
-							}
-						}
-						view.eventElementHandlers(event, eventElement);
-						if (event.editable || event.editable == undefined && options.editable) {
-							draggableEvent(event, eventElement);
-							if (seg.isEnd) {
-								view.resizableDayEvent(event, eventElement, colWidth);
-							}
-						}
-						view.reportEventElement(event, eventElement);
-						view.trigger('eventAfterRender', event, event, eventElement);
-						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
-					}
-				}
-				rowContentHeight += levelHeight;
-				top += levelHeight;
-			}
-			innerDiv.height(rowContentHeight);
-		}
-	}
-	*/
 	
 	
 	
@@ -683,7 +439,7 @@ function Grid(element, options, methods) {
 					}
 				}
 				attached = true;
-				view.trigger('eventMouseover', this, event, ev);
+				view.trigger('eventMouseover', this, event, ev); // TODO: make sure this isn't being fired twice
 			}
 		});
 	}
@@ -750,4 +506,132 @@ function Grid(element, options, methods) {
 	// event resizing w/ 'view' methods...
 
 };
+
+
+function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, dayContentRight, segmentContainer, bootstrapEventHandlers) {
+
+	var options=view.options,
+		rtl=options.isRTL,
+		event,
+		className,
+		left,
+		right,
+		eventLefts=[],
+		eventRights=[],
+		html='',
+		eventElements,
+		eventElement,
+		triggerRes,
+		eventOuterHeights=[],
+		eventHSides=[],
+		l=0,
+		i=0, len=segRows.length, levels,
+		tr,
+		td,
+		innerDiv,
+		top,
+		rowContentHeight,
+		j, segs,
+		k, seg;
+		
+	// calculate desired position/dimensions, create html
+	eachLeaf(segRows, function(l, seg) {
+		event = seg.event;
+		className = 'fc-event fc-event-hori ';
+		if (rtl) {
+			if (seg.isStart) {
+				className += 'fc-corner-right ';
+			}
+			if (seg.isEnd) {
+				className += 'fc-corner-left ';
+			}
+			left = seg.isEnd ? dayContentLeft(seg.end.getDay()-1) : minLeft;
+			right = seg.isStart ? dayContentRight(seg.start.getDay()) : maxLeft;
+		}else{
+			if (seg.isStart) {
+				className += 'fc-corner-left ';
+			}
+			if (seg.isEnd) {
+				className += 'fc-corner-right ';
+			}
+			left = seg.isStart ? dayContentLeft(seg.start.getDay()) : minLeft;
+			right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : maxLeft;
+		}
+		eventLefts[l] = left;
+		eventRights[l] = right;
+		html +=
+			"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
+				"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+					(!event.allDay && seg.isStart ?
+						"<span class='fc-event-time'>" +
+							htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'), options)) +
+						"</span>"
+					:'') +
+					"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+				"</a>" +
+			"</div>";
+	});			
+	segmentContainer.html(html);
+	eventElements = segmentContainer.children();
+	
+	// retrieve elements, run through eventRender callback, record outer-edge dimensions
+	eachLeaf(segRows, function(l, seg) {
+		event = seg.event;
+		eventElement = eventElements.eq(l);
+		triggerRes = view.trigger('eventRender', event, event, eventElement);
+		if (triggerRes === false) {
+			eventElement.remove();
+		}else{
+			if (triggerRes && triggerRes !== true) {
+				eventElement.remove();
+				eventElement = $(triggerRes)
+					.css('left', eventLefts[l])
+					.appendTo(segmentContainer);
+			}
+			seg.element = eventElement;
+			eventOuterHeights[l] = eventElement.outerHeight(true);
+			eventHSides[l] = hsides(eventElement, true);
+			bootstrapEventHandlers(event, seg, eventElement);
+			view.reportEventElement(event, eventElement);
+		}
+	});
+	
+	// set all positions/dimensions at once
+	for (; i<len; i++) {
+		levels = segRows[i];
+		tr = getTr(i);
+		td = tr.find('td:first');
+		innerDiv = td.find('div.fc-day-content div')
+			.css('position', 'relative')
+			.height(''); // this is needed for IE7 to get an accurate position
+		top = innerDiv.position().top + topCorrect(tr, td);
+		rowContentHeight = 0;
+		for (j=0; j<levels.length; j++) {
+			segs = levels[j];
+			levelHeight = 0;
+			for (k=0; k<segs.length; k++) {
+				seg = segs[k];
+				if (eventElement = seg.element) {
+					eventElement.css('top', top);
+					//if (rtl && rtlLeftDiff == undefined) {
+					//	// bug in IE6 where offsets are miscalculated with direction:rtl
+					//	rtlLeftDiff = eventLefts[l] - eventElement.position().left;
+					//	if (rtlLeftDiff) {
+					//		eventElement.css('left', eventLefts[l] + rtlLeftDiff);
+					//	}
+					//}
+					eventElement.width(eventRights[l] - eventLefts[l] - eventHSides[l]);
+					event = seg.event;
+					view.trigger('eventAfterRender', event, event, eventElement);
+					levelHeight = Math.max(levelHeight, eventOuterHeights[l]);
+				}
+				l++;
+			}
+			rowContentHeight += levelHeight;
+			top += levelHeight;
+		}
+		innerDiv.height(rowContentHeight);
+	}
+	
+}
 
