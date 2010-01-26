@@ -340,15 +340,17 @@ function vsides(e, includeMargins) {
 
 var topBug;
 
-function topCorrect(tr, td) {
-	if (topBug !== false && tr.is('tr')) {
-		var tbody = tr.parent(),
-			trTop = tr.position().top;
-		if (topBug == undefined) {
-			topBug = trTop != tr.children().position().top;
+function topCorrect(tr) { // tr/th/td or anything else
+	if (topBug !== false) {
+		var cell;
+		if (tr.is('th,td')) {
+			tr = (cell = tr).parent();
+		}
+		if (topBug == undefined && tr.is('tr')) {
+			topBug = tr.position().top != tr.children().position().top;
 		}
 		if (topBug) {
-			return tbody.position().top + trTop - (td ? td.position().top : 0);
+			return tr.parent().position().top + (cell ? tr.position().top - cell.position().top : 0);
 		}
 	}
 	return 0;

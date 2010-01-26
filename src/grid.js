@@ -604,7 +604,7 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 		innerDiv = td.find('div.fc-day-content div')
 			.css('position', 'relative')
 			.height(''); // this is needed for IE7 to get an accurate position
-		top = innerDiv.position().top + topCorrect(tr, td);
+		top = innerDiv.position().top + topCorrect(td);
 		rowContentHeight = 0;
 		for (j=0; j<levels.length; j++) {
 			segs = levels[j];

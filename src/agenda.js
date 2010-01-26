@@ -371,9 +371,8 @@ function Agenda(element, options, methods) {
 	
 	
 	function clearEvents() {
-		$.each(view.eventElements, function() { // TODO: move away from this, empty a container instead
-			this.remove();
-		});
+		daySegmentContainer.empty();
+		slotSegmentContainer.empty();
 		view._clearEvents(); // only clears the hashes
 	}
 	
@@ -892,7 +891,7 @@ function Agenda(element, options, methods) {
 			td = tr.find('td'),
 			innerDiv = td.find('div');
 		return Math.max(0, Math.round(
-			innerDiv.position().top + topCorrect(tr, td) - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
+			innerDiv.position().top + topCorrect(td) - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
 		));
 	}
 	

@@ -752,7 +752,7 @@ jQuery.extend({
 			var val, props = { position: "absolute", visibility: "hidden", display:"block" }, which = name == "width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ];
 
 			function getWH() {
-				val = name == "width" ? getElmOffsetWidth2(elem) : getElmOffsetHeight(elem);
+				val = name == "width" ? elem.offsetWidth : elem.offsetHeight;
 
 				if ( extra === "border" )
 					return;
@@ -767,7 +767,7 @@ jQuery.extend({
 				});
 			}
 
-			if ( getElmOffsetWidth1(elem) !== 0 )
+			if ( elem.offsetWidth !== 0 )
 				getWH();
 			else
 				jQuery.swap( elem, props, getWH );
@@ -4374,16 +4374,3 @@ jQuery.each([ "Height", "Width" ], function(i, name){
 
 });
 })();
-
-function getElmOffsetWidth1(e) {
-	return e.offsetWidth;
-}
-
-function getElmOffsetWidth2(e) {
-	return e.offsetWidth;
-}
-
-function getElmOffsetHeight(e) {
-	return e.offsetHeight;
-}
-
