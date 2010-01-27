@@ -9,15 +9,17 @@
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar({
+			defaultView: 'agendaWeek',
 			year: 2009,
 			month: 11,
+			date: 16,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
-			events: 'many_events_json.txt'
+			events: 'many_agenda_events_json.txt'
 		});
 		
 	});

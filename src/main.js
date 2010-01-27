@@ -149,7 +149,9 @@ $.fn.fullCalendar = function(options) {
 			element = $(_element).addClass('fc'),
 			elementWidth,
 			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element), // relative for ie6
+			contentWidth,
 			contentHeight;
+			
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
 		}
@@ -214,11 +216,12 @@ $.fn.fullCalendar = function(options) {
 		function render(inc, forceUpdateSize) {
 			if ((elementWidth = _element.offsetWidth) !== 0) { // visible on the screen
 				if (!contentHeight) {
+					contentWidth = content.width();
 					contentHeight = calculateContentHeight();
 				}
 				if (inc || !view.date || date < view.visStart || date > view.visEnd ) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
-					view.render(date, inc || 0, contentHeight, function(callback) {
+					view.render(date, inc || 0, contentWidth, contentHeight, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
 						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
 							fetchEvents(callback);
@@ -230,12 +233,14 @@ $.fn.fullCalendar = function(options) {
 					view.date = cloneDate(date);
 				}
 				else if (view.sizeDirty || forceUpdateSize) {
-					view.updateSize(contentHeight);
-					view.rerenderEvents();
+					view.updateSize(contentWidth, contentHeight);
+					view.rerenderEvents(); // TODO: could probably skip recompile??
 				}
 				else if (view.eventsDirty) {
 					// ensure events are rerendered if another view messed with them
 					// pass in 'events' b/c event might have been added/removed
+					// executed on a switchView
+					// TODO: should this be inclusive with sizeDirty and forceUpdateSize??
 					view.clearEvents();
 					view.renderEvents(events);
 				}
@@ -257,7 +262,7 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		// marks other views' events as dirty
-		function eventsDirtyExcept(exceptView) {
+		function eventsDirtyExcept(exceptView) { // TODO: otherViewsEventsDirty
 			$.each(viewInstances, function() {
 				if (this != exceptView) {
 					this.eventsDirty = true;
@@ -283,16 +288,17 @@ $.fn.fullCalendar = function(options) {
 		
 		// called when we know the element size has changed
 		function sizeChanged(fix) {
+			contentWidth = content.width();
 			contentHeight = calculateContentHeight();
 			if (fix) {
 				fixContentSize();
 			}
-			view.updateSize(contentHeight);
+			view.updateSize(contentWidth, contentHeight);
 			if (fix) {
 				unfixContentSize();
 			}
 			sizesDirtyExcept(view);
-			view.rerenderEvents(true);
+			view.rerenderEvents();
 		}
 		
 		// calculate what the height of the content should be
@@ -301,9 +307,9 @@ $.fn.fullCalendar = function(options) {
 				return options.contentHeight;
 			}
 			else if (options.height) {
-				return options.height - (header ? header.height() : 0) - horizontalSides(content);
+				return options.height - (header ? header.height() : 0) - horizontalSides(content); // TODO: shouldn't this be vertical sides??
 			}
-			return elementWidth / Math.max(options.aspectRatio, .5);
+			return Math.round(contentWidth / Math.max(options.aspectRatio, .5));
 		}
 		
 		
@@ -776,7 +782,7 @@ $.fn.fullCalendar = function(options) {
 				}
 			}
 		};
-		$(window).resize(windowResize);
+		//$(window).resize(windowResize);
 		
 		
 		// let's begin...
@@ -787,7 +793,7 @@ $.fn.fullCalendar = function(options) {
 			setTimeout(function() {
 				render();
 				content.hide().show(); // needed for IE 6
-				view.rerenderEvents(); // needed for IE 7
+				view.rerenderEvents(); // needed for IE 7 // TODO: could probably skip recompile
 			}, 0);
 		}
 	

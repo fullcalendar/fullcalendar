@@ -8,7 +8,7 @@ setDefaults({
 
 views.month = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, height, fetchEvents) {
+		render: function(date, delta, width, height, fetchEvents) {
 			if (delta) {
 				addMonths(date, delta);
 				date.setDate(1);
@@ -44,7 +44,7 @@ views.month = function(element, options) {
 				rowCnt, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
 				true,
-				height,
+				width, height,
 				fetchEvents
 			);
 		}
@@ -53,7 +53,7 @@ views.month = function(element, options) {
 
 views.basicWeek = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, height, fetchEvents) {
+		render: function(date, delta, width, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -77,7 +77,7 @@ views.basicWeek = function(element, options) {
 				1, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
 				false,
-				height,
+				width, height,
 				fetchEvents
 			);
 		}
@@ -86,7 +86,7 @@ views.basicWeek = function(element, options) {
 
 views.basicDay = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, height, fetchEvents) {
+		render: function(date, delta, width, height, fetchEvents) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -96,7 +96,13 @@ views.basicDay = function(element, options) {
 			this.title = formatDate(date, this.option('titleFormat'), options);
 			this.start = this.visStart = cloneDate(date, true);
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
-			this.renderGrid(1, 1, this.option('columnFormat'), false, height, fetchEvents);
+			this.renderGrid(
+				1, 1,
+				this.option('columnFormat'),
+				false,
+				width, height,
+				fetchEvents
+			);
 		}
 	});
 }
@@ -104,7 +110,7 @@ views.basicDay = function(element, options) {
 
 // rendering bugs
 
-var tdHeightBug, rtlLeftDiff;
+var tdHeightBug;
 
 
 function Grid(element, options, methods) {
@@ -112,27 +118,27 @@ function Grid(element, options, methods) {
 	var tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
+		viewWidth, viewHeight,
 		rowCnt, colCnt,
 		colWidth,
 		thead, tbody,
-		cachedSegs=[], //...
+		cachedEvents=[],
+		segments=[],
+		segmentContainer,
+		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
+			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div')
+		}),
+		// ...
 		
 	// initialize superclass
 	view = $.extend(this, viewMethods, methods, {
 		renderGrid: renderGrid,
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
+		clearEvents: clearEvents,
 		updateSize: updateSize,
 		defaultEventEnd: function(event) { // calculates an end if event doesnt have one, mostly for resizing
 			return cloneDate(event.start);
-		},
-		visEventEnd: function(event) { // returns exclusive 'visible' end, for rendering
-			if (event.end) {
-				var end = cloneDate(event.end);
-				return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
-			}else{
-				return addDays(cloneDate(event.start), 1);
-			}
 		}
 	});
 	view.init(element, options);
@@ -148,7 +154,7 @@ function Grid(element, options, methods) {
 		element.disableSelection();
 	}
 
-	function renderGrid(r, c, colFormat, showNumbers, height, fetchEvents) {
+	function renderGrid(r, c, colFormat, showNumbers, width, height, fetchEvents) {
 		rowCnt = r;
 		colCnt = c;
 		
@@ -210,10 +216,12 @@ function Grid(element, options, methods) {
 			}
 			tbody = $(s + "</tbody>").appendTo(table);
 			tbody.find('td').click(dayClick);
+			
+			segmentContainer = $("<div/>").appendTo(element);
 		
 		}else{ // NOT first time, reuse as many cells as possible
 		
-			view.clearEvents();
+			clearEvents();
 		
 			var prevRowCnt = tbody.find('tr').length;
 			if (rowCnt < prevRowCnt) {
@@ -296,7 +304,7 @@ function Grid(element, options, methods) {
 		
 		}
 		
-		updateSize(height);
+		updateSize(width, height);
 		fetchEvents(renderEvents);
 	
 	};
@@ -312,10 +320,13 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function updateSize(height) {
+	function updateSize(width, height) { // does not render/position the events
+		viewWidth = width;
+		viewHeight = height;
+		dayContentPositions.clear();
 		
 		var leftTDs = tbody.find('tr td:first-child'),
-			tbodyHeight = height - thead.height(),
+			tbodyHeight = viewHeight - thead.height(),
 			rowHeight1, rowHeight2;
 		
 		if (options.weekMode == 'variable') {
@@ -324,8 +335,6 @@ function Grid(element, options, methods) {
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-		
-		reportTBody(tbody);
 		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
@@ -345,11 +354,11 @@ function Grid(element, options, methods) {
 		
 		setOuterWidth(
 			thead.find('th').slice(0, -1),
-			colWidth = Math.floor(element.width() / colCnt)
+			colWidth = Math.floor(viewWidth / colCnt)
 		);
 		
 	}
-	
+
 	
 	
 	/* Event Rendering
@@ -357,18 +366,20 @@ function Grid(element, options, methods) {
 	
 	
 	function renderEvents(events) {
-		view.reportEvents(events);
-		renderSegs(cachedSegs = compileSegs(events));
+		view.reportEvents(cachedEvents = events);
+		renderSegs(segments = compileSegs(events));
 	}
 	
 	
-	function rerenderEvents(skipCompile) {
-		view.clearEvents();
-		if (skipCompile) {
-			renderSegs(cachedSegs);
-		}else{
-			renderEvents(view.cachedEvents);
-		}
+	function rerenderEvents() {
+		clearEvents();
+		renderSegs(segments = compileSegs(cachedEvents));
+	}
+	
+	
+	function clearEvents() {
+		view._clearEvents(); // only clears the hashes
+		segmentContainer.empty();
 	}
 	
 	
@@ -378,7 +389,7 @@ function Grid(element, options, methods) {
 			rows = [],
 			i=0;
 		for (; i<rowCnt; i++) {
-			rows.push(stackSegs(view.sliceSegs(events, d1, d2)));
+			rows.push(stackSegs(view.sliceSegs(events, $.map(events, visEventEnd), d1, d2)));
 			addDays(d1, 7);
 			addDays(d2, 7);
 		}
@@ -386,108 +397,51 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function renderSegs(segRows) {
-		var i, len = segRows.length, levels,
-			tr, td,
-			innerDiv,
-			top,
-			rowContentHeight,
-			j, segs,
-			levelHeight,
-			k, seg,
-			event,
-			className,
-			startElm, endElm,
-			left, right,
-			eventElement, eventAnchor,
-			triggerRes;
-		for (i=0; i<len; i++) {
-			levels = segRows[i];
-			tr = tbody.find('tr:eq('+i+')');
-			td = tr.find('td:first');
-			innerDiv = td.find('div.fc-day-content div').css('position', 'relative');
-			top = safePosition(innerDiv, td, tr, tbody).top;
-			rowContentHeight = 0;
-			for (j=0; j<levels.length; j++) {
-				segs = levels[j];
-				levelHeight = 0;
-				for (k=0; k<segs.length; k++) {
-					seg = segs[k];
-					event = seg.event;
-					className = 'fc-event fc-event-hori ';
-					startElm = seg.isStart ?
-						tr.find('td:eq('+((seg.start.getDay()-Math.max(firstDay,nwe)+colCnt)%colCnt)+') div div') :
-						tbody;
-					endElm = seg.isEnd ?
-						tr.find('td:eq('+((seg.end.getDay()-Math.max(firstDay,nwe)+colCnt-1)%colCnt)+') div div') :
-						tbody;
-					if (rtl) {
-						left = endElm.position().left;
-						right = startElm.position().left + startElm.width();
-						if (seg.isStart) {
-							className += 'fc-corner-right ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-left ';
-						}
-					}else{
-						left = startElm.position().left;
-						right = endElm.position().left + endElm.width();
-						if (seg.isStart) {
-							className += 'fc-corner-left ';
-						}
-						if (seg.isEnd) {
-							className += 'fc-corner-right ';
-						}
-					}
-					eventElement = $("<div class='" + className + event.className.join(' ') + "'/>")
-						.append(eventAnchor = $("<a/>")
-							.append(event.allDay || !seg.isStart ? null :
-								$("<span class='fc-event-time'/>")
-									.html(formatDates(event.start, event.end, view.option('timeFormat'), options)))
-							.append($("<span class='fc-event-title'/>")
-								.text(event.title)));
-					if (event.url) {
-						eventAnchor.attr('href', event.url);
-					}
-					triggerRes = view.trigger('eventRender', event, event, eventElement);
-					if (triggerRes !== false) {
-						if (triggerRes && typeof triggerRes != 'boolean') {
-							eventElement = $(triggerRes);
-						}
-						eventElement
-							.css({
-								position: 'absolute',
-								top: top,
-								left: left + (rtlLeftDiff||0),
-								zIndex: 8
-							})
-							.appendTo(element);
-						setOuterWidth(eventElement, right-left, true);
-						if (rtl && rtlLeftDiff == undefined) {
-							// bug in IE6 where offsets are miscalculated with direction:rtl
-							rtlLeftDiff = left - eventElement.position().left;
-							if (rtlLeftDiff) {
-								eventElement.css('left', left + rtlLeftDiff);
-							}
-						}
-						view.eventElementHandlers(event, eventElement);
-						if (event.editable || event.editable == undefined && options.editable) {
-							draggableEvent(event, eventElement);
-							if (seg.isEnd) {
-								view.resizableDayEvent(event, eventElement, colWidth);
-							}
-						}
-						view.reportEventElement(event, eventElement);
-						view.trigger('eventAfterRender', event, event, eventElement);
-						levelHeight = Math.max(levelHeight, eventElement.outerHeight(true));
+	
+	function renderSegs(segCols) {
+		_renderDaySegs(
+			segCols,
+			view,
+			0,
+			viewWidth,
+			function(i) {
+				return tbody.find('tr:eq('+i+')');
+			},
+			dayContentPositions.left,
+			dayContentPositions.right,
+			segmentContainer,
+			bootstrapEventHandlers
+		);
+	}
+	
+	
+	
+	function visEventEnd(event) { // returns exclusive 'visible' end, for rendering
+		if (event.end) {
+			var end = cloneDate(event.end);
+			return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
+		}else{
+			return addDays(cloneDate(event.start), 1);
+		}
+	}
+	
+	
+	
+	function bootstrapEventHandlers(event, seg, eventElement) {
+		var attached = false;
+		eventElement.mouseover(function(ev) {
+			if (!attached) {
+				view.eventElementHandlers(event, eventElement);
+				if (event.editable || event.editable == undefined && options.editable) {
+					draggableEvent(event, eventElement);
+					if (seg.isEnd) {
+						view.resizableDayEvent(event, eventElement, colWidth);
 					}
 				}
-				rowContentHeight += levelHeight;
-				top += levelHeight;
+				attached = true;
+				view.trigger('eventMouseover', this, event, ev); // TODO: make sure this isn't being fired twice
 			}
-			innerDiv.height(rowContentHeight);
-		}
+		});
 	}
 	
 	
@@ -552,4 +506,132 @@ function Grid(element, options, methods) {
 	// event resizing w/ 'view' methods...
 
 };
+
+
+function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, dayContentRight, segmentContainer, bootstrapEventHandlers) {
+
+	var options=view.options,
+		rtl=options.isRTL,
+		event,
+		className,
+		left,
+		right,
+		eventLefts=[],
+		eventRights=[],
+		html='',
+		eventElements,
+		eventElement,
+		triggerRes,
+		eventOuterHeights=[],
+		eventHSides=[],
+		l=0,
+		i=0, len=segRows.length, levels,
+		tr,
+		td,
+		innerDiv,
+		top,
+		rowContentHeight,
+		j, segs,
+		k, seg;
+		
+	// calculate desired position/dimensions, create html
+	eachLeaf(segRows, function(l, seg) {
+		event = seg.event;
+		className = 'fc-event fc-event-hori ';
+		if (rtl) {
+			if (seg.isStart) {
+				className += 'fc-corner-right ';
+			}
+			if (seg.isEnd) {
+				className += 'fc-corner-left ';
+			}
+			left = seg.isEnd ? dayContentLeft(seg.end.getDay()-1) : minLeft;
+			right = seg.isStart ? dayContentRight(seg.start.getDay()) : maxLeft;
+		}else{
+			if (seg.isStart) {
+				className += 'fc-corner-left ';
+			}
+			if (seg.isEnd) {
+				className += 'fc-corner-right ';
+			}
+			left = seg.isStart ? dayContentLeft(seg.start.getDay()) : minLeft;
+			right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : maxLeft;
+		}
+		eventLefts[l] = left;
+		eventRights[l] = right;
+		html +=
+			"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
+				"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+					(!event.allDay && seg.isStart ?
+						"<span class='fc-event-time'>" +
+							htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'), options)) +
+						"</span>"
+					:'') +
+					"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+				"</a>" +
+			"</div>";
+	});			
+	segmentContainer.html(html);
+	eventElements = segmentContainer.children();
+	
+	// retrieve elements, run through eventRender callback, record outer-edge dimensions
+	eachLeaf(segRows, function(l, seg) {
+		event = seg.event;
+		eventElement = eventElements.eq(l);
+		triggerRes = view.trigger('eventRender', event, event, eventElement);
+		if (triggerRes === false) {
+			eventElement.remove();
+		}else{
+			if (triggerRes && triggerRes !== true) {
+				eventElement.remove();
+				eventElement = $(triggerRes)
+					.css('left', eventLefts[l])
+					.appendTo(segmentContainer);
+			}
+			seg.element = eventElement;
+			eventOuterHeights[l] = eventElement.outerHeight(true);
+			eventHSides[l] = hsides(eventElement, true);
+			bootstrapEventHandlers(event, seg, eventElement);
+			view.reportEventElement(event, eventElement);
+		}
+	});
+	
+	// set all positions/dimensions at once
+	for (; i<len; i++) {
+		levels = segRows[i];
+		tr = getTr(i);
+		td = tr.find('td:first');
+		innerDiv = td.find('div.fc-day-content div')
+			.css('position', 'relative')
+			.height(''); // this is needed for IE7 to get an accurate position
+		top = innerDiv.position().top + topCorrect(td);
+		rowContentHeight = 0;
+		for (j=0; j<levels.length; j++) {
+			segs = levels[j];
+			levelHeight = 0;
+			for (k=0; k<segs.length; k++) {
+				seg = segs[k];
+				if (eventElement = seg.element) {
+					eventElement.css('top', top);
+					//if (rtl && rtlLeftDiff == undefined) {
+					//	// bug in IE6 where offsets are miscalculated with direction:rtl
+					//	rtlLeftDiff = eventLefts[l] - eventElement.position().left;
+					//	if (rtlLeftDiff) {
+					//		eventElement.css('left', eventLefts[l] + rtlLeftDiff);
+					//	}
+					//}
+					eventElement.width(eventRights[l] - eventLefts[l] - eventHSides[l]);
+					event = seg.event;
+					view.trigger('eventAfterRender', event, event, eventElement);
+					levelHeight = Math.max(levelHeight, eventOuterHeights[l]);
+				}
+				l++;
+			}
+			rowContentHeight += levelHeight;
+			top += levelHeight;
+		}
+		innerDiv.height(rowContentHeight);
+	}
+	
+}
 
