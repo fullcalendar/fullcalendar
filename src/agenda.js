@@ -81,9 +81,7 @@ function Agenda(element, options, methods) {
 		viewWidth, viewHeight,
 		cachedEvents=[],
 		daySegmentContainer,
-		daySegments=[],
 		slotSegmentContainer,
-		slotSegments=[],
 		tm, firstDay,
 		nwe,            // no weekends (int)
 		rtl, dis, dit,  // day index sign / translate
@@ -359,8 +357,8 @@ function Agenda(element, options, methods) {
 				slotEvents.push(events[i]);
 			}
 		}
-		renderDaySegs(daySegments = stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
-		renderSlotSegs(slotSegments = compileSlotSegs(slotEvents));
+		renderDaySegs(stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
+		renderSlotSegs(compileSlotSegs(slotEvents));
 	}
 	
 	
@@ -371,9 +369,9 @@ function Agenda(element, options, methods) {
 	
 	
 	function clearEvents() {
+		view._clearEvents(); // only clears the hashes
 		daySegmentContainer.empty();
 		slotSegmentContainer.empty();
-		view._clearEvents(); // only clears the hashes
 	}
 	
 	
@@ -445,7 +443,7 @@ function Agenda(element, options, methods) {
 			triggerRes,
 			eventVSides=[],
 			eventHSides=[],
-			eventTitleTops=[],
+			eventTitlePositions=[],
 			height;
 			
 		// calculate desired position/dimensions, create html
@@ -510,6 +508,7 @@ function Agenda(element, options, methods) {
 					eventElement.remove();
 					eventElement = $(triggerRes)
 						.css({
+							position: 'absolute',
 							top: eventTops[l],
 							left: eventLefts[l]
 						})
@@ -518,7 +517,7 @@ function Agenda(element, options, methods) {
 				seg.element = eventElement;
 				eventVSides[l] = vsides(eventElement, true);
 				eventHSides[l] = hsides(eventElement, true);
-				eventTitleTops[l] = eventElement.find('span.fc-event-title').position().top;
+				eventTitlePositions[l] = eventElement.find('span.fc-event-title').position();
 				bootstrapSlotEventHandlers(event, seg, eventElement);
 				view.reportEventElement(event, eventElement);
 			}
@@ -531,7 +530,7 @@ function Agenda(element, options, methods) {
 					.width(eventOuterWidths[l] - eventHSides[l])
 					.height(height = eventOuterHeights[l] - eventVSides[l]);
 				event = seg.event;
-				if (height - eventTitleTops[l] < 10) {
+				if (eventTitlePositions[l] && height - eventTitlePositions[l].top < 10) {
 					// not enough room for title, put it in the time header
 					eventElement.find('span.fc-event-time')
 						.text(formatDate(event.start, view.option('timeFormat')) + ' - ' + event.title);
@@ -567,9 +566,10 @@ function Agenda(element, options, methods) {
 	
 	
 	function bootstrapDayEventHandlers(event, seg, eventElement) {
-		var attached = false;
-		eventElement.mouseover(function(ev) {
-			if (!attached) {
+		function mouseover(ev) {
+			view.trigger('eventMouseover', this, event, ev);
+			eventElement.unbind('mouseover', mouseover);
+			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
 				view.eventElementHandlers(event, eventElement);
 				if (event.editable || event.editable == undefined && options.editable) {
 					draggableDayEvent(event, eventElement, seg.isStart);
@@ -577,18 +577,18 @@ function Agenda(element, options, methods) {
 						view.resizableDayEvent(event, eventElement, colWidth);
 					}
 				}
-				attached = true;
-				view.trigger('eventMouseover', this, event, ev);
-			}
-		});
+			},0);
+		}
+		eventElement.mouseover(mouseover);
 	}
 	
 	
 	
 	function bootstrapSlotEventHandlers(event, seg, eventElement) {
-		var attached = false;
-		eventElement.mouseover(function(ev) {
-			if (!attached) {
+		function mouseover(ev) {
+			view.trigger('eventMouseover', this, event, ev);
+			eventElement.unbind('mouseover', mouseover);
+			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
 				view.eventElementHandlers(event, eventElement);
 				if (event.editable || event.editable == undefined && options.editable) {
 					var timeElement = eventElement.find('span.fc-event-time');
@@ -597,10 +597,9 @@ function Agenda(element, options, methods) {
 						resizableSlotEvent(event, eventElement, timeElement);
 					}
 				}
-				attached = true;
-				view.trigger('eventMouseover', this, event, ev);
-			}
-		});
+			},0);
+		}
+		eventElement.mouseover(mouseover);
 	}
 
 	
@@ -824,47 +823,46 @@ function Agenda(element, options, methods) {
 	function resizableSlotEvent(event, eventElement, timeElement) {
 		if (!options.disableResizing && eventElement.resizable) {
 			var slotDelta, prevSlotDelta;
-			eventElement
-				.resizable({
-					handles: {
-						s: 'div.ui-resizable-s'
-					},
-					grid: slotHeight,
-					start: function(ev, ui) {
-						slotDelta = prevSlotDelta = 0;
-						view.hideEvents(event, eventElement);
-						if ($.browser.msie && $.browser.version == '6.0') {
-							eventElement.css('overflow', 'hidden');
-						}
-						eventElement.css('z-index', 9);
-						view.trigger('eventResizeStart', this, event, ev, ui);
-					},
-					resize: function(ev, ui) {
-						// don't rely on ui.size.height, doesn't take grid into account
-						slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
-						if (slotDelta != prevSlotDelta) {
-							timeElement.text(
-								formatDates(
-									event.start,
-									(!slotDelta && !event.end) ? null : // no change, so don't display time range
-										addMinutes(view.eventEnd(event), options.slotMinutes*slotDelta),
-									view.option('timeFormat')
-								)
-							);
-							prevSlotDelta = slotDelta;
-						}
-					},
-					stop: function(ev, ui) {
-						view.trigger('eventResizeStop', this, event, ev, ui);
-						if (slotDelta) {
-							view.eventResize(this, event, 0, options.slotMinutes*slotDelta, ev, ui);
-						}else{
-							eventElement.css('z-index', 8);
-							view.showEvents(event, eventElement);
-							// BUG: if event was really short, need to put title back in span
-						}
+			eventElement.resizable({
+				handles: {
+					s: 'div.ui-resizable-s'
+				},
+				grid: slotHeight,
+				start: function(ev, ui) {
+					slotDelta = prevSlotDelta = 0;
+					view.hideEvents(event, eventElement);
+					if ($.browser.msie && $.browser.version == '6.0') {
+						eventElement.css('overflow', 'hidden');
 					}
-				});
+					eventElement.css('z-index', 9);
+					view.trigger('eventResizeStart', this, event, ev, ui);
+				},
+				resize: function(ev, ui) {
+					// don't rely on ui.size.height, doesn't take grid into account
+					slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
+					if (slotDelta != prevSlotDelta) {
+						timeElement.text(
+							formatDates(
+								event.start,
+								(!slotDelta && !event.end) ? null : // no change, so don't display time range
+									addMinutes(view.eventEnd(event), options.slotMinutes*slotDelta),
+								view.option('timeFormat')
+							)
+						);
+						prevSlotDelta = slotDelta;
+					}
+				},
+				stop: function(ev, ui) {
+					view.trigger('eventResizeStop', this, event, ev, ui);
+					if (slotDelta) {
+						view.eventResize(this, event, 0, options.slotMinutes*slotDelta, ev, ui);
+					}else{
+						eventElement.css('z-index', 8);
+						view.showEvents(event, eventElement);
+						// BUG: if event was really short, need to put title back in span
+					}
+				}
+			});
 		}
 	}
 	
@@ -887,8 +885,7 @@ function Agenda(element, options, methods) {
 		var slotMinutes = options.slotMinutes,
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
 			slotI = Math.floor(minutes / slotMinutes),
-			tr = body.find('tr:eq(' + slotI + ')'),
-			td = tr.find('td'),
+			td = body.find('tr:eq(' + slotI + ') td'),
 			innerDiv = td.find('div');
 		return Math.max(0, Math.round(
 			innerDiv.position().top + topCorrect(td) - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)

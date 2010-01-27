@@ -4,8 +4,7 @@
 
 var DAY_MS = 86400000,
 	HOUR_MS = 3600000,
-	MINUTE_MS = 60000,
-	arrayPop = Array.prototype.pop; // for eachLeaf
+	MINUTE_MS = 60000;
 
 function addYears(d, n, keepTime) {
 	d.setFullYear(d.getFullYear() + n);
@@ -425,7 +424,8 @@ function HoverMatrix(changeCallback) {
 -----------------------------------------------------------------------------*/
 
 var undefined,
-	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+	arrayPop = Array.prototype.pop;
 
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;

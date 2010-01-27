@@ -219,7 +219,7 @@ $.fn.fullCalendar = function(options) {
 					contentWidth = content.width();
 					contentHeight = calculateContentHeight();
 				}
-				if (inc || !view.date || date < view.visStart || date > view.visEnd ) { // !view.date means it hasn't been rendered yet
+				if (inc || !view.date || date < view.visStart || date >= view.visEnd) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
 					view.render(date, inc || 0, contentWidth, contentHeight, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
@@ -239,7 +239,7 @@ $.fn.fullCalendar = function(options) {
 				else if (view.eventsDirty) {
 					// ensure events are rerendered if another view messed with them
 					// pass in 'events' b/c event might have been added/removed
-					// executed on a switchView
+					// executed on a changeView
 					// TODO: should this be inclusive with sizeDirty and forceUpdateSize??
 					view.clearEvents();
 					view.renderEvents(events);
@@ -307,7 +307,7 @@ $.fn.fullCalendar = function(options) {
 				return options.contentHeight;
 			}
 			else if (options.height) {
-				return options.height - (header ? header.height() : 0) - horizontalSides(content); // TODO: shouldn't this be vertical sides??
+				return options.height - (header ? header.height() : 0) - vsides(content);
 			}
 			return Math.round(contentWidth / Math.max(options.aspectRatio, .5));
 		}
@@ -371,7 +371,7 @@ $.fn.fullCalendar = function(options) {
 					url: src,
 					dataType: 'json',
 					data: params,
-					cache: options.cacheEvents || options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
+					cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
 					success: reportEventsAndPop
 				});
 			}
@@ -782,7 +782,7 @@ $.fn.fullCalendar = function(options) {
 				}
 			}
 		};
-		//$(window).resize(windowResize);
+		$(window).resize(windowResize);
 		
 		
 		// let's begin...

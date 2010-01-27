@@ -123,7 +123,6 @@ function Grid(element, options, methods) {
 		colWidth,
 		thead, tbody,
 		cachedEvents=[],
-		segments=[],
 		segmentContainer,
 		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
 			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div')
@@ -367,13 +366,13 @@ function Grid(element, options, methods) {
 	
 	function renderEvents(events) {
 		view.reportEvents(cachedEvents = events);
-		renderSegs(segments = compileSegs(events));
+		renderSegs(compileSegs(events));
 	}
 	
 	
 	function rerenderEvents() {
 		clearEvents();
-		renderSegs(segments = compileSegs(cachedEvents));
+		renderSegs(compileSegs(cachedEvents));
 	}
 	
 	
@@ -428,9 +427,10 @@ function Grid(element, options, methods) {
 	
 	
 	function bootstrapEventHandlers(event, seg, eventElement) {
-		var attached = false;
-		eventElement.mouseover(function(ev) {
-			if (!attached) {
+		function mouseover(ev) {
+			view.trigger('eventMouseover', this, event, ev);
+			eventElement.unbind('mouseover', mouseover);
+			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
 				view.eventElementHandlers(event, eventElement);
 				if (event.editable || event.editable == undefined && options.editable) {
 					draggableEvent(event, eventElement);
@@ -438,10 +438,9 @@ function Grid(element, options, methods) {
 						view.resizableDayEvent(event, eventElement, colWidth);
 					}
 				}
-				attached = true;
-				view.trigger('eventMouseover', this, event, ev); // TODO: make sure this isn't being fired twice
-			}
-		});
+			},0);
+		}
+		eventElement.mouseover(mouseover);
 	}
 	
 	
@@ -526,12 +525,12 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 		eventHSides=[],
 		l=0,
 		i=0, len=segRows.length, levels,
-		tr,
 		td,
 		innerDiv,
 		top,
 		rowContentHeight,
 		j, segs,
+		levelHeight,
 		k, seg;
 		
 	// calculate desired position/dimensions, create html
@@ -585,10 +584,13 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 			if (triggerRes && triggerRes !== true) {
 				eventElement.remove();
 				eventElement = $(triggerRes)
-					.css('left', eventLefts[l])
+					.css({
+						position: 'absolute',
+						left: eventLefts[l]
+					})
 					.appendTo(segmentContainer);
 			}
-			seg.element = eventElement;
+			seg.element = eventElement; // will be useful for future rerender optimizations
 			eventOuterHeights[l] = eventElement.outerHeight(true);
 			eventHSides[l] = hsides(eventElement, true);
 			bootstrapEventHandlers(event, seg, eventElement);
@@ -599,8 +601,7 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 	// set all positions/dimensions at once
 	for (; i<len; i++) {
 		levels = segRows[i];
-		tr = getTr(i);
-		td = tr.find('td:first');
+		td = getTr(i).find('td:first');
 		innerDiv = td.find('div.fc-day-content div')
 			.css('position', 'relative')
 			.height(''); // this is needed for IE7 to get an accurate position
@@ -613,6 +614,7 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 				seg = segs[k];
 				if (eventElement = seg.element) {
 					eventElement.css('top', top);
+					//IE6 right-to-left sort-of-off-by-one bug
 					//if (rtl && rtlLeftDiff == undefined) {
 					//	// bug in IE6 where offsets are miscalculated with direction:rtl
 					//	rtlLeftDiff = eventLefts[l] - eventElement.position().left;
