@@ -205,7 +205,7 @@ function Grid(element, options, methods) {
 						' fc-today '+tm+'-state-highlight' :
 						' fc-not-today') + "'>" +
 						(showNumbers ? "<div class='fc-day-number'>" + d.getDate() + "</div>" : '') +
-						"<div class='fc-day-content'><div>&nbsp;</div></div></td>";
+						"<div class='fc-day-content'><div style='position:relative'>&nbsp;</div></div></td>";
 					addDays(d, 1);
 					if (nwe) {
 						skipWeekend(d);
@@ -216,7 +216,7 @@ function Grid(element, options, methods) {
 			tbody = $(s + "</tbody>").appendTo(table);
 			tbody.find('td').click(dayClick);
 			
-			segmentContainer = $("<div/>").appendTo(element);
+			segmentContainer = $("<div/>").appendTo(element); // style='position:absolute;top:0;left:0' // made it a little slower for some reason
 		
 		}else{ // NOT first time, reuse as many cells as possible
 		
@@ -236,7 +236,7 @@ function Grid(element, options, methods) {
 							tm + '-state-default fc-new fc-day' + (i*colCnt+j) +
 							(j==dit ? ' fc-leftmost' : '') + "'>" +
 							(showNumbers ? "<div class='fc-day-number'></div>" : '') +
-							"<div class='fc-day-content'><div>&nbsp;</div></div>" +
+							"<div class='fc-day-content'><div style='position:relative'>&nbsp;</div></div>" +
 							"</td>";
 						addDays(d, 1);
 						if (nwe) {
@@ -385,31 +385,42 @@ function Grid(element, options, methods) {
 	function compileSegs(events) {
 		var d1 = cloneDate(view.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
-			rows = [],
-			i=0;
-		for (; i<rowCnt; i++) {
-			rows.push(stackSegs(view.sliceSegs(events, $.map(events, visEventEnd), d1, d2)));
+			visEventsEnds = $.map(events, visEventEnd),
+			i, row,
+			j, level,
+			k, seg,
+			segs=[];
+		for (i=0; i<rowCnt; i++) {
+			row = stackSegs(view.sliceSegs(events, visEventsEnds, d1, d2));
+			for (j=0; j<row.length; j++) {
+				level = row[j];
+				for (k=0; k<level.length; k++) {
+					seg = level[k];
+					seg.row = i;
+					seg.level = j;
+					segs.push(seg);
+				}
+			}
 			addDays(d1, 7);
 			addDays(d2, 7);
 		}
-		return rows;
+		return segs;
 	}
 	
 	
 	
-	function renderSegs(segCols) {
+	function renderSegs(segs) {
 		_renderDaySegs(
-			segCols,
+			segs,
+			rowCnt,
 			view,
 			0,
 			viewWidth,
-			function(i) {
-				return tbody.find('tr:eq('+i+')');
-			},
+			function(i) { return tbody.find('tr:eq('+i+')') },
 			dayContentPositions.left,
 			dayContentPositions.right,
 			segmentContainer,
-			bootstrapEventHandlers
+			mouseoverBind
 		);
 	}
 	
@@ -426,11 +437,12 @@ function Grid(element, options, methods) {
 	
 	
 	
-	function bootstrapEventHandlers(event, seg, eventElement) {
+	
+	function mouseoverBind(event, seg, eventElement) {
 		function mouseover(ev) {
-			view.trigger('eventMouseover', this, event, ev);
 			eventElement.unbind('mouseover', mouseover);
-			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
+			view.trigger('eventMouseover', this, event, ev);
+			setTimeout(function() { // because IE will immediately trigger the new mouseover handlers
 				view.eventElementHandlers(event, eventElement);
 				if (event.editable || event.editable == undefined && options.editable) {
 					draggableEvent(event, eventElement);
@@ -507,34 +519,28 @@ function Grid(element, options, methods) {
 };
 
 
-function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, dayContentRight, segmentContainer, bootstrapEventHandlers) {
+function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContentLeft, dayContentRight, segmentContainer, mouseoverBind) {
 
 	var options=view.options,
 		rtl=options.isRTL,
+		i, segCnt=segs.length, seg,
 		event,
 		className,
-		left,
-		right,
-		eventLefts=[],
-		eventRights=[],
+		left, right,
 		html='',
-		eventElements,
+		_eventElements,
 		eventElement,
 		triggerRes,
-		eventOuterHeights=[],
-		eventHSides=[],
-		l=0,
-		i=0, len=segRows.length, levels,
-		td,
-		innerDiv,
-		top,
-		rowContentHeight,
-		j, segs,
-		levelHeight,
-		k, seg;
+		hsideCache={},
+		vmarginCache={},
+		key, val,
+		rowI, top, levelI, levelHeight,
+		rowDivs=[],
+		rowDivTops=[];
 		
 	// calculate desired position/dimensions, create html
-	eachLeaf(segRows, function(l, seg) {
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
 		event = seg.event;
 		className = 'fc-event fc-event-hori ';
 		if (rtl) {
@@ -556,8 +562,6 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 			left = seg.isStart ? dayContentLeft(seg.start.getDay()) : minLeft;
 			right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : maxLeft;
 		}
-		eventLefts[l] = left;
-		eventRights[l] = right;
 		html +=
 			"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
 				"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
@@ -569,14 +573,17 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 					"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</a>" +
 			"</div>";
-	});			
-	segmentContainer.html(html);
-	eventElements = segmentContainer.children();
+		seg.left = left;
+		seg.outerWidth = right - left;
+	}
+	segmentContainer[0].innerHTML = html;
+	_eventElements = $.makeArray(segmentContainer[0].childNodes); // TODO: look at .children() again
 	
-	// retrieve elements, run through eventRender callback, record outer-edge dimensions
-	eachLeaf(segRows, function(l, seg) {
+	// retrieve elements, run through eventRender callback, bind handlers
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
+		eventElement = $(_eventElements[i]);
 		event = seg.event;
-		eventElement = eventElements.eq(l);
 		triggerRes = view.trigger('eventRender', event, event, eventElement);
 		if (triggerRes === false) {
 			eventElement.remove();
@@ -586,54 +593,81 @@ function _renderDaySegs(segRows, view, minLeft, maxLeft, getTr, dayContentLeft, 
 				eventElement = $(triggerRes)
 					.css({
 						position: 'absolute',
-						left: eventLefts[l]
+						left: seg.left
 					})
 					.appendTo(segmentContainer);
 			}
-			seg.element = eventElement; // will be useful for future rerender optimizations
-			eventOuterHeights[l] = eventElement.outerHeight(true);
-			eventHSides[l] = hsides(eventElement, true);
-			bootstrapEventHandlers(event, seg, eventElement);
+			seg.element = eventElement;
+			mouseoverBind(event, seg, eventElement);
 			view.reportEventElement(event, eventElement);
 		}
-	});
+	}
 	
-	// set all positions/dimensions at once
-	for (; i<len; i++) {
-		levels = segRows[i];
-		td = getTr(i).find('td:first');
-		innerDiv = td.find('div.fc-day-content div')
-			.css('position', 'relative')
-			.height(''); // this is needed for IE7 to get an accurate position
-		top = innerDiv.position().top + topCorrect(td);
-		rowContentHeight = 0;
-		for (j=0; j<levels.length; j++) {
-			segs = levels[j];
-			levelHeight = 0;
-			for (k=0; k<segs.length; k++) {
-				seg = segs[k];
-				if (eventElement = seg.element) {
-					eventElement.css('top', top);
-					//IE6 right-to-left sort-of-off-by-one bug
-					//if (rtl && rtlLeftDiff == undefined) {
-					//	// bug in IE6 where offsets are miscalculated with direction:rtl
-					//	rtlLeftDiff = eventLefts[l] - eventElement.position().left;
-					//	if (rtlLeftDiff) {
-					//		eventElement.css('left', eventLefts[l] + rtlLeftDiff);
-					//	}
-					//}
-					eventElement.width(eventRights[l] - eventLefts[l] - eventHSides[l]);
-					event = seg.event;
-					view.trigger('eventAfterRender', event, event, eventElement);
-					levelHeight = Math.max(levelHeight, eventOuterHeights[l]);
-				}
-				l++;
-			}
-			rowContentHeight += levelHeight;
-			top += levelHeight;
+	// record event horizontal sides
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
+		if (eventElement = seg.element) {
+			val = hsideCache[key = seg.key = cssKey(eventElement[0])];
+			seg.hsides = val == undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
 		}
-		innerDiv.height(rowContentHeight);
+	}
+	
+	// set event widths
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
+		if (eventElement = seg.element) {
+			eventElement[0].style.width = seg.outerWidth - seg.hsides + 'px';
+		}
+	}
+	
+	// record event heights
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
+		if (eventElement = seg.element) {
+			val = vmarginCache[key = seg.key];
+			seg.outerHeight = eventElement[0].offsetHeight + (
+				val == undefined ? (vmarginCache[key] = vmargins(eventElement[0])) : val
+			);
+		}
+	}
+	
+	// set row heights, calculate event tops (in relation to row top)
+	for (i=0, rowI=0; rowI<rowCnt; rowI++) {
+		top = levelI = levelHeight = 0;
+		while (i<segCnt && (seg = segs[i]).row == rowI) {
+			if (seg.level != levelI) {
+				top += levelHeight;
+				levelHeight = 0;
+				levelI++;
+			}
+			levelHeight = Math.max(levelHeight, seg.outerHeight||0);
+			seg.top = top;
+			i++;
+		}
+		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div') // > is optimal???
+			.height(top + levelHeight);
+	}
+	
+	// calculate row tops
+	for (rowI=0; rowI<rowCnt; rowI++) {
+		rowDivTops[rowI] = rowDivs[rowI][0].offsetTop;
+	}
+	
+	// set event tops
+	for (i=0; i<segCnt; i++) {
+		seg = segs[i];
+		if (eventElement = seg.element) {
+			eventElement[0].style.top = rowDivTops[seg.row] + seg.top + 'px';
+			event = seg.event;
+			view.trigger('eventAfterRender', event, event, eventElement);
+		}
 	}
 	
 }
+
+
+function cssKey(_element) {
+	return _element.id + '/' + _element.className + '/' + _element.style.cssText.replace(/(^|;)\s*(top|left|width|height)\s*:[^;]*/ig, '');
+}
+
 

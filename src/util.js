@@ -298,37 +298,42 @@ var dateFormatters = {
 -----------------------------------------------------------------------------*/
 
 function setOuterWidth(element, width, includeMargins) {
-	element.each(function() {
-		var e = $(this);
-		e.width(width - hsides(e, includeMargins));
+	element.each(function(i, _element) {
+		_element.style.width = width - hsides(_element, includeMargins) + 'px';
 	});
-}
-
-function hsides(e, includeMargins) {
-	return (parseInt(e.css('border-left-width')) || 0) +
-		(parseInt(e.css('padding-left')) || 0) +
-		(parseInt(e.css('padding-right')) || 0) +
-		(parseInt(e.css('border-right-width')) || 0) +
-		(includeMargins ?
-			(parseInt(e.css('margin-left')) || 0) + (parseInt(e.css('margin-right')) || 0)
-			: 0);
 }
 
 function setOuterHeight(element, height, includeMargins) {
-	element.each(function() {
-		var e = $(this);
-		e.height(height - vsides(e, includeMargins));
+	element.each(function(i, _element) {
+		_element.style.height = height - vsides(_element, includeMargins) + 'px';
 	});
 }
 
-function vsides(e, includeMargins) {
-	return (parseInt(e.css('border-top-width')) || 0) +
-		(parseInt(e.css('padding-top')) || 0) +
-		(parseInt(e.css('padding-bottom')) || 0) +
-		(parseInt(e.css('border-bottom-width')) || 0) +
-		(includeMargins ?
-			(parseInt(e.css('margin-top')) || 0) + (parseInt(e.css('margin-bottom')) || 0)
-			: 0);
+
+function hsides(_element, includeMargins) {
+	return (parseFloat(jQuery.curCSS(_element, 'paddingLeft', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'paddingRight', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'borderLeftWidth', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'borderRightWidth', true)) || 0) +
+	       (includeMargins ? hmargins(_element) : 0);
+}
+
+function hmargins(_element) {
+	return (parseFloat(jQuery.curCSS(_element, 'marginLeft', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'marginRight', true)) || 0);
+}
+
+function vsides(_element, includeMargins) {
+	return (parseFloat(jQuery.curCSS(_element, 'paddingTop', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'paddingBottom', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'borderTopWidth', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'borderBottomWidth', true)) || 0) +
+	       (includeMargins ? vmargins(_element) : 0);
+}
+
+function vmargins(_element) {
+	return (parseFloat(jQuery.curCSS(_element, 'marginTop', true)) || 0) +
+	       (parseFloat(jQuery.curCSS(_element, 'marginBottom', true)) || 0);
 }
 
 
@@ -455,18 +460,6 @@ function htmlEscape(s) {
 		.replace(/"/g, '&quot;')
 }
 
-function eachLeaf(node, callback, leafIndex, indexTrail) {
-	if (node.pop == arrayPop) { // is an array?
-		for (var i=0, len=node.length; i<len; i++) {
-			leafIndex = eachLeaf(node[i], callback, leafIndex||0, [i].concat(indexTrail||[]));
-		}
-		return leafIndex;
-	}
-	callback.apply(node, [leafIndex, node].concat(indexTrail));
-	return leafIndex + 1;
-}
-
-
 
 
 function HorizontalPositionCache(getElement) {
@@ -498,7 +491,6 @@ function HorizontalPositionCache(getElement) {
 	};
 	
 }
-
 
 
 

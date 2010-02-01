@@ -105,7 +105,7 @@ var viewMethods = {
 		var elements = this.eventElementsByID[event._id],
 			i, len = elements.length;
 		for (i=0; i<len; i++) {
-			if (elements[i] != exceptElement) {
+			if (elements[i][0] != exceptElement[0]) { // AHAHAHAHAHAHAHAH
 				elements[i][funcName]();
 			}
 		}

@@ -219,7 +219,7 @@ $.fn.fullCalendar = function(options) {
 					contentWidth = content.width();
 					contentHeight = calculateContentHeight();
 				}
-				if (inc || !view.date || date < view.visStart || date >= view.visEnd) { // !view.date means it hasn't been rendered yet
+				if (inc || !view.date || date < view.start || date >= view.end) { // !view.date means it hasn't been rendered yet
 					fixContentSize();
 					view.render(date, inc || 0, contentWidth, contentHeight, function(callback) {
 						// dont refetch if new view contains the same events (or a subset)
@@ -307,7 +307,7 @@ $.fn.fullCalendar = function(options) {
 				return options.contentHeight;
 			}
 			else if (options.height) {
-				return options.height - (header ? header.height() : 0) - vsides(content);
+				return options.height - (header ? header.height() : 0) - vsides(content[0]);
 			}
 			return Math.round(contentWidth / Math.max(options.aspectRatio, .5));
 		}

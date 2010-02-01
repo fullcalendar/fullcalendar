@@ -50,14 +50,13 @@
 					return false;
 				}
 				else if (event.id == 777) {
-					return $("<div style='background:green'/>").text(event.title);
+					return $("<div style='background:green'>").text(event.title);
 				}
 				else if (event.id == 999) {
 					element.css('border-color', 'red');
 					//console.log('renderEvent (' + event.title + ') - ' + view.title);
 				}
 			},
-			
 			eventAfterRender: function(event, element, view) {
 				//console.log('after render for "' + event.title + '":');
 				//console.log(element);
@@ -99,9 +98,9 @@
 				console.log(dayDelta + ' days');
 				console.log(minuteDelta + ' minutes');
 				console.log('allday: ' + allDay);
-				/*setTimeout(function() {
-					revertFunc();
-				}, 2000);*/
+				//setTimeout(function() {
+				//	revertFunc();
+				//}, 2000);
 				//console.log(jsEvent);
 				//console.log(ui);
 				//console.log(view.title);
@@ -120,9 +119,9 @@
 				console.log('RESIZE!! ' + event.title);
 				console.log(dayDelta + ' days');
 				console.log(minuteDelta + ' minutes');
-				/*setTimeout(function() {
-					revertFunc();
-				}, 2000);*/
+				//setTimeout(function() {
+				//	revertFunc();
+				//}, 2000);
 				//console.log(jsEvent);
 				//console.log(ui);
 				//console.log(view.title);

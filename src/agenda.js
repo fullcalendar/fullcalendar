@@ -89,6 +89,7 @@ function Agenda(element, options, methods) {
 		colContentPositions = new HorizontalPositionCache(function(col) {
 			return bg.find('td:eq(' + col + ') div div');
 		}),
+		slotTopCache = {},
 		// ...
 		
 	view = $.extend(this, viewMethods, methods, {
@@ -167,7 +168,7 @@ function Agenda(element, options, methods) {
 				s += "<tr class='fc-all-day'>" +
 						"<th class='fc-axis fc-leftmost " + tm + "-state-default'>" + options.allDayText + "</th>" +
 						"<td colspan='" + colCnt + "' class='" + tm + "-state-default'>" +
-							"<div class='fc-day-content'><div>&nbsp;</div></div></td>" +
+							"<div class='fc-day-content'><div style='position:relative'>&nbsp;</div></div></td>" +
 						"<th class='" + tm + "-state-default'>&nbsp;</th>" +
 					"</tr><tr class='fc-divider fc-last'><th colspan='" + (colCnt+2) + "' class='" +
 						tm + "-state-default fc-leftmost'><div/></th></tr>";
@@ -177,7 +178,7 @@ function Agenda(element, options, methods) {
 			head.find('td').click(slotClick);
 			
 			// all-day event container
-			daySegmentContainer = $("<div/>").appendTo(head);
+			daySegmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(head);
 			
 			// body
 			d = zeroDate();
@@ -191,7 +192,7 @@ function Agenda(element, options, methods) {
 					"'><th class='fc-axis fc-leftmost " + tm + "-state-default'>" +
 					((!slotNormal || minutes==0) ? formatDate(d, options.axisFormat) : '&nbsp;') + 
 					"</th><td class='fc-slot" + i + ' ' +
-						tm + "-state-default'><div>&nbsp;</div></td></tr>";
+						tm + "-state-default'><div style='position:relative'>&nbsp;</div></td></tr>";
 				addMinutes(d, options.slotMinutes);
 			}
 			s += "</table>";
@@ -287,6 +288,7 @@ function Agenda(element, options, methods) {
 		viewWidth = width;
 		viewHeight = height;
 		colContentPositions.clear();
+		slotTopCache = {};
 		
 		body.width(width);
 		body.height(height - head.height());
@@ -357,7 +359,7 @@ function Agenda(element, options, methods) {
 				slotEvents.push(events[i]);
 			}
 		}
-		renderDaySegs(stackSegs(view.sliceSegs(dayEvents, $.map(dayEvents, visEventEnd), view.visStart, view.visEnd)));
+		renderDaySegs(compileDaySegs(dayEvents));
 		renderSlotSegs(compileSlotSegs(slotEvents));
 	}
 	
@@ -375,19 +377,49 @@ function Agenda(element, options, methods) {
 	}
 	
 	
+	
+	
+	
+	function compileDaySegs(events) {
+		var levels = stackSegs(view.sliceSegs(events, $.map(events, visEventEnd), view.visStart, view.visEnd)),
+			i, levelCnt=levels.length, level,
+			j, seg,
+			segs=[];
+		for (i=0; i<levelCnt; i++) {
+			level = levels[i];
+			for (j=0; j<level.length; j++) {
+				seg = level[j];
+				seg.row = 0;
+				seg.level = i;
+				segs.push(seg);
+			}
+		}
+		return segs;
+	}
+	
+	
 	function compileSlotSegs(events) {
 		var d = addMinutes(cloneDate(view.visStart), minMinute),
-			ends = $.map(events, visEventEnd),
-			levels,
-			segCols = [],
-			i=0;
-		for (; i<colCnt; i++) {
-			levels = stackSegs(view.sliceSegs(events, ends, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
-			countForwardSegs(levels);
-			segCols.push(levels);
+			visEventEnds = $.map(events, visEventEnd),
+			i, col,
+			j, level,
+			k, seg,
+			segs=[];
+		for (i=0; i<colCnt; i++) {
+			col = stackSegs(view.sliceSegs(events, visEventEnds, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
+			countForwardSegs(col);
+			for (j=0; j<col.length; j++) {
+				level = col[j];
+				for (k=0; k<level.length; k++) {
+					seg = level[k];
+					seg.col = i;
+					seg.level = j;
+					segs.push(seg);
+				}
+			}
 			addDays(d, 1, true);
 		}
-		return segCols;
+		return segs;
 	}
 	
 	
@@ -395,10 +427,11 @@ function Agenda(element, options, methods) {
 	
 	// renders 'all-day' events at the top
 	
-	function renderDaySegs(segRow) {
+	function renderDaySegs(segs) {
 		if (options.allDaySlot) {
 			_renderDaySegs(
-				[segRow],
+				segs,
+				1,
 				view,
 				axisWidth,
 				viewWidth,
@@ -422,32 +455,30 @@ function Agenda(element, options, methods) {
 	
 	// renders events in the 'time slots' at the bottom
 	
-	function renderSlotSegs(segCols) {
-			
-		var event,
+	function renderSlotSegs(segs) {
+	
+		var i, segCnt=segs.length, seg,
+			event,
 			className,
-			top,
-			bottom,
+			top, bottom,
+			colI, levelI, forward,
 			leftmost,
 			availWidth,
-			forward,
-			width,
+			outerWidth,
 			left,
-			eventTops=[],
-			eventLefts=[],
-			eventOuterWidths=[],
-			eventOuterHeights=[],
 			html='',
-			eventElements,
+			_eventElements,
 			eventElement,
 			triggerRes,
-			eventVSides=[],
-			eventHSides=[],
-			eventTitlePositions=[],
+			vsideCache={},
+			hsideCache={},
+			key, val,
+			titleSpan,
 			height;
 			
-		// calculate desired position/dimensions, create html
-		eachLeaf(segCols, function(l, seg, segI, levelI, colI) {
+		// calculate position/dimensions, create html
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
 			event = seg.event;
 			className = 'fc-event fc-event-vert ';
 			if (seg.isStart) {
@@ -458,48 +489,51 @@ function Agenda(element, options, methods) {
 			}
 			top = timePosition(seg.start, seg.start);
 			bottom = timePosition(seg.start, seg.end);
+			colI = seg.col;
+			levelI = seg.level;
+			forward = seg.forward || 0;
 			leftmost = axisWidth + colContentPositions.left(colI*dis + dit);
 			availWidth = axisWidth + colContentPositions.right(colI*dis + dit) - leftmost;
 			availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
-			forward = seg.forward || 0;
 			if (levelI) {
 				// indented and thin
-				width = availWidth / (levelI + forward + 1);
+				outerWidth = availWidth / (levelI + forward + 1);
 			}else{
 				if (forward) {
 					// moderately wide, aligned left still
-					width = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
 				}else{
 					// can be entire width, aligned left
-					width = availWidth;
+					outerWidth = availWidth;
 				}
 			}
 			left = leftmost +                                  // leftmost possible
 				(availWidth / (levelI + forward + 1) * levelI) // indentation
-				* dis + (rtl ? availWidth - width : 0);        // rtl
-			eventTops[l] = top;
-			eventLefts[l] = left;
-			eventOuterWidths[l] = width;
-			eventOuterHeights[l] = bottom - top;
+				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+			seg.top = top;
+			seg.left = left;
+			seg.outerWidth = outerWidth;
+			seg.outerHeight = bottom - top;
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;top:" + top + "px;left:" + left + "px'>" +
 					"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+						"<span class='fc-event-bg'></span>" +
 						"<span class='fc-event-time'>" + htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'))) + "</span>" +
 						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
-						"<span class='fc-event-bg'/>" +
 					"</a>" +
 					((event.editable || event.editable == undefined && options.editable) && !options.disableResizing && $.fn.resizable ?
 						"<div class='ui-resizable-handle ui-resizable-s'>=</div>"
 						: '') +
 				"</div>";
-		});
-		slotSegmentContainer.html(html);
-		eventElements = slotSegmentContainer.children();
+		}
+		slotSegmentContainer[0].innerHTML = html;
+		_eventElements = $.makeArray(slotSegmentContainer[0].childNodes); // TODO: look at .children() again
 		
-		// retrieve elements, run through eventRender callback, record outer-edge dimensions
-		eachLeaf(segCols, function(l, seg) {
+		// retrieve elements, run through eventRender callback, bind event handlers
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
 			event = seg.event;
-			eventElement = eventElements.eq(l);
+			eventElement = $(_eventElements[i]);
 			triggerRes = view.trigger('eventRender', event, event, eventElement);
 			if (triggerRes === false) {
 				eventElement.remove();
@@ -509,28 +543,40 @@ function Agenda(element, options, methods) {
 					eventElement = $(triggerRes)
 						.css({
 							position: 'absolute',
-							top: eventTops[l],
-							left: eventLefts[l]
+							top: seg.top,
+							left: seg.left
 						})
 						.appendTo(slotSegmentContainer);
 				}
 				seg.element = eventElement;
-				eventVSides[l] = vsides(eventElement, true);
-				eventHSides[l] = hsides(eventElement, true);
-				eventTitlePositions[l] = eventElement.find('span.fc-event-title').position();
 				bootstrapSlotEventHandlers(event, seg, eventElement);
 				view.reportEventElement(event, eventElement);
 			}
-		});
+		}
+		
+		// record event sides and title positions
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
+			if (eventElement = seg.element) {
+				val = vsideCache[key = seg.key = cssKey(eventElement[0])];
+				seg.vsides = val == undefined ? (vsideCache[key] = vsides(eventElement[0], true)) : val;
+				val = hsideCache[key];
+				seg.hsides = val == undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
+				titleSpan = eventElement.find('span.fc-event-title');
+				if (titleSpan.length) {
+					seg.titleTop = titleSpan[0].offsetTop;
+				}
+			}
+		}
 		
 		// set all positions/dimensions at once
-		eachLeaf(segCols, function(l, seg) {
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
 			if (eventElement = seg.element) {
-				eventElement
-					.width(eventOuterWidths[l] - eventHSides[l])
-					.height(height = eventOuterHeights[l] - eventVSides[l]);
+				eventElement[0].style.width = seg.outerWidth - seg.hsides + 'px';
+				eventElement[0].style.height = (height = seg.outerHeight - seg.vsides) + 'px';
 				event = seg.event;
-				if (eventTitlePositions[l] && height - eventTitlePositions[l].top < 10) {
+				if (seg.titleTop != undefined && height - seg.titleTop < 10) {
 					// not enough room for title, put it in the time header
 					eventElement.find('span.fc-event-time')
 						.text(formatDate(event.start, view.option('timeFormat')) + ' - ' + event.title);
@@ -539,7 +585,7 @@ function Agenda(element, options, methods) {
 				}
 				view.trigger('eventAfterRender', event, event, eventElement);
 			}
-		});
+		}
 					
 	}
 	
@@ -874,7 +920,7 @@ function Agenda(element, options, methods) {
 	
 	// get the Y coordinate of the given time on the given day (both Date objects)
 	
-	function timePosition(day, time) { // both date object. day holds 00:00 of current day
+	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
 		day = cloneDate(day, true);
 		if (time < addMinutes(cloneDate(day), minMinute)) {
 			return 0;
@@ -885,12 +931,15 @@ function Agenda(element, options, methods) {
 		var slotMinutes = options.slotMinutes,
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
 			slotI = Math.floor(minutes / slotMinutes),
-			td = body.find('tr:eq(' + slotI + ') td'),
-			innerDiv = td.find('div');
+			slotTop = slotTopCache[slotI];
+		if (slotTop == undefined) {
+			slotTop = slotTopCache[slotI] = body.find('tr:eq(' + slotI + ') td div')[0].offsetTop;
+		}
 		return Math.max(0, Math.round(
-			innerDiv.position().top + topCorrect(td) - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
+			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
 		));
 	}
+	
 	
 	
 	
