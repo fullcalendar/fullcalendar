@@ -117,27 +117,29 @@ var viewMethods = {
 	
 	eventDrop: function(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
 		var view = this,
-			oldAllDay = event.allDay;
-		view.moveEvents(view.eventsByID[event._id], dayDelta, minuteDelta, allDay);
+			oldAllDay = event.allDay,
+			eventId = event._id;
+		view.moveEvents(view.eventsByID[eventId], dayDelta, minuteDelta, allDay);
 		view.trigger('eventDrop', e, event, dayDelta, minuteDelta, allDay, function() { // TODO: change docs
 			// TODO: investigate cases where this inverse technique might not work
-			view.moveEvents(view.eventsByID[event._id], -dayDelta, -minuteDelta, oldAllDay);
+			view.moveEvents(view.eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
 			view.rerenderEvents();
 		}, ev, ui);
 		view.eventsChanged = true;
-		view.rerenderEvents();
+		view.rerenderEvents(eventId);
 	},
 	
 	eventResize: function(e, event, dayDelta, minuteDelta, ev, ui) {
-		var view = this;
-		view.elongateEvents(view.eventsByID[event._id], dayDelta, minuteDelta);
+		var view = this,
+			eventId = event._id;
+		view.elongateEvents(view.eventsByID[eventId], dayDelta, minuteDelta);
 		view.trigger('eventResize', e, event, dayDelta, minuteDelta, function() {
 			// TODO: investigate cases where this inverse technique might not work
-			view.elongateEvents(view.eventsByID[event._id], -dayDelta, -minuteDelta);
+			view.elongateEvents(view.eventsByID[eventId], -dayDelta, -minuteDelta);
 			view.rerenderEvents();
 		}, ev, ui);
 		view.eventsChanged = true;
-		view.rerenderEvents();
+		view.rerenderEvents(eventId);
 	},
 	
 	
@@ -202,7 +204,7 @@ var viewMethods = {
 		var view = this;
 		if (!view.options.disableResizing && eventElement.resizable) {
 			eventElement.resizable({
-				handles: view.options.isRTL ? 'w' : 'e',
+				handles: view.options.isRTL ? {w:'div.ui-resizable-w'} : {e:'div.ui-resizable-e'},
 				grid: colWidth,
 				minWidth: colWidth/2, // need this or else IE throws errors when too small
 				containment: view.element.parent().parent(), // the main element...
@@ -306,7 +308,6 @@ var viewMethods = {
 	
 
 };
-
 
 
 

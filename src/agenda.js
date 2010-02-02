@@ -347,7 +347,7 @@ function Agenda(element, options, methods) {
 	/* Event Rendering
 	-----------------------------------------------------------------------------*/
 	
-	function renderEvents(events) {
+	function renderEvents(events, modifiedEventId) {
 		view.reportEvents(cachedEvents = events);
 		var i, len=events.length,
 			dayEvents=[],
@@ -359,14 +359,14 @@ function Agenda(element, options, methods) {
 				slotEvents.push(events[i]);
 			}
 		}
-		renderDaySegs(compileDaySegs(dayEvents));
-		renderSlotSegs(compileSlotSegs(slotEvents));
+		renderDaySegs(compileDaySegs(dayEvents), modifiedEventId);
+		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
 	}
 	
 	
-	function rerenderEvents() {
+	function rerenderEvents(modifiedEventId) {
 		clearEvents();
-		renderEvents(cachedEvents);
+		renderEvents(cachedEvents, modifiedEventId);
 	}
 	
 	
@@ -427,7 +427,7 @@ function Agenda(element, options, methods) {
 	
 	// renders 'all-day' events at the top
 	
-	function renderDaySegs(segs) {
+	function renderDaySegs(segs, modifiedEventId) {
 		if (options.allDaySlot) {
 			_renderDaySegs(
 				segs,
@@ -445,7 +445,8 @@ function Agenda(element, options, methods) {
 					return axisWidth + colContentPositions.right(day2col(dayOfWeek));
 				},
 				daySegmentContainer,
-				bootstrapDayEventHandlers
+				bindDaySegHandlers,
+				modifiedEventId
 			);
 			updateSize(viewWidth, viewHeight); // might have pushed the body down, so resize
 		}
@@ -455,7 +456,7 @@ function Agenda(element, options, methods) {
 	
 	// renders events in the 'time slots' at the bottom
 	
-	function renderSlotSegs(segs) {
+	function renderSlotSegs(segs, modifiedEventId) {
 	
 		var i, segCnt=segs.length, seg,
 			event,
@@ -467,7 +468,7 @@ function Agenda(element, options, methods) {
 			outerWidth,
 			left,
 			html='',
-			_eventElements,
+			eventElements,
 			eventElement,
 			triggerRes,
 			vsideCache={},
@@ -527,13 +528,13 @@ function Agenda(element, options, methods) {
 				"</div>";
 		}
 		slotSegmentContainer[0].innerHTML = html;
-		_eventElements = $.makeArray(slotSegmentContainer[0].childNodes); // TODO: look at .children() again
+		eventElements = slotSegmentContainer.children();
 		
 		// retrieve elements, run through eventRender callback, bind event handlers
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			eventElement = $(_eventElements[i]);
+			eventElement = $(eventElements[i]); // faster than eq()
 			triggerRes = view.trigger('eventRender', event, event, eventElement);
 			if (triggerRes === false) {
 				eventElement.remove();
@@ -549,10 +550,16 @@ function Agenda(element, options, methods) {
 						.appendTo(slotSegmentContainer);
 				}
 				seg.element = eventElement;
-				bootstrapSlotEventHandlers(event, seg, eventElement);
+				if (event._id === modifiedEventId) {
+					bindSlotSegHandlers(event, eventElement, seg);
+				}else{
+					eventElement[0]._fci = i; // for lazySegBind
+				}
 				view.reportEventElement(event, eventElement);
 			}
 		}
+		
+		lazySegBind(slotSegmentContainer, segs, bindSlotSegHandlers);
 		
 		// record event sides and title positions
 		for (i=0; i<segCnt; i++) {
@@ -611,41 +618,27 @@ function Agenda(element, options, methods) {
 	
 	
 	
-	function bootstrapDayEventHandlers(event, seg, eventElement) {
-		function mouseover(ev) {
-			view.trigger('eventMouseover', this, event, ev);
-			eventElement.unbind('mouseover', mouseover);
-			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
-				view.eventElementHandlers(event, eventElement);
-				if (event.editable || event.editable == undefined && options.editable) {
-					draggableDayEvent(event, eventElement, seg.isStart);
-					if (seg.isEnd) {
-						view.resizableDayEvent(event, eventElement, colWidth);
-					}
-				}
-			},0);
+	function bindDaySegHandlers(event, eventElement, seg) {
+		view.eventElementHandlers(event, eventElement);
+		if (event.editable || event.editable == undefined && options.editable) {
+			draggableDayEvent(event, eventElement, seg.isStart);
+			if (seg.isEnd) {
+				view.resizableDayEvent(event, eventElement, colWidth);
+			}
 		}
-		eventElement.mouseover(mouseover);
 	}
 	
 	
 	
-	function bootstrapSlotEventHandlers(event, seg, eventElement) {
-		function mouseover(ev) {
-			view.trigger('eventMouseover', this, event, ev);
-			eventElement.unbind('mouseover', mouseover);
-			setTimeout(function() { // because IE will immediately trigger eventElementHandlers's mouseover
-				view.eventElementHandlers(event, eventElement);
-				if (event.editable || event.editable == undefined && options.editable) {
-					var timeElement = eventElement.find('span.fc-event-time');
-					draggableSlotEvent(event, eventElement, timeElement);
-					if (seg.isEnd) {
-						resizableSlotEvent(event, eventElement, timeElement);
-					}
-				}
-			},0);
+	function bindSlotSegHandlers(event, eventElement, seg) {
+		view.eventElementHandlers(event, eventElement);
+		if (event.editable || event.editable == undefined && options.editable) {
+			var timeElement = eventElement.find('span.fc-event-time');
+			draggableSlotEvent(event, eventElement, timeElement);
+			if (seg.isEnd) {
+				resizableSlotEvent(event, eventElement, timeElement);
+			}
 		}
-		eventElement.mouseover(mouseover);
 	}
 
 	

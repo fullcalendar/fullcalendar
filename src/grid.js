@@ -370,9 +370,9 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function rerenderEvents() {
+	function rerenderEvents(modifiedEventId) {
 		clearEvents();
-		renderSegs(compileSegs(cachedEvents));
+		renderSegs(compileSegs(cachedEvents), modifiedEventId);
 	}
 	
 	
@@ -409,7 +409,7 @@ function Grid(element, options, methods) {
 	
 	
 	
-	function renderSegs(segs) {
+	function renderSegs(segs, modifiedEventId) {
 		_renderDaySegs(
 			segs,
 			rowCnt,
@@ -420,7 +420,8 @@ function Grid(element, options, methods) {
 			dayContentPositions.left,
 			dayContentPositions.right,
 			segmentContainer,
-			mouseoverBind
+			bindSegHandlers,
+			modifiedEventId
 		);
 	}
 	
@@ -437,22 +438,14 @@ function Grid(element, options, methods) {
 	
 	
 	
-	
-	function mouseoverBind(event, seg, eventElement) {
-		function mouseover(ev) {
-			eventElement.unbind('mouseover', mouseover);
-			view.trigger('eventMouseover', this, event, ev);
-			setTimeout(function() { // because IE will immediately trigger the new mouseover handlers
-				view.eventElementHandlers(event, eventElement);
-				if (event.editable || event.editable == undefined && options.editable) {
-					draggableEvent(event, eventElement);
-					if (seg.isEnd) {
-						view.resizableDayEvent(event, eventElement, colWidth);
-					}
-				}
-			},0);
+	function bindSegHandlers(event, eventElement, seg) {
+		view.eventElementHandlers(event, eventElement);
+		if (event.editable || event.editable == undefined && options.editable) {
+			draggableEvent(event, eventElement);
+			if (seg.isEnd) {
+				view.resizableDayEvent(event, eventElement, colWidth);
+			}
 		}
-		eventElement.mouseover(mouseover);
 	}
 	
 	
@@ -519,7 +512,7 @@ function Grid(element, options, methods) {
 };
 
 
-function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContentLeft, dayContentRight, segmentContainer, mouseoverBind) {
+function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContentLeft, dayContentRight, segmentContainer, bindSegHandlers, modifiedEventId) {
 
 	var options=view.options,
 		rtl=options.isRTL,
@@ -528,7 +521,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 		className,
 		left, right,
 		html='',
-		_eventElements,
+		eventElements,
 		eventElement,
 		triggerRes,
 		hsideCache={},
@@ -572,17 +565,20 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 					:'') +
 					"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</a>" +
+				((event.editable || event.editable == undefined && options.editable) && !options.disableResizing && $.fn.resizable ?
+					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
+					: '') +
 			"</div>";
 		seg.left = left;
 		seg.outerWidth = right - left;
 	}
 	segmentContainer[0].innerHTML = html;
-	_eventElements = $.makeArray(segmentContainer[0].childNodes); // TODO: look at .children() again
+	eventElements = segmentContainer.children();
 	
 	// retrieve elements, run through eventRender callback, bind handlers
 	for (i=0; i<segCnt; i++) {
 		seg = segs[i];
-		eventElement = $(_eventElements[i]);
+		eventElement = $(eventElements[i]); // faster than eq()
 		event = seg.event;
 		triggerRes = view.trigger('eventRender', event, event, eventElement);
 		if (triggerRes === false) {
@@ -598,10 +594,16 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 					.appendTo(segmentContainer);
 			}
 			seg.element = eventElement;
-			mouseoverBind(event, seg, eventElement);
+			if (event._id === modifiedEventId) {
+				bindSegHandlers(event, eventElement, seg);
+			}else{
+				eventElement[0]._fci = i; // for lazySegBind
+			}
 			view.reportEventElement(event, eventElement);
 		}
 	}
+	
+	lazySegBind(segmentContainer, segs, bindSegHandlers);
 	
 	// record event horizontal sides
 	for (i=0; i<segCnt; i++) {
@@ -669,5 +671,25 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 function cssKey(_element) {
 	return _element.id + '/' + _element.className + '/' + _element.style.cssText.replace(/(^|;)\s*(top|left|width|height)\s*:[^;]*/ig, '');
 }
+
+
+function lazySegBind(container, segs, bindHandlers) {
+	container.unbind('mouseover').mouseover(function(ev) {
+		var parent=ev.target, e,
+			i, seg;
+		while (parent != this) {
+			e = parent;
+			parent = parent.parentNode;
+		}
+		if ((i = e._fci) != undefined) {
+			e._fci = undefined;
+			seg = segs[i];
+			bindHandlers(seg.event, seg.element, seg);
+			$(ev.target).trigger(ev);
+		}
+		ev.stopPropagation();
+	});
+}
+
 
 
