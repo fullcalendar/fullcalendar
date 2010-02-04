@@ -1,4 +1,9 @@
 
+version 1.4.4 (2/3/10)
+	- optimized event rendering in all views (events render in 1/10 the time)
+	- gotoDate() does not force the calendar to unnecessarily rerender
+	- render() method now correctly readjusts height
+
 version 1.4.3 (12/22/09)
 	- added destroy method
 	- Google Calendar event pages respect currentTimezone

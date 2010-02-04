@@ -527,7 +527,7 @@ function Agenda(element, options, methods) {
 						: '') +
 				"</div>";
 		}
-		slotSegmentContainer[0].innerHTML = html;
+		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
 		
 		// retrieve elements, run through eventRender callback, bind event handlers

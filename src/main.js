@@ -215,7 +215,7 @@ $.fn.fullCalendar = function(options) {
 		
 		function render(inc, forceUpdateSize) {
 			if ((elementWidth = _element.offsetWidth) !== 0) { // visible on the screen
-				if (!contentHeight) {
+				if (!contentHeight || forceUpdateSize) {
 					contentWidth = content.width();
 					contentHeight = calculateContentHeight();
 				}
@@ -234,13 +234,13 @@ $.fn.fullCalendar = function(options) {
 				}
 				else if (view.sizeDirty || forceUpdateSize) {
 					view.updateSize(contentWidth, contentHeight);
-					view.rerenderEvents(); // TODO: could probably skip recompile??
+					view.clearEvents();
+					view.renderEvents(events);
 				}
 				else if (view.eventsDirty) {
 					// ensure events are rerendered if another view messed with them
 					// pass in 'events' b/c event might have been added/removed
 					// executed on a changeView
-					// TODO: should this be inclusive with sizeDirty and forceUpdateSize??
 					view.clearEvents();
 					view.renderEvents(events);
 				}
@@ -412,6 +412,8 @@ $.fn.fullCalendar = function(options) {
 		
 			render: function() {
 				render(0, true); // true forces size to updated
+				sizesDirtyExcept(view);
+				eventsDirtyExcept(view);
 			},
 			
 			changeView: changeView,
@@ -590,6 +592,7 @@ $.fn.fullCalendar = function(options) {
 			
 			rerenderEvents: function() {
 				view.rerenderEvents(); 
+				eventsDirtyExcept(view);
 			},
 			
 			//

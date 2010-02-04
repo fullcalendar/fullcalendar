@@ -63,6 +63,7 @@ else if (_build) {
 	includeJS('../build/fullcalendar/jquery/ui.resizable.js');
 }
 else {
+	//includeJS('../src/jquery/jquery-1.4.1.min.js');
 	includeJS('../src/jquery/jquery-uncompressed.js');
 	includeJS('../src/jquery/ui.core.js');
 	includeJS('../src/jquery/ui.draggable.js');

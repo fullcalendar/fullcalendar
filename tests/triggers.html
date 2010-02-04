@@ -12,6 +12,7 @@
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			//weekends: false,
+			//defaultView: 'agendaWeek',
 			
 			header: {
 				left: 'prev,next today',
@@ -70,7 +71,7 @@
 				//return false;
 			},
 			
-			/*
+			
 			eventMouseover: function(event, jsEvent, view) {
 				console.log('MOUSEOVER ' + event.title);
 				//console.log(jsEvent);
@@ -83,7 +84,7 @@
 				//console.log(view);
 				//console.log(this);
 			},
-			*/
+			
 			
 			eventDragStart: function(event, jsEvent, ui, view) {
 				console.log('DRAG START ' + event.title);

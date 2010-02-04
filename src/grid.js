@@ -572,7 +572,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 		seg.left = left;
 		seg.outerWidth = right - left;
 	}
-	segmentContainer[0].innerHTML = html;
+	segmentContainer[0].innerHTML = html; // faster than html()
 	eventElements = segmentContainer.children();
 	
 	// retrieve elements, run through eventRender callback, bind handlers
@@ -646,7 +646,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 			seg.top = top;
 			i++;
 		}
-		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div') // > is optimal???
+		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div') // optimal selector?
 			.height(top + levelHeight);
 	}
 	
@@ -666,30 +666,5 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 	}
 	
 }
-
-
-function cssKey(_element) {
-	return _element.id + '/' + _element.className + '/' + _element.style.cssText.replace(/(^|;)\s*(top|left|width|height)\s*:[^;]*/ig, '');
-}
-
-
-function lazySegBind(container, segs, bindHandlers) {
-	container.unbind('mouseover').mouseover(function(ev) {
-		var parent=ev.target, e,
-			i, seg;
-		while (parent != this) {
-			e = parent;
-			parent = parent.parentNode;
-		}
-		if ((i = e._fci) != undefined) {
-			e._fci = undefined;
-			seg = segs[i];
-			bindHandlers(seg.event, seg.element, seg);
-			$(ev.target).trigger(ev);
-		}
-		ev.stopPropagation();
-	});
-}
-
 
 
