@@ -21,7 +21,7 @@ setDefaults({
 
 views.agendaWeek = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -43,9 +43,7 @@ views.agendaWeek = function(element, options) {
 			);
 			this.renderAgenda(
 				options.weekends ? 7 : 5,
-				this.option('columnFormat'),
-				width, height,
-				fetchEvents
+				this.option('columnFormat')
 			);
 		}
 	});
@@ -53,7 +51,7 @@ views.agendaWeek = function(element, options) {
 
 views.agendaDay = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -65,9 +63,7 @@ views.agendaDay = function(element, options) {
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
 			this.renderAgenda(
 				1,
-				this.option('columnFormat'),
-				width, height,
-				fetchEvents
+				this.option('columnFormat')
 			);
 		}
 	});
@@ -97,7 +93,8 @@ function Agenda(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		clearEvents: clearEvents,
-		updateSize: updateSize,
+		setHeight: setHeight,
+		setWidth: setWidth,
 		shown: resetScroll,
 		defaultEventEnd: function(event) {
 			var start = cloneDate(event.start);
@@ -115,12 +112,12 @@ function Agenda(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-agenda').css('position', 'relative');
+	element.addClass('fc-agenda');
 	if (element.disableSelection) {
 		element.disableSelection();
 	}
 	
-	function renderAgenda(c, colFormat, width, height, fetchEvents) {
+	function renderAgenda(c, colFormat) {
 		colCnt = c;
 		
 		// update option-derived variables
@@ -261,10 +258,6 @@ function Agenda(element, options, methods) {
 		
 		}
 		
-		updateSize(width, height);
-		resetScroll();
-		fetchEvents(renderEvents);
-		
 	};
 	
 	
@@ -284,21 +277,35 @@ function Agenda(element, options, methods) {
 	}
 	
 	
-	function updateSize(width, height) {
-		viewWidth = width;
+	function setHeight(height) {
 		viewHeight = height;
-		colContentPositions.clear();
 		slotTopCache = {};
 		
-		body.width(width);
 		body.height(height - head.height());
+		
+		slotHeight = body.find('tr:first div').height() + 1;
+		
+		bg.css({
+			top: head.find('tr').height(),
+			height: height
+		});
+		
+		resetScroll(); //TODO: not the best place for this
+	}
+	
+	
+	function setWidth(width) {
+		viewWidth = width;
+		colContentPositions.clear();
+		
+		body.width(width);
 		bodyTable.width('');
 		
 		var topTDs = head.find('tr:first th'),
 			stripeTDs = bg.find('td'),
-			contentWidth = slotSegmentContainer.width(); // body[0].clientWidth isn't reliable here in IE6
+			clientWidth = slotSegmentContainer.width(); // body[0].clientWidth isn't reliable here in IE6
 			
-		bodyTable.width(contentWidth);
+		bodyTable.width(clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
@@ -312,20 +319,19 @@ function Agenda(element, options, methods) {
 		);
 		
 		// column width
-		colWidth = Math.floor((contentWidth - axisWidth) / colCnt);
+		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
 		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
-		setOuterWidth(topTDs.slice(-2, -1), contentWidth - axisWidth - colWidth*(colCnt-1));
+		setOuterWidth(topTDs.slice(-2, -1), clientWidth - axisWidth - colWidth*(colCnt-1));
 		
 		bg.css({
-			top: head.find('tr').height(),
 			left: axisWidth,
-			width: contentWidth - axisWidth,
-			height: height
+			width: clientWidth - axisWidth
 		});
-		
-		slotHeight = body.find('tr:first div').height() + 1;
 	}
+	
+	
+	
 	
 	function slotClick(ev) {
 		var col = Math.floor((ev.pageX - bg.offset().left) / colWidth),
@@ -448,7 +454,7 @@ function Agenda(element, options, methods) {
 				bindDaySegHandlers,
 				modifiedEventId
 			);
-			updateSize(viewWidth, viewHeight); // might have pushed the body down, so resize
+			setHeight(viewHeight); // might have pushed the body down, so resize
 		}
 	}
 	

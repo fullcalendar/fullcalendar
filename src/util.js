@@ -338,6 +338,13 @@ function vmargins(_element) {
 
 
 
+
+function setMinHeight(element, h) {
+	element.css('min-height', h)[0].style.cssText += ';_height:' + (typeof h == 'number' ? h + 'px' : h);
+}
+
+
+
 /* Position Calculation
 -----------------------------------------------------------------------------*/
 // nasty bugs in opera 9.25

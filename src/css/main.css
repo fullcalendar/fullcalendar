@@ -18,6 +18,7 @@
 	
 .fc {
 	direction: ltr;
+	text-align: left;
 	}
 	
 .fc table {
@@ -49,6 +50,7 @@ table.fc-header {
 	
 .fc-header-center {
 	width: 50%;
+	text-align: center;
 	}
 	
 .fc-header-center table {

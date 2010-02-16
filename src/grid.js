@@ -8,7 +8,7 @@ setDefaults({
 
 views.month = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addMonths(date, delta);
 				date.setDate(1);
@@ -43,9 +43,7 @@ views.month = function(element, options) {
 			this.renderGrid(
 				rowCnt, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
-				true,
-				width, height,
-				fetchEvents
+				true
 			);
 		}
 	});
@@ -53,7 +51,7 @@ views.month = function(element, options) {
 
 views.basicWeek = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -76,9 +74,7 @@ views.basicWeek = function(element, options) {
 			this.renderGrid(
 				1, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
-				false,
-				width, height,
-				fetchEvents
+				false
 			);
 		}
 	});
@@ -86,7 +82,7 @@ views.basicWeek = function(element, options) {
 
 views.basicDay = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -99,9 +95,7 @@ views.basicDay = function(element, options) {
 			this.renderGrid(
 				1, 1,
 				this.option('columnFormat'),
-				false,
-				width, height,
-				fetchEvents
+				false
 			);
 		}
 	});
@@ -135,7 +129,8 @@ function Grid(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		clearEvents: clearEvents,
-		updateSize: updateSize,
+		setHeight: setHeight,
+		setWidth: setWidth,
 		defaultEventEnd: function(event) { // calculates an end if event doesnt have one, mostly for resizing
 			return cloneDate(event.start);
 		}
@@ -148,12 +143,12 @@ function Grid(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-grid').css('position', 'relative');
+	element.addClass('fc-grid');
 	if (element.disableSelection) {
 		element.disableSelection();
 	}
 
-	function renderGrid(r, c, colFormat, showNumbers, width, height, fetchEvents) {
+	function renderGrid(r, c, colFormat, showNumbers) {
 		rowCnt = r;
 		colCnt = c;
 		
@@ -302,9 +297,6 @@ function Grid(element, options, methods) {
 			}
 		
 		}
-		
-		updateSize(width, height);
-		fetchEvents(renderEvents);
 	
 	};
 	
@@ -319,22 +311,18 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function updateSize(width, height) { // does not render/position the events
-		viewWidth = width;
+	
+	function setHeight(height) {
 		viewHeight = height;
-		dayContentPositions.clear();
-		
 		var leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = viewHeight - thead.height(),
 			rowHeight1, rowHeight2;
-		
 		if (options.weekMode == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
 			var tr = tbody.find('tr:first'),
@@ -342,7 +330,6 @@ function Grid(element, options, methods) {
 			td.height(rowHeight1);
 			tdHeightBug = rowHeight1 != td.height();
 		}
-		
 		if (tdHeightBug) {
 			leftTDs.slice(0, -1).height(rowHeight1);
 			leftTDs.slice(-1).height(rowHeight2);
@@ -350,12 +337,16 @@ function Grid(element, options, methods) {
 			setOuterHeight(leftTDs.slice(0, -1), rowHeight1);
 			setOuterHeight(leftTDs.slice(-1), rowHeight2);
 		}
-		
+	}
+	
+	
+	function setWidth(width) {
+		viewWidth = width;
+		dayContentPositions.clear();
 		setOuterWidth(
 			thead.find('th').slice(0, -1),
 			colWidth = Math.floor(viewWidth / colCnt)
 		);
-		
 	}
 
 	

@@ -147,10 +147,17 @@ $.fn.fullCalendar = function(options) {
 		// element
 		var _element = this,
 			element = $(_element).addClass('fc'),
-			elementWidth,
-			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element), // relative for ie6
-			contentWidth,
-			contentHeight;
+			elementOuterWidth,
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element),
+			suggestedViewHeight,
+			resizeUID = 0,
+			ignoreWindowResize = 0,
+			date = new Date(),
+			viewName,  // the current view name (TODO: look into getting rid of)
+			view,      // the current view
+			viewInstances = {};
+			
+			
 			
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
@@ -158,11 +165,6 @@ $.fn.fullCalendar = function(options) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
-		
-		// view managing
-		var date = new Date(),
-			viewName, view, // the current view
-			viewInstances = {};
 			
 		if (options.year != undefined && options.year != date.getFullYear()) {
 			date.setDate(1);
@@ -184,14 +186,19 @@ $.fn.fullCalendar = function(options) {
 		
 		function changeView(v) {
 			if (v != viewName) {
-				fixContentSize();
-				if (view) {
-					if (view.eventsChanged) {
-						eventsDirtyExcept(view);
-						view.eventsChanged = false;
+				ignoreWindowResize++;
+				
+				var oldView = view;
+				if (oldView) {
+					if (oldView.eventsChanged) {
+						eventsDirty();
+						oldView.eventDirty = oldView.eventsChanged = false;
 					}
-					view.element.hide();
+					setMinHeight(content, content.height()); // needs to be first
+					content.css('overflow', 'hidden');
+					oldView.element.hide();
 				}
+				
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
 					if (view.shown) {
@@ -199,51 +206,55 @@ $.fn.fullCalendar = function(options) {
 					}
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
-						$("<div class='fc-view fc-view-" + v + "'/>").appendTo(content),
+						$("<div class='fc-view fc-view-" + v + "' style='position:relative'/>").appendTo(content),
 						options);
 				}
+				
 				if (header) {
 					// update 'active' view button
 					header.find('div.fc-button-' + viewName).removeClass(tm + '-state-active');
 					header.find('div.fc-button-' + v).addClass(tm + '-state-active');
 				}
+				
 				view.name = viewName = v;
 				render();
-				unfixContentSize();
+				if (oldView) {
+					content.css('overflow', ''); // needs to be first
+					setMinHeight(content, 0);
+				}
+				
+				ignoreWindowResize--;
 			}
 		}
 		
-		function render(inc, forceUpdateSize) {
-			if ((elementWidth = _element.offsetWidth) !== 0) { // visible on the screen
-				if (!contentHeight || forceUpdateSize) {
-					contentWidth = content.width();
-					contentHeight = calculateContentHeight();
+		function render(inc) {
+			if (_element.offsetWidth !== 0) { // visible on the screen
+				ignoreWindowResize++;
+				
+				if (!view.start || inc || date < view.start || date >= view.end) {
+					view.render(date, inc || 0); // responsible for clearing events
+					setSize();
+					if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
+						fetchEvents(function(events) {
+							ignoreWindowResize++;
+							view.renderEvents(events);
+							ignoreWindowResize--;
+						});
+					}else{
+						view.renderEvents(events); // don't refetch
+					}
 				}
-				if (inc || !view.date || date < view.start || date >= view.end) { // !view.date means it hasn't been rendered yet
-					fixContentSize();
-					view.render(date, inc || 0, contentWidth, contentHeight, function(callback) {
-						// dont refetch if new view contains the same events (or a subset)
-						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
-							fetchEvents(callback);
-						}else{
-							callback(events); // no refetching
-						}
-					});
-					unfixContentSize();
-					view.date = cloneDate(date);
-				}
-				else if (view.sizeDirty || forceUpdateSize) {
-					view.updateSize(contentWidth, contentHeight);
+				else if (view.sizeDirty || view.eventsDirty) {
 					view.clearEvents();
+					if (view.sizeDirty) {
+						setSize();
+					}
 					view.renderEvents(events);
 				}
-				else if (view.eventsDirty) {
-					// ensure events are rerendered if another view messed with them
-					// pass in 'events' b/c event might have been added/removed
-					// executed on a changeView
-					view.clearEvents();
-					view.renderEvents(events);
-				}
+				elementOuterWidth = element.outerWidth();
+				view.sizeDirty = false;
+				view.eventsDirty = false;
+				
 				if (header) {
 					// update title text
 					header.find('h2.fc-header-title').html(view.title);
@@ -255,62 +266,42 @@ $.fn.fullCalendar = function(options) {
 						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
 					}
 				}
-				view.sizeDirty = false;
-				view.eventsDirty = false;
+				
 				view.trigger('viewDisplay', _element);
+				ignoreWindowResize--;
 			}
-		}
-		
-		// marks other views' events as dirty
-		function eventsDirtyExcept(exceptView) { // TODO: otherViewsEventsDirty
-			$.each(viewInstances, function() {
-				if (this != exceptView) {
-					this.eventsDirty = true;
-				}
-			});
 		}
 		
 		// called when any event objects have been added/removed/changed, rerenders
 		function eventsChanged() {
+			eventsDirty();
 			view.clearEvents();
 			view.renderEvents(events);
-			eventsDirtyExcept(view);
+			view.eventsDirty = false;
 		}
 		
-		// marks other views' sizes as dirty
-		function sizesDirtyExcept(exceptView) {
+		// marks other views' events as dirty
+		function eventsDirty() {
 			$.each(viewInstances, function() {
-				if (this != exceptView) {
-					this.sizeDirty = true;
-				}
+				this.eventsDirty = true;
 			});
 		}
 		
 		// called when we know the element size has changed
-		function sizeChanged(fix) {
-			contentWidth = content.width();
-			contentHeight = calculateContentHeight();
-			if (fix) {
-				fixContentSize();
-			}
-			view.updateSize(contentWidth, contentHeight);
-			if (fix) {
-				unfixContentSize();
-			}
-			sizesDirtyExcept(view);
+		function sizeChanged() {
+			sizesDirty();
+			calcSize();
+			setSize();
 			view.rerenderEvents();
 		}
 		
-		// calculate what the height of the content should be
-		function calculateContentHeight() {
-			if (options.contentHeight) {
-				return options.contentHeight;
-			}
-			else if (options.height) {
-				return options.height - (header ? header.height() : 0) - vsides(content[0]);
-			}
-			return Math.round(contentWidth / Math.max(options.aspectRatio, .5));
+		// marks other views' sizes as dirty
+		function sizesDirty() {
+			$.each(viewInstances, function() {
+				this.sizeDirty = true;
+			});
 		}
+		
 		
 		
 		
@@ -411,9 +402,9 @@ $.fn.fullCalendar = function(options) {
 		var publicMethods = {
 		
 			render: function() {
-				render(0, true); // true forces size to updated
-				sizesDirtyExcept(view);
-				eventsDirtyExcept(view);
+				sizesDirty();
+				eventsDirty();
+				render();
 			},
 			
 			changeView: changeView,
@@ -590,10 +581,7 @@ $.fn.fullCalendar = function(options) {
 				return events; // else, return all
 			},
 			
-			rerenderEvents: function() {
-				view.rerenderEvents(); 
-				eventsDirtyExcept(view);
-			},
+			rerenderEvents: eventsChanged, // TODO: think of renaming eventsChanged
 			
 			//
 			// Event Source
@@ -734,48 +722,39 @@ $.fn.fullCalendar = function(options) {
 		/* Resizing
 		-----------------------------------------------------------------------------*/
 		
-		var contentSizeFixed = false,
-			resizeCnt = 0;
 		
-		function fixContentSize() {
-			if (!contentSizeFixed) {
-				contentSizeFixed = true;
-				content.css({
-					overflow: 'hidden',
-					height: contentHeight
-				});
-				// TODO: previous action might have caused scrollbars
-				// which will make the window width more narrow, possibly changing the aspect ratio
+		function calcSize() {
+			if (options.contentHeight) {
+				suggestedViewHeight = options.contentHeight;
+			}
+			else if (options.height) {
+				suggestedViewHeight = options.height - (header ? header.height() : 0) - vsides(content[0]);
+			}
+			else {
+				suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 			}
 		}
 		
-		function unfixContentSize() {
-			if (contentSizeFixed) {
-				content.css({
-					overflow: 'visible',
-					height: ''
-				});
-				if ($.browser.msie && ($.browser.version=='6.0' || $.browser.version=='7.0')) {
-					// in IE6/7 the inside of the content div was invisible
-					// bizarre hack to get this work... need both lines
-					content[0].clientHeight;
-					content.hide().show();
-				}
-				contentSizeFixed = false;
-			}
+		
+		function setSize() {
+			ignoreWindowResize++;
+			view.setHeight(suggestedViewHeight);
+			view.setWidth(content.width());
+			ignoreWindowResize--;
 		}
+		
 		
 		function windowResize() {
-			if (!contentSizeFixed) {
-				if (view.date) { // view has already been rendered
-					var rcnt = ++resizeCnt; // add a delay
-					setTimeout(function() {
-						if (rcnt == resizeCnt && !contentSizeFixed) {
-							var newWidth = element.width();
-							if (newWidth != elementWidth) {
-								elementWidth = newWidth;
-								sizeChanged(true);
+			if (!ignoreWindowResize) {
+				if (view.start) { // view has already been rendered
+					var uid = ++resizeUID;
+					setTimeout(function() { // add a delay
+						if (uid == resizeUID && !ignoreWindowResize) {
+							if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
+								ignoreWindowResize++;
+								sizeChanged();
 								view.trigger('windowResize', _element);
+								ignoreWindowResize--;
 							}
 						}
 					}, 200);
@@ -789,7 +768,9 @@ $.fn.fullCalendar = function(options) {
 		
 		
 		// let's begin...
+		calcSize();
 		changeView(options.defaultView);
+		
 		
 		// in IE, when in 0x0 iframe, initial resize never gets called, so do this...
 		if ($.browser.msie && !$('body').width()) {
@@ -799,6 +780,7 @@ $.fn.fullCalendar = function(options) {
 				view.rerenderEvents(); // needed for IE 7 // TODO: could probably skip recompile
 			}, 0);
 		}
+
 	
 	});
 	
