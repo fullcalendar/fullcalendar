@@ -200,7 +200,7 @@ function Agenda(element, options, methods) {
 			body.find('td').click(slotClick);
 			
 			// slot event container
-			slotSegmentContainer = $("<div/>").appendTo(bodyContent);
+			slotSegmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(bodyContent);
 			
 			// background stripes
 			d = cloneDate(d0);
@@ -269,15 +269,15 @@ function Agenda(element, options, methods) {
 			body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
 				// TODO: +1 doesn't apply when firstHour=0
 		}
-		if ($.browser.opera) {
+		//if ($.browser.opera) {
 			setTimeout(go, 0); // opera 10 (and earlier?) needs this
-		}else{
-			go();
-		}
+		//}else{
+		//	go();
+		//}
 	}
 	
 	
-	function setHeight(height) {
+	function setHeight(height, dontResetScroll) {
 		viewHeight = height;
 		slotTopCache = {};
 		
@@ -290,7 +290,9 @@ function Agenda(element, options, methods) {
 			height: height
 		});
 		
-		resetScroll(); //TODO: not the best place for this
+		if (!dontResetScroll) {
+			resetScroll();
+		}
 	}
 	
 	
@@ -303,7 +305,7 @@ function Agenda(element, options, methods) {
 		
 		var topTDs = head.find('tr:first th'),
 			stripeTDs = bg.find('td'),
-			clientWidth = slotSegmentContainer.width(); // body[0].clientWidth isn't reliable here in IE6
+			clientWidth = body[0].clientWidth;
 			
 		bodyTable.width(clientWidth);
 		
@@ -454,7 +456,7 @@ function Agenda(element, options, methods) {
 				bindDaySegHandlers,
 				modifiedEventId
 			);
-			setHeight(viewHeight); // might have pushed the body down, so resize
+			setHeight(viewHeight, true); // might have pushed the body down, so resize
 		}
 	}
 	

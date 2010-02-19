@@ -188,7 +188,9 @@ $.fn.fullCalendar = function(options) {
 			if (v != viewName) {
 				ignoreWindowResize++;
 				
-				var oldView = view;
+				var oldView = view,
+					newViewElement;
+					
 				if (oldView) {
 					if (oldView.eventsChanged) {
 						eventsDirty();
@@ -206,8 +208,9 @@ $.fn.fullCalendar = function(options) {
 					}
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
-						$("<div class='fc-view fc-view-" + v + "' style='position:relative'/>").appendTo(content),
-						options);
+						newViewElement = $("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>").appendTo(content),
+						options
+					);
 				}
 				
 				if (header) {
@@ -218,6 +221,9 @@ $.fn.fullCalendar = function(options) {
 				
 				view.name = viewName = v;
 				render();
+				if (newViewElement) {
+					newViewElement.css('position', 'relative');
+				}
 				if (oldView) {
 					content.css('overflow', ''); // needs to be first
 					setMinHeight(content, 0);
