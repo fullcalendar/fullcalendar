@@ -75,6 +75,7 @@ function Agenda(element, options, methods) {
 		colCnt,
 		axisWidth, colWidth, slotHeight,
 		viewWidth, viewHeight,
+		savedScrollTop,
 		cachedEvents=[],
 		daySegmentContainer,
 		slotSegmentContainer,
@@ -95,7 +96,12 @@ function Agenda(element, options, methods) {
 		clearEvents: clearEvents,
 		setHeight: setHeight,
 		setWidth: setWidth,
-		shown: resetScroll,
+		beforeHide: function() {
+			savedScrollTop = body.scrollTop();
+		},
+		afterShow: function() {
+			body.scrollTop(savedScrollTop);
+		},
 		defaultEventEnd: function(event) {
 			var start = cloneDate(event.start);
 			if (event.allDay) {
@@ -265,19 +271,16 @@ function Agenda(element, options, methods) {
 		var d0 = zeroDate(),
 			scrollDate = cloneDate(d0);
 		scrollDate.setHours(options.firstHour);
-		var go = function() {
-			body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
-				// TODO: +1 doesn't apply when firstHour=0
-		}
-		//if ($.browser.opera) {
-			setTimeout(go, 0); // opera 10 (and earlier?) needs this
-		//}else{
-		//	go();
-		//}
+		var top = timePosition(d0, scrollDate) + 1, // +1 for the border
+			scroll = function() {
+				body.scrollTop(top);
+			};
+		scroll();
+		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
 	}
 	
 	
-	function setHeight(height, dontResetScroll) {
+	function setHeight(height, dateChanged) {
 		viewHeight = height;
 		slotTopCache = {};
 		
@@ -290,7 +293,7 @@ function Agenda(element, options, methods) {
 			height: height
 		});
 		
-		if (!dontResetScroll) {
+		if (dateChanged) {
 			resetScroll();
 		}
 	}
@@ -456,7 +459,7 @@ function Agenda(element, options, methods) {
 				bindDaySegHandlers,
 				modifiedEventId
 			);
-			setHeight(viewHeight, true); // might have pushed the body down, so resize
+			setHeight(viewHeight); // might have pushed the body down, so resize
 		}
 	}
 	

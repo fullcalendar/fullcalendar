@@ -192,20 +192,20 @@ $.fn.fullCalendar = function(options) {
 					newViewElement;
 					
 				if (oldView) {
+					if (oldView.beforeHide) {
+						oldView.beforeHide(); // called before changing min-height/overflow. if called after, scroll state is reset (in Opera)
+					}
 					if (oldView.eventsChanged) {
 						eventsDirty();
 						oldView.eventDirty = oldView.eventsChanged = false;
 					}
-					setMinHeight(content, content.height()); // needs to be first
+					setMinHeight(content, content.height()); // needs to be called before setting overflow
 					content.css('overflow', 'hidden');
 					oldView.element.hide();
 				}
 				
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
-					if (view.shown) {
-						view.shown();
-					}
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
 						newViewElement = $("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>").appendTo(content),
@@ -225,8 +225,11 @@ $.fn.fullCalendar = function(options) {
 					newViewElement.css('position', 'relative');
 				}
 				if (oldView) {
-					content.css('overflow', ''); // needs to be first
+					content.css('overflow', ''); // needs to be called before setting min-height
 					setMinHeight(content, 0);
+				}
+				if (!newViewElement && view.afterShow) {
+					view.afterShow(); // called after setting min-height/overflow, so in final scroll state (for Opera)
 				}
 				
 				ignoreWindowResize--;
@@ -239,7 +242,7 @@ $.fn.fullCalendar = function(options) {
 				
 				if (!view.start || inc || date < view.start || date >= view.end) {
 					view.render(date, inc || 0); // responsible for clearing events
-					setSize();
+					setSize(true);
 					if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
 						fetchEvents(function(events) {
 							ignoreWindowResize++;
@@ -742,10 +745,10 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		
-		function setSize() {
+		function setSize(dateChanged) {
 			ignoreWindowResize++;
-			view.setHeight(suggestedViewHeight);
-			view.setWidth(content.width());
+			view.setHeight(suggestedViewHeight, dateChanged);
+			view.setWidth(content.width(), dateChanged);
 			ignoreWindowResize--;
 		}
 		
