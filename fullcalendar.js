@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.4.4
+ * FullCalendar v1.4.5
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * Date: Wed Feb 3 22:56:20 2010 -0800
+ * Date: Sun Feb 21 20:30:11 2010 -0800
  *
  */
  
@@ -45,6 +45,7 @@ var defaults = {
 	allDayDefault: true,
 	
 	// event ajax
+	lazyFetching: true,
 	startParam: 'start',
 	endParam: 'end',
 	
@@ -126,9 +127,12 @@ $.fn.fullCalendar = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1),
 			res;
 		this.each(function() {
-			var r = $.data(this, 'fullCalendar')[options].apply(this, args);
-			if (res == undefined) {
-				res = r;
+			var data = $.data(this, 'fullCalendar');
+			if (data) {
+				var r = data[options].apply(this, args);
+				if (res == undefined) {
+					res = r;
+				}
 			}
 		});
 		if (res != undefined) {
@@ -166,10 +170,18 @@ $.fn.fullCalendar = function(options) {
 		// element
 		var _element = this,
 			element = $(_element).addClass('fc'),
-			elementWidth,
-			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element), // relative for ie6
-			contentWidth,
-			contentHeight;
+			elementOuterWidth,
+			content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>").prependTo(_element),
+			suggestedViewHeight,
+			resizeUID = 0,
+			ignoreWindowResize = 0,
+			date = new Date(),
+			viewName,  // the current view name (TODO: look into getting rid of)
+			view,      // the current view
+			viewInstances = {},
+			absoluteViewElement;
+			
+			
 			
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
@@ -177,11 +189,6 @@ $.fn.fullCalendar = function(options) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
-		
-		// view managing
-		var date = new Date(),
-			viewName, view, // the current view
-			viewInstances = {};
 			
 		if (options.year != undefined && options.year != date.getFullYear()) {
 			date.setDate(1);
@@ -203,66 +210,90 @@ $.fn.fullCalendar = function(options) {
 		
 		function changeView(v) {
 			if (v != viewName) {
-				fixContentSize();
-				if (view) {
-					if (view.eventsChanged) {
-						eventsDirtyExcept(view);
-						view.eventsChanged = false;
+				ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
+				
+				var oldView = view,
+					newViewElement;
+					
+				if (oldView) {
+					if (oldView.eventsChanged) {
+						eventsDirty();
+						oldView.eventDirty = oldView.eventsChanged = false;
 					}
-					view.element.hide();
+					if (oldView.beforeHide) {
+						oldView.beforeHide(); // called before changing min-height. if called after, scroll state is reset (in Opera)
+					}
+					setMinHeight(content, content.height());
+					oldView.element.hide();
+				}else{
+					setMinHeight(content, 1); // needs to be 1 (not 0) for IE7, or else view dimensions miscalculated
 				}
+				content.css('overflow', 'hidden');
+				
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
-					if (view.shown) {
-						view.shown();
-					}
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
-						$("<div class='fc-view fc-view-" + v + "'/>").appendTo(content),
-						options);
+						newViewElement = absoluteViewElement =
+							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
+								.appendTo(content),
+						options
+					);
 				}
+				
 				if (header) {
 					// update 'active' view button
 					header.find('div.fc-button-' + viewName).removeClass(tm + '-state-active');
 					header.find('div.fc-button-' + v).addClass(tm + '-state-active');
 				}
+				
 				view.name = viewName = v;
-				render();
-				unfixContentSize();
+				render(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
+				content.css('overflow', '');
+				if (oldView) {
+					setMinHeight(content, 1);
+				}
+				if (!newViewElement && view.afterShow) {
+					view.afterShow(); // called after setting min-height/overflow, so in final scroll state (for Opera)
+				}
+				
+				ignoreWindowResize--;
 			}
 		}
 		
-		function render(inc, forceUpdateSize) {
-			if ((elementWidth = _element.offsetWidth) !== 0) { // visible on the screen
-				if (!contentHeight || forceUpdateSize) {
-					contentWidth = content.width();
-					contentHeight = calculateContentHeight();
+		
+		function render(inc) {
+			if (elementVisible()) {
+				ignoreWindowResize++; // because view.renderEvents might temporarily change the height before setSize is reached
+				
+				if (suggestedViewHeight == undefined) {
+					calcSize();
 				}
-				if (inc || !view.date || date < view.start || date >= view.end) { // !view.date means it hasn't been rendered yet
-					fixContentSize();
-					view.render(date, inc || 0, contentWidth, contentHeight, function(callback) {
-						// dont refetch if new view contains the same events (or a subset)
-						if (!eventStart || view.visStart < eventStart || view.visEnd > eventEnd) {
-							fetchEvents(callback);
-						}else{
-							callback(events); // no refetching
-						}
-					});
-					unfixContentSize();
-					view.date = cloneDate(date);
+				
+				if (!view.start || inc || date < view.start || date >= view.end) {
+					view.render(date, inc || 0); // responsible for clearing events
+					setSize(true);
+					if (!eventStart || !options.lazyFetching || view.visStart < eventStart || view.visEnd > eventEnd) {
+						fetchAndRenderEvents();
+					}else{
+						view.renderEvents(events); // don't refetch
+					}
 				}
-				else if (view.sizeDirty || forceUpdateSize) {
-					view.updateSize(contentWidth, contentHeight);
+				else if (view.sizeDirty || view.eventsDirty || !options.lazyFetching) {
 					view.clearEvents();
-					view.renderEvents(events);
+					if (view.sizeDirty) {
+						setSize();
+					}
+					if (options.lazyFetching) {
+						view.renderEvents(events); // don't refetch
+					}else{
+						fetchAndRenderEvents();
+					}
 				}
-				else if (view.eventsDirty) {
-					// ensure events are rerendered if another view messed with them
-					// pass in 'events' b/c event might have been added/removed
-					// executed on a changeView
-					view.clearEvents();
-					view.renderEvents(events);
-				}
+				elementOuterWidth = element.outerWidth();
+				view.sizeDirty = false;
+				view.eventsDirty = false;
+				
 				if (header) {
 					// update title text
 					header.find('h2.fc-header-title').html(view.title);
@@ -274,62 +305,57 @@ $.fn.fullCalendar = function(options) {
 						header.find('div.fc-button-today').removeClass(tm + '-state-disabled');
 					}
 				}
-				view.sizeDirty = false;
-				view.eventsDirty = false;
+				
+				ignoreWindowResize--;
 				view.trigger('viewDisplay', _element);
 			}
 		}
 		
-		// marks other views' events as dirty
-		function eventsDirtyExcept(exceptView) { // TODO: otherViewsEventsDirty
-			$.each(viewInstances, function() {
-				if (this != exceptView) {
-					this.eventsDirty = true;
-				}
-			});
+		
+		function elementVisible() {
+			return _element.offsetWidth !== 0;
 		}
+		
+		function bodyVisible() {
+			return $('body')[0].offsetWidth !== 0;
+		}
+		
 		
 		// called when any event objects have been added/removed/changed, rerenders
 		function eventsChanged() {
-			view.clearEvents();
-			view.renderEvents(events);
-			eventsDirtyExcept(view);
+			eventsDirty();
+			if (elementVisible()) {
+				view.clearEvents();
+				view.renderEvents(events);
+				view.eventsDirty = false;
+			}
 		}
 		
-		// marks other views' sizes as dirty
-		function sizesDirtyExcept(exceptView) {
+		// marks other views' events as dirty
+		function eventsDirty() {
 			$.each(viewInstances, function() {
-				if (this != exceptView) {
-					this.sizeDirty = true;
-				}
+				this.eventsDirty = true;
 			});
 		}
 		
 		// called when we know the element size has changed
-		function sizeChanged(fix) {
-			contentWidth = content.width();
-			contentHeight = calculateContentHeight();
-			if (fix) {
-				fixContentSize();
+		function sizeChanged() {
+			sizesDirty();
+			if (elementVisible()) {
+				calcSize();
+				setSize();
+				view.rerenderEvents();
+				view.sizeDirty = false;
 			}
-			view.updateSize(contentWidth, contentHeight);
-			if (fix) {
-				unfixContentSize();
-			}
-			sizesDirtyExcept(view);
-			view.rerenderEvents();
 		}
 		
-		// calculate what the height of the content should be
-		function calculateContentHeight() {
-			if (options.contentHeight) {
-				return options.contentHeight;
-			}
-			else if (options.height) {
-				return options.height - (header ? header.height() : 0) - vsides(content[0]);
-			}
-			return Math.round(contentWidth / Math.max(options.aspectRatio, .5));
+		// marks other views' sizes as dirty
+		function sizesDirty() {
+			$.each(viewInstances, function() {
+				this.sizeDirty = true;
+			});
 		}
+		
 		
 		
 		
@@ -404,6 +430,14 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		
+		// for convenience
+		function fetchAndRenderEvents() {
+			fetchEvents(function(events) {
+				view.renderEvents(events); // maintain `this` in view
+			});
+		}
+		
+		
 		
 		/* Loading State
 		-----------------------------------------------------------------------------*/
@@ -430,9 +464,10 @@ $.fn.fullCalendar = function(options) {
 		var publicMethods = {
 		
 			render: function() {
-				render(0, true); // true forces size to updated
-				sizesDirtyExcept(view);
-				eventsDirtyExcept(view);
+				calcSize();
+				sizesDirty();
+				eventsDirty();
+				render();
 			},
 			
 			changeView: changeView,
@@ -450,10 +485,8 @@ $.fn.fullCalendar = function(options) {
 					return options[name];
 				}
 				if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-					if (!contentSizeFixed) {
-						options[name] = value;
-						sizeChanged();
-					}
+					options[name] = value;
+					sizeChanged();
 				}
 			},
 			
@@ -609,10 +642,7 @@ $.fn.fullCalendar = function(options) {
 				return events; // else, return all
 			},
 			
-			rerenderEvents: function() {
-				view.rerenderEvents(); 
-				eventsDirtyExcept(view);
-			},
+			rerenderEvents: eventsChanged, // TODO: think of renaming eventsChanged
 			
 			//
 			// Event Source
@@ -620,9 +650,7 @@ $.fn.fullCalendar = function(options) {
 		
 			addEventSource: function(source) {
 				eventSources.push(source);
-				fetchEventSource(source, function() {
-					eventsChanged();
-				});
+				fetchEventSource(source, eventsChanged);
 			},
 		
 			removeEventSource: function(source) {
@@ -753,54 +781,49 @@ $.fn.fullCalendar = function(options) {
 		/* Resizing
 		-----------------------------------------------------------------------------*/
 		
-		var contentSizeFixed = false,
-			resizeCnt = 0;
 		
-		function fixContentSize() {
-			if (!contentSizeFixed) {
-				contentSizeFixed = true;
-				content.css({
-					overflow: 'hidden',
-					height: contentHeight
-				});
-				// TODO: previous action might have caused scrollbars
-				// which will make the window width more narrow, possibly changing the aspect ratio
+		function calcSize() {
+			if (options.contentHeight) {
+				suggestedViewHeight = options.contentHeight;
+			}
+			else if (options.height) {
+				suggestedViewHeight = options.height - (header ? header.height() : 0) - vsides(content[0]);
+			}
+			else {
+				suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 			}
 		}
 		
-		function unfixContentSize() {
-			if (contentSizeFixed) {
-				content.css({
-					overflow: 'visible',
-					height: ''
-				});
-				if ($.browser.msie && ($.browser.version=='6.0' || $.browser.version=='7.0')) {
-					// in IE6/7 the inside of the content div was invisible
-					// bizarre hack to get this work... need both lines
-					content[0].clientHeight;
-					content.hide().show();
-				}
-				contentSizeFixed = false;
+		
+		function setSize(dateChanged) {
+			ignoreWindowResize++;
+			view.setHeight(suggestedViewHeight, dateChanged);
+			if (absoluteViewElement) {
+				absoluteViewElement.css('position', 'relative');
+				absoluteViewElement = null;
 			}
+			view.setWidth(content.width(), dateChanged);
+			ignoreWindowResize--;
 		}
+		
 		
 		function windowResize() {
-			if (!contentSizeFixed) {
-				if (view.date) { // view has already been rendered
-					var rcnt = ++resizeCnt; // add a delay
-					setTimeout(function() {
-						if (rcnt == resizeCnt && !contentSizeFixed) {
-							var newWidth = element.width();
-							if (newWidth != elementWidth) {
-								elementWidth = newWidth;
-								sizeChanged(true);
+			if (!ignoreWindowResize) {
+				if (view.start) { // view has already been rendered
+					var uid = ++resizeUID;
+					setTimeout(function() { // add a delay
+						if (uid == resizeUID && !ignoreWindowResize && elementVisible()) {
+							if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
+								ignoreWindowResize++; // in case the windowResize callback changes the height
+								sizeChanged();
 								view.trigger('windowResize', _element);
+								ignoreWindowResize--;
 							}
 						}
 					}, 200);
 				}else{
-					render(); // render for first time
-					// was probably in a 0x0 iframe that has just been resized
+					// calendar must have been initialized in a 0x0 iframe that has just been resized
+					lateRender();
 				}
 			}
 		};
@@ -810,14 +833,23 @@ $.fn.fullCalendar = function(options) {
 		// let's begin...
 		changeView(options.defaultView);
 		
-		// in IE, when in 0x0 iframe, initial resize never gets called, so do this...
-		if ($.browser.msie && !$('body').width()) {
-			setTimeout(function() {
-				render();
-				content.hide().show(); // needed for IE 6
-				view.rerenderEvents(); // needed for IE 7 // TODO: could probably skip recompile
-			}, 0);
+		
+		// needed for IE in a 0x0 iframe, b/c when it is resized, never triggers a windowResize
+		if (!bodyVisible()) {
+			lateRender();
 		}
+		
+		
+		// called when we know the calendar couldn't be rendered when it was initialized,
+		// but we think it's ready now
+		function lateRender() {
+			setTimeout(function() { // IE7 needs this so dimensions are calculated correctly
+				if (!view.start && bodyVisible()) { // !view.start makes sure this never happens more than once
+					render();
+				}
+			},0);
+		}
+
 	
 	});
 	
@@ -869,7 +901,7 @@ setDefaults({
 
 views.month = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addMonths(date, delta);
 				date.setDate(1);
@@ -904,9 +936,7 @@ views.month = function(element, options) {
 			this.renderGrid(
 				rowCnt, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
-				true,
-				width, height,
-				fetchEvents
+				true
 			);
 		}
 	});
@@ -914,7 +944,7 @@ views.month = function(element, options) {
 
 views.basicWeek = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -937,9 +967,7 @@ views.basicWeek = function(element, options) {
 			this.renderGrid(
 				1, options.weekends ? 7 : 5,
 				this.option('columnFormat'),
-				false,
-				width, height,
-				fetchEvents
+				false
 			);
 		}
 	});
@@ -947,7 +975,7 @@ views.basicWeek = function(element, options) {
 
 views.basicDay = function(element, options) {
 	return new Grid(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -960,9 +988,7 @@ views.basicDay = function(element, options) {
 			this.renderGrid(
 				1, 1,
 				this.option('columnFormat'),
-				false,
-				width, height,
-				fetchEvents
+				false
 			);
 		}
 	});
@@ -996,7 +1022,8 @@ function Grid(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		clearEvents: clearEvents,
-		updateSize: updateSize,
+		setHeight: setHeight,
+		setWidth: setWidth,
 		defaultEventEnd: function(event) { // calculates an end if event doesnt have one, mostly for resizing
 			return cloneDate(event.start);
 		}
@@ -1009,12 +1036,12 @@ function Grid(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-grid').css('position', 'relative');
+	element.addClass('fc-grid');
 	if (element.disableSelection) {
 		element.disableSelection();
 	}
 
-	function renderGrid(r, c, colFormat, showNumbers, width, height, fetchEvents) {
+	function renderGrid(r, c, colFormat, showNumbers) {
 		rowCnt = r;
 		colCnt = c;
 		
@@ -1077,7 +1104,7 @@ function Grid(element, options, methods) {
 			tbody = $(s + "</tbody>").appendTo(table);
 			tbody.find('td').click(dayClick);
 			
-			segmentContainer = $("<div/>").appendTo(element); // style='position:absolute;top:0;left:0' // made it a little slower for some reason
+			segmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 		
 		}else{ // NOT first time, reuse as many cells as possible
 		
@@ -1163,9 +1190,6 @@ function Grid(element, options, methods) {
 			}
 		
 		}
-		
-		updateSize(width, height);
-		fetchEvents(renderEvents);
 	
 	};
 	
@@ -1180,22 +1204,18 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	function updateSize(width, height) { // does not render/position the events
-		viewWidth = width;
+	
+	function setHeight(height) {
 		viewHeight = height;
-		dayContentPositions.clear();
-		
 		var leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = viewHeight - thead.height(),
 			rowHeight1, rowHeight2;
-		
 		if (options.weekMode == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-		
 		if (tdHeightBug == undefined) {
 			// bug in firefox where cell height includes padding
 			var tr = tbody.find('tr:first'),
@@ -1203,7 +1223,6 @@ function Grid(element, options, methods) {
 			td.height(rowHeight1);
 			tdHeightBug = rowHeight1 != td.height();
 		}
-		
 		if (tdHeightBug) {
 			leftTDs.slice(0, -1).height(rowHeight1);
 			leftTDs.slice(-1).height(rowHeight2);
@@ -1211,12 +1230,16 @@ function Grid(element, options, methods) {
 			setOuterHeight(leftTDs.slice(0, -1), rowHeight1);
 			setOuterHeight(leftTDs.slice(-1), rowHeight2);
 		}
-		
+	}
+	
+	
+	function setWidth(width) {
+		viewWidth = width;
+		dayContentPositions.clear();
 		setOuterWidth(
 			thead.find('th').slice(0, -1),
 			colWidth = Math.floor(viewWidth / colCnt)
 		);
-		
 	}
 
 	
@@ -1552,7 +1575,7 @@ setDefaults({
 
 views.agendaWeek = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta * 7);
 			}
@@ -1574,9 +1597,7 @@ views.agendaWeek = function(element, options) {
 			);
 			this.renderAgenda(
 				options.weekends ? 7 : 5,
-				this.option('columnFormat'),
-				width, height,
-				fetchEvents
+				this.option('columnFormat')
 			);
 		}
 	});
@@ -1584,7 +1605,7 @@ views.agendaWeek = function(element, options) {
 
 views.agendaDay = function(element, options) {
 	return new Agenda(element, options, {
-		render: function(date, delta, width, height, fetchEvents) {
+		render: function(date, delta) {
 			if (delta) {
 				addDays(date, delta);
 				if (!options.weekends) {
@@ -1596,9 +1617,7 @@ views.agendaDay = function(element, options) {
 			this.end = this.visEnd = addDays(cloneDate(this.start), 1);
 			this.renderAgenda(
 				1,
-				this.option('columnFormat'),
-				width, height,
-				fetchEvents
+				this.option('columnFormat')
 			);
 		}
 	});
@@ -1610,6 +1629,7 @@ function Agenda(element, options, methods) {
 		colCnt,
 		axisWidth, colWidth, slotHeight,
 		viewWidth, viewHeight,
+		savedScrollTop,
 		cachedEvents=[],
 		daySegmentContainer,
 		slotSegmentContainer,
@@ -1628,8 +1648,14 @@ function Agenda(element, options, methods) {
 		renderEvents: renderEvents,
 		rerenderEvents: rerenderEvents,
 		clearEvents: clearEvents,
-		updateSize: updateSize,
-		shown: resetScroll,
+		setHeight: setHeight,
+		setWidth: setWidth,
+		beforeHide: function() {
+			savedScrollTop = body.scrollTop();
+		},
+		afterShow: function() {
+			body.scrollTop(savedScrollTop);
+		},
 		defaultEventEnd: function(event) {
 			var start = cloneDate(event.start);
 			if (event.allDay) {
@@ -1646,12 +1672,12 @@ function Agenda(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-agenda').css('position', 'relative');
+	element.addClass('fc-agenda');
 	if (element.disableSelection) {
 		element.disableSelection();
 	}
 	
-	function renderAgenda(c, colFormat, width, height, fetchEvents) {
+	function renderAgenda(c, colFormat) {
 		colCnt = c;
 		
 		// update option-derived variables
@@ -1709,7 +1735,7 @@ function Agenda(element, options, methods) {
 			head.find('td').click(slotClick);
 			
 			// all-day event container
-			daySegmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(head);
+			daySegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(head);
 			
 			// body
 			d = zeroDate();
@@ -1734,7 +1760,7 @@ function Agenda(element, options, methods) {
 			body.find('td').click(slotClick);
 			
 			// slot event container
-			slotSegmentContainer = $("<div/>").appendTo(bodyContent);
+			slotSegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(bodyContent);
 			
 			// background stripes
 			d = cloneDate(d0);
@@ -1792,10 +1818,6 @@ function Agenda(element, options, methods) {
 		
 		}
 		
-		updateSize(width, height);
-		resetScroll();
-		fetchEvents(renderEvents);
-		
 	};
 	
 	
@@ -1803,33 +1825,46 @@ function Agenda(element, options, methods) {
 		var d0 = zeroDate(),
 			scrollDate = cloneDate(d0);
 		scrollDate.setHours(options.firstHour);
-		var go = function() {
-			body.scrollTop(timePosition(d0, scrollDate) + 1); // +1 for the border
-				// TODO: +1 doesn't apply when firstHour=0
-		}
-		if ($.browser.opera) {
-			setTimeout(go, 0); // opera 10 (and earlier?) needs this
-		}else{
-			go();
+		var top = timePosition(d0, scrollDate) + 1, // +1 for the border
+			scroll = function() {
+				body.scrollTop(top);
+			};
+		scroll();
+		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
+	}
+	
+	
+	function setHeight(height, dateChanged) {
+		viewHeight = height;
+		slotTopCache = {};
+		
+		body.height(height - head.height());
+		
+		slotHeight = body.find('tr:first div').height() + 1;
+		
+		bg.css({
+			top: head.find('tr').height(),
+			height: height
+		});
+		
+		if (dateChanged) {
+			resetScroll();
 		}
 	}
 	
 	
-	function updateSize(width, height) {
+	function setWidth(width) {
 		viewWidth = width;
-		viewHeight = height;
 		colContentPositions.clear();
-		slotTopCache = {};
 		
 		body.width(width);
-		body.height(height - head.height());
 		bodyTable.width('');
 		
 		var topTDs = head.find('tr:first th'),
 			stripeTDs = bg.find('td'),
-			contentWidth = slotSegmentContainer.width(); // body[0].clientWidth isn't reliable here in IE6
+			clientWidth = body[0].clientWidth;
 			
-		bodyTable.width(contentWidth);
+		bodyTable.width(clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
@@ -1843,20 +1878,19 @@ function Agenda(element, options, methods) {
 		);
 		
 		// column width
-		colWidth = Math.floor((contentWidth - axisWidth) / colCnt);
+		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
 		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
-		setOuterWidth(topTDs.slice(-2, -1), contentWidth - axisWidth - colWidth*(colCnt-1));
+		setOuterWidth(topTDs.slice(-2, -1), clientWidth - axisWidth - colWidth*(colCnt-1));
 		
 		bg.css({
-			top: head.find('tr').height(),
 			left: axisWidth,
-			width: contentWidth - axisWidth,
-			height: height
+			width: clientWidth - axisWidth
 		});
-		
-		slotHeight = body.find('tr:first div').height() + 1;
 	}
+	
+	
+	
 	
 	function slotClick(ev) {
 		var col = Math.floor((ev.pageX - bg.offset().left) / colWidth),
@@ -1979,7 +2013,7 @@ function Agenda(element, options, methods) {
 				bindDaySegHandlers,
 				modifiedEventId
 			);
-			updateSize(viewWidth, viewHeight); // might have pushed the body down, so resize
+			setHeight(viewHeight); // might have pushed the body down, so resize
 		}
 	}
 	
@@ -3206,6 +3240,14 @@ function vsides(_element, includeMargins) {
 function vmargins(_element) {
 	return (parseFloat(jQuery.curCSS(_element, 'marginTop', true)) || 0) +
 	       (parseFloat(jQuery.curCSS(_element, 'marginBottom', true)) || 0);
+}
+
+
+
+
+function setMinHeight(element, h) {
+	h = typeof h == 'number' ? h + 'px' : h;
+	element[0].style.cssText += ';min-height:' + h + ';_height:' + h;
 }
 
 
