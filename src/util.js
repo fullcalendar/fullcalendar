@@ -340,7 +340,8 @@ function vmargins(_element) {
 
 
 function setMinHeight(element, h) {
-	element.css('min-height', h)[0].style.cssText += ';_height:' + (typeof h == 'number' ? h + 'px' : h);
+	h = typeof h == 'number' ? h + 'px' : h;
+	element[0].style.cssText += ';min-height:' + h + ';_height:' + h;
 }
 
 

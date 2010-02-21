@@ -107,9 +107,12 @@ $.fn.fullCalendar = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1),
 			res;
 		this.each(function() {
-			var r = $.data(this, 'fullCalendar')[options].apply(this, args);
-			if (res == undefined) {
-				res = r;
+			var data = $.data(this, 'fullCalendar');
+			if (data) {
+				var r = data[options].apply(this, args);
+				if (res == undefined) {
+					res = r;
+				}
 			}
 		});
 		if (res != undefined) {
@@ -192,17 +195,19 @@ $.fn.fullCalendar = function(options) {
 					newViewElement;
 					
 				if (oldView) {
-					if (oldView.beforeHide) {
-						oldView.beforeHide(); // called before changing min-height/overflow. if called after, scroll state is reset (in Opera)
-					}
 					if (oldView.eventsChanged) {
 						eventsDirty();
 						oldView.eventDirty = oldView.eventsChanged = false;
 					}
-					setMinHeight(content, content.height()); // needs to be called before setting overflow
-					content.css('overflow', 'hidden');
+					if (oldView.beforeHide) {
+						oldView.beforeHide(); // called before changing min-height. if called after, scroll state is reset (in Opera)
+					}
+					setMinHeight(content, content.height());
 					oldView.element.hide();
+				}else{
+					setMinHeight(content, 1); // needs to be 1 (not 0) for IE7, or else view dimensions miscalculated
 				}
+				content.css('overflow', 'hidden');
 				
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
@@ -224,9 +229,9 @@ $.fn.fullCalendar = function(options) {
 				if (newViewElement) {
 					newViewElement.css('position', 'relative');
 				}
+				content.css('overflow', '');
 				if (oldView) {
-					content.css('overflow', ''); // needs to be called before setting min-height
-					setMinHeight(content, 0);
+					setMinHeight(content, 1); // must be called after changing overflow (or mass would change)
 				}
 				if (!newViewElement && view.afterShow) {
 					view.afterShow(); // called after setting min-height/overflow, so in final scroll state (for Opera)
@@ -237,8 +242,12 @@ $.fn.fullCalendar = function(options) {
 		}
 		
 		function render(inc) {
-			if (_element.offsetWidth !== 0) { // visible on the screen
+			if (elementVisible()) { // checks to make sure element is visible first
 				ignoreWindowResize++;
+				
+				if (suggestedViewHeight == undefined) {
+					calcSize();
+				}
 				
 				if (!view.start || inc || date < view.start || date >= view.end) {
 					view.render(date, inc || 0); // responsible for clearing events
@@ -281,12 +290,24 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		
+		
+		function elementVisible() {
+			return _element.offsetWidth !== 0;
+		}
+		
+		function bodyVisible() {
+			return $('body')[0].offsetWidth !== 0;
+		}
+		
+		
 		// called when any event objects have been added/removed/changed, rerenders
 		function eventsChanged() {
 			eventsDirty();
-			view.clearEvents();
-			view.renderEvents(events);
-			view.eventsDirty = false;
+			if (elementVisible()) {
+				view.clearEvents();
+				view.renderEvents(events);
+				view.eventsDirty = false;
+			}
 		}
 		
 		// marks other views' events as dirty
@@ -299,9 +320,11 @@ $.fn.fullCalendar = function(options) {
 		// called when we know the element size has changed
 		function sizeChanged() {
 			sizesDirty();
-			calcSize();
-			setSize();
-			view.rerenderEvents();
+			if (elementVisible()) {
+				calcSize();
+				setSize();
+				view.rerenderEvents();
+			}
 		}
 		
 		// marks other views' sizes as dirty
@@ -411,6 +434,7 @@ $.fn.fullCalendar = function(options) {
 		var publicMethods = {
 		
 			render: function() {
+				calcSize();
 				sizesDirty();
 				eventsDirty();
 				render();
@@ -758,7 +782,7 @@ $.fn.fullCalendar = function(options) {
 				if (view.start) { // view has already been rendered
 					var uid = ++resizeUID;
 					setTimeout(function() { // add a delay
-						if (uid == resizeUID && !ignoreWindowResize) {
+						if (uid == resizeUID && !ignoreWindowResize && elementVisible()) {
 							if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
 								ignoreWindowResize++;
 								sizeChanged();
@@ -768,8 +792,8 @@ $.fn.fullCalendar = function(options) {
 						}
 					}, 200);
 				}else{
-					render(); // render for first time
-					// was probably in a 0x0 iframe that has just been resized
+					// calendar must have been initialized in a 0x0 iframe that has just been resized
+					lateRender();
 				}
 			}
 		};
@@ -777,17 +801,23 @@ $.fn.fullCalendar = function(options) {
 		
 		
 		// let's begin...
-		calcSize();
 		changeView(options.defaultView);
 		
 		
-		// in IE, when in 0x0 iframe, initial resize never gets called, so do this...
-		if ($.browser.msie && !$('body').width()) {
-			setTimeout(function() {
-				render();
-				content.hide().show(); // needed for IE 6
-				view.rerenderEvents(); // needed for IE 7 // TODO: could probably skip recompile
-			}, 0);
+		// needed for IE in a 0x0 iframe, b/c when it is resized, never triggers a windowResize
+		if (!bodyVisible()) {
+			lateRender();
+		}
+		
+		
+		// called when we know the calendar couldn't be rendered when it was initialized,
+		// but we think it's ready now
+		function lateRender() {
+			setTimeout(function() { // IE7 needs this so dimensions are calculated correctly
+				if (bodyVisible() && !view.start) { // !view.start makes sure this never happens more than once
+					render();
+				}
+			},0);
 		}
 
 	
