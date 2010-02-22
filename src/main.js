@@ -159,7 +159,8 @@ $.fn.fullCalendar = function(options) {
 			date = new Date(),
 			viewName,  // the current view name (TODO: look into getting rid of)
 			view,      // the current view
-			viewInstances = {};
+			viewInstances = {},
+			absoluteViewElement;
 			
 			
 			
@@ -214,7 +215,9 @@ $.fn.fullCalendar = function(options) {
 					(view = viewInstances[v]).element.show();
 				}else{
 					view = viewInstances[v] = $.fullCalendar.views[v](
-						newViewElement = $("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>").appendTo(content),
+						newViewElement = absoluteViewElement =
+							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
+								.appendTo(content),
 						options
 					);
 				}
@@ -226,10 +229,7 @@ $.fn.fullCalendar = function(options) {
 				}
 				
 				view.name = viewName = v;
-				render();
-				if (newViewElement) {
-					newViewElement.css('position', 'relative');
-				}
+				render(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
 				content.css('overflow', '');
 				if (oldView) {
 					setMinHeight(content, 1);
@@ -779,6 +779,10 @@ $.fn.fullCalendar = function(options) {
 		function setSize(dateChanged) {
 			ignoreWindowResize++;
 			view.setHeight(suggestedViewHeight, dateChanged);
+			if (absoluteViewElement) {
+				absoluteViewElement.css('position', 'relative');
+				absoluteViewElement = null;
+			}
 			view.setWidth(content.width(), dateChanged);
 			ignoreWindowResize--;
 		}
