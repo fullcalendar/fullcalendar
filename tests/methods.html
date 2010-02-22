@@ -174,11 +174,12 @@
 <button onclick="getView()">getView</button>
 <button onclick="getDate()">getDate</button>
 <button onclick="optionGetter()">option getter</button>
-<button onclick="cal.width(1100)">change size</button>
+<button onclick="cal.width(1100)">change width (passive)</button>
 <button onclick="cal.fullCalendar('render')">render</button>
+<button onclick="cal.fullCalendar('option', 'height', 1000)">change height</button>
 
 </p>
 <div id='loading' style='position:absolute;display:none'>loading...</div>
-<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
+<div id='calendar' style='width:70%;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>
