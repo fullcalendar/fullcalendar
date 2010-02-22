@@ -211,7 +211,7 @@ function Grid(element, options, methods) {
 			tbody = $(s + "</tbody>").appendTo(table);
 			tbody.find('td').click(dayClick);
 			
-			segmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(element);
+			segmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 		
 		}else{ // NOT first time, reuse as many cells as possible
 		

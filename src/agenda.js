@@ -181,7 +181,7 @@ function Agenda(element, options, methods) {
 			head.find('td').click(slotClick);
 			
 			// all-day event container
-			daySegmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(head);
+			daySegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(head);
 			
 			// body
 			d = zeroDate();
@@ -206,7 +206,7 @@ function Agenda(element, options, methods) {
 			body.find('td').click(slotClick);
 			
 			// slot event container
-			slotSegmentContainer = $("<div style='position:absolute;top:0;left:0'/>").appendTo(bodyContent);
+			slotSegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(bodyContent);
 			
 			// background stripes
 			d = cloneDate(d0);
