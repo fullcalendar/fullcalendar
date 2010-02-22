@@ -12,6 +12,7 @@ Event Data
 <li>startParam</li>
 <li>endParam</li>
 <li>cacheParam</li>
+<li>lazyFetching</li>
 <li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>
 <li class='method'><a href='updateEvent'>updateEvent</a> <em>(method)</em></li>
 <li class='method'><a href='clientEvents'>clientEvents</a> <em>(method)</em></li>
