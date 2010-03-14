@@ -47,7 +47,7 @@ views.month = function(element, options) {
 			);
 		}
 	});
-}
+};
 
 views.basicWeek = function(element, options) {
 	return new Grid(element, options, {
@@ -99,7 +99,7 @@ views.basicDay = function(element, options) {
 			);
 		}
 	});
-}
+};
 
 
 // rendering bugs
@@ -119,7 +119,7 @@ function Grid(element, options, methods) {
 		cachedEvents=[],
 		segmentContainer,
 		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
-			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div')
+			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
 		}),
 		// ...
 		
@@ -298,7 +298,7 @@ function Grid(element, options, methods) {
 		
 		}
 	
-	};
+	}
 	
 	
 	function dayClick(ev) {
@@ -323,7 +323,7 @@ function Grid(element, options, methods) {
 			rowHeight1 = Math.floor(tbodyHeight / rowCnt);
 			rowHeight2 = tbodyHeight - rowHeight1*(rowCnt-1);
 		}
-		if (tdHeightBug == undefined) {
+		if (tdHeightBug === undefined) {
 			// bug in firefox where cell height includes padding
 			var tr = tbody.find('tr:first'),
 				td = tr.find('td:first');
@@ -431,7 +431,7 @@ function Grid(element, options, methods) {
 	
 	function bindSegHandlers(event, eventElement, seg) {
 		view.eventElementHandlers(event, eventElement);
-		if (event.editable || event.editable == undefined && options.editable) {
+		if (event.editable || event.editable === undefined && options.editable) {
 			draggableEvent(event, eventElement);
 			if (seg.isEnd) {
 				view.resizableDayEvent(event, eventElement, colWidth);
@@ -500,7 +500,7 @@ function Grid(element, options, methods) {
 	
 	// event resizing w/ 'view' methods...
 
-};
+}
 
 
 function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContentLeft, dayContentRight, segmentContainer, bindSegHandlers, modifiedEventId) {
@@ -556,7 +556,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 					:'') +
 					"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</a>" +
-				((event.editable || event.editable == undefined && options.editable) && !options.disableResizing && $.fn.resizable ?
+				((event.editable || event.editable === undefined && options.editable) && !options.disableResizing && $.fn.resizable ?
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
 					: '') +
 			"</div>";
@@ -601,7 +601,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 		seg = segs[i];
 		if (eventElement = seg.element) {
 			val = hsideCache[key = seg.key = cssKey(eventElement[0])];
-			seg.hsides = val == undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
+			seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
 		}
 	}
 	
@@ -619,7 +619,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 		if (eventElement = seg.element) {
 			val = vmarginCache[key = seg.key];
 			seg.outerHeight = eventElement[0].offsetHeight + (
-				val == undefined ? (vmarginCache[key] = vmargins(eventElement[0])) : val
+				val === undefined ? (vmarginCache[key] = vmargins(eventElement[0])) : val
 			);
 		}
 	}

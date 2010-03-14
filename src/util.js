@@ -79,13 +79,13 @@ function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
 	var i=0, d;
 	do {
 		d = new Date(1970, i++, 1);
-	} while (d.getHours() != 0);
+	} while (d.getHours()); // != 0
 	return d;
 }
 
 function skipWeekend(date, inc, excl) {
 	inc = inc || 1;
-	while (date.getDay()==0 || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
+	while (!date.getDay() || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
 		addDays(date, inc);
 	}
 	return date;
@@ -111,7 +111,7 @@ var parseDate = fc.parseDate = function(s) {
 	}
 	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
 	return null;
-}
+};
 
 var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	// derived from http://delete.me.uk/2005/03/iso8601.html
@@ -153,7 +153,7 @@ var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 		offset -= date.getTimezoneOffset();
 	}
 	return new Date(+date + (offset * 60 * 1000));
-}
+};
 
 var parseTime = fc.parseTime = function(s) { // returns minutes since start of day
 	if (typeof s == 'number') { // an hour
@@ -182,7 +182,7 @@ var parseTime = fc.parseTime = function(s) { // returns minutes since start of d
 
 var formatDate = fc.formatDate = function(date, format, options) {
 	return formatDates(date, null, format, options);
-}
+};
 
 var formatDates = fc.formatDates = function(date1, date2, format, options) {
 	options = options || defaults;
@@ -259,7 +259,7 @@ var formatDates = fc.formatDates = function(date1, date2, format, options) {
 		}
 	}
 	return res;
-}
+};
 
 var dateFormatters = {
 	s	: function(d)	{ return d.getSeconds() },
@@ -287,7 +287,9 @@ var dateFormatters = {
 	u	: function(d)	{ return formatDate(d, "yyyy-MM-dd'T'HH:mm:ss'Z'") },
 	S	: function(d)	{
 		var date = d.getDate();
-		if (date > 10 && date < 20) return 'th';
+		if (date > 10 && date < 20) {
+			return 'th';
+		}
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
 	}
 };
@@ -359,7 +361,7 @@ function topCorrect(tr) { // tr/th/td or anything else
 		if (tr.is('th,td')) {
 			tr = (cell = tr).parent();
 		}
-		if (topBug == undefined && tr.is('tr')) {
+		if (topBug === undefined && tr.is('tr')) {
 			topBug = tr.position().top != tr.children().position().top;
 		}
 		if (topBug) {
@@ -393,14 +395,14 @@ function HoverMatrix(changeCallback) {
 	};
 
 	t.mouse = function(x, y) {
-		if (origRow == undefined) {
+		if (origRow === undefined) {
 			tops.push(tops[tops.length-1] + prevRowE.outerHeight());
 			lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
 			currRow = currCol = -1;
 		}
 		var r, c;
-		for (r=0; r<tops.length && y>=tops[r]; r++) ;
-		for (c=0; c<lefts.length && x>=lefts[c]; c++) ;
+		for (r=0; r<tops.length && y>=tops[r]; r++) {}
+		for (c=0; c<lefts.length && x>=lefts[c]; c++) {}
 		r = r >= tops.length ? -1 : r - 1;
 		c = c >= lefts.length ? -1 : c - 1;
 		if (r != currRow || c != currCol) {
@@ -409,7 +411,7 @@ function HoverMatrix(changeCallback) {
 			if (r == -1 || c == -1) {
 				t.cell = null;
 			}else{
-				if (origRow == undefined) {
+				if (origRow === undefined) {
 					origRow = r;
 					origCol = c;
 				}
@@ -445,14 +447,14 @@ function zeroPad(n) {
 }
 
 function smartProperty(obj, name) { // get a camel-cased/namespaced property of an object
-	if (obj[name] != undefined) {
+	if (obj[name] !== undefined) {
 		return obj[name];
 	}
 	var parts = name.split(/(?=[A-Z])/),
 		i=parts.length-1, res;
 	for (; i>=0; i--) {
 		res = obj[parts[i].toLowerCase()];
-		if (res != undefined) {
+		if (res !== undefined) {
 			return res;
 		}
 	}
@@ -465,7 +467,7 @@ function htmlEscape(s) {
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
 		.replace(/'/g, '&#039;')
-		.replace(/"/g, '&quot;')
+		.replace(/"/g, '&quot;');
 }
 
 
@@ -478,18 +480,15 @@ function HorizontalPositionCache(getElement) {
 		rights = {};
 		
 	function e(i) {
-		return elements[i] =
-			elements[i] || getElement(i);
+		return elements[i] = elements[i] || getElement(i);
 	}
 	
 	t.left = function(i) {
-		return lefts[i] =
-			lefts[i] == undefined ? e(i).position().left : lefts[i];
+		return lefts[i] = lefts[i] === undefined ? e(i).position().left : lefts[i];
 	};
 	
 	t.right = function(i) {
-		return rights[i] =
-			rights[i] == undefined ? t.left(i) + e(i).width() : rights[i];
+		return rights[i] = rights[i] === undefined ? t.left(i) + e(i).width() : rights[i];
 	};
 	
 	t.clear = function() {

@@ -150,7 +150,7 @@ var viewMethods = {
 		minuteDelta = minuteDelta || 0;
 		for (var e, len=events.length, i=0; i<len; i++) {
 			e = events[i];
-			if (allDay != undefined) {
+			if (allDay !== undefined) {
 				e.allDay = allDay;
 			}
 			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
@@ -319,7 +319,7 @@ function lazySegBind(container, segs, bindHandlers) {
 			e = parent;
 			parent = parent.parentNode;
 		}
-		if ((i = e._fci) != undefined) {
+		if ((i = e._fci) !== undefined) {
 			e._fci = undefined;
 			seg = segs[i];
 			bindHandlers(seg.event, seg.element, seg);
