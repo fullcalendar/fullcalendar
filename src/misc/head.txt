@@ -1,4 +1,5 @@
-/*!
+/**
+ * @preserve
  * FullCalendar
  * http://arshaw.com/fullcalendar/
  *

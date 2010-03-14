@@ -35,7 +35,7 @@ zip:
 		done
 	
 	@echo "compressing js..."
-	@java -jar build/yuicompressor-2.4.2.jar -o build/fullcalendar/fullcalendar.min.js build/fullcalendar/fullcalendar.js
+	@java -jar build/compiler.jar --js build/fullcalendar/fullcalendar.js > build/fullcalendar/fullcalendar.min.js
 	
 	@echo "building examples..."
 	@for f in build/fullcalendar/examples/*.html; do\
