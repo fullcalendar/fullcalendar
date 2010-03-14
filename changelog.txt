@@ -1,5 +1,5 @@
 
-version 1.4.5 (2/21/09)
+version 1.4.5 (2/21/10)
 	- lazyFetching option, which can force the calendar to fetch events on every view/date change
 	- scroll state of agenda views are preserved when switching back to view
 	- bugfixes
