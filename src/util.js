@@ -140,39 +140,55 @@ var parseISO8601 = fc.parseISO8601 = function(s, ignoreTimezone) {
 	if (!m) {
 		return null;
 	}
-	var date = new Date(m[1], 0, 1),
-		check = new Date(m[1], 0, 1, 9, 0),
-		offset = 0;
-	if (m[3]) {
-		date.setMonth(m[3] - 1);
-		check.setMonth(m[3] - 1);
-	}
-	if (m[5]) {
-		date.setDate(m[5]);
-		check.setDate(m[5]);
-	}
-	fixDate(date, check);
-	if (m[7]) {
-		date.setHours(m[7]);
-	}
-	if (m[8]) {
-		date.setMinutes(m[8]);
-	}
-	if (m[10]) {
-		date.setSeconds(m[10]);
-	}
-	if (m[12]) {
-		date.setMilliseconds(Number("0." + m[12]) * 1000);
-	}
-	fixDate(date, check);
-	if (!ignoreTimezone) {
+	var date = new Date(m[1], 0, 1), offset = 0;
+	if (ignoreTimezone) {
+		if (m[3]) {
+			date.setMonth(m[3] - 1);
+		}
+		if (m[5]) {
+			date.setDate(m[5]);
+		}
+		if (m[7]) {
+			date.setHours(m[7]);
+		}
+		if (m[8]) {
+			date.setMinutes(m[8]);
+		}
+		if (m[10]) {
+			date.setSeconds(m[10]);
+		}
+		if (m[12]) {
+			date.setMilliseconds(Number("0." + m[12]) * 1000);
+		}
+	} else {
+		date.setUTCFullYear(m[1]);
+		if (m[3]) {
+			date.setUTCMonth(m[3] - 1);
+		}
+		if (m[5]) {
+			date.setUTCDate(m[5]);
+		}
+		
+		if (m[7]) {
+			date.setUTCHours(m[7]);
+		}
+		if (m[8]) {
+			date.setUTCMinutes(m[8]);
+		}
+		if (m[10]) {
+			date.setUTCSeconds(m[10]);
+		}
+		if (m[12]) {
+			date.setUTCMilliseconds(Number("0." + m[12]) * 1000);
+		}
 		if (m[14]) {
 			offset = Number(m[16]) * 60 + Number(m[17]);
 			offset *= m[15] == '-' ? 1 : -1;
 		}
-		offset -= date.getTimezoneOffset();
+		date = new Date(+date + (offset * 60 * 1000));
 	}
-	return new Date(+date + (offset * 60 * 1000));
+	
+	return date;
 };
 
 var parseTime = fc.parseTime = function(s) { // returns minutes since start of day
