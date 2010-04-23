@@ -68,7 +68,10 @@ var defaults = {
 	buttonIcons: {
 		prev: 'circle-triangle-w',
 		next: 'circle-triangle-e'
-	}
+	},
+	
+	//selectable: false,
+	unselectable: true
 	
 };
 
@@ -647,6 +650,14 @@ $.fn.fullCalendar = function(options) {
 			
 			refetchEvents: function() {
 				fetchEvents(eventsChanged);
+			},
+			
+			
+			
+			unselect: function() {
+				for (n in viewInstances) {
+					viewInstances[n].unselect();
+				}
 			}
 			
 		};

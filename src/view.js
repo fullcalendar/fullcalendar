@@ -33,6 +33,7 @@ var viewMethods = {
 		this.eventsByID = {};
 		this.eventElements = [];
 		this.eventElementsByID = {};
+		this.overlays = [];
 	},
 	
 	
@@ -172,29 +173,22 @@ var viewMethods = {
 	
 	
 	
-	// semi-transparent overlay (while dragging)
+	// semi-transparent overlay (while dragging or selecting)
 	
-	showOverlay: function(props) {
-		if (!this.dayOverlay) {
-			this.dayOverlay = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3;display:none'/>")
-				.appendTo(this.element);
-		}
-		var o = this.element.offset();
-		this.dayOverlay
-			.css({
-				top: props.top - o.top,
-				left: props.left - o.left,
-				width: props.width,
-				height: props.height
-			})
-			.show();
+	renderOverlay: function(rect, parent) {
+		var e = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3'/>")
+			.css(rect)
+			.appendTo(parent);
+		this.overlays.push(e);
 	},
 	
-	hideOverlay: function() {
-		if (this.dayOverlay) {
-			this.dayOverlay.hide();
-		}
+	clearOverlays: function() {
+		$.each(this.overlays, function() {
+			this.remove();
+		});
+		this.overlays = [];
 	},
+	
 	
 	
 	

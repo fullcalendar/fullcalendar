@@ -209,7 +209,7 @@ function Grid(element, options, methods) {
 				s += "</tr>";
 			}
 			tbody = $(s + "</tbody>").appendTo(table);
-			tbody.find('td').click(dayClick);
+			bindDayHandlers(tbody.find('td'));
 			
 			segmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 		
@@ -242,7 +242,7 @@ function Grid(element, options, methods) {
 				}
 				tbody.append(s);
 			}
-			tbody.find('td.fc-new').removeClass('fc-new').click(dayClick);
+			bindDayHandlers(tbody.find('td.fc-new').removeClass('fc-new'));
 			
 			// re-label and re-class existing cells
 			d = cloneDate(view.visStart);
@@ -297,17 +297,9 @@ function Grid(element, options, methods) {
 			}
 		
 		}
+		
+		unselect();
 	
-	}
-	
-	
-	function dayClick(ev) {
-		var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
-			date = addDays(
-				cloneDate(view.visStart),
-				Math.floor(n/colCnt) * 7 + n % colCnt
-			);
-		view.trigger('dayClick', this, date, true, ev);
 	}
 	
 	
@@ -447,7 +439,8 @@ function Grid(element, options, methods) {
 	
 	function draggableEvent(event, eventElement) {
 		if (!options.disableDragging && eventElement.draggable) {
-			var matrix;
+			var matrix,
+				dayDelta = 0;
 			eventElement.draggable({
 				zIndex: 9,
 				delay: 50,
@@ -456,23 +449,19 @@ function Grid(element, options, methods) {
 				start: function(ev, ui) {
 					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
-					matrix = new HoverMatrix(function(cell) {
+					matrix = buildMatrix(function(cell) {
 						eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
+						view.clearOverlays();
 						if (cell) {
-							view.showOverlay(cell);
+							dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
+							renderOverlays(
+								matrix,
+								cellOffset(addDays(cloneDate(event.start), dayDelta)),
+								cellOffset(addDays(visEventEnd(event), dayDelta)) // visEventEnd returns a clone
+							);
 						}else{
-							view.hideOverlay();
+							dayDelta = 0;
 						}
-					});
-					tbody.find('tr').each(function() {
-						matrix.row(this);
-					});
-					var tds = tbody.find('tr:first td');
-					if (rtl) {
-						tds = $(tds.get().reverse());
-					}
-					tds.each(function() {
-						matrix.col(this);
 					});
 					matrix.mouse(ev.pageX, ev.pageY);
 				},
@@ -480,17 +469,16 @@ function Grid(element, options, methods) {
 					matrix.mouse(ev.pageX, ev.pageY);
 				},
 				stop: function(ev, ui) {
-					view.hideOverlay();
+					view.clearOverlays();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
-					var cell = matrix.cell;
-					if (!cell || !cell.rowDelta && !cell.colDelta) {
+					if (dayDelta) {
+						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
+						view.eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
+					}else{
 						if ($.browser.msie) {
 							eventElement.css('filter', ''); // clear IE opacity side-effects
 						}
 						view.showEvents(event, eventElement);
-					}else{
-						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
-						view.eventDrop(this, event, cell.rowDelta*7+cell.colDelta*dis, 0, event.allDay, ev, ui);
 					}
 				}
 			});
@@ -498,7 +486,161 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	// event resizing w/ 'view' methods...
+	
+	/* Day clicking and selecting
+	---------------------------------------------------------*/
+	
+	
+	function bindDayHandlers(days) {
+		days.click(dayClick)
+		if (view.option('selectable')) {
+			days.mousedown(selectMousedown);
+		}
+	}
+	
+	
+	function dayClick(ev) {
+		var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
+			date = addDays(
+				cloneDate(view.visStart),
+				Math.floor(n/colCnt) * 7 + n % colCnt
+			);
+		view.trigger('dayClick', this, date, true, ev);
+	}
+	
+	
+	var selected=false,
+		selectMatrix,
+		selectStart, // the "offset" (row*colCnt+col) of the cell
+		selectEnd,	 // the "offset" (row*colCnt+col) of the cell (inclusive)
+		selectRange;
+	
+	function selectMousedown(ev) {
+		selectStart = undefined;
+		selectMatrix = buildMatrix(function(cell) {
+			view.clearOverlays();
+			if (cell) {
+				selected = true;
+				selectEnd = cell.row * colCnt + cell.col;
+				if (selectStart === undefined) {
+					selectStart = selectEnd;
+				}
+				selectRange = [selectStart, selectEnd].sort(cmp);
+				renderOverlays(selectMatrix, selectRange[0], selectRange[1]+1);
+				$.each(view.overlays, function() {
+					bindDayHandlers(this);
+				});
+			}else{
+				selected = false;
+			}
+		});
+		$(document)
+			.mousemove(selectMousemove)
+			.mouseup(selectMouseup);
+		selectMatrix.mouse(ev.pageX, ev.pageY);
+		ev.stopPropagation();
+	}
+	
+	function selectMousemove(ev) {
+		selectMatrix.mouse(ev.pageX, ev.pageY);
+	}
+	
+	function selectMouseup(ev) {
+		$(document)
+			.unbind('mousemove', selectMousemove)
+			.unbind('mouseup', selectMouseup);
+		if (selected) {
+			view.trigger(
+				'select',
+				view,
+				offset2date(selectRange[0]),
+				offset2date(selectRange[1]+1),
+				true
+			);
+		}
+		// todo: if a selection was made before this one, and this one ended up unselected, fire unselect
+	}
+	
+	function unselect() {
+		if (selected) {
+			view.clearOverlays();
+			selected = false;
+			view.trigger('unselect', view);
+		}
+	}
+	view.unselect = unselect;
+	
+	if (view.option('selectable') && view.option('unselectable')) {
+		$(document).mousedown(function() {
+			unselect();
+		});
+	}
+	
+	
+	
+	
+	/* Utilities
+	---------------------------------------------------*/
+	
+	
+	function cellOffset(date) { // always returns index in range
+		var d = cloneDate(view.visStart),
+			i, j, k=0;
+		for (i=0; i<rowCnt; i++) {
+			for (j=0; j<colCnt; j++) {
+				addDays(d, 1);
+				if (nwe) {
+					skipWeekend(d);
+				}
+				if (d > date) {
+					return k;
+				}
+				k++;
+			}
+		}
+		return k;
+	}
+	
+	
+	function offset2date(cellOffset) {
+		return addDays(cloneDate(view.visStart), cellOffset);
+	}
+	
+	
+	function renderOverlays(matrix, offset, endOffset) {
+		var len = endOffset - offset,
+			localLen,
+			r = Math.floor(offset / colCnt),
+			c = offset % colCnt,
+			origin = element.offset();
+		while (len > 0) {
+			localLen = Math.min(len, colCnt - c);
+			view.renderOverlay(
+				matrix.rect(r, c, r+1, c+localLen, element),
+				element
+			);
+			len -= localLen;
+			r += 1;
+			c = 0;
+		}
+	}
+	
+	
+	function buildMatrix(changeCallback) {
+		var matrix = new HoverMatrix(changeCallback);
+		tbody.find('tr').each(function() {
+			matrix.row(this);
+		});
+		var tds = tbody.find('tr:first td');
+		if (rtl) {
+			tds = $(tds.get().reverse());
+		}
+		tds.each(function() {
+			matrix.col(this);
+		});
+		return matrix;
+	}
+	
 
 }
 

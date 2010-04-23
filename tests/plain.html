@@ -19,6 +19,18 @@
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
+			//defaultView: 'agendaWeek',
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end, allDay) {
+				console.log('select');
+				console.log(start);
+				console.log(end);
+				console.log(allDay);
+			},
+			unselect: function() {
+				console.log('unselect');
+			},
 			events: [
 				{
 					title: 'All Day Event',

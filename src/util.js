@@ -430,6 +430,16 @@ function HoverMatrix(changeCallback) {
 			changeCallback(t.cell);
 		}
 	};
+	
+	t.rect = function(row0, col0, row1, col1, originElement) {
+		var origin = originElement.offset();
+		return {
+			top: tops[row0] - origin.top,
+			left: lefts[col0] - origin.left,
+			width: lefts[col1] - lefts[col0],
+			height: tops[row1] - tops[row0]
+		};
+	};
 
 }
 
@@ -503,6 +513,11 @@ function HorizontalPositionCache(getElement) {
 
 function cssKey(_element) {
 	return _element.id + '/' + _element.className + '/' + _element.style.cssText.replace(/(^|;)\s*(top|left|width|height)\s*:[^;]*/ig, '');
+}
+
+
+function cmp(a,b) {
+	return a - b;
 }
 
 
