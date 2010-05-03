@@ -113,9 +113,15 @@ $.fn.fullCalendar = function(options) {
 		this.each(function() {
 			var data = $.data(this, 'fullCalendar');
 			if (data) {
-				var r = data[options].apply(this, args);
-				if (res === undefined) {
-					res = r;
+				var meth = data[options];
+				if (!meth) {
+					meth = $.fullCalendar.publicMethods[options];
+				}
+				if (meth) {
+					var r = meth.apply(this, args);
+					if (res === undefined) {
+						res = r;
+					}
 				}
 			}
 		});
@@ -195,6 +201,8 @@ $.fn.fullCalendar = function(options) {
 		function changeView(v) {
 			if (v != viewName) {
 				ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
+
+				viewUpdate();
 				
 				var oldView = view,
 					newViewElement;
@@ -249,6 +257,8 @@ $.fn.fullCalendar = function(options) {
 		function render(inc) {
 			if (elementVisible()) {
 				ignoreWindowResize++; // because view.renderEvents might temporarily change the height before setSize is reached
+
+				viewUpdate();
 				
 				if (suggestedViewHeight === undefined) {
 					calcSize();
@@ -302,6 +312,13 @@ $.fn.fullCalendar = function(options) {
 		
 		function bodyVisible() {
 			return $('body')[0].offsetWidth !== 0;
+		}
+
+		function viewUpdate() {
+			// this function is ONLY for the ghetto plugin archicture
+			if (view && view.viewUpdate) {
+				view.viewUpdate();
+			}
 		}
 		
 		
@@ -650,14 +667,6 @@ $.fn.fullCalendar = function(options) {
 			
 			refetchEvents: function() {
 				fetchEvents(eventsChanged);
-			},
-			
-			
-			
-			unselect: function() {
-				for (n in viewInstances) {
-					viewInstances[n].unselect();
-				}
 			}
 			
 		};

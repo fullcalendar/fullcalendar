@@ -149,8 +149,13 @@ function Grid(element, options, methods) {
 	}
 
 	function renderGrid(r, c, colFormat, showNumbers) {
+
+		if (view.beforeRender) {
+			view.beforeRender();
+		}
+	
 		rowCnt = r;
-		colCnt = c;
+		colCnt = view.colCnt = c;
 		
 		// update option-derived variables
 		tm = options.theme ? 'ui' : 'fc';
@@ -298,8 +303,6 @@ function Grid(element, options, methods) {
 		
 		}
 		
-		unselect();
-	
 	}
 	
 	
@@ -487,16 +490,17 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/* Day clicking and selecting
+	/* Day clicking and day event binding
 	---------------------------------------------------------*/
 	
 	
 	function bindDayHandlers(days) {
-		days.click(dayClick)
-		if (view.option('selectable')) {
-			days.mousedown(selectMousedown);
+		days.click(dayClick);
+		if ($.fullCalendar.bindBgHandlers) {
+			$.fullCalendar.bindBgHandlers(view, days, true);
 		}
 	}
+	view.bindDayHandlers = bindDayHandlers;
 	
 	
 	function dayClick(ev) {
@@ -506,74 +510,6 @@ function Grid(element, options, methods) {
 				Math.floor(n/colCnt) * 7 + n % colCnt
 			);
 		view.trigger('dayClick', this, date, true, ev);
-	}
-	
-	
-	var selected=false,
-		selectMatrix,
-		selectStart, // the "offset" (row*colCnt+col) of the cell
-		selectEnd,	 // the "offset" (row*colCnt+col) of the cell (inclusive)
-		selectRange;
-	
-	function selectMousedown(ev) {
-		selectStart = undefined;
-		selectMatrix = buildMatrix(function(cell) {
-			view.clearOverlays();
-			if (cell) {
-				selected = true;
-				selectEnd = cell.row * colCnt + cell.col;
-				if (selectStart === undefined) {
-					selectStart = selectEnd;
-				}
-				selectRange = [selectStart, selectEnd].sort(cmp);
-				renderOverlays(selectMatrix, selectRange[0], selectRange[1]+1);
-				$.each(view.overlays, function() {
-					bindDayHandlers(this);
-				});
-			}else{
-				selected = false;
-			}
-		});
-		$(document)
-			.mousemove(selectMousemove)
-			.mouseup(selectMouseup);
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-		ev.stopPropagation();
-	}
-	
-	function selectMousemove(ev) {
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-	}
-	
-	function selectMouseup(ev) {
-		$(document)
-			.unbind('mousemove', selectMousemove)
-			.unbind('mouseup', selectMouseup);
-		if (selected) {
-			view.trigger(
-				'select',
-				view,
-				offset2date(selectRange[0]),
-				offset2date(selectRange[1]+1),
-				true
-			);
-		}
-		// todo: if a selection was made before this one, and this one ended up unselected, fire unselect
-	}
-	
-	function unselect() {
-		if (selected) {
-			view.clearOverlays();
-			selected = false;
-			view.trigger('unselect', view);
-		}
-	}
-	view.unselect = unselect;
-	
-	if (view.option('selectable') && view.option('unselectable')) {
-		$(document).mousedown(function() {
-			unselect();
-		});
 	}
 	
 	
@@ -605,6 +541,7 @@ function Grid(element, options, methods) {
 	function offset2date(cellOffset) {
 		return addDays(cloneDate(view.visStart), cellOffset);
 	}
+	view.offset2date = offset2date;
 	
 	
 	function renderOverlays(matrix, offset, endOffset) {
@@ -624,6 +561,7 @@ function Grid(element, options, methods) {
 			c = 0;
 		}
 	}
+	view.renderOverlays = renderOverlays;
 	
 	
 	function buildMatrix(changeCallback) {
@@ -640,6 +578,7 @@ function Grid(element, options, methods) {
 		});
 		return matrix;
 	}
+	view.buildMatrix = buildMatrix;
 	
 
 }

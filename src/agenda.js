@@ -125,6 +125,11 @@ function Agenda(element, options, methods) {
 	}
 	
 	function renderAgenda(c, colFormat) {
+
+		if (view.beforeRender) {
+			view.beforeRender();
+		}
+	
 		colCnt = c;
 		
 		// update option-derived variables
@@ -202,7 +207,7 @@ function Agenda(element, options, methods) {
 			}
 			s += "</table>";
 			body = $("<div class='fc-agenda-body' style='position:relative;z-index:2;overflow:auto'/>")
-				.append(bodyContent = $("<div style='position:relative;overflow:hidden'>")
+				.append(view.bodyContent = bodyContent = $("<div style='position:relative;overflow:hidden'>")
 					.append(bodyTable = $(s)))
 				.appendTo(element);
 			bindSlotHandlers(body.find('td')); // .click(slotClick);
@@ -265,8 +270,6 @@ function Agenda(element, options, methods) {
 			});
 		
 		}
-		
-		unselect();
 		
 	}
 	
@@ -341,12 +344,27 @@ function Agenda(element, options, methods) {
 	
 	
 	
-	/* Slot/Day clicking and selecting
+	/* Slot/Day clicking and binding
 	-----------------------------------------------------------------------*/
 	
-	var selected=false,
-		selectHelper,
-		selectMatrix;
+
+	function bindDayHandlers(tds) {
+		tds.click(slotClick);
+		if ($.fullCalendar.bindBgHandlers) {
+			$.fullCalendar.bindBgHandlers(view, tds, true);
+		}
+	}
+	view.bindDayHandlers = bindDayHandlers;
+
+
+	function bindSlotHandlers(tds) {
+		tds.click(slotClick);
+		if ($.fullCalendar.bindBgHandlers) {
+			$.fullCalendar.bindBgHandlers(view, tds, false);
+		}
+	}
+	view.bindSlotHandlers = bindSlotHandlers;
+	
 	
 	function slotClick(ev) {
 		var col = Math.floor((ev.pageX - bg.offset().left) / colWidth),
@@ -362,173 +380,6 @@ function Agenda(element, options, methods) {
 			view.trigger('dayClick', this, date, true, ev);
 		}
 	}
-	
-	function unselect() {
-		if (selected) {
-			if (selectHelper) {
-				selectHelper.remove();
-				selectHelper = null;
-			}
-			view.clearOverlays();
-			view.trigger('unselect', view);
-			selected = false;
-		}
-	}
-	view.unselect = unselect;
-	
-	if (view.option('selectable') && view.option('unselectable')) {
-		$(document).mousedown(function() {
-			unselect();
-		});
-	}
-	
-	
-	// all-day
-	
-	var daySelectStart, // the "column" of the day
-		daySelectEnd,   // the "column" of the day
-		daySelectRange;
-	
-	function bindDayHandlers(tds) {
-		tds.click(slotClick);
-		if (view.option('selectable')) {
-			tds.mousedown(daySelectMousedown);
-		}
-	}
-	
-	function daySelectMousedown(ev) {
-		daySelectStart = undefined;
-		selectMatrix = buildMainMatrix(function(cell) {
-			view.clearOverlays();
-			if (selectHelper) {
-				selectHelper.remove(); // todo: turn these lines into _unselect()
-				selectHelper = null;
-			}
-			if (cell) {
-				selected = true;
-				daySelectEnd = cell.col;
-				if (daySelectStart === undefined) {
-					daySelectStart = daySelectEnd;
-				}
-				daySelectRange = [daySelectStart, daySelectEnd].sort(cmp);
-				renderDayOverlay(selectMatrix, daySelectRange[0], daySelectRange[1]+1);
-				bindDayHandlers(view.overlays[0]);
-			}else{
-				selected = false;
-			}
-		});
-		$(document)
-			.mousemove(daySelectMousemove)
-			.mouseup(daySelectMouseup);
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-		ev.stopPropagation();
-	}
-	
-	function daySelectMousemove(ev) {
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-	}
-	
-	function daySelectMouseup(ev) {
-		$(document)
-			.unbind('mousemove', daySelectMousemove)
-			.unbind('mouseup', daySelectMouseup);
-		if (selected) {
-			view.trigger(
-				'select',
-				view,
-				addDays(cloneDate(view.visStart), daySelectRange[0]),
-				addDays(cloneDate(view.visStart), daySelectRange[1]+1),
-				true
-			);
-		}
-	}
-	
-	
-	// slot
-	
-	function bindSlotHandlers(tds) {
-		tds.click(slotClick);
-		if (view.option('selectable')) {
-			tds.mousedown(slotSelectMousedown);
-		}
-	}
-	
-	var slotSelectDay,
-		slotSelectStart, // the "row" of the slot
-		slotSelectEnd,   // the "row" of the slot
-		slotSelectRange;
-	
-	function slotSelectMousedown(ev) {
-		slotSelectDay = undefined;
-		selectMatrix = buildSlotMatrix(function(cell) {
-			view.clearOverlays();
-			if (slotSelectDay === undefined) {
-				slotSelectDay = cell.col;
-				slotSelectStart = cell.row;
-			}
-			if (selectHelper) {
-				selectHelper.remove();
-				selectHelper = null;
-			}
-			if (cell) {
-				selected = true;
-				slotSelectEnd = cell.row;
-				slotSelectRange = [slotSelectStart, slotSelectEnd].sort(cmp);
-				if (view.option('selectHelper')) {
-					var rect = selectMatrix.rect(slotSelectRange[0], slotSelectDay, slotSelectRange[1]+1, slotSelectDay+1, bodyContent);
-					selectHelper =
-						$(segHtml(
-							{ title: '', start: slotTime(slotSelectDay, slotSelectRange[0]), end: slotTime(slotSelectDay, slotSelectRange[1]+1), className: [], editable:false },
-							{ top: rect.top, left: rect.left+2 },
-							'fc-event fc-event-vert fc-corner-top fc-corner-bottom '
-						));
-					if (!$.browser.msie) {
-						// IE makes the event completely clear!!?
-						selectHelper.css('opacity', view.option('dragOpacity'));
-					}
-					// TODO: change cursor
-					bindSlotHandlers(selectHelper);
-					bodyContent.append(selectHelper);
-					setOuterWidth(selectHelper, rect.width-5, true);
-					setOuterHeight(selectHelper, rect.height, true);
-				}else{
-					view.renderOverlay(
-						selectMatrix.rect(slotSelectRange[0], slotSelectDay, slotSelectRange[1]+1, slotSelectDay+1, bodyContent),
-						bodyContent
-					);
-					bindSlotHandlers(view.overlays[0]);
-				}
-			}else{
-				selected = false;
-				slotSelectEnd = undefined;
-			}
-		});
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-		$(document)
-			.mousemove(slotSelectMousemove)
-			.mouseup(slotSelectMouseup);
-		ev.stopPropagation();
-	}
-	
-	function slotSelectMousemove(ev) {
-		selectMatrix.mouse(ev.pageX, ev.pageY);
-	}
-	
-	function slotSelectMouseup(ev) {
-		$(document)
-			.unbind('mousemove', slotSelectMousemove)
-			.unbind('mouseup', slotSelectMouseup);
-		if (selected) {
-			view.trigger('select',
-				view,
-				slotTime(slotSelectDay, slotSelectRange[0]),
-				slotTime(slotSelectDay, slotSelectRange[1]+1),
-				false
-			);
-		}
-	}
-	
-	
 	
 	
 	
@@ -787,6 +638,7 @@ function Agenda(element, options, methods) {
 				: '') +
 		"</div>";
 	}
+	view.segHtml = segHtml;
 	
 	
 	function visEventEnd(event) { // returns exclusive 'visible' end, for rendering
@@ -1150,6 +1002,7 @@ function Agenda(element, options, methods) {
 		}
 		return d;
 	}
+	view.slotTime = slotTime;
 	
 	
 	// matrix building
@@ -1165,6 +1018,7 @@ function Agenda(element, options, methods) {
 		matrix.row(body);
 		return matrix;
 	}
+	view.buildMainMatrix = buildMainMatrix;
 	
 	function buildSlotMatrix(changeCallback) {
 		var matrix = new HoverMatrix(changeCallback);
@@ -1176,6 +1030,7 @@ function Agenda(element, options, methods) {
 		});
 		return matrix;
 	}
+	view.buildSlotMatrix = buildSlotMatrix;
 	
 	
 	// overlay for dropping and selecting
@@ -1186,6 +1041,7 @@ function Agenda(element, options, methods) {
 			head
 		);
 	}
+	view.renderDayOverlay = renderDayOverlay;
 	
 
 }

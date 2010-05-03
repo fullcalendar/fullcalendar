@@ -74,6 +74,7 @@ function cloneDate(d, dontKeepTime) {
 	}
 	return new Date(+d);
 }
+fc.cloneDate = cloneDate;
 
 function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
 	var i=0, d;
@@ -304,12 +305,14 @@ function setOuterWidth(element, width, includeMargins) {
 		_element.style.width = width - hsides(_element, includeMargins) + 'px';
 	});
 }
+fc.setOuterWidth = setOuterWidth;
 
 function setOuterHeight(element, height, includeMargins) {
 	element.each(function(i, _element) {
 		_element.style.height = height - vsides(_element, includeMargins) + 'px';
 	});
 }
+fc.setOuterHeight = setOuterHeight;
 
 
 function hsides(_element, includeMargins) {
@@ -516,9 +519,13 @@ function cssKey(_element) {
 }
 
 
-function cmp(a,b) {
+function cmp(a, b) {
 	return a - b;
 }
+fc.cmp = cmp;
+
+
+fc.publicMethods = {};
 
 
 
