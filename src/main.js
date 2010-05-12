@@ -409,6 +409,7 @@ $.fn.fullCalendar = function(options) {
 				var params = {};
 				params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
+				params['browserTimezone'] = eventEnd.getTimezoneOffset();
 				if (options.cacheParam) {
 					params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 				}
@@ -425,9 +426,11 @@ $.fn.fullCalendar = function(options) {
 				pushLoading();
 				src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
 			}
-			else {
+			else if (src) {
 				reportEvents(src); // src is an array
 			}
+			else
+				alert('Error detected in fullcalender fetchEventSource()\nPlease check the last comma at the end of your feed list.');
 		}
 		
 		
@@ -655,12 +658,13 @@ $.fn.fullCalendar = function(options) {
 			},
 		
 			removeEventSource: function(source) {
+				// if source=null, delete all
 				eventSources = $.grep(eventSources, function(src) {
-					return src != source;
+					return (source && src != source);
 				});
 				// remove all client events from that source
 				events = $.grep(events, function(e) {
-					return e.source != source;
+					return (source && e.source != source);
 				});
 				eventsChanged();
 			},
