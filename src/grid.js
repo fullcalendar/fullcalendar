@@ -121,6 +121,7 @@ function Grid(element, options, methods) {
 		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
 			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
 		}),
+		selectionManager,
 		// ...
 		
 	// initialize superclass
@@ -155,7 +156,7 @@ function Grid(element, options, methods) {
 		}
 	
 		rowCnt = r;
-		colCnt = view.colCnt = c;
+		colCnt = c;
 		
 		// update option-derived variables
 		tm = options.theme ? 'ui' : 'fc';
@@ -214,7 +215,7 @@ function Grid(element, options, methods) {
 				s += "</tr>";
 			}
 			tbody = $(s + "</tbody>").appendTo(table);
-			bindDayHandlers(tbody.find('td'));
+			dayBind(tbody.find('td'));
 			
 			segmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 		
@@ -247,7 +248,7 @@ function Grid(element, options, methods) {
 				}
 				tbody.append(s);
 			}
-			bindDayHandlers(tbody.find('td.fc-new').removeClass('fc-new'));
+			dayBind(tbody.find('td.fc-new').removeClass('fc-new'));
 			
 			// re-label and re-class existing cells
 			d = cloneDate(view.visStart);
@@ -452,27 +453,27 @@ function Grid(element, options, methods) {
 				start: function(ev, ui) {
 					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
-					matrix = buildMatrix(function(cell) {
+					matrix = buildDayMatrix(function(cell) {
 						eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
-						view.clearOverlays();
+						clearOverlays();
 						if (cell) {
 							dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
-							renderOverlays(
+							renderDayOverlays(
 								matrix,
-								cellOffset(addDays(cloneDate(event.start), dayDelta)),
-								cellOffset(addDays(visEventEnd(event), dayDelta)) // visEventEnd returns a clone
+								dateCell(addDays(cloneDate(event.start), dayDelta)),
+								dateCell(addDays(visEventEnd(event), dayDelta))
 							);
 						}else{
 							dayDelta = 0;
 						}
 					});
-					matrix.mouse(ev.pageX, ev.pageY);
+					matrix.mouse(ev);
 				},
 				drag: function(ev) {
-					matrix.mouse(ev.pageX, ev.pageY);
+					matrix.mouse(ev);
 				},
 				stop: function(ev, ui) {
-					view.clearOverlays();
+					clearOverlays();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
 					if (dayDelta) {
 						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
@@ -490,18 +491,15 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/* Day clicking and day event binding
+	/* Day clicking and binding
 	---------------------------------------------------------*/
 	
-	
-	function bindDayHandlers(days) {
+	function dayBind(days) {
 		days.click(dayClick);
-		if ($.fullCalendar.bindBgHandlers) {
-			$.fullCalendar.bindBgHandlers(view, days, true);
+		if (selectionManager) {
+			days.mousedown(selectionMousedown);
 		}
 	}
-	view.bindDayHandlers = bindDayHandlers;
-	
 	
 	function dayClick(ev) {
 		var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
@@ -509,62 +507,106 @@ function Grid(element, options, methods) {
 				cloneDate(view.visStart),
 				Math.floor(n/colCnt) * 7 + n % colCnt
 			);
+		// TODO: what about weekends in middle of week?
 		view.trigger('dayClick', this, date, true, ev);
 	}
 	
 	
 	
+	/* Selecting
+	--------------------------------------------------------*/
 	
-	/* Utilities
-	---------------------------------------------------*/
+	if (view.option('selectable')) {
 	
+		var selectionMatrix;
 	
-	function cellOffset(date) { // always returns index in range
-		var d = cloneDate(view.visStart),
-			i, j, k=0;
-		for (i=0; i<rowCnt; i++) {
-			for (j=0; j<colCnt; j++) {
-				addDays(d, 1);
-				if (nwe) {
-					skipWeekend(d);
+		selectionManager = new SelectionManager(
+			view,
+			function(startDate, endDate) {
+				renderDayOverlays(selectionMatrix, dateCell(startDate), dateCell(addDays(endDate, 1)));
+			},
+			clearOverlays
+		);
+		
+		function selectionMousedown(ev) {
+			selectionMatrix = buildDayMatrix(function(cell) {
+				if (cell) {
+					var d = cellDate(cell.row, cell.col);
+					selectionManager.drag(d, d, true);
+				}else{
+					selectionManager.drag();
 				}
-				if (d > date) {
-					return k;
+			});
+			documentDragHelp(
+				function(ev) {
+					selectionMatrix.mouse(ev);
+				},
+				function(ev) {
+					selectionManager.dragStop(ev);
 				}
-				k++;
+			);
+			selectionManager.dragStart(ev);
+			selectionMatrix.mouse(ev);
+			ev.stopPropagation(); // prevent auto-unselect
+		}
+		
+		documentAutoUnselect(view, unselect);
+	
+	}
+	
+	view.select = function(start, end) {
+		if (selectionManager) {
+			selectionMatrix = buildDayMatrix();
+			selectionManager.select(start, end, true);
+		}
+	};
+	
+	function unselect() {
+		if (selectionManager) {
+			selectionManager.unselect();
+		}
+	}
+	view.unselect = unselect;
+	
+	
+	
+	
+	/* Semi-transparent Overlay Helpers
+	------------------------------------------------------*/
+
+	function renderDayOverlays(matrix, startCell, endCell) { // for rendering overlays across weeks
+		var r0 = startCell[0];
+		var c0 = startCell[1];
+		var r1 = endCell[0];
+		var c1 = endCell[1];
+		var localC0, localC1;
+		for (var r=r0; r<=r1; r++) {
+			if (rtl) {
+				localC0 = r==r1 ? c1+1 : 0;
+				localC1 = r==r0 ? c0+1 : colCnt;
+			}else{
+				localC0 = r==r0 ? c0 : 0;
+				localC1 = r==r1 ? c1 : colCnt;
+			}
+			if (localC0 < localC1) {
+				var rect = matrix.rect(r, localC0, r+1, localC1, element);
+				dayBind(
+					view.renderOverlay(rect, element)
+				);
 			}
 		}
-		return k;
+	}
+	
+	function clearOverlays() {
+		view.clearOverlays();
 	}
 	
 	
-	function offset2date(cellOffset) {
-		return addDays(cloneDate(view.visStart), cellOffset);
-	}
-	view.offset2date = offset2date;
 	
-	
-	function renderOverlays(matrix, offset, endOffset) {
-		var len = endOffset - offset,
-			localLen,
-			r = Math.floor(offset / colCnt),
-			c = offset % colCnt,
-			origin = element.offset();
-		while (len > 0) {
-			localLen = Math.min(len, colCnt - c);
-			view.renderOverlay(
-				matrix.rect(r, c, r+1, c+localLen, element),
-				element
-			);
-			len -= localLen;
-			r += 1;
-			c = 0;
-		}
-	}
-	view.renderOverlays = renderOverlays;
-	
-	
-	function buildMatrix(changeCallback) {
+	/* Matrix Construction
+	---------------------------------------------------*/
+
+	function buildDayMatrix(changeCallback) {
 		var matrix = new HoverMatrix(changeCallback);
 		tbody.find('tr').each(function() {
 			matrix.row(this);
@@ -578,7 +620,38 @@ function Grid(element, options, methods) {
 		});
 		return matrix;
 	}
-	view.buildMatrix = buildMatrix;
+	
+	
+	
+	/* Date Utilities
+	------------------------------------------------------*/
+	
+	function dateCell(date) { // convert date to [row, col]
+		var d = cloneDate(view.visStart);
+		var r, c;
+		var found = false;
+		for (r=0; r<rowCnt; r++) {
+			for (c=0; c<colCnt; c++) {
+				addDays(d, 1);
+				if (nwe) {
+					skipWeekend(d);
+				}
+				if (d > date) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				break;
+			}
+		}
+		return [r, c*dis+dit];
+	}
+	
+	function cellDate(r, c) { // convert r,c to date
+		return addDays(cloneDate(view.visStart), r*7 + c*dis+dit);
+		// TODO: what about weekends in middle of week?
+	}
 	
 
 }

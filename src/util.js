@@ -397,7 +397,9 @@ function HoverMatrix(changeCallback) {
 		lefts.push(prevColE.offset().left);
 	};
 
-	t.mouse = function(x, y) {
+	t.mouse = function(ev) {
+		var x = ev.pageX;
+		var y = ev.pageY;
 		if (origRow === undefined) {
 			tops.push(tops[tops.length-1] + prevRowE.outerHeight());
 			lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
@@ -425,6 +427,8 @@ function HoverMatrix(changeCallback) {
 					left: lefts[c],
 					width: lefts[c+1] - lefts[c],
 					height: tops[r+1] - tops[r],
+					origRow: origRow,
+					origCol: origCol,
 					isOrig: r==origRow && c==origCol,
 					rowDelta: r-origRow,
 					colDelta: c-origCol
@@ -523,9 +527,5 @@ function cmp(a, b) {
 	return a - b;
 }
 fc.cmp = cmp;
-
-
-fc.publicMethods = {};
-
 
 

@@ -180,6 +180,7 @@ var viewMethods = {
 			.css(rect)
 			.appendTo(parent);
 		this.overlays.push(e);
+		return e;
 	},
 	
 	clearOverlays: function() {

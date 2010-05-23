@@ -13,8 +13,8 @@
 <script type='text/javascript' src='../src/grid.js'></script>
 <script type='text/javascript' src='../src/agenda.js'></script>
 <script type='text/javascript' src='../src/view.js'></script>
+<script type='text/javascript' src='../src/selection_util.js'></script>
 <script type='text/javascript' src='../src/util.js'></script>
-<script type='text/javascript' src='../src/selectable.js'></script>
 <!--</src>-->
 <!--
 <dist>
@@ -24,7 +24,6 @@
 <script type='text/javascript' src='../jquery/ui.draggable.js'></script>
 <script type='text/javascript' src='../jquery/ui.resizable.js'></script>
 <script type='text/javascript' src='../fullcalendar.min.js'></script>
-<script type='text/javascript' src='../selectable.js'></script>
 </dist>
 -->
 <script type='text/javascript'>
@@ -36,39 +35,30 @@
 		var m = date.getMonth();
 		var y = date.getFullYear();
 		
-		$('#calendar').fullCalendar({
+		var calendar = $('#calendar').fullCalendar({
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
-			editable: true,
-			
-			/********** new selecting options **********/
-			
-			selectable: true, // activate selecting!
-			unselectable: true, // automatically hide the selection when user clicks elsewhere? (defaults to true)
-			selectHelper: true, // use a "fake" event for selecting? (only works in agenda views right now)
-			select: function(start, end, allDay, view) {
-				console.log(
-					'---- selection ----\n' +
-					'start: ' + start + '\n' +
-					'end: ' + end + '\n' + // exclusive!!
-					'allDay: ' + allDay
-				);
-				/*
-				if (confirm("clear the selection?")) {
-					$('#calendar').fullCalendar('unselect'); // 'unselect' method to manually clear selection
-					// a 'select' method coming soon...
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end, allDay) {
+				var title = prompt('Event Title:');
+				if (title) {
+					calendar.fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay
+						},
+						true
+					);
 				}
-				*/
+				calendar.fullCalendar('unselect');
 			},
-			unselect: function() {
-				console.log('unselected');
-			},
-			
-			/******************************************/
-			
+			editable: true,
 			events: [
 				{
 					title: 'All Day Event',

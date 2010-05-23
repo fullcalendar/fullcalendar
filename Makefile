@@ -9,6 +9,7 @@ JS_SRC_FILES = \
 	${SRC_DIR}/grid.js \
 	${SRC_DIR}/agenda.js \
 	${SRC_DIR}/view.js \
+	${SRC_DIR}/selection_util.js \
 	${SRC_DIR}/util.js
 	
 CSS_SRC_FILES = \
@@ -37,9 +38,6 @@ zip:
 	@cat ${SRC_DIR}/gcal.js \
 		| ${VER_SED} | ${DATE_SED} \
 		> ${BUILD_DIR}/fullcalendar/gcal.js
-	@cat ${SRC_DIR}/selectable.js \
-		| ${VER_SED} | ${DATE_SED} \
-		> ${BUILD_DIR}/fullcalendar/selectable.js
 		
 	@echo "compressing js..."
 	@java -jar ${BUILD_DIR}/compiler.jar --js ${BUILD_DIR}/fullcalendar/fullcalendar.js \

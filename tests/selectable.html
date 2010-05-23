@@ -18,6 +18,27 @@
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
+			//defaultView: 'agendaWeek',
+			//isRTL: true,
+			selectable: true,
+			selectHelper: true,
+			//unselectAuto: false,
+			//unselectCancel: '.fc',
+			select: function(start, end, allDay) {
+				console.log(
+					'---- selection ----\n' +
+					'start: ' + start + '\n' +
+					'end: ' + end + '\n' + // exclusive!!
+					'allDay: ' + allDay
+				);
+			},
+			unselect: function() {
+				console.log('unselect');
+			},
+			dayClick: function(date, allDay) {
+				console.log(date, allDay);
+				console.log(this);
+			},
 			editable: true,
 			events: [
 				{
@@ -26,8 +47,9 @@
 				},
 				{
 					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
+					start: new Date(y, m, d-5, 5, 0),
+					end: new Date(y, m, d-2, 2, 0),
+					allDay: false
 				},
 				{
 					id: 999,

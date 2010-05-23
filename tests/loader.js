@@ -83,6 +83,7 @@ if (_build) {
 	includeJS('../src/grid.js');
 	includeJS('../src/agenda.js');
 	includeJS('../src/view.js');
+	includeJS('../src/selection_util.js');
 	includeJS('../src/util.js');
 	includeJS('../src/gcal.js');
 }
