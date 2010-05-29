@@ -5,14 +5,16 @@
 <script type='text/javascript' src='loader.js'></script>
 <script type='text/javascript'>
 
+	var date = new Date();
+	var d = date.getDate();
+	var m = date.getMonth();
+	var y = date.getFullYear();
+
+	var calendar;
+
 	$(document).ready(function() {
-	
-		var date = new Date();
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
 		
-		$('#calendar').fullCalendar({
+		calendar = $('#calendar').fullCalendar({
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -20,15 +22,23 @@
 			},
 			//defaultView: 'agendaWeek',
 			//isRTL: true,
+			//minTime: 7,
+			//weekends: false,
+			//allDaySlot: false,
 			selectable: true,
-			selectHelper: true,
+			//selectHelper: true,
+			/*
+			selectHelper: function(start, end) {
+				return $("<div style='background:red' />").text(start+' '+end);
+			},
+			*/
 			//unselectAuto: false,
 			//unselectCancel: '.fc',
 			select: function(start, end, allDay) {
 				console.log(
 					'---- selection ----\n' +
 					'start: ' + start + '\n' +
-					'end: ' + end + '\n' + // exclusive!!
+					'end: ' + end + '\n' +
 					'allDay: ' + allDay
 				);
 			},
@@ -36,7 +46,7 @@
 				console.log('unselect');
 			},
 			dayClick: function(date, allDay) {
-				console.log(date, allDay);
+				console.log('DAYCLICK', date, allDay);
 				console.log(this);
 			},
 			editable: true,
@@ -89,26 +99,32 @@
 			]
 		});
 		
+		
 	});
 
 </script>
 <style type='text/css'>
 
 	body {
-		margin-top: 40px;
-		text-align: center;
 		font-size: 13px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		}
 
 	#calendar {
 		width: 900px;
-		margin: 0 auto;
+		margin: 40px auto;
 		}
 
 </style>
 </head>
 <body>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d-1), new Date(y, m, d-1), true)">1day, allday</button>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d-1))">1day, noend, noallday</button>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d-1), null, false)">1day, noend, allday=false</button>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d, 5, 15), new Date(y, m, d, 15, 30), false)">1day, timed</button>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d-2), new Date(y, m, d), true)">3day, allday</button>
+<button onclick="calendar.fullCalendar('select', new Date(y, m, d-1, 5, 15), new Date(y, m, d+1, 15, 30), false)">3day, timed</button>
+<button onclick="calendar.fullCalendar('unselect')">unselect</button>
 <div id='calendar'></div>
 </body>
 </html>

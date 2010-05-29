@@ -1,5 +1,5 @@
 
-function SelectionManager(view, displayFunc, clearFunc) {
+function SelectionManager(view, initFunc, displayFunc, clearFunc) {
 
 	var t = this;
 	var selected = false;
@@ -11,7 +11,7 @@ function SelectionManager(view, displayFunc, clearFunc) {
 	
 	
 	t.dragStart = function(ev) {
-		unselect();
+		initFunc();
 		start = end = undefined;
 		initialRange = undefined;
 		initialElement = ev.currentTarget;
@@ -43,20 +43,25 @@ function SelectionManager(view, displayFunc, clearFunc) {
 			if (+initialRange[0] == +start && +initialRange[1] == +end) {
 				view.trigger('dayClick', initialElement, start, allDay, ev);
 			}
-			selected = true;
-			view.trigger('select', view, start, end, allDay);
+			_select();
 		}
 	};
 	
 	
 	t.select = function(newStart, newEnd, newAllDay) {
-		unselect();
+		initFunc();
 		start = newStart;
 		end = newEnd;
 		allDay = newAllDay;
-		selected = true;
-		displayFunc(start, end, allDay);
+		displayFunc(cloneDate(start), cloneDate(end), allDay);
+		_select();
 	};
+	
+	
+	function _select() { // just set the selected flag, and trigger
+		selected = true;
+		view.trigger('select', view, start, end, allDay);
+	}
 	
 	
 	function unselect() {
@@ -85,8 +90,8 @@ function documentDragHelp(mousemove, mouseup) {
 }
 
 
-function documentAutoUnselect(view, unselectFunc) {
-	if (view.option('unselectAuto')) {
+function documentUnselectAuto(view, unselectFunc) {
+	if (view.option('selectable') && view.option('unselectAuto')) {
 		$(document).mousedown(function(ev) {
 			var ignore = view.option('unselectCancel');
 			if (ignore) {

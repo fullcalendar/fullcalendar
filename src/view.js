@@ -4,8 +4,6 @@
 
 var viewMethods = {
 
-	// TODO: maybe change the 'vis' variables to 'excl'
-
 	/*
 	 * Objects inheriting these methods must implement the following properties/methods:
 	 * - title

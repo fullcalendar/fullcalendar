@@ -341,6 +341,7 @@ $.fn.fullCalendar = function(options) {
 			if (elementVisible()) {
 				calcSize();
 				setSize();
+				viewUnselect();
 				view.rerenderEvents();
 				view.sizeDirty = false;
 			}
@@ -670,7 +671,7 @@ $.fn.fullCalendar = function(options) {
 			//
 			
 			select: function(start, end, allDay) {
-				view.select(start, end, allDay);
+				view.select(start, end, allDay===undefined ? true : allDay);
 			},
 			
 			unselect: function() {
@@ -679,7 +680,7 @@ $.fn.fullCalendar = function(options) {
 			
 		};
 		
-		$.data(this, 'fullCalendar', publicMethods);
+		$.data(this, 'fullCalendar', publicMethods); // TODO: look into memory leak implications
 		
 		
 		
@@ -898,5 +899,5 @@ function normalizeEvent(event, options) {
 		event.className = [];
 	}
 }
-// TODO: if there is no title or start date, return false to indicate an invalid event
+// TODO: if there is no start date, return false to indicate an invalid event
 

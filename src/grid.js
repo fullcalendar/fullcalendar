@@ -122,6 +122,7 @@ function Grid(element, options, methods) {
 			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
 		}),
 		selectionManager,
+		selectionMatrix,
 		// ...
 		
 	// initialize superclass
@@ -150,10 +151,6 @@ function Grid(element, options, methods) {
 	}
 
 	function renderGrid(r, c, colFormat, showNumbers) {
-
-		if (view.beforeRender) {
-			view.beforeRender();
-		}
 	
 		rowCnt = r;
 		colCnt = c;
@@ -372,7 +369,7 @@ function Grid(element, options, methods) {
 	function compileSegs(events) {
 		var d1 = cloneDate(view.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
-			visEventsEnds = $.map(events, visEventEnd),
+			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
 			k, seg,
@@ -395,7 +392,6 @@ function Grid(element, options, methods) {
 	}
 	
 	
-	
 	function renderSegs(segs, modifiedEventId) {
 		_renderDaySegs(
 			segs,
@@ -411,18 +407,6 @@ function Grid(element, options, methods) {
 			modifiedEventId
 		);
 	}
-	
-	
-	
-	function visEventEnd(event) { // returns exclusive 'visible' end, for rendering
-		if (event.end) {
-			var end = cloneDate(event.end);
-			return (event.allDay || end.getHours() || end.getMinutes()) ? addDays(end, 1) : end;
-		}else{
-			return addDays(cloneDate(event.start), 1);
-		}
-	}
-	
 	
 	
 	function bindSegHandlers(event, eventElement, seg) {
@@ -460,8 +444,8 @@ function Grid(element, options, methods) {
 							dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
 							renderDayOverlays(
 								matrix,
-								dateCell(addDays(cloneDate(event.start), dayDelta)),
-								dateCell(addDays(visEventEnd(event), dayDelta))
+								addDays(cloneDate(event.start), dayDelta),
+								addDays(exclEndDay(event), dayDelta)
 							);
 						}else{
 							dayDelta = 0;
@@ -495,40 +479,42 @@ function Grid(element, options, methods) {
 	---------------------------------------------------------*/
 	
 	function dayBind(days) {
-		days.click(dayClick);
-		if (selectionManager) {
-			days.mousedown(selectionMousedown);
-		}
+		days.click(dayClick)
+			.mousedown(selectionMousedown);
 	}
 	
 	function dayClick(ev) {
-		var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
-			date = addDays(
-				cloneDate(view.visStart),
-				Math.floor(n/colCnt) * 7 + n % colCnt
-			);
-		// TODO: what about weekends in middle of week?
-		view.trigger('dayClick', this, date, true, ev);
+		if (!view.option('selectable')) { // SelectionManager will worry about dayClick
+			var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
+				date = addDays(
+					cloneDate(view.visStart),
+					Math.floor(n/colCnt) * 7 + n % colCnt
+				);
+			// TODO: what about weekends in middle of week?
+			view.trigger('dayClick', this, date, true, ev);
+		}
 	}
 	
 	
 	
 	/* Selecting
 	--------------------------------------------------------*/
+
+	selectionManager = new SelectionManager(
+		view,
+		unselect,
+		function(startDate, endDate, allDay) {
+			renderDayOverlays(
+				selectionMatrix,
+				startDate,
+				addDays(cloneDate(endDate), 1)
+			);
+		},
+		clearOverlays
+	);
 	
-	if (view.option('selectable')) {
-	
-		var selectionMatrix;
-	
-		selectionManager = new SelectionManager(
-			view,
-			function(startDate, endDate) {
-				renderDayOverlays(selectionMatrix, dateCell(startDate), dateCell(addDays(endDate, 1)));
-			},
-			clearOverlays
-		);
-		
-		function selectionMousedown(ev) {
+	function selectionMousedown(ev) {
+		if (view.option('selectable')) {
 			selectionMatrix = buildDayMatrix(function(cell) {
 				if (cell) {
 					var d = cellDate(cell.row, cell.col);
@@ -549,22 +535,20 @@ function Grid(element, options, methods) {
 			selectionMatrix.mouse(ev);
 			ev.stopPropagation(); // prevent auto-unselect
 		}
-		
-		documentAutoUnselect(view, unselect);
-	
 	}
 	
-	view.select = function(start, end) {
-		if (selectionManager) {
-			selectionMatrix = buildDayMatrix();
-			selectionManager.select(start, end, true);
+	documentUnselectAuto(view, unselect);
+	
+	view.select = function(start, end, allDay) {
+		if (!end) {
+			end = cloneDate(start);
 		}
+		selectionMatrix = buildDayMatrix();
+		selectionManager.select(start, end, allDay);
 	};
 	
 	function unselect() {
-		if (selectionManager) {
-			selectionManager.unselect();
-		}
+		selectionManager.unselect();
 	}
 	view.unselect = unselect;
 	
@@ -573,27 +557,29 @@ function Grid(element, options, methods) {
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
-
-	function renderDayOverlays(matrix, startCell, endCell) { // for rendering overlays across weeks
-		var r0 = startCell[0];
-		var c0 = startCell[1];
-		var r1 = endCell[0];
-		var c1 = endCell[1];
-		var localC0, localC1;
-		for (var r=r0; r<=r1; r++) {
-			if (rtl) {
-				localC0 = r==r1 ? c1+1 : 0;
-				localC1 = r==r0 ? c0+1 : colCnt;
-			}else{
-				localC0 = r==r0 ? c0 : 0;
-				localC1 = r==r1 ? c1 : colCnt;
-			}
-			if (localC0 < localC1) {
-				var rect = matrix.rect(r, localC0, r+1, localC1, element);
+	
+	function renderDayOverlays(matrix, overlayStart, overlayEnd) { // overlayEnd is exclusive
+		var rowStart = cloneDate(view.visStart);
+		var rowEnd = addDays(cloneDate(rowStart), colCnt);
+		for (var i=0; i<rowCnt; i++) {
+			var stretchStart = new Date(Math.max(rowStart, overlayStart));
+			var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));
+			if (stretchStart < stretchEnd) {
+				var colStart, colEnd;
+				if (rtl) {
+					colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
+					colEnd = dayDiff(stretchStart, rowStart)*dis+dit+1;
+				}else{
+					colStart = dayDiff(stretchStart, rowStart);
+					colEnd = dayDiff(stretchEnd, rowStart);
+				}
+				var rect = matrix.rect(i, colStart, i+1, colEnd, element);
 				dayBind(
 					view.renderOverlay(rect, element)
 				);
 			}
+			addDays(rowStart, 7);
+			addDays(rowEnd, 7);
 		}
 	}
 	
@@ -603,50 +589,19 @@ function Grid(element, options, methods) {
 	
 	
 	
-	/* Matrix Construction
+	
+	/* Utils
 	---------------------------------------------------*/
+	
 
 	function buildDayMatrix(changeCallback) {
-		var matrix = new HoverMatrix(changeCallback);
-		tbody.find('tr').each(function() {
-			matrix.row(this);
-		});
 		var tds = tbody.find('tr:first td');
 		if (rtl) {
 			tds = $(tds.get().reverse());
 		}
-		tds.each(function() {
-			matrix.col(this);
-		});
-		return matrix;
+		return new HoverMatrix(tbody.find('tr'), tds, changeCallback);
 	}
 	
-	
-	
-	/* Date Utilities
-	------------------------------------------------------*/
-	
-	function dateCell(date) { // convert date to [row, col]
-		var d = cloneDate(view.visStart);
-		var r, c;
-		var found = false;
-		for (r=0; r<rowCnt; r++) {
-			for (c=0; c<colCnt; c++) {
-				addDays(d, 1);
-				if (nwe) {
-					skipWeekend(d);
-				}
-				if (d > date) {
-					found = true;
-					break;
-				}
-			}
-			if (found) {
-				break;
-			}
-		}
-		return [r, c*dis+dit];
-	}
 	
 	function cellDate(r, c) { // convert r,c to date
 		return addDays(cloneDate(view.visStart), r*7 + c*dis+dit);

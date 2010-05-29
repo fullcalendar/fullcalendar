@@ -58,17 +58,11 @@ if (_legacy) {
 }
 else if (_build) {
 	includeJS('../build/fullcalendar/jquery/jquery.js');
-	includeJS('../build/fullcalendar/jquery/ui.core.js');
-	includeJS('../build/fullcalendar/jquery/ui.draggable.js');
-	includeJS('../build/fullcalendar/jquery/ui.resizable.js');
+	includeJS('../build/fullcalendar/jquery/jquery-ui-custom.js');
 }
 else {
-	//includeJS('jquery-1.4.1.min.js');
-	//includeJS('jquery-uncompressed.js');
 	includeJS('../src/jquery/jquery.js');
-	includeJS('../src/jquery/ui.core.js');
-	includeJS('../src/jquery/ui.draggable.js');
-	includeJS('../src/jquery/ui.resizable.js');
+	includeJS('../src/jquery/jquery-ui-custom.js');
 }
 
 if (_build) {
