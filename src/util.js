@@ -543,4 +543,21 @@ function _exclEndDay(end, allDay) {
 
 
 
+function disableTextSelection(element) {
+	element
+		.attr('unselectable', 'on')
+		.css('MozUserSelect', 'none')
+		.bind('selectstart.ui', function() { return false; });
+}
+
+/*
+function enableTextSelection(element) {
+	element
+		.attr('unselectable', 'off')
+		.css('MozUserSelect', '')
+		.unbind('selectstart.ui');
+}
+*/
+
+
 

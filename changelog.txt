@@ -1,10 +1,10 @@
 
-version 1.4.6 (5/28/10)
+version 1.4.6 (5/31/10)
 	- "selecting" days or timeslots
 		- options: selectable, selectHelper, unselectAuto, unselectCancel
 		- callbacks: select, unselect
 		- methods: select, unselect
-	- when dragging an event, the highlighting that appears reflects the duration of the event
+	- when dragging an event, the highlighting reflects the duration of the event
 	- code compressing by Google Closure Compiler
 	- bundled with jQuery 1.4.2 and jQuery UI 1.8.1
 

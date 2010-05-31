@@ -40,10 +40,18 @@
 			minTime: '5',
 			maxTime: '21:30',
 			dayClick: function(dayDate, allDay, ev, view) {
-				alert(dayDate);
-				//console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
+				//alert(dayDate);
+				console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
 				//console.log(ev);
 				//console.log(this);
+			},
+			
+			selectable: true,
+			select: function(start, end, allDay) {
+				console.log('select', start, end, allDay);
+			},
+			unselect: function() {
+				console.log('unselect');
 			},
 			
 			eventRender: function(event, element, view) {

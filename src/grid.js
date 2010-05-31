@@ -145,10 +145,8 @@ function Grid(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-grid');
-	if (element.disableSelection) {
-		element.disableSelection();
-	}
+	disableTextSelection(element.addClass('fc-grid'));
+	
 
 	function renderGrid(r, c, colFormat, showNumbers) {
 	
@@ -533,7 +531,7 @@ function Grid(element, options, methods) {
 			);
 			selectionManager.dragStart(ev);
 			selectionMatrix.mouse(ev);
-			ev.stopPropagation(); // prevent auto-unselect
+			return false; // prevent auto-unselect and text selection
 		}
 	}
 	

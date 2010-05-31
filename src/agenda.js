@@ -123,10 +123,8 @@ function Agenda(element, options, methods) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	element.addClass('fc-agenda');
-	if (element.disableSelection) {
-		element.disableSelection();
-	}
+	disableTextSelection(element.addClass('fc-agenda'));
+	
 	
 	function renderAgenda(c, colFormat) {
 	
@@ -956,7 +954,7 @@ function Agenda(element, options, methods) {
 			);
 			daySelectionManager.dragStart(ev);
 			selectionMatrix.mouse(ev);
-			ev.stopPropagation(); // prevent auto-unselect
+			return false; // prevent auto-unselect and text selection
 		}
 	}
 	
@@ -987,7 +985,7 @@ function Agenda(element, options, methods) {
 			);
 			slotSelectionManager.dragStart(ev);
 			selectionMatrix.mouse(ev);
-			ev.stopPropagation(); // prevent auto-unselect
+			return false; // prevent auto-unselect and text selection
 		}
 	}
 	

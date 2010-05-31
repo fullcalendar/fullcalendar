@@ -51,10 +51,8 @@ if (_build) {
 }
 
 if (_legacy) {
-	includeJS('jquery-legacy/jquery.js');
-	includeJS('jquery-legacy/ui.core.js');
-	includeJS('jquery-legacy/ui.draggable.js');
-	includeJS('jquery-legacy/ui.resizable.js');
+	includeJS('jquery-legacy/jquery-1.3.2.min.js');
+	includeJS('jquery-legacy/jquery-ui-1.7.3.custom.min.js');
 }
 else if (_build) {
 	includeJS('../build/fullcalendar/jquery/jquery.js');
