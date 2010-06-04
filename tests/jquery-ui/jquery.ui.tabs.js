@@ -1,27 +1,47 @@
 /*
- * jQuery UI Tabs 1.7.2
+ * jQuery UI Tabs 1.8.1
  *
- * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
  *
  * http://docs.jquery.com/UI/Tabs
  *
  * Depends:
- *	ui.core.js
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
  */
 (function($) {
 
-$.widget("ui.tabs", {
+var tabId = 0,
+	listId = 0;
 
-	_init: function() {
-		if (this.options.deselectable !== undefined) {
-			this.options.collapsible = this.options.deselectable;
-		}
+$.widget("ui.tabs", {
+	options: {
+		add: null,
+		ajaxOptions: null,
+		cache: false,
+		cookie: null, // e.g. { expires: 7, path: '/', domain: 'jquery.com', secure: true }
+		collapsible: false,
+		disable: null,
+		disabled: [],
+		enable: null,
+		event: 'click',
+		fx: null, // e.g. { height: 'toggle', opacity: 'toggle', duration: 200 }
+		idPrefix: 'ui-tabs-',
+		load: null,
+		panelTemplate: '<div></div>',
+		remove: null,
+		select: null,
+		show: null,
+		spinner: '<em>Loading&#8230;</em>',
+		tabTemplate: '<li><a href="#{href}"><span>#{label}</span></a></li>'
+	},
+	_create: function() {
 		this._tabify(true);
 	},
 
-	_setData: function(key, value) {
+	_setOption: function(key, value) {
 		if (key == 'selected') {
 			if (this.options.collapsible && value == this.options.selected) {
 				return;
@@ -30,16 +50,13 @@ $.widget("ui.tabs", {
 		}
 		else {
 			this.options[key] = value;
-			if (key == 'deselectable') {
-				this.options.collapsible = value;
-			}
 			this._tabify();
 		}
 	},
 
 	_tabId: function(a) {
 		return a.title && a.title.replace(/\s/g, '_').replace(/[^A-Za-z0-9\-_:\.]/g, '') ||
-			this.options.idPrefix + $.data(a);
+			this.options.idPrefix + (++tabId);
 	},
 
 	_sanitizeSelector: function(hash) {
@@ -47,7 +64,7 @@ $.widget("ui.tabs", {
 	},
 
 	_cookie: function() {
-		var cookie = this.cookie || (this.cookie = this.options.cookie.name || 'ui-tabs-' + $.data(this.list[0]));
+		var cookie = this.cookie || (this.cookie = this.options.cookie.name || 'ui-tabs-' + (++listId));
 		return $.cookie.apply(null, [cookie].concat($.makeArray(arguments)));
 	},
 
@@ -71,7 +88,7 @@ $.widget("ui.tabs", {
 
 	_tabify: function(init) {
 
-		this.list = this.element.children('ul:first');
+		this.list = this.element.find('ol,ul').eq(0);
 		this.lis = $('li:has(a[href])', this.list);
 		this.anchors = this.lis.map(function() { return $('a', this)[0]; });
 		this.panels = $([]);
@@ -153,7 +170,7 @@ $.widget("ui.tabs", {
 				if (typeof o.selected != 'number' && this.lis.filter('.ui-tabs-selected').length) {
 					o.selected = this.lis.index(this.lis.filter('.ui-tabs-selected'));
 				}
-				o.selected = o.selected || 0;
+				o.selected = o.selected || (this.lis.length ? 0 : -1);
 			}
 			else if (o.selected === null) { // usage of null is deprecated, TODO remove in next release
 				o.selected = -1;
@@ -262,7 +279,7 @@ $.widget("ui.tabs", {
 		// and prevent IE's ClearType bug...
 		function resetStyle($el, fx) {
 			$el.css({ display: '' });
-			if ($.browser.msie && fx.opacity) {
+			if (!$.support.opacity && fx.opacity) {
 				$el[0].style.removeAttribute('filter');
 			}
 		}
@@ -270,7 +287,7 @@ $.widget("ui.tabs", {
 		// Show a tab...
 		var showTab = showFx ?
 			function(clicked, $show) {
-				$(clicked).closest('li').removeClass('ui-state-default').addClass('ui-tabs-selected ui-state-active');
+				$(clicked).closest('li').addClass('ui-tabs-selected ui-state-active');
 				$show.hide().removeClass('ui-tabs-hide') // avoid flicker that way
 					.animate(showFx, showFx.duration || 'normal', function() {
 						resetStyle($show, showFx);
@@ -278,7 +295,7 @@ $.widget("ui.tabs", {
 					});
 			} :
 			function(clicked, $show) {
-				$(clicked).closest('li').removeClass('ui-state-default').addClass('ui-tabs-selected ui-state-active');
+				$(clicked).closest('li').addClass('ui-tabs-selected ui-state-active');
 				$show.removeClass('ui-tabs-hide');
 				self._trigger('show', null, self._ui(clicked, $show[0]));
 			};
@@ -287,14 +304,14 @@ $.widget("ui.tabs", {
 		var hideTab = hideFx ?
 			function(clicked, $hide) {
 				$hide.animate(hideFx, hideFx.duration || 'normal', function() {
-					self.lis.removeClass('ui-tabs-selected ui-state-active').addClass('ui-state-default');
+					self.lis.removeClass('ui-tabs-selected ui-state-active');
 					$hide.addClass('ui-tabs-hide');
 					resetStyle($hide, hideFx);
 					self.element.dequeue("tabs");
 				});
 			} :
 			function(clicked, $hide, $show) {
-				self.lis.removeClass('ui-tabs-selected ui-state-active').addClass('ui-state-default');
+				self.lis.removeClass('ui-tabs-selected ui-state-active');
 				$hide.addClass('ui-tabs-hide');
 				self.element.dequeue("tabs");
 			};
@@ -434,6 +451,8 @@ $.widget("ui.tabs", {
 		if (o.cookie) {
 			this._cookie(null, o.cookie);
 		}
+
+		return this;
 	},
 
 	add: function(url, label, index) {
@@ -469,6 +488,7 @@ $.widget("ui.tabs", {
 		this._tabify();
 
 		if (this.anchors.length == 1) { // after tabify
+			o.selected = 0;
 			$li.addClass('ui-tabs-selected ui-state-active');
 			$panel.removeClass('ui-tabs-hide');
 			this.element.queue("tabs", function() {
@@ -480,6 +500,7 @@ $.widget("ui.tabs", {
 
 		// callback
 		this._trigger('add', null, this._ui(this.anchors[index], this.panels[index]));
+		return this;
 	},
 
 	remove: function(index) {
@@ -499,6 +520,7 @@ $.widget("ui.tabs", {
 
 		// callback
 		this._trigger('remove', null, this._ui($li.find('a')[0], $panel[0]));
+		return this;
 	},
 
 	enable: function(index) {
@@ -512,6 +534,7 @@ $.widget("ui.tabs", {
 
 		// callback
 		this._trigger('enable', null, this._ui(this.anchors[index], this.panels[index]));
+		return this;
 	},
 
 	disable: function(index) {
@@ -525,6 +548,8 @@ $.widget("ui.tabs", {
 			// callback
 			this._trigger('disable', null, this._ui(this.anchors[index], this.panels[index]));
 		}
+
+		return this;
 	},
 
 	select: function(index) {
@@ -539,6 +564,7 @@ $.widget("ui.tabs", {
 		}
 
 		this.anchors.eq(index).trigger(this.options.event + '.tabs');
+		return this;
 	},
 
 	load: function(index) {
@@ -578,17 +604,38 @@ $.widget("ui.tabs", {
 					o.ajaxOptions.success(r, s);
 				}
 				catch (e) {}
+			},
+			error: function(xhr, s, e) {
+				// take care of tab labels
+				self._cleanup();
 
-				// last, so that load event is fired before show...
-				self.element.dequeue("tabs");
+				// callbacks
+				self._trigger('load', null, self._ui(self.anchors[index], self.panels[index]));
+				try {
+					// Passing index avoid a race condition when this method is
+					// called after the user has selected another tab.
+					// Pass the anchor that initiated this request allows
+					// loadError to manipulate the tab content panel via $(a.hash)
+					o.ajaxOptions.error(xhr, s, index, a);
+				}
+				catch (e) {}
 			}
 		}));
+
+		// last, so that load event is fired before show...
+		self.element.dequeue("tabs");
+
+		return this;
 	},
 
 	abort: function() {
 		// stop possibly running animations
 		this.element.queue([]);
 		this.panels.stop(false, true);
+
+		// "tabs" queue must not contain more than two elements,
+		// which are the callbacks for the latest clicked tab...
+		this.element.queue("tabs", this.element.queue("tabs").splice(-2, 2));
 
 		// terminate pending requests from other tabs
 		if (this.xhr) {
@@ -598,11 +645,12 @@ $.widget("ui.tabs", {
 
 		// take care of tab labels
 		this._cleanup();
-
+		return this;
 	},
 
 	url: function(index, url) {
 		this.anchors.eq(index).removeData('cache.tabs').data('load.tabs', url);
+		return this;
 	},
 
 	length: function() {
@@ -612,21 +660,7 @@ $.widget("ui.tabs", {
 });
 
 $.extend($.ui.tabs, {
-	version: '1.7.2',
-	getter: 'length',
-	defaults: {
-		ajaxOptions: null,
-		cache: false,
-		cookie: null, // e.g. { expires: 7, path: '/', domain: 'jquery.com', secure: true }
-		collapsible: false,
-		disabled: [],
-		event: 'click',
-		fx: null, // e.g. { height: 'toggle', opacity: 'toggle', duration: 200 }
-		idPrefix: 'ui-tabs-',
-		panelTemplate: '<div></div>',
-		spinner: '<em>Loading&#8230;</em>',
-		tabTemplate: '<li><a href="#{href}"><span>#{label}</span></a></li>'
-	}
+	version: '1.8.1'
 });
 
 /*
@@ -679,6 +713,8 @@ $.extend($.ui.tabs.prototype, {
 			delete this._rotate;
 			delete this._unrotate;
 		}
+
+		return this;
 	}
 });
 

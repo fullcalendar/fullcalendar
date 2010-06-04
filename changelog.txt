@@ -1,4 +1,13 @@
 
+version 1.4.6 (5/31/10)
+	- "selecting" days or timeslots
+		- options: selectable, selectHelper, unselectAuto, unselectCancel
+		- callbacks: select, unselect
+		- methods: select, unselect
+	- when dragging an event, the highlighting reflects the duration of the event
+	- code compressing by Google Closure Compiler
+	- bundled with jQuery 1.4.2 and jQuery UI 1.8.1
+
 version 1.4.5 (2/21/10)
 	- lazyFetching option, which can force the calendar to fetch events on every view/date change
 	- scroll state of agenda views are preserved when switching back to view
@@ -204,3 +213,4 @@ version 1.1 (5/10/09)
 		- for THEAD and TBODY (in 1.0, just used TBODY, restructured in 1.1)
 		- IF UPGRADING FROM FULLCALENDAR 1.0, YOU MUST UPGRADE FULLCALENDAR.CSS
 		  !!!!!!!!!!!
+		  

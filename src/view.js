@@ -4,8 +4,6 @@
 
 var viewMethods = {
 
-	// TODO: maybe change the 'vis' variables to 'excl'
-
 	/*
 	 * Objects inheriting these methods must implement the following properties/methods:
 	 * - title
@@ -33,7 +31,8 @@ var viewMethods = {
 		this.eventsByID = {};
 		this.eventElements = [];
 		this.eventElementsByID = {};
-		this.overlays = [];
+		this.usedOverlays = [];
+		this.unusedOverlays = [];
 	},
 	
 	
@@ -176,17 +175,22 @@ var viewMethods = {
 	// semi-transparent overlay (while dragging or selecting)
 	
 	renderOverlay: function(rect, parent) {
-		var e = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3'/>")
-			.css(rect)
-			.appendTo(parent);
-		this.overlays.push(e);
+		var e = this.unusedOverlays.shift();
+		if (!e) {
+			e = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3'/>");
+		}
+		if (e[0].parentNode != parent[0]) {
+			e.appendTo(parent);
+		}
+		this.usedOverlays.push(e.css(rect).show());
+		return e;
 	},
-	
+
 	clearOverlays: function() {
-		$.each(this.overlays, function() {
-			this.remove();
-		});
-		this.overlays = [];
+		var e;
+		while (e = this.usedOverlays.shift()) {
+			this.unusedOverlays.push(e.hide().unbind());
+		}
 	},
 	
 	

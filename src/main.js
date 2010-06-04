@@ -71,7 +71,7 @@ var defaults = {
 	},
 	
 	//selectable: false,
-	unselectable: true
+	unselectAuto: true
 	
 };
 
@@ -114,9 +114,6 @@ $.fn.fullCalendar = function(options) {
 			var data = $.data(this, 'fullCalendar');
 			if (data) {
 				var meth = data[options];
-				if (!meth) {
-					meth = $.fullCalendar.publicMethods[options];
-				}
 				if (meth) {
 					var r = meth.apply(this, args);
 					if (res === undefined) {
@@ -202,7 +199,7 @@ $.fn.fullCalendar = function(options) {
 			if (v != viewName) {
 				ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
 
-				viewUpdate();
+				viewUnselect();
 				
 				var oldView = view,
 					newViewElement;
@@ -225,7 +222,7 @@ $.fn.fullCalendar = function(options) {
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
 				}else{
-					view = viewInstances[v] = $.fullCalendar.views[v](
+					view = viewInstances[v] = fc.views[v](
 						newViewElement = absoluteViewElement =
 							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
 								.appendTo(content),
@@ -258,7 +255,7 @@ $.fn.fullCalendar = function(options) {
 			if (elementVisible()) {
 				ignoreWindowResize++; // because view.renderEvents might temporarily change the height before setSize is reached
 
-				viewUpdate();
+				viewUnselect();
 				
 				if (suggestedViewHeight === undefined) {
 					calcSize();
@@ -314,10 +311,9 @@ $.fn.fullCalendar = function(options) {
 			return $('body')[0].offsetWidth !== 0;
 		}
 
-		function viewUpdate() {
-			// this function is ONLY for the ghetto plugin archicture
-			if (view && view.viewUpdate) {
-				view.viewUpdate();
+		function viewUnselect() {
+			if (view) {
+				view.unselect();
 			}
 		}
 		
@@ -345,6 +341,7 @@ $.fn.fullCalendar = function(options) {
 			if (elementVisible()) {
 				calcSize();
 				setSize();
+				viewUnselect();
 				view.rerenderEvents();
 				view.sizeDirty = false;
 			}
@@ -671,11 +668,23 @@ $.fn.fullCalendar = function(options) {
 			
 			refetchEvents: function() {
 				fetchEvents(eventsChanged);
+			},
+			
+			//
+			// selection
+			//
+			
+			select: function(start, end, allDay) {
+				view.select(start, end, allDay===undefined ? true : allDay);
+			},
+			
+			unselect: function() {
+				view.unselect();
 			}
 			
 		};
 		
-		$.data(this, 'fullCalendar', publicMethods);
+		$.data(this, 'fullCalendar', publicMethods); // TODO: look into memory leak implications
 		
 		
 		
@@ -894,5 +903,5 @@ function normalizeEvent(event, options) {
 		event.className = [];
 	}
 }
-// TODO: if there is no title or start date, return false to indicate an invalid event
+// TODO: if there is no start date, return false to indicate an invalid event
 

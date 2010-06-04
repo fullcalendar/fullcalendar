@@ -51,24 +51,16 @@ if (_build) {
 }
 
 if (_legacy) {
-	includeJS('jquery-legacy/jquery.js');
-	includeJS('jquery-legacy/ui.core.js');
-	includeJS('jquery-legacy/ui.draggable.js');
-	includeJS('jquery-legacy/ui.resizable.js');
+	includeJS('jquery-legacy/jquery-1.3.2.min.js');
+	includeJS('jquery-legacy/jquery-ui-1.7.3.custom.min.js');
 }
 else if (_build) {
 	includeJS('../build/fullcalendar/jquery/jquery.js');
-	includeJS('../build/fullcalendar/jquery/ui.core.js');
-	includeJS('../build/fullcalendar/jquery/ui.draggable.js');
-	includeJS('../build/fullcalendar/jquery/ui.resizable.js');
+	includeJS('../build/fullcalendar/jquery/jquery-ui-custom.js');
 }
 else {
-	//includeJS('jquery-1.4.1.min.js');
-	//includeJS('jquery-uncompressed.js');
 	includeJS('../src/jquery/jquery.js');
-	includeJS('../src/jquery/ui.core.js');
-	includeJS('../src/jquery/ui.draggable.js');
-	includeJS('../src/jquery/ui.resizable.js');
+	includeJS('../src/jquery/jquery-ui-custom.js');
 }
 
 if (_build) {
@@ -83,6 +75,7 @@ if (_build) {
 	includeJS('../src/grid.js');
 	includeJS('../src/agenda.js');
 	includeJS('../src/view.js');
+	includeJS('../src/selection_util.js');
 	includeJS('../src/util.js');
 	includeJS('../src/gcal.js');
 }

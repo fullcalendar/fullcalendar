@@ -92,6 +92,10 @@ function skipWeekend(date, inc, excl) {
 	return date;
 }
 
+function dayDiff(d1, d2) { // d1 - d2
+	return Math.round((cloneDate(d1, true) - cloneDate(d2, true)) / DAY_MS);
+}
+
 
 
 /* Date Parsing
@@ -305,14 +309,12 @@ function setOuterWidth(element, width, includeMargins) {
 		_element.style.width = width - hsides(_element, includeMargins) + 'px';
 	});
 }
-fc.setOuterWidth = setOuterWidth;
 
 function setOuterHeight(element, height, includeMargins) {
 	element.each(function(i, _element) {
 		_element.style.height = height - vsides(_element, includeMargins) + 'px';
 	});
 }
-fc.setOuterHeight = setOuterHeight;
 
 
 function hsides(_element, includeMargins) {
@@ -379,30 +381,29 @@ function topCorrect(tr) { // tr/th/td or anything else
 /* Hover Matrix
 -----------------------------------------------------------------------------*/
 
-function HoverMatrix(changeCallback) {
+function HoverMatrix(rowElements, colElements, changeCallback) {
 
 	var t=this,
 		tops=[], lefts=[],
-		prevRowE, prevColE,
 		origRow, origCol,
-		currRow, currCol;
+		currRow, currCol,
+		e;
+		
+	$.each(rowElements, function(i, _e) {
+		e = $(_e);
+		tops.push(e.offset().top + topCorrect(e));
+	});
+	tops.push(tops[tops.length-1] + e.outerHeight());
+	$.each(colElements, function(i, _e) {
+		e = $(_e);
+		lefts.push(e.offset().left);
+	});
+	lefts.push(lefts[lefts.length-1] + e.outerWidth());
 	
-	t.row = function(e) {
-		prevRowE = $(e);
-		tops.push(prevRowE.offset().top + topCorrect(prevRowE));
-	};
-	
-	t.col = function(e) {
-		prevColE = $(e);
-		lefts.push(prevColE.offset().left);
-	};
 
-	t.mouse = function(x, y) {
-		if (origRow === undefined) {
-			tops.push(tops[tops.length-1] + prevRowE.outerHeight());
-			lefts.push(lefts[lefts.length-1] + prevColE.outerWidth());
-			currRow = currCol = -1;
-		}
+	t.mouse = function(ev) {
+		var x = ev.pageX;
+		var y = ev.pageY;
 		var r, c;
 		for (r=0; r<tops.length && y>=tops[r]; r++) {}
 		for (c=0; c<lefts.length && x>=lefts[c]; c++) {}
@@ -425,6 +426,8 @@ function HoverMatrix(changeCallback) {
 					left: lefts[c],
 					width: lefts[c+1] - lefts[c],
 					height: tops[r+1] - tops[r],
+					origRow: origRow,
+					origCol: origCol,
 					isOrig: r==origRow && c==origCol,
 					rowDelta: r-origRow,
 					colDelta: c-origCol
@@ -434,7 +437,7 @@ function HoverMatrix(changeCallback) {
 		}
 	};
 	
-	t.rect = function(row0, col0, row1, col1, originElement) {
+	t.rect = function(row0, col0, row1, col1, originElement) { // row1,col1 are exclusive
 		var origin = originElement.offset();
 		return {
 			top: tops[row0] - origin.top,
@@ -452,8 +455,7 @@ function HoverMatrix(changeCallback) {
 -----------------------------------------------------------------------------*/
 
 var undefined,
-	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
-	arrayPop = Array.prototype.pop;
+	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
@@ -519,13 +521,43 @@ function cssKey(_element) {
 }
 
 
+
 function cmp(a, b) {
 	return a - b;
 }
-fc.cmp = cmp;
 
 
-fc.publicMethods = {};
+
+function exclEndDay(event) {
+	if (event.end) {
+		return _exclEndDay(event.end, event.allDay);
+	}else{
+		return addDays(cloneDate(event.start), 1);
+	}
+}
+
+function _exclEndDay(end, allDay) {
+	end = cloneDate(end);
+	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : end;
+}
+
+
+
+function disableTextSelection(element) {
+	element
+		.attr('unselectable', 'on')
+		.css('MozUserSelect', 'none')
+		.bind('selectstart.ui', function() { return false; });
+}
+
+/*
+function enableTextSelection(element) {
+	element
+		.attr('unselectable', 'off')
+		.css('MozUserSelect', '')
+		.unbind('selectstart.ui');
+}
+*/
 
 
 
