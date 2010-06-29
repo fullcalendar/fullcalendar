@@ -840,6 +840,21 @@ $.fn.fullCalendar = function(options) {
 		$(window).resize(windowResize);
 		
 		
+		if (options.droppable) {
+			$(document)
+				.bind('dragstart', function(ev, ui) {
+					if (view.isExternalDraggable(ev.target)) {
+						view.dragStart(ev, ui);
+					}
+				})
+				.bind('dragstop', function(ev, ui) {
+					if (view.isExternalDraggable(ev.target)) {
+						view.dragStop(ev, ui);
+					}
+				});
+		}
+		
+		
 		// let's begin...
 		changeView(options.defaultView);
 		

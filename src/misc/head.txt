@@ -16,5 +16,5 @@
  *
  */
  
-(function($) {
+(function($, undefined) {
 

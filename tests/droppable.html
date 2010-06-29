@@ -13,13 +13,21 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
+		
+			droppable: true,
+			drop: function(date, allDay) {
+				console.log('drop', date, allDay);
+			},
+			
+			//defaultView: 'agendaWeek',
+			//isRTL: true,
+			
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
-			//isRTL: true,
 			events: [
 				{
 					title: 'All Day Event',
@@ -68,6 +76,11 @@
 			]
 		});
 		
+		$('.external-event').draggable({
+			revert: true,
+			revertDuration: 0
+		});
+		
 	});
 
 </script>
@@ -82,12 +95,38 @@
 
 	#calendar {
 		width: 900px;
-		margin: 0 auto;
+		float: left;
+		}
+		
+	#external-events {
+		position: relative;
+		left: 50px;
+		text-align: left;
+		float: left;
+		width: 140px;
+		padding: 10px;
+		border: 1px solid #aaa;
+		background: #ccc;
+		}
+		
+	.external-event {
+		height: 20px;
+		line-height: 20px;
+		color: #fff;
+		background: blue;
+		margin-bottom: 10px;
+		padding-left: 5px;
+		cursor: pointer;
 		}
 
 </style>
 </head>
 <body>
 <div id='calendar'></div>
+<div id='external-events'>
+	<div class='external-event'>Draggable 1</div>
+	<div class='external-event'>Draggable 2</div>
+	<div class='external-event'>Draggable 3</div>
+</div>
 </body>
 </html>

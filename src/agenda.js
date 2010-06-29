@@ -88,10 +88,6 @@ function Agenda(element, options, methods) {
 			return bg.find('td:eq(' + col + ') div div');
 		}),
 		slotTopCache = {},
-		daySelectionManager,
-		slotSelectionManager,
-		selectionHelper,
-		selectionMatrix,
 		// ...
 		
 	view = $.extend(this, viewMethods, methods, {
@@ -669,38 +665,27 @@ function Agenda(element, options, methods) {
 	
 	function draggableDayEvent(event, eventElement, isStart) {
 		if (!options.disableDragging && eventElement.draggable) {
-			var origPosition, origWidth,
-				resetElement,
-				allDay=true,
-				matrix;
+			var origWidth;
+			var allDay=true;
+			var dayDelta;
 			eventElement.draggable({
 				zIndex: 9,
 				opacity: view.option('dragOpacity', 'month'), // use whatever the month view was using
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
-					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
-					origPosition = eventElement.position();
+					view.hideEvents(event, eventElement);
 					origWidth = eventElement.width();
-					resetElement = function() {
-						if (!allDay) {
-							eventElement
-								.width(origWidth)
-								.height('')
-								.draggable('option', 'grid', null);
-							allDay = true;
-						}
-					};
-					matrix = buildDayMatrix(function(cell) {
-						eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
-						view.clearOverlays();
+					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
+						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
+						clearOverlay();
 						if (cell) {
+							dayDelta = colDelta * dis;
 							if (!cell.row) {
 								// on full-days
 								renderDayOverlay(
-									matrix,
-									addDays(cloneDate(event.start), cell.colDelta),
-									addDays(exclEndDay(event), cell.colDelta)
+									addDays(cloneDate(event.start), dayDelta),
+									addDays(exclEndDay(event), dayDelta)
 								);
 								resetElement();
 							}else{
@@ -710,50 +695,51 @@ function Agenda(element, options, methods) {
 									setOuterHeight(
 										eventElement.width(colWidth - 10), // don't use entire width
 										slotHeight * Math.round(
-											(event.end ? ((event.end - event.start)/MINUTE_MS) : options.defaultEventMinutes)
-											/options.slotMinutes)
+											(event.end ? ((event.end - event.start) / MINUTE_MS) : options.defaultEventMinutes)
+											/ options.slotMinutes
+										)
 									);
 									eventElement.draggable('option', 'grid', [colWidth, 1]);
 									allDay = false;
 								}
 							}
 						}
-					},true);
-					matrix.mouse(ev);
-				},
-				drag: function(ev, ui) {
-					matrix.mouse(ev);
+					}, ev, 'drag');
 				},
 				stop: function(ev, ui) {
+					var cell = hoverListener.stop();
+					clearOverlay();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
-					view.clearOverlays();
-					var cell = matrix.cell;
-					var dayDelta = dis * (
-						allDay ? // can't trust cell.colDelta when using slot grid
-							(cell ? cell.colDelta : 0) :
-							Math.floor((ui.position.left - origPosition.left) / colWidth)
-					);
-					if (!cell || !dayDelta && !cell.rowDelta) {
-						// over nothing (has reverted)
+					if (cell && (!allDay || dayDelta)) {
+						// changed!
+						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
+						var minuteDelta = 0;
+						if (!allDay) {
+							minuteDelta = Math.round((eventElement.offset().top - bodyContent.offset().top) / slotHeight)
+								* options.slotMinutes
+								+ minMinute
+								- (event.start.getHours() * 60 + event.start.getMinutes());
+						}
+						view.eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
+					}else{
+						// hasn't moved or is out of bounds (draggable has already reverted)
 						resetElement();
 						if ($.browser.msie) {
 							eventElement.css('filter', ''); // clear IE opacity side-effects
 						}
 						view.showEvents(event, eventElement);
-					}else{
-						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
-						view.eventDrop(
-							this, event, dayDelta,
-							allDay ? 0 : // minute delta
-								Math.round((eventElement.offset().top - bodyContent.offset().top) / slotHeight)
-								* options.slotMinutes
-								+ minMinute
-								- (event.start.getHours() * 60 + event.start.getMinutes()),
-							allDay, ev, ui
-						);
 					}
 				}
 			});
+			function resetElement() {
+				if (!allDay) {
+					eventElement
+						.width(origWidth)
+						.height('')
+						.draggable('option', 'grid', null);
+					allDay = true;
+				}
+			}
 		}
 	}
 	
@@ -763,11 +749,11 @@ function Agenda(element, options, methods) {
 	
 	function draggableSlotEvent(event, eventElement, timeElement) {
 		if (!options.disableDragging && eventElement.draggable) {
-			var origPosition,
-				resetElement,
-				prevSlotDelta, slotDelta,
-				allDay=false,
-				matrix;
+			var origPosition;
+			var allDay=false;
+			var dayDelta;
+			var minuteDelta;
+			var prevMinuteDelta;
 			eventElement.draggable({
 				zIndex: 9,
 				scroll: false,
@@ -776,26 +762,20 @@ function Agenda(element, options, methods) {
 				opacity: view.option('dragOpacity'),
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
-					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
+					view.hideEvents(event, eventElement);
 					if ($.browser.msie) {
 						eventElement.find('span.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
 					}
 					origPosition = eventElement.position();
-					resetElement = function() {
-						// convert back to original slot-event
-						if (allDay) {
-							timeElement.css('display', ''); // show() was causing display=inline
-							eventElement.draggable('option', 'grid', [colWidth, slotHeight]);
-							allDay = false;
-						}
-					};
-					prevSlotDelta = 0;
-					matrix = buildDayMatrix(function(cell) {
+					minuteDelta = prevMinuteDelta = 0;
+					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 						eventElement.draggable('option', 'revert', !cell);
-						view.clearOverlays();
+						clearOverlay();
 						if (cell) {
-							if (!cell.row && options.allDaySlot) { // over full days
+							dayDelta = colDelta * dis;
+							if (options.allDaySlot && !cell.row) {
+								// over full days
 								if (!allDay) {
 									// convert to temporary all-day event
 									allDay = true;
@@ -803,61 +783,63 @@ function Agenda(element, options, methods) {
 									eventElement.draggable('option', 'grid', null);
 								}
 								renderDayOverlay(
-									matrix,
-									addDays(cloneDate(event.start), cell.colDelta),
-									addDays(exclEndDay(event), cell.colDelta)
+									addDays(cloneDate(event.start), dayDelta),
+									addDays(exclEndDay(event), dayDelta)
 								);
-							}else{ // on slots
+							}else{
+								// on slots
 								resetElement();
 							}
 						}
-					},true);
-					matrix.mouse(ev);
+					}, ev, 'drag');
 				},
 				drag: function(ev, ui) {
-					slotDelta = Math.round((ui.position.top - origPosition.top) / slotHeight);
-					if (slotDelta != prevSlotDelta) {
+					minuteDelta = Math.round((ui.position.top - origPosition.top) / slotHeight) * options.slotMinutes;
+					if (minuteDelta != prevMinuteDelta) {
 						if (!allDay) {
-							// update time header
-							var minuteDelta = slotDelta*options.slotMinutes,
-								newStart = addMinutes(cloneDate(event.start), minuteDelta),
-								newEnd;
-							if (event.end) {
-								newEnd = addMinutes(cloneDate(event.end), minuteDelta);
-							}
-							timeElement.text(formatDates(newStart, newEnd, view.option('timeFormat')));
+							updateTimeText(minuteDelta);
 						}
-						prevSlotDelta = slotDelta;
+						prevMinuteDelta = minuteDelta;
 					}
-					matrix.mouse(ev);
 				},
 				stop: function(ev, ui) {
-					view.clearOverlays();
+					var cell = hoverListener.stop();
+					clearOverlay();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
-					var cell = matrix.cell,
-						dayDelta = dis * (
-							allDay ? // can't trust cell.colDelta when using slot grid
-							(cell ? cell.colDelta : 0) : 
-							Math.floor((ui.position.left - origPosition.left) / colWidth)
-						);
-					if (!cell || !slotDelta && !dayDelta) {
+					if (cell && (dayDelta || minuteDelta || allDay)) {
+						// changed!
+						view.eventDrop(this, event, dayDelta, allDay ? 0 : minuteDelta, allDay, ev, ui);
+					}else{
+						// either no change or out-of-bounds (draggable has already reverted)
 						resetElement();
+						eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
+						updateTimeText(0);
 						if ($.browser.msie) {
 							eventElement
 								.css('filter', '') // clear IE opacity side-effects
-								.find('span.fc-event-bg').css('display', ''); // .show() made display=inline
+								.find('span.fc-event-bg')
+									.css('display', ''); // .show() made display=inline
 						}
-						eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
 						view.showEvents(event, eventElement);
-					}else{
-						view.eventDrop(
-							this, event, dayDelta,
-							allDay ? 0 : slotDelta * options.slotMinutes, // minute delta
-							allDay, ev, ui
-						);
 					}
 				}
 			});
+			function updateTimeText(minuteDelta) {
+				var newStart = addMinutes(cloneDate(event.start), minuteDelta);
+				var newEnd;
+				if (event.end) {
+					newEnd = addMinutes(cloneDate(event.end), minuteDelta);
+				}
+				timeElement.text(formatDates(newStart, newEnd, view.option('timeFormat')));
+			}
+			function resetElement() {
+				// convert back to original slot-event
+				if (allDay) {
+					timeElement.css('display', ''); // show() was causing display=inline
+					eventElement.draggable('option', 'grid', [colWidth, slotHeight]);
+					allDay = false;
+				}
+			}
 		}
 	}
 	
@@ -918,114 +900,152 @@ function Agenda(element, options, methods) {
 	
 	
 	
-	/* Selecting
+	/* Coordinate Utilities
 	-----------------------------------------------------------------------------*/
-
-	daySelectionManager = new SelectionManager(
-		view,
-		unselect,
-		function(startDate, endDate, allDay) {
-			renderDayOverlay(
-				selectionMatrix,
-				startDate,
-				addDays(cloneDate(endDate), 1)
-			);
-		},
-		clearSelection
-	);
 	
-	function daySelectionMousedown(ev) {
-		if (view.option('selectable')) {
-			selectionMatrix = buildDayMatrix(function(cell) {
-				if (cell) {
-					var d = dayColDate(cell.col);
-					daySelectionManager.drag(d, d, true);
-				}else{
-					daySelectionManager.drag();
-				}
-			});
-			documentDragHelp(
-				function(ev) {
-					selectionMatrix.mouse(ev);
-				},
-				function(ev) {
-					daySelectionManager.dragStop(ev);
-				}
-			);
-			daySelectionManager.dragStart(ev);
-			selectionMatrix.mouse(ev);
-			return false; // prevent auto-unselect and text selection
+	var coordinateGrid = new CoordinateGrid(function(rows, cols) {
+		var e, n, p;
+		bg.find('td').each(function(i, _e) {
+			e = $(_e);
+			n = e.offset().left;
+			if (i) {
+				p[1] = n;
+			}
+			p = [n];
+			cols[i] = p;
+		});
+		p[1] = n + e.outerWidth();
+		if (options.allDaySlot) {
+			e = head.find('td');
+			n = e.offset().top;
+			rows[0] = [n, n+e.outerHeight()];
 		}
+		var bodyContentTop = bodyContent.offset().top;
+		var bodyTop = body.offset().top;
+		var bodyBottom = bodyTop + body.outerHeight();
+		function constrain(n) {
+			return Math.max(bodyTop, Math.min(bodyBottom, n));
+		}
+		for (var i=0; i<slotCnt; i++) {
+			rows.push([
+				constrain(bodyContentTop + slotHeight*i),
+				constrain(bodyContentTop + slotHeight*(i+1))
+			]);
+		}
+	});
+	
+	var hoverListener = new HoverListener(coordinateGrid);
+	
+	// get the Y coordinate of the given time on the given day (both Date objects)
+	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
+		day = cloneDate(day, true);
+		if (time < addMinutes(cloneDate(day), minMinute)) {
+			return 0;
+		}
+		if (time >= addMinutes(cloneDate(day), maxMinute)) {
+			return bodyContent.height();
+		}
+		var slotMinutes = options.slotMinutes,
+			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
+			slotI = Math.floor(minutes / slotMinutes),
+			slotTop = slotTopCache[slotI];
+		if (slotTop === undefined) {
+			slotTop = slotTopCache[slotI] = body.find('tr:eq(' + slotI + ') td div')[0].offsetTop;
+		}
+		return Math.max(0, Math.round(
+			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
+		));
 	}
 	
-	slotSelectionManager = new SelectionManager(
-		view,
-		unselect,
-		renderSlotSelection,
-		clearSelection
+	
+	
+	
+	/* Selecting
+	-----------------------------------------------------------------------------*/
+	
+	var selected = false;
+	var daySelectionMousedown = selection_dayMousedown(
+		view, hoverListener, cellDate, renderDayOverlay, clearOverlay, reportSelection, unselect
 	);
 	
 	function slotSelectionMousedown(ev) {
 		if (view.option('selectable')) {
-			selectionMatrix = buildSlotMatrix(function(cell) {
-				if (cell) {
-					var d = slotCellDate(cell.row, cell.origCol);
-					slotSelectionManager.drag(d, addMinutes(cloneDate(d), options.slotMinutes), false);
+			unselect();
+			var dates;
+			hoverListener.start(function(cell, origCell) {
+				clearSelection();
+				if (cell && cell.col == origCell.col) {
+					var d1 = cellDate(origCell);
+					var d2 = cellDate(cell);
+					dates = [
+						d1,
+						addMinutes(cloneDate(d1), options.slotMinutes),
+						d2,
+						addMinutes(cloneDate(d2), options.slotMinutes)
+					].sort(cmp);
+					renderSlotSelection(dates[0], dates[3]);
 				}else{
-					slotSelectionManager.drag();
+					dates = null;
+				}
+			}, ev);
+			$(document).one('mouseup', function() {
+				hoverListener.stop();
+				if (dates) {
+					reportSelection(dates[0], dates[3], false);
 				}
 			});
-			documentDragHelp(
-				function(ev) {
-					selectionMatrix.mouse(ev);
-				},
-				function(ev) {
-					slotSelectionManager.dragStop(ev);
-				}
-			);
-			slotSelectionManager.dragStart(ev);
-			selectionMatrix.mouse(ev);
-			return false; // prevent auto-unselect and text selection
 		}
 	}
 	
-	documentUnselectAuto(view, unselect);
-	
-	this.select = function(start, end, allDay) {
+	view.select = function(startDate, endDate, allDay) {
+		coordinateGrid.build();
+		unselect();
 		if (allDay) {
 			if (options.allDaySlot) {
-				if (!end) {
-					end = cloneDate(start);
+				if (!endDate) {
+					endDate = cloneDate(startDate);
 				}
-				selectionMatrix = buildDayMatrix();
-				daySelectionManager.select(start, end, allDay);
+				renderDayOverlay(startDate, addDays(cloneDate(endDate), 1));
 			}
 		}else{
-			if (!end) {
-				end = addMinutes(cloneDate(start), options.slotMinutes);
+			if (!endDate) {
+				endDate = addMinutes(cloneDate(startDate), options.slotMinutes);
 			}
-			selectionMatrix = buildSlotMatrix();
-			slotSelectionManager.select(start, end, allDay);
+			renderSlotSelection(startDate, endDate);
 		}
+		reportSelection(startDate, endDate, allDay);
 	};
 	
-	function unselect() {
-		slotSelectionManager.unselect();
-		daySelectionManager.unselect();
+	function reportSelection(startDate, endDate, allDay) {
+		selected = true;
+		view.trigger('select', view, startDate, endDate, allDay);
 	}
-	this.unselect = unselect;
+	
+	function unselect() {
+		if (selected) {
+			clearSelection();
+			selected = false;
+			view.trigger('unselect', view);
+		}
+	}
+	view.unselect = unselect;
+	
+	selection_unselectAuto(view, unselect);
+	
 	
 	
 	
 	/* Selecting drawing utils
 	-----------------------------------------------------------------------------*/
 	
+	var selectionHelper;
+	
 	function renderSlotSelection(startDate, endDate) {
 		var helperOption = view.option('selectHelper');
 		if (helperOption) {
-			var col = dayDiff(startDate, view.visStart);
+			var col = dayDiff(startDate, view.visStart) * dis + dit;
 			if (col >= 0 && col < colCnt) { // only works when times are on same day
-				var rect = selectionMatrix.rect(0, col*dis+dit, 1, col*dis+dit+1, bodyContent); // only for horizontal coords
+				var rect = coordinateGrid.rect(0, col, 0, col, bodyContent); // only for horizontal coords
 				var top = timePosition(startDate, startDate);
 				var bottom = timePosition(startDate, endDate);
 				if (bottom > top) { // protect against selections that are entirely before or after visible range
@@ -1068,18 +1088,17 @@ function Agenda(element, options, methods) {
 				}
 			}
 		}else{
-			renderSlotOverlay(selectionMatrix, startDate, endDate);
+			renderSlotOverlay(startDate, endDate);
 		}
 	}
 	
 	function clearSelection() {
-		clearOverlays();
+		clearOverlay();
 		if (selectionHelper) {
 			selectionHelper.remove();
 			selectionHelper = null;
 		}
 	}
-
 	
 	
 	
@@ -1087,7 +1106,7 @@ function Agenda(element, options, methods) {
 	/* Semi-transparent Overlay Helpers
 	-----------------------------------------------------*/
 
-	function renderDayOverlay(matrix, startDate, endDate) {
+	function renderDayOverlay(startDate, endDate) {
 		var startCol, endCol;
 		if (rtl) {
 			startCol = dayDiff(endDate, view.visStart)*dis+dit+1;
@@ -1099,21 +1118,26 @@ function Agenda(element, options, methods) {
 		startCol = Math.max(0, startCol);
 		endCol = Math.min(colCnt, endCol);
 		if (startCol < endCol) {
-			var rect = matrix.rect(0, startCol, 1, endCol, head);
 			dayBind(
-				view.renderOverlay(rect, head)
+				_renderDayOverlay(0, startCol, 0, endCol-1)
 			);
 		}
 	}
+	
+	function _renderDayOverlay(col0, row0, col1, row1) {
+		var rect = coordinateGrid.rect(col0, row0, col1, row1, head);
+		return view.renderOverlay(rect, head);
+	}
 
-	function renderSlotOverlay(matrix, overlayStart, overlayEnd) {
+	function renderSlotOverlay(overlayStart, overlayEnd) {
 		var dayStart = cloneDate(view.visStart);
 		var dayEnd = addDays(cloneDate(dayStart), 1);
 		for (var i=0; i<colCnt; i++) {
 			var stretchStart = new Date(Math.max(dayStart, overlayStart));
 			var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
 			if (stretchStart < stretchEnd) {
-				var rect = matrix.rect(0, i*dis+dit, 1, i*dis+dit+1, bodyContent); // only use it for horizontal coords
+				var col = i*dis+dit;
+				var rect = coordinateGrid.rect(0, col, 0, col, bodyContent); // only use it for horizontal coords
 				var top = timePosition(dayStart, stretchStart);
 				var bottom = timePosition(dayStart, stretchEnd);
 				rect.top = top;
@@ -1127,48 +1151,42 @@ function Agenda(element, options, methods) {
 		}
 	}
 	
-	function clearOverlays() {
+	function clearOverlay() {
 		view.clearOverlays();
 	}
 	
 	
 	
 	
-	/* Coordinate Utilities
-	-----------------------------------------------------------------------------*/
+	/* External dragging
+	-----------------------------------------------------*/
 	
-	// get the Y coordinate of the given time on the given day (both Date objects)
-	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
-		day = cloneDate(day, true);
-		if (time < addMinutes(cloneDate(day), minMinute)) {
-			return 0;
-		}
-		if (time >= addMinutes(cloneDate(day), maxMinute)) {
-			return bodyContent.height();
-		}
-		var slotMinutes = options.slotMinutes,
-			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
-			slotI = Math.floor(minutes / slotMinutes),
-			slotTop = slotTopCache[slotI];
-		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = body.find('tr:eq(' + slotI + ') td div')[0].offsetTop;
-		}
-		return Math.max(0, Math.round(
-			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
-		));
-	}
+	view.isExternalDraggable = function(_element) {
+		return _element.parentNode != daySegmentContainer[0] && _element.parentNode != slotSegmentContainer[0];
+	};
 	
-	function buildDayMatrix(changeCallback, includeSlotArea) {
-		var rowElements = options.allDaySlot ? head.find('td') : $([]);
-		if (includeSlotArea) {
-			rowElements = rowElements.add(body);
-		}
-		return new HoverMatrix(rowElements, bg.find('td'), changeCallback);
-	}
+	view.dragStart = function(ev) {
+		hoverListener.start(function(cell) {
+			clearOverlay();
+			if (cell) {
+				if (cellIsAllDay(cell)) {
+					_renderDayOverlay(cell.row, cell.col, cell.row, cell.col);
+				}else{
+					var d1 = cellDate(cell);
+					var d2 = addMinutes(cloneDate(d1), options.slotMinutes); //options.defaultEventMinutes);
+					renderSlotOverlay(d1, d2);
+				}
+			}
+		}, ev);
+	};
 	
-	function buildSlotMatrix(changeCallback) {
-		return new HoverMatrix(bodyTable.find('td'), bg.find('td'), changeCallback);
-	}
+	view.dragStop = function(ev, ui) {
+		var cell = hoverListener.stop();
+		clearOverlay();
+		if (cell) {
+			view.trigger('drop', view, cellDate(cell), cellIsAllDay(cell), ev, ui);
+		}
+	};
 	
 	
 	
@@ -1188,17 +1206,20 @@ function Agenda(element, options, methods) {
 		return ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt)*dis+dit;
 	}
 	
-	
-	// generating dates from cell row & columns
-
-	function dayColDate(col) {
-		return addDays(cloneDate(view.visStart), col*dis+dit);
+	function cellDate(cell) {
+		var d = addDays(cloneDate(view.visStart), cell.col*dis+dit);
+		var slotIndex = cell.row;
+		if (options.allDaySlot) {
+			slotIndex--;
+		}
+		if (slotIndex >= 0) {
+			addMinutes(d, minMinute + slotIndex*options.slotMinutes);
+		}
+		return d;
 	}
 	
-	function slotCellDate(row, col) {
-		var d = dayColDate(col);
-		addMinutes(d, minMinute + row*options.slotMinutes);
-		return d;
+	function cellIsAllDay(cell) {
+		return options.allDaySlot && !cell.row;
 	}
 	
 	
