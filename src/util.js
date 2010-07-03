@@ -556,7 +556,7 @@ function exclEndDay(event) {
 
 function _exclEndDay(end, allDay) {
 	end = cloneDate(end);
-	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : end;
+	return allDay || end.getHours() || end.getMinutes() || end.getSeconds() ? addDays(end, 1) : end;
 }
 
 
