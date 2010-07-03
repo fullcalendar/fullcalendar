@@ -176,19 +176,8 @@ $.fn.fullCalendar = function(options) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
-			
-		if (options.year !== undefined && options.year != date.getFullYear()) {
-			date.setDate(1);
-			date.setMonth(0);
-			date.setFullYear(options.year);
-		}
-		if (options.month !== undefined && options.month != date.getMonth()) {
-			date.setDate(1);
-			date.setMonth(options.month);
-		}
-		if (options.date !== undefined) {
-			date.setDate(options.date);
-		}
+		
+		setYMD(date, options.year, options.month, options.date);
 		
 		
 		
@@ -528,15 +517,7 @@ $.fn.fullCalendar = function(options) {
 				if (typeof year == 'object') {
 					date = cloneDate(year); // provided 1 argument, a Date
 				}else{
-					if (year !== undefined) {
-						date.setFullYear(year);
-					}
-					if (month !== undefined) {
-						date.setMonth(month);
-					}
-					if (dateNum !== undefined) {
-						date.setDate(dateNum);
-					}
+					setYMD(date, year, month, dateNum);
 				}
 				render();
 			},
