@@ -580,7 +580,7 @@ function Grid(element, options, methods) {
 		clearOverlay();
 		if (cell) {
 			var d = cellDate(cell);
-			view.trigger('drop', view, d, true, ev, ui);
+			view.trigger('drop', ev.target, d, true, ev, ui);
 		}
 	};
 	

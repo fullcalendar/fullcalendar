@@ -1173,7 +1173,7 @@ function Agenda(element, options, methods) {
 					_renderDayOverlay(cell.row, cell.col, cell.row, cell.col);
 				}else{
 					var d1 = cellDate(cell);
-					var d2 = addMinutes(cloneDate(d1), options.slotMinutes); //options.defaultEventMinutes);
+					var d2 = addMinutes(cloneDate(d1), options.defaultEventMinutes);
 					renderSlotOverlay(d1, d2);
 				}
 			}
@@ -1184,7 +1184,7 @@ function Agenda(element, options, methods) {
 		var cell = hoverListener.stop();
 		clearOverlay();
 		if (cell) {
-			view.trigger('drop', view, cellDate(cell), cellIsAllDay(cell), ev, ui);
+			view.trigger('drop', ev.target, cellDate(cell), cellIsAllDay(cell), ev, ui);
 		}
 	};
 	
