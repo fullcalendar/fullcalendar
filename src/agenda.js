@@ -357,8 +357,8 @@ function Agenda(element, options, methods, viewName) {
 	
 	function slotClick(ev) {
 		if (!view.option('selectable')) { // SelectionManager will worry about dayClick
-			var col = Math.floor((ev.pageX - bg.offset().left) / colWidth),
-				date = addDays(cloneDate(view.visStart), dit + dis*col),
+			var col = Math.min(colCnt-1, Math.floor((ev.pageX - bg.offset().left) / colWidth)),
+				date = addDays(cloneDate(view.visStart), col*dis+dit),
 				rowMatch = this.className.match(/fc-slot(\d+)/);
 			if (rowMatch) {
 				var mins = parseInt(rowMatch[1]) * options.slotMinutes,
