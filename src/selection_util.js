@@ -1,19 +1,26 @@
 
 
-function selection_dayMousedown(view, hoverListener, cellDate, renderSelection, clearSelection, reportSelection, unselect) {
+function selection_dayMousedown(view, hoverListener, cellDate, cellIsAllDay, renderSelection, clearSelection, reportSelection, unselect) {
 	return function(ev) {
 		if (view.option('selectable')) {
 			unselect();
+			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
-				if (cell) {
+				if (cell && cellIsAllDay(cell)) {
 					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
 					renderSelection(dates[0], addDays(cloneDate(dates[1]), 1), true);
+				}else{
+					dates = null;
 				}
 			}, ev);
 			$(document).one('mouseup', function(ev) {
-				if (hoverListener.stop()) { // over a cell?
+				hoverListener.stop();
+				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						view.trigger('dayClick', _mousedownElement, dates[0], true, ev);
+					}
 					reportSelection(dates[0], dates[1], true);
 				}
 			});

@@ -6,7 +6,7 @@ setDefaults({
 	weekMode: 'fixed'
 });
 
-views.month = function(element, options) {
+views.month = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -46,10 +46,10 @@ views.month = function(element, options) {
 				true
 			);
 		}
-	});
+	}, viewName);
 };
 
-views.basicWeek = function(element, options) {
+views.basicWeek = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -77,10 +77,10 @@ views.basicWeek = function(element, options) {
 				false
 			);
 		}
-	});
+	}, viewName);
 };
 
-views.basicDay = function(element, options) {
+views.basicDay = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -98,7 +98,7 @@ views.basicDay = function(element, options) {
 				false
 			);
 		}
-	});
+	}, viewName);
 };
 
 
@@ -107,7 +107,7 @@ views.basicDay = function(element, options) {
 var tdHeightBug;
 
 
-function Grid(element, options, methods) {
+function Grid(element, options, methods, viewName) {
 	
 	var tm, firstDay,
 		nwe,            // no weekends (int)
@@ -135,6 +135,7 @@ function Grid(element, options, methods) {
 			return cloneDate(event.start);
 		}
 	});
+	view.name = viewName;
 	view.init(element, options);
 	
 	
@@ -528,7 +529,7 @@ function Grid(element, options, methods) {
 	
 	var selected = false;
 	var selectionMousedown = selection_dayMousedown(
-		view, hoverListener, cellDate, renderDayOverlay, clearOverlay, reportSelection, unselect
+		view, hoverListener, cellDate, function(){return true}, renderDayOverlay, clearOverlay, reportSelection, unselect
 	);
 	
 	view.select = function(startDate, endDate, allDay) {

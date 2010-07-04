@@ -215,7 +215,8 @@ $.fn.fullCalendar = function(options) {
 						newViewElement = absoluteViewElement =
 							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
 								.appendTo(content),
-						options
+						options,
+						v // the view's name
 					);
 				}
 				
@@ -225,7 +226,7 @@ $.fn.fullCalendar = function(options) {
 					header.find('div.fc-button-' + v).addClass(tm + '-state-active');
 				}
 				
-				view.name = viewName = v;
+				viewName = v;
 				render(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
 				content.css('overflow', '');
 				if (oldView) {

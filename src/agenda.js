@@ -19,7 +19,7 @@ setDefaults({
 	maxTime: 24
 });
 
-views.agendaWeek = function(element, options) {
+views.agendaWeek = function(element, options, viewName) {
 	return new Agenda(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -46,10 +46,10 @@ views.agendaWeek = function(element, options) {
 				this.option('columnFormat')
 			);
 		}
-	});
+	}, viewName);
 };
 
-views.agendaDay = function(element, options) {
+views.agendaDay = function(element, options, viewName) {
 	return new Agenda(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -66,10 +66,10 @@ views.agendaDay = function(element, options) {
 				this.option('columnFormat')
 			);
 		}
-	});
+	}, viewName);
 };
 
-function Agenda(element, options, methods) {
+function Agenda(element, options, methods, viewName) {
 
 	var head, body, bodyContent, bodyTable, bg,
 		colCnt,
@@ -111,6 +111,7 @@ function Agenda(element, options, methods) {
 			return addMinutes(start, options.defaultEventMinutes);
 		}
 	});
+	view.name = viewName;
 	view.init(element, options);
 	
 	
@@ -965,16 +966,17 @@ function Agenda(element, options, methods) {
 	
 	var selected = false;
 	var daySelectionMousedown = selection_dayMousedown(
-		view, hoverListener, cellDate, renderDayOverlay, clearOverlay, reportSelection, unselect
+		view, hoverListener, cellDate, cellIsAllDay, renderDayOverlay, clearOverlay, reportSelection, unselect
 	);
 	
 	function slotSelectionMousedown(ev) {
 		if (view.option('selectable')) {
 			unselect();
+			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
-				if (cell && cell.col == origCell.col) {
+				if (cell && cell.col == origCell.col && !cellIsAllDay(cell)) {
 					var d1 = cellDate(origCell);
 					var d2 = cellDate(cell);
 					dates = [
@@ -988,9 +990,12 @@ function Agenda(element, options, methods) {
 					dates = null;
 				}
 			}, ev);
-			$(document).one('mouseup', function() {
+			$(document).one('mouseup', function(ev) {
 				hoverListener.stop();
 				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						view.trigger('dayClick', _mousedownElement, dates[0], false, ev);
+					}
 					reportSelection(dates[0], dates[3], false);
 				}
 			});
