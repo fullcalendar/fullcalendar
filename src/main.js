@@ -821,19 +821,32 @@ $.fn.fullCalendar = function(options) {
 		$(window).resize(windowResize);
 		
 		
+		
+		/* External event dropping
+		--------------------------------------------------------*/
+		
 		if (options.droppable) {
+			var _dragElement;
 			$(document)
 				.bind('dragstart', function(ev, ui) {
-					if (view.isExternalDraggable(ev.target)) {
-						view.dragStart(ev, ui);
+					var _e = ev.target;
+					var e = $(_e);
+					if (!e.parents('.fc').length) { // not already inside a calendar
+						var accept = options.dropAccept;
+						if (!accept || ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept))) {
+							_dragElement = _e;
+							view.dragStart(_dragElement, ev, ui);
+						}
 					}
 				})
 				.bind('dragstop', function(ev, ui) {
-					if (view.isExternalDraggable(ev.target)) {
-						view.dragStop(ev, ui);
+					if (_dragElement) {
+						view.dragStop(_dragElement, ev, ui);
+						_dragElement = null;
 					}
 				});
 		}
+		
 		
 		
 		// let's begin...

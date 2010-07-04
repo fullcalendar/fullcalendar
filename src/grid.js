@@ -562,11 +562,7 @@ function Grid(element, options, methods) {
 	/* External dragging
 	------------------------------------------------------*/
 	
-	view.isExternalDraggable = function(_element) {
-		return _element.parentNode != segmentContainer[0];
-	};
-	
-	view.dragStart = function(ev, ui) {
+	view.dragStart = function(_dragElement, ev, ui) {
 		hoverListener.start(function(cell) {
 			clearOverlay();
 			if (cell) {
@@ -575,12 +571,12 @@ function Grid(element, options, methods) {
 		}, ev);
 	};
 	
-	view.dragStop = function(ev, ui) {
+	view.dragStop = function(_dragElement, ev, ui) {
 		var cell = hoverListener.stop();
 		clearOverlay();
 		if (cell) {
 			var d = cellDate(cell);
-			view.trigger('drop', ev.target, d, true, ev, ui);
+			view.trigger('drop', _dragElement, d, true, ev, ui);
 		}
 	};
 	

@@ -1161,11 +1161,7 @@ function Agenda(element, options, methods) {
 	/* External dragging
 	-----------------------------------------------------*/
 	
-	view.isExternalDraggable = function(_element) {
-		return _element.parentNode != daySegmentContainer[0] && _element.parentNode != slotSegmentContainer[0];
-	};
-	
-	view.dragStart = function(ev) {
+	view.dragStart = function(_dragElement, ev, ui) {
 		hoverListener.start(function(cell) {
 			clearOverlay();
 			if (cell) {
@@ -1180,11 +1176,11 @@ function Agenda(element, options, methods) {
 		}, ev);
 	};
 	
-	view.dragStop = function(ev, ui) {
+	view.dragStop = function(_dragElement, ev, ui) {
 		var cell = hoverListener.stop();
 		clearOverlay();
 		if (cell) {
-			view.trigger('drop', ev.target, cellDate(cell), cellIsAllDay(cell), ev, ui);
+			view.trigger('drop', _dragElement, cellDate(cell), cellIsAllDay(cell), ev, ui);
 		}
 	};
 	
