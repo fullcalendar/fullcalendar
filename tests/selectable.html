@@ -21,10 +21,13 @@
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			//defaultView: 'agendaWeek',
+			
+			//firstDay: 1,
 			//isRTL: true,
 			//minTime: 7,
 			//weekends: false,
 			//allDaySlot: false,
+			
 			selectable: true,
 			/*
 			selectable: {
@@ -32,24 +35,33 @@
 				agenda: true
 			},
 			*/
-			//selectHelper: true,
+			
+			selectHelper: true,
 			/*
 			selectHelper: function(start, end) {
 				return $("<div style='background:red' />").text(start+' '+end);
 			},
 			*/
+			
 			//unselectAuto: false,
 			//unselectCancel: '.fc',
-			select: function(start, end, allDay) {
+			
+			select: function(start, end, allDay, ev) {
 				console.log(
 					'---- selection ----\n' +
 					'start: ' + start + '\n' +
 					'end: ' + end + '\n' +
 					'allDay: ' + allDay
 				);
+				if (ev) {
+					//console.log('select mouse: ' + ev.pageX + ', ' + ev.pageY);
+				}
 			},
-			unselect: function() {
+			unselect: function(ev) {
 				console.log('unselect');
+				if (ev) {
+					//console.log('unselect mouse: ' + ev.pageX + ', ' + ev.pageY);
+				}
 			},
 			dayClick: function(date, allDay) {
 				console.log('DAYCLICK', date, allDay);

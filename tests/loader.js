@@ -80,9 +80,11 @@ if (_build) {
 	includeJS('../src/gcal.js');
 }
 
-if (!window.DISABLE_FIREBUG_LITE) {
+//if (!window.DISABLE_FIREBUG_LITE) {
+if (!window.console || !console.log) {
 	includeJS('firebug-lite/firebug-lite-compressed.js');
 }
+//}
 
 window.onload = function() {
 	$('body').append(

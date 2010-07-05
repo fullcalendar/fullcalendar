@@ -971,7 +971,7 @@ function Agenda(element, options, methods, viewName) {
 	
 	function slotSelectionMousedown(ev) {
 		if (view.option('selectable')) {
-			unselect();
+			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) {
@@ -995,8 +995,9 @@ function Agenda(element, options, methods, viewName) {
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
 						view.trigger('dayClick', _mousedownElement, dates[0], false, ev);
+						// BUG: _mousedownElement will sometimes be the overlay
 					}
-					reportSelection(dates[0], dates[3], false);
+					reportSelection(dates[0], dates[3], false, ev);
 				}
 			});
 		}
@@ -1021,16 +1022,16 @@ function Agenda(element, options, methods, viewName) {
 		reportSelection(startDate, endDate, allDay);
 	};
 	
-	function reportSelection(startDate, endDate, allDay) {
+	function reportSelection(startDate, endDate, allDay, ev) {
 		selected = true;
-		view.trigger('select', view, startDate, endDate, allDay);
+		view.trigger('select', view, startDate, endDate, allDay, ev);
 	}
 	
-	function unselect() {
+	function unselect(ev) {
 		if (selected) {
 			clearSelection();
 			selected = false;
-			view.trigger('unselect', view);
+			view.trigger('unselect', view, ev);
 		}
 	}
 	view.unselect = unselect;
