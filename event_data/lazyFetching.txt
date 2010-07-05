@@ -16,3 +16,8 @@ The calendar will avoid fetching events because it already has this information 
 
 When set to `false`, the calendar will fetch events any time the view is switched,
 or any time the current date changes (for example, as a result of the user clicking prev/next).
+
+<div class='version-info' markdown='1'>
+Before this option existed, FullCalendar would always do "lazy" event fetching,
+as if `lazyFetching` were set to `true`.
+</div>

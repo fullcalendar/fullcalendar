@@ -23,6 +23,11 @@ It can serve as a backend that manages and persistently stores event data
 4. In the "Calendar Address" section of the screen, click the XML badge.
 5. Your feed's URL will appear.
 
+**Next, you must have all the required js/css files**. This includes the standard fullcalendar.js
+and fullcalendar.css, **in addition to gcal.js**:
+
+	<script type='text/javascript' src='fullcalendar/gcal.js'></script>
+
 **Now it's time to initialize your calendar in JavaScript.**
 You will use the `$.fullCalendar.gcalFeed` function with the `events` option, like so:
 

@@ -1,13 +1,17 @@
 
-- [Basic Usage](usage)
-- [Google Calendar](google_calendar)
-- [General Display](display)
-- [Views](views)
-- [Agenda Options](agenda)
-- [Current Date](current_date)
-- [Text/Time Customization](text)
-- [Clicking & Hovering](mouse)
-- [Event Data](event_data)
-- [Event Rendering](event_rendering)
-- [Event Dragging & Resizing](event_ui)
-- [Utilities](utilities)
+<ul>
+<li><a href='usage'>Basic Usage</a></li>
+<li><a href='google_calendar'>Google Calendar</a></li>
+<li><a href='display'>General Display</a></li>
+<li><a href='views'>Views</a></li>
+<li><a href='agenda'>Agenda Options</a></li>
+<li><a href='current_date'>Current Date</a></li>
+<li><a href='text'>Text/Time Customization</a></li>
+<li><a href='mouse'>Clicking &amp; Hovering</a></li>
+<li><a href='selection'>Selection</a></li>
+<li><a href='event_data'>Event Data</a></li>
+<li><a href='event_rendering'>Event Rendering</a></li>
+<li><a href='event_ui'>Event Dragging &amp; Resizing</a></li>
+<li><a href='dropping'>Dropping External Elements</a></li>
+<li><a href='utilities'>Utilities</a></li>
+</ul>
