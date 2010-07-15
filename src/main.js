@@ -71,7 +71,9 @@ var defaults = {
 	},
 	
 	//selectable: false,
-	unselectAuto: true
+	unselectAuto: true,
+	
+	dropAccept: '*'
 	
 };
 
@@ -838,7 +840,7 @@ $.fn.fullCalendar = function(options) {
 					var e = $(_e);
 					if (!e.parents('.fc').length) { // not already inside a calendar
 						var accept = options.dropAccept;
-						if (!accept || ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept))) {
+						if ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept)) {
 							_dragElement = _e;
 							view.dragStart(_dragElement, ev, ui);
 						}

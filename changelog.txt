@@ -1,4 +1,18 @@
 
+version 1.4.7 (7/5/10)
+	- "dropping" external objects onto the calendar
+		- droppable (boolean, to turn on/off)
+		- dropAccept (to filter which events the calendar will accept)
+		- drop (trigger)
+	- selectable options can now be specified with a View Option Hash
+	- bugfixes
+		- dragged & reverted events having wrong time text (issue 406)
+		- bug rendering events that have an endtime with seconds, but no hours/minutes (issue 477)
+		- gotoDate date overflow bug (issue 429)
+		- wrong date reported when clicking on edge of last column in agenda views (412)
+	- support newlines in event titles
+	- select/unselect callbacks now passes native js event
+
 version 1.4.6 (5/31/10)
 	- "selecting" days or timeslots
 		- options: selectable, selectHelper, unselectAuto, unselectCancel

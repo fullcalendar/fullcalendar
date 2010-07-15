@@ -542,16 +542,16 @@ function Grid(element, options, methods, viewName) {
 		reportSelection(startDate, endDate, allDay);
 	};
 	
-	function reportSelection(startDate, endDate, allDay) {
+	function reportSelection(startDate, endDate, allDay, ev) {
 		selected = true;
-		view.trigger('select', view, startDate, endDate, allDay);
+		view.trigger('select', view, startDate, endDate, allDay, ev);
 	}
 	
-	function unselect() {
+	function unselect(ev) {
 		if (selected) {
 			clearOverlay();
 			selected = false;
-			view.trigger('unselect', view);
+			view.trigger('unselect', view, ev);
 		}
 	}
 	view.unselect = unselect;

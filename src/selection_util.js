@@ -3,7 +3,7 @@
 function selection_dayMousedown(view, hoverListener, cellDate, cellIsAllDay, renderSelection, clearSelection, reportSelection, unselect) {
 	return function(ev) {
 		if (view.option('selectable')) {
-			unselect();
+			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) {
@@ -20,8 +20,9 @@ function selection_dayMousedown(view, hoverListener, cellDate, cellIsAllDay, ren
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
 						view.trigger('dayClick', _mousedownElement, dates[0], true, ev);
+						// BUG: _mousedownElement will sometimes be the overlay
 					}
-					reportSelection(dates[0], dates[1], true);
+					reportSelection(dates[0], dates[1], true, ev);
 				}
 			});
 		}
@@ -38,7 +39,7 @@ function selection_unselectAuto(view, unselect) {
 					return;
 				}
 			}
-			unselect();
+			unselect(ev);
 		});
 	}
 }
