@@ -1,96 +1,35 @@
 
-function SelectionManager(view, initFunc, displayFunc, clearFunc) {
 
-	var t = this;
-	var selected = false;
-	var initialElement;
-	var initialRange;
-	var start;
-	var end;
-	var allDay;
-	
-	
-	t.dragStart = function(ev) {
-		initFunc();
-		start = end = undefined;
-		initialRange = undefined;
-		initialElement = ev.currentTarget;
-	};
-	
-	
-	t.drag = function(currentStart, currentEnd, currentAllDay) {
-		if (currentStart) {
-			var range = [currentStart, currentEnd];
-			if (!initialRange) {
-				initialRange = range;
-			}
-			var dates = initialRange.concat(range).sort(cmp);
-			start = dates[0];
-			end = dates[3];
-			allDay = currentAllDay;
-			clearFunc();
-			displayFunc(cloneDate(start), cloneDate(end), allDay);
-		}else{
-			// called with no arguments
-			start = end = undefined;
-			clearFunc();
-		}
-	};
-	
-	
-	t.dragStop = function(ev) {
-		if (start) {
-			if (+initialRange[0] == +start && +initialRange[1] == +end) {
-				view.trigger('dayClick', initialElement, start, allDay, ev);
-			}
-			_select();
-		}
-	};
-	
-	
-	t.select = function(newStart, newEnd, newAllDay) {
-		initFunc();
-		start = newStart;
-		end = newEnd;
-		allDay = newAllDay;
-		displayFunc(cloneDate(start), cloneDate(end), allDay);
-		_select();
-	};
-	
-	
-	function _select() { // just set the selected flag, and trigger
-		selected = true;
-		view.trigger('select', view, start, end, allDay);
-	}
-	
-	
-	function unselect() {
-		if (selected) {
-			selected = false;
-			start = end = undefined;
-			clearFunc();
-			view.trigger('unselect', view);
+function selection_dayMousedown(view, hoverListener, cellDate, cellIsAllDay, renderSelection, clearSelection, reportSelection, unselect) {
+	return function(ev) {
+		if (view.option('selectable')) {
+			unselect();
+			var _mousedownElement = this;
+			var dates;
+			hoverListener.start(function(cell, origCell) {
+				clearSelection();
+				if (cell && cellIsAllDay(cell)) {
+					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
+					renderSelection(dates[0], addDays(cloneDate(dates[1]), 1), true);
+				}else{
+					dates = null;
+				}
+			}, ev);
+			$(document).one('mouseup', function(ev) {
+				hoverListener.stop();
+				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						view.trigger('dayClick', _mousedownElement, dates[0], true, ev);
+					}
+					reportSelection(dates[0], dates[1], true);
+				}
+			});
 		}
 	}
-	t.unselect = unselect;
-
 }
 
 
-function documentDragHelp(mousemove, mouseup) {
-	function _mouseup(ev) {
-		mouseup(ev);
-		$(document)
-			.unbind('mousemove', mousemove)
-			.unbind('mouseup', _mouseup);
-	}
-	$(document)
-		.mousemove(mousemove)
-		.mouseup(_mouseup);
-}
-
-
-function documentUnselectAuto(view, unselectFunc) {
+function selection_unselectAuto(view, unselect) {
 	if (view.option('selectable') && view.option('unselectAuto')) {
 		$(document).mousedown(function(ev) {
 			var ignore = view.option('unselectCancel');
@@ -99,10 +38,7 @@ function documentUnselectAuto(view, unselectFunc) {
 					return;
 				}
 			}
-			unselectFunc();
+			unselect();
 		});
 	}
 }
-
-
-

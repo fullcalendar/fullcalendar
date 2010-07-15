@@ -96,6 +96,21 @@ function dayDiff(d1, d2) { // d1 - d2
 	return Math.round((cloneDate(d1, true) - cloneDate(d2, true)) / DAY_MS);
 }
 
+function setYMD(date, y, m, d) {
+	if (y !== undefined && y != date.getFullYear()) {
+		date.setDate(1);
+		date.setMonth(0);
+		date.setFullYear(y);
+	}
+	if (m !== undefined && m != date.getMonth()) {
+		date.setDate(1);
+		date.setMonth(m);
+	}
+	if (d !== undefined) {
+		date.setDate(d);
+	}
+}
+
 
 
 /* Date Parsing
@@ -378,72 +393,47 @@ function topCorrect(tr) { // tr/th/td or anything else
 
 
 
-/* Hover Matrix
+/* Coordinate Grid
 -----------------------------------------------------------------------------*/
 
-function HoverMatrix(rowElements, colElements, changeCallback) {
+function CoordinateGrid(buildFunc) {
 
-	var t=this,
-		tops=[], lefts=[],
-		origRow, origCol,
-		currRow, currCol,
-		e;
-		
-	$.each(rowElements, function(i, _e) {
-		e = $(_e);
-		tops.push(e.offset().top + topCorrect(e));
-	});
-	tops.push(tops[tops.length-1] + e.outerHeight());
-	$.each(colElements, function(i, _e) {
-		e = $(_e);
-		lefts.push(e.offset().left);
-	});
-	lefts.push(lefts[lefts.length-1] + e.outerWidth());
+	var t = this;
+	var rows;
+	var cols;
 	
-
-	t.mouse = function(ev) {
-		var x = ev.pageX;
-		var y = ev.pageY;
-		var r, c;
-		for (r=0; r<tops.length && y>=tops[r]; r++) {}
-		for (c=0; c<lefts.length && x>=lefts[c]; c++) {}
-		r = r >= tops.length ? -1 : r - 1;
-		c = c >= lefts.length ? -1 : c - 1;
-		if (r != currRow || c != currCol) {
-			currRow = r;
-			currCol = c;
-			if (r == -1 || c == -1) {
-				t.cell = null;
-			}else{
-				if (origRow === undefined) {
-					origRow = r;
-					origCol = c;
-				}
-				t.cell = {
-					row: r,
-					col: c,
-					top: tops[r],
-					left: lefts[c],
-					width: lefts[c+1] - lefts[c],
-					height: tops[r+1] - tops[r],
-					origRow: origRow,
-					origCol: origCol,
-					isOrig: r==origRow && c==origCol,
-					rowDelta: r-origRow,
-					colDelta: c-origCol
-				};
-			}
-			changeCallback(t.cell);
-		}
+	t.build = function() {
+		rows = [];
+		cols = [];
+		buildFunc(rows, cols);
 	};
 	
-	t.rect = function(row0, col0, row1, col1, originElement) { // row1,col1 are exclusive
+	t.cell = function(x, y) {
+		var rowCnt = rows.length;
+		var colCnt = cols.length;
+		var i, r=-1, c=-1;
+		for (i=0; i<rowCnt; i++) {
+			if (y >= rows[i][0] && y < rows[i][1]) {
+				r = i;
+				break;
+			}
+		}
+		for (i=0; i<colCnt; i++) {
+			if (x >= cols[i][0] && x < cols[i][1]) {
+				c = i;
+				break;
+			}
+		}
+		return (r>=0 && c>=0) ? { row:r, col:c } : null;
+	};
+	
+	t.rect = function(row0, col0, row1, col1, originElement) { // row1,col1 is inclusive
 		var origin = originElement.offset();
 		return {
-			top: tops[row0] - origin.top,
-			left: lefts[col0] - origin.left,
-			width: lefts[col1] - lefts[col0],
-			height: tops[row1] - tops[row0]
+			top: rows[row0][0] - origin.top,
+			left: cols[col0][0] - origin.left,
+			width: cols[col1][1] - cols[col0][0],
+			height: rows[row1][1] - rows[row0][0]
 		};
 	};
 
@@ -451,11 +441,54 @@ function HoverMatrix(rowElements, colElements, changeCallback) {
 
 
 
+/* Hover Listener
+-----------------------------------------------------------------------------*/
+
+function HoverListener(coordinateGrid) {
+
+	var t = this;
+	var bindType;
+	var change;
+	var firstCell;
+	var cell;
+	
+	t.start = function(_change, ev, _bindType) {
+		change = _change;
+		firstCell = cell = null;
+		coordinateGrid.build();
+		mouse(ev);
+		bindType = _bindType || 'mousemove';
+		$(document).bind(bindType, mouse);
+	};
+	
+	function mouse(ev) {
+		var newCell = coordinateGrid.cell(ev.pageX, ev.pageY);
+		if (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col)) {
+			if (newCell) {
+				if (!firstCell) {
+					firstCell = newCell;
+				}
+				change(newCell, firstCell, newCell.row-firstCell.row, newCell.col-firstCell.col);
+			}else{
+				change(newCell, firstCell);
+			}
+			cell = newCell;
+		}
+	}
+	
+	t.stop = function() {
+		$(document).unbind(bindType, mouse);
+		return cell;
+	};
+	
+}
+
+
+
 /* Misc Utils
 -----------------------------------------------------------------------------*/
 
-var undefined,
-	dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
@@ -477,12 +510,12 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 }
 
 function htmlEscape(s) {
-	return s
-		.replace(/&/g, '&amp;')
+	return s.replace(/&/g, '&amp;')
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
 		.replace(/'/g, '&#039;')
-		.replace(/"/g, '&quot;');
+		.replace(/"/g, '&quot;')
+		.replace(/\n/g, '<br />');
 }
 
 
@@ -538,7 +571,7 @@ function exclEndDay(event) {
 
 function _exclEndDay(end, allDay) {
 	end = cloneDate(end);
-	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : end;
+	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : clearTime(end);
 }
 
 

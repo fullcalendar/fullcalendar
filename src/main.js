@@ -176,19 +176,8 @@ $.fn.fullCalendar = function(options) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
-			
-		if (options.year !== undefined && options.year != date.getFullYear()) {
-			date.setDate(1);
-			date.setMonth(0);
-			date.setFullYear(options.year);
-		}
-		if (options.month !== undefined && options.month != date.getMonth()) {
-			date.setDate(1);
-			date.setMonth(options.month);
-		}
-		if (options.date !== undefined) {
-			date.setDate(options.date);
-		}
+		
+		setYMD(date, options.year, options.month, options.date);
 		
 		
 		
@@ -226,7 +215,8 @@ $.fn.fullCalendar = function(options) {
 						newViewElement = absoluteViewElement =
 							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
 								.appendTo(content),
-						options
+						options,
+						v // the view's name
 					);
 				}
 				
@@ -236,7 +226,7 @@ $.fn.fullCalendar = function(options) {
 					header.find('div.fc-button-' + v).addClass(tm + '-state-active');
 				}
 				
-				view.name = viewName = v;
+				viewName = v;
 				render(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
 				content.css('overflow', '');
 				if (oldView) {
@@ -531,15 +521,7 @@ $.fn.fullCalendar = function(options) {
 				if (typeof year == 'object') {
 					date = cloneDate(year); // provided 1 argument, a Date
 				}else{
-					if (year !== undefined) {
-						date.setFullYear(year);
-					}
-					if (month !== undefined) {
-						date.setMonth(month);
-					}
-					if (dateNum !== undefined) {
-						date.setDate(dateNum);
-					}
+					setYMD(date, year, month, dateNum);
 				}
 				render();
 			},
@@ -842,6 +824,34 @@ $.fn.fullCalendar = function(options) {
 			}
 		}
 		$(window).resize(windowResize);
+		
+		
+		
+		/* External event dropping
+		--------------------------------------------------------*/
+		
+		if (options.droppable) {
+			var _dragElement;
+			$(document)
+				.bind('dragstart', function(ev, ui) {
+					var _e = ev.target;
+					var e = $(_e);
+					if (!e.parents('.fc').length) { // not already inside a calendar
+						var accept = options.dropAccept;
+						if (!accept || ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept))) {
+							_dragElement = _e;
+							view.dragStart(_dragElement, ev, ui);
+						}
+					}
+				})
+				.bind('dragstop', function(ev, ui) {
+					if (_dragElement) {
+						view.dragStop(_dragElement, ev, ui);
+						_dragElement = null;
+					}
+				});
+		}
+		
 		
 		
 		// let's begin...

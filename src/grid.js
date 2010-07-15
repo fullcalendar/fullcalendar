@@ -6,7 +6,7 @@ setDefaults({
 	weekMode: 'fixed'
 });
 
-views.month = function(element, options) {
+views.month = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -46,10 +46,10 @@ views.month = function(element, options) {
 				true
 			);
 		}
-	});
+	}, viewName);
 };
 
-views.basicWeek = function(element, options) {
+views.basicWeek = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -77,10 +77,10 @@ views.basicWeek = function(element, options) {
 				false
 			);
 		}
-	});
+	}, viewName);
 };
 
-views.basicDay = function(element, options) {
+views.basicDay = function(element, options, viewName) {
 	return new Grid(element, options, {
 		render: function(date, delta) {
 			if (delta) {
@@ -98,7 +98,7 @@ views.basicDay = function(element, options) {
 				false
 			);
 		}
-	});
+	}, viewName);
 };
 
 
@@ -107,7 +107,7 @@ views.basicDay = function(element, options) {
 var tdHeightBug;
 
 
-function Grid(element, options, methods) {
+function Grid(element, options, methods, viewName) {
 	
 	var tm, firstDay,
 		nwe,            // no weekends (int)
@@ -121,8 +121,6 @@ function Grid(element, options, methods) {
 		dayContentPositions = new HorizontalPositionCache(function(dayOfWeek) {
 			return tbody.find('td:eq(' + ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt) + ') div div');
 		}),
-		selectionManager,
-		selectionMatrix,
 		// ...
 		
 	// initialize superclass
@@ -137,6 +135,7 @@ function Grid(element, options, methods) {
 			return cloneDate(event.start);
 		}
 	});
+	view.name = viewName;
 	view.init(element, options);
 	
 	
@@ -425,37 +424,32 @@ function Grid(element, options, methods) {
 	
 	function draggableEvent(event, eventElement) {
 		if (!options.disableDragging && eventElement.draggable) {
-			var matrix,
-				dayDelta = 0;
+			var dayDelta;
 			eventElement.draggable({
 				zIndex: 9,
 				delay: 50,
 				opacity: view.option('dragOpacity'),
 				revertDuration: options.dragRevertDuration,
 				start: function(ev, ui) {
-					view.hideEvents(event, eventElement);
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
-					matrix = buildDayMatrix(function(cell) {
-						eventElement.draggable('option', 'revert', !cell || !cell.rowDelta && !cell.colDelta);
-						clearOverlays();
+					view.hideEvents(event, eventElement);
+					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
+						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
+						clearOverlay();
 						if (cell) {
-							dayDelta = cell.rowDelta*7 + cell.colDelta*dis;
-							renderDayOverlays(
-								matrix,
+							dayDelta = rowDelta*7 + colDelta*dis;
+							renderDayOverlay(
 								addDays(cloneDate(event.start), dayDelta),
 								addDays(exclEndDay(event), dayDelta)
 							);
 						}else{
 							dayDelta = 0;
 						}
-					});
-					matrix.mouse(ev);
-				},
-				drag: function(ev) {
-					matrix.mouse(ev);
+					}, ev, 'drag');
 				},
 				stop: function(ev, ui) {
-					clearOverlays();
+					hoverListener.stop();
+					clearOverlay();
 					view.trigger('eventDragStop', eventElement, event, ev, ui);
 					if (dayDelta) {
 						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
@@ -495,68 +489,104 @@ function Grid(element, options, methods) {
 	
 	
 	
+	/* Coordinate Utilities
+	--------------------------------------------------------*/
+	
+	var coordinateGrid = new CoordinateGrid(function(rows, cols) {
+		var e, n, p;
+		var tds = tbody.find('tr:first td');
+		if (rtl) {
+			tds = $(tds.get().reverse());
+		}
+		tds.each(function(i, _e) {
+			e = $(_e);
+			n = e.offset().left;
+			if (i) {
+				p[1] = n;
+			}
+			p = [n];
+			cols[i] = p;
+		});
+		p[1] = n + e.outerWidth();
+		tbody.find('tr').each(function(i, _e) {
+			e = $(_e);
+			n = e.offset().top;
+			if (i) {
+				p[1] = n;
+			}
+			p = [n];
+			rows[i] = p;
+		});
+		p[1] = n + e.outerHeight();
+	});
+	
+	var hoverListener = new HoverListener(coordinateGrid);
+	
+	
+	
 	/* Selecting
 	--------------------------------------------------------*/
-
-	selectionManager = new SelectionManager(
-		view,
-		unselect,
-		function(startDate, endDate, allDay) {
-			renderDayOverlays(
-				selectionMatrix,
-				startDate,
-				addDays(cloneDate(endDate), 1)
-			);
-		},
-		clearOverlays
+	
+	var selected = false;
+	var selectionMousedown = selection_dayMousedown(
+		view, hoverListener, cellDate, function(){return true}, renderDayOverlay, clearOverlay, reportSelection, unselect
 	);
 	
-	function selectionMousedown(ev) {
-		if (view.option('selectable')) {
-			selectionMatrix = buildDayMatrix(function(cell) {
-				if (cell) {
-					var d = cellDate(cell.row, cell.col);
-					selectionManager.drag(d, d, true);
-				}else{
-					selectionManager.drag();
-				}
-			});
-			documentDragHelp(
-				function(ev) {
-					selectionMatrix.mouse(ev);
-				},
-				function(ev) {
-					selectionManager.dragStop(ev);
-				}
-			);
-			selectionManager.dragStart(ev);
-			selectionMatrix.mouse(ev);
-			return false; // prevent auto-unselect and text selection
+	view.select = function(startDate, endDate, allDay) {
+		coordinateGrid.build();
+		unselect();
+		if (!endDate) {
+			endDate = cloneDate(startDate);
 		}
-	}
-	
-	documentUnselectAuto(view, unselect);
-	
-	view.select = function(start, end, allDay) {
-		if (!end) {
-			end = cloneDate(start);
-		}
-		selectionMatrix = buildDayMatrix();
-		selectionManager.select(start, end, allDay);
+		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1));
+		reportSelection(startDate, endDate, allDay);
 	};
 	
+	function reportSelection(startDate, endDate, allDay) {
+		selected = true;
+		view.trigger('select', view, startDate, endDate, allDay);
+	}
+	
 	function unselect() {
-		selectionManager.unselect();
+		if (selected) {
+			clearOverlay();
+			selected = false;
+			view.trigger('unselect', view);
+		}
 	}
 	view.unselect = unselect;
 	
+	selection_unselectAuto(view, unselect);
+	
+	
+	
+	/* External dragging
+	------------------------------------------------------*/
+	
+	view.dragStart = function(_dragElement, ev, ui) {
+		hoverListener.start(function(cell) {
+			clearOverlay();
+			if (cell) {
+				_renderDayOverlay(cell.row, cell.col, cell.row, cell.col);
+			}
+		}, ev);
+	};
+	
+	view.dragStop = function(_dragElement, ev, ui) {
+		var cell = hoverListener.stop();
+		clearOverlay();
+		if (cell) {
+			var d = cellDate(cell);
+			view.trigger('drop', _dragElement, d, true, ev, ui);
+		}
+	};
 	
 	
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
 	
-	function renderDayOverlays(matrix, overlayStart, overlayEnd) { // overlayEnd is exclusive
+	function renderDayOverlay(overlayStart, overlayEnd) { // overlayEnd is exclusive
 		var rowStart = cloneDate(view.visStart);
 		var rowEnd = addDays(cloneDate(rowStart), colCnt);
 		for (var i=0; i<rowCnt; i++) {
@@ -571,9 +601,8 @@ function Grid(element, options, methods) {
 					colStart = dayDiff(stretchStart, rowStart);
 					colEnd = dayDiff(stretchEnd, rowStart);
 				}
-				var rect = matrix.rect(i, colStart, i+1, colEnd, element);
 				dayBind(
-					view.renderOverlay(rect, element)
+					_renderDayOverlay(i, colStart, i, colEnd-1)
 				);
 			}
 			addDays(rowStart, 7);
@@ -581,28 +610,23 @@ function Grid(element, options, methods) {
 		}
 	}
 	
-	function clearOverlays() {
+	function _renderDayOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
+		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
+		return view.renderOverlay(rect, element);
+	}
+	
+	function clearOverlay() {
 		view.clearOverlays();
 	}
 	
 	
 	
-	
-	/* Utils
+	/* Date Utils
 	---------------------------------------------------*/
 	
-
-	function buildDayMatrix(changeCallback) {
-		var tds = tbody.find('tr:first td');
-		if (rtl) {
-			tds = $(tds.get().reverse());
-		}
-		return new HoverMatrix(tbody.find('tr'), tds, changeCallback);
-	}
 	
-	
-	function cellDate(r, c) { // convert r,c to date
-		return addDays(cloneDate(view.visStart), r*7 + c*dis+dit);
+	function cellDate(cell) {
+		return addDays(cloneDate(view.visStart), cell.row*7 + cell.col*dis+dit);
 		// TODO: what about weekends in middle of week?
 	}
 	
