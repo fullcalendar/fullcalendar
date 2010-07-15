@@ -398,7 +398,7 @@ $.fn.fullCalendar = function(options) {
 				var params = {};
 				params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 				params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
-				params['browserTimezone'] = eventEnd.getTimezoneOffset();
+				params['browserTimezone'] = eventStart.getTimezoneOffset();
 				if (options.cacheParam) {
 					params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 				}
