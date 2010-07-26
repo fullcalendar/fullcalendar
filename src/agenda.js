@@ -295,6 +295,12 @@ function Agenda(element, options, methods, viewName) {
 			height: height
 		});
 		
+		// if the table ends up shorter than the allotted view, shrink the view to fit the table
+		var tableHeight=body.find('table:first').height();
+		if (tableHeight<body.height()) {
+			body.height(tableHeight);
+		}
+		
 		if (dateChanged) {
 			resetScroll();
 		}
