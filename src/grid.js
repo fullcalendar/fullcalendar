@@ -164,8 +164,9 @@ function Grid(element, options, methods, viewName) {
 			dit = 0;
 		}
 		
+		var now = new Date();
 		var month = view.start.getMonth(),
-			today = clearTime(new Date()),
+			today = clearTime(now),
 			s, i, j, d = cloneDate(view.visStart);
 		
 		if (!tbody) { // first time, build all cells from scratch
@@ -198,7 +199,8 @@ function Grid(element, options, methods, viewName) {
 						(rowCnt>1 && d.getMonth() != month ? ' fc-other-month' : '') +
 						(+d == +today ?
 						' fc-today '+tm+'-state-highlight' :
-						' fc-not-today') + "'>" +
+						(+d < +now ? ' fc-before-today fc-not-today' :
+						' fc-not-today')) + "'>" +
 						(showNumbers ? "<div class='fc-day-number'>" + d.getDate() + "</div>" : '') +
 						"<div class='fc-day-content'><div style='position:relative'>&nbsp;</div></div></td>";
 					addDays(d, 1);
@@ -257,10 +259,16 @@ function Grid(element, options, methods, viewName) {
 				}
 				if (+d == +today) {
 					td.removeClass('fc-not-today')
+				    .removeClass('fc-before-today')
 						.addClass('fc-today')
 						.addClass(tm + '-state-highlight');
+				}else if (+d < +now) {
+					td.addClass('fc-before-today')
+					  .addClass('fc-not-today')
+					  .removeClass(tm + '-state-highlight');
 				}else{
 					td.addClass('fc-not-today')
+					  .removeClass('fc-before-today')
 						.removeClass('fc-today')
 						.removeClass(tm + '-state-highlight');
 				}
