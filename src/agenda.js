@@ -336,7 +336,7 @@ function Agenda(element, options, methods, viewName) {
 		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
 		
-		var scrollbar=body.get().scrollHeight!=body.get().clientHeight;
+		var scrollbar=body[0].scrollHeight!=body[0].clientHeight;
 
 		if (scrollbar) {
 			setOuterWidth(topTDs.slice(-2, -1), clientWidth - axisWidth - colWidth*(colCnt-1));
