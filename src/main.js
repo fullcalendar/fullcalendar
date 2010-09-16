@@ -569,6 +569,7 @@ $.fn.fullCalendar = function(options) {
 						e.allDay = event.allDay;
 						e.className = event.className;
 						e.editable = event.editable;
+						e.resizable = event.resizable;
 						normalizeEvent(e, options);
 					}
 				}
@@ -785,7 +786,8 @@ $.fn.fullCalendar = function(options) {
 				suggestedViewHeight = options.contentHeight;
 			}
 			else if (options.height) {
-				suggestedViewHeight = options.height - (header ? header.height() : 0) - vsides(content[0]);
+				suggestedViewHeight = options.height - vsides(content[0]);
+				suggestedViewHeight -= (header && header.height() < options.height) ? header.height() : 0;
 			}
 			else {
 				suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));

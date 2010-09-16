@@ -322,14 +322,12 @@ function Agenda(element, options, methods, viewName) {
 		
 		// time-axis width
 		axisWidth = 0;
-		setOuterWidth(
-			head.find('tr:lt(2) th:first').add(body.find('tr:first th'))
-				.width('')
-				.each(function() {
-					axisWidth = Math.max(axisWidth, $(this).outerWidth());
-				}),
-			axisWidth
-		);
+		var axisTHs = head.find('tr:lt(2) th:first').add(body.find('tr:first th'));
+		axisTHs.width('');
+		axisTHs.each(function() {
+			axisWidth = Math.max(axisWidth, $(this).outerWidth());
+		})
+		setOuterWidth(axisTHs, axisWidth);
 		
 		// column width
 		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
