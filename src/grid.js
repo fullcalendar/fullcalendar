@@ -768,8 +768,8 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 			seg.top = top;
 			i++;
 		}
-		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div') // optimal selector?
-			.height(top + levelHeight);
+		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div'); // optimal selector?
+		rowDivs[rowI].height(top + levelHeight);
 	}
 	
 	// calculate row tops
