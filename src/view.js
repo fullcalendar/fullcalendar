@@ -364,6 +364,8 @@ function stackSegs(segs) {
 }
 
 function segCmp(a, b) {
+	if (a.event.allDay && !b.event.allDay) return -1;
+	if (!a.event.allDay && b.event.allDay) return  1;
 	return  (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 }
 
