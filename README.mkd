@@ -1,6 +1,14 @@
 
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
+About this fork
+---------------
+
+This version is included in joomla gcalendar component to display google calendar events.
+see http://code.google.com/p/joomla-gcalendar/ and maintained by tanguy.pruvot@gmail.com
+
+This version is (also) compatible with IE9 beta
+This fork adds the option of pulling different colors in agenda view for each event.
 
 Development and testing
 -----------------------
