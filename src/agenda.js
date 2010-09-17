@@ -311,14 +311,14 @@ function Agenda(element, options, methods, viewName) {
 		viewWidth = width;
 		colContentPositions.clear();
 		
-		body.width(width);
+		body.outerWidth(width);
 		bodyTable.width('');
 		
 		var topTDs = head.find('tr:first th'),
 			stripeTDs = bg.find('td'),
 			clientWidth = body[0].clientWidth;
 			
-		bodyTable.width(clientWidth);
+		bodyTable.outerWidth(clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
@@ -705,7 +705,7 @@ function Agenda(element, options, methods, viewName) {
 								if (isStart && allDay) {
 									// convert event to temporary slot-event
 									setOuterHeight(
-										eventElement.width(colWidth - 10), // don't use entire width
+										eventElement.outerWidth(colWidth - 10), // don't use entire width
 										slotHeight * Math.round(
 											(event.end ? ((event.end - event.start) / MINUTE_MS) : options.defaultEventMinutes)
 											/ options.slotMinutes
@@ -746,7 +746,7 @@ function Agenda(element, options, methods, viewName) {
 			function resetElement() {
 				if (!allDay) {
 					eventElement
-						.width(origWidth)
+						.outerWidth(origWidth)
 						.height('')
 						.draggable('option', 'grid', null);
 					allDay = true;

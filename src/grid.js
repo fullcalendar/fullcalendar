@@ -329,8 +329,8 @@ function Grid(element, options, methods, viewName) {
 			tdHeightBug = rowHeight1 != td.outerHeight();
 		}
 		if (tdHeightBug) {
-			leftTDs.slice(0, -1).height(rowHeight1);
-			leftTDs.slice(-1).height(rowHeight2);
+			leftTDs.slice(0, -1).outerHeight(rowHeight1);
+			leftTDs.slice(-1).outerHeight(rowHeight2);
 		}else{
 			setOuterHeight(leftTDs.slice(0, -1), rowHeight1);
 			setOuterHeight(leftTDs.slice(-1), rowHeight2);
@@ -777,7 +777,7 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 			i++;
 		}
 		rowDivs[rowI] = getRow(rowI).find('td:first div.fc-day-content > div'); // optimal selector?
-		rowDivs[rowI].height(top + levelHeight);
+		rowDivs[rowI].outerHeight(top + levelHeight);
 	}
 	
 	// calculate row tops
