@@ -685,9 +685,14 @@ function _renderDaySegs(segs, rowCnt, view, minLeft, maxLeft, getRow, dayContent
 			left = seg.isStart ? dayContentLeft(seg.start.getDay()) : minLeft;
 			right = seg.isEnd ? dayContentRight(seg.end.getDay()-1) : maxLeft;
 		}
+		if (event.color) {
+			color = ";background-color:" + event.color + ";border-color:" + event.color; 
+		} else {
+			color = "";
+		}
 		html +=
-			"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
-				"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+			"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px" + color + "'>" +
+				"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + (color ? " style='" + color + "'" : '') + ">" +
 					(!event.allDay && seg.isStart ?
 						"<span class='fc-event-time'>" +
 							htmlEscape(formatDates(event.start, event.end, view.option('timeFormat'), options)) +
