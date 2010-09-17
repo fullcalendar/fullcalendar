@@ -203,7 +203,7 @@ $.fn.fullCalendar = function(options) {
 					if (oldView.beforeHide) {
 						oldView.beforeHide(); // called before changing min-height. if called after, scroll state is reset (in Opera)
 					}
-					setMinHeight(content, content.height());
+					setMinHeight(content, content.innerHeight());
 					oldView.element.hide();
 				}else{
 					setMinHeight(content, 1); // needs to be 1 (not 0) for IE7, or else view dimensions miscalculated
@@ -786,11 +786,11 @@ $.fn.fullCalendar = function(options) {
 				suggestedViewHeight = options.contentHeight;
 			}
 			else if (options.height) {
-				suggestedViewHeight = options.height - vsides(content[0]);
-				suggestedViewHeight -= (header && header.height() < options.height) ? header.height() : 0;
+				suggestedViewHeight  = options.height - vsides(content[0]);
+				suggestedViewHeight -= (header) ? header.innerHeight() : 0;
 			}
 			else {
-				suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+				suggestedViewHeight = Math.round(content.innerWidth() / Math.max(options.aspectRatio, .5));
 			}
 		}
 		
@@ -802,7 +802,7 @@ $.fn.fullCalendar = function(options) {
 				absoluteViewElement.css('position', 'relative');
 				absoluteViewElement = null;
 			}
-			view.setWidth(content.width(), dateChanged);
+			view.setWidth(content.innerWidth(), dateChanged);
 			ignoreWindowResize--;
 		}
 		

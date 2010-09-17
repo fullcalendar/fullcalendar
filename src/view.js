@@ -214,8 +214,8 @@ var viewMethods = {
 				},
 				stop: function(ev, ui) {
 					view.trigger('eventResizeStop', this, event, ev, ui);
-					// ui.size.width wasn't working with grid correctly, use .width()
-					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
+					// ui.size.width wasn't working with grid correctly, width() buggy with ie9, use inner/outerWidth()
+					var dayDelta = Math.round((eventElement.outerWidth() - ui.originalSize.width) / colWidth);
 					if (dayDelta) {
 						view.eventResize(this, event, dayDelta, 0, ev, ui);
 					}else{

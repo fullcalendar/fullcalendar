@@ -305,7 +305,7 @@ function Grid(element, options, methods, viewName) {
 	function setHeight(height) {
 		viewHeight = height;
 		var leftTDs = tbody.find('tr td:first-child'),
-			tbodyHeight = viewHeight - thead.height(),
+			tbodyHeight = viewHeight - thead.outerHeight(),
 			rowHeight1, rowHeight2;
 		if (options.weekMode == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
@@ -317,8 +317,8 @@ function Grid(element, options, methods, viewName) {
 			// bug in firefox where cell height includes padding
 			var tr = tbody.find('tr:first'),
 				td = tr.find('td:first');
-			td.height(rowHeight1);
-			tdHeightBug = rowHeight1 != td.height();
+			td.outerHeight(rowHeight1);
+			tdHeightBug = rowHeight1 != td.outerHeight();
 		}
 		if (tdHeightBug) {
 			leftTDs.slice(0, -1).height(rowHeight1);

@@ -286,19 +286,19 @@ function Agenda(element, options, methods, viewName) {
 		viewHeight = height;
 		slotTopCache = {};
 		
-		body.height(height - head.height());
+		body.outerHeight(height - head.outerHeight());
 		
-		slotHeight = body.find('tr:first div').height() + 1;
+		slotHeight = body.find('tr:first div').innerHeight() + 1;
 		
 		bg.css({
-			top: head.find('tr').height(),
+			top: head.find('tr').outerHeight(),
 			height: height
 		});
 		
 		// if the table ends up shorter than the allotted view, shrink the view to fit the table
-		var tableHeight=body.find('table:first').height();
-		if (tableHeight<body.height()) {
-			body.height(tableHeight);
+		var tableHeight=body.find('table:first').innerHeight();
+		if (tableHeight<body.innerHeight()) {
+			body.innerHeight(tableHeight);
 		}
 		
 		if (dateChanged) {
@@ -687,7 +687,7 @@ function Agenda(element, options, methods, viewName) {
 				start: function(ev, ui) {
 					view.trigger('eventDragStart', eventElement, event, ev, ui);
 					view.hideEvents(event, eventElement);
-					origWidth = eventElement.width();
+					origWidth = eventElement.outerWidth();
 					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 						clearOverlay();
@@ -882,7 +882,7 @@ function Agenda(element, options, methods, viewName) {
 				},
 				resize: function(ev, ui) {
 					// don't rely on ui.size.height, doesn't take grid into account
-					slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
+					slotDelta = Math.round((Math.max(slotHeight, eventElement.outerHeight()) - ui.originalSize.height) / slotHeight);
 					if (slotDelta != prevSlotDelta) {
 						timeElement.text(
 							formatDates(
@@ -955,7 +955,7 @@ function Agenda(element, options, methods, viewName) {
 			return 0;
 		}
 		if (time >= addMinutes(cloneDate(day), maxMinute)) {
-			return bodyContent.height();
+			return bodyContent.innerHeight();
 		}
 		var slotMinutes = options.slotMinutes,
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
