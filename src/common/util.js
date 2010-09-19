@@ -189,6 +189,21 @@ function setMinHeight(element, h) {
 }
 
 
+function getHeight(e) {
+	if ($.browser.msie && $.browser.version == '9.0') {
+		return e.innerHeight();
+	}
+	return e.height();
+}
+
+
+function getWidth(e) {
+	if ($.browser.msie && $.browser.version == '9.0') {
+		return e.innerWidth();
+	} 
+	return e.width();
+}
+
 
 /* Position Calculation
 -----------------------------------------------------------------------------*/

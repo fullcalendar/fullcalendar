@@ -351,7 +351,7 @@ function AgendaEventRenderer() {
 				start: function(ev, ui) {
 					trigger('eventDragStart', eventElement, event, ev, ui);
 					hideEvents(event, eventElement);
-					origWidth = eventElement.width();
+					origWidth = getWidth(eventElement);
 					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 						clearOverlays();
@@ -368,8 +368,9 @@ function AgendaEventRenderer() {
 								// mouse is over bottom slots
 								if (isStart && allDay) {
 									// convert event to temporary slot-event
+									setOuterWidth(eventElement,colWidth - 10);
 									setOuterHeight(
-										eventElement.width(colWidth - 10), // don't use entire width
+										eventElement, // don't use entire width
 										slotHeight * Math.round(
 											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
 											/ opt('slotMinutes')
@@ -409,10 +410,9 @@ function AgendaEventRenderer() {
 			});
 			function resetElement() {
 				if (!allDay) {
-					eventElement
-						.width(origWidth)
-						.height('')
-						.draggable('option', 'grid', null);
+					setOuterWidth(eventElement,origWidth);
+					eventElement.height('');
+					eventElement.draggable('option', 'grid', null);
 					allDay = true;
 				}
 			}
@@ -549,7 +549,7 @@ function AgendaEventRenderer() {
 				},
 				resize: function(ev, ui) {
 					// don't rely on ui.size.height, doesn't take grid into account
-					slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
+					slotDelta = Math.round((Math.max(slotHeight, getHeight(eventElement)) - ui.originalSize.height) / slotHeight);
 					if (slotDelta != prevSlotDelta) {
 						timeElement.text(
 							formatDates(

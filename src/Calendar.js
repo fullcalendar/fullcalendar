@@ -145,7 +145,7 @@ function Calendar(element, options, eventSources) {
 					oldView.eventDirty = oldView.eventsChanged = false;
 				}
 				(oldView.beforeHide || noop)(); // called before changing min-height. if called after, scroll state is reset (in Opera)
-				setMinHeight(content, content.height());
+				setMinHeight(content, getHeight(content));
 				oldView.element.hide();
 			}else{
 				setMinHeight(content, 1); // needs to be 1 (not 0) for IE7, or else view dimensions miscalculated
@@ -244,10 +244,10 @@ function Calendar(element, options, eventSources) {
 			suggestedViewHeight = options.contentHeight;
 		}
 		else if (options.height) {
-			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content[0]);
+			suggestedViewHeight  = options.height - vsides(content[0]) - (headerElement ? getHeight(headerElement) : 0);
 		}
 		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+			suggestedViewHeight = Math.round(getWidth(content) / Math.max(options.aspectRatio, .5));
 		}
 	}
 	
@@ -259,7 +259,7 @@ function Calendar(element, options, eventSources) {
 			absoluteViewElement.css('position', 'relative');
 			absoluteViewElement = null;
 		}
-		currentView.setWidth(content.width(), dateChanged);
+		currentView.setWidth(getWidth(content), dateChanged);
 		ignoreWindowResize--;
 	}
 	

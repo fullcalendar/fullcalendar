@@ -15,7 +15,7 @@ function HorizontalPositionCache(getElement) {
 	};
 	
 	t.right = function(i) {
-		return rights[i] = rights[i] === undefined ? t.left(i) + e(i).width() : rights[i];
+		return rights[i] = rights[i] === undefined ? t.left(i) + getWidth(e(i)) : rights[i];
 	};
 	
 	t.clear = function() {

@@ -256,12 +256,12 @@ function AgendaView(element, calendar, viewName) {
 		viewHeight = height;
 		slotTopCache = {};
 		
-		body.height(height - head.height());
+		setOuterHeight(body,height - getHeight(head));
 		
-		slotHeight = body.find('tr:first div').height() + 1;
+		slotHeight = getHeight(body.find('tr:first div')) + 1;
 		
 		bg.css({
-			top: head.find('tr').height(),
+			top: head.find('tr').outerHeight(),
 			height: height
 		});
 		
@@ -276,14 +276,14 @@ function AgendaView(element, calendar, viewName) {
 		viewWidth = width;
 		colContentPositions.clear();
 		
-		body.width(width);
+		setOuterWidth(body,width);
 		bodyTable.width('');
 		
 		var topTDs = head.find('tr:first th'),
 			stripeTDs = bg.find('td'),
 			clientWidth = body[0].clientWidth;
 			
-		bodyTable.width(clientWidth);
+		setOuterWidth(bodyTable,clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
@@ -489,7 +489,7 @@ function AgendaView(element, calendar, viewName) {
 			return 0;
 		}
 		if (time >= addMinutes(cloneDate(day), maxMinute)) {
-			return bodyContent.height();
+			return getHeight(bodyContent);
 		}
 		var slotMinutes = opt('slotMinutes'),
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,

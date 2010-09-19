@@ -235,7 +235,7 @@ function BasicView(element, calendar, viewName) {
 	function setHeight(height) {
 		viewHeight = height;
 		var leftTDs = tbody.find('tr td:first-child'),
-			tbodyHeight = viewHeight - thead.height(),
+			tbodyHeight = viewHeight - thead.outerHeight(),
 			rowHeight1, rowHeight2;
 		if (opt('weekMode') == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
@@ -247,8 +247,8 @@ function BasicView(element, calendar, viewName) {
 			// bug in firefox where cell height includes padding
 			var tr = tbody.find('tr:first'),
 				td = tr.find('td:first');
-			td.height(rowHeight1);
-			tdHeightBug = rowHeight1 != td.height();
+			setOuterHeight(td,rowHeight1);
+			tdHeightBug = rowHeight1 != td.outerHeight();
 		}
 		if (tdHeightBug) {
 			leftTDs.slice(0, -1).height(rowHeight1);

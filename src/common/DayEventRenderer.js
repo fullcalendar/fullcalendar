@@ -177,7 +177,7 @@ function DayEventRenderer() {
 				i++;
 			}
 			rowDivs[rowI] = allDayTR(rowI).find('td:first div.fc-day-content > div'); // optimal selector?
-			rowDivs[rowI].height(top + levelHeight);
+			setOuterHeight(rowDivs[rowI],top + levelHeight);
 		}
 	
 		// calculate row tops
@@ -220,7 +220,7 @@ function DayEventRenderer() {
 				stop: function(ev, ui) {
 					trigger('eventResizeStop', this, event, ev, ui);
 					// ui.size.width wasn't working with grid correctly, use .width()
-					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
+					var dayDelta = Math.round((getWidth(eventElement) - ui.originalSize.width) / colWidth);
 					if (dayDelta) {
 						eventResize(this, event, dayDelta, 0, ev, ui);
 					}else{
