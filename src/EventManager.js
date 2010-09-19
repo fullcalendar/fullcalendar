@@ -46,13 +46,18 @@ function EventManager(options, eventSources) {
 	
 
 	function removeEventSource(source) {
-		eventSources = $.grep(eventSources, function(src) {
-			return src != source;
-		});
-		// remove all client events from that source
-		events = $.grep(events, function(e) {
-			return e.source != source;
-		});
+		var sticky = (typeof eventSources[0] == 'object') ? eventSources.slice(0,1) : [];
+		if (!source) events = eventSources = [];
+		else {
+			eventSources = $.grep(eventSources, function(src) {
+				return src != source;
+			});
+			// remove all client events from that source
+			events = $.grep(events, function(e) {
+				return e.source != source;
+			});
+		}
+		eventSources = sticky.concat(eventSources);
 		rerenderEvents();
 	}
 
