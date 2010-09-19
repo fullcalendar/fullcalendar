@@ -1,19 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='../examples/redmond/theme.css' />
-<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
 <script type='text/javascript'>
 
 	$(document).ready(function() {
 	
 		$('#calendar').fullCalendar({
-			year: 2009,
-			month: 10,
-			date: 22, 
+			//year: 2009,
+			//month: 10,
+			//date: 22, 
 			//defaultView: 'agendaWeek', // error also occured with month view
 			editable: true,
-			events: "../examples/json-events.php"		
+			events: "../demos/json-events.php"
 		});
 		
 		$('#calendar').fullCalendar('option', 'height', $(window).height()-80);

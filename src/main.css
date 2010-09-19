@@ -1,0 +1,237 @@
+/*
+ * FullCalendar v@VERSION Stylesheet
+ *
+ * Feel free to edit this file to customize the look of FullCalendar.
+ * When upgrading to newer versions, please upgrade this file as well,
+ * porting over any customizations afterwards.
+ *
+ * Date: @DATE
+ *
+ */
+ 
+ 
+/* TODO: make font sizes look the same in all doctypes */
+
+
+.fc,
+.fc .fc-header,
+.fc .fc-content {
+	font-size: 1em;
+	}
+	
+.fc {
+	direction: ltr;
+	text-align: left;
+	}
+	
+.fc table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+	
+.fc td, .fc th {
+	padding: 0;
+	vertical-align: top;
+	}
+
+
+
+/* Header
+------------------------------------------------------------------------*/
+	
+table.fc-header {
+	width: 100%;
+	}
+	
+.fc-header-left {
+	width: 25%;
+	}
+	
+.fc-header-left table {
+	float: left;
+	}
+	
+.fc-header-center {
+	width: 50%;
+	text-align: center;
+	}
+	
+.fc-header-center table {
+	margin: 0 auto;
+	}
+	
+.fc-header-right {
+	width: 25%;
+	}
+	
+.fc-header-right table {
+	float: right;
+	}
+	
+.fc-header-title {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+	
+.fc-header-space {
+	padding-left: 10px;
+	}
+	
+/* right-to-left */
+
+.fc-rtl .fc-header-title {
+	direction: rtl;
+	}
+
+
+
+/* Buttons
+------------------------------------------------------------------------*/
+
+.fc-header .fc-state-default,
+.fc-header .ui-state-default {
+	margin-bottom: 1em;
+	cursor: pointer;
+	}
+	
+.fc-header .fc-state-default {
+	border-width: 1px 0;
+	padding: 0 1px;
+	}
+	
+.fc-header .fc-state-default,
+.fc-header .fc-state-default a {
+	border-style: solid;
+	}
+	
+.fc-header .fc-state-default a {
+	display: block;
+	border-width: 0 1px;
+	margin: 0 -1px;
+	width: 100%;
+	text-decoration: none;
+	}
+	
+.fc-header .fc-state-default span {
+	display: block;
+	border-style: solid;
+	border-width: 1px 0 1px 1px;
+	padding: 3px 5px;
+	}
+	
+.fc-header .ui-state-default {
+	padding: 4px 6px;
+	}
+	
+.fc-header .fc-state-default span,
+.fc-header .ui-state-default span {
+	white-space: nowrap;
+	}
+	
+/* for adjacent buttons */
+	
+.fc-header .fc-no-right {
+	padding-right: 0;
+	}
+	
+.fc-header .fc-no-right a {
+	margin-right: 0;
+	border-right: 0;
+	}
+	
+.fc-header .ui-no-right {
+	border-right: 0;
+	}
+	
+/* for fake rounded corners */
+	
+.fc-header .fc-corner-left {
+	margin-left: 1px;
+	padding-left: 0;
+	}
+	
+.fc-header .fc-corner-right {
+	margin-right: 1px;
+	padding-right: 0;
+	}
+	
+/* DEFAULT button COLORS */
+	
+.fc-header .fc-state-default,
+.fc-header .fc-state-default a {
+	border-color: #777; /* outer border */
+	color: #333;
+	}
+
+.fc-header .fc-state-default span {
+	border-color: #fff #fff #d1d1d1; /* inner border */
+	background: #e8e8e8;
+	}
+	
+/* PRESSED button COLORS (down and active) */
+	
+.fc-header .fc-state-active a {
+	color: #fff;
+	}
+	
+.fc-header .fc-state-down span,
+.fc-header .fc-state-active span {
+	background: #888;
+	border-color: #808080 #808080 #909090; /* inner border */
+	}
+	
+/* DISABLED button COLORS */
+	
+.fc-header .fc-state-disabled a {
+	color: #999;
+	}
+	
+.fc-header .fc-state-disabled,
+.fc-header .fc-state-disabled a {
+	border-color: #ccc; /* outer border */
+	}
+	
+.fc-header .fc-state-disabled span {
+	border-color: #fff #fff #f0f0f0; /* inner border */
+	background: #f0f0f0;
+	}
+	
+	
+	
+/* Content Area & Global Cell Styles
+------------------------------------------------------------------------*/
+	
+.fc-widget-content {
+	border: 1px solid #ccc; /* outer border color */
+	}
+	
+.fc-content {
+	clear: both;
+	}
+	
+.fc-content .fc-state-default {
+	border-style: solid;
+	border-color: #ccc; /* inner border color */
+	}
+	
+.fc-content .fc-state-highlight { /* today */
+	background: #ffc;
+	}
+	
+.fc-content .fc-not-today {
+	background: none;
+	}
+	
+.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+	background: #9cf;
+	opacity: .2;
+	filter: alpha(opacity=20); /* for IE */
+	}
+	
+.fc-view { /* prevents dragging outside of widget */
+	width: 100%;
+	overflow: hidden;
+	}
+	
+	
+	

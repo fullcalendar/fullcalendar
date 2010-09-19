@@ -1,0 +1,129 @@
+
+
+/* Global Event Styles
+------------------------------------------------------------------------*/
+
+.fc-event,
+.fc-agenda .fc-event-time,
+.fc-event a {
+	border-style: solid; 
+	border-color: #36c;     /* default BORDER color (probably the same as background-color) */
+	background-color: #36c; /* default BACKGROUND color */
+	color: #fff;            /* default TEXT color */
+	}
+	
+	/* Use the 'className' CalEvent property and the following
+	 * example CSS to change event color on a per-event basis:
+	 *
+	 * .myclass,
+	 * .fc-agenda .myclass .fc-event-time,
+	 * .myclass a {
+	 *     background-color: black;
+	 *     border-color: black;
+	 *     color: red;
+	 *     }
+	 */
+	 
+.fc-event {
+	text-align: left;
+	}
+	
+.fc-event a {
+	overflow: hidden;
+	font-size: .85em;
+	text-decoration: none;
+	cursor: pointer;
+	}
+	
+.fc-event-editable {
+	cursor: pointer;
+	}
+	
+.fc-event-time,
+.fc-event-title {
+	padding: 0 1px;
+	}
+	
+/* for fake rounded corners */
+
+.fc-event a {
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	}
+	
+/* right-to-left */
+
+.fc-rtl .fc-event a {
+	text-align: right;
+	}
+	
+/* resizable */
+	
+.fc .ui-resizable-handle {
+	display: block;
+	position: absolute;
+	z-index: 99999;
+	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
+	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
+	}
+	
+	
+	
+/* Horizontal Events
+------------------------------------------------------------------------*/
+
+.fc-event-hori {
+	border-width: 1px 0;
+	margin-bottom: 1px;
+	}
+	
+.fc-event-hori a {
+	border-width: 0;
+	}
+	
+/* for fake rounded corners */
+	
+.fc-content .fc-corner-left {
+	margin-left: 1px;
+	}
+	
+.fc-content .fc-corner-left a {
+	margin-left: -1px;
+	border-left-width: 1px;
+	}
+	
+.fc-content .fc-corner-right {
+	margin-right: 1px;
+	}
+	
+.fc-content .fc-corner-right a {
+	margin-right: -1px;
+	border-right-width: 1px;
+	}
+	
+/* resizable */
+	
+.fc-event-hori .ui-resizable-e {
+	top: 0           !important; /* importants override pre jquery ui 1.7 styles */
+	right: -3px      !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	cursor: e-resize;
+	}
+	
+.fc-event-hori .ui-resizable-w {
+	top: 0           !important;
+	left: -3px       !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	cursor: w-resize;
+	}
+	
+.fc-event-hori .ui-resizable-handle {
+	_padding-bottom: 14px; /* IE6 had 0 height */
+	}
+	
+	
+	

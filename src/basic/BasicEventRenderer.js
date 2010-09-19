@@ -1,0 +1,149 @@
+
+function BasicEventRenderer() {
+	var t = this;
+	
+	
+	// exports
+	t.renderEvents = renderEvents;
+	t.rerenderEvents = rerenderEvents;
+	t.clearEvents = clearEvents;
+	t.bindDaySeg = bindDaySeg;
+	
+	
+	// imports
+	DayEventRenderer.call(t);
+	var opt = t.opt;
+	var trigger = t.trigger;
+	var reportEvents = t.reportEvents;
+	var clearEventData = t.clearEventData;
+	var eventElementHandlers = t.eventElementHandlers;
+	var showEvents = t.showEvents;
+	var hideEvents = t.hideEvents;
+	var eventDrop = t.eventDrop;
+	var getDaySegmentContainer = t.getDaySegmentContainer;
+	var getHoverListener = t.getHoverListener;
+	var renderDayOverlay = t.renderDayOverlay;
+	var clearOverlays = t.clearOverlays;
+	var getRowCnt = t.getRowCnt;
+	var getColCnt = t.getColCnt;
+	var renderDaySegs = t.renderDaySegs;
+	var resizableDayEvent = t.resizableDayEvent;
+	
+	
+	// locals
+	var cachedEvents=[];
+	
+	
+	
+	/* Rendering
+	--------------------------------------------------------------------*/
+	
+	
+	function renderEvents(events) {
+		reportEvents(cachedEvents = events);
+		renderDaySegs(compileSegs(events));
+	}
+	
+	
+	function rerenderEvents(modifiedEventId) {
+		clearEvents();
+		renderDaySegs(compileSegs(cachedEvents), modifiedEventId);
+	}
+	
+	
+	function clearEvents() {
+		clearEventData();
+		getDaySegmentContainer().empty();
+	}
+	
+	
+	function compileSegs(events) {
+		var rowCnt = getRowCnt(),
+			colCnt = getColCnt(),
+			d1 = cloneDate(t.visStart),
+			d2 = addDays(cloneDate(d1), colCnt),
+			visEventsEnds = $.map(events, exclEndDay),
+			i, row,
+			j, level,
+			k, seg,
+			segs=[];
+		for (i=0; i<rowCnt; i++) {
+			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
+			for (j=0; j<row.length; j++) {
+				level = row[j];
+				for (k=0; k<level.length; k++) {
+					seg = level[k];
+					seg.row = i;
+					seg.level = j;
+					segs.push(seg);
+				}
+			}
+			addDays(d1, 7);
+			addDays(d2, 7);
+		}
+		return segs;
+	}
+	
+	
+	function bindDaySeg(event, eventElement, seg) {
+		eventElementHandlers(event, eventElement);
+		if (event.editable || event.editable === undefined && opt('editable')) {
+			draggableDayEvent(event, eventElement);
+			if (seg.isEnd) {
+				resizableDayEvent(event, eventElement);
+			}
+		}
+	}
+	
+	
+	
+	/* Dragging
+	----------------------------------------------------------------------------*/
+	
+	
+	function draggableDayEvent(event, eventElement) {
+		if (!opt('disableDragging') && eventElement.draggable) {
+			var hoverListener = getHoverListener();
+			var dayDelta;
+			eventElement.draggable({
+				zIndex: 9,
+				delay: 50,
+				opacity: opt('dragOpacity'),
+				revertDuration: opt('dragRevertDuration'),
+				start: function(ev, ui) {
+					trigger('eventDragStart', eventElement, event, ev, ui);
+					hideEvents(event, eventElement);
+					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
+						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
+						clearOverlays();
+						if (cell) {
+							dayDelta = rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
+							renderDayOverlay(
+								addDays(cloneDate(event.start), dayDelta),
+								addDays(exclEndDay(event), dayDelta)
+							);
+						}else{
+							dayDelta = 0;
+						}
+					}, ev, 'drag');
+				},
+				stop: function(ev, ui) {
+					hoverListener.stop();
+					clearOverlays();
+					trigger('eventDragStop', eventElement, event, ev, ui);
+					if (dayDelta) {
+						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
+						eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
+					}else{
+						if ($.browser.msie) {
+							eventElement.css('filter', ''); // clear IE opacity side-effects
+						}
+						showEvents(event, eventElement);
+					}
+				}
+			});
+		}
+	}
+
+
+}
