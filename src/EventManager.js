@@ -10,6 +10,7 @@ function EventManager(options, eventSources) {
 	t.refetchEvents = refetchEvents;
 	t.isFetchNeeded = isFetchNeeded;
 	t.addEventSource = addEventSource;
+	t.addEventSourceFast = addEventSourceFast;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
@@ -37,13 +38,17 @@ function EventManager(options, eventSources) {
 	
 	
 	eventSources.unshift([]); // first event source reserved for 'sticky' events
-	
+
+	//to add some, then refetchEvents()
+	function addEventSourceFast(source) {
+		if (eventSources.indexOf(source) < 0)
+			eventSources.push(source);
+	}
 
 	function addEventSource(source) {
-		eventSources.push(source);
+		addEventSourceFast(source);
 		fetchEventSource(source, rerenderEvents);
 	}
-	
 
 	function removeEventSource(source) {
 		var sticky = (typeof eventSources[0] == 'object') ? eventSources.slice(0,1) : [];
