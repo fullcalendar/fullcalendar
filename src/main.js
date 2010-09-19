@@ -13,7 +13,7 @@ $.fn.fullCalendar = function(options) {
 		var res;
 		this.each(function() {
 			var calendar = $.data(this, 'fullCalendar');
-			if (calendar && typeof $.isFunction(calendar[options])) {
+			if (calendar && $.isFunction(calendar[options])) {
 				var r = calendar[options].apply(calendar, args);
 				if (res === undefined) {
 					res = r;
