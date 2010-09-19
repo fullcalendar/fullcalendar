@@ -7,7 +7,10 @@ About this fork
 This version is included in joomla gcalendar component to display google calendar events.
 see http://code.google.com/p/joomla-gcalendar/ and maintained by tanguy.pruvot@gmail.com
 
-This fork adds the option of pulling different colors in agenda view for each event.
+This fork also adds :
+	- different colors for each event.
+	- resizable for each event
+	- IE9 public beta compatibility (in work)
 
 Development and testing
 -----------------------
