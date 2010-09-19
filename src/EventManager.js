@@ -171,6 +171,8 @@ function EventManager(options, eventSources) {
 				e.allDay = event.allDay;
 				e.className = event.className;
 				e.editable = event.editable;
+				e.resizable = event.resizable;
+				e.color = event.color;
 				normalizeEvent(e);
 			}
 		}

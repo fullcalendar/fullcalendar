@@ -81,9 +81,13 @@ function DayEventRenderer() {
 				left = seg.isStart ? colContentLeft(dayOfWeekCol(seg.start.getDay())) : minLeft;
 				right = seg.isEnd ? colContentRight(dayOfWeekCol(seg.end.getDay()-1)) : maxLeft;
 			}
+			var color;
+			if (event.color) {
+				color = ";background-color:" + event.color + ";border-color:" + event.color;
+			}
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
-					"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+					"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + (color ? " style='" + color + "'" : '') + ">" +
 						(!event.allDay && seg.isStart ?
 							"<span class='fc-event-time'>" +
 								htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
@@ -91,7 +95,7 @@ function DayEventRenderer() {
 						:'') +
 						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 					"</a>" +
-					((event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
+					((event.resizable || event.resizable === undefined) && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
 						"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
 						: '') +
 				"</div>";

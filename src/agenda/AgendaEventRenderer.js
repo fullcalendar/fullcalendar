@@ -287,13 +287,17 @@ function AgendaEventRenderer() {
 	
 	
 	function slotSegHtml(event, seg, className) {
+		var color;
+		if (event.color) {
+			color = ";background-color:" + event.color + ";border-color:" + event.color;
+		}
 		return "<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px'>" +
-			"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+			"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + (color ? " style='" + color + "'" : '') + ">" +
 				"<span class='fc-event-bg'></span>" +
 				"<span class='fc-event-time'>" + htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) + "</span>" +
 				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 			"</a>" +
-			((event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
+			((event.resizable || event.resizable === undefined) && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>"
 				: '') +
 		"</div>";
