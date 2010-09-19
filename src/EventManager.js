@@ -107,6 +107,7 @@ function EventManager(options, eventSources) {
 			var params = {};
 			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
+			params['browserTimezone'] = eventStart.getTimezoneOffset();
 			if (options.cacheParam) {
 				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 			}
@@ -124,8 +125,8 @@ function EventManager(options, eventSources) {
 			pushLoading();
 			src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
 		}
-		else {
-			reportEvents(src); // src is an array
+		else if (src) {
+			reportEvents(src); // src is an array (sticky events)
 		}
 	}
 	
