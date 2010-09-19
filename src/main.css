@@ -221,6 +221,10 @@ table.fc-header {
 .fc-content .fc-not-today {
 	background: none;
 	}
+
+.fc-content .fc-before-today {
+	background: #fafafa;
+	}
 	
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
 	background: #9cf;

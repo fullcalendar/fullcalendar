@@ -122,7 +122,8 @@ function BasicView(element, calendar, viewName) {
 						(rowCnt>1 && d.getMonth() != month ? ' fc-other-month' : '') +
 						(+d == +today ?
 						' fc-today '+tm+'-state-highlight' :
-						' fc-not-today') + "'>" +
+						(+d <  +today ? ' fc-before-today fc-not-today' :
+						' fc-not-today')) + "'>" +
 						(showNumbers ? "<div class='fc-day-number'>" + d.getDate() + "</div>" : '') +
 						"<div class='fc-day-content'><div style='position:relative'>&nbsp;</div></div></td>";
 					addDays(d, 1);
@@ -181,10 +182,16 @@ function BasicView(element, calendar, viewName) {
 				}
 				if (+d == +today) {
 					td.removeClass('fc-not-today')
+						.removeClass('fc-before-today')
 						.addClass('fc-today')
 						.addClass(tm + '-state-highlight');
+				}else if (+d < +today) {
+					td.addClass('fc-before-today')
+						.addClass('fc-not-today')
+						.removeClass(tm + '-state-highlight');
 				}else{
 					td.addClass('fc-not-today')
+						.removeClass('fc-before-today')
 						.removeClass('fc-today')
 						.removeClass(tm + '-state-highlight');
 				}
