@@ -166,14 +166,18 @@ function parseISO8601(s, ignoreTimezone) {
 	if (!m) {
 		return null;
 	}
-	var date = new Date(m[1], 0, 1), offset = 0;
+	var date = new Date(m[1], 0, 1);
 	if (ignoreTimezone) {
+		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
 			date.setMonth(m[3] - 1);
+			check.setMonth(m[3] - 1);
 		}
 		if (m[5]) {
 			date.setDate(m[5]);
+			check.setDate(m[5]);
 		}
+		fixDate(date, check);
 		if (m[7]) {
 			date.setHours(m[7]);
 		}
@@ -186,7 +190,9 @@ function parseISO8601(s, ignoreTimezone) {
 		if (m[12]) {
 			date.setMilliseconds(Number("0." + m[12]) * 1000);
 		}
+		fixDate(date, check);
 	}else{
+		var offset = 0;
 		date.setUTCFullYear(m[1]);
 		if (m[3]) {
 			date.setUTCMonth(m[3] - 1);
