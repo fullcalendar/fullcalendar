@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<script type='text/javascript' src='loader.js'></script>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript' src='../src/gcal/_loader.js'></script>
 <script type='text/javascript'>
 
 	var cal;
@@ -13,7 +14,7 @@
 	
 	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 	
-	var jsonFeed = "../examples/json-events.php";
+	var jsonFeed = "../demos/json-events.php";
 	
 	var staticEvents = [
 		{
@@ -93,9 +94,11 @@
 		]);
 	};
 	
-	//$.ajaxSetup({
-	//	cache: false // should NOT insert an extra _ parameter
-	//});
+	/* TODO: doesn't work anymore
+	$.ajaxSetup({
+		cache: true // should NOT insert an extra _ parameter
+	});
+	*/
 
 	$(document).ready(function() {
 		cal = $('#calendar').fullCalendar({
