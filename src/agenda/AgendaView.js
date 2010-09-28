@@ -256,20 +256,11 @@ function AgendaView(element, calendar, viewName) {
 		viewHeight = height;
 		slotTopCache = {};
 		
-		body.height(height - head.height());
+		var bodyHeight = height - head.height();
+		bodyHeight = Math.min(bodyHeight, bodyTable.height()); // shrink to fit table
+		body.height(bodyHeight);
 		
 		slotHeight = body.find('tr:first div').height() + 1;
-		
-		bg.css({
-			top: head.find('tr').height(),
-			height: height
-		});
-		
-		// if the table ends up shorter than the allotted view, shrink the view to fit the table
-		var tableHeight = body.find('table:first').height();
-		if (tableHeight < body.height()) {
-			body.height(tableHeight);
-		}
 		
 		if (dateChanged) {
 			resetScroll();
@@ -282,26 +273,28 @@ function AgendaView(element, calendar, viewName) {
 		viewWidth = width;
 		colContentPositions.clear();
 		
-		body.width(width);
+		body.width(width).css('overflow', 'auto');
 		bodyTable.width('');
 		
 		var topTDs = head.find('tr:first th'),
+			allDayLastTH = head.find('tr.fc-all-day th:last'),
 			stripeTDs = bg.find('td'),
 			clientWidth = body[0].clientWidth;
 			
+		bodyTable.width(clientWidth);
+		clientWidth = body[0].clientWidth; // in ie6, sometimes previous clientWidth was wrongly reported
 		bodyTable.width(clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
 		setOuterWidth(
 			head.find('tr:lt(2) th:first').add(body.find('tr:first th'))
-				.width('')
+				.width(1)
 				.each(function() {
 					axisWidth = Math.max(axisWidth, $(this).outerWidth());
 				}),
 			axisWidth
 		);
-		axisWidth = axisWidth;
 		
 		// column width, except for last column
 		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
@@ -309,17 +302,22 @@ function AgendaView(element, calendar, viewName) {
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
 		
 		// column width for last column
-		var hasScrollbar = body[0].scrollHeight != body[0].clientHeight;
-		if (hasScrollbar) {
+		if (width != clientWidth) { // has scrollbar
 			setOuterWidth(topTDs.slice(-2, -1), clientWidth - axisWidth - colWidth*(colCnt-1));
+			topTDs.slice(-1).show();
+			allDayLastTH.show();
 		}else{
+			body.css('overflow', 'hidden');
+			topTDs.slice(-2, -1).width('');
 			topTDs.slice(-1).hide();
-			$('tr.fc-all-day th').slice(-1).hide();
+			allDayLastTH.hide();
 		}
 		
 		bg.css({
+			top: head.find('tr').height(),
 			left: axisWidth,
-			width: clientWidth - axisWidth
+			width: clientWidth - axisWidth,
+			height: viewHeight
 		});
 	}
 	
