@@ -5,13 +5,6 @@
 <script type='text/javascript' src='../src/gcal/_loader.js'></script>
 <script type='text/javascript'>
 
-	/*
-	- click on day button
-	- click refetchEvents
-	- click on month button
-	   event shouldn't disappear!!!
-	*/
-
 	$(document).ready(function() {
 	
 		var date = new Date();
@@ -20,19 +13,24 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
-			year: 2010,
-			month: 9,
-			date: 31,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaDay'
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
-			editable: true,
-			events: $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic')
+			editable: true
 		});
 		
 	});
+	
+	
+	function doit() {
+		var calendar = $('#calendar');
+		var gcal = $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic');
+		calendar.fullCalendar('addEventSource', gcal);
+		calendar.fullCalendar('refetchEvents');
+	}
+	
 
 </script>
 <style type='text/css'>
@@ -52,7 +50,7 @@
 </style>
 </head>
 <body>
-<button onclick="$('#calendar').fullCalendar('refetchEvents')">refetchEvents</button>
+<button onclick='doit()'>do it</button>
 <div id='calendar'></div>
 </body>
 </html>

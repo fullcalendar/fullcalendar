@@ -26,6 +26,7 @@ function EventManager(options, eventSources) {
 
 	
 	// locals
+	var fetchID = 0;
 	var eventStart, eventEnd;
 	var events = [];
 	var loadingLevel = 0;
@@ -64,45 +65,49 @@ function EventManager(options, eventSources) {
 	
 	// Fetch from ALL sources. Clear 'events' array and populate
 	function fetchEvents(callback) {
-		var view = getView();
 		events = [];
-		eventStart = cloneDate(view.visStart);
-		eventEnd = cloneDate(view.visEnd);
-		var queued = eventSources.length,
-			sourceDone = function() {
+		fetchEventSources(eventSources, callback);
+	}
+	
+	
+	// appends to the events array
+	function fetchEventSources(sources, callback) {
+		var savedID = ++fetchID;
+		var queued = sources.length;
+		var view = getView();
+		eventStart = cloneDate(view.visStart); // we don't need to make local copies b/c
+		eventEnd = cloneDate(view.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
+		function sourceDone(source, sourceEvents) {
+			if (savedID == fetchID && eventStart >= view.visStart && eventEnd <= view.visEnd) {
+				// same fetchEventSources call, and still in correct date range
+				if ($.inArray(source, eventSources) != -1) { // source hasn't been removed since we started
+					for (var i=0; i<sourceEvents.length; i++) {
+						normalizeEvent(sourceEvents[i]);
+						sourceEvents[i].source = source;
+					}
+					events = events.concat(sourceEvents);
+				}
 				if (!--queued) {
 					if (callback) {
 						callback(events);
 					}
 				}
-			}, i=0;
-		for (; i<eventSources.length; i++) {
-			fetchEventSource(eventSources[i], sourceDone);
+			}
+		}
+		for (var i=0; i<sources.length; i++) {
+			_fetchEventSource(sources[i], sourceDone);
 		}
 	}
 	
 	
-	// Fetch from a particular source. Append to the 'events' array
-	function fetchEventSource(src, callback) {
-		var prevView = getView(),
-			prevDate = getDate(),
-			reportEvents = function(a) {
-				if (prevView == getView() && +prevDate == +getDate() && // protects from fast switching
-					$.inArray(src, eventSources) != -1) {               // makes sure source hasn't been removed
-						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i]);
-							a[i].source = src;
-						}
-						events = events.concat(a);
-						if (callback) {
-							callback(a);
-						}
-					}
-			},
-			reportEventsAndPop = function(a) {
-				reportEvents(a);
-				popLoading();
-			};
+	function _fetchEventSource(src, callback) {
+		function reportEvents(a) {
+			callback(src, a);
+		}
+		function reportEventsAndPop(a) {
+			reportEvents(a);
+			popLoading();
+		}
 		if (typeof src == 'string') {
 			var params = {};
 			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
@@ -127,6 +132,11 @@ function EventManager(options, eventSources) {
 		else {
 			reportEvents(src); // src is an array
 		}
+	}
+	
+	
+	function fetchEventSource(src, callback) {
+		fetchEventSources([src], callback);
 	}
 	
 	
