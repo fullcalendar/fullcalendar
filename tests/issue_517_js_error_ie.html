@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
+			defaultView: 'agendaWeek',
+			events: [
+					{
+						title: 'Event1',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event2',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event3',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event4',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event5',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event6',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event7',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event8',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					}, 
+					{
+						title: 'Event9',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event10',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event11',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event12',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event13',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event14',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event15',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					},
+					{
+						title: 'Event16',
+						start: new Date(y, m, d, 6, 0), 
+						allDay : false
+					}
+			]
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 400px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

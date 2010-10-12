@@ -144,7 +144,7 @@ function DayEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			if (eventElement = seg.element) {
-				eventElement[0].style.width = seg.outerWidth - seg.hsides + 'px';
+				eventElement[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
 			}
 		}
 	

@@ -139,14 +139,14 @@ function lazySegBind(container, segs, bindHandlers) {
 
 function setOuterWidth(element, width, includeMargins) {
 	element.each(function(i, _element) {
-		_element.style.width = width - hsides(_element, includeMargins) + 'px';
+		_element.style.width = Math.max(0, width - hsides(_element, includeMargins)) + 'px';
 	});
 }
 
 
 function setOuterHeight(element, height, includeMargins) {
 	element.each(function(i, _element) {
-		_element.style.height = height - vsides(_element, includeMargins) + 'px';
+		_element.style.height = Math.max(0, height - vsides(_element, includeMargins)) + 'px';
 	});
 }
 

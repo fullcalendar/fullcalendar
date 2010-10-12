@@ -269,8 +269,9 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			if (eventElement = seg.element) {
-				eventElement[0].style.width = seg.outerWidth - seg.hsides + 'px';
-				eventElement[0].style.height = (height = seg.outerHeight - seg.vsides) + 'px';
+				eventElement[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
+				height = Math.max(0, seg.outerHeight - seg.vsides);
+				eventElement[0].style.height = height + 'px';
 				event = seg.event;
 				if (seg.titleTop !== undefined && height - seg.titleTop < 10) {
 					// not enough room for title, put it in the time header
