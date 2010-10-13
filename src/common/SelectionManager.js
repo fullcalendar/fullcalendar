@@ -68,7 +68,7 @@ function SelectionManager() {
 		var cellDate = t.cellDate;
 		var cellIsAllDay = t.cellIsAllDay;
 		var hoverListener = t.getHoverListener();
-		if (opt('selectable')) {
+		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
