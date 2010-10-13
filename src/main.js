@@ -1,5 +1,5 @@
 
-var fc = $.fullCalendar = {};
+var fc = $.fullCalendar = { version: "@VERSION" };
 var fcViews = fc.views = {};
 
 
