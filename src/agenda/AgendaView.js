@@ -133,7 +133,7 @@ function AgendaView(element, calendar, viewName) {
 				"<table style='width:100%'>" +
 				"<tr class='fc-first" + (opt('allDaySlot') ? '' : ' fc-last') + "'>" +
 				"<th class='fc-leftmost " +
-					tm + "-state-default'>&nbsp;</th>";
+					tm + "-state-default'>" + (opt('weekNumbers') ? formatDate(t.visStart, 'w') : '&nbsp;') + "</th>";
 			for (i=0; i<colCnt; i++) {
 				s += "<th class='fc-" +
 					dayIDs[d.getDay()] + ' ' + // needs to be first
@@ -209,6 +209,10 @@ function AgendaView(element, calendar, viewName) {
 		}else{ // skeleton already built, just modify it
 		
 			clearEvents();
+			
+			if (opt('weekNumbers')) {
+				head.find('tr:first th:first').text( formatDate(t.visStart, 'w') );
+			}
 			
 			// redo column header text and class
 			head.find('tr:first th').slice(1, -1).each(function(i, th) {

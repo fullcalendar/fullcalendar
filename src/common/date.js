@@ -362,7 +362,43 @@ var dateFormatters = {
 			return 'th';
 		}
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
-	}
+	},
+	w	: function(d)	{ return d.getWeek(); }
 };
 
+if (Date.prototype.getWeek === undefined) {
+
+	Date.prototype.getWeek = function() {
+		//By tanguy.pruvot at gmail.com (2010)
+
+		//first week of year always contains 4th Jan, or 28 Dec (ISO)
+		var jan4  = new Date(this.getFullYear(),0,4);
+
+		//ISO weeks numbers begins on monday, so rotate monday:sunday to 0:6
+		var jan4Day = (jan4.getDay() - 1 + 7) % 7;
+
+		var week = Math.floor( (((this - jan4) / 86400000) + jan4Day ) / 7 )+1;
+
+		//special cases
+		var thisDay = (this.getDay() - 1 + 7) % 7;
+		if (this.getMonth()==11 && this.getDate() >= 28) {
+			
+			jan4  = new Date(this.getFullYear()+1,0,4);
+			jan4Day = (jan4.getDay() - 1 + 7) % 7;
+			
+			if (thisDay < jan4Day) return 1;
+			
+			var prevWeek = new Date(this.valueOf()-(86400000*7));
+			return prevWeek.getWeek() + 1;
+		}
+		
+		if (week == 0 && thisDay > 3 && this.getMonth()==0) {
+			var prevWeek = new Date(this.valueOf()-(86400000*7));
+			return prevWeek.getWeek() + 1;
+		}
+
+		return week;
+	}
+
+}
 
