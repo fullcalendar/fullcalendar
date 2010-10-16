@@ -218,7 +218,7 @@ table.fc-header {
 	background: #ffc;
 	}
 	
-.fc-content .fc-not-today {
+.fc-content .fc-not-today { /* override jq-ui highlight (TODO: ui-widget-content) */
 	background: none;
 	}
 	
