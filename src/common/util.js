@@ -151,6 +151,9 @@ function setOuterHeight(element, height, includeMargins) {
 }
 
 
+// TODO: curCSS has been deprecated
+
+
 function hsides(_element, includeMargins) {
 	return (parseFloat($.curCSS(_element, 'paddingLeft', true)) || 0) +
 	       (parseFloat($.curCSS(_element, 'paddingRight', true)) || 0) +

@@ -74,6 +74,12 @@
 	padding: 2px 2px 0; /* distance between events and day edges */
 	}
 	
+/* vertical background columns */
+
+.fc .fc-agenda-bg .ui-state-highlight {
+	background-image: none; /* tall column, don't want repeating background image */
+	}
+	
 
 
 /* Vertical Events

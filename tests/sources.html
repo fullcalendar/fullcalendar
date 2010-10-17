@@ -42,6 +42,11 @@
 			allDay: false
 		},
 		{
+			title: 'O event',
+			start: y + '-06-06T10:20:00-02:00',
+			allDay: false
+		},
+		{
 			id: 999,
 			title: 'Repeating Event',
 			start: new Date(y, m, d-3, 16, 0),
@@ -102,6 +107,7 @@
 
 	$(document).ready(function() {
 		cal = $('#calendar').fullCalendar({
+			ignoreTimezone: false,
 			//lazyFetching: false,
 			editable: true,
 			header: {

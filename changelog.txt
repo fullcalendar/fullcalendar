@@ -1,4 +1,17 @@
 
+version 1.4.8 (10/16/10)
+	- ignoreTimezone option (set to `false` to process UTC offsets in ISO8601 dates)
+	- bugfixes
+		- event refetching not being called under certain conditions (issues 417, 554)
+		- event refetching being called multiple times under certain conditions (issues 586, 616)
+		- selection cannot be triggered by right mouse button (issue 558)
+		- agenda view left axis sized incorrectly (issue 465)
+		- IE js error when calendar is too narrow (issue 517)
+		- agenda view looks strange when no scrollbars (issue 235)
+		- improved parsing of ISO8601 dates with UTC offsets
+	- $.fullCalendar.version
+	- an internal refactor of the code, for easier future development and modularity
+
 version 1.4.7 (7/5/10)
 	- "dropping" external objects onto the calendar
 		- droppable (boolean, to turn on/off)
