@@ -138,7 +138,7 @@ function setYMD(date, y, m, d) {
 -----------------------------------------------------------------------------*/
 
 
-function parseDate(s, ignoreTimezone) {
+function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 	if (typeof s == 'object') { // already a Date object
 		return s;
 	}
@@ -159,7 +159,7 @@ function parseDate(s, ignoreTimezone) {
 }
 
 
-function parseISO8601(s, ignoreTimezone) {
+function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	// derived from http://delete.me.uk/2005/03/iso8601.html
 	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
 	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
@@ -167,7 +167,7 @@ function parseISO8601(s, ignoreTimezone) {
 		return null;
 	}
 	var date = new Date(m[1], 0, 1);
-	if (ignoreTimezone) {
+	if (ignoreTimezone || !m[14]) {
 		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
 			date.setMonth(m[3] - 1);
@@ -192,30 +192,19 @@ function parseISO8601(s, ignoreTimezone) {
 		}
 		fixDate(date, check);
 	}else{
-		var offset = 0;
-		date.setUTCFullYear(m[1]);
-		if (m[3]) {
-			date.setUTCMonth(m[3] - 1);
-		}
-		if (m[5]) {
-			date.setUTCDate(m[5]);
-		}
-		if (m[7]) {
-			date.setUTCHours(m[7]);
-		}
-		if (m[8]) {
-			date.setUTCMinutes(m[8]);
-		}
-		if (m[10]) {
-			date.setUTCSeconds(m[10]);
-		}
-		if (m[12]) {
-			date.setUTCMilliseconds(Number("0." + m[12]) * 1000);
-		}
-		if (m[14]) {
-			offset = Number(m[16]) * 60 + Number(m[17]);
-			offset *= m[15] == '-' ? 1 : -1;
-		}
+		date.setUTCFullYear(
+			m[1],
+			m[3] ? m[3] - 1 : 0,
+			m[5] || 1
+		);
+		date.setUTCHours(
+			m[7] || 0,
+			m[8] || 0,
+			m[10] || 0,
+			m[12] ? Number("0." + m[12]) * 1000 : 0
+		);
+		var offset = Number(m[16]) * 60 + Number(m[17]);
+		offset *= m[15] == '-' ? 1 : -1;
 		date = new Date(+date + (offset * 60 * 1000));
 	}
 	return date;
