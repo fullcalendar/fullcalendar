@@ -74,11 +74,15 @@ function EventManager(options, eventSources) {
 	function fetchEventSources(sources, callback) {
 		var savedID = ++fetchID;
 		var queued = sources.length;
-		var view = getView();
-		eventStart = cloneDate(view.visStart); // we don't need to make local copies b/c
-		eventEnd = cloneDate(view.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
+		var origView = getView();
+		eventStart = cloneDate(origView.visStart); // we don't need to make local copies b/c
+		eventEnd = cloneDate(origView.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
 		function sourceDone(source, sourceEvents) {
-			if (savedID == fetchID && eventStart >= view.visStart && eventEnd <= view.visEnd) {
+			var currentView = getView();
+			if (origView != currentView) {
+				origView.eventsDirty = true; // sort of a hack
+			}
+			if (savedID == fetchID && eventStart <= currentView.visStart && eventEnd >= currentView.visEnd) {
 				// same fetchEventSources call, and still in correct date range
 				if ($.inArray(source, eventSources) != -1) { // source hasn't been removed since we started
 					for (var i=0; i<sourceEvents.length; i++) {
