@@ -5,7 +5,6 @@ function AgendaEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
-	t.rerenderEvents = rerenderEvents;
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
 	t.bindDaySeg = bindDaySeg;
@@ -17,7 +16,7 @@ function AgendaEventRenderer() {
 	var trigger = t.trigger;
 	var eventEnd = t.eventEnd;
 	var reportEvents = t.reportEvents;
-	var clearEventData = t.clearEventData;
+	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
 	var setHeight = t.setHeight;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
@@ -50,12 +49,9 @@ function AgendaEventRenderer() {
 	/* Rendering
 	----------------------------------------------------------------------------*/
 	
-	
-	var cachedEvents = [];
-	
 
 	function renderEvents(events, modifiedEventId) {
-		reportEvents(cachedEvents = events);
+		reportEvents(events);
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -74,14 +70,8 @@ function AgendaEventRenderer() {
 	}
 	
 	
-	function rerenderEvents(modifiedEventId) {
-		clearEvents();
-		renderEvents(cachedEvents, modifiedEventId);
-	}
-	
-	
 	function clearEvents() {
-		clearEventData();
+		reportEventClear();
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}

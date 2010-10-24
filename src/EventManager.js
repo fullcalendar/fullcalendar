@@ -1,14 +1,13 @@
 
 var eventGUID = 1;
 
-function EventManager(options, eventSources) {
+function EventManager(options, sources) {
 	var t = this;
 	
 	
 	// exports
-	t.fetchEvents = fetchEvents;
-	t.refetchEvents = refetchEvents;
 	t.isFetchNeeded = isFetchNeeded;
+	t.fetchEvents = fetchEvents;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -19,17 +18,91 @@ function EventManager(options, eventSources) {
 	
 	
 	// imports
-	var getDate = t.getDate;
-	var getView = t.getView;
 	var trigger = t.trigger;
-	var rerenderEvents = t.rerenderEvents;
-
+	var getView = t.getView;
+	var reportEvents = t.reportEvents;
+	
 	
 	// locals
-	var fetchID = 0;
-	var eventStart, eventEnd;
-	var events = [];
+	var rangeStart, rangeEnd;
+	var currentFetchID = 0;
+	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
+	var dynamicEventSource = [];
+	var cache = [];
+	
+	
+	
+	/* Fetching
+	-----------------------------------------------------------------------------*/
+	
+	
+	function isFetchNeeded(start, end) {
+		return !rangeStart || start < rangeStart || end > rangeEnd;
+	}
+	
+	
+	function fetchEvents(start, end) {
+		rangeStart = start;
+		rangeEnd = end;
+		currentFetchID++;
+		cache = [];
+		pendingSourceCnt = sources.length;
+		for (var i=0; i<sources.length; i++) {
+			fetchEventSource(sources[i], currentFetchID);
+		}
+	}
+	
+	
+	function fetchEventSource(source, fetchID) {
+		_fetchEventSource(source, function(events) {
+			if (fetchID == currentFetchID) {
+				for (var i=0; i<events.length; i++) {
+					normalizeEvent(events[i]);
+					events[i].source = source;
+				}
+				cache = cache.concat(events);
+				pendingSourceCnt--;
+				if (!pendingSourceCnt) {
+					reportEvents(cache);
+				}
+			}
+		});
+	}
+	
+	
+	function _fetchEventSource(source, callback) {
+		if (typeof source == 'string') {
+			var params = {};
+			params[options.startParam] = Math.round(rangeStart.getTime() / 1000);
+			params[options.endParam] = Math.round(rangeEnd.getTime() / 1000);
+			if (options.cacheParam) {
+				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
+			}
+			pushLoading();
+			// TODO: respect cache param in ajaxSetup
+			$.ajax({
+				url: source,
+				dataType: 'json',
+				data: params,
+				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
+				success: function(events) {
+					popLoading();
+					callback(events);
+				}
+			});
+		}
+		else if ($.isFunction(source)) {
+			pushLoading();
+			source(cloneDate(rangeStart), cloneDate(rangeEnd), function(events) {
+				popLoading();
+				callback(events);
+			});
+		}
+		else {
+			callback(source); // src is an array
+		}
+	}
 	
 	
 	
@@ -37,121 +110,25 @@ function EventManager(options, eventSources) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	eventSources.unshift([]); // first event source reserved for 'sticky' events
+	sources.push(dynamicEventSource);
 	
 
 	function addEventSource(source) {
-		eventSources.push(source);
-		fetchEventSource(source, rerenderEvents);
+		sources.push(source);
+		pendingSourceCnt++;
+		fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 	}
 	
 
 	function removeEventSource(source) {
-		eventSources = $.grep(eventSources, function(src) {
+		sources = $.grep(sources, function(src) {
 			return src != source;
 		});
 		// remove all client events from that source
-		events = $.grep(events, function(e) {
+		cache = $.grep(cache, function(e) {
 			return e.source != source;
 		});
-		rerenderEvents();
-	}
-
-
-
-	/* Fetching
-	-----------------------------------------------------------------------------*/
-	
-	
-	// Fetch from ALL sources. Clear 'events' array and populate
-	function fetchEvents(callback) {
-		events = [];
-		fetchEventSources(eventSources, callback);
-	}
-	
-	
-	// appends to the events array
-	function fetchEventSources(sources, callback) {
-		var savedID = ++fetchID;
-		var queued = sources.length;
-		var origView = getView();
-		eventStart = cloneDate(origView.visStart); // we don't need to make local copies b/c
-		eventEnd = cloneDate(origView.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
-		function sourceDone(source, sourceEvents) {
-			var currentView = getView();
-			if (origView != currentView) {
-				origView.eventsDirty = true; // sort of a hack
-			}
-			if (savedID == fetchID && eventStart <= currentView.visStart && eventEnd >= currentView.visEnd) {
-				// same fetchEventSources call, and still in correct date range
-				if ($.inArray(source, eventSources) != -1) { // source hasn't been removed since we started
-					for (var i=0; i<sourceEvents.length; i++) {
-						normalizeEvent(sourceEvents[i]);
-						sourceEvents[i].source = source;
-					}
-					events = events.concat(sourceEvents);
-				}
-				if (!--queued) {
-					if (callback) {
-						callback(events);
-					}
-				}
-			}
-		}
-		for (var i=0; i<sources.length; i++) {
-			_fetchEventSource(sources[i], sourceDone);
-		}
-	}
-	
-	
-	function _fetchEventSource(src, callback) {
-		function reportEvents(a) {
-			callback(src, a);
-		}
-		function reportEventsAndPop(a) {
-			reportEvents(a);
-			popLoading();
-		}
-		if (typeof src == 'string') {
-			var params = {};
-			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
-			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
-			if (options.cacheParam) {
-				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
-			}
-			pushLoading();
-			// TODO: respect cache param in ajaxSetup
-			$.ajax({
-				url: src,
-				dataType: 'json',
-				data: params,
-				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
-				success: reportEventsAndPop
-			});
-		}
-		else if ($.isFunction(src)) {
-			pushLoading();
-			src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
-		}
-		else {
-			reportEvents(src); // src is an array
-		}
-	}
-	
-	
-	function fetchEventSource(src, callback) {
-		fetchEventSources([src], callback);
-	}
-	
-	
-	function refetchEvents() {
-		fetchEvents(rerenderEvents);
-	}
-	
-	
-	function isFetchNeeded() {
-		var view = getView();
-		return !eventStart || view.visStart < eventStart || view.visEnd > eventEnd;
+		reportEvents(cache);
 	}
 	
 	
@@ -161,14 +138,14 @@ function EventManager(options, eventSources) {
 	
 	
 	function updateEvent(event) { // update an existing event
-		var i, len = events.length, e,
-			defaultEventEnd = getView().defaultEventEnd,
+		var i, len = cache.length, e,
+			defaultEventEnd = getView().defaultEventEnd, // getView???
 			startDelta = event.start - event._start,
 			endDelta = event.end ?
 				(event.end - (event._end || defaultEventEnd(event))) // event._end would be null if event.end
 				: 0;                                                      // was null and event was just resized
 		for (i=0; i<len; i++) {
-			e = events[i];
+			e = cache[i];
 			if (e._id == event._id && e != event) {
 				e.start = new Date(+e.start + startDelta);
 				if (event.end) {
@@ -189,29 +166,30 @@ function EventManager(options, eventSources) {
 			}
 		}
 		normalizeEvent(event);
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
-	function renderEvent(event, stick) { // render a new event
+	function renderEvent(event, stick) {
 		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
-				(event.source = eventSources[0]).push(event);
+				dynamicEventSource.push(event);
+				event.source = dynamicEventSource;
 			}
-			events.push(event);
+			cache.push(event);
 		}
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
 	function removeEvents(filter) {
 		if (!filter) { // remove all
-			events = [];
+			cache = [];
 			// clear all array sources
-			for (var i=0; i<eventSources.length; i++) {
-				if (typeof eventSources[i] == 'object') {
-					eventSources[i] = [];
+			for (var i=0; i<sources.length; i++) {
+				if (typeof sources[i] == 'object') {
+					sources[i] = [];
 				}
 			}
 		}else{
@@ -221,29 +199,29 @@ function EventManager(options, eventSources) {
 					return e._id == id;
 				};
 			}
-			events = $.grep(events, filter, true);
+			cache = $.grep(cache, filter, true);
 			// remove events from array sources
-			for (var i=0; i<eventSources.length; i++) {
-				if (typeof eventSources[i] == 'object') {
-					eventSources[i] = $.grep(eventSources[i], filter, true);
+			for (var i=0; i<sources.length; i++) {
+				if (typeof sources[i] == 'object') {
+					sources[i] = $.grep(sources[i], filter, true);
 				}
 			}
 		}
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
-			return $.grep(events, filter);
+			return $.grep(cache, filter);
 		}
 		else if (filter) { // an event ID
 			filter += '';
-			return $.grep(events, function(e) {
+			return $.grep(cache, function(e) {
 				return e._id == filter;
 			});
 		}
-		return events; // else, return all
+		return cache; // else, return all
 	}
 	
 	

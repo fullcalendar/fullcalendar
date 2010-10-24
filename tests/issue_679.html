@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript' src='../src/gcal/_loader.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
+			editable: true
+		});
+		
+	});
+	
+	
+	function doit() {
+		var calendar = $('#calendar');
+		var holidays = $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic');
+		var moon = $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/ht3jlfaac5lfd6263ulfh4tql8%40group.calendar.google.com/public/basic');
+		var australia = $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/en.australian%23holiday%40group.v.calendar.google.com/public/basic');
+		calendar.fullCalendar('addEventSource', holidays);
+		calendar.fullCalendar('addEventSource', moon);
+		calendar.fullCalendar('addEventSource', australia);
+	}
+	
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<button onclick='doit()'>do it</button>
+<div id='calendar'></div>
+</body>
+</html>

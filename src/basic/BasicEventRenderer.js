@@ -5,7 +5,6 @@ function BasicEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
-	t.rerenderEvents = rerenderEvents;
 	t.clearEvents = clearEvents;
 	t.bindDaySeg = bindDaySeg;
 	
@@ -15,7 +14,7 @@ function BasicEventRenderer() {
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var reportEvents = t.reportEvents;
-	var clearEventData = t.clearEventData;
+	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
 	var showEvents = t.showEvents;
 	var hideEvents = t.hideEvents;
@@ -30,29 +29,19 @@ function BasicEventRenderer() {
 	var resizableDayEvent = t.resizableDayEvent;
 	
 	
-	// locals
-	var cachedEvents=[];
-	
-	
 	
 	/* Rendering
 	--------------------------------------------------------------------*/
 	
 	
-	function renderEvents(events) {
-		reportEvents(cachedEvents = events);
-		renderDaySegs(compileSegs(events));
-	}
-	
-	
-	function rerenderEvents(modifiedEventId) {
-		clearEvents();
-		renderDaySegs(compileSegs(cachedEvents), modifiedEventId);
+	function renderEvents(events, modifiedEventId) {
+		reportEvents(events);
+		renderDaySegs(compileSegs(events), modifiedEventId);
 	}
 	
 	
 	function clearEvents() {
-		clearEventData();
+		reportEventClear();
 		getDaySegmentContainer().empty();
 	}
 	

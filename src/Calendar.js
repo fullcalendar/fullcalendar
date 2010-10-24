@@ -8,10 +8,12 @@ function Calendar(element, options, eventSources) {
 	t.options = options;
 	t.render = render;
 	t.destroy = destroy;
+	t.refetchEvents = refetchEvents;
+	t.reportEvents = reportEvents;
+	t.reportEventChange = reportEventChange;
 	t.changeView = changeView;
 	t.select = select;
 	t.unselect = unselect;
-	t.rerenderEvents = rerenderEvents; // todo: seems liks an EventManager thing
 	t.prev = prev;
 	t.next = next;
 	t.prevYear = prevYear;
@@ -29,9 +31,8 @@ function Calendar(element, options, eventSources) {
 	
 	// imports
 	EventManager.call(t, options, eventSources);
-	var fetchEvents = t.fetchEvents;
 	var isFetchNeeded = t.isFetchNeeded;
-	var clientEvents = t.clientEvents;
+	var fetchEvents = t.fetchEvents;
 	
 	
 	// locals
@@ -48,6 +49,7 @@ function Calendar(element, options, eventSources) {
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
 	var date = new Date();
+	var events = [];
 	
 	
 	
@@ -63,8 +65,8 @@ function Calendar(element, options, eventSources) {
 			initialRender();
 		}else{
 			calcSize();
-			sizesDirty();
-			eventsDirty();
+			markSizesDirty();
+			markEventsDirty();
 			renderView(inc);
 		}
 	}
@@ -140,10 +142,6 @@ function Calendar(element, options, eventSources) {
 			var newViewElement;
 				
 			if (oldView) {
-				if (oldView.eventsChanged) {
-					eventsDirty();
-					oldView.eventDirty = oldView.eventsChanged = false;
-				}
 				(oldView.beforeHide || noop)(); // called before changing min-height. if called after, scroll state is reset (in Opera)
 				setMinHeight(content, content.height());
 				oldView.element.hide();
@@ -196,29 +194,28 @@ function Calendar(element, options, eventSources) {
 				calcSize();
 			}
 			
+			var forceEventRender = false;
 			if (!currentView.start || inc || date < currentView.start || date >= currentView.end) {
+				// view must render an entire new date range (and refetch/render events)
 				currentView.render(date, inc || 0); // responsible for clearing events
 				setSize(true);
-				if (!options.lazyFetching || isFetchNeeded()) {
-					fetchAndRenderEvents();
-				}else{
-					currentView.renderEvents(clientEvents()); // don't refetch
-				}
+				forceEventRender = true;
 			}
-			else if (currentView.sizeDirty || currentView.eventsDirty || !options.lazyFetching) {
+			else if (currentView.sizeDirty) {
+				// view must resize (and rerender events)
 				currentView.clearEvents();
-				if (currentView.sizeDirty) {
-					setSize();
-				}
-				if (!options.lazyFetching || isFetchNeeded()) {
-					fetchAndRenderEvents();
-				}else{
-					currentView.renderEvents(clientEvents()); // don't refetch
-				}
+				setSize();
+				forceEventRender = true;
 			}
-			elementOuterWidth = element.outerWidth();
+			else if (currentView.eventsDirty) {
+				currentView.clearEvents();
+				forceEventRender = true;
+			}
 			currentView.sizeDirty = false;
 			currentView.eventsDirty = false;
+			updateEvents(forceEventRender);
+			
+			elementOuterWidth = element.outerWidth();
 			
 			header.updateTitle(currentView.title);
 			var today = new Date();
@@ -237,6 +234,25 @@ function Calendar(element, options, eventSources) {
 	
 	/* Resizing
 	-----------------------------------------------------------------------------*/
+	
+	
+	function updateSize() {
+		markSizesDirty();
+		if (elementVisible()) {
+			calcSize();
+			setSize();
+			unselect();
+			currentView.renderEvents(events);
+			currentView.sizeDirty = false;
+		}
+	}
+	
+	
+	function markSizesDirty() {
+		$.each(viewInstances, function(i, inst) {
+			inst.sizeDirty = true;
+		});
+	}
 	
 	
 	function calcSize() {
@@ -272,7 +288,7 @@ function Calendar(element, options, eventSources) {
 					if (uid == resizeUID && !ignoreWindowResize && elementVisible()) {
 						if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
 							ignoreWindowResize++; // in case the windowResize callback changes the height
-							sizeChanged();
+							updateSize();
 							currentView.trigger('windowResize', _element);
 							ignoreWindowResize--;
 						}
@@ -286,55 +302,54 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	// called when we know the element size has changed
-	function sizeChanged() {
-		sizesDirty();
-		if (elementVisible()) {
-			calcSize();
-			setSize();
-			unselect();
-			currentView.rerenderEvents();
-			currentView.sizeDirty = false;
+	
+	/* Event Fetching/Rendering
+	-----------------------------------------------------------------------------*/
+	
+	
+	// fetches events if necessary, rerenders events if necessary (or if forced)
+	function updateEvents(forceRender) {
+		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
+			refetchEvents();
+		}
+		else if (forceRender) {
+			rerenderEvents();
 		}
 	}
 	
 	
-	// marks other views' sizes as dirty
-	function sizesDirty() {
-		$.each(viewInstances, function(i, inst) {
-			inst.sizeDirty = true;
-		});
+	function refetchEvents() {
+		fetchEvents(currentView.visStart, currentView.visEnd); // will call reportEvents
 	}
 	
 	
+	// called when event data arrives
+	function reportEvents(_events) {
+		events = _events;
+		rerenderEvents();
+	}
 	
-	/* Event Rendering
-	-----------------------------------------------------------------------------*/
+	
+	// called when a single event's data has been changed
+	function reportEventChange(eventID) {
+		rerenderEvents(eventID);
+	}
 	
 	
-	// called when any event objects have been added/removed/changed, rerenders
-	function rerenderEvents() {
-		eventsDirty();
+	// attempts to rerenderEvents
+	function rerenderEvents(modifiedEventID) {
+		markEventsDirty();
 		if (elementVisible()) {
 			currentView.clearEvents();
-			currentView.renderEvents(clientEvents());
+			currentView.renderEvents(events, modifiedEventID);
 			currentView.eventsDirty = false;
 		}
 	}
 	
 	
-	// marks every views' events as dirty
-	function eventsDirty() {
+	function markEventsDirty() {
 		$.each(viewInstances, function(i, inst) {
 			inst.eventsDirty = true;
-		});
-	}
-	
-	
-	// for convenience
-	function fetchAndRenderEvents() {
-		fetchEvents(function(events) {
-			currentView.renderEvents(events); // maintain `this` in view
 		});
 	}
 	
@@ -434,7 +449,7 @@ function Calendar(element, options, eventSources) {
 		}
 		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
 			options[name] = value;
-			sizeChanged();
+			updateSize();
 		}
 	}
 	

@@ -11,9 +11,9 @@ function View(element, calendar, viewName) {
 	t.opt = opt;
 	t.trigger = trigger;
 	t.reportEvents = reportEvents;
-	t.clearEventData = clearEventData;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
+	t.reportEventClear = reportEventClear;
 	t.eventElementHandlers = eventElementHandlers;
 	t.showEvents = showEvents;
 	t.hideEvents = hideEvents;
@@ -22,13 +22,12 @@ function View(element, calendar, viewName) {
 	// t.title
 	// t.start, t.end
 	// t.visStart, t.visEnd
-	// t.eventsChanged // todo: maybe report to calendar instead
 	
 	
 	// imports
 	var defaultEventEnd = t.defaultEventEnd;
 	var normalizeEvent = calendar.normalizeEvent; // in EventManager
-	var rerenderEvents = calendar.rerenderEvents;
+	var reportEventChange = calendar.reportEventChange;
 	
 	
 	// locals
@@ -76,12 +75,6 @@ function View(element, calendar, viewName) {
 	}
 	
 	
-	function clearEventData() { // todo: rename to clearReportedEvents or something
-		eventElements = [];
-		eventElementsByID = {};
-	}
-	
-	
 	// returns a Date object for an event's end
 	function eventEnd(event) {
 		return event.end ? cloneDate(event.end) : defaultEventEnd(event);
@@ -101,6 +94,12 @@ function View(element, calendar, viewName) {
 		}else{
 			eventElementsByID[event._id] = [element];
 		}
+	}
+	
+	
+	function reportEventClear() {
+		eventElements = [];
+		eventElementsByID = {};
 	}
 	
 	
@@ -156,26 +155,43 @@ function View(element, calendar, viewName) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
 		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
-		trigger('eventDrop', e, event, dayDelta, minuteDelta, allDay, function() {
-			// TODO: investigate cases where this inverse technique might not work
-			moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
-			rerenderEvents();
-		}, ev, ui);
-		t.eventsChanged = true;
-		rerenderEvents(eventId);
+		trigger(
+			'eventDrop',
+			e,
+			event,
+			dayDelta,
+			minuteDelta,
+			allDay,
+			function() {
+				// TODO: investigate cases where this inverse technique might not work
+				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+				reportEventChange(eventId);
+			},
+			ev,
+			ui
+		);
+		reportEventChange(eventId);
 	}
 	
 	
 	function eventResize(e, event, dayDelta, minuteDelta, ev, ui) {
 		var eventId = event._id;
 		elongateEvents(eventsByID[eventId], dayDelta, minuteDelta);
-		trigger('eventResize', e, event, dayDelta, minuteDelta, function() {
-			// TODO: investigate cases where this inverse technique might not work
-			elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
-			rerenderEvents();
-		}, ev, ui);
-		t.eventsChanged = true;
-		rerenderEvents(eventId);
+		trigger(
+			'eventResize',
+			e,
+			event,
+			dayDelta,
+			minuteDelta,
+			function() {
+				// TODO: investigate cases where this inverse technique might not work
+				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
+				reportEventChange(eventId);
+			},
+			ev,
+			ui
+		);
+		reportEventChange(eventId);
 	}
 	
 	
