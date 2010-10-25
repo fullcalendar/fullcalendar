@@ -58,3 +58,8 @@
 	float: right;
 	}
 	
+/* week numbers */
+	
+.fc .fc-grid th.fc-weeknumber {
+	border-top-width: 1px;
+}

@@ -50,7 +50,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	// locals
-	var rtl, dis, dit;
+	var rtl, dis, dit, wkn;
 	var firstDay;
 	var nwe;
 	var rowCnt, colCnt;
@@ -75,13 +75,16 @@ function BasicView(element, calendar, viewName) {
 	
 		rowCnt = r;
 		colCnt = c;
+		wkn = 0 + opt('weekNumbers');
 		rtl = opt('isRTL');
 		if (rtl) {
 			dis = -1;
 			dit = colCnt - 1;
+			if (wkn) dit++;
 		}else{
 			dis = 1;
 			dit = 0;
+			if (wkn) dit--;
 		}
 		firstDay = opt('firstDay');
 		nwe = opt('weekends') ? 0 : 1;
@@ -97,6 +100,9 @@ function BasicView(element, calendar, viewName) {
 			var table = $("<table/>").appendTo(element);
 			
 			s = "<thead><tr>";
+			if (wkn) {
+				s += "<th width='25px' class='fc-axis fc-leftmost " + tm + "-state-default'>&nbsp;</th>";
+			}
 			for (i=0; i<colCnt; i++) {
 				s += "<th class='fc-" +
 					dayIDs[d.getDay()] + ' ' + // needs to be first
@@ -114,10 +120,13 @@ function BasicView(element, calendar, viewName) {
 			d = cloneDate(t.visStart);
 			for (i=0; i<rowCnt; i++) {
 				s += "<tr class='fc-week" + i + "'>";
+				if (wkn) {
+					s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+d.getWeek()+"</th>";
+				}
 				for (j=0; j<colCnt; j++) {
 					s += "<td class='fc-" +
 						dayIDs[d.getDay()] + ' ' + // needs to be first
-						tm + '-state-default fc-day' + (i*colCnt+j) +
+						tm + '-state-default fc-new fc-day' + (i*colCnt+j) +
 						(j==dit ? ' fc-leftmost' : '') +
 						(rowCnt>1 && d.getMonth() != month ? ' fc-other-month' : '') +
 						(+d == +today ?
@@ -133,7 +142,7 @@ function BasicView(element, calendar, viewName) {
 				s += "</tr>";
 			}
 			tbody = $(s + "</tbody>").appendTo(table);
-			dayBind(tbody.find('td'));
+			dayBind(tbody.find('td.fc-new').removeClass('fc-new'));
 			
 			daySegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 		
@@ -149,6 +158,9 @@ function BasicView(element, calendar, viewName) {
 				s = '';
 				for (i=prevRowCnt; i<rowCnt; i++) {
 					s += "<tr class='fc-week" + i + "'>";
+					if (wkn) {
+						s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+d.getWeek()+"</th>";
+					}
 					for (j=0; j<colCnt; j++) {
 						s += "<td class='fc-" +
 							dayIDs[d.getDay()] + ' ' + // needs to be first
@@ -172,6 +184,8 @@ function BasicView(element, calendar, viewName) {
 			d = cloneDate(t.visStart);
 			tbody.find('td').each(function() {
 				var td = $(this);
+				if (wkn && d.getDay() == 3)
+					td.closest('tr').find('th').text(d.getWeek());
 				if (rowCnt > 1) {
 					if (d.getMonth() == month) {
 						td.removeClass('fc-other-month');
@@ -230,6 +244,8 @@ function BasicView(element, calendar, viewName) {
 		var leftTDs = tbody.find('tr td:first-child'),
 			tbodyHeight = viewHeight - thead.height(),
 			rowHeight1, rowHeight2;
+		if (wkn)
+			leftTDs = tbody.find('tr th:first-child');
 		if (opt('weekMode') == 'variable') {
 			rowHeight1 = rowHeight2 = Math.floor(tbodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
@@ -256,10 +272,9 @@ function BasicView(element, calendar, viewName) {
 	function setWidth(width) {
 		viewWidth = width;
 		colContentPositions.clear();
-		colWidth = Math.floor(viewWidth / colCnt);
-		setOuterWidth(thead.find('th').slice(0, -1), colWidth);
+		colWidth = Math.floor((viewWidth-25) / colCnt);
+		setOuterWidth(thead.find('th').slice(wkn, -1), colWidth);
 	}
-	
 	
 	
 	/* Day clicking and binding
@@ -432,7 +447,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function cellDate(cell) {
-		return addDays(cloneDate(t.visStart), cell.row*7 + cell.col*dis+dit);
+		return addDays(cloneDate(t.visStart), cell.row*7 + cell.col*dis+dit+wkn);
 		// TODO: what about weekends in middle of week?
 	}
 	
