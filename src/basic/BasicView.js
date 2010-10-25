@@ -272,8 +272,13 @@ function BasicView(element, calendar, viewName) {
 	function setWidth(width) {
 		viewWidth = width;
 		colContentPositions.clear();
-		colWidth = Math.floor((viewWidth-25) / colCnt);
-		setOuterWidth(thead.find('th').slice(wkn, -1), colWidth);
+		if (wkn) {
+			colWidth = Math.floor((viewWidth-25) / colCnt);
+			setOuterWidth(thead.find('th').slice(1, -1), colWidth);
+		} else {
+			colWidth = Math.floor(viewWidth / colCnt);
+			setOuterWidth(thead.find('th').slice(0, -1), colWidth);
+		}
 	}
 	
 	
