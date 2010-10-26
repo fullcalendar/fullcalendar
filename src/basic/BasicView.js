@@ -217,7 +217,7 @@ function BasicView(element, calendar, viewName) {
 			
 				// redo column header text and class
 				d = cloneDate(t.visStart);
-				thead.find('th').each(function(i, th) {
+				thead.find('th').not('.fc-axis').each(function(i, th) {
 					$(th).text(formatDate(d, colFormat));
 					th.className = th.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
 					addDays(d, 1);
