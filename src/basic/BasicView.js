@@ -123,7 +123,7 @@ function BasicView(element, calendar, viewName) {
 				if (wkn) {
 					var monday = cloneDate(d); //skip first day (could be sunday)
 					addDays(monday, 1);
-					s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
+					s += "<th class='fc-axis " + tm + "-state-default fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
 				}
 				for (j=0; j<colCnt; j++) {
 					s += "<td class='fc-" +
@@ -163,7 +163,7 @@ function BasicView(element, calendar, viewName) {
 					if (wkn) {
 						var monday = cloneDate(d); //skip first day (could be sunday)
 						addDays(monday, 1);
-						s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
+						s += "<th class='fc-axis " + tm + "-state-default fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
 					}
 					for (j=0; j<colCnt; j++) {
 						s += "<td class='fc-" +
