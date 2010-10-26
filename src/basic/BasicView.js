@@ -121,7 +121,9 @@ function BasicView(element, calendar, viewName) {
 			for (i=0; i<rowCnt; i++) {
 				s += "<tr class='fc-week" + i + "'>";
 				if (wkn) {
-					s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+d.getWeek()+"</th>";
+					var monday = cloneDate(d); //skip first day (could be sunday)
+					addDays(monday, 1);
+					s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
 				}
 				for (j=0; j<colCnt; j++) {
 					s += "<td class='fc-" +
@@ -159,7 +161,9 @@ function BasicView(element, calendar, viewName) {
 				for (i=prevRowCnt; i<rowCnt; i++) {
 					s += "<tr class='fc-week" + i + "'>";
 					if (wkn) {
-						s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+d.getWeek()+"</th>";
+						var monday = cloneDate(d); //skip first day (could be sunday)
+						addDays(monday, 1);
+						s += "<th class='fc-axis " + tm + "-state-default " + tm + "-border-top fc-leftmost fc-weeknumber'>"+monday.getWeek()+"</th>";
 					}
 					for (j=0; j<colCnt; j++) {
 						s += "<td class='fc-" +
@@ -184,7 +188,7 @@ function BasicView(element, calendar, viewName) {
 			d = cloneDate(t.visStart);
 			tbody.find('td').each(function() {
 				var td = $(this);
-				if (wkn && d.getDay() == 3)
+				if (wkn && d.getDay() == 1)
 					td.closest('tr').find('th').text(d.getWeek());
 				if (rowCnt > 1) {
 					if (d.getMonth() == month) {
