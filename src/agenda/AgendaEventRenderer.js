@@ -335,6 +335,7 @@ function AgendaEventRenderer() {
 				zIndex: 9,
 				opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
 				revertDuration: opt('dragRevertDuration'),
+				axis: opt('dragAxis'),
 				start: function(ev, ui) {
 					trigger('eventDragStart', eventElement, event, ev, ui);
 					hideEvents(event, eventElement);

@@ -97,6 +97,7 @@ function BasicEventRenderer() {
 			eventElement.draggable({
 				zIndex: 9,
 				delay: 50,
+				axis: opt('dragAxis'),
 				opacity: opt('dragOpacity'),
 				revertDuration: opt('dragRevertDuration'),
 				start: function(ev, ui) {
