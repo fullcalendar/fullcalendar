@@ -67,8 +67,10 @@ var defaults = {
 	//selectable: false,
 	unselectAuto: true,
 	
-	dropAccept: '*'
+	dropAccept: '*',
 	
+	// dragging
+	dragAxis: false
 };
 
 // right-to-left defaults
