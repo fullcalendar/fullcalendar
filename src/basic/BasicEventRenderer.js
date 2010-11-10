@@ -5,6 +5,7 @@ function BasicEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
+	t.compileDaySegs = compileSegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.bindDaySeg = bindDaySeg;
 	
@@ -79,7 +80,7 @@ function BasicEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement);
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}

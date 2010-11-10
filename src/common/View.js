@@ -139,7 +139,7 @@ function View(element, calendar, viewName) {
 		var elements = eventElementsByID[event._id],
 			i, len = elements.length;
 		for (i=0; i<len; i++) {
-			if (elements[i][0] != exceptElement[0]) {
+			if (!exceptElement || elements[i][0] != exceptElement[0]) {
 				elements[i][funcName]();
 			}
 		}

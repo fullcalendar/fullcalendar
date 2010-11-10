@@ -61,7 +61,7 @@
 	
 /* resizable */
 	
-.fc .ui-resizable-handle {
+.fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anoymore, change class ***/
 	display: block;
 	position: absolute;
 	z-index: 99999;

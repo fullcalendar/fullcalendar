@@ -5,6 +5,7 @@ function AgendaEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
+	t.compileDaySegs = compileDaySegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
 	t.bindDaySeg = bindDaySeg;
@@ -296,7 +297,7 @@ function AgendaEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement, seg.isStart);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement, getColWidth());
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}

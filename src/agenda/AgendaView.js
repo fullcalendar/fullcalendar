@@ -30,6 +30,7 @@ function AgendaView(element, calendar, viewName) {
 	t.defaultEventEnd = defaultEventEnd;
 	t.timePosition = timePosition;
 	t.dayOfWeekCol = dayOfWeekCol;
+	t.dateCell = dateCell;
 	t.cellDate = cellDate;
 	t.cellIsAllDay = cellIsAllDay;
 	t.allDayTR = allDayTR;
@@ -493,7 +494,15 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt)*dis+dit;
+		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt)*dis+dit;
+	}
+	
+	
+	function dateCell(date) {
+		return {
+			row: Math.floor(dayDiff(date, t.visStart) / 7),
+			col: dayOfWeekCol(date.getDay())
+		};
 	}
 	
 	
