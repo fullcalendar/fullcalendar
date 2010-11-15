@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			},
+			editable: true,
+			isRTL: false,
+			year: 2010,
+			month: 10,
+			date: 14,
+			events: [
+				{
+					title: 'event1',
+					start: '2010-11-15',
+					end: '2010-11-19'
+				},
+				{
+					title: 'event2 with a really long title that wraps',
+					start: '2010-11-15'
+				},
+				{
+					title: 'event3',
+					start: '2010-11-17'
+				},
+				{
+					title: 'event4',
+					start: '2010-11-18',
+					end: '2010-11-19'
+				},
+				{
+					title: 'event5',
+					start: '2010-11-18'
+				}
+			]
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

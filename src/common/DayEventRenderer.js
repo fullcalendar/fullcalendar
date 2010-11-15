@@ -42,14 +42,17 @@ function DayEventRenderer() {
 	function renderDaySegs(segs, modifiedEventId) {
 		var segmentContainer = getDaySegmentContainer();
 		var rowDivs;
-		var rowCnt;
-		var i;
+		var rowCnt = getRowCnt();
+		var colCnt = getColCnt();
+		var i = 0;
 		var rowI;
-		var top;
 		var levelI;
-		var levelHeight;
+		var colHeights;
+		var j;
 		var segCnt = segs.length;
 		var seg;
+		var top;
+		var k;
 		segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
 		daySegElementResolve(segs, segmentContainer.children());
 		daySegElementReport(segs);
@@ -58,21 +61,24 @@ function DayEventRenderer() {
 		daySegSetWidths(segs);
 		daySegCalcHeights(segs);
 		rowDivs = getRowDivs();
-		rowCnt = rowDivs.length;
 		// set row heights, calculate event tops (in relation to row top)
-		for (i=0, rowI=0; rowI<rowCnt; rowI++) {
-			top = levelI = levelHeight = 0;
+		for (rowI=0; rowI<rowCnt; rowI++) {
+			levelI = 0;
+			colHeights = [];
+			for (j=0; j<colCnt; j++) {
+				colHeights[j] = 0;
+			}
 			while (i<segCnt && (seg = segs[i]).row == rowI) {
-				if (seg.level != levelI) {
-					top += levelHeight;
-					levelHeight = 0;
-					levelI++;
-				}
-				levelHeight = Math.max(levelHeight, seg.outerHeight||0);
+				// loop through segs in a row
+				top = arrayMax(colHeights.slice(seg.startCol, seg.endCol));
 				seg.top = top;
+				top += seg.outerHeight;
+				for (k=seg.startCol; k<seg.endCol; k++) {
+					colHeights[k] = top;
+				}
 				i++;
 			}
-			rowDivs[rowI].height(top + levelHeight);
+			rowDivs[rowI].height(arrayMax(colHeights));
 		}
 		daySegSetTops(segs, getRowTops(rowDivs));
 	}
@@ -117,6 +123,7 @@ function DayEventRenderer() {
 		var bounds = allDayBounds();
 		var minLeft = bounds.left;
 		var maxLeft = bounds.right;
+		var cols = []; // don't really like this system (but have to do this b/c RTL works differently in basic vs agenda)
 		var left;
 		var right;
 		var html = '';
@@ -132,8 +139,10 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					className += 'fc-corner-left ';
 				}
-				left = seg.isEnd ? colContentLeft(dayOfWeekCol(seg.end.getDay()-1)) : minLeft;
-				right = seg.isStart ? colContentRight(dayOfWeekCol(seg.start.getDay())) : maxLeft;
+				cols[0] = dayOfWeekCol(seg.end.getDay()-1);
+				cols[1] = dayOfWeekCol(seg.start.getDay());
+				left = seg.isEnd ? colContentLeft(cols[0]) : minLeft;
+				right = seg.isStart ? colContentRight(cols[1]) : maxLeft;
 			}else{
 				if (seg.isStart) {
 					className += 'fc-corner-left ';
@@ -141,8 +150,10 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					className += 'fc-corner-right ';
 				}
-				left = seg.isStart ? colContentLeft(dayOfWeekCol(seg.start.getDay())) : minLeft;
-				right = seg.isEnd ? colContentRight(dayOfWeekCol(seg.end.getDay()-1)) : maxLeft;
+				cols[0] = dayOfWeekCol(seg.start.getDay());
+				cols[1] = dayOfWeekCol(seg.end.getDay()-1);
+				left = seg.isStart ? colContentLeft(cols[0]) : minLeft;
+				right = seg.isEnd ? colContentRight(cols[1]) : maxLeft;
 			}
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
@@ -160,6 +171,9 @@ function DayEventRenderer() {
 				"</div>";
 			seg.left = left;
 			seg.outerWidth = right - left;
+			cols.sort(cmp);
+			seg.startCol = cols[0];
+			seg.endCol = cols[1] + 1;
 		}
 		return html;
 	}

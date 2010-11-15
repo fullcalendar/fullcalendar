@@ -232,6 +232,11 @@ function cmp(a, b) {
 }
 
 
+function arrayMax(a) {
+	return Math.max.apply(Math, a);
+}
+
+
 function zeroPad(n) {
 	return (n < 10 ? '0' : '') + n;
 }
