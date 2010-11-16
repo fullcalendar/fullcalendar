@@ -1,6 +1,6 @@
 /**
  * @preserve
- * FullCalendar v1.4.8
+ * FullCalendar v1.4.9
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Sat Oct 16 17:10:03 2010 -0700
+ * Date: Fri Nov 19 22:45:44 2010 -0800
  *
  */
  
@@ -111,7 +111,7 @@ var rtlDefaults = {
 
 
 
-var fc = $.fullCalendar = { version: "1.4.8" };
+var fc = $.fullCalendar = { version: "1.4.9" };
 var fcViews = fc.views = {};
 
 
@@ -141,7 +141,7 @@ $.fn.fullCalendar = function(options) {
 	}
 	
 	
-	// would like to have this logic in EventManager, but needs to happen before options are extended
+	// would like to have this logic in EventManager, but needs to happen before options are recursively extended
 	var eventSources = options.eventSources || [];
 	delete options.eventSources;
 	if (options.events) {
@@ -186,10 +186,12 @@ function Calendar(element, options, eventSources) {
 	t.options = options;
 	t.render = render;
 	t.destroy = destroy;
+	t.refetchEvents = refetchEvents;
+	t.reportEvents = reportEvents;
+	t.reportEventChange = reportEventChange;
 	t.changeView = changeView;
 	t.select = select;
 	t.unselect = unselect;
-	t.rerenderEvents = rerenderEvents; // todo: seems liks an EventManager thing
 	t.prev = prev;
 	t.next = next;
 	t.prevYear = prevYear;
@@ -207,9 +209,8 @@ function Calendar(element, options, eventSources) {
 	
 	// imports
 	EventManager.call(t, options, eventSources);
-	var fetchEvents = t.fetchEvents;
 	var isFetchNeeded = t.isFetchNeeded;
-	var clientEvents = t.clientEvents;
+	var fetchEvents = t.fetchEvents;
 	
 	
 	// locals
@@ -226,6 +227,8 @@ function Calendar(element, options, eventSources) {
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
 	var date = new Date();
+	var events = [];
+	var _dragElement;
 	
 	
 	
@@ -241,8 +244,8 @@ function Calendar(element, options, eventSources) {
 			initialRender();
 		}else{
 			calcSize();
-			sizesDirty();
-			eventsDirty();
+			markSizesDirty();
+			markEventsDirty();
 			renderView(inc);
 		}
 	}
@@ -318,10 +321,6 @@ function Calendar(element, options, eventSources) {
 			var newViewElement;
 				
 			if (oldView) {
-				if (oldView.eventsChanged) {
-					eventsDirty();
-					oldView.eventDirty = oldView.eventsChanged = false;
-				}
 				(oldView.beforeHide || noop)(); // called before changing min-height. if called after, scroll state is reset (in Opera)
 				setMinHeight(content, content.height());
 				oldView.element.hide();
@@ -374,29 +373,28 @@ function Calendar(element, options, eventSources) {
 				calcSize();
 			}
 			
+			var forceEventRender = false;
 			if (!currentView.start || inc || date < currentView.start || date >= currentView.end) {
+				// view must render an entire new date range (and refetch/render events)
 				currentView.render(date, inc || 0); // responsible for clearing events
 				setSize(true);
-				if (!options.lazyFetching || isFetchNeeded()) {
-					fetchAndRenderEvents();
-				}else{
-					currentView.renderEvents(clientEvents()); // don't refetch
-				}
+				forceEventRender = true;
 			}
-			else if (currentView.sizeDirty || currentView.eventsDirty || !options.lazyFetching) {
+			else if (currentView.sizeDirty) {
+				// view must resize (and rerender events)
 				currentView.clearEvents();
-				if (currentView.sizeDirty) {
-					setSize();
-				}
-				if (!options.lazyFetching || isFetchNeeded()) {
-					fetchAndRenderEvents();
-				}else{
-					currentView.renderEvents(clientEvents()); // don't refetch
-				}
+				setSize();
+				forceEventRender = true;
 			}
-			elementOuterWidth = element.outerWidth();
+			else if (currentView.eventsDirty) {
+				currentView.clearEvents();
+				forceEventRender = true;
+			}
 			currentView.sizeDirty = false;
 			currentView.eventsDirty = false;
+			updateEvents(forceEventRender);
+			
+			elementOuterWidth = element.outerWidth();
 			
 			header.updateTitle(currentView.title);
 			var today = new Date();
@@ -415,6 +413,26 @@ function Calendar(element, options, eventSources) {
 	
 	/* Resizing
 	-----------------------------------------------------------------------------*/
+	
+	
+	function updateSize() {
+		markSizesDirty();
+		if (elementVisible()) {
+			calcSize();
+			setSize();
+			unselect();
+			currentView.clearEvents();
+			currentView.renderEvents(events);
+			currentView.sizeDirty = false;
+		}
+	}
+	
+	
+	function markSizesDirty() {
+		$.each(viewInstances, function(i, inst) {
+			inst.sizeDirty = true;
+		});
+	}
 	
 	
 	function calcSize() {
@@ -450,7 +468,7 @@ function Calendar(element, options, eventSources) {
 					if (uid == resizeUID && !ignoreWindowResize && elementVisible()) {
 						if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
 							ignoreWindowResize++; // in case the windowResize callback changes the height
-							sizeChanged();
+							updateSize();
 							currentView.trigger('windowResize', _element);
 							ignoreWindowResize--;
 						}
@@ -464,55 +482,54 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	// called when we know the element size has changed
-	function sizeChanged() {
-		sizesDirty();
-		if (elementVisible()) {
-			calcSize();
-			setSize();
-			unselect();
-			currentView.rerenderEvents();
-			currentView.sizeDirty = false;
+	
+	/* Event Fetching/Rendering
+	-----------------------------------------------------------------------------*/
+	
+	
+	// fetches events if necessary, rerenders events if necessary (or if forced)
+	function updateEvents(forceRender) {
+		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
+			refetchEvents();
+		}
+		else if (forceRender) {
+			rerenderEvents();
 		}
 	}
 	
 	
-	// marks other views' sizes as dirty
-	function sizesDirty() {
-		$.each(viewInstances, function(i, inst) {
-			inst.sizeDirty = true;
-		});
+	function refetchEvents() {
+		fetchEvents(currentView.visStart, currentView.visEnd); // will call reportEvents
 	}
 	
 	
+	// called when event data arrives
+	function reportEvents(_events) {
+		events = _events;
+		rerenderEvents();
+	}
 	
-	/* Event Rendering
-	-----------------------------------------------------------------------------*/
+	
+	// called when a single event's data has been changed
+	function reportEventChange(eventID) {
+		rerenderEvents(eventID);
+	}
 	
 	
-	// called when any event objects have been added/removed/changed, rerenders
-	function rerenderEvents() {
-		eventsDirty();
+	// attempts to rerenderEvents
+	function rerenderEvents(modifiedEventID) {
+		markEventsDirty();
 		if (elementVisible()) {
 			currentView.clearEvents();
-			currentView.renderEvents(clientEvents());
+			currentView.renderEvents(events, modifiedEventID);
 			currentView.eventsDirty = false;
 		}
 	}
 	
 	
-	// marks every views' events as dirty
-	function eventsDirty() {
+	function markEventsDirty() {
 		$.each(viewInstances, function(i, inst) {
 			inst.eventsDirty = true;
-		});
-	}
-	
-	
-	// for convenience
-	function fetchAndRenderEvents() {
-		fetchEvents(function(events) {
-			currentView.renderEvents(events); // maintain `this` in view
 		});
 	}
 	
@@ -612,7 +629,7 @@ function Calendar(element, options, eventSources) {
 		}
 		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
 			options[name] = value;
-			sizeChanged();
+			updateSize();
 		}
 	}
 	
@@ -630,8 +647,6 @@ function Calendar(element, options, eventSources) {
 	
 	/* External Dragging
 	------------------------------------------------------------------------*/
-	
-	var _dragElement;
 	
 	if (options.droppable) {
 		$(document)
@@ -823,14 +838,13 @@ function Header(calendar, options) {
 
 var eventGUID = 1;
 
-function EventManager(options, eventSources) {
+function EventManager(options, sources) {
 	var t = this;
 	
 	
 	// exports
-	t.fetchEvents = fetchEvents;
-	t.refetchEvents = refetchEvents;
 	t.isFetchNeeded = isFetchNeeded;
+	t.fetchEvents = fetchEvents;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -841,17 +855,92 @@ function EventManager(options, eventSources) {
 	
 	
 	// imports
-	var getDate = t.getDate;
-	var getView = t.getView;
 	var trigger = t.trigger;
-	var rerenderEvents = t.rerenderEvents;
-
+	var getView = t.getView;
+	var reportEvents = t.reportEvents;
+	
 	
 	// locals
-	var fetchID = 0;
-	var eventStart, eventEnd;
-	var events = [];
+	var rangeStart, rangeEnd;
+	var currentFetchID = 0;
+	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
+	var dynamicEventSource = [];
+	var cache = [];
+	
+	
+	
+	/* Fetching
+	-----------------------------------------------------------------------------*/
+	
+	
+	function isFetchNeeded(start, end) {
+		return !rangeStart || start < rangeStart || end > rangeEnd;
+	}
+	
+	
+	function fetchEvents(start, end) {
+		rangeStart = start;
+		rangeEnd = end;
+		cache = [];
+		var fetchID = ++currentFetchID;
+		var len = sources.length;
+		pendingSourceCnt = len;
+		for (var i=0; i<len; i++) {
+			fetchEventSource(sources[i], fetchID);
+		}
+	}
+	
+	
+	function fetchEventSource(source, fetchID) {
+		_fetchEventSource(source, function(events) {
+			if (fetchID == currentFetchID) {
+				for (var i=0; i<events.length; i++) {
+					normalizeEvent(events[i]);
+					events[i].source = source;
+				}
+				cache = cache.concat(events);
+				pendingSourceCnt--;
+				if (!pendingSourceCnt) {
+					reportEvents(cache);
+				}
+			}
+		});
+	}
+	
+	
+	function _fetchEventSource(source, callback) {
+		if (typeof source == 'string') {
+			var params = {};
+			params[options.startParam] = Math.round(rangeStart.getTime() / 1000);
+			params[options.endParam] = Math.round(rangeEnd.getTime() / 1000);
+			if (options.cacheParam) {
+				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
+			}
+			pushLoading();
+			// TODO: respect cache param in ajaxSetup
+			$.ajax({
+				url: source,
+				dataType: 'json',
+				data: params,
+				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
+				success: function(events) {
+					popLoading();
+					callback(events);
+				}
+			});
+		}
+		else if ($.isFunction(source)) {
+			pushLoading();
+			source(cloneDate(rangeStart), cloneDate(rangeEnd), function(events) {
+				popLoading();
+				callback(events);
+			});
+		}
+		else {
+			callback(source); // src is an array
+		}
+	}
 	
 	
 	
@@ -859,121 +948,25 @@ function EventManager(options, eventSources) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	eventSources.unshift([]); // first event source reserved for 'sticky' events
+	sources.push(dynamicEventSource);
 	
 
 	function addEventSource(source) {
-		eventSources.push(source);
-		fetchEventSource(source, rerenderEvents);
+		sources.push(source);
+		pendingSourceCnt++;
+		fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 	}
 	
 
 	function removeEventSource(source) {
-		eventSources = $.grep(eventSources, function(src) {
+		sources = $.grep(sources, function(src) {
 			return src != source;
 		});
 		// remove all client events from that source
-		events = $.grep(events, function(e) {
+		cache = $.grep(cache, function(e) {
 			return e.source != source;
 		});
-		rerenderEvents();
-	}
-
-
-
-	/* Fetching
-	-----------------------------------------------------------------------------*/
-	
-	
-	// Fetch from ALL sources. Clear 'events' array and populate
-	function fetchEvents(callback) {
-		events = [];
-		fetchEventSources(eventSources, callback);
-	}
-	
-	
-	// appends to the events array
-	function fetchEventSources(sources, callback) {
-		var savedID = ++fetchID;
-		var queued = sources.length;
-		var origView = getView();
-		eventStart = cloneDate(origView.visStart); // we don't need to make local copies b/c
-		eventEnd = cloneDate(origView.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
-		function sourceDone(source, sourceEvents) {
-			var currentView = getView();
-			if (origView != currentView) {
-				origView.eventsDirty = true; // sort of a hack
-			}
-			if (savedID == fetchID && eventStart <= currentView.visStart && eventEnd >= currentView.visEnd) {
-				// same fetchEventSources call, and still in correct date range
-				if ($.inArray(source, eventSources) != -1) { // source hasn't been removed since we started
-					for (var i=0; i<sourceEvents.length; i++) {
-						normalizeEvent(sourceEvents[i]);
-						sourceEvents[i].source = source;
-					}
-					events = events.concat(sourceEvents);
-				}
-				if (!--queued) {
-					if (callback) {
-						callback(events);
-					}
-				}
-			}
-		}
-		for (var i=0; i<sources.length; i++) {
-			_fetchEventSource(sources[i], sourceDone);
-		}
-	}
-	
-	
-	function _fetchEventSource(src, callback) {
-		function reportEvents(a) {
-			callback(src, a);
-		}
-		function reportEventsAndPop(a) {
-			reportEvents(a);
-			popLoading();
-		}
-		if (typeof src == 'string') {
-			var params = {};
-			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
-			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
-			if (options.cacheParam) {
-				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
-			}
-			pushLoading();
-			// TODO: respect cache param in ajaxSetup
-			$.ajax({
-				url: src,
-				dataType: 'json',
-				data: params,
-				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
-				success: reportEventsAndPop
-			});
-		}
-		else if ($.isFunction(src)) {
-			pushLoading();
-			src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
-		}
-		else {
-			reportEvents(src); // src is an array
-		}
-	}
-	
-	
-	function fetchEventSource(src, callback) {
-		fetchEventSources([src], callback);
-	}
-	
-	
-	function refetchEvents() {
-		fetchEvents(rerenderEvents);
-	}
-	
-	
-	function isFetchNeeded() {
-		var view = getView();
-		return !eventStart || view.visStart < eventStart || view.visEnd > eventEnd;
+		reportEvents(cache);
 	}
 	
 	
@@ -983,14 +976,14 @@ function EventManager(options, eventSources) {
 	
 	
 	function updateEvent(event) { // update an existing event
-		var i, len = events.length, e,
-			defaultEventEnd = getView().defaultEventEnd,
+		var i, len = cache.length, e,
+			defaultEventEnd = getView().defaultEventEnd, // getView???
 			startDelta = event.start - event._start,
 			endDelta = event.end ?
 				(event.end - (event._end || defaultEventEnd(event))) // event._end would be null if event.end
 				: 0;                                                      // was null and event was just resized
 		for (i=0; i<len; i++) {
-			e = events[i];
+			e = cache[i];
 			if (e._id == event._id && e != event) {
 				e.start = new Date(+e.start + startDelta);
 				if (event.end) {
@@ -1011,29 +1004,30 @@ function EventManager(options, eventSources) {
 			}
 		}
 		normalizeEvent(event);
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
-	function renderEvent(event, stick) { // render a new event
+	function renderEvent(event, stick) {
 		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
-				(event.source = eventSources[0]).push(event);
+				dynamicEventSource.push(event);
+				event.source = dynamicEventSource;
 			}
-			events.push(event);
+			cache.push(event);
 		}
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
 	function removeEvents(filter) {
 		if (!filter) { // remove all
-			events = [];
+			cache = [];
 			// clear all array sources
-			for (var i=0; i<eventSources.length; i++) {
-				if (typeof eventSources[i] == 'object') {
-					eventSources[i] = [];
+			for (var i=0; i<sources.length; i++) {
+				if (typeof sources[i] == 'object') {
+					sources[i] = [];
 				}
 			}
 		}else{
@@ -1043,29 +1037,29 @@ function EventManager(options, eventSources) {
 					return e._id == id;
 				};
 			}
-			events = $.grep(events, filter, true);
+			cache = $.grep(cache, filter, true);
 			// remove events from array sources
-			for (var i=0; i<eventSources.length; i++) {
-				if (typeof eventSources[i] == 'object') {
-					eventSources[i] = $.grep(eventSources[i], filter, true);
+			for (var i=0; i<sources.length; i++) {
+				if (typeof sources[i] == 'object') {
+					sources[i] = $.grep(sources[i], filter, true);
 				}
 			}
 		}
-		rerenderEvents();
+		reportEvents(cache);
 	}
 	
 	
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
-			return $.grep(events, filter);
+			return $.grep(cache, filter);
 		}
 		else if (filter) { // an event ID
 			filter += '';
-			return $.grep(events, function(e) {
+			return $.grep(cache, function(e) {
 				return e._id == filter;
 			});
 		}
-		return events; // else, return all
+		return cache; // else, return all
 	}
 	
 	
@@ -1284,6 +1278,7 @@ function BasicView(element, calendar, viewName) {
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
 	t.dayOfWeekCol = dayOfWeekCol;
+	t.dateCell = dateCell;
 	t.cellDate = cellDate;
 	t.cellIsAllDay = function() { return true };
 	t.allDayTR = allDayTR;
@@ -1594,7 +1589,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function renderSelection(startDate, endDate, allDay) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
+		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
 	
 	
@@ -1686,7 +1681,15 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return (dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt;
+		return (dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt;
+	}
+	
+	
+	function dateCell(date) {
+		return {
+			row: Math.floor(dayDiff(date, t.visStart) / 7),
+			col: dayOfWeekCol(date.getDay())*dis + dit
+		};
 	}
 	
 	
@@ -1717,7 +1720,7 @@ function BasicEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
-	t.rerenderEvents = rerenderEvents;
+	t.compileDaySegs = compileSegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.bindDaySeg = bindDaySeg;
 	
@@ -1727,7 +1730,7 @@ function BasicEventRenderer() {
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var reportEvents = t.reportEvents;
-	var clearEventData = t.clearEventData;
+	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
 	var showEvents = t.showEvents;
 	var hideEvents = t.hideEvents;
@@ -1742,29 +1745,19 @@ function BasicEventRenderer() {
 	var resizableDayEvent = t.resizableDayEvent;
 	
 	
-	// locals
-	var cachedEvents=[];
-	
-	
 	
 	/* Rendering
 	--------------------------------------------------------------------*/
 	
 	
-	function renderEvents(events) {
-		reportEvents(cachedEvents = events);
-		renderDaySegs(compileSegs(events));
-	}
-	
-	
-	function rerenderEvents(modifiedEventId) {
-		clearEvents();
-		renderDaySegs(compileSegs(cachedEvents), modifiedEventId);
+	function renderEvents(events, modifiedEventId) {
+		reportEvents(events);
+		renderDaySegs(compileSegs(events), modifiedEventId);
 	}
 	
 	
 	function clearEvents() {
-		clearEventData();
+		reportEventClear();
 		getDaySegmentContainer().empty();
 	}
 	
@@ -1786,7 +1779,7 @@ function BasicEventRenderer() {
 				for (k=0; k<level.length; k++) {
 					seg = level[k];
 					seg.row = i;
-					seg.level = j;
+					seg.level = j; // not needed anymore
 					segs.push(seg);
 				}
 			}
@@ -1802,7 +1795,7 @@ function BasicEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement);
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}
@@ -1973,6 +1966,7 @@ function AgendaView(element, calendar, viewName) {
 	t.defaultEventEnd = defaultEventEnd;
 	t.timePosition = timePosition;
 	t.dayOfWeekCol = dayOfWeekCol;
+	t.dateCell = dateCell;
 	t.cellDate = cellDate;
 	t.cellIsAllDay = cellIsAllDay;
 	t.allDayTR = allDayTR;
@@ -2436,7 +2430,15 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt)*dis+dit;
+		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt)*dis+dit;
+	}
+	
+	
+	function dateCell(date) {
+		return {
+			row: Math.floor(dayDiff(date, t.visStart) / 7),
+			col: dayOfWeekCol(date.getDay())
+		};
 	}
 	
 	
@@ -2662,7 +2664,7 @@ function AgendaEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
-	t.rerenderEvents = rerenderEvents;
+	t.compileDaySegs = compileDaySegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
 	t.bindDaySeg = bindDaySeg;
@@ -2674,7 +2676,7 @@ function AgendaEventRenderer() {
 	var trigger = t.trigger;
 	var eventEnd = t.eventEnd;
 	var reportEvents = t.reportEvents;
-	var clearEventData = t.clearEventData;
+	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
 	var setHeight = t.setHeight;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
@@ -2707,12 +2709,9 @@ function AgendaEventRenderer() {
 	/* Rendering
 	----------------------------------------------------------------------------*/
 	
-	
-	var cachedEvents = [];
-	
 
 	function renderEvents(events, modifiedEventId) {
-		reportEvents(cachedEvents = events);
+		reportEvents(events);
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -2731,14 +2730,8 @@ function AgendaEventRenderer() {
 	}
 	
 	
-	function rerenderEvents(modifiedEventId) {
-		clearEvents();
-		renderEvents(cachedEvents, modifiedEventId);
-	}
-	
-	
 	function clearEvents() {
-		clearEventData();
+		reportEventClear();
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}
@@ -2754,7 +2747,7 @@ function AgendaEventRenderer() {
 			for (j=0; j<level.length; j++) {
 				seg = level[j];
 				seg.row = 0;
-				seg.level = i;
+				seg.level = i; // not needed anymore
 				segs.push(seg);
 			}
 		}
@@ -2963,7 +2956,7 @@ function AgendaEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement, seg.isStart);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement, getColWidth());
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}
@@ -3264,9 +3257,9 @@ function View(element, calendar, viewName) {
 	t.opt = opt;
 	t.trigger = trigger;
 	t.reportEvents = reportEvents;
-	t.clearEventData = clearEventData;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
+	t.reportEventClear = reportEventClear;
 	t.eventElementHandlers = eventElementHandlers;
 	t.showEvents = showEvents;
 	t.hideEvents = hideEvents;
@@ -3275,13 +3268,12 @@ function View(element, calendar, viewName) {
 	// t.title
 	// t.start, t.end
 	// t.visStart, t.visEnd
-	// t.eventsChanged // todo: maybe report to calendar instead
 	
 	
 	// imports
 	var defaultEventEnd = t.defaultEventEnd;
 	var normalizeEvent = calendar.normalizeEvent; // in EventManager
-	var rerenderEvents = calendar.rerenderEvents;
+	var reportEventChange = calendar.reportEventChange;
 	
 	
 	// locals
@@ -3329,12 +3321,6 @@ function View(element, calendar, viewName) {
 	}
 	
 	
-	function clearEventData() { // todo: rename to clearReportedEvents or something
-		eventElements = [];
-		eventElementsByID = {};
-	}
-	
-	
 	// returns a Date object for an event's end
 	function eventEnd(event) {
 		return event.end ? cloneDate(event.end) : defaultEventEnd(event);
@@ -3354,6 +3340,12 @@ function View(element, calendar, viewName) {
 		}else{
 			eventElementsByID[event._id] = [element];
 		}
+	}
+	
+	
+	function reportEventClear() {
+		eventElements = [];
+		eventElementsByID = {};
 	}
 	
 	
@@ -3393,7 +3385,7 @@ function View(element, calendar, viewName) {
 		var elements = eventElementsByID[event._id],
 			i, len = elements.length;
 		for (i=0; i<len; i++) {
-			if (elements[i][0] != exceptElement[0]) {
+			if (!exceptElement || elements[i][0] != exceptElement[0]) {
 				elements[i][funcName]();
 			}
 		}
@@ -3409,26 +3401,43 @@ function View(element, calendar, viewName) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
 		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
-		trigger('eventDrop', e, event, dayDelta, minuteDelta, allDay, function() {
-			// TODO: investigate cases where this inverse technique might not work
-			moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
-			rerenderEvents();
-		}, ev, ui);
-		t.eventsChanged = true;
-		rerenderEvents(eventId);
+		trigger(
+			'eventDrop',
+			e,
+			event,
+			dayDelta,
+			minuteDelta,
+			allDay,
+			function() {
+				// TODO: investigate cases where this inverse technique might not work
+				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+				reportEventChange(eventId);
+			},
+			ev,
+			ui
+		);
+		reportEventChange(eventId);
 	}
 	
 	
 	function eventResize(e, event, dayDelta, minuteDelta, ev, ui) {
 		var eventId = event._id;
 		elongateEvents(eventsByID[eventId], dayDelta, minuteDelta);
-		trigger('eventResize', e, event, dayDelta, minuteDelta, function() {
-			// TODO: investigate cases where this inverse technique might not work
-			elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
-			rerenderEvents();
-		}, ev, ui);
-		t.eventsChanged = true;
-		rerenderEvents(eventId);
+		trigger(
+			'eventResize',
+			e,
+			event,
+			dayDelta,
+			minuteDelta,
+			function() {
+				// TODO: investigate cases where this inverse technique might not work
+				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
+				reportEventChange(eventId);
+			},
+			ev,
+			ui
+		);
+		reportEventChange(eventId);
 	}
 	
 	
@@ -3477,6 +3486,7 @@ function DayEventRenderer() {
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
+	var eventEnd = t.eventEnd;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
 	var hideEvents = t.hideEvents;
@@ -3489,40 +3499,109 @@ function DayEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var dayOfWeekCol = t.dayOfWeekCol;
+	var dateCell = t.dateCell;
+	var compileDaySegs = t.compileDaySegs;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var bindDaySeg = t.bindDaySeg; //TODO: streamline this
 	var formatDates = t.calendar.formatDates;
+	var renderDayOverlay = t.renderDayOverlay;
+	var clearOverlays = t.clearOverlays;
+	var clearSelection = t.clearSelection;
 	
 	
 	
 	/* Rendering
 	-----------------------------------------------------------------------------*/
-
-
+	
+	
 	function renderDaySegs(segs, modifiedEventId) {
-
-		var rtl=opt('isRTL'),
-			i, segCnt=segs.length, seg,
-			event,
-			className,
-			left, right,
-			html='',
-			eventElements,
-			eventElement,
-			triggerRes,
-			hsideCache={},
-			vmarginCache={},
-			key, val,
-			rowI, top, levelI, levelHeight,
-			rowDivs=[],
-			rowDivTops=[],
-			bounds = allDayBounds(),
-			minLeft = bounds.left,
-			maxLeft = bounds.right,
-			rowCnt = getRowCnt(),
-			colCnt = getColCnt(),
-			segmentContainer = getDaySegmentContainer();
-		
+		var segmentContainer = getDaySegmentContainer();
+		var rowDivs;
+		var rowCnt = getRowCnt();
+		var colCnt = getColCnt();
+		var i = 0;
+		var rowI;
+		var levelI;
+		var colHeights;
+		var j;
+		var segCnt = segs.length;
+		var seg;
+		var top;
+		var k;
+		segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
+		daySegElementResolve(segs, segmentContainer.children());
+		daySegElementReport(segs);
+		daySegHandlers(segs, segmentContainer, modifiedEventId);
+		daySegCalcHSides(segs);
+		daySegSetWidths(segs);
+		daySegCalcHeights(segs);
+		rowDivs = getRowDivs();
+		// set row heights, calculate event tops (in relation to row top)
+		for (rowI=0; rowI<rowCnt; rowI++) {
+			levelI = 0;
+			colHeights = [];
+			for (j=0; j<colCnt; j++) {
+				colHeights[j] = 0;
+			}
+			while (i<segCnt && (seg = segs[i]).row == rowI) {
+				// loop through segs in a row
+				top = arrayMax(colHeights.slice(seg.startCol, seg.endCol));
+				seg.top = top;
+				top += seg.outerHeight;
+				for (k=seg.startCol; k<seg.endCol; k++) {
+					colHeights[k] = top;
+				}
+				i++;
+			}
+			rowDivs[rowI].height(arrayMax(colHeights));
+		}
+		daySegSetTops(segs, getRowTops(rowDivs));
+	}
+	
+	
+	function renderTempDaySegs(segs, adjustRow, adjustTop) {
+		var tempContainer = $("<div/>");
+		var elements;
+		var segmentContainer = getDaySegmentContainer();
+		var i;
+		var segCnt = segs.length;
+		var element;
+		tempContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
+		elements = tempContainer.children();
+		segmentContainer.append(elements);
+		daySegElementResolve(segs, elements);
+		daySegCalcHSides(segs);
+		daySegSetWidths(segs);
+		daySegCalcHeights(segs);
+		daySegSetTops(segs, getRowTops(getRowDivs()));
+		elements = [];
+		for (i=0; i<segCnt; i++) {
+			element = segs[i].element;
+			if (element) {
+				if (segs[i].row === adjustRow) {
+					element.css('top', adjustTop);
+				}
+				elements.push(element[0]);
+			}
+		}
+		return $(elements);
+	}
+	
+	
+	function daySegHTML(segs) { // also sets seg.left and seg.outerWidth
+		var rtl = opt('isRTL');
+		var i;
+		var segCnt=segs.length;
+		var seg;
+		var event;
+		var className;
+		var bounds = allDayBounds();
+		var minLeft = bounds.left;
+		var maxLeft = bounds.right;
+		var cols = []; // don't really like this system (but have to do this b/c RTL works differently in basic vs agenda)
+		var left;
+		var right;
+		var html = '';
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -3535,8 +3614,10 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					className += 'fc-corner-left ';
 				}
-				left = seg.isEnd ? colContentLeft(dayOfWeekCol(seg.end.getDay()-1)) : minLeft;
-				right = seg.isStart ? colContentRight(dayOfWeekCol(seg.start.getDay())) : maxLeft;
+				cols[0] = dayOfWeekCol(seg.end.getDay()-1);
+				cols[1] = dayOfWeekCol(seg.start.getDay());
+				left = seg.isEnd ? colContentLeft(cols[0]) : minLeft;
+				right = seg.isStart ? colContentRight(cols[1]) : maxLeft;
 			}else{
 				if (seg.isStart) {
 					className += 'fc-corner-left ';
@@ -3544,8 +3625,10 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					className += 'fc-corner-right ';
 				}
-				left = seg.isStart ? colContentLeft(dayOfWeekCol(seg.start.getDay())) : minLeft;
-				right = seg.isEnd ? colContentRight(dayOfWeekCol(seg.end.getDay()-1)) : maxLeft;
+				cols[0] = dayOfWeekCol(seg.start.getDay());
+				cols[1] = dayOfWeekCol(seg.end.getDay()-1);
+				left = seg.isStart ? colContentLeft(cols[0]) : minLeft;
+				right = seg.isEnd ? colContentRight(cols[1]) : maxLeft;
 			}
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
@@ -3557,106 +3640,187 @@ function DayEventRenderer() {
 						:'') +
 						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 					"</a>" +
-					((event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
+					(seg.isEnd && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') ?
 						"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
 						: '') +
 				"</div>";
 			seg.left = left;
 			seg.outerWidth = right - left;
+			cols.sort(cmp);
+			seg.startCol = cols[0];
+			seg.endCol = cols[1] + 1;
 		}
-		segmentContainer[0].innerHTML = html; // faster than html()
-		eventElements = segmentContainer.children();
+		return html;
+	}
 	
-		// retrieve elements, run through eventRender callback, bind handlers
+	
+	function daySegElementResolve(segs, elements) { // sets seg.element
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var event;
+		var element;
+		var triggerRes;
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			eventElement = $(eventElements[i]); // faster than eq()
 			event = seg.event;
-			triggerRes = trigger('eventRender', event, event, eventElement);
+			element = $(elements[i]); // faster than .eq()
+			triggerRes = trigger('eventRender', event, event, element);
 			if (triggerRes === false) {
-				eventElement.remove();
+				element.remove();
 			}else{
 				if (triggerRes && triggerRes !== true) {
-					eventElement.remove();
-					eventElement = $(triggerRes)
+					triggerRes = $(triggerRes)
 						.css({
 							position: 'absolute',
 							left: seg.left
-						})
-						.appendTo(segmentContainer);
+						});
+					element.replaceWith(triggerRes);
+					element = triggerRes;
 				}
-				seg.element = eventElement;
-				if (event._id === modifiedEventId) {
-					bindDaySeg(event, eventElement, seg);
-				}else{
-					eventElement[0]._fci = i; // for lazySegBind
-				}
-				reportEventElement(event, eventElement);
+				seg.element = element;
 			}
 		}
+	}
 	
+	
+	function daySegElementReport(segs) {
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
+			element = seg.element;
+			if (element) {
+				reportEventElement(seg.event, element);
+			}
+		}
+	}
+	
+	
+	function daySegHandlers(segs, segmentContainer, modifiedEventId) {
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var event;
+		// retrieve elements, run through eventRender callback, bind handlers
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
+			element = seg.element;
+			if (element) {
+				event = seg.event;
+				if (event._id === modifiedEventId) {
+					bindDaySeg(event, element, seg);
+				}else{
+					element[0]._fci = i; // for lazySegBind
+				}
+			}
+		}
 		lazySegBind(segmentContainer, segs, bindDaySeg);
+	}
 	
+	
+	function daySegCalcHSides(segs) { // also sets seg.key
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var key, val;
+		var hsideCache = {};
 		// record event horizontal sides
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
-				val = hsideCache[key = seg.key = cssKey(eventElement[0])];
-				seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
+			element = seg.element;
+			if (element) {
+				key = seg.key = cssKey(element[0]);
+				val = hsideCache[key];
+				if (val === undefined) {
+					val = hsideCache[key] = hsides(element[0], true);
+				}
+				seg.hsides = val;
 			}
 		}
+	}
 	
-		// set event widths
+	
+	function daySegSetWidths(segs) {
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
-				eventElement[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
+			element = seg.element;
+			if (element) {
+				element[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
 			}
 		}
+	}
 	
+	
+	function daySegCalcHeights(segs) {
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var key, val;
+		var vmarginCache = {};
 		// record event heights
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
-				val = vmarginCache[key = seg.key];
-				seg.outerHeight = eventElement[0].offsetHeight + (
-					val === undefined ? (vmarginCache[key] = vmargins(eventElement[0])) : val
-				);
-			}
-		}
-	
-		// set row heights, calculate event tops (in relation to row top)
-		for (i=0, rowI=0; rowI<rowCnt; rowI++) {
-			top = levelI = levelHeight = 0;
-			while (i<segCnt && (seg = segs[i]).row == rowI) {
-				if (seg.level != levelI) {
-					top += levelHeight;
-					levelHeight = 0;
-					levelI++;
+			element = seg.element;
+			if (element) {
+				key = seg.key; // created in daySegCalcHSides
+				val = vmarginCache[key];
+				if (val === undefined) {
+					val = vmarginCache[key] = vmargins(element[0]);
 				}
-				levelHeight = Math.max(levelHeight, seg.outerHeight||0);
-				seg.top = top;
-				i++;
+				seg.outerHeight = element[0].offsetHeight + val;
 			}
-			rowDivs[rowI] = allDayTR(rowI).find('td:first div.fc-day-content > div') // optimal selector?
-				.height(top + levelHeight);
 		}
+	}
 	
-		// calculate row tops
-		for (rowI=0; rowI<rowCnt; rowI++) {
-			rowDivTops[rowI] = rowDivs[rowI][0].offsetTop;
+	
+	function getRowDivs() {
+		var i;
+		var rowCnt = getRowCnt();
+		var rowDivs = [];
+		for (i=0; i<rowCnt; i++) {
+			rowDivs[i] = allDayTR(i)
+				.find('td:first div.fc-day-content > div'); // optimal selector?
 		}
+		return rowDivs;
+	}
 	
-		// set event tops
+	
+	function getRowTops(rowDivs) {
+		var i;
+		var rowCnt = rowDivs.length;
+		var tops = [];
+		for (i=0; i<rowCnt; i++) {
+			tops[i] = rowDivs[i][0].offsetTop;
+		}
+		return tops;
+	}
+	
+	
+	function daySegSetTops(segs, rowTops) { // also triggers eventAfterRender
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var event;
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
-				eventElement[0].style.top = rowDivTops[seg.row] + seg.top + 'px';
+			element = seg.element;
+			if (element) {
+				element[0].style.top = rowTops[seg.row] + (seg.top||0) + 'px';
 				event = seg.event;
-				trigger('eventAfterRender', event, event, eventElement);
+				trigger('eventAfterRender', event, event, element);
 			}
 		}
-	
 	}
 	
 	
@@ -3665,30 +3829,76 @@ function DayEventRenderer() {
 	-----------------------------------------------------------------------------------*/
 	
 	
-	function resizableDayEvent(event, eventElement) {
-		if (!opt('disableResizing') && eventElement.resizable) {
-			var colWidth = getColWidth();
-			eventElement.resizable({
-				handles: opt('isRTL') ? {w:'div.ui-resizable-w'} : {e:'div.ui-resizable-e'},
-				grid: colWidth,
-				minWidth: colWidth/2, // need this or else IE throws errors when too small
-				containment: t.element.parent().parent(), // the main element...
-				             // ... a fix. wouldn't allow extending to last column in agenda views (jq ui bug?)
-				start: function(ev, ui) {
-					eventElement.css('z-index', 9);
-					hideEvents(event, eventElement);
-					trigger('eventResizeStart', this, event, ev, ui);
-				},
-				stop: function(ev, ui) {
-					trigger('eventResizeStop', this, event, ev, ui);
-					// ui.size.width wasn't working with grid correctly, use .width()
-					var dayDelta = Math.round((eventElement.width() - ui.originalSize.width) / colWidth);
-					if (dayDelta) {
-						eventResize(this, event, dayDelta, 0, ev, ui);
-					}else{
-						eventElement.css('z-index', 8);
-						showEvents(event, eventElement);
+	function resizableDayEvent(event, element, seg) {
+		if (!opt('disableResizing') && seg.isEnd) {
+			var rtl = opt('isRTL');
+			var direction = rtl ? 'w' : 'e';
+			var handle = element.find('div.ui-resizable-' + direction);
+			handle.mousedown(function(ev) {
+				if (ev.which != 1) {
+					return; // needs to be left mouse button
+				}
+				var hoverListener = t.getHoverListener();
+				var rowCnt = getRowCnt();
+				var colCnt = getColCnt();
+				var dis = rtl ? -1 : 1;
+				var dit = rtl ? colCnt : 0;
+				var elementTop = element.css('top');
+				var dayDelta;
+				var helpers;
+				var eventCopy = $.extend({}, event);
+				var minCell = dateCell(event.start);
+				clearSelection();
+				$('body')
+					.css('cursor', direction + '-resize')
+					.one('mouseup', mouseup);
+				trigger('eventResizeStart', this, event, ev);
+				hoverListener.start(function(cell, origCell) {
+					if (cell) {
+						var r = Math.max(minCell.row, cell.row);
+						var c = cell.col;
+						if (rowCnt == 1) {
+							r = 0; // hack for all-day area in agenda views
+						}
+						if (r == minCell.row) {
+							if (rtl) {
+								c = Math.min(minCell.col, c);
+							}else{
+								c = Math.max(minCell.col, c);
+							}
+						}
+						dayDelta = (r * colCnt + c*dis+dit) - (origCell.row * colCnt + origCell.col*dis+dit);
+						var newEnd = addDays(eventEnd(event), dayDelta, true);
+						if (dayDelta) {
+							eventCopy.end = newEnd;
+							var oldHelpers = helpers;
+							helpers = renderTempDaySegs(compileDaySegs([eventCopy]), seg.row, elementTop);
+							helpers.find('*').css('cursor', direction + '-resize');
+							if (oldHelpers) {
+								oldHelpers.remove();
+							}
+							hideEvents(event);
+						}else{
+							if (helpers) {
+								showEvents(event);
+								helpers.remove();
+								helpers = null;
+							}
+						}
+						clearOverlays();
+						renderDayOverlay(event.start, addDays(cloneDate(newEnd), 1)); // coordinate grid already rebuild at hoverListener.start
 					}
+				}, ev);
+				function mouseup(ev) {
+					trigger('eventResizeStop', this, event, ev);
+					$('body').css('cursor', 'auto');
+					hoverListener.stop();
+					clearOverlays();
+					if (dayDelta) {
+						eventResize(this, event, dayDelta, 0, ev);
+						// event redraw will clear helpers
+					}
+					// otherwise, the drag handler already restored the old events
 				}
 			});
 		}
@@ -4533,6 +4743,11 @@ function noop() { }
 
 function cmp(a, b) {
 	return a - b;
+}
+
+
+function arrayMax(a) {
+	return Math.max.apply(Math, a);
 }
 
 

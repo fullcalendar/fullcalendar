@@ -1,11 +1,11 @@
 /*
- * FullCalendar v1.4.8 Stylesheet
+ * FullCalendar v1.4.9 Stylesheet
  *
  * Feel free to edit this file to customize the look of FullCalendar.
  * When upgrading to newer versions, please upgrade this file as well,
  * porting over any customizations afterwards.
  *
- * Date: Sat Oct 16 17:10:03 2010 -0700
+ * Date: Fri Nov 19 22:45:44 2010 -0800
  *
  */
  
@@ -298,7 +298,7 @@ table.fc-header {
 	
 /* resizable */
 	
-.fc .ui-resizable-handle {
+.fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anoymore, change class ***/
 	display: block;
 	position: absolute;
 	z-index: 99999;
