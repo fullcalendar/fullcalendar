@@ -50,6 +50,7 @@ function Calendar(element, options, eventSources) {
 	var ignoreWindowResize = 0;
 	var date = new Date();
 	var events = [];
+	var _dragElement;
 	
 	
 	
@@ -242,6 +243,7 @@ function Calendar(element, options, eventSources) {
 			calcSize();
 			setSize();
 			unselect();
+			currentView.clearEvents();
 			currentView.renderEvents(events);
 			currentView.sizeDirty = false;
 		}
@@ -467,8 +469,6 @@ function Calendar(element, options, eventSources) {
 	
 	/* External Dragging
 	------------------------------------------------------------------------*/
-	
-	var _dragElement;
 	
 	if (options.droppable) {
 		$(document)

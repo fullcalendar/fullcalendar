@@ -45,11 +45,12 @@ function EventManager(options, sources) {
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		currentFetchID++;
 		cache = [];
-		pendingSourceCnt = sources.length;
-		for (var i=0; i<sources.length; i++) {
-			fetchEventSource(sources[i], currentFetchID);
+		var fetchID = ++currentFetchID;
+		var len = sources.length;
+		pendingSourceCnt = len;
+		for (var i=0; i<len; i++) {
+			fetchEventSource(sources[i], fetchID);
 		}
 	}
 	

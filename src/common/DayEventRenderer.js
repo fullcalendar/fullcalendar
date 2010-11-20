@@ -165,7 +165,7 @@ function DayEventRenderer() {
 						:'') +
 						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 					"</a>" +
-					(seg.isEnd && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
+					(seg.isEnd && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') ?
 						"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
 						: '') +
 				"</div>";

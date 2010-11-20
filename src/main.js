@@ -29,7 +29,7 @@ $.fn.fullCalendar = function(options) {
 	}
 	
 	
-	// would like to have this logic in EventManager, but needs to happen before options are extended
+	// would like to have this logic in EventManager, but needs to happen before options are recursively extended
 	var eventSources = options.eventSources || [];
 	delete options.eventSources;
 	if (options.events) {

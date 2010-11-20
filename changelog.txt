@@ -1,4 +1,9 @@
 
+version 1.4.9 (11/16/10)
+	- new algorithm for vertically stacking events (issue 111)
+	- resizing an event to a different week (issue 306)
+	- bug: some events not rendered with consecutive calls to addEventSource (issue 679)
+
 version 1.4.8 (10/16/10)
 	- ignoreTimezone option (set to `false` to process UTC offsets in ISO8601 dates)
 	- bugfixes
