@@ -325,10 +325,12 @@ function AgendaEventRenderer() {
 	function draggableDayEvent(event, eventElement, isStart) {
 		if (!opt('disableDragging') && eventElement.draggable) {
 			var origWidth;
+			var origPosition;
 			var allDay=true;
 			var dayDelta;
 			var dis = opt('isRTL') ? -1 : 1;
 			var hoverListener = getHoverListener();
+			var colCnt = getColCnt();
 			var colWidth = getColWidth();
 			var slotHeight = getSlotHeight();
 			var minMinute = getMinMinute();
@@ -340,6 +342,7 @@ function AgendaEventRenderer() {
 					trigger('eventDragStart', eventElement, event, ev, ui);
 					hideEvents(event, eventElement);
 					origWidth = eventElement.width();
+					origPosition = eventElement.position();
 					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 						clearOverlays();
@@ -369,6 +372,10 @@ function AgendaEventRenderer() {
 							}
 						}
 					}, ev, 'drag');
+				},
+				drag: function(ev, ui) {
+					var position = Math.min(Math.max(colWidth, ui.position.left), colWidth * colCnt);
+					dayDelta = Math.round((position - origPosition.left) / colWidth);
 				},
 				stop: function(ev, ui) {
 					var cell = hoverListener.stop();
@@ -469,6 +476,8 @@ function AgendaEventRenderer() {
 						}
 						prevMinuteDelta = minuteDelta;
 					}
+					var position = Math.min(Math.max(colWidth, ui.position.left), colWidth * colCnt);
+					dayDelta = Math.round((position - origPosition.left) / colWidth);
 				},
 				stop: function(ev, ui) {
 					var cell = hoverListener.stop();
