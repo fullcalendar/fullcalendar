@@ -28,7 +28,6 @@ function EventManager(options, sources) {
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
-	var dynamicEventSource = [];
 	var cache = [];
 	
 	
@@ -111,7 +110,8 @@ function EventManager(options, sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	sources.push(dynamicEventSource);
+	// first event source is reserved for "sticky" events
+	sources.unshift([]);
 	
 
 	function addEventSource(source) {
@@ -175,8 +175,8 @@ function EventManager(options, sources) {
 		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
-				dynamicEventSource.push(event);
-				event.source = dynamicEventSource;
+				sources[0].push(event);
+				event.source = sources[0];
 			}
 			cache.push(event);
 		}
@@ -205,6 +205,7 @@ function EventManager(options, sources) {
 			for (var i=0; i<sources.length; i++) {
 				if (typeof sources[i] == 'object') {
 					sources[i] = $.grep(sources[i], filter, true);
+					// TODO: event objects' sources will no longer be correct reference :(
 				}
 			}
 		}
