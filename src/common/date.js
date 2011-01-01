@@ -147,7 +147,7 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 	}
 	if (typeof s == 'string') {
 		if (s.match(/^\d+$/)) { // a UNIX timestamp
-			return new Date(parseInt(s) * 1000);
+			return new Date(parseInt(s, 10) * 1000);
 		}
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
@@ -220,14 +220,14 @@ function parseTime(s) { // returns minutes since start of day
 	}
 	var m = s.match(/(\d+)(?::(\d+))?\s*(\w+)?/);
 	if (m) {
-		var h = parseInt(m[1]);
+		var h = parseInt(m[1], 10);
 		if (m[3]) {
 			h %= 12;
 			if (m[3].toLowerCase().charAt(0) == 'p') {
 				h += 12;
 			}
 		}
-		return h * 60 + (m[2] ? parseInt(m[2]) : 0);
+		return h * 60 + (m[2] ? parseInt(m[2], 10) : 0);
 	}
 }
 
@@ -271,7 +271,7 @@ function formatDates(date1, date2, format, options) {
 			for (i2=i+1; i2<len; i2++) {
 				if (format.charAt(i2) == ')') {
 					var subres = formatDate(date, format.substring(i+1, i2), options);
-					if (parseInt(subres.replace(/\D/, ''))) {
+					if (parseInt(subres.replace(/\D/, ''), 10)) {
 						res += subres;
 					}
 					i = i2;
