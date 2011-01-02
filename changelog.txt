@@ -1,4 +1,9 @@
 
+version 1.4.10 (1/2/11)
+	- fixed bug with resizing event to different week in 5-day month view (issue 740)
+	- fixed bug with events not sticking after a removeEvents call (issue 757)
+	- fixed bug with underlying parseTime method, and other uses of parseInt (issue 688)
+
 version 1.4.9 (11/16/10)
 	- new algorithm for vertically stacking events (issue 111)
 	- resizing an event to a different week (issue 306)

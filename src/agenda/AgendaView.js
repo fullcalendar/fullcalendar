@@ -76,7 +76,7 @@ function AgendaView(element, calendar, viewName) {
 	var head, body, bodyContent, bodyTable, bg;
 	var colCnt;
 	var slotCnt=0; // spanning all the way across
-	var axisWidth, colWidth, slotHeight;
+	var axisWidth, colWidth, slotHeight; // TODO: what if slotHeight changes? (see issue 650)
 	var viewWidth, viewHeight;
 	var savedScrollTop;
 	var tm, firstDay;
