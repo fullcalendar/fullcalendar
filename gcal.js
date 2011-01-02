@@ -1,11 +1,11 @@
 /*
- * FullCalendar v1.4.9 Google Calendar Extension
+ * FullCalendar v1.4.10 Google Calendar Extension
  *
  * Copyright (c) 2010 Adam Shaw
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Fri Nov 19 22:45:44 2010 -0800
+ * Date: Sat Jan 1 23:46:27 2011 -0800
  *
  */
 

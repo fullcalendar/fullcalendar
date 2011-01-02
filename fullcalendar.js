@@ -1,6 +1,6 @@
 /**
  * @preserve
- * FullCalendar v1.4.9
+ * FullCalendar v1.4.10
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Fri Nov 19 22:45:44 2010 -0800
+ * Date: Sat Jan 1 23:46:27 2011 -0800
  *
  */
  
@@ -111,7 +111,7 @@ var rtlDefaults = {
 
 
 
-var fc = $.fullCalendar = { version: "1.4.9" };
+var fc = $.fullCalendar = { version: "1.4.10" };
 var fcViews = fc.views = {};
 
 
@@ -865,7 +865,6 @@ function EventManager(options, sources) {
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
-	var dynamicEventSource = [];
 	var cache = [];
 	
 	
@@ -948,7 +947,8 @@ function EventManager(options, sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	sources.push(dynamicEventSource);
+	// first event source is reserved for "sticky" events
+	sources.unshift([]);
 	
 
 	function addEventSource(source) {
@@ -1012,8 +1012,8 @@ function EventManager(options, sources) {
 		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
-				dynamicEventSource.push(event);
-				event.source = dynamicEventSource;
+				sources[0].push(event);
+				event.source = sources[0];
 			}
 			cache.push(event);
 		}
@@ -1042,6 +1042,7 @@ function EventManager(options, sources) {
 			for (var i=0; i<sources.length; i++) {
 				if (typeof sources[i] == 'object') {
 					sources[i] = $.grep(sources[i], filter, true);
+					// TODO: event objects' sources will no longer be correct reference :(
 				}
 			}
 		}
@@ -2012,7 +2013,7 @@ function AgendaView(element, calendar, viewName) {
 	var head, body, bodyContent, bodyTable, bg;
 	var colCnt;
 	var slotCnt=0; // spanning all the way across
-	var axisWidth, colWidth, slotHeight;
+	var axisWidth, colWidth, slotHeight; // TODO: what if slotHeight changes? (see issue 650)
 	var viewWidth, viewHeight;
 	var savedScrollTop;
 	var tm, firstDay;
@@ -3867,7 +3868,7 @@ function DayEventRenderer() {
 								c = Math.max(minCell.col, c);
 							}
 						}
-						dayDelta = (r * colCnt + c*dis+dit) - (origCell.row * colCnt + origCell.col*dis+dit);
+						dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
 						var newEnd = addDays(eventEnd(event), dayDelta, true);
 						if (dayDelta) {
 							eventCopy.end = newEnd;
@@ -4304,7 +4305,7 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 	}
 	if (typeof s == 'string') {
 		if (s.match(/^\d+$/)) { // a UNIX timestamp
-			return new Date(parseInt(s) * 1000);
+			return new Date(parseInt(s, 10) * 1000);
 		}
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
@@ -4377,14 +4378,14 @@ function parseTime(s) { // returns minutes since start of day
 	}
 	var m = s.match(/(\d+)(?::(\d+))?\s*(\w+)?/);
 	if (m) {
-		var h = parseInt(m[1]);
+		var h = parseInt(m[1], 10);
 		if (m[3]) {
 			h %= 12;
 			if (m[3].toLowerCase().charAt(0) == 'p') {
 				h += 12;
 			}
 		}
-		return h * 60 + (m[2] ? parseInt(m[2]) : 0);
+		return h * 60 + (m[2] ? parseInt(m[2], 10) : 0);
 	}
 }
 
@@ -4428,7 +4429,7 @@ function formatDates(date1, date2, format, options) {
 			for (i2=i+1; i2<len; i2++) {
 				if (format.charAt(i2) == ')') {
 					var subres = formatDate(date, format.substring(i+1, i2), options);
-					if (parseInt(subres.replace(/\D/, ''))) {
+					if (parseInt(subres.replace(/\D/, ''), 10)) {
 						res += subres;
 					}
 					i = i2;
