@@ -392,7 +392,7 @@ function DayEventRenderer() {
 								c = Math.max(minCell.col, c);
 							}
 						}
-						dayDelta = (r * colCnt + c*dis+dit) - (origCell.row * colCnt + origCell.col*dis+dit);
+						dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
 						var newEnd = addDays(eventEnd(event), dayDelta, true);
 						if (dayDelta) {
 							eventCopy.end = newEnd;
