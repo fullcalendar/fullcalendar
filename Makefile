@@ -8,21 +8,22 @@ OTHER_FILES = \
 	MIT-LICENSE.txt \
 	GPL-LICENSE.txt
 
+SED ?= sed
 VER = $$(cat version.txt)
-VER_SED = sed s/@VERSION/"${VER}"/
+VER_SED = ${SED} s/@VERSION/"${VER}"/
 DATE = $$(git log -1 --pretty=format:%ad)
-DATE_SED = sed s/@DATE/"${DATE}"/
+DATE_SED = ${SED} s/@DATE/"${DATE}"/
 
-JQ = $$(sed -n "s/.*JQUERY\s*=\s*[\"']\(.*\)[\"'].*/\1/p" "${SRC_DIR}/_loader.js")
-JQUI = $$(sed -n "s/.*JQUERY_UI\s*=\s*[\"']\(.*\)[\"'].*/\1/p" "${SRC_DIR}/_loader.js")
+JQ = $$(${SED} -n "s/.*JQUERY\s*=\s*[\"']\(.*\)[\"'].*/\1/p" "${SRC_DIR}/_loader.js")
+JQUI = $$(${SED} -n "s/.*JQUERY_UI\s*=\s*[\"']\(.*\)[\"'].*/\1/p" "${SRC_DIR}/_loader.js")
 
 DEMO_FILES = $$(cd ${DEMOS_DIR}; find . -mindepth 1 -maxdepth 1 -type f)
 DEMO_SUBDIRS = $$(cd ${DEMOS_DIR}; find . -mindepth 1 -maxdepth 1 -type d)
 DEMO_RE = \(<script[^>]*_loader\.js[^>]*><\/script>\|<!--\[\[\|\]\]-->\)\s*
-DEMO_SED = sed -n "1h;1!H;\$${;g;s/${DEMO_RE}//g;p;}"
+DEMO_SED = ${SED} -n "1h;1!H;\$${;g;s/${DEMO_RE}//g;p;}"
 
-JS_SED = sed -n "s/\s*js([\"']\(.*\)[\"']).*/\1/p"
-CSS_SED = sed -n "s/\s*css([\"']\(.*\)[\"']).*/\1/p"
+JS_SED = ${SED} -n "s/\s*js([\"']\(.*\)[\"']).*/\1/p"
+CSS_SED = ${SED} -n "s/\s*css([\"']\(.*\)[\"']).*/\1/p"
 
 concat_js = \
 	files=$$(cat "$(1)/_loader.js" | ${JS_SED}); \
@@ -79,8 +80,8 @@ zip:
 	@for f in ${DEMO_FILES}; do \
 		cat ${DEMOS_DIR}/$$f \
 			| ${DEMO_SED} \
-			| sed "s/jquery\.js/${JQ}/" \
-			| sed "s/jquery-ui\.js/${JQUI}/" \
+			| ${SED} "s/jquery\.js/${JQ}/" \
+			| ${SED} "s/jquery-ui\.js/${JQUI}/" \
 			> ${BUILD_DIR}/fullcalendar/demos/$$f; \
 	done
 	@for d in ${DEMO_SUBDIRS}; do \
