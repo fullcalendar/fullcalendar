@@ -2,83 +2,93 @@
 /* Agenda Week View, Agenda Day View
 ------------------------------------------------------------------------*/
 
-.fc .fc-agenda th,
-.fc .fc-agenda td {
-	border-width: 1px 0 0 1px;
+.fc-agenda table {
+	border-collapse: separate;
 	}
 	
-.fc .fc-agenda .fc-leftmost {
-	border-left: 0;
-	}
-	
-.fc-agenda tr.fc-first th,
-.fc-agenda tr.fc-first td {
-	border-top: 0;
-	}
-	
-.fc-agenda-head tr.fc-last th {
-	border-bottom-width: 1px;
-	}
-	
-.fc .fc-agenda-head td,
-.fc .fc-agenda-body td {
-	background: none;
-	}
-	
-.fc-agenda-head th {
-	text-align: center;
-	}
-	
-/* the time axis running down the left side */
-	
-.fc-agenda .fc-axis {
+.fc-agenda .fc-agenda-axis {
 	width: 50px;
 	padding: 0 4px;
 	vertical-align: middle;
-	white-space: nowrap;
 	text-align: right;
+	white-space: nowrap;
 	font-weight: normal;
 	}
 	
-/* all-day event cells at top */
-	
-.fc-agenda-head tr.fc-all-day th {
-	height: 35px;
+.fc-agenda .fc-day-content {
+	padding: 2px 2px 1px;
 	}
 	
-.fc-agenda-head td {
-	padding-bottom: 10px;
+	
+	
+	
+.fc-agenda-days th {
+	text-align: center;
 	}
 	
-.fc .fc-divider div {
-	font-size: 1px; /* for IE6/7 */
+.fc-agenda-days .fc-agenda-axis {
+	border-right-width: 1px;
+	}
+	
+.fc-agenda-days .fc-col0 {
+	border-left-width: 0;
+	}
+	
+	
+	
+	
+.fc-agenda-allday th {
+	border-width: 0 1px;
+	}
+	
+.fc-agenda-allday .fc-day-content {
+	min-height: 34px; /* TODO: doesnt work in quirksmode */
+	_height: 34px;
+	}
+	
+	
+	
+	
+.fc-agenda-divider-inner {
 	height: 2px;
+	overflow: hidden;
 	}
 	
-.fc .fc-divider .fc-state-default {
-	background: #eee; /* color for divider between all-day and time-slot events */
+.fc-widget-header .fc-agenda-divider-inner {
+	background: #eee;
+	}
+	
+	
+	
+	
+	
+.fc-agenda-slots th {
+	border-width: 1px 1px 0;
+	}
+	
+.fc-agenda-slots td {
+	border-width: 1px 0 0;
+	background: none;
+	}
+	
+.fc-agenda-slots td div {
+	height: 20px;
+	}
+	
+.fc-agenda-slots tr.fc-slot0 th,
+.fc-agenda-slots tr.fc-slot0 td {
+	border-top-width: 0;
 	}
 
-/* body styles */
-	
-.fc .fc-agenda-body td div {
-	height: 20px; /* slot height */
-	}
-	
-.fc .fc-agenda-body tr.fc-minor th,
-.fc .fc-agenda-body tr.fc-minor td {
+.fc-agenda-slots tr.fc-minor th,
+.fc-agenda-slots tr.fc-minor td {
 	border-top-style: dotted;
 	}
 	
-.fc-agenda .fc-day-content {
-	padding: 2px 2px 0; /* distance between events and day edges */
+.fc-agenda-slots tr.fc-minor th.ui-widget-header {
+	*border-top-style: solid;
 	}
 	
-/* vertical background columns */
-
-.fc .fc-agenda-bg .ui-state-highlight {
-	background-image: none; /* tall column, don't want repeating background image */
-	}
 	
 
 
@@ -151,6 +161,7 @@
 	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
 	width: 100%      !important;
 	height: 8px      !important;
+	overflow: hidden !important;
 	line-height: 8px !important;
 	font-size: 11px  !important;
 	font-family: monospace;

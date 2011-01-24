@@ -68,6 +68,7 @@ function SelectionManager() {
 		var cellDate = t.cellDate;
 		var cellIsAllDay = t.cellIsAllDay;
 		var hoverListener = t.getHoverListener();
+		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
@@ -85,8 +86,7 @@ function SelectionManager() {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						trigger('dayClick', _mousedownElement, dates[0], true, ev);
-						// BUG: _mousedownElement will sometimes be the overlay
+						reportDayClick(dates[0], true, ev);
 					}
 					reportSelection(dates[0], dates[1], true, ev);
 				}

@@ -1,7 +1,7 @@
 (function() {
 
 var JQUERY = 'jquery-1.4.4.min.js';
-var JQUERY_UI = 'jquery-ui-1.8.6.custom.min.js';
+var JQUERY_UI = 'jquery-ui-1.8.9.custom.min.js';
 var JQUERY_LEGACY = 'jquery-1.3.2.min.js';
 var JQUERY_UI_LEGACY = 'jquery-ui-1.7.3.custom.min.js';
 
@@ -41,6 +41,8 @@ js('main.js');
 js('Calendar.js');
 js('Header.js');
 js('EventManager.js');
+js('date_util.js');
+js('util.js');
 
 js('basic/MonthView.js');
 js('basic/BasicWeekView.js');
@@ -60,8 +62,6 @@ js('common/OverlayManager.js');
 js('common/CoordinateGrid.js');
 js('common/HoverListener.js');
 js('common/HorizontalPositionCache.js');
-js('common/date.js');
-js('common/util.js');
 
 endload();
 

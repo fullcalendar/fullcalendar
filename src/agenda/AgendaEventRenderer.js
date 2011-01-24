@@ -246,9 +246,9 @@ function AgendaEventRenderer() {
 			seg = segs[i];
 			if (eventElement = seg.element) {
 				val = vsideCache[key = seg.key = cssKey(eventElement[0])];
-				seg.vsides = val === undefined ? (vsideCache[key] = vsides(eventElement[0], true)) : val;
+				seg.vsides = val === undefined ? (vsideCache[key] = vsides(eventElement, true)) : val;
 				val = hsideCache[key];
-				seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement[0], true)) : val;
+				seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement, true)) : val;
 				titleSpan = eventElement.find('span.fc-event-title');
 				if (titleSpan.length) {
 					seg.titleTop = titleSpan[0].offsetTop;
@@ -356,8 +356,9 @@ function AgendaEventRenderer() {
 								// mouse is over bottom slots
 								if (isStart && allDay) {
 									// convert event to temporary slot-event
+									eventElement.width(colWidth - 10); // don't use entire width
 									setOuterHeight(
-										eventElement.width(colWidth - 10), // don't use entire width
+										eventElement,
 										slotHeight * Math.round(
 											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
 											/ opt('slotMinutes')

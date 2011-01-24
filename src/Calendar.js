@@ -82,7 +82,7 @@ function Calendar(element, options, eventSources) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
-		content = $("<div class='fc-content " + tm + "-widget-content' style='position:relative'/>")
+		content = $("<div class='fc-content' style='position:relative'/>")
 			.prependTo(element);
 		header = new Header(t, options);
 		headerElement = header.render();
@@ -132,6 +132,7 @@ function Calendar(element, options, eventSources) {
 	/* View Rendering
 	-----------------------------------------------------------------------------*/
 	
+	// TODO: improve view switching (still weird transition in IE, and FF has whiteout problem)
 	
 	function changeView(newViewName) {
 		if (!currentView || newViewName != currentView.name) {
@@ -262,7 +263,7 @@ function Calendar(element, options, eventSources) {
 			suggestedViewHeight = options.contentHeight;
 		}
 		else if (options.height) {
-			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content[0]);
+			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content);
 		}
 		else {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));

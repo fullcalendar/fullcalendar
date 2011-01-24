@@ -1,103 +1,121 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='../demos/redmond/theme.css' />
-<!--
-<link rel='stylesheet' type='text/css' href='themes/start/theme.css' />
--->
+<link type="text/css" rel="stylesheet" href="http://jqueryui.com/themes/base/ui.all.css" />
 <script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
 <script type='text/javascript'>
+
+function initCalendar() {
 
 	var date = new Date();
 	var d = date.getDate();
 	var m = date.getMonth();
 	var y = date.getFullYear();
 
-	$(document).ready(function() {
-		$('#calendar').fullCalendar({
+	$('#calendar').fullCalendar({
+	
+		theme: true,
+		editable: true,
+		//weekends: false,
 		
-			theme: true,
-			editable: true,
-			//weekends: false,
-			
-			header: {
-				left: 'prevYear,prev,next,nextYear today',
-				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+		header: {
+			left: 'prev,next today', //'prevYear,prev,next,nextYear today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay' //'month,agendaWeek,basicWeek,agendaDay,basicDay'
+		},
+		
+		/*
+		buttonIcons: {
+			prev: 'triangle-1-w',
+			next: 'triangle-1-e',
+			today: 'home'
+		},
+		*/
+		
+		/*
+		isRTL: true,
+		header: {
+			left: 'nextYear,next,prev,prevYear today',
+			center: 'title',
+			right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+		},
+		*/
+		
+		events: [
+			{
+				title: 'All Day Event',
+				start: new Date(y, m, 1)
 			},
-			
-			
-			buttonIcons: {
-				prev: 'triangle-1-w',
-				next: 'triangle-1-e',
-				today: 'home'
+			{
+				title: 'Long Event',
+				start: new Date(y, m, d-5),
+				end: new Date(y, m, d-2)
 			},
-			
-			
-			/*
-			isRTL: true,
-			header: {
-				left: 'nextYear,next,prev,prevYear today',
-				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+			{
+				id: 999,
+				title: 'Repeating Event',
+				start: new Date(y, m, d-3, 16, 0),
+				allDay: false
 			},
-			*/
-			
-			events: [
-				{
-					title: 'All Day Event',
-					start: new Date(y, m, 1)
-				},
-				{
-					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false
-				},
-				{
-					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false
-				},
-				{
-					id: 777,
-					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false,
-					//className: 'yellow-event black-text-event',
-					className: ['yellow-event', 'black-text-event']
-				},
-				{
-					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
-				},
-				{
-					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
-				}
-			]
-		});
+			{
+				id: 999,
+				title: 'Repeating Event',
+				start: new Date(y, m, d+4, 16, 0),
+				allDay: false
+			},
+			{
+				title: 'Meeting',
+				start: new Date(y, m, d, 10, 30),
+				allDay: false
+			},
+			{
+				id: 777,
+				title: 'Lunch',
+				start: new Date(y, m, d, 12, 0),
+				end: new Date(y, m, d, 14, 0),
+				allDay: false,
+				//className: 'yellow-event black-text-event',
+				className: ['yellow-event', 'black-text-event']
+			},
+			{
+				title: 'Birthday Party',
+				start: new Date(y, m, d+1, 19, 0),
+				end: new Date(y, m, d+1, 22, 30),
+				allDay: false
+			},
+			{
+				title: 'Click for Google',
+				start: new Date(y, m, 28),
+				end: new Date(y, m, 29),
+				url: 'http://google.com/'
+			}
+		]
 	});
+	
+}
+
+
+$(document).ready(function() {
+
+	initCalendar();
+	
+	$('#switcher').themeswitcher({
+		loadTheme: 'Cupertino',
+		height: 400,
+		onSelect: function(theme) {
+			setTimeout(function() {
+				$('#calendar').fullCalendar('render');
+			},1000);
+		}
+	});
+	
+});
 
 </script>
 </head>
-<body style='font-size:12px'>
+<body style='font-size:13px;margin:40px 0 0'>
+<div id="switcher" style='position:absolute;top:5px;left:5px'></div>
 <div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
 </body>
 </html>

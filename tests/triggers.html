@@ -19,7 +19,7 @@
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
-			//weekends: false,
+			weekends: false,
 			//defaultView: 'agendaWeek',
 			
 			header: {
@@ -52,7 +52,7 @@
 				//alert(dayDate);
 				console.log('dayClick - ' + dayDate + ', allDay:' + allDay + ' - ' + view.title);
 				//console.log(ev);
-				//console.log(this);
+				console.log(this);
 			},
 			
 			selectable: true,

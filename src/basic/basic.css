@@ -2,22 +2,8 @@
 /* Month View, Basic Week View, Basic Day View
 ------------------------------------------------------------------------*/
 
-.fc-grid table {
-	width: 100%;
-	}
-	
-.fc .fc-grid th {
-	border-width: 0 0 0 1px;
+.fc-grid th {
 	text-align: center;
-	}
-	
-.fc .fc-grid td {
-	border-width: 1px 0 0 1px;
-	}
-	
-.fc-grid th.fc-leftmost,
-.fc-grid td.fc-leftmost {
-	border-left: 0;
 	}
 	
 .fc-grid .fc-day-number {
@@ -35,7 +21,7 @@
 	
 .fc-grid .fc-day-content {
 	clear: both;
-	padding: 2px 2px 0; /* distance between events and day edges */
+	padding: 2px 2px 1px; /* distance between events and day edges */
 	}
 	
 /* event styles */
@@ -45,10 +31,6 @@
 	}
 	
 /* right-to-left */
-
-.fc-rtl .fc-grid {
-	direction: rtl;
-	}
 	
 .fc-rtl .fc-grid .fc-day-number {
 	float: left;
@@ -57,4 +39,3 @@
 .fc-rtl .fc-grid .fc-event-time {
 	float: right;
 	}
-	

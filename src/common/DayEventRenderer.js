@@ -19,7 +19,7 @@ function DayEventRenderer() {
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
 	var getColWidth = t.getColWidth;
-	var allDayTR = t.allDayTR;
+	var allDayRow = t.allDayRow;
 	var allDayBounds = t.allDayBounds;
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
@@ -262,7 +262,7 @@ function DayEventRenderer() {
 				key = seg.key = cssKey(element[0]);
 				val = hsideCache[key];
 				if (val === undefined) {
-					val = hsideCache[key] = hsides(element[0], true);
+					val = hsideCache[key] = hsides(element, true);
 				}
 				seg.hsides = val;
 			}
@@ -300,7 +300,7 @@ function DayEventRenderer() {
 				key = seg.key; // created in daySegCalcHSides
 				val = vmarginCache[key];
 				if (val === undefined) {
-					val = vmarginCache[key] = vmargins(element[0]);
+					val = vmarginCache[key] = vmargins(element);
 				}
 				seg.outerHeight = element[0].offsetHeight + val;
 			}
@@ -313,7 +313,7 @@ function DayEventRenderer() {
 		var rowCnt = getRowCnt();
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
-			rowDivs[i] = allDayTR(i)
+			rowDivs[i] = allDayRow(i)
 				.find('td:first div.fc-day-content > div'); // optimal selector?
 		}
 		return rowDivs;
@@ -325,7 +325,7 @@ function DayEventRenderer() {
 		var rowCnt = rowDivs.length;
 		var tops = [];
 		for (i=0; i<rowCnt; i++) {
-			tops[i] = rowDivs[i][0].offsetTop;
+			tops[i] = rowDivs[i][0].offsetTop; // !!?? but this means the element needs position:relative if in a table cell!!!!
 		}
 		return tops;
 	}

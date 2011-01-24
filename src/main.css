@@ -13,12 +13,6 @@
 /* TODO: make font sizes look the same in all doctypes */
 
 
-.fc,
-.fc .fc-header,
-.fc .fc-content {
-	font-size: 1em;
-	}
-	
 .fc {
 	direction: ltr;
 	text-align: left;
@@ -29,7 +23,13 @@
 	border-spacing: 0;
 	}
 	
-.fc td, .fc th {
+html .fc,
+.fc table {
+	font-size: 1em;
+	}
+	
+.fc td,
+.fc th {
 	padding: 0;
 	vertical-align: top;
 	}
@@ -38,49 +38,67 @@
 
 /* Header
 ------------------------------------------------------------------------*/
-	
-table.fc-header {
-	width: 100%;
+
+table.fc-header td {
+	white-space: nowrap;
 	}
-	
+
 .fc-header-left {
 	width: 25%;
-	}
-	
-.fc-header-left table {
-	float: left;
+	text-align: left;
 	}
 	
 .fc-header-center {
-	width: 50%;
 	text-align: center;
-	}
-	
-.fc-header-center table {
-	margin: 0 auto;
 	}
 	
 .fc-header-right {
 	width: 25%;
+	text-align: right;
 	}
 	
-.fc-header-right table {
-	float: right;
+
+	
+.fc-header .fc-button {
+	margin-right: -1px;
+	margin-bottom: 1em;
+	vertical-align: top;
+	}
+	
+.fc-header .fc-corner-right {
+	margin-right: 1px;
+	}
+	
+.fc-header .ui-corner-right {
+	margin-right: 0;
+	}
+	
+.fc-header .fc-state-hover,
+.fc-header .ui-state-hover {
+	z-index: 2;
+	}
+	
+.fc-header .fc-state-down {
+	z-index: 3;
+	}
+
+.fc-header .fc-state-active,
+.fc-header .ui-state-active {
+	z-index: 4;
 	}
 	
 .fc-header-title {
+	display: inline-block;
+	vertical-align: top;
+	}
+	
+.fc-header-title h2 {
 	margin-top: 0;
 	white-space: nowrap;
 	}
 	
-.fc-header-space {
+.fc .fc-header-space {
 	padding-left: 10px;
-	}
-	
-/* right-to-left */
-
-.fc-rtl .fc-header-title {
-	direction: rtl;
 	}
 
 
@@ -88,138 +106,153 @@ table.fc-header {
 /* Buttons
 ------------------------------------------------------------------------*/
 
-.fc-header .fc-state-default,
-.fc-header .ui-state-default {
-	margin-bottom: 1em;
+.fc-button {
+	position: relative;
+	display: inline-block;
 	cursor: pointer;
 	}
 	
-.fc-header .fc-state-default {
+.fc-button .fc-inner {
+	float: left;
+	}
+	
+.fc-button-content {
+	position: relative;
+	float: left;
+	height: 1.9em;
+	line-height: 1.9em;
+	padding: 0 .6em;
+	white-space: nowrap;
+	}
+	
+.fc-button-content .fc-icon-wrap {
+	position: relative;
+	float: left;
+	top: 50%;
+	}
+	
+.fc-button-content .ui-icon {
+	position: relative;
+	float: left;
+	margin-top: -50%;
+	*margin-top: 0;
+	*top: -50%;
+	}
+	
+/* fake rounded corners */
+	
+.fc-state-default {
+	border-style: solid;
 	border-width: 1px 0;
 	padding: 0 1px;
 	}
 	
-.fc-header .fc-state-default,
-.fc-header .fc-state-default a {
+.fc-state-default .fc-inner {
+	position: relative;
 	border-style: solid;
-	}
-	
-.fc-header .fc-state-default a {
-	display: block;
 	border-width: 0 1px;
 	margin: 0 -1px;
-	width: 100%;
-	text-decoration: none;
+	overflow: hidden;
 	}
 	
-.fc-header .fc-state-default span {
-	display: block;
-	border-style: solid;
-	border-width: 1px 0 1px 1px;
-	padding: 3px 5px;
-	}
-	
-.fc-header .ui-state-default {
-	padding: 4px 6px;
-	}
-	
-.fc-header .fc-state-default span,
-.fc-header .ui-state-default span {
-	white-space: nowrap;
-	}
-	
-/* for adjacent buttons */
-	
-.fc-header .fc-no-right {
-	padding-right: 0;
-	}
-	
-.fc-header .fc-no-right a {
-	margin-right: 0;
-	border-right: 0;
-	}
-	
-.fc-header .ui-no-right {
-	border-right: 0;
-	}
-	
-/* for fake rounded corners */
-	
-.fc-header .fc-corner-left {
+.fc-corner-left {
 	margin-left: 1px;
 	padding-left: 0;
 	}
 	
-.fc-header .fc-corner-right {
+.fc-corner-right {
 	margin-right: 1px;
 	padding-right: 0;
 	}
 	
-/* DEFAULT button COLORS */
+/* gloss effect */
 	
-.fc-header .fc-state-default,
-.fc-header .fc-state-default a {
-	border-color: #777; /* outer border */
-	color: #333;
-	}
-
-.fc-header .fc-state-default span {
-	border-color: #fff #fff #d1d1d1; /* inner border */
-	background: #e8e8e8;
+.fc-state-default .fc-button-effect {
+	position: absolute;
+	top: 50%;
+	left: 0;
 	}
 	
-/* PRESSED button COLORS (down and active) */
+.fc-state-default .fc-button-effect span {
+	position: absolute;
+	top: -100px;
+	left: 0;
+	width: 500px;
+	height: 100px;
+	border-width: 100px 0 0 1px;
+	border-style: solid;
+	border-color: #fff;
+	background: #444;
+	opacity: .09;
+	filter: alpha(opacity=9);
+	}
 	
-.fc-header .fc-state-active a {
+.fc-state-disabled .fc-button-effect {
+	display: none;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+.fc-state-default,
+.fc-state-default .fc-inner {
+	border-style: solid;
+	border-color: #ccc #bbb #aaa;
+	background: #F3F3F3;
+	color: #000;
+	}
+	
+.fc-state-hover,
+.fc-state-hover .fc-inner {
+	border-color: #999;
+	}
+	
+.fc-state-down,
+.fc-state-down .fc-inner {
+	border-color: #555;
+	background: #777;
+	}
+	
+.fc-state-active,
+.fc-state-active .fc-inner {
+	border-color: #555;
+	background: #777;
 	color: #fff;
 	}
 	
-.fc-header .fc-state-down span,
-.fc-header .fc-state-active span {
-	background: #888;
-	border-color: #808080 #808080 #909090; /* inner border */
-	}
-	
-/* DISABLED button COLORS */
-	
-.fc-header .fc-state-disabled a {
+.fc-state-disabled,
+.fc-state-disabled .fc-inner {
 	color: #999;
+	border-color: #ddd;
 	}
 	
-.fc-header .fc-state-disabled,
-.fc-header .fc-state-disabled a {
-	border-color: #ccc; /* outer border */
-	}
 	
-.fc-header .fc-state-disabled span {
-	border-color: #fff #fff #f0f0f0; /* inner border */
-	background: #f0f0f0;
-	}
+	
+/* TODO: calendar column headings */
+	
+	
+	
 	
 	
 	
 /* Content Area & Global Cell Styles
 ------------------------------------------------------------------------*/
 	
-.fc-widget-content {
-	border: 1px solid #ccc; /* outer border color */
-	}
-	
 .fc-content {
 	clear: both;
 	}
 	
-.fc-content .fc-state-default {
-	border-style: solid;
-	border-color: #ccc; /* inner border color */
+.fc-widget-header,
+.fc-widget-content {
+	border: 1px solid #ccc;
 	}
 	
-.fc-content .fc-state-highlight { /* today */
+.fc-state-highlight { /* today */
 	background: #ffc;
-	}
-	
-.fc-content .fc-not-today { /* override jq-ui highlight (TODO: ui-widget-content) */
-	background: none;
 	}
 	
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
@@ -228,9 +261,8 @@ table.fc-header {
 	filter: alpha(opacity=20); /* for IE */
 	}
 	
-.fc-view { /* prevents dragging outside of widget */
-	width: 100%;
-	overflow: hidden;
+.fc-view {
+	width: 100%; /* needed for view switching (when view is absolute) */
 	}
 	
 	

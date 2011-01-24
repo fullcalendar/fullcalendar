@@ -5,11 +5,13 @@ function CoordinateGrid(buildFunc) {
 	var rows;
 	var cols;
 	
+	
 	t.build = function() {
 		rows = [];
 		cols = [];
 		buildFunc(rows, cols);
 	};
+	
 	
 	t.cell = function(x, y) {
 		var rowCnt = rows.length;
@@ -29,6 +31,7 @@ function CoordinateGrid(buildFunc) {
 		}
 		return (r>=0 && c>=0) ? { row:r, col:c } : null;
 	};
+	
 	
 	t.rect = function(row0, col0, row1, col1, originElement) { // row1,col1 is inclusive
 		var origin = originElement.offset();

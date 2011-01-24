@@ -15,10 +15,14 @@
 			//defaultView: 'agendaWeek',
 			
 			//weekMode: 'variable',
+			minTime: '5:30am',
+			maxTime: '5:30pm',
+			
+			// TODO: there is a bug switching into agendaWeek from month with a 1280x1024 (with firebug showing)
 			
 			header: {
 				left: 'prev,next today',
-				center: 'title',
+				center: 'prev title next',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,

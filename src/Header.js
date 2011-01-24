@@ -23,14 +23,13 @@ function Header(calendar, options) {
 		tm = options.theme ? 'ui' : 'fc';
 		var sections = options.header;
 		if (sections) {
-			element = $("<table class='fc-header'/>")
-				.append($("<tr/>")
-					.append($("<td class='fc-header-left'/>")
-						.append(renderSection(sections.left)))
-					.append($("<td class='fc-header-center'/>")
-						.append(renderSection(sections.center)))
-					.append($("<td class='fc-header-right'/>")
-						.append(renderSection(sections.right))));
+			element = $("<table class='fc-header' style='width:100%'/>")
+				.append(
+					$("<tr/>")
+						.append(renderSection('left'))
+						.append(renderSection('center'))
+						.append(renderSection('right'))
+				);
 			return element;
 		}
 	}
@@ -41,17 +40,18 @@ function Header(calendar, options) {
 	}
 	
 	
-	function renderSection(buttonStr) {
+	function renderSection(position) {
+		var e = $("<td class='fc-header-" + position + "'/>");
+		var buttonStr = options.header[position];
 		if (buttonStr) {
-			var tr = $("<tr/>");
 			$.each(buttonStr.split(' '), function(i) {
 				if (i > 0) {
-					tr.append("<td><span class='fc-header-space'/></td>");
+					e.append("<span class='fc-header-space'/>");
 				}
 				var prevButton;
 				$.each(this.split(','), function(j, buttonName) {
 					if (buttonName == 'title') {
-						tr.append("<td><h2 class='fc-header-title'>&nbsp;</h2></td>");
+						e.append("<span class='fc-header-title'><h2>&nbsp;</h2></span>");
 						if (prevButton) {
 							prevButton.addClass(tm + '-corner-right');
 						}
@@ -68,20 +68,23 @@ function Header(calendar, options) {
 							};
 						}
 						if (buttonClick) {
-							if (prevButton) {
-								prevButton.addClass(tm + '-no-right');
-							}
-							var button;
 							var icon = options.theme ? smartProperty(options.buttonIcons, buttonName) : null;
 							var text = smartProperty(options.buttonText, buttonName);
-							if (icon) {
-								button = $("<div class='fc-button-" + buttonName + " ui-state-default'>" +
-									"<a><span class='ui-icon ui-icon-" + icon + "'/></a></div>");
-							}
-							else if (text) {
-								button = $("<div class='fc-button-" + buttonName + " " + tm + "-state-default'>" +
-									"<a><span>" + text + "</span></a></div>");
-							}
+							var button = $(
+								"<span class='fc-button fc-button-" + buttonName + " " + tm + "-state-default'>" +
+									"<span class='fc-inner'>" +
+										"<span class='fc-button-content'>" +
+											(icon ?
+												"<span class='fc-icon-wrap'>" +
+													"<span class='ui-icon ui-icon-" + icon + "'/>" +
+												"</span>" :
+												text
+												) +
+										"</span>" +
+										"<span class='fc-button-effect'><span></span></span>" +
+									"</span>" +
+								"</span>"
+							);
 							if (button) {
 								button
 									.click(function() {
@@ -111,10 +114,8 @@ function Header(calendar, options) {
 												.removeClass(tm + '-state-down');
 										}
 									)
-									.appendTo($("<td/>").appendTo(tr));
-								if (prevButton) {
-									prevButton.addClass(tm + '-no-right');
-								}else{
+									.appendTo(e);
+								if (!prevButton) {
 									button.addClass(tm + '-corner-left');
 								}
 								prevButton = button;
@@ -126,37 +127,37 @@ function Header(calendar, options) {
 					prevButton.addClass(tm + '-corner-right');
 				}
 			});
-			return $("<table/>").append(tr);
 		}
+		return e;
 	}
 	
 	
 	function updateTitle(html) {
-		element.find('h2.fc-header-title')
+		element.find('h2')
 			.html(html);
 	}
 	
 	
 	function activateButton(buttonName) {
-		element.find('div.fc-button-' + buttonName)
+		element.find('span.fc-button-' + buttonName)
 			.addClass(tm + '-state-active');
 	}
 	
 	
 	function deactivateButton(buttonName) {
-		element.find('div.fc-button-' + buttonName)
+		element.find('span.fc-button-' + buttonName)
 			.removeClass(tm + '-state-active');
 	}
 	
 	
 	function disableButton(buttonName) {
-		element.find('div.fc-button-' + buttonName)
+		element.find('span.fc-button-' + buttonName)
 			.addClass(tm + '-state-disabled');
 	}
 	
 	
 	function enableButton(buttonName) {
-		element.find('div.fc-button-' + buttonName)
+		element.find('span.fc-button-' + buttonName)
 			.removeClass(tm + '-state-disabled');
 	}
 

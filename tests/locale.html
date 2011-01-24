@@ -4,7 +4,7 @@
 <style>
 
 /* http://code.google.com/p/fullcalendar/issues/detail?id=193 */
-.fc .fc-agenda td.fc-sat, .fc .fc-agenda td.fc-sun { background-color:red }
+.fc .fc-sat, .fc .fc-sun { background-color:red }
 
 </style>
 <script type='text/javascript' src='../src/_loader.js?debug'></script>
@@ -19,15 +19,16 @@
 		$('#calendar').fullCalendar({
 		
 			header: {
+				left: 'nextYear,next,prev,prevYear today',
 				center: 'month,agendaWeek,basicWeek,agendaDay,basicDay',
-				left: 'nextYear,next,prev,prevYear today'
+				right: 'title prev,next'
 			},
 			
 			editable: true,
 			
 			isRTL: true,
 			firstDay: 1,
-			//weekends: false,
+			weekends: false,
 			
 			minTime: '8am',
 			maxTime: '11:30pm',
