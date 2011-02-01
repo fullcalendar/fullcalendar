@@ -1,16 +1,9 @@
 /*
  * FullCalendar v@VERSION Stylesheet
  *
- * Feel free to edit this file to customize the look of FullCalendar.
- * When upgrading to newer versions, please upgrade this file as well,
- * porting over any customizations afterwards.
- *
  * Date: @DATE
  *
  */
- 
- 
-/* TODO: make font sizes look the same in all doctypes */
 
 
 .fc {
@@ -39,7 +32,7 @@ html .fc,
 /* Header
 ------------------------------------------------------------------------*/
 
-table.fc-header td {
+.fc-header td {
 	white-space: nowrap;
 	}
 
@@ -57,21 +50,40 @@ table.fc-header td {
 	text-align: right;
 	}
 	
-
+.fc-header-title {
+	display: inline-block;
+	vertical-align: top;
+	}
+	
+.fc-header-title h2 {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+	
+.fc .fc-header-space {
+	padding-left: 10px;
+	}
 	
 .fc-header .fc-button {
-	margin-right: -1px;
 	margin-bottom: 1em;
 	vertical-align: top;
 	}
 	
+/* buttons edges butting together */
+
+.fc-header .fc-button {
+	margin-right: -1px;
+	}
+	
 .fc-header .fc-corner-right {
-	margin-right: 1px;
+	margin-right: 1px; /* back to normal */
 	}
 	
 .fc-header .ui-corner-right {
-	margin-right: 0;
+	margin-right: 0; /* back to normal */
 	}
+	
+/* button layering (for border precedence) */
 	
 .fc-header .fc-state-hover,
 .fc-header .ui-state-hover {
@@ -87,183 +99,17 @@ table.fc-header td {
 	z-index: 4;
 	}
 	
-.fc-header-title {
-	display: inline-block;
-	vertical-align: top;
-	}
-	
-.fc-header-title h2 {
-	margin-top: 0;
-	white-space: nowrap;
-	}
-	
-.fc .fc-header-space {
-	padding-left: 10px;
-	}
-
-
-
-/* Buttons
-------------------------------------------------------------------------*/
-
-.fc-button {
-	position: relative;
-	display: inline-block;
-	cursor: pointer;
-	}
-	
-.fc-button .fc-inner {
-	float: left;
-	}
-	
-.fc-button-content {
-	position: relative;
-	float: left;
-	height: 1.9em;
-	line-height: 1.9em;
-	padding: 0 .6em;
-	white-space: nowrap;
-	}
-	
-.fc-button-content .fc-icon-wrap {
-	position: relative;
-	float: left;
-	top: 50%;
-	}
-	
-.fc-button-content .ui-icon {
-	position: relative;
-	float: left;
-	margin-top: -50%;
-	*margin-top: 0;
-	*top: -50%;
-	}
-	
-/* fake rounded corners */
-	
-.fc-state-default {
-	border-style: solid;
-	border-width: 1px 0;
-	padding: 0 1px;
-	}
-	
-.fc-state-default .fc-inner {
-	position: relative;
-	border-style: solid;
-	border-width: 0 1px;
-	margin: 0 -1px;
-	overflow: hidden;
-	}
-	
-.fc-corner-left {
-	margin-left: 1px;
-	padding-left: 0;
-	}
-	
-.fc-corner-right {
-	margin-right: 1px;
-	padding-right: 0;
-	}
-	
-/* gloss effect */
-	
-.fc-state-default .fc-button-effect {
-	position: absolute;
-	top: 50%;
-	left: 0;
-	}
-	
-.fc-state-default .fc-button-effect span {
-	position: absolute;
-	top: -100px;
-	left: 0;
-	width: 500px;
-	height: 100px;
-	border-width: 100px 0 0 1px;
-	border-style: solid;
-	border-color: #fff;
-	background: #444;
-	opacity: .09;
-	filter: alpha(opacity=9);
-	}
-	
-.fc-state-disabled .fc-button-effect {
-	display: none;
-	}
 	
 	
-	
-	
-	
-	
-	
-	
-.fc-state-default,
-.fc-state-default .fc-inner {
-	border-style: solid;
-	border-color: #ccc #bbb #aaa;
-	background: #F3F3F3;
-	color: #000;
-	}
-	
-.fc-state-hover,
-.fc-state-hover .fc-inner {
-	border-color: #999;
-	}
-	
-.fc-state-down,
-.fc-state-down .fc-inner {
-	border-color: #555;
-	background: #777;
-	}
-	
-.fc-state-active,
-.fc-state-active .fc-inner {
-	border-color: #555;
-	background: #777;
-	color: #fff;
-	}
-	
-.fc-state-disabled,
-.fc-state-disabled .fc-inner {
-	color: #999;
-	border-color: #ddd;
-	}
-	
-	
-	
-/* TODO: calendar column headings */
-	
-	
-	
-	
-	
-	
-/* Content Area & Global Cell Styles
+/* Content
 ------------------------------------------------------------------------*/
 	
 .fc-content {
 	clear: both;
 	}
 	
-.fc-widget-header,
-.fc-widget-content {
-	border: 1px solid #ccc;
-	}
-	
-.fc-state-highlight { /* today */
-	background: #ffc;
-	}
-	
-.fc-cell-overlay { /* semi-transparent rectangle while dragging */
-	background: #9cf;
-	opacity: .2;
-	filter: alpha(opacity=20); /* for IE */
-	}
-	
 .fc-view {
 	width: 100%; /* needed for view switching (when view is absolute) */
 	}
-	
 	
 	

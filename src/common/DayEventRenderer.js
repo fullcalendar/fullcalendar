@@ -157,7 +157,7 @@ function DayEventRenderer() {
 			}
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
-					"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+					"<a class='fc-event-inner'" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
 						(!event.allDay && seg.isStart ?
 							"<span class='fc-event-time'>" +
 								htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +

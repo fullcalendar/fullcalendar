@@ -19,6 +19,7 @@ css('main.css');
 css('common/common.css');
 css('basic/basic.css');
 css('agenda/agenda.css');
+cssprint('common/print.css');
 
 if (!legacy) {
 	jslib('../lib/' + JQUERY);
@@ -116,6 +117,11 @@ function endload() {
 
 function css(file) {
 	tags.push("<link rel='stylesheet' type='text/css' href='" + prefix + file + "' />");
+}
+
+
+function cssprint(file) {
+	tags.push("<link rel='stylesheet' type='text/css' href='" + prefix + file + "' media='print' />");
 }
 
 

@@ -56,6 +56,10 @@ zip:
 	@echo "building core..."
 	@$(call concat_js,${SRC_DIR},"${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.js")
 	@$(call concat_css,${SRC_DIR},"${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.css")
+	@cat "${SRC_DIR}/common/print.css" \
+		| ${VER_SED} \
+		| ${DATE_SED} \
+		> "${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.print.css"
 	
 	@echo "compressing core js..."
 	@java -jar ${BUILD_DIR}/compiler.jar --warning_level VERBOSE --jscomp_off checkTypes --externs build/externs.js \

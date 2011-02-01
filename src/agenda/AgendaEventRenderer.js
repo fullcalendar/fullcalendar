@@ -280,10 +280,18 @@ function AgendaEventRenderer() {
 	
 	function slotSegHtml(event, seg, className) {
 		return "<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px'>" +
-			"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
-				"<span class='fc-event-bg'></span>" +
-				"<span class='fc-event-time'>" + htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) + "</span>" +
-				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+			"<a class='fc-event-inner'" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" + // good for escaping quotes?
+				"<div class='fc-event-head'>" +
+					"<div class='fc-event-time'>" +
+						htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+					"</div>" +
+				"</div>" +
+				"<div class='fc-event-content'>" +
+					"<div class='fc-event-title'>" +
+						htmlEscape(event.title) +
+					"</div>" +
+				"</div>" +
+				"<div class='fc-event-bg'></div>" +
 			"</a>" +
 			((event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>"
@@ -434,7 +442,7 @@ function AgendaEventRenderer() {
 					trigger('eventDragStart', eventElement, event, ev, ui);
 					hideEvents(event, eventElement);
 					if ($.browser.msie) {
-						eventElement.find('span.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
+						eventElement.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
 					}
 					origPosition = eventElement.position();
 					minuteDelta = prevMinuteDelta = 0;
@@ -483,11 +491,11 @@ function AgendaEventRenderer() {
 						resetElement();
 						eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
 						updateTimeText(0);
-						if ($.browser.msie) {
+						if ($.browser.msie) { // TODO: dont use browser detection. base off of the presence of filter
 							eventElement
 								.css('filter', '') // clear IE opacity side-effects
-								.find('span.fc-event-bg')
-									.css('display', ''); // .show() made display=inline
+								.find('div.fc-event-bg')
+									.show();
 						}
 						showEvents(event, eventElement);
 					}

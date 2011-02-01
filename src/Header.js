@@ -72,7 +72,7 @@ function Header(calendar, options) {
 							var text = smartProperty(options.buttonText, buttonName);
 							var button = $(
 								"<span class='fc-button fc-button-" + buttonName + " " + tm + "-state-default'>" +
-									"<span class='fc-inner'>" +
+									"<span class='fc-button-inner'>" +
 										"<span class='fc-button-content'>" +
 											(icon ?
 												"<span class='fc-icon-wrap'>" +
