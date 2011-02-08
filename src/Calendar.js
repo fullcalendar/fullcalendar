@@ -134,8 +134,8 @@ function Calendar(element, options, eventSources) {
 	
 	// TODO: improve view switching (still weird transition in IE, and FF has whiteout problem)
 	
-	function changeView(newViewName) {
-		if (!currentView || newViewName != currentView.name) {
+	function changeView(newViewName, force) {
+		if (!currentView || newViewName != currentView.name || force == true) {
 			ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
 
 			unselect();
@@ -153,7 +153,7 @@ function Calendar(element, options, eventSources) {
 			content.css('overflow', 'hidden');
 			
 			currentView = viewInstances[newViewName];
-			if (currentView) {
+			if (currentView && force != true) {
 				currentView.element.show();
 			}else{
 				currentView = viewInstances[newViewName] = new fcViews[newViewName](
@@ -184,7 +184,13 @@ function Calendar(element, options, eventSources) {
 		}
 	}
 	
-	
+	function renderAgain() {
+		view = getView()
+		if(view.name)
+			changeView(view.name, true)
+		else
+			changeView(options.defaultView)
+	}
 	
 	function renderView(inc) {
 		if (elementVisible()) {
@@ -454,8 +460,11 @@ function Calendar(element, options, eventSources) {
 			options[name] = value;
 			updateSize();
 		}
+		if(name == 'slotMinutes' && typeof value == 'number') {
+			options[name] = value;
+			renderAgain();
+		}
 	}
-	
 	
 	function trigger(name, thisObj) {
 		if (options[name]) {
