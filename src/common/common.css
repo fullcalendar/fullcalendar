@@ -25,17 +25,23 @@
 .fc-button {
 	position: relative;
 	display: inline-block;
+	cursor: pointer;
+	}
+	
+.fc-state-default { /* non-theme */
 	border-style: solid;
 	border-width: 1px 0;
-	cursor: pointer;
 	}
 	
 .fc-button-inner {
 	position: relative;
 	float: left;
+	overflow: hidden;
+	}
+	
+.fc-state-default .fc-button-inner { /* non-theme */
 	border-style: solid;
 	border-width: 0 1px;
-	overflow: hidden;
 	}
 	
 .fc-button-content {
