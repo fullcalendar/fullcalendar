@@ -1,4 +1,6 @@
 
+fc.applyAll = applyAll;
+
 
 /* Event Date Math
 -----------------------------------------------------------------------------*/
@@ -302,6 +304,67 @@ function setDayID(cell, date) {
 	cell.each(function(i, _cell) {
 		_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-' + dayIDs[date.getDay()]);
 	});
+}
+
+
+function getSkinCss(event, opt) {
+	var source = event.source;
+	var eventColor = event.color;
+	var sourceColor = source.color;
+	var optionColor = opt('eventColor');
+	var backgroundColor =
+		event.backgroundColor ||
+		eventColor ||
+		source.backgroundColor ||
+		sourceColor ||
+		opt('eventBackgroundColor') ||
+		optionColor;
+	var borderColor =
+		event.borderColor ||
+		eventColor ||
+		source.borderColor ||
+		sourceColor ||
+		opt('eventBorderColor') ||
+		optionColor;
+	var textColor =
+		event.textColor ||
+		source.textColor ||
+		opt('textColor');
+	var statements = [];
+	if (backgroundColor) {
+		statements.push('background-color:' + backgroundColor);
+	}
+	if (borderColor) {
+		statements.push('border-color:' + borderColor);
+	}
+	if (textColor) {
+		statements.push('color:' + textColor);
+	}
+	return statements.join(';');
+}
+
+
+function applyAll(functions, thisObj, args) {
+	if ($.isFunction(functions)) {
+		functions = [ functions ];
+	}
+	if (functions) {
+		var i;
+		var ret;
+		for (i=0; i<functions.length; i++) {
+			ret = functions[i].apply(thisObj, args) || ret;
+		}
+		return ret;
+	}
+}
+
+
+function firstDefined() {
+	for (var i=0; i<arguments.length; i++) {
+		if (arguments[i] !== undefined) {
+			return arguments[i];
+		}
+	}
 }
 
 

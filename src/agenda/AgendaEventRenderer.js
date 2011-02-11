@@ -139,7 +139,7 @@ function AgendaEventRenderer() {
 	
 		var i, segCnt=segs.length, seg,
 			event,
-			className,
+			classes,
 			top, bottom,
 			colI, levelI, forward,
 			leftmost,
@@ -171,12 +171,12 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			className = 'fc-event fc-event-vert ';
+			classes = ['fc-event', 'fc-event-vert'];
 			if (seg.isStart) {
-				className += 'fc-corner-top ';
+				classes.push('fc-corner-top');
 			}
 			if (seg.isEnd) {
-				className += 'fc-corner-bottom ';
+				classes.push('fc-corner-bottom');
 			}
 			top = timePosition(seg.start, seg.start);
 			bottom = timePosition(seg.start, seg.end);
@@ -205,7 +205,7 @@ function AgendaEventRenderer() {
 			seg.left = left;
 			seg.outerWidth = outerWidth;
 			seg.outerHeight = bottom - top;
-			html += slotSegHtml(event, seg, className);
+			html += slotSegHtml(event, seg, classes);
 		}
 		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
@@ -278,10 +278,16 @@ function AgendaEventRenderer() {
 	}
 	
 	
-	function slotSegHtml(event, seg, className) {
-		return "<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px'>" +
-			"<a class='fc-event-inner'" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" + // good for escaping quotes?
-				"<div class='fc-event-head'>" +
+	function slotSegHtml(event, seg, classes) {
+		classes = classes.concat(event.className, event.source.className);
+		var skinCss = getSkinCss(event, opt);
+		var skinCssAttr = (skinCss ? " style='" + skinCss + "'" : '');
+		return "<div class='" + classes.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'>" +
+			"<a class='fc-event-inner'" +
+				(event.url ? " href='" + htmlEscape(event.url) + "'" : '') + // good for escaping quotes?
+				skinCssAttr +
+				">" +
+				"<div class='fc-event-head'" + skinCssAttr + ">" +
 					"<div class='fc-event-time'>" +
 						htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
 					"</div>" +
@@ -293,16 +299,22 @@ function AgendaEventRenderer() {
 				"</div>" +
 				"<div class='fc-event-bg'></div>" +
 			"</a>" +
-			((event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') && $.fn.resizable ?
+			((seg.isEnd &&
+				isEventEditable(event) &&
+				!opt('disableResizing') && // TODO: make like other source properties
+				$.fn.resizable)
+				?
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>"
-				: '') +
+				:
+				''
+				) +
 		"</div>";
 	}
 	
 	
 	function bindDaySeg(event, eventElement, seg) {
 		eventElementHandlers(event, eventElement);
-		if (event.editable || event.editable === undefined && opt('editable')) {
+		if (isEventEditable(event)) {
 			draggableDayEvent(event, eventElement, seg.isStart);
 			if (seg.isEnd) {
 				resizableDayEvent(event, eventElement, seg);
@@ -313,7 +325,7 @@ function AgendaEventRenderer() {
 	
 	function bindSlotSeg(event, eventElement, seg) {
 		eventElementHandlers(event, eventElement);
-		if (event.editable || event.editable === undefined && opt('editable')) {
+		if (isEventEditable(event)) {
 			var timeElement = eventElement.find('span.fc-event-time');
 			draggableSlotEvent(event, eventElement, timeElement);
 			if (seg.isEnd) {
@@ -323,12 +335,21 @@ function AgendaEventRenderer() {
 	}
 	
 	
+	function isEventEditable(event) {
+		return firstDefined(event.editable, event.source.editable, opt('editable'));
+	}
+	
+	
 	
 	/* Dragging
 	-----------------------------------------------------------------------------------*/
 	
 	
 	// when event starts out FULL-DAY
+	
+	// TODO: bug when dragging an event that occupies first day, but is not the event's start (no rounded left side)
+	
+	// TODO: bug when dragging from day to slot, outer container doesn't seem to change height
 	
 	function draggableDayEvent(event, eventElement, isStart) {
 		if (!opt('disableDragging') && eventElement.draggable) {

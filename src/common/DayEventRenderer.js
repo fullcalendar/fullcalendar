@@ -119,25 +119,26 @@ function DayEventRenderer() {
 		var segCnt=segs.length;
 		var seg;
 		var event;
-		var className;
+		var classes;
 		var bounds = allDayBounds();
 		var minLeft = bounds.left;
 		var maxLeft = bounds.right;
 		var cols = []; // don't really like this system (but have to do this b/c RTL works differently in basic vs agenda)
 		var left;
 		var right;
+		var skinCss;
 		var html = '';
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			className = 'fc-event fc-event-hori ';
+			classes = ['fc-event', 'fc-event-hori'];
 			if (rtl) {
 				if (seg.isStart) {
-					className += 'fc-corner-right ';
+					classes.push('fc-corner-right');
 				}
 				if (seg.isEnd) {
-					className += 'fc-corner-left ';
+					classes.push('fc-corner-left');
 				}
 				cols[0] = dayOfWeekCol(seg.end.getDay()-1);
 				cols[1] = dayOfWeekCol(seg.start.getDay());
@@ -145,19 +146,26 @@ function DayEventRenderer() {
 				right = seg.isStart ? colContentRight(cols[1]) : maxLeft;
 			}else{
 				if (seg.isStart) {
-					className += 'fc-corner-left ';
+					classes.push('fc-corner-left');
 				}
 				if (seg.isEnd) {
-					className += 'fc-corner-right ';
+					classes.push('fc-corner-right');
 				}
 				cols[0] = dayOfWeekCol(seg.start.getDay());
 				cols[1] = dayOfWeekCol(seg.end.getDay()-1);
 				left = seg.isStart ? colContentLeft(cols[0]) : minLeft;
 				right = seg.isEnd ? colContentRight(cols[1]) : maxLeft;
 			}
+			classes = classes.concat(event.className, event.source.className);
+			skinCss = getSkinCss(event, opt);
 			html +=
-				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +
-					"<a class='fc-event-inner'" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + ">" +
+				"<div class='" + classes.join(' ') + "' " +
+					"style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
+					">" +
+					"<a class='fc-event-inner'" +
+						(event.url ? " href='" + htmlEscape(event.url) + "'" : '') +
+						(skinCss ? " style='" + skinCss + "'" : '') +
+						">" +
 						(!event.allDay && seg.isStart ?
 							"<span class='fc-event-time'>" +
 								htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
@@ -165,9 +173,14 @@ function DayEventRenderer() {
 						:'') +
 						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 					"</a>" +
-					(seg.isEnd && (event.editable || event.editable === undefined && opt('editable')) && !opt('disableResizing') ?
+					((seg.isEnd &&
+						firstDefined(event.editable, event.source.editable, opt('editable')) &&
+						!opt('disableResizing')) // TODO: make this like the other source options
+						?
 						"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
-						: '') +
+						:
+						''
+						) +
 				"</div>";
 			seg.left = left;
 			seg.outerWidth = right - left;

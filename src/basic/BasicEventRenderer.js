@@ -77,7 +77,7 @@ function BasicEventRenderer() {
 	
 	function bindDaySeg(event, eventElement, seg) {
 		eventElementHandlers(event, eventElement);
-		if (event.editable || event.editable === undefined && opt('editable')) {
+		if (firstDefined(event.editable, event.source.editable, opt('editable'))) {
 			draggableDayEvent(event, eventElement);
 			if (seg.isEnd) {
 				resizableDayEvent(event, eventElement, seg);

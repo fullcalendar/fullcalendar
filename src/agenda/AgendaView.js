@@ -701,10 +701,11 @@ function AgendaView(element, calendar, viewName) {
 								start: startDate,
 								end: endDate,
 								className: [],
-								editable: false
+								editable: false,
+								source: {}
 							},
 							rect,
-							'fc-event fc-event-vert fc-corner-top fc-corner-bottom '
+							['fc-event', 'fc-event-vert', 'fc-corner-top', 'fc-corner-bottom']
 						));
 						if ($.browser.msie) {
 							selectionHelper.find('span.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
