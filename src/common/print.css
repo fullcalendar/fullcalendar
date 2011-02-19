@@ -13,9 +13,7 @@
  /* Events
 -----------------------------------------------------*/
  
-.fc-event,
-.fc-event-inner,
-.fc-event-head {
+.fc-event-skin {
 	background: none !important;
 	color: #000 !important;
 	}

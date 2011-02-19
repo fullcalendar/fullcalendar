@@ -14,6 +14,9 @@ function BasicEventRenderer() {
 	DayEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
+	//var setOverflowHidden = t.setOverflowHidden;
+	var isEventDraggable = t.isEventDraggable;
+	var isEventResizable = t.isEventResizable;
 	var reportEvents = t.reportEvents;
 	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
@@ -76,13 +79,14 @@ function BasicEventRenderer() {
 	
 	
 	function bindDaySeg(event, eventElement, seg) {
-		eventElementHandlers(event, eventElement);
-		if (firstDefined(event.editable, event.source.editable, opt('editable'))) {
+		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement);
-			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement, seg);
-			}
 		}
+		if (seg.isEnd && isEventResizable(event)) {
+			resizableDayEvent(event, eventElement, seg);
+		}
+		eventElementHandlers(event, eventElement);
+			// needs to be after, because resizableDayEvent might stopImmediatePropagation on click
 	}
 	
 	
@@ -92,47 +96,47 @@ function BasicEventRenderer() {
 	
 	
 	function draggableDayEvent(event, eventElement) {
-		if (!opt('disableDragging') && eventElement.draggable) {
-			var hoverListener = getHoverListener();
-			var dayDelta;
-			eventElement.draggable({
-				zIndex: 9,
-				delay: 50,
-				opacity: opt('dragOpacity'),
-				revertDuration: opt('dragRevertDuration'),
-				start: function(ev, ui) {
-					trigger('eventDragStart', eventElement, event, ev, ui);
-					hideEvents(event, eventElement);
-					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
-						clearOverlays();
-						if (cell) {
-							dayDelta = rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
-							renderDayOverlay(
-								addDays(cloneDate(event.start), dayDelta),
-								addDays(exclEndDay(event), dayDelta)
-							);
-						}else{
-							dayDelta = 0;
-						}
-					}, ev, 'drag');
-				},
-				stop: function(ev, ui) {
-					hoverListener.stop();
+		var hoverListener = getHoverListener();
+		var dayDelta;
+		eventElement.draggable({
+			zIndex: 9,
+			delay: 50,
+			opacity: opt('dragOpacity'),
+			revertDuration: opt('dragRevertDuration'),
+			start: function(ev, ui) {
+				trigger('eventDragStart', eventElement, event, ev, ui);
+				hideEvents(event, eventElement);
+				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
+					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 					clearOverlays();
-					trigger('eventDragStop', eventElement, event, ev, ui);
-					if (dayDelta) {
-						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
-						eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
+					if (cell) {
+						//setOverflowHidden(true);
+						dayDelta = rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
+						renderDayOverlay(
+							addDays(cloneDate(event.start), dayDelta),
+							addDays(exclEndDay(event), dayDelta)
+						);
 					}else{
-						if ($.browser.msie) {
-							eventElement.css('filter', ''); // clear IE opacity side-effects
-						}
-						showEvents(event, eventElement);
+						//setOverflowHidden(false);
+						dayDelta = 0;
 					}
+				}, ev, 'drag');
+			},
+			stop: function(ev, ui) {
+				hoverListener.stop();
+				clearOverlays();
+				trigger('eventDragStop', eventElement, event, ev, ui);
+				if (dayDelta) {
+					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
+				}else{
+					if ($.browser.msie) {
+						eventElement.css('filter', ''); // clear IE opacity side-effects
+					}
+					showEvents(event, eventElement);
 				}
-			});
-		}
+				//setOverflowHidden(false);
+			}
+		});
 	}
 
 

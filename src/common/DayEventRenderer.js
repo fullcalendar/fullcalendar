@@ -11,6 +11,8 @@ function DayEventRenderer() {
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
+	var isEventDraggable = t.isEventDraggable;
+	var isEventResizable = t.isEventResizable;
 	var eventEnd = t.eventEnd;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
@@ -119,6 +121,7 @@ function DayEventRenderer() {
 		var segCnt=segs.length;
 		var seg;
 		var event;
+		var url;
 		var classes;
 		var bounds = allDayBounds();
 		var minLeft = bounds.left;
@@ -132,7 +135,10 @@ function DayEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			classes = ['fc-event', 'fc-event-hori'];
+			classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
+			if (isEventDraggable(event)) {
+				classes.push('fc-event-draggable');
+			}
 			if (rtl) {
 				if (seg.isStart) {
 					classes.push('fc-corner-right');
@@ -157,34 +163,39 @@ function DayEventRenderer() {
 				right = seg.isEnd ? colContentRight(cols[1]) : maxLeft;
 			}
 			classes = classes.concat(event.className, event.source.className);
+			url = event.url;
 			skinCss = getSkinCss(event, opt);
+			if (url) {
+				html += "<a href='" + htmlEscape(url) + "'";
+			}else{
+				html += "<div";
+			}
 			html +=
-				"<div class='" + classes.join(' ') + "' " +
-					"style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
-					">" +
-					"<a class='fc-event-inner'" +
-						(event.url ? " href='" + htmlEscape(event.url) + "'" : '') +
-						(skinCss ? " style='" + skinCss + "'" : '') +
-						">" +
-						(!event.allDay && seg.isStart ?
-							"<span class='fc-event-time'>" +
-								htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
-							"</span>"
-						:'') +
-						"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
-					"</a>" +
-					((seg.isEnd &&
-						firstDefined(event.editable, event.source.editable, opt('editable')) &&
-						!opt('disableResizing')) // TODO: make this like the other source options
-						?
-						"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>"
-						:
-						''
-						) +
+				" class='" + classes.join(' ') + "'" +
+				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
+				">" +
+				"<div" +
+				" class='fc-event-inner fc-event-skin'" +
+				(skinCss ? " style='" + skinCss + "'" : '') +
+				">";
+			if (!event.allDay && seg.isStart) {
+				html +=
+					"<span class='fc-event-time'>" +
+					htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+					"</span>";
+			}
+			html +=
+				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</div>";
+			if (seg.isEnd && isEventResizable(event)) {
+				html +=
+					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>";
+			}
+			html +=
+				"</" + (url ? "a" : "div" ) + ">";
 			seg.left = left;
 			seg.outerWidth = right - left;
-			cols.sort(cmp);
+			cols.sort(cmp); // is this still needed now that cols are always left-to-right?
 			seg.startCol = cols[0];
 			seg.endCol = cols[1] + 1;
 		}
@@ -368,78 +379,99 @@ function DayEventRenderer() {
 	
 	
 	function resizableDayEvent(event, element, seg) {
-		if (!opt('disableResizing') && seg.isEnd) {
-			var rtl = opt('isRTL');
-			var direction = rtl ? 'w' : 'e';
-			var handle = element.find('div.ui-resizable-' + direction);
-			handle.mousedown(function(ev) {
-				if (ev.which != 1) {
-					return; // needs to be left mouse button
-				}
-				var hoverListener = t.getHoverListener();
-				var rowCnt = getRowCnt();
-				var colCnt = getColCnt();
-				var dis = rtl ? -1 : 1;
-				var dit = rtl ? colCnt : 0;
-				var elementTop = element.css('top');
-				var dayDelta;
-				var helpers;
-				var eventCopy = $.extend({}, event);
-				var minCell = dateCell(event.start);
-				clearSelection();
-				$('body')
-					.css('cursor', direction + '-resize')
-					.one('mouseup', mouseup);
-				trigger('eventResizeStart', this, event, ev);
-				hoverListener.start(function(cell, origCell) {
-					if (cell) {
-						var r = Math.max(minCell.row, cell.row);
-						var c = cell.col;
-						if (rowCnt == 1) {
-							r = 0; // hack for all-day area in agenda views
-						}
-						if (r == minCell.row) {
-							if (rtl) {
-								c = Math.min(minCell.col, c);
-							}else{
-								c = Math.max(minCell.col, c);
-							}
-						}
-						dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
-						var newEnd = addDays(eventEnd(event), dayDelta, true);
-						if (dayDelta) {
-							eventCopy.end = newEnd;
-							var oldHelpers = helpers;
-							helpers = renderTempDaySegs(compileDaySegs([eventCopy]), seg.row, elementTop);
-							helpers.find('*').css('cursor', direction + '-resize');
-							if (oldHelpers) {
-								oldHelpers.remove();
-							}
-							hideEvents(event);
-						}else{
-							if (helpers) {
-								showEvents(event);
-								helpers.remove();
-								helpers = null;
-							}
-						}
-						clearOverlays();
-						renderDayOverlay(event.start, addDays(cloneDate(newEnd), 1)); // coordinate grid already rebuild at hoverListener.start
-					}
-				}, ev);
-				function mouseup(ev) {
-					trigger('eventResizeStop', this, event, ev);
-					$('body').css('cursor', 'auto');
-					hoverListener.stop();
-					clearOverlays();
-					if (dayDelta) {
-						eventResize(this, event, dayDelta, 0, ev);
-						// event redraw will clear helpers
-					}
-					// otherwise, the drag handler already restored the old events
+		var rtl = opt('isRTL');
+		var direction = rtl ? 'w' : 'e';
+		var handle = element.find('div.ui-resizable-' + direction);
+		var isResizing = false;
+		
+		// TODO: look into using jquery-ui mouse widget for this stuff
+		disableTextSelection(element); // prevent native <a> selection for IE
+		element
+			.mousedown(function(ev) { // prevent native <a> selection for others
+				ev.preventDefault();
+			})
+			.click(function(ev) {
+				if (isResizing) {
+					ev.preventDefault(); // prevent link from being visited (only method that worked in IE6)
+					ev.stopImmediatePropagation(); // prevent fullcalendar eventClick handler from being called
+					                               // (eventElementHandlers needs to be bound after resizableDayEvent)
 				}
 			});
-		}
+		
+		handle.mousedown(function(ev) {
+			if (ev.which != 1) {
+				return; // needs to be left mouse button
+			}
+			isResizing = true;
+			var hoverListener = t.getHoverListener();
+			var rowCnt = getRowCnt();
+			var colCnt = getColCnt();
+			var dis = rtl ? -1 : 1;
+			var dit = rtl ? colCnt : 0;
+			var elementTop = element.css('top');
+			var dayDelta;
+			var helpers;
+			var eventCopy = $.extend({}, event);
+			var minCell = dateCell(event.start);
+			clearSelection();
+			$('body')
+				.css('cursor', direction + '-resize')
+				.one('mouseup', mouseup);
+			trigger('eventResizeStart', this, event, ev);
+			hoverListener.start(function(cell, origCell) {
+				if (cell) {
+					var r = Math.max(minCell.row, cell.row);
+					var c = cell.col;
+					if (rowCnt == 1) {
+						r = 0; // hack for all-day area in agenda views
+					}
+					if (r == minCell.row) {
+						if (rtl) {
+							c = Math.min(minCell.col, c);
+						}else{
+							c = Math.max(minCell.col, c);
+						}
+					}
+					dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
+					var newEnd = addDays(eventEnd(event), dayDelta, true);
+					if (dayDelta) {
+						eventCopy.end = newEnd;
+						var oldHelpers = helpers;
+						helpers = renderTempDaySegs(compileDaySegs([eventCopy]), seg.row, elementTop);
+						helpers.find('*').css('cursor', direction + '-resize');
+						if (oldHelpers) {
+							oldHelpers.remove();
+						}
+						hideEvents(event);
+					}else{
+						if (helpers) {
+							showEvents(event);
+							helpers.remove();
+							helpers = null;
+						}
+					}
+					clearOverlays();
+					renderDayOverlay(event.start, addDays(cloneDate(newEnd), 1)); // coordinate grid already rebuild at hoverListener.start
+				}
+			}, ev);
+			
+			function mouseup(ev) {
+				trigger('eventResizeStop', this, event, ev);
+				$('body').css('cursor', '');
+				hoverListener.stop();
+				clearOverlays();
+				if (dayDelta) {
+					eventResize(this, event, dayDelta, 0, ev);
+					// event redraw will clear helpers
+				}
+				// otherwise, the drag handler already restored the old events
+				
+				setTimeout(function() { // make this happen after the element's click event
+					isResizing = false;
+				},0);
+			}
+			
+		});
 	}
 	
 

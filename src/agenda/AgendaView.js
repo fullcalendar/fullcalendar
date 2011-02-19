@@ -695,6 +695,8 @@ function AgendaView(element, calendar, viewName) {
 								.appendTo(slotContent);
 						}
 					}else{
+						rect.isStart = true; // conside rect a "seg" now
+						rect.isEnd = true;   //
 						selectionHelper = $(slotSegHtml(
 							{
 								title: '',
@@ -704,11 +706,10 @@ function AgendaView(element, calendar, viewName) {
 								editable: false,
 								source: {}
 							},
-							rect,
-							['fc-event', 'fc-event-vert', 'fc-corner-top', 'fc-corner-bottom']
+							rect
 						));
 						if ($.browser.msie) {
-							selectionHelper.find('span.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
+							selectionHelper.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
 						}
 						selectionHelper.css('opacity', opt('dragOpacity'));
 					}

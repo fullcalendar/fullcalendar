@@ -15,6 +15,9 @@ function AgendaEventRenderer() {
 	DayEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
+	//var setOverflowHidden = t.setOverflowHidden;
+	var isEventDraggable = t.isEventDraggable;
+	var isEventResizable = t.isEventResizable;
 	var eventEnd = t.eventEnd;
 	var reportEvents = t.reportEvents;
 	var reportEventClear = t.reportEventClear;
@@ -171,13 +174,6 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			classes = ['fc-event', 'fc-event-vert'];
-			if (seg.isStart) {
-				classes.push('fc-corner-top');
-			}
-			if (seg.isEnd) {
-				classes.push('fc-corner-bottom');
-			}
 			top = timePosition(seg.start, seg.start);
 			bottom = timePosition(seg.start, seg.end);
 			colI = seg.col;
@@ -205,7 +201,7 @@ function AgendaEventRenderer() {
 			seg.left = left;
 			seg.outerWidth = outerWidth;
 			seg.outerHeight = bottom - top;
-			html += slotSegHtml(event, seg, classes);
+			html += slotSegHtml(event, seg);
 		}
 		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
@@ -278,65 +274,75 @@ function AgendaEventRenderer() {
 	}
 	
 	
-	function slotSegHtml(event, seg, classes) {
-		classes = classes.concat(event.className, event.source.className);
+	function slotSegHtml(event, seg) {
+		var html = "<";
+		var url = event.url;
 		var skinCss = getSkinCss(event, opt);
 		var skinCssAttr = (skinCss ? " style='" + skinCss + "'" : '');
-		return "<div class='" + classes.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'>" +
-			"<a class='fc-event-inner'" +
-				(event.url ? " href='" + htmlEscape(event.url) + "'" : '') + // good for escaping quotes?
-				skinCssAttr +
-				">" +
-				"<div class='fc-event-head'" + skinCssAttr + ">" +
-					"<div class='fc-event-time'>" +
-						htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
-					"</div>" +
-				"</div>" +
-				"<div class='fc-event-content'>" +
-					"<div class='fc-event-title'>" +
-						htmlEscape(event.title) +
-					"</div>" +
-				"</div>" +
-				"<div class='fc-event-bg'></div>" +
-			"</a>" +
-			((seg.isEnd &&
-				isEventEditable(event) &&
-				!opt('disableResizing') && // TODO: make like other source properties
-				$.fn.resizable)
-				?
-				"<div class='ui-resizable-handle ui-resizable-s'>=</div>"
-				:
-				''
-				) +
-		"</div>";
+		var classes = ['fc-event', 'fc-event-skin', 'fc-event-vert'];
+		if (isEventDraggable(event)) {
+			classes.push('fc-event-draggable');
+		}
+		if (seg.isStart) {
+			classes.push('fc-corner-top');
+		}
+		if (seg.isEnd) {
+			classes.push('fc-corner-bottom');
+		}
+		classes = classes.concat(event.className, event.source.className);
+		if (url) {
+			html += "a href='" + htmlEscape(event.url) + "'";
+		}else{
+			html += "div";
+		}
+		html +=
+			" class='" + classes.join(' ') + "'" +
+			" style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'" +
+			">" +
+			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
+			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
+			"<div class='fc-event-time'>" +
+			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+			"</div>" +
+			"</div>" +
+			"<div class='fc-event-content'>" +
+			"<div class='fc-event-title'>" +
+			htmlEscape(event.title) +
+			"</div>" +
+			"</div>" +
+			"<div class='fc-event-bg'></div>" +
+			"</div>"; // close inner
+		if (seg.isEnd && isEventResizable(event)) {
+			html +=
+				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
+		}
+		html +=
+			"</" + (url ? "a" : "div") + ">";
+		return html;
 	}
 	
 	
 	function bindDaySeg(event, eventElement, seg) {
-		eventElementHandlers(event, eventElement);
-		if (isEventEditable(event)) {
+		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement, seg.isStart);
-			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement, seg);
-			}
 		}
+		if (seg.isEnd && isEventResizable(event)) {
+			resizableDayEvent(event, eventElement, seg);
+		}
+		eventElementHandlers(event, eventElement);
+			// needs to be after, because resizableDayEvent might stopImmediatePropagation on click
 	}
 	
 	
 	function bindSlotSeg(event, eventElement, seg) {
-		eventElementHandlers(event, eventElement);
-		if (isEventEditable(event)) {
-			var timeElement = eventElement.find('span.fc-event-time');
+		var timeElement = eventElement.find('span.fc-event-time');
+		if (isEventDraggable(event)) {
 			draggableSlotEvent(event, eventElement, timeElement);
-			if (seg.isEnd) {
-				resizableSlotEvent(event, eventElement, timeElement);
-			}
 		}
-	}
-	
-	
-	function isEventEditable(event) {
-		return firstDefined(event.editable, event.source.editable, opt('editable'));
+		if (seg.isEnd && isEventResizable(event)) {
+			resizableSlotEvent(event, eventElement, timeElement);
+		}
+		eventElementHandlers(event, eventElement);
 	}
 	
 	
@@ -347,101 +353,98 @@ function AgendaEventRenderer() {
 	
 	// when event starts out FULL-DAY
 	
-	// TODO: bug when dragging an event that occupies first day, but is not the event's start (no rounded left side)
-	
-	// TODO: bug when dragging from day to slot, outer container doesn't seem to change height
-	
 	function draggableDayEvent(event, eventElement, isStart) {
-		if (!opt('disableDragging') && eventElement.draggable) {
-			var origWidth;
-			var revert;
-			var allDay=true;
-			var dayDelta;
-			var dis = opt('isRTL') ? -1 : 1;
-			var hoverListener = getHoverListener();
-			var colWidth = getColWidth();
-			var slotHeight = getSlotHeight();
-			var minMinute = getMinMinute();
-			eventElement.draggable({
-				zIndex: 9,
-				opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
-				revertDuration: opt('dragRevertDuration'),
-				start: function(ev, ui) {
-					trigger('eventDragStart', eventElement, event, ev, ui);
-					hideEvents(event, eventElement);
-					origWidth = eventElement.width();
-					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-						clearOverlays();
-						if (cell) {
-							revert = false;
-							dayDelta = colDelta * dis;
-							if (!cell.row) {
-								// on full-days
-								renderDayOverlay(
-									addDays(cloneDate(event.start), dayDelta),
-									addDays(exclEndDay(event), dayDelta)
-								);
-								resetElement();
-							}else{
-								// mouse is over bottom slots
-								if (isStart) {
-									if (allDay) {
-										// convert event to temporary slot-event
-										eventElement.width(colWidth - 10); // don't use entire width
-										setOuterHeight(
-											eventElement,
-											slotHeight * Math.round(
-												(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
-												/ opt('slotMinutes')
-											)
-										);
-										eventElement.draggable('option', 'grid', [colWidth, 1]);
-										allDay = false;
-									}
-								}else{
-									revert = true;
-								}
-							}
-							revert = revert || (allDay && !dayDelta);
-						}else{
-							revert = true;
-						}
-						eventElement.draggable('option', 'revert', revert);
-					}, ev, 'drag');
-				},
-				stop: function(ev, ui) {
-					hoverListener.stop();
+		var origWidth;
+		var revert;
+		var allDay=true;
+		var dayDelta;
+		var dis = opt('isRTL') ? -1 : 1;
+		var hoverListener = getHoverListener();
+		var colWidth = getColWidth();
+		var slotHeight = getSlotHeight();
+		var minMinute = getMinMinute();
+		eventElement.draggable({
+			zIndex: 9,
+			opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
+			revertDuration: opt('dragRevertDuration'),
+			start: function(ev, ui) {
+				trigger('eventDragStart', eventElement, event, ev, ui);
+				hideEvents(event, eventElement);
+				origWidth = eventElement.width();
+				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 					clearOverlays();
-					trigger('eventDragStop', eventElement, event, ev, ui);
-					if (revert) {
-						// hasn't moved or is out of bounds (draggable has already reverted)
-						resetElement();
-						if ($.browser.msie) {
-							eventElement.css('filter', ''); // clear IE opacity side-effects
+					if (cell) {
+						//setOverflowHidden(true);
+						revert = false;
+						dayDelta = colDelta * dis;
+						if (!cell.row) {
+							// on full-days
+							renderDayOverlay(
+								addDays(cloneDate(event.start), dayDelta),
+								addDays(exclEndDay(event), dayDelta)
+							);
+							resetElement();
+						}else{
+							// mouse is over bottom slots
+							if (isStart) {
+								if (allDay) {
+									// convert event to temporary slot-event
+									eventElement.width(colWidth - 10); // don't use entire width
+									setOuterHeight(
+										eventElement,
+										slotHeight * Math.round(
+											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
+											/ opt('slotMinutes')
+										)
+									);
+									eventElement.draggable('option', 'grid', [colWidth, 1]);
+									allDay = false;
+								}
+							}else{
+								revert = true;
+							}
 						}
-						showEvents(event, eventElement);
+						revert = revert || (allDay && !dayDelta);
 					}else{
-						// changed!
-						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
-						var minuteDelta = 0;
-						if (!allDay) {
-							minuteDelta = Math.round((eventElement.offset().top - getBodyContent().offset().top) / slotHeight)
-								* opt('slotMinutes')
-								+ minMinute
-								- (event.start.getHours() * 60 + event.start.getMinutes());
-						}
-						eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
+						resetElement();
+						//setOverflowHidden(false);
+						revert = true;
 					}
+					eventElement.draggable('option', 'revert', revert);
+				}, ev, 'drag');
+			},
+			stop: function(ev, ui) {
+				hoverListener.stop();
+				clearOverlays();
+				trigger('eventDragStop', eventElement, event, ev, ui);
+				if (revert) {
+					// hasn't moved or is out of bounds (draggable has already reverted)
+					resetElement();
+					if ($.browser.msie) {
+						eventElement.css('filter', ''); // clear IE opacity side-effects
+					}
+					showEvents(event, eventElement);
+				}else{
+					// changed!
+					var minuteDelta = 0;
+					if (!allDay) {
+						minuteDelta = Math.round((eventElement.offset().top - getBodyContent().offset().top) / slotHeight)
+							* opt('slotMinutes')
+							+ minMinute
+							- (event.start.getHours() * 60 + event.start.getMinutes());
+					}
+					eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
 				}
-			});
-			function resetElement() {
-				if (!allDay) {
-					eventElement
-						.width(origWidth)
-						.height('')
-						.draggable('option', 'grid', null);
-					allDay = true;
-				}
+				//setOverflowHidden(false);
+			}
+		});
+		function resetElement() {
+			if (!allDay) {
+				eventElement
+					.width(origWidth)
+					.height('')
+					.draggable('option', 'grid', null);
+				allDay = true;
 			}
 		}
 	}
@@ -450,102 +453,100 @@ function AgendaEventRenderer() {
 	// when event starts out IN TIMESLOTS
 	
 	function draggableSlotEvent(event, eventElement, timeElement) {
-		if (!opt('disableDragging') && eventElement.draggable) {
-			var origPosition;
-			var allDay=false;
-			var dayDelta;
-			var minuteDelta;
-			var prevMinuteDelta;
-			var dis = opt('isRTL') ? -1 : 1;
-			var hoverListener = getHoverListener();
-			var colCnt = getColCnt();
-			var colWidth = getColWidth();
-			var slotHeight = getSlotHeight();
-			eventElement.draggable({
-				zIndex: 9,
-				scroll: false,
-				grid: [colWidth, slotHeight],
-				axis: colCnt==1 ? 'y' : false,
-				opacity: opt('dragOpacity'),
-				revertDuration: opt('dragRevertDuration'),
-				start: function(ev, ui) {
-					trigger('eventDragStart', eventElement, event, ev, ui);
-					hideEvents(event, eventElement);
-					if ($.browser.msie) {
-						eventElement.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
-					}
-					origPosition = eventElement.position();
-					minuteDelta = prevMinuteDelta = 0;
-					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-						eventElement.draggable('option', 'revert', !cell);
-						clearOverlays();
-						if (cell) {
-							dayDelta = colDelta * dis;
-							if (opt('allDaySlot') && !cell.row) {
-								// over full days
-								if (!allDay) {
-									// convert to temporary all-day event
-									allDay = true;
-									timeElement.hide();
-									eventElement.draggable('option', 'grid', null);
-								}
-								renderDayOverlay(
-									addDays(cloneDate(event.start), dayDelta),
-									addDays(exclEndDay(event), dayDelta)
-								);
-							}else{
-								// on slots
-								resetElement();
-							}
-						}
-					}, ev, 'drag');
-				},
-				drag: function(ev, ui) {
-					minuteDelta = Math.round((ui.position.top - origPosition.top) / slotHeight) * opt('slotMinutes');
-					if (minuteDelta != prevMinuteDelta) {
-						if (!allDay) {
-							updateTimeText(minuteDelta);
-						}
-						prevMinuteDelta = minuteDelta;
-					}
-				},
-				stop: function(ev, ui) {
-					var cell = hoverListener.stop();
+		var origPosition;
+		var allDay=false;
+		var dayDelta;
+		var minuteDelta;
+		var prevMinuteDelta;
+		var dis = opt('isRTL') ? -1 : 1;
+		var hoverListener = getHoverListener();
+		var colCnt = getColCnt();
+		var colWidth = getColWidth();
+		var slotHeight = getSlotHeight();
+		eventElement.draggable({
+			zIndex: 9,
+			scroll: false,
+			grid: [colWidth, slotHeight],
+			axis: colCnt==1 ? 'y' : false,
+			opacity: opt('dragOpacity'),
+			revertDuration: opt('dragRevertDuration'),
+			start: function(ev, ui) {
+				trigger('eventDragStart', eventElement, event, ev, ui);
+				hideEvents(event, eventElement);
+				if ($.browser.msie) {
+					eventElement.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
+				}
+				origPosition = eventElement.position();
+				minuteDelta = prevMinuteDelta = 0;
+				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
+					eventElement.draggable('option', 'revert', !cell);
 					clearOverlays();
-					trigger('eventDragStop', eventElement, event, ev, ui);
-					if (cell && (dayDelta || minuteDelta || allDay)) {
-						// changed!
-						eventDrop(this, event, dayDelta, allDay ? 0 : minuteDelta, allDay, ev, ui);
-					}else{
-						// either no change or out-of-bounds (draggable has already reverted)
-						resetElement();
-						eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
-						updateTimeText(0);
-						if ($.browser.msie) { // TODO: dont use browser detection. base off of the presence of filter
-							eventElement
-								.css('filter', '') // clear IE opacity side-effects
-								.find('div.fc-event-bg')
-									.show();
+					if (cell) {
+						dayDelta = colDelta * dis;
+						if (opt('allDaySlot') && !cell.row) {
+							// over full days
+							if (!allDay) {
+								// convert to temporary all-day event
+								allDay = true;
+								timeElement.hide();
+								eventElement.draggable('option', 'grid', null);
+							}
+							renderDayOverlay(
+								addDays(cloneDate(event.start), dayDelta),
+								addDays(exclEndDay(event), dayDelta)
+							);
+						}else{
+							// on slots
+							resetElement();
 						}
-						showEvents(event, eventElement);
 					}
+				}, ev, 'drag');
+			},
+			drag: function(ev, ui) {
+				minuteDelta = Math.round((ui.position.top - origPosition.top) / slotHeight) * opt('slotMinutes');
+				if (minuteDelta != prevMinuteDelta) {
+					if (!allDay) {
+						updateTimeText(minuteDelta);
+					}
+					prevMinuteDelta = minuteDelta;
 				}
-			});
-			function updateTimeText(minuteDelta) {
-				var newStart = addMinutes(cloneDate(event.start), minuteDelta);
-				var newEnd;
-				if (event.end) {
-					newEnd = addMinutes(cloneDate(event.end), minuteDelta);
+			},
+			stop: function(ev, ui) {
+				var cell = hoverListener.stop();
+				clearOverlays();
+				trigger('eventDragStop', eventElement, event, ev, ui);
+				if (cell && (dayDelta || minuteDelta || allDay)) {
+					// changed!
+					eventDrop(this, event, dayDelta, allDay ? 0 : minuteDelta, allDay, ev, ui);
+				}else{
+					// either no change or out-of-bounds (draggable has already reverted)
+					resetElement();
+					eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
+					updateTimeText(0);
+					if ($.browser.msie) { // TODO: dont use browser detection. base off of the presence of filter
+						eventElement
+							.css('filter', '') // clear IE opacity side-effects
+							.find('div.fc-event-bg')
+								.show();
+					}
+					showEvents(event, eventElement);
 				}
-				timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
 			}
-			function resetElement() {
-				// convert back to original slot-event
-				if (allDay) {
-					timeElement.css('display', ''); // show() was causing display=inline
-					eventElement.draggable('option', 'grid', [colWidth, slotHeight]);
-					allDay = false;
-				}
+		});
+		function updateTimeText(minuteDelta) {
+			var newStart = addMinutes(cloneDate(event.start), minuteDelta);
+			var newEnd;
+			if (event.end) {
+				newEnd = addMinutes(cloneDate(event.end), minuteDelta);
+			}
+			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
+		}
+		function resetElement() {
+			// convert back to original slot-event
+			if (allDay) {
+				timeElement.css('display', ''); // show() was causing display=inline
+				eventElement.draggable('option', 'grid', [colWidth, slotHeight]);
+				allDay = false;
 			}
 		}
 	}
@@ -557,50 +558,48 @@ function AgendaEventRenderer() {
 	
 	
 	function resizableSlotEvent(event, eventElement, timeElement) {
-		if (!opt('disableResizing') && eventElement.resizable) {
-			var slotDelta, prevSlotDelta;
-			var slotHeight = getSlotHeight();
-			eventElement.resizable({
-				handles: {
-					s: 'div.ui-resizable-s'
-				},
-				grid: slotHeight,
-				start: function(ev, ui) {
-					slotDelta = prevSlotDelta = 0;
-					hideEvents(event, eventElement);
-					if ($.browser.msie && $.browser.version == '6.0') {
-						eventElement.css('overflow', 'hidden');
-					}
-					eventElement.css('z-index', 9);
-					trigger('eventResizeStart', this, event, ev, ui);
-				},
-				resize: function(ev, ui) {
-					// don't rely on ui.size.height, doesn't take grid into account
-					slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
-					if (slotDelta != prevSlotDelta) {
-						timeElement.text(
-							formatDates(
-								event.start,
-								(!slotDelta && !event.end) ? null : // no change, so don't display time range
-									addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
-								opt('timeFormat')
-							)
-						);
-						prevSlotDelta = slotDelta;
-					}
-				},
-				stop: function(ev, ui) {
-					trigger('eventResizeStop', this, event, ev, ui);
-					if (slotDelta) {
-						eventResize(this, event, 0, opt('slotMinutes')*slotDelta, ev, ui);
-					}else{
-						eventElement.css('z-index', 8);
-						showEvents(event, eventElement);
-						// BUG: if event was really short, need to put title back in span
-					}
+		var slotDelta, prevSlotDelta;
+		var slotHeight = getSlotHeight();
+		eventElement.resizable({
+			handles: {
+				s: 'div.ui-resizable-s'
+			},
+			grid: slotHeight,
+			start: function(ev, ui) {
+				slotDelta = prevSlotDelta = 0;
+				hideEvents(event, eventElement);
+				if ($.browser.msie && $.browser.version == '6.0') {
+					eventElement.css('overflow', 'hidden');
 				}
-			});
-		}
+				eventElement.css('z-index', 9);
+				trigger('eventResizeStart', this, event, ev, ui);
+			},
+			resize: function(ev, ui) {
+				// don't rely on ui.size.height, doesn't take grid into account
+				slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
+				if (slotDelta != prevSlotDelta) {
+					timeElement.text(
+						formatDates(
+							event.start,
+							(!slotDelta && !event.end) ? null : // no change, so don't display time range
+								addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
+							opt('timeFormat')
+						)
+					);
+					prevSlotDelta = slotDelta;
+				}
+			},
+			stop: function(ev, ui) {
+				trigger('eventResizeStop', this, event, ev, ui);
+				if (slotDelta) {
+					eventResize(this, event, 0, opt('slotMinutes')*slotDelta, ev, ui);
+				}else{
+					eventElement.css('z-index', 8);
+					showEvents(event, eventElement);
+					// BUG: if event was really short, need to put title back in span
+				}
+			}
+		});
 	}
 	
 

@@ -10,6 +10,9 @@ function View(element, calendar, viewName) {
 	t.name = viewName;
 	t.opt = opt;
 	t.trigger = trigger;
+	//t.setOverflowHidden = setOverflowHidden;
+	t.isEventDraggable = isEventDraggable;
+	t.isEventResizable = isEventResizable;
 	t.reportEvents = reportEvents;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
@@ -52,6 +55,28 @@ function View(element, calendar, viewName) {
 			calendar,
 			[name, thisObj || t].concat(Array.prototype.slice.call(arguments, 2), [t])
 		);
+	}
+	
+	
+	/*
+	function setOverflowHidden(bool) {
+		element.css('overflow', bool ? 'hidden' : '');
+	}
+	*/
+	
+	
+	function isEventDraggable(event) {
+		return isEventEditable(event) && !opt('disableDragging');
+	}
+	
+	
+	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
+		return isEventEditable(event) && !opt('disableResizing');
+	}
+	
+	
+	function isEventEditable(event) {
+		return firstDefined(event.editable, event.source.editable, opt('editable'));
 	}
 	
 	
