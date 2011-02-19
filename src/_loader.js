@@ -1,6 +1,6 @@
 (function() {
 
-var JQUERY = 'jquery-1.4.4.min.js';
+var JQUERY = 'jquery-1.5.min.js';
 var JQUERY_UI = 'jquery-ui-1.8.9.custom.min.js';
 var JQUERY_LEGACY = 'jquery-1.3.2.min.js';
 var JQUERY_UI_LEGACY = 'jquery-ui-1.7.3.custom.min.js';
