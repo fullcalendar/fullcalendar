@@ -420,9 +420,7 @@ function AgendaEventRenderer() {
 				if (revert) {
 					// hasn't moved or is out of bounds (draggable has already reverted)
 					resetElement();
-					if ($.browser.msie) {
-						eventElement.css('filter', ''); // clear IE opacity side-effects
-					}
+					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
 				}else{
 					// changed!
@@ -473,9 +471,6 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				trigger('eventDragStart', eventElement, event, ev, ui);
 				hideEvents(event, eventElement);
-				if ($.browser.msie) {
-					eventElement.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
-				}
 				origPosition = eventElement.position();
 				minuteDelta = prevMinuteDelta = 0;
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
@@ -523,12 +518,6 @@ function AgendaEventRenderer() {
 					resetElement();
 					eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
 					updateTimeText(0);
-					if ($.browser.msie) { // TODO: dont use browser detection. base off of the presence of filter
-						eventElement
-							.css('filter', '') // clear IE opacity side-effects
-							.find('div.fc-event-bg')
-								.show();
-					}
 					showEvents(event, eventElement);
 				}
 			}
@@ -568,9 +557,6 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				slotDelta = prevSlotDelta = 0;
 				hideEvents(event, eventElement);
-				if ($.browser.msie && $.browser.version == '6.0') {
-					eventElement.css('overflow', 'hidden');
-				}
 				eventElement.css('z-index', 9);
 				trigger('eventResizeStart', this, event, ev, ui);
 			},

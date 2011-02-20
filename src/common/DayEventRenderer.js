@@ -189,7 +189,9 @@ function DayEventRenderer() {
 				"</div>";
 			if (seg.isEnd && isEventResizable(event)) {
 				html +=
-					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'></div>";
+					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
+					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
+					"</div>";
 			}
 			html +=
 				"</" + (url ? "a" : "div" ) + ">";

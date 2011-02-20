@@ -118,6 +118,10 @@
 	filter: alpha(opacity=30);
 	}
 	
+.fc .ui-draggable-dragging .fc-event-bg {
+	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
+	}
+	
 /* resizable */
 	
 .fc-event-vert .ui-resizable-s {
@@ -130,6 +134,10 @@
 	font-family: monospace;
 	text-align: center;
 	cursor: s-resize;
+	}
+	
+.fc-agenda .ui-resizable-resizing { /* TODO: better selector */
+	_overflow: hidden;
 	}
 	
 	

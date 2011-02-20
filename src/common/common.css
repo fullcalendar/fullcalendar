@@ -177,8 +177,9 @@ a.fc-event {
 	display: block;
 	position: absolute;
 	z-index: 99999;
-	border: 0 !important; /* important overrides pre jquery ui 1.7 styles */
-	background: url(data:image/gif;base64,AAAA) !important; /* hover fix for IE */
+	overflow: hidden; /* hacky spaces (IE6/7) */
+	font-size: 300%;  /* */
+	line-height: 50%; /* */
 	}
 	
 	

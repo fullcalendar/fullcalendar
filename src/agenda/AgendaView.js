@@ -708,9 +708,6 @@ function AgendaView(element, calendar, viewName) {
 							},
 							rect
 						));
-						if ($.browser.msie) {
-							selectionHelper.find('div.fc-event-bg').hide(); // nested opacities mess up in IE, just hide
-						}
 						selectionHelper.css('opacity', opt('dragOpacity'));
 					}
 					if (selectionHelper) {

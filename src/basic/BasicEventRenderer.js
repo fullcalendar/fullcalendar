@@ -129,9 +129,7 @@ function BasicEventRenderer() {
 				if (dayDelta) {
 					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
 				}else{
-					if ($.browser.msie) {
-						eventElement.css('filter', ''); // clear IE opacity side-effects
-					}
+					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
 				}
 				//setOverflowHidden(false);
