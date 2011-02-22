@@ -1,6 +1,6 @@
 /**
  * @preserve
- * FullCalendar v1.4.10
+ * FullCalendar v1.4.11
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Sat Jan 1 23:46:27 2011 -0800
+ * Date: Tue Feb 22 21:47:22 2011 -0800
  *
  */
  
@@ -111,7 +111,7 @@ var rtlDefaults = {
 
 
 
-var fc = $.fullCalendar = { version: "1.4.10" };
+var fc = $.fullCalendar = { version: "1.4.11" };
 var fcViews = fc.views = {};
 
 
@@ -189,6 +189,7 @@ function Calendar(element, options, eventSources) {
 	t.refetchEvents = refetchEvents;
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
+	t.rerenderEvents = rerenderEvents;
 	t.changeView = changeView;
 	t.select = select;
 	t.unselect = unselect;
@@ -2985,6 +2986,7 @@ function AgendaEventRenderer() {
 	function draggableDayEvent(event, eventElement, isStart) {
 		if (!opt('disableDragging') && eventElement.draggable) {
 			var origWidth;
+			var revert;
 			var allDay=true;
 			var dayDelta;
 			var dis = opt('isRTL') ? -1 : 1;
@@ -3001,9 +3003,9 @@ function AgendaEventRenderer() {
 					hideEvents(event, eventElement);
 					origWidth = eventElement.width();
 					hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-						eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 						clearOverlays();
 						if (cell) {
+							revert = false;
 							dayDelta = colDelta * dis;
 							if (!cell.row) {
 								// on full-days
@@ -3014,27 +3016,43 @@ function AgendaEventRenderer() {
 								resetElement();
 							}else{
 								// mouse is over bottom slots
-								if (isStart && allDay) {
-									// convert event to temporary slot-event
-									setOuterHeight(
-										eventElement.width(colWidth - 10), // don't use entire width
-										slotHeight * Math.round(
-											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
-											/ opt('slotMinutes')
-										)
-									);
-									eventElement.draggable('option', 'grid', [colWidth, 1]);
-									allDay = false;
+								if (isStart) {
+									if (allDay) {
+										// convert event to temporary slot-event
+										eventElement.width(colWidth - 10); // don't use entire width
+										setOuterHeight(
+											eventElement,
+											slotHeight * Math.round(
+												(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes'))
+												/ opt('slotMinutes')
+											)
+										);
+										eventElement.draggable('option', 'grid', [colWidth, 1]);
+										allDay = false;
+									}
+								}else{
+									revert = true;
 								}
 							}
+							revert = revert || (allDay && !dayDelta);
+						}else{
+							revert = true;
 						}
+						eventElement.draggable('option', 'revert', revert);
 					}, ev, 'drag');
 				},
 				stop: function(ev, ui) {
-					var cell = hoverListener.stop();
+					hoverListener.stop();
 					clearOverlays();
 					trigger('eventDragStop', eventElement, event, ev, ui);
-					if (cell && (!allDay || dayDelta)) {
+					if (revert) {
+						// hasn't moved or is out of bounds (draggable has already reverted)
+						resetElement();
+						if ($.browser.msie) {
+							eventElement.css('filter', ''); // clear IE opacity side-effects
+						}
+						showEvents(event, eventElement);
+					}else{
 						// changed!
 						eventElement.find('a').removeAttr('href'); // prevents safari from visiting the link
 						var minuteDelta = 0;
@@ -3045,13 +3063,6 @@ function AgendaEventRenderer() {
 								- (event.start.getHours() * 60 + event.start.getMinutes());
 						}
 						eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
-					}else{
-						// hasn't moved or is out of bounds (draggable has already reverted)
-						resetElement();
-						if ($.browser.msie) {
-							eventElement.css('filter', ''); // clear IE opacity side-effects
-						}
-						showEvents(event, eventElement);
 					}
 				}
 			});
