@@ -11,6 +11,7 @@ function Calendar(element, options, eventSources) {
 	t.refetchEvents = refetchEvents;
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
+	t.rerenderEvents = rerenderEvents;
 	t.changeView = changeView;
 	t.select = select;
 	t.unselect = unselect;
