@@ -1,4 +1,9 @@
 
+version 1.4.11 (1/22/11)
+	- fixed rerenderEvents bug (issue 790)
+	- fixed bug with faulty dragging of events from all-day slot in agenda views
+	- bundled with jquery 1.5 and jquery-ui 1.8.9
+
 version 1.4.10 (1/2/11)
 	- fixed bug with resizing event to different week in 5-day month view (issue 740)
 	- fixed bug with events not sticking after a removeEvents call (issue 757)
