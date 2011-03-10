@@ -43,11 +43,12 @@ function BasicEventRenderer() {
 		// Add class on days with events.
 		// TODO: Make it aware of different months!
 		for (var i in events) {
+			var title = (events[i].title == null ? 'Event' : events[i].title);
 			var starts = events[i]._start.getDate() + 1;
 			var ends = events[i]._end;
 			ends = (ends == null ? starts + 1 : ends.getDate() + 1);
 			for (var i = starts; i <= ends; i++) {
-				$('td.fc-day' + i).addClass('has-events');
+				$('td.fc-day' + i).addClass('has-events').attr('title', title);
 			}
 		}
 
