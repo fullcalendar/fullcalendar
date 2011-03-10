@@ -123,8 +123,9 @@ function BasicView(element, calendar, viewName) {
 		var i, j;
 		var table;
 		
+		var style = (viewName != 'smallMonth' ? " style='width:100%'" : '');
 		s =
-			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
+			"<table class='fc-border-separate'" + style + "cellspacing='0'>" +
 			"<thead>" +
 			"<tr>";
 		for (i=0; i<colCnt; i++) {
@@ -145,11 +146,13 @@ function BasicView(element, calendar, viewName) {
 					(showNumbers ?
 						"<div class='fc-day-number'/>" :
 						''
-						) +
-					"<div class='fc-day-content'>" +
-					"<div style='position:relative'>&nbsp;</div>" +
-					"</div>" +
-					"</div>" +
+						);
+					if (viewName != 'smallMonth') {
+						s += "<div class='fc-day-content'>" +
+						"<div style='position:relative'>&nbsp;</div>" +
+						"</div>";
+					}
+					s += "</div>" +
 					"</td>";
 			}
 			s +=
@@ -174,9 +177,13 @@ function BasicView(element, calendar, viewName) {
 		
 		dayBind(bodyCells);
 		
-		daySegmentContainer =
-			$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
-				.appendTo(element);
+		if (viewName != 'smallMonth')
+			daySegmentContainer =
+				$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
+					.appendTo(element);
+		else
+			daySegmentContainer =
+				$("<div style='position:absolute;z-index:8;top:0;left:0'/>");
 	}
 	
 	
@@ -235,38 +242,41 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function setHeight(height) {
-		viewHeight = height;
+		if (viewName != 'smallMonth') {
+			viewHeight = height;
 		
-		var bodyHeight = viewHeight - head.height();
-		var rowHeight;
-		var rowHeightLast;
-		var cell;
+			var bodyHeight = viewHeight - head.height();
+			var rowHeight;
+			var rowHeightLast;
+			var cell;
 			
-		if (opt('weekMode') == 'variable') {
-			rowHeight = rowHeightLast = Math.floor(bodyHeight / (rowCnt==1 ? 2 : 6));
-		}else{
-			rowHeight = Math.floor(bodyHeight / rowCnt);
-			rowHeightLast = bodyHeight - rowHeight * (rowCnt-1);
-		}
-		
-		bodyFirstCells.each(function(i, _cell) {
-			if (i < rowCnt) {
-				cell = $(_cell);
-				setMinHeight(
-					cell.find('> div'),
-					(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
-				);
+			if (opt('weekMode') == 'variable') {
+				rowHeight = rowHeightLast = Math.floor(bodyHeight / (rowCnt==1 ? 2 : 6));
+			}else{
+				rowHeight = Math.floor(bodyHeight / rowCnt);
+				rowHeightLast = bodyHeight - rowHeight * (rowCnt-1);
 			}
-		});
 		
+			bodyFirstCells.each(function(i, _cell) {
+				if (i < rowCnt) {
+					cell = $(_cell);
+					setMinHeight(
+						cell.find('> div'),
+						(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
+					);
+				}
+			});
+		}
 	}
 	
 	
 	function setWidth(width) {
-		viewWidth = width;
-		colContentPositions.clear();
-		colWidth = Math.floor(viewWidth / colCnt);
-		setOuterWidth(headCells.slice(0, -1), colWidth);
+		if (viewName != 'smallMonth') {
+			viewWidth = width;
+			colContentPositions.clear();
+			colWidth = Math.floor(viewWidth / colCnt);
+			setOuterWidth(headCells.slice(0, -1), colWidth);
+		}
 	}
 	
 	
