@@ -42,7 +42,7 @@ function BasicEventRenderer() {
 
 		// Add class on days with events.
 		// TODO: Make it aware of different months!
-		for (i in events) {
+		for (var i in events) {
 			var starts = events[i]._start.getDate() + 1;
 			var ends = events[i]._end;
 			ends = (ends == null ? starts + 1 : ends.getDate() + 1);
