@@ -1,4 +1,55 @@
 
+version 1.5
+	- slicker default styling for buttons
+	- reworked a lot of the calendar's HTML and accompanying CSS
+	  (solves issues 327 and 395)
+	- more printer-friendly (fullcalendar-print.css)
+	- fullcalendar now inherits styles from jquery-ui themes differently.
+	  styles for buttons are distinct from styles for calendar cells.
+	  (solves issue 299)
+	- can now color events through FullCalendar options and Event-Object properties (issue 117)
+	  THIS IS NOW THE PREFERRED METHOD OF COLORING EVENTS (as opposed to using className and CSS)
+		- FullCalendar options:
+			- eventColor (changes both background and border)
+			- eventBackgroundColor
+			- eventBorderColor
+			- eventTextColor
+		- Event-Object options:
+			- color (changes both background and border)
+			- backgroundColor
+			- borderColor
+			- textColor
+	- can now specify an event source as an *object* with a `url` property (json feed) or
+	  an `events` property (function or array) with additional properties that will
+	  be applied to the entire event source:
+		- color (changes both background and border)
+		- backgroudColor
+		- borderColor
+		- textColor
+		- className
+		- editable
+		- allDayDefault
+		- ignoreTimezone
+		- startParam (for a feed)
+		- endParam   (for a feed)
+		- ANY OF THE JQUERY $.ajax OPTIONS
+		  allows for easily changing from GET to POST and sending additional parameters (issue 386)
+		  allows for easily attaching ajax handlers such as `error` (issue 754)
+		  allows for turning caching on (issue 355)
+	- Google Calendar feeds are now specified differently:
+		- specify a simple string of your feed's URL
+		- specify an *object* with a `url` property of your feed's URL.
+		  you can include any of the new Event-Source options in this object.
+		- the old `$.fullCalendar.gcalFeed` method still works
+	- no more IE7 SSL popup (issue 504)
+	- remove `cacheParam` - use json event source `cache` option instead
+	- latest jquery/jquery-ui
+
+version 1.4.11 (2/22/11)
+	- fixed rerenderEvents bug (issue 790)
+	- fixed bug with faulty dragging of events from all-day slot in agenda views
+	- bundled with jquery 1.5 and jquery-ui 1.8.9
+
 version 1.4.10 (1/2/11)
 	- fixed bug with resizing event to different week in 5-day month view (issue 740)
 	- fixed bug with events not sticking after a removeEvents call (issue 757)
