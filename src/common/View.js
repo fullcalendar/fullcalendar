@@ -76,7 +76,7 @@ function View(element, calendar, viewName) {
 	
 	
 	function isEventEditable(event) {
-		return firstDefined(event.editable, event.source.editable, opt('editable'));
+		return firstDefined(event.editable, (event.source || {}).editable, opt('editable'));
 	}
 	
 	

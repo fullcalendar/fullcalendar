@@ -126,7 +126,8 @@ function DayEventRenderer() {
 		var bounds = allDayBounds();
 		var minLeft = bounds.left;
 		var maxLeft = bounds.right;
-		var cols = []; // don't really like this system (but have to do this b/c RTL works differently in basic vs agenda)
+		var leftCol;
+		var rightCol;
 		var left;
 		var right;
 		var skinCss;
@@ -146,10 +147,10 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					classes.push('fc-corner-left');
 				}
-				cols[0] = dayOfWeekCol(seg.end.getDay()-1);
-				cols[1] = dayOfWeekCol(seg.start.getDay());
-				left = seg.isEnd ? colContentLeft(cols[0]) : minLeft;
-				right = seg.isStart ? colContentRight(cols[1]) : maxLeft;
+				leftCol = dayOfWeekCol(seg.end.getDay()-1);
+				rightCol = dayOfWeekCol(seg.start.getDay());
+				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
+				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
 			}else{
 				if (seg.isStart) {
 					classes.push('fc-corner-left');
@@ -157,12 +158,15 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					classes.push('fc-corner-right');
 				}
-				cols[0] = dayOfWeekCol(seg.start.getDay());
-				cols[1] = dayOfWeekCol(seg.end.getDay()-1);
-				left = seg.isStart ? colContentLeft(cols[0]) : minLeft;
-				right = seg.isEnd ? colContentRight(cols[1]) : maxLeft;
+				leftCol = dayOfWeekCol(seg.start.getDay());
+				rightCol = dayOfWeekCol(seg.end.getDay()-1);
+				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
+				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}
-			classes = classes.concat(event.className, event.source.className);
+			classes = classes.concat(event.className);
+			if (event.source) {
+				classes = classes.concat(event.source.className || []);
+			}
 			url = event.url;
 			skinCss = getSkinCss(event, opt);
 			if (url) {
@@ -197,9 +201,8 @@ function DayEventRenderer() {
 				"</" + (url ? "a" : "div" ) + ">";
 			seg.left = left;
 			seg.outerWidth = right - left;
-			cols.sort(cmp); // is this still needed now that cols are always left-to-right?
-			seg.startCol = cols[0];
-			seg.endCol = cols[1] + 1;
+			seg.startCol = leftCol;
+			seg.endCol = rightCol + 1; // needs to be exclusive
 		}
 		return html;
 	}
@@ -409,7 +412,7 @@ function DayEventRenderer() {
 			var rowCnt = getRowCnt();
 			var colCnt = getColCnt();
 			var dis = rtl ? -1 : 1;
-			var dit = rtl ? colCnt : 0;
+			var dit = rtl ? colCnt-1 : 0;
 			var elementTop = element.css('top');
 			var dayDelta;
 			var helpers;

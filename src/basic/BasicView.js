@@ -129,7 +129,7 @@ function BasicView(element, calendar, viewName) {
 			"<tr>";
 		for (i=0; i<colCnt; i++) {
 			s +=
-				"<th class='fc- " + headerClass + "'/>";
+				"<th class='fc- " + headerClass + "'/>"; // need fc- for setDayID
 		}
 		s +=
 			"</tr>" +
@@ -140,7 +140,7 @@ function BasicView(element, calendar, viewName) {
 				"<tr class='fc-week" + i + "'>";
 			for (j=0; j<colCnt; j++) {
 				s +=
-					"<td class='fc- " + contentClass + " fc-day" + (i*colCnt+j) + "'>" +
+					"<td class='fc- " + contentClass + " fc-day" + (i*colCnt+j) + "'>" + // need fc- for setDayID
 					"<div>" +
 					(showNumbers ?
 						"<div class='fc-day-number'/>" :
@@ -182,14 +182,14 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function updateCells(firstTime) {
-		var optimize = !firstTime && rowCnt > 1;
+		var dowDirty = firstTime || rowCnt == 1; // could the cells' day-of-weeks need updating?
 		var month = t.start.getMonth();
 		var today = clearTime(new Date());
 		var cell;
 		var date;
 		var row;
 	
-		if (!optimize) {
+		if (dowDirty) {
 			headCells.each(function(i, _cell) {
 				cell = $(_cell);
 				date = indexDate(i);
@@ -212,7 +212,7 @@ function BasicView(element, calendar, viewName) {
 				cell.removeClass(tm + '-state-highlight fc-today');
 			}
 			cell.find('div.fc-day-number').text(date.getDate());
-			if (!optimize) {
+			if (dowDirty) {
 				setDayID(cell, date);
 			}
 		});
@@ -282,7 +282,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function dayClick(ev) {
-		if (!opt('selectable')) { // SelectionManager will worry about dayClick
+		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var index = parseInt(this.className.match(/fc\-day(\d+)/)[1]); // TODO: maybe use .data
 			var date = indexDate(index);
 			trigger('dayClick', this, date, true, ev);

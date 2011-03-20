@@ -28,7 +28,7 @@
 			selectable: true,
 			selectHelper: true,
 			
-			weekends: false,
+			//weekends: false,
 			
 			height: 700,
 			//contentHeight: 500,
@@ -78,10 +78,18 @@
 			//},
 			//isRTL: true,
 			
+			eventColor: 'green',
+			eventTextColor: 'yellow',
+			eventBorderColor: 'black',
+			//eventBackgroundColor: 'red',
 			events: [
 				{
 					title: 'All Day Event',
-					start: new Date(y, m, 1)
+					start: new Date(y, m, 1),
+					color: 'gray',
+					//backgroundColor: 'red',
+					textColor: 'white',
+					borderColor: '#000'
 				},
 				{
 					title: 'Long Event',

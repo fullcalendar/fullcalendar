@@ -118,7 +118,8 @@
 	filter: alpha(opacity=30);
 	}
 	
-.fc .ui-draggable-dragging .fc-event-bg {
+.fc .ui-draggable-dragging .fc-event-bg, /* TODO: something nicer like .fc-opacity */
+.fc-select-helper .fc-event-bg {
 	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
 	}
 	

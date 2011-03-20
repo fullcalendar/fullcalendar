@@ -156,7 +156,7 @@ function AgendaEventRenderer() {
 			vsideCache={},
 			hsideCache={},
 			key, val,
-			titleSpan,
+			contentElement,
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis, dit,
@@ -245,9 +245,9 @@ function AgendaEventRenderer() {
 				seg.vsides = val === undefined ? (vsideCache[key] = vsides(eventElement, true)) : val;
 				val = hsideCache[key];
 				seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement, true)) : val;
-				titleSpan = eventElement.find('span.fc-event-title');
-				if (titleSpan.length) {
-					seg.titleTop = titleSpan[0].offsetTop;
+				contentElement = eventElement.find('div.fc-event-content');
+				if (contentElement.length) {
+					seg.contentTop = contentElement[0].offsetTop;
 				}
 			}
 		}
@@ -260,11 +260,11 @@ function AgendaEventRenderer() {
 				height = Math.max(0, seg.outerHeight - seg.vsides);
 				eventElement[0].style.height = height + 'px';
 				event = seg.event;
-				if (seg.titleTop !== undefined && height - seg.titleTop < 10) {
+				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time header
-					eventElement.find('span.fc-event-time')
+					eventElement.find('div.fc-event-time')
 						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
-					eventElement.find('span.fc-event-title')
+					eventElement.find('div.fc-event-title')
 						.remove();
 				}
 				trigger('eventAfterRender', event, event, eventElement);
@@ -289,7 +289,10 @@ function AgendaEventRenderer() {
 		if (seg.isEnd) {
 			classes.push('fc-corner-bottom');
 		}
-		classes = classes.concat(event.className, event.source.className);
+		classes = classes.concat(event.className);
+		if (event.source) {
+			classes = classes.concat(event.source.className || []);
+		}
 		if (url) {
 			html += "a href='" + htmlEscape(event.url) + "'";
 		}else{
@@ -335,7 +338,7 @@ function AgendaEventRenderer() {
 	
 	
 	function bindSlotSeg(event, eventElement, seg) {
-		var timeElement = eventElement.find('span.fc-event-time');
+		var timeElement = eventElement.find('div.fc-event-time');
 		if (isEventDraggable(event)) {
 			draggableSlotEvent(event, eventElement, timeElement);
 		}
@@ -516,6 +519,7 @@ function AgendaEventRenderer() {
 				}else{
 					// either no change or out-of-bounds (draggable has already reverted)
 					resetElement();
+					eventElement.css('filter', ''); // clear IE opacity side-effects
 					eventElement.css(origPosition); // sometimes fast drags make event revert to wrong position
 					updateTimeText(0);
 					showEvents(event, eventElement);

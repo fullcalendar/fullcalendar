@@ -179,7 +179,7 @@ function AgendaView(element, calendar, viewName) {
 			"<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
 		for (i=0; i<colCnt; i++) {
 			s +=
-				"<th class='fc- fc-col" + i + ' ' + headerClass + "'/>";
+				"<th class='fc- fc-col" + i + ' ' + headerClass + "'/>"; // fc- needed for setDayID
 		}
 		s +=
 			"<th class='fc-agenda-gutter " + headerClass + "'>&nbsp;</th>" +
@@ -190,7 +190,7 @@ function AgendaView(element, calendar, viewName) {
 			"<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
 		for (i=0; i<colCnt; i++) {
 			s +=
-				"<td class='fc- fc-col" + i + ' ' + contentClass + "'>" +
+				"<td class='fc- fc-col" + i + ' ' + contentClass + "'>" + // fc- needed for setDayID
 				"<div>" +
 				"<div class='fc-day-content'>" +
 				"<div style='position:relative'>&nbsp;</div>" +
@@ -434,7 +434,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	function slotClick(ev) {
-		if (!opt('selectable')) { // SelectionManager will worry about dayClick
+		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var col = Math.min(colCnt-1, Math.floor((ev.pageX - dayTable.offset().left - axisWidth) / colWidth));
 			var date = colDate(col);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
@@ -702,9 +702,8 @@ function AgendaView(element, calendar, viewName) {
 								title: '',
 								start: startDate,
 								end: endDate,
-								className: [],
-								editable: false,
-								source: {}
+								className: ['fc-select-helper'],
+								editable: false
 							},
 							rect
 						));

@@ -114,7 +114,7 @@ function Calendar(element, options, eventSources) {
 		$(window).unbind('resize', windowResize);
 		header.destroy();
 		content.remove();
-		element.removeClass('fc fc-rtl fc-ui-widget');
+		element.removeClass('fc fc-rtl ui-widget');
 	}
 	
 	
