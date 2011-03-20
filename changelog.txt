@@ -1,5 +1,5 @@
 
-version 1.5
+version 1.5 (3/19/11)
 	- slicker default styling for buttons
 	- reworked a lot of the calendar's HTML and accompanying CSS
 	  (solves issues 327 and 395)
