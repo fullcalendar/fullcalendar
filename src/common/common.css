@@ -166,6 +166,7 @@ a.fc-event {
 	height: 100%;
 	border-style: solid;
 	border-width: 0;
+	overflow: hidden;
 	}
 	
 .fc-event-time,
