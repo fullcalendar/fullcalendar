@@ -203,7 +203,6 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 			m[10] || 0,
 			m[12] ? Number("0." + m[12]) * 1000 : 0
 		);
-		console.log(m[18]);
 		var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
 		offset *= m[15] == '-' ? 1 : -1;
 		date = new Date(+date + (offset * 60 * 1000));
