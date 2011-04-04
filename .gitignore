@@ -1,9 +1,3 @@
 build/fullcalendar
 build/fullcalendar-*
 dist
-.project
-.settings
-.classpath
-target
-hs_err*
-.tmp_*
