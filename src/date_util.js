@@ -162,7 +162,11 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	// derived from http://delete.me.uk/2005/03/iso8601.html
 	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
-	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?$/);
+
+	// TNM 2011-02-01: Updated regex to support +0000 or +00 timezones in addition to +00:00
+	// See: http://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC
+	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})((:?)([0-9]{2}))?))?)?)?)?$/);
+
 	if (!m) {
 		return null;
 	}
@@ -203,7 +207,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 			m[10] || 0,
 			m[12] ? Number("0." + m[12]) * 1000 : 0
 		);
-		var offset = Number(m[16]) * 60 + Number(m[17]);
+		var offset = Number(m[16]) * 60 + (m[19] ? Number(m[19]) : 0);
 		offset *= m[15] == '-' ? 1 : -1;
 		date = new Date(+date + (offset * 60 * 1000));
 	}
