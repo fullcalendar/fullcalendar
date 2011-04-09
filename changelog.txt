@@ -1,4 +1,11 @@
 
+version 1.5.1 (4/9/11)
+	- more flexible ISO8601 date parsing (issue 814)
+	- more flexible parsing of UNIX timestamps (issue 826)
+	- FullCalendar now buildable from source on a Mac (issue 795)
+	- FullCalendar QA'd in FF4 (issue 883)
+	- upgraded to jQuery 1.5.2 (which supports IE9) and jQuery UI 1.8.11
+
 version 1.5 (3/19/11)
 	- slicker default styling for buttons
 	- reworked a lot of the calendar's HTML and accompanying CSS

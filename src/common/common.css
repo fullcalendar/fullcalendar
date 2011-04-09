@@ -125,6 +125,10 @@
 	border-color: #ddd;
 	}
 	
+.fc-state-disabled {
+	cursor: default;
+	}
+	
 .fc-state-disabled .fc-button-effect {
 	display: none;
 	}

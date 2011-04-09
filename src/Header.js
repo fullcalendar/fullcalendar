@@ -68,8 +68,8 @@ function Header(calendar, options) {
 							};
 						}
 						if (buttonClick) {
-							var icon = options.theme ? smartProperty(options.buttonIcons, buttonName) : null;
-							var text = smartProperty(options.buttonText, buttonName);
+							var icon = options.theme ? smartProperty(options.buttonIcons, buttonName) : null; // why are we using smartProperty here?
+							var text = smartProperty(options.buttonText, buttonName); // why are we using smartProperty here?
 							var button = $(
 								"<span class='fc-button fc-button-" + buttonName + " " + tm + "-state-default'>" +
 									"<span class='fc-button-inner'>" +
