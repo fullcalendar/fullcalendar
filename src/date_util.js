@@ -146,8 +146,8 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 		return new Date(s * 1000);
 	}
 	if (typeof s == 'string') {
-		if (s.match(/^\d+$/)) { // a UNIX timestamp
-			return new Date(parseInt(s, 10) * 1000);
+		if (s.match(/^\d+(\.\d+)?$/)) { // a UNIX timestamp
+			return new Date(parseFloat(s) * 1000);
 		}
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
