@@ -1,11 +1,11 @@
 /*
- * FullCalendar v1.5 Stylesheet
+ * FullCalendar v1.5.1 Stylesheet
  *
  * Copyright (c) 2011 Adam Shaw
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Sat Mar 19 18:59:37 2011 -0700
+ * Date: Sat Apr 9 14:09:51 2011 -0700
  *
  */
 
@@ -245,6 +245,10 @@ html .fc,
 	border-color: #ddd;
 	}
 	
+.fc-state-disabled {
+	cursor: default;
+	}
+	
 .fc-state-disabled .fc-button-effect {
 	display: none;
 	}
@@ -286,6 +290,7 @@ a.fc-event {
 	height: 100%;
 	border-style: solid;
 	border-width: 0;
+	overflow: hidden;
 	}
 	
 .fc-event-time,
