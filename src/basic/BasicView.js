@@ -75,7 +75,7 @@ function BasicView(element, calendar, viewName) {
 	
 		rowCnt = r;
 		colCnt = c;
-		wkn = 0 + opt('weekNumbers');
+		wkn = opt('weekNumbers') ? 1 : 0;
 		rtl = opt('isRTL');
 		if (rtl) {
 			dis = -1;
