@@ -103,9 +103,13 @@ function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
 }
 
 
-function skipWeekend(date, inc, excl) {
+function skipWeekend(date, weekendDays, inc, excl) {
+	var wd = weekendDays;
+	if (excl) {
+		wd = $.map(weekendDays, function(day) { return (day + 1) % 7; });
+	}
 	inc = inc || 1;
-	while (!date.getDay() || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
+	while ($.inArray(date.getDay(), wd) != -1) {
 		addDays(date, inc);
 	}
 	return date;

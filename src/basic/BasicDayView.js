@@ -15,6 +15,7 @@ function BasicDayView(element, calendar) {
 	// imports
 	BasicView.call(t, element, calendar, 'basicDay');
 	var opt = t.opt;
+	var option = calendar.option;
 	var renderBasic = t.renderBasic;
 	var formatDate = calendar.formatDate;
 	
@@ -24,7 +25,7 @@ function BasicDayView(element, calendar) {
 		if (delta) {
 			addDays(date, delta);
 			if (!opt('weekends')) {
-				skipWeekend(date, delta < 0 ? -1 : 1);
+				skipWeekend(date, option('weekendDays'), delta < 0 ? -1 : 1);
 			}
 		}
 		t.title = formatDate(date, opt('titleFormat'));

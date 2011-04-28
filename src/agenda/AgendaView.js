@@ -66,6 +66,7 @@ function AgendaView(element, calendar, viewName) {
 	SelectionManager.call(t);
 	AgendaEventRenderer.call(t);
 	var opt = t.opt;
+	var option = calendar.option;
 	var trigger = t.trigger;
 	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
@@ -117,7 +118,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	var tm;
 	var firstDay;
-	var nwe;            // no weekends (int)
+	var firstDayDelta;
 	var rtl, dis, dit;  // day index sign / translate
 	var minMinute, maxMinute;
 	var colFormat;
@@ -146,8 +147,8 @@ function AgendaView(element, calendar, viewName) {
 	
 	function updateOptions() {
 		tm = opt('theme') ? 'ui' : 'fc';
-		nwe = opt('weekends') ? 0 : 1;
 		firstDay = opt('firstDay');
+		firstDayDelta = Math.max(firstDay, $.inArray(firstDay, option('weekendDays')) == -1 ? 0 : 1);
 		if (rtl = opt('isRTL')) {
 			dis = -1;
 			dit = colCnt - 1;
@@ -597,7 +598,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt)*dis+dit;
+		return ((dayOfWeek - firstDayDelta + colCnt) % colCnt)*dis+dit;
 	}
 	
 	
