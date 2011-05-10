@@ -163,6 +163,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	// derived from http://delete.me.uk/2005/03/iso8601.html
 	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
 	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
+	var local_offset;
 	if (!m) {
 		return null;
 	}
@@ -177,7 +178,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 			date.setDate(m[5]);
 			check.setDate(m[5]);
 		}
-		fixDate(date, check);
+		// fixDate(date, check);
 		if (m[7]) {
 			date.setHours(m[7]);
 		}
@@ -190,7 +191,11 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		if (m[12]) {
 			date.setMilliseconds(Number("0." + m[12]) * 1000);
 		}
-		fixDate(date, check);
+		if (m[13]) { // includes the Z, then add local offset
+			local_offset = date.getTimezoneOffset();
+			date = new Date(+date - (local_offset * 60 * 1000));
+		}
+		// fixDate(date, check);
 	}else{
 		date.setUTCFullYear(
 			m[1],
@@ -205,7 +210,8 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		);
 		var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
 		offset *= m[15] == '-' ? 1 : -1;
-		date = new Date(+date + (offset * 60 * 1000));
+		local_offset = date.getTimezoneOffset();
+		date = new Date(+date + ((offset-local_offset) * 60 * 1000));
 	}
 	return date;
 }
