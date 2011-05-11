@@ -47,6 +47,7 @@ function AgendaEventRenderer() {
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
+	var getSelectionSlotRatio = t.getSelectionSlotRatio; // read selection slot ratio
 	
 	
 	
@@ -463,7 +464,7 @@ function AgendaEventRenderer() {
 		var hoverListener = getHoverListener();
 		var colCnt = getColCnt();
 		var colWidth = getColWidth();
-		var slotHeight = getSlotHeight();
+		var slotHeight = getSlotHeight() / getSelectionSlotRatio();		// calculate height depending on selection slot ratio
 		eventElement.draggable({
 			zIndex: 9,
 			scroll: false,
@@ -501,7 +502,7 @@ function AgendaEventRenderer() {
 				}, ev, 'drag');
 			},
 			drag: function(ev, ui) {
-				minuteDelta = Math.round((ui.position.top - origPosition.top) / slotHeight) * opt('slotMinutes');
+				minuteDelta = Math.round((ui.position.top - origPosition.top) / slotHeight) * opt('selectionSlotMinutes');
 				if (minuteDelta != prevMinuteDelta) {
 					if (!allDay) {
 						updateTimeText(minuteDelta);
@@ -552,7 +553,7 @@ function AgendaEventRenderer() {
 	
 	function resizableSlotEvent(event, eventElement, timeElement) {
 		var slotDelta, prevSlotDelta;
-		var slotHeight = getSlotHeight();
+		var slotHeight = getSlotHeight() / getSelectionSlotRatio();		// calculate height depending on selection slot ratio
 		eventElement.resizable({
 			handles: {
 				s: 'div.ui-resizable-s'
@@ -561,7 +562,7 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				slotDelta = prevSlotDelta = 0;
 				hideEvents(event, eventElement);
-				eventElement.css('z-index', 9);
+				eventElement.css('z-index', 10);
 				trigger('eventResizeStart', this, event, ev, ui);
 			},
 			resize: function(ev, ui) {
@@ -572,7 +573,7 @@ function AgendaEventRenderer() {
 						formatDates(
 							event.start,
 							(!slotDelta && !event.end) ? null : // no change, so don't display time range
-								addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
+								addMinutes(eventEnd(event), opt('selectionSlotMinutes')*slotDelta),
 							opt('timeFormat')
 						)
 					);
@@ -582,7 +583,7 @@ function AgendaEventRenderer() {
 			stop: function(ev, ui) {
 				trigger('eventResizeStop', this, event, ev, ui);
 				if (slotDelta) {
-					eventResize(this, event, 0, opt('slotMinutes')*slotDelta, ev, ui);
+					eventResize(this, event, 0, opt('selectionSlotMinutes')*slotDelta, ev, ui);
 				}else{
 					eventElement.css('z-index', 8);
 					showEvents(event, eventElement);
