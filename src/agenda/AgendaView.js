@@ -1,4 +1,3 @@
-
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
@@ -334,18 +333,21 @@ function AgendaView(element, calendar, viewName) {
 		slotTopCache = {};
 	
 		var headHeight = dayBody.position().top;
-		var allDayHeight = slotScroller.position().top; // including divider
-		var bodyHeight = Math.min( // total body height, including borders
-			height - headHeight,   // when scrollbars
-			slotTable.height() + allDayHeight + 1 // when no scrollbars. +1 for bottom border
-		);
 		
-		dayBodyFirstCellStretcher
-			.height(bodyHeight - vsides(dayBodyFirstCell));
-		
+		if($.type(height) === 'number') {
+			var allDayHeight = slotScroller.position().top; // including divider
+			var bodyHeight = Math.min( // total body height, including borders
+				height - headHeight,   // when scrollbars
+				slotTable.height() + allDayHeight + 1 // when no scrollbars. +1 for bottom border
+			);
+			
+			slotScroller.height(bodyHeight - allDayHeight - 1);
+			dayBodyFirstCellStretcher.height(bodyHeight - vsides(dayBodyFirstCell));
+		} else {
+			slotScroller.height(height);
+			dayBodyFirstCellStretcher.height(slotScroller.height());
+		}
 		slotLayer.css('top', headHeight);
-		
-		slotScroller.height(bodyHeight - allDayHeight - 1);
 		
 		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
 		
