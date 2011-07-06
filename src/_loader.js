@@ -44,6 +44,7 @@ js('Header.js');
 js('EventManager.js');
 js('date_util.js');
 js('util.js');
+js('I18n.js');
 
 js('basic/MonthView.js');
 js('basic/BasicWeekView.js');
