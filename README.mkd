@@ -62,3 +62,4 @@ Other texts could be modified via method setDefaults:
       }
     });
 
+See all available locales here: [I18n](https://github.com/sergio-fry/fullcalendar/wiki/I18n)
