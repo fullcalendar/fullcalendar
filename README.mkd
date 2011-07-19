@@ -50,6 +50,15 @@ I18n
 ----
 To localize fullCalendar You can use i18n for jquery datepicker.
 
-$.fullCalendar.applyLocale($.datepicker.regional['ru']);
+    $.fullCalendar.applyLocale($.datepicker.regional['ru']);
 
+Other texts could be modified via method setDefaults:
+
+    $.fullCalendar.setDefaults({
+      buttonText: {
+        month: 'month',
+        week: 'week',
+        day: 'day'
+      }
+    });
 
