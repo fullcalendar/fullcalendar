@@ -69,7 +69,7 @@
 			start: new Date(y, m, d, 12, 0),
 			end: new Date(y, m, d, 14, 0),
 			allDay: false,
-			//className: 'yellow-event black-text-event',
+			//className: 'yellow-event black-text-event'
 			className: ['yellow-event', 'black-text-event']
 		},
 		{
@@ -83,6 +83,10 @@
 			start: new Date(y, m, 28),
 			end: new Date(y, m, 29),
 			url: 'http://google.com/'
+		},
+		{
+			title: 'Float String Timestamp Event',
+			start: '1295078400.0'
 		}
 	];
 	
@@ -132,8 +136,7 @@
 			/*
 			,
 			startParam: 'mystart',
-			endParam: 'myend',
-			cacheParam: 'uniq'
+			endParam: 'myend'
 			*/
 		});
 	});
@@ -141,16 +144,19 @@
 </script>
 <style>
 
-	.red-event a {
-		background: red;
+	.red-event,
+	.red-event .fc-event-skin {
+		background: red !important;
 	}
 	
-	.yellow-event a {
-		background: yellow;
+	.yellow-event,
+	.yellow-event .fc-event-skin {
+		background: yellow !important;
 	}
 	
-	.black-text-event a {
-		color: #000;
+	.black-text-event,
+	.black-text-event .fc-event-skin {
+		color: #000 !important;
 	}
 
 	button {

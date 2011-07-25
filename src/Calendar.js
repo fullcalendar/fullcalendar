@@ -11,6 +11,7 @@ function Calendar(element, options, eventSources) {
 	t.refetchEvents = refetchEvents;
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
+	t.rerenderEvents = rerenderEvents;
 	t.changeView = changeView;
 	t.select = select;
 	t.unselect = unselect;
@@ -28,6 +29,7 @@ function Calendar(element, options, eventSources) {
 	t.option = option;
 	t.trigger = trigger;
 	
+	t.getResources = function() { return options.resources; }
 	
 	// imports
 	EventManager.call(t, options, eventSources);
@@ -52,6 +54,7 @@ function Calendar(element, options, eventSources) {
 	var events = [];
 	var _dragElement;
 	
+
 	
 	
 	/* Main Rendering
@@ -84,11 +87,22 @@ function Calendar(element, options, eventSources) {
 		}
 		content = $("<div class='fc-content' style='position:relative'/>")
 			.prependTo(element);
+			
+		// Render out the resource list before the Calendar (not applicable to all views?)
+		resourceList = new ResourceList(t, options);
+		resourceListElement = resourceList.render()
+		if(resourceListElement) {
+			element.prepend(resourceListElement);
+		}
+			
 		header = new Header(t, options);
 		headerElement = header.render();
 		if (headerElement) {
 			element.prepend(headerElement);
 		}
+		
+
+		
 		changeView(options.defaultView);
 		$(window).resize(windowResize);
 		// needed for IE in a 0x0 iframe, b/c when it is resized, never triggers a windowResize
@@ -113,7 +127,7 @@ function Calendar(element, options, eventSources) {
 		$(window).unbind('resize', windowResize);
 		header.destroy();
 		content.remove();
-		element.removeClass('fc fc-rtl fc-ui-widget');
+		element.removeClass('fc fc-rtl ui-widget');
 	}
 	
 	

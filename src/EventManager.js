@@ -4,10 +4,11 @@ fc.sourceFetchers = [];
 
 var ajaxDefaults = {
 	dataType: 'json',
-	cache: true // because we are using the cacheParam option (TODO: deprecate)
+	cache: false
 };
 
 var eventGUID = 1;
+
 
 function EventManager(options, _sources) {
 	var t = this;
@@ -74,8 +75,9 @@ function EventManager(options, _sources) {
 			if (fetchID == currentFetchID) {
 				if (events) {
 					for (var i=0; i<events.length; i++) {
-						normalizeEvent(events[i], source);
 						events[i].source = source;
+						associateResourceWithEvent(events[i], options.resources) // resource association
+						normalizeEvent(events[i]);
 					}
 					cache = cache.concat(events);
 				}
@@ -128,15 +130,11 @@ function EventManager(options, _sources) {
 				var data = $.extend({}, source.data || {});
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
-				var cacheParam = firstDefined(source.cacheParam, options.cacheParam);
 				if (startParam) {
 					data[startParam] = Math.round(+rangeStart / 1000);
 				}
 				if (endParam) {
 					data[endParam] = Math.round(+rangeEnd / 1000);
-				}
-				if (cacheParam) {
-					data[cacheParam] = +new Date();
 				}
 				pushLoading();
 				$.ajax($.extend({}, ajaxDefaults, source, {
@@ -158,6 +156,8 @@ function EventManager(options, _sources) {
 						popLoading();
 					}
 				}));
+			}else{
+				callback();
 			}
 		}
 	}
@@ -234,16 +234,20 @@ function EventManager(options, _sources) {
 				e.allDay = event.allDay;
 				e.className = event.className;
 				e.editable = event.editable;
-				normalizeEvent(e, e.source);
+				e.color = event.color;
+				e.backgroudColor = event.backgroudColor;
+				e.borderColor = event.borderColor;
+				e.textColor = event.textColor;
+				normalizeEvent(e);
 			}
 		}
-		normalizeEvent(event, event.source);
+		normalizeEvent(event);
 		reportEvents(cache);
 	}
 	
 	
 	function renderEvent(event, stick) {
-		normalizeEvent(event, event.source || stickySource);
+		normalizeEvent(event);
 		if (!event.source) {
 			if (stick) {
 				stickySource.events.push(event);
@@ -321,7 +325,9 @@ function EventManager(options, _sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
-	function normalizeEvent(event, source) {
+	function normalizeEvent(event) {
+		var source = event.source || {};
+		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
 		event._id = event._id || (event.id === undefined ? '_fc' + eventGUID++ : event.id + '');
 		if (event.date) {
 			if (!event.start) {
@@ -329,8 +335,8 @@ function EventManager(options, _sources) {
 			}
 			delete event.date;
 		}
-		event._start = cloneDate(event.start = parseDate(event.start, firstDefined(source.ignoreTimezone, options.ignoreTimezone)));
-		event.end = parseDate(event.end, options.ignoreTimezone);
+		event._start = cloneDate(event.start = parseDate(event.start, ignoreTimezone));
+		event.end = parseDate(event.end, ignoreTimezone);
 		if (event.end && event.end <= event.start) {
 			event.end = null;
 		}
@@ -356,7 +362,7 @@ function EventManager(options, _sources) {
 	
 	function normalizeSource(source) {
 		if (source.className) {
-			// TODO: repeate code, same code for event classNames
+			// TODO: repeat code, same code for event classNames
 			if (typeof source.className == 'string') {
 				source.className = source.className.split(/\s+/);
 			}
@@ -371,13 +377,31 @@ function EventManager(options, _sources) {
 	
 	
 	function isSourcesEqual(source1, source2) {
-		return getSourcePrimitive(source1) == getSourcePrimitive(source2);
+		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
 	}
 	
 	
 	function getSourcePrimitive(source) {
 		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
 	}
-
-
+	
+	/* Resources
+	------------------------------------------------------------------------------*/
+	
+	function associateResourceWithEvent(event, resources) {
+		if(event.resourceId)
+		{
+			eventResource = new Object();
+		
+			$.each(
+				resources,
+				function( intIndex, resource ){
+					if(resource.id == event.resourceId) {
+						event.resource = resource;
+						delete event.resourceId;
+					}
+				}
+			);
+		}
+	}
 }

@@ -56,8 +56,11 @@ $(document).ready(function() {
 			right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 		},
 		editable: true,
+		//disableResizing: true,
+		//disableDragging: true,
 		selectable: true,
 		selectHelper: true,
+		dragOpacity: .5,
 		eventSources: [
 		
 			{
@@ -67,6 +70,7 @@ $(document).ready(function() {
 				success: function(events) {
 					console.log('successfully loaded gcal event data!', events);
 				},
+				editable: true
 			},
 			
 			/*
@@ -143,7 +147,13 @@ $(document).ready(function() {
 				]
 			}
 			
-		]
+		],
+		eventClick: function(event) {
+			if (event.url) {
+				window.open(event.url);
+			}
+			return false;
+		}
 	});
 	
 });

@@ -1,3 +1,14 @@
+/*
+ * FullCalendar v@VERSION Google Calendar Plugin
+ *
+ * Copyright (c) 2011 Adam Shaw
+ * Dual licensed under the MIT and GPL licenses, located in
+ * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
+ *
+ * Date: @DATE
+ *
+ */
+ 
 (function($) {
 
 
@@ -11,7 +22,7 @@ var applyAll = fc.applyAll;
 fc.sourceNormalizers.push(function(sourceOptions) {
 	if (sourceOptions.dataType == 'gcal' ||
 		sourceOptions.dataType === undefined &&
-		(sourceOptions.url || '').indexOf('http://www.google.com/calendar/feeds/') == 0) {
+		(sourceOptions.url || '').match(/^(http|https):\/\/www.google.com\/calendar\/feeds\//)) {
 			sourceOptions.dataType = 'gcal';
 			if (sourceOptions.editable === undefined) {
 				sourceOptions.editable = false;
@@ -48,8 +59,6 @@ function transformOptions(sourceOptions, start, end) {
 		data: data,
 		startParam: false,
 		endParam: false,
-		cacheParam: false,
-		cache: false, // TODO: when we remove cacheParam, we can also remove this
 		success: function(data) {
 			var events = [];
 			if (data.feed.entry) {
@@ -94,6 +103,7 @@ function transformOptions(sourceOptions, start, end) {
 }
 
 
+// legacy
 fc.gcalFeed = function(url, sourceOptions) {
 	return $.extend({}, sourceOptions, { url: url, dataType: 'gcal' });
 };
