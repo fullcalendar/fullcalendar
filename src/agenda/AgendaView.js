@@ -739,7 +739,7 @@ function AgendaView(element, calendar, viewName) {
 			var helperOption = opt('selectHelper');
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
-				if (cell && (cell.col == origCell.col || !helperOption) && !cellIsAllDay(cell)) {
+				if (cell && !cellIsAllDay(cell)) {
 					var d1 = cellDate(origCell);
 					var d2 = cellDate(cell);
 					dates = [
@@ -748,7 +748,26 @@ function AgendaView(element, calendar, viewName) {
 						d2,
 						addMinutes(cloneDate(d2), opt('slotMinutes'))
 					].sort(cmp);
-					renderSlotSelection(dates[0], dates[3]);
+					var days = Math.ceil((dates[3].getTime()-dates[0].getTime())/(1000*60*60*24));
+					var daystart = cloneDate(dates[0], true);
+					var dayend = addMinutes(cloneDate(daystart), 60*24);
+					for (var i=0; i<days; i++) {
+						var fromdate;
+						if (dates[0] > daystart) {
+							fromdate = dates[0];
+						} else {
+							fromdate = daystart;
+						}
+						var todate;
+						if (dates[3] < dayend) {
+							todate = dates[3];
+						} else {
+							todate = dayend;
+						}
+						renderSlotSelection(cloneDate(fromdate), cloneDate(todate));
+						daystart = addMinutes(cloneDate(daystart), 60*24);
+						dayend = addMinutes(cloneDate(dayend), 60*24);
+					}
 				}else{
 					dates = null;
 				}
