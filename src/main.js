@@ -64,6 +64,4 @@ var setDefaults = function(d) {
 }
 
 
-$.fullCalendar.setDefaults = function(d) {
-	setDefaults(d);
-}
+$.fullCalendar.setDefaults = setDefaults;
