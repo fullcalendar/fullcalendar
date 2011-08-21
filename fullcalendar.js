@@ -1,6 +1,6 @@
 /**
  * @preserve
- * FullCalendar v1.5.1
+ * FullCalendar v1.5.2
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
@@ -11,7 +11,7 @@
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
  *
- * Date: Sat Apr 9 14:09:51 2011 -0700
+ * Date: Sun Aug 21 22:06:09 2011 -0700
  *
  */
  
@@ -111,7 +111,7 @@ var rtlDefaults = {
 
 
 
-var fc = $.fullCalendar = { version: "1.5.1" };
+var fc = $.fullCalendar = { version: "1.5.2" };
 var fcViews = fc.views = {};
 
 
@@ -1395,7 +1395,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		return null;
 	}
 	var date = new Date(m[1], 0, 1);
-	if (ignoreTimezone || !m[14]) {
+	if (ignoreTimezone || !m[13]) {
 		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
 			date.setMonth(m[3] - 1);
@@ -1431,9 +1431,11 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 			m[10] || 0,
 			m[12] ? Number("0." + m[12]) * 1000 : 0
 		);
-		var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
-		offset *= m[15] == '-' ? 1 : -1;
-		date = new Date(+date + (offset * 60 * 1000));
+		if (m[14]) {
+			var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
+			offset *= m[15] == '-' ? 1 : -1;
+			date = new Date(+date + (offset * 60 * 1000));
+		}
 	}
 	return date;
 }
