@@ -30,11 +30,13 @@ var defaults = {
 	// time formats
 	titleFormat: {
 		month: 'MMMM yyyy',
+		fourWeeks: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
 	},
 	columnFormat: {
 		month: 'ddd',
+    fourWeeks: "ddd",
 		week: 'ddd M/d',
 		day: 'dddd M/d'
 	},
@@ -57,6 +59,7 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
+    fourWeeks: "4 weeks",
 		day: 'day'
 	},
 	
