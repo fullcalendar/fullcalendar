@@ -15,35 +15,12 @@ function ResourceList(calendar, options) {
 	// Core render function
 	function render() {
 		tm = options.theme ? 'ui' : 'fc';
-		resources = options.resources
-		if (resources) {
-			element = $("<div class=\"fc-content\" style=\"position: relative; min-height: 1px; padding-bottom: 15px;\"><table  style=\"width: 100%\" cellspacing=\"0\"><tbody><tr>");
-				
-				
-					$.each(resources, function(i, val) {
-						element.append(renderResource(val));
-						}
-					)
-			return element;
-		}
+		resources = options.resources;
 	}
 	
 	function destroy() {
 		element.remove();
 	}
-	
-	function renderResource(resource) {
-		var e = $("<td style=\"width: 127px;\">" +                
-                            "<div class=\"fc-event fc-event-skin fc-event-hori fc-corner-left fc-corner-right\" style=\"width: 121px; margin: 0 auto\;background-color: " + resource.color + ";border-color: " + resource.color +";\">" +
-                                "<div class=\"fc-event-inner fc-event-skin\" style=\"background-color: " + resource.color + ";border-color: " + resource.color +";\">" +
-                                    "<span class=\"fc-event-title\">" + resource.name + "</span>" +
-                                "</div>" +
-                            "</div>" +
-                        "</td>");
-						
-		return e;
-	}
-	
 	
 	function renderSection(position) {
 		var e = $("<td class='fc-header-" + position + "'/>");

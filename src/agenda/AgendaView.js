@@ -795,7 +795,7 @@ function AgendaView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-			trigger('drop', _dragElement, cellDate(cell), cellIsAllDay(cell), ev, ui);
+			trigger('drop', _dragElement, cellDate(cell), cellIsAllDay(cell), ev, ui, false);
 		}
 	}
 

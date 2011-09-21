@@ -17,7 +17,7 @@ function ResourceDayView(element, calendar) {
 	
 	
 	
-	function render(date, delta) {
+	function render(date, delta, rebuildSkeleton) {
 		if (delta) {
 			addDays(date, delta);
 			if (!opt('weekends')) {
@@ -29,7 +29,7 @@ function ResourceDayView(element, calendar) {
 		t.title = formatDate(date, opt('titleFormat'));
 		t.start = t.visStart = start;
 		t.end = t.visEnd = end;
-		renderResourceView();
+		renderResourceView(rebuildSkeleton);
 	}
 	
 

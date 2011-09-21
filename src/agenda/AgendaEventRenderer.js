@@ -48,8 +48,6 @@ function AgendaEventRenderer() {
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
 	
-	var resources = calendar.getResources();
-	
 	/* Rendering
 	----------------------------------------------------------------------------*/
 	
@@ -59,6 +57,7 @@ function AgendaEventRenderer() {
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
+		
 		for (i=0; i<len; i++) {
 			if (events[i].allDay) {
 				dayEvents.push(events[i]);
@@ -279,12 +278,9 @@ function AgendaEventRenderer() {
 		var url = event.url;
 		
 		var skinCss = $('');
-		if(event.resource)
-		{		
+		if(event.resource) {		
 			skinCss = getSkinCssWithResource(event, event.resource); // PA TODO - merge getSkinCssWithResource into getSkinCss
-		}
-		else
-		{
+		} else {
 			skinCss = getSkinCss(event, opt);
 		}
 		
@@ -605,7 +601,6 @@ function AgendaEventRenderer() {
 
 }
 
-
 function countForwardSegs(levels) {
 	var i, j, k, level, segForward, segBack;
 	for (i=levels.length-1; i>0; i--) {
@@ -621,5 +616,3 @@ function countForwardSegs(levels) {
 		}
 	}
 }
-
-

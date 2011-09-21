@@ -76,7 +76,6 @@ function EventManager(options, _sources) {
 				if (events) {
 					for (var i=0; i<events.length; i++) {
 						events[i].source = source;
-						associateResourceWithEvent(events[i], options.resources) // resource association
 						normalizeEvent(events[i]);
 					}
 					cache = cache.concat(events);
@@ -351,7 +350,10 @@ function EventManager(options, _sources) {
 		}else{
 			event.className = [];
 		}
+		
 		// TODO: if there is no start date, return false to indicate an invalid event
+		
+		associateResourceWithEvent(event);
 	}
 	
 	
@@ -388,20 +390,24 @@ function EventManager(options, _sources) {
 	/* Resources
 	------------------------------------------------------------------------------*/
 	
-	function associateResourceWithEvent(event, resources) {
-		if(event.resourceId)
-		{
-			eventResource = new Object();
+	function associateResourceWithEvent(event) {
+		var resources = options.resources,
+		    i = 0;
 		
-			$.each(
-				resources,
-				function( intIndex, resource ){
-					if(resource.id == event.resourceId) {
-						event.resource = resource;
-						delete event.resourceId;
-					}
+		if(!event.resourceId) {
+            return;
+        }
+        
+        $.each(
+            resources,
+        	function( intIndex, resource ){
+    			if(resource.id == event.resourceId) {
+					event.resource = resource;
+					event.resource._col = i;
+					delete event.resourceId;
 				}
-			);
-		}
+				i++;
+            }
+        );
 	}
 }

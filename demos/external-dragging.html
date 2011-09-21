@@ -22,7 +22,8 @@
 			// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
 			// it doesn't need to have a start or end
 			var eventObject = {
-				title: $.trim($(this).text()) // use the element's text as the event title
+				title: $.trim($(this).text()), // use the element's text as the event title
+				resourceId: parseInt($(this).attr('employee'))
 			};
 			
 			// store the Event Object in the DOM element so we can get to it later
@@ -45,11 +46,55 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'month,agendaWeek,agendaDay,resourceDay'
 			},
+			resources: [
+				{
+					/*
+					 * employeeId
+				     * name
+				     * backgroundColor
+				     * foregroundColor
+					 */
+					id: 1,
+					name: 'Joe Bloggs',
+					color: 'red',
+					textColor: 'black'
+				},
+				{
+					id: 2,
+					name: 'Alan Black',
+					color: 'blue'
+				},
+				{
+					id: 3,
+					name: 'Robert White',
+					color: 'pink'
+				},
+				{
+					id: 4,
+					name: 'Paul Green',
+					color: 'green'
+				},
+				{
+					id: 5,
+					name: 'Jane Yellow',
+					color: 'yellow',
+					textColor: 'black'
+				}
+			],
+			events: [
+				{
+        			title: 'Test Event',
+				    start: '2011-08-08 12:30:00',
+				    end: '2011-08-08 17:10:00',
+				    resourceId: 4,
+				    allDay: false
+                }
+            ],
 			editable: true,
 			droppable: true, // this allows things to be dropped onto the calendar !!!
-			drop: function(date, allDay) { // this function is called when something is dropped
+			drop: function(date, allDay, ev, ui, res) { // this function is called when something is dropped
 			
 				// retrieve the dropped element's stored Event Object
 				var originalEventObject = $(this).data('eventObject');
@@ -60,6 +105,13 @@
 				// assign it the date that was reported
 				copiedEventObject.start = date;
 				copiedEventObject.allDay = allDay;
+				
+				// dropped event of resource a to a cell belonging to resource b?
+				if (res && res.id != copiedEventObject.resourceId) {
+				    if (!confirm('Wrong column. Do you want me to correct that?')) {
+				        copiedEventObject.resourceId = res.id;
+				    }
+				}
 				
 				// render the event on the calendar
 				// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
@@ -139,11 +191,11 @@
 
 <div id='external-events'>
 <h4>Draggable Events</h4>
-<div class='external-event'>My Event 1</div>
-<div class='external-event'>My Event 2</div>
-<div class='external-event'>My Event 3</div>
-<div class='external-event'>My Event 4</div>
-<div class='external-event'>My Event 5</div>
+<div class='external-event' employee='1' style="background-color: red;">Resource 1</div>
+<div class='external-event' employee='2' style="background-color: bleu;">Resource 2</div>
+<div class='external-event' employee='3' style="background-color: pink;">Resource 3</div>
+<div class='external-event' employee='4' style="background-color: green;">Resource 4</div>
+<div class='external-event' employee='5' style="background-color: yellow;">Resource 5</div>
 <p>
 <input type='checkbox' id='drop-remove' /> <label for='drop-remove'>remove after drop</label>
 </p>

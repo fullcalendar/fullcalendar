@@ -10,7 +10,7 @@ setDefaults({
 		agenda: 'h:mm{ - h:mm}'
 	},
 	dragOpacity: {
-		agenda: .5
+		resource: .5
 	},
 	minTime: 0,
 	maxTime: 24
@@ -76,7 +76,6 @@ function ResourceView(element, calendar, viewName) {
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var formatDate = calendar.formatDate;
-	var resources = calendar.getResources();
 	
 	// locals
 	
@@ -123,6 +122,9 @@ function ResourceView(element, calendar, viewName) {
 	var minMinute, maxMinute;
 	var colFormat;
 	
+	var resources;
+	var resourceFingerprint;
+	
 
 	
 	/* Rendering
@@ -132,9 +134,30 @@ function ResourceView(element, calendar, viewName) {
 	disableTextSelection(element.addClass('fc-agenda'));
 	
 	
-	function renderResourceView() {
-		colCnt = resources.length;
+	function renderResourceView(rebuildSkeleton) {
 		updateOptions();
+		
+		resources = calendar.getResources();
+		colCnt = resources.length;
+		
+		// calc fingerprint
+		var oldFingerprint = resourceFingerprint,
+		    ids;
+		ids = [];
+		$.each(resources, function(i,r) {
+		    ids.push(r.id);
+		});
+		resourceFingerprint = ids.join(',');
+		
+		// rebuild the skeleton?
+		if (dayTable && slotLayer && (rebuildSkeleton || oldFingerprint != resourceFingerprint)) {
+		    dayTable.remove();
+		    slotLayer.remove();
+		    
+		    dayTable = false;
+		    slotLayer = false;
+		}
+		
 		if (!dayTable) {
 			buildSkeleton();
 		}else{
@@ -480,21 +503,15 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	// PA TODO - This function has to be updated to use something other than index!
-	function renderResourceOverlay(index, refreshCoordinateGrid) {
+	function renderResourceOverlay(col, refreshCoordinateGrid) {
 		if (refreshCoordinateGrid) {
 			coordinateGrid.build();
 		}
-		var col
-		if (rtl) {
-			startCol = dayDiff(endDate, visStart)*dis+dit+1;
-			endCol = dayDiff(startDate, visStart)*dis+dit+1;
-		}else{
-			col = index;
-		}
-		startCol = Math.max(0, col);
-		endCol = Math.min(colCnt, col);
-
-		dayBind(renderCellOverlay(0,startCol, 0, endCol))
+		
+		var startCol = Math.max(0, col),
+		    endCol = Math.min(colCnt, col);
+        
+		dayBind(renderCellOverlay(0,startCol, 0, endCol));
 	}
 	
 	
@@ -814,7 +831,12 @@ function ResourceView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-			trigger('drop', _dragElement, cellDate(cell), cellIsAllDay(cell), ev, ui);
+		    var resource = resources[cell.col];
+		    var dDrop = cellDate(cell);
+		    var dViewing = t.visStart;
+		    setYMD(dDrop, dViewing.getFullYear(), dViewing.getMonth(), dViewing.getDate());
+		    
+			trigger('drop', _dragElement, dDrop, cellIsAllDay(cell), ev, ui, resource);
 		}
 	}
 

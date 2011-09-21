@@ -41,7 +41,7 @@ function DayEventRenderer() {
 	-----------------------------------------------------------------------------*/
 	
 	
-	function renderDaySegs(segs, modifiedEventId) {
+	function renderDaySegs(segs, modifiedEventId, isResourceView) {
 		var segmentContainer = getDaySegmentContainer();
 		var rowDivs;
 		var rowCnt = getRowCnt();
@@ -55,7 +55,7 @@ function DayEventRenderer() {
 		var seg;
 		var top;
 		var k;
-		segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
+		segmentContainer[0].innerHTML = daySegHTML(segs, isResourceView); // faster than .html()
 		daySegElementResolve(segs, segmentContainer.children());
 		daySegElementReport(segs);
 		daySegHandlers(segs, segmentContainer, modifiedEventId);
@@ -115,7 +115,7 @@ function DayEventRenderer() {
 	}
 	
 	
-	function daySegHTML(segs) { // also sets seg.left and seg.outerWidth
+	function daySegHTML(segs, isResourceView) { // also sets seg.left and seg.outerWidth
 		var rtl = opt('isRTL');
 		var i;
 		var segCnt=segs.length;
@@ -140,29 +140,46 @@ function DayEventRenderer() {
 			if (isEventDraggable(event)) {
 				classes.push('fc-event-draggable');
 			}
-			if (rtl) {
-				if (seg.isStart) {
-					classes.push('fc-corner-right');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-left');
-				}
-				leftCol = dayOfWeekCol(seg.end.getDay()-1);
-				rightCol = dayOfWeekCol(seg.start.getDay());
-				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
-				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
-			}else{
-				if (seg.isStart) {
-					classes.push('fc-corner-left');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-right');
-				}
-				leftCol = dayOfWeekCol(seg.start.getDay());
-				rightCol = dayOfWeekCol(seg.end.getDay()-1);
-				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
-				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
-			}
+			
+			if (isResourceView) {
+                classes.push('fc-corner-left');
+			    classes.push('fc-corner-right');
+			    
+			    if (event.resource) {
+			        leftCol = event.resource._col;
+			    } else {
+			        leftCol = 0;
+			    }
+			    
+			    rightCol = leftCol;
+			    
+			    left = colContentLeft(leftCol);
+			    right = colContentRight(rightCol);
+			} else {
+			    if (rtl) {
+    				if (seg.isStart) {
+    					classes.push('fc-corner-right');
+    				}
+    				if (seg.isEnd) {
+    					classes.push('fc-corner-left');
+    				}
+    				leftCol = dayOfWeekCol(seg.end.getDay()-1);
+    				rightCol = dayOfWeekCol(seg.start.getDay());
+    				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
+    				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
+    			}else{
+    				if (seg.isStart) {
+    					classes.push('fc-corner-left');
+    				}
+    				if (seg.isEnd) {
+    					classes.push('fc-corner-right');
+    				}
+    				leftCol = dayOfWeekCol(seg.start.getDay());
+    				rightCol = dayOfWeekCol(seg.end.getDay()-1);
+    				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
+    				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
+    			}
+            }
 			classes = classes.concat(event.className);
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
@@ -197,7 +214,7 @@ function DayEventRenderer() {
 			html +=
 				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</div>";
-			if (seg.isEnd && isEventResizable(event)) {
+			if (seg.isEnd && isEventResizable(event) && !(event.allDay && isResourceView)) {
 				html +=
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7

@@ -376,7 +376,7 @@ function BasicView(element, calendar, viewName) {
 		clearOverlays();
 		if (cell) {
 			var d = cellDate(cell);
-			trigger('drop', _dragElement, d, true, ev, ui);
+			trigger('drop', _dragElement, d, true, ev, ui, false);
 		}
 	}
 	
