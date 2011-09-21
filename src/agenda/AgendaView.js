@@ -279,8 +279,9 @@ function AgendaView(element, calendar, viewName) {
 		slotCnt = 0;
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
+			nonBusinessHours = (i < (opt("startOfBusiness") * 2) || i > ((opt("endOfBusiness") + .5) * 2) ? " fc-non-business-hours" : "" )
 			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + nonBusinessHours + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
 				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
 				"</th>" +

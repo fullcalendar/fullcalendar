@@ -83,6 +83,10 @@
 .fc-agenda-slots tr.fc-minor th.ui-widget-header {
 	*border-top-style: solid; /* doesn't work with background in IE6/7 */
 	}
+
+.fc-non-business-hours {
+	background-color:rgba(230, 230, 230, .8);
+}
 	
 
 
