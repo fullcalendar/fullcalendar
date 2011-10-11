@@ -30,7 +30,8 @@
       var limit = new $.fn.limitEvents.constructor($(this));
 
       $.extend({ maxEvents: 4 }, opts); //defaults
-      $(this).fullCalendar('limitEvents', opts);
+      $(this).fullCalendar('limitEvents', opts)
+        .fullCalendar('rerenderEvents');
     });    
   };
   
@@ -67,6 +68,7 @@
     
     self.calendar.delegate('.fc-button-prev, .fc-button-next', 'click', function(){
       resetEventsRangeCounts();
+      self.calendar.fullCalendar('rerenderEvents');
     });
   };
   
