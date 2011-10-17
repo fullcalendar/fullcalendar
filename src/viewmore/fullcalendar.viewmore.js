@@ -123,7 +123,7 @@
                         .click(function () {
                           var viewMoreClick = self.opts.viewMoreClick;
                           
-                            if (viewMoreClick && $.isFunction(viewMoreClick)) self.opts.viewMoreClick();
+                            if (viewMoreClick && $.isFunction(viewMoreClick)) self.opts.viewMoreClick(td, self.calendar);
                             else viewMore(td, self.calendar); //show events in formBubble overlay
                             
                             return false;
