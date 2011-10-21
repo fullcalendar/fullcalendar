@@ -212,6 +212,7 @@ function BasicView(element, calendar, viewName) {
 				cell.removeClass(tm + '-state-highlight fc-today');
 			}
 			cell.find('div.fc-day-number').text(date.getDate());
+			trigger('dayRender', t, date, cell);
 			if (dowDirty) {
 				setDayID(cell, date);
 			}
