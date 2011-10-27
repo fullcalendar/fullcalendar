@@ -19,10 +19,12 @@ var defaults = {
 	allDayDefault: true,
 	ignoreTimezone: true,
 	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
 	endParam: 'end',
+        startEndDateOnly: false,
 	
 	// time formats
 	titleFormat: {

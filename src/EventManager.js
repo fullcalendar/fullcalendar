@@ -130,10 +130,10 @@ function EventManager(options, _sources) {
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
 				if (startParam) {
-					data[startParam] = Math.round(+rangeStart / 1000);
+					data[startParam] = (options.startEndDateOnly) ? (rangeStart.getYear()+'-'+(rangeStart.getMonth()+1)+'-'+rangeStart.getDate()) : Math.round(+rangeStart / 1000);
 				}
 				if (endParam) {
-					data[endParam] = Math.round(+rangeEnd / 1000);
+					data[endParam] = (options.startEndDateOnly) ? (rangeEnd.getYear()+'-'+(rangeEnd.getMonth()+1)+'-'+rangeEnd.getDate()) : Math.round(+rangeEnd / 1000);
 				}
 				pushLoading();
 				$.ajax($.extend({}, ajaxDefaults, source, {
