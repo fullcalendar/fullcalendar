@@ -1,4 +1,8 @@
 
+version 1.5.3 (11/21/11)
+	- fixed dragging issue with jQuery 1.7 (issue 1168)
+	- bundled with jQuery 1.7 and jQuery UI 1.8.16
+
 version 1.5.2 (8/21/11)
 	- correctly process UTC "Z" ISO8601 date strings (issue 750)
 
