@@ -18,6 +18,7 @@ startload();
 css('main.css');
 css('common/common.css');
 css('basic/basic.css');
+css('resource/resource.css');
 css('agenda/agenda.css');
 cssprint('common/print.css');
 
@@ -50,6 +51,11 @@ js('basic/BasicWeekView.js');
 js('basic/BasicDayView.js');
 js('basic/BasicView.js');
 js('basic/BasicEventRenderer.js');
+
+js('resource/ResourceWeekView.js');
+js('resource/ResourceMonthView.js');
+js('resource/ResourceView.js');
+js('resource/ResourceEventRenderer.js');
 
 js('agenda/AgendaWeekView.js');
 js('agenda/AgendaDayView.js');

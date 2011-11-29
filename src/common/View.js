@@ -44,7 +44,12 @@ function View(element, calendar, viewName) {
 	function opt(name, viewNameOverride) {
 		var v = options[name];
 		if (typeof v == 'object') {
-			return smartProperty(v, viewNameOverride || viewName);
+			if(name == 'resources') {
+				return v;
+			}
+			else {
+				return smartProperty(v, viewNameOverride || viewName);
+			}
 		}
 		return v;
 	}
@@ -176,10 +181,10 @@ function View(element, calendar, viewName) {
 	---------------------------------------------------------------------------------*/
 	
 	
-	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
+	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui, resource) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
-		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
+		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay, resource);
 		trigger(
 			'eventDrop',
 			e,
@@ -193,7 +198,8 @@ function View(element, calendar, viewName) {
 				reportEventChange(eventId);
 			},
 			ev,
-			ui
+			ui,
+			resource
 		);
 		reportEventChange(eventId);
 	}
@@ -225,17 +231,22 @@ function View(element, calendar, viewName) {
 	---------------------------------------------------------------------------------*/
 	
 	
-	function moveEvents(events, dayDelta, minuteDelta, allDay) {
+	function moveEvents(events, dayDelta, minuteDelta, allDay, resource) {
 		minuteDelta = minuteDelta || 0;
 		for (var e, len=events.length, i=0; i<len; i++) {
 			e = events[i];
 			if (allDay !== undefined) {
 				e.allDay = allDay;
 			}
+
 			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
 			}
+			if (e.resource != resource) {
+				e.resource = resource;
+			}
+			
 			normalizeEvent(e, options);
 		}
 	}

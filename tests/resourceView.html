@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+
+<script type='text/javascript'>
+	/*
+		This file tests that resources are in perfect order and everything works
+	*/
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		var calendar = $('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'resourceWeek,resourceMonth'
+			},
+			defaultView: 'resourceMonth',
+			firstDay: 1, 	
+			editable: true,
+			selectable: true,
+			selectHelper: true,
+			resources: [
+				{
+					name: 'Resource Name 2',
+					id:	'resource2'
+				},
+				{
+					name: 'Resource Name 1',
+					id:	'resource1'
+				},
+				{
+					name: 'Resource Name 3',
+					id:	'resource3'
+				}
+			],
+			events: [
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					end: new Date(y, m, d+4, 11, 00),
+					allDay: false,
+					resource: 'resource1'
+				},
+					{
+					title: 'All Day Event',
+					start: new Date(y, m, 1),
+					resource: 'resource2'
+				},
+				{
+					title: 'Long Event',
+					start: new Date(y, m, d-5),
+					end: new Date(y, m, d-2),
+					resource: 'resource1'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
+					allDay: false,
+					resource: 'resource2'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
+					allDay: false,
+					resource: 'resource1'
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					allDay: false,
+					resource: 'resource2'
+				},
+				{
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
+					allDay: false,
+					resource: 'resource1'
+				},
+				{
+					title: 'Birthday Party',
+					start: new Date(y, m, 3, 19, 0),
+					end: new Date(y, m, 3, 22, 30),
+					allDay: false,
+					resource: 'resource1'
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, 28),
+					end: new Date(y, m, 29),
+					url: 'http://google.com/',
+					resource: 'resource2'
+				}
+			],
+			select: function(start, end, allDay, jsEvent, view, resource) {
+				var title = prompt('event title:');
+
+				if (title) {
+					calendar.fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay,
+							resource: resource.id
+						},
+						true // make the event "stick"
+					);
+				}
+				calendar.fullCalendar('unselect');
+			},
+			eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) { 
+				alert('event moved to '+event.start+' to '+event.resource);
+			},
+			eventResize: function( event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ) { 
+				alert('event was resized, new endtime: '+event.end);
+			},
+			height: calcCalendarHeight()
+		});
+		
+		function calcCalendarHeight() {
+			var h = $(window).height() - 40;
+			console.log(h);
+			return h;
+		}
+		
+		$(window).resize(function() {
+			$('#calendar').fullCalendar('option', 'height', calcCalendarHeight());
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin: 20px 200px 20px 20px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 100%;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

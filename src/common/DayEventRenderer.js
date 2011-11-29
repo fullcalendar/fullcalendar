@@ -6,6 +6,7 @@ function DayEventRenderer() {
 	// exports
 	t.renderDaySegs = renderDaySegs;
 	t.resizableDayEvent = resizableDayEvent;
+	t.renderTempDaySegs = renderTempDaySegs;
 	
 	
 	// imports
@@ -132,6 +133,7 @@ function DayEventRenderer() {
 		var right;
 		var skinCss;
 		var html = '';
+
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -158,8 +160,23 @@ function DayEventRenderer() {
 				if (seg.isEnd) {
 					classes.push('fc-corner-right');
 				}
-				leftCol = dayOfWeekCol(seg.start.getDay());
-				rightCol = dayOfWeekCol(seg.end.getDay()-1);
+				
+				if (getColCnt() > 7) {
+					// hack for resourceMonth view (other views are based on column count 7 or less)
+					// What is we have view which lists 4 week from now on, how can we get right columns?
+					leftCol = seg.start.getDate()-1;
+					rightCol = seg.end.getDate()-2;
+
+					if(rightCol < 0) {
+						// end is in the next month so rightCol is the last column
+						rightCol = getColCnt()-1;
+					}
+				}
+				else {
+					leftCol = dayOfWeekCol(seg.start.getDay());
+					rightCol = dayOfWeekCol(seg.end.getDay()-1);
+				}
+
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
 				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}
@@ -343,7 +360,7 @@ function DayEventRenderer() {
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
 			rowDivs[i] = allDayRow(i)
-				.find('td:first div.fc-day-content > div'); // optimal selector?
+				.find('td:not(.fc-resourceName):first div.fc-day-content > div'); // optimal selector?
 		}
 		return rowDivs;
 	}

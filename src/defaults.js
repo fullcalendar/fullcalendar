@@ -33,7 +33,9 @@ var defaults = {
 	columnFormat: {
 		month: 'ddd',
 		week: 'ddd M/d',
-		day: 'dddd M/d'
+		day: 'dddd M/d',
+		resourceMonth: 'M/d',
+		resourceWeek: 'ddd M/d'
 	},
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
@@ -54,7 +56,9 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
-		day: 'day'
+		day: 'day',
+		resourceWeek: 'resource week',
+		resourceMonth: 'resource month'
 	},
 	
 	// jquery-ui theming
