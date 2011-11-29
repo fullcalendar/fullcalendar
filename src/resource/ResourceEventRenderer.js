@@ -107,7 +107,7 @@ function ResourceEventRenderer() {
 	
 	function draggableResourceEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
-		var dayDelta, resourceDelta, newResourceId;
+		var dayDelta, resourceDelta, newResourceId, resources;
 		eventElement.draggable({
 			zIndex: 9,
 			delay: 50,
