@@ -1,3 +1,5 @@
+**Note that this is a version of fullcalendar that has been optimized for mobile devices.**
+
 
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
