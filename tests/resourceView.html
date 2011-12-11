@@ -18,12 +18,14 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'resourceWeek,resourceMonth'
+				right: 'resourceDay,resourceWeek,resourceMonth'
 			},
-			defaultView: 'resourceMonth',
+			defaultView: 'resourceDay',
 			firstDay: 1, 	
 			editable: true,
 			selectable: true,
+			minTime: 7,
+			maxTime:17,
 			selectHelper: true,
 			resources: [
 				{

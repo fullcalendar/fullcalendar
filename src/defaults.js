@@ -34,6 +34,7 @@ var defaults = {
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d',
+		resourceDay: 'H:mm',
 		resourceMonth: 'M/d',
 		resourceWeek: 'ddd M/d'
 	},
@@ -57,6 +58,7 @@ var defaults = {
 		month: 'month',
 		week: 'week',
 		day: 'day',
+		resourceDay: 'resource day',
 		resourceWeek: 'resource week',
 		resourceMonth: 'resource month'
 	},

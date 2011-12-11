@@ -22,12 +22,14 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'resourceWeek,resourceMonth'
+				right: 'resourceDay,resourceWeek,resourceMonth'
 			},
-			defaultView: 'resourceMonth',
+			defaultView: 'resourceDay',
 			firstDay: 1, 	
 			editable: true,
 			selectable: true,
+			minTime: 8,
+			maxTime:16,
 			selectHelper: true,
 			resources: [
 				{
@@ -40,6 +42,13 @@
 				}
 			],
 			events: [
+				{
+					title: 'Lunch 12-14',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
+					allDay: false,
+					resource: 'resource1'
+				},				
 				{
 					title: 'Meeting',
 					start: new Date(y, m, d, 10, 30),
@@ -74,7 +83,7 @@
 				},
 				{
 					title: 'Meeting',
-					start: new Date(y, m, 4, 10, 30),
+					start: new Date(y, m, d, 10, 30),
 					allDay: false,
 					resource: 'resource2'
 				},
@@ -87,14 +96,14 @@
 				},
 				{
 					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
+					start: new Date(y, m, 3, 19, 0),
+					end: new Date(y, m, 3, 22, 30),
 					allDay: false,
 					resource: 'resource1'
 				},
 				{
 					title: 'Click for Google',
-					start: new Date(y, m, 12),
+					start: new Date(y, m, 28),
 					end: new Date(y, m, 29),
 					url: 'http://google.com/',
 					resource: 'resource2'
@@ -123,6 +132,24 @@
 			eventResize: function( event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ) { 
 				alert('event was resized, new endtime: '+event.end);
 			},
+			eventClick: function ( event, jsEvent, view )  {
+				alert('event '+event.title+' was left clicked');
+			},
+			eventRender: function( event, element, view ) { 
+				element.bind('contextmenu',function(e){
+					$('#contextMenuContainer').html('<div class=\'contextMenu\'>Actions<br><br><input type=\'button\' value=\'copy\'><br><input type=\'button\' value=\'paste\'></div>');	
+					$('#contextMenuContainer').fadeIn();
+					var position = element.position();
+					$('#contextMenuContainer').css({
+						left : position.left+20,
+						top  : position.top+80
+					});
+					$(document).click(function()   {
+						$('#contextMenuContainer').fadeOut();
+					});
+					return false;
+				});
+			},
 			height: calcCalendarHeight()
 		});
 		
@@ -135,7 +162,6 @@
 		$(window).resize(function() {
 			$('#calendar').fullCalendar('option', 'height', calcCalendarHeight());
 		});
-		
 	});
 
 </script>
@@ -156,5 +182,6 @@
 </head>
 <body>
 <div id='calendar'></div>
+<div id='contextMenuContainer' style='background-color:#f0f0f0;width:100px;height:100px;display:none;z-index:999;border-radius:5px;border:1px solid black;position:absolute;'></div>
 </body>
 </html>

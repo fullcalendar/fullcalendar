@@ -52,6 +52,7 @@ js('basic/BasicDayView.js');
 js('basic/BasicView.js');
 js('basic/BasicEventRenderer.js');
 
+js('resource/ResourceDayView.js');
 js('resource/ResourceWeekView.js');
 js('resource/ResourceMonthView.js');
 js('resource/ResourceView.js');

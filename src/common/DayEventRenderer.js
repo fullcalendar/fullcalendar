@@ -27,6 +27,7 @@ function DayEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var dayOfWeekCol = t.dayOfWeekCol;
+	var timeOfDayCol = t.timeOfDayCol;
 	var dateCell = t.dateCell;
 	var compileDaySegs = t.compileDaySegs;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
@@ -35,6 +36,7 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
+	var getView = t.getView;
 	
 	
 	
@@ -133,6 +135,7 @@ function DayEventRenderer() {
 		var right;
 		var skinCss;
 		var html = '';
+		var currentView = getView();
 
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
@@ -161,8 +164,8 @@ function DayEventRenderer() {
 					classes.push('fc-corner-right');
 				}
 				
-				if (getColCnt() > 7) {
-					// hack for resourceMonth view (other views are based on column count 7 or less)
+				if (currentView == 'resourceMonth') {
+					// hack for resourceMonth view
 					// What is we have view which lists 4 week from now on, how can we get right columns?
 					leftCol = seg.start.getDate()-1;
 					rightCol = seg.end.getDate()-2;
@@ -171,6 +174,11 @@ function DayEventRenderer() {
 						// end is in the next month so rightCol is the last column
 						rightCol = getColCnt()-1;
 					}
+				}
+				else if (currentView == 'resourceDay') {
+					// hack for resourceDay view
+					leftCol = timeOfDayCol(seg.start);
+					rightCol = timeOfDayCol(seg.end)-1;
 				}
 				else {
 					leftCol = dayOfWeekCol(seg.start.getDay());
@@ -197,7 +205,7 @@ function DayEventRenderer() {
 				">" +
 				"<div" +
 				" class='fc-event-inner fc-event-skin'" +
-				(skinCss ? " style='" + skinCss + "'" : '') +
+				(skinCss ? " style='" + skinCss + "'" : "") +
 				">";
 			if (!event.allDay && seg.isStart) {
 				html +=

@@ -24,6 +24,7 @@ function ResourceView(element, calendar, viewName) {
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
 	t.dayOfWeekCol = dayOfWeekCol;
+	t.timeOfDayCol = timeOfDayCol;
 	t.dateCell = dateCell;
 	t.cellDate = cellDate;
 	t.cellIsAllDay = function() { return true };
@@ -33,6 +34,7 @@ function ResourceView(element, calendar, viewName) {
 	t.getColCnt = function() { return colCnt };
 	t.getResources = function() { return opt('resources') };
 	t.getColWidth = function() { return colWidth };
+	t.getView = function() { return viewName };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
 	
 	
@@ -317,17 +319,29 @@ function ResourceView(element, calendar, viewName) {
 		var rowStart = cloneDate(t.visStart);
 		var rowEnd = addDays(cloneDate(rowStart), colCnt);
 
+		if (viewName == 'resourceDay') {
+			rowEnd = addMinutes(cloneDate(rowStart), opt('slotMinutes')*colCnt);
+		}
+
 		var stretchStart = new Date(Math.max(rowStart, overlayStart));
 		var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));
+
 		if (stretchStart < stretchEnd) {
 			var colStart, colEnd;
-			if (rtl) {
-				colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
-				colEnd = dayDiff(stretchStart, rowStart)*dis+dit+1;
-			}else{
-				colStart = dayDiff(stretchStart, rowStart);
-				colEnd = dayDiff(stretchEnd, rowStart);
+			if (viewName == 'resourceDay') {
+				colStart = (stretchStart-rowStart)/1000/60/opt('slotMinutes');
+				colEnd = (stretchEnd-rowStart)/1000/60/opt('slotMinutes');
 			}
+			else {
+				if (rtl) {
+					colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
+					colEnd = dayDiff(stretchStart, rowStart)*dis+dit+1;
+				}else{
+					colStart = dayDiff(stretchStart, rowStart);
+					colEnd = dayDiff(stretchEnd, rowStart);
+				}
+			}
+			
 			dayBind(
 				renderCellOverlay(overlayRow, colStart, overlayRow, colEnd-1)
 			);
@@ -460,18 +474,22 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function cellDate(cell) {
-		return _cellDate(cell.row, cell.col);
+		return _cellDate(cell.col);
 	}
 	
 	
-	function _cellDate(row, col) {
-		return addDays(cloneDate(t.visStart), col*dis+dit);
-		// what about weekends in middle of week?
+	function _cellDate(col) {
+		if (viewName == 'resourceDay') {
+			return addMinutes(cloneDate(t.visStart), col*opt('slotMinutes'));
+		}
+		else {
+			return addDays(cloneDate(t.visStart), col*dis+dit);
+		}
 	}
 	
 	
 	function indexDate(index) {
-		return _cellDate(Math.floor(index/colCnt), index%colCnt);
+		return _cellDate(index%colCnt);
 	}
 	
 	
@@ -479,7 +497,19 @@ function ResourceView(element, calendar, viewName) {
 		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
 	}
 	
-	
+	function timeOfDayCol(datetime) {
+		var hours = datetime.getHours();
+		var minutes = datetime.getMinutes();
+
+		for ( var i = 0; i < colCnt; i++) {
+			if (indexDate(i).getHours() == hours && indexDate(i).getMinutes() == minutes) {
+				return i;
+			}
+		}
+
+		// not in range, return max
+		return colCnt;
+	}
 	
 	
 	function allDayRow(i) {
@@ -488,10 +518,10 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function allDayBounds(i) {
-		var resourceNameColWidth = $(head).find('th.fc-resourceName').css('width').replace('px','');
+		var resourceNameColWidth = parseInt($(head).find('th.fc-resourceName').css('width').replace('px',''));
 		return {
 			left: resourceNameColWidth,
-			right: viewWidth+resourceNameColWidth
+			right: (viewWidth+resourceNameColWidth)
 		};
 	}
 	

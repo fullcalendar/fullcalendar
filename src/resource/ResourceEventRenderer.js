@@ -31,6 +31,7 @@ function ResourceEventRenderer() {
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
 	var getResources = t.getResources;
+	var getView = t.getView;
 	var renderDaySegs = t.renderDaySegs;
 	var dateCell = t.dateCell;
 	var clearSelection = t.clearSelection;
@@ -66,12 +67,21 @@ function ResourceEventRenderer() {
 			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
-			k, seg, currentResource,
+			k, seg, currentResource, currentView = getView(),
 			segs=[];
+			
+		if (currentView == 'resourceDay') {
+			d2 = cloneDate(t.visEnd);
+			
+			visEventsEnds = $.map(events, function(event) {
+				return event.end;
+			});
+		}
+
 		for (i=0; i<rowCnt; i++) {
 			currentResource = resources[i].id;
 			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
-		
+	
 			for (j=0; j<row.length; j++) {
 				level = row[j];
 				for (k=0; k<level.length; k++) {
@@ -107,7 +117,7 @@ function ResourceEventRenderer() {
 	
 	function draggableResourceEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
-		var dayDelta, resourceDelta, newResourceId, resources;
+		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, currentView = getView();
 		eventElement.draggable({
 			zIndex: 9,
 			delay: 50,
@@ -121,18 +131,31 @@ function ResourceEventRenderer() {
 					clearOverlays();
 					if (cell) {
 						//setOverflowHidden(true);
-						dayDelta = colDelta * (opt('isRTL') ? -1 : 1);
 						resourceDelta = rowDelta * (opt('isRTL') ? -1 : 1);
 						resources = opt('resources');
 						newResourceId = resources[cell.row].id; 
-						renderDayOverlay(
-							addDays(cloneDate(event.start), dayDelta),
-							addDays(exclEndDay(event), dayDelta), 
-							false,
-							cell.row
-						);
+						
+						if (currentView == 'resourceDay') {
+							minuteDelta = colDelta * (opt('isRTL') ? -1 : 1) * opt('slotMinutes');
+							renderDayOverlay(
+								addMinutes(cloneDate(event.start), minuteDelta),
+								addMinutes(cloneDate(event.end), minuteDelta), 
+								false,
+								cell.row
+							);
+						}
+						else {
+							dayDelta = colDelta * (opt('isRTL') ? -1 : 1);			
+							renderDayOverlay(
+								addDays(cloneDate(event.start), dayDelta),
+								addDays(exclEndDay(event), dayDelta), 
+								false,
+								cell.row
+							);
+						}
 					}else{
 						//setOverflowHidden(false);
+						minuteDelta = 0;
 						dayDelta = 0;
 						resourceDelta = 0;
 					}
@@ -142,9 +165,12 @@ function ResourceEventRenderer() {
 				hoverListener.stop();
 				clearOverlays();
 				trigger('eventDragStop', eventElement, event, ev, ui);
-				if (dayDelta || resourceDelta) {
+				if (currentView == 'resourceDay' && (minuteDelta || resourceDelta)) {
+					eventDrop(this, event, 0, minuteDelta, event.allDay, ev, ui, newResourceId);
+				}
+				else if (dayDelta || resourceDelta) {
 					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui, newResourceId);
-				}else{
+				} else{
 					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
 				}
@@ -187,10 +213,12 @@ function ResourceEventRenderer() {
 			var hoverListener = t.getHoverListener();
 			var rowCnt = getRowCnt();
 			var colCnt = getColCnt();
+			var currentView = getView();
 			var dis = rtl ? -1 : 1;
 			var dit = rtl ? colCnt-1 : 0;
 			var elementTop = element.css('top');
 			var dayDelta;
+			var minuteDelta;
 			var helpers;
 			var eventCopy = $.extend({}, event);
 			var minCell = dateCell(event.start);
@@ -203,19 +231,17 @@ function ResourceEventRenderer() {
 				if (cell) {
 					var r = Math.max(minCell.row, cell.row);
 					var c = cell.col;
-					if (rowCnt == 1) {
-						r = 0; // hack for all-day area in agenda views
+					
+					if (currentView == 'resourceDay') {
+						minuteDelta = (opt('slotMinutes') * c*dis+dit) - (opt('slotMinutes') * origCell.col*dis+dit);
+						var newEnd = addMinutes(eventEnd(event), minuteDelta, true);
 					}
-					if (r == minCell.row) {
-						if (rtl) {
-							c = Math.min(minCell.col, c);
-						}else{
-							c = Math.max(minCell.col, c);
-						}
+					else {
+						dayDelta = (7 + c*dis+dit) - (7 + origCell.col*dis+dit);
+						var newEnd = addDays(eventEnd(event), dayDelta, true);
 					}
-					dayDelta = (7 + c*dis+dit) - (7 + origCell.col*dis+dit);
-					var newEnd = addDays(eventEnd(event), dayDelta, true);
-					if (dayDelta) {
+					
+					if (dayDelta || minuteDelta) {
 						eventCopy.end = newEnd;
 						var oldHelpers = helpers;
 						helpers = renderTempDaySegs(compileDaySegs([eventCopy]), seg.row, elementTop);
@@ -233,7 +259,12 @@ function ResourceEventRenderer() {
 					}
 					clearOverlays();
 
-					renderDayOverlay(event.start, addDays(cloneDate(newEnd), 1), 1, origCell.row); // coordinate grid already rebuild at hoverListener.start
+					if (currentView == 'resourceDay') {
+						renderDayOverlay(event.start, addMinutes(cloneDate(newEnd), 0), 1, origCell.row); // coordinate grid already rebuild at hoverListener.start
+					}
+					else {
+						renderDayOverlay(event.start, addDays(cloneDate(newEnd), 1), 1, origCell.row); // coordinate grid already rebuild at hoverListener.start
+					}
 				}
 			}, ev);
 			
@@ -245,6 +276,9 @@ function ResourceEventRenderer() {
 				if (dayDelta) {
 					eventResize(this, event, dayDelta, 0, ev);
 					// event redraw will clear helpers
+				}
+				else if (minuteDelta) {
+					eventResize(this, event, 0, minuteDelta, ev);
 				}
 				// otherwise, the drag handler already restored the old events
 				
