@@ -18,6 +18,7 @@ function SelectionManager() {
 	var defaultSelectionEnd = t.defaultSelectionEnd;
 	var renderSelection = t.renderSelection;
 	var clearSelection = t.clearSelection;
+	var getViewName = t.getViewName;
 	
 	
 	// locals
@@ -71,6 +72,7 @@ function SelectionManager() {
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
 		var row;
 		var resources = opt('resources');
+		var viewName = getViewName();
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
@@ -79,7 +81,7 @@ function SelectionManager() {
 				clearSelection();
 				if (cell && cellIsAllDay(cell)) {
 					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
-					renderSelection(dates[0], dates[1], true, cell.row);
+					renderSelection(dates[0], dates[1], (viewName == 'resourceDay' ? false : true), cell.row);
 					row = cell.row;
 				}else{
 					dates = null;
@@ -89,9 +91,9 @@ function SelectionManager() {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0], true, ev);
+						reportDayClick(dates[0],(viewName == 'resourceDay' ? false : true), ev);
 					}
-					reportSelection(dates[0], dates[1], true, ev, resources[row]);
+					reportSelection(dates[0], (viewName == 'resourceDay' ? addMinutes(dates[1], opt('slotMinutes')) : dates[1]), (viewName == 'resourceDay' ? false : true), ev, resources[row]);
 				}
 			});
 		}

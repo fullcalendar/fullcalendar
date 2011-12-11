@@ -32,7 +32,7 @@ function BasicView(element, calendar, viewName) {
 	t.getRowCnt = function() { return rowCnt };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
-	t.getView = function() { return viewName };
+	t.getViewName = function() { return viewName };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
 	
 	

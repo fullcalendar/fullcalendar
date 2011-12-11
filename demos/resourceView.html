@@ -137,7 +137,7 @@
 			},
 			eventRender: function( event, element, view ) { 
 				element.bind('contextmenu',function(e){
-					$('#contextMenuContainer').html('<div class=\'contextMenu\'>Actions<br><br><input type=\'button\' value=\'copy\'><br><input type=\'button\' value=\'paste\'></div>');	
+					$('#contextMenuContainer').html('<div class=\'contextMenu\'>Actions for event<br><br><input type=\'button\' value=\'Action 1\'><br><input type=\'button\' value=\'Action 2\'></div>');	
 					$('#contextMenuContainer').fadeIn();
 					var position = element.position();
 					$('#contextMenuContainer').css({

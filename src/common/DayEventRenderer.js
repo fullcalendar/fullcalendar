@@ -36,7 +36,7 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
-	var getView = t.getView;
+	var getViewName = t.getViewName;
 	
 	
 	
@@ -135,7 +135,7 @@ function DayEventRenderer() {
 		var right;
 		var skinCss;
 		var html = '';
-		var currentView = getView();
+		var viewName = getViewName();
 
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
@@ -164,7 +164,7 @@ function DayEventRenderer() {
 					classes.push('fc-corner-right');
 				}
 				
-				if (currentView == 'resourceMonth') {
+				if (viewName == 'resourceMonth') {
 					// hack for resourceMonth view
 					// What is we have view which lists 4 week from now on, how can we get right columns?
 					leftCol = seg.start.getDate()-1;
@@ -175,7 +175,7 @@ function DayEventRenderer() {
 						rightCol = getColCnt()-1;
 					}
 				}
-				else if (currentView == 'resourceDay') {
+				else if (viewName == 'resourceDay') {
 					// hack for resourceDay view
 					leftCol = timeOfDayCol(seg.start);
 					rightCol = timeOfDayCol(seg.end)-1;

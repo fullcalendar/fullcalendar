@@ -34,7 +34,7 @@ function ResourceView(element, calendar, viewName) {
 	t.getColCnt = function() { return colCnt };
 	t.getResources = function() { return opt('resources') };
 	t.getColWidth = function() { return colWidth };
-	t.getView = function() { return viewName };
+	t.getViewName = function() { return viewName };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
 	
 	
@@ -366,7 +366,12 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function renderSelection(startDate, endDate, allDay, overlayRow) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true, overlayRow); // rebuild every time???
+		if (viewName == 'resourceDay') {
+			renderDayOverlay(startDate, addMinutes(cloneDate(endDate), opt('slotMinutes')), true, overlayRow); // rebuild every time???
+		}
+		else {
+			renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true, overlayRow); // rebuild every time???
+		}
 	}
 	
 	
@@ -466,10 +471,14 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function dateCell(date) {
-		return {
-			row: Math.floor(dayDiff(date, t.visStart) / 7),
-			col: dayOfWeekCol(date.getDay())
-		};
+		var col;
+		if (viewName == 'resourceDay') {
+			col = timeOfDayCol(date);
+		}
+		else {
+			col = dayOfWeekCol(date.getDay());
+		}
+		return { col: col };
 	}
 	
 	
