@@ -1,9 +1,10 @@
-
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
 	firstHour: 6,
 	slotMinutes: 30,
+	minSlotNumber: 0,
+	maxSlotNumber: 0,
 	defaultEventMinutes: 120,
 	axisFormat: 'h(:mm)tt',
 	timeFormat: {
@@ -736,17 +737,36 @@ function AgendaView(element, calendar, viewName) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
 			var dates;
+			var minSlotNumber = opt('minSlotNumber');
+			if (minSlotNumber <= 0) minSlotNumber = 1;
+			var maxSlotNumber = opt('maxSlotNumber');
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !cellIsAllDay(cell)) {
 					var d1 = cellDate(origCell);
 					var d2 = cellDate(cell);
-					dates = [
-						d1,
-						addMinutes(cloneDate(d1), opt('slotMinutes')),
-						d2,
-						addMinutes(cloneDate(d2), opt('slotMinutes'))
-					].sort(cmp);
+					if (d2>d1) {
+						var date1 = d1
+						var date2 = d2
+					} else {
+						var date1 = d2
+						var date2 = d1
+					}
+					if (maxSlotNumber != 0 && (date2-date1) >= maxSlotNumber*opt('slotMinutes')*60000) {
+						dates = [
+							date1,
+							addMinutes(cloneDate(date1), minSlotNumber*opt('slotMinutes')),
+							date1,
+							addMinutes(cloneDate(date1), maxSlotNumber*opt('slotMinutes'))
+						].sort(cmp);
+					} else {
+						dates = [
+							date1,
+							addMinutes(cloneDate(date1), minSlotNumber*opt('slotMinutes')),
+							date2,
+							addMinutes(cloneDate(date2), opt('slotMinutes'))
+						].sort(cmp);
+					}
 					renderSlotSelection(dates[0], dates[3]);
 				}else{
 					dates = null;
