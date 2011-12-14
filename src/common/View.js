@@ -235,6 +235,8 @@ function View(element, calendar, viewName) {
 			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
+			} else {
+				e.end = defaultEventEnd(e);
 			}
 			normalizeEvent(e, options);
 		}
