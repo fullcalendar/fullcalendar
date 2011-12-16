@@ -31,13 +31,21 @@ function MonthView(element, calendar) {
 		var firstDay = opt('firstDay');
 		var nwe = opt('weekends') ? 0 : 1;
 		var weekendDays = option('weekendDays');
+		var firstDayDelta;
 		if (nwe) {
 			skipWeekend(visStart, weekendDays);
 			skipWeekend(visEnd, weekendDays, -1, true);
+			// phurni: Really uggly, refactor one day...
+			var wd = weekendDays.slice();
+			wd.sort()
+			if (wd[wd.length-1] == 6) wd.pop();
+			firstDayDelta = wd[wd.length-1]+1;
 		}
-		var firstDayDelta = Math.max(firstDay, $.inArray(firstDay, weekendDays) == -1 ? 0 : 1);
-		addDays(visStart, -((visStart.getDay() - firstDayDelta + 7) % 7));
-		addDays(visEnd, (7 - visEnd.getDay() + firstDayDelta) % 7);
+		else {
+		  firstDayDelta = firstDay;
+		}
+		addDays(visStart, -((visStart.getDay() - firstDayDelta + 7) % 7) );
+		addDays(visEnd, (7 - visEnd.getDay() + firstDayDelta) % 7 );
 		var rowCnt = Math.round((visEnd - visStart) / (DAY_MS * 7));
 		if (opt('weekMode') == 'fixed') {
 			addDays(visEnd, (6 - rowCnt) * 7);
