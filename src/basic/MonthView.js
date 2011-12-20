@@ -35,14 +35,21 @@ function MonthView(element, calendar) {
 		if (nwe) {
 			skipWeekend(visStart, weekendDays);
 			skipWeekend(visEnd, weekendDays, -1, true);
-			// phurni: Really uggly, refactor one day...
-			var wd = weekendDays.slice();
-			wd.sort()
-			if (wd[wd.length-1] == 6) wd.pop();
-			firstDayDelta = wd[wd.length-1]+1;
+			
+			// find the first day not part of the week-end
+			var previous = weekendDays[0]-1;
+			for (var i=0; i<weekendDays.length; i++) {
+			  if (weekendDays[i] != previous + 1) {
+			    firstDayDelta = (previous + 1) % 7;
+  			  break;
+		    }
+		    previous = weekendDays[i];
+			}
+			if (!firstDayDelta)
+	      firstDayDelta = (weekendDays[weekendDays.length-1] + 1) % 7;
 		}
 		else {
-		  firstDayDelta = firstDay;
+  		firstDayDelta = firstDay;
 		}
 		addDays(visStart, -((visStart.getDay() - firstDayDelta + 7) % 7) );
 		addDays(visEnd, (7 - visEnd.getDay() + firstDayDelta) % 7 );
