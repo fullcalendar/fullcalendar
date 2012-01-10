@@ -167,6 +167,13 @@ function DayEventRenderer() {
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
 			}
+			if (event.allDay) {
+				classes.push('fc-event-allday');
+			}
+			if (formatDate(event.start, "yyyy-MM-dd") !== formatDate(event.end, "yyyy-MM-dd") && event.end !== null)
+			{
+				classes.push('fc-event-multiday');
+			}
 			url = event.url;
 			skinCss = getSkinCss(event, opt);
 			if (url) {
