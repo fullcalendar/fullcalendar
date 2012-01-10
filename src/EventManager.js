@@ -128,12 +128,15 @@ function EventManager(options, _sources) {
 				var complete = source.complete;
 				var data = $.extend({}, source.data || {});
 				var startParam = firstDefined(source.startParam, options.startParam);
+				var startParamFn = firstDefined(source.startParamFn, options.startParamFn);
 				var endParam = firstDefined(source.endParam, options.endParam);
+				var endParamFn = firstDefined(source.endParamFn, options.endParamFn);
+				
 				if (startParam) {
-					data[startParam] = Math.round(+rangeStart / 1000);
+					data[startParam] = startParamFn(rangeStart);
 				}
 				if (endParam) {
-					data[endParam] = Math.round(+rangeEnd / 1000);
+					data[endParam] = endParamFn(rangeEnd);
 				}
 				pushLoading();
 				$.ajax($.extend({}, ajaxDefaults, source, {
