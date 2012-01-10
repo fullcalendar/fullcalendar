@@ -337,6 +337,7 @@ function Calendar(element, options, eventSources) {
 	// called when a single event's data has been changed
 	function reportEventChange(eventID) {
 		rerenderEvents(eventID);
+		trigger('afterEventChange', Calendar, eventID);
 	}
 	
 	
