@@ -48,7 +48,7 @@ function HoverListener(coordinateGrid) {
 
 // this fix was only necessary for jQuery UI 1.8.16 (and jQuery 1.7 or 1.7.1)
 // upgrading to jQuery UI 1.8.17 (and using either jQuery 1.7 or 1.7.1) fixed the problem
-// but keep this in here for 1.8.17 users
+// but keep this in here for 1.8.16 users
 // and maybe remove it down the line
 
 function _fixUIEvent(event) { // for issue 1168
