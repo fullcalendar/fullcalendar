@@ -2,6 +2,13 @@
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
 
+Compiled download
+---------------------------
+
+I know some of you don't want to download the JDK and compile it so I did all the hard work!
+I'll check for updates constantly. (:
+The link is [here](https://github.com/downloads/skowyong/fullcalendar/fullcalendar-1.5.2.zip)
+
 Development and testing
 -----------------------
 
