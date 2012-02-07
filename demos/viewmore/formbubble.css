@@ -1,0 +1,60 @@
+.form-bubble{
+    background-color:#fff;
+    border:solid 1px #A7B1B8;
+    border-radius:5px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    box-shadow:3px 3px 7px #A7B1B8;
+    -moz-box-shadow:3px 3px 7px #A7B1B8;
+    -webkit-box-shadow:3px 3px 7px #A7B1B8;
+    display:none;
+    float:left;
+    margin-right:14px;
+    padding:14px;
+    position:absolute;
+    z-index:101;
+}
+.form-bubble .form-bubble-close{
+    background:#fff url('images/close_button.png') no-repeat;
+    cursor:pointer;
+    height:9px;
+    position:absolute;
+    right:4px;
+    top:4px;
+    width:9px !important;
+}
+/*all pointers*/
+.form-bubble .form-bubble-pointer-right, .form-bubble .form-bubble-pointer-top-right, .form-bubble .form-bubble-pointer-left, .form-bubble .form-bubble-pointer-top-left, .form-bubble .form-bubble-pointer-bottom-left{
+    background-repeat:no-repeat;
+    float:left;
+    height:13px;
+    position:absolute;
+    width:14px !important;
+}
+/*pointers right*/
+.form-bubble .form-bubble-pointer-right, .form-bubble .form-bubble-pointer-top-right{
+    background-image: url('images/formbubblepointer-right.png');
+    right:-14px;
+}
+.form-bubble .form-bubble-pointer-right{
+    margin-top:-6px;
+    top:50%;
+}
+.form-bubble .form-bubble-pointer-top-right{
+    top:8px;
+}
+/*pointers left*/
+.form-bubble .form-bubble-pointer-left, .form-bubble .form-bubble-pointer-top-left, .form-bubble .form-bubble-pointer-bottom-left{
+    background-image: url('images/formbubblepointer.png');
+    left:-14px;
+}
+.form-bubble .form-bubble-pointer-left{
+    margin-top:-6px;
+    top:50%;
+}
+.form-bubble .form-bubble-pointer-top-left{
+    top:8px;
+}
+.form-bubble .form-bubble-pointer-bottom-left{
+    bottom:14px;
+}
