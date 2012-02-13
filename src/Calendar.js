@@ -323,8 +323,8 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function refetchEvents() {
-		fetchEvents(currentView.visStart, currentView.visEnd); // will call reportEvents
+	function refetchEvents(source) {
+		fetchEvents(currentView.visStart, currentView.visEnd, source); // will call reportEvents
 	}
 	
 	
