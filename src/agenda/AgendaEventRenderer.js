@@ -167,7 +167,8 @@ function AgendaEventRenderer() {
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis, dit,
-			colCnt = getColCnt();
+			colCnt = getColCnt(),
+			overlapping = colCnt > 1;
 			
 		if (rtl = opt('isRTL')) {
 			dis = -1;
@@ -194,8 +195,11 @@ function AgendaEventRenderer() {
 				outerWidth = availWidth / (levelI + forward + 1);
 			}else{
 				if (forward) {
-					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					if (overlapping) {	// moderately wide, aligned left still
+						outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					}else{
+						outerWidth = outerWidth = availWidth / (forward + 1);
+					}
 				}else{
 					// can be entire width, aligned left
 					outerWidth = availWidth;
@@ -206,7 +210,7 @@ function AgendaEventRenderer() {
 				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth;
+			seg.outerWidth = outerWidth - (overlapping ? 0 : 1);
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
