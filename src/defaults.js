@@ -10,6 +10,7 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
+	currentTimeIndicator: false,
 	
 	// editing
 	//editable: false,
