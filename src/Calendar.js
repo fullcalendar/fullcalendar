@@ -456,6 +456,8 @@ function Calendar(element, options, eventSources) {
 		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
 			options[name] = value;
 			updateSize();
+		} else if (name == 'maxHeight') {
+			options[name] = value;
 		}
 	}
 	
