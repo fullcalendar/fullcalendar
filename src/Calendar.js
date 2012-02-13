@@ -456,6 +456,9 @@ function Calendar(element, options, eventSources) {
 		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
 			options[name] = value;
 			updateSize();
+		} else if (name.indexOf('list') == 0 || name == 'tableCols') {
+			options[name] = value;
+			currentView.start = null; // force re-render
 		} else if (name == 'maxHeight') {
 			options[name] = value;
 		}
