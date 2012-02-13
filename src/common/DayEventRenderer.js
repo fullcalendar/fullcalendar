@@ -333,6 +333,8 @@ function DayEventRenderer() {
 				}
 				seg.outerHeight = element[0].offsetHeight + val;
 			}
+			else  // always set a value (issue #1108 )
+				seg.outerHeight = 0;
 		}
 	}
 	
