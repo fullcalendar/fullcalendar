@@ -246,6 +246,7 @@ function Calendar(element, options, eventSources) {
 			setSize();
 			unselect();
 			currentView.clearEvents();
+			currentView.trigger('viewRender', currentView);
 			currentView.renderEvents(events);
 			currentView.sizeDirty = false;
 		}
@@ -345,6 +346,7 @@ function Calendar(element, options, eventSources) {
 		markEventsDirty();
 		if (elementVisible()) {
 			currentView.clearEvents();
+			currentView.trigger('viewRender', currentView);
 			currentView.renderEvents(events, modifiedEventID);
 			currentView.eventsDirty = false;
 		}
