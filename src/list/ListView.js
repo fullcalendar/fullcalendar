@@ -116,7 +116,7 @@ function ListEventRenderer() {
 		var tm = opt('theme') ? 'ui' : 'fc';
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
-		var i, j, seg, event, times, s, skinCss, skinCssAttr, classes, segContainer, eventElements;
+		var i, j, seg, event, times, s, skinCss, skinCssAttr, classes, segContainer, eventElement, eventElements, triggerRes;
 
 		for (j=0; j < segs.length; j++) {
 			seg = segs[j];

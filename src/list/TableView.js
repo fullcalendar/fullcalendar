@@ -51,7 +51,7 @@ function TableEventRenderer() {
 		var contentClass = tm + "-widget-content";
 		var tableCols = opt('tableCols');
 		var timecol = $.inArray('time', tableCols) >= 0;
-		var i, j, seg, event, times, s, skinCss, skinCssAttr, skinClasses, rowClasses, segContainer, eventElements;
+		var i, j, seg, event, times, s, skinCss, skinCssAttr, skinClasses, rowClasses, segContainer, eventElements, eventElement, triggerRes;
 
 		for (j=0; j < segs.length; j++) {
 			seg = segs[j];
