@@ -255,8 +255,9 @@ function EventManager(options, _sources) {
 				stickySource.events.push(event);
 				event.source = stickySource;
 			}
-			cache.push(event);
 		}
+		// always push event to cache (issue #1112:)
+		cache.push(event);
 		reportEvents(cache);
 	}
 	
