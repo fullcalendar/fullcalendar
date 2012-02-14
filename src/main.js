@@ -36,7 +36,13 @@ $.fn.fullCalendar = function(options) {
 		eventSources.push(options.events);
 		delete options.events;
 	}
-	
+
+	var eventResources = options.eventResources || [];
+	delete options.eventResources;
+	if (options.resources) {
+		eventResources = options.resources;
+		delete options.resources;
+	}
 
 	options = $.extend(true, {},
 		defaults,
@@ -47,7 +53,7 @@ $.fn.fullCalendar = function(options) {
 	
 	this.each(function(i, _element) {
 		var element = $(_element);
-		var calendar = new Calendar(element, options, eventSources);
+		var calendar = new Calendar(element, options, eventSources, eventResources);
 		element.data('fullCalendar', calendar); // TODO: look into memory leak implications
 		calendar.render();
 	});

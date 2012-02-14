@@ -10,7 +10,7 @@ var ajaxDefaults = {
 var eventGUID = 1;
 
 
-function EventManager(options, _sources) {
+function EventManager(options, _sources, _resources) {
 	var t = this;
 	
 	
@@ -24,6 +24,7 @@ function EventManager(options, _sources) {
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.normalizeEvent = normalizeEvent;
+	t.associateResourceWithEvent = associateResourceWithEvent;
 	
 	
 	// imports
@@ -40,7 +41,7 @@ function EventManager(options, _sources) {
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
 	var cache = [];
-	
+	var resources = _resources;
 	
 	for (var i=0; i<_sources.length; i++) {
 		_addEventSource(_sources[i]);
@@ -201,7 +202,6 @@ function EventManager(options, _sources) {
 		});
 		reportEvents(cache);
 	}
-	
 	
 	
 	/* Manipulation
@@ -389,10 +389,9 @@ function EventManager(options, _sources) {
 	
 	/* Resources
 	------------------------------------------------------------------------------*/
-	
+
 	function associateResourceWithEvent(event) {
-		var resources = options.resources,
-		    i = 0;
+		 var i = 0;
 		
 		if(!event.resourceId) {
             return;

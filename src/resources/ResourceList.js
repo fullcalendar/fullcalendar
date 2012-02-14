@@ -1,5 +1,5 @@
 
-function ResourceList(calendar, options) {
+function ResourceList(calendar, options, eventResources) {
 	var t = this;
 
 	// exports
@@ -15,7 +15,7 @@ function ResourceList(calendar, options) {
 	// Core render function
 	function render() {
 		tm = options.theme ? 'ui' : 'fc';
-		resources = options.resources;
+		resources = eventResources;
 	}
 	
 	function destroy() {
