@@ -19,6 +19,7 @@ css('main.css');
 css('common/common.css');
 css('basic/basic.css');
 css('agenda/agenda.css');
+css('list/list.css');
 cssprint('common/print.css');
 
 if (!legacy) {
@@ -63,6 +64,9 @@ js('common/OverlayManager.js');
 js('common/CoordinateGrid.js');
 js('common/HoverListener.js');
 js('common/HorizontalPositionCache.js');
+
+js('list/ListView.js');
+js('list/TableView.js');
 
 endload();
 
