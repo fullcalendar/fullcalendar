@@ -217,7 +217,8 @@ function TableView(element, calendar) {
 	}
 	
 	function setHeight(height, dateChanged) {
-		div.css('height', (height-1)+'px').css('overflow', 'auto');
+	  if (!opt('listNoHeight'))
+		  div.css('height', (height-1)+'px').css('overflow', 'auto');
 	}
 
 	function setWidth(width) {
