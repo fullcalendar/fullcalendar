@@ -9,7 +9,10 @@ Array
 </div>
 
 This option is used instead of the `events` option.
-It can take an Array of Arrays/Functions/URLs (anything that the `events` option would take).
+
+You can put any number of [event arrays](events_array), [functions](events_function),
+[JSON feed URLs](events_json_feed), or full-out [Event Source Objects](Event_Source_Object)
+into the `eventSources` array.
 
 Here is an example calendar that displays two [JSON feeds](events_json_feed):
 
@@ -19,14 +22,3 @@ Here is an example calendar that displays two [JSON feeds](events_json_feed):
 			'/feed2.php'
 		]
 	});
-	
-Here is how you would display two Google Calendars:
-
-	$('#calendar').fullCalendar({
-		eventSources: [
-			$.fullCalendar.gcalFeed("http://www.google.com/feed1"),
-			$.fullCalendar.gcalFeed("http://www.google.com/feed2")
-		]
-	});
-	
-More info on displaying Google Calendars can be found [here](../google_calendar).

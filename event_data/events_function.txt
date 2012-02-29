@@ -20,7 +20,7 @@ responsibility to make sure `callback` is being called with an array of
 [Event Objects](Event_Object).
 
 Here is an example showing how to use an event function to fetch events from
-an XML feed:
+a hypothetical XML feed:
 
 	$('#calendar').fullCalendar({
 		events: function(start, end, callback) {
@@ -33,16 +33,13 @@ an XML feed:
 			        end: Math.round(end.getTime() / 1000)
 				},
 				success: function(doc) {
-			
 					var events = [];
-			
 					$(doc).find('event').each(function() {
-						event.push({
+						events.push({
 							title: $(this).attr('title'),
 							start: $(this).attr('start') // will be parsed
 						});
 					});
-				
 					callback(events);
 				}
 			});
@@ -51,3 +48,32 @@ an XML feed:
 
 However, if you have the choice, JSON is a better idea because you can just specify a
 [feed URL](events_json_feed).
+
+Extended Form
+-------------
+
+Since version 1.5, you are able to specify [Event Source options](Event_Source_Object#options).
+This often comes in handy when you are using the [eventSources]() option to
+specify multiple event sources and you want certain options to only apply to certain sources.
+However, to do this, you must write things a little differently:
+
+	$('#calendar').fullCalendar({
+		
+		eventSources: [
+		
+			// your event source
+			{
+				events: function(start, end, callback) {
+					// ...
+				},
+				color: 'yellow',   // an option!
+				textColor: 'black' // an option!
+			}
+			
+			// any other sources...
+		
+		]
+		
+	});
+
+

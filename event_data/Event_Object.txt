@@ -2,65 +2,183 @@
 Event Object
 ============
 
-A standard object that FullCalendar uses to store information about a calendar event.
+A standard JavaScript object that FullCalendar uses to store information about a calendar event.
+Here are its properties:
 
-An Event Object has a number of properties. When passing new Event Objects to 
-`events` and `eventSources`, only the `title` and `start` properties are required.
-Here is the full list of properties:
 
-**id**: String/Integer (optional)
-:	Uniquely identifies the given event. Different instances of repeating events should all have the same `id`.
-	
-**title**: String
-:	The text on an event's element
+<table>
+<!-- ------------------- -->
+<tr>
+<th>
+id
+</th>
+<td markdown='block'>
+String/Integer. Optional
 
-**allDay**: `true` or `false` (optional)
-:	Whether an event occurs at a specific time-of-day. This property affects whether an event's time is shown.
-	Also, in the agenda views, determines if it is displayed in the "all-day" section.
-	
-	**Don't include quotes** around your `true`/`false`. This value is not a string!
-	
-	When specifying Event Objects for `events` or `eventSources`,
-	omitting this property will make it inherit from
-	[allDayDefault](), which is normally `false`.
-	
-**start**: Date
-:	A JavaScript Date object indicating the date/time an event begins.
+Uniquely identifies the given event. Different instances of repeating events should all have the same `id`.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+title
+</th>
+<td markdown='block'>
+String. *Required*.
 
-	When specifying Event Objects for `events` or `eventSources`,
-	you may specify a string in IETF format (ex: "Wed, 18 Oct 2009 13:00:00 EST"),
-	a string in ISO8601 format (ex: "2009-11-05T13:15:30Z") or a UNIX timestamp.
-	
-**end**: Date (optional)
-:	A Javascript Date object indicating the date/time an event ends.
-	As with `start`, you may specify it in IETF, ISO8601, or UNIX timestamp format.
-	
-	**If an event is all-day**...
+The text on an event's element
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+allDay
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
 
-	the end date is inclusive. This means an event with `start` Nov 10 and
-	`end` Nov 12 will span 3 days on the calendar.
+Whether an event occurs at a specific time-of-day. This property affects whether an event's time is shown.
+Also, in the agenda views, determines if it is displayed in the "all-day" section.
 
-	**If an event is NOT all-day**...
+**Don't include quotes** around your `true`/`false`. This value is not a string!
 
-	the end date is exclusive. This is only a gotcha when your `end` has time 00:00.
-	It means your event ends on midnight, and it will not span through the next day.
-	
-**url**: String (optional)
-:	A URL that will be visited when this event is clicked by the user.
-	For more information on controlling this behavior, see the [eventClick](../mouse/eventClick) callback.
-	
-**className**: String/Array (optional)
-:	A CSS class (or array of classes) that will be attached to this event's element.
+When specifying Event Objects for `events` or `eventSources`,
+omitting this property will make it inherit from
+[allDayDefault](), which is normally `true`.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>	
+start
+</th>
+<td markdown='block'>
+Date. *Required*.
 
-**editable**: `true` or `false` (optional)
-:	Overrides the master [editable](../event_ui/editable) option for this single event.
+The date/time an event begins.
 
-**source**: Array/String/Function (automatically populated)
-:	A reference to the event source (as specified in `events` or `eventSources`)
-	that this event came from.
-	
-	Do not worry about populating this value, FullCalendar will do this automatically.
-	
+When specifying Event Objects for `events` or `eventSources`,
+you may specify a string in IETF format (ex: "Wed, 18 Oct 2009 13:00:00 EST"),
+a string in ISO8601 format (ex: "2009-11-05T13:15:30Z") or a UNIX timestamp.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+end
+</th>
+<td markdown='block'>
+Date. Optional.
+
+The date/time an event ends.
+
+As with `start`, you may specify it in IETF, ISO8601, or UNIX timestamp format.
+
+**If an event is all-day**...
+
+the end date is inclusive. This means an event with `start` Nov 10 and
+`end` Nov 12 will span 3 days on the calendar.
+
+**If an event is NOT all-day**...
+
+the end date is exclusive. This is only a gotcha when your `end` has time 00:00.
+It means your event ends on midnight, and it will not span through the next day.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>	
+url
+</th>
+<td markdown='block'>
+String. Optional.
+
+A URL that will be visited when this event is clicked by the user.
+For more information on controlling this behavior, see the [eventClick](../mouse/eventClick) callback.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>	
+className
+</th>
+<td markdown='block'>
+String/Array. Optional.
+
+A CSS class (or array of classes) that will be attached to this event's element.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+editable
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [editable](../event_ui/editable) option for this single event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+source
+</th>
+<td markdown='block'>
+[Event Source Object](). Automatically populated.
+
+A reference to the event source that this event came from.
+</td>
+</tr>
+<!-- ------------------- -->
+<th colspan='2' id='color-options'>
+New options have been added in version 1.5 to change an event's colors:
+</th>
+<!-- ------------------- -->
+<tr>
+<th>
+color
+</th>
+<td markdown='block'>
+Sets an event's background *and* border color just like
+the calendar-wide [eventColor](../event_rendering/eventColor) option.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+backgroundColor
+</th>
+<td markdown='block'>
+Sets an event's background color just like
+the calendar-wide [eventBackgroundColor](../event_rendering/eventBackgroundColor) option.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+borderColor
+</th>
+<td markdown='block'>
+Sets an event's border color just like the
+the calendar-wide [eventBorderColor](../event_rendering/eventBorderColor) option.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+textColor
+</th>
+<td markdown='block'>
+Sets an event's text color just like
+the calendar-wide [eventTextColor](../event_rendering/eventTextColor) option.
+</td>
+</tr>
+</table>
+
+
+Non-standard Fields
+-------------------
 	
 In addition to the fields above, you may also include your own non-standard fields
 in each Event Object. FullCalendar will not modify or delete these fields.

@@ -20,4 +20,4 @@ function( *date*, *allDay*, *jsEvent*, *ui* ) { }
 `this` holds the DOM element that has been dropped.
 
 To see this callback function in action, view the [droppable]() article or look at
-[this example](/js/fullcalendar/examples/external-dragging.html).
+[this example](/js/fullcalendar/demos/external-dragging.html).

@@ -2,6 +2,7 @@
 Renamed/Removed
 ---------------
 
+- cacheParam
 - prevMonth
 - nextMonth
 - draggable

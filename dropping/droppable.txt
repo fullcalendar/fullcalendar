@@ -36,7 +36,7 @@ dragged onto the calendar.
 While the `droppable` option deals with generic jQuery UI draggables and is not specifically
 tailored to adding events, it is possible to achieve this with a few lines of code.
 Follow the **external-dragging.html** example in FullCalendar's download. You can also
-view the [example online](/js/fullcalendar/examples/external-dragging.html).
+view the [example online](/js/fullcalendar-1.5.2/demos/external-dragging.html).
 
 In short, you must call [renderEvent](../event_rendering/renderEvent) yourself
 in the [drop]() callback.

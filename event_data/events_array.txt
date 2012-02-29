@@ -27,3 +27,44 @@ Here is an example of how to specify an array of events:
 	
 Make sure you do not have a comma after the last event in your array!
 It will make Internet Explorer choke.
+
+Extended Form
+-------------
+
+Since version 1.5, you are able to specify [Event Source options](Event_Source_Object#options).
+This often comes in handy when you are using the [eventSources]() option to
+specify multiple event sources and you want certain options to only apply to certain sources.
+However, to do this, you must write things a little differently:
+
+	$('#calendar').fullCalendar({
+	
+		eventSources: [
+		
+			// your event source
+			{
+				events: [ // put the array in the `events` property
+					{
+						title  : 'event1',
+						start  : '2010-01-01'
+					},
+					{
+						title  : 'event2',
+						start  : '2010-01-05',
+						end    : '2010-01-07'
+					},
+					{
+						title  : 'event3',
+						start  : '2010-01-09 12:30:00',
+					}
+				],
+				color: 'black',     // an option!
+				textColor: 'yellow' // an option!
+			}
+			
+			// any other event sources...
+			
+		]
+		
+	});
+	
+A list of available Event Source options can be found [here](Event_Source_Object#options).

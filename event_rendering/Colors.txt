@@ -1,6 +1,30 @@
 
-Event Colors
-============
+Coloring Events
+===============
+
+You can change the color of all events on the calendar using the [eventColor]() option like so:
+
+	$('#calendar').fullCalendar({
+		events: [
+			// my event data
+		],
+		eventColor: '#378006'
+	});
+	
+The [eventBackgroundColor](), [eventBorderColor](), and [eventTextColor]() options
+can also be used for coloring events.
+
+If you want to change the color for events in a specific Event Source,
+please look at the [Event Source options](../event_data/Event_Source_Object#options) documentation.
+
+If you want to change the color for individual events, please look at the
+[Event Object color options](../event_data/Event_Object#color-options).
+
+
+
+
+[deprecated] Coloring Events prior to version 1.5
+=================================================
 
 You can modify the default color that affects all events by adding some css in the following form:
 

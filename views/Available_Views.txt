@@ -5,11 +5,11 @@ Available Views
 FullCalendar has a number of different "views", or ways of displaying days and events.
 The following 5 views are all built in to FullCalendar:
 
-- **month** - [see example](/js/fullcalendar_views/month.html)
-- **basicWeek** - [see example](/js/fullcalendar_views/basicWeek.html) (available since version 1.3)
-- **basicDay** - [see example](/js/fullcalendar_views/basicDay.html) (available since version 1.3)
-- **agendaWeek** - [see example](/js/fullcalendar_views/agendaWeek.html) (available since version 1.4)
-- **agendaDay** - [see example](/js/fullcalendar_views/agendaDay.html) (available since version 1.4)
+- **month** - [see example](../../views/month/)
+- **basicWeek** - [see example](../../views/basicWeek/) (available since version 1.3)
+- **basicDay** - [see example](../../views/basicDay/) (available since version 1.3)
+- **agendaWeek** - [see example](../../views/agendaWeek/) (available since version 1.4)
+- **agendaDay** - [see example](../../views/agendaDay/) (available since version 1.4)
 
 You can define [header](../display/header) buttons to allow the user to switch between them.
 You can set the initial view of the calendar with the [defaultView]() option.

@@ -4,14 +4,15 @@ Event Data
 
 <ul>
 <li class='article'>Event Object</li>
+<li class='article'>Event Source Object</li>
 <li><a href='events_array'>events</a> <em>(as an array)</em></li>
 <li><a href='events_json_feed'>events</a> <em>(as a json feed)</em></li>
 <li><a href='events_function'>events</a> <em>(as a function)</em></li>
 <li>eventSources</li>
 <li>allDayDefault</li>
+<li>ignoreTimezone</li>
 <li>startParam</li>
 <li>endParam</li>
-<li>cacheParam</li>
 <li>lazyFetching</li>
 <li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>
 <li class='method'><a href='updateEvent'>updateEvent</a> <em>(method)</em></li>
