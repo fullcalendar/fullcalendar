@@ -18,7 +18,7 @@ To learn the ways in which selections can be cleared, read the docs
 for the [unselect](unselect_callback) callback.
 
 To view an example of how to create a new event based on a user's selection
-see "demos/selectable.html" in the download, or [visit this page](/js/fullcalendar-1.5.1/demos/selectable.html).
+see "demos/selectable.html" in the download, or [visit this page](/js/fullcalendar-1.5.3/demos/selectable.html).
 
 <div class='version-info' markdown='1'>
 A View Option Hash has been supported since version 1.4.7
