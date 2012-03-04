@@ -308,7 +308,8 @@ function ListView(element, calendar) {
 	}
 	
 	function setHeight(height, dateChanged) {
-		body.css('height', (height-1)+'px').css('overflow', 'auto');
+	  if (!opt('listNoHeight'))
+		  body.css('height', (height-1)+'px').css('overflow', 'auto');
 	}
 
 	function setWidth(width) {

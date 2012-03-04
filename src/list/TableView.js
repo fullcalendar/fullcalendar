@@ -91,7 +91,7 @@ function TableEventRenderer() {
 							s += "<td class='fc-event-time'>" + htmlEscape(times[1]) + "</td>";
 						}
 					} else {
-						s += "<td class='fc-event-" + col + "'>" + (htmlEscape(event[col]) || '&nbsp;') + "</td>";
+						s += "<td class='fc-event-" + col + "'>" + (event[col] ? htmlEscape(event[col]) : '&nbsp;') + "</td>";
 					}
 				}
 				s += "</tr>";
@@ -217,7 +217,8 @@ function TableView(element, calendar) {
 	}
 	
 	function setHeight(height, dateChanged) {
-		div.css('height', (height-1)+'px').css('overflow', 'auto');
+	  if (!opt('listNoHeight'))
+		  div.css('height', (height-1)+'px').css('overflow', 'auto');
 	}
 
 	function setWidth(width) {
