@@ -2,14 +2,11 @@
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
 
-About this fork (phurni)
-========================
+About this fork (roundcube)
+===========================
 
-This fork adds features either requested in the issue tracker or needed by my own projects.
-You'll find each new feature in its own branch.
-The goal is to keep close to the original arshaw/fullcalendar. I'll send some push requests but
-some features will certainly not be part of the core (too biased).
-
+This fork adds features either requested in the issue tracker or needed for
+the Roundcube calendar plugin.
 
 Development and testing
 -----------------------
