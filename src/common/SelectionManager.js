@@ -60,7 +60,18 @@ function SelectionManager() {
 	
 	function reportSelection(startDate, endDate, allDay, ev) {
 		selected = true;
-		trigger('select', null, startDate, endDate, allDay, ev);
+		var resourceObj = false;
+		if(t.calendar.getView().name=="resourceDay")
+		{
+			//Get the cell associated with the select function
+			var hoverListener = t.getHoverListener();
+			var cell = hoverListener.stop();
+			var calendar = t.calendar;
+		        var resources = calendar.getResources();
+			//Get the resource from the selected cell and pass it to the select function as an argument		
+			resourceObj = resources[cell.col];			
+		}
+		trigger('select', null, startDate, endDate, allDay, ev,resourceObj);
 	}
 	
 	

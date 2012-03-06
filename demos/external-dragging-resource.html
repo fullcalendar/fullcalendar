@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js'></script>
+<!--[[
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.print.css' media='print' />
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/jquery-ui.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.min.js'></script>
+]]-->
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+	
+		/* initialize the external events
+		-----------------------------------------------------------------*/
+	
+		$('#external-events div.external-event').each(function() {
+		
+			// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+			// it doesn't need to have a start or end
+			var eventObject = {
+				title: $.trim($(this).text()), // use the element's text as the event title
+				resourceId: parseInt($(this).attr('employee'))
+			};
+			
+			// store the Event Object in the DOM element so we can get to it later
+			$(this).data('eventObject', eventObject);
+			
+			// make the event draggable using jQuery UI
+			$(this).draggable({
+				zIndex: 999,
+				revert: true,      // will cause the event to go back to its
+				revertDuration: 0  //  original position after the drag
+			});
+			
+		});
+	
+	
+		/* initialize the calendar
+		-----------------------------------------------------------------*/
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,resourceDay'
+			},
+			resources: [
+				{
+					/*
+					 * employeeId
+				     * name
+				     * backgroundColor
+				     * foregroundColor
+					 */
+					id: 1,
+					name: 'Joe Bloggs',
+					color: 'red',
+					textColor: 'black'
+				},
+				{
+					id: 2,
+					name: 'Alan Black',
+					color: 'blue'
+				},
+				{
+					id: 3,
+					name: 'Robert White',
+					color: 'pink'
+				},
+				{
+					id: 4,
+					name: 'Paul Green',
+					color: 'green'
+				},
+				{
+					id: 5,
+					name: 'Jane Yellow',
+					color: 'yellow',
+					textColor: 'black'
+				}
+			],
+			events: [
+				{
+        			title: 'Test Event',
+				    start: '2011-08-08 12:30:00',
+				    end: '2011-08-08 17:10:00',
+				    resourceId: 4,
+				    allDay: false
+                }
+            ],
+		selectable: true,
+		selectHelper: true,
+		select: function(start, end, allDay,ev,res) {				
+				var title = prompt('Event Title:');
+				if (title) {
+				if(res)
+				{
+					$('#calendar').fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay,
+							resourceId:res.id
+						},
+						true // make the event "stick"
+					);
+				}
+				else
+				{
+					$('#calendar').fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay							
+						},
+						true // make the event "stick"
+					);
+				}
+				}
+				$('#calendar').fullCalendar('unselect');
+			},
+			editable: true,
+			droppable: true, // this allows things to be dropped onto the calendar !!!
+			drop: function(date, allDay, ev, ui, res) { // this function is called when something is dropped
+			
+				// retrieve the dropped element's stored Event Object
+				var originalEventObject = $(this).data('eventObject');
+				
+				// we need to copy it, so that multiple events don't have a reference to the same object
+				var copiedEventObject = $.extend({}, originalEventObject);
+				
+				// assign it the date that was reported
+				copiedEventObject.start = date;
+				copiedEventObject.allDay = allDay;
+				
+				// dropped event of resource a to a cell belonging to resource b?
+				if (res && res.id != copiedEventObject.resourceId) {
+				    if (!confirm('Wrong column. Do you want me to correct that?')) {
+				        copiedEventObject.resourceId = res.id;
+				    }
+				}
+				
+				// render the event on the calendar
+				// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+				$('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+				
+				// is the "remove after drop" checkbox checked?
+				if ($('#drop-remove').is(':checked')) {
+					// if so, remove the element from the "Draggable Events" list
+					$(this).remove();
+				}
+				
+			}
+		});
+		
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+		
+	#wrap {
+		width: 1100px;
+		margin: 0 auto;
+		}
+		
+	#external-events {
+		float: left;
+		width: 150px;
+		padding: 0 10px;
+		border: 1px solid #ccc;
+		background: #eee;
+		text-align: left;
+		}
+		
+	#external-events h4 {
+		font-size: 16px;
+		margin-top: 0;
+		padding-top: 1em;
+		}
+		
+	.external-event { /* try to mimick the look of a real event */
+		margin: 10px 0;
+		padding: 2px 4px;
+		background: #3366CC;
+		color: #fff;
+		font-size: .85em;
+		cursor: pointer;
+		}
+		
+	#external-events p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+		}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+		}
+
+	#calendar {
+		float: right;
+		width: 900px;
+		}
+
+</style>
+</head>
+<body>
+<div id='wrap'>
+
+<div id='external-events'>
+<h4>Draggable Events</h4>
+<div class='external-event' employee='1' style="background-color: red;">Resource 1</div>
+<div class='external-event' employee='2' style="background-color: bleu;">Resource 2</div>
+<div class='external-event' employee='3' style="background-color: pink;">Resource 3</div>
+<div class='external-event' employee='4' style="background-color: green;">Resource 4</div>
+<div class='external-event' employee='5' style="background-color: yellow;">Resource 5</div>
+<p>
+<input type='checkbox' id='drop-remove' /> <label for='drop-remove'>remove after drop</label>
+</p>
+</div>
+
+<div id='calendar'></div>
+
+<div style='clear:both'></div>
+</div>
+</body>
+</html>

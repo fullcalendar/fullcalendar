@@ -622,7 +622,7 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	
-	function colDate(col) { // returns dates with 00:00:00
+	function colDate(col) { // returns dates with 00:00:00		
 		return addDays(cloneDate(t.visStart), col*dis+dit);
 	}
 	
@@ -771,19 +771,33 @@ function ResourceView(element, calendar, viewName) {
 	function slotSelectionMousedown(ev) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
-			var dates;
+			var dates,dates1;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !cellIsAllDay(cell)) {
-					var d1 = cellDate(origCell);
-					var d2 = cellDate(cell);
+					var d21 = cellDate(origCell);					
+					d21.setDate(d21.getDate()-cell.col);
+					var d12 = cellDate(cell);
+					d12.setDate(d12.getDate()-cell.col);
+					var d1 = new Date(d21);
+					var d2 = new Date(d12);
+					//Actual selected slots which should be available for rendering the slot
 					dates = [
 						d1,
 						addMinutes(cloneDate(d1), opt('slotMinutes')),
 						d2,
 						addMinutes(cloneDate(d2), opt('slotMinutes'))
 					].sort(cmp);
-					renderSlotSelection(dates[0], dates[3]);
+					//virtually while rendering show the user the selected slot which is not the correct slot
+					var d1tmp = cellDate(origCell);
+					var d2tmp = cellDate(cell);
+					dates1 = [
+						d1tmp,
+						addMinutes(cloneDate(d1tmp), opt('slotMinutes')),
+						d2tmp,
+						addMinutes(cloneDate(d2tmp), opt('slotMinutes'))
+					].sort(cmp);
+					renderSlotSelection(dates1[0], dates1[3]);
 				}else{
 					dates = null;
 				}
