@@ -20,7 +20,7 @@ function HoverListener(coordinateGrid) {
 	
 	
 	function mouse(ev) {
-		var newCell = coordinateGrid.cell(ev.pageX, ev.pageY);
+		var newCell = coordinateGrid.cell(ev.originalEvent.pageX, ev.originalEvent.pageY);
 		if (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col)) {
 			if (newCell) {
 				if (!firstCell) {

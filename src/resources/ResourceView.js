@@ -140,6 +140,10 @@ function ResourceView(element, calendar, viewName) {
 		resources = calendar.getResources();
 		colCnt = resources.length;
 		
+		if(colCnt == 0 ) {
+			colCnt++;
+		}
+
 		// calc fingerprint
 		var oldFingerprint = resourceFingerprint,
 		    ids;
@@ -337,7 +341,12 @@ function ResourceView(element, calendar, viewName) {
 		for (i=0; i<colCnt; i++) {
 			date = colDate(0); 	// PA massive hack of existing code, but this needs to be changed to support working hours anyway!
 			headCell = dayHeadCells.eq(i);
-			headCell.html(resources[i].name);
+			if(resources.length > 0) {
+				headCell.html(resources[i].name);
+			}
+			else {
+				headCell.html("None");
+			}
 			bodyCell = dayBodyCells.eq(i);
 			if (+date == +today) {
 				bodyCell.addClass(tm + '-state-highlight fc-today');
