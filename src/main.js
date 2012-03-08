@@ -57,6 +57,27 @@ $.fn.fullCalendar = function(options) {
 	
 };
 
+$.extend($.expr[":"], {
+  "cell-date": function(element, i, match, array) {
+    var exprDate = "" + match[3];
+    var cellDate = $(element).data("cell-date");
+    var day = cellDate.getDate();
+    var month = cellDate.getMonth() + 1;
+    var year = cellDate.getFullYear();
+    // Match mm-dd-yyy
+    var matchResult = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(exprDate) || /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(exprDate);
+    if (matchResult) {
+      return month == parseInt(matchResult[1], 10) && day == parseInt(matchResult[2], 10) && year == matchResult[3];
+    }
+    // Match yyyy-mm-dd
+    matchResult = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(exprDate) || /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(exprDate);
+    if (matchResult) {
+      return month == parseInt(matchResult[2], 10) && day == parseInt(matchResult[3], 10) && year == matchResult[1];
+    }
+    // Match timestamps
+    return +cellDate == exprDate;
+  }
+});
 
 // function for adding/overriding defaults
 function setDefaults(d) {
