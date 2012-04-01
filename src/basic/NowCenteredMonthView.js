@@ -23,7 +23,6 @@ function NowCenteredMonthView(element, calendar) {
 			
 			//date.setDate(1);
 		}
-		console.log(date)
 		var start = cloneDate(date, true);
 		//var today = new Date();
 		start.setDate(date.getDate());
