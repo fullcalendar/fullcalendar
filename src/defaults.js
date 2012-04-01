@@ -26,11 +26,13 @@ var defaults = {
 	
 	// time formats
 	titleFormat: {
+		ncmonth: 'MMMM yyyy',
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
 	},
 	columnFormat: {
+		ncmonth: 'ddd',
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d'
@@ -53,6 +55,7 @@ var defaults = {
 		nextYear: '&nbsp;&gt;&gt;&nbsp;',
 		today: 'today',
 		month: 'month',
+		ncmonth: 'month starting today',
 		week: 'week',
 		day: 'day'
 	},
