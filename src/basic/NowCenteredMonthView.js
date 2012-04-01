@@ -19,11 +19,14 @@ function NowCenteredMonthView(element, calendar) {
 	
 	function render(date, delta) {
 		if (delta) {
-			addMonths(date, delta);
-			date.setDate(1);
+			addDays(date, delta*42);
+			
+			//date.setDate(1);
 		}
+		console.log(date)
 		var start = cloneDate(date, true);
-		start.setDate(1);
+		//var today = new Date();
+		start.setDate(date.getDate());
 		var end = addMonths(cloneDate(start), 1);
 		var visStart = cloneDate(start);
 		var visEnd = cloneDate(end);
