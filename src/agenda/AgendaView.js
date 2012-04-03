@@ -746,19 +746,31 @@ function AgendaView(element, calendar, viewName) {
 					var d1 = cellDate(origCell);
 					var d2 = cellDate(cell);
 					if (d2>d1) {
-						var date1 = d1
-						var date2 = d2
+						var date1 = d1;
+						var date2 = d2;
+						var later = true;
 					} else {
-						var date1 = d2
-						var date2 = d1
+						var date1 = d2;
+						var date2 = d1;
+						var later = false;
+						
 					}
 					if (maxSlotNumber != 0 && (date2-date1) >= maxSlotNumber*opt('slotMinutes')*60000) {
-						dates = [
-							date1,
-							addMinutes(cloneDate(date1), minSlotNumber*opt('slotMinutes')),
-							date1,
-							addMinutes(cloneDate(date1), maxSlotNumber*opt('slotMinutes'))
-						].sort(cmp);
+					    if (!later) {
+							dates = [
+								date1,
+								addMinutes(cloneDate(date1), minSlotNumber*opt('slotMinutes')),
+								date1,
+								addMinutes(cloneDate(date1), maxSlotNumber*opt('slotMinutes'))
+							].sort(cmp);
+						} else {
+							dates = [
+								date2,
+								addMinutes(cloneDate(date2), -1*(maxSlotNumber-1)*opt('slotMinutes')),
+								date2,
+							addMinutes(cloneDate(date2), opt('slotMinutes'))
+							].sort(cmp);
+						}
 					} else {
 						dates = [
 							date1,
