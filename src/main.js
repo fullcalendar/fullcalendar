@@ -1,4 +1,3 @@
-
 var fc = $.fullCalendar = { version: "@VERSION" };
 var fcViews = fc.views = {};
 
@@ -31,10 +30,10 @@ $.fn.fullCalendar = function(options) {
 	
 	// would like to have this logic in EventManager, but needs to happen before options are recursively extended
 	var eventSources = options.eventSources || [];
-	delete options.eventSources;
+//	delete options.eventSources;
 	if (options.events) {
 		eventSources.push(options.events);
-		delete options.events;
+//		delete options.events;
 	}
 	
 
