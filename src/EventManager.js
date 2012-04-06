@@ -1,4 +1,3 @@
-
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
 
@@ -192,6 +191,7 @@ function EventManager(options, _sources) {
 	
 
 	function removeEventSource(source) {
+		if (!source) sources = [];
 		sources = $.grep(sources, function(src) {
 			return !isSourcesEqual(src, source);
 		});
