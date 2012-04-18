@@ -36,31 +36,32 @@ $.fn.fullCalendar = function(options) {
 		eventSources.push(options.events);
 		delete options.events;
 	}
-	
+
 
 	options = $.extend(true, {},
 		defaults,
 		(options.isRTL || options.isRTL===undefined && defaults.isRTL) ? rtlDefaults : {},
 		options
 	);
-	
-	
+
+
 	this.each(function(i, _element) {
 		var element = $(_element);
 		var calendar = new Calendar(element, options, eventSources);
 		element.data('fullCalendar', calendar); // TODO: look into memory leak implications
 		calendar.render();
 	});
-	
-	
+
+
 	return this;
-	
+
 };
 
 
 // function for adding/overriding defaults
-function setDefaults(d) {
+var setDefaults = function(d) {
 	$.extend(true, defaults, d);
 }
 
 
+$.fullCalendar.setDefaults = setDefaults;

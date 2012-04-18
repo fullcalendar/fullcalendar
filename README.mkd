@@ -45,3 +45,21 @@ Here is an example of doing it within an element having an `id` of `calendar`:
 	});
 	
 To see a full list of all available options, please consult the [FullCalendar documentation &raquo;](http://arshaw.com/fullcalendar/docs/)
+
+I18n
+----
+To localize fullCalendar You can use i18n for jquery datepicker.
+
+    $.fullCalendar.applyLocale($.datepicker.regional['ru']);
+
+Other texts could be modified via method setDefaults:
+
+    $.fullCalendar.setDefaults({
+      buttonText: {
+        month: 'month',
+        week: 'week',
+        day: 'day'
+      }
+    });
+
+See all available locales here: [I18n](https://github.com/sergio-fry/fullcalendar/wiki/I18n)
