@@ -43,7 +43,7 @@ $.fn.fullCalendar = function(options) {
 		(options.isRTL || options.isRTL===undefined && defaults.isRTL) ? rtlDefaults : {},
 		options
 	);
-	
+	if (!options.weekendDays) options.weekendDays = [0,6];	// see defaults.js
 	
 	this.each(function(i, _element) {
 		var element = $(_element);

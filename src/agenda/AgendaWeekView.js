@@ -12,6 +12,7 @@ function AgendaWeekView(element, calendar) {
 	// imports
 	AgendaView.call(t, element, calendar, 'agendaWeek');
 	var opt = t.opt;
+	var option = calendar.option;
 	var renderAgenda = t.renderAgenda;
 	var formatDates = calendar.formatDates;
 	
@@ -27,8 +28,8 @@ function AgendaWeekView(element, calendar) {
 		var visEnd = cloneDate(end);
 		var weekends = opt('weekends');
 		if (!weekends) {
-			skipWeekend(visStart);
-			skipWeekend(visEnd, -1, true);
+			skipWeekend(visStart, option('weekendDays'));
+			skipWeekend(visEnd, option('weekendDays'), -1, true);
 		}
 		t.title = formatDates(
 			visStart,
@@ -39,7 +40,7 @@ function AgendaWeekView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderAgenda(weekends ? 7 : 5);
+		renderAgenda(weekends ? 7 : 7-option('weekendDays').length);
 	}
 	
 

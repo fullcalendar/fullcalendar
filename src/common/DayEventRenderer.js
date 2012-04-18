@@ -149,6 +149,7 @@ function DayEventRenderer() {
 				}
 				leftCol = dayOfWeekCol(seg.end.getDay()-1);
 				rightCol = dayOfWeekCol(seg.start.getDay());
+				if (leftCol < rightCol) leftCol = rightCol;
 				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
 				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
 			}else{
@@ -160,6 +161,7 @@ function DayEventRenderer() {
 				}
 				leftCol = dayOfWeekCol(seg.start.getDay());
 				rightCol = dayOfWeekCol(seg.end.getDay()-1);
+				if (rightCol < leftCol) rightCol = leftCol;
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
 				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}

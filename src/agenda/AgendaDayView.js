@@ -12,6 +12,7 @@ function AgendaDayView(element, calendar) {
 	// imports
 	AgendaView.call(t, element, calendar, 'agendaDay');
 	var opt = t.opt;
+	var option = calendar.option;
 	var renderAgenda = t.renderAgenda;
 	var formatDate = calendar.formatDate;
 	
@@ -21,7 +22,7 @@ function AgendaDayView(element, calendar) {
 		if (delta) {
 			addDays(date, delta);
 			if (!opt('weekends')) {
-				skipWeekend(date, delta < 0 ? -1 : 1);
+				skipWeekend(date, option('weekendDays'), delta < 0 ? -1 : 1);
 			}
 		}
 		var start = cloneDate(date, true);

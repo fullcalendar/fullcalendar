@@ -12,6 +12,7 @@ function BasicWeekView(element, calendar) {
 	// imports
 	BasicView.call(t, element, calendar, 'basicWeek');
 	var opt = t.opt;
+	var option = calendar.option;
 	var renderBasic = t.renderBasic;
 	var formatDates = calendar.formatDates;
 	
@@ -27,8 +28,8 @@ function BasicWeekView(element, calendar) {
 		var visEnd = cloneDate(end);
 		var weekends = opt('weekends');
 		if (!weekends) {
-			skipWeekend(visStart);
-			skipWeekend(visEnd, -1, true);
+			skipWeekend(visStart, option('weekendDays'));
+			skipWeekend(visEnd, option('weekendDays'), -1, true);
 		}
 		t.title = formatDates(
 			visStart,
@@ -39,7 +40,7 @@ function BasicWeekView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(1, 1, weekends ? 7 : 5, false);
+		renderBasic(1, 1, weekends ? 7 : 7-option('weekendDays').length, false);
 	}
 	
 	

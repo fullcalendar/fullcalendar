@@ -10,6 +10,7 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
+	//weekendDays: [0,6], // being an array deep merge can't override it, look into main.js
 	
 	// editing
 	//editable: false,

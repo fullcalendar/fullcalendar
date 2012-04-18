@@ -2,6 +2,37 @@
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
 
+About this fork (phurni)
+========================
+
+This fork adds features either requested in the issue tracker or needed by my own projects.
+You'll find each new feature in its own branch.
+The goal is to keep close to the original arshaw/fullcalendar. I'll send some push requests but
+some features will certainly not be part of the core (too biased).
+
+Weekends
+--------
+
+When `weekends` is false, you may configure which days are considered weekend days. By default
+it is Saturday and Sunday, but you may choose only Sunday so that Saturday becomes a working day
+(or the other way around).
+The option for this is `weekendDays` which should contain an array of day numbers that are to be
+considered weekend days. By default it contains `[0,6]` which stands for Sunday and Saturday.
+
+Note that by combining with the `firstDay` option, you may have these week layouts:
+                      firstDay    weekendDays
+  Sunday-Friday          0           [6]
+  Monday-Friday          0           [0,6]
+  Monday-Friday          1           [0,6]
+  Monday-Saturday        1           [0]
+  Monday-Saturday        0           [0]
+
+You may even have `weekends` set to `false` and having `weekendDays` set to an empty array `[]` which
+lead to the same behaviour when `weekends` is set to `true`.
+
+Don't expect predictable behaviour when setting days other than Sunday or Saturday.
+
+
 Development and testing
 -----------------------
 

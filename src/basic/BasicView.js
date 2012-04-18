@@ -41,6 +41,7 @@ function BasicView(element, calendar, viewName) {
 	SelectionManager.call(t);
 	BasicEventRenderer.call(t);
 	var opt = t.opt;
+	var option = calendar.option;
 	var trigger = t.trigger;
 	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
@@ -71,7 +72,7 @@ function BasicView(element, calendar, viewName) {
 	
 	var rtl, dis, dit;
 	var firstDay;
-	var nwe;
+	var firstDayDelta;
 	var tm;
 	var colFormat;
 	
@@ -109,7 +110,7 @@ function BasicView(element, calendar, viewName) {
 			dit = 0;
 		}
 		firstDay = opt('firstDay');
-		nwe = opt('weekends') ? 0 : 1;
+		firstDayDelta = Math.max(firstDay, $.inArray(firstDay, option('weekendDays')) == -1 ? 0 : 1);
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
 	}
@@ -463,7 +464,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
+		return ((dayOfWeek - firstDayDelta + colCnt) % colCnt) * dis + dit;
 	}
 	
 	
