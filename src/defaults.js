@@ -52,6 +52,7 @@ var defaults = {
 		prevYear: '&nbsp;&lt;&lt;&nbsp;',
 		nextYear: '&nbsp;&gt;&gt;&nbsp;',
 		today: 'today',
+		smallMonth: 'month (small)',
 		month: 'month',
 		week: 'week',
 		day: 'day'

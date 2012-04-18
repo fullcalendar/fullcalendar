@@ -41,3 +41,8 @@
 	}
 	
 	
+/* smallMonth View
+------------------------------------------------------------------------*/
+.fc-view-smallMonth td.has-events {
+	background: #ddf;
+	}
