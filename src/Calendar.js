@@ -1,4 +1,3 @@
-
  
 function Calendar(element, options, eventSources) {
 	var t = this;
@@ -262,11 +261,13 @@ function Calendar(element, options, eventSources) {
 	function calcSize() {
 		if (options.contentHeight) {
 			suggestedViewHeight = options.contentHeight;
-		}
-		else if (options.height) {
-			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content);
-		}
-		else {
+		} else if (options.height) {
+			if(options.height.toString().match(new RegExp("^[0-9]+(px)?$"))) {
+				suggestedViewHeight = parseInt(options.height) - (headerElement ? headerElement.height() : 0) - vsides(content);
+			} else {
+				suggestedViewHeight = options.height;
+			}
+		} else {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 		}
 	}
