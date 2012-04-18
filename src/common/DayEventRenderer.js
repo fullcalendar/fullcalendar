@@ -55,6 +55,9 @@ function DayEventRenderer() {
 		var seg;
 		var top;
 		var k;
+		var overflows;
+		var overflowLinks;
+		var maxHeight = opt('maxHeight');
 		segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
 		daySegElementResolve(segs, segmentContainer.children());
 		daySegElementReport(segs);
@@ -66,23 +69,66 @@ function DayEventRenderer() {
 		// set row heights, calculate event tops (in relation to row top)
 		for (rowI=0; rowI<rowCnt; rowI++) {
 			levelI = 0;
+			overflows = [];
+			overflowLinks = {};
 			colHeights = [];
 			for (j=0; j<colCnt; j++) {
+				overflows[j] = 0;
 				colHeights[j] = 0;
 			}
 			while (i<segCnt && (seg = segs[i]).row == rowI) {
 				// loop through segs in a row
 				top = arrayMax(colHeights.slice(seg.startCol, seg.endCol));
-				seg.top = top;
-				top += seg.outerHeight;
+				if (maxHeight && top + seg.outerHeight > maxHeight) {
+					seg.overflow = true;
+				}
+				else {
+					seg.top = top;
+					top += seg.outerHeight;
+				}
 				for (k=seg.startCol; k<seg.endCol; k++) {
-					colHeights[k] = top;
+					if (overflows[k])
+						seg.overflow = true;
+					if (seg.overflow) {
+						if (seg.isStart && !overflowLinks[k])
+							overflowLinks[k] = { seg:seg, top:top, date:cloneDate(seg.start, true), count:0 };
+						if (overflowLinks[k])
+							overflowLinks[k].count++;
+						overflows[k]++;
+					}
+					else
+						colHeights[k] = top;
 				}
 				i++;
 			}
 			rowDivs[rowI].height(arrayMax(colHeights));
+			renderOverflowLinks(overflowLinks, rowDivs[rowI]);
 		}
 		daySegSetTops(segs, getRowTops(rowDivs));
+	}
+	
+	
+	function renderOverflowLinks(overflowLinks, rowDiv) {
+		var container = getDaySegmentContainer();
+		var colCnt = getColCnt();
+		var element, triggerRes, link;
+		for (var j=0; j<colCnt; j++) {
+			if ((link = overflowLinks[j])) {
+				if (link.count > 1) {
+					element = $('<a>').addClass('fc-more-link').html('+'+link.count).appendTo(container);
+					element[0].style.position = 'absolute';
+					element[0].style.left = link.seg.left + 'px';
+					element[0].style.top = (link.top + rowDiv[0].offsetTop) + 'px';
+					triggerRes = trigger('overflowRender', link, { count:link.count, date:link.date }, element);
+					if (triggerRes === false)
+						element.remove();
+				}
+				else {
+					link.seg.top = link.top;
+					link.seg.overflow = false;
+				}
+			}
+		}
 	}
 	
 	
@@ -333,6 +379,8 @@ function DayEventRenderer() {
 				}
 				seg.outerHeight = element[0].offsetHeight + val;
 			}
+			else  // always set a value (issue #1108 )
+				seg.outerHeight = 0;
 		}
 	}
 	
@@ -369,11 +417,13 @@ function DayEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			element = seg.element;
-			if (element) {
+			if (element && !seg.overflow) {
 				element[0].style.top = rowTops[seg.row] + (seg.top||0) + 'px';
 				event = seg.event;
 				trigger('eventAfterRender', event, event, element);
 			}
+			else if (element)
+				element.hide();
 		}
 	}
 	

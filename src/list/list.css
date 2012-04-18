@@ -1,0 +1,90 @@
+
+/* List view  (by bruederli@kolabsys.com)
+------------------------------------------------------------------------*/
+
+.fc-view-list,
+.fc-view-table {
+	border: 1px solid #ccc;
+	width: auto;
+}
+
+.fc-view-list .fc-list-header,
+.fc-view-table td.fc-list-header {
+	border-width: 0;
+	border-bottom-width: 1px;
+	padding: 3px 5px;
+}
+
+.fc-view-table .fc-first td.fc-list-header {
+	border-top-width: 0;
+}
+
+.fc-list-section {
+	padding: 4px 2px;
+	border-width: 0;
+	border-bottom-width: 1px;
+}
+
+.fc-view-list .fc-last {
+	border-bottom-width: 0;
+}
+
+.fc-list-section .fc-event {
+	position: relative;
+	margin: 1px 2px 3px 2px;
+}
+
+.fc-view-table tr.fc-event td {
+	padding: 2px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fc-view-table tr.fc-event td.fc-event-handle {
+	padding: 3px 8px 3px 3px;
+}
+
+.fc-view-table .fc-event-handle .fc-event-skin {
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+}
+
+.fc-view-table .fc-event-handle .fc-event-inner {
+	display: block;
+	width: 8px;
+	height: 10px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+}
+
+.fc-view-table table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.fc-view-table col.fc-event-handle {
+	width: 18px;
+}
+
+.fc-event-handle .fc-event-inner {
+	border-color: inherit;
+	background-color: inherit;
+}
+
+.fc-view-table col.fc-event-date {
+	width: 7em;
+}
+
+.fc-view-table .fc-list-day col.fc-event-date {
+	width: 1px;
+}
+
+.fc-view-table col.fc-event-time {
+	width: 8em;
+}
+
+.fc-view-table td.fc-event-date,
+.fc-view-table td.fc-event-time {
+	white-space: nowrap;
+	padding-right: 1em;
+}
+

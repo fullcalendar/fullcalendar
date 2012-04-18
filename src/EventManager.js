@@ -36,6 +36,7 @@ function EventManager(options, _sources) {
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
+	var offsetStart, offsetEnd;
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
@@ -57,17 +58,22 @@ function EventManager(options, _sources) {
 	}
 	
 	
-	function fetchEvents(start, end) {
+	function fetchEvents(start, end, src) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
+		offsetStart = start.getTimezoneOffset()*60*1000;
+		offsetEnd = end.getTimezoneOffset()*60*1000;
+		// partially clear cache if refreshing one source only (issue #1061)
+		cache = typeof src != 'undefined' ? $.grep(cache, function(e) { return !isSourcesEqual(e.source, src); }) : [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
-		pendingSourceCnt = len;
+		pendingSourceCnt = typeof src == 'undefined' ? len : 1;
 		for (var i=0; i<len; i++) {
-			fetchEventSource(sources[i], fetchID);
+			if (typeof src == 'undefined' || isSourcesEqual(sources[i], src))
+				fetchEventSource(sources[i], fetchID);
 		}
 	}
+
 	
 	
 	function fetchEventSource(source, fetchID) {
@@ -130,10 +136,18 @@ function EventManager(options, _sources) {
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
 				if (startParam) {
-					data[startParam] = Math.round(+rangeStart / 1000);
+					var tmpstart = rangeStart;
+					if (source.startParamUTC) {
+						tmpstart -= offsetStart;
+					}
+					data[startParam] = Math.round(+tmpstart / 1000);
 				}
 				if (endParam) {
-					data[endParam] = Math.round(+rangeEnd / 1000);
+					var tmpend = rangeEnd;
+					if (source.endParamUTC) {
+						tmpend -= offsetEnd;
+					}
+					data[endParam] = Math.round(+tmpend / 1000);
 				}
 				pushLoading();
 				$.ajax($.extend({}, ajaxDefaults, source, {
@@ -252,8 +266,9 @@ function EventManager(options, _sources) {
 				stickySource.events.push(event);
 				event.source = stickySource;
 			}
-			cache.push(event);
 		}
+		// always push event to cache (issue #1112:)
+		cache.push(event);
 		reportEvents(cache);
 	}
 	
