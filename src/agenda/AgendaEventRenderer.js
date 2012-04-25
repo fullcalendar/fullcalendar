@@ -188,7 +188,10 @@ function AgendaEventRenderer() {
 			}else{
 				if (forward) {
 					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					if(opt('overlapping'))
+						outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					else
+						outerWidth = availWidth / (forward + 1);
 				}else{
 					// can be entire width, aligned left
 					outerWidth = availWidth;
@@ -199,7 +202,10 @@ function AgendaEventRenderer() {
 				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth;
+			if(opt('overlapping'))
+				seg.outerWidth = outerWidth;
+			else
+				seg.outerWidth = outerWidth -1;
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
