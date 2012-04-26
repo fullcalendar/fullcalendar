@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'teamDay,teamWeek'
+			},
+			defaultView: 'teamDay',
+			allDaySlot: true,
+			slotMinutes: 60,
+			editable: true,
+                        overlapping:false,
+                        persons: [
+                            {
+                                id:'abc',
+                                name:'Joe Test'
+                            },
+                            {
+                                id:'def',
+                                name:'Mary Moore'
+                            },
+			    {
+				id:'ghi',
+				name: "Abdul Forek"
+			    }
+                        ],
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, 1),
+					person: 'abc'
+				},
+				{
+					title: 'Long Event',
+					start: new Date(y, m, d-5, 14, 0),
+					end: new Date(y, m, d-4, 2, 0),
+					allDay:false,
+					person: 'def'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
+					allDay: false,
+					person: 'abc'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
+					allDay: false,
+					person: 'abc'
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					allDay: false,
+					person: 'def'
+				},
+				{
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 5),
+					end: new Date(y, m, d, 14, 43),
+					allDay: false,
+					person: 'ghi'
+				},
+				{
+					title: 'Birthday Party',
+					start: new Date(y, m, d+1, 19, 0),
+					end: new Date(y, m, d+1, 22, 30),
+					allDay: false,
+					person: 'ghi'
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, d-1),
+					end: new Date(y, m, d-1),
+					url: 'http://google.com/',
+					person: 'ghi'
+				}
+			]
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 70%;
+		margin: 0 auto;
+		}
+	
+	#calendar {
+		
+	}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
