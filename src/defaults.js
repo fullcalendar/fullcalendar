@@ -51,10 +51,12 @@ var defaults = {
 		next: '&nbsp;&#9658;&nbsp;',
 		prevYear: '&nbsp;&lt;&lt;&nbsp;',
 		nextYear: '&nbsp;&gt;&gt;&nbsp;',
-		today: 'today',
-		month: 'month',
-		week: 'week',
-		day: 'day'
+		today: 'Today',
+		month: 'Month',
+		week: 'Week',
+		day: 'Day',
+		teamDay: 'Team Day',
+		teamWeek: 'Team Week'
 	},
 	
 	// jquery-ui theming
