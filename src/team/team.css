@@ -1,0 +1,153 @@
+
+/* team Week View, team Day View
+------------------------------------------------------------------------*/
+
+.fc-team table {
+	border-collapse: separate;
+	table-layout: fixed;
+	}
+	
+.fc-team-days th {
+	text-align: center;
+	overflow: hidden;
+	text-wrap: none;
+	white-space: nowrap;
+	}
+	
+.fc-team .fc-team-axis {
+	width: 50px;
+	padding: 0 4px;
+	vertical-align: middle;
+	text-align: right;
+	white-space: nowrap;
+	font-weight: normal;
+	}
+	
+.fc-team .fc-day-content {
+	padding: 2px 2px 1px;
+	}
+	
+/* make axis border take precedence */
+	
+.fc-team-days .fc-team-axis {
+	border-right-width: 1px;
+	}
+	
+.fc-team-days .fc-col0 {
+	border-left-width: 0;
+	}
+	
+/* all-day area */
+	
+.fc-team-allday th {
+	border-width: 0 1px;
+	}
+	
+.fc-team-allday .fc-day-content {
+	min-height: 34px; /* TODO: doesnt work well in quirksmode */
+	_height: 34px;
+	}
+	
+/* divider (between all-day and slots) */
+	
+.fc-team-divider-inner {
+	height: 2px;
+	overflow: hidden;
+	}
+	
+.fc-widget-header .fc-team-divider-inner {
+	background: #eee;
+	}
+	
+/* slot rows */
+	
+.fc-team-slots th {
+	border-width: 1px 1px 0;
+	}
+	
+.fc-team-slots td {
+	border-width: 1px 0 0;
+	background: none;
+	}
+	
+.fc-team-slots td div {
+	height: 20px;
+	}
+	
+.fc-team-slots tr.fc-slot0 th,
+.fc-team-slots tr.fc-slot0 td {
+	border-top-width: 0;
+	}
+
+.fc-team-slots tr.fc-minor th,
+.fc-team-slots tr.fc-minor td {
+	border-top-style: dotted;
+	}
+	
+.fc-team-slots tr.fc-minor th.ui-widget-header {
+	*border-top-style: solid; /* doesn't work with background in IE6/7 */
+	}
+
+.fc-team-day1, .fc-team-day3, .fc-team-day5
+{
+	background-color: rgba(0,0,0,.1);
+}
+
+
+
+/* Vertical Events
+------------------------------------------------------------------------*/
+
+.fc-event-vert {
+	border-width: 0 1px;
+	}
+	
+.fc-event-vert .fc-event-head,
+.fc-event-vert .fc-event-content {
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	overflow: hidden;
+	}
+	
+.fc-event-vert .fc-event-time {
+	white-space: nowrap;
+	font-size: 10px;
+	}
+	
+.fc-event-vert .fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	opacity: .3;
+	filter: alpha(opacity=30);
+	}
+	
+.fc .ui-draggable-dragging .fc-event-bg, /* TODO: something nicer like .fc-opacity */
+.fc-select-helper .fc-event-bg {
+	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
+	}
+	
+/* resizable */
+	
+.fc-event-vert .ui-resizable-s {
+	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
+	width: 100%      !important;
+	height: 8px      !important;
+	overflow: hidden !important;
+	line-height: 8px !important;
+	font-size: 11px  !important;
+	font-family: monospace;
+	text-align: center;
+	cursor: s-resize;
+	}
+	
+.fc-team .ui-resizable-resizing { /* TODO: better selector */
+	_overflow: hidden;
+	}
+	
+	

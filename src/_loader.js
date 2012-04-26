@@ -19,6 +19,7 @@ css('main.css');
 css('common/common.css');
 css('basic/basic.css');
 css('agenda/agenda.css');
+css('team/team.css');
 cssprint('common/print.css');
 
 if (!legacy) {
@@ -51,10 +52,17 @@ js('basic/BasicDayView.js');
 js('basic/BasicView.js');
 js('basic/BasicEventRenderer.js');
 
+
 js('agenda/AgendaWeekView.js');
 js('agenda/AgendaDayView.js');
 js('agenda/AgendaView.js');
 js('agenda/AgendaEventRenderer.js');
+
+
+js('team/TeamDayView.js');
+js('team/TeamWeekView.js');
+js('team/TeamView.js');
+js('team/TeamEventRenderer.js');
 
 js('common/View.js');
 js('common/DayEventRenderer.js');
