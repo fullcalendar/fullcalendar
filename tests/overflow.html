@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		date.setDate(1);
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultView: 'month',
+			maxHeight: 80,
+			overflowRender: function(data, element) {
+				element.click(function(e){ alert(data.date) });
+			},
+			firstDay: 1,
+			monthMaxEvents: 4,
+			editable: false,
+			events: [
+				{
+					title: 'MY Hotel Somewhere',
+					start: new Date(y, m, 11),
+					end: new Date(y, m, 13),
+					allDay: true
+				},
+				{
+					title: 'OpenRheinRuhr 2012',
+					start: new Date(y, m, 12),
+					end: new Date(y, m, 13),
+					allDay: true
+				},
+				{
+					title: 'Meeting #1',
+					start: new Date(y, m, 11, 10, 0),
+					end: new Date(y, m, 11, 12, 0),
+					allDay: false
+				},
+				{
+					title: 'Meeting #2',
+					start: new Date(y, m, 11, 13, 0),
+					end: new Date(y, m, 11, 15, 0),
+					allDay: false
+				},
+				{
+					title: 'Meeting #2 (2)',
+					start: new Date(y, m, 11, 13, 0),
+					end: new Date(y, m, 11, 15, 0),
+					allDay: false
+				},
+				{
+					title: 'Meeting #3',
+					start: new Date(y, m, 11, 16, 0),
+					end: new Date(y, m, 11, 17, 0),
+					allDay: false
+				},
+				{
+					title: 'Business Meeting #3',
+					start: new Date(y, m, 11, 17, 30),
+					end: new Date(y, m, 11, 19, 0),
+					allDay: false
+				},
+				{
+					title: 'Visit from outer space',
+					start: new Date(y, m, 16),
+					end: new Date(y, m, 23),
+					allDay: true
+				},
+				{
+					title: 'In Zurich',
+					start: new Date(y, m, 17),
+					end: new Date(y, m, 22),
+					allDay: true
+				},
+				{
+					title: 'CWL -> ZHR',
+					start: new Date(y, m, 16, 9, 0),
+					end: new Date(y, m, 16, 17, 0),
+					allDay: false
+				},
+				{
+					title: 'Confcall',
+					start: new Date(y, m, 16, 11, 0),
+					end: new Date(y, m, 16, 12, 0),
+					allDay: false
+				},
+				{
+					title: 'Confcall (2)',
+					start: new Date(y, m, 16, 11, 0),
+					end: new Date(y, m, 16, 12, 0),
+					allDay: false
+				},
+				{
+					title: 'Confcall (3)',
+					start: new Date(y, m, 16, 11, 0),
+					end: new Date(y, m, 16, 12, 0),
+					allDay: false
+				},
+/*
+				{
+					title: 'Confcall (4)',
+					start: new Date(y, m, 16, 11, 0),
+					end: new Date(y, m, 16, 12, 0),
+					allDay: false
+				},
+*/
+				{
+					title: 'Working...',
+					start: new Date(y, m, 17, 9, 0),
+					end: new Date(y, m, 17, 18, 0),
+					allDay: false
+				},
+				{
+					title: 'Working... (2)',
+					start: new Date(y, m, 17, 9, 0),
+					end: new Date(y, m, 17, 18, 0),
+					allDay: false
+				},
+				{
+					title: 'Working... /3()',
+					start: new Date(y, m, 17, 9, 0),
+					end: new Date(y, m, 17, 18, 0),
+					allDay: false
+				},
+				{
+					title: 'Working... (4)',
+					start: new Date(y, m, 17, 9, 0),
+					end: new Date(y, m, 17, 18, 0),
+					allDay: false
+				},
+				{
+					title: 'Lunch with the guys',
+					start: new Date(y, m, 17, 13),
+					end: new Date(y, m, 17, 14),
+					allDay: false
+				},
+				{
+					title: 'LinuxCon Brazil',
+					start: new Date(y, m, 17),
+					end: new Date(y, m, 18),
+					allDay: true
+				},
+				{
+					title: 'GLA -> SXF',
+					start: new Date(y, m, 18, 9),
+					end: new Date(y, m, 18, 11),
+					allDay: false
+				},
+				{
+					title: 'Touchbase',
+					start: new Date(y, m, 18, 16),
+					end: new Date(y, m, 18, 17),
+					allDay: false
+				},
+				{
+					title: 'KDE eV Sprint',
+					start: new Date(y, m, 19),
+					end: new Date(y, m, 20),
+					allDay: true
+				},
+				{
+					title: 'Partner Meeting',
+					start: new Date(y, m, 21, 9),
+					end: new Date(y, m, 21, 18),
+					allDay: false
+				},
+				{
+					title: 'Partner Meeting (2)',
+					start: new Date(y, m, 21, 9),
+					end: new Date(y, m, 21, 18),
+					allDay: false
+				},
+				{
+					title: 'More Meeting',
+					start: new Date(y, m, 21, 18),
+					end: new Date(y, m, 21, 19),
+					allDay: false
+				},
+				{
+					title: 'SXF -> GLA',
+					start: new Date(y, m, 21, 13),
+					end: new Date(y, m, 21, 15),
+					allDay: false
+				},
+				{
+					title: 'ABCD Call',
+					start: new Date(y, m, 22, 15),
+					end: new Date(y, m, 22, 16),
+					allDay: false
+				},
+				{
+					title: 'Touchbase 2',
+					start: new Date(y, m, 22, 16),
+					end: new Date(y, m, 22, 17),
+					allDay: false
+				},
+				{
+					title: 'ZHR -> CWL',
+					start: new Date(y, m, 23, 10),
+					end: new Date(y, m, 23, 17),
+					allDay: false
+				},
+				{
+					title: 'Team Call',
+					start: new Date(y, m, 23, 11),
+					end: new Date(y, m, 23, 12),
+					allDay: false
+				},
+				{
+					title: 'Team Call (2)',
+					start: new Date(y, m, 23, 11),
+					end: new Date(y, m, 23, 12),
+					allDay: false
+				},
+				{
+					title: 'Team Call (3)',
+					start: new Date(y, m, 23, 11),
+					end: new Date(y, m, 23, 12),
+					allDay: false
+				},
+				{
+					title: 'Team Call (4)',
+					start: new Date(y, m, 23, 11),
+					end: new Date(y, m, 23, 12),
+					allDay: false
+				},
+			]
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		background: white;
+		}
+
+	#calendar {
+		width: 960px;
+		margin: 0 auto;
+		}
+		
+	#calendar .fc-event-title {
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

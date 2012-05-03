@@ -40,4 +40,10 @@
 	float: right;
 	}
 	
-	
+.fc-more-link {
+	font-size: 0.85em;
+	white-space: nowrap;
+	text-decoration: none;
+	cursor: pointer;
+	padding: 1px;
+}
