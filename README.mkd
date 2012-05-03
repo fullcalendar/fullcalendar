@@ -2,11 +2,12 @@
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
 
-About this fork (roundcube)
+About this fork (mrkmg)
 ===========================
 
-This fork adds features either requested in the issue tracker or needed for
-the Roundcube calendar plugin.
+Used for fun!
+
+-- Plan to maintian along with roundcubes fork.
 
 Development and testing
 -----------------------
