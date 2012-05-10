@@ -22,7 +22,13 @@ var defaults = {
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
+   startParamFn: function(rangeStart) {
+		return Math.round(+rangeStart / 1000)
+	},
 	endParam: 'end',
+	endParamFn: function(rangeEnd) {
+		return Math.round(+rangeEnd / 1000)
+	},
 	
 	// time formats
 	titleFormat: {
