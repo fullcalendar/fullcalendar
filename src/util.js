@@ -22,7 +22,9 @@ function _exclEndDay(end, allDay) {
 
 
 function segCmp(a, b) {
-	return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
+	// Sort earliest first or if same then longest first
+	var returnVal = a.event.start - b.event.start;
+	return (returnVal !== 0)? returnVal : (b.totalLength - a.totalLength);
 }
 
 
@@ -68,7 +70,8 @@ function sliceSegs(events, visEventEnds, start, end) {
 				end: segEnd,
 				isStart: isStart,
 				isEnd: isEnd,
-				msLength: segEnd - segStart
+				msLength: segEnd - segStart,
+				totalLength: eventEnd - eventStart
 			});
 		}
 	} 
