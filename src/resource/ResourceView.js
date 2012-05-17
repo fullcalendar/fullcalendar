@@ -350,7 +350,7 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
+		var rect = coordinateGrid.rect(row0, Math.round(col0), row1, Math.round(col1), element);
 		return renderOverlay(rect, element);
 	}
 	
