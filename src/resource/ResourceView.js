@@ -509,7 +509,29 @@ function ResourceView(element, calendar, viewName) {
 	function timeOfDayCol(datetime) {
 		var hours = datetime.getHours();
 		var minutes = datetime.getMinutes();
+		var slotMinutes = opt('slotMinutes');
+		var slot, diff, minDiff, closestMinute;
+		
+		// round minutes to closest minuteslot
+		for ( var i = 0 ; i <= 60/slotMinutes; i++) {
+			slot = i*slotMinutes;
 
+			diff = Math.abs(slot-minutes);
+			
+			if (diff <= minDiff || i == 0) {
+				minDiff = diff;
+				closestMinute = slot;
+			}
+			
+			if(closestMinute == 60) {
+				hours++;
+				closestMinute = 0;
+			}
+		}		
+		minutes = closestMinute;
+
+
+		
 		for ( var i = 0; i < colCnt; i++) {
 			if (indexDate(i).getHours() == hours && indexDate(i).getMinutes() == minutes) {
 				return i;

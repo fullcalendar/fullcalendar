@@ -43,9 +43,9 @@
 			],
 			events: [
 				{
-					title: 'Lunch 12-14',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
+					title: 'Lunch 12.15-14.45',
+					start: new Date(y, m, d, 12, 15),
+					end: new Date(y, m, d, 14, 45),
 					allDay: false,
 					resource: 'resource1'
 				},				
@@ -107,7 +107,7 @@
 					end: new Date(y, m, 29),
 					url: 'http://google.com/',
 					resource: 'resource2'
-				}
+				}			
 			],
 			select: function(start, end, allDay, jsEvent, view, resource) {
 				var title = prompt('event title:');
