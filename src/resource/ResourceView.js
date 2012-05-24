@@ -212,6 +212,9 @@ function ResourceView(element, calendar, viewName) {
 			cell = $(_cell);
 			date = indexDate(i);
 			cell.html(formatDate(date, colFormat));
+			if (date.getDay() == 0 || date.getDay() == 6) {
+				cell.addClass('fc-weekend');
+			}
 			setDayID(cell, i);
 		});
 		
