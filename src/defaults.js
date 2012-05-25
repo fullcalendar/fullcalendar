@@ -82,7 +82,7 @@ var defaults = {
 	dropAccept: '*',
 	
 	// ResourceNextWeeks week count
-	numberOfWeeks: 4,
+	numberOfWeeks: 4
 	
 };
 
