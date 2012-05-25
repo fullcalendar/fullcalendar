@@ -46,6 +46,11 @@ function addMonths(d, n, keepTime) { // prevents day overflow/underflow
 }
 
 
+function addWeeks(d, n, keepTime) {
+	addDays(d, n * 7, keepTime);
+	return d;
+}
+
 function addDays(d, n, keepTime) { // deals with daylight savings
 	if (+d) {
 		var dd = d.getDate() + n,
@@ -130,6 +135,24 @@ function setYMD(date, y, m, d) {
 	if (d !== undefined) {
 		date.setDate(d);
 	}
+}
+
+
+function getWeek(d) {
+	var when = d;
+    var year = d.getFullYear();
+    var newYear = new Date(d.getFullYear(),0,1);
+    var offset = 7 + 1 - newYear.getDay();
+    if (offset == 8) offset = 1;
+    var daynum = ((Date.UTC(year,when.getMonth(),when.getDate(),0,0,0) - Date.UTC(year,0,1,0,0,0)) /1000/60/60/24) + 1;
+    var weeknum = Math.floor((daynum-offset+7)/7);
+    if (weeknum == 0) {
+        year--;
+        var prevNewYear = new Date(year,0,1);
+        var prevOffset = 7 + 1 - prevNewYear.getDay();
+        if (prevOffset == 2 || prevOffset == 8) weeknum = 53; else weeknum = 52;
+    }
+    return weeknum;
 }
 
 
@@ -336,6 +359,7 @@ var dateFormatters = {
 	dd	: function(d)	{ return zeroPad(d.getDate()) },
 	ddd	: function(d,o)	{ return o.dayNamesShort[d.getDay()] },
 	dddd: function(d,o)	{ return o.dayNames[d.getDay()] },
+	W   : function(d) 	{ return getWeek(d) },
 	M	: function(d)	{ return d.getMonth() + 1 },
 	MM	: function(d)	{ return zeroPad(d.getMonth() + 1) },
 	MMM	: function(d,o)	{ return o.monthNamesShort[d.getMonth()] },

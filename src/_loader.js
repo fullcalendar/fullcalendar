@@ -54,6 +54,7 @@ js('basic/BasicEventRenderer.js');
 
 js('resource/ResourceDayView.js');
 js('resource/ResourceWeekView.js');
+js('resource/ResourceNextWeeksView.js');
 js('resource/ResourceMonthView.js');
 js('resource/ResourceView.js');
 js('resource/ResourceEventRenderer.js');

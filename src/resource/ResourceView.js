@@ -92,7 +92,6 @@ function ResourceView(element, calendar, viewName) {
 		colCnt = c;
 
 		updateOptions();
-
 		var firstTime = !body;
 		if (firstTime || viewName == 'resourceMonth') {
 			buildSkeleton(maxr, showNumbers);
@@ -221,11 +220,7 @@ function ResourceView(element, calendar, viewName) {
 		bodyCells.each(function(i, _cell) {
 			cell = $(_cell);
 			date = indexDate(i);
-			if (date.getMonth() == month) {
-				cell.removeClass('fc-other-month');
-			}else{
-				cell.addClass('fc-other-month');
-			}
+
 			if (+date == +today) {
 				cell.addClass(tm + '-state-highlight fc-today');
 			}else{
@@ -474,9 +469,31 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function dateCell(date) {
-		var col;
+		var col,year,month,day,cmpDate,cmpYear,cmpMonth,cmpDay;
 		if (viewName == 'resourceDay') {
 			col = timeOfDayCol(date);
+		}
+		else if (viewName == 'resourceNextWeeks') {
+			// Start from first slot and test every date
+			year = date.getFullYear();
+			month = date.getMonth();
+			day = date.getDate();
+			for (var i=0; i < colCnt; i++) {
+				cmpDate = _cellDate(i);
+				cmpYear = cmpDate.getFullYear();
+				cmpMonth = cmpDate.getMonth();
+				cmpDay = cmpDate.getDate();
+				
+				if (year == cmpYear && month == cmpMonth && day == cmpDay) {
+					col = i;
+					break;
+				}
+			};
+			
+			if (typeof col == 'undefined') {
+				// date is in next weekview, select last column
+				col = i;
+			}
 		}
 		else {
 			col = dayOfWeekCol(date.getDay());
@@ -503,7 +520,6 @@ function ResourceView(element, calendar, viewName) {
 	function indexDate(index) {
 		return _cellDate(index%colCnt);
 	}
-	
 	
 	function dayOfWeekCol(dayOfWeek) {
 		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;

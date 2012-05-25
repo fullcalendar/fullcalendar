@@ -175,6 +175,10 @@ function DayEventRenderer() {
 						rightCol = getColCnt()-1;
 					}
 				}
+				else if (viewName == 'resourceNextWeeks') {
+					leftCol = dateCell(seg.start).col;
+					rightCol = dateCell(seg.end).col-1;
+				}
 				else if (viewName == 'resourceDay') {
 					// hack for resourceDay view
 					leftCol = timeOfDayCol(seg.start);
