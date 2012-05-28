@@ -21,8 +21,9 @@ function ResourceDayView(element, calendar) {
 		if (delta) {
 			addDays(date, delta * 1);
 		}
-		var start = addMinutes(cloneDate(date, true),opt('minTime')*60);
-		var end = addMinutes(cloneDate(start), (opt('maxTime')-opt('minTime'))*60);
+
+		var start = addMinutes(cloneDate(date, true),parseTime(opt('minTime')));
+		var end = addMinutes(cloneDate(start), (parseTime(opt('maxTime'))-parseTime(opt('minTime'))));
 		var visStart = cloneDate(start);
 		var visEnd = cloneDate(end);
 		var weekends = opt('weekends');
