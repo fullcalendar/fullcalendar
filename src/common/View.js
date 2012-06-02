@@ -243,7 +243,8 @@ function View(element, calendar, viewName) {
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
 			}
-			if (e.resource != resource) {
+			if (e.resource != resource && len == 1) {
+				// Change resource if this is not repeating event
 				e.resource = resource;
 			}
 			
