@@ -605,11 +605,14 @@ function AgendaView(element, calendar, viewName) {
 	
 	// get the Y coordinate of the given time on the given day (both Date objects)
 	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
-		day = cloneDate(day, true);
-		if (time < addMinutes(cloneDate(day), minMinute)) {
+		var clonedDay = cloneDate(day, true);
+		addMinutes(clonedDay, minMinute);
+		if (time < clonedDay) {
 			return 0;
 		}
-		if (time >= addMinutes(cloneDate(day), maxMinute)) {
+		clearTime(clonedDay)
+		addMinutes(clonedDay, maxMinute);
+		if (time >= clonedDay) {
 			return slotTable.height();
 		}
 		var slotMinutes = opt('slotMinutes'),
@@ -617,7 +620,7 @@ function AgendaView(element, calendar, viewName) {
 			slotI = Math.floor(minutes / slotMinutes),
 			slotTop = slotTopCache[slotI];
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			slotTop = slotTopCache[slotI] = slotTable.find('tr').eq(slotI).find('td div')[0].offsetTop; //.position().top; // need this optimization???
 		}
 		return Math.max(0, Math.round(
 			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
