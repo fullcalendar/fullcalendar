@@ -722,7 +722,11 @@ function AgendaView(element, calendar, viewName) {
 			slotI = Math.floor(minutes / slotMinutes),
 			slotTop = slotTopCache[slotI];
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			slotTop = slotTopCache[slotI] =
+				slotTable.find('tr').eq(slotI).find('td div')[0].offsetTop;
+				// .eq() is faster than ":eq()" selector
+				// [0].offsetTop is faster than .position().top (do we really need this optimization?)
+				// a better optimization would be to cache all these divs
 		}
 		return Math.max(0, Math.round(
 			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
