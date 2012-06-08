@@ -13,14 +13,6 @@ function YearView( element, calendar )
     //console.log( "t" );
     //console.log( t );
     
-	var opt = t.opt;
-	var trigger = t.trigger;
-	var clearEvents = t.clearEvents;
-	var renderOverlay = t.renderOverlay;
-	var clearOverlays = t.clearOverlays;
-	var daySelectionMousedown = t.daySelectionMousedown;
-	var formatDate = calendar.formatDate;
-    
     t.render = render;
     t.renderBasic = renderBasic;
     t.updateCells = updateCells;
