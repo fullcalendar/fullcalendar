@@ -55,10 +55,17 @@ function DayEventRenderer() {
 		var seg;
 		var top;
 		var k;
-		segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
-		daySegElementResolve(segs, segmentContainer.children());
-		daySegElementReport(segs);
-		daySegHandlers(segs, segmentContainer, modifiedEventId);
+		
+		//      hack - prevent TypeError
+		if ( segmentContainer )
+		{
+            segmentContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
+            
+            daySegElementResolve(segs, segmentContainer.children());
+            daySegElementReport(segs);
+            daySegHandlers(segs, segmentContainer, modifiedEventId);
+		}
+		
 		daySegCalcHSides(segs);
 		daySegSetWidths(segs);
 		daySegCalcHeights(segs);

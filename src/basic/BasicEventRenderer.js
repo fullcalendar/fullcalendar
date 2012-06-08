@@ -46,7 +46,12 @@ function BasicEventRenderer() {
 	
 	function clearEvents() {
 		reportEventClear();
-		getDaySegmentContainer().empty();
+		//getDaySegmentContainer().empty();
+		
+		//      hack bypass error
+		var testgdsc = getDaySegmentContainer();
+		if ( testgdsc )
+            testgdsc.empty();
 	}
 	
 	
