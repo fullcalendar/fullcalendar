@@ -89,6 +89,7 @@ function Calendar(element, options, eventSources) {
 		headerElement = header.render();
 		if (headerElement) {
 			element.prepend(headerElement);
+			trigger("headerCreated", headerElement, headerElement);
 		}
 		changeView(options.defaultView);
 		$(window).resize(windowResize);
