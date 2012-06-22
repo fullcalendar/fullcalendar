@@ -456,6 +456,7 @@ function AgendaEventRenderer() {
 	
 	function draggableSlotEvent(event, eventElement, timeElement) {
 		var origPosition;
+		var origZIndex = eventElement.zIndex();
 		var allDay=false;
 		var dayDelta;
 		var minuteDelta;
@@ -466,7 +467,7 @@ function AgendaEventRenderer() {
 		var colWidth = getColWidth();
 		var slotHeight = getSlotHeight();
 		eventElement.draggable({
-			zIndex: 9,
+			zIndex: origZIndex + 1,
 			scroll: false,
 			grid: [colWidth, slotHeight],
 			axis: colCnt==1 ? 'y' : false,
