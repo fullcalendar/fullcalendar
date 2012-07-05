@@ -1,4 +1,3 @@
-
 function DayEventRenderer() {
 	var t = this;
 
@@ -399,7 +398,8 @@ function DayEventRenderer() {
 			seg = segs[i];
 			element = seg.element;
 			if (element) {
-				element[0].style.top = rowTops[seg.row] + (seg.top||0) + 'px';
+				var segTop = parseInt(seg.top)>0?parseInt(seg.top):0;
+				element[0].style.top = rowTops[seg.row] + segTop + 'px';
 				event = seg.event;
 				trigger('eventAfterRender', event, event, element);
 			}
