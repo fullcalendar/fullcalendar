@@ -136,7 +136,13 @@ function EventManager(options, _sources) {
 				var success = source.success;
 				var error = source.error;
 				var complete = source.complete;
-				var data = $.extend({}, source.data || {});
+				var custom_data;
+				if ($.isFunction(source.data)) {
+					custom_data = source.data();
+				} else {
+					custom_data = source.data;
+				}
+				var data = $.extend({}, custom_data || {});
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
 				if (startParam) {
