@@ -43,7 +43,7 @@ function View(element, calendar, viewName) {
 	
 	function opt(name, viewNameOverride) {
 		var v = options[name];
-		if (typeof v == 'object') {
+		if (typeof v == 'object' && !v.length) {
 			return smartProperty(v, viewNameOverride || viewName);
 		}
 		return v;
