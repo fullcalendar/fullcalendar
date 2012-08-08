@@ -112,12 +112,14 @@
 				}
 				else
 				{
+					var rid = prompt('Resource ID:');
 					$('#calendar').fullCalendar('renderEvent',
 						{
 							title: title,
 							start: start,
 							end: end,
-							allDay: allDay							
+							allDay: allDay,
+							resourceId:rid
 						},
 						true // make the event "stick"
 					);
