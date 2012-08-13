@@ -10,7 +10,8 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
-	
+    timeline: true,
+
 	// editing
 	//editable: false,
 	//disableDragging: false,
