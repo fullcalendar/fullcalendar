@@ -57,6 +57,9 @@ js('agenda/AgendaDayView.js');
 js('agenda/AgendaView.js');
 js('agenda/AgendaEventRenderer.js');
 
+js('agenda/AgendaListView.js');
+js('agenda/AgendaListEventRenderer.js');
+
 js('common/View.js');
 js('common/DayEventRenderer.js');
 js('common/SelectionManager.js');
