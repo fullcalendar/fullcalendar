@@ -41,7 +41,9 @@ var defaults = {
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
 	},
-	
+    dateFormat: { // for event elements
+        '': 'ddd MMM d' // default
+    },
 	// locale
 	isRTL: false,
 	firstDay: 0,

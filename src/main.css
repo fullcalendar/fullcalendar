@@ -116,5 +116,36 @@ html .fc,
 	width: 100%; /* needed for view switching (when view is absolute) */
 	overflow: hidden;
 	}
-	
 
+.fc-agenda-list-day {
+    margin-top:5px;
+}
+
+.fc-agenda-list-container {
+
+}
+
+.fc-agenda-list-container th {
+    font-weight: bold;
+    font-size:12px;
+    width:100px;
+    padding: 5px 0 0 5px;
+}
+
+.fc-agenda-list-container td {
+    font-weight: normal;
+}
+
+.fc-agenda-list-container a, span {
+    text-decoration: none;
+}
+
+.fc-agenda-list-container a:hover, span:hover {
+    text-decoration: underline;
+}
+
+.fc-agenda-list-container .fc-event-skin {
+    color: #36c;
+    border-color: white;
+    background-color: white;
+}

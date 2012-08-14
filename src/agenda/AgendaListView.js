@@ -1,5 +1,7 @@
 fcViews.agenda = AgendaListView;
 
+var AGENDA_LIST_LIMIT = 30;
+
 function AgendaListView(element, calendar) {
     var t = this;
 
@@ -20,14 +22,14 @@ function AgendaListView(element, calendar) {
         var start = cloneDate(date, true);
         var end = addDays(cloneDate(start, true), 1);
         var visStart = cloneDate(start, true);
-        var visEnd =  addDays(cloneDate(end, true), 15);
+        var visEnd =  addDays(cloneDate(end, true), AGENDA_LIST_LIMIT);
 
         t.title = formatDate(start, opt('titleFormat'));
         t.start = start;
         t.end = end;
         t.visStart = visStart;
         t.visEnd = visEnd;
-        renderList(15);
+        renderList(AGENDA_LIST_LIMIT);
     }
 }
 
@@ -113,7 +115,7 @@ function AgendaList(element, calendar, viewName) {
 
     function renderList(maxr) {
 
-        rowCnt = 15;
+        rowCnt = AGENDA_LIST_LIMIT;
         colCnt = 1;
 
         updateOptions();
@@ -154,7 +156,6 @@ function AgendaList(element, calendar, viewName) {
         var table;
         var colCnt = 1;
 
-
         s =
             "<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
                 "<thead>" +
@@ -171,13 +172,11 @@ function AgendaList(element, calendar, viewName) {
         for (i=0; i<maxRowCnt; i++) {
 
             s +=
-                "<tr class='row-num-"+ i +"'>" +
+                "<tr class='row-num-"+ i +"' style='padding: 10px;'>" +
                     "<td>" + // need fc- for setDayID
-                    "<div>" +
-                    "<div class='fc-day-content'>" +
-                    "<div style='position:relative'>&nbsp;</div>" +
-                    "</div>" +
-                    "</div>" +
+
+                    "<div class='fc-day-content'><div></div></div>" +
+
                     "</td>" +
                     "</tr>";
         }

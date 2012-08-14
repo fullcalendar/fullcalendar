@@ -208,6 +208,7 @@ function AgendaListViewEventRenderer() {
         daySegSetWidths(segs);
         daySegCalcHeights(segs);
         rowDivs = getRowDivs();
+
         // set row heights, calculate event tops (in relation to row top)
         for (rowI=0; rowI<rowCnt; rowI++) {
             levelI = 0;
@@ -261,7 +262,7 @@ function AgendaListViewEventRenderer() {
 
 
     function daySegHTML(segs) { // also sets seg.left and seg.outerWidth
-        //TODO#2
+
         var rtl = opt('isRTL');
         var i;
         var segCnt=segs.length;
@@ -279,9 +280,11 @@ function AgendaListViewEventRenderer() {
         var skinCss;
         var html = '';
 
+        var rowPointer = 0;
         // calculate desired position/dimensions, create html
         for (i=0; i<segCnt; i++) {
             seg = segs[i];
+
 
             event = seg.event;
             classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
@@ -311,56 +314,56 @@ function AgendaListViewEventRenderer() {
                 left = seg.isStart ? colContentLeft(leftCol) : minLeft;
                 right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
             }
-            classes = classes.concat(event.className);
-            if (event.source) {
-                classes = classes.concat(event.source.className || []);
+
+            var today = clearTime(new Date());
+            var eventDay = clearTime(seg.start);
+            var todayClass = (+today == +eventDay) ? " fc-state-highlight fc-today" : ""; //fc-state-highlight fc-today
+
+            var dateFormatText = "";
+            var tableClass = "";
+            if (rowPointer != +eventDay) {
+                dateFormatText = htmlEscape(formatDates(seg.start, seg.end, opt('dateFormat')));
+                rowPointer = +eventDay;
+                var tableClass = " fc-agenda-list-day";
             }
+
+            // prepare row
+            html +="<table class='fc-agenda-list-container"+tableClass+"' style='padding-bottom:5px;'>";
+            html += "<tr>";
+
+            html += "<th class='fc-event"+todayClass+"' style='text-align: left;'>"+ dateFormatText +"</th>";
+            html += "<td style='width:120px;' class='fc-event'>";
+            if (!event.allDay && seg.isStart) {
+                html += "<span class='fc-event-time-seg'>" + htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +"</span>";
+            }
+            else {
+                html += "<span class='fc-event-time-seg'>All day</span>";
+            }
+            html += "</td>";
+
+            // prepare title
+            classes = classes.concat(event.className);
+            if (event.source) { classes = classes.concat(event.source.className || []); }
             url = event.url;
             skinCss = getSkinCss(event, opt);
-            if (url) {
-                html += "<a href='" + htmlEscape(url) + "'";
-            }else{
-                html += "<div";
-            }
-            html +=
-                " class='" + classes.join(' ') + "'" +
-                    " style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
-                    ">" +
-                    "<div" +
-                    " class='fc-event-inner fc-event-skin'" +
-                    (skinCss ? " style='" + skinCss + "'" : '') +
-                    ">";
-            if (!event.allDay && seg.isStart) {
-                html +=
-                    "<span class='fc-event-time'>" +
-                        htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
-                        "</span>";
-            }
 
-            var eventDay = clearTime(seg.start);
-            var today = clearTime(new Date());
-            var todayText = (+today == +eventDay) ? "Today - " : ""; //fc-state-highlight fc-today
+            html += "<td style=''>";
+            html += "<span class='fc-event-title'> " +
+                        (url ? ("<a href='" + htmlEscape(url) + "'") : "<span") +
+                        " class='" + classes.join(' ') + "'>" +
+                        htmlEscape(event.title) +
+                        "</" + (url ? "a" : "span" ) + ">" +
+                    "</span>";
+            html += "</td>";
+            html += "</tr></table>";
 
-            html +=
-                "<span class='fc-event-title'> " + todayText + seg.row + " ) " + seg.start + " - " + htmlEscape(event.title) + "</span>" +
-                    "</div>";
-            if (seg.isEnd && isEventResizable(event)) {
-                html +=
-                    "<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
-                        "&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
-                        "</div>";
-            }
-            html +=
-                "</" + (url ? "a" : "div" ) + ">";
             seg.left = left;
             seg.outerWidth = right - left;
             seg.startCol = leftCol;
             seg.endCol = rightCol + 1; // needs to be exclusive
-
-
         }
 
-        //console.log(html);
+
         return html;
     }
 
@@ -424,12 +427,12 @@ function AgendaListViewEventRenderer() {
                 event = seg.event;
                 if (event._id === modifiedEventId) {
                     bindDaySeg(event, element, seg);
-                }else{
+                }else if (element[0] != undefined) {
                     element[0]._fci = i; // for lazySegBind
                 }
             }
         }
-        lazySegBind(segmentContainer, segs, bindDaySeg);
+        //lazySegBind(segmentContainer, segs, bindDaySeg);
     }
 
 
