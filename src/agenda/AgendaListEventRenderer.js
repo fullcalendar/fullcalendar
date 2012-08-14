@@ -324,7 +324,7 @@ function AgendaListViewEventRenderer() {
             if (rowPointer != +eventDay) {
                 dateFormatText = htmlEscape(formatDates(seg.start, seg.end, opt('dateFormat')));
                 rowPointer = +eventDay;
-                var tableClass = " fc-agenda-list-day";
+                tableClass = " fc-agenda-list-day";
             }
 
             // prepare row
