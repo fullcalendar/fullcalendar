@@ -5,7 +5,7 @@ FullCalendar - Full-sized drag & drop event calendar
 About this fork (mrkmg)
 ===========================
 
-Used for fun!
+Added in TeamViews to view events from multiple different people on one easy to view calendar.
 
 -- Plan to maintian along with roundcubes fork.
 
