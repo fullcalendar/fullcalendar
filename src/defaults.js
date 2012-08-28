@@ -62,8 +62,8 @@ var defaults = {
 		day: 'Day',
 		teamDay: 'Team Day',
 		teamWeek: 'Team Week',
-		list: 'List',
-		table: 'Table'
+		list: 'List Week',
+		table: 'Table Week'
 	},
 	listTexts: {
 		until: 'until',

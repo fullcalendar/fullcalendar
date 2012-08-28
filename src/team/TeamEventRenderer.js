@@ -68,7 +68,7 @@ function TeamEventRenderer() {
 			}
 		}
 		if (opt('allDaySlot')) {
-			renderDaySegs(compileDaySegs(dayEvents), modifiedEventId);
+			renderDaySegs(compileDaySegsNew(dayEvents), modifiedEventId);
 			setHeight(); // no params means set to viewHeight
 		}
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
@@ -80,7 +80,6 @@ function TeamEventRenderer() {
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}
-	
 	
 	function compileDaySegs(events) {
 		var levels = stackSegs(sliceSegs(events, $.map(events, exclEndDay), t.visStart, t.visEnd)),
@@ -94,6 +93,29 @@ function TeamEventRenderer() {
 				seg.row = 0;
 				seg.level = i; // not needed anymore
 				segs.push(seg);
+			}
+		}
+		return segs;
+	}
+	
+	function compileDaySegsNew(events) {
+		var i,ii,iii,j,seg,segs=[],levels,level,levelCnt;
+		iii=0;
+		for(ii=0;ii<persons.length;ii++)
+		{
+			levels = stackSegs(sliceSegsTeam(events, $.map(events, exclEndDay), t.visStart, t.visEnd,persons[ii].id));
+			levelCnt = levels.length;
+			for (i=0; i<levelCnt; i++)
+			{
+				level = levels[i];
+				for (j=0; j<level.length; j++)
+				{
+					seg = level[j];
+					seg.row = iii;
+					seg.level = j; // not needed anymore
+					segs.push(seg);
+					iii++;
+				}
 			}
 		}
 		return segs;

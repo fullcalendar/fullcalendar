@@ -38,49 +38,68 @@
                         ],
 			events: [
 				{
+					title: 'All Day Joe',
+					allDay:	true,
+					person:	'abc',
+					start: new Date(y, m, d)
+				},
+				{
+					title: 'All Day Mary',
+					allDay:	true,
+					person:	'def',
+					start: new Date(y, m, d)
+				},
+				{
+					title: 'All Day Abdul',
+					allDay:	true,
+					person: 'ghi',
+					start: new Date(y, m, d)
+				},
+				{
 					title: 'All Day Event',
 					start: new Date(y, m, 1),
-					person: 'abc'
+					person: 'abc',
+					allDay: true,
 				},
 				{
 					title: 'Long Event',
 					start: new Date(y, m, d-5, 14, 0),
 					end: new Date(y, m, d-4, 2, 0),
-					allDay:false,
+					allDay:true,
 					person: 'def'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
 					start: new Date(y, m, d-3, 16, 0),
-					allDay: false,
+					allDay: true,
 					person: 'abc'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
 					start: new Date(y, m, d+4, 16, 0),
-					allDay: false,
+					allDay: true,
 					person: 'abc'
 				},
 				{
 					title: 'Meeting',
 					start: new Date(y, m, d, 10, 30),
-					allDay: false,
+					allDay: true,
 					person: 'def'
 				},
 				{
 					title: 'Lunch',
 					start: new Date(y, m, d, 12, 5),
 					end: new Date(y, m, d, 14, 43),
-					allDay: false,
+					allDay: true,
 					person: 'ghi'
 				},
 				{
 					title: 'Birthday Party',
 					start: new Date(y, m, d+1, 19, 0),
 					end: new Date(y, m, d+1, 22, 30),
-					allDay: false,
+					allDay: true,
 					person: 'ghi'
 				},
 				{
@@ -88,7 +107,8 @@
 					start: new Date(y, m, d-1),
 					end: new Date(y, m, d-1),
 					url: 'http://google.com/',
-					person: 'ghi'
+					person: 'ghi',
+					allDay: true
 				}
 			]
 		});

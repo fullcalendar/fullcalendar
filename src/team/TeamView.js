@@ -34,8 +34,8 @@ function TeamView(element, calendar, viewName) {
 	t.getMinMinute = function() { return minMinute };
 	t.getMaxMinute = function() { return maxMinute };
 	t.getBodyContent = function() { return slotContent }; // !!??
-	t.getRowCnt = function() { return 1 };
-	t.getColCnt = function() { return colCnt };
+	t.getRowCnt = function() { return persons.length };
+	t.getColCnt = function() { return colCnt*persons.length };
 	t.getColWidth = function() { return colWidth };
 	t.getSlotHeight = function() { return slotHeight };
 	t.defaultSelectionEnd = defaultSelectionEnd;
