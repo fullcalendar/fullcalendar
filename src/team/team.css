@@ -1,16 +1,20 @@
 
-/* Agenda Week View, Agenda Day View
+/* team Week View, team Day View
 ------------------------------------------------------------------------*/
 
-.fc-agenda table {
+.fc-team table {
 	border-collapse: separate;
+	table-layout: fixed;
 	}
 	
-.fc-agenda-days th {
+.fc-team-days th {
 	text-align: center;
+	overflow: hidden;
+	text-wrap: none;
+	white-space: nowrap;
 	}
 	
-.fc-agenda .fc-agenda-axis {
+.fc-team .fc-team-axis {
 	width: 50px;
 	padding: 0 4px;
 	vertical-align: middle;
@@ -19,71 +23,76 @@
 	font-weight: normal;
 	}
 	
-.fc-agenda .fc-day-content {
+.fc-team .fc-day-content {
 	padding: 2px 2px 1px;
 	}
 	
 /* make axis border take precedence */
 	
-.fc-agenda-days .fc-agenda-axis {
+.fc-team-days .fc-team-axis {
 	border-right-width: 1px;
 	}
 	
-.fc-agenda-days .fc-col0 {
+.fc-team-days .fc-col0 {
 	border-left-width: 0;
 	}
 	
 /* all-day area */
 	
-.fc-agenda-allday th {
+.fc-team-allday th {
 	border-width: 0 1px;
 	}
 	
-.fc-agenda-allday .fc-day-content {
+.fc-team-allday .fc-day-content {
 	min-height: 34px; /* TODO: doesnt work well in quirksmode */
 	_height: 34px;
 	}
 	
 /* divider (between all-day and slots) */
 	
-.fc-agenda-divider-inner {
+.fc-team-divider-inner {
 	height: 2px;
 	overflow: hidden;
 	}
 	
-.fc-widget-header .fc-agenda-divider-inner {
+.fc-widget-header .fc-team-divider-inner {
 	background: #eee;
 	}
 	
 /* slot rows */
 	
-.fc-agenda-slots th {
+.fc-team-slots th {
 	border-width: 1px 1px 0;
 	}
 	
-.fc-agenda-slots td {
+.fc-team-slots td {
 	border-width: 1px 0 0;
 	background: none;
 	}
 	
-.fc-agenda-slots td div {
+.fc-team-slots td div {
 	height: 20px;
 	}
 	
-.fc-agenda-slots tr.fc-slot0 th,
-.fc-agenda-slots tr.fc-slot0 td {
+.fc-team-slots tr.fc-slot0 th,
+.fc-team-slots tr.fc-slot0 td {
 	border-top-width: 0;
 	}
 
-.fc-agenda-slots tr.fc-minor th,
-.fc-agenda-slots tr.fc-minor td {
+.fc-team-slots tr.fc-minor th,
+.fc-team-slots tr.fc-minor td {
 	border-top-style: dotted;
 	}
 	
-.fc-agenda-slots tr.fc-minor th.ui-widget-header {
+.fc-team-slots tr.fc-minor th.ui-widget-header {
 	*border-top-style: solid; /* doesn't work with background in IE6/7 */
 	}
-	
+
+.fc-team-day1, .fc-team-day3, .fc-team-day5
+{
+	background-color: rgba(0,0,0,.1);
+}
+
 
 
 /* Vertical Events
@@ -137,17 +146,8 @@
 	cursor: s-resize;
 	}
 	
-.fc-agenda .ui-resizable-resizing { /* TODO: better selector */
+.fc-team .ui-resizable-resizing { /* TODO: better selector */
 	_overflow: hidden;
 	}
 	
-.fc-timeline {
-	position: absolute;
-	width: 100%;
-	left: 0;
-	margin: 0;
-	padding: 0;
-	border: none;
-	border-top: 2px solid #3ec400;
-	z-index: 999;
-}
+	

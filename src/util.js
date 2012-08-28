@@ -75,6 +75,46 @@ function sliceSegs(events, visEventEnds, start, end) {
 	return segs.sort(segCmp);
 }
 
+function sliceSegsTeam(events, visEventEnds, start, end, personId) {
+	var segs = [],
+		i, len=events.length, event,
+		eventStart, eventEnd,
+		segStart, segEnd,
+		isStart, isEnd,
+		pid;
+	for (i=0; i<len; i++) {
+		event = events[i];
+		eventStart = event.start;
+		eventEnd = visEventEnds[i];
+		pid = event.person;
+		if (eventEnd > start && eventStart < end && personId == pid) {
+			if (eventStart < start) {
+				segStart = cloneDate(start);
+				isStart = false;
+			}else{
+				segStart = eventStart;
+				isStart = true;
+			}
+			if (eventEnd > end) {
+				segEnd = cloneDate(end);
+				isEnd = false;
+			}else{
+				segEnd = eventEnd;
+				isEnd = true;
+			}
+			segs.push({
+				event: event,
+				start: segStart,
+				end: segEnd,
+				isStart: isStart,
+				isEnd: isEnd,
+				msLength: segEnd - segStart
+			});
+		}
+	} 
+	return segs.sort(segCmp);
+}
+
 
 // event rendering calculation utilities
 function stackSegs(segs) {

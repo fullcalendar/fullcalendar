@@ -1,5 +1,5 @@
 
-function AgendaEventRenderer() {
+function TeamEventRenderer() {
 	var t = this;
 	
 	
@@ -47,7 +47,7 @@ function AgendaEventRenderer() {
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
-	var timeLineInterval;
+	var persons = calendar.options.persons;
 	
 	
 	
@@ -68,16 +68,10 @@ function AgendaEventRenderer() {
 			}
 		}
 		if (opt('allDaySlot')) {
-			renderDaySegs(compileDaySegs(dayEvents), modifiedEventId);
+			renderDaySegs(compileDaySegsNew(dayEvents), modifiedEventId);
 			setHeight(); // no params means set to viewHeight
 		}
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
-		
-		if (opt('currentTimeIndicator')) {
-			window.clearInterval(timeLineInterval);
-			timeLineInterval = window.setInterval(setTimeIndicator, 30000);
-			setTimeIndicator();
-		}
 	}
 	
 	
@@ -86,7 +80,6 @@ function AgendaEventRenderer() {
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}
-	
 	
 	function compileDaySegs(events) {
 		var levels = stackSegs(sliceSegs(events, $.map(events, exclEndDay), t.visStart, t.visEnd)),
@@ -105,6 +98,29 @@ function AgendaEventRenderer() {
 		return segs;
 	}
 	
+	function compileDaySegsNew(events) {
+		var i,ii,iii,j,seg,segs=[],levels,level,levelCnt;
+		iii=0;
+		for(ii=0;ii<persons.length;ii++)
+		{
+			levels = stackSegs(sliceSegsTeam(events, $.map(events, exclEndDay), t.visStart, t.visEnd,persons[ii].id));
+			levelCnt = levels.length;
+			for (i=0; i<levelCnt; i++)
+			{
+				level = levels[i];
+				for (j=0; j<level.length; j++)
+				{
+					seg = level[j];
+					seg.row = iii;
+					seg.level = j; // not needed anymore
+					segs.push(seg);
+					iii++;
+				}
+			}
+		}
+		return segs;
+	}
+	
 	
 	function compileSlotSegs(events) {
 		var colCnt = getColCnt(),
@@ -116,20 +132,25 @@ function AgendaEventRenderer() {
 			j, level,
 			k, seg,
 			segs=[];
+		var iii=0;
 		for (i=0; i<colCnt; i++) {
-			col = stackSegs(sliceSegs(events, visEventEnds, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
-			countForwardSegs(col);
-			for (j=0; j<col.length; j++) {
-				level = col[j];
-				for (k=0; k<level.length; k++) {
-					seg = level[k];
-					seg.col = i;
-					seg.level = j;
-					segs.push(seg);
+			for (var ii=0; ii<persons.length; ii++) {
+				col = stackSegs(sliceSegsTeam(events, visEventEnds, d, addMinutes(cloneDate(d), maxMinute-minMinute),persons[ii].id));
+				countForwardSegs(col);
+				for (j=0; j<col.length; j++) {
+					level = col[j];
+					for (k=0; k<level.length; k++) {
+						seg = level[k];
+						seg.col = iii;
+						seg.level = j;
+						segs.push(seg);
+					}
 				}
+				iii++;
 			}
 			addDays(d, 1, true);
 		}
+		
 		return segs;
 	}
 	
@@ -167,8 +188,7 @@ function AgendaEventRenderer() {
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis, dit,
-			colCnt = getColCnt(),
-			overlapping = colCnt > 1;
+			colCnt = getColCnt();
 			
 		if (rtl = opt('isRTL')) {
 			dis = -1;
@@ -177,7 +197,7 @@ function AgendaEventRenderer() {
 			dis = 1;
 			dit = 0;
 		}
-			
+					
 		// calculate position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -195,11 +215,11 @@ function AgendaEventRenderer() {
 				outerWidth = availWidth / (levelI + forward + 1);
 			}else{
 				if (forward) {
-					if (overlapping) {	// moderately wide, aligned left still
+					// moderately wide, aligned left still
+					if(opt('overlapping'))
 						outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
-					}else{
-						outerWidth = outerWidth = availWidth / (forward + 1);
-					}
+					else
+						outerWidth = availWidth / (forward + 1);
 				}else{
 					// can be entire width, aligned left
 					outerWidth = availWidth;
@@ -210,7 +230,10 @@ function AgendaEventRenderer() {
 				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth - (overlapping ? 0 : 1);
+			if(opt('overlapping'))
+				seg.outerWidth = outerWidth;
+			else
+				seg.outerWidth = outerWidth -1;
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
@@ -359,37 +382,6 @@ function AgendaEventRenderer() {
 		eventElementHandlers(event, eventElement);
 	}
 	
-	
-	// draw a horizontal line indicating the current time (#143)
-	function setTimeIndicator()
-	{
-		var container = getBodyContent();
-		var timeline = container.children('.fc-timeline');
-		if (timeline.length == 0) { // if timeline isn't there, add it
-			timeline = $('<hr>').addClass('fc-timeline').appendTo(container);
-		}
-
-		var cur_time = new Date();
-		if (t.visStart < cur_time && t.visEnd > cur_time) {
-			timeline.show();
-		}
-		else {
-			timeline.hide();
-			return;
-		}
-
-		var secs = (cur_time.getHours() * 60 * 60) + (cur_time.getMinutes() * 60) + cur_time.getSeconds();
-		var percents = secs / 86400; // 24 * 60 * 60 = 86400, # of seconds in a day
-
-		timeline.css('top', Math.floor(container.height() * percents - 1) + 'px');
-
-		if (t.name == 'agendaWeek') { // week view, don't want the timeline to go the whole way across
-			var daycol = $('.fc-today', t.element);
-			var left = daycol.position().left + 1;
-			var width = daycol.width();
-			timeline.css({ left: left + 'px', width: width + 'px' });
-		}
-	}
 	
 	
 	/* Dragging
@@ -636,22 +628,4 @@ function AgendaEventRenderer() {
 	
 
 }
-
-
-function countForwardSegs(levels) {
-	var i, j, k, level, segForward, segBack;
-	for (i=levels.length-1; i>0; i--) {
-		level = levels[i];
-		for (j=0; j<level.length; j++) {
-			segForward = level[j];
-			for (k=0; k<levels[i-1].length; k++) {
-				segBack = levels[i-1][k];
-				if (segsCollide(segForward, segBack)) {
-					segBack.forward = Math.max(segBack.forward||0, (segForward.forward||0)+1);
-				}
-			}
-		}
-	}
-}
-
 

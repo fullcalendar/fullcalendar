@@ -10,6 +10,7 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
+	currentTimeIndicator: false,
 	
 	// editing
 	//editable: false,
@@ -28,12 +29,16 @@ var defaults = {
 	titleFormat: {
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
-		day: 'dddd, MMM d, yyyy'
+		day: 'dddd, MMM d, yyyy',
+		list: 'MMM d, yyyy',
+		table: 'MMM d, yyyy'
 	},
 	columnFormat: {
 		month: 'ddd',
 		week: 'ddd M/d',
-		day: 'dddd M/d'
+		day: 'dddd M/d',
+		list: 'dddd, MMM d, yyyy',
+		table: 'MMM d, yyyy'
 	},
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
@@ -51,11 +56,33 @@ var defaults = {
 		next: '&nbsp;&#9658;&nbsp;',
 		prevYear: '&nbsp;&lt;&lt;&nbsp;',
 		nextYear: '&nbsp;&gt;&gt;&nbsp;',
-		today: 'today',
-		month: 'month',
-		week: 'week',
-		day: 'day'
+		today: 'Today',
+		month: 'Month',
+		week: 'Week',
+		day: 'Day',
+		teamDay: 'Team Day',
+		teamWeek: 'Team Week',
+		list: 'List Week',
+		table: 'Table Week'
 	},
+	listTexts: {
+		until: 'until',
+		past: 'Past events',
+		today: 'Today',
+		tomorrow: 'Tomorrow',
+		thisWeek: 'This week',
+		nextWeek: 'Next week',
+		thisMonth: 'This month',
+		nextMonth: 'Next month',
+		future: 'Future events',
+		week: 'W'
+	},
+	
+	// list/table options
+	listSections: 'month',  // false|'day'|'week'|'month'|'smart'
+	listRange: 30,  // number of days to be displayed
+	listPage: 7,  // number of days to jump when paging
+	tableCols: ['handle', 'date', 'time', 'title'],
 	
 	// jquery-ui theming
 	theme: false,
