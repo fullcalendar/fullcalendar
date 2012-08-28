@@ -56,7 +56,7 @@ function ListEventRenderer() {
 			event = events[i];
 			
 			// skip events out of range
-			if (event.end < t.start || event.start > t.visEnd)
+			if ((event.end || event.start) < t.start || event.start > t.visEnd)
 				continue;
 			
 			// define sections of this event
@@ -109,7 +109,7 @@ function ListEventRenderer() {
 
 	function sortCmp(a, b) {
 		var sd = a.start.getTime() - b.start.getTime();
-		return sd + (sd ? 0 : a.end.getTime() - b.end.getTime());
+		return sd || (a.end ? a.end.getTime() : 0) - (b.end ? b.end.getTime() : 0);
 	}
 	
 	function renderSegs(segs, modifiedEventId) {
@@ -191,7 +191,7 @@ function ListEventRenderer() {
 		var timeFormat = opt('timeFormat');
 		var dateFormat = opt('columnFormat');
 		var segmode = opt('listSections');
-		var duration = event.end.getTime() - event.start.getTime();
+		var duration = event.end ? event.end.getTime() - event.start.getTime() : 0;
 		var datestr = '', timestr = '';
 		
 		if (segmode == 'smart') {
