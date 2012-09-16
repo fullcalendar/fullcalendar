@@ -341,7 +341,7 @@ function Calendar(element, options, eventSources, resourceSources) {
 		
 		// create current view again
 		currentView = viewInstances[currentView.name] = new fcViews[currentView.name](
-					newViewElement = absoluteViewElement =
+					absoluteViewElement =
 						$("<div class='fc-view fc-view-" + currentView.name + "' style='position:absolute'/>")
 							.appendTo(content),
 					t // the calendar object
