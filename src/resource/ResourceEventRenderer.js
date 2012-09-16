@@ -30,7 +30,6 @@ function ResourceEventRenderer() {
 	var clearOverlays = t.clearOverlays;
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
-	var getResources = t.getResources;
 	var getViewName = t.getViewName;
 	var renderDaySegs = t.renderDaySegs;
 	var dateCell = t.dateCell;
@@ -61,14 +60,14 @@ function ResourceEventRenderer() {
 	function compileSegs(events) {
 		var rowCnt = getRowCnt(),
 			colCnt = getColCnt(),
-			resources = getResources(),
+			resources = t.getResources,
 			d1 = cloneDate(t.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
 			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
 			k, seg, currentResource, viewName = getViewName(),
-			segs=[];
+			l, segs=[];
 			
 		if (viewName == 'resourceDay') {
 			d2 = cloneDate(t.visEnd);
@@ -88,9 +87,17 @@ function ResourceEventRenderer() {
 					seg = level[k];
 					seg.row = i;
 					seg.level = j; // not needed anymore
-					if(currentResource == seg['event'].resource) {
-						segs.push(seg);
+					
+					// Let's be backwards compatitle. If event resource is not array, then we convert it.
+					if (!$.isArray(seg.event.resource)) { 
+						seg.event.resource = [seg.event.resource];
 					}
+					
+					for (l=0; l<seg.event.resource.length; l++) {
+						if(currentResource == seg.event.resource[l]) {
+							segs.push(seg);
+						}
+					}	
 				}
 			}
 		}

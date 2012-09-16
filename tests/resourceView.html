@@ -27,27 +27,14 @@
 			minTime: 7,
 			maxTime:17,
 			selectHelper: true,
-			resources: [
-				{
-					name: 'Resource Name 2',
-					id:	'resource2'
-				},
-				{
-					name: 'Resource Name 1',
-					id:	'resource1'
-				},
-				{
-					name: 'Resource Name 3',
-					id:	'resource3'
-				}
-			],
+			resources: 'json-resources.php',
 			events: [
 				{
 					title: 'Meeting',
 					start: new Date(y, m, d, 10, 30),
 					end: new Date(y, m, d+4, 11, 00),
 					allDay: false,
-					resource: 'resource1'
+					resource: ['resource1','resource3']
 				},
 					{
 					title: 'All Day Event',

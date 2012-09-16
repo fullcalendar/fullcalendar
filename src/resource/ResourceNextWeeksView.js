@@ -16,7 +16,7 @@ function ResourceNextWeeksView(element, calendar) {
 	var opt = t.opt;
 	var renderBasic = t.renderBasic;
 	var formatDates = calendar.formatDates;
-	
+	var getResources = t.getResources;
 	
 	
 	function render(date, delta) {
@@ -42,7 +42,7 @@ function ResourceNextWeeksView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(opt('resources').length, opt('resources').length, weekends ? opt('numberOfWeeks') * 7 : opt('numberOfWeeks') * 5, false);
+		renderBasic(getResources.length, getResources.length, weekends ? opt('numberOfWeeks') * 7 : opt('numberOfWeeks') * 5, false);
 	}
 	
 	

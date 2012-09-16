@@ -31,23 +31,14 @@
 			minTime: 8,
 			maxTime:16,
 			selectHelper: true,
-			resources: [
-				{
-					name: 'Resource 2',
-					id:	'resource2'
-				},
-				{
-					name: 'Resource 1',
-					id:	'resource1'
-				}
-			],
+			resources: 'json-resources.php',
 			events: [
 				{
 					title: 'Lunch 12.15-14.45',
 					start: new Date(y, m, d, 12, 15),
 					end: new Date(y, m, d, 14, 45),
 					allDay: false,
-					resource: 'resource1'
+					resource: ['resource1','resource2']
 				},				
 				{
 					title: 'Meeting',

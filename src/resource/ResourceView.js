@@ -32,7 +32,7 @@ function ResourceView(element, calendar, viewName) {
 	t.allDayBounds = allDayBounds;
 	t.getRowCnt = function() { return rowCnt };
 	t.getColCnt = function() { return colCnt };
-	t.getResources = function() { return opt('resources') };
+	t.getResources = calendar.fetchResources();
 	t.getColWidth = function() { return colWidth };
 	t.getViewName = function() { return viewName };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
@@ -67,7 +67,7 @@ function ResourceView(element, calendar, viewName) {
 	var viewHeight;
 	var colWidth;
 	
-	var rowCnt, colCnt, resources;
+	var rowCnt, colCnt, getResources;
 	var coordinateGrid;
 	var hoverListener;
 	var colContentPositions;
@@ -126,7 +126,7 @@ function ResourceView(element, calendar, viewName) {
 		var contentClass = tm + "-widget-content";
 		var i, j, id, resourceName;
 		var table;
-		var resources = opt('resources');
+		var resources = t.getResources;
 		s =
 			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
 			"<thead>" +

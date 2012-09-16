@@ -14,7 +14,7 @@ function ResourceWeekView(element, calendar) {
 	var opt = t.opt;
 	var renderBasic = t.renderBasic;
 	var formatDates = calendar.formatDates;
-	
+	var getResources = t.getResources;
 	
 	
 	function render(date, delta) {
@@ -39,7 +39,7 @@ function ResourceWeekView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(opt('resources').length, opt('resources').length, weekends ? 7 : 5, false);
+		renderBasic(getResources.length, getResources.length, weekends ? 7 : 5, false);
 	}
 	
 	

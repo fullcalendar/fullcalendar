@@ -14,7 +14,7 @@ function ResourceMonthView(element, calendar) {
 	var opt = t.opt;
 	var renderBasic = t.renderBasic;
 	var formatDates = calendar.formatDates;
-	
+	var getResources = t.getResources;
 	
 	
 	function render(date, delta) {
@@ -42,7 +42,7 @@ function ResourceMonthView(element, calendar) {
 		t.visStart = visStart;
 		t.visEnd = visEnd;
 		var cols = Math.round((visEnd - visStart) / (DAY_MS));
-		renderBasic(opt('resources').length, opt('resources').length, cols, false);
+		renderBasic(getResources.length, getResources.length, cols, false);
 	}
 	
 	
