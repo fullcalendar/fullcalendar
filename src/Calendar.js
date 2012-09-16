@@ -332,6 +332,22 @@ function Calendar(element, options, eventSources, resourceSources) {
 	
 	function refetchResources() {
 		fetchResources(false);
+		
+		// we have to destroy all view instances and recreate current one
+		viewInstances = [];
+		
+		// remove current view from display
+		currentView.element.remove();
+		
+		// create current view again
+		currentView = viewInstances[currentView.name] = new fcViews[currentView.name](
+					newViewElement = absoluteViewElement =
+						$("<div class='fc-view fc-view-" + currentView.name + "' style='position:absolute'/>")
+							.appendTo(content),
+					t // the calendar object
+				);
+		// let's render the new view		
+		renderView();
 	}
 	
 	// called when event data arrives
