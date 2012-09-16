@@ -139,7 +139,7 @@ function ResourceEventRenderer() {
 					if (cell) {
 						//setOverflowHidden(true);
 						resourceDelta = rowDelta * (opt('isRTL') ? -1 : 1);
-						resources = opt('resources');
+						resources = t.getResources;
 						newResourceId = resources[cell.row].id; 
 						
 						if (viewName == 'resourceDay') {
