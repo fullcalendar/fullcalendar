@@ -149,9 +149,6 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 		if (s.match(/^\d+(\.\d+)?$/)) { // a UNIX timestamp
 			return new Date(parseFloat(s) * 1000);
 		}
-		if (s.match(/^\/Date\([0-9]+\)\/$/)) { // a .NET Json serializaed date
-		    return new Date(s.match(/[0-9]+/));
-		}
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
 		}
