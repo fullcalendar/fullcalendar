@@ -10,7 +10,8 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
-	
+    timeline: true,
+
 	// editing
 	//editable: false,
 	//disableDragging: false,
@@ -28,17 +29,21 @@ var defaults = {
 	titleFormat: {
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
-		day: 'dddd, MMM d, yyyy'
+		day: 'dddd, MMM d, yyyy',
+        agenda: 'dddd, d MMM yyyy'
 	},
 	columnFormat: {
 		month: 'ddd',
 		week: 'ddd M/d',
-		day: 'dddd M/d'
+		day: 'dddd M/d',
+        agenda: 'dddd, d MMM'
 	},
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
 	},
-	
+    dateFormat: { // for event elements
+        '': 'ddd MMM d' // default
+    },
 	// locale
 	isRTL: false,
 	firstDay: 0,
@@ -54,7 +59,8 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
-		day: 'day'
+		day: 'day',
+        agenda: 'agenda'
 	},
 	
 	// jquery-ui theming
