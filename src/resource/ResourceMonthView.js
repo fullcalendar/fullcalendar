@@ -47,7 +47,7 @@ function ResourceMonthView(element, calendar) {
 		if(!weekends) {
 			// Drop out weekends from cols
 			var weekendCnt = 0;
-			for(i=1; i<=cols; i++) {
+			for(var i=1; i<=cols; i++) {
 				weekendTestDate = addDays(cloneDate(visStart), i);
 				if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
 					weekendCnt++;

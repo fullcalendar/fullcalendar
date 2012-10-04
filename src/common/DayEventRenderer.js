@@ -174,7 +174,7 @@ function DayEventRenderer() {
 						weekendSumColStart=0	
 						weekendSumColEnd=0
 						
-						for(j=0; j<=leftCol; j++) {
+						for(var j=0; j<=leftCol; j++) {
 							weekendTestDate = addDays(cloneDate(t.visStart), j);
 							
 							if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {

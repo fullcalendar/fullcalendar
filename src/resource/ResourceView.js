@@ -365,8 +365,8 @@ function ResourceView(element, calendar, viewName) {
 				
 				if(!opt('weekends')) {
 					// Drop weekends off
-					var weekendSumColStart=0				
-					for(i=0; i<=colStart; i++) {
+					var weekendSumColStart=0, weekendTestDate;				
+					for(var i=0; i<=colStart; i++) {
 						weekendTestDate = addDays(cloneDate(t.visStart), i);
 						
 						if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
@@ -562,7 +562,7 @@ function ResourceView(element, calendar, viewName) {
 		else {	
 			if (!opt('weekends')) {
 				// no weekends
-				var dateTest;
+				var dateTest, i;
 
 				for (i=0; i <= col; i++) {
 					dateTest = addDays(cloneDate(t.visStart), i);

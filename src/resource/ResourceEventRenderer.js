@@ -122,7 +122,7 @@ function ResourceEventRenderer() {
 	
 	function draggableResourceEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
-		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, viewName = getViewName(), weekendTestDate, daysToAdd, daysToDel, dayDeltaStart, dayDeltaEnd;
+		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, viewName = getViewName(), weekendTestDate, daysToAdd, daysToDel, dayDeltaStart, dayDeltaEnd, i;
 		eventElement.draggable({
 			zIndex: 9,
 			delay: 50,
@@ -282,12 +282,14 @@ function ResourceEventRenderer() {
 			var dis = rtl ? -1 : 1;
 			var dit = rtl ? colCnt-1 : 0;
 			var elementTop = element.css('top');
-			var dayDelta;
+			var dayDelta, dayDeltaStart, dayDeltaEnd;
 			var minuteDelta;
 			var helpers;
 			var eventCopy = $.extend({}, event);
 			var minCell = dateCell(event.start);
 			var newEnd;
+			var weekendTestDate;
+			
 			clearSelection();
 			$('body')
 				.css('cursor', direction + '-resize')
@@ -308,7 +310,7 @@ function ResourceEventRenderer() {
 						// If weekends is set to false, add or remove days from dayDelta
 						if (!opt('weekends') && (dayDelta > 0 || dayDelta < 0)) {
 							if (dayDelta > 0) {
-								for(i=1; i<=dayDeltaEnd; i++) {
+								for(var i=1; i<=dayDeltaEnd; i++) {
 									weekendTestDate = addDays(cloneDate(event.end), i);
 									if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd++;
 								}
@@ -361,15 +363,15 @@ function ResourceEventRenderer() {
 					if (!opt('weekends')) {
 						// We have to add or remove days from event.end. Is there a better way?
 						if (dayDelta > 0) {
-							daysToAdd = 0;
-							for(i=1; i<=dayDelta+daysToAdd; i++) {
+							var daysToAdd = 0;
+							for(var i=1; i<=dayDelta+daysToAdd; i++) {
 								weekendTestDate = addDays(cloneDate(event.end), i);
 								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToAdd++;
 							}
 							if (daysToAdd > 0) event.end = addDays(cloneDate(event.end), daysToAdd, true);
 						}
 						else {
-							daysToDel = 0;
+							var daysToDel = 0;
 							for(i=-1; i>=dayDelta+daysToDel; i--) {
 								weekendTestDate = addDays(cloneDate(event.end), i);
 								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToDel--;
