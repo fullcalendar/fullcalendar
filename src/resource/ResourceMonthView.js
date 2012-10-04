@@ -32,6 +32,7 @@ function ResourceMonthView(element, calendar) {
 			skipWeekend(visStart);
 			skipWeekend(visEnd, -1, true);
 		}
+
 		t.title = formatDates(
 			visStart,
 			addDays(cloneDate(visEnd), -1),
@@ -42,6 +43,19 @@ function ResourceMonthView(element, calendar) {
 		t.visStart = visStart;
 		t.visEnd = visEnd;
 		var cols = Math.round((visEnd - visStart) / (DAY_MS));
+		var weekendTestDate;
+		if(!weekends) {
+			// Drop out weekends from cols
+			var weekendCnt = 0;
+			for(i=1; i<=cols; i++) {
+				weekendTestDate = addDays(cloneDate(visStart), i);
+				if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+					weekendCnt++;
+				}
+			}
+			cols -= weekendCnt;
+		}
+		
 		renderBasic(getResources.length, getResources.length, cols, false);
 	}
 	

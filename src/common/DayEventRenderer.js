@@ -135,6 +135,7 @@ function DayEventRenderer() {
 		var skinCss;
 		var html = '';
 		var viewName = getViewName();
+		var weekends = opt('weekends'), weekendTestDate, weekendSumColStart, weekendSumColEnd;
 
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
@@ -164,19 +165,48 @@ function DayEventRenderer() {
 				}
 				
 				if (viewName == 'resourceMonth') {
-					// hack for resourceMonth view
-					// What is we have view which lists 4 week from now on, how can we get right columns?
+					// for resourceMonth view
 					leftCol = seg.start.getDate()-1;
 					rightCol = seg.end.getDate()-2;
 
+					if(!weekends) {
+						// Drop out weekends
+						weekendSumColStart=0	
+						weekendSumColEnd=0
+						
+						for(j=0; j<=leftCol; j++) {
+							weekendTestDate = addDays(cloneDate(t.visStart), j);
+							
+							if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+								weekendSumColStart++;
+							}
+						}
+						leftCol -= weekendSumColStart;
+						
+						for(j=0; j<=rightCol; j++) {
+							weekendTestDate = addDays(cloneDate(t.visStart), j);
+							
+							if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+								weekendSumColEnd++;
+							}
+						}
+						rightCol -= weekendSumColEnd;
+					}
+					
 					if(rightCol < 0) {
 						// end is in the next month so rightCol is the last column
 						rightCol = getColCnt()-1;
 					}
 				}
 				else if (viewName == 'resourceNextWeeks') {
+					
 					leftCol = dateCell(seg.start).col;
 					rightCol = dateCell(seg.end).col-1;
+					if(!weekends) {
+						leftCol = dateCell(seg.start).col;
+						rightCol = dateCell(addDays(cloneDate(seg.end),-1)).col;
+					}
+					
 				}
 				else if (viewName == 'resourceDay') {
 					// hack for resourceDay view

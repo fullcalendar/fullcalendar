@@ -206,10 +206,13 @@ function ResourceView(element, calendar, viewName) {
 		var cell;
 		var date;
 		var row;
-	
+		var weekendTester;
+		var indexCorrecter=0;
+		var weekends = opt('weekends');
 		headCells.each(function(i, _cell) {
 			cell = $(_cell);
 			date = indexDate(i);
+
 			cell.html(formatDate(date, colFormat));
 			if (date.getDay() == 0 || date.getDay() == 6) {
 				cell.addClass('fc-weekend');
@@ -221,10 +224,24 @@ function ResourceView(element, calendar, viewName) {
 			setDayID(cell, i);
 		});
 		
+		indexCorrecter=0;
 		bodyCells.each(function(i, _cell) {
 			cell = $(_cell);
+			if(!weekends) {
+				i+=indexCorrecter;
+				weekendTester = addDays(cloneDate(t.visStart), i);
+				if(weekendTester.getDay() == 0) {
+					indexCorrecter++;
+					i++;
+				}
+				else if(weekendTester.getDay() == 6) {
+					indexCorrecter+=2;
+					i+=2;
+				}
+			}
+			
 			date = indexDate(i);
-
+			
 			if (+date == +today) {
 				cell.addClass(tm + '-state-highlight fc-today');
 			}else{
@@ -324,6 +341,9 @@ function ResourceView(element, calendar, viewName) {
 		if (viewName == 'resourceDay') {
 			rowEnd = addMinutes(cloneDate(rowStart), opt('slotMinutes')*colCnt);
 		}
+		else if (!opt('weekends')) {
+			rowEnd = cloneDate(t.visEnd);
+		}
 
 		var stretchStart = new Date(Math.max(rowStart, overlayStart));
 		var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));
@@ -341,6 +361,29 @@ function ResourceView(element, calendar, viewName) {
 				}else{
 					colStart = dayDiff(stretchStart, rowStart);
 					colEnd = dayDiff(stretchEnd, rowStart);
+				}
+				
+				if(!opt('weekends')) {
+					// Drop weekends off
+					var weekendSumColStart=0				
+					for(i=0; i<=colStart; i++) {
+						weekendTestDate = addDays(cloneDate(t.visStart), i);
+						
+						if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+							weekendSumColStart++;
+						}
+					}
+					colStart -= weekendSumColStart;
+					
+					var weekendSumColEnd=0
+					for(i=0; i<=colEnd-1; i++) {
+						weekendTestDate = addDays(cloneDate(t.visStart), i);
+						
+						if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+							weekendSumColEnd++;
+						}
+					}
+					colEnd -= weekendSumColEnd;
 				}
 			}
 			
@@ -482,6 +525,7 @@ function ResourceView(element, calendar, viewName) {
 			year = date.getFullYear();
 			month = date.getMonth();
 			day = date.getDate();
+
 			for (var i=0; i < colCnt; i++) {
 				cmpDate = _cellDate(i);
 				cmpYear = cmpDate.getFullYear();
@@ -515,14 +559,28 @@ function ResourceView(element, calendar, viewName) {
 		if (viewName == 'resourceDay') {
 			return addMinutes(cloneDate(t.visStart), col*opt('slotMinutes'));
 		}
-		else {
-			return addDays(cloneDate(t.visStart), col*dis+dit);
+		else {	
+			if (!opt('weekends')) {
+				// no weekends
+				var dateTest;
+
+				for (i=0; i <= col; i++) {
+					dateTest = addDays(cloneDate(t.visStart), i);
+					
+					if (dateTest.getDay() == 6 || dateTest.getDay() == 0) {
+						// this sunday or saturday
+						col++;
+					}
+				}
+			}
+
+			return addDays(cloneDate(t.visStart), col, true);
 		}
 	}
 	
 	
 	function indexDate(index) {
-		return _cellDate(index%colCnt);
+		return _cellDate(index);
 	}
 	
 	function dayOfWeekCol(dayOfWeek) {

@@ -194,7 +194,7 @@ function View(element, calendar, viewName) {
 			allDay,
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
-				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay,resource.oldId);
 				reportEventChange(eventId);
 			},
 			ev,

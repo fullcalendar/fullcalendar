@@ -62,16 +62,14 @@ function ResourceEventRenderer() {
 			colCnt = getColCnt(),
 			resources = t.getResources,
 			d1 = cloneDate(t.visStart),
-			d2 = addDays(cloneDate(d1), colCnt),
+			d2 = cloneDate(t.visEnd),
 			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
 			k, seg, currentResource, viewName = getViewName(),
 			l, segs=[];
-			
-		if (viewName == 'resourceDay') {
-			d2 = cloneDate(t.visEnd);
-			
+		
+		if (viewName == 'resourceDay') {			
 			visEventsEnds = $.map(events, function(event) {
 				return event.end || addDays(event.start, 1);
 			});
@@ -124,7 +122,7 @@ function ResourceEventRenderer() {
 	
 	function draggableResourceEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
-		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, viewName = getViewName();
+		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, viewName = getViewName(), weekendTestDate, daysToAdd, daysToDel, dayDeltaStart, dayDeltaEnd;
 		eventElement.draggable({
 			zIndex: 9,
 			delay: 50,
@@ -138,7 +136,7 @@ function ResourceEventRenderer() {
 					clearOverlays();
 					if (cell) {
 						//setOverflowHidden(true);
-						resourceDelta = rowDelta * (opt('isRTL') ? -1 : 1);
+						resourceDelta = rowDelta;
 						resources = t.getResources;
 						newResourceId = resources[cell.row].id; 
 						
@@ -152,10 +150,37 @@ function ResourceEventRenderer() {
 							);
 						}
 						else {
-							dayDelta = colDelta * (opt('isRTL') ? -1 : 1);			
+							dayDelta = dayDeltaStart = dayDeltaEnd = colDelta * (opt('isRTL') ? -1 : 1);	
+
+							// If weekends are not within, add or remove days from dayDelta. Is there a better way?
+							if (!opt('weekends') && (dayDelta > 0 || dayDelta < 0)) {
+								if (dayDelta > 0) {
+									for(i=1; i<=dayDeltaStart; i++) {
+										weekendTestDate = addDays(cloneDate(event.start), i);
+										if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaStart++;
+									}
+									
+									for(i=1; i<=dayDeltaEnd; i++) {
+										weekendTestDate = addDays(cloneDate(event.end), i);
+										if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd++;
+									}
+								}
+								else {
+									for(i=-1; i>=dayDeltaStart; i--) {
+										weekendTestDate = addDays(cloneDate(event.start), i);
+										if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaStart--;
+									}
+									
+									for(i=-1; i>=dayDeltaEnd; i--) {
+										weekendTestDate = addDays(cloneDate(event.end), i);
+										if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd--;
+									}
+								}
+							}	
+
 							renderDayOverlay(
-								addDays(cloneDate(event.start), dayDelta),
-								addDays(exclEndDay(event), dayDelta), 
+								addDays(cloneDate(event.start), dayDeltaStart),
+								addDays(exclEndDay(event), dayDeltaEnd), 
 								false,
 								cell.row
 							);
@@ -176,6 +201,39 @@ function ResourceEventRenderer() {
 					eventDrop(this, event, 0, minuteDelta, event.allDay, ev, ui, newResourceId);
 				}
 				else if (dayDelta || resourceDelta) {
+					if (!opt('weekends')) {
+						// We have to add or remove days from event.start and event.end. Is there a better way?
+						if (dayDelta > 0) {
+							daysToAdd = 0;
+							for(i=1; i<=dayDelta+daysToAdd; i++) {
+								weekendTestDate = addDays(cloneDate(event.start), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToAdd++;
+							}
+							if (daysToAdd > 0) event.start = addDays(cloneDate(event.start), daysToAdd, true);
+							
+							daysToAdd = 0;
+							for(i=1; i<=dayDelta+daysToAdd; i++) {
+								weekendTestDate = addDays(cloneDate(event.end), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToAdd++;
+							}
+							if (daysToAdd > 0) event.end = addDays(cloneDate(event.end), daysToAdd, true);
+						}
+						else {
+							daysToDel = 0;
+							for(i=-1; i>=dayDelta+daysToDel; i--) {
+								weekendTestDate = addDays(cloneDate(event.start), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToDel--;
+							}
+							if (daysToDel < 0) event.start = addDays(cloneDate(event.start), daysToDel, true);
+
+							daysToDel = 0;
+							for(i=-1; i>=dayDelta+daysToDel; i--) {
+								weekendTestDate = addDays(cloneDate(event.end), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToDel--;
+							}
+							if (daysToDel < 0) event.end = addDays(cloneDate(event.end), daysToDel, true);
+						}
+					}
 					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui, newResourceId);
 				} else{
 					eventElement.css('filter', ''); // clear IE opacity side-effects
@@ -229,6 +287,7 @@ function ResourceEventRenderer() {
 			var helpers;
 			var eventCopy = $.extend({}, event);
 			var minCell = dateCell(event.start);
+			var newEnd;
 			clearSelection();
 			$('body')
 				.css('cursor', direction + '-resize')
@@ -244,8 +303,25 @@ function ResourceEventRenderer() {
 						var newEnd = addMinutes(eventEnd(event), minuteDelta, true);
 					}
 					else {
-						dayDelta = (7 + c*dis+dit) - (7 + origCell.col*dis+dit);
-						var newEnd = addDays(eventEnd(event), dayDelta, true);
+						dayDelta = dayDeltaStart = dayDeltaEnd = (7 + c*dis+dit) - (7 + origCell.col*dis+dit);
+						
+						// If weekends is set to false, add or remove days from dayDelta
+						if (!opt('weekends') && (dayDelta > 0 || dayDelta < 0)) {
+							if (dayDelta > 0) {
+								for(i=1; i<=dayDeltaEnd; i++) {
+									weekendTestDate = addDays(cloneDate(event.end), i);
+									if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd++;
+								}
+							}
+							else {
+								for(i=-1; i>=dayDeltaEnd; i--) {
+									weekendTestDate = addDays(cloneDate(event.end), i);
+									if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd--;
+								}
+							}
+						}	
+						newEnd = addDays(eventEnd(event), dayDeltaEnd, true);
+						
 					}
 					
 					if (dayDelta || minuteDelta) {
@@ -280,7 +356,28 @@ function ResourceEventRenderer() {
 				$('body').css('cursor', '');
 				hoverListener.stop();
 				clearOverlays();
+
 				if (dayDelta) {
+					if (!opt('weekends')) {
+						// We have to add or remove days from event.end. Is there a better way?
+						if (dayDelta > 0) {
+							daysToAdd = 0;
+							for(i=1; i<=dayDelta+daysToAdd; i++) {
+								weekendTestDate = addDays(cloneDate(event.end), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToAdd++;
+							}
+							if (daysToAdd > 0) event.end = addDays(cloneDate(event.end), daysToAdd, true);
+						}
+						else {
+							daysToDel = 0;
+							for(i=-1; i>=dayDelta+daysToDel; i--) {
+								weekendTestDate = addDays(cloneDate(event.end), i);
+								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToDel--;
+							}
+							if (daysToDel < 0) event.end = addDays(cloneDate(event.end), daysToDel, true);
+						}
+					}
+				
 					eventResize(this, event, dayDelta, 0, ev);
 					// event redraw will clear helpers
 				}
