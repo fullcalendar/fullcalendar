@@ -226,20 +226,7 @@ function ResourceView(element, calendar, viewName) {
 		
 		indexCorrecter=0;
 		bodyCells.each(function(i, _cell) {
-			cell = $(_cell);
-			if(!weekends) {
-				i+=indexCorrecter;
-				weekendTester = addDays(cloneDate(t.visStart), i);
-				if(weekendTester.getDay() == 0) {
-					indexCorrecter++;
-					i++;
-				}
-				else if(weekendTester.getDay() == 6) {
-					indexCorrecter+=2;
-					i+=2;
-				}
-			}
-			
+			cell = $(_cell);		
 			date = indexDate(i);
 			
 			if (+date == +today) {
@@ -580,7 +567,7 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function indexDate(index) {
-		return _cellDate(index);
+		return _cellDate(index%colCnt);
 	}
 	
 	function dayOfWeekCol(dayOfWeek) {
