@@ -183,6 +183,8 @@ function DayEventRenderer() {
 						}
 						leftCol -= weekendSumColStart;
 						
+						if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
+						
 						for(j=0; j<=rightCol; j++) {
 							weekendTestDate = addDays(cloneDate(t.visStart), j);
 							
@@ -205,8 +207,8 @@ function DayEventRenderer() {
 					if(!weekends) {
 						leftCol = dateCell(seg.start).col;
 						rightCol = dateCell(addDays(cloneDate(seg.end),-1)).col;
+						if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
 					}
-					
 				}
 				else if (viewName == 'resourceDay') {
 					// hack for resourceDay view

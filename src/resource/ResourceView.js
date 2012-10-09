@@ -435,11 +435,14 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function dragStop(_dragElement, ev, ui) {
-		var cell = hoverListener.stop();
+		var cell = hoverListener.stop(),
+		resources = t.getResources,
+		newResource = resources[cell.row]; 
+		
 		clearOverlays();
 		if (cell) {
 			var d = cellDate(cell);
-			trigger('drop', _dragElement, d, true, ev, ui);
+			trigger('drop', _dragElement, d, true, ev, ui, newResource);
 		}
 	}
 	
@@ -503,7 +506,7 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function dateCell(date) {
-		var col,year,month,day,cmpDate,cmpYear,cmpMonth,cmpDay;
+		var col,year,month,day,cmpDate,cmpYear,cmpMonth,cmpDay, weekends = opt('weekends');
 		if (viewName == 'resourceDay') {
 			col = timeOfDayCol(date);
 		}
@@ -521,6 +524,11 @@ function ResourceView(element, calendar, viewName) {
 				
 				if (year == cmpYear && month == cmpMonth && day == cmpDay) {
 					col = i;
+					break;
+				}
+				else if (cmpDate > date && !weekends) {
+					// No weekends in the calendar, this must be the right column!
+					col = i-1;
 					break;
 				}
 			};
