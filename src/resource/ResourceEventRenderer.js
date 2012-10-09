@@ -69,7 +69,7 @@ function ResourceEventRenderer() {
 			k, seg, currentResource, viewName = getViewName(),
 			l, segs=[],
 			weekends = opt('weekends'),
-			startDay, endDay;
+			startDay, endDay, startDate, endDate;
 		
 		if (viewName == 'resourceDay') {			
 			visEventsEnds = $.map(events, function(event) {
@@ -95,13 +95,21 @@ function ResourceEventRenderer() {
 					
 					for (l=0; l<seg.event.resource.length; l++) {
 						startDay = seg.event.start.getDay();
-						if (seg.event.end == null) seg.event.end = cloneDate(seg.event.start, true);
-						endDay = seg.event.end.getDay();
+						startDate = seg.event.start.getDate();
+						if (seg.event.end == null) {
+							endDay = seg.event.start.getDay();
+							endDate = cloneDate(seg.event.start, true).getDate();
+						}
+						else {
+							endDay = seg.event.end.getDay();
+							endDate = seg.event.end.getDate();
+						}
+						
 						// skip if weekends is set to false and this event is on weekend
 						if(!weekends && 
 							(startDay == 6 || startDay == 0) && 
 							(endDay == 6 || endDay == 0) && 
-							(seg.event.start.getDate() == seg.event.end.getDate() || addDays(cloneDate(seg.event.start),1).getDate() == seg.event.end.getDate())
+							(startDate == endDate || addDays(cloneDate(seg.event.start),1).getDate() == endDate)
 						) continue;
 
 					
