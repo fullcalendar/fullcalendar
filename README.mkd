@@ -1,5 +1,5 @@
 
-FullCalendar - Full-sized drag & drop event calendar
+FullCalendar ResourceViews - Full-sized drag & drop event calendar with horizontal multiuser views
 ====================================================
 
 Development and testing
