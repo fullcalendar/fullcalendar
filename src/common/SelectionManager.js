@@ -92,7 +92,7 @@ function SelectionManager() {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0],(viewName == 'resourceDay' ? false : true), ev);
+						reportDayClick(dates[0],(viewName == 'resourceDay' ? false : true), ev, resources[row]);
 					}
 					reportSelection(dates[0], (viewName == 'resourceDay' ? addMinutes(dates[1], opt('slotMinutes')) : dates[1]), (viewName == 'resourceDay' ? false : true), ev, resources[row]);
 				}

@@ -412,10 +412,10 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	
-	function reportDayClick(date, allDay, ev) {
+	function reportDayClick(date, allDay, ev, resource) {
 		var cell = dateCell(date);
-		var _element = bodyCells[cell.row*colCnt + cell.col];
-		trigger('dayClick', _element, date, allDay, ev);
+		var _element = bodyCells[cell.col];
+		trigger('dayClick', _element, date, allDay, ev, resource);
 	}
 	
 	
