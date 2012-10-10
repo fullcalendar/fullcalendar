@@ -1,6 +1,7 @@
 version 1.5.3.1 (10/10/12)
 	- Version numbering for resourceviews: first is fullcalendar version, then resource views version
 	- Fixed event dropping revert function
+	- dayclick callback returns resource information
 
 version 1.5.3 (2/6/12)
 	- fixed dragging issue with jQuery UI 1.8.16 (issue 1168)
