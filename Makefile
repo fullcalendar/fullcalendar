@@ -102,7 +102,7 @@ zip:
 	@mv ${BUILD_DIR}/fullcalendar-${VER} ${BUILD_DIR}/fullcalendar
 	
 	@mkdir -p ${DIST_DIR}
-	@mv ${BUILD_DIR}/fullcalendar-${VER}.zip ${DIST_DIR}
+	@mv ${BUILD_DIR}/fullcalendar-${VER}.zip ${DIST_DIR}/fullcalendar-resourceviews-${VER}.zip
 	@echo "done."
 
 clean:

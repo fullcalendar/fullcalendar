@@ -184,6 +184,7 @@ function View(element, calendar, viewName) {
 	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui, resource) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
+		var oldResourceId = event.resource;
 		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay, resource);
 		trigger(
 			'eventDrop',
@@ -194,7 +195,7 @@ function View(element, calendar, viewName) {
 			allDay,
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
-				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay,resource.oldId);
+				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay,oldResourceId);
 				reportEventChange(eventId);
 			},
 			ev,
