@@ -554,9 +554,7 @@ function AgendaEventRenderer() {
 		var slotDelta, prevSlotDelta;
 		var slotHeight = getSlotHeight();
 		eventElement.resizable({
-			handles: {
-				s: 'div.ui-resizable-s'
-			},
+			handles: 's',
 			grid: slotHeight,
 			start: function(ev, ui) {
 				slotDelta = prevSlotDelta = 0;
