@@ -559,9 +559,7 @@ function AgendaEventRenderer() {
 		var granularityHeight = getGranularityHeight();
 		var granularityMinutes = getGranularityMinutes();
 		eventElement.resizable({
-			handles: {
-				s: 'div.ui-resizable-s'
-			},
+			handles: 's',
 			grid: granularityHeight,
 			start: function(ev, ui) {
 				granularityDelta = prevGranularityDelta = 0;
