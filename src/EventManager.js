@@ -307,14 +307,14 @@ function EventManager(options, _sources) {
 	
 	function pushLoading() {
 		if (!loadingLevel++) {
-			trigger('loading', null, true);
+			trigger('loading', null, true, getView());
 		}
 	}
 	
 	
 	function popLoading() {
 		if (!--loadingLevel) {
-			trigger('loading', null, false);
+			trigger('loading', null, false, getView());
 		}
 	}
 	
