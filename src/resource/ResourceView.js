@@ -435,12 +435,10 @@ function ResourceView(element, calendar, viewName) {
 	
 	
 	function dragStop(_dragElement, ev, ui) {
-		var cell = hoverListener.stop(),
-		resources = t.getResources,
-		newResource = resources[cell.row]; 
-		
+		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
+			var resources = t.getResources, newResource = resources[cell.row];
 			var d = cellDate(cell);
 			trigger('drop', _dragElement, d, true, ev, ui, newResource);
 		}
