@@ -1,3 +1,8 @@
+version 1.5.3.2 (10/21/12)
+	- Fixed a bug where day was not calculated correctly when used weekends false in resourceDay view
+	- Fixed a bug where external events broke if were dropped outside the calendar element
+	- Loading callback function returns view object now
+
 version 1.5.3.1 (10/10/12)
 	- Version numbering for resourceviews: first is fullcalendar version, then resource views version
 	- Fixed event dropping revert function
