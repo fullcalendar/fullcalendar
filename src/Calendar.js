@@ -319,6 +319,7 @@ function Calendar(element, options, eventSources, resourceSources) {
 	function updateEvents(forceRender) {
 		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
 			refetchEvents();
+			if (options['refetchResources']) refetchResources(); // refetch resources every time new events are loaded
 		}
 		else if (forceRender) {
 			rerenderEvents();
@@ -331,8 +332,8 @@ function Calendar(element, options, eventSources, resourceSources) {
 	}
 	
 	function refetchResources() {
-		fetchResources(false);
-		
+		fetchResources(false, currentView);
+
 		// we have to destroy all view instances and recreate current one
 		viewInstances = [];
 		

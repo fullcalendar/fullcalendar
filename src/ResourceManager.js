@@ -10,7 +10,7 @@ function ResourceManager(options) {
 	
     // exports
     t.fetchResources = fetchResources;
-    
+
     // local
     var sources = [];  // source array
     var cache;  // cached resources
@@ -57,7 +57,7 @@ function ResourceManager(options) {
      * Fetch resources from source array
      * ----------------------------------------------------------------
      */
-    function fetchResources(useCache) {
+    function fetchResources(useCache, currentView) {
         // if useCache is not defined, default to true
         useCache = typeof useCache !== 'undefined' ? useCache : true;
         
@@ -69,7 +69,7 @@ function ResourceManager(options) {
             cache = [];
             var len = sources.length;
             for (var i = 0; i < len; i++) {
-                var resources = _fetchResourceSource(sources[i]);
+                var resources = _fetchResourceSource(sources[i], currentView);
                 cache = cache.concat(resources);
             }
             return cache;
@@ -85,8 +85,9 @@ function ResourceManager(options) {
      * object, return it as is.
      * ----------------------------------------------------------------
      */
-    function _fetchResourceSource(source) {
+    function _fetchResourceSource(source, currentView) {
         var resources = source.resources;
+       
         if (resources) {
             if ($.isFunction(resources)) {
                 return resources();
@@ -94,8 +95,20 @@ function ResourceManager(options) {
         } else {
             var url = source.url;
             if (url) {
-                $.ajax({
-                    url: url,
+                var data={};
+                if (typeof currentView == 'object') {
+                    var startParam = options.startParam;
+                    var endParam = options.endParam;
+                    if (startParam) {
+                        data[startParam] = Math.round(+currentView.visStart / 1000);
+                    }
+                    if (endParam) {
+                        data[endParam] = Math.round(+currentView.visEnd / 1000);
+                    }
+                }
+
+                $.ajax($.extend({}, source, {
+                    data: data,
                     dataType: 'json',
                     cache: false,
                     success: function(res) {
@@ -106,7 +119,7 @@ function ResourceManager(options) {
                         alert("ajax error getting json from "+url);
                     },
                     async: false  // too much work coordinating callbacks so dumb it down
-                });
+                }));
             }
         }
         return resources;

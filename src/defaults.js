@@ -23,6 +23,9 @@ var defaults = {
 	lazyFetching: true,
 	startParam: 'start',
 	endParam: 'end',
+
+	// resource ajax
+	refetchResources: false,
 	
 	// time formats
 	titleFormat: {
