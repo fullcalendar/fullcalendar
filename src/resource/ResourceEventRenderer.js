@@ -143,22 +143,32 @@ function ResourceEventRenderer() {
 	
 	function draggableResourceEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
-		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources, viewName = getViewName(), weekendTestDate, daysToAdd, daysToDel, dayDeltaStart, dayDeltaEnd, i;
+		var dayDelta, minuteDelta, resourceDelta, newResourceId, resources = t.getResources, viewName = getViewName(), weekendTestDate, daysToAdd, daysToDel, dayDeltaStart, dayDeltaEnd, i;
+		
+		var denyEventDragging = false;
+		$(resources).each(function(i, resource) {
+			if (resource.id == event.resource && resource.readonly) {
+				denyEventDragging = true;
+			} 
+		});
+
 		eventElement.draggable({
 			zIndex: 9,
 			delay: 50,
+			disabled: denyEventDragging,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 				trigger('eventDragStart', eventElement, event, ev, ui);
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
+					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta || resources[cell.row].readonly === true);
+
 					clearOverlays();
-					if (cell) {
+					
+					if (cell && !resources[cell.row].readonly) {
 						//setOverflowHidden(true);
 						resourceDelta = rowDelta;
-						resources = t.getResources;
 						newResourceId = resources[cell.row].id; 
 						
 						if (viewName == 'resourceDay') {
@@ -277,6 +287,16 @@ function ResourceEventRenderer() {
 		var handle = element.find('div.ui-resizable-' + direction);
 		var isResizing = false;
 		
+		// let's check if resource is readonly?
+		var denyEventResizing = false;
+		$(t.getResources).each(function(i, resource) {
+			if (resource.id == event.resource && resource.readonly) {
+				denyEventResizing = true;
+			} 
+		});
+
+		if (denyEventResizing) return false;
+
 		// TODO: look into using jquery-ui mouse widget for this stuff
 		disableTextSelection(element); // prevent native <a> selection for IE
 		element

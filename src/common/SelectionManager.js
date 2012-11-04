@@ -60,6 +60,10 @@ function SelectionManager() {
 	
 	
 	function reportSelection(startDate, endDate, allDay, ev, resource) {
+		if (typeof resource == 'object' && resource.readonly === true) {
+			return false;
+		}
+
 		selected = true;
 		trigger('select', null, startDate, endDate, allDay, ev, '', resource);
 	}
@@ -71,7 +75,8 @@ function SelectionManager() {
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
 		var row;
-		var resources = t.getResources;
+		var resources = t.getResources || [];
+		var resourceRO;
 
 		var viewName = getViewName();
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
@@ -80,7 +85,13 @@ function SelectionManager() {
 			var dates;
 			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellDate/cellIsAllDay info in cell
 				clearSelection();
-				if (cell && cellIsAllDay(cell)) {
+
+				if (cell) {
+					resourceRO = typeof resources[cell.row] == 'object' ? resources[cell.row].readonly : false;
+				}
+				
+
+				if (cell && cellIsAllDay(cell) && resourceRO !== true) {
 					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
 					renderSelection(dates[0], dates[1], (viewName == 'resourceDay' ? false : true), cell.row);
 					row = cell.row;
