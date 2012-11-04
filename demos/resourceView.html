@@ -141,16 +141,9 @@
 					return false;
 				});
 			},
-			height: calcCalendarHeight()
-		});
-		
-		function calcCalendarHeight() {
-			var h = $(window).height() - 40;
-			return h;
-		}
-		
-		$(window).resize(function() {
-			$('#calendar').fullCalendar('option', 'height', calcCalendarHeight());
+			windowResize: function( view ) {
+				calendar.fullCalendar('option', 'height', $(window).height() - 40);
+			}
 		});
 	});
 

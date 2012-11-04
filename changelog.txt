@@ -1,3 +1,9 @@
+version 1.5.3.3 (11/04/12)
+	- Implemented better dynamic calendar height in resourceview demo 
+	- Fixed issue in daySelection when used non resource view.
+	- Added boolean option refetchResources which determines if resources are refetched every time view changes. Default false.
+	- Resource object handles boolean value readonly which determines if resource is readonly. Default false.
+
 version 1.5.3.2 (10/21/12)
 	- Fixed a bug where day was not calculated correctly when used weekends false in resourceDay view
 	- Fixed a bug where external events broke if were dropped outside the calendar element
