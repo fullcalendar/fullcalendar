@@ -1,4 +1,8 @@
 
+version 1.5.4 (9/5/12)
+	- made compatible with jQuery 1.8.* (thx archaeron)
+	- bundled with jQuery 1.8.1 and jQuery UI 1.8.23
+
 version 1.5.3 (2/6/12)
 	- fixed dragging issue with jQuery UI 1.8.16 (issue 1168)
 	- bundled with jQuery 1.7.1 and jQuery UI 1.8.17
