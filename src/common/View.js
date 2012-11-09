@@ -13,6 +13,8 @@ function View(element, calendar, viewName) {
 	//t.setOverflowHidden = setOverflowHidden;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
+	t.isDayEventResizable = isDayEventResizable;
+	t.isSlotEventResizable = isSlotEventResizable;
 	t.reportEvents = reportEvents;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
@@ -69,9 +71,16 @@ function View(element, calendar, viewName) {
 		return isEventEditable(event) && !opt('disableDragging');
 	}
 	
-	
 	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
 		return isEventEditable(event) && !opt('disableResizing');
+	}
+
+	function isDayEventResizable(event) {
+		return isEventResizable(event) && !opt('disableDayEventResizing');
+	}
+	
+	function isSlotEventResizable(event) {
+		return isEventResizable(event) && !opt('disableSlotEventResizing');
 	}
 	
 	

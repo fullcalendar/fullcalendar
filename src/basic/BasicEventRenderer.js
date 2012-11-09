@@ -16,7 +16,7 @@ function BasicEventRenderer() {
 	var trigger = t.trigger;
 	//var setOverflowHidden = t.setOverflowHidden;
 	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
+	var isDayEventResizable = t.isDayEventResizable;
 	var reportEvents = t.reportEvents;
 	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
@@ -82,7 +82,7 @@ function BasicEventRenderer() {
 		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement);
 		}
-		if (seg.isEnd && isEventResizable(event)) {
+		if (seg.isEnd && isDayEventResizable(event)) {
 			resizableDayEvent(event, eventElement, seg);
 		}
 		eventElementHandlers(event, eventElement);

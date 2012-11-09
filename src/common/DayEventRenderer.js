@@ -12,7 +12,7 @@ function DayEventRenderer() {
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
+	var isDayEventResizable = t.isDayEventResizable;
 	var eventEnd = t.eventEnd;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
@@ -191,7 +191,7 @@ function DayEventRenderer() {
 			html +=
 				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</div>";
-			if (seg.isEnd && isEventResizable(event)) {
+			if (seg.isEnd && isDayEventResizable(event)) {
 				html +=
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7

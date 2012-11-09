@@ -17,7 +17,8 @@ function AgendaEventRenderer() {
 	var trigger = t.trigger;
 	//var setOverflowHidden = t.setOverflowHidden;
 	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
+	var isDayEventResizable = t.isDayEventResizable;
+	var isSlotEventResizable = t.isSlotEventResizable;
 	var eventEnd = t.eventEnd;
 	var reportEvents = t.reportEvents;
 	var reportEventClear = t.reportEventClear;
@@ -315,7 +316,7 @@ function AgendaEventRenderer() {
 			"</div>" +
 			"<div class='fc-event-bg'></div>" +
 			"</div>"; // close inner
-		if (seg.isEnd && isEventResizable(event)) {
+		if (seg.isEnd && isSlotEventResizable(event)) {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
 		}
@@ -329,7 +330,7 @@ function AgendaEventRenderer() {
 		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement, seg.isStart);
 		}
-		if (seg.isEnd && isEventResizable(event)) {
+		if (seg.isEnd && isDayEventResizable(event)) {
 			resizableDayEvent(event, eventElement, seg);
 		}
 		eventElementHandlers(event, eventElement);
@@ -342,7 +343,7 @@ function AgendaEventRenderer() {
 		if (isEventDraggable(event)) {
 			draggableSlotEvent(event, eventElement, timeElement);
 		}
-		if (seg.isEnd && isEventResizable(event)) {
+		if (seg.isEnd && isSlotEventResizable(event)) {
 			resizableSlotEvent(event, eventElement, timeElement);
 		}
 		eventElementHandlers(event, eventElement);
