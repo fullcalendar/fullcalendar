@@ -211,6 +211,11 @@ function BasicView(element, calendar, viewName) {
 			}else{
 				cell.removeClass(tm + '-state-highlight fc-today');
 			}
+
+			if (+date < +today) {
+				cell.addClass('fc-pastdate');											}
+			}
+
 			cell.find('div.fc-day-number').text(date.getDate());
 			if (dowDirty) {
 				setDayID(cell, date);
