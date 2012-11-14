@@ -322,6 +322,8 @@ function AgendaView(element, calendar, viewName) {
 			}
 			if (+date < +today) {
 				bodyCell.addClass('fc-pastdate');
+			} else {
+				bodyCell.removeClass('fc-pastdate');
 			}	
 			setDayID(headCell.add(bodyCell), date);
 		}

@@ -214,6 +214,8 @@ function BasicView(element, calendar, viewName) {
 
 			if (+date < +today) {
 				cell.addClass('fc-pastdate');											}
+			} else {
+				cell.removeClass('fc-pastdate');
 			}
 
 			cell.find('div.fc-day-number').text(date.getDate());
