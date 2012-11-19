@@ -68,11 +68,11 @@ function View(element, calendar, viewName) {
 	
 	
 	function isEventDraggable(event) {
-		return isEventEditable(event) && !opt('disableDragging');
+		return isEventEditable(event) && !opt('disableDragging') && !event.disableDragging;
 	}
 	
 	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
-		return isEventEditable(event) && !opt('disableResizing');
+		return isEventEditable(event) && !opt('disableResizing') && !event.disableResizing;
 	}
 
 	function isDayEventResizable(event) {
