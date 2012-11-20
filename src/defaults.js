@@ -38,7 +38,8 @@ var defaults = {
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
 	},
-	
+	hideMultiDayTimeHeader: false,
+
 	// locale
 	isRTL: false,
 	firstDay: 0,
