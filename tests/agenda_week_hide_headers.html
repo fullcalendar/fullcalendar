@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js'></script>
+<!--[[
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.print.css' media='print' />
+<script type='text/javascript' src='../jquery/jquery.js'></script>
+<script type='text/javascript' src='../jquery/jquery-ui.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.min.js'></script>
+]]-->
+<script type='text/javascript'>
+	$(document).ready(function() {
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+
+		var to_day = date.getDay();
+		var monday = new Date();
+		monday.setDate(date.getDate() - to_day + (to_day == 0 ? -6:1));
+
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultView: 'agendaWeek',
+			editable: true,
+			hideMultiDayTimeHeader: true, //option to hide the time header on events that span multiple days in agenda week view
+			//isRTL: true,
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, d),
+					allDay: true
+				},
+				{
+					title: 'Multi All Day Event',
+					start: new Date(y, m, d+1),
+					end: new Date(y, m, d+3),
+					allDay: true
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d+2, 10, 30),
+					allDay: false
+				},
+				{
+					title: 'A Long flight',
+					start: new Date(y, m, d - 1, 10, 30, 0),
+					end: new Date(y, m, d + 1, 7, 0, 0),
+					allDay: false
+				},
+				{
+					title: 'Previous Week Long flight',
+					start: new Date(y, m, monday.getDate()-3, 10, 30, 0), //friday
+					end: new Date(y, m, monday.getDate(), 7, 0, 0), //monday
+					allDay: false
+				}
+			]
+		});
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

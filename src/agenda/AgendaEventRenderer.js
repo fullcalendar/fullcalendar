@@ -280,6 +280,8 @@ function AgendaEventRenderer() {
 		var skinCss = getSkinCss(event, opt);
 		var skinCssAttr = (skinCss ? " style='" + skinCss + "'" : '');
 		var classes = ['fc-event', 'fc-event-skin', 'fc-event-vert'];
+		//middle segment or last segment, everything but first segment
+		var hideTimeHeader = opt('hideMultiDayTimeHeader') && ((!seg.isEnd && !seg.isStart) || (seg.isEnd && !seg.isStart));
 		if (isEventDraggable(event)) {
 			classes.push('fc-event-draggable');
 		}
@@ -304,9 +306,11 @@ function AgendaEventRenderer() {
 			">" +
 			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
-			"<div class='fc-event-time'>" +
-			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
-			"</div>" +
+			( hideTimeHeader ? "" :
+				"<div class='fc-event-time'>" +
+				htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+				"</div>"
+			) +
 			"</div>" +
 			"<div class='fc-event-content'>" +
 			"<div class='fc-event-title'>" +
