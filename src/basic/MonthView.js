@@ -7,7 +7,7 @@ function MonthView(element, calendar) {
 	
 	// exports
 	t.render = render;
-	
+	t.renderAnnotations = function () {};
 	
 	// imports
 	BasicView.call(t, element, calendar, 'month');
