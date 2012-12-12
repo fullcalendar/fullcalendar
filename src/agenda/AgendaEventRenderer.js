@@ -48,7 +48,9 @@ function AgendaEventRenderer() {
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
-	
+
+	var renderTime = t.renderTime;
+	var renderTitle = t.renderTitle;
 	
 	
 	/* Rendering
@@ -264,7 +266,7 @@ function AgendaEventRenderer() {
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time header
 					eventElement.find('div.fc-event-time')
-						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+						.html(renderTime(event, formatDate(event.start, opt('timeFormat')) + ' - ' + event.title), true);
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
@@ -306,12 +308,12 @@ function AgendaEventRenderer() {
 			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-time'>" +
-			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+			renderTime(event, htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))), false) +
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-content'>" +
 			"<div class='fc-event-title'>" +
-			htmlEscape(event.title) +
+			renderTitle(event, htmlEscape(event.title)) +
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-bg'></div>" +
@@ -533,7 +535,7 @@ function AgendaEventRenderer() {
 			if (event.end) {
 				newEnd = addMinutes(cloneDate(event.end), minuteDelta);
 			}
-			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
+			timeElement.html(renderTime(event, formatDates(newStart, newEnd, opt('timeFormat')), false));
 		}
 		function resetElement() {
 			// convert back to original slot-event
@@ -569,12 +571,16 @@ function AgendaEventRenderer() {
 				// don't rely on ui.size.height, doesn't take grid into account
 				slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
 				if (slotDelta != prevSlotDelta) {
-					timeElement.text(
-						formatDates(
-							event.start,
-							(!slotDelta && !event.end) ? null : // no change, so don't display time range
-								addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
-							opt('timeFormat')
+					timeElement.html(
+						renderTime(
+							event,
+							formatDates(
+								event.start,
+								(!slotDelta && !event.end) ? null : // no change, so don't display time range
+									addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
+								opt('timeFormat')
+							),
+							false
 						)
 					);
 					prevSlotDelta = slotDelta;

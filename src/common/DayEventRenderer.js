@@ -6,6 +6,8 @@ function DayEventRenderer() {
 	// exports
 	t.renderDaySegs = renderDaySegs;
 	t.resizableDayEvent = resizableDayEvent;
+	t.renderTime = renderTime;
+	t.renderTitle = renderTitle;
 	
 	
 	// imports
@@ -34,8 +36,6 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
-	
-	
 	
 	/* Rendering
 	-----------------------------------------------------------------------------*/
@@ -185,11 +185,11 @@ function DayEventRenderer() {
 			if (!event.allDay && seg.isStart) {
 				html +=
 					"<span class='fc-event-time'>" +
-					htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+					renderTime(event, htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))), false) +
 					"</span>";
 			}
 			html +=
-				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+				"<span class='fc-event-title'>" + renderTitle(event, htmlEscape(event.title)) + "</span>" +
 				"</div>";
 			if (seg.isEnd && isDayEventResizable(event)) {
 				html +=
@@ -478,6 +478,25 @@ function DayEventRenderer() {
 			
 		});
 	}
-	
+
+	function renderTime(event, defaultTime, timeContainsTitle) {
+		var customRenderTime = opt('renderTime');
+		if(typeof customRenderTime == 'function') {
+			return customRenderTime(event, defaultTime, timeContainsTitle);
+		}
+		else {
+			return defaultTime;
+		}
+	}
+
+	function renderTitle(event, defaultTitle) {
+		var customRenderTitle = opt('renderTitle');
+		if(typeof customRenderTitle == 'function') {
+			return customRenderTitle(event, defaultTitle);
+		}
+		else {
+			return defaultTitle;
+		}
+	}
 
 }
