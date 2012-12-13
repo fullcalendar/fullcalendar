@@ -346,7 +346,6 @@ function Calendar(element, options, eventSources) {
 	
 	// attempts to rerenderEvents
 	function rerenderEvents(modifiedEventID) {
-		console.log("Calendar.rerenderEvents");
 		markEventsDirty();
 		if (elementVisible()) {
 			currentView.clearEvents();

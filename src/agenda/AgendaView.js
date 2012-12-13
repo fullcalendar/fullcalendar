@@ -66,7 +66,6 @@ function AgendaView(element, calendar, viewName) {
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
-	console.log("Calling AgendaEventRenderer");
 	AgendaEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -92,6 +91,7 @@ function AgendaView(element, calendar, viewName) {
 	var dayBodyFirstCellStretcher;
 	var slotLayer;
 	var daySegmentContainer;
+	var annotationSegmentContainer;
 	var allDayTable;
 	var allDayRow;
 	var slotScroller;
@@ -559,7 +559,7 @@ function AgendaView(element, calendar, viewName) {
 	-----------------------------------------------------------------------------*/
 	function renderAnnotations(annotations) {
 		var html = '';
-		for (i=0; i < annotations.length; i++) {
+		for (var i=0; i < annotations.length; i++) {
 			var ann = annotations[i];
 			if (ann.start >= this.start && ann.end <= this.end) {
 				var top = timePosition(ann.start, ann.start);
