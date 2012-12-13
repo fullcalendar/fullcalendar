@@ -266,7 +266,7 @@ function AgendaEventRenderer() {
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time header
 					eventElement.find('div.fc-event-time')
-						.html(renderTime(event, formatDate(event.start, opt('timeFormat')) + ' - ' + event.title), true);
+						.html(renderTime(event, htmlEscape(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title), true));
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
