@@ -220,7 +220,25 @@ a.fc-event {
 	}
 	
 	
-	
+/* Global Annotation Styles
+------------------------------------------------------------------------*/
+	 
+.fc-annotation {
+	border-style: solid;
+	border-width: 0;
+	font-size: .85em;
+	cursor: default;
+	}
+		
+.fc-annotation-skin {
+	border-color: #999;     /* default BORDER color */
+	background-color: #edb; /* default BACKGROUND color */
+	color: #777;            /* default TEXT color */
+	text-align: center;
+	opacity: 0.8;
+	filter: alpha(opacity=80); /* for IE */
+	}
+		
 /* Fake Rounded Corners (for buttons and events)
 ------------------------------------------------------------*/
 	
