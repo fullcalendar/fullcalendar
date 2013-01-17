@@ -4,6 +4,7 @@ setDefaults({
 	allDayText: 'all-day',
 	firstHour: 6,
 	slotMinutes: 30,
+	//snapMinutes: 5, no default for backwards compatibility
 	defaultEventMinutes: 120,
 	axisFormat: 'h(:mm)tt',
 	timeFormat: {
@@ -106,6 +107,10 @@ function AgendaView(element, calendar, viewName) {
 	var colWidth;
 	var gutterWidth;
 	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
+	var slotMinutes = opt('slotMinutes');
+	var snapHeight;
+	var snapMinutes = opt('snapMinutes') || slotMinutes;
+	var pixelsPerMinute;
 	var savedScrollTop;
 	
 	var colCnt;
@@ -163,6 +168,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	function buildSkeleton() {
+
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
 		var s;
@@ -170,8 +176,9 @@ function AgendaView(element, calendar, viewName) {
 		var d;
 		var maxd;
 		var minutes;
-		var slotNormal = opt('slotMinutes') % 15 == 0;
-		
+
+		var slotNormal = slotMinutes % 15 == 0;
+
 		s =
 			"<table style='width:100%' class='fc-agenda-days fc-border-separate' cellspacing='0'>" +
 			"<thead>" +
@@ -279,16 +286,18 @@ function AgendaView(element, calendar, viewName) {
 		slotCnt = 0;
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
-			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
-				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
-				"</th>" +
-				"<td class='" + contentClass + "'>" +
-				"<div style='position:relative'>&nbsp;</div>" +
-				"</td>" +
-				"</tr>";
-			addMinutes(d, opt('slotMinutes'));
+			if (minutes % slotMinutes === 0) {
+				s +=
+					"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+					"<th class='fc-agenda-axis " + headerClass + "'>" +
+					((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
+					"</th>" +
+					"<td class='" + contentClass + "'>" +
+					"<div style='position:relative'>&nbsp;</div>" +
+					"</td>" +
+					"</tr>";
+			}
+			addMinutes(d, snapMinutes);
 			slotCnt++;
 		}
 		s +=
@@ -352,6 +361,21 @@ function AgendaView(element, calendar, viewName) {
 		if (dateChanged) {
 			resetScroll();
 		}
+
+		// TODO: dry this up
+		pixelsPerMinute = slotHeight / slotMinutes;
+		var hasSnapMinutes = !isNaN(snapMinutes);
+		if (hasSnapMinutes) {
+			// limit the interval of snapping
+			snapMinutes = Math.max(snapMinutes, 1);
+			snapMinutes = Math.min(snapMinutes, 60);
+			// set number of pixels per minute to snap to
+			snapHeight = pixelsPerMinute * snapMinutes;
+		} else {
+			snapHeight = slotHeight;
+			snapMinutes = slotMinutes;
+		}
+
 	}
 	
 	
@@ -481,7 +505,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // only for all-day?
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, slotLayer);
-		return renderOverlay(rect, slotLayer);
+		return renderOverlay(rect, slotLayer).html('');
 	}
 	
 
@@ -498,8 +522,9 @@ function AgendaView(element, calendar, viewName) {
 				var bottom = timePosition(dayStart, stretchEnd);
 				rect.top = top;
 				rect.height = bottom - top;
+				var displayTime = '<span class="fc-cell-overlay-time">' + formatDate(stretchStart, 'h:mm T') + '</span>';
 				slotBind(
-					renderOverlay(rect, slotContent)
+					renderOverlay(rect, slotContent).html(displayTime)
 				);
 			}
 			addDays(dayStart, 1);
@@ -538,8 +563,8 @@ function AgendaView(element, calendar, viewName) {
 		}
 		for (var i=0; i<slotCnt; i++) {
 			rows.push([
-				constrain(slotTableTop + slotHeight*i),
-				constrain(slotTableTop + slotHeight*(i+1))
+				constrain(slotTableTop + snapHeight*i),
+				constrain(slotTableTop + snapHeight*(i+1))
 			]);
 		}
 	});
@@ -576,11 +601,16 @@ function AgendaView(element, calendar, viewName) {
 	function cellDate(cell) {
 		var d = colDate(cell.col);
 		var slotIndex = cell.row;
+		var minutes = 0;
 		if (opt('allDaySlot')) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * opt('slotMinutes'));
+			if (cell.pixelDelta) {
+				// pixelDelta means user wants up to the minute adjustments
+				minutes = Math.round(cell.pixelDelta / 2) * pixelsPerMinute;
+			}
+			addMinutes(d, (minutes + minMinute) + slotIndex * snapMinutes);
 		}
 		return d;
 	}
@@ -612,15 +642,15 @@ function AgendaView(element, calendar, viewName) {
 		if (time >= addMinutes(cloneDate(day), maxMinute)) {
 			return slotTable.height();
 		}
-		var slotMinutes = opt('slotMinutes'),
+		var slotMinutes = snapMinutes,
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
-			slotI = Math.floor(minutes / slotMinutes),
+			slotI = Math.floor(minutes / snapMinutes),
 			slotTop = slotTopCache[slotI];
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			slotTop = slotTopCache[slotI] = snapHeight * slotI; //slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
 		}
 		return Math.max(0, Math.round(
-			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
+			slotTop - 1 + snapHeight * ((minutes % snapMinutes) / snapMinutes)
 		));
 	}
 	

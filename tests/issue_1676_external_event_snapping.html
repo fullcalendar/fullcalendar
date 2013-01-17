@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<script type='text/javascript' src='../src/_loader.js?debug'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$('#calendar').fullCalendar({
+			
+			editable: true,
+			droppable: true,
+			drop: function(date, allDay, ev) {
+				console.log('drop', date, allDay, ev);
+				var newEvent = {title: $(this).text(), start: date, allDay: allDay};
+				$('#calendar').fullCalendar('renderEvent', newEvent, true);
+			},
+			height: 400,
+			snapMinutes: 5,
+			defaultView: 'agendaWeek',
+			
+			//firstDay: 1,
+			//isRTL: true,
+			//minTime: '6:30am',
+			
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'agendaWeek,agendaDay'
+			},
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, 1)
+				},
+				{
+					title: 'Long Event',
+					start: new Date(y, m, d-5),
+					end: new Date(y, m, d-2)
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
+					allDay: false
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
+					allDay: false
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					allDay: false
+				},
+				{
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 5),
+					end: new Date(y, m, d, 14, 43),
+					allDay: false
+				},
+				{
+					title: 'Birthday Party',
+					start: new Date(y, m, d+1, 19, 0),
+					end: new Date(y, m, d+1, 22, 30),
+					allDay: false
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, 28),
+					end: new Date(y, m, 29),
+					url: 'http://google.com/'
+				}
+			]
+		});
+		
+		$('.external-event').draggable({
+			revert: true,
+			revertDuration: 0,
+			zIndex: 999
+		});
+		
+		$('#calendar2').fullCalendar({
+			//isRTL: true,
+			snapMinutes: 10,
+			defaultView: 'agendaWeek',
+			droppable: true,
+			dropAccept: '.for-calendar2',
+			/*
+			dropAccept: function(e) {
+				console.log(e);
+				console.log(this);
+				return e.text() == 'Draggable 1';
+			},
+			*/
+			drop: function(date, allDay) {
+				console.log('drop 2nd calendar', date, allDay);
+				var newEvent = {title: $(this).text(), start: date, allDay: allDay};
+				$('#calendar2').fullCalendar('renderEvent', newEvent, true);
+			},
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'agendaWeek,agendaDay'
+			}
+		});
+		
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		float: left;
+		}
+		
+	#external-events {
+		position: relative;
+		left: 50px;
+		text-align: left;
+		float: left;
+		width: 140px;
+		padding: 10px;
+		border: 1px solid #aaa;
+		background: #ccc;
+		}
+		
+	.external-event {
+		height: 20px;
+		line-height: 20px;
+		color: #fff;
+		background: blue;
+		margin-bottom: 10px;
+		padding-left: 5px;
+		cursor: pointer;
+		}
+		
+	#calendar2 {
+		width: 900px;
+		margin-top: 50px;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+<div id='external-events'>
+	<div class='external-event'>Draggable 1</div>
+	<div class='external-event'>Draggable 2</div>
+	<div class='external-event for-calendar2'>Draggable 3</div>
+</div>
+<div style='clear:both'></div>
+<div id='calendar2'></div>
+</body>
+</html>

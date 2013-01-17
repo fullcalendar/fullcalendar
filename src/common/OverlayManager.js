@@ -16,7 +16,7 @@ function OverlayManager() {
 	function renderOverlay(rect, parent) {
 		var e = unusedOverlays.shift();
 		if (!e) {
-			e = $("<div class='fc-cell-overlay' style='position:absolute;z-index:3'/>");
+			e = $("<div class='fc-cell-overlay' style='position:absolute;z-index:999'/>");
 		}
 		if (e[0].parentNode != parent[0]) {
 			e.appendTo(parent);

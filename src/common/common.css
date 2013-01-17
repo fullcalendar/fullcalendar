@@ -13,10 +13,15 @@
 	
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
 	background: #9cf;
-	opacity: .2;
-	filter: alpha(opacity=20); /* for IE */
+	opacity: .5;
+	filter: alpha(opacity=50); /* for IE */
 	}
-	
+
+.fc-cell-overlay-time {
+	font-size: 2em;
+	position: relative;
+	top: 20px;
+	}	
 
 
 /* Buttons

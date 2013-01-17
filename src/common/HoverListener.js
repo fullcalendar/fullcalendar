@@ -7,7 +7,7 @@ function HoverListener(coordinateGrid) {
 	var change;
 	var firstCell;
 	var cell;
-	
+	var pageY;
 	
 	t.start = function(_change, ev, _bindType) {
 		change = _change;
@@ -21,9 +21,20 @@ function HoverListener(coordinateGrid) {
 	
 	function mouse(ev) {
 		_fixUIEvent(ev); // see below
-		var newCell = coordinateGrid.cell(ev.pageX, ev.pageY);
-		if (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col)) {
+		// TODO: make alt key configurable
+		var disableSnapping = ev.altKey ? true : false;
+		if (disableSnapping) {
+			if (!pageY) {
+				pageY = ev.pageY;
+			}
+		} else {
+			pageY = null;
+		}
+		var newCell = (disableSnapping && cell) ? cell : coordinateGrid.cell(ev.pageX, ev.pageY);
+		var callChange = disableSnapping || (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col));
+		if (callChange) {
 			if (newCell) {
+				newCell.pixelDelta = disableSnapping ? ev.pageY - pageY : 0;
 				if (!firstCell) {
 					firstCell = newCell;
 				}

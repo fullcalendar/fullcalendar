@@ -1,4 +1,6 @@
-
+varsion 1.5.4-javadoug (1/13/13)
+	- add snapping feature (issue 1676)
+	
 version 1.5.4 (9/5/12)
 	- made compatible with jQuery 1.8.* (thx archaeron)
 	- bundled with jQuery 1.8.1 and jQuery UI 1.8.23
