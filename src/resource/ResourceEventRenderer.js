@@ -79,44 +79,38 @@ function ResourceEventRenderer() {
 
 		for (i=0; i<rowCnt; i++) {
 			currentResource = resources[i].id;
-			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
+			row = sliceSegs(events, visEventsEnds, d1, d2);
 
 			for (j=0; j<row.length; j++) {
-				level = row[j];
-				for (k=0; k<level.length; k++) {
-					seg = level[k];
-					seg.row = i;
-					seg.level = j; // not needed anymore
-					
-					// Let's be backwards compatitle. If event resource is not array, then we convert it.
-					if (!$.isArray(seg.event.resource)) { 
-						seg.event.resource = [seg.event.resource];
-					}
-					
-					for (l=0; l<seg.event.resource.length; l++) {
-						startDay = seg.event.start.getDay();
-						startDate = seg.event.start.getDate();
-						if (seg.event.end == null) {
-							endDay = seg.event.start.getDay();
-							endDate = cloneDate(seg.event.start, true).getDate();
-						}
-						else {
-							endDay = seg.event.end.getDay();
-							endDate = seg.event.end.getDate();
-						}
-						
-						// skip if weekends is set to false and this event is on weekend
-						if(!weekends && 
-							(startDay == 6 || startDay == 0) && 
-							(endDay == 6 || endDay == 0) && 
-							(startDate == endDate || addDays(cloneDate(seg.event.start),1).getDate() == endDate)
-						) continue;
+				seg = row[j];
+				seg.row = i;
+				
+				// Let's be backwards compatitle. If event resource is not array, then we convert it.
+				if (!$.isArray(seg.event.resource)) { 
+					seg.event.resource = [seg.event.resource];
+				}
 
-					
-						if(currentResource == seg.event.resource[l]) {
-							segs.push(seg);
-						}
-					}	
+				startDay = seg.event.start.getDay();
+				startDate = seg.event.start.getDate();
+				if (seg.event.end == null) {
+					endDay = seg.event.start.getDay();
+					endDate = cloneDate(seg.event.start, true).getDate();
+				}
+				else {
+					endDay = seg.event.end.getDay();
+					endDate = seg.event.end.getDate();
+				}
+				
+				// skip if weekends is set to false and this event is on weekend skip this event
+				if(!weekends && 
+					(startDay == 6 || startDay == 0) && 
+					(endDay == 6 || endDay == 0) && 
+					(startDate == endDate || addDays(cloneDate(seg.event.start),1).getDate() == endDate)
+				) continue;
+
+				// if event scheduled to current resource push this seg to segs
+				if($.inArray(currentResource, seg.event.resource) != '-1') {
+					segs.push(seg);
 				}
 			}
 		}
