@@ -1,3 +1,8 @@
+version 1.5.3.4 (01/23/13)
+	- Faster event rendering
+	- Fixed previous button on resource next weeks
+	- Calculate week number correctly
+
 version 1.5.3.3 (11/04/12)
 	- Implemented better dynamic calendar height in resourceview demo 
 	- Fixed issue in daySelection when used non resource view.
