@@ -139,20 +139,18 @@ function setYMD(date, y, m, d) {
 
 
 function getWeek(d) {
-	var when = d;
-    var year = d.getFullYear();
-    var newYear = new Date(d.getFullYear(),0,1);
-    var offset = 7 + 1 - newYear.getDay();
-    if (offset == 8) offset = 1;
-    var daynum = ((Date.UTC(year,when.getMonth(),when.getDate(),0,0,0) - Date.UTC(year,0,1,0,0,0)) /1000/60/60/24) + 1;
-    var weeknum = Math.floor((daynum-offset+7)/7);
-    if (weeknum == 0) {
-        year--;
-        var prevNewYear = new Date(year,0,1);
-        var prevOffset = 7 + 1 - prevNewYear.getDay();
-        if (prevOffset == 2 || prevOffset == 8) weeknum = 53; else weeknum = 52;
-    }
-    return weeknum;
+	// Copy date so don't modify original
+	d = new Date(d);
+	d.setHours(0,0,0);
+	// Set to nearest Thursday: current date + 4 - current day number
+	// Make Sunday's day number 7
+	d.setDate(d.getDate() + 4 - (d.getDay()||7));
+	// Get first day of year
+	var yearStart = new Date(d.getFullYear(),0,1);
+	// Calculate full weeks to nearest Thursday
+	var weeknum = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+	
+	return weeknum;
 }
 
 
