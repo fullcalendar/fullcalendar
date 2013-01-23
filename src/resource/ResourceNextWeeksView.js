@@ -21,9 +21,11 @@ function ResourceNextWeeksView(element, calendar) {
 	
 	function render(date, delta) {
 		var weekends = opt('weekends');
+		
 		if (delta) {
-			addDays(date, delta * opt('numberOfWeeks') * weekends ? 7 : 5);
+			addDays(date, delta * (opt('numberOfWeeks') * weekends ? 7 : 5));
 		}
+		
 		var start = addDays(cloneDate(date), -((date.getDay() - opt('firstDay') + weekends ? 7 : 5) % weekends ? 7 : 5));
 		var end = addWeeks(cloneDate(start), opt('numberOfWeeks'));
 		var visStart = cloneDate(start);
