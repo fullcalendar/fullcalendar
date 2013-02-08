@@ -137,7 +137,16 @@ function AgendaEventRenderer() {
 			return addMinutes(cloneDate(event.start), opt('defaultEventMinutes'));
 		}
 	}
-	
+
+	function getSlotStart(date) {
+		date.setMinutes(Math.floor(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
+		return date;
+	}
+
+	function getSlotEnd(date) {
+		date.setMinutes(Math.ceil(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
+		return date;
+	}
 	
 	// renders events in the 'time slots' at the bottom
 	
@@ -163,7 +172,8 @@ function AgendaEventRenderer() {
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis, dit,
-			colCnt = getColCnt();
+			colCnt = getColCnt(),
+			start, end;
 			
 		if (rtl = opt('isRTL')) {
 			dis = -1;
@@ -177,8 +187,10 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			top = timePosition(seg.start, seg.start);
-			bottom = timePosition(seg.start, seg.end);
+			start = (opt('fillSlot') ? getSlotStart(cloneDate(seg.start)) : seg.start);
+			end = (opt('fillSlot') ? getSlotEnd(cloneDate(seg.end)) : seg.end);
+			top = timePosition(seg.start, start);
+			bottom = timePosition(seg.start, end);
 			colI = seg.col;
 			levelI = seg.level;
 			forward = seg.forward || 0;
