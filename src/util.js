@@ -22,7 +22,16 @@ function _exclEndDay(end, allDay) {
 
 
 function segCmp(a, b) {
-	return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
+	// Removed the length in the sorting
+	var diff = (a.event.start - b.event.start);
+	if(diff == 0) { // both events are at the same time, We sort by title
+		return (a.event.title.localeCompare(b.event.title));
+	}
+	else {
+		return diff;
+	}
+
+	//return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 }
 
 
