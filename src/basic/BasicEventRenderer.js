@@ -55,13 +55,14 @@ function BasicEventRenderer() {
 			colCnt = getColCnt(),
 			d1 = cloneDate(t.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
+			visEventsStarts = $.map(events, function(event){ return event.start }),
 			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
 			k, seg,
 			segs=[];
 		for (i=0; i<rowCnt; i++) {
-			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
+			row = stackSegs(sliceSegs(events, visEventsStarts, visEventsEnds, d1, d2));
 			for (j=0; j<row.length; j++) {
 				level = row[j];
 				for (k=0; k<level.length; k++) {

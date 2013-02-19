@@ -107,13 +107,14 @@ function AgendaEventRenderer() {
 			minMinute = getMinMinute(),
 			maxMinute = getMaxMinute(),
 			d = addMinutes(cloneDate(t.visStart), minMinute),
+			visEventStarts = $.map(events, slotEventStart),
 			visEventEnds = $.map(events, slotEventEnd),
 			i, col,
 			j, level,
 			k, seg,
 			segs=[];
 		for (i=0; i<colCnt; i++) {
-			col = stackSegs(sliceSegs(events, visEventEnds, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
+			col = stackSegs(sliceSegs(events, visEventStarts, visEventEnds, d, addMinutes(cloneDate(d), maxMinute-minMinute)));
 			countForwardSegs(col);
 			for (j=0; j<col.length; j++) {
 				level = col[j];
@@ -130,22 +131,30 @@ function AgendaEventRenderer() {
 	}
 	
 	
-	function slotEventEnd(event) {
-		if (event.end) {
-			return cloneDate(event.end);
-		}else{
-			return addMinutes(cloneDate(event.start), opt('defaultEventMinutes'));
+	function slotEventStart(event) {
+		if(opt('fillSlot')) {
+			var date = cloneDate(event.start);
+			date.setMinutes(Math.floor(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
+			return date;
+		}
+		else {
+			return cloneDate(event.start);
 		}
 	}
 
-	function getSlotStart(date) {
-		date.setMinutes(Math.floor(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
-		return date;
-	}
-
-	function getSlotEnd(date) {
-		date.setMinutes(Math.ceil(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
-		return date;
+	function slotEventEnd(event) {
+		if (event.end) {
+			if(opt('fillSlot')) {
+				var date = cloneDate(event.end);
+				date.setMinutes(Math.ceil(date.getMinutes() / opt('slotMinutes')) * opt('slotMinutes'));
+				return date;
+			}
+			else {
+				return cloneDate(event.end);
+			}
+		}else{
+			return addMinutes(cloneDate(event.start), opt('defaultEventMinutes'));
+		}
 	}
 	
 	// renders events in the 'time slots' at the bottom
@@ -187,8 +196,8 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			start = (opt('fillSlot') ? getSlotStart(cloneDate(seg.start)) : seg.start);
-			end = (opt('fillSlot') ? getSlotEnd(cloneDate(seg.end)) : seg.end);
+			start = slotEventStart(seg);
+			end = slotEventEnd(seg);
 			top = timePosition(seg.start, start);
 			bottom = timePosition(seg.start, end);
 			colI = seg.col;

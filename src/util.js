@@ -37,7 +37,7 @@ function segsCollide(seg1, seg2) {
 
 
 // event rendering utilities
-function sliceSegs(events, visEventEnds, start, end) {
+function sliceSegs(events, visEventStarts, visEventEnds, start, end) {
 	var segs = [],
 		i, len=events.length, event,
 		eventStart, eventEnd,
@@ -45,7 +45,7 @@ function sliceSegs(events, visEventEnds, start, end) {
 		isStart, isEnd;
 	for (i=0; i<len; i++) {
 		event = events[i];
-		eventStart = event.start;
+		eventStart = visEventStarts[i];
 		eventEnd = visEventEnds[i];
 		if (eventEnd > start && eventStart < end) {
 			if (eventStart < start) {
