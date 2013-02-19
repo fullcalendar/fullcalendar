@@ -130,6 +130,7 @@ function DayEventRenderer() {
 		var rightCol;
 		var left;
 		var right;
+		var width;
 		var skinCss;
 		var html = '';
 		// calculate desired position/dimensions, create html
@@ -163,6 +164,8 @@ function DayEventRenderer() {
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
 				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}
+			width = right - left;
+
 			classes = classes.concat(event.className);
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
@@ -189,7 +192,7 @@ function DayEventRenderer() {
 					"</span>";
 			}
 			html +=
-				"<span class='fc-event-title'>" + renderTitle(event, htmlEscape(event.title)) + "</span>" +
+				"<span class='fc-event-title'>" + renderTitle(event, htmlEscape(event.title), width) + "</span>" +
 				"</div>";
 			if (seg.isEnd && isDayEventResizable(event)) {
 				html +=
@@ -200,7 +203,7 @@ function DayEventRenderer() {
 			html +=
 				"</" + (url ? "a" : "div" ) + ">";
 			seg.left = left;
-			seg.outerWidth = right - left;
+			seg.outerWidth = width;
 			seg.startCol = leftCol;
 			seg.endCol = rightCol + 1; // needs to be exclusive
 		}
@@ -489,10 +492,10 @@ function DayEventRenderer() {
 		}
 	}
 
-	function renderTitle(event, defaultTitle) {
+	function renderTitle(event, defaultTitle, eventWidth) {
 		var customRenderTitle = opt('renderTitle');
 		if(typeof customRenderTitle == 'function') {
-			return customRenderTitle(event, defaultTitle);
+			return customRenderTitle(event, defaultTitle, eventWidth);
 		}
 		else {
 			return defaultTitle;
