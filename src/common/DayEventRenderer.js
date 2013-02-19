@@ -6,13 +6,15 @@ function DayEventRenderer() {
 	// exports
 	t.renderDaySegs = renderDaySegs;
 	t.resizableDayEvent = resizableDayEvent;
+	t.renderTime = renderTime;
+	t.renderTitle = renderTitle;
 	
 	
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
+	var isDayEventResizable = t.isDayEventResizable;
 	var eventEnd = t.eventEnd;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
@@ -34,8 +36,6 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
-	
-	
 	
 	/* Rendering
 	-----------------------------------------------------------------------------*/
@@ -130,6 +130,7 @@ function DayEventRenderer() {
 		var rightCol;
 		var left;
 		var right;
+		var width;
 		var skinCss;
 		var html = '';
 		// calculate desired position/dimensions, create html
@@ -163,6 +164,8 @@ function DayEventRenderer() {
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
 				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}
+			width = right - left;
+
 			classes = classes.concat(event.className);
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
@@ -185,13 +188,13 @@ function DayEventRenderer() {
 			if (!event.allDay && seg.isStart) {
 				html +=
 					"<span class='fc-event-time'>" +
-					htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+					renderTime(event, htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))), false) +
 					"</span>";
 			}
 			html +=
-				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+				"<span class='fc-event-title'>" + renderTitle(event, htmlEscape(event.title), width) + "</span>" +
 				"</div>";
-			if (seg.isEnd && isEventResizable(event)) {
+			if (seg.isEnd && isDayEventResizable(event)) {
 				html +=
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
@@ -200,7 +203,7 @@ function DayEventRenderer() {
 			html +=
 				"</" + (url ? "a" : "div" ) + ">";
 			seg.left = left;
-			seg.outerWidth = right - left;
+			seg.outerWidth = width;
 			seg.startCol = leftCol;
 			seg.endCol = rightCol + 1; // needs to be exclusive
 		}
@@ -478,6 +481,25 @@ function DayEventRenderer() {
 			
 		});
 	}
-	
+
+	function renderTime(event, defaultTime, timeContainsTitle) {
+		var customRenderTime = opt('renderTime');
+		if(typeof customRenderTime == 'function') {
+			return customRenderTime(event, defaultTime, timeContainsTitle);
+		}
+		else {
+			return defaultTime;
+		}
+	}
+
+	function renderTitle(event, defaultTitle, eventWidth) {
+		var customRenderTitle = opt('renderTitle');
+		if(typeof customRenderTitle == 'function') {
+			return customRenderTitle(event, defaultTitle, eventWidth);
+		}
+		else {
+			return defaultTitle;
+		}
+	}
 
 }

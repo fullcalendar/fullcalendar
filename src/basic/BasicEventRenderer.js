@@ -16,7 +16,7 @@ function BasicEventRenderer() {
 	var trigger = t.trigger;
 	//var setOverflowHidden = t.setOverflowHidden;
 	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
+	var isDayEventResizable = t.isDayEventResizable;
 	var reportEvents = t.reportEvents;
 	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
@@ -55,13 +55,14 @@ function BasicEventRenderer() {
 			colCnt = getColCnt(),
 			d1 = cloneDate(t.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
+			visEventsStarts = $.map(events, function(event){ return event.start }),
 			visEventsEnds = $.map(events, exclEndDay),
 			i, row,
 			j, level,
 			k, seg,
 			segs=[];
 		for (i=0; i<rowCnt; i++) {
-			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
+			row = stackSegs(sliceSegs(events, visEventsStarts, visEventsEnds, d1, d2));
 			for (j=0; j<row.length; j++) {
 				level = row[j];
 				for (k=0; k<level.length; k++) {
@@ -82,7 +83,7 @@ function BasicEventRenderer() {
 		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement);
 		}
-		if (seg.isEnd && isEventResizable(event)) {
+		if (seg.isEnd && isDayEventResizable(event)) {
 			resizableDayEvent(event, eventElement, seg);
 		}
 		eventElementHandlers(event, eventElement);

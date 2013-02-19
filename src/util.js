@@ -22,7 +22,16 @@ function _exclEndDay(end, allDay) {
 
 
 function segCmp(a, b) {
-	return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
+	// Removed the length in the sorting
+	var diff = (a.event.start - b.event.start);
+	if(diff == 0) { // both events are at the same time, We sort by title
+		return (a.event.title.localeCompare(b.event.title));
+	}
+	else {
+		return diff;
+	}
+
+	//return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
 }
 
 
@@ -37,7 +46,7 @@ function segsCollide(seg1, seg2) {
 
 
 // event rendering utilities
-function sliceSegs(events, visEventEnds, start, end) {
+function sliceSegs(events, visEventStarts, visEventEnds, start, end) {
 	var segs = [],
 		i, len=events.length, event,
 		eventStart, eventEnd,
@@ -45,7 +54,7 @@ function sliceSegs(events, visEventEnds, start, end) {
 		isStart, isEnd;
 	for (i=0; i<len; i++) {
 		event = events[i];
-		eventStart = event.start;
+		eventStart = visEventStarts[i];
 		eventEnd = visEventEnds[i];
 		if (eventEnd > start && eventStart < end) {
 			if (eventStart < start) {
@@ -254,12 +263,7 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 
 
 function htmlEscape(s) {
-	return s.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/'/g, '&#039;')
-		.replace(/"/g, '&quot;')
-		.replace(/\n/g, '<br />');
+	return $('<div></div>').text(s).html();
 }
 
 

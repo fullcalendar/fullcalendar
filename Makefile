@@ -48,6 +48,55 @@ concat_css = \
 			> "$(2)"; \
 	fi
 	
+js:
+	@rm -rf ${BUILD_DIR}/fullcalendar
+	@rm -rf ${BUILD_DIR}/fullcalendar-*
+	@mkdir -p ${BUILD_DIR}/fullcalendar/fullcalendar/
+	
+	@echo "building core..."
+	@$(call concat_js,${SRC_DIR},"${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.js")
+	@$(call concat_css,${SRC_DIR},"${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.css")
+	@cat "${SRC_DIR}/common/print.css" \
+		| ${VER_SED} \
+		| ${DATE_SED} \
+		> "${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.print.css"
+	
+	@echo "compressing core js..."
+	@java -jar ${BUILD_DIR}/compiler.jar --warning_level VERBOSE --jscomp_off checkTypes --externs build/externs.js \
+		--js ${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.js \
+		> ${BUILD_DIR}/fullcalendar/fullcalendar/fullcalendar.min.js; \
+		
+	@echo "building plugins..."
+	@for loader in ${SRC_DIR}/*/_loader.js; do \
+		dir=`dirname $$loader`; \
+		name=`basename $$dir`; \
+		$(call concat_js,$$dir,"${BUILD_DIR}/fullcalendar/fullcalendar/$$name.js"); \
+	done
+	
+	@echo "copying jquery..."
+	@mkdir -p ${BUILD_DIR}/fullcalendar/jquery
+	@cp lib/${JQ} ${BUILD_DIR}/fullcalendar/jquery
+	@cp lib/${JQUI} ${BUILD_DIR}/fullcalendar/jquery
+	
+	@echo "building demos..."
+	@mkdir -p ${BUILD_DIR}/fullcalendar/demos
+	@for f in ${DEMO_FILES}; do \
+		cat ${DEMOS_DIR}/$$f \
+			| ${DEMO_SED} \
+			| sed "s/jquery\.js/${JQ}/" \
+			| sed "s/jquery-ui\.js/${JQUI}/" \
+			> ${BUILD_DIR}/fullcalendar/demos/$$f; \
+	done
+	@for d in ${DEMO_SUBDIRS}; do \
+		cp -r ${DEMOS_DIR}/$$d ${BUILD_DIR}/fullcalendar/demos/$$d; \
+	done
+	
+	@echo "copying other files..."
+	@cp -r ${OTHER_FILES} ${BUILD_DIR}/fullcalendar
+	
+	@mv ${BUILD_DIR}/fullcalendar ${BUILD_DIR}/fullcalendar-${VER}
+	@echo "done."
+
 zip:
 	@rm -rf ${BUILD_DIR}/fullcalendar
 	@rm -rf ${BUILD_DIR}/fullcalendar-*

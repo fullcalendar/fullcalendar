@@ -336,7 +336,7 @@ function EventManager(options, _sources) {
 		}
 		event._start = cloneDate(event.start = parseDate(event.start, ignoreTimezone));
 		event.end = parseDate(event.end, ignoreTimezone);
-		if (event.end && event.end <= event.start) {
+		if (event.end && event.end < event.start) {
 			event.end = null;
 		}
 		event._end = event.end ? cloneDate(event.end) : null;
