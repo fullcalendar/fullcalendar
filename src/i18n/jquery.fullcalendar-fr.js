@@ -4,7 +4,7 @@
 
     var i18n = {
 	
-		allDayText: 'Toute la journée',
+		allDayText: 'Toute la journÃ©e',
 
 		axisFormat: "HH'h'(:mm)",
 		timeFormat: {
@@ -15,19 +15,17 @@
 		titleFormat: {
 			month: 'MMMM yyyy',
 			week: "d MMM [ yyyy]{ '&#8212;'d [ MMM] yyyy}",
-			workweek: "d MMM [ yyyy]{ '&#8212;'d [ MMM] yyyy}",
 			day: 'dddd, d MMM yyyy'
 		},
 		columnFormat: {
 			month: 'ddd',
 			week: 'ddd d M',
-			workweek: 'ddd d M',
 			day: 'dddd d M'
 		},
 
 		firstDay: 1,
-		monthNames: ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],
-		monthNamesShort: ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'],
+		monthNames: ['janvier','fÃ©vrier','mars','avril','mai','juin','juillet','aoÃ»t','septembre','octobre','novembre','dÃ©cembre'],
+		monthNamesShort: ['janv.','fÃ©vr.','mars','avr.','mai','juin','juil.','aoÃ»t','sept.','oct.','nov.','dÃ©c.'],
 		dayNames: ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],
 		dayNamesShort: ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],
 		buttonText: {
@@ -37,10 +35,8 @@
 			nextYear: '&nbsp;&gt;&gt;&nbsp;',
 			today: 'Aujourd\'hui',
 			month: 'mois',
-			week: 'semaine',
-			workweek: 'semaine travaillé',
-			day: 'jour',
-			year: 'année'
+			week: 'semaine'
+			day: 'jour'
 		}
     };
 
