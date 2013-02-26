@@ -1,11 +1,9 @@
 /*
- * FullCalendar v1.5.3 Stylesheet
+ * FullCalendar v1.5.4-final Stylesheet
  *
- * Copyright (c) 2011 Adam Shaw
+ * (c) 2012 Adam Shaw
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
- *
- * Date: Mon Feb 6 22:40:40 2012 -0800
  *
  */
 
@@ -118,6 +116,7 @@ html .fc,
 	}
 	
 	
+
 
 /* Cell Styles
 ------------------------------------------------------------------------*/
@@ -430,6 +429,7 @@ table.fc-border-separate {
 	
 	
 
+
 /* Month View, Basic Week View, Basic Day View
 ------------------------------------------------------------------------*/
 
@@ -472,6 +472,7 @@ table.fc-border-separate {
 	}
 	
 	
+
 
 /* Agenda Week View, Agenda Day View
 ------------------------------------------------------------------------*/

@@ -1,21 +1,19 @@
-/**
- * @preserve
- * FullCalendar v1.5.3
+/*!
+ * FullCalendar v1.5.4-final
  * http://arshaw.com/fullcalendar/
  *
  * Use fullcalendar.css for basic styling.
  * For event drag & drop, requires jQuery UI draggable.
  * For event resizing, requires jQuery UI resizable.
  *
- * Copyright (c) 2011 Adam Shaw
+ * (c) 2012 Adam Shaw
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
- *
- * Date: Mon Feb 6 22:40:40 2012 -0800
  *
  */
  
 (function($, undefined) {
+
 
 
 var defaults = {
@@ -111,7 +109,8 @@ var rtlDefaults = {
 
 
 
-var fc = $.fullCalendar = { version: "1.5.3" };
+
+var fc = $.fullCalendar = { version: "1.5.4-final" };
 var fcViews = fc.views = {};
 
 
@@ -174,6 +173,7 @@ $.fn.fullCalendar = function(options) {
 function setDefaults(d) {
 	$.extend(true, defaults, d);
 }
+
 
 
 
@@ -674,6 +674,7 @@ function Calendar(element, options, eventSources) {
 
 }
 
+
 function Header(calendar, options) {
 	var t = this;
 	
@@ -838,6 +839,7 @@ function Header(calendar, options) {
 
 
 }
+
 
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
@@ -1228,6 +1230,7 @@ function EventManager(options, _sources) {
 }
 
 
+
 fc.addDays = addDays;
 fc.cloneDate = cloneDate;
 fc.parseDate = parseDate;
@@ -1586,6 +1589,7 @@ var dateFormatters = {
 
 
 
+
 fc.applyAll = applyAll;
 
 
@@ -1658,7 +1662,7 @@ function sliceSegs(events, visEventEnds, start, end) {
 				msLength: segEnd - segStart
 			});
 		}
-	} 
+	}
 	return segs.sort(segCmp);
 }
 
@@ -1742,29 +1746,26 @@ function setOuterHeight(element, height, includeMargins) {
 }
 
 
-// TODO: curCSS has been deprecated (jQuery 1.4.3 - 10/16/2010)
-
-
 function hsides(element, includeMargins) {
 	return hpadding(element) + hborders(element) + (includeMargins ? hmargins(element) : 0);
 }
 
 
 function hpadding(element) {
-	return (parseFloat($.curCSS(element[0], 'paddingLeft', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'paddingRight', true)) || 0);
+	return (parseFloat($.css(element[0], 'paddingLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingRight', true)) || 0);
 }
 
 
 function hmargins(element) {
-	return (parseFloat($.curCSS(element[0], 'marginLeft', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'marginRight', true)) || 0);
+	return (parseFloat($.css(element[0], 'marginLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginRight', true)) || 0);
 }
 
 
 function hborders(element) {
-	return (parseFloat($.curCSS(element[0], 'borderLeftWidth', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'borderRightWidth', true)) || 0);
+	return (parseFloat($.css(element[0], 'borderLeftWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderRightWidth', true)) || 0);
 }
 
 
@@ -1774,20 +1775,20 @@ function vsides(element, includeMargins) {
 
 
 function vpadding(element) {
-	return (parseFloat($.curCSS(element[0], 'paddingTop', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'paddingBottom', true)) || 0);
+	return (parseFloat($.css(element[0], 'paddingTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingBottom', true)) || 0);
 }
 
 
 function vmargins(element) {
-	return (parseFloat($.curCSS(element[0], 'marginTop', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'marginBottom', true)) || 0);
+	return (parseFloat($.css(element[0], 'marginTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginBottom', true)) || 0);
 }
 
 
 function vborders(element) {
-	return (parseFloat($.curCSS(element[0], 'borderTopWidth', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'borderBottomWidth', true)) || 0);
+	return (parseFloat($.css(element[0], 'borderTopWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderBottomWidth', true)) || 0);
 }
 
 
@@ -2009,6 +2010,7 @@ function MonthView(element, calendar) {
 	
 }
 
+
 fcViews.basicWeek = BasicWeekView;
 
 function BasicWeekView(element, calendar) {
@@ -2055,6 +2057,7 @@ function BasicWeekView(element, calendar) {
 	
 }
 
+
 fcViews.basicDay = BasicDayView;
 
 //TODO: when calendar's date starts out on a weekend, shouldn't happen
@@ -2091,6 +2094,7 @@ function BasicDayView(element, calendar) {
 	
 	
 }
+
 
 setDefaults({
 	weekMode: 'fixed'
@@ -2577,6 +2581,7 @@ function BasicView(element, calendar, viewName) {
 	
 }
 
+
 function BasicEventRenderer() {
 	var t = this;
 	
@@ -2718,6 +2723,7 @@ function BasicEventRenderer() {
 
 }
 
+
 fcViews.agendaWeek = AgendaWeekView;
 
 function AgendaWeekView(element, calendar) {
@@ -2764,6 +2770,7 @@ function AgendaWeekView(element, calendar) {
 
 }
 
+
 fcViews.agendaDay = AgendaDayView;
 
 function AgendaDayView(element, calendar) {
@@ -2799,6 +2806,7 @@ function AgendaDayView(element, calendar) {
 	
 
 }
+
 
 setDefaults({
 	allDaySlot: true,
@@ -3603,6 +3611,7 @@ function AgendaView(element, calendar, viewName) {
 
 }
 
+
 function AgendaEventRenderer() {
 	var t = this;
 	
@@ -4219,6 +4228,7 @@ function countForwardSegs(levels) {
 
 
 
+
 function View(element, calendar, viewName) {
 	var t = this;
 	
@@ -4471,6 +4481,7 @@ function View(element, calendar, viewName) {
 	
 
 }
+
 
 function DayEventRenderer() {
 	var t = this;
@@ -4955,6 +4966,7 @@ function DayEventRenderer() {
 
 }
 
+
 //BUG: unselect needs to be triggered when events are dragged+dropped
 
 function SelectionManager() {
@@ -5052,6 +5064,7 @@ function SelectionManager() {
 
 
 }
+
  
 function OverlayManager() {
 	var t = this;
@@ -5089,6 +5102,7 @@ function OverlayManager() {
 
 
 }
+
 
 function CoordinateGrid(buildFunc) {
 
@@ -5135,6 +5149,7 @@ function CoordinateGrid(buildFunc) {
 	};
 
 }
+
 
 function HoverListener(coordinateGrid) {
 
@@ -5194,6 +5209,7 @@ function _fixUIEvent(event) { // for issue 1168
 		event.pageY = event.originalEvent.pageY;
 	}
 }
+
 function HorizontalPositionCache(getElement) {
 
 	var t = this,
@@ -5220,5 +5236,6 @@ function HorizontalPositionCache(getElement) {
 	};
 	
 }
+
 
 })(jQuery);
