@@ -35,7 +35,7 @@
 			nextYear: '&nbsp;&gt;&gt;&nbsp;',
 			today: 'Aujourd\'hui',
 			month: 'mois',
-			week: 'semaine'
+			week: 'semaine',
 			day: 'jour'
 		}
     };
