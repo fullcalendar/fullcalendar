@@ -46,6 +46,7 @@ module.exports = function(grunt) {
 		'clean:build',
 		'submodules',
 		'uglify',
+		'copy:i18n',
 		'copy:deps',
 		'copy:demos',
 		'copy:misc',
@@ -177,6 +178,16 @@ module.exports = function(grunt) {
 		ext: '.min.js'
 	}
 
+	/* Copy I18n files
+	----------------------------------------------------------------------------------------------------*/
+	
+	config.copy.i18n = {
+		expand: true,
+		flatten: true,
+		cwd: 'src/i18n/',
+		src: '*.js',
+		dest: 'build/out/fullcalendar/i18n/'
+	};
 
 	/* Copy Dependencies
 	----------------------------------------------------------------------------------------------------*/
