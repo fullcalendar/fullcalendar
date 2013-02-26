@@ -1,15 +1,13 @@
 /*
- * FullCalendar v@VERSION Print Stylesheet
+ * <%= meta.title %> v<%= meta.version %> Print Stylesheet
  *
  * Include this stylesheet on your page to get a more printer-friendly calendar.
  * When including this stylesheet, use the media='print' attribute of the <link> tag.
  * Make sure to include this stylesheet IN ADDITION to the regular fullcalendar.css.
  *
- * Copyright (c) 2011 Adam Shaw
+ * (c) <%= meta.copyright %>
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
- *
- * Date: @DATE
  *
  */
  

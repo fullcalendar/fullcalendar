@@ -1,0 +1,38 @@
+{
+  "name": "fullcalendar",
+  "version": "1.5.4",
+  "dependencies": {
+    "jquery": "~1.8.1"
+  },
+  "optionalDependencies": {
+    "jquery-ui": "~1.8.23"
+  },
+
+  "title": "FullCalendar",
+  "description": "Full-sized drag & drop event calendar",
+  "keywords": [ "calendar", "event", "full-sized" ],
+
+  "homepage": "http://arshaw.com/fullcalendar/",
+  "demo": "http://arshaw.com/fullcalendar/",
+  "docs": "http://arshaw.com/fullcalendar/docs/",
+  "download": "http://arshaw.com/fullcalendar/download/",
+  "bugs": "http://code.google.com/p/fullcalendar/issues/list",
+
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/arshaw/fullcalendar/blob/master/MIT-LICENSE.txt"
+    },
+    {
+      "type": "GPL",
+      "url": "https://github.com/arshaw/fullcalendar/blob/master/GPL-LICENSE.txt"
+    }
+  ],
+
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  },
+  "copyright": "2012 Adam Shaw"
+}

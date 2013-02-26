@@ -1,11 +1,9 @@
 /*
- * FullCalendar v@VERSION Stylesheet
+ * <%= meta.title %> v<%= meta.version %> Stylesheet
  *
- * Copyright (c) 2011 Adam Shaw
+ * (c) <%= meta.copyright %>
  * Dual licensed under the MIT and GPL licenses, located in
  * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
- *
- * Date: @DATE
  *
  */
 
