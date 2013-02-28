@@ -22,6 +22,8 @@
 			},
 			selectable: true,
 			selectHelper: true,
+			slotMinutes: 30, // update eventRender below when slotMinutes is changed
+			selectionSlotMinutes: 15, // this is the size of steps that events will be drawn, dragged and resized in
 			select: function(start, end, allDay) {
 				var title = prompt('Event Title:');
 				if (title) {
