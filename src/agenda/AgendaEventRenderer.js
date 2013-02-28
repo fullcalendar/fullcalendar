@@ -358,6 +358,7 @@ function AgendaEventRenderer() {
 	
 	function draggableDayEvent(event, eventElement, isStart) {
 		var origWidth;
+		var origZIndex = eventElement.zIndex();
 		var revert;
 		var allDay=true;
 		var dayDelta;
@@ -367,7 +368,7 @@ function AgendaEventRenderer() {
 		var slotHeight = getSlotHeight();
 		var minMinute = getMinMinute();
 		eventElement.draggable({
-			zIndex: 9,
+			zIndex: origZIndex + 1,
 			opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
@@ -455,6 +456,7 @@ function AgendaEventRenderer() {
 	
 	function draggableSlotEvent(event, eventElement, timeElement) {
 		var origPosition;
+		var origZIndex = eventElement.zIndex();
 		var allDay=false;
 		var dayDelta;
 		var minuteDelta;
@@ -465,7 +467,7 @@ function AgendaEventRenderer() {
 		var colWidth = getColWidth();
 		var slotHeight = getSlotHeight();
 		eventElement.draggable({
-			zIndex: 9,
+			zIndex: origZIndex + 1,
 			scroll: false,
 			grid: [colWidth, slotHeight],
 			axis: colCnt==1 ? 'y' : false,
@@ -553,6 +555,7 @@ function AgendaEventRenderer() {
 	function resizableSlotEvent(event, eventElement, timeElement) {
 		var slotDelta, prevSlotDelta;
 		var slotHeight = getSlotHeight();
+		var origZIndex = eventElement.zIndex();
 		eventElement.resizable({
 			handles: {
 				s: 'div.ui-resizable-s'
@@ -561,7 +564,7 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				slotDelta = prevSlotDelta = 0;
 				hideEvents(event, eventElement);
-				eventElement.css('z-index', 9);
+				eventElement.zIndex(origZIndex + 1);
 				trigger('eventResizeStart', this, event, ev, ui);
 			},
 			resize: function(ev, ui) {
@@ -584,7 +587,7 @@ function AgendaEventRenderer() {
 				if (slotDelta) {
 					eventResize(this, event, 0, opt('slotMinutes')*slotDelta, ev, ui);
 				}else{
-					eventElement.css('z-index', 8);
+					eventElement.zIndex(origZIndex);
 					showEvents(event, eventElement);
 					// BUG: if event was really short, need to put title back in span
 				}

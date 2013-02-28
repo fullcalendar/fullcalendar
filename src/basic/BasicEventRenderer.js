@@ -98,8 +98,9 @@ function BasicEventRenderer() {
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
 		var dayDelta;
+		var origZIndex = eventElement.zIndex();
 		eventElement.draggable({
-			zIndex: 9,
+			zIndex: origZIndex + 1,
 			delay: 50,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
