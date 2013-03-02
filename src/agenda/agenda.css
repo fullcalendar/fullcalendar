@@ -18,6 +18,10 @@
 	white-space: nowrap;
 	font-weight: normal;
 	}
+
+.fc-agenda .fc-week-number {
+	font-weight: bold;
+	}
 	
 .fc-agenda .fc-day-content {
 	padding: 2px 2px 1px;

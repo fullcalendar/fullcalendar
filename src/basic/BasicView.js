@@ -63,6 +63,7 @@ function BasicView(element, calendar, viewName) {
 	var viewWidth;
 	var viewHeight;
 	var colWidth;
+	var weekNumberWidth;
 	
 	var rowCnt, colCnt;
 	var coordinateGrid;
@@ -71,9 +72,12 @@ function BasicView(element, calendar, viewName) {
 	
 	var rtl, dis, dit;
 	var firstDay;
-	var nwe;
+	var nwe; // no weekends? a 0 or 1 for easy computations
 	var tm;
 	var colFormat;
+	var showWeekNumbers;
+	var weekNumberTitle;
+	var weekNumberFormat;
 	
 	
 	
@@ -112,6 +116,16 @@ function BasicView(element, calendar, viewName) {
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
+
+		// week # options. (TODO: bad, logic also in other views)
+		showWeekNumbers = opt('weekNumbers');
+		weekNumberTitle = opt('weekNumberTitle');
+		if (opt('weekNumberCalculation') != 'iso') {
+			weekNumberFormat = "w";
+		}
+		else {
+			weekNumberFormat = "W";
+		}
 	}
 	
 	
@@ -127,6 +141,10 @@ function BasicView(element, calendar, viewName) {
 			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
 			"<thead>" +
 			"<tr>";
+		if (showWeekNumbers) {
+			s +=
+				"<th class='fc-week-number " + headerClass + "'/>";
+		}
 		for (i=0; i<colCnt; i++) {
 			s +=
 				"<th class='fc- " + headerClass + "'/>"; // need fc- for setDayID
@@ -138,6 +156,10 @@ function BasicView(element, calendar, viewName) {
 		for (i=0; i<maxRowCnt; i++) {
 			s +=
 				"<tr class='fc-week" + i + "'>";
+			if (showWeekNumbers) {
+				s +=
+					"<td class='fc-week-number " + contentClass + "'><div></div></td>";
+			}
 			for (j=0; j<colCnt; j++) {
 				s +=
 					"<td class='fc- " + contentClass + " fc-day" + (i*colCnt+j) + "'>" + // need fc- for setDayID
@@ -161,11 +183,11 @@ function BasicView(element, calendar, viewName) {
 		table = $(s).appendTo(element);
 		
 		head = table.find('thead');
-		headCells = head.find('th');
+		headCells = head.find('th:not(.fc-week-number)');
 		body = table.find('tbody');
 		bodyRows = body.find('tr');
-		bodyCells = body.find('td');
-		bodyFirstCells = bodyCells.filter(':first-child');
+		bodyCells = body.find('td').filter(':not(.fc-week-number)');
+		bodyFirstCells = bodyCells.filter(':first-child, td.fc-week-number + *'); // either first cell in each row, or immediately following week #
 		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
 		
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
@@ -189,6 +211,10 @@ function BasicView(element, calendar, viewName) {
 		var date;
 		var row;
 	
+		if (showWeekNumbers) {
+			head.find('.fc-week-number').text(weekNumberTitle);
+		}
+
 		if (dowDirty) {
 			headCells.each(function(i, _cell) {
 				cell = $(_cell);
@@ -220,6 +246,14 @@ function BasicView(element, calendar, viewName) {
 		bodyRows.each(function(i, _row) {
 			row = $(_row);
 			if (i < rowCnt) {
+
+				if (showWeekNumbers) {
+					var weekStartDate = indexDate(i*7);
+					row.find('.fc-week-number > div').text(
+						formatDate(weekStartDate, weekNumberFormat)
+					);
+				}
+
 				row.show();
 				if (i == rowCnt-1) {
 					row.addClass('fc-last');
@@ -265,7 +299,13 @@ function BasicView(element, calendar, viewName) {
 	function setWidth(width) {
 		viewWidth = width;
 		colContentPositions.clear();
-		colWidth = Math.floor(viewWidth / colCnt);
+
+		weekNumberWidth = 0;
+		if (showWeekNumbers) {
+			weekNumberWidth = head.find('th.fc-week-number').outerWidth();
+		}
+
+		colWidth = Math.floor((viewWidth - weekNumberWidth) / colCnt);
 		setOuterWidth(headCells.slice(0, -1), colWidth);
 	}
 	
@@ -475,8 +515,12 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function allDayBounds(i) {
+		var left = 0;
+		if (showWeekNumbers) {
+			left += weekNumberWidth;
+		}
 		return {
-			left: 0,
+			left: left,
 			right: viewWidth
 		};
 	}

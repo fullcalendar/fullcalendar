@@ -343,7 +343,7 @@ function DayEventRenderer() {
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
 			rowDivs[i] = allDayRow(i)
-				.find('td:first div.fc-day-content > div'); // optimal selector?
+				.find('div.fc-day-content > div'); // optimal selector?
 		}
 		return rowDivs;
 	}

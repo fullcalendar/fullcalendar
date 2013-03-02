@@ -10,6 +10,9 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
+	weekNumbers: false,
+	weekNumberCalculation: 'iso',
+	weekNumberTitle: 'W',
 	
 	// editing
 	//editable: false,
