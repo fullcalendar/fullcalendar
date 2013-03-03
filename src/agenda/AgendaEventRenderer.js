@@ -72,7 +72,7 @@ function AgendaEventRenderer() {
 			setHeight(); // no params means set to viewHeight
 		}
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
-		trigger('readyState');
+		trigger('eventAfterAllRender');
 	}
 	
 	

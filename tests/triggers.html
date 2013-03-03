@@ -5,6 +5,7 @@
 <link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.print.css' media='print' />
 <script src='../build/deps.js'></script>
 <script src='../build/out/fullcalendar/fullcalendar.js'></script>
+<script src='../build/out/fullcalendar/gcal.js'></script>
 <script>
 
 	/*
@@ -40,6 +41,10 @@
 				console.log(view.visStart + ' - ' + view.visEnd);
 				//console.log(view);
 				//console.log(this);
+			},
+
+			eventAfterAllRender: function(view) {
+				console.log('all rendered', view);
 			},
 			
 			//loading: // see sources.html
@@ -148,6 +153,14 @@
 				//console.log(view.title);
 				//console.log(this);
 			},
+
+			/* for testing eventAfterAllRender
+			events: {
+				url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+				editable: true,
+				className: 'holiday'
+			},
+			*/
 			
 			events: [
 				{
