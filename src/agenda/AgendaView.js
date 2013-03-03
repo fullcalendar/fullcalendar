@@ -321,6 +321,9 @@ function AgendaView(element, calendar, viewName) {
 				bodyCell.removeClass(tm + '-state-highlight fc-today');
 			}
 			setDayID(headCell.add(bodyCell), date);
+			if(typeof opt('cellDisplay') === 'function') {
+				opt('cellDisplay').call(bodyCell, bodyCell, date);
+			}
 		}
 	}
 	
