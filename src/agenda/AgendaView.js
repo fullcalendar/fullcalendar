@@ -50,7 +50,6 @@ function AgendaView(element, calendar, viewName) {
 	t.getRowCnt = function() { return 1 };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
-	t.getSlotHeight = function() { return slotHeight };
 	t.getGranularityHeight = function() { return granularityHeight };
 	t.getGranularityMinutes = function() { return granularityMinutes };
 	t.defaultSelectionEnd = defaultSelectionEnd;
