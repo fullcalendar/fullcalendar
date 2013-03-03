@@ -271,7 +271,7 @@ module.exports = function(grunt) {
 	// http://twitter.github.com/bower/
 
 	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
-		'clean:build',
+		'clean:component',
 		'submodules',
 		'uglify', // we want the minified JS in there
 		'copy:component',
@@ -306,11 +306,8 @@ module.exports = function(grunt) {
 	/* Clean Up Files
 	----------------------------------------------------------------------------------------------------*/
 
-	config.clean.build = [
-		'build/out/*',
-		'build/component/*'
-	];
-
+	config.clean.build = 'build/out/*';
+	config.clean.component = 'build/component/*';
 	config.clean.dist = 'dist/*';
 
 
