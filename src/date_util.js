@@ -361,6 +361,7 @@ var dateFormatters = {
 		return iso8601Week(d);
 	}
 };
+fc.dateFormatters = dateFormatters;
 
 
 /* thanks jQuery UI (https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.datepicker.js)
