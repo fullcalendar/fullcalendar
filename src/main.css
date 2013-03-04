@@ -100,6 +100,24 @@ html .fc,
 .fc-header .ui-state-active {
 	z-index: 4;
 	}
+
+/*
+Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
+and we'll try to make them look good cross-browser.
+*/
+
+.fc-text-arrow {
+	position: relative;
+	top: -8%;
+	margin: 0 .2em;
+	font-size: 2em;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	}
+
+.fc-button-prev .fc-text-arrow,
+.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+	font-weight: bold;
+	}
 	
 	
 	
