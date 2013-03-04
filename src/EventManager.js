@@ -74,6 +74,14 @@ function EventManager(options, _sources) {
 		_fetchEventSource(source, function(events) {
 			if (fetchID == currentFetchID) {
 				if (events) {
+
+					if (options.eventTransform) {
+						events = $.map(events, options.eventTransform);
+					}
+					if (source.eventTransform) {
+						events = $.map(events, source.eventTransform);
+					}
+				
 					for (var i=0; i<events.length; i++) {
 						events[i].source = source;
 						normalizeEvent(events[i]);
@@ -122,7 +130,6 @@ function EventManager(options, _sources) {
 			}
 		}else{
 			var url = source.url;
-			var eventTransform = source.eventTransform || options.eventTransform;
 			if (url) {
 				var success = source.success;
 				var error = source.error;
@@ -145,9 +152,7 @@ function EventManager(options, _sources) {
 						if ($.isArray(res)) {
 							events = res;
 						}
-						callback(events && eventTransform
-							? $.map(events, eventTransform)
-							: events);
+						callback(events);
 					},
 					error: function() {
 						applyAll(error, this, arguments);
