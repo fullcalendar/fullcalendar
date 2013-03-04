@@ -12,8 +12,8 @@
 // all files are relative to the project root
 
 var files = [
-	'lib/jquery-1.8.1.min.js',
-	'lib/jquery-ui-1.8.23.custom.min.js'
+	'lib/jquery-1.9.1.min.js',
+	'lib/jquery-ui-1.10.1.custom.min.js'
 ];
 
 
