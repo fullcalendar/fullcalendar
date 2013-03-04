@@ -146,33 +146,58 @@ function BasicView(element, calendar, viewName) {
 		var contentClass = tm + "-widget-content";
 		var month = t.start.getMonth();
 		var today = clearTime(new Date());
+		var cellDate; // not to be confused with local function. TODO: better names
+		var cellClasses;
 		var cell;
-		var date;
 
 		html += "<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
 		        "<thead>" +
 		        "<tr>";
+
 		if (showWeekNumbers) {
 			html += "<th class='fc-week-number " + headerClass + "'/>";
 		}
+
 		for (i=0; i<colCnt; i++) {
-			html += "<th class='fc- fc-day-header " + headerClass + "'/>"; // need fc- for setDayID
+			html += "<th class='fc-day-header fc-" + dayIDs[i] + " " + headerClass + "'/>";
 		}
+
 		html += "</tr>" +
 		        "</thead>" +
 		        "<tbody>";
+
 		for (i=0; i<rowCnt; i++) {
-			html += "<tr class='fc-week" + i + "'>";
+			html += "<tr class='fc-week'>";
+
 			if (showWeekNumbers) {
 				html += "<td class='fc-week-number " + contentClass + "'>" +
 				        "<div/>" +
 				        "</td>";
 			}
+
 			for (j=0; j<colCnt; j++) {
-				html += "<td class='fc- fc-day fc-day" + (i*colCnt+j) + " " + contentClass + "'>" + // need fc- for setDayID
+				cellDate = _cellDate(i, j); // a little confusing. cellDate is local variable. _cellDate is private function
+
+				cellClasses = [
+					'fc-day',
+					'fc-' + dayIDs[cellDate.getDay()],
+					contentClass
+				];
+				if (cellDate.getMonth() != month) {
+					cellClasses.push('fc-other-month');
+				}
+				if (+cellDate == +today) {
+					cellClasses.push('fc-today');
+					cellClasses.push(tm + '-state-highlight');
+				}
+
+				html += "<td" +
+				        " class='" + cellClasses.join(' ') + "'" +
+				        " data-date='" + formatDate(cellDate, 'yyyy-MM-dd') + "'" +
+				        ">" + 
 				        "<div>";
 				if (showNumbers) {
-					html += "<div class='fc-day-number'/>";
+					html += "<div class='fc-day-number'>" + cellDate.getDate() + "</div>";
 				}
 				html += "<div class='fc-day-content'>" +
 				        "<div style='position:relative'>&nbsp;</div>" +
@@ -180,6 +205,7 @@ function BasicView(element, calendar, viewName) {
 				        "</div>" +
 				        "</td>";
 			}
+
 			html += "</tr>";
 		}
 		html += "</tbody>" +
@@ -203,47 +229,29 @@ function BasicView(element, calendar, viewName) {
 		markFirstLast(bodyRows); // marks first+last td's
 		bodyRows.eq(0).addClass('fc-first');
 		bodyRows.filter(':last').addClass('fc-last');
-		
-		dayBind(bodyCells);
-
-		// update head cells
 	
 		if (showWeekNumbers) {
 			head.find('.fc-week-number').text(weekNumberTitle);
 		}
 
 		headCells.each(function(i, _cell) {
-			cell = $(_cell);
-			date = indexDate(i);
-			cell.text(formatDate(date, colFormat));
-			setDayID(cell, date);
+			var date = indexDate(i);
+			$(_cell).text(formatDate(date, colFormat));
 		});
 
-		// update body cells (we should maybe move this into the HTML generation above)
-
 		if (showWeekNumbers) {
-			bodyRows.each(function(i, _row) {
-				var weekStartDate = _cellDate(i, 0);
-				$(_row).find('.fc-week-number > div').text(
-					formatDate(weekStartDate, weekNumberFormat)
-				);
+			body.find('.fc-week-number > div').each(function(i, _cell) {
+				var weekStart = _cellDate(i, 0);
+				$(_cell).text(formatDate(weekStart, weekNumberFormat));
 			});
 		}
 		
 		bodyCells.each(function(i, _cell) {
-			cell = $(_cell);
-			date = indexDate(i);
-			if (date.getMonth() != month) {
-				cell.addClass('fc-other-month');
-			}
-			if (+date == +today) {
-				cell.addClass(tm + '-state-highlight fc-today');
-			}
-			cell.find('.fc-day-number').text(date.getDate());
-			cell.attr('data-date', $.fullCalendar.formatDate(date, "yyyyMMdd"));
-			setDayID(cell, date);
-			trigger('dayRender', t, date, cell);
+			var date = indexDate(i);
+			trigger('dayRender', t, date, $(_cell));
 		});
+
+		dayBind(bodyCells);
 	}
 	
 	
@@ -304,8 +312,7 @@ function BasicView(element, calendar, viewName) {
 	
 	function dayClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var index = parseInt(this.className.match(/fc\-day(\d+)/)[1]); // TODO: maybe use .data
-			var date = indexDate(index);
+			var date = parseISO8601($(this).data('date'));
 			trigger('dayClick', this, date, true, ev);
 		}
 	}
