@@ -136,28 +136,22 @@ function DayEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
+			classes = ['fc-event', 'fc-event-hori'];
 			if (isEventDraggable(event)) {
 				classes.push('fc-event-draggable');
 			}
+			if (seg.isStart) {
+				classes.push('fc-event-start');
+			}
+			if (seg.isEnd) {
+				classes.push('fc-event-end');
+			}
 			if (rtl) {
-				if (seg.isStart) {
-					classes.push('fc-corner-right');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-left');
-				}
 				leftCol = dayOfWeekCol(seg.end.getDay()-1);
 				rightCol = dayOfWeekCol(seg.start.getDay());
 				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
 				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
 			}else{
-				if (seg.isStart) {
-					classes.push('fc-corner-left');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-right');
-				}
 				leftCol = dayOfWeekCol(seg.start.getDay());
 				rightCol = dayOfWeekCol(seg.end.getDay()-1);
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
@@ -177,10 +171,6 @@ function DayEventRenderer() {
 			html +=
 				" class='" + classes.join(' ') + "'" +
 				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
-				">" +
-				"<div" +
-				" class='fc-event-inner fc-event-skin'" +
-				(skinCss ? " style='" + skinCss + "'" : '') +
 				">";
 			if (!event.allDay && seg.isStart) {
 				html +=
@@ -189,8 +179,7 @@ function DayEventRenderer() {
 					"</span>";
 			}
 			html +=
-				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
-				"</div>";
+				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>";
 			if (seg.isEnd && isEventResizable(event)) {
 				html +=
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
@@ -386,7 +375,7 @@ function DayEventRenderer() {
 	function resizableDayEvent(event, element, seg) {
 		var rtl = opt('isRTL');
 		var direction = rtl ? 'w' : 'e';
-		var handle = element.find('div.ui-resizable-' + direction);
+		var handle = element.find('.ui-resizable-' + direction); // TODO: stop using this class because we aren't using jqui for this
 		var isResizing = false;
 		
 		// TODO: look into using jquery-ui mouse widget for this stuff

@@ -158,7 +158,7 @@ function AgendaEventRenderer() {
 			vsideCache={},
 			hsideCache={},
 			key, val,
-			contentElement,
+			titleElement,
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis, dit,
@@ -247,9 +247,9 @@ function AgendaEventRenderer() {
 				seg.vsides = val === undefined ? (vsideCache[key] = vsides(eventElement, true)) : val;
 				val = hsideCache[key];
 				seg.hsides = val === undefined ? (hsideCache[key] = hsides(eventElement, true)) : val;
-				contentElement = eventElement.find('div.fc-event-content');
-				if (contentElement.length) {
-					seg.contentTop = contentElement[0].offsetTop;
+				titleElement = eventElement.find('.fc-event-title');
+				if (titleElement.length) {
+					seg.contentTop = titleElement[0].offsetTop;
 				}
 			}
 		}
@@ -263,7 +263,7 @@ function AgendaEventRenderer() {
 				eventElement[0].style.height = height + 'px';
 				event = seg.event;
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
-					// not enough room for title, put it in the time header
+					// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
 					eventElement.find('div.fc-event-time')
 						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
 					eventElement.find('div.fc-event-title')
@@ -280,16 +280,15 @@ function AgendaEventRenderer() {
 		var html = "<";
 		var url = event.url;
 		var skinCss = getSkinCss(event, opt);
-		var skinCssAttr = (skinCss ? " style='" + skinCss + "'" : '');
-		var classes = ['fc-event', 'fc-event-skin', 'fc-event-vert'];
+		var classes = ['fc-event', 'fc-event-vert'];
 		if (isEventDraggable(event)) {
 			classes.push('fc-event-draggable');
 		}
 		if (seg.isStart) {
-			classes.push('fc-corner-top');
+			classes.push('fc-event-start');
 		}
 		if (seg.isEnd) {
-			classes.push('fc-corner-bottom');
+			classes.push('fc-event-end');
 		}
 		classes = classes.concat(event.className);
 		if (event.source) {
@@ -304,19 +303,13 @@ function AgendaEventRenderer() {
 			" class='" + classes.join(' ') + "'" +
 			" style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'" +
 			">" +
-			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
-			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-time'>" +
 			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
 			"</div>" +
-			"</div>" +
-			"<div class='fc-event-content'>" +
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title) +
 			"</div>" +
-			"</div>" +
-			"<div class='fc-event-bg'></div>" +
-			"</div>"; // close inner
+			"<div class='fc-event-bg'></div>";
 		if (seg.isEnd && isEventResizable(event)) {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
@@ -559,7 +552,9 @@ function AgendaEventRenderer() {
 		var granularityHeight = getGranularityHeight();
 		var granularityMinutes = getGranularityMinutes();
 		eventElement.resizable({
-			handles: 's',
+			handles: {
+				s: '.ui-resizable-handle',
+			},
 			grid: granularityHeight,
 			start: function(ev, ui) {
 				granularityDelta = prevGranularityDelta = 0;

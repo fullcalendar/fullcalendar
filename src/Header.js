@@ -72,17 +72,12 @@ function Header(calendar, options) {
 							var text = smartProperty(options.buttonText, buttonName); // why are we using smartProperty here?
 							var button = $(
 								"<span class='fc-button fc-button-" + buttonName + " " + tm + "-state-default'>" +
-									"<span class='fc-button-inner'>" +
-										"<span class='fc-button-content'>" +
-											(icon ?
-												"<span class='fc-icon-wrap'>" +
-													"<span class='ui-icon ui-icon-" + icon + "'/>" +
-												"</span>" :
-												text
-												) +
-										"</span>" +
-										"<span class='fc-button-effect'><span></span></span>" +
-									"</span>" +
+									(icon ?
+										"<span class='fc-icon-wrap'>" +
+											"<span class='ui-icon ui-icon-" + icon + "'/>" +
+										"</span>" :
+										text
+										) +
 								"</span>"
 							);
 							if (button) {
