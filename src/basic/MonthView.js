@@ -45,7 +45,7 @@ function MonthView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(6, rowCnt, nwe ? 5 : 7, true);
+		renderBasic(rowCnt, nwe ? 5 : 7, true);
 	}
 	
 	
