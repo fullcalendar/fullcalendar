@@ -10,7 +10,9 @@ var defaults = {
 		right: 'today prev,next'
 	},
 	weekends: true,
-	
+
+	htmlTitle: false,
+
 	// editing
 	//editable: false,
 	//disableDragging: false,
