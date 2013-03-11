@@ -141,7 +141,7 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	config.copy.misc = {
-		src: "*.txt", // licenses and changelog
+		src: "*.txt", // license and changelog
 		dest: 'build/out/'
 	};
 

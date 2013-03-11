@@ -21,11 +21,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/arshaw/fullcalendar/blob/master/MIT-LICENSE.txt"
-    },
-    {
-      "type": "GPL",
-      "url": "https://github.com/arshaw/fullcalendar/blob/master/GPL-LICENSE.txt"
+      "url": "https://github.com/arshaw/fullcalendar/blob/master/license.txt"
     }
   ],
 
