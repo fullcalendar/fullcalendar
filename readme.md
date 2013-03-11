@@ -28,23 +28,14 @@ Enter the directory and install FullCalendar's development dependencies:
 	cd fullcalendar && npm install
 
 
-Development Workflow
---------------------
+Building
+--------
 
-After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and demos.
-You can either manually rebuild each time you make a change:
-
-	grunt dev
-
-Or, you can run a command that automatically rebuilds whenever you save a source file:
-
-	grunt watch
-
-When you are finished, run the following command to write the distributable files into the `./build/out/` directory:
+To build a concatenated, minified version of FullCalendar in the ./build/out/fullcalendar/ directory, run:
 
 	grunt
 
-If you want to clean up the generated files run:
+If you want to clean up the generated files, run:
 
 	grunt clean
 
