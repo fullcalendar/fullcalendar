@@ -1,7 +1,9 @@
 
 var _ = require('underscore');
 
+
 module.exports = function(grunt) {
+
 
 	// Load required NPM tasks.
 	// You must first run `npm install` in the project's root directory to get these dependencies.
@@ -10,8 +12,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-watch'); // Very useful for development. See README.
 
+
+	var fileIndex = require('./files.js'); // lists of source/dependency files
+	var loaderUtils = require('./build/loader.js');
 
 	// read config files, and combine into one "meta" object
 	var packageConfig = grunt.file.readJSON('package.json');
@@ -19,22 +23,15 @@ module.exports = function(grunt) {
 	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	var meta = _.extend({}, packageConfig, componentConfig, pluginConfig);
 	
-	
-	var config = { // this will eventually get passed to grunt.initConfig
+	// this will eventually get passed to grunt.initConfig
+	var config = {
 		meta: meta, // do this primarily for templating (<%= %>)
-
-		// initialize multitasks
-		concat: {},
+		concat: {}, // initialize multitasks...
 		uglify: {},
 		copy: {},
 		compress: {},
-		clean: {},
-		watch: {} // we will add watch tasks whenever we do concats, so files get re-concatenated upon save
+		clean: {}
 	};
-
-
-	// files that the demos might need in the distributable
-	var depFiles = require('./build/deps.js');
 
 
 	/* Important Top-Level Tasks
@@ -44,125 +41,51 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('dist', 'Create a distributable ZIP file', [
 		'clean:build',
-		'submodules',
+		'concat',
 		'uglify',
-		'copy:deps',
+		'copy:dependencies',
 		'copy:demos',
 		'copy:misc',
 		'compress'
 	]);
 
-	grunt.registerTask('dev', 'Build necessary files for developing and debugging', 'submodules');
 
-	grunt.registerTask('submodules', 'Build all FullCalendar submodules', [
-		'main',
-		'gcal'
-	]);
-
-
-	/* Main FullCalendar Submodule
+	/* Concatenate Submodules
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('main', 'Build the main FullCalendar submodule', [
-		'concat:mainJs',
-		'concat:mainCss',
-		'concat:mainPrintCss'
-	]);
+	_.each(fileIndex.fullcalendar, function(submodule, name) {
 
-	// JavaScript
+		if (submodule.js) {
+			config.concat[name + '-js'] = {
+				options: {
+					process: true // replace template variables
+				},
+				src: submodule.js,
+				dest: 'build/out/fullcalendar/' + name + '.js'
+			};
+		}
 
-	config.concat.mainJs = {
-		options: {
-			process: true // replace template variables
-		},
-		src: [
-			'src/intro.js',
-			'src/defaults.js',
-			'src/main.js',
-			'src/Calendar.js',
-			'src/Header.js',
-			'src/EventManager.js',
-			'src/date_util.js',
-			'src/util.js',
-			'src/basic/MonthView.js',
-			'src/basic/BasicWeekView.js',
-			'src/basic/BasicDayView.js',
-			'src/basic/BasicView.js',
-			'src/basic/BasicEventRenderer.js',
-			'src/agenda/AgendaWeekView.js',
-			'src/agenda/AgendaDayView.js',
-			'src/agenda/AgendaView.js',
-			'src/agenda/AgendaEventRenderer.js',
-			'src/common/View.js',
-			'src/common/DayEventRenderer.js',
-			'src/common/SelectionManager.js',
-			'src/common/OverlayManager.js',
-			'src/common/CoordinateGrid.js',
-			'src/common/HoverListener.js',
-			'src/common/HorizontalPositionCache.js',
-			'src/outro.js'
-		],
-		dest: 'build/out/fullcalendar/fullcalendar.js'
-	};
+		if (submodule.css) {
+			config.concat[name + '-css'] = {
+				options: {
+					process: true // replace template variables
+				},
+				src: submodule.css,
+				dest: 'build/out/fullcalendar/' + name + '.css'
+			};
+		}
 
-	config.watch.mainJs = {
-		files: config.concat.mainJs.src,
-		tasks: 'concat:mainJs'
-	};
+		if (submodule.printCss) {
+			config.concat[name + '-print-css'] = {
+				options: {
+					process: true // replace template variables
+				},
+				src: submodule.printCss,
+				dest: 'build/out/fullcalendar/' + name + '.print.css'
+			};
+		}
 
-	// CSS
-
-	config.concat.mainCss = {
-		options: {
-			process: true // replace template variables
-		},
-		src: [
-			'src/main.css',
-			'src/common/common.css',
-			'src/basic/basic.css',
-			'src/agenda/agenda.css'
-		],
-		dest: 'build/out/fullcalendar/fullcalendar.css'
-	};
-
-	config.watch.mainCss = {
-		files: config.concat.mainCss.src,
-		tasks: 'concat:mainCss'
-	};
-
-	// CSS (for printing)
-
-	config.concat.mainPrintCss = {
-		options: {
-			process: true // replace template variables
-		},
-		src: 'src/common/print.css',
-		dest: 'build/out/fullcalendar/fullcalendar.print.css'
-	};
-
-	config.watch.mainPrintCss = {
-		files: config.concat.mainPrintCss.src,
-		tasks: 'concat:mainPrintCss'
-	};
-
-
-	/* Google Calendar Submodule
-	----------------------------------------------------------------------------------------------------*/
-
-	grunt.registerTask('gcal', 'Build the Google Calendar submodule', 'concat:gcalJs');
-
-	config.concat.gcalJs = {
-		options: {
-			process: true // replace template variables
-		},
-		src: 'src/gcal/gcal.js',
-		dest: 'build/out/fullcalendar/gcal.js'
-	};
-
-	config.watch.gcalJs = {
-		files: config.concat.gcalJs.src,
-		tasks: 'concat:gcalJs'
-	};
+	});
 
 
 	/* Minify the JavaScript
@@ -173,7 +96,7 @@ module.exports = function(grunt) {
 			preserveComments: 'some' // keep comments starting with /*!
 		},
 		expand: true,
-		src: 'build/out/fullcalendar/fullcalendar.js',
+		src: 'build/out/fullcalendar/*.js',
 		ext: '.min.js'
 	}
 
@@ -181,12 +104,14 @@ module.exports = function(grunt) {
 	/* Copy Dependencies
 	----------------------------------------------------------------------------------------------------*/
 
-	config.copy.deps = {
+	config.copy.dependencies = {
 		expand: true,
 		flatten: true,
-		src: depFiles,
-		dest: 'build/out/jquery/' // all depenencies will go in the jquery/ directory for now
-		                          // (because we only have jquery and jquery-ui)
+		src: [
+			fileIndex['jquery'].js,
+			fileIndex['jquery-ui'].js
+		],
+		dest: 'build/out/jquery/'
 	};
 
 
@@ -195,52 +120,21 @@ module.exports = function(grunt) {
 
 	config.copy.demos = {
 		options: {
-			// while copying demo files over, rewrite <script> and <link> tags for new dependency locations
+			// while copying demo files over, replace loader.js <script> with actual tags
 			processContentExclude: 'demos/*/**', // don't process anything more than 1 level deep (like assets)
 			processContent: function(content) {
-				content = rewriteDemoStylesheetTags(content);
-				content = rewriteDemoScriptTags(content);
+				content = content.replace(
+					/<script[^>]*loader\.js[^>]*?(?:data-modules=['"](.*?)['"])?><\/script>/i, // match loader.js tag and modules param
+					function(wholeMatch, moduleString) {
+						return loaderUtils.buildTags('..', fileIndex, moduleString, 'dist');
+					}
+				);
 				return content;
 			}
 		},
 		src: 'demos/**',
 		dest: 'build/out/'
 	};
-
-	function rewriteDemoStylesheetTags(content) {
-		return content.replace(
-			/(<link[^>]*href=['"])(.*?\.css)(['"][^>]*>)/g,
-			function(full, before, href, after) {
-				href = href.replace('../build/out/', '../');
-				return before + href + after;
-			}
-		);
-	}
-
-	function rewriteDemoScriptTags(content) {
-		return content.replace(
-			/(<script[^>]*src=['"])(.*?)(['"][\s\S]*?<\/script>)/g,
-			function(full, before, src, after) {
-				if (src == '../build/deps.js') {
-					return buildDepScriptTags();
-				}
-				else {
-					src = src.replace('../build/out/', '../');
-					src = src.replace('/fullcalendar.', '/fullcalendar.min.'); // use minified version of main JS file
-					return before + src + after;
-				}
-			}
-		);
-	}
-
-	function buildDepScriptTags() {
-		var tags = [];
-		for (var i=0; i<depFiles.length; i++) {
-			var fileName = depFiles[i].replace(/.*\//, ''); // get file's basename
-			tags.push("<script src='../jquery/" + fileName + "'></script>"); // all dependencies are in jquery/ for now
-		}
-		return tags.join("\n");
-	}
 
 
 	/* Copy Misc Files
@@ -272,11 +166,11 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
 		'clean:component',
-		'submodules',
+		'concat',
 		'uglify', // we want the minified JS in there
 		'copy:component',
-		'copy:componentReadme',
-		'componentConfig'
+		'copy:component-readme',
+		'component.json'
 	]);
 
 	config.copy.component = {
@@ -286,12 +180,12 @@ module.exports = function(grunt) {
 		dest: 'build/component/',
 	};
 
-	config.copy.componentReadme = {
+	config.copy['component-readme'] = {
 		src: 'build/component-readme.md',
 		dest: 'build/component/readme.md'
 	};
 
-	grunt.registerTask('componentConfig', function() {
+	grunt.registerTask('component.json', function() {
 		grunt.file.write(
 			'build/component/component.json',
 			JSON.stringify(
