@@ -69,7 +69,8 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	firstEventLarger: true
+	firstEventLarger: true,
+	eventHorizSpacing: 0
 };
 
 // right-to-left defaults

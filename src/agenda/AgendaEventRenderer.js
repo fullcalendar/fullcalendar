@@ -203,7 +203,7 @@ function AgendaEventRenderer() {
 				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth;
+			seg.outerWidth = outerWidth - opt('eventHorizSpacing');
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
