@@ -188,7 +188,11 @@ function AgendaEventRenderer() {
 			}else{
 				if (forward) {
 					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					if (opt('firstEventLarger')) {
+						outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
+					}else{
+						outerWidth = availWidth / (forward + 1);
+					}
 				}else{
 					// can be entire width, aligned left
 					outerWidth = availWidth;
