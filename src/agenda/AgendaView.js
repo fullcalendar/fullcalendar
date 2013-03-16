@@ -50,8 +50,8 @@ function AgendaView(element, calendar, viewName) {
 	t.getRowCnt = function() { return 1 };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
-	t.getGranularityHeight = function() { return granularityHeight };
-	t.getGranularityMinutes = function() { return granularityMinutes };
+	t.getSnapHeight = function() { return snapHeight };
+	t.getSnapMinutes = function() { return snapMinutes };
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
@@ -108,9 +108,9 @@ function AgendaView(element, calendar, viewName) {
 	var gutterWidth;
 	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
 
-	var granularityMinutes;
-	var granularityRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
-	var granularityHeight; // holds the pixel hight of a "selection" slot
+	var snapMinutes;
+	var snapRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
+	var snapHeight; // holds the pixel hight of a "selection" slot
 	
 	var colCnt;
 	var slotCnt;
@@ -177,7 +177,7 @@ function AgendaView(element, calendar, viewName) {
 			weekNumberFormat = "W";
 		}
 
-		granularityMinutes = opt('granularityMinutes') || opt('slotMinutes');
+		snapMinutes = opt('snapMinutes') || opt('slotMinutes');
 	}
 	
 	
@@ -388,8 +388,8 @@ function AgendaView(element, calendar, viewName) {
 		
 		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
 
-		granularityRatio = opt('slotMinutes') / granularityMinutes;
-		granularityHeight = slotHeight / granularityRatio;
+		snapRatio = opt('slotMinutes') / snapMinutes;
+		snapHeight = slotHeight / snapRatio;
 		
 		if (dateChanged) {
 			resetScroll();
@@ -578,10 +578,10 @@ function AgendaView(element, calendar, viewName) {
 		function constrain(n) {
 			return Math.max(slotScrollerTop, Math.min(slotScrollerBottom, n));
 		}
-		for (var i=0; i<slotCnt*granularityRatio; i++) { // adapt slot count to increased/decreased selection slot count
+		for (var i=0; i<slotCnt*snapRatio; i++) { // adapt slot count to increased/decreased selection slot count
 			rows.push([
-				constrain(slotTableTop + granularityHeight*i),
-				constrain(slotTableTop + granularityHeight*(i+1))
+				constrain(slotTableTop + snapHeight*i),
+				constrain(slotTableTop + snapHeight*(i+1))
 			]);
 		}
 	});
@@ -622,7 +622,7 @@ function AgendaView(element, calendar, viewName) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * granularityMinutes);
+			addMinutes(d, minMinute + slotIndex * snapMinutes);
 		}
 		return d;
 	}
@@ -785,9 +785,9 @@ function AgendaView(element, calendar, viewName) {
 					var d2 = cellDate(cell);
 					dates = [
 						d1,
-						addMinutes(cloneDate(d1), granularityMinutes), // calculate minutes depending on selection slot minutes 
+						addMinutes(cloneDate(d1), snapMinutes), // calculate minutes depending on selection slot minutes 
 						d2,
-						addMinutes(cloneDate(d2), granularityMinutes)
+						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(cmp);
 					renderSlotSelection(dates[0], dates[3]);
 				}else{
