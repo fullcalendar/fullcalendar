@@ -125,6 +125,14 @@ ignoreTimezone
 Sets the [ignoreTimezone]() option, but only for this source.
 </td>
 </tr>
+<tr>
+<th>
+eventTransform
+</th>
+<td markdown='1'>
+Sets the [eventTransform]() callback, but only for this source.
+</td>
+</tr>
 </table>
 
 **For JSON feeds**, [there are additional options you can set](events_json_feed#options).

@@ -36,6 +36,7 @@ Prior to version 1.3, formatDate accepted a very different format. [See here](fo
 - **TT** - 'AM' or 'PM'
 - **u** - ISO8601 format
 - **S** - 'st', 'nd', 'rd', 'th' for the date
+- **W** - the [ISO8601 week number](http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
 
 
 Special Characters:

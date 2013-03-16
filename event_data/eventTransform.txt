@@ -1,0 +1,17 @@
+
+eventTransform *1.6*
+====================
+
+Transforms custom data into a standard [Event Object](Event_Object).
+
+<div class='spec' markdown='1'>
+function( *eventData* ) {}
+</div>
+
+This hook allows you to receive arbitrary event data from a JSON feed or any other
+[Event Source](Event_Source_Object) and transform it into the type of data FullCalendar accepts.
+This let's you easily accept alternative data formats without having to write a completely custom
+[events function](events_function).
+
+This function is called once per received event. `eventData` is the event data that has been
+receieved. The function must return a new object in the [Event Object](Event_Object) format.

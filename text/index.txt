@@ -11,6 +11,7 @@ Text/Time Customization
 <li>monthNamesShort</li>
 <li>dayNames</li>
 <li>dayNamesShort</li>
+<li>weekNumberTitle</li>
 </ul>
 
 Related agenda options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
