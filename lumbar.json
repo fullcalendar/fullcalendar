@@ -23,7 +23,7 @@
     },
     "jquery-ui": {
       "scripts": [
-        "lib/jquery-ui-1.10.1.custom.min.js"
+        "lib/jquery-ui-1.10.2.custom.min.js"
       ]
     },
     "fullcalendar": {
