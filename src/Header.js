@@ -79,42 +79,40 @@ function Header(calendar, options) {
 										text
 										) +
 								"</span>"
-							);
-							if (button) {
-								button
-									.click(function() {
-										if (!button.hasClass(tm + '-state-disabled')) {
-											buttonClick();
-										}
-									})
-									.mousedown(function() {
+								)
+								.click(function() {
+									if (!button.hasClass(tm + '-state-disabled')) {
+										buttonClick();
+									}
+								})
+								.mousedown(function() {
+									button
+										.not('.' + tm + '-state-active')
+										.not('.' + tm + '-state-disabled')
+										.addClass(tm + '-state-down');
+								})
+								.mouseup(function() {
+									button.removeClass(tm + '-state-down');
+								})
+								.hover(
+									function() {
 										button
 											.not('.' + tm + '-state-active')
 											.not('.' + tm + '-state-disabled')
-											.addClass(tm + '-state-down');
-									})
-									.mouseup(function() {
-										button.removeClass(tm + '-state-down');
-									})
-									.hover(
-										function() {
-											button
-												.not('.' + tm + '-state-active')
-												.not('.' + tm + '-state-disabled')
-												.addClass(tm + '-state-hover');
-										},
-										function() {
-											button
-												.removeClass(tm + '-state-hover')
-												.removeClass(tm + '-state-down');
-										}
-									)
-									.appendTo(e);
-								if (!prevButton) {
-									button.addClass(tm + '-corner-left');
-								}
-								prevButton = button;
+											.addClass(tm + '-state-hover');
+									},
+									function() {
+										button
+											.removeClass(tm + '-state-hover')
+											.removeClass(tm + '-state-down');
+									}
+								)
+								.appendTo(e);
+							disableTextSelection(button);
+							if (!prevButton) {
+								button.addClass(tm + '-corner-left');
 							}
+							prevButton = button;
 						}
 					}
 				});
