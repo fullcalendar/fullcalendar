@@ -46,6 +46,23 @@
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
 	}
+
+/*
+	Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
+	and we'll try to make them look good cross-browser.
+*/
+
+.fc-text-arrow {
+	margin: 0 .1em;
+	font-size: 2em;
+	font-family: "Courier New", Courier, monospace;
+	vertical-align: baseline; /* for IE7 */
+	}
+
+.fc-button-prev .fc-text-arrow,
+.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+	font-weight: bold;
+	}
 	
 /* icon (for jquery ui) */
 	

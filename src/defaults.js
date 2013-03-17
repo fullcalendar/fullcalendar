@@ -82,10 +82,10 @@ var rtlDefaults = {
 		right: 'title'
 	},
 	buttonText: {
-		prev: '&nbsp;&#9658;&nbsp;',
-		next: '&nbsp;&#9668;&nbsp;',
-		prevYear: '&nbsp;&gt;&gt;&nbsp;',
-		nextYear: '&nbsp;&lt;&lt;&nbsp;'
+		prev: "<span class='fc-text-arrow'>&rsaquo;</span>",
+		next: "<span class='fc-text-arrow'>&lsaquo;</span>",
+		prevYear: "<span class='fc-text-arrow'>&raquo;</span>",
+		nextYear: "<span class='fc-text-arrow'>&laquo;</span>"
 	},
 	buttonIcons: {
 		prev: 'circle-triangle-e',
