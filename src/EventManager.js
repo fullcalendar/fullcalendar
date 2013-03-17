@@ -81,6 +81,8 @@ function EventManager(options, _sources) {
 					if (source.eventTransform) {
 						events = $.map(events, source.eventTransform);
 					}
+					// TODO: this technique is not ideal for static array event sources.
+					//  For arrays, we'll want to process all events right in the beginning, then never again.
 				
 					for (var i=0; i<events.length; i++) {
 						events[i].source = source;
