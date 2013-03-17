@@ -34,6 +34,9 @@ module.exports = function(grunt) {
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'archive');
 
+	// Bare minimum for debugging
+	grunt.registerTask('dev', 'lumbar:build');
+
 
 
 	/* FullCalendar Modules
