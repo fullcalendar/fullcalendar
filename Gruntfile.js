@@ -1,9 +1,7 @@
 
-var _ = require('underscore');
-
-
 module.exports = function(grunt) {
 
+	var _ = require('underscore');
 
 	// Load required NPM tasks.
 	// You must first run `npm install` in the project's root directory to get these dependencies.
@@ -12,197 +10,194 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('lumbar');
 
-
-	var fileIndex = require('./files.js'); // lists of source/dependency files
-	var loaderUtils = require('./build/loader.js');
-
-	// read config files, and combine into one "meta" object
+	// Parse config files
+	var lumbarConfig = grunt.file.readJSON('lumbar.json');
 	var packageConfig = grunt.file.readJSON('package.json');
 	var componentConfig = grunt.file.readJSON('component.json');
 	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
-	var meta = _.extend({}, packageConfig, componentConfig, pluginConfig);
 	
-	// this will eventually get passed to grunt.initConfig
+	// This will eventually get passed to grunt.initConfig()
+	// Initialize multitasks...
 	var config = {
-		meta: meta, // do this primarily for templating (<%= %>)
-		concat: {}, // initialize multitasks...
+		concat: {},
 		uglify: {},
 		copy: {},
 		compress: {},
 		clean: {}
 	};
 
+	// Combine configs for the "meta" template variable (<%= meta.whatever %>)
+	config.meta = _.extend({}, packageConfig, componentConfig, pluginConfig);
 
-	/* Important Top-Level Tasks
+	// The "grunt" command with no arguments
+	grunt.registerTask('default', 'archive');
+
+
+
+	/* FullCalendar Modules
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('default', 'dist'); // what will be run with a plain old "grunt" command
-
-	grunt.registerTask('dist', 'Create a distributable ZIP file', [
-		'clean:build',
-		'concat',
-		'uglify',
-		'copy:dependencies',
-		'copy:demos',
-		'copy:misc',
-		'compress'
+	grunt.registerTask('modules', 'Build the FullCalendar modules', [
+		'lumbar:build',
+		'concat:moduleVariables',
+		'uglify:modules'
 	]);
 
-
-	/* Concatenate Submodules
-	----------------------------------------------------------------------------------------------------*/
-
-	_.each(fileIndex.fullcalendar, function(submodule, name) {
-
-		if (submodule.js) {
-			config.concat[name + '-js'] = {
-				options: {
-					process: true // replace template variables
-				},
-				src: submodule.js,
-				dest: 'build/out/fullcalendar/' + name + '.js'
-			};
+	// assemble modules
+	config.lumbar = {
+		build: {
+			build: 'lumbar.json',
+			output: 'build/out' // a directory. lumbar doesn't like trailing slash
 		}
+	};
 
-		if (submodule.css) {
-			config.concat[name + '-css'] = {
-				options: {
-					process: true // replace template variables
-				},
-				src: submodule.css,
-				dest: 'build/out/fullcalendar/' + name + '.css'
-			};
-		}
+	// replace template variables (<%= %>), IN PLACE
+	config.concat.moduleVariables = {
+		options: {
+			process: true // replace
+		},
+		expand: true,
+		cwd: 'build/out/',
+		src: [ '*.js', '*.css', '!jquery*' ],
+		dest: 'build/out/'
+	};
 
-		if (submodule.printCss) {
-			config.concat[name + '-print-css'] = {
-				options: {
-					process: true // replace template variables
-				},
-				src: submodule.printCss,
-				dest: 'build/out/fullcalendar/' + name + '.print.css'
-			};
-		}
-
-	});
-
-
-	/* Minify the JavaScript
-	----------------------------------------------------------------------------------------------------*/
-
-	config.uglify.all = {
+	// create minified versions (*.min.js)
+	config.uglify.modules = {
 		options: {
 			preserveComments: 'some' // keep comments starting with /*!
 		},
 		expand: true,
-		src: 'build/out/fullcalendar/*.js',
+		src: 'build/out/fullcalendar.js', // only do it for fullcalendar.js
 		ext: '.min.js'
 	}
 
+	config.clean.modules = 'build/out/*';
 
-	/* Copy Dependencies
+
+
+	/* Archive
 	----------------------------------------------------------------------------------------------------*/
 
-	config.copy.dependencies = {
+	grunt.registerTask('archive', 'Create a distributable ZIP archive', [
+		'clean:modules',
+		'clean:archive',
+		'modules',
+		'copy:archiveModules',
+		'copy:archiveDependencies',
+		'copy:archiveDemos',
+		'copy:archiveMisc',
+		'compress:archive'
+	]);
+
+	// copy FullCalendar modules into ./fullcalendar/ directory
+	config.copy.archiveModules = {
+		expand: true,
+		cwd: 'build/out/',
+		src: [ '*.js', '*.css', '!jquery*' ],
+		dest: 'build/archive/fullcalendar/'
+	};
+
+	// copy jQuery and jQuery UI into the ./jquery/ directory
+	config.copy.archiveDependencies = {
 		expand: true,
 		flatten: true,
 		src: [
-			fileIndex['jquery'].js,
-			fileIndex['jquery-ui'].js
+			// we want to retain the original filenames
+			lumbarConfig.modules['jquery'].scripts[0],
+			lumbarConfig.modules['jquery-ui'].scripts[0]
 		],
-		dest: 'build/out/jquery/'
+		dest: 'build/archive/jquery/'
 	};
 
-
-	/* Demos
-	----------------------------------------------------------------------------------------------------*/
-
-	config.copy.demos = {
+	// copy demo files into ./demos/ directory
+	config.copy.archiveDemos = {
 		options: {
-			// while copying demo files over, replace loader.js <script> with actual tags
 			processContentExclude: 'demos/*/**', // don't process anything more than 1 level deep (like assets)
 			processContent: function(content) {
-				content = content.replace(
-					/<script[^>]*loader\.js[^>]*?(?:data-modules=['"](.*?)['"])?><\/script>/i, // match loader.js tag and modules param
-					function(wholeMatch, moduleString) {
-						return loaderUtils.buildTags('..', fileIndex, moduleString, 'dist');
-					}
-				);
+				content = content.replace(/((?:src|href)=['"])([^'"]*)(['"])/g, function(m0, m1, m2, m3) {
+					return m1 + transformDemoPath(m2) + m3;
+				});
 				return content;
 			}
 		},
 		src: 'demos/**',
-		dest: 'build/out/'
+		dest: 'build/archive/'
 	};
 
+	// in demo HTML, rewrites paths to work in the archive
+	function transformDemoPath(path) {
+		path = path.replace('/build/out/jquery.js', '/' + lumbarConfig.modules['jquery'].scripts[0]);
+		path = path.replace('/build/out/jquery-ui.js', '/' + lumbarConfig.modules['jquery-ui'].scripts[0]);
+		path = path.replace('/lib/', '/jquery/');
+		path = path.replace('/build/out/', '/fullcalendar/');
+		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
+		return path;
+	}
 
-	/* Copy Misc Files
-	----------------------------------------------------------------------------------------------------*/
-
-	config.copy.misc = {
-		src: "*.txt", // license and changelog
-		dest: 'build/out/'
+	// copy license and changelog
+	config.copy.archiveMisc = {
+		src: "*.txt",
+		dest: 'build/archive/'
 	};
 
-
-	/* Create ZIP file
-	----------------------------------------------------------------------------------------------------*/
-
-	config.compress.all = {
+	// create the ZIP
+	config.compress.archive = {
 		options: {
 			archive: 'dist/<%= meta.name %>-<%= meta.version %>.zip'
 		},
 		expand: true,
-		cwd: 'build/out/',
+		cwd: 'build/archive/',
 		src: '**',
 		dest: '<%= meta.name %>-<%= meta.version %>/' // have a top-level directory in the ZIP file
 	};
 
+	config.clean.archive = 'build/archive/*';
+	config.clean.dist = 'dist/*';
 
-	/* Bower Component
+
+
+	/* Bower Component (http://twitter.github.com/bower/)
 	----------------------------------------------------------------------------------------------------*/
-	// http://twitter.github.com/bower/
 
 	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
+		'clean:modules',
 		'clean:component',
-		'concat',
-		'uglify', // we want the minified JS in there
-		'copy:component',
-		'copy:component-readme',
-		'component.json'
+		'modules',
+		'copy:componentModules',
+		'copy:componentReadme',
+		'componentConfig'
 	]);
 
-	config.copy.component = {
+	// copy FullCalendar modules into component root
+	config.copy.componentModules = {
 		expand: true,
-		cwd: 'build/out/fullcalendar/',
-		src: '**',
+		cwd: 'build/out/',
+		src: [ '*.js', '*.css', '!jquery*' ],
 		dest: 'build/component/',
 	};
 
-	config.copy['component-readme'] = {
+	// copy the component-specific README
+	config.copy.componentReadme = {
 		src: 'build/component-readme.md',
 		dest: 'build/component/readme.md'
 	};
 
-	grunt.registerTask('component.json', function() {
+	// assemble the component's config from existing configs
+	grunt.registerTask('componentConfig', function() {
 		grunt.file.write(
 			'build/component/component.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, componentConfig), // combine the 2 configs
+				_.extend({}, pluginConfig, componentConfig), // combine 2 configs
 				null, // replacer
 				2 // indent
 			)
 		);
 	});
 
-
-	/* Clean Up Files
-	----------------------------------------------------------------------------------------------------*/
-
-	config.clean.build = 'build/out/*';
 	config.clean.component = 'build/component/*';
-	config.clean.dist = 'dist/*';
 
 
 

@@ -1,4 +1,5 @@
 build/out
+build/archive
 build/component
 dist
 
