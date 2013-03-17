@@ -553,7 +553,7 @@ function AgendaEventRenderer() {
 		var snapMinutes = getSnapMinutes();
 		eventElement.resizable({
 			handles: {
-				s: '.ui-resizable-handle',
+				s: '.ui-resizable-handle'
 			},
 			grid: snapHeight,
 			start: function(ev, ui) {
