@@ -1,5 +1,5 @@
 
-version 1.5.5
+version 1.6.0 (3/18/13)
 	- visual facelift, with bootstrap-inspired buttons and colors
 	- simplified HTML/CSS for events and buttons
 	- dayRender, for modifying a day cell (issue 191, thx althaus)
