@@ -3,6 +3,7 @@ snapMinutes *1.6*
 =================
 
 The time interval at which a dragged event will snap to the agenda view time grid.
+Also affects the granularity at which [selections](../selection/) can be made.
 Specified in number of minutes.
 
 <div class='spec' markdown='1'>

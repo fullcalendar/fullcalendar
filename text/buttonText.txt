@@ -8,10 +8,10 @@ Text that will be displayed on buttons of the header.
 Object, *default*:
 
 	{
-		prev:     '&nbsp;&#9668;&nbsp;',  // left triangle
-		next:     '&nbsp;&#9658;&nbsp;',  // right triangle
-		prevYear: '&nbsp;&lt;&lt;&nbsp;', // <<
-		nextYear: '&nbsp;&gt;&gt;&nbsp;', // >>
+		prev:     '&lsaquo;', // <
+		next:     '&rsaquo;', // >
+		prevYear: '&laquo;',  // <<
+		nextYear: '&raquo;',  // >>
 		today:    'today',
 		month:    'month',
 		week:     'week',
