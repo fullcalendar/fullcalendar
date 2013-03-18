@@ -1,4 +1,24 @@
 
+version 1.5.5
+	- visual facelift, with bootstrap-inspired buttons and colors
+	- simplified HTML/CSS for events and buttons
+	- dayRender, for modifying a day cell (issue 191, thx althaus)
+	- week numbers on side of calendar (issue 295)
+		- weekNumber
+		- weekNumberCalculation
+		- weekNumberTitle
+		- "W" formatting variable
+	- finer snapping granularity for agenda view events (issue 495, thx ms-doodle-com)
+	- eventAfterAllRender (issue 753, thx pdrakeweb)
+	- eventDataTransform (thx joeyspo)
+	- data-date attributes on cells (thx Jae)
+	- expose $.fullCalendar.dateFormatters
+	- when clicking fast on buttons, prevent text selection
+	- bundled with latest jQuery (1.9.1) and jQuery UI (1.10.2)
+	- Grunt/Lumbar build system for internal development
+	- build for Bower package manager
+	- build for jQuery plugin site
+
 version 1.5.4 (9/5/12)
 	- made compatible with jQuery 1.8.* (thx archaeron)
 	- bundled with jQuery 1.8.1 and jQuery UI 1.8.23
