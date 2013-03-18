@@ -114,8 +114,7 @@
 	font-size: 10px;
 	}
 
-.fc-event-vert .fc-event-time,
-.fc-event-vert .fc-event-title {
+.fc-event-vert .fc-event-inner {
 	position: relative;
 	z-index: 2;
 	}

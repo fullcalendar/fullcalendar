@@ -140,7 +140,6 @@
 ------------------------------------------------------------------------*/
 	 
 .fc-event {
-	overflow: hidden;
 	border: 1px solid #3a87ad; /* default BORDER color */
 	background-color: #3a87ad; /* default BACKGROUND color */
 	color: #fff;               /* default TEXT color */
@@ -160,6 +159,11 @@ a.fc-event,
 	
 .fc-rtl .fc-event {
 	text-align: right;
+	}
+
+.fc-event-inner {
+	width: 100%;
+	overflow: hidden;
 	}
 	
 .fc-event-time,
