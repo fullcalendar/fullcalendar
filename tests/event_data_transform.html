@@ -23,13 +23,13 @@
 			},
 			editable: true,
 
-			eventTransform: function(event) {
+			eventDataTransform: function(event) {
 				var copy = $.extend({}, event);
 				copy.title += "*";
 				return copy;
 			},
 			events: {
-				eventTransform: function(event) {
+				eventDataTransform: function(event) {
 					var copy = $.extend({}, event);
 					copy.title += "!";
 					return copy;

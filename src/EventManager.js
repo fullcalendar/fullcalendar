@@ -75,11 +75,11 @@ function EventManager(options, _sources) {
 			if (fetchID == currentFetchID) {
 				if (events) {
 
-					if (options.eventTransform) {
-						events = $.map(events, options.eventTransform);
+					if (options.eventDataTransform) {
+						events = $.map(events, options.eventDataTransform);
 					}
-					if (source.eventTransform) {
-						events = $.map(events, source.eventTransform);
+					if (source.eventDataTransform) {
+						events = $.map(events, source.eventDataTransform);
 					}
 					// TODO: this technique is not ideal for static array event sources.
 					//  For arrays, we'll want to process all events right in the beginning, then never again.
