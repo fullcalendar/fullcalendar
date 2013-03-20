@@ -9,7 +9,7 @@ function( date, cell ) { }
 </div>
 
 This callback lets you modify day cells that are part of the *month*, *basicWeek*, and *basicDay* views.
-See [Available Views](http://localhost/arshaw/fullcalendar/docs/views/Available_Views/).
+See [Available Views](../views/Available_Views/).
 
 `date` is the native Date object for the given day.
 
