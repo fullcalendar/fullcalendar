@@ -163,15 +163,16 @@ function DayEventRenderer() {
 			}
 			url = event.url;
 			skinCss = getSkinCss(event, opt);
-			if (url) {
+			/*if (url) {
 				html += "<a href='" + htmlEscape(url) + "'";
 			}else{
 				html += "<div";
-			}
+			}*/
 			html +=
-				" class='" + classes.join(' ') + "'" +
+				"<div class='" + classes.join(' ') + "'" +
 				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
 				">" +
+				((url) ? "<a href='" + htmlEscape(url) + "'>" : '') +
 				"<div class='fc-event-inner'>";
 			if (!event.allDay && seg.isStart) {
 				html +=
@@ -188,8 +189,7 @@ function DayEventRenderer() {
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
 					"</div>";
 			}
-			html +=
-				"</" + (url ? "a" : "div" ) + ">";
+			html += (url ? "</a>" : "" ) + "</div>";
 			seg.left = left;
 			seg.outerWidth = right - left;
 			seg.startCol = leftCol;
