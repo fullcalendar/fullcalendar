@@ -294,15 +294,16 @@ function AgendaEventRenderer() {
 		if (event.source) {
 			classes = classes.concat(event.source.className || []);
 		}
-		if (url) {
+		/*if (url) {
 			html += "a href='" + htmlEscape(event.url) + "'";
 		}else{
 			html += "div";
-		}
+		}*/
 		html +=
-			" class='" + classes.join(' ') + "'" +
+			"<div class='" + classes.join(' ') + "'" +
 			" style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'" +
 			">" +
+			((url) ? "<a href='" + htmlEscape(url) + "'>" : '') +
 			"<div class='fc-event-inner'>" +
 			"<div class='fc-event-time'>" +
 			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
@@ -316,8 +317,7 @@ function AgendaEventRenderer() {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
 		}
-		html +=
-			"</" + (url ? "a" : "div") + ">";
+		html += (url ? "</a>" : "" ) + "</div>";
 		return html;
 	}
 	
