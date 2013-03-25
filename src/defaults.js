@@ -26,11 +26,13 @@ var defaults = {
 	
 	// time formats
 	titleFormat: {
+    year: 'yyyy',
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
 	},
 	columnFormat: {
+    year: 'MMMM',
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d'
@@ -46,12 +48,14 @@ var defaults = {
 	monthNamesShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
 	dayNames: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
 	dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+  dayNamesShortest: ['S','M','T','W','T','F','S'],
 	buttonText: {
 		prev: '&nbsp;&#9668;&nbsp;',
 		next: '&nbsp;&#9658;&nbsp;',
 		prevYear: '&nbsp;&lt;&lt;&nbsp;',
 		nextYear: '&nbsp;&gt;&gt;&nbsp;',
 		today: 'today',
+    year: 'year',
 		month: 'month',
 		week: 'week',
 		day: 'day'

@@ -336,6 +336,7 @@ var dateFormatters = {
 	dd	: function(d)	{ return zeroPad(d.getDate()) },
 	ddd	: function(d,o)	{ return o.dayNamesShort[d.getDay()] },
 	dddd: function(d,o)	{ return o.dayNames[d.getDay()] },
+  e   : function(d,o)     { return o.dayNamesShortest[d.getDay()] },
 	M	: function(d)	{ return d.getMonth() + 1 },
 	MM	: function(d)	{ return zeroPad(d.getMonth() + 1) },
 	MMM	: function(d,o)	{ return o.monthNamesShort[d.getMonth()] },

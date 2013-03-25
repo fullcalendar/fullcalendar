@@ -85,6 +85,7 @@ module.exports = function(grunt) {
 			'src/date_util.js',
 			'src/util.js',
 			'src/basic/MonthView.js',
+                        'src/basic/YearView.js',
 			'src/basic/BasicWeekView.js',
 			'src/basic/BasicDayView.js',
 			'src/basic/BasicView.js',
