@@ -34,6 +34,9 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
+  if (t.getRowLefts) {
+    var getRowLefts = t.getRowLefts;
+  }
 	
 	
 	
@@ -82,7 +85,8 @@ function DayEventRenderer() {
 			}
 			rowDivs[rowI].height(arrayMax(colHeights));
 		}
-		daySegSetTops(segs, getRowTops(rowDivs));
+    daySegSetLefts(segs, getRowLefts(rowDivs));
+		daySegSetTops(segs, getRowTops(rowDivs));    
 	}
 	
 	
@@ -100,6 +104,7 @@ function DayEventRenderer() {
 		daySegCalcHSides(segs);
 		daySegSetWidths(segs);
 		daySegCalcHeights(segs);
+    daySegSetLefts(segs, getRowLefts(getRowDivs()));
 		daySegSetTops(segs, getRowTops(getRowDivs()));
 		elements = [];
 		for (i=0; i<segCnt; i++) {
@@ -339,7 +344,7 @@ function DayEventRenderer() {
 	
 	function getRowDivs() {
 		var i;
-		var rowCnt = getRowCnt();
+		var rowCnt = getRowCnt();    
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
 			rowDivs[i] = allDayRow(i)
@@ -358,6 +363,10 @@ function DayEventRenderer() {
 		}
 		return tops;
 	}
+  
+  function getRowLefts(rowDivs) {    
+    return null;
+  }
 	
 	
 	function daySegSetTops(segs, rowTops) { // also triggers eventAfterRender
@@ -373,6 +382,26 @@ function DayEventRenderer() {
 				element[0].style.top = rowTops[seg.row] + (seg.top||0) + 'px';
 				event = seg.event;
 				trigger('eventAfterRender', event, event, element);
+			}
+		}
+	}
+  
+  function daySegSetLefts(segs, rowLefts) { // also triggers eventAfterRender
+    if (!rowLefts) {
+      return;
+    }
+    
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var event;
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
+      seg.left = rowLefts[seg.row] + (seg.left||0);
+			element = seg.element;
+			if (element) {        
+				element[0].style.left = seg.left + 'px';
 			}
 		}
 	}

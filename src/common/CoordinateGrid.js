@@ -29,6 +29,10 @@ function CoordinateGrid(buildFunc) {
 				break;
 			}
 		}
+    if (r >= 0 && c >= 0) {
+      r += (((c/5)|0)*5)%15;
+      c = c % 5 + ((c/15)|0)*15;
+    }
 		return (r>=0 && c>=0) ? { row:r, col:c } : null;
 	};
 	
