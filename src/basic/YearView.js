@@ -69,7 +69,7 @@ function BasicYearView(element, calendar, viewName) {
 	t.getBodyRows = function() { return bodyRows; };
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
   t.getRowLefts = getRowLefts;
-  
+  t.gridToView = gridToView;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -385,7 +385,6 @@ function BasicYearView(element, calendar, viewName) {
 			var stretchStart = new Date(Math.max(rowStart, overlayStart));
 			var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));            
 			if (stretchStart < stretchEnd) {
-        console.log("found at row="+i);
 				var colStart, colEnd;
 				if (rtl) {
 					colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
@@ -404,13 +403,10 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-    console.log("back = "+col0+','+row0);//5,0
-    col0 += ((row0/5)|0)*5;
-    row0 = (row0 % 5)+((row0/15)|0)*15;
-    col1 += ((row1/5)|0)*5;
-    row1 = (row1 % 5)+((row1/15)|0)*15;
-    
-    console.log("backto = "+col0+','+row0);//0,5
+//    console.log("back = "+col0+','+row0);//5,0
+    [col0,row0] = viewToGrid(col0,row0);
+    [col1,row1] = viewToGrid(col1,row1);    
+//    console.log("backto = "+col0+','+row0);//0,5
     
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
 //    console.log("render overlay row0="+row0+"col0="+col0);
@@ -488,6 +484,21 @@ function BasicYearView(element, calendar, viewName) {
 	function defaultEventEnd(event) {
 		return cloneDate(event.start);
 	}
+  
+  function gridToView(c,r)
+  {
+    r += (((c/colCnt)|0)*5)%15;
+    c = c % colCnt;// + ((c/15)|0)*15;
+    return [c,r];
+  }
+  
+  function viewToGrid(c,r)
+  {
+    c += ((r/5)|0)*colCnt;
+    r = (r % 5)+((r/15)|0)*15;
+    return [c,r];
+  }
+
 	
 	
 	coordinateGrid = new CoordinateGrid(function(rows, cols) {    
@@ -506,7 +517,7 @@ function BasicYearView(element, calendar, viewName) {
 				rows[i] = p;
 			}
 		});		
-	});
+	}, function(c,r) { return t.gridToView(c,r); });
 	
 	
 	hoverListener = new HoverListener(coordinateGrid);
