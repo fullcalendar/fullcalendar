@@ -28,6 +28,7 @@ function YearView(element, calendar) {
 		var visEnd = cloneDate(end);
 		var nwe = opt('weekends') ? 0 : 1;
     addDays(visStart, -((visStart.getDay() - Math.max(firstDay, nwe) + 7) % 7));
+    addDays(visEnd, (7 - visEnd.getDay() + Math.max(firstDay, nwe)) % 7);
 		colAndRow = '3x4'; //'2x6', '3x4', '4x3' 3 types
 		t.title = formatDate(start, opt('titleFormat'));
 		t.start = start;
@@ -134,7 +135,8 @@ function BasicYearView(element, calendar, viewName) {
 		}else{
 			clearEvents();
 		}
-			updateCells(firstTime);
+		
+    updateCells(firstTime);
 	}
 	
 	
@@ -172,7 +174,7 @@ function BasicYearView(element, calendar, viewName) {
 		s ="<table class='fc-border-separate fc-year-main-table' style='width:100%'><tr >";
 		for(var mi=0; mi<12; mi++) {
 			di.setFullYear(di.getFullYear(),mi,1);
-			di.setFullYear(di.getFullYear(),mi,1-di.getDay());
+			di.setFullYear(di.getFullYear(),mi,1-di.getDay()+firstDay);
 			if(mi%monthsPerRow==0 && mi > 0) s+="</tr><tr>";
 			
 			s +="<td class='fc-year-monthly-td'>";
@@ -180,8 +182,8 @@ function BasicYearView(element, calendar, viewName) {
 				"<thead>"+
 				"<tr><th colspan='7' class='fc-year-monthly-header' />"+localMonthNames[mi]+"</tr>"+
 				"<tr>";
-  		for (i=nwe; i<colCnt+nwe; i++) {
-	  		s +="<th class='fc-year-month-weekly-head'>"+ localWeekNames[i]+"</th>"; // need fc- for setDayID
+  		for (i=firstDay; i<colCnt+firstDay; i++) {
+	  		s +="<th class='fc-year-month-weekly-head'>"+ localWeekNames[i%7]+"</th>"; // need fc- for setDayID
 		  }
   		s +="</tr>" +
 	  		"</thead>" +
@@ -189,7 +191,7 @@ function BasicYearView(element, calendar, viewName) {
 
       for (i=0; i<6; i++) {                
         if (nwe) {
-          addDays(di, 1);
+          skipWeekend(di);
         }
         //don't show week if all days are in next month
         if (di.getMonth() == (mi+1)%12) {
@@ -218,7 +220,7 @@ function BasicYearView(element, calendar, viewName) {
 				  addDays(di, 1);	
   			}
         if (nwe) {
-          addDays(di, 1);
+          skipWeekend(di);
         }
   			s +="</tr>";			
 		  }
@@ -229,10 +231,7 @@ function BasicYearView(element, calendar, viewName) {
 		s+="</tr></table>";
 		table = $(s).appendTo(element);
 		head = table.find('thead');
-    console.log(head);
 		headCells = head.find('th.fc-year-month-weekly-head');
-    console.log("headcells");
-    console.log(headCells);
 		//mainBody = table.find('tbody table');
 		subTables = table.find('table');
 		//subTables.each( function(x, _sub){
@@ -251,49 +250,47 @@ function BasicYearView(element, calendar, viewName) {
 		//dayBind(bodyCells);
 		daySegmentContainer =$("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 	}
-	
-	
-	
+			
 	function updateCells(firstTime) {
 		var startYear = t.start.getFullYear();
 		var today = clearTime(new Date());
 		var cell;
 		var date;
 		var row;
+    
 		subTables.each(function(i, _sub){
+		  if ( !t.curYear ) t.curYear = t.start;
 
-		if ( !t.curYear ) t.curYear = t.start;
-
-		var d = cloneDate(t.curYear);
-		d.setFullYear(d.getFullYear(),i,1);
-		d.setFullYear(d.getFullYear(),i,1-d.getDay());
-		$(_sub).find('tbody > tr').each(function(iii, _tr) {
-      if (nwe) { addDays(d, 1); }
-      $(_tr).find('td').each(function(ii, _cell) {
+  		var d = cloneDate(t.curYear);
+	  	d.setFullYear(d.getFullYear(),i,1);
+      d.setFullYear(d.getFullYear(),i,1-d.getDay()+firstDay);
+  		$(_sub).find('tbody > tr').each(function(iii, _tr) {
+        if (nwe) { skipWeekend(d); }
+        $(_tr).find('td').each(function(ii, _cell) {
 			
-			  var dayStr;
-  			cell = $(_cell);
+			    var dayStr;
+  			  cell = $(_cell);
       
-		  	if (d.getMonth() == i) {
-			  	cell.removeClass('fc-other-month');
-				  dayStr=formatDate(d, '-yyyy-MM-dd');
-  			} else{
-	  			cell.addClass('fc-other-month');
-		  		dayStr="";
-			  }
-  			if (+d == +today && d.getMonth() == i) {
-	  			cell.addClass(tm + '-state-highlight fc-today');
-		  	}else{
-			  	cell.removeClass(tm + '-state-highlight fc-today');
-  			}
-	  		var $div = cell.find('div.fc-day-number');
-		  	$div.text(d.getDate()); 
-			  $div.parent().parent().attr('class', "fc-widget-content fc-day" + dayStr);
+  		  	if (d.getMonth() == i) {
+	  		  	cell.removeClass('fc-other-month');
+		  		  dayStr=formatDate(d, '-yyyy-MM-dd');
+  		  	} else{
+	  		  	cell.addClass('fc-other-month');
+		  		  dayStr="";
+  			  }
+    			if (+d == +today && d.getMonth() == i) {
+	    			cell.addClass(tm + '-state-highlight fc-today');
+		    	}else{
+			    	cell.removeClass(tm + '-state-highlight fc-today');
+    			}
+	    		var $div = cell.find('div.fc-day-number');
+		    	$div.text(d.getDate()); 
+			    $div.parent().parent().attr('class', "fc-widget-content fc-day" + dayStr);
 
-  			addDays(d, 1);
-      });
-      if (nwe) { addDays(d, 1); }
-		});
+  			  addDays(d, 1);
+        });
+        if (nwe) { skipWeekend(d); }
+  		});
     });
 		bodyRows.filter('.fc-year-have-event').removeClass('fc-year-have-event');
 	}
@@ -521,7 +518,6 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function colContentLeft(col) {
-    
 		return colContentPositions.left(col);
 	}
 	
@@ -558,7 +554,7 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
+    return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
 	}
 	
 	
