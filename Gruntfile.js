@@ -189,7 +189,7 @@ module.exports = function(grunt) {
 
 	// assemble the component's config from existing configs
 	grunt.registerTask('componentConfig', function() {
-		var config = grunt.file.readJSON('component.json');
+		var config = grunt.file.readJSON('build/component.json');
 		grunt.file.write(
 			'build/component/component.json',
 			JSON.stringify(
@@ -223,7 +223,7 @@ module.exports = function(grunt) {
 	};
 
 	grunt.registerTask('cdnConfig', function() {
-		var config = grunt.file.readJSON('cdn.json');
+		var config = grunt.file.readJSON('build/cdn.json');
 		grunt.file.write(
 			'build/cdn/package.json',
 			JSON.stringify(
