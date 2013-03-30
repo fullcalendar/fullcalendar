@@ -1,6 +1,7 @@
 build/out
 build/archive
 build/component
+build/cdn
 dist
 
 # for npm

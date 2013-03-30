@@ -15,7 +15,6 @@ module.exports = function(grunt) {
 	// Parse config files
 	var lumbarConfig = grunt.file.readJSON('lumbar.json');
 	var packageConfig = grunt.file.readJSON('package.json');
-	var componentConfig = grunt.file.readJSON('component.json');
 	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	
 	// This will eventually get passed to grunt.initConfig()
@@ -28,8 +27,8 @@ module.exports = function(grunt) {
 		clean: {}
 	};
 
-	// Combine configs for the "meta" template variable (<%= meta.whatever %>)
-	config.meta = _.extend({}, packageConfig, componentConfig, pluginConfig);
+	// Combine certain configs for the "meta" template variable (<%= meta.whatever %>)
+	config.meta = _.extend({}, packageConfig, pluginConfig);
 
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'archive');
@@ -179,7 +178,7 @@ module.exports = function(grunt) {
 		expand: true,
 		cwd: 'build/out/',
 		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/component/',
+		dest: 'build/component/'
 	};
 
 	// copy the component-specific README
@@ -190,10 +189,11 @@ module.exports = function(grunt) {
 
 	// assemble the component's config from existing configs
 	grunt.registerTask('componentConfig', function() {
+		var config = grunt.file.readJSON('component.json');
 		grunt.file.write(
 			'build/component/component.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, componentConfig), // combine 2 configs
+				_.extend({}, pluginConfig, config), // combine 2 configs
 				null, // replacer
 				2 // indent
 			)
@@ -201,6 +201,41 @@ module.exports = function(grunt) {
 	});
 
 	config.clean.component = 'build/component/*';
+
+
+
+	/* CDN (http://cdnjs.com/)
+	----------------------------------------------------------------------------------------------------*/
+
+	grunt.registerTask('cdn', 'Build files for CDNJS\'s hosted version of FullCalendar', [
+		'clean:modules',
+		'clean:cdn',
+		'modules',
+		'copy:cdnModules',
+		'cdnConfig'
+	]);
+
+	config.copy.cdnModules = {
+		expand: true,
+		cwd: 'build/out/',
+		src: [ '*.js', '*.css', '!jquery*' ],
+		dest: 'build/cdn/<%= meta.version %>/'
+	};
+
+	grunt.registerTask('cdnConfig', function() {
+		var config = grunt.file.readJSON('cdn.json');
+		grunt.file.write(
+			'build/cdn/package.json',
+			JSON.stringify(
+				_.extend({}, pluginConfig, config), // combine 2 configs
+				null, // replace
+				2 // indent
+			)
+		);
+	});
+
+	config.clean.cdn = 'build/cdn/<%= meta.version %>/';
+	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
 
 
 
