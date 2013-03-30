@@ -234,7 +234,7 @@ module.exports = function(grunt) {
 		);
 	});
 
-	config.clean.cdn = 'build/cdn/<%= meta.version %>/';
+	config.clean.cdn = 'build/cdn/<%= meta.version %>/*';
 	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
 
 
