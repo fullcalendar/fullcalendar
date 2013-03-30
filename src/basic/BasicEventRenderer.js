@@ -8,6 +8,7 @@ function BasicEventRenderer() {
 	t.compileDaySegs = compileSegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.bindDaySeg = bindDaySeg;
+  t.calculateDayDelta = calculateDayDelta;
 	
 	
 	// imports
@@ -40,7 +41,7 @@ function BasicEventRenderer() {
 	
 	function renderEvents(events, modifiedEventId) {
 		reportEvents(events);
-		renderDaySegs(compileSegs(events), modifiedEventId);
+		renderDaySegs(t.compileDaySegs(events), modifiedEventId);
 	}
 	
 	
@@ -94,6 +95,9 @@ function BasicEventRenderer() {
 	/* Dragging
 	----------------------------------------------------------------------------*/
 	
+  function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
+    return rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
+  }
 	
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
@@ -110,8 +114,8 @@ function BasicEventRenderer() {
 					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 					clearOverlays();
 					if (cell) {
-						//setOverflowHidden(true);
-						dayDelta = rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
+						//setOverflowHidden(true);            
+						dayDelta = t.calculateDayDelta(cell, origCell, rowDelta, colDelta);
 						renderDayOverlay(
 							addDays(cloneDate(event.start), dayDelta),
 							addDays(exclEndDay(event), dayDelta)

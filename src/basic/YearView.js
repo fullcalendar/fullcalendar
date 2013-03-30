@@ -69,13 +69,15 @@ function BasicYearView(element, calendar, viewName) {
 	t.getBodyRows = function() { return bodyRows; };
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
   t.getRowLefts = getRowLefts;
-  t.gridToView = gridToView;
+  t.gridToView = gridToView;  
 	
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
   BasicEventRenderer.call(t);
+  t.compileDaySegs = compileYearSegs;
+  t.calculateDayDelta = calculateDayDelta;
 	//BasicYearEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -109,6 +111,7 @@ function BasicYearView(element, calendar, viewName) {
 	var coordinateGrid;
 	var hoverListener;
 	var colContentPositions;
+  var otherMonthDays = [];
 	
 	var rtl, dis, dit;
 	var firstDay;
@@ -256,11 +259,12 @@ function BasicYearView(element, calendar, viewName) {
 		var today = clearTime(new Date());
 		var cell;
 		var date;
-		var row;
+		var row;    
     
 		subTables.each(function(i, _sub){
 		  if ( !t.curYear ) t.curYear = t.start;
-
+      otherMonthDays[i] = [0,0];
+      
   		var d = cloneDate(t.curYear);
 	  	d.setFullYear(d.getFullYear(),i,1);
       d.setFullYear(d.getFullYear(),i,1-d.getDay()+firstDay);
@@ -277,6 +281,11 @@ function BasicYearView(element, calendar, viewName) {
   		  	} else{
 	  		  	cell.addClass('fc-other-month');
 		  		  dayStr="";
+            if ((d.getMonth() < i) || (i==0 && d.getMonth() == 11)) {
+              otherMonthDays[i][0]++;
+            } else {
+              otherMonthDays[i][1]++;
+            }
   			  }
     			if (+d == +today && d.getMonth() == i) {
 	    			cell.addClass(tm + '-state-highlight fc-today');
@@ -335,6 +344,55 @@ function BasicYearView(element, calendar, viewName) {
 		*/
 	}
 	
+  function compileYearSegs(events) {
+    var segs = [];
+    var rowStart = cloneDate(t.visStart);
+    var visEventsEnds = $.map(events, exclEndDay);
+    
+    var row = 0;
+  	subTables.each(function(mo, _sub){      
+  		var d = cloneDate(t.curYear);
+	  	d.setFullYear(d.getFullYear(),mo,1);
+      d.setFullYear(d.getFullYear(),mo,1-d.getDay()+firstDay);
+  		$(_sub).find('tbody > tr').each(function(iii, _tr) {
+        if (nwe) { skipWeekend(d); }
+        
+        var rowStart = cloneDate(d);
+        var curCols = colCnt;
+        while (rowStart.getMonth() != mo) {
+          addDays(rowStart, 1);
+          curCols--;
+        }
+        
+        var rowEnd = cloneDate(rowStart);
+        for (i = 0; i < curCols; i++) {
+          addDays(rowEnd, 1);
+          if (rowEnd.getMonth() > rowStart.getMonth()) {
+            break;
+          }
+        }
+        
+        rowSeg = stackSegs(sliceSegs(events, visEventsEnds, rowStart, rowEnd));
+  			for (j=0; j<rowSeg.length; j++) {
+	  			level = rowSeg[j];
+		  		for (k=0; k<level.length; k++) {
+			  		seg = level[k];
+            console.log("set row ="+row);
+				  	seg.row = row;
+					  seg.level = j; // not needed anymore
+  					segs.push(seg);
+	  			}
+		  	}                
+        
+        row += 1;
+        addDays(d, 5);
+        if (nwe) { skipWeekend(d); }
+      });
+      
+    });
+    
+    return segs;
+	}
 	
 	
 	/* Day clicking and binding
@@ -367,38 +425,51 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		var rowStart = cloneDate(t.visStart);
     
-    console.log("Request overlay");
-    console.log(overlayStart);
-    console.log(overlayEnd);    
-    
-		
-		for (var i=0; i<rowCnt; i++) {
-      if (nwe == 1 && i > 0) {
-        addDays(rowStart, 1);
-      }
-      var rowEnd = addDays(cloneDate(rowStart), colCnt);
-      // if (i < 10) {
-      //   console.log("row");
-      //   console.log(rowStart);
-      //   console.log(rowEnd);
-      // }
-			var stretchStart = new Date(Math.max(rowStart, overlayStart));
-			var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));            
-			if (stretchStart < stretchEnd) {
-				var colStart, colEnd;
-				if (rtl) {
-					colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
-					colEnd = dayDiff(stretchStart, rowStart)*dis+dit+1;
-				}else{
-					colStart = dayDiff(stretchStart, rowStart);
-					colEnd = dayDiff(stretchEnd, rowStart);
-				}        
-				dayBind(
-					renderCellOverlay(i, colStart, i, colEnd-1)
-				);
-			}
-			addDays(rowStart, nwe == 1 ? 6 : 7);			
-		}
+    var row = 0;
+  	subTables.each(function(mo, _sub){      
+  		var d = cloneDate(t.curYear);
+	  	d.setFullYear(d.getFullYear(),mo,1);
+      d.setFullYear(d.getFullYear(),mo,1-d.getDay()+firstDay);
+  		$(_sub).find('tbody > tr').each(function(iii, _tr) {
+        if (nwe) { skipWeekend(d); }
+        
+        var curCols = colCnt;
+        var rowStart = cloneDate(d);
+        while (rowStart.getMonth() != mo) {
+          addDays(rowStart, 1);
+          curCols--;
+        }
+        
+        var rowEnd = cloneDate(rowStart);
+        for (i = 0; i < curCols; i++) {
+          addDays(rowEnd, 1);
+          if (rowEnd.getMonth() > rowStart.getMonth()) {
+            break;
+          }
+        }
+        
+        var stretchStart = new Date(Math.max(rowStart, overlayStart));
+		  	var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));            
+			  if (stretchStart < stretchEnd) {
+				  var colStart, colEnd;
+  				if (rtl) {
+	  				colStart = dayDiff(stretchEnd, d)*dis+dit+1;
+		  			colEnd = dayDiff(stretchStart, d)*dis+dit+1;
+			  	}else{
+				  	colStart = dayDiff(stretchStart, d);
+					  colEnd = dayDiff(stretchEnd, d);
+  				}        
+	  			dayBind(
+		  			renderCellOverlay(row, colStart, row, colEnd-1)
+			  	);
+        }
+        
+        row += 1;
+        addDays(d, 5);
+        if (nwe) { skipWeekend(d); }
+      });
+      
+    });    	
 	}
 	
 	
@@ -479,7 +550,18 @@ function BasicYearView(element, calendar, viewName) {
 	
 	/* Utilities
 	--------------------------------------------------------*/
-	
+  function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
+	  var origMo = (origCell.row/5)|0;
+    var newMo = (cell.row/5)|0;
+    extra = 0;
+    for (var i = origMo; i < newMo; i++) {
+      if (otherMonthDays[i][1] > 0) {
+        extra += 7;
+      }
+    }
+        
+    return rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1) - extra;
+  }
 	
 	function defaultEventEnd(event) {
 		return cloneDate(event.start);
@@ -640,6 +722,7 @@ function BasicYearEventRenderer() {
 	
 	
 	function compileSegs(events) {
+    console.log("hiiii")
 		var rowCnt = getRowCnt(),
 			colCnt = getColCnt(),
 			d1 = cloneDate(t.visStart),
@@ -654,6 +737,7 @@ function BasicYearEventRenderer() {
 				level = row[j];
 				for (k=0; k<level.length; k++) {
 					seg = level[k];
+          console.log("setting row");
 					seg.row = i;
 					seg.level = j; // not needed anymore
 					segs.push(seg);
