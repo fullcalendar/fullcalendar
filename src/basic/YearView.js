@@ -112,6 +112,7 @@ function BasicYearView(element, calendar, viewName) {
 	var hoverListener;
 	var colContentPositions;
   var otherMonthDays = [];
+  var rowsForMonth = [];
 	
 	var rtl, dis, dit;
 	var firstDay;
@@ -177,6 +178,7 @@ function BasicYearView(element, calendar, viewName) {
 		s ="<table class='fc-border-separate fc-year-main-table' style='width:100%'><tr >";
 		for(var mi=0; mi<12; mi++) {
 			di.setFullYear(di.getFullYear(),mi,1);
+      if (nwe) { skipWeekend(di); }
 			di.setFullYear(di.getFullYear(),mi,1-di.getDay()+firstDay);
 			if(mi%monthsPerRow==0 && mi > 0) s+="</tr><tr>";
 			
@@ -192,6 +194,7 @@ function BasicYearView(element, calendar, viewName) {
 	  		"</thead>" +
 		  	"<tbody>";
 
+      rowsForMonth[mi] = 0;
       for (i=0; i<6; i++) {                
         if (nwe) {
           skipWeekend(di);
@@ -200,6 +203,7 @@ function BasicYearView(element, calendar, viewName) {
         if (di.getMonth() == (mi+1)%12) {
           continue;
         }
+        rowsForMonth[mi]++;
         
         rowCnt++;
 			  s +="<tr class='fc-week" + i + "'>";
@@ -267,6 +271,7 @@ function BasicYearView(element, calendar, viewName) {
       
   		var d = cloneDate(t.curYear);
 	  	d.setFullYear(d.getFullYear(),i,1);
+      if (nwe) { skipWeekend(d); }
       d.setFullYear(d.getFullYear(),i,1-d.getDay()+firstDay);
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
@@ -353,6 +358,7 @@ function BasicYearView(element, calendar, viewName) {
   	subTables.each(function(mo, _sub){      
   		var d = cloneDate(t.curYear);
 	  	d.setFullYear(d.getFullYear(),mo,1);
+      if (nwe) { skipWeekend(d); }
       d.setFullYear(d.getFullYear(),mo,1-d.getDay()+firstDay);
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
@@ -429,6 +435,7 @@ function BasicYearView(element, calendar, viewName) {
   	subTables.each(function(mo, _sub){      
   		var d = cloneDate(t.curYear);
 	  	d.setFullYear(d.getFullYear(),mo,1);
+      if (nwe) { skipWeekend(d); }
       d.setFullYear(d.getFullYear(),mo,1-d.getDay()+firstDay);
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
@@ -474,14 +481,10 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-//    console.log("back = "+col0+','+row0);//5,0
     [col0,row0] = viewToGrid(col0,row0);
     [col1,row1] = viewToGrid(col1,row1);    
-//    console.log("backto = "+col0+','+row0);//0,5
     
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
-//    console.log("render overlay row0="+row0+"col0="+col0);
-//    console.log(rect);
 		return renderOverlay(rect, element);
 	}
 	
@@ -552,14 +555,23 @@ function BasicYearView(element, calendar, viewName) {
 	--------------------------------------------------------*/
   function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
 	  var origMo = (origCell.row/5)|0;
-    var newMo = (cell.row/5)|0;
-    extra = 0;
-    for (var i = origMo; i < newMo; i++) {
-      if (otherMonthDays[i][1] > 0) {
-        extra += 7;
+    var newMo = (cell.row/5)|0;    
+    var extra = 0;
+    
+    if (newMo >= origMo) {
+      for (var i = origMo; i < newMo; i++) {
+        if (otherMonthDays[i][1] > 0) {
+          extra += 7;
+        }
       }
+    } else {
+      for (var i = origMo; i >= newMo; i--) {
+        if (otherMonthDays[i][0] > 0) {
+          extra -= 7;
+        }
+      }      
     }
-        
+    
     return rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1) - extra;
   }
 	
@@ -567,17 +579,44 @@ function BasicYearView(element, calendar, viewName) {
 		return cloneDate(event.start);
 	}
   
+  function modRowsInMonth(a)
+  {
+    var rAdd = 0;
+    for (var i = 0; i < 12; i += 3) {
+      var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
+      if (a >= weeksInRow) {
+        a -= weeksInRow;        
+      } else {
+        break;
+      }
+    }
+    return a;
+  }
+  
   function gridToView(c,r)
   {
-    r += (((c/colCnt)|0)*5)%15;
+    r += modRowsInMonth(((c/colCnt)|0)*5);
     c = c % colCnt;// + ((c/15)|0)*15;
+    
     return [c,r];
   }
   
   function viewToGrid(c,r)
   {
-    c += ((r/5)|0)*colCnt;
-    r = (r % 5)+((r/15)|0)*15;
+    c += (((r/5)|0)*colCnt)%15;
+    
+    var rAdd = 0;
+    for (var i = 0; i < 12; i += 3) {
+      var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
+      if (r >= weeksInRow) {
+        console.log("weeksInRow = " + weeksInRow);
+        r -= weeksInRow;
+        rAdd += weeksInRow;
+      } else {
+        break;
+      }
+    }
+    r = (r % 5)+rAdd;
     return [c,r];
   }
 
