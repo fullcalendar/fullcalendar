@@ -246,7 +246,7 @@ function BasicYearView(element, calendar, viewName) {
 		
 		
 		bodyRows = table.find('table tbody tr');
-		bodyCells = table.find('tbody').find('td');
+		bodyCells = table.find('tbody').find('td').not('.fc-year-monthly-td');
 		bodyFirstCells = bodyCells.filter(':first-child');
 		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
 		
@@ -254,7 +254,7 @@ function BasicYearView(element, calendar, viewName) {
 		markFirstLast(bodyRows); // marks first+last td's
 		bodyRows.eq(0).addClass('fc-first'); // fc-last is done in updateCells
 		
-		//dayBind(bodyCells);
+		dayBind(bodyCells);
 		daySegmentContainer =$("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
 	}
 			
@@ -412,9 +412,9 @@ function BasicYearView(element, calendar, viewName) {
 	
 	function dayClick(ev) {
     console.log("dayClick!");
-		if (true) { //!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var index = parseInt(this.className.match(/fc\-day(\d+)/)[1]); // TODO: maybe use .data
-			var date = indexDate(index);
+		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
+			var match = this.className.match(/fc\-day\-(\d+)\-(\d+)\-(\d+)/);
+			var date = new Date(match[1], match[2], match[3]);
 			trigger('dayClick', this, date, true, ev);
 		}
 	}
@@ -679,10 +679,6 @@ function BasicYearView(element, calendar, viewName) {
 		// what about weekends in middle of week?
 	}
 	
-	
-	function indexDate(index) {
-		return _cellDate(Math.floor(index/colCnt), index%colCnt);
-	}
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
