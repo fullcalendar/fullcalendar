@@ -208,7 +208,7 @@ function DayEventRenderer() {
 			seg.outerWidth = right - left;
 			seg.startCol = leftCol;
 			seg.endCol = rightCol + 1; // needs to be exclusive
-		}
+		}    
 		return html;
 	}
 	

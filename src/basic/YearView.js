@@ -135,7 +135,7 @@ function BasicYearView(element, calendar, viewName) {
 		updateOptions();
 		var firstTime = !table;
 		if (firstTime) {
-			buildSkeleton(maxr, showNumbers);
+			buildSkeleton(maxr, showNumbers);      
 		}else{
 			clearEvents();
 		}
@@ -185,7 +185,7 @@ function BasicYearView(element, calendar, viewName) {
 			s +="<td class='fc-year-monthly-td'>";
 			s +="<table class='fc-border-separate' style='width:100%' cellspacing='0'>"+
 				"<thead>"+
-				"<tr><th colspan='7' class='fc-year-monthly-header' />"+localMonthNames[mi]+"</tr>"+
+				"<tr><td colspan='7' class='fc-year-monthly-header' /><a data-year='"+di.getFullYear()+"' data-month='"+mi+"' class='fc-year-monthly-name' href=\"#\">"+localMonthNames[mi]+"</a></td></tr>"+
 				"<tr>";
   		for (i=firstDay; i<colCnt+firstDay; i++) {
 	  		s +="<th class='fc-year-month-weekly-head'>"+ localWeekNames[i%7]+"</th>"; // need fc- for setDayID
@@ -252,7 +252,11 @@ function BasicYearView(element, calendar, viewName) {
 		
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
 		markFirstLast(bodyRows); // marks first+last td's
-		bodyRows.eq(0).addClass('fc-first'); // fc-last is done in updateCells
+    
+    table.find('.fc-year-monthly-name').click(function() {
+      calendar.gotoDate($(this).attr('data-year'), $(this).attr('data-month'), 1);
+      calendar.changeView('month');
+    });
 		
 		dayBind(bodyCells);
 		daySegmentContainer =$("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
@@ -383,7 +387,6 @@ function BasicYearView(element, calendar, viewName) {
 	  			level = rowSeg[j];
 		  		for (k=0; k<level.length; k++) {
 			  		seg = level[k];
-            console.log("set row ="+row);
 				  	seg.row = row;
 					  seg.level = j; // not needed anymore
   					segs.push(seg);
@@ -408,10 +411,8 @@ function BasicYearView(element, calendar, viewName) {
 	function dayBind(days) {
 		days.click(dayClick).mousedown(daySelectionMousedown);
 	}
-	
-	
+		
 	function dayClick(ev) {
-    console.log("dayClick!");
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var match = this.className.match(/fc\-day\-(\d+)\-(\d+)\-(\d+)/);
 			var date = new Date(match[1], match[2], match[3]);
@@ -493,7 +494,7 @@ function BasicYearView(element, calendar, viewName) {
 		var rowCnt = rowDivs.length;
 		var lefts = [];
 		for (i=0; i<rowCnt; i++) {
-			lefts[i] = rowDivs[i][0].offsetLeft; // !!?? but this means the element needs position:relative if in a table cell!!!!
+			lefts[i] = rowDivs[i][0].offsetLeft - rowDivs[0][0].offsetLeft; // !!?? but this means the element needs position:relative if in a table cell!!!!
 		}
 		return lefts;
   }
@@ -518,7 +519,6 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function reportDayClick(date, allDay, ev) {
-    console.log("report day click");
 		var cell = dateCell(date);
 		var _element = bodyCells[cell.row*colCnt + cell.col];
 		trigger('dayClick', _element, date, allDay, ev);
@@ -609,7 +609,6 @@ function BasicYearView(element, calendar, viewName) {
     for (var i = 0; i < 12; i += 3) {
       var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
       if (r >= weeksInRow) {
-        console.log("weeksInRow = " + weeksInRow);
         r -= weeksInRow;
         rAdd += weeksInRow;
       } else {
@@ -757,7 +756,6 @@ function BasicYearEventRenderer() {
 	
 	
 	function compileSegs(events) {
-    console.log("hiiii")
 		var rowCnt = getRowCnt(),
 			colCnt = getColCnt(),
 			d1 = cloneDate(t.visStart),
@@ -772,7 +770,6 @@ function BasicYearEventRenderer() {
 				level = row[j];
 				for (k=0; k<level.length; k++) {
 					seg = level[k];
-          console.log("setting row");
 					seg.row = i;
 					seg.level = j; // not needed anymore
 					segs.push(seg);
@@ -854,7 +851,6 @@ function stackSegs(segs) {
 }
 	
 	function bindDaySeg(event, eventElement, seg) {
-    console.log("bind day seg");
 		if (isEventDraggable(event)) {
 			draggableDayEvent(event, eventElement);
 		}
@@ -880,30 +876,7 @@ function stackSegs(segs) {
       }      
 		}
   }
-  
-  function daySegHTML(seg) {
-    var skinCss = getSkinCss(seg, opt);
-    var classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
-    var left = 0;
-    var html = "<div";
-    
-    html +=
-				" class='" + classes.join(' ') + "'" +
-				" style='position:relative;width:10px;float:left;margin-right:3px;z-index:8;left:"+left+"px;" + skinCss + "'" +
-				">" +
-				"<div" +
-				" class='fc-event-inner fc-event-skin'" +
-				(skinCss ? " style='" + skinCss + "'" : '') +        
-				">";
-    html += seg.title[0];
-    html += "</div>";
-    
-    el = $(html);
-    el.attr('title', seg.title);
-    
-    return el;
-  }    
-	
+  	
 	function renderDaySegs(segs, modifiedEventId) {
 		try{
 			var segCnt = segs.length;
