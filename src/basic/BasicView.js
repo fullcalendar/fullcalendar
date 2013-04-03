@@ -189,6 +189,10 @@ function BasicView(element, calendar, viewName) {
 				if (+cellDate == +today) {
 					cellClasses.push('fc-today');
 					cellClasses.push(tm + '-state-highlight');
+				} else if (+cellDate < +today) {
+					cellClasses.push('fc-day-past');
+				} else if (+cellDate > +today) {
+					cellClasses.push('fc-day-future');
 				}
 
 				html += "<td" +

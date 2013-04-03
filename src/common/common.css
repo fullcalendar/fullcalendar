@@ -17,7 +17,9 @@
 	filter: alpha(opacity=30); /* for IE */
 	}
 	
-
+.fc-day-past {
+    background-color: #f9f9f9;
+}
 
 /* Buttons
 ------------------------------------------------------------------------*/

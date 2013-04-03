@@ -359,6 +359,16 @@ function AgendaView(element, calendar, viewName) {
 			}else{
 				bodyCell.removeClass(tm + '-state-highlight fc-today');
 			}
+			if (+date < +today) {
+				bodyCell.addClass('fc-day-past');
+			}else{
+				bodyCell.removeClass('fc-day-past');
+			}
+			if (+date > +today) {
+				bodyCell.addClass('fc-day-future');
+			}else{
+				bodyCell.removeClass('fc-day-future');
+			}
 			setDayID(headCell.add(bodyCell), date);
 		}
 	}
