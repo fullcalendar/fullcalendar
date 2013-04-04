@@ -33,7 +33,8 @@ function CoordinateGrid(buildFunc, gridToViewFunc) {
 			}
 		}
     if (r >= 0 && c >= 0 && t.gridToView) {
-      [c,r] = t.gridToView(c,r);      
+      var a = t.gridToView(c,r);      
+      c = a[0]; r = a[1];
     }
 		return (r>=0 && c>=0) ? { row:r, col:c } : null;
 	};

@@ -495,8 +495,10 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-    [col0,row0] = viewToGrid(col0,row0);
-    [col1,row1] = viewToGrid(col1,row1);    
+    var a = viewToGrid(col0,row0);
+    col0 = a[0]; row0 = a[1];
+    a = viewToGrid(col1,row1);    
+    col1 = a[0]; row1 = a[1];
     
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
 		return renderOverlay(rect, element);
