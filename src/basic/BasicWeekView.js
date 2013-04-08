@@ -39,7 +39,7 @@ function BasicWeekView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(1, 1, weekends ? 7 : 5, false);
+		renderBasic(1, weekends ? 7 : 5, false);
 	}
 	
 	

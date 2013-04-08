@@ -36,15 +36,18 @@ You can either manually rebuild each time you make a change:
 
 	grunt dev
 
-Or, you can run a command that automatically rebuilds whenever you save a source file:
+Or, you can run a script that automatically rebuilds whenever you save a source file:
 
-	grunt watch
+	./build/watch
 
-When you are finished, run the following command to write the distributable files into the `./build/out/` directory:
+You can optionally add the `--sourceMap` flag to output source maps for debugging.
+
+When you are finished, run the following command to write the distributable files into the `./build/out/`
+and `./build/dist/` directories:
 
 	grunt
 
-If you want to clean up the generated files run:
+If you want to clean up the generated files, run:
 
 	grunt clean
 

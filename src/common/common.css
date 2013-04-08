@@ -4,17 +4,17 @@
 
 .fc-widget-header,    /* <th>, usually */
 .fc-widget-content {  /* <td>, usually */
-	border: 1px solid #ccc;
+	border: 1px solid #ddd;
 	}
 	
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
-	background: #ffc;
+	background: #fcf8e3;
 	}
 	
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
-	background: #9cf;
-	opacity: .2;
-	filter: alpha(opacity=20); /* for IE */
+	background: #bce8f1;
+	opacity: .3;
+	filter: alpha(opacity=30); /* for IE */
 	}
 	
 
@@ -25,43 +25,54 @@
 .fc-button {
 	position: relative;
 	display: inline-block;
+	padding: 0 .6em;
+	overflow: hidden;
+	height: 1.9em;
+	line-height: 1.9em;
+	white-space: nowrap;
 	cursor: pointer;
 	}
 	
 .fc-state-default { /* non-theme */
-	border-style: solid;
-	border-width: 1px 0;
+	border: 1px solid;
 	}
-	
-.fc-button-inner {
-	position: relative;
-	float: left;
-	overflow: hidden;
+
+.fc-state-default.fc-corner-left { /* non-theme */
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
 	}
-	
-.fc-state-default .fc-button-inner { /* non-theme */
-	border-style: solid;
-	border-width: 0 1px;
+
+.fc-state-default.fc-corner-right { /* non-theme */
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
 	}
-	
-.fc-button-content {
-	position: relative;
-	float: left;
-	height: 1.9em;
-	line-height: 1.9em;
-	padding: 0 .6em;
-	white-space: nowrap;
+
+/*
+	Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
+	and we'll try to make them look good cross-browser.
+*/
+
+.fc-text-arrow {
+	margin: 0 .1em;
+	font-size: 2em;
+	font-family: "Courier New", Courier, monospace;
+	vertical-align: baseline; /* for IE7 */
+	}
+
+.fc-button-prev .fc-text-arrow,
+.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+	font-weight: bold;
 	}
 	
 /* icon (for jquery ui) */
 	
-.fc-button-content .fc-icon-wrap {
+.fc-button .fc-icon-wrap {
 	position: relative;
 	float: left;
 	top: 50%;
 	}
 	
-.fc-button-content .ui-icon {
+.fc-button .ui-icon {
 	position: relative;
 	float: left;
 	margin-top: -50%;
@@ -69,80 +80,76 @@
 	*top: -50%;
 	}
 	
-/* gloss effect */
-	
-.fc-state-default .fc-button-effect {
-	position: absolute;
-	top: 50%;
-	left: 0;
+/*
+  button states
+  borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
+*/
+
+.fc-state-default {
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-repeat: repeat-x;
+	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	color: #333;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	}
-	
-.fc-state-default .fc-button-effect span {
-	position: absolute;
-	top: -100px;
-	left: 0;
-	width: 500px;
-	height: 100px;
-	border-width: 100px 0 0 1px;
-	border-style: solid;
-	border-color: #fff;
-	background: #444;
-	opacity: .09;
-	filter: alpha(opacity=9);
-	}
-	
-/* button states (determines colors)  */
-	
-.fc-state-default,
-.fc-state-default .fc-button-inner {
-	border-style: solid;
-	border-color: #ccc #bbb #aaa;
-	background: #F3F3F3;
-	color: #000;
-	}
-	
+
 .fc-state-hover,
-.fc-state-hover .fc-button-inner {
-	border-color: #999;
-	}
-	
 .fc-state-down,
-.fc-state-down .fc-button-inner {
-	border-color: #555;
-	background: #777;
-	}
-	
 .fc-state-active,
-.fc-state-active .fc-button-inner {
-	border-color: #555;
-	background: #777;
-	color: #fff;
+.fc-state-disabled {
+	color: #333333;
+	background-color: #e6e6e6;
 	}
-	
-.fc-state-disabled,
-.fc-state-disabled .fc-button-inner {
-	color: #999;
-	border-color: #ddd;
+
+.fc-state-hover {
+	color: #333333;
+	text-decoration: none;
+	background-position: 0 -15px;
+	-webkit-transition: background-position 0.1s linear;
+	   -moz-transition: background-position 0.1s linear;
+	     -o-transition: background-position 0.1s linear;
+	        transition: background-position 0.1s linear;
 	}
-	
+
+.fc-state-down,
+.fc-state-active {
+	background-color: #cccccc;
+	background-image: none;
+	outline: 0;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	}
+
 .fc-state-disabled {
 	cursor: default;
+	background-image: none;
+	opacity: 0.65;
+	filter: alpha(opacity=65);
+	box-shadow: none;
 	}
-	
-.fc-state-disabled .fc-button-effect {
-	display: none;
-	}
-	
+
 	
 
 /* Global Event Styles
 ------------------------------------------------------------------------*/
 	 
 .fc-event {
-	border-style: solid;
-	border-width: 0;
+	border: 1px solid #3a87ad; /* default BORDER color */
+	background-color: #3a87ad; /* default BACKGROUND color */
+	color: #fff;               /* default TEXT color */
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	font-size: .85em;
 	cursor: default;
+	}
+
+a.fc-event {
+	text-decoration: none;
 	}
 	
 a.fc-event,
@@ -150,26 +157,12 @@ a.fc-event,
 	cursor: pointer;
 	}
 	
-a.fc-event {
-	text-decoration: none;
-	}
-	
 .fc-rtl .fc-event {
 	text-align: right;
 	}
-	
-.fc-event-skin {
-	border-color: #36c;     /* default BORDER color */
-	background-color: #36c; /* default BACKGROUND color */
-	color: #fff;            /* default TEXT color */
-	}
-	
+
 .fc-event-inner {
-	position: relative;
 	width: 100%;
-	height: 100%;
-	border-style: solid;
-	border-width: 0;
 	overflow: hidden;
 	}
 	
@@ -178,7 +171,7 @@ a.fc-event {
 	padding: 0 1px;
 	}
 	
-.fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anymore, change class ***/
+.fc .ui-resizable-handle {
 	display: block;
 	position: absolute;
 	z-index: 99999;
@@ -195,6 +188,20 @@ a.fc-event {
 .fc-event-hori {
 	border-width: 1px 0;
 	margin-bottom: 1px;
+	}
+
+.fc-ltr .fc-event-hori.fc-event-start,
+.fc-rtl .fc-event-hori.fc-event-end {
+	border-left-width: 1px;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	}
+
+.fc-ltr .fc-event-hori.fc-event-end,
+.fc-rtl .fc-event-hori.fc-event-start {
+	border-right-width: 1px;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
 	}
 	
 /* resizable */
@@ -217,66 +224,6 @@ a.fc-event {
 	
 .fc-event-hori .ui-resizable-handle {
 	_padding-bottom: 14px; /* IE6 had 0 height */
-	}
-	
-	
-	
-/* Fake Rounded Corners (for buttons and events)
-------------------------------------------------------------*/
-	
-.fc-corner-left {
-	margin-left: 1px;
-	}
-	
-.fc-corner-left .fc-button-inner,
-.fc-corner-left .fc-event-inner {
-	margin-left: -1px;
-	}
-	
-.fc-corner-right {
-	margin-right: 1px;
-	}
-	
-.fc-corner-right .fc-button-inner,
-.fc-corner-right .fc-event-inner {
-	margin-right: -1px;
-	}
-	
-.fc-corner-top {
-	margin-top: 1px;
-	}
-	
-.fc-corner-top .fc-event-inner {
-	margin-top: -1px;
-	}
-	
-.fc-corner-bottom {
-	margin-bottom: 1px;
-	}
-	
-.fc-corner-bottom .fc-event-inner {
-	margin-bottom: -1px;
-	}
-	
-	
-	
-/* Fake Rounded Corners SPECIFICALLY FOR EVENTS
------------------------------------------------------------------*/
-	
-.fc-corner-left .fc-event-inner {
-	border-left-width: 1px;
-	}
-	
-.fc-corner-right .fc-event-inner {
-	border-right-width: 1px;
-	}
-	
-.fc-corner-top .fc-event-inner {
-	border-top-width: 1px;
-	}
-	
-.fc-corner-bottom .fc-event-inner {
-	border-bottom-width: 1px;
 	}
 	
 	

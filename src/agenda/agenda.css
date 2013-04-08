@@ -18,6 +18,10 @@
 	white-space: nowrap;
 	font-weight: normal;
 	}
+
+.fc-agenda .fc-week-number {
+	font-weight: bold;
+	}
 	
 .fc-agenda .fc-day-content {
 	padding: 2px 2px 1px;
@@ -92,18 +96,27 @@
 .fc-event-vert {
 	border-width: 0 1px;
 	}
-	
-.fc-event-vert .fc-event-head,
-.fc-event-vert .fc-event-content {
-	position: relative;
-	z-index: 2;
-	width: 100%;
-	overflow: hidden;
+
+.fc-event-vert.fc-event-start {
+	border-top-width: 1px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	}
+
+.fc-event-vert.fc-event-end {
+	border-bottom-width: 1px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 	}
 	
 .fc-event-vert .fc-event-time {
 	white-space: nowrap;
 	font-size: 10px;
+	}
+
+.fc-event-vert .fc-event-inner {
+	position: relative;
+	z-index: 2;
 	}
 	
 .fc-event-vert .fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */

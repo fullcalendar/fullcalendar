@@ -30,7 +30,7 @@ function BasicDayView(element, calendar) {
 		t.title = formatDate(date, opt('titleFormat'));
 		t.start = t.visStart = cloneDate(date, true);
 		t.end = t.visEnd = addDays(cloneDate(t.start), 1);
-		renderBasic(1, 1, 1, false);
+		renderBasic(1, 1, false);
 	}
 	
 	
