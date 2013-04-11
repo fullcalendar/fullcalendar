@@ -19,8 +19,8 @@
 		},
 		columnFormat: {
 			month: 'ddd',
-			week: 'ddd d M',
-			day: 'dddd d M'
+			week: 'ddd d MMM',
+			day: 'dddd d MMM'
 		},
 
 		firstDay: 1,
@@ -36,6 +36,7 @@
 			today: 'Aujourd\'hui',
 			month: 'mois',
 			week: 'semaine',
+			workweek: 'semaine ouverte',
 			day: 'jour'
 		}
     };
