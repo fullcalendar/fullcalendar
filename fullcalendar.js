@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.6.0
+ * FullCalendar v1.6.1
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -113,7 +113,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "1.6.0" };
+var fc = $.fullCalendar = { version: "1.6.1" };
 var fcViews = fc.views = {};
 
 
@@ -2300,7 +2300,8 @@ function BasicView(element, calendar, viewName) {
 		}
 
 		for (i=0; i<colCnt; i++) {
-			html += "<th class='fc-day-header fc-" + dayIDs[i] + " " + headerClass + "'/>";
+			cellDate = _cellDate(0, i); // a little confusing. cellDate is local variable. _cellDate is private function
+			html += "<th class='fc-day-header fc-" + dayIDs[cellDate.getDay()] + " " + headerClass + "'/>";
 		}
 
 		html += "</tr>" +
