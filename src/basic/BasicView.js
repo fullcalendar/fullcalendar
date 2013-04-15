@@ -159,7 +159,8 @@ function BasicView(element, calendar, viewName) {
 		}
 
 		for (i=0; i<colCnt; i++) {
-			html += "<th class='fc-day-header fc-" + dayIDs[i] + " " + headerClass + "'/>";
+			cellDate = _cellDate(0, i); // a little confusing. cellDate is local variable. _cellDate is private function
+			html += "<th class='fc-day-header fc-" + dayIDs[cellDate.getDay()] + " " + headerClass + "'/>";
 		}
 
 		html += "</tr>" +
