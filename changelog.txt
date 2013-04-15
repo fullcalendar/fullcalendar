@@ -1,4 +1,9 @@
 
+version 1.6.1 (4/14/13)
+	- fixed event inner content overflow bug (issue 1783)
+	- fixed table header className bug (1772)
+	- removed text-shadow on events (better for general use, thx tkrotoff)
+
 version 1.6.0 (3/18/13)
 	- visual facelift, with bootstrap-inspired buttons and colors
 	- simplified HTML/CSS for events and buttons
