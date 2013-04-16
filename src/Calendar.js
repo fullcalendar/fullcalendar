@@ -28,6 +28,7 @@ function Calendar(element, options, eventSources) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
+	t.scrollToHour = scrollToHour;
 	
 	
 	// imports
@@ -467,6 +468,12 @@ function Calendar(element, options, eventSources) {
 				thisObj || _element,
 				Array.prototype.slice.call(arguments, 2)
 			);
+		}
+	}
+	
+	function scrollToHour(hour_target) {
+		if(currentView.scrollToHour) {
+			currentView.scrollToHour(hour_target);
 		}
 	}
 	
