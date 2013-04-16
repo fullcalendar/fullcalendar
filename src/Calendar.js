@@ -471,8 +471,10 @@ function Calendar(element, options, eventSources) {
 		}
 	}
 	
+
+	//Exposes view's scrollToHour function to Calendar user
 	function scrollToHour(hour_target) {
-		if(currentView.scrollToHour) {
+		if(currentView.scrollToHour) { //this will have no effect unless you're in agendaWeek or agendaDay view
 			currentView.scrollToHour(hour_target);
 		}
 	}

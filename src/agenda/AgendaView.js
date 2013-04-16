@@ -80,7 +80,12 @@ function AgendaView(element, calendar, viewName) {
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
 	t.scrollToHour = scrollToHour;
+<<<<<<< HEAD
 
+=======
+	
+	
+>>>>>>> 1d3086afb8b5bcadc93cb37ab0d9a2b69d18e9fd
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
@@ -379,11 +384,23 @@ function AgendaView(element, calendar, viewName) {
 	}
 
 	function resetScroll() {
+		//modified to reuse scrollToHour logic
+		scrollToHour(opt('firstHour'));
+	}
+	
+	//In case the user wants to scroll to a particular hour of the day after the view has loaded
+	//a reworking of the former resetScroll
+	function scrollToHour(hour_target) {
 		var d0 = zeroDate();
 		var scrollDate = cloneDate(d0);
+<<<<<<< HEAD
 		scrollDate.setHours(opt('firstHour'));
 		var top = timePosition(d0, scrollDate) + 1;
 		// +1 for the border
+=======
+		scrollDate.setHours(hour_target);
+		var top = timePosition(d0, scrollDate) + 1; // +1 for the border
+>>>>>>> 1d3086afb8b5bcadc93cb37ab0d9a2b69d18e9fd
 		function scroll() {
 			slotScroller.scrollTop(top);
 		}
