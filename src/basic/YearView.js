@@ -178,7 +178,7 @@ function BasicYearView(element, calendar, viewName) {
 		
     
     rowCnt = 0;
-		var localWeekNames =['S','M','T','W','T','F','S'];
+		var localWeekNames =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 		var localMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 		s ="<table class='fc-border-separate fc-year-main-table' style='width:100%'><tr >";
 		for(var m=0; m<12; m++) {
@@ -353,13 +353,9 @@ function BasicYearView(element, calendar, viewName) {
 	}
 	
 	
-	function setWidth(width) {
-		/*
-		viewWidth = width;
+	function setWidth(width) { 
+    viewWidth = width;
 		colContentPositions.clear();
-		colWidth = Math.floor(viewWidth / colCnt);
-		setOuterWidth(headCells.slice(0, -1), colWidth);
-		*/
 	}
 	
   function compileYearSegs(events) {

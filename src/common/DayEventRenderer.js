@@ -313,7 +313,12 @@ function DayEventRenderer() {
 			seg = segs[i];
 			element = seg.element;
 			if (element) {
-				element[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
+        if (!element[0].style.width) {
+  				element[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
+        } else {
+          console.log("skipped")
+          console.log(element);
+        }
 			}
 		}
 	}
