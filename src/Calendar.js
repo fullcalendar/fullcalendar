@@ -17,8 +17,8 @@ function Calendar(element, options, eventSources) {
 	t.unselect = unselect;
 	t.prev = prev;
 	t.next = next;
-	t.prevYear = prevYear;
-	t.nextYear = nextYear;
+	t.prevJump = prevJump;
+	t.nextJump = nextJump;
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
@@ -393,14 +393,22 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function prevYear() {
-		addYears(date, -1);
+	function prevJump() {
+		if(currentView.name === 'month'){
+			addYears(date, -1);
+		}else{
+			addMonths(date, -1);
+		}
 		renderView();
 	}
 	
 	
-	function nextYear() {
-		addYears(date, 1);
+	function nextJump() {
+		if(currentView.name === 'month'){
+			addYears(date, 1);
+		}else{
+			addMonths(date, 1);
+		}
 		renderView();
 	}
 	
