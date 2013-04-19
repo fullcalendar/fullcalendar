@@ -1,0 +1,16 @@
+.fc-timeslots-slots {
+	width: 100%;
+	position:absolute;
+	z-index:8;
+	top:0;
+	left:0;
+}
+.fc-timeslots-slots .fc-timeslots-slot {
+	position: absolute;
+	height: 0;
+	width: 100%;
+	border-top: 1px solid #000;
+}
+.fc-timeslots-slots .fc-minor {
+	border-top-style: dotted;
+}
