@@ -287,7 +287,7 @@ function AgendaEventRenderer() {
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time header
 					eventElement.find('div.fc-event-time')
-						.html(renderTime(event, htmlEscape(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title), true));
+						.html(renderTime(event, htmlEscape(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title), true, event.start, event.end));
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
@@ -329,7 +329,7 @@ function AgendaEventRenderer() {
 			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-time'>" +
-			renderTime(event, htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))), false) +
+			renderTime(event, htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))), false, event.start, event.end) +
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-content'>" +
@@ -556,7 +556,7 @@ function AgendaEventRenderer() {
 			if (event.end) {
 				newEnd = addMinutes(cloneDate(event.end), minuteDelta);
 			}
-			timeElement.html(renderTime(event, formatDates(newStart, newEnd, opt('timeFormat')), false));
+			timeElement.html(renderTime(event, formatDates(newStart, newEnd, opt('timeFormat')), false, newStart, newEnd));
 		}
 		function resetElement() {
 			// convert back to original slot-event
@@ -592,16 +592,19 @@ function AgendaEventRenderer() {
 				// don't rely on ui.size.height, doesn't take grid into account
 				slotDelta = Math.round((Math.max(slotHeight, eventElement.height()) - ui.originalSize.height) / slotHeight);
 				if (slotDelta != prevSlotDelta) {
+					var end = (!slotDelta && !event.end) ? null : // no change, so don't display time range
+									addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta)
 					timeElement.html(
 						renderTime(
 							event,
 							formatDates(
 								event.start,
-								(!slotDelta && !event.end) ? null : // no change, so don't display time range
-									addMinutes(eventEnd(event), opt('slotMinutes')*slotDelta),
+								end,
 								opt('timeFormat')
 							),
-							false
+							false,
+							event.start,
+							end
 						)
 					);
 					prevSlotDelta = slotDelta;

@@ -482,10 +482,10 @@ function DayEventRenderer() {
 		});
 	}
 
-	function renderTime(event, defaultTime, timeContainsTitle) {
+	function renderTime(event, defaultTime, timeContainsTitle, start, end) {
 		var customRenderTime = opt('renderTime');
 		if(typeof customRenderTime == 'function') {
-			return customRenderTime(event, defaultTime, timeContainsTitle);
+			return customRenderTime(event, defaultTime, timeContainsTitle, start, end);
 		}
 		else {
 			return defaultTime;
