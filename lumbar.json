@@ -47,6 +47,7 @@
         "src/agenda/AgendaEventRenderer.js",
         "src/timeslots/TimeslotsView.js",
         "src/timeslots/TimeslotsWeekView.js",
+		  "src/timeslots/TimeslotsEventRenderer.js",
         "src/common/View.js",
         "src/common/DayEventRenderer.js",
         "src/common/SelectionManager.js",

@@ -12,7 +12,7 @@ function TimeslotsWeekView(element, calendar) {
 	// imports
 	TimeslotsView.call(t, element, calendar, 'timeslotsWeek');
 	var opt = t.opt;
-	var renderAgenda = t.renderAgenda;
+	//var renderAgenda = t.renderAgenda;
 	var renderTimeslots = t.renderTimeslots;
 	var formatDates = calendar.formatDates;
 
@@ -40,7 +40,7 @@ function TimeslotsWeekView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderAgenda(weekends ? 7 : 5);
-		renderTimeslots();
+		renderTimeslots(weekends ? 7 : 5);
+		//renderTimeslots();
 	}
 }
