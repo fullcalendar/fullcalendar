@@ -79,6 +79,7 @@ function TimeslotsView(element, calendar, viewName) {
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var formatDate = calendar.formatDate;
+	var element = t.element;
 
 
 	// locals
@@ -157,6 +158,7 @@ function TimeslotsView(element, calendar, viewName) {
 		updateCells();
 
 		// added by Ne0x
+		element.attr('id', element.attr('id') || (Math.random() + '').substr(2));
 		updateTimeslots();
 		buildTimeslotsSkeleton();
 	}

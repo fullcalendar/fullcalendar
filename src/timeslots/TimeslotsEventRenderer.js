@@ -49,7 +49,8 @@ function TimeslotsEventRenderer() {
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
 	// added by Ne0x
-	var timeslots;
+	var element = t.element;
+	var getTimeslots = t.getTimeslots;
 	var getTimeslotsGrid = t.getTimeslotsGrid;
 
 
@@ -59,7 +60,6 @@ function TimeslotsEventRenderer() {
 
 
 	function renderEvents(events, modifiedEventId) {
-		timeslots = t.getTimeslots();
 		reportEvents(events);
 		var i, len=events.length,
 			dayEvents=[],
@@ -467,11 +467,13 @@ function TimeslotsEventRenderer() {
 		var colWidth = getColWidth();
 		var snapHeight = getSnapHeight();
 		var snapMinutes = getSnapMinutes();
+		var elementId = element.attr('id');
+		var timeslots = getTimeslots();
 		eventElement.draggable({
 			zIndex: 9,
 			scroll: false,
 			grid: [colWidth, snapHeight],
-			snap: '.fc-timeslots-slot',
+			snap: '#' + elementId + ' .fc-timeslots-slot',
 			axis: colCnt==1 ? 'y' : false,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
@@ -505,9 +507,13 @@ function TimeslotsEventRenderer() {
 				}, ev, 'drag');
 			},
 			drag: function(ev, ui) {
-				//TODO: need to each timeslots array and select suitable slot
-				minuteDelta = Math.round((ui.position.top - origPosition.top) / snapHeight) * snapMinutes;
-				console.log(minuteDelta);
+				var slot;
+				for(var i=0, len=timeslots.length ; i<len ; i++ ) {
+					slot = timeslots[i];
+					if(Math.round(ui.position.top - slot.top) == 0) {
+						minuteDelta = (slot.start.getHours() - event.start.getHours())*60 + (slot.start.getMinutes() - event.start.getMinutes());
+					}
+				}
 				if (minuteDelta != prevMinuteDelta) {
 					if (!allDay) {
 						updateTimeText(minuteDelta);
