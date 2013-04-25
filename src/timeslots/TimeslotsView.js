@@ -79,6 +79,7 @@ function TimeslotsView(element, calendar, viewName) {
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var formatDate = calendar.formatDate;
+	var formatDates = calendar.formatDates;
 	var element = t.element;
 
 
@@ -424,6 +425,7 @@ function TimeslotsView(element, calendar, viewName) {
 				}),
 			axisWidth
 		);
+		setOuterWidth(element.find('.fc-timeslots-axis'), axisWidth);
 
 		var slotTableWidth = slotScroller[0].clientWidth; // needs to be done after axisWidth (for IE7)
 		//slotTable.width(slotTableWidth);
@@ -892,7 +894,9 @@ function TimeslotsView(element, calendar, viewName) {
 		for(var i=0, len=timeslots.length ; i<len ; i++ ) {
 			slot = timeslots[i];
 			top = timePosition(d0, slot.start);
-			s += '<div class="fc-timeslots-slot" style="top:' + top + 'px;" />';
+			s += '<div class="fc-timeslots-slot" style="top:' + top + 'px;" >' +
+				'<div class="fc-timeslots-axis">' + formatDates(slot.start, slot.end, opt('axisFormat')) + '</div>' +
+				'</div>';
 			slot.top = top;
 		}
 		$(s).appendTo(timeslotsGrid);
