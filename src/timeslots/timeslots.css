@@ -23,12 +23,20 @@
 	top:0;
 	left:0;
 }
-.fc-timeslots-slots .fc-timeslots-slot {
+.fc-timeslots-slots .fc-timeslots-slot,
+.fc-timeslots-slots .fc-timeslots-break
+{
 	position: absolute;
 	height: 0;
 	width: 100%;
 	border-top: 1px solid #ddd;
 }
+.fc-timeslots-slots .fc-timeslots-slot {
+
+}
 .fc-timeslots-slots .fc-minor {
 	border-top-style: dotted;
+}
+.fc-timeslots-slots .fc-timeslots-break {
+	background: #eee;
 }

@@ -878,7 +878,11 @@ function TimeslotsView(element, calendar, viewName) {
 	function buildTimeslotsSkeleton() {
 		var s;
 		var slot;
+		var nextSlot;
 		var top;
+		var breakHtml;
+		var breakTop;
+		var breakHeight;
 		var d0 = zeroDate();
 
 		setHeight(); // no params means set to viewHeight
@@ -893,10 +897,19 @@ function TimeslotsView(element, calendar, viewName) {
 		s = '';
 		for(var i=0, len=timeslots.length ; i<len ; i++ ) {
 			slot = timeslots[i];
+			nextSlot = timeslots[i+1];
 			top = timePosition(d0, slot.start);
+			breakTop = timePosition(d0, slot.end);
+			if(nextSlot) {
+				breakHeight = timePosition(d0, nextSlot.start) - breakTop;
+				breakHtml = (breakHeight > 0) ? '<div class="fc-timeslots-break" style="top:' + breakTop + 'px; height:' + breakHeight + 'px;"></div>' : '';
+			}
+			else {
+				breakHtml = '<div class="fc-timeslots-break" style="top:' + breakTop + 'px;"></div>';
+			}
 			s += '<div class="fc-timeslots-slot" style="top:' + top + 'px;" >' +
 				'<div class="fc-timeslots-axis">' + formatDates(slot.start, slot.end, opt('axisFormat')) + '</div>' +
-				'</div>';
+				'</div>' + breakHtml;
 			slot.top = top;
 		}
 		$(s).appendTo(timeslotsGrid);
