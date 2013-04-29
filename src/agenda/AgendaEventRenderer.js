@@ -85,7 +85,7 @@ function AgendaEventRenderer() {
 	
 	
 	function compileDaySegs(events) {
-		var levels = stackSegs(sliceSegs(events, $.map(events, exclEndDay), t.visStart, t.visEnd)),
+		var levels = stackSegs(sliceSegs(events, $.map(events, function(event){ return event.start }), $.map(events, exclEndDay), t.visStart, t.visEnd)),
 			i, levelCnt=levels.length, level,
 			j, seg,
 			segs=[];
