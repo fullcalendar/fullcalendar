@@ -87,7 +87,8 @@ function transformOptions(sourceOptions, start, end) {
 						end: end,
 						allDay: allDay,
 						location: entry['gd$where'][0]['valueString'],
-						description: entry['content']['$t']
+						description: entry['content']['$t'],
+						resource: sourceOptions.resource
 					});
 				});
 			}
