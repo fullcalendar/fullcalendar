@@ -879,7 +879,8 @@ function TimeslotsView(element, calendar, viewName) {
 		var s;
 		var slot;
 		var nextSlot;
-		var top;
+		var slotTop;
+		var slotHeight;
 		var breakHtml;
 		var breakTop;
 		var breakHeight;
@@ -898,19 +899,21 @@ function TimeslotsView(element, calendar, viewName) {
 		for(var i=0, len=timeslots.length ; i<len ; i++ ) {
 			slot = timeslots[i];
 			nextSlot = timeslots[i+1];
-			top = timePosition(d0, slot.start);
-			breakTop = timePosition(d0, slot.end);
+			slotTop = timePosition(d0, slot.start);
+			slotHeight = timePosition(d0, slot.end) - slotTop - 1;
+			breakTop = timePosition(d0, slot.end) + 1;
 			if(nextSlot) {
 				breakHeight = timePosition(d0, nextSlot.start) - breakTop;
 				breakHtml = (breakHeight > 0) ? '<div class="fc-timeslots-break" style="top:' + breakTop + 'px; height:' + breakHeight + 'px;"></div>' : '';
 			}
-			else {
+			/*else {
 				breakHtml = '<div class="fc-timeslots-break" style="top:' + breakTop + 'px;"></div>';
-			}
-			s += '<div class="fc-timeslots-slot" style="top:' + top + 'px;" >' +
+			}*/
+			s += '<div class="fc-timeslots-slot" style="top:' + slotTop + 'px;height:' + slotHeight + 'px;" >' +
 				'<div class="fc-timeslots-axis">' + formatDates(slot.start, slot.end, opt('axisFormat')) + '</div>' +
 				'</div>' + breakHtml;
-			slot.top = top;
+			slot.top = slotTop;
+			slot.height = slotHeight;
 		}
 		$(s).appendTo(timeslotsGrid);
 	}

@@ -472,8 +472,8 @@ function TimeslotsEventRenderer() {
 		eventElement.draggable({
 			zIndex: 9,
 			scroll: false,
-			grid: [colWidth, snapHeight],
-			snap: '#' + elementId + ' .fc-timeslots-slot',
+			grid: [colWidth, 1],
+			//snap: '#' + elementId + ' .fc-timeslots-slot',
 			axis: colCnt==1 ? 'y' : false,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
@@ -507,6 +507,9 @@ function TimeslotsEventRenderer() {
 				}, ev, 'drag');
 			},
 			drag: function(ev, ui) {
+				/* Snapping (start) */
+				snapSlotEvent.apply(this, arguments);
+				/* Snapping (end) */
 				var slot;
 				for(var i=0, len=timeslots.length ; i<len ; i++ ) {
 					slot = timeslots[i];
@@ -603,6 +606,41 @@ function TimeslotsEventRenderer() {
 				}
 			}
 		});
+	}
+
+	function snapSlotEvent(ev, ui) {
+		var i, t, b;
+		var timeslots = getTimeslots();
+		var slot, nextSlot;
+		var len=timeslots.length;
+		var inst = $(this).data("ui-draggable");
+		var o = inst.options;
+		var d = o.snapTolerance;
+		var y1 = inst._convertPositionTo("relative", { top: ui.offset.top, left: 0 }).top - inst.margins.top;
+
+		for(i=0 ; i<len ; i++ ) {
+			slot = timeslots[i];
+			nextSlot = timeslots[i+1];
+//			l = inst.snapElements[i].left;
+//			r = l + inst.snapElements[i].width;
+			t = slot.top;
+			b = (nextSlot) ? nextSlot.top : null;
+			if(!(t-d < y1 && (b===null || y1 < b+d))) {
+				continue;
+			}
+			ui.position.top = t;
+			//ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top - inst.margins.top;
+			break;
+			/*if(!((l-d < x1 && x1 < r+d && t-d < y1 && y1 < b+d) || (l-d < x1 && x1 < r+d && t-d < y2 && y2 < b+d) || (l-d < x2 && x2 < r+d && t-d < y1 && y1 < b+d) || (l-d < x2 && x2 < r+d && t-d < y2 && y2 < b+d))) {
+				if(inst.snapElements[i].snapping) {
+					(inst.options.snap.release && inst.options.snap.release.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
+				}
+				inst.snapElements[i].snapping = false;
+				continue;
+			}*/
+			//ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
+		}
+		//console.log(inst);
 	}
 
 	function countForwardSegs(levels) {
