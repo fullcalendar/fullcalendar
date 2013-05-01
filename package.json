@@ -1,4 +1,6 @@
 {
+  "name": "npm",
+  "version": "1.1.49",
   "devDependencies": {
     "underscore": "~1.4.4",
     "grunt": "~0.4.0",

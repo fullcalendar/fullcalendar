@@ -10,7 +10,7 @@ var ajaxDefaults = {
 var eventGUID = 1;
 
 
-function EventManager(options, _sources) {
+function EventManager(options, _sources, _resources) {
 	var t = this;
 	
 	
