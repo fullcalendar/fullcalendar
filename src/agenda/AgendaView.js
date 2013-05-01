@@ -50,7 +50,8 @@ function AgendaView(element, calendar, viewName) {
 	t.getRowCnt = function() { return 1 };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
-	t.getSlotHeight = function() { return slotHeight };
+	t.getSnapHeight = function() { return snapHeight };
+	t.getSnapMinutes = function() { return snapMinutes };
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
@@ -106,7 +107,10 @@ function AgendaView(element, calendar, viewName) {
 	var colWidth;
 	var gutterWidth;
 	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
-	var savedScrollTop;
+
+	var snapMinutes;
+	var snapRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
+	var snapHeight; // holds the pixel hight of a "selection" slot
 	
 	var colCnt;
 	var slotCnt;
@@ -114,6 +118,7 @@ function AgendaView(element, calendar, viewName) {
 	var hoverListener;
 	var colContentPositions;
 	var slotTopCache = {};
+	var savedScrollTop;
 	
 	var tm;
 	var firstDay;
@@ -121,6 +126,9 @@ function AgendaView(element, calendar, viewName) {
 	var rtl, dis, dit;  // day index sign / translate
 	var minMinute, maxMinute;
 	var colFormat;
+	var showWeekNumbers;
+	var weekNumberTitle;
+	var weekNumberFormat;
 	
 
 	
@@ -158,6 +166,18 @@ function AgendaView(element, calendar, viewName) {
 		minMinute = parseTime(opt('minTime'));
 		maxMinute = parseTime(opt('maxTime'));
 		colFormat = opt('columnFormat');
+
+		// week # options. (TODO: bad, logic also in other views)
+		showWeekNumbers = opt('weekNumbers');
+		weekNumberTitle = opt('weekNumberTitle');
+		if (opt('weekNumberCalculation') != 'iso') {
+			weekNumberFormat = "w";
+		}
+		else {
+			weekNumberFormat = "W";
+		}
+
+		snapMinutes = opt('snapMinutes') || opt('slotMinutes');
 	}
 	
 	
@@ -175,8 +195,15 @@ function AgendaView(element, calendar, viewName) {
 		s =
 			"<table style='width:100%' class='fc-agenda-days fc-border-separate' cellspacing='0'>" +
 			"<thead>" +
-			"<tr>" +
-			"<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+			"<tr>";
+
+		if (showWeekNumbers) {
+			s += "<th class='fc-agenda-axis fc-week-number " + headerClass + "'/>";
+		}
+		else {
+			s += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+		}
+
 		for (i=0; i<colCnt; i++) {
 			s +=
 				"<th class='fc- fc-col" + i + ' ' + headerClass + "'/>"; // fc- needed for setDayID
@@ -310,6 +337,18 @@ function AgendaView(element, calendar, viewName) {
 		var bodyCell;
 		var date;
 		var today = clearTime(new Date());
+
+		if (showWeekNumbers) {
+			var weekText = formatDate(colDate(0), weekNumberFormat);
+			if (rtl) {
+				weekText = weekText + weekNumberTitle;
+			}
+			else {
+				weekText = weekNumberTitle + weekText;
+			}
+			dayHead.find('.fc-week-number').text(weekText);
+		}
+
 		for (i=0; i<colCnt; i++) {
 			date = colDate(i);
 			headCell = dayHeadCells.eq(i);
@@ -348,6 +387,9 @@ function AgendaView(element, calendar, viewName) {
 		slotScroller.height(bodyHeight - allDayHeight - 1);
 		
 		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
+
+		snapRatio = opt('slotMinutes') / snapMinutes;
+		snapHeight = slotHeight / snapRatio;
 		
 		if (dateChanged) {
 			resetScroll();
@@ -536,10 +578,10 @@ function AgendaView(element, calendar, viewName) {
 		function constrain(n) {
 			return Math.max(slotScrollerTop, Math.min(slotScrollerBottom, n));
 		}
-		for (var i=0; i<slotCnt; i++) {
+		for (var i=0; i<slotCnt*snapRatio; i++) { // adapt slot count to increased/decreased selection slot count
 			rows.push([
-				constrain(slotTableTop + slotHeight*i),
-				constrain(slotTableTop + slotHeight*(i+1))
+				constrain(slotTableTop + snapHeight*i),
+				constrain(slotTableTop + snapHeight*(i+1))
 			]);
 		}
 	});
@@ -580,7 +622,7 @@ function AgendaView(element, calendar, viewName) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * opt('slotMinutes'));
+			addMinutes(d, minMinute + slotIndex * snapMinutes);
 		}
 		return d;
 	}
@@ -743,9 +785,9 @@ function AgendaView(element, calendar, viewName) {
 					var d2 = cellDate(cell);
 					dates = [
 						d1,
-						addMinutes(cloneDate(d1), opt('slotMinutes')),
+						addMinutes(cloneDate(d1), snapMinutes), // calculate minutes depending on selection slot minutes 
 						d2,
-						addMinutes(cloneDate(d2), opt('slotMinutes'))
+						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(cmp);
 					renderSlotSelection(dates[0], dates[3]);
 				}else{

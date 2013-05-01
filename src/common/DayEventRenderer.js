@@ -136,62 +136,33 @@ function DayEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
+			classes = ['fc-event', 'fc-event-hori'];
 			if (isEventDraggable(event)) {
 				classes.push('fc-event-draggable');
 			}
-			
-			if (isResourceView) {
-                classes.push('fc-corner-left');
-			    classes.push('fc-corner-right');
-			    
-			    if (event.resource) {
-			        leftCol = event.resource._col;
-			    } else {
-			        leftCol = 0;
-			    }
-			    
-			    rightCol = leftCol;
-			    
-			    left = colContentLeft(leftCol);
-			    right = colContentRight(rightCol);
-			} else {
-			    if (rtl) {
-    				if (seg.isStart) {
-    					classes.push('fc-corner-right');
-    				}
-    				if (seg.isEnd) {
-    					classes.push('fc-corner-left');
-    				}
-    				leftCol = dayOfWeekCol(seg.end.getDay()-1);
-    				rightCol = dayOfWeekCol(seg.start.getDay());
-    				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
-    				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
-    			}else{
-    				if (seg.isStart) {
-    					classes.push('fc-corner-left');
-    				}
-    				if (seg.isEnd) {
-    					classes.push('fc-corner-right');
-    				}
-    				leftCol = dayOfWeekCol(seg.start.getDay());
-    				rightCol = dayOfWeekCol(seg.end.getDay()-1);
-    				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
-    				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
-    			}
-            }
+			if (seg.isStart) {
+				classes.push('fc-event-start');
+			}
+			if (seg.isEnd) {
+				classes.push('fc-event-end');
+			}
+			if (rtl) {
+				leftCol = dayOfWeekCol(seg.end.getDay()-1);
+				rightCol = dayOfWeekCol(seg.start.getDay());
+				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
+				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
+			}else{
+				leftCol = dayOfWeekCol(seg.start.getDay());
+				rightCol = dayOfWeekCol(seg.end.getDay()-1);
+				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
+				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
+			}
 			classes = classes.concat(event.className);
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
 			}
 			url = event.url;
-			if(event.resource) {		
-				skinCss = getSkinCssWithResource(event, event.resource); // PA TODO - merge getSkinCssWithResource into getSkinCss
-			}
-			else {
-				skinCss = getSkinCss(event, opt);
-			}
-			
+			skinCss = getSkinCss(event, opt);
 			if (url) {
 				html += "<a href='" + htmlEscape(url) + "'";
 			}else{
@@ -201,10 +172,7 @@ function DayEventRenderer() {
 				" class='" + classes.join(' ') + "'" +
 				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
 				">" +
-				"<div" +
-				" class='fc-event-inner fc-event-skin'" +
-				(skinCss ? " style='" + skinCss + "'" : '') +
-				">";
+				"<div class='fc-event-inner'>";
 			if (!event.allDay && seg.isStart) {
 				html +=
 					"<span class='fc-event-time'>" +
@@ -214,7 +182,7 @@ function DayEventRenderer() {
 			html +=
 				"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
 				"</div>";
-			if (seg.isEnd && isEventResizable(event) && !(event.allDay && isResourceView)) {
+			if (seg.isEnd && isEventResizable(event)) {
 				html +=
 					"<div class='ui-resizable-handle ui-resizable-" + (rtl ? 'w' : 'e') + "'>" +
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
@@ -366,7 +334,7 @@ function DayEventRenderer() {
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
 			rowDivs[i] = allDayRow(i)
-				.find('td:first div.fc-day-content > div'); // optimal selector?
+				.find('div.fc-day-content > div'); // optimal selector?
 		}
 		return rowDivs;
 	}
@@ -409,7 +377,7 @@ function DayEventRenderer() {
 	function resizableDayEvent(event, element, seg) {
 		var rtl = opt('isRTL');
 		var direction = rtl ? 'w' : 'e';
-		var handle = element.find('div.ui-resizable-' + direction);
+		var handle = element.find('.ui-resizable-' + direction); // TODO: stop using this class because we aren't using jqui for this
 		var isResizing = false;
 		
 		// TODO: look into using jquery-ui mouse widget for this stuff

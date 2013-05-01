@@ -167,7 +167,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		return null;
 	}
 	var date = new Date(m[1], 0, 1);
-	if (ignoreTimezone || !m[14]) {
+	if (ignoreTimezone || !m[13]) {
 		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
 			date.setMonth(m[3] - 1);
@@ -203,9 +203,11 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 			m[10] || 0,
 			m[12] ? Number("0." + m[12]) * 1000 : 0
 		);
-		var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
-		offset *= m[15] == '-' ? 1 : -1;
-		date = new Date(+date + (offset * 60 * 1000));
+		if (m[14]) {
+			var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
+			offset *= m[15] == '-' ? 1 : -1;
+			date = new Date(+date + (offset * 60 * 1000));
+		}
 	}
 	return date;
 }
@@ -351,7 +353,33 @@ var dateFormatters = {
 			return 'th';
 		}
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
+	},
+	w   : function(d, o) { // local
+		return o.weekNumberCalculation(d);
+	},
+	W   : function(d) { // ISO
+		return iso8601Week(d);
 	}
 };
+fc.dateFormatters = dateFormatters;
 
+
+/* thanks jQuery UI (https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.datepicker.js)
+ * 
+ * Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
+ * @param  date  Date - the date to get the week for
+ * @return  number - the number of the week within the year that contains this date
+ */
+function iso8601Week(date) {
+	var time;
+	var checkDate = new Date(date.getTime());
+
+	// Find Thursday of this week starting on Monday
+	checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7));
+
+	time = checkDate.getTime();
+	checkDate.setMonth(0); // Compare with Jan 1
+	checkDate.setDate(1);
+	return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
+}
 

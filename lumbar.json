@@ -1,0 +1,75 @@
+{
+  "scope": "none",
+  "packages": {
+    "dependencies": {
+      "modules": [
+        "jquery",
+        "jquery-ui"
+      ]
+    },
+    "fullcalendar": {
+      "modules": [
+        "fullcalendar",
+        "fullcalendar.print",
+        "gcal"
+      ]
+    }
+  },
+  "modules": {
+    "jquery": {
+      "scripts": [
+        "lib/jquery-1.9.1.min.js"
+      ]
+    },
+    "jquery-ui": {
+      "scripts": [
+        "lib/jquery-ui-1.10.2.custom.min.js"
+      ]
+    },
+    "fullcalendar": {
+      "scripts": [
+        "src/intro.js",
+        "src/defaults.js",
+        "src/main.js",
+        "src/Calendar.js",
+        "src/Header.js",
+        "src/EventManager.js",
+        "src/date_util.js",
+        "src/util.js",
+        "src/basic/MonthView.js",
+        "src/basic/BasicWeekView.js",
+        "src/basic/BasicDayView.js",
+        "src/basic/BasicView.js",
+        "src/basic/BasicEventRenderer.js",
+        "src/agenda/AgendaWeekView.js",
+        "src/agenda/AgendaDayView.js",
+        "src/agenda/AgendaView.js",
+        "src/agenda/AgendaEventRenderer.js",
+        "src/common/View.js",
+        "src/common/DayEventRenderer.js",
+        "src/common/SelectionManager.js",
+        "src/common/OverlayManager.js",
+        "src/common/CoordinateGrid.js",
+        "src/common/HoverListener.js",
+        "src/common/HorizontalPositionCache.js",
+        "src/outro.js"
+      ],
+      "styles": [
+        "src/main.css",
+        "src/common/common.css",
+        "src/basic/basic.css",
+        "src/agenda/agenda.css"
+      ]
+    },
+    "fullcalendar.print": {
+      "styles": [
+        "src/common/print.css"
+      ]
+    },
+    "gcal": {
+      "scripts": [
+        "src/gcal/gcal.js"
+      ]
+    }
+  }
+}

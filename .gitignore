@@ -1,4 +1,13 @@
+build/out
+build/archive
+build/component
+build/cdn
 build/fullcalendar
-build/fullcalendar-*
 dist
 .DS_Store
+
+# for npm
+node_modules
+
+# for bower
+components
