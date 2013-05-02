@@ -36,6 +36,8 @@ function ResourceEventRenderer() {
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
 	var getColWidth = t.getColWidth;
+	var getSnapHeight = t.getSnapHeight;
+	var getSnapMinutes = t.getSnapMinutes;
 	var getSlotHeight = t.getSlotHeight;
 	var getBodyContent = t.getBodyContent;
 	var reportEventElement = t.reportEventElement;
