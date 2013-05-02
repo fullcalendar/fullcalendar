@@ -50,6 +50,8 @@ function ResourceView(element, calendar, viewName) {
 	t.getRowCnt = function() { return 1 };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
+	t.getSnapHeight = function() { return snapHeight };
+	t.getSnapMinutes = function() { return snapMinutes };
 	t.getSlotHeight = function() { return slotHeight };
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderDayOverlay = renderDayOverlay;
@@ -107,6 +109,10 @@ function ResourceView(element, calendar, viewName) {
 	var gutterWidth;
 	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
 	var savedScrollTop;
+
+	var snapMinutes;
+	var snapRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
+	var snapHeight; // holds the pixel hight of a "selection" slot
 	
 	var colCnt;
 	var slotCnt;
@@ -186,6 +192,8 @@ function ResourceView(element, calendar, viewName) {
 		minMinute = parseTime(opt('minTime'));
 		maxMinute = parseTime(opt('maxTime'));
 		colFormat = opt('columnFormat');
+
+		snapMinutes = opt('snapMinutes') || opt('slotMinutes');
 	}
 	
 	
@@ -381,6 +389,9 @@ function ResourceView(element, calendar, viewName) {
 		slotScroller.height(bodyHeight - allDayHeight - 1);
 		
 		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
+
+		snapRatio = opt('slotMinutes') / snapMinutes;
+		snapHeight = slotHeight / snapRatio;
 		
 		if (dateChanged) {
 			resetScroll();
