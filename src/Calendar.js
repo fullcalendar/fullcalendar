@@ -28,6 +28,7 @@ function Calendar(element, options, eventSources, eventResources) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
+	t.clientResources = clientResources;
 	
 	t.getResources = function() { return eventResources; }
 	t.setResources = function(resources) { eventResources = resources; render(false, true); }
@@ -398,6 +399,20 @@ function Calendar(element, options, eventSources, eventResources) {
 		}
 		eventResources = updatedResources;
 		render(false, true);
+	}
+	
+	
+	function clientResources(filter) {
+		if ($.isFunction(filter)) {
+			return $.grep(eventResources, filter);
+		}
+		else if (filter) { // an event ID
+			filter += '';
+			return $.grep(eventResources, function(e) {
+				return e._id == filter;
+			});
+		}
+		return eventResources; // else, return all
 	}
 	
 
