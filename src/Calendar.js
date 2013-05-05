@@ -28,12 +28,12 @@ function Calendar(element, options, eventSources, eventResources) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
-	t.clientResources = clientResources;
 	
 	t.getResources = function() { return eventResources; }
 	t.setResources = function(resources) { eventResources = resources; render(false, true); }
 	t.addEventResource = addEventResource;
 	t.removeEventResource = removeEventResource;
+	t.clientResources = clientResources;
 	
 	// imports
 	EventManager.call(t, options, eventSources, eventResources);
