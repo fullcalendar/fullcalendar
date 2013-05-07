@@ -32,7 +32,7 @@
 	/*border-top: 1px solid #ddd;*/
 }
 .fc-timeslots-slots .fc-timeslots-slot {
-	background: #ff0;
+	background: transparent;
 	border: 1px solid #ddd;
 	border-width: 1px 0;
 }

@@ -55,6 +55,7 @@ function TimeslotsEventRenderer() {
 
 
 
+
 	/* Rendering
 	 ----------------------------------------------------------------------------*/
 
@@ -566,39 +567,49 @@ function TimeslotsEventRenderer() {
 
 
 	function resizableSlotEvent(event, eventElement, timeElement) {
-		var snapDelta, prevSnapDelta;
-		var snapHeight = getSnapHeight();
+		var minuteDelta, prevMinuteDelta;
+		var snapHeight = 1;
 		var snapMinutes = getSnapMinutes();
+		var endSlot;
 		eventElement.resizable({
 			handles: {
 				s: '.ui-resizable-handle'
 			},
-			grid: snapHeight,
+			//grid: snapHeight,
 			start: function(ev, ui) {
-				snapDelta = prevSnapDelta = 0;
+				minuteDelta = prevMinuteDelta = 0;
 				hideEvents(event, eventElement);
 				eventElement.css('z-index', 9);
 				trigger('eventResizeStart', this, event, ev, ui);
 			},
 			resize: function(ev, ui) {
+				/* Snapping (start) */
+				snapResizeEvent.apply(this, arguments);
+				/* Snapping (end) */
+				endSlot = ui.element.data("ts-end-slot");
+
 				// don't rely on ui.size.height, doesn't take grid into account
-				snapDelta = Math.round((Math.max(snapHeight, eventElement.height()) - ui.originalSize.height) / snapHeight);
-				if (snapDelta != prevSnapDelta) {
-					timeElement.text(
-						formatDates(
-							event.start,
-							(!snapDelta && !event.end) ? null : // no change, so don't display time range
-								addMinutes(eventEnd(event), snapMinutes*snapDelta),
-							opt('timeFormat')
-						)
-					);
-					prevSnapDelta = snapDelta;
+				if(endSlot) {
+					minuteDelta = (endSlot.end.getHours() - event.end.getHours())*60 + (endSlot.end.getMinutes() - event.end.getMinutes());
+					if (minuteDelta != prevMinuteDelta) {
+						timeElement.text(
+							formatDates(
+								event.start,
+								(!minuteDelta && !event.end) ? null : // no change, so don't display time range
+									addMinutes(eventEnd(event), minuteDelta),
+								opt('timeFormat')
+							)
+						);
+						prevMinuteDelta = minuteDelta;
+					}
 				}
+				//snapDelta = (previousSize) ? previousSize.endSlot.end
+
 			},
 			stop: function(ev, ui) {
 				trigger('eventResizeStop', this, event, ev, ui);
-				if (snapDelta) {
-					eventResize(this, event, 0, snapMinutes*snapDelta, ev, ui);
+				if (minuteDelta) {
+					eventResize(this, event, 0, minuteDelta, ev, ui);
 				}else{
 					eventElement.css('z-index', 8);
 					showEvents(event, eventElement);
@@ -614,34 +625,54 @@ function TimeslotsEventRenderer() {
 		var slot, nextSlot;
 		var len=timeslots.length;
 		var inst = $(this).data("ui-draggable");
-		var o = inst.options;
-		var d = o.snapTolerance;
-		var y1 = inst._convertPositionTo("relative", { top: ui.offset.top, left: 0 }).top - inst.margins.top;
+		var y1 = inst._convertPositionTo("relative", { top: ui.offset.top, left: 0 }).top + 10; // 10 - temporary hardcoded
 
 		for(i=0 ; i<len ; i++ ) {
 			slot = timeslots[i];
 			nextSlot = timeslots[i+1];
-//			l = inst.snapElements[i].left;
-//			r = l + inst.snapElements[i].width;
 			t = slot.top;
 			b = (nextSlot) ? nextSlot.top : null;
-			if(!(t-d < y1 && (b===null || y1 < b+d))) {
+			if(!(t < y1 && (b===null || y1 < b))) {
 				continue;
 			}
 			ui.position.top = t;
-			//ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top - inst.margins.top;
 			break;
-			/*if(!((l-d < x1 && x1 < r+d && t-d < y1 && y1 < b+d) || (l-d < x1 && x1 < r+d && t-d < y2 && y2 < b+d) || (l-d < x2 && x2 < r+d && t-d < y1 && y1 < b+d) || (l-d < x2 && x2 < r+d && t-d < y2 && y2 < b+d))) {
-				if(inst.snapElements[i].snapping) {
-					(inst.options.snap.release && inst.options.snap.release.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
-				}
-				inst.snapElements[i].snapping = false;
-				continue;
-			}*/
-			//ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
 		}
-		//console.log(inst);
 	}
+
+	function snapResizeEvent(ev, ui) {
+		var i, t, b;
+		var timeslots = getTimeslots();
+		var slot, nextSlot;
+		var len=timeslots.length;
+		var inst = $(this).data("ui-resizable");
+		var y1 = ui.position.top + ui.size.height + 10; // 10 - temporary hardcoded
+		var previousSize = ui.element.data("ts-previous-size");
+
+		for(i=0 ; i<len ; i++ ) {
+			slot = timeslots[i];
+			nextSlot = timeslots[i+1];
+			t = slot.top + slot.height;
+			b = (nextSlot) ? (nextSlot.top + nextSlot.height) : null;
+			if(!(t < y1 && (b===null || y1 < b) && slot.top >= ui.position.top)) {
+				continue;
+			}
+
+			ui.size.height = t - ui.position.top - 1;
+			ui.element.height(ui.size.height);
+			previousSize = {
+				width: ui.size.width,
+				height: ui.size.height
+			};
+			ui.element.data("ts-previous-size", previousSize);
+			ui.element.data("ts-end-slot", slot);
+
+			return;
+		}
+		ui.size.height = (previousSize) ? previousSize.height : ui.originalSize.height;
+		ui.element.height(ui.size.height);
+	}
+
 
 	function countForwardSegs(levels) {
 		var i, j, k, level, segForward, segBack;
