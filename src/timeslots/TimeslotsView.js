@@ -916,6 +916,7 @@ function TimeslotsView(element, calendar, viewName) {
 			slot.height = slotHeight;
 		}
 		$(s).appendTo(timeslotsGrid);
+		slotBind(timeslotsGrid.find('.fc-timeslots-slot'));
 	}
 
 }

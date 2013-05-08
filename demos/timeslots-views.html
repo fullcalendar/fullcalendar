@@ -16,11 +16,15 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
+			select: function() {
+				alert(1);
+			},
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,timeslotsWeek,agendaDay'
+				right: 'month,timeslotsWeek,agendaWeek,agendaDay'
 			},
+			selectable : true,
 			minTime: '7:00',
 			maxTime: '18:00',
 			//snapMinutes: 45,
