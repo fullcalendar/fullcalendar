@@ -140,7 +140,7 @@ function ResourceEventRenderer() {
 		
 		for(i=0; i<events.length; i++) {
 			if(events[i].resource) {
-				if(events[i].resource.id == resource.id) {
+				if(resource !== undefined && events[i].resource.id == resource.id) {
 					resEvents.push(events[i]);
 				}
 			}
@@ -156,7 +156,7 @@ function ResourceEventRenderer() {
 		
 		for(i=0; i<events.length; i++) {
 			if(events[i].resource) {
-				if(events[i].resource.id == resource.id) {
+				if(resource !== undefined && events[i].resource.id == resource.id) {
 					resEvents.push(events[i])
 				}
 			}
