@@ -594,8 +594,8 @@ function ResourceView(element, calendar, viewName) {
 		}
 		for (var i=0; i<slotCnt; i++) {
 			rows.push([
-				constrain(slotTableTop + slotHeight*i),
-				constrain(slotTableTop + slotHeight*(i+1))
+				constrain(slotTableTop + snapHeight*i),
+				constrain(slotTableTop + snapHeight*(i+1))
 			]);
 		}
 	});
@@ -636,7 +636,7 @@ function ResourceView(element, calendar, viewName) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * opt('slotMinutes'));
+			addMinutes(d, minMinute + slotIndex * snapMinutes);
 		}
 		return d;
 	}
@@ -804,18 +804,18 @@ function ResourceView(element, calendar, viewName) {
 					//Actual selected slots which should be available for rendering the slot
 					dates = [
 						d1,
-						addMinutes(cloneDate(d1), opt('slotMinutes')),
+						addMinutes(cloneDate(d1), snapMinutes),
 						d2,
-						addMinutes(cloneDate(d2), opt('slotMinutes'))
+						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(cmp);
 					//virtually while rendering show the user the selected slot which is not the correct slot
 					var d1tmp = cellDate(origCell);
 					var d2tmp = cellDate(cell);
 					dates1 = [
 						d1tmp,
-						addMinutes(cloneDate(d1tmp), opt('slotMinutes')),
+						addMinutes(cloneDate(d1tmp), snapMinutes),
 						d2tmp,
-						addMinutes(cloneDate(d2tmp), opt('slotMinutes'))
+						addMinutes(cloneDate(d2tmp), snapMinutes)
 					].sort(cmp);
 					renderSlotSelection(dates1[0], dates1[3]);
 				}else{
