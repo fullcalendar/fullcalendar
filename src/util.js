@@ -71,7 +71,7 @@ function sliceSegs(events, visEventEnds, start, end) {
 				msLength: segEnd - segStart
 			});
 		}
-	} 
+	}
 	return segs.sort(segCmp);
 }
 
@@ -161,20 +161,20 @@ function hsides(element, includeMargins) {
 
 
 function hpadding(element) {
-	return (parseFloat($(element[0]).css('paddingLeft')) || 0) +
-	       (parseFloat($(element[0]).css('paddingRight')) || 0);
+	return (parseFloat($.css(element[0], 'paddingLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingRight', true)) || 0);
 }
 
 
 function hmargins(element) {
-	return (parseFloat($(element[0]).css('marginLeft')) || 0) +
-	       (parseFloat($(element[0]).css('marginRight')) || 0);
+	return (parseFloat($.css(element[0], 'marginLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginRight', true)) || 0);
 }
 
 
 function hborders(element) {
-	return (parseFloat($(element[0]).css('borderLeftWidth')) || 0) +
-	       (parseFloat($(element[0]).css('borderRightWidth')) || 0);
+	return (parseFloat($.css(element[0], 'borderLeftWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderRightWidth', true)) || 0);
 }
 
 
@@ -184,20 +184,20 @@ function vsides(element, includeMargins) {
 
 
 function vpadding(element) {
-	return (parseFloat($(element[0]).css('paddingTop')) || 0) +
-	       (parseFloat($(element[0]).css('paddingBottom')) || 0);
+	return (parseFloat($.css(element[0], 'paddingTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingBottom', true)) || 0);
 }
 
 
 function vmargins(element) {
-	return (parseFloat($(element[0]).css('marginTop')) || 0) +
-	       (parseFloat($(element[0]).css('marginBottom')) || 0);
+	return (parseFloat($.css(element[0], 'marginTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginBottom', true)) || 0);
 }
 
 
 function vborders(element) {
-	return (parseFloat($(element[0]).css('borderTopWidth')) || 0) +
-	       (parseFloat($(element[0]).css('borderBottomWidth')) || 0);
+	return (parseFloat($.css(element[0], 'borderTopWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderBottomWidth', true)) || 0);
 }
 
 
@@ -299,7 +299,8 @@ function markFirstLast(e) {
 
 function setDayID(cell, date) {
 	cell.each(function(i, _cell) {
-		_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-id' + date); // I don't understand why do we need dayID which is not date?
+		_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-' + dayIDs[date.getDay()]);
+		// TODO: make a way that doesn't rely on order of classes
 	});
 }
 
@@ -363,5 +364,4 @@ function firstDefined() {
 		}
 	}
 }
-
 

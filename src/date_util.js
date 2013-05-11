@@ -45,7 +45,6 @@ function addMonths(d, n, keepTime) { // prevents day overflow/underflow
 	return d;
 }
 
-
 function addWeeks(d, n, keepTime) {
 	addDays(d, n * 7, keepTime);
 	return d;
@@ -135,22 +134,6 @@ function setYMD(date, y, m, d) {
 	if (d !== undefined) {
 		date.setDate(d);
 	}
-}
-
-
-function getWeek(d) {
-	// Copy date so don't modify original
-	d = new Date(d);
-	d.setHours(0,0,0);
-	// Set to nearest Thursday: current date + 4 - current day number
-	// Make Sunday's day number 7
-	d.setDate(d.getDate() + 4 - (d.getDay()||7));
-	// Get first day of year
-	var yearStart = new Date(d.getFullYear(),0,1);
-	// Calculate full weeks to nearest Thursday
-	var weeknum = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-	
-	return weeknum;
 }
 
 
@@ -357,7 +340,6 @@ var dateFormatters = {
 	dd	: function(d)	{ return zeroPad(d.getDate()) },
 	ddd	: function(d,o)	{ return o.dayNamesShort[d.getDay()] },
 	dddd: function(d,o)	{ return o.dayNames[d.getDay()] },
-	W   : function(d) 	{ return getWeek(d) },
 	M	: function(d)	{ return d.getMonth() + 1 },
 	MM	: function(d)	{ return zeroPad(d.getMonth() + 1) },
 	MMM	: function(d,o)	{ return o.monthNamesShort[d.getMonth()] },
@@ -375,7 +357,33 @@ var dateFormatters = {
 			return 'th';
 		}
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
+	},
+	w   : function(d, o) { // local
+		return o.weekNumberCalculation(d);
+	},
+	W   : function(d) { // ISO
+		return iso8601Week(d);
 	}
 };
+fc.dateFormatters = dateFormatters;
 
+
+/* thanks jQuery UI (https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.datepicker.js)
+ * 
+ * Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
+ * @param  date  Date - the date to get the week for
+ * @return  number - the number of the week within the year that contains this date
+ */
+function iso8601Week(date) {
+	var time;
+	var checkDate = new Date(date.getTime());
+
+	// Find Thursday of this week starting on Monday
+	checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7));
+
+	time = checkDate.getTime();
+	checkDate.setMonth(0); // Compare with Jan 1
+	checkDate.setDate(1);
+	return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
+}
 

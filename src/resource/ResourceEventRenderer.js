@@ -63,7 +63,7 @@ function ResourceEventRenderer() {
 			resources = t.getResources,
 			d1 = cloneDate(t.visStart),
 			d2 = cloneDate(t.visEnd),
-			visEventsEnds = $.map(events, exclEndDay),
+			visEventsEnds,
 			i, row,
 			j, level,
 			k, seg, currentResource, viewName = getViewName(),
@@ -71,12 +71,16 @@ function ResourceEventRenderer() {
 			weekends = opt('weekends'),
 			startDay, endDay, startDate, endDate;
 		
+		// for resource day view exclEndDay returns next day, which is incorrect if there's no end time for event.
 		if (viewName == 'resourceDay') {			
 			visEventsEnds = $.map(events, function(event) {
-				return event.end || addDays(event.start, 1);
+				return event.end || addMinutes(cloneDate(event.start), opt('slotMinutes'));
 			});
 		}
-
+		else {
+			visEventsEnds = $.map(events, exclEndDay);
+		}
+		
 		for (i=0; i<rowCnt; i++) {
 			currentResource = resources[i].id;
 			row = sliceSegs(events, visEventsEnds, d1, d2);
@@ -84,7 +88,6 @@ function ResourceEventRenderer() {
 			for (j=0; j<row.length; j++) {
 				seg = row[j];
 				seg.row = i;
-				
 				// Let's be backwards compatitle. If event resource is not array, then we convert it.
 				if (!$.isArray(seg.event.resource)) { 
 					seg.event.resource = [seg.event.resource];
@@ -324,6 +327,7 @@ function ResourceEventRenderer() {
 			var minCell = dateCell(event.start);
 			var newEnd;
 			var weekendTestDate;
+			var visEnd;
 			
 			clearSelection();
 			$('body')
@@ -341,24 +345,23 @@ function ResourceEventRenderer() {
 					}
 					else {
 						dayDelta = dayDeltaStart = dayDeltaEnd = (7 + c*dis+dit) - (7 + origCell.col*dis+dit);
-						
+						visEnd = event.end || cloneDate(event.start);
 						// If weekends is set to false, add or remove days from dayDelta
 						if (!opt('weekends') && (dayDelta > 0 || dayDelta < 0)) {
 							if (dayDelta > 0) {
 								for(var i=1; i<=dayDeltaEnd; i++) {
-									weekendTestDate = addDays(cloneDate(event.end), i);
+									weekendTestDate = addDays(cloneDate(visEnd), i);
 									if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd++;
 								}
 							}
 							else {
 								for(i=-1; i>=dayDeltaEnd; i--) {
-									weekendTestDate = addDays(cloneDate(event.end), i);
+									weekendTestDate = addDays(cloneDate(visEnd), i);
 									if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) dayDeltaEnd--;
 								}
 							}
 						}	
 						newEnd = addDays(eventEnd(event), dayDeltaEnd, true);
-						
 					}
 					
 					if (dayDelta || minuteDelta) {
@@ -397,21 +400,22 @@ function ResourceEventRenderer() {
 				if (dayDelta) {
 					if (!opt('weekends')) {
 						// We have to add or remove days from event.end. Is there a better way?
+						visEnd = event.end || cloneDate(event.start);
 						if (dayDelta > 0) {
 							var daysToAdd = 0;
 							for(var i=1; i<=dayDelta+daysToAdd; i++) {
-								weekendTestDate = addDays(cloneDate(event.end), i);
+								weekendTestDate = addDays(cloneDate(visEnd), i);
 								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToAdd++;
 							}
-							if (daysToAdd > 0) event.end = addDays(cloneDate(event.end), daysToAdd, true);
+							if (daysToAdd > 0) event.end = addDays(cloneDate(visEnd), daysToAdd, true);
 						}
 						else {
 							var daysToDel = 0;
 							for(i=-1; i>=dayDelta+daysToDel; i--) {
-								weekendTestDate = addDays(cloneDate(event.end), i);
+								weekendTestDate = addDays(cloneDate(visEnd), i);
 								if (weekendTestDate.getDay() == 6 || weekendTestDate.getDay() == 0) daysToDel--;
 							}
-							if (daysToDel < 0) event.end = addDays(cloneDate(event.end), daysToDel, true);
+							if (daysToDel < 0) event.end = addDays(cloneDate(visEnd), daysToDel, true);
 						}
 					}
 				

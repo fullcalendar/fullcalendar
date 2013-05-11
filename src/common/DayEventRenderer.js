@@ -1,11 +1,12 @@
+
 function DayEventRenderer() {
 	var t = this;
 
 	
 	// exports
 	t.renderDaySegs = renderDaySegs;
-	t.resizableDayEvent = resizableDayEvent;
 	t.renderTempDaySegs = renderTempDaySegs;
+	t.resizableDayEvent = resizableDayEvent;
 	
 	
 	// imports
@@ -95,6 +96,7 @@ function DayEventRenderer() {
 		var i;
 		var segCnt = segs.length;
 		var element;
+
 		tempContainer[0].innerHTML = daySegHTML(segs); // faster than .html()
 		elements = tempContainer.children();
 		segmentContainer.append(elements);
@@ -136,93 +138,92 @@ function DayEventRenderer() {
 		var html = '';
 		var viewName = getViewName();
 		var weekends = opt('weekends'), weekendTestDate, weekendSumColStart, weekendSumColEnd;
-
 		// calculate desired position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			classes = ['fc-event', 'fc-event-skin', 'fc-event-hori'];
+			classes = ['fc-event', 'fc-event-hori'];
 			if (isEventDraggable(event)) {
 				classes.push('fc-event-draggable');
 			}
+			if (seg.isStart) {
+				classes.push('fc-event-start');
+			}
+			if (seg.isEnd) {
+				classes.push('fc-event-end');
+			}
 			if (rtl) {
-				if (seg.isStart) {
-					classes.push('fc-corner-right');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-left');
-				}
 				leftCol = dayOfWeekCol(seg.end.getDay()-1);
 				rightCol = dayOfWeekCol(seg.start.getDay());
 				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
 				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
 			}else{
-				if (seg.isStart) {
-					classes.push('fc-corner-left');
-				}
-				if (seg.isEnd) {
-					classes.push('fc-corner-right');
-				}
-				
-				if (viewName == 'resourceMonth') {
-					// for resourceMonth view
-					leftCol = seg.start.getDate()-1;
-					rightCol = seg.end.getDate()-2;
-
-					if(!weekends) {
-						// Drop out weekends
-						weekendSumColStart=0	
-						weekendSumColEnd=0
-						
-						for(var j=0; j<=leftCol; j++) {
-							weekendTestDate = addDays(cloneDate(t.visStart), j);
-							
-							if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
-								weekendSumColStart++;
-							}
-						}
-						leftCol -= weekendSumColStart;
-						
-						if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
-						
-						for(j=0; j<=rightCol; j++) {
-							weekendTestDate = addDays(cloneDate(t.visStart), j);
-							
-							if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
-								weekendSumColEnd++;
-							}
-						}
-						rightCol -= weekendSumColEnd;
-					}
-					
-					if(rightCol < 0) {
-						// end is in the next month so rightCol is the last column
-						rightCol = getColCnt()-1;
-					}
-				}
-				else if (viewName == 'resourceNextWeeks') {
-					
-					leftCol = dateCell(seg.start).col;
-					rightCol = dateCell(seg.end).col-1;
-					if(!weekends) {
-						leftCol = dateCell(seg.start).col;
-						rightCol = dateCell(addDays(cloneDate(seg.end),-1)).col;
-						if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
-					}
-				}
-				else if (viewName == 'resourceDay') {
-					// hack for resourceDay view
-					leftCol = timeOfDayCol(seg.start);
-					rightCol = timeOfDayCol(seg.end)-1;
-				}
-				else {
-					leftCol = dayOfWeekCol(seg.start.getDay());
-					rightCol = dayOfWeekCol(seg.end.getDay()-1);
-				}
-
+				leftCol = dayOfWeekCol(seg.start.getDay());
+				rightCol = dayOfWeekCol(seg.end.getDay()-1);
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
 				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
 			}
+			
+			// TODO: better implementation for this one..
+			if (viewName == 'resourceMonth') {
+				// for resourceMonth view
+				leftCol = seg.start.getDate()-1;
+				rightCol = seg.end.getDate()-2;
+
+				if(!weekends) {
+					// Drop out weekends
+					weekendSumColStart=0	
+					weekendSumColEnd=0
+					
+					for(var j=0; j<=leftCol; j++) {
+						weekendTestDate = addDays(cloneDate(t.visStart), j);
+						
+						if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+							weekendSumColStart++;
+						}
+					}
+					leftCol -= weekendSumColStart;
+					
+					if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
+					
+					for(j=0; j<=rightCol; j++) {
+						weekendTestDate = addDays(cloneDate(t.visStart), j);
+						
+						if(weekendTestDate.getDay() == 0 || weekendTestDate.getDay() == 6) {
+							weekendSumColEnd++;
+						}
+					}
+					rightCol -= weekendSumColEnd;
+				}
+				
+				if(rightCol < 0) {
+					// end is in the next month so rightCol is the last column
+					rightCol = getColCnt()-1;
+				}
+			}
+			else if (viewName == 'resourceNextWeeks') {
+				leftCol = dateCell(seg.start).col;
+				rightCol = dateCell(seg.end).col-1;
+				if(!weekends) {
+					leftCol = dateCell(seg.start).col;
+					rightCol = dateCell(addDays(cloneDate(seg.end),-1)).col;
+					if (seg.start.getDay() == 6 || seg.start.getDay() == 0) leftCol++;
+				}
+			}
+			else if (viewName == 'resourceDay') {
+				// hack for resourceDay view
+				leftCol = timeOfDayCol(seg.start);
+				rightCol = timeOfDayCol(seg.end)-1;
+			}
+			
+			if (rtl) {
+				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
+				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
+			}else{
+				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
+				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
+			}
+			
 			classes = classes.concat(event.className);
 			if (event.source) {
 				classes = classes.concat(event.source.className || []);
@@ -238,8 +239,7 @@ function DayEventRenderer() {
 				" class='" + classes.join(' ') + "'" +
 				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
 				">" +
-				"<div" +
-				" class='fc-event-inner fc-event-skin'" +
+				"<div class='fc-event-inner'>" +
 				(skinCss ? " style='" + skinCss + "'" : "") +
 				">";
 			if (!event.allDay && seg.isStart) {
@@ -257,6 +257,7 @@ function DayEventRenderer() {
 					"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
 					"</div>";
 			}
+			
 			html +=
 				"</" + (url ? "a" : "div" ) + ">";
 			seg.left = left;
@@ -430,8 +431,7 @@ function DayEventRenderer() {
 			seg = segs[i];
 			element = seg.element;
 			if (element) {
-				var segTop = parseInt(seg.top)>0?parseInt(seg.top):0;
-				element[0].style.top = rowTops[seg.row] + segTop + 'px';
+				element[0].style.top = rowTops[seg.row] + (seg.top||0) + 'px';
 				event = seg.event;
 				trigger('eventAfterRender', event, event, element);
 			}
@@ -447,7 +447,7 @@ function DayEventRenderer() {
 	function resizableDayEvent(event, element, seg) {
 		var rtl = opt('isRTL');
 		var direction = rtl ? 'w' : 'e';
-		var handle = element.find('div.ui-resizable-' + direction);
+		var handle = element.find('.ui-resizable-' + direction); // TODO: stop using this class because we aren't using jqui for this
 		var isResizing = false;
 		
 		// TODO: look into using jquery-ui mouse widget for this stuff

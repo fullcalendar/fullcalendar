@@ -1,3 +1,12 @@
-build/fullcalendar
-build/fullcalendar-*
+build/out
+build/archive
+build/component
+build/cdn
 dist
+
+# for npm
+node_modules
+
+# for bower
+components
+/.project

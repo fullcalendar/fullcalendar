@@ -48,12 +48,9 @@ function ResourceView(element, calendar, viewName) {
 	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
-	var daySelectionMousedown = t.daySelectionMousedown;
 	var formatDate = calendar.formatDate;
 	
-	
 	// locals
-	
 	var head;
 	var headCells;
 	var body;
@@ -133,7 +130,7 @@ function ResourceView(element, calendar, viewName) {
 			"<tr class='fc-first fc-last'><th class='fc-resourceName'>&nbsp;</th>";
 		for (i=0; i<colCnt; i++) {
 			s +=
-				"<th class='fc- " + headerClass + "'/>"; // need fc- for setDayID
+				"<th class='fc- " + headerClass + "'/>";
 		}
 		s +=
 			"</tr>" +
@@ -142,8 +139,9 @@ function ResourceView(element, calendar, viewName) {
 		for (i=0; i<maxRowCnt; i++) {
 			id = resources[i]['id'];
 			resourceName = resources[i]['name'];
+			
 			s +=
-				"<tr class='fc-week" + id + "'><td class='fc-resourceName'>" + resourceName + "</td>";
+				"<tr class='fc-resourcerow-" + id + "'><td class='fc-resourceName'>" + resourceName + "</td>";
 			for (j=0; j<colCnt; j++) {
 				s +=
 					"<td class='fc- " + contentClass + " fc-day" + j + " fc-resource" + id +"'>" + // need fc- for setDayID
@@ -174,6 +172,11 @@ function ResourceView(element, calendar, viewName) {
 		bodyFirstCells = bodyRows.children().filter(':first-child');
 		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
 		
+		// trigger resourceRender callback now when the skeleton is ready
+		body.find('td.fc-resourceName').each(function(resourceElement) {
+			trigger('resourceRender', resources[i], resources[i], resourceElement);
+		});
+
 		// marks first+last th's
 		headCells
 			.removeClass('fc-first fc-last')
@@ -214,14 +217,14 @@ function ResourceView(element, calendar, viewName) {
 			date = indexDate(i);
 
 			cell.html(formatDate(date, colFormat));
-			if (date.getDay() == 0 || date.getDay() == 6) {
-				cell.addClass('fc-weekend');
-			}
-			if (date.getDay() == 1 && viewName == "resourceNextWeeks") {
-				cell.html(cell.html()+'<br>'+opt('weekPrefix')+' '+getWeek(date));
-			}
+			if (date.getDay() == 0 || date.getDay() == 6) cell.addClass('fc-weekend');
+			
+			if (date.getDay() == 1 && viewName == "resourceNextWeeks") cell.html(cell.html()+'<br>'+opt('weekPrefix')+' '+iso8601Week(date));
 
-			setDayID(cell, i);
+			// setDayID does not work at all for resourceviews because there can be same id twice. Set date as timestamp works better
+			cell.each(function(i, _cell) {
+				_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-id' + date.getTime());
+			});
 		});
 		
 		indexCorrecter=0;
@@ -234,8 +237,14 @@ function ResourceView(element, calendar, viewName) {
 			}else{
 				cell.removeClass(tm + '-state-highlight fc-today');
 			}
+			
+			if (date.getDay() == 0 || date.getDay() == 6) cell.addClass('fc-weekend-column');
+			
 			cell.find('div.fc-day-number').text(date.getDate());
-			setDayID(cell, i);
+			
+			cell.each(function(i, _cell) {
+				_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-id' + date.getTime());
+			});
 		});
 		
 		bodyRows.each(function(i, _row) {
@@ -628,6 +637,56 @@ function ResourceView(element, calendar, viewName) {
 			left: resourceNameColWidth,
 			right: (viewWidth+resourceNameColWidth)
 		};
+	}
+	
+	function reportSelection(startDate, endDate, allDay, ev, resource) {
+		if (typeof resource == 'object' && resource.readonly === true) {
+			return false;
+		}
+
+		selected = true;
+		trigger('select', null, startDate, endDate, allDay, ev, '', resource);
+	}
+	
+	// Some changes from selectionManager daySelectionMousedown. Mainly because resourceDay view and resource readonly setting
+	function daySelectionMousedown(ev) {
+		var cellDate = t.cellDate;
+		var cellIsAllDay = t.cellIsAllDay;
+		var hoverListener = t.getHoverListener();
+		var unselect = t.unselect;
+		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
+		var row;
+		var resources = t.getResources || [];
+		var resourceRO;
+		
+		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
+			unselect(ev);
+			var _mousedownElement = this;
+			var dates;
+			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellDate/cellIsAllDay info in cell
+				clearSelection();
+				if (cell) {
+					resourceRO = typeof resources[cell.row] == 'object' ? resources[cell.row].readonly : false;
+				}
+
+				if (cell && cellIsAllDay(cell) && resourceRO !== true) {
+					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
+					renderSelection(dates[0], dates[1], (viewName == 'resourceDay' ? false : true), cell.row);
+					row = cell.row;
+				}else{
+					dates = null;
+				}
+			}, ev);
+			$(document).one('mouseup', function(ev) {
+				hoverListener.stop();
+				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						reportDayClick(dates[0],(viewName == 'resourceDay' ? false : true), ev, resources[row]);
+					}
+					reportSelection(dates[0], (viewName == 'resourceDay' ? addMinutes(dates[1], opt('slotMinutes')) : dates[1]), (viewName == 'resourceDay' ? false : true), ev, resources[row]);
+				}
+			});
+		}
 	}
 	
 	

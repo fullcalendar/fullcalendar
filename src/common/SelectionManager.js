@@ -18,7 +18,6 @@ function SelectionManager() {
 	var defaultSelectionEnd = t.defaultSelectionEnd;
 	var renderSelection = t.renderSelection;
 	var clearSelection = t.clearSelection;
-	var getViewName = t.getViewName;
 	
 	
 	// locals
@@ -59,13 +58,9 @@ function SelectionManager() {
 	}
 	
 	
-	function reportSelection(startDate, endDate, allDay, ev, resource) {
-		if (typeof resource == 'object' && resource.readonly === true) {
-			return false;
-		}
-
+	function reportSelection(startDate, endDate, allDay, ev) {
 		selected = true;
-		trigger('select', null, startDate, endDate, allDay, ev, '', resource);
+		trigger('select', null, startDate, endDate, allDay, ev);
 	}
 	
 	
@@ -74,27 +69,15 @@ function SelectionManager() {
 		var cellIsAllDay = t.cellIsAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
-		var row;
-		var resources = t.getResources || [];
-		var resourceRO;
-
-		var viewName = getViewName();
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellDate/cellIsAllDay info in cell
 				clearSelection();
-
-				if (cell) {
-					resourceRO = typeof resources[cell.row] == 'object' ? resources[cell.row].readonly : false;
-				}
-				
-
-				if (cell && cellIsAllDay(cell) && resourceRO !== true) {
+				if (cell && cellIsAllDay(cell)) {
 					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
-					renderSelection(dates[0], dates[1], (viewName == 'resourceDay' ? false : true), cell.row);
-					row = cell.row;
+					renderSelection(dates[0], dates[1], true);
 				}else{
 					dates = null;
 				}
@@ -103,9 +86,9 @@ function SelectionManager() {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0],(viewName == 'resourceDay' ? false : true), ev, resources[row]);
+						reportDayClick(dates[0], true, ev);
 					}
-					reportSelection(dates[0], (viewName == 'resourceDay' ? addMinutes(dates[1], opt('slotMinutes')) : dates[1]), (viewName == 'resourceDay' ? false : true), ev, resources[row]);
+					reportSelection(dates[0], dates[1], true, ev);
 				}
 			});
 		}
