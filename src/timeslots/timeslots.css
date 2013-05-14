@@ -35,6 +35,7 @@
 	background: transparent;
 	border: 1px solid #ddd;
 	border-width: 1px 0;
+	overflow: hidden;
 }
 .fc-timeslots-slots .fc-minor {
 	border-top-style: dotted;
