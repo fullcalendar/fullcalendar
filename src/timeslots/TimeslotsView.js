@@ -60,6 +60,7 @@ function TimeslotsView(element, calendar, viewName) {
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
 	// added by Ne0x
+	t.cellDates = cellDates;
 	t.getTimeslots = function() { return timeslots };
 	t.getTimeslotsGrid = function() { return timeslotsGrid };
 
@@ -572,6 +573,7 @@ function TimeslotsView(element, calendar, viewName) {
 
 	coordinateGrid = new CoordinateGrid(function(rows, cols) {
 		var e, n, p;
+		var slot;
 		dayHeadCells.each(function(i, _e) {
 			e = $(_e);
 			n = e.offset().left;
@@ -593,10 +595,12 @@ function TimeslotsView(element, calendar, viewName) {
 		function constrain(n) {
 			return Math.max(slotScrollerTop, Math.min(slotScrollerBottom, n));
 		}
-		for (var i=0; i<slotCnt*snapRatio; i++) { // adapt slot count to increased/decreased selection slot count
+		// added by Ne0x
+		for(var i=0, len=timeslots.length ; i<len ; i++ ) {
+			slot = timeslots[i];
 			rows.push([
-				constrain(slotTableTop + snapHeight*i),
-				constrain(slotTableTop + snapHeight*(i+1))
+				constrain(slotTableTop + slot.top),
+				constrain(slotTableTop + slot.top + slot.height)
 			]);
 		}
 	});
@@ -631,13 +635,36 @@ function TimeslotsView(element, calendar, viewName) {
 
 
 	function cellDate(cell) {
+		var slot;
 		var d = colDate(cell.col);
 		var slotIndex = cell.row;
 		if (opt('allDaySlot')) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * snapMinutes);
+			slot = timeslots[slotIndex];
+			d.setHours(slot.start.getHours());
+			d.setMinutes(slot.start.getMinutes());
+		}
+		return d;
+	}
+
+	function cellDates(cell) {
+		var slot;
+		var d1 = colDate(cell.col);
+		var d2 = cloneDate(d1);
+		var d = [d1, d2];
+		var slotIndex = cell.row;
+		if (opt('allDaySlot')) {
+			slotIndex--;
+		}
+		if (slotIndex >= 0) {
+			slot = timeslots[slotIndex];
+			d1.setHours(slot.start.getHours());
+			d1.setMinutes(slot.start.getMinutes());
+
+			d2.setHours(slot.end.getHours());
+			d2.setMinutes(slot.end.getMinutes());
 		}
 		return d;
 	}
@@ -796,13 +823,13 @@ function TimeslotsView(element, calendar, viewName) {
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !cellIsAllDay(cell)) {
-					var d1 = cellDate(origCell);
-					var d2 = cellDate(cell);
+					var d1 = cellDates(origCell);
+					var d2 = cellDates(cell);
 					dates = [
-						d1,
-						addMinutes(cloneDate(d1), snapMinutes), // calculate minutes depending on selection slot minutes
-						d2,
-						addMinutes(cloneDate(d2), snapMinutes)
+						d1[0],
+						d1[1],
+						d2[0],
+						d2[1]
 					].sort(cmp);
 					renderSlotSelection(dates[0], dates[3]);
 				}else{
@@ -839,8 +866,9 @@ function TimeslotsView(element, calendar, viewName) {
 				if (cellIsAllDay(cell)) {
 					renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
 				}else{
-					var d1 = cellDate(cell);
-					var d2 = addMinutes(cloneDate(d1), opt('defaultEventMinutes'));
+					var d = cellDates(cell);
+					var d1 = d[0];
+					var d2 = [1];
 					renderSlotOverlay(d1, d2);
 				}
 			}
