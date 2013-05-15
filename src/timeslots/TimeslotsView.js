@@ -154,15 +154,14 @@ function TimeslotsView(element, calendar, viewName) {
 		updateOptions();
 		if (!dayTable) {
 			buildSkeleton();
+			// added by Ne0x
+			//element.attr('id', element.attr('id') || (Math.random() + '').substr(2));
+			updateTimeslots();
+			buildTimeslotsSkeleton();
 		}else{
 			clearEvents();
 		}
 		updateCells();
-
-		// added by Ne0x
-		element.attr('id', element.attr('id') || (Math.random() + '').substr(2));
-		updateTimeslots();
-		buildTimeslotsSkeleton();
 	}
 
 
