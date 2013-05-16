@@ -225,7 +225,7 @@ function Calendar(element, options, eventSources) {
 			
 			header.updateTitle(currentView.title);
 			var today = new Date();
-			if (today >= currentView.start && today < currentView.end) {
+			if (options.disableTodayButton && today >= currentView.start && today < currentView.end) {
 				header.disableButton('today');
 			}else{
 				header.enableButton('today');
