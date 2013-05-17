@@ -239,7 +239,7 @@ function DayEventRenderer() {
 				" class='" + classes.join(' ') + "'" +
 				" style='position:absolute;z-index:8;left:"+left+"px;" + skinCss + "'" +
 				">" +
-				"<div class='fc-event-inner'>" +
+				"<div class='fc-event-inner'" +
 				(skinCss ? " style='" + skinCss + "'" : "") +
 				">";
 			if (!event.allDay && seg.isStart) {
