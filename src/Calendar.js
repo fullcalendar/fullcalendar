@@ -22,8 +22,8 @@ function Calendar(element, options, eventSources) {
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
-	t.formatDate = function(date, format) { return formatDate(date, format, options) };
-	t.formatDates = function(date1, date2, format) { return formatDates(date1, date2, format, options) };
+	t.formatDate = function(date, format) { return fc.formatDate(date, format, options) };
+	t.formatDates = function(date1, date2, format) { return fc.formatDates(date1, date2, format, options) };
 	t.getDate = getDate;
 	t.getView = getView;
 	t.option = option;
