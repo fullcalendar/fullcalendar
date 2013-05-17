@@ -234,7 +234,7 @@ function EventManager(options, _sources) {
 				e.className = event.className;
 				e.editable = event.editable;
 				e.color = event.color;
-				e.backgroudColor = event.backgroudColor;
+				e.backgroundColor = event.backgroundColor;
 				e.borderColor = event.borderColor;
 				e.textColor = event.textColor;
 				normalizeEvent(e);
