@@ -55,5 +55,10 @@
 .fc-event .ui-resizable-handle {
 	display: none !important;
 	}
+  
+.fc-year-monthly-name {
+  color: #000;
+  text-decoration: none;
+}
 	
 	

@@ -134,7 +134,7 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function renderYear(maxr, r, c, showNumbers) {
-		rowCnt = r;
+    //rowCnt set by buildingskeleton
 		colCnt = c;
 		updateOptions();
 		var firstTime = !table;
