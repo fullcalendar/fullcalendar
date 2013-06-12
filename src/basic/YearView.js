@@ -422,7 +422,7 @@ function BasicYearView(element, calendar, viewName) {
 	function dayClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var match = this.className.match(/fc\-day\-(\d+)\-(\d+)\-(\d+)/);
-			var date = new Date(match[1], match[2], match[3]);
+			var date = new Date(match[1], match[2]-1, match[3]);
 			trigger('dayClick', this, date, true, ev);
 		}
 	}
