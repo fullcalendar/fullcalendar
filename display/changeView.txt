@@ -1,4 +1,3 @@
-
 changeView 
 =================
 
@@ -9,8 +8,7 @@ Triggered when the calendar loads and every time **before** a different date-ran
 function( *view* ) { }
 </div>
 
-The calendar's date-range changes whenever the user switches to a new view
-(for example, if they switch from "month" to "agendaWeek") or when they click the prev/next buttons.
+For more see [viewDisplay](viewDisplay).
 
 `view` is the current [View Object](../views/View_Object).
 
