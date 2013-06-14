@@ -94,7 +94,6 @@ function BasicYearView(element, calendar, viewName) {
 	// locals
 	var table;
 	//var head;
-	//var headCells;
 	var body;
 	var bodyRows;
 	
@@ -111,7 +110,7 @@ function BasicYearView(element, calendar, viewName) {
 	var colWidth;
 	
 	var rowCnt, colCnt;
-	var coordinateGrid;
+	var coordinateGrids = [];
 	var hoverListener;
 	var colContentPositions;
   var otherMonthDays = [];
@@ -154,7 +153,7 @@ function BasicYearView(element, calendar, viewName) {
 		if (rtl) {
 			dis = -1;
 			dit = colCnt - 1;
-		}else{
+		} else {
 			dis = 1;
 			dit = 0;
 		}
@@ -186,7 +185,8 @@ function BasicYearView(element, calendar, viewName) {
       var miYear = di.getFullYear() + ((m+firstMonth)/12)|0;
 			di.setFullYear(miYear,mi,1);
       if (nwe) { skipWeekend(di); }
-			di.setFullYear(miYear,mi,1-di.getDay()+firstDay);
+      var dowFirst = (di.getDay()+7-firstDay)%7;      
+			di.setFullYear(miYear,mi, -1 * dowFirst+1);      
 			if(m%monthsPerRow==0 && m > 0) s+="</tr><tr>";
 			
 			s +="<td class='fc-year-monthly-td'>";
@@ -278,16 +278,22 @@ function BasicYearView(element, calendar, viewName) {
     
 		subTables.each(function(i, _sub){
 		  if ( !t.curYear ) t.curYear = t.start;
-      otherMonthDays[i] = [0,0];
+      otherMonthDays[i] = [0,0,0,0];
             
   		var d = cloneDate(t.curYear);
       var mi = (i+firstMonth)%12;
       var miYear = d.getFullYear() + ((i+firstMonth)/12)|0;
 	  	d.setFullYear(miYear,mi,1);
       if (nwe) { skipWeekend(d); }
-      d.setFullYear(miYear,mi,1-d.getDay()+firstDay);
+      
+      var dowFirst = (d.getDay()+7-firstDay)%7;
+      var lastDateShown = 0;
+			d.setFullYear(miYear,mi, -1 * dowFirst+1);
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
+        if (iii == 0 && d.getMonth() == mi) {
+          otherMonthDays[i][2] = d.getDate()-1;          
+        }
         $(_tr).find('td').each(function(ii, _cell) {
 			
 			    var dayStr;
@@ -299,7 +305,7 @@ function BasicYearView(element, calendar, viewName) {
   		  	} else{
 	  		  	cell.addClass('fc-other-month');
 		  		  dayStr="";
-            if ((d.getMonth() < i) || (i==0 && d.getMonth() == 11)) {
+            if ((d.getMonth() == mi-1) || (mi == 0 && d.getMonth() == 11)) {
               otherMonthDays[i][0]++;
             } else {
               otherMonthDays[i][1]++;
@@ -314,10 +320,14 @@ function BasicYearView(element, calendar, viewName) {
 		    	$div.text(d.getDate()); 
 			    $div.parent().parent().attr('class', "fc-widget-content fc-day" + dayStr);
 
+          if (d.getMonth() == mi) { lastDateShown = d.getDate(); }
   			  addDays(d, 1);
         });
         if (nwe) { skipWeekend(d); }
   		});
+      
+      var endDaysHidden = daysInMonth(t.curYear.getYear(), mi+1) - lastDateShown;
+      otherMonthDays[i][3] = endDaysHidden;
     });
 		bodyRows.filter('.fc-year-have-event').removeClass('fc-year-have-event');
 	}
@@ -370,7 +380,9 @@ function BasicYearView(element, calendar, viewName) {
       var moYear = d.getFullYear() + ((i+firstMonth)/12)|0;
 	  	d.setFullYear(moYear,mo,1);
       if (nwe) { skipWeekend(d); }
-      d.setFullYear(moYear,mo,1-d.getDay()+firstDay);
+      var dowFirst = (d.getDay()+7-firstDay)%7;      
+			d.setFullYear(moYear,mo, -1 * dowFirst+1);     
+
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
         
@@ -402,7 +414,7 @@ function BasicYearView(element, calendar, viewName) {
         
         row += 1;
         addDays(d, 5);
-        if (nwe) { skipWeekend(d); }
+        if (nwe) { skipWeekend(d); } else { addDays(d, 2); }
       });
       
     });
@@ -446,7 +458,8 @@ function BasicYearView(element, calendar, viewName) {
       var moYear = d.getFullYear()+((m+firstMonth)/12)|0;
 	  	d.setFullYear(moYear,mo,1);
       if (nwe) { skipWeekend(d); }
-      d.setFullYear(moYear,mo,1-d.getDay()+firstDay);
+      var dowFirst = (d.getDay()+7-firstDay)%7;      
+			d.setFullYear(moYear,mo, -1 * dowFirst+1);     
   		$(_sub).find('tbody > tr').each(function(iii, _tr) {
         if (nwe) { skipWeekend(d); }
         
@@ -475,28 +488,24 @@ function BasicYearView(element, calendar, viewName) {
 			  	}else{
 				  	colStart = dayDiff(stretchStart, d);
 					  colEnd = dayDiff(stretchEnd, d);
-  				}        
+  				}
+          var grid = coordinateGrids[m];
 	  			dayBind(
-		  			renderCellOverlay(row, colStart, row, colEnd-1)
+		  			renderCellOverlay(grid, iii, colStart, iii, colEnd-1)
 			  	);
         }
         
         row += 1;
         addDays(d, 5);
-        if (nwe) { skipWeekend(d); }
+        if (nwe) { skipWeekend(d); } else { addDays(d, 2); }
       });
       
     });    	
 	}
 	
 	
-	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-    var a = viewToGrid(col0,row0);
-    col0 = a[0]; row0 = a[1];
-    a = viewToGrid(col1,row1);    
-    col1 = a[0]; row1 = a[1];
-    
-		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
+	function renderCellOverlay(grid, row0, col0, row1, col1) { // row1,col1 is inclusive
+		var rect = grid.rect(row0, col0, row1, col1, element);
 		return renderOverlay(rect, element);
 	}
 	
@@ -543,6 +552,7 @@ function BasicYearView(element, calendar, viewName) {
 	
 	function dragStart(_dragElement, ev, ui) {
 		hoverListener.start(function(cell) {
+      aaa();
 			clearOverlays();
 			if (cell) {
 				renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
@@ -564,29 +574,28 @@ function BasicYearView(element, calendar, viewName) {
 	
 	/* Utilities
 	--------------------------------------------------------*/
-  function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
-	  var origMo = (origCell.row/5)|0;
-    var newMo = (cell.row/5)|0;    
-    var extra = 0;
-    
-    if (newMo >= origMo) {
-      for (var i = origMo; i < newMo; i++) {
-        if (otherMonthDays[i][1] > 0) {
-          extra += 7;
-        }
-      }
-    } else {
-      for (var i = origMo; i >= newMo; i--) {
-        if (otherMonthDays[i][0] > 0) {
-          extra -= 7;
-        }
-      }      
-    }
-    
-    return rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1) - extra;
+  function daysInMonth(year, month) {
+    return new Date(year, month, 0).getDate();
   }
-	
-	function defaultEventEnd(event) {
+  
+  function cellToDayOffset(cell)
+  {
+    var offset = 1;
+    var m = cell.grid.offset;
+    for (var i = 0; i < m; i++) {      
+      offset += daysInMonth(t.curYear.getYear(), (i + firstMonth)%12+1);
+    }
+    offset += cell.row*7+cell.col;
+    offset -= otherMonthDays[m][0]; //days in other month at beginning of month
+    offset += otherMonthDays[m][2]; //hidden weekend days at beginning of month
+    return offset;
+  }
+  
+  function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
+    return cellToDayOffset(cell) - cellToDayOffset(origCell);
+  }
+
+  function defaultEventEnd(event) {
 		return cloneDate(event.start);
 	}
   
@@ -606,52 +615,89 @@ function BasicYearView(element, calendar, viewName) {
   
   function gridToView(c,r)
   {
-    r += modRowsInMonth(((c/colCnt)|0)*5);
-    c = c % colCnt;// + ((c/15)|0)*15;
+    // r += modRowsInMonth(((c/colCnt)|0)*5);
+    // c = c % colCnt;// + ((c/15)|0)*15;
     
     return [c,r];
   }
   
-  function viewToGrid(c,r)
-  {
-    c += (((r/5)|0)*colCnt)%15;
-    
-    var rAdd = 0;
-    for (var i = 0; i < 12; i += 3) {
-      var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
-      if (r >= weeksInRow) {
-        r -= weeksInRow;
-        rAdd += weeksInRow;
-      } else {
-        break;
-      }
-    }
-    r = (r % 5)+rAdd;
-    return [c,r];
+  // function viewToGrid(c,r)
+  // {
+  //   c += (((r/5)|0)*colCnt)%15;
+  //   
+  //   var rAdd = 0;
+  //   for (var i = 0; i < 12; i += 3) {
+  //     var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
+  //     if (r >= weeksInRow) {
+  //       r -= weeksInRow;
+  //       rAdd += weeksInRow;
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //   r = (r % 5)+rAdd;
+  //   return [c,r];
+  // }
+  // function viewToGrid(c,r)
+  // {
+  //   var table = (c/10)|0;
+  //   c = c % 10;
+  //   return [table, c, r];
+  // }
+  
+  function tableByOffset(offset) {
+    return $(subTables[offset]);
   }
 
+  var nums = [0,1,2,3,4,5,6,7,8,9,10,11];
+  $.each(nums, function(i, val) {
+    var offset = new Number(val);
+    var grid = new CoordinateGrid(function(rows, cols) {    
+      var _subTable = tableByOffset(offset);
+      var _head = _subTable.find('thead');
+  		var _headCells = _head.find('th.fc-year-month-weekly-head');
+      var _bodyRows = _subTable.find('tbody tr');
+    
+  		var e, n, p;
+	  	_headCells.each(function(i, _e) {      
+		  	e = $(_e);
+			  n = e.offset().left;
+  			p = [n, n+e.outerWidth()];
+	  		cols[i] = p;
+		  });
+  		_bodyRows.each(function(i, _e) {
+	  		if (i < rowCnt) {
+		  		e = $(_e);
+			  	n = e.offset().top;				
+				  p = [n, n+e.outerHeight()];
+  				rows[i] = p;
+	  		}
+		  });
+    });
+    grid.offset = offset;
+    coordinateGrids.push(grid);    
+  });
+	
+	// coordinateGrid = new CoordinateGrid(function(rows, cols) {    
+	// 	var e, n, p;
+	// 	headCells.each(function(i, _e) {      
+	// 		e = $(_e);
+	// 		n = e.offset().left;
+	// 		p = [n, n+e.outerWidth()];
+	// 		cols[i] = p;
+	// 	});
+	// 	bodyRows.each(function(i, _e) {
+	// 		if (i < rowCnt) {
+	// 			e = $(_e);
+	// 			n = e.offset().top;				
+	// 			p = [n, n+e.outerHeight()];
+	// 			rows[i] = p;
+	// 		}
+	// 	});		
+	// }, function(c,r) { return t.gridToView(c,r); });
 	
 	
-	coordinateGrid = new CoordinateGrid(function(rows, cols) {    
-		var e, n, p;
-		headCells.each(function(i, _e) {      
-			e = $(_e);
-			n = e.offset().left;
-			p = [n, n+e.outerWidth()];
-			cols[i] = p;
-		});
-		bodyRows.each(function(i, _e) {
-			if (i < rowCnt) {
-				e = $(_e);
-				n = e.offset().top;				
-				p = [n, n+e.outerHeight()];
-				rows[i] = p;
-			}
-		});		
-	}, function(c,r) { return t.gridToView(c,r); });
-	
-	
-	hoverListener = new HoverListener(coordinateGrid);
+	hoverListener = new HoverListener(coordinateGrids);
 	
 	
 	colContentPositions = new HorizontalPositionCache(function(col) {

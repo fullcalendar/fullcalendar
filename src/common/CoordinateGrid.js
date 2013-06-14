@@ -36,7 +36,7 @@ function CoordinateGrid(buildFunc, gridToViewFunc) {
       var a = t.gridToView(c,r);      
       c = a[0]; r = a[1];
     }
-		return (r>=0 && c>=0) ? { row:r, col:c } : null;
+		return (r>=0 && c>=0) ? { row:r, col:c, grid: t } : null;
 	};
 	
 	

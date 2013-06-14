@@ -7,12 +7,20 @@ function HoverListener(coordinateGrid) {
 	var change;
 	var firstCell;
 	var cell;
+  var grids = [];
+  if (coordinateGrid.length === undefined) {
+    grids.push(coordinateGrid);
+  } else {
+    grids = coordinateGrid;
+  }
 	
 	
 	t.start = function(_change, ev, _bindType) {
 		change = _change;
 		firstCell = cell = null;
-		coordinateGrid.build();
+    $.each(grids, function(i, inst) {
+		  inst.build();
+    });
 		mouse(ev);
 		bindType = _bindType || 'mousemove';
 		$(document).bind(bindType, mouse);
@@ -21,7 +29,13 @@ function HoverListener(coordinateGrid) {
 	
 	function mouse(ev) {
 		_fixUIEvent(ev); // see below
-		var newCell = coordinateGrid.cell(ev.pageX, ev.pageY);
+
+    var newCell = null;
+    $.each(grids, function(i, inst) {
+      if (!newCell) { 
+        newCell = inst.cell(ev.pageX, ev.pageY);
+      }
+    });
 		if (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col)) {
 			if (newCell) {
 				if (!firstCell) {
