@@ -1,5 +1,3 @@
-//Year View Start ----------------------------------------------------------------------------------
-//add by kebin --> 6
 fcViews.year = YearView;
 
 function YearView(element, calendar) {
@@ -72,6 +70,7 @@ function BasicYearView(element, calendar, viewName) {
 	t.getBodyRows = function() { return bodyRows; };
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
   t.getRowLefts = getRowLefts;
+  t.getRowMaxWidth = getRowMaxWidth;
   t.gridToView = gridToView;  
 	
 	// imports
@@ -518,6 +517,10 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		return lefts;
   }
+  
+  function getRowMaxWidth(row) {
+    return $(subTables[(row/5)|0]).width();
+  }
 	
 	/* Selection
 	-----------------------------------------------------------------------*/
@@ -677,25 +680,6 @@ function BasicYearView(element, calendar, viewName) {
     grid.offset = offset;
     coordinateGrids.push(grid);    
   });
-	
-	// coordinateGrid = new CoordinateGrid(function(rows, cols) {    
-	// 	var e, n, p;
-	// 	headCells.each(function(i, _e) {      
-	// 		e = $(_e);
-	// 		n = e.offset().left;
-	// 		p = [n, n+e.outerWidth()];
-	// 		cols[i] = p;
-	// 	});
-	// 	bodyRows.each(function(i, _e) {
-	// 		if (i < rowCnt) {
-	// 			e = $(_e);
-	// 			n = e.offset().top;				
-	// 			p = [n, n+e.outerHeight()];
-	// 			rows[i] = p;
-	// 		}
-	// 	});		
-	// }, function(c,r) { return t.gridToView(c,r); });
-	
 	
 	hoverListener = new HoverListener(coordinateGrids);
 	
@@ -919,6 +903,7 @@ function stackSegs(segs) {
 	}
   
   function renderDayEvents(segs, modifiedEventId) {
+    yyy();
     var segCnt = segs.length;
 		var rowsTd = getBodyRows();			
 		for(var i=0;i<segs.length;i++){
@@ -935,17 +920,10 @@ function stackSegs(segs) {
   }
   	
 	function renderDaySegs(segs, modifiedEventId) {
+    zzz();
 		try{
 			var segCnt = segs.length;
 			var rowsTd = getBodyRows();
-			//alert(rowsTd.find('td.fc-day-1-1'));
-			//rowsTd.find('td.fc-day-1-1').addClass('fc-year-have-event');
-			/*
-			rowsTd.each(function(i,_td){
-				alert(_td.className.match('\\d{4}-\\d{2}-\\d{2}'));
-				$(_td).css();
-			});
-			*/
 			for(var i=0;i<segs.length;i++){
 				var sd = cloneDate(segs[i].start);        
 				while(sd.getTime() < segs[i].end.getTime()) {
@@ -958,56 +936,6 @@ function stackSegs(segs) {
 		}catch(e){
 			alert("MyrenderDaySegs:"+e);
 		}
-	}
-	
-	/* Dragging
-	----------------------------------------------------------------------------*/
-	
-	
-	function draggableDayEvent(event, eventElement) {
-    zzz();
-		var hoverListener = getHoverListener();
-		var dayDelta;
-		eventElement.draggable({
-			zIndex: 9,
-			delay: 50,
-			opacity: opt('dragOpacity'),
-			revertDuration: opt('dragRevertDuration'),
-			start: function(ev, ui) {
-				trigger('eventDragStart', eventElement, event, ev, ui);
-				//hideEvents(event, eventElement);
-				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
-					clearOverlays();
-					if (cell) {
-						//setOverflowHidden(true);
-						dayDelta = rowDelta*7 + colDelta * (opt('isRTL') ? -1 : 1);
-						renderDayOverlay(
-							addDays(cloneDate(event.start), dayDelta),
-							addDays(exclEndDay(event), dayDelta)
-						);
-					}else{
-						//setOverflowHidden(false);
-						dayDelta = 0;
-					}
-				}, ev, 'drag');
-			},
-			stop: function(ev, ui) {
-				hoverListener.stop();
-				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
-				if (dayDelta) {
-					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
-				}else{
-					eventElement.css('filter', ''); // clear IE opacity side-effects
-					showEvents(event, eventElement);
-				}
-				//setOverflowHidden(false);
-			}
-		});
-	}
-
+	}		
 
 }
-
-// Year View END ----------------------------------------------------------------------------------

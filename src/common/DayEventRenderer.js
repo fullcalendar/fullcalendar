@@ -37,6 +37,9 @@ function DayEventRenderer() {
   if (t.getRowLefts) {
     var getRowLefts = t.getRowLefts;
   }
+  if (t.getRowMaxWidth) {
+    var getRowMaxWidth = t.getRowMaxWidth;
+  }
 	
 	
 	
@@ -155,7 +158,7 @@ function DayEventRenderer() {
 				leftCol = dayOfWeekCol(seg.end.getDay()-1);
 				rightCol = dayOfWeekCol(seg.start.getDay());
 				left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
-				right = seg.isStart ? colContentRight(rightCol) : maxLeft;
+        right = seg.isStart ? colContentRight(rightCol) : maxLeft;        
 			}else{
 				if (seg.isStart) {
 					classes.push('fc-corner-left');
@@ -166,7 +169,15 @@ function DayEventRenderer() {
 				leftCol = dayOfWeekCol(seg.start.getDay());
 				rightCol = dayOfWeekCol(seg.end.getDay()-1);
 				left = seg.isStart ? colContentLeft(leftCol) : minLeft;
-				right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
+				//right = seg.isEnd ? colContentRight(rightCol) : maxLeft;
+        if (seg.isEnd) {
+          right = colContentRight(rightCol)
+        } else {
+          right = maxLeft;
+          if (t.getRowMaxWidth) {
+            right = t.getRowMaxWidth(seg.row);
+          }
+        }				
 			}
 			classes = classes.concat(event.className);
 			if (event.source) {
