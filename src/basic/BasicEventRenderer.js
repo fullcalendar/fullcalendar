@@ -115,7 +115,7 @@ function BasicEventRenderer() {
 					clearOverlays();
 					if (cell) {
 						//setOverflowHidden(true);            
-						dayDelta = t.calculateDayDelta(cell, origCell, rowDelta, colDelta);
+						dayDelta = calculateDayDelta(cell, origCell, rowDelta, colDelta);
 						renderDayOverlay(
 							addDays(cloneDate(event.start), dayDelta),
 							addDays(exclEndDay(event), dayDelta)

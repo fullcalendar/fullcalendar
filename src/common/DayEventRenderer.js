@@ -468,7 +468,7 @@ function DayEventRenderer() {
 				.css('cursor', direction + '-resize')
 				.one('mouseup', mouseup);
 			trigger('eventResizeStart', this, event, ev);
-			hoverListener.start(function(cell, origCell) {
+			hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 				if (cell) {
 					var r = Math.max(minCell.row, cell.row);
 					var c = cell.col;
@@ -482,12 +482,16 @@ function DayEventRenderer() {
 							c = Math.max(minCell.col, c);
 						}
 					}
-					dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
+          if (t.calculateDayDelta) {
+            dayDelta = t.calculateDayDelta(cell, origCell, rowDelta, colDelta);		 
+          } else {
+            dayDelta = (r*7 + c*dis+dit) - (origCell.row*7 + origCell.col*dis+dit);
+          }          
 					var newEnd = addDays(eventEnd(event), dayDelta, true);
 					if (dayDelta) {
 						eventCopy.end = newEnd;
 						var oldHelpers = helpers;
-						helpers = renderTempDaySegs(compileDaySegs([eventCopy]), seg.row, elementTop);
+						helpers = renderTempDaySegs(t.compileDaySegs([eventCopy]), seg.row, elementTop);
 						helpers.find('*').css('cursor', direction + '-resize');
 						if (oldHelpers) {
 							oldHelpers.remove();
