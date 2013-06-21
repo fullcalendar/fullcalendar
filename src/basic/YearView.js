@@ -176,7 +176,7 @@ function BasicYearView(element, calendar, viewName) {
 		
     
     rowCnt = 0;
-		var localWeekNames =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+		var localWeekNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 		var localMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 		s ="<table class='fc-border-separate fc-year-main-table' style='width:100%'><tr >";
 		for(var m=0; m<12; m++) {
@@ -194,7 +194,7 @@ function BasicYearView(element, calendar, viewName) {
 				"<tr><td colspan='7' class='fc-year-monthly-header' /><a data-year='"+di.getFullYear()+"' data-month='"+mi+"' class='fc-year-monthly-name' href=\"#\">"+localMonthNames[mi]+"</a></td></tr>"+
 				"<tr>";
   		for (i=firstDay; i<colCnt+firstDay; i++) {
-	  		s +="<th class='fc-year-month-weekly-head'>"+ localWeekNames[i%7]+"</th>"; // need fc- for setDayID
+	  		s +="<th class='fc-year-month-weekly-head' width=\""+((100/colCnt)|0)+"%\">"+ localWeekNames[i%7]+"</th>"; // need fc- for setDayID
 		  }
   		s +="</tr>" +
 	  		"</thead>" +
