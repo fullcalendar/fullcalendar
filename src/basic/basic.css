@@ -52,3 +52,9 @@
 .fc-year-monthly-header{
   border: thin #f0f0f0 solid;
 }
+
+.fc-view-year .fc-event-inner {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
