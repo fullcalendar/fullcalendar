@@ -144,7 +144,7 @@
 .fc-timeline {
 	position: absolute;
 	width: 100%;
-	left: 0;
+	left: 60px;
 	margin: 0;
 	padding: 0;
 	border: none;
