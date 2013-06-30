@@ -19,6 +19,7 @@ function EventManager(options, _sources) {
 	t.fetchEvents = fetchEvents;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
+	t.getEventSources = getEventSources;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
@@ -267,7 +268,10 @@ function EventManager(options, _sources) {
 		reportEvents(cache);
 	}
 	
-	
+	function getEventSources() {
+		return sources
+	}
+ 	
 	function removeEvents(filter) {
 		if (!filter) { // remove all
 			cache = [];
