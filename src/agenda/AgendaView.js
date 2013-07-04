@@ -305,10 +305,14 @@ function AgendaView(element, calendar, viewName) {
 		maxd = addMinutes(cloneDate(d), maxMinute);
 		addMinutes(d, minMinute);
 		slotCnt = 0;
+		var stripe = false;
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
+			if(!minutes){
+				stripe = !stripe;
+			}
 			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + ' ' + (stripe ? '' : 'fc-stripe') +"'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
 				(opt('alwaysShowAxisFormat') 
 					? formatDate(d, opt('axisFormat'))
