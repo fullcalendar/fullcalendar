@@ -51,6 +51,7 @@ function Calendar(element, options, eventSources) {
 	var ignoreWindowResize = 0;
 	var date = new Date();
 	var events = [];
+	var annotations = t.options.annotations;
 	var _dragElement;
 	
 	
@@ -220,7 +221,7 @@ function Calendar(element, options, eventSources) {
 			currentView.sizeDirty = false;
 			currentView.eventsDirty = false;
 			updateEvents(forceEventRender);
-			
+			// TODO: updateAnnotations here!
 			elementOuterWidth = element.outerWidth();
 			
 			header.updateTitle(currentView.title);
@@ -350,6 +351,7 @@ function Calendar(element, options, eventSources) {
 			currentView.clearEvents();
 			currentView.renderEvents(events, modifiedEventID);
 			currentView.eventsDirty = false;
+			currentView.renderAnnotations(annotations);
 		}
 	}
 	

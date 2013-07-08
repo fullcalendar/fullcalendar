@@ -70,7 +70,9 @@ var defaults = {
 	//selectable: false,
 	unselectAuto: true,
 	
-	dropAccept: '*'
+	dropAccept: '*',
+
+	annotations: []
 	
 };
 
