@@ -555,10 +555,9 @@ function BasicYearView(element, calendar, viewName) {
 	
 	function dragStart(_dragElement, ev, ui) {
 		hoverListener.start(function(cell) {
-      aaa();
 			clearOverlays();
 			if (cell) {
-				renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
+				renderCellOverlay(cell.grid, cell.row, cell.col, cell.row, cell.col);
 			}
 		}, ev);
 	}
