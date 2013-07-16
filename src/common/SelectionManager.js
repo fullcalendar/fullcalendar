@@ -65,18 +65,18 @@ function SelectionManager() {
 	
 	
 	function daySelectionMousedown(ev) { // not really a generic manager method, oh well
-		var cellDate = t.cellDate;
-		var cellIsAllDay = t.cellIsAllDay;
+		var cellToDate = t.cellToDate;
+		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
-			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellDate/cellIsAllDay info in cell
+			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
 				clearSelection();
-				if (cell && cellIsAllDay(cell)) {
-					dates = [ cellDate(origCell), cellDate(cell) ].sort(cmp);
+				if (cell && getIsCellAllDay(cell)) {
+					dates = [ cellToDate(origCell), cellToDate(cell) ].sort(dateCompare);
 					renderSelection(dates[0], dates[1], true);
 				}else{
 					dates = null;
