@@ -1,4 +1,3 @@
-
  
 function Calendar(element, options, eventSources) {
 	var t = this;
@@ -114,6 +113,10 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function destroy() {
+		$( document )
+	            	.unbind( 'dragstart.FullCalendar' + options._createTS )
+	        	.unbind( 'dragstop.FullCalendar' + options._createTS )
+	        	.unbind( 'mousedown.FullCalendar' + options._createTS );
 		$(window).unbind('resize', windowResize);
 		header.destroy();
 		content.remove();
@@ -477,7 +480,7 @@ function Calendar(element, options, eventSources) {
 	
 	if (options.droppable) {
 		$(document)
-			.bind('dragstart', function(ev, ui) {
+			.bind('dragstart.FullCalendar' + options._createTS, function(ev, ui) {
 				var _e = ev.target;
 				var e = $(_e);
 				if (!e.parents('.fc').length) { // not already inside a calendar
@@ -488,7 +491,7 @@ function Calendar(element, options, eventSources) {
 					}
 				}
 			})
-			.bind('dragstop', function(ev, ui) {
+			.bind('dragstop.FullCalendar' + options._createTS, function(ev, ui) {
 				if (_dragElement) {
 					currentView.dragStop(_dragElement, ev, ui);
 					_dragElement = null;
