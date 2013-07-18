@@ -1,4 +1,3 @@
-
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
 
