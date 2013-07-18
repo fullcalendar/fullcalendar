@@ -1,4 +1,3 @@
-
 //BUG: unselect needs to be triggered when events are dragged+dropped
 
 function SelectionManager() {
@@ -27,7 +26,7 @@ function SelectionManager() {
 
 	// unselectAuto
 	if (opt('selectable') && opt('unselectAuto')) {
-		$(document).mousedown(function(ev) {
+		$(document).bind( "mousedown.FullCalendar" + t.calendar.options._createTS, function(ev) {
 			var ignore = opt('unselectCancel');
 			if (ignore) {
 				if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
