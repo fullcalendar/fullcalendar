@@ -6,8 +6,8 @@ setDefaults({
 
 function BasicView(element, calendar, viewName) {
 	var t = this;
-	
-	
+
+
 	// exports
 	t.renderBasic = renderBasic;
 	t.setHeight = setHeight;
@@ -31,8 +31,8 @@ function BasicView(element, calendar, viewName) {
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
-	
-	
+
+
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
@@ -48,10 +48,10 @@ function BasicView(element, calendar, viewName) {
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
-	
-	
+
+
 	// locals
-	
+
 	var table;
 	var head;
 	var headCells;
@@ -62,34 +62,35 @@ function BasicView(element, calendar, viewName) {
 	var firstRowCellInners;
 	var firstRowCellContentInners;
 	var daySegmentContainer;
-	
+	var weekCells;
+
 	var viewWidth;
 	var viewHeight;
 	var colWidth;
 	var weekNumberWidth;
-	
+
 	var rowCnt, colCnt;
 	var showNumbers;
 	var coordinateGrid;
 	var hoverListener;
 	var colPositions;
 	var colContentPositions;
-	
+
 	var tm;
 	var colFormat;
 	var showWeekNumbers;
 	var weekNumberTitle;
 	var weekNumberFormat;
-	
-	
-	
+
+
+
 	/* Rendering
 	------------------------------------------------------------*/
-	
-	
+
+
 	disableTextSelection(element.addClass('fc-grid'));
-	
-	
+
+
 	function renderBasic(_rowCnt, _colCnt, _showNumbers) {
 		rowCnt = _rowCnt;
 		colCnt = _colCnt;
@@ -103,8 +104,8 @@ function BasicView(element, calendar, viewName) {
 		}
 		buildTable();
 	}
-	
-	
+
+
 	function updateOptions() {
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
@@ -119,15 +120,15 @@ function BasicView(element, calendar, viewName) {
 			weekNumberFormat = "W";
 		}
 	}
-	
-	
+
+
 	function buildEventContainer() {
 		daySegmentContainer =
 			$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
 				.appendTo(element);
 	}
-	
-	
+
+
 	function buildTable() {
 		var html = buildTableHTML();
 
@@ -143,10 +144,11 @@ function BasicView(element, calendar, viewName) {
 		bodyRows = body.find('tr');
 		bodyCells = body.find('.fc-day');
 		bodyFirstCells = bodyRows.find('td:first-child');
+		weekCells = body.find('.fc-week-number');
 
 		firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
 		firstRowCellContentInners = bodyRows.eq(0).find('.fc-day-content > div');
-		
+
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
 		markFirstLast(bodyRows); // marks first+last td's
 		bodyRows.eq(0).addClass('fc-first');
@@ -161,6 +163,7 @@ function BasicView(element, calendar, viewName) {
 		});
 
 		dayBind(bodyCells);
+		weekBind(weekCells);
 	}
 
 
@@ -292,23 +295,23 @@ function BasicView(element, calendar, viewName) {
 
 	/* Dimensions
 	-----------------------------------------------------------*/
-	
-	
+
+
 	function setHeight(height) {
 		viewHeight = height;
-		
+
 		var bodyHeight = viewHeight - head.height();
 		var rowHeight;
 		var rowHeightLast;
 		var cell;
-			
+
 		if (opt('weekMode') == 'variable') {
 			rowHeight = rowHeightLast = Math.floor(bodyHeight / (rowCnt==1 ? 2 : 6));
 		}else{
 			rowHeight = Math.floor(bodyHeight / rowCnt);
 			rowHeightLast = bodyHeight - rowHeight * (rowCnt-1);
 		}
-		
+
 		bodyFirstCells.each(function(i, _cell) {
 			if (i < rowCnt) {
 				cell = $(_cell);
@@ -318,11 +321,11 @@ function BasicView(element, calendar, viewName) {
 				);
 			}
 		});
-		
+
 		unlockHeight();
 	}
-	
-	
+
+
 	function setWidth(width) {
 		viewWidth = width;
 		colPositions.clear();
@@ -336,28 +339,45 @@ function BasicView(element, calendar, viewName) {
 		colWidth = Math.floor((viewWidth - weekNumberWidth) / colCnt);
 		setOuterWidth(headCells.slice(0, -1), colWidth);
 	}
-	
-	
-	
+
+
+
 	/* Day clicking and binding
 	-----------------------------------------------------------*/
-	
-	
+
+
 	function dayBind(days) {
 		days.click(dayClick)
 			.mousedown(daySelectionMousedown);
 	}
-	
-	
+
+
 	function dayClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var date = parseISO8601($(this).data('date'));
 			trigger('dayClick', this, date, true, ev);
 		}
 	}
-	
-	
-	
+
+
+
+	/* Week clicking and binding
+	-----------------------------------------------------------*/
+
+
+	function weekBind(weeks) {
+		weeks.click(weekClick);
+	}
+
+
+	function weekClick(ev) {
+		// List all days in clicked week
+		var week = $(ev.target).parents('.fc-week');
+		trigger('weekClick', this, week, ev);
+	}
+
+
+
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
 	// TODO: should be consolidated with AgendaView's methods
@@ -384,45 +404,45 @@ function BasicView(element, calendar, viewName) {
 		}
 	}
 
-	
+
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
 		return renderOverlay(rect, element);
 	}
-	
-	
-	
+
+
+
 	/* Selection
 	-----------------------------------------------------------------------*/
-	
-	
+
+
 	function defaultSelectionEnd(startDate, allDay) {
 		return cloneDate(startDate);
 	}
-	
-	
+
+
 	function renderSelection(startDate, endDate, allDay) {
 		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
-	
-	
+
+
 	function clearSelection() {
 		clearOverlays();
 	}
-	
-	
+
+
 	function reportDayClick(date, allDay, ev) {
 		var cell = dateToCell(date);
 		var _element = bodyCells[cell.row*colCnt + cell.col];
 		trigger('dayClick', _element, date, allDay, ev);
 	}
-	
-	
-	
+
+
+
 	/* External Dragging
 	-----------------------------------------------------------------------*/
-	
-	
+
+
 	function dragStart(_dragElement, ev, ui) {
 		hoverListener.start(function(cell) {
 			clearOverlays();
@@ -431,8 +451,8 @@ function BasicView(element, calendar, viewName) {
 			}
 		}, ev);
 	}
-	
-	
+
+
 	function dragStop(_dragElement, ev, ui) {
 		var cell = hoverListener.stop();
 		clearOverlays();
@@ -441,18 +461,18 @@ function BasicView(element, calendar, viewName) {
 			trigger('drop', _dragElement, d, true, ev, ui);
 		}
 	}
-	
-	
-	
+
+
+
 	/* Utilities
 	--------------------------------------------------------*/
-	
-	
+
+
 	function defaultEventEnd(event) {
 		return cloneDate(event.start);
 	}
-	
-	
+
+
 	coordinateGrid = new CoordinateGrid(function(rows, cols) {
 		var e, n, p;
 		headCells.each(function(i, _e) {
@@ -478,10 +498,10 @@ function BasicView(element, calendar, viewName) {
 		});
 		p[1] = n + e.outerHeight();
 	});
-	
-	
+
+
 	hoverListener = new HoverListener(coordinateGrid);
-	
+
 	colPositions = new HorizontalPositionCache(function(col) {
 		return firstRowCellInners.eq(col);
 	});
@@ -499,18 +519,18 @@ function BasicView(element, calendar, viewName) {
 	function colRight(col) {
 		return colPositions.right(col);
 	}
-	
-	
+
+
 	function colContentLeft(col) {
 		return colContentPositions.left(col);
 	}
-	
-	
+
+
 	function colContentRight(col) {
 		return colContentPositions.right(col);
 	}
-	
-	
+
+
 	function allDayRow(i) {
 		return bodyRows.eq(i);
 	}
@@ -528,5 +548,5 @@ function BasicView(element, calendar, viewName) {
 	function unlockHeight() {
 		setMinHeight(element, 1);
 	}
-	
+
 }
