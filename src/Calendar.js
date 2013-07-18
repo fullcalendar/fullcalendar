@@ -128,7 +128,8 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function bodyVisible() {
-		return $('body')[0].offsetWidth !== 0;
+        var body = $('body');
+		return body.length > 0 && body [0].offsetWidth !== 0;
 	}
 	
 	
