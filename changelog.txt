@@ -1,4 +1,9 @@
 
+version 1.6.2 (7/18/13)
+	- hiddenDays option (issue 686)
+	- bugfix: when eventRender returns false, incorrect stacking of events (issue 762)
+	- bugfix: couldn't change event.backgroundImage when calling updateEvent (thx stephenharris)
+
 version 1.6.1 (4/14/13)
 	- fixed event inner content overflow bug (issue 1783)
 	- fixed table header className bug (1772)
