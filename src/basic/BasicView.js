@@ -55,14 +55,15 @@ function BasicView(element, calendar, viewName) {
 	var table;
 	var head;
 	var headCells;
+	var headBindCells;
 	var body;
 	var bodyRows;
 	var bodyCells;
 	var bodyFirstCells;
+	var bodyWeekNumCells;
 	var firstRowCellInners;
 	var firstRowCellContentInners;
 	var daySegmentContainer;
-	var weekCells;
 
 	var viewWidth;
 	var viewHeight;
@@ -140,11 +141,12 @@ function BasicView(element, calendar, viewName) {
 
 		head = table.find('thead');
 		headCells = head.find('.fc-day-header');
+		headBindCells = head.find('th.fc-mon.'+tm+'-widget-header, th.fc-tue.'+tm+'-widget-header, th.fc-wed.'+tm+'-widget-header, th.fc-thu.'+tm+'-widget-header, th.fc-fri.'+tm+'-widget-header, th.fc-sat.'+tm+'-widget-header, th.fc-sun.'+tm+'-widget-header');
 		body = table.find('tbody');
 		bodyRows = body.find('tr');
 		bodyCells = body.find('.fc-day');
 		bodyFirstCells = bodyRows.find('td:first-child');
-		weekCells = body.find('.fc-week-number');
+		bodyWeekNumCells = body.find('.fc-week-number');
 
 		firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
 		firstRowCellContentInners = bodyRows.eq(0).find('.fc-day-content > div');
@@ -162,8 +164,9 @@ function BasicView(element, calendar, viewName) {
 			trigger('dayRender', t, date, $(_cell));
 		});
 
+		headerBind(headBindCells);
 		dayBind(bodyCells);
-		weekBind(weekCells);
+		weekBind(bodyWeekNumCells);
 	}
 
 
@@ -201,7 +204,12 @@ function BasicView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
 			date = cellToDate(0, col);
 			html +=
-				"<th class='fc-day-header fc-" + dayIDs[date.getDay()] + " " + headerClass + "'>" +
+				"<th class='fc-day-header fc-" + dayIDs[date.getDay()] + " " + headerClass + "'";
+			if(viewName !== 'month') {
+				// Add data-date attribute only if we're not in month view
+				html += " data-date='" + formatDate(date, 'yyyy-MM-dd') + "'";
+			}
+			html += ">" +
 				htmlEscape(formatDate(date, colFormat)) +
 				"</th>";
 		}
@@ -374,6 +382,22 @@ function BasicView(element, calendar, viewName) {
 		// List all days in clicked week
 		var week = $(ev.target).parents('.fc-week');
 		trigger('weekClick', this, week, ev);
+	}
+
+
+
+	/* Header cells clicking and binding
+	-----------------------------------------------------------*/
+
+
+	function headerBind(cells) {
+		// Unbind callback first to prevent mutiple bindings on a single element
+		cells.off('click').click(headerClick);
+	}
+
+
+	function headerClick(ev) {
+		trigger('headerClick', this, ev);
 	}
 
 
