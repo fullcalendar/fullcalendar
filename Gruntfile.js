@@ -89,6 +89,7 @@ module.exports = function(grunt) {
 		'modules',
 		'copy:archiveModules',
 		'copy:archiveDependencies',
+		'copy:archiveI18n',
 		'copy:archiveDemos',
 		'copy:archiveMisc',
 		'compress:archive'
@@ -113,6 +114,15 @@ module.exports = function(grunt) {
 		],
 		dest: 'build/archive/jquery/'
 	};
+
+	// copy I18n files into ./fullcalendar/i18n/ directory
+	config.copy.archiveI18n = {
+		expand: true,
+		flatten: true,
+		cwd: 'src/i18n/',
+		src: '*.js',
+		dest: 'build/archive/fullcalendar/i18n/'
+	};	
 
 	// copy demo files into ./demos/ directory
 	config.copy.archiveDemos = {
