@@ -9,3 +9,7 @@ node_modules
 
 # for bower
 components
+
+## for eclipse
+/.project
+/.settings
