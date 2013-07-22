@@ -103,15 +103,6 @@ function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
 }
 
 
-function skipWeekend(date, inc, excl) {
-	inc = inc || 1;
-	while (!date.getDay() || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
-		addDays(date, inc);
-	}
-	return date;
-}
-
-
 function dayDiff(d1, d2) { // d1 - d2
 	return Math.round((cloneDate(d1, true) - cloneDate(d2, true)) / DAY_MS);
 }
@@ -367,8 +358,8 @@ fc.dateFormatters = dateFormatters;
 /* thanks jQuery UI (https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.datepicker.js)
  * 
  * Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
- * @param  date  Date - the date to get the week for
- * @return  number - the number of the week within the year that contains this date
+ * `date` - the date to get the week for
+ * `number` - the number of the week within the year that contains this date
  */
 function iso8601Week(date) {
 	var time;

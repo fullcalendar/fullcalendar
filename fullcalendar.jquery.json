@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "dependencies": {
     "jquery": "~1.9.1"
   },
