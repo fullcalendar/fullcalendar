@@ -173,6 +173,8 @@ function Calendar(element, options, eventSources) {
 			}
 			header.activateButton(newViewName);
 			
+			currentView.trigger('viewDisplayChanging', _element);
+			
 			renderView(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
 			
 			content.css('overflow', '');
