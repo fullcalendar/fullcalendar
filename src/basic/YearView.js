@@ -709,17 +709,9 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function cellDate(cell) {
-		return _cellDate(cell.row, cell.col);
+    return addDays(cloneDate(t.visStart), cellToDayOffset(cell) - 1);
 	}
-	
-	
-	function _cellDate(row, col) {
-		return addDays(cloneDate(t.visStart), row*7 + col*dis+dit);
-		// what about weekends in middle of week?
-	}
-	
-	
-	
+		
 	function dayOfWeekCol(dayOfWeek) {
     return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
 	}
