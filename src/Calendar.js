@@ -1,4 +1,3 @@
-
  
 function Calendar(element, options, eventSources) {
 	var t = this;
@@ -192,6 +191,7 @@ function Calendar(element, options, eventSources) {
 	
 	function renderView(inc) {
 		if (elementVisible()) {
+			currentView.trigger('viewBeforeDisplay', _element);
 			ignoreWindowResize++; // because renderEvents might temporarily change the height before setSize is reached
 
 			unselect();
