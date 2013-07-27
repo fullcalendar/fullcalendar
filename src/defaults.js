@@ -9,6 +9,7 @@ var defaults = {
 		center: '',
 		right: 'today prev,next'
 	},
+	disableTodayButton: true,
 	weekends: true,
 	weekNumbers: false,
 	weekNumberCalculation: 'iso',
