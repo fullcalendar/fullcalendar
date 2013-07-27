@@ -57,7 +57,7 @@ function AgendaView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	
+	t.scrollToHour = scrollToHour;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -513,6 +513,19 @@ function AgendaView(element, calendar, viewName) {
 		}
 		scroll();
 		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
+	}
+	
+	function scrollToHour(hour_target) {
+		var d0 = zeroDate();
+		var scrollDate = cloneDate(d0);
+		scrollDate.setHours(hour_target);
+		var top = timePosition(d0, scrollDate) + 1; // +1 for the border
+		function scroll() {
+			slotScroller.scrollTop(top);
+		}
+		scroll();
+		setTimeout(scroll, 0);
+		// overrides any previous scroll state made by the browser
 	}
 	
 	
