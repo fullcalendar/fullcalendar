@@ -70,8 +70,10 @@ var defaults = {
 	//selectable: false,
 	unselectAuto: true,
 	
-	dropAccept: '*'
+	dropAccept: '*',
 	
+	firstEventLarger: true,
+	eventHorizSpacing: 0
 };
 
 // right-to-left defaults
