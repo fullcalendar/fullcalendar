@@ -245,10 +245,13 @@ function AgendaView(element, calendar, viewName) {
 		maxd = addMinutes(cloneDate(d), maxMinute);
 		addMinutes(d, minMinute);
 		slotCnt = 0;
+		startOfBusiness = opt("startOfBusiness") * (60/opt("slotMinutes"));
+		endOfBusiness = (opt("endOfBusiness") + (opt("slotMinutes")/60)) * (60/opt("slotMinutes"));
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
+			nonBusinessHours = (i < startOfBusiness || i > endOfBusiness) ? " fc-non-business-hours" : "";
 			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + nonBusinessHours + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
 				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
 				"</th>" +
