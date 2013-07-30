@@ -266,6 +266,12 @@ function BasicView(element, calendar, viewName) {
 				tm + '-state-highlight'
 			);
 		}
+		else if (date < today) {
+			classNames.push('fc-past');
+		}
+		else {
+			classNames.push('fc-future');
+		}
 
 		html +=
 			"<td" +

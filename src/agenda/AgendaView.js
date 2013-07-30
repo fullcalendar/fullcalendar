@@ -388,6 +388,12 @@ function AgendaView(element, calendar, viewName) {
 					'fc-today'
 				);
 			}
+			else if (date < today) {
+				classNames.push('fc-past');
+			}
+			else {
+				classNames.push('fc-future');
+			}
 
 			cellHTML =
 				"<td class='" + classNames.join(' ') + "'>" +
