@@ -199,16 +199,30 @@ function AgendaView(element, calendar, viewName) {
 				$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
 					.appendTo(slotLayer);
 		
-			s =
-				"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
-				"<tr>" +
-				"<th class='" + headerClass + " fc-agenda-axis'>" + opt('allDayText') + "</th>" +
-				"<td>" +
-				"<div class='fc-day-content'><div style='position:relative'/></div>" +
-				"</td>" +
-				"<th class='" + headerClass + " fc-agenda-gutter'>&nbsp;</th>" +
-				"</tr>" +
-				"</table>";
+			if(rtl){
+				s =
+					"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
+						"<tr>" +
+							//"<th class='" + headerClass + " fc-agenda-gutter'>&nbsp;</th>" + // Todo: not sure why this is so disruptive to the layout...
+							"<td>" +
+								"<div class='fc-day-content'><div style='position:relative'/></div>" +
+							"</td>" +
+							"<th class='" + headerClass + " fc-agenda-axis'>" + opt('allDayText') + "</th>" +
+						"</tr>" +
+					"</table>";
+			} else {
+				s =
+					"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
+						"<tr>" +
+							"<th class='" + headerClass + " fc-agenda-axis'>" + opt('allDayText') + "</th>" +
+							"<td>" +
+								"<div class='fc-day-content'><div style='position:relative'/></div>" +
+							"</td>" +
+							"<th class='" + headerClass + " fc-agenda-gutter'>&nbsp;</th>" +
+						"</tr>" +
+					"</table>";
+			}
+			
 			allDayTable = $(s).appendTo(slotLayer);
 			allDayRow = allDayTable.find('tr');
 			
@@ -240,27 +254,39 @@ function AgendaView(element, calendar, viewName) {
 		
 		s =
 			"<table class='fc-agenda-slots' style='width:100%' cellspacing='0'>" +
-			"<tbody>";
-		d = zeroDate();
-		maxd = addMinutes(cloneDate(d), maxMinute);
-		addMinutes(d, minMinute);
-		slotCnt = 0;
-		for (i=0; d < maxd; i++) {
-			minutes = d.getMinutes();
-			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
-				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
-				"</th>" +
-				"<td class='" + contentClass + "'>" +
-				"<div style='position:relative'>&nbsp;</div>" +
-				"</td>" +
-				"</tr>";
-			addMinutes(d, opt('slotMinutes'));
-			slotCnt++;
-		}
-		s +=
-			"</tbody>" +
+				"<tbody>";
+					d = zeroDate();
+					maxd = addMinutes(cloneDate(d), maxMinute);
+					addMinutes(d, minMinute);
+					slotCnt = 0;
+					for (i=0; d < maxd; i++) {
+						minutes = d.getMinutes();
+						if(rtl){ // Set axis on the right side.
+							s +=
+								"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+									"<td class='" + contentClass + "'>" +
+										"<div style='position:relative'>&nbsp;</div>" +
+									"</td>" +
+									"<th class='fc-agenda-axis " + headerClass + "'>" +
+										((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
+									"</th>" +
+								"</tr>";
+						} else { // Set axis on left side.
+							s +=
+								"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+									"<th class='fc-agenda-axis " + headerClass + "'>" +
+										((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
+									"</th>" +
+									"<td class='" + contentClass + "'>" +
+										"<div style='position:relative'>&nbsp;</div>" +
+									"</td>" +
+								"</tr>";
+						}
+						addMinutes(d, opt('slotMinutes'));
+						slotCnt++;
+					}
+					s +=
+				"</tbody>" +
 			"</table>";
 		slotTable = $(s).appendTo(slotContainer);
 		slotTableFirstInner = slotTable.find('div:first');
@@ -284,11 +310,17 @@ function AgendaView(element, calendar, viewName) {
 
 		dayHead = dayTable.find('thead');
 		dayHeadCells = dayHead.find('th').slice(1, -1); // exclude gutter
+		
 		dayBody = dayTable.find('tbody');
-		dayBodyCells = dayBody.find('td').slice(0, -1); // exclude gutter
+		
+		if(rtl){
+			dayBodyCells = dayBody.find('td').slice(1); // exclude gutter
+		} else {
+			dayBodyCells = dayBody.find('td').slice(0, -1); // exclude gutter
+		}
 		dayBodyCellInners = dayBodyCells.find('> div');
 		dayBodyCellContentInners = dayBodyCells.find('.fc-day-content > div');
-
+		
 		dayBodyFirstCell = dayBodyCells.eq(0);
 		dayBodyFirstCellStretcher = dayBodyCellInners.eq(0);
 		
@@ -298,17 +330,16 @@ function AgendaView(element, calendar, viewName) {
 		// TODO: now that we rebuild the cells every time, we should call dayRender
 	}
 
-
 	function buildDayTableHTML() {
-		var html =
-			"<table style='width:100%' class='fc-agenda-days fc-border-separate' cellspacing='0'>" +
-			buildDayTableHeadHTML() +
-			buildDayTableBodyHTML() +
-			"</table>";
+		var html = '';
+	
+		html += "<table style='width:100%' class='fc-agenda-days fc-border-separate' cellspacing='0'>";
+		html += buildDayTableHeadHTML();
+		html += buildDayTableBodyHTML();
+		html += "</table>";
 
 		return html;
 	}
-
 
 	function buildDayTableHeadHTML() {
 		var headerClass = tm + "-widget-header";
@@ -321,39 +352,64 @@ function AgendaView(element, calendar, viewName) {
 			"<thead>" +
 			"<tr>";
 
-		if (showWeekNumbers) {
-			weekText = formatDate(date, weekNumberFormat);
-			if (rtl) {
-				weekText += weekNumberTitle;
-			}
-			else {
-				weekText = weekNumberTitle + weekText;
-			}
-			html +=
-				"<th class='fc-agenda-axis fc-week-number " + headerClass + "'>" +
-				htmlEscape(weekText) +
-				"</th>";
-		}
-		else {
-			html += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
-		}
-
-		for (col=0; col<colCnt; col++) {
-			date = cellToDate(0, col);
-			html +=
-				"<th class='fc-" + dayIDs[date.getDay()] + " fc-col" + col + ' ' + headerClass + "'>" +
-				htmlEscape(formatDate(date, colFormat)) +
-				"</th>";
+		if(rtl){
+			html += buildDayTableHeadGutterHTML(headerClass);
+			html += buildDayTableHeadContentHTML(headerClass);
+			html += buildDayTableHeadAxisHTML(headerClass);
+		} else {
+			html += buildDayTableHeadAxisHTML(headerClass);
+			html += buildDayTableHeadContentHTML(headerClass);
+			html += buildDayTableHeadGutterHTML(headerClass);
 		}
 
 		html +=
-			"<th class='fc-agenda-gutter " + headerClass + "'>&nbsp;</th>" +
 			"</tr>" +
 			"</thead>";
 
 		return html;
 	}
 
+	function buildDayTableHeadContentHTML(headerClass){
+		var html = '';
+		var col;
+
+		for (col=0; col<colCnt; col++) {
+			date = cellToDate(0, col);
+			html +=
+				"<th class='fc-" + dayIDs[date.getDay()] + " fc-col" + col + ' ' + headerClass + "'>" +
+					htmlEscape(formatDate(date, colFormat)) +
+				"</th>";
+		}
+		return html;
+	}
+
+	function buildDayTableHeadAxisHTML(headerClass){
+		var html = '';
+		var weekText;
+
+		if (showWeekNumbers) {
+			weekText = formatDate(date, weekNumberFormat);
+			
+			if (rtl) {
+				weekText += weekNumberTitle;
+			} else {
+				weekText = weekNumberTitle + weekText;
+			}
+
+			html +=
+				"<th class='fc-agenda-axis fc-week-number " + headerClass + "'>" +
+					htmlEscape(weekText) +
+				"</th>";
+		} else {
+			html += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+		}
+
+		return html;
+	}
+
+	function buildDayTableHeadGutterHTML(headerClass){
+		return "<th class='fc-agenda-gutter " + headerClass + "'>&nbsp;</th>";
+	}
 
 	function buildDayTableBodyHTML() {
 		var headerClass = tm + "-widget-header"; // TODO: make these when updateOptions() called
@@ -368,8 +424,13 @@ function AgendaView(element, calendar, viewName) {
 
 		html +=
 			"<tbody>" +
-			"<tr>" +
-			"<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+			"<tr>";
+
+		if(rtl){
+			html += "<td class='fc-agenda-gutter " + contentClass + "'>&nbsp;</td>";
+		} else {
+			html += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+		}
 
 		cellsHTML = '';
 
@@ -391,19 +452,25 @@ function AgendaView(element, calendar, viewName) {
 
 			cellHTML =
 				"<td class='" + classNames.join(' ') + "'>" +
-				"<div>" +
-				"<div class='fc-day-content'>" +
-				"<div style='position:relative'>&nbsp;</div>" +
-				"</div>" +
-				"</div>" +
+					"<div>" +
+						"<div class='fc-day-content'>" +
+							"<div style='position:relative'>&nbsp;</div>" +
+						"</div>" +
+					"</div>" +
 				"</td>";
 
 			cellsHTML += cellHTML;
 		}
 
 		html += cellsHTML;
+
+		if(rtl){
+			html += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
+		} else {
+			html += "<td class='fc-agenda-gutter " + contentClass + "'>&nbsp;</td>";
+		}
+
 		html +=
-			"<td class='fc-agenda-gutter " + contentClass + "'>&nbsp;</td>" +
 			"</tr>" +
 			"</tbody>";
 
