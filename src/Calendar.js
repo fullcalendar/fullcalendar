@@ -127,12 +127,12 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function elementVisible() {
-		return _element.offsetWidth !== 0;
+		return element.is(':visible');
 	}
 	
 	
 	function bodyVisible() {
-		return $('body')[0].offsetWidth !== 0;
+		return $('body').is(':visible');
 	}
 	
 	
