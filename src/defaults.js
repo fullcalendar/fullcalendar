@@ -72,7 +72,7 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	hookWindowResize: true
+	handleWindowResize: true
 	
 };
 

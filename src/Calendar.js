@@ -94,9 +94,11 @@ function Calendar(element, options, eventSources) {
 			element.prepend(headerElement);
 		}
 		changeView(options.defaultView);
-		if (options.hookWindowResize) {
+
+		if (options.handleWindowResize) {
 			$(window).resize(windowResize);
 		}
+
 		// needed for IE in a 0x0 iframe, b/c when it is resized, never triggers a windowResize
 		if (!bodyVisible()) {
 			lateRender();
