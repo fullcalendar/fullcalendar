@@ -1,14 +1,11 @@
-/* NOTE: This is a FORK of... */
-
 /*!
+ * !!! FORKED from:
  * <%= meta.title %> v<%= meta.version %>
  * Docs & License: <%= meta.homepage %>
  * (c) <%= meta.copyright %>
- */
-
-/*
- * Fork Version: v1.6.2-twoweeks
- * Forked codebase is here: https://github.com/erictip/fullcalendar
+ *
+ * !!! Fork Version: v1.6.2-twoweeks
+ * !!! Forked codebase is here: https://github.com/erictip/fullcalendar
  */
 
 /*
