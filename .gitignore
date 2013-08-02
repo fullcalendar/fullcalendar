@@ -9,3 +9,6 @@ node_modules
 
 # for bower
 components
+
+# for PhpStorm
+.idea
