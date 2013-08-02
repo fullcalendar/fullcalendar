@@ -1,3 +1,7 @@
+/*
+ * Shamelessly stolen (only slightly modified) from stackoverflow user 'roflwaffle':
+ * http://stackoverflow.com/questions/6420200/display-2-weeks-in-jquery-fullcalendar
+*/
 
 fcViews.twoweeks = TwoWeeksView;
 
