@@ -59,9 +59,13 @@ $(document).ready(function() {
 			center: 'title',
 			right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 		},
+
 		editable: true,
-		//disableResizing: true,
-		//disableDragging: true,
+		//eventStartEditable: false,
+		//eventDurationEditable: false,
+		//disableResizing: true, // deprecated
+		//disableDragging: true, // deprecated
+
 		selectable: true,
 		selectHelper: true,
 		dragOpacity: .5,
@@ -98,9 +102,14 @@ $(document).ready(function() {
 		
 			{
 				color: 'purple',
+				//editable: false,
+				//startEditable: false,
+				//durationEditable: false,
 				events: [
 					{
 						title: 'All Day Event',
+						//startEditable: false,
+						//durationEditable: false,
 						start: new Date(y, m, 1)
 					},
 					{

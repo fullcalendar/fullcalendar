@@ -59,21 +59,34 @@ function View(element, calendar, viewName) {
 
 
 	/* Event Editable Boolean Calculations
-
 	------------------------------------------------------------------------------*/
+
 	
 	function isEventDraggable(event) {
-		return isEventEditable(event) && !opt('disableDragging');
+		var source = event.source || {};
+		return firstDefined(
+				event.startEditable,
+				source.startEditable,
+				opt('eventStartEditable'),
+				event.editable,
+				source.editable,
+				opt('editable')
+			)
+			&& !opt('disableDragging'); // deprecated
 	}
 	
 	
 	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
-		return isEventEditable(event) && !opt('disableResizing');
-	}
-	
-	
-	function isEventEditable(event) {
-		return firstDefined(event.editable, (event.source || {}).editable, opt('editable'));
+		var source = event.source || {};
+		return firstDefined(
+				event.durationEditable,
+				source.durationEditable,
+				opt('eventDurationEditable'),
+				event.editable,
+				source.editable,
+				opt('editable')
+			)
+			&& !opt('disableResizing'); // deprecated
 	}
 	
 	
