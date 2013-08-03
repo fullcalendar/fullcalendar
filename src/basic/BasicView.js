@@ -123,7 +123,7 @@ function BasicView(element, calendar, viewName) {
 	
 	function buildEventContainer() {
 		daySegmentContainer =
-			$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
+			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
 				.appendTo(element);
 	}
 	

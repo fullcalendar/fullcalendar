@@ -268,7 +268,6 @@ function DayEventRenderer() {
 			" style=" +
 				"'" +
 				"position:absolute;" +
-				"z-index:8;" + // TODO: move this into a constant or put it in the stylesheet
 				"left:" + segment.left + "px;" +
 				skinCss +
 				"'" +
@@ -329,7 +328,6 @@ function DayEventRenderer() {
 					triggerRes = $(triggerRes)
 						.css({
 							position: 'absolute',
-							zIndex: 8, // TODO: move this into a constant or put it in the stylesheet
 							left: segment.left
 						});
 
@@ -573,7 +571,6 @@ function DayEventRenderer() {
 		var hoverListener = getHoverListener();
 		var dayDelta;
 		eventElement.draggable({
-			zIndex: 9,
 			delay: 50,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),

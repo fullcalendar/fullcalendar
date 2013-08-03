@@ -333,7 +333,13 @@ function AgendaEventRenderer() {
 		}
 		html +=
 			" class='" + classes.join(' ') + "'" +
-			" style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'" +
+			" style=" +
+				"'" +
+				"position:absolute;" +
+				"top:" + seg.top + "px;" +
+				"left:" + seg.left + "px;" +
+				skinCss +
+				"'" +
 			">" +
 			"<div class='fc-event-inner'>" +
 			"<div class='fc-event-time'>" +
@@ -387,7 +393,6 @@ function AgendaEventRenderer() {
 		var snapMinutes = getSnapMinutes();
 		var minMinute = getMinMinute();
 		eventElement.draggable({
-			zIndex: 9,
 			opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
@@ -489,7 +494,6 @@ function AgendaEventRenderer() {
 		var minuteDelta, prevMinuteDelta;
 
 		eventElement.draggable({
-			zIndex: 9,
 			scroll: false,
 			grid: [ colWidth, snapHeight ],
 			axis: colCnt==1 ? 'y' : false,
@@ -644,7 +648,6 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				snapDelta = prevSnapDelta = 0;
 				hideEvents(event, eventElement);
-				eventElement.css('z-index', 9);
 				trigger('eventResizeStart', this, event, ev, ui);
 			},
 			resize: function(ev, ui) {
@@ -667,7 +670,6 @@ function AgendaEventRenderer() {
 				if (snapDelta) {
 					eventResize(this, event, 0, snapMinutes*snapDelta, ev, ui);
 				}else{
-					eventElement.css('z-index', 8);
 					showEvents(event, eventElement);
 					// BUG: if event was really short, need to put title back in span
 				}
