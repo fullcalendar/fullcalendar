@@ -155,6 +155,7 @@ function Calendar(element, options, eventSources) {
 
 		if (currentView) {
 			trigger('viewDestroy', currentView, currentView, currentView.element);
+			currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 			freezeContentHeight();
 			currentView.element.remove();
 			header.deactivateButton(currentView.name);
@@ -304,6 +305,7 @@ function Calendar(element, options, eventSources) {
 
 
 	function clearEvents() {
+		currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 		currentView.clearEvents(); // actually remove the DOM elements
 		currentView.clearEventData(); // for View.js, TODO: unify with clearEvents
 	}

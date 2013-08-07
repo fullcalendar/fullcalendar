@@ -16,6 +16,7 @@ function View(element, calendar, viewName) {
 	t.clearEventData = clearEventData;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
+	t.triggerEventDestroy = triggerEventDestroy;
 	t.eventElementHandlers = eventElementHandlers;
 	t.showEvents = showEvents;
 	t.hideEvents = hideEvents;
@@ -33,9 +34,9 @@ function View(element, calendar, viewName) {
 	
 	
 	// locals
-	var eventsByID = {};
-	var eventElements = [];
-	var eventElementsByID = {};
+	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
+	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
+	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
 	
 	
@@ -110,8 +111,9 @@ function View(element, calendar, viewName) {
 
 
 	function clearEventData() {
-		eventElements = [];
+		eventsByID = {};
 		eventElementsByID = {};
+		eventElementCouples = [];
 	}
 	
 	
@@ -128,12 +130,19 @@ function View(element, calendar, viewName) {
 	
 	// report when view creates an element for an event
 	function reportEventElement(event, element) {
-		eventElements.push(element);
+		eventElementCouples.push({ event: event, element: element });
 		if (eventElementsByID[event._id]) {
 			eventElementsByID[event._id].push(element);
 		}else{
 			eventElementsByID[event._id] = [element];
 		}
+	}
+
+
+	function triggerEventDestroy() {
+		$.each(eventElementCouples, function(i, couple) {
+			t.trigger('eventDestroy', couple.event, couple.event, couple.element);
+		});
 	}
 	
 	
@@ -170,6 +179,8 @@ function View(element, calendar, viewName) {
 	
 	
 	function eachEventElement(event, exceptElement, funcName) {
+		// NOTE: there may be multiple events per ID (repeating events)
+		// and multiple segments per event
 		var elements = eventElementsByID[event._id],
 			i, len = elements.length;
 		for (i=0; i<len; i++) {
