@@ -18,95 +18,7 @@ function exclEndDay(event) {
 function _exclEndDay(end, allDay) {
 	end = cloneDate(end);
 	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : clearTime(end);
-}
-
-
-function segCmp(a, b) {
-	return (b.msLength - a.msLength) * 100 + (a.event.start - b.event.start);
-}
-
-
-function segsCollide(seg1, seg2) {
-	return seg1.end > seg2.start && seg1.start < seg2.end;
-}
-
-
-
-/* Event Sorting
------------------------------------------------------------------------------*/
-
-
-// event rendering utilities
-function sliceSegs(events, visEventEnds, start, end) {
-	var segs = [],
-		i, len=events.length, event,
-		eventStart, eventEnd,
-		segStart, segEnd,
-		isStart, isEnd;
-	for (i=0; i<len; i++) {
-		event = events[i];
-		eventStart = event.start;
-		eventEnd = visEventEnds[i];
-		if (eventEnd > start && eventStart < end) {
-			if (eventStart < start) {
-				segStart = cloneDate(start);
-				isStart = false;
-			}else{
-				segStart = eventStart;
-				isStart = true;
-			}
-			if (eventEnd > end) {
-				segEnd = cloneDate(end);
-				isEnd = false;
-			}else{
-				segEnd = eventEnd;
-				isEnd = true;
-			}
-			segs.push({
-				event: event,
-				start: segStart,
-				end: segEnd,
-				isStart: isStart,
-				isEnd: isEnd,
-				msLength: segEnd - segStart
-			});
-		}
-	} 
-	return segs.sort(segCmp);
-}
-
-
-// event rendering calculation utilities
-function stackSegs(segs) {
-	var levels = [],
-		i, len = segs.length, seg,
-		j, collide, k;
-	for (i=0; i<len; i++) {
-		seg = segs[i];
-		j = 0; // the level index where seg should belong
-		while (true) {
-			collide = false;
-			if (levels[j]) {
-				for (k=0; k<levels[j].length; k++) {
-					if (segsCollide(levels[j][k], seg)) {
-						collide = true;
-						break;
-					}
-				}
-			}
-			if (collide) {
-				j++;
-			}else{
-				break;
-			}
-		}
-		if (levels[j]) {
-			levels[j].push(seg);
-		}else{
-			levels[j] = [seg];
-		}
-	}
-	return levels;
+	// why don't we check for seconds/ms too?
 }
 
 
@@ -155,29 +67,26 @@ function setOuterHeight(element, height, includeMargins) {
 }
 
 
-// TODO: curCSS has been deprecated (jQuery 1.4.3 - 10/16/2010)
-
-
 function hsides(element, includeMargins) {
 	return hpadding(element) + hborders(element) + (includeMargins ? hmargins(element) : 0);
 }
 
 
 function hpadding(element) {
-	return (parseFloat($.curCSS(element[0], 'paddingLeft', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'paddingRight', true)) || 0);
+	return (parseFloat($.css(element[0], 'paddingLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingRight', true)) || 0);
 }
 
 
 function hmargins(element) {
-	return (parseFloat($.curCSS(element[0], 'marginLeft', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'marginRight', true)) || 0);
+	return (parseFloat($.css(element[0], 'marginLeft', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginRight', true)) || 0);
 }
 
 
 function hborders(element) {
-	return (parseFloat($.curCSS(element[0], 'borderLeftWidth', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'borderRightWidth', true)) || 0);
+	return (parseFloat($.css(element[0], 'borderLeftWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderRightWidth', true)) || 0);
 }
 
 
@@ -187,20 +96,20 @@ function vsides(element, includeMargins) {
 
 
 function vpadding(element) {
-	return (parseFloat($.curCSS(element[0], 'paddingTop', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'paddingBottom', true)) || 0);
+	return (parseFloat($.css(element[0], 'paddingTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'paddingBottom', true)) || 0);
 }
 
 
 function vmargins(element) {
-	return (parseFloat($.curCSS(element[0], 'marginTop', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'marginBottom', true)) || 0);
+	return (parseFloat($.css(element[0], 'marginTop', true)) || 0) +
+	       (parseFloat($.css(element[0], 'marginBottom', true)) || 0);
 }
 
 
 function vborders(element) {
-	return (parseFloat($.curCSS(element[0], 'borderTopWidth', true)) || 0) +
-	       (parseFloat($.curCSS(element[0], 'borderBottomWidth', true)) || 0);
+	return (parseFloat($.css(element[0], 'borderTopWidth', true)) || 0) +
+	       (parseFloat($.css(element[0], 'borderBottomWidth', true)) || 0);
 }
 
 
@@ -225,7 +134,7 @@ function setMinHeight(element, height) {
 function noop() { }
 
 
-function cmp(a, b) {
+function dateCompare(a, b) {
 	return a - b;
 }
 
@@ -263,11 +172,6 @@ function htmlEscape(s) {
 		.replace(/'/g, '&#039;')
 		.replace(/"/g, '&quot;')
 		.replace(/\n/g, '<br />');
-}
-
-
-function cssKey(_element) {
-	return _element.id + '/' + _element.className + '/' + _element.style.cssText.replace(/(^|;)\s*(top|left|width|height)\s*:[^;]*/ig, '');
 }
 
 
@@ -367,5 +271,4 @@ function firstDefined() {
 		}
 	}
 }
-
 

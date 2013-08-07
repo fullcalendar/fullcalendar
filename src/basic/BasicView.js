@@ -21,14 +21,12 @@ function BasicView(element, calendar, viewName) {
 	t.dragStop = dragStop;
 	t.defaultEventEnd = defaultEventEnd;
 	t.getHoverListener = function() { return hoverListener };
+	t.colLeft = colLeft;
+	t.colRight = colRight;
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
-	t.dayOfWeekCol = dayOfWeekCol;
-	t.dateCell = dateCell;
-	t.cellDate = cellDate;
-	t.cellIsAllDay = function() { return true };
+	t.getIsCellAllDay = function() { return true };
 	t.allDayRow = allDayRow;
-	t.allDayBounds = allDayBounds;
 	t.getRowCnt = function() { return rowCnt };
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
@@ -46,34 +44,42 @@ function BasicView(element, calendar, viewName) {
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var daySelectionMousedown = t.daySelectionMousedown;
+	var cellToDate = t.cellToDate;
+	var dateToCell = t.dateToCell;
+	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
 	
 	
 	// locals
 	
+	var table;
 	var head;
 	var headCells;
 	var body;
 	var bodyRows;
 	var bodyCells;
 	var bodyFirstCells;
-	var bodyCellTopInners;
+	var firstRowCellInners;
+	var firstRowCellContentInners;
 	var daySegmentContainer;
 	
 	var viewWidth;
 	var viewHeight;
 	var colWidth;
+	var weekNumberWidth;
 	
 	var rowCnt, colCnt;
+	var showNumbers;
 	var coordinateGrid;
 	var hoverListener;
+	var colPositions;
 	var colContentPositions;
 	
-	var rtl, dis, dit;
-	var firstDay;
-	var nwe;
 	var tm;
 	var colFormat;
+	var showWeekNumbers;
+	var weekNumberTitle;
+	var weekNumberFormat;
 	
 	
 	
@@ -84,154 +90,208 @@ function BasicView(element, calendar, viewName) {
 	disableTextSelection(element.addClass('fc-grid'));
 	
 	
-	function renderBasic(maxr, r, c, showNumbers) {
-		rowCnt = r;
-		colCnt = c;
+	function renderBasic(_rowCnt, _colCnt, _showNumbers) {
+		rowCnt = _rowCnt;
+		colCnt = _colCnt;
+		showNumbers = _showNumbers;
 		updateOptions();
 		var firstTime = !body;
 		if (firstTime) {
-			buildSkeleton(maxr, showNumbers);
+			buildEventContainer();
 		}else{
 			clearEvents();
 		}
-		updateCells(firstTime);
+		buildTable();
 	}
-	
 	
 	
 	function updateOptions() {
-		rtl = opt('isRTL');
-		if (rtl) {
-			dis = -1;
-			dit = colCnt - 1;
-		}else{
-			dis = 1;
-			dit = 0;
-		}
-		firstDay = opt('firstDay');
-		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
+
+		// week # options. (TODO: bad, logic also in other views)
+		showWeekNumbers = opt('weekNumbers');
+		weekNumberTitle = opt('weekNumberTitle');
+		if (opt('weekNumberCalculation') != 'iso') {
+			weekNumberFormat = "w";
+		}
+		else {
+			weekNumberFormat = "W";
+		}
 	}
 	
 	
-	
-	function buildSkeleton(maxRowCnt, showNumbers) {
-		var s;
-		var headerClass = tm + "-widget-header";
-		var contentClass = tm + "-widget-content";
-		var i, j;
-		var table;
-		
-		s =
-			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
-			"<thead>" +
-			"<tr>";
-		for (i=0; i<colCnt; i++) {
-			s +=
-				"<th class='fc- " + headerClass + "'/>"; // need fc- for setDayID
-		}
-		s +=
-			"</tr>" +
-			"</thead>" +
-			"<tbody>";
-		for (i=0; i<maxRowCnt; i++) {
-			s +=
-				"<tr class='fc-week" + i + "'>";
-			for (j=0; j<colCnt; j++) {
-				s +=
-					"<td class='fc- " + contentClass + " fc-day" + (i*colCnt+j) + "'>" + // need fc- for setDayID
-					"<div>" +
-					(showNumbers ?
-						"<div class='fc-day-number'/>" :
-						''
-						) +
-					"<div class='fc-day-content'>" +
-					"<div style='position:relative'>&nbsp;</div>" +
-					"</div>" +
-					"</div>" +
-					"</td>";
-			}
-			s +=
-				"</tr>";
-		}
-		s +=
-			"</tbody>" +
-			"</table>";
-		table = $(s).appendTo(element);
-		
-		head = table.find('thead');
-		headCells = head.find('th');
-		body = table.find('tbody');
-		bodyRows = body.find('tr');
-		bodyCells = body.find('td');
-		bodyFirstCells = bodyCells.filter(':first-child');
-		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
-		
-		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
-		markFirstLast(bodyRows); // marks first+last td's
-		bodyRows.eq(0).addClass('fc-first'); // fc-last is done in updateCells
-		
-		dayBind(bodyCells);
-		
+	function buildEventContainer() {
 		daySegmentContainer =
 			$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
 				.appendTo(element);
 	}
 	
 	
-	
-	function updateCells(firstTime) {
-		var dowDirty = firstTime || rowCnt == 1; // could the cells' day-of-weeks need updating?
+	function buildTable() {
+		var html = buildTableHTML();
+
+		lockHeight(); // the unlock happens later, in setHeight()...
+		if (table) {
+			table.remove();
+		}
+		table = $(html).appendTo(element);
+
+		head = table.find('thead');
+		headCells = head.find('.fc-day-header');
+		body = table.find('tbody');
+		bodyRows = body.find('tr');
+		bodyCells = body.find('.fc-day');
+		bodyFirstCells = bodyRows.find('td:first-child');
+
+		firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
+		firstRowCellContentInners = bodyRows.eq(0).find('.fc-day-content > div');
+		
+		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
+		markFirstLast(bodyRows); // marks first+last td's
+		bodyRows.eq(0).addClass('fc-first');
+		bodyRows.filter(':last').addClass('fc-last');
+
+		bodyCells.each(function(i, _cell) {
+			var date = cellToDate(
+				Math.floor(i / colCnt),
+				i % colCnt
+			);
+			trigger('dayRender', t, date, $(_cell));
+		});
+
+		dayBind(bodyCells);
+	}
+
+
+
+	/* HTML Building
+	-----------------------------------------------------------*/
+
+
+	function buildTableHTML() {
+		var html =
+			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
+			buildHeadHTML() +
+			buildBodyHTML() +
+			"</table>";
+
+		return html;
+	}
+
+
+	function buildHeadHTML() {
+		var headerClass = tm + "-widget-header";
+		var html = '';
+		var col;
+		var date;
+
+		html += "<thead><tr>";
+
+		if (showWeekNumbers) {
+			html +=
+				"<th class='fc-week-number " + headerClass + "'>" +
+				htmlEscape(weekNumberTitle) +
+				"</th>";
+		}
+
+		for (col=0; col<colCnt; col++) {
+			date = cellToDate(0, col);
+			html +=
+				"<th class='fc-day-header fc-" + dayIDs[date.getDay()] + " " + headerClass + "'>" +
+				htmlEscape(formatDate(date, colFormat)) +
+				"</th>";
+		}
+
+		html += "</tr></thead>";
+
+		return html;
+	}
+
+
+	function buildBodyHTML() {
+		var contentClass = tm + "-widget-content";
+		var html = '';
+		var row;
+		var col;
+		var date;
+
+		html += "<tbody>";
+
+		for (row=0; row<rowCnt; row++) {
+
+			html += "<tr class='fc-week'>";
+
+			if (showWeekNumbers) {
+				date = cellToDate(row, 0);
+				html +=
+					"<td class='fc-week-number " + contentClass + "'>" +
+					"<div>" +
+					htmlEscape(formatDate(date, weekNumberFormat)) +
+					"</div>" +
+					"</td>";
+			}
+
+			for (col=0; col<colCnt; col++) {
+				date = cellToDate(row, col);
+				html += buildCellHTML(date);
+			}
+
+			html += "</tr>";
+		}
+
+		html += "</tbody>";
+
+		return html;
+	}
+
+
+	function buildCellHTML(date) {
+		var contentClass = tm + "-widget-content";
 		var month = t.start.getMonth();
 		var today = clearTime(new Date());
-		var cell;
-		var date;
-		var row;
-	
-		if (dowDirty) {
-			headCells.each(function(i, _cell) {
-				cell = $(_cell);
-				date = indexDate(i);
-				cell.html(formatDate(date, colFormat));
-				setDayID(cell, date);
-			});
+		var html = '';
+		var classNames = [
+			'fc-day',
+			'fc-' + dayIDs[date.getDay()],
+			contentClass
+		];
+
+		if (date.getMonth() != month) {
+			classNames.push('fc-other-month');
 		}
-		
-		bodyCells.each(function(i, _cell) {
-			cell = $(_cell);
-			date = indexDate(i);
-			if (date.getMonth() == month) {
-				cell.removeClass('fc-other-month');
-			}else{
-				cell.addClass('fc-other-month');
-			}
-			if (+date == +today) {
-				cell.addClass(tm + '-state-highlight fc-today');
-			}else{
-				cell.removeClass(tm + '-state-highlight fc-today');
-			}
-			cell.find('div.fc-day-number').text(date.getDate());
-			if (dowDirty) {
-				setDayID(cell, date);
-			}
-		});
-		
-		bodyRows.each(function(i, _row) {
-			row = $(_row);
-			if (i < rowCnt) {
-				row.show();
-				if (i == rowCnt-1) {
-					row.addClass('fc-last');
-				}else{
-					row.removeClass('fc-last');
-				}
-			}else{
-				row.hide();
-			}
-		});
+		if (+date == +today) {
+			classNames.push(
+				'fc-today',
+				tm + '-state-highlight'
+			);
+		}
+
+		html +=
+			"<td" +
+			" class='" + classNames.join(' ') + "'" +
+			" data-date='" + formatDate(date, 'yyyy-MM-dd') + "'" +
+			">" +
+			"<div>";
+
+		if (showNumbers) {
+			html += "<div class='fc-day-number'>" + date.getDate() + "</div>";
+		}
+
+		html +=
+			"<div class='fc-day-content'>" +
+			"<div style='position:relative'>&nbsp;</div>" +
+			"</div>" +
+			"</div>" +
+			"</td>";
+
+		return html;
 	}
-	
+
+
+
+	/* Dimensions
+	-----------------------------------------------------------*/
 	
 	
 	function setHeight(height) {
@@ -259,13 +319,21 @@ function BasicView(element, calendar, viewName) {
 			}
 		});
 		
+		unlockHeight();
 	}
 	
 	
 	function setWidth(width) {
 		viewWidth = width;
+		colPositions.clear();
 		colContentPositions.clear();
-		colWidth = Math.floor(viewWidth / colCnt);
+
+		weekNumberWidth = 0;
+		if (showWeekNumbers) {
+			weekNumberWidth = head.find('th.fc-week-number').outerWidth();
+		}
+
+		colWidth = Math.floor((viewWidth - weekNumberWidth) / colCnt);
 		setOuterWidth(headCells.slice(0, -1), colWidth);
 	}
 	
@@ -283,8 +351,7 @@ function BasicView(element, calendar, viewName) {
 	
 	function dayClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var index = parseInt(this.className.match(/fc\-day(\d+)/)[1]); // TODO: maybe use .data
-			var date = indexDate(index);
+			var date = parseISO8601($(this).data('date'));
 			trigger('dayClick', this, date, true, ev);
 		}
 	}
@@ -293,35 +360,30 @@ function BasicView(element, calendar, viewName) {
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
-	
-	
+	// TODO: should be consolidated with AgendaView's methods
+
+
 	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
+
 		if (refreshCoordinateGrid) {
 			coordinateGrid.build();
 		}
-		var rowStart = cloneDate(t.visStart);
-		var rowEnd = addDays(cloneDate(rowStart), colCnt);
-		for (var i=0; i<rowCnt; i++) {
-			var stretchStart = new Date(Math.max(rowStart, overlayStart));
-			var stretchEnd = new Date(Math.min(rowEnd, overlayEnd));
-			if (stretchStart < stretchEnd) {
-				var colStart, colEnd;
-				if (rtl) {
-					colStart = dayDiff(stretchEnd, rowStart)*dis+dit+1;
-					colEnd = dayDiff(stretchStart, rowStart)*dis+dit+1;
-				}else{
-					colStart = dayDiff(stretchStart, rowStart);
-					colEnd = dayDiff(stretchEnd, rowStart);
-				}
-				dayBind(
-					renderCellOverlay(i, colStart, i, colEnd-1)
-				);
-			}
-			addDays(rowStart, 7);
-			addDays(rowEnd, 7);
+
+		var segments = rangeToSegments(overlayStart, overlayEnd);
+
+		for (var i=0; i<segments.length; i++) {
+			var segment = segments[i];
+			dayBind(
+				renderCellOverlay(
+					segment.row,
+					segment.leftCol,
+					segment.row,
+					segment.rightCol
+				)
+			);
 		}
 	}
-	
+
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
 		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
@@ -350,7 +412,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function reportDayClick(date, allDay, ev) {
-		var cell = dateCell(date);
+		var cell = dateToCell(date);
 		var _element = bodyCells[cell.row*colCnt + cell.col];
 		trigger('dayClick', _element, date, allDay, ev);
 	}
@@ -375,7 +437,7 @@ function BasicView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-			var d = cellDate(cell);
+			var d = cellToDate(cell);
 			trigger('drop', _dragElement, d, true, ev, ui);
 		}
 	}
@@ -420,10 +482,23 @@ function BasicView(element, calendar, viewName) {
 	
 	hoverListener = new HoverListener(coordinateGrid);
 	
-	
-	colContentPositions = new HorizontalPositionCache(function(col) {
-		return bodyCellTopInners.eq(col);
+	colPositions = new HorizontalPositionCache(function(col) {
+		return firstRowCellInners.eq(col);
 	});
+
+	colContentPositions = new HorizontalPositionCache(function(col) {
+		return firstRowCellContentInners.eq(col);
+	});
+
+
+	function colLeft(col) {
+		return colPositions.left(col);
+	}
+
+
+	function colRight(col) {
+		return colPositions.right(col);
+	}
 	
 	
 	function colContentLeft(col) {
@@ -436,50 +511,22 @@ function BasicView(element, calendar, viewName) {
 	}
 	
 	
-	
-	
-	function dateCell(date) {
-		return {
-			row: Math.floor(dayDiff(date, t.visStart) / 7),
-			col: dayOfWeekCol(date.getDay())
-		};
-	}
-	
-	
-	function cellDate(cell) {
-		return _cellDate(cell.row, cell.col);
-	}
-	
-	
-	function _cellDate(row, col) {
-		return addDays(cloneDate(t.visStart), row*7 + col*dis+dit);
-		// what about weekends in middle of week?
-	}
-	
-	
-	function indexDate(index) {
-		return _cellDate(Math.floor(index/colCnt), index%colCnt);
-	}
-	
-	
-	function dayOfWeekCol(dayOfWeek) {
-		return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
-	}
-	
-	
-	
-	
 	function allDayRow(i) {
 		return bodyRows.eq(i);
 	}
-	
-	
-	function allDayBounds(i) {
-		return {
-			left: 0,
-			right: viewWidth
-		};
+
+
+
+	// makes sure height doesn't collapse while we destroy/render new cells
+	// (this causes a bad end-user scrollbar jump)
+	// TODO: generalize this for all view rendering. (also in Calendar.js)
+
+	function lockHeight() {
+		setMinHeight(element, element.height());
 	}
-	
+
+	function unlockHeight() {
+		setMinHeight(element, 1);
+	}
 	
 }

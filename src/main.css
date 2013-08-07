@@ -1,12 +1,7 @@
-/*
- * FullCalendar v@VERSION Stylesheet
- *
- * Copyright (c) 2011 Adam Shaw
- * Dual licensed under the MIT and GPL licenses, located in
- * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
- *
- * Date: @DATE
- *
+/*!
+ * <%= meta.title %> v<%= meta.version %> Stylesheet
+ * Docs & License: <%= meta.homepage %>
+ * (c) <%= meta.copyright %>
  */
 
 
@@ -79,11 +74,8 @@ html .fc,
 	margin-right: -1px;
 	}
 	
-.fc-header .fc-corner-right {
-	margin-right: 1px; /* back to normal */
-	}
-	
-.fc-header .ui-corner-right {
+.fc-header .fc-corner-right,  /* non-theme */
+.fc-header .ui-corner-right { /* theme */
 	margin-right: 0; /* back to normal */
 	}
 	

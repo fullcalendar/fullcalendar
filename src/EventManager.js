@@ -74,6 +74,16 @@ function EventManager(options, _sources) {
 		_fetchEventSource(source, function(events) {
 			if (fetchID == currentFetchID) {
 				if (events) {
+
+					if (options.eventDataTransform) {
+						events = $.map(events, options.eventDataTransform);
+					}
+					if (source.eventDataTransform) {
+						events = $.map(events, source.eventDataTransform);
+					}
+					// TODO: this technique is not ideal for static array event sources.
+					//  For arrays, we'll want to process all events right in the beginning, then never again.
+				
 					for (var i=0; i<events.length; i++) {
 						events[i].source = source;
 						normalizeEvent(events[i]);
@@ -234,7 +244,7 @@ function EventManager(options, _sources) {
 				e.className = event.className;
 				e.editable = event.editable;
 				e.color = event.color;
-				e.backgroudColor = event.backgroudColor;
+				e.backgroundColor = event.backgroundColor;
 				e.borderColor = event.borderColor;
 				e.textColor = event.textColor;
 				normalizeEvent(e);
