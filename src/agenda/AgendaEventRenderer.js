@@ -16,8 +16,6 @@ function AgendaEventRenderer() {
 	var isEventDraggable = t.isEventDraggable;
 	var isEventResizable = t.isEventResizable;
 	var eventEnd = t.eventEnd;
-	var reportEvents = t.reportEvents;
-	var reportEventClear = t.reportEventClear;
 	var eventElementHandlers = t.eventElementHandlers;
 	var setHeight = t.setHeight;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
@@ -59,7 +57,6 @@ function AgendaEventRenderer() {
 	
 
 	function renderEvents(events, modifiedEventId) {
-		reportEvents(events);
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -77,13 +74,10 @@ function AgendaEventRenderer() {
 		}
 
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
-
-		trigger('eventAfterAllRender');
 	}
 	
 	
 	function clearEvents() {
-		reportEventClear();
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}

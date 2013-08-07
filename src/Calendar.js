@@ -43,10 +43,8 @@ function Calendar(element, options, eventSources) {
 	var content;
 	var tm; // for making theme classes
 	var currentView;
-	var viewInstances = {};
 	var elementOuterWidth;
 	var suggestedViewHeight;
-	var absoluteViewElement;
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
 	var date = new Date();
@@ -65,10 +63,10 @@ function Calendar(element, options, eventSources) {
 	function render(inc) {
 		if (!content) {
 			initialRender();
-		}else{
+		}
+		else {
+			// mainly for the public API
 			calcSize();
-			markSizesDirty();
-			markEventsDirty();
 			renderView(inc);
 		}
 	}
@@ -86,13 +84,16 @@ function Calendar(element, options, eventSources) {
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
+
 		content = $("<div class='fc-content' style='position:relative'/>")
 			.prependTo(element);
+
 		header = new Header(t, options);
 		headerElement = header.render();
 		if (headerElement) {
 			element.prepend(headerElement);
 		}
+
 		changeView(options.defaultView);
 
 		if (options.handleWindowResize) {
@@ -140,129 +141,85 @@ function Calendar(element, options, eventSources) {
 	/* View Rendering
 	-----------------------------------------------------------------------------*/
 	
-	// TODO: improve view switching (still weird transition in IE, and FF has whiteout problem)
-	
+
 	function changeView(newViewName) {
 		if (!currentView || newViewName != currentView.name) {
-			ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
-
-			unselect();
-			
-			var oldView = currentView;
-			var newViewElement;
-				
-			if (oldView) {
-				(oldView.beforeHide || noop)(); // called before changing min-height. if called after, scroll state is reset (in Opera)
-				setMinHeight(content, content.height());
-				oldView.element.hide();
-			}else{
-				setMinHeight(content, 1); // needs to be 1 (not 0) for IE7, or else view dimensions miscalculated
-			}
-			content.css('overflow', 'hidden');
-			
-			currentView = viewInstances[newViewName];
-			if (currentView) {
-				currentView.element.show();
-			}else{
-				currentView = viewInstances[newViewName] = new fcViews[newViewName](
-					newViewElement = absoluteViewElement =
-						$("<div class='fc-view fc-view-" + newViewName + "' style='position:absolute'/>")
-							.appendTo(content),
-					t // the calendar object
-				);
-			}
-			
-			if (oldView) {
-				header.deactivateButton(oldView.name);
-			}
-			header.activateButton(newViewName);
-			
-			renderView(); // after height has been set, will make absoluteViewElement's position=relative, then set to null
-			
-			content.css('overflow', '');
-			if (oldView) {
-				setMinHeight(content, 1);
-			}
-			
-			if (!newViewElement) {
-				(currentView.afterShow || noop)(); // called after setting min-height/overflow, so in final scroll state (for Opera)
-			}
-			
+			ignoreWindowResize++;
+			_changeView(newViewName);
 			ignoreWindowResize--;
 		}
 	}
-	
-	
-	
+
+
+	function _changeView(newViewName) {
+
+		if (currentView) {
+			freezeContentHeight();
+			currentView.element.remove();
+			header.deactivateButton(currentView.name);
+		}
+
+		header.activateButton(newViewName);
+
+		currentView = new fcViews[newViewName](
+			$("<div class='fc-view fc-view-" + newViewName + "' style='position:relative'/>")
+				.appendTo(content),
+			t // the calendar object
+		);
+
+		_renderView();
+		unfreezeContentHeight();
+	}
+
+
 	function renderView(inc) {
 		if (elementVisible()) {
-			ignoreWindowResize++; // because renderEvents might temporarily change the height before setSize is reached
-
-			unselect();
-			
-			if (suggestedViewHeight === undefined) {
-				calcSize();
-			}
-			
-			var forceEventRender = false;
-			if (!currentView.start || inc || date < currentView.start || date >= currentView.end) {
-				// view must render an entire new date range (and refetch/render events)
-				currentView.render(date, inc || 0); // responsible for clearing events
-				setSize(true);
-				forceEventRender = true;
-			}
-			else if (currentView.sizeDirty) {
-				// view must resize (and rerender events)
-				currentView.clearEvents();
-				setSize();
-				forceEventRender = true;
-			}
-			else if (currentView.eventsDirty) {
-				currentView.clearEvents();
-				forceEventRender = true;
-			}
-			currentView.sizeDirty = false;
-			currentView.eventsDirty = false;
-			updateEvents(forceEventRender);
-			
-			elementOuterWidth = element.outerWidth();
-			
-			header.updateTitle(currentView.title);
-			var today = new Date();
-			if (today >= currentView.start && today < currentView.end) {
-				header.disableButton('today');
-			}else{
-				header.enableButton('today');
-			}
-			
+			ignoreWindowResize++;
+			_renderView(inc);
 			ignoreWindowResize--;
-			currentView.trigger('viewDisplay', _element);
 		}
+	}
+
+
+	function _renderView(inc) {
+		if (!currentView.start) { // has not been rendered before
+			renderViewDateRange();
+			getAndRenderEvents();
+		}
+		else if (inc || date < currentView.start || date >= currentView.end) {
+			unselect();
+			clearEvents();
+			renderViewDateRange(inc);
+			getAndRenderEvents();
+		}
+		currentView.trigger('viewDisplay', _element); // deprecated
+	}
+
+
+	function renderViewDateRange(inc) {
+		freezeContentHeight();
+		currentView.render(date, inc || 0); // the view's render method ONLY renders the skeleton, nothing else
+		setSize();
+		unfreezeContentHeight();
+		(currentView.afterRender || noop)();
+		updateTitle();
+		updateTodayButton();
 	}
 	
 	
-	
+
 	/* Resizing
 	-----------------------------------------------------------------------------*/
 	
 	
 	function updateSize() {
-		markSizesDirty();
 		if (elementVisible()) {
+			unselect();
+			clearEvents();
 			calcSize();
 			setSize();
-			unselect();
-			currentView.clearEvents();
-			currentView.renderEvents(events);
-			currentView.sizeDirty = false;
+			renderEvents();
 		}
-	}
-	
-	
-	function markSizesDirty() {
-		$.each(viewInstances, function(i, inst) {
-			inst.sizeDirty = true;
-		});
 	}
 	
 	
@@ -279,15 +236,18 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function setSize(dateChanged) { // todo: dateChanged?
-		ignoreWindowResize++;
-		currentView.setHeight(suggestedViewHeight, dateChanged);
-		if (absoluteViewElement) {
-			absoluteViewElement.css('position', 'relative');
-			absoluteViewElement = null;
+	function setSize() {
+
+		if (suggestedViewHeight === undefined) {
+			calcSize(); // for first time
 		}
-		currentView.setWidth(content.width(), dateChanged);
+
+		ignoreWindowResize++;
+		currentView.setHeight(suggestedViewHeight);
+		currentView.setWidth(content.width());
 		ignoreWindowResize--;
+
+		elementOuterWidth = element.outerWidth();
 	}
 	
 	
@@ -316,52 +276,84 @@ function Calendar(element, options, eventSources) {
 	
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
+	// TODO: going forward, most of this stuff should be directly handled by the view
+
+
+	function refetchEvents() { // can be called as an API method
+		clearEvents();
+		fetchAndRenderEvents();
+	}
+
+
+	function rerenderEvents(modifiedEventID) { // can be called as an API method
+		clearEvents();
+		renderEvents(modifiedEventID);
+	}
+
+
+	function renderEvents(modifiedEventID) { // TODO: remove modifiedEventID hack
+		if (elementVisible()) {
+			currentView.setEventData(events); // for View.js, TODO: unify with renderEvents
+			currentView.renderEvents(events, modifiedEventID); // actually render the DOM elements
+			currentView.trigger('eventAfterAllRender');
+		}
+	}
+
+
+	function clearEvents() {
+		currentView.clearEvents(); // actually remove the DOM elements
+		currentView.clearEventData(); // for View.js, TODO: unify with clearEvents
+	}
 	
-	
-	// fetches events if necessary, rerenders events if necessary (or if forced)
-	function updateEvents(forceRender) {
+
+	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
-			refetchEvents();
+			fetchAndRenderEvents();
 		}
-		else if (forceRender) {
-			rerenderEvents();
+		else {
+			renderEvents();
 		}
 	}
-	
-	
-	function refetchEvents() {
-		fetchEvents(currentView.visStart, currentView.visEnd); // will call reportEvents
+
+
+	function fetchAndRenderEvents() {
+		fetchEvents(currentView.visStart, currentView.visEnd);
+			// ... will call reportEvents
+			// ... which will call renderEvents
 	}
-	
+
 	
 	// called when event data arrives
 	function reportEvents(_events) {
 		events = _events;
-		rerenderEvents();
+		renderEvents();
 	}
-	
-	
+
+
 	// called when a single event's data has been changed
 	function reportEventChange(eventID) {
 		rerenderEvents(eventID);
 	}
-	
-	
-	// attempts to rerenderEvents
-	function rerenderEvents(modifiedEventID) {
-		markEventsDirty();
-		if (elementVisible()) {
-			currentView.clearEvents();
-			currentView.renderEvents(events, modifiedEventID);
-			currentView.eventsDirty = false;
-		}
+
+
+
+	/* Header Updating
+	-----------------------------------------------------------------------------*/
+
+
+	function updateTitle() {
+		header.updateTitle(currentView.title);
 	}
-	
-	
-	function markEventsDirty() {
-		$.each(viewInstances, function(i, inst) {
-			inst.eventsDirty = true;
-		});
+
+
+	function updateTodayButton() {
+		var today = new Date();
+		if (today >= currentView.start && today < currentView.end) {
+			header.disableButton('today');
+		}
+		else {
+			header.enableButton('today');
+		}
 	}
 	
 
@@ -441,6 +433,29 @@ function Calendar(element, options, eventSources) {
 	
 	function getDate() {
 		return cloneDate(date);
+	}
+
+
+
+	/* Height "Freezing"
+	-----------------------------------------------------------------------------*/
+
+
+	function freezeContentHeight() {
+		content.css({
+			width: '100%',
+			height: content.height(),
+			overflow: 'hidden'
+		});
+	}
+
+
+	function unfreezeContentHeight() {
+		content.css({
+			width: '',
+			height: '',
+			overflow: ''
+		});
 	}
 	
 	

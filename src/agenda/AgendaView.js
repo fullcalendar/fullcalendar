@@ -29,8 +29,7 @@ function AgendaView(element, calendar, viewName) {
 	t.renderAgenda = renderAgenda;
 	t.setWidth = setWidth;
 	t.setHeight = setHeight;
-	t.beforeHide = beforeHide;
-	t.afterShow = afterShow;
+	t.afterRender = afterRender;
 	t.defaultEventEnd = defaultEventEnd;
 	t.timePosition = timePosition;
 	t.getIsCellAllDay = getIsCellAllDay;
@@ -67,7 +66,6 @@ function AgendaView(element, calendar, viewName) {
 	AgendaEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
-	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
@@ -120,7 +118,6 @@ function AgendaView(element, calendar, viewName) {
 	var colPositions;
 	var colContentPositions;
 	var slotTopCache = {};
-	var savedScrollTop;
 	
 	var tm;
 	var rtl;
@@ -142,11 +139,12 @@ function AgendaView(element, calendar, viewName) {
 	function renderAgenda(c) {
 		colCnt = c;
 		updateOptions();
-		if (!dayTable) {
+
+		if (!dayTable) { // first time rendering?
 			buildSkeleton(); // builds day table, slot area, events containers
-		}else{
+		}
+		else {
 			buildDayTable(); // rebuilds day table
-			clearEvents();
 		}
 	}
 	
@@ -426,7 +424,7 @@ function AgendaView(element, calendar, viewName) {
 	-----------------------------------------------------------------------*/
 
 	
-	function setHeight(height, dateChanged) {
+	function setHeight(height) {
 		if (height === undefined) {
 			height = viewHeight;
 		}
@@ -451,10 +449,6 @@ function AgendaView(element, calendar, viewName) {
 
 		snapRatio = opt('slotMinutes') / snapMinutes;
 		snapHeight = slotHeight / snapRatio;
-		
-		if (dateChanged) {
-			resetScroll();
-		}
 	}
 	
 	
@@ -521,15 +515,10 @@ function AgendaView(element, calendar, viewName) {
 		scroll();
 		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
 	}
-	
-	
-	function beforeHide() {
-		savedScrollTop = slotScroller.scrollTop();
-	}
-	
-	
-	function afterShow() {
-		slotScroller.scrollTop(savedScrollTop);
+
+
+	function afterRender() { // after the view has been freshly rendered and sized
+		resetScroll();
 	}
 	
 	

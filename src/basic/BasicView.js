@@ -40,7 +40,6 @@ function BasicView(element, calendar, viewName) {
 	BasicEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
-	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var daySelectionMousedown = t.daySelectionMousedown;
@@ -95,12 +94,11 @@ function BasicView(element, calendar, viewName) {
 		colCnt = _colCnt;
 		showNumbers = _showNumbers;
 		updateOptions();
-		var firstTime = !body;
-		if (firstTime) {
+
+		if (!body) {
 			buildEventContainer();
-		}else{
-			clearEvents();
 		}
+
 		buildTable();
 	}
 	
@@ -131,7 +129,6 @@ function BasicView(element, calendar, viewName) {
 	function buildTable() {
 		var html = buildTableHTML();
 
-		lockHeight(); // the unlock happens later, in setHeight()...
 		if (table) {
 			table.remove();
 		}
@@ -318,14 +315,13 @@ function BasicView(element, calendar, viewName) {
 		bodyFirstCells.each(function(i, _cell) {
 			if (i < rowCnt) {
 				cell = $(_cell);
-				setMinHeight(
-					cell.find('> div'),
+				cell.find('> div').css(
+					'min-height',
 					(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
 				);
 			}
 		});
 		
-		unlockHeight();
 	}
 	
 	
@@ -519,20 +515,6 @@ function BasicView(element, calendar, viewName) {
 	
 	function allDayRow(i) {
 		return bodyRows.eq(i);
-	}
-
-
-
-	// makes sure height doesn't collapse while we destroy/render new cells
-	// (this causes a bad end-user scrollbar jump)
-	// TODO: generalize this for all view rendering. (also in Calendar.js)
-
-	function lockHeight() {
-		setMinHeight(element, element.height());
-	}
-
-	function unlockHeight() {
-		setMinHeight(element, 1);
 	}
 	
 }
