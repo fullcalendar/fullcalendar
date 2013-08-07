@@ -64,10 +64,10 @@ function Calendar(element, options, eventSources) {
 		if (!content) {
 			initialRender();
 		}
-		else {
+		else if (elementVisible()) {
 			// mainly for the public API
 			calcSize();
-			renderView(inc);
+			_renderView(inc);
 		}
 	}
 	
@@ -126,7 +126,6 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	
 	function elementVisible() {
 		return element.is(':visible');
 	}
@@ -144,17 +143,17 @@ function Calendar(element, options, eventSources) {
 
 	function changeView(newViewName) {
 		if (!currentView || newViewName != currentView.name) {
-			ignoreWindowResize++;
 			_changeView(newViewName);
-			ignoreWindowResize--;
 		}
 	}
 
 
 	function _changeView(newViewName) {
+		ignoreWindowResize++;
 
 		if (currentView) {
 			trigger('viewDestroy', currentView, currentView, currentView.element);
+			unselect();
 			currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 			freezeContentHeight();
 			currentView.element.remove();
@@ -169,45 +168,49 @@ function Calendar(element, options, eventSources) {
 			t // the calendar object
 		);
 
-		_renderView();
+		renderView();
 		unfreezeContentHeight();
+
+		ignoreWindowResize--;
 	}
 
 
 	function renderView(inc) {
-		if (elementVisible()) {
-			ignoreWindowResize++;
-			_renderView(inc);
-			ignoreWindowResize--;
+		if (
+			!currentView.start || // never rendered before
+			inc || date < currentView.start || date >= currentView.end // or new date range
+		) {
+			if (elementVisible()) {
+				_renderView(inc);
+			}
 		}
 	}
 
 
-	function _renderView(inc) {
-		if (!currentView.start) { // has not been rendered before
-			renderViewDateRange();
-			getAndRenderEvents();
-		}
-		else if (inc || date < currentView.start || date >= currentView.end) {
+	function _renderView(inc) { // assumes elementVisible
+		ignoreWindowResize++;
+
+		if (currentView.start) { // already been rendered?
 			trigger('viewDestroy', currentView, currentView, currentView.element);
 			unselect();
 			clearEvents();
-			renderViewDateRange(inc);
-			getAndRenderEvents();
 		}
-		trigger('viewRender', currentView, currentView, currentView.element);
-		currentView.trigger('viewDisplay', _element); // deprecated
-	}
 
-
-	function renderViewDateRange(inc) {
 		freezeContentHeight();
 		currentView.render(date, inc || 0); // the view's render method ONLY renders the skeleton, nothing else
 		setSize();
 		unfreezeContentHeight();
 		(currentView.afterRender || noop)();
+
 		updateTitle();
 		updateTodayButton();
+
+		trigger('viewRender', currentView, currentView, currentView.element);
+		currentView.trigger('viewDisplay', _element); // deprecated
+
+		getAndRenderEvents();
+
+		ignoreWindowResize--;
 	}
 	
 	
@@ -227,7 +230,7 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function calcSize() {
+	function calcSize() { // assumes elementVisible
 		if (options.contentHeight) {
 			suggestedViewHeight = options.contentHeight;
 		}
@@ -240,10 +243,12 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function setSize() {
+	function setSize() { // assumes elementVisible
 
 		if (suggestedViewHeight === undefined) {
 			calcSize(); // for first time
+				// NOTE: we don't want to recalculate on every renderView because
+				// it could result in oscillating heights due to scrollbars.
 		}
 
 		ignoreWindowResize++;
