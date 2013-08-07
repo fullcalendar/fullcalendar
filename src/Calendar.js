@@ -154,6 +154,7 @@ function Calendar(element, options, eventSources) {
 	function _changeView(newViewName) {
 
 		if (currentView) {
+			trigger('viewDestroy', currentView, currentView, currentView.element);
 			freezeContentHeight();
 			currentView.element.remove();
 			header.deactivateButton(currentView.name);
@@ -187,11 +188,13 @@ function Calendar(element, options, eventSources) {
 			getAndRenderEvents();
 		}
 		else if (inc || date < currentView.start || date >= currentView.end) {
+			trigger('viewDestroy', currentView, currentView, currentView.element);
 			unselect();
 			clearEvents();
 			renderViewDateRange(inc);
 			getAndRenderEvents();
 		}
+		trigger('viewRender', currentView, currentView, currentView.element);
 		currentView.trigger('viewDisplay', _element); // deprecated
 	}
 
