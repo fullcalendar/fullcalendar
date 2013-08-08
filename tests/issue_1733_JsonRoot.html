@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Specifying JSON root</title>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../build/out/jquery.js'></script>
+<script src='../build/out/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script>
+
+    $(document).ready(function() {
+    
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+        
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+            },
+            editable: true,
+            root: 'events',
+            success: 'success',
+            events: "issue_1733_JsonRoot.json",
+            ignoreTimezone: false
+        });
+        
+    });
+
+</script>
+<style>
+
+    body {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 13px;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        }
+
+    #calendar {
+        width: 900px;
+        margin: 0 auto;
+        }
+
+</style>
+</head>
+<body>
+<h1>Specifying JSON root</h1>
+<h2>This issue gives support for Zend Framework 2 JsonView strategy.</h2>
+<p>In this example you should see all holidays (days free from work) in Poland (Europe).</p>
+<div id='calendar'></div>
+</body>
+</html>
