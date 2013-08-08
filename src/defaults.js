@@ -27,6 +27,9 @@ var defaults = {
 	startParam: 'start',
 	endParam: 'end',
 	
+	// JSON root - used e.g. in Zend Framework 2
+	root: null,
+	
 	// time formats
 	titleFormat: {
 		month: 'MMMM yyyy',
