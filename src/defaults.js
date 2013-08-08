@@ -13,20 +13,22 @@ var defaults = {
 	weekNumbers: false,
 	weekNumberCalculation: 'iso',
 	weekNumberTitle: 'W',
-	
+
+	//viewMoreLink: false,
+
 	// editing
 	//editable: false,
 	//disableDragging: false,
 	//disableResizing: false,
-	
+
 	allDayDefault: true,
 	ignoreTimezone: true,
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
 	endParam: 'end',
-	
+
 	// time formats
 	titleFormat: {
 		month: 'MMMM yyyy',
@@ -41,7 +43,7 @@ var defaults = {
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
 	},
-	
+
 	// locale
 	isRTL: false,
 	firstDay: 0,
@@ -59,19 +61,19 @@ var defaults = {
 		week: 'week',
 		day: 'day'
 	},
-	
+
 	// jquery-ui theming
 	theme: false,
 	buttonIcons: {
 		prev: 'circle-triangle-w',
 		next: 'circle-triangle-e'
 	},
-	
+
 	//selectable: false,
 	unselectAuto: true,
-	
+
 	dropAccept: '*'
-	
+
 };
 
 // right-to-left defaults
