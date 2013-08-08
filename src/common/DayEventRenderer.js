@@ -2,13 +2,13 @@
 function DayEventRenderer() {
 	var t = this;
 
-	
+
 	// exports
 	t.renderDayEvents = renderDayEvents;
 	t.draggableDayEvent = draggableDayEvent; // made public so that subclasses can override
 	t.resizableDayEvent = resizableDayEvent; // "
-	
-	
+
+
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -390,6 +390,16 @@ function DayEventRenderer() {
 		var rowContentHeights = []; // content height for each row
 		var segmentRows = buildSegmentRows(segments); // an array of segment arrays, one for each row
 
+		var dayPadding = 6, // ~.5em, default css padding provided by fullcalendar.css
+			rowHeight = $(".fc-week").height(),
+			dayNumberHeight = $(".fc-day-number").height(),
+			viewMoreLinkHeight = 18; // TODO - not hard-code?
+		var dayContentHeight = rowHeight - dayNumberHeight - (dayPadding*2) - viewMoreLinkHeight;
+
+		var tbody    = $($($(getDaySegmentContainer()).parent().children()[1]).children()[1]);
+		var weekRows = tbody.children();
+		var dayMs    = (1000*60*60*24); // 24 hrs * 60 mins * 60s * 1000 ms
+
 		for (var rowI=0; rowI<rowCnt; rowI++) {
 			var segmentRow = segmentRows[rowI];
 
@@ -413,9 +423,107 @@ function DayEventRenderer() {
 					)
 				);
 
-				// adjust the columns to account for the segment's height
-				for (var colI=segment.leftCol; colI<=segment.rightCol; colI++) {
-					colHeights[colI] = segment.top + segment.outerHeight;
+				var segmentBottom = segment.top + segment.element.height(),
+					tooTall = false,
+					checkHeight = (opt('viewMoreLink') && t.calendar.getView().name == "month");
+
+				if (checkHeight && (segmentBottom > dayContentHeight)) {
+					tooTall = true;
+
+					// tdDate is the date associated with segment.lCol
+					// if the segment already has a displayStartDate, great! we've got it
+					var tdDate = segment.displayStartDate;
+
+					// if not, we need to figure it out
+					if (tdDate == null) {
+						// start by assuming the first col in the row is the date we want
+						// this helps with the case where the segment's event is being carried
+						// over from the previous row
+						var weekRow = $(weekRows[segment.row]);
+						var col1Index = opt('weekNumbers') ? 1 : 0;
+						var col1DateStr = $(weekRow.children()[col1Index]).attr('data-date');
+						var ymd = col1DateStr.split("-");
+						var tdDate = new Date(ymd[0], (ymd[1]-1), ymd[2]);
+
+						// now change it if the event starts later
+						if (segment.event.start >= tdDate) {
+							var s = segment.event.start;
+							tdDate = new Date(s.getFullYear(), s.getMonth(), s.getDate());
+						}
+					}
+
+					// Set the date of the day this segment will actually start to appear on.
+					// We're in this "tooTall" if statement for a reason... let's bump the date up
+					// a day
+					segment.displayStartDate = new Date(tdDate.getTime() + dayMs);
+
+					var tdDateStr = formatDate(tdDate, 'yyyy-MM-dd');
+					var td = $('td[data-date="' + tdDateStr + '"]');
+
+					// now add the "view more" link
+					if (!td.data('viewMoreLinkAdded')) {
+						var dayContentDiv = $(td.children()[0]);
+
+						var viewMoreButton = $('<div class="events-view-more">' +
+						'<a href="#view-more"><span>View More</span></a></div>');
+
+						viewMoreButton.appendTo(dayContentDiv);
+						td.data('viewMoreLinkAdded', true);
+
+						viewMoreButton.click(function () {
+							// just go to the "day" view when clicked
+							var ymd = $(this).parent().parent().attr('data-date').split("-");
+							t.calendar.changeView('agendaDay');
+							t.calendar.gotoDate(new Date(ymd[0], (ymd[1]-1), ymd[2]));
+							return false;
+						});
+					}
+
+					if (segment.leftCol == segment.rightCol) {
+						// we haven't found any way to show this segment at all, just remove it
+						segment.element.remove();
+					} else {
+						// update positioning to hopefully show on subsequent days
+						var currLeft = parseInt(segment.element.css('left'));
+						var currWidth = parseInt(segment.element.css('width'));
+
+						// We need to hide a col's (day's) worth of length
+						var colWidth = $('.fc-day').outerWidth();
+						var newLeft  = currLeft + colWidth;
+						var newWidth = currWidth - colWidth;
+
+						segment.element.css('left', newLeft);
+						segment.element.css('width', newWidth);
+
+						if (segment.alreadyShifted == null) {
+							// shift the element left to indicate that it actually started before
+							// the col that it's first appearing in
+							var shiftAmt = 2;
+							segment.element.css('left', newLeft - shiftAmt);
+							segment.element.css('width', newWidth + shiftAmt + 1);
+
+							// make it clear that this event is continuing from a prior time
+							segment.element.removeClass('fc-event-start');
+
+							segment.alreadyShifted = true;
+						}
+
+						// reprocess this segment to try to find a way to show part of it on a
+						// future day
+						segment.leftCol += 1;
+						segmentI -= 1;
+					}
+				}
+
+				if (!tooTall) {
+					// adjust the columns to account for the segment's height
+					for (var colI=segment.leftCol; colI<=segment.rightCol; colI++) {
+						// we can't use segment.outerHeight because the "viewMore" functionality
+						// could cause a segment to be taller than expected (since we're squashing
+						// the width in some cases)
+						var vertSpacing = 3;
+						colHeights[colI] = segment.top + segment.element.height() + vertSpacing;
+					}
 				}
 			}
 
@@ -566,7 +674,7 @@ function DayEventRenderer() {
 		eventElementHandlers(event, eventElement);
 	}
 
-	
+
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
 		var dayDelta;
@@ -608,13 +716,13 @@ function DayEventRenderer() {
 		});
 	}
 
-	
+
 	function resizableDayEvent(event, element, segment) {
 		var isRTL = opt('isRTL');
 		var direction = isRTL ? 'w' : 'e';
 		var handle = element.find('.ui-resizable-' + direction); // TODO: stop using this class because we aren't using jqui for this
 		var isResizing = false;
-		
+
 		// TODO: look into using jquery-ui mouse widget for this stuff
 		disableTextSelection(element); // prevent native <a> selection for IE
 		element
@@ -628,7 +736,7 @@ function DayEventRenderer() {
 					                               // (eventElementHandlers needs to be bound after resizableDayEvent)
 				}
 			});
-		
+
 		handle.mousedown(function(ev) {
 			if (ev.which != 1) {
 				return; // needs to be left mouse button
@@ -690,7 +798,7 @@ function DayEventRenderer() {
 					);
 				}
 			}, ev);
-			
+
 			function mouseup(ev) {
 				trigger('eventResizeStop', this, event, ev);
 				$('body').css('cursor', '');
@@ -701,14 +809,14 @@ function DayEventRenderer() {
 					// event redraw will clear helpers
 				}
 				// otherwise, the drag handler already restored the old events
-				
+
 				setTimeout(function() { // make this happen after the element's click event
 					isResizing = false;
 				},0);
 			}
 		});
 	}
-	
+
 
 }
 
