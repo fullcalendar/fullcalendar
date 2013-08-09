@@ -473,8 +473,16 @@ function DayEventRenderer() {
 						viewMoreButton.click(function () {
 							// just go to the "day" view when clicked
 							var ymd = $(this).parent().parent().attr('data-date').split("-");
-							t.calendar.changeView('agendaDay');
-							t.calendar.gotoDate(new Date(ymd[0], (ymd[1]-1), ymd[2]));
+							var targetDate = new Date(ymd[0], (ymd[1]-1), ymd[2]);
+
+							var changeView = true;
+							if ($.isFunction(opt('viewMoreClick'))) {
+								changeView = opt('viewMoreClick')(this, targetDate);
+							}
+							if (changeView !== false) {
+								t.calendar.changeView('agendaDay');
+								t.calendar.gotoDate(targetDate);
+							}
 							return false;
 						});
 					}
