@@ -396,7 +396,7 @@ function DayEventRenderer() {
 			viewMoreLinkHeight = 18; // TODO - not hard-code?
 		var dayContentHeight = rowHeight - dayNumberHeight - (dayPadding*2) - viewMoreLinkHeight;
 
-		var tbody    = $($($(getDaySegmentContainer()).parent().children()[1]).children()[1]);
+		var tbody    = $(getDaySegmentContainer()).parent().children().eq(1).children().eq(1);
 		var weekRows = tbody.children();
 		var dayMs    = (1000*60*60*24); // 24 hrs * 60 mins * 60s * 1000 ms
 
@@ -439,9 +439,9 @@ function DayEventRenderer() {
 						// start by assuming the first col in the row is the date we want
 						// this helps with the case where the segment's event is being carried
 						// over from the previous row
-						var weekRow = $(weekRows[segment.row]);
+						var weekRow = weekRows.eq(segment.row);
 						var col1Index = opt('weekNumbers') ? 1 : 0;
-						var col1DateStr = $(weekRow.children()[col1Index]).attr('data-date');
+						var col1DateStr = weekRow.children().eq(col1Index).attr('data-date');
 						var ymd = col1DateStr.split("-");
 						var tdDate = new Date(ymd[0], (ymd[1]-1), ymd[2]);
 
@@ -462,7 +462,7 @@ function DayEventRenderer() {
 
 					// now add the "view more" link
 					if (!td.data('viewMoreLinkAdded')) {
-						var dayContentDiv = $(td.children()[0]);
+						var dayContentDiv = td.children().first();
 
 						var viewMoreDiv = $('<div class="events-view-more"><a href="#view-more">' +
 							'<span>View More</span></a></div>');
