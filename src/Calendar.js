@@ -35,6 +35,10 @@ function Calendar(element, options, eventSources) {
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
 	
+	var resourceSources;
+	ResourceManager.call(t, options, resourceSources);
+	//var fetchResources = t.fetchResources;
+		
 	
 	// locals
 	var _element = element[0];
