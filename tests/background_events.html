@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+
+		$('#calendar').fullCalendar({
+
+			defaultView: 'agendaWeek',
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,basicDay'
+			},
+			editable: true,
+			events: [
+				{
+					title: 'Intended use zone for public medical consultation',
+					start: new Date(y, m, d - 1, 8, 00),
+					end: new Date(y, m, d - 1, 18, 00),
+					allDay: false,
+					isBackground: true,
+					className: 'intendedUseZone public'
+				},
+				{
+					title: 'HAINES Albert - Public consultation',
+					start: new Date(y, m, d - 1, 10, 00),
+					end: new Date(y, m, d - 1, 11, 30),
+					allDay: false
+				},
+				{
+					title: 'Intended use zone for private medical consultation',
+					start: new Date(y, m, d, 8, 00),
+					end: new Date(y, m, d, 18, 00),
+					allDay: false,
+					isBackground: true,
+					className: 'intendedUseZone private'
+				},
+				{
+					title: 'DOE John - Pivate consultation',
+					start: new Date(y, m, d, 10, 00),
+					end: new Date(y, m, d, 13, 00),
+					allDay: false
+				},
+				{
+					title: 'KELLER Judy - Pivate consultation',
+					start: new Date(y, m, d, 10, 00),
+					end: new Date(y, m, d, 13, 00),
+					allDay: false
+				}
+			]
+		});
+
+	});
+
+</script>
+<style>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+	}
+
+	.intendedUseZone {
+		color: black;
+		opacity: 0.75;
+		background-color: orange;
+	}
+
+	.private {
+		background-color: red;
+	}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
