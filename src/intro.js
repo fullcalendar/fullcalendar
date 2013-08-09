@@ -1,7 +1,11 @@
 /*!
+ * !!! FORKED from:
  * <%= meta.title %> v<%= meta.version %>
  * Docs & License: <%= meta.homepage %>
  * (c) <%= meta.copyright %>
+ *
+ * !!! Fork Version: v1.6.2-viewmore
+ * !!! Forked codebase is here: https://github.com/erictip/fullcalendar
  */
 
 /*
@@ -9,6 +13,6 @@
  * For event drag & drop, requires jQuery UI draggable.
  * For event resizing, requires jQuery UI resizable.
  */
- 
+
 (function($, undefined) {
 

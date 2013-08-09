@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='../build/out/fullcalendar.css' rel='stylesheet' />
+    <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <script src='../build/out/jquery.js'></script>
+    <script src='../build/out/jquery-ui.js'></script>
+    <script src='../build/out/fullcalendar.js'></script>
+    <script>
+
+        $(document).ready(function() {
+
+            var date = new Date(2013, 7, 8);
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+
+            var events = [];
+            for(var i=1; i <= 4; i++) {
+                events.push({
+                    title: 'Busy Day Event ' + i,
+                    start: new Date(y, m, 1),
+                    allDay: false
+                });
+                events.push({
+                    title: '4-day Event ' + i,
+                    start: new Date(y, m, 4, 13),
+                    end: new Date(y, m, 7, 13),
+                    allDay: false
+                });
+                events.push({
+                    title: 'Another 4-day Event ' + i,
+                    start: new Date(y, m, 11, 13),
+                    end: new Date(y, m, 14, 13),
+                    allDay: false
+                });
+                events.push({
+                    title: '8/18 Event ' + i,
+                    start: new Date(y, m, 18, 13),
+                    end: new Date(y, m, 19, 13),
+                    allDay: false
+                });
+            }
+            events = events.concat([
+                {
+                    title: 'Busy Day Event 5',
+                    start: new Date(y, m, 1),
+                    allDay: false
+                },
+                {
+                    title: '2-day Event',
+                    start: new Date(y, m, 7, 13),
+                    end: new Date(y, m, 8, 13),
+                    allDay: false
+                },
+                {
+                    title: '8/8 Event',
+                    start: new Date(y, m, 8, 13),
+                    allDay: false
+                },
+                {
+                    title: '3-day Event',
+                    start: new Date(y, m, 13, 13),
+                    end: new Date(y, m, 15, 13)
+                },
+                {
+                    title: 'Multi-Week Event',
+                    start: new Date(y, m, 17, 13),
+                    end: new Date(y, m, 18, 13),
+                    allDay: false
+                }
+            ]);
+            $('#calendar').fullCalendar({
+                weekNumbers: true,
+                editable: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+                },
+                viewMoreLink: true,
+                viewMoreClick: function(element, targetDate) {
+                    alert('Drilling down to date: ' + targetDate);
+                    return true;
+                },
+                events: events
+            });
+
+        });
+
+    </script>
+    <style>
+
+        body {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        }
+
+        #calendar {
+            width: 900px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

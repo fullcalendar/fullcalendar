@@ -19,9 +19,9 @@ Also, you will need to have the [Grunt](http://gruntjs.com/) build system instal
 
 	npm install -g grunt-cli
 
-Then, clone FullCalendar's git repo:
+Then, clone this git repo:
 
-	git clone git://github.com/arshaw/fullcalendar.git
+	git clone git://github.com/erictip/fullcalendar.git
 
 Enter the directory and install FullCalendar's development dependencies:
 
