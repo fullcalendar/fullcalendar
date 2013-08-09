@@ -79,6 +79,10 @@
                     right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
                 },
                 viewMoreLink: true,
+                viewMoreClick: function(element, targetDate) {
+                    alert('Drilling down to date: ' + targetDate);
+                    return true;
+                },
                 events: events
             });
 

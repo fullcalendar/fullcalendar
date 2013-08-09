@@ -464,17 +464,25 @@ function DayEventRenderer() {
 					if (!td.data('viewMoreLinkAdded')) {
 						var dayContentDiv = $(td.children()[0]);
 
-						var viewMoreButton = $('<div class="events-view-more">' +
-						'<a href="#view-more"><span>View More</span></a></div>');
+						var viewMoreDiv = $('<div class="events-view-more"><a href="#view-more">' +
+							'<span>View More</span></a></div>');
 
-						viewMoreButton.appendTo(dayContentDiv);
+						viewMoreDiv.appendTo(dayContentDiv);
 						td.data('viewMoreLinkAdded', true);
 
-						viewMoreButton.click(function () {
+						viewMoreDiv.click(function () {
 							// just go to the "day" view when clicked
 							var ymd = $(this).parent().parent().attr('data-date').split("-");
-							t.calendar.changeView('agendaDay');
-							t.calendar.gotoDate(new Date(ymd[0], (ymd[1]-1), ymd[2]));
+							var targetDate = new Date(ymd[0], (ymd[1]-1), ymd[2]);
+
+							var changeView = true;
+							if ($.isFunction(opt('viewMoreClick'))) {
+								changeView = opt('viewMoreClick')(this, targetDate);
+							}
+							if (changeView !== false) {
+								t.calendar.changeView('agendaDay');
+								t.calendar.gotoDate(targetDate);
+							}
 							return false;
 						});
 					}
