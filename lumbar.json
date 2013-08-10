@@ -18,7 +18,7 @@
   "modules": {
     "jquery": {
       "scripts": [
-        "lib/jquery-1.9.1.min.js"
+        "lib/jquery-1.10.2.min.js"
       ]
     },
     "jquery-ui": {
