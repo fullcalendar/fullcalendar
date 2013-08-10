@@ -119,7 +119,14 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function destroy() {
+
+		if (currentView) {
+			trigger('viewDestroy', currentView, currentView, currentView.element);
+			currentView.triggerEventDestroy();
+		}
+
 		$(window).unbind('resize', windowResize);
+
 		header.destroy();
 		content.remove();
 		element.removeClass('fc fc-rtl ui-widget');
@@ -208,9 +215,9 @@ function Calendar(element, options, eventSources) {
 		trigger('viewRender', currentView, currentView, currentView.element);
 		currentView.trigger('viewDisplay', _element); // deprecated
 
-		getAndRenderEvents();
-
 		ignoreWindowResize--;
+
+		getAndRenderEvents();
 	}
 	
 	
