@@ -5,7 +5,7 @@
     "jquery": "~1.9.1"
   },
   "optionalDependencies": {
-    "jquery-ui": "~1.10.2"
+    "jquery-ui": "~1.10.3"
   },
 
   "title": "FullCalendar",
