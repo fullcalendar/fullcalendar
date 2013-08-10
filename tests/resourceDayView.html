@@ -122,34 +122,34 @@
 				// 	}
 				// },
 				defaultView: 'resourceDay',
-				resources: [{"id":"resource1","name":"Resource 1"},{"id":"resource2", "name":"Resource 2"}],
+				resources: [{"id":"resource1","name":"Resource 1"},{"id":"resource2", "name":"Resource 2"},{"id":"resource3", "name":"Resource 3"}],
 				events: [
 					{
-						title: 'Lunch 12.15-14.45',
+						title: 'R1-R2: Lunch 12.15-14.45',
 						start: new Date(y, m, d, 12, 15),
 						end: new Date(y, m, d, 14, 45),
 						allDay: false,
 						resource: ['resource1','resource2']
 					},				
 					{
-						title: 'Meeting from this day to this +4',
+						title: 'R1: All day',
 						start: new Date(y, m, d, 10, 30),
 						end: new Date(y, m, d, 11, 00),
-						allDay: false,
+						allDay: true,
 						resource: 'resource1'
 					},
 					{
-						title: 'Meeting 11.00',
-						start: new Date(y, m-2, d, 11, 00),
-						allDay: true,
+						title: 'R2: Meeting 11.00',
+						start: new Date(y, m, d, 11, 00),
+						allDay: false,
 						resource: 'resource2'
 					},
 					{
-						title: 'Lunch 12-14',
+						title: 'R1/R2: Lunch 12-14',
 						start: new Date(y, m, d, 12, 0),
 						end: new Date(y, m, d, 14, 0),
 						allDay: false,
-						resource: 'resource1'
+						resource: ['resource1','resource2']
 					}		
 				]
 			});
