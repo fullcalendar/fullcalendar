@@ -111,6 +111,22 @@ Sets every <a href='Event_Object'>Event Object's</a> `editable` for this source.
 </tr>
 <tr>
 <th>
+startEditable
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `startEditable` for this source.
+</td>
+</tr>
+<tr>
+<th>
+durationEditable
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `durationEditable` for this source.
+</td>
+</tr>
+<tr>
+<th>
 allDayDefault
 </th>
 <td markdown='1'>

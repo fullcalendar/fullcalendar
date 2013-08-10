@@ -5,8 +5,8 @@ Event Dragging & Resizing
 <ul>
 <li class='article'>Requirements</li>
 <li>editable</li>
-<li>disableDragging</li>
-<li>disableResizing</li>
+<li>eventStartEditable</li>
+<li>eventDurationEditable</li>
 <li>dragRevertDuration</li>
 <li>dragOpacity</li>
 <li class='callback'><a href='eventDragStart'>eventDragStart</a> <em>(callback)</em></li>

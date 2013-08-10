@@ -1,0 +1,13 @@
+
+eventStartEditable *1.6.3*
+==========================
+
+Allow events' start times to be editable through dragging.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: `true`
+</div>
+
+This option can be overridden on a per-source basis with the
+`startEditable` [Event Source Object](../event_data/Event_Source_Object) option or on a per-event basis with the
+`startEditable` [Event Object](../event_data/Event_Object) option.

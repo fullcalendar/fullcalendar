@@ -2,6 +2,9 @@
 Renamed/Removed
 ---------------
 
+- viewDisplay
+- disableDragging
+- disableResizing
 - cacheParam
 - prevMonth
 - nextMonth

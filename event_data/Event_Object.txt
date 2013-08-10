@@ -122,6 +122,28 @@ Overrides the master [editable](../event_ui/editable) option for this single eve
 <!-- ------------------- -->
 <tr>
 <th>
+startEditable
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [eventStartEditable](../event_ui/eventStartEditable) option for this single event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+durationEditable
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [eventDurationEditable](../event_ui/eventDurationEditable) option for this single event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
 source
 </th>
 <td markdown='block'>
@@ -130,10 +152,6 @@ source
 A reference to the event source that this event came from.
 </td>
 </tr>
-<!-- ------------------- -->
-<th colspan='2' id='color-options'>
-New options have been added in version 1.5 to change an event's colors:
-</th>
 <!-- ------------------- -->
 <tr>
 <th>

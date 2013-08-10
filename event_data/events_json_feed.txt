@@ -126,8 +126,30 @@ Here is the same example, but using the single-source `events` option instead:
 			color: 'yellow',   // a non-ajax option
 			textColor: 'black' // a non-ajax option
 		}
+
+	});
+
+Dynamic `data` parameter
+------------------------
+
+The `data` parameters, which sends information to your JSON script through either GET or POST,
+can also be specified as a function, in order to send dynamic values:
+
+	$('#calendar').fullCalendar({
+		
+		events: {
+			url: '/myfeed.php',
+			data: function() { // a function that returns an object
+				return {
+					dynamic_value: Math.random()
+				};
+			}
+		}
 	
 	});
+
+The `startParam` and `endParam` values will still automatically be included.
+This feature is new in version 1.6.3.
 	
 Caching
 -------

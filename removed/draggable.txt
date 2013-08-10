@@ -4,7 +4,7 @@ draggable
 
 <div class='removed-notice' markdown='1'>
 This option was removed in version 1.3. Use [editable](../event_ui/editable) and
-[disableDragging](../event_ui/disableDragging) instead.
+[disableDragging]() instead.
 </div>
 
 Enables/disables dragging.

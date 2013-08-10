@@ -16,9 +16,11 @@ General Display
 <li>height</li>
 <li>contentHeight</li>
 <li>aspectRatio</li>
-<li class='callback'><a href='viewDisplay'>viewDisplay</a> <em>(callback)</em></li>
-<li class='callback'><a href='windowResize'>windowResize</a> <em>(callback)</em></li>
+<li>handleWindowResize</li>
+<li class='callback'><a href='viewRender'>viewRender</a> <em>(callback)</em></li>
+<li class='callback'><a href='viewDestroy'>viewDestroy</a> <em>(callback)</em></li>
 <li class='callback'><a href='dayRender'>dayRender</a> <em>(callback)</em></li>
+<li class='callback'><a href='windowResize'>windowResize</a> <em>(callback)</em></li>
 <li class='method'><a href='render'>render</a> <em>(method)</em></li>
 <li class='method'><a href='destroy'>destroy</a> <em>(method)</em></li>
 </ul>
