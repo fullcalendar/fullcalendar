@@ -22,6 +22,7 @@ function ResourceDayView(element, calendar) {
     t.title = formatDate(date, opt('titleFormat'));
     t.start = t.visStart = start;
     t.end = t.visEnd = end;
+    
     renderResource(getResources.length);
   }
 }

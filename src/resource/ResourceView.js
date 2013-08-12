@@ -123,6 +123,7 @@ function ResourceView(element, calendar, viewName) {
   disableTextSelection(element.addClass('fc-agenda'));
 
   function renderResource(c) {
+    colCnt = c;
     updateOptions();
     if (!dayTable) {
       buildSkeleton(); // builds day table, slot area, events containers
