@@ -12,10 +12,11 @@ function View(element, calendar, viewName) {
 	t.trigger = trigger;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
-	t.reportEvents = reportEvents;
+	t.setEventData = setEventData;
+	t.clearEventData = clearEventData;
 	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
-	t.reportEventClear = reportEventClear;
+	t.triggerEventDestroy = triggerEventDestroy;
 	t.eventElementHandlers = eventElementHandlers;
 	t.showEvents = showEvents;
 	t.hideEvents = hideEvents;
@@ -33,9 +34,9 @@ function View(element, calendar, viewName) {
 	
 	
 	// locals
-	var eventsByID = {};
-	var eventElements = [];
-	var eventElementsByID = {};
+	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
+	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
+	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
 	
 	
@@ -59,21 +60,34 @@ function View(element, calendar, viewName) {
 
 
 	/* Event Editable Boolean Calculations
-
 	------------------------------------------------------------------------------*/
+
 	
 	function isEventDraggable(event) {
-		return isEventEditable(event) && !opt('disableDragging');
+		var source = event.source || {};
+		return firstDefined(
+				event.startEditable,
+				source.startEditable,
+				opt('eventStartEditable'),
+				event.editable,
+				source.editable,
+				opt('editable')
+			)
+			&& !opt('disableDragging'); // deprecated
 	}
 	
 	
 	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
-		return isEventEditable(event) && !opt('disableResizing');
-	}
-	
-	
-	function isEventEditable(event) {
-		return firstDefined(event.editable, (event.source || {}).editable, opt('editable'));
+		var source = event.source || {};
+		return firstDefined(
+				event.durationEditable,
+				source.durationEditable,
+				opt('eventDurationEditable'),
+				event.editable,
+				source.editable,
+				opt('editable')
+			)
+			&& !opt('disableResizing'); // deprecated
 	}
 	
 	
@@ -82,8 +96,7 @@ function View(element, calendar, viewName) {
 	------------------------------------------------------------------------------*/
 	
 	
-	// report when view receives new events
-	function reportEvents(events) { // events are already normalized at this point
+	function setEventData(events) { // events are already normalized at this point
 		eventsByID = {};
 		var i, len=events.length, event;
 		for (i=0; i<len; i++) {
@@ -94,6 +107,13 @@ function View(element, calendar, viewName) {
 				eventsByID[event._id] = [event];
 			}
 		}
+	}
+
+
+	function clearEventData() {
+		eventsByID = {};
+		eventElementsByID = {};
+		eventElementCouples = [];
 	}
 	
 	
@@ -110,18 +130,19 @@ function View(element, calendar, viewName) {
 	
 	// report when view creates an element for an event
 	function reportEventElement(event, element) {
-		eventElements.push(element);
+		eventElementCouples.push({ event: event, element: element });
 		if (eventElementsByID[event._id]) {
 			eventElementsByID[event._id].push(element);
 		}else{
 			eventElementsByID[event._id] = [element];
 		}
 	}
-	
-	
-	function reportEventClear() {
-		eventElements = [];
-		eventElementsByID = {};
+
+
+	function triggerEventDestroy() {
+		$.each(eventElementCouples, function(i, couple) {
+			t.trigger('eventDestroy', couple.event, couple.event, couple.element);
+		});
 	}
 	
 	
@@ -158,6 +179,8 @@ function View(element, calendar, viewName) {
 	
 	
 	function eachEventElement(event, exceptElement, funcName) {
+		// NOTE: there may be multiple events per ID (repeating events)
+		// and multiple segments per event
 		var elements = eventElementsByID[event._id],
 			i, len = elements.length;
 		for (i=0; i<len; i++) {

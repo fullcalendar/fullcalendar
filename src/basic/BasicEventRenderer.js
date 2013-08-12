@@ -13,14 +13,11 @@ function BasicEventRenderer() {
 
 	
 	function renderEvents(events, modifiedEventId) {
-		t.reportEvents(events);
 		t.renderDayEvents(events, modifiedEventId);
-		t.trigger('eventAfterAllRender');
 	}
 	
 	
 	function clearEvents() {
-		t.reportEventClear();
 		t.getDaySegmentContainer().empty();
 	}
 
