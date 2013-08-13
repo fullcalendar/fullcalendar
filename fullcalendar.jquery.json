@@ -9,26 +9,26 @@
   },
 
   "title": "FullCalendar",
-  "description": "Full-sized drag & drop event calendar",
-  "keywords": [ "calendar", "event", "full-sized" ],
+  "description": "Full-sized drag & drop event calendar with resource views",
+  "keywords": [ "calendar", "event", "full-sized", "Resources" ],
 
   "homepage": "http://arshaw.com/fullcalendar/",
-  "demo": "http://arshaw.com/fullcalendar/",
+  "demo": "",
   "docs": "http://arshaw.com/fullcalendar/docs/",
-  "download": "http://arshaw.com/fullcalendar/download/",
-  "bugs": "http://code.google.com/p/fullcalendar/issues/list",
+  "download": "",
+  "bugs": "https://github.com/seankenny/fullcalendar/issues",
 
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/arshaw/fullcalendar/blob/master/license.txt"
+      "url": "https://github.com/seankenny/fullcalendar/blob/master/license.txt"
     }
   ],
 
   "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+    "name": "Adam Shaw, Sean Kenny",
+    "email": "srkenny@gmail.com",
+    "url": "http://seankenny.me/"
   },
-  "copyright": "2013 Adam Shaw"
+  "copyright": "2013 Adam Shaw, Sean Kenny - resource view"
 }

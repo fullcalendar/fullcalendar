@@ -89,7 +89,7 @@ function ResourceEventRenderer() {
 			minMinute = getMinMinute(),
 			maxMinute = getMaxMinute(),
 			d,
-			visEventEnds = $.map(events, slotEventEnd),
+			visEventEnds,
 			i, col,
 			j, level,
 			k, seg,
@@ -100,6 +100,7 @@ function ResourceEventRenderer() {
 			addMinutes(d, minMinute);
 
 			var resourceEvents = eventsForResource(resources[i], events);
+			visEventEnds = $.map(resourceEvents, slotEventEnd);
 			col = stackAgendaSegs(
 				sliceSegs(
 					resourceEvents,
