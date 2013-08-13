@@ -531,13 +531,15 @@ function AgendaView(element, calendar, viewName) {
 
 	function dayBind(cells) {
 		cells.click(slotClick)
-			.mousedown(daySelectionMousedown);
+			.mousedown(daySelectionMousedown)
+			.dblclick(slotClick);
 	}
 
 
 	function slotBind(cells) {
 		cells.click(slotClick)
-			.mousedown(slotSelectionMousedown);
+			.mousedown(slotSelectionMousedown)
+			.dblclick(slotClick);
 	}
 	
 	
