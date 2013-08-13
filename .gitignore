@@ -9,3 +9,5 @@ node_modules
 
 # for bower
 components
+
+.DS_Store

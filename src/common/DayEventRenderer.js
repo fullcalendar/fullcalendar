@@ -171,7 +171,7 @@ function DayEventRenderer() {
 	function buildSegments(events) {
 		var resources = t.getResources;
 		
-		if (resources.length === 0){
+		if (typeof resources === 'undefined'){
 			return buildSegmentsTEMP(events);  // TEMP!
 		} else {
 			var segments = [];
@@ -193,7 +193,7 @@ function DayEventRenderer() {
 	function eventsForResource(resource, events) {
     var resourceEvents = [];
     for (var i = 0; i < events.length; i++) {
-      if (events[i].resource && events[i].resource.indexOf(resource.id) >= 0) {
+      if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
         resourceEvents.push(events[i])
       }
     }
