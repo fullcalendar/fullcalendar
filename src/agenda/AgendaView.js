@@ -1,22 +1,3 @@
-
-setDefaults({
-	allDaySlot: true,
-	allDayText: 'all-day',
-	firstHour: 6,
-	slotMinutes: 30,
-	defaultEventMinutes: 120,
-	axisFormat: 'h(:mm)tt',
-	timeFormat: {
-		agenda: 'h:mm{ - h:mm}'
-	},
-	dragOpacity: {
-		agenda: .5
-	},
-	minTime: 0,
-	maxTime: 24
-});
-
-
 // TODO: make it work in quirks mode (event corners, all-day height)
 // TODO: test liquid width, especially in IE6
 
