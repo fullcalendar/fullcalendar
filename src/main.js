@@ -1,4 +1,3 @@
-
 var fc = $.fullCalendar = { version: "<%= meta.version %>" };
 var fcViews = fc.views = {};
 
@@ -40,6 +39,7 @@ $.fn.fullCalendar = function(options) {
 
 	options = $.extend(true, {},
 		defaults,
+		($.fullCalendarDefaultsLang !== undefined) ? $.fullCalendarDefaultsLang : {},
 		(options.isRTL || options.isRTL===undefined && defaults.isRTL) ? rtlDefaults : {},
 		options
 	);
