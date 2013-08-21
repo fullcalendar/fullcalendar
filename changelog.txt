@@ -1,4 +1,28 @@
 
+version 1.6.3 (8/10/13)
+	- viewRender callback (PR 15)
+	- viewDestroy callback (PR 15)
+	- eventDestroy callback (PR 111)
+	- handleWindowResize option (PR 54)
+	- eventStartEditable/startEditable options (PR 49)
+	- eventDurationEditable/durationEditable options (PR 49)
+	- specify function for $.ajax `data` parameter for JSON event sources (PR 59)
+	- fixed bug with agenda event dropping in wrong column (PR 55)
+	- easier event element z-index customization (PR 58)
+	- classNames on past/future days (PR 88)
+	- allow null/undefined event titles (PR 84)
+	- small optimize for agenda event rendering (PR 56)
+	- deprecated:
+		- viewDisplay
+		- disableDragging
+		- disableResizing
+	- bundled with latest jQuery (1.10.2) and jQuery UI (1.10.3)
+
+version 1.6.2 (7/18/13)
+	- hiddenDays option (issue 686)
+	- bugfix: when eventRender returns false, incorrect stacking of events (issue 762)
+	- bugfix: couldn't change event.backgroundImage when calling updateEvent (thx stephenharris)
+
 version 1.6.1 (4/14/13)
 	- fixed event inner content overflow bug (issue 1783)
 	- fixed table header className bug (1772)
