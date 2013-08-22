@@ -64,8 +64,10 @@ function AgendaView(element, calendar, viewName) {
 	OverlayManager.call(t);
 	SelectionManager.call(t);
 	AgendaEventRenderer.call(t);
+	AgendaAxisMarkersRenderer.call(t, element, calendar);
 	var opt = t.opt;
 	var trigger = t.trigger;
+	var renderAxisMarkers = t.renderAxisMarkers;
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
@@ -142,6 +144,7 @@ function AgendaView(element, calendar, viewName) {
 
 		if (!dayTable) { // first time rendering?
 			buildSkeleton(); // builds day table, slot area, events containers
+			renderAxisMarkers(opt('markers'));
 		}
 		else {
 			buildDayTable(); // rebuilds day table
