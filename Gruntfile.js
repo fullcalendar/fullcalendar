@@ -189,9 +189,9 @@ module.exports = function(grunt) {
 
 	// assemble the component's config from existing configs
 	grunt.registerTask('componentConfig', function() {
-		var config = grunt.file.readJSON('build/component.json');
+		var config = grunt.file.readJSON('build/bower.json');
 		grunt.file.write(
-			'build/component/component.json',
+			'build/component/bower.json',
 			JSON.stringify(
 				_.extend({}, pluginConfig, config), // combine 2 configs
 				null, // replacer
