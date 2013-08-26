@@ -1,0 +1,39 @@
+{
+  "name": "fullcalendar",
+  "version": "1.6.3",
+  "dependencies": {
+    "jquery": "~1.10.2"
+  },
+  "optionalDependencies": {
+    "jquery-ui": "~1.10.3"
+  },
+  "title": "FullCalendar",
+  "description": "Full-sized drag & drop event calendar with resource views",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized",
+    "Resources"
+  ],
+  "homepage": "http://arshaw.com/fullcalendar/",
+  "demo": "",
+  "docs": "http://arshaw.com/fullcalendar/docs/",
+  "download": "",
+  "bugs": "https://github.com/seankenny/fullcalendar/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/seankenny/fullcalendar/blob/master/license.txt"
+    }
+  ],
+  "author": {
+    "name": "Adam Shaw, Sean Kenny",
+    "email": "srkenny@gmail.com",
+    "url": "http://seankenny.me/"
+  },
+  "copyright": "2013 Adam Shaw, Sean Kenny - resource view",
+  "main": [
+    "/build/component/fullcalendar.js",
+    "/build/component/fullcalendar.css"
+  ]
+}
