@@ -484,7 +484,9 @@ function View(element, calendar, viewName) {
 	//
 	function rangeToSegments(startDate, endDate) {
 		var rowCnt = t.getRowCnt();
-		var colCnt = t.getColCnt();
+
+		// HAAAACK!  Can't really think of a way yet to get this working.
+		var colCnt = t.name === 'resourceDay' ? 1 : t.getColCnt();
 		var segments = []; // array of segments to return
 
 		// day offset for given date range

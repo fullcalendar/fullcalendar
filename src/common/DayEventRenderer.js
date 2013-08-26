@@ -169,6 +169,39 @@ function DayEventRenderer() {
 
 	// Generate an array of "segments" for all events.
 	function buildSegments(events) {
+		var resources = t.getResources;
+		
+		if (typeof resources === 'undefined'){
+			return buildSegmentsTEMP(events);  // TEMP!
+		} else {
+			var segments = [];
+			for (var i=0; i<resources.length; i++) {
+				var resourceEvents = eventsForResource(resources[i], events);
+
+				for (var j=0; j<resourceEvents.length; j++) {
+					var eventSegments = buildSegmentsForEvent(resourceEvents[j], i);
+					segments.push.apply(segments, eventSegments); // append an array to an array
+
+				}
+			}
+			return segments;
+		}
+	}
+
+	// TODO - move this into more generic area as is a duplicate
+	//Generate an array of "segments" for all events.
+	function eventsForResource(resource, events) {
+    var resourceEvents = [];
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
+        resourceEvents.push(events[i])
+      }
+    }
+    return resourceEvents;
+  }
+
+	// Generate an array of "segments" for all events.
+	function buildSegmentsTEMP(events) {
 		var segments = [];
 		for (var i=0; i<events.length; i++) {
 			var eventSegments = buildSegmentsForEvent(events[i]);
@@ -181,11 +214,17 @@ function DayEventRenderer() {
 	// Generate an array of segments for a single event.
 	// A "segment" is the same data structure that View.rangeToSegments produces,
 	// with the addition of the `event` property being set to reference the original event.
-	function buildSegmentsForEvent(event) {
+	function buildSegmentsForEvent(event, col) {
 		var startDate = event.start;
 		var endDate = exclEndDay(event);
 		var segments = rangeToSegments(startDate, endDate);
 		for (var i=0; i<segments.length; i++) {
+			//TEMP
+			if (typeof col !== 'undefined'){
+				segments[i].leftCol = col;
+				segments[i].rightCol = col;
+			}
+			// TEMP
 			segments[i].event = event;
 		}
 		return segments;

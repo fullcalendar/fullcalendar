@@ -1,4 +1,3 @@
-build/out
 build/archive
 build/component
 build/cdn
@@ -9,3 +8,5 @@ node_modules
 
 # for bower
 components
+
+.DS_Store

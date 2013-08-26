@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    a {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="tests"></div>
+  <script>
+    var tests = [
+        'data_as_a_function.html',
+        'day_render.html',
+        'dbclick.html',
+        'droppable.html',
+        'event_data_transform.html',
+        'fullheight.html',
+        'gcal.html',
+        'hiddenDays.html',
+        'iframe.html',
+        'issue_206_parseDate_dst.html',
+        'issue_220_buttons_ie6.html',
+        'issue_221_quick_remove_source.html',
+        'issue_230_height_json_events.html',
+        'issue_244_aspectRatio_0.html',
+        'issue_251_empty_end_date.html',
+        'issue_333_blinking.html',
+        'issue_417_refetchEvents.html',
+        'issue_429_gotoDate.html',
+        'issue_477_event_width.html',
+        'issue_517_js_error_ie.html',
+        'issue_554.html',
+        'issue_586_refetchEvents.html',
+        'issue_616.html',
+        'issue_679.html',
+        'issue_688_parseInt.html',
+        'issue_740_event_resizing.html',
+        'issue_750.html',
+        'issue_757_removeEvents.html',
+        'liquidwidth.html',
+        'locale.html',
+        'long_event_titles.html',
+        'many_agenda_events.html',
+        'many_events.html',
+        'method_destroy.html',
+        'methods.html',
+        'no_event_titles.html',
+        'options.html',
+        'past_future_classNames.html',
+        'plain.html',
+        'resourceDayView.html',
+        'selectable.html',
+        'short_agenda.html',
+        'skip-redraw-test.html',
+        'snap.html',
+        'sources.html',
+        'sources_new.html',
+        'stacking.html',
+        'tabs.html',
+        'theming.html',
+        'triggers.html',
+        'triggers_view.html',
+        'week_numbers.html'
+        ];
+
+    var html = '';
+    var div = document.getElementById('tests');
+    for(var i = 0; i < tests.length; i++){
+      var a = document.createElement('a');
+      a.href = tests[i];
+      a.innerHTML = tests[i];
+      div.appendChild(a);
+    }
+
+    
+    
+  </script>
+</body>
+</html>

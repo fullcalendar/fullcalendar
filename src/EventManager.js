@@ -376,6 +376,14 @@ function EventManager(options, _sources) {
 		}else{
 			event.className = [];
 		}
+		
+		if (event.resources) {
+			if (typeof event.resources == 'string') {
+				event.resources = event.resources.split(/\s+/);
+			}
+		}else{
+			event.resources = [];
+		}
 		// TODO: if there is no start date, return false to indicate an invalid event
 	}
 	
