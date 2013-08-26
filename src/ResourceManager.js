@@ -16,13 +16,13 @@ function ResourceManager(options) {
       resource = {
         resources: sources
       };
-      resources.push(resource);
+      resourceSources.push(resource);
     } else if (typeof sources == 'string') {
       // is it a URL string?
       resource = {
         url: sources
       };
-      resources.push(resource);
+      resourceSources.push(resource);
     } else if (typeof sources == 'object') {
       // is it json object?
       for (var i = 0; i < sources.length; i++) {
