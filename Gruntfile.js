@@ -207,37 +207,37 @@ module.exports = function(grunt) {
 
 
 
-	/* CDN (http://cdnjs.com/)
+	/* CDNJS (http://cdnjs.com/)
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('cdn', 'Build files for CDNJS\'s hosted version of FullCalendar', [
+	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
 		'clean:modules',
-		'clean:cdn',
+		'clean:cdnjs',
 		'modules',
-		'copy:cdnModules',
-		'cdnConfig'
+		'copy:cdnjsModules',
+		'cdnjsConfig'
 	]);
 
-	config.copy.cdnModules = {
+	config.copy.cdnjsModules = {
 		expand: true,
 		cwd: 'build/out/',
 		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/cdn/<%= meta.version %>/'
+		dest: 'build/cdnjs/<%= meta.version %>/'
 	};
 
-	grunt.registerTask('cdnConfig', function() {
-		var config = grunt.file.readJSON('build/cdn.json');
+	grunt.registerTask('cdnjsConfig', function() {
+		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
-			'build/cdn/package.json',
+			'build/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
+				_.extend({}, pluginConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
 				2 // indent
 			)
 		);
 	});
 
-	config.clean.cdn = 'build/cdn/<%= meta.version %>/*';
+	config.clean.cdnjs = 'build/cdnjs/<%= meta.version %>/*';
 	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
 
 

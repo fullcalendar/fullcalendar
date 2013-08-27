@@ -1,7 +1,7 @@
 build/out
 build/archive
 build/bower
-build/cdn
+build/cdnjs
 dist
 
 # for npm
