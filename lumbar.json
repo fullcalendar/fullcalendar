@@ -18,12 +18,16 @@
   "modules": {
     "jquery": {
       "scripts": [
-        "lib/jquery-1.10.2.min.js"
+        "bower_components/jquery/jquery.min.js"
       ]
     },
     "jquery-ui": {
       "scripts": [
-        "lib/jquery-ui-1.10.3.custom.min.js"
+        "bower_components/jquery-ui/ui/minified/jquery.ui.core.min.js",
+        "bower_components/jquery-ui/ui/minified/jquery.ui.widget.min.js",
+        "bower_components/jquery-ui/ui/minified/jquery.ui.mouse.min.js",
+        "bower_components/jquery-ui/ui/minified/jquery.ui.draggable.min.js",
+        "bower_components/jquery-ui/ui/minified/jquery.ui.resizable.min.js"
       ]
     },
     "fullcalendar": {

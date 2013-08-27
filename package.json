@@ -8,5 +8,8 @@
     "grunt-contrib-compress": "~0.4.0",
     "grunt-contrib-clean": "~0.4.0",
     "lumbar": "~2.0.0-beta19"
+  },
+  "scripts": {
+    "install": "bower install"
   }
 }

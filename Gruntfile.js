@@ -13,7 +13,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('lumbar');
 
 	// Parse config files
-	var lumbarConfig = grunt.file.readJSON('lumbar.json');
 	var packageConfig = grunt.file.readJSON('package.json');
 	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	
@@ -90,6 +89,7 @@ module.exports = function(grunt) {
 		'copy:archiveModules',
 		'copy:archiveDependencies',
 		'copy:archiveDemos',
+		'copy:archiveDemoTheme',
 		'copy:archiveMisc',
 		'compress:archive'
 	]);
@@ -102,22 +102,17 @@ module.exports = function(grunt) {
 		dest: 'build/archive/fullcalendar/'
 	};
 
-	// copy jQuery and jQuery UI into the ./jquery/ directory
+	// copy the already-minified jQuery and jQuery UI files into the ./jquery/ directory
 	config.copy.archiveDependencies = {
-		expand: true,
-		flatten: true,
-		src: [
-			// we want to retain the original filenames
-			lumbarConfig.modules['jquery'].scripts[0],
-			lumbarConfig.modules['jquery-ui'].scripts[0]
-		],
-		dest: 'build/archive/jquery/'
+		files: [
+			{ src: 'build/out/jquery.js', dest: 'build/archive/jquery/jquery.min.js' },
+			{ src: 'build/out/jquery-ui.js', dest: 'build/archive/jquery/jquery-ui.custom.min.js' }
+		]
 	};
 
 	// copy demo files into ./demos/ directory
 	config.copy.archiveDemos = {
 		options: {
-			processContentExclude: 'demos/*/**', // don't process anything more than 1 level deep (like assets)
 			processContent: function(content) {
 				content = content.replace(/((?:src|href)=['"])([^'"]*)(['"])/g, function(m0, m1, m2, m3) {
 					return m1 + transformDemoPath(m2) + m3;
@@ -125,15 +120,23 @@ module.exports = function(grunt) {
 				return content;
 			}
 		},
-		src: 'demos/**',
+		src: 'demos/*',
 		dest: 'build/archive/'
+	};
+
+	// copy the "cupertino" jquery-ui theme into the demo directory (for demos/theme.html)
+	config.copy.archiveDemoTheme = {
+		expand: true,
+		cwd: 'bower_components/jquery-ui/themes/cupertino/',
+		src: [ 'jquery-ui.min.css', 'images/*' ],
+		dest: 'build/archive/demos/cupertino/'
 	};
 
 	// in demo HTML, rewrites paths to work in the archive
 	function transformDemoPath(path) {
-		path = path.replace('/build/out/jquery.js', '/' + lumbarConfig.modules['jquery'].scripts[0]);
-		path = path.replace('/build/out/jquery-ui.js', '/' + lumbarConfig.modules['jquery-ui'].scripts[0]);
-		path = path.replace('/lib/', '/jquery/');
+		path = path.replace('../bower_components/jquery-ui/themes/', ''); // for demos/theme.html
+		path = path.replace('/build/out/jquery.js', '/jquery/jquery.min.js');
+		path = path.replace('/build/out/jquery-ui.js', '/jquery/jquery-ui.custom.min.js');
 		path = path.replace('/build/out/', '/fullcalendar/');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 		return path;

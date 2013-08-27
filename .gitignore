@@ -8,4 +8,4 @@ dist
 node_modules
 
 # for bower
-components
+bower_components
