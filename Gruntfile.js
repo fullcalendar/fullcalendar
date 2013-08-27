@@ -164,46 +164,46 @@ module.exports = function(grunt) {
 
 
 
-	/* Bower Component (http://twitter.github.com/bower/)
+	/* Bower Component (http://bower.io/)
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
+	grunt.registerTask('bower', 'Build the FullCalendar Bower component', [
 		'clean:modules',
-		'clean:component',
+		'clean:bower',
 		'modules',
-		'copy:componentModules',
-		'copy:componentReadme',
-		'componentConfig'
+		'copy:bowerModules',
+		'copy:bowerReadme',
+		'bowerConfig'
 	]);
 
-	// copy FullCalendar modules into component root
-	config.copy.componentModules = {
+	// copy FullCalendar modules into bower component's root
+	config.copy.bowerModules = {
 		expand: true,
 		cwd: 'build/out/',
 		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/component/'
+		dest: 'build/bower/'
 	};
 
-	// copy the component-specific README
-	config.copy.componentReadme = {
-		src: 'build/component-readme.md',
-		dest: 'build/component/readme.md'
+	// copy the bower-specific README
+	config.copy.bowerReadme = {
+		src: 'build/bower-readme.md',
+		dest: 'build/bower/readme.md'
 	};
 
-	// assemble the component's config from existing configs
-	grunt.registerTask('componentConfig', function() {
-		var config = grunt.file.readJSON('build/component.json');
+	// assemble the bower config from existing configs
+	grunt.registerTask('bowerConfig', function() {
+		var bowerConfig = grunt.file.readJSON('build/bower.json');
 		grunt.file.write(
-			'build/component/component.json',
+			'build/bower/bower.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
+				_.extend({}, pluginConfig, bowerConfig), // combine 2 configs
 				null, // replacer
 				2 // indent
 			)
 		);
 	});
 
-	config.clean.component = 'build/component/*';
+	config.clean.bower = 'build/bower/*';
 
 
 

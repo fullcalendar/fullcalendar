@@ -1,6 +1,6 @@
 build/out
 build/archive
-build/component
+build/bower
 build/cdn
 dist
 
