@@ -1,6 +1,6 @@
 {
   "main": [
-    "./fullcalendar.js",
-    "./fullcalendar.css"
+    "fullcalendar.js",
+    "fullcalendar.css"
   ]
 }
