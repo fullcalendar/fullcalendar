@@ -10,9 +10,9 @@ Getting Set Up
 
 You will need [Git][git], [Node][node], and NPM installed. For clarification, please view the [jQuery readme][jq-readme], which requires a similar setup.
 
-Also, you will need to have the [Grunt][grunt] build system installed globally (`-g`) on your system:
+Also, you will need the [grunt-cli][grunt-cli] and [bower][bower] packages installed globally (`-g`) on your system:
 
-	npm install -g grunt-cli
+	npm install -g grunt-cli bower
 
 Then, clone FullCalendar's git repo:
 
@@ -54,5 +54,6 @@ When fixing a bug or writing a feature, please make a corresponding HTML file in
 [fc-homepage]: http://arshaw.com/fullcalendar/
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
-[grunt]: http://gruntjs.com/
+[grunt-cli]: http://gruntjs.com/getting-started#installing-the-cli
+[bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
