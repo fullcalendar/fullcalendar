@@ -98,7 +98,17 @@
 	}
 
 	function _testOverlap(el, allowOverlap, isRTL) {
+
 		var events = el.find('.fc-event');
+
+		var cell = el.find('.fc-slot0 td');
+		var cellLeft = Math.round(cell.offset().left);
+		var cellWidth = Math.round(cell.outerWidth());
+
+		if (!events.length) { // json events probably couldn't load
+			console.log('need to run this from a real web server');
+			return false;
+		}
 
 		for (var i=0; i<events.length; i++) {
 
@@ -108,6 +118,16 @@
 			var left = Math.ceil(offset.left);
 			var width = Math.floor(event.outerWidth());
 			var height = Math.floor(event.outerHeight());
+
+			if (left < cellLeft || left + width > cellLeft + cellWidth) {
+				console.log('event is out of bounds', event[0]);
+				return false;
+			}
+
+			if (width < 10 || height < 10) {
+				console.log('event is suprisingly small', event[0]);
+				return false;
+			}
 
 			if (allowOverlap) {
 				width /= 2; // make sure nothing overlaps the first half of the event
@@ -159,6 +179,8 @@
 
 		return true;
 	}
+
+	// TODO: add tests for viewing events in week-mode also
 
 </script>
 <style>
