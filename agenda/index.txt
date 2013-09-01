@@ -13,3 +13,4 @@ The following options only apply to the `agendaWeek` and `agendaDay` views:
 - firstHour
 - minTime
 - maxTime
+- slotEventOverlap
