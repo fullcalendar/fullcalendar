@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 		},
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/out/'
 	};
 
@@ -87,7 +87,8 @@ module.exports = function(grunt) {
 		'clean:archive',
 		'modules',
 		'copy:archiveModules',
-		'copy:archiveDependencies',
+		'copy:archiveJQuery',
+		'concat:archiveJQueryUI',
 		'copy:archiveDemos',
 		'copy:archiveDemoTheme',
 		'copy:archiveMisc',
@@ -98,16 +99,24 @@ module.exports = function(grunt) {
 	config.copy.archiveModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/archive/fullcalendar/'
 	};
 
-	// copy the already-minified jQuery and jQuery UI files into the ./jquery/ directory
-	config.copy.archiveDependencies = {
-		files: [
-			{ src: 'build/out/jquery.js', dest: 'build/archive/jquery/jquery.min.js' },
-			{ src: 'build/out/jquery-ui.js', dest: 'build/archive/jquery/jquery-ui.custom.min.js' }
-		]
+	config.copy.archiveJQuery = {
+		src: 'lib/jquery/jquery.min.js',
+		dest: 'build/archive/lib/jquery.min.js'
+	};
+
+	config.concat.archiveJQueryUI = {
+		src: [
+			'lib/jquery-ui/ui/minified/jquery.ui.core.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.widget.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.mouse.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
+		],
+		dest: 'build/archive/lib/jquery-ui.custom.min.js'
 	};
 
 	// copy demo files into ./demos/ directory
@@ -127,17 +136,17 @@ module.exports = function(grunt) {
 	// copy the "cupertino" jquery-ui theme into the demo directory (for demos/theme.html)
 	config.copy.archiveDemoTheme = {
 		expand: true,
-		cwd: 'bower_components/jquery-ui/themes/cupertino/',
+		cwd: 'lib/jquery-ui/themes/cupertino/',
 		src: [ 'jquery-ui.min.css', 'images/*' ],
 		dest: 'build/archive/demos/cupertino/'
 	};
 
 	// in demo HTML, rewrites paths to work in the archive
 	function transformDemoPath(path) {
-		path = path.replace('../bower_components/jquery-ui/themes/', ''); // for demos/theme.html
-		path = path.replace('/build/out/jquery.js', '/jquery/jquery.min.js');
-		path = path.replace('/build/out/jquery-ui.js', '/jquery/jquery-ui.custom.min.js');
-		path = path.replace('/build/out/', '/fullcalendar/');
+		path = path.replace('../lib/jquery/jquery.js', '../lib/jquery.min.js');
+		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
+		path = path.replace('../lib/jquery-ui/themes/', '');
+		path = path.replace('../build/out/', '../fullcalendar/');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 		return path;
 	}
@@ -180,7 +189,7 @@ module.exports = function(grunt) {
 	config.copy.bowerModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/bower/'
 	};
 
@@ -221,7 +230,7 @@ module.exports = function(grunt) {
 	config.copy.cdnjsModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/cdnjs/<%= meta.version %>/'
 	};
 

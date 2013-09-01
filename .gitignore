@@ -4,8 +4,8 @@ build/bower
 build/cdnjs
 dist
 
-# for npm
+# npm modules
 node_modules
 
-# for bower
-bower_components
+# bower components
+lib/*/*

@@ -4,12 +4,5 @@
   "devDependencies": {
     "jquery": "~1.10.2",
     "jquery-ui": "~1.10.3"
-  },
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+  }
 }
