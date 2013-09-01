@@ -1,5 +1,4 @@
 
-
 fc.addDays = addDays;
 fc.cloneDate = cloneDate;
 fc.parseDate = parseDate;
@@ -130,15 +129,22 @@ function setYMD(date, y, m, d) {
 
 
 function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
+	// Make sure that ignoreTimezone really ignores cilent timezone and uses UTC
+	var tzOffset = 0;
+	if(ignoreTimezone) {
+		var tzDate = new Date();
+		tzOffset = tzDate.getTimezoneOffset() * 60 * 1000;
+	}
 	if (typeof s == 'object') { // already a Date object
+		s.setMilliseconds(s.getMilliseconds() + tzOffset);
 		return s;
 	}
 	if (typeof s == 'number') { // a UNIX timestamp
-		return new Date(s * 1000);
+		return new Date(s * 1000 + tzOffset);
 	}
 	if (typeof s == 'string') {
 		if (s.match(/^\d+(\.\d+)?$/)) { // a UNIX timestamp
-			return new Date(parseFloat(s) * 1000);
+			return new Date(parseFloat(s) * 1000 + tzOffset);
 		}
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
