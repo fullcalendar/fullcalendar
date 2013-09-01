@@ -11,7 +11,7 @@ describe('day names', function() {
     '.fc-wed',
     '.fc-thu',
     '.fc-fri',
-    '.fc-sat',
+    '.fc-sat'
   ];
   var referenceDate = '2014-05-25 06:00'; // A sunday
   var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];

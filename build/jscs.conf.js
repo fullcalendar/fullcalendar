@@ -45,6 +45,9 @@ module.exports = {
 		src: 'tests/automated/*.js'
 	},
 
-	misc: '*.js' // config files in root
+	misc: [
+		'*.js', // ex: Gruntfile.js
+		'build/*.js' // ex: this file
+	]
 
 };

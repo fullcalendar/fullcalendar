@@ -8,6 +8,7 @@ module.exports = {
 			moment: false,
 			jQuery: false
 		},
+		es3: true,
 		bitwise: true,
 		camelcase: true,
 		curly: true,

@@ -45,7 +45,7 @@ describe('columnFormat', function() {
                     agendaDay: 'dddd M/D',
                     agendaWeek: 'dddd D , M',
                     basicDay: 'dddd D | M',
-                    basicWeek: 'dddd D - M',
+                    basicWeek: 'dddd D - M'
                 }
             });
         });

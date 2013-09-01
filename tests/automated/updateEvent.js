@@ -360,7 +360,7 @@ describe('updateEvent', function() {
 			beforeEach(function() {
 				options.events = [
 					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false },
-					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false },
+					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false }
 				];
 				init();
 				event.end.add('hours', 2);

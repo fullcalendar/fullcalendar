@@ -3,7 +3,7 @@ describe('short day names', function() {
   var testableClasses = [
     'month',
     'agendaWeek',
-    'basicWeek',
+    'basicWeek'
   ];
   var dayClasses = [
     '.fc-sun',

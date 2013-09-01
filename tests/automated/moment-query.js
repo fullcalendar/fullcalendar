@@ -4,7 +4,7 @@
 	var momentTypeSuffixes = {
 		'ambiguously-timed': '',
 		'ambiguously-zoned': 'T00:30:00',
-		timed: 'T00:30:00-0500',
+		timed: 'T00:30:00-0500'
 	};
 
 	describe('isWithin', function() {

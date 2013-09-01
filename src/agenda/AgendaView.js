@@ -572,7 +572,7 @@ function AgendaView(element, calendar, viewName) {
 			var date = cellToDate(0, col);
 			var match = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
 			if (match) {
-				var slotIndex = parseInt(match[1]);
+				var slotIndex = parseInt(match[1], 10);
 				date.add(minTime + slotIndex * slotDuration);
 				date = calendar.rezoneDate(date);
 				trigger(
