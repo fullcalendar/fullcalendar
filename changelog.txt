@@ -1,4 +1,15 @@
 
+version 1.6.4 (9/1/13)
+	- better algorithm for positioning timed agenda events (issue 1115)
+	- `slotEventOverlap` option to tweak timed agenda event overlapping (issue 218)
+	- selection bug when slot height is customized (issue 1035)
+	- supply view argument in `loading` callback (issue 1018)
+	- fixed week number not displaying in agenda views (issue 1951)
+	- fixed fullCalendar not initializing with no options (issue 1356)
+	- NPM's package.json, no more warnings or errors (issue 1762)
+	- building the bower component should output bower.json instead of component.json (PR 125)
+	- use bower internally for fetching new versions of jQuery and jQuery UI
+
 version 1.6.3 (8/10/13)
 	- viewRender callback (PR 15)
 	- viewDestroy callback (PR 15)
