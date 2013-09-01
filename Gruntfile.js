@@ -67,9 +67,15 @@ module.exports = function(grunt) {
 	// assemble modules
 	config.lumbar = {
 		build: {
-			build: 'build/lumbar.json',
+			build: 'lumbar.json',
 			output: 'dist', // a directory. lumbar doesn't like trailing slash
 			background: false // lumbar complains otherwise
+		},
+		watch: {
+			watch: 'lumbar.json',
+			output: 'dist', // a directory. lumbar doesn't like trailing slash
+			background: false, // lumbar complains otherwise
+			sourceMap: true
 		}
 	};
 
