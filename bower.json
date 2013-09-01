@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "dependencies": {
     "jquery": "~1.10.2"
   },
@@ -32,7 +32,7 @@
   },
   "copyright": "2013 Adam Shaw",
   "main": [
-    "./fullcalendar.js",
-    "./fullcalendar.css"
+    "fullcalendar.js",
+    "fullcalendar.css"
   ]
 }

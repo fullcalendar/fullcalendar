@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.6.3
+ * FullCalendar v1.6.4
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -115,7 +115,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "1.6.3" };
+var fc = $.fullCalendar = { version: "1.6.4" };
 var fcViews = fc.views = {};
 
 
@@ -143,7 +143,8 @@ $.fn.fullCalendar = function(options) {
 		}
 		return this;
 	}
-	
+
+	options = options || {};
 	
 	// would like to have this logic in EventManager, but needs to happen before options are recursively extended
 	var eventSources = options.eventSources || [];
@@ -1215,14 +1216,14 @@ function EventManager(options, _sources) {
 	
 	function pushLoading() {
 		if (!loadingLevel++) {
-			trigger('loading', null, true);
+			trigger('loading', null, true, getView());
 		}
 	}
 	
 	
 	function popLoading() {
 		if (!--loadingLevel) {
-			trigger('loading', null, false);
+			trigger('loading', null, false, getView());
 		}
 	}
 	
@@ -2764,7 +2765,8 @@ setDefaults({
 		agenda: .5
 	},
 	minTime: 0,
-	maxTime: 24
+	maxTime: 24,
+	slotEventOverlap: true
 });
 
 
@@ -2848,7 +2850,6 @@ function AgendaView(element, calendar, viewName) {
 	var slotContainer;
 	var slotSegmentContainer;
 	var slotTable;
-	var slotTableFirstInner;
 	var selectionHelper;
 	
 	var viewWidth;
@@ -3013,7 +3014,6 @@ function AgendaView(element, calendar, viewName) {
 			"</tbody>" +
 			"</table>";
 		slotTable = $(s).appendTo(slotContainer);
-		slotTableFirstInner = slotTable.find('div:first');
 		
 		slotBind(slotTable.find('td'));
 	}
@@ -3072,6 +3072,7 @@ function AgendaView(element, calendar, viewName) {
 			"<tr>";
 
 		if (showWeekNumbers) {
+			date = cellToDate(0, 0);
 			weekText = formatDate(date, weekNumberFormat);
 			if (rtl) {
 				weekText += weekNumberTitle;
@@ -3196,7 +3197,9 @@ function AgendaView(element, calendar, viewName) {
 		
 		slotScroller.height(bodyHeight - allDayHeight - 1);
 		
-		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
+		// the stylesheet guarantees that the first row has no border.
+		// this allows .height() to work well cross-browser.
+		slotHeight = slotTable.find('tr:first').height() + 1; // +1 for bottom border
 
 		snapRatio = opt('slotMinutes') / snapMinutes;
 		snapHeight = slotHeight / snapRatio;
@@ -3673,7 +3676,6 @@ function AgendaEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var cellToDate = t.cellToDate;
-	var segmentCompare = t.segmentCompare;
 	var getColCnt = t.getColCnt;
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
@@ -3734,35 +3736,32 @@ function AgendaEventRenderer() {
 			maxMinute = getMaxMinute(),
 			d,
 			visEventEnds = $.map(events, slotEventEnd),
-			i, col,
-			j, level,
-			k, seg,
+			i,
+			j, seg,
+			colSegs,
 			segs = [];
+
 		for (i=0; i<colCnt; i++) {
 
 			d = cellToDate(0, i);
 			addMinutes(d, minMinute);
 
-			col = stackAgendaSegs(
-				sliceSegs(
-					events,
-					visEventEnds,
-					d,
-					addMinutes(cloneDate(d), maxMinute-minMinute)
-				)
+			colSegs = sliceSegs(
+				events,
+				visEventEnds,
+				d,
+				addMinutes(cloneDate(d), maxMinute-minMinute)
 			);
-			countForwardSegs(col);
 
-			for (j=0; j<col.length; j++) {
-				level = col[j];
-				for (k=0; k<level.length; k++) {
-					seg = level[k];
-					seg.col = i;
-					seg.level = j;
-					segs.push(seg);
-				}
+			colSegs = placeSlotSegs(colSegs); // returns a new order
+
+			for (j=0; j<colSegs.length; j++) {
+				seg = colSegs[j];
+				seg.col = i;
+				segs.push(seg);
 			}
 		}
+
 		return segs;
 	}
 
@@ -3797,12 +3796,11 @@ function AgendaEventRenderer() {
 					start: segStart,
 					end: segEnd,
 					isStart: isStart,
-					isEnd: isEnd,
-					msLength: segEnd - segStart
+					isEnd: isEnd
 				});
 			}
 		}
-		return segs.sort(segmentCompare);
+		return segs.sort(compareSlotSegs);
 	}
 
 
@@ -3823,27 +3821,22 @@ function AgendaEventRenderer() {
 	
 		var i, segCnt=segs.length, seg,
 			event,
-			classes,
-			top, bottom,
-			colI, levelI, forward,
-			leftmost,
-			availWidth,
-			outerWidth,
+			top,
+			bottom,
+			columnLeft,
+			columnRight,
+			columnWidth,
+			width,
 			left,
-			html='',
+			right,
+			html = '',
 			eventElements,
 			eventElement,
 			triggerRes,
 			titleElement,
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
-			rtl, dis;
-			
-		if (rtl = opt('isRTL')) {
-			dis = -1;
-		}else{
-			dis = 1;
-		}
+			isRTL = opt('isRTL');
 			
 		// calculate position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
@@ -3851,33 +3844,48 @@ function AgendaEventRenderer() {
 			event = seg.event;
 			top = timePosition(seg.start, seg.start);
 			bottom = timePosition(seg.start, seg.end);
-			colI = seg.col;
-			levelI = seg.level;
-			forward = seg.forward || 0;
-			leftmost = colContentLeft(colI);
-			availWidth = colContentRight(colI) - leftmost;
-			availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
-			if (levelI) {
-				// indented and thin
-				outerWidth = availWidth / (levelI + forward + 1);
-			}else{
-				if (forward) {
-					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
-				}else{
-					// can be entire width, aligned left
-					outerWidth = availWidth;
-				}
+			columnLeft = colContentLeft(seg.col);
+			columnRight = colContentRight(seg.col);
+			columnWidth = columnRight - columnLeft;
+
+			// shave off space on right near scrollbars (2.5%)
+			// TODO: move this to CSS somehow
+			columnRight -= columnWidth * .025;
+			columnWidth = columnRight - columnLeft;
+
+			width = columnWidth * (seg.forwardCoord - seg.backwardCoord);
+
+			if (opt('slotEventOverlap')) {
+				// double the width while making sure resize handle is visible
+				// (assumed to be 20px wide)
+				width = Math.max(
+					(width - (20/2)) * 2,
+					width // narrow columns will want to make the segment smaller than
+						// the natural width. don't allow it
+				);
 			}
-			left = leftmost +                                  // leftmost possible
-				(availWidth / (levelI + forward + 1) * levelI) // indentation
-				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+
+			if (isRTL) {
+				right = columnRight - seg.backwardCoord * columnWidth;
+				left = right - width;
+			}
+			else {
+				left = columnLeft + seg.backwardCoord * columnWidth;
+				right = left + width;
+			}
+
+			// make sure horizontal coordinates are in bounds
+			left = Math.max(left, columnLeft);
+			right = Math.min(right, columnRight);
+			width = right - left;
+
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth;
+			seg.outerWidth = width;
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
+
 		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
 		
@@ -4323,61 +4331,206 @@ function AgendaEventRenderer() {
 
 /* Agenda Event Segment Utilities
 -----------------------------------------------------------------------------*/
-// TODO: maybe somehow consolidate this with DayEventRenderer's segment system
 
 
-function stackAgendaSegs(segs) {
-	var levels = [],
-		i, len = segs.length, seg,
-		j, collide, k;
-	for (i=0; i<len; i++) {
+// Sets the seg.backwardCoord and seg.forwardCoord on each segment and returns a new
+// list in the order they should be placed into the DOM (an implicit z-index).
+function placeSlotSegs(segs) {
+	var levels = buildSlotSegLevels(segs);
+	var level0 = levels[0];
+	var i;
+
+	computeForwardSlotSegs(levels);
+
+	if (level0) {
+
+		for (i=0; i<level0.length; i++) {
+			computeSlotSegPressures(level0[i]);
+		}
+
+		for (i=0; i<level0.length; i++) {
+			computeSlotSegCoords(level0[i], 0, 0);
+		}
+	}
+
+	return flattenSlotSegLevels(levels);
+}
+
+
+// Builds an array of segments "levels". The first level will be the leftmost tier of segments
+// if the calendar is left-to-right, or the rightmost if the calendar is right-to-left.
+function buildSlotSegLevels(segs) {
+	var levels = [];
+	var i, seg;
+	var j;
+
+	for (i=0; i<segs.length; i++) {
 		seg = segs[i];
-		j = 0; // the level index where seg should belong
-		while (true) {
-			collide = false;
-			if (levels[j]) {
-				for (k=0; k<levels[j].length; k++) {
-					if (agendaSegsCollide(levels[j][k], seg)) {
-						collide = true;
-						break;
-					}
-				}
-			}
-			if (collide) {
-				j++;
-			}else{
+
+		// go through all the levels and stop on the first level where there are no collisions
+		for (j=0; j<levels.length; j++) {
+			if (!computeSlotSegCollisions(seg, levels[j]).length) {
 				break;
 			}
 		}
-		if (levels[j]) {
-			levels[j].push(seg);
-		}else{
-			levels[j] = [seg];
-		}
+
+		(levels[j] || (levels[j] = [])).push(seg);
 	}
+
 	return levels;
 }
 
 
-function countForwardSegs(levels) {
-	var i, j, k, level, segForward, segBack;
-	for (i=levels.length-1; i>0; i--) {
+// For every segment, figure out the other segments that are in subsequent
+// levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
+function computeForwardSlotSegs(levels) {
+	var i, level;
+	var j, seg;
+	var k;
+
+	for (i=0; i<levels.length; i++) {
 		level = levels[i];
+
 		for (j=0; j<level.length; j++) {
-			segForward = level[j];
-			for (k=0; k<levels[i-1].length; k++) {
-				segBack = levels[i-1][k];
-				if (agendaSegsCollide(segForward, segBack)) {
-					segBack.forward = Math.max(segBack.forward||0, (segForward.forward||0)+1);
-				}
+			seg = level[j];
+
+			seg.forwardSegs = [];
+			for (k=i+1; k<levels.length; k++) {
+				computeSlotSegCollisions(seg, levels[k], seg.forwardSegs);
 			}
 		}
 	}
 }
 
 
-function agendaSegsCollide(seg1, seg2) {
+// Figure out which path forward (via seg.forwardSegs) results in the longest path until
+// the furthest edge is reached. The number of segments in this path will be seg.forwardPressure
+function computeSlotSegPressures(seg) {
+	var forwardSegs = seg.forwardSegs;
+	var forwardPressure = 0;
+	var i, forwardSeg;
+
+	if (seg.forwardPressure === undefined) { // not already computed
+
+		for (i=0; i<forwardSegs.length; i++) {
+			forwardSeg = forwardSegs[i];
+
+			// figure out the child's maximum forward path
+			computeSlotSegPressures(forwardSeg);
+
+			// either use the existing maximum, or use the child's forward pressure
+			// plus one (for the forwardSeg itself)
+			forwardPressure = Math.max(
+				forwardPressure,
+				1 + forwardSeg.forwardPressure
+			);
+		}
+
+		seg.forwardPressure = forwardPressure;
+	}
+}
+
+
+// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
+// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
+// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
+//
+// The segment might be part of a "series", which means consecutive segments with the same pressure
+// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
+// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
+// coordinate of the first segment in the series.
+function computeSlotSegCoords(seg, seriesBackwardPressure, seriesBackwardCoord) {
+	var forwardSegs = seg.forwardSegs;
+	var i;
+
+	if (seg.forwardCoord === undefined) { // not already computed
+
+		if (!forwardSegs.length) {
+
+			// if there are no forward segments, this segment should butt up against the edge
+			seg.forwardCoord = 1;
+		}
+		else {
+
+			// sort highest pressure first
+			forwardSegs.sort(compareForwardSlotSegs);
+
+			// this segment's forwardCoord will be calculated from the backwardCoord of the
+			// highest-pressure forward segment.
+			computeSlotSegCoords(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord);
+			seg.forwardCoord = forwardSegs[0].backwardCoord;
+		}
+
+		// calculate the backwardCoord from the forwardCoord. consider the series
+		seg.backwardCoord = seg.forwardCoord -
+			(seg.forwardCoord - seriesBackwardCoord) / // available width for series
+			(seriesBackwardPressure + 1); // # of segments in the series
+
+		// use this segment's coordinates to computed the coordinates of the less-pressurized
+		// forward segments
+		for (i=0; i<forwardSegs.length; i++) {
+			computeSlotSegCoords(forwardSegs[i], 0, seg.forwardCoord);
+		}
+	}
+}
+
+
+// Outputs a flat array of segments, from lowest to highest level
+function flattenSlotSegLevels(levels) {
+	var segs = [];
+	var i, level;
+	var j;
+
+	for (i=0; i<levels.length; i++) {
+		level = levels[i];
+
+		for (j=0; j<level.length; j++) {
+			segs.push(level[j]);
+		}
+	}
+
+	return segs;
+}
+
+
+// Find all the segments in `otherSegs` that vertically collide with `seg`.
+// Append into an optionally-supplied `results` array and return.
+function computeSlotSegCollisions(seg, otherSegs, results) {
+	results = results || [];
+
+	for (var i=0; i<otherSegs.length; i++) {
+		if (isSlotSegCollision(seg, otherSegs[i])) {
+			results.push(otherSegs[i]);
+		}
+	}
+
+	return results;
+}
+
+
+// Do these segments occupy the same vertical space?
+function isSlotSegCollision(seg1, seg2) {
 	return seg1.end > seg2.start && seg1.start < seg2.end;
+}
+
+
+// A cmp function for determining which forward segment to rely on more when computing coordinates.
+function compareForwardSlotSegs(seg1, seg2) {
+	// put higher-pressure first
+	return seg2.forwardPressure - seg1.forwardPressure ||
+		// put segments that are closer to initial edge first (and favor ones with no coords yet)
+		(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
+		// do normal sorting...
+		compareSlotSegs(seg1, seg2);
+}
+
+
+// A cmp function for determining which segment should be closer to the initial edge
+// (the left edge on a left-to-right calendar).
+function compareSlotSegs(seg1, seg2) {
+	return seg1.start - seg2.start || // earlier start time goes first
+		(seg2.end - seg2.start) - (seg1.end - seg1.start) || // tie? longer-duration goes first
+		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
 }
 
 
@@ -4691,7 +4844,6 @@ function View(element, calendar, viewName) {
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 	t.dayOffsetToDate = dayOffsetToDate;
 	t.rangeToSegments = rangeToSegments;
-	t.segmentCompare = segmentCompare;
 
 
 	// internals
@@ -4920,30 +5072,6 @@ function View(element, calendar, viewName) {
 
 		return segments;
 	}
-
-
-	// Compare two event segments and determine which one takes priority (ex: rendered topmost/leftmost)
-	// NOTE: only works with segments that have `event` properties!
-	//
-	// Returns a negative value if `a` should be first.
-	// Returns a positive value of `b` should be first.
-	function segmentCompare(a, b) {
-		return _segmentCompare(a, b) // sort by dimension
-			|| (a.event.start - b.event.start) // if a tie, sort by event start date
-			|| (a.event.title || "").localeCompare(b.event.title) // if a tie, sort by event title
-	}
-
-	// compare dimensions
-	// NOTE: this is not modular! depends on subclass-specific segment schemas
-	function _segmentCompare(a, b) {
-		if ('msLength' in a) {
-			// segment generated by AgendaEventRenderer
-			return b.msLength - a.msLength; // put taller events first
-		}
-		// segment generated by DayEventRenderer
-		return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) // put wider events first
-			|| b.event.allDay - a.event.allDay; // if tie, put all-day events first (booleans cast to 0/1)
-	}
 	
 
 }
@@ -4988,7 +5116,6 @@ function DayEventRenderer() {
 	var clearSelection = t.clearSelection;
 	var getHoverListener = t.getHoverListener;
 	var rangeToSegments = t.rangeToSegments;
-	var segmentCompare = t.segmentCompare;
 	var cellToDate = t.cellToDate;
 	var cellToCellOffset = t.cellToCellOffset;
 	var cellOffsetToDayOffset = t.cellOffsetToDayOffset;
@@ -5436,7 +5563,7 @@ function DayEventRenderer() {
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segments.sort(segmentCompare);
+		segments.sort(compareDaySegments);
 
 		var subrows = [];
 		for (var i=0; i<segments.length; i++) {
@@ -5691,6 +5818,16 @@ function segmentElementEach(segments, callback) { // TODO: use in AgendaView?
 		}
 	}
 }
+
+
+// A cmp function for determining which segments should appear higher up
+function compareDaySegments(a, b) {
+	return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) || // put wider events first
+		b.event.allDay - a.event.allDay || // if tie, put all-day events first (booleans cast to 0/1)
+		a.event.start - b.event.start || // if a tie, sort by event start date
+		(a.event.title || '').localeCompare(b.event.title) // if a tie, sort by event title
+}
+
 
 ;;
 
