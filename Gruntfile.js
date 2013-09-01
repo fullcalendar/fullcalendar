@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 		'clean',
 		'modules',
 		'languages',
-		'karma:continuous',
+		'karma:single',
 		'archiveDist',
 		'cdnjsDist'
 	]);
@@ -155,9 +155,9 @@ module.exports = function(grunt) {
 		options: {
 			configFile: 'build/karma.conf.js'
 		},
-		url: {}, // you'll have to visit a URL in a browser
+		url: {}, // visit a URL in a browser
 		headless: { browsers: [ 'PhantomJS' ] },
-		continuous: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false } // "continuous integration" mode
+		single: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false }
 	};
 
 
@@ -168,7 +168,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('archive', 'Create a distributable ZIP archive', [
 		'modules',
 		'languages',
-		'karma:continuous',
+		'karma:single',
 		'archiveDist'
 	]);
 
@@ -306,7 +306,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
 		'modules',
 		'languages',
-		'karma:continuous',
+		'karma:single',
 		'cdnjsDist'
 	]);
 
