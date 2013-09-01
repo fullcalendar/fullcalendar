@@ -291,7 +291,11 @@ module.exports = function(grunt) {
 
 	config.bump = { // changes the version number in the configs
 		options: {
-			files: '*.json',
+			files: [
+				'package.json',
+				'bower.json',
+				'fullcalendar.jquery.json'
+			],
 			commit: false,
 			createTag: false,
 			push: false
