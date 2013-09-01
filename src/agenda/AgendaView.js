@@ -322,6 +322,7 @@ function AgendaView(element, calendar, viewName) {
 			"<tr>";
 
 		if (showWeekNumbers) {
+			date = cellToDate(0, 0);
 			weekText = formatDate(date, weekNumberFormat);
 			if (rtl) {
 				weekText += weekNumberTitle;
