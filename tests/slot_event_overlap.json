@@ -1,0 +1,102 @@
+[
+  {
+    "title": "1",
+    "start": "2013-07-31T00:30",
+    "end": "2013-07-31T02:30",
+    "allDay": false
+  },
+  {
+    "title": "2",
+    "start": "2013-07-31T00:30",
+    "end": "2013-07-31T02:30",
+    "allDay": false
+  },
+  {
+    "title": "3",
+    "start": "2013-07-31T02:30",
+    "end": "2013-07-31T04:30",
+    "allDay": false
+  },
+  {
+    "title": "4",
+    "start": "2013-07-31T02:30",
+    "end": "2013-07-31T04:30",
+    "allDay": false
+  },
+  {
+    "title": "5",
+    "start": "2013-07-31T02:30",
+    "end": "2013-07-31T04:30",
+    "allDay": false
+  },
+  {
+    "title": "6",
+    "start": "2013-07-31T01:00",
+    "end": "2013-07-31T03:00",
+    "allDay": false
+  },
+  {
+    "title": "7",
+    "start": "2013-07-31T01:30",
+    "end": "2013-07-31T03:30",
+    "allDay": false
+  },
+  {
+    "title": "8",
+    "start": "2013-07-31T02:50",
+    "end": "2013-07-31T04:50",
+    "allDay": false
+  },
+  {
+    "title": "9",
+    "start": "2013-07-31T04:30",
+    "end": "2013-07-31T09:00",
+    "allDay": false
+  },
+  {
+    "title": "10",
+    "start": "2013-07-31T02:00",
+    "end": "2013-07-31T04:05",
+    "allDay": false
+  },    
+  {
+    "title": "11",
+    "start": "2013-07-31T02:50",
+    "end": "2013-07-31T04:50",
+    "allDay": false
+  },    
+  {
+    "title": "12",
+    "start": "2013-07-31T02:50",
+    "end": "2013-07-31T04:50",
+    "allDay": false
+  },    
+  {
+    "title": "13",
+    "start": "2013-07-31T04:00",
+    "end": "2013-07-31T06:00",
+    "allDay": false,
+    "className": "equalwidth1"
+  },
+  {
+    "title": "14",
+    "start": "2013-07-31T04:10",
+    "end": "2013-07-31T06:09",
+    "allDay": false,
+    "className": "equalwidth1"
+  },
+  {
+    "title": "15",
+    "start": "2013-07-31T06:30",
+    "end": "2013-07-31T08:30",
+    "allDay": false,
+    "className": "equalwidth2"
+  },
+  {
+    "title": "16",
+    "start": "2013-07-31T06:30",
+    "end": "2013-07-31T08:30",
+    "allDay": false,
+    "className": "equalwidth2"
+  }
+]
