@@ -12,8 +12,8 @@ var eventGUID = 1;
 
 function EventManager(options, _sources) {
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -24,14 +24,14 @@ function EventManager(options, _sources) {
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.normalizeEvent = normalizeEvent;
-	
-	
+
+
 	// imports
 	var trigger = t.trigger;
 	var getView = t.getView;
 	var reportEvents = t.reportEvents;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -40,23 +40,23 @@ function EventManager(options, _sources) {
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
 	var cache = [];
-	
-	
+
+
 	for (var i=0; i<_sources.length; i++) {
 		_addEventSource(_sources[i]);
 	}
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function isFetchNeeded(start, end) {
 		return !rangeStart || start < rangeStart || end > rangeEnd;
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -68,8 +68,8 @@ function EventManager(options, _sources) {
 			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(events) {
 			if (fetchID == currentFetchID) {
@@ -97,8 +97,8 @@ function EventManager(options, _sources) {
 			}
 		});
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = fc.sourceFetchers;
@@ -154,6 +154,8 @@ function EventManager(options, _sources) {
 
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
+				// Send user's timezone offset in the event user needs to calculate dates serverside.
+				data[offset] = Date.getTimezoneOffset() * 60;
 				if (startParam) {
 					data[startParam] = Math.round(+rangeStart / 1000);
 				}
@@ -186,12 +188,12 @@ function EventManager(options, _sources) {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function addEventSource(source) {
 		source = _addEventSource(source);
@@ -200,8 +202,8 @@ function EventManager(options, _sources) {
 			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 		}
 	}
-	
-	
+
+
 	function _addEventSource(source) {
 		if ($.isFunction(source) || $.isArray(source)) {
 			source = { events: source };
@@ -215,7 +217,7 @@ function EventManager(options, _sources) {
 			return source;
 		}
 	}
-	
+
 
 	function removeEventSource(source) {
 		sources = $.grep(sources, function(src) {
@@ -227,13 +229,13 @@ function EventManager(options, _sources) {
 		});
 		reportEvents(cache);
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function updateEvent(event) { // update an existing event
 		var i, len = cache.length, e,
 			defaultEventEnd = getView().defaultEventEnd, // getView???
@@ -269,8 +271,8 @@ function EventManager(options, _sources) {
 		normalizeEvent(event);
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function renderEvent(event, stick) {
 		normalizeEvent(event);
 		if (!event.source) {
@@ -282,8 +284,8 @@ function EventManager(options, _sources) {
 		}
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function removeEvents(filter) {
 		if (!filter) { // remove all
 			cache = [];
@@ -310,8 +312,8 @@ function EventManager(options, _sources) {
 		}
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -324,32 +326,32 @@ function EventManager(options, _sources) {
 		}
 		return cache; // else, return all
 	}
-	
-	
-	
+
+
+
 	/* Loading State
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function pushLoading() {
 		if (!loadingLevel++) {
 			trigger('loading', null, true, getView());
 		}
 	}
-	
-	
+
+
 	function popLoading() {
 		if (!--loadingLevel) {
 			trigger('loading', null, false, getView());
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function normalizeEvent(event) {
 		var source = event.source || {};
 		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
@@ -378,13 +380,13 @@ function EventManager(options, _sources) {
 		}
 		// TODO: if there is no start date, return false to indicate an invalid event
 	}
-	
-	
-	
+
+
+
 	/* Utils
 	------------------------------------------------------------------------------*/
-	
-	
+
+
 	function normalizeSource(source) {
 		if (source.className) {
 			// TODO: repeat code, same code for event classNames
@@ -399,13 +401,13 @@ function EventManager(options, _sources) {
 			normalizers[i](source);
 		}
 	}
-	
-	
+
+
 	function isSourcesEqual(source1, source2) {
 		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
 	}
-	
-	
+
+
 	function getSourcePrimitive(source) {
 		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
 	}
