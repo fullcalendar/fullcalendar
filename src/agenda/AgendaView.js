@@ -358,7 +358,7 @@ function AgendaView(element, calendar, viewName) {
 		var headerClass = tm + "-widget-header"; // TODO: make these when updateOptions() called
 		var contentClass = tm + "-widget-content";
 		var date;
-		var today = clearTime(new Date());
+		var today = clearTime(opt('getDate')());
 		var col;
 		var cellsHTML;
 		var cellHTML;
