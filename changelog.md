@@ -337,8 +337,8 @@ v1.4.3 (2009-12-22)
 	- dynamically setting calendar height when no events have been fetched, throws error
 
 
-v1.4.2 (2009-12-002)
---------------------
+v1.4.2 (2009-12-02)
+-------------------
 
 - eventAfterRender trigger
 - getDate & getView methods
@@ -426,51 +426,51 @@ v1.3 (2009-09-21)
 	- new test suite for new features, uses firebug-lite
 - refactored docs
 - Options
-	+ date
-	+ defaultView
-	+ aspectRatio
-	+ disableResizing
-	+ monthNames      (use instead of $.fullCalendar.monthNames)
-	+ monthNamesShort (use instead of $.fullCalendar.monthAbbrevs)
-	+ dayNames        (use instead of $.fullCalendar.dayNames)
-	+ dayNamesShort   (use instead of $.fullCalendar.dayAbbrevs)
-	+ theme
-	+ buttonText
-	+ buttonIcons
-	x draggable           -> editable/disableDragging
-	x fixedWeeks          -> weekMode
-	x abbrevDayHeadings   -> columnFormat
-	x buttons/title       -> header
-	x eventDragOpacity    -> dragOpacity
-	x eventRevertDuration -> dragRevertDuration
-	x weekStart           -> firstDay
-	x rightToLeft         -> isRTL
-	x showTime (use 'allDay' CalEvent property instead)
+	- + date
+	- + defaultView
+	- + aspectRatio
+	- + disableResizing
+	- + monthNames      (use instead of $.fullCalendar.monthNames)
+	- + monthNamesShort (use instead of $.fullCalendar.monthAbbrevs)
+	- + dayNames        (use instead of $.fullCalendar.dayNames)
+	- + dayNamesShort   (use instead of $.fullCalendar.dayAbbrevs)
+	- + theme
+	- + buttonText
+	- + buttonIcons
+	- x draggable           -> editable/disableDragging
+	- x fixedWeeks          -> weekMode
+	- x abbrevDayHeadings   -> columnFormat
+	- x buttons/title       -> header
+	- x eventDragOpacity    -> dragOpacity
+	- x eventRevertDuration -> dragRevertDuration
+	- x weekStart           -> firstDay
+	- x rightToLeft         -> isRTL
+	- x showTime (use 'allDay' CalEvent property instead)
 - Triggered Actions
-	+ eventResizeStart
-	+ eventResizeStop
-	+ eventResize
-	x monthDisplay -> viewDisplay
-	x resize       -> windowResize
-	'eventDrop' params changed, can revert if ajax cuts out
+	- + eventResizeStart
+	- + eventResizeStop
+	- + eventResize
+	- x monthDisplay -> viewDisplay
+	- x resize       -> windowResize
+	- 'eventDrop' params changed, can revert if ajax cuts out
 - CalEvent Properties
-	x showTime  -> allDay
-	x draggable -> editable
-	'end' is now INCLUSIVE when allDay=true
-	'url' now produces a real <a> tag, more native clicking/tab behavior
+	- x showTime  -> allDay
+	- x draggable -> editable
+	- 'end' is now INCLUSIVE when allDay=true
+	- 'url' now produces a real <a> tag, more native clicking/tab behavior
 - Methods:
-	+ renderEvent
-	x prevMonth         -> prev
-	x nextMonth         -> next
-	x prevYear/nextYear -> moveDate
-	x refresh           -> rerenderEvents/refetchEvents
-	x removeEvent       -> removeEvents
-	x getEventsByID     -> clientEvents
+	- + renderEvent
+	- x prevMonth         -> prev
+	- x nextMonth         -> next
+	- x prevYear/nextYear -> moveDate
+	- x refresh           -> rerenderEvents/refetchEvents
+	- x removeEvent       -> removeEvents
+	- x getEventsByID     -> clientEvents
 - Utilities:
-	'formatDate' format string completely changed (inspired by jQuery UI datepicker + datejs)
-	'formatDates' added to support date-ranges
+	- 'formatDate' format string completely changed (inspired by jQuery UI datepicker + datejs)
+	- 'formatDates' added to support date-ranges
 - Google Calendar Options:
-	x draggable -> editable
+	- x draggable -> editable
 - Bugfixes
 	- gcal extension fetched 25 results max, now fetches all
 
