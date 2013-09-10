@@ -18,7 +18,9 @@ function BasicEventRenderer() {
 	
 	
 	function clearEvents() {
-		t.getDaySegmentContainer().empty();
+        if (t.getDaySegmentContainer() !== undefined) {
+            t.getDaySegmentContainer().empty();
+        }
 	}
 
 
