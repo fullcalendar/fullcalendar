@@ -545,6 +545,7 @@ function AgendaView(element, calendar, viewName) {
 	
 	function slotClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
+			var eventName = 'day' + (ev.type == 'dblclick' ? 'DoubleClick' : 'Click');
 			var col = Math.min(colCnt-1, Math.floor((ev.pageX - dayTable.offset().left - axisWidth) / colWidth));
 			var date = cellToDate(0, col);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
@@ -553,9 +554,9 @@ function AgendaView(element, calendar, viewName) {
 				var hours = Math.floor(mins/60);
 				date.setHours(hours);
 				date.setMinutes(mins%60 + minMinute);
-				trigger('dayClick', dayBodyCells[col], date, false, ev);
+				trigger(eventName, dayBodyCells[col], date, false, ev);
 			}else{
-				trigger('dayClick', dayBodyCells[col], date, true, ev);
+				trigger(eventName, dayBodyCells[col], date, true, ev);
 			}
 		}
 	}
