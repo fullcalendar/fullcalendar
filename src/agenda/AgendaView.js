@@ -60,6 +60,7 @@ function AgendaView(element, calendar, viewName) {
 	t.dragStop = dragStop;
 	
 	
+	t.dataFromClickEvent = dataFromClickEvent;
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
@@ -543,18 +544,13 @@ function AgendaView(element, calendar, viewName) {
 	
 	function slotClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var col = Math.min(colCnt-1, Math.floor((ev.pageX - dayTable.offset().left - axisWidth) / colWidth));
-			var date = cellToDate(0, col);
-			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
-			if (rowMatch) {
-				var mins = parseInt(rowMatch[1]) * opt('slotMinutes');
-				var hours = Math.floor(mins/60);
-				date.setHours(hours);
-				date.setMinutes(mins%60 + minMinute);
-				trigger('dayClick', dayBodyCells[col], date, false, ev);
-			}else{
-				trigger('dayClick', dayBodyCells[col], date, true, ev);
-			}
+			var data = dataFromClickEvent(ev);
+			trigger('dayClick',
+				data.cells,
+				data.date,
+				data.fullColumn,
+				ev
+			);
 		}
 	}
 	
@@ -740,6 +736,34 @@ function AgendaView(element, calendar, viewName) {
 	
 	
 	
+	/** Computes the date and time that the given click event designates.
+	*
+	*@param	{DOMevent}	domEvent	The DOM click event whose clicked time is to be computed.
+	*@returns	{Hash}	An object with the following keys:
+	*	- `{Date} date`:		a Date object containing at least the date (at midnight), possibly with a time, that was clicked with through the given DOM event;
+	*	- `{Number} column`:	the index of the column that was clicked;
+	*	- `{Number} row`:		the index of the row that was clicked.
+	*/
+	function dataFromClickEvent(domEvent) {
+		var tableOffset = dayTable.offset();
+		var col = Math.min(colCnt-1, Math.floor((domEvent.pageX - tableOffset.left - axisWidth) / colWidth));
+		var date = cellToDate(0, col);
+		var row = Math.floor((domEvent.pageY - tableOffset.top) / slotHeight) - 1;
+		var rowMatch = row >= 0;
+		if (rowMatch) {
+			var mins = row * opt('slotMinutes');
+			var hours = Math.floor(mins/60);
+			date.setHours(hours);
+			date.setMinutes(mins%60 + minMinute);
+		}
+
+		return {
+			date		: date,	// this value is of public interest
+			cells		: dayBodyCells[col],	// this value is used by the internal FC API
+			fullColumn	: ! rowMatch			// this value is used by the internal FC API
+		}
+	}
+
 	/* Selection
 	---------------------------------------------------------------------------------*/
 	
