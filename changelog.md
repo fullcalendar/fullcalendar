@@ -9,7 +9,7 @@ v1.6.4 (2013-09-01)
 - fixed week number not displaying in agenda views ([1951])
 - fixed fullCalendar not initializing with no options ([1356])
 - NPM's `package.json`, no more warnings or errors ([1762])
-- building the bower component should output `bower.json` instead of `component.json` (#125)
+- building the bower component should output `bower.json` instead of `component.json` ([PR 125])
 - use bower internally for fetching new versions of jQuery and jQuery UI
 
 [1115]: https://code.google.com/p/fullcalendar/issues/detail?id=1115
@@ -19,28 +19,40 @@ v1.6.4 (2013-09-01)
 [1951]: https://code.google.com/p/fullcalendar/issues/detail?id=1951
 [1356]: https://code.google.com/p/fullcalendar/issues/detail?id=1356
 [1762]: https://code.google.com/p/fullcalendar/issues/detail?id=1762
+[PR 125]: https://github.com/arshaw/fullcalendar/pull/125
 
 
 v1.6.3 (2013-08-10)
 -------------------
 
-- `viewRender` callback (#15)
-- `viewDestroy` callback (#15)
-- `eventDestroy` callback (#111)
-- `handleWindowResize` option (#54)
-- `eventStartEditable`/`startEditable` options (#49)
-- `eventDurationEditable`/`durationEditable` options (#49)
-- specify function for `$.ajax` `data` parameter for JSON event sources (#59)
-- fixed bug with agenda event dropping in wrong column (#55)
-- easier event element z-index customization (#58)
-- classNames on past/future days (#88)
-- allow `null`/`undefined` event titles (#84)
-- small optimize for agenda event rendering (#56)
+- `viewRender` callback ([PR 15])
+- `viewDestroy` callback ([PR 15])
+- `eventDestroy` callback ([PR 111])
+- `handleWindowResize` option ([PR 54])
+- `eventStartEditable`/`startEditable` options ([PR 49])
+- `eventDurationEditable`/`durationEditable` options ([PR 49])
+- specify function for `$.ajax` `data` parameter for JSON event sources ([PR 59])
+- fixed bug with agenda event dropping in wrong column ([PR 55])
+- easier event element z-index customization ([PR 58])
+- classNames on past/future days ([PR 88])
+- allow `null`/`undefined` event titles ([PR 84])
+- small optimize for agenda event rendering ([PR 56])
 - deprecated:
 	- `viewDisplay`
 	- `disableDragging`
 	- `disableResizing`
 - bundled with latest jQuery (1.10.2) and jQuery UI (1.10.3)
+
+[PR 15]: https://github.com/arshaw/fullcalendar/pull/15
+[PR 111]: https://github.com/arshaw/fullcalendar/pull/111
+[PR 54]: https://github.com/arshaw/fullcalendar/pull/54
+[PR 49]: https://github.com/arshaw/fullcalendar/pull/49
+[PR 59]: https://github.com/arshaw/fullcalendar/pull/59
+[PR 55]: https://github.com/arshaw/fullcalendar/pull/55
+[PR 58]: https://github.com/arshaw/fullcalendar/pull/58
+[PR 88]: https://github.com/arshaw/fullcalendar/pull/88
+[PR 84]: https://github.com/arshaw/fullcalendar/pull/84
+[PR 56]: https://github.com/arshaw/fullcalendar/pull/56
 
 
 v1.6.2 (2013-07-18)
