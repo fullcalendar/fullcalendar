@@ -67,6 +67,17 @@ function Header(calendar, options) {
 								calendar.changeView(buttonName);
 							};
 						}
+						else if(match = buttonName.match(/^{(\w+):(.+)}$/)) {
+							if(typeof(options[match[2]]) == "function") {
+								buttonClick = options[match[2]];
+							} else if(typeof(window[match[2]]) == "function") {
+								buttonClick = window[match[2]];
+							} else {
+								buttonClick = function() { return false; }
+							}
+							buttonName = match[1];
+							options.buttonText[match[1]] = match[1].replace('_', ' ');
+						}
 						if (buttonClick) {
 							var icon = options.theme ? smartProperty(options.buttonIcons, buttonName) : null; // why are we using smartProperty here?
 							var text = smartProperty(options.buttonText, buttonName); // why are we using smartProperty here?
