@@ -409,7 +409,7 @@ function Calendar(element, options, eventSources, eventResources) {
 		else if (filter) { // an event ID
 			filter += '';
 			return $.grep(eventResources, function(e) {
-				return e._id == filter;
+				return e.id == filter;
 			});
 		}
 		return eventResources; // else, return all
