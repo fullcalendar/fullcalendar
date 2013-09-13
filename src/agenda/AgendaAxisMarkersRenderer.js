@@ -6,7 +6,7 @@ function AgendaAxisMarkersRenderer(element, calendar) {
 	t.renderAxisMarkers = renderAxisMarkers;
 	
 	function dateToSlotNumber(date) {
-		return 2 * (marker.start.getHours() + (marker.start.getMinutes() / 60))
+		return 2 * (date.getHours() + (date.getMinutes() / 60))
 	}
 
 	function renderAxisMarkers(markers) {
