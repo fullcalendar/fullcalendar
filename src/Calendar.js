@@ -245,7 +245,7 @@ function Calendar(element, options, eventSources) {
 			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content);
 		}
 		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .2));
 		}
 	}
 	
