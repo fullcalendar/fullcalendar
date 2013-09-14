@@ -123,6 +123,18 @@ function View(element, calendar, viewName) {
 	}
 	
 	
+	// returns all events with a matching propery value
+	function eventsByProp(property, value)
+	{
+		var id, i, len, events = [];
+		for(id in eventsByID)
+			for(i=0, len=eventsByID[id].length; i<len; i++)
+				if (eventsByID[id][i][property] == value)
+					events.push(eventsByID[id][i]);
+		return events;
+	}
+	
+	
 	
 	/* Event Elements
 	------------------------------------------------------------------------------*/
@@ -199,7 +211,12 @@ function View(element, calendar, viewName) {
 	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
-		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
+		var prop = opt('eventGroupProperty') || 'id';
+		if (prop != 'id')
+			events = eventsByProp(prop, event[prop]);
+		else
+			events = eventsByID[eventId];
+		moveEvents(events, dayDelta, minuteDelta, allDay);
 		trigger(
 			'eventDrop',
 			e,
@@ -209,7 +226,7 @@ function View(element, calendar, viewName) {
 			allDay,
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
-				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+				moveEvents(events, -dayDelta, -minuteDelta, oldAllDay);
 				reportEventChange(eventId);
 			},
 			ev,
@@ -221,7 +238,12 @@ function View(element, calendar, viewName) {
 	
 	function eventResize(e, event, dayDelta, minuteDelta, ev, ui) {
 		var eventId = event._id;
-		elongateEvents(eventsByID[eventId], dayDelta, minuteDelta);
+		var prop = opt('eventGroupProperty') || 'id';
+		if (prop != 'id')
+			events = eventsByProp(prop, event[prop]);
+		else
+			events = eventsByID[eventId];
+		elongateEvents(events, dayDelta, minuteDelta);
 		trigger(
 			'eventResize',
 			e,
@@ -230,7 +252,7 @@ function View(element, calendar, viewName) {
 			minuteDelta,
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
-				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
+				elongateEvents(events, -dayDelta, -minuteDelta);
 				reportEventChange(eventId);
 			},
 			ev,
