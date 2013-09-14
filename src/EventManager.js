@@ -1,4 +1,3 @@
-
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
 
@@ -122,7 +121,8 @@ function EventManager(options, _sources) {
 				events(cloneDate(rangeStart), cloneDate(rangeEnd), function(events) {
 					callback(events);
 					popLoading();
-				});
+				},
+				source);
 			}
 			else if ($.isArray(events)) {
 				callback(events);
