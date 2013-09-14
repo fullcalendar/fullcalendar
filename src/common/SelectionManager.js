@@ -1,4 +1,3 @@
-
 //BUG: unselect needs to be triggered when events are dragged+dropped
 
 function SelectionManager() {
@@ -69,7 +68,7 @@ function SelectionManager() {
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
-		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
+		if (ev.which == 1 && opt('selectable') && !ev.ctrlKey) { // which==1 means left mouse button, ctrlKey + left mouse button = osx right click
 			unselect(ev);
 			var _mousedownElement = this;
 			var dates;
