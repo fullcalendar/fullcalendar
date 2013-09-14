@@ -6,6 +6,7 @@ setDefaults({
 	slotMinutes: 30,
 	defaultEventMinutes: 120,
 	axisFormat: 'h(:mm)tt',
+	alwaysShowAxisFormat: false,
 	timeFormat: {
 		agenda: 'h:mm{ - h:mm}'
 	},
@@ -244,12 +245,18 @@ function AgendaView(element, calendar, viewName) {
 		maxd = addMinutes(cloneDate(d), maxMinute);
 		addMinutes(d, minMinute);
 		slotCnt = 0;
+		var stripe = false;
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
+			if(!minutes){
+				stripe = !stripe;
+			}
 			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + ' ' + (stripe ? '' : 'fc-stripe') +"'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
+				(opt('alwaysShowAxisFormat') 
+					? formatDate(d, opt('axisFormat'))
+					: ((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;')) +
 				"</th>" +
 				"<td class='" + contentClass + "'>" +
 				"<div style='position:relative'>&nbsp;</div>" +
