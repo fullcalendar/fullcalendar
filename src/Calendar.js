@@ -43,7 +43,6 @@ function Calendar(element, options, eventSources) {
 	var content;
 	var tm; // for making theme classes
 	var currentView;
-	var elementOuterWidth;
 	var suggestedViewHeight;
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
@@ -263,7 +262,6 @@ function Calendar(element, options, eventSources) {
 		currentView.setWidth(content.width());
 		ignoreWindowResize--;
 
-		elementOuterWidth = element.outerWidth();
 	}
 	
 	
@@ -273,12 +271,10 @@ function Calendar(element, options, eventSources) {
 				var uid = ++resizeUID;
 				setTimeout(function() { // add a delay
 					if (uid == resizeUID && !ignoreWindowResize && elementVisible()) {
-						if (elementOuterWidth != (elementOuterWidth = element.outerWidth())) {
-							ignoreWindowResize++; // in case the windowResize callback changes the height
-							updateSize();
-							currentView.trigger('windowResize', _element);
-							ignoreWindowResize--;
-						}
+						ignoreWindowResize++; // in case the windowResize callback changes the height
+						updateSize();
+						currentView.trigger('windowResize', _element);
+						ignoreWindowResize--;
 					}
 				}, 200);
 			}else{
