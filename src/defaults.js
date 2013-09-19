@@ -72,8 +72,11 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	handleWindowResize: true
+	handleWindowResize: true,
 	
+	getDate: function() {
+		return new Date();
+	}
 };
 
 // right-to-left defaults

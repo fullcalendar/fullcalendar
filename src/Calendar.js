@@ -47,7 +47,7 @@ function Calendar(element, options, eventSources) {
 	var suggestedViewHeight;
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
-	var date = new Date();
+	var date = option('getDate')();
 	var events = [];
 	var _dragElement;
 	
@@ -364,7 +364,7 @@ function Calendar(element, options, eventSources) {
 
 
 	function updateTodayButton() {
-		var today = new Date();
+		var today = option('getDate')();
 		if (today >= currentView.start && today < currentView.end) {
 			header.disableButton('today');
 		}
@@ -419,7 +419,7 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function today() {
-		date = new Date();
+		date = option('getDate')();
 		renderView();
 	}
 	

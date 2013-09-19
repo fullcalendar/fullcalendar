@@ -246,7 +246,7 @@ function BasicView(element, calendar, viewName) {
 	function buildCellHTML(date) {
 		var contentClass = tm + "-widget-content";
 		var month = t.start.getMonth();
-		var today = clearTime(new Date());
+		var today = clearTime(opt('getDate')());
 		var html = '';
 		var classNames = [
 			'fc-day',
