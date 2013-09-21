@@ -24,6 +24,7 @@ function EventManager(options, _sources) {
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.normalizeEvent = normalizeEvent;
+    t.getEventSources = getEventSources;
 	
 	
 	// imports
@@ -192,6 +193,10 @@ function EventManager(options, _sources) {
 	/* Sources
 	-----------------------------------------------------------------------------*/
 	
+
+    function getEventSources() {
+        return sources;
+    }
 
 	function addEventSource(source) {
 		source = _addEventSource(source);
