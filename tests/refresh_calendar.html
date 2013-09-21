@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='../build/out/fullcalendar.css' rel='stylesheet' />
+    <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <script src='../build/out/jquery.js'></script>
+    <script src='../build/out/jquery-ui.js'></script>
+    <script src='../build/out/fullcalendar.js'></script>
+    <style>
+
+      .fc .fc-sat, .fc .fc-sun { background-color:red }
+      div#actions { margin: 20px auto; width: 500px; border: 1px dotted red; padding: 10px; text-align: center;}
+    </style>
+    <script type="text/javascript">
+
+      var date = new Date();
+      var d = date.getDate();
+      var m = date.getMonth();
+      var y = date.getFullYear();
+
+      // This options dictionary will be re-used for re-creating the new calendar
+      var options = {
+              header: {
+                  left: 'nextYear,next,prev,prevYear today',
+                  center: 'month,agendaWeek,basicWeek,agendaDay,basicDay',
+                  right: 'title prev,next'
+              },
+
+              editable: true,
+
+              firstDay: 1,
+              weekends: false,
+
+              minTime: '8am',
+              maxTime: '11:30pm',
+              firstHour: 9,
+
+              weekMode: 'variable',
+
+              dayClick: function(dayDate, allDay, ev, view) {
+                  console.log('dayClick - ' + dayDate + ' - allDay:' + allDay + ' --- ' + view.title);
+              },
+
+              eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+                  console.log('DROP ' + event.title);
+                  console.log(dayDelta + ' days');
+                  console.log(minuteDelta + ' minutes');
+                  console.log('allDay: ' + allDay);
+                  console.log(event.start);
+                  //console.log(minuteDelta + ' minutes');
+              },
+
+              eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+                  console.log('RESIZE!! ' + event.title);
+                  console.log(dayDelta + ' days');
+                  console.log(minuteDelta + ' minutes');
+                  console.log(event.end);
+                  //console.log(minuteDelta + ' minutes');
+              },
+
+              events: [{
+                      title: 'All Day Event',
+                      start: new Date(y, m, 1)
+                  },
+                  {
+                      title: 'Long Event',
+                      start: new Date(y, m, d-5),
+                      end: new Date(y, m, d-2)
+                  },
+                  {
+                      id: 999,
+                      title: 'Repeating Event',
+                      start: new Date(y, m, d-3, 16, 0),
+                      allDay: false
+                  },
+                  {
+                      id: 999,
+                      title: 'Repeating Event',
+                      start: new Date(y, m, d+4, 16, 0),
+                      allDay: false
+                  },
+                  {
+                      title: 'Meeting',
+                      start: new Date(y, m, d, 10, 30),
+                      allDay: false
+                  },
+                  {
+                      title: 'Lunch',
+                      start: new Date(y, m, d, 12, 0),
+                      end: new Date(y, m, d, 14, 0),
+                      allDay: false
+                  },
+                  {
+                      title: 'Birthday Party',
+                      start: new Date(y, m, d+1, 19, 0),
+                      end: new Date(y, m, d+1, 22, 30),
+                      allDay: false
+                  },
+                  {
+                      title: 'Click for Google',
+                      start: new Date(y, m, 28),
+                      end: new Date(y, m, 29),
+                      url: 'http://google.com/'
+                  }
+              ]
+
+          };
+
+      function refreshCalendar() {
+          $('#calendar').fullCalendar('destroy');
+
+          // By re-using the options, we implicitely think that it shouldn't
+          // have been modified by fullCalendar
+
+          $('#calendar').fullCalendar(options);
+      }
+
+      $(document).ready(function() {
+          $('#actions *[name="normal"]').click(refreshCalendar)
+          $('#calendar').fullCalendar(options);
+      });
+
+    </script>
+  </head>
+  <body style='font-size:12px'>
+    <div id='actions'>
+      <button name="normal">Destroy and re-create</button>
+    </div>
+    <div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
+  </body>
+</html>
