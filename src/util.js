@@ -79,32 +79,44 @@ function sliceSegs(events, visEventEnds, start, end) {
 // event rendering calculation utilities
 function stackSegs(segs) {
 	var levels = [],
+		creneau = [],
 		i, len = segs.length, seg,
 		j, collide, k;
 	for (i=0; i<len; i++) {
 		seg = segs[i];
 		j = 0; // the level index where seg should belong
-		while (true) {
-			collide = false;
-			if (levels[j]) {
-				for (k=0; k<levels[j].length; k++) {
-					if (segsCollide(levels[j][k], seg)) {
-						collide = true;
-						break;
+		if (seg.event.timeSlotWindow == undefined) {
+			while (true) {
+				collide = false;
+				if (levels[j]) {
+					for (k=0; k<levels[j].length; k++) {
+						if (segsCollide(levels[j][k], seg)) {
+							collide = true;
+							break;
+						}
 					}
 				}
+				if (collide) {
+					j++;
+				}else{
+					break;
+				}
 			}
-			if (collide) {
-				j++;
+			if (levels[j]) {
+				levels[j].push(seg);
 			}else{
-				break;
+				levels[j] = [seg];
 			}
+		} else {
+			creneau.push(seg);
 		}
-		if (levels[j]) {
-			levels[j].push(seg);
-		}else{
-			levels[j] = [seg];
-		}
+	}
+	
+	len = levels.length;
+	levels[len] = [];
+	
+	for (i=0; i<creneau.length; i++) {
+		levels[len].push(creneau[i]);
 	}
 	return levels;
 }
@@ -329,14 +341,24 @@ function getSkinCss(event, opt) {
 		source.textColor ||
 		opt('eventTextColor');
 	var statements = [];
-	if (backgroundColor) {
-		statements.push('background-color:' + backgroundColor);
-	}
-	if (borderColor) {
-		statements.push('border-color:' + borderColor);
-	}
-	if (textColor) {
-		statements.push('color:' + textColor);
+	if (event.isTimeSlotWindow) {
+		statements.push('background-color: white');
+		if (borderColor) {
+			statements.push('border-color:' + borderColor);
+		}
+		if (backgroundColor) {
+			statements.push('color:' + backgroundColor);
+		}
+	} else{
+		if (backgroundColor) {
+			statements.push('background-color:' + backgroundColor);
+		}
+		if (borderColor) {
+			statements.push('border-color:' + borderColor);
+		}
+		if (textColor) {
+			statements.push('color:' + textColor);
+		}
 	}
 	return statements.join(';');
 }
