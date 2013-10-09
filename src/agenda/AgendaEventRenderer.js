@@ -184,21 +184,16 @@ function AgendaEventRenderer() {
 			leftmost = colContentLeft(colI*dis + dit);
 			availWidth = colContentRight(colI*dis + dit) - leftmost;
 			availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
-			if (levelI) {
-				// indented and thin
+			if (seg.event.timeSlotWindow == undefined) {
 				outerWidth = availWidth / (levelI + forward + 1);
-			}else{
-				if (forward) {
-					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
-				}else{
-					// can be entire width, aligned left
-					outerWidth = availWidth;
-				}
+				left = leftmost +                                  // leftmost possible
+					(availWidth / (levelI + forward + 1) * levelI) // indentation
+					* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+			} else {
+				var tempSeg = $.grep(segs, function(e){ return (e.event.uuid == seg.event.timeSlotWindow.uuid); })[0];
+				left = tempSeg.left + 10;
+				outerWidth = tempSeg.outerWidth - 12;
 			}
-			left = leftmost +                                  // leftmost possible
-				(availWidth / (levelI + forward + 1) * levelI) // indentation
-				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
 			seg.outerWidth = outerWidth;
@@ -264,10 +259,7 @@ function AgendaEventRenderer() {
 				event = seg.event;
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
-					eventElement.find('div.fc-event-time')
-						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
-					eventElement.find('div.fc-event-title')
-						.remove();
+					eventElement.find('div.fc-event-title')[0].style.display="inline-block";
 				}
 				trigger('eventAfterRender', event, event, eventElement);
 			}
@@ -302,11 +294,26 @@ function AgendaEventRenderer() {
 		html +=
 			" class='" + classes.join(' ') + "'" +
 			" style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px;" + skinCss + "'" +
-			">" +
-			"<div class='fc-event-inner'>" +
-			"<div class='fc-event-time'>" +
+			"><div class='fc-event-inner'>";
+		
+		if (event.activity != undefined) {
+			html += "<div class='activityColor' style='display: inline-block;background-color: " + event.activity.color + ";'" +
+					"title='" + event.activity.title + "'></div>";
+		}
+		
+		html +=	"<div class='fc-event-time'>" +
 			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
-			"</div>" +
+			"</div>";
+		
+		if (event.inWaitingRoom) {
+			html += "<div class='patientInWaitingRoom'></div>";
+		}		
+		
+		if (event.havePatient) {
+			html += "<div class='patientInAppointment'></div>";
+		}		
+			
+		html +=
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title) +
 			"</div>" +
@@ -600,12 +607,14 @@ function countForwardSegs(levels) {
 	var i, j, k, level, segForward, segBack;
 	for (i=levels.length-1; i>0; i--) {
 		level = levels[i];
-		for (j=0; j<level.length; j++) {
-			segForward = level[j];
-			for (k=0; k<levels[i-1].length; k++) {
-				segBack = levels[i-1][k];
-				if (segsCollide(segForward, segBack)) {
-					segBack.forward = Math.max(segBack.forward||0, (segForward.forward||0)+1);
+		if ((level[0] != undefined) && (level[0].event.timeSlotWindow == undefined)) {
+			for (j=0; j<level.length; j++) {
+				segForward = level[j];
+				for (k=0; k<levels[i-1].length; k++) {
+					segBack = levels[i-1][k];
+					if (segsCollide(segForward, segBack)) {
+						segBack.forward = Math.max(segBack.forward||0, (segForward.forward||0)+1);
+					}
 				}
 			}
 		}
