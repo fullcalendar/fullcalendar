@@ -138,8 +138,8 @@ function Calendar(element, options, eventSources) {
 	-----------------------------------------------------------------------------*/
 	
 	// TODO: improve view switching (still weird transition in IE, and FF has whiteout problem)
-	
-	function changeView(newViewName, force_reload) {
+	function changeView(newViewName) {
+		var force_reload = true;
 		if (force_reload || !currentView || newViewName != currentView.name)  {
 			ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
 
@@ -158,20 +158,16 @@ function Calendar(element, options, eventSources) {
 			content.css('overflow', 'hidden');
 			
 			currentView = viewInstances[newViewName];
-			if (force_reload) {
+			if (currentView != undefined) {
 				currentView.element.remove();
 			}
 			
-			if (currentView && !force_reload) {
-				currentView.element.show();
-			}else{
-				currentView = viewInstances[newViewName] = new fcViews[newViewName](
-					newViewElement = absoluteViewElement =
-						$("<div class='fc-view fc-view-" + newViewName + "' style='position:absolute'/>")
-							.appendTo(content),
-					t // the calendar object
-				);
-			}
+			currentView = viewInstances[newViewName] = new fcViews[newViewName](
+				newViewElement = absoluteViewElement =
+					$("<div class='fc-view fc-view-" + newViewName + "' style='position:absolute'/>")
+						.appendTo(content),
+				t // the calendar object
+			);
 			
 			if (oldView) {
 				header.deactivateButton(oldView.name);
@@ -479,7 +475,7 @@ function Calendar(element, options, eventSources) {
 	function setOptions(new_options) {
 		$.extend(options, new_options);
 		var viewName = currentView.name;
-		changeView(viewName, true);
+		changeView(viewName);
 	}
 	
 	/* External Dragging
