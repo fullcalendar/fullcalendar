@@ -32,11 +32,17 @@ var defaults = {
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
+	    // { RESOURCE VIEW
+        , resource: 'dddd, MMM d, yyyy'
+	    // } RESOURCE VIEW
 	},
 	columnFormat: {
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d'
+	    // { RESOURCE VIEW
+		, resource: 'resource'
+	    // } RESOURCE VIEW
 	},
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
@@ -58,6 +64,9 @@ var defaults = {
 		month: 'month',
 		week: 'week',
 		day: 'day'
+	    // { RESOURCE VIEW
+		, resource: 'resource'
+	    // } RESOURCE VIEW
 	},
 	
 	// jquery-ui theming

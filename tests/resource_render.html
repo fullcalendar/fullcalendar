@@ -16,25 +16,41 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
-
-			dayRender: function(date, td) {
-				//console.log(date, td);
-				td.find('.fc-day-content').prepend('this is the ' + date.getDate());
-			},
-
-			dayClick: function(date, allDay) {
-				console.log(date, allDay);
-			},
-			weekNumbers: true,
-			//selectable: true,
-			//isRTL: true,
-
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+				right: 'resource'
 			},
+			defaultView: 'resource',
+			allDaySlot: false,
+			slotMinutes: 60,
 			editable: true,
+			resources: [
+				{
+					id: "resource_0",
+					title: "Resource 0"
+				},
+				{
+					id: "resource_1",
+					title: "Resource 1"
+				},
+				{
+					id: "resource_2",
+					title: "Resource 2"
+				},
+				{
+					id: "resource_3",
+					title: "Resource 3"
+				},
+				{
+					id: "resource_4",
+					title: "Resource 4"
+				},
+				{
+					id: "resource_5",
+					title: "Resource 5"
+				}
+			],
 			events: [
 				{
 					title: 'All Day Event',
@@ -60,25 +76,30 @@
 				{
 					title: 'Meeting',
 					start: new Date(y, m, d, 10, 30),
-					allDay: false
+					allDay: false,
+					resource_id: "resource_2"	
 				},
 				{
 					title: 'Lunch',
 					start: new Date(y, m, d, 12, 5),
 					end: new Date(y, m, d, 14, 43),
-					allDay: false
+					allDay: false,
+					resource_id: "resource_1"	
 				},
 				{
 					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
+					start: new Date(y, m, d, 19, 0),
+					end: new Date(y, m, d, 22, 30),
+					allDay: false,
+					resource_id: "resource_4"	
 				},
 				{
 					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
+					start: new Date(y, m, d, 10, 0),
+					end: new Date(y, m, d, 15, 30),
+					allDay: false,
+					url: 'http://google.com/',
+					resource_id: "resource_5"	
 				}
 			]
 		});
@@ -96,7 +117,7 @@
 		}
 
 	#calendar {
-		width: 900px;
+		width: 70%;
 		margin: 0 auto;
 		}
 

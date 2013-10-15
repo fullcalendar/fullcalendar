@@ -263,6 +263,9 @@ function EventManager(options, _sources) {
 				e.backgroundColor = event.backgroundColor;
 				e.borderColor = event.borderColor;
 				e.textColor = event.textColor;
+			    // { RESOURCE VIEW
+				e.resource_id = event.resource_id;
+			    // } RESOURCE VIEW
 				normalizeEvent(e);
 			}
 		}
