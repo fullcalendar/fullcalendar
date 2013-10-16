@@ -191,8 +191,15 @@ function AgendaEventRenderer() {
 					* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			} else {
 				var tempSeg = $.grep(segs, function(e){ return (e.event.uuid == seg.event.timeSlotWindow.uuid); })[0];
-				left = tempSeg.left + 10;
-				outerWidth = tempSeg.outerWidth - 12;
+				if (seg.event.timeSlotWindow == undefined) {
+					left = tempSeg.left + 10;
+					outerWidth = tempSeg.outerWidth - 12;
+				} else {
+					outerWidth = availWidth / (levelI + forward + 1);
+					left = leftmost +                                  // leftmost possible
+						(availWidth / (levelI + forward + 1) * levelI) // indentation
+						* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+				}
 			}
 			seg.top = top;
 			seg.left = left;
