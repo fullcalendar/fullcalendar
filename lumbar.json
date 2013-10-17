@@ -29,6 +29,12 @@
         "src/agenda/AgendaDayView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaEventRenderer.js",
+        // { RESOURCE VIEW
+        "src/resource/ResourceDayView.js",
+        "src/resource/ResourceView.js",
+        "src/resource/ResourceEventRenderer.js",
+        "src/resource/ResourceSelectionManager.js",
+        // } RESOURCE VIEW
         "src/common/View.js",
         "src/common/DayEventRenderer.js",
         "src/common/SelectionManager.js",
