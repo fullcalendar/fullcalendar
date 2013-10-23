@@ -4,6 +4,10 @@ FullCalendar - Full-sized drag & drop event calendar
 
 This document describes how to modify or contribute to the FullCalendar project. If you are looking for end-developer documentation, please visit the [project homepage][fc-homepage].
 
+About this fork
+---------------
+
+This fork adds an `agendaList` view to display calendar events in a list.
 
 Getting Set Up
 --------------
