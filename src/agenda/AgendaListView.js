@@ -85,15 +85,21 @@ function ListView(element, calendar) {
 
 	var firstDay;
 	var eventElementHandlers = t.eventElementHandlers;
+	var tm;
 
 
 
 	function renderAgendaList() {
+		updateOptions();
 		if (!body) {
 			buildTable();
 		} else {
 			clearEvents();
 		}
+	}
+	
+	function updateOptions() {
+		tm = opt('theme') ? 'ui' : 'fc';
 	}
 
 
@@ -149,14 +155,14 @@ function ListView(element, calendar) {
 				classes = events[i].className;              
 
 				if (lday != temp) {
-					$("<li class='fc-agendaList-day-header ui-widget-header'>" +
+					$("<li class='fc-agendaList-day-header "+tm+"-widget-header'>" +
 						"<span class='fc-agendaList-day'>"+dd+"</span>" +
 						"<span class='fc-agendaList-date'>"+lday+"</span>" +
 					"</li>").appendTo(html);                           
 					temp = lday;
 				}  
 				if (allDay) {
-					eventdisplay = $("<li class='fc-agendaList-item'>"+
+					eventdisplay = $("<li class='fc-agendaList-item "+tm+"-widget-content'>"+
 						"<"+ (lurl ? "a href='"+ lurl +"'" : "div") + " class='fc-agendaList-event fc-event fc-event-all-day "+classes+"'>"+
 							"<div class='fc-event-time'>"+
 								"All Day"+
@@ -168,7 +174,7 @@ function ListView(element, calendar) {
 						"</" + (lurl ? "a" : "div") + ">"+ 
 					"</li>").appendTo(html);                                      
 				} else {
-					eventdisplay = $("<li class='fc-agendaList-item'>"+
+					eventdisplay = $("<li class='fc-agendaList-item "+tm+"-widget-content'>"+
 						"<"+ (lurl ? "a href='"+ lurl +"'" : "div") + " class='fc-agendaList-event fc-event "+classes+"'>"+
 							"<div class='fc-event-time'>"+
 								"<span class='fc-event-time-start'>"+st+"</span>"+
