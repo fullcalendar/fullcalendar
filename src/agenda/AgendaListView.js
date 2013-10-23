@@ -72,51 +72,26 @@ function ListView(element, calendar) {
 
 	var opt = t.opt;
 	var trigger = t.trigger;
-	var renderOverlay = t.renderOverlay;
-	var clearOverlays = t.clearOverlays;
-	var daySelectionMousedown = t.daySelectionMousedown;
 	var formatDate = calendar.formatDate;
 
 	// locals
 	var updateEvents = t.calendar.updateEvents;
-	var table;
-	var head;
-	var headCells;
 	var body;
-	var bodyRows;
-	var bodyCells;
-	var bodyFirstCells;
-	var bodyCellTopInners;
 	var daySegmentContainer;
 
 	var viewWidth;
 	var viewHeight;
 	var colWidth;
-	var weekNumberWidth;
 
-	var rowCnt, colCnt;
-	var coordinateGrid;
-	var hoverListener;
-	var colContentPositions;
-
-	var rtl, dis, dit;
 	var firstDay;
-	var nwe;
-	var tm;
-	var colFormat;
-	var showWeekNumbers;
-	var weekNumberTitle;
-	var weekNumberFormat;
 	var eventElementHandlers = t.eventElementHandlers;
 
 
 
 	function renderAgendaList() {
-		var firstTime = !body;
-		if (firstTime) {
+		if (!body) {
 			buildTable();
-		}
-		else {
+		} else {
 			clearEvents();
 		}
 	}
@@ -141,78 +116,77 @@ function ListView(element, calendar) {
 
 
 	function renderEvents(events, modifiedEventId) {
-		var EmptyMonth = true;
-		var html = $("<div class='fc-listcalendar'></div>");
-		var ClassName = "";
-		var $list = $("<ul class='fc-agendaList'></ul>").appendTo(html);
-		var lMonth, lDay, lTime, lDate, lUrl, lTitle;
+		var emptyMonth = true;
+		// html
+		var html;
+		//Start by sorting the events for the month to be displayed
+		events.sort(function(a,b) {
+					   var  dateA = new Date(a.start); 
+					   var dateB = new Date(b.start);
+					   return dateA-dateB;
+					   });
+		
+		
+		html    = $("<ul class='fc-agendaList'></ul>");
+		var mm, dd, tt, dt, lurl, ltitle, em;
 		var temp, i = 0;
-		var vMonth = formatDate(t.visStart, 'MM');
-		var arr = [];
+		var vm = formatDate(t.visStart, 'MM');
 
 		for (i in events) {
 			z = i;
-			eMonth = formatDate(events[i].start, 'MM');
+			em = formatDate(events[i].start, 'MM');
+			// retrieve only current view month events
+			if ( em == vm ) {
+				emptyMonth = false;
+				dd    = formatDate(events[i].start, 'dddd');
+				lday   = formatDate(events[i].start, 'MMMM d, yyyy');
+				ldescription  = events[i].description || '';
+				ltitle  = events[i].title;
+				allDay  = events[i].allDay;
+				st   = formatDate(events[i].start, 'h(:mm)tt');
+				et   = formatDate(events[i].end, 'h(:mm)tt');
+				lurl = events[i].url;
+				classes = events[i].className;              
 
-			if (eMonth == vMonth) {
-				EmptyMonth = false;
-
-				lMonth = formatDate(events[i].start, 'MMM');
-				lDay = formatDate(events[i].start, 'dddd');
-				lDate = formatDate(events[i].start, 'd MMM');
-				lDDay = formatDate(events[i].start, 'dddd, d MMM');
-				lTitle = events[i].title;
-				allDay = events[i].allDay;
-				ClassName = events[i].className;
-				textColor = events[i].textColor;
-				if (formatDate(events[i].start, 'd MMM') == formatDate(events[i].end, 'd MMM')) {
-					lTime = formatDate(events[i].start, opt('timeFormat')) + ' - ' + formatDate(events[i].end, opt('timeFormat'))
-				}
-				else {
-					//alert (events[i].end) ; 
-					if (events[i].end == null) {
-						lTime = formatDate(events[i].start, opt('timeFormat'));
-					}
-					else {
-						lTime = '=> ' + formatDate(events[i].end, 'd MMM');
-					}
-				}
-				lUrl = events[i].url;
-				if (lUrl != null) {
-					lTitle = "<a href='" + htmlEscape(lUrl) + "'>" + lTitle + "</a>";
-				}
-				if (i != temp) {
-					if (!dayHeaderExists(arr, lDDay)) {
-						$("<li class='dayHeader ui-widget-header'>" + lDDay + "</li>").appendTo($list);
-						temp = z;
-						arr.push(lDDay);
-					}
-				}
-				if (i % 2 == 0) {
-					if (allDay) {
-						eventdisplay = $("<li style='color:" + textColor + ";' class='" + ClassName.join(' ') + " dayDetails even'>" + lTitle + "</a><span style='float:right'>" + opt('allDayText') + "</span></li>").appendTo($list);
-					}
-					else {
-						eventdisplay = $("<li style='color:" + textColor + ";' class='" + ClassName.join(' ') + " dayDetails even'>" + lTitle + "</a><span style='float:right'>" + lTime + "</span></li>").appendTo($list);
-					}
-				}
-				else {
-					if (allDay) {
-						eventdisplay = $("<li style='color:" + textColor + ";' class='" + ClassName.join(' ') + " dayDetails odd'>" + lTitle + "</a><span style='float:right'>" + opt('allDayText') + "</span></li>").appendTo($list);
-					}
-					else {
-						eventdisplay = $("<li style='color:" + textColor + ";' class='" + ClassName.join(' ') + " dayDetails odd'>" + lTitle + "</a><span style='float:right'>" + lTime + "</span></li>").appendTo($list);
-					}
+				if (lday != temp) {
+					$("<li class='fc-agendaList-day-header ui-widget-header'>" +
+						"<span class='fc-agendaList-day'>"+dd+"</span>" +
+						"<span class='fc-agendaList-date'>"+lday+"</span>" +
+					"</li>").appendTo(html);                           
+					temp = lday;
+				}  
+				if (allDay) {
+					eventdisplay = $("<li class='fc-agendaList-item'>"+
+						"<"+ (lurl ? "a href='"+ lurl +"'" : "div") + " class='fc-agendaList-event fc-event fc-event-all-day "+classes+"'>"+
+							"<div class='fc-event-time'>"+
+								"All Day"+
+							"</div>"+
+							"<div class='fc-agendaList-event-details'>"+
+								"<div class='fc-event-title'>"+ltitle+"</div>"+
+								"<div class='fc-event-description'>"+ldescription+"</div>"+
+							"</div>"+
+						"</" + (lurl ? "a" : "div") + ">"+ 
+					"</li>").appendTo(html);                                      
+				} else {
+					eventdisplay = $("<li class='fc-agendaList-item'>"+
+						"<"+ (lurl ? "a href='"+ lurl +"'" : "div") + " class='fc-agendaList-event fc-event "+classes+"'>"+
+							"<div class='fc-event-time'>"+
+								"<span class='fc-event-time-start'>"+st+"</span>"+
+								(et ? "<span class='fc-event-time-end'>"+et+"</span>" : "")+
+							"</div>"+
+							"<div class='fc-agendaList-event-details'>"+
+								"<div class='fc-event-title'>"+ltitle+"</div>"+
+								(ldescription ? "<div class='fc-event-description'>"+ldescription+"</div>" : "")+
+							"</div>"+
+						"</" + (lurl ? "a" : "div") + ">"+                                        
+					"</li>").appendTo(html);   
 				}
 				eventElementHandlers(events[i], eventdisplay);
 			}
 		}
 
-		if (EmptyMonth == true) {
-			$("<div>No Events</div>").appendTo(html)
-		}
-		else {
-			eventdisplay = $("<li class='listEndCap'> </li>").appendTo($list);
+		if (emptyMonth == true) {
+			html = $("<div class='fc-agendaList-no-events'>No Events Found</div>");
 		}
 
 		$(element).html(html);
