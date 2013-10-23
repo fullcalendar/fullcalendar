@@ -163,6 +163,7 @@
 }
 .fc-agendaList-day-header {
   background-color: #F0F0F0;
+  border: none;
   border-top: 1px solid #E0E0E0;
   overflow: hidden;
   padding: 8px;
@@ -186,6 +187,7 @@
   float: right;
 }
 .fc-agendaList-item {
+  border: none;
   border-top: 1px solid #E0E0E0;
 }
 .fc-agendaList-event {
