@@ -236,6 +236,9 @@ function DayEventRenderer() {
 
 		// generate the list of CSS classNames
 		var classNames = [ 'fc-event', 'fc-event-hori' ];
+		if (event.allDay) {
+			classNames.push('fc-event-all-day');
+		}
 		if (isEventDraggable(event)) {
 			classNames.push('fc-event-draggable');
 		}

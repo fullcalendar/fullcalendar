@@ -26,6 +26,7 @@
         "src/basic/BasicView.js",
         "src/basic/BasicEventRenderer.js",
         "src/agenda/AgendaWeekView.js",
+		"src/agenda/AgendaListView.js",
         "src/agenda/AgendaDayView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaEventRenderer.js",
