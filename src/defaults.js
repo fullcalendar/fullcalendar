@@ -13,6 +13,7 @@ var defaults = {
 	weekNumbers: false,
 	weekNumberCalculation: 'iso',
 	weekNumberTitle: 'W',
+	weekNumberTitleHtml: false,
 	
 	// editing
 	//editable: false,

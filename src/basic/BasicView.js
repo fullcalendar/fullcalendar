@@ -78,6 +78,7 @@ function BasicView(element, calendar, viewName) {
 	var colFormat;
 	var showWeekNumbers;
 	var weekNumberTitle;
+	var weekNumberTitleHtml;
 	var weekNumberFormat;
 	
 	
@@ -110,6 +111,7 @@ function BasicView(element, calendar, viewName) {
 		// week # options. (TODO: bad, logic also in other views)
 		showWeekNumbers = opt('weekNumbers');
 		weekNumberTitle = opt('weekNumberTitle');
+		weekNumberTitleHtml = opt('weekNumberTitleHtml');
 		if (opt('weekNumberCalculation') != 'iso') {
 			weekNumberFormat = "w";
 		}
@@ -187,9 +189,13 @@ function BasicView(element, calendar, viewName) {
 
 		if (showWeekNumbers) {
 			html +=
-				"<th class='fc-week-number " + headerClass + "'>" +
-				htmlEscape(weekNumberTitle) +
-				"</th>";
+				"<th class='fc-week-number " + headerClass + "'>";
+				if(weekNumberTitleHtml == true) {
+					html += weekNumberTitle;
+				} else {
+					html += htmlEscape(weekNumberTitle);
+				}
+				html += "</th>";
 		}
 
 		for (col=0; col<colCnt; col++) {
