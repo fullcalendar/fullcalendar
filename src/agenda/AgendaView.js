@@ -125,6 +125,7 @@ function AgendaView(element, calendar, viewName) {
 	var colFormat;
 	var showWeekNumbers;
 	var weekNumberTitle;
+	var weekNumberTitleHtml;
 	var weekNumberFormat;
 	
 
@@ -160,6 +161,7 @@ function AgendaView(element, calendar, viewName) {
 		// week # options. (TODO: bad, logic also in other views)
 		showWeekNumbers = opt('weekNumbers');
 		weekNumberTitle = opt('weekNumberTitle');
+		weekNumberTitleHtml = opt('weekNumberTitleHtml');
 		if (opt('weekNumberCalculation') != 'iso') {
 			weekNumberFormat = "w";
 		}
@@ -312,7 +314,6 @@ function AgendaView(element, calendar, viewName) {
 		var headerClass = tm + "-widget-header";
 		var date;
 		var html = '';
-		var weekText;
 		var col;
 
 		html +=
@@ -321,17 +322,23 @@ function AgendaView(element, calendar, viewName) {
 
 		if (showWeekNumbers) {
 			date = cellToDate(0, 0);
-			weekText = formatDate(date, weekNumberFormat);
+			html += "<th class='fc-agenda-axis toto fc-week-number " + headerClass + "'>";
 			if (rtl) {
-				weekText += weekNumberTitle;
+				html += htmlEscape(formatDate(date, weekNumberFormat));
+				if(weekNumberTitleHtml == true) {
+					html += weekNumberTitle;
+				} else {
+					html += htmlEscape(weekNumberTitle);
+				}
+			} else {
+				if(weekNumberTitleHtml == true) {
+					html += weekNumberTitle;
+				} else {
+					html += htmlEscape(weekNumberTitle);
+				}
+				html += htmlEscape(formatDate(date, weekNumberFormat));
 			}
-			else {
-				weekText = weekNumberTitle + weekText;
-			}
-			html +=
-				"<th class='fc-agenda-axis fc-week-number " + headerClass + "'>" +
-				htmlEscape(weekText) +
-				"</th>";
+			html += "</th>";
 		}
 		else {
 			html += "<th class='fc-agenda-axis " + headerClass + "'>&nbsp;</th>";
