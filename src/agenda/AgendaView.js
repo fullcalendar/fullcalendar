@@ -827,6 +827,7 @@ function AgendaView(element, calendar, viewName) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
 			var dates;
+			var previousY = ev.clientY;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !getIsCellAllDay(cell)) {
@@ -844,12 +845,16 @@ function AgendaView(element, calendar, viewName) {
 				}
 			}, ev);
 			$(document).one('mouseup', function(ev) {
+				var distanceY = Math.abs(ev.clientY - previousY);
 				hoverListener.stop();
 				if (dates) {
-					if (+dates[0] == +dates[1]) {
+					if (+dates[0] == +dates[1] && distanceY < opt('mouseThreshold')) {
+						clearSelection();
 						reportDayClick(dates[0], false, ev);
 					}
-					reportSelection(dates[0], dates[3], false, ev);
+					else {
+						reportSelection(dates[0], dates[3], false, ev);
+					}
 				}
 			});
 		}
