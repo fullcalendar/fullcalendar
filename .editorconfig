@@ -1,0 +1,17 @@
+# http://editorconfig.org
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = tab
+indent_size = tab
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+[{tests/,}lib/**]
+indent_style = ignore
+end_of_line = ignore
+insert_final_newline = ignore
+trim_trailing_whitespace = ignore
