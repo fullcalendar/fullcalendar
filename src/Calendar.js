@@ -1,5 +1,5 @@
 
- 
+
 function Calendar(element, options, eventSources) {
 	var t = this;
 	

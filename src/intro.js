@@ -9,6 +9,6 @@
  * For event drag & drop, requires jQuery UI draggable.
  * For event resizing, requires jQuery UI resizable.
  */
- 
+
 (function($, undefined) {
 
