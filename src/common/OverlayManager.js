@@ -1,4 +1,4 @@
- 
+
 function OverlayManager() {
 	var t = this;
 	

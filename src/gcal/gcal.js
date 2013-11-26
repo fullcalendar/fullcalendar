@@ -3,7 +3,7 @@
  * Docs & License: <%= meta.homepage %>
  * (c) <%= meta.copyright %>
  */
- 
+
 (function($) {
 
 
