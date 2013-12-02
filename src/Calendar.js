@@ -28,7 +28,8 @@ function Calendar(element, options, eventSources) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
-	
+	t.setHiddenDays = setHiddenDays;
+
 	
 	// imports
 	EventManager.call(t, options, eventSources);
@@ -507,6 +508,12 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
+	function setHiddenDays(newHiddenDays) {
+	    t.options.hiddenDays = newHiddenDays;
+	    currentView.reloadHiddenDays();
+	}
+
+
 	
 	/* External Dragging
 	------------------------------------------------------------------------*/
