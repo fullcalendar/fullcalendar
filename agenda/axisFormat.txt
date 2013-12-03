@@ -1,13 +1,13 @@
 
-axisFormat *1.4*
-================
+axisFormat
+==========
 
 Determines the time-text that will be displayed on the vertical axis of the agenda views.
 
 <div class='spec' markdown='1'>
-String, *default*: `'h(:mm)tt'`
+[format string](../utilities/date_formatting_string), *default*: `'h(:mm)a'`
 </div>
 
-The value is a format-string that will be processed by [formatDate](../utilities/formatDate).
+The default value depends on the current [lang](../text/lang).
 
-The default value will produce times that look like "5pm" and "5:30pm".
+The default English value will produce times that look like "5pm" and "5:30pm".

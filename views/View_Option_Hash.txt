@@ -1,6 +1,6 @@
 
-View Option Hash *1.4*
-======================
+View Option Hash
+================
 
 A way to specify options on a per-view basis.
 

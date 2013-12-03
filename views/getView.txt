@@ -1,6 +1,6 @@
 
-getView *1.4.2*
-===============
+getView
+=======
 
 Returns the [View Object]() for the current view.
 

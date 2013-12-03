@@ -1,0 +1,19 @@
+
+formatRange
+===========
+
+Formats a date range by intelligently inserting a dash between the two dates.
+
+<div class='spec' markdown='1'>
+$.fullCalendar.formatRange( *moment1*, *moment2*, *formatString* [, *separator*, *isRTL* ] ) -> String
+</div>
+
+`moment1` and `moment2` must be [Moment]() objects.
+
+Example:
+
+	var moment1 = moment('2013-09-02');
+	var moment2 = moment('2013-09-09');
+	$.fullCalendar.formatRange(moment1, moment2, 'MMMM D YYYY');
+
+	=> "Sep 2 - 9 2013"

@@ -1,11 +1,11 @@
 
-getDate *1.4.2*
-===============
+getDate
+=======
 
-Returns a Date object for the current date of the calendar.
+Returns a [Moment](../utilities/Moment) for the current date of the calendar.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'getDate' ) -> Date
+.fullCalendar( 'getDate' ) -> Moment
 </div>
 
 For month view, it will always be sometime between the first and last day of the month.
@@ -14,6 +14,6 @@ For week views, it will always be sometime between the first and last day of the
 Example of displaying a calendar's current date when a button is clicked:
 
 	$('#my-button').click(function() {
-		var d = $('#calendar').fullCalendar('getDate');
-		alert("The current date of the calendar is " + d);
+		var moment = $('#calendar').fullCalendar('getDate');
+		alert("The current date of the calendar is " + moment.format());
 	});

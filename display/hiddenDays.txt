@@ -1,6 +1,6 @@
 
-hiddenDays *1.6.2*
-==================
+hiddenDays
+==========
 
 Exclude certain days-of-the-week from being displayed.
 

@@ -1,6 +1,6 @@
 
-render *1.3.1*
-==============
+render
+======
 
 Immediately forces the calendar to render and/or readjusts its size.
 
@@ -19,8 +19,3 @@ Here is an example with the [jQuery UI tab plugin](http://jqueryui.com/demos/tab
 	
 Notice that this example calls `render` whenever *any* tab is shown, not just the tab that the calendar is within.
 This is okay, because FullCalendar is smart enough to only render calendars that are visible to the user.
-
-<div class='version-info' markdown='1'>
-Prior to version 1.4.2, the *render* method did not readjust the size of the calendar. It only
-rendered the calendar if it was not already rendered.
-</div>

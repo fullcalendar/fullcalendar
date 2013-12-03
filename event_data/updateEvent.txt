@@ -1,6 +1,6 @@
 
-updateEvent *1.2*
-=================
+updateEvent
+===========
 
 Reports changes to an event and renders them on the calendar.
 

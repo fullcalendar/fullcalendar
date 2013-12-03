@@ -7,10 +7,9 @@ The following options only apply to the `agendaWeek` and `agendaDay` views:
 - allDaySlot
 - allDayText
 - axisFormat
-- slotMinutes
-- snapMinutes
-- defaultEventMinutes
-- firstHour
+- slotDuration
+- snapDuration
+- scrollTime
 - minTime
 - maxTime
 - slotEventOverlap

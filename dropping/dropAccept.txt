@@ -1,6 +1,6 @@
 
-dropAccept *1.4.7*
-==================
+dropAccept
+==========
 
 Provides a way to filter which elements can be dropped onto the calendar.
 

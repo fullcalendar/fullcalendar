@@ -1,6 +1,6 @@
 
-eventDurationEditable *1.6.3*
-=============================
+eventDurationEditable
+=====================
 
 Allow events' durations to be editable through resizing.
 

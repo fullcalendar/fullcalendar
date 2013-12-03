@@ -8,7 +8,7 @@ an <a href='events_function'>event-generating function</a> that you define,
 a <a href='events_json_feed'>URL to a json feed</a>,
 or a <a href='../google_calendar'>Google Calendar feed</a>.
 
-Since version 1.5, Event Objects can have "options" associated with them.
+Event Objects can have "options" associated with them.
 However, before you can start specifying options, you must write an Event Object in its
 *extended form*. It must be a traditional JavaScript object with properties.
 Here are the extended forms for each type of Event Source:
@@ -127,26 +127,10 @@ Sets every <a href='Event_Object'>Event Object's</a> `durationEditable` for this
 </tr>
 <tr>
 <th>
-allDayDefault
+eventDataTransform
 </th>
 <td markdown='1'>
-Sets the [allDayDefault]() option, but only for this source.
-</td>
-</tr>
-<tr>
-<th>
-ignoreTimezone
-</th>
-<td markdown='1'>
-Sets the [ignoreTimezone]() option, but only for this source.
-</td>
-</tr>
-<tr>
-<th>
-eventTransform
-</th>
-<td markdown='1'>
-Sets the [eventTransform]() callback, but only for this source.
+Sets the [eventDataTransform]() callback, but only for this source.
 </td>
 </tr>
 </table>

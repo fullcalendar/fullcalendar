@@ -1,6 +1,6 @@
 
-defaultView *1.3*
-=================
+defaultView
+===========
 
 The initial view when the calendar loads.
 

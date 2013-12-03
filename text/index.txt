@@ -3,6 +3,7 @@ Text/Time Customization
 =======================
 
 <ul>
+<li>lang</li>
 <li>timeFormat</li>
 <li>columnFormat</li>
 <li>titleFormat</li>

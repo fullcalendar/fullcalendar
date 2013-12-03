@@ -1,6 +1,6 @@
 
-next *1.3*
-==========
+next
+====
 
 Moves the calendar one step forward (either by a month, week, or day).
 
@@ -19,8 +19,3 @@ Example using `next` with an external button:
 	$('#my-next-button').click(function() {
 		$('#calendar').fullCalendar('next');
 	});
-
-
-<div class='version-info' markdown='1'>
-In versions 1.0 through 1.2.1, this option was known as *prevMonth*.
-</div>

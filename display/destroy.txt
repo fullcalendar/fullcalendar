@@ -1,6 +1,6 @@
 
-destroy *1.4.3*
-===============
+destroy
+=======
 
 Restores the element to the state before FullCalendar was initialized.
 

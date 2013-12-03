@@ -1,6 +1,6 @@
 
-allDaySlot *1.4*
-================
+allDaySlot
+==========
 
 Determines if the "all-day" slot is displayed at the top of the calendar.
 

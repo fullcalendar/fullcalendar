@@ -1,6 +1,6 @@
 
-header *1.3*
-============
+header
+======
 
 Defines the buttons and title at the top of the calendar.
 

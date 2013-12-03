@@ -1,6 +1,6 @@
 
-eventSources *1.2*
-==================
+eventSources
+============
 
 A way to specify multiple event sources.
 

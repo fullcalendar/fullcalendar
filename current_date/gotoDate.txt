@@ -2,13 +2,10 @@
 gotoDate
 ========
 
-Moves the calendar to an arbitrary year/month/date.
+Moves the calendar to an arbitrary date.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'gotoDate', *year* [, *month*, [ *date* ]] )
+.fullCalendar( 'gotoDate', moment )
 </div>
 
-**IMPORTANT**: `month` is 0-based, meaning January=`0`, February=`1`, etc.
-
-This method can also be called with a single argument, a Date object
-(only works in versions >= 1.3.2).
+`moment` can be a [Moment](../utilities/Moment) object, or anything the Moment constructor accepts.

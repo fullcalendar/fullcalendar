@@ -1,6 +1,6 @@
 
-eventDataTransform *1.6*
-====================
+eventDataTransform
+==================
 
 Transforms custom data into a standard [Event Object](Event_Object).
 

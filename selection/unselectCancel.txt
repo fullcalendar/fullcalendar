@@ -1,6 +1,6 @@
 
-unselectCancel *1.4.6*
-======================
+unselectCancel
+==============
 
 A way to specify elements that will ignore the [unselectAuto]() option.
 

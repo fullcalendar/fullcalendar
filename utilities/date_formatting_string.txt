@@ -1,0 +1,31 @@
+
+Date formatting string
+======================
+
+Date formatting strings are used throughout the API and determine how a
+given [Moment]() object is rendered to a string.
+
+FullCalendar leverages MomentJS for most date-related operations including
+formatting dates:
+
+> **[See MomentJS's formatting characters](http://momentjs.com/docs/#/displaying/format/)**
+
+However, FullCalendar has extended Moment's functionality a bit by adding
+additional formatting characters:
+
+<table>
+<tr><th>AA</th><td>renders "A" or "P" (one-letter, uppercase, for AM or PM)</td></tr>
+<tr><th>aa</th><td>renders "a" or "a" (one-letter, lowercase, for AM or PM)</td></tr>
+<tr><th>( ... )</th><td>only renders the enclosed string if one or more non-zero digits</td></tr>
+</table>
+<br />
+
+
+Formatting ranges
+-----------------
+
+Many parts of the API accept formatting strings for *ranges*, two dates that denote a start
+and end time. Some examples include [titleFormat](../text/titleFormat) and [timeFormat](../text/timeFormat).
+
+In this scenario, FullCalendar intelligently inserts a dash between the two dates, yielding
+something like `"Sep 2 - 9 2013"`. Internally, [formatRange]() is used for this.

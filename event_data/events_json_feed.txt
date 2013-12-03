@@ -12,7 +12,8 @@ pass that information along in GET parameters.
 The GET parameter names will be determined by the [startParam]() and [endParam]() options.
 (`"start"` and `"end"` by default).
 
-The value of the parameters will always be UNIX timestamps (seconds since 1970).
+The values of these parameters will be ISO8601 date strings (like `"2013-12-01"`).
+For precise behavior, see the [timezone](../timezone/timezone) docs.
 
 Consider the following script:
 
@@ -22,7 +23,7 @@ Consider the following script:
 	
 Here is a URL that FullCalendar might visit:
 	
-`/myfeed.php?start=1262332800&end=1265011200&_=1263178646`
+`/myfeed.php?start=2013-12-01&end=2014-01-12&_=1386054751381`
 
 The `_` parameter is automatically inserted to prevent the browser from
 caching the result ([more below](#caching)).
@@ -33,7 +34,7 @@ with a `?` in your URL (see the JSONP discussion in [$.ajax](http://api.jquery.c
 Extended Form
 -------------
 
-Since version 1.5, you are able to specify [Event Source options](Event_Source_Object#options).
+You can specify [Event Source options](Event_Source_Object#options).
 This often comes in handy when you are using the [eventSources]() option to
 specify multiple event sources and you want certain options to only apply to certain sources.
 However, to do this, you must write things a little differently:
@@ -73,6 +74,14 @@ endParam
 </th>
 <td markdown='1'>
 Sets the [endParam]() option, but only for this source.
+</td>
+</tr>
+<tr>
+<th>
+timezoneParam
+</th>
+<td markdown='1'>
+Sets the [timezoneParam]() option, but only for this source.
 </td>
 </tr>
 </table>
@@ -149,7 +158,6 @@ can also be specified as a function, in order to send dynamic values:
 	});
 
 The `startParam` and `endParam` values will still automatically be included.
-This feature is new in version 1.6.3.
 	
 Caching
 -------

@@ -6,10 +6,10 @@ FullCalendar has a number of different "views", or ways of displaying days and e
 The following 5 views are all built in to FullCalendar:
 
 - **month** - [see example](../../views/month/)
-- **basicWeek** - [see example](../../views/basicWeek/) (available since version 1.3)
-- **basicDay** - [see example](../../views/basicDay/) (available since version 1.3)
-- **agendaWeek** - [see example](../../views/agendaWeek/) (available since version 1.4)
-- **agendaDay** - [see example](../../views/agendaDay/) (available since version 1.4)
+- **basicWeek** - [see example](../../views/basicWeek/)
+- **basicDay** - [see example](../../views/basicDay/)
+- **agendaWeek** - [see example](../../views/agendaWeek/)
+- **agendaDay** - [see example](../../views/agendaDay/)
 
 You can define [header](../display/header) buttons to allow the user to switch between them.
 You can set the initial view of the calendar with the [defaultView]() option.

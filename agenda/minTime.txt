@@ -1,11 +1,11 @@
 
-minTime *1.4.2*
-===============
+minTime
+=======
 
-Determines the first hour/time that will be displayed, even when the scrollbars have been scrolled all the way up.
+Determines the starting time that will be displayed, even when the scrollbars have been scrolled all the way up.
 
 <div class='spec' markdown='1'>
-Integer/String, *default*: `0`
+[Duration](../utilities/Duration), default: `"00:00:00"`
 </div>
 
-This can be a number like `5` (which means 5am), a string like `'5:30'` (which means 5:30am) or a string like `'5:30am'`.
+The default `"00:00:00"` means the start time will be at the very beginning of the day (midnight).

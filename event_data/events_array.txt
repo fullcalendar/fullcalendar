@@ -31,7 +31,7 @@ It will make Internet Explorer choke.
 Extended Form
 -------------
 
-Since version 1.5, you are able to specify [Event Source options](Event_Source_Object#options).
+You can specify [Event Source options](Event_Source_Object#options).
 This often comes in handy when you are using the [eventSources]() option to
 specify multiple event sources and you want certain options to only apply to certain sources.
 However, to do this, you must write things a little differently:

@@ -12,49 +12,10 @@ You can change the color of all events on the calendar using the [eventColor]() 
 	});
 	
 The [eventBackgroundColor](), [eventBorderColor](), and [eventTextColor]() options
-can also be used for coloring events.
+can be used for more granularity.
 
 If you want to change the color for events in a specific Event Source,
 please look at the [Event Source options](../event_data/Event_Source_Object#options) documentation.
 
 If you want to change the color for individual events, please look at the
 [Event Object color options](../event_data/Event_Object#color-options).
-
-
-
-
-[deprecated] Coloring Events prior to version 1.5
-=================================================
-
-You can modify the default color that affects all events by adding some css in the following form:
-
-	.fc-event,
-	.fc-agenda .fc-event-time,
-	.fc-event a {
-		background-color: black; /* background color */
-		border-color: black;     /* border color */
-		color: red;              /* text color */
-		}
-
-You can also change the color for certain events by using the `className` property of each [Event Object](../event_data/Event_Object).
-Here is an example of the CSS you would write if your `className` was "holiday":
-
-	.holiday,
-	.fc-agenda .holiday .fc-event-time,
-	.holiday a {
-		background-color: green; /* background color */
-		border-color: green;     /* border color */
-		color: yellow;           /* text color */
-		}
-
-If you are using the "default" and "className" techniques together,
-make sure the CSS for the default technique comes first.
-
-<p class='abstract' style='display:none'>
-How to change colors of events through CSS.
-</p>
-
-<div class='version-info' markdown='1'>
-Versions prior to 1.3 had different ways of setting colors through CSS.
-Check your version's *fullcalendar.css* for an example.
-</div>

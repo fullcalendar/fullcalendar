@@ -1,0 +1,46 @@
+
+Moment
+======
+
+Moment objects are used throughout the API. A Moment object represents a point in time,
+like the native [Date Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date),
+but is far superior.
+MomentJS is a third-party library that must be included on the same page as FullCalendar.
+
+> **[Visit the MomentJS website](http://momentjs.com/)**
+
+For more information on how to include MomentJS on your page, see [Basic Usage](../usage).
+
+In the API, most options that accept a Moment will also conveniently accept anything
+that the `moment()` constructor accepts, including:
+
+- date strings (ISO8601 is **highly** recommended)
+- unix offsets (milliseconds since the Unix Epoch)
+- native Date objects
+
+ISO8601 dates are recommended because they can compactly contain information
+about timezone offset, as well as whether a "time" (hours/minutes/seconds) is present.
+Here are some examples:
+
+	"2013-02-08"                // without time
+	"2013-02-08T09:30:26"       // with time 
+	"2013-02-08T09:30:26+07:00" // with time and timezone offset
+
+<br />
+
+Creating Moments from scratch
+-----------------------------
+
+Since Moment is a dependency of FullCalendar, the global `moment` object will likely
+be available to you. You should be able to create new Moments from scratch like this:
+
+	var m = moment();
+	console.log(m.format());
+
+However, if you want to create a new Moment object that has been initialized with a calendar's
+[lang](../text/lang) and [timezone](../timezone/timezone) settings, use the `moment` method of the Calendar object.
+This method accepts the same parameters as the normal `moment()` method.
+
+	var calendar = $('#calendar').fullCalendar('getCalendar');
+	var m = calendar.moment();
+	console.log(m.format());

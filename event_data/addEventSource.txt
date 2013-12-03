@@ -1,6 +1,6 @@
 
-addEventSource *1.2*
-====================
+addEventSource
+==============
 
 Dynamically adds an event source.
 

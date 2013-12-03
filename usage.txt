@@ -3,12 +3,17 @@ Basic Usage
 ===========
 
 The first step in embedding a calendar on a web page is to have the right JavaScript and CSS files.
-Make sure you are including the FullCalendar stylesheet, as well as the FullCalendar and
-[jQuery](http://jquery.com/) JS files, in the `<head>` of your page:
+Make sure you are including the FullCalendar stylesheet, as well as the FullCalendar,
+[jQuery](http://jquery.com/), and
+[Moment](http://momentjs.com/)
+JavaScript files, in the `<head>` of your page:
 
-	<link rel='stylesheet' type='text/css' href='fullcalendar.css' />
-	<script type='text/javascript' src='jquery.js'></script>
-	<script type='text/javascript' src='fullcalendar.js'></script>
+	<link rel='stylesheet' href='fullcalendar/fullcalendar.css' />
+	<script src='lib/jquery.min.js'></script>
+	<script src='lib/moment.min.js'></script>
+	<script src='fullcalendar/fullcalendar.js'></script>
+
+jQuery and Moment must be loaded before FullCalendar's JavaScript.
 	
 If you plan on doing dragging or resizing, you need some additional [jQuery UI](http://jqueryui.com/download) files
 (more information [here](event_ui/Requirements)).

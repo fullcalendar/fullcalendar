@@ -1,6 +1,6 @@
 
-unselectAuto *1.4.6*
-====================
+unselectAuto
+============
 
 Whether clicking elsewhere on the page will cause the current selection to be cleared.
 

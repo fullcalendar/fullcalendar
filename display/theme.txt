@@ -1,6 +1,6 @@
 
-theme *1.3*
-===========
+theme
+=====
 
 Enables/disables use of jQuery UI theming.
 

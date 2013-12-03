@@ -1,6 +1,6 @@
 
-eventAfterAllRender *1.6*
-=========================
+eventAfterAllRender
+===================
 
 Triggered after all events have finished rendering.
 

@@ -1,6 +1,6 @@
 
-viewDestroy *1.6.3*
-===================
+viewDestroy
+===========
 
 Triggered when a rendered date-range needs to be torn down.
 

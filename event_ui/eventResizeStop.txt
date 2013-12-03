@@ -1,6 +1,6 @@
 
-eventResizeStop *1.3*
-=====================
+eventResizeStop
+===============
 
 Triggered when event resizing stops.
 

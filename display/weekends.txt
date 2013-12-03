@@ -1,6 +1,6 @@
 
-weekends *1.4.1*
-================
+weekends
+========
 
 Whether to include Saturday/Sunday columns in any of the calendar views.
 

@@ -1,6 +1,6 @@
 
-contentHeight *1.4.2*
-=====================
+contentHeight
+=============
 
 Will make the calendar's content area a pixel height.
 

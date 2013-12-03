@@ -1,0 +1,15 @@
+
+defaultTimedEventDuration
+=========================
+
+A fallback duration for timed [Event Objects](../event_data/Event_Object) without a specified `end` value.
+
+<div class='spec' markdown='1'>
+[Duration](../utilities/Duration), *default*: `'02:00:00'` (2 hours)
+</div>
+
+If an event does not have an `end` specified, it will appear to be this duration when rendered.
+However, the `end` value will remain unset.
+
+This setting only affects events with `allDay` equal to `false`.
+For all-day events, use [defaultAllDayEventDuration]().

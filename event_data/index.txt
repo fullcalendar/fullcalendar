@@ -9,10 +9,9 @@ Event Data
 <li><a href='events_json_feed'>events</a> <em>(as a json feed)</em></li>
 <li><a href='events_function'>events</a> <em>(as a function)</em></li>
 <li>eventSources</li>
-<li>allDayDefault</li>
-<li>ignoreTimezone</li>
 <li>startParam</li>
 <li>endParam</li>
+<li>timezoneParam</li>
 <li>lazyFetching</li>
 <li class='callback'><a href='eventDataTransform'>eventDataTransform</a> <em>(callback)</em></li>
 <li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>

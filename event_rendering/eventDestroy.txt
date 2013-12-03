@@ -1,6 +1,6 @@
 
-eventDestroy *1.6.3*
-====================
+eventDestroy
+============
 
 Called before an event's element is removed from the DOM.
 

@@ -1,7 +1,0 @@
-
-resize
-======
-
-<div class='removed-notice' markdown='1'>
-In version 1.3, this callback was renamed to [windowResize](../display/windowResize).
-</div>

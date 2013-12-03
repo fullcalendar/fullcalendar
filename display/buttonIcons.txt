@@ -1,25 +1,26 @@
 
-buttonIcons *1.3*
-=================
+buttonIcons
+===========
 
-Determines which theme icons appear on the header buttons.
+Determines which icons are displayed in buttons of the header.
 
 <div class='spec' markdown='1'>
 Object, *default:*
 
 	{
-		prev: 'circle-triangle-w',
-		next: 'circle-triangle-e'
+		prev: 'left-single-arrow',
+		next: 'right-single-arrow',
+		prevYear: 'left-double-arrow',
+		nextYear: 'right-double-arrow'
 	}
 </div>
 
-This option only applies to calendars that have jQuery UI theming enabled with the [theme]() option.
+This setting only takes affect when [theme]() is `false`.
 
 A hash must be supplied that maps button names (from the [header]()) to icon strings.
-The icon strings determine the CSS class that will be used on the button. For example, the
-string `'circle-triangle-w'` will result in the class `'ui-icon-triangle-w'`.
-	
+These icon string are transformed into classNames which are styled by FullCalendar's CSS.
+
 If a button does not have an entry, it falls back to using [buttonText](../text/buttonText).
 
-If you are using a jQuery UI theme and would prefer not to display any icons and would rather
+If you would prefer not to display any icons and would rather
 use `buttonText` instead, you can set the `buttonIcons` option to `false`.

@@ -1,6 +1,6 @@
 
-firstDay *1.3*
-==============
+firstDay
+========
 
 The day that each week begins.
 
@@ -8,12 +8,10 @@ The day that each week begins.
 Integer, *default*: `0` (Sunday)
 </div>
 
+The default value depends on the current [lang](../text/lang).
+
 The value must be a number that represents the day of the week.
 
 Sunday=`0`, Monday=`1`, Tuesday=`2`, etc.
 
 This option is useful for UK users who need the week to start on Monday (`1`).
-
-<div class='version-info' markdown='1'>
-In versions 1.1 through 1.2.1, this option was known as *weekStart*.
-</div>

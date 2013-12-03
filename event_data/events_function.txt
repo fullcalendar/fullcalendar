@@ -5,14 +5,17 @@ events (as a function)
 A custom function for programmatically generating [Event Objects](Event_Object).
 
 <div class='spec' markdown='1'>
-function( *start*, *end*, *callback* ) { }
+function( *start*, *end*, *timezone*, *callback* ) { }
 </div>
 
 FullCalendar will call this function whenever it needs new event data.
 This is triggered when the user clicks prev/next or switches views.
 
 This function will be given `start` and `end` parameters, which are
-Date objects denoting the range the calendar needs events for.
+[Moments](../utilities/Moment) denoting the range the calendar needs events for.
+
+`timezone` is a string/boolean describing the calendar's current timezone.
+It is the exact value of the [timezone](../timezone/timezone) option.
 
 It will also be given `callback`, a function that must be called when
 the custom event function has generated its events. It is the event function's
@@ -23,14 +26,14 @@ Here is an example showing how to use an event function to fetch events from
 a hypothetical XML feed:
 
 	$('#calendar').fullCalendar({
-		events: function(start, end, callback) {
+		events: function(start, end, timezone, callback) {
 			$.ajax({
 				url: 'myxmlfeed.php',
 				dataType: 'xml',
 				data: {
 					// our hypothetical feed requires UNIX timestamps
-			        start: Math.round(start.getTime() / 1000),
-			        end: Math.round(end.getTime() / 1000)
+			        start: start.unix(),
+			        end: end.unix()
 				},
 				success: function(doc) {
 					var events = [];
@@ -52,7 +55,7 @@ However, if you have the choice, JSON is a better idea because you can just spec
 Extended Form
 -------------
 
-Since version 1.5, you are able to specify [Event Source options](Event_Source_Object#options).
+You can specify [Event Source options](Event_Source_Object#options).
 This often comes in handy when you are using the [eventSources]() option to
 specify multiple event sources and you want certain options to only apply to certain sources.
 However, to do this, you must write things a little differently:
@@ -63,7 +66,7 @@ However, to do this, you must write things a little differently:
 		
 			// your event source
 			{
-				events: function(start, end, callback) {
+				events: function(start, end, timezone, callback) {
 					// ...
 				},
 				color: 'yellow',   // an option!

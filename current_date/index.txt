@@ -3,8 +3,6 @@ Current Date
 ============
 
 <ul>
-<li>year</li>
-<li>month</li>
 <li>date</li>
 <li class='method'><a href='prev'>prev</a> <em>(method)</em></li>
 <li class='method'><a href='next'>next</a> <em>(method)</em></li>

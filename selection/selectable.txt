@@ -1,6 +1,6 @@
 
-selectable *1.4.6*
-==================
+selectable
+==========
 
 Allows a user to highlight multiple days or timeslots by clicking and dragging.
 
@@ -19,7 +19,3 @@ for the [unselect](unselect_callback) callback.
 
 To view an example of how to create a new event based on a user's selection
 see "demos/selectable.html" in the download, or [visit this page](/js/fullcalendar-1.5.3/demos/selectable.html).
-
-<div class='version-info' markdown='1'>
-A View Option Hash has been supported since version 1.4.7
-</div>

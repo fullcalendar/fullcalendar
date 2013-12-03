@@ -1,6 +1,6 @@
 
-eventResizeStart *1.3*
-======================
+eventResizeStart
+================
 
 Triggered when event resizing begins.
 

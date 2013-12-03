@@ -1,6 +1,6 @@
 
-eventStartEditable *1.6.3*
-==========================
+eventStartEditable
+==================
 
 Allow events' start times to be editable through dragging.
 

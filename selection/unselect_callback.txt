@@ -1,6 +1,6 @@
 
-unselect *1.4.6*
-================
+unselect
+========
 
 A callback that will fire when the current selection is cleared.
 
@@ -21,4 +21,3 @@ A selection might be cleared for a number of reasons:
 
 `jsEvent` holds the primitive JavaScript event with information such as mouse coordinates.
 If `unselect` has been triggered via the [unselect method](unselect_method), `jsEvent` will be `undefined`.
-(added in version 1.4.7)

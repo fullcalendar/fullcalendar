@@ -1,6 +1,6 @@
 
-renderEvent *1.3*
-=================
+renderEvent
+===========
 
 Renders a new event on the calendar.
 

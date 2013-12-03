@@ -1,6 +1,6 @@
 
-slotEventOverlap *1.6.4*
-========================
+slotEventOverlap
+================
 
 Determines if timed events in agenda view should visually overlap.
 

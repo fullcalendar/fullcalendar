@@ -2,10 +2,12 @@
 startParam
 ==========
 
-A GET parameter of this name will be inserted into each JSON feed's URL.
+A parameter of this name will be sent to each JSON event feed.
+It describes the start of the interval being fetched.
 
 <div class='spec' markdown='1'>
 String, *default*: `'start'`
 </div>
 
-The value of this GET parameter will be a UNIX timestamp denoting the start of the first visible day (inclusive).
+The value of this parameter will be an ISO8601 date string.
+The precise format is determined by the [timezone](../timezone/timezone) option.

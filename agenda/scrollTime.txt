@@ -1,14 +1,12 @@
 
-firstHour *1.4*
-===============
+scrollTime
+==========
 
-Determines the first hour that will be visible in the scroll pane.
+Determines how far down the scroll pane is initially scrolled down.
 
 <div class='spec' markdown='1'>
-Integer, *default*: `6`
+[Duration](../utilities/Duration), *default*: `'06:00:00'` (6am)
 </div>
-
-Values must be from 0-23, where 0=midnight, 1=1am, etc.
 
 The user will be able to scroll upwards to see events before this time.
 If you want to prevent users from doing this, use the [minTime]() option instead.

@@ -1,6 +1,6 @@
 
-handleWindowResize *1.6.3*
-==========================
+handleWindowResize
+==================
 
 Whether to automatically resize the calendar when the browser window resizes.
 

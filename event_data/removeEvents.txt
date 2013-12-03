@@ -1,6 +1,6 @@
 
-removeEvents *1.2*
-==================
+removeEvents
+============
 
 Removes events from the calendar.
 

@@ -1,6 +1,6 @@
 
-eventAfterRender *1.4.2*
-========================
+eventAfterRender
+================
 
 Triggered after an event has been placed on the calendar in its final position.
 

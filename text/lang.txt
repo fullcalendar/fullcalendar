@@ -1,0 +1,96 @@
+
+lang
+====
+
+Customize the language and localization options for the calendar.
+
+<div class='spec' markdown='1'>
+A String language code. *default*: `"en"`
+</div>
+
+This option affects many things such as:
+
+- the text in buttons, as defined by [header](../display/header)
+- text that contains month or day-of-week strings
+- date formatting strings, such as [timeFormat]()
+- [weekNumberCalculation](../display/weekNumberCalculation)
+- [firstDay](../display/firstDay)
+
+How to use other languages
+--------------------------
+
+You will need to load the language's JavaScript data file in order to use it.
+These files are included with the FullCalendar download in the `lang/` directory.
+
+	<script src='fullcalendar/lang/es.js'></script>
+	<script>
+
+		$(document).ready(function() {
+
+			$('#calendar').fullCalendar({
+			});
+
+		});
+
+	</script>
+
+If you are simply loading one language, you do *not* need to specify the `lang` option.
+FullCalendar will look at the most recent language file loaded and use it.
+
+However, if more than one language file is loaded, or the combined `all.js` file is loaded,
+you must explicitly specify which language to use via the `lang` option:
+
+	<script src='fullcalendar/lang/all.js'></script>
+	<script>
+
+		$(document).ready(function() {
+
+			$('#calendar').fullCalendar({
+				lang: 'es'
+			});
+
+		});
+
+	</script>
+
+For more information, see the [live example]() ([source code]()).
+
+Available language codes
+------------------------
+
+	ar-ma
+	ar
+	bg
+	ca
+	cs
+	da
+	de
+	el
+	en-ca
+	en-gb
+	es
+	fa
+	fi
+	fr-ca
+	fr
+	hi
+	hr
+	hu
+	it
+	ja
+	ko
+	lv
+	nl
+	pl
+	pt-br
+	pt
+	ro
+	ru
+	sk
+	sl
+	sv
+	th
+	tr
+	uk
+	zh-cn
+	zh-tw

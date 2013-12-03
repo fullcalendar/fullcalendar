@@ -1,0 +1,28 @@
+
+now
+===
+
+Explicitly sets the "today" date of the calendar.
+This is the day that is normally highlighted in yellow.
+
+<div class='spec' markdown='1'>
+an ISO8601 date string like `"2013-12-01T00:00:00"`
+</div>
+
+Normally, the local browser's "today" date is used.
+
+Overriding the "today" date is particularly useful when your calendar is
+using a custom [timezone]() parameter. The current year/month/date in the custom
+timezone might be different than the local computer's current date.
+
+You'll most likely want to calculate this with a server-side script and inject
+it into the settings of the calendar. Here is an example in PHP:
+
+	<?php
+		$datetime = new DateTime('now', 'America/Chicago');
+		$datetime_string = $datetime->format('c');
+	?>
+
+	$('#calendar').fullCalendar({
+		now: <?php echo json_encode($datetime_string) ?>
+	});

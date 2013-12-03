@@ -1,6 +1,6 @@
 
-weekMode *1.3*
-==============
+weekMode
+========
 
 Determines the number of weeks displayed in a month view. Also determines each week's height.
 
@@ -23,7 +23,3 @@ Available options:
 :	The calendar will have either 4, 5, or 6 weeks, depending on the month.
 	Each week will have the same constant height, meaning the calendar’s height will change
 	month-to-month.
-
-<div class='version-info' markdown='1'>
-In versions 1.0 through 1.2.1, this option was known as *fixedWeeks*.
-</div>

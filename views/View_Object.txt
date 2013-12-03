@@ -1,10 +1,12 @@
 
-View Object *1.3*
-=================
+View Object
+===========
 
 An object that is passed to every callback, containing info about the current view.
 
-It will be populated with the following properties:
+
+Properties
+----------
 
 `name`
 :	Name of one of the [Available Views]() (a string).
@@ -12,19 +14,24 @@ It will be populated with the following properties:
 `title`
 :	Title text that is displayed at the top of the header (such as "September 2009" or "Sep 7 - 13 2009").
 
-`start`
-:	A Date object of the first day of the month/week. If in day-view, the date of the single day.
-   
-`end`
-:	A Date object of the day after the last day of the month/week. If in day-view, the Date after the single day.
 
-	Because this is an exclusive value, if the calendar has a month-view on October 2009, `end` will be November 1st.
-	
-`visStart`
-:	A Date object of the first visible day of the view. In month-view, this value is often before the 1st day of the month,
-	because most months do not begin on a Monday.
 
-	In week and day views, this value will always be the same as `start`.
+Methods
+-------
 
-`visEnd`
-:	A Date object of the day after the last visible day (because it is exclusive like `end`).
+`getStart()`
+:	The [Moment](../utilities/Moment) of the view's first visible day.
+
+	In month-view, this value is often before the 1st day of the month, because most months do not begin on the first day-of-week.
+
+`getEnd()`
+:	The [Moment](../utilities/Moment) of the view's exclusive end.
+
+	This value is exclusive and will be the day after the last visible day.
+
+`getIntervalStart()`
+:	This will be the same value as `getStart()`, **except for month view**, in which case it will be the first of the month.
+
+`getIntervalEnd()`
+:	This will be the same value as `getEnd()`, **except for month view**, in which case it will be the day after
+	the last day of the month (because it is an exclusive value)

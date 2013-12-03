@@ -1,6 +1,6 @@
 
-removeEventSource *1.2*
-=======================
+removeEventSource
+=================
 
 Dynamically removes an event source.
 
@@ -10,9 +10,6 @@ Dynamically removes an event source.
 
 Events from the source will immediately be removed from the calendar.
 
-Since version 1.5, the `source` parameter has become rather relaxed.
+The `source` parameter is rather flexible.
 You can provide an event source's Array/URL/Function
 **or** you can specify the full [Event Source Object]().
-
-Prior to version 1.5, things were more strict.
-You must specify a reference to the original Array/URL/Function.

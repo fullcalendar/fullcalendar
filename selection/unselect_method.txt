@@ -1,6 +1,6 @@
 
-unselect *1.4.6*
-================
+unselect
+========
 
 A method for programmatically clearing the current selection.
 

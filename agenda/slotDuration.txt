@@ -1,0 +1,11 @@
+
+slotDuration
+============
+
+The frequency for displaying time slots.
+
+<div class='spec' markdown='1'>
+[Duration](../utilities/Duration), *default*: `'00:30:00'` (30 minutes)
+</div>
+
+[Duration String]: http://momentjs.com/docs/#/durations/creating/

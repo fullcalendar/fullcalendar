@@ -1,6 +1,6 @@
 
-weekNumbers *1.6*
-=================
+weekNumbers
+===========
 
 Determines if week numbers should be displayed on the calendar.
 
@@ -11,5 +11,5 @@ Boolean, *default*: `false`
 If set to `true`, week numbers will be displayed in a separate left column in the month/basic views
 as well as at the top-left corner of the agenda views. See [Available Views](../views/Available_Views).
 
-By defaut, FullCalendar will display the [ISO8601 week number](http://en.wikipedia.org/wiki/ISO_8601#Week_dates).
+By default, FullCalendar will use the current locale's week number calculation method.
 To display other types of week numbers, see [weekNumberCalculation](weekNumberCalculation).

@@ -1,11 +1,11 @@
 
-maxTime *1.4.2*
-===============
+maxTime
+=======
 
-Determines the last hour/time (exclusively) that will be displayed, even when the scrollbars have been scrolled all the way down.
+Determines the end time (exclusively) that will be displayed, even when the scrollbars have been scrolled all the way down.
 
 <div class='spec' markdown='1'>
-Integer/String, *default*: `24`
+[Duration](../utilities/Duration), *default*: `"24:00:00"`
 </div>
 
-This can be a number like `22` (which means 10pm), a string like `'22:30'` (which means 10:30pm) or a string like `'10:30pm'`.
+The default `"24:00:00"` means the end time will be at the very end of the day (midnight).

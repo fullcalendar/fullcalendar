@@ -1,7 +1,0 @@
-
-eventDragOpacity
-================
-
-<div class='removed-notice' markdown='1'>
-In version 1.3, this option was renamed to [dragOpacity](../event_ui/dragOpacity).
-</div>

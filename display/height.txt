@@ -1,6 +1,6 @@
 
-height *1.4.2*
-==============
+height
+======
 
 Will make the entire calendar (including header) a pixel height.
 

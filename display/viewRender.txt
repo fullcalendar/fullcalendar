@@ -1,6 +1,6 @@
 
-viewRender *1.6.3*
-==================
+viewRender
+==========
 
 Triggered when a new date-range is rendered, or when the [view type](../views/Available_Views)
 switches.

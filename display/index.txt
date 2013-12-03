@@ -4,8 +4,9 @@ General Display
 
 <ul>
 <li>header</li>
-<li>theme</li>
 <li>buttonIcons</li>
+<li>theme</li>
+<li>themeButtonIcons</li>
 <li>firstDay</li>
 <li>isRTL</li>
 <li>weekends</li>
