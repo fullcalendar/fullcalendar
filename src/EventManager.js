@@ -74,6 +74,16 @@ function EventManager(options, _sources) {
 		_fetchEventSource(source, function(events) {
 			if (fetchID == currentFetchID) {
 				if (events) {
+
+					if (options.eventDataTransform) {
+						events = $.map(events, options.eventDataTransform);
+					}
+					if (source.eventDataTransform) {
+						events = $.map(events, source.eventDataTransform);
+					}
+					// TODO: this technique is not ideal for static array event sources.
+					//  For arrays, we'll want to process all events right in the beginning, then never again.
+				
 					for (var i=0; i<events.length; i++) {
 						events[i].source = source;
 						normalizeEvent(events[i]);
@@ -126,7 +136,22 @@ function EventManager(options, _sources) {
 				var success = source.success;
 				var error = source.error;
 				var complete = source.complete;
-				var data = $.extend({}, source.data || {});
+
+				// retrieve any outbound GET/POST $.ajax data from the options
+				var customData;
+				if ($.isFunction(source.data)) {
+					// supplied as a function that returns a key/value object
+					customData = source.data();
+				}
+				else {
+					// supplied as a straight key/value object
+					customData = source.data;
+				}
+
+				// use a copy of the custom data so we can modify the parameters
+				// and not affect the passed-in object.
+				var data = $.extend({}, customData || {});
+
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
 				if (startParam) {
@@ -135,6 +160,7 @@ function EventManager(options, _sources) {
 				if (endParam) {
 					data[endParam] = Math.round(+rangeEnd / 1000);
 				}
+
 				pushLoading();
 				$.ajax($.extend({}, ajaxDefaults, source, {
 					data: data,
@@ -234,7 +260,7 @@ function EventManager(options, _sources) {
 				e.className = event.className;
 				e.editable = event.editable;
 				e.color = event.color;
-				e.backgroudColor = event.backgroudColor;
+				e.backgroundColor = event.backgroundColor;
 				e.borderColor = event.borderColor;
 				e.textColor = event.textColor;
 				normalizeEvent(e);
@@ -307,14 +333,14 @@ function EventManager(options, _sources) {
 	
 	function pushLoading() {
 		if (!loadingLevel++) {
-			trigger('loading', null, true);
+			trigger('loading', null, true, getView());
 		}
 	}
 	
 	
 	function popLoading() {
 		if (!--loadingLevel) {
-			trigger('loading', null, false);
+			trigger('loading', null, false, getView());
 		}
 	}
 	

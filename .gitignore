@@ -1,9 +1,11 @@
 build/out
-build/component
+build/archive
+build/bower
+build/cdnjs
 dist
 
-# for npm
+# npm modules
 node_modules
 
-# for bower
-components
+# bower components
+lib/*/*

@@ -58,6 +58,8 @@ function BasicYearView(element, calendar, viewName) {
 	t.getHoverListener = function() { return hoverListener };
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
+  t.colLeft = colLeft;
+  t.colRight = colRight;
 	t.dayOfWeekCol = dayOfWeekCol;
 	t.dateCell = dateCell;
 	t.cellDate = cellDate;
@@ -71,8 +73,8 @@ function BasicYearView(element, calendar, viewName) {
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
   t.getRowLefts = getRowLefts;
   t.getRowMaxWidth = getRowMaxWidth;
-  t.gridToView = gridToView;  
-	
+  t.gridToView = gridToView;
+
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
@@ -80,6 +82,11 @@ function BasicYearView(element, calendar, viewName) {
   BasicEventRenderer.call(t);
   t.compileDaySegs = compileYearSegs;
   t.calculateDayDelta = calculateDayDelta;
+  t.rowToGridOffset = rowToGridOffset;
+//  t.dateToDayOffset = dateToDayOffset;
+  t.dayOffsetToCellOffset = dayOffsetToCellOffset;
+  t.cellToCellOffset = cellToCellOffset;
+  t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 	//BasicYearEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -121,8 +128,8 @@ function BasicYearView(element, calendar, viewName) {
 	var nwe;
 	var tm;
 	var colFormat;
-	
-	
+
+
 	
 	/* Rendering
 	------------------------------------------------------------*/
@@ -576,6 +583,97 @@ function BasicYearView(element, calendar, viewName) {
 	
 	/* Utilities
 	--------------------------------------------------------*/
+  function cellsForMonth(i) {
+    return rowsForMonth[i] * (nwe ? 5 : 7);
+  }
+
+  function dayOffsetToCellOffset(dayOffset) {
+    var offset = 0;
+    for (var i = 0; i < 12; i++) {
+      var mo = (i + firstMonth)%12+1;
+      var moDays = daysInMonth(t.curYear.getYear(), mo);
+
+      if (dayOffset < moDays) {
+        offset += otherMonthDays[i][0]; //days in other month at beginning of month;
+        var di = cloneDate(t.visStart);
+        addMonths(di, i);
+        di.setDate(1);
+        for (j = 1; j <= dayOffset; j++) {
+          if (nwe) {
+            if (di.getDay() != 0 && di.getDay() != 6) {
+              offset += 1;
+            }
+          } else {
+            offset += 1;
+          }
+          addDays(di, 1);
+        }
+        return offset;
+      }
+
+      dayOffset -= moDays;
+      offset += cellsForMonth(i);
+    }
+  }
+
+  function cellToCellOffset(row, col) {
+    var colCnt = t.getColCnt();
+    var grid = null;
+
+    // rtl variables. wish we could pre-populate these. but where?
+    var dis = rtl ? -1 : 1;
+    var dit = rtl ? colCnt - 1 : 0;
+
+    if (typeof row == 'object') {
+      grid = row.grid;
+      col = row.col;
+      row = row.row;
+
+    }
+
+    var offset = 0;
+    for (var i = 0; i < grid.offset; i++) {
+      offset += cellsForMonth(i);
+    }
+
+    offset += row * colCnt + (col * dis + dit); // column, adjusted for RTL (dis & dit)
+
+    return offset;
+  }
+
+  function cellOffsetToDayOffset(cellOffset) {
+    var offset = 0;
+    for (var i = 0; i < 12; i++) {
+      var mo = (i + firstMonth)%12+1;
+      var moDays = daysInMonth(t.curYear.getYear(), mo);
+      var moCellDays = cellsForMonth(i);
+      if (cellOffset < moCellDays) {
+        cellOffset -= otherMonthDays[i][0];
+
+        offset += otherMonthDays[i][2];
+
+        var di = cloneDate(t.visStart);
+        addMonths(di, i);
+        di.setDate(1 + otherMonthDays[i][2]);
+        while (cellOffset > 0) {
+          if (nwe) {
+            if (di.getDay() != 5 && di.getDay() != 6) {
+              cellOffset -= 1;
+            }
+          } else {
+            cellOffset -= 1;
+          }
+          addDays(di, 1);
+          offset += 1;
+        }
+        return offset;
+      }
+
+      cellOffset -= moCellDays;
+      offset += moDays;
+    }
+  }
+
   function daysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
   }
@@ -591,6 +689,15 @@ function BasicYearView(element, calendar, viewName) {
     offset -= otherMonthDays[m][0]; //days in other month at beginning of month
     offset += otherMonthDays[m][2]; //hidden weekend days at beginning of month
     return offset;
+  }
+
+  function rowToGridOffset(row) {
+    var cnt = 0;
+    for (var i = 0; i < 12; i++) {
+      cnt += rowsForMonth[i];
+      if (row < cnt) { return i; }
+    }
+    return -1;
   }
   
   function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
@@ -688,14 +795,24 @@ function BasicYearView(element, calendar, viewName) {
 	});
 	
 	
-	function colContentLeft(col) {
-		return colContentPositions.left(col);
+	function colContentLeft(col, gridOffset) {
+    var grid = tableByOffset(gridOffset);
+		return colContentPositions.left(col) + grid.position().left - 10;
 	}
 	
 	
-	function colContentRight(col) {
-		return colContentPositions.right(col);
+	function colContentRight(col, gridOffset) {
+    var grid = tableByOffset(gridOffset);
+		return colContentPositions.right(col) + grid.position().left - 10;
 	}
+
+  function colLeft(col, gridOffset) {
+    return colContentLeft(col, gridOffset);
+  }
+
+  function colRight(col, gridOffset) {
+    return colContentRight(col, gridOffset);
+  }
 	
 	
 	

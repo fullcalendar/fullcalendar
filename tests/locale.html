@@ -7,10 +7,11 @@
 	.fc .fc-sat, .fc .fc-sun { background-color:red } 
 
 </style>
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.css' />
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.print.css' media='print' />
-<script src='../build/deps.js'></script>
-<script src='../build/out/fullcalendar/fullcalendar.js'></script>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
 <script>
 
 	var date = new Date();
@@ -31,7 +32,10 @@
 			
 			isRTL: true,
 			firstDay: 1,
-			weekends: false,
+			//weekends: false,
+			//hiddenDays: [ 4 ], // hide thursday
+
+			//weekNumbers: true,
 			
 			minTime: '8am',
 			maxTime: '11:30pm',

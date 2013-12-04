@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.css' />
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.print.css' media='print' />
-<script src='../build/deps.js'></script>
-<script src='../build/out/fullcalendar/fullcalendar.js'></script>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
 <script>
 
 	var date = new Date();
@@ -29,6 +30,7 @@
 			//minTime: 7,
 			//weekends: false,
 			//allDaySlot: false,
+			//hiddenDays: [ 2, 4 ], // tuesdays and thursdays
 			
 			selectable: true,
 			/*

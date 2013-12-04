@@ -5,6 +5,15 @@
 .fc-grid th {
 	text-align: center;
 	}
+
+.fc .fc-week-number {
+	width: 22px;
+	text-align: center;
+	}
+
+.fc .fc-week-number div {
+	padding: 0 2px;
+	}
 	
 .fc-grid .fc-day-number {
 	float: right;

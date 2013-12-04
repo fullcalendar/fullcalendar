@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.css' />
-<link rel='stylesheet' href='../build/out/fullcalendar/fullcalendar.print.css' media='print' />
-<link rel='stylesheet' href='http://jqueryui.com/themes/base/ui.all.css' />
-<script src='../build/deps.js'></script>
-<script src='../build/out/fullcalendar/fullcalendar.js'></script>
-<script src='http://jqueryui.com/themeroller/themeswitchertool/'></script>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script src='lib/themeswitcher/jquery.themeswitcher.js'></script>
 <script>
 
 function initCalendar() {
@@ -104,6 +104,7 @@ $(document).ready(function() {
 	initCalendar();
 	
 	$('#switcher').themeswitcher({
+		imgPath: 'lib/themeswitcher/images/',
 		loadTheme: 'Cupertino',
 		height: 400,
 		onSelect: function(theme) {
@@ -117,8 +118,8 @@ $(document).ready(function() {
 
 </script>
 </head>
-<body style='font-size:13px;margin:40px 0 0'>
+<body style='font-size:13px;margin:0'>
 <div id="switcher" style='position:absolute;top:5px;left:5px'></div>
-<div id='calendar' style='width:900px;margin:20px auto 0;font-family:arial'></div>
+<div id='calendar' style='width:900px;margin:50px auto 0;font-family:arial'></div>
 </body>
 </html>

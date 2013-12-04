@@ -1,11 +1,12 @@
 {
   "name": "fullcalendar",
-  "version": "1.5.4-final",
+  "version": "1.6.4",
+
   "dependencies": {
-    "jquery": "~1.8.1"
+    "jquery": "~1.10.2"
   },
   "optionalDependencies": {
-    "jquery-ui": "~1.8.23"
+    "jquery-ui": "~1.10.3"
   },
 
   "title": "FullCalendar",
@@ -21,11 +22,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/arshaw/fullcalendar/blob/master/MIT-LICENSE.txt"
-    },
-    {
-      "type": "GPL",
-      "url": "https://github.com/arshaw/fullcalendar/blob/master/GPL-LICENSE.txt"
+      "url": "https://github.com/arshaw/fullcalendar/blob/master/license.txt"
     }
   ],
 
@@ -34,5 +31,5 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2012 Adam Shaw"
+  "copyright": "2013 Adam Shaw"
 }
