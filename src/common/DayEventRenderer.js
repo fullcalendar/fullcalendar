@@ -36,10 +36,6 @@ function DayEventRenderer() {
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
 
-  //xxx yearview
-  if (t.getRowLefts) {
-    var getRowLefts = t.getRowLefts;
-  }
   if (t.getRowMaxWidth) {
     var getRowMaxWidth = t.getRowMaxWidth;
   }
@@ -128,8 +124,6 @@ function DayEventRenderer() {
 
 		// calculate the desired `left` and `width` properties on each segment object
 		calculateHorizontals(segments);
-
-    //xxx set lefts here?
 
 		// build the HTML string. relies on `left` property
 		html = buildHTML(segments);
@@ -228,9 +222,6 @@ function DayEventRenderer() {
 	// Build a concatenated HTML string for an array of segments
 	function buildHTML(segments) {
 		var html = '';
-
-    //xxx yearview need this?
-    //left = seg.isEnd ? colContentLeft(leftCol) : minLeft;
 
 		for (var i=0; i<segments.length; i++) {
 			html += buildHTMLForSegment(segments[i]);
@@ -579,11 +570,6 @@ function DayEventRenderer() {
 		eventElementHandlers(event, eventElement);
 	}
 
-  //xxx yeaview need this?
-  function getRowLefts(rowDivs) {    
-    return null;
-  }
-
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
 		var dayDelta;
@@ -690,9 +676,6 @@ function DayEventRenderer() {
 
 					// don't let resizing move earlier than start date cell
 					cellOffset = Math.max(cellOffset, minCellOffset);
-
-          //xxx yearview
-          //dayDelta = t.calculateDayDelta(cell, origCell, rowDelta, colDelta);
 
 					dayDelta =
             t.cellOffsetToDayOffset(cellOffset) -

@@ -7,10 +7,6 @@ function BasicEventRenderer() {
 	t.renderEvents = renderEvents;
 	t.clearEvents = clearEvents;
 
-  //xxx yearview. still need?
-	//t.bindDaySeg = bindDaySeg;
-  //t.calculateDayDelta = calculateDayDelta;
-
 	// imports
 	DayEventRenderer.call(t);
 

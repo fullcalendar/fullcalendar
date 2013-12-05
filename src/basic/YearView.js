@@ -9,15 +9,14 @@ function YearView(element, calendar) {
 	BasicYearView.call(t, element, calendar, 'year');
 	var opt = t.opt;
 	var renderYear = t.renderYear;
-	var formatDate = calendar.formatDate;  
-	
+	var formatDate = calendar.formatDate;
+
 	function render(date, delta) {
 		if (delta) {
 			t.curYear = addYears(date, delta);
 		}
 		var start = cloneDate(date, true);		
     var firstMonth = opt('firstMonth') || 0;
-		//start.setDate(1);
 		start.setFullYear(start.getFullYear(),firstMonth,1);
 		var end = cloneDate(date);
 		end.setFullYear(end.getFullYear()+((firstMonth+12)/12)|0, (firstMonth+11)%12,31);
@@ -29,7 +28,7 @@ function YearView(element, calendar) {
 		var nwe = opt('weekends') ? 0 : 1;
     addDays(visStart, -((visStart.getDay() - Math.max(firstDay, nwe) + 7) % 7));
     addDays(visEnd, (7 - visEnd.getDay() + Math.max(firstDay, nwe)) % 7);
-		colAndRow = '3x4'; //'2x6', '3x4', '4x3' 3 types
+		colAndRow = '3x4'; //TODO support '2x6', '3x4', '4x3' 3 types
 
 		t.title = formatDate(start, opt('titleFormat'));
 		t.start = start;
@@ -52,8 +51,6 @@ function BasicYearView(element, calendar, viewName) {
 	t.renderSelection = renderSelection;
 	t.clearSelection = clearSelection;
 	t.reportDayClick = reportDayClick; // for selection (kinda hacky)
-	t.dragStart = dragStart;
-	t.dragStop = dragStop;
 	t.defaultEventEnd = defaultEventEnd;
 	t.getHoverListener = function() { return hoverListener };
 	t.colContentLeft = colContentLeft;
@@ -62,7 +59,6 @@ function BasicYearView(element, calendar, viewName) {
   t.colRight = colRight;
 	t.dayOfWeekCol = dayOfWeekCol;
 	t.dateCell = dateCell;
-	t.cellDate = cellDate;
 	t.cellIsAllDay = function() { return true };
 	t.allDayRow = allDayRow;
 	t.allDayBounds = allDayBounds;
@@ -71,23 +67,17 @@ function BasicYearView(element, calendar, viewName) {
 	t.getColWidth = function() { return colWidth; };
 	t.getBodyRows = function() { return bodyRows; };
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
-  t.getRowLefts = getRowLefts;
   t.getRowMaxWidth = getRowMaxWidth;
-  t.gridToView = gridToView;
 
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
   BasicEventRenderer.call(t);
-  t.compileDaySegs = compileYearSegs;
-  t.calculateDayDelta = calculateDayDelta;
   t.rowToGridOffset = rowToGridOffset;
-//  t.dateToDayOffset = dateToDayOffset;
   t.dayOffsetToCellOffset = dayOffsetToCellOffset;
   t.cellToCellOffset = cellToCellOffset;
   t.cellOffsetToDayOffset = cellOffsetToDayOffset;
-	//BasicYearEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var clearEvents = t.clearEvents;
@@ -96,10 +86,8 @@ function BasicYearView(element, calendar, viewName) {
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var formatDate = calendar.formatDate;
 	
-	
 	// locals
 	var table;
-	//var head;
 	var body;
 	var bodyRows;
 	
@@ -107,7 +95,6 @@ function BasicYearView(element, calendar, viewName) {
 	var subTables;
 	
 	var bodyCells;
-	//var bodyFirstCells;
 	var bodyCellTopInners;
 	var daySegmentContainer;
 	
@@ -129,8 +116,6 @@ function BasicYearView(element, calendar, viewName) {
 	var tm;
 	var colFormat;
 
-
-	
 	/* Rendering
 	------------------------------------------------------------*/
 	
@@ -341,93 +326,16 @@ function BasicYearView(element, calendar, viewName) {
 	
 	
 	function setHeight(height) {
-		/*
-		viewHeight = height;
-		
-		var bodyHeight = viewHeight - head.height();
-		var rowHeight;
-		var rowHeightLast;
-		var cell;
-			
-		if (opt('weekMode') == 'variable') {
-			rowHeight = rowHeightLast = Math.floor(bodyHeight / (rowCnt==1 ? 2 : 6));
-		}else{
-			rowHeight = Math.floor(bodyHeight / rowCnt);
-			rowHeightLast = bodyHeight - rowHeight * (rowCnt-1);
-		}
-		
-		bodyFirstCells.each(function(i, _cell) {
-			if (i < rowCnt) {
-				cell = $(_cell);
-				setMinHeight(
-					cell.find('> div'),
-					(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
-				);
-			}
-		});
-		*/
+    //not sure what supposed to do
 	}
-	
-	
-	function setWidth(width) { 
+
+
+	function setWidth(width) {
     viewWidth = width;
 		colContentPositions.clear();
 	}
 	
-  function compileYearSegs(events) {
-    var segs = [];
-    var rowStart = cloneDate(t.visStart);
-    var visEventsEnds = $.map(events, exclEndDay);
-    
-    var row = 0;
-  	subTables.each(function(i, _sub) {                  
-  		var d = cloneDate(t.curYear);
-      var mo = (i + firstMonth)%12;
-      var moYear = d.getFullYear() + ((i+firstMonth)/12)|0;
-	  	d.setFullYear(moYear,mo,1);
-      if (nwe) { skipWeekend(d); }
-      var dowFirst = (d.getDay()+7-firstDay)%7;      
-			d.setFullYear(moYear,mo, -1 * dowFirst+1);     
 
-  		$(_sub).find('tbody > tr').each(function(iii, _tr) {
-        if (nwe) { skipWeekend(d); }
-        
-        var rowStart = cloneDate(d);
-        var curCols = colCnt;
-        while (rowStart.getMonth() != mo) {
-          addDays(rowStart, 1);
-          curCols--;
-        }
-        
-        var rowEnd = cloneDate(rowStart);
-        for (i = 0; i < curCols; i++) {
-          addDays(rowEnd, 1);
-          if (rowEnd.getMonth() > rowStart.getMonth()) {
-            break;
-          }
-        }
-        
-        rowSeg = stackSegs(sliceSegs(events, visEventsEnds, rowStart, rowEnd));
-  			for (j=0; j<rowSeg.length; j++) {
-	  			level = rowSeg[j];
-		  		for (k=0; k<level.length; k++) {
-			  		seg = level[k];
-				  	seg.row = row;
-					  seg.level = j; // not needed anymore
-  					segs.push(seg);
-	  			}
-		  	}                
-        
-        row += 1;
-        addDays(d, 5);
-        if (nwe) { skipWeekend(d); } else { addDays(d, 2); }
-      });
-      
-    });
-    
-    return segs;
-	}
-	
 	
 	/* Day clicking and binding
 	-----------------------------------------------------------*/
@@ -515,16 +423,6 @@ function BasicYearView(element, calendar, viewName) {
 		return renderOverlay(rect, element);
 	}
 	
-  function getRowLefts(rowDivs) {    
-    var i;
-		var rowCnt = rowDivs.length;
-		var lefts = [];
-		for (i=0; i<rowCnt; i++) {
-			lefts[i] = rowDivs[i][0].offsetLeft - rowDivs[0][0].offsetLeft; // !!?? but this means the element needs position:relative if in a table cell!!!!
-		}
-		return lefts;
-  }
-  
   function getRowMaxWidth(row) {
     return $(subTables[(row/5)|0]).width();
   }
@@ -552,31 +450,6 @@ function BasicYearView(element, calendar, viewName) {
 		var cell = dateCell(date);
 		var _element = bodyCells[cell.row*colCnt + cell.col];
 		trigger('dayClick', _element, date, allDay, ev);
-	}
-	
-	
-	
-	/* External Dragging
-	-----------------------------------------------------------------------*/
-	
-	
-	function dragStart(_dragElement, ev, ui) {
-		hoverListener.start(function(cell) {
-			clearOverlays();
-			if (cell) {
-				renderCellOverlay(cell.grid, cell.row, cell.col, cell.row, cell.col);
-			}
-		}, ev);
-	}
-	
-	
-	function dragStop(_dragElement, ev, ui) {
-		var cell = hoverListener.stop();
-		clearOverlays();
-		if (cell) {
-			var d = cellDate(cell);
-			trigger('drop', _dragElement, d, true, ev, ui);
-		}
 	}
 	
 	
@@ -678,19 +551,6 @@ function BasicYearView(element, calendar, viewName) {
     return new Date(year, month, 0).getDate();
   }
   
-  function cellToDayOffset(cell)
-  {
-    var offset = 1;
-    var m = cell.grid.offset;
-    for (var i = 0; i < m; i++) {      
-      offset += daysInMonth(t.curYear.getYear(), (i + firstMonth)%12+1);
-    }
-    offset += cell.row*7+cell.col;
-    offset -= otherMonthDays[m][0]; //days in other month at beginning of month
-    offset += otherMonthDays[m][2]; //hidden weekend days at beginning of month
-    return offset;
-  }
-
   function rowToGridOffset(row) {
     var cnt = 0;
     for (var i = 0; i < 12; i++) {
@@ -700,59 +560,9 @@ function BasicYearView(element, calendar, viewName) {
     return -1;
   }
   
-  function calculateDayDelta(cell, origCell, rowDelta, colDelta) {
-    return cellToDayOffset(cell) - cellToDayOffset(origCell);
-  }
-
   function defaultEventEnd(event) {
 		return cloneDate(event.start);
 	}
-  
-  function modRowsInMonth(a)
-  {
-    var rAdd = 0;
-    for (var i = 0; i < 12; i += 3) {
-      var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
-      if (a >= weeksInRow) {
-        a -= weeksInRow;        
-      } else {
-        break;
-      }
-    }
-    return a;
-  }
-  
-  function gridToView(c,r)
-  {
-    // r += modRowsInMonth(((c/colCnt)|0)*5);
-    // c = c % colCnt;// + ((c/15)|0)*15;
-    
-    return [c,r];
-  }
-  
-  // function viewToGrid(c,r)
-  // {
-  //   c += (((r/5)|0)*colCnt)%15;
-  //   
-  //   var rAdd = 0;
-  //   for (var i = 0; i < 12; i += 3) {
-  //     var weeksInRow = rowsForMonth[i]+rowsForMonth[i+1]+rowsForMonth[i+2];      
-  //     if (r >= weeksInRow) {
-  //       r -= weeksInRow;
-  //       rAdd += weeksInRow;
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  //   r = (r % 5)+rAdd;
-  //   return [c,r];
-  // }
-  // function viewToGrid(c,r)
-  // {
-  //   var table = (c/10)|0;
-  //   c = c % 10;
-  //   return [table, c, r];
-  // }
   
   function tableByOffset(offset) {
     return $(subTables[offset]);
@@ -825,225 +635,23 @@ function BasicYearView(element, calendar, viewName) {
 	}
 	
 	
-	function cellDate(cell) {
-    return addDays(cloneDate(t.visStart), cellToDayOffset(cell) - 1);
-	}
-		
 	function dayOfWeekCol(dayOfWeek) {
     return ((dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt) * dis + dit;
 	}
-	
-	
-	
-	
+
 	function allDayRow(i) {
 		return bodyRows.eq(i);
 	}
-	
-	
+
 	function allDayBounds(i) {
 		return {
 			left: 0,
 			right: viewWidth
 		};
 	}
-	
-	
-}
-
-function BasicYearEventRenderer() {
-	var t = this;
-	
-	// exports
-	t.renderEvents = renderEvents;
-	t.compileDaySegs = compileSegs; // for DayEventRenderer
-	t.clearEvents = clearEvents;
-	t.bindDaySeg = bindDaySeg;
-	
-	
-	// imports
-	DayEventRenderer.call(t);
-	var opt = t.opt;
-	var trigger = t.trigger;
-	//var setOverflowHidden = t.setOverflowHidden;
-	var isEventDraggable = t.isEventDraggable;
-	var isEventResizable = t.isEventResizable;
-	var reportEvents = t.reportEvents;
-	var reportEventClear = t.reportEventClear;
-	var eventElementHandlers = t.eventElementHandlers;
-	var showEvents = t.showEvents;
-	var hideEvents = t.hideEvents;
-	var eventDrop = t.eventDrop;
-	var getDaySegmentContainer = t.getDaySegmentContainer;
-	var getHoverListener = t.getHoverListener;
-	var renderDayOverlay = t.renderDayOverlay;
-	var clearOverlays = t.clearOverlays;
-	var getRowCnt = t.getRowCnt;
-	var getColCnt = t.getColCnt;
-	var getBodyRows = t.getBodyRows;
-	//var renderDaySegs = t.renderDaySegs;
-	var resizableDayEvent = t.resizableDayEvent;
-	
-	
-	
-	/* Rendering
-	--------------------------------------------------------------------*/
-	
-	
-	function renderEvents(events, modifiedEventId) {
-		reportEvents(events);
-		//renderDaySegs(compileSegs(events), modifiedEventId);
-    renderDayEvents(events, modifiedEventId);
-	}
-	
-	
-	function clearEvents() {
-		reportEventClear();
-    getBodyRows().find('.fc-day-content').html('');
-		getDaySegmentContainer().empty();
-	}
-	
-	
-	function compileSegs(events) {
-		var rowCnt = getRowCnt(),
-			colCnt = getColCnt(),
-			d1 = cloneDate(t.visStart),
-			d2 = cloneDate(t.visEnd),
-			visEventsEnds = $.map(events, exclEndDay),
-			i, row,
-			j, level,
-			k, seg,
-			segs=[];
-			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
-			for (j=0; j<row.length; j++) {
-				level = row[j];
-				for (k=0; k<level.length; k++) {
-					seg = level[k];
-					seg.row = i;
-					seg.level = j; // not needed anymore
-					segs.push(seg);
-				}
-			}
-		return segs;
-	}
-	
-	function sliceSegs(events, visEventEnds, start, end) {
-	var segs = [],
-		i, len=events.length, event,
-		eventStart, eventEnd,
-		segStart, segEnd,
-		isStart, isEnd;
-	for (i=0; i<len; i++) {
-		event = events[i];
-		eventStart = event.start;
-		eventEnd = visEventEnds[i];
-		if (eventEnd > start && eventStart < end) {
-			if (eventStart < start) {
-				segStart = cloneDate(start);
-				isStart = false;
-			}else{
-				segStart = eventStart;
-				isStart = true;
-			}
-			if (eventEnd > end) {
-				segEnd = cloneDate(end);
-				isEnd = false;
-			}else{
-				segEnd = eventEnd;
-				isEnd = true;
-			}
-			segs.push({
-				event: event,
-				start: segStart,
-				end: segEnd,
-				isStart: isStart,
-				isEnd: isEnd,
-				msLength: segEnd - segStart
-			});
-		}
-	} 
-	return segs.sort(segCmp);
-}
 
 
-// event rendering calculation utilities
-function stackSegs(segs) {
-	var levels = [],
-		i, len = segs.length, seg,
-		j, collide, k;
-	for (i=0; i<len; i++) {
-		seg = segs[i];
-		j = 0; // the level index where seg should belong
-		while (true) {
-			collide = false;
-			if (levels[j]) {
-				for (k=0; k<levels[j].length; k++) {
-					if (segsCollide(levels[j][k], seg)) {
-						collide = true;
-						break;
-					}
-				}
-			}
-			if (collide) {
-				j++;
-			}else{
-				break;
-			}
-		}
-		if (levels[j]) {
-			levels[j].push(seg);
-		}else{
-			levels[j] = [seg];
-		}
-	}
-	return levels;
-}
-	
-	function bindDaySeg(event, eventElement, seg) {
-		if (isEventDraggable(event)) {
-			draggableDayEvent(event, eventElement);
-		}
-		if (seg.isEnd && isEventResizable(event)) {
-			resizableDayEvent(event, eventElement, seg);
-		}
-		eventElementHandlers(event, eventElement);
-			// needs to be after, because resizableDayEvent might stopImmediatePropagation on click
-	}
-  
-  function renderDayEvents(segs, modifiedEventId) {
-    yyy();
-    var segCnt = segs.length;
-		var rowsTd = getBodyRows();			
-		for(var i=0;i<segs.length;i++){
-      var seg = segs[i];
-			var sd = cloneDate(seg.start);        
-      var td = rowsTd.filter('.fc-day-'+formatDate(sd, 'yyyy-MM-dd'));
-        
-      if (td.length == 1) {
-        var el = daySegHTML(seg);
-        td.find('.fc-day-content').append(el);
-        draggableDayEvent(seg, el);
-      }      
-		}
-  }
-  	
-	function renderDaySegs(segs, modifiedEventId) {
-    zzz();
-		try{
-			var segCnt = segs.length;
-			var rowsTd = getBodyRows();
-			for(var i=0;i<segs.length;i++){
-				var sd = cloneDate(segs[i].start);        
-				while(sd.getTime() < segs[i].end.getTime()) {
-					rowsTd.filter('.fc-day-'+formatDate(segs[i].start, 'yyyy-MM-dd')).addClass('fc-year-have-event');
-					addDays(sd,1);
-				}
-			}
-			
-			
-		}catch(e){
-			alert("MyrenderDaySegs:"+e);
-		}
-	}		
+
+
 
 }
