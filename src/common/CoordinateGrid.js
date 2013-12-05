@@ -1,5 +1,5 @@
 
-function CoordinateGrid(buildFunc) {
+function CoordinateGrid(buildFunc, gridToViewFunc) {
 
 	var t = this;
 	var rows;
@@ -11,7 +11,10 @@ function CoordinateGrid(buildFunc) {
 		cols = [];
 		buildFunc(rows, cols);
 	};
-	
+  
+  if (gridToViewFunc) {
+    t.gridToView = gridToViewFunc;
+  }	
 	
 	t.cell = function(x, y) {
 		var rowCnt = rows.length;
@@ -29,7 +32,11 @@ function CoordinateGrid(buildFunc) {
 				break;
 			}
 		}
-		return (r>=0 && c>=0) ? { row:r, col:c } : null;
+    if (r >= 0 && c >= 0 && t.gridToView) {
+      var a = t.gridToView(c,r);      
+      c = a[0]; r = a[1];
+    }
+		return (r>=0 && c>=0) ? { row:r, col:c, grid: t } : null;
 	};
 	
 	

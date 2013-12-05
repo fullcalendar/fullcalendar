@@ -35,6 +35,11 @@ function DayEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
+
+  if (t.getRowMaxWidth) {
+    var getRowMaxWidth = t.getRowMaxWidth;
+  }
+
 	var getHoverListener = t.getHoverListener;
 	var rangeToSegments = t.rangeToSegments;
 	var cellToDate = t.cellToDate;
@@ -206,8 +211,8 @@ function DayEventRenderer() {
 			var leftFunc = (isRTL ? segment.isEnd : segment.isStart) ? colContentLeft : colLeft;
 			var rightFunc = (isRTL ? segment.isStart : segment.isEnd) ? colContentRight : colRight;
 
-			var left = leftFunc(segment.leftCol);
-			var right = rightFunc(segment.rightCol);
+			var left = leftFunc(segment.leftCol, segment.gridOffset);
+			var right = rightFunc(segment.rightCol, segment.gridOffset);
 			segment.left = left;
 			segment.outerWidth = right - left;
 		}
@@ -217,6 +222,7 @@ function DayEventRenderer() {
 	// Build a concatenated HTML string for an array of segments
 	function buildHTML(segments) {
 		var html = '';
+
 		for (var i=0; i<segments.length; i++) {
 			html += buildHTMLForSegment(segments[i]);
 		}
@@ -461,7 +467,6 @@ function DayEventRenderer() {
 		return segmentRows;
 	}
 
-
 	// Sort an array of segments according to which segment should appear closest to the top
 	function sortSegmentRow(segments) {
 		var sortedSegments = [];
@@ -515,7 +520,7 @@ function DayEventRenderer() {
 	// the events that are overlaid on top.
 	function getRowContentElements() {
 		var i;
-		var rowCnt = getRowCnt();
+		var rowCnt = getRowCnt();    
 		var rowDivs = [];
 		for (i=0; i<rowCnt; i++) {
 			rowDivs[i] = allDayRow(i)
@@ -565,7 +570,6 @@ function DayEventRenderer() {
 		eventElementHandlers(event, eventElement);
 	}
 
-	
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
 		var dayDelta;
@@ -606,7 +610,26 @@ function DayEventRenderer() {
 		});
 	}
 
-	
+  function daySegSetLefts(segs, rowLefts) { // also triggers eventAfterRender
+    if (!rowLefts) {
+      return;
+    }
+    
+		var i;
+		var segCnt = segs.length;
+		var seg;
+		var element;
+		var event;
+		for (i=0; i<segCnt; i++) {
+			seg = segs[i];
+      seg.left = rowLefts[seg.row] + (seg.left||0);
+			element = seg.element;
+			if (element) {        
+				element[0].style.left = seg.left + 'px';
+			}
+		}
+	}
+
 	function resizableDayEvent(event, element, segment) {
 		var isRTL = opt('isRTL');
 		var direction = isRTL ? 'w' : 'e';
@@ -639,24 +662,24 @@ function DayEventRenderer() {
 			var dayDelta;
 			var helpers;
 			var eventCopy = $.extend({}, event);
-			var minCellOffset = dayOffsetToCellOffset( dateToDayOffset(event.start) );
+			var minCellOffset = t.dayOffsetToCellOffset( dateToDayOffset(event.start) );
 			clearSelection();
 			$('body')
 				.css('cursor', direction + '-resize')
 				.one('mouseup', mouseup);
 			trigger('eventResizeStart', this, event, ev);
-			hoverListener.start(function(cell, origCell) {
+			hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 				if (cell) {
 
-					var origCellOffset = cellToCellOffset(origCell);
-					var cellOffset = cellToCellOffset(cell);
+					var origCellOffset = t.cellToCellOffset(origCell);
+					var cellOffset = t.cellToCellOffset(cell);
 
 					// don't let resizing move earlier than start date cell
 					cellOffset = Math.max(cellOffset, minCellOffset);
 
 					dayDelta =
-						cellOffsetToDayOffset(cellOffset) -
-						cellOffsetToDayOffset(origCellOffset);
+            t.cellOffsetToDayOffset(cellOffset) -
+            t.cellOffsetToDayOffset(origCellOffset);
 
 					if (dayDelta) {
 						eventCopy.end = addDays(eventEnd(event), dayDelta, true);

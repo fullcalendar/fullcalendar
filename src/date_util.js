@@ -123,6 +123,13 @@ function setYMD(date, y, m, d) {
 	}
 }
 
+function skipWeekend(date, inc, excl) {
+  inc = inc || 1;
+  while (!date.getDay() || (excl && date.getDay()==1 || !excl && date.getDay()==6)) {
+    addDays(date, inc);
+  }
+  return date;
+}
 
 
 /* Date Parsing
@@ -327,12 +334,14 @@ var dateFormatters = {
 	dd	: function(d)	{ return zeroPad(d.getDate()) },
 	ddd	: function(d,o)	{ return o.dayNamesShort[d.getDay()] },
 	dddd: function(d,o)	{ return o.dayNames[d.getDay()] },
+  e   : function(d,o)     { return o.dayNamesShortest[d.getDay()] },
 	M	: function(d)	{ return d.getMonth() + 1 },
 	MM	: function(d)	{ return zeroPad(d.getMonth() + 1) },
 	MMM	: function(d,o)	{ return o.monthNamesShort[d.getMonth()] },
 	MMMM: function(d,o)	{ return o.monthNames[d.getMonth()] },
 	yy	: function(d)	{ return (d.getFullYear()+'').substring(2) },
 	yyyy: function(d)	{ return d.getFullYear() },
+  zzzz: function(d)	{ return d.getFullYear()+1 },
 	t	: function(d)	{ return d.getHours() < 12 ? 'a' : 'p' },
 	tt	: function(d)	{ return d.getHours() < 12 ? 'am' : 'pm' },
 	T	: function(d)	{ return d.getHours() < 12 ? 'A' : 'P' },

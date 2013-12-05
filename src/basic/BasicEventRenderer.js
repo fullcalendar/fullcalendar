@@ -6,7 +6,6 @@ function BasicEventRenderer() {
 	// exports
 	t.renderEvents = renderEvents;
 	t.clearEvents = clearEvents;
-	
 
 	// imports
 	DayEventRenderer.call(t);

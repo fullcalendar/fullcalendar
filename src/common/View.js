@@ -22,6 +22,7 @@ function View(element, calendar, viewName) {
 	t.hideEvents = hideEvents;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
+  t.rowToGridOffset = rowToGridOffset;
 	// t.title
 	// t.start, t.end
 	// t.visStart, t.visEnd
@@ -382,8 +383,8 @@ function View(element, calendar, viewName) {
 	// - row, col
 	// - { row:#, col: # }
 	function cellToDate() {
-		var cellOffset = cellToCellOffset.apply(null, arguments);
-		var dayOffset = cellOffsetToDayOffset(cellOffset);
+		var cellOffset = t.cellToCellOffset.apply(null, arguments);
+		var dayOffset = t.cellOffsetToDayOffset(cellOffset);
 		var date = dayOffsetToDate(dayOffset);
 		return date;
 	}
@@ -433,8 +434,8 @@ function View(element, calendar, viewName) {
 
 	// date -> cell (combines all transformations)
 	function dateToCell(date) {
-		var dayOffset = dateToDayOffset(date);
-		var cellOffset = dayOffsetToCellOffset(dayOffset);
+		var dayOffset = t.dateToDayOffset(date);
+		var cellOffset = t.dayOffsetToCellOffset(dayOffset);
 		var cell = cellOffsetToCell(cellOffset);
 		return cell;
 	}
@@ -471,6 +472,10 @@ function View(element, calendar, viewName) {
 		};
 	}
 
+  function rowToGridOffset(row) {
+    return 0;
+  }
+
 
 	//
 	// Converts a date range into an array of segment objects.
@@ -487,16 +492,18 @@ function View(element, calendar, viewName) {
 		var segments = []; // array of segments to return
 
 		// day offset for given date range
-		var rangeDayOffsetStart = dateToDayOffset(startDate);
-		var rangeDayOffsetEnd = dateToDayOffset(endDate); // exclusive
+		var rangeDayOffsetStart = t.dateToDayOffset(startDate);
+		var rangeDayOffsetEnd = t.dateToDayOffset(endDate); // exclusive
 
 		// first and last cell offset for the given date range
 		// "last" implies inclusivity
-		var rangeCellOffsetFirst = dayOffsetToCellOffset(rangeDayOffsetStart);
-		var rangeCellOffsetLast = dayOffsetToCellOffset(rangeDayOffsetEnd) - 1;
+		var rangeCellOffsetFirst = t.dayOffsetToCellOffset(rangeDayOffsetStart);
+		var rangeCellOffsetLast = t.dayOffsetToCellOffset(rangeDayOffsetEnd) - 1;
 
 		// loop through all the rows in the view
 		for (var row=0; row<rowCnt; row++) {
+
+      var gridOffset = t.rowToGridOffset(row);
 
 			// first and last cell offset for the row
 			var rowCellOffsetFirst = row * colCnt;
@@ -520,10 +527,11 @@ function View(element, calendar, viewName) {
 				// We need to compare "day offset" because "cell offsets" are often ambiguous and
 				// can translate to multiple days, and an edge case reveals itself when we the
 				// range's first cell is hidden (we don't want isStart to be true).
-				var isStart = cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
-				var isEnd = cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd; // +1 for comparing exclusively
+				var isStart = t.cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
+				var isEnd = t.cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd; // +1 for comparing exclusively
 
 				segments.push({
+          gridOffset: gridOffset,
 					row: row,
 					leftCol: cols[0],
 					rightCol: cols[1],
