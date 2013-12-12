@@ -54,8 +54,14 @@
 				// we need to copy it, so that multiple events don't have a reference to the same object
 				var copiedEventObject = $.extend({}, originalEventObject);
 				
+				// compute the event's end
+				var eventMinutes = $(this).data('eventMinutes') || $('#calendar').fullCalendar('option', 'defaultEventMinutes');
+				var end = $.fullCalendar.cloneDate(date);
+				end.setMinutes(end.getMinutes() + eventMinutes);
+
 				// assign it the date that was reported
 				copiedEventObject.start = date;
+				copiedEventObject.end = end;
 				copiedEventObject.allDay = allDay;
 				
 				// render the event on the calendar
@@ -136,11 +142,11 @@
 
 <div id='external-events'>
 <h4>Draggable Events</h4>
-<div class='external-event'>My Event 1</div>
+<div class='external-event' data-event-minutes="60">My Event 1 (60 min.)</div>
 <div class='external-event'>My Event 2</div>
-<div class='external-event'>My Event 3</div>
-<div class='external-event'>My Event 4</div>
-<div class='external-event'>My Event 5</div>
+<div class='external-event' data-event-minutes="360">My Event 3 (6 hrs.)</div>
+<div class='external-event' data-event-minutes="120">My Event 4 (2 hrs.)</div>
+<div class='external-event' data-event-minutes="300">My Event 5 (5 hrs.)</div>
 <p>
 <input type='checkbox' id='drop-remove' /> <label for='drop-remove'>remove after drop</label>
 </p>

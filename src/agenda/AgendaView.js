@@ -873,8 +873,9 @@ function AgendaView(element, calendar, viewName) {
 				if (getIsCellAllDay(cell)) {
 					renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
 				}else{
+					var eventMinutes = $(_dragElement).data('eventMinutes') || opt('defaultEventMinutes');
 					var d1 = realCellToDate(cell);
-					var d2 = addMinutes(cloneDate(d1), opt('defaultEventMinutes'));
+					var d2 = addMinutes(cloneDate(d1), eventMinutes);
 					renderSlotOverlay(d1, d2);
 				}
 			}
