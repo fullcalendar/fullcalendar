@@ -6,6 +6,7 @@ setDefaults({
 	slotMinutes: 30,
 	defaultEventMinutes: 120,
 	axisFormat: 'h(:mm)tt',
+	axisTimeAll:false,
 	timeFormat: {
 		agenda: 'h:mm{ - h:mm}'
 	},
@@ -184,7 +185,12 @@ function AgendaView(element, calendar, viewName) {
 		var i;
 		var maxd;
 		var minutes;
-		var slotNormal = opt('slotMinutes') % 15 == 0;
+		var slotNormal = true;
+		if( opt('axisTimeAll') ) {
+			slotNormal = false;
+		} else {
+			slotNormal = opt('slotMinutes') % 15 == 0;
+		}
 		
 		buildDayTable();
 		
