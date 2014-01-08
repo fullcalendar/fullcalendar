@@ -43,6 +43,7 @@ function AgendaView(element, calendar, viewName) {
 	t.colContentRight = colContentRight;
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
 	t.getSlotSegmentContainer = function() { return slotSegmentContainer };
+	t.getAnnotationSegmentContainer = function() { return annotationSegmentContainer };
 	t.getMinMinute = function() { return minMinute };
 	t.getMaxMinute = function() { return maxMinute };
 	t.getSlotContainer = function() { return slotContainer };
@@ -58,7 +59,7 @@ function AgendaView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	
+	t.renderAnnotations = renderAnnotations;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -77,7 +78,7 @@ function AgendaView(element, calendar, viewName) {
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
-	
+	var compileSlotSegs = t.compileSlotSegs;
 	
 	// locals
 	
@@ -92,6 +93,7 @@ function AgendaView(element, calendar, viewName) {
 	var dayBodyFirstCellStretcher;
 	var slotLayer;
 	var daySegmentContainer;
+	var annotationSegmentContainer;
 	var allDayTable;
 	var allDayRow;
 	var slotScroller;
@@ -236,7 +238,9 @@ function AgendaView(element, calendar, viewName) {
 		slotSegmentContainer =
 			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
 				.appendTo(slotContainer);
-		
+		annotationSegmentContainer =
+			$("<div style='position:absolute;z-index:-1;top:0;left:0'/>")
+				.appendTo(slotContainer);
 		s =
 			"<table class='fc-agenda-slots' style='width:100%' cellspacing='0'>" +
 			"<tbody>";
@@ -612,6 +616,38 @@ function AgendaView(element, calendar, viewName) {
 		}
 	}
 	
+	/* Render annotations
+	-----------------------------------------------------------------------------*/
+	function renderAnnotations(annotations) {
+		var html = '';
+		annotations = compileSlotSegs(annotations);
+		for (var i=0; i < annotations.length; i++) {
+			var ann = annotations[i];
+			if (ann.start >= this.start && ann.end <= this.end) {
+				var top = timePosition(ann.start, ann.start);
+				var bottom = timePosition(ann.start, ann.end);
+				var height = bottom - top;
+				var dayIndex = dayDiff(ann.start, t.visStart);
+				
+				var left = colContentLeft(dayIndex) - 2;
+				var right = colContentRight(dayIndex) + 3;
+				var width = right - left;
+
+				var body = ann.event.title || '';
+
+				html += '<div style="position: absolute; ' + 
+					'top: ' + top + 'px; ' + 
+					'left: ' + left + 'px; ' +
+					'width: ' + width + 'px; ' +
+					'height: ' + height + 'px;" ' + 
+					'class="fc-annotation ' + (ann.event.className || '') + '">' + 
+					body + 
+					'</div>';
+			}
+		}
+		annotationSegmentContainer[0].innerHTML = html;				
+	}
+	
 	
 	
 	/* Coordinate Utilities
@@ -826,7 +862,7 @@ function AgendaView(element, calendar, viewName) {
 	function slotSelectionMousedown(ev) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
-			var dates;
+			var dates, disableSlot;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !getIsCellAllDay(cell)) {
@@ -838,7 +874,28 @@ function AgendaView(element, calendar, viewName) {
 						d2,
 						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(dateCompare);
-					renderSlotSelection(dates[0], dates[3]);
+					$.each(opt('annotations'), function(i, ann){
+						var start = new Date(Math.floor(ann.start.getTime()/ opt('slotMinutes')/ 60/ 1000)* opt('slotMinutes')* 60* 1000);
+						var end = new Date(Math.ceil(ann.end.getTime()/ opt('slotMinutes')/ 60/ 1000)* opt('slotMinutes')* 60* 1000);
+						if(typeof ann.selectable != 'undefined' && !ann.selectable && start < dates[3] && dates[0] < end) {
+							disableSlot = {start: start, end: end};
+							return;
+						}
+					});
+					if(disableSlot) {
+						hoverListener.stop();
+						if(disableSlot.start > dates[0]) {
+							dates[3] = disableSlot.start;
+						} else 
+						if(dates[3] > disableSlot.end) {
+							dates[0] = disableSlot.end;
+						} else {
+							dates = null;
+						}
+					}
+					if(dates) {
+						renderSlotSelection(dates[0], dates[3]);
+					}
 				}else{
 					dates = null;
 				}
