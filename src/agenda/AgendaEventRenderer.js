@@ -7,7 +7,7 @@ function AgendaEventRenderer() {
 	t.renderEvents = renderEvents;
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
-	
+	t.compileSlotSegs = compileSlotSegs;
 	
 	// imports
 	DayEventRenderer.call(t);
