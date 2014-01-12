@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		var calendar = $('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'resourceDay,resourceWeek,resourceNextWeeks,resourceMonth'
+			},
+			defaultView: 'resourceWeek',
+			firstDay: 1, 	
+			refetchResources: true,
+			editable: true,
+			selectable: true,
+			minTime: 8,
+			weekNumbers: true,
+			maxTime:16,
+			selectHelper: true,
+			resources: [
+				{
+					name: 'Arnold Schwarzenegger',
+					id: 'terminator'
+				},
+				{
+					name: 'Clint Eastwood',
+					id: 'clinteastwood'
+				},
+				{
+					name: 'Bruce Lee',
+					id: 'brucelee'
+				},
+				{
+					name: 'Jackie Chan',
+					id: 'jackiechan'
+				}
+			],
+			events: [		
+				{
+					title: 'arnold today 10.30, no end time',
+					start: new Date(y, m, d, 10, 30),
+					resource: 'terminator'
+				},	
+				{
+					title: 'clint today 10.30-11.00',
+					start: new Date(y, m, d, 10, 30),
+					end: new Date(y, m, d, 11, 00),
+					resource: 'clinteastwood'
+				},
+				{
+					title: 'arnold today 10.30 - tomorrow 12.00',
+					start: new Date(y, m, d, 10, 30),
+					end: new Date(y, m, d+1, 12, 00),
+					resource: 'terminator'
+				},
+				{
+					title: 'bruce -7 days to +7 days',
+					start: new Date(y, m, d-7, 12, 0),
+					end: new Date(y, m, d+7, 12, 0),
+					resource: 'brucelee'
+				},
+				{
+					title: 'bruce -7 days to +1 days',
+					start: new Date(y, m, d-7, 12, 0),
+					end: new Date(y, m, d+1, 12, 0),
+					resource: 'brucelee'
+				},			
+				{
+					title: 'bruce today to +7 days',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d+7, 12, 0),
+					resource: 'brucelee'
+				},					
+			],
+			eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) { 
+				alert('event moved to '+event.start+' to '+event.resource);
+			},
+			eventResize: function( event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ) { 
+				alert('event was resized, new endtime: '+event.end);
+			}
+		});
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin: 20px 200px 20px 20px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+
+		}
+
+</style>
+</head>
+<body>
+<h3>This is testing resource event rendering by displaying many different events</h3>
+<div id='calendar'></div>
+</body>
+</html>

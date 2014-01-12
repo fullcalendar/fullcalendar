@@ -184,6 +184,7 @@ function DayEventRenderer() {
 		var startDate = event.start;
 		var endDate = exclEndDay(event);
 		var segments = rangeToSegments(startDate, endDate);
+		console.log(segments);
 		for (var i=0; i<segments.length; i++) {
 			segments[i].event = event;
 		}

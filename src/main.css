@@ -107,7 +107,7 @@ html .fc,
 	
 .fc-view {
 	width: 100%;
-	overflow: hidden;
+	overflow: visible;
 	}
 	
 	

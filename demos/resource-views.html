@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		var calendar = $('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'resourceDay,resourceWeek,resourceNextWeeks,resourceMonth'
+			},
+			defaultView: 'resourceWeek',
+			firstDay: 1, 	
+			editable: true,
+			selectable: true,
+			minTime: 8,
+			snapMinutes:10,
+			weekNumbers: false,
+			weekNumberTitle: 'Viikko ',
+			refetchResources: true,
+			maxTime:16,
+			selectHelper: true,
+			resources: 'json-resources.php',
+			events: [		
+				{
+					title: 'Meeting from this day to this +4',
+					start: new Date(y, m, d, 10, 30),
+					end: new Date(y, m, d+4, 11, 00),
+					resource: 'resource1'
+				},	
+				{
+					title: 'Meeting last week',
+					start: new Date(y, m, d-7, 10, 30),
+					end: new Date(y, m, d-7, 12, 15),
+					resource: 'resource1'
+				},	
+				{
+					title: 'meeting tomorrow',
+					start: new Date(y, m, d+1, 10, 30),
+					end: new Date(y, m, d+1, 12, 00),
+					resource: 'resource1'
+				}	
+			],
+			select: function(start, end, allDay, jsEvent, view, resource) {
+				var title = prompt('event title:');
+
+				if (title) {
+					calendar.fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay,
+							resource: resource.id
+						},
+						true // make the event "stick"
+					);
+				}
+				calendar.fullCalendar('unselect');
+			},
+			resourceRender: function(resource, element, view) {
+				// this is triggered when the resource is rendered, just like eventRender
+			},
+			eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) { 
+				alert('event moved to '+event.start+' to '+event.resource);
+			},
+			eventResize: function( event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ) { 
+				alert('event was resized, new endtime: '+event.end);
+			},
+			eventClick: function ( event, jsEvent, view )  {
+				alert('event '+event.title+' was left clicked');
+			}
+		});
+	});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin: 20px 200px 20px 20px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 100%;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

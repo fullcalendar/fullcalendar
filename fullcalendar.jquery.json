@@ -1,7 +1,6 @@
 {
-  "name": "fullcalendar",
-  "version": "1.6.4",
-
+  "name": "fullcalendar-resourceviews",
+  "version": "1.6.4.1",
   "dependencies": {
     "jquery": "~1.10.2"
   },
@@ -9,15 +8,15 @@
     "jquery-ui": "~1.10.3"
   },
 
-  "title": "FullCalendar",
-  "description": "Full-sized drag & drop event calendar",
-  "keywords": [ "calendar", "event", "full-sized" ],
+  "title": "FullCalendar-Resourceviews",
+  "description": "Full-sized drag & drop event calendar with Resource Views",
+  "keywords": [ "calendar", "event", "full-sized", "resources" ],
 
-  "homepage": "http://arshaw.com/fullcalendar/",
-  "demo": "http://arshaw.com/fullcalendar/",
-  "docs": "http://arshaw.com/fullcalendar/docs/",
-  "download": "http://arshaw.com/fullcalendar/download/",
-  "bugs": "http://code.google.com/p/fullcalendar/issues/list",
+  "homepage": "http://arshaw.com/fullcalendar/, http://tux.fi/~jarnok/fullcalendar-resourceviews",
+  "demo": "http://arshaw.com/fullcalendar/, http://tux.fi/~jarnok/fullcalendar-resourceviews",
+  "docs": "http://arshaw.com/fullcalendar/docs/, http://tux.fi/~jarnok/fullcalendar-resourceviews",
+  "download": "http://arshaw.com/fullcalendar/download/, http://tux.fi/~jarnok/fullcalendar-resourceviews",
+  "bugs": "http://code.google.com/p/fullcalendar/issues/list, http://www.github.com/jarnokurlin/fullcalendar",
 
   "licenses": [
     {
@@ -27,9 +26,9 @@
   ],
 
   "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+    "name": "Jarno Kurlin",
+    "email": "jarno@kirottu.net",
+    "url": ""
   },
-  "copyright": "2013 Adam Shaw"
+  "copyright": "2013 Adam Shaw, 2013 Jarno Kurlin (Resource Views)"
 }

@@ -22,6 +22,7 @@ function View(element, calendar, viewName) {
 	t.hideEvents = hideEvents;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
+	t.getShownEvents = getShownEvents;
 	// t.title
 	// t.start, t.end
 	// t.visStart, t.visEnd
@@ -39,7 +40,14 @@ function View(element, calendar, viewName) {
 	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
 	
-	
+	// Get currently shown events
+	function getShownEvents() {
+		evs = [];
+		for (id in eventElementsByID){
+			evs.push(eventsByID[id]);
+		}
+		return evs;
+	}
 	
 	function opt(name, viewNameOverride) {
 		var v = options[name];
@@ -196,10 +204,11 @@ function View(element, calendar, viewName) {
 	---------------------------------------------------------------------------------*/
 	
 	
-	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
+	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui, resource) {
 		var oldAllDay = event.allDay;
 		var eventId = event._id;
-		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
+		var oldResourceId = event.resource || '';
+		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay, resource);
 		trigger(
 			'eventDrop',
 			e,
@@ -209,11 +218,12 @@ function View(element, calendar, viewName) {
 			allDay,
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
-				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay, oldResourceId);
 				reportEventChange(eventId);
 			},
 			ev,
-			ui
+			ui,
+			resource
 		);
 		reportEventChange(eventId);
 	}
@@ -245,7 +255,7 @@ function View(element, calendar, viewName) {
 	---------------------------------------------------------------------------------*/
 	
 	
-	function moveEvents(events, dayDelta, minuteDelta, allDay) {
+	function moveEvents(events, dayDelta, minuteDelta, allDay, resource) {
 		minuteDelta = minuteDelta || 0;
 		for (var e, len=events.length, i=0; i<len; i++) {
 			e = events[i];
@@ -255,6 +265,10 @@ function View(element, calendar, viewName) {
 			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
 			if (e.end) {
 				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
+			}
+			if (e.resource != resource && len == 1) {
+				// Change resource if this is not repeating event
+				e.resource = resource;
 			}
 			normalizeEvent(e, options);
 		}

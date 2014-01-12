@@ -1,6 +1,6 @@
 
  
-function Calendar(element, options, eventSources) {
+function Calendar(element, options, eventSources, resourceSources) {
 	var t = this;
 	
 	
@@ -10,6 +10,7 @@ function Calendar(element, options, eventSources) {
 	t.destroy = destroy;
 	t.refetchEvents = refetchEvents;
 	t.reportEvents = reportEvents;
+	t.refetchResources = refetchResources;
 	t.reportEventChange = reportEventChange;
 	t.rerenderEvents = rerenderEvents;
 	t.changeView = changeView;
@@ -17,6 +18,8 @@ function Calendar(element, options, eventSources) {
 	t.unselect = unselect;
 	t.prev = prev;
 	t.next = next;
+	t.largePrev = largePrev;
+	t.largeNext = largeNext;
 	t.prevYear = prevYear;
 	t.nextYear = nextYear;
 	t.today = today;
@@ -32,9 +35,10 @@ function Calendar(element, options, eventSources) {
 	
 	// imports
 	EventManager.call(t, options, eventSources);
+	ResourceManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
-	
+	var fetchResources = t.fetchResources;
 	
 	// locals
 	var _element = element[0];
@@ -325,6 +329,7 @@ function Calendar(element, options, eventSources) {
 
 	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
+			if (options['refetchResources']) refetchResources(); // refetch resources every time new events are loaded
 			fetchAndRenderEvents();
 		}
 		else {
@@ -337,6 +342,17 @@ function Calendar(element, options, eventSources) {
 		fetchEvents(currentView.visStart, currentView.visEnd);
 			// ... will call reportEvents
 			// ... which will call renderEvents
+	}
+	
+	function refetchResources() {
+		fetchResources(false, currentView);
+
+		// remove current view
+		//var viewName = currentView.name;
+		//currentView = false;
+		
+		// show view with new resources
+		//changeView(viewName);
 	}
 
 	
@@ -405,6 +421,13 @@ function Calendar(element, options, eventSources) {
 		renderView(1);
 	}
 	
+	function largePrev() {
+		renderView(-100);
+	}
+	
+	function largeNext() {
+		renderView(100);
+	}
 	
 	function prevYear() {
 		addYears(date, -1);

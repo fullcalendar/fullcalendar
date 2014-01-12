@@ -1,3 +1,9 @@
+v1.6.4.1 (2014-01-12)
+-------------------
+
+- Resource views doesn't need fullcalendar dayEventRendering anymore
+- Merged Resourceviews with Fullcalendar 1.6.4
+
 
 v1.6.4 (2013-09-01)
 -------------------

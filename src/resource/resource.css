@@ -1,0 +1,20 @@
+
+/* Resource month, Resource week, Resource day
+------------------------------------------------------------------------*/
+
+td.fc-resourceName {
+	border-left: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	padding: 0px 5px 0px 5px;
+	white-space: nowrap;
+	font-size: 14px;
+	font-weight:bold;
+}
+tr.fc-last td.fc-resourceName {
+	border-bottom: 1px solid #ddd;	
+}
+th.fc-resourceName {
+	border-bottom: 1px solid #ddd;
+}
+	
+	

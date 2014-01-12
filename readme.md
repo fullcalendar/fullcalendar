@@ -1,8 +1,10 @@
 
-FullCalendar - Full-sized drag & drop event calendar
+FullCalendar ResourceViews - Full-sized drag & drop event calendar with resource views
 ====================================================
 
-This document describes how to modify or contribute to the FullCalendar project. If you are looking for end-developer documentation, please visit the [project homepage][fc-homepage].
+This document describes how to modify or contribute to the FullCalendar project.
+If you are looking for end-developer documentation, please visit
+the [project homepage](http://arshaw.com/fullcalendar/ and http://tux.fi/~jarnok/fullcalendar-resourceviews/)
 
 
 Getting Set Up
@@ -16,7 +18,7 @@ Also, you will need the [grunt-cli][grunt-cli] and [bower][bower] packages insta
 
 Then, clone FullCalendar's git repo:
 
-	git clone git://github.com/arshaw/fullcalendar.git
+	git clone git://github.com/jarnokurlin/fullcalendar.git
 
 Enter the directory and install FullCalendar's development dependencies:
 
