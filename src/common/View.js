@@ -210,6 +210,7 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
+                trigger('eventDropRevert', e, event, -dayDelta, -minuteDelta, oldAllDay, ev, ui);
 				reportEventChange(eventId);
 			},
 			ev,
@@ -217,8 +218,8 @@ function View(element, calendar, viewName) {
 		);
 		reportEventChange(eventId);
 	}
-	
-	
+
+
 	function eventResize(e, event, dayDelta, minuteDelta, ev, ui) {
 		var eventId = event._id;
 		elongateEvents(eventsByID[eventId], dayDelta, minuteDelta);
@@ -231,6 +232,7 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
+                trigger('eventResizeRevert', e, event, -dayDelta, -minuteDelta, ev, ui);
 				reportEventChange(eventId);
 			},
 			ev,
