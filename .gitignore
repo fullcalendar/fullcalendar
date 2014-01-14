@@ -1,8 +1,5 @@
-build/out
-build/archive
-build/component
-build/cdn
-build/fullcalendar
+build/*
+!build/out
 dist
 .DS_Store
 
