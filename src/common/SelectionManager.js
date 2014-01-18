@@ -69,6 +69,7 @@ function SelectionManager() {
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
+		var abort = false;
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
 			var _mousedownElement = this;
@@ -77,6 +78,14 @@ function SelectionManager() {
 				clearSelection();
 				if (cell && getIsCellAllDay(cell)) {
 					dates = [ cellToDate(origCell), cellToDate(cell) ].sort(dateCompare);
+					
+					var minDate = opt('minDate');
+					var maxDate = opt('maxDate');
+					if((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
+						abort = true;
+						return;
+					}
+					
 					renderSelection(dates[0], dates[1], true);
 				}else{
 					dates = null;
@@ -84,7 +93,7 @@ function SelectionManager() {
 			}, ev);
 			$(document).one('mouseup', function(ev) {
 				hoverListener.stop();
-				if (dates) {
+				if (!abort && dates) {
 					if (+dates[0] == +dates[1]) {
 						reportDayClick(dates[0], true, ev);
 					}

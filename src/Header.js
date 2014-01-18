@@ -11,6 +11,7 @@ function Header(calendar, options) {
 	t.deactivateButton = deactivateButton;
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
+	t.toggleEnable = toggleEnable;
 	
 	
 	// locals
@@ -152,6 +153,15 @@ function Header(calendar, options) {
 	function enableButton(buttonName) {
 		element.find('span.fc-button-' + buttonName)
 			.removeClass(tm + '-state-disabled');
+	}
+	
+	
+	function toggleEnable(buttonName, enabled) {
+		if(enabled) {
+			enableButton(buttonName);
+		} else {
+			disableButton(buttonName);
+		}
 	}
 
 
