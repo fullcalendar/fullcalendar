@@ -27,6 +27,10 @@ var defaults = {
 	startParam: 'start',
 	endParam: 'end',
 	
+	// date restriction
+	minDate: null,
+	maxDate: null,
+	
 	// time formats
 	titleFormat: {
 		month: 'MMMM yyyy',

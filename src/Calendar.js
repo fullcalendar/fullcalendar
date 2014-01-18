@@ -210,7 +210,7 @@ function Calendar(element, options, eventSources) {
 		(currentView.afterRender || noop)();
 
 		updateTitle();
-		updateTodayButton();
+		updateNavigation();
 
 		trigger('viewRender', currentView, currentView, currentView.element);
 		currentView.trigger('viewDisplay', _element); // deprecated
@@ -365,11 +365,19 @@ function Calendar(element, options, eventSources) {
 
 	function updateTodayButton() {
 		var today = new Date();
-		if (today >= currentView.start && today < currentView.end) {
-			header.disableButton('today');
+		
+		header.toggleEnable('today', (today < currentView.start || today >= currentView.end));
+	}
+	
+	function updateNavigation() {
+		updateTodayButton();
+		
+		if(options.minDate) {
+			header.toggleEnable('prev', options.minDate < currentView.start);
 		}
-		else {
-			header.enableButton('today');
+		
+		if(options.maxDate) {
+			header.toggleEnable('next', options.maxDate > currentView.end);
 		}
 	}
 	
