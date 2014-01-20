@@ -13,7 +13,8 @@ setDefaults({
 		agenda: .5
 	},
 	minTime: 0,
-	maxTime: 24
+	maxTime: 24,
+	slotEventOverlap: true
 });
 
 
@@ -29,12 +30,12 @@ function AgendaView(element, calendar, viewName) {
 	t.renderAgenda = renderAgenda;
 	t.setWidth = setWidth;
 	t.setHeight = setHeight;
-	t.beforeHide = beforeHide;
-	t.afterShow = afterShow;
+	t.afterRender = afterRender;
 	t.defaultEventEnd = defaultEventEnd;
 	t.timePosition = timePosition;
 	t.getIsCellAllDay = getIsCellAllDay;
 	t.allDayRow = getAllDayRow;
+	t.getCoordinateGrid = function() { return coordinateGrid }; // specifically for AgendaEventRenderer
 	t.getHoverListener = function() { return hoverListener };
 	t.colLeft = colLeft;
 	t.colRight = colRight;
@@ -66,7 +67,6 @@ function AgendaView(element, calendar, viewName) {
 	AgendaEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
-	var clearEvents = t.clearEvents;
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
@@ -99,7 +99,6 @@ function AgendaView(element, calendar, viewName) {
 	var slotContainer;
 	var slotSegmentContainer;
 	var slotTable;
-	var slotTableFirstInner;
 	var selectionHelper;
 
 	var viewWidth;
@@ -120,7 +119,6 @@ function AgendaView(element, calendar, viewName) {
 	var colPositions;
 	var colContentPositions;
 	var slotTopCache = {};
-	var savedScrollTop;
 
 	var tm;
 	var rtl;
@@ -142,11 +140,12 @@ function AgendaView(element, calendar, viewName) {
 	function renderAgenda(c) {
 		colCnt = c;
 		updateOptions();
-		if (!dayTable) {
+
+		if (!dayTable) { // first time rendering?
 			buildSkeleton(); // builds day table, slot area, events containers
-		}else{
+		}
+		else {
 			buildDayTable(); // rebuilds day table
-			clearEvents();
 		}
 	}
 
@@ -197,7 +196,7 @@ function AgendaView(element, calendar, viewName) {
 		if (opt('allDaySlot')) {
 
 			daySegmentContainer =
-				$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
+				$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
 					.appendTo(slotLayer);
 
 			s =
@@ -236,7 +235,7 @@ function AgendaView(element, calendar, viewName) {
 				.appendTo(slotScroller);
 
 		slotSegmentContainer =
-			$("<div style='position:absolute;z-index:8;top:0;left:0'/>")
+			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
 				.appendTo(slotContainer);
 
 		s =
@@ -264,7 +263,6 @@ function AgendaView(element, calendar, viewName) {
 			"</tbody>" +
 			"</table>";
 		slotTable = $(s).appendTo(slotContainer);
-		slotTableFirstInner = slotTable.find('div:first');
 
 		slotBind(slotTable.find('td'));
 	}
@@ -327,6 +325,7 @@ function AgendaView(element, calendar, viewName) {
 			"<tr>";
 
 		if (showWeekNumbers) {
+			date = cellToDate(0, 0);
 			weekText = formatDate(date, weekNumberFormat);
 			if (rtl) {
 				weekText += weekNumberTitle;
@@ -393,6 +392,12 @@ function AgendaView(element, calendar, viewName) {
 					'fc-today'
 				);
 			}
+			else if (date < today) {
+				classNames.push('fc-past');
+			}
+			else {
+				classNames.push('fc-future');
+			}
 
 			cellHTML =
 				"<td class='" + classNames.join(' ') + "'>" +
@@ -424,7 +429,7 @@ function AgendaView(element, calendar, viewName) {
 	-----------------------------------------------------------------------*/
 
 
-	function setHeight(height, dateChanged) {
+	function setHeight(height) {
 		if (height === undefined) {
 			height = viewHeight;
 		}
@@ -444,15 +449,13 @@ function AgendaView(element, calendar, viewName) {
 		slotLayer.css('top', headHeight);
 
 		slotScroller.height(bodyHeight - allDayHeight - 1);
-
-		slotHeight = slotTableFirstInner.height() + 1; // +1 for border
+		
+		// the stylesheet guarantees that the first row has no border.
+		// this allows .height() to work well cross-browser.
+		slotHeight = slotTable.find('tr:first').height() + 1; // +1 for bottom border
 
 		snapRatio = opt('slotMinutes') / snapMinutes;
 		snapHeight = slotHeight / snapRatio;
-
-		if (dateChanged) {
-			resetScroll();
-		}
 	}
 
 
@@ -521,13 +524,8 @@ function AgendaView(element, calendar, viewName) {
 	}
 
 
-	function beforeHide() {
-		savedScrollTop = slotScroller.scrollTop();
-	}
-
-
-	function afterShow() {
-		slotScroller.scrollTop(savedScrollTop);
+	function afterRender() { // after the view has been freshly rendered and sized
+		resetScroll();
 	}
 
 
@@ -736,7 +734,11 @@ function AgendaView(element, calendar, viewName) {
 			slotI = Math.floor(minutes / slotMinutes),
 			slotTop = slotTopCache[slotI];
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			slotTop = slotTopCache[slotI] =
+				slotTable.find('tr').eq(slotI).find('td div')[0].offsetTop;
+				// .eq() is faster than ":eq()" selector
+				// [0].offsetTop is faster than .position().top (do we really need this optimization?)
+				// a better optimization would be to cache all these divs
 		}
 		return Math.max(0, Math.round(
 			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
@@ -800,7 +802,6 @@ function AgendaView(element, calendar, viewName) {
 						var helperRes = helperOption(startDate, endDate);
 						if (helperRes) {
 							rect.position = 'absolute';
-							rect.zIndex = 8;
 							selectionHelper = $(helperRes)
 								.css(rect)
 								.appendTo(slotContainer);

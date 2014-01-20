@@ -138,6 +138,15 @@
 
 /* Global Event Styles
 ------------------------------------------------------------------------*/
+
+.fc-event-container > * {
+	z-index: 8;
+	}
+
+.fc-event-container > .ui-draggable-dragging,
+.fc-event-container > .ui-resizable-resizing {
+	z-index: 9;
+	}
 	 
 .fc-event {
 	border: 1px solid #3a87ad; /* default BORDER color */

@@ -21,10 +21,9 @@
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
-			defaultView: 'agendaWeek',
-			allDaySlot: false,
-			slotMinutes: 60,
 			editable: true,
+			defaultView: 'agendaWeek',
+			selectable: true,
 			events: [
 				{
 					title: 'All Day Event',
@@ -86,13 +85,22 @@
 		}
 
 	#calendar {
-		width: 70%;
+		width: 900px;
 		margin: 0 auto;
+		}
+
+	.fc-agenda-slots td div {
+		height: 10px;
 		}
 
 </style>
 </head>
 <body>
+
+<p>The selection box for selecting agenda slot cells should align to the grid.</p>
+<p>(even though <code>.fc-agenda-slots td div</code> has been set to 10px tall)</p>
+
 <div id='calendar'></div>
+
 </body>
 </html>

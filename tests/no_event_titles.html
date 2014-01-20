@@ -9,6 +9,11 @@
 <script>
 
 	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
 			header: {
@@ -16,11 +21,26 @@
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
-			defaultView: 'agendaWeek', // month view also looked scrunched
-			aspectRatio: 0
+			editable: true,
+			events: [
+				{
+					title: null,
+					start: new Date(y, m, 1)
+				},
+				{
+					title: '',
+					start: new Date(y, m, d-5),
+					end: new Date(y, m, d-2)
+				},
+				{
+					start: new Date(y, m, d, 10, 30),
+					allDay: false
+				}
+			],
+			eventRender: function(event, el) {
+				el.find('.fc-event-title').text("something");
+			}
 		});
-		
-		// shouldnt allow aspectRatios to *actually* go under .5
 		
 	});
 

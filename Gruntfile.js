@@ -13,7 +13,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('lumbar');
 
 	// Parse config files
-	var lumbarConfig = grunt.file.readJSON('lumbar.json');
 	var packageConfig = grunt.file.readJSON('package.json');
 	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	
@@ -62,7 +61,7 @@ module.exports = function(grunt) {
 		},
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/out/'
 	};
 
@@ -88,8 +87,10 @@ module.exports = function(grunt) {
 		'clean:archive',
 		'modules',
 		'copy:archiveModules',
-		'copy:archiveDependencies',
+		'copy:archiveJQuery',
+		'concat:archiveJQueryUI',
 		'copy:archiveDemos',
+		'copy:archiveDemoTheme',
 		'copy:archiveMisc',
 		'compress:archive'
 	]);
@@ -98,26 +99,29 @@ module.exports = function(grunt) {
 	config.copy.archiveModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
+		src: [ '*.js', '*.css' ],
 		dest: 'build/archive/fullcalendar/'
 	};
 
-	// copy jQuery and jQuery UI into the ./jquery/ directory
-	config.copy.archiveDependencies = {
-		expand: true,
-		flatten: true,
+	config.copy.archiveJQuery = {
+		src: 'lib/jquery/jquery.min.js',
+		dest: 'build/archive/lib/jquery.min.js'
+	};
+
+	config.concat.archiveJQueryUI = {
 		src: [
-			// we want to retain the original filenames
-			lumbarConfig.modules['jquery'].scripts[0],
-			lumbarConfig.modules['jquery-ui'].scripts[0]
+			'lib/jquery-ui/ui/minified/jquery.ui.core.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.widget.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.mouse.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
 		],
-		dest: 'build/archive/jquery/'
+		dest: 'build/archive/lib/jquery-ui.custom.min.js'
 	};
 
 	// copy demo files into ./demos/ directory
 	config.copy.archiveDemos = {
 		options: {
-			processContentExclude: 'demos/*/**', // don't process anything more than 1 level deep (like assets)
 			processContent: function(content) {
 				content = content.replace(/((?:src|href)=['"])([^'"]*)(['"])/g, function(m0, m1, m2, m3) {
 					return m1 + transformDemoPath(m2) + m3;
@@ -125,23 +129,31 @@ module.exports = function(grunt) {
 				return content;
 			}
 		},
-		src: 'demos/**',
+		src: 'demos/*',
 		dest: 'build/archive/'
+	};
+
+	// copy the "cupertino" jquery-ui theme into the demo directory (for demos/theme.html)
+	config.copy.archiveDemoTheme = {
+		expand: true,
+		cwd: 'lib/jquery-ui/themes/cupertino/',
+		src: [ 'jquery-ui.min.css', 'images/*' ],
+		dest: 'build/archive/demos/cupertino/'
 	};
 
 	// in demo HTML, rewrites paths to work in the archive
 	function transformDemoPath(path) {
-		path = path.replace('/build/out/jquery.js', '/' + lumbarConfig.modules['jquery'].scripts[0]);
-		path = path.replace('/build/out/jquery-ui.js', '/' + lumbarConfig.modules['jquery-ui'].scripts[0]);
-		path = path.replace('/lib/', '/jquery/');
-		path = path.replace('/build/out/', '/fullcalendar/');
+		path = path.replace('../lib/jquery/jquery.js', '../lib/jquery.min.js');
+		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
+		path = path.replace('../lib/jquery-ui/themes/', '');
+		path = path.replace('../build/out/', '../fullcalendar/');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 		return path;
 	}
 
 	// copy license and changelog
 	config.copy.archiveMisc = {
-		src: "*.txt",
+		src: [ 'license.txt', 'changelog.txt' ],
 		dest: 'build/archive/'
 	};
 
@@ -161,80 +173,80 @@ module.exports = function(grunt) {
 
 
 
-	/* Bower Component (http://twitter.github.com/bower/)
+	/* Bower Component (http://bower.io/)
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
+	grunt.registerTask('bower', 'Build the FullCalendar Bower component', [
 		'clean:modules',
-		'clean:component',
+		'clean:bower',
 		'modules',
-		'copy:componentModules',
-		'copy:componentReadme',
-		'componentConfig'
+		'copy:bowerModules',
+		'copy:bowerReadme',
+		'bowerConfig'
 	]);
 
-	// copy FullCalendar modules into component root
-	config.copy.componentModules = {
+	// copy FullCalendar modules into bower component's root
+	config.copy.bowerModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/component/'
+		src: [ '*.js', '*.css' ],
+		dest: 'build/bower/'
 	};
 
-	// copy the component-specific README
-	config.copy.componentReadme = {
-		src: 'build/component-readme.md',
-		dest: 'build/component/readme.md'
+	// copy the bower-specific README
+	config.copy.bowerReadme = {
+		src: 'build/bower-readme.md',
+		dest: 'build/bower/readme.md'
 	};
 
-	// assemble the component's config from existing configs
-	grunt.registerTask('componentConfig', function() {
-		var config = grunt.file.readJSON('build/component.json');
+	// assemble the bower config from existing configs
+	grunt.registerTask('bowerConfig', function() {
+		var bowerConfig = grunt.file.readJSON('build/bower.json');
 		grunt.file.write(
-			'build/component/component.json',
+			'build/bower/bower.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
+				_.extend({}, pluginConfig, bowerConfig), // combine 2 configs
 				null, // replacer
 				2 // indent
 			)
 		);
 	});
 
-	config.clean.component = 'build/component/*';
+	config.clean.bower = 'build/bower/*';
 
 
 
-	/* CDN (http://cdnjs.com/)
+	/* CDNJS (http://cdnjs.com/)
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('cdn', 'Build files for CDNJS\'s hosted version of FullCalendar', [
+	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
 		'clean:modules',
-		'clean:cdn',
+		'clean:cdnjs',
 		'modules',
-		'copy:cdnModules',
-		'cdnConfig'
+		'copy:cdnjsModules',
+		'cdnjsConfig'
 	]);
 
-	config.copy.cdnModules = {
+	config.copy.cdnjsModules = {
 		expand: true,
 		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/cdn/<%= meta.version %>/'
+		src: [ '*.js', '*.css' ],
+		dest: 'build/cdnjs/<%= meta.version %>/'
 	};
 
-	grunt.registerTask('cdnConfig', function() {
-		var config = grunt.file.readJSON('build/cdn.json');
+	grunt.registerTask('cdnjsConfig', function() {
+		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
-			'build/cdn/package.json',
+			'build/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
+				_.extend({}, pluginConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
 				2 // indent
 			)
 		);
 	});
 
-	config.clean.cdn = 'build/cdn/<%= meta.version %>/*';
+	config.clean.cdnjs = 'build/cdnjs/<%= meta.version %>/*';
 	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
 
 

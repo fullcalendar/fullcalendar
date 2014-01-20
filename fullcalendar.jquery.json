@@ -1,11 +1,12 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.2",
+  "version": "1.6.4",
+
   "dependencies": {
-    "jquery": "~1.9.1"
+    "jquery": "~1.10.2"
   },
   "optionalDependencies": {
-    "jquery-ui": "~1.10.2"
+    "jquery-ui": "~1.10.3"
   },
 
   "title": "FullCalendar",

@@ -37,7 +37,6 @@ function DayEventRenderer() {
 	var clearSelection = t.clearSelection;
 	var getHoverListener = t.getHoverListener;
 	var rangeToSegments = t.rangeToSegments;
-	var segmentCompare = t.segmentCompare;
 	var cellToDate = t.cellToDate;
 	var cellToCellOffset = t.cellToCellOffset;
 	var cellOffsetToDayOffset = t.cellOffsetToDayOffset;
@@ -268,7 +267,6 @@ function DayEventRenderer() {
 			" style=" +
 				"'" +
 				"position:absolute;" +
-				"z-index:8;" + // TODO: move this into a constant or put it in the stylesheet
 				"left:" + segment.left + "px;" +
 				skinCss +
 				"'" +
@@ -283,7 +281,9 @@ function DayEventRenderer() {
 				"</span>";
 		}
 		html +=
-			"<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+			"<span class='fc-event-title'>" +
+			htmlEscape(event.title || '') +
+			"</span>" +
 			"</div>";
 		if (segment.isEnd && isEventResizable(event)) {
 			html +=
@@ -327,7 +327,6 @@ function DayEventRenderer() {
 					triggerRes = $(triggerRes)
 						.css({
 							position: 'absolute',
-							zIndex: 8, // TODO: move this into a constant or put it in the stylesheet
 							left: segment.left
 						});
 
@@ -485,7 +484,7 @@ function DayEventRenderer() {
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segments.sort(segmentCompare);
+		segments.sort(compareDaySegments);
 
 		var subrows = [];
 		for (var i=0; i<segments.length; i++) {
@@ -571,7 +570,6 @@ function DayEventRenderer() {
 		var hoverListener = getHoverListener();
 		var dayDelta;
 		eventElement.draggable({
-			zIndex: 9,
 			delay: 50,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
@@ -741,3 +739,13 @@ function segmentElementEach(segments, callback) { // TODO: use in AgendaView?
 		}
 	}
 }
+
+
+// A cmp function for determining which segments should appear higher up
+function compareDaySegments(a, b) {
+	return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) || // put wider events first
+		b.event.allDay - a.event.allDay || // if tie, put all-day events first (booleans cast to 0/1)
+		a.event.start - b.event.start || // if a tie, sort by event start date
+		(a.event.title || '').localeCompare(b.event.title) // if a tie, sort by event title
+}
+

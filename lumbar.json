@@ -1,12 +1,6 @@
 {
   "scope": "none",
   "packages": {
-    "dependencies": {
-      "modules": [
-        "jquery",
-        "jquery-ui"
-      ]
-    },
     "fullcalendar": {
       "modules": [
         "fullcalendar",
@@ -16,16 +10,6 @@
     }
   },
   "modules": {
-    "jquery": {
-      "scripts": [
-        "lib/jquery-1.9.1.min.js"
-      ]
-    },
-    "jquery-ui": {
-      "scripts": [
-        "lib/jquery-ui-1.10.2.custom.min.js"
-      ]
-    },
     "fullcalendar": {
       "scripts": [
         "src/intro.js",

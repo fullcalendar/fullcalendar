@@ -11,16 +11,23 @@
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar({
+			year: 2010,
+			month: 0,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
-			defaultView: 'agendaWeek', // month view also looked scrunched
-			aspectRatio: 0
+			editable: true,
+			events: {
+				url: "many_events_json.txt",
+				data: function() {
+					var custom_data = { q: 'custom data value' }; // should see this in Networking
+					console.log('setting custom_data as part of the eventSource fetch');
+					return custom_data;
+				}
+			}
 		});
-		
-		// shouldnt allow aspectRatios to *actually* go under .5
 		
 	});
 

@@ -21,9 +21,6 @@
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
-			defaultView: 'agendaWeek',
-			allDaySlot: false,
-			slotMinutes: 60,
 			editable: true,
 			events: [
 				{
@@ -86,8 +83,16 @@
 		}
 
 	#calendar {
-		width: 70%;
+		width: 900px;
 		margin: 0 auto;
+		}
+
+	.fc-past {
+		background: #fbc0fc;
+		}
+
+	.fc-future {
+		background: #a4ffa4;
 		}
 
 </style>
