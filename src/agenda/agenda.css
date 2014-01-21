@@ -135,6 +135,25 @@
 .fc-select-helper .fc-event-bg {
 	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
 	}
+
+.fc-timeline {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-top: 2px solid #ff0000;
+    z-index: 999;
+    opacity: .5;
+    filter: alpha(opacity=50);
+}
+
+.fc-timeline-caret {
+    position: absolute;
+    z-index: 999;
+    color: #ff0000;
+}
 	
 /* resizable */
 	

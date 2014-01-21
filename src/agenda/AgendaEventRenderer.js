@@ -42,9 +42,10 @@ function AgendaEventRenderer() {
 	var clearOverlays = t.clearOverlays;
 	var renderDayEvents = t.renderDayEvents;
 	var calendar = t.calendar;
+	var isHiddenDay = t.isHiddenDay;
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
-
+	var timeLineInterval;
 
 	// overrides
 	t.draggableDayEvent = draggableDayEvent;
@@ -73,6 +74,12 @@ function AgendaEventRenderer() {
 		}
 
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
+
+		if (opt('currentTimeIndicator')) {
+			window.clearInterval(timeLineInterval);
+			timeLineInterval = window.setInterval(setTimeIndicator, 30000);
+			setTimeIndicator();
+		}
 	}
 	
 	
@@ -369,9 +376,52 @@ function AgendaEventRenderer() {
 		}
 		eventElementHandlers(event, eventElement);
 	}
-	
-	
-	
+
+	// draw a horizontal line indicating the current time (#143)
+	function setTimeIndicator()
+	{
+		var container = getSlotContainer();
+		var timeline = container.children('.fc-timeline');
+		if (timeline.length == 0) { // if timeline isn't there, add it
+			timeline = $('<hr>').addClass('fc-timeline').appendTo(container);
+		}
+		var caret = container.children('.fc-timeline-caret');
+		if (caret.length == 0) { // if caret isn't there, add it
+			caret = $('<i>').addClass('fc-timeline-caret icon-caret-right').appendTo(container);
+		}
+
+		var cur_time = new Date();
+		var secs = (cur_time.getHours() * 60 * 60) + (cur_time.getMinutes() * 60) + cur_time.getSeconds();
+
+		if (t.visStart < cur_time
+			&& t.visEnd > cur_time
+			&& !isHiddenDay(cur_time)
+			&& secs >= 60*getMinMinute()
+			&& secs <= 60*getMaxMinute()) {
+			timeline.show();
+			caret.show();
+		}
+		else {
+			timeline.hide();
+			caret.hide();
+			return;
+		}
+
+		var secs = (cur_time.getHours() * 60 * 60) + (cur_time.getMinutes() * 60) + cur_time.getSeconds();
+		secs -= (getMinMinute() * 60);
+		var percents = secs / ((getMaxMinute() - getMinMinute()) * 60); // 24 * 60 * 60 = 86400, # of seconds in a day
+
+		timeline.css('top', Math.floor(container.height() * percents - 1) + 'px');
+		caret.css('top', Math.floor(container.height() * percents - 7) + 'px');
+
+		if (t.name == 'agendaWeek') { // week view, don't want the timeline to go the whole way across
+			var daycol = $('.fc-today', t.element);
+			var left = daycol.position().left + 1;
+			var width = daycol.width();
+			timeline.css({ left: left + 'px', width: width + 'px' });
+		}
+	}
+
 	/* Dragging
 	-----------------------------------------------------------------------------------*/
 	
