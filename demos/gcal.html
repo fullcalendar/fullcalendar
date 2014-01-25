@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset='utf-8' />
 <link href='../build/out/fullcalendar.css' rel='stylesheet' />
 <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/jquery.js'></script>
-<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
 <script src='../build/out/fullcalendar.js'></script>
 <script src='../build/out/gcal.js'></script>
 <script>
@@ -23,11 +24,7 @@
 			},
 			
 			loading: function(bool) {
-				if (bool) {
-					$('#loading').show();
-				}else{
-					$('#loading').hide();
-				}
+				$('#loading').toggle(bool);
 			}
 			
 		});
@@ -38,27 +35,31 @@
 <style>
 
 	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 14px;
+		margin: 0;
+		padding: 0;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+		font-size: 14px;
+	}
 		
 	#loading {
+		display: none;
 		position: absolute;
-		top: 5px;
-		right: 5px;
-		}
+		top: 10px;
+		right: 10px;
+	}
 
 	#calendar {
 		width: 900px;
-		margin: 0 auto;
-		}
+		margin: 40px auto;
+	}
 
 </style>
 </head>
 <body>
-<div id='loading' style='display:none'>loading...</div>
-<div id='calendar'></div>
+
+	<div id='loading'>loading...</div>
+
+	<div id='calendar'></div>
+
 </body>
 </html>

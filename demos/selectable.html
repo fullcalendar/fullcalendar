@@ -1,88 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset='utf-8' />
 <link href='../build/out/fullcalendar.css' rel='stylesheet' />
 <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/jquery.js'></script>
 <script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
 <script src='../build/out/fullcalendar.js'></script>
 <script>
 
 	$(document).ready(function() {
-	
-		var date = new Date();
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
 		
-		var calendar = $('#calendar').fullCalendar({
+		$('#calendar').fullCalendar({
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
+			defaultDate: '2014-01-12',
 			selectable: true,
 			selectHelper: true,
-			select: function(start, end, allDay) {
+			select: function(start, end) {
 				var title = prompt('Event Title:');
+				var eventData;
 				if (title) {
-					calendar.fullCalendar('renderEvent',
-						{
-							title: title,
-							start: start,
-							end: end,
-							allDay: allDay
-						},
-						true // make the event "stick"
-					);
+					eventData = {
+						title: title,
+						start: start,
+						end: end
+					};
+					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
 				}
-				calendar.fullCalendar('unselect');
+				$('#calendar').fullCalendar('unselect');
 			},
 			editable: true,
 			events: [
 				{
 					title: 'All Day Event',
-					start: new Date(y, m, 1)
+					start: '2014-01-01'
 				},
 				{
 					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
+					start: '2014-01-07',
+					end: '2014-01-10'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false
+					start: '2014-01-09T16:00:00'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false
+					start: '2014-01-16T16:00:00'
 				},
 				{
 					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false
+					start: '2014-01-12T10:30:00',
+					end: '2014-01-12T12:30:00'
 				},
 				{
 					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false
+					start: '2014-01-12T12:00:00'
 				},
 				{
 					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
+					start: '2014-01-13T07:00:00'
 				},
 				{
 					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
+					url: 'http://google.com/',
+					start: '2014-01-28'
 				}
 			]
 		});
@@ -93,20 +82,22 @@
 <style>
 
 	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 14px;
+		margin: 0;
+		padding: 0;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+		font-size: 14px;
+	}
 
 	#calendar {
 		width: 900px;
-		margin: 0 auto;
-		}
+		margin: 40px auto;
+	}
 
 </style>
 </head>
 <body>
-<div id='calendar'></div>
+
+	<div id='calendar'></div>
+
 </body>
 </html>
