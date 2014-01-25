@@ -1,4 +1,10 @@
 
+v2.0.0-beta
+-----------
+
+See <http://arshaw.com/fullcalendar/wiki/Upgrading-to-2/>
+
+
 v1.6.4 (2013-09-01)
 -------------------
 
