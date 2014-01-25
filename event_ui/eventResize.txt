@@ -5,15 +5,10 @@ eventResize
 Triggered when resizing stops and the event has changed in duration.
 
 <div class='spec' markdown='1'>
-function( *event*, *delta*, *revertFunc*, *jsEvent*, *ui*, *view* ) { }
+function( *event*, *jsEvent*, *ui*, *view* ) { }
 </div>
 
 `event` is an [Event Object](../event_data/Event_Object) that hold the event's information (date, title, etc).
-
-`duration` holds a [Duration](../utilities/Duration) object containing the amount of time the end date has changed from
-the original end date.
-This is elegant for dealing with multi-day and repeating events.
-If updating a remote database, just add this value to the *end* of all events with the given `event.id`.
 
 `revertFunc` is a function that, if called, reverts the event's end date to the value before the drag.
 This is useful if an ajax call should fail.
@@ -32,12 +27,9 @@ Here is an example demonstrating most of these arguments:
 			// events here
 		],
 		editable: true,
-		eventResize: function(event, delta, revertFunc) {
+		eventResize: function(event, revertFunc) {
 			
-			alert(
-				"The end date of " + event.title + "has been moved " +
-				delta.humanize()
-			);
+			alert(event.title + " end is now " + event.end.format());
 			
 			if (!confirm("is this okay?")) {
 				revertFunc();

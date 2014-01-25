@@ -127,6 +127,14 @@ Sets every <a href='Event_Object'>Event Object's</a> `durationEditable` for this
 </tr>
 <tr>
 <th>
+allDayDefault
+</th>
+<td markdown='1'>
+Sets the [allDayDefault]() option, but only for this source.
+</td>
+</tr>
+<tr>
+<th>
 eventDataTransform
 </th>
 <td markdown='1'>

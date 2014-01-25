@@ -16,12 +16,15 @@ This option affects many things such as:
 - [weekNumberCalculation](../display/weekNumberCalculation)
 - [firstDay](../display/firstDay)
 
+
 How to use other languages
 --------------------------
 
 You will need to load the language's JavaScript data file in order to use it.
 These files are included with the FullCalendar download in the `lang/` directory.
+They must be loaded via a `<script>` tag after the main FullCalendar library is loaded.
 
+	<script src='fullcalendar/fullcalendar.js'></script>
 	<script src='fullcalendar/lang/es.js'></script>
 	<script>
 
@@ -40,6 +43,7 @@ FullCalendar will look at the most recent language file loaded and use it.
 However, if more than one language file is loaded, or the combined `all.js` file is loaded,
 you must explicitly specify which language to use via the `lang` option:
 
+	<script src='fullcalendar/fullcalendar.js'></script>
 	<script src='fullcalendar/lang/all.js'></script>
 	<script>
 
@@ -53,44 +57,18 @@ you must explicitly specify which language to use via the `lang` option:
 
 	</script>
 
-For more information, see the [live example]() ([source code]()).
+For more information, see the [live example](../../../../js/fullcalendar-2.0.0-beta/demos/languages.html).
 
-Available language codes
-------------------------
 
-	ar-ma
-	ar
-	bg
-	ca
-	cs
-	da
-	de
-	el
-	en-ca
-	en-gb
-	es
-	fa
-	fi
-	fr-ca
-	fr
-	hi
-	hr
-	hu
-	it
-	ja
-	ko
-	lv
-	nl
-	pl
-	pt-br
-	pt
-	ro
-	ru
-	sk
-	sl
-	sv
-	th
-	tr
-	uk
-	zh-cn
-	zh-tw
+MomentJS and jQuery UI Datepicker
+---------------------------------
+
+When you load a FullCalendar language file, it also loads the translations
+for MomentJS and jQuery UI Datepicker (if the library is already on the page).
+Just make sure to include the `<script>` tags for Moment and Datepicker before
+you include FullCalendar's language file:
+
+	<script src='lib/moment.js'></script>
+	<script src='lib/jquery-ui.custom-datepicker.js'></script>
+	<script src='fullcalendar/fullcalendar.js'></script>
+	<script src='fullcalendar/lang/all.js'></script>

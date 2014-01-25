@@ -5,7 +5,7 @@ gotoDate
 Moves the calendar to an arbitrary date.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'gotoDate', moment )
+.fullCalendar( 'gotoDate', date )
 </div>
 
-`moment` can be a [Moment](../utilities/Moment) object, or anything the Moment constructor accepts.
+`date` can be a [Moment](../utilities/Moment) object, or anything the Moment constructor accepts.

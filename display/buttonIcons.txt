@@ -16,6 +16,7 @@ Object, *default:*
 </div>
 
 This setting only takes affect when [theme]() is `false`.
+If you want to change icons when [theme]() is `true`, use [themeButtonIcons]() instead.
 
 A hash must be supplied that maps button names (from the [header]()) to icon strings.
 These icon string are transformed into classNames which are styled by FullCalendar's CSS.

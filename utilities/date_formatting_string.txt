@@ -14,10 +14,14 @@ However, FullCalendar has extended Moment's functionality a bit by adding
 additional formatting characters:
 
 <table>
-<tr><th>AA</th><td>renders "A" or "P" (one-letter, uppercase, for AM or PM)</td></tr>
-<tr><th>aa</th><td>renders "a" or "a" (one-letter, lowercase, for AM or PM)</td></tr>
+<tr><th>T</th><td>renders "A" or "P" (one-letter, uppercase, for AM or PM)</td></tr>
+<tr><th>t</th><td>renders "a" or "a" (one-letter, lowercase, for AM or PM)</td></tr>
 <tr><th>( ... )</th><td>only renders the enclosed string if one or more non-zero digits</td></tr>
 </table>
+
+These formatting characters are only available to moments generated via the API as well as
+moments created with one of the [special moment constructors](Moment/#creating).
+
 <br />
 
 

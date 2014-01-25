@@ -5,13 +5,13 @@ dayRender
 A hook for modifying a day cell.
 
 <div class='spec' markdown='1'>
-function( moment, cell ) { }
+function( date, cell ) { }
 </div>
 
 This callback lets you modify day cells that are part of the *month*, *basicWeek*, and *basicDay* views.
 See [Available Views](../views/Available_Views/).
 
-`moment` is the [Moment](../utilities/Moment) for the given day.
+`date` is the [Moment](../utilities/Moment) for the given day.
 
 You cannot return a new element. You must only modify the `cell` (a `<td>` element) that is provided.
 

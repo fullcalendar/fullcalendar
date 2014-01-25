@@ -10,7 +10,7 @@ and can be instantiated with the `moment.duration` constructor.
 
 Durations are sometimes used to express:
 
-- lengths of time (ex: [defaultTimedEventDuration](../event_rendering/defaultTimedEventDuration))
+- lengths of time (ex: [defaultTimedEventDuration](../event_data/defaultTimedEventDuration))
 - differences between two dates (ex: [eventDrop](../event_ui/eventDrop))
 - times that are not bound to a particular day (ex: [scrollTime](../agenda/scrollTime))
 

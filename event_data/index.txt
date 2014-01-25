@@ -9,10 +9,14 @@ Event Data
 <li><a href='events_json_feed'>events</a> <em>(as a json feed)</em></li>
 <li><a href='events_function'>events</a> <em>(as a function)</em></li>
 <li>eventSources</li>
+<li>allDayDefault</li>
 <li>startParam</li>
 <li>endParam</li>
 <li>timezoneParam</li>
 <li>lazyFetching</li>
+<li>defaultTimedEventDuration</li>
+<li>defaultAllDayEventDuration</li>
+<li>forceEventDuration</li>
 <li class='callback'><a href='eventDataTransform'>eventDataTransform</a> <em>(callback)</em></li>
 <li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>
 <li class='method'><a href='updateEvent'>updateEvent</a> <em>(method)</em></li>

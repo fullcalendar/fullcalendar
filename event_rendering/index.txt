@@ -8,8 +8,7 @@ Event Rendering
 <li>eventBackgroundColor</li>
 <li>eventBorderColor</li>
 <li>eventTextColor</li>
-<li>defaultTimedEventDuration</li>
-<li>defaultAllDayEventDuration</li>
+<li>nextDayThreshold</li>
 <li class='callback'><a href='eventRender'>eventRender</a> <em>(callback)</em></li>
 <li class='callback'><a href='eventAfterRender'>eventAfterRender</a> <em>(callback)</em></li>
 <li class='callback'><a href='eventAfterAllRender'>eventAfterAllRender</a> <em>(callback)</em></li>

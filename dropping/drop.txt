@@ -5,13 +5,12 @@ drop
 Called when a valid jQuery UI draggable has been dropped onto the calendar.
 
 <div class='spec' markdown='1'>
-function( *moment*, *allDay*, *jsEvent*, *ui* ) { }
+function( *date*, *jsEvent*, *ui* ) { }
 </div>
 
-`moment` holds the [Moment](../utilities/Moment) of where the draggable was dropped.
-
-`allDay` holds a boolean of whether the draggable was dropped on an all-day cell
-(like in month view) or in a slot with a specific time (like in agenda view).
+`date` holds the [Moment](../utilities/Moment) of where the draggable was dropped.
+It will either have a time, or be [ambiguously-timed](../utilities/Moment#ambiguously-timed),
+depending on whether it was dropped on an all-day area or not.
 
 `jsEvent` holds the primitive JavaScript event, with information like mouse coordinates.
 

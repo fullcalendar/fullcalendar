@@ -2,8 +2,7 @@
 timezone
 ========
 
-Determines the timezone in which events are rendered,
-as well as how [Moments] throughout the API are represented.
+Determines the timezone in which dates throughout the API are parsed and rendered.
 
 <div class='spec' markdown='1'>
 `false` (default),
@@ -14,11 +13,10 @@ a timezone string (`'America/Chicago'`)
 
 Each of these possible values has an effect on
 **(1)** the way event data requests are made,
-the way both **(2)** normal and **(3)** ambiguous ISO8601 date strings are
-processed for events and other options, and **(4)** how [Moments] are
-represented throughout FullCalendar's API.
+**(2)** the timezones that event dates are represented in, and
+**(3)** the timezones that other dates in the API are represented in.
 
-For more information, see the [timezone demo](#) ([source code](#)).
+For more information, see the [timezone demo](../../../../js/fullcalendar-2.0.0-beta/demos/timezones.html).
 
 
 <br />
@@ -28,20 +26,19 @@ For more information, see the [timezone demo](#) ([source code](#)).
 `false` (no timezone, the default)
 ----------------------------------
 
-Use this mode if you don't store timezone information for your events,
+Use this mode if you don't store timezone information for your events
 and you want all events to render consistently across all client computers,
 regardless of timezone.
 
 **1)**
-When events are requested, no timezone offset will be sent:
+When events are requested, no timezone information will be sent:
 
-	events.php?start=2013-09-28
-	            &end=2013-11-02
+	events.php?start=2013-09-28&end=2013-11-02
 
 **2)**
-When ISO8601 date strings **with** timezone offsets are parsed,
-the exact year/month/date/hour/minutes/seconds will be preserved
-and the moment will have a forced [zone]:
+When ISO8601 date strings are parsed, the timezone offset that was originally
+in the string will be preserved (via Moment's [zone]). If the string has
+no timezone offset, the date will become [ambiguously-zoned].
 
 	{ title: "event1", start: "2013-10-20T02:00:00+09:00" }
 	//                                     ^        ^
@@ -49,37 +46,13 @@ and the moment will have a forced [zone]:
 	//                                              |
 	//         the timezone offset will always be +09:00
 
+**NOTE:**
+Because the browser does not know the timezone offset for every time in every timezone,
+when an event is modified, whether through user dragging/resizing or [updateEvent](../event_data/updateEvent),
+the dates will become [ambiguously-zoned](../utilities/Moment#ambiguously-zoned).
+
 **3)**
-When ISO8601 date strings **without** timezone offsets are parsed,
-the exact year/month/date/hour/minutes/seconds will be preserved
-and the moment will be in [UTC-mode]:
-
-	{ title: "event2", start: "2013-10-20T02:00:00" }
-	//                                     ^      ^
-	//              will always display as 2:00   |
-	//                                            |
-	//            no timezone offset, so assume +00:00
-
-**4)**
-In other parts of the API, moments will be in UTC-mode:
-
-	var start = $('#calendar').fullCalendar('getView').getStart();
-	start.format();
-
-	=> "2013-10-20T00:00:00+00:00"
-	//                       ^
-	//                      UTC
-
-**However**, since we are avoiding the notion of a timezone in this scenario,
-it is best to always ignore the timezone offset of all dates:
-
-	start.format('YYYY-MM-DDTHH:mm:ss'); // don't use 'z'
-
-	=> "2013-10-20T00:00:00"
-	//                     ^
-	//   does not output a timezone offset
-
-
+In other parts of the API, moments will be [ambiguously-zoned].
 
 <br />
 <br />
@@ -89,19 +62,17 @@ it is best to always ignore the timezone offset of all dates:
 `"local"` (the client's timezone)
 ---------------------------------
 
-Use this mode if you store timezone information for your events,
+Use this mode if you store timezone information for your events
 and you want events displayed differently depending on the local timezone of each end-user's computer.
 
 **1)**
-When events are requested, the client's local timezone offset will be sent.
-For example, if the client computer is in San Francisco, `-07:00` will be sent:
+When events are requested, no timezone information will be sent:
 
-	events.php?start=2013-09-28T00:00:00-07:00
-	            &end=2013-11-02T00:00:00-07:00
+	events.php?start=2013-09-28&end=2013-11-02
 
 **2)**
-When ISO8601 date strings **with** timezone offsets are parsed,
-they will be converted to the local computer's timezone:
+Date strings will be parsed in the local timezone. If no timezone offset is present,
+it is assumed to already be in local time.
 
 	{ title: "event1", start: "2013-10-20T15:00:00+02:00" }
 	//                                     ^        ^
@@ -109,100 +80,55 @@ they will be converted to the local computer's timezone:
 	// and the time will become 06:00:00
 
 **3)**
-When ambiguous IS08601 date strings **without** timezone offsets are parsed,
-they are assumed to be local:
-
-	{ title: "event1", start: "2013-10-20T08:00:00" }
-	//                                     ^      ^
-	//                     will display as 8:00   |
-	//                                            |
-	//        since no timezone offset, assume local (-07:00)
-
-**4)**
-Throughout the API, moments will be represented in the client's local timezone:
-
-	var start = $('#calendar').fullCalendar('getView').getStart();
-	start.format()
-
-	=> "2013-10-20T00:00:00-07:00"
-	//                       ^
-	//   the local timezone offset
-
+In other parse of the API, moments will be represented in the local timezone.
 
 <br />
 <br />
+
 
 
 `"UTC"`
 -------
 
-Use this mode if you store timezone information for your events,
+Use this mode if you store timezone information for your events
 and you want all your events to be displayed in UTC ([Coordinated Universal Time]).
 
 **1)**
-When events are requested, a `00:00` timezone offset will be sent.
-Also, the [timezone parameter] will be set to `UTC`:
+When events are requested, the [timezone parameter] will be set to `UTC`:
 
-	events.php?timezone=UTC
-	             &start=2013-09-28T00:00:00+00:00
-	               &end=2013-11-02T00:00:00+00:00
+	events.php?start=2013-09-28&end=2013-11-02&timezone=UTC
 
 **2)**
-When ISO8601 date strings **with** timezone offsets are parsed,
-they will be converted to UTC:
+Date strings will be parsed in the UTC timezone. If no timezone offset is present,
+it is assumed to already be in UTC.
 
 	{ title: "event1", start: "2013-10-20T08:00:00+02:00" }
 	//                                     ^        ^
 	//               will be converted to 06:00:00+00:00
 
 **3)**
-When ambiguous IS08601 date strings **without** timezone offsets are parsed,
-they are assumed to be UTC:
-
-	{ title: "event1", start: "2013-10-20T08:00:00" }
-	//                                     ^      ^
-	//                    will display as 08:00   |
-	//                                            |
-	//         since no timezone offset, assume +00:00
-
-**4)**
-In other parts of the API, moments will be represend in UTC:
-
-	$('#calendar').fullCalendar('getView').getStart().format()
-
-	=> "2013-10-20T00:00:00+00:00"
-	//                       ^
-	//                      UTC
-
+In other parts of the API, moments will be represented in UTC.
 
 <br />
 <br />
+
 
 
 Timezone string (like `"America/Chicago"`)
 ------------------------------------------
 
-Use this mode if you store timezone information for your events,
+Use this mode if you store timezone information for your events
 and you want them displayed in a timezone that can be customized.
 
-**IMPORTANT:** This scenario assumes that your server-side event feed script
-does the timezone math! Timezone math is *not* done on the client side!
-
-For more information, see the
-[timezone demo](#) ([source code](#)).
-
 **1)**
-When events are requested, no timezone offset will be sent.
-Also, the supplied timezone string will be sent as the [timezone parameter].
+When events are requested, the timezone name will sent as the [timezone parameter]:
 
-	events.php?timezone=America/Chicago
-	             &start=2013-09-28
-	               &end=2013-11-02
+	events.php?start=2013-09-28&end=2013-11-02&timezone=America/Chicago
 
 **2)**
-When ISO8601 date strings **with** timezone offsets are parsed,
-the exact year/month/date/hour/minutes/seconds will be preserved
-and the moment will have a forced [zone]:
+**Your server-side script is then expected to use the `timezone` parameter
+to calculate the timezone offset of the returned ISO8601 dates!**
+Once the dates are parsed, they will have a forced [zone]:
 
 	{ title: "event1", start: "2013-10-20T02:00:00+09:00" }
 	//                                     ^        ^
@@ -210,30 +136,13 @@ and the moment will have a forced [zone]:
 	//                                              |
 	//             timezone offset will always be +09:00
 
+**NOTE:**
+Because the browser does not know the timezone offset for every time in every timezone,
+when an event is modified, whether through user dragging/resizing or [updateEvent](../event_data/updateEvent),
+the dates will become [ambiguously-zoned](../utilities/Moment#ambiguously-zoned).
+
 **3)**
-It is not advised to ever supply an ISO8601 string **without** a timezone
-offset in this scenario because JavaScript does not natively know how to convert between arbitrary
-timezones.
-
-**4)**
-In other parts of the API, moments will be represend in UTC.
-
-	var start = $('#calendar').fullCalendar('getView').getStart();
-	start.format();
-
-	=> "2013-10-20T00:00:00+00:00"
-	//                       ^
-	//                      UTC
-
-**However**, the only reason moments are represented in UTC is because JavaScript is not smart
-enough to know the offset for every timezone. Thus, you should always ignore
-the timezone offset for every date:
-
-	start.format('YYYY-MM-DDTHH:mm:ss'); // don't use 'z'
-
-	=> "2013-10-20T00:00:00"
-	//                     ^
-	//   does not output a timezone offset
+In other parts of the API, moments will be [ambiguously-zoned].
 
 
 
@@ -244,3 +153,4 @@ the timezone offset for every date:
 [zone]: http://momentjs.com/docs/#/manipulating/timezone-offset/
 [timezone parameter]: ../event_data/timezoneParam/
 [Coordinated Universal Time]: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
+[ambiguously-zoned]: ../utilities/Moment/#ambiguously-zoned

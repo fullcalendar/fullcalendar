@@ -28,7 +28,7 @@ Here is how you target certain views:
 		basicWeek:  // basicWeek view
 		basicDay:   // basicDay view
 
-		'':         // (an empty string) when no other properties match
+		'default':  // when no other properties match
 	}
 
 So for example, if you wanted to `dragOpacity` to be `.2` for month view,
@@ -38,6 +38,6 @@ code would look like:
 	$('#calendar').fullCalendar({
 		dragOpacity: {
 			month: .2,
-			''   : .5
+			'default': .5
 		}
 	});

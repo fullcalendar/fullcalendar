@@ -17,4 +17,4 @@ Text/Time Customization
 
 Related agenda options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
 
-Essential for date/time formatting: [formatDate](../utilities/formatDate) commands.
+See also: [date formatting string](../utilities/date_formatting_string)

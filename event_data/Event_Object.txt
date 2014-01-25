@@ -42,8 +42,10 @@ allDay
 Whether an event occurs at a specific time-of-day. This property affects whether an event's time is shown.
 Also, in the agenda views, determines if it is displayed in the "all-day" section.
 
-If this value is not explicitly specified, FullCalendar will try to guess.
-If either the `start` or `end` value has hours/minutes/seconds or a `"T"` as part of the ISO8601
+If this value is not explicitly specified, [allDayDefault]() will be used if it is defined.
+
+If all else fails, FullCalendar will try to guess.
+If either the `start` or `end` value has a `"T"` as part of the ISO8601
 date string, `allDay` will become `false`. Otherwise, it will be `true`.
 
 **Don't include quotes** around your `true`/`false`. This value is a boolean, not a string!
@@ -74,7 +76,7 @@ The **exclusive** date/time an event ends.
 
 It is the moment immediately *after* the event has ended.
 For example, if the last full day of an event is **Thursday**, the exclusive
-end of the event will be **Friday**!
+end of the event will be 00:00:00 on **Friday**!
 
 
 A Moment object is accepted, as well as anything the Moment constructor accepts.

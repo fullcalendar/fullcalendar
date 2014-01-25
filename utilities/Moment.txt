@@ -18,29 +18,109 @@ that the `moment()` constructor accepts, including:
 - unix offsets (milliseconds since the Unix Epoch)
 - native Date objects
 
-ISO8601 dates are recommended because they can compactly contain information
-about timezone offset, as well as whether a "time" (hours/minutes/seconds) is present.
-Here are some examples:
-
-	"2013-02-08"                // without time
-	"2013-02-08T09:30:26"       // with time 
-	"2013-02-08T09:30:26+07:00" // with time and timezone offset
-
 <br />
 
-Creating Moments from scratch
------------------------------
 
-Since Moment is a dependency of FullCalendar, the global `moment` object will likely
+<h2 id='creating'>Creating Moments from scratch</h2>
+
+Since Moment is a dependency of FullCalendar, the global `moment` constructor will likely
 be available to you. You should be able to create new Moments from scratch like this:
 
 	var m = moment();
-	console.log(m.format());
 
-However, if you want to create a new Moment object that has been initialized with a calendar's
-[lang](../text/lang) and [timezone](../timezone/timezone) settings, use the `moment` method of the Calendar object.
-This method accepts the same parameters as the normal `moment()` method.
+To create a moment with FullCalendar's extended formatting and "ambiguous" functionality (see below),
+use FullCalendar's version of the `moment` constructor:
+
+	var m = $.fullCalendar.moment();
+
+To create a moment with extended functionality that is already scoped within a given
+calendar's [timezone](../timezone/timezone) and [lang](../text/lang) settings,
+use the `Calendar` object's version of the `moment` constructor:
 
 	var calendar = $('#calendar').fullCalendar('getCalendar');
 	var m = calendar.moment();
-	console.log(m.format());
+
+<br />
+
+
+<h2 id='ambiguously-timed'>Ambiguously-timed Moments</h2>
+
+For FullCalendar, the Moment object has been extended in order to represent a
+Moment without a time, or an "ambigously-timed moment". Under the hood, these moments
+are represented in [UTC-mode] with a time of `00:00:00`. You can query whether
+a moment is ambiguously-timed or not by using the `hasTime` method.
+
+To create one, you can use FullCalendar's version of the `moment` constructor in tandem
+with an IS08601 string without a time part:
+
+	var mom = $.fullCalendar.moment('2014-01-22');
+	mom.hasTime();
+	=> false
+
+Or you can convert a timed moment to ambiguous by using the `stripTime` method:
+
+	var mom = moment('2014-01-22T05:00:00');
+	mom.stripTime();
+	mom.hasTime();
+	=> false
+
+The `format` and `toISOString` methods have been modified to not return a time part in
+the string:
+
+	var mom = moment('2014-01-22T05:00:00').stripTime();
+	mom.format();
+	=> "2013-01-22"
+
+<br />
+
+
+<h2 id='ambiguously-zoned'>Ambiguously-zoned Moments</h2>
+
+The moment object has also been extended to represent dates that have no specified timezone.
+Under the hood, these moments are represented in [UTC-mode]. You can query whether a moment
+is ambiguously zoned or not by using the `hasZone` method.
+
+To create one, you can use FullCalendar's version of the `moment` constructor in tandem
+with an IS08601 string without a timezone offset part:
+
+	var mom = $.fullCalendar.moment('2014-01-22T06:00:00');
+	mom.hasZone();
+	=> false
+
+Or you can convert unambiguous to ambiguous by using the `stripZone` method:
+
+	var mom = moment('2014-01-22T05:00:00-07:00');
+	mom.stripZone();
+	mom.hasZone();
+	=> false
+
+The `format` and `toISOString` methods have been modified to not return a timezone offset
+part in the string:
+
+	var mom = moment('2014-01-22T05:00:00-07:00').stripZone();
+	mom.format();
+	=> "2014-01-22T05:00:00"
+
+<br />
+
+
+Other extensions
+----------------
+
+Moments will have the `time` utility available to them, which is a getter/setter for the
+hours/minutes/seconds/milliseconds part of the moment. It accepts/returns a [Duration](Duration)-ish
+object representing the time:
+
+	var m = moment();
+	mom.time('05:30:00');
+	mom.time(); // returns Duration with 05:30:00
+
+Also, Moments created with FullCalendar's version of the `moment` constructor will have the
+extended set of [date formatting characters](date_formatting_string) available to them.
+
+<br />
+
+
+[UTC-mode]: http://momentjs.com/docs/#/parsing/utc/
+
+

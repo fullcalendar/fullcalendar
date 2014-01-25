@@ -1,0 +1,13 @@
+
+forceEventDuration
+==================
+
+A flag to force calculation of an event's `end` if it is unspecified.
+
+<div class='spec' markdown='1'>
+Boolean, *default:* `false`
+</div>
+
+If an event's `end` is not specified, it will be calculated and assigned to
+the [Event Object]() using
+[defaultTimedEventDuration]() or [defaultAllDayEventDuration]().

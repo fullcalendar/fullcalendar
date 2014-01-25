@@ -12,7 +12,7 @@ pass that information along in GET parameters.
 The GET parameter names will be determined by the [startParam]() and [endParam]() options.
 (`"start"` and `"end"` by default).
 
-The values of these parameters will be ISO8601 date strings (like `"2013-12-01"`).
+The values of these parameters will be ISO8601 date strings (like `2013-12-01`).
 For precise behavior, see the [timezone](../timezone/timezone) docs.
 
 Consider the following script:

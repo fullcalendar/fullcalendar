@@ -5,17 +5,12 @@ eventDrop
 Triggered when dragging stops and the event has moved to a *different* day/time.
 
 <div class='spec' markdown='1'>
-function( *event*, *delta*, *allDay*, *revertFunc*, *jsEvent*, *ui*, *view* ) { }
+function( *event*, *revertFunc*, *jsEvent*, *ui*, *view* ) { }
 </div>
 
 `event` is an [Event Object](../event_data/Event_Object) that hold the event's information (date, title, etc).
-
-`delta` is a [Duration](../utilities/Duration) object that holds the amount of time the event has changed from its original date/time.
-This is elegant for dealing with multi-day and repeating events.
-If updating a remote database, just add this value to the start and end times of all events with the given `event.id`.
-
-`allDay` is `true` if the event has been dropped on a day in month view, or the "all-day" slot in the agenda views.
-It will be `false` if dropped on a slot in the agenda views (meaning it has been assigned a time).
+Call `hasTime` on the event's `start`/`end` to see if it has been dropped in a timed or all-day area
+([more info](../utilities/Moment#ambiguously-timed)).
 
 `revertFunc` is a function that, if called, reverts the event's start/end date to the values before the drag.
 This is useful if an ajax call should fail.
@@ -34,18 +29,9 @@ Here is an example demonstrating most of these arguments:
 			// events here
 		],
 		editable: true,
-		eventDrop: function(event, delta, allDay, revertFunc) {
-			
-			alert(
-				event.title + " was moved " +
-				delta.humanize()
-			);
-			
-			if (allDay) {
-				alert("Event is now all-day");
-			}else{
-				alert("Event has a time-of-day");
-			}
+		eventDrop: function(event, revertFunc) {
+
+			alert(event.title + " was dropped on " + event.start.format());
 			
 			if (!confirm("Are you sure about this change?")) {
 				revertFunc();

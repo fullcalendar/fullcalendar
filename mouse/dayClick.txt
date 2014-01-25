@@ -5,14 +5,14 @@ dayClick
 Triggered when the user clicks on a day.
 
 <div class='spec' markdown='1'>
-function( *moment*, *allDay*, *jsEvent*, *view* ) { }
+function( *date*, *jsEvent*, *view* ) { }
 </div>
 
-`moment` holds a [Moment](../utilities/Moment) for the clicked day. If the user has clicked on a slot in the
-agendaWeek or agendaDay views, `moment` will have the slot's time.
-
-`allDay` will be set to `false` if the user has clicked on a slot in the
-agendaWeek or agendaDay views. Otherwise, it will be `true`.
+`date` holds a [Moment](../utilities/Moment) for the clicked day.
+If an all-day area has been clicked,
+the moment will be [ambiguously-timed](../utilities/Moment#ambiguously-timed).
+If a slot in the agendaWeek or agendaDay views has been clicked,
+`date` will have the slot's time.
 
 `jsEvent` holds the native JavaScript event with low-level information such as click coordinates.
 
@@ -23,13 +23,9 @@ Within the callback function, `this` is set to the `<td>` of the clicked day.
 Here is an example that demonstrates all of these variables:
 
 	$('#calendar').fullCalendar({
-		dayClick: function(moment, allDay, jsEvent, view) {
+		dayClick: function(date, jsEvent, view) {
 		
-			if (allDay) {
-				alert('Clicked on the entire day: ' + moment.format());
-			}else{
-				alert('Clicked on the slot: ' + moment.format());
-			}
+			alert('Clicked on: ' + date.format());
 			
 			alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
 			

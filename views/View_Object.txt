@@ -14,24 +14,22 @@ Properties
 `title`
 :	Title text that is displayed at the top of the header (such as "September 2009" or "Sep 7 - 13 2009").
 
-
-
-Methods
--------
-
-`getStart()`
-:	The [Moment](../utilities/Moment) of the view's first visible day.
+`start`
+:	A [Moment](../utilities/Moment) that is the first visible day.
 
 	In month-view, this value is often before the 1st day of the month, because most months do not begin on the first day-of-week.
 
-`getEnd()`
-:	The [Moment](../utilities/Moment) of the view's exclusive end.
+`end`
+:	A [Moment](../utilities/Moment) that is the exclusive last visible day.
 
-	This value is exclusive and will be the day after the last visible day.
+`intervalStart`
+:	A [Moment](../utilities/Moment) that is the start of the interval the view is trying to represent.
+	For example, in month view, this will be the first of the month. This value disregards hidden days.
 
-`getIntervalStart()`
-:	This will be the same value as `getStart()`, **except for month view**, in which case it will be the first of the month.
+`intervalEnd`
+:	A [Moment](../utilities/Moment) that is the exclusive end of the interval the view is trying to represent.
+	For example, in month view, this will be the day after the last day of the month (because it is exclusive).
+	This value disregards hidden days.
 
-`getIntervalEnd()`
-:	This will be the same value as `getEnd()`, **except for month view**, in which case it will be the day after
-	the last day of the month (because it is an exclusive value)
+For all views, `start`, `end`, `intervalStart`, and `intervalEnd` will be
+[ambiguously-timed moments](../utilities/Moment#ambiguously-timed)
