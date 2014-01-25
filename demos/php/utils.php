@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 // Utilities for our event-fetching scripts.
 //
-// Requires PHP 5.3.0 or higher.
+// Requires PHP 5.2.0 or higher.
 //--------------------------------------------------------------------------------------------------
 
 // PHP will fatal error if we attempt to use the DateTime class without this being set.
@@ -111,7 +111,7 @@ class Event {
 function parseDateTime($string, $timezone=null) {
 	$date = new DateTime(
 		$string,
-		$timezone ?: new DateTimeZone('UTC')
+		$timezone ? $timezone : new DateTimeZone('UTC')
 			// Used only when the string is ambiguous.
 			// Ignored if string has a timezone offset in it.
 	);

@@ -6,11 +6,11 @@
 //
 // An optional "timezone" GET parameter will force all ISO8601 date stings to a given timezone.
 //
-// Requires PHP 5.3.0 or higher.
+// Requires PHP 5.2.0 or higher.
 //--------------------------------------------------------------------------------------------------
 
 // Require our Event class and datetime utilities
-require __DIR__ . '/utils.php';
+require dirname(__FILE__) . '/utils.php';
 
 // Short-circuit if the client did not give us a date range.
 if (!isset($_GET['start']) || !isset($_GET['end'])) {
@@ -30,7 +30,7 @@ if (isset($_GET['timezone'])) {
 }
 
 // Read and parse our events JSON file into an array of event data arrays.
-$json = file_get_contents(__DIR__ . '/../json/events.json');
+$json = file_get_contents(dirname(__FILE__) . '/../json/events.json');
 $input_arrays = json_decode($json, true);
 
 // Accumulate an output array of event data arrays.
