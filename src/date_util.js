@@ -1,376 +1,462 @@
 
-
-fc.addDays = addDays;
-fc.cloneDate = cloneDate;
-fc.parseDate = parseDate;
-fc.parseISO8601 = parseISO8601;
-fc.parseTime = parseTime;
-fc.formatDate = formatDate;
-fc.formatDates = formatDates;
+var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var ambigTimeRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))$/;
+var ambigZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
+var momentFormatMethod = moment.fn.format;
+var momentToISOStringMethod = moment.fn.toISOString;
 
 
+// diffs the two moments into a Duration where full-days are recorded first,
+// then the remaining time.
+function dayishDiff(d1, d0) {
+	return moment.duration({
+		days: d1.clone().stripTime().diff(d0.clone().stripTime(), 'days'),
+		ms: d1.time() - d0.time()
+	});
+}
 
-/* Date Math
------------------------------------------------------------------------------*/
-
-var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
-	DAY_MS = 86400000,
-	HOUR_MS = 3600000,
-	MINUTE_MS = 60000;
-	
-
-function addYears(d, n, keepTime) {
-	d.setFullYear(d.getFullYear() + n);
-	if (!keepTime) {
-		clearTime(d);
-	}
-	return d;
+function isNativeDate(input) {
+	return  Object.prototype.toString.call(input) === '[object Date]' ||
+		input instanceof Date;
 }
 
 
-function addMonths(d, n, keepTime) { // prevents day overflow/underflow
-	if (+d) { // prevent infinite looping on invalid dates
-		var m = d.getMonth() + n,
-			check = cloneDate(d);
-		check.setDate(1);
-		check.setMonth(m);
-		d.setMonth(m);
-		if (!keepTime) {
-			clearTime(d);
+// MOMENT: creating
+// -------------------------------------------------------------------------------------------------
+
+// Creates a moment in the local timezone, similar to the vanilla moment(...) constructor,
+// but with extra features:
+// - ambiguous times
+// - enhanced formatting (TODO)
+fc.moment = function() {
+	return buildMoment(arguments);
+};
+
+// Sames as fc.moment, but creates a moment in the UTC timezone.
+fc.moment.utc = function() {
+	return buildMoment(arguments, true);
+};
+
+// Creates a moment and preserves the timezone offset of the ISO8601 string,
+// allowing for ambigous timezones. If the string is not an ISO8601 string,
+// the moment is processed in UTC-mode (a departure from moment's method).
+fc.moment.parseZone = function() {
+	return buildMoment(arguments, true, true);
+};
+
+// when parseZone==true, if can't figure it out, fall back to parseUTC
+function buildMoment(args, parseUTC, parseZone) {
+	var isSingleArg = args.length == 1;
+	var isSingleString = isSingleArg && typeof args[0] === 'string';
+	var isSingleArray = isSingleArg && $.isArray(args[0]);
+	var isSingleNativeDate = isSingleArg && isNativeDate(args[0]);
+	var isAmbigTime = isSingleString && ambigTimeRegex.test(args[0]);
+	var isAmbigZone = isAmbigTime || isSingleArray || isSingleString && ambigZoneRegex.test(args[0]);
+	var mom;
+
+	if (parseUTC || parseZone || isAmbigTime) {
+		mom = moment.utc.apply(moment, args);
+	}
+	else {
+		mom = moment.apply(null, args);
+	}
+
+	if (isAmbigTime) {
+		mom._ambigTime = true;
+		mom._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+	}
+
+	if (parseZone) {
+		if (isAmbigZone) {
+			mom._ambigZone = true;
 		}
-		while (d.getMonth() != check.getMonth()) {
-			d.setDate(d.getDate() + (d < check ? 1 : -1));
+		else if (isSingleString) {
+			mom.zone(args[0]); // if fails, will set it to 0, which it already was
+		}
+		else if (isSingleNativeDate || args[0] === undefined) {
+			// native Date object?
+			// specified with no arguments?
+			// then consider the moment to be local
+			mom.local();
 		}
 	}
-	return d;
+
+	mom._fc = true; // flag for use other extended functionality (only formatting at this point)
+
+	return mom;
 }
 
 
-function addDays(d, n, keepTime) { // deals with daylight savings
-	if (+d) {
-		var dd = d.getDate() + n,
-			check = cloneDate(d);
-		check.setHours(9); // set to middle of day
-		check.setDate(dd);
-		d.setDate(dd);
-		if (!keepTime) {
-			clearTime(d);
-		}
-		fixDate(d, check);
+// MOMENT: time-of-day
+// -------------------------------------------------------------------------------------------------
+
+
+// GETTER
+// Returns a Duration with the hours/minutes/seconds/ms values of the moment.
+// If the moment has an ambiguous time, a duration of 00:00 will be returned.
+//
+// SETTER
+// You can supply a Duration, a Moment, or a Duration-like argument.
+// When setting the time, and the moment has an ambiguous time, it then becomes unambiguous.
+moment.fn.time = function(time) {
+	if (time === undefined) { // getter
+		return moment.duration({
+			hours: this.hours(),
+			minutes: this.minutes(),
+			seconds: this.seconds(),
+			milliseconds: this.milliseconds()
+		});
 	}
-	return d;
-}
+	else { // setter
 
+		delete this._ambigTime; // mark that the moment now has a time
 
-function fixDate(d, check) { // force d to be on check's YMD, for daylight savings purposes
-	if (+d) { // prevent infinite looping on invalid dates
-		while (d.getDate() != check.getDate()) {
-			d.setTime(+d + (d < check ? 1 : -1) * HOUR_MS);
+		if (!moment.isDuration(time) && !moment.isMoment(time)) {
+			time = moment.duration(time);
 		}
+
+		return this.hours(time.hours() + time.days() * 24) // day value will cause overflow (so 24 hours becomes 00:00:00 of next day)
+			.minutes(time.minutes())
+			.seconds(time.seconds())
+			.milliseconds(time.milliseconds());
 	}
-}
+};
+
+// Converts the moment to UTC, stripping out its time-of-day and timezone offset,
+// but preserving its YMD. A moment with a stripped time will display no time
+// nor timezone offset when .format() is called.
+moment.fn.stripTime = function() {
+	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
+
+	this._ambigTime = true;
+	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+
+	return this.utc()
+		.year(a[0])
+		.month(a[1])
+		.date(a[2])
+		.hours(0)
+		.minutes(0)
+		.seconds(0)
+		.milliseconds(0);
+};
+
+// Returns if the moment has a non-ambiguous time (boolean)
+moment.fn.hasTime = function() {
+	return !this._ambigTime;
+};
 
 
-function addMinutes(d, n) {
-	d.setMinutes(d.getMinutes() + n);
-	return d;
-}
+// MOMENT: timezone offset
+// -------------------------------------------------------------------------------------------------
+
+// Converts the moment to UTC, stripping out its timezone offset, but preserving its
+// YMD and time-of-day. A moment with a stripped timezone offset will display no
+// timezone offset when .format() is called.
+moment.fn.stripZone = function() {
+	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
+
+	this._ambigZone = true;
+
+	return this.utc()
+		.year(a[0])
+		.month(a[1])
+		.date(a[2])
+		.hours(a[3])
+		.minutes(a[4])
+		.seconds(a[5])
+		.milliseconds(a[6]);
+};
+
+// Returns of the moment has a non-ambiguous timezone offset (boolean)
+moment.fn.hasZone = function() {
+	return !this._ambigZone;
+};
 
 
-function clearTime(d) {
-	d.setHours(0);
-	d.setMinutes(0);
-	d.setSeconds(0); 
-	d.setMilliseconds(0);
-	return d;
-}
+// MOMENT: formatting mods
+// -------------------------------------------------------------------------------------------------
 
-
-function cloneDate(d, dontKeepTime) {
-	if (dontKeepTime) {
-		return clearTime(new Date(+d));
-	}
-	return new Date(+d);
-}
-
-
-function zeroDate() { // returns a Date with time 00:00:00 and dateOfMonth=1
-	var i=0, d;
-	do {
-		d = new Date(1970, i++, 1);
-	} while (d.getHours()); // != 0
-	return d;
-}
-
-
-function dayDiff(d1, d2) { // d1 - d2
-	return Math.round((cloneDate(d1, true) - cloneDate(d2, true)) / DAY_MS);
-}
-
-
-function setYMD(date, y, m, d) {
-	if (y !== undefined && y != date.getFullYear()) {
-		date.setDate(1);
-		date.setMonth(0);
-		date.setFullYear(y);
-	}
-	if (m !== undefined && m != date.getMonth()) {
-		date.setDate(1);
-		date.setMonth(m);
-	}
-	if (d !== undefined) {
-		date.setDate(d);
-	}
-}
-
-
-
-/* Date Parsing
------------------------------------------------------------------------------*/
-
-
-function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
-	if (typeof s == 'object') { // already a Date object
-		return s;
-	}
-	if (typeof s == 'number') { // a UNIX timestamp
-		return new Date(s * 1000);
-	}
-	if (typeof s == 'string') {
-		if (s.match(/^\d+(\.\d+)?$/)) { // a UNIX timestamp
-			return new Date(parseFloat(s) * 1000);
+moment.fn.format = function() {
+	if (!arguments[0]) {
+		if (this._ambigTime) {
+			return momentFormat(this, 'YYYY-MM-DD');
 		}
-		if (ignoreTimezone === undefined) {
-			ignoreTimezone = true;
-		}
-		return parseISO8601(s, ignoreTimezone) || (s ? new Date(s) : null);
-	}
-	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
-	return null;
-}
-
-
-function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
-	// derived from http://delete.me.uk/2005/03/iso8601.html
-	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
-	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
-	if (!m) {
-		return null;
-	}
-	var date = new Date(m[1], 0, 1);
-	if (ignoreTimezone || !m[13]) {
-		var check = new Date(m[1], 0, 1, 9, 0);
-		if (m[3]) {
-			date.setMonth(m[3] - 1);
-			check.setMonth(m[3] - 1);
-		}
-		if (m[5]) {
-			date.setDate(m[5]);
-			check.setDate(m[5]);
-		}
-		fixDate(date, check);
-		if (m[7]) {
-			date.setHours(m[7]);
-		}
-		if (m[8]) {
-			date.setMinutes(m[8]);
-		}
-		if (m[10]) {
-			date.setSeconds(m[10]);
-		}
-		if (m[12]) {
-			date.setMilliseconds(Number("0." + m[12]) * 1000);
-		}
-		fixDate(date, check);
-	}else{
-		date.setUTCFullYear(
-			m[1],
-			m[3] ? m[3] - 1 : 0,
-			m[5] || 1
-		);
-		date.setUTCHours(
-			m[7] || 0,
-			m[8] || 0,
-			m[10] || 0,
-			m[12] ? Number("0." + m[12]) * 1000 : 0
-		);
-		if (m[14]) {
-			var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
-			offset *= m[15] == '-' ? 1 : -1;
-			date = new Date(+date + (offset * 60 * 1000));
+		if (this._ambigZone) {
+			return momentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
 		}
 	}
-	return date;
-}
-
-
-function parseTime(s) { // returns minutes since start of day
-	if (typeof s == 'number') { // an hour
-		return s * 60;
+	if (this._fc) {
+		return formatDate(this, arguments[0]); // our extended formatting
 	}
-	if (typeof s == 'object') { // a Date object
-		return s.getHours() * 60 + s.getMinutes();
-	}
-	var m = s.match(/(\d+)(?::(\d+))?\s*(\w+)?/);
-	if (m) {
-		var h = parseInt(m[1], 10);
-		if (m[3]) {
-			h %= 12;
-			if (m[3].toLowerCase().charAt(0) == 'p') {
-				h += 12;
-			}
-		}
-		return h * 60 + (m[2] ? parseInt(m[2], 10) : 0);
+	else {
+		return momentFormatMethod.apply(this, arguments); // pass along all arguments
 	}
 }
 
+moment.fn.toISOString = function() {
+	if (this._ambigTime) {
+		return momentFormat(this, 'YYYY-MM-DD');
+	}
+	if (this._ambigZone) {
+		return momentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
+	}
+	return momentToISOStringMethod.apply(this, arguments); // pass along all arguments
+};
 
-
-/* Date Formatting
------------------------------------------------------------------------------*/
-// TODO: use same function formatDate(date, [date2], format, [options])
-
-
-function formatDate(date, format, options) {
-	return formatDates(date, null, format, options);
+// call this if you want Moment's original format method to be used
+function momentFormat(moment, formatStr) {
+	return momentFormatMethod.call(moment, formatStr);
 }
 
 
-function formatDates(date1, date2, format, options) {
-	options = options || defaults;
-	var date = date1,
-		otherDate = date2,
-		i, len = format.length, c,
-		i2, formatter,
-		res = '';
-	for (i=0; i<len; i++) {
-		c = format.charAt(i);
-		if (c == "'") {
-			for (i2=i+1; i2<len; i2++) {
-				if (format.charAt(i2) == "'") {
-					if (date) {
-						if (i2 == i+1) {
-							res += "'";
-						}else{
-							res += format.substring(i+1, i2);
-						}
-						i = i2;
-					}
-					break;
+// MOMENT: misc utils
+// -------------------------------------------------------------------------------------------------
+
+// Is the moment within the specified range? `end` is exclusive.
+// TODO: rename for collision reasons?
+moment.fn.isWithin = function(start, end) {
+	return this >= moment(start) && this < moment(end);
+};
+
+$.each([
+	'isBefore',
+	'isAfter',
+	//'isSame', // nevermind. moment handles normalization to UTC
+	'isWithin'
+], function(i, methodName) {
+	var origMethod = moment.fn[methodName];
+	var momentCount = methodName == 'isWithin' ? 2 : 1;
+
+	moment.fn[methodName] = function() {
+		var newThis;
+		var i;
+
+		if (this._ambigZone) {
+			for (i=0; i<momentCount; i++) {
+				if (typeof arguments[i] === 'string') {
+					arguments[i] = fc.moment.parseZone(arguments[i]);
 				}
 			}
 		}
-		else if (c == '(') {
-			for (i2=i+1; i2<len; i2++) {
-				if (format.charAt(i2) == ')') {
-					var subres = formatDate(date, format.substring(i+1, i2), options);
-					if (parseInt(subres.replace(/\D/, ''), 10)) {
-						res += subres;
-					}
-					i = i2;
-					break;
-				}
+
+		for (i=0; i<momentCount; i++) {
+			if (moment.isMoment(arguments[i]) && arguments[i]._ambigZone !== this._ambigZone) {
+				newThis = newThis || this.clone().stripZone();
+				arguments[i] = arguments[i].clone().stripZone();
 			}
 		}
-		else if (c == '[') {
-			for (i2=i+1; i2<len; i2++) {
-				if (format.charAt(i2) == ']') {
-					var subformat = format.substring(i+1, i2);
-					var subres = formatDate(date, subformat, options);
-					if (subres != formatDate(otherDate, subformat, options)) {
-						res += subres;
-					}
-					i = i2;
-					break;
-				}
-			}
+
+		return origMethod.apply(newThis || this, arguments);
+	};
+});
+
+
+// Single Date Formatting
+// -------------------------------------------------------------------------------------------------
+
+
+// Formats `date` with a Moment formatting string, but allow our non-zero areas and
+// additional token.
+function formatDate(date, formatStr) {
+	return formatDateWithChunks(date, getFormatStringChunks(formatStr));
+}
+
+
+function formatDateWithChunks(date, chunks) {
+	var s = '';
+	var i;
+
+	for (i=0; i<chunks.length; i++) {
+		s += formatDateWithChunk(date, chunks[i]);
+	}
+
+	return s;
+}
+
+
+// addition formatting tokens we want recognized
+var tokenOverrides = {
+	t: function(date) { // "a" or "p"
+		return momentFormat(date, 'a').charAt(0);
+	},
+	T: function(date) { // "A" or "P"
+		return momentFormat(date, 'A').charAt(0);
+	}
+};
+
+
+function formatDateWithChunk(date, chunk) {
+	var token;
+	var maybeStr;
+
+	if (typeof chunk === 'string') { // a literal string
+		return chunk;
+	}
+	else if (token = chunk.token) { // a token, like "YYYY"
+		if (tokenOverrides[token]) {
+			return tokenOverrides[token](date); // use our custom token
 		}
-		else if (c == '{') {
-			date = date2;
-			otherDate = date1;
+		return momentFormat(date, token);
+	}
+	else if (chunk.maybe) { // a grouping of other chunks that must be non-zero
+		maybeStr = formatDateWithChunks(date, chunk.maybe);
+		if (maybeStr.match(/[1-9]/)) {
+			return maybeStr;
 		}
-		else if (c == '}') {
-			date = date1;
-			otherDate = date2;
+	}
+
+	return '';
+}
+
+
+// Date Range Formatting
+// -------------------------------------------------------------------------------------------------
+// TODO: make it work with timezone offset
+
+// Using a formatting string meant for a single date, generate a range string, like
+// "Sep 2 - 9 2013", that intelligently inserts a separator where the dates differ.
+// If the dates are the same as far as the format string is concerned, just return a single
+// rendering of one date, without any separator.
+function formatRange(date1, date2, formatStr, separator, isRTL) {
+
+	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
+	formatStr = date1.lang().longDateFormat(formatStr) || formatStr;
+	// BTW, this is not important for `formatDate` because it is impossible to put custom tokens
+	// or non-zero areas in Moment's localized format strings.
+
+	separator = separator || ' - ';
+
+	return formatRangeWithChunks(
+		date1,
+		date2,
+		getFormatStringChunks(formatStr),
+		separator,
+		isRTL
+	);
+}
+fc.formatRange = formatRange; // expose
+
+
+function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
+	var chunkStr; // the rendering of the chunk
+	var leftI;
+	var leftStr = '';
+	var rightI;
+	var rightStr = '';
+	var middleI;
+	var middleStr1 = '';
+	var middleStr2 = '';
+	var middleStr = '';
+
+	// Start at the leftmost side of the formatting string and continue until you hit a token
+	// that is not the same between dates.
+	for (leftI=0; leftI<chunks.length; leftI++) {
+		chunkStr = formatSimilarChunk(date1, date2, chunks[leftI]);
+		if (chunkStr === false) {
+			break;
+		}
+		leftStr += chunkStr;
+	}
+
+	// Similarly, start at the rightmost side of the formatting string and move left
+	for (rightI=chunks.length-1; rightI>leftI; rightI--) {
+		chunkStr = formatSimilarChunk(date1, date2, chunks[rightI]);
+		if (chunkStr === false) {
+			break;
+		}
+		rightStr = chunkStr + rightStr;
+	}
+
+	// The area in the middle is different for both of the dates.
+	// Collect them distinctly so we can jam them together later.
+	for (middleI=leftI; middleI<=rightI; middleI++) {
+		middleStr1 += formatDateWithChunk(date1, chunks[middleI]);
+		middleStr2 += formatDateWithChunk(date2, chunks[middleI]);
+	}
+
+	if (middleStr1 || middleStr2) {
+		if (isRTL) {
+			middleStr = middleStr2 + separator + middleStr1;
 		}
 		else {
-			for (i2=len; i2>i; i2--) {
-				if (formatter = dateFormatters[format.substring(i, i2)]) {
-					if (date) {
-						res += formatter(date, options);
-					}
-					i = i2 - 1;
-					break;
-				}
-			}
-			if (i2 == i) {
-				if (date) {
-					res += c;
-				}
-			}
+			middleStr = middleStr1 + separator + middleStr2;
 		}
 	}
-	return res;
+
+	return leftStr + middleStr + rightStr;
+}
+
+
+var similarUnitMap = {
+	Y: 'year',
+	M: 'month',
+	D: 'day', // day of month
+	d: 'day' // day of week
 };
+// don't go any further than day, because we don't want to break apart times like "12:30:00"
+// TODO: week maybe?
 
 
-var dateFormatters = {
-	s	: function(d)	{ return d.getSeconds() },
-	ss	: function(d)	{ return zeroPad(d.getSeconds()) },
-	m	: function(d)	{ return d.getMinutes() },
-	mm	: function(d)	{ return zeroPad(d.getMinutes()) },
-	h	: function(d)	{ return d.getHours() % 12 || 12 },
-	hh	: function(d)	{ return zeroPad(d.getHours() % 12 || 12) },
-	H	: function(d)	{ return d.getHours() },
-	HH	: function(d)	{ return zeroPad(d.getHours()) },
-	d	: function(d)	{ return d.getDate() },
-	dd	: function(d)	{ return zeroPad(d.getDate()) },
-	ddd	: function(d,o)	{ return o.dayNamesShort[d.getDay()] },
-	dddd: function(d,o)	{ return o.dayNames[d.getDay()] },
-	M	: function(d)	{ return d.getMonth() + 1 },
-	MM	: function(d)	{ return zeroPad(d.getMonth() + 1) },
-	MMM	: function(d,o)	{ return o.monthNamesShort[d.getMonth()] },
-	MMMM: function(d,o)	{ return o.monthNames[d.getMonth()] },
-	yy	: function(d)	{ return (d.getFullYear()+'').substring(2) },
-	yyyy: function(d)	{ return d.getFullYear() },
-	t	: function(d)	{ return d.getHours() < 12 ? 'a' : 'p' },
-	tt	: function(d)	{ return d.getHours() < 12 ? 'am' : 'pm' },
-	T	: function(d)	{ return d.getHours() < 12 ? 'A' : 'P' },
-	TT	: function(d)	{ return d.getHours() < 12 ? 'AM' : 'PM' },
-	u	: function(d)	{ return formatDate(d, "yyyy-MM-dd'T'HH:mm:ss'Z'") },
-	S	: function(d)	{
-		var date = d.getDate();
-		if (date > 10 && date < 20) {
-			return 'th';
-		}
-		return ['st', 'nd', 'rd'][date%10-1] || 'th';
-	},
-	w   : function(d, o) { // local
-		return o.weekNumberCalculation(d);
-	},
-	W   : function(d) { // ISO
-		return iso8601Week(d);
+// Given a formatting chunk, and given that both dates are similar in the regard the
+// formatting chunk is concerned, format date1 against `chunk`. Otherwise, return `false`.
+function formatSimilarChunk(date1, date2, chunk) {
+	var token;
+	var unit;
+
+	if (typeof chunk === 'string') { // a literal string
+		return chunk;
 	}
-};
-fc.dateFormatters = dateFormatters;
+	else if (token = chunk.token) {
+		unit = similarUnitMap[token.charAt(0)];
+		// are the dates the same for this unit of measurement?
+		if (unit && date1.isSame(date2, unit)) {
+			return momentFormat(date1, token); // would be the same if we used `date2`
+			// BTW, don't support custom tokens
+		}
+	}
+
+	return false; // the chunk is NOT the same for the two dates
+	// BTW, don't support splitting on non-zero areas
+}
 
 
-/* thanks jQuery UI (https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.datepicker.js)
- * 
- * Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
- * `date` - the date to get the week for
- * `number` - the number of the week within the year that contains this date
- */
-function iso8601Week(date) {
-	var time;
-	var checkDate = new Date(date.getTime());
+// Chunking Utils
+// -------------------------------------------------------------------------------------------------
 
-	// Find Thursday of this week starting on Monday
-	checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7));
 
-	time = checkDate.getTime();
-	checkDate.setMonth(0); // Compare with Jan 1
-	checkDate.setDate(1);
-	return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
+var formatStringChunkCache = {};
+
+
+function getFormatStringChunks(formatStr) {
+	if (formatStr in formatStringChunkCache) {
+		return formatStringChunkCache[formatStr];
+	}
+	return formatStringChunkCache[formatStr] = chunkFormatString(formatStr);
+}
+
+
+// Break the formatting string into an array of chunks
+function chunkFormatString(formatStr) {
+	var chunks = [];
+	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|((\w)\4*o?T?)|([^\w\[\(]+)/g; // TODO: more descrimination
+	var match;
+
+	while (match = chunker.exec(formatStr)) {
+		if (match[1]) { // a literal string instead [ ... ]
+			chunks.push(match[1]);
+		}
+		else if (match[2]) { // non-zero formatting inside ( ... )
+			chunks.push({ maybe: chunkFormatString(match[2]) });
+		}
+		else if (match[3]) { // a formatting token
+			chunks.push({ token: match[3] });
+		}
+		else if (match[5]) { // an unenclosed literal string
+			chunks.push(match[5]);
+		}
+	}
+
+	return chunks;
 }
 

@@ -15,15 +15,12 @@ function AgendaEventRenderer() {
 	var trigger = t.trigger;
 	var isEventDraggable = t.isEventDraggable;
 	var isEventResizable = t.isEventResizable;
-	var eventEnd = t.eventEnd;
 	var eventElementHandlers = t.eventElementHandlers;
 	var setHeight = t.setHeight;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var getSlotSegmentContainer = t.getSlotSegmentContainer;
 	var getHoverListener = t.getHoverListener;
-	var getMaxMinute = t.getMaxMinute;
-	var getMinMinute = t.getMinMinute;
-	var timePosition = t.timePosition;
+	var computeDateTop = t.computeDateTop;
 	var getIsCellAllDay = t.getIsCellAllDay;
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
@@ -31,7 +28,9 @@ function AgendaEventRenderer() {
 	var getColCnt = t.getColCnt;
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
-	var getSnapMinutes = t.getSnapMinutes;
+	var getSnapDuration = t.getSnapDuration;
+	var getSlotHeight = t.getSlotHeight;
+	var getSlotDuration = t.getSlotDuration;
 	var getSlotContainer = t.getSlotContainer;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
@@ -41,9 +40,12 @@ function AgendaEventRenderer() {
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var renderDayEvents = t.renderDayEvents;
+	var getMinTime = t.getMinTime;
+	var getMaxTime = t.getMaxTime;
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
-	var formatDates = calendar.formatDates;
+	var formatRange = calendar.formatRange;
+	var getEventEnd = calendar.getEventEnd;
 
 
 	// overrides
@@ -84,25 +86,21 @@ function AgendaEventRenderer() {
 	
 	function compileSlotSegs(events) {
 		var colCnt = getColCnt(),
-			minMinute = getMinMinute(),
-			maxMinute = getMaxMinute(),
-			d,
-			visEventEnds = $.map(events, slotEventEnd),
+			minTime = getMinTime(),
+			maxTime = getMaxTime(),
+			cellDate,
 			i,
 			j, seg,
 			colSegs,
 			segs = [];
 
 		for (i=0; i<colCnt; i++) {
-
-			d = cellToDate(0, i);
-			addMinutes(d, minMinute);
+			cellDate = cellToDate(0, i);
 
 			colSegs = sliceSegs(
 				events,
-				visEventEnds,
-				d,
-				addMinutes(cloneDate(d), maxMinute-minMinute)
+				cellDate.clone().time(minTime),
+				cellDate.clone().time(maxTime)
 			);
 
 			colSegs = placeSlotSegs(colSegs); // returns a new order
@@ -118,31 +116,45 @@ function AgendaEventRenderer() {
 	}
 
 
-	function sliceSegs(events, visEventEnds, start, end) {
+	function sliceSegs(events, rangeStart, rangeEnd) {
+
+		// normalize, because all dates will be compared w/o zones
+		rangeStart = rangeStart.clone().stripZone();
+		rangeEnd = rangeEnd.clone().stripZone();
+
 		var segs = [],
 			i, len=events.length, event,
 			eventStart, eventEnd,
 			segStart, segEnd,
 			isStart, isEnd;
 		for (i=0; i<len; i++) {
+
 			event = events[i];
-			eventStart = event.start;
-			eventEnd = visEventEnds[i];
-			if (eventEnd > start && eventStart < end) {
-				if (eventStart < start) {
-					segStart = cloneDate(start);
+
+			// get dates, make copies, then strip zone to normalize
+			eventStart = event.start.clone().stripZone();
+			eventEnd = getEventEnd(event).stripZone();
+
+			if (eventEnd > rangeStart && eventStart < rangeEnd) {
+
+				if (eventStart < rangeStart) {
+					segStart = rangeStart.clone();
 					isStart = false;
-				}else{
+				}
+				else {
 					segStart = eventStart;
 					isStart = true;
 				}
-				if (eventEnd > end) {
-					segEnd = cloneDate(end);
+
+				if (eventEnd > rangeEnd) {
+					segEnd = rangeEnd.clone();
 					isEnd = false;
-				}else{
+				}
+				else {
 					segEnd = eventEnd;
 					isEnd = true;
 				}
+
 				segs.push({
 					event: event,
 					start: segStart,
@@ -152,16 +164,8 @@ function AgendaEventRenderer() {
 				});
 			}
 		}
+
 		return segs.sort(compareSlotSegs);
-	}
-
-
-	function slotEventEnd(event) {
-		if (event.end) {
-			return cloneDate(event.end);
-		}else{
-			return addMinutes(cloneDate(event.start), opt('defaultEventMinutes'));
-		}
 	}
 	
 	
@@ -194,8 +198,8 @@ function AgendaEventRenderer() {
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			top = timePosition(seg.start, seg.start);
-			bottom = timePosition(seg.start, seg.end);
+			top = computeDateTop(seg.start, seg.start);
+			bottom = computeDateTop(seg.end, seg.start);
 			columnLeft = colContentLeft(seg.col);
 			columnRight = colContentRight(seg.col);
 			columnWidth = columnRight - columnLeft;
@@ -296,7 +300,9 @@ function AgendaEventRenderer() {
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
 					eventElement.find('div.fc-event-time')
-						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+						.text(
+							formatDate(event.start, opt('timeFormat')) + ' - ' + event.title
+						);
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
@@ -330,6 +336,7 @@ function AgendaEventRenderer() {
 		}else{
 			html += "div";
 		}
+
 		html +=
 			" class='" + classes.join(' ') + "'" +
 			" style=" +
@@ -341,14 +348,22 @@ function AgendaEventRenderer() {
 				"'" +
 			">" +
 			"<div class='fc-event-inner'>" +
-			"<div class='fc-event-time'>" +
-			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+			"<div class='fc-event-time'>";
+
+		if (event.end) {
+			html += htmlEscape(formatRange(event.start, event.end, opt('timeFormat')));
+		}else{
+			html += htmlEscape(formatDate(event.start, opt('timeFormat')));
+		}
+
+		html +=
 			"</div>" +
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title || '') +
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-bg'></div>";
+
 		if (seg.isEnd && isEventResizable(event)) {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
@@ -386,79 +401,98 @@ function AgendaEventRenderer() {
 		var revert;
 		var allDay = true;
 		var dayDelta;
+
 		var hoverListener = getHoverListener();
 		var colWidth = getColWidth();
+		var minTime = getMinTime();
+		var slotDuration = getSlotDuration();
+		var slotHeight = getSlotHeight();
+		var snapDuration = getSnapDuration();
 		var snapHeight = getSnapHeight();
-		var snapMinutes = getSnapMinutes();
-		var minMinute = getMinMinute();
+
 		eventElement.draggable({
 			opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
+
 				trigger('eventDragStart', eventElement, event, ev, ui);
 				hideEvents(event, eventElement);
 				origWidth = eventElement.width();
+
 				hoverListener.start(function(cell, origCell) {
 					clearOverlays();
 					if (cell) {
 						revert = false;
+
 						var origDate = cellToDate(0, origCell.col);
 						var date = cellToDate(0, cell.col);
-						dayDelta = dayDiff(date, origDate);
-						if (!cell.row) {
-							// on full-days
+						dayDelta = date.diff(origDate, 'days');
+
+						if (!cell.row) { // on full-days
+							
 							renderDayOverlay(
-								addDays(cloneDate(event.start), dayDelta),
-								addDays(exclEndDay(event), dayDelta)
+								event.start.clone().add('days', dayDelta),
+								getEventEnd(event).add('days', dayDelta)
 							);
+
 							resetElement();
-						}else{
-							// mouse is over bottom slots
+						}
+						else { // mouse is over bottom slots
+
 							if (isStart) {
 								if (allDay) {
 									// convert event to temporary slot-event
 									eventElement.width(colWidth - 10); // don't use entire width
-									setOuterHeight(
-										eventElement,
-										snapHeight * Math.round(
-											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes')) /
-												snapMinutes
-										)
-									);
-									eventElement.draggable('option', 'grid', [colWidth, 1]);
+									setOuterHeight(eventElement, calendar.defaultTimedEventDuration / slotDuration * slotHeight); // the default height
+									eventElement.draggable('option', 'grid', [ colWidth, 1 ]);
 									allDay = false;
 								}
-							}else{
+							}
+							else {
 								revert = true;
 							}
 						}
+
 						revert = revert || (allDay && !dayDelta);
-					}else{
+					}
+					else {
 						resetElement();
 						revert = true;
 					}
+
 					eventElement.draggable('option', 'revert', revert);
+
 				}, ev, 'drag');
 			},
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
 				trigger('eventDragStop', eventElement, event, ev, ui);
-				if (revert) {
-					// hasn't moved or is out of bounds (draggable has already reverted)
+
+				if (revert) { // hasn't moved or is out of bounds (draggable has already reverted)
+					
 					resetElement();
 					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
-				}else{
-					// changed!
-					var minuteDelta = 0;
+				}
+				else { // changed!
+
+					var eventStart = event.start.clone().add('days', dayDelta); // already assumed to have a stripped time
+					var snapTime;
+					var snapIndex;
 					if (!allDay) {
-						minuteDelta = Math.round((eventElement.offset().top - getSlotContainer().offset().top) / snapHeight)
-							* snapMinutes
-							+ minMinute
-							- (event.start.getHours() * 60 + event.start.getMinutes());
+						snapIndex = Math.round((eventElement.offset().top - getSlotContainer().offset().top) / snapHeight); // why not use ui.offset.top?
+						snapTime = moment.duration(minTime + snapIndex * snapDuration);
+						eventStart = calendar.rezoneDate(eventStart.clone().time(snapTime));
 					}
-					eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
+
+					eventDrop(
+						this, // el
+						event,
+						eventStart,
+						ev,
+						ui
+					);
 				}
 			}
 		});
@@ -481,7 +515,7 @@ function AgendaEventRenderer() {
 		var colCnt = getColCnt();
 		var colWidth = getColWidth();
 		var snapHeight = getSnapHeight();
-		var snapMinutes = getSnapMinutes();
+		var snapDuration = getSnapDuration();
 
 		// states
 		var origPosition; // original position of the element, not the mouse
@@ -490,7 +524,10 @@ function AgendaEventRenderer() {
 		var isAllDay, prevIsAllDay;
 		var colDelta, prevColDelta;
 		var dayDelta; // derived from colDelta
-		var minuteDelta, prevMinuteDelta;
+		var snapDelta, prevSnapDelta; // the number of snaps away from the original position
+
+		// newly computed
+		var eventStart, eventEnd;
 
 		eventElement.draggable({
 			scroll: false,
@@ -512,8 +549,10 @@ function AgendaEventRenderer() {
 				isAllDay = prevIsAllDay = getIsCellAllDay(origCell);
 				colDelta = prevColDelta = 0;
 				dayDelta = 0;
-				minuteDelta = prevMinuteDelta = 0;
+				snapDelta = prevSnapDelta = 0;
 
+				eventStart = null;
+				eventEnd = null;
 			},
 			drag: function(ev, ui) {
 
@@ -539,12 +578,12 @@ function AgendaEventRenderer() {
 						col = Math.max(0, col);
 						col = Math.min(colCnt-1, col);
 						var date = cellToDate(0, col);
-						dayDelta = dayDiff(date, origDate);
+						dayDelta = date.diff(origDate, 'days');
 					}
 
 					// calculate minute delta (only if over slots)
 					if (!isAllDay) {
-						minuteDelta = Math.round((ui.position.top - origPosition.top) / snapHeight) * snapMinutes;
+						snapDelta = Math.round((ui.position.top - origPosition.top) / snapHeight);
 					}
 				}
 
@@ -553,8 +592,18 @@ function AgendaEventRenderer() {
 					isInBounds != prevIsInBounds ||
 					isAllDay != prevIsAllDay ||
 					colDelta != prevColDelta ||
-					minuteDelta != prevMinuteDelta
+					snapDelta != prevSnapDelta
 				) {
+
+					// compute new dates
+					if (isAllDay) {
+						eventStart = event.start.clone().stripTime().add('days', dayDelta);
+						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
+					}
+					else {
+						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+					}
 
 					updateUI();
 
@@ -562,7 +611,7 @@ function AgendaEventRenderer() {
 					prevIsInBounds = isInBounds;
 					prevIsAllDay = isAllDay;
 					prevColDelta = colDelta;
-					prevMinuteDelta = minuteDelta;
+					prevSnapDelta = snapDelta;
 				}
 
 				// if out-of-bounds, revert when done, and vice versa.
@@ -574,8 +623,14 @@ function AgendaEventRenderer() {
 				clearOverlays();
 				trigger('eventDragStop', eventElement, event, ev, ui);
 
-				if (isInBounds && (isAllDay || dayDelta || minuteDelta)) { // changed!
-					eventDrop(this, event, dayDelta, isAllDay ? 0 : minuteDelta, isAllDay, ev, ui);
+				if (isInBounds && (isAllDay || dayDelta || snapDelta)) { // changed!
+					eventDrop(
+						this, // el
+						event,
+						eventStart,
+						ev,
+						ui
+					);
 				}
 				else { // either no change or out-of-bounds (draggable has already reverted)
 
@@ -584,7 +639,7 @@ function AgendaEventRenderer() {
 					isAllDay = false;
 					colDelta = 0;
 					dayDelta = 0;
-					minuteDelta = 0;
+					snapDelta = 0;
 
 					updateUI();
 					eventElement.css('filter', ''); // clear IE opacity side-effects
@@ -605,26 +660,27 @@ function AgendaEventRenderer() {
 				if (isAllDay) {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
-					renderDayOverlay(
-						addDays(cloneDate(event.start), dayDelta),
-						addDays(exclEndDay(event), dayDelta)
-					);
+					renderDayOverlay(eventStart, eventEnd);
 				}
 				else {
-					updateTimeText(minuteDelta);
+					updateTimeText();
 					timeElement.css('display', ''); // show() was causing display=inline
 					eventElement.draggable('option', 'grid', [colWidth, snapHeight]); // re-enable grid snapping
 				}
 			}
 		}
 
-		function updateTimeText(minuteDelta) {
-			var newStart = addMinutes(cloneDate(event.start), minuteDelta);
-			var newEnd;
-			if (event.end) {
-				newEnd = addMinutes(cloneDate(event.end), minuteDelta);
+		function updateTimeText() {
+			var text;
+			if (eventStart) { // must of had a state change
+				if (event.end) {
+					text = formatRange(eventStart, eventEnd, opt('timeFormat'));
+				}
+				else {
+					text = formatDate(eventStart, opt('timeFormat'));
+				}
+				timeElement.text(text);
 			}
-			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
 		}
 
 	}
@@ -638,7 +694,9 @@ function AgendaEventRenderer() {
 	function resizableSlotEvent(event, eventElement, timeElement) {
 		var snapDelta, prevSnapDelta;
 		var snapHeight = getSnapHeight();
-		var snapMinutes = getSnapMinutes();
+		var snapDuration = getSnapDuration();
+		var eventEnd;
+
 		eventElement.resizable({
 			handles: {
 				s: '.ui-resizable-handle'
@@ -653,22 +711,34 @@ function AgendaEventRenderer() {
 				// don't rely on ui.size.height, doesn't take grid into account
 				snapDelta = Math.round((Math.max(snapHeight, eventElement.height()) - ui.originalSize.height) / snapHeight);
 				if (snapDelta != prevSnapDelta) {
-					timeElement.text(
-						formatDates(
+					eventEnd = getEventEnd(event).add(snapDuration * snapDelta);
+					var text;
+					if (snapDelta || event.end) {
+						text = formatRange(
 							event.start,
-							(!snapDelta && !event.end) ? null : // no change, so don't display time range
-								addMinutes(eventEnd(event), snapMinutes*snapDelta),
+							eventEnd,
 							opt('timeFormat')
-						)
-					);
+						);
+					}
+					else {
+						text = formatDate(event.start, opt('timeFormat'));
+					}
+					timeElement.text(text);
 					prevSnapDelta = snapDelta;
 				}
 			},
 			stop: function(ev, ui) {
 				trigger('eventResizeStop', this, event, ev, ui);
 				if (snapDelta) {
-					eventResize(this, event, 0, snapMinutes*snapDelta, ev, ui);
-				}else{
+					eventResize(
+						this,
+						event,
+						eventEnd,
+						ev,
+						ui
+					);
+				}
+				else {
 					showEvents(event, eventElement);
 					// BUG: if event was really short, need to put title back in span
 				}

@@ -52,32 +52,38 @@
 	and we'll try to make them look good cross-browser.
 */
 
-.fc-text-arrow {
+.fc-button .fc-icon {
 	margin: 0 .1em;
 	font-size: 2em;
 	font-family: "Courier New", Courier, monospace;
 	vertical-align: baseline; /* for IE7 */
 	}
 
-.fc-button-prev .fc-text-arrow,
-.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+.fc-icon-left-single-arrow:after {
+	content: "\02039";
 	font-weight: bold;
+	}
+
+.fc-icon-right-single-arrow:after {
+	content: "\0203A";
+	font-weight: bold;
+	}
+
+.fc-icon-left-double-arrow:after {
+	content: "\000AB";
+	}
+
+.fc-icon-right-double-arrow:after {
+	content: "\000BB";
 	}
 	
 /* icon (for jquery ui) */
-	
-.fc-button .fc-icon-wrap {
-	position: relative;
-	float: left;
-	top: 50%;
-	}
-	
+
 .fc-button .ui-icon {
 	position: relative;
+	top: 50%;
 	float: left;
-	margin-top: -50%;
-	*margin-top: 0;
-	*top: -50%;
+	margin-top: -8px; /* we know jqui icons are always 16px tall */
 	}
 	
 /*

@@ -2,24 +2,13 @@
 fc.applyAll = applyAll;
 
 
-/* Event Date Math
------------------------------------------------------------------------------*/
 
-
-function exclEndDay(event) {
-	if (event.end) {
-		return _exclEndDay(event.end, event.allDay);
-	}else{
-		return addDays(cloneDate(event.start), 1);
-	}
+function createObject(proto) { // like Object.create
+	var f = function() {};
+	f.prototype = proto;
+	return new f();
 }
 
-
-function _exclEndDay(end, allDay) {
-	end = cloneDate(end);
-	return allDay || end.getHours() || end.getMinutes() ? addDays(end, 1) : clearTime(end);
-	// why don't we check for seconds/ms too?
-}
 
 
 
@@ -125,18 +114,13 @@ function vborders(element) {
 function noop() { }
 
 
-function dateCompare(a, b) {
+function dateCompare(a, b) { // works with moments too
 	return a - b;
 }
 
 
 function arrayMax(a) {
 	return Math.max.apply(Math, a);
-}
-
-
-function zeroPad(n) {
-	return (n < 10 ? '0' : '') + n;
 }
 
 
@@ -152,17 +136,22 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 			return res;
 		}
 	}
-	return obj[''];
+	return obj['default'];
 }
 
 
 function htmlEscape(s) {
-	return s.replace(/&/g, '&amp;')
+	return (s + '').replace(/&/g, '&amp;')
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
 		.replace(/'/g, '&#039;')
 		.replace(/"/g, '&quot;')
 		.replace(/\n/g, '<br />');
+}
+
+
+function stripHTMLEntities(text) {
+	return text.replace(/&.*?;/g, '');
 }
 
 
@@ -184,7 +173,7 @@ function enableTextSelection(element) {
 */
 
 
-function markFirstLast(e) {
+function markFirstLast(e) { // TODO: use CSS selectors instead
 	e.children()
 		.removeClass('fc-first fc-last')
 		.filter(':first-child')
@@ -192,14 +181,6 @@ function markFirstLast(e) {
 		.end()
 		.filter(':last-child')
 			.addClass('fc-last');
-}
-
-
-function setDayID(cell, date) {
-	cell.each(function(i, _cell) {
-		_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-' + dayIDs[date.getDay()]);
-		// TODO: make a way that doesn't rely on order of classes
-	});
 }
 
 
