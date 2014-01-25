@@ -1,8 +1,9 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.4",
+  "version": "2.0.0-beta",
   "devDependencies": {
     "jquery": "~1.10.2",
-    "jquery-ui": "~1.10.3"
+    "jquery-ui": "~1.10.3",
+    "moment": ">=2.5.0"
   }
 }
