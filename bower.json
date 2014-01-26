@@ -2,8 +2,11 @@
   "name": "fullcalendar",
   "version": "2.0.0-beta",
   "devDependencies": {
+    "moment": ">=2.5.0",
     "jquery": "~1.10.2",
     "jquery-ui": "~1.10.3",
-    "moment": ">=2.5.0"
+    "jquery-simulate": "*",
+    "jasmine-jquery": "~1.7.0",
+    "jasmine-fixture": "~1.0.8"
   }
 }
