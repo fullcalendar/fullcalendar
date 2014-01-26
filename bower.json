@@ -3,6 +3,9 @@
   "version": "1.6.4",
   "devDependencies": {
     "jquery": "~1.10.2",
-    "jquery-ui": "~1.10.3"
+    "jquery-ui": "~1.10.3",
+    "jquery-simulate": "*",
+    "jasmine-jquery": "~1.7.0",
+    "jasmine-fixture": "~1.0.8"
   }
 }
