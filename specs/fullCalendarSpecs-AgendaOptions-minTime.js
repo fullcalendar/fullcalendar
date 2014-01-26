@@ -1,4 +1,4 @@
-'use strict';
+
 describe('minTime', function() {
 
 	beforeEach(function() {
@@ -17,7 +17,7 @@ describe('minTime', function() {
 		return time + amPm;
 	};
 
-	describe('when using the default Settings', function() {
+	describe('when using the default settings', function() {
 
 		describe('in agendaWeek', function() {
 			it('should start at 12am', function() {

@@ -1,5 +1,5 @@
-'use strict';
-describe('aspectRatio:', function() {
+
+describe('aspectRatio', function() {
 
 	beforeEach(function() {
 		affix('#cal');
@@ -60,7 +60,7 @@ describe('aspectRatio:', function() {
 			});
 		});
 
-		describe('to less than 0.5 ', function() {
+		describe('to less than 0.5', function() {
 			beforeEach(function() {
 				$('#cal').width(1000)
 				$('#cal').fullCalendar({
@@ -79,7 +79,7 @@ describe('aspectRatio:', function() {
 			});
 		});
 
-		describe('to negative ', function() {
+		describe('to negative', function() {
 			beforeEach(function() {
 				$('#cal').width(1000)
 				$('#cal').fullCalendar({

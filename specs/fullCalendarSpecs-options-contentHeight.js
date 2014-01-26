@@ -1,5 +1,5 @@
-'use strict';
-describe('contentHeight:', function() {
+
+describe('contentHeight', function() {
 
 	beforeEach(function() {
 		affix('#cal');

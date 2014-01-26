@@ -1,5 +1,4 @@
-// Karma configuration
-// Generated on Wed Sep 18 2013 21:29:48 GMT+0100 (GMT Daylight Time)
+
 module.exports = function(config) {
 	config.set({
 
@@ -15,11 +14,9 @@ module.exports = function(config) {
 			{ pattern: './lib/jquery-simulate/*.js', watched: false },
 			{ pattern: './lib/jasmine-jquery/*.js', watched: false },
 			{ pattern: './lib/jquery-ui/ui/jquery-ui.js', watched: false },
-			{ pattern: './lib/jquery-ui/ui/jquery.ui.draggable.js', watched: false },
 			{ pattern: './lib/jasmine-fixture/*.js', watched: false },
 			'./build/out/fullcalendar.js',
 			'./build/out/fullcalendar.css',
-			'./build/out/fullcalendar.print.css',
 			'./specs/fullCalendar*.js'
 		],
 
@@ -51,7 +48,7 @@ module.exports = function(config) {
 		// - Safari (only Mac)
 		// - PhantomJS
 		// - IE (only Windows)
-		browsers: [ 'PhantomJS' ],
+		//browsers: [ 'PhantomJS' ],
 
 		// If browser does not capture in given timeout [ms], kill it
 		captureTimeout: 60000,

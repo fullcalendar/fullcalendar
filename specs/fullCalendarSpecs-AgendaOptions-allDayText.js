@@ -1,5 +1,5 @@
-'use strict';
-describe('allDayText:', function() {
+
+describe('allDayText', function() {
 
 	beforeEach(function() {
 		affix('#cal');

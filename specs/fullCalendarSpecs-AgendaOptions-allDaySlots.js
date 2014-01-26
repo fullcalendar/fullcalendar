@@ -1,5 +1,5 @@
-'use strict';
-describe('allDaySlots:', function() {
+
+describe('allDaySlots', function() {
 
 	beforeEach(function() {
 		affix('#cal');

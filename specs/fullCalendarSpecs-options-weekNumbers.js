@@ -1,5 +1,5 @@
-'use strict';
-describe('weekNumbers:', function() {
+
+describe('weekNumbers', function() {
 
 	beforeEach(function() {
 		affix('#cal');

@@ -1,11 +1,11 @@
-'use strict';
-describe('weekNumbers-defaultView:', function() {
+
+describe('weekNumbers-defaultView', function() {
 
 	beforeEach(function() {
 		affix('#cal');
 	});
 
-	describe('when using basicWeek ', function() {
+	describe('when using basicWeek', function() {
 		describe('with default weekNumbers ', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
@@ -25,7 +25,7 @@ describe('weekNumbers-defaultView:', function() {
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
-		describe('with weekNumbers to true ', function() {
+		describe('with weekNumbers to true', function() {
 			it('should display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'basicWeek',
@@ -40,7 +40,7 @@ describe('weekNumbers-defaultView:', function() {
 	});
 
 	describe('when using basicDay', function() {
-		describe('with default weekNumbers ', function() {
+		describe('with default weekNumbers', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'basicDay'
@@ -59,7 +59,7 @@ describe('weekNumbers-defaultView:', function() {
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
-		describe('with weekNumbers to true ', function() {
+		describe('with weekNumbers to true', function() {
 			it('should display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'basicDay',
@@ -74,7 +74,7 @@ describe('weekNumbers-defaultView:', function() {
 	});
 
 	describe('when using agendaWeek', function() {
-		describe('with default weekNumbers ', function() {
+		describe('with default weekNumbers', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'agendaWeek'
@@ -93,7 +93,7 @@ describe('weekNumbers-defaultView:', function() {
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
-		describe('with weekNumbers to true ', function() {
+		describe('with weekNumbers to true', function() {
 			it('should display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'agendaWeek',
@@ -107,7 +107,7 @@ describe('weekNumbers-defaultView:', function() {
 	});
 
 	describe('when using agendaDay', function() {
-		describe('with default weekNumbers ', function() {
+		describe('with default weekNumbers', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'agendaDay'
@@ -126,7 +126,7 @@ describe('weekNumbers-defaultView:', function() {
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
-		describe('with weekNumbers to true ', function() {
+		describe('with weekNumbers to true', function() {
 			it('should display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'agendaDay',

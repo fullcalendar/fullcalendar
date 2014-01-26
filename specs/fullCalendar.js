@@ -1,5 +1,5 @@
-'use strict';
-describe('fullCalendar(Integration) :', function() {
+
+describe('fullCalendar(Integration)', function() {
 
 	beforeEach(function() {
 		affix('#calendar');
@@ -11,17 +11,17 @@ describe('fullCalendar(Integration) :', function() {
 			$('#calendar').fullCalendar();
 		});
 
-		it('should contain a table fc-header ', function() {
+		it('should contain a table fc-header', function() {
 			var header = $('#calendar > table.fc-header');
 			expect(header[0]).not.toBeUndefined();
 		});
 
-		it('should contain a div fc-content ', function() {
+		it('should contain a div fc-content', function() {
 			var content = ($('#calendar > div.fc-content'));
 			expect(content[0]).not.toBeUndefined();
 		});
 
-		it('should only contain 2 elements ', function() {
+		it('should only contain 2 elements', function() {
 			var calenderNodeCount = $('#calendar >').length;
 			expect(calenderNodeCount).toEqual(2);
 		});

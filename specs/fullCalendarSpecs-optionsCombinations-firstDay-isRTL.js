@@ -1,4 +1,4 @@
-describe('First Day : ', function() {
+describe('firstDay', function() {
 
 	beforeEach(function() {
 		affix('#cal');

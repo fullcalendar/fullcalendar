@@ -1,4 +1,5 @@
-describe('hiddenDays:', function() {
+
+describe('hiddenDays', function() {
 
 	beforeEach(function() {
 		affix('#cal');

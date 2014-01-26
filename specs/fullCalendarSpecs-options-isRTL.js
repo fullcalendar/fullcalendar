@@ -1,5 +1,5 @@
-'use strict';
-describe('isRTL tests:', function() {
+
+describe('isRTL tests', function() {
 
 	beforeEach(function() {
 		affix('#cal');

@@ -1,5 +1,5 @@
-'use strict';
-describe('slotMinutes:', function() {
+
+describe('slotMinutes', function() {
 
 	var minutesInADay = 1440;
 
@@ -7,7 +7,7 @@ describe('slotMinutes:', function() {
 		affix('#cal');
 	});
 
-	describe('when using the default Settings', function() {
+	describe('when using the default settings', function() {
 		describe('in agendaWeek', function() {
 			it('should have slots 1440/30 slots', function() {
 				var options = {

@@ -1,5 +1,5 @@
-'use strict';
-describe('handleWindowResize:', function() {
+
+describe('handleWindowResize', function() {
 
 	beforeEach(function() {
 		affix('#cal');

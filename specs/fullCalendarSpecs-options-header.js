@@ -1,5 +1,5 @@
-'use strict';
-describe('header Testing', function() {
+
+describe('header testing', function() {
 
 	beforeEach(function() {
 		affix('#calendar');

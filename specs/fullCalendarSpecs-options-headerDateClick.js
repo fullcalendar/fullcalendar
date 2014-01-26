@@ -1,4 +1,4 @@
-'use strict';
+
 describe('when header options set with next|prev|prevYear|nextYear|today', function() {
 
 	beforeEach(function() {

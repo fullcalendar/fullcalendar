@@ -1,5 +1,5 @@
-'use strict';
-describe('weekNumberCalculation:', function() {
+
+describe('weekNumberCalculation', function() {
 
 	beforeEach(function() {
 		affix('#cal');
@@ -22,15 +22,13 @@ describe('weekNumberCalculation:', function() {
 			$('#cal').fullCalendar({
 				editable: true,
 				weekNumbers: true,
-				weekNumberCalculation: myWeekNumber
+				weekNumberCalculation: function() {
+					return 4;
+				}
 			});
 			$('#cal').fullCalendar('gotoDate', 2013, 10, 17);
 			var weekNum = parseInt($('.fc-week.fc-first .fc-week-number div').text());
 			expect(weekNum).toEqual(4);
 		});
 	});
-
-	var myWeekNumber = function(someDate) {
-		return 4;
-	};
 });
