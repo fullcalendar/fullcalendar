@@ -10,14 +10,15 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			{ pattern: './lib/jquery/jquery.js', watched: false },
-			{ pattern: './lib/jquery-ui/ui/jquery-ui.js', watched: false },
+			{ pattern: 'lib/jquery/jquery.js', watched: false },
+			{ pattern: 'lib/jquery-ui/ui/jquery-ui.js', watched: false },
 			{ pattern: 'lib/jquery-simulate/jquery.simulate.js', watched: false },
 			{ pattern: 'lib/jasmine-jquery/lib/jasmine-jquery.js', watched: false },
 			{ pattern: 'lib/jasmine-fixture/dist/jasmine-fixture.js', watched: false },
-			'./build/out/fullcalendar.js',
-			'./build/out/fullcalendar.css',
-			'./specs/fullCalendar*.js'
+			'build/out/fullcalendar.js',
+			'build/out/fullcalendar.css',
+			'tests/base.css',
+			'tests/automated/*.js'
 		],
 
 		// list of files to exclude
