@@ -9,6 +9,8 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
 
+	instanceOptions = instanceOptions || {};
+
 	var options = mergeOptions({}, defaults, instanceOptions);
 	var langOptions;
 
@@ -144,14 +146,15 @@ function Calendar(element, instanceOptions) {
 	// `weekNumberCalculation` setting.
 	t.calculateWeekNumber = function(mom) {
 		var calc = options.weekNumberCalculation;
-		if (calc == 'local') {
+
+		if (typeof calc === 'function') {
+			return calc(mom);
+		}
+		else if (calc === 'local') {
 			return mom.week();
 		}
-		else if (calc.toUpperCase() == 'ISO') {
+		else if (calc.toUpperCase() === 'ISO') {
 			return mom.isoWeek();
-		}
-		else if (typeof calc === 'function') {
-			return calc(mom);
 		}
 	};
 

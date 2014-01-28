@@ -45,10 +45,20 @@ If you want to clean up the generated files, run:
 	grunt clean
 
 
-Writing Tests
--------------
+Automated Testing
+-----------------
 
-When fixing a bug or writing a feature, please make a corresponding HTML file in the `./tests/` directory to visually demonstrate your work. If the test requires user intervention to prove its point, please write instructions for the user to follow. Explore the existing tests for more info.
+To run automated tests, you must first install [karma] globally:
+
+	npm install -g karma
+
+Then, assuming all your source files have been built (via `grunt dev` or `watch`), you can run the tests from a browser:
+
+	karma start --single-run
+
+This will output a URL that you can visit in a browser. Alternatively, you can run the tests headlessly:
+
+	karma start --single-run --browsers PhantomJS
 
 
 [fc-homepage]: http://arshaw.com/fullcalendar/
@@ -57,3 +67,4 @@ When fixing a bug or writing a feature, please make a corresponding HTML file in
 [grunt-cli]: http://gruntjs.com/getting-started#installing-the-cli
 [bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
+[karma]: http://karma-runner.github.io/0.10/index.html
