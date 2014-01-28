@@ -50,15 +50,15 @@ describe('minTime', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			hourNumbers.forEach(function(minTimeIn) {
-				it('should start at ' + minTimeIn, function() {
+			hourNumbers.forEach(function(hourNumber) {
+				it('should start at ' + hourNumber, function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						minTime: minTimeIn
+						minTime: { hours: hourNumber }
 					};
 					$('#cal2').fullCalendar(options);
 					var firstSlotText = $('.fc-slot0 th').text();
-					var expected = numToStringConverter(minTimeIn);
+					var expected = numToStringConverter(hourNumber);
 					expect(firstSlotText).toEqual(expected);
 				});
 			});
@@ -68,15 +68,15 @@ describe('minTime', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			hourNumbers.forEach(function(minTimeIn) {
-				it('should start at ' + minTimeIn, function() {
+			hourNumbers.forEach(function(hourNumber) {
+				it('should start at ' + hourNumber, function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						minTime: minTimeIn
+						minTime: { hours: hourNumber }
 					};
 					$('#cal2').fullCalendar(options);
 					var firstSlotText = $('.fc-slot0 th').text();
-					var expected = numToStringConverter(minTimeIn);
+					var expected = numToStringConverter(hourNumber);
 					expect(firstSlotText).toEqual(expected);
 				});
 			});
@@ -91,11 +91,11 @@ describe('minTime', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			hourNumbers.forEach(function(minTimeIn) {
-				it('should start at ' + minTimeIn + 0.12, function() {
+			hourNumbers.forEach(function(hourNumber) {
+				it('should start at ' + hourNumber + ':20', function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						minTime: minTimeIn + 0.12
+						minTime: { hours: hourNumber, minutes: 20 }
 					};
 					$('#cal2').fullCalendar(options);
 					var firstSlotElement = $('.fc-slot0')[0];
@@ -112,11 +112,11 @@ describe('minTime', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			hourNumbers.forEach(function(minTimeIn) {
-				it('should start at ' + minTimeIn + 0.12, function() {
+			hourNumbers.forEach(function(hourNumber) {
+				it('should start at ' + hourNumber + ':20', function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						minTime: minTimeIn + 0.12
+						minTime: { hours: hourNumber, minutes: 20 }
 					};
 					$('#cal2').fullCalendar(options);
 					var firstSlotElement = $('.fc-slot0')[0];

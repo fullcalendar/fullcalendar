@@ -61,15 +61,15 @@ describe('slotMinutes', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			slotMinutesList.forEach(function(slotMinutesIn) {
+			slotMinutesList.forEach(function(slotMinutes) {
 				it('should have slots 1440/x slots', function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						slotMinutes: slotMinutesIn
+						slotDuration: { minutes: slotMinutes }
 					};
 					$('#cal2').fullCalendar(options);
 					var slotCount = $('.fc-agenda-slots tr').length;
-					var expected = Math.ceil(minutesInADay / slotMinutesIn);
+					var expected = Math.ceil(minutesInADay / slotMinutes);
 					expect(slotCount).toEqual(expected);
 				});
 			});
@@ -79,15 +79,15 @@ describe('slotMinutes', function() {
 			beforeEach(function() {
 				affix('#cal2');
 			});
-			slotMinutesList.forEach(function(slotMinutesIn) {
+			slotMinutesList.forEach(function(slotMinutes) {
 				it('should have slots 1440/x slots', function() {
 					var options = {
 						defaultView: 'agendaWeek',
-						slotMinutes: slotMinutesIn
+						slotDuration: { minutes: slotMinutes }
 					};
 					$('#cal2').fullCalendar(options);
 					var slotCount = $('.fc-agenda-slots tr').length;
-					var expected = Math.ceil(minutesInADay / slotMinutesIn);
+					var expected = Math.ceil(minutesInADay / slotMinutes);
 					expect(slotCount).toEqual(expected);
 				});
 			});
