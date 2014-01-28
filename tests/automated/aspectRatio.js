@@ -128,12 +128,11 @@ describe('aspectRatio', function() {
 				var width = $('.fc-content').width();
 				expect(width).toEqual(1000);
 			});
-			it('should set the height to width ratio to 0.5', function() {
-				var width = $('.fc-content').width();
-				var height = $('.fc-content').height();
-				var pxHeightPerCharacter = 22;
-				var defaultWeeksInCal = 7;
-				expect(height).toEqual(pxHeightPerCharacter * defaultWeeksInCal)
+			it('should cause rows to be natural height', function() {
+				var actualHeight = $('.fc-content').height();
+				$('tr.fc-week td:first-child > div').css('min-height', '').css('background', 'red');
+				var naturalHeight = $('.fc-content').height();
+				expect(actualHeight).toEqual(naturalHeight)
 			});
 		});
 	});

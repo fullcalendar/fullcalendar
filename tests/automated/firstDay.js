@@ -149,19 +149,17 @@ describe('First Day', function() {
 	});
 
 	describe('when new firstDay options are set', function() {
-		it('should change the first day of the week', function() {
-			var options = {
+		it('should change the first day of week to Monday', function() {
+			$('#cal').fullCalendar({
 				firstDay: 1
-			};
-			$('#cal').fullCalendar(options);
-			var firstDayBeforeChange = $('.fc-day-header')[0];
-			var newOptions = {
+			});
+			expect($('.fc-day-header')[0]).toHaveClass('fc-mon');
+		});
+		it('shoule change the first day of week to Thursday', function() {
+			$('#cal').fullCalendar({
 				firstDay: 4
-			};
-			$('#cal').fullCalendar(newOptions);
-			var firstDayAfterChange = $('.fc-day-header')[0];
-			expect(firstDayBeforeChange).toHaveClass('fc-mon');
-			expect(firstDayAfterChange).toHaveClass('fc-thu');
+			});
+			expect($('.fc-day-header')[0]).toHaveClass('fc-thu');
 		});
 	});
 });
