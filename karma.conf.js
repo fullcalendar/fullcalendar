@@ -10,6 +10,7 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
+			{ pattern: 'lib/moment/moment.js', watched: false },
 			{ pattern: 'lib/jquery/jquery.js', watched: false },
 			{ pattern: 'lib/jquery-ui/ui/jquery-ui.js', watched: false },
 			{ pattern: 'lib/jquery-simulate/jquery.simulate.js', watched: false },
