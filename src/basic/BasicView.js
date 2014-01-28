@@ -290,7 +290,7 @@ function BasicView(element, calendar, viewName) {
 	function setHeight(height) {
 		viewHeight = height;
 		
-		var bodyHeight = viewHeight - head.height();
+		var bodyHeight = Math.max(viewHeight - head.height(), 0);
 		var rowHeight;
 		var rowHeightLast;
 		var cell;
