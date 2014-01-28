@@ -9,6 +9,8 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
 
+	instanceOptions = instanceOptions || {};
+
 	var options = mergeOptions({}, defaults, instanceOptions);
 	var langOptions;
 
