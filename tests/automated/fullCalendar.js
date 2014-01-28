@@ -1,11 +1,16 @@
 
-describe('fullCalendar(Integration)', function() {
+describe('fullCalendar constructor', function() {
 
 	beforeEach(function() {
 		affix('#calendar');
 	});
 
-	describe('When fullCalendar() is called on a div', function() {
+	it('should return a jQuery object for chaining', function() {
+		var res = $('#calendar').fullCalendar();
+		expect(res instanceof jQuery).toBe(true);
+	});
+
+	describe('when called on a div', function() {
 
 		beforeEach(function() {
 			$('#calendar').fullCalendar();
