@@ -4,37 +4,35 @@ var fcViews = fc.views = {};
 
 
 $.fn.fullCalendar = function(options) {
+	var args = Array.prototype.slice.call(arguments, 1); // for a possible method call
+	var res = this; // what this function will return (this jQuery object by default)
 
-	// method calling
-	if (typeof options == 'string') {
-		var args = Array.prototype.slice.call(arguments, 1);
-		var res;
-		this.each(function() {
-			var calendar = $.data(this, 'fullCalendar');
+	this.each(function(i, _element) { // loop each DOM element involved
+		var element = $(_element);
+		var calendar = element.data('fullCalendar'); // get the existing calendar object (if any)
+		var singleRes; // the returned value of this single method call
+
+		// a method call
+		if (typeof options === 'string') {
 			if (calendar && $.isFunction(calendar[options])) {
-				var r = calendar[options].apply(calendar, args);
-				if (res === undefined) {
-					res = r;
+				singleRes = calendar[options].apply(calendar, args);
+				if (!i) {
+					res = singleRes; // record the first method call result
 				}
-				if (options == 'destroy') {
-					$.removeData(this, 'fullCalendar');
+				if (options === 'destroy') { // for the destroy method, must remove Calendar object data
+					element.removeData('fullCalendar');
 				}
 			}
-		});
-		if (res !== undefined) {
-			return res;
 		}
-		return this;
-	}
-	
-	this.each(function(i, _element) {
-		var element = $(_element);
-		var calendar = new Calendar(element, options);
-		element.data('fullCalendar', calendar);
-		calendar.render();
+		// a new calendar initialization
+		else if (!calendar) { // don't initialize twice
+			calendar = new Calendar(element, options);
+			element.data('fullCalendar', calendar);
+			calendar.render();
+		}
 	});
 	
-	return this;
+	return res;
 };
 
 
