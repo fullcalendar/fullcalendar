@@ -2,6 +2,7 @@
 var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 var ambigTimeRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))$/;
 var ambigZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
+var momentCloneMethod = moment.fn.clone;
 var momentFormatMethod = moment.fn.format;
 var momentToISOStringMethod = moment.fn.toISOString;
 
@@ -47,6 +48,7 @@ fc.moment.parseZone = function() {
 // when parseZone==true, if can't figure it out, fall back to parseUTC
 function buildMoment(args, parseUTC, parseZone) {
 	var isSingleArg = args.length == 1;
+	var isSingleMoment = isSingleArg && moment.isMoment(args[0]);
 	var isSingleString = isSingleArg && typeof args[0] === 'string';
 	var isSingleArray = isSingleArg && $.isArray(args[0]);
 	var isSingleNativeDate = isSingleArg && isNativeDate(args[0]);
@@ -59,6 +61,11 @@ function buildMoment(args, parseUTC, parseZone) {
 	}
 	else {
 		mom = moment.apply(null, args);
+	}
+
+	// if we are essentially cloning a moment, transfer over existing _ambig properties
+	if (isSingleMoment) {
+		transferAmbigs(args[0], mom);
 	}
 
 	if (isAmbigTime) {
@@ -84,6 +91,23 @@ function buildMoment(args, parseUTC, parseZone) {
 	mom._fc = true; // flag for use other extended functionality (only formatting at this point)
 
 	return mom;
+}
+
+// we need to patch moment's clone method because it will not copy our _ambig properties
+moment.fn.clone = function() {
+	var res = momentCloneMethod.apply(this, arguments);
+	transferAmbigs(this, res);
+	return res;
+};
+
+// transfers our internal _ambig properties from one moment to another, but only if true
+function transferAmbigs(srcMoment, destMoment) {
+	if (srcMoment._ambigTime) {
+		destMoment._ambigTime = true;
+	}
+	if (srcMoment._ambigZone) {
+		destMoment._ambigZone = true;
+	}
 }
 
 
