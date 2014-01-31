@@ -7,7 +7,7 @@ describe('minTime', function() {
 
 	var numToStringConverter = function(timeIn) {
 		var time = (timeIn % 12);
-		if ($.inArray(timeIn, [0, 12]) != -1) {
+		if ($.inArray(timeIn, [ 0, 12 ]) != -1) {
 			time = 12;
 		}
 		var amPm = 'am';
@@ -44,7 +44,7 @@ describe('minTime', function() {
 
 	describe('when using a whole number', function() {
 
-		var hourNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+		var hourNumbers = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 ];
 
 		describe('in agendaWeek', function() {
 			beforeEach(function() {
@@ -85,7 +85,7 @@ describe('minTime', function() {
 
 	describe('when using default slotInterval and \'uneven\' minTime', function() {
 
-		var hourNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+		var hourNumbers = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 ];
 
 		describe('in agendaWeek', function() {
 			beforeEach(function() {

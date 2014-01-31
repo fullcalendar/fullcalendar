@@ -55,7 +55,7 @@ describe('slotDuration', function() {
 
 	describe('when slotMinutes is set to a series of times', function() {
 
-		var slotMinutesList = [10, 12, 15, 17, 20, 30, 35, 45, 60, 62, 120, 300];
+		var slotMinutesList = [ 10, 12, 15, 17, 20, 30, 35, 45, 60, 62, 120, 300 ];
 
 		describe('in agendaWeek', function() {
 			beforeEach(function() {

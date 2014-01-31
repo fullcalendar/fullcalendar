@@ -481,7 +481,7 @@ function View(element, calendar, viewName) {
 		var out = date.clone();
 		inc = inc || 1;
 		while (
-			isHiddenDayHash[ ( out.day() + (isExclusive ? inc : 0) + 7 ) % 7 ]
+			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
 			out.add('days', inc);
 		}

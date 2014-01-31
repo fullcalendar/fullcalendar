@@ -41,7 +41,7 @@ function transformOptions(sourceOptions, start, end, timezone) {
 
 	var success = sourceOptions.success;
 	var data = $.extend({}, sourceOptions.data || {}, {
-		'singleevents': true,
+		singleevents: true,
 		'max-results': 9999
 	});
 

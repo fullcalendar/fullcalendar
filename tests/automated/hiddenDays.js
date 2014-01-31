@@ -30,7 +30,7 @@ describe('hiddenDays', function() {
 	describe('when setting hiddenDays with 1', function() {
 		beforeEach(function() {
 			$('#cal').fullCalendar({
-				hiddenDays: [1]
+				hiddenDays: [ 1 ]
 			});
 		});
 		it('should return 6 days', function() {
@@ -52,7 +52,7 @@ describe('hiddenDays', function() {
 	describe('when setting hiddenDays with 3,5', function() {
 		beforeEach(function() {
 			$('#cal').fullCalendar({
-				hiddenDays: [3, 5]
+				hiddenDays: [ 3, 5 ]
 			});
 		});
 		it('should return 6 days', function() {
@@ -78,7 +78,7 @@ describe('hiddenDays', function() {
 	describe('when setting all hiddenDays', function() {
 		it('should expect to throw an exception', function() {
 			var options = {
-				hiddenDays: [0, 1, 2, 3, 4, 5, 6]
+				hiddenDays: [ 0, 1, 2, 3, 4, 5, 6 ]
 			};
 			expect(function() {
 				$('#cal').fullCalendar(options);

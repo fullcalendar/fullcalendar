@@ -648,7 +648,7 @@ function DayEventRenderer() {
 			var eventEnd;
 			var helpers;
 			var eventCopy = $.extend({}, event);
-			var minCellOffset = dayOffsetToCellOffset( dateToDayOffset(event.start) );
+			var minCellOffset = dayOffsetToCellOffset(dateToDayOffset(event.start));
 			clearSelection();
 			$('body')
 				.css('cursor', direction + '-resize')

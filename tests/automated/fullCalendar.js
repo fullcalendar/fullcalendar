@@ -48,10 +48,12 @@ describe('fullCalendar constructor', function() {
 					editable: true
 				});
 				$('#calendar').fullCalendar('addEventSource', {
-					events: [{
-						title: eventName,
-						start: new Date()
-					}]
+					events: [
+						{
+							title: eventName,
+							start: new Date()
+						}
+					]
 				});
 				var el = $('div .fc-event');
 				var offsetBefore = el.offset();
