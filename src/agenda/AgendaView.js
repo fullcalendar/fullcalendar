@@ -50,25 +50,25 @@ function AgendaView(element, calendar, viewName) {
 	t.afterRender = afterRender;
 	t.computeDateTop = computeDateTop;
 	t.getIsCellAllDay = getIsCellAllDay;
-	t.allDayRow = function() { return allDayRow }; // badly named
-	t.getCoordinateGrid = function() { return coordinateGrid }; // specifically for AgendaEventRenderer
-	t.getHoverListener = function() { return hoverListener };
+	t.allDayRow = function() { return allDayRow; }; // badly named
+	t.getCoordinateGrid = function() { return coordinateGrid; }; // specifically for AgendaEventRenderer
+	t.getHoverListener = function() { return hoverListener; };
 	t.colLeft = colLeft;
 	t.colRight = colRight;
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
-	t.getDaySegmentContainer = function() { return daySegmentContainer };
-	t.getSlotSegmentContainer = function() { return slotSegmentContainer };
-	t.getSlotContainer = function() { return slotContainer };
-	t.getRowCnt = function() { return 1 };
-	t.getColCnt = function() { return colCnt };
-	t.getColWidth = function() { return colWidth };
-	t.getSnapHeight = function() { return snapHeight };
-	t.getSnapDuration = function() { return snapDuration };
-	t.getSlotHeight = function() { return slotHeight };
-	t.getSlotDuration = function() { return slotDuration };
-	t.getMinTime = function() { return minTime };
-	t.getMaxTime = function() { return maxTime };
+	t.getDaySegmentContainer = function() { return daySegmentContainer; };
+	t.getSlotSegmentContainer = function() { return slotSegmentContainer; };
+	t.getSlotContainer = function() { return slotContainer; };
+	t.getRowCnt = function() { return 1; };
+	t.getColCnt = function() { return colCnt; };
+	t.getColWidth = function() { return colWidth; };
+	t.getSnapHeight = function() { return snapHeight; };
+	t.getSnapDuration = function() { return snapDuration; };
+	t.getSlotHeight = function() { return slotHeight; };
+	t.getSlotDuration = function() { return slotDuration; };
+	t.getMinTime = function() { return minTime; };
+	t.getMaxTime = function() { return maxTime; };
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
@@ -94,7 +94,6 @@ function AgendaView(element, calendar, viewName) {
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
-	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var calculateWeekNumber = calendar.calculateWeekNumber;
 	
@@ -172,7 +171,7 @@ function AgendaView(element, calendar, viewName) {
 	function updateOptions() {
 
 		tm = opt('theme') ? 'ui' : 'fc';
-		rtl = opt('isRTL')
+		rtl = opt('isRTL');
 		colFormat = opt('columnFormat');
 
 		minTime = moment.duration(opt('minTime'));
@@ -196,7 +195,7 @@ function AgendaView(element, calendar, viewName) {
 		var slotTime;
 		var slotDate;
 		var minutes;
-		var slotNormal = slotDuration.asMinutes() % 15 == 0;
+		var slotNormal = slotDuration.asMinutes() % 15 === 0;
 		
 		buildDayTable();
 		

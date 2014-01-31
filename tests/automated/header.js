@@ -70,7 +70,7 @@ describe('header testing', function() {
 				header: false
 			};
 			$('#calendar').fullCalendar(options);
-		})
+		});
 		it('should not have header table', function() {
 			var headerTableCount = $('table.fc-header').length;
 			expect(headerTableCount).toEqual(0);

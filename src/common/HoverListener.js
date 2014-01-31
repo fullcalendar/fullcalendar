@@ -22,7 +22,10 @@ function HoverListener(coordinateGrid) {
 	function mouse(ev) {
 		_fixUIEvent(ev); // see below
 		var newCell = coordinateGrid.cell(ev.pageX, ev.pageY);
-		if (!newCell != !cell || newCell && (newCell.row != cell.row || newCell.col != cell.col)) {
+		if (
+			Boolean(newCell) !== Boolean(cell) ||
+			newCell && (newCell.row != cell.row || newCell.col != cell.col)
+		) {
 			if (newCell) {
 				if (!firstCell) {
 					firstCell = newCell;

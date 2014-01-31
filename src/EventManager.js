@@ -315,10 +315,11 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function removeEvents(filter) {
+		var i;
 		if (!filter) { // remove all
 			cache = [];
 			// clear all array sources
-			for (var i=0; i<sources.length; i++) {
+			for (i=0; i<sources.length; i++) {
 				if ($.isArray(sources[i].events)) {
 					sources[i].events = [];
 				}
@@ -332,7 +333,7 @@ function EventManager(options) { // assumed to be a calendar
 			}
 			cache = $.grep(cache, filter, true);
 			// remove events from array sources
-			for (var i=0; i<sources.length; i++) {
+			for (i=0; i<sources.length; i++) {
 				if ($.isArray(sources[i].events)) {
 					sources[i].events = $.grep(sources[i].events, filter, true);
 				}
@@ -362,14 +363,14 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function pushLoading() {
-		if (!loadingLevel++) {
+		if (!(loadingLevel++)) {
 			trigger('loading', null, true, getView());
 		}
 	}
 	
 	
 	function popLoading() {
-		if (!--loadingLevel) {
+		if (!(--loadingLevel)) {
 			trigger('loading', null, false, getView());
 		}
 	}

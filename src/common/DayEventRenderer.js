@@ -22,13 +22,11 @@ function DayEventRenderer() {
 	var eventResize = t.eventResize;
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
-	var getColWidth = t.getColWidth;
 	var allDayRow = t.allDayRow; // TODO: rename
 	var colLeft = t.colLeft;
 	var colRight = t.colRight;
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
-	var dateToCell = t.dateToCell;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
@@ -351,17 +349,18 @@ function DayEventRenderer() {
 		var rowContentHeights = calculateVerticals(segments); // also sets segment.top
 		var rowContentElements = getRowContentElements(); // returns 1 inner div per row
 		var rowContentTops = [];
+		var i;
 
 		// Set each row's height by setting height of first inner div
 		if (doRowHeights) {
-			for (var i=0; i<rowContentElements.length; i++) {
+			for (i=0; i<rowContentElements.length; i++) {
 				rowContentElements[i].height(rowContentHeights[i]);
 			}
 		}
 
 		// Get each row's top, relative to the views's origin.
 		// Important to do this after setting each row's height.
-		for (var i=0; i<rowContentElements.length; i++) {
+		for (i=0; i<rowContentElements.length; i++) {
 			rowContentTops.push(
 				rowContentElements[i].position().top
 			);
@@ -387,6 +386,7 @@ function DayEventRenderer() {
 		var colCnt = getColCnt();
 		var rowContentHeights = []; // content height for each row
 		var segmentRows = buildSegmentRows(segments); // an array of segment arrays, one for each row
+		var colI;
 
 		for (var rowI=0; rowI<rowCnt; rowI++) {
 			var segmentRow = segmentRows[rowI];
@@ -394,7 +394,7 @@ function DayEventRenderer() {
 			// an array of running total heights for each column.
 			// initialize with all zeros.
 			var colHeights = [];
-			for (var colI=0; colI<colCnt; colI++) {
+			for (colI=0; colI<colCnt; colI++) {
 				colHeights.push(0);
 			}
 
@@ -412,7 +412,7 @@ function DayEventRenderer() {
 				);
 
 				// adjust the columns to account for the segment's height
-				for (var colI=segment.leftCol; colI<=segment.rightCol; colI++) {
+				for (colI=segment.leftCol; colI<=segment.rightCol; colI++) {
 					colHeights[colI] = segment.top + segment.outerHeight;
 				}
 			}
@@ -643,8 +643,6 @@ function DayEventRenderer() {
 			}
 			isResizing = true;
 			var hoverListener = getHoverListener();
-			var rowCnt = getRowCnt();
-			var colCnt = getColCnt();
 			var elementTop = element.css('top');
 			var dayDelta;
 			var eventEnd;
@@ -763,6 +761,6 @@ function compareDaySegments(a, b) {
 	return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) || // put wider events first
 		b.event.allDay - a.event.allDay || // if tie, put all-day events first (booleans cast to 0/1)
 		a.event.start - b.event.start || // if a tie, sort by event start date
-		(a.event.title || '').localeCompare(b.event.title) // if a tie, sort by event title
+		(a.event.title || '').localeCompare(b.event.title); // if a tie, sort by event title
 }
 

@@ -28,7 +28,6 @@ function View(element, calendar, viewName) {
 	
 	// imports
 	var reportEventChange = calendar.reportEventChange;
-	var getEventEnd = calendar.getEventEnd;
 	
 	
 	// locals
@@ -529,11 +528,11 @@ function View(element, calendar, viewName) {
 	function cellOffsetToDayOffset(cellOffset) {
 		var day0 = t.start.day(); // first date's day of week
 		cellOffset += dayToCellMap[day0]; // normlize cellOffset to beginning-of-week
-		return Math.floor(cellOffset / cellsPerWeek) * 7 // # of days from full weeks
-			+ cellToDayMap[ // # of days from partial last week
+		return Math.floor(cellOffset / cellsPerWeek) * 7 + // # of days from full weeks
+			cellToDayMap[ // # of days from partial last week
 				(cellOffset % cellsPerWeek + cellsPerWeek) % cellsPerWeek // crazy math to handle negative cellOffsets
-			]
-			- day0; // adjustment for beginning-of-week normalization
+			] -
+			day0; // adjustment for beginning-of-week normalization
 	}
 
 	// day offset -> date
@@ -563,11 +562,11 @@ function View(element, calendar, viewName) {
 	function dayOffsetToCellOffset(dayOffset) {
 		var day0 = t.start.day(); // first date's day of week
 		dayOffset += day0; // normalize dayOffset to beginning-of-week
-		return Math.floor(dayOffset / 7) * cellsPerWeek // # of cells from full weeks
-			+ dayToCellMap[ // # of cells from partial last week
+		return Math.floor(dayOffset / 7) * cellsPerWeek + // # of cells from full weeks
+			dayToCellMap[ // # of cells from partial last week
 				(dayOffset % 7 + 7) % 7 // crazy math to handle negative dayOffsets
-			]
-			- dayToCellMap[day0]; // adjustment for beginning-of-week normalization
+			] -
+			dayToCellMap[day0]; // adjustment for beginning-of-week normalization
 	}
 
 	// cell offset -> cell (object with row & col keys)

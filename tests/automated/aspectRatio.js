@@ -7,7 +7,7 @@ describe('aspectRatio', function() {
 
 	describe('when default settings are used', function() {
 		beforeEach(function() {
-			$('#cal').width(675)
+			$('#cal').width(675);
 			$('#cal').fullCalendar();
 		});
 		it('fc-content should use the ratio 1:35 to set height', function() {
@@ -24,7 +24,7 @@ describe('aspectRatio', function() {
 
 		describe('to 2', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: 2
 				});
@@ -43,7 +43,7 @@ describe('aspectRatio', function() {
 
 		describe('to 1', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: 1
 				});
@@ -56,13 +56,13 @@ describe('aspectRatio', function() {
 				var width = $('.fc-content').width();
 				var height = $('.fc-content').height();
 				var ratio = Math.round(width / height * 100);
-				expect(ratio).toEqual(100)
+				expect(ratio).toEqual(100);
 			});
 		});
 
 		describe('to less than 0.5', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: 0.4
 				});
@@ -81,7 +81,7 @@ describe('aspectRatio', function() {
 
 		describe('to negative', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: -2
 				});
@@ -94,13 +94,13 @@ describe('aspectRatio', function() {
 				var width = $('.fc-content').width();
 				var height = $('.fc-content').height();
 				var ratio = Math.round(width / height * 100);
-				expect(ratio).toEqual(50)
+				expect(ratio).toEqual(50);
 			});
 		});
 
 		describe('to zero', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: 0
 				});
@@ -119,7 +119,7 @@ describe('aspectRatio', function() {
 
 		describe('to very large', function() {
 			beforeEach(function() {
-				$('#cal').width(1000)
+				$('#cal').width(1000);
 				$('#cal').fullCalendar({
 					aspectRatio: 4000
 				});
@@ -132,7 +132,7 @@ describe('aspectRatio', function() {
 				var actualHeight = $('.fc-content').height();
 				$('tr.fc-week td:first-child > div').css('min-height', '').css('background', 'red');
 				var naturalHeight = $('.fc-content').height();
-				expect(actualHeight).toEqual(naturalHeight)
+				expect(actualHeight).toEqual(naturalHeight);
 			});
 		});
 	});

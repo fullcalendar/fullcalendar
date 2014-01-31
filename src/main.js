@@ -49,17 +49,21 @@ function setDefaults(d) {
 //     mergeOptions(target, obj1, obj2, ...)
 //
 function mergeOptions(target) {
-	for (var i=1; i<arguments.length; i++) {
-		$.each(arguments[i], function(name, value) {
-			if ($.isPlainObject(value) && $.isPlainObject(target[name]) && !isForcedAtomicOption(name)) {
-				// merge into a new object to avoid destruction
-				target[name] = mergeOptions({}, target[name], value); // combine. `value` object takes precedence
-			}
-			else if (value !== undefined) { // only use values that are set and not undefined
-				target[name] = value;
-			}
-		});
+
+	function mergeIntoTarget(name, value) {
+		if ($.isPlainObject(value) && $.isPlainObject(target[name]) && !isForcedAtomicOption(name)) {
+			// merge into a new object to avoid destruction
+			target[name] = mergeOptions({}, target[name], value); // combine. `value` object takes precedence
+		}
+		else if (value !== undefined) { // only use values that are set and not undefined
+			target[name] = value;
+		}
 	}
+
+	for (var i=1; i<arguments.length; i++) {
+		$.each(arguments[i], mergeIntoTarget);
+	}
+
 	return target;
 }
 

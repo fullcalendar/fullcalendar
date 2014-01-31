@@ -19,17 +19,17 @@ function BasicView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // for selection (kinda hacky)
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	t.getHoverListener = function() { return hoverListener };
+	t.getHoverListener = function() { return hoverListener; };
 	t.colLeft = colLeft;
 	t.colRight = colRight;
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
-	t.getIsCellAllDay = function() { return true };
+	t.getIsCellAllDay = function() { return true; };
 	t.allDayRow = allDayRow;
-	t.getRowCnt = function() { return rowCnt };
-	t.getColCnt = function() { return colCnt };
-	t.getColWidth = function() { return colWidth };
-	t.getDaySegmentContainer = function() { return daySegmentContainer };
+	t.getRowCnt = function() { return rowCnt; };
+	t.getColCnt = function() { return colCnt; };
+	t.getColWidth = function() { return colWidth; };
+	t.getDaySegmentContainer = function() { return daySegmentContainer; };
 	
 	
 	// imports
@@ -45,7 +45,6 @@ function BasicView(element, calendar, viewName) {
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
-	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var calculateWeekNumber = calendar.calculateWeekNumber;
 	

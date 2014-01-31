@@ -216,7 +216,7 @@ moment.fn.format = function() {
 	else {
 		return momentFormatMethod.apply(this, arguments); // pass along all arguments
 	}
-}
+};
 
 moment.fn.toISOString = function() {
 	if (this._ambigTime) {
@@ -254,24 +254,25 @@ $.each([
 
 	moment.fn[methodName] = function() {
 		var newThis;
+		var args = Array.prototype.slice.call(arguments);
 		var i;
 
 		if (this._ambigZone) {
 			for (i=0; i<momentCount; i++) {
-				if (typeof arguments[i] === 'string') {
-					arguments[i] = fc.moment.parseZone(arguments[i]);
+				if (typeof args[i] === 'string') {
+					args[i] = fc.moment.parseZone(args[i]);
 				}
 			}
 		}
 
 		for (i=0; i<momentCount; i++) {
-			if (moment.isMoment(arguments[i]) && arguments[i]._ambigZone !== this._ambigZone) {
+			if (moment.isMoment(args[i]) && args[i]._ambigZone !== this._ambigZone) {
 				newThis = newThis || this.clone().stripZone();
-				arguments[i] = arguments[i].clone().stripZone();
+				args[i] = args[i].clone().stripZone();
 			}
 		}
 
-		return origMethod.apply(newThis || this, arguments);
+		return origMethod.apply(newThis || this, args);
 	};
 });
 
@@ -317,7 +318,7 @@ function formatDateWithChunk(date, chunk) {
 	if (typeof chunk === 'string') { // a literal string
 		return chunk;
 	}
-	else if (token = chunk.token) { // a token, like "YYYY"
+	else if ((token = chunk.token)) { // a token, like "YYYY"
 		if (tokenOverrides[token]) {
 			return tokenOverrides[token](date); // use our custom token
 		}
@@ -431,7 +432,7 @@ function formatSimilarChunk(date1, date2, chunk) {
 	if (typeof chunk === 'string') { // a literal string
 		return chunk;
 	}
-	else if (token = chunk.token) {
+	else if ((token = chunk.token)) {
 		unit = similarUnitMap[token.charAt(0)];
 		// are the dates the same for this unit of measurement?
 		if (unit && date1.isSame(date2, unit)) {
@@ -456,7 +457,7 @@ function getFormatStringChunks(formatStr) {
 	if (formatStr in formatStringChunkCache) {
 		return formatStringChunkCache[formatStr];
 	}
-	return formatStringChunkCache[formatStr] = chunkFormatString(formatStr);
+	return (formatStringChunkCache[formatStr] = chunkFormatString(formatStr));
 }
 
 
@@ -466,7 +467,7 @@ function chunkFormatString(formatStr) {
 	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|((\w)\4*o?T?)|([^\w\[\(]+)/g; // TODO: more descrimination
 	var match;
 
-	while (match = chunker.exec(formatStr)) {
+	while ((match = chunker.exec(formatStr))) {
 		if (match[1]) { // a literal string instead [ ... ]
 			chunks.push(match[1]);
 		}

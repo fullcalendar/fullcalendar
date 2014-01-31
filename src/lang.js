@@ -43,7 +43,7 @@ fc.datepickerLang = function(langCode, datepickerLangCode, options) {
 				options;
 
 		// Alias 'en' to the default language data. Do this every time.
-		$.datepicker.regional['en'] = $.datepicker.regional[''];
+		$.datepicker.regional.en = $.datepicker.regional[''];
 
 		// Set as Datepicker's global defaults.
 		$.datepicker.setDefaults(options);

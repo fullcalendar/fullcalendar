@@ -68,13 +68,13 @@ function transformOptions(sourceOptions, start, end, timezone) {
 					});
 
 					events.push({
-						id: entry['gCal$uid']['value'],
-						title: entry['title']['$t'],
-						start: entry['gd$when'][0]['startTime'],
-						end: entry['gd$when'][0]['endTime'],
+						id: entry.gCal$uid.value,
+						title: entry.title.$t,
+						start: entry.gd$when[0].startTime,
+						end: entry.gd$when[0].endTime,
 						url: url,
-						location: entry['gd$where'][0]['valueString'],
-						description: entry['content']['$t']
+						location: entry.gd$where[0].valueString,
+						description: entry.content.$t
 					});
 
 				});
