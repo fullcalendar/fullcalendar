@@ -1,5 +1,5 @@
 
-describe('slotMinutes', function() {
+describe('slotDuration', function() {
 
 	var minutesInADay = 1440;
 
