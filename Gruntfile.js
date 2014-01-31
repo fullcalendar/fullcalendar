@@ -81,7 +81,7 @@ module.exports = function(grunt) {
 		expand: true,
 		src: 'build/out/fullcalendar.js', // only do it for fullcalendar.js
 		ext: '.min.js'
-	}
+	};
 
 	config.clean.modules = 'build/out/**';
 

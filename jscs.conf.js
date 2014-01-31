@@ -2,8 +2,8 @@ module.exports = {
 
 	options: {
 		requireCurlyBraces: [ 'if', 'else', 'for', 'while', 'do', 'try', 'catch' ],
-		requireSpacesInFunctionExpression: { 'beforeOpeningCurlyBrace': true },
-		disallowSpacesInFunctionExpression: { 'beforeOpeningRoundBrace': true },
+		requireSpacesInFunctionExpression: { beforeOpeningCurlyBrace: true },
+		disallowSpacesInFunctionExpression: { beforeOpeningRoundBrace: true },
 		disallowSpacesInsideParentheses: true,
 		requireSpacesInsideObjectBrackets: 'all',
 		disallowQuotedKeysInObjects: 'allButReserved',
