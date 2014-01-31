@@ -61,6 +61,16 @@ This will output a URL that you can visit in a browser. Alternatively, you can r
 	karma start --single-run --browsers PhantomJS
 
 
+Before Contributing
+-------------------
+
+Before contributing changes in the form of a pull request,
+please make sure you have successfully ran the automated tests (instructions above)
+as well as checked your code for any quality/styling errors. To do this, run:
+
+	grunt check
+
+
 [fc-homepage]: http://arshaw.com/fullcalendar/
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
