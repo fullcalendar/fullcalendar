@@ -61,10 +61,40 @@ This will output a URL that you can visit in a browser. Alternatively, you can r
 	karma start --single-run --browsers PhantomJS
 
 
+Style Guide
+-----------
+
+Please follow the [Google JavaScript Style Guide] as closely as possible. With the following exceptions:
+
+```js
+if (true) {
+}
+else { // please put else, else if, and catch on a separate line
+}
+
+// please write one-line array literals with a one-space padding inside
+var a = [ 1, 2, 3 ];
+
+// please write one-line object literals with a one-space padding inside
+var o = { a: 1, b: 2, c: 3 };
+```
+
+Other exceptions:
+
+- please ignore anything about Google Closure Compiler or the `goog` library
+- please do not write JSDoc comments
+
+Notes about whitespace:
+
+- use *tabs* instead of spaces
+- separate functions with *2* blank lines
+- separate logical blocks within functions with *1* blank line
+
+
 Before Contributing
 -------------------
 
-Before contributing changes in the form of a pull request,
+If you have edited code (including **tests** and **translations**) and would like to submit a pull request,
 please make sure you have successfully ran the automated tests (instructions above)
 as well as checked your code for any quality/styling errors. To do this, run:
 
@@ -78,3 +108,4 @@ as well as checked your code for any quality/styling errors. To do this, run:
 [bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
 [karma]: http://karma-runner.github.io/0.10/index.html
+[Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
