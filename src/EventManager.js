@@ -1,4 +1,3 @@
-
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
 
@@ -58,8 +57,8 @@ function EventManager(options, _sources) {
 	
 	
 	function fetchEvents(start, end) {
-		rangeStart = start;
-		rangeEnd = end;
+		rangeStart = cloneDate(start);
+		rangeEnd = cloneDate(end);
 		cache = [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
