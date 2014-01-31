@@ -311,11 +311,9 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('check', 'Lint and check code style', [
 		'jscs',
-		'jshint:srcModules',
-		'jshint:srcLanguages',
+		'jshint:srcModules', // so we can fix most quality errors in their original files
 		'lumbar:build',
-		'jshint:builtModules',
-		'jshint:tests',
+		'jshint' // will run srcModules again but oh well
 	]);
 
 	// configs located elsewhere

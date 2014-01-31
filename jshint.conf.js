@@ -39,6 +39,8 @@ module.exports = {
 
 	srcLanguages: 'lang/*.js',
 
-	tests: 'tests/automated/*.js'
+	tests: 'tests/automated/*.js',
+
+	misc: '*.js' // config files in root
 
 };

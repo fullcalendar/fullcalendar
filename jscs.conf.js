@@ -43,6 +43,8 @@ module.exports = {
 			maximumLineLength: 120
 		},
 		src: 'tests/automated/*.js'
-	}
+	},
+
+	misc: '*.js' // config files in root
 
 };
