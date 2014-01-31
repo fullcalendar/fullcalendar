@@ -10,6 +10,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-jscs-checker');
 	grunt.loadNpmTasks('lumbar');
 
 	// Parse config files
@@ -44,9 +46,11 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('modules', 'Build the FullCalendar modules', [
+		'jscs:srcModules',
 		'clean:modules',
 		'lumbar:build',
 		'concat:moduleVariables',
+		'jshint:builtModules',
 		'uglify:modules'
 	]);
 
@@ -87,6 +91,8 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('languages', [
+		'jscs:srcLanguages',
+		'jshint:srcLanguages',
 		'clean:languages',
 		'generateLanguages',
 		'uglify:languages'
@@ -300,9 +306,27 @@ module.exports = function(grunt) {
 
 
 
+	/* Linting and Code Style Checking
+	----------------------------------------------------------------------------------------------------*/
+
+	grunt.registerTask('check', 'Lint and check code style', [
+		'jscs',
+		'jshint:srcModules',
+		'jshint:srcLanguages',
+		'lumbar:build',
+		'jshint:builtModules',
+		'jshint:tests',
+	]);
+
+	// configs located elsewhere
+	config.jshint = require('./jshint.conf');
+	config.jscs = require('./jscs.conf');
+
+
+
 	// finally, give grunt the config object...
 	grunt.initConfig(config);
 
-
+	// load everything in the ./tasks/ directory
 	grunt.loadTasks('tasks');
 };
