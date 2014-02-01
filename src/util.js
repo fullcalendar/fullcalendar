@@ -1,4 +1,3 @@
-
 fc.applyAll = applyAll;
 
 
@@ -33,6 +32,7 @@ function lazySegBind(container, segs, bindHandlers) {
 			i, seg;
 		while (parent != this) {
 			e = parent;
+			if (!parent.parentNode) break;
 			parent = parent.parentNode;
 		}
 		if ((i = e._fci) !== undefined) {
