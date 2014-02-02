@@ -18,7 +18,7 @@ describe('when header options set with next|prev|prevYear|nextYear|today', funct
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-button-next').simulate('click');
 			var newDate = $('#calendar').fullCalendar('getDate');
-			expect(newDate.format()).toEqual('2010-03-01');
+			expect(newDate).toEqualMoment('2010-03-01');
 		});
 	});
 
@@ -27,7 +27,7 @@ describe('when header options set with next|prev|prevYear|nextYear|today', funct
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-button-prev').simulate('click');
 			var newDate = $('#calendar').fullCalendar('getDate');
-			expect(newDate.format()).toEqual('2010-01-01');
+			expect(newDate).toEqualMoment('2010-01-01');
 		});
 	});
 
@@ -36,7 +36,7 @@ describe('when header options set with next|prev|prevYear|nextYear|today', funct
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-button-prevYear').simulate('click');
 			var newDate = $('#calendar').fullCalendar('getDate');
-			expect(newDate.format()).toEqual('2009-02-01');
+			expect(newDate).toEqualMoment('2009-02-01');
 		});
 	});
 
@@ -45,7 +45,7 @@ describe('when header options set with next|prev|prevYear|nextYear|today', funct
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-button-nextYear').simulate('click');
 			var newDate = $('#calendar').fullCalendar('getDate');
-			expect(newDate.format()).toEqual('2011-02-01');
+			expect(newDate).toEqualMoment('2011-02-01');
 		});
 	});
 
@@ -54,7 +54,7 @@ describe('when header options set with next|prev|prevYear|nextYear|today', funct
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-button-today').simulate('click');
 			var newDate = $('#calendar').fullCalendar('getDate');
-			expect(newDate.format()).toEqual(moment().format());
+			expect(newDate).toEqualNow();
 		});
 	});
 });
