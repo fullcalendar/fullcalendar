@@ -9,6 +9,37 @@ function createObject(proto) { // like Object.create
 	return new f();
 }
 
+function extend(a, b) {
+	for (var i in b) {
+		if (b.hasOwnProperty(i)) {
+			a[i] = b[i];
+		}
+	}
+}
+
+
+
+/* Date
+-----------------------------------------------------------------------------*/
+
+
+var dayIDs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+
+// diffs the two moments into a Duration where full-days are recorded first,
+// then the remaining time.
+function dayishDiff(d1, d0) {
+	return moment.duration({
+		days: d1.clone().stripTime().diff(d0.clone().stripTime(), 'days'),
+		ms: d1.time() - d0.time()
+	});
+}
+
+
+function isNativeDate(input) {
+	return  Object.prototype.toString.call(input) === '[object Date]' ||
+		input instanceof Date;
+}
 
 
 
