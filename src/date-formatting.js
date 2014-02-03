@@ -196,7 +196,7 @@ function chunkFormatString(formatStr) {
 	var match;
 
 	while ((match = chunker.exec(formatStr))) {
-		if (match[1]) { // a literal string instead [ ... ]
+		if (match[1]) { // a literal string inside [ ... ]
 			chunks.push(match[1]);
 		}
 		else if (match[2]) { // non-zero formatting inside ( ... )

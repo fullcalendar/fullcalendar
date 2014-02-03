@@ -116,7 +116,7 @@ function parseDateTime($string, $timezone=null) {
 			// Ignored if string has a timezone offset in it.
 	);
 	if ($timezone) {
-		// If our timezone was ignore above, force it.
+		// If our timezone was ignored above, force it.
 		$date->setTimezone($timezone);
 	}
 	return $date;

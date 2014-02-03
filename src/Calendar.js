@@ -80,7 +80,7 @@ function Calendar(element, instanceOptions) {
 	if (options.dayNamesShort) {
 		langData._weekdaysShort = options.dayNamesShort;
 	}
-	if (options.firstDay) {
+	if (options.firstDay != null) {
 		var _week = createObject(langData._week); // _week: { dow: # }
 		_week.dow = options.firstDay;
 		langData._week = _week;
