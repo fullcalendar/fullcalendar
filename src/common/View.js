@@ -12,7 +12,6 @@ function View(element, calendar, viewName) {
 	t.trigger = trigger;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
-	t.setEventData = setEventData;
 	t.clearEventData = clearEventData;
 	t.reportEventElement = reportEventElement;
 	t.triggerEventDestroy = triggerEventDestroy;
@@ -21,7 +20,6 @@ function View(element, calendar, viewName) {
 	t.hideEvents = hideEvents;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
-	t.mutateEvent = mutateEvent;
 	// t.start, t.end // moments with ambiguous-time
 	// t.intervalStart, t.intervalEnd // moments with ambiguous-time
 	
@@ -31,7 +29,6 @@ function View(element, calendar, viewName) {
 	
 	
 	// locals
-	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
 	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
 	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
@@ -91,24 +88,9 @@ function View(element, calendar, viewName) {
 	
 	/* Event Data
 	------------------------------------------------------------------------------*/
-	
-	
-	function setEventData(events) { // events are already normalized at this point
-		eventsByID = {};
-		var i, len=events.length, event;
-		for (i=0; i<len; i++) {
-			event = events[i];
-			if (eventsByID[event._id]) {
-				eventsByID[event._id].push(event);
-			}else{
-				eventsByID[event._id] = [event];
-			}
-		}
-	}
 
 
 	function clearEventData() {
-		eventsByID = {};
 		eventElementsByID = {};
 		eventElementCouples = [];
 	}
@@ -188,7 +170,7 @@ function View(element, calendar, viewName) {
 
 	
 	function eventDrop(el, event, newStart, ev, ui) {
-		var undoMutation = mutateEvent(event, newStart, null);
+		var undoMutation = calendar.mutateEvent(event, newStart, null);
 
 		trigger(
 			'eventDrop',
@@ -207,7 +189,7 @@ function View(element, calendar, viewName) {
 
 
 	function eventResize(el, event, newEnd, ev, ui) {
-		var undoMutation = mutateEvent(event, null, newEnd);
+		var undoMutation = calendar.mutateEvent(event, null, newEnd);
 
 		trigger(
 			'eventResize',
@@ -222,167 +204,6 @@ function View(element, calendar, viewName) {
 		);
 
 		reportEventChange(event._id);
-	}
-	
-	
-	
-	/* Event Modification Math
-	-----------------------------------------------------------------------------------------*/
-
-
-	// Modify the date(s) of an event and make this change propagate to all other events with
-	// the same ID (related repeating events).
-	//
-	// If `newStart`/`newEnd` are not specified, the "new" dates are assumed to be `event.start` and `event.end`.
-	// The "old" dates to be compare against are always `event._start` and `event._end` (set by EventManager).
-	//
-	// Returns a function that can be called to undo all the operations.
-	//
-	function mutateEvent(event, newStart, newEnd) {
-		var oldAllDay = event._allDay;
-		var oldStart = event._start;
-		var oldEnd = event._end;
-		var clearEnd = false;
-		var newAllDay;
-		var dateDelta;
-		var durationDelta;
-
-		// if no new dates were passed in, compare against the event's existing dates
-		if (!newStart && !newEnd) {
-			newStart = event.start;
-			newEnd = event.end;
-		}
-
-		// NOTE: throughout this function, the initial values of `newStart` and `newEnd` are
-		// preserved. These values may be undefined.
-
-		// detect new allDay
-		if (event.allDay != oldAllDay) { // if value has changed, use it
-			newAllDay = event.allDay;
-		}
-		else { // otherwise, see if any of the new dates are allDay
-			newAllDay = !(newStart || newEnd).hasTime();
-		}
-
-		// normalize the new dates based on allDay
-		if (newAllDay) {
-			if (newStart) {
-				newStart = newStart.clone().stripTime();
-			}
-			if (newEnd) {
-				newEnd = newEnd.clone().stripTime();
-			}
-		}
-
-		// compute dateDelta
-		if (newStart) {
-			if (newAllDay) {
-				dateDelta = dayishDiff(newStart, oldStart.clone().stripTime()); // treat oldStart as allDay
-			}
-			else {
-				dateDelta = dayishDiff(newStart, oldStart);
-			}
-		}
-
-		if (newAllDay != oldAllDay) {
-			// if allDay has changed, always throw away the end
-			clearEnd = true;
-		}
-		else if (newEnd) {
-			durationDelta = dayishDiff(
-				// new duration
-				newEnd || calendar.getDefaultEventEnd(newAllDay, newStart || oldStart),
-				newStart || oldStart
-			).subtract(dayishDiff(
-				// subtract old duration
-				oldEnd || calendar.getDefaultEventEnd(oldAllDay, oldStart),
-				oldStart
-			));
-		}
-
-		return mutateEvents(eventsByID[event._id], clearEnd, newAllDay, dateDelta, durationDelta);
-	}
-
-
-	// Modifies an array of events in the following ways (operations are in order):
-	// - clear the event's `end`
-	// - convert the event to allDay
-	// - add `dateDelta` to the start and end 
-	// - add `durationDelta` to the event's duration
-	//
-	// Returns a function that can be called to undo all the operations.
-	//
-	function mutateEvents(events, clearEnd, forceAllDay, dateDelta, durationDelta) {
-		var isAmbigTimezone = calendar.getIsAmbigTimezone();
-		var undoFunctions = [];
-
-		$.each(events, function(i, event) {
-			var oldAllDay = event._allDay;
-			var oldStart = event._start;
-			var oldEnd = event._end;
-			var newAllDay = forceAllDay != null ? forceAllDay : oldAllDay;
-			var newStart = oldStart.clone();
-			var newEnd = (!clearEnd && oldEnd) ? oldEnd.clone() : null;
-
-			// NOTE: this function is responsible for transforming `newStart` and `newEnd`,
-			// which were initialized to the OLD values first. `newEnd` may be null.
-
-			// normlize newStart/newEnd to be consistent with newAllDay
-			if (newAllDay) {
-				newStart.stripTime();
-				if (newEnd) {
-					newEnd.stripTime();
-				}
-			}
-			else {
-				if (!newStart.hasTime()) {
-					newStart = calendar.rezoneDate(newStart);
-				}
-				if (newEnd && !newEnd.hasTime()) {
-					newEnd = calendar.rezoneDate(newEnd);
-				}
-			}
-
-			// ensure we have an end date if necessary
-			if (!newEnd && (options.forceEventDuration || +durationDelta)) {
-				newEnd = calendar.getDefaultEventEnd(newAllDay, newStart);
-			}
-
-			// translate the dates
-			newStart.add(dateDelta);
-			if (newEnd) {
-				newEnd.add(dateDelta).add(durationDelta);
-			}
-
-			// if the dates have changed, and we know it is impossible to recompute the
-			// timezone offsets, strip the zone.
-			if (isAmbigTimezone) {
-				if (+dateDelta) {
-					newStart.stripZone();
-				}
-				if (newEnd && (+dateDelta || +durationDelta)) {
-					newEnd.stripZone();
-				}
-			}
-
-			event.allDay = newAllDay;
-			event.start = newStart;
-			event.end = newEnd;
-			backupEventDates(event);
-
-			undoFunctions.push(function() {
-				event.allDay = oldAllDay;
-				event.start = oldStart;
-				event.end = oldEnd;
-				backupEventDates(event);
-			});
-		});
-
-		return function() {
-			for (var i=0; i<undoFunctions.length; i++) {
-				undoFunctions[i]();
-			}
-		};
 	}
 
 
