@@ -52,6 +52,7 @@ function makeMoment(args, parseUTC, parseZone) {
 		isAmbigZone = true;
 	}
 
+	// instantiate a vanilla moment
 	if (parseUTC || parseZone || isAmbigTime) {
 		mom = moment.utc.apply(moment, args);
 	}
@@ -96,6 +97,7 @@ function FCMoment(config) {
 // chain the prototype to Moment's
 FCMoment.prototype = createObject(moment.fn);
 
+// we need this because Moment's implementation will not copy of the ambig flags
 FCMoment.prototype.clone = function() {
 	return makeMoment([ this ]);
 };

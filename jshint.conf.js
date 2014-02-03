@@ -3,9 +3,10 @@ module.exports = {
 	options: {
 		browser: true,
 		globals: {
-			define: true,
-			moment: true,
-			jQuery: true
+			// `false` means read-only
+			define: false,
+			moment: false,
+			jQuery: false
 		},
 		bitwise: true,
 		camelcase: true,

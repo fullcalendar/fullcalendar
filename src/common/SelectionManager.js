@@ -28,6 +28,7 @@ function SelectionManager() {
 
 	// unselectAuto
 	if (opt('selectable') && opt('unselectAuto')) {
+		// TODO: unbind on destroy
 		$(document).mousedown(function(ev) {
 			var ignore = opt('unselectCancel');
 			if (ignore) {

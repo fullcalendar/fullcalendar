@@ -709,6 +709,7 @@ function Calendar(element, instanceOptions) {
 	------------------------------------------------------------------------*/
 	
 	if (options.droppable) {
+		// TODO: unbind on destroy
 		$(document)
 			.bind('dragstart', function(ev, ui) {
 				var _e = ev.target;
