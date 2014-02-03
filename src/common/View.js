@@ -604,7 +604,8 @@ function View(element, calendar, viewName) {
 		// day offset for given date range
 		var rangeDayOffsetStart = dateToDayOffset(start);
 		var rangeDayOffsetEnd = dateToDayOffset(end); // an exclusive value
-		if (end.time() > nextDayThreshold) {
+		var endTimeMS = +end.time();
+		if (endTimeMS && endTimeMS >= nextDayThreshold) {
 			rangeDayOffsetEnd++;
 		}
 		rangeDayOffsetEnd = Math.max(rangeDayOffsetEnd, rangeDayOffsetStart + 1);
