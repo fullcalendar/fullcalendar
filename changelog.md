@@ -1,4 +1,11 @@
 
+v2.0.0-beta2
+------------
+
+- fixed broken updateEvent method
+- use of MomentJS with no side effects to the library
+
+
 v2.0.0-beta
 -----------
 
