@@ -269,17 +269,21 @@ describe('unambiguous moment', function() {
 	it('can be made ambiguously-zoned via stripZone', function() {
 		var mom = $.fullCalendar.moment('2014-06-08T10:00:00-0700');
 		expect(mom.hasZone()).toBe(true);
+		expect(mom.hasTime()).toBe(true);
 		mom.stripZone();
 		expect(mom.format()).toBe('2014-06-08T10:00:00');
 		expect(mom.hasZone()).toBe(false);
+		expect(mom.hasTime()).toBe(true);
 	});
 
 	it('can be made ambigously-timed via stripTime', function() {
 		var mom = $.fullCalendar.moment('2014-06-08T10:00:00-0700');
 		expect(mom.hasTime()).toBe(true);
+		expect(mom.hasZone()).toBe(true);
 		mom.stripTime();
 		expect(mom.format()).toBe('2014-06-08');
 		expect(mom.hasTime()).toBe(false);
+		expect(mom.hasZone()).toBe(false);
 	});
 
 });

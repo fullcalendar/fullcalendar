@@ -3,7 +3,7 @@ var ambigTimeRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))$/;
 var ambigZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
 
 
-// MOMENT: creating
+// Creating
 // -------------------------------------------------------------------------------------------------
 
 // Creates a moment in the local timezone, similar to the vanilla moment(...) constructor,
@@ -26,25 +26,13 @@ fc.moment.parseZone = function() {
 	return makeMoment(arguments, true, true);
 };
 
-function FCMoment(config) {
-	extend(this, config);
-}
-
-FCMoment.prototype = createObject(moment.fn);
-
-FCMoment.prototype.clone = function() {
-	return makeMoment([ this ]);
-};
-
 // when parseZone==true, if can't figure it out, fall back to parseUTC
 function makeMoment(args, parseUTC, parseZone) {
-	var isSingleArg = args.length == 1;
-	var isSingleMoment = isSingleArg && moment.isMoment(args[0]);
-	var isSingleString = isSingleArg && typeof args[0] === 'string';
-	var isSingleArray = isSingleArg && $.isArray(args[0]);
-	var isSingleNativeDate = isSingleArg && isNativeDate(args[0]);
-	var isAmbigTime = isSingleString && ambigTimeRegex.test(args[0]);
-	var isAmbigZone = isAmbigTime || isSingleArray || isSingleString && ambigZoneRegex.test(args[0]);
+	var isSingleString = args.length == 1 && typeof args[0] === 'string';
+	var isAmbigTime = isSingleString && ambigTimeRegex.test(args[0]); // an ISO8601 string without a time part
+	var isAmbigZone = isAmbigTime || // ambiguously-zoned moments are always ambiguously-timed too
+		$.isArray(args[0]) || // we consider y/m/d/h/m/s arrays to be lacking a zone
+		isSingleString && ambigZoneRegex.test(args[0]); // an ISO8601 string without a zone part
 	var mom;
 
 	if (parseUTC || parseZone || isAmbigTime) {
@@ -54,7 +42,7 @@ function makeMoment(args, parseUTC, parseZone) {
 		mom = moment.apply(null, args);
 	}
 
-	if (isSingleMoment) {
+	if (moment.isMoment(args[0])) {
 		transferAmbigs(args[0], mom);
 	}
 
@@ -70,7 +58,7 @@ function makeMoment(args, parseUTC, parseZone) {
 		else if (isSingleString) {
 			mom.zone(args[0]); // if fails, will set it to 0, which it already was
 		}
-		else if (isSingleNativeDate || args[0] === undefined) {
+		else if (isNativeDate(args[0]) || args[0] === undefined) {
 			// native Date object?
 			// specified with no arguments?
 			// then consider the moment to be local
@@ -81,39 +69,23 @@ function makeMoment(args, parseUTC, parseZone) {
 	return new FCMoment(mom);
 }
 
-// transfers our internal _ambig properties from one moment to another
-function transferAmbigs(src, dest) {
-	if (src._ambigTime) {
-		dest._ambigTime = true;
-	}
-	else if (dest._ambigTime) {
-		delete dest._ambigTime;
-	}
-
-	if (src._ambigZone) {
-		dest._ambigZone = true;
-	}
-	else if (dest._ambigZone) {
-		delete dest._ambigZone;
-	}
+// our subclass of Moment.
+// accepts an object with the internal Moment properties that should be copied over to
+// this object (most likely another Moment object).
+function FCMoment(config) {
+	extend(this, config);
 }
 
-function makeMomentAs(input, model) {
-	var output = fc.moment(input);
-	if (model._ambigTime) {
-		output.stripTime();
-	}
-	else if (model._ambigZone) {
-		output.stripZone();
-	}
-	return output;
-}
+// chain the prototype to Moment's
+FCMoment.prototype = createObject(moment.fn);
+
+FCMoment.prototype.clone = function() {
+	return makeMoment([ this ]);
+};
 
 
-
-// MOMENT: time-of-day
+// Time-of-day
 // -------------------------------------------------------------------------------------------------
-
 
 // GETTER
 // Returns a Duration with the hours/minutes/seconds/ms values of the moment.
@@ -123,7 +95,7 @@ function makeMomentAs(input, model) {
 // You can supply a Duration, a Moment, or a Duration-like argument.
 // When setting the time, and the moment has an ambiguous time, it then becomes unambiguous.
 FCMoment.prototype.time = function(time) {
-	if (time === undefined) { // getter
+	if (time == null) { // getter
 		return moment.duration({
 			hours: this.hours(),
 			minutes: this.minutes(),
@@ -152,17 +124,21 @@ FCMoment.prototype.time = function(time) {
 FCMoment.prototype.stripTime = function() {
 	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
 
+	// set the internal UTC flag
+	moment.fn.utc.call(this); // call the original method, because we don't want to affect _ambigZone
+
 	this._ambigTime = true;
 	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
 
-	return this.utc()
-		.year(a[0])
+	this.year(a[0])
 		.month(a[1])
 		.date(a[2])
 		.hours(0)
 		.minutes(0)
 		.seconds(0)
 		.milliseconds(0);
+
+	return this; // for chaining
 };
 
 // Returns if the moment has a non-ambiguous time (boolean)
@@ -171,7 +147,7 @@ FCMoment.prototype.hasTime = function() {
 };
 
 
-// MOMENT: timezone offset
+// Timezone
 // -------------------------------------------------------------------------------------------------
 
 // Converts the moment to UTC, stripping out its timezone offset, but preserving its
@@ -180,16 +156,20 @@ FCMoment.prototype.hasTime = function() {
 FCMoment.prototype.stripZone = function() {
 	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
 
+	// set the internal UTC flag
+	moment.fn.utc.call(this); // call the original method, because we don't want to affect _ambigZone
+
 	this._ambigZone = true;
 
-	return this.utc()
-		.year(a[0])
+	this.year(a[0])
 		.month(a[1])
 		.date(a[2])
 		.hours(a[3])
 		.minutes(a[4])
 		.seconds(a[5])
 		.milliseconds(a[6]);
+
+	return this; // for chaining
 };
 
 // Returns of the moment has a non-ambiguous timezone offset (boolean)
@@ -197,25 +177,30 @@ FCMoment.prototype.hasZone = function() {
 	return !this._ambigZone;
 };
 
+// this method implicitly marks a zone
 FCMoment.prototype.zone = function(tzo) {
-	if (tzo != undefined) {
-		this._ambigZone = false;
+	if (tzo != null) {
+		delete this._ambigZone;
 	}
 	return moment.fn.zone.apply(this, arguments);
 };
 
+// this method implicitly marks a zone.
+// we don't need this, because .local internally calls .zone, but we don't want to depend on that.
 FCMoment.prototype.local = function() {
-	this._ambigZone = false;
+	delete this._ambigZone;
 	return moment.fn.local.apply(this, arguments);
 };
 
+// this method implicitly marks a zone.
+// we don't need this, because .utc internally calls .zone, but we don't want to depend on that.
 FCMoment.prototype.utc = function() {
-	this._ambigZone = false;
+	delete this._ambigZone;
 	return moment.fn.utc.apply(this, arguments);
 };
 
 
-// MOMENT: formatting mods
+// Formatting
 // -------------------------------------------------------------------------------------------------
 
 FCMoment.prototype.format = function() {
@@ -242,23 +227,70 @@ FCMoment.prototype.toISOString = function() {
 };
 
 
-// MOMENT: misc utils
+// Querying
 // -------------------------------------------------------------------------------------------------
 
 // Is the moment within the specified range? `end` is exclusive.
 FCMoment.prototype.isWithin = function(start, end) {
-	return this >= makeMomentAs(start, this) && this < makeMomentAs(end, this);
+	var a = commonlyAmbiguate([ this, start, end ]);
+	return a[0] >= a[1] && a[0] < a[2];
 };
 
+// Make these query methods work with ambiguous moments
 $.each([
 	'isBefore',
-	'isAfter'
+	'isAfter',
+	'isSame'
 ], function(i, methodName) {
 	FCMoment.prototype[methodName] = function(input, units) {
-		moment.fn[methodName].call(
-			this,
-			makeMomentAs(input, this),
-			units
-		);
+		var a = commonlyAmbiguate([ this, input ]);
+		return moment.fn[methodName].call(a[0], a[1], units);
 	};
 });
+
+
+// Misc Internals
+// -------------------------------------------------------------------------------------------------
+
+// transfers our internal _ambig properties from one moment to another
+function transferAmbigs(src, dest) {
+	if (src._ambigTime) {
+		dest._ambigTime = true;
+	}
+	else if (dest._ambigTime) {
+		delete dest._ambigTime;
+	}
+
+	if (src._ambigZone) {
+		dest._ambigZone = true;
+	}
+	else if (dest._ambigZone) {
+		delete dest._ambigZone;
+	}
+}
+
+// given an array of moment-like inputs, return a parallel array w/ moments similarly ambiguated.
+// for example, of one moment has ambig time, but not others, all moments will have their time stripped.
+function commonlyAmbiguate(inputs) {
+	var outputs = [];
+	var anyAmbigTime = false;
+	var anyAmbigZone = false;
+	var i;
+
+	for (i=0; i<inputs.length; i++) {
+		outputs.push(fc.moment(inputs[i]));
+		anyAmbigTime = anyAmbigTime || outputs[i]._ambigTime;
+		anyAmbigZone = anyAmbigZone || outputs[i]._ambigZone;
+	}
+
+	for (i=0; i<outputs.length; i++) {
+		if (anyAmbigTime) {
+			outputs[i].stripTime();
+		}
+		else if (anyAmbigZone) {
+			outputs[i].stripZone();
+		}
+	}
+
+	return outputs;
+}

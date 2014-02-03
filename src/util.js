@@ -3,12 +3,15 @@ fc.applyAll = applyAll;
 
 
 
-function createObject(proto) { // like Object.create
+// Create an object that has the given prototype.
+// Just like Object.create
+function createObject(proto) {
 	var f = function() {};
 	f.prototype = proto;
 	return new f();
 }
 
+// copy specifically-owned (non-protoype) properties of `b` onto `a`
 function extend(a, b) {
 	for (var i in b) {
 		if (b.hasOwnProperty(i)) {
