@@ -43,6 +43,12 @@ describe('$.fullCalendar.moment', function() {
 			expect(mom.hasTime()).toBe(false);
 		});
 
+		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
+			var mom = $.fullCalendar.moment('2014-06');
+			expect(mom.format()).toBe('2014-06-01');
+			expect(mom.hasTime()).toBe(false);
+		});
+
 	});
 
 	it('is local when given no arguments', function() {
@@ -88,6 +94,12 @@ describe('$.fullCalendar.moment.utc', function() {
 			expect(mom.hasTime()).toBe(false);
 		});
 
+		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
+			var mom = $.fullCalendar.moment.utc('2014-06');
+			expect(mom.format()).toBe('2014-06-01');
+			expect(mom.hasTime()).toBe(false);
+		});
+
 	});
 
 	it('is UTC when given no arguments', function() {
@@ -128,6 +140,12 @@ describe('$.fullCalendar.moment.parseZone', function() {
 		it('accepts an ambiguous time', function() {
 			var mom = $.fullCalendar.moment.parseZone('2014-06-08');
 			expect(mom.format()).toContain('2014-06-08');
+			expect(mom.hasTime()).toBe(false);
+		});
+
+		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
+			var mom = $.fullCalendar.moment.parseZone('2014-06');
+			expect(mom.format()).toBe('2014-06-01');
 			expect(mom.hasTime()).toBe(false);
 		});
 

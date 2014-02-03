@@ -1,6 +1,6 @@
 
-var ambigTimeRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))$/;
-var ambigZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
+var ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/;
+var ambigTimeOrZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
 
 
 // Creating
@@ -28,12 +28,29 @@ fc.moment.parseZone = function() {
 
 // when parseZone==true, if can't figure it out, fall back to parseUTC
 function makeMoment(args, parseUTC, parseZone) {
-	var isSingleString = args.length == 1 && typeof args[0] === 'string';
-	var isAmbigTime = isSingleString && ambigTimeRegex.test(args[0]); // an ISO8601 string without a time part
-	var isAmbigZone = isAmbigTime || // ambiguously-zoned moments are always ambiguously-timed too
-		$.isArray(args[0]) || // we consider y/m/d/h/m/s arrays to be lacking a zone
-		isSingleString && ambigZoneRegex.test(args[0]); // an ISO8601 string without a zone part
+	var input = args[0];
+	var isSingleString = args.length == 1 && typeof input === 'string';
+	var isAmbigTime = false;
+	var isAmbigZone = false;
+	var ambigMatch;
 	var mom;
+
+	if (isSingleString) {
+		if (ambigDateOfMonthRegex.test(input)) {
+			// accept strings like '2014-05', but convert to the first of the month
+			input += '-01';
+			isAmbigTime = true;
+			isAmbigZone = true;
+		}
+		else if ((ambigMatch = ambigTimeOrZoneRegex.exec(input))) {
+			isAmbigTime = !ambigMatch[5]; // no time part?
+			isAmbigZone = true;
+		}
+	}
+	else if ($.isArray(input)) {
+		// arrays have no timezone information, so assume ambiguous zone
+		isAmbigZone = true;
+	}
 
 	if (parseUTC || parseZone || isAmbigTime) {
 		mom = moment.utc.apply(moment, args);
@@ -42,8 +59,8 @@ function makeMoment(args, parseUTC, parseZone) {
 		mom = moment.apply(null, args);
 	}
 
-	if (moment.isMoment(args[0])) {
-		transferAmbigs(args[0], mom);
+	if (moment.isMoment(input)) {
+		transferAmbigs(input, mom);
 	}
 
 	if (isAmbigTime) {
@@ -56,9 +73,9 @@ function makeMoment(args, parseUTC, parseZone) {
 			mom._ambigZone = true;
 		}
 		else if (isSingleString) {
-			mom.zone(args[0]); // if fails, will set it to 0, which it already was
+			mom.zone(input); // if fails, will set it to 0, which it already was
 		}
-		else if (isNativeDate(args[0]) || args[0] === undefined) {
+		else if (isNativeDate(input) || input === undefined) {
 			// native Date object?
 			// specified with no arguments?
 			// then consider the moment to be local
