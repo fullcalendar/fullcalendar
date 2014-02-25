@@ -29,11 +29,13 @@ var defaults = {
 	
 	// time formats
 	titleFormat: {
+		year: "yyyy",
 		month: 'MMMM yyyy',
 		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
 		day: 'dddd, MMM d, yyyy'
 	},
 	columnFormat: {
+		year: 'MMM',
 		month: 'ddd',
 		week: 'ddd M/d',
 		day: 'dddd M/d'
@@ -55,6 +57,7 @@ var defaults = {
 		prevYear: "<span class='fc-text-arrow'>&laquo;</span>",
 		nextYear: "<span class='fc-text-arrow'>&raquo;</span>",
 		today: 'today',
+		year: 'year',
 		month: 'month',
 		week: 'week',
 		day: 'day'
