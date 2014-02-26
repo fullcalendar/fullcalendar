@@ -54,6 +54,7 @@ function YearView( element, calendar )
     var dateToCell = t.dateToCell;
     var rangeToSegments = t.rangeToSegments;
     var formatDate = calendar.formatDate;
+    var clearEvents = t.clearEvents;
     
     
     /**
