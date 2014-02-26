@@ -168,7 +168,7 @@ function YearView( element, calendar )
 				day_nb++;
 				
 				s +=
-					"<td class='fc- " + contentClass + " fc-month" + ( i + 1 ) + " fc-day" + day_nb + "'>" +
+					"<td class='fc- " + contentClass + " fc-month" + ( i + 1 ) + " fc-day" + ( j + 1 ) + " fc-num" + day_nb + "'>" +
 					"<div>" +
 					(showNumbers ?
 						"<div class='fc-day-number'/>" :
@@ -350,7 +350,7 @@ function YearView( element, calendar )
 	{
 		if ( !opt( 'selectable' ))
 		{
-			var index = parseInt( this.className.match( /fc\-day(\d+)/ )[ 1 ]);
+			var index = parseInt( this.className.match( /fc\-num(\d+)/ )[ 1 ]);
 			var date = indexDate( index - 1);
 			trigger( 'dayClick', this, date, true, ev );
 		}
