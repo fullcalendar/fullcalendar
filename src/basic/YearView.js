@@ -169,7 +169,7 @@ function YearView( element, calendar )
 				day_nb++;
 				
 				s +=
-					"<td class='fc- " + contentClass + " fc-month" + ( j + 1 ) + " fc-day" + day_nb + "'>" +
+					"<td class='fc- " + contentClass + " fc-month" + ( j + 1 ) + " fc-day" + ( i + 1 ) + "'>" +
 					"<div>" +
 					(showNumbers ?
 						"<div class='fc-day-number'/>" :
