@@ -31,6 +31,17 @@
             dayClick: function (date, allDay, jsEvent, view) {
                 console.log(date);
             },
+            dayRender: function (date, cell) {
+                var month = date.getMonth() + 1, day = date.getDate(), curDate;
+                if (month < 10) {
+                    month = '0' + month;
+                }
+                if (day < 10) {
+                    day = '0' + day;
+                }
+                curDate = date.getFullYear() + '-' + month + '-' + day;
+                cell.find('.fc-day-number').attr('title', curDate);
+            },
 			
 			events: [
 				{
