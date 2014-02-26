@@ -271,7 +271,6 @@ function YearView( element, calendar )
 			}
 			else
 			{
-                cell.removeClass('fc-other-month');
                 if ( +date == +today ) {
                     cell.addClass(tm + '-state-highlight fc-today');
                 }else{
