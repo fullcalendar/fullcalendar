@@ -29,6 +29,8 @@ function YearView( element, calendar )
     t.colContentRight = colContentRight;
     t.getIsCellAllDay = function() { return true };
     t.allDayRow = allDayRow;
+    t.clearSelection = clearSelection;
+    t.defaultEventEnd = defaultEventEnd;
 
     // imports
     View.call(t, element, calendar, 'year');
@@ -44,6 +46,7 @@ function YearView( element, calendar )
     var bodyFirstCells;
     var bodyCellTopInners;
     var daySegmentContainer;
+    var firstRowCellInners;
 
     var opt = t.opt;
     var trigger = t.trigger;
@@ -194,6 +197,7 @@ function YearView( element, calendar )
 		bodyCells = body.find('td');
 		bodyFirstCells = bodyCells.filter(':first-child');
 		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
+        firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
 		
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
 		markFirstLast(bodyRows); // marks first+last td's
@@ -568,6 +572,9 @@ function YearView( element, calendar )
 	
 	hoverListener = new HoverListener(coordinateGrid);
 	
+    colPositions = new HorizontalPositionCache(function(col) {
+		return firstRowCellInners.eq(col);
+	});
 	
 	colContentPositions = new HorizontalPositionCache(function(col) {
 		return bodyCellTopInners.eq(col);
