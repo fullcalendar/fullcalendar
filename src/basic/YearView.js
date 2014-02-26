@@ -93,7 +93,7 @@ function YearView( element, calendar )
         t.visEnd = visEnd;
         
         //      Year view - vertical settings : 12 cols for months & 31 rows for dates
-        renderBasic( 31, 31, 12, true );
+        renderBasic( 12, 12, 31, true );
     }
     
     
@@ -146,30 +146,29 @@ function YearView( element, calendar )
 		
 		s +=
 			"<thead>" +
-			"<tr>";
+			"<tr><th></th>";
         
         //      @todo - check classes
 		for ( i = 0; i < colCnt; i++ )
 			s +=
-				"<th class='fc- " + headerClass + " month-" + ( i + 1 ) + "'/>";
+				"<th class='fc- " + headerClass + " day-" + ( i + 1 ) + "'/>";
 		s +=
 			"</tr>" +
 			"</thead>" +
 			"<tbody>";
 		
-		//      In YearView, lines are days
-		for ( i = 0; i < maxRowCnt; i++ )
+        for ( i = 0; i < maxRowCnt; i++ )
 		{
 			s +=
 				"<tr class='fc-date" + ( i + 1 ) + "'>";
+            s += '<th class="fc-month-header"></th>';
 			
-			//      And columns are months
-			for ( j = 0; j < colCnt; j++ )
+            for ( j = 0; j < colCnt; j++ )
 			{
 				day_nb++;
 				
 				s +=
-					"<td class='fc- " + contentClass + " fc-month" + ( j + 1 ) + " fc-day" + ( i + 1 ) + "'>" +
+					"<td class='fc- " + contentClass + " fc-month" + ( i + 1 ) + " fc-day" + ( j + 1 ) + "'>" +
 					"<div>" +
 					(showNumbers ?
 						"<div class='fc-day-number'/>" :
@@ -195,6 +194,7 @@ function YearView( element, calendar )
 		body = table.find('tbody');
 		bodyRows = body.find('tr');
 		bodyCells = body.find('td');
+		bodyRowHeadCells = body.find('th');
 		bodyFirstCells = bodyCells.filter(':first-child');
 		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
         firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
@@ -229,21 +229,28 @@ function YearView( element, calendar )
 		{
 			headCells.each(function(i, _cell)
 			{
-				cell = $(_cell);
-				
-				//      debug
-				//console.log( "cell " + i );
-				//console.log( cell );
-				
-				//     In YearView, each col is a month
-				//      @todo - optionally allow to start with another month
-				date = new Date( t.visStart.getFullYear(), i );
-				
-				cell.html(formatDate(date, colFormat));
-				setDayID(cell, date);
+                if (i > 0) {
+                    cell = $(_cell);
+
+                    //      debug
+                    //console.log( "cell " + i );
+                    //console.log( cell );
+
+                    //     In YearView, each col is a month
+                    //      @todo - optionally allow to start with another month
+                    date = new Date( t.visStart.getFullYear(), i );
+
+                    cell.html(i);
+                    setDayID(cell, date);
+                }
 			});
 		}
 		
+        bodyRowHeadCells.each( function( i, _cell ) {
+            cell = $( _cell );
+            date = new Date( t.visStart.getFullYear(), i );
+            cell.html(formatDate(date, colFormat));
+        });
 		bodyCells.each( function( i, _cell )
 		{
 			cell = $( _cell );
@@ -315,13 +322,13 @@ function YearView( element, calendar )
 		
 		//      Nb days in current month
 		//      @see    daysInMonth()
-		var nb_days = daysInMonth( current_col + 1, t.visStart.getFullYear());
+		var nb_days = daysInMonth( current_row + 1, t.visStart.getFullYear());
 		
 		//      Not a valid cell (e.g. rows > 28 or 29 in february)
-		if ( current_row >= nb_days )
+		if ( current_col >= nb_days )
             return false;
         else
-            return new Date( t.visStart.getFullYear(), current_col, current_row + 1 );
+            return new Date( t.visStart.getFullYear(), current_row , current_col + 1);
 	}
     
 	
@@ -469,8 +476,8 @@ function YearView( element, calendar )
 					renderCellOverlay(i, colStart, i, colEnd-1)
 				);
 			}
-			addDays(rowStart, 7);
-			addDays(rowEnd, 7);
+			addDays(rowStart, 31);
+			addDays(rowEnd, 31);
 		}
 	}
 	
@@ -552,7 +559,7 @@ function YearView( element, calendar )
 				p[1] = n;
 			}
 			p = [n];
-			cols[i] = p;
+			cols[i - 1] = p;
 		});
 		p[1] = n + e.outerWidth();
 		bodyRows.each(function(i, _e) {
