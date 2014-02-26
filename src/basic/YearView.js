@@ -21,6 +21,8 @@ function YearView( element, calendar )
     t.getColCnt = function() { return colCnt };
     t.getColWidth = function() { return colWidth };
     t.getDaySegmentContainer = function() { return daySegmentContainer };
+    t.getHoverListener = function() { return hoverListener };
+    t.renderDayOverlay = renderDayOverlay;
     t.colLeft = colLeft;
     t.colRight = colRight;
     t.colContentLeft = colContentLeft;
