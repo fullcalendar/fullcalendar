@@ -203,11 +203,11 @@ function YearView( element, calendar )
 		markFirstLast(bodyRows); // marks first+last td's
 		bodyRows.eq(0).addClass('fc-first'); // fc-last is done in updateCells
         bodyCells.each(function(i, _cell) {
-			var date = cellToDate(
-				Math.floor(i / colCnt),
-				i % colCnt
-			);
-			trigger('dayRender', t, date, $(_cell));
+            var index = parseInt( _cell.className.match( /fc\-num(\d+)/ )[ 1 ]);
+			var date = indexDate( index - 1);
+            if (date) {
+                trigger('dayRender', t, date, $(_cell));
+            }
 		});
 		
 		//      Bind
