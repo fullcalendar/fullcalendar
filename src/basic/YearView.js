@@ -7,12 +7,8 @@ fcViews.year = YearView;
 function YearView( element, calendar )
 {
     var t = this;
-    BasicView.call( t, element, calendar, 'year' );
-    
-    //      debug
-    //console.log( "t" );
-    //console.log( t );
-    
+
+    //exports
     t.render = render;
     t.renderBasic = renderBasic;
     t.updateCells = updateCells;
@@ -21,23 +17,41 @@ function YearView( element, calendar )
     t.setHeight = setHeight;
     t.setWidth = setWidth;
     t.dayBind = dayBind;
-    
+    t.getRowCnt = function() { return rowCnt };
+    t.getColCnt = function() { return colCnt };
+    t.getColWidth = function() { return colWidth };
+    t.getDaySegmentContainer = function() { return daySegmentContainer };
+    t.colLeft = colLeft;
+    t.colRight = colRight;
+    t.colContentLeft = colContentLeft;
+    t.colContentRight = colContentRight;
+    t.getIsCellAllDay = function() { return true };
+    t.allDayRow = allDayRow;
+
+    // imports
+    View.call(t, element, calendar, 'year');
+    OverlayManager.call(t);
+    SelectionManager.call(t);
+    BasicEventRenderer.call(t);
+
     var head;
-	var headCells;
-	var body;
-	var bodyRows;
-	var bodyCells;
-	var bodyFirstCells;
-	var bodyCellTopInners;
-	var daySegmentContainer;
-	
-	var opt = t.opt;
-	var trigger = t.trigger;
-	var clearEvents = t.clearEvents;
-	var renderOverlay = t.renderOverlay;
-	var clearOverlays = t.clearOverlays;
-	var daySelectionMousedown = t.daySelectionMousedown;
-	var formatDate = calendar.formatDate;
+    var headCells;
+    var body;
+    var bodyRows;
+    var bodyCells;
+    var bodyFirstCells;
+    var bodyCellTopInners;
+    var daySegmentContainer;
+
+    var opt = t.opt;
+    var trigger = t.trigger;
+    var renderOverlay = t.renderOverlay;
+    var clearOverlays = t.clearOverlays;
+    var daySelectionMousedown = t.daySelectionMousedown;
+    var cellToDate = t.cellToDate;
+    var dateToCell = t.dateToCell;
+    var rangeToSegments = t.rangeToSegments;
+    var formatDate = calendar.formatDate;
     
     
     /**
@@ -393,8 +407,8 @@ function YearView( element, calendar )
 		bodyFirstCells.each(function(i, _cell) {
 			if (i < rowCnt) {
 				cell = $(_cell);
-				setMinHeight(
-					cell.find('> div'),
+				cell.find('> div').css(
+					'min-height',
 					(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
 				);
 			}
@@ -600,4 +614,14 @@ function YearView( element, calendar )
 			right: viewWidth
 		};
 	}
+
+    function colLeft(col) {
+        return colPositions.left(col);
+    }
+
+
+    function colRight(col) {
+        return colPositions.right(col);
+    }
+
 }
