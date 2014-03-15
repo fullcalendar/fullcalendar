@@ -19,15 +19,15 @@ describe('isRTL tests', function() {
 		});
 		it('should have prev in left', function() {
 			var fcHeaderLeft = $(cal).find('.fc-header-left')[0];
-			expect(fcHeaderLeft).toContain('.fc-button-prev');
+			expect(fcHeaderLeft).toContainElement('.fc-button-prev');
 		});
 		it('should have today in center', function() {
 			var fcHeaderCenter = $(cal).find('.fc-header-center')[0];
-			expect(fcHeaderCenter).toContain('.fc-button-today');
+			expect(fcHeaderCenter).toContainElement('.fc-button-today');
 		});
 		it('should have next in right', function() {
 			var fcHeaderRight = $(cal).find('.fc-header-right')[0];
-			expect(fcHeaderRight).toContain('.fc-button-next');
+			expect(fcHeaderRight).toContainElement('.fc-button-next');
 		});
 	});
 
@@ -46,15 +46,15 @@ describe('isRTL tests', function() {
 		});
 		it('should have prev in left', function() {
 			var fcHeaderLeft = $(cal).find('.fc-header-left')[0];
-			expect(fcHeaderLeft).toContain('.fc-button-prev');
+			expect(fcHeaderLeft).toContainElement('.fc-button-prev');
 		});
 		it('should have today in center', function() {
 			var fcHeaderCenter = $(cal).find('.fc-header-center')[0];
-			expect(fcHeaderCenter).toContain('.fc-button-today');
+			expect(fcHeaderCenter).toContainElement('.fc-button-today');
 		});
 		it('should have next in right', function() {
 			var fcHeaderRight = $(cal).find('.fc-header-right')[0];
-			expect(fcHeaderRight).toContain('.fc-button-next');
+			expect(fcHeaderRight).toContainElement('.fc-button-next');
 		});
 	});
 
@@ -73,15 +73,15 @@ describe('isRTL tests', function() {
 		});
 		it('should have prev in left', function() {
 			var fcHeaderLeft = $(cal).find('.fc-header-left')[0];
-			expect(fcHeaderLeft).toContain('.fc-button-prev');
+			expect(fcHeaderLeft).toContainElement('.fc-button-prev');
 		});
 		it('should have today in center', function() {
 			var fcHeaderCenter = $(cal).find('.fc-header-center')[0];
-			expect(fcHeaderCenter).toContain('.fc-button-today');
+			expect(fcHeaderCenter).toContainElement('.fc-button-today');
 		});
 		it('should have next in right', function() {
 			var fcHeaderRight = $(cal).find('.fc-header-right')[0];
-			expect(fcHeaderRight).toContain('.fc-button-next');
+			expect(fcHeaderRight).toContainElement('.fc-button-next');
 		});
 	});
 

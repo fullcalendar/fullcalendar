@@ -48,9 +48,9 @@ If you want to clean up the generated files, run:
 Automated Testing
 -----------------
 
-To run automated tests, you must first install [karma] globally:
+To run automated tests, you must first install [karma] globally, as well as some karma plugins:
 
-	npm install -g karma
+	npm install -g karma karma-jasmine karma-phantomjs-launcher
 
 Then, assuming all your source files have been built (via `grunt dev` or `watch`), you can run the tests from a browser:
 

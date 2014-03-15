@@ -1,15 +1,27 @@
 
 beforeEach(function() {
-	this.addMatchers({
-		toEqualMoment: function(expected) {
-			return $.fullCalendar.moment(this.actual).format() ===
-				$.fullCalendar.moment(expected).format();
+	jasmine.addMatchers({
+		toEqualMoment: function() {
+			return {
+				compare: function(actual, expected) {
+					return {
+						pass: $.fullCalendar.moment(actual).format() ===
+							$.fullCalendar.moment(expected).format()
+					};
+				}
+			};
 		},
 		toEqualNow: function() {
-			return Math.abs(
-				$.fullCalendar.moment(this.actual) -
-				new Date()
-			) < 1000; // within a second of current datetime
+			return {
+				compare: function(actual) {
+					return {
+						pass: Math.abs(
+								$.fullCalendar.moment(actual) -
+								new Date()
+							) < 1000 // within a second of current datetime
+					};
+				}
+			};
 		}
 	});
 });

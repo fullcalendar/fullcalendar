@@ -6,7 +6,7 @@
     "jquery": "~1.10.2",
     "jquery-ui": "~1.10.3",
     "jquery-simulate": "*",
-    "jasmine-jquery": "~1.7.0",
-    "jasmine-fixture": "~1.0.8"
+    "jasmine-jquery": "~2.0.3",
+    "jasmine-fixture": "~1.2.0"
   }
 }
