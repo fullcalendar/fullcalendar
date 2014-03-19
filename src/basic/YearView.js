@@ -665,9 +665,7 @@ function YearView( element, calendar )
             var firstDay = (Math.ceil((new Date(startDate.getFullYear(), row, 1) - new Date(startDate.getFullYear(), 0, 1)) / 86400000));
             // first and last cell offset for the row
             var rowCellOffsetFirst = firstDay;
-            console.log(rowCellOffsetFirst);
             var rowCellOffsetLast = firstDay + new Date(startDate.getFullYear(), row + 1, 0).getDate() - 1;
-            console.log(rowCellOffsetLast);
 
             // get the segment's cell offsets by constraining the range's cell offsets to the bounds of the row
             var segmentCellOffsetFirst = Math.max(rangeCellOffsetFirst, rowCellOffsetFirst);
