@@ -99,7 +99,7 @@ function YearView( element, calendar )
         t.visEnd = visEnd;
         
         //      Year view - vertical settings : 12 cols for months & 31 rows for dates
-        renderBasic( 12, 12, 31, true );
+        renderBasic( 12, 12, 31, opt( 'showNumbers' ) );
     }
 
 
@@ -122,7 +122,7 @@ function YearView( element, calendar )
         else
             clearEvents();
         
-        updateCells( firstTime );
+        updateCells( firstTime, showNumbers );
     }
 
 
@@ -229,7 +229,7 @@ function YearView( element, calendar )
     /**
      *  YearView > updateCells
      */
-    function updateCells( firstTime )
+    function updateCells( firstTime, showNumbers )
     {
         var dowDirty = firstTime || rowCnt == 1;
         var month = t.start.getMonth();
@@ -289,8 +289,9 @@ function YearView( element, calendar )
                 }else{
                     cell.removeClass(tm + '-state-highlight fc-today');
                 }
-                
-                cell.find( 'div.fc-day-number' ).text( date.getDate());
+                if (showNumbers) {
+                    cell.find( 'div.fc-day-number' ).text( date.getDate());
+                }
                 
                 if ( dowDirty ) {
                     setDayID( cell, date );
