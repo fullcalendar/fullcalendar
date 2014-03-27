@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		var hidden = [];
+
+		$('#calendar').fullCalendar();
+
+		$('[data-action]').click(function() {
+
+			var $this = $(this);
+			var $calendar = $('#calendar');
+			var day = parseInt($('[data-role="day"]').val(), 10);
+			var index;
+
+			if ($this.data('action') === 'show') {
+				if ((index = $.inArray(day, hidden)) > -1) {
+					hidden.splice(index, 1);
+				}
+			} else {
+				hidden.push(day);
+			}
+
+			$calendar.fullCalendar('setHiddenDays', hidden);
+			$calendar.fullCalendar('render');
+		})
+
+	});
+
+</script>
+<style>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 13px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+	}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+	}
+
+</style>
+</head>
+<body>
+	<span>Show/Hide Days: </span>
+	<select data-role="day">
+		<option value="0">Sunday</option>
+		<option value="1">Monday</option>
+		<option value="2">Tuesday</option>
+		<option value="3">Wednesday</option>
+		<option value="4">Thursday</option>
+		<option value="5">Friday</option>
+		<option value="6">Saturday</option>
+	</select>
+	<button data-action="show">Show</button>
+	<button data-action="hide">Hide</button>
+	<div id='calendar'></div>
+</body>
+</html>
