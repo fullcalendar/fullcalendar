@@ -307,6 +307,7 @@ function View(element, calendar, viewName) {
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 	t.dayOffsetToDate = dayOffsetToDate;
 	t.rangeToSegments = rangeToSegments;
+    t.reloadHiddenDays = reloadHiddenDays;
 
 
 	// internals
@@ -325,23 +326,35 @@ function View(element, calendar, viewName) {
 			hiddenDays.push(0, 6); // 0=sunday, 6=saturday
 		}
 
-		// Loop through a hypothetical week and determine which
-		// days-of-week are hidden. Record in both hashes (one is the reverse of the other).
-		for (var dayIndex=0, cellIndex=0; dayIndex<7; dayIndex++) {
-			dayToCellMap[dayIndex] = cellIndex;
-			isHiddenDayHash[dayIndex] = $.inArray(dayIndex, hiddenDays) != -1;
-			if (!isHiddenDayHash[dayIndex]) {
-				cellToDayMap[cellIndex] = dayIndex;
-				cellIndex++;
-			}
-		}
+        initHiddenDays();
+	})();
+
+
+    function reloadHiddenDays() {
+        hiddenDays = opt('hiddenDays') || [];
+        dayToCellMap = [];
+        cellToDayMap = [];
+        initHiddenDays();
+    }
+
+
+    function initHiddenDays() {
+        // Loop through a hypothetical week and determine which
+        // days-of-week are hidden. Record in both hashes (one is the reverse of the other).
+        for (var dayIndex = 0, cellIndex = 0; dayIndex < 7; dayIndex++) {
+            dayToCellMap[dayIndex] = cellIndex;
+            isHiddenDayHash[dayIndex] = $.inArray(dayIndex, hiddenDays) != -1;
+            if (!isHiddenDayHash[dayIndex]) {
+                cellToDayMap[cellIndex] = dayIndex;
+                cellIndex++;
+            }
+        }
 
 		cellsPerWeek = cellIndex;
 		if (!cellsPerWeek) {
 			throw 'invalid hiddenDays'; // all days were hidden? bad.
 		}
-
-	})();
+    }
 
 
 	// Is the current day hidden?
