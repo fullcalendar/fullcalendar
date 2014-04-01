@@ -23,13 +23,10 @@ function Header(calendar, options) {
 		tm = options.theme ? 'ui' : 'fc';
 		var sections = options.header;
 		if (sections) {
-			element = $("<table class='fc-header' style='width:100%'/>")
-				.append(
-					$("<tr/>")
-						.append(renderSection('left'))
-						.append(renderSection('center'))
-						.append(renderSection('right'))
-				);
+			element = $("<div class='fc-header' style='width:100%'/>")
+				.append(renderSection('left'))
+				.append(renderSection('right'))
+				.append(renderSection('center'));
 			return element;
 		}
 	}
@@ -41,17 +38,19 @@ function Header(calendar, options) {
 	
 	
 	function renderSection(position) {
-		var e = $("<td class='fc-header-" + position + "'/>");
+		var e = $("<div class='fc-header-" + position + "'/>");
 		var buttonStr = options.header[position];
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
-				if (i > 0) {
-					e.append("<span class='fc-header-space'/>");
+				var prevButton, el;
+				if (this.split(',').length > 1) {
+					el = $("<span class='fc-button-group'/>");
+				}else{
+					el = e;
 				}
-				var prevButton;
 				$.each(this.split(','), function(j, buttonName) {
 					if (buttonName == 'title') {
-						e.append("<span class='fc-header-title'><h2>&nbsp;</h2></span>");
+						el.append("<span class='fc-header-title'><h2>&nbsp;</h2></span>");
 						if (prevButton) {
 							prevButton.addClass(tm + '-corner-right');
 						}
@@ -117,7 +116,7 @@ function Header(calendar, options) {
 											.removeClass(tm + '-state-down');
 									}
 								)
-								.appendTo(e);
+								.appendTo(el);
 							disableTextSelection(button);
 							if (!prevButton) {
 								button.addClass(tm + '-corner-left');
