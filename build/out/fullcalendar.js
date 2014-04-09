@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %>
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * FullCalendar v1.6.3
+ * Docs & License: http://arshaw.com/fullcalendar/
+ * (c) 2013 Adam Shaw, Sean Kenny - resource view
  */
 
 /*
@@ -115,7 +115,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "<%= meta.version %>" };
+var fc = $.fullCalendar = { version: "1.6.3" };
 var fcViews = fc.views = {};
 
 
