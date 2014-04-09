@@ -5958,6 +5958,7 @@ function ResourceEventRenderer() {
 		var isAllDay, prevIsAllDay;
 		var colDelta, prevColDelta;
 		var dayDelta; // derived from colDelta
+		var resourceDelta; // derived from colDelta
 		var minuteDelta, prevMinuteDelta;
 
 		eventElement.draggable({
@@ -5980,6 +5981,7 @@ function ResourceEventRenderer() {
 				isAllDay = prevIsAllDay = getIsCellAllDay(origCell);
 				colDelta = prevColDelta = 0;
 				dayDelta = 0;
+			  resourceDelta = 0;
 				minuteDelta = prevMinuteDelta = 0;
 
 			},
@@ -6002,12 +6004,13 @@ function ResourceEventRenderer() {
 					colDelta = Math.round((ui.position.left - origPosition.left) / colWidth);
 					if (colDelta != prevColDelta) {
 						// calculate the day delta based off of the original clicked column and the column delta
-						var origDate = cellToDate(0, origCell.col);
-						var col = origCell.col + colDelta;
-						col = Math.max(0, col);
-						col = Math.min(colCnt-1, col);
-						var date = cellToDate(0, col);
-						dayDelta = dayDiff(date, origDate);
+						//var origDate = cellToDate(0, origCell.col);
+						//var col = origCell.col + colDelta;
+						//col = Math.max(0, col);
+						//col = Math.min(colCnt-1, col);
+						//var date = cellToDate(0, col);
+					    //dayDelta = 0; //dayDiff(date, origDate);
+					  resourceDelta = colDelta;
 					}
 
 					// calculate minute delta (only if over slots)
@@ -6042,7 +6045,9 @@ function ResourceEventRenderer() {
 				clearOverlays();
 				trigger('eventDragStop', eventElement, event, ev, ui);
 
-				if (isInBounds && (isAllDay || dayDelta || minuteDelta)) { // changed!
+			  //if (isInBounds && (isAllDay || dayDelta || minuteDelta)) { // changed!
+				if (isInBounds && (isAllDay || resourceDelta || minuteDelta)) { // changed!
+				  event.resources = resources[origCell.col + resourceDelta].id;
 					eventDrop(this, event, dayDelta, isAllDay ? 0 : minuteDelta, isAllDay, ev, ui);
 				}
 				else { // either no change or out-of-bounds (draggable has already reverted)
