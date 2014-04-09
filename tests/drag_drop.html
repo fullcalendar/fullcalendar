@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='../build/out/fullcalendar.css' rel='stylesheet' />
+    <script src='../build/out/jquery.js'></script>
+    <script src='../build/out/jquery-ui.js'></script>
+    <script src='../build/out/fullcalendar.js'></script>
+    <script>
+
+        $(document).ready(function () {
+
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+
+            $('#calendar').fullCalendar({
+                defaultView: 'resourceDay',
+                editable: true,
+                eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+                    var resourceNames = '';
+                    for (var i = 0; i < event.resources.length; i++) {
+                        var resources = $.grep(view.getResources, function (r) { return r.id == event.resources[i]; });
+                        for (var resourceIndex = 0; resourceIndex < resources.length; resourceIndex++) {
+                            resourceNames += resources[resourceIndex].name + ' ';
+                        }
+                    }
+                    alert(resourceNames);
+                },
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'resourceDay'
+                },
+                resources: [{ 'id': 'resource1', 'name': 'Resource 1' }, { 'id': 'resource2', 'name': 'Resource 2' }, { 'id': 'resource3', 'name': 'Resource 3' }],
+                events: [
+                  {
+                      title: 'R1: breakfast',
+                      start: new Date(y, m, d, 09, 00),
+                      end: new Date(y, m, d, 09, 30),
+                      allDay: false,
+                      resources: ['resource1']
+                  },
+                  {
+                      title: 'R1: All day',
+                      start: new Date(y, m, d, 08, 30),
+                      end: new Date(y, m, d, 09, 00),
+                      allDay: true,
+                      resources: 'resource1'
+                  },
+                  {
+                      title: 'R1 & R2: Lunch',
+                      start: new Date(y, m, d, 12, 30),
+                      end: new Date(y, m, d, 13, 00),
+                      allDay: false,
+                      resources: ['resource1', 'resource2']
+                  }
+                ]
+            });
+        });
+    </script>
+    <style>
+        body {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+    <div id='calendar'></div>
+</body>
+</html>
