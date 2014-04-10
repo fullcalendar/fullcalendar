@@ -1,7 +1,7 @@
 #FORK INFO
 This fork adds a vertical resource view to FullCalendar.
 
-I'll be adding a link to plunkr with the forked version to demo its use.
+[plunkr demo](http://plnkr.co/KRXcK2oNd9eX2IMBM6yY).
 
 FullCalendar - Full-sized drag & drop event calendar
 ====================================================
