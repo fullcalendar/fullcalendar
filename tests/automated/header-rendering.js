@@ -1,5 +1,5 @@
 
-describe('header testing', function() {
+describe('header rendering', function() {
 
 	beforeEach(function() {
 		affix('#calendar');
@@ -74,6 +74,36 @@ describe('header testing', function() {
 		it('should not have header table', function() {
 			var headerTableCount = $('table.fc-header').length;
 			expect(headerTableCount).toEqual(0);
+		});
+	});
+
+	describe('renders left and right literally', function() {
+		[ true, false ].forEach(function(isRTL) {
+			describe('when isRTL is ' + isRTL, function() {
+				beforeEach(function() {
+					var options = {};
+					$('#calendar').fullCalendar({
+						header: {
+							left: 'prev',
+							center: 'today',
+							right: 'next'
+						},
+						isRTL: isRTL
+					});
+				});
+				it('should have prev in left', function() {
+					var fcHeaderLeft = $('#calendar').find('.fc-header-left')[0];
+					expect(fcHeaderLeft).toContainElement('.fc-button-prev');
+				});
+				it('should have today in center', function() {
+					var fcHeaderCenter = $('#calendar').find('.fc-header-center')[0];
+					expect(fcHeaderCenter).toContainElement('.fc-button-today');
+				});
+				it('should have next in right', function() {
+					var fcHeaderRight = $('#calendar').find('.fc-header-right')[0];
+					expect(fcHeaderRight).toContainElement('.fc-button-next');
+				});
+			});
 		});
 	});
 });

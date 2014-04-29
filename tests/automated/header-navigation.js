@@ -1,5 +1,5 @@
 
-describe('when header options set with next|prev|prevYear|nextYear|today', function() {
+describe('header navigation', function() {
 
 	beforeEach(function() {
 		affix('#calendar');

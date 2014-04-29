@@ -5,34 +5,117 @@ describe('weekNumbers', function() {
 		affix('#cal');
 	});
 
-	describe('when using default weekNumbers in default view', function() {
-		it('should not display weekNumbers', function() {
-			$('#cal').fullCalendar();
-			var weekNumbersCount = $('.fc-week-number').length;
-			expect(weekNumbersCount).toEqual(0);
+	describe('when using month view', function() {
+
+		describe('when using default weekNumbers', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'month'
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
+			});
 		});
+
+		describe('when setting weekNumbers to false', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'month',
+					weekNumbers: false
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
+			});
+		});
+
+		describe('when setting weekNumbers to true', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'month',
+					weekNumbers: true,
+					weekMode: 'fixed' // will make 6 rows
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				// 1 is the header row, the other 6 are the rows
+				expect(weekNumbersCount).toEqual(7);
+			});
+		});
+
 	});
 
-	describe('when setting weekNumbers to false in default view', function() {
-		it('should not display weekNumbers', function() {
-			$('#cal').fullCalendar({
-				weekNumbers: false
+	describe('when using basicWeek view', function() {
+
+		describe('with default weekNumbers ', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'basicWeek'
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
 			});
-			var weekNumbersCount = $('.fc-week-number').length;
-			expect(weekNumbersCount).toEqual(0);
 		});
+
+		describe('with weekNumbers to false', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'basicWeek',
+					weekNumbers: false
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
+			});
+		});
+
+		describe('with weekNumbers to true', function() {
+			it('should display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'basicWeek',
+					weekNumbers: true
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				// 1 row is header
+				// 1 row is actual week number
+				expect(weekNumbersCount).toEqual(2);
+			});
+		});
+
 	});
 
-	describe('when setting weekNumbers to true in default view', function() {
-		it('should not display weekNumbers', function() {
-			$('#cal').fullCalendar({
-				weekNumbers: true
+	describe('when using an agenda view', function() {
+
+		describe('with default weekNumbers', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'agendaWeek'
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
 			});
-			$('#cal').fullCalendar('gotoDate', 2013, 10);
-			var weekNumbersCount = $('.fc-week-number').length;
-			// 1 row is header
-			// 6 rows are week numbers
-			expect(weekNumbersCount).toEqual(7);
 		});
+
+		describe('with weekNumbers to false', function() {
+			it('should not display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'agendaWeek',
+					weekNumbers: false
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				expect(weekNumbersCount).toEqual(0);
+			});
+		});
+
+		describe('with weekNumbers to true', function() {
+			it('should display weekNumbers', function() {
+				$('#cal').fullCalendar({
+					defaultView: 'agendaWeek',
+					weekNumbers: true
+				});
+				var weekNumbersCount = $('.fc-week-number').length;
+				// 1 row is axis
+				expect(weekNumbersCount).toEqual(1);
+			});
+		});
+
 	});
+
 });
