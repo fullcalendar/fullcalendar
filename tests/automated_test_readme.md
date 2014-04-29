@@ -95,6 +95,9 @@ Similar to how `iRTL` often calls for nested groupings, the `lang` option will o
 Also, similar to how `isRTL` often calls for nested groupings, please also make different groupings for each type of view (just "basic" and "agenda" for now). This is very necessary, especially for settings that affect rendering, because often the code paths for each view are completely different. It might look something like this:
 
 	describe('weekNumbers', function() {
+		beforeEach(function() {
+			affix('#calendar');
+		});
 		describe('when view is basic', function() {
 			beforeEach(function() {
 				$('#calendar').fullCalendar({
@@ -139,6 +142,6 @@ If you have any questions on what to tests, or how to organize your tests, post 
 [Jasmine Introduction]: http://jasmine.github.io/2.0/introduction.html
 [Karma]: http://karma-runner.github.io/
 [FullCalendar Documentation]: http://arshaw.com/fullcalendar/docs2/
-[Style Guide]: ../#style-guide
+[Style Guide]: https://github.com/arshaw/fullcalendar/tree/v2#style-guide
 [Google Group]: https://groups.google.com/forum/#!forum/fullcalendar
 [How to create a PR]: https://help.github.com/articles/creating-a-pull-request
