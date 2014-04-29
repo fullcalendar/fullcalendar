@@ -45,22 +45,6 @@ If you want to clean up the generated files, run:
 	grunt clean
 
 
-Automated Testing
------------------
-
-To run automated tests, you must first install [karma] command line utility:
-
-	npm install -g karma-cli
-
-Then, assuming all your source files have been built (via `grunt dev` or `watch`), you can run the tests from a browser:
-
-	karma start --single-run
-
-This will output a URL that you can visit in a browser. Alternatively, you can run the tests headlessly:
-
-	karma start --single-run --browsers PhantomJS
-
-
 Style Guide
 -----------
 
@@ -90,15 +74,20 @@ Notes about whitespace:
 - separate functions with *2* blank lines
 - separate logical blocks within functions with *1* blank line
 
-
-Before Contributing
--------------------
-
-If you have edited code (including **tests** and **translations**) and would like to submit a pull request,
-please make sure you have successfully ran the automated tests (instructions above)
-as well as checked your code for any quality/styling errors. To do this, run:
+Run the command line tool to automatically check your style:
 
 	grunt check
+
+
+Before Contributing!
+--------------------
+
+If you have edited code (including **tests** and **translations**) and would like to submit a pull request, please make sure you have done the following:
+
+1. Conformed to the style guide (successfully run `grunt check`)
+
+2. Written automated tests. View the [Automated Test README]
+
 
 
 [fc-homepage]: http://arshaw.com/fullcalendar/
@@ -109,3 +98,4 @@ as well as checked your code for any quality/styling errors. To do this, run:
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
 [karma]: http://karma-runner.github.io/0.10/index.html
 [Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
+[Automated Test README]: ./tests/automated_test_readme.md
