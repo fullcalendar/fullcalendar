@@ -123,6 +123,14 @@ Also, similar to how `isRTL` often calls for nested groupings, please also make 
 	});
 
 
+
+# What to test for
+
+We are mostly doing "black box testing", which means we don't care about testing the internals, mainly just the input and output. For most options, this will entail inspecting the DOM to see if the option had the desired effect. This might involve checking an element for certain text, a certain className, or a certain pixel width. An example of this can be seen with [minTime].
+
+The [jasmine-jquery] library is available to make it easier to query the DOM for certain things. It provides extra utility methods on all jQuery elements.
+
+
 # Tips for debugging tests
 
 When you are writing a new test, it is often annoying to have to run *all* tests every time while you are debugging. Jasmine allows you to write `ddescribe` and `iit` statements, which will only run the enclosed tests and ignore all others.
@@ -145,3 +153,5 @@ If you have any questions on what to tests, or how to organize your tests, post 
 [Style Guide]: https://github.com/arshaw/fullcalendar/tree/v2#style-guide
 [Google Group]: https://groups.google.com/forum/#!forum/fullcalendar
 [How to create a PR]: https://help.github.com/articles/creating-a-pull-request
+[minTime]: https://github.com/arshaw/fullcalendar/blob/v2/tests/automated/minTime.js
+[jasmine-jquery]: https://github.com/velesin/jasmine-jquery
