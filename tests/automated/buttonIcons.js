@@ -16,7 +16,7 @@ describe('buttonIcons', function() {
             });
         });
 
-        iit('should have default values', function() {
+        it('should have default values', function() {
             var prevBtn = $('#cal').find('.fc-button-prev');
             var nextBtn = $('#cal').find('.fc-button-next');
             var nextYearBtn = $('#cal').find('.fc-button-nextYear');
@@ -74,7 +74,7 @@ describe('buttonIcons', function() {
             });
         });
 
-        iit('buttonIcons is ignored', function() {
+        it('buttonIcons is ignored', function() {
             var prevBtn = $('#cal').find('.fc-button-prev');
             var nextBtn = $('#cal').find('.fc-button-next');
             var prevYearBtn = $('#cal').find('.fc-button-prevYear');
