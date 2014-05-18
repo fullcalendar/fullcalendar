@@ -1,4 +1,3 @@
-
 describe('button text', function() {
 
   var settings = {};
@@ -15,6 +14,7 @@ describe('button text', function() {
   });
 
   describe('with buttonIcons', function() {
+
     describe('when lang is default', function() {
       it('should have no text', function() {
         expect($('.fc-button-next')).toHaveText('');
@@ -57,7 +57,9 @@ describe('button text', function() {
       });
     });
   });
+
   describe('without buttonIcons', function() {
+
     beforeEach(function() {
       settings.buttonIcons = {
         prev: null,
@@ -68,6 +70,7 @@ describe('button text', function() {
     });
 
     describe('when lang is default', function() {
+
       beforeEach(function() {
         $('#cal').fullCalendar(settings);
       });
@@ -91,6 +94,7 @@ describe('button text', function() {
     });
 
     describe('when buttonText is specified', function() {
+
       beforeEach(function() {
         settings.buttonText = {
           prev: '<-',
@@ -143,4 +147,5 @@ describe('button text', function() {
       });
     });
   });
+
 });
