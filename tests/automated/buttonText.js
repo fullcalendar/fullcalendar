@@ -17,6 +17,8 @@ describe('button text', function() {
 
     describe('when lang is default', function() {
       it('should have no text', function() {
+        $('#cal').fullCalendar();
+
         expect($('.fc-button-next')).toHaveText('');
         expect($('.fc-button-nextYear')).toHaveText('');
         expect($('.fc-button-prev')).toHaveText('');
