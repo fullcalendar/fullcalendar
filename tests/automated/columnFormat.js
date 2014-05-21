@@ -14,7 +14,7 @@ describe('columnFormat', function() {
 
         beforeEach(function() {
             $('#cal').fullCalendar({
-                timezone: 'local'
+                defaultDate: '2014-05-11'
             });
         });
 
@@ -39,7 +39,7 @@ describe('columnFormat', function() {
 
         beforeEach(function() {
             $('#cal').fullCalendar({
-                timezone: 'local',
+                defaultDate: '2014-05-11',
                 columnFormat: {
                     month: 'dddd',
                     agendaDay: 'dddd M/D',
@@ -72,7 +72,7 @@ describe('columnFormat', function() {
 
         beforeEach(function() {
             $('#cal').fullCalendar({
-                timezone: 'local',
+                defaultDate: '2014-05-11',
                 lang: 'fr'
             });
         });
