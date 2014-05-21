@@ -33,7 +33,7 @@ describe('minTime', function() {
 		describe('in agendaDay', function() {
 			it('should start at 12am', function() {
 				var options = {
-					defaultView: 'agendaWeek'
+					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
 				var firstSlotText = $('.fc-slot0 th').text();
@@ -71,7 +71,7 @@ describe('minTime', function() {
 			hourNumbers.forEach(function(hourNumber) {
 				it('should start at ' + hourNumber, function() {
 					var options = {
-						defaultView: 'agendaWeek',
+						defaultView: 'agendaDay',
 						minTime: { hours: hourNumber }
 					};
 					$('#cal2').fullCalendar(options);
@@ -115,7 +115,7 @@ describe('minTime', function() {
 			hourNumbers.forEach(function(hourNumber) {
 				it('should start at ' + hourNumber + ':20', function() {
 					var options = {
-						defaultView: 'agendaWeek',
+						defaultView: 'agendaDay',
 						minTime: { hours: hourNumber, minutes: 20 }
 					};
 					$('#cal2').fullCalendar(options);
