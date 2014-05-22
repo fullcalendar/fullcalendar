@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("in", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Bulan",
 		week: "Minggu",
 		day: "Hari",

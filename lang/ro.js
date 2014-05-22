@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("ro", {
-	buttonText: {
+	defaultButtonText: {
 		prev: "precedentă", // override JQUI's translations, which contains the word "month"
 		next: "următoare",  // "
 		month: "Lună",

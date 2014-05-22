@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("lt", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Mėnuo",
 		week: "Savaitė",
 		day: "Diena",

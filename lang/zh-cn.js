@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("zh-cn", {
-	buttonText: {
+	defaultButtonText: {
 		month: "月",
 		week: "周",
 		day: "日",

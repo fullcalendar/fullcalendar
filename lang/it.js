@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("it", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Mese",
 		week: "Settimana",
 		day: "Giorno",

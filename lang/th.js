@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("th", {
-	buttonText: {
+	defaultButtonText: {
 		month: "เดือน",
 		week: "สัปดาห์",
 		day: "วัน",

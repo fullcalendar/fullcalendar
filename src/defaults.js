@@ -49,7 +49,7 @@ var defaults = {
 	
 	// locale
 	isRTL: false,
-	buttonText: {
+	defaultButtonText: {
 		prev: "prev",
 		next: "next",
 		prevYear: "prev year",

@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("vi", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Tháng",
 		week: "Tuần",
 		day: "Ngày",

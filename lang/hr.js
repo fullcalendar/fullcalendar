@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("hr", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Mjesec",
 		week: "Tjedan",
 		day: "Dan",

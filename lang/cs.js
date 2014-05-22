@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("cs", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Měsíc",
 		week: "Týden",
 		day: "Den",

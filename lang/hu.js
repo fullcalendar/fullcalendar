@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("hu", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Hónap",
 		week: "Hét",
 		day: "Nap",

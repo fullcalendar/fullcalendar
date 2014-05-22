@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("tl", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Buwan",
 		week: "Linggo",
 		day: "Araw",

@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("uk", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Місяць",
 		week: "Тиждень",
 		day: "День",

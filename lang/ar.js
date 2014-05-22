@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("ar", {
-	buttonText: {
+	defaultButtonText: {
 		month: "شهر",
 		week: "أسبوع",
 		day: "يوم",

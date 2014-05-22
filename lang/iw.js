@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("iw", {
-	buttonText: {
+	defaultButtonText: {
 		month: "חודש",
 		week: "שבוע",
 		day: "יום",

@@ -159,6 +159,7 @@ function arrayMax(a) {
 
 
 function smartProperty(obj, name) { // get a camel-cased/namespaced property of an object
+	obj = obj || {};
 	if (obj[name] !== undefined) {
 		return obj[name];
 	}

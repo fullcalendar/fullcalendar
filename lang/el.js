@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("el", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Μήνας",
 		week: "Εβδομάδα",
 		day: "Ημέρα",

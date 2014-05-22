@@ -23,7 +23,7 @@ fc.datepickerLang = function(langCode, datepickerLangCode, options) {
 				'YYYY[' + options.yearSuffix + '] MMMM' :
 				'MMMM YYYY[' + options.yearSuffix + ']'
 		},
-		buttonText: {
+		defaultButtonText: {
 			// the translations sometimes wrongly contain HTML entities
 			prev: stripHTMLEntities(options.prevText),
 			next: stripHTMLEntities(options.nextText),

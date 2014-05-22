@@ -72,17 +72,21 @@ function Header(calendar, options) {
 							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
 							var themeIcon = smartProperty(options.themeButtonIcons, buttonName);
 							var normalIcon = smartProperty(options.buttonIcons, buttonName);
-							var text = smartProperty(options.buttonText, buttonName);
+							var defaultText = smartProperty(options.defaultButtonText, buttonName);
+							var customText = smartProperty(options.buttonText, buttonName);
 							var html;
 
-							if (themeIcon && options.theme) {
+							if (customText) {
+								html = htmlEscape(customText);
+							}
+							else if (themeIcon && options.theme) {
 								html = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
 							}
 							else if (normalIcon && !options.theme) {
 								html = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								html = htmlEscape(text || buttonName);
+								html = htmlEscape(defaultText || buttonName);
 							}
 
 							var button = $(

@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("ko", {
-	buttonText: {
+	defaultButtonText: {
 		month: "월",
 		week: "주",
 		day: "일",

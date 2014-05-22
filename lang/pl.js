@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("pl", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Miesiąc",
 		week: "Tydzień",
 		day: "Dzień",

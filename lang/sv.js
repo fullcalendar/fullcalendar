@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("sv", {
-	buttonText: {
+	defaultButtonText: {
 		month: "Månad",
 		week: "Vecka",
 		day: "Dag",

@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("hi", {
-	buttonText: {
+	defaultButtonText: {
 		month: "महीना",
 		week: "सप्ताह",
 		day: "दिन",
