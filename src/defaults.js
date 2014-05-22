@@ -30,6 +30,8 @@ var defaults = {
 	endParam: 'end',
 	timezoneParam: 'timezone',
 
+	timezone: false,
+
 	//allDayDefault: undefined,
 	
 	// time formats
