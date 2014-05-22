@@ -17,6 +17,7 @@ module.exports = function(config) {
 			{ pattern: 'lib/jasmine-jquery/lib/jasmine-jquery.js', watched: false },
 			{ pattern: 'lib/jasmine-fixture/dist/jasmine-fixture.js', watched: false },
 			'tests/lib/jasmine-ext.js',
+			'tests/lib/mock-ajax.js',
 			'build/out/fullcalendar.js',
 			'build/out/lang/all.js',
 			'build/out/fullcalendar.css',
