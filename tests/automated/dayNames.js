@@ -1,4 +1,3 @@
-// TODO: fix dates in moment
 describe('day names', function() {
   var settings = {};
   var dayClasses = [
@@ -10,10 +9,12 @@ describe('day names', function() {
     '.fc-fri',
     '.fc-sat',
   ];
+  var referenceDate = '2014-05-25 06:00'; // A sunday
 
   beforeEach(function() {
     affix('#cal');
     settings = { }
+    settings.now = moment(referenceDate).toISOString();
   });
 
   describe('when view is basicDay', function() {
@@ -27,55 +28,66 @@ describe('day names', function() {
         settings.lang = 'en';
       });
 
-      it('should be in the default language and order', function() {
-        $('#cal').fullCalendar(settings);
-        var weekdays = moment.weekdays();
+      $.each(moment.weekdays(), function(index, weekday) {
+        it('should be ' + weekday, function() {
+          settings.now = moment(referenceDate).add('days', index);
+          $('#cal').fullCalendar(settings);
 
-        $('.fc-day-header').each(function(index, item) {
-          expect(item).toHaveText(weekdays[moment().weekday()]);
+          var weekdays = moment.weekdays();
+  
+          expect($('.fc-day-header')[0]).toHaveText(weekday);
         });
       });
     });
   
-    describe('when lang is not default', function() {
-
-      var languages = [ 'es', 'fr', 'de', 'zh-cn', 'es' ];
-  
-      $.each(languages, function(index, language) {
-        it('should be in the selected language and corresponding order', function() {
-          settings.lang = language;
-          $('#cal').fullCalendar(settings);
-  
+    var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
+    $.each(languages, function(index, language) {
+      describe('when lang is ' + language, function() {
+        beforeEach(function() {
           moment.lang(language);
-          var dow = moment.langData(language)._week.dow
-          var weekdays = moment.weekdays();
+        });
+
+        $.each(moment.weekdays(), function(index, weekday) {
+          it('should be the translation for ' + weekday, function() {
+            var weekdays = moment.weekdays();
+            var dow = moment.langData(language)._week.dow
   
-          $('.fc-day-header').each(function(index, item) {
-            expect(item).toContainText(weekdays[(moment().weekday() + dow) % 7]);
+            settings.lang = language;
+            settings.now = moment(referenceDate).add('days', index);
+            $('#cal').fullCalendar(settings);
+    
+            expect($('.fc-day-header')[0]).toHaveText(weekdays[index])
           });
         });
       });
     });
 
     describe('when daynames are specified', function() {
-      it('should contain the specified names in the given order', function() {
-        var days = [
-          'Hovjaj', 'maSjaj', 'veSjaj', 'mechjaj', 'jevjaj', 'parmaqjaj', 'HoSjaj'
-        ];
+      var weekdays = [
+        'Hovjaj',
+        'maSjaj',
+        'veSjaj',
+        'mechjaj',
+        'jevjaj',
+        'parmaqjaj',
+        'HoSjaj'
+      ];
 
-        moment.lang('en'); // TODO: figure out why 'en' is explicitely needed to get dow set
-        settings.dayNames = days;
+      $.each(weekdays, function(index, weekday) {
+        it('should be ' + weekday, function() {
+          settings.dayNames = weekdays;
+          settings.now = moment(referenceDate).add('days', index);
 
-        $('#cal').fullCalendar(settings);
-
-        $('.fc-day-header').each(function(index, item) {
-          expect(item).toContainText(days[moment().weekday()]);
+          $('#cal').fullCalendar(settings);
+  
+          expect($('.fc-day-header')[0]).toHaveText(weekday)
         });
       });
     });
   });
 
-  describe('when view is agendaDay', function() {
+  // TODO: iterate over a entire week instead of just checking today
+  /*describe('when view is agendaDay', function() {
     beforeEach(function() {
       settings.defaultView = 'agendaDay';
     });
@@ -130,5 +142,5 @@ describe('day names', function() {
         expect($(dayClasses)[0]).toContainText(currentWeekday);
       });
     });
-  });
+  });*/
 });
