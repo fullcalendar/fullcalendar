@@ -13,13 +13,13 @@ describe('day names', function() {
 
   beforeEach(function() {
     affix('#cal');
+    moment.lang()
     settings = { }
     settings.now = moment(referenceDate).toISOString();
   });
 
   describe('when view is basicDay', function() {
     beforeEach(function() {
-      moment.lang();
       settings.defaultView = 'basicDay';
     });
 
@@ -32,8 +32,6 @@ describe('day names', function() {
         it('should be ' + weekday, function() {
           settings.now = moment(referenceDate).add('days', index);
           $('#cal').fullCalendar(settings);
-
-          var weekdays = moment.weekdays();
   
           expect($('.fc-day-header')[0]).toHaveText(weekday);
         });
@@ -86,8 +84,7 @@ describe('day names', function() {
     });
   });
 
-  // TODO: iterate over a entire week instead of just checking today
-  /*describe('when view is agendaDay', function() {
+  describe('when view is agendaDay', function() {
     beforeEach(function() {
       settings.defaultView = 'agendaDay';
     });
@@ -95,52 +92,65 @@ describe('day names', function() {
     describe('when lang is default', function() {
       beforeEach(function() {
         moment.lang('en');
+        settings.lang = 'en';
       });
 
-      it('should contain the proper dayname', function() {
-        $('#cal').fullCalendar(settings);
+      $.each(moment.weekdays(), function(index, weekday) {
+        it('should be ' + weekday, function() {
+          settings.now = moment(referenceDate).add('days', index);
+          $('#cal').fullCalendar(settings);
 
-        var currentWeekday = moment.weekdays()[moment().weekday()];
-        var itemClasses = '.fc-col0.fc-widget-header';
-        expect($(itemClasses)[0]).toContainText(currentWeekday);
+          var itemClasses = '.fc-col0.fc-widget-header';
+          expect($(itemClasses)[0]).toContainText(weekday);
+        });
       });
     });
 
-    describe('when lang is not default', function() {
-      it('should contain the dayname in the selected lang', function() {
-        var language = 'es';
-        settings.lang = language;
-        moment.lang(language);
+    var languages = [ 'es' ];
+    $.each(languages, function(index, language) {
+      describe('when lang is ' + language, function() {
+        beforeEach(function() {
+          moment.lang(language);
+        });
 
-        $('#cal').fullCalendar(settings);
+        $.each(moment.weekdays(), function(index, weekday) {
+          it('should be the translation for ' + weekday, function() {
+            var weekdays = moment.weekdays();
+            var dow = moment.langData(language)._week.dow
 
-        var dow = moment.langData(language)._week.dow
-        console.log('dow is ' + dow);
+            settings.lang = language;
+            settings.now = moment(referenceDate).add('days', index); // move to beforeEach
+            $('#cal').fullCalendar(settings);
 
-        var currentWeekday = moment.weekdays()[(moment().weekday() + dow) % 7];
-        var dayClasses = '.fc-col0.fc-widget-header';
-
-        console.log('today is ' + currentWeekday + ' UI:' + $(dayClasses)[0].innerHTML);
-        expect($(dayClasses)[0]).toContainText(currentWeekday);
+            var dayClasses = '.fc-col0.fc-widget-header';
+            expect($(dayClasses)[0]).toContainText(weekdays[index]);
+          });
+        });
       });
     });
 
     describe('when daynames are specified', function() {
-      it('should contain the specified names in the given order', function() {
-        
-        var days = [
-          'Hovjaj', 'maSjaj', 'veSjaj', 'mechjaj', 'jevjaj', 'parmaqjaj', 'HoSjaj'
-        ];
+      var weekdays = [
+        'Hovjaj',
+        'maSjaj',
+        'veSjaj',
+        'mechjaj',
+        'jevjaj',
+        'parmaqjaj',
+        'HoSjaj'
+      ];
 
-        settings.dayNames = days;
-        moment.lang('en'); // TODO: figure out how to reload moment.js defauls
+      $.each(weekdays, function(index, weekday) {
+        it('should be ' + weekday, function() {
+          settings.dayNames = weekdays;
+          settings.now = moment(referenceDate).add('days', index);
 
-        $('#cal').fullCalendar(settings);
-
-        var currentWeekday = days[moment().weekday()];
-        var dayClasses = '.fc-col0.fc-widget-header';
-        expect($(dayClasses)[0]).toContainText(currentWeekday);
+          $('#cal').fullCalendar(settings);
+  
+          var dayClasses = '.fc-col0.fc-widget-header';
+          expect($(dayClasses)[0]).toContainText(weekday);
+        });
       });
     });
-  });*/
+  });
 });
