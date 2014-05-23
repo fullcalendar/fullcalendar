@@ -19,6 +19,7 @@ module.exports = function(config) {
 			{ pattern: 'lib/jasmine-fixture/dist/jasmine-fixture.js', watched: false },
 			'tests/lib/jasmine-ext.js',
 			'build/out/fullcalendar.js',
+			'build/out/gcal.js',
 			'build/out/lang/all.js',
 			'build/out/fullcalendar.css',
 			'tests/base.css',
