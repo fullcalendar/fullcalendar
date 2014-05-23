@@ -14,6 +14,7 @@ module.exports = function(config) {
 			{ pattern: 'lib/jquery/jquery.js', watched: false },
 			{ pattern: 'lib/jquery-ui/ui/jquery-ui.js', watched: false },
 			{ pattern: 'lib/jquery-simulate/jquery.simulate.js', watched: false },
+			{ pattern: 'lib/jquery-mockjax/jquery.mockjax.js', watched: false },
 			{ pattern: 'lib/jasmine-jquery/lib/jasmine-jquery.js', watched: false },
 			{ pattern: 'lib/jasmine-fixture/dist/jasmine-fixture.js', watched: false },
 			'tests/lib/jasmine-ext.js',
