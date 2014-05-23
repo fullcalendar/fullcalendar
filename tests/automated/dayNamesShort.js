@@ -7,18 +7,33 @@ describe('short day names', function() {
     }
   });
 
-  describe('when view is agenda', function() {
+  describe('when view is agendaWeek', function() {
     describe('when lang is default', function() {
       beforeEach(function() {
         moment.lang('en');
+        settings.defaultView = 'agendaWeek';
       });
 
       it('should be in English, starting on Sunday', function() {
         $('#cal').fullCalendar(settings);
         var weekdays = moment.weekdaysShort();
 
-        $('.fc-day-header').each(function(index, item) {
-          expect(item).toContainText(weekdays[index]);
+        var dayClasses = [
+          '.fc-sun',
+          '.fc-mon',
+          '.fc-tue',
+          '.fc-wed',
+          '.fc-thu',
+          '.fc-fri',
+          '.fc-sat'
+        ];
+
+        //expect($('.fc-agenda-days thead .fc-sun')[0]).toContainText(weekdays[0]);
+        $.each(dayClasses, function(index, cls) {
+          (function(){
+            expect($('.fc-agenda-days thead ' + cls)[0]).toContainText(weekdays[index]);
+          })();
+          //console.log('dealing with ' + cls);
         });
       });
     });
