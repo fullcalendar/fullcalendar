@@ -87,7 +87,7 @@ describe('Google Calendar plugin', function() {
 		$('#cal').fullCalendar(options);
 		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
 		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(typeof currentRequest.data.ctz).toEqual('undefined');
+		expect(currentRequest.data.ctz).toBeUndefined();
 	});
 
 	it('sends request correctly when local timezone', function() {
@@ -95,7 +95,7 @@ describe('Google Calendar plugin', function() {
 		$('#cal').fullCalendar(options);
 		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
 		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(typeof currentRequest.data.ctz).toEqual('undefined');
+		expect(currentRequest.data.ctz).toBeUndefined();
 	});
 
 	it('sends request correctly when UTC timezone', function() {
