@@ -5,8 +5,8 @@ beforeEach(function() {
 			return {
 				compare: function(actual, expected) {
 					return {
-						pass: $.fullCalendar.moment(actual).format() ===
-							$.fullCalendar.moment(expected).format()
+						pass: $.fullCalendar.moment.parseZone(actual).format() ===
+							$.fullCalendar.moment.parseZone(expected).format()
 					};
 				}
 			};
@@ -16,7 +16,7 @@ beforeEach(function() {
 				compare: function(actual) {
 					return {
 						pass: Math.abs(
-								$.fullCalendar.moment(actual) -
+								$.fullCalendar.moment.parseZone(actual) -
 								new Date()
 							) < 1000 // within a second of current datetime
 					};
