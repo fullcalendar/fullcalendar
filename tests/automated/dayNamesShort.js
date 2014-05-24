@@ -21,6 +21,10 @@ describe('short day names', function() {
     settings = { };
   });
 
+  afterEach(function() {
+    moment.lang('en'); // reset moment's global language
+  });
+
   testableClasses.forEach(function(viewClass, index, viewClasses) {
     describe('when view is ' + viewClass, function() {
       beforeEach(function() {

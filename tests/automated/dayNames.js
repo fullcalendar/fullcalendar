@@ -18,10 +18,13 @@ describe('day names', function() {
 
   beforeEach(function() {
     affix('#cal');
-    moment.lang();
     settings = {
       now: moment(referenceDate).toISOString()
     };
+  });
+
+  afterEach(function() {
+    moment.lang('en'); // reset moment's global language
   });
 
   testableClasses.forEach(function(viewClass, index, viewClasses) {
