@@ -296,7 +296,7 @@ describe('updateEvent', function() {
 			$('#cal').fullCalendar('updateEvent', event);
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-01');
-			expect(event.end).toBeNull
+			expect(event.end).toBeNull();
 			expect(relatedEvent.allDay).toEqual(true);
 			expect(relatedEvent.start).toEqualMoment('2014-05-10');
 			expect(relatedEvent.end).toBeNull();
@@ -312,7 +312,7 @@ describe('updateEvent', function() {
 			$('#cal').fullCalendar('updateEvent', event);
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-02');
-			expect(event.end).toBeNull
+			expect(event.end).toBeNull();
 			expect(relatedEvent.allDay).toEqual(true);
 			expect(relatedEvent.start).toEqualMoment('2014-05-11');
 			expect(relatedEvent.end).toBeNull();
