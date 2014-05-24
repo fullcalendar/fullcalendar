@@ -1,5 +1,5 @@
 
-ddescribe('formatRange', function() {
+describe('formatRange', function() {
 
 	it('doesn\'t do any splitting when dates have different years', function() {
 		var s = $.fullCalendar.formatRange('2014-01-01', '2015-01-01', 'MMMM Do YYYY');
