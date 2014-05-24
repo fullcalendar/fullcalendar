@@ -29,41 +29,41 @@ describe('day names', function() {
       beforeEach(function() {
         settings.defaultView = 'basicDay';
       });
-  
+
       describe('when lang is default', function() {
         beforeEach(function() {
           settings.lang = 'en';
         });
-  
+
         dayClasses.forEach(function(cls, index, classes) {
           var weekdays = moment.weekdays();
           it('should be ' + weekdays[index], function() {
             settings.now = moment(referenceDate).add('days', index);
             $('#cal').fullCalendar(settings);
-  
+
             expect($('.fc-view thead ' + dayClasses[index])).toHaveText(weekdays[index]);
           });
         });
       });
-  
+
       $.each(languages, function(index, language) {
         describe('when lang is ' + language, function() {
           beforeEach(function() {
             moment.lang(language);
           });
-  
+
           dayClasses.forEach(function(cls, index, classes) {
             it('should be the translation for ' + moment.weekdays()[index], function() {
               settings.lang = language;
               settings.now = moment(referenceDate).add('days', index);
               $('#cal').fullCalendar(settings);
-  
+
               expect($('.fc-view thead ' + dayClasses[index])).toHaveText(moment.weekdays()[index]);
             });
           });
         });
       });
-  
+
       describe('when daynames are specified', function() {
         var weekdays = [
           'Hovjaj',
@@ -74,14 +74,14 @@ describe('day names', function() {
           'parmaqjaj',
           'HoSjaj'
         ];
-  
+
         dayClasses.forEach(function(cls, idx, classes) {
           it('should be ' + weekdays[idx], function() {
             settings.dayNames = moment.weekdays();
             settings.now = moment(referenceDate).add('days', idx);
-  
+
             $('#cal').fullCalendar(settings);
-  
+
             expect($('.fc-view thead ' + cls)).toHaveText(moment.weekdays()[idx]);
           });
         });
