@@ -77,12 +77,12 @@ describe('day names', function() {
 
         dayClasses.forEach(function(cls, idx, classes) {
           it('should be ' + weekdays[idx], function() {
-            settings.dayNames = moment.weekdays();
+            settings.dayNames = [].slice.call(weekdays); // copy. in case there is a mutation
             settings.now = moment(referenceDate).add('days', idx);
 
             $('#cal').fullCalendar(settings);
 
-            expect($('.fc-view thead ' + cls)).toHaveText(moment.weekdays()[idx]);
+            expect($('.fc-view thead ' + cls)).toHaveText(weekdays[idx]);
           });
         });
       });
