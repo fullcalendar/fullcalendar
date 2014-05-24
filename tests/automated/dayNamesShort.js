@@ -1,5 +1,10 @@
 describe('short day names', function() {
   var settings = {};
+  var testableClasses = [
+    'month',
+    'agendaWeek',
+    'basicWeek',
+  ]
   var dayClasses = [
     '.fc-sun',
     '.fc-mon',
@@ -17,7 +22,7 @@ describe('short day names', function() {
     }
   });
 
-  ['month', 'agendaWeek', 'basicWeek'].forEach(function(viewClass, index, viewClasses) {
+  testableClasses.forEach(function(viewClass, index, viewClasses) {
     describe('when view is ' + viewClass, function() {
       beforeEach(function() {
         settings.defaultView = viewClass;
