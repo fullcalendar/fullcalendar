@@ -73,6 +73,9 @@ function formatDateWithChunk(date, chunk) {
 // rendering of one date, without any separator.
 function formatRange(date1, date2, formatStr, separator, isRTL) {
 
+	date1 = fc.moment.parseZone(date1);
+	date2 = fc.moment.parseZone(date2);
+
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
 	formatStr = date1.lang().longDateFormat(formatStr) || formatStr;
 	// BTW, this is not important for `formatDate` because it is impossible to put custom tokens
@@ -145,9 +148,17 @@ var similarUnitMap = {
 	Y: 'year',
 	M: 'month',
 	D: 'day', // day of month
-	d: 'day' // day of week
+	d: 'day', // day of week
+	// prevents a separator between anything time-related...
+	A: 'second', // AM/PM
+	a: 'second', // am/pm
+	T: 'second', // A/P
+	t: 'second', // a/p
+	H: 'second', // hour (24)
+	h: 'second', // hour (12)
+	m: 'second', // minute
+	s: 'second' // second
 };
-// don't go any further than day, because we don't want to break apart times like "12:30:00"
 // TODO: week maybe?
 
 
