@@ -617,11 +617,11 @@ function EventManager(options) { // assumed to be a calendar
 			// if the dates have changed, and we know it is impossible to recompute the
 			// timezone offsets, strip the zone.
 			if (isAmbigTimezone) {
-				if (+dateDelta) {
+				if (+dateDelta || +durationDelta) {
 					newStart.stripZone();
-				}
-				if (newEnd && (+dateDelta || +durationDelta)) {
-					newEnd.stripZone();
+					if (newEnd) {
+						newEnd.stripZone();
+					}
 				}
 			}
 
