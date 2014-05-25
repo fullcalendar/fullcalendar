@@ -3,7 +3,6 @@ describe('when weekends option is set', function() {
 
 	beforeEach(function() {
 		affix('#calendar');
-		var cal = $('#calendar');
 	});
 
 	it('should show sat and sun if true', function() {

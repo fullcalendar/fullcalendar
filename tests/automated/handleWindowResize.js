@@ -6,6 +6,7 @@ describe('handleWindowResize', function() {
 	});
 
 	// not true
+	/*
 	xdescribe('When default is used, should fire resize event', function() {
 		it('should fire resize', function() {
 			var resized = 0;
@@ -17,4 +18,5 @@ describe('handleWindowResize', function() {
 			expect(resized).toEqual(1);
 		});
 	});
+	*/
 });

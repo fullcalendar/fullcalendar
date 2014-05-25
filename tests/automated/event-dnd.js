@@ -1,6 +1,7 @@
 
 // can't do event dragging yet.
 // need to work out how fullCalendar is intercepting events.
+/*
 xdescribe('when event is dragged from one cell to another', function() {
 	it('should move to the new cell', function() {
 		var eventName = 'xyzAllDayEvent';
@@ -28,3 +29,4 @@ xdescribe('when event is dragged from one cell to another', function() {
 		dump(el.offset());
 	});
 });
+*/

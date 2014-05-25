@@ -5,7 +5,7 @@ describe('now', function() {
 	beforeEach(function() {
 		affix('#cal');
 		options = {
-			defaultDate: '2014-05-1'
+			defaultDate: '2014-05-01'
 		};
 	});
 
