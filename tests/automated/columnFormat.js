@@ -61,8 +61,7 @@ describe('columnFormat', function() {
         });
     });
 
-
-    describe('when lang is Fr', function() {
+    describe('when lang is French', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'dim.', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: 'dim. 11/05', selector: 'th.fc-day-header.fc-sun' },
@@ -78,6 +77,32 @@ describe('columnFormat', function() {
         });
 
         it('should have the translated dates', function() {
+            var cal = $('#cal');
+
+            for (var i = 0; i <  viewWithFormat.length; i++) {
+                var crtView = viewWithFormat[i];
+                cal.fullCalendar('changeView', crtView.view);
+                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+            };
+        });
+    });
+
+    describe('when lang is Korean', function() {
+
+        var viewWithFormat = [ { view: 'month', expected: '일', selector: 'th.fc-day-header.fc-sun' },
+            { view: 'basicWeek', expected: '일 05.11', selector: 'th.fc-day-header.fc-sun' },
+            { view: 'agendaWeek', expected: '일 05.11', selector: 'th.fc-widget-header.fc-sun' },
+            { view: 'basicDay', expected: '일요일', selector: 'th.fc-day-header.fc-sun' },
+            { view: 'agendaDay', expected: '일요일', selector: 'th.fc-widget-header.fc-sun' } ];
+
+        beforeEach(function() {
+            $('#cal').fullCalendar({
+                defaultDate: '2014-05-11',
+                lang: 'ko'
+            });
+        });
+
+        it('should have the translated dates and columnFormat should be computed differently', function() {
             var cal = $('#cal');
 
             for (var i = 0; i <  viewWithFormat.length; i++) {

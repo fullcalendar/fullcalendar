@@ -182,4 +182,20 @@ describe('First Day', function() {
 			expect(daysOfWeek[6]).toHaveClass('fc-tue');
 		});
 	});
+
+	it('should have a different default value based on the language', function() {
+		$('#cal').fullCalendar({
+			lang: 'en-gb'
+		});
+		// firstDay will be 1 (Monday) in Great Britain
+		var daysOfWeek = $('.fc-day-header');
+		expect(daysOfWeek[0]).toHaveClass('fc-mon');
+		expect(daysOfWeek[1]).toHaveClass('fc-tue');
+		expect(daysOfWeek[2]).toHaveClass('fc-wed');
+		expect(daysOfWeek[3]).toHaveClass('fc-thu');
+		expect(daysOfWeek[4]).toHaveClass('fc-fri');
+		expect(daysOfWeek[5]).toHaveClass('fc-sat');
+		expect(daysOfWeek[6]).toHaveClass('fc-sun');
+	});
+
 });

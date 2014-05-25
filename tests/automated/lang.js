@@ -1,29 +1,53 @@
 
 describe('lang', function() {
 
-	/*
+	afterEach(function() {
+		moment.lang('en');
+	});
 
-	is not affected by global moment lang
+	it('is not affected by global moment lang when unset', function() {
+		moment.lang('fr');
+		affix('#cal');
+		$('#cal').fullCalendar();
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment('2014-05-01');
+		var s = mom.format('dddd MMMM Do YYYY');
+		expect(s).toEqual('Thursday May 1st 2014');
+	});
 
-	doesn't affect the global moment lang when customized
+	it('is not affected by global moment lang when unset', function() {
+		moment.lang('fr');
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'es'
+		});
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment('2014-05-01');
+		var s = mom.format('dddd MMMM Do YYYY');
+		expect(s).toEqual('jueves mayo 1º 2014');
+	});
 
-	defaults to english when configured to language that isn't loaded
+	it('doesn\'t side-effect the global moment lang when customized', function() {
+		moment.lang('fr');
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'es'
+		});
+		var mom = moment.utc('2014-05-01');
+		var s = mom.format('dddd MMMM Do YYYY');
+		expect(s).toEqual('jeudi mai 1er 2014');
+		expect(moment.lang()).toEqual('fr');
+	});
 
-
-	### below should be tested for in specific setting files
-
-	is affected by the language's isRTL
-	uses the isRTL setting instead of the language's isRTL
-
-	is affected by the language's firstDay
-	uses the firstDay setting instead of the language's firstDay
-
-	computes the default columnFormat based on the language
-	uses the columnFormat setting instead of the language's columnFormat default
-
-	computes the default timeFormat based on the language
-	uses the timeFormat setting instead of the language's timeFormat default
-
-	*/
+	it('defaults to English when configured to language that isn\'t loaded', function() {
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'zz'
+		});
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment('2014-05-01');
+		var s = mom.format('dddd MMMM Do YYYY');
+		expect(s).toEqual('Thursday May 1st 2014');
+	});
 
 });
