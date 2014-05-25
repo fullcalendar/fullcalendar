@@ -203,7 +203,7 @@ function getFormatStringChunks(formatStr) {
 // Break the formatting string into an array of chunks
 function chunkFormatString(formatStr) {
 	var chunks = [];
-	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|((\w)\4*o?T?)|([^\w\[\(]+)/g; // TODO: more descrimination
+	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|(LT|(\w)\4*o?)|([^\w\[\(]+)/g; // TODO: more descrimination
 	var match;
 
 	while ((match = chunker.exec(formatStr))) {
