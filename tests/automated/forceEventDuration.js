@@ -1,4 +1,4 @@
-ddescribe('forceEventDuration', function() {
+describe('forceEventDuration', function() {
 
 	var options;
 
