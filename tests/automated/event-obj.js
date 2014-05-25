@@ -35,14 +35,14 @@ describe('event object creation', function() {
 
 	it('doesn\'t produce an event when an invalid start', function() {
 		init({
-			start: 'asdf'
+			start: new Date('asdf') // we use Date constructor to avoid annoying momentjs warning
 		});
 		expect(event).toBeUndefined();
 	});
 
 	it('doesn\'t produce an event when an invalid end', function() {
 		init({
-			end: 'asdf'
+			end: new Date('asdf') // we use Date constructor to avoid annoying momentjs warning
 		});
 		expect(event).toBeUndefined();
 	});

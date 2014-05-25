@@ -39,6 +39,7 @@ function makeMoment(args, parseUTC, parseZone) {
 		if (ambigDateOfMonthRegex.test(input)) {
 			// accept strings like '2014-05', but convert to the first of the month
 			input += '-01';
+			args = [ input ]; // for when pass it on to moment's constructor
 			isAmbigTime = true;
 			isAmbigZone = true;
 		}
