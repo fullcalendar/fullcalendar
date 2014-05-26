@@ -724,6 +724,9 @@ function AgendaView(element, calendar, viewName) {
 	}
 
 
+	// NOTE: the row index of these "cells" doesn't correspond to the slot index, but rather the "snap" index
+
+
 	function getIsCellAllDay(cell) { // TODO: remove because mom.hasTime() from realCellToDate() is better
 		return opt('allDaySlot') && !cell.row;
 	}
@@ -731,14 +734,14 @@ function AgendaView(element, calendar, viewName) {
 
 	function realCellToDate(cell) { // ugh "real" ... but blame it on our abuse of the "cell" system
 		var date = cellToDate(0, cell.col);
-		var slotIndex = cell.row;
+		var snapIndex = cell.row;
 
 		if (opt('allDaySlot')) {
-			slotIndex--;
+			snapIndex--;
 		}
 
-		if (slotIndex >= 0) {
-			date.time(moment.duration(minTime + slotIndex * slotDuration));
+		if (snapIndex >= 0) {
+			date.time(moment.duration(minTime + snapIndex * snapDuration));
 			date = calendar.rezoneDate(date);
 		}
 
