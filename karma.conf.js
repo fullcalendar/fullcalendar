@@ -10,13 +10,13 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			{ pattern: 'lib/moment/moment.js', watched: false },
-			{ pattern: 'lib/jquery/jquery.js', watched: false },
-			{ pattern: 'lib/jquery-ui/ui/jquery-ui.js', watched: false },
-			{ pattern: 'lib/jquery-simulate/jquery.simulate.js', watched: false },
-			{ pattern: 'lib/jquery-mockjax/jquery.mockjax.js', watched: false },
-			{ pattern: 'lib/jasmine-jquery/lib/jasmine-jquery.js', watched: false },
-			{ pattern: 'lib/jasmine-fixture/dist/jasmine-fixture.js', watched: false },
+			'lib/moment/moment.js',
+			'lib/jquery/jquery.js',
+			'lib/jquery-ui/ui/jquery-ui.js',
+			'lib/jquery-simulate/jquery.simulate.js',
+			'lib/jquery-mockjax/jquery.mockjax.js',
+			'lib/jasmine-jquery/lib/jasmine-jquery.js',
+			'lib/jasmine-fixture/dist/jasmine-fixture.js',
 			'tests/lib/jasmine-ext.js',
 			'build/out/fullcalendar.js',
 			'build/out/gcal.js',
