@@ -13,11 +13,20 @@ module.exports = function(config) {
 			'lib/moment/moment.js',
 			'lib/jquery/jquery.js',
 			'lib/jquery-ui/ui/jquery-ui.js',
-			'lib/jquery-simulate/jquery.simulate.js',
+
+			// for jquery-simulate-ext
+			'lib/jquery-simulate-ext/libs/bililiteRange.js',
+			'lib/jquery-simulate-ext/libs/jquery.simulate.js',
+			'lib/jquery-simulate-ext/src/jquery.simulate.ext.js',
+			'lib/jquery-simulate-ext/src/jquery.simulate.drag-n-drop.js',
+			'lib/jquery-simulate-ext/src/jquery.simulate.key-sequence.js',
+			'lib/jquery-simulate-ext/src/jquery.simulate.key-combo.js',
+
 			'lib/jquery-mockjax/jquery.mockjax.js',
 			'lib/jasmine-jquery/lib/jasmine-jquery.js',
 			'lib/jasmine-fixture/dist/jasmine-fixture.js',
 			'tests/lib/jasmine-ext.js',
+
 			'build/out/fullcalendar.js',
 			'build/out/gcal.js',
 			'build/out/lang/all.js',

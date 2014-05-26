@@ -5,7 +5,7 @@
     "moment": "2.6.0",
     "jquery": "~1.10.2",
     "jquery-ui": "~1.10.3",
-    "jquery-simulate": "*",
+    "jquery-simulate-ext": "~1.3.0",
     "jquery-mockjax": "~1.5.3",
     "jasmine-jquery": "~2.0.3",
     "jasmine-fixture": "~1.2.0"
