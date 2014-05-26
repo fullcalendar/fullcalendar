@@ -8,9 +8,9 @@ Determines the text that will be displayed in the header's title.
 [format string](../utilities/date_formatting_string)/[View Option Hash](../views/View_Option_Hash), *default*:
 
 	{
-		month: 'MMMM yyyy',      // September 2009
-		week: "MMM d yyyy",      // Sep 13 2009
-		day: 'dddd, MMM d, yyyy' // Tuesday, Sep 8, 2009
+		month: 'MMMM YYYY', // September 2009
+		week: "MMM d YYYY", // Sep 13 2009
+		day: 'MMMM d YYYY'  // September 8 2009
 	}
 </div>
 

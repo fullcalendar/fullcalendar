@@ -8,10 +8,6 @@ Text that will be displayed on buttons of the header.
 Object, *default*:
 
 	{
-		prev:     'prev',
-		next:     'next',
-		prevYear: 'prev year',
-		nextYear: 'next year',
 		today:    'today',
 		month:    'month',
 		week:     'week',
@@ -19,6 +15,6 @@ Object, *default*:
 	}
 </div>
 
-The [buttonIcons](../display/buttonIcons) and [themeButtonIcons](../display/themeButtonIcons) options take precedence over `buttonText`.
+[buttonIcons](../display/buttonIcons) and [themeButtonIcons](../display/themeButtonIcons) affects the appearance of certain other buttons.
 
 HTML injection is not supported. All special characters will be escaped.

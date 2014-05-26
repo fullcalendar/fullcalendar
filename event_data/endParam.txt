@@ -9,5 +9,4 @@ It describes the exclusive end of the interval being fetched.
 String, *default*: `'end'`
 </div>
 
-The value of this parameter will be an ISO8601 date string.
-The precise format is determined by the [timezone](../timezone/timezone) option.
+The actual value of this parameter will be an ISO8601 date string.

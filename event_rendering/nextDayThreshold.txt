@@ -2,14 +2,16 @@
 nextDayThreshold
 ================
 
-When an event's end time spans into another day, the time which it must be passed in
-order for it to render as if it were on that day.
+When an event's end time spans into another day, the minimum time it must be
+in order for it to render as if it were on that day.
 
 <div class='spec' markdown='1'>
 Duration, default: `"09:00:00"` (9am)
 </div>
 
 Only affects Month and Basic views as well as the all-day slots in the Agenda views.
+
+Only affects timed events (not all-day events).
 
 For example, with `nextDayThreshold` being the default of 9am, the following event
 would appear to take up only one day:

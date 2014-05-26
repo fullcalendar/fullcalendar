@@ -28,10 +28,14 @@ be available to you. You should be able to create new Moments from scratch like 
 
 	var m = moment();
 
-To create a moment with FullCalendar's extended formatting and "ambiguous" functionality (see below),
-use FullCalendar's version of the `moment` constructor:
+To create a moment with FullCalendar's [extended formatting](date_formatting_string)
+and "ambiguous" functionality (see below),
+use FullCalendar's version of the `moment`, `moment.utc`, and `moment.parseZone` constructors:
 
-	var m = $.fullCalendar.moment();
+	var noTime = $.fullCalendar.moment('2014-05-01');
+	var local = $.fullCalendar.moment('2014-05-01T12:00:00');
+	var utc = $.fullCalendar.moment.utc('2014-05-01T12:00:00');
+	var noTZ = $.fullCalendar.moment.parseZone('2014-05-01T12:00:00');
 
 To create a moment with extended functionality that is already scoped within a given
 calendar's [timezone](../timezone/timezone) and [lang](../text/lang) settings,
@@ -45,30 +49,32 @@ use the `Calendar` object's version of the `moment` constructor:
 
 <h2 id='ambiguously-timed'>Ambiguously-timed Moments</h2>
 
-For FullCalendar, the Moment object has been extended in order to represent a
-Moment without a time, or an "ambigously-timed moment". Under the hood, these moments
-are represented in [UTC-mode] with a time of `00:00:00`. You can query whether
-a moment is ambiguously-timed or not by using the `hasTime` method.
+For FullCalendar, the Moment object has been extended to represent a
+moment without a time, or an "ambigously-timed moment". Under the hood, these moments
+are represented in [UTC-mode] with a time of `00:00:00`.
 
-To create one, you can use FullCalendar's version of the `moment` constructor in tandem
-with an IS08601 string without a time part:
+To create one, you can use FullCalendar's version of the `moment` or `moment.utc` constructor in tandem
+with an ISO8601 string without a time part:
 
-	var mom = $.fullCalendar.moment('2014-01-22');
-	mom.hasTime();
+	var m = $.fullCalendar.moment('2014-01-22');
+	m.hasTime();
 	=> false
 
-Or you can convert a timed moment to ambiguous by using the `stripTime` method:
+As you can see, you can query if a moment is ambiguously-timed by using the `hasTime` method.
+This method is only available on moments created through one of FullCalendar's moment constructors.
 
-	var mom = moment('2014-01-22T05:00:00');
-	mom.stripTime();
-	mom.hasTime();
+You can also convert a timed moment to ambiguous by using the `stripTime` method.
+This method is only available on moments created through one of FullCalendar's moment constructors.
+
+	var m = $.fullCalendar.moment('2014-01-22T05:00:00');
+	m.stripTime();
+	m.hasTime();
 	=> false
 
-The `format` and `toISOString` methods have been modified to not return a time part in
-the string:
+The `format` and `toISOString` methods have been modified so that ambiguously-timed moments
+do to not return a time part in the string:
 
-	var mom = moment('2014-01-22T05:00:00').stripTime();
-	mom.format();
+	m.format();
 	=> "2013-01-22"
 
 <br />
@@ -76,29 +82,31 @@ the string:
 
 <h2 id='ambiguously-zoned'>Ambiguously-zoned Moments</h2>
 
-The moment object has also been extended to represent dates that have no specified timezone.
-Under the hood, these moments are represented in [UTC-mode]. You can query whether a moment
-is ambiguously zoned or not by using the `hasZone` method.
+The moment object has also been extended to represent a date with no specified timezone.
+Under the hood, these moments are represented in [UTC-mode].
 
-To create one, you can use FullCalendar's version of the `moment` constructor in tandem
-with an IS08601 string without a timezone offset part:
+To create one, you can use FullCalendar's version of the `moment.parseZone` constructor in tandem
+with an ISO8601 string without a timezone offset part:
 
-	var mom = $.fullCalendar.moment('2014-01-22T06:00:00');
-	mom.hasZone();
+	var m = $.fullCalendar.moment.parseZone('2014-01-22T06:00:00');
+	m.hasZone();
 	=> false
 
-Or you can convert unambiguous to ambiguous by using the `stripZone` method:
+As you can see, you can query if a moment is ambiguously-zoned by using the `hasZone` method.
+This method is only available on moments created through one of FullCalendar's moment constructors.
 
-	var mom = moment('2014-01-22T05:00:00-07:00');
-	mom.stripZone();
-	mom.hasZone();
+You can also convert unambiguous to ambiguous by using the `stripZone` method.
+This method is only available on moments created through one of FullCalendar's moment constructors.
+
+	var m = $.fullCalendar.moment('2014-01-22T05:00:00-07:00');
+	m.stripZone();
+	m.hasZone();
 	=> false
 
-The `format` and `toISOString` methods have been modified to not return a timezone offset
-part in the string:
+The `format` and `toISOString` methods have been modified so that ambiguously-zoned moments
+do not return a timezone offset part in the string:
 
-	var mom = moment('2014-01-22T05:00:00-07:00').stripZone();
-	mom.format();
+	m.format();
 	=> "2014-01-22T05:00:00"
 
 <br />
@@ -107,18 +115,13 @@ part in the string:
 Other extensions
 ----------------
 
-Moments will have the `time` utility available to them, which is a getter/setter for the
+Extended moments will have the `time` utility available to them, which is a getter/setter for the
 hours/minutes/seconds/milliseconds part of the moment. It accepts/returns a [Duration](Duration)-ish
 object representing the time:
 
 	var m = moment();
-	mom.time('05:30:00');
-	mom.time(); // returns Duration with 05:30:00
-
-Also, Moments created with FullCalendar's version of the `moment` constructor will have the
-extended set of [date formatting characters](date_formatting_string) available to them.
-
-<br />
+	m.time('05:30:00');
+	m.time(); // returns Duration with 05:30:00
 
 
 [UTC-mode]: http://momentjs.com/docs/#/parsing/utc/

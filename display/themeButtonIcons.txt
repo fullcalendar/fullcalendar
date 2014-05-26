@@ -24,4 +24,4 @@ string `'circle-triangle-w'` will result in the class `'ui-icon-circle-triangle-
 If a button does not have an entry, it falls back to using [buttonText](../text/buttonText).
 
 If you are using a jQuery UI theme and would prefer not to display any icons and would rather
-use `buttonText` instead, you can set the `buttonIcons` option to `false`.
+use `buttonText` instead, you can set the `themeButtonIcons` option to `false`.

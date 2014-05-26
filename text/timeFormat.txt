@@ -12,7 +12,7 @@ Determines the time-text that will be displayed on each event.
 		agenda: 'h:mm', // 5:00
 
 		// for all other views
-		'': 'h(:mm)aa'  // 7p
+		'': 'h(:mm)t'  // 7p
 	}
 
 </div>
