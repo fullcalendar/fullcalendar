@@ -9,8 +9,8 @@ Determines the text that will be displayed on the calendar's column headings.
 
 	{
 		month: 'ddd',    // Mon
-		week: 'ddd M/d', // Mon 9/7
-		day: 'dddd'  // Monday
+		week: 'ddd M/D', // Mon 9/7
+		day: 'dddd'      // Monday
 	}
 </div>
 

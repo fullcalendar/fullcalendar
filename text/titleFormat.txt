@@ -9,8 +9,8 @@ Determines the text that will be displayed in the header's title.
 
 	{
 		month: 'MMMM YYYY', // September 2009
-		week: "MMM d YYYY", // Sep 13 2009
-		day: 'MMMM d YYYY'  // September 8 2009
+		week: "MMM D YYYY", // Sep 13 2009
+		day: 'MMMM D YYYY'  // September 8 2009
 	}
 </div>
 
