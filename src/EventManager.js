@@ -260,6 +260,12 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	function updateEvent(event) {
+
+		event.start = t.moment(event.start);
+		if (event.end) {
+			event.end = t.moment(event.end);
+		}
+
 		mutateEvent(event);
 		propagateMiscProperties(event);
 		reportEvents(cache); // reports event modifications (so we can redraw)

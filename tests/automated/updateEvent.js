@@ -319,6 +319,27 @@ describe('updateEvent', function() {
 		});
 	});
 
+	it('should accept moments that have unnormalized start/end', function() {
+		options.events = [
+			{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false },
+			{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false }
+		];
+		init();
+		event.start = '2014-05-02T06:00:00'; // move by 1 day
+		event.end = '2014-05-05T06:00:00'; // increase duration by 1 day
+		$('#cal').fullCalendar('updateEvent', event);
+		expect(event.allDay).toEqual(false);
+		expect(moment.isMoment(event.start)).toEqual(true);
+		expect(event.start).toEqualMoment('2014-05-02T06:00:00');
+		expect(moment.isMoment(event.end)).toEqual(true);
+		expect(event.end).toEqualMoment('2014-05-05T06:00:00');
+		expect(relatedEvent.allDay).toEqual(false);
+		expect(moment.isMoment(relatedEvent.start)).toEqual(true);
+		expect(relatedEvent.start).toEqualMoment('2014-05-11T06:00:00');
+		expect(moment.isMoment(relatedEvent.end)).toEqual(true);
+		expect(relatedEvent.end).toEqualMoment('2014-05-15T06:00:00');
+	});
+
 	function whenMovingStart(should) {
 		describe('when moving an timed event\'s start', function() {
 			beforeEach(function() {
