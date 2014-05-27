@@ -45,6 +45,7 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	var _sources = options.eventSources || [];
+	// TODO: don't mutate eventSources (see issue 954 and automated tests for constructor.js)
 
 	if (options.events) {
 		_sources.push(options.events);
