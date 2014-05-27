@@ -14,13 +14,14 @@ module.exports = function(config) {
 			'lib/jquery/jquery.js',
 			'lib/jquery-ui/ui/jquery-ui.js',
 
-			// for jquery-simulate-ext
+			// for jquery simulate
 			'lib/jquery-simulate-ext/libs/bililiteRange.js',
 			'lib/jquery-simulate-ext/libs/jquery.simulate.js',
 			'lib/jquery-simulate-ext/src/jquery.simulate.ext.js',
 			'lib/jquery-simulate-ext/src/jquery.simulate.drag-n-drop.js',
 			'lib/jquery-simulate-ext/src/jquery.simulate.key-sequence.js',
 			'lib/jquery-simulate-ext/src/jquery.simulate.key-combo.js',
+			'tests/lib/jquery-simulate-hacks.js', // needs to be last
 
 			'lib/jquery-mockjax/jquery.mockjax.js',
 			'lib/jasmine-jquery/lib/jasmine-jquery.js',
