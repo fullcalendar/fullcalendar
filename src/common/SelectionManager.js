@@ -55,6 +55,7 @@ function SelectionManager() {
 		renderSelection(start, end);
 		reportSelection(start, end);
 	}
+	// TODO: better date normalization. see notes in automated test
 	
 	
 	function unselect(ev) {
