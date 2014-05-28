@@ -1,4 +1,3 @@
-// FIX: some tests are skipped from time to time, as if this file isn't even loaded by the test runner
 describe('month name', function() {
   var settings = {};
   var referenceDate = '2014-01-01 06:00'; // The day the world is hung-over
