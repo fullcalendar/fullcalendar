@@ -1,3 +1,4 @@
+// FIX: some tests are skipped from time to time, as if this file isn't even loaded by the test runner
 describe('month name', function() {
   var settings = {};
   var referenceDate = '2014-01-01 06:00'; // The day the world is hung-over
@@ -26,13 +27,14 @@ describe('month name', function() {
       });
 
       moment.months().forEach(function(month, index, months) {
-        it('should be ' + months[index], function() {
+        it('should be ' + months[index], function(done) {
           settings.now = moment(referenceDate).add('months', index);
+          settings.eventAfterAllRender = function() {
+            expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
+            done();
+          };
+
           $('#cal').fullCalendar(settings);
-          if(index == 0) console.log(moment.months());
-          
-          // FIX: Selector often appears to point to a undefined object, wait for a callback to ensure all items are available in the DOM
-          expect($('.fc-header-title')[0]).toContainText(moment.months[index]);
         });
       });
     });
@@ -45,20 +47,47 @@ describe('month name', function() {
         });
 
         moment.months().forEach(function(month, index, months) {
-          it('should be the translated name for ' + months[index], function() {
+          it('should be the translated name for ' + months[index], function(done) {
             settings.now = moment(referenceDate).add('months', index);
-            $('#cal').fullCalendar(settings);
-            if(index == 0) console.log(moment.months());
-            if(index == 0) console.log(settings.now.toISOString());
-            if(index == 0) console.log($('.fc-header-title')[0].innerHTML);
+            settings.eventAfterAllRender = function() {
+              expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
+              done();
+            };
             
-            //expect($('.fc-header-title')[0]).toContainText(moment.months[index]);
+            $('#cal').fullCalendar(settings);
           });
         });
       });
     });
 
-    describe('when names are specified', function() {});
+    describe('when names are specified', function() {
+      var months = [
+        'I',
+        'II',
+        'III',
+        'IV',
+        'V',
+        'VI',
+        'VII',
+        'IIX',
+        'IX',
+        'X',
+        'XI',
+        'XII'
+      ];
 
+      months.forEach(function(month, index, months) {
+        it('should be the translated name for ' + months[index], function(done) {
+          settings.now = moment(referenceDate).add('months', index);
+          settings.monthNames = months;
+          settings.eventAfterAllRender = function() {
+            expect($('.fc-header-title')[0]).toContainText(month);
+            done();
+          };
+          
+          $('#cal').fullCalendar(settings);
+        });
+      });
+    });
   });
 });
