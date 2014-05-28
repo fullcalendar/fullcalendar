@@ -15,18 +15,18 @@ describe('month name', function() {
     moment.lang('en'); // reset moment's global language
   });
 
-  ['month', 'agendaDay', 'basicDay'].forEach(function(viewClass, index, viewClasses) {
+  [ 'month', 'agendaDay', 'basicDay' ].forEach(function(viewClass, index, viewClasses) {
     describe('when view is ' + viewClass, function() {
       beforeEach(function() {
         settings.defaultView = viewClass;
       });
-  
+
       describe('when lang is default', function() {
         beforeEach(function() {
           settings.lang = 'en';
-          moment.lang('en')
+          moment.lang('en');
         });
-  
+
         moment.months().forEach(function(month, index, months) {
           it('should be ' + months[index], function(done) {
             settings.now = moment(referenceDate).add('months', index);
@@ -34,37 +34,38 @@ describe('month name', function() {
               expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
               done();
             };
-  
+
             $('#cal').fullCalendar(settings);
           });
         });
       });
-  
+
       languages.forEach(function(language, index, languages) {
         describe('when lang is ' + language, function() {
           beforeEach(function() {
             settings.lang = language;
-            moment.lang(language)
+            moment.lang(language);
           });
-  
+
           moment.months().forEach(function(month, index, months) {
             it('should be the translated name for ' + months[index], function(done) {
               settings.now = moment(referenceDate).add('months', index);
               settings.eventAfterAllRender = function() {
-                if(viewClass == 'month') {
+                if (viewClass == 'month') { // with month view check for occurence of the monthname in the title
                   expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
-                } else {
+                }
+                else { // with day views ensure that title contains the properly formatted phrase
                   expect($('.fc-header-title')[0]).toHaveText(settings.now.format('LL'));
                 }
                 done();
               };
-              
+
               $('#cal').fullCalendar(settings);
             });
           });
         });
       });
-  
+
       describe('when names are specified', function() {
         var months = [
           'I',
@@ -80,7 +81,7 @@ describe('month name', function() {
           'XI',
           'XII'
         ];
-  
+
         months.forEach(function(month, index, months) {
           it('should be the translated name for ' + months[index], function(done) {
             settings.now = moment(referenceDate).add('months', index);
@@ -89,7 +90,7 @@ describe('month name', function() {
               expect($('.fc-header-title')[0]).toContainText(month);
               done();
             };
-            
+
             $('#cal').fullCalendar(settings);
           });
         });
