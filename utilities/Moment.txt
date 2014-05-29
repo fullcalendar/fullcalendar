@@ -23,6 +23,11 @@ that the `moment()` constructor accepts, including:
 
 <h2 id='creating'>Creating Moments from scratch</h2>
 
+Most of the time you won't have to worry about instantiating your own Moments.
+For example, when specify [event array](../event_data/events_array/) data, you can just write
+ISO8601 strings and let FullCalendar handle the parsing.
+
+However, creating Moments from scratch is sometimes necessary.
 Since Moment is a dependency of FullCalendar, the global `moment` constructor will likely
 be available to you. You should be able to create new Moments from scratch like this:
 
@@ -53,8 +58,8 @@ For FullCalendar, the Moment object has been extended to represent a
 moment without a time, or an "ambigously-timed moment". Under the hood, these moments
 are represented in [UTC-mode] with a time of `00:00:00`.
 
-To create one, you can use FullCalendar's version of the `moment` or `moment.utc` constructor in tandem
-with an ISO8601 string without a time part:
+To create one, you can use FullCalendar's version of the `moment`, `moment.utc`, or `moment.parseZone`
+constructor in tandem with an ISO8601 string without a time part:
 
 	var m = $.fullCalendar.moment('2014-01-22');
 	m.hasTime();

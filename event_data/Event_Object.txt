@@ -57,11 +57,10 @@ date string, `allDay` will become `false`. Otherwise, it will be `true`.
 start
 </th>
 <td markdown='block'>
-[Moment](../utilities/Moment). *Required*.
+The date/time an event begins. *Required*.
 
-The date/time an event begins.
-
-A Moment object is accepted, as well as anything the Moment constructor accepts.
+A [Moment](../utilities/Moment)-ish input, like an [ISO8601 string](http://en.wikipedia.org/wiki/ISO_8601).
+Throughout the API this will become a real Moment object.
 </td>
 </tr>
 <!-- ------------------- -->
@@ -70,16 +69,14 @@ A Moment object is accepted, as well as anything the Moment constructor accepts.
 end
 </th>
 <td markdown='block'>
-[Moment](../utilities/Moment). Optional.
+The **exclusive** date/time an event ends. Optional.
 
-The **exclusive** date/time an event ends.
+A [Moment](../utilities/Moment)-ish input, like an [ISO8601 string](http://en.wikipedia.org/wiki/ISO_8601).
+Throughout the API this will become a real Moment object.
 
 It is the moment immediately *after* the event has ended.
 For example, if the last full day of an event is **Thursday**, the exclusive
 end of the event will be 00:00:00 on **Friday**!
-
-
-A Moment object is accepted, as well as anything the Moment constructor accepts.
 </td>
 </tr>
 <!-- ------------------- -->

@@ -19,7 +19,7 @@ Here is an example of how to specify an array of events:
 			},
 			{
 				title  : 'event3',
-				start  : '2010-01-09 12:30:00',
+				start  : '2010-01-09T12:30:00',
 				allDay : false // will make the time show
 			}
 		]
@@ -54,7 +54,7 @@ However, to do this, you must write things a little differently:
 					},
 					{
 						title  : 'event3',
-						start  : '2010-01-09 12:30:00',
+						start  : '2010-01-09T12:30:00',
 					}
 				],
 				color: 'black',     // an option!
