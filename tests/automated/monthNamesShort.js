@@ -1,12 +1,12 @@
 describe('short month name', function() {
   var settings = {};
-  var referenceDate = '2014-01-01 06:00'; // The day the world is hung-over
+  var referenceDate = '2014-01-01'; // The day the world is hung-over
   var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
 
   beforeEach(function() {
     affix('#cal');
     settings = {
-      now: moment(referenceDate).toISOString()
+      defaultDate: referenceDate
     };
   });
 
@@ -26,11 +26,11 @@ describe('short month name', function() {
           moment.lang('en');
         });
 
-        moment.monthsShort().forEach(function(month, index, months) {
-          it('should be ' + months[index], function(done) {
-            settings.now = moment(referenceDate).add('months', index);
+        moment.monthsShort().forEach(function(monthShort, index) {
+          it('should be ' + monthShort, function(done) {
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(moment.monthsShort()[index]);
+              expect($('.fc-header-title')[0]).toContainText(monthShort);
               done();
             };
 
@@ -46,11 +46,14 @@ describe('short month name', function() {
             moment.lang(language);
           });
 
-          moment.monthsShort().forEach(function(month, index, months) {
-            it('should be the translated name for ' + months[index], function(done) {
-              settings.now = moment(referenceDate).add('months', index);
+          moment.monthsShort().forEach(function(monthShort, index) { // `monthShort` will always be English
+            it('should be the translated name for ' + monthShort, function(done) {
+              var langMonthsShort = moment.monthsShort();
+              var langMonthShort = langMonthsShort[index];
+
+              settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
               settings.eventAfterAllRender = function() {
-                expect($('.fc-header-title')[0]).toContainText(moment.monthsShort()[index]);
+                expect($('.fc-header-title')[0]).toContainText(langMonthShort);
                 done();
               };
 
@@ -76,12 +79,12 @@ describe('short month name', function() {
           'XII'
         ];
 
-        monthsShort.forEach(function(month, index, months) {
-          it('should be the translated name for ' + months[index], function(done) {
-            settings.now = moment(referenceDate).add('months', index);
-            settings.monthNamesShort = months;
+        monthsShort.forEach(function(monthShort, index) { // `monthShort` will be our custom month name
+          it('should be the translated name for ' + monthShort, function(done) {
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
+            settings.monthNamesShort = monthsShort;
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(month);
+              expect($('.fc-header-title')[0]).toContainText(monthShort);
               done();
             };
 
