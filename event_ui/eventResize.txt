@@ -5,7 +5,7 @@ eventResize
 Triggered when resizing stops and the event has changed in duration.
 
 <div class='spec' markdown='1'>
-function( *event*, *jsEvent*, *ui*, *view* ) { }
+function( *event*, *revertFunc*, *jsEvent*, *ui*, *view* ) { }
 </div>
 
 `event` is an [Event Object](../event_data/Event_Object) that hold the event's information (date, title, etc).
