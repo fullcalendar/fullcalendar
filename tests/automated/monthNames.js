@@ -1,12 +1,12 @@
 describe('month name', function() {
   var settings = {};
-  var referenceDate = '2014-01-01 06:00'; // The day the world is hung-over
+  var referenceDate = '2014-01-01'; // The day the world is hung-over
   var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
 
   beforeEach(function() {
     affix('#cal');
     settings = {
-      now: moment(referenceDate).toISOString()
+      defaultDate: referenceDate
     };
   });
 
@@ -27,10 +27,10 @@ describe('month name', function() {
         });
 
         moment.months().forEach(function(month, index, months) {
-          it('should be ' + months[index], function(done) {
-            settings.now = moment(referenceDate).add('months', index);
+          it('should be ' + month, function(done) {
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
+              expect($('.fc-header-title')[0]).toContainText(month);
               done();
             };
 
@@ -46,15 +46,18 @@ describe('month name', function() {
             moment.lang(language);
           });
 
-          moment.months().forEach(function(month, index, months) {
-            it('should be the translated name for ' + months[index], function(done) {
-              settings.now = moment(referenceDate).add('months', index);
+          moment.months().forEach(function(month, index, months) { // `month` will always be English
+            it('should be the translated name for ' + month, function(done) {
+              var langMonths = moment.months();
+              var langMonth = langMonths[index];
+
+              settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
               settings.eventAfterAllRender = function() {
                 if (viewClass == 'month') { // with month view check for occurence of the monthname in the title
-                  expect($('.fc-header-title')[0]).toContainText(moment.months()[index]);
+                  expect($('.fc-header-title')[0]).toContainText(langMonth);
                 }
                 else { // with day views ensure that title contains the properly formatted phrase
-                  expect($('.fc-header-title')[0]).toHaveText(settings.now.format('LL'));
+                  expect($('.fc-header-title')[0]).toHaveText(settings.defaultDate.format('LL'));
                 }
                 done();
               };
@@ -81,9 +84,9 @@ describe('month name', function() {
           'XII'
         ];
 
-        months.forEach(function(month, index, months) {
-          it('should be the translated name for ' + months[index], function(done) {
-            settings.now = moment(referenceDate).add('months', index);
+        months.forEach(function(month, index, months) { // `month` is our custom month name
+          it('should be the translated name for ' + month, function(done) {
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.monthNames = months;
             settings.eventAfterAllRender = function() {
               expect($('.fc-header-title')[0]).toContainText(month);
