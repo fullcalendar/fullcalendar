@@ -1,0 +1,95 @@
+describe('short month name', function() {
+  var settings = {};
+  var referenceDate = '2014-01-01 06:00'; // The day the world is hung-over
+  var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
+
+  beforeEach(function() {
+    affix('#cal');
+    settings = {
+      now: moment(referenceDate).toISOString()
+    };
+  });
+
+  afterEach(function() {
+    moment.lang('en'); // reset moment's global language
+  });
+
+  [ 'agendaWeek', 'basicWeek' ].forEach(function(viewClass, index, viewClasses) {
+    describe('when view is ' + viewClass, function() {
+      beforeEach(function() {
+        settings.defaultView = viewClass;
+      });
+
+      describe('when lang is default', function() {
+        beforeEach(function() {
+          settings.lang = 'en';
+          moment.lang('en');
+        });
+
+        moment.monthsShort().forEach(function(month, index, months) {
+          it('should be ' + months[index], function(done) {
+            settings.now = moment(referenceDate).add('months', index);
+            settings.eventAfterAllRender = function() {
+              expect($('.fc-header-title')[0]).toContainText(moment.monthsShort()[index]);
+              done();
+            };
+
+            $('#cal').fullCalendar(settings);
+          });
+        });
+      });
+
+      languages.forEach(function(language, index, languages) {
+        describe('when lang is ' + language, function() {
+          beforeEach(function() {
+            settings.lang = language;
+            moment.lang(language);
+          });
+
+          moment.monthsShort().forEach(function(month, index, months) {
+            it('should be the translated name for ' + months[index], function(done) {
+              settings.now = moment(referenceDate).add('months', index);
+              settings.eventAfterAllRender = function() {
+                expect($('.fc-header-title')[0]).toContainText(moment.monthsShort()[index]);
+                done();
+              };
+
+              $('#cal').fullCalendar(settings);
+            });
+          });
+        });
+      });
+
+      describe('when names are specified', function() {
+        var monthsShort = [
+          'I',
+          'II',
+          'III',
+          'IV',
+          'V',
+          'VI',
+          'VII',
+          'IIX',
+          'IX',
+          'X',
+          'XI',
+          'XII'
+        ];
+
+        monthsShort.forEach(function(month, index, months) {
+          it('should be the translated name for ' + months[index], function(done) {
+            settings.now = moment(referenceDate).add('months', index);
+            settings.monthNamesShort = months;
+            settings.eventAfterAllRender = function() {
+              expect($('.fc-header-title')[0]).toContainText(month);
+              done();
+            };
+
+            $('#cal').fullCalendar(settings);
+          });
+        });
+      });
+    });
+  });
+
+});
