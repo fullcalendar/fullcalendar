@@ -10,7 +10,7 @@ var ajaxDefaults = {
 var eventGUID = 1;
 
 
-function EventManager(options, _sources) {
+function EventManager(options) { // assumed to be a calendar
 	var t = this;
 	
 	
@@ -23,13 +23,14 @@ function EventManager(options, _sources) {
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
-	t.normalizeEvent = normalizeEvent;
+	t.mutateEvent = mutateEvent;
 	
 	
 	// imports
 	var trigger = t.trigger;
 	var getView = t.getView;
 	var reportEvents = t.reportEvents;
+	var getEventEnd = t.getEventEnd;
 	
 	
 	// locals
@@ -40,7 +41,15 @@ function EventManager(options, _sources) {
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
 	var cache = [];
-	
+
+
+
+	var _sources = options.eventSources || [];
+	// TODO: don't mutate eventSources (see issue 954 and automated tests for constructor.js)
+
+	if (options.events) {
+		_sources.push(options.events);
+	}
 	
 	for (var i=0; i<_sources.length; i++) {
 		_addEventSource(_sources[i]);
@@ -53,7 +62,10 @@ function EventManager(options, _sources) {
 	
 	
 	function isFetchNeeded(start, end) {
-		return !rangeStart || start < rangeStart || end > rangeEnd;
+		return !rangeStart || // nothing has been fetched yet?
+			// or, a part of the new range is outside of the old range? (after normalizing)
+			start.clone().stripZone() < rangeStart.clone().stripZone() ||
+			end.clone().stripZone() > rangeEnd.clone().stripZone();
 	}
 	
 	
@@ -73,23 +85,16 @@ function EventManager(options, _sources) {
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(events) {
 			if (fetchID == currentFetchID) {
-				if (events) {
 
-					if (options.eventDataTransform) {
-						events = $.map(events, options.eventDataTransform);
-					}
-					if (source.eventDataTransform) {
-						events = $.map(events, source.eventDataTransform);
-					}
-					// TODO: this technique is not ideal for static array event sources.
-					//  For arrays, we'll want to process all events right in the beginning, then never again.
-				
+				if (events) {
 					for (var i=0; i<events.length; i++) {
-						events[i].source = source;
-						normalizeEvent(events[i]);
+						var event = buildEvent(events[i], source);
+						if (event) {
+							cache.push(event);
+						}
 					}
-					cache = cache.concat(events);
 				}
+
 				pendingSourceCnt--;
 				if (!pendingSourceCnt) {
 					reportEvents(cache);
@@ -103,8 +108,17 @@ function EventManager(options, _sources) {
 		var i;
 		var fetchers = fc.sourceFetchers;
 		var res;
+
 		for (i=0; i<fetchers.length; i++) {
-			res = fetchers[i](source, rangeStart, rangeEnd, callback);
+			res = fetchers[i].call(
+				t, // this, the Calendar object
+				source,
+				rangeStart.clone(),
+				rangeEnd.clone(),
+				options.timezone,
+				callback
+			);
+
 			if (res === true) {
 				// the fetcher is in charge. made its own async request
 				return;
@@ -115,14 +129,21 @@ function EventManager(options, _sources) {
 				return;
 			}
 		}
+
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
 				pushLoading();
-				events(cloneDate(rangeStart), cloneDate(rangeEnd), function(events) {
-					callback(events);
-					popLoading();
-				});
+				events.call(
+					t, // this, the Calendar object
+					rangeStart.clone(),
+					rangeEnd.clone(),
+					options.timezone,
+					function(events) {
+						callback(events);
+						popLoading();
+					}
+				);
 			}
 			else if ($.isArray(events)) {
 				callback(events);
@@ -154,11 +175,16 @@ function EventManager(options, _sources) {
 
 				var startParam = firstDefined(source.startParam, options.startParam);
 				var endParam = firstDefined(source.endParam, options.endParam);
+				var timezoneParam = firstDefined(source.timezoneParam, options.timezoneParam);
+
 				if (startParam) {
-					data[startParam] = Math.round(+rangeStart / 1000);
+					data[startParam] = rangeStart.format();
 				}
 				if (endParam) {
-					data[endParam] = Math.round(+rangeEnd / 1000);
+					data[endParam] = rangeEnd.format();
+				}
+				if (options.timezone && options.timezone != 'local') {
+					data[timezoneParam] = options.timezone;
 				}
 
 				pushLoading();
@@ -232,63 +258,75 @@ function EventManager(options, _sources) {
 	
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
-	
-	
-	function updateEvent(event) { // update an existing event
-		var i, len = cache.length, e,
-			defaultEventEnd = getView().defaultEventEnd, // getView???
-			startDelta = event.start - event._start,
-			endDelta = event.end ?
-				(event.end - (event._end || defaultEventEnd(event))) // event._end would be null if event.end
-				: 0;                                                      // was null and event was just resized
-		for (i=0; i<len; i++) {
-			e = cache[i];
-			if (e._id == event._id && e != event) {
-				e.start = new Date(+e.start + startDelta);
-				if (event.end) {
-					if (e.end) {
-						e.end = new Date(+e.end + endDelta);
-					}else{
-						e.end = new Date(+defaultEventEnd(e) + endDelta);
-					}
-				}else{
-					e.end = null;
-				}
-				e.title = event.title;
-				e.url = event.url;
-				e.allDay = event.allDay;
-				e.className = event.className;
-				e.editable = event.editable;
-				e.color = event.color;
-				e.backgroundColor = event.backgroundColor;
-				e.borderColor = event.borderColor;
-				e.textColor = event.textColor;
-				normalizeEvent(e);
-			}
+
+
+	function updateEvent(event) {
+
+		event.start = t.moment(event.start);
+		if (event.end) {
+			event.end = t.moment(event.end);
 		}
-		normalizeEvent(event);
-		reportEvents(cache);
+
+		mutateEvent(event);
+		propagateMiscProperties(event);
+		reportEvents(cache); // reports event modifications (so we can redraw)
 	}
-	
-	
-	function renderEvent(event, stick) {
-		normalizeEvent(event);
-		if (!event.source) {
-			if (stick) {
-				stickySource.events.push(event);
-				event.source = stickySource;
+
+
+	var miscCopyableProps = [
+		'title',
+		'url',
+		'allDay',
+		'className',
+		'editable',
+		'color',
+		'backgroundColor',
+		'borderColor',
+		'textColor'
+	];
+
+	function propagateMiscProperties(event) {
+		var i;
+		var cachedEvent;
+		var j;
+		var prop;
+
+		for (i=0; i<cache.length; i++) {
+			cachedEvent = cache[i];
+			if (cachedEvent._id == event._id && cachedEvent !== event) {
+				for (j=0; j<miscCopyableProps.length; j++) {
+					prop = miscCopyableProps[j];
+					if (event[prop] !== undefined) {
+						cachedEvent[prop] = event[prop];
+					}
+				}
 			}
-			cache.push(event);
 		}
-		reportEvents(cache);
+	}
+
+	
+	
+	function renderEvent(eventData, stick) {
+		var event = buildEvent(eventData);
+		if (event) {
+			if (!event.source) {
+				if (stick) {
+					stickySource.events.push(event);
+					event.source = stickySource;
+				}
+				cache.push(event);
+			}
+			reportEvents(cache);
+		}
 	}
 	
 	
 	function removeEvents(filter) {
+		var i;
 		if (!filter) { // remove all
 			cache = [];
 			// clear all array sources
-			for (var i=0; i<sources.length; i++) {
+			for (i=0; i<sources.length; i++) {
 				if ($.isArray(sources[i].events)) {
 					sources[i].events = [];
 				}
@@ -302,7 +340,7 @@ function EventManager(options, _sources) {
 			}
 			cache = $.grep(cache, filter, true);
 			// remove events from array sources
-			for (var i=0; i<sources.length; i++) {
+			for (i=0; i<sources.length; i++) {
 				if ($.isArray(sources[i].events)) {
 					sources[i].events = $.grep(sources[i].events, filter, true);
 				}
@@ -332,14 +370,14 @@ function EventManager(options, _sources) {
 	
 	
 	function pushLoading() {
-		if (!loadingLevel++) {
+		if (!(loadingLevel++)) {
 			trigger('loading', null, true, getView());
 		}
 	}
 	
 	
 	function popLoading() {
-		if (!--loadingLevel) {
+		if (!(--loadingLevel)) {
 			trigger('loading', null, false, getView());
 		}
 	}
@@ -348,35 +386,270 @@ function EventManager(options, _sources) {
 	
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
-	
-	
-	function normalizeEvent(event) {
-		var source = event.source || {};
-		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
-		event._id = event._id || (event.id === undefined ? '_fc' + eventGUID++ : event.id + '');
-		if (event.date) {
-			if (!event.start) {
-				event.start = event.date;
+
+	function buildEvent(data, source) { // source may be undefined!
+		var out = {};
+		var start;
+		var end;
+		var allDay;
+		var allDayDefault;
+
+		if (options.eventDataTransform) {
+			data = options.eventDataTransform(data);
+		}
+		if (source && source.eventDataTransform) {
+			data = source.eventDataTransform(data);
+		}
+
+		start = t.moment(data.start || data.date); // "date" is an alias for "start"
+		if (!start.isValid()) {
+			return;
+		}
+
+		end = null;
+		if (data.end) {
+			end = t.moment(data.end);
+			if (!end.isValid()) {
+				return;
 			}
-			delete event.date;
 		}
-		event._start = cloneDate(event.start = parseDate(event.start, ignoreTimezone));
-		event.end = parseDate(event.end, ignoreTimezone);
-		if (event.end && event.end <= event.start) {
-			event.end = null;
-		}
-		event._end = event.end ? cloneDate(event.end) : null;
-		if (event.allDay === undefined) {
-			event.allDay = firstDefined(source.allDayDefault, options.allDayDefault);
-		}
-		if (event.className) {
-			if (typeof event.className == 'string') {
-				event.className = event.className.split(/\s+/);
+
+		allDay = data.allDay;
+		if (allDay === undefined) {
+			allDayDefault = firstDefined(
+				source ? source.allDayDefault : undefined,
+				options.allDayDefault
+			);
+			if (allDayDefault !== undefined) {
+				// use the default
+				allDay = allDayDefault;
 			}
-		}else{
-			event.className = [];
+			else {
+				// all dates need to have ambig time for the event to be considered allDay
+				allDay = !start.hasTime() && (!end || !end.hasTime());
+			}
 		}
-		// TODO: if there is no start date, return false to indicate an invalid event
+
+		// normalize the date based on allDay
+		if (allDay) {
+			// neither date should have a time
+			if (start.hasTime()) {
+				start.stripTime();
+			}
+			if (end && end.hasTime()) {
+				end.stripTime();
+			}
+		}
+		else {
+			// force a time/zone up the dates
+			if (!start.hasTime()) {
+				start = t.rezoneDate(start);
+			}
+			if (end && !end.hasTime()) {
+				end = t.rezoneDate(end);
+			}
+		}
+
+		// Copy all properties over to the resulting object.
+		// The special-case properties will be copied over afterwards.
+		$.extend(out, data);
+
+		if (source) {
+			out.source = source;
+		}
+
+		out._id = data._id || (data.id === undefined ? '_fc' + eventGUID++ : data.id + '');
+
+		if (data.className) {
+			if (typeof data.className == 'string') {
+				out.className = data.className.split(/\s+/);
+			}
+			else { // assumed to be an array
+				out.className = data.className;
+			}
+		}
+		else {
+			out.className = [];
+		}
+
+		out.allDay = allDay;
+		out.start = start;
+		out.end = end;
+
+		if (options.forceEventDuration && !out.end) {
+			out.end = getEventEnd(out);
+		}
+
+		backupEventDates(out);
+
+		return out;
+	}
+
+
+
+	/* Event Modification Math
+	-----------------------------------------------------------------------------------------*/
+
+
+	// Modify the date(s) of an event and make this change propagate to all other events with
+	// the same ID (related repeating events).
+	//
+	// If `newStart`/`newEnd` are not specified, the "new" dates are assumed to be `event.start` and `event.end`.
+	// The "old" dates to be compare against are always `event._start` and `event._end` (set by EventManager).
+	//
+	// Returns a function that can be called to undo all the operations.
+	//
+	function mutateEvent(event, newStart, newEnd) {
+		var oldAllDay = event._allDay;
+		var oldStart = event._start;
+		var oldEnd = event._end;
+		var clearEnd = false;
+		var newAllDay;
+		var dateDelta;
+		var durationDelta;
+
+		// if no new dates were passed in, compare against the event's existing dates
+		if (!newStart && !newEnd) {
+			newStart = event.start;
+			newEnd = event.end;
+		}
+
+		// NOTE: throughout this function, the initial values of `newStart` and `newEnd` are
+		// preserved. These values may be undefined.
+
+		// detect new allDay
+		if (event.allDay != oldAllDay) { // if value has changed, use it
+			newAllDay = event.allDay;
+		}
+		else { // otherwise, see if any of the new dates are allDay
+			newAllDay = !(newStart || newEnd).hasTime();
+		}
+
+		// normalize the new dates based on allDay
+		if (newAllDay) {
+			if (newStart) {
+				newStart = newStart.clone().stripTime();
+			}
+			if (newEnd) {
+				newEnd = newEnd.clone().stripTime();
+			}
+		}
+
+		// compute dateDelta
+		if (newStart) {
+			if (newAllDay) {
+				dateDelta = dayishDiff(newStart, oldStart.clone().stripTime()); // treat oldStart as allDay
+			}
+			else {
+				dateDelta = dayishDiff(newStart, oldStart);
+			}
+		}
+
+		if (newAllDay != oldAllDay) {
+			// if allDay has changed, always throw away the end
+			clearEnd = true;
+		}
+		else if (newEnd) {
+			durationDelta = dayishDiff(
+				// new duration
+				newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
+				newStart || oldStart
+			).subtract(dayishDiff(
+				// subtract old duration
+				oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
+				oldStart
+			));
+		}
+
+		return mutateEvents(
+			clientEvents(event._id), // get events with this ID
+			clearEnd,
+			newAllDay,
+			dateDelta,
+			durationDelta
+		);
+	}
+
+
+	// Modifies an array of events in the following ways (operations are in order):
+	// - clear the event's `end`
+	// - convert the event to allDay
+	// - add `dateDelta` to the start and end
+	// - add `durationDelta` to the event's duration
+	//
+	// Returns a function that can be called to undo all the operations.
+	//
+	function mutateEvents(events, clearEnd, forceAllDay, dateDelta, durationDelta) {
+		var isAmbigTimezone = t.getIsAmbigTimezone();
+		var undoFunctions = [];
+
+		$.each(events, function(i, event) {
+			var oldAllDay = event._allDay;
+			var oldStart = event._start;
+			var oldEnd = event._end;
+			var newAllDay = forceAllDay != null ? forceAllDay : oldAllDay;
+			var newStart = oldStart.clone();
+			var newEnd = (!clearEnd && oldEnd) ? oldEnd.clone() : null;
+
+			// NOTE: this function is responsible for transforming `newStart` and `newEnd`,
+			// which were initialized to the OLD values first. `newEnd` may be null.
+
+			// normlize newStart/newEnd to be consistent with newAllDay
+			if (newAllDay) {
+				newStart.stripTime();
+				if (newEnd) {
+					newEnd.stripTime();
+				}
+			}
+			else {
+				if (!newStart.hasTime()) {
+					newStart = t.rezoneDate(newStart);
+				}
+				if (newEnd && !newEnd.hasTime()) {
+					newEnd = t.rezoneDate(newEnd);
+				}
+			}
+
+			// ensure we have an end date if necessary
+			if (!newEnd && (options.forceEventDuration || +durationDelta)) {
+				newEnd = t.getDefaultEventEnd(newAllDay, newStart);
+			}
+
+			// translate the dates
+			newStart.add(dateDelta);
+			if (newEnd) {
+				newEnd.add(dateDelta).add(durationDelta);
+			}
+
+			// if the dates have changed, and we know it is impossible to recompute the
+			// timezone offsets, strip the zone.
+			if (isAmbigTimezone) {
+				if (+dateDelta || +durationDelta) {
+					newStart.stripZone();
+					if (newEnd) {
+						newEnd.stripZone();
+					}
+				}
+			}
+
+			event.allDay = newAllDay;
+			event.start = newStart;
+			event.end = newEnd;
+			backupEventDates(event);
+
+			undoFunctions.push(function() {
+				event.allDay = oldAllDay;
+				event.start = oldStart;
+				event.end = oldEnd;
+				backupEventDates(event);
+			});
+		});
+
+		return function() {
+			for (var i=0; i<undoFunctions.length; i++) {
+				undoFunctions[i]();
+			}
+		};
 	}
 	
 	
@@ -396,7 +669,7 @@ function EventManager(options, _sources) {
 		}
 		var normalizers = fc.sourceNormalizers;
 		for (var i=0; i<normalizers.length; i++) {
-			normalizers[i](source);
+			normalizers[i].call(t, source);
 		}
 	}
 	
@@ -411,4 +684,12 @@ function EventManager(options, _sources) {
 	}
 
 
+}
+
+
+// updates the "backup" properties, which are preserved in order to compute diffs later on.
+function backupEventDates(event) {
+	event._allDay = event.allDay;
+	event._start = event.start.clone();
+	event._end = event.end ? event.end.clone() : null;
 }

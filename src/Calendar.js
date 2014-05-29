@@ -1,10 +1,40 @@
 
  
-function Calendar(element, options, eventSources) {
+function Calendar(element, instanceOptions) {
 	var t = this;
+
+
+
+	// Build options object
+	// -----------------------------------------------------------------------------------
+	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
+
+	instanceOptions = instanceOptions || {};
+
+	var options = mergeOptions({}, defaults, instanceOptions);
+	var langOptions;
+
+	// determine language options
+	if (options.lang in langOptionHash) {
+		langOptions = langOptionHash[options.lang];
+	}
+	else {
+		langOptions = langOptionHash[defaults.lang];
+	}
+
+	if (langOptions) { // if language options exist, rebuild...
+		options = mergeOptions({}, defaults, langOptions, instanceOptions);
+	}
+
+	if (options.isRTL) { // is isRTL, rebuild...
+		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
+	}
+
+
 	
-	
-	// exports
+	// Exports
+	// -----------------------------------------------------------------------------------
+
 	t.options = options;
 	t.render = render;
 	t.destroy = destroy;
@@ -22,21 +52,192 @@ function Calendar(element, options, eventSources) {
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
-	t.formatDate = function(format, date) { return formatDate(format, date, options) };
-	t.formatDates = function(format, date1, date2) { return formatDates(format, date1, date2, options) };
 	t.getDate = getDate;
+	t.getCalendar = getCalendar;
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
+
+
+
+	// Language-data Internals
+	// -----------------------------------------------------------------------------------
+	// Apply overrides to the current language's data
+
+	var langData = createObject( // make a cheap clone
+		moment.langData(options.lang)
+	);
+
+	if (options.monthNames) {
+		langData._months = options.monthNames;
+	}
+	if (options.monthNamesShort) {
+		langData._monthsShort = options.monthNamesShort;
+	}
+	if (options.dayNames) {
+		langData._weekdays = options.dayNames;
+	}
+	if (options.dayNamesShort) {
+		langData._weekdaysShort = options.dayNamesShort;
+	}
+	if (options.firstDay != null) {
+		var _week = createObject(langData._week); // _week: { dow: # }
+		_week.dow = options.firstDay;
+		langData._week = _week;
+	}
+
+
+
+	// Calendar-specific Date Utilities
+	// -----------------------------------------------------------------------------------
+
+
+	t.defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration);
+	t.defaultTimedEventDuration = moment.duration(options.defaultTimedEventDuration);
+
+
+	// Builds a moment using the settings of the current calendar: timezone and language.
+	// Accepts anything the vanilla moment() constructor accepts.
+	t.moment = function() {
+		var mom;
+
+		if (options.timezone === 'local') {
+			mom = fc.moment.apply(null, arguments);
+
+			// Force the moment to be local, because fc.moment doesn't guarantee it.
+			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
+				mom.local();
+			}
+		}
+		else if (options.timezone === 'UTC') {
+			mom = fc.moment.utc.apply(null, arguments); // process as UTC
+		}
+		else {
+			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
+		}
+
+		mom._lang = langData;
+
+		return mom;
+	};
+
+
+	// Returns a boolean about whether or not the calendar knows how to calculate
+	// the timezone offset of arbitrary dates in the current timezone.
+	t.getIsAmbigTimezone = function() {
+		return options.timezone !== 'local' && options.timezone !== 'UTC';
+	};
+
+
+	// Returns a copy of the given date in the current timezone of it is ambiguously zoned.
+	// This will also give the date an unambiguous time.
+	t.rezoneDate = function(date) {
+		return t.moment(date.toArray());
+	};
+
+
+	// Returns a moment for the current date, as defined by the client's computer,
+	// or overridden by the `now` option.
+	t.getNow = function() {
+		var now = options.now;
+		if (typeof now === 'function') {
+			now = now();
+		}
+		return t.moment(now);
+	};
+
+
+	// Calculates the week number for a moment according to the calendar's
+	// `weekNumberCalculation` setting.
+	t.calculateWeekNumber = function(mom) {
+		var calc = options.weekNumberCalculation;
+
+		if (typeof calc === 'function') {
+			return calc(mom);
+		}
+		else if (calc === 'local') {
+			return mom.week();
+		}
+		else if (calc.toUpperCase() === 'ISO') {
+			return mom.isoWeek();
+		}
+	};
+
+
+	// Get an event's normalized end date. If not present, calculate it from the defaults.
+	t.getEventEnd = function(event) {
+		if (event.end) {
+			return event.end.clone();
+		}
+		else {
+			return t.getDefaultEventEnd(event.allDay, event.start);
+		}
+	};
+
+
+	// Given an event's allDay status and start date, return swhat its fallback end date should be.
+	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
+		var end = start.clone();
+
+		if (allDay) {
+			end.stripTime().add(t.defaultAllDayEventDuration);
+		}
+		else {
+			end.add(t.defaultTimedEventDuration);
+		}
+
+		if (t.getIsAmbigTimezone()) {
+			end.stripZone(); // we don't know what the tzo should be
+		}
+
+		return end;
+	};
+
+
+
+	// Date-formatting Utilities
+	// -----------------------------------------------------------------------------------
+
+
+	// Like the vanilla formatRange, but with calendar-specific settings applied.
+	t.formatRange = function(m1, m2, formatStr) {
+
+		// a function that returns a formatStr // TODO: in future, precompute this
+		if (typeof formatStr === 'function') {
+			formatStr = formatStr.call(t, options, langData);
+		}
+
+		return formatRange(m1, m2, formatStr, null, options.isRTL);
+	};
+
+
+	// Like the vanilla formatDate, but with calendar-specific settings applied.
+	t.formatDate = function(mom, formatStr) {
+
+		// a function that returns a formatStr // TODO: in future, precompute this
+		if (typeof formatStr === 'function') {
+			formatStr = formatStr.call(t, options, langData);
+		}
+
+		return formatDate(mom, formatStr);
+	};
+
+
 	
-	
-	// imports
-	EventManager.call(t, options, eventSources);
+	// Imports
+	// -----------------------------------------------------------------------------------
+
+
+	EventManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
-	
-	
-	// locals
+
+
+
+	// Locals
+	// -----------------------------------------------------------------------------------
+
+
 	var _element = element[0];
 	var header;
 	var headerElement;
@@ -47,17 +248,22 @@ function Calendar(element, options, eventSources) {
 	var suggestedViewHeight;
 	var resizeUID = 0;
 	var ignoreWindowResize = 0;
-	var date = new Date();
+	var date;
 	var events = [];
 	var _dragElement;
 	
 	
 	
-	/* Main Rendering
-	-----------------------------------------------------------------------------*/
-	
-	
-	setYMD(date, options.year, options.month, options.date);
+	// Main Rendering
+	// -----------------------------------------------------------------------------------
+
+
+	if (options.defaultDate != null) {
+		date = t.moment(options.defaultDate);
+	}
+	else {
+		date = t.getNow();
+	}
 	
 	
 	function render(inc) {
@@ -85,7 +291,7 @@ function Calendar(element, options, eventSources) {
 			element.addClass('ui-widget');
 		}
 
-		content = $("<div class='fc-content' style='position:relative'/>")
+		content = $("<div class='fc-content' />")
 			.prependTo(element);
 
 		header = new Header(t, options);
@@ -143,9 +349,9 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	
-	/* View Rendering
-	-----------------------------------------------------------------------------*/
+
+	// View Rendering
+	// -----------------------------------------------------------------------------------
 	
 
 	function changeView(newViewName) {
@@ -170,7 +376,7 @@ function Calendar(element, options, eventSources) {
 		header.activateButton(newViewName);
 
 		currentView = new fcViews[newViewName](
-			$("<div class='fc-view fc-view-" + newViewName + "' style='position:relative'/>")
+			$("<div class='fc-view fc-view-" + newViewName + "' />")
 				.appendTo(content),
 			t // the calendar object
 		);
@@ -185,7 +391,8 @@ function Calendar(element, options, eventSources) {
 	function renderView(inc) {
 		if (
 			!currentView.start || // never rendered before
-			inc || date < currentView.start || date >= currentView.end // or new date range
+			inc || // explicit date window change
+			!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 		) {
 			if (elementVisible()) {
 				_renderView(inc);
@@ -204,7 +411,10 @@ function Calendar(element, options, eventSources) {
 		}
 
 		freezeContentHeight();
-		currentView.render(date, inc || 0); // the view's render method ONLY renders the skeleton, nothing else
+		if (inc) {
+			date = currentView.incrementDate(date, inc);
+		}
+		currentView.render(date.clone()); // the view's render method ONLY renders the skeleton, nothing else
 		setSize();
 		unfreezeContentHeight();
 		(currentView.afterRender || noop)();
@@ -213,7 +423,6 @@ function Calendar(element, options, eventSources) {
 		updateTodayButton();
 
 		trigger('viewRender', currentView, currentView, currentView.element);
-		currentView.trigger('viewDisplay', _element); // deprecated
 
 		ignoreWindowResize--;
 
@@ -222,8 +431,8 @@ function Calendar(element, options, eventSources) {
 	
 	
 
-	/* Resizing
-	-----------------------------------------------------------------------------*/
+	// Resizing
+	// -----------------------------------------------------------------------------------
 	
 	
 	function updateSize() {
@@ -309,7 +518,6 @@ function Calendar(element, options, eventSources) {
 
 	function renderEvents(modifiedEventID) { // TODO: remove modifiedEventID hack
 		if (elementVisible()) {
-			currentView.setEventData(events); // for View.js, TODO: unify with renderEvents
 			currentView.renderEvents(events, modifiedEventID); // actually render the DOM elements
 			currentView.trigger('eventAfterAllRender');
 		}
@@ -324,7 +532,7 @@ function Calendar(element, options, eventSources) {
 	
 
 	function getAndRenderEvents() {
-		if (!options.lazyFetching || isFetchNeeded(currentView.visStart, currentView.visEnd)) {
+		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
 			fetchAndRenderEvents();
 		}
 		else {
@@ -334,7 +542,7 @@ function Calendar(element, options, eventSources) {
 
 
 	function fetchAndRenderEvents() {
-		fetchEvents(currentView.visStart, currentView.visEnd);
+		fetchEvents(currentView.start, currentView.end);
 			// ... will call reportEvents
 			// ... which will call renderEvents
 	}
@@ -364,8 +572,8 @@ function Calendar(element, options, eventSources) {
 
 
 	function updateTodayButton() {
-		var today = new Date();
-		if (today >= currentView.start && today < currentView.end) {
+		var now = t.getNow();
+		if (now.isWithin(currentView.intervalStart, currentView.intervalEnd)) {
 			header.disableButton('today');
 		}
 		else {
@@ -379,8 +587,8 @@ function Calendar(element, options, eventSources) {
 	-----------------------------------------------------------------------------*/
 	
 
-	function select(start, end, allDay) {
-		currentView.select(start, end, allDay===undefined ? true : allDay);
+	function select(start, end) {
+		currentView.select(start, end);
 	}
 	
 
@@ -407,49 +615,37 @@ function Calendar(element, options, eventSources) {
 	
 	
 	function prevYear() {
-		addYears(date, -1);
+		date.add('years', -1);
 		renderView();
 	}
 	
 	
 	function nextYear() {
-		addYears(date, 1);
+		date.add('years', 1);
 		renderView();
 	}
 	
 	
 	function today() {
-		date = new Date();
+		date = t.getNow();
 		renderView();
 	}
 	
 	
-	function gotoDate(year, month, dateOfMonth) {
-		if (year instanceof Date) {
-			date = cloneDate(year); // provided 1 argument, a Date
-		}else{
-			setYMD(date, year, month, dateOfMonth);
-		}
+	function gotoDate(dateInput) {
+		date = t.moment(dateInput);
 		renderView();
 	}
 	
 	
-	function incrementDate(years, months, days) {
-		if (years !== undefined) {
-			addYears(date, years);
-		}
-		if (months !== undefined) {
-			addMonths(date, months);
-		}
-		if (days !== undefined) {
-			addDays(date, days);
-		}
+	function incrementDate() {
+		date.add.apply(date, arguments);
 		renderView();
 	}
 	
 	
 	function getDate() {
-		return cloneDate(date);
+		return date.clone();
 	}
 
 
@@ -480,6 +676,11 @@ function Calendar(element, options, eventSources) {
 	/* Misc
 	-----------------------------------------------------------------------------*/
 	
+
+	function getCalendar() {
+		return t;
+	}
+
 	
 	function getView() {
 		return currentView;
@@ -512,6 +713,7 @@ function Calendar(element, options, eventSources) {
 	------------------------------------------------------------------------*/
 	
 	if (options.droppable) {
+		// TODO: unbind on destroy
 		$(document)
 			.bind('dragstart', function(ev, ui) {
 				var _e = ev.target;

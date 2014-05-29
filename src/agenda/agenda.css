@@ -15,8 +15,11 @@
 	padding: 0 4px;
 	vertical-align: middle;
 	text-align: right;
-	white-space: nowrap;
 	font-weight: normal;
+	}
+
+.fc-agenda-slots .fc-agenda-axis {
+	white-space: nowrap;
 	}
 
 .fc-agenda .fc-week-number {

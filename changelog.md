@@ -1,4 +1,17 @@
 
+v2.0.0-beta2
+------------
+
+- fixed broken updateEvent method
+- use of MomentJS with no side effects to the library
+
+
+v2.0.0-beta
+-----------
+
+See <http://arshaw.com/fullcalendar/wiki/Upgrading-to-2/>
+
+
 v1.6.4 (2013-09-01)
 -------------------
 

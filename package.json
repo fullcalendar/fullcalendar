@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.4",
+  "version": "2.0.0-beta2",
   "repository": {
     "type": "git",
     "url": "https://github.com/arshaw/fullcalendar.git"
@@ -13,7 +13,12 @@
     "grunt-contrib-copy": "~0.4.0",
     "grunt-contrib-compress": "~0.4.0",
     "grunt-contrib-clean": "~0.4.0",
-    "lumbar": "~2.0.0-beta19"
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-jscs-checker": "~0.3.2",
+    "lumbar": "~2.0.0-beta19",
+    "karma": "^0.12.1",
+    "karma-jasmine": "^0.2.2",
+    "karma-phantomjs-launcher": "^0.1.2"
   },
   "scripts": {
     "install": "bower install"

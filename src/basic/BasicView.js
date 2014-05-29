@@ -19,18 +19,17 @@ function BasicView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // for selection (kinda hacky)
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	t.defaultEventEnd = defaultEventEnd;
-	t.getHoverListener = function() { return hoverListener };
+	t.getHoverListener = function() { return hoverListener; };
 	t.colLeft = colLeft;
 	t.colRight = colRight;
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
-	t.getIsCellAllDay = function() { return true };
+	t.getIsCellAllDay = function() { return true; };
 	t.allDayRow = allDayRow;
-	t.getRowCnt = function() { return rowCnt };
-	t.getColCnt = function() { return colCnt };
-	t.getColWidth = function() { return colWidth };
-	t.getDaySegmentContainer = function() { return daySegmentContainer };
+	t.getRowCnt = function() { return rowCnt; };
+	t.getColCnt = function() { return colCnt; };
+	t.getColWidth = function() { return colWidth; };
+	t.getDaySegmentContainer = function() { return daySegmentContainer; };
 	
 	
 	// imports
@@ -47,6 +46,7 @@ function BasicView(element, calendar, viewName) {
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
+	var calculateWeekNumber = calendar.calculateWeekNumber;
 	
 	
 	// locals
@@ -77,8 +77,6 @@ function BasicView(element, calendar, viewName) {
 	var tm;
 	var colFormat;
 	var showWeekNumbers;
-	var weekNumberTitle;
-	var weekNumberFormat;
 	
 	
 	
@@ -106,16 +104,7 @@ function BasicView(element, calendar, viewName) {
 	function updateOptions() {
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
-
-		// week # options. (TODO: bad, logic also in other views)
 		showWeekNumbers = opt('weekNumbers');
-		weekNumberTitle = opt('weekNumberTitle');
-		if (opt('weekNumberCalculation') != 'iso') {
-			weekNumberFormat = "w";
-		}
-		else {
-			weekNumberFormat = "W";
-		}
 	}
 	
 	
@@ -188,14 +177,14 @@ function BasicView(element, calendar, viewName) {
 		if (showWeekNumbers) {
 			html +=
 				"<th class='fc-week-number " + headerClass + "'>" +
-				htmlEscape(weekNumberTitle) +
+				htmlEscape(opt('weekNumberTitle')) +
 				"</th>";
 		}
 
 		for (col=0; col<colCnt; col++) {
 			date = cellToDate(0, col);
 			html +=
-				"<th class='fc-day-header fc-" + dayIDs[date.getDay()] + " " + headerClass + "'>" +
+				"<th class='fc-day-header fc-" + dayIDs[date.day()] + " " + headerClass + "'>" +
 				htmlEscape(formatDate(date, colFormat)) +
 				"</th>";
 		}
@@ -224,7 +213,7 @@ function BasicView(element, calendar, viewName) {
 				html +=
 					"<td class='fc-week-number " + contentClass + "'>" +
 					"<div>" +
-					htmlEscape(formatDate(date, weekNumberFormat)) +
+					htmlEscape(calculateWeekNumber(date)) +
 					"</div>" +
 					"</td>";
 			}
@@ -243,21 +232,21 @@ function BasicView(element, calendar, viewName) {
 	}
 
 
-	function buildCellHTML(date) {
-		var contentClass = tm + "-widget-content";
-		var month = t.start.getMonth();
-		var today = clearTime(new Date());
+	function buildCellHTML(date) { // date assumed to have stripped time
+		var month = t.intervalStart.month();
+		var today = calendar.getNow().stripTime();
 		var html = '';
+		var contentClass = tm + "-widget-content";
 		var classNames = [
 			'fc-day',
-			'fc-' + dayIDs[date.getDay()],
+			'fc-' + dayIDs[date.day()],
 			contentClass
 		];
 
-		if (date.getMonth() != month) {
+		if (date.month() != month) {
 			classNames.push('fc-other-month');
 		}
-		if (+date == +today) {
+		if (date.isSame(today, 'day')) {
 			classNames.push(
 				'fc-today',
 				tm + '-state-highlight'
@@ -273,12 +262,12 @@ function BasicView(element, calendar, viewName) {
 		html +=
 			"<td" +
 			" class='" + classNames.join(' ') + "'" +
-			" data-date='" + formatDate(date, 'yyyy-MM-dd') + "'" +
+			" data-date='" + date.format() + "'" +
 			">" +
 			"<div>";
 
 		if (showNumbers) {
-			html += "<div class='fc-day-number'>" + date.getDate() + "</div>";
+			html += "<div class='fc-day-number'>" + date.date() + "</div>";
 		}
 
 		html +=
@@ -300,7 +289,7 @@ function BasicView(element, calendar, viewName) {
 	function setHeight(height) {
 		viewHeight = height;
 		
-		var bodyHeight = viewHeight - head.height();
+		var bodyHeight = Math.max(viewHeight - head.height(), 0);
 		var rowHeight;
 		var rowHeightLast;
 		var cell;
@@ -353,8 +342,8 @@ function BasicView(element, calendar, viewName) {
 	
 	function dayClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var date = parseISO8601($(this).data('date'));
-			trigger('dayClick', this, date, true, ev);
+			var date = calendar.moment($(this).data('date'));
+			trigger('dayClick', this, date, ev);
 		}
 	}
 	
@@ -398,13 +387,13 @@ function BasicView(element, calendar, viewName) {
 	-----------------------------------------------------------------------*/
 	
 	
-	function defaultSelectionEnd(startDate, allDay) {
-		return cloneDate(startDate);
+	function defaultSelectionEnd(start) {
+		return start.clone().stripTime().add('days', 1);
 	}
 	
 	
-	function renderSelection(startDate, endDate, allDay) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
+	function renderSelection(start, end) { // end is exclusive
+		renderDayOverlay(start, end, true); // true = rebuild every time
 	}
 	
 	
@@ -413,10 +402,10 @@ function BasicView(element, calendar, viewName) {
 	}
 	
 	
-	function reportDayClick(date, allDay, ev) {
+	function reportDayClick(date, ev) {
 		var cell = dateToCell(date);
 		var _element = bodyCells[cell.row*colCnt + cell.col];
-		trigger('dayClick', _element, date, allDay, ev);
+		trigger('dayClick', _element, date, ev);
 	}
 	
 	
@@ -429,7 +418,9 @@ function BasicView(element, calendar, viewName) {
 		hoverListener.start(function(cell) {
 			clearOverlays();
 			if (cell) {
-				renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
+				var d1 = cellToDate(cell);
+				var d2 = d1.clone().add(calendar.defaultAllDayEventDuration);
+				renderDayOverlay(d1, d2);
 			}
 		}, ev);
 	}
@@ -439,8 +430,13 @@ function BasicView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-			var d = cellToDate(cell);
-			trigger('drop', _dragElement, d, true, ev, ui);
+			trigger(
+				'drop',
+				_dragElement,
+				cellToDate(cell),
+				ev,
+				ui
+			);
 		}
 	}
 	
@@ -448,11 +444,6 @@ function BasicView(element, calendar, viewName) {
 	
 	/* Utilities
 	--------------------------------------------------------*/
-	
-	
-	function defaultEventEnd(event) {
-		return cloneDate(event.start);
-	}
 	
 	
 	coordinateGrid = new CoordinateGrid(function(rows, cols) {

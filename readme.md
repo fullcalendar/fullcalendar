@@ -45,10 +45,49 @@ If you want to clean up the generated files, run:
 	grunt clean
 
 
-Writing Tests
--------------
+Style Guide
+-----------
 
-When fixing a bug or writing a feature, please make a corresponding HTML file in the `./tests/` directory to visually demonstrate your work. If the test requires user intervention to prove its point, please write instructions for the user to follow. Explore the existing tests for more info.
+Please follow the [Google JavaScript Style Guide] as closely as possible. With the following exceptions:
+
+```js
+if (true) {
+}
+else { // please put else, else if, and catch on a separate line
+}
+
+// please write one-line array literals with a one-space padding inside
+var a = [ 1, 2, 3 ];
+
+// please write one-line object literals with a one-space padding inside
+var o = { a: 1, b: 2, c: 3 };
+```
+
+Other exceptions:
+
+- please ignore anything about Google Closure Compiler or the `goog` library
+- please do not write JSDoc comments
+
+Notes about whitespace:
+
+- use *tabs* instead of spaces
+- separate functions with *2* blank lines
+- separate logical blocks within functions with *1* blank line
+
+Run the command line tool to automatically check your style:
+
+	grunt check
+
+
+Before Contributing!
+--------------------
+
+If you have edited code (including **tests** and **translations**) and would like to submit a pull request, please make sure you have done the following:
+
+1. Conformed to the style guide (successfully run `grunt check`)
+
+2. Written automated tests. View the [Automated Test README]
+
 
 
 [fc-homepage]: http://arshaw.com/fullcalendar/
@@ -57,3 +96,6 @@ When fixing a bug or writing a feature, please make a corresponding HTML file in
 [grunt-cli]: http://gruntjs.com/getting-started#installing-the-cli
 [bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
+[karma]: http://karma-runner.github.io/0.10/index.html
+[Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
+[Automated Test README]: ./tests/automated_test_readme.md
