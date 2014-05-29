@@ -103,12 +103,17 @@ function Calendar(element, instanceOptions) {
 
 		if (options.timezone === 'local') {
 			mom = fc.moment.apply(null, arguments);
+
+			// Force the moment to be local, because fc.moment doesn't guarantee it.
+			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
+				mom.local();
+			}
 		}
 		else if (options.timezone === 'UTC') {
-			mom = fc.moment.utc.apply(null, arguments);
+			mom = fc.moment.utc.apply(null, arguments); // process as UTC
 		}
 		else {
-			mom = fc.moment.parseZone.apply(null, arguments);
+			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
 		}
 
 		mom._lang = langData;

@@ -11,7 +11,8 @@ function createObject(proto) {
 	return new f();
 }
 
-// copy specifically-owned (non-protoype) properties of `b` onto `a`
+// Copies specifically-owned (non-protoype) properties of `b` onto `a`.
+// FYI, $.extend would copy *all* properties of `b` onto `a`.
 function extend(a, b) {
 	for (var i in b) {
 		if (b.hasOwnProperty(i)) {
