@@ -53,6 +53,33 @@ describe('allDayText', function() {
 		});
 	});
 
+	describe('when allDaySlots is set true and language is not default', function() {
+		describe('in agendaWeek', function() {
+			it('should use the language\'s all-day value', function() {
+				var options = {
+					defaultView: 'agendaWeek',
+					allDaySlot: true,
+					lang: 'pt-br'
+				};
+				$('#cal').fullCalendar(options);
+				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				expect(allDayText).toEqual('dia inteiro');
+			});
+		});
+		describe('in agendaDay', function() {
+			it('should use the language\'s all-day value', function() {
+				var options = {
+					defaultView: 'agendaDay',
+					allDaySlot: true,
+					lang: 'pt-br'
+				};
+				$('#cal').fullCalendar(options);
+				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				expect(allDayText).toEqual('dia inteiro');
+			});
+		});
+	});
+
 	describe('when allDaySlots is set true and allDayText is specified', function() {
 		describe('in agendaWeek', function() {
 			it('should show specified all day text', function() {

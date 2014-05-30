@@ -1,35 +1,68 @@
 
 describe('weekNumberCalculation', function() {
 
+	var options;
+
+	beforeEach(function() {
+		options = {
+			weekNumbers: true
+		};
+	});
+
+	function getRenderedWeekNumber() {
+		// works for both kinds of views
+		var text = $('.fc-agenda-axis.fc-week-number, .fc-week:first .fc-week-number').text();
+		return parseInt(text.replace(/\D/g, ''));
+	}
+
 	beforeEach(function() {
 		affix('#cal');
 	});
 
-	describe('when using the default', function() {
-		it('should return iso standard', function() {
-			$('#cal').fullCalendar({
-				editable: true,
-				weekNumbers: true,
-				weekNumberCalculation: 'ISO'
-			});
-			$('#cal').fullCalendar('gotoDate', '2013-11-17');
-			var weekNum = parseInt($('.fc-week.fc-first .fc-week-number div').text());
-			expect(weekNum).toEqual(43);
-		});
-	});
+	[ 'basicDay', 'agendaDay' ].forEach(function(viewType) {
+		describe('when in ' + viewType + ' view', function() {
 
-	describe('when using a defined weekNumber calculation', function() {
-		it('should return the calculated number', function() {
-			$('#cal').fullCalendar({
-				editable: true,
-				weekNumbers: true,
-				weekNumberCalculation: function() {
-					return 4;
-				}
+			beforeEach(function() {
+				options.defaultView = viewType;
 			});
-			$('#cal').fullCalendar('gotoDate', '2013-11-17');
-			var weekNum = parseInt($('.fc-week.fc-first .fc-week-number div').text());
-			expect(weekNum).toEqual(4);
+
+			it('should display the American standard when using \'local\'', function() {
+				options.defaultDate = '2013-11-23'; // a Saturday
+				options.weekNumberCalculation = 'local';
+				$('#cal').fullCalendar(options);
+				expect(getRenderedWeekNumber()).toBe(47);
+			});
+
+			it('should display a language-specific local week number', function() {
+				options.defaultDate = '2013-11-23'; // a Saturday
+				options.lang = 'ar';
+				options.weekNumberCalculation = 'local';
+				$('#cal').fullCalendar(options);
+				expect(getRenderedWeekNumber()).toBe(48);
+			});
+
+			// another local test, but to make sure it is different from ISO
+			it('should display the American standard when using \'local\'', function() {
+				options.defaultDate = '2013-11-17'; // a Sunday
+				options.weekNumberCalculation = 'local';
+				$('#cal').fullCalendar(options);
+				expect(getRenderedWeekNumber()).toBe(47);
+			});
+
+			it('should display ISO standard when using \'ISO\'', function() {
+				options.defaultDate = '2013-11-17'; // a Sunday
+				options.weekNumberCalculation = 'ISO';
+				$('#cal').fullCalendar(options);
+				expect(getRenderedWeekNumber()).toBe(46);
+			});
+
+			it('should display the calculated number when a custom function', function() {
+				options.weekNumberCalculation = function() {
+					return 4;
+				};
+				$('#cal').fullCalendar(options);
+				expect(getRenderedWeekNumber()).toBe(4);
+			});
 		});
 	});
 });
