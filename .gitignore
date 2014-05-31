@@ -1,7 +1,4 @@
-build/out
-build/archive
-build/bower
-build/cdnjs
+build/temp
 dist
 
 # npm modules

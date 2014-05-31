@@ -25,7 +25,9 @@ module.exports = function(grunt) {
 		uglify: {},
 		copy: {},
 		compress: {},
-		clean: {}
+		clean: {
+			temp: 'build/temp'
+		}
 	};
 
 	// Combine certain configs for the "meta" template variable (<%= meta.whatever %>)
@@ -37,7 +39,7 @@ module.exports = function(grunt) {
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
 		'lumbar:build',
-		'generateLanguages'
+		'languages'
 	]);
 
 
@@ -58,7 +60,7 @@ module.exports = function(grunt) {
 	config.lumbar = {
 		build: {
 			build: 'lumbar.json',
-			output: 'build/out' // a directory. lumbar doesn't like trailing slash
+			output: 'dist' // a directory. lumbar doesn't like trailing slash
 		}
 	};
 
@@ -68,9 +70,9 @@ module.exports = function(grunt) {
 			process: true // replace
 		},
 		expand: true,
-		cwd: 'build/out/',
+		cwd: 'dist/',
 		src: [ '*.js', '*.css' ],
-		dest: 'build/out/'
+		dest: 'dist/'
 	};
 
 	// create minified versions (*.min.js)
@@ -79,11 +81,11 @@ module.exports = function(grunt) {
 			preserveComments: 'some' // keep comments starting with /*!
 		},
 		expand: true,
-		src: 'build/out/fullcalendar.js', // only do it for fullcalendar.js
+		src: 'dist/fullcalendar.js', // only do it for fullcalendar.js
 		ext: '.min.js'
 	};
 
-	config.clean.modules = 'build/out/**';
+	config.clean.modules = 'dist/*.{js,css}';
 
 
 
@@ -95,26 +97,35 @@ module.exports = function(grunt) {
 		'jshint:srcLanguages',
 		'clean:languages',
 		'generateLanguages',
-		'uglify:languages'
+		'uglify:languages',
+		'uglify:languagesAll'
 	]);
 
 	config.generateLanguages = {
 		moment: 'lib/moment/lang/',
 		datepicker: 'lib/jquery-ui/ui/i18n/',
 		fullCalendar: 'lang/',
-		dest: 'build/out/lang/'
+		dest: 'build/temp/lang/',
+		allDest: 'build/temp/lang-all.js'
 	};
 
 	config.uglify.languages = {
 		expand: true,
-		cwd: 'build/out/lang/',
+		cwd: 'build/temp/lang/',
 		src: '*.js',
-		dest: 'build/out/lang-min/'
+		dest: 'dist/lang/'
+	};
+
+	config.uglify.languagesAll = {
+		src: 'build/temp/lang-all.js',
+		dest: 'dist/lang-all.js'
 	};
 
 	config.clean.languages = [
-		'build/out/lang/*',
-		'build/out/lang-min/*'
+		'build/temp/lang',
+		'build/temp/lang-all.js',
+		'dist/lang',
+		'dist/lang-all.js'
 	];
 
 
@@ -128,6 +139,7 @@ module.exports = function(grunt) {
 		'languages',
 		'copy:archiveModules',
 		'copy:archiveLanguages',
+		'copy:archiveLanguagesAll',
 		'copy:archiveMoment',
 		'copy:archiveJQuery',
 		'concat:archiveJQueryUI',
@@ -140,26 +152,31 @@ module.exports = function(grunt) {
 	// copy FullCalendar modules into ./fullcalendar/ directory
 	config.copy.archiveModules = {
 		expand: true,
-		cwd: 'build/out/',
+		cwd: 'dist/',
 		src: [ '*.js', '*.css' ],
-		dest: 'build/archive/fullcalendar/'
+		dest: 'build/temp/archive/'
 	};
 
 	config.copy.archiveLanguages = {
 		expand: true,
-		cwd: 'build/out/lang-min/',
+		cwd: 'dist/lang/',
 		src: '*.js',
-		dest: 'build/archive/fullcalendar/lang/'
+		dest: 'build/temp/archive/lang/'
+	};
+
+	config.copy.archiveLanguagesAll = {
+		src: 'dist/lang-all.js',
+		dest: 'build/temp/archive/lang-all.js'
 	};
 
 	config.copy.archiveMoment = {
 		src: 'lib/moment/min/moment.min.js',
-		dest: 'build/archive/lib/moment.min.js'
+		dest: 'build/temp/archive/lib/moment.min.js'
 	};
 
 	config.copy.archiveJQuery = {
 		src: 'lib/jquery/jquery.min.js',
-		dest: 'build/archive/lib/jquery.min.js'
+		dest: 'build/temp/archive/lib/jquery.min.js'
 	};
 
 	config.concat.archiveJQueryUI = {
@@ -170,7 +187,7 @@ module.exports = function(grunt) {
 			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
 			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
 		],
-		dest: 'build/archive/lib/jquery-ui.custom.min.js'
+		dest: 'build/temp/archive/lib/jquery-ui.custom.min.js'
 	};
 
 	// copy demo files into ./demos/ directory
@@ -184,7 +201,7 @@ module.exports = function(grunt) {
 			}
 		},
 		src: 'demos/**',
-		dest: 'build/archive/'
+		dest: 'build/temp/archive/'
 	};
 
 	// copy the "cupertino" jquery-ui theme into the demo directory (for demos/theme.html)
@@ -192,7 +209,7 @@ module.exports = function(grunt) {
 		expand: true,
 		cwd: 'lib/jquery-ui/themes/cupertino/',
 		src: [ 'jquery-ui.min.css', 'images/*' ],
-		dest: 'build/archive/lib/cupertino/'
+		dest: 'build/temp/archive/lib/cupertino/'
 	};
 
 	// in demo HTML, rewrites paths to work in the archive
@@ -201,7 +218,7 @@ module.exports = function(grunt) {
 		path = path.replace('../lib/jquery/jquery.js', '../lib/jquery.min.js');
 		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
 		path = path.replace('../lib/jquery-ui/themes/cupertino/', '../lib/cupertino/');
-		path = path.replace('../build/out/', '../fullcalendar/');
+		path = path.replace('../dist/', '../');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 		return path;
 	}
@@ -209,8 +226,8 @@ module.exports = function(grunt) {
 	// copy license and changelog
 	config.copy.archiveMisc = {
 		files: {
-			'build/archive/license.txt': 'license.txt',
-			'build/archive/changelog.txt': 'changelog.md'
+			'build/temp/archive/license.txt': 'license.txt',
+			'build/temp/archive/changelog.txt': 'changelog.md'
 		}
 	};
 
@@ -220,55 +237,15 @@ module.exports = function(grunt) {
 			archive: 'dist/<%= meta.name %>-<%= meta.version %>.zip'
 		},
 		expand: true,
-		cwd: 'build/archive/',
+		cwd: 'build/temp/archive/',
 		src: '**',
 		dest: '<%= meta.name %>-<%= meta.version %>/' // have a top-level directory in the ZIP file
 	};
 
-	config.clean.archive = 'build/archive/*';
-	config.clean.dist = 'dist/*';
-
-
-
-	/* Bower Component (http://bower.io/)
-	----------------------------------------------------------------------------------------------------*/
-
-	grunt.registerTask('bower', 'Build the FullCalendar Bower component', [
-		'clean:bower',
-		'modules',
-		'copy:bowerModules',
-		'copy:bowerReadme',
-		'bowerConfig'
-	]);
-
-	// copy FullCalendar modules into bower component's root
-	config.copy.bowerModules = {
-		expand: true,
-		cwd: 'build/out/',
-		src: [ '*.js', '*.css' ],
-		dest: 'build/bower/'
-	};
-
-	// copy the bower-specific README
-	config.copy.bowerReadme = {
-		src: 'build/bower-readme.md',
-		dest: 'build/bower/readme.md'
-	};
-
-	// assemble the bower config from existing configs
-	grunt.registerTask('bowerConfig', function() {
-		var bowerConfig = grunt.file.readJSON('build/bower.json');
-		grunt.file.write(
-			'build/bower/bower.json',
-			JSON.stringify(
-				_.extend({}, pluginConfig, bowerConfig), // combine 2 configs
-				null, // replacer
-				2 // indent
-			)
-		);
-	});
-
-	config.clean.bower = 'build/bower/*';
+	config.clean.archive = [
+		'build/temp/archive',
+		'dist/*.zip'
+	];
 
 
 
@@ -278,21 +255,36 @@ module.exports = function(grunt) {
 	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
 		'clean:cdnjs',
 		'modules',
+		'languages',
 		'copy:cdnjsModules',
+		'copy:cdnjsLanguages',
+		'copy:cdnjsLanguagesAll',
 		'cdnjsConfig'
 	]);
 
 	config.copy.cdnjsModules = {
 		expand: true,
-		cwd: 'build/out/',
+		cwd: 'dist/',
 		src: [ '*.js', '*.css' ],
-		dest: 'build/cdnjs/<%= meta.version %>/'
+		dest: 'dist/cdnjs/<%= meta.version %>/'
+	};
+
+	config.copy.cdnjsLanguages = {
+		expand: true,
+		cwd: 'dist/lang/',
+		src: '*.js',
+		dest: 'dist/cdnjs/<%= meta.version %>/lang/'
+	};
+
+	config.copy.cdnjsLanguagesAll = {
+		src: 'dist/lang-all.js',
+		dest: 'dist/cdnjs/<%= meta.version %>/lang-all.js'
 	};
 
 	grunt.registerTask('cdnjsConfig', function() {
 		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
-			'build/cdnjs/package.json',
+			'dist/cdnjs/package.json',
 			JSON.stringify(
 				_.extend({}, pluginConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
@@ -301,7 +293,7 @@ module.exports = function(grunt) {
 		);
 	});
 
-	config.clean.cdnjs = 'build/cdnjs/<%= meta.version %>/*';
+	config.clean.cdnjs = 'dist/cdnjs/<%= meta.version %>';
 	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
 
 

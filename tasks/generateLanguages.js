@@ -39,10 +39,9 @@ module.exports = function(grunt) {
 		combinedJS += '\n$.fullCalendar.lang("en");';
 		combinedJS += '\nif ($.datepicker) $.datepicker.setDefaults($.datepicker.regional[""]);';
 
-		grunt.file.write(
-			config.dest + '/all.js',
-			wrapWithUMD(combinedJS)
-		);
+		if (config.allDest) {
+			grunt.file.write(config.allDest, wrapWithUMD(combinedJS));
+		}
 
 		grunt.log.writeln(skippedLangCodes.length + ' skipped languages: ' + skippedLangCodes.join(', '));
 		grunt.log.writeln(languageCnt + ' generated languages.');

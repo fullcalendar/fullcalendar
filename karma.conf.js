@@ -28,10 +28,10 @@ module.exports = function(config) {
 			'lib/jasmine-fixture/dist/jasmine-fixture.js',
 			'tests/lib/jasmine-ext.js',
 
-			'build/out/fullcalendar.js',
-			'build/out/gcal.js',
-			'build/out/lang/all.js',
-			'build/out/fullcalendar.css',
+			'dist/fullcalendar.js',
+			'dist/gcal.js',
+			'dist/lang-all.js',
+			'dist/fullcalendar.css',
 			'tests/base.css',
 			'tests/automated/*.js'
 		],

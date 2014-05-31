@@ -24,8 +24,8 @@ module.exports = {
 
 	srcModules: [
 		'src/**/*.js',
-		'!**/intro.js',
-		'!**/outro.js'
+		'!**/intro.js', // exclude
+		'!**/outro.js'  //
 	],
 
 	builtModules: {
@@ -35,7 +35,10 @@ module.exports = {
 			unused: 'vars', // functions/variables (excluding function arguments) that are never used
 			latedef: 'nofunc' // variables that are referenced before their `var` statement
 		},
-		src: 'build/out/{fullcalendar,gcal}.js'
+		src: [
+			'dist/*.js',
+			'!**/lang-all.js' // exclude
+		]
 	},
 
 	srcLanguages: 'lang/*.js',

@@ -36,7 +36,7 @@ Or, you can run a script that automatically rebuilds whenever you save a source 
 
 You can optionally add the `--sourceMap` flag to output source maps for debugging.
 
-When you are finished, run the following command to write the distributable files into the `./build/out/` and `./build/dist/` directories:
+When you are finished, run the following command to write the distributable files into the `./dist/` directory:
 
 	grunt
 
