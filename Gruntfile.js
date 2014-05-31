@@ -32,20 +32,22 @@ module.exports = function(grunt) {
 	config.meta = grunt.file.readJSON('fullcalendar.jquery.json');
 
 	// The "grunt" command with no arguments
-	grunt.registerTask('default', 'archive');
+	grunt.registerTask('default', 'dist');
+
+	// Builds all distributable files, for a new release possibly
+	grunt.registerTask('dist', [
+		'clean',
+		'modules',
+		'languages',
+		'karma:continuous',
+		'archiveDist',
+		'cdnjsDist'
+	]);
 
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
 		'lumbar:build',
 		'languages'
-	]);
-
-	// Builds a clean dist directory, for a new release possibly
-	grunt.registerTask('dist', [
-		'clean',
-		'modules',
-		'languages',
-		'karma:continuous'
 	]);
 
 
@@ -157,10 +159,14 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('archive', 'Create a distributable ZIP archive', [
-		'clean:archive',
 		'modules',
 		'languages',
 		'karma:continuous',
+		'archiveDist'
+	]);
+
+	grunt.registerTask('archiveDist', [
+		'clean:archive',
 		'copy:archiveModules',
 		'copy:archiveLanguages',
 		'copy:archiveLanguagesAll',
@@ -291,10 +297,14 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
-		'clean:cdnjs',
 		'modules',
 		'languages',
 		'karma:continuous',
+		'cdnjsDist'
+	]);
+
+	grunt.registerTask('cdnjsDist', [
+		'clean:cdnjs',
 		'copy:cdnjsModules',
 		'copy:cdnjsLanguages',
 		'copy:cdnjsLanguagesAll',
