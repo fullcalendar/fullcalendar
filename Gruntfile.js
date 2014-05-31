@@ -309,14 +309,13 @@ module.exports = function(grunt) {
 	]);
 
 	// configs located elsewhere
-	config.jshint = require('./jshint.conf');
-	config.jscs = require('./jscs.conf');
+	config.jshint = require('./build/jshint.conf');
+	config.jscs = require('./build/jscs.conf');
 
 
 
 	// finally, give grunt the config object...
 	grunt.initConfig(config);
 
-	// load everything in the ./tasks/ directory
-	grunt.loadTasks('tasks');
+	grunt.loadTasks('./build/tasks/');
 };

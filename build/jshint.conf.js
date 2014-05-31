@@ -37,7 +37,8 @@ module.exports = {
 		},
 		src: [
 			'dist/*.js',
-			'!**/lang-all.js' // exclude
+			'!**/*.min.js',   // exclude
+			'!**/lang-all.js' //
 		]
 	},
 
@@ -45,6 +46,9 @@ module.exports = {
 
 	tests: 'tests/automated/*.js',
 
-	misc: '*.js' // config files in root
+	misc: [
+		'*.js', // ex: Gruntfile.js
+		'build/*.js' // ex: this file
+	]
 
 };
