@@ -638,8 +638,8 @@ function Calendar(element, instanceOptions) {
 	}
 	
 	
-	function incrementDate() {
-		date.add.apply(date, arguments);
+	function incrementDate(delta) {
+		date.add(moment.duration(delta));
 		renderView();
 	}
 	
