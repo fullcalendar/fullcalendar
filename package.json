@@ -15,6 +15,7 @@
     "grunt-contrib-clean": "~0.4.0",
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-jscs-checker": "~0.3.2",
+    "grunt-karma": "^0.8.3",
     "lumbar": "~2.0.0-beta19",
     "karma": "^0.12.1",
     "karma-jasmine": "^0.2.2",

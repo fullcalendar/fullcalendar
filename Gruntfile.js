@@ -12,6 +12,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-jscs-checker');
+	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('lumbar');
 
 	// Parse config files
@@ -40,6 +41,14 @@ module.exports = function(grunt) {
 	grunt.registerTask('dev', [
 		'lumbar:build',
 		'languages'
+	]);
+
+	// Builds a clean dist directory, for a new release possibly
+	grunt.registerTask('dist', [
+		'clean',
+		'modules',
+		'languages',
+		'karma:continuous'
 	]);
 
 
@@ -133,6 +142,20 @@ module.exports = function(grunt) {
 
 
 
+	/* Automated Tests
+	----------------------------------------------------------------------------------------------------*/
+
+	config.karma = {
+		options: {
+			configFile: 'karma.conf.js'
+		},
+		url: {}, // you'll have to visit a URL in a browser
+		headless: { browsers: [ 'PhantomJS' ] },
+		continuous: { browsers: [ 'PhantomJS' ], singleRun: true } // "continuous integration" mode
+	};
+
+
+
 	/* Archive
 	----------------------------------------------------------------------------------------------------*/
 
@@ -140,6 +163,7 @@ module.exports = function(grunt) {
 		'clean:archive',
 		'modules',
 		'languages',
+		'karma:continuous',
 		'copy:archiveModules',
 		'copy:archiveLanguages',
 		'copy:archiveLanguagesAll',
@@ -259,6 +283,7 @@ module.exports = function(grunt) {
 		'clean:cdnjs',
 		'modules',
 		'languages',
+		'karma:continuous',
 		'copy:cdnjsModules',
 		'copy:cdnjsLanguages',
 		'copy:cdnjsLanguagesAll',
@@ -296,8 +321,7 @@ module.exports = function(grunt) {
 		);
 	});
 
-	config.clean.cdnjs = 'dist/cdnjs/<%= meta.version %>';
-	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
+	config.clean.cdnjs = 'dist/cdnjs';
 
 
 
