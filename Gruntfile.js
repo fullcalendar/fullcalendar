@@ -150,7 +150,7 @@ module.exports = function(grunt) {
 		},
 		url: {}, // you'll have to visit a URL in a browser
 		headless: { browsers: [ 'PhantomJS' ] },
-		continuous: { browsers: [ 'PhantomJS' ], singleRun: true } // "continuous integration" mode
+		continuous: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false } // "continuous integration" mode
 	};
 
 

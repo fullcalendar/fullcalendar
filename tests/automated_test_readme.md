@@ -9,17 +9,16 @@ The test suite leverages the [Karma Test Runner][Karma]. This is the thing that 
 
 # Development Tools
 
-To run automated tests, you must first install the `karma` command line utility globally:
+First, your JS/CSS files should be built (via `grunt dev` or `build/watch.sh`).
+Then you can run the tests from a browser (this will output a URL that you can visit):
 
-	npm install -g karma-cli
-
-Then, assuming all your source files have been built (via `grunt dev` or `build/watch`), you can run the tests from a browser (this will output a URL that you can visit):
-
-	karma start --single-run
+	grunt karma
 
 Alternatively, you can run the tests headlessly:
 
-	karma start --single-run --browsers PhantomJS
+	grunt karma:headless
+
+Both commands will watch for any changes made to source files or test files, and then automatically rereun the tests.
 
 
 # Collaboration Resources
@@ -53,7 +52,7 @@ Once you are set up with the spreadsheet, there is the procedure for claiming/su
 
 6. Write the tests. Look at other tests in the directory for inspiration on how a test file is laid out.
 
-7. Make sure your tests pass. Run the `karma` commands mentioned above.
+7. Make sure your tests pass. Run the `grunt karma` commands mentioned above.
 
 8. Submit your code as a pull request to the main FullCalendar repo. [How to create a PR].
 
@@ -137,7 +136,7 @@ To test API methods (like [updateEvent]), call the method with a healthy variety
 
 When you are writing a new test, it is often annoying to have to run *all* tests every time while you are debugging. Jasmine allows you to write `ddescribe` and `iit` statements, which will only run the enclosed tests and ignore all others.
 
-Also, when running tests in a real browers via the plain `karma start` command, it is very helpful to use Karma's "debug" mode (available via the big DEBUG button). Once you are in that mode, JS debugging tools such as console and breakpoints will become available.
+Also, when running tests in a real browers via the plain `grunt karma` command, it is very helpful to use Karma's "debug" mode (available via the big DEBUG button). Once you are in that mode, JS debugging tools such as console and breakpoints will become available.
 
 The [jasmine-jquery] library is available to make it easier to query the DOM for certain things. It adds extra DOM-specific utility methods to the `expect()` object.
 
