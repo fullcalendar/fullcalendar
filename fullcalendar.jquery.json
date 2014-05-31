@@ -2,6 +2,10 @@
   "name": "fullcalendar",
   "version": "2.0.0-beta2",
 
+  "description": "Full-sized drag & drop event calendar",
+  "keywords": [ "calendar", "event", "full-sized" ],
+  "homepage": "http://arshaw.com/fullcalendar/",
+
   "dependencies": {
     "jquery": "~1.10.2",
     "moment": ">=2.6.0"
@@ -11,10 +15,6 @@
   },
 
   "title": "FullCalendar",
-  "description": "Full-sized drag & drop event calendar",
-  "keywords": [ "calendar", "event", "full-sized" ],
-
-  "homepage": "http://arshaw.com/fullcalendar/",
   "demo": "http://arshaw.com/fullcalendar/",
   "docs": "http://arshaw.com/fullcalendar/docs/",
   "download": "http://arshaw.com/fullcalendar/download/",
