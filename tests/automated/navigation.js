@@ -1,4 +1,4 @@
-describe('navigation', function() {
+describe('current date', function() {
 
 	var TITLE_FORMAT = 'MMMM D YYYY';
 	var options;
@@ -11,13 +11,15 @@ describe('navigation', function() {
 		};
 	});
 
-	describe('defaultDate', function() {
+	describe('defaultDate & getDate', function() {
 		describeWhenInMonth(function() {
 			it('should initialize at the date', function() {
 				options.defaultDate = '2011-03-10';
 				$('#cal').fullCalendar(options);
 				expectViewDates('2011-02-27', '2011-04-10', '2011-03-01');
-				expect($('#cal').fullCalendar('getDate')).toEqualMoment('2011-03-10');
+				var currentDate = $('#cal').fullCalendar('getDate');
+				expect(moment.isMoment(currentDate)).toEqual(true); // test the type, but only here
+				expect(currentDate).toEqualMoment('2011-03-10');
 			});
 		});
 		describeWhenInWeek(function() {
