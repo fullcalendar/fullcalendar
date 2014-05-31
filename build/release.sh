@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "`dirname $0`/../"
+cd "`dirname $0`/.."
 
 read -p "Enter the new version number with no 'v' (for example '1.0.1'): " version
 
