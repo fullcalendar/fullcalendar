@@ -1,4 +1,4 @@
-describe('nav method', function() {
+describe('navigation', function() {
 
 	var TITLE_FORMAT = 'MMMM D YYYY';
 	var options;
@@ -11,29 +11,67 @@ describe('nav method', function() {
 		};
 	});
 
+	describe('defaultDate', function() {
+		describeWhenInMonth(function() {
+			it('should initialize at the date', function() {
+				options.defaultDate = '2011-03-10';
+				$('#cal').fullCalendar(options);
+				expectViewDates('2011-02-27', '2011-04-10', '2011-03-01');
+				expect($('#cal').fullCalendar('getDate')).toEqualMoment('2011-03-10');
+			});
+		});
+		describeWhenInWeek(function() {
+			it('should initialize at the date, given a date string', function() {
+				options.defaultDate = '2011-03-10';
+				$('#cal').fullCalendar(options);
+				expectViewDates('2011-03-06', '2011-03-13');
+				expect($('#cal').fullCalendar('getDate')).toEqualMoment('2011-03-10');
+			});
+			it('should initialize at the date, given a Moment object', function() {
+				options.defaultDate = $.fullCalendar.moment('2011-03-10');
+				$('#cal').fullCalendar(options);
+				expectViewDates('2011-03-06', '2011-03-13');
+				expect($('#cal').fullCalendar('getDate')).toEqualMoment('2011-03-10');
+			});
+		});
+		describeWhenInDay(function() {
+			it('should initialize at the date', function() {
+				options.defaultDate = '2011-03-10';
+				$('#cal').fullCalendar(options);
+				expectViewDates('2011-03-10');
+				expect($('#cal').fullCalendar('getDate')).toEqualMoment('2011-03-10');
+			});
+		});
+	});
+
 	describe('gotoDate', function() {
 		describeWhenInMonth(function() {
 			it('should go to a date when given a date string', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('gotoDate', '2015-04-01');
 				expectViewDates('2015-03-29', '2015-05-10', '2015-04-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should go to a date when given a date string', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('gotoDate', '2015-04-01');
 				expectViewDates('2015-03-29', '2015-04-05');
 			});
 			it('should go to a date when given a date string with a time', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('gotoDate', '2015-04-01T12:00:00');
 				expectViewDates('2015-03-29', '2015-04-05');
 			});
 			it('should go to a date when given a moment object', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('gotoDate', $.fullCalendar.moment('2015-04-01'));
 				expectViewDates('2015-03-29', '2015-04-05');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should go to a date when given a date string', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('gotoDate', '2015-04-01');
 				expectViewDates('2015-04-01');
 			});
@@ -43,26 +81,31 @@ describe('nav method', function() {
 	describe('incrementDate', function() {
 		describeWhenInMonth(function() {
 			it('should increment the date when given a Duration object', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('incrementDate', { months: -1 });
 				expectViewDates('2014-04-27', '2014-06-08', '2014-05-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should increment the date when given a Duration object', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('incrementDate', { weeks: -2 });
 				expectViewDates('2014-05-18', '2014-05-25');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should increment the date when given a Duration object', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('incrementDate', { days: 2 });
 				expectViewDates('2014-06-03');
 			});
 			it('should increment the date when given a Duration string', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('incrementDate', '2.00:00:00');
 				expectViewDates('2014-06-03');
 			});
 			it('should increment the date when given a Duration string with a time', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('incrementDate', '2.05:30:00');
 				expectViewDates('2014-06-03');
 			});
@@ -72,18 +115,21 @@ describe('nav method', function() {
 	describe('prev', function() {
 		describeWhenInMonth(function() {
 			it('should move the calendar back a month', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prev');
 				expectViewDates('2014-04-27', '2014-06-08', '2014-05-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should move the calendar back a week', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prev');
 				expectViewDates('2014-05-25', '2014-06-01');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should move the calendar back a week', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prev');
 				expectViewDates('2014-05-31');
 			});
@@ -93,18 +139,21 @@ describe('nav method', function() {
 	describe('next', function() {
 		describeWhenInMonth(function() {
 			it('should move the calendar forward a month', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('next');
 				expectViewDates('2014-06-29', '2014-08-10', '2014-07-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should move the calendar forward a week', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('next');
 				expectViewDates('2014-06-08', '2014-06-15');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should move the calendar forward a week', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('next');
 				expectViewDates('2014-06-02');
 			});
@@ -114,18 +163,21 @@ describe('nav method', function() {
 	describe('prevYear', function() {
 		describeWhenInMonth(function() {
 			it('should move the calendar back a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prevYear');
 				expectViewDates('2013-05-26', '2013-07-07', '2013-06-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should move the calendar back a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prevYear');
 				expectViewDates('2013-05-26', '2013-06-02');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should move the calendar back a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('prevYear');
 				expectViewDates('2013-06-01');
 			});
@@ -135,18 +187,21 @@ describe('nav method', function() {
 	describe('nextYear', function() {
 		describeWhenInMonth(function() {
 			it('should move the calendar forward a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('nextYear');
 				expectViewDates('2015-05-31', '2015-07-12', '2015-06-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should move the calendar forward a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('nextYear');
 				expectViewDates('2015-05-31', '2015-06-07');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should move the calendar forward a year', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('nextYear');
 				expectViewDates('2015-06-01');
 			});
@@ -159,18 +214,21 @@ describe('nav method', function() {
 		});
 		describeWhenInMonth(function() {
 			it('should move the calendar to now', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('today');
 				expectViewDates('2016-02-28', '2016-04-10', '2016-03-01');
 			});
 		});
 		describeWhenInWeek(function() {
 			it('should move the calendar to now', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('today');
 				expectViewDates('2016-03-13', '2016-03-20');
 			});
 		});
 		describeWhenInDay(function() {
 			it('should move the calendar to now', function() {
+				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('today');
 				expectViewDates('2016-03-15');
 			});
@@ -199,7 +257,6 @@ describe('nav method', function() {
 		describe('when in ' + viewName, function() {
 			beforeEach(function() {
 				options.defaultView = viewName;
-				$('#cal').fullCalendar(options);
 			});
 			func();
 		});
