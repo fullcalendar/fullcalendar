@@ -85,7 +85,10 @@ module.exports = function(grunt) {
 		ext: '.min.js'
 	};
 
-	config.clean.modules = 'dist/*.{js,css}';
+	config.clean.modules = [
+		'dist/*.{js,css,map}', // maps created by lumbar sourceMap
+		'dist/src' // created by lumbar sourceMap
+	];
 
 
 

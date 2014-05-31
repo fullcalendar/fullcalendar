@@ -32,9 +32,7 @@ After you make code changes, you'll want to compile the JS/CSS so that it can be
 
 Or, you can run a script that automatically rebuilds whenever you save a source file:
 
-	./build/watch
-
-You can optionally add the `--sourceMap` flag to output source maps for debugging.
+	./build/watch.sh
 
 When you are finished, run the following command to write the distributable files into the `./dist/` directory:
 

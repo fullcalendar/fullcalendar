@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-"`dirname $0`/../node_modules/lumbar/bin/lumbar" watch "$@" "`dirname $0`/out"
