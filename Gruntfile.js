@@ -68,7 +68,7 @@ module.exports = function(grunt) {
 	// assemble modules
 	config.lumbar = {
 		build: {
-			build: 'lumbar.json',
+			build: 'build/lumbar.json',
 			output: 'dist' // a directory. lumbar doesn't like trailing slash
 		}
 	};
@@ -147,7 +147,7 @@ module.exports = function(grunt) {
 
 	config.karma = {
 		options: {
-			configFile: 'karma.conf.js'
+			configFile: 'build/karma.conf.js'
 		},
 		url: {}, // you'll have to visit a URL in a browser
 		headless: { browsers: [ 'PhantomJS' ] },
