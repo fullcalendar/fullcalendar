@@ -18,5 +18,14 @@
   "main": [
     "dist/fullcalendar.js",
     "dist/fullcalendar.css"
+  ],
+  "ignore": [
+    "build",
+    "demos",
+    "fullcalendar.jquery.json",
+    "lang",
+    "package.json",
+    "src",
+    "tests"
   ]
 }
