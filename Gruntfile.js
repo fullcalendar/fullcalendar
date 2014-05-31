@@ -205,7 +205,7 @@ module.exports = function(grunt) {
 	};
 
 	config.copy.archiveJQuery = {
-		src: 'lib/jquery/jquery.min.js',
+		src: 'lib/jquery/dist/jquery.min.js',
 		dest: 'build/temp/archive/lib/jquery.min.js'
 	};
 
@@ -245,7 +245,7 @@ module.exports = function(grunt) {
 	// in demo HTML, rewrites paths to work in the archive
 	function transformDemoPath(path) {
 		path = path.replace('../lib/moment/moment.js', '../lib/moment.min.js');
-		path = path.replace('../lib/jquery/jquery.js', '../lib/jquery.min.js');
+		path = path.replace('../lib/jquery/dist/jquery.js', '../lib/jquery.min.js');
 		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
 		path = path.replace('../lib/jquery-ui/themes/cupertino/', '../lib/cupertino/');
 		path = path.replace('../dist/', '../');

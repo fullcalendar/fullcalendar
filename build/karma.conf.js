@@ -11,7 +11,7 @@ module.exports = function(config) {
 		// list of files / patterns to load in the browser
 		files: [
 			'../lib/moment/moment.js',
-			'../lib/jquery/jquery.js',
+			'../lib/jquery/dist/jquery.js',
 			'../lib/jquery-ui/ui/jquery-ui.js',
 
 			// for jquery simulate
