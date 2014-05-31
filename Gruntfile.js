@@ -13,11 +13,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-jscs-checker');
 	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('lumbar');
-
-	// Parse config files
-	var packageConfig = grunt.file.readJSON('package.json');
-	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	
 	// This will eventually get passed to grunt.initConfig()
 	// Initialize multitasks...
@@ -31,8 +28,8 @@ module.exports = function(grunt) {
 		}
 	};
 
-	// Combine certain configs for the "meta" template variable (<%= meta.whatever %>)
-	config.meta = _.extend({}, packageConfig, pluginConfig);
+	// for the "meta" template variable (<%= meta.whatever %>)
+	config.meta = grunt.file.readJSON('fullcalendar.jquery.json');
 
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'archive');
@@ -276,6 +273,20 @@ module.exports = function(grunt) {
 
 
 
+	/* Release Utilities
+	----------------------------------------------------------------------------------------------------*/
+
+	config.bump = { // changes the version number in the configs
+		options: {
+			files: '*.json',
+			commit: false,
+			createTag: false,
+			push: false
+		}
+	};
+
+
+
 	/* CDNJS (http://cdnjs.com/)
 	----------------------------------------------------------------------------------------------------*/
 
@@ -310,11 +321,12 @@ module.exports = function(grunt) {
 	};
 
 	grunt.registerTask('cdnjsConfig', function() {
+		var jqueryConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
 			'dist/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, cdnjsConfig), // combine 2 configs
+				_.extend({}, jqueryConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
 				2 // indent
 			)
