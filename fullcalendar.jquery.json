@@ -4,7 +4,7 @@
 
   "dependencies": {
     "jquery": "~1.10.2",
-    "moment": ">=2.5.0"
+    "moment": ">=2.6.0"
   },
   "optionalDependencies": {
     "jquery-ui": "~1.10.3"
