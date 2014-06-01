@@ -14,7 +14,7 @@
     "grunt-contrib-compress": "^0.4.10",
     "grunt-contrib-clean": "^0.4.1",
     "grunt-contrib-jshint": "^0.8.0",
-    "grunt-jscs-checker": "^0.3.2",
+    "grunt-jscs-checker": "^0.4.4",
     "grunt-karma": "^0.8.3",
     "lumbar": "^2.0.1",
     "karma": "^0.12.16",
