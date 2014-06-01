@@ -13,8 +13,8 @@ grunt bump --setversion=$version && \
 grunt dist && \
 git add *.json && \
 git add -f dist/*.js dist/*.css dist/lang/*.js && \
-git commit -e -m "Release v$version" && \
-git tag -a v$version -m "Release v$version" && \
+git commit -e -m "version $version" && \
+git tag -a v$version -m "version $version" && \
 echo && \
 echo 'DONE. It is now up to you to run `'"git push origin master && git push origin v$version"'`' && \
 echo
