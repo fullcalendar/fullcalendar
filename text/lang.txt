@@ -44,7 +44,7 @@ However, if more than one language file is loaded, or the combined `all.js` file
 you must explicitly specify which language to use via the `lang` option:
 
 	<script src='fullcalendar/fullcalendar.js'></script>
-	<script src='fullcalendar/lang/all.js'></script>
+	<script src='fullcalendar/lang-all.js'></script>
 	<script>
 
 		$(document).ready(function() {
@@ -71,4 +71,4 @@ you include FullCalendar's language file:
 	<script src='lib/moment.js'></script>
 	<script src='lib/jquery-ui.custom-datepicker.js'></script>
 	<script src='fullcalendar/fullcalendar.js'></script>
-	<script src='fullcalendar/lang/all.js'></script>
+	<script src='fullcalendar/lang-all.js'></script>
