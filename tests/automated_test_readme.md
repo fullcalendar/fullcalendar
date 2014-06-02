@@ -12,7 +12,7 @@ The test suite leverages the [Karma Test Runner][Karma]. This is the thing that 
 First, your JS/CSS files should be built (via `grunt dev` or `build/watch.sh`).
 Then you can run the tests from a browser (this will output a URL that you can visit):
 
-	grunt karma
+	grunt karma:url
 
 Alternatively, you can run the tests headlessly:
 
