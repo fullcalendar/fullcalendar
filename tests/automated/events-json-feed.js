@@ -91,16 +91,13 @@ describe('events as a json feed', function() {
 			data: {
 				customParam: 'yes'
 			},
-			success: function() { }
+			success: function() {
+				var request = $.mockjax.mockedAjaxCalls()[0];
+				expect(request.data.customParam).toMatch('yes');
+				done();
+			}
 		};
-		spyOn(eventSource, 'success').and.callThrough();
 		options.eventSources = [ eventSource ];
-		options.eventAfterAllRender = function() {
-			var request = $.mockjax.mockedAjaxCalls()[0];
-			expect(request.data.customParam).toMatch('yes');
-			expect(eventSource.success.calls.count()).toEqual(1);
-			done();
-		};
 		$('#cal').fullCalendar(options);
 	});
 
