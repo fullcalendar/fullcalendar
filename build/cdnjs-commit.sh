@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 cd "`dirname $0`/.."
+proj_dir="$PWD"
 
 echo
 echo "This script assumes the following:"
@@ -26,16 +27,23 @@ read cdnjs_dir_override
 if [[ "$cdnjs_dir_override" ]]
 then
 	cdnjs_dir="$cdnjs_dir_override"
-fi 
+fi
 
-cp -r -f dist/cdnjs/* "$cdnjs_dir/ajax/libs/fullcalendar" && \
-cd $cdnjs_dir && \
+echo "Updating local copy of CDNJS..." && \
+cd "$cdnjs_dir" && \
+git pull upstream master && \
+\
+echo "Copying over our changes..." && \
+cd "$proj_dir" && \
+cp -r -f dist/cdnjs/* "$cdnjs_dir/ajax/libs/fullcalendar/" && \
+\
+echo "Running CDNJS's tests..." && \
+cd "$cdnjs_dir" && \
 npm test && \
-git add "ajax/libs/fullcalendar" && \
+\
+echo "Building commit..." && \
+git add "ajax/libs/fullcalendar/" && \
 git commit -e -m "fullcalendar v$version" && \
-echo && \
-echo 'Pulling from upstream...' && \
-git pull --rebase upstream master && \
 echo && \
 echo 'DONE. It is now up to you to run `'"cd $cdnjs_dir && git push origin master"'` and submit the PR to CDNJS.' && \
 echo
