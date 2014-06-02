@@ -16,7 +16,7 @@ Each of these possible values has an effect on
 **(2)** the timezones that event dates are represented in, and
 **(3)** the timezones that other dates in the API are represented in.
 
-For more information, see the [timezone demo](../../../../js/fullcalendar-2.0.0-beta/demos/timezones.html).
+For more information, see the [timezone demo](../../../../js/fullcalendar-2.0.0/demos/timezones.html).
 
 
 <br />
