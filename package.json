@@ -21,8 +21,9 @@
     "karma-jasmine": "^0.2.2",
     "karma-phantomjs-launcher": "^0.1.4"
   },
+
   "scripts": {
-    "install": "bower install && git update-index --assume-unchanged dist/*.js dist/*.css",
-    "uninstall": "git update-index --no-assume-unchanged dist/*.js dist/*.css"
+    "install": "bower install && git update-index --assume-unchanged dist/*.js dist/*.css dist/lang/*",
+    "preuninstall": "git update-index --no-assume-unchanged dist/*.js dist/*.css dist/lang/*"
   }
 }
