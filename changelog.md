@@ -1,15 +1,25 @@
 
-v2.0.0-beta2
-------------
+v2.0.0 (2014-06-01)
+-------------------
 
-- fixed broken updateEvent method
-- use of MomentJS with no side effects to the library
+Internationalization support, timezone support, and [MomentJS] integration. Extensive changes, many
+of which are backwards incompatible.
 
+[Full list of changes][Upgrading-to-2] | [Affected Issues][Date-Milestone]
 
-v2.0.0-beta
------------
+An automated testing framework has been set up ([Karma] + [Jasmine]) and tests have been written
+which cover about half of FullCalendar's functionality. Special thanks to @incre-d, @vidbina, and
+@sirrocco for the help.
 
-See <http://arshaw.com/fullcalendar/wiki/Upgrading-to-2/>
+In addition, the main development repo has been repurposed to also include the built distributable
+JS/CSS for the project and will serve as the new [Bower] endpoint.
+
+[MomentJS]: http://momentjs.com/
+[Upgrading-to-2]: http://arshaw.com/fullcalendar/wiki/Upgrading-to-2/
+[Date-Milestone]: https://code.google.com/p/fullcalendar/issues/list?can=1&q=milestone%3Ddate
+[Karma]: http://karma-runner.github.io/
+[Jasmine]: http://jasmine.github.io/
+[Bower]: http://bower.io/
 
 
 v1.6.4 (2013-09-01)
