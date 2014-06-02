@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "2.0.0-beta2",
+  "version": "2.0.0",
 
   "description": "Full-sized drag & drop event calendar",
   "keywords": [ "calendar", "event", "full-sized" ],
