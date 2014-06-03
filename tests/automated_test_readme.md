@@ -155,10 +155,10 @@ If you have any questions on what to tests, or how to organize your tests, post 
 [Jasmine Introduction]: http://jasmine.github.io/2.0/introduction.html
 [Karma]: http://karma-runner.github.io/
 [FullCalendar Documentation]: http://arshaw.com/fullcalendar/docs2/
-[Style Guide]: https://github.com/arshaw/fullcalendar/tree/v2#style-guide
+[Style Guide]: https://github.com/arshaw/fullcalendar/tree/master#style-guide
 [Google Group]: https://groups.google.com/forum/#!forum/fullcalendar
 [How to create a PR]: https://help.github.com/articles/creating-a-pull-request
-[minTime]: https://github.com/arshaw/fullcalendar/blob/v2/tests/automated/minTime.js
+[minTime]: https://github.com/arshaw/fullcalendar/blob/master/tests/automated/minTime.js
 [jasmine-jquery]: https://github.com/velesin/jasmine-jquery
 [jasmine-fixture]: https://github.com/searls/jasmine-fixture
 [Jasmine's asynchronous support]: http://jasmine.github.io/2.0/introduction.html#section-Asynchronous_Support
