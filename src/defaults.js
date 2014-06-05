@@ -34,6 +34,9 @@ var defaults = {
 
 	//allDayDefault: undefined,
 	
+	// JSON root - used e.g. in Zend Framework 2
+	root: null,
+	
 	// time formats
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this

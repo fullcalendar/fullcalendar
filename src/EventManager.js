@@ -192,6 +192,11 @@ function EventManager(options) { // assumed to be a calendar
 					data: data,
 					success: function(events) {
 						events = events || [];
+						// select events from the root element
+						if (typeof(options.root) !== 'undefined' && options.root &&
+							typeof(events[options.root]) !== 'undefined') {
+							events = events[options.root];
+						}
 						var res = applyAll(success, this, arguments);
 						if ($.isArray(res)) {
 							events = res;
