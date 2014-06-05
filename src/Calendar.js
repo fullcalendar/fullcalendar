@@ -699,10 +699,12 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function trigger(name, thisObj) {
+		var extraParameters = Array.prototype.slice.call(arguments, 2);
+		$(_element).trigger('fullcalendar-' + name, extraParameters);
 		if (options[name]) {
 			return options[name].apply(
 				thisObj || _element,
-				Array.prototype.slice.call(arguments, 2)
+				extraParameters
 			);
 		}
 	}
