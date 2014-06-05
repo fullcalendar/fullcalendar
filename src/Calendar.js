@@ -451,7 +451,13 @@ function Calendar(element, instanceOptions) {
 			suggestedViewHeight = options.contentHeight;
 		}
 		else if (options.height) {
-			suggestedViewHeight = options.height - (headerElement ? headerElement.height() : 0) - vsides(content);
+			var height;
+			if (typeof(options.height) == 'function') {
+				height = options.height();
+			} else {
+				height = options.height;
+			}
+			suggestedViewHeight = height - (headerElement ? headerElement.height() : 0) - vsides(content);
 		}
 		else {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
