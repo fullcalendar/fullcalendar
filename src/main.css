@@ -31,13 +31,10 @@ html .fc,
 /* Header
 ------------------------------------------------------------------------*/
 
-.fc-header td {
-	white-space: nowrap;
-	}
-
 .fc-header-left {
 	width: 25%;
 	text-align: left;
+  float: left;
 	}
 	
 .fc-header-center {
@@ -47,6 +44,7 @@ html .fc,
 .fc-header-right {
 	width: 25%;
 	text-align: right;
+  float: right;
 	}
 	
 .fc-header-title {
@@ -64,19 +62,29 @@ html .fc,
 	}
 	
 .fc-header .fc-button {
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	vertical-align: top;
 	}
+
+.fc-header .fc-button-group {
+	white-space: nowrap;
+	}
+
 	
 /* buttons edges butting together */
 
-.fc-header .fc-button {
+.fc-header .fc-button-group .fc-button {
 	margin-right: -1px;
 	}
+
+.fc-header .fc-corner-left,   /* non-theme */
+.fc-header .ui-corner-left {  /* theme */
+  margin-left: 5px;
+}
 	
 .fc-header .fc-corner-right,  /* non-theme */
 .fc-header .ui-corner-right { /* theme */
-	margin-right: 0; /* back to normal */
+	margin-right: 5px;
 	}
 	
 /* button layering (for border precedence) */
