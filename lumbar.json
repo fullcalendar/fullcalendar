@@ -31,6 +31,9 @@
         "src/agenda/AgendaDayView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaEventRenderer.js",
+        "src/timeslots/TimeslotsView.js",
+        "src/timeslots/TimeslotsWeekView.js",
+		  "src/timeslots/TimeslotsEventRenderer.js",
         "src/common/View.js",
         "src/common/DayEventRenderer.js",
         "src/common/SelectionManager.js",
@@ -44,7 +47,8 @@
         "src/main.css",
         "src/common/common.css",
         "src/basic/basic.css",
-        "src/agenda/agenda.css"
+        "src/agenda/agenda.css",
+        "src/timeslots/timeslots.css"
       ]
     },
     "fullcalendar.print": {

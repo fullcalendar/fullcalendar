@@ -1,0 +1,45 @@
+/*.fc-view-timeslotsWeek .fc-event-vert .fc-event-time {
+	white-space: normal;
+}*/
+.fc-view-timeslotsWeek .fc-agenda-slots {
+	/*opacity: .5;*/
+	visibility: hidden;
+}
+.fc-view-timeslotsWeek .fc-agenda-axis,
+.fc-view-timeslotsWeek .fc-timeslots-axis
+{
+	font-size: .86em;
+	line-height: 1.14em;
+}
+.fc-timeslots-axis {
+	width: 50px;
+	padding: 0 5px 0 4px;
+	text-align: right;
+}
+.fc-timeslots-slots {
+	width: 100%;
+	position:absolute;
+	z-index:8;
+	top:0;
+	left:0;
+}
+.fc-timeslots-slots .fc-timeslots-slot,
+.fc-timeslots-slots .fc-timeslots-break
+{
+	position: absolute;
+	height: 0;
+	width: 100%;
+	/*border-top: 1px solid #ddd;*/
+}
+.fc-timeslots-slots .fc-timeslots-slot {
+	background: transparent;
+	border: 1px solid #ddd;
+	border-width: 1px 0;
+	overflow: hidden;
+}
+.fc-timeslots-slots .fc-minor {
+	border-top-style: dotted;
+}
+.fc-timeslots-slots .fc-timeslots-break {
+	background: #eee;
+}
