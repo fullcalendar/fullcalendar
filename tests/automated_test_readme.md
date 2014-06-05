@@ -1,2 +1,2 @@
 
-Please consult the [Automated Test README on master](https://github.com/arshaw/fullcalendar/blob/master/tests/automated_test_readme.md).
+This documentation has moved: ["Automated Tests" on the Wiki](https://github.com/arshaw/fullcalendar/wiki/Automated-Tests)
