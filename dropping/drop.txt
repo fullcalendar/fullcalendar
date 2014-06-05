@@ -19,4 +19,4 @@ depending on whether it was dropped on an all-day area or not.
 `this` holds the DOM element that has been dropped.
 
 To see this callback function in action, view the [droppable]() article or look at
-[this example](/js/fullcalendar-1.5.3/demos/external-dragging.html).
+[this example](../../../../js/fullcalendar-2-latest/demos/external-dragging.html).

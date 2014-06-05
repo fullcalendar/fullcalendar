@@ -5,7 +5,7 @@ defaultView
 The initial view when the calendar loads.
 
 <div class='spec' markdown='1'>
-String, *default*: `'month'`
+String. the default value is `'month'`
 </div>
 
 Any of the [Available Views]().
