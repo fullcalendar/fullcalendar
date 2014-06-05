@@ -19,6 +19,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.fetchEvents = fetchEvents;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
+	t.getEventSources = getEventSources;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
@@ -320,7 +321,10 @@ function EventManager(options) { // assumed to be a calendar
 		}
 	}
 	
-	
+	function getEventSources() {
+		return sources
+	}
+ 	
 	function removeEvents(filter) {
 		var i;
 		if (!filter) { // remove all
