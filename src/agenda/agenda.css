@@ -157,4 +157,9 @@
 	_overflow: hidden;
 	}
 	
-	
+/* z-indexes */
+
+.fc-slots-container, .fc-event-container, .fc-event {
+	z-index: 1;
+	}
+

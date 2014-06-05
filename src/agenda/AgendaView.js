@@ -200,13 +200,13 @@ function AgendaView(element, calendar, viewName) {
 		buildDayTable();
 		
 		slotLayer =
-			$("<div style='position:absolute;z-index:2;left:0;width:100%'/>")
+			$('<div class="fc-slots-container" style="position:absolute;left:0;width:100%"/>')
 				.appendTo(element);
 				
 		if (opt('allDaySlot')) {
 		
 			daySegmentContainer =
-				$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
+				$("<div class='fc-event-container' style='position:absolute;top:0;left:0'/>")
 					.appendTo(slotLayer);
 		
 			s =
@@ -250,7 +250,7 @@ function AgendaView(element, calendar, viewName) {
 				.appendTo(slotScroller);
 				
 		slotSegmentContainer =
-			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
+			$("<div class='fc-event-container' style='position:absolute;top:0;left:0'/>")
 				.appendTo(slotContainer);
 		
 		s =
