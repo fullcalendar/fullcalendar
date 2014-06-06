@@ -56,6 +56,16 @@ function Header(calendar, options) {
 							prevButton.addClass(tm + '-corner-right');
 						}
 						prevButton = null;
+
+					//Allow a callback to define a custom header element - such as a filter
+					}else if( $.isFunction(options.filters[buttonName]) ){
+
+						//Use callback to define custom header element - pass options as argument.
+						var html =options.filters[buttonName](options);
+
+						var element =  $("<span class='fc-header-"+buttonName+"'></span>").append(html);
+ 						e.append(element);
+
 					}else{
 						var buttonClick;
 						if (calendar[buttonName]) {
