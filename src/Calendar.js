@@ -298,6 +298,7 @@ function Calendar(element, instanceOptions) {
 		headerElement = header.render();
 		if (headerElement) {
 			element.prepend(headerElement);
+			trigger("headerCreated", headerElement, headerElement);
 		}
 
 		changeView(options.defaultView);
