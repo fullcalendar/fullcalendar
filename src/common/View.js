@@ -170,14 +170,15 @@ function View(element, calendar, viewName) {
 
 	
 	function eventDrop(el, event, newStart, ev, ui) {
-		var undoMutation = calendar.mutateEvent(event, newStart, null);
+		var mutateResult = calendar.mutateEvent(event, newStart, null);
 
 		trigger(
 			'eventDrop',
 			el,
 			event,
+			mutateResult.dateDelta,
 			function() {
-				undoMutation();
+				mutateResult.undo();
 				reportEventChange(event._id);
 			},
 			ev,
@@ -189,14 +190,15 @@ function View(element, calendar, viewName) {
 
 
 	function eventResize(el, event, newEnd, ev, ui) {
-		var undoMutation = calendar.mutateEvent(event, null, newEnd);
+		var mutateResult = calendar.mutateEvent(event, null, newEnd);
 
 		trigger(
 			'eventResize',
 			el,
 			event,
+			mutateResult.durationDelta,
 			function() {
-				undoMutation();
+				mutateResult.undo();
 				reportEventChange(event._id);
 			},
 			ev,

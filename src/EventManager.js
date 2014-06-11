@@ -497,7 +497,7 @@ function EventManager(options) { // assumed to be a calendar
 	// If `newStart`/`newEnd` are not specified, the "new" dates are assumed to be `event.start` and `event.end`.
 	// The "old" dates to be compare against are always `event._start` and `event._end` (set by EventManager).
 	//
-	// Returns a function that can be called to undo all the operations.
+	// Returns an object with delta information and a function to undo all operations.
 	//
 	function mutateEvent(event, newStart, newEnd) {
 		var oldAllDay = event._allDay;
@@ -507,6 +507,7 @@ function EventManager(options) { // assumed to be a calendar
 		var newAllDay;
 		var dateDelta;
 		var durationDelta;
+		var undoFunc;
 
 		// if no new dates were passed in, compare against the event's existing dates
 		if (!newStart && !newEnd) {
@@ -561,13 +562,19 @@ function EventManager(options) { // assumed to be a calendar
 			));
 		}
 
-		return mutateEvents(
+		undoFunc = mutateEvents(
 			clientEvents(event._id), // get events with this ID
 			clearEnd,
 			newAllDay,
 			dateDelta,
 			durationDelta
 		);
+
+		return {
+			dateDelta: dateDelta,
+			durationDelta: durationDelta,
+			undo: undoFunc
+		};
 	}
 
 
