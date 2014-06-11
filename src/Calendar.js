@@ -345,7 +345,7 @@ function Calendar(element, instanceOptions) {
 
 		header.destroy();
 		content.remove();
-		element.removeClass('fc fc-rtl ui-widget');
+		element.removeClass('fc fc-ltr fc-rtl ui-widget');
 	}
 	
 	
