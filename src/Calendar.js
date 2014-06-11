@@ -333,6 +333,16 @@ function Calendar(element, instanceOptions) {
 
 		$(window).unbind('resize', windowResize);
 
+		if (options.droppable) {
+			$(document)
+				.off('dragstart', droppableDragStart)
+				.off('dragstop', droppableDragStop);
+		}
+
+		if (currentView.selectionManagerDestroy) {
+			currentView.selectionManagerDestroy();
+		}
+
 		header.destroy();
 		content.remove();
 		element.removeClass('fc fc-rtl ui-widget');
@@ -715,23 +725,28 @@ function Calendar(element, instanceOptions) {
 	if (options.droppable) {
 		// TODO: unbind on destroy
 		$(document)
-			.bind('dragstart', function(ev, ui) {
-				var _e = ev.target;
-				var e = $(_e);
-				if (!e.parents('.fc').length) { // not already inside a calendar
-					var accept = options.dropAccept;
-					if ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept)) {
-						_dragElement = _e;
-						currentView.dragStart(_dragElement, ev, ui);
-					}
-				}
-			})
-			.bind('dragstop', function(ev, ui) {
-				if (_dragElement) {
-					currentView.dragStop(_dragElement, ev, ui);
-					_dragElement = null;
-				}
-			});
+			.on('dragstart', droppableDragStart)
+			.on('dragstop', droppableDragStop);
+		// this is undone in destroy
+	}
+
+	function droppableDragStart(ev, ui) {
+		var _e = ev.target;
+		var e = $(_e);
+		if (!e.parents('.fc').length) { // not already inside a calendar
+			var accept = options.dropAccept;
+			if ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept)) {
+				_dragElement = _e;
+				currentView.dragStart(_dragElement, ev, ui);
+			}
+		}
+	}
+
+	function droppableDragStop(ev, ui) {
+		if (_dragElement) {
+			currentView.dragStop(_dragElement, ev, ui);
+			_dragElement = null;
+		}
 	}
 	
 

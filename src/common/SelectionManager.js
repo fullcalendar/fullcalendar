@@ -10,6 +10,7 @@ function SelectionManager() {
 	t.unselect = unselect;
 	t.reportSelection = reportSelection;
 	t.daySelectionMousedown = daySelectionMousedown;
+	t.selectionManagerDestroy = destroy;
 	
 	
 	// imports
@@ -28,16 +29,18 @@ function SelectionManager() {
 
 	// unselectAuto
 	if (opt('selectable') && opt('unselectAuto')) {
-		// TODO: unbind on destroy
-		$(document).mousedown(function(ev) {
-			var ignore = opt('unselectCancel');
-			if (ignore) {
-				if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
-					return;
-				}
+		$(document).on('mousedown', documentMousedown);
+	}
+
+
+	function documentMousedown(ev) {
+		var ignore = opt('unselectCancel');
+		if (ignore) {
+			if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
+				return;
 			}
-			unselect(ev);
-		});
+		}
+		unselect(ev);
 	}
 	
 
@@ -108,6 +111,11 @@ function SelectionManager() {
 				}
 			});
 		}
+	}
+
+
+	function destroy() {
+		$(document).off('mousedown', documentMousedown);
 	}
 
 
