@@ -415,7 +415,7 @@ function AgendaEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 				origWidth = eventElement.width();
 
@@ -467,7 +467,7 @@ function AgendaEventRenderer() {
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (revert) { // hasn't moved or is out of bounds (draggable has already reverted)
 					
@@ -487,7 +487,7 @@ function AgendaEventRenderer() {
 					}
 
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -537,7 +537,7 @@ function AgendaEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 
 				coordinateGrid.build();
@@ -621,11 +621,11 @@ function AgendaEventRenderer() {
 			stop: function(ev, ui) {
 
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || dayDelta || snapDelta)) { // changed!
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -705,7 +705,7 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				snapDelta = prevSnapDelta = 0;
 				hideEvents(event, eventElement);
-				trigger('eventResizeStart', this, event, ev, ui);
+				trigger('eventResizeStart', eventElement[0], event, ev, ui);
 			},
 			resize: function(ev, ui) {
 				// don't rely on ui.size.height, doesn't take grid into account
@@ -728,10 +728,10 @@ function AgendaEventRenderer() {
 				}
 			},
 			stop: function(ev, ui) {
-				trigger('eventResizeStop', this, event, ev, ui);
+				trigger('eventResizeStop', eventElement[0], event, ev, ui);
 				if (snapDelta) {
 					eventResize(
-						this,
+						eventElement[0],
 						event,
 						eventEnd,
 						ev,

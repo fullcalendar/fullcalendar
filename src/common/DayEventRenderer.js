@@ -575,7 +575,7 @@ function DayEventRenderer() {
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
@@ -598,10 +598,10 @@ function DayEventRenderer() {
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 				if (dayDelta) {
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -653,7 +653,7 @@ function DayEventRenderer() {
 			$('body')
 				.css('cursor', direction + '-resize')
 				.one('mouseup', mouseup);
-			trigger('eventResizeStart', this, event, ev);
+			trigger('eventResizeStart', element[0], event, ev, {}); // {} is dummy jqui event
 			hoverListener.start(function(cell, origCell) {
 				if (cell) {
 
@@ -699,17 +699,18 @@ function DayEventRenderer() {
 			}, ev);
 			
 			function mouseup(ev) {
-				trigger('eventResizeStop', this, event, ev);
+				trigger('eventResizeStop', element[0], event, ev, {}); // {} is dummy jqui event
 				$('body').css('cursor', '');
 				hoverListener.stop();
 				clearOverlays();
 
 				if (dayDelta) {
 					eventResize(
-						this, // el
+						element[0],
 						event,
 						eventEnd,
-						ev
+						ev,
+						{} // dummy jqui event
 					);
 					// event redraw will clear helpers
 				}
