@@ -1,5 +1,4 @@
 describe('eventDrop', function() {
-
 	var options;
 
 	beforeEach(function() {
@@ -26,9 +25,9 @@ describe('eventDrop', function() {
 					start: '2014-06-11',
 					allDay: true
 				} ];
-				var called = false;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
@@ -39,33 +38,23 @@ describe('eventDrop', function() {
 									duration: 100
 								}
 							});
-						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.asDays()).toBe(9);
+						expect(delta.hours()).toBe(0);
+						expect(delta.minutes()).toBe(0);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-20');
+						expect(event.end).toBeNull();
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11');
+						expect(event.end).toBeNull();
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					// only type-check arguments for basic view once here
-					expect(typeof event).toBe('object'); // TODO: discriminate more
-					expect(moment.isDuration(delta)).toBe(true);
-					expect(typeof revertFunc).toBe('function');
-					expect(typeof jsEvent).toBe('object'); // TODO: discriminate more
-					expect(typeof uiEvent).toBe('object'); // "
-					expect(typeof view).toBe('object'); // "
-
-					expect(delta.asDays()).toBe(9);
-					expect(delta.hours()).toBe(0);
-					expect(delta.minutes()).toBe(0);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-20');
-					expect(event.end).toBeNull();
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11');
-					expect(event.end).toBeNull();
-
-					done();
-				};
-				$('#cal').fullCalendar(options);
+				);
 			});
 		});
 
@@ -76,9 +65,9 @@ describe('eventDrop', function() {
 					start: '2014-06-11T06:00:00',
 					allDay: false
 				} ];
-				var called = false;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
@@ -89,25 +78,23 @@ describe('eventDrop', function() {
 									duration: 100
 								}
 							});
-						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.asDays()).toBe(5);
+						expect(delta.hours()).toBe(0);
+						expect(delta.minutes()).toBe(0);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-16T06:00:00');
+						expect(event.end).toBeNull();
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T06:00:00');
+						expect(event.end).toBeNull();
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					expect(delta.asDays()).toBe(5);
-					expect(delta.hours()).toBe(0);
-					expect(delta.minutes()).toBe(0);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-16T06:00:00');
-					expect(event.end).toBeNull();
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11T06:00:00');
-					expect(event.end).toBeNull();
-
-					done();
-				};
-				$('#cal').fullCalendar(options);
+				);
 			});
 		});
 	});
@@ -124,9 +111,9 @@ describe('eventDrop', function() {
 					start: '2014-06-11T06:00:00',
 					allDay: false
 				} ];
-				var called = false;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
@@ -138,32 +125,23 @@ describe('eventDrop', function() {
 								}
 							});
 						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(1);
+						expect(delta.hours()).toBe(1);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-12T07:30:00');
+						expect(event.end).toBeNull();
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T06:00:00');
+						expect(event.end).toBeNull();
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					// only type-check arguments for agenda view once here
-					expect(typeof event).toBe('object'); // TODO: discriminate more
-					expect(moment.isDuration(delta)).toBe(true);
-					expect(typeof revertFunc).toBe('function');
-					expect(typeof jsEvent).toBe('object'); // TODO: discriminate more
-					expect(typeof uiEvent).toBe('object'); // "
-					expect(typeof view).toBe('object'); // "
-
-					expect(delta.days()).toBe(1);
-					expect(delta.hours()).toBe(1);
-					expect(delta.minutes()).toBe(30);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-12T07:30:00');
-					expect(event.end).toBeNull();
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11T06:00:00');
-					expect(event.end).toBeNull();
-
-					done();
-				};
-				$('#cal').fullCalendar(options);
+				);
 			});
 		});
 
@@ -174,9 +152,9 @@ describe('eventDrop', function() {
 					start: '2014-06-11',
 					allDay: true
 				} ];
-				var called = false;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
@@ -187,24 +165,23 @@ describe('eventDrop', function() {
 								}
 							});
 						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(2);
+						expect(delta.hours()).toBe(0);
+						expect(delta.minutes()).toBe(0);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-13');
+						expect(event.end).toBeNull();
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11');
+						expect(event.end).toBeNull();
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					expect(delta.days()).toBe(2);
-					expect(delta.hours()).toBe(0);
-					expect(delta.minutes()).toBe(0);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-13');
-					expect(event.end).toBeNull();
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11');
-					expect(event.end).toBeNull();
-
-					done();
-				};
-				$('#cal').fullCalendar(options);
+				);
 			});
 		});
 
@@ -216,9 +193,9 @@ describe('eventDrop', function() {
 					start: '2014-06-11',
 					allDay: true
 				} ];
-				var called = false;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
@@ -230,43 +207,41 @@ describe('eventDrop', function() {
 								}
 							});
 						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(-1);
+						expect(delta.hours()).toBe(1);
+						expect(delta.minutes()).toBe(0);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-10T01:00:00');
+						expect(event.end).toBeNull();
+						expect(event.allDay).toBe(false);
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11');
+						expect(event.end).toBeNull();
+						expect(event.allDay).toBe(true);
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					expect(delta.days()).toBe(-1);
-					expect(delta.hours()).toBe(1);
-					expect(delta.minutes()).toBe(0);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-10T01:00:00');
-					expect(event.end).toBeNull();
-					expect(event.allDay).toBe(false);
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11');
-					expect(event.end).toBeNull();
-					expect(event.allDay).toBe(true);
-
-					done();
-				};
-				setTimeout(function() { // hack. scroll state was messed up or something
-					$('#cal').fullCalendar(options);
-				},0);
+				);
 			});
 		});
 
 		describe('when dragging a timed event to an all-day slot on a different day', function() {
 			it('should be given correct arguments, with whole-day delta', function(done) {
+				var eventElm;
+
 				options.scrollTime = '01:00:00';
 				options.events = [ {
 					title: 'timed event',
 					start: '2014-06-11T01:00:00',
 					allDay: false
 				} ];
-				var called = false;
-				var eventElm;
-				options.eventAfterAllRender = function() {
-					if (!called) { // because event rerendering will happen upon drop
+
+				init(
+					function() {
 						eventElm = $('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag', {
@@ -293,30 +268,78 @@ describe('eventDrop', function() {
 									}, 100);
 								}
 							});
-						called = true;
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(-1);
+						expect(delta.hours()).toBe(0);
+						expect(delta.minutes()).toBe(0);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-10');
+						expect(event.end).toBeNull();
+						expect(event.allDay).toBe(true);
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T01:00:00');
+						expect(event.end).toBeNull();
+						expect(event.allDay).toBe(false);
+
+						done();
 					}
-				};
-				options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
-					expect(delta.days()).toBe(-1);
-					expect(delta.hours()).toBe(0);
-					expect(delta.minutes()).toBe(0);
-					expect(delta.seconds()).toBe(0);
-					expect(delta.milliseconds()).toBe(0);
-
-					expect(event.start).toEqualMoment('2014-06-10');
-					expect(event.end).toBeNull();
-					expect(event.allDay).toBe(true);
-					revertFunc();
-					expect(event.start).toEqualMoment('2014-06-11T01:00:00');
-					expect(event.end).toBeNull();
-					expect(event.allDay).toBe(false);
-
-					done();
-				};
-				setTimeout(function() { // hack. scroll state was messed up or something
-					$('#cal').fullCalendar(options);
-				},0);
+				);
 			});
 		});
 	});
+
+	// Initialize a calendar, run a drag, and do type-checking of all arguments for all handlers.
+	// TODO: more descrimination instead of just checking for 'object'
+	function init(dragFunc, dropHandler) {
+		var eventsRendered = false;
+
+		options.eventAfterAllRender = function() {
+			if (!eventsRendered) { // because event rerendering will happen upon drop
+				dragFunc();
+				eventsRendered = true;
+			}
+		};
+		options.eventDragStart = function(event, jsEvent, uiEvent, view) {
+			expect(this instanceof Element).toBe(true);
+			expect(this).toHaveClass('fc-event');
+			expect(typeof event).toBe('object');
+			expect(typeof jsEvent).toBe('object');
+			expect(typeof uiEvent).toBe('object');
+			expect(typeof view).toBe('object');
+		};
+		options.eventDragStop = function(event, jsEvent, uiEvent, view) {
+			expect(options.eventDragStart).toHaveBeenCalled();
+
+			expect(this instanceof Element).toBe(true);
+			expect(this).toHaveClass('fc-event');
+			expect(typeof event).toBe('object');
+			expect(typeof jsEvent).toBe('object');
+			expect(typeof uiEvent).toBe('object');
+			expect(typeof view).toBe('object');
+		};
+		options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
+			expect(options.eventDragStop).toHaveBeenCalled();
+
+			expect(this instanceof Element).toBe(true);
+			expect(this).toHaveClass('fc-event');
+			expect(typeof event).toBe('object');
+			expect(moment.isDuration(delta)).toBe(true);
+			expect(typeof revertFunc).toBe('function');
+			expect(typeof jsEvent).toBe('object');
+			expect(typeof uiEvent).toBe('object');
+			expect(typeof view).toBe('object');
+
+			dropHandler.apply(this, arguments);
+		};
+
+		spyOn(options, 'eventDragStart').and.callThrough();
+		spyOn(options, 'eventDragStop').and.callThrough();
+
+		setTimeout(function() { // hack. agenda view scroll state would get messed up between tests
+			$('#cal').fullCalendar(options);
+		}, 0);
+	}
 });
