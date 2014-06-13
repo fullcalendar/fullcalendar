@@ -262,6 +262,73 @@ describe('eventDrop', function() {
 				);
 			});
 		});
+
+		describe('when dragging a timed event with no end time', function() {
+			it('should continue to only show the updated start time', function(done) {
+				var dragged = false;
+				var eventElm;
+
+				options.scrollTime = '01:00:00';
+				options.events = [ {
+					title: 'timed event',
+					start: '2014-06-11T01:00:00',
+					allDay: false
+				} ];
+
+				init(
+					function() {
+						eventElm = $('.fc-event')
+							.simulate('mouseover') // for our dumb optimization
+							.simulate('drag', {
+								dy: $('tr.fc-slot1').height() * 3, // 1.5 hours
+								callback: function() {
+									dragged = true;
+									expect(eventElm.find('.fc-event-time')).toHaveText('2:30');
+									eventElm.simulate('drop');
+								}
+							});
+					},
+					function() {
+						expect(dragged).toBe(true);
+						done();
+					}
+				);
+			});
+		});
+
+		describe('when dragging a timed event with an end time', function() {
+			it('should continue to show the updated start and end time', function(done) {
+				var dragged = false;
+				var eventElm;
+
+				options.scrollTime = '01:00:00';
+				options.events = [ {
+					title: 'timed event',
+					start: '2014-06-11T01:00:00',
+					end: '2014-06-11T02:00:00',
+					allDay: false
+				} ];
+
+				init(
+					function() {
+						eventElm = $('.fc-event')
+							.simulate('mouseover') // for our dumb optimization
+							.simulate('drag', {
+								dy: $('tr.fc-slot1').height() * 3, // 1.5 hours
+								callback: function() {
+									dragged = true;
+									expect(eventElm.find('.fc-event-time')).toHaveText('2:30 - 3:30');
+									eventElm.simulate('drop');
+								}
+							});
+					},
+					function() {
+						expect(dragged).toBe(true);
+						done();
+					}
+				);
+			});
+		});
 	});
 
 	// Initialize a calendar, run a drag, and do type-checking of all arguments for all handlers.

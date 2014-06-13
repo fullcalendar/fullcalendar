@@ -146,6 +146,92 @@ describe('eventResize', function() {
 					}
 				);
 			});
+
+			it('should display the correct time text while resizing', function(done) {
+				var dy;
+				var handle;
+
+				init(
+					function() {
+						dy = $('tr.fc-slot1').height() * 4.5; // 5 slots, so 2.5 hours
+						handle = $('.fc-event .ui-resizable-handle')
+							.simulate('mouseover') // for our dumb optimization
+							.simulate('drag', {
+								dy: dy,
+								callback: function() {
+									expect($('.fc-event-time')).toHaveText('5:00 - 9:30');
+									handle.simulate('drag', {
+										// BUG with jquery-simulate-ext
+										// I guess the delta is still relative to the original position, so should be zero.
+										// But zero causes nothing to happen, so make it a tiny non-zero delta.
+										dy: -1,
+
+										callback: function() {
+											expect($('.fc-event-time')).toHaveText('5:00 - 7:00');
+											handle.simulate('drop', {
+												callback: function() {
+													done();
+												}
+											});
+										}
+									});
+								}
+							});
+					},
+					function() {
+						// this wasn't firing for some reason. do it in the drop callback instead
+						//done();
+					}
+				);
+			});
+		});
+
+		describe('when resizing a timed event without an end', function() {
+			beforeEach(function() {
+				options.events = [ {
+					title: 'timed event event',
+					start: '2014-06-11T05:00:00',
+					allDay: false
+				} ];
+			});
+
+			it('should display the correct time text while resizing', function(done) {
+				var dy;
+				var handle;
+
+				init(
+					function() {
+						dy = $('tr.fc-slot1').height() * 4.5; // 5 slots, so 2.5 hours
+						handle = $('.fc-event .ui-resizable-handle')
+							.simulate('mouseover') // for our dumb optimization
+							.simulate('drag', {
+								dy: dy,
+								callback: function() {
+									expect($('.fc-event-time')).toHaveText('5:00 - 9:30');
+									handle.simulate('drag', {
+										// BUG with jquery-simulate-ext
+										// I guess the delta is still relative to the original position, so should be zero.
+										// But zero causes nothing to happen, so make it a tiny non-zero delta.
+										dy: -1,
+
+										callback: function() {
+											expect($('.fc-event-time')).toHaveText('5:00');
+											handle.simulate('drop', {
+												callback: function() {
+													done();
+												}
+											});
+										}
+									});
+								}
+							});
+					},
+					function() {
+						// this wasn't firing for some reason. do it in the drop callback instead
+						//done();
+					}
+				);
+			});
 		});
 	});
 
