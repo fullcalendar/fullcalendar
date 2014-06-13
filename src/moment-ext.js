@@ -176,9 +176,6 @@ FCMoment.prototype.stripTime = function() {
 	// set the internal UTC flag
 	moment.fn.utc.call(this); // call the original method, because we don't want to affect _ambigZone
 
-	this._ambigTime = true;
-	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
-
 	this.year(a[0]) // TODO: find a way to do this in one shot
 		.month(a[1])
 		.date(a[2])
@@ -186,6 +183,11 @@ FCMoment.prototype.stripTime = function() {
 		.minutes(0)
 		.seconds(0)
 		.milliseconds(0);
+
+	// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(), which
+	// clears all ambig flags. Same concept with the .year/month/date calls in the case of moment-timezone.
+	this._ambigTime = true;
+	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
 
 	return this; // for chaining
 };
