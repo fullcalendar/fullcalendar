@@ -162,7 +162,32 @@ function View(element, calendar, viewName) {
 			}
 		}
 	}
-	
+
+
+	// Compute the text that should be displayed on an event's element.
+	// Based off the settings of the view.
+	// Given either an event object or two arguments: a start and end date (which can be null)
+	t.getEventTimeText = function(event) {
+		var start;
+		var end;
+
+		if (arguments.length === 2) {
+			start = arguments[0];
+			end = arguments[1];
+		}
+		else {
+			start = event.start;
+			end = event.end;
+		}
+
+		if (end && opt('displayEventEnd')) {
+			return calendar.formatRange(start, end, opt('timeFormat'));
+		}
+		else {
+			return calendar.formatDate(start, opt('timeFormat'));
+		}
+	};
+
 	
 	
 	/* Event Modification Reporting

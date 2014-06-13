@@ -44,7 +44,6 @@ function AgendaEventRenderer() {
 	var getMaxTime = t.getMaxTime;
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
-	var formatRange = calendar.formatRange;
 	var getEventEnd = calendar.getEventEnd;
 
 
@@ -348,15 +347,8 @@ function AgendaEventRenderer() {
 				"'" +
 			">" +
 			"<div class='fc-event-inner'>" +
-			"<div class='fc-event-time'>";
-
-		if (event.end) {
-			html += htmlEscape(formatRange(event.start, event.end, opt('timeFormat')));
-		}else{
-			html += htmlEscape(formatDate(event.start, opt('timeFormat')));
-		}
-
-		html +=
+			"<div class='fc-event-time'>" +
+			htmlEscape(t.getEventTimeText(event)) +
 			"</div>" +
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title || '') +
@@ -671,15 +663,12 @@ function AgendaEventRenderer() {
 		}
 
 		function updateTimeText() {
-			var text;
 			if (eventStart) { // must of had a state change
-				if (event.end) {
-					text = formatRange(eventStart, eventEnd, opt('timeFormat'));
-				}
-				else {
-					text = formatDate(eventStart, opt('timeFormat'));
-				}
-				timeElement.text(text);
+				timeElement.text(
+					t.getEventTimeText(eventStart, event.end ? eventEnd : null)
+					//                                       ^
+					// only display the new end if there was an old end
+				);
 			}
 		}
 
@@ -713,15 +702,11 @@ function AgendaEventRenderer() {
 				if (snapDelta != prevSnapDelta) {
 					eventEnd = getEventEnd(event).add(snapDuration * snapDelta);
 					var text;
-					if (snapDelta || event.end) {
-						text = formatRange(
-							event.start,
-							eventEnd,
-							opt('timeFormat')
-						);
+					if (snapDelta) { // has there been a change?
+						text = t.getEventTimeText(event.start, eventEnd);
 					}
 					else {
-						text = formatDate(event.start, opt('timeFormat'));
+						text = t.getEventTimeText(event); // the original time text
 					}
 					timeElement.text(text);
 					prevSnapDelta = snapDelta;

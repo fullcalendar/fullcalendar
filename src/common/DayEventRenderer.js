@@ -40,7 +40,6 @@ function DayEventRenderer() {
 	var dayOffsetToCellOffset = t.dayOffsetToCellOffset;
 	var calendar = t.calendar;
 	var getEventEnd = calendar.getEventEnd;
-	var formatDate = calendar.formatDate;
 
 
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
@@ -272,9 +271,7 @@ function DayEventRenderer() {
 		if (!event.allDay && segment.isStart) {
 			html +=
 				"<span class='fc-event-time'>" +
-				htmlEscape(
-					formatDate(event.start, opt('timeFormat'))
-				) +
+				htmlEscape(t.getEventTimeText(event)) +
 				"</span>";
 		}
 		html +=

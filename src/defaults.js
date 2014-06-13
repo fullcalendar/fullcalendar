@@ -48,6 +48,12 @@ var defaults = {
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
 	},
+
+	displayEventEnd: {
+		month: false,
+		basicWeek: false,
+		'default': true
+	},
 	
 	// locale
 	isRTL: false,
