@@ -4,7 +4,8 @@ $.fullCalendar.lang("lt", {
 		month: "Mėnuo",
 		week: "Savaitė",
 		day: "Diena",
-		list: "Darbotvarkė"
+		list: "Darbotvarkė",
+		today: "Šiandien"
 	},
 	allDayText: "Visą dieną"
 });
