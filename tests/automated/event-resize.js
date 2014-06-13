@@ -184,6 +184,29 @@ describe('eventResize', function() {
 					}
 				);
 			});
+
+			it('should not fire the windowResize handler', function(done) { // bug 1116
+				options.windowResize = function() { };
+				options.windowResizeDelay = 0;
+				spyOn(options, 'windowResize');
+				init(
+					function() {
+						$('.fc-event .ui-resizable-handle')
+							.simulate('mouseover') // for our dumb optimization
+							.simulate('drag-n-drop', {
+								dy: 200,
+								interpolation: {
+									stepCount: 10,
+									duration: 100
+								}
+							});
+					},
+					function() { // if an unintended rerender happened, won't get here anyway
+						expect(options.windowResize).not.toHaveBeenCalled();
+						done();
+					}
+				);
+			});
 		});
 
 		describe('when resizing a timed event without an end', function() {

@@ -89,7 +89,8 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	handleWindowResize: true
+	handleWindowResize: true,
+	windowResizeDelay: 200 // milliseconds before a rerender happens
 	
 };
 

@@ -486,8 +486,11 @@ function Calendar(element, instanceOptions) {
 	}
 	
 	
-	function windowResize() {
-		if (!ignoreWindowResize) {
+	function windowResize(ev) {
+		if (
+			!ignoreWindowResize &&
+			ev.target === window // so we don't process jqui "resize" events that have bubbled up
+		) {
 			if (currentView.start) { // view has already been rendered
 				var uid = ++resizeUID;
 				setTimeout(function() { // add a delay
@@ -499,7 +502,7 @@ function Calendar(element, instanceOptions) {
 							ignoreWindowResize--;
 						}
 					}
-				}, 200);
+				}, options.windowResizeDelay);
 			}else{
 				// calendar must have been initialized in a 0x0 iframe that has just been resized
 				lateRender();
