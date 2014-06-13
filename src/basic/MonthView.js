@@ -24,11 +24,15 @@ function MonthView(element, calendar) {
 		t.intervalStart = date.clone().stripTime().startOf('month');
 		t.intervalEnd = t.intervalStart.clone().add('months', 1);
 
-		t.start = t.intervalStart.clone().startOf('week');
-		t.start = t.skipHiddenDays(t.start);
+		t.start = t.intervalStart.clone();
+		t.start = t.skipHiddenDays(t.start); // move past the first week if no visible days
+		t.start.startOf('week');
+		t.start = t.skipHiddenDays(t.start); // move past the first invisible days of the week
 
-		t.end = t.intervalEnd.clone().add('days', (7 - t.intervalEnd.weekday()) % 7);
-		t.end = t.skipHiddenDays(t.end, -1, true);
+		t.end = t.intervalEnd.clone();
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
+		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
 
 		var rowCnt = Math.ceil( // need to ceil in case there are hidden days
 			t.end.diff(t.start, 'weeks', true) // returnfloat=true
