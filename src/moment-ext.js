@@ -151,7 +151,16 @@ FCMoment.prototype.time = function(time) {
 			time = moment.duration(time);
 		}
 
-		return this.hours(time.hours() + time.days() * 24) // day value will cause overflow (so 24 hours becomes 00:00:00 of next day)
+		// The day value should cause overflow (so 24 hours becomes 00:00:00 of next day).
+		// Only for Duration times, not Moment times.
+		var dayHours = 0;
+		if (moment.isDuration(time)) {
+			dayHours = Math.floor(time.asDays()) * 24;
+		}
+
+		// We need to set the individual fields.
+		// Can't use startOf('day') then add duration. In case of DST at start of day.
+		return this.hours(dayHours + time.hours())
 			.minutes(time.minutes())
 			.seconds(time.seconds())
 			.milliseconds(time.milliseconds());
