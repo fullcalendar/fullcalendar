@@ -32,11 +32,7 @@ describe('eventDrop', function() {
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
 								dx: $('.fc-day').width() * 2,
-								dy: $('.fc-day').height(),
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('.fc-day').height()
 							});
 					},
 					function(event, delta, revertFunc) {
@@ -72,11 +68,7 @@ describe('eventDrop', function() {
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
 								dx: $('.fc-day').width() * -2,
-								dy: $('.fc-day').height(),
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('.fc-day').height()
 							});
 					},
 					function(event, delta, revertFunc) {
@@ -118,13 +110,8 @@ describe('eventDrop', function() {
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
 								dx: $('th.fc-wed').width(), // 1 day
-								dy: $('tr.fc-slot1').height() * 3, // 1.5 hours
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('tr.fc-slot1').height() * 3 // 1.5 hours
 							});
-						called = true;
 					},
 					function(event, delta, revertFunc) {
 						expect(delta.days()).toBe(1);
@@ -158,13 +145,8 @@ describe('eventDrop', function() {
 						$('.fc-event')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
-								dx: $('th.fc-wed').width() * 2, // 2 days
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dx: $('th.fc-wed').width() * 2 // 2 days
 							});
-						called = true;
 					},
 					function(event, delta, revertFunc) {
 						expect(delta.days()).toBe(2);
@@ -200,13 +182,8 @@ describe('eventDrop', function() {
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
 								dx: $('th.fc-wed').width() * -1,
-								dy: $('.fc-agenda-allday').outerHeight() + $('.fc-agenda-divider').outerHeight(),
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('.fc-agenda-allday').outerHeight() + $('.fc-agenda-divider').outerHeight()
 							});
-						called = true;
 					},
 					function(event, delta, revertFunc) {
 						expect(delta.days()).toBe(-1);
@@ -247,10 +224,6 @@ describe('eventDrop', function() {
 							.simulate('drag', {
 								dx: $('th.fc-wed').width() * -1,
 								dy: -$('.fc-agenda-allday').outerHeight(),
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								},
 								callback: function() {
 									// the all day slot works off of mouse-moving coordinates
 									var offset = eventElm.offset();

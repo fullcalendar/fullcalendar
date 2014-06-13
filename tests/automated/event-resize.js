@@ -32,11 +32,7 @@ describe('eventResize', function() {
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
 								dx: $('.fc-day').width() * -2,
-								dy: $('.fc-day').height(),
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('.fc-day').height()
 							});
 					},
 					function(event, delta, revertFunc) {
@@ -92,11 +88,7 @@ describe('eventResize', function() {
 						$('.fc-event .ui-resizable-handle')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
-								dx: $('th.fc-wed').width() * 1.5, // two days
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dx: $('th.fc-wed').width() * 1.5 // two days
 							});
 					},
 					function(event, delta, revertFunc) {
@@ -118,25 +110,23 @@ describe('eventResize', function() {
 			});
 		});
 
-		describe('when resizing a timed event', function() {
-			it('should have correct arguments with a timed delta', function(done) {
+		describe('when resizing a timed event with an end', function() {
+			beforeEach(function() {
 				options.events = [ {
 					title: 'timed event event',
 					start: '2014-06-11T05:00:00',
 					end: '2014-06-11T07:00:00',
 					allDay: false
 				} ];
+			});
 
+			it('should have correct arguments with a timed delta', function(done) {
 				init(
 					function() {
 						$('.fc-event .ui-resizable-handle')
 							.simulate('mouseover') // for our dumb optimization
 							.simulate('drag-n-drop', {
-								dy: $('tr.fc-slot1').height() * 4.5, // 5 slots, so 2.5 hours
-								interpolation: {
-									stepCount: 10,
-									duration: 100
-								}
+								dy: $('tr.fc-slot1').height() * 4.5 // 5 slots, so 2.5 hours
 							});
 					},
 					function(event, delta, revertFunc) {

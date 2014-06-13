@@ -38,10 +38,6 @@ describe('select callback', function() {
 					$('#cal').fullCalendar(options);
 					$('.fc-day[data-date="2014-04-28"]').simulate('drag-n-drop', {
 						dropTarget: '.fc-day[data-date="2014-05-06"]',
-						interpolation: {
-							stepCount: 10,
-							duration: 100
-						},
 						callback: function() {
 							expect(options.select).toHaveBeenCalled();
 							done();
@@ -63,10 +59,6 @@ describe('select callback', function() {
 					$('#cal').fullCalendar(options);
 					$('.fc-day[data-date="2014-04-28"]').simulate('drag-n-drop', {
 						dropTarget: '.fc-day[data-date="2014-04-28"]',
-						interpolation: {
-							stepCount: 10,
-							duration: 100
-						},
 						callback: function() {
 							expect(options.select).toHaveBeenCalled();
 							done();
@@ -95,10 +87,6 @@ describe('select callback', function() {
 						$('#cal').fullCalendar(options);
 						$('.fc-agenda-allday .fc-day-content').simulate('drag-n-drop', { // middle will be 2014-05-28
 							dx: $('.fc-sun').outerWidth() * (isRTL ? -1 : 1), // the width of one column
-							interpolation: {
-								stepCount: 10,
-								duration: 100
-							},
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -119,10 +107,6 @@ describe('select callback', function() {
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
 						$('.fc-agenda-allday .fc-day-content').simulate('drag-n-drop', { // middle will be 2014-05-28
-							interpolation: {
-								stepCount: 10,
-								duration: 100
-							},
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -146,10 +130,6 @@ describe('select callback', function() {
 						$('#cal').fullCalendar(options);
 						$('tr.fc-slot18 td').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
 							dy: $('tr.fc-slot18 td').outerHeight() * 2, // move down two slots
-							interpolation: {
-								stepCount: 10,
-								duration: 100
-							},
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -170,10 +150,6 @@ describe('select callback', function() {
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
 						$('tr.fc-slot18 td').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
-							interpolation: {
-								stepCount: 10,
-								duration: 100
-							},
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
