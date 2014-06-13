@@ -43,17 +43,15 @@ function EventManager(options) { // assumed to be a calendar
 	var cache = [];
 
 
-
-	var _sources = options.eventSources || [];
-	// TODO: don't mutate eventSources (see issue 954 and automated tests for constructor.js)
-
-	if (options.events) {
-		_sources.push(options.events);
-	}
-	
-	for (var i=0; i<_sources.length; i++) {
-		_addEventSource(_sources[i]);
-	}
+	$.each(
+		(options.events ? [ options.events ] : []).concat(options.eventSources || []),
+		function(i, sourceInput) {
+			var source = buildEventSource(sourceInput);
+			if (source) {
+				sources.push(source);
+			}
+		}
+	);
 	
 	
 	
@@ -219,29 +217,44 @@ function EventManager(options) { // assumed to be a calendar
 	-----------------------------------------------------------------------------*/
 	
 
-	function addEventSource(source) {
-		source = _addEventSource(source);
+	function addEventSource(sourceInput) {
+		var source = buildEventSource(sourceInput);
 		if (source) {
 			pendingSourceCnt++;
 			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 		}
 	}
-	
-	
-	function _addEventSource(source) {
-		if ($.isFunction(source) || $.isArray(source)) {
-			source = { events: source };
+
+
+	function buildEventSource(sourceInput) { // will return undefined if invalid source
+		var normalizers = fc.sourceNormalizers;
+		var source;
+		var i;
+
+		if ($.isFunction(sourceInput) || $.isArray(sourceInput)) {
+			source = { events: sourceInput };
 		}
-		else if (typeof source == 'string') {
-			source = { url: source };
+		else if (typeof sourceInput === 'string') {
+			source = { url: sourceInput };
 		}
-		if (typeof source == 'object') {
-			normalizeSource(source);
-			sources.push(source);
+		else if (typeof sourceInput === 'object') {
+			source = $.extend({}, sourceInput); // shallow copy
+
+			if (typeof source.className === 'string') {
+				// TODO: repeat code, same code for event classNames
+				source.className = source.className.split(/\s+/);
+			}
+		}
+
+		if (source) {
+			for (i=0; i<normalizers.length; i++) {
+				normalizers[i].call(t, source);
+			}
+
 			return source;
 		}
 	}
-	
+
 
 	function removeEventSource(source) {
 		sources = $.grep(sources, function(src) {
@@ -252,6 +265,16 @@ function EventManager(options) { // assumed to be a calendar
 			return !isSourcesEqual(e.source, source);
 		});
 		reportEvents(cache);
+	}
+
+
+	function isSourcesEqual(source1, source2) {
+		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
+	}
+
+
+	function getSourcePrimitive(source) {
+		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
 	}
 	
 	
@@ -658,38 +681,6 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		};
 	}
-	
-	
-	
-	/* Utils
-	------------------------------------------------------------------------------*/
-	
-	
-	function normalizeSource(source) {
-		if (source.className) {
-			// TODO: repeat code, same code for event classNames
-			if (typeof source.className == 'string') {
-				source.className = source.className.split(/\s+/);
-			}
-		}else{
-			source.className = [];
-		}
-		var normalizers = fc.sourceNormalizers;
-		for (var i=0; i<normalizers.length; i++) {
-			normalizers[i].call(t, source);
-		}
-	}
-	
-	
-	function isSourcesEqual(source1, source2) {
-		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
-	}
-	
-	
-	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
-	}
-
 
 }
 

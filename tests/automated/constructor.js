@@ -37,8 +37,6 @@ describe('constructor', function() {
 		expect(options).toEqual(optionsCopy);
 	});
 
-	/*
-	TODO: implement this behavior
 	it('should not modify the eventSources array', function() {
 		var options = {
 			defaultView: 'month',
@@ -56,7 +54,6 @@ describe('constructor', function() {
 		$('#calendar').fullCalendar(options);
 		expect(options).toEqual(optionsCopy);
 	});
-	*/
 
 	describe('when called on a div', function() {
 
