@@ -15,6 +15,7 @@
     "grunt-contrib-clean": "^0.4.1",
     "grunt-contrib-jshint": "^0.8.0",
     "grunt-jscs-checker": "^0.4.4",
+    "grunt-shell": "^0.7.0",
     "grunt-karma": "^0.8.3",
     "grunt-bump": "0.0.14",
     "lumbar": "^2.0.1",
@@ -22,10 +23,6 @@
     "karma-phantomjs-launcher": "^0.1.4"
   },
   "scripts": {
-    "install": "bower install; npm run-script assume-unchanged",
-    "preuninstall": "npm run-script no-assume-unchanged",
-    "assume-unchanged": "git update-index --assume-unchanged dist/*.js dist/*.css dist/lang/*.js",
-    "no-assume-unchanged": "git update-index --no-assume-unchanged dist/*.js dist/*.css dist/lang/*.js",
-    "list-assume-unchanged": "git ls-files -v | grep '^h'"
+    "install": "bower install"
   }
 }

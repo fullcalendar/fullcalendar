@@ -2,5 +2,5 @@
 
 cd "`dirname $0`/.."
 
-npm run-script assume-unchanged
+grunt shell:assume-unchanged
 grunt lumbar:watch

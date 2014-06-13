@@ -11,7 +11,7 @@ fi
 
 grunt bump --setversion=$version && \
 grunt dist && \
-npm run-script no-assume-unchanged && \
+grunt shell:no-assume-unchanged && \
 git add -f dist/*.js dist/*.css dist/lang/*.js && \
 git add *.json && \
 git commit -e -m "version $version" && \
@@ -21,7 +21,7 @@ status=$?
 
 # regardless of error/success, undo the temporary no-assume-unchanged
 git reset
-npm run-script assume-unchanged
+grunt shell:assume-unchanged
 
 if [ $status -eq 0 ]
 then
