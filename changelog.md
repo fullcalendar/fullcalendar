@@ -1,4 +1,27 @@
 
+v2.0.1 (2014-06-13)
+-------------------
+
+- wrongfully triggering a windowResize when resizing an agenda view event ([1116])
+- `this` values in event drag-n-drop/resize handlers consistently the DOM node ([1177])
+- `displayEventEnd` - v2 workaround to force display of an end time ([2090])
+- don't modify passed-in eventSource items ([954])
+- destroy method now removes fc-ltr class ([2033])
+- weeks of last/next month still visible when weekends are hidden ([2095])
+- fixed memory leak when destroying calendar with selectable/droppable ([2137])
+- `delta` parameters reintroduced in `eventDrop` and `eventResize` handlers ([2156])
+- Icelandic language ([2180])
+
+[1116]: https://code.google.com/p/fullcalendar/issues/detail?id=1116
+[1177]: https://code.google.com/p/fullcalendar/issues/detail?id=1177
+[2090]: https://code.google.com/p/fullcalendar/issues/detail?id=2090
+[954]: https://code.google.com/p/fullcalendar/issues/detail?id=954
+[2033]: https://code.google.com/p/fullcalendar/issues/detail?id=2033
+[2095]: https://code.google.com/p/fullcalendar/issues/detail?id=2095
+[2137]: https://code.google.com/p/fullcalendar/issues/detail?id=2137
+[2156]: https://code.google.com/p/fullcalendar/issues/detail?id=2156
+[2180]: https://code.google.com/p/fullcalendar/issues/detail?id=2180
+
 v2.0.0 (2014-06-01)
 -------------------
 
