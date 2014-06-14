@@ -170,6 +170,7 @@ describe('eventDrop', function() {
 		describe('when dragging an all-day event to a time slot on a different day', function() {
 			it('should be given correct arguments and delta with days/time', function(done) {
 				options.scrollTime = '01:00:00';
+				options.height = 400; // short enough to make scrolling happen
 				options.events = [ {
 					title: 'all-day event',
 					start: '2014-06-11',
@@ -211,6 +212,7 @@ describe('eventDrop', function() {
 				var eventElm;
 
 				options.scrollTime = '01:00:00';
+				options.height = 400; // short enough to make scrolling happen
 				options.events = [ {
 					title: 'timed event',
 					start: '2014-06-11T01:00:00',
@@ -269,6 +271,7 @@ describe('eventDrop', function() {
 				var eventElm;
 
 				options.scrollTime = '01:00:00';
+				options.height = 400; // short enough to make scrolling happen
 				options.events = [ {
 					title: 'timed event',
 					start: '2014-06-11T01:00:00',
@@ -302,6 +305,7 @@ describe('eventDrop', function() {
 				var eventElm;
 
 				options.scrollTime = '01:00:00';
+				options.height = 400; // short enough to make scrolling happen
 				options.events = [ {
 					title: 'timed event',
 					start: '2014-06-11T01:00:00',

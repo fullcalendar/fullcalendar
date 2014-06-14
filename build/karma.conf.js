@@ -16,6 +16,10 @@ module.exports = function(config) {
 			// You must run `bower install es5-shim` first.
 			//'../lib/es5-shim/es5-shim.js',
 
+			// For IE8 testing, we'll need jQuery 1.x. Before running karma, force the version:
+			// `bower install jquery#1` and choose 1
+			// to undo: `bower update jquery`
+
 			'../lib/moment/moment.js',
 			'../lib/jquery/dist/jquery.js',
 			'../lib/jquery-ui/ui/jquery-ui.js',
@@ -39,13 +43,14 @@ module.exports = function(config) {
 			'../dist/lang-all.js',
 			'../dist/fullcalendar.css',
 			'../tests/base.css',
-			'../tests/automated/*.js'
 
 			// For IE8 testing. Because it can't handle running all the tests at once.
-			// Comment the above line and run karma with each of the below lines uncommented.
+			// Comment out the *.js line and run karma with each of the lines below.
 			//'../tests/automated/{a,b,c,d,e,f,g,h,i,j,k,l}*.js'
 			//'../tests/automated/{m,n}*.js' // mostly moment tests
 			//'../tests/automated/{o,p,q,r,s,t,u,v,w,x,y,z}*.js'
+
+			'../tests/automated/*.js'
 		],
 
 		// list of files to exclude
