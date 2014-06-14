@@ -1,0 +1,21 @@
+
+displayEventEnd *2.0.1*
+=======================
+
+Whether or not to display an event's end time text when it is rendered on the calendar.
+
+<div class='spec' markdown='1'>
+Boolean / [View Option Hash](../views/View_Option_Hash), *default*:
+
+	{
+		month: false,
+		basicWeek: false,
+		'default': true
+	}
+
+</div>
+
+The default is a [View Option Hash](../views/View_Option_Hash)
+that displays an event's end time in all views except for *month* and *basicWeek* view.
+
+If an event does not have an end date/time, it won't displayed anyway, regardless of this setting.
