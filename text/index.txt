@@ -13,6 +13,7 @@ Text/Time Customization
 <li>dayNames</li>
 <li>dayNamesShort</li>
 <li>weekNumberTitle</li>
+<li>displayEventEnd</li>
 </ul>
 
 Related agenda options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
