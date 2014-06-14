@@ -106,7 +106,7 @@ v1.6.2 (2013-07-18)
 
 - `hiddenDays` option ([686])
 - bugfix: when `eventRender` returns `false`, incorrect stacking of events ([762])
-- bugfix: couldn't change `event.backgroundImage` when calling `updateEvent` (thx stephenharris)
+- bugfix: couldn't change `event.backgroundImage` when calling `updateEvent` (thx @stephenharris)
 
 [686]: https://code.google.com/p/fullcalendar/issues/detail?id=686
 [762]: https://code.google.com/p/fullcalendar/issues/detail?id=762
@@ -117,7 +117,7 @@ v1.6.1 (2013-04-14)
 
 - fixed event inner content overflow bug ([1783])
 - fixed table header className bug [1772]
-- removed text-shadow on events (better for general use, thx tkrotoff)
+- removed text-shadow on events (better for general use, thx @tkrotoff)
 
 [1783]: https://code.google.com/p/fullcalendar/issues/detail?id=1783
 [1772]: https://code.google.com/p/fullcalendar/issues/detail?id=1772
@@ -128,16 +128,16 @@ v1.6.0 (2013-03-18)
 
 - visual facelift, with bootstrap-inspired buttons and colors
 - simplified HTML/CSS for events and buttons
-- `dayRender`, for modifying a day cell ([191], thx althaus)
+- `dayRender`, for modifying a day cell ([191], thx @althaus)
 - week numbers on side of calendar ([295])
 	- `weekNumber`
 	- `weekNumberCalculation`
 	- `weekNumberTitle`
 	- `W` formatting variable
-- finer snapping granularity for agenda view events ([495], thx ms-doodle-com)
-- `eventAfterAllRender` ([753], thx pdrakeweb)
-- `eventDataTransform` (thx joeyspo)
-- `data-date` attributes on cells (thx Jae)
+- finer snapping granularity for agenda view events ([495], thx @ms-doodle-com)
+- `eventAfterAllRender` ([753], thx @pdrakeweb)
+- `eventDataTransform` (thx @joeyspo)
+- `data-date` attributes on cells (thx @Jae)
 - expose `$.fullCalendar.dateFormatters`
 - when clicking fast on buttons, prevent text selection
 - bundled with latest jQuery (1.9.1) and jQuery UI (1.10.2)
@@ -154,7 +154,7 @@ v1.6.0 (2013-03-18)
 v1.5.4 (2012-09-05)
 -------------------
 
-- made compatible with jQuery 1.8.* (thx archaeron)
+- made compatible with jQuery 1.8.* (thx @archaeron)
 - bundled with jQuery 1.8.1 and jQuery UI 1.8.23
 
 
