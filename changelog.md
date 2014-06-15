@@ -11,6 +11,7 @@ v2.0.1 (2014-06-13)
 - fixed memory leak when destroying calendar with selectable/droppable ([2137])
 - `delta` parameters reintroduced in `eventDrop` and `eventResize` handlers ([2156])
 - Icelandic language ([2180])
+- Bahasa Indonesia language ([PR 172])
 
 [1116]: https://code.google.com/p/fullcalendar/issues/detail?id=1116
 [1177]: https://code.google.com/p/fullcalendar/issues/detail?id=1177
@@ -21,6 +22,7 @@ v2.0.1 (2014-06-13)
 [2137]: https://code.google.com/p/fullcalendar/issues/detail?id=2137
 [2156]: https://code.google.com/p/fullcalendar/issues/detail?id=2156
 [2180]: https://code.google.com/p/fullcalendar/issues/detail?id=2180
+[PR 172]: https://github.com/arshaw/fullcalendar/pull/172
 
 v2.0.0 (2014-06-01)
 -------------------
