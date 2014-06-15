@@ -13,8 +13,7 @@ grunt bump --setversion=$version && \
 grunt dist && \
 grunt shell:no-assume-unchanged && \
 git add -f dist/*.js dist/*.css dist/lang/*.js && \
-git add *.json && \
-git commit -e -m "version $version" && \
+git commit -a -e -m "version $version" && \
 git tag -a v$version -m "version $version"
 
 status=$?
