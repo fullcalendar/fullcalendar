@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.0.0
+ * FullCalendar v2.0.1
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -64,6 +64,12 @@ var defaults = {
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
 	},
+
+	displayEventEnd: {
+		month: false,
+		basicWeek: false,
+		'default': true
+	},
 	
 	// locale
 	isRTL: false,
@@ -99,7 +105,8 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	handleWindowResize: true
+	handleWindowResize: true,
+	windowResizeDelay: 200 // milliseconds before a rerender happens
 	
 };
 
@@ -159,7 +166,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.0.0" };
+var fc = $.fullCalendar = { version: "2.0.1" };
 var fcViews = fc.views = {};
 
 
@@ -646,9 +653,19 @@ function Calendar(element, instanceOptions) {
 
 		$(window).unbind('resize', windowResize);
 
+		if (options.droppable) {
+			$(document)
+				.off('dragstart', droppableDragStart)
+				.off('dragstop', droppableDragStop);
+		}
+
+		if (currentView.selectionManagerDestroy) {
+			currentView.selectionManagerDestroy();
+		}
+
 		header.destroy();
 		content.remove();
-		element.removeClass('fc fc-rtl ui-widget');
+		element.removeClass('fc fc-ltr fc-rtl ui-widget');
 	}
 	
 	
@@ -789,8 +806,11 @@ function Calendar(element, instanceOptions) {
 	}
 	
 	
-	function windowResize() {
-		if (!ignoreWindowResize) {
+	function windowResize(ev) {
+		if (
+			!ignoreWindowResize &&
+			ev.target === window // so we don't process jqui "resize" events that have bubbled up
+		) {
 			if (currentView.start) { // view has already been rendered
 				var uid = ++resizeUID;
 				setTimeout(function() { // add a delay
@@ -802,7 +822,7 @@ function Calendar(element, instanceOptions) {
 							ignoreWindowResize--;
 						}
 					}
-				}, 200);
+				}, options.windowResizeDelay);
 			}else{
 				// calendar must have been initialized in a 0x0 iframe that has just been resized
 				lateRender();
@@ -1028,23 +1048,28 @@ function Calendar(element, instanceOptions) {
 	if (options.droppable) {
 		// TODO: unbind on destroy
 		$(document)
-			.bind('dragstart', function(ev, ui) {
-				var _e = ev.target;
-				var e = $(_e);
-				if (!e.parents('.fc').length) { // not already inside a calendar
-					var accept = options.dropAccept;
-					if ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept)) {
-						_dragElement = _e;
-						currentView.dragStart(_dragElement, ev, ui);
-					}
-				}
-			})
-			.bind('dragstop', function(ev, ui) {
-				if (_dragElement) {
-					currentView.dragStop(_dragElement, ev, ui);
-					_dragElement = null;
-				}
-			});
+			.on('dragstart', droppableDragStart)
+			.on('dragstop', droppableDragStop);
+		// this is undone in destroy
+	}
+
+	function droppableDragStart(ev, ui) {
+		var _e = ev.target;
+		var e = $(_e);
+		if (!e.parents('.fc').length) { // not already inside a calendar
+			var accept = options.dropAccept;
+			if ($.isFunction(accept) ? accept.call(_e, e) : e.is(accept)) {
+				_dragElement = _e;
+				currentView.dragStart(_dragElement, ev, ui);
+			}
+		}
+	}
+
+	function droppableDragStop(ev, ui) {
+		if (_dragElement) {
+			currentView.dragStop(_dragElement, ev, ui);
+			_dragElement = null;
+		}
 	}
 	
 
@@ -1270,17 +1295,15 @@ function EventManager(options) { // assumed to be a calendar
 	var cache = [];
 
 
-
-	var _sources = options.eventSources || [];
-	// TODO: don't mutate eventSources (see issue 954 and automated tests for constructor.js)
-
-	if (options.events) {
-		_sources.push(options.events);
-	}
-	
-	for (var i=0; i<_sources.length; i++) {
-		_addEventSource(_sources[i]);
-	}
+	$.each(
+		(options.events ? [ options.events ] : []).concat(options.eventSources || []),
+		function(i, sourceInput) {
+			var source = buildEventSource(sourceInput);
+			if (source) {
+				sources.push(source);
+			}
+		}
+	);
 	
 	
 	
@@ -1446,29 +1469,44 @@ function EventManager(options) { // assumed to be a calendar
 	-----------------------------------------------------------------------------*/
 	
 
-	function addEventSource(source) {
-		source = _addEventSource(source);
+	function addEventSource(sourceInput) {
+		var source = buildEventSource(sourceInput);
 		if (source) {
 			pendingSourceCnt++;
 			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 		}
 	}
-	
-	
-	function _addEventSource(source) {
-		if ($.isFunction(source) || $.isArray(source)) {
-			source = { events: source };
+
+
+	function buildEventSource(sourceInput) { // will return undefined if invalid source
+		var normalizers = fc.sourceNormalizers;
+		var source;
+		var i;
+
+		if ($.isFunction(sourceInput) || $.isArray(sourceInput)) {
+			source = { events: sourceInput };
 		}
-		else if (typeof source == 'string') {
-			source = { url: source };
+		else if (typeof sourceInput === 'string') {
+			source = { url: sourceInput };
 		}
-		if (typeof source == 'object') {
-			normalizeSource(source);
-			sources.push(source);
+		else if (typeof sourceInput === 'object') {
+			source = $.extend({}, sourceInput); // shallow copy
+
+			if (typeof source.className === 'string') {
+				// TODO: repeat code, same code for event classNames
+				source.className = source.className.split(/\s+/);
+			}
+		}
+
+		if (source) {
+			for (i=0; i<normalizers.length; i++) {
+				normalizers[i].call(t, source);
+			}
+
 			return source;
 		}
 	}
-	
+
 
 	function removeEventSource(source) {
 		sources = $.grep(sources, function(src) {
@@ -1479,6 +1517,16 @@ function EventManager(options) { // assumed to be a calendar
 			return !isSourcesEqual(e.source, source);
 		});
 		reportEvents(cache);
+	}
+
+
+	function isSourcesEqual(source1, source2) {
+		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
+	}
+
+
+	function getSourcePrimitive(source) {
+		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
 	}
 	
 	
@@ -1724,7 +1772,7 @@ function EventManager(options) { // assumed to be a calendar
 	// If `newStart`/`newEnd` are not specified, the "new" dates are assumed to be `event.start` and `event.end`.
 	// The "old" dates to be compare against are always `event._start` and `event._end` (set by EventManager).
 	//
-	// Returns a function that can be called to undo all the operations.
+	// Returns an object with delta information and a function to undo all operations.
 	//
 	function mutateEvent(event, newStart, newEnd) {
 		var oldAllDay = event._allDay;
@@ -1734,6 +1782,7 @@ function EventManager(options) { // assumed to be a calendar
 		var newAllDay;
 		var dateDelta;
 		var durationDelta;
+		var undoFunc;
 
 		// if no new dates were passed in, compare against the event's existing dates
 		if (!newStart && !newEnd) {
@@ -1788,13 +1837,19 @@ function EventManager(options) { // assumed to be a calendar
 			));
 		}
 
-		return mutateEvents(
+		undoFunc = mutateEvents(
 			clientEvents(event._id), // get events with this ID
 			clearEnd,
 			newAllDay,
 			dateDelta,
 			durationDelta
 		);
+
+		return {
+			dateDelta: dateDelta,
+			durationDelta: durationDelta,
+			undo: undoFunc
+		};
 	}
 
 
@@ -1878,38 +1933,6 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		};
 	}
-	
-	
-	
-	/* Utils
-	------------------------------------------------------------------------------*/
-	
-	
-	function normalizeSource(source) {
-		if (source.className) {
-			// TODO: repeat code, same code for event classNames
-			if (typeof source.className == 'string') {
-				source.className = source.className.split(/\s+/);
-			}
-		}else{
-			source.className = [];
-		}
-		var normalizers = fc.sourceNormalizers;
-		for (var i=0; i<normalizers.length; i++) {
-			normalizers[i].call(t, source);
-		}
-	}
-	
-	
-	function isSourcesEqual(source1, source2) {
-		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
-	}
-	
-	
-	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
-	}
-
 
 }
 
@@ -2359,7 +2382,16 @@ FCMoment.prototype.time = function(time) {
 			time = moment.duration(time);
 		}
 
-		return this.hours(time.hours() + time.days() * 24) // day value will cause overflow (so 24 hours becomes 00:00:00 of next day)
+		// The day value should cause overflow (so 24 hours becomes 00:00:00 of next day).
+		// Only for Duration times, not Moment times.
+		var dayHours = 0;
+		if (moment.isDuration(time)) {
+			dayHours = Math.floor(time.asDays()) * 24;
+		}
+
+		// We need to set the individual fields.
+		// Can't use startOf('day') then add duration. In case of DST at start of day.
+		return this.hours(dayHours + time.hours())
 			.minutes(time.minutes())
 			.seconds(time.seconds())
 			.milliseconds(time.milliseconds());
@@ -2375,9 +2407,6 @@ FCMoment.prototype.stripTime = function() {
 	// set the internal UTC flag
 	moment.fn.utc.call(this); // call the original method, because we don't want to affect _ambigZone
 
-	this._ambigTime = true;
-	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
-
 	this.year(a[0]) // TODO: find a way to do this in one shot
 		.month(a[1])
 		.date(a[2])
@@ -2385,6 +2414,11 @@ FCMoment.prototype.stripTime = function() {
 		.minutes(0)
 		.seconds(0)
 		.milliseconds(0);
+
+	// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(), which
+	// clears all ambig flags. Same concept with the .year/month/date calls in the case of moment-timezone.
+	this._ambigTime = true;
+	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
 
 	return this; // for chaining
 };
@@ -2814,11 +2848,15 @@ function MonthView(element, calendar) {
 		t.intervalStart = date.clone().stripTime().startOf('month');
 		t.intervalEnd = t.intervalStart.clone().add('months', 1);
 
-		t.start = t.intervalStart.clone().startOf('week');
-		t.start = t.skipHiddenDays(t.start);
+		t.start = t.intervalStart.clone();
+		t.start = t.skipHiddenDays(t.start); // move past the first week if no visible days
+		t.start.startOf('week');
+		t.start = t.skipHiddenDays(t.start); // move past the first invisible days of the week
 
-		t.end = t.intervalEnd.clone().add('days', (7 - t.intervalEnd.weekday()) % 7);
-		t.end = t.skipHiddenDays(t.end, -1, true);
+		t.end = t.intervalEnd.clone();
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
+		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
 
 		var rowCnt = Math.ceil( // need to ceil in case there are hidden days
 			t.end.diff(t.start, 'weeks', true) // returnfloat=true
@@ -4544,7 +4582,6 @@ function AgendaEventRenderer() {
 	var getMaxTime = t.getMaxTime;
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
-	var formatRange = calendar.formatRange;
 	var getEventEnd = calendar.getEventEnd;
 
 
@@ -4848,15 +4885,8 @@ function AgendaEventRenderer() {
 				"'" +
 			">" +
 			"<div class='fc-event-inner'>" +
-			"<div class='fc-event-time'>";
-
-		if (event.end) {
-			html += htmlEscape(formatRange(event.start, event.end, opt('timeFormat')));
-		}else{
-			html += htmlEscape(formatDate(event.start, opt('timeFormat')));
-		}
-
-		html +=
+			"<div class='fc-event-time'>" +
+			htmlEscape(t.getEventTimeText(event)) +
 			"</div>" +
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title || '') +
@@ -4915,7 +4945,7 @@ function AgendaEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 				origWidth = eventElement.width();
 
@@ -4967,7 +4997,7 @@ function AgendaEventRenderer() {
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (revert) { // hasn't moved or is out of bounds (draggable has already reverted)
 					
@@ -4987,7 +5017,7 @@ function AgendaEventRenderer() {
 					}
 
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -5037,7 +5067,7 @@ function AgendaEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 
 				coordinateGrid.build();
@@ -5121,11 +5151,11 @@ function AgendaEventRenderer() {
 			stop: function(ev, ui) {
 
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || dayDelta || snapDelta)) { // changed!
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -5171,15 +5201,12 @@ function AgendaEventRenderer() {
 		}
 
 		function updateTimeText() {
-			var text;
 			if (eventStart) { // must of had a state change
-				if (event.end) {
-					text = formatRange(eventStart, eventEnd, opt('timeFormat'));
-				}
-				else {
-					text = formatDate(eventStart, opt('timeFormat'));
-				}
-				timeElement.text(text);
+				timeElement.text(
+					t.getEventTimeText(eventStart, event.end ? eventEnd : null)
+					//                                       ^
+					// only display the new end if there was an old end
+				);
 			}
 		}
 
@@ -5205,7 +5232,7 @@ function AgendaEventRenderer() {
 			start: function(ev, ui) {
 				snapDelta = prevSnapDelta = 0;
 				hideEvents(event, eventElement);
-				trigger('eventResizeStart', this, event, ev, ui);
+				trigger('eventResizeStart', eventElement[0], event, ev, ui);
 			},
 			resize: function(ev, ui) {
 				// don't rely on ui.size.height, doesn't take grid into account
@@ -5213,25 +5240,21 @@ function AgendaEventRenderer() {
 				if (snapDelta != prevSnapDelta) {
 					eventEnd = getEventEnd(event).add(snapDuration * snapDelta);
 					var text;
-					if (snapDelta || event.end) {
-						text = formatRange(
-							event.start,
-							eventEnd,
-							opt('timeFormat')
-						);
+					if (snapDelta) { // has there been a change?
+						text = t.getEventTimeText(event.start, eventEnd);
 					}
 					else {
-						text = formatDate(event.start, opt('timeFormat'));
+						text = t.getEventTimeText(event); // the original time text
 					}
 					timeElement.text(text);
 					prevSnapDelta = snapDelta;
 				}
 			},
 			stop: function(ev, ui) {
-				trigger('eventResizeStop', this, event, ev, ui);
+				trigger('eventResizeStop', eventElement[0], event, ev, ui);
 				if (snapDelta) {
 					eventResize(
-						this,
+						eventElement[0],
 						event,
 						eventEnd,
 						ev,
@@ -5621,7 +5644,32 @@ function View(element, calendar, viewName) {
 			}
 		}
 	}
-	
+
+
+	// Compute the text that should be displayed on an event's element.
+	// Based off the settings of the view.
+	// Given either an event object or two arguments: a start and end date (which can be null)
+	t.getEventTimeText = function(event) {
+		var start;
+		var end;
+
+		if (arguments.length === 2) {
+			start = arguments[0];
+			end = arguments[1];
+		}
+		else {
+			start = event.start;
+			end = event.end;
+		}
+
+		if (end && opt('displayEventEnd')) {
+			return calendar.formatRange(start, end, opt('timeFormat'));
+		}
+		else {
+			return calendar.formatDate(start, opt('timeFormat'));
+		}
+	};
+
 	
 	
 	/* Event Modification Reporting
@@ -5629,14 +5677,15 @@ function View(element, calendar, viewName) {
 
 	
 	function eventDrop(el, event, newStart, ev, ui) {
-		var undoMutation = calendar.mutateEvent(event, newStart, null);
+		var mutateResult = calendar.mutateEvent(event, newStart, null);
 
 		trigger(
 			'eventDrop',
 			el,
 			event,
+			mutateResult.dateDelta,
 			function() {
-				undoMutation();
+				mutateResult.undo();
 				reportEventChange(event._id);
 			},
 			ev,
@@ -5648,14 +5697,15 @@ function View(element, calendar, viewName) {
 
 
 	function eventResize(el, event, newEnd, ev, ui) {
-		var undoMutation = calendar.mutateEvent(event, null, newEnd);
+		var mutateResult = calendar.mutateEvent(event, null, newEnd);
 
 		trigger(
 			'eventResize',
 			el,
 			event,
+			mutateResult.durationDelta,
 			function() {
-				undoMutation();
+				mutateResult.undo();
 				reportEventChange(event._id);
 			},
 			ev,
@@ -5982,7 +6032,6 @@ function DayEventRenderer() {
 	var dayOffsetToCellOffset = t.dayOffsetToCellOffset;
 	var calendar = t.calendar;
 	var getEventEnd = calendar.getEventEnd;
-	var formatDate = calendar.formatDate;
 
 
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
@@ -6214,9 +6263,7 @@ function DayEventRenderer() {
 		if (!event.allDay && segment.isStart) {
 			html +=
 				"<span class='fc-event-time'>" +
-				htmlEscape(
-					formatDate(event.start, opt('timeFormat'))
-				) +
+				htmlEscape(t.getEventTimeText(event)) +
 				"</span>";
 		}
 		html +=
@@ -6517,7 +6564,7 @@ function DayEventRenderer() {
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
@@ -6540,10 +6587,10 @@ function DayEventRenderer() {
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 				if (dayDelta) {
 					eventDrop(
-						this, // el
+						eventElement[0],
 						event,
 						eventStart,
 						ev,
@@ -6595,7 +6642,7 @@ function DayEventRenderer() {
 			$('body')
 				.css('cursor', direction + '-resize')
 				.one('mouseup', mouseup);
-			trigger('eventResizeStart', this, event, ev);
+			trigger('eventResizeStart', element[0], event, ev, {}); // {} is dummy jqui event
 			hoverListener.start(function(cell, origCell) {
 				if (cell) {
 
@@ -6641,17 +6688,18 @@ function DayEventRenderer() {
 			}, ev);
 			
 			function mouseup(ev) {
-				trigger('eventResizeStop', this, event, ev);
+				trigger('eventResizeStop', element[0], event, ev, {}); // {} is dummy jqui event
 				$('body').css('cursor', '');
 				hoverListener.stop();
 				clearOverlays();
 
 				if (dayDelta) {
 					eventResize(
-						this, // el
+						element[0],
 						event,
 						eventEnd,
-						ev
+						ev,
+						{} // dummy jqui event
 					);
 					// event redraw will clear helpers
 				}
@@ -6720,6 +6768,7 @@ function SelectionManager() {
 	t.unselect = unselect;
 	t.reportSelection = reportSelection;
 	t.daySelectionMousedown = daySelectionMousedown;
+	t.selectionManagerDestroy = destroy;
 	
 	
 	// imports
@@ -6738,16 +6787,18 @@ function SelectionManager() {
 
 	// unselectAuto
 	if (opt('selectable') && opt('unselectAuto')) {
-		// TODO: unbind on destroy
-		$(document).mousedown(function(ev) {
-			var ignore = opt('unselectCancel');
-			if (ignore) {
-				if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
-					return;
-				}
+		$(document).on('mousedown', documentMousedown);
+	}
+
+
+	function documentMousedown(ev) {
+		var ignore = opt('unselectCancel');
+		if (ignore) {
+			if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
+				return;
 			}
-			unselect(ev);
-		});
+		}
+		unselect(ev);
 	}
 	
 
@@ -6818,6 +6869,11 @@ function SelectionManager() {
 				}
 			});
 		}
+	}
+
+
+	function destroy() {
+		$(document).off('mousedown', documentMousedown);
 	}
 
 
