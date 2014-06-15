@@ -1,5 +1,5 @@
 
-v2.0.1 (2014-06-13)
+v2.0.1 (2014-06-15)
 -------------------
 
 - wrongfully triggering a windowResize when resizing an agenda view event ([1116])
@@ -23,6 +23,7 @@ v2.0.1 (2014-06-13)
 [2156]: https://code.google.com/p/fullcalendar/issues/detail?id=2156
 [2180]: https://code.google.com/p/fullcalendar/issues/detail?id=2180
 [PR 172]: https://github.com/arshaw/fullcalendar/pull/172
+
 
 v2.0.0 (2014-06-01)
 -------------------
