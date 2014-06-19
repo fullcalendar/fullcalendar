@@ -190,6 +190,11 @@ function EventManager(options) { // assumed to be a calendar
 					data: data,
 					success: function(events) {
 						events = events || [];
+						
+						if (source.responseTransform) {
+							events = source.responseTransform(events);
+						}
+							
 						var res = applyAll(success, this, arguments);
 						if ($.isArray(res)) {
 							events = res;
