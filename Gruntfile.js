@@ -11,6 +11,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-jscs-checker');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
@@ -24,6 +25,7 @@ module.exports = function(grunt) {
 		uglify: {},
 		copy: {},
 		compress: {},
+        cssmin: {},
 		shell: {},
 		clean: {
 			temp: 'build/temp'
@@ -64,7 +66,8 @@ module.exports = function(grunt) {
 		'lumbar:build',
 		'concat:moduleVariables',
 		'jshint:builtModules',
-		'uglify:modules'
+		'uglify:modules',
+        'cssmin'
 	]);
 
 	// assemble modules
@@ -108,7 +111,15 @@ module.exports = function(grunt) {
 		'dist/src' // created by lumbar sourceMap
 	];
 
-
+    config.cssmin = {
+        minify: {
+            expand: true,
+            cwd: 'dist/',
+            src: ['fullcalendar.css'],
+            dest: 'dist/',
+            ext: '.min.css'
+        }
+    };
 
 	/* Languages
 	----------------------------------------------------------------------------------------------------*/
