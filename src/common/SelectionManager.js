@@ -11,7 +11,7 @@ function SelectionManager() {
 	t.reportSelection = reportSelection;
 	t.daySelectionMousedown = daySelectionMousedown;
 	t.selectionManagerDestroy = destroy;
-	
+        t.reportSelecting = reportSelecting;
 	
 	// imports
 	var calendar = t.calendar;
@@ -75,6 +75,9 @@ function SelectionManager() {
 		trigger('select', null, start, end, ev);
 	}
 	
+	 function reportSelecting(start, end, ev) {
+        	trigger('selecting', null, start, end, ev);
+	}
 	
 	function daySelectionMousedown(ev) { // not really a generic manager method, oh well
 		var cellToDate = t.cellToDate;

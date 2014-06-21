@@ -88,6 +88,7 @@ function AgendaView(element, calendar, viewName) {
 	var renderOverlay = t.renderOverlay;
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
+	var reportSelecting = t.reportSelecting;
 	var unselect = t.unselect;
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
@@ -893,6 +894,7 @@ function AgendaView(element, calendar, viewName) {
 						d2.clone().add(snapDuration)
 					].sort(dateCompare);
 					renderSlotSelection(dates[0], dates[3]);
+				        reportSelecting(dates[0], dates[3], ev);
 				}else{
 					dates = null;
 				}
