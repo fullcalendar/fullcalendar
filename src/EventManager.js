@@ -346,7 +346,7 @@ function EventManager(options) { // assumed to be a calendar
 	
 	function removeEvents(filter) {
 		var i;
-		if (!filter) { // remove all
+		if (filter == null) { // null or undefined. remove all
 			cache = [];
 			// clear all array sources
 			for (i=0; i<sources.length; i++) {
@@ -377,7 +377,7 @@ function EventManager(options) { // assumed to be a calendar
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
 		}
-		else if (filter) { // an event ID
+		else if (filter != null) { // not null, not undefined. an event ID
 			filter += '';
 			return $.grep(cache, function(e) {
 				return e._id == filter;
