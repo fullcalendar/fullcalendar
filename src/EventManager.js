@@ -230,6 +230,7 @@ function EventManager(options) { // assumed to be a calendar
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
 		if (source) {
+			sources.push(source);
 			pendingSourceCnt++;
 			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
 		}
