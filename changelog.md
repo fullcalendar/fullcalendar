@@ -2,6 +2,8 @@
 v2.0.1 (2014-06-15)
 -------------------
 
+- `delta` parameters reintroduced in `eventDrop` and `eventResize` handlers ([2156])
+  - **Note**: this changes the argument order for `revertFunc`
 - wrongfully triggering a windowResize when resizing an agenda view event ([1116])
 - `this` values in event drag-n-drop/resize handlers consistently the DOM node ([1177])
 - `displayEventEnd` - v2 workaround to force display of an end time ([2090])
@@ -9,7 +11,6 @@ v2.0.1 (2014-06-15)
 - destroy method now removes fc-ltr class ([2033])
 - weeks of last/next month still visible when weekends are hidden ([2095])
 - fixed memory leak when destroying calendar with selectable/droppable ([2137])
-- `delta` parameters reintroduced in `eventDrop` and `eventResize` handlers ([2156])
 - Icelandic language ([2180])
 - Bahasa Indonesia language ([PR 172])
 
