@@ -1,4 +1,16 @@
 
+v2.0.2 (2014-06-24)
+-------------------
+
+- bug with persisting addEventSource calls ([2191])
+- bug with persisting removeEvents calls with an array source ([2187])
+- bug with removeEvents method when called with 0 removes all events ([2082])
+
+[2191]: https://code.google.com/p/fullcalendar/issues/detail?id=2191
+[2187]: https://code.google.com/p/fullcalendar/issues/detail?id=2187
+[2082]: https://code.google.com/p/fullcalendar/issues/detail?id=2082
+
+
 v2.0.1 (2014-06-15)
 -------------------
 
