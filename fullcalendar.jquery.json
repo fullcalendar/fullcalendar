@@ -11,7 +11,7 @@
     "moment": ">=2.5.0"
   },
   "optionalDependencies": {
-    "jquery-ui": ">=1.8.17"
+    "jquery-ui": "1.8.17 - 1.10.4"
   },
 
   "title": "FullCalendar",
