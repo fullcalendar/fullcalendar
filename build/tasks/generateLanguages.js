@@ -1,3 +1,4 @@
+var pathLib = require('path');
 
 module.exports = function(grunt) {
 
@@ -12,7 +13,7 @@ module.exports = function(grunt) {
 
 		grunt.file.mkdir(config.dest, 0755);
 
-		grunt.file.expand(config.moment + '/*.js').forEach(function(momentPath) {
+		grunt.file.expand(pathLib.join(config.moment, '*.js')).forEach(function(momentPath) {
 
 			var langCode = momentPath.match(/([^\/]*)\.js$/)[1];
 			var js = getLangJS(langCode, momentPath);
@@ -20,7 +21,7 @@ module.exports = function(grunt) {
 			if (js) {
 
 				grunt.file.write(
-					config.dest + '/' + langCode + '.js',
+					pathLib.join(config.dest, langCode + '.js'),
 					wrapWithUMD(js)
 				);
 
@@ -148,7 +149,7 @@ module.exports = function(grunt) {
 			return '-' + m1.toUpperCase();
 		});
 
-		var path = config.datepicker + '/jquery.ui.datepicker-' + datepickerLangCode + '.js';
+		var path = pathLib.join(config.datepicker, 'jquery.ui.datepicker-' + datepickerLangCode + '.js');
 		var js;
 
 		try {
@@ -182,7 +183,7 @@ module.exports = function(grunt) {
 
 	function getFullCalendarLangJS(langCode, targetLangCode) {
 
-		var path = config.fullCalendar + '/' + langCode + '.js';
+		var path = pathLib.join(config.fullCalendar, langCode + '.js');
 		var js;
 
 		try {
