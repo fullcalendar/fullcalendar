@@ -123,10 +123,10 @@ module.exports = function(grunt) {
 	]);
 
 	config.generateLanguages = {
-		moment: 'lib/moment/lang/',
-		datepicker: 'lib/jquery-ui/ui/i18n/',
-		fullCalendar: 'lang/',
-		dest: 'build/temp/lang/',
+		moment: 'lib/moment/lang',
+		datepicker: 'lib/jquery-ui/ui/i18n',
+		fullCalendar: 'lang',
+		dest: 'build/temp/lang',
 		allDest: 'build/temp/lang-all.js'
 	};
 
