@@ -3124,6 +3124,7 @@ function BasicView(element, calendar, viewName) {
 		});
 
 		dayBind(bodyCells);
+		dayHeadBind(headCells);
 	}
 
 
@@ -3161,7 +3162,8 @@ function BasicView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
 			date = cellToDate(0, col);
 			html +=
-				"<th class='fc-day-header fc-" + dayIDs[date.day()] + " " + headerClass + "'>" +
+				"<th class='fc-day-header fc-" + dayIDs[date.day()] + " " + headerClass + "'" +
+				" data-date='" + date.format() + "'>" +
 				htmlEscape(formatDate(date, colFormat)) +
 				"</th>";
 		}
@@ -3324,7 +3326,18 @@ function BasicView(element, calendar, viewName) {
 		}
 	}
 	
+	/* Day header clicking and binding
+	-----------------------------------------------------------*/
+
+	function dayHeadBind(days) {
+		days.click(dayHeadClick);
+	}
+
 	
+	function dayHeadClick(ev) {
+		var date = calendar.moment($(this).data('date'));
+		trigger('dayHeadClick', this, date, ev);
+	}
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
@@ -3913,6 +3926,8 @@ function AgendaView(element, calendar, viewName) {
 		markFirstLast(dayHead.add(dayHead.find('tr')));
 		markFirstLast(dayBody.add(dayBody.find('tr')));
 
+		dayHeadBind(dayHeadCells);
+
 		// TODO: now that we rebuild the cells every time, we should call dayRender
 	}
 
@@ -3960,7 +3975,8 @@ function AgendaView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
 			date = cellToDate(0, col);
 			html +=
-				"<th class='fc-" + dayIDs[date.day()] + " fc-col" + col + ' ' + headerClass + "'>" +
+				"<th class='fc-" + dayIDs[date.day()] + " fc-col" + col + ' ' + headerClass + "'" +
+				" data-date='" + date.format() + "'>" +
 				htmlEscape(formatDate(date, colFormat)) +
 				"</th>";
 		}
@@ -4191,6 +4207,18 @@ function AgendaView(element, calendar, viewName) {
 		}
 	}
 	
+	/* Day header clicking and binding
+	-----------------------------------------------------------*/
+
+	function dayHeadBind(days) {
+		days.click(dayHeadClick);
+	}
+
+
+	function dayHeadClick(ev) {
+		var date = calendar.moment($(this).data('date'));
+		trigger('dayHeadClick', this, date, ev);
+	}
 	
 	
 	/* Semi-transparent Overlay Helpers
