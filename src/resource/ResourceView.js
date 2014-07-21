@@ -56,7 +56,7 @@ function ResourceView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	t.getResources = calendar.fetchResources();
+  t.getResources = calendar.fetchResources;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -339,13 +339,13 @@ function ResourceView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
       var classNames = [
           'fc-col' + col,
-          resources[col].className,
+          resources()[col].className,
           headerClass
         ];
 
       html +=
 				"<th class='" + classNames.join(' ') + "'>" +
-				htmlEscape(resources[col].name) +
+				htmlEscape(resources()[col].name) +
 				"</th>";
 		}
 
@@ -382,7 +382,7 @@ function ResourceView(element, calendar, viewName) {
 
 			classNames = [
 				'fc-col' + col,
-				resources[col].className,
+				resources()[col].className,
 				contentClass
 			];
 			if (+date == +today) {
@@ -549,7 +549,7 @@ function ResourceView(element, calendar, viewName) {
 			var date = cellToDate(0, 0);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
 
-		  ev.data = resources[col];
+		  ev.data = resources()[col];
 
 			if (rowMatch) {
 				var mins = parseInt(rowMatch[1]) * opt('slotMinutes');
@@ -891,7 +891,7 @@ function ResourceView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-		  ev.data = resources[cell.col];
+		  ev.data = resources()[cell.col];
 			trigger('drop', _dragElement, realCellToDate(cell), getIsCellAllDay(cell), ev, ui);
 		}
 	}

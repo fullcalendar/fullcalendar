@@ -2,28 +2,33 @@ function ResourceManager(options) {
   var t = this;
   // exports
   t.fetchResources = fetchResources;
+  t.setResources = setResources;
+
   // locals
   var resourceSources = [];
   var cache;
   // initialize the resources.
-  addResourceSources(options.resources);
+  setResources(options.resources);
   // add the resource sources
 
-  function addResourceSources(sources) {
-    var resource = {};
+  function setResources(sources) {
+    resourceSources = [];
+    var resource;
     if ($.isFunction(sources)) {
       // is it a function?
       resource = {
         resources: sources
       };
       resourceSources.push(resource);
+      cache = undefined;
     } else if (typeof sources == 'string') {
       // is it a URL string?
       resource = {
         url: sources
       };
       resourceSources.push(resource);
-    } else if (typeof sources == 'object') {
+      cache = undefined;
+    } else if (typeof sources == 'object' && sources != null) {
       // is it json object?
       for (var i = 0; i < sources.length; i++) {
         var s = sources[i];
@@ -33,6 +38,7 @@ function ResourceManager(options) {
         };
         resourceSources.push(resource);
       }
+      cache = undefined;
     }
   }
   /**
@@ -58,6 +64,7 @@ function ResourceManager(options) {
       return cache;
     }
   }
+
   /**
    * ----------------------------------------------------------------
    * Fetch resources from each source.  If source is a function, call

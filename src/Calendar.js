@@ -34,9 +34,9 @@ function Calendar(element, options, eventSources) {
 	EventManager.call(t, options, eventSources);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
-	
+
 	ResourceManager.call(t, options);
-	
+
 	// locals
 	var _element = element[0];
 	var header;
@@ -294,7 +294,6 @@ function Calendar(element, options, eventSources) {
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
-
 
 	function refetchEvents() { // can be called as an API method
 		clearEvents();

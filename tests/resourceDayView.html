@@ -93,8 +93,6 @@
   <script src='../src/common/CoordinateGrid.js'></script>
   <script src='../src/common/HoverListener.js'></script>
   <script src='../src/common/HorizontalPositionCache.js'></script>
-  <!--<script src='../src/outro.js'></script>-->
-  <!-- <script src='../build/out/fullcalendar.js'></script> -->
   <script src='../build/out/gcal.js'></script>
   <script>
 
@@ -107,20 +105,13 @@
 
     $(document).ready(function() {
       cal = $('#calendar').fullCalendar({
-        // editable: true,
+        editable: true,
         // weekends: false,
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'month,agendaWeek,basicWeek,agendaDay,basicDay,resourceDay'
         },
-        // loading: function(bool) {
-        //   if (bool) {
-        //     $('#loading').show();
-        //   }else{
-        //     $('#loading').hide();
-        //   }
-        // },
         defaultView: 'resourceDay',
         resources: [{'id':'resource1','name':'Resource 1', 'className': 'css-class-as-string'},{'id':'resource2', 'name':'Resource 2', 'className': ['green', 'another-css-class-name']},{'id':'resource3', 'name':'Resource 3'}],
         events: [

@@ -218,9 +218,9 @@ function Calendar(element, options, eventSources) {
 	EventManager.call(t, options, eventSources);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
-	
+
 	ResourceManager.call(t, options);
-	
+
 	// locals
 	var _element = element[0];
 	var header;
@@ -478,7 +478,6 @@ function Calendar(element, options, eventSources) {
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
-
 
 	function refetchEvents() { // can be called as an API method
 		clearEvents();
@@ -881,6 +880,7 @@ function Header(calendar, options) {
 }
 
 ;;
+/// <reference path="../build/out/fullcalendar.min.js" />
 
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
@@ -1309,28 +1309,33 @@ function ResourceManager(options) {
   var t = this;
   // exports
   t.fetchResources = fetchResources;
+  t.setResources = setResources;
+
   // locals
   var resourceSources = [];
   var cache;
   // initialize the resources.
-  addResourceSources(options.resources);
+  setResources(options.resources);
   // add the resource sources
 
-  function addResourceSources(sources) {
-    var resource = {};
+  function setResources(sources) {
+    resourceSources = [];
+    var resource;
     if ($.isFunction(sources)) {
       // is it a function?
       resource = {
         resources: sources
       };
       resourceSources.push(resource);
+      cache = undefined;
     } else if (typeof sources == 'string') {
       // is it a URL string?
       resource = {
         url: sources
       };
       resourceSources.push(resource);
-    } else if (typeof sources == 'object') {
+      cache = undefined;
+    } else if (typeof sources == 'object' && sources != null) {
       // is it json object?
       for (var i = 0; i < sources.length; i++) {
         var s = sources[i];
@@ -1340,6 +1345,7 @@ function ResourceManager(options) {
         };
         resourceSources.push(resource);
       }
+      cache = undefined;
     }
   }
   /**
@@ -1365,6 +1371,7 @@ function ResourceManager(options) {
       return cache;
     }
   }
+
   /**
    * ----------------------------------------------------------------
    * Fetch resources from each source.  If source is a function, call
@@ -4554,7 +4561,7 @@ function ResourceDayView(element, calendar) {
 		t.start = t.visStart = start;
 		t.end = t.visEnd = end;
 
-		renderResource(getResources.length);
+		renderResource(getResources().length);
 	}
 	
 
@@ -4618,7 +4625,7 @@ function ResourceView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-	t.getResources = calendar.fetchResources();
+  t.getResources = calendar.fetchResources;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -4901,13 +4908,13 @@ function ResourceView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
       var classNames = [
           'fc-col' + col,
-          resources[col].className,
+          resources()[col].className,
           headerClass
         ];
 
       html +=
 				"<th class='" + classNames.join(' ') + "'>" +
-				htmlEscape(resources[col].name) +
+				htmlEscape(resources()[col].name) +
 				"</th>";
 		}
 
@@ -4944,7 +4951,7 @@ function ResourceView(element, calendar, viewName) {
 
 			classNames = [
 				'fc-col' + col,
-				resources[col].className,
+				resources()[col].className,
 				contentClass
 			];
 			if (+date == +today) {
@@ -5111,7 +5118,7 @@ function ResourceView(element, calendar, viewName) {
 			var date = cellToDate(0, 0);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
 
-		  ev.data = resources[col];
+		  ev.data = resources()[col];
 
 			if (rowMatch) {
 				var mins = parseInt(rowMatch[1]) * opt('slotMinutes');
@@ -5453,7 +5460,7 @@ function ResourceView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-		  ev.data = resources[cell.col];
+		  ev.data = resources()[cell.col];
 			trigger('drop', _dragElement, realCellToDate(cell), getIsCellAllDay(cell), ev, ui);
 		}
 	}
@@ -5549,7 +5556,7 @@ function ResourceEventRenderer() {
 
 	
 	function compileSlotSegs(events) {
-		var colCnt = getColCnt(),
+	  var colCnt = getColCnt(),
 			minMinute = getMinMinute(),
 			maxMinute = getMaxMinute(),
 			d,
@@ -5563,7 +5570,7 @@ function ResourceEventRenderer() {
 			d = cloneDate(t.visStart);
 			addMinutes(d, minMinute);
 
-			var resourceEvents = eventsForResource(resources[i], events);
+			var resourceEvents = eventsForResource(resources()[i], events);
 			visEventEnds = $.map(resourceEvents, slotEventEnd);
 			col = stackAgendaSegs(
 				sliceSegs(
@@ -6050,7 +6057,7 @@ function ResourceEventRenderer() {
 
 			  //if (isInBounds && (isAllDay || dayDelta || minuteDelta)) { // changed!
 				if (isInBounds && (isAllDay || resourceDelta || minuteDelta)) { // changed!
-				  event.resources = resources[origCell.col + resourceDelta].id;
+				  event.resources = resources()[origCell.col + resourceDelta].id;
 					eventDrop(this, event, dayDelta, isAllDay ? 0 : minuteDelta, isAllDay, ev, ui);
 				}
 				else { // either no change or out-of-bounds (draggable has already reverted)
@@ -6958,7 +6965,7 @@ function DayEventRenderer() {
 
 	// Generate an array of "segments" for all events.
 	function buildSegments(events) {
-		var resources = t.getResources;
+		var resources = t.getResources();
 		
 		if (typeof resources === 'undefined'){
 			return buildSegmentsTEMP(events);  // TEMP!

@@ -169,7 +169,7 @@ function DayEventRenderer() {
 
 	// Generate an array of "segments" for all events.
 	function buildSegments(events) {
-		var resources = t.getResources;
+		var resources = t.getResources();
 		
 		if (typeof resources === 'undefined'){
 			return buildSegmentsTEMP(events);  // TEMP!

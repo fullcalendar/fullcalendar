@@ -34,7 +34,7 @@ function ResourceDayView(element, calendar) {
 		t.start = t.visStart = start;
 		t.end = t.visEnd = end;
 
-		renderResource(getResources.length);
+		renderResource(getResources().length);
 	}
 	
 

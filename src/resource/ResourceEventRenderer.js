@@ -85,7 +85,7 @@ function ResourceEventRenderer() {
 
 	
 	function compileSlotSegs(events) {
-		var colCnt = getColCnt(),
+	  var colCnt = getColCnt(),
 			minMinute = getMinMinute(),
 			maxMinute = getMaxMinute(),
 			d,
@@ -99,7 +99,7 @@ function ResourceEventRenderer() {
 			d = cloneDate(t.visStart);
 			addMinutes(d, minMinute);
 
-			var resourceEvents = eventsForResource(resources[i], events);
+			var resourceEvents = eventsForResource(resources()[i], events);
 			visEventEnds = $.map(resourceEvents, slotEventEnd);
 			col = stackAgendaSegs(
 				sliceSegs(
@@ -586,7 +586,7 @@ function ResourceEventRenderer() {
 
 			  //if (isInBounds && (isAllDay || dayDelta || minuteDelta)) { // changed!
 				if (isInBounds && (isAllDay || resourceDelta || minuteDelta)) { // changed!
-				  event.resources = resources[origCell.col + resourceDelta].id;
+				  event.resources = resources()[origCell.col + resourceDelta].id;
 					eventDrop(this, event, dayDelta, isAllDay ? 0 : minuteDelta, isAllDay, ev, ui);
 				}
 				else { // either no change or out-of-bounds (draggable has already reverted)

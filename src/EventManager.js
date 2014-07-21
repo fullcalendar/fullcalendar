@@ -1,3 +1,4 @@
+/// <reference path="../build/out/fullcalendar.min.js" />
 
 fc.sourceNormalizers = [];
 fc.sourceFetchers = [];
