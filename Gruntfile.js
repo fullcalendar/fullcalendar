@@ -224,8 +224,7 @@ module.exports = function(grunt) {
 			'lib/jquery-ui/ui/minified/jquery.ui.core.min.js',
 			'lib/jquery-ui/ui/minified/jquery.ui.widget.min.js',
 			'lib/jquery-ui/ui/minified/jquery.ui.mouse.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
+			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js'
 		],
 		dest: 'build/temp/archive/lib/jquery-ui.custom.min.js'
 	};
