@@ -10,9 +10,6 @@
     "jquery": ">=1.7.1",
     "moment": ">=2.5.0"
   },
-  "optionalDependencies": {
-    "jquery-ui": ">=1.8.17"
-  },
 
   "title": "FullCalendar",
   "demo": "http://arshaw.com/fullcalendar/",

@@ -1,46 +1,358 @@
 
+/* An abstract class from which other views inherit from
+----------------------------------------------------------------------------------------------------------------------*/
+// Newer methods should be written as prototype methods, not in the monster `View` function at the bottom.
 
-function View(element, calendar, viewName) {
+View.prototype = {
+
+	calendar: null, // owner Calendar object
+	coordMap: null, // a CoordMap object for converting pixel regions to dates
+	el: null, // the view's containing element. set by Calendar
+
+	// important Moments
+	start: null, // the date of the very first cell
+	end: null, // the date after the very last cell
+	intervalStart: null, // the start of the interval of time the view represents (1st of month for month view)
+	intervalEnd: null, // the exclusive end of the interval of time the view represents
+
+	// used for cell-to-date and date-to-cell calculations
+	rowCnt: null, // # of weeks
+	colCnt: null, // # of days displayed in a week
+
+	segs: null, // array of rendered event segment objects
+
+	isSelected: false, // boolean whether cells are user-selected or not
+
+	// subclasses can optionally use a scroll container
+	scrollerEl: null, // the element that will most likely scroll when content is too tall
+	scrollTop: null, // cached vertical scroll value
+
+	// classNames styled by jqui themes
+	widgetHeaderClass: null,
+	widgetContentClass: null,
+	highlightStateClass: null,
+
+	dayRowThemeClass: null, // sets the theme className applied to DayGrid rows (none by default)
+
+	// document handlers, bound to `this` object
+	documentMousedownProxy: null,
+	documentDragStartProxy: null,
+
+
+	// Serves as a "constructor" to suppliment the monster `View` constructor below
+	init: function() {
+		var tm = this.opt('theme') ? 'ui' : 'fc';
+
+		this.widgetHeaderClass = tm + '-widget-header';
+		this.widgetContentClass = tm + '-widget-content';
+		this.highlightStateClass = tm + '-state-highlight';
+
+		// save reference to `this`-bound handlers and attach to document
+		$(document)
+			.on('mousedown', this.documentMousedownProxy = $.proxy(this, 'documentMousedown'))
+			.on('dragstart', this.documentDragStartProxy = $.proxy(this, 'documentDragStart')); // jqui drag
+	},
+
+
+	// Renders the view inside an already-defined `this.el`.
+	// Subclasses should override this and then call the super method afterwards.
+	render: function() {
+		this.updateHeight();
+		this.updateWidth();
+		this.trigger('viewRender', this, this, this.el);
+	},
+
+
+	// Clears all view rendering, event elements, and unregisters handlers
+	destroy: function() {
+		this.unselect();
+		this.trigger('viewDestroy', this, this, this.el);
+		this.destroyEvents();
+		this.el.empty(); // removes inner contents but leaves the element intact
+
+		$(document)
+			.off('mousedown', this.documentMousedownProxy)
+			.off('dragstart', this.documentDragStartProxy);
+	},
+
+
+	// Used to determine what happens when the users clicks next/prev. Given -1 for prev, 1 for next.
+	// Should apply the delta to `date` (a Moment) and return it.
+	incrementDate: function(date, delta) {
+		// subclasses should implement
+	},
+
+
+	/* Dimensions
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Refreshes the horizontal dimensions of the calendar
+	updateWidth: function() {
+		// subclasses should implement
+	},
+
+
+	// Refreshes the vertical dimensions of the calendar
+	updateHeight: function() {
+		var calendar = this.calendar; // we poll the calendar for height information
+
+		this.setHeight(
+			calendar.getSuggestedViewHeight(),
+			calendar.isHeightAuto()
+		);
+	},
+
+
+	// Updates the vertical dimensions of the calendar to the specified height.
+	// if `isAuto` is set to true, height becomes merely a suggestion and the view should use its "natural" height.
+	setHeight: function(height, isAuto) {
+		// subclasses should implement
+	},
+
+
+	// Given the total height of the view, return the number of pixels that should be used for the scroller.
+	// Utility for subclasses.
+	computeScrollerHeight: function(totalHeight) {
+		// `otherHeight` is the cumulative height of everything that is not the scrollerEl in the view (header+borders)
+		var otherHeight = this.el.outerHeight() - this.scrollerEl.height();
+		return totalHeight - otherHeight;
+	},
+
+
+	// Called for remembering the current scroll value of the scroller.
+	// Should be called before there is a destructive operation (like removing DOM elements) that might inadvertently
+	// change the scroll of the container.
+	recordScroll: function() {
+		this.scrollTop = this.scrollerEl.scrollTop();
+	},
+
+
+	// Set the scroll value of the scroller to the previously recorded value.
+	// Should be called after we know the view's dimensions have been restored following some type of destructive
+	// operation (like temporarily removing DOM elements).
+	restoreScroll: function() {
+		if (this.scrollTop !== null) {
+			this.scrollerEl.scrollTop(this.scrollTop);
+		}
+	},
+
+
+	/* Events
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders the events onto the view.
+	// Should be overriden by subclasses. Subclasses should assign `this.segs` and call the super-method afterwards.
+	renderEvents: function(events) {
+		this.segEach(function(seg) {
+			seg.el.data('fc-seg', seg); // store info about the segment object. used by handlers
+			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
+		});
+		this.trigger('eventAfterAllRender');
+	},
+
+
+	// Removes event elements from the view.
+	// Should be overridden by subclasses. Actual element destruction should happen first, then call super-method.
+	destroyEvents: function() {
+		this.segEach(function(seg) {
+			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
+		});
+		this.segs = [];
+	},
+
+
+	// Given an event and the default element used for rendering, returns the element that should actually be used.
+	// Basically runs events and elements through the eventRender hook.
+	resolveEventEl: function(event, el) {
+		var custom = this.trigger('eventRender', event, event, el);
+
+		if (custom === false) { // means don't render at all
+			el = null;
+		}
+		else if (custom && custom !== true) {
+			el = $(custom);
+		}
+
+		return el;
+	},
+
+
+	// Hides all rendered event segments linked to the given event
+	showEvent: function(event) {
+		this.segEach(function(seg) {
+			seg.el.css('visibility', '');
+		}, event);
+	},
+
+
+	// Shows all rendered event segments linked to the given event
+	hideEvent: function(event) {
+		this.segEach(function(seg) {
+			seg.el.css('visibility', 'hidden');
+		}, event);
+	},
+
+
+	// Iterates through event segments. Goes through all by default.
+	// If the optional `event` argument is specified, only iterates through segments linked to that event.
+	// The `this` value of the callback function will be the view.
+	segEach: function(func, event) {
+		var segs = this.segs || [];
+		var i;
+
+		for (i = 0; i < segs.length; i++) {
+			if (!event || segs[i].event._id === event._id) {
+				func.call(this, segs[i]);
+			}
+		}
+	},
+
+
+	/* Event Drag Visualization
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of an event hovering over the specified date.
+	// `end` is a Moment and might be null.
+	// `seg` might be null. if specified, it is the segment object of the event being dragged.
+	//       otherwise, an external event from outside the calendar is being dragged.
+	renderDrag: function(start, end, seg) {
+		// subclasses should implement
+	},
+
+
+	// Unrenders a visual indication of event hovering
+	destroyDrag: function() {
+		// subclasses should implement
+	},
+
+
+	// Handler for accepting externally dragged events being dropped in the view.
+	// Gets called when jqui's 'dragstart' is fired.
+	documentDragStart: function(ev, ui) {
+		var _this = this;
+		var dropDate = null;
+		var dragListener;
+
+		if (this.opt('droppable')) { // only listen if this setting is on
+
+			// listener that tracks mouse movement over date-associated pixel regions
+			dragListener = new DragListener(this.coordMap, {
+				cellOver: function(cell, date) {
+					dropDate = date;
+					_this.renderDrag(date);
+				},
+				cellOut: function() {
+					dropDate = null;
+					_this.destroyDrag();
+				}
+			});
+
+			// gets called, only once, when jqui drag is finished
+			$(document).one('dragstop', function(ev, ui) {
+				_this.destroyDrag();
+				if (dropDate) {
+					_this.trigger('drop', ev.target, dropDate, ev, ui);
+				}
+			});
+
+			dragListener.startDrag(ev); // start listening immediately
+		}
+	},
+
+
+	/* Selection
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Selects a date range on the view. `start` and `end` are both Moments.
+	// `ev` is the native mouse event that begin the interaction.
+	select: function(start, end, ev) {
+		this.unselect(ev);
+		this.renderSelection(start, end);
+		this.reportSelection(start, end, ev);
+	},
+
+
+	// Renders a visual indication of the selection
+	renderSelection: function(start, end) {
+		// subclasses should implement
+	},
+
+
+	// Called when a new selection is made. Updates internal state and triggers handlers.
+	reportSelection: function(start, end, ev) {
+		this.isSelected = true;
+		this.trigger('select', null, start, end, ev);
+	},
+
+
+	// Undoes a selection. updates in the internal state and triggers handlers.
+	// `ev` is the native mouse event that began the interaction.
+	unselect: function(ev) {
+		if (this.isSelected) {
+			this.isSelected = false;
+			this.destroySelection();
+			this.trigger('unselect', null, ev);
+		}
+	},
+
+
+	// Unrenders a visual indication of selection
+	destroySelection: function() {
+		// subclasses should implement
+	},
+
+
+	// Handler for unselecting when the user clicks something and the 'unselectAuto' setting is on
+	documentMousedown: function(ev) {
+		var ignore;
+
+		// is there a selection, and has the user made a proper left click?
+		if (this.isSelected && this.opt('unselectAuto') && isPrimaryMouseButton(ev)) {
+
+			// only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
+			ignore = this.opt('unselectCancel');
+			if (!ignore || !$(ev.target).closest(ignore).length) {
+				this.unselect(ev);
+			}
+		}
+	}
+
+};
+
+
+// We are mixing JavaScript OOP design patterns here by putting methods and member variables in the closed scope of the
+// constructor. Going forward, methods should be part of the prototype.
+function View(calendar) {
 	var t = this;
 	
-	
 	// exports
-	t.element = element;
 	t.calendar = calendar;
-	t.name = viewName;
 	t.opt = opt;
 	t.trigger = trigger;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
-	t.clearEventData = clearEventData;
-	t.reportEventElement = reportEventElement;
-	t.triggerEventDestroy = triggerEventDestroy;
-	t.eventElementHandlers = eventElementHandlers;
-	t.showEvents = showEvents;
-	t.hideEvents = hideEvents;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
-	// t.start, t.end // moments with ambiguous-time
-	// t.intervalStart, t.intervalEnd // moments with ambiguous-time
-	
 	
 	// imports
 	var reportEventChange = calendar.reportEventChange;
 	
-	
 	// locals
-	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
-	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
 	var nextDayThreshold = moment.duration(options.nextDayThreshold);
 
+
+	t.init(); // the "constructor" that concerns the prototype methods
 	
 	
-	
-	function opt(name, viewNameOverride) {
+	function opt(name) {
 		var v = options[name];
 		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
-			return smartProperty(v, viewNameOverride || viewName);
+			return smartProperty(v, t.name);
 		}
 		return v;
 	}
@@ -61,130 +373,66 @@ function View(element, calendar, viewName) {
 	
 	function isEventDraggable(event) {
 		var source = event.source || {};
+
 		return firstDefined(
-				event.startEditable,
-				source.startEditable,
-				opt('eventStartEditable'),
-				event.editable,
-				source.editable,
-				opt('editable')
-			);
+			event.startEditable,
+			source.startEditable,
+			opt('eventStartEditable'),
+			event.editable,
+			source.editable,
+			opt('editable')
+		);
 	}
 	
 	
-	function isEventResizable(event) { // but also need to make sure the seg.isEnd == true
+	function isEventResizable(event) {
 		var source = event.source || {};
+
 		return firstDefined(
-				event.durationEditable,
-				source.durationEditable,
-				opt('eventDurationEditable'),
-				event.editable,
-				source.editable,
-				opt('editable')
-			);
-	}
-	
-	
-	
-	/* Event Data
-	------------------------------------------------------------------------------*/
-
-
-	function clearEventData() {
-		eventElementsByID = {};
-		eventElementCouples = [];
+			event.durationEditable,
+			source.durationEditable,
+			opt('eventDurationEditable'),
+			event.editable,
+			source.editable,
+			opt('editable')
+		);
 	}
 	
 	
 	
 	/* Event Elements
 	------------------------------------------------------------------------------*/
-	
-	
-	// report when view creates an element for an event
-	function reportEventElement(event, element) {
-		eventElementCouples.push({ event: event, element: element });
-		if (eventElementsByID[event._id]) {
-			eventElementsByID[event._id].push(element);
-		}else{
-			eventElementsByID[event._id] = [element];
-		}
-	}
-
-
-	function triggerEventDestroy() {
-		$.each(eventElementCouples, function(i, couple) {
-			t.trigger('eventDestroy', couple.event, couple.event, couple.element);
-		});
-	}
-	
-	
-	// attaches eventClick, eventMouseover, eventMouseout
-	function eventElementHandlers(event, eventElement) {
-		eventElement
-			.click(function(ev) {
-				if (!eventElement.hasClass('ui-draggable-dragging') &&
-					!eventElement.hasClass('ui-resizable-resizing')) {
-						return trigger('eventClick', this, event, ev);
-					}
-			})
-			.hover(
-				function(ev) {
-					trigger('eventMouseover', this, event, ev);
-				},
-				function(ev) {
-					trigger('eventMouseout', this, event, ev);
-				}
-			);
-		// TODO: don't fire eventMouseover/eventMouseout *while* dragging is occuring (on subject element)
-		// TODO: same for resizing
-	}
-	
-	
-	function showEvents(event, exceptElement) {
-		eachEventElement(event, exceptElement, 'show');
-	}
-	
-	
-	function hideEvents(event, exceptElement) {
-		eachEventElement(event, exceptElement, 'hide');
-	}
-	
-	
-	function eachEventElement(event, exceptElement, funcName) {
-		// NOTE: there may be multiple events per ID (repeating events)
-		// and multiple segments per event
-		var elements = eventElementsByID[event._id],
-			i, len = elements.length;
-		for (i=0; i<len; i++) {
-			if (!exceptElement || elements[i][0] != exceptElement[0]) {
-				elements[i][funcName]();
-			}
-		}
-	}
 
 
 	// Compute the text that should be displayed on an event's element.
-	// Based off the settings of the view.
-	// Given either an event object or two arguments: a start and end date (which can be null)
-	t.getEventTimeText = function(event) {
+	// Based off the settings of the view. Possible signatures:
+	//   .getEventTimeText(event, formatStr)
+	//   .getEventTimeText(startMoment, endMoment, formatStr)
+	//   .getEventTimeText(startMoment, null, formatStr)
+	// `timeFormat` is used but the `formatStr` argument can be used to override.
+	t.getEventTimeText = function(event, formatStr) {
 		var start;
 		var end;
 
-		if (arguments.length === 2) {
-			start = arguments[0];
-			end = arguments[1];
+		if (typeof event === 'object' && typeof formatStr === 'object') {
+			// first two arguments are actually moments (or null). shift arguments.
+			start = event;
+			end = formatStr;
+			formatStr = arguments[2];
 		}
 		else {
+			// otherwise, an event object was the first argument
 			start = event.start;
 			end = event.end;
 		}
 
+		formatStr = formatStr || opt('timeFormat');
+
 		if (end && opt('displayEventEnd')) {
-			return calendar.formatRange(start, end, opt('timeFormat'));
+			return calendar.formatRange(start, end, formatStr);
 		}
 		else {
-			return calendar.formatDate(start, opt('timeFormat'));
+			return calendar.formatDate(start, formatStr);
 		}
 	};
 
@@ -194,7 +442,7 @@ function View(element, calendar, viewName) {
 	---------------------------------------------------------------------------------*/
 
 	
-	function eventDrop(el, event, newStart, ev, ui) {
+	function eventDrop(el, event, newStart, ev) {
 		var mutateResult = calendar.mutateEvent(event, newStart, null);
 
 		trigger(
@@ -204,17 +452,17 @@ function View(element, calendar, viewName) {
 			mutateResult.dateDelta,
 			function() {
 				mutateResult.undo();
-				reportEventChange(event._id);
+				reportEventChange();
 			},
 			ev,
-			ui
+			{} // jqui dummy
 		);
 
-		reportEventChange(event._id);
+		reportEventChange();
 	}
 
 
-	function eventResize(el, event, newEnd, ev, ui) {
+	function eventResize(el, event, newEnd, ev) {
 		var mutateResult = calendar.mutateEvent(event, null, newEnd);
 
 		trigger(
@@ -224,13 +472,13 @@ function View(element, calendar, viewName) {
 			mutateResult.durationDelta,
 			function() {
 				mutateResult.undo();
-				reportEventChange(event._id);
+				reportEventChange();
 			},
 			ev,
-			ui
+			{} // jqui dummy
 		);
 
-		reportEventChange(event._id);
+		reportEventChange();
 	}
 
 
@@ -269,6 +517,7 @@ function View(element, calendar, viewName) {
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 	t.dayOffsetToDate = dayOffsetToDate;
 	t.rangeToSegments = rangeToSegments;
+	t.isMultiDayEvent = isMultiDayEvent;
 
 
 	// internals
@@ -357,7 +606,7 @@ function View(element, calendar, viewName) {
 	// - row, col
 	// - { row:#, col:# }
 	function cellToCellOffset(row, col) {
-		var colCnt = t.getColCnt();
+		var colCnt = t.colCnt;
 
 		// rtl variables. wish we could pre-populate these. but where?
 		var dis = isRTL ? -1 : 1;
@@ -419,7 +668,7 @@ function View(element, calendar, viewName) {
 
 	// cell offset -> cell (object with row & col keys)
 	function cellOffsetToCell(cellOffset) {
-		var colCnt = t.getColCnt();
+		var colCnt = t.colCnt;
 
 		// rtl variables. wish we could pre-populate these. but where?
 		var dis = isRTL ? -1 : 1;
@@ -445,18 +694,14 @@ function View(element, calendar, viewName) {
 	//
 	function rangeToSegments(start, end) {
 
-		var rowCnt = t.getRowCnt();
-		var colCnt = t.getColCnt();
+		var rowCnt = t.rowCnt;
+		var colCnt = t.colCnt;
 		var segments = []; // array of segments to return
 
 		// day offset for given date range
-		var rangeDayOffsetStart = dateToDayOffset(start);
-		var rangeDayOffsetEnd = dateToDayOffset(end); // an exclusive value
-		var endTimeMS = +end.time();
-		if (endTimeMS && endTimeMS >= nextDayThreshold) {
-			rangeDayOffsetEnd++;
-		}
-		rangeDayOffsetEnd = Math.max(rangeDayOffsetEnd, rangeDayOffsetStart + 1);
+		var dayRange = computeDayRange(start, end); // convert to a whole-day range
+		var rangeDayOffsetStart = dateToDayOffset(dayRange.start);
+		var rangeDayOffsetEnd = dateToDayOffset(dayRange.end); // an exclusive value
 
 		// first and last cell offset for the given date range
 		// "last" implies inclusivity
@@ -489,7 +734,8 @@ function View(element, calendar, viewName) {
 				// can translate to multiple days, and an edge case reveals itself when we the
 				// range's first cell is hidden (we don't want isStart to be true).
 				var isStart = cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
-				var isEnd = cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd; // +1 for comparing exclusively
+				var isEnd = cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd;
+				                                                   // +1 for comparing exclusively
 
 				segments.push({
 					row: row,
@@ -503,6 +749,42 @@ function View(element, calendar, viewName) {
 
 		return segments;
 	}
-	
+
+
+	// Returns the date range of the full days the given range visually appears to occupy.
+	// Returns object with properties `start` (moment) and `end` (moment, exclusive end).
+	function computeDayRange(start, end) {
+		var startDay = start.clone().stripTime(); // the beginning of the day the range starts
+		var endDay;
+		var endTimeMS;
+
+		if (end) {
+			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
+			endTimeMS = +end.time(); // # of milliseconds into `endDay`
+
+			// If the end time is actually inclusively part of the next day and is equal to or
+			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
+			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
+			if (endTimeMS && endTimeMS >= nextDayThreshold) {
+				endDay.add('days', 1);
+			}
+		}
+
+		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
+		// assign the default duration of one day.
+		if (!end || endDay <= startDay) {
+			endDay = startDay.clone().add('days', 1);
+		}
+
+		return { start: startDay, end: endDay };
+	}
+
+
+	// Does the given event visually appear to occupy more than one day?
+	function isMultiDayEvent(event) {
+		var range = computeDayRange(event.start, event.end);
+
+		return range.end.diff(range.start, 'days') > 1;
+	}
 
 }

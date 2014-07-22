@@ -1,7 +1,10 @@
 
+/* Top toolbar area with buttons and title
+----------------------------------------------------------------------------------------------------------------------*/
+// TODO: rename all header-related things to "toolbar"
+
 function Header(calendar, options) {
 	var t = this;
-	
 	
 	// exports
 	t.render = render;
@@ -12,54 +15,61 @@ function Header(calendar, options) {
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
 	
-	
 	// locals
-	var element = $([]);
+	var el = $();
 	var tm;
-	
 
 
 	function render() {
-		tm = options.theme ? 'ui' : 'fc';
 		var sections = options.header;
+
+		tm = options.theme ? 'ui' : 'fc';
+
 		if (sections) {
-			element = $("<table class='fc-header' style='width:100%'/>")
-				.append(
-					$("<tr/>")
-						.append(renderSection('left'))
-						.append(renderSection('center'))
-						.append(renderSection('right'))
-				);
-			return element;
+			el = $("<div class='fc-toolbar'/>")
+				.append(renderSection('left'))
+				.append(renderSection('right'))
+				.append(renderSection('center'))
+				.append('<div class="fc-clear"/>');
+
+			return el;
 		}
 	}
 	
 	
 	function destroy() {
-		element.remove();
+		el.remove();
 	}
 	
 	
 	function renderSection(position) {
-		var e = $("<td class='fc-header-" + position + "'/>");
+		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = options.header[position];
+
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
-				if (i > 0) {
-					e.append("<span class='fc-header-space'/>");
-				}
-				var prevButton;
+				var groupChildren = $();
+				var isOnlyButtons = true;
+				var groupEl;
+
 				$.each(this.split(','), function(j, buttonName) {
+					var buttonClick;
+					var themeIcon;
+					var normalIcon;
+					var defaultText;
+					var customText;
+					var innerHtml;
+					var classes;
+					var button;
+
 					if (buttonName == 'title') {
-						e.append("<span class='fc-header-title'><h2>&nbsp;</h2></span>");
-						if (prevButton) {
-							prevButton.addClass(tm + '-corner-right');
-						}
-						prevButton = null;
-					}else{
-						var buttonClick;
+						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
+						isOnlyButtons = false;
+					}
+					else {
 						if (calendar[buttonName]) {
 							buttonClick = calendar[buttonName]; // calendar method
+							// NOTE: won't work when we move away from parasitic inheritance
 						}
 						else if (fcViews[buttonName]) {
 							buttonClick = function() {
@@ -70,29 +80,34 @@ function Header(calendar, options) {
 						if (buttonClick) {
 
 							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
-							var themeIcon = smartProperty(options.themeButtonIcons, buttonName);
-							var normalIcon = smartProperty(options.buttonIcons, buttonName);
-							var defaultText = smartProperty(options.defaultButtonText, buttonName);
-							var customText = smartProperty(options.buttonText, buttonName);
-							var html;
+							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
+							normalIcon = smartProperty(options.buttonIcons, buttonName);
+							defaultText = smartProperty(options.defaultButtonText, buttonName);
+							customText = smartProperty(options.buttonText, buttonName);
 
 							if (customText) {
-								html = htmlEscape(customText);
+								innerHtml = htmlEscape(customText);
 							}
 							else if (themeIcon && options.theme) {
-								html = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
+								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
 							}
 							else if (normalIcon && !options.theme) {
-								html = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
+								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								html = htmlEscape(defaultText || buttonName);
+								innerHtml = htmlEscape(defaultText || buttonName);
 							}
 
-							var button = $(
-								"<span class='fc-button fc-button-" + buttonName + " " + tm + "-state-default'>" +
-									html +
-								"</span>"
+							classes = [
+								'fc-' + buttonName + '-button',
+								tm + '-button',
+								tm + '-state-default'
+							];
+
+							button = $(
+								'<button class="' + classes.join(' ') + '">' +
+									innerHtml +
+								'</button>'
 								)
 								.click(function() {
 									if (!button.hasClass(tm + '-state-disabled')) {
@@ -120,53 +135,65 @@ function Header(calendar, options) {
 											.removeClass(tm + '-state-hover')
 											.removeClass(tm + '-state-down');
 									}
-								)
-								.appendTo(e);
-							disableTextSelection(button);
-							if (!prevButton) {
-								button.addClass(tm + '-corner-left');
-							}
-							prevButton = button;
+								);
+
+							groupChildren = groupChildren.add(button);
 						}
 					}
 				});
-				if (prevButton) {
-					prevButton.addClass(tm + '-corner-right');
+
+				if (isOnlyButtons) {
+					groupChildren
+						.first().addClass(tm + '-corner-left').end()
+						.last().addClass(tm + '-corner-right').end();
+				}
+
+				if (groupChildren.length > 1) {
+					groupEl = $('<div/>');
+					if (isOnlyButtons) {
+						groupEl.addClass('fc-button-group');
+					}
+					groupEl.append(groupChildren);
+					sectionEl.append(groupEl);
+				}
+				else {
+					sectionEl.append(groupChildren); // 1 or 0 children
 				}
 			});
 		}
-		return e;
+
+		return sectionEl;
 	}
 	
 	
-	function updateTitle(html) {
-		element.find('h2')
-			.html(html);
+	function updateTitle(text) {
+		el.find('h2').text(text);
 	}
 	
 	
 	function activateButton(buttonName) {
-		element.find('span.fc-button-' + buttonName)
+		el.find('.fc-' + buttonName + '-button')
 			.addClass(tm + '-state-active');
 	}
 	
 	
 	function deactivateButton(buttonName) {
-		element.find('span.fc-button-' + buttonName)
+		el.find('.fc-' + buttonName + '-button')
 			.removeClass(tm + '-state-active');
 	}
 	
 	
 	function disableButton(buttonName) {
-		element.find('span.fc-button-' + buttonName)
+		el.find('.fc-' + buttonName + '-button')
+			.attr('disabled', 'disabled')
 			.addClass(tm + '-state-disabled');
 	}
 	
 	
 	function enableButton(buttonName) {
-		element.find('span.fc-button-' + buttonName)
+		el.find('.fc-' + buttonName + '-button')
+			.removeAttr('disabled')
 			.removeClass(tm + '-state-disabled');
 	}
-
 
 }

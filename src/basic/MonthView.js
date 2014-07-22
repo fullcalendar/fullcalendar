@@ -1,51 +1,79 @@
 
-fcViews.month = MonthView;
+/* A month view with day cells running in rows (one-per-week) and columns
+----------------------------------------------------------------------------------------------------------------------*/
 
-function MonthView(element, calendar) {
-	var t = this;
-	
-	
-	// exports
-	t.incrementDate = incrementDate;
-	t.render = render;
-	
-	
-	// imports
-	BasicView.call(t, element, calendar, 'month');
+setDefaults({
+	fixedWeekCount: true
+});
+
+fcViews.month = MonthView; // register the view
+
+function MonthView(calendar) {
+	BasicView.call(this, calendar); // call the super-constructor
+}
 
 
-	function incrementDate(date, delta) {
+MonthView.prototype = createObject(BasicView.prototype); // define the super-class
+$.extend(MonthView.prototype, {
+
+	name: 'month',
+
+
+	incrementDate: function(date, delta) {
 		return date.clone().stripTime().add('months', delta).startOf('month');
-	}
+	},
 
 
-	function render(date) {
+	render: function(date) {
+		var rowCnt;
 
-		t.intervalStart = date.clone().stripTime().startOf('month');
-		t.intervalEnd = t.intervalStart.clone().add('months', 1);
+		this.intervalStart = date.clone().stripTime().startOf('month');
+		this.intervalEnd = this.intervalStart.clone().add('months', 1);
 
-		t.start = t.intervalStart.clone();
-		t.start = t.skipHiddenDays(t.start); // move past the first week if no visible days
-		t.start.startOf('week');
-		t.start = t.skipHiddenDays(t.start); // move past the first invisible days of the week
+		this.start = this.intervalStart.clone();
+		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
+		this.start.startOf('week');
+		this.start = this.skipHiddenDays(this.start); // move past the first invisible days of the week
 
-		t.end = t.intervalEnd.clone();
-		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
-		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
-		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
+		this.end = this.intervalEnd.clone();
+		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
+		this.end.add('days', (7 - this.end.weekday()) % 7); // move to end of week if not already
+		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
 
-		var rowCnt = Math.ceil( // need to ceil in case there are hidden days
-			t.end.diff(t.start, 'weeks', true) // returnfloat=true
+		rowCnt = Math.ceil( // need to ceil in case there are hidden days
+			this.end.diff(this.start, 'weeks', true) // returnfloat=true
 		);
-		if (t.opt('weekMode') == 'fixed') {
-			t.end.add('weeks', 6 - rowCnt);
+		if (this.isFixedWeeks()) {
+			this.end.add('weeks', 6 - rowCnt);
 			rowCnt = 6;
 		}
 
-		t.title = calendar.formatDate(t.intervalStart, t.opt('titleFormat'));
+		this.title = this.calendar.formatDate(this.intervalStart, this.opt('titleFormat'));
 
-		t.renderBasic(rowCnt, t.getCellsPerWeek(), true);
+		BasicView.prototype.render.call(this, rowCnt, this.getCellsPerWeek(), true); // call the super-method
+	},
+
+
+	// Overrides the default BasicView behavior to have special multi-week auto-height logic
+	setGridHeight: function(height, isAuto) {
+		isAuto = isAuto || this.opt('weekMode') === 'variable'; // LEGACY: weekMode is deprecated
+
+		// if auto, make the height of each row the height that it would be if there were 6 weeks
+		if (isAuto) {
+			height *= this.rowCnt / 6;
+		}
+
+		distributeHeight(this.dayGrid.rowEls, height, !isAuto); // if auto, don't compensate for height-hogging rows
+	},
+
+
+	isFixedWeeks: function() {
+		var weekMode = this.opt('weekMode'); // LEGACY: weekMode is deprecated
+		if (weekMode) {
+			return weekMode === 'fixed'; // if any other type of weekMode, assume NOT fixed
+		}
+
+		return this.opt('fixedWeekCount');
 	}
-	
-	
-}
+
+});

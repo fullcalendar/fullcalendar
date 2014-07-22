@@ -1,160 +1,197 @@
 
-/* Agenda Week View, Agenda Day View
-------------------------------------------------------------------------*/
+/* AgendaView all-day area
+--------------------------------------------------------------------------------------------------*/
 
-.fc-agenda table {
-	border-collapse: separate;
-	}
-	
-.fc-agenda-days th {
-	text-align: center;
-	}
-	
-.fc-agenda .fc-agenda-axis {
-	width: 50px;
-	padding: 0 4px;
+.fc-agenda-view tbody .fc-row {
+	min-height: 3em; /* all-day section will never get shorter than this */
+}
+
+.fc-agenda-view tbody .fc-row .fc-content-skeleton {
+	padding-bottom: 1em; /* give space underneath events for clicking/selecting days */
+}
+
+
+/* TimeGrid axis running down the side (for both the all-day area and the slot area)
+--------------------------------------------------------------------------------------------------*/
+
+.fc .fc-axis { /* .fc to overcome default cell styles */
 	vertical-align: middle;
+	padding: 0 4px;
+	white-space: nowrap;
+}
+
+.fc-ltr .fc-axis {
 	text-align: right;
-	font-weight: normal;
-	}
+}
 
-.fc-agenda-slots .fc-agenda-axis {
-	white-space: nowrap;
-	}
+.fc-rtl .fc-axis {
+	text-align: left;
+}
 
-.fc-agenda .fc-week-number {
-	font-weight: bold;
-	}
-	
-.fc-agenda .fc-day-content {
-	padding: 2px 2px 1px;
-	}
-	
-/* make axis border take precedence */
-	
-.fc-agenda-days .fc-agenda-axis {
-	border-right-width: 1px;
-	}
-	
-.fc-agenda-days .fc-col0 {
-	border-left-width: 0;
-	}
-	
-/* all-day area */
-	
-.fc-agenda-allday th {
-	border-width: 0 1px;
-	}
-	
-.fc-agenda-allday .fc-day-content {
-	min-height: 34px; /* TODO: doesnt work well in quirksmode */
-	_height: 34px;
-	}
-	
-/* divider (between all-day and slots) */
-	
-.fc-agenda-divider-inner {
-	height: 2px;
-	overflow: hidden;
-	}
-	
-.fc-widget-header .fc-agenda-divider-inner {
-	background: #eee;
-	}
-	
-/* slot rows */
-	
-.fc-agenda-slots th {
-	border-width: 1px 1px 0;
-	}
-	
-.fc-agenda-slots td {
-	border-width: 1px 0 0;
-	background: none;
-	}
-	
-.fc-agenda-slots td div {
-	height: 20px;
-	}
-	
-.fc-agenda-slots tr.fc-slot0 th,
-.fc-agenda-slots tr.fc-slot0 td {
-	border-top-width: 0;
-	}
-
-.fc-agenda-slots tr.fc-minor th,
-.fc-agenda-slots tr.fc-minor td {
-	border-top-style: dotted;
-	}
-	
-.fc-agenda-slots tr.fc-minor th.ui-widget-header {
-	*border-top-style: solid; /* doesn't work with background in IE6/7 */
-	}
-	
+.ui-widget td.fc-axis {
+	font-weight: normal; /* overcome jqui theme making it bold */
+}
 
 
-/* Vertical Events
-------------------------------------------------------------------------*/
+/* TimeGrid Structure
+--------------------------------------------------------------------------------------------------*/
 
-.fc-event-vert {
-	border-width: 0 1px;
-	}
+.fc-time-grid {
+	position: relative; /* so slats/bg/content/etc positions get scoped within here */
+	min-height: 100%; /* so if height setting is 'auto', .fc-bg stretches to fill height */
+}
 
-.fc-event-vert.fc-event-start {
-	border-top-width: 1px;
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
-	}
+.fc-time-grid table { /* don't put outer borders on slats/bg/content/etc */
+	border: 0 hidden transparent;
+}
 
-.fc-event-vert.fc-event-end {
-	border-bottom-width: 1px;
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-	}
-	
-.fc-event-vert .fc-event-time {
-	white-space: nowrap;
-	font-size: 10px;
-	}
+.fc-time-grid > .fc-bg {
+	z-index: 1;
+}
 
-.fc-event-vert .fc-event-inner {
+.fc-time-grid .fc-slats,
+.fc-time-grid > hr { /* the <hr> AgendaView injects when grid is shorter than scroller */
 	position: relative;
 	z-index: 2;
-	}
-	
-.fc-event-vert .fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
+}
+
+.fc-time-grid .fc-highlight-skeleton {
+	z-index: 3;
+}
+
+.fc-time-grid .fc-content-skeleton {
 	position: absolute;
-	z-index: 1;
+	z-index: 4;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	right: 0;
+}
+
+.fc-time-grid > .fc-helper-skeleton {
+	z-index: 5;
+}
+
+
+/* TimeGrid Slats (lines that run horizontally)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-slats td {
+	height: 1.5em;
+	border-bottom: 0; /* each cell is responsible for its top border */
+}
+
+.fc-slats .fc-minor td {
+	border-top-style: dotted;
+}
+
+.fc-slats .ui-widget-content { /* for jqui theme */
+	background: none; /* see through to fc-bg */
+}
+
+
+/* TimeGrid Highlighting Slots
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-highlight-container { /* a div within a cell within the fc-highlight-skeleton */
+	position: relative; /* scopes the left/right of the fc-highlight to be in the column */
+}
+
+.fc-time-grid .fc-highlight {
+	position: absolute;
+	left: 0;
+	right: 0;
+	/* top and bottom will be in by JS */
+}
+
+
+/* TimeGrid Event Containment
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-event-container { /* a div within a cell within the fc-content-skeleton */
+	position: relative;
+}
+
+.fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
+	margin: 0 2.5% 0 2px;
+}
+
+.fc-rtl .fc-time-grid .fc-event-container { /* space on the sides of events for RTL */
+	margin: 0 2px 0 2.5%;
+}
+
+.fc-time-grid .fc-event {
+	position: absolute;
+	z-index: 1; /* scope inner z-index's */
+}
+
+
+/* TimeGrid Event Styling
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-event.fc-not-start { /* events that are continuing from another day */
+	/* replace space made by the top border with padding */
+	border-top-width: 0;
+	padding-top: 1px;
+
+	/* remove top rounded corners */
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.fc-time-grid .fc-event.fc-not-end {
+	/* replace space made by the top border with padding */
+	border-bottom-width: 0;
+	padding-bottom: 1px;
+
+	/* remove bottom rounded corners */
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+/*
+The above event styles will not apply to events that are being dragged. Dragged events are attached
+to an outer parent not part of the .fc-view, thus we need the className "fc-time-grid-event".
+The below styles WILL be applied to dragged events.
+*/
+
+.fc-time-grid-event {
+	overflow: hidden; /* don't let the bg flow over rounded corners */
+}
+
+.fc-time-grid-event > .fc-content { /* contains the time and title, but no bg and resizer */
+	position: relative;
+	z-index: 2; /* above the bg */
+}
+
+.fc-time-grid-event .fc-time {
+	font-size: .85em;
+	white-space: nowrap;
+}
+
+.fc-time-grid-event .fc-bg {
+	z-index: 1;
 	background: #fff;
 	opacity: .25;
-	filter: alpha(opacity=25);
-	}
-	
-.fc .ui-draggable-dragging .fc-event-bg, /* TODO: something nicer like .fc-opacity */
-.fc-select-helper .fc-event-bg {
-	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
-	}
-	
-/* resizable */
-	
-.fc-event-vert .ui-resizable-s {
-	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
-	width: 100%      !important;
-	height: 8px      !important;
-	overflow: hidden !important;
-	line-height: 8px !important;
-	font-size: 11px  !important;
+	filter: alpha(opacity=25); /* for IE */
+}
+
+/* resizer */
+
+.fc-time-grid-event .fc-resizer {
+	position: absolute;
+	z-index: 3; /* above content */
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 8px;
+	overflow: hidden;
+	line-height: 8px;
+	font-size: 11px;
 	font-family: monospace;
 	text-align: center;
 	cursor: s-resize;
-	}
-	
-.fc-agenda .ui-resizable-resizing { /* TODO: better selector */
-	_overflow: hidden;
-	}
-	
-	
+}
+
+.fc-time-grid-event .fc-resizer:after {
+	content: "=";
+}

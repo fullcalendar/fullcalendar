@@ -1,41 +1,42 @@
 
-fcViews.agendaWeek = AgendaWeekView;
+/* A week view with an all-day cell area at the top, and a time grid below
+----------------------------------------------------------------------------------------------------------------------*/
+// TODO: a WeekView mixin for calculating dates and titles
 
-function AgendaWeekView(element, calendar) { // TODO: do a WeekView mixin
-	var t = this;
-	
-	
-	// exports
-	t.incrementDate = incrementDate;
-	t.render = render;
-	
-	
-	// imports
-	AgendaView.call(t, element, calendar, 'agendaWeek');
+fcViews.agendaWeek = AgendaWeekView; // register the view
+
+function AgendaWeekView(calendar) {
+	AgendaView.call(this, calendar); // call the super-constructor
+}
 
 
-	function incrementDate(date, delta) {
+AgendaWeekView.prototype = createObject(AgendaView.prototype); // define the super-class
+$.extend(AgendaWeekView.prototype, {
+
+	name: 'agendaWeek',
+
+
+	incrementDate: function(date, delta) {
 		return date.clone().stripTime().add('weeks', delta).startOf('week');
-	}
+	},
 
 
-	function render(date) {
+	render: function(date) {
 
-		t.intervalStart = date.clone().stripTime().startOf('week');
-		t.intervalEnd = t.intervalStart.clone().add('weeks', 1);
+		this.intervalStart = date.clone().stripTime().startOf('week');
+		this.intervalEnd = this.intervalStart.clone().add('weeks', 1);
 
-		t.start = t.skipHiddenDays(t.intervalStart);
-		t.end = t.skipHiddenDays(t.intervalEnd, -1, true);
+		this.start = this.skipHiddenDays(this.intervalStart);
+		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 
-		t.title = calendar.formatRange(
-			t.start,
-			t.end.clone().subtract(1), // make inclusive by subtracting 1 ms
-			t.opt('titleFormat'),
+		this.title = this.calendar.formatRange(
+			this.start,
+			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+			this.opt('titleFormat'),
 			' \u2014 ' // emphasized dash
 		);
 
-		t.renderAgenda(t.getCellsPerWeek());
+		AgendaView.prototype.render.call(this, this.getCellsPerWeek()); // call the super-method
 	}
 
-
-}
+});

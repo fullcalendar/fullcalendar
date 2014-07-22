@@ -250,14 +250,20 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		else if (typeof sourceInput === 'object') {
 			source = $.extend({}, sourceInput); // shallow copy
-
-			if (typeof source.className === 'string') {
-				// TODO: repeat code, same code for event classNames
-				source.className = source.className.split(/\s+/);
-			}
 		}
 
 		if (source) {
+
+			// TODO: repeat code, same code for event classNames
+			if (source.className) {
+				if (typeof source.className === 'string') {
+					source.className = source.className.split(/\s+/);
+				}
+				// otherwise, assumed to be an array
+			}
+			else {
+				source.className = [];
+			}
 
 			// for array sources, we convert to standard Event Objects up front
 			if ($.isArray(source.events)) {

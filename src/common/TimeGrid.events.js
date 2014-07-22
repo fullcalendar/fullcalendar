@@ -1,0 +1,375 @@
+
+/* Event-rendering methods for the TimeGrid class
+----------------------------------------------------------------------------------------------------------------------*/
+
+$.extend(TimeGrid.prototype, {
+
+	eventSkeletonEl: null, // has cells with event-containers, which contain absolutely positioned event elements
+
+
+	// Renders the events onto the grid and returns an array of segments that have been rendered
+	renderEvents: function(events) {
+		var res = this.renderEventTable(events);
+
+		this.eventSkeletonEl = $('<div class="fc-content-skeleton"/>').append(res.tableEl);
+		this.el.append(this.eventSkeletonEl);
+
+		return res.segs; // return segment objects. for the view
+	},
+
+
+	// Removes all event segment elements from the view
+	destroyEvents: function() {
+		if (this.eventSkeletonEl) {
+			this.eventSkeletonEl.remove();
+			this.eventSkeletonEl = null;
+		}
+	},
+
+
+	// Renders and returns the <table> portion of the event-skeleton.
+	// Returns an object with properties 'tbodyEl' and 'segs'.
+	renderEventTable: function(events) {
+		var view = this.view;
+		var tableEl = $('<table><tr/></table>');
+		var trEl = tableEl.find('tr');
+		var allSegs = this.eventsToSegs(events);
+		var segCols = this.groupSegCols(allSegs); // groups into sub-arrays, and assigns 'col' to each seg
+		var html = ''; // html string with default HTML for all events, concatenated together
+		var i, seg;
+		var col, segs;
+		var containerEl;
+
+		// build the combined HTML string. and compute top/bottom
+		for (i = 0; i < allSegs.length; i++) {
+			seg = allSegs[i];
+			html += this.renderSegHtml(seg);
+
+			seg.top = this.computeDateTop(seg.start, seg.start);
+			seg.bottom = this.computeDateTop(seg.end, seg.start);
+		}
+
+		// Grab individual elements from the combined HTML string. Use each as the default rendering.
+		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
+		$(html).each(function(i, node) {
+			allSegs[i].el = view.resolveEventEl(allSegs[i].event, $(node));
+		});
+
+		for (col = 0; col < segCols.length; col++) { // iterate each column grouping
+			segs = segCols[col];
+
+			segs = $.grep(segs, renderedSegFilter); // filter out unrendered segments
+			placeSlotSegs(segs); // compute horizontal coordinates, z-index's, and reorder the array
+			segCols[col] = segs; // assign back
+
+			containerEl = $('<div class="fc-event-container"/>');
+
+			// assign positioning CSS and insert into container
+			for (i = 0; i < segs.length; i++) {
+				seg = segs[i];
+				seg.el.css(this.generateSegPositionCss(seg));
+				containerEl.append(seg.el);
+			}
+
+			trEl.append($('<td/>').append(containerEl));
+		}
+
+		this.bookendCells(trEl, 'eventSkeleton');
+
+		return  {
+			tableEl: tableEl,
+			segs: flattenArray(segCols) // will contain only segments with rendered els
+		};
+	},
+
+
+	// Renders the HTML for a single event segment's default rendering
+	renderSegHtml: function(seg) {
+		var view = this.view;
+		var event = seg.event;
+		var isDraggable = view.isEventDraggable(event);
+		var isResizable = seg.isEnd && view.isEventResizable(event);
+		var classes = this.getSegClasses(seg, isDraggable, isResizable);
+		var skinCss = this.getEventSkinCss(event);
+		var timeText;
+		var fullTimeText; // more verbose time text. for the print stylesheet
+
+		classes.unshift('fc-time-grid-event');
+
+		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
+			// Don't display time text on segments that run entirely through a day.
+			// That would appear as midnight-midnight and would look dumb.
+			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
+			if (seg.isStart || seg.isEnd) {
+				timeText = view.getEventTimeText(seg.start, seg.end);
+				fullTimeText = view.getEventTimeText(seg.start, seg.end, 'LT');
+			}
+		} else {
+			// Display the normal time text for the *event's* times
+			timeText = view.getEventTimeText(event);
+			fullTimeText = view.getEventTimeText(event, 'LT');
+		}
+
+		return '<a class="' + classes.join(' ') + '"' +
+			(skinCss ? ' style="' + skinCss + '"' : '') +
+			'>' +
+				'<div class="fc-content">' +
+					(timeText ?
+						'<div class="fc-time" data-full="' + htmlEscape(fullTimeText) + '">' +
+							'<span>' + htmlEscape(timeText) + '</span>' +
+						'</div>' :
+						''
+						) +
+					(event.title ?
+						'<div class="fc-title">' +
+							htmlEscape(event.title) +
+						'</div>' :
+						''
+						) +
+				'</div>' +
+				'<div class="fc-bg"/>' +
+				(isResizable ?
+					'<div class="fc-resizer"/>' :
+					''
+					) +
+			'</a>';
+	},
+
+
+	// Generates an object with css properties/values that should be applied to an event segment element.
+	// Contains important positioning-related properties that should be applied to any event element, customized or not.
+	generateSegPositionCss: function(seg) {
+		var view = this.view;
+		var isRTL = view.opt('isRTL');
+		var shouldOverlap = view.opt('slotEventOverlap');
+		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
+		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
+		var left; // amount of space from left edge, a fraction of the total width
+		var right; // amount of space from right edge, a fraction of the total width
+		var props;
+
+		if (shouldOverlap) {
+			// double the width, but don't go beyond the maximum forward coordinate (1.0)
+			forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2);
+		}
+
+		if (isRTL) {
+			left = 1 - forwardCoord;
+			right = backwardCoord;
+		}
+		else {
+			left = backwardCoord;
+			right = 1 - forwardCoord;
+		}
+
+		props = {
+			zIndex: seg.level + 1, // convert from 0-base to 1-based
+			top: seg.top,
+			bottom: -seg.bottom, // flipped because needs to be space beyond bottom edge of event container
+			left: left * 100 + '%',
+			right: right * 100 + '%'
+		};
+
+		if (shouldOverlap && seg.forwardPressure) {
+			// add padding to the edge so that forward stacked events don't cover the resizer's icon
+			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width 
+		}
+
+		return props;
+	},
+
+
+	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
+	groupSegCols: function(segs) {
+		var view = this.view;
+		var segCols = [];
+		var i;
+
+		for (i = 0; i < view.colCnt; i++) {
+			segCols.push([]);
+		}
+
+		for (i = 0; i < segs.length; i++) {
+			segCols[segs[i].col].push(segs[i]);
+		}
+
+		return segCols;
+	}
+
+});
+
+
+// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
+// Also reorders the given array by date!
+function placeSlotSegs(segs) {
+	var levels;
+	var level0;
+	var i;
+
+	segs.sort(compareSegs); // order by date
+	levels = buildSlotSegLevels(segs);
+	computeForwardSlotSegs(levels);
+
+	if ((level0 = levels[0])) {
+
+		for (i = 0; i < level0.length; i++) {
+			computeSlotSegPressures(level0[i]);
+		}
+
+		for (i = 0; i < level0.length; i++) {
+			computeSlotSegCoords(level0[i], 0, 0);
+		}
+	}
+}
+
+
+// Builds an array of segments "levels". The first level will be the leftmost tier of segments if the calendar is
+// left-to-right, or the rightmost if the calendar is right-to-left. Assumes the segments are already ordered by date.
+function buildSlotSegLevels(segs) {
+	var levels = [];
+	var i, seg;
+	var j;
+
+	for (i=0; i<segs.length; i++) {
+		seg = segs[i];
+
+		// go through all the levels and stop on the first level where there are no collisions
+		for (j=0; j<levels.length; j++) {
+			if (!computeSlotSegCollisions(seg, levels[j]).length) {
+				break;
+			}
+		}
+
+		seg.level = j;
+
+		(levels[j] || (levels[j] = [])).push(seg);
+	}
+
+	return levels;
+}
+
+
+// For every segment, figure out the other segments that are in subsequent
+// levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
+function computeForwardSlotSegs(levels) {
+	var i, level;
+	var j, seg;
+	var k;
+
+	for (i=0; i<levels.length; i++) {
+		level = levels[i];
+
+		for (j=0; j<level.length; j++) {
+			seg = level[j];
+
+			seg.forwardSegs = [];
+			for (k=i+1; k<levels.length; k++) {
+				computeSlotSegCollisions(seg, levels[k], seg.forwardSegs);
+			}
+		}
+	}
+}
+
+
+// Figure out which path forward (via seg.forwardSegs) results in the longest path until
+// the furthest edge is reached. The number of segments in this path will be seg.forwardPressure
+function computeSlotSegPressures(seg) {
+	var forwardSegs = seg.forwardSegs;
+	var forwardPressure = 0;
+	var i, forwardSeg;
+
+	if (seg.forwardPressure === undefined) { // not already computed
+
+		for (i=0; i<forwardSegs.length; i++) {
+			forwardSeg = forwardSegs[i];
+
+			// figure out the child's maximum forward path
+			computeSlotSegPressures(forwardSeg);
+
+			// either use the existing maximum, or use the child's forward pressure
+			// plus one (for the forwardSeg itself)
+			forwardPressure = Math.max(
+				forwardPressure,
+				1 + forwardSeg.forwardPressure
+			);
+		}
+
+		seg.forwardPressure = forwardPressure;
+	}
+}
+
+
+// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
+// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
+// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
+//
+// The segment might be part of a "series", which means consecutive segments with the same pressure
+// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
+// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
+// coordinate of the first segment in the series.
+function computeSlotSegCoords(seg, seriesBackwardPressure, seriesBackwardCoord) {
+	var forwardSegs = seg.forwardSegs;
+	var i;
+
+	if (seg.forwardCoord === undefined) { // not already computed
+
+		if (!forwardSegs.length) {
+
+			// if there are no forward segments, this segment should butt up against the edge
+			seg.forwardCoord = 1;
+		}
+		else {
+
+			// sort highest pressure first
+			forwardSegs.sort(compareForwardSlotSegs);
+
+			// this segment's forwardCoord will be calculated from the backwardCoord of the
+			// highest-pressure forward segment.
+			computeSlotSegCoords(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord);
+			seg.forwardCoord = forwardSegs[0].backwardCoord;
+		}
+
+		// calculate the backwardCoord from the forwardCoord. consider the series
+		seg.backwardCoord = seg.forwardCoord -
+			(seg.forwardCoord - seriesBackwardCoord) / // available width for series
+			(seriesBackwardPressure + 1); // # of segments in the series
+
+		// use this segment's coordinates to computed the coordinates of the less-pressurized
+		// forward segments
+		for (i=0; i<forwardSegs.length; i++) {
+			computeSlotSegCoords(forwardSegs[i], 0, seg.forwardCoord);
+		}
+	}
+}
+
+
+// Find all the segments in `otherSegs` that vertically collide with `seg`.
+// Append into an optionally-supplied `results` array and return.
+function computeSlotSegCollisions(seg, otherSegs, results) {
+	results = results || [];
+
+	for (var i=0; i<otherSegs.length; i++) {
+		if (isSlotSegCollision(seg, otherSegs[i])) {
+			results.push(otherSegs[i]);
+		}
+	}
+
+	return results;
+}
+
+
+// Do these segments occupy the same vertical space?
+function isSlotSegCollision(seg1, seg2) {
+	return seg1.bottom > seg2.top && seg1.top < seg2.bottom;
+}
+
+
+// A cmp function for determining which forward segment to rely on more when computing coordinates.
+function compareForwardSlotSegs(seg1, seg2) {
+	// put higher-pressure first
+	return seg2.forwardPressure - seg1.forwardPressure ||
+		// put segments that are closer to initial edge first (and favor ones with no coords yet)
+		(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
+		// do normal sorting...
+		compareSegs(seg1, seg2);
+}

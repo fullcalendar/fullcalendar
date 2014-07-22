@@ -1,116 +1,71 @@
-/*!
- * <%= meta.title %> v<%= meta.version %> Stylesheet
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
- */
 
+/* Toolbar
+--------------------------------------------------------------------------------------------------*/
 
-.fc {
-	direction: ltr;
-	text-align: left;
-	}
-	
-.fc table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	}
-	
-html .fc,
-.fc table {
-	font-size: 1em;
-	}
-	
-.fc td,
-.fc th {
-	padding: 0;
-	vertical-align: top;
-	}
-
-
-
-/* Header
-------------------------------------------------------------------------*/
-
-.fc-header td {
-	white-space: nowrap;
-	}
-
-.fc-header-left {
-	width: 25%;
-	text-align: left;
-	}
-	
-.fc-header-center {
+.fc-toolbar {
 	text-align: center;
-	}
-	
-.fc-header-right {
-	width: 25%;
-	text-align: right;
-	}
-	
-.fc-header-title {
-	display: inline-block;
-	vertical-align: top;
-	}
-	
-.fc-header-title h2 {
-	margin-top: 0;
-	white-space: nowrap;
-	}
-	
-.fc .fc-header-space {
-	padding-left: 10px;
-	}
-	
-.fc-header .fc-button {
 	margin-bottom: 1em;
-	vertical-align: top;
-	}
-	
-/* buttons edges butting together */
+}
 
-.fc-header .fc-button {
-	margin-right: -1px;
-	}
+.fc-toolbar .fc-left {
+	float: left;
+}
+
+.fc-toolbar .fc-right {
+	float: right;
+}
+
+.fc-toolbar .fc-center {
+	display: inline-block;
+}
+
+/* the things within each left/right/center section */
+.fc .fc-toolbar > * > * { /* extra precedence to override button border margins */
+	float: left;
+	margin-left: .75em;
+}
+
+/* the first thing within each left/center/right section */
+.fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
+	margin-left: 0;
+}
 	
-.fc-header .fc-corner-right,  /* non-theme */
-.fc-header .ui-corner-right { /* theme */
-	margin-right: 0; /* back to normal */
-	}
-	
+/* title text */
+
+.fc-toolbar h2 {
+	margin: 0;
+}
+
 /* button layering (for border precedence) */
-	
-.fc-header .fc-state-hover,
-.fc-header .ui-state-hover {
-	z-index: 2;
-	}
-	
-.fc-header .fc-state-down {
-	z-index: 3;
-	}
 
-.fc-header .fc-state-active,
-.fc-header .ui-state-active {
+.fc-toolbar button {
+	position: relative;
+}
+
+.fc-toolbar .fc-state-hover,
+.fc-toolbar .ui-state-hover {
+	z-index: 2;
+}
+	
+.fc-toolbar .fc-state-down {
+	z-index: 3;
+}
+
+.fc-toolbar .fc-state-active,
+.fc-toolbar .ui-state-active {
 	z-index: 4;
-	}
-	
-	
-	
-/* Content
-------------------------------------------------------------------------*/
-	
-.fc-content {
+}
+
+.fc-toolbar button:focus {
+	z-index: 5;
+}
+
+
+/* View Structure
+--------------------------------------------------------------------------------------------------*/
+
+.fc-view-container, /* scope positioning and z-index's for everything within the view */
+.fc-view > table { /* so dragged elements can be above the view's main element */
 	position: relative;
-	z-index: 1; /* scopes all other z-index's to be inside this container */
-	clear: both;
-	zoom: 1; /* for IE7, gives accurate coordinates for [un]freezeContentHeight */
-	}
-	
-.fc-view {
-	position: relative;
-	width: 100%;
-	overflow: hidden;
-	}
-	
-	
+	z-index: 1;
+}

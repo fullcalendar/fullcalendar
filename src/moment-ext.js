@@ -1,6 +1,7 @@
 
 var ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/;
-var ambigTimeOrZoneRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
+var ambigTimeOrZoneRegex =
+	/^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
 
 
 // Creating
@@ -321,11 +322,27 @@ FCMoment.prototype.isWithin = function(start, end) {
 	return a[0] >= a[1] && a[0] < a[2];
 };
 
+// When isSame is called with units, timezone ambiguity is normalized before the comparison happens.
+// If no units are specified, the two moments must be identically the same, with matching ambig flags.
+FCMoment.prototype.isSame = function(input, units) {
+	var a;
+
+	if (units) {
+		a = commonlyAmbiguate([ this, input ], true); // normalize timezones but don't erase times
+		return moment.fn.isSame.call(a[0], a[1], units);
+	}
+	else {
+		input = fc.moment.parseZone(input); // normalize input
+		return moment.fn.isSame.call(this, input) &&
+			Boolean(this._ambigTime) === Boolean(input._ambigTime) &&
+			Boolean(this._ambigZone) === Boolean(input._ambigZone);
+	}
+};
+
 // Make these query methods work with ambiguous moments
 $.each([
 	'isBefore',
-	'isAfter',
-	'isSame'
+	'isAfter'
 ], function(i, methodName) {
 	FCMoment.prototype[methodName] = function(input, units) {
 		var a = commonlyAmbiguate([ this, input ]);
@@ -339,20 +356,21 @@ $.each([
 
 // given an array of moment-like inputs, return a parallel array w/ moments similarly ambiguated.
 // for example, of one moment has ambig time, but not others, all moments will have their time stripped.
-function commonlyAmbiguate(inputs) {
+// set `preserveTime` to `true` to keep times, but only normalize zone ambiguity.
+function commonlyAmbiguate(inputs, preserveTime) {
 	var outputs = [];
 	var anyAmbigTime = false;
 	var anyAmbigZone = false;
 	var i;
 
 	for (i=0; i<inputs.length; i++) {
-		outputs.push(fc.moment(inputs[i]));
+		outputs.push(fc.moment.parseZone(inputs[i]));
 		anyAmbigTime = anyAmbigTime || outputs[i]._ambigTime;
 		anyAmbigZone = anyAmbigZone || outputs[i]._ambigZone;
 	}
 
 	for (i=0; i<outputs.length; i++) {
-		if (anyAmbigTime) {
+		if (anyAmbigTime && !preserveTime) {
 			outputs[i].stripTime();
 		}
 		else if (anyAmbigZone) {

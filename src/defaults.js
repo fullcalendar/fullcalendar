@@ -83,6 +83,9 @@ var defaults = {
 		prevYear: 'seek-prev',
 		nextYear: 'seek-next'
 	},
+
+	dragOpacity: .75,
+	dragRevertDuration: 500,
 	
 	//selectable: false,
 	unselectAuto: true,
@@ -145,5 +148,3 @@ var rtlDefaults = {
 		prevYear: 'seek-next'
 	}
 };
-
-

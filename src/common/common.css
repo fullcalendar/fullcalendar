@@ -1,90 +1,125 @@
+/*!
+ * <%= meta.title %> v<%= meta.version %> Stylesheet
+ * Docs & License: <%= meta.homepage %>
+ * (c) <%= meta.copyright %>
+ */
 
-/* Cell Styles
-------------------------------------------------------------------------*/
 
-.fc-widget-header,    /* <th>, usually */
-.fc-widget-content {  /* <td>, usually */
-	border: 1px solid #ddd;
-	}
-	
-.fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
+.fc {
+	direction: ltr;
+	text-align: left;
+}
+
+.fc-rtl {
+	text-align: right;
+}
+
+body .fc { /* extra precedence to overcome jqui */
+	font-size: 1em;
+}
+
+
+/* Colors
+--------------------------------------------------------------------------------------------------*/
+
+.fc-unthemed th,
+.fc-unthemed td,
+.fc-unthemed hr,
+.fc-unthemed thead,
+.fc-unthemed tbody,
+.fc-unthemed .fc-row {
+	border-color: #ddd;
+}
+
+.fc-unthemed hr {
+	background: #eee;
+}
+
+.fc-unthemed .fc-today {
 	background: #fcf8e3;
-	}
-	
-.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+}
+
+.fc-highlight { /* when user is selecting cells */
 	background: #bce8f1;
 	opacity: .3;
 	filter: alpha(opacity=30); /* for IE */
-	}
-	
+}
 
 
-/* Buttons
-------------------------------------------------------------------------*/
+/* Icons (inline elements with styled text that mock arrow icons)
+--------------------------------------------------------------------------------------------------*/
 
-.fc-button {
-	position: relative;
+.fc-icon {
 	display: inline-block;
-	padding: 0 .6em;
-	overflow: hidden;
-	height: 1.9em;
-	line-height: 1.9em;
-	white-space: nowrap;
-	cursor: pointer;
-	}
-	
-.fc-state-default { /* non-theme */
-	border: 1px solid;
-	}
-
-.fc-state-default.fc-corner-left { /* non-theme */
-	border-top-left-radius: 4px;
-	border-bottom-left-radius: 4px;
-	}
-
-.fc-state-default.fc-corner-right { /* non-theme */
-	border-top-right-radius: 4px;
-	border-bottom-right-radius: 4px;
-	}
-
-/*
-	Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
-	and we'll try to make them look good cross-browser.
-*/
-
-.fc-button .fc-icon {
-	margin: 0 .1em;
 	font-size: 2em;
+	line-height: .5em;
+	height: .5em; /* will make the total height 1em */
 	font-family: "Courier New", Courier, monospace;
-	vertical-align: baseline; /* for IE7 */
-	}
+}
 
 .fc-icon-left-single-arrow:after {
 	content: "\02039";
 	font-weight: bold;
-	}
+}
 
 .fc-icon-right-single-arrow:after {
 	content: "\0203A";
 	font-weight: bold;
-	}
+}
 
 .fc-icon-left-double-arrow:after {
 	content: "\000AB";
-	}
+}
 
 .fc-icon-right-double-arrow:after {
 	content: "\000BB";
-	}
-	
-/* icon (for jquery ui) */
+}
 
-.fc-button .ui-icon {
+
+/* Buttons (styled <button> tags, normalized to work cross-browser)
+--------------------------------------------------------------------------------------------------*/
+
+.fc button {
+	/* force height to include the border and padding */
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+
+	/* dimensions */
+	margin: 0;
+	height: 2.1em;
+	padding: 0 .6em;
+
+	/* text & cursor */
+	font-size: 1em; /* normalize */
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+/* Firefox has an annoying inner border */
+.fc button::-moz-focus-inner { margin: 0; padding: 0; }
+	
+.fc-state-default { /* non-theme */
+	border: 1px solid;
+}
+
+.fc-state-default.fc-corner-left { /* non-theme */
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+}
+
+.fc-state-default.fc-corner-right { /* non-theme */
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+/* icons in buttons */
+
+.fc button .fc-icon { /* non-theme */
 	position: relative;
-	top: 50%;
-	float: left;
-	margin-top: -8px; /* we know jqui icons are always 16px tall */
-	}
+	top: .05em; /* seems to be a good adjustment across browsers */
+	margin: 0 .1em;
+}
 	
 /*
   button states
@@ -104,7 +139,7 @@
 	color: #333;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	}
+}
 
 .fc-state-hover,
 .fc-state-down,
@@ -112,7 +147,7 @@
 .fc-state-disabled {
 	color: #333333;
 	background-color: #e6e6e6;
-	}
+}
 
 .fc-state-hover {
 	color: #333333;
@@ -122,15 +157,14 @@
 	   -moz-transition: background-position 0.1s linear;
 	     -o-transition: background-position 0.1s linear;
 	        transition: background-position 0.1s linear;
-	}
+}
 
 .fc-state-down,
 .fc-state-active {
 	background-color: #cccccc;
 	background-image: none;
-	outline: 0;
 	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-	}
+}
 
 .fc-state-disabled {
 	cursor: default;
@@ -138,136 +172,273 @@
 	opacity: 0.65;
 	filter: alpha(opacity=65);
 	box-shadow: none;
-	}
+}
 
-	
+
+/* Buttons Groups
+--------------------------------------------------------------------------------------------------*/
+
+.fc-button-group {
+	display: inline-block;
+}
+
+/*
+every button that is not first in a button group should scootch over one pixel and cover the
+previous button's border...
+*/
+
+.fc .fc-button-group > * { /* extra precedence b/c buttons have margin set to zero */
+	float: left;
+	margin: 0 0 0 -1px;
+}
+
+.fc .fc-button-group > :first-child { /* same */
+	margin-left: 0;
+}
+
+
+/* Misc Reusable Components
+--------------------------------------------------------------------------------------------------*/
+
+.fc hr {
+	height: 0;
+	margin: 0;
+	padding: 0 0 2px; /* height is unreliable across browsers, so use padding */
+	border-style: solid;
+	border-width: 1px 0;
+}
+
+.fc-clear {
+	clear: both;
+}
+
+.fc-bg,
+.fc-highlight-skeleton,
+.fc-helper-skeleton {
+	/* these element should always cling to top-left/right corners */
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
+.fc-bg {
+	bottom: 0; /* strech bg to bottom edge */
+}
+
+.fc-bg table {
+	height: 100%; /* strech bg to bottom edge */
+}
+
+
+/* Tables
+--------------------------------------------------------------------------------------------------*/
+
+.fc table {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+	border-spacing: 0;
+	font-size: 1em; /* normalize cross-browser */
+}
+
+.fc th {
+	text-align: center;
+}
+
+.fc th,
+.fc td {
+	border-style: solid;
+	border-width: 1px;
+	padding: 0;
+	vertical-align: top;
+}
+
+.fc td.fc-today {
+	border-style: double; /* overcome neighboring borders */
+}
+
+
+/* Fake Table Rows
+--------------------------------------------------------------------------------------------------*/
+
+.fc .fc-row { /* extra precedence to overcome themes w/ .ui-widget-content forcing a 1px border */
+	/* no visible border by default. but make available if need be (scrollbar width compensation) */
+	border-style: solid;
+	border-width: 0;
+}
+
+.fc-row table {
+	/* don't put left/right border on anything within a fake row.
+	   the outer tbody will worry about this */
+	border-left: 0 hidden transparent;
+	border-right: 0 hidden transparent;
+
+	/* no bottom borders on rows */
+	border-bottom: 0 hidden transparent; 
+}
+
+.fc-row:first-child table {
+	border-top: 0 hidden transparent; /* no top border on first row */
+}
+
+
+/* Day Row (used within the header and the DayGrid)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-row {
+	position: relative;
+}
+
+.fc-row .fc-bg {
+	z-index: 1;
+}
+
+/* highlighting cells */
+
+.fc-row .fc-highlight-skeleton {
+	z-index: 2;
+	bottom: 0; /* stretch skeleton to bottom of row */
+}
+
+.fc-row .fc-highlight-skeleton table {
+	height: 100%; /* stretch skeleton to bottom of row */
+}
+
+.fc-row .fc-highlight-skeleton td {
+	border-color: transparent;
+}
+
+/*
+row content (which contains day/week numbers and events) as well as "helper" (which contains
+temporary rendered events).
+*/
+
+.fc-row .fc-content-skeleton {
+	position: relative;
+	z-index: 3;
+	padding-bottom: 1px; /* matches the space between events */
+}
+
+.fc-row .fc-helper-skeleton {
+	z-index: 4;
+}
+
+.fc-row .fc-content-skeleton td,
+.fc-row .fc-helper-skeleton td {
+	/* see-through to the background below */
+	background: none; /* in case <td>s are globally styled */
+	border-color: transparent;
+
+	/* don't put a border between events and/or the day number */
+	border-bottom: 0;
+}
+
+.fc-row .fc-content-skeleton tbody td, /* cells with events inside (so NOT the day number cell) */
+.fc-row .fc-helper-skeleton tbody td {
+	/* don't put a border between event cells */
+	border-top: 0;
+}
+
+
+/* Scrolling Container
+--------------------------------------------------------------------------------------------------*/
+
+.fc-scroller { /* this class goes on elements for guaranteed vertical scrollbars */
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.fc-scroller > * { /* we expect an immediate inner element */
+	position: relative; /* re-scope all positions */
+	width: 100%; /* hack to force re-sizing this inner element when scrollbars appear/disappear */
+	overflow: hidden; /* don't let negative margins or absolute positioning create further scroll */
+}
+
 
 /* Global Event Styles
-------------------------------------------------------------------------*/
+--------------------------------------------------------------------------------------------------*/
 
-.fc-event-container > * {
-	z-index: 8;
-	}
-
-.fc-event-container > .ui-draggable-dragging,
-.fc-event-container > .ui-resizable-resizing {
-	z-index: 9;
-	}
-	 
-.fc-event {
+.fc-event { /* always an <a> tag */
+	position: relative; /* for resize handle and other inner positioning */
+	display: block; /* make the <a> tag block */
 	border: 1px solid #3a87ad; /* default BORDER color */
 	background-color: #3a87ad; /* default BACKGROUND color */
 	color: #fff;               /* default TEXT color */
 	font-size: .85em;
+	border-radius: 3px;
+	text-decoration: none; /* if it has an href */
 	cursor: default;
-	}
+}
 
-a.fc-event {
-	text-decoration: none;
-	}
-	
-a.fc-event,
-.fc-event-draggable {
-	cursor: pointer;
-	}
-	
-.fc-rtl .fc-event {
-	text-align: right;
-	}
+.ui-widget .fc-event { /* undo jqui's styles on <a> tags */
+	color: #fff;
+	font-weight: normal;
+}
 
-.fc-event-inner {
-	width: 100%;
-	height: 100%;
+.fc-event[href],
+.fc-event.fc-draggable {
+	cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
+}
+
+
+/* DayGrid events
+--------------------------------------------------------------------------------------------------*/
+
+.fc-day-grid .fc-event {
+	margin: 1px 1px 0; /* spacing between events and edges */
+}
+
+/* events that are continuing to/from another week. kill rounded corners and butt up against edge */
+
+.fc-ltr .fc-day-grid .fc-event.fc-not-start,
+.fc-rtl .fc-day-grid .fc-event.fc-not-end {
+	margin-left: 0;
+	border-left-width: 0;
+	padding-left: 1px; /* replace the border with padding */
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.fc-ltr .fc-day-grid .fc-event.fc-not-end,
+.fc-rtl .fc-day-grid .fc-event.fc-not-start {
+	margin-right: 0;
+	border-right-width: 0;
+	padding-right: 1px; /* replace the border with padding */
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+/*
+The above event styles will not apply to events that are being dragged. Dragged events are attached
+to an outer parent not part of the .fc-view, thus we need the className "fc-day-grid-event".
+The below styles WILL be applied to dragged events.
+*/
+
+.fc-day-grid-event > .fc-content { /* force events to be one-line tall */
+	white-space: nowrap;
 	overflow: hidden;
-	}
-	
-.fc-event-time,
-.fc-event-title {
-	padding: 0 1px;
-	}
-	
-.fc .ui-resizable-handle {
-	display: block;
+}
+
+.fc-day-grid-event .fc-time {
+	font-weight: bold;
+}
+
+/* resize handle (outside of fc-content, so can go outside of bounds) */
+
+.fc-day-grid-event .fc-resizer {
 	position: absolute;
-	z-index: 99999;
-	overflow: hidden; /* hacky spaces (IE6/7) */
-	font-size: 300%;  /* */
-	line-height: 50%; /* */
-	}
-	
-	
-	
-/* Horizontal Events
-------------------------------------------------------------------------*/
+	top: 0;
+	bottom: 0;
+	width: 7px;
+}
 
-.fc-event-hori {
-	border-width: 1px 0;
-	margin-bottom: 1px;
-	}
-
-.fc-ltr .fc-event-hori.fc-event-start,
-.fc-rtl .fc-event-hori.fc-event-end {
-	border-left-width: 1px;
-	border-top-left-radius: 3px;
-	border-bottom-left-radius: 3px;
-	}
-
-.fc-ltr .fc-event-hori.fc-event-end,
-.fc-rtl .fc-event-hori.fc-event-start {
-	border-right-width: 1px;
-	border-top-right-radius: 3px;
-	border-bottom-right-radius: 3px;
-	}
-	
-/* resizable */
-	
-.fc-event-hori .ui-resizable-e {
-	top: 0           !important; /* importants override pre jquery ui 1.7 styles */
-	right: -3px      !important;
-	width: 7px       !important;
-	height: 100%     !important;
+.fc-ltr .fc-day-grid-event .fc-resizer {
+	right: -3px;
 	cursor: e-resize;
-	}
-	
-.fc-event-hori .ui-resizable-w {
-	top: 0           !important;
-	left: -3px       !important;
-	width: 7px       !important;
-	height: 100%     !important;
-	cursor: w-resize;
-	}
-	
-.fc-event-hori .ui-resizable-handle {
-	_padding-bottom: 14px; /* IE6 had 0 height */
-	}
-	
-	
-	
-/* Reusable Separate-border Table
-------------------------------------------------------------*/
+}
 
-table.fc-border-separate {
-	border-collapse: separate;
-	}
-	
-.fc-border-separate th,
-.fc-border-separate td {
-	border-width: 1px 0 0 1px;
-	}
-	
-.fc-border-separate th.fc-last,
-.fc-border-separate td.fc-last {
-	border-right-width: 1px;
-	}
-	
-.fc-border-separate tr.fc-last th,
-.fc-border-separate tr.fc-last td {
-	border-bottom-width: 1px;
-	}
-	
-.fc-border-separate tbody tr.fc-first td,
-.fc-border-separate tbody tr.fc-first th {
-	border-top-width: 0;
-	}
-	
-	
+.fc-rtl .fc-day-grid-event .fc-resizer {
+	left: -3px;
+	cursor: w-resize;
+}

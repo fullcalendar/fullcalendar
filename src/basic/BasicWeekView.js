@@ -1,41 +1,42 @@
 
-fcViews.basicWeek = BasicWeekView;
+/* A week view with simple day cells running horizontally
+----------------------------------------------------------------------------------------------------------------------*/
+// TODO: a WeekView mixin for calculating dates and titles
 
-function BasicWeekView(element, calendar) { // TODO: do a WeekView mixin
-	var t = this;
-	
-	
-	// exports
-	t.incrementDate = incrementDate;
-	t.render = render;
-	
-	
-	// imports
-	BasicView.call(t, element, calendar, 'basicWeek');
+fcViews.basicWeek = BasicWeekView; // register this view
+
+function BasicWeekView(calendar) {
+	BasicView.call(this, calendar); // call the super-constructor
+}
 
 
-	function incrementDate(date, delta) {
+BasicWeekView.prototype = createObject(BasicView.prototype); // define the super-class
+$.extend(BasicWeekView.prototype, {
+
+	name: 'basicWeek',
+
+
+	incrementDate: function(date, delta) {
 		return date.clone().stripTime().add('weeks', delta).startOf('week');
-	}
+	},
 
 
-	function render(date) {
+	render: function(date) {
 
-		t.intervalStart = date.clone().stripTime().startOf('week');
-		t.intervalEnd = t.intervalStart.clone().add('weeks', 1);
+		this.intervalStart = date.clone().stripTime().startOf('week');
+		this.intervalEnd = this.intervalStart.clone().add('weeks', 1);
 
-		t.start = t.skipHiddenDays(t.intervalStart);
-		t.end = t.skipHiddenDays(t.intervalEnd, -1, true);
+		this.start = this.skipHiddenDays(this.intervalStart);
+		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 
-		t.title = calendar.formatRange(
-			t.start,
-			t.end.clone().subtract(1), // make inclusive by subtracting 1 ms
-			t.opt('titleFormat'),
+		this.title = this.calendar.formatRange(
+			this.start,
+			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+			this.opt('titleFormat'),
 			' \u2014 ' // emphasized dash
 		);
 
-		t.renderBasic(1, t.getCellsPerWeek(), false);
+		BasicView.prototype.render.call(this, 1, this.getCellsPerWeek(), false); // call the super-method
 	}
 	
-	
-}
+});

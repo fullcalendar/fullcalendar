@@ -1,511 +1,262 @@
 
-setDefaults({
-	weekMode: 'fixed'
-});
+/* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
+----------------------------------------------------------------------------------------------------------------------*/
+// It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
+// It is responsible for managing width/height.
+
+function BasicView(calendar) {
+	View.call(this, calendar); // call the super-constructor
+	this.dayGrid = new DayGrid(this);
+	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
+}
 
 
-function BasicView(element, calendar, viewName) {
-	var t = this;
-	
-	
-	// exports
-	t.renderBasic = renderBasic;
-	t.setHeight = setHeight;
-	t.setWidth = setWidth;
-	t.renderDayOverlay = renderDayOverlay;
-	t.defaultSelectionEnd = defaultSelectionEnd;
-	t.renderSelection = renderSelection;
-	t.clearSelection = clearSelection;
-	t.reportDayClick = reportDayClick; // for selection (kinda hacky)
-	t.dragStart = dragStart;
-	t.dragStop = dragStop;
-	t.getHoverListener = function() { return hoverListener; };
-	t.colLeft = colLeft;
-	t.colRight = colRight;
-	t.colContentLeft = colContentLeft;
-	t.colContentRight = colContentRight;
-	t.getIsCellAllDay = function() { return true; };
-	t.allDayRow = allDayRow;
-	t.getRowCnt = function() { return rowCnt; };
-	t.getColCnt = function() { return colCnt; };
-	t.getColWidth = function() { return colWidth; };
-	t.getDaySegmentContainer = function() { return daySegmentContainer; };
-	
-	
-	// imports
-	View.call(t, element, calendar, viewName);
-	OverlayManager.call(t);
-	SelectionManager.call(t);
-	BasicEventRenderer.call(t);
-	var opt = t.opt;
-	var trigger = t.trigger;
-	var renderOverlay = t.renderOverlay;
-	var clearOverlays = t.clearOverlays;
-	var daySelectionMousedown = t.daySelectionMousedown;
-	var cellToDate = t.cellToDate;
-	var dateToCell = t.dateToCell;
-	var rangeToSegments = t.rangeToSegments;
-	var formatDate = calendar.formatDate;
-	var calculateWeekNumber = calendar.calculateWeekNumber;
-	
-	
-	// locals
-	
-	var table;
-	var head;
-	var headCells;
-	var body;
-	var bodyRows;
-	var bodyCells;
-	var bodyFirstCells;
-	var firstRowCellInners;
-	var firstRowCellContentInners;
-	var daySegmentContainer;
-	
-	var viewWidth;
-	var viewHeight;
-	var colWidth;
-	var weekNumberWidth;
-	
-	var rowCnt, colCnt;
-	var showNumbers;
-	var coordinateGrid;
-	var hoverListener;
-	var colPositions;
-	var colContentPositions;
-	
-	var tm;
-	var colFormat;
-	var showWeekNumbers;
-	
-	
-	
-	/* Rendering
-	------------------------------------------------------------*/
-	
-	
-	disableTextSelection(element.addClass('fc-grid'));
-	
-	
-	function renderBasic(_rowCnt, _colCnt, _showNumbers) {
-		rowCnt = _rowCnt;
-		colCnt = _colCnt;
-		showNumbers = _showNumbers;
-		updateOptions();
+BasicView.prototype = createObject(View.prototype); // define the super-class
+$.extend(BasicView.prototype, {
 
-		if (!body) {
-			buildEventContainer();
+	dayGrid: null, // the main subcomponent that does most of the heavy lifting
+
+	dayNumbersVisible: false, // display day numbers on each day cell?
+	weekNumbersVisible: false, // display week numbers along the side?
+
+	weekNumberWidth: null, // width of all the week-number cells running down the side
+
+	headRowEl: null, // the fake row element of the day-of-week header
+
+
+	// Renders the view into `this.el`, which should already be assigned.
+	// rowCnt, colCnt, and dayNumbersVisible have been calculated by a subclass and passed here.
+	render: function(rowCnt, colCnt, dayNumbersVisible) {
+
+		// needed for cell-to-date and date-to-cell calculations in View
+		this.rowCnt = rowCnt;
+		this.colCnt = colCnt;
+
+		this.dayNumbersVisible = dayNumbersVisible;
+		this.weekNumbersVisible = this.opt('weekNumbers');
+		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
+
+		this.el.addClass('fc-basic-view').html(this.renderHtml());
+
+		this.headRowEl = this.el.find('thead .fc-row');
+
+		this.scrollerEl = this.el.find('.fc-day-grid-container');
+		this.dayGrid.coordMap.containerEl = this.scrollerEl; // constrain clicks/etc to the dimensions of the scroller
+
+		this.dayGrid.el = this.el.find('.fc-day-grid');
+		this.dayGrid.render();
+
+		View.prototype.render.call(this); // call the super-method
+	},
+
+
+	// Builds the HTML skeleton for the view.
+	// The day-grid component will render inside of a container defined by this HTML.
+	renderHtml: function() {
+		return '' +
+			'<table>' +
+				'<thead>' +
+					'<tr>' +
+						'<td class="' + this.widgetHeaderClass + '">' +
+							this.dayGrid.headHtml() + // render the day-of-week headers
+						'</td>' +
+					'</tr>' +
+				'</thead>' +
+				'<tbody>' +
+					'<tr>' +
+						'<td class="' + this.widgetContentClass + '">' +
+							'<div class="fc-day-grid-container">' +
+								'<div class="fc-day-grid"/>' +
+							'</div>' +
+						'</td>' +
+					'</tr>' +
+				'</tbody>' +
+			'</table>';
+	},
+
+
+	// Generates the HTML that will go before the day-of week header cells.
+	// Queried by the DayGrid subcomponent when generating rows. Ordering depends on isRTL.
+	headIntroHtml: function() {
+		if (this.weekNumbersVisible) {
+			return '' +
+				'<th class="fc-week-number ' + this.widgetHeaderClass + '">' +
+					'<span>' + // needed for matchCellWidths
+						htmlEscape(this.opt('weekNumberTitle')) +
+					'</span>' +
+				'</th>';
+		}
+	},
+
+
+	// Generates the HTML that will go before content-skeleton cells that display the day/week numbers.
+	// Queried by the DayGrid subcomponent. Ordering depends on isRTL.
+	numberIntroHtml: function(row) {
+		if (this.weekNumbersVisible) {
+			return '' +
+				'<td class="fc-week-number">' +
+					'<span>' + // needed for matchCellWidths
+						this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
+					'</span>' +
+				'</td>';
+		}
+	},
+
+
+	// Generates the HTML that goes before the day bg cells for each day-row.
+	// Queried by the DayGrid subcomponent. Ordering depends on isRTL.
+	dayIntroHtml: function() {
+		if (this.weekNumbersVisible) {
+			return '<td class="fc-week-number ' + this.widgetContentClass + '"' +
+				(this.weekNumberWidth !== null ?
+					' style="width:' + this.weekNumberWidth + 'px"' :
+					''
+					) +
+				'></td>';
+		}
+	},
+
+
+	// Generates the HTML that goes before every other type of row generated by DayGrid. Ordering depends on isRTL.
+	// Affects helper-skeleton and highlight-skeleton rows.
+	introHtml: function() {
+		if (this.weekNumbersVisible) {
+			return '<td class="fc-week-number"' +
+				(this.weekNumberWidth !== null ?
+					' style="width:' + this.weekNumberWidth + 'px"' :
+					''
+					) +
+				'></td>';
+		}
+	},
+
+
+	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
+	// The number row will only exist if either day numbers or week numbers are turned on.
+	numberCellHtml: function(row, col, date) {
+		var classes;
+
+		if (!this.dayNumbersVisible) { // if there are week numbers but not day numbers
+			return '<td/>'; //  will create an empty space above events :(
 		}
 
-		buildTable();
-	}
-	
-	
-	function updateOptions() {
-		tm = opt('theme') ? 'ui' : 'fc';
-		colFormat = opt('columnFormat');
-		showWeekNumbers = opt('weekNumbers');
-	}
-	
-	
-	function buildEventContainer() {
-		daySegmentContainer =
-			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
-				.appendTo(element);
-	}
-	
-	
-	function buildTable() {
-		var html = buildTableHTML();
+		classes = this.dayGrid.getDayClasses(date);
+		classes.unshift('fc-day-number');
 
-		if (table) {
-			table.remove();
-		}
-		table = $(html).appendTo(element);
-
-		head = table.find('thead');
-		headCells = head.find('.fc-day-header');
-		body = table.find('tbody');
-		bodyRows = body.find('tr');
-		bodyCells = body.find('.fc-day');
-		bodyFirstCells = bodyRows.find('td:first-child');
-
-		firstRowCellInners = bodyRows.eq(0).find('.fc-day > div');
-		firstRowCellContentInners = bodyRows.eq(0).find('.fc-day-content > div');
-		
-		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
-		markFirstLast(bodyRows); // marks first+last td's
-		bodyRows.eq(0).addClass('fc-first');
-		bodyRows.filter(':last').addClass('fc-last');
-
-		bodyCells.each(function(i, _cell) {
-			var date = cellToDate(
-				Math.floor(i / colCnt),
-				i % colCnt
-			);
-			trigger('dayRender', t, date, $(_cell));
-		});
-
-		dayBind(bodyCells);
-	}
-
-
-
-	/* HTML Building
-	-----------------------------------------------------------*/
-
-
-	function buildTableHTML() {
-		var html =
-			"<table class='fc-border-separate' style='width:100%' cellspacing='0'>" +
-			buildHeadHTML() +
-			buildBodyHTML() +
-			"</table>";
-
-		return html;
-	}
-
-
-	function buildHeadHTML() {
-		var headerClass = tm + "-widget-header";
-		var html = '';
-		var col;
-		var date;
-
-		html += "<thead><tr>";
-
-		if (showWeekNumbers) {
-			html +=
-				"<th class='fc-week-number " + headerClass + "'>" +
-				htmlEscape(opt('weekNumberTitle')) +
-				"</th>";
-		}
-
-		for (col=0; col<colCnt; col++) {
-			date = cellToDate(0, col);
-			html +=
-				"<th class='fc-day-header fc-" + dayIDs[date.day()] + " " + headerClass + "'>" +
-				htmlEscape(formatDate(date, colFormat)) +
-				"</th>";
-		}
-
-		html += "</tr></thead>";
-
-		return html;
-	}
-
-
-	function buildBodyHTML() {
-		var contentClass = tm + "-widget-content";
-		var html = '';
-		var row;
-		var col;
-		var date;
-
-		html += "<tbody>";
-
-		for (row=0; row<rowCnt; row++) {
-
-			html += "<tr class='fc-week'>";
-
-			if (showWeekNumbers) {
-				date = cellToDate(row, 0);
-				html +=
-					"<td class='fc-week-number " + contentClass + "'>" +
-					"<div>" +
-					htmlEscape(calculateWeekNumber(date)) +
-					"</div>" +
-					"</td>";
-			}
-
-			for (col=0; col<colCnt; col++) {
-				date = cellToDate(row, col);
-				html += buildCellHTML(date);
-			}
-
-			html += "</tr>";
-		}
-
-		html += "</tbody>";
-
-		return html;
-	}
-
-
-	function buildCellHTML(date) { // date assumed to have stripped time
-		var month = t.intervalStart.month();
-		var today = calendar.getNow().stripTime();
-		var html = '';
-		var contentClass = tm + "-widget-content";
-		var classNames = [
-			'fc-day',
-			'fc-' + dayIDs[date.day()],
-			contentClass
-		];
-
-		if (date.month() != month) {
-			classNames.push('fc-other-month');
-		}
-		if (date.isSame(today, 'day')) {
-			classNames.push(
-				'fc-today',
-				tm + '-state-highlight'
-			);
-		}
-		else if (date < today) {
-			classNames.push('fc-past');
-		}
-		else {
-			classNames.push('fc-future');
-		}
-
-		html +=
-			"<td" +
-			" class='" + classNames.join(' ') + "'" +
-			" data-date='" + date.format() + "'" +
-			">" +
-			"<div>";
-
-		if (showNumbers) {
-			html += "<div class='fc-day-number'>" + date.date() + "</div>";
-		}
-
-		html +=
-			"<div class='fc-day-content'>" +
-			"<div style='position:relative'>&nbsp;</div>" +
-			"</div>" +
-			"</div>" +
-			"</td>";
-
-		return html;
-	}
-
+		return '' +
+			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
+				date.date() +
+			'</td>';
+	},
 
 
 	/* Dimensions
-	-----------------------------------------------------------*/
-	
-	
-	function setHeight(height) {
-		viewHeight = height;
-		
-		var bodyHeight = Math.max(viewHeight - head.height(), 0);
-		var rowHeight;
-		var rowHeightLast;
-		var cell;
-			
-		if (opt('weekMode') == 'variable') {
-			rowHeight = rowHeightLast = Math.floor(bodyHeight / (rowCnt==1 ? 2 : 6));
-		}else{
-			rowHeight = Math.floor(bodyHeight / rowCnt);
-			rowHeightLast = bodyHeight - rowHeight * (rowCnt-1);
-		}
-		
-		bodyFirstCells.each(function(i, _cell) {
-			if (i < rowCnt) {
-				cell = $(_cell);
-				cell.find('> div').css(
-					'min-height',
-					(i==rowCnt-1 ? rowHeightLast : rowHeight) - vsides(cell)
-				);
-			}
-		});
-		
-	}
-	
-	
-	function setWidth(width) {
-		viewWidth = width;
-		colPositions.clear();
-		colContentPositions.clear();
-
-		weekNumberWidth = 0;
-		if (showWeekNumbers) {
-			weekNumberWidth = head.find('th.fc-week-number').outerWidth();
-		}
-
-		colWidth = Math.floor((viewWidth - weekNumberWidth) / colCnt);
-		setOuterWidth(headCells.slice(0, -1), colWidth);
-	}
-	
-	
-	
-	/* Day clicking and binding
-	-----------------------------------------------------------*/
-	
-	
-	function dayBind(days) {
-		days.click(dayClick)
-			.mousedown(daySelectionMousedown);
-	}
-	
-	
-	function dayClick(ev) {
-		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
-			var date = calendar.moment($(this).data('date'));
-			trigger('dayClick', this, date, ev);
-		}
-	}
-	
-	
-	
-	/* Semi-transparent Overlay Helpers
-	------------------------------------------------------*/
-	// TODO: should be consolidated with AgendaView's methods
+	------------------------------------------------------------------------------------------------------------------*/
 
 
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
-		if (refreshCoordinateGrid) {
-			coordinateGrid.build();
-		}
-
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
+	// Refreshes the horizontal dimensions of the view
+	updateWidth: function() {
+		if (this.weekNumbersVisible) {
+			// Make sure all week number cells running down the side have the same width.
+			// Record the width for cells created later.
+			this.weekNumberWidth = matchCellWidths(
+				this.el.find('.fc-week-number')
 			);
 		}
-	}
+	},
 
-	
-	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
-		var rect = coordinateGrid.rect(row0, col0, row1, col1, element);
-		return renderOverlay(rect, element);
-	}
-	
-	
-	
+
+	// Adjusts the vertical dimensions of the view to the specified values
+	setHeight: function(totalHeight, isAuto) {
+		var scrollerHeight;
+
+		// reset all heights to be natural
+		this.scrollerEl.height('').removeClass('fc-scroller');
+		uncompensateScroll(this.headRowEl);
+
+		scrollerHeight = this.computeScrollerHeight(totalHeight);
+		this.setGridHeight(scrollerHeight, isAuto);
+
+		if (!isAuto && this.dayGrid.el.height() > scrollerHeight) { // should we show scrollbars?
+
+			this.scrollerEl.height(scrollerHeight).addClass('fc-scroller');
+			compensateScroll(this.headRowEl, getScrollbarWidths(this.scrollerEl));
+
+			// doing the scrollbar compensation might have created text overflow which created more height. redo
+			scrollerHeight = this.computeScrollerHeight(totalHeight);
+			this.scrollerEl.height(scrollerHeight);
+
+			this.restoreScroll();
+		}
+	},
+
+
+	// Sets the height of just the DayGrid component in this view
+	setGridHeight: function(height, isAuto) {
+		if (isAuto) {
+			undistributeHeight(this.dayGrid.rowEls); // let the rows be their natural height with no expanding
+		}
+		else {
+			distributeHeight(this.dayGrid.rowEls, height, true); // true = compensate for height-hogging rows
+		}
+	},
+
+
+	/* Events
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders the given events onto the view and populates the segments array
+	renderEvents: function(events) {
+		this.segs = this.dayGrid.renderEvents(events);
+
+		this.updateHeight(); // must compensate for events that overflow the row
+
+		View.prototype.renderEvents.call(this, events); // call the super-method
+	},
+
+
+	// Unrenders all event elements and clears internal segment data
+	destroyEvents: function() {
+		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
+		this.dayGrid.destroyEvents();
+
+		this.updateHeight();
+
+		View.prototype.destroyEvents.call(this); // call the super-method
+	},
+
+
+	/* Event Dragging
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of an event being dragged over the view.
+	// A returned value of `true` signals that a mock "helper" event has been rendered.
+	renderDrag: function(start, end, seg) {
+		return this.dayGrid.renderDrag(start, end, seg);
+	},
+
+
+	// Unrenders the visual indication of an event being dragged over the view
+	destroyDrag: function() {
+		this.dayGrid.destroyDrag();
+	},
+
+
 	/* Selection
-	-----------------------------------------------------------------------*/
-	
-	
-	function defaultSelectionEnd(start) {
-		return start.clone().stripTime().add('days', 1);
-	}
-	
-	
-	function renderSelection(start, end) { // end is exclusive
-		renderDayOverlay(start, end, true); // true = rebuild every time
-	}
-	
-	
-	function clearSelection() {
-		clearOverlays();
-	}
-	
-	
-	function reportDayClick(date, ev) {
-		var cell = dateToCell(date);
-		var _element = bodyCells[cell.row*colCnt + cell.col];
-		trigger('dayClick', _element, date, ev);
-	}
-	
-	
-	
-	/* External Dragging
-	-----------------------------------------------------------------------*/
-	
-	
-	function dragStart(_dragElement, ev, ui) {
-		hoverListener.start(function(cell) {
-			clearOverlays();
-			if (cell) {
-				var d1 = cellToDate(cell);
-				var d2 = d1.clone().add(calendar.defaultAllDayEventDuration);
-				renderDayOverlay(d1, d2);
-			}
-		}, ev);
-	}
-	
-	
-	function dragStop(_dragElement, ev, ui) {
-		var cell = hoverListener.stop();
-		clearOverlays();
-		if (cell) {
-			trigger(
-				'drop',
-				_dragElement,
-				cellToDate(cell),
-				ev,
-				ui
-			);
-		}
-	}
-	
-	
-	
-	/* Utilities
-	--------------------------------------------------------*/
-	
-	
-	coordinateGrid = new CoordinateGrid(function(rows, cols) {
-		var e, n, p;
-		headCells.each(function(i, _e) {
-			e = $(_e);
-			n = e.offset().left;
-			if (i) {
-				p[1] = n;
-			}
-			p = [n];
-			cols[i] = p;
-		});
-		p[1] = n + e.outerWidth();
-		bodyRows.each(function(i, _e) {
-			if (i < rowCnt) {
-				e = $(_e);
-				n = e.offset().top;
-				if (i) {
-					p[1] = n;
-				}
-				p = [n];
-				rows[i] = p;
-			}
-		});
-		p[1] = n + e.outerHeight();
-	});
-	
-	
-	hoverListener = new HoverListener(coordinateGrid);
-	
-	colPositions = new HorizontalPositionCache(function(col) {
-		return firstRowCellInners.eq(col);
-	});
-
-	colContentPositions = new HorizontalPositionCache(function(col) {
-		return firstRowCellContentInners.eq(col);
-	});
+	------------------------------------------------------------------------------------------------------------------*/
 
 
-	function colLeft(col) {
-		return colPositions.left(col);
-	}
+	// Renders a visual indication of a selection
+	renderSelection: function(start, end) {
+		this.dayGrid.renderSelection(start, end);
+	},
 
 
-	function colRight(col) {
-		return colPositions.right(col);
+	// Unrenders a visual indications of a selection
+	destroySelection: function() {
+		this.dayGrid.destroySelection();
 	}
-	
-	
-	function colContentLeft(col) {
-		return colContentPositions.left(col);
-	}
-	
-	
-	function colContentRight(col) {
-		return colContentPositions.right(col);
-	}
-	
-	
-	function allDayRow(i) {
-		return bodyRows.eq(i);
-	}
-	
-}
+
+});
