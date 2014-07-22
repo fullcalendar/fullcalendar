@@ -15,7 +15,7 @@ describe('timeFormat', function() {
 	});
 
 	function getRenderedEventTime() {
-		return $('.fc-event-time:first').text();
+		return $('.fc-event:first .fc-time').text();
 	}
 
 	describe('when in month view', function() {

@@ -9,7 +9,7 @@ describe('height', function() {
 		it('should use default height based on default aspect ratio of 1:35', function() {
 			$('#cal').width(1350);
 			$('#cal').fullCalendar();
-			var height = $('.fc-content').height();
+			var height = $('.fc-view-container').height();
 			expect(height).toEqual(1000);
 		});
 	});

@@ -12,7 +12,7 @@ describe('weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'month'
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
@@ -23,7 +23,7 @@ describe('weekNumbers', function() {
 					defaultView: 'month',
 					weekNumbers: false
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
@@ -35,9 +35,8 @@ describe('weekNumbers', function() {
 					weekNumbers: true,
 					weekMode: 'fixed' // will make 6 rows
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
-				// 1 is the header row, the other 6 are the rows
-				expect(weekNumbersCount).toEqual(7);
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
+				expect(weekNumbersCount).toEqual(6);
 			});
 		});
 
@@ -50,7 +49,7 @@ describe('weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'basicWeek'
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
@@ -61,7 +60,7 @@ describe('weekNumbers', function() {
 					defaultView: 'basicWeek',
 					weekNumbers: false
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
 				expect(weekNumbersCount).toEqual(0);
 			});
 		});
@@ -72,10 +71,8 @@ describe('weekNumbers', function() {
 					defaultView: 'basicWeek',
 					weekNumbers: true
 				});
-				var weekNumbersCount = $('.fc-week-number').length;
-				// 1 row is header
-				// 1 row is actual week number
-				expect(weekNumbersCount).toEqual(2);
+				var weekNumbersCount = $('.fc-content-skeleton thead .fc-week-number').length;
+				expect(weekNumbersCount).toEqual(1);
 			});
 		});
 

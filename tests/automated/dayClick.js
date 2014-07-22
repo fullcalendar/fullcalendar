@@ -63,7 +63,7 @@ describe('dayClick', function() {
 							};
 							spyOn(options, 'dayClick').and.callThrough();
 							$('#cal').fullCalendar(options);
-							var dayContent = $('.fc-agenda-allday .fc-day-content'); // the middle is 2014-05-28 (regardless of isRTL)
+							var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)'); // 2014-05-28 (regardless of isRTL)
 							dayContent.simulate('drag-n-drop', { // for simulating the mousedown/mouseup/click (relevant for selectable)
 								callback: function() {
 									dayContent.simulate('click');
@@ -73,6 +73,11 @@ describe('dayClick', function() {
 							});
 						});
 						it('fires correctly when clicking on a timed slot', function(done) {
+
+							// make sure the click slot will be in scroll view
+							options.contentHeight = 500;
+							options.scrollTime = '07:00:00';
+
 							options.dayClick = function(date, jsEvent, view) {
 								expect(moment.isMoment(date)).toEqual(true);
 								expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
@@ -82,10 +87,9 @@ describe('dayClick', function() {
 							};
 							spyOn(options, 'dayClick').and.callThrough();
 							$('#cal').fullCalendar(options);
-							var slotRow = $('tr.fc-slot18 td'); // the middle is 2014-05-28T09:00:00 (regardless of isRTL)
+							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)'); // the middle is 2014-05-28T09:00:00 (regardless of isRTL)
 							slotRow.simulate('drag-n-drop', { // for simulating the mousedown/mouseup/click (relevant for selectable)
 								callback: function() {
-									slotRow.simulate('click');
 									expect(options.dayClick).toHaveBeenCalled();
 									done();
 								}

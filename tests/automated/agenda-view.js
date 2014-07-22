@@ -15,8 +15,8 @@ describe('agenda view rendering', function() {
 		});
 
 		it('should have have days ordered sun to sat', function() {
-			var fc = $('#cal').find('.fc-agenda-days th');
-			expect(fc[0]).toHaveClass('fc-agenda-axis');
+			var fc = $('#cal').find('.fc-view > table > thead th');
+			expect(fc[0]).toHaveClass('fc-axis');
 			expect(fc[1]).toHaveClass('fc-sun');
 			expect(fc[2]).toHaveClass('fc-mon');
 			expect(fc[3]).toHaveClass('fc-tue');
@@ -37,15 +37,15 @@ describe('agenda view rendering', function() {
 		});
 
 		it('should have have days ordered sat to sun', function() {
-			var fc = $('#cal').find('.fc-agenda-days th');
-			expect(fc[0]).toHaveClass('fc-agenda-axis');
-			expect(fc[1]).toHaveClass('fc-sat');
-			expect(fc[2]).toHaveClass('fc-fri');
-			expect(fc[3]).toHaveClass('fc-thu');
-			expect(fc[4]).toHaveClass('fc-wed');
-			expect(fc[5]).toHaveClass('fc-tue');
-			expect(fc[6]).toHaveClass('fc-mon');
-			expect(fc[7]).toHaveClass('fc-sun');
+			var fc = $('#cal').find('.fc-view > table > thead th');
+			expect(fc[0]).toHaveClass('fc-sat');
+			expect(fc[1]).toHaveClass('fc-fri');
+			expect(fc[2]).toHaveClass('fc-thu');
+			expect(fc[3]).toHaveClass('fc-wed');
+			expect(fc[4]).toHaveClass('fc-tue');
+			expect(fc[5]).toHaveClass('fc-mon');
+			expect(fc[6]).toHaveClass('fc-sun');
+			expect(fc[7]).toHaveClass('fc-axis');
 		});
 	});
 

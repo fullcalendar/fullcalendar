@@ -12,7 +12,7 @@ describe('allDayText', function() {
 					defaultView: 'agendaWeek'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('all-day');
 			});
 		});
@@ -22,7 +22,7 @@ describe('allDayText', function() {
 					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('all-day');
 			});
 		});
@@ -36,7 +36,7 @@ describe('allDayText', function() {
 					allDaySlot: true
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('all-day');
 			});
 		});
@@ -47,7 +47,7 @@ describe('allDayText', function() {
 					allDaySlot: true
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('all-day');
 			});
 		});
@@ -62,7 +62,7 @@ describe('allDayText', function() {
 					lang: 'pt-br'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('dia inteiro');
 			});
 		});
@@ -74,7 +74,7 @@ describe('allDayText', function() {
 					lang: 'pt-br'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('dia inteiro');
 			});
 		});
@@ -89,7 +89,7 @@ describe('allDayText', function() {
 					allDayText: 'axis-phosy'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('axis-phosy');
 			});
 		});
@@ -100,7 +100,7 @@ describe('allDayText', function() {
 					allDayText: 'axis-phosy'
 				};
 				$('#cal').fullCalendar(options);
-				var allDayText = $('.fc-agenda-allday .fc-agenda-axis').text();
+				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
 				expect(allDayText).toEqual('axis-phosy');
 			});
 		});

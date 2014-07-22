@@ -36,7 +36,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays no time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time').length).toBe(0);
+							expect($('.fc-event .fc-time').length).toBe(0);
 							done();
 						};
 						$('#cal').fullCalendar(options);
@@ -53,7 +53,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays only the start time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time')).toHaveText('1:00');
+							expect($('.fc-event .fc-time')).toHaveText('1:00');
 							done();
 						};
 						$('#cal').fullCalendar(options);
@@ -71,7 +71,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays only the start time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time')).toHaveText('1:00');
+							expect($('.fc-event .fc-time')).toHaveText('1:00');
 							done();
 						};
 						$('#cal').fullCalendar(options);
@@ -95,7 +95,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays no time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time').length).toBe(0);
+							expect($('.fc-event .fc-time').length).toBe(0);
 							done();
 						};
 						$('#cal').fullCalendar(options);
@@ -112,7 +112,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays only the start time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time')).toHaveText('1:00');
+							expect($('.fc-event .fc-time')).toHaveText('1:00');
 							done();
 						};
 						$('#cal').fullCalendar(options);
@@ -130,7 +130,7 @@ describe('displayEventEnd', function() {
 					});
 					it('displays both the start and end time text', function(done) {
 						options.eventAfterAllRender = function() {
-							expect($('.fc-event-time')).toHaveText('1:00 - 2:00');
+							expect($('.fc-event .fc-time')).toHaveText('1:00 - 2:00');
 							done();
 						};
 						$('#cal').fullCalendar(options);

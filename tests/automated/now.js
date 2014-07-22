@@ -30,7 +30,7 @@ describe('now', function() {
 			options.now = '2014-04-29T12:00:00';
 			$('#cal').fullCalendar(options);
 			var todayCell = $('#cal td.fc-today');
-			expect(todayCell).toHaveClass('fc-col2'); // no date metadata, but we know which column #
+			expect(todayCell.data('date')).toBe('2014-04-29');
 		});
 	});
 

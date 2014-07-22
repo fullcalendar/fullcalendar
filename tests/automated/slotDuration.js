@@ -14,7 +14,7 @@ describe('slotDuration', function() {
 					defaultView: 'agendaWeek'
 				};
 				$('#cal').fullCalendar(options);
-				var slotCount = $('.fc-agenda-slots tr').length;
+				var slotCount = $('.fc-slats tr').length;
 				expect(slotCount).toEqual(Math.ceil(minutesInADay / 30));
 			});
 		});
@@ -24,7 +24,7 @@ describe('slotDuration', function() {
 					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
-				var slotCount = $('.fc-agenda-slots tr').length;
+				var slotCount = $('.fc-slats tr').length;
 				expect(slotCount).toEqual(Math.ceil(minutesInADay / 30));
 			});
 		});
@@ -37,7 +37,7 @@ describe('slotDuration', function() {
 					defaultView: 'agendaWeek'
 				};
 				$('#cal').fullCalendar(options);
-				var slotCount = $('.fc-agenda-slots tr').length;
+				var slotCount = $('.fc-slats tr').length;
 				expect(slotCount).toEqual(Math.ceil(minutesInADay / 30));
 			});
 		});
@@ -47,7 +47,7 @@ describe('slotDuration', function() {
 					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
-				var slotCount = $('.fc-agenda-slots tr').length;
+				var slotCount = $('.fc-slats tr').length;
 				expect(slotCount).toEqual(Math.ceil(minutesInADay / 30));
 			});
 		});
@@ -68,7 +68,7 @@ describe('slotDuration', function() {
 						slotDuration: { minutes: slotMinutes }
 					};
 					$('#cal2').fullCalendar(options);
-					var slotCount = $('.fc-agenda-slots tr').length;
+					var slotCount = $('.fc-slats tr').length;
 					var expected = Math.ceil(minutesInADay / slotMinutes);
 					expect(slotCount).toEqual(expected);
 				});
@@ -86,7 +86,7 @@ describe('slotDuration', function() {
 						slotDuration: { minutes: slotMinutes }
 					};
 					$('#cal2').fullCalendar(options);
-					var slotCount = $('.fc-agenda-slots tr').length;
+					var slotCount = $('.fc-slats tr').length;
 					var expected = Math.ceil(minutesInADay / slotMinutes);
 					expect(slotCount).toEqual(expected);
 				});

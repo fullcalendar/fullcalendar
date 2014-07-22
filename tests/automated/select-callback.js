@@ -85,7 +85,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-agenda-allday .fc-day-content').simulate('drag-n-drop', { // middle will be 2014-05-28
+						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag-n-drop', { // will be 2014-05-28 for LTR and RTL
 							dx: $('.fc-sun').outerWidth() * (isRTL ? -1 : 1), // the width of one column
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
@@ -106,7 +106,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-agenda-allday .fc-day-content').simulate('drag-n-drop', { // middle will be 2014-05-28
+						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag-n-drop', { // will be 2014-05-28 for LTR and RTL
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -128,8 +128,8 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('tr.fc-slot18 td').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
-							dy: $('tr.fc-slot18 td').outerHeight() * 2, // move down two slots
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+							dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -149,7 +149,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('tr.fc-slot18 td').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();

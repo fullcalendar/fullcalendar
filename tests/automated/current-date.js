@@ -284,7 +284,7 @@ describe('current date', function() {
 				TITLE_FORMAT
 			);
 		}
-		expect($('.fc-header-title h2')).toContainText(title);
+		expect($('.fc-toolbar h2')).toContainText(title);
 	}
 
 });

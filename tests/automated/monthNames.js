@@ -30,7 +30,7 @@ describe('month name', function() {
           it('should be ' + month, function(done) {
             settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(month);
+              expect($('.fc-toolbar h2')).toContainText(month);
               done();
             };
 
@@ -54,10 +54,10 @@ describe('month name', function() {
               settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
               settings.eventAfterAllRender = function() {
                 if (viewClass == 'month') { // with month view check for occurence of the monthname in the title
-                  expect($('.fc-header-title')[0]).toContainText(langMonth);
+                  expect($('.fc-toolbar h2')).toContainText(langMonth);
                 }
                 else { // with day views ensure that title contains the properly formatted phrase
-                  expect($('.fc-header-title')[0]).toHaveText(settings.defaultDate.format('LL'));
+                  expect($('.fc-toolbar h2')).toHaveText(settings.defaultDate.format('LL'));
                 }
                 done();
               };
@@ -89,7 +89,7 @@ describe('month name', function() {
             settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.monthNames = months;
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(month);
+              expect($('.fc-toolbar h2')).toContainText(month);
               done();
             };
 

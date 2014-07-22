@@ -3,7 +3,7 @@ describe('axisFormat', function() {
 	var options;
 
 	function getAxisText() {
-		return $('.fc-agenda-slots tr th.fc-agenda-axis:first').text();
+		return $('.fc-slats tr:first-child .fc-time').text();
 	}
 
 	beforeEach(function() {

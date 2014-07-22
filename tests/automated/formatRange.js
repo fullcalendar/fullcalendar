@@ -116,7 +116,7 @@ describe('formatRange', function() {
 				isRTL: true,
 				titleFormat: 'MMMM Do YYYY'
 			});
-			expect($('.fc-header-title h2')).toHaveText('May 24th - 18th 2014');
+			expect($('.fc-toolbar h2')).toHaveText('May 24th - 18th 2014');
 		});
 
 	});
@@ -131,7 +131,7 @@ describe('formatRange', function() {
 				lang: 'fr',
 				titleFormat: 'dddd MMMM D YYYY'
 			});
-			expect($('.fc-header-title h2')).toHaveText('lundi mai 19 - dimanche mai 25 2014');
+			expect($('.fc-toolbar h2')).toHaveText('lundi mai 19 - dimanche mai 25 2014');
 		});
 
 	});

@@ -12,7 +12,7 @@ describe('allDaySlots', function() {
 					defaultView: 'agendaWeek'
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(1);
 			});
 		});
@@ -22,7 +22,7 @@ describe('allDaySlots', function() {
 					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(1);
 			});
 		});
@@ -36,7 +36,7 @@ describe('allDaySlots', function() {
 					allDaySlot: true
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(1);
 			});
 		});
@@ -47,7 +47,7 @@ describe('allDaySlots', function() {
 					allDaySlot: true
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(1);
 			});
 		});
@@ -61,7 +61,7 @@ describe('allDaySlots', function() {
 					allDaySlot: false
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(0);
 			});
 		});
@@ -72,7 +72,7 @@ describe('allDaySlots', function() {
 					allDaySlot: false
 				};
 				$('#cal').fullCalendar(options);
-				var allDaySlotCount = $('table.fc-agenda-allday').length;
+				var allDaySlotCount = $('.fc-day-grid').length;
 				expect(allDaySlotCount).toEqual(0);
 			});
 		});

@@ -1,6 +1,6 @@
 describe('titleFormat', function() {
 
-    var SELECTOR = '.fc-header-title h2';
+    var SELECTOR = '.fc-toolbar h2';
 
     beforeEach(function() {
         affix('#cal');

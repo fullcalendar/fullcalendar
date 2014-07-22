@@ -10,7 +10,7 @@ describe('contentHeight', function() {
 		it('should set the height', function() {
 			$('#cal').width(1350);
 			$('#cal').fullCalendar();
-			var height = $('.fc-content').height();
+			var height = $('.fc-view-container').height();
 			expect(height).toEqual(1000);
 		});
 	});
@@ -20,7 +20,7 @@ describe('contentHeight', function() {
 			$('#cal').fullCalendar({
 				contentHeight: 1000
 			});
-			var height = $('.fc-content').height();
+			var height = $('.fc-view-container').height();
 			expect(height).toEqual(1000);
 		});
 		it('should not change the container width', function() {
@@ -36,7 +36,7 @@ describe('contentHeight', function() {
 		it('should set the content height', function() {
 			$('#cal').fullCalendar();
 			$('#cal').fullCalendar('option', 'contentHeight', 1137);
-			var height = $('.fc-content').height();
+			var height = $('.fc-view-container').height();
 			expect(height).toEqual(1137);
 		});
 		it('should not change the container width', function() {

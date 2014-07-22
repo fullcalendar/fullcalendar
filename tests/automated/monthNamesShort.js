@@ -30,7 +30,7 @@ describe('short month name', function() {
           it('should be ' + monthShort, function(done) {
             settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(monthShort);
+              expect($('.fc-toolbar h2')).toContainText(monthShort);
               done();
             };
 
@@ -53,7 +53,7 @@ describe('short month name', function() {
 
               settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
               settings.eventAfterAllRender = function() {
-                expect($('.fc-header-title')[0]).toContainText(langMonthShort);
+                expect($('.fc-toolbar h2')).toContainText(langMonthShort);
                 done();
               };
 
@@ -84,7 +84,7 @@ describe('short month name', function() {
             settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
             settings.monthNamesShort = monthsShort;
             settings.eventAfterAllRender = function() {
-              expect($('.fc-header-title')[0]).toContainText(monthShort);
+              expect($('.fc-toolbar h2')).toContainText(monthShort);
               done();
             };
 

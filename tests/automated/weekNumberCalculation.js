@@ -11,7 +11,7 @@ describe('weekNumberCalculation', function() {
 
 	function getRenderedWeekNumber() {
 		// works for both kinds of views
-		var text = $('.fc-agenda-axis.fc-week-number, .fc-week:first .fc-week-number').text();
+		var text = $('.fc-agenda-view .fc-week-number, .fc-week:first .fc-content-skeleton .fc-week-number').text();
 		return parseInt(text.replace(/\D/g, ''), 10);
 	}
 

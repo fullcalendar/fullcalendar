@@ -21,7 +21,7 @@ describe('maxTime', function() {
 					defaultView: 'agendaWeek'
 				};
 				$('#cal').fullCalendar(options);
-				var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+				var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 				expect(lastSlotText).toEqual('11pm');
 			});
 		});
@@ -32,7 +32,7 @@ describe('maxTime', function() {
 					defaultView: 'agendaDay'
 				};
 				$('#cal').fullCalendar(options);
-				var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+				var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 				expect(lastSlotText).toEqual('11pm');
 			});
 		});
@@ -53,7 +53,7 @@ describe('maxTime', function() {
 						maxTime: { hours: hourNumber }
 					};
 					$('#cal2').fullCalendar(options);
-					var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+					var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 					var expected = numToStringConverter(hourNumber - 1);
 					expect(lastSlotText).toEqual(expected);
 				});
@@ -71,7 +71,7 @@ describe('maxTime', function() {
 						maxTime: hourNumber + ':00' // in addition, test string duration input
 					};
 					$('#cal2').fullCalendar(options);
-					var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+					var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 					var expected = numToStringConverter(hourNumber - 1);
 					expect(lastSlotText).toEqual(expected);
 				});
@@ -94,7 +94,7 @@ describe('maxTime', function() {
 						maxTime: { hours: hourNumber, minutes: 20 }
 					};
 					$('#cal2').fullCalendar(options);
-					var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+					var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 					// since exclusive end is :20, last slot will be on the current hour's 00:00
 					var expected = numToStringConverter(hourNumber);
 					expect(lastSlotText).toEqual(expected);
@@ -113,7 +113,7 @@ describe('maxTime', function() {
 						maxTime: { hours: hourNumber, minutes: 20 }
 					};
 					$('#cal2').fullCalendar(options);
-					var lastSlotText = $('.fc-agenda-slots tr:not(.fc-minor):last th').text();
+					var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text();
 					// since exclusive end is :20, last slot will be on the current hour's 00:00
 					var expected = numToStringConverter(hourNumber);
 					expect(lastSlotText).toEqual(expected);
