@@ -12,15 +12,20 @@
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar({
-			year: 2010,
-			month: 0,
+			defaultDate: '2010-01-01',
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
-			events: "many_events_json.txt"
+			events: "many_events_json.txt",
+			eventDataTransform: function(input) {
+				return $.extend({}, input, {
+					start: input.start * 1000,
+					end: input.end ? (input.end * 1000) : null
+				});
+			}
 		});
 		
 	});
