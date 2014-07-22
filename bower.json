@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar-resourceviews",
-  "version": "1.6.4.1",
+  "version": "1.6.4-1",
   "devDependencies": {
     "jquery": "~1.10.2",
     "jquery-ui": "~1.10.3"
