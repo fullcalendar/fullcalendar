@@ -52,7 +52,7 @@
 				eventRender: function(event, el) {
 					// render the timezone offset below the event title
 					if (event.start.hasZone()) {
-						el.find('.fc-event-title').after(
+						el.find('.fc-title').after(
 							$('<div class="tzo"/>').text(event.start.format('Z'))
 						);
 					}
@@ -88,8 +88,9 @@
 	#script-warning { font-weight: bold; color: red }
 
 	#calendar {
-		width: 900px;
+		max-width: 900px;
 		margin: 40px auto;
+		padding: 0 10px;
 	}
 
 	.tzo {
