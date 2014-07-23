@@ -1,4 +1,93 @@
 
+v2.1.0-beta1 (2014-07-23)
+-------------------------
+
+No more reliance on jQuery UI for event dragging or resizing.
+Large internal code refactor with better OOP, better code reuse, and more comments.
+
+BACKWARDS INCOMPATIBLE CHANGES:
+- HTML skeleton is very different, lots of CSS and many classNames have changed.
+  Your CSS for customizing the look of the calendar will probably need to be rewritten.
+  IE7 support was officially dropped in v2.0.0, but things still worked ok. Not the case anymore.
+- In month view, when the calendar's height overflows because of too many events, vertical
+  scrollbars will appear. To turn this behavior off, set the height option to 'auto'.
+- The CSS for styling events forces one line of text and cuts off titles when they overflow.
+  It is possible to undo this default behavior through custom CSS, but not recommended, as it might
+  introduce gaps between events [like this][111]. There is no way around this since
+  [moving to tables][809] for event positioning, as required to solve [printing problems][35] and
+  eventually the ["too many events" issue][304].
+
+NEW OPTIONS:
+- 'auto' value for height and contentHeight
+- fixedWeekCount
+
+DEPRECATED OPTIONS:
+- weekMode (use height 'auto' and fixedWeekCount instead)
+
+RESOLVED ISSUES:
+- Problems with printing ([35])
+- Space on right side of agenda events configurable through CSS ([204])
+- Tall weeks in month-view should try to borrow height from other weeks ([243])
+- Problem with window resize ([259])
+- Events sorting stays consistent across weeks ([510])
+- Agenda's columns misaligned on wide screens ([511])
+- Agenda view without scrollbars, natural height ([521])
+- Run selectHelper through eventRender/eventAfterRender callbacks ([629])
+- Keyboard access, tabbing ([637])
+- Run resizing events through eventRender/eventAfterRender ([714])
+- Stationary header, scrolling calendar body ([728])
+- Resize an event to a different day in agenda views ([736])
+- Allow selection across days in agenda views ([778])
+- Use tables to position events, no need for repositioning ([809])
+- Mouseenter delegated event not working on event elements ([936])
+- Agenda event dragging, snapping to different columns is erratic ([1101])
+- Android browser cuts off Day view at 8 PM with no scroll bar ([1203])
+- Customize the resize handle text ("=") ([1326])
+- If agenda event is too short, don't overwrite .fc-event-time ([1700])
+- dayRender trigger for agendaViews ([1898])
+- Limit height of events to 1-line by default ([1992])
+- Zooming calendar causes events to miss-align ([1996])
+- Event destroy callback on event removal ([2017])
+- Agenda views, when RTL, should have axis on right ([2132])
+- Make header buttons more accessibile ([2151])
+- daySelectionMousedown should interpret OSX ctrl+click as a right mouse click ([2169])
+- Best way to display time text on multi-day events *with times* ([2172])
+- Eliminate table use for layout ([2186])
+- Agenda views should fill total height ([2196])
+
+[35]: https://code.google.com/p/fullcalendar/issues/detail?id=35
+[204]: https://code.google.com/p/fullcalendar/issues/detail?id=204
+[243]: https://code.google.com/p/fullcalendar/issues/detail?id=243
+[259]: https://code.google.com/p/fullcalendar/issues/detail?id=259
+[510]: https://code.google.com/p/fullcalendar/issues/detail?id=510
+[511]: https://code.google.com/p/fullcalendar/issues/detail?id=511
+[521]: https://code.google.com/p/fullcalendar/issues/detail?id=521
+[629]: https://code.google.com/p/fullcalendar/issues/detail?id=629
+[637]: https://code.google.com/p/fullcalendar/issues/detail?id=637
+[714]: https://code.google.com/p/fullcalendar/issues/detail?id=714
+[728]: https://code.google.com/p/fullcalendar/issues/detail?id=728
+[736]: https://code.google.com/p/fullcalendar/issues/detail?id=736
+[778]: https://code.google.com/p/fullcalendar/issues/detail?id=778
+[809]: https://code.google.com/p/fullcalendar/issues/detail?id=809
+[936]: https://code.google.com/p/fullcalendar/issues/detail?id=936
+[1101]: https://code.google.com/p/fullcalendar/issues/detail?id=1101
+[1203]: https://code.google.com/p/fullcalendar/issues/detail?id=1203
+[1326]: https://code.google.com/p/fullcalendar/issues/detail?id=1326
+[1700]: https://code.google.com/p/fullcalendar/issues/detail?id=1700
+[1898]: https://code.google.com/p/fullcalendar/issues/detail?id=1898
+[1992]: https://code.google.com/p/fullcalendar/issues/detail?id=1992
+[1996]: https://code.google.com/p/fullcalendar/issues/detail?id=1996
+[2017]: https://code.google.com/p/fullcalendar/issues/detail?id=2017
+[2132]: https://code.google.com/p/fullcalendar/issues/detail?id=2132
+[2151]: https://code.google.com/p/fullcalendar/issues/detail?id=2151
+[2169]: https://code.google.com/p/fullcalendar/issues/detail?id=2169
+[2172]: https://code.google.com/p/fullcalendar/issues/detail?id=2172
+[2186]: https://code.google.com/p/fullcalendar/issues/detail?id=2186
+[2196]: https://code.google.com/p/fullcalendar/issues/detail?id=2196
+[111]: https://code.google.com/p/fullcalendar/issues/detail?id=111
+[304]: https://code.google.com/p/fullcalendar/issues/detail?id=304
+
+
 v2.0.2 (2014-06-24)
 -------------------
 
