@@ -80,7 +80,7 @@ $.extend(BasicView.prototype, {
 	headIntroHtml: function() {
 		if (this.weekNumbersVisible) {
 			return '' +
-				'<th class="fc-week-number ' + this.widgetHeaderClass + '">' +
+				'<th class="fc-week-number ' + this.widgetHeaderClass + '" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
 						htmlEscape(this.opt('weekNumberTitle')) +
 					'</span>' +
@@ -94,7 +94,7 @@ $.extend(BasicView.prototype, {
 	numberIntroHtml: function(row) {
 		if (this.weekNumbersVisible) {
 			return '' +
-				'<td class="fc-week-number">' +
+				'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
 						this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
 					'</span>' +
@@ -107,12 +107,8 @@ $.extend(BasicView.prototype, {
 	// Queried by the DayGrid subcomponent. Ordering depends on isRTL.
 	dayIntroHtml: function() {
 		if (this.weekNumbersVisible) {
-			return '<td class="fc-week-number ' + this.widgetContentClass + '"' +
-				(this.weekNumberWidth !== null ?
-					' style="width:' + this.weekNumberWidth + 'px"' :
-					''
-					) +
-				'></td>';
+			return '<td class="fc-week-number ' + this.widgetContentClass + '" ' +
+				this.weekNumberStyleAttr() + '></td>';
 		}
 	},
 
@@ -121,12 +117,7 @@ $.extend(BasicView.prototype, {
 	// Affects helper-skeleton and highlight-skeleton rows.
 	introHtml: function() {
 		if (this.weekNumbersVisible) {
-			return '<td class="fc-week-number"' +
-				(this.weekNumberWidth !== null ?
-					' style="width:' + this.weekNumberWidth + 'px"' :
-					''
-					) +
-				'></td>';
+			return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>';
 		}
 	},
 
@@ -147,6 +138,15 @@ $.extend(BasicView.prototype, {
 			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
 				date.date() +
 			'</td>';
+	},
+
+
+	// Generates an HTML attribute string for setting the width of the week number column, if it is known
+	weekNumberStyleAttr: function() {
+		if (this.weekNumberWidth !== null) {
+			return 'style="width:' + this.weekNumberWidth + 'px"';
+		}
+		return '';
 	},
 
 

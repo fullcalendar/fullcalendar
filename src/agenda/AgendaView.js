@@ -166,19 +166,14 @@ $.extend(AgendaView.prototype, {
 			}
 
 			return '' +
-				'<th class="fc-axis fc-week-number ' + this.widgetHeaderClass + '">' +
+				'<th class="fc-axis fc-week-number ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
 						htmlEscape(weekText) +
 					'</span>' +
 				'</th>';
 		}
 		else {
-			return '<th class="fc-axis ' + this.widgetHeaderClass + '"' +
-				(this.axisWidth !== null ?
-					' style="width:' + this.axisWidth + 'px"' :
-					''
-					) +
-				'></th>';
+			return '<th class="fc-axis ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '></th>';
 		}
 	},
 
@@ -187,7 +182,7 @@ $.extend(AgendaView.prototype, {
 	// Queried by the DayGrid subcomponent when generating rows. Ordering depends on isRTL.
 	dayIntroHtml: function() {
 		return '' +
-			'<td class="' + this.widgetHeaderClass + ' fc-axis">' +
+			'<td class="' + this.widgetHeaderClass + ' fc-axis" ' + this.axisStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
 					(this.opt('allDayHTML') || htmlEscape(this.opt('allDayText'))) +
 				'</span>' +
@@ -199,12 +194,16 @@ $.extend(AgendaView.prototype, {
 	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
 	// Queried by the TimeGrid and DayGrid subcomponents when generating rows. Ordering depends on isRTL.
 	introHtml: function() {
-		return '<td class="fc-axis"' +
-			(this.axisWidth !== null ?
-				' style="width:' + this.axisWidth + 'px"' :
-				''
-				) +
-			'></td>';
+		return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>';
+	},
+
+
+	// Generates an HTML attribute string for setting the width of the axis, if it is known
+	axisStyleAttr: function() {
+		if (this.axisWidth !== null) {
+			 return 'style="width:' + this.axisWidth + 'px"';
+		}
+		return '';
 	},
 
 
@@ -337,7 +336,10 @@ $.extend(AgendaView.prototype, {
 			this.dayGrid.destroyEvents();
 		}
 
-		this.updateHeight();
+		// When rerendering events in IE8, the event elements flash because of this line.
+		// Comment it out. It's not necessary because a renderEvents is always called subsequently,
+		// which updates the height.
+		//this.updateHeight();
 
 		View.prototype.destroyEvents.call(this); // call the super-method. will kill `this.segs`
 	},
