@@ -5261,7 +5261,7 @@ function ResourceView(element, calendar, viewName) {
 
 
 	function realCellToDate(cell) { // ugh "real" ... but blame it on our abuse of the "cell" system
-		var d = cellToDate(0, cell.col);
+		var d = cellToDate(0, 0);
 		var slotIndex = cell.row;
 		if (opt('allDaySlot')) {
 			slotIndex--;
@@ -5337,11 +5337,11 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	
-	function renderSlotSelection(startDate, endDate) {
+	function renderSlotSelection(startDate, endDate, col) {
 		var helperOption = opt('selectHelper');
 		coordinateGrid.build();
 		if (helperOption) {
-			var col = dateToCell(startDate).col;
+			col = col || dateToCell(startDate).col;
 			if (col >= 0 && col < colCnt) { // only works when times are on same day
 				var rect = coordinateGrid.rect(0, col, 0, col, slotContainer); // only for horizontal coords
 				var top = timePosition(startDate, startDate);
@@ -5401,9 +5401,11 @@ function ResourceView(element, calendar, viewName) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
 			var dates;
+			var col;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !getIsCellAllDay(cell)) {
+					col = cell.col;
 					var d1 = realCellToDate(origCell);
 					var d2 = realCellToDate(cell);
 					dates = [
@@ -5412,7 +5414,7 @@ function ResourceView(element, calendar, viewName) {
 						d2,
 						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(dateCompare);
-					renderSlotSelection(dates[0], dates[3]);
+					renderSlotSelection(dates[0], dates[3], cell.col);
 				}else{
 					dates = null;
 				}
@@ -5423,6 +5425,7 @@ function ResourceView(element, calendar, viewName) {
 					if (+dates[0] == +dates[1]) {
 						reportDayClick(dates[0], false, ev);
 					}
+					ev.data = resources()[col];
 					reportSelection(dates[0], dates[3], false, ev);
 				}
 			});

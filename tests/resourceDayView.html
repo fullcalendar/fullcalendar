@@ -96,6 +96,10 @@
   <script src='../build/out/gcal.js'></script>
   <script>
 
+function showModal(a, b, c) {
+  $('#newAppointment').modal('show');
+}
+
     var cal, staticEvents;
     
     var date = new Date();
@@ -105,6 +109,9 @@
 
     $(document).ready(function() {
       cal = $('#calendar').fullCalendar({
+        eventClick: function(event) {
+      showModal(event.apId, event.patId, event.provisoryId);
+    },
         editable: true,
         // weekends: false,
         header: {
