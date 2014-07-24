@@ -1,45 +1,23 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <link rel="stylesheet" href="./lib/bootstrap.min.css" />
-     <link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<head>
+  <link rel="stylesheet" href="./lib/bootstrap.min.css" />
+  <link href='../build/out/fullcalendar.css' rel='stylesheet' />
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    <link rel="stylesheet" href="style.css">
-  </head>
+<body>
+  <h3 class="text-center">Calendar demo</h3>
+  
+  <div id="calendar"></div>
 
-  <body>
-    <h3 class="text-center">Calendar demo</h3>
-    <div class="col-sm-10">
-  		<select name="study" id="study-selector" class="form-control shortselector">
-    		<option value="1">Eco</option>
-    		<option value="2">TAC</option>
-    		<option value="3">RMN</option>
-    	</select>
-    </div>
-    
-    <div id="calendar"></div>
-    
-  <div class="modal fade" id="newAppointment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="modal-body">
-            <h4>Form</h4>
-            <div id="date"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-    
-    
   <script src='../build/out/jquery.js'></script>
   <script src='../build/out/jquery-ui.js'></script>
 
-    <script src="./lib/bootstrap.min.js"></script>
-    
-<script src='../src/defaults.js'></script>
+  <script src="./lib/bootstrap.min.js"></script>
+
+  <script src='../src/defaults.js'></script>
   <script src='../src/main.js'></script>
   <script src='../src/Calendar.js'></script>
   <script src='../src/Header.js'></script>
@@ -62,142 +40,114 @@
   <script src='../src/common/View.js'></script>
   <script src='../src/common/DayEventRenderer.js'></script>
   <script src='../src/common/SelectionManager.js'></script>
-   <script src='../src/common/OverlayManager.js'></script>  
+  <script src='../src/common/OverlayManager.js'></script>  
   <script src='../src/common/CoordinateGrid.js'></script>
   <script src='../src/common/HoverListener.js'></script>
   <script src='../src/common/HorizontalPositionCache.js'></script>
   <script src='../build/out/gcal.js'></script>
 
-    <script src="dateFormat.min.js"></script>
-    <script >
-// Code goes here
-var date = new Date();
-var d = date.getDate();
-var m = date.getMonth();
-var y = date.getFullYear();
-var study;
+  <script src="dateFormat.min.js"></script>
+  <script>
+    // Code goes here
+    var date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    var study;
 
-var ecoEvents = [{
-    title: 'Test 1',
-    start: new Date(y, m, d, 09, 15),
-    end: new Date(y, m, d, 10, 00),
-    allDay: false,
-    resources: ['1']
-  }, {
-    title: 'Test 2',
-    start: new Date(y, m, d, 08, 30),
-    end: new Date(y, m, d, 09, 00),
-    allDay: false,
-    resources: ['2']
-  }];
-
-var ecoResources = [{'id':'1','name':'Eco Office 1'},{'id':'2', 'name':'Eco Office 2'}];
-
-$('#calendar').fullCalendar({
-    //When you click and select a time range show up the modal, with date,
-    //start and end time fields populated (Didn´t add fields).
-    select: function(start, end, allDay, a, b, c) {
-      debugger;
-      $("#date").html(start);
-      showModal(null, null, null);
-    },
-    /*Clicking on an event makes an ajax request with the parameters I pass on the showModal
-    function, and shows the modal with all the fields populated. */
-    eventClick: function(event) {
-      showModal(event.apId, event.patId, event.provisoryId);
-    },
-    resources: ecoResources,
-    events: ecoEvents,
-    titleFormat: {
-      day: 'dd/MM/yyyy',
-      week: "MMMM dd[ yyyy]{ '&#8212;'[ MMMM] d yyyy}"
-    },
-    columnFormat: {
-      day: 'dddd dd/MM/yyyy',
-      week: "dddd dd"
-    },
-    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    defaultView: 'resourceDay',
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'agendaWeek, agendaDay, resourceDay'
-    },
-    buttonText: {
-      week: 'Semana',
-      day: 'Día',
-      today: 'Hoy'
-    },
-    allDaySlot: false,
-    selectable: true,
-    selectHelper: true,
-    snapMinutes: 5,
-    slotMinutes: 15,
-    aspectRatio: 2,
-    height: 500,
-    theme: false,
-    buttonIcons: false,
-    minTime: 8,
-    maxTime: 21
-  });
-
-function showModal(a, b, c) {
-  $('#newAppointment').modal('show');
-}
-
-$("#study-selector").change(function(a, b, c) {
-  var office = $(this).val();
-  
-  // TAC
-  if (office == 2){
-    events = [{
-      title: 'TAC Appointment',
-      start: new Date(y, m, d, 08, 30),
-      end: new Date(y, m, d, 09, 00),
-      allDay: false,
-      resources: ['3']
-    }];
-    resources = [{'id':'3','name':'Tac Office'}];
-  } else if (office == 3){
-    events = [{
-      title: 'RMN Appointment',
+    var ecoEvents = [{
+      title: 'Test 1',
       start: new Date(y, m, d, 09, 15),
       end: new Date(y, m, d, 10, 00),
       allDay: false,
-      resources: ['4']
+      resources: ['1','2']
+    }, {
+      title: 'Test 2',
+      start: new Date(y, m, d, 08, 30),
+      end: new Date(y, m, d, 09, 00),
+      allDay: false,
+      resources: ['2']
     }];
-    resources = [{'id':'4','name':'RMS Office'}];
-  } else {
-    events = ecoEvents;
-    resources = ecoResources;
-  }
-  
-  cal = $('#calendar');
-  cal.fullCalendar('setResources', resources)
-  cal.fullCalendar('removeEvents')
-  cal.fullCalendar('render')
-  cal.fullCalendar('addEventSource', events)
-});
 
+    var ecoResources = [{'id':'1','name':'Eco Office 1'},{'id':'2', 'name':'Eco Office 2'}];
 
+    $('#calendar').fullCalendar({
+      //When you click and select a time range show up the modal, with date,
+      //start and end time fields populated (Didn´t add fields).
+      select: function(start, end, allDay, ev) {
+        console.log(start);
+        console.log(ev.data);
+      },
+      /*Clicking on an event makes an ajax request with the parameters I pass on the showModal
+      function, and shows the modal with all the fields populated. */
+      eventClick: function(event) {
+        console.log(event);
+      },
+      resources: ecoResources,
+      events: ecoEvents,
+      titleFormat: {
+        day: 'dd/MM/yyyy',
+        week: "MMMM dd[ yyyy]{ '&#8212;'[ MMMM] d yyyy}"
+      },
+      columnFormat: {
+        day: 'dddd dd/MM/yyyy',
+        week: "dddd dd"
+      },
+      defaultView: 'resourceDay',
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'agendaWeek, agendaDay, resourceDay'
+      },
+      allDaySlot: false,
+      selectable: true,
+      selectHelper: true,
+      editable: true,
+      droppable: true,
+      snapMinutes: 5,
+      slotMinutes: 15,
+      aspectRatio: 2,
+      height: 500,
+      theme: false,
+      buttonIcons: false,
+      minTime: 8,
+      maxTime: 21
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </script>
-  </body>
+    $("#study-selector").change(function(a, b, c) {
+      var office = $(this).val();
+      
+      // TAC
+      if (office == 2){
+        events = [{
+          title: 'TAC Appointment',
+          start: new Date(y, m, d, 08, 30),
+          end: new Date(y, m, d, 09, 00),
+          allDay: false,
+          resources: ['3']
+        }];
+        resources = [{'id':'3','name':'Tac Office'}];
+      } else if (office == 3){
+        events = [{
+          title: 'RMN Appointment',
+          start: new Date(y, m, d, 09, 15),
+          end: new Date(y, m, d, 10, 00),
+          allDay: false,
+          resources: ['4']
+        }];
+        resources = [{'id':'4','name':'RMS Office'}];
+      } else {
+        events = ecoEvents;
+        resources = ecoResources;
+      }
+      
+      cal = $('#calendar');
+      cal.fullCalendar('setResources', resources)
+      cal.fullCalendar('removeEvents')
+      cal.fullCalendar('render')
+      cal.fullCalendar('addEventSource', events)
+    });
+</script>
+</body>
 
 </html>
