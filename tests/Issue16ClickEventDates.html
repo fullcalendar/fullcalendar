@@ -74,7 +74,7 @@
     $('#calendar').fullCalendar({
       //When you click and select a time range show up the modal, with date,
       //start and end time fields populated (Didn´t add fields).
-      select: function(start, end, allDay, ev) {
+      select: function(start, end, allDay, ev, resources) {
         console.log(start);
         console.log(ev.data);
       },
@@ -99,10 +99,14 @@
         center: 'title',
         right: 'agendaWeek, agendaDay, resourceDay'
       },
-      allDaySlot: false,
+      editable: true,
+      eventDrop: function (event, delta, revertFunc) {
+          console.log(event.resources);
+      },
+      allDaySlot: true,
       selectable: true,
       selectHelper: true,
-      editable: true,
+      
       droppable: true,
       snapMinutes: 5,
       slotMinutes: 15,
