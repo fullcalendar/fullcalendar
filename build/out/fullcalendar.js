@@ -5167,22 +5167,20 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 
-	function renderSlotOverlay(overlayStart, overlayEnd) {
-		for (var i=0; i<colCnt; i++) {
-			var dayStart = cellToDate(0, i);
-			var dayEnd = addDays(cloneDate(dayStart), 1);
-			var stretchStart = new Date(Math.max(dayStart, overlayStart));
-			var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
-			if (stretchStart < stretchEnd) {
-				var rect = coordinateGrid.rect(0, i, 0, i, slotContainer); // only use it for horizontal coords
-				var top = timePosition(dayStart, stretchStart);
-				var bottom = timePosition(dayStart, stretchEnd);
-				rect.top = top;
-				rect.height = bottom - top;
-				slotBind(
-					renderOverlay(rect, slotContainer)
-				);
-			}
+	function renderSlotOverlay(overlayStart, overlayEnd, col) {
+		var dayStart = cellToDate(0, 0);
+		var dayEnd = addDays(cloneDate(dayStart), 1);
+		var stretchStart = new Date(Math.max(dayStart, overlayStart));
+		var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
+		if (stretchStart < stretchEnd) {
+			var rect = coordinateGrid.rect(0, col, 0, col, slotContainer); // only use it for horizontal coords
+			var top = timePosition(dayStart, stretchStart);
+			var bottom = timePosition(dayStart, stretchEnd);
+			rect.top = top;
+			rect.height = bottom - top;
+			slotBind(
+				renderOverlay(rect, slotContainer)
+			);
 		}
 	}
 	
@@ -5383,7 +5381,7 @@ function ResourceView(element, calendar, viewName) {
 				}
 			}
 		}else{
-			renderSlotOverlay(startDate, endDate);
+			renderSlotOverlay(startDate, endDate, col);
 		}
 	}
 	
@@ -5452,7 +5450,7 @@ function ResourceView(element, calendar, viewName) {
 				}else{
 					var d1 = realCellToDate(cell);
 					var d2 = addMinutes(cloneDate(d1), opt('defaultEventMinutes'));
-					renderSlotOverlay(d1, d2);
+					renderSlotOverlay(d1, d2, cell.col);
 				}
 			}
 		}, ev);
