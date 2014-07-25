@@ -4625,7 +4625,7 @@ function ResourceView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-  t.getResources = calendar.fetchResources;
+  	t.getResources = calendar.fetchResources;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
@@ -4638,7 +4638,6 @@ function ResourceView(element, calendar, viewName) {
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
 	var unselect = t.unselect;
-	var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
@@ -5118,7 +5117,7 @@ function ResourceView(element, calendar, viewName) {
 			var date = cellToDate(0, 0);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
 
-		  ev.data = resources()[col];
+		  	ev.data = resources()[col];
 
 			if (rowMatch) {
 				var mins = parseInt(rowMatch[1]) * opt('slotMinutes');
@@ -5139,25 +5138,13 @@ function ResourceView(element, calendar, viewName) {
 	// TODO: should be consolidated with BasicView's methods
 
 
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
+	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid, col) { // overlayEnd is exclusive
+		var allDayRow = 0;
 		if (refreshCoordinateGrid) {
 			coordinateGrid.build();
 		}
 
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
-			);
-		}
+		dayBind(renderCellOverlay(allDayRow, col, allDayRow, col));
 	}
 	
 	
@@ -5324,10 +5311,10 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	
-	function renderSelection(startDate, endDate, allDay) { // only for all-day
+	function renderSelection(startDate, endDate, allDay, col) { // only for all-day
 		if (allDay) {
 			if (opt('allDaySlot')) {
-				renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
+				renderDayOverlay(startDate, endDate, true, col);
 			}
 		}else{
 			renderSlotSelection(startDate, endDate);
@@ -5394,7 +5381,40 @@ function ResourceView(element, calendar, viewName) {
 		}
 	}
 	
-	
+	function daySelectionMousedown(ev) {
+		var cellToDate = t.cellToDate;
+		var getIsCellAllDay = t.getIsCellAllDay;
+		var hoverListener = t.getHoverListener();
+		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
+		var col;
+		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
+			unselect(ev);
+			var _mousedownElement = this;
+			var dates;
+			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
+				clearSelection();
+				if (cell && getIsCellAllDay(cell)) {
+					col = cell.col;
+					dates = [ realCellToDate(origCell), realCellToDate(cell) ].sort(dateCompare);
+					renderSelection(dates[0], dates[1], true, col);
+				}else{
+					dates = null;
+				}
+			}, ev);
+			$(document).one('mouseup', function(ev) {
+				hoverListener.stop();
+				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						reportDayClick(dates[0], true, ev);
+					}
+					ev.data = resources()[col];
+					reportSelection(dates[0], dates[1], true, ev);
+				}
+			});
+		}
+	}
+
+	// select on the calendar somewhere
 	function slotSelectionMousedown(ev) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
