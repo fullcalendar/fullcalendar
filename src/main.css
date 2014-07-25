@@ -101,11 +101,14 @@ html .fc,
 ------------------------------------------------------------------------*/
 	
 .fc-content {
+	position: relative;
+	z-index: 1; /* scopes all other z-index's to be inside this container */
 	clear: both;
 	zoom: 1; /* for IE7, gives accurate coordinates for [un]freezeContentHeight */
 	}
 	
 .fc-view {
+	position: relative;
 	width: 100%;
 	overflow: hidden;
 	}

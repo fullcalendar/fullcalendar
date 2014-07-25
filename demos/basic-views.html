@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href='../build/out/fullcalendar.css' rel='stylesheet' />
-<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../build/out/jquery.js'></script>
-<script src='../build/out/jquery-ui.js'></script>
-<script src='../build/out/fullcalendar.js'></script>
+<meta charset='utf-8' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../dist/fullcalendar.js'></script>
 <script>
 
 	$(document).ready(function() {
-	
-		var date = new Date();
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
 			header: {
@@ -21,51 +18,45 @@
 				center: 'title',
 				right: 'month,basicWeek,basicDay'
 			},
+			defaultDate: '2014-06-12',
 			editable: true,
 			events: [
 				{
 					title: 'All Day Event',
-					start: new Date(y, m, 1)
+					start: '2014-06-01'
 				},
 				{
 					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
+					start: '2014-06-07',
+					end: '2014-06-10'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false
+					start: '2014-06-09T16:00:00'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false
+					start: '2014-06-16T16:00:00'
 				},
 				{
 					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false
+					start: '2014-06-12T10:30:00',
+					end: '2014-06-12T12:30:00'
 				},
 				{
 					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false
+					start: '2014-06-12T12:00:00'
 				},
 				{
 					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
+					start: '2014-06-13T07:00:00'
 				},
 				{
 					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
+					url: 'http://google.com/',
+					start: '2014-06-28'
 				}
 			]
 		});
@@ -76,20 +67,22 @@
 <style>
 
 	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 14px;
+		margin: 0;
+		padding: 0;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+		font-size: 14px;
+	}
 
 	#calendar {
 		width: 900px;
-		margin: 0 auto;
-		}
+		margin: 40px auto;
+	}
 
 </style>
 </head>
 <body>
-<div id='calendar'></div>
+
+	<div id='calendar'></div>
+
 </body>
 </html>

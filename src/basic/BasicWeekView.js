@@ -1,52 +1,40 @@
 
 fcViews.basicWeek = BasicWeekView;
 
-function BasicWeekView(element, calendar) {
+function BasicWeekView(element, calendar) { // TODO: do a WeekView mixin
 	var t = this;
 	
 	
 	// exports
+	t.incrementDate = incrementDate;
 	t.render = render;
 	
 	
 	// imports
 	BasicView.call(t, element, calendar, 'basicWeek');
-	var opt = t.opt;
-	var renderBasic = t.renderBasic;
-	var skipHiddenDays = t.skipHiddenDays;
-	var getCellsPerWeek = t.getCellsPerWeek;
-	var formatDates = calendar.formatDates;
-	
-	
-	function render(date, delta) {
 
-		if (delta) {
-			addDays(date, delta * 7);
-		}
 
-		var start = addDays(cloneDate(date), -((date.getDay() - opt('firstDay') + 7) % 7));
-		var end = addDays(cloneDate(start), 7);
+	function incrementDate(date, delta) {
+		return date.clone().stripTime().add('weeks', delta).startOf('week');
+	}
 
-		var visStart = cloneDate(start);
-		skipHiddenDays(visStart);
 
-		var visEnd = cloneDate(end);
-		skipHiddenDays(visEnd, -1, true);
+	function render(date) {
 
-		var colCnt = getCellsPerWeek();
+		t.intervalStart = date.clone().stripTime().startOf('week');
+		t.intervalEnd = t.intervalStart.clone().add('weeks', 1);
 
-		t.start = start;
-		t.end = end;
-		t.visStart = visStart;
-		t.visEnd = visEnd;
+		t.start = t.skipHiddenDays(t.intervalStart);
+		t.end = t.skipHiddenDays(t.intervalEnd, -1, true);
 
-		t.title = formatDates(
-			visStart,
-			addDays(cloneDate(visEnd), -1),
-			opt('titleFormat')
+		t.title = calendar.formatRange(
+			t.start,
+			t.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+			t.opt('titleFormat'),
+			' \u2014 ' // emphasized dash
 		);
 
-		renderBasic(1, colCnt, false);
+		t.renderBasic(1, t.getCellsPerWeek(), false);
 	}
 	
 	

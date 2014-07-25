@@ -1,39 +1,35 @@
 {
   "name": "fullcalendar",
-  "version": "1.6.3",
-  "dependencies": {
-    "jquery": "~1.10.2"
-  },
-  "optionalDependencies": {
-    "jquery-ui": "~1.10.3"
-  },
-  "title": "FullCalendar",
-  "description": "Full-sized drag & drop event calendar with resource views",
-  "keywords": [
-    "calendar",
-    "event",
-    "full-sized",
-    "Resources"
-  ],
+  "version": "2.0.2",
+
+  "description": "Full-sized drag & drop event calendar",
+  "keywords": [ "calendar", "event", "full-sized" ],
   "homepage": "http://arshaw.com/fullcalendar/",
-  "demo": "",
-  "docs": "http://arshaw.com/fullcalendar/docs/",
-  "download": "",
-  "bugs": "https://github.com/seankenny/fullcalendar/issues",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/seankenny/fullcalendar/blob/master/license.txt"
-    }
-  ],
-  "author": {
-    "name": "Adam Shaw, Sean Kenny",
-    "email": "srkenny@gmail.com",
-    "url": "http://seankenny.me/"
+
+  "dependencies": {
+    "jquery": ">=1.7.1",
+    "moment": ">=2.5.0"
   },
-  "copyright": "2013 Adam Shaw, Sean Kenny - resource view",
+  "devDependencies": {
+    "jquery-ui": "1.8.17 - 1.10.4",
+    "jquery-simulate-ext": "~1.3.0",
+    "jquery-mockjax": "~1.5.3",
+    "jasmine-jquery": "~2.0.3",
+    "jasmine-fixture": "~1.2.0",
+    "moment-timezone": "~0.0.6"
+  },
+
   "main": [
-    "/build/component/fullcalendar.js",
-    "/build/component/fullcalendar.css"
+    "/dist/fullcalendar.js",
+    "/dist/fullcalendar.css"
+  ],
+  "ignore": [
+    "*",
+    "**/.*",
+    "!/dist/**",
+    "!/bower.json",
+    "!/changelog.*",
+    "!/license.*",
+    "!/readme.*"
   ]
 }

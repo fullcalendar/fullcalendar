@@ -4,11 +4,11 @@
  * (c) <%= meta.copyright %>
  */
 
-/*
- * Use fullcalendar.css for basic styling.
- * For event drag & drop, requires jQuery UI draggable.
- * For event resizing, requires jQuery UI resizable.
- */
- 
-(function($, undefined) {
-
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		define([ 'jquery', 'moment' ], factory);
+	}
+	else {
+		factory(jQuery, moment);
+	}
+})(function($, moment) {

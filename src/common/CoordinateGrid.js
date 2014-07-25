@@ -29,7 +29,7 @@ function CoordinateGrid(buildFunc) {
 				break;
 			}
 		}
-		return (r>=0 && c>=0) ? { row:r, col:c } : null;
+		return (r>=0 && c>=0) ? { row: r, col: c } : null;
 	};
 	
 	

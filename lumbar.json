@@ -1,12 +1,6 @@
 {
   "scope": "none",
   "packages": {
-    "dependencies": {
-      "modules": [
-        "jquery",
-        "jquery-ui"
-      ]
-    },
     "fullcalendar": {
       "modules": [
         "fullcalendar",
@@ -16,27 +10,19 @@
     }
   },
   "modules": {
-    "jquery": {
-      "scripts": [
-        "lib/jquery-1.10.2.min.js"
-      ]
-    },
-    "jquery-ui": {
-      "scripts": [
-        "lib/jquery-ui-1.10.3.custom.min.js"
-      ]
-    },
     "fullcalendar": {
       "scripts": [
         "src/intro.js",
         "src/defaults.js",
         "src/main.js",
+        "src/lang.js",
         "src/Calendar.js",
         "src/Header.js",
         "src/EventManager.js",
         "src/ResourceManager.js",
-        "src/date_util.js",
         "src/util.js",
+        "src/moment-ext.js",
+        "src/date-formatting.js",
         "src/basic/MonthView.js",
         "src/basic/BasicWeekView.js",
         "src/basic/BasicDayView.js",

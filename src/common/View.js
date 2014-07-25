@@ -12,9 +12,7 @@ function View(element, calendar, viewName) {
 	t.trigger = trigger;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
-	t.setEventData = setEventData;
 	t.clearEventData = clearEventData;
-	t.eventEnd = eventEnd;
 	t.reportEventElement = reportEventElement;
 	t.triggerEventDestroy = triggerEventDestroy;
 	t.eventElementHandlers = eventElementHandlers;
@@ -22,28 +20,26 @@ function View(element, calendar, viewName) {
 	t.hideEvents = hideEvents;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
-	// t.title
-	// t.start, t.end
-	// t.visStart, t.visEnd
+	// t.start, t.end // moments with ambiguous-time
+	// t.intervalStart, t.intervalEnd // moments with ambiguous-time
 	
 	
 	// imports
-	var defaultEventEnd = t.defaultEventEnd;
-	var normalizeEvent = calendar.normalizeEvent; // in EventManager
 	var reportEventChange = calendar.reportEventChange;
 	
 	
 	// locals
-	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
 	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
 	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
 	var options = calendar.options;
+	var nextDayThreshold = moment.duration(options.nextDayThreshold);
+
 	
 	
 	
 	function opt(name, viewNameOverride) {
 		var v = options[name];
-		if ($.isPlainObject(v)) {
+		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
 			return smartProperty(v, viewNameOverride || viewName);
 		}
 		return v;
@@ -72,8 +68,7 @@ function View(element, calendar, viewName) {
 				event.editable,
 				source.editable,
 				opt('editable')
-			)
-			&& !opt('disableDragging'); // deprecated
+			);
 	}
 	
 	
@@ -86,40 +81,18 @@ function View(element, calendar, viewName) {
 				event.editable,
 				source.editable,
 				opt('editable')
-			)
-			&& !opt('disableResizing'); // deprecated
+			);
 	}
 	
 	
 	
 	/* Event Data
 	------------------------------------------------------------------------------*/
-	
-	
-	function setEventData(events) { // events are already normalized at this point
-		eventsByID = {};
-		var i, len=events.length, event;
-		for (i=0; i<len; i++) {
-			event = events[i];
-			if (eventsByID[event._id]) {
-				eventsByID[event._id].push(event);
-			}else{
-				eventsByID[event._id] = [event];
-			}
-		}
-	}
 
 
 	function clearEventData() {
-		eventsByID = {};
 		eventElementsByID = {};
 		eventElementCouples = [];
-	}
-	
-	
-	// returns a Date object for an event's end
-	function eventEnd(event) {
-		return event.end ? cloneDate(event.end) : defaultEventEnd(event);
 	}
 	
 	
@@ -189,87 +162,76 @@ function View(element, calendar, viewName) {
 			}
 		}
 	}
-	
+
+
+	// Compute the text that should be displayed on an event's element.
+	// Based off the settings of the view.
+	// Given either an event object or two arguments: a start and end date (which can be null)
+	t.getEventTimeText = function(event) {
+		var start;
+		var end;
+
+		if (arguments.length === 2) {
+			start = arguments[0];
+			end = arguments[1];
+		}
+		else {
+			start = event.start;
+			end = event.end;
+		}
+
+		if (end && opt('displayEventEnd')) {
+			return calendar.formatRange(start, end, opt('timeFormat'));
+		}
+		else {
+			return calendar.formatDate(start, opt('timeFormat'));
+		}
+	};
+
 	
 	
 	/* Event Modification Reporting
 	---------------------------------------------------------------------------------*/
+
 	
-	
-	function eventDrop(e, event, dayDelta, minuteDelta, allDay, ev, ui) {
-		var oldAllDay = event.allDay;
-		var eventId = event._id;
-		moveEvents(eventsByID[eventId], dayDelta, minuteDelta, allDay);
+	function eventDrop(el, event, newStart, ev, ui) {
+		var mutateResult = calendar.mutateEvent(event, newStart, null);
+
 		trigger(
 			'eventDrop',
-			e,
+			el,
 			event,
-			dayDelta,
-			minuteDelta,
-			allDay,
+			mutateResult.dateDelta,
 			function() {
-				// TODO: investigate cases where this inverse technique might not work
-				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
-				reportEventChange(eventId);
+				mutateResult.undo();
+				reportEventChange(event._id);
 			},
 			ev,
 			ui
 		);
-		reportEventChange(eventId);
-	}
-	
-	
-	function eventResize(e, event, dayDelta, minuteDelta, ev, ui) {
-		var eventId = event._id;
-		elongateEvents(eventsByID[eventId], dayDelta, minuteDelta);
-		trigger(
-			'eventResize',
-			e,
-			event,
-			dayDelta,
-			minuteDelta,
-			function() {
-				// TODO: investigate cases where this inverse technique might not work
-				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
-				reportEventChange(eventId);
-			},
-			ev,
-			ui
-		);
-		reportEventChange(eventId);
-	}
-	
-	
-	
-	/* Event Modification Math
-	---------------------------------------------------------------------------------*/
-	
-	
-	function moveEvents(events, dayDelta, minuteDelta, allDay) {
-		minuteDelta = minuteDelta || 0;
-		for (var e, len=events.length, i=0; i<len; i++) {
-			e = events[i];
-			if (allDay !== undefined) {
-				e.allDay = allDay;
-			}
-			addMinutes(addDays(e.start, dayDelta, true), minuteDelta);
-			if (e.end) {
-				e.end = addMinutes(addDays(e.end, dayDelta, true), minuteDelta);
-			}
-			normalizeEvent(e, options);
-		}
-	}
-	
-	
-	function elongateEvents(events, dayDelta, minuteDelta) {
-		minuteDelta = minuteDelta || 0;
-		for (var e, len=events.length, i=0; i<len; i++) {
-			e = events[i];
-			e.end = addMinutes(addDays(eventEnd(e), dayDelta, true), minuteDelta);
-			normalizeEvent(e, options);
-		}
+
+		reportEventChange(event._id);
 	}
 
+
+	function eventResize(el, event, newEnd, ev, ui) {
+		var mutateResult = calendar.mutateEvent(event, null, newEnd);
+
+		trigger(
+			'eventResize',
+			el,
+			event,
+			mutateResult.durationDelta,
+			function() {
+				mutateResult.undo();
+				reportEventChange(event._id);
+			},
+			ev,
+			ui
+		);
+
+		reportEventChange(event._id);
+	}
 
 
 	// ====================================================================================================
@@ -289,7 +251,7 @@ function View(element, calendar, viewName) {
 	//
 	// 2. Convert the "cell offset" to a "day offset" (the # of days since the first visible day in the view).
 	//
-	// 3. Convert the "day offset" into a "date" (a JavaScript Date object).
+	// 3. Convert the "day offset" into a "date" (a Moment).
 	//
 	// The reverse transformation happens when transforming a date into a cell.
 
@@ -307,7 +269,6 @@ function View(element, calendar, viewName) {
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 	t.dayOffsetToDate = dayOffsetToDate;
 	t.rangeToSegments = rangeToSegments;
-	t.segmentCompare = segmentCompare;
 
 
 	// internals
@@ -346,10 +307,10 @@ function View(element, calendar, viewName) {
 
 
 	// Is the current day hidden?
-	// `day` is a day-of-week index (0-6), or a Date object
+	// `day` is a day-of-week index (0-6), or a Moment
 	function isHiddenDay(day) {
-		if (typeof day == 'object') {
-			day = day.getDay();
+		if (moment.isMoment(day)) {
+			day = day.day();
 		}
 		return isHiddenDayHash[day];
 	}
@@ -360,17 +321,19 @@ function View(element, calendar, viewName) {
 	}
 
 
-	// Keep incrementing the current day until it is no longer a hidden day.
+	// Incrementing the current day until it is no longer a hidden day, returning a copy.
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)
 	function skipHiddenDays(date, inc, isExclusive) {
+		var out = date.clone();
 		inc = inc || 1;
 		while (
-			isHiddenDayHash[ ( date.getDay() + (isExclusive ? inc : 0) + 7 ) % 7 ]
+			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
-			addDays(date, inc);
+			out.add('days', inc);
 		}
+		return out;
 	}
 
 
@@ -411,20 +374,18 @@ function View(element, calendar, viewName) {
 
 	// cell offset -> day offset
 	function cellOffsetToDayOffset(cellOffset) {
-		var day0 = t.visStart.getDay(); // first date's day of week
+		var day0 = t.start.day(); // first date's day of week
 		cellOffset += dayToCellMap[day0]; // normlize cellOffset to beginning-of-week
-		return Math.floor(cellOffset / cellsPerWeek) * 7 // # of days from full weeks
-			+ cellToDayMap[ // # of days from partial last week
+		return Math.floor(cellOffset / cellsPerWeek) * 7 + // # of days from full weeks
+			cellToDayMap[ // # of days from partial last week
 				(cellOffset % cellsPerWeek + cellsPerWeek) % cellsPerWeek // crazy math to handle negative cellOffsets
-			]
-			- day0; // adjustment for beginning-of-week normalization
+			] -
+			day0; // adjustment for beginning-of-week normalization
 	}
 
-	// day offset -> date (JavaScript Date object)
+	// day offset -> date
 	function dayOffsetToDate(dayOffset) {
-		var date = cloneDate(t.visStart);
-		addDays(date, dayOffset);
-		return date;
+		return t.start.clone().add('days', dayOffset);
 	}
 
 
@@ -442,18 +403,18 @@ function View(element, calendar, viewName) {
 
 	// date -> day offset
 	function dateToDayOffset(date) {
-		return dayDiff(date, t.visStart);
+		return date.clone().stripTime().diff(t.start, 'days');
 	}
 
 	// day offset -> cell offset
 	function dayOffsetToCellOffset(dayOffset) {
-		var day0 = t.visStart.getDay(); // first date's day of week
+		var day0 = t.start.day(); // first date's day of week
 		dayOffset += day0; // normalize dayOffset to beginning-of-week
-		return Math.floor(dayOffset / 7) * cellsPerWeek // # of cells from full weeks
-			+ dayToCellMap[ // # of cells from partial last week
+		return Math.floor(dayOffset / 7) * cellsPerWeek + // # of cells from full weeks
+			dayToCellMap[ // # of cells from partial last week
 				(dayOffset % 7 + 7) % 7 // crazy math to handle negative dayOffsets
-			]
-			- dayToCellMap[day0]; // adjustment for beginning-of-week normalization
+			] -
+			dayToCellMap[day0]; // adjustment for beginning-of-week normalization
 	}
 
 	// cell offset -> cell (object with row & col keys)
@@ -482,7 +443,8 @@ function View(element, calendar, viewName) {
 	// - isStart
 	// - isEnd
 	//
-	function rangeToSegments(startDate, endDate) {
+	function rangeToSegments(start, end) {
+
 		var rowCnt = t.getRowCnt();
 
 		// HAAAACK!  Can't really think of a way yet to get this working.
@@ -490,8 +452,13 @@ function View(element, calendar, viewName) {
 		var segments = []; // array of segments to return
 
 		// day offset for given date range
-		var rangeDayOffsetStart = dateToDayOffset(startDate);
-		var rangeDayOffsetEnd = dateToDayOffset(endDate); // exclusive
+		var rangeDayOffsetStart = dateToDayOffset(start);
+		var rangeDayOffsetEnd = dateToDayOffset(end); // an exclusive value
+		var endTimeMS = +end.time();
+		if (endTimeMS && endTimeMS >= nextDayThreshold) {
+			rangeDayOffsetEnd++;
+		}
+		rangeDayOffsetEnd = Math.max(rangeDayOffsetEnd, rangeDayOffsetStart + 1);
 
 		// first and last cell offset for the given date range
 		// "last" implies inclusivity
@@ -537,30 +504,6 @@ function View(element, calendar, viewName) {
 		}
 
 		return segments;
-	}
-
-
-	// Compare two event segments and determine which one takes priority (ex: rendered topmost/leftmost)
-	// NOTE: only works with segments that have `event` properties!
-	//
-	// Returns a negative value if `a` should be first.
-	// Returns a positive value of `b` should be first.
-	function segmentCompare(a, b) {
-		return _segmentCompare(a, b) // sort by dimension
-			|| (a.event.start - b.event.start) // if a tie, sort by event start date
-			|| (a.event.title || "").localeCompare(b.event.title) // if a tie, sort by event title
-	}
-
-	// compare dimensions
-	// NOTE: this is not modular! depends on subclass-specific segment schemas
-	function _segmentCompare(a, b) {
-		if ('msLength' in a) {
-			// segment generated by AgendaEventRenderer
-			return b.msLength - a.msLength; // put taller events first
-		}
-		// segment generated by DayEventRenderer
-		return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) // put wider events first
-			|| b.event.allDay - a.event.allDay; // if tie, put all-day events first (booleans cast to 0/1)
 	}
 	
 

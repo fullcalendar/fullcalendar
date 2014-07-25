@@ -6,56 +6,45 @@ function MonthView(element, calendar) {
 	
 	
 	// exports
+	t.incrementDate = incrementDate;
 	t.render = render;
 	
 	
 	// imports
 	BasicView.call(t, element, calendar, 'month');
-	var opt = t.opt;
-	var renderBasic = t.renderBasic;
-	var skipHiddenDays = t.skipHiddenDays;
-	var getCellsPerWeek = t.getCellsPerWeek;
-	var formatDate = calendar.formatDate;
-	
-	
-	function render(date, delta) {
 
-		if (delta) {
-			addMonths(date, delta);
-			date.setDate(1);
-		}
 
-		var firstDay = opt('firstDay');
+	function incrementDate(date, delta) {
+		return date.clone().stripTime().add('months', delta).startOf('month');
+	}
 
-		var start = cloneDate(date, true);
-		start.setDate(1);
 
-		var end = addMonths(cloneDate(start), 1);
+	function render(date) {
 
-		var visStart = cloneDate(start);
-		addDays(visStart, -((visStart.getDay() - firstDay + 7) % 7));
-		skipHiddenDays(visStart);
+		t.intervalStart = date.clone().stripTime().startOf('month');
+		t.intervalEnd = t.intervalStart.clone().add('months', 1);
 
-		var visEnd = cloneDate(end);
-		addDays(visEnd, (7 - visEnd.getDay() + firstDay) % 7);
-		skipHiddenDays(visEnd, -1, true);
+		t.start = t.intervalStart.clone();
+		t.start = t.skipHiddenDays(t.start); // move past the first week if no visible days
+		t.start.startOf('week');
+		t.start = t.skipHiddenDays(t.start); // move past the first invisible days of the week
 
-		var colCnt = getCellsPerWeek();
-		var rowCnt = Math.round(dayDiff(visEnd, visStart) / 7); // should be no need for Math.round
+		t.end = t.intervalEnd.clone();
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
+		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
+		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
 
-		if (opt('weekMode') == 'fixed') {
-			addDays(visEnd, (6 - rowCnt) * 7); // add weeks to make up for it
+		var rowCnt = Math.ceil( // need to ceil in case there are hidden days
+			t.end.diff(t.start, 'weeks', true) // returnfloat=true
+		);
+		if (t.opt('weekMode') == 'fixed') {
+			t.end.add('weeks', 6 - rowCnt);
 			rowCnt = 6;
 		}
 
-		t.title = formatDate(start, opt('titleFormat'));
+		t.title = calendar.formatDate(t.intervalStart, t.opt('titleFormat'));
 
-		t.start = start;
-		t.end = end;
-		t.visStart = visStart;
-		t.visEnd = visEnd;
-
-		renderBasic(rowCnt, colCnt, true);
+		t.renderBasic(rowCnt, t.getCellsPerWeek(), true);
 	}
 	
 	

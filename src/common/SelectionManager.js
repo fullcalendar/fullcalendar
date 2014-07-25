@@ -10,9 +10,11 @@ function SelectionManager() {
 	t.unselect = unselect;
 	t.reportSelection = reportSelection;
 	t.daySelectionMousedown = daySelectionMousedown;
+	t.selectionManagerDestroy = destroy;
 	
 	
 	// imports
+	var calendar = t.calendar;
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var defaultSelectionEnd = t.defaultSelectionEnd;
@@ -27,26 +29,36 @@ function SelectionManager() {
 
 	// unselectAuto
 	if (opt('selectable') && opt('unselectAuto')) {
-		$(document).mousedown(function(ev) {
-			var ignore = opt('unselectCancel');
-			if (ignore) {
-				if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
-					return;
-				}
+		$(document).on('mousedown', documentMousedown);
+	}
+
+
+	function documentMousedown(ev) {
+		var ignore = opt('unselectCancel');
+		if (ignore) {
+			if ($(ev.target).parents(ignore).length) { // could be optimized to stop after first match
+				return;
 			}
-			unselect(ev);
-		});
+		}
+		unselect(ev);
 	}
 	
 
-	function select(startDate, endDate, allDay) {
+	function select(start, end) {
 		unselect();
-		if (!endDate) {
-			endDate = defaultSelectionEnd(startDate, allDay);
+
+		start = calendar.moment(start);
+		if (end) {
+			end = calendar.moment(end);
 		}
-		renderSelection(startDate, endDate, allDay);
-		reportSelection(startDate, endDate, allDay);
+		else {
+			end = defaultSelectionEnd(start);
+		}
+
+		renderSelection(start, end);
+		reportSelection(start, end);
 	}
+	// TODO: better date normalization. see notes in automated test
 	
 	
 	function unselect(ev) {
@@ -58,9 +70,9 @@ function SelectionManager() {
 	}
 	
 	
-	function reportSelection(startDate, endDate, allDay, ev) {
+	function reportSelection(start, end, ev) {
 		selected = true;
-		trigger('select', null, startDate, endDate, allDay, ev);
+		trigger('select', null, start, end, ev);
 	}
 	
 	
@@ -69,15 +81,18 @@ function SelectionManager() {
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
+
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
-			var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
 				clearSelection();
 				if (cell && getIsCellAllDay(cell)) {
 					dates = [ cellToDate(origCell), cellToDate(cell) ].sort(dateCompare);
-					renderSelection(dates[0], dates[1], true);
+					renderSelection(
+						dates[0],
+						dates[1].clone().add('days', 1) // make exclusive
+					);
 				}else{
 					dates = null;
 				}
@@ -86,12 +101,21 @@ function SelectionManager() {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0], true, ev);
+						reportDayClick(dates[0], ev);
 					}
-					reportSelection(dates[0], dates[1], true, ev);
+					reportSelection(
+						dates[0],
+						dates[1].clone().add('days', 1), // make exclusive
+						ev
+					);
 				}
 			});
 		}
+	}
+
+
+	function destroy() {
+		$(document).off('mousedown', documentMousedown);
 	}
 
 

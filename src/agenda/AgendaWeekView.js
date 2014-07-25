@@ -1,52 +1,41 @@
 
 fcViews.agendaWeek = AgendaWeekView;
 
-function AgendaWeekView(element, calendar) {
+function AgendaWeekView(element, calendar) { // TODO: do a WeekView mixin
 	var t = this;
 	
 	
 	// exports
+	t.incrementDate = incrementDate;
 	t.render = render;
 	
 	
 	// imports
 	AgendaView.call(t, element, calendar, 'agendaWeek');
-	var opt = t.opt;
-	var renderAgenda = t.renderAgenda;
-	var skipHiddenDays = t.skipHiddenDays;
-	var getCellsPerWeek = t.getCellsPerWeek;
-	var formatDates = calendar.formatDates;
 
-	
-	function render(date, delta) {
 
-		if (delta) {
-			addDays(date, delta * 7);
-		}
+	function incrementDate(date, delta) {
+		return date.clone().stripTime().add('weeks', delta).startOf('week');
+	}
 
-		var start = addDays(cloneDate(date), -((date.getDay() - opt('firstDay') + 7) % 7));
-		var end = addDays(cloneDate(start), 7);
 
-		var visStart = cloneDate(start);
-		skipHiddenDays(visStart);
+	function render(date) {
 
-		var visEnd = cloneDate(end);
-		skipHiddenDays(visEnd, -1, true);
+		t.intervalStart = date.clone().stripTime().startOf('week');
+		t.intervalEnd = t.intervalStart.clone().add('weeks', 1);
 
-		var colCnt = getCellsPerWeek();
+		t.start = t.skipHiddenDays(t.intervalStart);
+		t.end = t.skipHiddenDays(t.intervalEnd, -1, true);
 
-		t.title = formatDates(
-			visStart,
-			addDays(cloneDate(visEnd), -1),
-			opt('titleFormat')
+		t.title = calendar.formatRange(
+			t.start,
+			t.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+			t.opt('titleFormat'),
+			' \u2014 ' // emphasized dash
 		);
 
-		t.start = start;
-		t.end = end;
-		t.visStart = visStart;
-		t.visEnd = visEnd;
-
-		renderAgenda(colCnt);
+		t.renderAgenda(t.getCellsPerWeek());
 	}
+
 
 }

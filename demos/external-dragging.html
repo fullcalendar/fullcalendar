@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href='../build/out/fullcalendar.css' rel='stylesheet' />
-<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../build/out/jquery.js'></script>
-<script src='../build/out/jquery-ui.js'></script>
-<script src='../build/out/fullcalendar.js'></script>
+<meta charset='utf-8' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../dist/fullcalendar.js'></script>
 <script>
 
 	$(document).ready(function() {
@@ -46,7 +48,7 @@
 			},
 			editable: true,
 			droppable: true, // this allows things to be dropped onto the calendar !!!
-			drop: function(date, allDay) { // this function is called when something is dropped
+			drop: function(date) { // this function is called when something is dropped
 			
 				// retrieve the dropped element's stored Event Object
 				var originalEventObject = $(this).data('eventObject');
@@ -56,7 +58,6 @@
 				
 				// assign it the date that was reported
 				copiedEventObject.start = date;
-				copiedEventObject.allDay = allDay;
 				
 				// render the event on the calendar
 				// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
@@ -82,12 +83,12 @@
 		text-align: center;
 		font-size: 14px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+	}
 		
 	#wrap {
 		width: 1100px;
 		margin: 0 auto;
-		}
+	}
 		
 	#external-events {
 		float: left;
@@ -96,13 +97,13 @@
 		border: 1px solid #ccc;
 		background: #eee;
 		text-align: left;
-		}
+	}
 		
 	#external-events h4 {
 		font-size: 16px;
 		margin-top: 0;
 		padding-top: 1em;
-		}
+	}
 		
 	.external-event { /* try to mimick the look of a real event */
 		margin: 10px 0;
@@ -111,44 +112,46 @@
 		color: #fff;
 		font-size: .85em;
 		cursor: pointer;
-		}
+	}
 		
 	#external-events p {
 		margin: 1.5em 0;
 		font-size: 11px;
 		color: #666;
-		}
+	}
 		
 	#external-events p input {
 		margin: 0;
 		vertical-align: middle;
-		}
+	}
 
 	#calendar {
 		float: right;
 		width: 900px;
-		}
+	}
 
 </style>
 </head>
 <body>
-<div id='wrap'>
+	<div id='wrap'>
 
-<div id='external-events'>
-<h4>Draggable Events</h4>
-<div class='external-event'>My Event 1</div>
-<div class='external-event'>My Event 2</div>
-<div class='external-event'>My Event 3</div>
-<div class='external-event'>My Event 4</div>
-<div class='external-event'>My Event 5</div>
-<p>
-<input type='checkbox' id='drop-remove' /> <label for='drop-remove'>remove after drop</label>
-</p>
-</div>
+		<div id='external-events'>
+			<h4>Draggable Events</h4>
+			<div class='external-event'>My Event 1</div>
+			<div class='external-event'>My Event 2</div>
+			<div class='external-event'>My Event 3</div>
+			<div class='external-event'>My Event 4</div>
+			<div class='external-event'>My Event 5</div>
+			<p>
+				<input type='checkbox' id='drop-remove' />
+				<label for='drop-remove'>remove after drop</label>
+			</p>
+		</div>
 
-<div id='calendar'></div>
+		<div id='calendar'></div>
 
-<div style='clear:both'></div>
-</div>
+		<div style='clear:both'></div>
+
+	</div>
 </body>
 </html>

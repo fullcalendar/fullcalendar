@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link rel='stylesheet' href='../lib/jquery-ui/themes/cupertino/jquery-ui.min.css' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../lib/moment/moment.js'></script>
+<script src='../dist/fullcalendar.js'></script>
+<script src='../dist/lang-all.js'></script>
+<script>
+
+	$(document).ready(function() {
+		var currentLangCode = 'en';
+
+		// build the language selector's options
+		$.each($.fullCalendar.langs, function(langCode) {
+			$('#lang-selector').append(
+				$('<option/>')
+					.attr('value', langCode)
+					.prop('selected', langCode == currentLangCode)
+					.text(langCode)
+			);
+		});
+
+		// update the language when the selected option changes
+		$('#lang-selector').on('change', function() {
+			if (this.value) {
+				currentLangCode = this.value;
+				// change the language on the datepicker
+				$('#datepicker').datepicker('option', $.datepicker.regional[currentLangCode]);
+				// rerender the calendar
+				$('#calendar').fullCalendar('destroy');
+				renderCalendar();
+			}
+		});
+
+		// initialize the datepicker
+		$('#datepicker').datepicker({
+			dateFormat: 'yy-mm-dd', // needed for defaultDate
+			defaultDate: '2014-01-12',
+			showWeek: true,
+			showButtonPanel: true,
+			calculateWeek: function(nativeDate) {
+				// use Moment to calculate the local week number
+				return moment(nativeDate).lang(currentLangCode).week();
+			}
+		});
+
+		function renderCalendar() {
+			$('#calendar').fullCalendar({
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+				},
+				date: '2014-01-12',
+				lang: currentLangCode,
+				buttonIcons: false, // show the prev/next text
+				weekNumbers: true,
+				editable: true,
+				events: [
+					{
+						title: 'All Day Event',
+						start: '2014-01-01'
+					},
+					{
+						title: 'Long Event',
+						start: '2014-01-07',
+						end: '2014-01-10'
+					},
+					{
+						id: 999,
+						title: 'Repeating Event',
+						start: '2014-01-09T16:00:00'
+					},
+					{
+						id: 999,
+						title: 'Repeating Event',
+						start: '2014-01-16T16:00:00'
+					},
+					{
+						title: 'Meeting',
+						start: '2014-01-12T10:30:00',
+						end: '2014-01-12T12:30:00'
+					},
+					{
+						title: 'Lunch',
+						start: '2014-01-12T12:00:00'
+					},
+					{
+						title: 'Birthday Party',
+						start: '2014-01-13T07:00:00'
+					},
+					{
+						title: 'Click for Google',
+						url: 'http://google.com/',
+						start: '2014-01-28'
+					}
+				]
+			});
+		}
+
+		renderCalendar();
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 0;
+		padding: 0;
+		text-align: center;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#top {
+		background: #eee;
+		border-bottom: 1px solid #ddd;
+		padding: 0 10px;
+		text-align: left;
+		line-height: 40px;
+		font-size: 12px;
+	}
+
+	#calendar {
+		width: 900px;
+		margin: 40px auto;
+	}
+
+	#datepicker {
+		display: inline-block;
+	}
+
+</style>
+</head>
+<body>
+
+	<div id='top'>
+
+		Language:
+		<select id='lang-selector'></select>
+
+	</div>
+
+	<div id='calendar'></div>
+
+	<div id='datepicker'></div>
+
+</body>
+</html>

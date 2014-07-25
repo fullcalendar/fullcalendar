@@ -1,39 +1,34 @@
 
 fcViews.basicDay = BasicDayView;
 
-
-function BasicDayView(element, calendar) {
+function BasicDayView(element, calendar) { // TODO: make a DayView mixin
 	var t = this;
 	
 	
 	// exports
+	t.incrementDate = incrementDate;
 	t.render = render;
 	
 	
 	// imports
 	BasicView.call(t, element, calendar, 'basicDay');
-	var opt = t.opt;
-	var renderBasic = t.renderBasic;
-	var skipHiddenDays = t.skipHiddenDays;
-	var formatDate = calendar.formatDate;
-	
-	
-	function render(date, delta) {
 
-		if (delta) {
-			addDays(date, delta);
-		}
-		skipHiddenDays(date, delta < 0 ? -1 : 1);
 
-		var start = cloneDate(date, true);
-		var end = addDays(cloneDate(start), 1);
+	function incrementDate(date, delta) {
+		var out = date.clone().stripTime().add('days', delta);
+		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
+		return out;
+	}
 
-		t.title = formatDate(date, opt('titleFormat'));
 
-		t.start = t.visStart = start;
-		t.end = t.visEnd = end;
+	function render(date) {
 
-		renderBasic(1, 1, false);
+		t.start = t.intervalStart = date.clone().stripTime();
+		t.end = t.intervalEnd = t.start.clone().add('days', 1);
+
+		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
+
+		t.renderBasic(1, 1, false);
 	}
 	
 	

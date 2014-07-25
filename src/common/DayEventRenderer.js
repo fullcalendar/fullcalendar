@@ -14,7 +14,6 @@ function DayEventRenderer() {
 	var trigger = t.trigger;
 	var isEventDraggable = t.isEventDraggable;
 	var isEventResizable = t.isEventResizable;
-	var eventEnd = t.eventEnd;
 	var reportEventElement = t.reportEventElement;
 	var eventElementHandlers = t.eventElementHandlers;
 	var showEvents = t.showEvents;
@@ -23,26 +22,24 @@ function DayEventRenderer() {
 	var eventResize = t.eventResize;
 	var getRowCnt = t.getRowCnt;
 	var getColCnt = t.getColCnt;
-	var getColWidth = t.getColWidth;
 	var allDayRow = t.allDayRow; // TODO: rename
 	var colLeft = t.colLeft;
 	var colRight = t.colRight;
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
-	var dateToCell = t.dateToCell;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
-	var formatDates = t.calendar.formatDates;
 	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
 	var getHoverListener = t.getHoverListener;
 	var rangeToSegments = t.rangeToSegments;
-	var segmentCompare = t.segmentCompare;
 	var cellToDate = t.cellToDate;
 	var cellToCellOffset = t.cellToCellOffset;
 	var cellOffsetToDayOffset = t.cellOffsetToDayOffset;
 	var dateToDayOffset = t.dateToDayOffset;
 	var dayOffsetToCellOffset = t.dayOffsetToCellOffset;
+	var calendar = t.calendar;
+	var getEventEnd = calendar.getEventEnd;
 
 
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
@@ -215,9 +212,7 @@ function DayEventRenderer() {
 	// A "segment" is the same data structure that View.rangeToSegments produces,
 	// with the addition of the `event` property being set to reference the original event.
 	function buildSegmentsForEvent(event, col) {
-		var startDate = event.start;
-		var endDate = exclEndDay(event);
-		var segments = rangeToSegments(startDate, endDate);
+		var segments = rangeToSegments(event.start, getEventEnd(event));
 		for (var i=0; i<segments.length; i++) {
 			//TEMP
 			if (typeof col !== 'undefined'){
@@ -286,7 +281,7 @@ function DayEventRenderer() {
 			classNames.push('fc-event-end');
 		}
 		// use the event's configured classNames
-		// guaranteed to be an array via `normalizeEvent`
+		// guaranteed to be an array via `buildEvent`
 		classNames = classNames.concat(event.className);
 		if (event.source) {
 			// use the event's source's classNames, if specified
@@ -315,9 +310,7 @@ function DayEventRenderer() {
 		if (!event.allDay && segment.isStart) {
 			html +=
 				"<span class='fc-event-time'>" +
-				htmlEscape(
-					formatDates(event.start, event.end, opt('timeFormat'))
-				) +
+				htmlEscape(t.getEventTimeText(event)) +
 				"</span>";
 		}
 		html +=
@@ -325,7 +318,7 @@ function DayEventRenderer() {
 			htmlEscape(event.title || '') +
 			"</span>" +
 			"</div>";
-		if (segment.isEnd && isEventResizable(event)) {
+		if (event.allDay && segment.isEnd && isEventResizable(event)) {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-" + (isRTL ? 'w' : 'e') + "'>" +
 				"&nbsp;&nbsp;&nbsp;" + // makes hit area a lot better for IE6/7
@@ -392,17 +385,18 @@ function DayEventRenderer() {
 		var rowContentHeights = calculateVerticals(segments); // also sets segment.top
 		var rowContentElements = getRowContentElements(); // returns 1 inner div per row
 		var rowContentTops = [];
+		var i;
 
 		// Set each row's height by setting height of first inner div
 		if (doRowHeights) {
-			for (var i=0; i<rowContentElements.length; i++) {
+			for (i=0; i<rowContentElements.length; i++) {
 				rowContentElements[i].height(rowContentHeights[i]);
 			}
 		}
 
 		// Get each row's top, relative to the views's origin.
 		// Important to do this after setting each row's height.
-		for (var i=0; i<rowContentElements.length; i++) {
+		for (i=0; i<rowContentElements.length; i++) {
 			rowContentTops.push(
 				rowContentElements[i].position().top
 			);
@@ -428,6 +422,7 @@ function DayEventRenderer() {
 		var colCnt = getColCnt();
 		var rowContentHeights = []; // content height for each row
 		var segmentRows = buildSegmentRows(segments); // an array of segment arrays, one for each row
+		var colI;
 
 		for (var rowI=0; rowI<rowCnt; rowI++) {
 			var segmentRow = segmentRows[rowI];
@@ -435,7 +430,7 @@ function DayEventRenderer() {
 			// an array of running total heights for each column.
 			// initialize with all zeros.
 			var colHeights = [];
-			for (var colI=0; colI<colCnt; colI++) {
+			for (colI=0; colI<colCnt; colI++) {
 				colHeights.push(0);
 			}
 
@@ -453,7 +448,7 @@ function DayEventRenderer() {
 				);
 
 				// adjust the columns to account for the segment's height
-				for (var colI=segment.leftCol; colI<=segment.rightCol; colI++) {
+				for (colI=segment.leftCol; colI<=segment.rightCol; colI++) {
 					colHeights[colI] = segment.top + segment.outerHeight;
 				}
 			}
@@ -524,7 +519,7 @@ function DayEventRenderer() {
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segments.sort(segmentCompare);
+		segments.sort(compareDaySegments);
 
 		var subrows = [];
 		for (var i=0; i<segments.length; i++) {
@@ -594,6 +589,7 @@ function DayEventRenderer() {
 		}
 
 		if (
+			event.allDay &&
 			segment.isEnd && // only allow resizing on the final segment for an event
 			isEventResizable(event)
 		) {
@@ -605,29 +601,32 @@ function DayEventRenderer() {
 		eventElementHandlers(event, eventElement);
 	}
 
-	
+
 	function draggableDayEvent(event, eventElement) {
 		var hoverListener = getHoverListener();
 		var dayDelta;
+		var eventStart;
 		eventElement.draggable({
 			delay: 50,
 			opacity: opt('dragOpacity'),
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
-				trigger('eventDragStart', eventElement, event, ev, ui);
+				trigger('eventDragStart', eventElement[0], event, ev, ui);
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
 					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
 					clearOverlays();
 					if (cell) {
-						var origDate = cellToDate(origCell);
-						var date = cellToDate(cell);
-						dayDelta = dayDiff(date, origDate);
+						var origCellDate = cellToDate(origCell);
+						var cellDate = cellToDate(cell);
+						dayDelta = cellDate.diff(origCellDate, 'days');
+						eventStart = event.start.clone().add('days', dayDelta);
 						renderDayOverlay(
-							addDays(cloneDate(event.start), dayDelta),
-							addDays(exclEndDay(event), dayDelta)
+							eventStart,
+							getEventEnd(event).add('days', dayDelta)
 						);
-					}else{
+					}
+					else {
 						dayDelta = 0;
 					}
 				}, ev, 'drag');
@@ -635,10 +634,17 @@ function DayEventRenderer() {
 			stop: function(ev, ui) {
 				hoverListener.stop();
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 				if (dayDelta) {
-					eventDrop(this, event, dayDelta, 0, event.allDay, ev, ui);
-				}else{
+					eventDrop(
+						eventElement[0],
+						event,
+						eventStart,
+						ev,
+						ui
+					);
+				}
+				else {
 					eventElement.css('filter', ''); // clear IE opacity side-effects
 					showEvents(event, eventElement);
 				}
@@ -673,18 +679,17 @@ function DayEventRenderer() {
 			}
 			isResizing = true;
 			var hoverListener = getHoverListener();
-			var rowCnt = getRowCnt();
-			var colCnt = getColCnt();
 			var elementTop = element.css('top');
 			var dayDelta;
+			var eventEnd;
 			var helpers;
 			var eventCopy = $.extend({}, event);
-			var minCellOffset = dayOffsetToCellOffset( dateToDayOffset(event.start) );
+			var minCellOffset = dayOffsetToCellOffset(dateToDayOffset(event.start));
 			clearSelection();
 			$('body')
 				.css('cursor', direction + '-resize')
 				.one('mouseup', mouseup);
-			trigger('eventResizeStart', this, event, ev);
+			trigger('eventResizeStart', element[0], event, ev, {}); // {} is dummy jqui event
 			hoverListener.start(function(cell, origCell) {
 				if (cell) {
 
@@ -698,18 +703,17 @@ function DayEventRenderer() {
 						cellOffsetToDayOffset(cellOffset) -
 						cellOffsetToDayOffset(origCellOffset);
 
-					if (dayDelta) {
-						eventCopy.end = addDays(eventEnd(event), dayDelta, true);
-						var oldHelpers = helpers;
+					eventEnd = getEventEnd(event).add('days', dayDelta); // assumed to already have a stripped time
 
+					if (dayDelta) {
+						eventCopy.end = eventEnd;
+						var oldHelpers = helpers;
 						helpers = renderTempDayEvent(eventCopy, segment.row, elementTop);
 						helpers = $(helpers); // turn array into a jQuery object
-
 						helpers.find('*').css('cursor', direction + '-resize');
 						if (oldHelpers) {
 							oldHelpers.remove();
 						}
-
 						hideEvents(event);
 					}
 					else {
@@ -719,10 +723,11 @@ function DayEventRenderer() {
 							helpers = null;
 						}
 					}
+
 					clearOverlays();
 					renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
 						event.start,
-						addDays( exclEndDay(event), dayDelta )
+						eventEnd
 						// TODO: instead of calling renderDayOverlay() with dates,
 						// call _renderDayOverlay (or whatever) with cell offsets.
 					);
@@ -730,12 +735,19 @@ function DayEventRenderer() {
 			}, ev);
 			
 			function mouseup(ev) {
-				trigger('eventResizeStop', this, event, ev);
+				trigger('eventResizeStop', element[0], event, ev, {}); // {} is dummy jqui event
 				$('body').css('cursor', '');
 				hoverListener.stop();
 				clearOverlays();
+
 				if (dayDelta) {
-					eventResize(this, event, dayDelta, 0, ev);
+					eventResize(
+						element[0],
+						event,
+						eventEnd,
+						ev,
+						{} // dummy jqui event
+					);
 					// event redraw will clear helpers
 				}
 				// otherwise, the drag handler already restored the old events
@@ -779,3 +791,13 @@ function segmentElementEach(segments, callback) { // TODO: use in AgendaView?
 		}
 	}
 }
+
+
+// A cmp function for determining which segments should appear higher up
+function compareDaySegments(a, b) {
+	return (b.rightCol - b.leftCol) - (a.rightCol - a.leftCol) || // put wider events first
+		b.event.allDay - a.event.allDay || // if tie, put all-day events first (booleans cast to 0/1)
+		a.event.start - b.event.start || // if a tie, sort by event start date
+		(a.event.title || '').localeCompare(b.event.title); // if a tie, sort by event title
+}
+

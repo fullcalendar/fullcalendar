@@ -1,6 +1,13 @@
 
 var defaults = {
 
+	lang: 'en',
+
+	defaultTimedEventDuration: '02:00:00',
+	defaultAllDayEventDuration: { days: 1 },
+	forceEventDuration: false,
+	nextDayThreshold: '09:00:00', // 9am
+
 	// display
 	defaultView: 'month',
 	aspectRatio: 1.35,
@@ -11,60 +18,70 @@ var defaults = {
 	},
 	weekends: true,
 	weekNumbers: false,
-	weekNumberCalculation: 'iso',
+
 	weekNumberTitle: 'W',
+	weekNumberCalculation: 'local',
 	
-	// editing
 	//editable: false,
-	//disableDragging: false,
-	//disableResizing: false,
-	
-	allDayDefault: true,
-	ignoreTimezone: true,
 	
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
 	endParam: 'end',
+	timezoneParam: 'timezone',
+
+	timezone: false,
+
+	//allDayDefault: undefined,
 	
 	// time formats
 	titleFormat: {
-		month: 'MMMM yyyy',
-		week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",
-		day: 'dddd, MMM d, yyyy'
+		month: 'MMMM YYYY', // like "September 1986". each language will override this
+		week: 'll', // like "Sep 4 1986"
+		day: 'LL' // like "September 4 1986"
 	},
 	columnFormat: {
-		month: 'ddd',
-		week: 'ddd M/d',
-		day: 'dddd M/d'
+		month: 'ddd', // like "Sat"
+		week: generateWeekColumnFormat,
+		day: 'dddd' // like "Saturday"
 	},
 	timeFormat: { // for event elements
-		'': 'h(:mm)t' // default
+		'default': generateShortTimeFormat
+	},
+
+	displayEventEnd: {
+		month: false,
+		basicWeek: false,
+		'default': true
 	},
 	
 	// locale
 	isRTL: false,
-	firstDay: 0,
-	monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-	monthNamesShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-	dayNames: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-	dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-	buttonText: {
-		prev: "<span class='fc-text-arrow'>&lsaquo;</span>",
-		next: "<span class='fc-text-arrow'>&rsaquo;</span>",
-		prevYear: "<span class='fc-text-arrow'>&laquo;</span>",
-		nextYear: "<span class='fc-text-arrow'>&raquo;</span>",
+	defaultButtonText: {
+		prev: "prev",
+		next: "next",
+		prevYear: "prev year",
+		nextYear: "next year",
 		today: 'today',
 		month: 'month',
 		week: 'week',
 		day: 'day'
 	},
+
+	buttonIcons: {
+		prev: 'left-single-arrow',
+		next: 'right-single-arrow',
+		prevYear: 'left-double-arrow',
+		nextYear: 'right-double-arrow'
+	},
 	
 	// jquery-ui theming
 	theme: false,
-	buttonIcons: {
+	themeButtonIcons: {
 		prev: 'circle-triangle-w',
-		next: 'circle-triangle-e'
+		next: 'circle-triangle-e',
+		prevYear: 'seek-prev',
+		nextYear: 'seek-next'
 	},
 	
 	//selectable: false,
@@ -72,9 +89,41 @@ var defaults = {
 	
 	dropAccept: '*',
 	
-	handleWindowResize: true
+	handleWindowResize: true,
+	windowResizeDelay: 200 // milliseconds before a rerender happens
 	
 };
+
+
+function generateShortTimeFormat(options, langData) {
+	return langData.longDateFormat('LT')
+		.replace(':mm', '(:mm)')
+		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+		.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
+}
+
+
+function generateWeekColumnFormat(options, langData) {
+	var format = langData.longDateFormat('L'); // for the format like "MM/DD/YYYY"
+	format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, ''); // strip the year off the edge, as well as other misc non-whitespace chars
+	if (options.isRTL) {
+		format += ' ddd'; // for RTL, add day-of-week to end
+	}
+	else {
+		format = 'ddd ' + format; // for LTR, add day-of-week to beginning
+	}
+	return format;
+}
+
+
+var langOptionHash = {
+	en: {
+		columnFormat: {
+			week: 'ddd M/D' // override for english. different from the generated default, which is MM/DD
+		}
+	}
+};
+
 
 // right-to-left defaults
 var rtlDefaults = {
@@ -83,15 +132,17 @@ var rtlDefaults = {
 		center: '',
 		right: 'title'
 	},
-	buttonText: {
-		prev: "<span class='fc-text-arrow'>&rsaquo;</span>",
-		next: "<span class='fc-text-arrow'>&lsaquo;</span>",
-		prevYear: "<span class='fc-text-arrow'>&raquo;</span>",
-		nextYear: "<span class='fc-text-arrow'>&laquo;</span>"
-	},
 	buttonIcons: {
+		prev: 'right-single-arrow',
+		next: 'left-single-arrow',
+		prevYear: 'right-double-arrow',
+		nextYear: 'left-double-arrow'
+	},
+	themeButtonIcons: {
 		prev: 'circle-triangle-e',
-		next: 'circle-triangle-w'
+		next: 'circle-triangle-w',
+		nextYear: 'seek-prev',
+		prevYear: 'seek-next'
 	}
 };
 

@@ -10,12 +10,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-jscs-checker');
+	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('lumbar');
-
-	// Parse config files
-	var lumbarConfig = grunt.file.readJSON('lumbar.json');
-	var packageConfig = grunt.file.readJSON('package.json');
-	var pluginConfig = grunt.file.readJSON('fullcalendar.jquery.json');
 	
 	// This will eventually get passed to grunt.initConfig()
 	// Initialize multitasks...
@@ -24,17 +24,34 @@ module.exports = function(grunt) {
 		uglify: {},
 		copy: {},
 		compress: {},
-		clean: {}
+		shell: {},
+		clean: {
+			temp: 'build/temp'
+		}
 	};
 
-	// Combine certain configs for the "meta" template variable (<%= meta.whatever %>)
-	config.meta = _.extend({}, packageConfig, pluginConfig);
+	// for the "meta" template variable (<%= meta.whatever %>)
+	config.meta = grunt.file.readJSON('fullcalendar.jquery.json');
 
 	// The "grunt" command with no arguments
-	grunt.registerTask('default', 'archive');
+	grunt.registerTask('default', 'dist');
+
+	// Builds all distributable files, for a new release possibly
+	grunt.registerTask('dist', [
+		'clean',
+		'modules',
+		'languages',
+		'karma:single',
+		'archiveDist',
+		'cdnjsDist'
+	]);
 
 	// Bare minimum for debugging
-	grunt.registerTask('dev', 'lumbar:build');
+	grunt.registerTask('dev', [
+		'shell:assume-unchanged',
+		'lumbar:build',
+		'languages'
+	]);
 
 
 
@@ -42,8 +59,11 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('modules', 'Build the FullCalendar modules', [
+		'jscs:srcModules',
+		'clean:modules',
 		'lumbar:build',
 		'concat:moduleVariables',
+		'jshint:builtModules',
 		'uglify:modules'
 	]);
 
@@ -51,7 +71,14 @@ module.exports = function(grunt) {
 	config.lumbar = {
 		build: {
 			build: 'lumbar.json',
-			output: 'build/out' // a directory. lumbar doesn't like trailing slash
+			output: 'dist', // a directory. lumbar doesn't like trailing slash
+			background: false // lumbar complains otherwise
+		},
+		watch: {
+			watch: 'lumbar.json',
+			output: 'dist', // a directory. lumbar doesn't like trailing slash
+			background: false, // lumbar complains otherwise
+			sourceMap: true
 		}
 	};
 
@@ -61,9 +88,9 @@ module.exports = function(grunt) {
 			process: true // replace
 		},
 		expand: true,
-		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/out/'
+		cwd: 'dist/',
+		src: [ '*.js', '*.css' ],
+		dest: 'dist/'
 	};
 
 	// create minified versions (*.min.js)
@@ -72,11 +99,69 @@ module.exports = function(grunt) {
 			preserveComments: 'some' // keep comments starting with /*!
 		},
 		expand: true,
-		src: 'build/out/fullcalendar.js', // only do it for fullcalendar.js
+		src: 'dist/fullcalendar.js', // only do it for fullcalendar.js
 		ext: '.min.js'
-	}
+	};
 
-	config.clean.modules = 'build/out/*';
+	config.clean.modules = [
+		'dist/*.{js,css,map}', // maps created by lumbar sourceMap
+		'dist/src' // created by lumbar sourceMap
+	];
+
+
+
+	/* Languages
+	----------------------------------------------------------------------------------------------------*/
+
+	grunt.registerTask('languages', [
+		'jscs:srcLanguages',
+		'jshint:srcLanguages',
+		'clean:languages',
+		'generateLanguages',
+		'uglify:languages',
+		'uglify:languagesAll'
+	]);
+
+	config.generateLanguages = {
+		moment: 'lib/moment/lang/',
+		datepicker: 'lib/jquery-ui/ui/i18n/',
+		fullCalendar: 'lang/',
+		dest: 'build/temp/lang/',
+		allDest: 'build/temp/lang-all.js'
+	};
+
+	config.uglify.languages = {
+		expand: true,
+		cwd: 'build/temp/lang/',
+		src: '*.js',
+		dest: 'dist/lang/'
+	};
+
+	config.uglify.languagesAll = {
+		src: 'build/temp/lang-all.js',
+		dest: 'dist/lang-all.js'
+	};
+
+	config.clean.languages = [
+		'build/temp/lang',
+		'build/temp/lang-all.js',
+		'dist/lang',
+		'dist/lang-all.js'
+	];
+
+
+
+	/* Automated Tests
+	----------------------------------------------------------------------------------------------------*/
+
+	config.karma = {
+		options: {
+			configFile: 'build/karma.conf.js'
+		},
+		url: {}, // visit a URL in a browser
+		headless: { browsers: [ 'PhantomJS' ] },
+		single: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false }
+	};
 
 
 
@@ -84,12 +169,22 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('archive', 'Create a distributable ZIP archive', [
-		'clean:modules',
-		'clean:archive',
 		'modules',
+		'languages',
+		'karma:single',
+		'archiveDist'
+	]);
+
+	grunt.registerTask('archiveDist', [
+		'clean:archive',
 		'copy:archiveModules',
-		'copy:archiveDependencies',
+		'copy:archiveLanguages',
+		'copy:archiveLanguagesAll',
+		'copy:archiveMoment',
+		'copy:archiveJQuery',
+		'concat:archiveJQueryUI',
 		'copy:archiveDemos',
+		'copy:archiveDemoTheme',
 		'copy:archiveMisc',
 		'compress:archive'
 	]);
@@ -97,27 +192,47 @@ module.exports = function(grunt) {
 	// copy FullCalendar modules into ./fullcalendar/ directory
 	config.copy.archiveModules = {
 		expand: true,
-		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/archive/fullcalendar/'
+		cwd: 'dist/',
+		src: [ '*.js', '*.css' ],
+		dest: 'build/temp/archive/'
 	};
 
-	// copy jQuery and jQuery UI into the ./jquery/ directory
-	config.copy.archiveDependencies = {
+	config.copy.archiveLanguages = {
 		expand: true,
-		flatten: true,
+		cwd: 'dist/lang/',
+		src: '*.js',
+		dest: 'build/temp/archive/lang/'
+	};
+
+	config.copy.archiveLanguagesAll = {
+		src: 'dist/lang-all.js',
+		dest: 'build/temp/archive/lang-all.js'
+	};
+
+	config.copy.archiveMoment = {
+		src: 'lib/moment/min/moment.min.js',
+		dest: 'build/temp/archive/lib/moment.min.js'
+	};
+
+	config.copy.archiveJQuery = {
+		src: 'lib/jquery/dist/jquery.min.js',
+		dest: 'build/temp/archive/lib/jquery.min.js'
+	};
+
+	config.concat.archiveJQueryUI = {
 		src: [
-			// we want to retain the original filenames
-			lumbarConfig.modules['jquery'].scripts[0],
-			lumbarConfig.modules['jquery-ui'].scripts[0]
+			'lib/jquery-ui/ui/minified/jquery.ui.core.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.widget.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.mouse.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
+			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
 		],
-		dest: 'build/archive/jquery/'
+		dest: 'build/temp/archive/lib/jquery-ui.custom.min.js'
 	};
 
 	// copy demo files into ./demos/ directory
 	config.copy.archiveDemos = {
 		options: {
-			processContentExclude: 'demos/*/**', // don't process anything more than 1 level deep (like assets)
 			processContent: function(content) {
 				content = content.replace(/((?:src|href)=['"])([^'"]*)(['"])/g, function(m0, m1, m2, m3) {
 					return m1 + transformDemoPath(m2) + m3;
@@ -126,23 +241,34 @@ module.exports = function(grunt) {
 			}
 		},
 		src: 'demos/**',
-		dest: 'build/archive/'
+		dest: 'build/temp/archive/'
+	};
+
+	// copy the "cupertino" jquery-ui theme into the demo directory (for demos/theme.html)
+	config.copy.archiveDemoTheme = {
+		expand: true,
+		cwd: 'lib/jquery-ui/themes/cupertino/',
+		src: [ 'jquery-ui.min.css', 'images/*' ],
+		dest: 'build/temp/archive/lib/cupertino/'
 	};
 
 	// in demo HTML, rewrites paths to work in the archive
 	function transformDemoPath(path) {
-		path = path.replace('/build/out/jquery.js', '/' + lumbarConfig.modules['jquery'].scripts[0]);
-		path = path.replace('/build/out/jquery-ui.js', '/' + lumbarConfig.modules['jquery-ui'].scripts[0]);
-		path = path.replace('/lib/', '/jquery/');
-		path = path.replace('/build/out/', '/fullcalendar/');
+		path = path.replace('../lib/moment/moment.js', '../lib/moment.min.js');
+		path = path.replace('../lib/jquery/dist/jquery.js', '../lib/jquery.min.js');
+		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
+		path = path.replace('../lib/jquery-ui/themes/cupertino/', '../lib/cupertino/');
+		path = path.replace('../dist/', '../');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 		return path;
 	}
 
 	// copy license and changelog
 	config.copy.archiveMisc = {
-		src: "*.txt",
-		dest: 'build/archive/'
+		files: {
+			'build/temp/archive/license.txt': 'license.txt',
+			'build/temp/archive/changelog.txt': 'changelog.md'
+		}
 	};
 
 	// create the ZIP
@@ -151,94 +277,126 @@ module.exports = function(grunt) {
 			archive: 'dist/<%= meta.name %>-<%= meta.version %>.zip'
 		},
 		expand: true,
-		cwd: 'build/archive/',
+		cwd: 'build/temp/archive/',
 		src: '**',
 		dest: '<%= meta.name %>-<%= meta.version %>/' // have a top-level directory in the ZIP file
 	};
 
-	config.clean.archive = 'build/archive/*';
-	config.clean.dist = 'dist/*';
+	config.clean.archive = [
+		'build/temp/archive',
+		'dist/*.zip'
+	];
 
 
 
-	/* Bower Component (http://twitter.github.com/bower/)
+	/* Release Utilities
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('component', 'Build the FullCalendar component for the Bower package manager', [
-		'clean:modules',
-		'clean:component',
-		'modules',
-		'copy:componentModules',
-		'copy:componentReadme',
-		'componentConfig'
-	]);
-
-	// copy FullCalendar modules into component root
-	config.copy.componentModules = {
-		expand: true,
-		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/component/'
+	config.bump = { // changes the version number in the configs
+		options: {
+			files: [
+				'package.json',
+				'bower.json',
+				'fullcalendar.jquery.json'
+			],
+			commit: false,
+			createTag: false,
+			push: false
+		}
 	};
 
-	// copy the component-specific README
-	config.copy.componentReadme = {
-		src: 'build/component-readme.md',
-		dest: 'build/component/readme.md'
-	};
-
-	// assemble the component's config from existing configs
-	grunt.registerTask('componentConfig', function() {
-		var config = grunt.file.readJSON('build/component.json');
-		grunt.file.write(
-			'build/component/component.json',
-			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
-				null, // replacer
-				2 // indent
-			)
-		);
-	});
-
-	config.clean.component = 'build/component/*';
 
 
-
-	/* CDN (http://cdnjs.com/)
+	/* CDNJS (http://cdnjs.com/)
 	----------------------------------------------------------------------------------------------------*/
 
-	grunt.registerTask('cdn', 'Build files for CDNJS\'s hosted version of FullCalendar', [
-		'clean:modules',
-		'clean:cdn',
+	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
 		'modules',
-		'copy:cdnModules',
-		'cdnConfig'
+		'languages',
+		'karma:single',
+		'cdnjsDist'
 	]);
 
-	config.copy.cdnModules = {
+	grunt.registerTask('cdnjsDist', [
+		'clean:cdnjs',
+		'copy:cdnjsModules',
+		'copy:cdnjsLanguages',
+		'copy:cdnjsLanguagesAll',
+		'cdnjsConfig'
+	]);
+
+	config.copy.cdnjsModules = {
 		expand: true,
-		cwd: 'build/out/',
-		src: [ '*.js', '*.css', '!jquery*' ],
-		dest: 'build/cdn/<%= meta.version %>/'
+		cwd: 'dist/',
+		src: [ '*.js', '*.css' ],
+		dest: 'dist/cdnjs/<%= meta.version %>/'
 	};
 
-	grunt.registerTask('cdnConfig', function() {
-		var config = grunt.file.readJSON('build/cdn.json');
+	config.copy.cdnjsLanguages = {
+		expand: true,
+		cwd: 'dist/lang/',
+		src: '*.js',
+		dest: 'dist/cdnjs/<%= meta.version %>/lang/'
+	};
+
+	config.copy.cdnjsLanguagesAll = {
+		src: 'dist/lang-all.js',
+		dest: 'dist/cdnjs/<%= meta.version %>/lang-all.js'
+	};
+
+	grunt.registerTask('cdnjsConfig', function() {
+		var jqueryConfig = grunt.file.readJSON('fullcalendar.jquery.json');
+		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
-			'build/cdn/package.json',
+			'dist/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, pluginConfig, config), // combine 2 configs
+				_.extend({}, jqueryConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
 				2 // indent
 			)
 		);
 	});
 
-	config.clean.cdn = 'build/cdn/<%= meta.version %>/*';
-	// NOTE: not a complete clean. also need to manually worry about package.json and version folders
+	config.clean.cdnjs = 'dist/cdnjs';
+
+
+
+	/* Linting and Code Style Checking
+	----------------------------------------------------------------------------------------------------*/
+
+	grunt.registerTask('check', 'Lint and check code style', [
+		'jscs',
+		'jshint:srcModules', // so we can fix most quality errors in their original files
+		'lumbar:build',
+		'jshint' // will run srcModules again but oh well
+	]);
+
+	// configs located elsewhere
+	config.jshint = require('./build/jshint.conf');
+	config.jscs = require('./build/jscs.conf');
+
+
+
+	/* dist & git hacks
+	----------------------------------------------------------------------------------------------------
+	// These shell commands are used to force/unforce git from thinking that files have changed.
+	// Used to ignore changes when dist files are overwritten, but not committed, during development.
+	*/
+
+	config.shell['assume-unchanged'] = {
+		command: 'git update-index --assume-unchanged `git ls-files dist`'
+	};
+	config.shell['no-assume-unchanged'] = {
+		command: 'git update-index --no-assume-unchanged `git ls-files dist`'
+	};
+	config.shell['list-assume-unchanged'] = {
+		command: 'git ls-files -v | grep \'^h\''
+	};
 
 
 
 	// finally, give grunt the config object...
 	grunt.initConfig(config);
+
+	grunt.loadTasks('./build/tasks/');
 };

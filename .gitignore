@@ -1,12 +1,8 @@
-build/archive
-build/component
-build/cdn
+build/temp
 dist
 
-# for npm
+# npm modules
 node_modules
 
-# for bower
-components
-
-.DS_Store
+# bower components
+lib/*/*

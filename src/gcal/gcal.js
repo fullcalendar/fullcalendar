@@ -4,13 +4,17 @@
  * (c) <%= meta.copyright %>
  */
  
-(function($) {
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		define([ 'jquery' ], factory);
+	}
+	else {
+		factory(jQuery);
+	}
+})(function($) {
 
 
 var fc = $.fullCalendar;
-var formatDate = fc.formatDate;
-var parseISO8601 = fc.parseISO8601;
-var addDays = fc.addDays;
 var applyAll = fc.applyAll;
 
 
@@ -26,64 +30,53 @@ fc.sourceNormalizers.push(function(sourceOptions) {
 });
 
 
-fc.sourceFetchers.push(function(sourceOptions, start, end) {
+fc.sourceFetchers.push(function(sourceOptions, start, end, timezone) {
 	if (sourceOptions.dataType == 'gcal') {
-		return transformOptions(sourceOptions, start, end);
+		return transformOptions(sourceOptions, start, end, timezone);
 	}
 });
 
 
-function transformOptions(sourceOptions, start, end) {
+function transformOptions(sourceOptions, start, end, timezone) {
 
 	var success = sourceOptions.success;
 	var data = $.extend({}, sourceOptions.data || {}, {
-		'start-min': formatDate(start, 'u'),
-		'start-max': formatDate(end, 'u'),
-		'singleevents': true,
+		singleevents: true,
 		'max-results': 9999
 	});
-	
-	var ctz = sourceOptions.currentTimezone;
-	if (ctz) {
-		data.ctz = ctz = ctz.replace(' ', '_');
-	}
 
 	return $.extend({}, sourceOptions, {
 		url: sourceOptions.url.replace(/\/basic$/, '/full') + '?alt=json-in-script&callback=?',
 		dataType: 'jsonp',
 		data: data,
-		startParam: false,
-		endParam: false,
+		timezoneParam: 'ctz',
+		startParam: 'start-min',
+		endParam: 'start-max',
 		success: function(data) {
 			var events = [];
 			if (data.feed.entry) {
 				$.each(data.feed.entry, function(i, entry) {
-					var startStr = entry['gd$when'][0]['startTime'];
-					var start = parseISO8601(startStr, true);
-					var end = parseISO8601(entry['gd$when'][0]['endTime'], true);
-					var allDay = startStr.indexOf('T') == -1;
+
 					var url;
 					$.each(entry.link, function(i, link) {
 						if (link.type == 'text/html') {
 							url = link.href;
-							if (ctz) {
-								url += (url.indexOf('?') == -1 ? '?' : '&') + 'ctz=' + ctz;
+							if (timezone && timezone != 'local') {
+								url += (url.indexOf('?') == -1 ? '?' : '&') + 'ctz=' + encodeURIComponent(timezone);
 							}
 						}
 					});
-					if (allDay) {
-						addDays(end, -1); // make inclusive
-					}
+
 					events.push({
-						id: entry['gCal$uid']['value'],
-						title: entry['title']['$t'],
+						id: entry.gCal$uid.value,
+						title: entry.title.$t,
+						start: entry.gd$when[0].startTime,
+						end: entry.gd$when[0].endTime,
 						url: url,
-						start: start,
-						end: end,
-						allDay: allDay,
-						location: entry['gd$where'][0]['valueString'],
-						description: entry['content']['$t']
+						location: entry.gd$where[0].valueString,
+						description: entry.content.$t
 					});
+
 				});
 			}
 			var args = [events].concat(Array.prototype.slice.call(arguments, 1));
@@ -104,4 +97,4 @@ fc.gcalFeed = function(url, sourceOptions) {
 };
 
 
-})(jQuery);
+});
