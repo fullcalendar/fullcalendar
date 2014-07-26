@@ -1,40 +1,34 @@
 
 fcViews.resourceDay = ResourceDayView;
 
-
-function ResourceDayView(element, calendar) {
+function AgendaDayView(element, calendar) { // TODO: make a DayView mixin
 	var t = this;
 	
 	
 	// exports
+	t.incrementDate = incrementDate;
 	t.render = render;
 	
 	
 	// imports
 	ResourceView.call(t, element, calendar, 'resourceDay');
-	var opt = t.opt;
-	var renderResource = t.renderResource;
-	var skipHiddenDays = t.skipHiddenDays;
-	var formatDate = calendar.formatDate;
 	var getResources = t.getResources;
-	
-	
-	function render(date, delta) {
 
-		if (delta) {
-			addDays(date, delta);
-		}
-		skipHiddenDays(date, delta < 0 ? -1 : 1);
+	function incrementDate(date, delta) {
+		var out = date.clone().stripTime().add('days', delta);
+		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
+		return out;
+	}
 
-		var start = date.cloneDate().stripTime();
-		var end = addDays(cloneDate(start), 1);
 
-		t.title = formatDate(date, opt('titleFormat'));
+	function render(date) {
 
-		t.start = t.visStart = start;
-		t.end = t.visEnd = end;
+		t.start = t.intervalStart = date.clone().stripTime();
+		t.end = t.intervalEnd = t.start.clone().add('days', 1);
 
-		renderResource(getResources().length);
+		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
+
+		t.renderResource(getResources.length);
 	}
 	
 
