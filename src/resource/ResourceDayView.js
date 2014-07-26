@@ -26,7 +26,7 @@ function ResourceDayView(element, calendar) {
 		}
 		skipHiddenDays(date, delta < 0 ? -1 : 1);
 
-		var start = cloneDate(date, true);
+		var start = date.cloneDate().stripTime();
 		var end = addDays(cloneDate(start), 1);
 
 		t.title = formatDate(date, opt('titleFormat'));

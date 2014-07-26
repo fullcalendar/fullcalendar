@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href='../build/out/fullcalendar.css' rel='stylesheet' />
-  <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+  <link href='../dist/fullcalendar.css' rel='stylesheet' />
+  <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 
   <style>
 
@@ -62,18 +62,22 @@
   <div id='calendar' style='width:70%;margin:20px auto 0;font-family:arial'></div>
 
 
-  <script src='../build/out/jquery.js'></script>
-  <script src='../build/out/jquery-ui.js'></script>
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../lib/moment/moment.js'></script>
   
-  <!--<script src='../src/intro.js'></script> -->
+
+  // <!-- <script src='../src/intro.js'></script> -->
   <script src='../src/defaults.js'></script>
   <script src='../src/main.js'></script>
+  <script src='../src/lang.js'></script>
   <script src='../src/Calendar.js'></script>
   <script src='../src/Header.js'></script>
   <script src='../src/EventManager.js'></script>
   <script src='../src/ResourceManager.js'></script>
-  <script src='../src/date_util.js'></script>
   <script src='../src/util.js'></script>
+  <script src='../src/moment-ext.js'></script>
+  <script src='../src/date-formatting.js'></script>
   <script src='../src/basic/MonthView.js'></script>
   <script src='../src/basic/BasicWeekView.js'></script>
   <script src='../src/basic/BasicDayView.js'></script>
@@ -89,11 +93,13 @@
   <script src='../src/common/View.js'></script>
   <script src='../src/common/DayEventRenderer.js'></script>
   <script src='../src/common/SelectionManager.js'></script>
-   <script src='../src/common/OverlayManager.js'></script>  
+  <script src='../src/common/OverlayManager.js'></script>  
   <script src='../src/common/CoordinateGrid.js'></script>
   <script src='../src/common/HoverListener.js'></script>
   <script src='../src/common/HorizontalPositionCache.js'></script>
-  <script src='../build/out/gcal.js'></script>
+  // <!-- <script src='../src/outro.js'></script> -->
+
+  <script src='../dist/gcal.js'></script>
   <script>
 
 function showModal(a, b, c) {

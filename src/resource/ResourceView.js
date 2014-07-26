@@ -1,4 +1,3 @@
-
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',

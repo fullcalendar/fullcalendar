@@ -98,11 +98,11 @@ function ResourceManager(options) {
           data: data,
           dataType: 'json',
           cache: false,
-          success: function (res) {
+          success: function(res) {
             res = res || [];
             resources = res;
           },
-          error: function () {
+          error: function() {
             alert("ajax error getting json from " + url);
           },
           async: false // too much work coordinating callbacks so dumb it down

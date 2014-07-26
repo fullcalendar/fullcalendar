@@ -237,8 +237,8 @@ function ResourceEventRenderer() {
 				}
 			}
 			left = leftmost +                                  // leftmost possible
-				(availWidth / (levelI + forward + 1) * levelI) // indentation
-				* dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+				(availWidth / (levelI + forward + 1) * levelI) * // indentation
+				 dis + (rtl ? availWidth - outerWidth : 0);   // rtl
 			seg.top = top;
 			seg.left = left;
 			seg.outerWidth = outerWidth;
@@ -460,10 +460,10 @@ function ResourceEventRenderer() {
 					// changed!
 					var minuteDelta = 0;
 					if (!allDay) {
-						minuteDelta = Math.round((eventElement.offset().top - getSlotContainer().offset().top) / snapHeight)
-							* snapMinutes
-							+ minMinute
-							- (event.start.getHours() * 60 + event.start.getMinutes());
+						minuteDelta = Math.round((eventElement.offset().top - getSlotContainer().offset().top) / snapHeight) *
+							snapMinutes +
+							minMinute -
+							(event.start.getHours() * 60 + event.start.getMinutes());
 					}
 					eventDrop(this, event, dayDelta, minuteDelta, allDay, ev, ui);
 				}
