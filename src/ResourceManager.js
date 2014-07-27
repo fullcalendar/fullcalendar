@@ -1,3 +1,7 @@
+var ajaxDefaults = {
+	dataType: 'json',
+	cache: false
+};
 function ResourceManager(options) {
   var t = this;
   // exports
@@ -94,7 +98,7 @@ function ResourceManager(options) {
             data[endParam] = Math.round(+currentView.visEnd / 1000);
           }
         }
-        $.ajax($.extend({}, source, {
+        $.ajax($.extend({}, ajaxDefaults, source, {
           data: data,
           dataType: 'json',
           cache: false,

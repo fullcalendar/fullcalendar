@@ -229,10 +229,10 @@ function Calendar(element, instanceOptions) {
 
 
 	EventManager.call(t, options);
+	ResourceManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
 
-	ResourceManager.call(t, options);
 
 
 	// Locals
