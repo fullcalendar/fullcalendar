@@ -21,14 +21,15 @@ $.extend(DayGrid.prototype, {
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
+	// isRigid determins whether the individual rows should ignore the contents and be a constant height.
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
-	render: function() {
+	render: function(isRigid) {
 		var view = this.view;
 		var html = '';
 		var row;
 
 		for (row = 0; row < view.rowCnt; row++) {
-			html += this.dayRowHtml(row);
+			html += this.dayRowHtml(row, isRigid);
 		}
 		this.el.html(html);
 
@@ -46,9 +47,13 @@ $.extend(DayGrid.prototype, {
 
 
 	// Generates the HTML for a single row. `row` is the row number.
-	dayRowHtml: function(row) {
+	dayRowHtml: function(row, isRigid) {
 		var view = this.view;
 		var classes = [ 'fc-row', 'fc-week' ];
+
+		if (isRigid) {
+			classes.push('fc-rigid');
+		}
 
 		if (view.dayRowThemeClass) { // provides the view a hook to inject a theme className
 			classes.push(view.dayRowThemeClass);
@@ -197,7 +202,7 @@ $.extend(DayGrid.prototype, {
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
 	renderHelper: function(event, sourceSeg) {
 		var helperNodes = [];
-		var tbodyEls = this.renderEventRows([ event ]).tbodyEls; // render events as usual, receiving tbodys to inject
+		var rowStructs = this.renderEventRows([ event ]);
 
 		// inject each new event skeleton into each associated row
 		this.rowEls.each(function(row, rowNode) {
@@ -215,7 +220,7 @@ $.extend(DayGrid.prototype, {
 
 			skeletonEl.css('top', skeletonTop)
 				.find('table')
-					.append(tbodyEls[row]);
+					.append(rowStructs[row].tbodyEl);
 
 			rowEl.append(skeletonEl);
 			helperNodes.push(skeletonEl[0]);

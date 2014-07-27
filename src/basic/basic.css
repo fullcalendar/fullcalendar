@@ -15,6 +15,19 @@
 	min-height: 4em; /* ensure that all rows are at least this tall */
 }
 
+/* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */
+
+.fc-row.fc-rigid {
+	overflow: hidden;
+}
+
+.fc-row.fc-rigid .fc-content-skeleton {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
 /* week and day number styling */
 
 .fc-basic-view .fc-week-number,
@@ -44,4 +57,21 @@
 
 .fc-rtl .fc-basic-view .fc-day-number {
 	text-align: left;
+}
+
+/* "more" link that represents hidden events */
+
+a.fc-more {
+	margin: 1px 2px;
+	font-size: .85em;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a.fc-more:hover {
+	text-decoration: underline;
+}
+
+.fc-limited { /* rows and cells that are hidden because of a "more" link */
+	display: none;
 }

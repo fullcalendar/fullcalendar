@@ -3,7 +3,10 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 
 setDefaults({
-	fixedWeekCount: true
+	fixedWeekCount: true,
+	eventLimit: false,
+	eventLimitText: 'more',
+	eventLimitClick: 'auto'
 });
 
 fcViews.month = MonthView; // register the view
@@ -56,6 +59,8 @@ $.extend(MonthView.prototype, {
 
 	// Overrides the default BasicView behavior to have special multi-week auto-height logic
 	setGridHeight: function(height, isAuto) {
+		var eventLimit = this.opt('eventLimit');
+
 		isAuto = isAuto || this.opt('weekMode') === 'variable'; // LEGACY: weekMode is deprecated
 
 		// if auto, make the height of each row the height that it would be if there were 6 weeks
@@ -63,7 +68,17 @@ $.extend(MonthView.prototype, {
 			height *= this.rowCnt / 6;
 		}
 
+		// is the event limit a constant level number?
+		if (eventLimit && typeof eventLimit === 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels first so the height can redistribute after
+		}
+
 		distributeHeight(this.dayGrid.rowEls, height, !isAuto); // if auto, don't compensate for height-hogging rows
+
+		// is the event limit dynamically calculated?
+		if (eventLimit && typeof eventLimit !== 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels after the grid's row heights have been set
+		}
 	},
 
 
@@ -74,6 +89,13 @@ $.extend(MonthView.prototype, {
 		}
 
 		return this.opt('fixedWeekCount');
+	},
+
+
+	// If dynamically limiting events, signals that all rows need to be a constant height.
+	hasRigidRows: function() {
+		var eventLimit = this.opt('eventLimit');
+		return eventLimit && typeof eventLimit !== 'number';
 	}
 
 });

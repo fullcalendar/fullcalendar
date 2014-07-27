@@ -336,10 +336,9 @@ $.extend(AgendaView.prototype, {
 			this.dayGrid.destroyEvents();
 		}
 
-		// When rerendering events in IE8, the event elements flash because of this line.
-		// Comment it out. It's not necessary because a renderEvents is always called subsequently,
-		// which updates the height.
-		//this.updateHeight();
+		// we DON'T need to call updateHeight() because:
+		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// B) in IE8, this causes a flash whenever events are rerendered
 
 		View.prototype.destroyEvents.call(this); // call the super-method. will kill `this.segs`
 	},

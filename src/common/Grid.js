@@ -62,7 +62,7 @@ $.extend(Grid.prototype, {
 		var _this = this;
 
 		this.el.on('mousedown', function(ev) {
-			if (!$(ev.target).is('.fc-event-container *')) { // not an event element
+			if (!$(ev.target).is('.fc-event-container *, .fc-more')) { // not an event element or "more" link
 				_this.dayMousedown(ev);
 			}
 		});

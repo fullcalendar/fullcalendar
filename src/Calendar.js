@@ -52,6 +52,7 @@ function Calendar(element, instanceOptions) {
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
+	t.zoomToDay = zoomToDay;
 	t.getDate = getDate;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
@@ -621,6 +622,26 @@ function Calendar(element, instanceOptions) {
 	function incrementDate(delta) {
 		date.add(moment.duration(delta));
 		renderView();
+	}
+
+
+	// Forces navigation to a day-view on the given date. `viewName` is the name of an explicit view to go to.
+	// If not specified, or 'auto', it will guess the best view based on which buttons are in the header toolbar.
+	function zoomToDay(newDate, viewName) {
+		var viewsWithButtons;
+
+		if (fcViews[viewName] === undefined) { // not an available view, or 'auto'
+			viewsWithButtons = header.getViewsWithButtons();
+			if ($.inArray('basicDay', viewsWithButtons) !== -1) {
+				viewName = 'basicDay';
+			}
+			else {
+				viewName = 'agendaDay'; // the fallback
+			}
+		}
+
+		date = newDate;
+		changeView(viewName);
 	}
 	
 	

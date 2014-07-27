@@ -14,9 +14,11 @@ function Header(calendar, options) {
 	t.deactivateButton = deactivateButton;
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
+	t.getViewsWithButtons = getViewsWithButtons;
 	
 	// locals
 	var el = $();
+	var viewsWithButtons = [];
 	var tm;
 
 
@@ -76,6 +78,7 @@ function Header(calendar, options) {
 								button.removeClass(tm + '-state-hover'); // forget why
 								calendar.changeView(buttonName);
 							};
+							viewsWithButtons.push(buttonName);
 						}
 						if (buttonClick) {
 
@@ -194,6 +197,11 @@ function Header(calendar, options) {
 		el.find('.fc-' + buttonName + '-button')
 			.removeAttr('disabled')
 			.removeClass(tm + '-state-disabled');
+	}
+
+
+	function getViewsWithButtons() {
+		return viewsWithButtons;
 	}
 
 }

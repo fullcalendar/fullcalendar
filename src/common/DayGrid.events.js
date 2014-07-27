@@ -4,43 +4,49 @@
 
 $.extend(DayGrid.prototype, {
 
-	// A jQuery set of <tbody> elements, one for each row, with events inside. Attached to the content skeletons.
-	eventTbodyEls: null,
+
+	rowStructs: null, // an array of objects, each holding information about a row's event-rendering
 
 
 	// Render the given events onto the Grid and return the rendered segments
 	renderEvents: function(events) {
-		var res = this.renderEventRows(events);
-		var tbodyEls = this.eventTbodyEls = res.tbodyEls;
+		var rowStructs = this.rowStructs = this.renderEventRows(events);
+		var allSegs = [];
 
 		// append to each row's content skeleton
 		this.rowEls.each(function(i, rowNode) {
-			$(rowNode).find('.fc-content-skeleton > table').append(tbodyEls[i]);
+			$(rowNode).find('.fc-content-skeleton > table').append(
+				rowStructs[i].tbodyEl
+			);
+			allSegs.push.apply(allSegs, rowStructs[i].segs);
 		});
 
-		return res.segs; // return segment objects. for the view
+		return allSegs; // return segment objects. for the view
 	},
 
 
 	// Removes all rendered event elements
 	destroyEvents: function() {
-		if (this.eventTbodyEls) {
-			this.eventTbodyEls.remove();
-			this.eventTbodyEls = null;
+		var rowStructs = this.rowStructs || [];
+		var rowStruct;
+
+		while ((rowStruct = rowStructs.pop())) {
+			rowStruct.tbodyEl.remove();
 		}
 	},
 
 
 	// Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
-	// Returns an object with properties 'tbodyEls' and 'segs' (which contains all the rendered segment objects).
+	// Returns an array of rowStruct objects (see the bottom of `renderEventRow`).
 	renderEventRows: function(events) {
 		var view = this.view;
 		var allSegs = this.eventsToSegs(events);
 		var segRows = this.groupSegRows(allSegs); // group into nested arrays
 		var html = '';
-		var tbodyNodes = [];
+		var rowStructs = [];
 		var i;
 		var row;
+		var rowSegs;
 
 		// build a large concatenation of event segment HTML
 		for (i = 0; i < allSegs.length; i++) {
@@ -55,16 +61,14 @@ $.extend(DayGrid.prototype, {
 
 		// iterate each row of segment groupings
 		for (row = 0; row < segRows.length; row++) {
-			segRows[row] = $.grep(segRows[row], renderedSegFilter); // filter out non-rendered segments. reassign array
-			tbodyNodes.push(
-				this.renderSegSkeleton(segRows[row])[0]
+			rowSegs = segRows[row];
+			rowSegs = $.grep(rowSegs, renderedSegFilter); // filter out non-rendered segments
+			rowStructs.push(
+				this.renderEventRow(row, rowSegs)
 			);
 		}
 
-		return {
-			tbodyEls: $(tbodyNodes), // array -> jQuery set
-			segs: flattenArray(segRows) // flatten all rendered segments into one array
-		};
+		return rowStructs;
 	},
 
 
@@ -116,14 +120,17 @@ $.extend(DayGrid.prototype, {
 	},
 
 
-	// Given an array of segments all in the same row, render a <tbody> element, a skeleton that contains the segments
-	renderSegSkeleton: function(rowSegs) {
+	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
+	// the segments. Returns object with a bunch of internal data about how the render was calculated.
+	renderEventRow: function(row, rowSegs) {
 		var view = this.view;
 		var colCnt = view.colCnt;
-		var levels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
+		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
+		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
 		var tbody = $('<tbody/>');
-		var emptyTds = []; // a sparse array of references to the current row's empty cells, indexed by column
-		var aboveEmptyTds; // like emptyTds, but for the level above
+		var segMatrix = []; // lookup for which segments are rendered into which level+col cells
+		var cellMatrix = []; // lookup for all <td> elements of the level+col matrix
+		var loneCellMatrix = []; // lookup for <td> elements that only take up a single column
 		var i, levelSegs;
 		var col;
 		var tr;
@@ -133,8 +140,8 @@ $.extend(DayGrid.prototype, {
 		// populates empty cells from the current column (`col`) to `endCol`
 		function emptyCellsUntil(endCol) {
 			while (col < endCol) {
-				// try to grab an empty cell from the level above and extend its rowspan. otherwise, create a fresh cell
-				td = aboveEmptyTds[col];
+				// try to grab a cell from the level above and extend its rowspan. otherwise, create a fresh cell
+				td = (loneCellMatrix[i - 1] || [])[col];
 				if (td) {
 					td.attr(
 						'rowspan',
@@ -145,22 +152,24 @@ $.extend(DayGrid.prototype, {
 					td = $('<td/>');
 					tr.append(td);
 				}
-				emptyTds[col] = td;
+				cellMatrix[i][col] = td;
+				loneCellMatrix[i][col] = td;
 				col++;
 			}
 		}
 
-		// Iterate through all levels, and then beyond one. Do this so we have an empty row at the end.
-		// This empty row comes in handy when styling the height of the content skeleton.
-		for (i = 0; i < levels.length + 1; i++) {
-			levelSegs = levels[i];
+		for (i = 0; i < levelCnt; i++) { // iterate through all levels
+			levelSegs = segLevels[i];
 			col = 0;
 			tr = $('<tr/>');
 
-			aboveEmptyTds = emptyTds;
-			emptyTds = [];
+			segMatrix.push([]);
+			cellMatrix.push([]);
+			loneCellMatrix.push([]);
 
-			if (levelSegs) { // protect against non-existent last level
+			// levelCnt might be 1 even though there are no actual levels. protect against this.
+			// this single empty row is useful for styling.
+			if (levelSegs) {
 				for (j = 0; j < levelSegs.length; j++) { // iterate through segments in level
 					seg = levelSegs[j];
 
@@ -168,22 +177,36 @@ $.extend(DayGrid.prototype, {
 
 					// create a container that occupies or more columns. append the event element.
 					td = $('<td class="fc-event-container"/>').append(seg.el);
-					if (seg.rightCol > seg.leftCol) {
+					if (seg.leftCol != seg.rightCol) {
 						td.attr('colspan', seg.rightCol - seg.leftCol + 1);
+					}
+					else { // a single-column segment
+						loneCellMatrix[i][col] = td;
+					}
+
+					while (col <= seg.rightCol) {
+						cellMatrix[i][col] = td;
+						segMatrix[i][col] = seg;
+						col++;
 					}
 
 					tr.append(td);
-					col = seg.rightCol + 1;
 				}
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
-
 			this.bookendCells(tr, 'eventSkeleton');
 			tbody.append(tr);
 		}
 
-		return tbody;
+		return { // a "rowStruct"
+			row: row, // the row number
+			tbodyEl: tbody,
+			cellMatrix: cellMatrix,
+			segMatrix: segMatrix,
+			segLevels: segLevels,
+			segs: rowSegs
+		};
 	},
 
 

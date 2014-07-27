@@ -44,7 +44,7 @@ $.extend(BasicView.prototype, {
 		this.dayGrid.coordMap.containerEl = this.scrollerEl; // constrain clicks/etc to the dimensions of the scroller
 
 		this.dayGrid.el = this.el.find('.fc-day-grid');
-		this.dayGrid.render();
+		this.dayGrid.render(this.hasRigidRows());
 
 		View.prototype.render.call(this); // call the super-method
 	},
@@ -150,6 +150,12 @@ $.extend(BasicView.prototype, {
 	},
 
 
+	// Determines whether each row should have a constant height. Overridable by subclasses.
+	hasRigidRows: function() {
+		return false;
+	},
+
+
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -221,7 +227,9 @@ $.extend(BasicView.prototype, {
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
-		this.updateHeight();
+		// we DON'T need to call updateHeight() because:
+		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// B) in IE8, this causes a flash whenever events are rerendered
 
 		View.prototype.destroyEvents.call(this); // call the super-method
 	},
