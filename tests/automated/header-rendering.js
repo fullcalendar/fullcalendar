@@ -8,7 +8,7 @@ describe('header rendering', function() {
 	describe('when using default header options', function() {
 		it('should have title as default on left', function() {
 			$('#calendar').fullCalendar();
-			expect($('#calendar > .fc-toolbar > .fc-left > *')).toBeMatchedBy('h2')
+			expect($('#calendar > .fc-toolbar > .fc-left > *')).toBeMatchedBy('h2');
 		});
 		it('should have empty center', function() {
 			$('#calendar').fullCalendar();

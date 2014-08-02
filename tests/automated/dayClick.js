@@ -38,8 +38,11 @@ describe('dayClick', function() {
 							};
 							spyOn(options, 'dayClick').and.callThrough();
 							$('#cal').fullCalendar(options);
+
 							var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
-							dayCell.simulate('drag-n-drop', { // for simulating the mousedown/mouseup/click (relevant for selectable)
+
+							// for simulating the mousedown/mouseup/click (relevant for selectable)
+							dayCell.simulate('drag-n-drop', {
 								callback: function() {
 									dayCell.simulate('click');
 									expect(options.dayClick).toHaveBeenCalled();
@@ -63,8 +66,12 @@ describe('dayClick', function() {
 							};
 							spyOn(options, 'dayClick').and.callThrough();
 							$('#cal').fullCalendar(options);
-							var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)'); // 2014-05-28 (regardless of isRTL)
-							dayContent.simulate('drag-n-drop', { // for simulating the mousedown/mouseup/click (relevant for selectable)
+
+							// 2014-05-28 (regardless of isRTL)
+							var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)');
+
+							// for simulating the mousedown/mouseup/click (relevant for selectable)
+							dayContent.simulate('drag-n-drop', {
 								callback: function() {
 									dayContent.simulate('click');
 									expect(options.dayClick).toHaveBeenCalled();
@@ -87,8 +94,12 @@ describe('dayClick', function() {
 							};
 							spyOn(options, 'dayClick').and.callThrough();
 							$('#cal').fullCalendar(options);
-							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)'); // the middle is 2014-05-28T09:00:00 (regardless of isRTL)
-							slotRow.simulate('drag-n-drop', { // for simulating the mousedown/mouseup/click (relevant for selectable)
+
+							// the middle is 2014-05-28T09:00:00 (regardless of isRTL)
+							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)');
+
+							// for simulating the mousedown/mouseup/click (relevant for selectable)
+							slotRow.simulate('drag-n-drop', {
 								callback: function() {
 									expect(options.dayClick).toHaveBeenCalled();
 									done();
