@@ -50,6 +50,13 @@ $.extend(BasicView.prototype, {
 	},
 
 
+	// Make subcomponents ready for cleanup
+	destroy: function() {
+		this.dayGrid.destroy();
+		View.prototype.destroy.call(this); // call the super-method
+	},
+
+
 	// Builds the HTML skeleton for the view.
 	// The day-grid component will render inside of a container defined by this HTML.
 	renderHtml: function() {
@@ -214,11 +221,17 @@ $.extend(BasicView.prototype, {
 
 	// Renders the given events onto the view and populates the segments array
 	renderEvents: function(events) {
-		this.segs = this.dayGrid.renderEvents(events);
+		this.dayGrid.renderEvents(events);
 
 		this.updateHeight(); // must compensate for events that overflow the row
 
 		View.prototype.renderEvents.call(this, events); // call the super-method
+	},
+
+
+	// Retrieves all segment objects that are rendered in the view
+	getSegs: function() {
+		return this.dayGrid.getSegs();
 	},
 
 

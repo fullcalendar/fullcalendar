@@ -19,8 +19,6 @@ View.prototype = {
 	rowCnt: null, // # of weeks
 	colCnt: null, // # of days displayed in a week
 
-	segs: null, // array of rendered event segment objects
-
 	isSelected: false, // boolean whether cells are user-selected or not
 
 	// subclasses can optionally use a scroll container
@@ -124,7 +122,9 @@ View.prototype = {
 	// Should be called before there is a destructive operation (like removing DOM elements) that might inadvertently
 	// change the scroll of the container.
 	recordScroll: function() {
-		this.scrollTop = this.scrollerEl.scrollTop();
+		if (this.scrollerEl) {
+			this.scrollTop = this.scrollerEl.scrollTop();
+		}
 	},
 
 
@@ -143,10 +143,9 @@ View.prototype = {
 
 
 	// Renders the events onto the view.
-	// Should be overriden by subclasses. Subclasses should assign `this.segs` and call the super-method afterwards.
+	// Should be overriden by subclasses. Subclasses should call the super-method afterwards.
 	renderEvents: function(events) {
 		this.segEach(function(seg) {
-			seg.el.data('fc-seg', seg); // store info about the segment object. used by handlers
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
 		this.trigger('eventAfterAllRender');
@@ -159,7 +158,6 @@ View.prototype = {
 		this.segEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
-		this.segs = [];
 	},
 
 
@@ -199,7 +197,7 @@ View.prototype = {
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
 	// The `this` value of the callback function will be the view.
 	segEach: function(func, event) {
-		var segs = this.segs || [];
+		var segs = this.getSegs();
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -207,6 +205,12 @@ View.prototype = {
 				func.call(this, segs[i]);
 			}
 		}
+	},
+
+
+	// Retrieves all the rendered segment objects for the view
+	getSegs: function() {
+		// subclasses must implement
 	},
 
 

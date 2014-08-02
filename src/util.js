@@ -116,6 +116,20 @@ function matchCellWidths(els) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
+// borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
+function getScrollParent(el) {
+	var position = el.css('position'),
+		scrollParent = el.parents().filter(function() {
+			var parent = $(this);
+			return (/(auto|scroll)/).test(
+				parent.css('overflow') + parent.css('overflow-y') + parent.css('overflow-x')
+			);
+		}).eq(0);
+
+	return position === 'fixed' || !scrollParent.length ? $(el[0].ownerDocument || document) : scrollParent;
+}
+
+
 // Given a container element, return an object with the pixel values of the left/right scrollbars.
 // Left scrollbars might occur on RTL browsers (IE maybe?) but I have not tested.
 // PREREQUISITE: container element must have a single child with display:block
@@ -143,6 +157,42 @@ function isPrimaryMouseButton(ev) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
+// Creates a basic segment with the intersection of the two ranges. Returns undefined if no intersection.
+// Expects all dates to be normalized to the same timezone beforehand.
+function intersectionToSeg(subjectStart, subjectEnd, intervalStart, intervalEnd) {
+	var segStart, segEnd;
+	var isStart, isEnd;
+
+	if (subjectEnd > intervalStart && subjectStart < intervalEnd) { // in bounds at all?
+
+		if (subjectStart >= intervalStart) {
+			segStart = subjectStart.clone();
+			isStart = true;
+		}
+		else {
+			segStart = intervalStart.clone();
+			isStart =  false;
+		}
+
+		if (subjectEnd <= intervalEnd) {
+			segEnd = subjectEnd.clone();
+			isEnd = true;
+		}
+		else {
+			segEnd = intervalEnd.clone();
+			isEnd = false;
+		}
+
+		return {
+			start: segStart,
+			end: segEnd,
+			isStart: isStart,
+			isEnd: isEnd
+		};
+	}
+}
+
+
 function smartProperty(obj, name) { // get a camel-cased/namespaced property of an object
 	obj = obj || {};
 	if (obj[name] !== undefined) {
@@ -163,11 +213,20 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
 
 
-// diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
+// Diffs the two moments into a Duration where only full-days are considered.
+// Moments will have their timezones normalized.
+function dayDiff(a, b) {
+	return moment.duration({
+		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
+	});
+}
+
+
+// Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
+// Moments will have their timezones normalized.
 function dayishDiff(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days'),
@@ -208,11 +267,6 @@ function extend(a, b) {
 			a[i] = b[i];
 		}
 	}
-}
-
-
-function flattenArray(a) { // flatten an array of arrays, one level deep
-	return Array.prototype.concat.apply([], a);
 }
 
 

@@ -124,51 +124,26 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Slices up a date range into a segment for each column
-	rangeToSegs: function(start, end) {
+	rangeToSegs: function(rangeStart, rangeEnd) {
 		var view = this.view;
 		var segs = [];
+		var seg;
 		var col;
 		var cellDate;
 		var colStart, colEnd;
-		var segStart, segEnd;
-		var isStart, isEnd;
 
 		// normalize
-		start = start.clone().stripZone();
-		end = end.clone().stripZone();
+		rangeStart = rangeStart.clone().stripZone();
+		rangeEnd = rangeEnd.clone().stripZone();
 
 		for (col = 0; col < view.colCnt; col++) {
 			cellDate = view.cellToDate(0, col); // use the View's cell system for this
-			colStart = cellDate.clone().stripZone().time(this.minTime); // normalize and calculate
-			colEnd = cellDate.clone().stripZone().time(this.maxTime); // normalize and calculate
-
-			if (end > colStart && start < colEnd) { // in bounds at all?
-
-				if (start >= colStart) {
-					segStart = start.clone();
-					isStart = true;
-				}
-				else {
-					segStart = colStart; // don't need to clone
-					isStart =  false;
-				}
-
-				if (end <= colEnd) {
-					segEnd = end.clone();
-					isEnd = true;
-				}
-				else {
-					segEnd = colEnd; // don't need to clone
-					isEnd = false;
-				}
-
-				segs.push({
-					col: col,
-					start: segStart,
-					end: segEnd,
-					isStart: isStart,
-					isEnd: isEnd
-				});
+			colStart = cellDate.clone().time(this.minTime);
+			colEnd = cellDate.clone().time(this.maxTime);
+			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
+			if (seg) {
+				seg.col = col;
+				segs.push(seg);
 			}
 		}
 

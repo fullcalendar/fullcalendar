@@ -126,9 +126,12 @@
 
 
 /* TimeGrid Event Styling
---------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
 
-.fc-time-grid .fc-event.fc-not-start { /* events that are continuing from another day */
+.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
 	/* replace space made by the top border with padding */
 	border-top-width: 0;
 	padding-top: 1px;
@@ -138,7 +141,7 @@
 	border-top-right-radius: 0;
 }
 
-.fc-time-grid .fc-event.fc-not-end {
+.fc-time-grid-event.fc-not-end {
 	/* replace space made by the top border with padding */
 	border-bottom-width: 0;
 	padding-bottom: 1px;
@@ -147,12 +150,6 @@
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-
-/*
-The above event styles will not apply to events that are being dragged. Dragged events are attached
-to an outer parent not part of the .fc-view, thus we need the className "fc-time-grid-event".
-The below styles WILL be applied to dragged events.
-*/
 
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */

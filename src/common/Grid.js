@@ -23,6 +23,12 @@ $.extend(Grid.prototype, {
 	},
 
 
+	// Called when the grid's resources need to be cleaned up
+	destroy: function() {
+		// subclasses can implement
+	},
+
+
 	/* Coordinates & Cells
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -62,7 +68,10 @@ $.extend(Grid.prototype, {
 		var _this = this;
 
 		this.el.on('mousedown', function(ev) {
-			if (!$(ev.target).is('.fc-event-container *, .fc-more')) { // not an event element or "more" link
+			if (
+				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
+				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
+			) {
 				_this.dayMousedown(ev);
 			}
 		});

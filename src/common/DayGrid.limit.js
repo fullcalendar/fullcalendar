@@ -5,6 +5,17 @@
 $.extend(DayGrid.prototype, {
 
 
+	segPopover: null, // the Popover that holds events that can't fit in a cell. null when not visible
+	popoverSegs: null, // an array of segment objects that the segPopover holds. null when not visible
+
+
+	destroySegPopover: function() {
+		if (this.segPopover) {
+			this.segPopover.hide(); // will trigger destruction of `segPopover` and `popoverSegs`
+		}
+	},
+
+
 	// Limits the number of "levels" (vertically stacking layers of events) for each row of the grid.
 	// `levelLimit` can be false (don't limit), a number, or true (should be computed).
 	limitRows: function(levelLimit) {
@@ -73,7 +84,7 @@ $.extend(DayGrid.prototype, {
 		var td, rowspan;
 		var segMoreNodes; // array of "more" <td> cells that will stand-in for the current seg's cell
 		var j;
-		var moreTd, moreLink;
+		var moreTd, moreWrap, moreLink;
 
 		// Iterates through empty level cells and places "more" links inside if need be
 		function emptyCellsUntil(endCol) { // goes from current `col` to `endCol`
@@ -83,8 +94,9 @@ $.extend(DayGrid.prototype, {
 				if (segsBelow.length) {
 					td = cellMatrix[levelLimit - 1][col];
 					moreLink = _this.renderMoreLink(cell, segsBelow);
-					td.append(moreLink);
-					moreNodes.push(moreLink[0]);
+					moreWrap = $('<div/>').append(moreLink);
+					td.append(moreWrap);
+					moreNodes.push(moreWrap[0]);
 				}
 				col++;
 			}
@@ -124,7 +136,8 @@ $.extend(DayGrid.prototype, {
 						segsBelow = colSegsBelow[j];
 						cell = { row: row, col: seg.leftCol + j };
 						moreLink = this.renderMoreLink(cell, [ seg ].concat(segsBelow)); // count seg as hidden too
-						moreTd.append(moreLink);
+						moreWrap = $('<div/>').append(moreLink);
+						moreTd.append(moreWrap);
 						segMoreNodes.push(moreTd[0]);
 						moreNodes.push(moreTd[0]);
 					}
@@ -168,24 +181,113 @@ $.extend(DayGrid.prototype, {
 			.text(
 				this.getMoreLinkText(hiddenSegs.length)
 			)
-			.on('click', function() {
-				var date = view.cellToDate(cell);
+			.on('click', function(ev) {
 				var clickOption = view.opt('eventLimitClick');
+				var date = view.cellToDate(cell);
+				var moreEl = $(this);
+				var dayEl = _this.getCellDayEl(cell);
+				var allSegs = _this.getCellSegs(cell);
 
-				if (typeof clickOption === 'string') { // a view name or 'auto'
-					view.calendar.zoomToDay(date, clickOption);
+				// rescope the segments to be within the cell's date
+				var reslicedAllSegs = _this.resliceDaySegs(allSegs, date);
+				var reslicedHiddenSegs = _this.resliceDaySegs(hiddenSegs, date);
+
+				if (clickOption === 'popover') {
+					_this.showSegPopover(date, cell, moreEl, reslicedAllSegs);
 				}
-				else {
-					view.trigger(
-						'eventLimitClick',
-						null,
-						date,
-						_this.getCellDayEl(cell), // element for the cell's day
-						hiddenSegs,
-						_this.getCellSegs(cell) // all segments on that day
-					);
+				else if (typeof clickOption === 'string') { // a view name
+					view.calendar.zoomTo(date, clickOption);
+				}
+				else if (typeof clickOption === 'function') {
+					view.trigger('eventLimitClick', null, {
+						date: date,
+						dayEl: dayEl,
+						moreEl: moreEl,
+						segs: reslicedAllSegs,
+						hiddenSegs: reslicedHiddenSegs
+					}, ev);
 				}
 			});
+	},
+
+
+	// Reveals the popover that displays all events within a cell
+	showSegPopover: function(date, cell, moreLink, segs) {
+		var _this = this;
+		var view = this.view;
+		var moreWrap = moreLink.parent(); // the <div> wrapper around the <a>
+		var options = {
+			className: 'fc-more-popover',
+			content: this.renderSegPopoverContent(date, segs),
+			parentEl: this.el,
+			top: this.rowEls.eq(cell.row).offset().top, // better than the <td>. no border confusion
+			autoHide: true, // when the user clicks elsewhere, hide the popover
+			hide: function() {
+				// destroy everything when the popover is hidden
+				_this.segPopover.destroy();
+				_this.segPopover = null;
+				_this.popoverSegs = null;
+			}
+		};
+
+		// Determine horizontal coordinate.
+		// We use the moreWrap instead of the <td> to avoid border confusion.
+		if (view.opt('isRTL')) {
+			options.right = moreWrap.offset().left + moreWrap.outerWidth() + 1; // +1 to be over cell border
+		}
+		else {
+			options.left = moreWrap.offset().left - 1; // -1 to be over cell border
+		}
+
+		this.segPopover = new Popover(options);
+		this.segPopover.show();
+	},
+
+
+	// Builds the inner DOM contents of the segment popover
+	renderSegPopoverContent: function(date, segs) {
+		var view = this.view;
+		var isTheme = view.opt('theme');
+		var title = date.format('LL'); // TODO: make this an option somehow
+		var content = $(
+			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
+				'<span class="fc-close ' +
+					(isTheme ? 'ui-icon ui-icon-closethick' : 'fc-icon fc-icon-x') +
+				'"></span>' +
+				'<span class="fc-title">' +
+					htmlEscape(title) +
+				'</span>' +
+				'<div class="fc-clear"/>' +
+			'</div>' +
+			'<div class="fc-body ' + view.widgetContentClass + '">' +
+				'<div class="fc-event-container"></div>' +
+			'</div>'
+		);
+		var segContainer = content.find('.fc-event-container');
+		var i;
+
+		// render each seg's `el` and only return the visible segs
+		segs = this.renderSegs(segs, true); // disableResizing=true
+		this.popoverSegs = segs;
+
+		for (i = 0; i < segs.length; i++) {
+			segs[i].isDetached = true; // signals the segment doesn't live in a cell. needed for event DnD
+			segContainer.append(segs[i].el);
+		}
+
+		return content;
+	},
+
+
+	// Given the events within an array of segment objects, reslice them to be in a single day
+	resliceDaySegs: function(segs, dayDate) {
+		var events = $.map(segs, function(seg) {
+			return seg.event;
+		});
+		var dayStart = dayDate.clone().stripTime();
+		var dayEnd = dayStart.clone().add('days', 1);
+
+		return this.eventsToSegs(events, dayStart, dayEnd);
 	},
 
 

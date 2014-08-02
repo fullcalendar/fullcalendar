@@ -27,12 +27,22 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-unthemed hr,
 .fc-unthemed thead,
 .fc-unthemed tbody,
-.fc-unthemed .fc-row {
+.fc-unthemed .fc-row,
+.fc-unthemed .fc-popover {
 	border-color: #ddd;
 }
 
-.fc-unthemed hr {
+.fc-unthemed .fc-popover {
+	background-color: #fff;
+}
+
+.fc-unthemed hr,
+.fc-unthemed .fc-popover .fc-header {
 	background: #eee;
+}
+
+.fc-unthemed .fc-popover .fc-header .fc-close {
+	color: #666;
 }
 
 .fc-unthemed .fc-today {
@@ -73,6 +83,10 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-icon-right-double-arrow:after {
 	content: "\000BB";
+}
+
+.fc-icon-x:after {
+	content: "\000D7";
 }
 
 
@@ -194,6 +208,55 @@ previous button's border...
 
 .fc .fc-button-group > :first-child { /* same */
 	margin-left: 0;
+}
+
+
+/* Popover
+--------------------------------------------------------------------------------------------------*/
+
+.fc-popover {
+	position: absolute;
+	box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+.fc-popover .fc-header {
+	padding: 2px 4px;
+}
+
+.fc-popover .fc-header .fc-title {
+	margin: 0 2px;
+}
+
+.fc-popover .fc-header .fc-close {
+	cursor: pointer;
+}
+
+.fc-ltr .fc-popover .fc-header .fc-title,
+.fc-rtl .fc-popover .fc-header .fc-close {
+	float: left;
+}
+
+.fc-rtl .fc-popover .fc-header .fc-title,
+.fc-ltr .fc-popover .fc-header .fc-close {
+	float: right;
+}
+
+/* unthemed */
+
+.fc-unthemed .fc-popover {
+	border-width: 1px;
+	border-style: solid;
+}
+
+.fc-unthemed .fc-popover .fc-header .fc-close {
+	font-size: 25px;
+	margin-top: 4px;
+}
+
+/* jqui themed */
+
+.fc-popover > .ui-widget-header + .ui-widget-content {
+	border-top: 0; /* where they meet, let the header have the border */
 }
 
 
@@ -383,16 +446,19 @@ temporary rendered events).
 
 
 /* DayGrid events
---------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------
+We use the full "fc-day-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
 
-.fc-day-grid .fc-event {
+.fc-day-grid-event {
 	margin: 1px 1px 0; /* spacing between events and edges */
 }
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
-.fc-ltr .fc-day-grid .fc-event.fc-not-start,
-.fc-rtl .fc-day-grid .fc-event.fc-not-end {
+.fc-ltr .fc-day-grid-event.fc-not-start,
+.fc-rtl .fc-day-grid-event.fc-not-end {
 	margin-left: 0;
 	border-left-width: 0;
 	padding-left: 1px; /* replace the border with padding */
@@ -400,20 +466,14 @@ temporary rendered events).
 	border-bottom-left-radius: 0;
 }
 
-.fc-ltr .fc-day-grid .fc-event.fc-not-end,
-.fc-rtl .fc-day-grid .fc-event.fc-not-start {
+.fc-ltr .fc-day-grid-event.fc-not-end,
+.fc-rtl .fc-day-grid-event.fc-not-start {
 	margin-right: 0;
 	border-right-width: 0;
 	padding-right: 1px; /* replace the border with padding */
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
-
-/*
-The above event styles will not apply to events that are being dragged. Dragged events are attached
-to an outer parent not part of the .fc-view, thus we need the className "fc-day-grid-event".
-The below styles WILL be applied to dragged events.
-*/
 
 .fc-day-grid-event > .fc-content { /* force events to be one-line tall */
 	white-space: nowrap;

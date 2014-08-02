@@ -22,6 +22,7 @@
         "src/util.js",
         "src/moment-ext.js",
         "src/date-formatting.js",
+        "src/common/Popover.js",
         "src/common/CoordMap.js",
         "src/common/DragListener.js",
         "src/common/MouseFollower.js",

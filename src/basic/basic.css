@@ -75,3 +75,18 @@ a.fc-more:hover {
 .fc-limited { /* rows and cells that are hidden because of a "more" link */
 	display: none;
 }
+
+/* popover that appears when "more" link is clicked */
+
+.fc-day-grid .fc-row {
+	z-index: 1; /* make the "more" popover one higher than this */
+}
+
+.fc-more-popover {
+	z-index: 2;
+	width: 220px;
+}
+
+.fc-more-popover .fc-event-container {
+	padding: 10px;
+}

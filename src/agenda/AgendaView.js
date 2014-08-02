@@ -115,6 +115,16 @@ $.extend(AgendaView.prototype, {
 	},
 
 
+	// Make subcomponents ready for cleanup
+	destroy: function() {
+		this.timeGrid.destroy();
+		if (this.dayGrid) {
+			this.dayGrid.destroy();
+		}
+		View.prototype.destroy.call(this); // call the super-method
+	},
+
+
 	// Builds the HTML skeleton for the view.
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
 	renderHtml: function() {
@@ -317,9 +327,15 @@ $.extend(AgendaView.prototype, {
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		this.updateHeight();
 
-		this.segs = daySegs.concat(timedSegs); // needed by the View super-class
-
 		View.prototype.renderEvents.call(this, events); // call the super-method
+	},
+
+
+	// Retrieves all segment objects that are rendered in the view
+	getSegs: function() {
+		return this.timeGrid.getSegs().concat(
+			this.dayGrid ? this.dayGrid.getSegs() : []
+		);
 	},
 
 
@@ -340,7 +356,7 @@ $.extend(AgendaView.prototype, {
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
 		// B) in IE8, this causes a flash whenever events are rerendered
 
-		View.prototype.destroyEvents.call(this); // call the super-method. will kill `this.segs`
+		View.prototype.destroyEvents.call(this); // call the super-method
 	},
 
 

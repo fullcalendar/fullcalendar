@@ -46,6 +46,11 @@ $.extend(DayGrid.prototype, {
 	},
 
 
+	destroy: function() {
+		this.destroySegPopover();
+	},
+
+
 	// Generates the HTML for a single row. `row` is the row number.
 	dayRowHtml: function(row, isRigid) {
 		var view = this.view;

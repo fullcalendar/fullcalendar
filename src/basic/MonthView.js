@@ -6,7 +6,7 @@ setDefaults({
 	fixedWeekCount: true,
 	eventLimit: false,
 	eventLimitText: 'more',
-	eventLimitClick: 'auto'
+	eventLimitClick: 'popover'
 });
 
 fcViews.month = MonthView; // register the view
@@ -67,6 +67,8 @@ $.extend(MonthView.prototype, {
 		if (isAuto) {
 			height *= this.rowCnt / 6;
 		}
+
+		this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
 
 		// is the event limit a constant level number?
 		if (eventLimit && typeof eventLimit === 'number') {

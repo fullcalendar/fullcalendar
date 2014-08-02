@@ -4,6 +4,7 @@
 
 $.extend(TimeGrid.prototype, {
 
+	segs: null, // segment objects rendered in the component. null of events haven't been rendered yet
 	eventSkeletonEl: null, // has cells with event-containers, which contain absolutely positioned event elements
 
 
@@ -14,7 +15,13 @@ $.extend(TimeGrid.prototype, {
 		this.eventSkeletonEl = $('<div class="fc-content-skeleton"/>').append(res.tableEl);
 		this.el.append(this.eventSkeletonEl);
 
-		return res.segs; // return segment objects. for the view
+		this.segs = res.segs;
+	},
+
+
+	// Retrieves rendered segment objects
+	getSegs: function() {
+		return this.segs || [];
 	},
 
 
@@ -24,49 +31,41 @@ $.extend(TimeGrid.prototype, {
 			this.eventSkeletonEl.remove();
 			this.eventSkeletonEl = null;
 		}
+
+		this.segs = null;
 	},
 
 
 	// Renders and returns the <table> portion of the event-skeleton.
 	// Returns an object with properties 'tbodyEl' and 'segs'.
 	renderEventTable: function(events) {
-		var view = this.view;
 		var tableEl = $('<table><tr/></table>');
 		var trEl = tableEl.find('tr');
-		var allSegs = this.eventsToSegs(events);
-		var segCols = this.groupSegCols(allSegs); // groups into sub-arrays, and assigns 'col' to each seg
-		var html = ''; // html string with default HTML for all events, concatenated together
+		var segs = this.eventsToSegs(events);
+		var segCols;
 		var i, seg;
-		var col, segs;
+		var col, colSegs;
 		var containerEl;
 
-		// build the combined HTML string. and compute top/bottom
-		for (i = 0; i < allSegs.length; i++) {
-			seg = allSegs[i];
-			html += this.renderSegHtml(seg);
+		segs = this.renderSegs(segs); // returns only the visible segs
+		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
+		// compute vertical coordinates
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
 			seg.top = this.computeDateTop(seg.start, seg.start);
 			seg.bottom = this.computeDateTop(seg.end, seg.start);
 		}
 
-		// Grab individual elements from the combined HTML string. Use each as the default rendering.
-		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-		$(html).each(function(i, node) {
-			allSegs[i].el = view.resolveEventEl(allSegs[i].event, $(node));
-		});
-
 		for (col = 0; col < segCols.length; col++) { // iterate each column grouping
-			segs = segCols[col];
-
-			segs = $.grep(segs, renderedSegFilter); // filter out unrendered segments
-			placeSlotSegs(segs); // compute horizontal coordinates, z-index's, and reorder the array
-			segCols[col] = segs; // assign back
+			colSegs = segCols[col];
+			placeSlotSegs(colSegs); // compute horizontal coordinates, z-index's, and reorder the array
 
 			containerEl = $('<div class="fc-event-container"/>');
 
 			// assign positioning CSS and insert into container
-			for (i = 0; i < segs.length; i++) {
-				seg = segs[i];
+			for (i = 0; i < colSegs.length; i++) {
+				seg = colSegs[i];
 				seg.el.css(this.generateSegPositionCss(seg));
 				containerEl.append(seg.el);
 			}
@@ -78,17 +77,17 @@ $.extend(TimeGrid.prototype, {
 
 		return  {
 			tableEl: tableEl,
-			segs: flattenArray(segCols) // will contain only segments with rendered els
+			segs: segs
 		};
 	},
 
 
 	// Renders the HTML for a single event segment's default rendering
-	renderSegHtml: function(seg) {
+	renderSegHtml: function(seg, disableResizing) {
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
-		var isResizable = seg.isEnd && view.isEventResizable(event);
+		var isResizable = !disableResizing && seg.isEnd && view.isEventResizable(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizable);
 		var skinCss = this.getEventSkinCss(event);
 		var timeText;

@@ -4,6 +4,7 @@
 
 $.extend(Grid.prototype, {
 
+	isMouseOverSeg: false, // is the user's mouse over a segment?
 	isDraggingSeg: false, // is a segment being dragged?
 	isResizingSeg: false, // is a segment being resized?
 
@@ -14,28 +15,78 @@ $.extend(Grid.prototype, {
 	},
 
 
+	// Retrieves all rendered segment objects in this grid
+	getSegs: function() {
+		// subclasses must implement
+	},
+
+
 	// Unrenders all events
 	destroyEvents: function() {
 		// subclasses must implement
 	},
 
 
+	// Renders a `el` property for each seg, and only returns segments that successfully rendered
+	renderSegs: function(segs, disableResizing) {
+		var view = this.view;
+		var html = '';
+		var renderedSegs = [];
+		var i;
+
+		// build a large concatenation of event segment HTML
+		for (i = 0; i < segs.length; i++) {
+			html += this.renderSegHtml(segs[i], disableResizing);
+		}
+
+		// Grab individual elements from the combined HTML string. Use each as the default rendering.
+		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
+		$(html).each(function(i, node) {
+			var seg = segs[i];
+			var el = view.resolveEventEl(seg.event, $(node));
+			if (el) {
+				el.data('fc-seg', seg); // used by handlers
+				seg.el = el;
+				renderedSegs.push(seg);
+			}
+		});
+
+		return renderedSegs;
+	},
+
+
+	// Generates the HTML for the default rendering of a segment
+	renderSegHtml: function(seg, disableResizing) {
+		// subclasses must implement
+	},
+
+
 	// Converts an array of event objects into an array of segment objects
-	eventsToSegs: function(events) {
+	eventsToSegs: function(events, intervalStart, intervalEnd) {
 		var _this = this;
 
 		return $.map(events, function(event) {
-			return _this.eventToSegs(event); // $.map flattens all returned arrays together
+			return _this.eventToSegs(event, intervalStart, intervalEnd); // $.map flattens all returned arrays together
 		});
 	},
 
 
-	// Slices a single event into an array of event segments
-	eventToSegs: function(event) {
+	// Slices a single event into an array of event segments.
+	// When `intervalStart` and `intervalEnd` are specified, intersect the events with that interval.
+	// Otherwise, let the subclass decide how it wants to slice the segments over the grid.
+	eventToSegs: function(event, intervalStart, intervalEnd) {
 		var eventStart = event.start.clone().stripZone(); // normalize
 		var eventEnd = this.view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
-		var segs = this.rangeToSegs(eventStart, eventEnd); // defined by the subclass
+		var segs;
 		var i, seg;
+
+		if (intervalStart && intervalEnd) {
+			seg = intersectionToSeg(eventStart, eventEnd, intervalStart, intervalEnd);
+			segs = seg ? [ seg ] : [];
+		}
+		else {
+			segs = this.rangeToSegs(eventStart, eventEnd); // defined by the subclass
+		}
 
 		// assign extra event-related properties to the segment objects
 		for (i = 0; i < segs.length; i++) {
@@ -49,6 +100,10 @@ $.extend(Grid.prototype, {
 	},
 
 
+	/* Handlers
+	------------------------------------------------------------------------------------------------------------------*/
+
+
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
 		var _this = this;
@@ -57,10 +112,10 @@ $.extend(Grid.prototype, {
 		$.each(
 			{
 				mouseenter: function(seg, ev) {
-					view.trigger('eventMouseover', this, seg.event, ev);
+					_this.triggerSegMouseover(seg, ev);
 				},
 				mouseleave: function(seg, ev) {
-					view.trigger('eventMouseout', this, seg.event, ev);
+					_this.triggerSegMouseout(seg, ev);
 				},
 				click: function(seg, ev) {
 					return view.trigger('eventClick', this, seg.event, ev); // can return `false` to cancel
@@ -76,17 +131,39 @@ $.extend(Grid.prototype, {
 			},
 			function(name, func) {
 				// attach the handler to the container element and only listen for real event elements via bubbling
-				_this.el.on(name, '.fc-content-skeleton .fc-event-container > *', function(ev) {
+				_this.el.on(name, '.fc-event-container > *', function(ev) {
 					var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
 
-					if (seg /*&& !_this.isDraggingSeg && !_this.isResizingSeg*/) {
-						   // needs more work if we want eventMouseout to fire correctly
+					// only call the handlers if there is not a drag/resize in progress
+					if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
 						func.call(this, seg, ev); // `this` will be the event element
 					}
 				});
 			}
 		);
 	},
+
+
+	// Updates internal state and triggers handlers for when an event element is moused over
+	triggerSegMouseover: function(seg, ev) {
+		if (!this.isMouseOverSeg) {
+			this.isMouseOverSeg = true;
+			this.view.trigger('eventMouseover', seg.el[0], seg.event, ev);
+		}
+	},
+
+
+	// Updates internal state and triggers handlers for when an event element is moused out
+	triggerSegMouseout: function(seg, ev) {
+		if (this.isMouseOverSeg) {
+			this.isMouseOverSeg = false;
+			this.view.trigger('eventMouseout', seg.el[0], seg.event, ev);
+		}
+	},
+
+
+	/* Dragging
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Called when the user does a mousedown on an event, which might lead to dragging.
@@ -96,9 +173,7 @@ $.extend(Grid.prototype, {
 		var view = this.view;
 		var el = seg.el;
 		var event = seg.event;
-		var start = event.start;
-		var end = view.calendar.getEventEnd(event);
-		var newStart = null;
+		var newStart, newEnd;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -117,39 +192,21 @@ $.extend(Grid.prototype, {
 				mouseFollower.start(ev);
 			},
 			dragStart: function(ev) {
+				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isDraggingSeg = true;
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
-
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
-				var origDate = dragListener.origDate;
-				var delta;
-				var newEnd;
+				var res = _this.computeDraggedEventDates(seg, dragListener.origDate, date);
+				newStart = res.start;
+				newEnd = res.end;
 
-				if (origDate) { // must start out on a cell (weird accident if it didn't)
-
-					if (date.hasTime() === origDate.hasTime()) { // staying all-day or staying timed
-						delta = dayishDiff(date, origDate);
-						newStart = start.clone().add(delta);
-						if (event.end === null) { // do we need to compute an end?
-							newEnd = null;
-						}
-						else {
-							newEnd = end.clone().add(delta);
-						}
-					}
-					else { // switching from all-day to timed, or vice versa
-						newStart = date;
-						newEnd = null; // end should be cleared
-					}
-
-					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
-						mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
-					}
-					else {
-						mouseFollower.show();
-					}
+				if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
+					mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+				}
+				else {
+					mouseFollower.show();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
@@ -158,14 +215,13 @@ $.extend(Grid.prototype, {
 				mouseFollower.show(); // show in case we are moving out of all cells
 			},
 			dragStop: function(ev) {
-				var hasChanged = newStart && !newStart.isSame(start);
+				var hasChanged = newStart && !newStart.isSame(event.start);
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!hasChanged, function() {
 					_this.isDraggingSeg = false;
 					view.destroyDrag();
 					view.showEvent(event);
-
 					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 					if (hasChanged) {
@@ -180,6 +236,60 @@ $.extend(Grid.prototype, {
 
 		dragListener.mousedown(ev); // start listening, which will eventually lead to a dragStart
 	},
+
+
+	// Given a segment, where it originally resided on the grid, and the new date it has been dragged to,
+	// calculates the Event Object's new start and end dates.
+	computeDraggedEventDates: function(seg, origDate, newDate) {
+		var view = this.view;
+		var event = seg.event;
+		var start = event.start;
+		var end = view.calendar.getEventEnd(event);
+		var delta;
+		var newStart;
+		var newEnd;
+
+		// the segment might be explicitly marked as not-in-the-grid
+		if (seg.isDetached) {
+			origDate = null;
+		}
+
+		// calculate the delta (a Duration) that the event's dates must be moved.
+		// if `delta` remains undefined, that means the event's start will literally become newDate.
+		if (!origDate) {
+			if (newDate.hasTime()) { // over a time slot
+				delta = dayishDiff(newDate, start); // will move the start to the exact new datetime
+			}
+			else { // over a whole-day cell
+				delta = dayDiff(newDate, start); // will be a whole-day diff, so that start's time will be kept
+			}
+		}
+		else if (newDate.hasTime() === origDate.hasTime()) { // staying all-day or staying timed
+			delta = dayishDiff(newDate, origDate);
+		}
+		// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
+
+		// recalculate start/end
+		if (delta) {
+			newStart = start.clone().add(delta);
+			if (event.end === null) { // do we need to compute an end?
+				newEnd = null;
+			}
+			else {
+				newEnd = end.clone().add(delta);
+			}
+		}
+		else {
+			newStart = newDate;
+			newEnd = null; // end should be cleared
+		}
+
+		return { start: newStart, end: newEnd };
+	},
+
+
+	/* Resizing
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Called when the user does a mousedown on an event's resizer, which might lead to resizing.
@@ -203,8 +313,8 @@ $.extend(Grid.prototype, {
 		dragListener = new DragListener(this.coordMap, {
 			distance: 5,
 			dragStart: function(ev) {
+				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isResizingSeg = true;
-
 				view.trigger('eventResizeStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
@@ -230,7 +340,6 @@ $.extend(Grid.prototype, {
 			dragStop: function(ev) {
 				_this.isResizingSeg = false;
 				destroy();
-
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 				if (newEnd) {
@@ -241,6 +350,10 @@ $.extend(Grid.prototype, {
 
 		dragListener.mousedown(ev); // start listening, which will eventually lead to a dragStart
 	},
+
+
+	/* Rendering Utils
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
@@ -317,11 +430,5 @@ function compareSegs(seg1, seg2) {
 		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
 		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
-}
-
-
-// Returns `true` if the segment has a rendered element and `false` otherwise
-function renderedSegFilter(seg) {
-	return !!seg.el;
 }
 

@@ -52,7 +52,7 @@ function Calendar(element, instanceOptions) {
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
-	t.zoomToDay = zoomToDay;
+	t.zoomTo = zoomTo;
 	t.getDate = getDate;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
@@ -424,6 +424,7 @@ function Calendar(element, instanceOptions) {
 			}
 
 			ignoreWindowResize++;
+			currentView.recordScroll(); // for keeping the scroll value (if any) before refreshing dimensions
 			currentView.updateHeight(); // will poll getSuggestedViewHeight() and isHeightAuto()
 			currentView.updateWidth();
 			ignoreWindowResize--;
@@ -625,19 +626,25 @@ function Calendar(element, instanceOptions) {
 	}
 
 
-	// Forces navigation to a day-view on the given date. `viewName` is the name of an explicit view to go to.
-	// If not specified, or 'auto', it will guess the best view based on which buttons are in the header toolbar.
-	function zoomToDay(newDate, viewName) {
-		var viewsWithButtons;
+	// Forces navigation to a view for the given date.
+	// `viewName` can be a specific view name or a generic one like "week" or "day".
+	function zoomTo(newDate, viewName) {
+		var viewStr;
+		var match;
 
-		if (fcViews[viewName] === undefined) { // not an available view, or 'auto'
-			viewsWithButtons = header.getViewsWithButtons();
-			if ($.inArray('basicDay', viewsWithButtons) !== -1) {
-				viewName = 'basicDay';
+		if (!viewName || fcViews[viewName] === undefined) { // a general view name, or "auto"
+			viewName = viewName || 'day';
+			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
+
+			// try to match a general view name, like "week", against a specific one, like "agendaWeek"
+			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewName)));
+
+			// fall back to the day view being used in the header
+			if (!match) {
+				match = viewStr.match(/\w+Day/);
 			}
-			else {
-				viewName = 'agendaDay'; // the fallback
-			}
+
+			viewName = match ? match[0] : 'agendaDay'; // fall back to agendaDay
 		}
 
 		date = newDate;
