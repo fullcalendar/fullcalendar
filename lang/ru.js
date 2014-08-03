@@ -6,5 +6,8 @@ $.fullCalendar.lang("ru", {
 		day: "День",
 		list: "Повестка дня"
 	},
-	allDayText: "Весь день"
+	allDayText: "Весь день",
+	eventLimitText: function(n) {
+		return "+ ещё " + n;
+	}
 });

@@ -6,5 +6,8 @@ $.fullCalendar.lang("sk", {
 		day: "Deň",
 		list: "Rozvrh"
 	},
-	allDayText: "Celý deň"
+	allDayText: "Celý deň",
+	eventLimitText: function(n) {
+		return "+ďalšie: " + n;
+	}
 });

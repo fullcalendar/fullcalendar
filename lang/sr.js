@@ -6,5 +6,8 @@ $.fullCalendar.lang("sr", {
 		day: "Дан",
 		list: "Планер"
 	},
-	allDayText: "Цео дан"
+	allDayText: "Цео дан",
+	eventLimitText: function(n) {
+		return "+ још " + n;
+	}
 });

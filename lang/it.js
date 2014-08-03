@@ -6,5 +6,8 @@ $.fullCalendar.lang("it", {
 		day: "Giorno",
 		list: "Agenda"
 	},
-	allDayText: "Tutto il giorno"
+	allDayText: "Tutto il giorno",
+	eventLimitText: function(n) {
+		return "+altri " + n;
+	}
 });

@@ -6,5 +6,8 @@ $.fullCalendar.lang("vi", {
 		day: "Ngày",
 		list: "Lịch biểu"
 	},
-	allDayText: "Cả ngày"
+	allDayText: "Cả ngày",
+	eventLimitText: function(n) {
+		return "+ thêm " + n;
+	}
 });

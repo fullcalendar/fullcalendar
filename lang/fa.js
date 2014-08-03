@@ -6,5 +6,8 @@ $.fullCalendar.lang("fa", {
 		day: "روز",
 		list: "برنامه"
 	},
-	allDayText: "تمام روز"
+	allDayText: "تمام روز",
+	eventLimitText: function(n) {
+		return "بیش از " + n;
+	}
 });

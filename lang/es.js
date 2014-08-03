@@ -6,5 +6,6 @@ $.fullCalendar.lang("es", {
 		day: "Día",
 		list: "Agenda"
 	},
-	allDayText: "Todo el día"
+	allDayText: "Todo el día",
+	eventLimitText: "más"
 });

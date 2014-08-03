@@ -6,5 +6,6 @@ $.fullCalendar.lang("fi", {
 		day: "Päivä",
 		list: "Tapahtumat"
 	},
-	allDayText: "Koko päivä"
+	allDayText: "Koko päivä",
+	eventLimitText: "lisää"
 });

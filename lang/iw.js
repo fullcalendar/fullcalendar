@@ -6,5 +6,8 @@ $.fullCalendar.lang("iw", {
 		day: "יום",
 		list: "סדר יום"
 	},
-	allDayText: "כל היום"
+	allDayText: "כל היום",
+	eventLimitText: function(n) {
+		return "+עוד " + n;
+	}
 });

@@ -6,5 +6,8 @@ $.fullCalendar.lang("pt-br", {
 		day: "Dia",
 		list: "Compromissos"
 	},
-	allDayText: "dia inteiro"
+	allDayText: "dia inteiro",
+	eventLimitText: function(n) {
+		return "mais +" + n;
+	}
 });

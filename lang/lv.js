@@ -6,5 +6,8 @@ $.fullCalendar.lang("lv", {
 		day: "Diena",
 		list: "Dienas kārtība"
 	},
-	allDayText: "Visu dienu"
+	allDayText: "Visu dienu",
+	eventLimitText: function(n) {
+		return "+vēl " + n;
+	}
 });

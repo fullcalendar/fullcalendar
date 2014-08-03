@@ -6,5 +6,6 @@ $.fullCalendar.lang("is", {
 		day: "Dagur",
 		list: "Dagskrá"
 	},
-	allDayText: "Allan daginn"
+	allDayText: "Allan daginn",
+	eventLimitText: "meira"
 });

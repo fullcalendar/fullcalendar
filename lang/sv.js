@@ -6,5 +6,6 @@ $.fullCalendar.lang("sv", {
 		day: "Dag",
 		list: "Program"
 	},
-	allDayText: "Heldag"
+	allDayText: "Heldag",
+	eventLimitText: "till"
 });

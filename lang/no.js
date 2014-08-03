@@ -6,5 +6,6 @@ $.fullCalendar.lang("no", {
 		day: "Dag",
 		list: "Agenda"
 	},
-	allDayText: "Hele dagen"
+	allDayText: "Hele dagen",
+	eventLimitText: "til"
 });

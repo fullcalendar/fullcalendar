@@ -6,5 +6,8 @@ $.fullCalendar.lang("de", {
 		day: "Tag",
 		list: "Terminübersicht"
 	},
-	allDayText: "Ganztägig"
+	allDayText: "Ganztägig",
+	eventLimitText: function(n) {
+		return "+ weitere " + n;
+	}
 });

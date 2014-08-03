@@ -6,5 +6,6 @@ $.fullCalendar.lang("hu", {
 		day: "Nap",
 		list: "Napló"
 	},
-	allDayText: "Egész nap"
+	allDayText: "Egész nap",
+	eventLimitText: "további"
 });

@@ -6,5 +6,8 @@ $.fullCalendar.lang("zh-cn", {
 		day: "日",
 		list: "日程"
 	},
-	allDayText: "全天"
+	allDayText: "全天",
+	eventLimitText: function(n) {
+		return "另外 " + n + " 个";
+	}
 });

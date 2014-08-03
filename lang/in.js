@@ -6,5 +6,8 @@ $.fullCalendar.lang("in", {
 		day: "Hari",
 		list: "Agenda"
 	},
-	allDayText: "Sepanjang hari"
+	allDayText: "Sepanjang hari",
+	eventLimitText: function(n) {
+		return "masih ada " + n + " acara";
+	}
 });

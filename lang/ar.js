@@ -6,5 +6,6 @@ $.fullCalendar.lang("ar", {
 		day: "يوم",
 		list: "أجندة"
 	},
-	allDayText: "اليوم كله"
+	allDayText: "اليوم كله",
+	eventLimitText: "أخرى"
 });

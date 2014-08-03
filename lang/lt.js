@@ -6,5 +6,6 @@ $.fullCalendar.lang("lt", {
 		day: "Diena",
 		list: "Darbotvarkė"
 	},
-	allDayText: "Visą dieną"
+	allDayText: "Visą dieną",
+	eventLimitText: "daugiau"
 });

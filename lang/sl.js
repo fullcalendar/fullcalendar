@@ -6,5 +6,6 @@ $.fullCalendar.lang("sl", {
 		day: "Dan",
 		list: "Dnevni red"
 	},
-	allDayText: "Ves dan"
+	allDayText: "Ves dan",
+	eventLimitText: "več"
 });

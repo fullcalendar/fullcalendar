@@ -8,5 +8,8 @@ $.fullCalendar.lang("ro", {
 		day: "Zi",
 		list: "Agendă"
 	},
-	allDayText: "Toată ziua"
+	allDayText: "Toată ziua",
+	eventLimitText: function(n) {
+		return "+alte " + n;
+	}
 });

@@ -6,5 +6,8 @@ $.fullCalendar.lang("hr", {
 		day: "Dan",
 		list: "Raspored"
 	},
-	allDayText: "Cijeli dan"
+	allDayText: "Cijeli dan",
+	eventLimitText: function(n) {
+		return "+ još " + n;
+	}
 });

@@ -6,5 +6,6 @@ $.fullCalendar.lang("ko", {
 		day: "일",
 		list: "일정목록"
 	},
-	allDayText: "종일"
+	allDayText: "종일",
+	eventLimitText: "개"
 });

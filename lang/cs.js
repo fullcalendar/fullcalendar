@@ -6,5 +6,8 @@ $.fullCalendar.lang("cs", {
 		day: "Den",
 		list: "Agenda"
 	},
-	allDayText: "Celý den"
+	allDayText: "Celý den",
+	eventLimitText: function(n) {
+		return "+další: " + n;
+	}
 });

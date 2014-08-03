@@ -6,5 +6,6 @@ $.fullCalendar.lang("th", {
 		day: "วัน",
 		list: "แผนงาน"
 	},
-	allDayText: "ตลอดวัน"
+	allDayText: "ตลอดวัน",
+	eventLimitText: "เพิ่มเติม"
 });

@@ -6,5 +6,6 @@ $.fullCalendar.lang("nl", {
 		day: "Dag",
 		list: "Agenda"
 	},
-	allDayText: "Hele dag"
+	allDayText: "Hele dag",
+	eventLimitText: "extra"
 });

@@ -6,5 +6,6 @@ $.fullCalendar.lang("el", {
 		day: "Ημέρα",
 		list: "Ατζέντα"
 	},
-	allDayText: "Ολοήμερο"
+	allDayText: "Ολοήμερο",
+	eventLimitText: "περισσότερα"
 });

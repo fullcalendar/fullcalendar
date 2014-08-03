@@ -7,5 +7,6 @@ $.fullCalendar.lang("tr", {
 		day: "Gün",
 		list: "Ajanda"
 	},
-	allDayText: "Tüm gün"
+	allDayText: "Tüm gün",
+	eventLimitText: "daha fazla"
 });

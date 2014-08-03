@@ -6,5 +6,8 @@ $.fullCalendar.lang("hi", {
 		day: "दिन",
 		list: "कार्यसूची"
 	},
-	allDayText: "सभी दिन"
+	allDayText: "सभी दिन",
+	eventLimitText: function(n) {
+		return "+अधिक " + n;
+	}
 });
