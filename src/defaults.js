@@ -123,7 +123,8 @@ var langOptionHash = {
 	en: {
 		columnFormat: {
 			week: 'ddd M/D' // override for english. different from the generated default, which is MM/DD
-		}
+		},
+		eventLimitPopoverFormat: 'dddd, MMMM D, YYYY'
 	}
 };
 

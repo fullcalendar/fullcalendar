@@ -6,7 +6,8 @@ setDefaults({
 	fixedWeekCount: true,
 	eventLimit: false,
 	eventLimitText: 'more',
-	eventLimitClick: 'popover'
+	eventLimitClick: 'popover',
+	eventLimitPopoverFormat: 'LL'
 });
 
 fcViews.month = MonthView; // register the view
