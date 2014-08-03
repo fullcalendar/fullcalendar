@@ -106,6 +106,9 @@ function matchCellWidths(els) {
 			maxInnerWidth = innerWidth;
 		}
 	});
+
+	maxInnerWidth++; // sometimes not accurate of width the text needs to stay on one line. insurance
+
 	els.width(maxInnerWidth);
 
 	return maxInnerWidth;

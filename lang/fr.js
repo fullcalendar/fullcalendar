@@ -6,9 +6,6 @@ $.fullCalendar.lang("fr", {
 		day: "Jour",
 		list: "Mon planning"
 	},
-
-	// allDayHTML is discouraged but used here as a hack to get the breaking correct
-	allDayHtml: "Toute&nbsp;la journée",
-
+	allDayHtml: "Toute la<br/>journée",
 	eventLimitText: "en plus"
 });

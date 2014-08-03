@@ -6,6 +6,6 @@ $.fullCalendar.lang("id", {
 		day: "Hari",
 		list: "Agenda"
 	},
-	allDayText: "Sehari penuh",
+	allDayHtml: "Sehari<br/>penuh",
 	eventLimitText: "lebih"
 });
