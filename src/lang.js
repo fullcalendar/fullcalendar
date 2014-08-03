@@ -25,9 +25,9 @@ fc.datepickerLang = function(langCode, datepickerLangCode, options) {
 		},
 		defaultButtonText: {
 			// the translations sometimes wrongly contain HTML entities
-			prev: stripHTMLEntities(options.prevText),
-			next: stripHTMLEntities(options.nextText),
-			today: stripHTMLEntities(options.currentText)
+			prev: stripHtmlEntities(options.prevText),
+			next: stripHtmlEntities(options.nextText),
+			today: stripHtmlEntities(options.currentText)
 		}
 	});
 

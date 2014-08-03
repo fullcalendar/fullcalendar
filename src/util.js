@@ -304,7 +304,7 @@ function htmlEscape(s) {
 }
 
 
-function stripHTMLEntities(text) {
+function stripHtmlEntities(text) {
 	return text.replace(/&.*?;/g, '');
 }
 

@@ -194,7 +194,7 @@ $.extend(AgendaView.prototype, {
 		return '' +
 			'<td class="' + this.widgetHeaderClass + ' fc-axis" ' + this.axisStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
-					(this.opt('allDayHTML') || htmlEscape(this.opt('allDayText'))) +
+					(this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'))) +
 				'</span>' +
 			'</td>';
 	},
