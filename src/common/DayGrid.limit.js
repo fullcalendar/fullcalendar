@@ -250,7 +250,7 @@ $.extend(DayGrid.prototype, {
 	renderSegPopoverContent: function(date, segs) {
 		var view = this.view;
 		var isTheme = view.opt('theme');
-		var title = date.format(view.opt('eventLimitPopoverFormat'));
+		var title = date.format(view.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
