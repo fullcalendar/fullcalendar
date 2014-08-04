@@ -106,7 +106,7 @@ function ResourceEventRenderer() {
 					resourceEvents,
 					visEventEnds,
 					d,
-					addMinutes(cloneDate(d), maxMinute-minMinute)
+					addMinutes(d.clone(), maxMinute-minMinute)
 				)
 			);
 			countForwardSegs(col);
@@ -137,14 +137,14 @@ function ResourceEventRenderer() {
 			eventEnd = visEventEnds[i];
 			if (eventEnd > start && eventStart < end) {
 				if (eventStart < start) {
-					segStart = cloneDate(start);
+					segStart = start.clone();
 					isStart = false;
 				}else{
 					segStart = eventStart;
 					isStart = true;
 				}
 				if (eventEnd > end) {
-					segEnd = cloneDate(end);
+					segEnd = end.clone();
 					isEnd = false;
 				}else{
 					segEnd = eventEnd;
@@ -175,9 +175,9 @@ function ResourceEventRenderer() {
 
 	function slotEventEnd(event) {
 		if (event.end) {
-			return cloneDate(event.end);
+			return event.end.clone();
 		}else{
-			return addMinutes(cloneDate(event.start), opt('defaultEventMinutes'));
+			return addMinutes(event.start.clone(), opt('defaultEventMinutes'));
 		}
 	}
 	
@@ -415,7 +415,7 @@ function ResourceEventRenderer() {
 						if (!cell.row) {
 							// on full-days
 							renderDayOverlay(
-								addDays(cloneDate(event.start), dayDelta),
+								addDays(event.start.clone(), dayDelta),
 								addDays(exclEndDay(event), dayDelta)
 							);
 							resetElement();
@@ -618,7 +618,7 @@ function ResourceEventRenderer() {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
 					renderDayOverlay(
-						addDays(cloneDate(event.start), dayDelta),
+						addDays(event.start.clone(), dayDelta),
 						addDays(exclEndDay(event), dayDelta)
 					);
 				}
@@ -631,10 +631,10 @@ function ResourceEventRenderer() {
 		}
 
 		function updateTimeText(minuteDelta) {
-			var newStart = addMinutes(cloneDate(event.start), minuteDelta);
+			var newStart = addMinutes(event.start.clone(), minuteDelta);
 			var newEnd;
 			if (event.end) {
-				newEnd = addMinutes(cloneDate(event.end), minuteDelta);
+				newEnd = addMinutes(event.end.clone(), minuteDelta);
 			}
 			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
 		}
