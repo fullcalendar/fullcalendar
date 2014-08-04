@@ -431,7 +431,6 @@ temporary rendered events).
 	font-size: .85em;
 	border-radius: 3px;
 	text-decoration: none; /* if it has an href */
-	cursor: default;
 }
 
 .ui-widget .fc-event { /* undo jqui's styles on <a> tags */
