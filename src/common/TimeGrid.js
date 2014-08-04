@@ -199,7 +199,9 @@ $.extend(TimeGrid.prototype, {
 	// Gets the datetime for the given slot cell
 	getCellDate: function(cell) {
 		// the View's cellToDate system only accounts for the beginning of whole days
-		return this.view.cellToDate(0, cell.col).time(this.snapDuration * cell.row);
+		return this.view.cellToDate(0, cell.col).time(
+			this.minTime + this.snapDuration * cell.row
+		);
 	},
 
 
