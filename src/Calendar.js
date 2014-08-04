@@ -424,9 +424,7 @@ function Calendar(element, instanceOptions) {
 			}
 
 			ignoreWindowResize++;
-			currentView.recordScroll(); // for keeping the scroll value (if any) before refreshing dimensions
-			currentView.updateHeight(); // will poll getSuggestedViewHeight() and isHeightAuto()
-			currentView.updateWidth();
+			currentView.updateSize(true); // isResize=true. will poll getSuggestedViewHeight() and isHeightAuto()
 			ignoreWindowResize--;
 
 			return true; // signal success

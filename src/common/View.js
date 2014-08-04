@@ -55,8 +55,7 @@ View.prototype = {
 	// Renders the view inside an already-defined `this.el`.
 	// Subclasses should override this and then call the super method afterwards.
 	render: function() {
-		this.updateHeight();
-		this.updateWidth();
+		this.updateSize();
 		this.trigger('viewRender', this, this, this.el);
 	},
 
@@ -83,6 +82,16 @@ View.prototype = {
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Refreshes anything dependant upon sizing of the container element of the grid
+	updateSize: function(isResize) {
+		if (isResize) {
+			this.recordScroll();
+		}
+		this.updateHeight();
+		this.updateWidth();
+	},
 
 
 	// Refreshes the horizontal dimensions of the calendar

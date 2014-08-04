@@ -50,12 +50,7 @@ $.extend(TimeGrid.prototype, {
 		segs = this.renderSegs(segs); // returns only the visible segs
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
-		// compute vertical coordinates
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			seg.top = this.computeDateTop(seg.start, seg.start);
-			seg.bottom = this.computeDateTop(seg.end, seg.start);
-		}
+		this.computeSegVerticals(segs); // compute and assign top/bottom
 
 		for (col = 0; col < segCols.length; col++) { // iterate each column grouping
 			colSegs = segCols[col];
@@ -79,6 +74,35 @@ $.extend(TimeGrid.prototype, {
 			tableEl: tableEl,
 			segs: segs
 		};
+	},
+
+
+	// Refreshes the CSS top/bottom coordinates for each segment element. Probably after a window resize/zoom.
+	updateSegVerticals: function() {
+		var segs = this.segs;
+		var i;
+
+		if (segs) {
+			this.computeSegVerticals(segs);
+
+			for (i = 0; i < segs.length; i++) {
+				segs[i].el.css(
+					this.generateSegVerticalCss(segs[i])
+				);
+			}
+		}
+	},
+
+
+	// For each segment in an array, computes and assigns its top and bottom properties
+	computeSegVerticals: function(segs) {
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			seg.top = this.computeDateTop(seg.start, seg.start);
+			seg.bottom = this.computeDateTop(seg.end, seg.start);
+		}
 	},
 
 
@@ -135,7 +159,7 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
-	// Generates an object with css properties/values that should be applied to an event segment element.
+	// Generates an object with CSS properties/values that should be applied to an event segment element.
 	// Contains important positioning-related properties that should be applied to any event element, customized or not.
 	generateSegPositionCss: function(seg) {
 		var view = this.view;
@@ -143,6 +167,7 @@ $.extend(TimeGrid.prototype, {
 		var shouldOverlap = view.opt('slotEventOverlap');
 		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
 		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
+		var props = this.generateSegVerticalCss(seg); // get top/bottom first
 		var left; // amount of space from left edge, a fraction of the total width
 		var right; // amount of space from right edge, a fraction of the total width
 		var props;
@@ -161,13 +186,9 @@ $.extend(TimeGrid.prototype, {
 			right = 1 - forwardCoord;
 		}
 
-		props = {
-			zIndex: seg.level + 1, // convert from 0-base to 1-based
-			top: seg.top,
-			bottom: -seg.bottom, // flipped because needs to be space beyond bottom edge of event container
-			left: left * 100 + '%',
-			right: right * 100 + '%'
-		};
+		props.zIndex = seg.level + 1; // convert from 0-base to 1-based
+		props.left = left * 100 + '%';
+		props.right = right * 100 + '%';
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
@@ -175,6 +196,15 @@ $.extend(TimeGrid.prototype, {
 		}
 
 		return props;
+	},
+
+
+	// Generates an object with CSS properties for the top/bottom coordinates of a segment element
+	generateSegVerticalCss: function(seg) {
+		return {
+			top: seg.top,
+			bottom: -seg.bottom, // flipped because needs to be space beyond bottom edge of event container
+		};
 	},
 
 

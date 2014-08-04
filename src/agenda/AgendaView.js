@@ -220,6 +220,13 @@ $.extend(AgendaView.prototype, {
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
 
+	updateSize: function(isResize) {
+		if (isResize) {
+			this.timeGrid.resize();
+		}
+		View.prototype.updateSize.call(this, isResize);
+	},
+
 
 	// Refreshes the horizontal dimensions of the view
 	updateWidth: function() {

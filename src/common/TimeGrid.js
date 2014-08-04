@@ -155,6 +155,13 @@ $.extend(TimeGrid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	// Called when there is a window resize/zoom and we need to recalculate coordinates for the grid
+	resize: function() {
+		this.computeSlatTops();
+		this.updateSegVerticals();
+	},
+
+
 	// Populates the given empty `rows` and `cols` arrays with offset positions of the "snap" cells.
 	// "Snap" cells are different the slots because they might have finer granularity.
 	buildCoords: function(rows, cols) {
