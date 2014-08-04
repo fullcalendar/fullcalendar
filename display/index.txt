@@ -11,13 +11,15 @@ General Display
 <li>isRTL</li>
 <li>weekends</li>
 <li>hiddenDays</li>
-<li>weekMode</li>
+<li>fixedWeekCount</li>
 <li>weekNumbers</li>
 <li>weekNumberCalculation</li>
 <li>height</li>
 <li>contentHeight</li>
 <li>aspectRatio</li>
 <li>handleWindowResize</li>
+<li>eventLimit</li>
+<li>eventLimitClick</li>
 <li class='callback'><a href='viewRender'>viewRender</a> <em>(callback)</em></li>
 <li class='callback'><a href='viewDestroy'>viewDestroy</a> <em>(callback)</em></li>
 <li class='callback'><a href='dayRender'>dayRender</a> <em>(callback)</em></li>

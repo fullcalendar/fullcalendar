@@ -5,10 +5,16 @@ contentHeight
 Will make the calendar's content area a pixel height.
 
 <div class='spec' markdown='1'>
-Integer
+Integer, `"auto"`
 </div>
 
 By default, this option is unset and the calendar's height is calculated by [aspectRatio]().
+
+If an integer is specified, the height of the view will be guaranteed to be that exact pixel height.
+If the contents will not fit within the height, scrollbars will appear (new in version 2.1.0).
+
+If `"auto"` is specified, the view's contents will assume a natural height and no scrollbars will be used.
+(new in version 2.1.0).
 
 Example usage of `contentHeight`:
 

@@ -1,0 +1,18 @@
+
+eventLimit *2.1.0*
+==================
+
+Limits the number of events displayed on a day in Month view.
+
+<div class='spec' markdown='1'>
+Boolean, Integer. *default:* `false`
+</div>
+
+When there are too many events, a link that looks like "+2 more" is displayed.
+The exact action that happens when the user clicks the link is determined by [eventLimitClick]().
+
+A value of `false` (the default) will display all events as-is.
+
+A value of `true` will limit the number of events to the height of the day cell.
+
+An integer value will limit the events to a specific number of rows.

@@ -2,6 +2,11 @@
 weekMode
 ========
 
+<div class='removed-notice' markdown='1'>
+This method has been deprecated in favor of [fixedWeekCount](), which controls the number of rows,
+and the [height]()/[contentHeight]() settings, which can now be set to `"auto"`.
+</div>
+
 Determines the number of weeks displayed in a month view. Also determines each week's height.
 
 <div class='spec' markdown='1'>
@@ -14,12 +19,18 @@ Available options:
 :	The calendar will always be 6 weeks tall. The height will always be the same, as determined by
 	[height](height), [contentHeight](), or [aspectRatio]().
 
+	*Use [fixedWeekCount]() as `true` instead.*
+
 `'liquid'`
 :	The calendar will have either 4, 5, or 6 weeks, depending on the month.
 	The height of the weeks will stretch to fill the available height, as determined by
 	[height](height), [contentHeight](), or [aspectRatio]().
 
+	*Use [fixedWeekCount]() as `false` instead.*
+
 `'variable'`
 :	The calendar will have either 4, 5, or 6 weeks, depending on the month.
 	Each week will have the same constant height, meaning the calendar’s height will change
 	month-to-month.
+
+	*Use [height]() as `"auto"` and [fixedWeekCount]() as `false` instead.*

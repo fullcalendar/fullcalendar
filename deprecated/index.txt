@@ -1,0 +1,5 @@
+
+Deprecated
+==========
+
+- [weekMode](../display/weekMode)
