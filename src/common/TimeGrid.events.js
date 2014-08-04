@@ -170,7 +170,6 @@ $.extend(TimeGrid.prototype, {
 		var props = this.generateSegVerticalCss(seg); // get top/bottom first
 		var left; // amount of space from left edge, a fraction of the total width
 		var right; // amount of space from right edge, a fraction of the total width
-		var props;
 
 		if (shouldOverlap) {
 			// double the width, but don't go beyond the maximum forward coordinate (1.0)
@@ -203,7 +202,7 @@ $.extend(TimeGrid.prototype, {
 	generateSegVerticalCss: function(seg) {
 		return {
 			top: seg.top,
-			bottom: -seg.bottom, // flipped because needs to be space beyond bottom edge of event container
+			bottom: -seg.bottom // flipped because needs to be space beyond bottom edge of event container
 		};
 	},
 

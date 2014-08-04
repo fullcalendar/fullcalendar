@@ -115,6 +115,28 @@ function matchCellWidths(els) {
 }
 
 
+// Turns a container element into a scroller if its contents is taller than the allotted height.
+// Returns true if the element is now a scroller, false otherwise.
+// NOTE: this method is best because it takes weird zooming dimensions into account
+function setPotentialScroller(containerEl, height) {
+	containerEl.height(height).addClass('fc-scroller');
+
+	// are scrollbars needed?
+	if (containerEl[0].scrollHeight > containerEl[0].clientHeight) {
+		return true;
+	}
+
+	unsetScroller(containerEl); // undo
+	return false;
+}
+
+
+// Takes an element that might have been a scroller, and turns it back into a normal element.
+function unsetScroller(containerEl) {
+	containerEl.height('').removeClass('fc-scroller');
+}
+
+
 /* General DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 

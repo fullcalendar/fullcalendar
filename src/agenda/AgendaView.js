@@ -238,8 +238,6 @@ $.extend(AgendaView.prototype, {
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
 		var scrollerHeight;
-		var timeGridHeight;
-		var extraHeight; // # of pixels the time-grid element needs to expand to fill the scroller
 
 		if (this.bottomRuleHeight === null) {
 			// calculate the height of the rule the very first time
@@ -248,19 +246,16 @@ $.extend(AgendaView.prototype, {
 		this.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
 
 		// reset all dimensions back to the original state
-		this.scrollerEl.height('').removeClass('fc-scroller');
+		this.scrollerEl.css('overflow', '');
+		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.noScrollRowEls);
 
 		if (!isAuto) { // should we force dimensions of the scroll container, or let the contents be natural height?
 
 			scrollerHeight = this.computeScrollerHeight(totalHeight);
-			timeGridHeight = this.timeGrid.el.height();
-			this.scrollerEl.height(scrollerHeight);
+			if (setPotentialScroller(this.scrollerEl, scrollerHeight)) { // using scrollbars?
 
-			if (timeGridHeight > scrollerHeight) { // do we need scrollbars?
-
-				// force scrollbars and make the all-day and header rows lines up
-				this.scrollerEl.addClass('fc-scroller');
+				// make the all-day and header rows lines up
 				compensateScroll(this.noScrollRowEls, getScrollbarWidths(this.scrollerEl));
 
 				// the scrollbar compensation might have changed text flow, which might affect height, so recalculate
@@ -270,12 +265,10 @@ $.extend(AgendaView.prototype, {
 
 				this.restoreScroll();
 			}
-			else {
-				// display the <hr> if there is enough extra space
-				extraHeight = scrollerHeight - timeGridHeight;
-				if (extraHeight > this.bottomRuleHeight + 5) {
-					this.bottomRuleEl.show();
-				}
+			else { // no scrollbars
+				// still, force a height and display the bottom rule (marks the end of day)
+				this.scrollerEl.height(scrollerHeight).css('overflow', 'hidden'); // in case <hr> goes outside
+				this.bottomRuleEl.show();
 			}
 		}
 	},

@@ -184,15 +184,14 @@ $.extend(BasicView.prototype, {
 		var scrollerHeight;
 
 		// reset all heights to be natural
-		this.scrollerEl.height('').removeClass('fc-scroller');
+		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.headRowEl);
 
 		scrollerHeight = this.computeScrollerHeight(totalHeight);
 		this.setGridHeight(scrollerHeight, isAuto);
 
-		if (!isAuto && this.dayGrid.el.height() > scrollerHeight) { // should we show scrollbars?
+		if (!isAuto && setPotentialScroller(this.scrollerEl, scrollerHeight)) { // using scrollbars?
 
-			this.scrollerEl.height(scrollerHeight).addClass('fc-scroller');
 			compensateScroll(this.headRowEl, getScrollbarWidths(this.scrollerEl));
 
 			// doing the scrollbar compensation might have created text overflow which created more height. redo
