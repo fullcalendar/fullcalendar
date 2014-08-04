@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta1 Stylesheet
+ * FullCalendar v2.1.0-beta2 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -27,12 +27,22 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-unthemed hr,
 .fc-unthemed thead,
 .fc-unthemed tbody,
-.fc-unthemed .fc-row {
+.fc-unthemed .fc-row,
+.fc-unthemed .fc-popover {
 	border-color: #ddd;
 }
 
-.fc-unthemed hr {
+.fc-unthemed .fc-popover {
+	background-color: #fff;
+}
+
+.fc-unthemed hr,
+.fc-unthemed .fc-popover .fc-header {
 	background: #eee;
+}
+
+.fc-unthemed .fc-popover .fc-header .fc-close {
+	color: #666;
 }
 
 .fc-unthemed .fc-today {
@@ -73,6 +83,10 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-icon-right-double-arrow:after {
 	content: "\000BB";
+}
+
+.fc-icon-x:after {
+	content: "\000D7";
 }
 
 
@@ -194,6 +208,55 @@ previous button's border...
 
 .fc .fc-button-group > :first-child { /* same */
 	margin-left: 0;
+}
+
+
+/* Popover
+--------------------------------------------------------------------------------------------------*/
+
+.fc-popover {
+	position: absolute;
+	box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+.fc-popover .fc-header {
+	padding: 2px 4px;
+}
+
+.fc-popover .fc-header .fc-title {
+	margin: 0 2px;
+}
+
+.fc-popover .fc-header .fc-close {
+	cursor: pointer;
+}
+
+.fc-ltr .fc-popover .fc-header .fc-title,
+.fc-rtl .fc-popover .fc-header .fc-close {
+	float: left;
+}
+
+.fc-rtl .fc-popover .fc-header .fc-title,
+.fc-ltr .fc-popover .fc-header .fc-close {
+	float: right;
+}
+
+/* unthemed */
+
+.fc-unthemed .fc-popover {
+	border-width: 1px;
+	border-style: solid;
+}
+
+.fc-unthemed .fc-popover .fc-header .fc-close {
+	font-size: 25px;
+	margin-top: 4px;
+}
+
+/* jqui themed */
+
+.fc-popover > .ui-widget-header + .ui-widget-content {
+	border-top: 0; /* where they meet, let the header have the border */
 }
 
 
@@ -366,9 +429,9 @@ temporary rendered events).
 	background-color: #3a87ad; /* default BACKGROUND color */
 	color: #fff;               /* default TEXT color */
 	font-size: .85em;
+	line-height: 1.3;
 	border-radius: 3px;
 	text-decoration: none; /* if it has an href */
-	cursor: default;
 }
 
 .ui-widget .fc-event { /* undo jqui's styles on <a> tags */
@@ -383,16 +446,19 @@ temporary rendered events).
 
 
 /* DayGrid events
---------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------
+We use the full "fc-day-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
 
-.fc-day-grid .fc-event {
+.fc-day-grid-event {
 	margin: 1px 1px 0; /* spacing between events and edges */
 }
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
-.fc-ltr .fc-day-grid .fc-event.fc-not-start,
-.fc-rtl .fc-day-grid .fc-event.fc-not-end {
+.fc-ltr .fc-day-grid-event.fc-not-start,
+.fc-rtl .fc-day-grid-event.fc-not-end {
 	margin-left: 0;
 	border-left-width: 0;
 	padding-left: 1px; /* replace the border with padding */
@@ -400,20 +466,14 @@ temporary rendered events).
 	border-bottom-left-radius: 0;
 }
 
-.fc-ltr .fc-day-grid .fc-event.fc-not-end,
-.fc-rtl .fc-day-grid .fc-event.fc-not-start {
+.fc-ltr .fc-day-grid-event.fc-not-end,
+.fc-rtl .fc-day-grid-event.fc-not-start {
 	margin-right: 0;
 	border-right-width: 0;
 	padding-right: 1px; /* replace the border with padding */
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
-
-/*
-The above event styles will not apply to events that are being dragged. Dragged events are attached
-to an outer parent not part of the .fc-view, thus we need the className "fc-day-grid-event".
-The below styles WILL be applied to dragged events.
-*/
 
 .fc-day-grid-event > .fc-content { /* force events to be one-line tall */
 	white-space: nowrap;
@@ -530,6 +590,19 @@ The below styles WILL be applied to dragged events.
 	min-height: 4em; /* ensure that all rows are at least this tall */
 }
 
+/* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */
+
+.fc-row.fc-rigid {
+	overflow: hidden;
+}
+
+.fc-row.fc-rigid .fc-content-skeleton {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
 /* week and day number styling */
 
 .fc-basic-view .fc-week-number,
@@ -561,14 +634,46 @@ The below styles WILL be applied to dragged events.
 	text-align: left;
 }
 
+/* "more" link that represents hidden events */
+
+a.fc-more {
+	margin: 1px 2px;
+	font-size: .85em;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a.fc-more:hover {
+	text-decoration: underline;
+}
+
+.fc-limited { /* rows and cells that are hidden because of a "more" link */
+	display: none;
+}
+
+/* popover that appears when "more" link is clicked */
+
+.fc-day-grid .fc-row {
+	z-index: 1; /* make the "more" popover one higher than this */
+}
+
+.fc-more-popover {
+	z-index: 2;
+	width: 220px;
+}
+
+.fc-more-popover .fc-event-container {
+	padding: 10px;
+}
+
 /* AgendaView all-day area
 --------------------------------------------------------------------------------------------------*/
 
-.fc-agenda-view tbody .fc-row {
+.fc-agenda-view .fc-day-grid .fc-row {
 	min-height: 3em; /* all-day section will never get shorter than this */
 }
 
-.fc-agenda-view tbody .fc-row .fc-content-skeleton {
+.fc-agenda-view .fc-day-grid .fc-row .fc-content-skeleton {
 	padding-bottom: 1em; /* give space underneath events for clicking/selecting days */
 }
 
@@ -688,9 +793,12 @@ The below styles WILL be applied to dragged events.
 
 
 /* TimeGrid Event Styling
---------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
 
-.fc-time-grid .fc-event.fc-not-start { /* events that are continuing from another day */
+.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
 	/* replace space made by the top border with padding */
 	border-top-width: 0;
 	padding-top: 1px;
@@ -700,7 +808,7 @@ The below styles WILL be applied to dragged events.
 	border-top-right-radius: 0;
 }
 
-.fc-time-grid .fc-event.fc-not-end {
+.fc-time-grid-event.fc-not-end {
 	/* replace space made by the top border with padding */
 	border-bottom-width: 0;
 	padding-bottom: 1px;
@@ -709,12 +817,6 @@ The below styles WILL be applied to dragged events.
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-
-/*
-The above event styles will not apply to events that are being dragged. Dragged events are attached
-to an outer parent not part of the .fc-view, thus we need the className "fc-time-grid-event".
-The below styles WILL be applied to dragged events.
-*/
 
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */

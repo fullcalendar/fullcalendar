@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta1 Print Stylesheet
+ * FullCalendar v2.1.0-beta2 Print Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -51,31 +51,47 @@ tbody,
 
 /* don't force a min-height on rows (for DayGrid) */
 .fc tbody .fc-row {
-	min-height: 0 !important;
+	height: auto !important; /* undo height that JS set in distributeHeight */
+	min-height: 0 !important; /* undo the min-height from each view's specific stylesheet */
 }
 
-/* don't have chunky padding underneath events (for Agenda, basicWeek, basicDay) */
 .fc tbody .fc-row .fc-content-skeleton {
+	position: static; /* undo .fc-rigid */
+	/* don't have chunky padding underneath events (for Agenda, basicWeek, basicDay) */
 	padding-bottom: 0 !important;
 }
 
-/* Make space at the bottom by putting a non-breaking space in the last row's cells.
-   :last-child only works with newer browsers */
-.fc tbody .fc-row .fc-content-skeleton tbody tr:last-child td:after {
-	content: "\000A0";
+/* give back the bottom spacing that was taken away from the content-skeleton's padding (above) */
+/* only works on modern browsers */
+.fc tbody .fc-row .fc-content-skeleton table tr:last-child td {
+	padding-bottom: 1px;
 }
 
-/* For IE8, which doesn't understand the above line, give a min-height.
-   For some reason, IE8 really overexaggerates this value.
-   Other browsers will already be taller than this. */
+/* sets a min-height on the event skeleton. for IE8. was overexaggerating this, so make small */
 .fc tbody .fc-row .fc-content-skeleton table {
 	height: 2em;
 }
 
-/* For IE8, the table height might get too tall and create gaps between events and day lines.
-   Vertically centering events within these cells makes it look better */
-.fc-day-grid .fc-event-container {
-	vertical-align: middle !important;
+/* sets a min-height on the event skeleton. for modern browsers (not IE8) */
+.fc tbody .fc-row .fc-content-skeleton table:last-child {
+	height: 4em;
+}
+
+
+/* Undo month-view event limiting. Display all events and hide the "more" links
+--------------------------------------------------------------------------------------------------*/
+
+.fc-more-cell,
+.fc-more {
+	display: none !important;
+}
+
+.fc tr.fc-limited {
+	display: table-row !important;
+}
+
+.fc td.fc-limited {
+	display: table-cell !important;
 }
 
 
