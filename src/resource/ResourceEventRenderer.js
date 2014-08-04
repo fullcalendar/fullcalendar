@@ -97,7 +97,7 @@ function ResourceEventRenderer() {
 		for (i=0; i<colCnt; i++) {
 
 			d = t.visStart.clone();
-			addMinutes(d, minMinute);
+			d.add('m', minMinute);
 
 			var resourceEvents = eventsForResource(resources()[i], events);
 			visEventEnds = $.map(resourceEvents, slotEventEnd);
@@ -106,7 +106,7 @@ function ResourceEventRenderer() {
 					resourceEvents,
 					visEventEnds,
 					d,
-					addMinutes(d.clone(), maxMinute-minMinute)
+					d.clone().add('m', maxMinute-minMinute)
 				)
 			);
 			countForwardSegs(col);
@@ -177,7 +177,7 @@ function ResourceEventRenderer() {
 		if (event.end) {
 			return event.end.clone();
 		}else{
-			return addMinutes(event.start.clone(), opt('defaultEventMinutes'));
+			return event.start.clone().add('m', opt('defaultEventMinutes'));
 		}
 	}
 	
@@ -631,10 +631,10 @@ function ResourceEventRenderer() {
 		}
 
 		function updateTimeText(minuteDelta) {
-			var newStart = addMinutes(event.start.clone(), minuteDelta);
+			var newStart = event.start.clone().add('m', minuteDelta);
 			var newEnd;
 			if (event.end) {
-				newEnd = addMinutes(event.end.clone(), minuteDelta);
+				newEnd = event.end.clone().add('m', minuteDelta);
 			}
 			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
 		}
@@ -669,7 +669,7 @@ function ResourceEventRenderer() {
 						formatDates(
 							event.start,
 							(!snapDelta && !event.end) ? null : // no change, so don't display time range
-								addMinutes(eventEnd(event), snapMinutes*snapDelta),
+								eventEnd(event).add('m', snapMinutes*snapDelta),
 							opt('timeFormat')
 						)
 					);

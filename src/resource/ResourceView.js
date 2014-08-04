@@ -238,8 +238,8 @@ function ResourceView(element, calendar, viewName) {
 			"<table class='fc-agenda-slots' style='width:100%' cellspacing='0'>" +
 			"<tbody>";
 		d = zeroDate();
-		maxd = addMinutes(d.clone(), maxMinute);
-		addMinutes(d, minMinute);
+		maxd = d.clone().add('m', maxMinute);
+		d.add('m', minMinute);
 		slotCnt = 0;
 		for (i=0; d < maxd; i++) {
 			minutes = d.getMinutes();
@@ -252,7 +252,7 @@ function ResourceView(element, calendar, viewName) {
 				"<div style='position:relative'>&nbsp;</div>" +
 				"</td>" +
 				"</tr>";
-			addMinutes(d, opt('slotMinutes'));
+			d.add('m', opt('slotMinutes'));
 			slotCnt++;
 		}
 		s +=
@@ -691,10 +691,10 @@ function ResourceView(element, calendar, viewName) {
 	// get the Y coordinate of the given time on the given day (both Date objects)
 	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
 		day = day.clone().stripTime();
-		if (time < addMinutes(day.clone(), minMinute)) {
+		if (time < day.clone().add('m', minMinute)) {
 			return 0;
 		}
-		if (time >= addMinutes(day.clone(), maxMinute)) {
+		if (time >= day.clone().add('m', maxMinute)) {
 			return slotTable.height();
 		}
 		var slotMinutes = opt('slotMinutes'),
@@ -724,7 +724,7 @@ function ResourceView(element, calendar, viewName) {
 		if (event.allDay) {
 			return start;
 		}
-		return addMinutes(start, opt('defaultEventMinutes'));
+		return start.add('m', opt('defaultEventMinutes'));
 	}
 	
 	
@@ -737,7 +737,7 @@ function ResourceView(element, calendar, viewName) {
 		if (allDay) {
 			return startDate.clone();
 		}
-		return addMinutes(startDate.clone(), opt('slotMinutes'));
+		return startDate.clone().add('m', opt('slotMinutes'));
 	}
 	
 	
@@ -858,9 +858,9 @@ function ResourceView(element, calendar, viewName) {
 					var d2 = realCellToDate(cell);
 					dates = [
 						d1,
-						addMinutes(d1.clone(), snapMinutes), // calculate minutes depending on selection slot minutes
+						d1.clone().add('m', snapMinutes), // calculate minutes depending on selection slot minutes
 						d2,
-						addMinutes(d2.clone(), snapMinutes)
+						d2.clone().add('m', snapMinutes)
 					].sort(dateCompare);
 					renderSlotSelection(dates[0], dates[3], cell.col);
 				}else{
@@ -899,7 +899,7 @@ function ResourceView(element, calendar, viewName) {
 					renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
 				}else{
 					var d1 = realCellToDate(cell);
-					var d2 = addMinutes(d1.clone(), opt('defaultEventMinutes'));
+					var d2 = d1.clone().add('m', opt('defaultEventMinutes'));
 					renderSlotOverlay(d1, d2, cell.col);
 				}
 			}
