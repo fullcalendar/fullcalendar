@@ -1,4 +1,21 @@
 
+v2.1.0-beta2 (2014-08-04)
+-------------------------
+
+RESOLVED ISSUES:
+- Max events with "more..." link ([304])
+- Don't fire eventMouseover/eventMouseout while dragging/resizing ([1297])
+
+NEW OPTIONS:
+- eventLimit
+- eventLimitClick
+- eventLimitText
+- dayPopoverFormat
+
+[304]: https://code.google.com/p/fullcalendar/issues/detail?id=304
+[1297]: https://code.google.com/p/fullcalendar/issues/detail?id=1297
+
+
 v2.1.0-beta1 (2014-07-23)
 -------------------------
 
@@ -44,7 +61,6 @@ RESOLVED ISSUES:
 - Android browser cuts off Day view at 8 PM with no scroll bar ([1203])
 - Customize the resize handle text ("=") ([1326])
 - If agenda event is too short, don't overwrite .fc-event-time ([1700])
-- dayRender trigger for agendaViews ([1898])
 - Limit height of events to 1-line by default ([1992])
 - Zooming calendar causes events to miss-align ([1996])
 - Event destroy callback on event removal ([2017])
@@ -74,7 +90,6 @@ RESOLVED ISSUES:
 [1203]: https://code.google.com/p/fullcalendar/issues/detail?id=1203
 [1326]: https://code.google.com/p/fullcalendar/issues/detail?id=1326
 [1700]: https://code.google.com/p/fullcalendar/issues/detail?id=1700
-[1898]: https://code.google.com/p/fullcalendar/issues/detail?id=1898
 [1992]: https://code.google.com/p/fullcalendar/issues/detail?id=1992
 [1996]: https://code.google.com/p/fullcalendar/issues/detail?id=1996
 [2017]: https://code.google.com/p/fullcalendar/issues/detail?id=2017
