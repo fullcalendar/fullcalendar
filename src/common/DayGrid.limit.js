@@ -192,20 +192,22 @@ $.extend(DayGrid.prototype, {
 				var reslicedAllSegs = _this.resliceDaySegs(allSegs, date);
 				var reslicedHiddenSegs = _this.resliceDaySegs(hiddenSegs, date);
 
-				if (clickOption === 'popover') {
-					_this.showSegPopover(date, cell, moreEl, reslicedAllSegs);
-				}
-				else if (typeof clickOption === 'string') { // a view name
-					view.calendar.zoomTo(date, clickOption);
-				}
-				else if (typeof clickOption === 'function') {
-					view.trigger('eventLimitClick', null, {
+				if (typeof clickOption === 'function') {
+					// the returned value can be an atomic option
+					clickOption = view.trigger('eventLimitClick', null, {
 						date: date,
 						dayEl: dayEl,
 						moreEl: moreEl,
 						segs: reslicedAllSegs,
 						hiddenSegs: reslicedHiddenSegs
 					}, ev);
+				}
+
+				if (clickOption === 'popover') {
+					_this.showSegPopover(date, cell, moreEl, reslicedAllSegs);
+				}
+				else if (typeof clickOption === 'string') { // a view name
+					view.calendar.zoomTo(date, clickOption);
 				}
 			});
 	},
