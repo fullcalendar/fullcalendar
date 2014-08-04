@@ -1,3 +1,5 @@
+#THIS BRANCH IS A WORK IN PROGRESS FOR NOW
+
 #FORK INFO
 This fork adds a vertical resource view to FullCalendar.
 
