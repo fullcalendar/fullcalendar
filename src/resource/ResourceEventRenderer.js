@@ -411,7 +411,7 @@ function ResourceEventRenderer() {
 						revert = false;
 						var origDate = cellToDate(0, origCell.col);
 						var date = cellToDate(0, cell.col);
-						dayDelta = dayDiff(date, origDate);
+						dayDelta = date.diff(origDate, 'days');
 						if (!cell.row) {
 							// on full-days
 							renderDayOverlay(

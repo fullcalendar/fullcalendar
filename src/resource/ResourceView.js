@@ -145,15 +145,15 @@ function ResourceView(element, calendar, viewName) {
 		}
 	}
 	
-	
 	function updateOptions() {
 
 		tm = opt('theme') ? 'ui' : 'fc';
 		rtl = opt('isRTL');
-		minMinute = parseTime(opt('minTime'));
-		maxMinute = parseTime(opt('maxTime'));
 		colFormat = opt('columnFormat');
 
+		minMinute = moment.duration(opt('minTime'));
+		maxMinute = moment.duration(opt('maxTime'));
+		
 		// week # options. (TODO: bad, logic also in other views)
 		showWeekNumbers = opt('weekNumbers');
 		weekNumberTitle = opt('weekNumberTitle');
