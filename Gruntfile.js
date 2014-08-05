@@ -1,4 +1,3 @@
-
 module.exports = function(grunt) {
 
 	var _ = require('underscore');
@@ -16,7 +15,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('lumbar');
-	
+
 	// This will eventually get passed to grunt.initConfig()
 	// Initialize multitasks...
 	var config = {
@@ -63,7 +62,7 @@ module.exports = function(grunt) {
 		'clean:modules',
 		'lumbar:build',
 		'concat:moduleVariables',
-		//'jshint:builtModules',
+		'jshint:builtModules',
 		'uglify:modules'
 	]);
 
@@ -384,7 +383,7 @@ module.exports = function(grunt) {
 	*/
 
 	config.shell['assume-unchanged'] = {
-		command: 'git update-index --assume-unchanged `git ls-files dist`'
+		command: 'git ls-files -z dist/ | xargs -0 git update-index --assume-unchanged'
 	};
 	config.shell['no-assume-unchanged'] = {
 		command: 'git update-index --no-assume-unchanged `git ls-files dist`'

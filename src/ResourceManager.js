@@ -1,7 +1,3 @@
-var ajaxDefaults = {
-	dataType: 'json',
-	cache: false
-};
 function ResourceManager(options) {
   var t = this;
   // exports
@@ -54,7 +50,7 @@ function ResourceManager(options) {
   function fetchResources(useCache, currentView) {
     // if useCache is not defined, default to true
     useCache = (typeof useCache !== 'undefined' ? useCache : true);
-    if (cache != undefined && useCache) {
+    if (cache !== undefined && useCache) {
       // get from cache
       return cache;
     } else {

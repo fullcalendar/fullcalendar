@@ -167,7 +167,7 @@ function ResourceEventRenderer() {
 	var resourceEvents = [];
 	for (var i = 0; i < events.length; i++) {
 	    if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
-	        resourceEvents.push(events[i])
+	        resourceEvents.push(events[i]);
 	    }
 	}
 	return resourceEvents;
@@ -206,7 +206,7 @@ function ResourceEventRenderer() {
 			slotSegmentContainer = getSlotSegmentContainer(),
 			rtl, dis;
 			
-		if (rtl = opt('isRTL')) {
+		if (rtl === opt('isRTL')) {
 			dis = -1;
 		}else{
 			dis = 1;
@@ -282,7 +282,7 @@ function ResourceEventRenderer() {
 		// record event sides and title positions
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
+			if (eventElement === seg.element) {
 				seg.vsides = vsides(eventElement, true);
 				seg.hsides = hsides(eventElement, true);
 				titleElement = eventElement.find('.fc-event-title');
@@ -295,7 +295,7 @@ function ResourceEventRenderer() {
 		// set all positions/dimensions at once
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement = seg.element) {
+			if (eventElement === seg.element) {
 				eventElement[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
 				height = Math.max(0, seg.outerHeight - seg.vsides);
 				eventElement[0].style.height = height + 'px';

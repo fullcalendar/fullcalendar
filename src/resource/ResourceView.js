@@ -32,22 +32,22 @@ function ResourceView(element, calendar, viewName) {
 	t.timePosition = timePosition;
 	t.getIsCellAllDay = getIsCellAllDay;
 	t.allDayRow = getAllDayRow;
-	t.getCoordinateGrid = function() { return coordinateGrid }; // specifically for AgendaEventRenderer
-	t.getHoverListener = function() { return hoverListener };
+	t.getCoordinateGrid = function() { return coordinateGrid; }; // specifically for AgendaEventRenderer
+	t.getHoverListener = function() { return hoverListener; };
 	t.colLeft = colLeft;
 	t.colRight = colRight;
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
-	t.getDaySegmentContainer = function() { return daySegmentContainer };
-	t.getSlotSegmentContainer = function() { return slotSegmentContainer };
-	t.getMinMinute = function() { return minMinute };
-	t.getMaxMinute = function() { return maxMinute };
-	t.getSlotContainer = function() { return slotContainer };
-	t.getRowCnt = function() { return 1 };
-	t.getColCnt = function() { return colCnt };
-	t.getColWidth = function() { return colWidth };
-	t.getSnapHeight = function() { return snapHeight };
-	t.getSnapMinutes = function() { return snapMinutes };
+	t.getDaySegmentContainer = function() { return daySegmentContainer; };
+	t.getSlotSegmentContainer = function() { return slotSegmentContainer; };
+	t.getMinMinute = function() { return minMinute; };
+	t.getMaxMinute = function() { return maxMinute; };
+	t.getSlotContainer = function() { return slotContainer; };
+	t.getRowCnt = function() { return 1; };
+	t.getColCnt = function() { return colCnt; };
+	t.getColWidth = function() { return colWidth; };
+	t.getSnapHeight = function() { return snapHeight; };
+	t.getSnapMinutes = function() { return snapMinutes; };
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
@@ -55,13 +55,13 @@ function ResourceView(element, calendar, viewName) {
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
-  	t.getResources = calendar.fetchResources;
+	t.getResources = calendar.fetchResources;
 	
 	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
-  	ResourceEventRenderer.call(t);
+	ResourceEventRenderer.call(t);
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var renderOverlay = t.renderOverlay;
@@ -149,7 +149,7 @@ function ResourceView(element, calendar, viewName) {
 	function updateOptions() {
 
 		tm = opt('theme') ? 'ui' : 'fc';
-		rtl = opt('isRTL')
+		rtl = opt('isRTL');
 		minMinute = parseTime(opt('minTime'));
 		maxMinute = parseTime(opt('maxTime'));
 		colFormat = opt('columnFormat');
@@ -181,7 +181,7 @@ function ResourceView(element, calendar, viewName) {
 		var i;
 		var maxd;
 		var minutes;
-		var slotNormal = opt('slotMinutes') % 15 == 0;
+		var slotNormal = opt('slotMinutes') % 15 === 0;
 		
 		buildDayTable();
 		
@@ -547,10 +547,10 @@ function ResourceView(element, calendar, viewName) {
 			var date = cellToDate(0, 0);
 			var rowMatch = this.parentNode.className.match(/fc-slot(\d+)/); // TODO: maybe use data
 
-		  	ev.data = resources()[col];
+			ev.data = resources()[col];
 
 			if (rowMatch) {
-				var mins = parseInt(rowMatch[1]) * opt('slotMinutes');
+				var mins = parseInt(rowMatch[1], 10) * opt('slotMinutes');
 				var hours = Math.floor(mins/60);
 				date.setHours(hours);
 				date.setMinutes(mins%60 + minMinute);
