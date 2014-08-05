@@ -88,10 +88,10 @@ function ResourceManager(options) {
           var startParam = options.startParam;
           var endParam = options.endParam;
           if (startParam) {
-            data[startParam] = Math.round(+currentView.visStart / 1000);
+            data[startParam] = Math.round(+currentView.intervalStart / 1000);
           }
           if (endParam) {
-            data[endParam] = Math.round(+currentView.visEnd / 1000);
+            data[endParam] = Math.round(+currentView.intervalEnd / 1000);
           }
         }
         $.ajax($.extend({}, ajaxDefaults, source, {

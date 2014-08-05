@@ -384,7 +384,7 @@ function ResourceView(element, calendar, viewName) {
 
 		for (col=0; col<colCnt; col++) {
 
-			date = t.visStart.clone();
+			date = t.intervalStart.clone();
 
 			classNames = [
 				'fc-col' + col,
@@ -515,9 +515,9 @@ function ResourceView(element, calendar, viewName) {
 
 
 	function resetScroll() {
-		var d0 = new Date(1970, 0, 1);  // TODO - refactor this out when we replace minMinute/maxMinute with minTime/maxTime
+		var d0 = $.fullCalendar.moment(new Date(1970, 0, 1));  // TODO - refactor this out when we replace minMinute/maxMinute with minTime/maxTime
 		var scrollDate = d0.clone();
-		scrollDate.setHours(opt('firstHour'));
+		scrollDate.hour(opt('firstHour'));
 		var top = timePosition(d0, scrollDate) + 1; // +1 for the border
 		
 		function scroll() {
@@ -562,7 +562,7 @@ function ResourceView(element, calendar, viewName) {
 			if (rowMatch) {
 				var mins = parseInt(rowMatch[1], 10) * opt('slotMinutes');
 				var hours = Math.floor(mins/60);
-				date.setHours(hours);
+				date.hour(hours);
 				date.setMinutes(mins%60 + minMinute);
 				trigger('dayClick', dayBodyCells[col], date, false, ev);
 			}else{

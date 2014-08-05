@@ -98,7 +98,7 @@ function ResourceEventRenderer() {
 			segs = [];
 		for (i=0; i<colCnt; i++) {
 
-			d = t.visStart.clone();
+			d = t.intervalStart.clone();
 			d.add('m', minMinute);
 
 			var resourceEvents = eventsForResource(resources()[i], events);
