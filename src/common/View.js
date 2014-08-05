@@ -121,8 +121,17 @@ View.prototype = {
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
 	// Utility for subclasses.
 	computeScrollerHeight: function(totalHeight) {
-		// `otherHeight` is the cumulative height of everything that is not the scrollerEl in the view (header+borders)
-		var otherHeight = this.el.outerHeight() - this.scrollerEl.height();
+		var both = this.el.add(this.scrollerEl);
+		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
+
+		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
+		both.css({
+			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
+			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
+		});
+		otherHeight = this.el.outerHeight() - this.scrollerEl.height(); // grab the dimensions
+		both.css({ position: '', left: '' }); // undo hack
+
 		return totalHeight - otherHeight;
 	},
 
