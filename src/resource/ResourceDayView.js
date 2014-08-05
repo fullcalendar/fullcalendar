@@ -1,7 +1,7 @@
 
 fcViews.resourceDay = ResourceDayView;
 
-function AgendaDayView(element, calendar) { // TODO: make a DayView mixin
+function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 	var t = this;
 	
 	

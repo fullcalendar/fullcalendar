@@ -586,7 +586,7 @@ function ResourceView(element, calendar, viewName) {
 
 	function renderSlotOverlay(overlayStart, overlayEnd, col) {
 		var dayStart = cellToDate(0, 0);
-		var dayEnd = addDays(dayStart.clone(), 1);
+		var dayEnd = dayStart.clone().add('d', 1);
 		var stretchStart = new Date(Math.max(dayStart, overlayStart));
 		var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
 		if (stretchStart < stretchEnd) {

@@ -415,8 +415,8 @@ function ResourceEventRenderer() {
 						if (!cell.row) {
 							// on full-days
 							renderDayOverlay(
-								addDays(event.start.clone(), dayDelta),
-								addDays(exclEndDay(event), dayDelta)
+								event.start.clone().add('d', dayDelta),
+								exclEndDay(event).add('d', dayDelta)
 							);
 							resetElement();
 						}else{
@@ -618,8 +618,8 @@ function ResourceEventRenderer() {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
 					renderDayOverlay(
-						addDays(event.start.clone(), dayDelta),
-						addDays(exclEndDay(event), dayDelta)
+						event.start.clone().add('d', dayDelta),
+						exclEndDay(event).add('d', dayDelta)
 					);
 				}
 				else {
