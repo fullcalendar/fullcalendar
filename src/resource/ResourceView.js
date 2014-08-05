@@ -71,7 +71,7 @@ function ResourceView(element, calendar, viewName) {
 	var slotSegHtml = t.slotSegHtml;
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
-	var rangeToSegments = t.rangeToSegments;
+	// var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
 	
 	
@@ -177,9 +177,6 @@ function ResourceView(element, calendar, viewName) {
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
 		var s;
-		var d;
-		var i;
-		var maxd;
 		var minutes;
 		var slotTime;
 		var slotDate;
@@ -262,7 +259,7 @@ function ResourceView(element, calendar, viewName) {
 				"<div style='position:relative'>&nbsp;</div>" +
 				"</td>" +
 				"</tr>";
-			slotTime.add(slotDuration);
+			slotTime.add(opt('slotMinutes'));
 			slotCnt++;
 		}
 
@@ -825,14 +822,14 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	function daySelectionMousedown(ev) {
-		var cellToDate = t.cellToDate;
+		// var cellToDate = t.cellToDate;
 		var getIsCellAllDay = t.getIsCellAllDay;
 		var hoverListener = t.getHoverListener();
 		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
 		var col;
 		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
 			unselect(ev);
-			var _mousedownElement = this;
+			// var _mousedownElement = this;
 			var dates;
 			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
 				clearSelection();

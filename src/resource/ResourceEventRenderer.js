@@ -33,6 +33,8 @@ function ResourceEventRenderer() {
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
 	var getSnapMinutes = t.getSnapMinutes;
+	var getSlotHeight = t.getSlotHeight;
+	var getSlotDuration = t.getSlotDuration;
 	var getSlotContainer = t.getSlotContainer;
 	var reportEventElement = t.reportEventElement;
 	var showEvents = t.showEvents;
@@ -46,7 +48,7 @@ function ResourceEventRenderer() {
 	var formatDate = calendar.formatDate;
 	var formatDates = calendar.formatDates;
 	var resources = t.getResources;
-
+	var getEventEnd = calendar.getEventEnd;
 
 	// overrides
 	t.draggableDayEvent = draggableDayEvent;
@@ -190,7 +192,7 @@ function ResourceEventRenderer() {
 	
 		var i, segCnt=segs.length, seg,
 			event,
-			classes,
+			// classes,
 			top, bottom,
 			colI, levelI, forward,
 			leftmost,
@@ -395,6 +397,8 @@ function ResourceEventRenderer() {
 		var dayDelta;
 		var hoverListener = getHoverListener();
 		var colWidth = getColWidth();
+		var slotDuration = getSlotDuration();
+		var slotHeight = getSlotHeight();
 		var snapHeight = getSnapHeight();
 		var snapMinutes = getSnapMinutes();
 		var minMinute = getMinMinute();
@@ -416,7 +420,7 @@ function ResourceEventRenderer() {
 							// on full-days
 							renderDayOverlay(
 								event.start.clone().add('d', dayDelta),
-								exclEndDay(event).add('d', dayDelta)
+								getEventEnd(event).add('d', dayDelta)
 							);
 							resetElement();
 						}else{
@@ -425,13 +429,7 @@ function ResourceEventRenderer() {
 								if (allDay) {
 									// convert event to temporary slot-event
 									eventElement.width(colWidth - 10); // don't use entire width
-									setOuterHeight(
-										eventElement,
-										snapHeight * Math.round(
-											(event.end ? ((event.end - event.start) / MINUTE_MS) : opt('defaultEventMinutes')) /
-												snapMinutes
-										)
-									);
+									setOuterHeight(eventElement, calendar.defaultTimedEventDuration / slotDuration * slotHeight); // the default height
 									eventElement.draggable('option', 'grid', [colWidth, 1]);
 									allDay = false;
 								}
@@ -619,7 +617,7 @@ function ResourceEventRenderer() {
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
 					renderDayOverlay(
 						event.start.clone().add('d', dayDelta),
-						exclEndDay(event).add('d', dayDelta)
+						getEventEnd(event).add('d', dayDelta)
 					);
 				}
 				else {
