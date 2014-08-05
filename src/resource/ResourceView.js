@@ -181,6 +181,8 @@ function ResourceView(element, calendar, viewName) {
 		var i;
 		var maxd;
 		var minutes;
+		var slotTime;
+		var slotDate;
 		var slotNormal = opt('slotMinutes') % 15 === 0;
 		
 		buildDayTable();
@@ -198,7 +200,12 @@ function ResourceView(element, calendar, viewName) {
 			s =
 				"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
 				"<tr>" +
-				"<th class='" + headerClass + " fc-agenda-axis'>" + opt('allDayText') + "</th>" +
+				"<th class='" + headerClass + " fc-agenda-axis'>" +
+				(
+					opt('allDayHTML') ||
+					htmlEscape(opt('allDayText'))
+				) +
+				"</th>" +
 				"<td>" +
 				"<div class='fc-day-content'><div style='position:relative'/></div>" +
 				"</td>" +
@@ -237,24 +244,28 @@ function ResourceView(element, calendar, viewName) {
 		s =
 			"<table class='fc-agenda-slots' style='width:100%' cellspacing='0'>" +
 			"<tbody>";
-		d = zeroDate();
-		maxd = d.clone().add('m', maxMinute);
-		d.add('m', minMinute);
+
+		slotTime = moment.duration(+minMinute);
 		slotCnt = 0;
-		for (i=0; d < maxd; i++) {
-			minutes = d.getMinutes();
+		while (slotTime < maxMinute) {
+			slotDate = t.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
+			minutes = slotDate.minutes();
 			s +=
-				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + slotCnt + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes) ? formatDate(d, opt('axisFormat')) : '&nbsp;') +
+				((!slotNormal || !minutes) ?
+					htmlEscape(formatDate(slotDate, opt('axisFormat'))) :
+					'&nbsp;'
+					) +
 				"</th>" +
 				"<td class='" + contentClass + "'>" +
 				"<div style='position:relative'>&nbsp;</div>" +
 				"</td>" +
 				"</tr>";
-			d.add('m', opt('slotMinutes'));
+			slotTime.add(slotDuration);
 			slotCnt++;
 		}
+
 		s +=
 			"</tbody>" +
 			"</table>";
@@ -507,13 +518,15 @@ function ResourceView(element, calendar, viewName) {
 
 
 	function resetScroll() {
-		var d0 = zeroDate();
+		var d0 = new Date(1970, 0, 1);  // TODO - refactor this out when we replace minMinute/maxMinute with minTime/maxTime
 		var scrollDate = d0.clone();
 		scrollDate.setHours(opt('firstHour'));
 		var top = timePosition(d0, scrollDate) + 1; // +1 for the border
+		
 		function scroll() {
 			slotScroller.scrollTop(top);
 		}
+
 		scroll();
 		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
 	}
