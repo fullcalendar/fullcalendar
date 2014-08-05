@@ -682,7 +682,7 @@ function ResourceView(element, calendar, viewName) {
 			slotIndex--;
 		}
 		if (slotIndex >= 0) {
-			addMinutes(d, minMinute + slotIndex * snapMinutes);
+			d.add('m', minMinute + slotIndex * snapMinutes);
 		}
 		return d;
 	}
