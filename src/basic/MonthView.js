@@ -24,7 +24,7 @@ $.extend(MonthView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add('months', delta).startOf('month');
+		return date.clone().stripTime().add(delta, 'months').startOf('month');
 	},
 
 
@@ -32,7 +32,7 @@ $.extend(MonthView.prototype, {
 		var rowCnt;
 
 		this.intervalStart = date.clone().stripTime().startOf('month');
-		this.intervalEnd = this.intervalStart.clone().add('months', 1);
+		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
 
 		this.start = this.intervalStart.clone();
 		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
@@ -41,14 +41,14 @@ $.extend(MonthView.prototype, {
 
 		this.end = this.intervalEnd.clone();
 		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
-		this.end.add('days', (7 - this.end.weekday()) % 7); // move to end of week if not already
+		this.end.add((7 - this.end.weekday()) % 7, 'days'); // move to end of week if not already
 		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
 
 		rowCnt = Math.ceil( // need to ceil in case there are hidden days
 			this.end.diff(this.start, 'weeks', true) // returnfloat=true
 		);
 		if (this.isFixedWeeks()) {
-			this.end.add('weeks', 6 - rowCnt);
+			this.end.add(6 - rowCnt, 'weeks');
 			rowCnt = 6;
 		}
 

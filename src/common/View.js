@@ -788,14 +788,14 @@ function View(calendar) {
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
 			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
 			if (endTimeMS && endTimeMS >= nextDayThreshold) {
-				endDay.add('days', 1);
+				endDay.add(1, 'days');
 			}
 		}
 
 		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
 		// assign the default duration of one day.
 		if (!end || endDay <= startDay) {
-			endDay = startDay.clone().add('days', 1);
+			endDay = startDay.clone().add(1, 'days');
 		}
 
 		return { start: startDay, end: endDay };

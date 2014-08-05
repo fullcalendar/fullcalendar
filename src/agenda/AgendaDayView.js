@@ -16,7 +16,7 @@ $.extend(AgendaDayView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	},
@@ -25,7 +25,7 @@ $.extend(AgendaDayView.prototype, {
 	render: function(date) {
 
 		this.start = this.intervalStart = date.clone().stripTime();
-		this.end = this.intervalEnd = this.start.clone().add('days', 1);
+		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
 
 		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
 

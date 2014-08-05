@@ -17,14 +17,14 @@ $.extend(BasicWeekView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add('weeks', delta).startOf('week');
+		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
 	},
 
 
 	render: function(date) {
 
 		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add('weeks', 1);
+		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
 
 		this.start = this.skipHiddenDays(this.intervalStart);
 		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);

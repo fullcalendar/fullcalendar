@@ -287,7 +287,7 @@ $.extend(DayGrid.prototype, {
 			return seg.event;
 		});
 		var dayStart = dayDate.clone().stripTime();
-		var dayEnd = dayStart.clone().add('days', 1);
+		var dayEnd = dayStart.clone().add(1, 'days');
 
 		return this.eventsToSegs(events, dayStart, dayEnd);
 	},
