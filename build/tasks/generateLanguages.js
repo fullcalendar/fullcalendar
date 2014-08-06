@@ -36,7 +36,7 @@ module.exports = function(grunt) {
 		});
 
 		// code for resetting the language back to English
-		combinedJS += '\nmoment.lang("en");';
+		combinedJS += '\n(moment.locale || moment.lang).call(moment, "en");'; // works with moment-pre-2.8
 		combinedJS += '\n$.fullCalendar.lang("en");';
 		combinedJS += '\nif ($.datepicker) $.datepicker.setDefaults($.datepicker.regional[""]);';
 
@@ -133,9 +133,11 @@ module.exports = function(grunt) {
 			}
 		);
 
-		js = js.replace( // replace the `return` statement so execution continues
-			/^(\s*)return moment\.lang\(/m,
-			'$1moment.lang('
+		// replace the `return` statement so execution continues
+		// compatible with moment-pre-2.8
+		js = js.replace(
+			/^(\s*)return moment\.(defineLocale|lang)\(/m,
+			'$1(moment.defineLocale || moment.lang).call(moment, '
 		);
 
 		return js;
