@@ -21,6 +21,7 @@ function ResourceEventRenderer() {
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var getSlotSegmentContainer = t.getSlotSegmentContainer;
 	var getHoverListener = t.getHoverListener;
+	var computeDateTop = t.computeDateTop;
 	var getMaxMinute = t.getMaxMinute;
 	var getMinMinute = t.getMinMinute;
 	var timePosition = t.timePosition;
@@ -192,58 +193,67 @@ function ResourceEventRenderer() {
 	
 		var i, segCnt=segs.length, seg,
 			event,
-			// classes,
-			top, bottom,
-			colI, levelI, forward,
-			leftmost,
-			availWidth,
-			outerWidth,
+			top,
+			bottom,
+			columnLeft,
+			columnRight,
+			columnWidth,
+			width,
 			left,
-			html='',
+			right,
+			html = '',
 			eventElements,
 			eventElement,
 			triggerRes,
 			titleElement,
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
-			rtl, dis;
-			
-		if (rtl === opt('isRTL')) {
-			dis = -1;
-		}else{
-			dis = 1;
-		}
+			isRTL = opt('isRTL');
 			
 		// calculate position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			top = timePosition(seg.start, seg.start);
-			bottom = timePosition(seg.start, seg.end);
-			colI = seg.col;
-			levelI = seg.level;
-			forward = seg.forward || 0;
-			leftmost = colContentLeft(colI);
-			availWidth = colContentRight(colI) - leftmost;
-			availWidth = Math.min(availWidth-6, availWidth*.95); // TODO: move this to CSS
-			if (levelI) {
-				// indented and thin
-				outerWidth = availWidth / (levelI + forward + 1);
-			}else{
-				if (forward) {
-					// moderately wide, aligned left still
-					outerWidth = ((availWidth / (forward + 1)) - (12/2)) * 2; // 12 is the predicted width of resizer =
-				}else{
-					// can be entire width, aligned left
-					outerWidth = availWidth;
-				}
+			top = computeDateTop(seg.start, seg.start);
+			bottom = computeDateTop(seg.end, seg.start);
+			columnLeft = colContentLeft(seg.col);
+			columnRight = colContentRight(seg.col);
+			columnWidth = columnRight - columnLeft;
+
+			// shave off space on right near scrollbars (2.5%)
+			// TODO: move this to CSS somehow
+			columnRight -= columnWidth * .025;
+			columnWidth = columnRight - columnLeft;
+
+			width = columnWidth * (seg.forwardCoord - seg.backwardCoord);
+
+			if (opt('slotEventOverlap')) {
+				// double the width while making sure resize handle is visible
+				// (assumed to be 20px wide)
+				width = Math.max(
+					(width - (20/2)) * 2,
+					width // narrow columns will want to make the segment smaller than
+						// the natural width. don't allow it
+				);
 			}
-			left = leftmost +                                  // leftmost possible
-				(availWidth / (levelI + forward + 1) * levelI) * // indentation
-				 dis + (rtl ? availWidth - outerWidth : 0);   // rtl
+
+			if (isRTL) {
+				right = columnRight - seg.backwardCoord * columnWidth;
+				left = right - width;
+			}
+			else {
+				left = columnLeft + seg.backwardCoord * columnWidth;
+				right = left + width;
+			}
+
+			// make sure horizontal coordinates are in bounds
+			left = Math.max(left, columnLeft);
+			right = Math.min(right, columnRight);
+			width = right - left;
+
 			seg.top = top;
 			seg.left = left;
-			seg.outerWidth = outerWidth;
+			seg.outerWidth = width;
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
@@ -284,7 +294,7 @@ function ResourceEventRenderer() {
 		// record event sides and title positions
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if (eventElement === seg.element) {
+			if ((eventElement = seg.element)) {
 				seg.vsides = vsides(eventElement, true);
 				seg.hsides = hsides(eventElement, true);
 				titleElement = eventElement.find('.fc-event-title');
@@ -351,7 +361,7 @@ function ResourceEventRenderer() {
 			">" +
 			"<div class='fc-event-inner'>" +
 			"<div class='fc-event-time'>" +
-			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+			htmlEscape(t.getEventTimeText(event)) +
 			"</div>" +
 			"<div class='fc-event-title'>" +
 			htmlEscape(event.title || '') +
@@ -628,13 +638,14 @@ function ResourceEventRenderer() {
 			}
 		}
 
-		function updateTimeText(minuteDelta) {
-			var newStart = event.start.clone().add('m', minuteDelta);
-			var newEnd;
-			if (event.end) {
-				newEnd = event.end.clone().add('m', minuteDelta);
+		function updateTimeText() {
+			if (eventStart) { // must of had a state change
+				timeElement.text(
+					t.getEventTimeText(eventStart, event.end ? eventEnd : null)
+					//                                       ^
+					// only display the new end if there was an old end
+				);
 			}
-			timeElement.text(formatDates(newStart, newEnd, opt('timeFormat')));
 		}
 
 	}

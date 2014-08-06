@@ -67,7 +67,7 @@
 <script src='../lib/moment/moment.js'></script>
   
 
-  // <!-- <script src='../src/intro.js'></script> -->
+  <!-- <script src='../src/intro.js'></script> -->
   <script src='../src/defaults.js'></script>
   <script src='../src/main.js'></script>
   <script src='../src/lang.js'></script>
@@ -97,7 +97,7 @@
   <script src='../src/common/CoordinateGrid.js'></script>
   <script src='../src/common/HoverListener.js'></script>
   <script src='../src/common/HorizontalPositionCache.js'></script>
-  // <!-- <script src='../src/outro.js'></script> -->
+  <!-- <script src='../src/outro.js'></script> -->
 
   <script src='../dist/gcal.js'></script>
   <script>
@@ -116,8 +116,8 @@ function showModal(a, b, c) {
     $(document).ready(function() {
       cal = $('#calendar').fullCalendar({
         eventClick: function(event) {
-      showModal(event.apId, event.patId, event.provisoryId);
-    },
+          showModal(event.apId, event.patId, event.provisoryId);
+        },
         editable: true,
         // weekends: false,
         header: {
@@ -125,31 +125,31 @@ function showModal(a, b, c) {
           center: 'title',
           right: 'month,agendaWeek,basicWeek,agendaDay,basicDay,resourceDay'
         },
-        defaultView: 'resourceDay',
+        //defaultView: 'resourceDay',
         resources: [{'id':'resource1','name':'Resource 1', 'className': 'css-class-as-string'},{'id':'resource2', 'name':'Resource 2', 'className': ['green', 'another-css-class-name']},{'id':'resource3', 'name':'Resource 3'}],
         events: [
-          {
-            title: 'R1-R2: Lunch 12.15-14.45',
-            start: new Date(y, m, d, 12, 15),
-            end: new Date(y, m, d, 14, 45),
-            allDay: false,
-            resources: ['resource1','resource2']
-          },        
+          // {
+          //   title: 'R1-R2: Lunch 12.15-14.45',
+          //   start: new Date(y, m, d, 12, 15),
+          //   end: new Date(y, m, d, 14, 45),
+          //   allDay: false,
+          //   resources: ['resource1','resource2']
+          // },        
           {
             title: 'R1: All day',
-            start: new Date(y, m, d, 10, 30),
-            end: new Date(y, m, d, 11, 00),
+            // start: new Date(y, m, d, 10, 30),
+            // end: new Date(y, m, d, 11, 00),
             allDay: true,
             resources: 'resource1'
           },
           {
-            title: 'R2: Meeting 11.00',
-            start: new Date(y, m, d, 11, 00),
+            title: 'R2: All Day',
+            //start: new Date(y, m, d, 11, 00),
             allDay: true,
             resources: 'resource2'
           },
           {
-            title: 'R1/R2: Lunch 12-14',
+            title: 'R1/R2: 12-14',
             start: new Date(y, m, d, 12, 0),
             end: new Date(y, m, d, 14, 0),
             allDay: false,
@@ -157,26 +157,26 @@ function showModal(a, b, c) {
           },
           {
             id: 777,
-            title: 'Lunch',
-            start: new Date(y, m, d, 12, 0),
-            end: new Date(y, m, d, 14, 0),
+            title: 'R1: 14:30-16',
+            start: new Date(y, m, d, 14, 30),
+            end: new Date(y, m, d, 16, 0),
             allDay: false,
             resources: ['resource1']
           },
-          {
-            id: 999,
-            title: 'Repeating Event',
-            start: new Date(y, m, d-3, 16, 0),
-            allDay: false,
-            resources: 'resource2'
-          },
-          {
-            id: 999,
-            title: 'Repeating Event',
-            start: new Date(y, m, d+4, 16, 0),
-            allDay: false,
-            resources: 'resource2'
-          }
+          // {
+          //   id: 999,
+          //   title: 'Repeating Event',
+          //   start: new Date(y, m, d-3, 16, 0),
+          //   allDay: false,
+          //   resources: 'resource2'
+          // },
+          // {
+          //   id: 999,
+          //   title: 'Repeating Event',
+          //   start: new Date(y, m, d+4, 16, 0),
+          //   allDay: false,
+          //   resources: 'resource2'
+          // }
         ]
       });
     });

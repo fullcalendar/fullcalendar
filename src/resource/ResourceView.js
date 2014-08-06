@@ -1,18 +1,41 @@
+// setDefaults({
+// 	allDaySlot: true,
+// 	allDayText: 'all-day',
+// 	firstHour: 6,
+// 	slotMinutes: 30,
+// 	defaultEventMinutes: 120,
+// 	axisFormat: 'h(:mm)tt',
+// 	timeFormat: {
+// 		agenda: 'h:mm{ - h:mm}'
+// 	},
+// 	dragOpacity: {
+// 		agenda: .5
+// 	},
+// 	minTime: 0,
+// 	maxTime: 24
+// });
+
+
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
-	firstHour: 6,
+
+	scrollTime: '06:00:00',
+
 	slotMinutes: 30,
-	defaultEventMinutes: 120,
-	axisFormat: 'h(:mm)tt',
-	timeFormat: {
-		agenda: 'h:mm{ - h:mm}'
-	},
+	slotDuration: '00:30:00',
+
+	// axisFormat: generateAgendaAxisFormat,
+	// timeFormat: {
+	// 	agenda: generateAgendaTimeFormat
+	// },
+
 	dragOpacity: {
 		agenda: .5
 	},
-	minTime: 0,
-	maxTime: 24
+	minTime: '00:00:00',
+	maxTime: '24:00:00',
+	slotEventOverlap: true
 });
 
 
@@ -28,10 +51,12 @@ function ResourceView(element, calendar, viewName) {
 	t.setWidth = setWidth;
 	t.setHeight = setHeight;
 	t.afterRender = afterRender;
-	t.defaultEventEnd = defaultEventEnd;
-	t.timePosition = timePosition;
+	t.computeDateTop = computeDateTop;
+	//t.defaultEventEnd = defaultEventEnd;
+	//t.timePosition = timePosition;
 	t.getIsCellAllDay = getIsCellAllDay;
-	t.allDayRow = getAllDayRow;
+	t.allDayRow = function() { return allDayRow; }; // badly named
+	//t.allDayRow = getAllDayRow;
 	t.getCoordinateGrid = function() { return coordinateGrid; }; // specifically for AgendaEventRenderer
 	t.getHoverListener = function() { return hoverListener; };
 	t.colLeft = colLeft;
@@ -115,7 +140,7 @@ function ResourceView(element, calendar, viewName) {
 	var colPositions;
 	var colContentPositions;
 	var slotTopCache = {};
-	
+	var slotDuration;
 	var tm;
 	var rtl;
 	var minMinute, maxMinute;
@@ -151,9 +176,13 @@ function ResourceView(element, calendar, viewName) {
 		rtl = opt('isRTL');
 		colFormat = opt('columnFormat');
 
+		minTime = moment.duration(opt('minTime'));
+		maxTime = moment.duration(opt('maxTime'));
 		minMinute = moment.duration(opt('minTime'));
 		maxMinute = moment.duration(opt('maxTime'));
 		
+		slotDuration = moment.duration(opt('slotDuration'));
+
 		// week # options. (TODO: bad, logic also in other views)
 		showWeekNumbers = opt('weekNumbers');
 		weekNumberTitle = opt('weekNumberTitle');
@@ -259,7 +288,7 @@ function ResourceView(element, calendar, viewName) {
 				"<div style='position:relative'>&nbsp;</div>" +
 				"</td>" +
 				"</tr>";
-			slotTime.add(opt('slotMinutes'));
+			slotTime.add(slotDuration);
 			slotCnt++;
 		}
 
@@ -514,12 +543,11 @@ function ResourceView(element, calendar, viewName) {
 	-----------------------------------------------------------------------*/
 
 
-	function resetScroll() {
-		var d0 = $.fullCalendar.moment(new Date(1970, 0, 1));  // TODO - refactor this out when we replace minMinute/maxMinute with minTime/maxTime
-		var scrollDate = d0.clone();
-		scrollDate.hour(opt('firstHour'));
-		var top = timePosition(d0, scrollDate) + 1; // +1 for the border
-		
+		function resetScroll() {
+		var top = computeTimeTop(
+			moment.duration(opt('scrollTime'))
+		) + 1; // +1 for the border
+
 		function scroll() {
 			slotScroller.scrollTop(top);
 		}
@@ -595,20 +623,45 @@ function ResourceView(element, calendar, viewName) {
 	
 
 	function renderSlotOverlay(overlayStart, overlayEnd, col) {
-		var dayStart = cellToDate(0, 0);
-		var dayEnd = dayStart.clone().add('d', 1);
-		var stretchStart = new Date(Math.max(dayStart, overlayStart));
-		var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
-		if (stretchStart < stretchEnd) {
-			var rect = coordinateGrid.rect(0, col, 0, col, slotContainer); // only use it for horizontal coords
-			var top = timePosition(dayStart, stretchStart);
-			var bottom = timePosition(dayStart, stretchEnd);
-			rect.top = top;
-			rect.height = bottom - top;
-			slotBind(
-				renderOverlay(rect, slotContainer)
-			);
-		}
+		// normalize, because dayStart/dayEnd have stripped time+zone
+		overlayStart = overlayStart.clone().stripZone();
+		overlayEnd = overlayEnd.clone().stripZone();
+
+		//for (var i=0; i<colCnt; i++) { // loop through the day columns
+
+			var dayStart = cellToDate(0, 0);
+			var dayEnd = dayStart.clone().add('days', 1);
+
+			var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
+			var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
+
+			if (stretchStart < stretchEnd) {
+				var rect = coordinateGrid.rect(0, col, 0, col, slotContainer); // only use it for horizontal coords
+				var top = computeDateTop(stretchStart, dayStart);
+				var bottom = computeDateTop(stretchEnd, dayStart);
+				
+				rect.top = top;
+				rect.height = bottom - top;
+				slotBind(
+					renderOverlay(rect, slotContainer)
+				);
+			}
+		//}
+
+		// var dayStart = cellToDate(0, 0);
+		// var dayEnd = dayStart.clone().add('d', 1);
+		// var stretchStart = new Date(Math.max(dayStart, overlayStart));
+		// var stretchEnd = new Date(Math.min(dayEnd, overlayEnd));
+		// if (stretchStart < stretchEnd) {
+		// 	var rect = coordinateGrid.rect(0, col, 0, col, slotContainer); // only use it for horizontal coords
+		// 	var top = timePosition(dayStart, stretchStart);
+		// 	var bottom = timePosition(dayStart, stretchEnd);
+		// 	rect.top = top;
+		// 	rect.height = bottom - top;
+		// 	slotBind(
+		// 		renderOverlay(rect, slotContainer)
+		// 	);
+		// }
 	}
 	
 	
@@ -697,45 +750,86 @@ function ResourceView(element, calendar, viewName) {
 		return d;
 	}
 	
-	
-	// get the Y coordinate of the given time on the given day (both Date objects)
-	function timePosition(day, time) { // both date objects. day holds 00:00 of current day
-		day = day.clone().stripTime();
-		if (time < day.clone().add('m', minMinute)) {
+	function computeDateTop(date, startOfDayDate) {
+		return computeTimeTop(
+			moment.duration(
+				date.clone().stripZone() - startOfDayDate.clone().stripTime()
+			)
+		);
+	}
+
+
+	function computeTimeTop(time) { // time is a duration
+
+		if (time < minTime) {
 			return 0;
 		}
-		if (time >= day.clone().add('m', maxMinute)) {
+		if (time >= maxTime) {
 			return slotTable.height();
 		}
-		var slotMinutes = opt('slotMinutes'),
-			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
-			slotI = Math.floor(minutes / slotMinutes),
-			slotTop = slotTopCache[slotI];
+
+		var slots = (time - minTime) / slotDuration;
+		var slotIndex = Math.floor(slots);
+		var slotPartial = slots - slotIndex;
+		var slotTop = slotTopCache[slotIndex];
+
+		// find the position of the corresponding <tr>
+		// need to use this tecnhique because not all rows are rendered at same height sometimes.
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] =
-				slotTable.find('tr').eq(slotI).find('td div')[0].offsetTop;
+			slotTop = slotTopCache[slotIndex] =
+				slotTable.find('tr').eq(slotIndex).find('td div')[0].offsetTop;
 				// .eq() is faster than ":eq()" selector
 				// [0].offsetTop is faster than .position().top (do we really need this optimization?)
 				// a better optimization would be to cache all these divs
 		}
-		return Math.max(0, Math.round(
-			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
-		));
+
+		var top =
+			slotTop - 1 + // because first row doesn't have a top border
+			slotPartial * slotHeight; // part-way through the row
+
+		top = Math.max(top, 0);
+
+		return top;
 	}
 	
+	// // get the Y coordinate of the given time on the given day (both Date objects)
+	// function timePosition(day, time) { // both date objects. day holds 00:00 of current day
+	// 	day = day.clone().stripTime();
+	// 	if (time < day.clone().add('m', minMinute)) {
+	// 		return 0;
+	// 	}
+	// 	if (time >= day.clone().add('m', maxMinute)) {
+	// 		return slotTable.height();
+	// 	}
+	// 	var slotMinutes = opt('slotMinutes'),
+	// 		minutes = time.getHours()*60 + time.getMinutes() - minMinute,
+	// 		slotI = Math.floor(minutes / slotMinutes),
+	// 		slotTop = slotTopCache[slotI];
+	// 	if (slotTop === undefined) {
+	// 		slotTop = slotTopCache[slotI] =
+	// 			slotTable.find('tr').eq(slotI).find('td div')[0].offsetTop;
+	// 			// .eq() is faster than ":eq()" selector
+	// 			// [0].offsetTop is faster than .position().top (do we really need this optimization?)
+	// 			// a better optimization would be to cache all these divs
+	// 	}
+	// 	return Math.max(0, Math.round(
+	// 		slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
+	// 	));
+	// }
 	
-	function getAllDayRow(index) {
-		return allDayRow;
-	}
+	
+	// function getAllDayRow(index) {
+	// 	return allDayRow;
+	// }
 	
 	
-	function defaultEventEnd(event) {
-		var start = event.start.clone();
-		if (event.allDay) {
-			return start;
-		}
-		return start.add('m', opt('defaultEventMinutes'));
-	}
+	// function defaultEventEnd(event) {
+	// 	var start = event.start.clone();
+	// 	if (event.allDay) {
+	// 		return start;
+	// 	}
+	// 	return start.add('m', opt('defaultEventMinutes'));
+	// }
 	
 	
 	

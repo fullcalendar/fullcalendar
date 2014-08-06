@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../fullcalendar/fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../jquery/jquery-1.10.2.min.js'></script>
+<script src='../jquery/jquery-ui-1.10.3.custom.min.js'></script>
+<script src='../fullcalendar/fullcalendar.min.js'></script>
+<script>
+
+	$(document).ready(function() {
+	
+		$('#calendar').fullCalendar({
+		
+			editable: true,
+			
+			events: "json-events.php",
+			
+			eventDrop: function(event, delta) {
+				alert(event.title + ' was moved ' + delta + ' days\n' +
+					'(should probably update your database)');
+			},
+			
+			loading: function(bool) {
+				if (bool) $('#loading').show();
+				else $('#loading').hide();
+			}
+			
+		});
+		
+	});
+
+</script>
+<style>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+		
+	#loading {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='loading' style='display:none'>loading...</div>
+<div id='calendar'></div>
+<p>json-events.php needs to be running in the same directory.</p>
+</body>
+</html>
