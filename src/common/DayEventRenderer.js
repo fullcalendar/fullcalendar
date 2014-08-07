@@ -581,10 +581,10 @@ function DayEventRenderer() {
 						var origCellDate = cellToDate(origCell);
 						var cellDate = cellToDate(cell);
 						dayDelta = cellDate.diff(origCellDate, 'days');
-						eventStart = event.start.clone().add('days', dayDelta);
+						eventStart = event.start.clone().add(dayDelta, 'days');
 						renderDayOverlay(
 							eventStart,
-							getEventEnd(event).add('days', dayDelta)
+							getEventEnd(event).add(dayDelta, 'days')
 						);
 					}
 					else {
@@ -664,7 +664,7 @@ function DayEventRenderer() {
 						cellOffsetToDayOffset(cellOffset) -
 						cellOffsetToDayOffset(origCellOffset);
 
-					eventEnd = getEventEnd(event).add('days', dayDelta); // assumed to already have a stripped time
+					eventEnd = getEventEnd(event).add(dayDelta, 'days'); // assumed to already have a stripped time
 
 					if (dayDelta) {
 						eventCopy.end = eventEnd;
