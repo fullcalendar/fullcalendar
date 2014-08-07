@@ -123,7 +123,7 @@ module.exports = function(grunt) {
 	]);
 
 	config.generateLanguages = {
-		moment: 'lib/moment/lang/',
+		moment: grunt.file.expand('lib/moment/{locale,lang}/')[0], // lang directory is pre-moment-2.8
 		datepicker: 'lib/jquery-ui/ui/i18n/',
 		fullCalendar: 'lang/',
 		dest: 'build/temp/lang/',

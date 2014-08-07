@@ -10,10 +10,10 @@ describe('titleFormat', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: 'June 2014' },
-            { view: 'basicWeek', expected: 'Jun 8 - 14 2014' },
-            { view: 'agendaWeek', expected: 'Jun 8 - 14 2014' },
-            { view: 'basicDay', expected: 'June 12 2014' },
-            { view: 'agendaDay', expected: 'June 12 2014' }
+            { view: 'basicWeek', expected: /Jun 8 - 14,? 2014/ },  // moment changed LL defaults after 2.8
+            { view: 'agendaWeek', expected: /Jun 8 - 14,? 2014/ }, // "
+            { view: 'basicDay', expected: /June 12,? 2014/ },      // "
+            { view: 'agendaDay', expected: /June 12,? 2014/ }      // "
         ];
 
         beforeEach(function() {
@@ -28,7 +28,7 @@ describe('titleFormat', function() {
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
                 cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(SELECTOR).text()).toBe(crtView.expected);
+                expect(cal.find(SELECTOR).text()).toMatch(crtView.expected);
             };
         });
     });

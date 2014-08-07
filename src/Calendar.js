@@ -65,26 +65,34 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 	// Apply overrides to the current language's data
 
-	var langData = createObject( // make a cheap clone
-		moment.langData(options.lang)
-	);
+
+	// Returns moment's internal locale data. If doesn't exist, returns English.
+	// Works with moment-pre-2.8
+	function getLocaleData(langCode) {
+		var f = moment.localeData || moment.langData;
+		return f.call(moment, langCode) ||
+			f.call(moment, 'en'); // the newer localData could return null, so fall back to en
+	}
+
+
+	var localeData = createObject(getLocaleData(options.lang)); // make a cheap copy
 
 	if (options.monthNames) {
-		langData._months = options.monthNames;
+		localeData._months = options.monthNames;
 	}
 	if (options.monthNamesShort) {
-		langData._monthsShort = options.monthNamesShort;
+		localeData._monthsShort = options.monthNamesShort;
 	}
 	if (options.dayNames) {
-		langData._weekdays = options.dayNames;
+		localeData._weekdays = options.dayNames;
 	}
 	if (options.dayNamesShort) {
-		langData._weekdaysShort = options.dayNamesShort;
+		localeData._weekdaysShort = options.dayNamesShort;
 	}
 	if (options.firstDay != null) {
-		var _week = createObject(langData._week); // _week: { dow: # }
+		var _week = createObject(localeData._week); // _week: { dow: # }
 		_week.dow = options.firstDay;
-		langData._week = _week;
+		localeData._week = _week;
 	}
 
 
@@ -117,7 +125,12 @@ function Calendar(element, instanceOptions) {
 			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
 		}
 
-		mom._lang = langData;
+		if ('_locale' in mom) { // moment 2.8 and above
+			mom._locale = localeData;
+		}
+		else { // pre-moment-2.8
+			mom._lang = localeData;
+		}
 
 		return mom;
 	};
@@ -205,7 +218,7 @@ function Calendar(element, instanceOptions) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, langData);
+			formatStr = formatStr.call(t, options, localeData);
 		}
 
 		return formatRange(m1, m2, formatStr, null, options.isRTL);
@@ -217,7 +230,7 @@ function Calendar(element, instanceOptions) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, langData);
+			formatStr = formatStr.call(t, options, localeData);
 		}
 
 		return formatDate(mom, formatStr);
@@ -595,13 +608,13 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function prevYear() {
-		date.add('years', -1);
+		date.add(-1, 'years');
 		renderView();
 	}
 	
 	
 	function nextYear() {
-		date.add('years', 1);
+		date.add(1, 'years');
 		renderView();
 	}
 	
