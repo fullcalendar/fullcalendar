@@ -196,7 +196,7 @@ function testDefaultProcessing(construct) {
 				var newMoment = construct(oldMoment);
 				expect(newMoment).not.toBe(oldMoment);
 				expect(+newMoment).toBe(+oldMoment);
-				newMoment.add('months', 1);
+				newMoment.add(1, 'months');
 				expect(+newMoment).not.toBe(+oldMoment);
 			});
 		});
@@ -349,7 +349,7 @@ function testForcedLocalProcessing(construct) {
 				var newMoment = construct(oldMoment);
 				expect(newMoment).not.toBe(oldMoment);
 				expect(+newMoment).toBe(+oldMoment);
-				newMoment.add('months', 1);
+				newMoment.add(1, 'months');
 				expect(+newMoment).not.toBe(+oldMoment);
 			});
 		});
@@ -493,7 +493,7 @@ function testForcedUTCProcessing(construct) {
 				var newMoment = construct(oldMoment);
 				expect(newMoment).not.toBe(oldMoment);
 				expect(+newMoment).toBe(+oldMoment);
-				newMoment.add('months', 1);
+				newMoment.add(1, 'months');
 				expect(+newMoment).not.toBe(+oldMoment);
 			});
 		});
@@ -635,7 +635,7 @@ function testLiteralProcessing(construct) {
 				var newMoment = construct(oldMoment);
 				expect(newMoment).not.toBe(oldMoment);
 				expect(+newMoment).toBe(+oldMoment);
-				newMoment.add('months', 1);
+				newMoment.add(1, 'months');
 				expect(+newMoment).not.toBe(+oldMoment);
 			});
 

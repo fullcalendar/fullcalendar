@@ -28,7 +28,7 @@ describe('short month name', function() {
 
         moment.monthsShort().forEach(function(monthShort, index) {
           it('should be ' + monthShort, function(done) {
-            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months');
             settings.eventAfterAllRender = function() {
               expect($('.fc-toolbar h2')).toContainText(monthShort);
               done();
@@ -51,7 +51,7 @@ describe('short month name', function() {
               var langMonthsShort = moment.monthsShort();
               var langMonthShort = langMonthsShort[index];
 
-              settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
+              settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months');
               settings.eventAfterAllRender = function() {
                 expect($('.fc-toolbar h2')).toContainText(langMonthShort);
                 done();
@@ -81,7 +81,7 @@ describe('short month name', function() {
 
         monthsShort.forEach(function(monthShort, index) { // `monthShort` will be our custom month name
           it('should be the translated name for ' + monthShort, function(done) {
-            settings.defaultDate = $.fullCalendar.moment(referenceDate).add('months', index);
+            settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months');
             settings.monthNamesShort = monthsShort;
             settings.eventAfterAllRender = function() {
               expect($('.fc-toolbar h2')).toContainText(monthShort);

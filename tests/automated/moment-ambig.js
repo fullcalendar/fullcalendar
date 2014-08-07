@@ -32,7 +32,7 @@ describe('ambiguously-zoned moment', function() {
 		expect(clone.hasZone()).toBe(false);
 		expect(clone.format()).toBe('2014-06-08T10:00:00');
 		expect(clone).not.toBe(mom);
-		clone.add('months', 1);
+		clone.add(1, 'months');
 		expect(+clone).not.toBe(+mom);
 	});
 
@@ -108,7 +108,7 @@ describe('ambiguously-timed moment', function() {
 		expect(clone.hasTime()).toBe(false);
 		expect(clone.format()).toBe('2014-06-08');
 		expect(clone).not.toBe(mom);
-		clone.add('months', 1);
+		clone.add(1, 'months');
 		expect(+clone).not.toBe(+mom);
 	});
 

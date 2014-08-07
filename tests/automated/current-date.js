@@ -270,7 +270,7 @@ describe('current date', function() {
 		var title;
 
 		start = $.fullCalendar.moment(start);
-		calculatedEnd = end ? $.fullCalendar.moment(end) : start.clone().add('days', 1);
+		calculatedEnd = end ? $.fullCalendar.moment(end) : start.clone().add(1, 'days');
 		expect(start).toEqualMoment(view.start);
 		expect(calculatedEnd).toEqualMoment(view.end);
 
@@ -280,7 +280,7 @@ describe('current date', function() {
 		else {
 			title = $.fullCalendar.formatRange(
 				start,
-				calculatedEnd.clone().add('ms', -1),
+				calculatedEnd.clone().add(-1, 'ms'),
 				TITLE_FORMAT
 			);
 		}
