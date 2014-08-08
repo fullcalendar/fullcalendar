@@ -28,7 +28,7 @@ function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 
-		t.renderResource(getResources.length);
+		t.renderResource(getResources().length);
 	}
 	
 

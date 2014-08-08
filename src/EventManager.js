@@ -515,13 +515,13 @@ function EventManager(options) { // assumed to be a calendar
 			out.className = [];
 		}
 		
-//		if (event.resources) {
-//			if (typeof event.resources == 'string') {
-//				event.resources = event.resources.split(/\s+/);
-//			}
-//		}else{
-//			event.resources = [];
-//		}
+		if (out.resources) {
+			if (typeof out.resources == 'string') {
+				out.resources = out.resources.split(/\s+/);
+			}
+		}else{
+			out.resources = [];
+		}
 
 		out.allDay = allDay;
 		out.start = start;
