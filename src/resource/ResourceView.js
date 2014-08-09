@@ -467,7 +467,7 @@ function ResourceView(element, calendar, viewName) {
 
 	      var classNames = [ 			// added
 	          'fc-col' + col,
-	          resource.className instanceof Array ? resource.className.join(' ') : resource.className,
+	          resource.className,
 	          headerClass
 	        ];
 
@@ -510,7 +510,7 @@ function ResourceView(element, calendar, viewName) {
 
 			classNames = [
 				'fc-col' + col,
-				resource.className instanceof Array ? resource.className.join(' ') : resource.className,
+				resource.className,
 				contentClass
 			];
 			if (+date == +today) {

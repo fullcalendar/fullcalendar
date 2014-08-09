@@ -201,9 +201,13 @@ function DayEventRenderer() {
 	// Generate an array of segments for a single event.
 	// A "segment" is the same data structure that View.rangeToSegments produces,
 	// with the addition of the `event` property being set to reference the original event.
-	function buildSegmentsForEvent(event) { //, col) {
+	function buildSegmentsForEvent(event, resourceCol) {
 		var segments = rangeToSegments(event.start, getEventEnd(event));
 		for (var i=0; i<segments.length; i++) {
+			if (typeof resourceCol !== 'undefined'){
+				segments[i].leftCol = resourceCol;
+				segments[i].rightCol = resourceCol;
+			}
 			segments[i].event = event;
 		}
 		return segments;
