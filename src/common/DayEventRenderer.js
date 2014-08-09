@@ -168,18 +168,19 @@ function DayEventRenderer() {
 	function buildSegments(events) {
 		var resources = t.getResources;
 		var segments = [];
+		var i, eventSegments;
 
 		if (typeof resources === 'undefined'){
-			for (var i=0; i<events.length; i++) {
-				var eventSegments = buildSegmentsForEvent(events[i]);
+			for (i=0; i<events.length; i++) {
+				eventSegments = buildSegmentsForEvent(events[i]);
 				segments.push.apply(segments, eventSegments); // append an array to an array
 			}
 		} else {
-			for (var i=0; i<resources().length; i++) {
+			for (i=0; i<resources().length; i++) {
 				var resourceEvents = eventsForResource(resources()[i], events);
 
 				for (var j=0; j<resourceEvents.length; j++) {
-					var eventSegments = buildSegmentsForEvent(resourceEvents[j], i);
+					eventSegments = buildSegmentsForEvent(resourceEvents[j], i);
 					segments.push.apply(segments, eventSegments); // append an array to an array
 
 				}
@@ -192,7 +193,7 @@ function DayEventRenderer() {
 	    var resourceEvents = [];
 	    for (var i = 0; i < events.length; i++) {
 	      if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
-	        resourceEvents.push(events[i])
+	        resourceEvents.push(events[i]);
 	      }
 	    }
 	    return resourceEvents;

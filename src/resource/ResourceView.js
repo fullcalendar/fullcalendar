@@ -465,7 +465,7 @@ function ResourceView(element, calendar, viewName) {
 		for (col=0; col<colCnt; col++) {
 		  var resource = resources()[col];
 
-	      var classNames = [ 			// added
+		  var classNames = [ // added
 	          'fc-col' + col,
 	          resource.className,
 	          headerClass
