@@ -633,7 +633,7 @@ function ResourceEventRenderer() {
 				trigger('eventDragStop', eventElement, event, ev, ui);
 
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
-					event.resources = resources()[origCell.col + resourceDelta].id;
+					event.resources = [ resources()[origCell.col + resourceDelta].id ];
 					eventDrop(
 						eventElement[0],
 						event,
