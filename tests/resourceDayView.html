@@ -10,7 +10,7 @@
     </style>
 </head>
 <body style='font-size:12px'>
-    <p>
+<!--     <p>
         <button onclick="cal.fullCalendar('prev')">prev</button>
         <button onclick="cal.fullCalendar('next')">next</button>
         <button onclick="cal.fullCalendar('today')">today</button>
@@ -48,7 +48,7 @@
         <button onclick="cal.width(1100)">change width (passive)</button>
         <button onclick="cal.fullCalendar('render')">render</button>
         <button onclick="cal.fullCalendar('option', 'height', 1000)">change height</button>
-    </p>
+    </p> -->
 
     <!--   <div id='loading' style='position:absolute;display:none'>loading...</div>-->
     <div id='calendar' style='width:70%;margin:20px auto 0;font-family:arial'></div>
@@ -105,6 +105,7 @@
                     showModal(event.apId, event.patId, event.provisoryId);
                 },
                 editable: true,
+                allDaySlot: false,
                 // weekends: false,
                 header: {
                     left: 'prev,next today',
@@ -135,12 +136,18 @@
                       resources: ['resource1', 'resource2']
                   },
                   {
-                      id: 777,
                       title: 'R1: 14:30-16',
                       start: new Date(y, m, d, 14, 30),
                       end: new Date(y, m, d, 16, 0),
                       allDay: false,
                       resources: ['resource1']
+                  },
+                  {
+                      title: 'R2: 10:00-10:30',
+                      start: new Date(y, m, d, 10, 0),
+                      end: new Date(y, m, d, 10, 30),
+                      allDay: false,
+                      resources: ['resource2']
                   }
                 ]
             });

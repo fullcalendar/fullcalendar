@@ -97,10 +97,10 @@ function ResourceEventRenderer() {
 			
 			//new
 		for (i=0; i<colCnt; i++) {
-			cellDate = cellToDate(0, 0);  // updated
-
+			cellDate = cellToDate(0, 0);  // updated - should show same day for all
+			var resourceEvents = eventsForResource(resources()[i], events);
 			colSegs = sliceSegs(
-				events,
+				resourceEvents,
 				cellDate.clone().time(minTime),
 				cellDate.clone().time(maxTime)
 			);
@@ -169,15 +169,15 @@ function ResourceEventRenderer() {
 		return segs.sort(compareSlotSegs);
 	}
 
-	// function eventsForResource(resource, events) {
-	// var resourceEvents = [];
-	// for (var i = 0; i < events.length; i++) {
-	//     if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
-	//         resourceEvents.push(events[i]);
-	//     }
-	// }
-	// return resourceEvents;
-	// }
+	function eventsForResource(resource, events) {
+	var resourceEvents = [];
+	for (var i = 0; i < events.length; i++) {
+	    if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
+	        resourceEvents.push(events[i]);
+	    }
+	}
+	return resourceEvents;
+	}
 
 	// function slotEventEnd(event) {
 	// 	if (event.end) {
