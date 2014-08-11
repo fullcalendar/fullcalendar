@@ -55,7 +55,6 @@
     <script src='../lib/jquery/dist/jquery.js'></script>
     <script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
     <script src='../lib/moment/moment.js'></script>
-    <!-- <script src='../src/intro.js'></script> -->
     <script src='../src/defaults.js'></script>
     <script src='../src/main.js'></script>
     <script src='../src/lang.js'></script>
@@ -85,7 +84,6 @@
     <script src='../src/common/CoordinateGrid.js'></script>
     <script src='../src/common/HoverListener.js'></script>
     <script src='../src/common/HorizontalPositionCache.js'></script>
-    <!-- <script src='../src/outro.js'></script> -->
     <script src='../dist/gcal.js'></script>
     <script>
         function showModal(a, b, c) {
@@ -105,7 +103,9 @@
                     showModal(event.apId, event.patId, event.provisoryId);
                 },
                 editable: true,
-                allDaySlot: false,
+				selectable: true,
+				selectHelper: true,
+                allDaySlot: true,
                 // weekends: false,
                 header: {
                     left: 'prev,next today',
