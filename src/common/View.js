@@ -45,10 +45,9 @@ View.prototype = {
 		this.widgetContentClass = tm + '-widget-content';
 		this.highlightStateClass = tm + '-state-highlight';
 
-		// save reference to `this`-bound handlers and attach to document
-		$(document)
-			.on('mousedown', this.documentMousedownProxy = $.proxy(this, 'documentMousedown'))
-			.on('dragstart', this.documentDragStartProxy = $.proxy(this, 'documentDragStart')); // jqui drag
+		// save references to `this`-bound handlers
+		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
 	},
 
 
@@ -57,6 +56,11 @@ View.prototype = {
 	render: function() {
 		this.updateSize();
 		this.trigger('viewRender', this, this, this.el);
+
+		// attach handlers to document. do it here to allow for destroy/rerender
+		$(document)
+			.on('mousedown', this.documentMousedownProxy)
+			.on('dragstart', this.documentDragStartProxy); // jqui drag
 	},
 
 
