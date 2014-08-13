@@ -5691,30 +5691,16 @@ setDefaults({
 
 	axisFormat: generateAgendaAxisFormat,
 	timeFormat: {
-		agenda: generateAgendaTimeFormat
+		resource: generateAgendaTimeFormat
 	},
 
 	dragOpacity: {
-		agenda: .5
+		resource: .5
 	},
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
 	slotEventOverlap: true
 });
-
-
-// function generateAgendaAxisFormat(options, langData) {
-// 	return langData.longDateFormat('LT')
-// 		.replace(':mm', '(:mm)')
-// 		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-// 		.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-// }
-
-
-// function generateAgendaTimeFormat(options, langData) {
-// 	return langData.longDateFormat('LT')
-// 		.replace(/\s*a$/i, ''); // remove trailing AM/PM
-// }
 
 
 // TODO: make it work in quirks mode (event corners, all-day height)
@@ -5742,7 +5728,7 @@ function ResourceView(element, calendar, viewName) {
 	t.getSlotSegmentContainer = function() { return slotSegmentContainer; };
 	t.getSlotContainer = function() { return slotContainer; };
 	t.getRowCnt = function() { return 1; };
-	t.getColCnt = function() { return colCnt; };
+	t.getColCnt = function() { return 1; };
 	t.getColWidth = function() { return colWidth; };
 	t.getSnapHeight = function() { return snapHeight; };
 	t.getSnapDuration = function() { return snapDuration; };
@@ -6703,7 +6689,7 @@ function ResourceEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var cellToDate = t.cellToDate;
-	var getColCnt = t.getColCnt;
+	var getColCnt = function() { return resources().length; };
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
 	var getSnapDuration = t.getSnapDuration;

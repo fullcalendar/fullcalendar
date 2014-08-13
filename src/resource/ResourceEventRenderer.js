@@ -25,7 +25,7 @@ function ResourceEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var cellToDate = t.cellToDate;
-	var getColCnt = function() { return resources().length;} 
+	var getColCnt = function() { return resources().length; };
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
 	var getSnapDuration = t.getSnapDuration;
