@@ -636,7 +636,7 @@ function AgendaView(element, calendar, viewName) {
 		for (var i=0; i<colCnt; i++) { // loop through the day columns
 
 			var dayStart = cellToDate(0, i);
-			var dayEnd = dayStart.clone().add('days', 1);
+			var dayEnd = dayStart.clone().add(1, 'days');
 
 			var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
 			var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
@@ -802,7 +802,7 @@ function AgendaView(element, calendar, viewName) {
 			return start.clone().add(slotDuration);
 		}
 		else {
-			return start.clone().add('days', 1);
+			return start.clone().add(1, 'days');
 		}
 	}
 	

@@ -423,8 +423,8 @@ function AgendaEventRenderer() {
 						if (!cell.row) { // on full-days
 							
 							renderDayOverlay(
-								event.start.clone().add('days', dayDelta),
-								getEventEnd(event).add('days', dayDelta)
+								event.start.clone().add(dayDelta, 'days'),
+								getEventEnd(event).add(dayDelta, 'days')
 							);
 
 							resetElement();
@@ -469,7 +469,7 @@ function AgendaEventRenderer() {
 				}
 				else { // changed!
 
-					var eventStart = event.start.clone().add('days', dayDelta); // already assumed to have a stripped time
+					var eventStart = event.start.clone().add(dayDelta, 'days'); // already assumed to have a stripped time
 					var snapTime;
 					var snapIndex;
 					if (!allDay) {
@@ -589,12 +589,12 @@ function AgendaEventRenderer() {
 
 					// compute new dates
 					if (isAllDay) {
-						eventStart = event.start.clone().stripTime().add('days', dayDelta);
+						eventStart = event.start.clone().stripTime().add(dayDelta, 'days');
 						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
 					}
 					else {
-						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
-						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+						eventStart = event.start.clone().add(snapDelta * snapDuration).add(dayDelta, 'days');
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add(dayDelta, 'days');
 					}
 
 					updateUI();

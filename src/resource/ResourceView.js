@@ -21,20 +21,6 @@ setDefaults({
 });
 
 
-function generateAgendaAxisFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(':mm', '(:mm)')
-		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-		.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-}
-
-
-function generateAgendaTimeFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(/\s*a$/i, ''); // remove trailing AM/PM
-}
-
-
 // TODO: make it work in quirks mode (event corners, all-day height)
 // TODO: test liquid width, especially in IE6
 
@@ -640,7 +626,7 @@ function ResourceView(element, calendar, viewName) {
 		overlayEnd = overlayEnd.clone().stripZone();
 
 		var dayStart = cellToDate(0, 0);
-		var dayEnd = dayStart.clone().add('days', 1);
+		var dayEnd = dayStart.clone().add(1, 'days');
 
 		var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
 		var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
@@ -805,7 +791,7 @@ function ResourceView(element, calendar, viewName) {
 			return start.clone().add(slotDuration);
 		}
 		else {
-			return start.clone().add('days', 1);
+			return start.clone().add(1, 'days');
 		}
 	}
 	

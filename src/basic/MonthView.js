@@ -31,7 +31,7 @@ function MonthView(element, calendar) {
 
 		t.end = t.intervalEnd.clone();
 		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
-		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
+		t.end.add((7 - t.end.weekday()) % 7, 'days'); // move to end of week if not already
 		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
 
 		var rowCnt = Math.ceil( // need to ceil in case there are hidden days

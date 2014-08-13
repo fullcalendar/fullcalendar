@@ -403,6 +403,7 @@ function ResourceEventRenderer() {
 		var revert;
 		var allDay = true;
 		var dayDelta;
+		var origCol;
 
 		var hoverListener = getHoverListener();
 		var colWidth = getColWidth();
@@ -425,7 +426,7 @@ function ResourceEventRenderer() {
 					clearOverlays();
 					if (cell) {
 						revert = false;
-
+						origCol = origCell.col;
 						var origDate = cellToDate(0, origCell.col);
 						var date = cellToDate(0, cell.col);
 						dayDelta = date.diff(origDate, 'days');
@@ -433,8 +434,10 @@ function ResourceEventRenderer() {
 						if (!cell.row) { // on full-days
 							
 							renderDayOverlay(
-								event.start.clone().add('days', dayDelta),
-								getEventEnd(event).add('days', dayDelta)
+								event.start.clone().add(dayDelta, 'days'),
+								getEventEnd(event).add(dayDelta, 'days'),
+								true,
+								1
 							);
 
 							resetElement();
@@ -478,8 +481,12 @@ function ResourceEventRenderer() {
 					showEvents(event, eventElement);
 				}
 				else { // changed!
-
-					var eventStart = event.start.clone().add('days', dayDelta); // already assumed to have a stripped time
+					// calculate column delta
+					var newCol = Math.round((eventElement.offset().left - getSlotContainer().offset().left) / colWidth);
+					if (newCol !== origCol){
+						event.resources = [ resources()[newCol].id ];
+					}
+					var eventStart = event.start.clone(); // already assumed to have a stripped time
 					var snapTime;
 					var snapIndex;
 					if (!allDay) {
@@ -596,12 +603,12 @@ function ResourceEventRenderer() {
 
 					// compute new dates
 					if (isAllDay) {
-						eventStart = event.start.clone().stripTime().add('days', dayDelta);
+						eventStart = event.start.clone().stripTime().add(dayDelta, 'days');
 						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
 					}
 					else {
-						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
-						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+						eventStart = event.start.clone().add(snapDelta * snapDuration).add(dayDelta, 'days');
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add(dayDelta, 'days');
 					}
 
 					updateUI();
@@ -663,7 +670,7 @@ function ResourceEventRenderer() {
 				if (isAllDay) {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
-					renderDayOverlay(eventStart, eventEnd);
+					renderDayOverlay(eventStart, eventEnd, false, origCell.col + colDelta);
 				}
 				else {
 					updateTimeText();

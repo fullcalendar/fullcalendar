@@ -388,7 +388,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function defaultSelectionEnd(start) {
-		return start.clone().stripTime().add('days', 1);
+		return start.clone().stripTime().add(1, 'days');
 	}
 	
 	

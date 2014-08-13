@@ -65,7 +65,7 @@ function Calendar(element, instanceOptions) {
 	// Apply overrides to the current language's data
 
 	var langData = createObject( // make a cheap clone
-		moment.langData(options.lang)
+		moment.localeData(options.lang)
 	);
 
 	if (options.monthNames) {

@@ -77,7 +77,7 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	date2 = fc.moment.parseZone(date2);
 
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
-	formatStr = date1.lang().longDateFormat(formatStr) || formatStr;
+	formatStr = date1.localeData().longDateFormat(formatStr) || formatStr;
 	// BTW, this is not important for `formatDate` because it is impossible to put custom tokens
 	// or non-zero areas in Moment's localized format strings.
 

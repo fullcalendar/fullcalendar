@@ -331,7 +331,7 @@ function View(element, calendar, viewName) {
 		while (
 			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
-			out.add('days', inc);
+			out.add(inc, 'days');
 		}
 		return out;
 	}
@@ -385,7 +385,7 @@ function View(element, calendar, viewName) {
 
 	// day offset -> date
 	function dayOffsetToDate(dayOffset) {
-		return t.start.clone().add('days', dayOffset);
+		return t.start.clone().add(dayOffset, 'days');
 	}
 
 

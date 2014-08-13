@@ -385,7 +385,7 @@ function Calendar(element, instanceOptions) {
 	// Apply overrides to the current language's data
 
 	var langData = createObject( // make a cheap clone
-		moment.langData(options.lang)
+		moment.localeData(options.lang)
 	);
 
 	if (options.monthNames) {
@@ -2838,7 +2838,7 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	date2 = fc.moment.parseZone(date2);
 
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
-	formatStr = date1.lang().longDateFormat(formatStr) || formatStr;
+	formatStr = date1.localeData().longDateFormat(formatStr) || formatStr;
 	// BTW, this is not important for `formatDate` because it is impossible to put custom tokens
 	// or non-zero areas in Moment's localized format strings.
 
@@ -3019,7 +3019,7 @@ function MonthView(element, calendar) {
 
 		t.end = t.intervalEnd.clone();
 		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last week if no visible days
-		t.end.add('days', (7 - t.end.weekday()) % 7); // move to end of week if not already
+		t.end.add((7 - t.end.weekday()) % 7, 'days'); // move to end of week if not already
 		t.end = t.skipHiddenDays(t.end, -1, true); // move in from the last invisible days of the week
 
 		var rowCnt = Math.ceil( // need to ceil in case there are hidden days
@@ -3099,7 +3099,7 @@ function BasicDayView(element, calendar) { // TODO: make a DayView mixin
 
 
 	function incrementDate(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	}
@@ -3108,7 +3108,7 @@ function BasicDayView(element, calendar) { // TODO: make a DayView mixin
 	function render(date) {
 
 		t.start = t.intervalStart = date.clone().stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('days', 1);
+		t.end = t.intervalEnd = t.start.clone().add(1, 'days');
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 
@@ -3509,7 +3509,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function defaultSelectionEnd(start) {
-		return start.clone().stripTime().add('days', 1);
+		return start.clone().stripTime().add(1, 'days');
 	}
 	
 	
@@ -3721,7 +3721,7 @@ function AgendaDayView(element, calendar) { // TODO: make a DayView mixin
 
 
 	function incrementDate(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	}
@@ -3730,7 +3730,7 @@ function AgendaDayView(element, calendar) { // TODO: make a DayView mixin
 	function render(date) {
 
 		t.start = t.intervalStart = date.clone().stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('days', 1);
+		t.end = t.intervalEnd = t.start.clone().add(1, 'days');
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 
@@ -4379,7 +4379,7 @@ function AgendaView(element, calendar, viewName) {
 		for (var i=0; i<colCnt; i++) { // loop through the day columns
 
 			var dayStart = cellToDate(0, i);
-			var dayEnd = dayStart.clone().add('days', 1);
+			var dayEnd = dayStart.clone().add(1, 'days');
 
 			var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
 			var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
@@ -4545,7 +4545,7 @@ function AgendaView(element, calendar, viewName) {
 			return start.clone().add(slotDuration);
 		}
 		else {
-			return start.clone().add('days', 1);
+			return start.clone().add(1, 'days');
 		}
 	}
 	
@@ -5125,8 +5125,8 @@ function AgendaEventRenderer() {
 						if (!cell.row) { // on full-days
 							
 							renderDayOverlay(
-								event.start.clone().add('days', dayDelta),
-								getEventEnd(event).add('days', dayDelta)
+								event.start.clone().add(dayDelta, 'days'),
+								getEventEnd(event).add(dayDelta, 'days')
 							);
 
 							resetElement();
@@ -5171,7 +5171,7 @@ function AgendaEventRenderer() {
 				}
 				else { // changed!
 
-					var eventStart = event.start.clone().add('days', dayDelta); // already assumed to have a stripped time
+					var eventStart = event.start.clone().add(dayDelta, 'days'); // already assumed to have a stripped time
 					var snapTime;
 					var snapIndex;
 					if (!allDay) {
@@ -5291,12 +5291,12 @@ function AgendaEventRenderer() {
 
 					// compute new dates
 					if (isAllDay) {
-						eventStart = event.start.clone().stripTime().add('days', dayDelta);
+						eventStart = event.start.clone().stripTime().add(dayDelta, 'days');
 						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
 					}
 					else {
-						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
-						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+						eventStart = event.start.clone().add(snapDelta * snapDuration).add(dayDelta, 'days');
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add(dayDelta, 'days');
 					}
 
 					updateUI();
@@ -5661,7 +5661,7 @@ function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 	var getResources = t.getResources;
 
 	function incrementDate(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	}
@@ -5670,7 +5670,7 @@ function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 	function render(date) {
 
 		t.start = t.intervalStart = date.clone().stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('days', 1);
+		t.end = t.intervalEnd = t.start.clone().add(1, 'days');
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 
@@ -5680,12 +5680,20 @@ function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 
 }
 ;;
+
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
+
 	scrollTime: '06:00:00',
-	slotMinutes: 30,
+
 	slotDuration: '00:30:00',
+
+	axisFormat: generateAgendaAxisFormat,
+	timeFormat: {
+		agenda: generateAgendaTimeFormat
+	},
+
 	dragOpacity: {
 		agenda: .5
 	},
@@ -5693,6 +5701,20 @@ setDefaults({
 	maxTime: '24:00:00',
 	slotEventOverlap: true
 });
+
+
+// function generateAgendaAxisFormat(options, langData) {
+// 	return langData.longDateFormat('LT')
+// 		.replace(':mm', '(:mm)')
+// 		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+// 		.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+// }
+
+
+// function generateAgendaTimeFormat(options, langData) {
+// 	return langData.longDateFormat('LT')
+// 		.replace(/\s*a$/i, ''); // remove trailing AM/PM
+// }
 
 
 // TODO: make it work in quirks mode (event corners, all-day height)
@@ -5748,13 +5770,14 @@ function ResourceView(element, calendar, viewName) {
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
 	var unselect = t.unselect;
+	//var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
 	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
 	var calculateWeekNumber = calendar.calculateWeekNumber;
-
+	
 	
 	// locals
 	
@@ -5937,10 +5960,9 @@ function ResourceView(element, calendar, viewName) {
 		s +=
 			"</tbody>" +
 			"</table>";
-		// slotTable = $(s).appendTo(slotContainer);
-		// slotTableFirstInner = slotTable.find('div:first');
-		slotTable = $(s).appendTo(slotContainer);
 
+		slotTable = $(s).appendTo(slotContainer);
+		
 		slotBind(slotTable.find('td'));
 	}
 
@@ -6043,7 +6065,7 @@ function ResourceView(element, calendar, viewName) {
 		var headerClass = tm + "-widget-header"; // TODO: make these when updateOptions() called
 		var contentClass = tm + "-widget-content";
 		var date;
-		var today = makeMoment(new Date()).stripTime();
+		var today = calendar.getNow().stripTime();
 		var col;
 		var cellsHTML;
 		var cellHTML;
@@ -6063,10 +6085,11 @@ function ResourceView(element, calendar, viewName) {
 
 			classNames = [
 				'fc-col' + col,
+				'fc-' + dayIDs[date.day()],
 				resource.className,
 				contentClass
 			];
-			if (+date == +today) {
+			if (date.isSame(today, 'day')) {
 				classNames.push(
 					tm + '-state-highlight',
 					'fc-today'
@@ -6229,6 +6252,7 @@ function ResourceView(element, calendar, viewName) {
 			.mousedown(slotSelectionMousedown);
 	}
 	
+	
 	function slotClick(ev) {
 		if (!opt('selectable')) { // if selectable, SelectionManager will worry about dayClick
 			var col = Math.min(colCnt-1, Math.floor((ev.pageX - dayTable.offset().left - axisWidth) / colWidth));
@@ -6257,7 +6281,7 @@ function ResourceView(element, calendar, viewName) {
 			}
 		}
 	}
-
+	
 	
 	
 	/* Semi-transparent Overlay Helpers
@@ -6277,19 +6301,12 @@ function ResourceView(element, calendar, viewName) {
 			dayBind(
 				renderCellOverlay(
 					segment.row,
-					col, //segment.leftCol,
+					col,
 					segment.row,
-					col //segment.rightCol
+					col
 				)
 			);
 		}
-
-		// var allDayRow = 0;
-		// if (refreshCoordinateGrid) {
-		// 	coordinateGrid.build();
-		// }
-
-		// dayBind(renderCellOverlay(allDayRow, col, allDayRow, col));
 	}
 	
 	
@@ -6305,7 +6322,7 @@ function ResourceView(element, calendar, viewName) {
 		overlayEnd = overlayEnd.clone().stripZone();
 
 		var dayStart = cellToDate(0, 0);
-		var dayEnd = dayStart.clone().add('days', 1);
+		var dayEnd = dayStart.clone().add(1, 'days');
 
 		var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
 		var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
@@ -6392,7 +6409,10 @@ function ResourceView(element, calendar, viewName) {
 	}
 
 
-	function getIsCellAllDay(cell) {
+	// NOTE: the row index of these "cells" doesn't correspond to the slot index, but rather the "snap" index
+
+
+	function getIsCellAllDay(cell) { // TODO: remove because mom.hasTime() from realCellToDate() is better
 		return opt('allDaySlot') && !cell.row;
 	}
 
@@ -6413,7 +6433,7 @@ function ResourceView(element, calendar, viewName) {
 		return date;
 	}
 
-	
+
 	function computeDateTop(date, startOfDayDate) {
 		return computeTimeTop(
 			moment.duration(
@@ -6457,25 +6477,27 @@ function ResourceView(element, calendar, viewName) {
 	}
 	
 	
+	
 	/* Selection
 	---------------------------------------------------------------------------------*/
+
 	
-	
-	function defaultSelectionEnd(startDate, allDay) {
-		if (allDay) {
-			return startDate.clone();
+	function defaultSelectionEnd(start) {
+		if (start.hasTime()) {
+			return start.clone().add(slotDuration);
 		}
-		return startDate.clone().add('m', opt('slotMinutes'));
+		else {
+			return start.clone().add(1, 'days');
+		}
 	}
 	
 	
-	function renderSelection(startDate, endDate, allDay, col) { // only for all-day
-		if (allDay) {
-			if (opt('allDaySlot')) {
-				renderDayOverlay(startDate, endDate, true, col);
-			}
-		}else{
-			renderSlotSelection(startDate, endDate);
+	function renderSelection(start, end, col) {
+		if (start.hasTime() || end.hasTime()) {
+			renderSlotSelection(start, end); //, col);
+		}
+		else if (opt('allDaySlot')) {
+			renderDayOverlay(start, end, true, col); // true for refreshing coordinate grid
 		}
 	}
 	
@@ -6539,38 +6561,7 @@ function ResourceView(element, calendar, viewName) {
 		}
 	}
 	
-	function daySelectionMousedown(ev) {
-		var getIsCellAllDay = t.getIsCellAllDay;
-		var hoverListener = t.getHoverListener();
-		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
-		var col;
-		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
-			unselect(ev);
-			var dates;
-			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
-				clearSelection();
-				if (cell && getIsCellAllDay(cell)) {
-					col = cell.col;
-					dates = [ realCellToDate(origCell), realCellToDate(cell) ].sort(dateCompare);
-					renderSelection(dates[0], dates[1], true, col);
-				}else{
-					dates = null;
-				}
-			}, ev);
-			$(document).one('mouseup', function(ev) {
-				hoverListener.stop();
-				if (dates) {
-					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0], true, ev);
-					}
-					ev.data = resources()[col];
-					reportSelection(dates[0], dates[1], true, ev);
-				}
-			});
-		}
-	}
-
-	// select on the calendar somewhere
+	
 	function slotSelectionMousedown(ev) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
@@ -6597,18 +6588,18 @@ function ResourceView(element, calendar, viewName) {
 				hoverListener.stop();
 				if (dates) {
 					if (+dates[0] == +dates[1]) {
-						reportDayClick(dates[0], false, ev);
+						reportDayClick(dates[0], ev);
 					}
 					ev.data = resources()[col]; // added
-					reportSelection(dates[0], dates[3], false, ev);
+					reportSelection(dates[0], dates[3], ev);
 				}
 			});
 		}
 	}
 
 
-	function reportDayClick(date, allDay, ev) {
-		trigger('dayClick', dayBodyCells[dateToCell(date).col], date, allDay, ev);
+	function reportDayClick(date, ev) {
+		trigger('dayClick', dayBodyCells[dateToCell(date).col], date, ev);
 	}
 	
 	
@@ -6621,12 +6612,15 @@ function ResourceView(element, calendar, viewName) {
 		hoverListener.start(function(cell) {
 			clearOverlays();
 			if (cell) {
-				if (getIsCellAllDay(cell)) {
-					renderCellOverlay(cell.row, cell.col, cell.row, cell.col);
-				}else{
-					var d1 = realCellToDate(cell);
-					var d2 = d1.clone().add('m', opt('defaultEventMinutes'));
+				var d1 = realCellToDate(cell);
+				var d2 = d1.clone();
+				if (d1.hasTime()) {
+					d2.add(calendar.defaultTimedEventDuration);
 					renderSlotOverlay(d1, d2, cell.col);
+				}
+				else {
+					d2.add(calendar.defaultAllDayEventDuration);
+					renderDayOverlay(d1, d2, true, cell.col);
 				}
 			}
 		}, ev);
@@ -6637,10 +6631,49 @@ function ResourceView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-		  ev.data = resources()[cell.col];
-			trigger('drop', _dragElement, realCellToDate(cell), getIsCellAllDay(cell), ev, ui);
+			ev.data = resources()[cell.col];
+			trigger(
+				'drop',
+				_dragElement,
+				realCellToDate(cell),
+				ev,
+				ui
+			);
 		}
 	}
+	
+	/* OVERRIDES */
+	function daySelectionMousedown(ev) {
+		var getIsCellAllDay = t.getIsCellAllDay;
+		var hoverListener = t.getHoverListener();
+		var reportDayClick = t.reportDayClick; // this is hacky and sort of weird
+		var col;
+		if (ev.which == 1 && opt('selectable')) { // which==1 means left mouse button
+			unselect(ev);
+			var dates;
+			hoverListener.start(function(cell, origCell) { // TODO: maybe put cellToDate/getIsCellAllDay info in cell
+				clearSelection();
+				if (cell && getIsCellAllDay(cell)) {
+					col = cell.col;
+					dates = [ realCellToDate(origCell), realCellToDate(cell) ].sort(dateCompare);
+					renderSelection(dates[0], dates[1], col);
+				}else{
+					dates = null;
+				}
+			}, ev);
+			$(document).one('mouseup', function(ev) {
+				hoverListener.stop();
+				if (dates) {
+					if (+dates[0] == +dates[1]) {
+						reportDayClick(dates[0], true, ev);
+					}
+					ev.data = resources()[col];
+					reportSelection(dates[0], dates[1], ev);
+				}
+			});
+		}
+	}
+
 }
 ;;
 
@@ -6737,10 +6770,8 @@ function ResourceEventRenderer() {
 			i,
 			j, seg,
 			colSegs,
-			segs = []; //,
-			//col;
-			
-			//new
+			segs = [];
+
 		for (i=0; i<colCnt; i++) {
 			cellDate = cellToDate(0, 0);  // updated - should show same day for all
 			var resourceEvents = eventsForResource(resources()[i], events);
@@ -6758,7 +6789,7 @@ function ResourceEventRenderer() {
 				segs.push(seg);
 			}
 		}
-		
+
 		return segs;
 	}
 
@@ -6815,22 +6846,14 @@ function ResourceEventRenderer() {
 	}
 
 	function eventsForResource(resource, events) {
-	var resourceEvents = [];
-	for (var i = 0; i < events.length; i++) {
-	    if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
-	        resourceEvents.push(events[i]);
-	    }
+		var resourceEvents = [];
+		for (var i = 0; i < events.length; i++) {
+		    if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
+		        resourceEvents.push(events[i]);
+		    }
+		}
+		return resourceEvents;
 	}
-	return resourceEvents;
-	}
-
-	// function slotEventEnd(event) {
-	// 	if (event.end) {
-	// 		return event.end.clone();
-	// 	}else{
-	// 		return event.start.clone().add('m', opt('defaultEventMinutes'));
-	// 	}
-	// }
 	
 	
 	// renders events in the 'time slots' at the bottom
@@ -6905,6 +6928,7 @@ function ResourceEventRenderer() {
 			seg.outerHeight = bottom - top;
 			html += slotSegHtml(event, seg);
 		}
+
 		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
 		
@@ -6963,7 +6987,9 @@ function ResourceEventRenderer() {
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
 					eventElement.find('div.fc-event-time')
-						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+						.text(
+							formatDate(event.start, opt('timeFormat')) + ' - ' + event.title
+						);
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
@@ -6997,6 +7023,7 @@ function ResourceEventRenderer() {
 		}else{
 			html += "div";
 		}
+
 		html +=
 			" class='" + classes.join(' ') + "'" +
 			" style=" +
@@ -7016,6 +7043,7 @@ function ResourceEventRenderer() {
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-bg'></div>";
+
 		if (seg.isEnd && isEventResizable(event)) {
 			html +=
 				"<div class='ui-resizable-handle ui-resizable-s'>=</div>";
@@ -7053,6 +7081,7 @@ function ResourceEventRenderer() {
 		var revert;
 		var allDay = true;
 		var dayDelta;
+		var origCol;
 
 		var hoverListener = getHoverListener();
 		var colWidth = getColWidth();
@@ -7075,16 +7104,18 @@ function ResourceEventRenderer() {
 					clearOverlays();
 					if (cell) {
 						revert = false;
-
+						origCol = origCell.col;
 						var origDate = cellToDate(0, origCell.col);
 						var date = cellToDate(0, cell.col);
 						dayDelta = date.diff(origDate, 'days');
 
 						if (!cell.row) { // on full-days
-
+							
 							renderDayOverlay(
-								event.start.clone().add('days', dayDelta),
-								getEventEnd(event).add('days', dayDelta)
+								event.start.clone().add(dayDelta, 'days'),
+								getEventEnd(event).add(dayDelta, 'days'),
+								true,
+								1
 							);
 
 							resetElement();
@@ -7128,8 +7159,12 @@ function ResourceEventRenderer() {
 					showEvents(event, eventElement);
 				}
 				else { // changed!
-
-					var eventStart = event.start.clone().add('days', dayDelta); // already assumed to have a stripped time
+					// calculate column delta
+					var newCol = Math.round((eventElement.offset().left - getSlotContainer().offset().left) / colWidth);
+					if (newCol !== origCol){
+						event.resources = [ resources()[newCol].id ];
+					}
+					var eventStart = event.start.clone(); // already assumed to have a stripped time
 					var snapTime;
 					var snapIndex;
 					if (!allDay) {
@@ -7227,11 +7262,6 @@ function ResourceEventRenderer() {
 					colDelta = Math.round((ui.position.left - origPosition.left) / colWidth);
 					if (colDelta != prevColDelta) {
 						// calculate the day delta based off of the original clicked column and the column delta
-						//var origDate = cellToDate(0, origCell.col);
-						//var col = origCell.col + colDelta;
-						//col = Math.max(0, col);
-						//col = Math.min(colCnt-1, col);
-					    //dayDelta = 0; //dayDiff(date, origDate);
 						resourceDelta = colDelta;
 					}
 
@@ -7251,12 +7281,12 @@ function ResourceEventRenderer() {
 
 					// compute new dates
 					if (isAllDay) {
-						eventStart = event.start.clone().stripTime().add('days', dayDelta);
+						eventStart = event.start.clone().stripTime().add(dayDelta, 'days');
 						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
 					}
 					else {
-						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
-						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+						eventStart = event.start.clone().add(snapDelta * snapDuration).add(dayDelta, 'days');
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add(dayDelta, 'days');
 					}
 
 					updateUI();
@@ -7275,10 +7305,13 @@ function ResourceEventRenderer() {
 			stop: function(ev, ui) {
 
 				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
+				
+				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
-					event.resources = [ resources()[origCell.col + resourceDelta].id ];
+					if (resourceDelta){
+						event.resources = [ resources()[origCell.col + resourceDelta].id ];
+					}
 					eventDrop(
 						eventElement[0],
 						event,
@@ -7315,7 +7348,7 @@ function ResourceEventRenderer() {
 				if (isAllDay) {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
-					renderDayOverlay(eventStart, eventEnd);
+					renderDayOverlay(eventStart, eventEnd, false, origCell.col + colDelta);
 				}
 				else {
 					updateTimeText();
@@ -7376,7 +7409,7 @@ function ResourceEventRenderer() {
 				}
 			},
 			stop: function(ev, ui) {
-				trigger('eventResizeStop', this, event, ev, ui);
+				trigger('eventResizeStop', eventElement[0], event, ev, ui);
 				if (snapDelta) {
 					eventResize(
 						eventElement[0],
@@ -7396,211 +7429,6 @@ function ResourceEventRenderer() {
 	
 
 }
-
-
-
-// /* Agenda Event Segment Utilities
-// -----------------------------------------------------------------------------*/
-// // Sets the seg.backwardCoord and seg.forwardCoord on each segment and returns a new
-// // list in the order they should be placed into the DOM (an implicit z-index).
-// function placeSlotSegs(segs) {
-// 	var levels = buildSlotSegLevels(segs);
-// 	var level0 = levels[0];
-// 	var i;
-
-// 	computeForwardSlotSegs(levels);
-
-// 	if (level0) {
-
-// 		for (i=0; i<level0.length; i++) {
-// 			computeSlotSegPressures(level0[i]);
-// 		}
-
-// 		for (i=0; i<level0.length; i++) {
-// 			computeSlotSegCoords(level0[i], 0, 0);
-// 		}
-// 	}
-
-// 	return flattenSlotSegLevels(levels);
-// }
-
-
-// // Builds an array of segments "levels". The first level will be the leftmost tier of segments
-// // if the calendar is left-to-right, or the rightmost if the calendar is right-to-left.
-// function buildSlotSegLevels(segs) {
-// 	var levels = [];
-// 	var i, seg;
-// 	var j;
-
-// 	for (i=0; i<segs.length; i++) {
-// 		seg = segs[i];
-
-// 		// go through all the levels and stop on the first level where there are no collisions
-// 		for (j=0; j<levels.length; j++) {
-// 			if (!computeSlotSegCollisions(seg, levels[j]).length) {
-// 				break;
-// 			}
-// 		}
-
-// 		(levels[j] || (levels[j] = [])).push(seg);
-// 	}
-
-// 	return levels;
-// }
-
-
-// // For every segment, figure out the other segments that are in subsequent
-// // levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
-// function computeForwardSlotSegs(levels) {
-// 	var i, level;
-// 	var j, seg;
-// 	var k;
-
-// 	for (i=0; i<levels.length; i++) {
-// 		level = levels[i];
-
-// 		for (j=0; j<level.length; j++) {
-// 			seg = level[j];
-
-// 			seg.forwardSegs = [];
-// 			for (k=i+1; k<levels.length; k++) {
-// 				computeSlotSegCollisions(seg, levels[k], seg.forwardSegs);
-// 			}
-// 		}
-// 	}
-// }
-
-
-// // Figure out which path forward (via seg.forwardSegs) results in the longest path until
-// // the furthest edge is reached. The number of segments in this path will be seg.forwardPressure
-// function computeSlotSegPressures(seg) {
-// 	var forwardSegs = seg.forwardSegs;
-// 	var forwardPressure = 0;
-// 	var i, forwardSeg;
-
-// 	if (seg.forwardPressure === undefined) { // not already computed
-
-// 		for (i=0; i<forwardSegs.length; i++) {
-// 			forwardSeg = forwardSegs[i];
-
-// 			// figure out the child's maximum forward path
-// 			computeSlotSegPressures(forwardSeg);
-
-// 			// either use the existing maximum, or use the child's forward pressure
-// 			// plus one (for the forwardSeg itself)
-// 			forwardPressure = Math.max(
-// 				forwardPressure,
-// 				1 + forwardSeg.forwardPressure
-// 			);
-// 		}
-
-// 		seg.forwardPressure = forwardPressure;
-// 	}
-// }
-
-
-// // Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
-// // from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
-// // seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
-// //
-// // The segment might be part of a "series", which means consecutive segments with the same pressure
-// // who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
-// // segments behind this one in the current series, and `seriesBackwardCoord` is the starting
-// // coordinate of the first segment in the series.
-// function computeSlotSegCoords(seg, seriesBackwardPressure, seriesBackwardCoord) {
-// 	var forwardSegs = seg.forwardSegs;
-// 	var i;
-
-// 	if (seg.forwardCoord === undefined) { // not already computed
-
-// 		if (!forwardSegs.length) {
-
-// 			// if there are no forward segments, this segment should butt up against the edge
-// 			seg.forwardCoord = 1;
-// 		}
-// 		else {
-
-// 			// sort highest pressure first
-// 			forwardSegs.sort(compareForwardSlotSegs);
-
-// 			// this segment's forwardCoord will be calculated from the backwardCoord of the
-// 			// highest-pressure forward segment.
-// 			computeSlotSegCoords(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord);
-// 			seg.forwardCoord = forwardSegs[0].backwardCoord;
-// 		}
-
-// 		// calculate the backwardCoord from the forwardCoord. consider the series
-// 		seg.backwardCoord = seg.forwardCoord -
-// 			(seg.forwardCoord - seriesBackwardCoord) / // available width for series
-// 			(seriesBackwardPressure + 1); // # of segments in the series
-
-// 		// use this segment's coordinates to computed the coordinates of the less-pressurized
-// 		// forward segments
-// 		for (i=0; i<forwardSegs.length; i++) {
-// 			computeSlotSegCoords(forwardSegs[i], 0, seg.forwardCoord);
-// 		}
-// 	}
-// }
-
-
-// // Outputs a flat array of segments, from lowest to highest level
-// function flattenSlotSegLevels(levels) {
-// 	var segs = [];
-// 	var i, level;
-// 	var j;
-
-// 	for (i=0; i<levels.length; i++) {
-// 		level = levels[i];
-
-// 		for (j=0; j<level.length; j++) {
-// 			segs.push(level[j]);
-// 		}
-// 	}
-
-// 	return segs;
-// }
-
-
-// // Find all the segments in `otherSegs` that vertically collide with `seg`.
-// // Append into an optionally-supplied `results` array and return.
-// function computeSlotSegCollisions(seg, otherSegs, results) {
-// 	results = results || [];
-
-// 	for (var i=0; i<otherSegs.length; i++) {
-// 		if (isSlotSegCollision(seg, otherSegs[i])) {
-// 			results.push(otherSegs[i]);
-// 		}
-// 	}
-
-// 	return results;
-// }
-
-
-// // Do these segments occupy the same vertical space?
-// function isSlotSegCollision(seg1, seg2) {
-// 	return seg1.end > seg2.start && seg1.start < seg2.end;
-// }
-
-
-// // A cmp function for determining which forward segment to rely on more when computing coordinates.
-// function compareForwardSlotSegs(seg1, seg2) {
-// 	// put higher-pressure first
-// 	return seg2.forwardPressure - seg1.forwardPressure ||
-// 		// put segments that are closer to initial edge first (and favor ones with no coords yet)
-// 		(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
-// 		// do normal sorting...
-// 		compareSlotSegs(seg1, seg2);
-// }
-
-
-// // A cmp function for determining which segment should be closer to the initial edge
-// // (the left edge on a left-to-right calendar).
-// function compareSlotSegs(seg1, seg2) {
-// 	return seg1.start - seg2.start || // earlier start time goes first
-// 		(seg2.end - seg2.start) - (seg1.end - seg1.start) || // tie? longer-duration goes first
-// 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
-// }
-
 ;;
 
 
@@ -7935,7 +7763,7 @@ function View(element, calendar, viewName) {
 		while (
 			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
-			out.add('days', inc);
+			out.add(inc, 'days');
 		}
 		return out;
 	}
@@ -7989,7 +7817,7 @@ function View(element, calendar, viewName) {
 
 	// day offset -> date
 	function dayOffsetToDate(dayOffset) {
-		return t.start.clone().add('days', dayOffset);
+		return t.start.clone().add(dayOffset, 'days');
 	}
 
 
@@ -8723,10 +8551,10 @@ function DayEventRenderer() {
 						var origCellDate = cellToDate(origCell);
 						var cellDate = cellToDate(cell);
 						dayDelta = cellDate.diff(origCellDate, 'days');
-						eventStart = event.start.clone().add('days', dayDelta);
+						eventStart = event.start.clone().add(dayDelta, 'days');
 						renderDayOverlay(
 							eventStart,
-							getEventEnd(event).add('days', dayDelta)
+							getEventEnd(event).add(dayDelta, 'days')
 						);
 					}
 					else {
@@ -8806,7 +8634,7 @@ function DayEventRenderer() {
 						cellOffsetToDayOffset(cellOffset) -
 						cellOffsetToDayOffset(origCellOffset);
 
-					eventEnd = getEventEnd(event).add('days', dayDelta); // assumed to already have a stripped time
+					eventEnd = getEventEnd(event).add(dayDelta, 'days'); // assumed to already have a stripped time
 
 					if (dayDelta) {
 						eventCopy.end = eventEnd;
@@ -8999,7 +8827,7 @@ function SelectionManager() {
 					dates = [ cellToDate(origCell), cellToDate(cell) ].sort(dateCompare);
 					renderSelection(
 						dates[0],
-						dates[1].clone().add('days', 1) // make exclusive
+						dates[1].clone().add(1, 'days') // make exclusive
 					);
 				}else{
 					dates = null;
@@ -9013,7 +8841,7 @@ function SelectionManager() {
 					}
 					reportSelection(
 						dates[0],
-						dates[1].clone().add('days', 1), // make exclusive
+						dates[1].clone().add(1, 'days'), // make exclusive
 						ev
 					);
 				}
