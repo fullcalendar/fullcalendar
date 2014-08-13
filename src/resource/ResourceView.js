@@ -46,7 +46,7 @@ function ResourceView(element, calendar, viewName) {
 	t.getSlotSegmentContainer = function() { return slotSegmentContainer; };
 	t.getSlotContainer = function() { return slotContainer; };
 	t.getRowCnt = function() { return 1; };
-	t.getColCnt = function() { return colCnt; };
+	t.getColCnt = function() { return 1; };
 	t.getColWidth = function() { return colWidth; };
 	t.getSnapHeight = function() { return snapHeight; };
 	t.getSnapDuration = function() { return snapDuration; };
