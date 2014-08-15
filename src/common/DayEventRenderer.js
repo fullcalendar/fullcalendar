@@ -192,7 +192,7 @@ function DayEventRenderer() {
 	function eventsForResource(resource, events) {
 	    var resourceEvents = [];
 	    for (var i = 0; i < events.length; i++) {
-	      if (events[i].resources && $.inArray(resource.id, events[i].resources) >= 0) {
+	      if (events[i].resources && $.grep(events[i].resources, function(id) { return id == resource.id; }).length) {
 	        resourceEvents.push(events[i]);
 	      }
 	    }
