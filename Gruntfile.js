@@ -221,11 +221,11 @@ module.exports = function(grunt) {
 
 	config.concat.archiveJQueryUI = {
 		src: [
-			'lib/jquery-ui/ui/minified/jquery.ui.core.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.widget.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.mouse.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.draggable.min.js',
-			'lib/jquery-ui/ui/minified/jquery.ui.resizable.min.js'
+			'lib/jquery-ui/ui/minified/core.min.js',
+			'lib/jquery-ui/ui/minified/widget.min.js',
+			'lib/jquery-ui/ui/minified/mouse.min.js',
+			'lib/jquery-ui/ui/minified/draggable.min.js',
+			'lib/jquery-ui/ui/minified/resizable.min.js'
 		],
 		dest: 'build/temp/archive/lib/jquery-ui.custom.min.js'
 	};
@@ -256,7 +256,7 @@ module.exports = function(grunt) {
 	function transformDemoPath(path) {
 		path = path.replace('../lib/moment/moment.js', '../lib/moment.min.js');
 		path = path.replace('../lib/jquery/dist/jquery.js', '../lib/jquery.min.js');
-		path = path.replace('../lib/jquery-ui/ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
+		path = path.replace('../lib/jquery-ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
 		path = path.replace('../lib/jquery-ui/themes/cupertino/', '../lib/cupertino/');
 		path = path.replace('../dist/', '../');
 		path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
