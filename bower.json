@@ -11,17 +11,17 @@
     "moment": ">=2.5.0"
   },
   "devDependencies": {
-    "jquery-ui": "1.8.17 - 1.10.4",
+    "jquery-ui": ">=1.11.1",
     "jquery-simulate-ext": "~1.3.0",
-    "jquery-mockjax": "~1.5.3",
+    "jquery-mockjax": "~1.5.4",
     "jasmine-jquery": "~2.0.3",
     "jasmine-fixture": "~1.2.0",
-    "moment-timezone": "~0.0.6"
+    "moment-timezone": "~0.2.1"
   },
 
   "main": [
-    "/dist/fullcalendar.js",
-    "/dist/fullcalendar.css"
+    "dist/fullcalendar.js",
+    "dist/fullcalendar.css"
   ],
   "ignore": [
     "*",

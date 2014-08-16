@@ -103,6 +103,17 @@ RESOLVED ISSUES:
 [304]: https://code.google.com/p/fullcalendar/issues/detail?id=304
 
 
+v2.0.3 (2014-08-15)
+-------------------
+
+- moment-2.8.1 compatibility ([2221])
+- relative path in bower.json ([PR 117])
+- upgraded jquery-ui and misc dev dependencies
+
+[2221]: https://code.google.com/p/fullcalendar/issues/detail?id=2221
+[PR 117]: https://github.com/arshaw/fullcalendar/pull/177
+
+
 v2.0.2 (2014-06-24)
 -------------------
 
