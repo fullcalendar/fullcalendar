@@ -191,13 +191,19 @@ function DayEventRenderer() {
 
 	function eventsForResource(resource, events) {
 	    var resourceEvents = [];
+		var hasResource = function(event) {
+			return event.resources && $.grep(event.resources, function(id) {
+				return id == resource.id;
+			}).length;
+		};
+
 	    for (var i = 0; i < events.length; i++) {
-	      if (events[i].resources && $.grep(events[i].resources, function(id) { return id == resource.id; }).length) {
-	        resourceEvents.push(events[i]);
-	      }
-	    }
-	    return resourceEvents;
-	  }
+			if (hasResource(events[i])) {
+				resourceEvents.push(events[i]);
+			}
+		}
+		return resourceEvents;
+	}
 	  
 	// Generate an array of segments for a single event.
 	// A "segment" is the same data structure that View.rangeToSegments produces,
