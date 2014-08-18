@@ -48,12 +48,10 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
+    var cache;
     // if useCache is not defined, default to true
     useCache = (typeof useCache !== 'undefined' ? useCache : true);
-    if (cache !== undefined && useCache) {
-      // get from cache
-      return cache;
-    } else {
+    if (!useCache || cache === undefined) {
       // do a fetch resource from source, rebuild cache
       cache = [];
       var len = resourceSources.length;
@@ -61,8 +59,13 @@ function ResourceManager(options) {
         var resources = fetchResourceSource(resourceSources[i], currentView);
         cache = cache.concat(resources);
       }
-      return cache;
     }
+
+    if($.isFunction(options.resourceFilter)) {
+      return $.grep(cache, options.resourceFilter);
+    }
+
+    return cache;
   }
 
   /**
