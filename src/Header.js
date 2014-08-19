@@ -69,13 +69,13 @@ function Header(calendar, options) {
 						isOnlyButtons = false;
 					}
 					else {
-						if (calendar[buttonName]) {
-							buttonClick = calendar[buttonName]; // calendar method
-							// NOTE: won't work when we move away from parasitic inheritance
-						}
-						else if (fcViews[buttonName]) {
+						if (calendar[buttonName]) { // a calendar method
 							buttonClick = function() {
-								button.removeClass(tm + '-state-hover'); // forget why
+								calendar[buttonName]();
+							};
+						}
+						else if (fcViews[buttonName]) { // a view name
+							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
@@ -113,30 +113,47 @@ function Header(calendar, options) {
 								'</button>'
 								)
 								.click(function() {
+									// don't process clicks for disabled buttons
 									if (!button.hasClass(tm + '-state-disabled')) {
+
 										buttonClick();
+
+										// after the click action, if the button becomes the "active" tab, or disabled,
+										// it should never have a hover class, so remove it now.
+										if (
+											button.hasClass(tm + '-state-active') ||
+											button.hasClass(tm + '-state-disabled')
+										) {
+											button.removeClass(tm + '-state-hover');
+										}
 									}
 								})
 								.mousedown(function() {
+									// the *down* effect (mouse pressed in).
+									// only on buttons that are not the "active" tab, or disabled
 									button
 										.not('.' + tm + '-state-active')
 										.not('.' + tm + '-state-disabled')
 										.addClass(tm + '-state-down');
 								})
 								.mouseup(function() {
+									// undo the *down* effect
 									button.removeClass(tm + '-state-down');
 								})
 								.hover(
 									function() {
+										// the *hover* effect.
+										// only on buttons that are not the "active" tab, or disabled
 										button
 											.not('.' + tm + '-state-active')
 											.not('.' + tm + '-state-disabled')
 											.addClass(tm + '-state-hover');
 									},
 									function() {
+										// undo the *hover* effect
 										button
 											.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down');
+											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
 									}
 								);
 
