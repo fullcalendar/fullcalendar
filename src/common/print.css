@@ -94,6 +94,10 @@ tbody,
 	display: table-cell !important;
 }
 
+.fc-popover {
+	display: none; /* never display the "more.." popover in print mode */
+}
+
 
 /* TimeGrid Restyling
 --------------------------------------------------------------------------------------------------*/
