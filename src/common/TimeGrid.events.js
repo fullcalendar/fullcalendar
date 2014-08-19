@@ -62,6 +62,12 @@ $.extend(TimeGrid.prototype, {
 			for (i = 0; i < colSegs.length; i++) {
 				seg = colSegs[i];
 				seg.el.css(this.generateSegPositionCss(seg));
+
+				// if the height is short, add a className for alternate styling
+				if (seg.bottom - seg.top < 30) {
+					seg.el.addClass('fc-short');
+				}
+
 				containerEl.append(seg.el);
 			}
 
@@ -116,6 +122,7 @@ $.extend(TimeGrid.prototype, {
 		var skinCss = this.getEventSkinCss(event);
 		var timeText;
 		var fullTimeText; // more verbose time text. for the print stylesheet
+		var startTimeText; // just the start time text
 
 		classes.unshift('fc-time-grid-event');
 
@@ -126,11 +133,13 @@ $.extend(TimeGrid.prototype, {
 			if (seg.isStart || seg.isEnd) {
 				timeText = view.getEventTimeText(seg.start, seg.end);
 				fullTimeText = view.getEventTimeText(seg.start, seg.end, 'LT');
+				startTimeText = view.getEventTimeText(seg.start, null);
 			}
 		} else {
 			// Display the normal time text for the *event's* times
 			timeText = view.getEventTimeText(event);
 			fullTimeText = view.getEventTimeText(event, 'LT');
+			startTimeText = view.getEventTimeText(event.start, null);
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
@@ -138,7 +147,10 @@ $.extend(TimeGrid.prototype, {
 			'>' +
 				'<div class="fc-content">' +
 					(timeText ?
-						'<div class="fc-time" data-full="' + htmlEscape(fullTimeText) + '">' +
+						'<div class="fc-time"' +
+						' data-start="' + htmlEscape(startTimeText) + '"' +
+						' data-full="' + htmlEscape(fullTimeText) + '"' +
+						'>' +
 							'<span>' + htmlEscape(timeText) + '</span>' +
 						'</div>' :
 						''
