@@ -2,6 +2,7 @@
       "title": "R1-R2: Lunch 12.15-14.45",
       "start": "2014-08-19T12:15:00",
       "end": "2014-08-19T14:45:00",
+      "allDay": false,
       "resources": ["resource1", "resource2"]
     }, {
       "title": "R1: All day",
@@ -15,15 +16,20 @@
       "title": "R1/R2: Lunch 12-14",
       "start": "2014-08-19T12:00:00",
       "end": "2014-08-19T14:00:00",
+      "allDay": false,
       "resources": ["resource1", "resource2"]
     }, {
       "id": 999,
       "title": "Repeating Event",
       "start": "2014-08-19T16:00:00-05:00",
+      "end": "2014-08-19T17:00:00-05:00",
+      "allDay": false,
       "resources": "resource2"
     }, {
       "id": 999,
       "title": "Repeating Event",
       "start": "2014-08-19T16:00:00-05:00",
+      "end": "2014-08-19T17:00:00-05:00",
+      "allDay": false,
       "resources": "resource2"
 }]
