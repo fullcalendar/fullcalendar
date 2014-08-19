@@ -1,39 +1,43 @@
-[
-  {
-    "title": "All Day Event",
-    "start": "2014-06-01"
-  },
-  {
-    "title": "Long Event",
-    "start": "2014-06-07",
-    "end": "2014-06-10"
-  },
-  {
-    "id": "999",
-    "title": "Repeating Event",
-    "start": "2014-06-09T16:00:00-05:00"
-  },
-  {
-    "id": "999",
-    "title": "Repeating Event",
-    "start": "2014-06-16T16:00:00-05:00"
-  },
-  {
-    "title": "Meeting",
-    "start": "2014-06-12T10:30:00-05:00",
-    "end": "2014-06-12T12:30:00-05:00"
-  },
-  {
-    "title": "Lunch",
-    "start": "2014-06-12T12:00:00-05:00"
-  },
-  {
-    "title": "Birthday Party",
-    "start": "2014-06-13T07:00:00-05:00"
-  },
-  {
-    "title": "Click for Google",
-    "url": "http://google.com/",
-    "start": "2014-06-28"
-  }
-]
+[{
+      title: 'R1-R2: Lunch 12.15-14.45',
+      start: new Date(y, m, d, 12, 15),
+      end: new Date(y, m, d, 14, 45),
+      allDay: false,
+      resources: ['resource1', 'resource2']
+    }, {
+      title: 'R1: All day',
+      start: new Date(y, m, d, 10, 30),
+      end: new Date(y, m, d, 11, 0),
+      allDay: true,
+      resources: 'resource1'
+    }, {
+      title: 'R2: Meeting 11.00',
+      start: new Date(y, m, d, 11, 0),
+      allDay: true,
+      resources: 'resource2'
+    }, {
+      title: 'R1/R2: Lunch 12-14',
+      start: new Date(y, m, d, 12, 0),
+      end: new Date(y, m, d, 14, 0),
+      allDay: false,
+      resources: ['resource1', 'resource2']
+    }, {
+      id: 777,
+      title: 'Lunch',
+      start: new Date(y, m, d, 12, 0),
+      end: new Date(y, m, d, 14, 0),
+      allDay: false,
+      resources: ['resource1']
+    }, {
+      id: 999,
+      title: 'Repeating Event',
+      start: new Date(y, m, d - 3, 16, 0),
+      allDay: false,
+      resources: 'resource2'
+    }, {
+      id: 999,
+      title: 'Repeating Event',
+      start: new Date(y, m, d + 4, 16, 0),
+      allDay: false,
+      resources: 'resource2'
+    }]
