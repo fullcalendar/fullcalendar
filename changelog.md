@@ -1,4 +1,28 @@
 
+v2.1.0-beta3 (2014-08-19)
+-------------------------
+
+- If agenda event is too short, don't overwrite .fc-event-time ([1700])
+- drop callback date doesn't have calendar's timezone ([2225])
+- event resize when timezone set to 'local' not working ([2226])
+- scrolling while selecting in Agenda view ([2228])
+- box-sizing: border-box (eg from bootstrap) causes incorrect positioning ([2234])
+- today button has fc-state-hover class when mouse is not over it ([2235])
+- Dates for previous and coming month is not greyed out ([2238])
+- External drag/drop events not working after the view is changed ([2240])
+- hide popover with print stylesheet ([2242])
+
+[1700]: https://code.google.com/p/fullcalendar/issues/detail?id=1700
+[2225]: https://code.google.com/p/fullcalendar/issues/detail?id=2225
+[2226]: https://code.google.com/p/fullcalendar/issues/detail?id=2226
+[2228]: https://code.google.com/p/fullcalendar/issues/detail?id=2228
+[2234]: https://code.google.com/p/fullcalendar/issues/detail?id=2234
+[2235]: https://code.google.com/p/fullcalendar/issues/detail?id=2235
+[2238]: https://code.google.com/p/fullcalendar/issues/detail?id=2238
+[2240]: https://code.google.com/p/fullcalendar/issues/detail?id=2240
+[2242]: https://code.google.com/p/fullcalendar/issues/detail?id=2242
+
+
 v2.1.0-beta2 (2014-08-04)
 -------------------------
 
