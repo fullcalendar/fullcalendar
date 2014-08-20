@@ -198,9 +198,12 @@ $.extend(TimeGrid.prototype, {
 
 	// Gets the datetime for the given slot cell
 	getCellDate: function(cell) {
-		// the View's cellToDate system only accounts for the beginning of whole days
-		return this.view.cellToDate(0, cell.col).time(
-			this.minTime + this.snapDuration * cell.row
+		var view = this.view;
+		var calendar = view.calendar;
+
+		return calendar.rezoneDate( // since we are adding a time, it needs to be in the calendar's timezone
+			view.cellToDate(0, cell.col) // View's coord system only accounts for start-of-day for column
+				.time(this.minTime + this.snapDuration * cell.row)
 		);
 	},
 
