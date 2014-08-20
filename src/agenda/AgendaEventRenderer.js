@@ -1,14 +1,14 @@
 
 function AgendaEventRenderer() {
 	var t = this;
-	
-	
+
+
 	// exports
 	t.renderEvents = renderEvents;
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
-	
-	
+
+
 	// imports
 	DayEventRenderer.call(t);
 	var opt = t.opt;
@@ -50,11 +50,11 @@ function AgendaEventRenderer() {
 	// overrides
 	t.draggableDayEvent = draggableDayEvent;
 
-	
-	
+
+
 	/* Rendering
 	----------------------------------------------------------------------------*/
-	
+
 
 	function renderEvents(events, modifiedEventId) {
 		var i, len=events.length,
@@ -75,14 +75,14 @@ function AgendaEventRenderer() {
 
 		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
 	}
-	
-	
+
+
 	function clearEvents() {
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
 	}
 
-	
+
 	function compileSlotSegs(events) {
 		var colCnt = getColCnt(),
 			minTime = getMinTime(),
@@ -166,14 +166,14 @@ function AgendaEventRenderer() {
 
 		return segs.sort(compareSlotSegs);
 	}
-	
-	
+
+
 	// renders events in the 'time slots' at the bottom
 	// TODO: when we refactor this, when user returns `false` eventRender, don't have empty space
 	// TODO: refactor will include using pixels to detect collisions instead of dates (handy for seg cmp)
-	
+
 	function renderSlotSegs(segs, modifiedEventId) {
-	
+
 		var i, segCnt=segs.length, seg,
 			event,
 			top,
@@ -192,7 +192,7 @@ function AgendaEventRenderer() {
 			height,
 			slotSegmentContainer = getSlotSegmentContainer(),
 			isRTL = opt('isRTL');
-			
+
 		// calculate position/dimensions, create html
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -243,7 +243,7 @@ function AgendaEventRenderer() {
 
 		slotSegmentContainer[0].innerHTML = html; // faster than html()
 		eventElements = slotSegmentContainer.children();
-		
+
 		// retrieve elements, run through eventRender callback, bind event handlers
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -272,9 +272,9 @@ function AgendaEventRenderer() {
 				reportEventElement(event, eventElement);
 			}
 		}
-		
+
 		lazySegBind(slotSegmentContainer, segs, bindSlotSeg);
-		
+
 		// record event sides and title positions
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -287,7 +287,7 @@ function AgendaEventRenderer() {
 				}
 			}
 		}
-		
+
 		// set all positions/dimensions at once
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
@@ -308,10 +308,10 @@ function AgendaEventRenderer() {
 				trigger('eventAfterRender', event, event, eventElement);
 			}
 		}
-					
+
 	}
-	
-	
+
+
 	function slotSegHtml(event, seg) {
 		var html = "<";
 		var url = event.url;
@@ -364,8 +364,8 @@ function AgendaEventRenderer() {
 			"</" + (url ? "a" : "div") + ">";
 		return html;
 	}
-	
-	
+
+
 	function bindSlotSeg(event, eventElement, seg) {
 		var timeElement = eventElement.find('div.fc-event-time');
 		if (isEventDraggable(event)) {
@@ -376,17 +376,17 @@ function AgendaEventRenderer() {
 		}
 		eventElementHandlers(event, eventElement);
 	}
-	
-	
-	
+
+
+
 	/* Dragging
 	-----------------------------------------------------------------------------------*/
-	
-	
+
+
 	// when event starts out FULL-DAY
 	// overrides DayEventRenderer's version because it needs to account for dragging elements
 	// to and from the slot area.
-	
+
 	function draggableDayEvent(event, eventElement, seg) {
 		var isStart = seg.isStart;
 		var origWidth;
@@ -498,10 +498,10 @@ function AgendaEventRenderer() {
 			}
 		}
 	}
-	
-	
+
+
 	// when event starts out IN TIMESLOTS
-	
+
 	function draggableSlotEvent(event, eventElement, timeElement) {
 		var coordinateGrid = t.getCoordinateGrid();
 		var colCnt = getColCnt();
@@ -673,13 +673,13 @@ function AgendaEventRenderer() {
 		}
 
 	}
-	
-	
-	
+
+
+
 	/* Resizing
 	--------------------------------------------------------------------------------------*/
-	
-	
+
+
 	function resizableSlotEvent(event, eventElement, timeElement) {
 		var snapDelta, prevSnapDelta;
 		var snapHeight = getSnapHeight();
@@ -730,7 +730,7 @@ function AgendaEventRenderer() {
 			}
 		});
 	}
-	
+
 
 }
 
@@ -917,7 +917,7 @@ function computeSlotSegCollisions(seg, otherSegs, results) {
 
 // Do these segments occupy the same vertical space?
 function isSlotSegCollision(seg1, seg2) {
-	return seg1.end > seg2.start && seg1.start < seg2.end;
+	return !seg1.event.isBackground && !seg2.event.isBackground && seg1.end > seg2.start && seg1.start < seg2.end;
 }
 
 
