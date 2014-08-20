@@ -259,7 +259,7 @@ function Calendar(element, instanceOptions) {
 	var tm; // for making theme classes
 	var currentView;
 	var suggestedViewHeight;
-	var resizeUID = 0;
+	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
 	var date;
 	var events = [];
@@ -319,7 +319,8 @@ function Calendar(element, instanceOptions) {
 		changeView(options.defaultView);
 
 		if (options.handleWindowResize) {
-			$(window).resize(windowResize);
+			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
+			$(window).resize(windowResizeProxy);
 		}
 	}
 	
@@ -334,7 +335,7 @@ function Calendar(element, instanceOptions) {
 		content.remove();
 		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
 
-		$(window).unbind('resize', windowResize);
+		$(window).unbind('resize', windowResizeProxy);
 	}
 	
 	
@@ -471,14 +472,9 @@ function Calendar(element, instanceOptions) {
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
 			currentView.start // view has already been rendered
 		) {
-			var uid = ++resizeUID;
-			setTimeout(function() { // add a delay
-				if (uid == resizeUID && !ignoreWindowResize) {
-					if (updateSize(true)) {
-						currentView.trigger('windowResize', _element);
-					}
-				}
-			}, options.windowResizeDelay);
+			if (updateSize(true)) {
+				currentView.trigger('windowResize', _element);
+			}
 		}
 	}
 	

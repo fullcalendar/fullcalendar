@@ -337,3 +337,37 @@ function stripHtmlEntities(text) {
 function capitaliseFirstLetter(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds.
+// https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
+function debounce(func, wait) {
+	var timeoutId;
+	var args;
+	var context;
+	var timestamp; // of most recent call
+	var later = function() {
+		var last = +new Date() - timestamp;
+		if (last < wait && last > 0) {
+			timeoutId = setTimeout(later, wait - last);
+		}
+		else {
+			timeoutId = null;
+			func.apply(context, args);
+			if (!timeoutId) {
+				context = args = null;
+			}
+		}
+	};
+
+	return function() {
+		context = this;
+		args = arguments;
+		timestamp = +new Date();
+		if (!timeoutId) {
+			timeoutId = setTimeout(later, wait);
+		}
+	};
+}
