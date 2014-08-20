@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta2 Print Stylesheet
+ * FullCalendar v2.1.0-beta3 Print Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -92,6 +92,10 @@ tbody,
 
 .fc td.fc-limited {
 	display: table-cell !important;
+}
+
+.fc-popover {
+	display: none; /* never display the "more.." popover in print mode */
 }
 
 

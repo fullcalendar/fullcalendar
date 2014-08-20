@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta2 Stylesheet
+ * FullCalendar v2.1.0-beta3 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -422,21 +422,20 @@ temporary rendered events).
 /* Global Event Styles
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event { /* always an <a> tag */
+.fc-event,
+.fc-event:hover, /* extra precedents over other <a> tag hover styling */
+.ui-widget .fc-event { /* extra precedence over jqui theme <a> tag styling */
+
 	position: relative; /* for resize handle and other inner positioning */
 	display: block; /* make the <a> tag block */
-	border: 1px solid #3a87ad; /* default BORDER color */
-	background-color: #3a87ad; /* default BACKGROUND color */
-	color: #fff;               /* default TEXT color */
 	font-size: .85em;
 	line-height: 1.3;
 	border-radius: 3px;
-	text-decoration: none; /* if it has an href */
-}
-
-.ui-widget .fc-event { /* undo jqui's styles on <a> tags */
-	color: #fff;
-	font-weight: normal;
+	border: 1px solid #3a87ad; /* default BORDER color */
+	background-color: #3a87ad; /* default BACKGROUND color */
+	color: #fff;               /* default TEXT color */
+	text-decoration: none;     /* if <a> has an href */
+	font-weight: normal;       /* undo jqui */
 }
 
 .fc-event[href],
@@ -568,7 +567,17 @@ be a descendant of the grid when it is being dragged.
 /* View Structure
 --------------------------------------------------------------------------------------------------*/
 
-.fc-view-container, /* scope positioning and z-index's for everything within the view */
+/* undo twitter bootstrap's box-sizing rules. normalizes positioning techniques */
+/* don't do this for the toolbar because we'll want bootstrap to style those buttons as some pt */
+.fc-view-container *,
+.fc-view-container *:before,
+.fc-view-container *:after {
+	-webkit-box-sizing: content-box;
+	   -moz-box-sizing: content-box;
+	        box-sizing: content-box;
+}
+
+.fc-view, /* scope positioning and z-index's for everything within the view */
 .fc-view > table { /* so dragged elements can be above the view's main element */
 	position: relative;
 	z-index: 1;
@@ -632,6 +641,14 @@ be a descendant of the grid when it is being dragged.
 
 .fc-rtl .fc-basic-view .fc-day-number {
 	text-align: left;
+}
+
+.fc-day-number.fc-other-month {
+	opacity: 0.3;
+	filter: alpha(opacity=30); /* for IE */
+	/* opacity with small font can sometimes look too faded
+	   might want to set the 'color' property instead
+	   making day-numbers bold also fixes the problem */
 }
 
 /* "more" link that represents hidden events */
@@ -837,6 +854,36 @@ be a descendant of the grid when it is being dragged.
 	background: #fff;
 	opacity: .25;
 	filter: alpha(opacity=25); /* for IE */
+}
+
+/* short mode, where time and title are on the same line */
+
+.fc-time-grid-event.fc-short .fc-content {
+	/* don't wrap to second line (now that contents will be inline) */
+	white-space: nowrap;
+}
+
+.fc-time-grid-event.fc-short .fc-time,
+.fc-time-grid-event.fc-short .fc-title {
+	/* put the time and title on the same line */
+	display: inline-block;
+	vertical-align: top;
+}
+
+.fc-time-grid-event.fc-short .fc-time span {
+	display: none; /* don't display the full time text... */
+}
+
+.fc-time-grid-event.fc-short .fc-time:before {
+	content: attr(data-start); /* ...instead, display only the start time */
+}
+
+.fc-time-grid-event.fc-short .fc-time:after {
+	content: "\000A0-\000A0"; /* seperate with a dash, wrapped in nbsp's */
+}
+
+.fc-time-grid-event.fc-short .fc-title {
+	font-size: .85em; /* make the title text the same size as the time */
 }
 
 /* resizer */

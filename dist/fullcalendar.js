@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta2
+ * FullCalendar v2.1.0-beta3
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -168,7 +168,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.1.0-beta2" };
+var fc = $.fullCalendar = { version: "2.1.0-beta3" };
 var fcViews = fc.views = {};
 
 
@@ -387,26 +387,34 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 	// Apply overrides to the current language's data
 
-	var langData = createObject( // make a cheap clone
-		moment.langData(options.lang)
-	);
+
+	// Returns moment's internal locale data. If doesn't exist, returns English.
+	// Works with moment-pre-2.8
+	function getLocaleData(langCode) {
+		var f = moment.localeData || moment.langData;
+		return f.call(moment, langCode) ||
+			f.call(moment, 'en'); // the newer localData could return null, so fall back to en
+	}
+
+
+	var localeData = createObject(getLocaleData(options.lang)); // make a cheap copy
 
 	if (options.monthNames) {
-		langData._months = options.monthNames;
+		localeData._months = options.monthNames;
 	}
 	if (options.monthNamesShort) {
-		langData._monthsShort = options.monthNamesShort;
+		localeData._monthsShort = options.monthNamesShort;
 	}
 	if (options.dayNames) {
-		langData._weekdays = options.dayNames;
+		localeData._weekdays = options.dayNames;
 	}
 	if (options.dayNamesShort) {
-		langData._weekdaysShort = options.dayNamesShort;
+		localeData._weekdaysShort = options.dayNamesShort;
 	}
 	if (options.firstDay != null) {
-		var _week = createObject(langData._week); // _week: { dow: # }
+		var _week = createObject(localeData._week); // _week: { dow: # }
 		_week.dow = options.firstDay;
-		langData._week = _week;
+		localeData._week = _week;
 	}
 
 
@@ -439,7 +447,12 @@ function Calendar(element, instanceOptions) {
 			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
 		}
 
-		mom._lang = langData;
+		if ('_locale' in mom) { // moment 2.8 and above
+			mom._locale = localeData;
+		}
+		else { // pre-moment-2.8
+			mom._lang = localeData;
+		}
 
 		return mom;
 	};
@@ -527,7 +540,7 @@ function Calendar(element, instanceOptions) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, langData);
+			formatStr = formatStr.call(t, options, localeData);
 		}
 
 		return formatRange(m1, m2, formatStr, null, options.isRTL);
@@ -539,7 +552,7 @@ function Calendar(element, instanceOptions) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, langData);
+			formatStr = formatStr.call(t, options, localeData);
 		}
 
 		return formatDate(mom, formatStr);
@@ -568,7 +581,7 @@ function Calendar(element, instanceOptions) {
 	var tm; // for making theme classes
 	var currentView;
 	var suggestedViewHeight;
-	var resizeUID = 0;
+	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
 	var date;
 	var events = [];
@@ -628,7 +641,8 @@ function Calendar(element, instanceOptions) {
 		changeView(options.defaultView);
 
 		if (options.handleWindowResize) {
-			$(window).resize(windowResize);
+			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
+			$(window).resize(windowResizeProxy);
 		}
 	}
 	
@@ -643,7 +657,7 @@ function Calendar(element, instanceOptions) {
 		content.remove();
 		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
 
-		$(window).unbind('resize', windowResize);
+		$(window).unbind('resize', windowResizeProxy);
 	}
 	
 	
@@ -780,14 +794,9 @@ function Calendar(element, instanceOptions) {
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
 			currentView.start // view has already been rendered
 		) {
-			var uid = ++resizeUID;
-			setTimeout(function() { // add a delay
-				if (uid == resizeUID && !ignoreWindowResize) {
-					if (updateSize(true)) {
-						currentView.trigger('windowResize', _element);
-					}
-				}
-			}, options.windowResizeDelay);
+			if (updateSize(true)) {
+				currentView.trigger('windowResize', _element);
+			}
 		}
 	}
 	
@@ -917,13 +926,13 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function prevYear() {
-		date.add('years', -1);
+		date.add(-1, 'years');
 		renderView();
 	}
 	
 	
 	function nextYear() {
-		date.add('years', 1);
+		date.add(1, 'years');
 		renderView();
 	}
 	
@@ -1109,13 +1118,13 @@ function Header(calendar, options) {
 						isOnlyButtons = false;
 					}
 					else {
-						if (calendar[buttonName]) {
-							buttonClick = calendar[buttonName]; // calendar method
-							// NOTE: won't work when we move away from parasitic inheritance
-						}
-						else if (fcViews[buttonName]) {
+						if (calendar[buttonName]) { // a calendar method
 							buttonClick = function() {
-								button.removeClass(tm + '-state-hover'); // forget why
+								calendar[buttonName]();
+							};
+						}
+						else if (fcViews[buttonName]) { // a view name
+							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
@@ -1153,30 +1162,47 @@ function Header(calendar, options) {
 								'</button>'
 								)
 								.click(function() {
+									// don't process clicks for disabled buttons
 									if (!button.hasClass(tm + '-state-disabled')) {
+
 										buttonClick();
+
+										// after the click action, if the button becomes the "active" tab, or disabled,
+										// it should never have a hover class, so remove it now.
+										if (
+											button.hasClass(tm + '-state-active') ||
+											button.hasClass(tm + '-state-disabled')
+										) {
+											button.removeClass(tm + '-state-hover');
+										}
 									}
 								})
 								.mousedown(function() {
+									// the *down* effect (mouse pressed in).
+									// only on buttons that are not the "active" tab, or disabled
 									button
 										.not('.' + tm + '-state-active')
 										.not('.' + tm + '-state-disabled')
 										.addClass(tm + '-state-down');
 								})
 								.mouseup(function() {
+									// undo the *down* effect
 									button.removeClass(tm + '-state-down');
 								})
 								.hover(
 									function() {
+										// the *hover* effect.
+										// only on buttons that are not the "active" tab, or disabled
 										button
 											.not('.' + tm + '-state-active')
 											.not('.' + tm + '-state-disabled')
 											.addClass(tm + '-state-hover');
 									},
 									function() {
+										// undo the *hover* effect
 										button
 											.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down');
+											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
 									}
 								);
 
@@ -2308,6 +2334,40 @@ function capitaliseFirstLetter(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds.
+// https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
+function debounce(func, wait) {
+	var timeoutId;
+	var args;
+	var context;
+	var timestamp; // of most recent call
+	var later = function() {
+		var last = +new Date() - timestamp;
+		if (last < wait && last > 0) {
+			timeoutId = setTimeout(later, wait - last);
+		}
+		else {
+			timeoutId = null;
+			func.apply(context, args);
+			if (!timeoutId) {
+				context = args = null;
+			}
+		}
+	};
+
+	return function() {
+		context = this;
+		args = arguments;
+		timestamp = +new Date();
+		if (!timeoutId) {
+			timeoutId = setTimeout(later, wait);
+		}
+	};
+}
+
 ;;
 
 var ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/;
@@ -2767,12 +2827,15 @@ function formatDateWithChunk(date, chunk) {
 // If the dates are the same as far as the format string is concerned, just return a single
 // rendering of one date, without any separator.
 function formatRange(date1, date2, formatStr, separator, isRTL) {
+	var localeData;
 
 	date1 = fc.moment.parseZone(date1);
 	date2 = fc.moment.parseZone(date2);
 
+	localeData = (date1.localeData || date1.lang).call(date1); // works with moment-pre-2.8
+
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
-	formatStr = date1.lang().longDateFormat(formatStr) || formatStr;
+	formatStr = localeData.longDateFormat(formatStr) || formatStr;
 	// BTW, this is not important for `formatDate` because it is impossible to put custom tokens
 	// or non-zero areas in Moment's localized format strings.
 
@@ -3266,6 +3329,17 @@ DragListener.prototype = {
 	mousemoveProxy: null,
 	mouseupProxy: null,
 
+	scrollEl: null,
+	scrollBounds: null, // { top, bottom, left, right }
+	scrollTopVel: null, // pixels per second
+	scrollLeftVel: null, // pixels per second
+	scrollIntervalId: null, // ID of setTimeout for scrolling animation loop
+	scrollHandlerProxy: null, // this-scoped function for handling when scrollEl is scrolled
+
+	scrollSensitivity: 30, // pixels from edge for scrolling to start
+	scrollSpeed: 200, // pixels per second, at maximum speed
+	scrollIntervalMs: 50, // millisecond wait between scroll increment
+
 
 	// Call this when the user does a mousedown. Will probably lead to startListening
 	mousedown: function(ev) {
@@ -3285,11 +3359,24 @@ DragListener.prototype = {
 
 	// Call this to start tracking mouse movements
 	startListening: function(ev) {
+		var scrollParent;
 		var cell;
 
 		if (!this.isListening) {
 
-			this.coordMap.build(); // build coordinates of the cells
+			// grab scroll container and attach handler
+			if (ev) {
+				scrollParent = getScrollParent($(ev.target));
+				if (!scrollParent.is(window) && !scrollParent.is(document)) {
+					this.scrollEl = scrollParent;
+
+					// scope to `this`, and use `debounce` to make sure rapid calls don't happen
+					this.scrollHandlerProxy = debounce($.proxy(this, 'scrollHandler'), 100);
+					this.scrollEl.on('scroll', this.scrollHandlerProxy);
+				}
+			}
+
+			this.computeCoords(); // relies on `scrollEl`
 
 			// get info on the initial cell, date, and coordinates
 			if (ev) {
@@ -3309,6 +3396,13 @@ DragListener.prototype = {
 			this.isListening = true;
 			this.trigger('listenStart', ev);
 		}
+	},
+
+
+	// Recomputes the drag-critical positions of elements
+	computeCoords: function() {
+		this.coordMap.build();
+		this.computeScrollBounds();
 	},
 
 
@@ -3369,6 +3463,8 @@ DragListener.prototype = {
 					this.cellOver(cell);
 				}
 			}
+
+			this.dragScroll(ev); // will possibly cause scrolling
 		}
 	},
 
@@ -3402,6 +3498,7 @@ DragListener.prototype = {
 	// A concluding 'cellOut' event will NOT be triggered.
 	stopDrag: function(ev) {
 		if (this.isDragging) {
+			this.stopScrolling();
 			this.trigger('dragStop', ev);
 			this.isDragging = false;
 		}
@@ -3411,6 +3508,12 @@ DragListener.prototype = {
 	// Call this to stop listening to the user's mouse events
 	stopListening: function(ev) {
 		if (this.isListening) {
+
+			// remove the scroll handler if there is a scrollEl
+			if (this.scrollEl) {
+				this.scrollEl.off('scroll', this.scrollHandlerProxy);
+				this.scrollHandlerProxy = null;
+			}
 
 			$(document)
 				.off('mousemove', this.mousemoveProxy)
@@ -3447,6 +3550,155 @@ DragListener.prototype = {
 	// Stops a given mouse event from doing it's native browser action. In our case, text selection.
 	preventDefault: function(ev) {
 		ev.preventDefault();
+	},
+
+
+	/* Scrolling
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes and stores the bounding rectangle of scrollEl
+	computeScrollBounds: function() {
+		var el = this.scrollEl;
+		var offset;
+
+		if (el) {
+			offset = el.offset();
+			this.scrollBounds = {
+				top: offset.top,
+				left: offset.left,
+				bottom: offset.top + el.outerHeight(),
+				right: offset.left + el.outerWidth()
+			};
+		}
+	},
+
+
+	// Called when the dragging is in progress and scrolling should be updated
+	dragScroll: function(ev) {
+		var sensitivity = this.scrollSensitivity;
+		var bounds = this.scrollBounds;
+		var topCloseness, bottomCloseness;
+		var leftCloseness, rightCloseness;
+		var topVel = 0;
+		var leftVel = 0;
+
+		if (bounds) { // only scroll if scrollEl exists
+
+			// compute closeness to edges. valid range is from 0.0 - 1.0
+			topCloseness = (sensitivity - (ev.pageY - bounds.top)) / sensitivity;
+			bottomCloseness = (sensitivity - (bounds.bottom - ev.pageY)) / sensitivity;
+			leftCloseness = (sensitivity - (ev.pageX - bounds.left)) / sensitivity;
+			rightCloseness = (sensitivity - (bounds.right - ev.pageX)) / sensitivity;
+
+			// translate vertical closeness into velocity.
+			// mouse must be completely in bounds for velocity to happen.
+			if (topCloseness >= 0 && topCloseness <= 1) {
+				topVel = topCloseness * this.scrollSpeed * -1; // negative. for scrolling up
+			}
+			else if (bottomCloseness >= 0 && bottomCloseness <= 1) {
+				topVel = bottomCloseness * this.scrollSpeed;
+			}
+
+			// translate horizontal closeness into velocity
+			if (leftCloseness >= 0 && leftCloseness <= 1) {
+				leftVel = leftCloseness * this.scrollSpeed * -1; // negative. for scrolling left
+			}
+			else if (rightCloseness >= 0 && rightCloseness <= 1) {
+				leftVel = rightCloseness * this.scrollSpeed;
+			}
+		}
+
+		this.setScrollVel(topVel, leftVel);
+	},
+
+
+	// Sets the speed-of-scrolling for the scrollEl
+	setScrollVel: function(topVel, leftVel) {
+
+		this.scrollTopVel = topVel;
+		this.scrollLeftVel = leftVel;
+
+		this.constrainScrollVel(); // massages into realistic values
+
+		// if there is non-zero velocity, and an animation loop hasn't already started, then START
+		if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
+			this.scrollIntervalId = setInterval(
+				$.proxy(this, 'scrollIntervalFunc'), // scope to `this`
+				this.scrollIntervalMs
+			);
+		}
+	},
+
+
+	// Forces scrollTopVel and scrollLeftVel to be zero if scrolling has already gone all the way
+	constrainScrollVel: function() {
+		var el = this.scrollEl;
+
+		if (this.scrollTopVel < 0) { // scrolling up?
+			if (el.scrollTop() <= 0) { // already scrolled all the way up?
+				this.scrollTopVel = 0;
+			}
+		}
+		else if (this.scrollTopVel > 0) { // scrolling down?
+			if (el.scrollTop() + el[0].clientHeight >= el[0].scrollHeight) { // already scrolled all the way down?
+				this.scrollTopVel = 0;
+			}
+		}
+
+		if (this.scrollLeftVel < 0) { // scrolling left?
+			if (el.scrollLeft() <= 0) { // already scrolled all the left?
+				this.scrollLeftVel = 0;
+			}
+		}
+		else if (this.scrollLeftVel > 0) { // scrolling right?
+			if (el.scrollLeft() + el[0].clientWidth >= el[0].scrollWidth) { // already scrolled all the way right?
+				this.scrollLeftVel = 0;
+			}
+		}
+	},
+
+
+	// This function gets called during every iteration of the scrolling animation loop
+	scrollIntervalFunc: function() {
+		var el = this.scrollEl;
+		var frac = this.scrollIntervalMs / 1000; // considering animation frequency, what the vel should be mult'd by
+
+		// change the value of scrollEl's scroll
+		if (this.scrollTopVel) {
+			el.scrollTop(el.scrollTop() + this.scrollTopVel * frac);
+		}
+		if (this.scrollLeftVel) {
+			el.scrollLeft(el.scrollLeft() + this.scrollLeftVel * frac);
+		}
+
+		this.constrainScrollVel(); // since the scroll values changed, recompute the velocities
+
+		// if scrolled all the way, which causes the vels to be zero, stop the animation loop
+		if (!this.scrollTopVel && !this.scrollLeftVel) {
+			this.stopScrolling();
+		}
+	},
+
+
+	// Kills any existing scrolling animation loop
+	stopScrolling: function() {
+		if (this.scrollIntervalId) {
+			clearInterval(this.scrollIntervalId);
+			this.scrollIntervalId = null;
+
+			// when all done with scrolling, recompute positions since they probably changed
+			this.computeCoords();
+		}
+	},
+
+
+	// Get called when the scrollEl is scrolled (NOTE: this is delayed via debounce)
+	scrollHandler: function() {
+		// recompute all coordinates, but *only* if this is *not* part of our scrolling animation
+		if (!this.scrollIntervalId) {
+			this.computeCoords();
+		}
 	}
 
 };
@@ -5409,7 +5661,7 @@ $.extend(DayGrid.prototype, {
 			return seg.event;
 		});
 		var dayStart = dayDate.clone().stripTime();
-		var dayEnd = dayStart.clone().add('days', 1);
+		var dayEnd = dayStart.clone().add(1, 'days');
 
 		return this.eventsToSegs(events, dayStart, dayEnd);
 	},
@@ -5651,9 +5903,12 @@ $.extend(TimeGrid.prototype, {
 
 	// Gets the datetime for the given slot cell
 	getCellDate: function(cell) {
-		// the View's cellToDate system only accounts for the beginning of whole days
-		return this.view.cellToDate(0, cell.col).time(
-			this.minTime + this.snapDuration * cell.row
+		var view = this.view;
+		var calendar = view.calendar;
+
+		return calendar.rezoneDate( // since we are adding a time, it needs to be in the calendar's timezone
+			view.cellToDate(0, cell.col) // View's coord system only accounts for start-of-day for column
+				.time(this.minTime + this.snapDuration * cell.row)
 		);
 	},
 
@@ -5975,6 +6230,12 @@ $.extend(TimeGrid.prototype, {
 			for (i = 0; i < colSegs.length; i++) {
 				seg = colSegs[i];
 				seg.el.css(this.generateSegPositionCss(seg));
+
+				// if the height is short, add a className for alternate styling
+				if (seg.bottom - seg.top < 30) {
+					seg.el.addClass('fc-short');
+				}
+
 				containerEl.append(seg.el);
 			}
 
@@ -6029,6 +6290,7 @@ $.extend(TimeGrid.prototype, {
 		var skinCss = this.getEventSkinCss(event);
 		var timeText;
 		var fullTimeText; // more verbose time text. for the print stylesheet
+		var startTimeText; // just the start time text
 
 		classes.unshift('fc-time-grid-event');
 
@@ -6039,11 +6301,13 @@ $.extend(TimeGrid.prototype, {
 			if (seg.isStart || seg.isEnd) {
 				timeText = view.getEventTimeText(seg.start, seg.end);
 				fullTimeText = view.getEventTimeText(seg.start, seg.end, 'LT');
+				startTimeText = view.getEventTimeText(seg.start, null);
 			}
 		} else {
 			// Display the normal time text for the *event's* times
 			timeText = view.getEventTimeText(event);
 			fullTimeText = view.getEventTimeText(event, 'LT');
+			startTimeText = view.getEventTimeText(event.start, null);
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
@@ -6051,7 +6315,10 @@ $.extend(TimeGrid.prototype, {
 			'>' +
 				'<div class="fc-content">' +
 					(timeText ?
-						'<div class="fc-time" data-full="' + htmlEscape(fullTimeText) + '">' +
+						'<div class="fc-time"' +
+						' data-start="' + htmlEscape(startTimeText) + '"' +
+						' data-full="' + htmlEscape(fullTimeText) + '"' +
+						'>' +
 							'<span>' + htmlEscape(timeText) + '</span>' +
 						'</div>' :
 						''
@@ -6363,10 +6630,9 @@ View.prototype = {
 		this.widgetContentClass = tm + '-widget-content';
 		this.highlightStateClass = tm + '-state-highlight';
 
-		// save reference to `this`-bound handlers and attach to document
-		$(document)
-			.on('mousedown', this.documentMousedownProxy = $.proxy(this, 'documentMousedown'))
-			.on('dragstart', this.documentDragStartProxy = $.proxy(this, 'documentDragStart')); // jqui drag
+		// save references to `this`-bound handlers
+		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
 	},
 
 
@@ -6375,6 +6641,11 @@ View.prototype = {
 	render: function() {
 		this.updateSize();
 		this.trigger('viewRender', this, this, this.el);
+
+		// attach handlers to document. do it here to allow for destroy/rerender
+		$(document)
+			.on('mousedown', this.documentMousedownProxy)
+			.on('dragstart', this.documentDragStartProxy); // jqui drag
 	},
 
 
@@ -6439,8 +6710,17 @@ View.prototype = {
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
 	// Utility for subclasses.
 	computeScrollerHeight: function(totalHeight) {
-		// `otherHeight` is the cumulative height of everything that is not the scrollerEl in the view (header+borders)
-		var otherHeight = this.el.outerHeight() - this.scrollerEl.height();
+		var both = this.el.add(this.scrollerEl);
+		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
+
+		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
+		both.css({
+			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
+			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
+		});
+		otherHeight = this.el.outerHeight() - this.scrollerEl.height(); // grab the dimensions
+		both.css({ position: '', left: '' }); // undo hack
+
 		return totalHeight - otherHeight;
 	},
 
@@ -6911,7 +7191,7 @@ function View(calendar) {
 		while (
 			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
-			out.add('days', inc);
+			out.add(inc, 'days');
 		}
 		return out;
 	}
@@ -6965,7 +7245,7 @@ function View(calendar) {
 
 	// day offset -> date
 	function dayOffsetToDate(dayOffset) {
-		return t.start.clone().add('days', dayOffset);
+		return t.start.clone().add(dayOffset, 'days');
 	}
 
 
@@ -7097,14 +7377,14 @@ function View(calendar) {
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
 			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
 			if (endTimeMS && endTimeMS >= nextDayThreshold) {
-				endDay.add('days', 1);
+				endDay.add(1, 'days');
 			}
 		}
 
 		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
 		// assign the default duration of one day.
 		if (!end || endDay <= startDay) {
-			endDay = startDay.clone().add('days', 1);
+			endDay = startDay.clone().add(1, 'days');
 		}
 
 		return { start: startDay, end: endDay };
@@ -7431,7 +7711,7 @@ $.extend(MonthView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add('months', delta).startOf('month');
+		return date.clone().stripTime().add(delta, 'months').startOf('month');
 	},
 
 
@@ -7439,7 +7719,7 @@ $.extend(MonthView.prototype, {
 		var rowCnt;
 
 		this.intervalStart = date.clone().stripTime().startOf('month');
-		this.intervalEnd = this.intervalStart.clone().add('months', 1);
+		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
 
 		this.start = this.intervalStart.clone();
 		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
@@ -7448,14 +7728,14 @@ $.extend(MonthView.prototype, {
 
 		this.end = this.intervalEnd.clone();
 		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
-		this.end.add('days', (7 - this.end.weekday()) % 7); // move to end of week if not already
+		this.end.add((7 - this.end.weekday()) % 7, 'days'); // move to end of week if not already
 		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
 
 		rowCnt = Math.ceil( // need to ceil in case there are hidden days
 			this.end.diff(this.start, 'weeks', true) // returnfloat=true
 		);
 		if (this.isFixedWeeks()) {
-			this.end.add('weeks', 6 - rowCnt);
+			this.end.add(6 - rowCnt, 'weeks');
 			rowCnt = 6;
 		}
 
@@ -7530,14 +7810,14 @@ $.extend(BasicWeekView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add('weeks', delta).startOf('week');
+		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
 	},
 
 
 	render: function(date) {
 
 		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add('weeks', 1);
+		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
 
 		this.start = this.skipHiddenDays(this.intervalStart);
 		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
@@ -7572,7 +7852,7 @@ $.extend(BasicDayView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	},
@@ -7581,7 +7861,7 @@ $.extend(BasicDayView.prototype, {
 	render: function(date) {
 
 		this.start = this.intervalStart = date.clone().stripTime();
-		this.end = this.intervalEnd = this.start.clone().add('days', 1);
+		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
 
 		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
 
@@ -8022,14 +8302,14 @@ $.extend(AgendaWeekView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add('weeks', delta).startOf('week');
+		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
 	},
 
 
 	render: function(date) {
 
 		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add('weeks', 1);
+		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
 
 		this.start = this.skipHiddenDays(this.intervalStart);
 		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
@@ -8065,7 +8345,7 @@ $.extend(AgendaDayView.prototype, {
 
 
 	incrementDate: function(date, delta) {
-		var out = date.clone().stripTime().add('days', delta);
+		var out = date.clone().stripTime().add(delta, 'days');
 		out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	},
@@ -8074,7 +8354,7 @@ $.extend(AgendaDayView.prototype, {
 	render: function(date) {
 
 		this.start = this.intervalStart = date.clone().stripTime();
-		this.end = this.intervalEnd = this.start.clone().add('days', 1);
+		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
 
 		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
 
