@@ -91,6 +91,11 @@ var defaults = {
 	unselectAuto: true,
 	
 	dropAccept: '*',
+
+	eventLimit: false,
+	eventLimitText: 'more',
+	eventLimitClick: 'popover',
+	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
 	windowResizeDelay: 200 // milliseconds before a rerender happens

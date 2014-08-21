@@ -254,20 +254,13 @@ $.extend(Grid.prototype, {
 			origDate = null;
 		}
 
-		// calculate the delta (a Duration) that the event's dates must be moved.
-		// if `delta` remains undefined, that means the event's start will literally become newDate.
-		if (!origDate) {
-			if (newDate.hasTime()) { // over a time slot
-				delta = dayishDiff(newDate, start); // will move the start to the exact new datetime
-			}
-			else { // over a whole-day cell
-				delta = dayDiff(newDate, start); // will be a whole-day diff, so that start's time will be kept
-			}
+		// compute the delta.
+		// if the original date of the drag is available, use that.
+		// otherwise, use the event start, which will cause the event's start to become identical to newDate.
+		// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared (done later)
+		if (newDate.hasTime() === (origDate || start).hasTime()) {
+			delta = dayishDiff(newDate, (origDate || start));
 		}
-		else if (newDate.hasTime() === origDate.hasTime()) { // staying all-day or staying timed
-			delta = dayishDiff(newDate, origDate);
-		}
-		// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
 
 		// recalculate start/end
 		if (delta) {

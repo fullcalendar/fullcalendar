@@ -36,7 +36,7 @@ $.extend(DayGrid.prototype, {
 				rowLevelLimit = this.computeRowLevelLimit(row);
 			}
 
-			if (levelLimit !== false) {
+			if (rowLevelLimit !== false) {
 				this.limitRow(row, rowLevelLimit);
 			}
 		}
@@ -218,11 +218,21 @@ $.extend(DayGrid.prototype, {
 		var _this = this;
 		var view = this.view;
 		var moreWrap = moreLink.parent(); // the <div> wrapper around the <a>
-		var options = {
+		var topEl; // the element we want to match the top coordinate of
+		var options;
+
+		if (view.rowCnt == 1) {
+			topEl = this.view.el; // will cause the popover to cover any sort of header
+		}
+		else {
+			topEl = this.rowEls.eq(cell.row); // will align with top of row
+		}
+
+		options = {
 			className: 'fc-more-popover',
 			content: this.renderSegPopoverContent(date, segs),
 			parentEl: this.el,
-			top: this.rowEls.eq(cell.row).offset().top, // better than the <td>. no border confusion
+			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
 			hide: function() {
 				// destroy everything when the popover is hidden

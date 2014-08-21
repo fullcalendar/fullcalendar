@@ -241,15 +241,6 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
 
 
-// Diffs the two moments into a Duration where only full-days are considered.
-// Moments will have their timezones normalized.
-function dayDiff(a, b) {
-	return moment.duration({
-		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
-	});
-}
-
-
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
 // Moments will have their timezones normalized.
 function dayishDiff(a, b) {

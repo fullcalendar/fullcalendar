@@ -157,9 +157,10 @@ $.extend(BasicView.prototype, {
 	},
 
 
-	// Determines whether each row should have a constant height. Overridable by subclasses.
+	// Determines whether each row should have a constant height
 	hasRigidRows: function() {
-		return false;
+		var eventLimit = this.opt('eventLimit');
+		return eventLimit && typeof eventLimit !== 'number';
 	},
 
 
@@ -181,14 +182,27 @@ $.extend(BasicView.prototype, {
 
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
+		var eventLimit = this.opt('eventLimit');
 		var scrollerHeight;
 
 		// reset all heights to be natural
 		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.headRowEl);
 
+		this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+
+		// is the event limit a constant level number?
+		if (eventLimit && typeof eventLimit === 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels first so the height can redistribute after
+		}
+
 		scrollerHeight = this.computeScrollerHeight(totalHeight);
 		this.setGridHeight(scrollerHeight, isAuto);
+
+		// is the event limit dynamically calculated?
+		if (eventLimit && typeof eventLimit !== 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels after the grid's row heights have been set
+		}
 
 		if (!isAuto && setPotentialScroller(this.scrollerEl, scrollerHeight)) { // using scrollbars?
 

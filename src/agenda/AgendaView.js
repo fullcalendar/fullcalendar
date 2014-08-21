@@ -22,6 +22,8 @@ setDefaults({
 	slotEventOverlap: true
 });
 
+var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
+
 
 function generateAgendaAxisFormat(options, langData) {
 	return langData.longDateFormat('LT')
@@ -237,6 +239,7 @@ $.extend(AgendaView.prototype, {
 
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
+		var eventLimit;
 		var scrollerHeight;
 
 		if (this.bottomRuleHeight === null) {
@@ -249,6 +252,19 @@ $.extend(AgendaView.prototype, {
 		this.scrollerEl.css('overflow', '');
 		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.noScrollRowEls);
+
+		// limit number of events in the all-day area
+		if (this.dayGrid) {
+			this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+
+			eventLimit = this.opt('eventLimit');
+			if (eventLimit && typeof eventLimit !== 'number') {
+				eventLimit = AGENDA_ALL_DAY_EVENT_LIMIT; // make sure "auto" goes to a real number
+			}
+			if (eventLimit) {
+				this.dayGrid.limitRows(eventLimit);
+			}
+		}
 
 		if (!isAuto) { // should we force dimensions of the scroll container, or let the contents be natural height?
 

@@ -2,6 +2,11 @@
 /* AgendaView all-day area
 --------------------------------------------------------------------------------------------------*/
 
+.fc-agenda-view .fc-day-grid {
+	position: relative;
+	z-index: 2; /* so the "more.." popover will be over the time grid */
+}
+
 .fc-agenda-view .fc-day-grid .fc-row {
 	min-height: 3em; /* all-day section will never get shorter than this */
 }
@@ -36,8 +41,13 @@
 /* TimeGrid Structure
 --------------------------------------------------------------------------------------------------*/
 
+.fc-time-grid-container, /* so scroll container's z-index is below all-day */
+.fc-time-grid { /* so slats/bg/content/etc positions get scoped within here */
+	position: relative;
+	z-index: 1;
+}
+
 .fc-time-grid {
-	position: relative; /* so slats/bg/content/etc positions get scoped within here */
 	min-height: 100%; /* so if height setting is 'auto', .fc-bg stretches to fill height */
 }
 
