@@ -6069,16 +6069,18 @@ function ResourceView(element, calendar, viewName) {
 
 		cellsHTML = '';
 
-		for (col=0; col<colCnt; col++) {
+		for (col=0; col<(colCnt||1); col++) {
 			var resource = resources()[col];
 			date = t.intervalStart.clone();
 
 			classNames = [
 				'fc-col' + col,
 				'fc-' + dayIDs[date.day()],
-				resource.className,
 				contentClass
 			];
+			if (resource && resource.className) {
+				classNames.push(resource.className);
+			}
 			if (date.isSame(today, 'day')) {
 				classNames.push(
 					tm + '-state-highlight',
@@ -6665,6 +6667,7 @@ function ResourceView(element, calendar, viewName) {
 	}
 
 }
+
 ;;
 
 function ResourceEventRenderer() {
