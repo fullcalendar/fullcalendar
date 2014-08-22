@@ -198,7 +198,8 @@ $.extend(Grid.prototype, {
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
-				var res = _this.computeDraggedEventDates(seg, dragListener.origDate, date);
+				var origDate = seg.cellDate || dragListener.origDate;
+				var res = _this.computeDraggedEventDates(seg, origDate, date);
 				newStart = res.start;
 				newEnd = res.end;
 
@@ -238,9 +239,8 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Given a segment, where it originally resided on the grid, and the new date it has been dragged to,
-	// calculates the Event Object's new start and end dates.
-	computeDraggedEventDates: function(seg, origDate, newDate) {
+	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates
+	computeDraggedEventDates: function(seg, dragStartDate, dropDate) {
 		var view = this.view;
 		var event = seg.event;
 		var start = event.start;
@@ -249,21 +249,8 @@ $.extend(Grid.prototype, {
 		var newStart;
 		var newEnd;
 
-		// the segment might be explicitly marked as not-in-the-grid
-		if (seg.isDetached) {
-			origDate = null;
-		}
-
-		// compute the delta.
-		// if the original date of the drag is available, use that.
-		// otherwise, use the event start, which will cause the event's start to become identical to newDate.
-		// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared (done later)
-		if (newDate.hasTime() === (origDate || start).hasTime()) {
-			delta = dayishDiff(newDate, (origDate || start));
-		}
-
-		// recalculate start/end
-		if (delta) {
+		if (dropDate.hasTime() === dragStartDate.hasTime()) {
+			delta = dayishDiff(dropDate, dragStartDate);
 			newStart = start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
 				newEnd = null;
@@ -273,7 +260,8 @@ $.extend(Grid.prototype, {
 			}
 		}
 		else {
-			newStart = newDate;
+			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
+			newStart = dropDate;
 			newEnd = null; // end should be cleared
 		}
 

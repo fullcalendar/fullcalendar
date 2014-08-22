@@ -283,7 +283,11 @@ $.extend(DayGrid.prototype, {
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {
-			segs[i].isDetached = true; // signals the segment doesn't live in a cell. needed for event DnD
+
+			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
+			// grids that want to do drag-n-drop about which cell it came from
+			segs[i].cellDate = date;
+
 			segContainer.append(segs[i].el);
 		}
 
