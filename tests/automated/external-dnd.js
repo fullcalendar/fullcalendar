@@ -97,6 +97,30 @@ describe('external drag and drop', function() {
 				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
 			});
 		});
+
+		it('works with timezone as "local"', function(done) { // for issue 2225
+			options.timezone = 'local';
+			options.drop = function(date, jsEvent) {
+				expect(date).toEqualMoment(moment('2014-08-20T01:00:00')); // compate it to a local moment
+				done();
+			};
+			$('#cal').fullCalendar(options);
+			$('#sidebar .event1').simulate('drag-n-drop', {
+				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+			});
+		});
+
+		it('works with timezone as "UTC"', function(done) { // for issue 2225
+			options.timezone = 'UTC';
+			options.drop = function(date, jsEvent) {
+				expect(date).toEqualMoment('2014-08-20T01:00:00+00:00');
+				done();
+			};
+			$('#cal').fullCalendar(options);
+			$('#sidebar .event1').simulate('drag-n-drop', {
+				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+			});
+		});
 	});
 
 });
