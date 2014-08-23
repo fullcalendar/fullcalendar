@@ -107,8 +107,8 @@ function Header(calendar, options) {
 								tm + '-state-default'
 							];
 
-							button = $(
-								'<button class="' + classes.join(' ') + '">' +
+							button = $( // type="button" so that it doesn't submit a form
+								'<button type="button" class="' + classes.join(' ') + '">' +
 									innerHtml +
 								'</button>'
 								)
