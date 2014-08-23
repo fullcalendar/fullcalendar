@@ -141,10 +141,12 @@ Popover.prototype = {
 		viewportLeft += windowEl.scrollLeft();
 
 		// constrain to the view port. if constrained by two edges, give precedence to top/left
-		top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin);
-		top = Math.max(top, viewportTop + this.margin);
-		left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin);
-		left = Math.max(left, viewportLeft + this.margin);
+		if (options.viewportConstrain !== false) {
+			top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin);
+			top = Math.max(top, viewportTop + this.margin);
+			left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin);
+			left = Math.max(left, viewportLeft + this.margin);
+		}
 
 		this.el.css({
 			top: top - origin.top,

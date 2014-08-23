@@ -234,6 +234,7 @@ $.extend(DayGrid.prototype, {
 			parentEl: this.el,
 			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
+			viewportConstrain: view.opt('popoverViewportConstrain'),
 			hide: function() {
 				// destroy everything when the popover is hidden
 				_this.segPopover.destroy();
