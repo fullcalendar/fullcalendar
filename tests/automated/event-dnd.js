@@ -4,7 +4,8 @@ describe('eventDrop', function() {
 	beforeEach(function() {
 		options = {
 			defaultDate: '2014-06-11',
-			editable: true
+			editable: true,
+			dragScroll: false
 		};
 		affix('#cal');
 	});
