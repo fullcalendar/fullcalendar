@@ -8,6 +8,9 @@ beforeEach(function() {
 	moment.suppressDeprecationWarnings = true;
 
 	jasmine.addMatchers({
+
+		// Moment and Duration
+
 		toEqualMoment: function() {
 			return {
 				compare: function(actual, expected) {
@@ -51,7 +54,30 @@ beforeEach(function() {
 					return result;
 				}
 			};
+		},
+
+
+		// Geometry
+
+		toBeBoundedBy: function() {
+			return {
+				compare: function(actual, expected) {
+					var outer = getBounds(expected);
+					var inner = getBounds(actual);
+					var result = {
+						pass: inner.left >= outer.left &&
+							inner.right <= outer.right &&
+							inner.top >= outer.top &&
+							inner.bottom <= outer.bottom
+					};
+					if (!result.pass) {
+						result.message = 'Element does not bound other element';
+					}
+					return result;
+				}
+			};
 		}
+
 	});
 
 	function serializeDuration(duration) {
@@ -65,6 +91,18 @@ beforeEach(function() {
 	function pad(n, width) {
 		n = n + '';
 		return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+	}
+
+	function getBounds(node) {
+		var el = $(node);
+		var offset = el.offset();
+
+		return {
+			top: offset.top,
+			left: offset.left,
+			right: offset.left + el.outerWidth(),
+			bottom: offset.top + el.outerHeight()
+		};
 	}
 
 });
