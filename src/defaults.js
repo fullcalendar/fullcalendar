@@ -86,6 +86,7 @@ var defaults = {
 
 	dragOpacity: .75,
 	dragRevertDuration: 500,
+	dragScroll: true,
 	
 	//selectable: false,
 	unselectAuto: true,

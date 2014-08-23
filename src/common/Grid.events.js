@@ -187,6 +187,7 @@ $.extend(Grid.prototype, {
 		// of the view.
 		var dragListener = new DragListener(view.coordMap, {
 			distance: 5,
+			scroll: view.opt('dragScroll'),
 			listenStart: function(ev) {
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
@@ -293,6 +294,7 @@ $.extend(Grid.prototype, {
 		// Tracks mouse movement over the *grid's* coordinate map
 		dragListener = new DragListener(this.coordMap, {
 			distance: 5,
+			scroll: view.opt('dragScroll'),
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isResizingSeg = true;

@@ -69,7 +69,7 @@ DragListener.prototype = {
 		if (!this.isListening) {
 
 			// grab scroll container and attach handler
-			if (ev) {
+			if (ev && this.options.scroll) {
 				scrollParent = getScrollParent($(ev.target));
 				if (!scrollParent.is(window) && !scrollParent.is(document)) {
 					this.scrollEl = scrollParent;
