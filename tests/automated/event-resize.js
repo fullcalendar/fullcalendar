@@ -141,6 +141,58 @@ describe('eventResize', function() {
 				);
 			});
 
+			it('should have correct arguments with a timed delta, when timezone is local', function(done) {
+				options.timezone = 'local';
+				init(
+					function() {
+						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
+						});
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00')); // compate to local moment
+						expect(event.end).toEqualMoment(moment('2014-06-11T09:30:00'));
+						revertFunc();
+						expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00'));
+						expect(event.end).toEqualMoment(moment('2014-06-11T07:00:00'));
+
+						done();
+					}
+				);
+			});
+
+			it('should have correct arguments with a timed delta, when timezone is UTC', function(done) {
+				options.timezone = 'UTC';
+				init(
+					function() {
+						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
+						});
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00');
+						expect(event.end).toEqualMoment('2014-06-11T09:30:00+00:00');
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00');
+						expect(event.end).toEqualMoment('2014-06-11T07:00:00+00:00');
+
+						done();
+					}
+				);
+			});
+
 			it('should display the correct time text while resizing', function(done) {
 				var dy;
 				var handle;
