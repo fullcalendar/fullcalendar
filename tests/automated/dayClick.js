@@ -106,6 +106,36 @@ describe('dayClick', function() {
 								}
 							});
 						});
+
+						// issue 2217
+						it('fires correctly when clicking on a timed slot, with minTime set', function(done) {
+
+							// make sure the click slot will be in scroll view
+							options.contentHeight = 500;
+							options.scrollTime = '07:00:00';
+							options.minTime = '02:00:00';
+
+							options.dayClick = function(date, jsEvent, view) {
+								expect(moment.isMoment(date)).toEqual(true);
+								expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+								expect(typeof view).toEqual('object'); // "
+								expect(date.hasTime()).toEqual(true);
+								expect(date).toEqualMoment('2014-05-28T11:00:00');
+							};
+							spyOn(options, 'dayClick').and.callThrough();
+							$('#cal').fullCalendar(options);
+
+							// the middle is 2014-05-28T11:00:00 (regardless of isRTL)
+							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)');
+
+							// for simulating the mousedown/mouseup/click (relevant for selectable)
+							slotRow.simulate('drag-n-drop', {
+								callback: function() {
+									expect(options.dayClick).toHaveBeenCalled();
+									done();
+								}
+							});
+						});
 					});
 				});
 			});
