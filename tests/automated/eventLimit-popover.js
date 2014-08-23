@@ -14,8 +14,11 @@ describe('eventLimit popover', function() {
 				{ title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },
 				{ title: 'event3', start: '2014-07-29', className: 'event3' },
 				{ title: 'event4', start: '2014-07-29', className: 'event4' }
-			]
-		}
+			],
+			dragScroll: false, // don't do autoscrolling while dragging. close quarters in PhantomJS
+			popoverViewportConstrain: false, // because PhantomJS window is small, don't do smart repositioning
+			handleWindowResize: false // because showing the popover causes scrollbars and fires resize
+		};
 	});
 
 	function init() {
@@ -201,9 +204,11 @@ describe('eventLimit popover', function() {
 				};
 				init();
 
-				$('.fc-more-popover .event4').simulate('drag-n-drop', {
-					dx: 20
-				});
+				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
+					$('.fc-more-popover .event1 .fc-title').simulate('drag-n-drop', {
+						dx: 20
+					});
+				}, 0);
 			});
 		});
 
