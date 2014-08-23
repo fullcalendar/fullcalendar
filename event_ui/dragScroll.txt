@@ -1,0 +1,9 @@
+
+dragScroll *2.1.0*
+==================
+
+Whether to automatically move scroll containers while event drag-and-drop happens.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: true
+</div>

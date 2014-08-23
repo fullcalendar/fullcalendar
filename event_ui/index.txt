@@ -9,6 +9,7 @@ Event Dragging & Resizing
 <li>eventDurationEditable</li>
 <li>dragRevertDuration</li>
 <li>dragOpacity</li>
+<li>dragScroll</li>
 <li class='callback'><a href='eventDragStart'>eventDragStart</a> <em>(callback)</em></li>
 <li class='callback'><a href='eventDragStop'>eventDragStop</a> <em>(callback)</em></li>
 <li class='callback'><a href='eventDrop'>eventDrop</a> <em>(callback)</em></li>
