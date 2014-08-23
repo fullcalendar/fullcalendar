@@ -95,6 +95,7 @@ $.extend(Grid.prototype, {
 		// if 'selectable' is enabled, this listener also detects selections.
 		var dragListener = new DragListener(this.coordMap, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
+			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
