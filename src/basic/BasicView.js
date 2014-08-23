@@ -250,14 +250,14 @@ $.extend(BasicView.prototype, {
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
+		View.prototype.destroyEvents.call(this); // do this before dayGrid's segs have been cleared
+
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
 		// we DON'T need to call updateHeight() because:
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
 		// B) in IE8, this causes a flash whenever events are rerendered
-
-		View.prototype.destroyEvents.call(this); // call the super-method
 	},
 
 

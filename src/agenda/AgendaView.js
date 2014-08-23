@@ -357,6 +357,7 @@ $.extend(AgendaView.prototype, {
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
+		View.prototype.destroyEvents.call(this); // do this before the grids' segs have been cleared
 
 		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
 		// after, so remember what the scroll value was so we can restore it.
@@ -371,8 +372,6 @@ $.extend(AgendaView.prototype, {
 		// we DON'T need to call updateHeight() because:
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
 		// B) in IE8, this causes a flash whenever events are rerendered
-
-		View.prototype.destroyEvents.call(this); // call the super-method
 	},
 
 

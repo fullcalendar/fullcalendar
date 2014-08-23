@@ -175,7 +175,7 @@ View.prototype = {
 
 
 	// Removes event elements from the view.
-	// Should be overridden by subclasses. Actual element destruction should happen first, then call super-method.
+	// Should be overridden by subclasses. Should call this super-method FIRST, then subclass DOM destruction.
 	destroyEvents: function() {
 		this.segEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
