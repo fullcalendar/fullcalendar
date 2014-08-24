@@ -20,7 +20,7 @@ describe('DayGrid event rendering', function() {
 			{
 				title: 'event2',
 				start: '2014-08-02',
-				end:' 2014-08-05',
+				end: '2014-08-05',
 				className: 'event2'
 			}
 		];
