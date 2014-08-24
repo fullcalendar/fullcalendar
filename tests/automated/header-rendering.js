@@ -17,7 +17,7 @@ describe('header rendering', function() {
 		});
 		it('should have right with today|space|left|right', function() {
 			$('#calendar').fullCalendar();
-			var rightChildren = $('#calendar > .fc-toolbar > .fc-right > *');;
+			var rightChildren = $('#calendar > .fc-toolbar > .fc-right > *');
 			var todayButton = rightChildren.eq(0);
 			var buttonGroup = rightChildren.eq(1);
 			var prevNextButtons = buttonGroup.children();
@@ -95,6 +95,42 @@ describe('header rendering', function() {
 					expect(fcHeaderRight).toContainElement('.fc-next-button');
 				});
 			});
+		});
+	});
+
+	describe('when calendar is within a form', function() {
+		beforeEach(function() {
+			$('#calendar').wrap('<form action="http://google.com/"></form>');
+		});
+		it('should not submit the form when clicking the button', function(done) {
+			var options = {
+				header: {
+					left: 'prev,next',
+					right: 'title'
+				}
+			};
+			var unloadCalled = false;
+
+			function beforeUnloadHandler() {
+				console.log('when calendar is within a form, it submits!!!');
+				unloadCalled = true;
+				cleanup();
+				return 'click stay on this page';
+			}
+			$(window).on('beforeunload', beforeUnloadHandler);
+
+			function cleanup() {
+				$(window).off('beforeunload', beforeUnloadHandler);
+			}
+
+			$('#calendar').fullCalendar(options);
+			$('.fc-next-button').simulate('click');
+
+			setTimeout(function() { // wait to see if handler was called
+				expect(unloadCalled).toBe(false);
+				cleanup();
+				done();
+			}, 100);
 		});
 	});
 });
