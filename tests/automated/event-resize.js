@@ -141,6 +141,33 @@ describe('eventResize', function() {
 				);
 			});
 
+			// TODO: test RTL
+			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
+				init(
+					function() {
+						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+							dx: $('.fc-day-header:first').width() * .9, // one day
+							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
+						});
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(1);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-12T09:30:00');
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
+
+						done();
+					}
+				);
+			});
+
 			it('should have correct arguments with a timed delta, when timezone is local', function(done) {
 				options.timezone = 'local';
 				init(
