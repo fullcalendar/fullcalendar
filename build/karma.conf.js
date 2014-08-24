@@ -22,6 +22,7 @@ module.exports = function(config) {
 
 			'../lib/moment/moment.js',
 			'../lib/jquery/dist/jquery.js',
+			'../lib/jquery-ui/jquery-ui.js',
 
 			// for jquery simulate
 			'../lib/jquery-simulate-ext/libs/bililiteRange.js',

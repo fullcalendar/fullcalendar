@@ -65,13 +65,46 @@ beforeEach(function() {
 					var outer = getBounds(expected);
 					var inner = getBounds(actual);
 					var result = {
-						pass: inner.left >= outer.left &&
+						pass: outer && inner &&
+							inner.left >= outer.left &&
 							inner.right <= outer.right &&
 							inner.top >= outer.top &&
 							inner.bottom <= outer.bottom
 					};
 					if (!result.pass) {
 						result.message = 'Element does not bound other element';
+					}
+					return result;
+				}
+			};
+		},
+		toBeLeftOf: function() {
+			return {
+				compare: function(actual, expected) {
+					var subjectBounds = getBounds(actual);
+					var otherBounds = getBounds(expected);
+					var result = {
+						pass: subjectBounds && otherBounds &&
+							subjectBounds.right <= otherBounds.left
+					};
+					if (!result.pass) {
+						result.message = 'Element is not to the left of the other element';
+					}
+					return result;
+				}
+			};
+		},
+		toBeRightOf: function() {
+			return {
+				compare: function(actual, expected) {
+					var subjectBounds = getBounds(actual);
+					var otherBounds = getBounds(expected);
+					var result = {
+						pass: subjectBounds && otherBounds &&
+							subjectBounds.left >= otherBounds.right
+					};
+					if (!result.pass) {
+						result.message = 'Element is not to the right of the other element';
 					}
 					return result;
 				}
@@ -96,6 +129,10 @@ beforeEach(function() {
 	function getBounds(node) {
 		var el = $(node);
 		var offset = el.offset();
+
+		if (!offset) {
+			return false;
+		}
 
 		return {
 			top: offset.top,
