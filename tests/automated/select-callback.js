@@ -136,6 +136,28 @@ describe('select callback', function() {
 							}
 						});
 					});
+					it('gets fired correctly when the user selects slots in a different day', function(done) {
+						options.select = function(start, end, jsEvent, view) {
+							expect(moment.isMoment(start)).toEqual(true);
+							expect(moment.isMoment(end)).toEqual(true);
+							expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+							expect(typeof view).toEqual('object'); // "
+							expect(start.hasTime()).toEqual(true);
+							expect(end.hasTime()).toEqual(true);
+							expect(start).toEqualMoment('2014-05-28T09:00:00');
+							expect(end).toEqualMoment('2014-05-29T10:30:00');
+						};
+						spyOn(options, 'select').and.callThrough();
+						$('#cal').fullCalendar(options);
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+							dx: $('.fc-day-header:first').outerWidth() * .9 * (isRTL ? -1 : 1), // one day ahead
+							dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
+							callback: function() {
+								expect(options.select).toHaveBeenCalled();
+								done();
+							}
+						});
+					});
 					it('gets fired correctly when the user selects a single slot', function(done) {
 						options.select = function(start, end, jsEvent, view) {
 							expect(moment.isMoment(start)).toEqual(true);
