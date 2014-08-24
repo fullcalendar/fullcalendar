@@ -258,6 +258,46 @@ describe('eventResize', function() {
 				);
 			});
 
+			it('should run the temporarily rendered event through eventRender', function(done) {
+				var dy;
+				var handle;
+
+				options.eventRender = function(event, element) {
+					element.addClass('didEventRender');
+				};
+
+				init(
+					function() {
+						dy = $('.fc-slats tr:eq(1)').height() * 4.5; // 5 slots, so 2.5 hours
+						handle = $('.fc-event .fc-resizer').simulate('drag', {
+							dy: dy,
+							callback: function() {
+								expect($('.fc-event.fc-helper')).toHaveClass('didEventRender');
+								handle.simulate('drag', {
+									// BUG with jquery-simulate-ext
+									// I guess the delta is still relative to the original position, so should be zero.
+									// But zero causes nothing to happen, so make it a tiny non-zero delta.
+									dy: -1,
+
+									callback: function() {
+										expect($('.fc-event.fc-helper')).not.toExist();
+										handle.simulate('drop', {
+											callback: function() {
+												done();
+											}
+										});
+									}
+								});
+							}
+						});
+					},
+					function() {
+						// this wasn't firing for some reason. do it in the drop callback instead
+						//done();
+					}
+				);
+			});
+
 			it('should not fire the windowResize handler', function(done) { // bug 1116
 
 				// has to do this crap because PhantomJS was trigger false window resizes unrelated to the fc-event resize
