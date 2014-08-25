@@ -68,12 +68,12 @@ tbody,
 }
 
 /* sets a min-height on the event skeleton. for IE8. was overexaggerating this, so make small */
-.fc tbody .fc-row .fc-content-skeleton table {
+.fc .fc-basic-view tbody .fc-row .fc-content-skeleton table { /* NOT for all-day slot */
 	height: 2em;
 }
 
 /* sets a min-height on the event skeleton. for modern browsers (not IE8) */
-.fc tbody .fc-row .fc-content-skeleton table:last-child {
+.fc .fc-basic-view tbody .fc-row .fc-content-skeleton table:last-child { /* NOT for all-day slot */
 	height: 4em;
 }
 
