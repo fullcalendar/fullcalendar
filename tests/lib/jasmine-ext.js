@@ -57,6 +57,22 @@ beforeEach(function() {
 		},
 
 
+		// DOM
+
+		toHaveScrollbars: function() {
+			return {
+				compare: function(actual) {
+					var elm = $(actual);
+					var result = {
+						pass: elm.width() !== elm[0].clientWidth ||
+							elm.height() !== elm[0].clientHeight
+					};
+					return result;
+				}
+			};
+		},
+
+
 		// Geometry
 
 		toBeBoundedBy: function() {
