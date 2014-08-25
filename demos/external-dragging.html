@@ -16,7 +16,7 @@
 		/* initialize the external events
 		-----------------------------------------------------------------*/
 	
-		$('#external-events div.external-event').each(function() {
+		$('#external-events .fc-event').each(function() {
 		
 			// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
 			// it doesn't need to have a start or end
@@ -105,12 +105,8 @@
 		padding-top: 1em;
 	}
 		
-	.external-event { /* try to mimick the look of a real event */
+	#external-events .fc-event {
 		margin: 10px 0;
-		padding: 2px 4px;
-		background: #3366CC;
-		color: #fff;
-		font-size: .85em;
 		cursor: pointer;
 	}
 		
@@ -137,11 +133,11 @@
 
 		<div id='external-events'>
 			<h4>Draggable Events</h4>
-			<div class='external-event'>My Event 1</div>
-			<div class='external-event'>My Event 2</div>
-			<div class='external-event'>My Event 3</div>
-			<div class='external-event'>My Event 4</div>
-			<div class='external-event'>My Event 5</div>
+			<div class='fc-event'>My Event 1</div>
+			<div class='fc-event'>My Event 2</div>
+			<div class='fc-event'>My Event 3</div>
+			<div class='fc-event'>My Event 4</div>
+			<div class='fc-event'>My Event 5</div>
 			<p>
 				<input type='checkbox' id='drop-remove' />
 				<label for='drop-remove'>remove after drop</label>
