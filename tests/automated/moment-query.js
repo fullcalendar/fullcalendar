@@ -7,6 +7,63 @@
 		timed: 'T00:30:00-0500'
 	};
 
+	describe('isSame', function() {
+
+		describe('when no units provided', function() {
+
+			it('returns false when the dates are different', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T07:00:00');
+				expect(m1.isSame(m2)).toBe(false);
+			});
+
+			it('returns false when the dates are the same, but different zone-ambiguation', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00+00:00');
+				expect(m1.isSame(m2)).toBe(false);
+			});
+
+			it('returns false when the dates are the same, but different hasTime', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				expect(m1.isSame(m2)).toBe(false);
+			});
+
+			it('returns true when the dates are exactly the same', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25');
+				expect(m1.isSame(m2)).toBe(true);
+				m1 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				expect(m1.isSame(m2)).toBe(true);
+				m1 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00+05:00');
+				m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00+05:00');
+				expect(m1.isSame(m2)).toBe(true);
+			});
+		});
+
+		describe('when units are provided', function() {
+
+			it('returns true when dates are the same day but different zone-ambiguation', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00-11:00');
+				expect(m1.isSame(m2, 'day')).toBe(true);
+			});
+
+			it('returns true when dates are the same day but different hasTime', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-25');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00-11:00');
+				expect(m1.isSame(m2, 'day')).toBe(true);
+			});
+
+			it('returns false when dates are a different day', function() {
+				var m1 = $.fullCalendar.moment.parseZone('2014-08-24T00:00:00');
+				var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+				expect(m1.isSame(m2, 'day')).toBe(false);
+			});
+		});
+	});
+
 	describe('isWithin', function() {
 		$.each(momentTypeSuffixes, function(thisType, thisSuffix) {
 			describe('when the moment is ' + thisType, function() {
