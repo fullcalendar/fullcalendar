@@ -2,8 +2,10 @@
 dragScroll *2.1.0*
 ==================
 
-Whether to automatically move scroll containers while event drag-and-drop happens.
+Whether to automatically move scroll containers during event drag-and-drop or while selecting.
 
 <div class='spec' markdown='1'>
 Boolean, *default*: true
 </div>
+
+If enabled, the scroll container will automatically scroll once the mouse gets close to the edge.

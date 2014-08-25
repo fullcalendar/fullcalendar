@@ -2,7 +2,7 @@
 eventLimit *2.1.0*
 ==================
 
-Limits the number of events displayed on a day in Month view.
+Limits the number of events displayed on a day.
 
 <div class='spec' markdown='1'>
 Boolean, Integer. *default:* `false`
@@ -16,3 +16,13 @@ A value of `false` (the default) will display all events as-is.
 A value of `true` will limit the number of events to the height of the day cell.
 
 An integer value will limit the events to a specific number of rows.
+
+For the all-day section in the agenda views, a value of `true` will limit the number of events to
+`5`. To fine-tune this, use a [View Option Hash](../views/View_Option_Hash) like this:
+
+	$('#calendar').fullCalendar({
+		eventLimit: {
+			'agenda': 6, // adjust to 6 only for agendaWeek/agendaDay
+			'default': true // give the default value to other views
+		}
+	});

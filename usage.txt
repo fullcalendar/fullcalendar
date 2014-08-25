@@ -14,9 +14,9 @@ JavaScript files, in the `<head>` of your page:
 	<script src='fullcalendar/fullcalendar.js'></script>
 
 jQuery and Moment must be loaded before FullCalendar's JavaScript.
-	
-If you plan on doing dragging or resizing, you need some additional [jQuery UI](http://jqueryui.com/download) files
-(more information [here](event_ui/Requirements)).
+
+If you plan on doing dragging or resizing, you might need some additional dependencies.
+[More information](event_ui/Requirements).
 
 Once you have your dependencies, you need to write the JavaScript code that initializes the calendar.
 This code must be executed *after* the page has initialized. The best way to do this is with jQuery's
