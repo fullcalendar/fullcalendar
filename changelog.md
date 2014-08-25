@@ -30,7 +30,7 @@ Changes related to height and scrollbars:
   vertically stretch to accomodate and no scrollbars will be used ([521]).
 - Tall weeks in month view will borrow height from other weeks ([243])
 - New `fixedWeekCount` option to determines the number of weeks in month view
-	- Supercedes `weekMode` (**deprecated**). Instead, use a combination of `fixedWeekCount` and
+	- Supersedes `weekMode` (**deprecated**). Instead, use a combination of `fixedWeekCount` and
 	  one of the height options, possibly with an `'auto'` value
 
 Much nicer, glitch-free rendering of calendar *for printers* ([35]). Things you might not expect:
