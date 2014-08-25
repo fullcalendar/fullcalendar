@@ -86,6 +86,53 @@ describe('eventDrop', function() {
 				);
 			});
 		});
+
+		// TODO: tests for eventMouseover/eventMouseout firing correctly when no dragging
+		it('should not fire any eventMouseover/eventMouseout events while dragging', function(done) { // issue 1297
+			options.events = [
+				{
+					title: 'all-day event',
+					start: '2014-06-11',
+					allDay: true,
+					className: 'event1'
+				},
+				{
+					title: 'event2',
+					start: '2014-06-10',
+					allDay: true,
+					className: 'event2'
+				}
+			];
+			options.eventMouseover = function() { };
+			options.eventMouseout = function() { };
+			spyOn(options, 'eventMouseover');
+			spyOn(options, 'eventMouseout');
+
+			init(
+				function() {
+					$('.event1').simulate('drag-n-drop', {
+						dx: $('.fc-day').width() * 2,
+						dy: $('.fc-day').height(),
+						interpolation: {
+							stepCount: 10,
+							duration: 1000
+						}
+					});
+					setTimeout(function() { // wait until half way through drag
+						$('.event2')
+							.simulate('mouseover')
+							.simulate('mouseenter')
+							.simulate('mouseout')
+							.simulate('mouseleave');
+					}, 500);
+				},
+				function(event, delta, revertFunc) {
+					expect(options.eventMouseover).not.toHaveBeenCalled();
+					expect(options.eventMouseout).not.toHaveBeenCalled();
+					done();
+				}
+			);
+		});
 	});
 
 	describe('when in agenda view', function() {
