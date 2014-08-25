@@ -422,10 +422,7 @@ temporary rendered events).
 /* Global Event Styles
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event,
-.fc-event:hover, /* extra precedents over other <a> tag hover styling */
-.ui-widget .fc-event { /* extra precedence over jqui theme <a> tag styling */
-
+.fc-event {
 	position: relative; /* for resize handle and other inner positioning */
 	display: block; /* make the <a> tag block */
 	font-size: .85em;
@@ -433,9 +430,15 @@ temporary rendered events).
 	border-radius: 3px;
 	border: 1px solid #3a87ad; /* default BORDER color */
 	background-color: #3a87ad; /* default BACKGROUND color */
-	color: #fff;               /* default TEXT color */
-	text-decoration: none;     /* if <a> has an href */
-	font-weight: normal;       /* undo jqui */
+	font-weight: normal; /* undo jqui's ui-widget-header bold */
+}
+
+/* overpower some of bootstrap's and jqui's styles on <a> tags */
+.fc-event,
+.fc-event:hover,
+.ui-widget .fc-event {
+	color: #fff; /* default TEXT color */
+	text-decoration: none; /* if <a> has an href */
 }
 
 .fc-event[href],
