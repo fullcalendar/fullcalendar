@@ -32,6 +32,18 @@
 		}
 	}
 
+	function expectHeight(heightVal) {
+		var diff;
+		if (heightProp === 'height') {
+			// Firefox is reporting off-by-one difference sometimes, even when things are good :(
+			diff = Math.abs(heightElm.outerHeight() - heightVal);
+			expect(diff).toBeLessThan(2); // off-by-one or exactly the same
+		}
+		else {
+			expect(heightElm.outerHeight()).toBe(heightVal);
+		}
+	}
+
 	$.each({
 		'as an init option': false,
 		'as a method': true
@@ -65,7 +77,7 @@
 					var shortRows = rows.not(tallRow); // 0, 2, 3, 4, 5
 					var shortHeight = shortRows.eq(0).outerHeight();
 
-					expect(heightElm.outerHeight()).toBe(600);
+					expectHeight(600);
 
 					shortRows.each(function(i, node) {
 						var rowHeight = $(node).outerHeight();
@@ -91,7 +103,7 @@
 				});
 				it('height is correct and scrollbars show up', function() {
 					init(600);
-					expect(heightElm.outerHeight()).toBe(600);
+					expectHeight(600);
 					expect($('.fc-day-grid-container')).toHaveScrollbars();
 				});
 			});
@@ -124,7 +136,7 @@
 				describe('as a number, when there are no events', function() {
 					it('should be the specified height, with no scrollbars', function() {
 						init(600);
-						expect(heightElm.outerHeight()).toBe(600);
+						expectHeight(600);
 						expect('.fc-day-grid-container').not.toHaveScrollbars();
 					});
 				});
@@ -135,7 +147,7 @@
 					});
 					it('should have the correct height, with scrollbars', function() {
 						init(600);
-						expect(heightElm.outerHeight()).toBe(600);
+						expectHeight(600);
 						expect('.fc-day-grid-container').toHaveScrollbars();
 					});
 				});
@@ -176,7 +188,7 @@
 							});
 							it('should be the correct height, with a horizontal rule to occupy space', function() {
 								init(600);
-								expect(heightElm.outerHeight()).toBe(600);
+								expectHeight(600);
 								expect($('.fc-time-grid > hr')).toBeVisible();
 							});
 						});
@@ -188,7 +200,7 @@
 							});
 							it('should be the correct height, with scrollbars and no filler hr', function() {
 								init(600);
-								expect(heightElm.outerHeight()).toBe(600);
+								expectHeight(600);
 								expect($('.fc-time-grid-container')).toHaveScrollbars();
 								expect($('.fc-time-grid > hr')).not.toBeVisible();
 							});
