@@ -11,6 +11,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-jscs-checker');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
@@ -22,6 +23,7 @@ module.exports = function(grunt) {
 	var config = {
 		concat: {},
 		uglify: {},
+		cssmin: {},
 		copy: {},
 		compress: {},
 		shell: {},
@@ -64,7 +66,8 @@ module.exports = function(grunt) {
 		'lumbar:build',
 		'concat:moduleVariables',
 		'jshint:builtModules',
-		'uglify:modules'
+		'uglify:modules',
+		'cssmin:modules'
 	]);
 
 	// assemble modules
@@ -93,7 +96,7 @@ module.exports = function(grunt) {
 		dest: 'dist/'
 	};
 
-	// create minified versions (*.min.js)
+	// create minified versions of JS
 	config.uglify.modules = {
 		options: {
 			preserveComments: 'some' // keep comments starting with /*!
@@ -101,6 +104,13 @@ module.exports = function(grunt) {
 		expand: true,
 		src: 'dist/fullcalendar.js', // only do it for fullcalendar.js
 		ext: '.min.js'
+	};
+
+	// create minified versions of CSS
+	config.cssmin.modules = {
+		expand: true,
+		src: 'dist/fullcalendar.css', // only do it for fullcalendar.css
+		ext: '.min.css'
 	};
 
 	config.clean.modules = [

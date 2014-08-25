@@ -14,6 +14,7 @@
     "grunt-contrib-compress": "^0.4.10",
     "grunt-contrib-clean": "^0.4.1",
     "grunt-contrib-jshint": "^0.8.0",
+    "grunt-contrib-cssmin": "^0.10.0",
     "grunt-jscs-checker": "^0.4.4",
     "grunt-shell": "^0.7.0",
     "grunt-karma": "^0.8.3",
