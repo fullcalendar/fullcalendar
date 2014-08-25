@@ -380,7 +380,7 @@ temporary rendered events).
 .fc-row .fc-content-skeleton {
 	position: relative;
 	z-index: 3;
-	padding-bottom: 1px; /* matches the space between events */
+	padding-bottom: 2px; /* matches the space above the events */
 }
 
 .fc-row .fc-helper-skeleton {
@@ -451,7 +451,11 @@ be a descendant of the grid when it is being dragged.
 */
 
 .fc-day-grid-event {
-	margin: 1px 1px 0; /* spacing between events and edges */
+	margin: 1px 2px 0; /* spacing between events and edges */
+}
+
+tr:first-child > td > .fc-day-grid-event {
+	margin-top: 2px; /* a little bit more space before the first event */
 }
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */

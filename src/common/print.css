@@ -64,7 +64,7 @@ tbody,
 /* give back the bottom spacing that was taken away from the content-skeleton's padding (above) */
 /* only works on modern browsers */
 .fc tbody .fc-row .fc-content-skeleton table tr:last-child td {
-	padding-bottom: 1px;
+	padding-bottom: 2px;
 }
 
 /* sets a min-height on the event skeleton. for IE8. was overexaggerating this, so make small */
