@@ -159,3 +159,9 @@ beforeEach(function() {
 	}
 
 });
+
+// Destroy the calendar afterwards, to prevent memory leaks
+// (not the best place for this)
+afterEach(function() {
+	$('#calendar,#cal').fullCalendar('destroy'); // common id's for calendars in tests
+});
