@@ -302,7 +302,7 @@ $.extend(Grid.prototype, {
 			},
 			cellOver: function(cell, date) {
 				// compute the new end. don't allow it to go before the event's start
-				if (date < start) {
+				if (date.isBefore(start)) { // allows comparing ambig to non-ambig
 					date = start;
 				}
 				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
