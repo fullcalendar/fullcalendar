@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta3 Stylesheet
+ * FullCalendar v2.1.0 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -380,7 +380,7 @@ temporary rendered events).
 .fc-row .fc-content-skeleton {
 	position: relative;
 	z-index: 3;
-	padding-bottom: 1px; /* matches the space between events */
+	padding-bottom: 2px; /* matches the space above the events */
 }
 
 .fc-row .fc-helper-skeleton {
@@ -422,10 +422,7 @@ temporary rendered events).
 /* Global Event Styles
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event,
-.fc-event:hover, /* extra precedents over other <a> tag hover styling */
-.ui-widget .fc-event { /* extra precedence over jqui theme <a> tag styling */
-
+.fc-event {
 	position: relative; /* for resize handle and other inner positioning */
 	display: block; /* make the <a> tag block */
 	font-size: .85em;
@@ -433,9 +430,15 @@ temporary rendered events).
 	border-radius: 3px;
 	border: 1px solid #3a87ad; /* default BORDER color */
 	background-color: #3a87ad; /* default BACKGROUND color */
-	color: #fff;               /* default TEXT color */
-	text-decoration: none;     /* if <a> has an href */
-	font-weight: normal;       /* undo jqui */
+	font-weight: normal; /* undo jqui's ui-widget-header bold */
+}
+
+/* overpower some of bootstrap's and jqui's styles on <a> tags */
+.fc-event,
+.fc-event:hover,
+.ui-widget .fc-event {
+	color: #fff; /* default TEXT color */
+	text-decoration: none; /* if <a> has an href */
 }
 
 .fc-event[href],
@@ -451,7 +454,8 @@ be a descendant of the grid when it is being dragged.
 */
 
 .fc-day-grid-event {
-	margin: 1px 1px 0; /* spacing between events and edges */
+	margin: 1px 2px 0; /* spacing between events and edges */
+	padding: 0 1px;
 }
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
@@ -500,6 +504,42 @@ be a descendant of the grid when it is being dragged.
 .fc-rtl .fc-day-grid-event .fc-resizer {
 	left: -3px;
 	cursor: w-resize;
+}
+
+
+/* Event Limiting
+--------------------------------------------------------------------------------------------------*/
+
+/* "more" link that represents hidden events */
+
+a.fc-more {
+	margin: 1px 3px;
+	font-size: .85em;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a.fc-more:hover {
+	text-decoration: underline;
+}
+
+.fc-limited { /* rows and cells that are hidden because of a "more" link */
+	display: none;
+}
+
+/* popover that appears when "more" link is clicked */
+
+.fc-day-grid .fc-row {
+	z-index: 1; /* make the "more" popover one higher than this */
+}
+
+.fc-more-popover {
+	z-index: 2;
+	width: 220px;
+}
+
+.fc-more-popover .fc-event-container {
+	padding: 10px;
 }
 
 /* Toolbar
@@ -590,9 +630,9 @@ be a descendant of the grid when it is being dragged.
 
 .fc-basicWeek-view .fc-content-skeleton,
 .fc-basicDay-view .fc-content-skeleton {
-	/* in basicWeek and basicDay views, where we are sure there are no day numbers, ensure
-	   a space at the bottom of the cell to allow for day selecting/clicking */
-	padding-bottom: 1em;
+	/* we are sure there are no day numbers in these views, so... */
+	padding-top: 1px; /* add a pixel to make sure there are 2px padding above events */
+	padding-bottom: 1em; /* ensure a space at bottom of cell for user selecting/clicking */
 }
 
 .fc-basic-view tbody .fc-row {
@@ -651,46 +691,20 @@ be a descendant of the grid when it is being dragged.
 	   making day-numbers bold also fixes the problem */
 }
 
-/* "more" link that represents hidden events */
-
-a.fc-more {
-	margin: 1px 2px;
-	font-size: .85em;
-	cursor: pointer;
-	text-decoration: none;
-}
-
-a.fc-more:hover {
-	text-decoration: underline;
-}
-
-.fc-limited { /* rows and cells that are hidden because of a "more" link */
-	display: none;
-}
-
-/* popover that appears when "more" link is clicked */
-
-.fc-day-grid .fc-row {
-	z-index: 1; /* make the "more" popover one higher than this */
-}
-
-.fc-more-popover {
-	z-index: 2;
-	width: 220px;
-}
-
-.fc-more-popover .fc-event-container {
-	padding: 10px;
-}
-
 /* AgendaView all-day area
 --------------------------------------------------------------------------------------------------*/
+
+.fc-agenda-view .fc-day-grid {
+	position: relative;
+	z-index: 2; /* so the "more.." popover will be over the time grid */
+}
 
 .fc-agenda-view .fc-day-grid .fc-row {
 	min-height: 3em; /* all-day section will never get shorter than this */
 }
 
 .fc-agenda-view .fc-day-grid .fc-row .fc-content-skeleton {
+	padding-top: 1px; /* add a pixel to make sure there are 2px padding above events */
 	padding-bottom: 1em; /* give space underneath events for clicking/selecting days */
 }
 
@@ -720,8 +734,13 @@ a.fc-more:hover {
 /* TimeGrid Structure
 --------------------------------------------------------------------------------------------------*/
 
+.fc-time-grid-container, /* so scroll container's z-index is below all-day */
+.fc-time-grid { /* so slats/bg/content/etc positions get scoped within here */
+	position: relative;
+	z-index: 1;
+}
+
 .fc-time-grid {
-	position: relative; /* so slats/bg/content/etc positions get scoped within here */
 	min-height: 100%; /* so if height setting is 'auto', .fc-bg stretches to fill height */
 }
 
@@ -844,6 +863,11 @@ be a descendant of the grid when it is being dragged.
 	z-index: 2; /* above the bg */
 }
 
+.fc-time-grid-event .fc-time,
+.fc-time-grid-event .fc-title {
+	padding: 0 1px;
+}
+
 .fc-time-grid-event .fc-time {
 	font-size: .85em;
 	white-space: nowrap;
@@ -884,6 +908,7 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event.fc-short .fc-title {
 	font-size: .85em; /* make the title text the same size as the time */
+	padding: 0; /* undo padding from above */
 }
 
 /* resizer */

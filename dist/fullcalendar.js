@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0-beta3
+ * FullCalendar v2.1.0
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -102,11 +102,17 @@ var defaults = {
 
 	dragOpacity: .75,
 	dragRevertDuration: 500,
+	dragScroll: true,
 	
 	//selectable: false,
 	unselectAuto: true,
 	
 	dropAccept: '*',
+
+	eventLimit: false,
+	eventLimitText: 'more',
+	eventLimitClick: 'popover',
+	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
 	windowResizeDelay: 200 // milliseconds before a rerender happens
@@ -168,7 +174,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.1.0-beta3" };
+var fc = $.fullCalendar = { version: "2.1.0" };
 var fcViews = fc.views = {};
 
 
@@ -1156,8 +1162,8 @@ function Header(calendar, options) {
 								tm + '-state-default'
 							];
 
-							button = $(
-								'<button class="' + classes.join(' ') + '">' +
+							button = $( // type="button" so that it doesn't submit a form
+								'<button type="button" class="' + classes.join(' ') + '">' +
 									innerHtml +
 								'</button>'
 								)
@@ -2118,7 +2124,7 @@ function setPotentialScroller(containerEl, height) {
 	containerEl.height(height).addClass('fc-scroller');
 
 	// are scrollbars needed?
-	if (containerEl[0].scrollHeight > containerEl[0].clientHeight) {
+	if (containerEl[0].scrollHeight - 1 > containerEl[0].clientHeight) { // !!! -1 because IE is often off-by-one :(
 		return true;
 	}
 
@@ -2235,15 +2241,6 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 ----------------------------------------------------------------------------------------------------------------------*/
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
-
-
-// Diffs the two moments into a Duration where only full-days are considered.
-// Moments will have their timezones normalized.
-function dayDiff(a, b) {
-	return moment.duration({
-		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
-	});
-}
 
 
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
@@ -3126,10 +3123,12 @@ Popover.prototype = {
 		viewportLeft += windowEl.scrollLeft();
 
 		// constrain to the view port. if constrained by two edges, give precedence to top/left
-		top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin);
-		top = Math.max(top, viewportTop + this.margin);
-		left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin);
-		left = Math.max(left, viewportLeft + this.margin);
+		if (options.viewportConstrain !== false) {
+			top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin);
+			top = Math.max(top, viewportTop + this.margin);
+			left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin);
+			left = Math.max(left, viewportLeft + this.margin);
+		}
 
 		this.el.css({
 			top: top - origin.top,
@@ -3365,7 +3364,7 @@ DragListener.prototype = {
 		if (!this.isListening) {
 
 			// grab scroll container and attach handler
-			if (ev) {
+			if (ev && this.options.scroll) {
 				scrollParent = getScrollParent($(ev.target));
 				if (!scrollParent.is(window) && !scrollParent.is(document)) {
 					this.scrollEl = scrollParent;
@@ -4113,6 +4112,7 @@ $.extend(Grid.prototype, {
 		// if 'selectable' is enabled, this listener also detects selections.
 		var dragListener = new DragListener(this.coordMap, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
+			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
@@ -4475,7 +4475,7 @@ $.extend(Grid.prototype, {
 
 					// only call the handlers if there is not a drag/resize in progress
 					if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
-						func.call(this, seg, ev); // `this` will be the event element
+						return func.call(this, seg, ev); // `this` will be the event element
 					}
 				});
 			}
@@ -4526,6 +4526,7 @@ $.extend(Grid.prototype, {
 		// of the view.
 		var dragListener = new DragListener(view.coordMap, {
 			distance: 5,
+			scroll: view.opt('dragScroll'),
 			listenStart: function(ev) {
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
@@ -4537,7 +4538,8 @@ $.extend(Grid.prototype, {
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
-				var res = _this.computeDraggedEventDates(seg, dragListener.origDate, date);
+				var origDate = seg.cellDate || dragListener.origDate;
+				var res = _this.computeDraggedEventDates(seg, origDate, date);
 				newStart = res.start;
 				newEnd = res.end;
 
@@ -4577,9 +4579,8 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Given a segment, where it originally resided on the grid, and the new date it has been dragged to,
-	// calculates the Event Object's new start and end dates.
-	computeDraggedEventDates: function(seg, origDate, newDate) {
+	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates
+	computeDraggedEventDates: function(seg, dragStartDate, dropDate) {
 		var view = this.view;
 		var event = seg.event;
 		var start = event.start;
@@ -4588,28 +4589,8 @@ $.extend(Grid.prototype, {
 		var newStart;
 		var newEnd;
 
-		// the segment might be explicitly marked as not-in-the-grid
-		if (seg.isDetached) {
-			origDate = null;
-		}
-
-		// calculate the delta (a Duration) that the event's dates must be moved.
-		// if `delta` remains undefined, that means the event's start will literally become newDate.
-		if (!origDate) {
-			if (newDate.hasTime()) { // over a time slot
-				delta = dayishDiff(newDate, start); // will move the start to the exact new datetime
-			}
-			else { // over a whole-day cell
-				delta = dayDiff(newDate, start); // will be a whole-day diff, so that start's time will be kept
-			}
-		}
-		else if (newDate.hasTime() === origDate.hasTime()) { // staying all-day or staying timed
-			delta = dayishDiff(newDate, origDate);
-		}
-		// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
-
-		// recalculate start/end
-		if (delta) {
+		if (dropDate.hasTime() === dragStartDate.hasTime()) {
+			delta = dayishDiff(dropDate, dragStartDate);
 			newStart = start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
 				newEnd = null;
@@ -4619,7 +4600,8 @@ $.extend(Grid.prototype, {
 			}
 		}
 		else {
-			newStart = newDate;
+			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
+			newStart = dropDate;
 			newEnd = null; // end should be cleared
 		}
 
@@ -4651,6 +4633,7 @@ $.extend(Grid.prototype, {
 		// Tracks mouse movement over the *grid's* coordinate map
 		dragListener = new DragListener(this.coordMap, {
 			distance: 5,
+			scroll: view.opt('dragScroll'),
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isResizingSeg = true;
@@ -4658,7 +4641,7 @@ $.extend(Grid.prototype, {
 			},
 			cellOver: function(cell, date) {
 				// compute the new end. don't allow it to go before the event's start
-				if (date < start) {
+				if (date.isBefore(start)) { // allows comparing ambig to non-ambig
 					date = start;
 				}
 				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
@@ -4829,14 +4812,10 @@ $.extend(DayGrid.prototype, {
 	// Generates the HTML for a single row. `row` is the row number.
 	dayRowHtml: function(row, isRigid) {
 		var view = this.view;
-		var classes = [ 'fc-row', 'fc-week' ];
+		var classes = [ 'fc-row', 'fc-week', view.widgetContentClass ];
 
 		if (isRigid) {
 			classes.push('fc-rigid');
-		}
-
-		if (view.dayRowThemeClass) { // provides the view a hook to inject a theme className
-			classes.push(view.dayRowThemeClass);
 		}
 
 		return '' +
@@ -5410,7 +5389,7 @@ $.extend(DayGrid.prototype, {
 				rowLevelLimit = this.computeRowLevelLimit(row);
 			}
 
-			if (levelLimit !== false) {
+			if (rowLevelLimit !== false) {
 				this.limitRow(row, rowLevelLimit);
 			}
 		}
@@ -5592,12 +5571,23 @@ $.extend(DayGrid.prototype, {
 		var _this = this;
 		var view = this.view;
 		var moreWrap = moreLink.parent(); // the <div> wrapper around the <a>
-		var options = {
+		var topEl; // the element we want to match the top coordinate of
+		var options;
+
+		if (view.rowCnt == 1) {
+			topEl = this.view.el; // will cause the popover to cover any sort of header
+		}
+		else {
+			topEl = this.rowEls.eq(cell.row); // will align with top of row
+		}
+
+		options = {
 			className: 'fc-more-popover',
 			content: this.renderSegPopoverContent(date, segs),
 			parentEl: this.el,
-			top: this.rowEls.eq(cell.row).offset().top, // better than the <td>. no border confusion
+			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
+			viewportConstrain: view.opt('popoverViewportConstrain'),
 			hide: function() {
 				// destroy everything when the popover is hidden
 				_this.segPopover.destroy();
@@ -5647,7 +5637,11 @@ $.extend(DayGrid.prototype, {
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {
-			segs[i].isDetached = true; // signals the segment doesn't live in a cell. needed for event DnD
+
+			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
+			// grids that want to do drag-n-drop about which cell it came from
+			segs[i].cellDate = date;
+
 			segContainer.append(segs[i].el);
 		}
 
@@ -5787,7 +5781,7 @@ $.extend(TimeGrid.prototype, {
 			minutes = slotDate.minutes();
 
 			axisHtml =
-				'<td class="fc-axis fc-time ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
+				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
 					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
 						'<span>' + // for matchCellWidths
 							htmlEscape(calendar.formatDate(slotDate, view.opt('axisFormat'))) +
@@ -6615,8 +6609,6 @@ View.prototype = {
 	widgetContentClass: null,
 	highlightStateClass: null,
 
-	dayRowThemeClass: null, // sets the theme className applied to DayGrid rows (none by default)
-
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null,
 	documentDragStartProxy: null,
@@ -6760,7 +6752,7 @@ View.prototype = {
 
 
 	// Removes event elements from the view.
-	// Should be overridden by subclasses. Actual element destruction should happen first, then call super-method.
+	// Should be overridden by subclasses. Should call this super-method FIRST, then subclass DOM destruction.
 	destroyEvents: function() {
 		this.segEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
@@ -7560,9 +7552,10 @@ $.extend(BasicView.prototype, {
 	},
 
 
-	// Determines whether each row should have a constant height. Overridable by subclasses.
+	// Determines whether each row should have a constant height
 	hasRigidRows: function() {
-		return false;
+		var eventLimit = this.opt('eventLimit');
+		return eventLimit && typeof eventLimit !== 'number';
 	},
 
 
@@ -7584,14 +7577,27 @@ $.extend(BasicView.prototype, {
 
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
+		var eventLimit = this.opt('eventLimit');
 		var scrollerHeight;
 
 		// reset all heights to be natural
 		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.headRowEl);
 
+		this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+
+		// is the event limit a constant level number?
+		if (eventLimit && typeof eventLimit === 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels first so the height can redistribute after
+		}
+
 		scrollerHeight = this.computeScrollerHeight(totalHeight);
 		this.setGridHeight(scrollerHeight, isAuto);
+
+		// is the event limit dynamically calculated?
+		if (eventLimit && typeof eventLimit !== 'number') {
+			this.dayGrid.limitRows(eventLimit); // limit the levels after the grid's row heights have been set
+		}
 
 		if (!isAuto && setPotentialScroller(this.scrollerEl, scrollerHeight)) { // using scrollbars?
 
@@ -7639,14 +7645,14 @@ $.extend(BasicView.prototype, {
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
+		View.prototype.destroyEvents.call(this); // do this before dayGrid's segs have been cleared
+
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
 		// we DON'T need to call updateHeight() because:
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
 		// B) in IE8, this causes a flash whenever events are rerendered
-
-		View.prototype.destroyEvents.call(this); // call the super-method
 	},
 
 
@@ -7690,11 +7696,7 @@ $.extend(BasicView.prototype, {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 setDefaults({
-	fixedWeekCount: true,
-	eventLimit: false,
-	eventLimitText: 'more',
-	eventLimitClick: 'popover',
-	dayPopoverFormat: 'LL'
+	fixedWeekCount: true
 });
 
 fcViews.month = MonthView; // register the view
@@ -7747,7 +7749,6 @@ $.extend(MonthView.prototype, {
 
 	// Overrides the default BasicView behavior to have special multi-week auto-height logic
 	setGridHeight: function(height, isAuto) {
-		var eventLimit = this.opt('eventLimit');
 
 		isAuto = isAuto || this.opt('weekMode') === 'variable'; // LEGACY: weekMode is deprecated
 
@@ -7756,19 +7757,7 @@ $.extend(MonthView.prototype, {
 			height *= this.rowCnt / 6;
 		}
 
-		this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
-
-		// is the event limit a constant level number?
-		if (eventLimit && typeof eventLimit === 'number') {
-			this.dayGrid.limitRows(eventLimit); // limit the levels first so the height can redistribute after
-		}
-
 		distributeHeight(this.dayGrid.rowEls, height, !isAuto); // if auto, don't compensate for height-hogging rows
-
-		// is the event limit dynamically calculated?
-		if (eventLimit && typeof eventLimit !== 'number') {
-			this.dayGrid.limitRows(eventLimit); // limit the levels after the grid's row heights have been set
-		}
 	},
 
 
@@ -7779,13 +7768,6 @@ $.extend(MonthView.prototype, {
 		}
 
 		return this.opt('fixedWeekCount');
-	},
-
-
-	// If dynamically limiting events, signals that all rows need to be a constant height.
-	hasRigidRows: function() {
-		var eventLimit = this.opt('eventLimit');
-		return eventLimit && typeof eventLimit !== 'number';
 	}
 
 });
@@ -7894,6 +7876,8 @@ setDefaults({
 	slotEventOverlap: true
 });
 
+var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
+
 
 function generateAgendaAxisFormat(options, langData) {
 	return langData.longDateFormat('LT')
@@ -7970,8 +7954,6 @@ $.extend(AgendaView.prototype, {
 			.appendTo(this.timeGrid.el); // inject it into the time-grid
 
 		if (this.dayGrid) {
-			this.dayRowThemeClass = this.widgetHeaderClass; // forces this class on each day-row
-
 			this.dayGrid.el = this.el.find('.fc-day-grid');
 			this.dayGrid.render();
 
@@ -8011,7 +7993,7 @@ $.extend(AgendaView.prototype, {
 				'</thead>' +
 				'<tbody>' +
 					'<tr>' +
-						'<td class="' + this.widgetHeaderClass + '">' +
+						'<td class="' + this.widgetContentClass + '">' +
 							(this.dayGrid ?
 								'<div class="fc-day-grid"/>' +
 								'<hr class="' + this.widgetHeaderClass + '"/>' :
@@ -8064,11 +8046,17 @@ $.extend(AgendaView.prototype, {
 	// Queried by the DayGrid subcomponent when generating rows. Ordering depends on isRTL.
 	dayIntroHtml: function() {
 		return '' +
-			'<td class="' + this.widgetHeaderClass + ' fc-axis" ' + this.axisStyleAttr() + '>' +
+			'<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
 					(this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'))) +
 				'</span>' +
 			'</td>';
+	},
+
+
+	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
+	slotBgIntroHtml: function() {
+		return '<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '></td>';
 	},
 
 
@@ -8109,6 +8097,7 @@ $.extend(AgendaView.prototype, {
 
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
+		var eventLimit;
 		var scrollerHeight;
 
 		if (this.bottomRuleHeight === null) {
@@ -8121,6 +8110,19 @@ $.extend(AgendaView.prototype, {
 		this.scrollerEl.css('overflow', '');
 		unsetScroller(this.scrollerEl);
 		uncompensateScroll(this.noScrollRowEls);
+
+		// limit number of events in the all-day area
+		if (this.dayGrid) {
+			this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+
+			eventLimit = this.opt('eventLimit');
+			if (eventLimit && typeof eventLimit !== 'number') {
+				eventLimit = AGENDA_ALL_DAY_EVENT_LIMIT; // make sure "auto" goes to a real number
+			}
+			if (eventLimit) {
+				this.dayGrid.limitRows(eventLimit);
+			}
+		}
 
 		if (!isAuto) { // should we force dimensions of the scroll container, or let the contents be natural height?
 
@@ -8213,6 +8215,7 @@ $.extend(AgendaView.prototype, {
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
+		View.prototype.destroyEvents.call(this); // do this before the grids' segs have been cleared
 
 		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
 		// after, so remember what the scroll value was so we can restore it.
@@ -8227,8 +8230,6 @@ $.extend(AgendaView.prototype, {
 		// we DON'T need to call updateHeight() because:
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
 		// B) in IE8, this causes a flash whenever events are rerendered
-
-		View.prototype.destroyEvents.call(this); // call the super-method
 	},
 
 
