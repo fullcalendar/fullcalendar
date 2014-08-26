@@ -36,7 +36,7 @@ var defaults = {
 	},
 	columnFormat: {
 		month: 'ddd',
-    fourWeeks: "ddd",
+        fourWeeks: "ddd",
 		week: 'ddd M/d',
 		day: 'dddd M/d'
 	},
@@ -59,7 +59,7 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
-    fourWeeks: "4 weeks",
+        fourWeeks: "4 weeks",
 		day: 'day'
 	},
 	

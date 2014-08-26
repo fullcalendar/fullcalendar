@@ -22,6 +22,7 @@
         "src/util.js",
         "src/basic/MonthView.js",
         "src/basic/BasicWeekView.js",
+        "src/basic/FourWeeksView.js",
         "src/basic/BasicDayView.js",
         "src/basic/BasicView.js",
         "src/basic/BasicEventRenderer.js",

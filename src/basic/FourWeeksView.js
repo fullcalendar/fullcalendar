@@ -19,7 +19,7 @@ function FourWeeksView(element, calendar) {
 	
 	function render(date, delta) {
 		if (delta) {
-			addDays(date, delta * 7);
+            addDays(date, delta * 4 * 7);
 		}
 		var start = addDays(cloneDate(date), -((date.getDay() - opt('firstDay') + 7) % 7));
 		var end = addDays(cloneDate(start), 7*4);
@@ -39,7 +39,7 @@ function FourWeeksView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderBasic(4, 4, weekends ? 7 : 5, true);
+		renderBasic(4, 7, weekends ? 7 : 5, true);
 	}
 	
 	
