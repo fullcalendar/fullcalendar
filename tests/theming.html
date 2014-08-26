@@ -11,91 +11,74 @@
 
 function initCalendar() {
 
-	var date = new Date();
-	var d = date.getDate();
-	var m = date.getMonth();
-	var y = date.getFullYear();
-
 	$('#calendar').fullCalendar({
-	
 		theme: true,
+		header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		},
+		defaultDate: '2014-08-12',
+		weekNumbers: true,
 		editable: true,
-		//weekends: false,
-		
-		header: {
-			left: 'prev,next today', //'prevYear,prev,next,nextYear today',
-			center: 'title',
-			right: 'month,agendaWeek,agendaDay' //'month,agendaWeek,basicWeek,agendaDay,basicDay'
-		},
-		
-		/*
-		buttonIcons: {
-			prev: 'triangle-1-w',
-			next: 'triangle-1-e',
-			today: 'home'
-		},
-		*/
-		
-		/*
-		isRTL: true,
-		header: {
-			left: 'nextYear,next,prev,prevYear today',
-			center: 'title',
-			right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
-		},
-		*/
-		
+		eventLimit: true, // allow "more" link when too many events
 		events: [
 			{
 				title: 'All Day Event',
-				start: new Date(y, m, 1)
+				start: '2014-08-01'
 			},
 			{
 				title: 'Long Event',
-				start: new Date(y, m, d-5),
-				end: new Date(y, m, d-2)
+				start: '2014-08-07',
+				end: '2014-08-10'
 			},
 			{
 				id: 999,
 				title: 'Repeating Event',
-				start: new Date(y, m, d-3, 16, 0),
-				allDay: false
+				start: '2014-08-09T16:00:00'
 			},
 			{
 				id: 999,
 				title: 'Repeating Event',
-				start: new Date(y, m, d+4, 16, 0),
-				allDay: false
+				start: '2014-08-16T16:00:00'
+			},
+			{
+				title: 'Conference',
+				start: '2014-08-11',
+				end: '2014-08-13'
 			},
 			{
 				title: 'Meeting',
-				start: new Date(y, m, d, 10, 30),
-				allDay: false
+				start: '2014-08-12'
 			},
 			{
-				id: 777,
 				title: 'Lunch',
-				start: new Date(y, m, d, 12, 0),
-				end: new Date(y, m, d, 14, 0),
-				allDay: false,
-				//className: 'yellow-event black-text-event',
-				className: ['yellow-event', 'black-text-event']
+				start: '2014-08-12'
+			},
+			{
+				title: 'Meeting',
+				start: '2014-08-12'
+			},
+			{
+				title: 'Happy Hour',
+				start: '2014-08-12'
+			},
+			{
+				title: 'Dinner',
+				start: '2014-08-12'
 			},
 			{
 				title: 'Birthday Party',
-				start: new Date(y, m, d+1, 19, 0),
-				end: new Date(y, m, d+1, 22, 30),
-				allDay: false
+				start: '2014-08-13T07:00:00'
 			},
 			{
 				title: 'Click for Google',
-				start: new Date(y, m, 28),
-				end: new Date(y, m, 29),
-				url: 'http://google.com/'
+				url: 'http://google.com/',
+				start: '2014-08-28'
 			}
 		]
 	});
-	
+
 }
 
 
