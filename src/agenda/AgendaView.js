@@ -100,8 +100,6 @@ $.extend(AgendaView.prototype, {
 			.appendTo(this.timeGrid.el); // inject it into the time-grid
 
 		if (this.dayGrid) {
-			this.dayRowThemeClass = this.widgetHeaderClass; // forces this class on each day-row
-
 			this.dayGrid.el = this.el.find('.fc-day-grid');
 			this.dayGrid.render();
 
@@ -141,7 +139,7 @@ $.extend(AgendaView.prototype, {
 				'</thead>' +
 				'<tbody>' +
 					'<tr>' +
-						'<td class="' + this.widgetHeaderClass + '">' +
+						'<td class="' + this.widgetContentClass + '">' +
 							(this.dayGrid ?
 								'<div class="fc-day-grid"/>' +
 								'<hr class="' + this.widgetHeaderClass + '"/>' :
@@ -194,11 +192,17 @@ $.extend(AgendaView.prototype, {
 	// Queried by the DayGrid subcomponent when generating rows. Ordering depends on isRTL.
 	dayIntroHtml: function() {
 		return '' +
-			'<td class="' + this.widgetHeaderClass + ' fc-axis" ' + this.axisStyleAttr() + '>' +
+			'<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
 					(this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'))) +
 				'</span>' +
 			'</td>';
+	},
+
+
+	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
+	slotBgIntroHtml: function() {
+		return '<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '></td>';
 	},
 
 

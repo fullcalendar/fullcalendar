@@ -30,8 +30,6 @@ View.prototype = {
 	widgetContentClass: null,
 	highlightStateClass: null,
 
-	dayRowThemeClass: null, // sets the theme className applied to DayGrid rows (none by default)
-
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null,
 	documentDragStartProxy: null,

@@ -82,7 +82,7 @@ $.extend(TimeGrid.prototype, {
 			minutes = slotDate.minutes();
 
 			axisHtml =
-				'<td class="fc-axis fc-time ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
+				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
 					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
 						'<span>' + // for matchCellWidths
 							htmlEscape(calendar.formatDate(slotDate, view.opt('axisFormat'))) +

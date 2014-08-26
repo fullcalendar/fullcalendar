@@ -54,14 +54,10 @@ $.extend(DayGrid.prototype, {
 	// Generates the HTML for a single row. `row` is the row number.
 	dayRowHtml: function(row, isRigid) {
 		var view = this.view;
-		var classes = [ 'fc-row', 'fc-week' ];
+		var classes = [ 'fc-row', 'fc-week', view.widgetContentClass ];
 
 		if (isRigid) {
 			classes.push('fc-rigid');
-		}
-
-		if (view.dayRowThemeClass) { // provides the view a hook to inject a theme className
-			classes.push(view.dayRowThemeClass);
 		}
 
 		return '' +
