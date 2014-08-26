@@ -458,10 +458,6 @@ be a descendant of the grid when it is being dragged.
 	padding: 0 1px;
 }
 
-tr:first-child > td > .fc-day-grid-event {
-	margin-top: 2px; /* a little bit more space before the first event */
-}
-
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
 .fc-ltr .fc-day-grid-event.fc-not-start,

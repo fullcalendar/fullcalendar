@@ -6,9 +6,9 @@
 
 .fc-basicWeek-view .fc-content-skeleton,
 .fc-basicDay-view .fc-content-skeleton {
-	/* in basicWeek and basicDay views, where we are sure there are no day numbers, ensure
-	   a space at the bottom of the cell to allow for day selecting/clicking */
-	padding-bottom: 1em;
+	/* we are sure there are no day numbers in these views, so... */
+	padding-top: 1px; /* add a pixel to make sure there are 2px padding above events */
+	padding-bottom: 1em; /* ensure a space at bottom of cell for user selecting/clicking */
 }
 
 .fc-basic-view tbody .fc-row {
@@ -38,6 +38,7 @@
 .fc-basic-view td.fc-week-number span,
 .fc-basic-view td.fc-day-number {
 	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 .fc-basic-view .fc-week-number {
