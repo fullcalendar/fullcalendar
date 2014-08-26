@@ -29,6 +29,7 @@ Changes related to height and scrollbars:
 - `'auto'` value for `height`/`contentHeight` options. If content is too tall, the view will
   vertically stretch to accomodate and no scrollbars will be used ([521]).
 - Tall weeks in month view will borrow height from other weeks ([243])
+- Automatically scroll the view then dragging/resizing an event ([1025], [2078])
 - New `fixedWeekCount` option to determines the number of weeks in month view
 	- Supersedes `weekMode` (**deprecated**). Instead, use a combination of `fixedWeekCount` and
 	  one of the height options, possibly with an `'auto'` value
@@ -78,6 +79,7 @@ Other issues resolved along the way:
 [778]: https://code.google.com/p/fullcalendar/issues/detail?id=778
 [809]: https://code.google.com/p/fullcalendar/issues/detail?id=809
 [936]: https://code.google.com/p/fullcalendar/issues/detail?id=936
+[1025]: https://code.google.com/p/fullcalendar/issues/detail?id=1025
 [1101]: https://code.google.com/p/fullcalendar/issues/detail?id=1101
 [1203]: https://code.google.com/p/fullcalendar/issues/detail?id=1203
 [1297]: https://code.google.com/p/fullcalendar/issues/detail?id=1297
@@ -86,6 +88,7 @@ Other issues resolved along the way:
 [1992]: https://code.google.com/p/fullcalendar/issues/detail?id=1992
 [1996]: https://code.google.com/p/fullcalendar/issues/detail?id=1996
 [2017]: https://code.google.com/p/fullcalendar/issues/detail?id=2017
+[2078]: https://code.google.com/p/fullcalendar/issues/detail?id=2078
 [2132]: https://code.google.com/p/fullcalendar/issues/detail?id=2132
 [2151]: https://code.google.com/p/fullcalendar/issues/detail?id=2151
 [2169]: https://code.google.com/p/fullcalendar/issues/detail?id=2169
