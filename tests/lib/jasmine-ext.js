@@ -64,9 +64,10 @@ beforeEach(function() {
 				compare: function(actual) {
 					var elm = $(actual);
 					var result = {
-						pass: elm.width() !== elm[0].clientWidth ||
-							elm.height() !== elm[0].clientHeight
+						pass: elm[0].scrollWidth - 1 > elm[0].clientWidth || // -1 !!!
+							elm[0].scrollHeight - 1 > elm[0].clientHeight // -1 !!!
 					};
+					// !!! - IE was reporting a scrollWidth/scrollHeight 1 pixel taller than what it was :(
 					return result;
 				}
 			};
@@ -101,7 +102,8 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							subjectBounds.right <= otherBounds.left
+							Math.round(subjectBounds.right) <= Math.round(otherBounds.left)
+							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
 						result.message = 'Element is not to the left of the other element';
@@ -117,7 +119,8 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							subjectBounds.left >= otherBounds.right
+							Math.round(subjectBounds.left) >= Math.round(otherBounds.right)
+							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
 						result.message = 'Element is not to the right of the other element';

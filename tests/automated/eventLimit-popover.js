@@ -94,7 +94,9 @@ describe('eventLimit popover', function() {
 	it('closes when user clicks the X', function() {
 		init();
 		expect($('.fc-more-popover')).toBeVisible();
-		$('.fc-more-popover .fc-close').simulate('click');
+		$('.fc-more-popover .fc-close')
+			.simulate('click')
+			.trigger('click'); // needed this for IE8 for some reason
 		expect($('.fc-more-popover')).not.toBeVisible();
 	});
 

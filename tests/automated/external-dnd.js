@@ -46,9 +46,11 @@ describe('external drag and drop', function() {
 					$('#sidebar .event1').remove();
 					$('#cal').fullCalendar('next');
 					$('#cal').fullCalendar('prev');
-					$('#sidebar .event2').simulate('drag-n-drop', {
-						dropTarget: getMonthCell(1, 3)
-					});
+					setTimeout(function() { // needed for IE8
+						$('#sidebar .event2').simulate('drag-n-drop', {
+							dropTarget: getMonthCell(1, 3)
+						});
+					}, 0);
 				}
 				else if (callCnt === 1) {
 					expect(date).toEqualMoment('2014-08-06');
@@ -58,9 +60,11 @@ describe('external drag and drop', function() {
 			};
 
 			$('#cal').fullCalendar(options);
-			$('#sidebar .event1').simulate('drag-n-drop', {
-				dropTarget: getMonthCell(1, 3)
-			});
+			setTimeout(function() { // needed for IE8
+				$('#sidebar .event1').simulate('drag-n-drop', {
+					dropTarget: getMonthCell(1, 3)
+				});
+			}, 0);
 		});
 	});
 
@@ -81,9 +85,11 @@ describe('external drag and drop', function() {
 					$('#sidebar .event1').remove();
 					$('#cal').fullCalendar('next');
 					$('#cal').fullCalendar('prev');
-					$('#sidebar .event2').simulate('drag-n-drop', {
-						dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
-					});
+					setTimeout(function() { // needed for IE8, for firing the second time, for some reason
+						$('#sidebar .event2').simulate('drag-n-drop', {
+							dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
+						});
+					}, 0);
 				}
 				else if (callCnt === 1) {
 					expect(date).toEqualMoment('2014-08-20T01:00:00');
@@ -93,9 +99,11 @@ describe('external drag and drop', function() {
 			};
 
 			$('#cal').fullCalendar(options);
-			$('#sidebar .event1').simulate('drag-n-drop', {
-				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
-			});
+			setTimeout(function() { // needed for IE8
+				$('#sidebar .event1').simulate('drag-n-drop', {
+					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
+				});
+			}, 0);
 		});
 
 		it('works with timezone as "local"', function(done) { // for issue 2225
@@ -105,9 +113,11 @@ describe('external drag and drop', function() {
 				done();
 			};
 			$('#cal').fullCalendar(options);
-			$('#sidebar .event1').simulate('drag-n-drop', {
-				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
-			});
+			setTimeout(function() { // needed for IE8
+				$('#sidebar .event1').simulate('drag-n-drop', {
+					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+				});
+			}, 0);
 		});
 
 		it('works with timezone as "UTC"', function(done) { // for issue 2225
@@ -117,9 +127,11 @@ describe('external drag and drop', function() {
 				done();
 			};
 			$('#cal').fullCalendar(options);
-			$('#sidebar .event1').simulate('drag-n-drop', {
-				dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
-			});
+			setTimeout(function() { // needed for IE8
+				$('#sidebar .event1').simulate('drag-n-drop', {
+					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+				});
+			}, 0);
 		});
 	});
 

@@ -44,12 +44,6 @@ module.exports = function(config) {
 			'../dist/fullcalendar.css',
 			'../tests/base.css',
 
-			// For IE8 testing. Because it can't handle running all the tests at once.
-			// Comment out the *.js line and run karma with each of the lines below.
-			//'../tests/automated/{a,b,c,d,e,f,g,h,i,j,k,l}*.js'
-			//'../tests/automated/{m,n}*.js' // mostly moment tests
-			//'../tests/automated/{o,p,q,r,s,t,u,v,w,x,y,z}*.js'
-
 			'../tests/automated/*.js'
 		],
 
