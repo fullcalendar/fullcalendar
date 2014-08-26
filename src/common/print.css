@@ -57,24 +57,17 @@ tbody,
 
 .fc tbody .fc-row .fc-content-skeleton {
 	position: static; /* undo .fc-rigid */
-	/* don't have chunky padding underneath events (for Agenda, basicWeek, basicDay) */
-	padding-bottom: 0 !important;
+	padding-bottom: 0 !important; /* use a more border-friendly method for this... */
 }
 
-/* give back the bottom spacing that was taken away from the content-skeleton's padding (above) */
-/* only works on modern browsers */
-.fc tbody .fc-row .fc-content-skeleton table tr:last-child td {
-	padding-bottom: 2px;
+.fc tbody .fc-row .fc-content-skeleton tbody tr:last-child td { /* only works in newer browsers */
+	padding-bottom: 1em; /* ...gives space within the skeleton. also ensures min height in a way */
 }
 
-/* sets a min-height on the event skeleton. for IE8. was overexaggerating this, so make small */
-.fc .fc-basic-view tbody .fc-row .fc-content-skeleton table { /* NOT for all-day slot */
-	height: 2em;
-}
-
-/* sets a min-height on the event skeleton. for modern browsers (not IE8) */
-.fc .fc-basic-view tbody .fc-row .fc-content-skeleton table:last-child { /* NOT for all-day slot */
-	height: 4em;
+.fc tbody .fc-row .fc-content-skeleton table {
+	/* provides a min-height for the row, but only effective for IE, which exaggerates this value,
+	   making it look more like 3em. for other browers, it will already be this tall */
+	height: 1em;
 }
 
 

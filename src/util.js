@@ -122,7 +122,7 @@ function setPotentialScroller(containerEl, height) {
 	containerEl.height(height).addClass('fc-scroller');
 
 	// are scrollbars needed?
-	if (containerEl[0].scrollHeight > containerEl[0].clientHeight) {
+	if (containerEl[0].scrollHeight - 1 > containerEl[0].clientHeight) { // !!! -1 because IE is often off-by-one :(
 		return true;
 	}
 
