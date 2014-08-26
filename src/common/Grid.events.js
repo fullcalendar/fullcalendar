@@ -136,7 +136,7 @@ $.extend(Grid.prototype, {
 
 					// only call the handlers if there is not a drag/resize in progress
 					if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
-						func.call(this, seg, ev); // `this` will be the event element
+						return func.call(this, seg, ev); // `this` will be the event element
 					}
 				});
 			}
