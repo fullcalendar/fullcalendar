@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<script src='../lib/moment/moment.js'></script>
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../dist/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+
+		var events = [],
+			id = 1,
+			start = null,
+			end = null;
+		for (var d = 1; d < 31; d++) {
+			for (var t = 0; t < 50; t++) {
+				start = new Date(2014, 7, d, 8, 0, 0, 0);
+				start.setTime(start.getTime() + (t * 5 * 60 * 1000));
+				end = start;
+				end.setTime(start.getTime() + (60 * 60 * 1000));
+				events.push({
+					id: id,
+					start: start,
+					end: end,
+					title: "Event #" + id,
+					name: "Full event name on " + start.toLocaleString()
+				});
+				id++;
+			}
+		}
+		console.log("Events " + events.length);
+		var runStart = new Date();
+		$('#calendar').fullCalendar({
+			//eventLimit:true,
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultDate: '2014-08-12',
+			editable: true,
+			events: events
+		});
+		var runSetup = new Date();
+		$('#calendar').fullCalendar("removeEventSource", events);
+		var runRemove = new Date();
+		$('#calendar').fullCalendar("addEventSource", events);
+		var runAdd = new Date();
+		console.log("Milliseconds to setup: " + (runSetup.getTime() - runStart.getTime()));
+		console.log("Remove source: " + (runRemove.getTime() - runSetup.getTime()));
+		console.log("Add source: " + (runAdd.getTime() - runRemove.getTime()));
+
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 0;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 13px;
+	}
+
+	#calendar {
+		width: 900px;
+		margin: 40px auto;
+	}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
