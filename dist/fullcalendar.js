@@ -4294,7 +4294,7 @@ $.extend(Grid.prototype, {
 		var colFormat = view.opt('columnFormat');
 
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass + ' ' + this.getDayClasses(date).join(' ') + '">' +
 				htmlEscape(calendar.formatDate(date, colFormat)) +
 			'</th>';
 	},
