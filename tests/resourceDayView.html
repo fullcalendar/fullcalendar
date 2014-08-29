@@ -103,6 +103,9 @@
 				selectable: true,
 				selectHelper: true,
                 allDaySlot: true,
+                eventDrop: function (event, delta, revertFunc) {
+                  revertFunc();
+                },
                 // weekends: false,
                 header: {
                     left: 'prev,next today',

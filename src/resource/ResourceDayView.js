@@ -9,7 +9,6 @@ function ResourceDayView(element, calendar) { // TODO: make a DayView mixin
 	t.incrementDate = incrementDate;
 	t.render = render;
 	
-	
 	// imports
 	ResourceView.call(t, element, calendar, 'resourceDay');
 	var getResources = t.getResources;

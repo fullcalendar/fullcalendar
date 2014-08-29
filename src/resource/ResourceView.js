@@ -62,9 +62,12 @@ function ResourceView(element, calendar, viewName) {
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
 	t.getResources = calendar.fetchResources;
-	
-	// imports
 	View.call(t, element, calendar, viewName);
+	t.eventDrop = eventDrop;
+	t.eventResize = eventResize;
+
+	// imports
+	// View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
 	ResourceEventRenderer.call(t);
@@ -81,7 +84,7 @@ function ResourceView(element, calendar, viewName) {
 	var rangeToSegments = t.rangeToSegments;
 	var formatDate = calendar.formatDate;
 	var calculateWeekNumber = calendar.calculateWeekNumber;
-	
+	var reportEventChange = calendar.reportEventChange;
 	
 	// locals
 	
@@ -908,7 +911,50 @@ function ResourceView(element, calendar, viewName) {
 		trigger('dayClick', dayBodyCells[dateToCell(date).col], date, ev);
 	}
 	
+		/* Event Modification Reporting
+	---------------------------------------------------------------------------------*/
+
 	
+	function eventDrop(el, event, newResources, newStart, ev, ui) {
+		//var mutateResult = calendar.mutateEvent(event, newStart, null);
+		var mutateResult = calendar.mutateResourceEvent(event, newResources, newStart, null);
+		
+		trigger(
+			'eventDrop',
+			el,
+			event,
+			mutateResult.dateDelta,
+			function() {
+				mutateResult.undo();
+				reportEventChange(event._id);
+			},
+			ev,
+			ui
+		);
+
+		reportEventChange(event._id);
+	}
+
+
+	function eventResize(el, event, newEnd, ev, ui) {
+		var mutateResult = calendar.mutateResourceEvent(event, null, newEnd);
+
+		trigger(
+			'eventResize',
+			el,
+			event,
+			mutateResult.durationDelta,
+			function() {
+				mutateResult.undo();
+				reportEventChange(event._id);
+			},
+			ev,
+			ui
+		);
+
+		reportEventChange(event._id);
+	}
+
 	
 	/* External Dragging
 	--------------------------------------------------------------------------------*/

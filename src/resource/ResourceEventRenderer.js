@@ -489,9 +489,14 @@ function ResourceEventRenderer() {
 				else { // changed!
 					// calculate column delta
 					var newCol = Math.round((eventElement.offset().left - getSlotContainer().offset().left) / colWidth);
+					// if (newCol !== origCol){
+					// 	event.resources = [ resources()[newCol].id ];
+					// }
+					var newResources = event.resources;
 					if (newCol !== origCol){
-						event.resources = [ resources()[newCol].id ];
+					 	newResources = [ resources()[newCol].id ];
 					}
+
 					var eventStart = event.start.clone(); // already assumed to have a stripped time
 					var snapTime;
 					var snapIndex;
@@ -504,6 +509,7 @@ function ResourceEventRenderer() {
 					eventDrop(
 						eventElement[0],
 						event,
+						newResources,
 						eventStart,
 						ev,
 						ui
@@ -637,12 +643,14 @@ function ResourceEventRenderer() {
 				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
-					if (resourceDelta){
-						event.resources = [ resources()[origCell.col + resourceDelta].id ];
-					}
+					var resources = event.resources;
+					 if (resourceDelta){
+					 	resources = [ resources()[origCell.col + resourceDelta].id ];
+					 }
 					eventDrop(
 						eventElement[0],
 						event,
+						resources,
 						eventStart,
 						ev,
 						ui
