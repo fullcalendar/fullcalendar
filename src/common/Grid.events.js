@@ -4,9 +4,9 @@
 
 $.extend(Grid.prototype, {
 
-	isMouseOverSeg: false, // is the user's mouse over a segment?
-	isDraggingSeg: false, // is a segment being dragged?
-	isResizingSeg: false, // is a segment being resized?
+	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
+	isDraggingSeg: false, // is a segment being dragged? boolean
+	isResizingSeg: false, // is a segment being resized? boolean
 
 
 	// Renders the given events onto the grid
@@ -21,9 +21,9 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Unrenders all events
+	// Unrenders all events. Subclasses should implement, calling this super-method first.
 	destroyEvents: function() {
-		// subclasses must implement
+		this.triggerSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 	},
 
 
@@ -146,17 +146,21 @@ $.extend(Grid.prototype, {
 
 	// Updates internal state and triggers handlers for when an event element is moused over
 	triggerSegMouseover: function(seg, ev) {
-		if (!this.isMouseOverSeg) {
-			this.isMouseOverSeg = true;
+		if (!this.mousedOverSeg) {
+			this.mousedOverSeg = seg;
 			this.view.trigger('eventMouseover', seg.el[0], seg.event, ev);
 		}
 	},
 
 
-	// Updates internal state and triggers handlers for when an event element is moused out
+	// Updates internal state and triggers handlers for when an event element is moused out.
+	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
 	triggerSegMouseout: function(seg, ev) {
-		if (this.isMouseOverSeg) {
-			this.isMouseOverSeg = false;
+		ev = ev || {}; // if given no args, make a mock mouse event
+
+		if (this.mousedOverSeg) {
+			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
+			this.mousedOverSeg = null;
 			this.view.trigger('eventMouseout', seg.el[0], seg.event, ev);
 		}
 	},

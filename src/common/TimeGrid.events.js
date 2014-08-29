@@ -27,6 +27,8 @@ $.extend(TimeGrid.prototype, {
 
 	// Removes all event segment elements from the view
 	destroyEvents: function() {
+		Grid.prototype.destroyEvents.call(this); // call the super-method
+
 		if (this.eventSkeletonEl) {
 			this.eventSkeletonEl.remove();
 			this.eventSkeletonEl = null;

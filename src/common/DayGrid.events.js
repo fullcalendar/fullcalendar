@@ -35,9 +35,12 @@ $.extend(DayGrid.prototype, {
 
 	// Removes all rendered event elements
 	destroyEvents: function() {
-		var rowStructs = this.rowStructs || [];
+		var rowStructs;
 		var rowStruct;
 
+		Grid.prototype.destroyEvents.call(this); // call the super-method
+
+		rowStructs = this.rowStructs || [];
 		while ((rowStruct = rowStructs.pop())) {
 			rowStruct.tbodyEl.remove();
 		}
