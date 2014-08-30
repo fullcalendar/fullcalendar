@@ -1,4 +1,16 @@
 
+v2.1.1 (2014-08-29)
+-------------------
+
+- removeEventSource not working with array ([2203])
+- mouseout not triggered after mouseover+updateEvent ([829])
+- agenda event's render with no <a> href, not clickable ([2263])
+
+[2203]: https://code.google.com/p/fullcalendar/issues/detail?id=2203
+[829]: https://code.google.com/p/fullcalendar/issues/detail?id=829
+[2263]: https://code.google.com/p/fullcalendar/issues/detail?id=2263
+
+
 v2.1.0 (2014-08-25)
 -------------------
 
