@@ -104,7 +104,10 @@
 				selectHelper: true,
                 allDaySlot: true,
                 eventDrop: function (event, delta, revertFunc) {
-                  revertFunc();
+                  //revertFunc();
+                },
+                eventResize: function (event, delta, revertFunc) {
+                  //revertFunc();
                 },
                 // weekends: false,
                 header: {

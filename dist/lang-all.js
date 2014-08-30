@@ -1,1 +1,1 @@
-(function(t){"function"==typeof define&&define.amd?define(["jquery","moment"],t):t(jQuery,moment)})(function(t,e){e.lang("en"),t.fullCalendar.lang("en"),t.datepicker&&t.datepicker.setDefaults(t.datepicker.regional[""])});
+(function(e){"function"==typeof define&&define.amd?define(["jquery","moment"],e):e(jQuery,moment)})(function(e,t){t.lang("en"),e.fullCalendar.lang("en"),e.datepicker&&e.datepicker.setDefaults(e.datepicker.regional[""])});

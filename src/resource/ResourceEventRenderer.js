@@ -25,7 +25,7 @@ function ResourceEventRenderer() {
 	var colContentLeft = t.colContentLeft;
 	var colContentRight = t.colContentRight;
 	var cellToDate = t.cellToDate;
-	var getColCnt = function() { return resources().length; };
+	var getColCnt = function() { return getResources().length; };
 	var getColWidth = t.getColWidth;
 	var getSnapHeight = t.getSnapHeight;
 	var getSnapDuration = t.getSnapDuration;
@@ -45,7 +45,7 @@ function ResourceEventRenderer() {
 	var calendar = t.calendar;
 	var formatDate = calendar.formatDate;
 	var getEventEnd = calendar.getEventEnd;
-	var resources = t.getResources;
+	var getResources = t.getResources;
 	
 
 	// overrides
@@ -96,7 +96,7 @@ function ResourceEventRenderer() {
 
 		for (i=0; i<colCnt; i++) {
 			cellDate = cellToDate(0, 0);  // updated - should show same day for all
-			var resourceEvents = eventsForResource(resources()[i], events);
+			var resourceEvents = eventsForResource(getResources()[i], events);
 			colSegs = sliceSegs(
 				resourceEvents,
 				cellDate.clone().time(minTime),
@@ -492,9 +492,9 @@ function ResourceEventRenderer() {
 					// if (newCol !== origCol){
 					// 	event.resources = [ resources()[newCol].id ];
 					// }
-					var newResources = event.resources;
+					var resources = event.resources;
 					if (newCol !== origCol){
-					 	newResources = [ resources()[newCol].id ];
+						resources = [ getResources()[newCol].id ];
 					}
 
 					var eventStart = event.start.clone(); // already assumed to have a stripped time
@@ -509,7 +509,7 @@ function ResourceEventRenderer() {
 					eventDrop(
 						eventElement[0],
 						event,
-						newResources,
+						resources,
 						eventStart,
 						ev,
 						ui
@@ -645,7 +645,7 @@ function ResourceEventRenderer() {
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
 					var resources = event.resources;
 					 if (resourceDelta){
-					 	resources = [ resources()[origCell.col + resourceDelta].id ];
+						resources = [ getResources()[origCell.col + resourceDelta].id ];
 					 }
 					eventDrop(
 						eventElement[0],

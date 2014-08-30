@@ -62,12 +62,12 @@ function ResourceView(element, calendar, viewName) {
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
 	t.getResources = calendar.fetchResources;
+	
+	// imports
 	View.call(t, element, calendar, viewName);
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
 
-	// imports
-	// View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
 	ResourceEventRenderer.call(t);
@@ -77,7 +77,6 @@ function ResourceView(element, calendar, viewName) {
 	var clearOverlays = t.clearOverlays;
 	var reportSelection = t.reportSelection;
 	var unselect = t.unselect;
-	//var daySelectionMousedown = t.daySelectionMousedown;
 	var slotSegHtml = t.slotSegHtml;
 	var cellToDate = t.cellToDate;
 	var dateToCell = t.dateToCell;
@@ -916,7 +915,6 @@ function ResourceView(element, calendar, viewName) {
 
 	
 	function eventDrop(el, event, newResources, newStart, ev, ui) {
-		//var mutateResult = calendar.mutateEvent(event, newStart, null);
 		var mutateResult = calendar.mutateResourceEvent(event, newResources, newStart, null);
 		
 		trigger(
@@ -937,7 +935,7 @@ function ResourceView(element, calendar, viewName) {
 
 
 	function eventResize(el, event, newEnd, ev, ui) {
-		var mutateResult = calendar.mutateResourceEvent(event, null, newEnd);
+		var mutateResult = calendar.mutateResourceEvent(event, event.resources, null, newEnd);
 
 		trigger(
 			'eventResize',
