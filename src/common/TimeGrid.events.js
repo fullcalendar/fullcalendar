@@ -145,7 +145,14 @@ $.extend(TimeGrid.prototype, {
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
-			(skinCss ? ' style="' + skinCss + '"' : '') +
+			(event.url ?
+				' href="' + htmlEscape(event.url) + '"' :
+				''
+				) +
+			(skinCss ?
+				' style="' + skinCss + '"' :
+				''
+				) +
 			'>' +
 				'<div class="fc-content">' +
 					(timeText ?

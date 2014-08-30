@@ -46,4 +46,25 @@ describe('TimeGrid event rendering', function() {
 		expect(seg2.find('.fc-time')).not.toBeInDOM();
 	});
 
+	it('renders an event with no url with no <a> href', function() {
+		options.events = [ {
+			title: 'event1',
+			start: '2014-08-18T02:00:00'
+		} ];
+		$('#cal').fullCalendar(options);
+		var seg = $('.fc-event');
+		expect(seg).not.toHaveAttr('href');
+	});
+
+	it('renders an event with a url with an <a> href', function() {
+		options.events = [ {
+			title: 'event1',
+			start: '2014-08-18T02:00:00',
+			url: 'http://google.com/'
+		} ];
+		$('#cal').fullCalendar(options);
+		var seg = $('.fc-event');
+		expect(seg).toHaveAttr('href');
+	});
+
 });

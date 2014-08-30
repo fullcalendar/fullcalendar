@@ -34,4 +34,25 @@ describe('DayGrid event rendering', function() {
 		expect(row0event1.offset().top).toBeLessThan(row0event2.offset().top);
 		expect(row1event1.offset().top).toBeLessThan(row1event2.offset().top);
 	});
+
+	it('renders an event with no url with no <a> href', function() {
+		options.events = [ {
+			title: 'event1',
+			start: '2014-08-01'
+		} ];
+		$('#cal').fullCalendar(options);
+		var seg = $('.fc-event');
+		expect(seg).not.toHaveAttr('href');
+	});
+
+	it('renders an event with a url with an <a> href', function() {
+		options.events = [ {
+			title: 'event1',
+			start: '2014-08-01',
+			url: 'http://google.com/'
+		} ];
+		$('#cal').fullCalendar(options);
+		var seg = $('.fc-event');
+		expect(seg).toHaveAttr('href');
+	});
 });
