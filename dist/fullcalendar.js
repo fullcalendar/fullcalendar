@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.0
+ * FullCalendar v2.1.1
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -174,7 +174,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.1.0" };
+var fc = $.fullCalendar = { version: "2.1.1" };
 var fcViews = fc.views = {};
 
 
@@ -1548,6 +1548,7 @@ function EventManager(options) { // assumed to be a calendar
 
 			// for array sources, we convert to standard Event Objects up front
 			if ($.isArray(source.events)) {
+				source.origArray = source.events; // for removeEventSource
 				source.events = $.map(source.events, function(eventInput) {
 					return buildEvent(eventInput, source);
 				});
@@ -1580,7 +1581,12 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
+		return (
+			(typeof source === 'object') ? // a normalized event source?
+				(source.origArray || source.url || source.events) : // get the primitive
+				null
+		) ||
+		source; // the given argument *is* the primitive
 	}
 	
 	
@@ -4343,9 +4349,9 @@ $.extend(Grid.prototype, {
 
 $.extend(Grid.prototype, {
 
-	isMouseOverSeg: false, // is the user's mouse over a segment?
-	isDraggingSeg: false, // is a segment being dragged?
-	isResizingSeg: false, // is a segment being resized?
+	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
+	isDraggingSeg: false, // is a segment being dragged? boolean
+	isResizingSeg: false, // is a segment being resized? boolean
 
 
 	// Renders the given events onto the grid
@@ -4360,9 +4366,9 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Unrenders all events
+	// Unrenders all events. Subclasses should implement, calling this super-method first.
 	destroyEvents: function() {
-		// subclasses must implement
+		this.triggerSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 	},
 
 
@@ -4485,17 +4491,21 @@ $.extend(Grid.prototype, {
 
 	// Updates internal state and triggers handlers for when an event element is moused over
 	triggerSegMouseover: function(seg, ev) {
-		if (!this.isMouseOverSeg) {
-			this.isMouseOverSeg = true;
+		if (!this.mousedOverSeg) {
+			this.mousedOverSeg = seg;
 			this.view.trigger('eventMouseover', seg.el[0], seg.event, ev);
 		}
 	},
 
 
-	// Updates internal state and triggers handlers for when an event element is moused out
+	// Updates internal state and triggers handlers for when an event element is moused out.
+	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
 	triggerSegMouseout: function(seg, ev) {
-		if (this.isMouseOverSeg) {
-			this.isMouseOverSeg = false;
+		ev = ev || {}; // if given no args, make a mock mouse event
+
+		if (this.mousedOverSeg) {
+			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
+			this.mousedOverSeg = null;
 			this.view.trigger('eventMouseout', seg.el[0], seg.event, ev);
 		}
 	},
@@ -5099,9 +5109,12 @@ $.extend(DayGrid.prototype, {
 
 	// Removes all rendered event elements
 	destroyEvents: function() {
-		var rowStructs = this.rowStructs || [];
+		var rowStructs;
 		var rowStruct;
 
+		Grid.prototype.destroyEvents.call(this); // call the super-method
+
+		rowStructs = this.rowStructs || [];
 		while ((rowStruct = rowStructs.pop())) {
 			rowStruct.tbodyEl.remove();
 		}
@@ -6189,6 +6202,8 @@ $.extend(TimeGrid.prototype, {
 
 	// Removes all event segment elements from the view
 	destroyEvents: function() {
+		Grid.prototype.destroyEvents.call(this); // call the super-method
+
 		if (this.eventSkeletonEl) {
 			this.eventSkeletonEl.remove();
 			this.eventSkeletonEl = null;
@@ -6305,7 +6320,14 @@ $.extend(TimeGrid.prototype, {
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
-			(skinCss ? ' style="' + skinCss + '"' : '') +
+			(event.url ?
+				' href="' + htmlEscape(event.url) + '"' :
+				''
+				) +
+			(skinCss ?
+				' style="' + skinCss + '"' :
+				''
+				) +
 			'>' +
 				'<div class="fc-content">' +
 					(timeText ?
