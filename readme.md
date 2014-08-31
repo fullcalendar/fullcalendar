@@ -1,7 +1,8 @@
-#THIS BRANCH IS A WORK IN PROGRESS FOR NOW
-
 #FORK INFO
-This fork adds a vertical resource view to FullCalendar.
+This fork adds a vertical resource view to FullCalendar.  Some details on usage, etc are available here:
+<a href="http://www.seankenny.me/blog/2013/08/14/fullcalendar-with-a-resource-day-view/" target="_blank">http://www.seankenny.me/blog/2013/08/14/fullcalendar-with-a-resource-day-view/</a>
+<a href="http://www.seankenny.me/blog/2014/07/24/resource-fullcalendar-dragging-and-clicking/" target="_blank">http://www.seankenny.me/blog/2014/07/24/resource-fullcalendar-dragging-and-clicking/</a>
+<a href="ttp://www.seankenny.me/blog/2014/08/11/fullcalendar-with-a-resource-day-view-v2-0-2/" target="_blank">http://www.seankenny.me/blog/2014/08/11/fullcalendar-with-a-resource-day-view-v2-0-2/</a>
 
 [plunkr demo](http://plnkr.co/KRXcK2oNd9eX2IMBM6yY).
 
