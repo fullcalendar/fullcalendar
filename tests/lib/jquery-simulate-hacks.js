@@ -28,27 +28,4 @@
 		};
 	}
 
-
-	/*
-	Give jquery-simulate-ext drag-n-drop a default interpolation.
-	*/
-
-	var originalSimulate = $.fn.simulate;
-
-	$.fn.simulate = function(eventName, options) {
-
-		if (eventName == 'drag' || eventName == 'drop' || eventName == 'drag-n-drop') {
-			options = options || {};
-			if (options.interpolation === undefined) {
-				options.interpolation = {
-					stepCount: 10,
-					duration: 100
-				};
-			}
-			return originalSimulate.call(this, eventName, options);
-		}
-
-		return originalSimulate.apply(this, arguments);
-	};
-
 })(jQuery);

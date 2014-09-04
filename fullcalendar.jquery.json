@@ -7,11 +7,11 @@
   "homepage": "http://arshaw.com/fullcalendar/",
 
   "dependencies": {
-    "jquery": ">=1.7.1",
+    "jquery": "~1.11.1",
     "moment": ">=2.5.0"
   },
   "optionalDependencies": {
-    "jquery-ui": ">=1.8.17"
+    "jquery-ui": "~1.10.4"
   },
 
   "title": "FullCalendar",

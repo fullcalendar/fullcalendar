@@ -118,17 +118,4 @@ describe('events as a function', function() {
 		$('#cal').fullCalendar(options);
 	});
 
-	it('requests the correct dates when days at the start/end of the month are hidden', function(done) {
-		options.currentView = 'month';
-		options.defaultDate = '2013-06-01'; // June 2013 has first day as Saturday, and last as Sunday!
-		options.weekends = false;
-		options.weekMode = 'variable';
-		options.events = function(start, end, timezone, callback) {
-			expect(start).toEqualMoment('2013-06-03');
-			expect(end).toEqualMoment('2013-06-29');
-			done();
-		};
-		$('#cal').fullCalendar(options);
-	});
-
 });

@@ -1,3 +1,4 @@
+
 module.exports = function(grunt) {
 
 	var _ = require('underscore');
@@ -11,11 +12,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-jscs-checker');
-	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('lumbar');
-
+	
 	// This will eventually get passed to grunt.initConfig()
 	// Initialize multitasks...
 	var config = {
@@ -23,7 +23,6 @@ module.exports = function(grunt) {
 		uglify: {},
 		copy: {},
 		compress: {},
-		shell: {},
 		clean: {
 			temp: 'build/temp'
 		}
@@ -47,7 +46,6 @@ module.exports = function(grunt) {
 
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
-		'shell:assume-unchanged',
 		'lumbar:build',
 		'languages'
 	]);
@@ -122,7 +120,7 @@ module.exports = function(grunt) {
 	]);
 
 	config.generateLanguages = {
-		moment: 'lib/moment/lang/',
+		moment: grunt.file.expand('lib/moment/{locale,lang}/')[0], // lang directory is pre-moment-2.8
 		datepicker: 'lib/jquery-ui/ui/i18n/',
 		fullCalendar: 'lang/',
 		dest: 'build/temp/lang/',
@@ -373,24 +371,6 @@ module.exports = function(grunt) {
 	// configs located elsewhere
 	config.jshint = require('./build/jshint.conf');
 	config.jscs = require('./build/jscs.conf');
-
-
-
-	/* dist & git hacks
-	----------------------------------------------------------------------------------------------------
-	// These shell commands are used to force/unforce git from thinking that files have changed.
-	// Used to ignore changes when dist files are overwritten, but not committed, during development.
-	*/
-
-	config.shell['assume-unchanged'] = {
-		command: 'git ls-files -z dist/ | xargs -0 git update-index --assume-unchanged'
-	};
-	config.shell['no-assume-unchanged'] = {
-		command: 'git update-index --no-assume-unchanged `git ls-files dist`'
-	};
-	config.shell['list-assume-unchanged'] = {
-		command: 'git ls-files -v | grep \'^h\''
-	};
 
 
 

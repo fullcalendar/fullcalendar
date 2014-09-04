@@ -113,15 +113,6 @@ describe('weekMode', function() {
 		});
 	});
 
-	it('should not display an empty week when no visible days and weekMode is set to liquid', function() {
-		$('#cal').fullCalendar({
-			defaultDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
-			weekMode: 'liquid',
-			weekends: false
-		});
-		expect($('.fc-week').length).toBe(4);
-	});
-
 	describe('when weekMode is set to variable', function() {
 		beforeEach(function() {
 			$('#cal').fullCalendar({
@@ -153,14 +144,5 @@ describe('weekMode', function() {
 			expect(fourWeekHeight).toEqual(fiveWeekHeight);
 			expect(fiveWeekHeight).toEqual(sixWeekHeight);
 		});
-	});
-
-	it('should not display an empty week when no visible days and weekMode is set to variable', function() {
-		$('#cal').fullCalendar({
-			defaultDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
-			weekMode: 'variable',
-			weekends: false
-		});
-		expect($('.fc-week').length).toBe(4);
 	});
 });

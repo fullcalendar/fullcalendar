@@ -101,7 +101,6 @@ describe('select method', function() {
 				beforeEach(function() {
 					options.defaultView = 'agendaWeek';
 					options.scrollTime = '01:00:00'; // so that most events will be below the divider
-					options.height = 400; // short enought to make scrolling happen
 				});
 				describe('when called with timed moments', function() {
 					describe('when in bounds', function() {

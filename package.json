@@ -15,7 +15,6 @@
     "grunt-contrib-clean": "^0.4.1",
     "grunt-contrib-jshint": "^0.8.0",
     "grunt-jscs-checker": "^0.4.4",
-    "grunt-shell": "^0.7.0",
     "grunt-karma": "^0.8.3",
     "grunt-bump": "0.0.14",
     "lumbar": "^2.0.1",

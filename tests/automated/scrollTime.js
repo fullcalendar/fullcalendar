@@ -11,7 +11,6 @@ describe('scrollTime', function() {
 
 	it('accepts a string Duration', function() {
 		options.scrollTime = '02:00:00';
-		options.height = 400; // short enough to make scrolling happen
 		$('#cal').fullCalendar(options);
 		var slotCell = $('.fc-slot4 td'); // 2am slot
 		var slotTop = slotCell.position().top;
@@ -25,7 +24,6 @@ describe('scrollTime', function() {
 
 	it('accepts a Duration object', function() {
 		options.scrollTime = { hours: 2 };
-		options.height = 400; // short enough to make scrolling happen
 		$('#cal').fullCalendar(options);
 		var slotCell = $('.fc-slot4 td'); // 2am slot
 		var slotTop = slotCell.position().top;
