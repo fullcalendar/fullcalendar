@@ -5,23 +5,23 @@ Event Data
 <ul>
 <li class='article'>Event Object</li>
 <li class='article'>Event Source Object</li>
-<li><a href='events_array'>events</a> <em>(as an array)</em></li>
-<li><a href='events_json_feed'>events</a> <em>(as a json feed)</em></li>
-<li><a href='events_function'>events</a> <em>(as a function)</em></li>
+<li><a href='events_array'>events (as an array)</a></li>
+<li><a href='events_json_feed'>events (as a json feed)</a></li>
+<li><a href='events_function'>events (as a function)</a></li>
 <li>eventSources</li>
 <li>allDayDefault</li>
 <li>ignoreTimezone</li>
 <li>startParam</li>
 <li>endParam</li>
 <li>lazyFetching</li>
-<li class='callback'><a href='eventDataTransform'>eventDataTransform</a> <em>(callback)</em></li>
-<li class='callback'><a href='loading'>loading</a> <em>(callback)</em></li>
-<li class='method'><a href='updateEvent'>updateEvent</a> <em>(method)</em></li>
-<li class='method'><a href='clientEvents'>clientEvents</a> <em>(method)</em></li>
-<li class='method'><a href='removeEvents'>removeEvents</a> <em>(method)</em></li>
-<li class='method'><a href='refetchEvents'>refetchEvents</a> <em>(method)</em></li>
-<li class='method'><a href='addEventSource'>addEventSource</a> <em>(method)</em></li>
-<li class='method'><a href='removeEventSource'>removeEventSource</a> <em>(method)</em></li>
+<li class='callback'><a href='eventDataTransform'>eventDataTransform (callback)</a></li>
+<li class='callback'><a href='loading'>loading (callback)</a></li>
+<li class='method'><a href='updateEvent'>updateEvent (method)</a></li>
+<li class='method'><a href='clientEvents'>clientEvents (method)</a></li>
+<li class='method'><a href='removeEvents'>removeEvents (method)</a></li>
+<li class='method'><a href='refetchEvents'>refetchEvents (method)</a></li>
+<li class='method'><a href='addEventSource'>addEventSource (method)</a></li>
+<li class='method'><a href='removeEventSource'>removeEventSource (method)</a></li>
 </ul>
 
 See also: [renderEvent](../event_rendering/renderEvent) (for adding an event)

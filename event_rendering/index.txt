@@ -8,10 +8,10 @@ Event Rendering
 <li>eventBackgroundColor</li>
 <li>eventBorderColor</li>
 <li>eventTextColor</li>
-<li class='callback'><a href='eventRender'>eventRender</a> <em>(callback)</em></li>
-<li class='callback'><a href='eventAfterRender'>eventAfterRender</a> <em>(callback)</em></li>
-<li class='callback'><a href='eventAfterAllRender'>eventAfterAllRender</a> <em>(callback)</em></li>
-<li class='callback'><a href='eventDestroy'>eventDestroy</a> <em>(callback)</em></li>
-<li class='method'><a href='renderEvent'>renderEvent</a> <em>(method)</em></li>
-<li class='method'><a href='rerenderEvents'>rerenderEvents</a> <em>(method)</em></li>
+<li class='callback'><a href='eventRender'>eventRender (callback)</a></li>
+<li class='callback'><a href='eventAfterRender'>eventAfterRender (callback)</a></li>
+<li class='callback'><a href='eventAfterAllRender'>eventAfterAllRender (callback)</a></li>
+<li class='callback'><a href='eventDestroy'>eventDestroy (callback)</a></li>
+<li class='method'><a href='renderEvent'>renderEvent (method)</a></li>
+<li class='method'><a href='rerenderEvents'>rerenderEvents (method)</a></li>
 </ul>

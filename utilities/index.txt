@@ -3,8 +3,8 @@ Utilities
 =========
 
 <ul>
-<li class='function'><a href='formatDate'>formatDate</a> <em>(function)</em></li>
-<li class='function'><a href='formatDates'>formatDates</a> <em>(function)</em></li>
-<li class='function'><a href='parseDate'>parseDate</a> <em>(function)</em></li>
-<li class='function'><a href='parseISO8601'>parseISO8601</a> <em>(function)</em></li>
+<li class='function'><a href='formatDate'>formatDate (function)</a></li>
+<li class='function'><a href='formatDates'>formatDates (function)</a></li>
+<li class='function'><a href='parseDate'>parseDate (function)</a></li>
+<li class='function'><a href='parseISO8601'>parseISO8601 (function)</a></li>
 </ul>

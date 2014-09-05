@@ -1,6 +1,6 @@
 
 Renamed/Removed
----------------
+===============
 
 - viewDisplay
 - disableDragging

@@ -3,7 +3,7 @@ monthDisplay
 ============
 
 <div class='removed-notice' markdown='1'>
-In version 1.3, this callback was removed in favor of [viewDisplay](../display/viewDisplay).
+In version 1.3, this callback was removed in favor of [viewDisplay](viewDisplay).
 </div>
 
 Triggered once when the calendar loads and every time the calendar's month is changed.
