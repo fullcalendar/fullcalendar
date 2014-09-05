@@ -6,5 +6,5 @@ Utilities
 <li class='article'><a href='Moment'>Moment</a></li>
 <li class='article'><a href='Duration'>Duration</a></li>
 <li class='article'><a href='date_formatting_string'>date formatting string</a></li>
-<li class='function'><a href='formatRange'>formatRange</a> <em>(function)</em></li>
+<li class='function'><a href='formatRange'>formatRange (function)</a></li>
 </ul>

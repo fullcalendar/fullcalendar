@@ -57,7 +57,7 @@ you must explicitly specify which language to use via the `lang` option:
 
 	</script>
 
-For more information, see the [live example](../../../../js/fullcalendar-2-latest/demos/languages.html).
+For more information, see the [live example](../../../js/fullcalendar-2-latest/demos/languages.html).
 
 
 MomentJS and jQuery UI Datepicker

@@ -22,8 +22,6 @@ additional formatting characters:
 These formatting characters are only available to moments generated via the API as well as
 moments created with one of the [special moment constructors](Moment/#creating).
 
-<br />
-
 
 Formatting ranges
 -----------------

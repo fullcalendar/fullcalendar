@@ -16,11 +16,7 @@ Each of these possible values has an effect on
 **(2)** the timezones that event dates are represented in, and
 **(3)** the timezones that other dates in the API are represented in.
 
-For more information, see the [timezone demo](../../../../js/fullcalendar-2-latest/demos/timezones.html).
-
-
-<br />
-<br />
+For more information, see the [timezone demo](../../../js/fullcalendar-2-latest/demos/timezones.html).
 
 
 `false` (no timezone, the default)
@@ -54,10 +50,6 @@ the dates will become [ambiguously-zoned](../utilities/Moment#ambiguously-zoned)
 **3)**
 In other parts of the API, moments will be [ambiguously-zoned].
 
-<br />
-<br />
-
-
 
 `"local"` (the client's timezone)
 ---------------------------------
@@ -82,10 +74,6 @@ it is assumed to already be in local time.
 **3)**
 In other parse of the API, moments will be represented in the local timezone.
 
-<br />
-<br />
-
-
 
 `"UTC"`
 -------
@@ -108,10 +96,6 @@ it is assumed to already be in UTC.
 
 **3)**
 In other parts of the API, moments will be represented in UTC.
-
-<br />
-<br />
-
 
 
 Timezone string (like `"America/Chicago"`)
@@ -143,7 +127,6 @@ the dates will become [ambiguously-zoned](../utilities/Moment#ambiguously-zoned)
 
 **3)**
 In other parts of the API, moments will be [ambiguously-zoned].
-
 
 
 

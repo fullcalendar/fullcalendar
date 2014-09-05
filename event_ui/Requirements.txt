@@ -5,8 +5,6 @@ Version 2.1.0 and above
 For FullCalendar version 2.1.0 and above, you don't need any external dependencies to do event
 drag-and-drop or resizing! Reliance upon jQuery UI has been dropped.
 
-<br />
-
 
 Versions below 2.1.0
 ====================

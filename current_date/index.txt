@@ -4,12 +4,12 @@ Current Date
 
 <ul>
 <li>defaultDate</li>
-<li class='method'><a href='prev'>prev</a> <em>(method)</em></li>
-<li class='method'><a href='next'>next</a> <em>(method)</em></li>
-<li class='method'><a href='prevYear'>prevYear</a> <em>(method)</em></li>
-<li class='method'><a href='nextYear'>nextYear</a> <em>(method)</em></li>
-<li class='method'><a href='today'>today</a> <em>(method)</em></li>
-<li class='method'><a href='gotoDate'>gotoDate</a> <em>(method)</em></li>
-<li class='method'><a href='incrementDate'>incrementDate</a> <em>(method)</em></li>
-<li class='method'><a href='getDate'>getDate</a> <em>(method)</em></li>
+<li class='method'><a href='prev'>prev (method)</a></li>
+<li class='method'><a href='next'>next (method)</a></li>
+<li class='method'><a href='prevYear'>prevYear (method)</a></li>
+<li class='method'><a href='nextYear'>nextYear (method)</a></li>
+<li class='method'><a href='today'>today (method)</a></li>
+<li class='method'><a href='gotoDate'>gotoDate (method)</a></li>
+<li class='method'><a href='incrementDate'>incrementDate (method)</a></li>
+<li class='method'><a href='getDate'>getDate (method)</a></li>
 </ul>

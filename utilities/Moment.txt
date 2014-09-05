@@ -18,8 +18,6 @@ that the `moment()` constructor accepts, including:
 - unix offsets (milliseconds since the Unix Epoch)
 - native Date objects
 
-<br />
-
 
 <h2 id='creating'>Creating Moments from scratch</h2>
 
@@ -48,8 +46,6 @@ use the `Calendar` object's version of the `moment` constructor:
 
 	var calendar = $('#calendar').fullCalendar('getCalendar');
 	var m = calendar.moment();
-
-<br />
 
 
 <h2 id='ambiguously-timed'>Ambiguously-timed Moments</h2>
@@ -82,8 +78,6 @@ do to not return a time part in the string:
 	m.format();
 	=> "2013-01-22"
 
-<br />
-
 
 <h2 id='ambiguously-zoned'>Ambiguously-zoned Moments</h2>
 
@@ -114,8 +108,6 @@ do not return a timezone offset part in the string:
 	m.format();
 	=> "2014-01-22T05:00:00"
 
-<br />
-
 
 Other extensions
 ----------------
@@ -129,6 +121,5 @@ object representing the time:
 	m.time(); // returns Duration with 05:30:00
 
 
+
 [UTC-mode]: http://momentjs.com/docs/#/parsing/utc/
-
-

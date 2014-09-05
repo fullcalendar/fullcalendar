@@ -7,8 +7,8 @@ Views
 <li class='article'>View Object</li>
 <li class='article'>View Option Hash</li>
 <li>defaultView</li>
-<li class='method'><a href='getView'>getView</a> <em>(method)</em></li>
-<li class='method'><a href='changeView'>changeView</a> <em>(method)</em></li>
+<li class='method'><a href='getView'>getView (method)</a></li>
+<li class='method'><a href='changeView'>changeView (method)</a></li>
 </ul>
 
 See also: <a href='../display/viewDisplay'>viewDisplay</a>

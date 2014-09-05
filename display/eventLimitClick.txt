@@ -23,7 +23,6 @@ Determines the action taken when the user clicks on a "more" link created by the
 *function*
 :	A callback function, for executing arbitrary code.
 
-<br />
 
 Callback Function
 -----------------
@@ -45,7 +44,6 @@ function( cellInfo, jsEvent )
 A callback function can return a string value, like `"day"`, that will be processed
 as the new value of the setting.
 
-<br />
 
 Event Segment Object
 --------------------
