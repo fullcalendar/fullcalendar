@@ -18,7 +18,6 @@
     "jasmine-fixture": "~1.2.0",
     "moment-timezone": "~0.0.6"
   },
-
   "main": [
     "/dist/fullcalendar.js",
     "/dist/fullcalendar.css"
