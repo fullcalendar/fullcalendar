@@ -151,7 +151,7 @@ module.exports = function(grunt) {
 			return '-' + m1.toUpperCase();
 		});
 
-		var path = config.datepicker + '/jquery.ui.datepicker-' + datepickerLangCode + '.js';
+		var path = config.datepicker + '/datepicker-' + datepickerLangCode + '.js';
 		var js;
 
 		try {
@@ -161,11 +161,11 @@ module.exports = function(grunt) {
 			return false;
 		}
 
-		js = js.replace(
-			/^jQuery\([\S\s]*?\{([\S\s]*)\}\);?/m, // inside the jQuery(function) wrap,
-			function(m0, body) {                   // use only the function body, modified.
+		js = js.replace( // remove the UMD wrap
+			/\(\s*function[\S\s]*?function\s*\(\s*datepicker\s*\)\s*\{([\S\s]*)\}\)\);?/m,
+			function(m0, body) { // use only the function body, modified
 
-				var match = body.match(/\$\.datepicker\.regional[\S\s]*?(\{[\S\s]*?\});?/);
+				var match = body.match(/datepicker\.regional[\S\s]*?(\{[\S\s]*?\});?/);
 				var props = match[1];
 
 				// remove 1 level of tab indentation

@@ -1,7 +1,7 @@
 /*!
- * FullCalendar v2.0.2 Google Calendar Plugin
- * Docs & License: http://arshaw.com/fullcalendar/
- * (c) 2014 Adam Shaw, Sean Kenny
+ * <%= meta.title %> v<%= meta.version %> Google Calendar Plugin
+ * Docs & License: <%= meta.homepage %>
+ * (c) <%= meta.copyright %>
  */
  
 (function(factory) {
