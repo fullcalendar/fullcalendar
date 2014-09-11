@@ -39,8 +39,7 @@
       var element = $('#calendar');
 
       $('input:checkbox').change(function(){
-        debugger;
-        element.fullCalendar('render');
+        element.fullCalendar('render', true);
       });
 
       var date = new Date();
