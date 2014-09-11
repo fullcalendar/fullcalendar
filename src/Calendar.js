@@ -359,6 +359,12 @@ function Calendar(element, instanceOptions) {
 	function renderView(delta, viewName) {
 		ignoreWindowResize++;
 
+		// if forcing the rendering, pretend we are changing the view
+		if (delta === true) {
+			viewName = viewName || currentView.name;
+			currentView.name = delta = undefined;
+		}
+
 		// if viewName is changing, destroy the old view
 		if (currentView && viewName && currentView.name !== viewName) {
 			header.deactivateButton(currentView.name);
