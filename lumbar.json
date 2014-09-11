@@ -19,6 +19,7 @@
         "src/Calendar.js",
         "src/Header.js",
         "src/EventManager.js",
+        "src/ResourceManager.js",
         "src/util.js",
         "src/moment-ext.js",
         "src/date-formatting.js",
@@ -42,6 +43,8 @@
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",
         "src/agenda/AgendaDayView.js",
+        "src/resource/ResourceView.js",
+        "src/resource/ResourceDayView.js",
         "src/outro.js"
       ],
       "styles": [
