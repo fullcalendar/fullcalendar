@@ -9,7 +9,6 @@ function ResourceView(calendar) {
 
 
 ResourceView.prototype = createObject(AgendaView.prototype); // extends AgendaView
-//merge: add getResources below
 $.extend(ResourceView.prototype, {
 
   resources: function() {
