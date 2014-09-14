@@ -470,6 +470,15 @@ function EventManager(options) { // assumed to be a calendar
 		}
 
 		allDay = data.allDay;
+
+		var timezoneEffect = moment.duration({'minutes': start.zone()}).subtract({'minutes': end.zone()}).asMilliseconds();
+		var duration = end.diff(start)+timezoneEffect;
+		var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+
+		if (start == start.startOf('day') && duration >= defaultAllDayEventDuration) {
+		    allDay = true;
+		}
+
 		if (allDay === undefined) {
 			allDayDefault = firstDefined(
 				source ? source.allDayDefault : undefined,
@@ -482,7 +491,9 @@ function EventManager(options) { // assumed to be a calendar
 			else {
 				// all dates need to have ambig time for the event to be considered allDay
 				allDay = !start.hasTime() && (!end || !end.hasTime());
+
 			}
+						
 		}
 
 		// normalize the date based on allDay
