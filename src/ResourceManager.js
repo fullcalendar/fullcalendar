@@ -201,13 +201,13 @@ function ResourceManager(options) {
     else if (newEnd) {
       durationDelta = dayishDiff(
         // new duration
-          newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
-          newStart || oldStart
+        newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
+        newStart || oldStart
       ).subtract(dayishDiff(
-          // subtract old duration
-            oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
-          oldStart
-        ));
+        // subtract old duration
+        oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
+        oldStart
+      ));
     }
 
     undoFunc = mutateResourceEvents(
