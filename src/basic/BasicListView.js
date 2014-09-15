@@ -1,4 +1,4 @@
-/* A view with a single simple day cell
+/* A view with a simple list
 ----------------------------------------------------------------------------------------------------------------------*/
 
 fcViews.basicList = BasicListView; // register this view
