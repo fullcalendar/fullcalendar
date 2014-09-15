@@ -33,6 +33,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
+	allDayRecognition: true, //attempts to recognize allDay events from defaultAllDayEventDuration
 	
 	// time formats
 	titleFormat: {
