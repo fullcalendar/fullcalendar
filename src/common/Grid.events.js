@@ -75,8 +75,9 @@ $.extend(Grid.prototype, {
 	// When `intervalStart` and `intervalEnd` are specified, intersect the events with that interval.
 	// Otherwise, let the subclass decide how it wants to slice the segments over the grid.
 	eventToSegs: function(event, intervalStart, intervalEnd) {
+		var view = this.view;
 		var eventStart = event.start.clone().stripZone(); // normalize
-		var eventEnd = this.view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
+		var eventEnd = view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
 		var segs;
 		var i, seg;
 
@@ -87,6 +88,16 @@ $.extend(Grid.prototype, {
 		else {
 			segs = this.rangeToSegs(eventStart, eventEnd); // defined by the subclass
 		}
+
+		if (view.name === 'resourceDay') {
+				// Filters the events according to the resource columns
+				var resources = view.resources();
+
+				segs = $.grep(segs, function(seg, i) {
+					return $.inArray(resources[i].id, event.resources) !==-1;
+				});
+		}
+
 
 		// assign extra event-related properties to the segment objects
 		for (i = 0; i < segs.length; i++) {
@@ -418,4 +429,3 @@ function compareSegs(seg1, seg2) {
 		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
 }
-
