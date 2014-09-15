@@ -1,4 +1,5 @@
 build/temp
+dist
 
 # npm modules
 node_modules
