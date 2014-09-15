@@ -49,6 +49,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
+	allDayRecognition: true, //attempts to recognize allDay events from defaultAllDayEventDuration
 	
 	// time formats
 	titleFormat: {
@@ -1760,12 +1761,22 @@ function EventManager(options) { // assumed to be a calendar
 
 		allDay = data.allDay;
 
-		var timezoneEffect = moment.duration({'minutes': start.zone()}).subtract({'minutes': end.zone()}).asMilliseconds();
-		var duration = end.diff(start)+timezoneEffect;
-		var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+		if (start && end && allDay === undefined && options.allDayRecognition) {
 
-		if (start == start.startOf('day') && duration >= defaultAllDayEventDuration) {
-		    allDay = true;
+		    var timezoneEffect = moment.duration({
+		        'minutes': start.zone()
+		    }).subtract({
+		        'minutes': end.zone()
+		    }).asMilliseconds();
+
+		    var duration = end.diff(start) + timezoneEffect;
+		    
+		    var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+
+		    if (start == start.clone().startOf('day') && duration >= defaultAllDayEventDuration) {
+		        allDay = true;
+		    }
+
 		}
 
 		if (allDay === undefined) {
@@ -7897,7 +7908,7 @@ $.extend(BasicDayView.prototype, {
 
 });
 ;;
-/* A view with a single simple day cell
+/* A view with a simple list
 ----------------------------------------------------------------------------------------------------------------------*/
 
 fcViews.basicList = BasicListView; // register this view
