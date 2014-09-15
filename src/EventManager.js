@@ -471,12 +471,21 @@ function EventManager(options) { // assumed to be a calendar
 
 		allDay = data.allDay;
 
-		var timezoneEffect = moment.duration({'minutes': start.zone()}).subtract({'minutes': end.zone()}).asMilliseconds();
-		var duration = end.diff(start)+timezoneEffect;
-		var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+		if (start && end) {
+		    var timezoneEffect = moment.duration({
+		        'minutes': start.zone()
+		    }).subtract({
+		        'minutes': end.zone()
+		    }).asMilliseconds();
 
-		if (start == start.startOf('day') && duration >= defaultAllDayEventDuration) {
-		    allDay = true;
+		    var duration = end.diff(start) + timezoneEffect;
+		    
+		    var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+
+		    if (start == start.startOf('day') && duration >= defaultAllDayEventDuration) {
+		        allDay = true;
+		    }
+
 		}
 
 		if (allDay === undefined) {
