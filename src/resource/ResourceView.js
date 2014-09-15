@@ -2,9 +2,9 @@
 function ResourceView(calendar) {
   AgendaView.call(this, calendar); // call the super-constructor
 
-  this.cellToDate = function () {
+  this.cellToDate = function() {
     return this.start;
-  }
+  };
 }
 
 
@@ -17,7 +17,6 @@ $.extend(ResourceView.prototype, {
 
   // Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
   headCellHtml: function(row, col, date) {
-    var colFormat = this.opt('columnFormat');
     var resource = this.resources()[col];
     var classes = [
       'fc-day-header',
@@ -25,8 +24,9 @@ $.extend(ResourceView.prototype, {
       'fc-' + dayIDs[date.day()]
     ];
 
-    if(resource)
+    if(resource) {
       classes.push(resource.className);
+    }
 
     return '' +
       '<th class="'+ classes.join(' ') +'">' +
