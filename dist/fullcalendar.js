@@ -1,7 +1,7 @@
 /*!
- * FullCalendar v2.1.1
- * Docs & License: http://arshaw.com/fullcalendar/
- * (c) 2013 Adam Shaw
+ * <%= meta.title %> v<%= meta.version %>
+ * Docs & License: <%= meta.homepage %>
+ * (c) <%= meta.copyright %>
  */
 
 (function(factory) {
@@ -54,12 +54,14 @@ var defaults = {
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
 		week: 'll', // like "Sep 4 1986"
-		day: 'LL' // like "September 4 1986"
+		day: 'LL', // like "September 4 1986"
+		basicList: 'll'
 	},
 	columnFormat: {
 		month: 'ddd', // like "Sat"
 		week: generateWeekColumnFormat,
-		day: 'dddd' // like "Saturday"
+		day: 'dddd', // like "Saturday"
+		basicList: 'dddd'
 	},
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
@@ -115,8 +117,11 @@ var defaults = {
 	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
-	windowResizeDelay: 200 // milliseconds before a rerender happens
-	
+	windowResizeDelay: 200, // milliseconds before a rerender happens
+
+	basicList: {
+		days: 7
+	}
 };
 
 
@@ -174,7 +179,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.1.1" };
+var fc = $.fullCalendar = { version: "<%= meta.version %>" };
 var fcViews = fc.views = {};
 
 
@@ -1243,6 +1248,9 @@ function Header(calendar, options) {
 	
 	function updateTitle(text) {
 		el.find('h2').text(text);
+
+		if(options['updateTitle'])
+			options['updateTitle'](text);
 	}
 	
 	
@@ -1751,6 +1759,15 @@ function EventManager(options) { // assumed to be a calendar
 		}
 
 		allDay = data.allDay;
+
+		var timezoneEffect = moment.duration({'minutes': start.zone()}).subtract({'minutes': end.zone()}).asMilliseconds();
+		var duration = end.diff(start)+timezoneEffect;
+		var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
+
+		if (start == start.startOf('day') && duration >= defaultAllDayEventDuration) {
+		    allDay = true;
+		}
+
 		if (allDay === undefined) {
 			allDayDefault = firstDefined(
 				source ? source.allDayDefault : undefined,
@@ -1763,7 +1780,9 @@ function EventManager(options) { // assumed to be a calendar
 			else {
 				// all dates need to have ambig time for the event to be considered allDay
 				allDay = !start.hasTime() && (!end || !end.hasTime());
+
 			}
+						
 		}
 
 		// normalize the date based on allDay
@@ -6975,7 +6994,11 @@ function View(calendar) {
 	
 	
 	function opt(name) {
-		var v = options[name];
+		var v = options;
+		$.each(name.split('.'), function(index, key) {
+			v = v[key];
+		});
+
 		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
 			return smartProperty(v, t.name);
 		}
@@ -7873,6 +7896,50 @@ $.extend(BasicDayView.prototype, {
 	}
 
 });
+;;
+/* A view with a single simple day cell
+----------------------------------------------------------------------------------------------------------------------*/
+
+fcViews.basicList = BasicListView; // register this view
+
+function BasicListView(calendar) {
+    BasicView.call(this, calendar); // call the super-constructor
+}
+
+
+BasicListView.prototype = createObject(BasicView.prototype); // define the super-class
+$.extend(BasicListView.prototype, {
+
+    name: 'basicList',
+
+
+    incrementDate: function(date, delta) {
+        var out = date.clone().stripTime().add(delta, 'days');
+        out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
+        return out;
+    },
+
+
+    render: function(date) {
+
+		this.intervalStart = date.clone().stripTime();
+		this.intervalEnd = this.intervalStart.clone().add(this.opt('basicList.days'), 'days');
+
+		this.start = this.skipHiddenDays(this.intervalStart);
+		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
+		
+		this.title = this.calendar.formatRange(
+			this.start,
+			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+			this.opt('titleFormat'),
+			' \u2014 ' // emphasized dash
+		);
+
+        BasicView.prototype.render.call(this, 1, 1, false); // call the super-method
+    }
+
+});
+
 ;;
 
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
