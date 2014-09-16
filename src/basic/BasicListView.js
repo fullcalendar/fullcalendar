@@ -24,7 +24,7 @@ $.extend(BasicListView.prototype, {
     render: function(date) {
 
 		this.intervalStart = date.clone().stripTime();
-		this.intervalEnd = this.intervalStart.clone().add(this.opt('basicList.days'), 'days');
+		this.intervalEnd = this.intervalStart.clone().add(this.opt('basicListDays'), 'days');
 
 		this.start = this.skipHiddenDays(this.intervalStart);
 		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
@@ -36,7 +36,7 @@ $.extend(BasicListView.prototype, {
 			' \u2014 ' // emphasized dash
 		);
 
-        BasicView.prototype.render.call(this, 1, 1, false); // call the super-method
+        BasicView.prototype.render.call(this, 7, 1, true); // call the super-method
     }
 
 });
