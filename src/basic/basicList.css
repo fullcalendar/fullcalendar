@@ -50,13 +50,14 @@
 	width: 38px;
 }
 
-.fc-basicList-view .fc-event-title {
+.fc-basicList-view .fc-title {
 	width: 99%;
 }
 
-.fc-basicList-view .fc-event-time,
-.fc-basicList-view .fc-event-location {
+.fc-basicList-view .fc-time,
+.fc-basicList-view .fc-location {
 	white-space: nowrap;
+    width: 1px;
 }
 
 
