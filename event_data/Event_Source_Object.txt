@@ -34,7 +34,7 @@ Array of events:
 Event-generating function:
 
 	{
-		events: function(start, end, callback) {
+		events: function(start, end, timezone, callback) {
 			// ...
 		},
 		color: 'yellow',   // an option!
