@@ -112,7 +112,7 @@ $.extend(Grid.prototype, {
 					if (view.name === 'resourceDay') {
 						sourceSeg = {
 							event: {
-								editable: true,
+								editable: false,
 								resources: [view.resources()[cell.col].id]
 							}
 						};
