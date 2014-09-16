@@ -366,12 +366,12 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(start, end) {
+	renderSelection: function(start, end, sourceSeg) {
 		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderRangeHelper(start, end);
+			this.renderRangeHelper(start, end, sourceSeg);
 		}
 		else {
-			this.renderHighlight(start, end);
+			this.renderHighlight(start, end, sourceSeg);
 		}
 	},
 

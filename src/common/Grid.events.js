@@ -98,7 +98,6 @@ $.extend(Grid.prototype, {
 				});
 		}
 
-
 		// assign extra event-related properties to the segment objects
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];

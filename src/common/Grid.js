@@ -89,6 +89,7 @@ $.extend(Grid.prototype, {
 		var start; // the inclusive start of the selection
 		var end; // the *exclusive* end of the selection
 		var dayEl;
+		var sourceSeg;
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
@@ -108,8 +109,17 @@ $.extend(Grid.prototype, {
 					start = dates[0];
 					end = dates[1].clone().add(_this.cellDuration);
 
+					if (view.name === 'resourceDay') {
+						sourceSeg = {
+							event: {
+								editable: true,
+								resources: [view.resources()[cell.col].id]
+							}
+						};
+					}
+
 					if (isSelectable) {
-						_this.renderSelection(start, end);
+						_this.renderSelection(start, end, sourceSeg);
 					}
 				}
 			},
