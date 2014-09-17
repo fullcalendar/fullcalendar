@@ -15,7 +15,7 @@ $.extend(BasicListView.prototype, {
 
 
     incrementDate: function(date, delta) {
-        var out = date.clone().stripTime().add(delta, 'days');
+        var out = date.clone().startOf('day').add(delta, 'days');
         out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
         return out;
     },
@@ -23,14 +23,10 @@ $.extend(BasicListView.prototype, {
 
     render: function(date) {
 
-    	console.log("Display from date: " + date.format('YYYY M D h:mm:ss:SSS zz ZZ'));
-
         this.intervalStart = date.clone().startOf('day');
-        console.log("Display from date: " + this.intervalStart.format('YYYY M D h:mm:ss:SSS zz ZZ'));
         this.intervalEnd = this.intervalStart.clone().add(this.opt('basicListDays'), 'days');
 
         this.start = this.skipHiddenDays(this.intervalStart);
-        console.log("Display from date: " + this.start.format('YYYY M D h:mm:ss:SSS zz ZZ'));
         this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 
         this.title = this.calendar.formatRange(
@@ -54,6 +50,8 @@ $.extend(BasicListView.prototype, {
     },
 
     renderEvents: function renderBasicListEvents(events) {
+
+    	console.log(events);
 
         var eventsCopy = events.slice().reverse();
 
