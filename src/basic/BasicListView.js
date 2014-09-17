@@ -51,53 +51,44 @@ $.extend(BasicListView.prototype, {
 
     renderEvents: function renderBasicListEvents(events) {
 
-        //Assume "events" are only events we want to show
+        var eventsCopy = events.slice().reverse();
 
-        var daysToDisplay = {}; //keys are dates (moments) and objects are events[]
+        var segs = []; //Needed later for fullcalendar calls
 
-        for (var i = 0; i < events.length; ++i) {
-            var e = events[i];
-
-            var currentDay = e.start.clone().startOf('day');
-            var lastDay = e.end;
-
-            while (currentDay.isBefore(lastDay)) {
-
-                if (currentDay in daysToDisplay)
-                    daysToDisplay[currentDay].push(e);
-                else
-                    daysToDisplay[currentDay] = [e];
-
-                currentDay = currentDay.add('days', 1);
-
-            }
-
-        }
-
-        var segs = [];
-
-        var table = $('<table></table>');
         var tbody = $('<tbody></tbody>');
-        table.append(tbody);
+        var table = $('<table></table>')
+            .append(tbody);
 
-        var current = this.start.clone().startOf('day');
-        var end = this.end.clone();
-        while (current.isBefore(end)) {
+        var periodEnd = this.end.clone(); //clone as to not accidentally modify
 
-            if (current in daysToDisplay) {
+        var currentDay = this.start.clone();
+        while (currentDay.isBefore(periodEnd)) {
 
-                //Day header
-                tbody.append('\
-                	<tr>\
-                		<th colspan="4">\
-                			<span class="fc-header-date">' + current.format() + '</span>\
-                			<span class="fc-header-day">' + current.format() + '</span>\
-                    	</th>\
-                    </tr>');
+            var didAddDayHeader = false;
+            var currentDayEnd = currentDay.clone().add('days', 1);
 
-                var events = daysToDisplay[current];
-                for (var i = 0; i < events.length; ++i) {
-                    var e = events[i];
+            //Assume events were ordered originally (notice we reversed them)
+            for (var i = eventsCopy.length-1; i >= 0; --i) {
+                var e = eventsCopy[i];
+
+                if (currentDay.isAfter(e.end) || periodEnd.isBefore(e.start))
+                    eventsCopy.splice(i, 1);
+                else if(currentDayEnd.isBefore(e.start)){
+                    //We found an event to display
+                    console.log('displaying date');
+                    console.log(currentDay.toISOString());
+
+                    if (!didAddDayHeader) {
+                        tbody.append('\
+			                	<tr>\
+			                		<th colspan="4">\
+			                			<span class="fc-header-date">' + currentDay.toISOString() + '</span>\
+			                			<span class="fc-header-day">' + currentDay.format('dddd') + '</span>\
+			                    	</th>\
+			                    </tr>');
+
+                        didAddDayHeader = true;
+                    }
 
                     var segEl = $('\
                 		<tr class="fc-row fc-event-container fc-content">\
@@ -109,7 +100,7 @@ $.extend(BasicListView.prototype, {
                 			<td class="fc-location">' + e.location || '' + '</td>\
                 		</tr>');
                     tbody.append(segEl);
-                    
+
                     var seg = {
                         'el': segEl,
                         'event': e
@@ -123,11 +114,12 @@ $.extend(BasicListView.prototype, {
 
 
                     segs.push(seg);
+
                 }
 
             }
 
-            current.add('days', 1)
+            currentDay.add('days', 1)
         }
 
 
