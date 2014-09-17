@@ -75,9 +75,11 @@ $.extend(BasicListView.prototype, {
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
+
+
                 if (currentDayStart.isAfter(e.end) || periodEnd.isBefore(e.start))
                     eventsCopy.splice(i, 1);
-                else if(currentDayEnd.isAfter(e.end)){
+                else if(currentDayEnd.isAfter(e.start)){
                     //We found an event to display
                     
                     if (!didAddDayHeader) {
