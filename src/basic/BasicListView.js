@@ -23,10 +23,14 @@ $.extend(BasicListView.prototype, {
 
     render: function(date) {
 
-        this.intervalStart = date.clone().stripTime();
+    	console.log("Display from date: " + date.format('YYYY M D h:mm:ss:SSS zz ZZ'));
+
+        this.intervalStart = date.clone().startOf('day');
+        console.log("Display from date: " + this.intervalStart.format('YYYY M D h:mm:ss:SSS zz ZZ'));
         this.intervalEnd = this.intervalStart.clone().add(this.opt('basicListDays'), 'days');
 
         this.start = this.skipHiddenDays(this.intervalStart);
+        console.log("Display from date: " + this.start.format('YYYY M D h:mm:ss:SSS zz ZZ'));
         this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 
         this.title = this.calendar.formatRange(
@@ -61,29 +65,27 @@ $.extend(BasicListView.prototype, {
 
         var periodEnd = this.end.clone(); //clone as to not accidentally modify
 
-        var currentDay = this.start.clone();
-        while (currentDay.isBefore(periodEnd)) {
+        var currentDayStart = this.start.clone();
+        while (currentDayStart.isBefore(periodEnd)) {
 
             var didAddDayHeader = false;
-            var currentDayEnd = currentDay.clone().add('days', 1);
+            var currentDayEnd = currentDayStart.clone().add('days', 1).subtract('ms', 1);
 
             //Assume events were ordered originally (notice we reversed them)
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
-                if (currentDay.isAfter(e.end) || periodEnd.isBefore(e.start))
+                if (currentDayStart.isAfter(e.end) || periodEnd.isBefore(e.start))
                     eventsCopy.splice(i, 1);
-                else if(currentDayEnd.isBefore(e.start)){
+                else if(currentDayEnd.isAfter(e.end)){
                     //We found an event to display
-                    console.log('displaying date');
-                    console.log(currentDay.toISOString());
-
+                    
                     if (!didAddDayHeader) {
                         tbody.append('\
 			                	<tr>\
 			                		<th colspan="4">\
-			                			<span class="fc-header-date">' + currentDay.toISOString() + '</span>\
-			                			<span class="fc-header-day">' + currentDay.format('dddd') + '</span>\
+			                			<span class="fc-header-date">' + currentDayStart.format('YYYY M D h:mm:ss:SSS zz ZZ') + '</span>\
+			                			<span class="fc-header-day">' + currentDayStart.format('dddd') + '</span>\
 			                    	</th>\
 			                    </tr>');
 
@@ -95,7 +97,7 @@ $.extend(BasicListView.prototype, {
                 			<td class="fc-event-handle">\
                 				<span class="fc-event"></span>\
                 			</td>\
-                			<td class="fc-time">' + 'TODO time' + '</td>\
+                			<td class="fc-time">' + e.start.format('YYYY M D h:mm:ss:SSS zz ZZ') + ' and: ' + e.end.format('YYYY M D h:mm:ss:SSS zz ZZ')  + '</td>\
                 			<td class="fc-title">' + e.title + '</td>\
                 			<td class="fc-location">' + e.location || '' + '</td>\
                 		</tr>');
@@ -119,7 +121,7 @@ $.extend(BasicListView.prototype, {
 
             }
 
-            currentDay.add('days', 1)
+            currentDayStart.add('days', 1)
         }
 
 
