@@ -51,8 +51,6 @@ $.extend(BasicListView.prototype, {
 
     renderEvents: function renderBasicListEvents(events) {
 
-    	console.log(events);
-
         var eventsCopy = events.slice().reverse();
 
         var segs = []; //Needed later for fullcalendar calls
@@ -61,7 +59,7 @@ $.extend(BasicListView.prototype, {
         var table = $('<table></table>')
             .append(tbody);
 
-        var periodEnd = this.end.clone(); //clone as to not accidentally modify
+        var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
         var currentDayStart = this.start.clone();
         while (currentDayStart.isBefore(periodEnd)) {
@@ -73,8 +71,6 @@ $.extend(BasicListView.prototype, {
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
-
-
                 if (currentDayStart.isAfter(e.end) || periodEnd.isBefore(e.start))
                     eventsCopy.splice(i, 1);
                 else if(currentDayEnd.isAfter(e.start)){
@@ -84,7 +80,7 @@ $.extend(BasicListView.prototype, {
                         tbody.append('\
 			                	<tr>\
 			                		<th colspan="4">\
-			                			<span class="fc-header-date">' + currentDayStart.format('YYYY M D h:mm:ss:SSS zz ZZ') + '</span>\
+			                			<span class="fc-header-date">' + currentDayStart.format('YYYY M D h:mm:ss:SSS zz ZZ') + ' to: ' + currentDayEnd.format('YYYY M D h:mm:ss:SSS zz ZZ') + '</span>\
 			                			<span class="fc-header-day">' + currentDayStart.format('dddd') + '</span>\
 			                    	</th>\
 			                    </tr>');
@@ -97,7 +93,7 @@ $.extend(BasicListView.prototype, {
                 			<td class="fc-event-handle">\
                 				<span class="fc-event"></span>\
                 			</td>\
-                			<td class="fc-time">' + e.start.format('YYYY M D h:mm:ss:SSS zz ZZ') + ' and: ' + e.end.format('YYYY M D h:mm:ss:SSS zz ZZ')  + '</td>\
+                			<td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e))  + '</td>\
                 			<td class="fc-title">' + e.title + '</td>\
                 			<td class="fc-location">' + e.location || '' + '</td>\
                 		</tr>');
