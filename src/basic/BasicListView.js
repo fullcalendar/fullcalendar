@@ -80,8 +80,8 @@ $.extend(BasicListView.prototype, {
                         tbody.append('\
 			                	<tr>\
 			                		<th colspan="4">\
-			                			<span class="fc-header-date">' + currentDayStart.format('YYYY M D h:mm:ss:SSS zz ZZ') + ' to: ' + currentDayEnd.format('YYYY M D h:mm:ss:SSS zz ZZ') + '</span>\
 			                			<span class="fc-header-day">' + currentDayStart.format('dddd') + '</span>\
+			                			<span class="fc-header-date">' + this.calendar.formatDate(currentDayStart, this.opt('columnFormat')) + '</span>\
 			                    	</th>\
 			                    </tr>');
 

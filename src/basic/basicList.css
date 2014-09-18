@@ -60,5 +60,8 @@
     width: 1px;
 }
 
-
+.fc-basicList-view .fc-header-date {
+    float: right;
+    color: #666666;
+}
 
