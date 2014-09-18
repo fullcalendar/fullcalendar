@@ -24,7 +24,7 @@ $.extend(BasicListView.prototype, {
     render: function(date) {
 
         this.intervalStart = date.clone().startOf('day');
-        this.intervalEnd = this.intervalStart.clone().add(this.opt('basicListDays'), 'days');
+        this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.basicListInterval);
 
         this.start = this.skipHiddenDays(this.intervalStart);
         this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
@@ -80,7 +80,7 @@ $.extend(BasicListView.prototype, {
                         tbody.append('\
 			                	<tr>\
 			                		<th colspan="4">\
-			                			<span class="fc-header-day">' + currentDayStart.format('dddd') + '</span>\
+			                			<span class="fc-header-day">' + this.calendar.formatDate(currentDayStart, 'dddd') + '</span>\
 			                			<span class="fc-header-date">' + this.calendar.formatDate(currentDayStart, this.opt('columnFormat')) + '</span>\
 			                    	</th>\
 			                    </tr>');
