@@ -57,7 +57,10 @@ $.extend(BasicListView.prototype, {
 
         var tbody = $('<tbody></tbody>');
         var table = $('<table></table>')
-            .append(tbody);
+        	.append(tbody);
+        var html = $('<div class="fc-scroller" style="border-bottom: 2px"></div>')
+        	.append(table);
+        
 
         var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
@@ -110,7 +113,6 @@ $.extend(BasicListView.prototype, {
                         return _this.trigger('eventClick', segEl, e, ev);
                     });
 
-
                     segs.push(seg);
 
                 }
@@ -120,8 +122,14 @@ $.extend(BasicListView.prototype, {
             currentDayStart.add('days', 1)
         }
 
+        this.scrollerEl = html;
 
-        this.el.html(table);
+        var border = $('<hr class="fc-widget-header" />')
+
+        this.el.html(border)
+        	.append(html);
+
+       	this.updateHeight();
 
         this.segs = segs; //used in call below
         View.prototype.renderEvents.call(this, events);
@@ -129,11 +137,12 @@ $.extend(BasicListView.prototype, {
     },
 
     updateWidth: function() {
-        // subclasses should implement
+        // don't need to do anything
     },
 
     setHeight: function(height, isAuto) {
-        // subclasses should implement
+        //only seems to happen at resize
+        this.scrollerEl.height(height);
     },
 
     getSegs: function() {
