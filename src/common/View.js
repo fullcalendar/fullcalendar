@@ -266,11 +266,14 @@ View.prototype = {
 			dragListener = new DragListener(this.coordMap, {
 				cellOver: function(cell, date) {
 					dropDate = date;
-					_this.renderDrag(date);
+					var end = _this.computeDraggedEventEnd(ev, ui, date) || _this.view.calendar.getDefaultEventEnd(false, date);
+					_this.renderDrag(date, end);
+					_this.el.trigger('cellOver', [cell, date, end]);
 				},
 				cellOut: function() {
 					dropDate = null;
 					_this.destroyDrag();
+					_this.el.trigger('cellOut');
 				}
 			});
 
@@ -284,6 +287,26 @@ View.prototype = {
 
 			dragListener.startDrag(ev); // start listening immediately
 		}
+	},
+
+
+	// Calculates the end of the event that was dragged.
+	computeDraggedEventEnd: function(ev, ui, date) {
+		var opt = this.opt('draggedEventDuration');
+		var duration = null;
+
+		if (opt) {
+			if (typeof opt === 'function') {
+				duration = opt(ev, ui);
+			}
+			else {
+				duration = opt;
+			}
+
+			return date.clone().add(duration);
+		}
+
+		return null;
 	},
 
 
