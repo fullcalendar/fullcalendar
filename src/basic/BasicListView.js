@@ -38,7 +38,6 @@ $.extend(BasicListView.prototype, {
 
         //this.el.addClass('fc-basic-view').html(this.renderHtml());
 
-        this.scrollerEl = this.el.find('.fc-day-grid-container');
 
         this.trigger('viewRender', this, this, this.el);
 
@@ -56,12 +55,14 @@ $.extend(BasicListView.prototype, {
         var segs = []; //Needed later for fullcalendar calls
 
         var tbody = $('<tbody></tbody>');
-        var table = $('<table></table>')
-        	.append(tbody);
-        var html = $('<div class="fc-scroller" style="border-bottom: 2px"></div>')
-        	.append(table);
-        
 
+        this.scrollerEl = $('<div class="fc-scroller"></div>');
+
+        this.el.html('')
+            .append(this.scrollerEl).children()
+            .append('<table style="border: 0; width:100%"></table>').children()
+            .append(tbody);
+        
         var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
         var currentDayStart = this.start.clone();
@@ -122,12 +123,7 @@ $.extend(BasicListView.prototype, {
             currentDayStart.add('days', 1)
         }
 
-        this.scrollerEl = html;
 
-        var border = $('<hr class="fc-widget-header" />')
-
-        this.el.html(border)
-        	.append(html);
 
        	this.updateHeight();
 
@@ -137,12 +133,27 @@ $.extend(BasicListView.prototype, {
     },
 
     updateWidth: function() {
-        // don't need to do anything
+        this.scrollerEl.width(this.el.width());
     },
 
     setHeight: function(height, isAuto) {
         //only seems to happen at resize
-        this.scrollerEl.height(height);
+
+        var diff = this.el.outerHeight()-this.scrollerEl.height();
+
+        this.scrollerEl.height(height-diff);
+        
+        var contentHeight = 0;
+        this.scrollerEl.children().each(function(index, child) {
+            contentHeight += $(child).outerHeight();
+        });
+
+        
+        if(height-diff > contentHeight)
+            this.scrollerEl.css('overflow-y', 'hidden');
+        else
+            this.scrollerEl.css('overflow-y', 'scroll');
+        
     },
 
     getSegs: function() {

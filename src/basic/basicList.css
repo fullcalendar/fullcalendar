@@ -25,8 +25,7 @@
 
 .fc-basicList-view th {
 	line-height: 27px;
-    background: #e0e0e0;
-    color: #000;
+    background: #ddd;
     text-align: left;
     vertical-align: bottom;
 }
@@ -62,6 +61,12 @@
 
 .fc-basicList-view .fc-header-date {
     float: right;
-    color: #666666;
+    color: #666;
+}
+
+.fc-basicList-view .fc-scroller {
+    border: 1px solid #ddd;
+    border-right: 0;
+    border-left: 0;
 }
 
