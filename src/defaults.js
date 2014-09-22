@@ -46,7 +46,7 @@ var defaults = {
 		month: 'ddd', // like "Sat"
 		week: generateWeekColumnFormat,
 		day: 'dddd', // like "Saturday"
-		basicList: 'dddd'
+		basicList: 'D MMM YYYY'
 	},
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
