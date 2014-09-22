@@ -690,6 +690,78 @@ a.fc-more:hover {
 	   might want to set the 'color' property instead
 	   making day-numbers bold also fixes the problem */
 }
+.fc-basicList-view table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+    border: 1px solid #cbcbcb;
+    table-layout: auto;
+}
+
+.fc-basicList-view td,
+.fc-basicList-view th {
+    border-left: 1px solid #cbcbcb;/*  inner column border */
+    border-width: 0 0 0 1px;
+    font-size: inherit;
+    margin: 0;
+    overflow: visible; /*to make ths where the title is really long work*/
+    padding: 0.5em 1em; /* cell padding */
+
+    border-width: 0 0 1px 0;
+    border-bottom: 1px solid #cbcbcb;
+}
+.fc-basicList-view td:first-child,
+.fc-basicList-view th:first-child {
+    border-left-width: 0;
+}
+
+.fc-basicList-view th {
+	line-height: 27px;
+    background: #ddd;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+
+.fc-basicList-view td {
+	line-height: 23px;
+}
+
+.fc-basicList-view tbody > tr:last-child td {
+    border-bottom-width: 0;
+}
+
+.fc-basicList-view .fc-event {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.fc-basicList-view .fc-event-handle {
+	width: 38px;
+}
+
+.fc-basicList-view .fc-title {
+	width: 99%;
+}
+
+.fc-basicList-view .fc-time,
+.fc-basicList-view .fc-location {
+	white-space: nowrap;
+    width: 1px;
+}
+
+.fc-basicList-view .fc-header-date {
+    float: right;
+    color: #666;
+}
+
+.fc-basicList-view .fc-scroller {
+    border: 1px solid #ddd;
+    border-right: 0;
+    border-left: 0;
+}
+
 
 /* AgendaView all-day area
 --------------------------------------------------------------------------------------------------*/

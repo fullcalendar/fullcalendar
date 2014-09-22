@@ -120,9 +120,7 @@ var defaults = {
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before a rerender happens
 
-	basicList: {
-		days: 7
-	}
+	basicListInterval: { 'days': 7 }
 };
 
 
@@ -7925,7 +7923,7 @@ $.extend(BasicListView.prototype, {
 
 
     incrementDate: function(date, delta) {
-        var out = date.clone().stripTime().add(delta, 'days');
+        var out = date.clone().startOf('day').add(delta, 'days');
         out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
         return out;
     },
@@ -7933,20 +7931,160 @@ $.extend(BasicListView.prototype, {
 
     render: function(date) {
 
-		this.intervalStart = date.clone().stripTime();
-		this.intervalEnd = this.intervalStart.clone().add(this.opt('basicList.days'), 'days');
+        this.intervalStart = date.clone().startOf('day');
+        this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.basicListInterval);
 
-		this.start = this.skipHiddenDays(this.intervalStart);
-		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
-		
-		this.title = this.calendar.formatRange(
-			this.start,
-			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
-			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
-		);
+        this.start = this.skipHiddenDays(this.intervalStart);
+        this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 
-        BasicView.prototype.render.call(this, 1, 1, false); // call the super-method
+        this.title = this.calendar.formatRange(
+            this.start,
+            this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+            this.opt('titleFormat'),
+            ' \u2014 ' // emphasized dash
+        );
+
+        //this.el.addClass('fc-basic-view').html(this.renderHtml());
+
+
+        this.trigger('viewRender', this, this, this.el);
+
+        // attach handlers to document. do it here to allow for destroy/rerender
+        $(document)
+            .on('mousedown', this.documentMousedownProxy)
+            .on('dragstart', this.documentDragStartProxy); // jqui drag
+
+    },
+
+    renderEvents: function renderBasicListEvents(events) {
+
+        var eventsCopy = events.slice().reverse();
+
+        var segs = []; //Needed later for fullcalendar calls
+
+        var tbody = $('<tbody></tbody>');
+
+        this.scrollerEl = $('<div class="fc-scroller"></div>');
+
+        this.el.html('')
+            .append(this.scrollerEl).children()
+            .append('<table style="border: 0; width:100%"></table>').children()
+            .append(tbody);
+        
+        var periodEnd = this.end.clone(); //clone so as to not accidentally modify
+
+        var currentDayStart = this.start.clone();
+        while (currentDayStart.isBefore(periodEnd)) {
+
+            var didAddDayHeader = false;
+            var currentDayEnd = currentDayStart.clone().add('days', 1).subtract('ms', 1);
+
+            //Assume events were ordered originally (notice we reversed them)
+            for (var i = eventsCopy.length-1; i >= 0; --i) {
+                var e = eventsCopy[i];
+
+                if (currentDayStart.isAfter(e.end) || periodEnd.isBefore(e.start))
+                    eventsCopy.splice(i, 1);
+                else if(currentDayEnd.isAfter(e.start)){
+                    //We found an event to display
+                    
+                    if (!didAddDayHeader) {
+                        tbody.append('\
+			                	<tr>\
+			                		<th colspan="4">\
+			                			<span class="fc-header-day">' + this.calendar.formatDate(currentDayStart, 'dddd') + '</span>\
+			                			<span class="fc-header-date">' + this.calendar.formatDate(currentDayStart, this.opt('columnFormat')) + '</span>\
+			                    	</th>\
+			                    </tr>');
+
+                        didAddDayHeader = true;
+                    }
+
+                    var segEl = $('\
+                		<tr class="fc-row fc-event-container fc-content">\
+                			<td class="fc-event-handle">\
+                				<span class="fc-event"></span>\
+                			</td>\
+                			<td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e))  + '</td>\
+                			<td class="fc-title">' + e.title + '</td>\
+                			<td class="fc-location">' + e.location || '' + '</td>\
+                		</tr>');
+                    tbody.append(segEl);
+
+                    var seg = {
+                        'el': segEl,
+                        'event': e
+                    };
+
+                    //Tried to use fullcalendar code for this stuff but to no avail
+                    var _this = this;
+                    segEl.on('click', function(ev) {
+                        return _this.trigger('eventClick', segEl, e, ev);
+                    });
+
+                    segs.push(seg);
+
+                }
+
+            }
+
+            currentDayStart.add('days', 1)
+        }
+
+
+
+       	this.updateHeight();
+
+        this.segs = segs; //used in call below
+        View.prototype.renderEvents.call(this, events);
+
+    },
+
+    updateWidth: function() {
+        this.scrollerEl.width(this.el.width());
+    },
+
+    setHeight: function(height, isAuto) {
+        //only seems to happen at resize
+
+        var diff = this.el.outerHeight()-this.scrollerEl.height();
+
+        this.scrollerEl.height(height-diff);
+        
+        var contentHeight = 0;
+        this.scrollerEl.children().each(function(index, child) {
+            contentHeight += $(child).outerHeight();
+        });
+
+        
+        if(height-diff > contentHeight)
+            this.scrollerEl.css('overflow-y', 'hidden');
+        else
+            this.scrollerEl.css('overflow-y', 'scroll');
+        
+    },
+
+    getSegs: function() {
+        return this.segs || [];
+    },
+
+    renderDrag: function(start, end, seg) {
+        // subclasses should implement
+    },
+
+    // Unrenders a visual indication of event hovering
+    destroyDrag: function() {
+        // subclasses should implement
+    },
+
+    // Renders a visual indication of the selection
+    renderSelection: function(start, end) {
+        // subclasses should implement
+    },
+
+    // Unrenders a visual indication of selection
+    destroySelection: function() {
+        // subclasses should implement
     }
 
 });
