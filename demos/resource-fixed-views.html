@@ -35,6 +35,8 @@
     }
 
   </style>
+  <link rel="stylesheet/less" type="text/css" href="resource-fixed-views.less" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.5/less.min.js"></script>
   <script src='../lib/moment/moment.js'></script>
   <script src='../lib/jquery/dist/jquery.js'></script>
   <script src='../dist/fullcalendar.js'></script>
@@ -53,6 +55,8 @@
       var y = date.getFullYear();
 
       element.fullCalendar({
+        height: 200,
+        contentHeight: 400,
         header: {
           left: 'prev,next today',
           center: 'title',
@@ -79,6 +83,31 @@
             'id': 'resource4',
             'name': 'Resource 4',
             'className': ['blue']
+          },
+          {
+            'id': 'resource5',
+            'name': 'Resource 5',
+            'className': ['red']
+          },
+          {
+            'id': 'resource6',
+            'name': 'Resource 6',
+            'className': ['red']
+          },
+          {
+            'id': 'resource7',
+            'name': 'Resource 7',
+            'className': ['red']
+          },
+          {
+            'id': 'resource8',
+            'name': 'Resource 8',
+            'className': ['red']
+          },
+          {
+            'id': 'resource9',
+            'name': 'Resource 9',
+            'className': ['red']
           }
         ],
         resourceFilter: function (resource) {
@@ -145,22 +174,11 @@
             resources: 'resource2'
           }
         ],
-        // the 'ev' parameter is the mouse event rather than the resource 'event'
-        // the ev.data is the resource column clicked upon
         selectable: true,
-        selectHelper: true,
-        select: function (start, end, ev) {
-          console.log(start);
-          console.log(end);
-        },
-        eventClick: function (event) {
-          console.log(event);
-        },
-        eventDrop: function (event, delta, revertFunc) {
-          console.log(event);
-        }
+        selectHelper: true
       });
 
+$('.fc-resource-view').perfectScrollbar();
     });
 
   </script>
@@ -187,6 +205,11 @@
   <input name="resource2" type="checkbox" /> Resource 2
   <input name="resource3" type="checkbox" checked /> Resource 3
   <input name="resource4" type="checkbox" checked /> Resource 4
+  <input name="resource5" type="checkbox" checked /> Resource 5
+  <input name="resource6" type="checkbox" /> Resource 6
+  <input name="resource7" type="checkbox" /> Resource 7
+  <input name="resource8" type="checkbox" /> Resource 8
+  <input name="resource9" type="checkbox" checked /> Resource 9
 </form>
 <div id='calendar'></div>
 
