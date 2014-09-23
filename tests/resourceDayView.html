@@ -54,7 +54,7 @@
     <div id='calendar' style='width:70%;margin:20px auto 0;font-family:arial'></div>
 
     <script src='../lib/jquery/dist/jquery.js'></script>
-    <script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+    <script src='../lib/jquery-ui/jquery-ui.js'></script>
     <script src='../lib/moment/moment.js'></script>
     <script src='../src/defaults.js'></script>
     <script src='../src/main.js'></script>
@@ -100,9 +100,10 @@
                     console.log(event);
                 },
                 editable: true,
-				selectable: true,
-				selectHelper: true,
                 allDaySlot: true,
+                dayClick: function(date, jsEvent, view) {
+                  console.log(date);
+                },
                 eventDrop: function (event, delta, revertFunc) {
                   //revertFunc();
                 },
