@@ -31,7 +31,7 @@ $.extend(BasicListView.prototype, {
 
         this.title = this.calendar.formatRange(
             this.start,
-            this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
+            this.end.clone().subtract(1), // make inclusive by subtracting 1 ms? why?
             this.opt('titleFormat'),
             ' \u2014 ' // emphasized dash
         );
@@ -50,7 +50,9 @@ $.extend(BasicListView.prototype, {
 
     renderEvents: function renderBasicListEvents(events) {
 
-        var eventsCopy = events.slice().reverse();
+        //console.log(events);
+
+        var eventsCopy = events.slice().reverse(); //copy and reverse so we can modify while looping
 
         var segs = []; //Needed later for fullcalendar calls
 
@@ -65,20 +67,36 @@ $.extend(BasicListView.prototype, {
         
         var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
+        //console.log('Period start: ' + this.start.format("YYYY MM DD HH:mm:ss") + ', and end: ' + this.end.format("YYYY MM DD HH:mm:ss"));
+
         var currentDayStart = this.start.clone();
         while (currentDayStart.isBefore(periodEnd)) {
 
             var didAddDayHeader = false;
-            var currentDayEnd = currentDayStart.clone().add('days', 1).subtract('ms', 1);
+            var currentDayEnd = currentDayStart.clone().add(1, 'days');
 
-            //Assume events were ordered originally (notice we reversed them)
+            //console.log('=== this day start: ' + currentDayStart.format("YYYY MM DD HH:mm:ss") + ', and end: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss"));
+
+            //Assume events were ordered descending originally (notice we reversed them)
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
-                if (currentDayStart.isAfter(e.end) || periodEnd.isBefore(e.start))
+                //console.log(e.title);
+                //console.log('event index: ' + (events.length-i-1) + ', and in copy: ' + i);
+                //console.log('event start: ' + e.start.format("YYYY MM DD HH:mm:ss"));
+                //console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss"));
+                //console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss"));
+                //console.log(currentDayEnd.isAfter(e.start));
+                
+                var eventEnd = this.calendar.getEventEnd(e);
+                if (currentDayStart.isAfter(eventEnd) || currentDayStart.isSame(eventEnd) || periodEnd.isBefore(e.start)) {
                     eventsCopy.splice(i, 1);
-                else if(currentDayEnd.isAfter(e.start)){
+                    //console.log("--- Removed the above event");
+                }
+                else if(currentDayEnd.isAfter(e.start)) {
                     //We found an event to display
+                    
+                    //console.log("+++ We added the above event");
                     
                     if (!didAddDayHeader) {
                         tbody.append('\
@@ -120,7 +138,7 @@ $.extend(BasicListView.prototype, {
 
             }
 
-            currentDayStart.add('days', 1)
+            currentDayStart.add(1, 'days');
         }
 
 
