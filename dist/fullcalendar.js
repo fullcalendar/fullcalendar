@@ -49,8 +49,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
-	allDayRecognition: true, //attempts to recognize allDay events from defaultAllDayEventDuration
-	
+
 	// time formats
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
@@ -1758,24 +1757,6 @@ function EventManager(options) { // assumed to be a calendar
 		}
 
 		allDay = data.allDay;
-
-		if (start && end && allDay === undefined && options.allDayRecognition) {
-
-		    var timezoneEffect = moment.duration({
-		        'minutes': start.zone()
-		    }).subtract({
-		        'minutes': end.zone()
-		    }).asMilliseconds();
-
-		    var duration = end.diff(start) + timezoneEffect;
-		    
-		    var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
-
-		    if (start == start.clone().startOf('day') && duration >= defaultAllDayEventDuration) {
-		        allDay = true;
-		    }
-
-		}
 
 		if (allDay === undefined) {
 			allDayDefault = firstDefined(
@@ -7923,7 +7904,7 @@ $.extend(BasicListView.prototype, {
 
 
     incrementDate: function(date, delta) {
-        var out = date.clone().startOf('day').add(delta, 'days');
+        var out = date.clone().stripTime().add(delta, 'days').startOf('day'); //imitated week view
         out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
         return out;
     },
@@ -7931,7 +7912,7 @@ $.extend(BasicListView.prototype, {
 
     render: function(date) {
 
-        this.intervalStart = date.clone().startOf('day');
+        this.intervalStart = date.clone().stripTime().startOf('day');;
         this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.basicListInterval);
 
         this.start = this.skipHiddenDays(this.intervalStart);
@@ -7975,7 +7956,7 @@ $.extend(BasicListView.prototype, {
         
         var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
-        //console.log('Period start: ' + this.start.format("YYYY MM DD HH:mm:ss") + ', and end: ' + this.end.format("YYYY MM DD HH:mm:ss"));
+        //console.log('Period start: ' + this.start.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + this.end.format("YYYY MM DD HH:mm:ss Z"));
 
         var currentDayStart = this.start.clone();
         while (currentDayStart.isBefore(periodEnd)) {
@@ -7983,25 +7964,27 @@ $.extend(BasicListView.prototype, {
             var didAddDayHeader = false;
             var currentDayEnd = currentDayStart.clone().add(1, 'days');
 
-            //console.log('=== this day start: ' + currentDayStart.format("YYYY MM DD HH:mm:ss") + ', and end: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss"));
+            //console.log('=== this day start: ' + currentDayStart.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
 
             //Assume events were ordered descending originally (notice we reversed them)
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
+                var eventStart = e.start.clone().stripZone();
+                var eventEnd = this.calendar.getEventEnd(e).stripZone();
+
                 //console.log(e.title);
                 //console.log('event index: ' + (events.length-i-1) + ', and in copy: ' + i);
-                //console.log('event start: ' + e.start.format("YYYY MM DD HH:mm:ss"));
-                //console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss"));
-                //console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss"));
-                //console.log(currentDayEnd.isAfter(e.start));
+                //console.log('event start: ' + eventStart.format("YYYY MM DD HH:mm:ss Z"));
+                //console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss Z"));
+                //console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
+                //console.log(currentDayEnd.isAfter(eventStart));
                 
-                var eventEnd = this.calendar.getEventEnd(e);
-                if (currentDayStart.isAfter(eventEnd) || currentDayStart.isSame(eventEnd) || periodEnd.isBefore(e.start)) {
+                if (currentDayStart.isAfter(eventEnd) || currentDayStart.isSame(eventEnd) || periodEnd.isBefore(eventStart)) {
                     eventsCopy.splice(i, 1);
                     //console.log("--- Removed the above event");
                 }
-                else if(currentDayEnd.isAfter(e.start)) {
+                else if(currentDayEnd.isAfter(eventStart)) {
                     //We found an event to display
                     
                     //console.log("+++ We added the above event");
