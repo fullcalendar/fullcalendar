@@ -94,7 +94,7 @@ $.extend(Grid.prototype, {
 				var resources = view.resources();
 
 				segs = $.grep(segs, function(seg, i) {
-					return $.inArray(resources[i].id, event.resources) !==-1;
+					return resources[i] && view.hasResource(event, resources[i]);
 				});
 		}
 

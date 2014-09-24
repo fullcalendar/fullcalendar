@@ -15,6 +15,12 @@ $.extend(ResourceView.prototype, {
 		return this.calendar.fetchResources();
 	},
 
+	hasResource: function(event, resource) {
+		return event.resources && $.grep(event.resources, function(id) {
+			return id == resource.id;
+		}).length;
+	},
+
 	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
 	headCellHtml: function(row, col, date) {
 		var resource = this.resources()[col];
@@ -30,7 +36,7 @@ $.extend(ResourceView.prototype, {
 
 		return '' +
 			'<th class="'+ classes.join(' ') +'">' +
-			htmlEscape(resource.name) +
+			((resource) ? htmlEscape(resource.name) : '') +
 			'</th>';
 	},
 
