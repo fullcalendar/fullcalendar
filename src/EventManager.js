@@ -471,24 +471,6 @@ function EventManager(options) { // assumed to be a calendar
 
 		allDay = data.allDay;
 
-		if (start && end && allDay === undefined && options.allDayRecognition) {
-
-		    var timezoneEffect = moment.duration({
-		        'minutes': start.zone()
-		    }).subtract({
-		        'minutes': end.zone()
-		    }).asMilliseconds();
-
-		    var duration = end.diff(start) + timezoneEffect;
-		    
-		    var defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration).asMilliseconds();
-
-		    if (start == start.clone().startOf('day') && duration >= defaultAllDayEventDuration) {
-		        allDay = true;
-		    }
-
-		}
-
 		if (allDay === undefined) {
 			allDayDefault = firstDefined(
 				source ? source.allDayDefault : undefined,

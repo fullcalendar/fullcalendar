@@ -33,8 +33,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
-	allDayRecognition: true, //attempts to recognize allDay events from defaultAllDayEventDuration
-	
+
 	// time formats
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
