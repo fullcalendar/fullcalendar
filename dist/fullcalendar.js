@@ -5162,12 +5162,12 @@ $.extend(DayGrid.prototype, {
 
 		// Only display a timed events time if it is the starting segment
 		if (!event.allDay && seg.isStart) {
-			timeHtml = '<span class="fc-time">' +'title="'+event.title+'">' + htmlEscape(view.getEventTimeText(event)) + '</span>';
+			timeHtml = '<span class="fc-time">' + 'title="'+event.title+'">' + htmlEscape(view.getEventTimeText(event)) + '</span>';
 		}
 
 		titleHtml =
-			'<span class="fc-title">' +'title="'+event.title+'">' +
-				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
+			'<span class="fc-title">' + 'title="'+event.title+'">' +
+			 (htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
 		
 		return '<a class="' + classes.join(' ') + '"' +
