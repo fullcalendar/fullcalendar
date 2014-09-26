@@ -129,10 +129,11 @@ $.extend(BasicListView.prototype, {
                     };
 
                     //Tried to use fullcalendar code for this stuff but to no avail
-                    var _this = this;
-                    segEl.on('click', function(ev) {
-                        return _this.trigger('eventClick', segEl, e, ev);
-                    });
+                    (function(_this, myEvent, mySegEl) { //temp bug fix because 'e' seems to change
+                        segEl.on('click', function(ev) {
+                            return _this.trigger('eventClick', mySegEl, myEvent, ev);
+                        });
+                    })(this, e, segEl);
 
                     segs.push(seg);
 
