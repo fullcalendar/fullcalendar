@@ -95,7 +95,7 @@ function ResourceEventRenderer() {
 			segs = [];
 
 		for (i=0; i<colCnt; i++) {
-			cellDate = cellToDate(0, 0);  // updated - should show same day for all
+			cellDate = cellToDate(0, 0);	// updated - should show same day for all
 			var resourceEvents = eventsForResource(getResources()[i], events);
 			colSegs = sliceSegs(
 				resourceEvents,
@@ -643,14 +643,26 @@ function ResourceEventRenderer() {
 				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
-					var resources = event.resources;
-					 if (resourceDelta){
-						resources = [ getResources()[origCell.col + resourceDelta].id ];
-					 }
+					if (resourceDelta){
+						// given we have r1/r3 
+						// if we move r3 to r2, then we want to maintain r1/r2.
+						// if we move r3 to r1, then we only want to maintain r1 - so we splice the array
+						var resources = getResources();
+						var newId = resources[origCell.col + resourceDelta].id;
+						var oldId = resources[origCell.col].id;
+
+						var oldIndex = event.resources.indexOf(oldId);
+						var newIndex = event.resources.indexOf(newId);
+						if (newIndex > -1) {
+							event.resources.splice(oldIndex, 1);
+						} else {
+							event.resources[oldIndex] = newId;
+						}
+					}
 					eventDrop(
 						eventElement[0],
 						event,
-						resources,
+						event.resources,
 						eventStart,
 						ev,
 						ui
@@ -698,7 +710,7 @@ function ResourceEventRenderer() {
 			if (eventStart) { // must of had a state change
 				timeElement.text(
 					t.getEventTimeText(eventStart, event.end ? eventEnd : null)
-					//                                       ^
+					//
 					// only display the new end if there was an old end
 				);
 			}
