@@ -53,7 +53,7 @@
       var y = date.getFullYear();
 
       element.fullCalendar({
-        contentHeight: 'auto',
+        contentHeight: 400,
         header: {
           left: 'prev,next today',
           center: 'title',
@@ -178,12 +178,21 @@
       function resize(option) {
         var individualSize = 170;
         $('.fc-view').width(individualSize * $( "input:checked" ).length);
+        $('.fc-scroller').perfectScrollbar(option)
         $('.fc-view-container')
           .perfectScrollbar(option)
-          .scroll(function (s) {
+          .scroll(function () {
+            // for the left column
             var scrollLeft = $(this).scrollLeft()-1;
             $(this).find('.fc-slats .fc-axis').css('left', scrollLeft);
-          });
+          })
+          .scroll(function () {
+            // for the vertical scrollbar
+            var scrollbar = $('.ps-scrollbar-y-rail');
+            var scrollLeft = $(this).scrollLeft() + $(this).width() - (scrollbar.outerWidth()+2);
+            scrollbar.css('left', scrollLeft);
+          })
+          .triggerHandler('scroll');
       }
 
 
