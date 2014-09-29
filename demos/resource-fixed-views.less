@@ -1,36 +1,24 @@
-.fc-resource-view {
-	overflow-x: auto;
-	//overflow-y: auto;
-	//height: 700px;
+.fc-view-container {
+	overflow: hidden;
+	position: relative;
+
+	.ps-scrollbar-x-rail,
+	.ps-scrollbar-y-rail {
+		z-index: 2;
+	}
+}
+
+.fc-view {
+	width: 1200px;
+	height: 500px;
 
 	> table {
-		width: auto;
+		width: 100%;
 	}
-
-	.fc-row,
-	.fc-bg,
-	.fc-content-skeleton {
-		> table {
-			width: 0;
-			table-layout: fixed;
-		}
-	}
-
-	.fc-day,
-	.fc-day-header,
-	.fc-content-skeleton td {
-		width: 170px;
-	}
-
 
 	.fc-scroller {
-		//overflow: initial;
-		//height: auto !important;
+		overflow: hidden;
+		height: auto;
 	}
-
-	.fc-time-grid-container {
-		//height: auto !important;
-	}
-
 
 }
