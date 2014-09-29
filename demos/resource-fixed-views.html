@@ -178,7 +178,12 @@
       function resize(option) {
         var individualSize = 170;
         $('.fc-view').width(individualSize * $( "input:checked" ).length);
-        $('.fc-view-container').perfectScrollbar(option);
+        $('.fc-view-container')
+          .perfectScrollbar(option)
+          .scroll(function (s) {
+            var scrollLeft = $(this).scrollLeft()-1;
+            $(this).find('.fc-slats .fc-axis').css('left', scrollLeft);
+          });
       }
 
 

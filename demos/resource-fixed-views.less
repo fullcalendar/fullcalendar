@@ -21,4 +21,22 @@
 		height: auto;
 	}
 
+	.fc-time-grid {
+		> .fc-bg,
+		.fc-slats,
+		.fc-content-skeleton {
+			z-index: initial;
+		}
+	}
+
+	.fc-slats .fc-axis {
+		position: absolute;
+		background-color: #fff;
+		z-index: 100;
+
+		+ td {
+			width: 100%;
+		}
+	}
+
 }
