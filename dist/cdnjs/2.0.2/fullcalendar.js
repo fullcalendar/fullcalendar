@@ -1526,6 +1526,7 @@ function EventManager(options) { // assumed to be a calendar
 
 			// for array sources, we convert to standard Event Objects up front
 			if ($.isArray(source.events)) {
+				source.origArray = source.events; // for removeEventSource
 				source.events = $.map(source.events, function(eventInput) {
 					return buildEvent(eventInput, source);
 				});
@@ -1558,7 +1559,12 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
+		return (
+			(typeof source === 'object') ? // a normalized event source?
+				(source.origArray || source.url || source.events) : // get the primitive
+				null
+		) ||
+		source; // the given argument *is* the primitive
 	}
 	
 	
