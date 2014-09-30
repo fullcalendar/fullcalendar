@@ -33,7 +33,7 @@ $.extend(ResourceDayView.prototype, {
 	name: 'resourceDay',
 
 	incrementDate: function(date, delta) {
-		AgendaView.prototype.incrementDate.apply(this, arguments);
+		return AgendaDayView.prototype.incrementDate.apply(this, arguments);
 	},
 
 	render: function(date) {

@@ -172,7 +172,10 @@
           }
         ],
         selectable: true,
-        selectHelper: true
+        selectHelper: true,
+        viewRender: function(){
+          resize();
+        }
       });
 
       function resize(option) {
@@ -198,10 +201,7 @@
 
       $('input:checkbox').change(function(){
         element.fullCalendar('render', true);
-        resize('update');
       });
-
-      resize();
     });
 
   </script>

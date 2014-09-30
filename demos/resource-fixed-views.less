@@ -31,13 +31,16 @@
 		}
 	}
 
-	.fc-slats .fc-axis {
-		position: absolute;
-		background-color: #fff;
-		z-index: 100;
+	.fc-slats {
+		 .fc-axis {
+			position: absolute;
+			background-color: #fff;
+			z-index: 100;
 
-		+ td {
-			width: 100%;
+			+ td {
+				width: 100%;
+				z-index: 1;
+			}
 		}
 	}
 
