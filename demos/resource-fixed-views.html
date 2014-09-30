@@ -180,7 +180,7 @@
 
       function resize(option) {
         var individualSize = 170;
-        $('.fc-view').width(individualSize * $( "input:checked" ).length);
+        $('.fc-view').width(individualSize * $('.fc-day-header').length);
         $('.fc-scroller').perfectScrollbar(option);
         $('.fc-view-container')
           .perfectScrollbar(option)
