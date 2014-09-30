@@ -40,14 +40,12 @@
   <script src='../lib/moment/moment.js'></script>
   <script src='../lib/jquery/dist/jquery.js'></script>
   <script src='../dist/fullcalendar.js'></script>
+  <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar.min.css" />
+  <script src='vendor/perfect-scrollbar.min.js'></script>
   <script>
 
     $(document).ready(function () {
       var element = $('#calendar');
-
-      $('input:checkbox').change(function(){
-        element.fullCalendar('render', true);
-      });
 
       var date = new Date();
       var d = date.getDate();
@@ -55,7 +53,6 @@
       var y = date.getFullYear();
 
       element.fullCalendar({
-        height: 200,
         contentHeight: 400,
         header: {
           left: 'prev,next today',
@@ -175,10 +172,36 @@
           }
         ],
         selectable: true,
-        selectHelper: true
+        selectHelper: true,
+        eventAfterAllRender: function(){
+          resize();
+        }
       });
 
-$('.fc-resource-view').perfectScrollbar();
+      function resize(option) {
+        var individualSize = 170;
+        $('.fc-view').width(individualSize * $( "input:checked" ).length);
+        $('.fc-scroller').perfectScrollbar(option);
+        $('.fc-view-container')
+          .perfectScrollbar(option)
+          .scroll(function () {
+            // for the left column
+            var scrollLeft = $(this).scrollLeft()-1;
+            $(this).find('.fc-slats .fc-axis').css('left', scrollLeft);
+          })
+          .scroll(function () {
+            // for the vertical scrollbar
+            var scrollbar = $('.fc-scroller .ps-scrollbar-y-rail');
+            var scrollLeft = Math.min( $(this).scrollLeft() + $(this).width(), $(this).children('.fc-view').width());
+            scrollbar.css('left', scrollLeft -(scrollbar.outerWidth()+2));
+          })
+          .triggerHandler('scroll');
+      }
+
+
+      $('input:checkbox').change(function(){
+        element.fullCalendar('render', true);
+      });
     });
 
   </script>
@@ -202,7 +225,7 @@ $('.fc-resource-view').perfectScrollbar();
 <form>Select the resources you wanna filter:
 
   <input name="resource1" type="checkbox" checked /> Resource 1
-  <input name="resource2" type="checkbox" /> Resource 2
+  <input name="resource2" type="checkbox" checked /> Resource 2
   <input name="resource3" type="checkbox" checked /> Resource 3
   <input name="resource4" type="checkbox" checked /> Resource 4
   <input name="resource5" type="checkbox" checked /> Resource 5
