@@ -173,7 +173,7 @@
         ],
         selectable: true,
         selectHelper: true,
-        viewRender: function(){
+        eventAfterAllRender: function(){
           resize();
         }
       });
@@ -181,7 +181,7 @@
       function resize(option) {
         var individualSize = 170;
         $('.fc-view').width(individualSize * $( "input:checked" ).length);
-        $('.fc-scroller').perfectScrollbar(option)
+        $('.fc-scroller').perfectScrollbar(option);
         $('.fc-view-container')
           .perfectScrollbar(option)
           .scroll(function () {
@@ -191,9 +191,9 @@
           })
           .scroll(function () {
             // for the vertical scrollbar
-            var scrollbar = $('.ps-scrollbar-y-rail');
-            var scrollLeft = $(this).scrollLeft() + $(this).width() - (scrollbar.outerWidth()+2);
-            scrollbar.css('left', scrollLeft);
+            var scrollbar = $('.fc-scroller .ps-scrollbar-y-rail');
+            var scrollLeft = Math.min( $(this).scrollLeft() + $(this).width(), $(this).children('.fc-view').width());
+            scrollbar.css('left', scrollLeft -(scrollbar.outerWidth()+2));
           })
           .triggerHandler('scroll');
       }

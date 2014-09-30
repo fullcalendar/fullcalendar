@@ -38,11 +38,6 @@ $.extend(ResourceView.prototype, {
 			'<th class="'+ classes.join(' ') +'">' +
 			((resource) ? htmlEscape(resource.name) : '') +
 			'</th>';
-	},
-
-	render: function(colCnt) {
-		AgendaView.prototype.render.call(this, colCnt); // call the super-method
-		this.el.removeClass('fc-agenda-view').addClass('fc-resource-view');
 	}
 
 });
