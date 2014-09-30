@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %>
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * FullCalendar v2.1.1
+ * Docs & License: http://arshaw.com/fullcalendar/
+ * (c) 2013 Adam Shaw
  */
 
 (function(factory) {
@@ -174,7 +174,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "<%= meta.version %>" };
+var fc = $.fullCalendar = { version: "2.1.1" };
 var fcViews = fc.views = {};
 
 
@@ -2224,13 +2224,13 @@ function ResourceManager(options) {
     else if (newEnd) {
       durationDelta = dayishDiff(
         // new duration
-          newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
-          newStart || oldStart
+        newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
+        newStart || oldStart
       ).subtract(dayishDiff(
-          // subtract old duration
-            oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
-          oldStart
-        ));
+        // subtract old duration
+        oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
+        oldStart
+      ));
     }
 
     undoFunc = mutateResourceEvents(
@@ -3804,7 +3804,7 @@ DragListener.prototype = {
 	},
 
 
-	// Called when a the mouse has just moved over a new cell
+	// Called when the mouse has just moved over a new cell
 	cellOver: function(cell) {
 		this.cell = cell;
 		this.date = cell.date;
@@ -4442,6 +4442,7 @@ $.extend(Grid.prototype, {
 		var start; // the inclusive start of the selection
 		var end; // the *exclusive* end of the selection
 		var dayEl;
+		var sourceSeg;
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
@@ -4461,8 +4462,17 @@ $.extend(Grid.prototype, {
 					start = dates[0];
 					end = dates[1].clone().add(_this.cellDuration);
 
+					if (view.name === 'resourceDay') {
+						sourceSeg = {
+							event: {
+								editable: false,
+								resources: [view.resources()[cell.col].id]
+							}
+						};
+					}
+
 					if (isSelectable) {
-						_this.renderSelection(start, end);
+						_this.renderSelection(start, end, sourceSeg);
 					}
 				}
 			},
@@ -4750,8 +4760,9 @@ $.extend(Grid.prototype, {
 	// When `intervalStart` and `intervalEnd` are specified, intersect the events with that interval.
 	// Otherwise, let the subclass decide how it wants to slice the segments over the grid.
 	eventToSegs: function(event, intervalStart, intervalEnd) {
+		var view = this.view;
 		var eventStart = event.start.clone().stripZone(); // normalize
-		var eventEnd = this.view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
+		var eventEnd = view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
 		var segs;
 		var i, seg;
 
@@ -4761,6 +4772,15 @@ $.extend(Grid.prototype, {
 		}
 		else {
 			segs = this.rangeToSegs(eventStart, eventEnd); // defined by the subclass
+		}
+
+		if (view.name === 'resourceDay') {
+				// Filters the events according to the resource columns
+				var resources = view.resources();
+
+				segs = $.grep(segs, function(seg, i) {
+					return resources[i] && view.hasResource(event, resources[i]);
+				});
 		}
 
 		// assign extra event-related properties to the segment objects
@@ -5093,7 +5113,6 @@ function compareSegs(seg1, seg2) {
 		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
 }
-
 
 ;;
 
@@ -6408,12 +6427,12 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(start, end) {
+	renderSelection: function(start, end, sourceSeg) {
 		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderRangeHelper(start, end);
+			this.renderRangeHelper(start, end, sourceSeg);
 		}
 		else {
-			this.renderHighlight(start, end);
+			this.renderHighlight(start, end, sourceSeg);
 		}
 	},
 
@@ -8719,95 +8738,103 @@ $.extend(AgendaDayView.prototype, {
 ;;
 
 function ResourceView(calendar) {
-  AgendaView.call(this, calendar); // call the super-constructor
+	AgendaView.call(this, calendar); // call the super-constructor
 
-  this.cellToDate = function () {
-    return this.start;
-  }
+	this.cellToDate = function() {
+		return this.start.clone();
+	};
 }
 
 
 ResourceView.prototype = createObject(AgendaView.prototype); // extends AgendaView
 $.extend(ResourceView.prototype, {
 
-  resources: function() {
-    return this.calendar.fetchResources();
-  },
+	resources: function() {
+		return this.calendar.fetchResources();
+	},
 
-  // Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
-  headCellHtml: function(row, col, date) {
-    var colFormat = this.opt('columnFormat');
-    var resource = this.resources()[col];
-    var classes = [
-      'fc-day-header',
-      this.widgetHeaderClass,
-      'fc-' + dayIDs[date.day()]
-    ];
+	hasResource: function(event, resource) {
+		return event.resources && $.grep(event.resources, function(id) {
+			return id == resource.id;
+		}).length;
+	},
 
-    if(resource)
-      classes.push(resource.className);
+	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
+	headCellHtml: function(row, col, date) {
+		var resource = this.resources()[col];
+		var classes = [
+			'fc-day-header',
+			this.widgetHeaderClass,
+			'fc-' + dayIDs[date.day()]
+		];
 
-    return '' +
-      '<th class="'+ classes.join(' ') +'">' +
-        htmlEscape(resource.name) +
-      '</th>';
-  },
+		if(resource) {
+			classes.push(resource.className);
+		}
 
-  render: function(colCnt) {
-    AgendaView.prototype.render.call(this, colCnt); // call the super-method
-    this.el.removeClass('fc-agenda-view').addClass('fc-resource-view');
-  }
+		return '' +
+			'<th class="'+ classes.join(' ') +'">' +
+			((resource) ? htmlEscape(resource.name) : '') +
+			'</th>';
+	},
+
+	render: function(colCnt) {
+		AgendaView.prototype.render.call(this, colCnt); // call the super-method
+		this.el.removeClass('fc-agenda-view').addClass('fc-resource-view');
+	}
 
 });
 
 ;;
+
+/* A day view with an all-day cell area at the top, and a time grid below by resource
+----------------------------------------------------------------------------------------------------------------------*/
 
 fcViews.resourceDay = ResourceDayView;
 
 function ResourceDayView(calendar) {
-  ResourceView.call(this, calendar); // call the super-constructor
+	ResourceView.call(this, calendar); // call the super-constructor
 
-  var superRangeToSegments = this.rangeToSegments;
-  this.rangeToSegments = function(start, end) {
-    var colCnt = this.colCnt;
-    var segments = [];
+	var superRangeToSegments = this.rangeToSegments;
+	this.rangeToSegments = function(start, end) {
+		var colCnt = this.colCnt;
+		var segments = [];
 
-    $.each(superRangeToSegments(start, end), function(index, segment) {
-      for (var col=0; col<colCnt; col++) {
-        segments.push({
-          row: segment.row,
-          leftCol: col,
-          rightCol: col,
-          isStart: segment.isStart,
-          isEnd: segment.isEnd
-        });
-      }
-    });
-    return segments;
-  };
+		$.each(superRangeToSegments(start, end), function(index, segment) {
+			for (var col=0; col<colCnt; col++) {
+				segments.push({
+					row: segment.row,
+					leftCol: col,
+					rightCol: col,
+					isStart: segment.isStart,
+					isEnd: segment.isEnd
+				});
+			}
+		});
+		return segments;
+	};
 }
 
-ResourceDayView.prototype = createObject(ResourceView.prototype); // define the super-class TODO: make a DayView mixin
+ResourceDayView.prototype = createObject(ResourceView.prototype); // define the super-class
 $.extend(ResourceDayView.prototype, {
 
-  name: 'resourceDay',
+	name: 'resourceDay',
 
-  incrementDate: function(date, delta) {
-    AgendaView.prototype.incrementDate.apply(this, arguments);
-  },
+	incrementDate: function(date, delta) {
+		AgendaView.prototype.incrementDate.apply(this, arguments);
+	},
 
-  render: function(date) {
-    this.start = this.intervalStart = date.clone().stripTime();
-    this.end = this.intervalEnd = this.start.clone().add(1, 'days');
+	render: function(date) {
+		this.start = this.intervalStart = date.clone().stripTime();
+		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
 
-    this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
+		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
 
-    ResourceView.prototype.render.call(this, this.calendar.fetchResources().length || 1); // call the super-method
-  }
+		ResourceView.prototype.render.call(this, this.resources().length || 1); // call the super-method
+	}
 
 });
 
 ;;
 
 });
-//@ sourceMappingURL=fullcalendar.js.map
