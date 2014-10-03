@@ -180,7 +180,8 @@
 
       function resize(option) {
         var individualSize = 170;
-        $('.fc-view').width(individualSize * $('.fc-day-header').length);
+        var width = Math.max(element.width(), individualSize * $('.fc-day-header').length);
+        $('.fc-view').width(width);
         $('.fc-scroller').perfectScrollbar(option);
         $('.fc-view-container')
           .perfectScrollbar(option)
