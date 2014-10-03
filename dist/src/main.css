@@ -1,0 +1,81 @@
+
+/* Toolbar
+--------------------------------------------------------------------------------------------------*/
+
+.fc-toolbar {
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+.fc-toolbar .fc-left {
+	float: left;
+}
+
+.fc-toolbar .fc-right {
+	float: right;
+}
+
+.fc-toolbar .fc-center {
+	display: inline-block;
+}
+
+/* the things within each left/right/center section */
+.fc .fc-toolbar > * > * { /* extra precedence to override button border margins */
+	float: left;
+	margin-left: .75em;
+}
+
+/* the first thing within each left/center/right section */
+.fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
+	margin-left: 0;
+}
+	
+/* title text */
+
+.fc-toolbar h2 {
+	margin: 0;
+}
+
+/* button layering (for border precedence) */
+
+.fc-toolbar button {
+	position: relative;
+}
+
+.fc-toolbar .fc-state-hover,
+.fc-toolbar .ui-state-hover {
+	z-index: 2;
+}
+	
+.fc-toolbar .fc-state-down {
+	z-index: 3;
+}
+
+.fc-toolbar .fc-state-active,
+.fc-toolbar .ui-state-active {
+	z-index: 4;
+}
+
+.fc-toolbar button:focus {
+	z-index: 5;
+}
+
+
+/* View Structure
+--------------------------------------------------------------------------------------------------*/
+
+/* undo twitter bootstrap's box-sizing rules. normalizes positioning techniques */
+/* don't do this for the toolbar because we'll want bootstrap to style those buttons as some pt */
+.fc-view-container *,
+.fc-view-container *:before,
+.fc-view-container *:after {
+	-webkit-box-sizing: content-box;
+	   -moz-box-sizing: content-box;
+	        box-sizing: content-box;
+}
+
+.fc-view, /* scope positioning and z-index's for everything within the view */
+.fc-view > table { /* so dragged elements can be above the view's main element */
+	position: relative;
+	z-index: 1;
+}
