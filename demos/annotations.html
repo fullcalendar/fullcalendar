@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset='utf-8'/>
+	<link href='../dist/fullcalendar.css' rel='stylesheet'/>
+	<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print'/>
+	<script src='../lib/moment/moment.js'></script>
+	<script src='../lib/jquery/dist/jquery.js'></script>
+	<script src='../dist/fullcalendar.js'></script>
+	<script type='text/javascript'>
+
+		$(document).ready(function() {
+
+			var date = new Date();
+			var d = date.getDate();
+			var m = date.getMonth();
+			var y = date.getFullYear();
+
+			$('#calendar').fullCalendar({
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+				},
+				slotMinutes: 15,
+				firstHour: 10,
+				lastHour: 18,
+				firstDay: 1,
+				editable: true,
+				eventLimit: 3,
+				events: [
+					{
+						title: 'All Day Event 1',
+						start: new Date(y, m, 1),
+						allDay: true
+					},
+					{
+						title: 'All Day Event 2',
+						start: new Date(y, m, d+1),
+						allDay: true
+					},
+					{
+						title: 'All Day Event 3',
+						start: new Date(y, m, d+1),
+						allDay: true
+					},
+					{
+						title: 'All Day Event 4',
+						start: new Date(y, m, d+1),
+						allDay: true
+					},
+					{
+						title: 'All Day Event 5',
+						start: new Date(y, m, d+1),
+						allDay: true
+					},
+					{
+						title: 'All Day Event 6',
+						start: new Date(y, m, d+1),
+						allDay: true
+					},
+					{
+						title: 'Long Event 1',
+						start: new Date(y, m, d-5),
+						end: new Date(y, m, d-2)
+					},
+					{
+						title: 'Repeating Event 1',
+						start: new Date(y, m, d-3, 16, 0),
+						allDay: false
+					},
+					{
+						title: 'Repeating Event 2',
+						start: new Date(y, m, d+4, 16, 0),
+						allDay: false
+					},
+					{
+						title: 'Meeting',
+						start: new Date(y, m, d, 10, 30),
+						allDay: false
+					},
+					{
+						title: 'Lunch',
+						start: new Date(y, m, d, 12, 0),
+						end: new Date(y, m, d, 14, 0),
+						allDay: false
+					},
+					{
+						title: 'Birthday Party',
+						start: new Date(y, m, d+1, 13, 0),
+						end: new Date(y, m, d+1, 22, 30),
+						allDay: false
+					},
+					{
+						title: 'Click for Google',
+						start: new Date(y, m, 28),
+						end: new Date(y, m, 29),
+						url: 'http://google.com/'
+					}
+				],
+				annotations: [
+					{
+						allDay: true,
+						start: new Date(y, m, d),
+						title: 'My 1st annotation',
+						cls: 'open',
+						color: '#777777', // optional
+						backgroundColor: '#eeeeff' // optional
+					},
+					{
+						allDay: true,
+						start: new Date(y, m, d+1),
+						title: 'On vacations',
+						cls: 'vacation',
+						color: '#777777',
+						backgroundColor: '#eeeef0' // optional
+					},
+					{
+						start: new Date(y, m, d+1, 16, 0),
+						end: new Date(y, m, d+1, 18, 30),
+						title: 'Overlapping annotation',
+						cls: 'open',
+						color: '#777777', // optional
+						backgroundColor: '#fafafa' // optional
+					},
+					{
+						// just minimal fields for annotation
+						start: new Date(y, m, d-1, 12, 0),
+						end: new Date(y, m, d-1, 14, 0)
+					}
+				]
+			});
+
+		});
+
+	</script>
+	<style type='text/css'>
+
+		body {
+			margin-top: 40px;
+			text-align: center;
+			font-size: 14px;
+			font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+		#calendar {
+			width: 900px;
+			margin: 0 auto;
+		}
+
+	</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
+
+
+	</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
+
+</html>
