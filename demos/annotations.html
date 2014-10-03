@@ -103,15 +103,14 @@
 						allDay: true,
 						start: new Date(y, m, d),
 						title: 'My 1st annotation',
-						cls: 'open',
 						color: '#777777', // optional
 						backgroundColor: '#eeeeff' // optional
 					},
 					{
 						allDay: true,
 						start: new Date(y, m, d+1),
-						title: 'On vacations',
-						cls: 'vacation',
+						title: 'a holiday',
+						cls: 'holiday',
 						color: '#777777',
 						backgroundColor: '#eeeef0' // optional
 					},
@@ -119,7 +118,7 @@
 						start: new Date(y, m, d+1, 16, 0),
 						end: new Date(y, m, d+1, 18, 30),
 						title: 'Overlapping annotation',
-						cls: 'open',
+						cls: 'vacation',
 						color: '#777777', // optional
 						backgroundColor: '#fafafa' // optional
 					},
@@ -146,6 +145,15 @@
 		#calendar {
 			width: 900px;
 			margin: 0 auto;
+		}
+
+		.vacation {
+			background-color: #fff0f0;
+		}
+
+
+		.holiday {
+			background-color: #f0f0ff;
 		}
 
 	</style>

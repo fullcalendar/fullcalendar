@@ -58,13 +58,8 @@ $.extend(Grid.prototype, {
 		// Grab individual elements from the combined HTML string. Use each as the default rendering.
 		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
 		$(html).each(function(i, node) {
-			var ann = annotations[i];
-			var el = view.resolveEventEl(ann.event, $(node));
-			if (el) {
-				el.data('fc-ann', ann); // used by handlers
-				ann.el = el;
-				renderedAnns.push(ann);
-			}
+			annotations[i].el = $(node);
+			renderedAnns.push(annotations[i]);
 		});
 
 		return renderedAnns;
