@@ -39,13 +39,13 @@ var defaults = {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
 		week: 'll', // like "Sep 4 1986"
 		day: 'LL', // like "September 4 1986"
-		basicList: 'll'
+		list: 'll'
 	},
 	columnFormat: {
 		month: 'ddd', // like "Sat"
 		week: generateWeekColumnFormat,
 		day: 'dddd', // like "Saturday"
-		basicList: 'D MMM YYYY'
+		list: 'D MMM YYYY'
 	},
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
@@ -103,7 +103,7 @@ var defaults = {
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before a rerender happens
 
-	basicListInterval: { 'days': 7 }
+	listInterval: { 'days': 7 }
 };
 
 

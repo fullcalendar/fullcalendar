@@ -39,7 +39,7 @@
         "src/basic/MonthView.js",
         "src/basic/BasicWeekView.js",
         "src/basic/BasicDayView.js",
-        "src/basic/BasicListView.js",
+        "src/list/ListView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",
         "src/agenda/AgendaDayView.js",
@@ -49,7 +49,7 @@
         "src/common/common.css",
         "src/main.css",
         "src/basic/basic.css",
-        "src/basic/basicList.css",
+        "src/list/list.css",
         "src/agenda/agenda.css"
       ]
     },

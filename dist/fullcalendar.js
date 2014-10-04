@@ -55,13 +55,13 @@ var defaults = {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
 		week: 'll', // like "Sep 4 1986"
 		day: 'LL', // like "September 4 1986"
-		basicList: 'll'
+		list: 'll'
 	},
 	columnFormat: {
 		month: 'ddd', // like "Sat"
 		week: generateWeekColumnFormat,
 		day: 'dddd', // like "Saturday"
-		basicList: 'D MMM YYYY'
+		list: 'D MMM YYYY'
 	},
 	timeFormat: { // for event elements
 		'default': generateShortTimeFormat
@@ -119,7 +119,7 @@ var defaults = {
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before a rerender happens
 
-	basicListInterval: { 'days': 7 }
+	listInterval: { 'days': 7 }
 };
 
 
@@ -7890,21 +7890,21 @@ $.extend(BasicDayView.prototype, {
 /* A view with a simple list
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fcViews.basicList = BasicListView; // register this view
+fcViews.list = ListView; // register this view
 
-function BasicListView(calendar) {
-    BasicView.call(this, calendar); // call the super-constructor
+function ListView(calendar) {
+    View.call(this, calendar); // call the super-constructor
 }
 
 
-BasicListView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(BasicListView.prototype, {
+ListView.prototype = createObject(View.prototype); // define the super-class
+$.extend(ListView.prototype, {
 
-    name: 'basicList',
+    name: 'list',
 
 
     incrementDate: function(date, delta) {
-        var out = date.clone().stripTime().add(delta, 'days').startOf('day'); //imitated week view
+        var out = date.clone().add(delta, 'days'); //imitated week view
         out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
         return out;
     },
@@ -7912,8 +7912,10 @@ $.extend(BasicListView.prototype, {
 
     render: function(date) {
 
-        this.intervalStart = date.clone().stripTime().startOf('day');;
-        this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.basicListInterval);
+        //console.log('Render from: ' + date.format("YYYY MM DD HH:mm:ss Z"));
+
+        this.intervalStart = date.clone().startOf('day');;
+        this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.listInterval);
 
         this.start = this.skipHiddenDays(this.intervalStart);
         this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
@@ -7925,9 +7927,6 @@ $.extend(BasicListView.prototype, {
             ' \u2014 ' // emphasized dash
         );
 
-        //this.el.addClass('fc-basic-view').html(this.renderHtml());
-
-
         this.trigger('viewRender', this, this, this.el);
 
         // attach handlers to document. do it here to allow for destroy/rerender
@@ -7937,13 +7936,11 @@ $.extend(BasicListView.prototype, {
 
     },
 
-    renderEvents: function renderBasicListEvents(events) {
+    renderEvents: function renderListEvents(events) {
 
         //console.log(events);
 
         var eventsCopy = events.slice().reverse(); //copy and reverse so we can modify while looping
-
-        var segs = []; //Needed later for fullcalendar calls
 
         var tbody = $('<tbody></tbody>');
 
@@ -7970,15 +7967,17 @@ $.extend(BasicListView.prototype, {
             for (var i = eventsCopy.length-1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
-                var eventStart = e.start.clone().stripZone();
-                var eventEnd = this.calendar.getEventEnd(e).stripZone();
+                var eventStart = e.start.clone();
+                var eventEnd = this.calendar.getEventEnd(e);
 
-                //console.log(e.title);
-                //console.log('event index: ' + (events.length-i-1) + ', and in copy: ' + i);
-                //console.log('event start: ' + eventStart.format("YYYY MM DD HH:mm:ss Z"));
-                //console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss Z"));
-                //console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
-                //console.log(currentDayEnd.isAfter(eventStart));
+                /*
+                console.log(e.title);
+                console.log('event index: ' + (events.length-i-1) + ', and in copy: ' + i);
+                console.log('event start: ' + eventStart.format("YYYY MM DD HH:mm:ss Z"));
+                console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss Z"));
+                console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
+                console.log(currentDayEnd.isAfter(eventStart));
+                */
                 
                 if (currentDayStart.isAfter(eventEnd) || currentDayStart.isSame(eventEnd) || periodEnd.isBefore(eventStart)) {
                     eventsCopy.splice(i, 1);
@@ -7991,31 +7990,26 @@ $.extend(BasicListView.prototype, {
                     
                     if (!didAddDayHeader) {
                         tbody.append('\
-			                	<tr>\
-			                		<th colspan="4">\
-			                			<span class="fc-header-day">' + this.calendar.formatDate(currentDayStart, 'dddd') + '</span>\
-			                			<span class="fc-header-date">' + this.calendar.formatDate(currentDayStart, this.opt('columnFormat')) + '</span>\
-			                    	</th>\
-			                    </tr>');
+                                <tr>\
+                                    <th colspan="4">\
+                                        <span class="fc-header-day">' + this.calendar.formatDate(currentDayStart, 'dddd') + '</span>\
+                                        <span class="fc-header-date">' + this.calendar.formatDate(currentDayStart, this.opt('columnFormat')) + '</span>\
+                                    </th>\
+                                </tr>');
 
                         didAddDayHeader = true;
                     }
 
                     var segEl = $('\
-                		<tr class="fc-row fc-event-container fc-content">\
-                			<td class="fc-event-handle">\
-                				<span class="fc-event"></span>\
-                			</td>\
-                			<td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e))  + '</td>\
-                			<td class="fc-title">' + e.title + '</td>\
-                			<td class="fc-location">' + e.location || '' + '</td>\
-                		</tr>');
+                        <tr class="fc-row fc-event-container fc-content">\
+                            <td class="fc-event-handle">\
+                                <span class="fc-event"></span>\
+                            </td>\
+                            <td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e))  + '</td>\
+                            <td class="fc-title">' + e.title + '</td>\
+                            <td class="fc-location">' + e.location || '' + '</td>\
+                        </tr>');
                     tbody.append(segEl);
-
-                    var seg = {
-                        'el': segEl,
-                        'event': e
-                    };
 
                     //Tried to use fullcalendar code for this stuff but to no avail
                     (function(_this, myEvent, mySegEl) { //temp bug fix because 'e' seems to change
@@ -8024,8 +8018,6 @@ $.extend(BasicListView.prototype, {
                         });
                     })(this, e, segEl);
 
-                    segs.push(seg);
-
                 }
 
             }
@@ -8033,12 +8025,9 @@ $.extend(BasicListView.prototype, {
             currentDayStart.add(1, 'days');
         }
 
+        this.updateHeight();
 
-
-       	this.updateHeight();
-
-        this.segs = segs; //used in call below
-        View.prototype.renderEvents.call(this, events);
+        //View.prototype.renderEvents.call(this, events);
 
     },
 
@@ -8090,7 +8079,6 @@ $.extend(BasicListView.prototype, {
     }
 
 });
-
 ;;
 
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.

@@ -1,4 +1,4 @@
-.fc-basicList-view table {
+.fc-list-view table {
     border-collapse: collapse;
     border-spacing: 0;
     empty-cells: show;
@@ -6,8 +6,8 @@
     table-layout: auto;
 }
 
-.fc-basicList-view td,
-.fc-basicList-view th {
+.fc-list-view td,
+.fc-list-view th {
     border-left: 1px solid #cbcbcb;/*  inner column border */
     border-width: 0 0 0 1px;
     font-size: inherit;
@@ -18,12 +18,12 @@
     border-width: 0 0 1px 0;
     border-bottom: 1px solid #cbcbcb;
 }
-.fc-basicList-view td:first-child,
-.fc-basicList-view th:first-child {
+.fc-list-view td:first-child,
+.fc-list-view th:first-child {
     border-left-width: 0;
 }
 
-.fc-basicList-view th {
+.fc-list-view th {
 	line-height: 27px;
     background: #ddd;
     text-align: left;
@@ -31,40 +31,40 @@
 }
 
 
-.fc-basicList-view td {
+.fc-list-view td {
 	line-height: 23px;
 }
 
-.fc-basicList-view tbody > tr:last-child td {
+.fc-list-view tbody > tr:last-child td {
     border-bottom-width: 0;
 }
 
-.fc-basicList-view .fc-event {
+.fc-list-view .fc-event {
     width: 10px;
     height: 10px;
     display: inline-block;
 }
 
-.fc-basicList-view .fc-event-handle {
+.fc-list-view .fc-event-handle {
 	width: 38px;
 }
 
-.fc-basicList-view .fc-title {
+.fc-list-view .fc-title {
 	width: 99%;
 }
 
-.fc-basicList-view .fc-time,
-.fc-basicList-view .fc-location {
+.fc-list-view .fc-time,
+.fc-list-view .fc-location {
 	white-space: nowrap;
     width: 1px;
 }
 
-.fc-basicList-view .fc-header-date {
+.fc-list-view .fc-header-date {
     float: right;
     color: #666;
 }
 
-.fc-basicList-view .fc-scroller {
+.fc-list-view .fc-scroller {
     border: 1px solid #ddd;
     border-right: 0;
     border-left: 0;
