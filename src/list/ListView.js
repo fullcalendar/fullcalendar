@@ -49,7 +49,8 @@ $.extend(ListView.prototype, {
 
     renderEvents: function renderListEvents(events) {
 
-        //console.log(events);
+        var noDebug = false;
+        noDebug || console.log(events);
 
         var eventsCopy = events.slice().reverse(); //copy and reverse so we can modify while looping
 
@@ -61,10 +62,10 @@ $.extend(ListView.prototype, {
             .append(this.scrollerEl).children()
             .append('<table style="border: 0; width:100%"></table>').children()
             .append(tbody);
-        
+
         var periodEnd = this.end.clone(); //clone so as to not accidentally modify
 
-        //console.log('Period start: ' + this.start.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + this.end.format("YYYY MM DD HH:mm:ss Z"));
+        noDebug || console.log('Period start: ' + this.start.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + this.end.format("YYYY MM DD HH:mm:ss Z"));
 
         var currentDayStart = this.start.clone();
         while (currentDayStart.isBefore(periodEnd)) {
@@ -72,33 +73,32 @@ $.extend(ListView.prototype, {
             var didAddDayHeader = false;
             var currentDayEnd = currentDayStart.clone().add(1, 'days');
 
-            //console.log('=== this day start: ' + currentDayStart.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
+            noDebug || console.log('=== this day start: ' + currentDayStart.format("YYYY MM DD HH:mm:ss Z") + ', and end: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
 
             //Assume events were ordered descending originally (notice we reversed them)
-            for (var i = eventsCopy.length-1; i >= 0; --i) {
+            for (var i = eventsCopy.length - 1; i >= 0; --i) {
                 var e = eventsCopy[i];
 
                 var eventStart = e.start.clone();
                 var eventEnd = this.calendar.getEventEnd(e);
 
-                /*
-                console.log(e.title);
-                console.log('event index: ' + (events.length-i-1) + ', and in copy: ' + i);
-                console.log('event start: ' + eventStart.format("YYYY MM DD HH:mm:ss Z"));
-                console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss Z"));
-                console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
-                console.log(currentDayEnd.isAfter(eventStart));
-                */
-                
-                if (currentDayStart.isAfter(eventEnd) || currentDayStart.isSame(eventEnd) || periodEnd.isBefore(eventStart)) {
-                    eventsCopy.splice(i, 1);
-                    //console.log("--- Removed the above event");
+                if (!noDebug) {
+                    console.log(e.title);
+                    console.log('event index: ' + (events.length - i - 1) + ', and in copy: ' + i);
+                    console.log('event start: ' + eventStart.format("YYYY MM DD HH:mm:ss Z"));
+                    console.log('event end: ' + this.calendar.getEventEnd(e).format("YYYY MM DD HH:mm:ss Z"));
+                    console.log('currentDayEnd: ' + currentDayEnd.format("YYYY MM DD HH:mm:ss Z"));
+                    console.log(currentDayEnd.isAfter(eventStart));
                 }
-                else if(currentDayEnd.isAfter(eventStart)) {
+
+                if (currentDayStart.isAfter(eventEnd) || (currentDayStart.isSame(eventEnd) && !eventStart.isSame(eventEnd)) || periodEnd.isBefore(eventStart)) {
+                    eventsCopy.splice(i, 1);
+                    noDebug || console.log("--- Removed the above event");
+                } else if (currentDayEnd.isAfter(eventStart)) {
                     //We found an event to display
-                    
-                    //console.log("+++ We added the above event");
-                    
+
+                    noDebug || console.log("+++ We added the above event");
+
                     if (!didAddDayHeader) {
                         tbody.append('\
                                 <tr>\
@@ -116,7 +116,7 @@ $.extend(ListView.prototype, {
                             <td class="fc-event-handle">\
                                 <span class="fc-event"></span>\
                             </td>\
-                            <td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e))  + '</td>\
+                            <td class="fc-time">' + (e.allDay ? this.opt('allDayText') : this.getEventTimeText(e)) + '</td>\
                             <td class="fc-title">' + e.title + '</td>\
                             <td class="fc-location">' + e.location || '' + '</td>\
                         </tr>');
@@ -149,21 +149,21 @@ $.extend(ListView.prototype, {
     setHeight: function(height, isAuto) {
         //only seems to happen at resize
 
-        var diff = this.el.outerHeight()-this.scrollerEl.height();
+        var diff = this.el.outerHeight() - this.scrollerEl.height();
 
-        this.scrollerEl.height(height-diff);
-        
+        this.scrollerEl.height(height - diff);
+
         var contentHeight = 0;
         this.scrollerEl.children().each(function(index, child) {
             contentHeight += $(child).outerHeight();
         });
 
-        
-        if(height-diff > contentHeight)
+
+        if (height - diff > contentHeight)
             this.scrollerEl.css('overflow-y', 'hidden');
         else
             this.scrollerEl.css('overflow-y', 'scroll');
-        
+
     },
 
     getSegs: function() {
