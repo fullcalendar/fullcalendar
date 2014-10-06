@@ -40,7 +40,7 @@ function EventManager(options) { // assumed to be a calendar
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
-	var cache = [];
+	var cache = []; // holds events that have already been expanded
 
 
 	$.each(
@@ -81,24 +81,29 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function fetchEventSource(source, fetchID) {
-		_fetchEventSource(source, function(events) {
+		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
-			var i;
-			var event;
+			var i, eventInput;
+			var abstractEvent;
 
 			if (fetchID == currentFetchID) {
 
-				if (events) {
-					for (i=0; i<events.length; i++) {
-						event = events[i];
+				if (eventInputs) {
+					for (i = 0; i < eventInputs.length; i++) {
+						eventInput = eventInputs[i];
 
-						// event array sources have already been convert to Event Objects
-						if (!isArraySource) {
-							event = buildEvent(event, source);
+						if (isArraySource) { // array sources have already been convert to Event Objects
+							abstractEvent = eventInput;
+						}
+						else {
+							abstractEvent = buildEventFromInput(eventInput, source);
 						}
 
-						if (event) {
-							cache.push(event);
+						if (abstractEvent) { // not false (an invalid event)
+							cache.push.apply(
+								cache,
+								expandEvent(abstractEvent) // add individual expanded events to the cache
+							);
 						}
 					}
 				}
@@ -269,7 +274,7 @@ function EventManager(options) { // assumed to be a calendar
 			if ($.isArray(source.events)) {
 				source.origArray = source.events; // for removeEventSource
 				source.events = $.map(source.events, function(eventInput) {
-					return buildEvent(eventInput, source);
+					return buildEventFromInput(eventInput, source);
 				});
 			}
 
@@ -360,16 +365,26 @@ function EventManager(options) { // assumed to be a calendar
 
 	
 	
-	function renderEvent(eventData, stick) {
-		var event = buildEvent(eventData);
-		if (event) {
-			if (!event.source) {
-				if (stick) {
-					stickySource.events.push(event);
-					event.source = stickySource;
+	function renderEvent(eventInput, stick) {
+		var abstractEvent = buildEventFromInput(eventInput);
+		var events;
+		var i, event;
+
+		if (abstractEvent) { // not false (a valid input)
+			events = expandEvent(abstractEvent);
+
+			for (i = 0; i < events.length; i++) {
+				event = events[i];
+
+				if (!event.source) {
+					if (stick) {
+						stickySource.events.push(event);
+						event.source = stickySource;
+					}
+					cache.push(event);
 				}
-				cache.push(event);
 			}
+
 			reportEvents(cache);
 		}
 	}
@@ -442,48 +457,106 @@ function EventManager(options) { // assumed to be a calendar
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
-	function buildEvent(data, source) { // source may be undefined!
+
+	// Given a raw object with key/value properties, returns an "abstract" Event object.
+	// An "abstract" event is an event that, if recurring, will not have been expanded yet.
+	// Will return `false` when input is invalid.
+	function buildEventFromInput(input, source) {
 		var out = {};
-		var start;
-		var end;
+		var start, end;
 		var allDay;
 		var allDayDefault;
 
 		if (options.eventDataTransform) {
-			data = options.eventDataTransform(data);
+			input = options.eventDataTransform(input);
 		}
 		if (source && source.eventDataTransform) {
-			data = source.eventDataTransform(data);
+			input = source.eventDataTransform(input);
 		}
 
-		start = t.moment(data.start || data.date); // "date" is an alias for "start"
-		if (!start.isValid()) {
-			return;
+		// Copy all properties over to the resulting object.
+		// The special-case properties will be copied over afterwards.
+		$.extend(out, input);
+
+		if (source) {
+			out.source = source;
 		}
 
-		end = null;
-		if (data.end) {
-			end = t.moment(data.end);
-			if (!end.isValid()) {
-				return;
+		out._id = input._id || (input.id === undefined ? '_fc' + eventGUID++ : input.id + '');
+
+		if (input.className) {
+			if (typeof input.className == 'string') {
+				out.className = input.className.split(/\s+/);
 			}
+			else { // assumed to be an array
+				out.className = input.className;
+			}
+		}
+		else {
+			out.className = [];
 		}
 
-		allDay = data.allDay;
-		if (allDay === undefined) {
-			allDayDefault = firstDefined(
-				source ? source.allDayDefault : undefined,
-				options.allDayDefault
-			);
-			if (allDayDefault !== undefined) {
-				// use the default
-				allDay = allDayDefault;
-			}
-			else {
-				// all dates need to have ambig time for the event to be considered allDay
-				allDay = !start.hasTime() && (!end || !end.hasTime());
-			}
+		start = input.start || input.date; // "date" is an alias for "start"
+		end = input.end;
+
+		// parse as a time (Duration) if applicable
+		if (isTimeString(start)) {
+			start = moment.duration(start);
 		}
+		if (isTimeString(end)) {
+			end = moment.duration(end);
+		}
+
+		if (input.dow || moment.isDuration(start) || moment.isDuration(end)) {
+
+			// the event is "abstract" (recurring) so don't calculate exact start/end dates just yet
+			out.start = start ? moment.duration(start) : null; // will be a Duration or null
+			out.end = end ? moment.duration(end) : null; // will be a Duration or null
+			out._recurring = true; // our internal marker
+		}
+		else {
+
+			if (start) {
+				start = t.moment(start);
+				if (!start.isValid()) {
+					return false;
+				}
+			}
+
+			if (end) {
+				end = t.moment(end);
+				if (!end.isValid()) {
+					return false;
+				}
+			}
+
+			allDay = input.allDay;
+			if (allDay === undefined) {
+				allDayDefault = firstDefined(
+					source ? source.allDayDefault : undefined,
+					options.allDayDefault
+				);
+				if (allDayDefault !== undefined) {
+					// use the default
+					allDay = allDayDefault;
+				}
+				else {
+					// if a single date has a time, the event should not be all-day
+					allDay = !start.hasTime() && (!end || !end.hasTime());
+				}
+			}
+
+			assignDatesToEvent(start, end, allDay, out);
+		}
+
+		return out;
+	}
+
+
+	// Normalizes and assigns the given dates to the given partially-formed event object.
+	// Requires an explicit `allDay` boolean parameter.
+	// NOTE: mutates the given start/end moments. does not make an internal copy
+	function assignDatesToEvent(start, end, allDay, event) {
 
 		// normalize the date based on allDay
 		if (allDay) {
@@ -505,39 +578,75 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		// Copy all properties over to the resulting object.
-		// The special-case properties will be copied over afterwards.
-		$.extend(out, data);
+		event.allDay = allDay;
+		event.start = start;
+		event.end = end || null; // ensure null if falsy
 
-		if (source) {
-			out.source = source;
+		if (options.forceEventDuration && !event.end) {
+			event.end = getEventEnd(event);
 		}
 
-		out._id = data._id || (data.id === undefined ? '_fc' + eventGUID++ : data.id + '');
+		backupEventDates(event);
+	}
 
-		if (data.className) {
-			if (typeof data.className == 'string') {
-				out.className = data.className.split(/\s+/);
+
+	// If the given event is a recurring event, break it down into an array of individual instances.
+	// If not a recurring event, return an array with the single original event.
+	function expandEvent(abstractEvent) {
+		var events = [];
+		var dowHash;
+		var dow;
+		var i;
+		var date;
+		var startTime, endTime;
+		var start, end;
+		var event;
+
+		if (abstractEvent._recurring) {
+
+			// make a boolean hash as to whether the event occurs on each day-of-week
+			if ((dow = abstractEvent.dow)) {
+				dowHash = {};
+				for (i = 0; i < dow.length; i++) {
+					dowHash[dow[i]] = true;
+				}
 			}
-			else { // assumed to be an array
-				out.className = data.className;
+
+			// iterate through every day in the current range
+			date = rangeStart.clone().stripTime(); // holds the date of the current day
+			while (date.isBefore(rangeEnd)) {
+
+				if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
+
+					startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
+					endTime = abstractEvent.end; // "
+					start = date.clone();
+					end = null;
+
+					if (startTime) {
+						start = start.time(startTime);
+					}
+					if (endTime) {
+						end = date.clone().time(endTime);
+					}
+
+					event = $.extend({}, abstractEvent); // make a copy of the original
+					assignDatesToEvent(
+						start, end,
+						!startTime && !endTime, // allDay?
+						event
+					);
+					events.push(event);
+				}
+
+				date.add(1, 'days');
 			}
 		}
 		else {
-			out.className = [];
+			events.push(abstractEvent); // return the original event. will be a one-item array
 		}
 
-		out.allDay = allDay;
-		out.start = start;
-		out.end = end;
-
-		if (options.forceEventDuration && !out.end) {
-			out.end = getEventEnd(out);
-		}
-
-		backupEventDates(out);
-
-		return out;
+		return events;
 	}
 
 
