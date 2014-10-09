@@ -49,6 +49,9 @@ var defaults = {
 		'default': generateShortTimeFormat
 	},
 
+	// range separator
+	rangeSeparator: ' \u2014 ',
+
 	displayEventEnd: {
 		month: false,
 		basicWeek: false,

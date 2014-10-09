@@ -33,7 +33,7 @@ $.extend(BasicWeekView.prototype, {
 			this.start,
 			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
 			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
+			this.opt('rangeSeparator')
 		);
 
 		BasicView.prototype.render.call(this, 1, this.getCellsPerWeek(), false); // call the super-method

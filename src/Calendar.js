@@ -214,14 +214,14 @@ function Calendar(element, instanceOptions) {
 
 
 	// Like the vanilla formatRange, but with calendar-specific settings applied.
-	t.formatRange = function(m1, m2, formatStr) {
+	t.formatRange = function(m1, m2, formatStr, separator) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
 			formatStr = formatStr.call(t, options, localeData);
 		}
 
-		return formatRange(m1, m2, formatStr, null, options.isRTL);
+		return formatRange(m1, m2, formatStr, separator, options.isRTL);
 	};
 
 

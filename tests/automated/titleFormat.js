@@ -10,8 +10,8 @@ describe('titleFormat', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: 'June 2014' },
-            { view: 'basicWeek', expected: /Jun 8 - 14,? 2014/ },  // moment changed LL defaults after 2.8
-            { view: 'agendaWeek', expected: /Jun 8 - 14,? 2014/ }, // "
+            { view: 'basicWeek', expected: /Jun 8 — 14,? 2014/ },  // moment changed LL defaults after 2.8
+            { view: 'agendaWeek', expected: /Jun 8 — 14,? 2014/ }, // "
             { view: 'basicDay', expected: /June 12,? 2014/ },      // "
             { view: 'agendaDay', expected: /June 12,? 2014/ }      // "
         ];
@@ -37,8 +37,8 @@ describe('titleFormat', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: '2014, June' },
-            { view: 'basicWeek', expected: '8 - 14 6 2014' },
-            { view: 'agendaWeek', expected: '8 - 14, 6, 2014' },
+            { view: 'basicWeek', expected: '8 — 14 6 2014' },
+            { view: 'agendaWeek', expected: '8 — 14, 6, 2014' },
             { view: 'basicDay', expected: 'Thursday June 12 2014' },
             { view: 'agendaDay', expected: 'Thursday, June, 12, 2014' }
         ];
@@ -71,8 +71,8 @@ describe('titleFormat', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: 'juin 2014' },
-            { view: 'basicWeek', expected: '9 - 15 juin 2014' },
-            { view: 'agendaWeek', expected: '9 - 15 juin 2014' },
+            { view: 'basicWeek', expected: '9 — 15 juin 2014' },
+            { view: 'agendaWeek', expected: '9 — 15 juin 2014' },
             { view: 'basicDay', expected: '12 juin 2014' },
             { view: 'agendaDay', expected: '12 juin 2014' }
         ];
