@@ -48,7 +48,6 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
-    var cache;
     // if useCache is not defined, default to true
     useCache = (typeof useCache !== 'undefined' ? useCache : true);
     if (!useCache || cache === undefined) {
