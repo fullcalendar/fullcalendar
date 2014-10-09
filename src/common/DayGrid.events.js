@@ -54,10 +54,14 @@ $.extend(DayGrid.prototype, {
 	// Returns an array of rowStruct objects (see the bottom of `renderEventRow`).
 	renderEventRows: function(events) {
 		var segs = this.eventsToSegs(events);
-		var annotations = this.annotationsToSegs(this.view.calendar.option('annotations').day);
+		var annotations = [];
 		var rowStructs = [];
 		var segRows;
 		var row;
+
+		if(this.view.name !== 'resourceDay') {
+			annotations = this.annotationsToSegs(this.view.calendar.option('annotations').day);
+		}
 
 		segs = this.renderSegs(segs); // returns a new array with only visible segments
 		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
