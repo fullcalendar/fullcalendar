@@ -522,6 +522,10 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		
 		if (out.resources) {
+			if (typeof out.resources == 'number') {
+				out.resources = [out.resources];
+			}
+
 			if (typeof out.resources == 'string') {
 				out.resources = out.resources.split(/\s+/);
 			}
