@@ -44,12 +44,16 @@ $.extend(TimeGrid.prototype, {
 		var tableEl = $('<table><tr/></table>');
 		var trEl = tableEl.find('tr');
 		var segs = this.eventsToSegs(events);
+		var annotations = this.annotationsToSegs(this.view.calendar.option('annotations').timed);
 		var segCols;
 		var i, seg;
 		var col, colSegs;
 		var containerEl;
 
 		segs = this.renderSegs(segs); // returns only the visible segs
+		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
+
+		segs = segs.concat(annotations);
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
 		this.computeSegVerticals(segs); // compute and assign top/bottom
@@ -212,7 +216,7 @@ $.extend(TimeGrid.prototype, {
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
-			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width 
+			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
 		}
 
 		return props;

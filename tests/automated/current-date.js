@@ -1,12 +1,14 @@
 describe('current date', function() {
 
 	var TITLE_FORMAT = 'MMMM D YYYY';
+	var RANGE_SEPARATOR = ' \u2014 ';
 	var options;
 
 	beforeEach(function() {
 		affix('#cal');
 		options = {
 			titleFormat: TITLE_FORMAT,
+			rangeSeparator: RANGE_SEPARATOR,
 			defaultDate: '2014-06-01'
 		};
 	});
@@ -281,7 +283,8 @@ describe('current date', function() {
 			title = $.fullCalendar.formatRange(
 				start,
 				calculatedEnd.clone().add(-1, 'ms'),
-				TITLE_FORMAT
+				TITLE_FORMAT,
+				RANGE_SEPARATOR
 			);
 		}
 		expect($('.fc-toolbar h2')).toContainText(title);

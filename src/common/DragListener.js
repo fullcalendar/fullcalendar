@@ -173,7 +173,7 @@ DragListener.prototype = {
 	},
 
 
-	// Called when a the mouse has just moved over a new cell
+	// Called when the mouse has just moved over a new cell
 	cellOver: function(cell) {
 		this.cell = cell;
 		this.date = cell.date;

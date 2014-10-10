@@ -114,9 +114,10 @@ describe('formatRange', function() {
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
 				isRTL: true,
-				titleFormat: 'MMMM Do YYYY'
+				titleFormat: 'MMMM Do YYYY',
+				rangeSeparator: ' \u2014 '
 			});
-			expect($('.fc-toolbar h2')).toHaveText('May 24th - 18th 2014');
+			expect($('.fc-toolbar h2')).toHaveText('May 24th — 18th 2014');
 		});
 
 	});
@@ -129,9 +130,10 @@ describe('formatRange', function() {
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
 				lang: 'fr',
-				titleFormat: 'dddd MMMM D YYYY'
+				titleFormat: 'dddd MMMM D YYYY',
+				rangeSeparator: ' \u2014 '
 			});
-			expect($('.fc-toolbar h2')).toHaveText('lundi mai 19 - dimanche mai 25 2014');
+			expect($('.fc-toolbar h2')).toHaveText('lundi mai 19 — dimanche mai 25 2014');
 		});
 
 	});
@@ -140,9 +142,10 @@ describe('formatRange', function() {
 		var s = $.fullCalendar.formatRange(
 			moment.utc('2014-01-01'),
 			moment.utc('2015-01-01'),
-			'MMMM Do YYYY'
+			'MMMM Do YYYY',
+			' \u2014 '
 		);
-		expect(s).toEqual('January 1st 2014 - January 1st 2015');
+		expect(s).toEqual('January 1st 2014 — January 1st 2015');
 	});
 
 });
