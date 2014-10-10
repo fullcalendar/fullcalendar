@@ -96,6 +96,8 @@ var defaults = {
 	
 	dropAccept: '*',
 
+	annotations: [],
+
 	eventLimit: false,
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',

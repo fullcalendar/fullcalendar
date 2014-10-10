@@ -527,6 +527,14 @@ function EventManager(options) { // assumed to be a calendar
 			out.className = [];
 		}
 
+		if (out.resources) {
+			if (typeof out.resources == 'string') {
+				out.resources = out.resources.split(/\s+/);
+			}
+		}else{
+			out.resources = [];
+		}
+
 		out.allDay = allDay;
 		out.start = start;
 		out.end = end;

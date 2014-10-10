@@ -31,7 +31,32 @@ function Calendar(element, instanceOptions) {
 	}
 
 
-	
+	if (options.annotations) { // prepare annotations object
+    var annotations = {day: [], timed: []};
+
+		// separate the annotations into all-day and timed
+		for (i = 0; i < options.annotations.length; i++) {
+      var annotation = options.annotations[i];
+
+      if(annotation.start) {
+        annotation.start = jQuery.fullCalendar.moment(annotation.start);
+      }
+
+      if(annotation.end) {
+        annotation.end = jQuery.fullCalendar.moment(annotation.end);
+      }
+
+			if (annotation.allDay) {
+				annotations.day.push(annotation);
+			} else {
+				annotations.timed.push(annotation);
+			}
+		}
+
+		options.annotations = annotations;
+	}
+
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -243,6 +268,7 @@ function Calendar(element, instanceOptions) {
 
 
 	EventManager.call(t, options);
+	ResourceManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
 
@@ -357,6 +383,12 @@ function Calendar(element, instanceOptions) {
 	// Renders a view because of a date change, view-type change, or for the first time
 	function renderView(delta, viewName) {
 		ignoreWindowResize++;
+
+		// if forcing the rendering, pretend we are changing the view
+		if (delta === true) {
+			viewName = viewName || currentView.name;
+			currentView.name = delta = undefined;
+		}
 
 		// if viewName is changing, destroy the old view
 		if (currentView && viewName && currentView.name !== viewName) {

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <link href='../dist/fullcalendar.css' rel='stylesheet'/>
+  <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print'/>
+  <style type="text/css">
+    body {
+      margin: 5px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 20px;
+      background-color: #ffffff;
+    }
+
+    form {
+      background-color: #444;
+      color: #fff;
+      width: 500px;
+      margin: auto;
+      white-space: pre-line;
+      padding: 15px 30px;
+    }
+
+    input {
+      cursor: pointer;
+    }
+
+    .red {
+      background-color: rgb(255, 190, 190);
+    }
+
+    .blue {
+      background-color: rgb(190, 190, 255);
+    }
+
+  </style>
+  <link rel="stylesheet/less" type="text/css" href="resource-fixed-views.less" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.5/less.min.js"></script>
+  <script src='../lib/moment/moment.js'></script>
+  <script src='../lib/jquery/dist/jquery.js'></script>
+  <script src='../dist/fullcalendar.js'></script>
+  <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar.min.css" />
+  <script src='vendor/perfect-scrollbar.min.js'></script>
+  <script>
+
+    $(document).ready(function () {
+      var element = $('#calendar');
+
+      var date = new Date();
+      var d = date.getDate();
+      var m = date.getMonth();
+      var y = date.getFullYear();
+
+      element.fullCalendar({
+        contentHeight: 400,
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay,resourceDay'
+        },
+        defaultView: 'resourceDay',
+        editable: true,
+        droppable: true,
+        resources: [
+          {
+            'id': 'resource1',
+            'name': 'Resource 1'
+          },
+          {
+            'id': 'resource2',
+            'name': 'Resource 2'
+          },
+          {
+            'id': 'resource3',
+            'name': 'Resource 3',
+            'className': ['red']
+          },
+          {
+            'id': 'resource4',
+            'name': 'Resource 4',
+            'className': ['blue']
+          },
+          {
+            'id': 'resource5',
+            'name': 'Resource 5',
+            'className': ['red']
+          },
+          {
+            'id': 'resource6',
+            'name': 'Resource 6',
+            'className': ['red']
+          },
+          {
+            'id': 'resource7',
+            'name': 'Resource 7',
+            'className': ['red']
+          },
+          {
+            'id': 'resource8',
+            'name': 'Resource 8',
+            'className': ['red']
+          },
+          {
+            'id': 'resource9',
+            'name': 'Resource 9',
+            'className': ['red']
+          }
+        ],
+        resourceFilter: function (resource) {
+          var active = $("input").map(function(){
+            return this.checked ? this.name : null;
+          }).get();
+          return $.inArray(resource.id, active) > -1;
+        },
+        events: [
+          {
+            title: 'R1-R2: Lunch 12.15-14.45',
+            start: new Date(y, m, d, 12, 15),
+            end: new Date(y, m, d, 14, 45),
+            allDay: false,
+            resources: ['resource1', 'resource2']
+          },
+          {
+            title: 'R1: All day',
+            start: new Date(y, m, d, 10, 30),
+            end: new Date(y, m, d, 11, 0),
+            allDay: true,
+            resources: 'resource1'
+          },
+          {
+            title: 'R2: Meeting 11.00',
+            start: new Date(y, m, d, 11, 0),
+            allDay: true,
+            resources: 'resource2'
+          },
+          {
+            title: 'R1/R2: Lunch 12-14',
+            start: new Date(y, m, d, 12, 0),
+            end: new Date(y, m, d, 14, 0),
+            allDay: false,
+            resources: ['resource1', 'resource2']
+          },
+          {
+            id: 777,
+            title: 'R1: Lunch',
+            start: new Date(y, m, d, 12, 0),
+            end: new Date(y, m, d, 14, 0),
+            allDay: false,
+            resources: ['resource1']
+          },
+          {
+            title: 'R3: Breakfast',
+            start: new Date(y, m, d, 8, 0),
+            end: new Date(y, m, d, 8, 30),
+            allDay: false,
+            resources: ['resource3']
+          },
+          {
+            id: 999,
+            title: 'Repeating Event',
+            start: new Date(y, m, d - 3, 16, 0),
+            allDay: false,
+            resources: 'resource2'
+          },
+          {
+            id: 999,
+            title: 'Repeating Event',
+            start: new Date(y, m, d + 4, 16, 0),
+            allDay: false,
+            resources: 'resource2'
+          }
+        ],
+        selectable: true,
+        selectHelper: true,
+        eventAfterAllRender: function(){
+          resize();
+        }
+      });
+
+      function resize(option) {
+        var individualSize = 170;
+        var width = Math.max(element.width(), individualSize * $('.fc-day-header').length);
+        $('.fc-view').width(width);
+        $('.fc-scroller').perfectScrollbar(option);
+        $('.fc-view-container')
+          .perfectScrollbar(option)
+          .scroll(function () {
+            // for the left column
+            var scrollLeft = $(this).scrollLeft()-1;
+            $(this).find('.fc-slats .fc-axis').css('left', scrollLeft);
+          })
+          .scroll(function () {
+            // for the vertical scrollbar
+            var scrollbar = $('.fc-scroller .ps-scrollbar-y-rail');
+            var scrollLeft = Math.min( $(this).scrollLeft() + $(this).width(), $(this).children('.fc-view').width());
+            scrollbar.css('left', scrollLeft -(scrollbar.outerWidth()+2));
+          })
+          .triggerHandler('scroll');
+      }
+
+
+      $('input:checkbox').change(function(){
+        element.fullCalendar('render', true);
+      });
+    });
+
+  </script>
+  <style>
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+      font-size: 14px;
+    }
+
+    #calendar {
+      width: 900px;
+      margin: 40px auto;
+    }
+
+  </style>
+</head>
+<body>
+<form>Select the resources you wanna filter:
+
+  <input name="resource1" type="checkbox" checked /> Resource 1
+  <input name="resource2" type="checkbox" checked /> Resource 2
+  <input name="resource3" type="checkbox" checked /> Resource 3
+  <input name="resource4" type="checkbox" checked /> Resource 4
+  <input name="resource5" type="checkbox" checked /> Resource 5
+  <input name="resource6" type="checkbox" /> Resource 6
+  <input name="resource7" type="checkbox" /> Resource 7
+  <input name="resource8" type="checkbox" /> Resource 8
+  <input name="resource9" type="checkbox" checked /> Resource 9
+</form>
+<div id='calendar'></div>
+
+</body>
+</html>

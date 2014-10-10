@@ -19,6 +19,7 @@
         "src/Calendar.js",
         "src/Header.js",
         "src/EventManager.js",
+        "src/ResourceManager.js",
         "src/util.js",
         "src/moment-ext.js",
         "src/date-formatting.js",
@@ -29,6 +30,7 @@
         "src/common/RowRenderer.js",
         "src/common/Grid.js",
         "src/common/Grid.events.js",
+        "src/common/Grid.annotations.js",
         "src/common/DayGrid.js",
         "src/common/DayGrid.events.js",
         "src/common/DayGrid.limit.js",
@@ -42,6 +44,8 @@
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",
         "src/agenda/AgendaDayView.js",
+        "src/resource/ResourceView.js",
+        "src/resource/ResourceDayView.js",
         "src/outro.js"
       ],
       "styles": [
