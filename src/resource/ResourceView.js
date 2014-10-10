@@ -36,7 +36,7 @@ $.extend(ResourceView.prototype, {
 
 		return '' +
 			'<th class="'+ classes.join(' ') +'">' +
-			((resource) ? htmlEscape(resource.name) : '') +
+			((resource) ? resource.name : '') +
 			'</th>';
 	}
 

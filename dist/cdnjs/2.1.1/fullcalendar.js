@@ -65,6 +65,9 @@ var defaults = {
 		'default': generateShortTimeFormat
 	},
 
+	// range separator
+	rangeSeparator: ' \u2014 ',
+
 	displayEventEnd: {
 		month: false,
 		basicWeek: false,
@@ -360,21 +363,22 @@ function Calendar(element, instanceOptions) {
 		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
 	}
 
-
 	if (options.annotations) { // prepare annotations object
-    var annotations = {day: [], timed: []};
+		
+		var annotations = { day: [], timed: [] };
 
 		// separate the annotations into all-day and timed
-		for (i = 0; i < options.annotations.length; i++) {
-      var annotation = options.annotations[i];
+		for (var i = 0; i < options.annotations.length; i++) {
+		
+			var annotation = options.annotations[i];
 
-      if(annotation.start) {
-        annotation.start = jQuery.fullCalendar.moment(annotation.start);
-      }
+			if(annotation.start) {
+				annotation.start = jQuery.fullCalendar.moment(annotation.start);
+			}
 
-      if(annotation.end) {
-        annotation.end = jQuery.fullCalendar.moment(annotation.end);
-      }
+			if(annotation.end) {
+				annotation.end = jQuery.fullCalendar.moment(annotation.end);
+			}
 
 			if (annotation.allDay) {
 				annotations.day.push(annotation);
@@ -569,14 +573,14 @@ function Calendar(element, instanceOptions) {
 
 
 	// Like the vanilla formatRange, but with calendar-specific settings applied.
-	t.formatRange = function(m1, m2, formatStr) {
+	t.formatRange = function(m1, m2, formatStr, separator) {
 
 		// a function that returns a formatStr // TODO: in future, precompute this
 		if (typeof formatStr === 'function') {
 			formatStr = formatStr.call(t, options, localeData);
 		}
 
-		return formatRange(m1, m2, formatStr, null, options.isRTL);
+		return formatRange(m1, m2, formatStr, separator, options.isRTL);
 	};
 
 
@@ -5146,7 +5150,7 @@ function compareSegs(seg1, seg2) {
 	var data1 = seg1.event || seg1.annotation;
 	var data2 = seg2.event || seg2.annotation;
 
-	return (!!seg2.annotation - !!seg1.annotation) // annotations always go first
+	return (!!seg2.annotation - !!seg1.annotation) || // annotations always go first
 		seg1.eventStartMS - seg2.eventStartMS || // tie? earlier events go first
 		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
 		data2.allDay - data1.allDay || // tie? put all-day events first (booleans cast to 0/1)
@@ -5201,7 +5205,6 @@ $.extend(Grid.prototype, {
 
 	// Renders a `el` property for each seg, and only returns segments that successfully rendered
 	renderAnnotations: function(annotations, disableResizing) {
-		var view = this.view;
 		var html = '';
 		var renderedAnns = [];
 		var i;
@@ -8338,7 +8341,7 @@ $.extend(BasicWeekView.prototype, {
 			this.start,
 			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
 			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
+			this.opt('rangeSeparator')
 		);
 
 		BasicView.prototype.render.call(this, 1, this.getCellsPerWeek(), false); // call the super-method
@@ -8849,7 +8852,7 @@ $.extend(AgendaWeekView.prototype, {
 			this.start,
 			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
 			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
+			this.opt('rangeSeparator')
 		);
 
 		AgendaView.prototype.render.call(this, this.getCellsPerWeek()); // call the super-method
@@ -8933,7 +8936,7 @@ $.extend(ResourceView.prototype, {
 
 		return '' +
 			'<th class="'+ classes.join(' ') +'">' +
-			((resource) ? htmlEscape(resource.name) : '') +
+			((resource) ? resource.name : '') +
 			'</th>';
 	}
 
