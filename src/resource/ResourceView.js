@@ -21,6 +21,16 @@ $.extend(ResourceView.prototype, {
 		}).length;
 	},
 
+	// Called when a new selection is made. Updates internal state and triggers handlers.
+	reportSelection: function(start, end, ev, resources) {
+		this.isSelected = true;
+
+		this.calendar.trigger.apply(
+			this.calendar, ['select', this, start, end, ev, this, resources]
+		);
+
+	},
+
 	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
 	headCellHtml: function(row, col, date) {
 		var resource = this.resources()[col];

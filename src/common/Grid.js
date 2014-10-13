@@ -133,8 +133,14 @@ $.extend(Grid.prototype, {
 						view.trigger('dayClick', dayEl[0], start, ev);
 					}
 					if (isSelectable) {
+						var resources;
+						if(view.name === 'resourceDay') {
+							resources = $.map(dayEl, function(column) {
+								return view.resources()[ $(column).index()-1 ].id;
+							});
+						}
 						// the selection will already have been rendered. just report it
-						view.reportSelection(start, end, ev);
+						view.reportSelection(start, end, ev, resources);
 					}
 				}
 			}

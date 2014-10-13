@@ -61,6 +61,9 @@
         defaultView: 'resourceDay',
         editable: true,
         droppable: true,
+        select: function(start, end, jsEvent, view, resources) {
+          console.log('event from '+ start +' to '+ end +' selected with resources '+ JSON.stringify(resources));
+        },
         resources: [
           {
             'id': 'resource1',
@@ -149,10 +152,6 @@
         // the ev.data is the resource column clicked upon
         selectable: true,
         selectHelper: true,
-        select: function (start, end, ev) {
-          console.log(start);
-          console.log(end);
-        },
         eventClick: function (event) {
           console.log(event);
         },
