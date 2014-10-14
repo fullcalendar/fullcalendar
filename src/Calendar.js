@@ -30,12 +30,11 @@ function Calendar(element, instanceOptions) {
 		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
 	}
 
-
 	if (options.annotations) { // prepare annotations object
-    var annotations = {day: [], timed: []};
+		var annotations = { day: [], timed: [] };
 
 		// separate the annotations into all-day and timed
-		for (i = 0; i < options.annotations.length; i++) {
+		for (var i = 0; i < options.annotations.length; i++) {
       var annotation = options.annotations[i];
 
       if(annotation.start) {

@@ -45,7 +45,6 @@ $.extend(Grid.prototype, {
 
 	// Renders a `el` property for each seg, and only returns segments that successfully rendered
 	renderAnnotations: function(annotations, disableResizing) {
-		var view = this.view;
 		var html = '';
 		var renderedAnns = [];
 		var i;
