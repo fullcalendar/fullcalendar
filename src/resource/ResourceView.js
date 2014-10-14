@@ -16,6 +16,10 @@ $.extend(ResourceView.prototype, {
 	},
 
 	hasResource: function(event, resource) {
+		if(this.opt('hasResource')) {
+			return this.opt('hasResource').apply(this, arguments);
+		}
+		
 		return event.resources && $.grep(event.resources, function(id) {
 			return id == resource.id;
 		}).length;
