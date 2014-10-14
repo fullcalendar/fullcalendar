@@ -314,6 +314,14 @@ $.extend(Grid.prototype, {
 			classes.push('fc-future');
 		}
 
+		var annotations = this.view.calendar.option('annotations').day;
+		for(var i=0; i < annotations.length; i++) {
+			var ann = annotations[i];
+			if(ann.cls && ann.start.isSame(date, "day")) {
+				classes.push(ann.cls);
+			}
+		}
+
 		return classes;
 	}
 
