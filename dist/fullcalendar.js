@@ -7558,6 +7558,8 @@ function ResourceEventRenderer() {
 				trigger('eventDragStop', eventElement[0], event, ev, ui);
 
 				if (isInBounds && (isAllDay || resourceDelta || snapDelta)) { // changed!
+					var targetResources = event.resources.slice(0);
+
 					if (resourceDelta){
 						// given we have r1/r3 
 						// if we move r3 to r2, then we want to maintain r1/r2.
@@ -7568,16 +7570,17 @@ function ResourceEventRenderer() {
 
 						var oldIndex = event.resources.indexOf(oldId);
 						var newIndex = event.resources.indexOf(newId);
+
 						if (newIndex > -1) {
-							event.resources.splice(oldIndex, 1);
+							targetResources.splice(oldIndex, 1);
 						} else {
-							event.resources[oldIndex] = newId;
+							targetResources[oldIndex] = newId;
 						}
 					}
 					eventDrop(
 						eventElement[0],
 						event,
-						event.resources,
+						targetResources,
 						eventStart,
 						ev,
 						ui
