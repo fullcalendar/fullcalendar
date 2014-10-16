@@ -48,7 +48,6 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
-    var cache;
     // if useCache is not defined, default to true
     useCache = (typeof useCache !== 'undefined' ? useCache : true);
     if (!useCache || cache === undefined) {
@@ -136,7 +135,7 @@ function ResourceManager(options) {
   }
 
   /* Event Modification Math
-   -----------------------------------------------------------------------------------------*/
+  -----------------------------------------------------------------------------------------*/
 
 
   // Modify the date(s) of an event and make this change propagate to all other events with
