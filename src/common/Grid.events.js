@@ -188,6 +188,7 @@ $.extend(Grid.prototype, {
 		var el = seg.el;
 		var event = seg.event;
 		var newStart, newEnd;
+		var originalResources;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -210,6 +211,7 @@ $.extend(Grid.prototype, {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isDraggingSeg = true;
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
+				originalResources = event.resources && event.resources.slice(); // copy the resources;
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
@@ -217,6 +219,10 @@ $.extend(Grid.prototype, {
 				var res = _this.computeDraggedEventDates(seg, origDate, date);
 				newStart = res.start;
 				newEnd = res.end;
+
+				if (view.name === 'resourceDay') {
+					event.resources = [view.resources()[cell.col].id];
+				}
 
 				if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
 					mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
@@ -232,6 +238,12 @@ $.extend(Grid.prototype, {
 			},
 			dragStop: function(ev) {
 				var hasChanged = newStart && !newStart.isSame(event.start);
+
+				if (view.name === 'resourceDay') {
+					var sameResources = $(originalResources).not(event.resources).length === 0 &&
+							$(event.resources).not(originalResources).length === 0;
+					hasChanged = hasChanged || !sameResources;
+				}
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!hasChanged, function() {
