@@ -1,4 +1,9 @@
 # FullCalendar
+This fork is fullcalendar version 2.1.1 with support of Persian Jalali calendar.
+Everything is like fullcalendar mainline but:
+  - For persian jalali calendar to be enabled you have to just use "lang:'persianJalali'" in your fullcalendar object definition. It is added by me and it is not in mainline of fullcalendar development yet. and it has no interfere with any other fullcalendar configuration object.
+  - Becareful of using "lang:fa" because it does not convert fullcalendar to Jalali format, it just translates default fullcalendar to persian language as it does before.
+  - I used "viewRender" and "eventAfterAllRender" fullcalendar object elements for this conversion so PLEASE BE CAREFUL FOR OVERRIDING THEM.
 
 A full-sized drag & drop event calendar (jQuery plugin).
 
