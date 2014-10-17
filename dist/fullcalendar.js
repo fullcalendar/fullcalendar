@@ -37,9 +37,9 @@ var defaults = {
 
 	weekNumberTitle: 'W',
 	weekNumberCalculation: 'local',
-	
+
 	//editable: false,
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
@@ -49,7 +49,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
-	
+
 	// time formats
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
@@ -70,7 +70,7 @@ var defaults = {
 		basicWeek: false,
 		'default': true
 	},
-	
+
 	// locale
 	isRTL: false,
 	defaultButtonText: {
@@ -90,7 +90,7 @@ var defaults = {
 		prevYear: 'left-double-arrow',
 		nextYear: 'right-double-arrow'
 	},
-	
+
 	// jquery-ui theming
 	theme: false,
 	themeButtonIcons: {
@@ -103,22 +103,152 @@ var defaults = {
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,
-	
+
 	//selectable: false,
 	unselectAuto: true,
-	
+
 	dropAccept: '*',
 
 	eventLimit: false,
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
 	dayPopoverFormat: 'LL',
-	
+
 	handleWindowResize: true,
 	windowResizeDelay: 200 // milliseconds before a rerender happens
-	
-};
 
+};
+persianCalConf = { //added for persian calendar
+    timeFormat: 'H(:mm)',
+    buttonText:{
+        today: 'امروز',
+        month: 'ماه',
+        week: 'هفته',
+        day: 'روز'
+    },
+    monthNames: ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+    monthNamesShort: ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+    dayNames: ['یکشنبه','دوشنبه','سه شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],
+    dayNamesShort: ['ی','د','س','چ','پ','ج','ش'],
+    viewRender: function(view,element)
+    {
+        if (view.name == "month")
+        {
+            persianYearTitle=null;
+            element.find("th.fc-day-header").each(function ()
+                {
+                    if($(this).text() == "Sat")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[6]);
+                    }
+                    else if($(this).text() == "Fri")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[5]);
+                    }
+                    else if($(this).text() == "Thu")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[4]);
+                    }
+                    else if($(this).text() == "Wed")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[3]);
+                    }
+                    else if($(this).text() == "Tue")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[2]);
+                    }
+                    else if($(this).text() == "Mon")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[1]);
+                    }
+                    else if($(this).text() == "Sun")
+                    {
+                        $(this).text(persianCalConf.dayNamesShort[0]);
+                    }
+                }
+            );
+            element.find("td[data-date]").each(function(){
+                    var jalalidate = GetJalaliDateFromStr($(this).attr("data-date"));
+                    if( !$(this).hasClass('fc-other-month') && persianYearTitle == null)
+                    {
+                        var currentcalendaryear = parseInt(jalalidate.split("-")[0]);
+                        var currentcalendarmonth = parseInt(jalalidate.split("-")[1]);
+                        persianYearTitle= persianCalConf.monthNames[currentcalendarmonth-1]+" "+currentcalendaryear;
+                    }
+                    if (parseInt(jalalidate.split("-")[0]) > 1300)
+                    {
+                          $(this).attr("data-date",jalalidate);
+                        if ($(this).hasClass("fc-day-number"))
+                        {
+                            $(this).text(parseInt(jalalidate.split("-")[2]));
+                        }
+                    }
+                });
+        }
+        else if(view.name == "agendaWeek")
+        {
+            var weekdays=[];
+            var i=0;
+            element.find('div.fc-time-grid td.fc-day[data-date]').each(function()
+                {
+                    var jalalidate = GetJalaliDateFromStr($(this).attr("data-date"));
+                    weekdays[i] = parseInt(jalalidate.split("-")[1])+"/"+parseInt(jalalidate.split("-")[2]);
+                    i++;
+                }
+            );
+            i=0;
+            element.find('td.fc-widget-header th.fc-day-header').each(function()
+                {
+                    if($(this).hasClass("fc-sat"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[6]);
+                    }
+                    else if($(this).hasClass("fc-sun"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[0]);
+                    }
+                    else if($(this).hasClass("fc-mon"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[1]);
+                    }
+                    else if($(this).hasClass("fc-tue"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[2]);
+                    }
+                    else if($(this).hasClass("fc-wed"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[3]);
+                    }
+                    else if($(this).hasClass("fc-thu"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[4]);
+                    }
+                    else if($(this).hasClass("fc-fri"))
+                    {
+                        $(this).text(weekdays[i]+" "+persianCalConf.dayNamesShort[5]);
+                    }
+
+                    i++;
+                }
+            );
+        }
+        else if(view.name == "agendaDay")
+        {
+            var currentdate = element.find('div.fc-time-grid td.fc-day[data-date]').attr("data-date");
+            var jalalidate = GetJalaliDateFromStr(currentdate);
+            var currentcalendaryear = parseInt(jalalidate.split("-")[0]);
+            var currentcalendarmonth = parseInt(jalalidate.split("-")[1]);
+            var currentcalendarday = parseInt(jalalidate.split("-")[2]);
+            persianYearTitle= currentcalendarday+" "+persianCalConf.monthNames[currentcalendarmonth-1]+" "+currentcalendaryear;
+
+        }
+
+    },
+    eventAfterAllRender: function(view)
+    {
+        $('div.fc-toolbar div.fc-center h2').text(persianYearTitle);
+    }
+}
 
 function generateShortTimeFormat(options, langData) {
 	return langData.longDateFormat('LT')
@@ -177,6 +307,45 @@ var rtlDefaults = {
 var fc = $.fullCalendar = { version: "2.1.1" };
 var fcViews = fc.views = {};
 
+function GetJalaliDateFromStr(StrDate)
+{
+    if (true)
+    {
+        //persianDate().format();
+        var datetime=StrDate.split(' ');
+        if (datetime.length >= 1)
+        {
+            var date = datetime[0].split('-');
+            if (datetime.length == 2)
+            {
+                var time = datetime[1].split(':');
+                var timestampday = new Date(date[0],parseInt(date[1])-1,date[2],time[0],time[1],time[2]);
+                var StrDate = persianDate(timestampday);
+                var pmonth = (StrDate.month().toString().length < 2 ?  "0"+StrDate.month() : StrDate.month() );
+                var pdate = (StrDate.date().toString().length < 2 ?  "0"+StrDate.date() : StrDate.date() );
+                var phour = (StrDate.hour().toString().length < 2 ?  "0"+StrDate.hour() : StrDate.hour() );
+                var pminute = (StrDate.minute().toString().length < 2 ?  "0"+StrDate.minute() : StrDate.minute() );
+                var psecond = (StrDate.second().toString().length < 2 ?  "0"+StrDate.second() : StrDate.second() );
+                StrDate = StrDate.year()+"-"+pmonth+"-"+pdate+" "+phour+":"+pminute+":"+psecond;
+
+            }
+            else
+            {
+                var timestampday = new Date(date[0],parseInt(date[1])-1,date[2]);
+                var StrDate = persianDate(timestampday);
+                var pmonth = (StrDate.month().toString().length < 2 ?  "0"+StrDate.month() : StrDate.month() );
+                var pdate = (StrDate.date().toString().length < 2 ?  "0"+StrDate.date() : StrDate.date() );
+                StrDate = StrDate.year()+"-"+pmonth+"-"+pdate;
+
+            }
+        }
+        return StrDate;
+    }
+    else
+    {
+        return StrDate;
+    }
+}
 
 $.fn.fullCalendar = function(options) {
 	var args = Array.prototype.slice.call(arguments, 1); // for a possible method call
@@ -201,13 +370,18 @@ $.fn.fullCalendar = function(options) {
 		}
 		// a new calendar initialization
 		else if (!calendar) { // don't initialize twice
+            if (options.lang == "persianJalali")
+            {
+                $.extend(true,persianCalConf,options);
+                $.extend(true,options,persianCalConf);
+            }
 			calendar = new Calendar(element, options);
 			element.data('fullCalendar', calendar);
 			calendar.render();
 		}
 	});
-	
-	return res;
+
+    return res;
 };
 
 
@@ -327,7 +501,7 @@ fc.lang = function(langCode, options) {
 };
 ;;
 
- 
+
 function Calendar(element, instanceOptions) {
 	var t = this;
 
@@ -359,7 +533,7 @@ function Calendar(element, instanceOptions) {
 	}
 
 
-	
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -565,7 +739,7 @@ function Calendar(element, instanceOptions) {
 	};
 
 
-	
+
 	// Imports
 	// -----------------------------------------------------------------------------------
 
@@ -591,9 +765,9 @@ function Calendar(element, instanceOptions) {
 	var ignoreWindowResize = 0;
 	var date;
 	var events = [];
-	
-	
-	
+
+
+
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
 
@@ -604,8 +778,8 @@ function Calendar(element, instanceOptions) {
 	else {
 		date = t.getNow();
 	}
-	
-	
+
+
 	function render(inc) {
 		if (!content) {
 			initialRender();
@@ -616,8 +790,8 @@ function Calendar(element, instanceOptions) {
 			renderView(inc);
 		}
 	}
-	
-	
+
+
 	function initialRender() {
 		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
@@ -651,8 +825,8 @@ function Calendar(element, instanceOptions) {
 			$(window).resize(windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function destroy() {
 
 		if (currentView) {
@@ -665,13 +839,13 @@ function Calendar(element, instanceOptions) {
 
 		$(window).unbind('resize', windowResizeProxy);
 	}
-	
-	
+
+
 	function elementVisible() {
 		return element.is(':visible');
 	}
-	
-	
+
+
 
 	// View Rendering
 	// -----------------------------------------------------------------------------------
@@ -738,8 +912,8 @@ function Calendar(element, instanceOptions) {
 		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
 		ignoreWindowResize--;
 	}
-	
-	
+
+
 
 	// Resizing
 	// -----------------------------------------------------------------------------------
@@ -756,8 +930,8 @@ function Calendar(element, instanceOptions) {
 	t.isHeightAuto = function() {
 		return options.contentHeight === 'auto' || options.height === 'auto';
 	};
-	
-	
+
+
 	function updateSize(shouldRecalc) {
 		if (elementVisible()) {
 
@@ -779,8 +953,8 @@ function Calendar(element, instanceOptions) {
 			_calcSize();
 		}
 	}
-	
-	
+
+
 	function _calcSize() { // assumes elementVisible
 		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
 			suggestedViewHeight = options.contentHeight;
@@ -792,8 +966,8 @@ function Calendar(element, instanceOptions) {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 		}
 	}
-	
-	
+
+
 	function windowResize(ev) {
 		if (
 			!ignoreWindowResize &&
@@ -805,9 +979,9 @@ function Calendar(element, instanceOptions) {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
@@ -834,7 +1008,7 @@ function Calendar(element, instanceOptions) {
 		currentView.destroyEvents();
 		unfreezeContentHeight();
 	}
-	
+
 
 	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
@@ -852,7 +1026,7 @@ function Calendar(element, instanceOptions) {
 			// ... which will call renderEvents
 	}
 
-	
+
 	// called when event data arrives
 	function reportEvents(_events) {
 		events = _events;
@@ -885,12 +1059,12 @@ function Calendar(element, instanceOptions) {
 			header.enableButton('today');
 		}
 	}
-	
+
 
 
 	/* Selection
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function select(start, end) {
 
@@ -907,54 +1081,54 @@ function Calendar(element, instanceOptions) {
 
 		currentView.select(start, end);
 	}
-	
+
 
 	function unselect() { // safe to be called before renderView
 		if (currentView) {
 			currentView.unselect();
 		}
 	}
-	
-	
-	
+
+
+
 	/* Date
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function prev() {
 		renderView(-1);
 	}
-	
-	
+
+
 	function next() {
 		renderView(1);
 	}
-	
-	
+
+
 	function prevYear() {
 		date.add(-1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function nextYear() {
 		date.add(1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function today() {
 		date = t.getNow();
 		renderView();
 	}
-	
-	
+
+
 	function gotoDate(dateInput) {
 		date = t.moment(dateInput);
 		renderView();
 	}
-	
-	
+
+
 	function incrementDate(delta) {
 		date.add(moment.duration(delta));
 		renderView();
@@ -985,8 +1159,8 @@ function Calendar(element, instanceOptions) {
 		date = newDate;
 		changeView(viewName);
 	}
-	
-	
+
+
 	function getDate() {
 		return date.clone();
 	}
@@ -1013,23 +1187,23 @@ function Calendar(element, instanceOptions) {
 			overflow: ''
 		});
 	}
-	
-	
-	
+
+
+
 	/* Misc
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function getCalendar() {
 		return t;
 	}
 
-	
+
 	function getView() {
 		return currentView;
 	}
-	
-	
+
+
 	function option(name, value) {
 		if (value === undefined) {
 			return options[name];
@@ -1039,8 +1213,8 @@ function Calendar(element, instanceOptions) {
 			updateSize(true); // true = allow recalculation of height
 		}
 	}
-	
-	
+
+
 	function trigger(name, thisObj) {
 		if (options[name]) {
 			return options[name].apply(
@@ -1060,7 +1234,7 @@ function Calendar(element, instanceOptions) {
 
 function Header(calendar, options) {
 	var t = this;
-	
+
 	// exports
 	t.render = render;
 	t.destroy = destroy;
@@ -1070,7 +1244,7 @@ function Header(calendar, options) {
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
 	t.getViewsWithButtons = getViewsWithButtons;
-	
+
 	// locals
 	var el = $();
 	var viewsWithButtons = [];
@@ -1092,13 +1266,13 @@ function Header(calendar, options) {
 			return el;
 		}
 	}
-	
-	
+
+
 	function destroy() {
 		el.remove();
 	}
-	
-	
+
+
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = options.header[position];
@@ -1239,32 +1413,32 @@ function Header(calendar, options) {
 
 		return sectionEl;
 	}
-	
-	
+
+
 	function updateTitle(text) {
 		el.find('h2').text(text);
 	}
-	
-	
+
+
 	function activateButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.addClass(tm + '-state-active');
 	}
-	
-	
+
+
 	function deactivateButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.removeClass(tm + '-state-active');
 	}
-	
-	
+
+
 	function disableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.attr('disabled', 'disabled')
 			.addClass(tm + '-state-disabled');
 	}
-	
-	
+
+
 	function enableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.removeAttr('disabled')
@@ -1293,8 +1467,8 @@ var eventGUID = 1;
 
 function EventManager(options) { // assumed to be a calendar
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -1305,15 +1479,15 @@ function EventManager(options) { // assumed to be a calendar
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.mutateEvent = mutateEvent;
-	
-	
+
+
 	// imports
 	var trigger = t.trigger;
 	var getView = t.getView;
 	var reportEvents = t.reportEvents;
 	var getEventEnd = t.getEventEnd;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -1333,21 +1507,21 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function isFetchNeeded(start, end) {
 		return !rangeStart || // nothing has been fetched yet?
 			// or, a part of the new range is outside of the old range? (after normalizing)
 			start.clone().stripZone() < rangeStart.clone().stripZone() ||
 			end.clone().stripZone() > rangeEnd.clone().stripZone();
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -1359,8 +1533,8 @@ function EventManager(options) { // assumed to be a calendar
 			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(events) {
 			var isArraySource = $.isArray(source.events);
@@ -1391,8 +1565,8 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		});
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = fc.sourceFetchers;
@@ -1501,12 +1675,12 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
@@ -1588,9 +1762,9 @@ function EventManager(options) { // assumed to be a calendar
 		) ||
 		source; // the given argument *is* the primitive
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 
@@ -1639,8 +1813,8 @@ function EventManager(options) { // assumed to be a calendar
 		}
 	}
 
-	
-	
+
+
 	function renderEvent(eventData, stick) {
 		var event = buildEvent(eventData);
 		if (event) {
@@ -1654,8 +1828,8 @@ function EventManager(options) { // assumed to be a calendar
 			reportEvents(cache);
 		}
 	}
-	
-	
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;
@@ -1684,8 +1858,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -1698,28 +1872,28 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		return cache; // else, return all
 	}
-	
-	
-	
+
+
+
 	/* Loading State
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function pushLoading() {
 		if (!(loadingLevel++)) {
 			trigger('loading', null, true, getView());
 		}
 	}
-	
-	
+
+
 	function popLoading() {
 		if (!(--loadingLevel)) {
 			trigger('loading', null, false, getView());
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
@@ -2042,7 +2216,7 @@ function uncompensateScroll(rowEls) {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -2615,7 +2789,7 @@ FCMoment.prototype.zone = function(tzo) {
 
 	if (tzo != null) {
 		// FYI, the delete statements need to be before the .zone() call or else chaos ensues
-		// for reasons I don't understand. 
+		// for reasons I don't understand.
 		delete this._ambigTime;
 		delete this._ambigZone;
 	}
@@ -4293,7 +4467,7 @@ $.extend(Grid.prototype, {
 		var calendar = view.calendar;
 		var colFormat = view.opt('columnFormat');
 
-		return '' +
+        return '' +
 			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
 				htmlEscape(calendar.formatDate(date, colFormat)) +
 			'</th>';
@@ -4316,13 +4490,25 @@ $.extend(Grid.prototype, {
 		var view = this.view;
 		var today = view.calendar.getNow().stripTime();
 		var classes = [ 'fc-' + dayIDs[date.day()] ];
-
-		if (
-			view.name === 'month' &&
-			date.month() != view.intervalStart.month()
-		) {
-			classes.push('fc-other-month');
-		}
+        if (persianCalConf.lang == "persianJalali")
+        {
+            var jalalimonth = parseInt(GetJalaliDateFromStr(date.format()).split("-")[1]);
+    		if (
+    			view.name === 'month' &&
+    			jalalimonth != currentJalalMonth
+    		) {
+    			classes.push('fc-other-month');
+    		}
+        }
+        else
+        {
+    		if (
+    			view.name === 'month' &&
+    			date.month() != view.intervalStart.month()
+    		) {
+    			classes.push('fc-other-month');
+    		}
+        }
 
 		if (date.isSame(today, 'day')) {
 			classes.push(
@@ -5169,7 +5355,7 @@ $.extend(DayGrid.prototype, {
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-		
+
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -5293,7 +5479,7 @@ $.extend(DayGrid.prototype, {
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		segs.sort(compareSegs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
@@ -6387,7 +6573,7 @@ $.extend(TimeGrid.prototype, {
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
-			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width 
+			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
 		}
 
 		return props;
@@ -6953,7 +7139,7 @@ View.prototype = {
 // constructor. Going forward, methods should be part of the prototype.
 function View(calendar) {
 	var t = this;
-	
+
 	// exports
 	t.calendar = calendar;
 	t.opt = opt;
@@ -6962,18 +7148,18 @@ function View(calendar) {
 	t.isEventResizable = isEventResizable;
 	t.eventDrop = eventDrop;
 	t.eventResize = eventResize;
-	
+
 	// imports
 	var reportEventChange = calendar.reportEventChange;
-	
+
 	// locals
 	var options = calendar.options;
 	var nextDayThreshold = moment.duration(options.nextDayThreshold);
 
 
 	t.init(); // the "constructor" that concerns the prototype methods
-	
-	
+
+
 	function opt(name) {
 		var v = options[name];
 		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
@@ -6982,20 +7168,20 @@ function View(calendar) {
 		return v;
 	}
 
-	
+
 	function trigger(name, thisObj) {
 		return calendar.trigger.apply(
 			calendar,
 			[name, thisObj || t].concat(Array.prototype.slice.call(arguments, 2), [t])
 		);
 	}
-	
+
 
 
 	/* Event Editable Boolean Calculations
 	------------------------------------------------------------------------------*/
 
-	
+
 	function isEventDraggable(event) {
 		var source = event.source || {};
 
@@ -7008,8 +7194,8 @@ function View(calendar) {
 			opt('editable')
 		);
 	}
-	
-	
+
+
 	function isEventResizable(event) {
 		var source = event.source || {};
 
@@ -7022,9 +7208,9 @@ function View(calendar) {
 			opt('editable')
 		);
 	}
-	
-	
-	
+
+
+
 	/* Event Elements
 	------------------------------------------------------------------------------*/
 
@@ -7061,12 +7247,12 @@ function View(calendar) {
 		}
 	};
 
-	
-	
+
+
 	/* Event Modification Reporting
 	---------------------------------------------------------------------------------*/
 
-	
+
 	function eventDrop(el, event, newStart, ev) {
 		var mutateResult = calendar.mutateEvent(event, newStart, null);
 
@@ -7742,7 +7928,19 @@ $.extend(MonthView.prototype, {
 	render: function(date) {
 		var rowCnt;
 
-		this.intervalStart = date.clone().stripTime().startOf('month');
+        if (persianCalConf.lang == "persianJalali")
+        {
+            var myjalal  = date.clone().stripTime().startOf('month').format();
+            var strjalal = GetJalaliDateFromStr(myjalal);
+            currentJalalMonth = parseInt(strjalal.split('-')[1]);
+            myjalal = $.fullCalendar.moment(myjalal).subtract(parseInt(strjalal.split("-")[2])+1,'days');
+    		this.intervalStart = myjalal;
+        }
+        else
+        {
+            this.intervalStart = date.clone().stripTime().startOf('month');
+
+        }
 		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
 
 		this.start = this.intervalStart.clone();
@@ -7835,7 +8033,7 @@ $.extend(BasicWeekView.prototype, {
 
 		BasicView.prototype.render.call(this, 1, this.getCellsPerWeek(), false); // call the super-method
 	}
-	
+
 });
 ;;
 
