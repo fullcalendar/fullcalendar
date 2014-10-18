@@ -2,6 +2,9 @@
 <html>
 <head>
 <meta charset='utf-8' />
+<script src='../src/pwt-date.js'></script>
+
+
 <link rel='stylesheet' href='../lib/jquery-ui/themes/cupertino/jquery-ui.min.css' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -50,7 +53,8 @@
 
 		function renderCalendar() {
 			$('#calendar').fullCalendar({
-				header: {
+	            lang:'persianJalali',
+			header: {
 					left: 'prev,next today',
 					center: 'title',
 					right: 'month,agendaWeek,agendaDay'

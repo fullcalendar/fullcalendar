@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset='utf-8' />
+<script src='../src/pwt-date.js'></script>
+
+
 <link rel='stylesheet' href='../lib/jquery-ui/themes/cupertino/jquery-ui.min.css' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -23,7 +27,8 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
-			theme: true,
+	            lang:'persianJalali',
+		theme: true,
 			windowResize: function() {
 				//alert('recovered');
 			},

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset='utf-8' />
+<script src='../src/pwt-date.js'></script>
+
+
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/jquery/dist/jquery.js'></script>
@@ -16,6 +20,7 @@
 		var y = date.getFullYear();
 
 		$('#calendar').fullCalendar({
+            lang:'persianJalali',
 
 			defaultView: 'agendaDay',
 			minTime: 0,

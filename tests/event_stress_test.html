@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset='utf-8' />
+<script src='../src/pwt-date.js'></script>
+
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/dist/jquery.js'></script>
@@ -33,7 +35,8 @@
 		console.log("Events " + events.length);
 		var runStart = new Date();
 		$('#calendar').fullCalendar({
-			//eventLimit:true,
+	            lang:'persianJalali',
+		//eventLimit:true,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
