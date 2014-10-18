@@ -5,7 +5,7 @@ Everything is like fullcalendar mainline but:
   - Becareful of using "lang:fa" because it does not convert fullcalendar to Jalali format, it just translates default fullcalendar to persian language as it does before.
   - I used "viewRender" and "eventAfterAllRender" fullcalendar object elements for this conversion so PLEASE BE CAREFUL FOR OVERRIDING THEM.
   - I even used [this pwt-datpicker](http://babakhani.github.io/PersianWebToolkit/datepicker.html) jquery library for my date conversions so it is my fork new dependancy so add it before using this fork.
-
+  - Some tests are changed for Jalali calendare test.
 A full-sized drag & drop event calendar (jQuery plugin).
 
 - [Project website and demos](http://arshaw.com/fullcalendar/)
