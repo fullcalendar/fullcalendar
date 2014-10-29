@@ -235,8 +235,8 @@ $.extend(Grid.prototype, {
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	renderSelection: function(start, end) {
-		this.renderHighlight(start, end);
+	renderSelection: function(start, end, sourceSeg) {
+		this.renderHighlight(start, end, sourceSeg);
 	},
 
 
@@ -251,7 +251,7 @@ $.extend(Grid.prototype, {
 
 
 	// Puts visual emphasis on a certain date range
-	renderHighlight: function(start, end) {
+	renderHighlight: function(start, end, sourceSeg) {
 		// subclasses should implement
 	},
 

@@ -245,8 +245,9 @@ $.extend(DayGrid.prototype, {
 
 
 	// Renders an emphasis on the given date range. `start` is an inclusive, `end` is exclusive.
-	renderHighlight: function(start, end) {
+	renderHighlight: function(start, end, sourceSeg) {
 		var segs = this.rangeToSegs(start, end);
+		var view = this.view
 		var highlightNodes = [];
 		var i, seg;
 		var el;
@@ -254,6 +255,12 @@ $.extend(DayGrid.prototype, {
 		// build an event skeleton for each row that needs it
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
+			if(view.name === "resourceDay") {
+				if(!view.hasResource(sourceSeg.event, view.resources()[seg.leftCol])) {
+					continue;
+				}
+			}
+
 			el = $(
 				this.highlightSkeletonHtml(seg.leftCol, seg.rightCol + 1) // make end exclusive
 			);
