@@ -247,7 +247,7 @@ $.extend(DayGrid.prototype, {
 	// Renders an emphasis on the given date range. `start` is an inclusive, `end` is exclusive.
 	renderHighlight: function(start, end, sourceSeg) {
 		var segs = this.rangeToSegs(start, end);
-		var view = this.view
+		var view = this.view;
 		var highlightNodes = [];
 		var i, seg;
 		var el;
