@@ -800,7 +800,7 @@ function View(calendar) {
 				var segmentCellLast = cellOffsetToCell(segmentCellOffsetLast);
 
 				// view might be RTL, so order by leftmost column
-				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort();
+				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort(numericSort);
 
 				// Determine if segment's first/last cell is the beginning/end of the date range.
 				// We need to compare "day offset" because "cell offsets" are often ambiguous and
@@ -858,6 +858,10 @@ function View(calendar) {
 		var range = computeDayRange(event.start, event.end);
 
 		return range.end.diff(range.start, 'days') > 1;
+	}
+
+	function numericSort(a, b) {
+		return a-b;
 	}
 
 }
