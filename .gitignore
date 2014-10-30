@@ -1,8 +1,8 @@
 build/temp
-dist
+#dist
 
 # npm modules
 node_modules
 
 # bower components
-lib/*/*
+#lib/*/*
