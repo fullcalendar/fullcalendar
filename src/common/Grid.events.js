@@ -136,6 +136,11 @@ $.extend(Grid.prototype, {
 	},
 
 
+	businessHoursSegClasses: function(seg) {
+		return this.bgEventSegClasses(seg);
+	},
+
+
 	// Returns additional CSS properties (as a string) to be applied to a background event segment.
 	// Gets called by each subclass' fill-rendering system.
 	// TODO: merge with getEventSkinCss() somehow

@@ -61,6 +61,11 @@ body .fc { /* extra precedence to overcome jqui */
 	filter: alpha(opacity=30); /* for IE */
 }
 
+.fc-nonbusiness { /* default look for non-business-hours areas */
+	/* will inherit .fc-bgevent's styles */
+	background: #ccc;
+}
+
 
 /* Icons (inline elements with styled text that mock arrow icons)
 --------------------------------------------------------------------------------------------------*/

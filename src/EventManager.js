@@ -592,7 +592,8 @@ function EventManager(options) { // assumed to be a calendar
 
 	// If the given event is a recurring event, break it down into an array of individual instances.
 	// If not a recurring event, return an array with the single original event.
-	function expandEvent(abstractEvent) {
+	// `_rangeStart` and `_rangeEnd` and are HACKS for when the no events have been requested yet.
+	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
 		var events = [];
 		var dowHash;
 		var dow;
@@ -601,6 +602,10 @@ function EventManager(options) { // assumed to be a calendar
 		var startTime, endTime;
 		var start, end;
 		var event;
+
+		// hack
+		_rangeStart = _rangeStart || rangeStart;
+		_rangeEnd = _rangeEnd || rangeEnd;
 
 		if (abstractEvent._recurring) {
 
@@ -613,8 +618,8 @@ function EventManager(options) { // assumed to be a calendar
 			}
 
 			// iterate through every day in the current range
-			date = rangeStart.clone().stripTime(); // holds the date of the current day
-			while (date.isBefore(rangeEnd)) {
+			date = _rangeStart.clone().stripTime(); // holds the date of the current day
+			while (date.isBefore(_rangeEnd)) { // QUESTION: is this kosher with an ambiguous date?
 
 				if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
 
@@ -822,6 +827,38 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		};
 	}
+
+
+	/* Business Hours
+	-----------------------------------------------------------------------------------------*/
+
+	t.getBusinessHoursEvents = function(view) {
+		var optionVal = options.businessHours;
+		var defaultVal = {
+			id: '_businessHours',
+			className: 'fc-nonbusiness',
+			start: '09:00',
+			end: '17:00',
+			dow: [ 1, 2, 3, 4, 5 ],
+			rendering: 'inverse-background'
+		};
+		var eventInput;
+
+		if (optionVal) {
+			if (typeof optionVal === 'object') {
+				eventInput = $.extend({}, defaultVal, optionVal);
+			}
+			else {
+				eventInput = defaultVal;
+			}
+		}
+
+		if (eventInput) {
+			return expandEvent(buildEventFromInput(eventInput), view.start, view.end);
+		}
+
+		return [];
+	};
 
 }
 

@@ -39,7 +39,15 @@ $.extend(TimeGrid.prototype, {
 
 		this.computeSlatTops();
 
+		this.renderBusinessHours();
+
 		Grid.prototype.render.call(this); // call the super-method
+	},
+
+
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents(this.view);
+		this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
 	},
 
 
@@ -409,11 +417,11 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders a set of rectangles over the given time segments.
 	// The `type` is used for destroying later. Also allows for special-cased behavior via strategically-named methods.
-	renderFill: function(type, segs) {
+	// `classNameStr` is a HACK
+	renderFill: function(type, segs, classNameStr) {
 		var view = this.view;
 		var extraClassesMethod = this[type + 'SegClasses']; // TODO: better system for this
 		var extraStylesMethod = this[type + 'SegStyles']; //
-		var typeLower = type.toLowerCase();
 		var cellHtml = '';
 		var segCols;
 		var col, colSegs;
@@ -426,7 +434,11 @@ $.extend(TimeGrid.prototype, {
 		var segEls;
 		var j;
 
+		if (!segs.length) return;
+
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
+
+		classNameStr = classNameStr || type.toLowerCase();
 
 		for (col = 0; col < segCols.length; col++) {
 			colSegs = segCols[col];
@@ -434,7 +446,7 @@ $.extend(TimeGrid.prototype, {
 			cellHtml += '<td>';
 
 			if (colSegs.length) {
-				cellHtml += '<div class="fc-' + typeLower + '-container">';
+				cellHtml += '<div class="fc-' + classNameStr + '-container">';
 
 				for (i = 0; i < colSegs.length; i++) {
 					seg = colSegs[i];
@@ -449,7 +461,7 @@ $.extend(TimeGrid.prototype, {
 					extraStyles = extraStylesMethod ? extraStylesMethod.call(this, seg) : '';
 
 					cellHtml += '<div' +
-						' class="fc-' + typeLower + ' ' + extraClasses + '"' +
+						' class="fc-' + classNameStr + ' ' + extraClasses + '"' +
 						' style="top:' + top + 'px;bottom:-' + bottom + 'px;' + extraStyles + '"' +
 						'/>';
 				}
@@ -463,7 +475,7 @@ $.extend(TimeGrid.prototype, {
 		cellHtml = this.bookendCells(cellHtml, type);
 
 		el = $(
-			'<div class="fc-' + typeLower + '-skeleton">' +
+			'<div class="fc-' + classNameStr + '-skeleton">' +
 				'<table>' +
 					'<tr>' +
 						cellHtml +
@@ -473,7 +485,7 @@ $.extend(TimeGrid.prototype, {
 		);
 
 		// assign each segment's el. TODO: there's gotta be a better way
-		segEls = el.find('.fc-' + typeLower);
+		segEls = el.find('.fc-' + classNameStr);
 		j = 0;
 		for (col = 0; col < segCols.length; col++) {
 			colSegs = segCols[col];
