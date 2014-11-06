@@ -4,6 +4,8 @@
 
 function TimeGrid(view) {
 	Grid.call(this, view); // call the super-constructor
+
+	this.elsByFill = {};
 }
 
 
@@ -21,8 +23,8 @@ $.extend(TimeGrid.prototype, {
 
 	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
 
-	highlightEl: null, // cell skeleton element for rendering the highlight
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
+	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
 	// Renders the time grid into `this.el`, which should already be assigned.
@@ -326,11 +328,13 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		var res = this.renderEventTable([ event ]);
-		var tableEl = res.tableEl;
-		var segs = res.segs;
+		var segs = this.eventsToSegs([ event ]);
+		var tableEl;
 		var i, seg;
 		var sourceEl;
+
+		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		tableEl = this.renderSegTable(segs);
 
 		// Try to make the segment that is in the same row as sourceSeg look the same
 		for (i = 0; i < segs.length; i++) {
@@ -389,73 +393,110 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
 	renderHighlight: function(start, end) {
-		this.highlightEl = $(
-			this.highlightSkeletonHtml(start, end)
-		).appendTo(this.el);
+		this.renderFill('highlight', this.rangeToSegs(start, end));
 	},
 
 
 	// Unrenders the emphasis on a date range
 	destroyHighlight: function() {
-		if (this.highlightEl) {
-			this.highlightEl.remove();
-			this.highlightEl = null;
-		}
+		this.destroyFill('highlight');
 	},
 
 
-	// Generates HTML for a table element with containers in each column, responsible for absolutely positioning the
-	// highlight elements to cover the highlighted slots.
-	highlightSkeletonHtml: function(start, end) {
+	/* "Fill" Rendering (rectangles covering a specified period of days)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a set of rectangles over the given time segments.
+	// The `type` is used for destroying later. Also allows for special-cased behavior via strategically-named methods.
+	renderFill: function(type, segs) {
 		var view = this.view;
-		var segs = this.rangeToSegs(start, end);
+		var extraClassesMethod = this[type + 'SegClasses']; // TODO: better system for this
+		var extraStylesMethod = this[type + 'SegStyles']; //
+		var typeLower = type.toLowerCase();
 		var cellHtml = '';
-		var col = 0;
+		var segCols;
+		var col, colSegs;
 		var i, seg;
 		var dayDate;
 		var top, bottom;
+		var extraClasses;
+		var extraStyles;
+		var el;
+		var segEls;
+		var j;
 
-		for (i = 0; i < segs.length; i++) { // loop through the segments. one per column
-			seg = segs[i];
+		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
-			// need empty cells beforehand?
-			if (col < seg.col) {
-				cellHtml += '<td colspan="' + (seg.col - col) + '"/>';
-				col = seg.col;
+		for (col = 0; col < segCols.length; col++) {
+			colSegs = segCols[col];
+
+			cellHtml += '<td>';
+
+			if (colSegs.length) {
+				cellHtml += '<div class="fc-' + typeLower + '-container">';
+
+				for (i = 0; i < colSegs.length; i++) {
+					seg = colSegs[i];
+
+					// compute vertical position
+					dayDate = view.cellToDate(0, col);
+					top = this.computeDateTop(seg.start, dayDate);
+					bottom = this.computeDateTop(seg.end, dayDate); // the y position of the bottom edge
+
+					// TODO: better system for this
+					extraClasses = extraClassesMethod ? extraClassesMethod.call(this, seg) : '';
+					extraStyles = extraStylesMethod ? extraStylesMethod.call(this, seg) : '';
+
+					cellHtml += '<div' +
+						' class="fc-' + typeLower + ' ' + extraClasses + '"' +
+						' style="top:' + top + 'px;bottom:-' + bottom + 'px;' + extraStyles + '"' +
+						'/>';
+				}
+
+				cellHtml += '</div>';
 			}
 
-			// compute vertical position
-			dayDate = view.cellToDate(0, col);
-			top = this.computeDateTop(seg.start, dayDate);
-			bottom = this.computeDateTop(seg.end, dayDate); // the y position of the bottom edge
-
-			// generate the cell HTML. bottom becomes negative because it needs to be a CSS value relative to the
-			// bottom edge of the zero-height container.
-			cellHtml +=
-				'<td>' +
-					'<div class="fc-highlight-container">' +
-						'<div class="fc-highlight" style="top:' + top + 'px;bottom:-' + bottom + 'px"/>' +
-					'</div>' +
-				'</td>';
-
-			col++;
+			cellHtml += '</td>';
 		}
 
-		// need empty cells after the last segment?
-		if (col < view.colCnt) {
-			cellHtml += '<td colspan="' + (view.colCnt - col) + '"/>';
-		}
+		cellHtml = this.bookendCells(cellHtml, type);
 
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
-
-		return '' +
-			'<div class="fc-highlight-skeleton">' +
+		el = $(
+			'<div class="fc-' + typeLower + '-skeleton">' +
 				'<table>' +
 					'<tr>' +
 						cellHtml +
 					'</tr>' +
 				'</table>' +
-			'</div>';
+			'</div>'
+		);
+
+		// assign each segment's el. TODO: there's gotta be a better way
+		segEls = el.find('.fc-' + typeLower);
+		j = 0;
+		for (col = 0; col < segCols.length; col++) {
+			colSegs = segCols[col];
+			for (i = 0; i < colSegs.length; i++) {
+				seg = colSegs[i];
+				seg.el = segEls.eq(j);
+				j++;
+			}
+		}
+
+		this.el.append(el);
+		this.elsByFill[type] = el;
+	},
+
+
+	// Unrenders a specific type of fill that is currently rendered on the grid
+	destroyFill: function(type) {
+		var el = this.elsByFill[type];
+
+		if (el) {
+			el.remove();
+			delete this.elsByFill[type];
+		}
 	}
 
 });

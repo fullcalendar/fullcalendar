@@ -4,52 +4,41 @@
 
 $.extend(TimeGrid.prototype, {
 
-	segs: null, // segment objects rendered in the component. null of events haven't been rendered yet
 	eventSkeletonEl: null, // has cells with event-containers, which contain absolutely positioned event elements
 
 
-	// Renders the events onto the grid and returns an array of segments that have been rendered
-	renderEvents: function(events) {
-		var res = this.renderEventTable(events);
+	// Renders the given foreground event segments onto the grid
+	renderFgSegs: function(segs) {
+		segs = this.renderFgSegEls(segs); // returns a subset of the segs. segs that were actually rendered
 
-		this.eventSkeletonEl = $('<div class="fc-content-skeleton"/>').append(res.tableEl);
-		this.el.append(this.eventSkeletonEl);
+		this.el.append(
+			this.eventSkeletonEl = $('<div class="fc-content-skeleton"/>')
+				.append(this.renderSegTable(segs))
+		);
 
-		this.segs = res.segs;
+		return segs; // return only the segs that were actually rendered
 	},
 
 
-	// Retrieves rendered segment objects
-	getSegs: function() {
-		return this.segs || [];
-	},
-
-
-	// Removes all event segment elements from the view
-	destroyEvents: function() {
-		Grid.prototype.destroyEvents.call(this); // call the super-method
-
+	// Unrenders all currently rendered foreground event segments
+	destroyFgSegs: function(segs) {
 		if (this.eventSkeletonEl) {
 			this.eventSkeletonEl.remove();
 			this.eventSkeletonEl = null;
 		}
-
-		this.segs = null;
 	},
 
 
 	// Renders and returns the <table> portion of the event-skeleton.
 	// Returns an object with properties 'tbodyEl' and 'segs'.
-	renderEventTable: function(events) {
+	renderSegTable: function(segs) {
 		var tableEl = $('<table><tr/></table>');
 		var trEl = tableEl.find('tr');
-		var segs = this.eventsToSegs(events);
 		var segCols;
 		var i, seg;
 		var col, colSegs;
 		var containerEl;
 
-		segs = this.renderSegs(segs); // returns only the visible segs
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
 		this.computeSegVerticals(segs); // compute and assign top/bottom
@@ -78,10 +67,7 @@ $.extend(TimeGrid.prototype, {
 
 		this.bookendCells(trEl, 'eventSkeleton');
 
-		return  {
-			tableEl: tableEl,
-			segs: segs
-		};
+		return tableEl;
 	},
 
 
@@ -115,7 +101,7 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders the HTML for a single event segment's default rendering
-	renderSegHtml: function(seg, disableResizing) {
+	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);

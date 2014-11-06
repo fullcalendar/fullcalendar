@@ -7,28 +7,73 @@ $.extend(Grid.prototype, {
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 	isDraggingSeg: false, // is a segment being dragged? boolean
 	isResizingSeg: false, // is a segment being resized? boolean
+	segs: null, // the event segments currently rendered in the grid
 
 
 	// Renders the given events onto the grid
 	renderEvents: function(events) {
-		// subclasses must implement
+		var segs = this.eventsToSegs(events);
+		var bgSegs = [];
+		var fgSegs = [];
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (isBgEvent(seg.event)) {
+				bgSegs.push(seg);
+			}
+			else {
+				fgSegs.push(seg);
+			}
+		}
+
+		// Render each different type of segment.
+		// Each function may return a subset of the segs, segs that were actually rendered.
+		bgSegs = this.renderBgSegs(bgSegs) || bgSegs;
+		fgSegs = this.renderFgSegs(fgSegs) || fgSegs;
+
+		this.segs = bgSegs.concat(fgSegs);
 	},
 
 
-	// Retrieves all rendered segment objects in this grid
-	getSegs: function() {
-		// subclasses must implement
-	},
-
-
-	// Unrenders all events. Subclasses should implement, calling this super-method first.
+	// Unrenders all events currently rendered on the grid
 	destroyEvents: function() {
 		this.triggerSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
+
+		this.destroyFgSegs();
+		this.destroyBgSegs();
+
+		this.segs = null;
 	},
 
 
-	// Renders a `el` property for each seg, and only returns segments that successfully rendered
-	renderSegs: function(segs, disableResizing) {
+	// Retrieves all rendered segment objects currently rendered on the grid
+	getSegs: function() {
+		return this.segs || [];
+	},
+
+
+	/* Foreground Segment Rendering
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
+	renderFgSegs: function(segs) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders all currently rendered foreground segments
+	destroyFgSegs: function() {
+		// subclasses must implement
+	},
+
+
+	// Renders and assigns an `el` property for each foreground event segment.
+	// Only returns segments that successfully rendered.
+	// A utility that subclasses may use.
+	renderFgSegEls: function(segs, disableResizing) {
 		var view = this.view;
 		var html = '';
 		var renderedSegs = [];
@@ -36,7 +81,7 @@ $.extend(Grid.prototype, {
 
 		// build a large concatenation of event segment HTML
 		for (i = 0; i < segs.length; i++) {
-			html += this.renderSegHtml(segs[i], disableResizing);
+			html += this.fgSegHtml(segs[i], disableResizing);
 		}
 
 		// Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -55,48 +100,65 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Generates the HTML for the default rendering of a segment
-	renderSegHtml: function(seg, disableResizing) {
-		// subclasses must implement
+	// Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
+	fgSegHtml: function(seg, disableResizing) {
+		// subclasses should implement
 	},
 
 
-	// Converts an array of event objects into an array of segment objects
-	eventsToSegs: function(events, intervalStart, intervalEnd) {
-		var _this = this;
+	/* Background Segment Rendering
+	------------------------------------------------------------------------------------------------------------------*/
 
-		return $.map(events, function(event) {
-			return _this.eventToSegs(event, intervalStart, intervalEnd); // $.map flattens all returned arrays together
-		});
+
+	// Renders the given background event segments onto the grid
+	// TODO: should probably be abstract, but do this for immediate code reuse
+	renderBgSegs: function(segs) {
+		this.renderFill('bgEvent', segs); // relies on the subclass having a renderFill method!
 	},
 
 
-	// Slices a single event into an array of event segments.
-	// When `intervalStart` and `intervalEnd` are specified, intersect the events with that interval.
-	// Otherwise, let the subclass decide how it wants to slice the segments over the grid.
-	eventToSegs: function(event, intervalStart, intervalEnd) {
-		var eventStart = event.start.clone().stripZone(); // normalize
-		var eventEnd = this.view.calendar.getEventEnd(event).stripZone(); // compute (if necessary) and normalize
-		var segs;
-		var i, seg;
+	// Unrenders all the currently rendered background event segments
+	// TODO: should probably be abstract, but do this for immediate code reuse
+	destroyBgSegs: function() {
+		this.destroyFill('bgEvent'); // relies on the subclass having a destroyFill method!
+	},
 
-		if (intervalStart && intervalEnd) {
-			seg = intersectionToSeg(eventStart, eventEnd, intervalStart, intervalEnd);
-			segs = seg ? [ seg ] : [];
-		}
-		else {
-			segs = this.rangeToSegs(eventStart, eventEnd); // defined by the subclass
+
+	// Returns a space-separated string of additional classNames to apply to a background event segment.
+	// Gets called by each subclass' fill-rendering system.
+	// TODO: merge with getSegClasses() somehow
+	bgEventSegClasses: function(seg) {
+		var event = seg.event;
+		var source = event.source || {};
+		var classes = event.className.concat(source.className || []);
+
+		return classes.join(' ');
+	},
+
+
+	// Returns additional CSS properties (as a string) to be applied to a background event segment.
+	// Gets called by each subclass' fill-rendering system.
+	// TODO: merge with getEventSkinCss() somehow
+	bgEventSegStyles: function(seg) {
+		var view = this.view;
+		var event = seg.event;
+		var source = event.source || {};
+		var eventColor = event.color;
+		var sourceColor = source.color;
+		var optionColor = view.opt('eventColor');
+		var backgroundColor =
+			event.backgroundColor ||
+			eventColor ||
+			source.backgroundColor ||
+			sourceColor ||
+			view.opt('eventBackgroundColor') ||
+			optionColor;
+
+		if (backgroundColor) {
+			return 'background:' + backgroundColor;
 		}
 
-		// assign extra event-related properties to the segment objects
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			seg.event = event;
-			seg.eventStartMS = +eventStart;
-			seg.eventDurationMS = eventEnd - eventStart;
-		}
-
-		return segs;
+		return '';
 	},
 
 
@@ -402,16 +464,184 @@ $.extend(Grid.prototype, {
 			statements.push('color:' + textColor);
 		}
 		return statements.join(';');
+	},
+
+
+	/* Converting events -> ranges -> segs
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Converts an array of event objects into an array of event segment objects.
+	// A custom `rangeToSegsFunc` may be given for arbitrarily slicing up events.
+	eventsToSegs: function(events, rangeToSegsFunc) {
+		var eventRanges = this.eventsToRanges(events);
+		var segs = [];
+		var i;
+
+		for (i = 0; i < eventRanges.length; i++) {
+			segs.push.apply(
+				segs,
+				this.eventRangeToSegs(eventRanges[i], rangeToSegsFunc)
+			);
+		}
+
+		return segs;
+	},
+
+
+	// Converts an array of events into an array of "range" objects.
+	// A "range" object is a plain object with start/end properties denoting the time it covers. Also an event property.
+	// For "normal" events, this will be identical to the event's start/end, but for "inverse-background" events,
+	// will create an array of ranges that span the time *not* covered by the given event.
+	eventsToRanges: function(events) {
+		var _this = this;
+		var eventsById = groupEventsById(events);
+		var ranges = [];
+
+		// group by ID so that related inverse-background events can be rendered together
+		$.each(eventsById, function(id, eventGroup) {
+			if (eventGroup.length) {
+				ranges.push.apply(
+					ranges,
+					eventGroup[0].rendering === 'inverse-background' ?
+						_this.eventsToInverseRanges(eventGroup) :
+						_this.eventsToNormalRanges(eventGroup)
+				);
+			}
+		});
+
+		return ranges;
+	},
+
+
+	// Converts an array of "normal" events (not inverted rendering) into a parallel array of ranges
+	eventsToNormalRanges: function(events) {
+		var calendar = this.view.calendar;
+		var ranges = [];
+		var i, event;
+		var eventStart, eventEnd;
+
+		for (i = 0; i < events.length; i++) {
+			event = events[i];
+
+			// make copies and normalize by stripping timezone
+			eventStart = event.start.clone().stripZone();
+			eventEnd = calendar.getEventEnd(event).stripZone();
+
+			ranges.push({
+				event: event,
+				start: eventStart,
+				end: eventEnd,
+				eventStartMS: +eventStart,
+				eventDurationMS: eventEnd - eventStart
+			});
+		}
+
+		return ranges;
+	},
+
+
+	// Converts an array of events, with inverse-background rendering, into an array of range objects.
+	// The range objects will cover all the time NOT covered by the events.
+	eventsToInverseRanges: function(events) {
+		var view = this.view;
+		var calendar = view.calendar;
+		var viewStart = view.start.clone().stripZone(); // normalize timezone
+		var viewEnd = view.end.clone().stripZone(); // normalize timezone
+		var normalRanges = this.eventsToNormalRanges(events); // will give us normalized dates we can use w/o copies
+		var inverseRanges = [];
+		var event0 = events[0]; // assign this to each range's `.event`
+		var start = viewStart; // the end of the previous range. the start of the new range
+		var i, normalRange;
+
+		// ranges need to be in order. required for our date-walking algorithm
+		normalRanges.sort(compareNormalRanges);
+
+		for (i = 0; i < normalRanges.length; i++) {
+			normalRange = normalRanges[i];
+
+			// add the span of time before the event (if there is any)
+			if (normalRange.start > start) { // compare millisecond time (skip any ambig logic)
+				inverseRanges.push({
+					event: event0,
+					start: start,
+					end: normalRange.start
+				});
+			}
+
+			start = normalRange.end;
+		}
+
+		// add the span of time after the last event (if there is any)
+		if (start < viewEnd) { // compare millisecond time (skip any ambig logic)
+			inverseRanges.push({
+				event: event0,
+				start: start,
+				end: viewEnd
+			});
+		}
+
+		return inverseRanges;
+	},
+
+
+	// Slices the given event range into one or more segment objects.
+	// A `rangeToSegsFunc` custom slicing function can be given.
+	eventRangeToSegs: function(eventRange, rangeToSegsFunc) {
+		var event = eventRange.event;
+		var segs;
+		var i, seg;
+
+		if (rangeToSegsFunc) {
+			segs = rangeToSegsFunc(eventRange.start, eventRange.end);
+		}
+		else {
+			segs = this.rangeToSegs(eventRange.start, eventRange.end); // defined by the subclass
+		}
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			seg.event = event;
+			seg.eventStartMS = eventRange.eventStartMS;
+			seg.eventDurationMS = eventRange.eventDurationMS;
+		}
+
+		return segs;
 	}
 
 });
 
 
-/* Event Segment Utilities
+/* Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
+function isBgEvent(event) {
+	return event.rendering === 'background' || event.rendering === 'inverse-background';
+}
+
+
+function groupEventsById(events) {
+	var eventsById = {};
+	var i, event;
+
+	for (i = 0; i < events.length; i++) {
+		event = events[i];
+		(eventsById[event._id] || (eventsById[event._id] = [])).push(event);
+	}
+
+	return eventsById;
+}
+
+
+// A cmp function for determining which non-inverted "ranges" (see above) happen earlier
+function compareNormalRanges(range1, range2) {
+	return range1.eventStartMS - range2.eventStartMS; // earlier ranges go first
+}
+
+
 // A cmp function for determining which segments should take visual priority
+// DOES NOT WORK ON INVERTED BACKGROUND EVENTS because they have no eventStartMS/eventDurationMS
 function compareSegs(seg1, seg2) {
 	return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
 		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first

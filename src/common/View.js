@@ -167,7 +167,7 @@ View.prototype = {
 	renderEvents: function(events) {
 		this.segEach(function(seg) {
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
-		});
+		}, null, false); // isBg=false
 		this.trigger('eventAfterAllRender');
 	},
 
@@ -177,7 +177,7 @@ View.prototype = {
 	destroyEvents: function() {
 		this.segEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
-		});
+		}, null, false); // isBg=false
 	},
 
 
@@ -215,13 +215,17 @@ View.prototype = {
 
 	// Iterates through event segments. Goes through all by default.
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
+	// If the optional `isBg` argument is a boolean, only iterates through segments that are background/foreground.
 	// The `this` value of the callback function will be the view.
-	segEach: function(func, event) {
+	segEach: function(func, event, isBg) {
 		var segs = this.getSegs();
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
-			if (!event || segs[i].event._id === event._id) {
+			if (
+				(!event || segs[i].event._id === event._id) &&
+				(isBg == null || isBgEvent(segs[i].event) === isBg)
+			) {
 				func.call(this, segs[i]);
 			}
 		}
