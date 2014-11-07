@@ -461,6 +461,7 @@ function EventManager(options) { // assumed to be a calendar
 	// Given a raw object with key/value properties, returns an "abstract" Event object.
 	// An "abstract" event is an event that, if recurring, will not have been expanded yet.
 	// Will return `false` when input is invalid.
+	// `source` is optional
 	function buildEventFromInput(input, source) {
 		var out = {};
 		var start, end;
@@ -624,7 +625,7 @@ function EventManager(options) { // assumed to be a calendar
 
 			// iterate through every day in the current range
 			date = _rangeStart.clone().stripTime(); // holds the date of the current day
-			while (date.isBefore(_rangeEnd)) { // QUESTION: is this kosher with an ambiguous date?
+			while (date.isBefore(_rangeEnd)) {
 
 				if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
 
@@ -848,7 +849,7 @@ function EventManager(options) { // assumed to be a calendar
 			className: 'fc-nonbusiness',
 			start: '09:00',
 			end: '17:00',
-			dow: [ 1, 2, 3, 4, 5 ],
+			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
 			rendering: 'inverse-background'
 		};
 		var eventInput;
@@ -908,9 +909,9 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	// Returns true if the given range (caused by an event drop or a selection) is allowed to exist on the calendar
+	// Returns true if the given range (caused by an event drop/resize or a selection) is allowed to exist
 	// according to the constraint/overlap settings.
-	// `event` is required only in the case of isEventAllowedInRange.
+	// `event` is not required if checking a selection.
 	function isRangeAllowed(start, end, constraint, overlap, event) {
 		var constraintEvents;
 		var anyContainment;

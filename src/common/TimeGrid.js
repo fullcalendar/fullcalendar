@@ -434,7 +434,7 @@ $.extend(TimeGrid.prototype, {
 		var segEls;
 		var j;
 
-		if (!segs.length) return;
+		if (!segs.length) { return; }
 
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 

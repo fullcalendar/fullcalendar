@@ -1,6 +1,7 @@
 
 /* Methods relate to limiting the number events for a given day on a DayGrid
 ----------------------------------------------------------------------------------------------------------------------*/
+// NOTE: all the segs being passed around in here are foreground segs
 
 $.extend(DayGrid.prototype, {
 
@@ -280,7 +281,7 @@ $.extend(DayGrid.prototype, {
 		var i;
 
 		// render each seg's `el` and only return the visible segs
-		segs = this.renderFgSegEls(segs, true); // disableResizing=true // TODO: filter by only foreground!!!!!
+		segs = this.renderFgSegEls(segs, true); // disableResizing=true
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {

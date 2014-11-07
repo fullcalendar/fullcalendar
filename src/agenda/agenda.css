@@ -86,7 +86,7 @@
 	z-index: 5;
 }
 
-.fc-time-grid > .fc-helper-skeleton {
+.fc-time-grid .fc-helper-skeleton {
 	z-index: 6;
 }
 

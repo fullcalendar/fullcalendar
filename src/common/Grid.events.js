@@ -292,7 +292,7 @@ $.extend(Grid.prototype, {
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				newStart = null; // mark an invalid drop date
+				newStart = null;
 				view.destroyDrag(); // unrender whatever was done in view.renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
 				calendar.enableCursor();
@@ -350,7 +350,7 @@ $.extend(Grid.prototype, {
 			newEnd = null; // end should be cleared
 		}
 
-		// compute what the end date would appear to be if there isn't already one
+		// compute what the end date will appear to be
 		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(!dropDate.hasTime(), newStart);
 
 		return { start: newStart, end: newEnd, visibleEnd: visibleEnd };
@@ -576,7 +576,6 @@ $.extend(Grid.prototype, {
 	// The range objects will cover all the time NOT covered by the events.
 	eventsToInverseRanges: function(events) {
 		var view = this.view;
-		var calendar = view.calendar;
 		var viewStart = view.start.clone().stripZone(); // normalize timezone
 		var viewEnd = view.end.clone().stripZone(); // normalize timezone
 		var normalRanges = this.eventsToNormalRanges(events); // will give us normalized dates we can use w/o copies
@@ -619,7 +618,6 @@ $.extend(Grid.prototype, {
 	// Slices the given event range into one or more segment objects.
 	// A `rangeToSegsFunc` custom slicing function can be given.
 	eventRangeToSegs: function(eventRange, rangeToSegsFunc) {
-		var event = eventRange.event;
 		var segs;
 		var i, seg;
 
@@ -632,7 +630,7 @@ $.extend(Grid.prototype, {
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
-			seg.event = event;
+			seg.event = eventRange.event;
 			seg.eventStartMS = eventRange.eventStartMS;
 			seg.eventDurationMS = eventRange.eventDurationMS;
 		}
