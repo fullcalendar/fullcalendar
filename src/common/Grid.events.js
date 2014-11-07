@@ -242,6 +242,7 @@ $.extend(Grid.prototype, {
 	segDragMousedown: function(seg, ev) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
 		var newStart, newEnd;
@@ -275,17 +276,26 @@ $.extend(Grid.prototype, {
 				newStart = res.start;
 				newEnd = res.end;
 
-				if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
-					mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+				if (calendar.isEventAllowedInRange(event, newStart, res.visibleEnd)) { // allowed to drop here?
+					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
+						mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+					}
+					else {
+						mouseFollower.show();
+					}
 				}
 				else {
+					// have the helper follow the mouse (no snapping) with a warning-style cursor
+					newStart = null; // mark an invalid drop date
 					mouseFollower.show();
+					calendar.disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				newStart = null;
+				newStart = null; // mark an invalid drop date
 				view.destroyDrag(); // unrender whatever was done in view.renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
+				calendar.enableCursor();
 			},
 			dragStop: function(ev) {
 				var hasChanged = newStart && !newStart.isSame(event.start);
@@ -301,6 +311,8 @@ $.extend(Grid.prototype, {
 						view.eventDrop(el[0], event, newStart, ev); // will rerender all events...
 					}
 				});
+
+				calendar.enableCursor();
 			},
 			listenStop: function() {
 				mouseFollower.stop(); // put in listenStop in case there was a mousedown but the drag never started
@@ -320,6 +332,7 @@ $.extend(Grid.prototype, {
 		var delta;
 		var newStart;
 		var newEnd;
+		var visibleEnd;
 
 		if (dropDate.hasTime() === dragStartDate.hasTime()) {
 			delta = dayishDiff(dropDate, dragStartDate);
@@ -337,7 +350,10 @@ $.extend(Grid.prototype, {
 			newEnd = null; // end should be cleared
 		}
 
-		return { start: newStart, end: newEnd };
+		// compute what the end date would appear to be if there isn't already one
+		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(!dropDate.hasTime(), newStart);
+
+		return { start: newStart, end: newEnd, visibleEnd: visibleEnd };
 	},
 
 
@@ -350,6 +366,7 @@ $.extend(Grid.prototype, {
 	segResizeMousedown: function(seg, ev) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
 		var start = event.start;
@@ -357,7 +374,7 @@ $.extend(Grid.prototype, {
 		var newEnd = null;
 		var dragListener;
 
-		function destroy() { // resets the rendering
+		function destroy() { // resets the rendering to show the original event
 			_this.destroyResize();
 			view.showEvent(event);
 		}
@@ -378,22 +395,31 @@ $.extend(Grid.prototype, {
 				}
 				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
 
-				if (newEnd.isSame(end)) {
-					newEnd = null;
-					destroy();
+				if (calendar.isEventAllowedInRange(event, start, newEnd)) { // allowed to be resized here?
+					if (newEnd.isSame(end)) {
+						newEnd = null; // mark an invalid resize
+						destroy();
+					}
+					else {
+						_this.renderResize(start, newEnd, seg);
+						view.hideEvent(event);
+					}
 				}
 				else {
-					_this.renderResize(start, newEnd, seg);
-					view.hideEvent(event);
+					newEnd = null; // mark an invalid resize
+					destroy();
+					calendar.disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newEnd = null;
 				destroy();
+				calendar.enableCursor();
 			},
 			dragStop: function(ev) {
 				_this.isResizingSeg = false;
 				destroy();
+				calendar.enableCursor();
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 				if (newEnd) {

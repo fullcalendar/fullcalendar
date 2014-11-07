@@ -84,6 +84,7 @@ $.extend(Grid.prototype, {
 	dayMousedown: function(ev) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
 		var isSelectable = view.opt('selectable');
 		var dates = null; // the inclusive dates of the selection. will be null if no selection
 		var start; // the inclusive start of the selection
@@ -109,13 +110,20 @@ $.extend(Grid.prototype, {
 					end = dates[1].clone().add(_this.cellDuration);
 
 					if (isSelectable) {
-						_this.renderSelection(start, end);
+						if (calendar.isSelectionAllowedInRange(start, end)) { // allowed to select within this range?
+							_this.renderSelection(start, end);
+						}
+						else {
+							dates = null; // flag for an invalid selection
+							calendar.disableCursor();
+						}
 					}
 				}
 			},
 			cellOut: function(cell, date) {
 				dates = null;
 				_this.destroySelection();
+				calendar.enableCursor();
 			},
 			listenStop: function(ev) {
 				if (dates) { // started and ended on a cell?
@@ -127,6 +135,7 @@ $.extend(Grid.prototype, {
 						view.reportSelection(start, end, ev);
 					}
 				}
+				calendar.enableCursor();
 			}
 		});
 

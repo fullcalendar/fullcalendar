@@ -469,6 +469,11 @@ temporary rendered events).
 	cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
 }
 
+.fc-not-allowed, /* causes a "warning" cursor. applied on body */
+.fc-not-allowed .fc-event { /* to override an event's custom cursor */
+	cursor: not-allowed;
+}
+
 
 /* DayGrid events
 ----------------------------------------------------------------------------------------------------

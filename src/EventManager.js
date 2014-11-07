@@ -592,9 +592,11 @@ function EventManager(options) { // assumed to be a calendar
 
 	// If the given event is a recurring event, break it down into an array of individual instances.
 	// If not a recurring event, return an array with the single original event.
-	// `_rangeStart` and `_rangeEnd` and are HACKS for when the no events have been requested yet.
-	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
+	function expandEvent(abstractEvent) {
 		var events = [];
+		var _rangeStart = rangeStart;
+		var _rangeEnd = rangeEnd;
+		var view;
 		var dowHash;
 		var dow;
 		var i;
@@ -603,9 +605,12 @@ function EventManager(options) { // assumed to be a calendar
 		var start, end;
 		var event;
 
-		// hack
-		_rangeStart = _rangeStart || rangeStart;
-		_rangeEnd = _rangeEnd || rangeEnd;
+		// hack for when fetchEvents hasn't been called yet (calculating businessHours for example)
+		if (!_rangeStart || !_rangeEnd) {
+			view = t.getView();
+			_rangeStart = view.start;
+			_rangeEnd = view.end;
+		}
 
 		if (abstractEvent._recurring) {
 
@@ -832,10 +837,14 @@ function EventManager(options) { // assumed to be a calendar
 	/* Business Hours
 	-----------------------------------------------------------------------------------------*/
 
-	t.getBusinessHoursEvents = function(view) {
+	t.getBusinessHoursEvents = getBusinessHoursEvents;
+
+
+	// Returns an array of events as to when the business hours occur in the current view.
+	// Abuse of our event system :(
+	function getBusinessHoursEvents() {
 		var optionVal = options.businessHours;
 		var defaultVal = {
-			id: '_businessHours',
 			className: 'fc-nonbusiness',
 			start: '09:00',
 			end: '17:00',
@@ -846,19 +855,162 @@ function EventManager(options) { // assumed to be a calendar
 
 		if (optionVal) {
 			if (typeof optionVal === 'object') {
+				// option value is an object that can override the default business hours
 				eventInput = $.extend({}, defaultVal, optionVal);
 			}
 			else {
+				// option value is `true`. use default business hours
 				eventInput = defaultVal;
 			}
 		}
 
 		if (eventInput) {
-			return expandEvent(buildEventFromInput(eventInput), view.start, view.end);
+			return expandEvent(buildEventFromInput(eventInput));
 		}
 
 		return [];
-	};
+	}
+
+
+	/* Overlapping / Constraining
+	-----------------------------------------------------------------------------------------*/
+
+	t.isEventAllowedInRange = isEventAllowedInRange;
+	t.isSelectionAllowedInRange = isSelectionAllowedInRange;
+	t.enableCursor = enableCursor;
+	t.disableCursor = disableCursor;
+
+
+	function isEventAllowedInRange(event, start, end) {
+		var source = event.source || {};
+		var constraint = firstDefined(
+			event.constraint,
+			source.constraint,
+			options.eventConstraint
+		);
+		var overlap = firstDefined(
+			event.overlap,
+			source.overlap,
+			options.eventOverlap
+		);
+
+		return isRangeAllowed(start, end, constraint, overlap, event);
+	}
+
+
+	function isSelectionAllowedInRange(start, end) {
+		return isRangeAllowed(
+			start,
+			end,
+			options.selectionConstraint,
+			options.selectionOverlap
+		);
+	}
+
+
+	// Returns true if the given range (caused by an event drop or a selection) is allowed to exist on the calendar
+	// according to the constraint/overlap settings.
+	// `event` is required only in the case of isEventAllowedInRange.
+	function isRangeAllowed(start, end, constraint, overlap, event) {
+		var constraintEvents;
+		var anyContainment;
+		var overlapFunc;
+		var i;
+
+		// normalize. fyi, we're normalizing in too many places :(
+		start = start.clone().stripZone();
+		end = end.clone().stripZone();
+
+		// the range must be fully contained by at least one of produced constraint events
+		if (constraint != null) {
+			constraintEvents = constraintToEvents(constraint);
+			anyContainment = false;
+
+			for (i = 0; i < constraintEvents.length; i++) {
+				if (eventContainsRange(constraintEvents[i], start, end)) {
+					anyContainment = true;
+					break;
+				}
+			}
+
+			if (!anyContainment) {
+				return false;
+			}
+		}
+
+		// overlap is a filter function
+		if (typeof overlap === 'function') {
+			overlapFunc = overlap;
+		}
+
+		if (overlap === false || overlapFunc) { // `false` means make sure there is no overlap with *any* event
+
+			// check for intersection with events
+			for (i = 0; i < cache.length; i++) {
+				if (
+					(!event || event._id !== cache[i]._id) && // don't compare the event against itself
+					eventIntersectsRange(cache[i], start, end) && // make sure it intersects
+					(!overlapFunc || overlapFunc(cache[i], event) === false) // use filter function (if there is one)
+				) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	// Given an event input from the API, produces an array of event objects. Possible event inputs:
+	// 'businessHours'
+	// An event ID (number or string)
+	// An object with specific start/end dates or a recurring event (like what businessHours accepts)
+	function constraintToEvents(constraintInput) {
+
+		if (constraintInput === 'businessHours') {
+			return getBusinessHoursEvents();
+		}
+
+		if (typeof constraintInput === 'object') {
+			return expandEvent(buildEventFromInput(constraintInput));
+		}
+
+		return clientEvents(constraintInput); // probably an ID
+	}
+
+
+	// Is the event's date ranged fully contained by the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventContainsRange(event, start, end) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return start >= eventStart && end <= eventEnd;
+	}
+
+
+	// Does the event's date range intersect with the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventIntersectsRange(event, start, end) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return start < eventEnd && end > eventStart;
+	}
+
+
+	// Make the cursor express that an event is not allowed in the current area.
+	// Shouldn't really be here :(
+	function disableCursor() {
+		$('body').addClass('fc-not-allowed');
+	}
+
+
+	// Returns the cursor to its original look.
+	// Shouldn't really be here :(
+	function enableCursor() {
+		$('body').removeClass('fc-not-allowed');
+	}
 
 }
 
