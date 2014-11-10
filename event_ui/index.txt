@@ -10,6 +10,8 @@ Event Dragging & Resizing
 <li>dragRevertDuration</li>
 <li>dragOpacity</li>
 <li>dragScroll</li>
+<li>eventOverlap</li>
+<li>eventConstraint</li>
 <li class='callback'><a href='eventDragStart'>eventDragStart (callback)</a></li>
 <li class='callback'><a href='eventDragStop'>eventDragStop (callback)</a></li>
 <li class='callback'><a href='eventDrop'>eventDrop (callback)</a></li>

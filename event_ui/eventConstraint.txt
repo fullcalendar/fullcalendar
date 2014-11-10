@@ -1,0 +1,43 @@
+
+eventConstraint *2.2*
+=====================
+
+Limits event dragging and resizing to certain windows of time.
+
+<div class="spec" markdown="1">
+an event ID, `"businessHours"`, object
+</div>
+
+If an event ID is given (most likely a string), events that are being dragged or resized must
+be fully contained by at least one of the events linked to by the given event ID.
+
+If `"businessHours"` is given, events being dragged or resized must be contained within the
+week's business hours (Monday-Friday 9am-5pm by default). A custom
+[businessHours] value will be respected.
+
+A custom time-window, an object identical to what [businessHours] accepts, can also be given:
+
+	{
+		start: '10:00', // a start time (10am in this example)
+		end: '18:00', // an end time (6pm in this example)
+
+		dow: [ 1, 2, 3, 4 ]
+		// days of week. an array of zero-based day of week integers (0=Sunday)
+		// (Monday-Thursday in this example)
+	}
+
+A specific period of time with concrete start/end dates can also be given, similar to what an
+[Event Object] accepts:
+
+	{
+		start: '2014-12-01T10:00:00',
+		end: '2014-12-05T22:00:00'
+	}
+
+For more granular control over constraining event dates/times, use the `constraint` property
+on an [Event Source] or the `constraint` property on an [Event Object].
+
+
+[businessHours]: ../display/businessHours
+[Event Object]: ../event_data/Event_Object
+[Event Source]: ../event_data/Event_Source_Object

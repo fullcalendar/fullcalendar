@@ -4,6 +4,7 @@ Event Rendering
 
 <ul>
 <li class='article'>Colors</li>
+<li class='article'>Background Events</li>
 <li>eventColor</li>
 <li>eventBackgroundColor</li>
 <li>eventBorderColor</li>

@@ -14,6 +14,7 @@ General Display
 <li>fixedWeekCount</li>
 <li>weekNumbers</li>
 <li>weekNumberCalculation</li>
+<li>businessHours</li>
 <li>height</li>
 <li>contentHeight</li>
 <li>aspectRatio</li>

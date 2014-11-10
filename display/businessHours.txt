@@ -1,0 +1,31 @@
+
+businessHours *2.2*
+===================
+
+Emphasizes certain time slots on the calendar. By default, Monday-Friday, 9am-5pm.
+
+<div class="spec" markdown="1">
+boolean / object. *default*: `false`
+</div>
+
+If `true`, the default business hours will be emphasized.
+This only applies to the time slots in the agenda [views].
+If `false` (the default), there will be no emphasis.
+
+An object may be given to render business hours with fine-grain control over the days/hours.
+The object may have any of the following properties:
+
+	{
+		start: '10:00', // a start time (10am in this example)
+		end: '18:00', // an end time (6pm in this example)
+
+		dow: [ 1, 2, 3, 4 ]
+		// days of week. an array of zero-based day of week integers (0=Sunday)
+		// (Monday-Thursday in this example)
+	}
+
+More information on specifying times can be found in the [Duration] article.
+
+
+[views]: ../views/Available_Views
+[Duration]: ../utilities/Duration

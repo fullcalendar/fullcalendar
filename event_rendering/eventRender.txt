@@ -17,6 +17,9 @@ The `eventRender` callback function can modify `element`, return a brand new
 DOM element that will be used for rendering instead, or it can return `false`,
 which will prevent the event from being rendered at all.
 
+The `eventRender` callback will *not* be called for
+[background events](Background_Events).
+
 `eventRender` is a great way to attach other jQuery plugins to event elements,
 such as a [qTip](http://craigsworks.com/projects/qtip/) tooltip effect:
 

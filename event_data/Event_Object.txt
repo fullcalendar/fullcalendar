@@ -138,6 +138,31 @@ Overrides the master [eventDurationEditable](../event_ui/eventDurationEditable) 
 <!-- ------------------- -->
 <tr>
 <th>
+overlap
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [eventOverlap](../event_ui/eventOverlap) option for this single event.
+
+If `false`, prevents this event from being dragged/resized over other events. Also prevents other events from
+being dragged/resized over this event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
+constraint
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [eventConstraint](../event_ui/eventConstraint) option for this single event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
 source
 </th>
 <td markdown='block'>

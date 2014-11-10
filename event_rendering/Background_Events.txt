@@ -1,0 +1,48 @@
+
+Background Events *2.2*
+=======================
+
+Events that appear as background highlights can be achieved by setting an [Event Object]'s
+`rendering` property to `"background"`:
+
+	$('#calendar').fullCalendar({
+		defaultDate: '2014-11-10',
+		defaultView: 'agnedaWeek',
+		events: [
+			{
+				start: '2014-11-10T10:00:00',
+				end: '2014-11-10T16:00:00',
+				rendering: 'background'
+			}
+		]
+	});
+
+Result:
+
+Image
+
+Unlike non-background events, background events will not be piped through the
+[eventRender](eventRender) callback.
+
+
+Color
+-----
+
+The color of background events can be manipulated by targeting the `fc-bgevent` className, one
+of your own custom classNames provided by the [Event Object]'s `className` property, or by explicitly
+specifying a color with each [Event Object]'s or [Event Source]'s `color` or `backgroundColor`
+properties.
+
+
+Inverse Backgrounds
+-------------------
+
+The spans of time *not* occupied by an event can be colored by setting the `rendering` property
+to `"inverse-background"`. Events that share the same `id` will be grouped together when this
+rendering happens.
+
+Image
+
+
+[Event Object]: ../event_data/Event_Object
+[Event Source]: ../event_data/Event_Source_Object

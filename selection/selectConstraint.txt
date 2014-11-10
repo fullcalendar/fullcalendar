@@ -1,0 +1,14 @@
+
+selectConstraint *2.2*
+======================
+
+Limits user selection to certain windows of time.
+
+<div class="spec" markdown="1">
+an event ID, `"businessHours"`, object
+</div>
+
+This value behaves identically to the way [eventConstraint](../event_ui/eventConstraint)
+limits where events can go. It also accepts the same types of values.
+
+Only applicable when the [selectable](selectable) option is activated.
