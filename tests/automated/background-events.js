@@ -1,5 +1,5 @@
 
-ddescribe('background events', function() {
+describe('background events', function() {
 
 	var options;
 

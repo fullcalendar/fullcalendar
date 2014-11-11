@@ -1,5 +1,5 @@
 
-function testEventDrag(options, dropDate, expectSuccess, callback) {
+function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
 	var eventsRendered = false;
 
 	options.editable = true;
@@ -16,7 +16,7 @@ function testEventDrag(options, dropDate, expectSuccess, callback) {
 		eventsRendered = true;
 
 		dropDate = calendar.moment(dropDate);
-		eventEl = $('.fc-event:first');
+		eventEl = $('.' + (eventClassName || 'fc-event') + ':first');
 		expect(eventEl.length).toBe(1);
 		
 		if (dropDate.hasTime()) {
@@ -45,8 +45,18 @@ function testEventDrag(options, dropDate, expectSuccess, callback) {
 
 				dragEl.simulate('drop', {
 					callback: function() {
-						var eventObj = calendar.clientEvents()[0];
-						var successfulDrop = eventObj.start.format() == dropDate.format();
+						var eventObj;
+						var successfulDrop;
+
+						if (eventClassName) {
+							eventObj = calendar.clientEvents(function(o) {
+								return o.className.join(' ') === eventClassName;
+							})[0];
+						}
+						else {
+							eventObj = calendar.clientEvents()[0];
+						}
+						successfulDrop = eventObj.start.format() == dropDate.format();
 
 						expect(allowed).toBe(successfulDrop);
 						expect(allowed).toBe(expectSuccess);
@@ -61,7 +71,7 @@ function testEventDrag(options, dropDate, expectSuccess, callback) {
 }
 
 
-function testEventResize(options, resizeDate, expectSuccess, callback) {
+function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName) {
 	var eventsRendered = false;
 
 	options.editable = true;
@@ -78,7 +88,7 @@ function testEventResize(options, resizeDate, expectSuccess, callback) {
 		eventsRendered = true;
 
 		resizeDate = calendar.moment(resizeDate);
-		eventEl = $('.fc-event:last');
+		eventEl = $('.' + (eventClassName || 'fc-event') + ':last');
 		dragEl = eventEl.find('.fc-resizer');
 
 		if (resizeDate.hasTime()) {
