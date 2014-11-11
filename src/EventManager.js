@@ -903,8 +903,8 @@ function EventManager(options) { // assumed to be a calendar
 		return isRangeAllowed(
 			start,
 			end,
-			options.selectionConstraint,
-			options.selectionOverlap
+			options.selectConstraint,
+			options.selectOverlap
 		);
 	}
 
@@ -915,8 +915,8 @@ function EventManager(options) { // assumed to be a calendar
 	function isRangeAllowed(start, end, constraint, overlap, event) {
 		var constraintEvents;
 		var anyContainment;
-		var overlapFunc;
-		var i;
+		var i, otherEvent;
+		var otherOverlap;
 
 		// normalize. fyi, we're normalizing in too many places :(
 		start = start.clone().stripZone();
@@ -939,21 +939,39 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		// overlap is a filter function
-		if (typeof overlap === 'function') {
-			overlapFunc = overlap;
-		}
+		for (i = 0; i < cache.length; i++) { // loop all events and detect overlap
+			otherEvent = cache[i];
 
-		if (overlap === false || overlapFunc) { // `false` means make sure there is no overlap with *any* event
+			// don't compare the event to itself or other related [repeating] events
+			if (event && event._id === otherEvent._id) {
+				continue;
+			}
 
-			// check for intersection with events
-			for (i = 0; i < cache.length; i++) {
-				if (
-					(!event || event._id !== cache[i]._id) && // don't compare the event against itself
-					eventIntersectsRange(cache[i], start, end) && // make sure it intersects
-					(!overlapFunc || overlapFunc(cache[i], event) === false) // use filter function (if there is one)
-				) {
+			// there needs to be an actual intersection before disallowing anything
+			if (eventIntersectsRange(otherEvent, start, end)) {
+
+				// evaluate overlap for the given range and short-circuit if necessary
+				if (overlap === false) {
 					return false;
+				}
+				else if (typeof overlap === 'function' && !overlap(otherEvent, event)) {
+					return false;
+				}
+
+				// if we are computing if the given range is allowable for an event, consider the other event's
+				// EventObject-specific or Source-specific `overlap` property
+				if (event) {
+					otherOverlap = firstDefined(
+						otherEvent.overlap,
+						(otherEvent.source || {}).overlap
+						// we already considered the global `eventOverlap`
+					);
+					if (otherOverlap === false) {
+						return false;
+					}
+					if (typeof otherOverlap === 'function' && !otherOverlap(event, otherEvent)) {
+						return false;
+					}
 				}
 			}
 		}

@@ -56,7 +56,7 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-bgevent { /* default look for background events */
-	background: green;
+	background: rgb(143, 223, 130);
 	opacity: .3;
 	filter: alpha(opacity=30); /* for IE */
 }
