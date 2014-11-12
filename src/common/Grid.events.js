@@ -334,7 +334,8 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates
+	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates.
+	// Might return a `null` end (even when forceEventDuration is on).
 	computeDraggedEventDates: function(seg, dragStartDate, dropDate) {
 		var view = this.view;
 		var event = seg.event;
@@ -343,6 +344,7 @@ $.extend(Grid.prototype, {
 		var delta;
 		var newStart;
 		var newEnd;
+		var newAllDay;
 		var visibleEnd;
 
 		if (dropDate.hasTime() === dragStartDate.hasTime()) {
@@ -354,15 +356,17 @@ $.extend(Grid.prototype, {
 			else {
 				newEnd = end.clone().add(delta);
 			}
+			newAllDay = event.allDay; // keep it the same
 		}
 		else {
 			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
 			newStart = dropDate;
 			newEnd = null; // end should be cleared
+			newAllDay = !dropDate.hasTime();
 		}
 
 		// compute what the end date will appear to be
-		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(!dropDate.hasTime(), newStart);
+		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(newAllDay, newStart);
 
 		return { start: newStart, end: newEnd, visibleEnd: visibleEnd };
 	},
