@@ -79,22 +79,26 @@ $.extend(Grid.prototype, {
 		var renderedSegs = [];
 		var i;
 
-		// build a large concatenation of event segment HTML
-		for (i = 0; i < segs.length; i++) {
-			html += this.fgSegHtml(segs[i], disableResizing);
-		}
+		if (segs.length) { // don't build an empty html string
 
-		// Grab individual elements from the combined HTML string. Use each as the default rendering.
-		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-		$(html).each(function(i, node) {
-			var seg = segs[i];
-			var el = view.resolveEventEl(seg.event, $(node));
-			if (el) {
-				el.data('fc-seg', seg); // used by handlers
-				seg.el = el;
-				renderedSegs.push(seg);
+			// build a large concatenation of event segment HTML
+			for (i = 0; i < segs.length; i++) {
+				html += this.fgSegHtml(segs[i], disableResizing);
 			}
-		});
+
+			// Grab individual elements from the combined HTML string. Use each as the default rendering.
+			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
+			$(html).each(function(i, node) {
+				var seg = segs[i];
+				var el = view.resolveEventEl(seg.event, $(node));
+
+				if (el) {
+					el.data('fc-seg', seg); // used by handlers
+					seg.el = el;
+					renderedSegs.push(seg);
+				}
+			});
+		}
 
 		return renderedSegs;
 	},
@@ -110,40 +114,41 @@ $.extend(Grid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the given background event segments onto the grid
-	// TODO: should probably be abstract, but do this for immediate code reuse
+	// Renders the given background event segments onto the grid.
+	// Returns a subset of the segs that were actually rendered.
 	renderBgSegs: function(segs) {
-		this.renderFill('bgEvent', segs); // relies on the subclass having a renderFill method!
+		return this.renderFill('bgEvent', segs);
 	},
 
 
 	// Unrenders all the currently rendered background event segments
-	// TODO: should probably be abstract, but do this for immediate code reuse
 	destroyBgSegs: function() {
-		this.destroyFill('bgEvent'); // relies on the subclass having a destroyFill method!
+		this.destroyFill('bgEvent');
 	},
 
 
-	// Returns a space-separated string of additional classNames to apply to a background event segment.
-	// Gets called by each subclass' fill-rendering system.
-	// TODO: merge with getSegClasses() somehow
+	// Renders a background event element, given the default rendering. Called by the fill system.
+	bgEventSegEl: function(seg, el) {
+		return this.view.resolveEventEl(seg.event, el); // will filter through eventRender
+	},
+
+
+	// Generates an array of classNames to be used for the default rendering of a background event.
+	// Called by the fill system.
 	bgEventSegClasses: function(seg) {
 		var event = seg.event;
 		var source = event.source || {};
-		var classes = event.className.concat(source.className || []);
 
-		return classes.join(' ');
+		return [ 'fc-bgevent' ].concat(
+			event.className,
+			source.className || []
+		);
 	},
 
 
-	businessHoursSegClasses: function(seg) {
-		return this.bgEventSegClasses(seg);
-	},
-
-
-	// Returns additional CSS properties (as a string) to be applied to a background event segment.
-	// Gets called by each subclass' fill-rendering system.
-	// TODO: merge with getEventSkinCss() somehow
+	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
+	// Called by the fill system.
+	// TODO: consolidate with getEventSkinCss?
 	bgEventSegStyles: function(seg) {
 		var view = this.view;
 		var event = seg.event;
@@ -160,10 +165,16 @@ $.extend(Grid.prototype, {
 			optionColor;
 
 		if (backgroundColor) {
-			return 'background:' + backgroundColor;
+			return 'background-color:' + backgroundColor;
 		}
 
 		return '';
+	},
+
+
+	// Generates an array of classNames to be used for the rendering business hours overlay. Called by the fill system.
+	businessHoursSegClasses: function(seg) {
+		return [ 'fc-nonbusiness', 'fc-bgevent' ];
 	},
 
 

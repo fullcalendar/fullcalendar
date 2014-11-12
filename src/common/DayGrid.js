@@ -4,8 +4,6 @@
 
 function DayGrid(view) {
 	Grid.call(this, view); // call the super-constructor
-
-	this.elsByFill = {};
 }
 
 
@@ -19,7 +17,6 @@ $.extend(DayGrid.prototype, {
 	rowEls: null, // set of fake row elements
 	dayEls: null, // set of whole-day elements comprising the row's background
 	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
-	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
@@ -246,103 +243,65 @@ $.extend(DayGrid.prototype, {
 	},
 
 
-	/* Highlighting
+	/* Fill System (highlight, background events, business hours)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is an inclusive, `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.renderFill('highlight', this.rangeToSegs(start, end));
-	},
-
-
-	// Unrenders any visual emphasis on a date range
-	destroyHighlight: function() {
-		this.destroyFill('highlight');
-	},
-
-
-	/* "Fill" Rendering (rectangles covering a specified period of days)
-	------------------------------------------------------------------------------------------------------------------*/
+	fillSegTag: 'td', // override the default tag name
 
 
 	// Renders a set of rectangles over the given segments of days.
-	// The `type` is used for destroying later. Also allows for special-cased behavior via strategically-named methods.
-	// CAUTION: the segs' `.el` property DOES NOT get assigned (like it does with TimeGrid)
+	// Only returns segments that successfully rendered.
 	renderFill: function(type, segs) {
-		var html = '';
-		var i;
-		var els;
+		var nodes = [];
+		var i, seg;
+		var skeletonEl;
 
-		// concatenate all the rows' html
+		segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+
 		for (i = 0; i < segs.length; i++) {
-			html += this.fillRowHtml(type, segs[i]);
+			seg = segs[i];
+			skeletonEl = this.renderFillRow(type, seg);
+			this.rowEls.eq(seg.row).append(skeletonEl);
+			nodes.push(skeletonEl[0]);
 		}
 
-		els = $(html);
+		this.elsByFill[type] = $(nodes);
 
-		// inject each fill row's element into the correct row container of the grid
-		for (i = 0; i < segs.length; i++) {
-			this.rowEls.eq(segs[i].row).append(els[i]);
-		}
-
-		this.elsByFill[type] = els;
+		return segs;
 	},
 
 
-	// Unrenders a specific type of fill that is currently rendered on the grid
-	destroyFill: function(type) {
-		var els = this.elsByFill[type];
-
-		if (els) {
-			els.remove();
-			delete this.elsByFill[type];
-		}
-	},
-
-
-	// Generates the HTML needed for one row of a fill
-	fillRowHtml: function(type, seg) {
-		var typeLower = type.toLowerCase();
+	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
+	renderFillRow: function(type, seg) {
 		var colCnt = this.view.colCnt;
 		var startCol = seg.leftCol;
 		var endCol = seg.rightCol + 1;
-		var cellHtml = '';
+		var skeletonEl;
+		var trEl;
 
-		// TODO: a better system for this
-		var extraClassesMethod = this[type + 'SegClasses'];
-		var extraStylesMethod = this[type + 'SegStyles'];
-		var extraClasses = extraClassesMethod ? extraClassesMethod.call(this, seg) : '';
-		var extraStyles = extraStylesMethod ? extraStylesMethod.call(this, seg) : '';
+		skeletonEl = $(
+			'<div class="fc-' + type.toLowerCase() + '-skeleton">' +
+				'<table><tr/></table>' +
+			'</div>'
+		);
+		trEl = skeletonEl.find('tr');
 
 		if (startCol > 0) {
-			cellHtml += '<td colspan="' + startCol + '"/>';
+			trEl.append('<td colspan="' + startCol + '"/>');
 		}
 
-		cellHtml += '<td' +
-			' colspan="' + (endCol - startCol) + '"' +
-			' class="fc-' + typeLower + ' ' + extraClasses + '"' +
-			(extraStyles ?
-				' style="' + extraStyles + '"' :
-				''
-				) +
-			'/>';
+		trEl.append(
+			seg.el.attr('colspan', endCol - startCol)
+		);
 
 		if (endCol < colCnt) {
-			cellHtml += '<td colspan="' + (colCnt - endCol) + '"/>';
+			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
 		}
 
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
+		this.bookendCells(trEl, type);
 
-		return '' +
-			'<div class="fc-' + typeLower + '-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>';
+		return skeletonEl;
 	}
-
 
 });

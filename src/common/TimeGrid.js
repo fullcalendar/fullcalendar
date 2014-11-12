@@ -4,8 +4,6 @@
 
 function TimeGrid(view) {
 	Grid.call(this, view); // call the super-constructor
-
-	this.elsByFill = {};
 }
 
 
@@ -24,7 +22,6 @@ $.extend(TimeGrid.prototype, {
 	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
 
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
-	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
 	// Renders the time grid into `this.el`, which should already be assigned.
@@ -395,119 +392,59 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
-	/* Highlight
+	/* Fill System (highlight, background events, business hours)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.renderFill('highlight', this.rangeToSegs(start, end));
-	},
-
-
-	// Unrenders the emphasis on a date range
-	destroyHighlight: function() {
-		this.destroyFill('highlight');
-	},
-
-
-	/* "Fill" Rendering (rectangles covering a specified period of days)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a set of rectangles over the given time segments.
-	// The `type` is used for destroying later. Also allows for special-cased behavior via strategically-named methods.
-	// `classNameStr` is a HACK
-	renderFill: function(type, segs, classNameStr) {
+	// Renders a set of rectangles over the given time segments
+	renderFill: function(type, segs, className) {
 		var view = this.view;
-		var extraClassesMethod = this[type + 'SegClasses']; // TODO: better system for this
-		var extraStylesMethod = this[type + 'SegStyles']; //
-		var cellHtml = '';
 		var segCols;
+		var skeletonEl;
+		var trEl;
 		var col, colSegs;
-		var i, seg;
+		var tdEl;
+		var containerEl;
 		var dayDate;
-		var top, bottom;
-		var extraClasses;
-		var extraStyles;
-		var el;
-		var segEls;
-		var j;
+		var i, seg;
 
-		if (!segs.length) { return; }
+		if (segs.length) {
 
-		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
+			segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+			segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
-		classNameStr = classNameStr || type.toLowerCase();
+			className = className || type.toLowerCase();
+			skeletonEl = $(
+				'<div class="fc-' + className + '-skeleton">' +
+					'<table><tr/></table>' +
+				'</div>'
+			);
+			trEl = skeletonEl.find('tr');
 
-		for (col = 0; col < segCols.length; col++) {
-			colSegs = segCols[col];
+			for (col = 0; col < segCols.length; col++) {
+				colSegs = segCols[col];
+				tdEl = $('<td/>').appendTo(trEl);
 
-			cellHtml += '<td>';
-
-			if (colSegs.length) {
-				cellHtml += '<div class="fc-' + classNameStr + '-container">';
-
-				for (i = 0; i < colSegs.length; i++) {
-					seg = colSegs[i];
-
-					// compute vertical position
+				if (colSegs.length) {
+					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
 					dayDate = view.cellToDate(0, col);
-					top = this.computeDateTop(seg.start, dayDate);
-					bottom = this.computeDateTop(seg.end, dayDate); // the y position of the bottom edge
 
-					// TODO: better system for this
-					extraClasses = extraClassesMethod ? extraClassesMethod.call(this, seg) : '';
-					extraStyles = extraStylesMethod ? extraStylesMethod.call(this, seg) : '';
-
-					cellHtml += '<div' +
-						' class="fc-' + classNameStr + ' ' + extraClasses + '"' +
-						' style="top:' + top + 'px;bottom:-' + bottom + 'px;' + extraStyles + '"' +
-						'/>';
+					for (i = 0; i < colSegs.length; i++) {
+						seg = colSegs[i];
+						containerEl.append(
+							seg.el.css({
+								top: this.computeDateTop(seg.start, dayDate),
+								bottom: -this.computeDateTop(seg.end, dayDate) // the y position of the bottom edge
+							})
+						);
+					}
 				}
-
-				cellHtml += '</div>';
 			}
 
-			cellHtml += '</td>';
-		}
+			this.bookendCells(trEl, type);
 
-		cellHtml = this.bookendCells(cellHtml, type);
-
-		el = $(
-			'<div class="fc-' + classNameStr + '-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>'
-		);
-
-		// assign each segment's el. TODO: there's gotta be a better way
-		segEls = el.find('.fc-' + classNameStr);
-		j = 0;
-		for (col = 0; col < segCols.length; col++) {
-			colSegs = segCols[col];
-			for (i = 0; i < colSegs.length; i++) {
-				seg = colSegs[i];
-				seg.el = segEls.eq(j);
-				j++;
-			}
-		}
-
-		this.el.append(el);
-		this.elsByFill[type] = el;
-	},
-
-
-	// Unrenders a specific type of fill that is currently rendered on the grid
-	destroyFill: function(type) {
-		var el = this.elsByFill[type];
-
-		if (el) {
-			el.remove();
-			delete this.elsByFill[type];
+			this.el.append(skeletonEl);
+			this.elsByFill[type] = skeletonEl;
 		}
 	}
 
