@@ -262,31 +262,40 @@ View.prototype = {
 	documentDragStart: function(ev, ui) {
 		var _this = this;
 		var dropDate = null;
+		var el;
+		var accept;
 		var dragListener;
 
 		if (this.opt('droppable')) { // only listen if this setting is on
+			el = $(ev.target);
 
-			// listener that tracks mouse movement over date-associated pixel regions
-			dragListener = new DragListener(this.coordMap, {
-				cellOver: function(cell, date) {
-					dropDate = date;
-					_this.renderDrag(date);
-				},
-				cellOut: function() {
-					dropDate = null;
+			// Test that the dragged element passes the dropAccept selector or filter function.
+			// FYI, the default is "*" (matches all)
+			accept = this.opt('dropAccept');
+			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
+
+				// listener that tracks mouse movement over date-associated pixel regions
+				dragListener = new DragListener(this.coordMap, {
+					cellOver: function(cell, date) {
+						dropDate = date;
+						_this.renderDrag(date);
+					},
+					cellOut: function() {
+						dropDate = null;
+						_this.destroyDrag();
+					}
+				});
+
+				// gets called, only once, when jqui drag is finished
+				$(document).one('dragstop', function(ev, ui) {
 					_this.destroyDrag();
-				}
-			});
+					if (dropDate) {
+						_this.trigger('drop', el[0], dropDate, ev, ui);
+					}
+				});
 
-			// gets called, only once, when jqui drag is finished
-			$(document).one('dragstop', function(ev, ui) {
-				_this.destroyDrag();
-				if (dropDate) {
-					_this.trigger('drop', ev.target, dropDate, ev, ui);
-				}
-			});
-
-			dragListener.startDrag(ev); // start listening immediately
+				dragListener.startDrag(ev); // start listening immediately
+			}
 		}
 	},
 
