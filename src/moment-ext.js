@@ -134,7 +134,7 @@ newMomentProto.clone = function() {
 // SETTER
 // You can supply a Duration, a Moment, or a Duration-like argument.
 // When setting the time, and the moment has an ambiguous time, it then becomes unambiguous.
-newMomentProto.time = function(time) {
+newMomentProto.timeDuration = function(time) {
 	if (time == null) { // getter
 		return moment.duration({
 			hours: this.hours(),

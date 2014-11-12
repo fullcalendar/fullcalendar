@@ -797,7 +797,7 @@ function View(calendar) {
 
 		if (end) {
 			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
-			endTimeMS = +end.time(); // # of milliseconds into `endDay`
+			endTimeMS = +end.timeDuration(); // # of milliseconds into `endDay`
 
 			// If the end time is actually inclusively part of the next day and is equal to or
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.

@@ -88,7 +88,7 @@ describe('ambiguously-timed moment', function() {
 
 	it('has a zero time', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08');
-		var time = mom.time();
+		var time = mom.timeDuration();
 		expect(+time).toBe(0);
 	});
 
@@ -116,9 +116,9 @@ describe('ambiguously-timed moment', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08');
 		expect(mom.hasTime()).toBe(false);
 		var time = moment.duration({ hours: 1, minutes: 25 });
-		mom.time(time);
+		mom.timeDuration(time);
 		expect(mom.hasTime()).toBe(true);
-		expect(+mom.time()).toBe(+time);
+		expect(+mom.timeDuration()).toBe(+time);
 	});
 
 	it('can be given a time and zone via utc', function() {

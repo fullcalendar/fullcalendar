@@ -218,7 +218,7 @@ describe('updateEvent', function() {
 				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
 			];
 			init();
-			event.start.time('18:00');
+			event.start.timeDuration('18:00');
 			$('#cal').fullCalendar('updateEvent', event);
 			expect(event.allDay).toEqual(false);
 			expect(event.start).toEqualMoment('2014-05-01T18:00:00');
@@ -255,7 +255,7 @@ describe('updateEvent', function() {
 				];
 				init();
 				event.allDay = false;
-				event.start.time('14:00');
+				event.start.timeDuration('14:00');
 				$('#cal').fullCalendar('updateEvent', event);
 				expect(event.allDay).toEqual(false);
 				expect(event.start).toEqualMoment('2014-05-01T14:00:00');
