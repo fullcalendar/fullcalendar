@@ -65,4 +65,10 @@ describe('moment date formatting', function() {
 		//expect(s2).toEqual('Tue 6(:00)am');
 	});
 
+	it('should not allow custom fullCalendar formatting for moments created natively', function() {
+		var mom = moment.utc('2014-11-11T12:00:00');
+		var s = mom.format('MMMM Do YYYY, h(:mm)');
+		expect(s).toEqual('November 11th 2014, 12(:00)');
+	});
+
 });
