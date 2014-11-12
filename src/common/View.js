@@ -257,9 +257,13 @@ View.prototype = {
 	// Gets called when jqui's 'dragstart' is fired.
 	documentDragStart: function(ev, ui) {
 		var _this = this;
-		var dropDate = null;
+		var calendar = this.calendar;
+		var eventStart = null;
+		var eventEnd = null;
+		var visibleEnd = null; // will be calculated event when no eventEnd
 		var el;
 		var accept;
+		var meta;
 		var dragListener;
 
 		if (this.opt('droppable')) { // only listen if this setting is on
@@ -270,23 +274,45 @@ View.prototype = {
 			accept = this.opt('dropAccept');
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 
+				meta = getDraggedElMeta(el); // data for possibly creating an event
+
 				// listener that tracks mouse movement over date-associated pixel regions
 				dragListener = new DragListener(this.coordMap, {
-					cellOver: function(cell, date) {
-						dropDate = date;
-						_this.renderDrag(date);
+					cellOver: function(cell, cellDate) {
+						eventStart = cellDate;
+						eventEnd = meta.duration ? eventStart.clone().add(meta.duration) : null;
+						visibleEnd = eventEnd || calendar.getDefaultEventEnd(!eventStart.hasTime(), eventStart);
+						_this.renderDrag(eventStart, visibleEnd);
 					},
 					cellOut: function() {
-						dropDate = null;
+						eventStart = eventEnd = visibleEnd = null;
 						_this.destroyDrag();
 					}
 				});
 
 				// gets called, only once, when jqui drag is finished
 				$(document).one('dragstop', function(ev, ui) {
+					var eventProps = meta.eventProps;
+					var renderedEvents;
+
 					_this.destroyDrag();
-					if (dropDate) {
-						_this.trigger('drop', el[0], dropDate, ev, ui);
+
+					if (eventStart) { // element was dropped on a valid date/time cell
+
+						// if dropped on an all-day cell, and element's metadata specified a time, set it
+						if (meta.startTime && !eventStart.hasTime()) {
+							eventStart.timeDuration(meta.startTime);
+						}
+
+						// trigger 'drop' regardless of whether element represents an event
+						_this.trigger('drop', el[0], eventStart, ev, ui);
+
+						// create an event from the given properties and the newly calculated dates
+						if (eventProps) {
+							$.extend(eventProps, { start: eventStart, end: eventEnd });
+							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
+							_this.trigger('eventReceive', null, renderedEvents[0]); // signal an external event landed
+						}
 					}
 				});
 
@@ -820,4 +846,58 @@ function View(calendar) {
 		return range.end.diff(range.start, 'days') > 1;
 	}
 
+}
+
+
+/* Utils
+----------------------------------------------------------------------------------------------------------------------*/
+
+// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
+// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
+fc.dataAttrPrefix = '';
+
+// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
+// to be used for Event Object creation.
+// A defined `.eventProps`, even when empty, indicates that an event should be created.
+function getDraggedElMeta(el) {
+	var prefix = fc.dataAttrPrefix;
+	var eventProps; // properties for creating the event, not related to date/time
+	var startTime; // a Duration
+	var duration;
+	var stick;
+
+	if (prefix) { prefix += '-'; }
+	eventProps = el.data(prefix + 'event') || null;
+
+	if (eventProps) {
+		if (typeof eventProps === 'object') {
+			eventProps = $.extend({}, eventProps); // make a copy
+		}
+		else { // something like 1 or true. still signal event creation
+			eventProps = {};
+		}
+
+		// pluck special-cased date/time properties
+		startTime = eventProps.start;
+		if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
+		duration = eventProps.duration;
+		stick = eventProps.stick;
+		delete eventProps.start;
+		delete eventProps.time;
+		delete eventProps.duration;
+		delete eventProps.stick;
+	}
+
+	// fallback to standalone attribute values for each of the date/time properties
+	if (startTime == null) { startTime = el.data(prefix + 'start'); }
+	if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
+	if (duration == null) { duration = el.data(prefix + 'duration'); }
+	if (stick == null) { stick = el.data(prefix + 'stick'); }
+
+	// massage into correct data types
+	startTime = startTime != null ? moment.duration(startTime) : null;
+	duration = duration != null ? moment.duration(duration) : null;
+	stick = Boolean(stick);
+
+	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }

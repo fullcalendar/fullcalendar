@@ -364,7 +364,7 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 	
-	
+	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
 		var abstractEvent = buildEventFromInput(eventInput);
 		var events;
@@ -386,7 +386,11 @@ function EventManager(options) { // assumed to be a calendar
 			}
 
 			reportEvents(cache);
+
+			return events;
 		}
+
+		return [];
 	}
 	
 	
