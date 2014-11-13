@@ -1,10 +1,12 @@
 
+// this function has been mangled to work with external jqui draggables as well
 function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
 	var eventsRendered = false;
 
 	options.editable = true;
 	options.eventAfterAllRender = function() {
 		var calendar = $('#cal').fullCalendar('getCalendar');
+		var isDraggingExternal = false;
 		var dayEl;
 		var eventEl;
 		var dragEl;
@@ -33,6 +35,11 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 			dy = dayEl.offset().top - eventEl.offset().top;
 		}
 
+		if (!dragEl.length) {
+			isDraggingExternal = true;
+			dragEl = eventEl; // well, not really an "event" element anymore
+		}
+
 		expect(dragEl.length).toBe(1);
 		expect(dayEl.length).toBe(1);
 		dx = dayEl.offset().left - eventEl.offset().left;
@@ -42,32 +49,36 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 			dy: dy || 1,
 			callback: function() {
 				var allowed = !$('body').hasClass('fc-not-allowed');
+				expect(allowed).toBe(expectSuccess);
 
 				dragEl.simulate('drop', {
 					callback: function() {
 						var eventObj;
 						var successfulDrop;
 
-						if (eventClassName) {
-							eventObj = calendar.clientEvents(function(o) {
-								return o.className.join(' ') === eventClassName;
-							})[0];
-						}
-						else {
-							eventObj = calendar.clientEvents()[0];
+						if (!isDraggingExternal) { // if dragging an event within the calendar, check dates
+
+							if (eventClassName) {
+								eventObj = calendar.clientEvents(function(o) {
+									return o.className.join(' ') === eventClassName;
+								})[0];
+							}
+							else {
+								eventObj = calendar.clientEvents()[0];
+							}
+
+							if (dropDate.hasTime()) { // dropped on a slot
+								successfulDrop = eventObj.start.format() == dropDate.format(); // compare exact times
+							}
+							else { // dropped on a whole day
+								// only compare days
+								successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD');
+							}
+
+							expect(successfulDrop).toBe(allowed);
+							expect(successfulDrop).toBe(expectSuccess);
 						}
 
-						if (dropDate.hasTime()) { // dropped on a slot
-							successfulDrop = eventObj.start.format() == dropDate.format(); // compare exact times
-						}
-						else { // dropped on a whole day
-							// only compare days
-							successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD');
-						}
-
-						expect(allowed).toBe(successfulDrop);
-						expect(allowed).toBe(expectSuccess);
-						expect(successfulDrop).toBe(expectSuccess);
 						callback();
 					}
 				});

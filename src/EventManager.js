@@ -925,7 +925,7 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		return isRangeAllowed(start, end);
+		return isSelectionAllowedInRange(start, end); // treat it as a selection
 	}
 
 
