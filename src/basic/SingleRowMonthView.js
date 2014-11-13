@@ -1,4 +1,4 @@
-/* A month view with day cells running in rows (one-per-week) and columns
+/* A month view with day cells running in one single row and columns (one-per-day)
 ----------------------------------------------------------------------------------------------------------------------*/
 
 setDefaults({
