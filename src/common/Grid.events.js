@@ -549,7 +549,7 @@ $.extend(Grid.prototype, {
 			if (eventGroup.length) {
 				ranges.push.apply(
 					ranges,
-					eventGroup[0].rendering === 'inverse-background' ?
+					isInverseBgEvent(eventGroup[0]) ?
 						_this.eventsToInverseRanges(eventGroup) :
 						_this.eventsToNormalRanges(eventGroup)
 				);
@@ -660,8 +660,19 @@ $.extend(Grid.prototype, {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-function isBgEvent(event) {
-	return event.rendering === 'background' || event.rendering === 'inverse-background';
+function isBgEvent(event) { // returns true if background OR inverse-background
+	var rendering = getEventRendering(event);
+	return rendering === 'background' || rendering === 'inverse-background';
+}
+
+
+function isInverseBgEvent(event) {
+	return getEventRendering(event) === 'inverse-background';
+}
+
+
+function getEventRendering(event) {
+	return firstDefined((event.source || {}).rendering, event.rendering);
 }
 
 

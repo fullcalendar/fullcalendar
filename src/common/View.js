@@ -216,7 +216,7 @@ View.prototype = {
 	// Iterates through event segments. Goes through all by default.
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
 	// The `this` value of the callback function will be the view.
-	segEach: function(func, event, isBg) {
+	segEach: function(func, event) {
 		var segs = this.getSegs();
 		var i;
 

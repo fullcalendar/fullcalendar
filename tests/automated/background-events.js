@@ -381,6 +381,41 @@ describe('background events', function() {
 			$('#cal').fullCalendar(options);
 		});
 
+		describe('when in month view', function() {
+			it('can be activated when rendering set on the source', function(done) {
+				options.defaultView = 'month';
+				options.eventSources = [ {
+					rendering: 'background',
+					events: [ {
+						start: '2014-11-04'
+					} ]
+				} ];
+				options.eventAfterAllRender = function() {
+					expect($('.fc-bgevent').length).toBe(1);
+					expect($('.fc-event').length).toBe(0);
+					done();
+				};
+				$('#cal').fullCalendar(options);
+			});
+		});
+
+		describe('when in agenda view and timed event', function() {
+			it('can be activated when rendering set on the source', function(done) {
+				options.defaultView = 'agendaWeek';
+				options.eventSources = [ {
+					rendering: 'background',
+					events: [ {
+						start: '2014-11-04T01:00:00'
+					} ]
+				} ];
+				options.eventAfterAllRender = function() {
+					expect($('.fc-bgevent').length).toBe(1);
+					expect($('.fc-event').length).toBe(0);
+					done();
+				};
+				$('#cal').fullCalendar(options);
+			});
+		});
 	});
 
 	describe('when in agendaWeek view', function() {
