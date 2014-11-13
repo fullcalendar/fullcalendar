@@ -258,7 +258,7 @@ var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
 function dayishDiff(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days'),
-		ms: a.timeDuration() - b.timeDuration()
+		ms: a.time() - b.time()
 	});
 }
 

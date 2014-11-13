@@ -134,7 +134,14 @@ newMomentProto.clone = function() {
 // SETTER
 // You can supply a Duration, a Moment, or a Duration-like argument.
 // When setting the time, and the moment has an ambiguous time, it then becomes unambiguous.
-newMomentProto.timeDuration = function(time) {
+newMomentProto.time = function(time) {
+
+	// Fallback to the original method (if there is one) if this moment wasn't created via FullCalendar.
+	// `time` is a generic enough method name where this precaution is necessary to avoid collisions w/ other plugins.
+	if (!this._fullCalendar) {
+		return oldMomentProto.time.apply(this, arguments);
+	}
+
 	if (time == null) { // getter
 		return moment.duration({
 			hours: this.hours(),
@@ -376,7 +383,8 @@ function transferAmbigs(src, dest) {
 }
 
 
-// Sets the year/month/date/etc values of the moment from the given array
+// Sets the year/month/date/etc values of the moment from the given array.
+// Inefficient because it calls each individual setter.
 function setMomentValues(mom, a) {
 	mom.year(a[0] || 0)
 		.month(a[1] || 0)

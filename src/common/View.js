@@ -316,7 +316,7 @@ View.prototype = {
 
 						// if dropped on an all-day cell, and element's metadata specified a time, set it
 						if (meta.startTime && !eventStart.hasTime()) {
-							eventStart.timeDuration(meta.startTime);
+							eventStart.time(meta.startTime);
 						}
 
 						// trigger 'drop' regardless of whether element represents an event
@@ -833,7 +833,7 @@ function View(calendar) {
 
 		if (end) {
 			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
-			endTimeMS = +end.timeDuration(); // # of milliseconds into `endDay`
+			endTimeMS = +end.time(); // # of milliseconds into `endDay`
 
 			// If the end time is actually inclusively part of the next day and is equal to or
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.

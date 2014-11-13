@@ -85,7 +85,7 @@ $.extend(TimeGrid.prototype, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.maxTime) {
-			slotDate = view.start.clone().timeDuration(slotTime); // will be in UTC but that's good. to avoid DST issues
+			slotDate = view.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
 			minutes = slotDate.minutes();
 
 			axisHtml =
@@ -145,8 +145,8 @@ $.extend(TimeGrid.prototype, {
 
 		for (col = 0; col < view.colCnt; col++) {
 			cellDate = view.cellToDate(0, col); // use the View's cell system for this
-			colStart = cellDate.clone().timeDuration(this.minTime);
-			colEnd = cellDate.clone().timeDuration(this.maxTime);
+			colStart = cellDate.clone().time(this.minTime);
+			colEnd = cellDate.clone().time(this.maxTime);
 			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
 			if (seg) {
 				seg.col = col;
@@ -210,7 +210,7 @@ $.extend(TimeGrid.prototype, {
 
 		return calendar.rezoneDate( // since we are adding a time, it needs to be in the calendar's timezone
 			view.cellToDate(0, cell.col) // View's coord system only accounts for start-of-day for column
-				.timeDuration(this.minTime + this.snapDuration * cell.row)
+				.time(this.minTime + this.snapDuration * cell.row)
 		);
 	},
 

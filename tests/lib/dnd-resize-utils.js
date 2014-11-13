@@ -174,7 +174,7 @@ function testSelection(options, startTime, end, expectSuccess, callback) {
 	end = calendar.moment(end);
 
 	if (startTime) {
-		start.timeDuration(startTime);
+		start.time(startTime);
 		firstDayEl = $('.fc-time-grid .fc-day[data-date="' + start.format('YYYY-MM-DD') + '"]');
 		lastDayEl = $('.fc-time-grid .fc-day[data-date="' + end.format('YYYY-MM-DD') + '"]');
 		firstSlatIndex = start.hours() * 2 + (start.minutes() / 30); // assumes slotDuration:'30:00'

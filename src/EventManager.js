@@ -641,10 +641,10 @@ function EventManager(options) { // assumed to be a calendar
 						end = null;
 
 						if (startTime) {
-							start = start.timeDuration(startTime);
+							start = start.time(startTime);
 						}
 						if (endTime) {
-							end = date.clone().timeDuration(endTime);
+							end = date.clone().time(endTime);
 						}
 
 						event = $.extend({}, abstractEvent); // make a copy of the original
