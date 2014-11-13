@@ -299,14 +299,14 @@ $.extend(Grid.prototype, {
 					// have the helper follow the mouse (no snapping) with a warning-style cursor
 					newStart = null; // mark an invalid drop date
 					mouseFollower.show();
-					calendar.disableCursor();
+					disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newStart = null;
 				view.destroyDrag(); // unrender whatever was done in view.renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
-				calendar.enableCursor();
+				enableCursor();
 			},
 			dragStop: function(ev) {
 				var hasChanged = newStart && !newStart.isSame(event.start);
@@ -323,7 +323,7 @@ $.extend(Grid.prototype, {
 					}
 				});
 
-				calendar.enableCursor();
+				enableCursor();
 			},
 			listenStop: function() {
 				mouseFollower.stop(); // put in listenStop in case there was a mousedown but the drag never started
@@ -423,18 +423,18 @@ $.extend(Grid.prototype, {
 				else {
 					newEnd = null; // mark an invalid resize
 					destroy();
-					calendar.disableCursor();
+					disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newEnd = null;
 				destroy();
-				calendar.enableCursor();
+				enableCursor();
 			},
 			dragStop: function(ev) {
 				_this.isResizingSeg = false;
 				destroy();
-				calendar.enableCursor();
+				enableCursor();
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 				if (newEnd) {

@@ -117,7 +117,7 @@ $.extend(Grid.prototype, {
 						}
 						else {
 							dates = null; // flag for an invalid selection
-							calendar.disableCursor();
+							disableCursor();
 						}
 					}
 				}
@@ -125,7 +125,7 @@ $.extend(Grid.prototype, {
 			cellOut: function(cell, date) {
 				dates = null;
 				_this.destroySelection();
-				calendar.enableCursor();
+				enableCursor();
 			},
 			listenStop: function(ev) {
 				if (dates) { // started and ended on a cell?
@@ -137,7 +137,7 @@ $.extend(Grid.prototype, {
 						view.reportSelection(start, end, ev);
 					}
 				}
-				calendar.enableCursor();
+				enableCursor();
 			}
 		});
 

@@ -882,8 +882,6 @@ function EventManager(options) { // assumed to be a calendar
 
 	t.isEventAllowedInRange = isEventAllowedInRange;
 	t.isSelectionAllowedInRange = isSelectionAllowedInRange;
-	t.enableCursor = enableCursor;
-	t.disableCursor = disableCursor;
 
 
 	function isEventAllowedInRange(event, start, end) {
@@ -1019,20 +1017,6 @@ function EventManager(options) { // assumed to be a calendar
 		var eventEnd = t.getEventEnd(event).stripZone();
 
 		return start < eventEnd && end > eventStart;
-	}
-
-
-	// Make the cursor express that an event is not allowed in the current area.
-	// Shouldn't really be here :(
-	function disableCursor() {
-		$('body').addClass('fc-not-allowed');
-	}
-
-
-	// Returns the cursor to its original look.
-	// Shouldn't really be here :(
-	function enableCursor() {
-		$('body').removeClass('fc-not-allowed');
 	}
 
 }
