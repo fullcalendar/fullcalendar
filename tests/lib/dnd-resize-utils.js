@@ -56,7 +56,14 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 						else {
 							eventObj = calendar.clientEvents()[0];
 						}
-						successfulDrop = eventObj.start.format() == dropDate.format();
+
+						if (dropDate.hasTime()) { // dropped on a slot
+							successfulDrop = eventObj.start.format() == dropDate.format(); // compare exact times
+						}
+						else { // dropped on a whole day
+							// only compare days
+							successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD');
+						}
 
 						expect(allowed).toBe(successfulDrop);
 						expect(allowed).toBe(expectSuccess);

@@ -28,6 +28,26 @@ describe('event constraint', function() {
 					} ];
 					testEventDrag(options, '2014-11-10T04:00:00', true, done);
 				});
+
+				describe('when in month view with timed event', function() {
+					it('allows a drag, respects time of day', function(done) {
+						options.defaultView = 'month';
+						options.events = [ {
+							start: '2014-11-10T05:00:00',
+							end: '2014-11-10T07:00:00',
+							constraint: {
+								start: '04:00',
+								end: '20:00'
+							}
+						} ];
+						testEventDrag(options, '2014-11-14', true, function() {
+							var event = $('#cal').fullCalendar('clientEvents')[0];
+							expect(event.start).toEqualMoment('2014-11-14T05:00:00');
+							expect(event.end).toEqualMoment('2014-11-14T07:00:00');
+							done();
+						});
+					});
+				});
 			});
 
 			describe('to the start of the constraint range', function() {
@@ -189,7 +209,6 @@ describe('event constraint', function() {
 					});
 				});
 			});
-
 
 			describe('intersecting the constraint start', function() {
 				describe('with no timezone', function() {
@@ -519,6 +538,37 @@ describe('event constraint', function() {
 					testEventDrag(options, '2014-11-13T04:00:00', false, done);
 				});
 			});
+
+			describe('when the event ID constraint matches no events', function() {
+				it('does not allow a drag', function(done) {
+					options.events = [
+						{
+							start: '2014-11-12T01:00:00',
+							end: '2014-11-12T03:00:00',
+							constraint: 'yo'
+						}
+					];
+					testEventDrag(options, '2014-11-13T04:00:00', false, done);
+				});
+			});
+
+			describe('when in month view', function() {
+				beforeEach(function() {
+					options.defaultView = 'month';
+				});
+				describe('when the event ID constraint matches no events', function() {
+					it('does not allow a drag', function(done) {
+						options.events = [
+							{
+								start: '2014-11-12',
+								end: '2014-11-12',
+								constraint: 'yo'
+							}
+						];
+						testEventDrag(options, '2014-11-13', false, done);
+					});
+				});
+			});
 		});
 	});
 });
@@ -725,6 +775,22 @@ describe('selectConstraint', function() {
 				} ];
 				options.selectConstraint = 'yo';
 				testSelection(options, '03:00', '2014-11-12T06:00:00', false, done);
+			});
+		});
+
+		describe('when event ID does not match any events', function() {
+			describe('when in agendaWeek view', function() {
+				it('does not allow a selection', function(done) {
+					options.selectConstraint = 'yooo';
+					testSelection(options, '03:00', '2014-11-12T06:00:00', false, done);
+				});
+			});
+			describe('when in month view', function() {
+				it('does not allow a selection', function(done) {
+					options.defaultView = 'month';
+					options.selectConstraint = 'yooo';
+					testSelection(options, null, '2014-11-15', false, done);
+				});
 			});
 		});
 	});

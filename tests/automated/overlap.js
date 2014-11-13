@@ -232,6 +232,24 @@ describe('event overlap', function() {
 						testEventDrag(options, '2014-11-08', false, done, 'event-a');
 					});
 				});
+				describe('with timed subject and all-day other', function() {
+					it('does not allow dragging', function(done) {
+						options.events = [
+							{
+								title: 'Event A',
+								className: 'event-a',
+								start: '2014-11-04'
+							},
+							{
+								title: 'Event B',
+								className: 'event-b',
+								start: '2014-11-07T05:00:00',
+								overlap: false
+							}
+						];
+						testEventDrag(options, '2014-11-04', false, done, 'event-b');
+					});
+				});
 			});
 		});
 
