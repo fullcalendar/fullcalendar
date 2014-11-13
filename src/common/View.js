@@ -258,12 +258,13 @@ View.prototype = {
 	documentDragStart: function(ev, ui) {
 		var _this = this;
 		var calendar = this.calendar;
-		var eventStart = null;
+		var eventStart = null; // a null value signals an unsuccessful drag
 		var eventEnd = null;
 		var visibleEnd = null; // will be calculated event when no eventEnd
 		var el;
 		var accept;
 		var meta;
+		var eventProps; // if an object, signals an event should be created upon drop
 		var dragListener;
 
 		if (this.opt('droppable')) { // only listen if this setting is on
@@ -275,6 +276,7 @@ View.prototype = {
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 
 				meta = getDraggedElMeta(el); // data for possibly creating an event
+				eventProps = meta.eventProps;
 
 				// listener that tracks mouse movement over date-associated pixel regions
 				dragListener = new DragListener(this.coordMap, {
@@ -282,20 +284,33 @@ View.prototype = {
 						eventStart = cellDate;
 						eventEnd = meta.duration ? eventStart.clone().add(meta.duration) : null;
 						visibleEnd = eventEnd || calendar.getDefaultEventEnd(!eventStart.hasTime(), eventStart);
-						_this.renderDrag(eventStart, visibleEnd);
+
+						// keep the start/end up to date when dragging
+						if (eventProps) {
+							$.extend(eventProps, { start: eventStart, end: eventEnd });
+						}
+
+						if (calendar.isExternalDragAllowedInRange(eventStart, visibleEnd, eventProps)) {
+							_this.renderDrag(eventStart, visibleEnd);
+						}
+						else {
+							eventStart = null; // signal unsuccessful
+							disableCursor();
+						}
 					},
 					cellOut: function() {
-						eventStart = eventEnd = visibleEnd = null;
+						eventStart = null;
 						_this.destroyDrag();
+						enableCursor();
 					}
 				});
 
 				// gets called, only once, when jqui drag is finished
 				$(document).one('dragstop', function(ev, ui) {
-					var eventProps = meta.eventProps;
 					var renderedEvents;
 
 					_this.destroyDrag();
+					enableCursor();
 
 					if (eventStart) { // element was dropped on a valid date/time cell
 
@@ -307,9 +322,8 @@ View.prototype = {
 						// trigger 'drop' regardless of whether element represents an event
 						_this.trigger('drop', el[0], eventStart, ev, ui);
 
-						// create an event from the given properties and the newly calculated dates
+						// create an event from the given properties and the latest dates
 						if (eventProps) {
-							$.extend(eventProps, { start: eventStart, end: eventEnd });
 							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
 							_this.trigger('eventReceive', null, renderedEvents[0]); // signal an external event landed
 						}

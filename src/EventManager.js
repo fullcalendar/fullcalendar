@@ -597,11 +597,12 @@ function EventManager(options) { // assumed to be a calendar
 
 	// If the given event is a recurring event, break it down into an array of individual instances.
 	// If not a recurring event, return an array with the single original event.
+	// If given a falsy input (probably because of a failed buildEventFromInput call), returns an empty array.
 	function expandEvent(abstractEvent) {
 		var events = [];
+		var view;
 		var _rangeStart = rangeStart;
 		var _rangeEnd = rangeEnd;
-		var view;
 		var dowHash;
 		var dow;
 		var i;
@@ -617,48 +618,50 @@ function EventManager(options) { // assumed to be a calendar
 			_rangeEnd = view.end;
 		}
 
-		if (abstractEvent._recurring) {
+		if (abstractEvent) {
+			if (abstractEvent._recurring) {
 
-			// make a boolean hash as to whether the event occurs on each day-of-week
-			if ((dow = abstractEvent.dow)) {
-				dowHash = {};
-				for (i = 0; i < dow.length; i++) {
-					dowHash[dow[i]] = true;
-				}
-			}
-
-			// iterate through every day in the current range
-			date = _rangeStart.clone().stripTime(); // holds the date of the current day
-			while (date.isBefore(_rangeEnd)) {
-
-				if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
-
-					startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
-					endTime = abstractEvent.end; // "
-					start = date.clone();
-					end = null;
-
-					if (startTime) {
-						start = start.timeDuration(startTime);
+				// make a boolean hash as to whether the event occurs on each day-of-week
+				if ((dow = abstractEvent.dow)) {
+					dowHash = {};
+					for (i = 0; i < dow.length; i++) {
+						dowHash[dow[i]] = true;
 					}
-					if (endTime) {
-						end = date.clone().timeDuration(endTime);
-					}
-
-					event = $.extend({}, abstractEvent); // make a copy of the original
-					assignDatesToEvent(
-						start, end,
-						!startTime && !endTime, // allDay?
-						event
-					);
-					events.push(event);
 				}
 
-				date.add(1, 'days');
+				// iterate through every day in the current range
+				date = _rangeStart.clone().stripTime(); // holds the date of the current day
+				while (date.isBefore(_rangeEnd)) {
+
+					if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
+
+						startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
+						endTime = abstractEvent.end; // "
+						start = date.clone();
+						end = null;
+
+						if (startTime) {
+							start = start.timeDuration(startTime);
+						}
+						if (endTime) {
+							end = date.clone().timeDuration(endTime);
+						}
+
+						event = $.extend({}, abstractEvent); // make a copy of the original
+						assignDatesToEvent(
+							start, end,
+							!startTime && !endTime, // allDay?
+							event
+						);
+						events.push(event);
+					}
+
+					date.add(1, 'days');
+				}
 			}
-		}
-		else {
-			events.push(abstractEvent); // return the original event. will be a one-item array
+			else {
+				events.push(abstractEvent); // return the original event. will be a one-item array
+			}
 		}
 
 		return events;
@@ -882,6 +885,7 @@ function EventManager(options) { // assumed to be a calendar
 
 	t.isEventAllowedInRange = isEventAllowedInRange;
 	t.isSelectionAllowedInRange = isSelectionAllowedInRange;
+	t.isExternalDragAllowedInRange = isExternalDragAllowedInRange;
 
 
 	function isEventAllowedInRange(event, start, end) {
@@ -908,6 +912,20 @@ function EventManager(options) { // assumed to be a calendar
 			options.selectConstraint,
 			options.selectOverlap
 		);
+	}
+
+
+	function isExternalDragAllowedInRange(start, end, eventInput) { // eventInput is optional associated event data
+		var event;
+
+		if (eventInput) {
+			event = expandEvent(buildEventFromInput(eventInput))[0];
+			if (event) {
+				return isEventAllowedInRange(event, start, end);
+			}
+		}
+
+		return isRangeAllowed(start, end);
 	}
 
 
