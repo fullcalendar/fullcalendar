@@ -63,6 +63,6 @@ normal event overlap/constraint rules apply, such as
 
 
 
-[defaultAllDayEventDuration]: ../event_data/defaultTimedEventDuration
-[defaultTimedEventDuration]: ../event_data/defaultAllDayEventDuration
+[defaultAllDayEventDuration]: ../event_data/defaultAllDayEventDuration
+[defaultTimedEventDuration]: ../event_data/defaultTimedEventDuration
 [Duration]: ../utilities/Duration

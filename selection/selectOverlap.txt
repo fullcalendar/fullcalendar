@@ -15,7 +15,7 @@ default), the user will be able to freely select any period of time.
 If a function is given, the function will be called once for every time the user's selection
 intersects with an event. If the function returns `true`, the selection will be allowed. If `false`,
 the selection will not be allowed. Here is an example of allowing selections over [background events]
-but not allowing selections over any other type of events:
+but not allowing selections over any other types of events:
 
 	$('#calendar').fullCalendar({
 		events: [ /* event data here */ ]

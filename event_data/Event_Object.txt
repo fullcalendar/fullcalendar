@@ -166,7 +166,7 @@ being dragged/resized over this event.
 constraint
 </th>
 <td markdown='block'>
-`true` or `false`. Optional.
+an event ID, `"businessHours"`, object. Optional.
 
 Overrides the master [eventConstraint](../event_ui/eventConstraint) option for this single event.
 </td>

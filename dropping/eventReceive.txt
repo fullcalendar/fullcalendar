@@ -8,7 +8,7 @@ Called when an external element, containing event data, is dropped on the calend
 function( *event* ) { }
 </div>
 
-This function is triggered after the [drop]() callback has been called and after the new event has already been rendered on the calendar. `event` is the [Event Object](../event_data/Event_Object).
+This function is triggered after the [drop]() callback has been called and after the new event has already been rendered on the calendar. `event` is the [Event Object](../event_data/Event_Object) associated with the dropped element.
 
 The [droppable]() setting must be activated and the necessary jQuery UI requirements must be fulfilled.
 
@@ -40,7 +40,7 @@ In the provided object, any of the [Event Object] properties can be specified. T
 :	Whether the event should persist after the initial render. See the `stick` flag in the [renderEvent method].
 
 
-These special properties can either be specified in the provided object, or they can be standalone data attributes:
+These special properties can either be specified in the provided event object, or they can be standalone data attributes:
 
 	<div class='draggable' data-event='1' data-duration='03:00' />
 
@@ -57,5 +57,5 @@ normal event overlap/constraint rules apply, such as
 [Event Object]: ../event_data/Event_Object
 [Duration]: ../utilities/Duration
 [renderEvent method]: ../event_rendering/renderEvent
-[defaultAllDayEventDuration]: ../event_data/defaultTimedEventDuration
-[defaultTimedEventDuration]: ../event_data/defaultAllDayEventDuration
+[defaultAllDayEventDuration]: ../event_data/defaultAllDayEventDuration
+[defaultTimedEventDuration]: ../event_data/defaultTimedEventDuration

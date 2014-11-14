@@ -11,7 +11,7 @@ an event ID, `"businessHours"`, object
 If an event ID is given (most likely a string), events that are being dragged or resized must
 be fully contained by at least one of the events linked to by the given event ID.
 
-If `"businessHours"` is given, events being dragged or resized must be contained within the
+If `"businessHours"` is given, events being dragged or resized must be fully contained within the
 week's business hours (Monday-Friday 9am-5pm by default). A custom
 [businessHours] value will be respected.
 
