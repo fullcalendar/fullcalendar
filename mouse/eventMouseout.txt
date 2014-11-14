@@ -15,3 +15,5 @@ function( *event*, *jsEvent*, *view* ) { }
 `view` holds the current [View Object](../views/View_Object).
 
 Within the callback function, `this` is set to the event's `<div>` element.
+
+eventMouseout will *not* be triggered for [background events](../event_rendering/Background_Events).

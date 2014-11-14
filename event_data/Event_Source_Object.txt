@@ -127,6 +127,14 @@ Sets every <a href='Event_Object'>Event Object's</a> `durationEditable` for this
 </tr>
 <tr>
 <th>
+rendering
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `rendering` for this source.
+</td>
+</tr>
+<tr>
+<th>
 overlap
 </th>
 <td markdown='1'>

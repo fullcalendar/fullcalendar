@@ -7,7 +7,7 @@ Events that appear as background highlights can be achieved by setting an [Event
 
 	$('#calendar').fullCalendar({
 		defaultDate: '2014-11-10',
-		defaultView: 'agnedaWeek',
+		defaultView: 'agendaWeek',
 		events: [
 			{
 				start: '2014-11-10T10:00:00',
@@ -19,10 +19,11 @@ Events that appear as background highlights can be achieved by setting an [Event
 
 Result:
 
-Image
+<img src='../../../pages/docs/_images/bg_event.png' width='500' />
 
-Unlike non-background events, background events will not be piped through the
-[eventRender](eventRender) callback.
+Background events that are **timed** will only be rendered on the time slots in agenda view.
+Background events that are **all-day** will only be rendered in month view or the all-day slots
+of agenda view.
 
 
 Color
@@ -41,7 +42,7 @@ The spans of time *not* occupied by an event can be colored by setting the `rend
 to `"inverse-background"`. Events that share the same `id` will be grouped together when this
 rendering happens.
 
-Image
+<img src='../../../pages/docs/_images/inverse_bg_event.png' width='500' />
 
 
 [Event Object]: ../event_data/Event_Object

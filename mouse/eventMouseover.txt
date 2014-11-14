@@ -16,3 +16,4 @@ function( *event*, *jsEvent*, *view* ) { }
 
 Within the callback function, `this` is set to the event's `<div>` element.
 
+eventMouseover will *not* be triggered for [background events](../event_rendering/Background_Events).

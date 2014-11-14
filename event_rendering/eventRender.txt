@@ -10,15 +10,15 @@ function( *event*, *element*, *view* ) { }
 
 `event` is the [Event Object](../event_data/Event_Object) that is attempting to be rendered.
 
-`element` is a newly created jQuery `<div>` that will be used for rendering.
-It has already been populated with the correct time/title.
+`element` is a newly created jQuery element that will be used for rendering.
+It has already been populated with the correct time/title text.
 
-The `eventRender` callback function can modify `element`, return a brand new
-DOM element that will be used for rendering instead, or it can return `false`,
-which will prevent the event from being rendered at all.
+The `eventRender` callback function can modify `element`. For example, it can change its appearance via jQuery's `.css()`.
 
-The `eventRender` callback will *not* be called for
-[background events](Background_Events).
+The function can also return a brand new element that will be used for rendering instead.
+If this approach is taken, you must be careful to return an element of the correct type. For example, [background events](../event_rendering/Background_Events/) in month view only accept a `<td>` element, while most other places only accept a `<div>`.
+
+The function can also return `false` to completely cancel the rendering of the event.
 
 `eventRender` is a great way to attach other jQuery plugins to event elements,
 such as a [qTip](http://craigsworks.com/projects/qtip/) tooltip effect:

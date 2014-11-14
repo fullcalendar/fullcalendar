@@ -31,6 +31,8 @@ Here is an example demonstrating all these variables:
 		}
 	});
 
+eventClick will *not* be triggered for [background events](../event_rendering/Background_Events).
+
 
 Return Value
 ------------

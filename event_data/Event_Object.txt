@@ -138,6 +138,17 @@ Overrides the master [eventDurationEditable](../event_ui/eventDurationEditable) 
 <!-- ------------------- -->
 <tr>
 <th>
+rendering
+</th>
+<td markdown='block'>
+Allows alternate rendering of the event, like [background events](../event_rendering/Background_Events).
+
+Can be empty, `"background"`, or `"inverse-background"`
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
 overlap
 </th>
 <td markdown='block'>
