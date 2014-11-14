@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.1 Stylesheet
+ * FullCalendar v2.2.0 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -53,6 +53,17 @@ body .fc { /* extra precedence to overcome jqui */
 	background: #bce8f1;
 	opacity: .3;
 	filter: alpha(opacity=30); /* for IE */
+}
+
+.fc-bgevent { /* default look for background events */
+	background: rgb(143, 223, 130);
+	opacity: .3;
+	filter: alpha(opacity=30); /* for IE */
+}
+
+.fc-nonbusiness { /* default look for non-business-hours areas */
+	/* will inherit .fc-bgevent's styles */
+	background: #ccc;
 }
 
 
@@ -276,6 +287,7 @@ previous button's border...
 }
 
 .fc-bg,
+.fc-bgevent-skeleton,
 .fc-highlight-skeleton,
 .fc-helper-skeleton {
 	/* these element should always cling to top-left/right corners */
@@ -357,19 +369,30 @@ previous button's border...
 	z-index: 1;
 }
 
-/* highlighting cells */
+/* highlighting cells & background event skeleton */
 
+.fc-row .fc-bgevent-skeleton,
 .fc-row .fc-highlight-skeleton {
-	z-index: 2;
 	bottom: 0; /* stretch skeleton to bottom of row */
 }
 
+.fc-row .fc-bgevent-skeleton table,
 .fc-row .fc-highlight-skeleton table {
 	height: 100%; /* stretch skeleton to bottom of row */
 }
 
-.fc-row .fc-highlight-skeleton td {
+.fc-row .fc-highlight-skeleton td,
+.fc-row .fc-bgevent-skeleton td {
 	border-color: transparent;
+}
+
+.fc-row .fc-bgevent-skeleton {
+	z-index: 2;
+
+}
+
+.fc-row .fc-highlight-skeleton {
+	z-index: 3;
 }
 
 /*
@@ -379,12 +402,12 @@ temporary rendered events).
 
 .fc-row .fc-content-skeleton {
 	position: relative;
-	z-index: 3;
+	z-index: 4;
 	padding-bottom: 2px; /* matches the space above the events */
 }
 
 .fc-row .fc-helper-skeleton {
-	z-index: 4;
+	z-index: 5;
 }
 
 .fc-row .fc-content-skeleton td,
@@ -444,6 +467,11 @@ temporary rendered events).
 .fc-event[href],
 .fc-event.fc-draggable {
 	cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
+}
+
+.fc-not-allowed, /* causes a "warning" cursor. applied on body */
+.fc-not-allowed .fc-event { /* to override an event's custom cursor */
+	cursor: not-allowed;
 }
 
 
@@ -758,20 +786,28 @@ a.fc-more:hover {
 	z-index: 2;
 }
 
-.fc-time-grid .fc-highlight-skeleton {
-	z-index: 3;
-}
-
+.fc-time-grid .fc-bgevent-skeleton,
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
-	z-index: 4;
 	top: 0;
 	left: 0;
 	right: 0;
 }
 
-.fc-time-grid > .fc-helper-skeleton {
+.fc-time-grid .fc-bgevent-skeleton {
+	z-index: 3;
+}
+
+.fc-time-grid .fc-highlight-skeleton {
+	z-index: 4;
+}
+
+.fc-time-grid .fc-content-skeleton {
 	z-index: 5;
+}
+
+.fc-time-grid .fc-helper-skeleton {
+	z-index: 6;
 }
 
 
@@ -810,7 +846,8 @@ a.fc-more:hover {
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
 
-.fc-time-grid .fc-event-container { /* a div within a cell within the fc-content-skeleton */
+.fc-time-grid .fc-event-container, /* a div within a cell within the fc-content-skeleton */
+.fc-time-grid .fc-bgevent-container { /* a div within a cell within the fc-bgevent-skeleton */
 	position: relative;
 }
 
@@ -822,9 +859,16 @@ a.fc-more:hover {
 	margin: 0 2px 0 2.5%;
 }
 
-.fc-time-grid .fc-event {
+.fc-time-grid .fc-event,
+.fc-time-grid .fc-bgevent {
 	position: absolute;
 	z-index: 1; /* scope inner z-index's */
+}
+
+.fc-time-grid .fc-bgevent {
+	/* background events always span full width */
+	left: 0;
+	right: 0;
 }
 
 
