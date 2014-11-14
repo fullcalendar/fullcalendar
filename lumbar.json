@@ -39,6 +39,7 @@
         "src/basic/MonthView.js",
         "src/basic/BasicWeekView.js",
         "src/basic/BasicDayView.js",
+        "src/basic/SingleRowMonthView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",
         "src/agenda/AgendaDayView.js",

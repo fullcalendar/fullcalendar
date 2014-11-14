@@ -7352,7 +7352,7 @@ function View(calendar) {
 				var segmentCellLast = cellOffsetToCell(segmentCellOffsetLast);
 
 				// view might be RTL, so order by leftmost column
-				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort();
+				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort(numericSort);
 
 				// Determine if segment's first/last cell is the beginning/end of the date range.
 				// We need to compare "day offset" because "cell offsets" are often ambiguous and
@@ -7410,6 +7410,10 @@ function View(calendar) {
 		var range = computeDayRange(event.start, event.end);
 
 		return range.end.diff(range.start, 'days') > 1;
+	}
+
+	function numericSort(a, b) {
+		return a-b;
 	}
 
 }
@@ -7872,6 +7876,50 @@ $.extend(BasicDayView.prototype, {
 		BasicView.prototype.render.call(this, 1, 1, false); // call the super-method
 	}
 
+});
+;;
+/* A month view with day cells running in one single row and columns (one-per-day)
+----------------------------------------------------------------------------------------------------------------------*/
+
+setDefaults({
+	fixedWeekCount: true
+});
+
+fcViews.singleRowMonth = SingleRowMonthView;
+
+function SingleRowMonthView(calendar) {
+	BasicView.call(this, calendar); // call the super-constructor
+}
+
+
+SingleRowMonthView.prototype = createObject(BasicView.prototype); // define the super-class
+$.extend(SingleRowMonthView.prototype, {
+
+	name: 'SingleRowMonth',
+
+
+	incrementDate: function(date, delta) {
+		return date.clone().stripTime().add(delta, 'months').startOf('month');
+	},
+
+
+	render: function(date) {
+		var rowCnt;
+		this.calendar.options.contentHeight = 93;
+
+		this.intervalStart = date.clone().stripTime().startOf('month');
+		this.intervalEnd = this.intervalStart.clone().add('days', 31);
+
+		this.start = this.intervalStart.clone().startOf('month');
+		this.start = this.skipHiddenDays(this.start);
+
+		this.end = this.intervalEnd.clone().add('days', (7 - this.intervalEnd.weekday()) % 7);
+		this.end = this.skipHiddenDays(this.end, -1, true);
+
+		rowCnt = 1;
+
+		BasicView.prototype.render.call(this, rowCnt, 31, true); // call the super-method
+	}
 });
 ;;
 
