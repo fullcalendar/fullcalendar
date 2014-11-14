@@ -27,20 +27,42 @@ Here is how you might initialize an element that can be dragged onto a calendar:
 	});
 	
 	
-How can I use this to add events???
------------------------------------
+How can I use this to add events?
+---------------------------------
 
-Good question. It is a common need to have an "external list of events" that can be
-dragged onto the calendar.
+Good question. Please see the [eventReceive]() article. This is only available in version 2.2 and above.
 
-While the `droppable` option deals with generic jQuery UI draggables and is not specifically
-tailored to adding events, it is possible to achieve this with a few lines of code.
-Follow the **external-dragging.html** example in FullCalendar's download. You can also
-view the [example online](../../../js/fullcalendar-2-latest/demos/external-dragging.html).
+To do this in previous versions, see the [external-dragging demo](https://github.com/arshaw/fullcalendar/blob/v2.1.1/demos/external-dragging.html).
 
-In short, you must call [renderEvent](../event_rendering/renderEvent) yourself
-in the [drop]() callback.
 
-<div class='version-info' markdown='1'>
-Hopefully, this task will become more convenient with future API changes.
-</div>
+Specifying Duration
+-------------------
+
+Data can be attached to the element in order to specify its duration when dropped. A [Duration]-ish value can be provided. This can either be done via jQuery:
+
+	$('.draggable').data('duration', '03:00'); // three hours
+
+Or via an HTML5 attribute:
+
+	<div class="draggable" data-duration="03:00" />
+
+If no duration is specified, [defaultAllDayEventDuration] or [defaultTimedEventDuration] will apply.
+
+
+Overlapping and Constraining
+----------------------------
+
+When there is no event data associated with the drag, the areas where the drop is allowed
+are determined by [selectOverlap](../selection/selectOverlap) and
+[selectConstraint](../selection/selectConstraint).
+
+When there is event data associated with the drag (see [eventReceive]()),
+normal event overlap/constraint rules apply, such as
+[eventOverlap](../event_ui/eventOverlap) and
+[eventConstraint](../event_ui/eventConstraint).
+
+
+
+[defaultAllDayEventDuration]: ../event_data/defaultTimedEventDuration
+[defaultTimedEventDuration]: ../event_data/defaultAllDayEventDuration
+[Duration]: ../utilities/Duration

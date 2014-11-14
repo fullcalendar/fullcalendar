@@ -25,6 +25,9 @@ mouse coordinates.
 
 `view` holds the current [View Object](../views/View_Object).
 
+eventDrop *does not* get called when an external event lands on the calendar.
+[eventReceive](../dropping/eventReceive) is called instead.
+
 Here is an example demonstrating most of these arguments:
 
 	$('#calendar').fullCalendar({

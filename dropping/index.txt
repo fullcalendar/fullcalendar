@@ -6,4 +6,5 @@ Dropping External Elements
 <li><a href='droppable'>droppable</a></li>
 <li><a href='dropAccept'>dropAccept</a></li>
 <li class='callback'><a href='drop'>drop (callback)</a></li>
+<li class='callback'><a href='eventReceive'>eventReceive (callback)</a></li>
 </ul>
