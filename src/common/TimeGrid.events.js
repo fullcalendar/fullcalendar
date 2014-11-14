@@ -72,18 +72,17 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Refreshes the CSS top/bottom coordinates for each segment element. Probably after a window resize/zoom.
+	// Repositions business hours segs too, so not just for events. Maybe shouldn't be here.
 	updateSegVerticals: function() {
-		var segs = this.segs;
+		var allSegs = (this.segs || []).concat(this.businessHourSegs || []);
 		var i;
 
-		if (segs) {
-			this.computeSegVerticals(segs);
+		this.computeSegVerticals(allSegs);
 
-			for (i = 0; i < segs.length; i++) {
-				segs[i].el.css(
-					this.generateSegVerticalCss(segs[i])
-				);
-			}
+		for (i = 0; i < allSegs.length; i++) {
+			allSegs[i].el.css(
+				this.generateSegVerticalCss(allSegs[i])
+			);
 		}
 	},
 

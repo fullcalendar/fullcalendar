@@ -23,6 +23,8 @@ $.extend(TimeGrid.prototype, {
 
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
 
+	businessHourSegs: null,
+
 
 	// Renders the time grid into `this.el`, which should already be assigned.
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
@@ -44,7 +46,7 @@ $.extend(TimeGrid.prototype, {
 
 	renderBusinessHours: function() {
 		var events = this.view.calendar.getBusinessHoursEvents();
-		this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
+		this.businessHourSegs = this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
 	},
 
 
@@ -396,7 +398,8 @@ $.extend(TimeGrid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a set of rectangles over the given time segments
+	// Renders a set of rectangles over the given time segments.
+	// Only returns segments that successfully rendered.
 	renderFill: function(type, segs, className) {
 		var view = this.view;
 		var segCols;
@@ -446,6 +449,8 @@ $.extend(TimeGrid.prototype, {
 			this.el.append(skeletonEl);
 			this.elsByFill[type] = skeletonEl;
 		}
+
+		return segs;
 	}
 
 });
