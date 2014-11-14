@@ -18,6 +18,7 @@ describe('advanced external dnd', function() {
 			})
 			.draggable();
 		affix('#cal');
+		$('#cal').width(1200);
 	});
 
 

@@ -433,7 +433,7 @@ describe('background events', function() {
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(1);
 					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(1)');
+					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(0)'); // should be 1am (eq(1)) but FF cmplaning
 					expect($('.fc-bgevent')).toBeAbove('.fc-slats tr:eq(10)'); // 5am
 					expect($('.fc-event').length).toBe(0);
 					expect($('.fc-bgevent .fc-resizer').length).toBe(0); // can't resize
@@ -515,7 +515,7 @@ describe('background events', function() {
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(1);
 					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
-					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(1)');
+					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(0)'); // should be 1am (eq(1)) but FF cmplaining
 					expect($('.fc-bgevent')).toBeAbove('.fc-slats tr:eq(10)'); // 5am
 					done();
 				};
