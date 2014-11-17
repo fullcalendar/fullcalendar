@@ -11,7 +11,7 @@ function( *date*, *allDay*, *jsEvent*, *view* ) { }
 `date` holds a Date object for the current day. If user has clicked on a slot in the 
 agendaWeek or agendaDay views, `date` will also have its time set.
 
-`allDay` will be set to true `false` if the user has clicked on a slot in the
+`allDay` will be set to `false` if the user has clicked on a slot in the
 agendaWeek or agendaDay views. Otherwise, it will be `true`.
 
 `jsEvent` holds the native JavaScript event with low-level information such as click coordinates.
