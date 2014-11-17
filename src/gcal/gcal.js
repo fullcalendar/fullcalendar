@@ -21,7 +21,7 @@ var applyAll = fc.applyAll;
 fc.sourceNormalizers.push(function(sourceOptions) {
 	if (sourceOptions.dataType == 'gcal' ||
 		sourceOptions.dataType === undefined &&
-		(sourceOptions.url || '').match(/^(http|https):\/\/www.google.com\/calendar\/feeds\//)) {
+		(sourceOptions.url || '').match(/^(http|https):\/\/www.googleapis.com\/calendar\/v3\/calendars/)) {
 			sourceOptions.dataType = 'gcal';
 			if (sourceOptions.editable === undefined) {
 				sourceOptions.editable = false;
@@ -46,7 +46,7 @@ function transformOptions(sourceOptions, start, end, timezone) {
 	});
 
 	return $.extend({}, sourceOptions, {
-		url: sourceOptions.url.replace(/\/basic$/, '/full') + '?alt=json-in-script&callback=?',
+		url: sourceOptions.url + '&callback=?',
 		dataType: 'jsonp',
 		data: data,
 		timezoneParam: 'ctz',
@@ -54,27 +54,16 @@ function transformOptions(sourceOptions, start, end, timezone) {
 		endParam: 'start-max',
 		success: function(data) {
 			var events = [];
-			if (data.feed.entry) {
-				$.each(data.feed.entry, function(i, entry) {
-
-					var url;
-					$.each(entry.link, function(i, link) {
-						if (link.type == 'text/html') {
-							url = link.href;
-							if (timezone && timezone != 'local') {
-								url += (url.indexOf('?') == -1 ? '?' : '&') + 'ctz=' + encodeURIComponent(timezone);
-							}
-						}
-					});
-
+			if (data.items) {
+				$.each(data.items, function(i, entry) {
 					events.push({
-						id: entry.gCal$uid.value,
-						title: entry.title.$t,
-						start: entry.gd$when[0].startTime,
-						end: entry.gd$when[0].endTime,
-						url: url,
-						location: entry.gd$where[0].valueString,
-						description: entry.content.$t
+						id: entry.id,
+						title: entry.summary,
+						start: entry.start.dateTime || entry.start.date,
+						end: entry.end.dateTime || entry.end.date,
+						url: entry.htmlLink,
+						location: entry.location,
+						description: entry.description
 					});
 
 				});
