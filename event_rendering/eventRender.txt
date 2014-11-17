@@ -15,8 +15,7 @@ It has already been populated with the correct time/title text.
 
 The `eventRender` callback function can modify `element`. For example, it can change its appearance via jQuery's `.css()`.
 
-The function can also return a brand new element that will be used for rendering instead.
-If this approach is taken, you must be careful to return an element of the correct type. For example, [background events](../event_rendering/Background_Events/) in month view only accept a `<td>` element, while most other places only accept a `<div>`.
+The function can also return a brand new element that will be used for rendering instead. For all-day [background events](../event_rendering/Background_Events/), you must be sure to return a `<td>`.
 
 The function can also return `false` to completely cancel the rendering of the event.
 

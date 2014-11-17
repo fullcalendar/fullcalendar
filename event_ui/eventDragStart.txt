@@ -13,6 +13,6 @@ function( *event*, *jsEvent*, *ui*, *view* ) { }
 `jsEvent` holds the native javascript event with low-level information such as
 click coordinates.
 
-`ui` holds the [jQuery UI object](http://jqueryui.com/demos/draggable/).
+`ui` holds an empty object. Before version 2.1, the [jQuery UI object](http://jqueryui.com/demos/draggable/).
 
 `view` holds the current [View Object](../views/View_Object).

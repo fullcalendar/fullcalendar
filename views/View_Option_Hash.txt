@@ -7,11 +7,12 @@ A way to specify options on a per-view basis.
 This is specified as an object with key/value pairings. The key tells FullCalendar
 that the specified option value should only be applied to certain views.
 
-Currently, View Option Hashes only work for
+View Option Hashes work for options like
 [dragOpacity](../event_ui/dragOpacity),
 [titleFormat](../text/titleFormat),
 [columnFormat](../text/columnFormat),
-and [timeFormat](../text/timeFormat).
+[timeFormat](../text/timeFormat),
+and many more.
 
 Here is how you target certain views:
 

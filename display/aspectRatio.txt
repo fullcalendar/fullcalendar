@@ -17,6 +17,9 @@ The following example will initialize a calendar who's width is twice its height
 	$('#calendar').fullCalendar({
 		aspectRatio: 2
 	});
+
+More precisely, this is the aspect ratio of the calendar's "content" area
+(the area with a className of "fc-view-container").
 	
 	
 Setter

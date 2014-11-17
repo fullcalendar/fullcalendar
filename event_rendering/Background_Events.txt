@@ -35,6 +35,14 @@ specifying a color with each [Event Object]'s or [Event Source]'s `color` or `ba
 properties.
 
 
+Recurring Events
+----------------
+
+It is possible to define daily or weekly recurring events. Use [Duration]-ish times in the
+[Event Object]'s `start` and `end` properties, or use the `dow` property.
+See [businessHours](../display/businessHours) for more information.
+
+
 Inverse Backgrounds
 -------------------
 
@@ -47,3 +55,4 @@ rendering happens.
 
 [Event Object]: ../event_data/Event_Object
 [Event Source]: ../event_data/Event_Source_Object
+[Duration]: ../utilities/Duration

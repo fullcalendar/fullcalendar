@@ -9,9 +9,8 @@ in order for it to render as if it were on that day.
 Duration, default: `"09:00:00"` (9am)
 </div>
 
-Only affects Month and Basic views as well as the all-day slots in the Agenda views.
-
-Only affects timed events (not all-day events).
+Only affects timed events that appear on whole-days.
+Whole-day cells occur in month view, basicDay, basicWeek and the all-day slots in the agenda views.
 
 For example, with `nextDayThreshold` being the default of 9am, the following event
 would appear to take up only one day:

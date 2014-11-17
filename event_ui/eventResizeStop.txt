@@ -18,6 +18,6 @@ information has been modified (if changed in duration) and before the
 `jsEvent` holds the native JavaScript event with low-level information such as
 mouse coordinates.
 
-`ui` holds the [jQuery UI object](http://jqueryui.com/demos/resizable/).
+`ui` holds an empty object. Before version 2.1, the [jQuery UI object](http://jqueryui.com/demos/resizable/).
 
 `view` holds the current [View Object](../views/View_Object).

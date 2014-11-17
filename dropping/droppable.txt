@@ -21,8 +21,8 @@ Here is how you might initialize an element that can be dragged onto a calendar:
 
 	$('#calendar').fullCalendar({
 		droppable: true,
-		drop: function(moment, allDay) {
-			alert("Dropped on " + moment.format() + " with allDay=" + allDay);
+		drop: function(date) {
+			alert("Dropped on " + date.format());
 		}
 	});
 	
