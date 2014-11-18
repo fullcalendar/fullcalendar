@@ -2,7 +2,8 @@
 v2.2.0 (2014-11-14)
 -------------------
 
-- Background event rendering ([144], [1286])
+- Background events. Event object's `rendering` property ([144], [1286])
+- `businessHours` option ([144])
 - Controlling where events can be dragged/resized and selections can go ([396], [1286], [2253])
 	- `eventOverlap`, `selectOverlap`, and similar
 	- `eventConstraint`, `selectConstraint`, and similar
