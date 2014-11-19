@@ -128,6 +128,40 @@ beforeEach(function() {
 					return result;
 				}
 			};
+		},
+		toBeAbove: function() {
+			return {
+				compare: function(actual, expected) {
+					var subjectBounds = getBounds(actual);
+					var otherBounds = getBounds(expected);
+					var result = {
+						pass: subjectBounds && otherBounds &&
+							Math.round(subjectBounds.bottom) <= Math.round(otherBounds.top)
+							// need to round because IE was giving weird fractions
+					};
+					if (!result.pass) {
+						result.message = 'Element is not above the other element';
+					}
+					return result;
+				}
+			};
+		},
+		toBeBelow: function() {
+			return {
+				compare: function(actual, expected) {
+					var subjectBounds = getBounds(actual);
+					var otherBounds = getBounds(expected);
+					var result = {
+						pass: subjectBounds && otherBounds &&
+							Math.round(subjectBounds.top) >= Math.round(otherBounds.bottom)
+							// need to round because IE was giving weird fractions
+					};
+					if (!result.pass) {
+						result.message = 'Element is not below the other element';
+					}
+					return result;
+				}
+			};
 		}
 
 	});

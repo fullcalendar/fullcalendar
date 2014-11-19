@@ -4,8 +4,8 @@
 
 
 // call this if you want Moment's original format method to be used
-function momentFormat(mom, formatStr) {
-	return moment.fn.format.call(mom, formatStr);
+function oldMomentFormat(mom, formatStr) {
+	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
 }
 
 
@@ -31,10 +31,10 @@ function formatDateWithChunks(date, chunks) {
 // addition formatting tokens we want recognized
 var tokenOverrides = {
 	t: function(date) { // "a" or "p"
-		return momentFormat(date, 'a').charAt(0);
+		return oldMomentFormat(date, 'a').charAt(0);
 	},
 	T: function(date) { // "A" or "P"
-		return momentFormat(date, 'A').charAt(0);
+		return oldMomentFormat(date, 'A').charAt(0);
 	}
 };
 
@@ -50,7 +50,7 @@ function formatDateWithChunk(date, chunk) {
 		if (tokenOverrides[token]) {
 			return tokenOverrides[token](date); // use our custom token
 		}
-		return momentFormat(date, token);
+		return oldMomentFormat(date, token);
 	}
 	else if (chunk.maybe) { // a grouping of other chunks that must be non-zero
 		maybeStr = formatDateWithChunks(date, chunk.maybe);
@@ -178,7 +178,7 @@ function formatSimilarChunk(date1, date2, chunk) {
 		unit = similarUnitMap[token.charAt(0)];
 		// are the dates the same for this unit of measurement?
 		if (unit && date1.isSame(date2, unit)) {
-			return momentFormat(date1, token); // would be the same if we used `date2`
+			return oldMomentFormat(date1, token); // would be the same if we used `date2`
 			// BTW, don't support custom tokens
 		}
 	}

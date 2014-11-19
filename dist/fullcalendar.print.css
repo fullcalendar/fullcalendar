@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.1.1 Print Stylesheet
+ * FullCalendar v2.2.0 Print Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -44,6 +44,7 @@ tbody,
 
 /* kill the overlaid, absolutely-positioned common components */
 .fc-bg,
+.fc-bgevent-skeleton,
 .fc-highlight-skeleton,
 .fc-helper-skeleton {
 	display: none;

@@ -1,7 +1,7 @@
 
 /* Tracks mouse movements over a CoordMap and raises events about which cell the mouse is over.
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: implement scrolling
+// TODO: very useful to have a handler that gets called upon cellOut OR when dragging stops (for cleanup)
 
 function DragListener(coordMap, options) {
 	this.coordMap = coordMap;

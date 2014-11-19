@@ -55,6 +55,17 @@ body .fc { /* extra precedence to overcome jqui */
 	filter: alpha(opacity=30); /* for IE */
 }
 
+.fc-bgevent { /* default look for background events */
+	background: rgb(143, 223, 130);
+	opacity: .3;
+	filter: alpha(opacity=30); /* for IE */
+}
+
+.fc-nonbusiness { /* default look for non-business-hours areas */
+	/* will inherit .fc-bgevent's styles */
+	background: #ccc;
+}
+
 
 /* Icons (inline elements with styled text that mock arrow icons)
 --------------------------------------------------------------------------------------------------*/
@@ -276,6 +287,7 @@ previous button's border...
 }
 
 .fc-bg,
+.fc-bgevent-skeleton,
 .fc-highlight-skeleton,
 .fc-helper-skeleton {
 	/* these element should always cling to top-left/right corners */
@@ -357,19 +369,30 @@ previous button's border...
 	z-index: 1;
 }
 
-/* highlighting cells */
+/* highlighting cells & background event skeleton */
 
+.fc-row .fc-bgevent-skeleton,
 .fc-row .fc-highlight-skeleton {
-	z-index: 2;
 	bottom: 0; /* stretch skeleton to bottom of row */
 }
 
+.fc-row .fc-bgevent-skeleton table,
 .fc-row .fc-highlight-skeleton table {
 	height: 100%; /* stretch skeleton to bottom of row */
 }
 
-.fc-row .fc-highlight-skeleton td {
+.fc-row .fc-highlight-skeleton td,
+.fc-row .fc-bgevent-skeleton td {
 	border-color: transparent;
+}
+
+.fc-row .fc-bgevent-skeleton {
+	z-index: 2;
+
+}
+
+.fc-row .fc-highlight-skeleton {
+	z-index: 3;
 }
 
 /*
@@ -379,12 +402,12 @@ temporary rendered events).
 
 .fc-row .fc-content-skeleton {
 	position: relative;
-	z-index: 3;
+	z-index: 4;
 	padding-bottom: 2px; /* matches the space above the events */
 }
 
 .fc-row .fc-helper-skeleton {
-	z-index: 4;
+	z-index: 5;
 }
 
 .fc-row .fc-content-skeleton td,
@@ -444,6 +467,11 @@ temporary rendered events).
 .fc-event[href],
 .fc-event.fc-draggable {
 	cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
+}
+
+.fc-not-allowed, /* causes a "warning" cursor. applied on body */
+.fc-not-allowed .fc-event { /* to override an event's custom cursor */
+	cursor: not-allowed;
 }
 
 

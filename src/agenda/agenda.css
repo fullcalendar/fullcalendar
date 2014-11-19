@@ -66,20 +66,28 @@
 	z-index: 2;
 }
 
-.fc-time-grid .fc-highlight-skeleton {
-	z-index: 3;
-}
-
+.fc-time-grid .fc-bgevent-skeleton,
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
-	z-index: 4;
 	top: 0;
 	left: 0;
 	right: 0;
 }
 
-.fc-time-grid > .fc-helper-skeleton {
+.fc-time-grid .fc-bgevent-skeleton {
+	z-index: 3;
+}
+
+.fc-time-grid .fc-highlight-skeleton {
+	z-index: 4;
+}
+
+.fc-time-grid .fc-content-skeleton {
 	z-index: 5;
+}
+
+.fc-time-grid .fc-helper-skeleton {
+	z-index: 6;
 }
 
 
@@ -118,7 +126,8 @@
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
 
-.fc-time-grid .fc-event-container { /* a div within a cell within the fc-content-skeleton */
+.fc-time-grid .fc-event-container, /* a div within a cell within the fc-content-skeleton */
+.fc-time-grid .fc-bgevent-container { /* a div within a cell within the fc-bgevent-skeleton */
 	position: relative;
 }
 
@@ -130,9 +139,16 @@
 	margin: 0 2px 0 2.5%;
 }
 
-.fc-time-grid .fc-event {
+.fc-time-grid .fc-event,
+.fc-time-grid .fc-bgevent {
 	position: absolute;
 	z-index: 1; /* scope inner z-index's */
+}
+
+.fc-time-grid .fc-bgevent {
+	/* background events always span full width */
+	left: 0;
+	right: 0;
 }
 
 
