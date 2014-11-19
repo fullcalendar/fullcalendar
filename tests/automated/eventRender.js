@@ -10,8 +10,8 @@ describe('eventRender', function() {
 	});
 
 	$.each({
-		'month': '.fc-day-grid',
-		'agendaWeek': '.fc-time-grid'
+		month: '.fc-day-grid',
+		agendaWeek: '.fc-time-grid'
 	}, function(viewName, gridSelector) {
 		describe('when in ' + viewName + ' view', function() {
 			beforeEach(function() {
