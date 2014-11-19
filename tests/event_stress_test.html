@@ -44,12 +44,12 @@
 			events: events
 		});
 		var runSetup = new Date();
+		console.log("Milliseconds to setup: " + (runSetup.getTime() - runStart.getTime()));
 		$('#calendar').fullCalendar("removeEventSource", events);
 		var runRemove = new Date();
+		console.log("Remove source: " + (runRemove.getTime() - runSetup.getTime()));
 		$('#calendar').fullCalendar("addEventSource", events);
 		var runAdd = new Date();
-		console.log("Milliseconds to setup: " + (runSetup.getTime() - runStart.getTime()));
-		console.log("Remove source: " + (runRemove.getTime() - runSetup.getTime()));
 		console.log("Add source: " + (runAdd.getTime() - runRemove.getTime()));
 
 	});

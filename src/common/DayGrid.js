@@ -17,7 +17,6 @@ $.extend(DayGrid.prototype, {
 	rowEls: null, // set of fake row elements
 	dayEls: null, // set of whole-day elements comprising the row's background
 	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
-	highlightEls: null, // set of cell skeleton elements for rendering the highlight
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
@@ -203,7 +202,11 @@ $.extend(DayGrid.prototype, {
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
 	renderHelper: function(event, sourceSeg) {
 		var helperNodes = [];
-		var rowStructs = this.renderEventRows([ event ]);
+		var segs = this.eventsToSegs([ event ]);
+		var rowStructs;
+
+		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		rowStructs = this.renderSegRows(segs);
 
 		// inject each new event skeleton into each associated row
 		this.rowEls.each(function(row, rowNode) {
@@ -240,65 +243,65 @@ $.extend(DayGrid.prototype, {
 	},
 
 
-	/* Highlighting
+	/* Fill System (highlight, background events, business hours)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is an inclusive, `end` is exclusive.
-	renderHighlight: function(start, end) {
-		var segs = this.rangeToSegs(start, end);
-		var highlightNodes = [];
-		var i, seg;
-		var el;
+	fillSegTag: 'td', // override the default tag name
 
-		// build an event skeleton for each row that needs it
+
+	// Renders a set of rectangles over the given segments of days.
+	// Only returns segments that successfully rendered.
+	renderFill: function(type, segs) {
+		var nodes = [];
+		var i, seg;
+		var skeletonEl;
+
+		segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
-			el = $(
-				this.highlightSkeletonHtml(seg.leftCol, seg.rightCol + 1) // make end exclusive
-			);
-			el.appendTo(this.rowEls[seg.row]);
-			highlightNodes.push(el[0]);
+			skeletonEl = this.renderFillRow(type, seg);
+			this.rowEls.eq(seg.row).append(skeletonEl);
+			nodes.push(skeletonEl[0]);
 		}
 
-		this.highlightEls = $(highlightNodes); // array -> jQuery set
+		this.elsByFill[type] = $(nodes);
+
+		return segs;
 	},
 
 
-	// Unrenders any visual emphasis on a date range
-	destroyHighlight: function() {
-		if (this.highlightEls) {
-			this.highlightEls.remove();
-			this.highlightEls = null;
-		}
-	},
-
-
-	// Generates the HTML used to build a single-row "highlight skeleton", a table that frames highlight cells
-	highlightSkeletonHtml: function(startCol, endCol) {
+	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
+	renderFillRow: function(type, seg) {
 		var colCnt = this.view.colCnt;
-		var cellHtml = '';
+		var startCol = seg.leftCol;
+		var endCol = seg.rightCol + 1;
+		var skeletonEl;
+		var trEl;
+
+		skeletonEl = $(
+			'<div class="fc-' + type.toLowerCase() + '-skeleton">' +
+				'<table><tr/></table>' +
+			'</div>'
+		);
+		trEl = skeletonEl.find('tr');
 
 		if (startCol > 0) {
-			cellHtml += '<td colspan="' + startCol + '"/>';
-		}
-		if (endCol > startCol) {
-			cellHtml += '<td colspan="' + (endCol - startCol) + '" class="fc-highlight" />';
-		}
-		if (colCnt > endCol) {
-			cellHtml += '<td colspan="' + (colCnt - endCol) + '"/>';
+			trEl.append('<td colspan="' + startCol + '"/>');
 		}
 
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
+		trEl.append(
+			seg.el.attr('colspan', endCol - startCol)
+		);
 
-		return '' +
-			'<div class="fc-highlight-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>';
+		if (endCol < colCnt) {
+			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
+		}
+
+		this.bookendCells(trEl, type);
+
+		return skeletonEl;
 	}
 
 });

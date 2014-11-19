@@ -32,6 +32,18 @@ function uncompensateScroll(rowEls) {
 }
 
 
+// Make the mouse cursor express that an event is not allowed in the current area
+function disableCursor() {
+	$('body').addClass('fc-not-allowed');
+}
+
+
+// Returns the mouse cursor to its original look
+function enableCursor() {
+	$('body').removeClass('fc-not-allowed');
+}
+
+
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
 // any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
@@ -261,6 +273,12 @@ function dateCompare(a, b) { // works with Moments and native Dates
 }
 
 
+// Returns a boolean about whether the given input is a time string, like "06:40:00" or "06:00"
+function isTimeString(str) {
+	return /^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
+}
+
+
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -272,17 +290,6 @@ function createObject(proto) {
 	var f = function() {};
 	f.prototype = proto;
 	return new f();
-}
-
-
-// Copies specifically-owned (non-protoype) properties of `b` onto `a`.
-// FYI, $.extend would copy *all* properties of `b` onto `a`.
-function extend(a, b) {
-	for (var i in b) {
-		if (b.hasOwnProperty(i)) {
-			a[i] = b[i];
-		}
-	}
 }
 
 

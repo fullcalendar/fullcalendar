@@ -10,7 +10,7 @@
 <script>
 
 	$(document).ready(function() {
-		
+
 		$('#calendar').fullCalendar({
 			header: {
 				left: 'prev,next today',
@@ -18,62 +18,58 @@
 				right: 'month,agendaWeek,agendaDay'
 			},
 			defaultDate: '2014-11-12',
+			businessHours: true, // display business hours
 			editable: true,
-			eventLimit: true, // allow "more" link when too many events
 			events: [
 				{
-					title: 'All Day Event',
-					start: '2014-11-01'
+					title: 'Business Lunch',
+					start: '2014-11-03T13:00:00',
+					constraint: 'businessHours'
 				},
 				{
-					title: 'Long Event',
-					start: '2014-11-07',
-					end: '2014-11-10'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2014-11-09T16:00:00'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2014-11-16T16:00:00'
+					title: 'Meeting',
+					start: '2014-11-13T11:00:00',
+					constraint: 'availableForMeeting', // defined below
+					color: '#257e4a'
 				},
 				{
 					title: 'Conference',
-					start: '2014-11-11',
-					end: '2014-11-13'
+					start: '2014-11-18',
+					end: '2014-11-20'
 				},
 				{
-					title: 'Meeting',
-					start: '2014-11-12T10:30:00',
-					end: '2014-11-12T12:30:00'
+					title: 'Party',
+					start: '2014-11-29T20:00:00'
+				},
+
+				// areas where "Meeting" must be dropped
+				{
+					id: 'availableForMeeting',
+					start: '2014-11-11T10:00:00',
+					end: '2014-11-11T16:00:00',
+					rendering: 'background'
 				},
 				{
-					title: 'Lunch',
-					start: '2014-11-12T12:00:00'
+					id: 'availableForMeeting',
+					start: '2014-11-13T10:00:00',
+					end: '2014-11-13T16:00:00',
+					rendering: 'background'
+				},
+
+				// red areas where no events can be dropped
+				{
+					start: '2014-11-24',
+					end: '2014-11-28',
+					overlap: false,
+					rendering: 'background',
+					color: '#ff9f89'
 				},
 				{
-					title: 'Meeting',
-					start: '2014-11-12T14:30:00'
-				},
-				{
-					title: 'Happy Hour',
-					start: '2014-11-12T17:30:00'
-				},
-				{
-					title: 'Dinner',
-					start: '2014-11-12T20:00:00'
-				},
-				{
-					title: 'Birthday Party',
-					start: '2014-11-13T07:00:00'
-				},
-				{
-					title: 'Click for Google',
-					url: 'http://google.com/',
-					start: '2014-11-28'
+					start: '2014-11-06',
+					end: '2014-11-08',
+					overlap: false,
+					rendering: 'background',
+					color: '#ff9f89'
 				}
 			]
 		});

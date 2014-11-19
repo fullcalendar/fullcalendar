@@ -4,58 +4,75 @@
 
 $.extend(DayGrid.prototype, {
 
-	segs: null,
-	rowStructs: null, // an array of objects, each holding information about a row's event-rendering
+	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
 
-	// Render the given events onto the Grid and return the rendered segments
-	renderEvents: function(events) {
-		var rowStructs = this.rowStructs = this.renderEventRows(events);
-		var segs = [];
+	// Unrenders all events currently rendered on the grid
+	destroyEvents: function() {
+		this.destroySegPopover(); // removes the "more.." events popover
+		Grid.prototype.destroyEvents.apply(this, arguments); // calls the super-method
+	},
+
+
+	// Retrieves all rendered segment objects currently rendered on the grid
+	getSegs: function() {
+		return Grid.prototype.getSegs.call(this) // get the segments from the super-method
+			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
+	},
+
+
+	// Renders the given background event segments onto the grid
+	renderBgSegs: function(segs) {
+
+		// don't render timed background events
+		var allDaySegs = $.grep(segs, function(seg) {
+			return seg.event.allDay;
+		});
+
+		return Grid.prototype.renderBgSegs.call(this, allDaySegs); // call the super-method
+	},
+
+
+	// Renders the given foreground event segments onto the grid
+	renderFgSegs: function(segs) {
+		var rowStructs;
+
+		// render an `.el` on each seg
+		// returns a subset of the segs. segs that were actually rendered
+		segs = this.renderFgSegEls(segs);
+
+		rowStructs = this.rowStructs = this.renderSegRows(segs);
 
 		// append to each row's content skeleton
 		this.rowEls.each(function(i, rowNode) {
 			$(rowNode).find('.fc-content-skeleton > table').append(
 				rowStructs[i].tbodyEl
 			);
-			segs.push.apply(segs, rowStructs[i].segs);
 		});
 
-		this.segs = segs;
+		return segs; // return only the segs that were actually rendered
 	},
 
 
-	// Retrieves all segment objects that have been rendered
-	getSegs: function() {
-		return (this.segs || []).concat(
-			this.popoverSegs || [] // segs rendered in the "more" events popover
-		);
-	},
-
-
-	// Removes all rendered event elements
-	destroyEvents: function() {
-		var rowStructs;
+	// Unrenders all currently rendered foreground event segments
+	destroyFgSegs: function() {
+		var rowStructs = this.rowStructs || [];
 		var rowStruct;
 
-		Grid.prototype.destroyEvents.call(this); // call the super-method
-
-		rowStructs = this.rowStructs || [];
 		while ((rowStruct = rowStructs.pop())) {
 			rowStruct.tbodyEl.remove();
 		}
 
-		this.segs = null;
-		this.destroySegPopover(); // removes the "more.." events popover
+		this.rowStructs = null;
 	},
 
 
 	// Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
-	// Returns an array of rowStruct objects (see the bottom of `renderEventRow`).
-	renderEventRows: function(events) {
-		var segs = this.eventsToSegs(events);
-		var annotations = [];
+	// Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
+	// PRECONDITION: each segment shoud already have a rendered and assigned `.el`
+	renderSegRows: function(segs) {
 		var rowStructs = [];
+		var annotations = [];
 		var segRows;
 		var row;
 
@@ -71,7 +88,7 @@ $.extend(DayGrid.prototype, {
 		// iterate each row of segment groupings
 		for (row = 0; row < segRows.length; row++) {
 			rowStructs.push(
-				this.renderEventRow(row, segRows[row])
+				this.renderSegRow(row, segRows[row])
 			);
 		}
 
@@ -80,7 +97,7 @@ $.extend(DayGrid.prototype, {
 
 
 	// Builds the HTML to be used for the default element for an individual segment
-	renderSegHtml: function(seg, disableResizing) {
+	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
 		var isRTL = view.opt('isRTL');
 		var event = seg.event;
@@ -129,7 +146,7 @@ $.extend(DayGrid.prototype, {
 
 	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 	// the segments. Returns object with a bunch of internal data about how the render was calculated.
-	renderEventRow: function(row, rowSegs) {
+	renderSegRow: function(row, rowSegs) {
 		var view = this.view;
 		var colCnt = view.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels

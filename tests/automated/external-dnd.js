@@ -1,7 +1,7 @@
 
 describe('external drag and drop', function() {
 
-	// TODO: fill out tests for droppable/drop/dropAccept, with RTL
+	// TODO: fill out tests for droppable/drop, with RTL
 
 	var options;
 
@@ -66,6 +66,89 @@ describe('external drag and drop', function() {
 				});
 			}, 0);
 		});
+
+		describe('dropAccept', function() {
+
+			it('works with a className that does match', function(done) {
+				options.dropAccept = '.event1';
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: getMonthCell(1, 3),
+						callback: function() {
+							expect(options.drop).toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('prevents a classNames that doesn\'t match', function(done) {
+				options.dropAccept = '.event2';
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: getMonthCell(1, 3),
+						callback: function() {
+							expect(options.drop).not.toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('works with a filter function that returns true', function(done) {
+				options.dropAccept = function(jqEl) {
+					expect(typeof jqEl).toBe('object');
+					expect(jqEl.length).toBe(1);
+					return true;
+				};
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: getMonthCell(1, 3),
+						callback: function() {
+							expect(options.drop).toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('prevents a drop with a filter function that returns false', function(done) {
+				options.dropAccept = function(jqEl) {
+					expect(typeof jqEl).toBe('object');
+					expect(jqEl.length).toBe(1);
+					return false;
+				};
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: getMonthCell(1, 3),
+						callback: function() {
+							expect(options.drop).not.toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+		});
 	});
 
 	describe('in agenda view', function() {
@@ -129,9 +212,92 @@ describe('external drag and drop', function() {
 			$('#cal').fullCalendar(options);
 			setTimeout(function() { // needed for IE8
 				$('#sidebar .event1').simulate('drag-n-drop', {
-					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, UTC TIME
 				});
 			}, 0);
+		});
+
+		describe('dropAccept', function() {
+
+			it('works with a className that does match', function(done) {
+				options.dropAccept = '.event1';
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: $('.fc-slats tr:eq(2)'),
+						callback: function() {
+							expect(options.drop).toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('prevents a classNames that doesn\'t match', function(done) {
+				options.dropAccept = '.event2';
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: $('.fc-slats tr:eq(2)'),
+						callback: function() {
+							expect(options.drop).not.toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('works with a filter function that returns true', function(done) {
+				options.dropAccept = function(jqEl) {
+					expect(typeof jqEl).toBe('object');
+					expect(jqEl.length).toBe(1);
+					return true;
+				};
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: $('.fc-slats tr:eq(2)'),
+						callback: function() {
+							expect(options.drop).toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
+
+			it('prevents a drop with a filter function that returns false', function(done) {
+				options.dropAccept = function(jqEl) {
+					expect(typeof jqEl).toBe('object');
+					expect(jqEl.length).toBe(1);
+					return false;
+				};
+				options.drop = function() { };
+				spyOn(options, 'drop').and.callThrough();
+
+				$('#cal').fullCalendar(options);
+
+				setTimeout(function() { // needed for IE8
+					$('#sidebar .event1').simulate('drag-n-drop', {
+						dropTarget: $('.fc-slats tr:eq(2)'),
+						callback: function() {
+							expect(options.drop).not.toHaveBeenCalled();
+							done();
+						}
+					});
+				}, 0);
+			});
 		});
 	});
 

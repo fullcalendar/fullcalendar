@@ -40,7 +40,7 @@ function EventManager(options) { // assumed to be a calendar
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
-	var cache = [];
+	var cache = []; // holds events that have already been expanded
 
 
 	$.each(
@@ -81,24 +81,29 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function fetchEventSource(source, fetchID) {
-		_fetchEventSource(source, function(events) {
+		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
-			var i;
-			var event;
+			var i, eventInput;
+			var abstractEvent;
 
 			if (fetchID == currentFetchID) {
 
-				if (events) {
-					for (i=0; i<events.length; i++) {
-						event = events[i];
+				if (eventInputs) {
+					for (i = 0; i < eventInputs.length; i++) {
+						eventInput = eventInputs[i];
 
-						// event array sources have already been convert to Event Objects
-						if (!isArraySource) {
-							event = buildEvent(event, source);
+						if (isArraySource) { // array sources have already been convert to Event Objects
+							abstractEvent = eventInput;
+						}
+						else {
+							abstractEvent = buildEventFromInput(eventInput, source);
 						}
 
-						if (event) {
-							cache.push(event);
+						if (abstractEvent) { // not false (an invalid event)
+							cache.push.apply(
+								cache,
+								expandEvent(abstractEvent) // add individual expanded events to the cache
+							);
 						}
 					}
 				}
@@ -269,7 +274,7 @@ function EventManager(options) { // assumed to be a calendar
 			if ($.isArray(source.events)) {
 				source.origArray = source.events; // for removeEventSource
 				source.events = $.map(source.events, function(eventInput) {
-					return buildEvent(eventInput, source);
+					return buildEventFromInput(eventInput, source);
 				});
 			}
 
@@ -359,19 +364,33 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 	
-	
-	function renderEvent(eventData, stick) {
-		var event = buildEvent(eventData);
-		if (event) {
-			if (!event.source) {
-				if (stick) {
-					stickySource.events.push(event);
-					event.source = stickySource;
+	// returns the expanded events that were created
+	function renderEvent(eventInput, stick) {
+		var abstractEvent = buildEventFromInput(eventInput);
+		var events;
+		var i, event;
+
+		if (abstractEvent) { // not false (a valid input)
+			events = expandEvent(abstractEvent);
+
+			for (i = 0; i < events.length; i++) {
+				event = events[i];
+
+				if (!event.source) {
+					if (stick) {
+						stickySource.events.push(event);
+						event.source = stickySource;
+					}
+					cache.push(event);
 				}
-				cache.push(event);
 			}
+
 			reportEvents(cache);
+
+			return events;
 		}
+
+		return [];
 	}
 	
 	
@@ -442,48 +461,107 @@ function EventManager(options) { // assumed to be a calendar
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
-	function buildEvent(data, source) { // source may be undefined!
+
+	// Given a raw object with key/value properties, returns an "abstract" Event object.
+	// An "abstract" event is an event that, if recurring, will not have been expanded yet.
+	// Will return `false` when input is invalid.
+	// `source` is optional
+	function buildEventFromInput(input, source) {
 		var out = {};
-		var start;
-		var end;
+		var start, end;
 		var allDay;
 		var allDayDefault;
 
 		if (options.eventDataTransform) {
-			data = options.eventDataTransform(data);
+			input = options.eventDataTransform(input);
 		}
 		if (source && source.eventDataTransform) {
-			data = source.eventDataTransform(data);
+			input = source.eventDataTransform(input);
 		}
 
-		start = t.moment(data.start || data.date); // "date" is an alias for "start"
-		if (!start.isValid()) {
-			return;
+		// Copy all properties over to the resulting object.
+		// The special-case properties will be copied over afterwards.
+		$.extend(out, input);
+
+		if (source) {
+			out.source = source;
 		}
 
-		end = null;
-		if (data.end) {
-			end = t.moment(data.end);
-			if (!end.isValid()) {
-				return;
+		out._id = input._id || (input.id === undefined ? '_fc' + eventGUID++ : input.id + '');
+
+		if (input.className) {
+			if (typeof input.className == 'string') {
+				out.className = input.className.split(/\s+/);
 			}
+			else { // assumed to be an array
+				out.className = input.className;
+			}
+		}
+		else {
+			out.className = [];
 		}
 
-		allDay = data.allDay;
-		if (allDay === undefined) {
-			allDayDefault = firstDefined(
-				source ? source.allDayDefault : undefined,
-				options.allDayDefault
-			);
-			if (allDayDefault !== undefined) {
-				// use the default
-				allDay = allDayDefault;
-			}
-			else {
-				// all dates need to have ambig time for the event to be considered allDay
-				allDay = !start.hasTime() && (!end || !end.hasTime());
-			}
+		start = input.start || input.date; // "date" is an alias for "start"
+		end = input.end;
+
+		// parse as a time (Duration) if applicable
+		if (isTimeString(start)) {
+			start = moment.duration(start);
 		}
+		if (isTimeString(end)) {
+			end = moment.duration(end);
+		}
+
+		if (input.dow || moment.isDuration(start) || moment.isDuration(end)) {
+
+			// the event is "abstract" (recurring) so don't calculate exact start/end dates just yet
+			out.start = start ? moment.duration(start) : null; // will be a Duration or null
+			out.end = end ? moment.duration(end) : null; // will be a Duration or null
+			out._recurring = true; // our internal marker
+		}
+		else {
+
+			if (start) {
+				start = t.moment(start);
+				if (!start.isValid()) {
+					return false;
+				}
+			}
+
+			if (end) {
+				end = t.moment(end);
+				if (!end.isValid()) {
+					return false;
+				}
+			}
+
+			allDay = input.allDay;
+			if (allDay === undefined) {
+				allDayDefault = firstDefined(
+					source ? source.allDayDefault : undefined,
+					options.allDayDefault
+				);
+				if (allDayDefault !== undefined) {
+					// use the default
+					allDay = allDayDefault;
+				}
+				else {
+					// if a single date has a time, the event should not be all-day
+					allDay = !start.hasTime() && (!end || !end.hasTime());
+				}
+			}
+
+			assignDatesToEvent(start, end, allDay, out);
+		}
+
+		return out;
+	}
+
+
+	// Normalizes and assigns the given dates to the given partially-formed event object.
+	// Requires an explicit `allDay` boolean parameter.
+	// NOTE: mutates the given start/end moments. does not make an internal copy
+	function assignDatesToEvent(start, end, allDay, event) {
 
 		// normalize the date based on allDay
 		if (allDay) {
@@ -505,39 +583,88 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		// Copy all properties over to the resulting object.
-		// The special-case properties will be copied over afterwards.
-		$.extend(out, data);
+		event.allDay = allDay;
+		event.start = start;
+		event.end = end || null; // ensure null if falsy
 
-		if (source) {
-			out.source = source;
+		if (options.forceEventDuration && !event.end) {
+			event.end = getEventEnd(event);
 		}
 
-		out._id = data._id || (data.id === undefined ? '_fc' + eventGUID++ : data.id + '');
+		backupEventDates(event);
+	}
 
-		if (data.className) {
-			if (typeof data.className == 'string') {
-				out.className = data.className.split(/\s+/);
+
+	// If the given event is a recurring event, break it down into an array of individual instances.
+	// If not a recurring event, return an array with the single original event.
+	// If given a falsy input (probably because of a failed buildEventFromInput call), returns an empty array.
+	function expandEvent(abstractEvent) {
+		var events = [];
+		var view;
+		var _rangeStart = rangeStart;
+		var _rangeEnd = rangeEnd;
+		var dowHash;
+		var dow;
+		var i;
+		var date;
+		var startTime, endTime;
+		var start, end;
+		var event;
+
+		// hack for when fetchEvents hasn't been called yet (calculating businessHours for example)
+		if (!_rangeStart || !_rangeEnd) {
+			view = t.getView();
+			_rangeStart = view.start;
+			_rangeEnd = view.end;
+		}
+
+		if (abstractEvent) {
+			if (abstractEvent._recurring) {
+
+				// make a boolean hash as to whether the event occurs on each day-of-week
+				if ((dow = abstractEvent.dow)) {
+					dowHash = {};
+					for (i = 0; i < dow.length; i++) {
+						dowHash[dow[i]] = true;
+					}
+				}
+
+				// iterate through every day in the current range
+				date = _rangeStart.clone().stripTime(); // holds the date of the current day
+				while (date.isBefore(_rangeEnd)) {
+
+					if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
+
+						startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
+						endTime = abstractEvent.end; // "
+						start = date.clone();
+						end = null;
+
+						if (startTime) {
+							start = start.time(startTime);
+						}
+						if (endTime) {
+							end = date.clone().time(endTime);
+						}
+
+						event = $.extend({}, abstractEvent); // make a copy of the original
+						assignDatesToEvent(
+							start, end,
+							!startTime && !endTime, // allDay?
+							event
+						);
+						events.push(event);
+					}
+
+					date.add(1, 'days');
+				}
 			}
-			else { // assumed to be an array
-				out.className = data.className;
+			else {
+				events.push(abstractEvent); // return the original event. will be a one-item array
 			}
 		}
-		else {
-			out.className = [];
-		}
 
-		out.allDay = allDay;
-		out.start = start;
-		out.end = end;
-
-		if (options.forceEventDuration && !out.end) {
-			out.end = getEventEnd(out);
-		}
-
-		backupEventDates(out);
-
-		return out;
+		return events;
 	}
 
 
@@ -712,6 +839,202 @@ function EventManager(options) { // assumed to be a calendar
 				undoFunctions[i]();
 			}
 		};
+	}
+
+
+	/* Business Hours
+	-----------------------------------------------------------------------------------------*/
+
+	t.getBusinessHoursEvents = getBusinessHoursEvents;
+
+
+	// Returns an array of events as to when the business hours occur in the current view.
+	// Abuse of our event system :(
+	function getBusinessHoursEvents() {
+		var optionVal = options.businessHours;
+		var defaultVal = {
+			className: 'fc-nonbusiness',
+			start: '09:00',
+			end: '17:00',
+			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+			rendering: 'inverse-background'
+		};
+		var eventInput;
+
+		if (optionVal) {
+			if (typeof optionVal === 'object') {
+				// option value is an object that can override the default business hours
+				eventInput = $.extend({}, defaultVal, optionVal);
+			}
+			else {
+				// option value is `true`. use default business hours
+				eventInput = defaultVal;
+			}
+		}
+
+		if (eventInput) {
+			return expandEvent(buildEventFromInput(eventInput));
+		}
+
+		return [];
+	}
+
+
+	/* Overlapping / Constraining
+	-----------------------------------------------------------------------------------------*/
+
+	t.isEventAllowedInRange = isEventAllowedInRange;
+	t.isSelectionAllowedInRange = isSelectionAllowedInRange;
+	t.isExternalDragAllowedInRange = isExternalDragAllowedInRange;
+
+
+	function isEventAllowedInRange(event, start, end) {
+		var source = event.source || {};
+		var constraint = firstDefined(
+			event.constraint,
+			source.constraint,
+			options.eventConstraint
+		);
+		var overlap = firstDefined(
+			event.overlap,
+			source.overlap,
+			options.eventOverlap
+		);
+
+		return isRangeAllowed(start, end, constraint, overlap, event);
+	}
+
+
+	function isSelectionAllowedInRange(start, end) {
+		return isRangeAllowed(
+			start,
+			end,
+			options.selectConstraint,
+			options.selectOverlap
+		);
+	}
+
+
+	function isExternalDragAllowedInRange(start, end, eventInput) { // eventInput is optional associated event data
+		var event;
+
+		if (eventInput) {
+			event = expandEvent(buildEventFromInput(eventInput))[0];
+			if (event) {
+				return isEventAllowedInRange(event, start, end);
+			}
+		}
+
+		return isSelectionAllowedInRange(start, end); // treat it as a selection
+	}
+
+
+	// Returns true if the given range (caused by an event drop/resize or a selection) is allowed to exist
+	// according to the constraint/overlap settings.
+	// `event` is not required if checking a selection.
+	function isRangeAllowed(start, end, constraint, overlap, event) {
+		var constraintEvents;
+		var anyContainment;
+		var i, otherEvent;
+		var otherOverlap;
+
+		// normalize. fyi, we're normalizing in too many places :(
+		start = start.clone().stripZone();
+		end = end.clone().stripZone();
+
+		// the range must be fully contained by at least one of produced constraint events
+		if (constraint != null) {
+			constraintEvents = constraintToEvents(constraint);
+			anyContainment = false;
+
+			for (i = 0; i < constraintEvents.length; i++) {
+				if (eventContainsRange(constraintEvents[i], start, end)) {
+					anyContainment = true;
+					break;
+				}
+			}
+
+			if (!anyContainment) {
+				return false;
+			}
+		}
+
+		for (i = 0; i < cache.length; i++) { // loop all events and detect overlap
+			otherEvent = cache[i];
+
+			// don't compare the event to itself or other related [repeating] events
+			if (event && event._id === otherEvent._id) {
+				continue;
+			}
+
+			// there needs to be an actual intersection before disallowing anything
+			if (eventIntersectsRange(otherEvent, start, end)) {
+
+				// evaluate overlap for the given range and short-circuit if necessary
+				if (overlap === false) {
+					return false;
+				}
+				else if (typeof overlap === 'function' && !overlap(otherEvent, event)) {
+					return false;
+				}
+
+				// if we are computing if the given range is allowable for an event, consider the other event's
+				// EventObject-specific or Source-specific `overlap` property
+				if (event) {
+					otherOverlap = firstDefined(
+						otherEvent.overlap,
+						(otherEvent.source || {}).overlap
+						// we already considered the global `eventOverlap`
+					);
+					if (otherOverlap === false) {
+						return false;
+					}
+					if (typeof otherOverlap === 'function' && !otherOverlap(event, otherEvent)) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	// Given an event input from the API, produces an array of event objects. Possible event inputs:
+	// 'businessHours'
+	// An event ID (number or string)
+	// An object with specific start/end dates or a recurring event (like what businessHours accepts)
+	function constraintToEvents(constraintInput) {
+
+		if (constraintInput === 'businessHours') {
+			return getBusinessHoursEvents();
+		}
+
+		if (typeof constraintInput === 'object') {
+			return expandEvent(buildEventFromInput(constraintInput));
+		}
+
+		return clientEvents(constraintInput); // probably an ID
+	}
+
+
+	// Is the event's date ranged fully contained by the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventContainsRange(event, start, end) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return start >= eventStart && end <= eventEnd;
+	}
+
+
+	// Does the event's date range intersect with the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventIntersectsRange(event, start, end) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return start < eventEnd && end > eventStart;
 	}
 
 }

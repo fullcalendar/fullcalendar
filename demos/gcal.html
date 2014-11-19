@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8' />
@@ -13,9 +13,14 @@
 	$(document).ready(function() {
 	
 		$('#calendar').fullCalendar({
+
+			// THIS KEY WON'T WORK IN PRODUCTION!!!
+			// To make your own Google API key, follow the directions here:
+			// http://fullcalendar.io/docs/google_calendar/
+			googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
 		
 			// US Holidays
-			events: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
+			events: 'usa__en@holiday.calendar.google.com',
 			
 			eventClick: function(event) {
 				// opens events in a popup window

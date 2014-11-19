@@ -89,7 +89,7 @@ RowRenderer.prototype = {
 		}
 
 		if (typeof renderer === 'function') {
-			return function(row) {
+			return function() {
 				return renderer.apply(provider, arguments) || ''; // use correct `this` and always return a string
 			};
 		}
