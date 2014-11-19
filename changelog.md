@@ -1,5 +1,5 @@
 
-v2.2.1 (2014-11-18)
+v2.2.1 (2014-11-19)
 -------------------
 
 - Migrate Google Calendar plugin to use V3 of the API ([1526])

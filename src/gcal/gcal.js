@@ -77,7 +77,7 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 	}
 
 	if (!apiKey) {
-		reportError("Specify a Google Calendar API key (googleCalendarApiKey).");
+		reportError("Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/");
 		return {}; // an empty source to use instead. won't fetch anything.
 	}
 
@@ -139,14 +139,7 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 			return events;
 		}
 	});
-	
 }
-
-
-// legacy
-fc.gcalFeed = function(url, sourceOptions) {
-	return $.extend({}, sourceOptions, { url: url });
-};
 
 
 });
