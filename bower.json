@@ -4,6 +4,9 @@
   "dependencies": {
     "jquery": "~1.10.2"
   },
+  "devDependencies": {
+    "jquery-ui": "~1.10.3"
+  },
   "optionalDependencies": {
     "jquery-ui": "~1.10.3"
   },
