@@ -52,7 +52,7 @@ JSON feed:
 Google Calendar feed:
 
 	{
-		url: 'http://www.google.com/your_feed_url/',
+		googleCalendarId: 'abcd1234@group.calendar.google.com',
 		color: 'yellow',   // an option!
 		textColor: 'black' // an option!
 	}

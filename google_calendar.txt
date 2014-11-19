@@ -3,28 +3,51 @@ Google Calendar
 ===============
 
 FullCalendar can display events from a public [Google Calendar](http://calendar.google.com/).
-It can serve as a backend that manages and persistently stores event data
+Google Calendar can serve as a backend that manages and persistently stores event data
 (a feature that FullCalendar currently lacks).
+
+<div class='warning' markdown='1'>
+On Nov 17th 2014, Google shut down V1 and V2 of their Calendar APIs, which FullCalendar relied upon.
+Please upgrade to the latest version of FullCalendar or at least replace `gcal.js` with
+**[this file](https://raw.githubusercontent.com/arshaw/fullcalendar/v1.x/gcal.js)**
+(will work from FullCalendar v1.5.0 until the latest v1.x).
+Your own Google Calendar API key is now required.
+**Also, the way you specify your event feed is different!**
+Read below about `googleCalendarApiKey` and `googleCalendarId`.
+</div>
 
 Before you code...
 ------------------
 
-**You must first make your Google Calendar public:**
+**You must first have a Google Calendar API Key**:
 
-1. In the Google Calendar interface, locate the "My Calendar" box on the left.
-2. Click the arrow next to the calendar you need.
-3. A menu will appear. Click "Share this calendar."
-4. Check "Make this calendar public."
+1. Go to the [Google Developer Console](https://console.developers.google.com/)
+   and create a new project (it might take a second).
+2. Once in the project, go to **APIs & auth > APIs** on the sidebar.
+3. Find "Calendar API" in the list and turn it ON.
+4. On the sidebar, click **APIs & auth > Credentials**.
+5. In the "Public API access" section, click "Create new Key".
+6. Choose "Browser key".
+7. If you known what internet domains will host your calendar, enter them into the box.
+   Otherwise, leave it blank. You can always change it later.
+8. Your new API key will appear. It might take second or two before it starts working.
+
+**Make your Google Calendar public:**
+
+1. In the Google Calendar interface, locate the "My calendars" area on the left.
+2. Hover over the calendar you need and click the downward arrow.
+3. A menu will appear. Click "Share this Calendar".
+4. Check "Make this calendar public".
 5. Make sure "Share only my free/busy information" is **unchecked**.
-6. Click "Save."
+6. Click "Save".
 
-**Then, you must obtain your calendar's XML feed URL:**
+**Obtain your Google Calendar's ID:**
 
-1. In the Google Calendar interface, locate the "My Calendar" box on the left
-2. Click the arrow next to the calendar you need.
-3. A menu will appear. Click "Calendar settings."
-4. In the "Calendar Address" section of the screen, click the XML badge.
-5. Your feed's URL will appear.
+1. In the Google Calendar interface, locate the "My calendars" area on the left.
+2. Hover over the calendar you need and click the downward arrow.
+3. A menu will appear. Click "Calendar settings".
+4. In the "Calendar Address" section of the screen, you will see your Calendar ID.
+   It will look something like "abcd1234@group.calendar.google.com".
 
 Dependencies
 ------------
@@ -34,30 +57,35 @@ and fullcalendar.css, **in addition to gcal.js**:
 
 	<script type='text/javascript' src='fullcalendar/gcal.js'></script>
 	
-Writing the code (version 1.5 and above)
----------------------------------------
+Writing the code
+----------------
 
 Now it's time to initialize your calendar in JavaScript.
-You can simply put your feed's URL in the `events` option:
+You pass an object into the `events` parameter, with two required properties,
+`googleCalendarApiKey` and `googleCalendarId`:
 
 	<script type='text/javascript'>
 	
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
-			events: 'http://www.google.com/your_feed_url/'
+			events: {
+				googleCalendarApiKey: '<YOUR API KEY>',
+				googleCalendarId: 'abcd1234@group.calendar.google.com',
+			}
 		});
 	});
 	
 	</script>
 	
-If you want to specify some [Event Source options](event_data/Event_Source_Object#options), you need to write things a little differently:
+You can also specify some [Event Source options](event_data/Event_Source_Object#options):
 
 	<script type='text/javascript'>
 
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			events: {
-				url: 'http://www.google.com/your_feed_url/',
+				googleCalendarApiKey: '<YOUR API KEY>',
+				googleCalendarId: 'abcd1234@group.calendar.google.com',
 				className: 'gcal-event',           // an option!
 				currentTimezone: 'America/Chicago' // an option!
 			}
@@ -128,61 +156,16 @@ You can specify multiple Google Calendars by using the `eventSources` option:
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			eventSources: [
-			
-				// source with no options
-				"http://www.google.com/your_feed_url1/",
-				
-				// source with no options
-				"http://www.google.com/your_feed_url2/",
-				
-				// source WITH options
 				{
-					url: "http://www.google.com/your_feed_url3/",
-					className: 'nice-event'
+					googleCalendarApiKey: "<YOUR API KEY>",
+					googleCalendarId: "abcd1234@group.calendar.google.com"
+				},
+				{
+					googleCalendarApiKey: "<YOUR API KEY>",
+					googleCalendarId: "ijkl5678@group.calendar.google.com"
 				}
 			]
 		});
 	});
 	
 	</script>
-
-Writing the Code (prior to version 1.5)
----------------------------------------
-
-Prior to version 1.5, Google Calendar feeds were defined differently.
-This way will still continue to work until version 2.0, but it is deprecated:
-
-	<script type='text/javascript'>
-
-	$(document).ready(function() {
-		$('#calendar').fullCalendar({
-			events: $.fullCalendar.gcalFeed(
-				"http://www.google.com/your_feed_url/"
-			)
-		});
-	});
-	
-	</script>
-	
-Here is how you'd do the same thing, but with options:
-
-	<script type='text/javascript'>
-
-	$(document).ready(function() {
-		$('#calendar').fullCalendar({
-			events: $.fullCalendar.gcalFeed(
-				"http://www.google.com/your_feed_url/",
-				{
-					className: 'gcal-event',           // an option!
-					currentTimezone: 'America/Chicago' // an option!
-				}
-			)
-		});
-	
-	});
-	
-	</script>
-	
-Prior to version 1.5, the only options that are available are `className`, `currentTimezone`, and `editable`.
-
-
