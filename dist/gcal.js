@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.1 Google Calendar Plugin
+ * FullCalendar v2.2.2 Google Calendar Plugin
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -20,30 +20,41 @@ var applyAll = fc.applyAll;
 
 
 fc.sourceNormalizers.push(function(sourceOptions) {
+	var googleCalendarId = sourceOptions.googleCalendarId;
 	var url = sourceOptions.url;
 	var match;
 
 	// if the Google Calendar ID hasn't been explicitly defined
-	if (!sourceOptions.googleCalendarId && url) {
+	if (!googleCalendarId && url) {
 
 		// detect if the ID was specified as a single string
-		if ((match = /^[\w-]+@[\w-\.]+\.calendar\.google\.com$/.test(url))) {
-			sourceOptions.googleCalendarId = url;
+		if ((match = /^[^\/]+@([^\/]+\.)?calendar\.google\.com$/.test(url))) {
+			googleCalendarId = url;
 		}
 		// try to scrape it out of a V1 or V3 API feed URL
 		else if (
 			(match = /^https:\/\/www.googleapis.com\/calendar\/v3\/calendars\/([^\/]*)/.exec(url)) ||
 			(match = /^https?:\/\/www.google.com\/calendar\/feeds\/([^\/]*)/.exec(url))
 		) {
-			sourceOptions.googleCalendarId = decodeURIComponent(match[1]);
+			googleCalendarId = decodeURIComponent(match[1]);
+		}
+
+		if (googleCalendarId) {
+			sourceOptions.googleCalendarId = googleCalendarId;
 		}
 	}
 
-	// make each google calendar source uneditable by default
-	if (sourceOptions.googleCalendarId) {
+
+	if (googleCalendarId) { // is this a Google Calendar?
+
+		// make each Google Calendar source uneditable by default
 		if (sourceOptions.editable == null) {
 			sourceOptions.editable = false;
 		}
+
+		// We want removeEventSource to work, but it won't know about the googleCalendarId primitive.
+		// Shoehorn it into the url, which will function as the unique primitive. Won't cause side effects.
+		sourceOptions.url = googleCalendarId;
 	}
 });
 
@@ -56,7 +67,7 @@ fc.sourceFetchers.push(function(sourceOptions, start, end, timezone) {
 
 
 function transformOptions(sourceOptions, start, end, timezone, calendar) {
-	var url = API_BASE + '/' + encodeURI(sourceOptions.googleCalendarId) + '/events?callback=?'; // jsonp
+	var url = API_BASE + '/' + encodeURIComponent(sourceOptions.googleCalendarId) + '/events?callback=?'; // jsonp
 	var apiKey = sourceOptions.googleCalendarApiKey || calendar.options.googleCalendarApiKey;
 	var success = sourceOptions.success;
 	var data;
