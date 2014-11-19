@@ -183,6 +183,28 @@ describe('Google Calendar plugin', function() {
 		$('#cal').fullCalendar(options);
 	});
 
+	it('detects a gcal when `events` is the actual calendar ID, with complicated characters (1)', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.com_jlr7e6hpcuiald27@whatever.import.calendar.google.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, with complicated characters (2)', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'ar-shaw.com_jlr7e6hpcuiald27@calendar.google.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
 	it('works with requesting an HTTP V1 API feed URL', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic';
@@ -215,6 +237,34 @@ describe('Google Calendar plugin', function() {
 			done();
 		};
 		$('#cal').fullCalendar(options);
+	});
+
+	describe('removeEventSource', function() {
+		it('works when specifying only the Google Calendar ID', function(done) {
+			var CALENDAR_ID = 'usa__en@holiday.calendar.google.com';
+			var called = false;
+
+			options.googleCalendarApiKey = API_KEY;
+			options.eventSources = [ { googleCalendarId: CALENDAR_ID } ];
+			options.eventAfterAllRender = function() {
+				var events;
+
+				if (called) { return; } // only the first time
+				called = true;
+
+				events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(4); // 4 holidays in November 2014
+
+				setTimeout(function() {
+					$('#cal').fullCalendar('removeEventSource', CALENDAR_ID);
+					events = $('#cal').fullCalendar('clientEvents');
+					expect(events.length).toBe(0);
+					done();
+				}, 0);
+			};
+
+			$('#cal').fullCalendar(options);
+		});
 	});
 
 });

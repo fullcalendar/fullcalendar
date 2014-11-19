@@ -1,4 +1,12 @@
 
+v2.2.2 (2014-11-19)
+-------------------
+
+- Fixes to Google Calendar API V3 code
+	- wouldn't recognize a lone-string Google Calendar ID if periods before the @ symbol
+	- removeEventSource wouldn't work when given a Google Calendar ID
+
+
 v2.2.1 (2014-11-19)
 -------------------
 
