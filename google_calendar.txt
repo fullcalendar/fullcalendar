@@ -9,7 +9,7 @@ Google Calendar can serve as a backend that manages and persistently stores even
 <div class='warning' markdown='1'>
 On Nov 17th 2014, Google shut down V1 and V2 of their Calendar APIs, which FullCalendar relied upon.
 Please upgrade to the latest version of FullCalendar or at least replace `gcal.js` with
-**[this file](https://raw.githubusercontent.com/arshaw/fullcalendar/v1.x/gcal.js)**
+**[this file](https://github.com/arshaw/fullcalendar/blob/v1.x/gcal.js)**
 (will work from FullCalendar v1.5.0 until the latest v1.x).
 Your own Google Calendar API key is now required.
 **Also, the way you specify your event feed is different!**
@@ -28,7 +28,7 @@ Before you code...
 4. On the sidebar, click **APIs & auth > Credentials**.
 5. In the "Public API access" section, click "Create new Key".
 6. Choose "Browser key".
-7. If you known what internet domains will host your calendar, enter them into the box.
+7. If you know what domains will host your calendar, enter them into the box.
    Otherwise, leave it blank. You can always change it later.
 8. Your new API key will appear. It might take second or two before it starts working.
 
