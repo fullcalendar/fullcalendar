@@ -1,4 +1,7 @@
 
+version 1.6.5 (11/19/14)
+	- migrate Google Calendar plugin to use V3 of the API (issue 1526)
+
 version 1.6.4 (9/1/13)
 	- better algorithm for positioning timed agenda events (issue 1115)
 	- `slotEventOverlap` option to tweak timed agenda event overlapping (issue 218)

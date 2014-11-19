@@ -13,8 +13,16 @@
 	
 		$('#calendar').fullCalendar({
 		
-			// US Holidays
-			events: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
+			events: { // this is a single event source with two required settings...
+
+				// THIS KEY WON'T WORK IN PRODUCTION!!!
+				// To make your own Google API key, follow the directions here:
+				// http://fullcalendar.io/docs1/google_calendar/
+				googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
+
+				// US Holidays
+				googleCalendarId: 'usa__en@holiday.calendar.google.com'
+			},
 			
 			eventClick: function(event) {
 				// opens events in a popup window
