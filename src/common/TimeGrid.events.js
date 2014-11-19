@@ -40,9 +40,7 @@ $.extend(TimeGrid.prototype, {
 		var col, colSegs;
 		var containerEl;
 
-		segs = this.renderSegs(segs); // returns only the visible segs //xxx: maybe we can just remove this line
 		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
-
 		segs = segs.concat(annotations);
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 

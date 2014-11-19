@@ -80,9 +80,7 @@ $.extend(DayGrid.prototype, {
 			annotations = this.annotationsToSegs(this.view.calendar.option('annotations').day);
 		}
 
-		segs = this.renderSegs(segs); // returns a new array with only visible segments
 		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
-
 		segRows = this.groupSegRows(segs.concat(annotations)); // group into nested arrays
 
 		// iterate each row of segment groupings
