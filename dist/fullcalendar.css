@@ -271,6 +271,22 @@ previous button's border...
 }
 
 
+/* Annotation Styles
+------------------------------------------------------------------------*/
+
+.fc-annotation {
+	border-style: solid;
+	border-width: 0;
+	font-size: .85em;
+	cursor: default;
+	display: block;
+}
+
+.fc-time-grid .fc-annotation {
+	position: absolute;
+}
+
+
 /* Misc Reusable Components
 --------------------------------------------------------------------------------------------------*/
 
@@ -350,7 +366,7 @@ previous button's border...
 	border-right: 0 hidden transparent;
 
 	/* no bottom borders on rows */
-	border-bottom: 0 hidden transparent; 
+	border-bottom: 0 hidden transparent;
 }
 
 .fc-row:first-child table {

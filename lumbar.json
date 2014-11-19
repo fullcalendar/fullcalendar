@@ -30,6 +30,7 @@
         "src/common/RowRenderer.js",
         "src/common/Grid.js",
         "src/common/Grid.events.js",
+        "src/common/Grid.annotations.js",
         "src/common/DayGrid.js",
         "src/common/DayGrid.events.js",
         "src/common/DayGrid.limit.js",

@@ -72,10 +72,16 @@ $.extend(DayGrid.prototype, {
 	// PRECONDITION: each segment shoud already have a rendered and assigned `.el`
 	renderSegRows: function(segs) {
 		var rowStructs = [];
+		var annotations = [];
 		var segRows;
 		var row;
 
-		segRows = this.groupSegRows(segs); // group into nested arrays
+		if(this.view.name !== 'resourceDay') {
+			annotations = this.annotationsToSegs(this.view.calendar.option('annotations').day);
+		}
+
+		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
+		segRows = this.groupSegRows(segs.concat(annotations)); // group into nested arrays
 
 		// iterate each row of segment groupings
 		for (row = 0; row < segRows.length; row++) {

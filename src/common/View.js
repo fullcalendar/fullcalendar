@@ -221,7 +221,8 @@ View.prototype = {
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
-			if (!event || segs[i].event._id === event._id) {
+			var data = segs[i].event || segs[i].annotation;
+			if (!event || data._id === event._id) {
 				func.call(this, segs[i]);
 			}
 		}

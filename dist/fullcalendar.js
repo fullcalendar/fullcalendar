@@ -109,6 +109,8 @@ var defaults = {
 	
 	dropAccept: '*',
 
+	annotations: [],
+
 	eventLimit: false,
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
@@ -358,8 +360,32 @@ function Calendar(element, instanceOptions) {
 		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
 	}
 
+	if (options.annotations) { // prepare annotations object
+		var annotations = { day: [], timed: [] };
 
-	
+		// separate the annotations into all-day and timed
+		for (var i = 0; i < options.annotations.length; i++) {
+      var annotation = options.annotations[i];
+
+      if(annotation.start) {
+        annotation.start = jQuery.fullCalendar.moment(annotation.start);
+      }
+
+      if(annotation.end) {
+        annotation.end = jQuery.fullCalendar.moment(annotation.end);
+      }
+
+			if (annotation.allDay) {
+				annotations.day.push(annotation);
+			} else {
+				annotations.timed.push(annotation);
+			}
+		}
+
+		options.annotations = annotations;
+	}
+
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -5160,6 +5186,14 @@ $.extend(Grid.prototype, {
 			classes.push('fc-future');
 		}
 
+		var annotations = this.view.calendar.option('annotations').day;
+		for(var i=0; i < annotations.length; i++) {
+			var ann = annotations[i];
+			if(ann.cls && ann.start.isSame(date, "day")) {
+				classes.push(ann.cls);
+			}
+		}
+
 		return classes;
 	}
 
@@ -5888,11 +5922,122 @@ function compareNormalRanges(range1, range2) {
 // A cmp function for determining which segments should take visual priority
 // DOES NOT WORK ON INVERTED BACKGROUND EVENTS because they have no eventStartMS/eventDurationMS
 function compareSegs(seg1, seg2) {
-	return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
+	var data1 = seg1.event || seg1.annotation;
+	var data2 = seg2.event || seg2.annotation;
+
+	return (!!seg2.annotation - !!seg1.annotation) || // annotations always go first
+		seg1.eventStartMS - seg2.eventStartMS || // tie? earlier events go first
 		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
-		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
-		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
+		data2.allDay - data1.allDay || // tie? put all-day events first (booleans cast to 0/1)
+		(data1.title || '').localeCompare(data2.title); // tie? alphabetically by title
 }
+
+;;
+
+/* annotation-rendering and annotation-interaction methods for the abstract Grid class
+----------------------------------------------------------------------------------------------------------------------*/
+
+$.extend(Grid.prototype, {
+
+
+	// Converts an array of annotation objects into an array of segment objects
+	annotationsToSegs: function(annotations, intervalStart, intervalEnd) {
+		var _this = this;
+
+		return $.map(annotations, function(annotation) {
+			return _this.annotationToSegs(annotation, intervalStart, intervalEnd); // $.map flattens all returned arrays together
+		});
+	},
+
+
+	// Slices a single annotation into an array of annotation segments.
+	// When `intervalStart` and `intervalEnd` are specified, intersect the annotations with that interval.
+	// Otherwise, let the subclass decide how it wants to slice the segments over the grid.
+	annotationToSegs: function(annotation, intervalStart, intervalEnd) {
+		var annotationStart = annotation.start.clone().stripZone(); // normalize
+		var annotationEnd = this.view.calendar.getEventEnd(annotation).stripZone(); // compute (if necessary) and normalize
+		var segs;
+		var i, seg;
+
+		if (intervalStart && intervalEnd) {
+			seg = intersectionToSeg(annotationStart, annotationEnd, intervalStart, intervalEnd);
+			segs = seg ? [ seg ] : [];
+		}
+		else {
+			segs = this.rangeToSegs(annotationStart, annotationEnd); // defined by the subclass
+		}
+
+		// assign extra annotation-related properties to the segment objects
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			seg.annotation = annotation;
+			seg.eventStartMS = +annotationStart;
+			seg.eventDurationMS = annotationEnd - annotationStart;
+		}
+
+		return segs;
+	},
+
+	// Renders a `el` property for each seg, and only returns segments that successfully rendered
+	renderAnnotations: function(annotations, disableResizing) {
+		var html = '';
+		var renderedAnns = [];
+		var i;
+
+		// build a large concatenation of annotation segment HTML
+		for (i = 0; i < annotations.length; i++) {
+			html += this.renderAnnotationHtml(annotations[i], disableResizing);
+		}
+
+		// Grab individual elements from the combined HTML string. Use each as the default rendering.
+		// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
+		$(html).each(function(i, node) {
+			annotations[i].el = $(node);
+			renderedAnns.push(annotations[i]);
+		});
+
+		return renderedAnns;
+	},
+
+		// Builds the HTML to be used for the default element for an individual segment
+	renderAnnotationHtml: function(seg, disableResizing) {
+		var view = this.view;
+		var isRTL = view.opt('isRTL');
+		var annotation = seg.annotation;
+		var classes = ['fc-annotation'].concat(annotation.cls);
+		var skinCss = this.getEventSkinCss(annotation);
+		var timeHtml = '';
+		var titleHtml;
+
+		// Only display a timed events time if it is the starting segment
+		if (!annotation.allDay && seg.isStart) {
+			timeHtml = '<span class="fc-time">' + htmlEscape(view.getEventTimeText(annotation)) + '</span>';
+		}
+
+		titleHtml =
+			'<span class="fc-title">' +
+				(htmlEscape(annotation.title || '') || '&nbsp;') + // we always want one line of height
+			'</span>';
+
+		return '<a class="' + classes.join(' ') + '"' +
+				(annotation.url ?
+					' href="' + htmlEscape(annotation.url) + '"' :
+					''
+					) +
+				(skinCss ?
+					' style="' + skinCss + '"' :
+					''
+					) +
+			'>' +
+				'<div class="fc-content">' +
+					(isRTL ?
+						titleHtml + ' ' + timeHtml : // put a natural space in between
+						timeHtml + ' ' + titleHtml   //
+						) +
+				'</div></a>';
+	}
+
+});
 
 ;;
 
@@ -6279,10 +6424,16 @@ $.extend(DayGrid.prototype, {
 	// PRECONDITION: each segment shoud already have a rendered and assigned `.el`
 	renderSegRows: function(segs) {
 		var rowStructs = [];
+		var annotations = [];
 		var segRows;
 		var row;
 
-		segRows = this.groupSegRows(segs); // group into nested arrays
+		if(this.view.name !== 'resourceDay') {
+			annotations = this.annotationsToSegs(this.view.calendar.option('annotations').day);
+		}
+
+		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
+		segRows = this.groupSegRows(segs.concat(annotations)); // group into nested arrays
 
 		// iterate each row of segment groupings
 		for (row = 0; row < segRows.length; row++) {
@@ -7365,11 +7516,14 @@ $.extend(TimeGrid.prototype, {
 	renderSegTable: function(segs) {
 		var tableEl = $('<table><tr/></table>');
 		var trEl = tableEl.find('tr');
+		var annotations = this.annotationsToSegs(this.view.calendar.option('annotations').timed);
 		var segCols;
 		var i, seg;
 		var col, colSegs;
 		var containerEl;
 
+		annotations = this.renderAnnotations(annotations); // returns a new array with only visible annotations
+		segs = segs.concat(annotations);
 		segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
 
 		this.computeSegVerticals(segs); // compute and assign top/bottom
@@ -7528,7 +7682,7 @@ $.extend(TimeGrid.prototype, {
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
-			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width 
+			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
 		}
 
 		return props;
@@ -7963,7 +8117,8 @@ View.prototype = {
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
-			if (!event || segs[i].event._id === event._id) {
+			var data = segs[i].event || segs[i].annotation;
+			if (!event || data._id === event._id) {
 				func.call(this, segs[i]);
 			}
 		}
