@@ -105,11 +105,15 @@ View.prototype = {
 	// Refreshes the vertical dimensions of the calendar
 	updateHeight: function() {
 		var calendar = this.calendar; // we poll the calendar for height information
+		var that = this;
 
-		this.setHeight(
-			calendar.getSuggestedViewHeight(),
-			calendar.isHeightAuto()
-		);
+		setTimeout(function() {
+			that.setHeight(
+				calendar.getSuggestedViewHeight(),
+				calendar.isHeightAuto()
+			);
+		});
+
 	},
 
 

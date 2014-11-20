@@ -61,9 +61,9 @@ $.extend(DayGrid.prototype, {
 		for(var i=0; i<rowStructs.length; i++) {
 			var element = rowStructs[i].tbodyEl.get(0);
 			element.parentNode.removeChild(element);
-			setTimeout(function() {
+			setTimeout(function fcCleanup() {
 				$(element).remove();
-			});
+			}, 900);
 		}
 
 		this.rowStructs = null;
