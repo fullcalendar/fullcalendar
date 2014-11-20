@@ -57,10 +57,13 @@ $.extend(DayGrid.prototype, {
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function() {
 		var rowStructs = this.rowStructs || [];
-		var rowStruct;
 
-		while ((rowStruct = rowStructs.pop())) {
-			rowStruct.tbodyEl.remove();
+		for(var i=0; i<rowStructs.length; i++) {
+			var element = rowStructs[i].tbodyEl.get(0);
+			element.parentNode.removeChild(element);
+			setTimeout(function() {
+				$(element).remove();
+			});
 		}
 
 		this.rowStructs = null;
@@ -111,7 +114,7 @@ $.extend(DayGrid.prototype, {
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-		
+
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -235,7 +238,7 @@ $.extend(DayGrid.prototype, {
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		segs.sort(compareSegs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
