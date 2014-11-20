@@ -58,22 +58,22 @@ and fullcalendar.css, **in addition to gcal.js**:
 Writing the code
 ----------------
 
-Now it's time to initialize your calendar in JavaScript.
-You need to enter your API key in the `googleCalendarApiKey` option
-and then enter your calendar's ID in the `events` option:
+Now it's time to initialize your calendar in JavaScript. This is the most minimal example:
 
 	<script type='text/javascript'>
 	
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			googleCalendarApiKey: '<YOUR API KEY>',
-			events: 'abcd1234@group.calendar.google.com'
+			events: {
+				googleCalendarId: 'abcd1234@group.calendar.google.com'
+			}
 		});
 	});
 	
 	</script>
 	
-If you want to specify some [Event Source] options, you'll need to write things a little differently:
+If you want to specify some [Event Source] options, you can include them in the `events` object:
 
 	<script type='text/javascript'>
 
@@ -108,16 +108,11 @@ You can specify multiple Google Calendars by using the `eventSources` option:
 		$('#calendar').fullCalendar({
 			googleCalendarApiKey: '<YOUR API KEY>',
 			eventSources: [
-			
-				// source with no options
-				'abcd1234@group.calendar.google.com',
-
-				// source with no options
-				'efgh5678@group.calendar.google.com',
-				
-				// source WITH options
 				{
-					googleCalendarId: 'ijkl5678@group.calendar.google.com',
+					googleCalendarId: 'abcd1234@group.calendar.google.com'
+				},
+				{
+					googleCalendarId: 'efgh5678@group.calendar.google.com',
 					className: 'nice-event'
 				}
 			]
