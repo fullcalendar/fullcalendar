@@ -37,6 +37,7 @@ function EventManager(options) { // assumed to be a calendar
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
+	var intervals = [];
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
@@ -60,17 +61,26 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function isFetchNeeded(start, end) {
-		return !rangeStart || // nothing has been fetched yet?
-			// or, a part of the new range is outside of the old range? (after normalizing)
-			start.clone().stripZone() < rangeStart.clone().stripZone() ||
-			end.clone().stripZone() > rangeEnd.clone().stripZone();
+		start = start.clone().stripZone();
+		end = end.clone().stripZone();
+
+		for(var i=0; i<intervals.length; i++) {
+			var interval = intervals[i];
+			if(start >= interval.start.clone().stripZone() &&
+				end <= interval.end.clone().stripZone()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 	
 	
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
+		intervals.push({start: start, end: end});
+		cache = cache || [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
 		pendingSourceCnt = len;
