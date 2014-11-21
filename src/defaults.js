@@ -103,7 +103,7 @@ var defaults = {
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before a rerender happens
 
-	listInterval: { 'days': 7 }
+	listInterval: {days: 7 }
 };
 
 

@@ -49,7 +49,7 @@ $.extend(ListView.prototype, {
 
     renderEvents: function renderListEvents(events) {
 
-        var noDebug = false;
+        var noDebug = true;
         noDebug || console.log(events);
 
         var eventsCopy = events.slice().reverse(); //copy and reverse so we can modify while looping
@@ -159,10 +159,12 @@ $.extend(ListView.prototype, {
         });
 
 
-        if (height - diff > contentHeight)
+        if (height - diff > contentHeight) {
             this.scrollerEl.css('overflow-y', 'hidden');
-        else
+        }
+        else {
             this.scrollerEl.css('overflow-y', 'scroll');
+        }
 
     },
 
