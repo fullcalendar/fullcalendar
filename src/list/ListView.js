@@ -15,7 +15,7 @@ $.extend(ListView.prototype, {
 
 
     incrementDate: function(date, delta) {
-        var out = date.clone().add(delta, 'days'); //imitated week view
+        var out = date.clone().stripTime().add(delta, 'days'); //imitated week view
         out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
         return out;
     },
@@ -25,7 +25,7 @@ $.extend(ListView.prototype, {
 
         //console.log('Render from: ' + date.format("YYYY MM DD HH:mm:ss Z"));
 
-        this.intervalStart = date.clone().startOf('day');;
+        this.intervalStart = date.clone().stripTime();
         this.intervalEnd = this.intervalStart.clone().add(this.calendar.options.listInterval);
 
         this.start = this.skipHiddenDays(this.intervalStart);
@@ -49,7 +49,7 @@ $.extend(ListView.prototype, {
 
     renderEvents: function renderListEvents(events) {
 
-        var noDebug = true;
+        var noDebug = false;
         noDebug || console.log(events);
 
         var eventsCopy = events.slice().reverse(); //copy and reverse so we can modify while looping
