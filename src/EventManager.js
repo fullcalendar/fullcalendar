@@ -53,9 +53,51 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
+
+
+
+	/* Ranging
+	-----------------------------------------------------------------------------*/
 	
 	
-	
+	function splitRange(start, end) {
+		var splitStart = start.clone().stripZone();
+		var splitEnd = end.clone().stripZone();
+
+		for(var i=0; i<intervals.length; i++) {
+			var interval = intervals[i];
+			var intervalStart = interval.start.clone().stripZone();
+			var intervalEnd = interval.end.clone().stripZone();
+
+			if(splitStart >= intervalStart && splitEnd <= intervalEnd) {
+				// the interval contains the desired range
+				return [];
+			}
+
+			if(splitStart >= intervalStart && splitStart < intervalEnd) {
+				// the desired range starts during the interval
+				return splitRange(interval.end, end)
+			}
+
+			if(splitEnd <= intervalEnd && splitEnd > intervalStart) {
+				// the desired range ends during the interval
+				return splitRange(start, interval.start);
+			}
+
+			if(splitStart < intervalStart && splitEnd > intervalStart) {
+				// the interval starts during the desired range
+				debugger;
+				var left = splitRange(start, moment.min(end, interval.start));
+				var right = splitRange(moment.min(end, interval.end), moment.max(end, interval.end));
+				return left.concat(right);
+			}
+		}
+
+		return [{start: start, end: end}];
+	}
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
 	
@@ -79,7 +121,6 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		intervals.push({start: start, end: end});
 		cache = cache || [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
@@ -87,6 +128,7 @@ function EventManager(options) { // assumed to be a calendar
 		for (var i=0; i<len; i++) {
 			fetchEventSource(sources[i], fetchID);
 		}
+		intervals.push({start: start, end: end});
 	}
 	
 	
@@ -156,17 +198,19 @@ function EventManager(options) { // assumed to be a calendar
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
-				pushLoading();
-				events.call(
-					t, // this, the Calendar object
-					rangeStart.clone(),
-					rangeEnd.clone(),
-					options.timezone,
-					function(events) {
-						callback(events);
-						popLoading();
-					}
-				);
+				$.each(splitRange(rangeStart, rangeEnd), function(){
+					pushLoading();
+					events.call(
+						t, // this, the Calendar object
+						this.start.clone(),
+						this.end.clone(),
+						options.timezone,
+						function(events) {
+							callback(events);
+							popLoading();
+						}
+					);
+				});
 			}
 			else if ($.isArray(events)) {
 				callback(events);
