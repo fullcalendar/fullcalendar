@@ -44,6 +44,7 @@ tbody,
 
 /* kill the overlaid, absolutely-positioned common components */
 .fc-bg,
+.fc-bgevent-skeleton,
 .fc-highlight-skeleton,
 .fc-helper-skeleton {
 	display: none;

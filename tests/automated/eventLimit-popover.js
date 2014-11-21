@@ -69,6 +69,16 @@ describe('eventLimit popover', function() {
 			var diff = Math.abs(popoverTop - rowTop);
 			expect(diff).toBeLessThan(2);
 		});
+
+		it('works with background events', function() {
+			options.events.push({
+				start: '2014-07-29',
+				rendering: 'background'
+			});
+			init();
+			expect($('.fc-more-popover .fc-event').length).toBeGreaterThan(1);
+			expect($('.fc-more-popover .fc-bgevent').length).toBe(0);
+		});
 	});
 
 	[ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {

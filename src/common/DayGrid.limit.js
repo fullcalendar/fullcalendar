@@ -1,6 +1,7 @@
 
 /* Methods relate to limiting the number events for a given day on a DayGrid
 ----------------------------------------------------------------------------------------------------------------------*/
+// NOTE: all the segs being passed around in here are foreground segs
 
 $.extend(DayGrid.prototype, {
 
@@ -280,7 +281,7 @@ $.extend(DayGrid.prototype, {
 		var i;
 
 		// render each seg's `el` and only return the visible segs
-		segs = this.renderSegs(segs, true); // disableResizing=true
+		segs = this.renderFgSegEls(segs, true); // disableResizing=true
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {
@@ -298,13 +299,23 @@ $.extend(DayGrid.prototype, {
 
 	// Given the events within an array of segment objects, reslice them to be in a single day
 	resliceDaySegs: function(segs, dayDate) {
+
+		// build an array of the original events
 		var events = $.map(segs, function(seg) {
 			return seg.event;
 		});
+
 		var dayStart = dayDate.clone().stripTime();
 		var dayEnd = dayStart.clone().add(1, 'days');
 
-		return this.eventsToSegs(events, dayStart, dayEnd);
+		// slice the events with a custom slicing function
+		return this.eventsToSegs(
+			events,
+			function(rangeStart, rangeEnd) {
+				var seg = intersectionToSeg(rangeStart, rangeEnd, dayStart, dayEnd); // if no intersection, undefined
+				return seg ? [ seg ] : []; // must return an array of segments
+			}
+		);
 	},
 
 

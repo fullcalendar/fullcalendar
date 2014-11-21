@@ -40,6 +40,14 @@
 				m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00+05:00');
 				expect(m1.isSame(m2)).toBe(true);
 			});
+
+			describe('when called on a native moment', function() {
+				it('returns true when the dates are the same, but different zone-ambiguation', function() {
+					var m1 = moment.parseZone('2014-08-25T06:00:00+00:00');
+					var m2 = $.fullCalendar.moment.parseZone('2014-08-25T06:00:00');
+					expect(m1.isSame(m2)).toBe(true);
+				});
+			});
 		});
 
 		describe('when units are provided', function() {
@@ -170,6 +178,21 @@
 
 					});
 				});
+			});
+		});
+
+		it('returns false when on same ambiguous day', function() {
+			var mom = $.fullCalendar.moment.parseZone('2014-11-11T12:00:00+00:00');
+			var other = $.fullCalendar.moment.parseZone('2014-11-11');
+			var res = mom.isAfter(other);
+			expect(res).toBe(false);
+		});
+		describe('when called on a native moment', function() {
+			it('returns true, even when an ambiguous day would make it false', function() {
+				var mom = moment.parseZone('2014-11-11T12:00:00+00:00');
+				var other = $.fullCalendar.moment.parseZone('2014-11-11');
+				var res = mom.isAfter(other);
+				expect(res).toBe(true);
 			});
 		});
 	});

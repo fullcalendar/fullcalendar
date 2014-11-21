@@ -23,7 +23,7 @@ describe('eventMouseover', function() {
 				options.eventMouseover = function(event, ev) {
 					expect(typeof event).toBe('object');
 					expect(typeof ev).toBe('object');
-					event.title = "YO";
+					event.title = 'YO';
 					$('#cal').fullCalendar('updateEvent', event);
 				};
 				options.eventMouseout = function(event, ev) {

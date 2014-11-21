@@ -21,8 +21,9 @@ $.extend(TimeGrid.prototype, {
 
 	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
 
-	highlightEl: null, // cell skeleton element for rendering the highlight
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
+
+	businessHourSegs: null,
 
 
 	// Renders the time grid into `this.el`, which should already be assigned.
@@ -37,7 +38,15 @@ $.extend(TimeGrid.prototype, {
 
 		this.computeSlatTops();
 
+		this.renderBusinessHours();
+
 		Grid.prototype.render.call(this); // call the super-method
+	},
+
+
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents();
+		this.businessHourSegs = this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
 	},
 
 
@@ -326,11 +335,13 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		var res = this.renderEventTable([ event ]);
-		var tableEl = res.tableEl;
-		var segs = res.segs;
+		var segs = this.eventsToSegs([ event ]);
+		var tableEl;
 		var i, seg;
 		var sourceEl;
+
+		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		tableEl = this.renderSegTable(segs);
 
 		// Try to make the segment that is in the same row as sourceSeg look the same
 		for (i = 0; i < segs.length; i++) {
@@ -383,79 +394,63 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
-	/* Highlight
+	/* Fill System (highlight, background events, business hours)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.highlightEl = $(
-			this.highlightSkeletonHtml(start, end)
-		).appendTo(this.el);
-	},
-
-
-	// Unrenders the emphasis on a date range
-	destroyHighlight: function() {
-		if (this.highlightEl) {
-			this.highlightEl.remove();
-			this.highlightEl = null;
-		}
-	},
-
-
-	// Generates HTML for a table element with containers in each column, responsible for absolutely positioning the
-	// highlight elements to cover the highlighted slots.
-	highlightSkeletonHtml: function(start, end) {
+	// Renders a set of rectangles over the given time segments.
+	// Only returns segments that successfully rendered.
+	renderFill: function(type, segs, className) {
 		var view = this.view;
-		var segs = this.rangeToSegs(start, end);
-		var cellHtml = '';
-		var col = 0;
-		var i, seg;
+		var segCols;
+		var skeletonEl;
+		var trEl;
+		var col, colSegs;
+		var tdEl;
+		var containerEl;
 		var dayDate;
-		var top, bottom;
+		var i, seg;
 
-		for (i = 0; i < segs.length; i++) { // loop through the segments. one per column
-			seg = segs[i];
+		if (segs.length) {
 
-			// need empty cells beforehand?
-			if (col < seg.col) {
-				cellHtml += '<td colspan="' + (seg.col - col) + '"/>';
-				col = seg.col;
+			segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+			segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
+
+			className = className || type.toLowerCase();
+			skeletonEl = $(
+				'<div class="fc-' + className + '-skeleton">' +
+					'<table><tr/></table>' +
+				'</div>'
+			);
+			trEl = skeletonEl.find('tr');
+
+			for (col = 0; col < segCols.length; col++) {
+				colSegs = segCols[col];
+				tdEl = $('<td/>').appendTo(trEl);
+
+				if (colSegs.length) {
+					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
+					dayDate = view.cellToDate(0, col);
+
+					for (i = 0; i < colSegs.length; i++) {
+						seg = colSegs[i];
+						containerEl.append(
+							seg.el.css({
+								top: this.computeDateTop(seg.start, dayDate),
+								bottom: -this.computeDateTop(seg.end, dayDate) // the y position of the bottom edge
+							})
+						);
+					}
+				}
 			}
 
-			// compute vertical position
-			dayDate = view.cellToDate(0, col);
-			top = this.computeDateTop(seg.start, dayDate);
-			bottom = this.computeDateTop(seg.end, dayDate); // the y position of the bottom edge
+			this.bookendCells(trEl, type);
 
-			// generate the cell HTML. bottom becomes negative because it needs to be a CSS value relative to the
-			// bottom edge of the zero-height container.
-			cellHtml +=
-				'<td>' +
-					'<div class="fc-highlight-container">' +
-						'<div class="fc-highlight" style="top:' + top + 'px;bottom:-' + bottom + 'px"/>' +
-					'</div>' +
-				'</td>';
-
-			col++;
+			this.el.append(skeletonEl);
+			this.elsByFill[type] = skeletonEl;
 		}
 
-		// need empty cells after the last segment?
-		if (col < view.colCnt) {
-			cellHtml += '<td colspan="' + (view.colCnt - col) + '"/>';
-		}
-
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
-
-		return '' +
-			'<div class="fc-highlight-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>';
+		return segs;
 	}
 
 });

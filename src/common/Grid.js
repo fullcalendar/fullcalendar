@@ -5,6 +5,7 @@
 function Grid(view) {
 	RowRenderer.call(this, view); // call the super-constructor
 	this.coordMap = new GridCoordMap(this);
+	this.elsByFill = {};
 }
 
 
@@ -14,6 +15,7 @@ $.extend(Grid.prototype, {
 	el: null, // the containing element
 	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
 	cellDuration: null, // a cell's duration. subclasses must assign this ASAP
+	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
 	// Renders the grid into the `el` element.
@@ -84,6 +86,7 @@ $.extend(Grid.prototype, {
 	dayMousedown: function(ev) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
 		var isSelectable = view.opt('selectable');
 		var dates = null; // the inclusive dates of the selection. will be null if no selection
 		var start; // the inclusive start of the selection
@@ -109,13 +112,20 @@ $.extend(Grid.prototype, {
 					end = dates[1].clone().add(_this.cellDuration);
 
 					if (isSelectable) {
-						_this.renderSelection(start, end);
+						if (calendar.isSelectionAllowedInRange(start, end)) { // allowed to select within this range?
+							_this.renderSelection(start, end);
+						}
+						else {
+							dates = null; // flag for an invalid selection
+							disableCursor();
+						}
 					}
 				}
 			},
 			cellOut: function(cell, date) {
 				dates = null;
 				_this.destroySelection();
+				enableCursor();
 			},
 			listenStop: function(ev) {
 				if (dates) { // started and ended on a cell?
@@ -127,6 +137,7 @@ $.extend(Grid.prototype, {
 						view.reportSelection(start, end, ev);
 					}
 				}
+				enableCursor();
 			}
 		});
 
@@ -234,17 +245,107 @@ $.extend(Grid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Puts visual emphasis on a certain date range
+	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
 	renderHighlight: function(start, end) {
-		// subclasses should implement
+		this.renderFill('highlight', this.rangeToSegs(start, end));
 	},
 
 
-	// Removes visual emphasis on a date range
+	// Unrenders the emphasis on a date range
 	destroyHighlight: function() {
-		// subclasses should implement
+		this.destroyFill('highlight');
 	},
 
+
+	// Generates an array of classNames for rendering the highlight. Used by the fill system.
+	highlightSegClasses: function() {
+		return [ 'fc-highlight' ];
+	},
+
+
+	/* Fill System (highlight, background events, business hours)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a set of rectangles over the given segments of time.
+	// Returns a subset of segs, the segs that were actually rendered.
+	// Responsible for populating this.elsByFill
+	renderFill: function(type, segs) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a specific type of fill that is currently rendered on the grid
+	destroyFill: function(type) {
+		var el = this.elsByFill[type];
+
+		if (el) {
+			el.remove();
+			delete this.elsByFill[type];
+		}
+	},
+
+
+	// Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
+	// Only returns segments that successfully rendered.
+	// To be harnessed by renderFill (implemented by subclasses).
+	// Analagous to renderFgSegEls.
+	renderFillSegEls: function(type, segs) {
+		var _this = this;
+		var segElMethod = this[type + 'SegEl'];
+		var html = '';
+		var renderedSegs = [];
+		var i;
+
+		if (segs.length) {
+
+			// build a large concatenation of segment HTML
+			for (i = 0; i < segs.length; i++) {
+				html += this.fillSegHtml(type, segs[i]);
+			}
+
+			// Grab individual elements from the combined HTML string. Use each as the default rendering.
+			// Then, compute the 'el' for each segment.
+			$(html).each(function(i, node) {
+				var seg = segs[i];
+				var el = $(node);
+
+				// allow custom filter methods per-type
+				if (segElMethod) {
+					el = segElMethod.call(_this, seg, el);
+				}
+
+				if (el) { // custom filters did not cancel the render
+					el = $(el); // allow custom filter to return raw DOM node
+
+					// correct element type? (would be bad if a non-TD were inserted into a table for example)
+					if (el.is(_this.fillSegTag)) {
+						seg.el = el;
+						renderedSegs.push(seg);
+					}
+				}
+			});
+		}
+
+		return renderedSegs;
+	},
+
+
+	fillSegTag: 'div', // subclasses can override
+
+
+	// Builds the HTML needed for one fill segment. Generic enought o work with different types.
+	fillSegHtml: function(type, seg) {
+		var classesMethod = this[type + 'SegClasses']; // custom hooks per-type
+		var stylesMethod = this[type + 'SegStyles']; //
+		var classes = classesMethod ? classesMethod.call(this, seg) : [];
+		var styles = stylesMethod ? stylesMethod.call(this, seg) : ''; // a semi-colon separated CSS property string
+
+		return '<' + this.fillSegTag +
+			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
+			(styles ? ' style="' + styles + '"' : '') +
+			' />';
+	},
 
 
 	/* Generic rendering utilities for subclasses
