@@ -423,7 +423,11 @@ function View(calendar) {
 	
 	
 	function opt(name) {
-		var v = options[name];
+		var v = options;
+		$.each(name.split('.'), function(index, key) {
+			v = v[key];
+		});
+
 		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
 			return smartProperty(v, t.name);
 		}

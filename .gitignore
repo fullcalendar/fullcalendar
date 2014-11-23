@@ -1,5 +1,5 @@
 build/temp
-dist
+.DS_Store
 
 # npm modules
 node_modules
