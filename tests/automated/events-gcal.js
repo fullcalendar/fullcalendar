@@ -240,6 +240,7 @@ describe('Google Calendar plugin', function() {
 	});
 
 	describe('removeEventSource', function() {
+
 		it('works when specifying only the Google Calendar ID', function(done) {
 			var CALENDAR_ID = 'usa__en@holiday.calendar.google.com';
 			var called = false;
@@ -257,6 +258,33 @@ describe('Google Calendar plugin', function() {
 
 				setTimeout(function() {
 					$('#cal').fullCalendar('removeEventSource', CALENDAR_ID);
+					events = $('#cal').fullCalendar('clientEvents');
+					expect(events.length).toBe(0);
+					done();
+				}, 0);
+			};
+
+			$('#cal').fullCalendar(options);
+		});
+
+		it('works when specifying a raw Google Calendar source object', function(done) {
+			var CALENDAR_ID = 'usa__en@holiday.calendar.google.com';
+			var googleSource = { googleCalendarId: CALENDAR_ID };
+			var called = false;
+
+			options.googleCalendarApiKey = API_KEY;
+			options.eventSources = [ googleSource ];
+			options.eventAfterAllRender = function() {
+				var events;
+
+				if (called) { return; } // only the first time
+				called = true;
+
+				events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(4); // 4 holidays in November 2014
+
+				setTimeout(function() {
+					$('#cal').fullCalendar('removeEventSource', googleSource);
 					events = $('#cal').fullCalendar('clientEvents');
 					expect(events.length).toBe(0);
 					done();

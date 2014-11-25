@@ -307,7 +307,7 @@ function EventManager(options) { // assumed to be a calendar
 	function getSourcePrimitive(source) {
 		return (
 			(typeof source === 'object') ? // a normalized event source?
-				(source.origArray || source.url || source.events) : // get the primitive
+				(source.origArray || source.googleCalendarId || source.url || source.events) : // get the primitive
 				null
 		) ||
 		source; // the given argument *is* the primitive
