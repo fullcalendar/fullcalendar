@@ -45,7 +45,7 @@ $.extend(TimeGrid.prototype, {
 
 
 	renderBusinessHours: function() {
-		var events = this.view.calendar.getBusinessHoursEvents();
+		var events = this.view.calendar.getBusinessHoursEvents(this.view);
 		this.businessHourSegs = this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
 	},
 

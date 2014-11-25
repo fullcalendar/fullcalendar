@@ -598,11 +598,10 @@ function EventManager(options) { // assumed to be a calendar
 	// If the given event is a recurring event, break it down into an array of individual instances.
 	// If not a recurring event, return an array with the single original event.
 	// If given a falsy input (probably because of a failed buildEventFromInput call), returns an empty array.
-	function expandEvent(abstractEvent) {
+	// HACK: can override the recurring window by providing custom rangeStart/rangeEnd (for businessHours).
+	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
 		var events = [];
 		var view;
-		var _rangeStart = rangeStart;
-		var _rangeEnd = rangeEnd;
 		var dowHash;
 		var dow;
 		var i;
@@ -611,12 +610,8 @@ function EventManager(options) { // assumed to be a calendar
 		var start, end;
 		var event;
 
-		// hack for when fetchEvents hasn't been called yet (calculating businessHours for example)
-		if (!_rangeStart || !_rangeEnd) {
-			view = t.getView();
-			_rangeStart = view.start;
-			_rangeEnd = view.end;
-		}
+		_rangeStart = _rangeStart || rangeStart;
+		_rangeEnd = _rangeEnd || rangeEnd;
 
 		if (abstractEvent) {
 			if (abstractEvent._recurring) {
@@ -848,9 +843,9 @@ function EventManager(options) { // assumed to be a calendar
 	t.getBusinessHoursEvents = getBusinessHoursEvents;
 
 
-	// Returns an array of events as to when the business hours occur in the current view.
+	// Returns an array of events as to when the business hours occur in the given view.
 	// Abuse of our event system :(
-	function getBusinessHoursEvents() {
+	function getBusinessHoursEvents(view) {
 		var optionVal = options.businessHours;
 		var defaultVal = {
 			className: 'fc-nonbusiness',
@@ -873,7 +868,11 @@ function EventManager(options) { // assumed to be a calendar
 		}
 
 		if (eventInput) {
-			return expandEvent(buildEventFromInput(eventInput));
+			return expandEvent(
+				buildEventFromInput(eventInput),
+				view.start,
+				view.end
+			);
 		}
 
 		return [];
