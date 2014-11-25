@@ -107,7 +107,7 @@ $.extend(Grid.prototype, {
 
 					dayEl = _this.getCellDayEl(cell);
 
-					dates = [ date, dragListener.origDate ].sort(dateCompare);
+					dates = [ date, dragListener.origDate ].sort(compareNumbers); // works with Moments
 					start = dates[0];
 					end = dates[1].clone().add(_this.cellDuration);
 
