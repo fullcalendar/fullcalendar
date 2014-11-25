@@ -205,6 +205,28 @@ describe('Google Calendar plugin', function() {
 		$('#cal').fullCalendar(options);
 	});
 
+	it('detects a gcal when `events` is the actual calendar ID, person gmail', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.arshaw@gmail.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, person googlemail', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.arshaw@googlemail.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
 	it('works with requesting an HTTP V1 API feed URL', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic';
