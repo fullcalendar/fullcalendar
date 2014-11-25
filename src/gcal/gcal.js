@@ -27,8 +27,9 @@ fc.sourceNormalizers.push(function(sourceOptions) {
 	// if the Google Calendar ID hasn't been explicitly defined
 	if (!googleCalendarId && url) {
 
-		// detect if the ID was specified as a single string
-		if ((match = /^[^\/]+@([^\/]+\.)?calendar\.google\.com$/.test(url))) {
+		// detect if the ID was specified as a single string.
+		// will match calendars like "asdf1234@calendar.google.com" in addition to person email calendars.
+		if ((match = /^[^\/]+@([^\/\.]+\.)*(google|googlemail|gmail)\.com$/.test(url))) {
 			googleCalendarId = url;
 		}
 		// try to scrape it out of a V1 or V3 API feed URL
