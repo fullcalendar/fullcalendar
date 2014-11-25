@@ -51,6 +51,7 @@ fc.sourceNormalizers.push(function(sourceOptions) {
 
 		// We want removeEventSource to work, but it won't know about the googleCalendarId primitive.
 		// Shoehorn it into the url, which will function as the unique primitive. Won't cause side effects.
+		// This hack is obsolete since 1.6.7, but keep it so this plugin file is compatible with old versions.
 		sourceOptions.url = googleCalendarId;
 	}
 });

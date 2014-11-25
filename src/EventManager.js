@@ -407,7 +407,7 @@ function EventManager(options, _sources) {
 	
 	
 	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
+		return ((typeof source == 'object') ? (source.googleCalendarId || source.events || source.url) : '') || source;
 	}
 
 
