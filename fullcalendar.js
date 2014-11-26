@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v1.6.6
+ * FullCalendar v1.6.7
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -115,7 +115,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "1.6.6" };
+var fc = $.fullCalendar = { version: "1.6.7" };
 var fcViews = fc.views = {};
 
 
@@ -1290,7 +1290,7 @@ function EventManager(options, _sources) {
 	
 	
 	function getSourcePrimitive(source) {
-		return ((typeof source == 'object') ? (source.events || source.url) : '') || source;
+		return ((typeof source == 'object') ? (source.googleCalendarId || source.events || source.url) : '') || source;
 	}
 
 
