@@ -79,6 +79,17 @@ describe('eventLimit popover', function() {
 			expect($('.fc-more-popover .fc-event').length).toBeGreaterThan(1);
 			expect($('.fc-more-popover .fc-bgevent').length).toBe(0);
 		});
+
+		it('works with events that have invalid end times', function() {
+			options.events = [
+				{ title: 'event1', start: '2014-07-29', end: '2014-07-29' },
+				{ title: 'event2', start: '2014-07-29', end: '2014-07-28' },
+				{ title: 'event3', start: '2014-07-29T00:00:00', end: '2014-07-29T00:00:00' },
+				{ title: 'event4', start: '2014-07-29T00:00:00', end: '2014-07-28T23:00:00' }
+			];
+			init();
+			expect($('.fc-more-popover .fc-event').length).toBe(4);
+		});
 	});
 
 	[ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
