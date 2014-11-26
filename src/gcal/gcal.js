@@ -73,6 +73,7 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 	var apiKey = sourceOptions.googleCalendarApiKey || calendar.options.googleCalendarApiKey;
 	var success = sourceOptions.success;
 	var data;
+	var timezoneArg; // populated when a specific timezone. escaped to Google's liking
 
 	function reportError(message, apiErrorObjs) {
 		var errorObjs = apiErrorObjs || [ { message: message } ]; // to be passed into error handlers
@@ -105,10 +106,16 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 		end = end.clone().utc().add(1, 'day');
 	}
 
+	// when sending timezone names to Google, only accepts underscores, not spaces
+	if (timezone && timezone != 'local') {
+		timezoneArg = timezone.replace(' ', '_');
+	}
+
 	data = $.extend({}, sourceOptions.data || {}, {
 		key: apiKey,
 		timeMin: start.format(),
 		timeMax: end.format(),
+		timeZone: timezoneArg,
 		singleEvents: true,
 		maxResults: 9999
 	});
@@ -117,9 +124,9 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 		googleCalendarId: null, // prevents source-normalizing from happening again
 		url: url,
 		data: data,
-		timezoneParam: 'timeZone',
 		startParam: false, // `false` omits this parameter. we already included it above
 		endParam: false, // same
+		timezoneParam: false, // same
 		success: function(data) {
 			var events = [];
 			var successArgs;
@@ -130,12 +137,19 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 			}
 			else if (data.items) {
 				$.each(data.items, function(i, entry) {
+					var url = entry.htmlLink;
+
+					// make the URLs for each event show times in the correct timezone
+					if (timezoneArg) {
+						url = injectQsComponent(url, 'ctz=' + timezoneArg);
+					}
+
 					events.push({
 						id: entry.id,
 						title: entry.summary,
 						start: entry.start.dateTime || entry.start.date, // try timed. will fall back to all-day
 						end: entry.end.dateTime || entry.end.date, // same
-						url: entry.htmlLink,
+						url: url,
 						location: entry.location,
 						description: entry.description
 					});
@@ -151,6 +165,15 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 
 			return events;
 		}
+	});
+}
+
+
+// Injects a string like "arg=value" into the querystring of a URL
+function injectQsComponent(url, component) {
+	// inject it after the querystring but before the fragment
+	return url.replace(/(\?.*?)?(#|$)/, function(whole, qs, hash) {
+		return (qs ? qs + '&' : '?') + component + hash;
 	});
 }
 

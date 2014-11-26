@@ -44,48 +44,92 @@ describe('Google Calendar plugin', function() {
 		console.warn = oldConsoleWarn;
 	});
 
-	it('sends request correctly when local timezone', function() {
+	it('request/receives correctly when local timezone', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
 		options.timezone = 'local';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toBeUndefined();
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).not.toMatch('ctz=');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
-		expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
-		expect(currentRequest.data.timeZone).toBeUndefined();
 	});
 
-	it('sends request correctly when UTC timezone', function() {
+	it('request/receives correctly when UTC timezone', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
 		options.timezone = 'UTC';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toEqual('UTC');
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).toMatch('ctz=UTC');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
-		expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
-		expect(currentRequest.data.timeZone).toEqual('UTC');
 	});
 
-	it('sends request correctly when custom timezone', function() {
+	it('request/receives correctly when custom timezone', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
-		options.timezone = 'America/Chicago';
+		options.timezone = 'America/New York';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toEqual('America/New_York'); // space should be escaped
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).toMatch('ctz=America/New_York');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
-		expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
-		expect(currentRequest.data.timeZone).toEqual('America/Chicago');
 	});
 
-	it('fetches events correctly when no timezone, defaults to not editable', function(done) {
+	it('requests/receives correctly when no timezone, defaults to not editable', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
 		options.eventAfterAllRender = function() {
 			var events = $('#cal').fullCalendar('clientEvents');
 			var eventEls = $('.fc-event');
-			expect(events.length).toBe(4); // 4 holidays in November 2014
+			var i;
+
 			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
 			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
 			expect(currentRequest.data.timeZone).toBeUndefined();
+
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).not.toMatch('ctz=');
+			}
+
 			expect(eventEls.length).toBe(4);
 			expect(eventEls.find('.fc-resizer').length).toBe(0); // not editable
+
 			done();
 		};
 		$('#cal').fullCalendar(options);
