@@ -85,7 +85,7 @@ describe('event object creation', function() {
 		expect(event.end).toBe(null);
 	});
 
-	iit('allows ASP dates for start', function() {
+	it('allows ASP dates for start', function() {
 		init({
 			start: '\/Date(1239018869048)\/',
 			end: '\/Date(1239105269048)\/'
