@@ -605,7 +605,6 @@ function EventManager(options) { // assumed to be a calendar
 	// HACK: can override the recurring window by providing custom rangeStart/rangeEnd (for businessHours).
 	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
 		var events = [];
-		var view;
 		var dowHash;
 		var dow;
 		var i;
@@ -849,7 +848,7 @@ function EventManager(options) { // assumed to be a calendar
 
 	// Returns an array of events as to when the business hours occur in the given view.
 	// Abuse of our event system :(
-	function getBusinessHoursEvents(view) {
+	function getBusinessHoursEvents() {
 		var optionVal = options.businessHours;
 		var defaultVal = {
 			className: 'fc-nonbusiness',
@@ -858,6 +857,7 @@ function EventManager(options) { // assumed to be a calendar
 			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
 			rendering: 'inverse-background'
 		};
+		var view = t.getView();
 		var eventInput;
 
 		if (optionVal) {
