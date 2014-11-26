@@ -133,12 +133,10 @@ function EventManager(options) { // assumed to be a calendar
 	
 	
 	function fetchEventSource(source, fetchID) {
-		_fetchEventSource(source, function(eventInputs) {
+		_fetchEventSource(source, function(eventInputs, range) {
 			var isArraySource = $.isArray(source.events);
 			var i, eventInput;
 			var abstractEvent;
-
-			if (fetchID == currentFetchID) {
 
 				if (eventInputs) {
 					for (i = 0; i < eventInputs.length; i++) {
@@ -160,11 +158,16 @@ function EventManager(options) { // assumed to be a calendar
 					}
 				}
 
-				pendingSourceCnt--;
-				if (!pendingSourceCnt) {
-					reportEvents(cache);
+				if(range) {
+					// another range has been pre-loaded
+					intervals.push(range);
+				} else if (fetchID == currentFetchID){
+					pendingSourceCnt--;
+
+					if (!pendingSourceCnt) {
+						reportEvents(cache);
+					}
 				}
-			}
 		});
 	}
 	
@@ -198,15 +201,15 @@ function EventManager(options) { // assumed to be a calendar
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
-				$.each(splitRange(rangeStart, rangeEnd), function(){
+				$.each(splitRange(rangeStart, rangeEnd), function() {
 					pushLoading();
 					events.call(
 						t, // this, the Calendar object
 						this.start.clone(),
 						this.end.clone(),
 						options.timezone,
-						function(events) {
-							callback(events);
+						function(events, range) {
+							callback(events, range);
 							popLoading();
 						}
 					);
