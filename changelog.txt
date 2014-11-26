@@ -1,4 +1,7 @@
 
+version 1.6.7 (11/26/14)
+	- (Backport) removeEventSource with Google Calendar object source, would not remove
+
 version 1.6.6 (11/19/14)
 	- (Backport) fixes to Google Calendar API V3 code
 		- wouldn't recognize a lone-string Google Calendar ID if periods before the @ symbol
