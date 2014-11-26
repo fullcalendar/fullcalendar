@@ -531,7 +531,7 @@ function EventManager(options) { // assumed to be a calendar
 			if (end) {
 				end = t.moment(end);
 				if (!end.isValid()) {
-					return false;
+					end = null; // let defaults take over
 				}
 			}
 
@@ -581,6 +581,10 @@ function EventManager(options) { // assumed to be a calendar
 			if (end && !end.hasTime()) {
 				end = t.rezoneDate(end);
 			}
+		}
+
+		if (end && end <= start) { // end is exclusive. must be after start
+			end = null; // let defaults take over
 		}
 
 		event.allDay = allDay;
