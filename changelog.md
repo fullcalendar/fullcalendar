@@ -1,4 +1,24 @@
 
+v2.2.3 (2014-11-26)
+-------------------
+
+- removeEventSource with Google Calendar object source, would not remove ([2368])
+- Events with invalid end dates are still accepted and rendered ([2350], [2237], [2296])
+- Bug when rendering business hours and navigating away from original view ([2365])
+- Links to Google Calendar events will use current timezone ([2122])
+- Google Calendar plugin works with timezone names that have spaces
+- Google Calendar plugin accepts person email addresses as calendar IDs
+- Internally use numeric sort instead of alphanumeric sort ([2370])
+
+[2368]: https://code.google.com/p/fullcalendar/issues/detail?id=2368
+[2350]: https://code.google.com/p/fullcalendar/issues/detail?id=2350
+[2237]: https://code.google.com/p/fullcalendar/issues/detail?id=2237
+[2296]: https://code.google.com/p/fullcalendar/issues/detail?id=2296
+[2365]: https://code.google.com/p/fullcalendar/issues/detail?id=2365
+[2122]: https://code.google.com/p/fullcalendar/issues/detail?id=2122
+[2370]: https://code.google.com/p/fullcalendar/issues/detail?id=2370
+
+
 v2.2.2 (2014-11-19)
 -------------------
 
