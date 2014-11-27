@@ -113,6 +113,11 @@
           }).get();
           return $.inArray(resource.id, active) > -1;
         },
+        resourceSort: function SortByDescendingName(a, b) {
+          var aName = a.name.toLowerCase();
+          var bName = b.name.toLowerCase();
+          return ((aName < bName) ? 1 : ((aName > bName) ? -1 : 0));
+        },
         events: [
           {
             title: 'R1-R2: Lunch 12.15-14.45',
