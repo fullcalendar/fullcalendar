@@ -50,7 +50,7 @@ $.extend(DayGrid.prototype, {
 	computeRowLevelLimit: function(row) {
 		var rowEl = this.rowEls.eq(row); // the containing "fake" row div
 		var rowHeight = rowEl.height(); // TODO: cache somehow?
-		var trEls = this.rowStructs[row].tbodyEl.children();
+		var trEls = $(this.rowStructs[row].tbodyEl).children();
 		var i, trEl;
 
 		// Reveal one level <tr> at a time and stop when we find one out of bounds
@@ -93,7 +93,7 @@ $.extend(DayGrid.prototype, {
 				cell = { row: row, col: col };
 				segsBelow = _this.getCellSegs(cell, levelLimit);
 				if (segsBelow.length) {
-					td = cellMatrix[levelLimit - 1][col];
+					td = $(cellMatrix[levelLimit - 1][col]);
 					moreLink = _this.renderMoreLink(cell, segsBelow);
 					moreWrap = $('<div/>').append(moreLink);
 					td.append(moreWrap);
@@ -107,7 +107,7 @@ $.extend(DayGrid.prototype, {
 			levelSegs = rowStruct.segLevels[levelLimit - 1];
 			cellMatrix = rowStruct.cellMatrix;
 
-			limitedNodes = rowStruct.tbodyEl.children().slice(levelLimit) // get level <tr> elements past the limit
+			limitedNodes = $(rowStruct.tbodyEl).children().slice(levelLimit) // get level <tr> elements past the limit
 				.addClass('fc-limited').get(); // hide elements and get a simple DOM-nodes array
 
 			// iterate though segments in the last allowable level
@@ -127,7 +127,7 @@ $.extend(DayGrid.prototype, {
 				}
 
 				if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-					td = cellMatrix[levelLimit - 1][seg.leftCol]; // the segment's parent cell
+					td = $(cellMatrix[levelLimit - 1][seg.leftCol]); // the segment's parent cell
 					rowspan = td.attr('rowspan') || 1;
 					segMoreNodes = [];
 
