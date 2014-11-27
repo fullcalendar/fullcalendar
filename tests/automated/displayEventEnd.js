@@ -119,6 +119,24 @@ describe('displayEventEnd', function() {
 					});
 				});
 
+				describe('with a timed event given an invalid end time', function(done) {
+					beforeEach(function() {
+						options.events = [ {
+							title: 'timed event',
+							start: '2014-06-13T01:00:00',
+							end: '2014-06-13T01:00:00',
+							allDay: false
+						} ];
+					});
+					it('displays only the start time text', function(done) {
+						options.eventAfterAllRender = function() {
+							expect($('.fc-event .fc-time')).toHaveText('1:00');
+							done();
+						};
+						$('#cal').fullCalendar(options);
+					});
+				});
+
 				describe('with a timed event with an end time', function() {
 					beforeEach(function() {
 						options.events = [ {

@@ -18,13 +18,7 @@
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
-			events: "many_events_json.txt",
-			eventDataTransform: function(input) {
-				return $.extend({}, input, {
-					start: input.start * 1000,
-					end: input.end ? (input.end * 1000) : null
-				});
-			}
+			events: "many_events_json.txt"
 		});
 		
 	});
