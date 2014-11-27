@@ -268,11 +268,6 @@ function isNativeDate(input) {
 }
 
 
-function dateCompare(a, b) { // works with Moments and native Dates
-	return a - b;
-}
-
-
 // Returns a boolean about whether the given input is a time string, like "06:40:00" or "06:00"
 function isTimeString(str) {
 	return /^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
@@ -334,6 +329,11 @@ function stripHtmlEntities(text) {
 
 function capitaliseFirstLetter(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
+function compareNumbers(a, b) { // for .sort()
+	return a - b;
 }
 
 

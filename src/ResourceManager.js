@@ -48,9 +48,10 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
+    var resources = cache;
+
     // if useCache is not defined, default to true
-    useCache = (typeof useCache !== 'undefined' ? useCache : true);
-    if (!useCache || cache === undefined) {
+    if (useCache || useCache === undefined || cache === undefined) {
       // do a fetch resource from source, rebuild cache
       cache = [];
       var len = resourceSources.length;
@@ -61,10 +62,16 @@ function ResourceManager(options) {
     }
 
     if($.isFunction(options.resourceFilter)) {
-      return $.grep(cache, options.resourceFilter);
+      resources = $.grep(cache, options.resourceFilter);
     }
 
-    return cache;
+
+    if($.isFunction(options.resourceSort)) {
+      //todo! does it need to copy array first?
+      resources.sort(options.resourceSort);
+    }
+
+    return resources;
   }
 
   /**
