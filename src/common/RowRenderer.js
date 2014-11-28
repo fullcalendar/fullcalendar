@@ -57,12 +57,12 @@ RowRenderer.prototype = {
 			return cells.prepend(prependHtml).append(appendHtml);
 		}
 		else {
-			if(prependHtml.length) {
-				cells.insertAdjacentHTML('afterBegin', prependHtml);
+			if(appendHtml && appendHtml !== '') {
+				cells.appendChild(appendHtml);
 			}
 
-			if(appendHtml.length) {
-				cells.insertAdjacentHTML('beforeEnd', appendHtml);
+			if(prependHtml && prependHtml !== '') {
+				cells.insertBefore(prependHtml, cells.firstChild);
 			}
 
 			return cells;
