@@ -42,6 +42,7 @@ function EventManager(options) { // assumed to be a calendar
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
 	var cache = []; // holds events that have already been expanded
+	var cached = {}; // keeps track of already cached events
 
 
 	$.each(
@@ -121,7 +122,6 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = cache || [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
 		pendingSourceCnt = len;
@@ -135,18 +135,27 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs, range) {
 			var isArraySource = $.isArray(source.events);
-			var i, eventInput;
+			var key = options.indexKey || 'id';
+			var i;
 			var abstractEvent;
 
 				if (eventInputs) {
 					for (i = 0; i < eventInputs.length; i++) {
-						eventInput = eventInputs[i];
+						abstractEvent = eventInputs[i];
 
-						if (isArraySource) { // array sources have already been convert to Event Objects
-							abstractEvent = eventInput;
+						if (!isArraySource) { // array sources have already been converted to Event Objects
+							abstractEvent = buildEventFromInput(abstractEvent, source);
 						}
-						else {
-							abstractEvent = buildEventFromInput(eventInput, source);
+
+						var index = abstractEvent[key];
+						if(index) {
+							// the key has been found
+							if(cached[abstractEvent[key]]) {
+								// the key has been found and an event with this key has been cached
+								continue;
+							} else {
+								cached[abstractEvent[key]] = true;
+							}
 						}
 
 						if (abstractEvent) { // not false (an invalid event)
