@@ -87,7 +87,6 @@ function EventManager(options) { // assumed to be a calendar
 
 			if(splitStart < intervalStart && splitEnd > intervalStart) {
 				// the interval starts during the desired range
-				debugger;
 				var left = splitRange(start, moment.min(end, interval.start));
 				var right = splitRange(moment.min(end, interval.end), moment.max(end, interval.end));
 				return left.concat(right);
@@ -210,7 +209,9 @@ function EventManager(options) { // assumed to be a calendar
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
+				pendingSourceCnt--;
 				$.each(splitRange(rangeStart, rangeEnd), function() {
+					pendingSourceCnt++;
 					pushLoading();
 					events.call(
 						t, // this, the Calendar object
