@@ -77,7 +77,7 @@ function EventManager(options) { // assumed to be a calendar
 
 			if(splitStart >= intervalStart && splitStart < intervalEnd) {
 				// the desired range starts during the interval
-				return splitRange(interval.end, end)
+				return splitRange(interval.end, end);
 			}
 
 			if(splitEnd <= intervalEnd && splitEnd > intervalStart) {
@@ -93,7 +93,10 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		return [{start: start, end: end}];
+		return [{
+			start: start,
+			end: end
+		}];
 	}
 
 
@@ -127,7 +130,11 @@ function EventManager(options) { // assumed to be a calendar
 		for (var i=0; i<len; i++) {
 			fetchEventSource(sources[i], fetchID);
 		}
-		intervals.push({start: start, end: end});
+
+		intervals.push({
+			start: start,
+			end: end
+		});
 	}
 	
 	

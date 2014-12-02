@@ -155,7 +155,8 @@ $.extend(BasicView.prototype, {
 	weekNumberStyleAttr: function(element) {
 		if (this.weekNumberWidth !== null) {
 			if(element) {
-				return element.style.width = this.weekNumberWidth + 'px"';
+				element.style.width = this.weekNumberWidth + 'px"';
+				return;
 			}
 		
 			return 'style="width:' + this.weekNumberWidth + 'px"';

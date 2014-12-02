@@ -221,7 +221,8 @@ $.extend(AgendaView.prototype, {
 	axisStyleAttr: function(element) {
 		if (this.axisWidth !== null) {
 			if(element) {
-				return element.style.width = this.axisWidth + 'px';
+				element.style.width = this.axisWidth + 'px';
+				return;
 			}
 			 return 'style="width:' + this.axisWidth + 'px"';
 		}
