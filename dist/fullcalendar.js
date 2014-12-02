@@ -856,7 +856,9 @@ function Calendar(element, instanceOptions) {
 		if (elementVisible()) {
 			freezeContentHeight();
 			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
+			currentView.renderEvents($.grep(events, function(event) {
+				return event.end > currentView.start && event.start < currentView.end;
+			}));
 			unfreezeContentHeight();
 		}
 	}
@@ -1351,10 +1353,12 @@ function EventManager(options) { // assumed to be a calendar
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
+	var intervals = [];
 	var currentFetchID = 0;
 	var pendingSourceCnt = 0;
 	var loadingLevel = 0;
 	var cache = []; // holds events that have already been expanded
+	var cached = {}; // keeps track of already cached events
 
 
 	$.each(
@@ -1366,51 +1370,114 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
+
+
+
+	/* Ranging
+	-----------------------------------------------------------------------------*/
 	
 	
-	
+	function splitRange(start, end) {
+		var splitStart = start.clone().stripZone();
+		var splitEnd = end.clone().stripZone();
+
+		for(var i=0; i<intervals.length; i++) {
+			var interval = intervals[i];
+			var intervalStart = interval.start.clone().stripZone();
+			var intervalEnd = interval.end.clone().stripZone();
+
+			if(splitStart >= intervalStart && splitEnd <= intervalEnd) {
+				// the interval contains the desired range
+				return [];
+			}
+
+			if(splitStart >= intervalStart && splitStart < intervalEnd) {
+				// the desired range starts during the interval
+				return splitRange(interval.end, end);
+			}
+
+			if(splitEnd <= intervalEnd && splitEnd > intervalStart) {
+				// the desired range ends during the interval
+				return splitRange(start, interval.start);
+			}
+
+			if(splitStart < intervalStart && splitEnd > intervalStart) {
+				// the interval starts during the desired range
+				var left = splitRange(start, moment.min(end, interval.start));
+				var right = splitRange(moment.min(end, interval.end), moment.max(end, interval.end));
+				return left.concat(right);
+			}
+		}
+
+		return [{
+			start: start,
+			end: end
+		}];
+	}
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
 	
 	
 	function isFetchNeeded(start, end) {
-		return !rangeStart || // nothing has been fetched yet?
-			// or, a part of the new range is outside of the old range? (after normalizing)
-			start.clone().stripZone() < rangeStart.clone().stripZone() ||
-			end.clone().stripZone() > rangeEnd.clone().stripZone();
+		start = start.clone().stripZone();
+		end = end.clone().stripZone();
+
+		for(var i=0; i<intervals.length; i++) {
+			var interval = intervals[i];
+			if(start >= interval.start.clone().stripZone() &&
+				end <= interval.end.clone().stripZone()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 	
 	
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
 		pendingSourceCnt = len;
 		for (var i=0; i<len; i++) {
 			fetchEventSource(sources[i], fetchID);
 		}
+
+		intervals.push({
+			start: start,
+			end: end
+		});
 	}
 	
 	
 	function fetchEventSource(source, fetchID) {
-		_fetchEventSource(source, function(eventInputs) {
+		_fetchEventSource(source, function(eventInputs, range) {
 			var isArraySource = $.isArray(source.events);
-			var i, eventInput;
+			var key = options.indexKey || 'id';
+			var i;
 			var abstractEvent;
-
-			if (fetchID == currentFetchID) {
 
 				if (eventInputs) {
 					for (i = 0; i < eventInputs.length; i++) {
-						eventInput = eventInputs[i];
+						abstractEvent = eventInputs[i];
 
-						if (isArraySource) { // array sources have already been convert to Event Objects
-							abstractEvent = eventInput;
+						if (!isArraySource) { // array sources have already been converted to Event Objects
+							abstractEvent = buildEventFromInput(abstractEvent, source);
 						}
-						else {
-							abstractEvent = buildEventFromInput(eventInput, source);
+
+						var index = abstractEvent[key];
+						if(index) {
+							// the key has been found
+							if(cached[abstractEvent[key]]) {
+								// the key has been found and an event with this key has been cached
+								continue;
+							} else {
+								cached[abstractEvent[key]] = true;
+							}
 						}
 
 						if (abstractEvent) { // not false (an invalid event)
@@ -1422,11 +1489,16 @@ function EventManager(options) { // assumed to be a calendar
 					}
 				}
 
-				pendingSourceCnt--;
-				if (!pendingSourceCnt) {
-					reportEvents(cache);
+				if(range) {
+					// another range has been pre-loaded
+					intervals.push(range);
+				} else if (fetchID == currentFetchID){
+					pendingSourceCnt--;
+
+					if (!pendingSourceCnt) {
+						reportEvents(cache);
+					}
 				}
-			}
 		});
 	}
 	
@@ -1460,17 +1532,21 @@ function EventManager(options) { // assumed to be a calendar
 		var events = source.events;
 		if (events) {
 			if ($.isFunction(events)) {
-				pushLoading();
-				events.call(
-					t, // this, the Calendar object
-					rangeStart.clone(),
-					rangeEnd.clone(),
-					options.timezone,
-					function(events) {
-						callback(events);
-						popLoading();
-					}
-				);
+				pendingSourceCnt--;
+				$.each(splitRange(rangeStart, rangeEnd), function() {
+					pendingSourceCnt++;
+					pushLoading();
+					events.call(
+						t, // this, the Calendar object
+						this.start.clone(),
+						this.end.clone(),
+						options.timezone,
+						function(events, range) {
+							callback(events, range);
+							popLoading();
+						}
+					);
+				});
 			}
 			else if ($.isArray(events)) {
 				callback(events);
@@ -4704,8 +4780,19 @@ RowRenderer.prototype = {
 		if (typeof cells === 'string') {
 			return prependHtml + cells + appendHtml;
 		}
-		else { // a jQuery <tr> element
+		else if(cells.jquery) { // a jQuery <tr> element
 			return cells.prepend(prependHtml).append(appendHtml);
+		}
+		else {
+			if(appendHtml && appendHtml !== '') {
+				cells.appendChild(appendHtml);
+			}
+
+			if(prependHtml && prependHtml !== '') {
+				cells.insertBefore(prependHtml, cells.firstChild);
+			}
+
+			return cells;
 		}
 	},
 
@@ -6419,11 +6506,19 @@ $.extend(DayGrid.prototype, {
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function() {
 		var rowStructs = this.rowStructs || [];
-		var rowStruct;
 
-		while ((rowStruct = rowStructs.pop())) {
-			rowStruct.tbodyEl.remove();
+		for(var i=0; i<rowStructs.length; i++) {
+			var element = rowStructs[i].tbodyEl;
+			// we want to get rid of the element immediately
+			element.parentNode.removeChild(element);
 		}
+
+		setTimeout(function fgSegsCleanup(element) {
+			// but we can wait to safely remove them completely
+			for(var i=0; i<rowStructs.length; i++) {
+				$(rowStructs[i].tbodyEl).remove();
+			}
+		}, 1000);
 
 		this.rowStructs = null;
 	},
@@ -6479,7 +6574,7 @@ $.extend(DayGrid.prototype, {
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-		
+
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -6511,7 +6606,7 @@ $.extend(DayGrid.prototype, {
 		var colCnt = view.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
 		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
-		var tbody = $('<tbody/>');
+		var tbody = document.createElement('TBODY');
 		var segMatrix = []; // lookup for which segments are rendered into which level+col cells
 		var cellMatrix = []; // lookup for all <td> elements of the level+col matrix
 		var loneCellMatrix = []; // lookup for <td> elements that only take up a single column
@@ -6527,14 +6622,11 @@ $.extend(DayGrid.prototype, {
 				// try to grab a cell from the level above and extend its rowspan. otherwise, create a fresh cell
 				td = (loneCellMatrix[i - 1] || [])[col];
 				if (td) {
-					td.attr(
-						'rowspan',
-						parseInt(td.attr('rowspan') || 1, 10) + 1
-					);
+					td.setAttribute('rowspan', parseInt(td.getAttribute('rowspan') || 1, 10) + 1);
 				}
 				else {
-					td = $('<td/>');
-					tr.append(td);
+					td = document.createElement('TD');
+					tr.appendChild(td);
 				}
 				cellMatrix[i][col] = td;
 				loneCellMatrix[i][col] = td;
@@ -6545,7 +6637,7 @@ $.extend(DayGrid.prototype, {
 		for (i = 0; i < levelCnt; i++) { // iterate through all levels
 			levelSegs = segLevels[i];
 			col = 0;
-			tr = $('<tr/>');
+			tr = document.createElement('TR');
 
 			segMatrix.push([]);
 			cellMatrix.push([]);
@@ -6560,9 +6652,12 @@ $.extend(DayGrid.prototype, {
 					emptyCellsUntil(seg.leftCol);
 
 					// create a container that occupies or more columns. append the event element.
-					td = $('<td class="fc-event-container"/>').append(seg.el);
+					td = document.createElement('TD');
+					td.className = 'fc-event-container';
+					td.appendChild(seg.el.get(0));
+
 					if (seg.leftCol != seg.rightCol) {
-						td.attr('colspan', seg.rightCol - seg.leftCol + 1);
+						td.setAttribute('colspan', seg.rightCol - seg.leftCol + 1);
 					}
 					else { // a single-column segment
 						loneCellMatrix[i][col] = td;
@@ -6574,13 +6669,13 @@ $.extend(DayGrid.prototype, {
 						col++;
 					}
 
-					tr.append(td);
+					tr.appendChild(td);
 				}
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
 			this.bookendCells(tr, 'eventSkeleton');
-			tbody.append(tr);
+			tbody.appendChild(tr);
 		}
 
 		return { // a "rowStruct"
@@ -6603,7 +6698,7 @@ $.extend(DayGrid.prototype, {
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		segs.sort(compareSegs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
@@ -6726,7 +6821,7 @@ $.extend(DayGrid.prototype, {
 	computeRowLevelLimit: function(row) {
 		var rowEl = this.rowEls.eq(row); // the containing "fake" row div
 		var rowHeight = rowEl.height(); // TODO: cache somehow?
-		var trEls = this.rowStructs[row].tbodyEl.children();
+		var trEls = $(this.rowStructs[row].tbodyEl).children();
 		var i, trEl;
 
 		// Reveal one level <tr> at a time and stop when we find one out of bounds
@@ -6769,7 +6864,7 @@ $.extend(DayGrid.prototype, {
 				cell = { row: row, col: col };
 				segsBelow = _this.getCellSegs(cell, levelLimit);
 				if (segsBelow.length) {
-					td = cellMatrix[levelLimit - 1][col];
+					td = $(cellMatrix[levelLimit - 1][col]);
 					moreLink = _this.renderMoreLink(cell, segsBelow);
 					moreWrap = $('<div/>').append(moreLink);
 					td.append(moreWrap);
@@ -6783,7 +6878,7 @@ $.extend(DayGrid.prototype, {
 			levelSegs = rowStruct.segLevels[levelLimit - 1];
 			cellMatrix = rowStruct.cellMatrix;
 
-			limitedNodes = rowStruct.tbodyEl.children().slice(levelLimit) // get level <tr> elements past the limit
+			limitedNodes = $(rowStruct.tbodyEl).children().slice(levelLimit) // get level <tr> elements past the limit
 				.addClass('fc-limited').get(); // hide elements and get a simple DOM-nodes array
 
 			// iterate though segments in the last allowable level
@@ -6803,7 +6898,7 @@ $.extend(DayGrid.prototype, {
 				}
 
 				if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-					td = cellMatrix[levelLimit - 1][seg.leftCol]; // the segment's parent cell
+					td = $(cellMatrix[levelLimit - 1][seg.leftCol]); // the segment's parent cell
 					rowspan = td.attr('rowspan') || 1;
 					segMoreNodes = [];
 
@@ -7515,7 +7610,11 @@ $.extend(TimeGrid.prototype, {
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function(segs) {
 		if (this.eventSkeletonEl) {
-			this.eventSkeletonEl.remove();
+			var element = this.eventSkeletonEl.get(0);
+			element.parentNode.removeChild(element);
+			setTimeout(function fcCleanup() {
+				$(element).remove();
+			}, 900);
 			this.eventSkeletonEl = null;
 		}
 	},
@@ -8011,11 +8110,15 @@ View.prototype = {
 	// Refreshes the vertical dimensions of the calendar
 	updateHeight: function() {
 		var calendar = this.calendar; // we poll the calendar for height information
+		var that = this;
 
-		this.setHeight(
-			calendar.getSuggestedViewHeight(),
-			calendar.isHeightAuto()
-		);
+		setTimeout(function() {
+			that.setHeight(
+				calendar.getSuggestedViewHeight(),
+				calendar.isHeightAuto()
+			);
+		});
+
 	},
 
 
@@ -8950,7 +9053,10 @@ $.extend(BasicView.prototype, {
 	// Affects helper-skeleton and highlight-skeleton rows.
 	introHtml: function() {
 		if (this.weekNumbersVisible) {
-			return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>';
+			var td = document.createElement('TD');
+			td.className = 'fc-week-number';
+			this.weekNumberStyleAttr(td);
+			return td;
 		}
 	},
 
@@ -8975,10 +9081,16 @@ $.extend(BasicView.prototype, {
 
 
 	// Generates an HTML attribute string for setting the width of the week number column, if it is known
-	weekNumberStyleAttr: function() {
+	weekNumberStyleAttr: function(element) {
 		if (this.weekNumberWidth !== null) {
+			if(element) {
+				element.style.width = this.weekNumberWidth + 'px"';
+				return;
+			}
+		
 			return 'style="width:' + this.weekNumberWidth + 'px"';
 		}
+		
 		return '';
 	},
 
@@ -9495,13 +9607,20 @@ $.extend(AgendaView.prototype, {
 	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
 	// Queried by the TimeGrid and DayGrid subcomponents when generating rows. Ordering depends on isRTL.
 	introHtml: function() {
-		return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>';
+		var td = document.createElement('TD');
+		td.className = 'fc-axis';
+		this.axisStyleAttr(td);
+		return td;
 	},
 
 
 	// Generates an HTML attribute string for setting the width of the axis, if it is known
-	axisStyleAttr: function() {
+	axisStyleAttr: function(element) {
 		if (this.axisWidth !== null) {
+			if(element) {
+				element.style.width = this.axisWidth + 'px';
+				return;
+			}
 			 return 'style="width:' + this.axisWidth + 'px"';
 		}
 		return '';

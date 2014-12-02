@@ -681,6 +681,8 @@ a.fc-more:hover {
 
 .fc-basic-view tbody .fc-row {
 	min-height: 4em; /* ensure that all rows are at least this tall */
+	border-collapse:collapse;
+	empty-cells: show;
 }
 
 /* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */
