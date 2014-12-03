@@ -64,10 +64,15 @@ View.prototype = {
 
 	// Clears all view rendering, event elements, and unregisters handlers
 	destroy: function() {
+		var children = this.el.children().hide();
+
 		this.unselect();
 		this.trigger('viewDestroy', this, this, this.el);
 		this.destroyEvents();
-		this.el.empty(); // removes inner contents but leaves the element intact
+
+		setTimeout(function(){
+			children.remove();
+		}, 3000);
 
 		$(document)
 			.off('mousedown', this.documentMousedownProxy)
@@ -105,15 +110,11 @@ View.prototype = {
 	// Refreshes the vertical dimensions of the calendar
 	updateHeight: function() {
 		var calendar = this.calendar; // we poll the calendar for height information
-		var that = this;
 
-		setTimeout(function() {
-			that.setHeight(
-				calendar.getSuggestedViewHeight(),
-				calendar.isHeightAuto()
-			);
-		});
-
+		this.setHeight(
+			calendar.getSuggestedViewHeight(),
+			calendar.isHeightAuto()
+		);
 	},
 
 

@@ -56,21 +56,6 @@ $.extend(DayGrid.prototype, {
 
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function() {
-		var rowStructs = this.rowStructs || [];
-
-		for(var i=0; i<rowStructs.length; i++) {
-			var element = rowStructs[i].tbodyEl;
-			// we want to get rid of the element immediately
-			element.parentNode.removeChild(element);
-		}
-
-		setTimeout(function fgSegsCleanup(element) {
-			// but we can wait to safely remove them completely
-			for(var i=0; i<rowStructs.length; i++) {
-				$(rowStructs[i].tbodyEl).remove();
-			}
-		}, 1000);
-
 		this.rowStructs = null;
 	},
 

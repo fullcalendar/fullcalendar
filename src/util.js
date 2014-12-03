@@ -46,7 +46,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -113,10 +113,7 @@ function matchCellWidths(els) {
 	var maxInnerWidth = 0;
 
 	els.find('> *').each(function(i, innerEl) {
-		var innerWidth = $(innerEl).outerWidth();
-		if (innerWidth > maxInnerWidth) {
-			maxInnerWidth = innerWidth;
-		}
+		maxInnerWidth = Math.max(maxInnerWidth, innerEl.offsetWidth);
 	});
 
 	maxInnerWidth++; // sometimes not accurate of width the text needs to stay on one line. insurance
@@ -131,10 +128,12 @@ function matchCellWidths(els) {
 // Returns true if the element is now a scroller, false otherwise.
 // NOTE: this method is best because it takes weird zooming dimensions into account
 function setPotentialScroller(containerEl, height) {
-	containerEl.height(height).addClass('fc-scroller');
+	var nativeEl = containerEl.get(0);
+	nativeEl.style.height = height + 'px';
+	nativeEl.className = nativeEl.className + ' fc-scroller';
 
 	// are scrollbars needed?
-	if (containerEl[0].scrollHeight - 1 > containerEl[0].clientHeight) { // !!! -1 because IE is often off-by-one :(
+	if (nativeEl.scrollHeight - 1 > nativeEl.clientHeight) { // !!! -1 because IE is often off-by-one :(
 		return true;
 	}
 
@@ -145,7 +144,9 @@ function setPotentialScroller(containerEl, height) {
 
 // Takes an element that might have been a scroller, and turns it back into a normal element.
 function unsetScroller(containerEl) {
-	containerEl.height('').removeClass('fc-scroller');
+	var nativeEl = containerEl.get(0);
+	nativeEl.style.height = '';
+	nativeEl.className = nativeEl.className.replace(' fc-scroller', '');
 }
 
 

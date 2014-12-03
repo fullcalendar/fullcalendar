@@ -36,14 +36,14 @@ $.extend(BasicView.prototype, {
 		this.weekNumbersVisible = this.opt('weekNumbers');
 		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
 
-		this.el.addClass('fc-basic-view').html(this.renderHtml());
+		this.el.addClass('fc-basic-view').append(this.renderHtml());
 
 		this.headRowEl = this.el.find('thead .fc-row');
 
-		this.scrollerEl = this.el.find('.fc-day-grid-container');
+		this.scrollerEl = this.el.find('.fc-day-grid-container:visible');
 		this.dayGrid.coordMap.containerEl = this.scrollerEl; // constrain clicks/etc to the dimensions of the scroller
 
-		this.dayGrid.el = this.el.find('.fc-day-grid');
+		this.dayGrid.el = this.el.find('.fc-day-grid:visible');
 		this.dayGrid.render(this.hasRigidRows());
 
 		View.prototype.render.call(this); // call the super-method
