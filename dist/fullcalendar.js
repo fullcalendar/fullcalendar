@@ -1223,7 +1223,7 @@ function Header(calendar, options) {
 						.last().addClass(tm + '-corner-right').end();
 				}
 
-				if (groupChildren.length >= 1) {
+				if (groupChildren.length > 1 || isOnlyButtons) {
 					groupEl = $('<div/>');
 					if (isOnlyButtons) {
 						groupEl.addClass('fc-button-group');
