@@ -25,6 +25,23 @@
 	margin-left: .75em;
 }
 
+@media print, all and (max-width: 601px) {
+	.fc-toolbar {
+		margin-bottom: 0;
+	}
+	.fc-toolbar .fc-left,
+	.fc-toolbar .fc-center {
+		float: inherit;
+		margin-bottom: 10px;
+	}
+	.fc .fc-toolbar > * > * {
+		float: inherit;
+	}
+	.fc-toolbar .fc-right {
+		float: inherit;
+	}
+}
+
 /* the first thing within each left/center/right section */
 .fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
 	margin-left: 0;

@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.3
+ * FullCalendar v2.2.4
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -174,7 +174,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.3" };
+var fc = $.fullCalendar = { version: "2.2.4" };
 var fcViews = fc.views = {};
 
 
@@ -1223,7 +1223,7 @@ function Header(calendar, options) {
 						.last().addClass(tm + '-corner-right').end();
 				}
 
-				if (groupChildren.length > 1) {
+				if (groupChildren.length >= 1) {
 					groupEl = $('<div/>');
 					if (isOnlyButtons) {
 						groupEl.addClass('fc-button-group');
