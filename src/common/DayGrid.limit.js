@@ -193,6 +193,8 @@ $.extend(DayGrid.prototype, {
 				var reslicedAllSegs = _this.resliceDaySegs(allSegs, date);
 				var reslicedHiddenSegs = _this.resliceDaySegs(hiddenSegs, date);
 
+				reslicedAllSegs.sort(compareSegs); // order events
+
 				if (typeof clickOption === 'function') {
 					// the returned value can be an atomic option
 					clickOption = view.trigger('eventLimitClick', null, {
