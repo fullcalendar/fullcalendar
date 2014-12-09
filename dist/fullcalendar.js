@@ -856,7 +856,9 @@ function Calendar(element, instanceOptions) {
 		if (elementVisible()) {
 			freezeContentHeight();
 			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
+			currentView.renderEvents($.grep(events, function(event) {
+				return event.end > currentView.start && event.start < currentView.end;
+			}));
 			unfreezeContentHeight();
 		}
 	}
@@ -2420,7 +2422,7 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
-    var resources = cache;
+    var resources;
 
     // if useCache is not defined, default to true
     if (useCache || useCache === undefined || cache === undefined) {
@@ -2428,15 +2430,16 @@ function ResourceManager(options) {
       cache = [];
       var len = resourceSources.length;
       for (var i = 0; i < len; i++) {
-        var resources = fetchResourceSource(resourceSources[i], currentView);
-        cache = cache.concat(resources);
+        cache = cache.concat(fetchResourceSource(resourceSources[i], currentView));
       }
     }
 
     if($.isFunction(options.resourceFilter)) {
       resources = $.grep(cache, options.resourceFilter);
     }
-
+    else {
+      resources = cache;
+    }
 
     if($.isFunction(options.resourceSort)) {
       //todo! does it need to copy array first?
@@ -2739,7 +2742,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -2806,10 +2809,7 @@ function matchCellWidths(els) {
 	var maxInnerWidth = 0;
 
 	els.find('> *').each(function(i, innerEl) {
-		var innerWidth = $(innerEl).outerWidth();
-		if (innerWidth > maxInnerWidth) {
-			maxInnerWidth = innerWidth;
-		}
+		maxInnerWidth = Math.max(maxInnerWidth, innerEl.offsetWidth);
 	});
 
 	maxInnerWidth++; // sometimes not accurate of width the text needs to stay on one line. insurance
@@ -2824,10 +2824,12 @@ function matchCellWidths(els) {
 // Returns true if the element is now a scroller, false otherwise.
 // NOTE: this method is best because it takes weird zooming dimensions into account
 function setPotentialScroller(containerEl, height) {
-	containerEl.height(height).addClass('fc-scroller');
+	var nativeEl = containerEl.get(0);
+	nativeEl.style.height = height + 'px';
+	nativeEl.className = nativeEl.className + ' fc-scroller';
 
 	// are scrollbars needed?
-	if (containerEl[0].scrollHeight - 1 > containerEl[0].clientHeight) { // !!! -1 because IE is often off-by-one :(
+	if (nativeEl.scrollHeight - 1 > nativeEl.clientHeight) { // !!! -1 because IE is often off-by-one :(
 		return true;
 	}
 
@@ -2838,7 +2840,9 @@ function setPotentialScroller(containerEl, height) {
 
 // Takes an element that might have been a scroller, and turns it back into a normal element.
 function unsetScroller(containerEl) {
-	containerEl.height('').removeClass('fc-scroller');
+	var nativeEl = containerEl.get(0);
+	nativeEl.style.height = '';
+	nativeEl.className = nativeEl.className.replace(' fc-scroller', '');
 }
 
 
@@ -7970,10 +7974,15 @@ View.prototype = {
 
 	// Clears all view rendering, event elements, and unregisters handlers
 	destroy: function() {
+		var children = this.el.children().hide();
+
 		this.unselect();
 		this.trigger('viewDestroy', this, this, this.el);
 		this.destroyEvents();
-		this.el.empty(); // removes inner contents but leaves the element intact
+
+		setTimeout(function(){
+			children.remove();
+		}, 3000);
 
 		$(document)
 			.off('mousedown', this.documentMousedownProxy)
@@ -8862,14 +8871,14 @@ $.extend(BasicView.prototype, {
 		this.weekNumbersVisible = this.opt('weekNumbers');
 		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
 
-		this.el.addClass('fc-basic-view').html(this.renderHtml());
+		this.el.addClass('fc-basic-view').append(this.renderHtml());
 
 		this.headRowEl = this.el.find('thead .fc-row');
 
-		this.scrollerEl = this.el.find('.fc-day-grid-container');
+		this.scrollerEl = this.el.find('.fc-day-grid-container:visible');
 		this.dayGrid.coordMap.containerEl = this.scrollerEl; // constrain clicks/etc to the dimensions of the scroller
 
-		this.dayGrid.el = this.el.find('.fc-day-grid');
+		this.dayGrid.el = this.el.find('.fc-day-grid:visible');
 		this.dayGrid.render(this.hasRigidRows());
 
 		View.prototype.render.call(this); // call the super-method
@@ -9810,7 +9819,8 @@ ResourceView.prototype = createObject(AgendaView.prototype); // extends AgendaVi
 $.extend(ResourceView.prototype, {
 
 	resources: function() {
-		return this.calendar.fetchResources();
+		this._resources = this._resources || this.calendar.fetchResources();
+		return this._resources;
 	},
 
 	hasResource: function(event, resource) {
