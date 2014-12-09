@@ -48,7 +48,7 @@ function ResourceManager(options) {
    */
 
   function fetchResources(useCache, currentView) {
-    var resources = cache;
+    var resources;
 
     // if useCache is not defined, default to true
     if (useCache || useCache === undefined || cache === undefined) {
@@ -56,15 +56,16 @@ function ResourceManager(options) {
       cache = [];
       var len = resourceSources.length;
       for (var i = 0; i < len; i++) {
-        resources = fetchResourceSource(resourceSources[i], currentView);
-        cache = cache.concat(resources);
+        cache = cache.concat(fetchResourceSource(resourceSources[i], currentView));
       }
     }
 
     if($.isFunction(options.resourceFilter)) {
       resources = $.grep(cache, options.resourceFilter);
     }
-
+    else {
+      resources = cache;
+    }
 
     if($.isFunction(options.resourceSort)) {
       //todo! does it need to copy array first?
