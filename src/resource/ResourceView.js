@@ -12,7 +12,8 @@ ResourceView.prototype = createObject(AgendaView.prototype); // extends AgendaVi
 $.extend(ResourceView.prototype, {
 
 	resources: function() {
-		return this.calendar.fetchResources();
+		this._resources = this._resources || this.calendar.fetchResources();
+		return this._resources;
 	},
 
 	hasResource: function(event, resource) {
