@@ -210,20 +210,13 @@ $.extend(AgendaView.prototype, {
 	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
 	// Queried by the TimeGrid and DayGrid subcomponents when generating rows. Ordering depends on isRTL.
 	introHtml: function() {
-		var td = document.createElement('TD');
-		td.className = 'fc-axis';
-		this.axisStyleAttr(td);
-		return td;
+		return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>';
 	},
 
 
 	// Generates an HTML attribute string for setting the width of the axis, if it is known
-	axisStyleAttr: function(element) {
+	axisStyleAttr: function() {
 		if (this.axisWidth !== null) {
-			if(element) {
-				element.style.width = this.axisWidth + 'px';
-				return;
-			}
 			 return 'style="width:' + this.axisWidth + 'px"';
 		}
 		return '';

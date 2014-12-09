@@ -23,11 +23,7 @@ $.extend(TimeGrid.prototype, {
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function(segs) {
 		if (this.eventSkeletonEl) {
-			var element = this.eventSkeletonEl.get(0);
-			element.parentNode.removeChild(element);
-			setTimeout(function fcCleanup() {
-				$(element).remove();
-			}, 900);
+			this.eventSkeletonEl.remove();
 			this.eventSkeletonEl = null;
 		}
 	},

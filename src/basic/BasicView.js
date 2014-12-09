@@ -124,10 +124,7 @@ $.extend(BasicView.prototype, {
 	// Affects helper-skeleton and highlight-skeleton rows.
 	introHtml: function() {
 		if (this.weekNumbersVisible) {
-			var td = document.createElement('TD');
-			td.className = 'fc-week-number';
-			this.weekNumberStyleAttr(td);
-			return td;
+			return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>';
 		}
 	},
 
@@ -152,16 +149,10 @@ $.extend(BasicView.prototype, {
 
 
 	// Generates an HTML attribute string for setting the width of the week number column, if it is known
-	weekNumberStyleAttr: function(element) {
+	weekNumberStyleAttr: function() {
 		if (this.weekNumberWidth !== null) {
-			if(element) {
-				element.style.width = this.weekNumberWidth + 'px"';
-				return;
-			}
-		
 			return 'style="width:' + this.weekNumberWidth + 'px"';
 		}
-		
 		return '';
 	},
 

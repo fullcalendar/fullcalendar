@@ -526,9 +526,7 @@ function Calendar(element, instanceOptions) {
 		if (elementVisible()) {
 			freezeContentHeight();
 			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents($.grep(events, function(event) {
-				return event.end > currentView.start && event.start < currentView.end;
-			}));
+			currentView.renderEvents(events);
 			unfreezeContentHeight();
 		}
 	}

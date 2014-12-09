@@ -56,6 +56,13 @@ $.extend(DayGrid.prototype, {
 
 	// Unrenders all currently rendered foreground event segments
 	destroyFgSegs: function() {
+		var rowStructs = this.rowStructs || [];
+		var rowStruct;
+
+		while ((rowStruct = rowStructs.pop())) {
+			rowStruct.tbodyEl.remove();
+		}
+
 		this.rowStructs = null;
 	},
 
@@ -110,7 +117,7 @@ $.extend(DayGrid.prototype, {
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-
+		
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -142,7 +149,7 @@ $.extend(DayGrid.prototype, {
 		var colCnt = view.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
 		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
-		var tbody = document.createElement('TBODY');
+		var tbody = $('<tbody/>');
 		var segMatrix = []; // lookup for which segments are rendered into which level+col cells
 		var cellMatrix = []; // lookup for all <td> elements of the level+col matrix
 		var loneCellMatrix = []; // lookup for <td> elements that only take up a single column
@@ -158,11 +165,14 @@ $.extend(DayGrid.prototype, {
 				// try to grab a cell from the level above and extend its rowspan. otherwise, create a fresh cell
 				td = (loneCellMatrix[i - 1] || [])[col];
 				if (td) {
-					td.setAttribute('rowspan', parseInt(td.getAttribute('rowspan') || 1, 10) + 1);
+					td.attr(
+						'rowspan',
+						parseInt(td.attr('rowspan') || 1, 10) + 1
+					);
 				}
 				else {
-					td = document.createElement('TD');
-					tr.appendChild(td);
+					td = $('<td/>');
+					tr.append(td);
 				}
 				cellMatrix[i][col] = td;
 				loneCellMatrix[i][col] = td;
@@ -173,7 +183,7 @@ $.extend(DayGrid.prototype, {
 		for (i = 0; i < levelCnt; i++) { // iterate through all levels
 			levelSegs = segLevels[i];
 			col = 0;
-			tr = document.createElement('TR');
+			tr = $('<tr/>');
 
 			segMatrix.push([]);
 			cellMatrix.push([]);
@@ -188,12 +198,9 @@ $.extend(DayGrid.prototype, {
 					emptyCellsUntil(seg.leftCol);
 
 					// create a container that occupies or more columns. append the event element.
-					td = document.createElement('TD');
-					td.className = 'fc-event-container';
-					td.appendChild(seg.el.get(0));
-
+					td = $('<td class="fc-event-container"/>').append(seg.el);
 					if (seg.leftCol != seg.rightCol) {
-						td.setAttribute('colspan', seg.rightCol - seg.leftCol + 1);
+						td.attr('colspan', seg.rightCol - seg.leftCol + 1);
 					}
 					else { // a single-column segment
 						loneCellMatrix[i][col] = td;
@@ -205,13 +212,13 @@ $.extend(DayGrid.prototype, {
 						col++;
 					}
 
-					tr.appendChild(td);
+					tr.append(td);
 				}
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
 			this.bookendCells(tr, 'eventSkeleton');
-			tbody.appendChild(tr);
+			tbody.append(tr);
 		}
 
 		return { // a "rowStruct"
@@ -234,7 +241,7 @@ $.extend(DayGrid.prototype, {
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		segs.sort(compareSegs);
-
+		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 

@@ -53,19 +53,8 @@ RowRenderer.prototype = {
 		if (typeof cells === 'string') {
 			return prependHtml + cells + appendHtml;
 		}
-		else if(cells.jquery) { // a jQuery <tr> element
+		else { // a jQuery <tr> element
 			return cells.prepend(prependHtml).append(appendHtml);
-		}
-		else {
-			if(appendHtml && appendHtml !== '') {
-				cells.appendChild(appendHtml);
-			}
-
-			if(prependHtml && prependHtml !== '') {
-				cells.insertBefore(prependHtml, cells.firstChild);
-			}
-
-			return cells;
 		}
 	},
 
