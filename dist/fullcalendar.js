@@ -543,7 +543,7 @@ function Calendar(element, instanceOptions) {
 	};
 
 
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
+	// Given an event's allDay status and start date, return what its fallback end date should be.
 	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
 		var end = start.clone();
 
@@ -857,7 +857,13 @@ function Calendar(element, instanceOptions) {
 			freezeContentHeight();
 			currentView.destroyEvents(); // no performance cost if never rendered
 			currentView.renderEvents($.grep(events, function(event) {
-				return event.end > currentView.start && event.start < currentView.end;
+			var end = event.end;
+
+			if(!end) {
+				end = currentView.calendar.getEventEnd(event);
+			}
+
+				return end > currentView.start && event.start < currentView.end;
 			}));
 			unfreezeContentHeight();
 		}
