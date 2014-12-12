@@ -1,10 +1,16 @@
 {
   "name": "fullcalendar",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/arshaw/fullcalendar.git"
   },
+  "files": [
+    "dist/*",
+    "changelog.*",
+    "license.*",
+    "readme.*"
+  ],
   "devDependencies": {
     "underscore": "^1.4.4",
     "grunt": "^0.4.5",
@@ -22,8 +28,5 @@
     "lumbar": "^2.6.2",
     "karma-jasmine": "^0.2.2",
     "karma-phantomjs-launcher": "^0.1.4"
-  },
-  "scripts": {
-    "install": "bower install"
   }
 }
