@@ -14,11 +14,9 @@ $.extend(ListMonthView.prototype, {
 
 	name: 'listMonth',
 
-
 	incrementDate: function(date, delta) {
 		return date.clone().stripTime().add(delta, 'months').startOf('month');
 	},
-
 
 	render: function(date) {
 
