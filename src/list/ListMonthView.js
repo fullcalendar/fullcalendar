@@ -1,7 +1,6 @@
 
-/* A week view with simple day cells running horizontally
+/* A list view with simple day cells
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: a WeekView mixin for calculating dates and titles
 
 fcViews.listMonth = ListMonthView; // register this view
 
@@ -36,7 +35,7 @@ $.extend(ListMonthView.prototype, {
 			' \u2014 ' // emphasized dash
 		);
 
-		ListView.prototype.render.call(this, 30, this.getCellsPerWeek(), false); // call the super-method
+		ListView.prototype.render.call(this, 40); // call the super-method
 	}
 	
 });
