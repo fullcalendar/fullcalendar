@@ -81,8 +81,7 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
-		day: 'day',
-		list: 'list'
+		day: 'day'
 	},
 
 	buttonIcons: {
