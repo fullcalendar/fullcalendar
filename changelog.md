@@ -1,6 +1,7 @@
-v2.2.3 (2014-12-04)
+v??
 -------------------
 
+- added list view (listMonth) calendar type
 - added styles for mobile devices
 
 
