@@ -2,3 +2,7 @@
 	padding: 0 2px;
 	vertical-align: middle;
 }
+
+.fc-listMonth-view tbody .fc-row {
+	min-height: 3em;
+}
