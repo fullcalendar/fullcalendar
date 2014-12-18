@@ -81,7 +81,8 @@ var defaults = {
 		today: 'today',
 		month: 'month',
 		week: 'week',
-		day: 'day'
+		day: 'day',
+		list: 'list'
 	},
 
 	buttonIcons: {
@@ -9261,7 +9262,7 @@ $.extend(AgendaDayView.prototype, {
 
 ;;
 
-/* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
+/* An abstract class for the "list" views. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
@@ -9282,7 +9283,7 @@ $.extend(ListView.prototype, {
 	headRowEl: null, // the fake row element of the day-of-week header
 
 	// Renders the view into `this.el`, which should already be assigned.
-	// rowCnt, colCnt, and dayNumbersVisible have been calculated by a subclass and passed here.
+	// rowCnt have been calculated by a subclass and passed here.
 	render: function(rowCnt) {
 
 		// needed for cell-to-date and date-to-cell calculations in View
@@ -9349,7 +9350,6 @@ $.extend(ListView.prototype, {
 			'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
 					this.cellToDate(row,0).format('ddd MMM D, YYYY') +
-					//this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
 				'</span>' +
 			'</td>';
 	},
@@ -9536,9 +9536,8 @@ $.extend(ListView.prototype, {
 
 ;;
 
-/* A week view with simple day cells running horizontally
+/* A list view with simple day cells
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: a WeekView mixin for calculating dates and titles
 
 fcViews.listMonth = ListMonthView; // register this view
 
@@ -9552,11 +9551,9 @@ $.extend(ListMonthView.prototype, {
 
 	name: 'listMonth',
 
-
 	incrementDate: function(date, delta) {
 		return date.clone().stripTime().add(delta, 'months').startOf('month');
 	},
-
 
 	render: function(date) {
 
