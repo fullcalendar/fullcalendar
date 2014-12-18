@@ -42,13 +42,16 @@
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaWeekView.js",
         "src/agenda/AgendaDayView.js",
+        "src/list/ListView.js",
+        "src/list/ListMonthView.js",
         "src/outro.js"
       ],
       "styles": [
         "src/common/common.css",
         "src/main.css",
         "src/basic/basic.css",
-        "src/agenda/agenda.css"
+        "src/agenda/agenda.css",
+        "src/list/list.css"
       ]
     },
     "fullcalendar.print": {

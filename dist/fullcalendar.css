@@ -992,3 +992,7 @@ be a descendant of the grid when it is being dragged.
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
 }
+.fc-listMonth-view .fc-week-number {
+	padding: 0 2px;
+	vertical-align: middle;
+}
