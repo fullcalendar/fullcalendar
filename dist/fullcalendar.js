@@ -9280,6 +9280,7 @@ $.extend(ListView.prototype, {
 	dayNumbersVisible: false, // display day numbers on each day cell?
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 	headRowEl: null, // the fake row element of the day-of-week header
+	defultEventLimit: 5, //we need to show some events in each cell 
 
 	// Renders the view into `this.el`, which should already be assigned.
 	// rowCnt have been calculated by a subclass and passed here.
@@ -9400,6 +9401,10 @@ $.extend(ListView.prototype, {
 	// Determines whether each row should have a constant height
 	hasRigidRows: function() {
 		var eventLimit = this.opt('eventLimit');
+		if (eventLimit === true) {
+			eventLimit = this.defultEventLimit;
+		}
+
 		return eventLimit && typeof eventLimit !== 'number';
 	},
 
@@ -9421,6 +9426,9 @@ $.extend(ListView.prototype, {
 	// Adjusts the vertical dimensions of the view to the specified values
 	setHeight: function(totalHeight, isAuto) {
 		var eventLimit = this.opt('eventLimit');
+		if (eventLimit === true) {
+			eventLimit = this.defultEventLimit;
+		}
 		var scrollerHeight;
 
 		// reset all heights to be natural
