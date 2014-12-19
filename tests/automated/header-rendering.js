@@ -21,7 +21,7 @@ describe('header rendering', function() {
 			var todayButton = rightChildren.eq(0);
 			var buttonGroup = rightChildren.eq(1);
 			var prevNextButtons = buttonGroup.children();
-			expect(todayButton).toHaveClass('fc-today-button');
+			expect(todayButton).toHaveClass('fc-button-group');
 			expect(buttonGroup).toHaveClass('fc-button-group');
 			expect(prevNextButtons.eq(0)).toHaveClass('fc-prev-button');
 			expect(prevNextButtons.eq(1)).toHaveClass('fc-next-button');
@@ -49,7 +49,7 @@ describe('header rendering', function() {
 			expect(prevNextButtons.eq(1)).toHaveClass('fc-prev-button');
 		});
 		it('should have prevYear|space|today|space|nextYear in center', function() {
-			var items = $('#calendar > .fc-toolbar > .fc-center > *');
+			var items = $('#calendar > .fc-toolbar > .fc-center > .fc-button-group > *');
 			expect(items.eq(0)).toHaveClass('fc-prevYear-button');
 			expect(items.eq(1)).toHaveClass('fc-today-button');
 			expect(items.eq(2)).toHaveClass('fc-nextYear-button');

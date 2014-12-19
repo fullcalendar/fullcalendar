@@ -1,0 +1,20 @@
+.fc-listMonth-view .fc-week-number {
+	padding: 0 2px;
+	vertical-align: middle;
+}
+
+.fc-listMonth-view tbody .fc-row {
+	min-height: 2em;
+}
+
+.fc-listMonth-view .fc-week-number span {
+	line-height: 2em;
+}
+
+.fc-listMonth-view .fc-day-grid-event {
+	margin: 0 2px 1px;
+}
+
+.fc-listMonth-view .fc-row .fc-content-skeleton {
+	padding-bottom: 0;
+}

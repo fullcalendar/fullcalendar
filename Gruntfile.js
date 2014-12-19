@@ -38,6 +38,15 @@ module.exports = function(grunt) {
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'dist');
 
+	grunt.registerTask('skiptest', [
+		'clean',
+		'modules',
+		'languages',
+		'archiveDist',
+		'cdnjsDist'
+	]);
+
+
 	// Builds all distributable files, for a new release possibly
 	grunt.registerTask('dist', [
 		'clean',

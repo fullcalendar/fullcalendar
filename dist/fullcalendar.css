@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.3 Stylesheet
+ * FullCalendar v2.2.4 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -596,6 +596,23 @@ a.fc-more:hover {
 	margin-left: .75em;
 }
 
+@media print, all and (max-width: 601px) {
+	.fc-toolbar {
+		margin-bottom: 0;
+	}
+	.fc-toolbar .fc-left,
+	.fc-toolbar .fc-center {
+		float: inherit;
+		margin-bottom: 10px;
+	}
+	.fc .fc-toolbar > * > * {
+		float: inherit;
+	}
+	.fc-toolbar .fc-right {
+		float: inherit;
+	}
+}
+
 /* the first thing within each left/center/right section */
 .fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
 	margin-left: 0;
@@ -974,4 +991,24 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
+}
+.fc-listMonth-view .fc-week-number {
+	padding: 0 2px;
+	vertical-align: middle;
+}
+
+.fc-listMonth-view tbody .fc-row {
+	min-height: 2em;
+}
+
+.fc-listMonth-view .fc-week-number span {
+	line-height: 2em;
+}
+
+.fc-listMonth-view .fc-day-grid-event {
+	margin: 0 2px 1px;
+}
+
+.fc-listMonth-view .fc-row .fc-content-skeleton {
+	padding-bottom: 0;
 }
