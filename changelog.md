@@ -1,8 +1,8 @@
 v??
 -------------------
 
-- added height: 'parent' option to the calendar where the calendar takes the parent container's height
-- added list view (listMonth) calendar type
+- added height: 'parent' option to the calendar where the calendar takes the parent container's height (TODO: update docs)
+- added list view (listMonth) calendar type (TODO: update docs)
 - added styles for mobile devices
 
 
