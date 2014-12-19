@@ -4,5 +4,9 @@
 }
 
 .fc-listMonth-view tbody .fc-row {
-	min-height: 3em;
+	min-height: 2em;
+}
+
+.fc-listMonth-view .fc-week-number span {
+	line-height: 2em;
 }

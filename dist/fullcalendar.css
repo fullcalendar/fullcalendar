@@ -998,5 +998,8 @@ be a descendant of the grid when it is being dragged.
 }
 
 .fc-listMonth-view tbody .fc-row {
-	min-height: 3em;
+	min-height: 2em;
+}
+.fc-listMonth-view .fc-week-number span {
+	line-height: 2em;
 }
