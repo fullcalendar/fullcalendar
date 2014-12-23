@@ -72,7 +72,7 @@ it is assumed to already be in local time.
 	// and the time will become 06:00:00
 
 **3)**
-In other parse of the API, moments will be represented in the local timezone.
+In other parts of the API, moments will be represented in the local timezone.
 
 
 `"UTC"`
