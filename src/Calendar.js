@@ -402,6 +402,45 @@ function Calendar(element, instanceOptions) {
 					updateTitle();
 					updateTodayButton();
 
+					// Begin patch to include current time indicator in agenda views.
+					
+					// If there's an existing interval then clear it.
+					if (currentView.currentTimeInterval) { clearInterval(currentView.currentTimeInterval); }
+
+					// Detect if the view has the required elements to facilitate showing the current time.
+					if (currentView.el.find(".fc-time-grid-container").length > 0 && currentView.el.find(".fc-today").length > 0 && currentView.el.find(".fc-axis").length > 0)
+					{
+						// Create the element used to show the current time if it does not already exist.
+						if (!currentView.currentTimeElement)
+						{
+							currentView.el.find(".fc-time-grid-container").prepend("<hr class=\"timeline\" style=\"position: absolute; border: 0px; font-size: 0px; height: 3px; margin-top: -1px; z-index: 2; background: rgba(255, 0, 0, 0.25); padding: 0px;\" />");
+							currentView.currentTimeElement = currentView.el.find(".timeline");
+						}
+
+						// Define a function to update the position of the 'current time' element.
+						// Note that this takes slotDuration into account.
+						function setTimeline()
+						{
+							var now      = moment();
+							var duration = currentView.timeGrid.slotDuration;
+
+							var day      = parseInt(now.format("e"));
+							var width    = currentView.el.find(".fc-today").outerWidth();
+							var height   = (currentView.el.find(".fc-today").outerHeight() / 2) + 1;
+							var left     = (day * width) + currentView.el.find(".fc-axis").outerWidth();
+							var perc     = (((now.hours() * 3600) + (now.minutes() * 60) + now.seconds()) / (duration / 1000)) / 0.24;
+							var top      = ((height * 24) / 100) * perc;
+
+							currentView.currentTimeElement.css({"width": width + "px", "left": left + "px", "top": top + "px"});
+						}
+
+						// Auto-update the position of the time element and set its initial position.
+						currentView.currentTimeInterval = setInterval(setTimeline, (1000 * 60));
+						setTimeline();
+					}
+					
+					// End patch to include current time indicator in agenda views.
+
 					getAndRenderEvents();
 				}
 			}
