@@ -420,19 +420,33 @@ function Calendar(element, instanceOptions) {
 						// Define a function to update the position of the 'current time' element.
 						// Note that this takes slotDuration into account.
 						// PATCH: Take into account the slot offset to the current day.
+						// PATCH: Account for minTime/maxTime.
 						currentView.setTimeline = function()
 						{
-							var now      = moment();
-							var duration = currentView.timeGrid.slotDuration;
+							var now          = moment();
+							var duration     = currentView.timeGrid.slotDuration;
+							var minTime      = moment().stripTime().add(currentView.timeGrid.minTime);
 
-							var day      = parseInt(now.format("e"));
-							var width    = currentView.el.find(".fc-today").outerWidth();
-							var height   = (currentView.el.find(".fc-today").outerHeight() / 2) + 1;
-							var left     = (currentView.dateToDayOffset(now) * width) + currentView.el.find(".fc-axis").outerWidth();
-							var perc     = (((now.hours() * 3600) + (now.minutes() * 60) + now.seconds()) / (duration / 1000)) / 0.24;
-							var top      = ((height * 24) / 100) * perc;
+							// Are we within the bounds of minTime/maxTime? If not we can't show the current time.
+							if (now >=minTime && now <= moment().stripTime().add(currentView.timeGrid.maxTime).subtract(1, "hours"))
+							{
+								var day      = parseInt(now.format("e"));
+								var width    = currentView.el.find(".fc-today").outerWidth();
+								var height   = (currentView.el.find(".fc-today").outerHeight() / 2) + 1;
+								var left     = (currentView.dateToDayOffset(now) * width) + currentView.el.find(".fc-axis").outerWidth();
 
-							currentView.currentTimeElement.css({"width": width + "px", "left": left + "px", "top": top + "px"});
+								// Percentage is the current time in seconds - the minTime in seconds divided by the slotDuration in seconds divided by 0.24 (24 hour day).
+								var perc     = (((now.hours() * 3600) + (now.minutes() * 60) + now.seconds() - (minTime.hours() * 3600) - (minTime.minutes() * 60) - minTime.seconds()) / (duration / 1000)) / 0.24;
+
+								// Top position is calculated as if the height is a period of 24 hours.
+								var top      = ((height * 24) / 100) * perc;
+
+								currentView.currentTimeElement.show().css({"width": width + "px", "left": left + "px", "top": top + "px"});
+							}
+							else
+							{
+								currentView.currentTimeElement.hide();
+							}
 						}
 
 						// Auto-update the position of the time element and set its initial position.
