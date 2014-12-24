@@ -72,16 +72,6 @@ View.prototype = {
 		$(document)
 			.off('mousedown', this.documentMousedownProxy)
 			.off('dragstart', this.documentDragStartProxy);
-		
-		// Begin patch to implement current time indicator
-		
-		// If there's an existing interval for the current time highlighting then clear it.
-		if (this.currentTimeInterval) { clearInterval(this.currentTimeInterval); }
-
-		// Clear the resize event for the current time highlighting.
-		if (this.setTimeline) { $(window).off("resize", this.setTimeline); }
-		
-		// End patch to implement current time indicator
 	},
 
 
