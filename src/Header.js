@@ -59,6 +59,7 @@ function Header(calendar, options) {
 					var themeIcon;
 					var normalIcon;
 					var defaultText;
+					var defaultViewText;
 					var customText;
 					var innerHtml;
 					var classes;
@@ -74,18 +75,19 @@ function Header(calendar, options) {
 								calendar[buttonName]();
 							};
 						}
-						else if (fcViews[buttonName]) { // a view name
+						else if (calendar.isValidViewType(buttonName)) { // a view type
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
+							defaultViewText = calendar.getDefaultViewButtonText(buttonName);
 						}
 						if (buttonClick) {
 
 							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
 							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
 							normalIcon = smartProperty(options.buttonIcons, buttonName);
-							defaultText = smartProperty(options.defaultButtonText, buttonName);
+							defaultText = smartProperty(options.defaultButtonText, buttonName); // from languages
 							customText = smartProperty(options.buttonText, buttonName);
 
 							if (customText) {
@@ -98,7 +100,7 @@ function Header(calendar, options) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								innerHtml = htmlEscape(defaultText || buttonName);
+								innerHtml = htmlEscape(defaultViewText || defaultText || buttonName);
 							}
 
 							classes = [

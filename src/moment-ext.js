@@ -82,7 +82,7 @@ function makeMoment(args, parseAsUTC, parseZone) {
 		}
 		// otherwise, probably a string with a format
 
-		if (parseAsUTC) {
+		if (parseAsUTC || isAmbigTime) {
 			mom = moment.utc.apply(moment, args);
 		}
 		else {
@@ -178,15 +178,21 @@ newMomentProto.time = function(time) {
 // but preserving its YMD. A moment with a stripped time will display no time
 // nor timezone offset when .format() is called.
 newMomentProto.stripTime = function() {
-	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
+	var a;
 
-	this.utc(); // set the internal UTC flag (will clear the ambig flags)
-	setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
+	if (!this._ambigTime) {
 
-	// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
-	// which clears all ambig flags. Same with setUTCValues with moment-timezone.
-	this._ambigTime = true;
-	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+		// get the values before any conversion happens
+		a = this.toArray(); // array of y/m/d/h/m/s/ms
+
+		this.utc(); // set the internal UTC flag (will clear the ambig flags)
+		setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
+
+		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
+		this._ambigTime = true;
+		this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+	}
 
 	return this; // for chaining
 };
@@ -204,20 +210,26 @@ newMomentProto.hasTime = function() {
 // YMD and time-of-day. A moment with a stripped timezone offset will display no
 // timezone offset when .format() is called.
 newMomentProto.stripZone = function() {
-	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
-	var wasAmbigTime = this._ambigTime;
+	var a, wasAmbigTime;
 
-	this.utc(); // set the internal UTC flag (will clear the ambig flags)
-	setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
+	if (!this._ambigZone) {
 
-	if (wasAmbigTime) {
-		// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
-		this._ambigTime = true;
+		// get the values before any conversion happens
+		a = this.toArray(); // array of y/m/d/h/m/s/ms
+		wasAmbigTime = this._ambigTime;
+
+		this.utc(); // set the internal UTC flag (will clear the ambig flags)
+		setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
+
+		if (wasAmbigTime) {
+			// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
+			this._ambigTime = true;
+		}
+
+		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
+		this._ambigZone = true;
 	}
-
-	// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
-	// which clears all ambig flags. Same with setUTCValues with moment-timezone.
-	this._ambigZone = true;
 
 	return this; // for chaining
 };
@@ -341,28 +353,38 @@ $.each([
 // given an array of moment-like inputs, return a parallel array w/ moments similarly ambiguated.
 // for example, of one moment has ambig time, but not others, all moments will have their time stripped.
 // set `preserveTime` to `true` to keep times, but only normalize zone ambiguity.
+// returns the original moments if no modifications are necessary.
 function commonlyAmbiguate(inputs, preserveTime) {
-	var outputs = [];
 	var anyAmbigTime = false;
 	var anyAmbigZone = false;
-	var i;
+	var len = inputs.length;
+	var moms = [];
+	var i, mom;
 
-	for (i=0; i<inputs.length; i++) {
-		outputs.push(fc.moment.parseZone(inputs[i]));
-		anyAmbigTime = anyAmbigTime || outputs[i]._ambigTime;
-		anyAmbigZone = anyAmbigZone || outputs[i]._ambigZone;
+	// parse inputs into real moments and query their ambig flags
+	for (i = 0; i < len; i++) {
+		mom = inputs[i];
+		if (!moment.isMoment(mom)) {
+			mom = fc.moment.parseZone(mom);
+		}
+		anyAmbigTime = anyAmbigTime || mom._ambigTime;
+		anyAmbigZone = anyAmbigZone || mom._ambigZone;
+		moms.push(mom);
 	}
 
-	for (i=0; i<outputs.length; i++) {
-		if (anyAmbigTime && !preserveTime) {
-			outputs[i].stripTime();
+	// strip each moment down to lowest common ambiguity
+	// use clones to avoid modifying the original moments
+	for (i = 0; i < len; i++) {
+		mom = moms[i];
+		if (!preserveTime && anyAmbigTime && !mom._ambigTime) {
+			moms[i] = mom.clone().stripTime();
 		}
-		else if (anyAmbigZone) {
-			outputs[i].stripZone();
+		else if (anyAmbigZone && !mom._ambigZone) {
+			moms[i] = mom.clone().stripZone();
 		}
 	}
 
-	return outputs;
+	return moms;
 }
 
 // Transfers all the flags related to ambiguous time/zone from the `src` moment to the `dest` moment

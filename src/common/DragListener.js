@@ -17,13 +17,11 @@ DragListener.prototype = {
 	isListening: false,
 	isDragging: false,
 
-	// the cell/date the mouse was over when listening started
+	// the cell the mouse was over when listening started
 	origCell: null,
-	origDate: null,
 
-	// the cell/date the mouse is over
+	// the cell the mouse is over
 	cell: null,
-	date: null,
 
 	// coordinates of the initial mousedown
 	mouseX0: null,
@@ -82,11 +80,10 @@ DragListener.prototype = {
 
 			this.computeCoords(); // relies on `scrollEl`
 
-			// get info on the initial cell, date, and coordinates
+			// get info on the initial cell and its coordinates
 			if (ev) {
 				cell = this.getCell(ev);
 				this.origCell = cell;
-				this.origDate = cell ? cell.date : null;
 
 				this.mouseX0 = ev.pageX;
 				this.mouseY0 = ev.pageY;
@@ -144,9 +141,10 @@ DragListener.prototype = {
 			this.trigger('dragStart', ev);
 
 			// report the initial cell the mouse is over
-			cell = this.getCell(ev);
+			// especially important if no min-distance and drag starts immediately
+			cell = this.getCell(ev); // this might be different from this.origCell if the min-distance is large
 			if (cell) {
-				this.cellOver(cell, true);
+				this.cellOver(cell);
 			}
 		}
 	},
@@ -176,8 +174,7 @@ DragListener.prototype = {
 	// Called when a the mouse has just moved over a new cell
 	cellOver: function(cell) {
 		this.cell = cell;
-		this.date = cell.date;
-		this.trigger('cellOver', cell, cell.date);
+		this.trigger('cellOver', cell, isCellsEqual(cell, this.origCell));
 	},
 
 
@@ -186,7 +183,6 @@ DragListener.prototype = {
 		if (this.cell) {
 			this.trigger('cellOut', this.cell);
 			this.cell = null;
-			this.date = null;
 		}
 	},
 
@@ -231,7 +227,7 @@ DragListener.prototype = {
 			this.trigger('listenStop', ev);
 
 			this.origCell = this.cell = null;
-			this.origDate = this.date = null;
+			this.coordMap.clear();
 		}
 	},
 

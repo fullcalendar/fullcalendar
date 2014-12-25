@@ -1,11 +1,14 @@
 
+fcViews.basic = BasicView;
+
 /* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-function BasicView(calendar) {
-	View.call(this, calendar); // call the super-constructor
+function BasicView() {
+	View.apply(this, arguments); // call the super-constructor
+
 	this.dayGrid = new DayGrid(this);
 	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
 }
@@ -24,15 +27,17 @@ $.extend(BasicView.prototype, {
 	headRowEl: null, // the fake row element of the day-of-week header
 
 
-	// Renders the view into `this.el`, which should already be assigned.
-	// rowCnt, colCnt, and dayNumbersVisible have been calculated by a subclass and passed here.
-	render: function(rowCnt, colCnt, dayNumbersVisible) {
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
+		this.dayGrid.setRange(range);
+	},
 
-		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = rowCnt;
-		this.colCnt = colCnt;
 
-		this.dayNumbersVisible = dayNumbersVisible;
+	// Renders the view into `this.el`, which should already be assigned
+	render: function() {
+
+		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		this.weekNumbersVisible = this.opt('weekNumbers');
 		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
 
@@ -103,7 +108,7 @@ $.extend(BasicView.prototype, {
 			return '' +
 				'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
+						this.calendar.calculateWeekNumber(this.dayGrid.getCell(row, 0).start) +
 					'</span>' +
 				'</td>';
 		}
@@ -131,7 +136,8 @@ $.extend(BasicView.prototype, {
 
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
-	numberCellHtml: function(row, col, date) {
+	numberCellHtml: function(cell) {
+		var date = cell.start;
 		var classes;
 
 		if (!this.dayNumbersVisible) { // if there are week numbers but not day numbers
@@ -261,18 +267,16 @@ $.extend(BasicView.prototype, {
 	},
 
 
-	/* Event Dragging
+	/* Dragging (for both events and external elements)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		return this.dayGrid.renderDrag(start, end, seg);
+	renderDrag: function(dropLocation, seg) {
+		return this.dayGrid.renderDrag(dropLocation, seg);
 	},
 
 
-	// Unrenders the visual indication of an event being dragged over the view
 	destroyDrag: function() {
 		this.dayGrid.destroyDrag();
 	},
@@ -283,8 +287,8 @@ $.extend(BasicView.prototype, {
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(start, end) {
-		this.dayGrid.renderSelection(start, end);
+	renderSelection: function(range) {
+		this.dayGrid.renderSelection(range);
 	},
 
 

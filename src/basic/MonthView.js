@@ -8,49 +8,47 @@ setDefaults({
 
 fcViews.month = MonthView; // register the view
 
-function MonthView(calendar) {
-	BasicView.call(this, calendar); // call the super-constructor
+function MonthView() {
+	BasicView.apply(this, arguments); // call the super-constructor
 }
 
 
 MonthView.prototype = createObject(BasicView.prototype); // define the super-class
 $.extend(MonthView.prototype, {
 
-	name: 'month',
 
-
-	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add(delta, 'months').startOf('month');
-	},
-
-
-	render: function(date) {
+	computeRange: function(date) {
 		var rowCnt;
+		var intervalStart, intervalEnd;
+		var start, end;
 
-		this.intervalStart = date.clone().stripTime().startOf('month');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
+		intervalStart = date.clone().stripTime().startOf('month');
+		intervalEnd = intervalStart.clone().add(1, 'months');
 
-		this.start = this.intervalStart.clone();
-		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
-		this.start.startOf('week');
-		this.start = this.skipHiddenDays(this.start); // move past the first invisible days of the week
+		start = intervalStart.clone();
+		start = this.skipHiddenDays(start); // move past the first week if no visible days
+		start.startOf('week');
+		start = this.skipHiddenDays(start); // move past the first invisible days of the week
 
-		this.end = this.intervalEnd.clone();
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
-		this.end.add((7 - this.end.weekday()) % 7, 'days'); // move to end of week if not already
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
+		end = intervalEnd.clone();
+		end = this.skipHiddenDays(end, -1, true); // move in from the last week if no visible days
+		end.add((7 - end.weekday()) % 7, 'days'); // move to end of week if not already
+		end = this.skipHiddenDays(end, -1, true); // move in from the last invisible days of the week
 
 		rowCnt = Math.ceil( // need to ceil in case there are hidden days
-			this.end.diff(this.start, 'weeks', true) // returnfloat=true
+			end.diff(start, 'weeks', true) // returnfloat=true
 		);
 		if (this.isFixedWeeks()) {
-			this.end.add(6 - rowCnt, 'weeks');
+			end.add(6 - rowCnt, 'weeks');
 			rowCnt = 6;
 		}
 
-		this.title = this.calendar.formatDate(this.intervalStart, this.opt('titleFormat'));
-
-		BasicView.prototype.render.call(this, rowCnt, this.getCellsPerWeek(), true); // call the super-method
+		return {
+			start: start,
+			end: end,
+			intervalStart: intervalStart,
+			intervalEnd: intervalEnd
+		};
 	},
 
 

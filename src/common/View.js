@@ -1,25 +1,32 @@
 
+fc.View = View;
+
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 // Newer methods should be written as prototype methods, not in the monster `View` function at the bottom.
 
 View.prototype = {
 
+	type: null, // subclass' view name (string)
+	name: null, // deprecated. use `type` instead
+
 	calendar: null, // owner Calendar object
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
-	// important Moments
-	start: null, // the date of the very first cell
-	end: null, // the date after the very last cell
-	intervalStart: null, // the start of the interval of time the view represents (1st of month for month view)
-	intervalEnd: null, // the exclusive end of the interval of time the view represents
+	// range the view is actually displaying (moments)
+	start: null,
+	end: null, // exclusive
 
-	// used for cell-to-date and date-to-cell calculations
-	rowCnt: null, // # of weeks
-	colCnt: null, // # of days displayed in a week
+	// range the view is formally responsible for (moments)
+	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
+	intervalStart: null,
+	intervalEnd: null, // exclusive
 
-	isSelected: false, // boolean whether cells are user-selected or not
+	intervalDuration: null, // the whole-unit duration that is being displayed
+	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
+
+	isSelected: false, // boolean whether a range of time is user-selected or not
 
 	// subclasses can optionally use a scroll container
 	scrollerEl: null, // the element that will most likely scroll when content is too tall
@@ -32,7 +39,6 @@ View.prototype = {
 
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null,
-	documentDragStartProxy: null,
 
 
 	// Serves as a "constructor" to suppliment the monster `View` constructor below
@@ -45,8 +51,131 @@ View.prototype = {
 
 		// save references to `this`-bound handlers
 		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
-		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
 	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Updates all internal dates to center around the given current date
+	setDate: function(date) {
+		this.setRange(this.computeRange(date));
+	},
+
+
+	// Updates all internal dates for displaying the given range.
+	// Expects all values to be normalized (like what computeRange does).
+	setRange: function(range) {
+		this.start = range.start;
+		this.end = range.end;
+
+		// all interval-related is computed if not explicitly provided by computeRange
+		this.intervalStart = range.intervalStart || range.start.clone();
+		this.intervalEnd = range.intervalEnd || range.end.clone();
+		this.intervalDuration = range.intervalDuration || computeIntervalDuration(this.intervalStart, this.intervalEnd);
+		this.intervalUnit = range.intervalUnit || computeIntervalUnit(this.intervalDuration);
+	},
+
+
+	// Given a single current, produce information about what range to display.
+	// Subclasses can override. Must return {start,end} at the very least.
+	computeRange: function(date) {
+		var intervalDuration = moment.duration(this.opt('duration') || { days: 1 });
+		var intervalUnit = computeIntervalUnit(intervalDuration);
+		var start = date.clone().startOf(intervalUnit);
+		var end = start.clone().add(intervalDuration);
+
+		// normalize the range's time-ambiguity
+		if (computeIntervalAs('days', intervalDuration)) { // whole-days?
+			start.stripTime();
+			end.stripTime();
+		}
+		else { // needs to have a time?
+			if (!start.hasTime()) {
+				start = this.calendar.rezoneDate(start); // convert to current timezone, with a 00:00 time
+			}
+			if (!end.hasTime()) {
+				end = this.calendar.rezoneDate(end); // convert to current timezone, with a 00:00 time
+			}
+		}
+
+		// trim the range's edges for hidden days
+		start = this.skipHiddenDays(start);
+		end = this.skipHiddenDays(end, -1, true); // exclusively move backwards
+
+		return {
+			start: start,
+			end: end,
+			intervalDuration: intervalDuration,
+			intervalUnit: intervalUnit
+		};
+	},
+
+
+	// Computes the new date when the user hits the prev button, given the current date
+	computePrevDate: function(date) {
+		return this.skipHiddenDays(
+			date.clone().startOf(this.intervalUnit).subtract(this.intervalDuration), -1
+		);
+	},
+
+
+	// Computes the new date when the user hits the next button, given the current date
+	computeNextDate: function(date) {
+		return this.skipHiddenDays(
+			date.clone().startOf(this.intervalUnit).add(this.intervalDuration)
+		);
+	},
+
+
+	/* Title and Date Formatting
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes what the title at the top of the calendar should be for this view
+	computeTitle: function() {
+		return this.formatRange(
+			{ start: this.intervalStart, end: this.intervalEnd },
+			this.opt('titleFormat') || this.computeTitleFormat(),
+			' \u2014 ' // emphasized dash
+		);
+	},
+
+
+	// Generates the format string that should be used to generate the title for the current date range.
+	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
+	computeTitleFormat: function() {
+		if (this.intervalUnit == 'year') {
+			return 'YYYY';
+		}
+		else if (this.intervalUnit == 'month') {
+			return this.opt('monthYearFormat'); // like "September 2014"
+		}
+		else if (this.intervalDuration.as('days') > 1) {
+			return 'll'; // multi-day range. shorter, like "Sep 9 - 10 2014"
+		}
+		else {
+			return 'LL'; // one day. longer, like "September 9 2014"
+		}
+	},
+
+
+	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
+	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
+	formatRange: function(range, formatStr, separator) {
+		var end = range.end;
+
+		if (!end.hasTime()) { // all-day?
+			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
+		}
+
+		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
+	},
+
+
+	/* Rendering
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders the view inside an already-defined `this.el`.
@@ -56,9 +185,7 @@ View.prototype = {
 		this.trigger('viewRender', this, this, this.el);
 
 		// attach handlers to document. do it here to allow for destroy/rerender
-		$(document)
-			.on('mousedown', this.documentMousedownProxy)
-			.on('dragstart', this.documentDragStartProxy); // jqui drag
+		$(document).on('mousedown', this.documentMousedownProxy);
 	},
 
 
@@ -69,16 +196,7 @@ View.prototype = {
 		this.destroyEvents();
 		this.el.empty(); // removes inner contents but leaves the element intact
 
-		$(document)
-			.off('mousedown', this.documentMousedownProxy)
-			.off('dragstart', this.documentDragStartProxy);
-	},
-
-
-	// Used to determine what happens when the users clicks next/prev. Given -1 for prev, 1 for next.
-	// Should apply the delta to `date` (a Moment) and return it.
-	incrementDate: function(date, delta) {
-		// subclasses should implement
+		$(document).off('mousedown', this.documentMousedownProxy);
 	},
 
 
@@ -121,17 +239,21 @@ View.prototype = {
 
 
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
+	// By default, uses this.scrollerEl, but can pass this in as well.
 	// Utility for subclasses.
-	computeScrollerHeight: function(totalHeight) {
-		var both = this.el.add(this.scrollerEl);
+	computeScrollerHeight: function(totalHeight, scrollerEl) {
+		var both;
 		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
+
+		scrollerEl = scrollerEl || this.scrollerEl;
+		both = this.el.add(scrollerEl);
 
 		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
 		both.css({
 			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
 			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
 		});
-		otherHeight = this.el.outerHeight() - this.scrollerEl.height(); // grab the dimensions
+		otherHeight = this.el.outerHeight() - scrollerEl.height(); // grab the dimensions
 		both.css({ position: '', left: '' }); // undo hack
 
 		return totalHeight - otherHeight;
@@ -158,7 +280,7 @@ View.prototype = {
 	},
 
 
-	/* Events
+	/* Event Elements / Segments
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -234,106 +356,105 @@ View.prototype = {
 	},
 
 
-	/* Event Drag Visualization
+	/* Event Drag-n-Drop
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event hovering over the specified date.
-	// `end` is a Moment and might be null.
-	// `seg` might be null. if specified, it is the segment object of the event being dragged.
-	//       otherwise, an external event from outside the calendar is being dragged.
-	renderDrag: function(start, end, seg) {
-		// subclasses should implement
-	},
-
-
-	// Unrenders a visual indication of event hovering
-	destroyDrag: function() {
-		// subclasses should implement
-	},
-
-
-	// Handler for accepting externally dragged events being dropped in the view.
-	// Gets called when jqui's 'dragstart' is fired.
-	documentDragStart: function(ev, ui) {
-		var _this = this;
+	// Must be called when an event in the view is dropped onto new location.
+	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	reportEventDrop: function(event, dropLocation, el, ev) {
 		var calendar = this.calendar;
-		var eventStart = null; // a null value signals an unsuccessful drag
-		var eventEnd = null;
-		var visibleEnd = null; // will be calculated event when no eventEnd
-		var el;
-		var accept;
-		var meta;
-		var eventProps; // if an object, signals an event should be created upon drop
-		var dragListener;
+		var mutateResult = calendar.mutateEvent(event, dropLocation);
+		var undoFunc = function() {
+			mutateResult.undo();
+			calendar.reportEventChange();
+		};
 
-		if (this.opt('droppable')) { // only listen if this setting is on
-			el = $(ev.target);
+		this.triggerEventDrop(event, mutateResult.dateDelta, undoFunc, el, ev);
+		calendar.reportEventChange(); // will rerender events
+	},
 
-			// Test that the dragged element passes the dropAccept selector or filter function.
-			// FYI, the default is "*" (matches all)
-			accept = this.opt('dropAccept');
-			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 
-				meta = getDraggedElMeta(el); // data for possibly creating an event
-				eventProps = meta.eventProps;
+	// Triggers event-drop handlers that have subscribed via the API
+	triggerEventDrop: function(event, dateDelta, undoFunc, el, ev) {
+		this.trigger('eventDrop', el[0], event, dateDelta, undoFunc, ev, {}); // {} = jqui dummy
+	},
 
-				// listener that tracks mouse movement over date-associated pixel regions
-				dragListener = new DragListener(this.coordMap, {
-					cellOver: function(cell, cellDate) {
-						eventStart = cellDate;
-						eventEnd = meta.duration ? eventStart.clone().add(meta.duration) : null;
-						visibleEnd = eventEnd || calendar.getDefaultEventEnd(!eventStart.hasTime(), eventStart);
 
-						// keep the start/end up to date when dragging
-						if (eventProps) {
-							$.extend(eventProps, { start: eventStart, end: eventEnd });
-						}
+	/* External Element Drag-n-Drop
+	------------------------------------------------------------------------------------------------------------------*/
 
-						if (calendar.isExternalDragAllowedInRange(eventStart, visibleEnd, eventProps)) {
-							_this.renderDrag(eventStart, visibleEnd);
-						}
-						else {
-							eventStart = null; // signal unsuccessful
-							disableCursor();
-						}
-					},
-					cellOut: function() {
-						eventStart = null;
-						_this.destroyDrag();
-						enableCursor();
-					}
-				});
 
-				// gets called, only once, when jqui drag is finished
-				$(document).one('dragstop', function(ev, ui) {
-					var renderedEvents;
+	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
+	// `meta` is the parsed data that has been embedded into the dragging event.
+	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
+		var eventProps = meta.eventProps;
+		var eventInput;
+		var event;
 
-					_this.destroyDrag();
-					enableCursor();
+		// Try to build an event object and render it. TODO: decouple the two
+		if (eventProps) {
+			eventInput = $.extend({}, eventProps, dropLocation);
+			event = this.calendar.renderEvent(eventInput, meta.stick)[0]; // renderEvent returns an array
+		}
 
-					if (eventStart) { // element was dropped on a valid date/time cell
+		this.triggerExternalDrop(event, dropLocation, el, ev, ui);
+	},
 
-						// if dropped on an all-day cell, and element's metadata specified a time, set it
-						if (meta.startTime && !eventStart.hasTime()) {
-							eventStart.time(meta.startTime);
-						}
 
-						// trigger 'drop' regardless of whether element represents an event
-						_this.trigger('drop', el[0], eventStart, ev, ui);
+	// Triggers external-drop handlers that have subscribed via the API
+	triggerExternalDrop: function(event, dropLocation, el, ev, ui) {
 
-						// create an event from the given properties and the latest dates
-						if (eventProps) {
-							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
-							_this.trigger('eventReceive', null, renderedEvents[0]); // signal an external event landed
-						}
-					}
-				});
+		// trigger 'drop' regardless of whether element represents an event
+		this.trigger('drop', el[0], dropLocation.start, ev, ui);
 
-				dragListener.startDrag(ev); // start listening immediately
-			}
+		if (event) {
+			this.trigger('eventReceive', null, event); // signal an external event landed
 		}
 	},
+
+
+	/* Drag-n-Drop Rendering (for both events and external elements)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of a event or external-element drag over the given drop zone.
+	// If an external-element, seg will be `null`
+	renderDrag: function(dropLocation, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event or external-element being dragged.
+	destroyDrag: function() {
+		// subclasses must implement
+	},
+
+
+	/* Event Resizing
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Must be called when an event in the view has been resized to a new length
+	reportEventResize: function(event, newEnd, el, ev) {
+		var calendar = this.calendar;
+		var mutateResult = calendar.mutateEvent(event, { end: newEnd });
+		var undoFunc = function() {
+			mutateResult.undo();
+			calendar.reportEventChange();
+		};
+
+		this.triggerEventResize(event, mutateResult.durationDelta, undoFunc, el, ev);
+		calendar.reportEventChange(); // will rerender events
+	},
+
+
+	// Triggers event-resize handlers that have subscribed via the API
+	triggerEventResize: function(event, durationDelta, undoFunc, el, ev) {
+		this.trigger('eventResize', el[0], event, durationDelta, undoFunc, ev, {}); // {} = jqui dummy
+	},
+
 
 
 	/* Selection
@@ -342,23 +463,23 @@ View.prototype = {
 
 	// Selects a date range on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(start, end, ev) {
+	select: function(range, ev) {
 		this.unselect(ev);
-		this.renderSelection(start, end);
-		this.reportSelection(start, end, ev);
+		this.renderSelection(range);
+		this.reportSelection(range, ev);
 	},
 
 
 	// Renders a visual indication of the selection
-	renderSelection: function(start, end) {
+	renderSelection: function(range) {
 		// subclasses should implement
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(start, end, ev) {
+	reportSelection: function(range, ev) {
 		this.isSelected = true;
-		this.trigger('select', null, start, end, ev);
+		this.trigger('select', null, range.start, range.end, ev);
 	},
 
 
@@ -399,7 +520,7 @@ View.prototype = {
 
 // We are mixing JavaScript OOP design patterns here by putting methods and member variables in the closed scope of the
 // constructor. Going forward, methods should be part of the prototype.
-function View(calendar) {
+function View(calendar, viewOptions, viewType) {
 	var t = this;
 	
 	// exports
@@ -408,26 +529,34 @@ function View(calendar) {
 	t.trigger = trigger;
 	t.isEventDraggable = isEventDraggable;
 	t.isEventResizable = isEventResizable;
-	t.eventDrop = eventDrop;
-	t.eventResize = eventResize;
-	
-	// imports
-	var reportEventChange = calendar.reportEventChange;
 	
 	// locals
 	var options = calendar.options;
 	var nextDayThreshold = moment.duration(options.nextDayThreshold);
 
 
+	// important for view-specific opts
+	viewOptions = viewOptions || {};
+	t.type = t.name = viewType; // .name is deprecated
+
+
 	t.init(); // the "constructor" that concerns the prototype methods
 	
 	
 	function opt(name) {
-		var v = options[name];
-		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
-			return smartProperty(v, t.name);
+		var val;
+
+		val = viewOptions[name];
+		if (val !== undefined) {
+			return val;
 		}
-		return v;
+
+		val = options[name];
+		if ($.isPlainObject(val) && !isForcedAtomicOption(name)) {
+			return smartProperty(val, t.type);
+		}
+
+		return val;
 	}
 
 	
@@ -470,162 +599,39 @@ function View(calendar) {
 			opt('editable')
 		);
 	}
-	
-	
-	
-	/* Event Elements
+
+
+
+	/* Date Utils
 	------------------------------------------------------------------------------*/
-
-
-	// Compute the text that should be displayed on an event's element.
-	// Based off the settings of the view. Possible signatures:
-	//   .getEventTimeText(event, formatStr)
-	//   .getEventTimeText(startMoment, endMoment, formatStr)
-	//   .getEventTimeText(startMoment, null, formatStr)
-	// `timeFormat` is used but the `formatStr` argument can be used to override.
-	t.getEventTimeText = function(event, formatStr) {
-		var start;
-		var end;
-
-		if (typeof event === 'object' && typeof formatStr === 'object') {
-			// first two arguments are actually moments (or null). shift arguments.
-			start = event;
-			end = formatStr;
-			formatStr = arguments[2];
-		}
-		else {
-			// otherwise, an event object was the first argument
-			start = event.start;
-			end = event.end;
-		}
-
-		formatStr = formatStr || opt('timeFormat');
-
-		if (end && opt('displayEventEnd')) {
-			return calendar.formatRange(start, end, formatStr);
-		}
-		else {
-			return calendar.formatDate(start, formatStr);
-		}
-	};
-
-	
-	
-	/* Event Modification Reporting
-	---------------------------------------------------------------------------------*/
-
-	
-	function eventDrop(el, event, newStart, ev) {
-		var mutateResult = calendar.mutateEvent(event, newStart, null);
-
-		trigger(
-			'eventDrop',
-			el,
-			event,
-			mutateResult.dateDelta,
-			function() {
-				mutateResult.undo();
-				reportEventChange();
-			},
-			ev,
-			{} // jqui dummy
-		);
-
-		reportEventChange();
-	}
-
-
-	function eventResize(el, event, newEnd, ev) {
-		var mutateResult = calendar.mutateEvent(event, null, newEnd);
-
-		trigger(
-			'eventResize',
-			el,
-			event,
-			mutateResult.durationDelta,
-			function() {
-				mutateResult.undo();
-				reportEventChange();
-			},
-			ev,
-			{} // jqui dummy
-		);
-
-		reportEventChange();
-	}
-
-
-	// ====================================================================================================
-	// Utilities for day "cells"
-	// ====================================================================================================
-	// The "basic" views are completely made up of day cells.
-	// The "agenda" views have day cells at the top "all day" slot.
-	// This was the obvious common place to put these utilities, but they should be abstracted out into
-	// a more meaningful class (like DayEventRenderer).
-	// ====================================================================================================
-
-
-	// For determining how a given "cell" translates into a "date":
-	//
-	// 1. Convert the "cell" (row and column) into a "cell offset" (the # of the cell, cronologically from the first).
-	//    Keep in mind that column indices are inverted with isRTL. This is taken into account.
-	//
-	// 2. Convert the "cell offset" to a "day offset" (the # of days since the first visible day in the view).
-	//
-	// 3. Convert the "day offset" into a "date" (a Moment).
-	//
-	// The reverse transformation happens when transforming a date into a cell.
-
 
 	// exports
 	t.isHiddenDay = isHiddenDay;
 	t.skipHiddenDays = skipHiddenDays;
-	t.getCellsPerWeek = getCellsPerWeek;
-	t.dateToCell = dateToCell;
-	t.dateToDayOffset = dateToDayOffset;
-	t.dayOffsetToCellOffset = dayOffsetToCellOffset;
-	t.cellOffsetToCell = cellOffsetToCell;
-	t.cellToDate = cellToDate;
-	t.cellToCellOffset = cellToCellOffset;
-	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
-	t.dayOffsetToDate = dayOffsetToDate;
-	t.rangeToSegments = rangeToSegments;
+	t.computeDayRange = computeDayRange;
 	t.isMultiDayEvent = isMultiDayEvent;
 
 
 	// internals
 	var hiddenDays = opt('hiddenDays') || []; // array of day-of-week indices that are hidden
 	var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-	var cellsPerWeek;
-	var dayToCellMap = []; // hash from dayIndex -> cellIndex, for one week
-	var cellToDayMap = []; // hash from cellIndex -> dayIndex, for one week
-	var isRTL = opt('isRTL');
+	var dayCnt = 0;
 
+	if (opt('weekends') === false) {
+		hiddenDays.push(0, 6); // 0=sunday, 6=saturday
+	}
 
-	// initialize important internal variables
-	(function() {
-
-		if (opt('weekends') === false) {
-			hiddenDays.push(0, 6); // 0=sunday, 6=saturday
+	for (var i = 0; i < 7; i++) {
+		if (
+			!(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
+		) {
+			dayCnt++;
 		}
+	}
 
-		// Loop through a hypothetical week and determine which
-		// days-of-week are hidden. Record in both hashes (one is the reverse of the other).
-		for (var dayIndex=0, cellIndex=0; dayIndex<7; dayIndex++) {
-			dayToCellMap[dayIndex] = cellIndex;
-			isHiddenDayHash[dayIndex] = $.inArray(dayIndex, hiddenDays) != -1;
-			if (!isHiddenDayHash[dayIndex]) {
-				cellToDayMap[cellIndex] = dayIndex;
-				cellIndex++;
-			}
-		}
-
-		cellsPerWeek = cellIndex;
-		if (!cellsPerWeek) {
-			throw 'invalid hiddenDays'; // all days were hidden? bad.
-		}
-
-	})();
+	if (!dayCnt) {
+		throw 'invalid hiddenDays'; // all days were hidden? bad.
+	}
 
 
 	// Is the current day hidden?
@@ -635,11 +641,6 @@ function View(calendar) {
 			day = day.day();
 		}
 		return isHiddenDayHash[day];
-	}
-
-
-	function getCellsPerWeek() {
-		return cellsPerWeek;
 	}
 
 
@@ -659,176 +660,12 @@ function View(calendar) {
 	}
 
 
-	//
-	// TRANSFORMATIONS: cell -> cell offset -> day offset -> date
-	//
-
-	// cell -> date (combines all transformations)
-	// Possible arguments:
-	// - row, col
-	// - { row:#, col: # }
-	function cellToDate() {
-		var cellOffset = cellToCellOffset.apply(null, arguments);
-		var dayOffset = cellOffsetToDayOffset(cellOffset);
-		var date = dayOffsetToDate(dayOffset);
-		return date;
-	}
-
-	// cell -> cell offset
-	// Possible arguments:
-	// - row, col
-	// - { row:#, col:# }
-	function cellToCellOffset(row, col) {
-		var colCnt = t.colCnt;
-
-		// rtl variables. wish we could pre-populate these. but where?
-		var dis = isRTL ? -1 : 1;
-		var dit = isRTL ? colCnt - 1 : 0;
-
-		if (typeof row == 'object') {
-			col = row.col;
-			row = row.row;
-		}
-		var cellOffset = row * colCnt + (col * dis + dit); // column, adjusted for RTL (dis & dit)
-
-		return cellOffset;
-	}
-
-	// cell offset -> day offset
-	function cellOffsetToDayOffset(cellOffset) {
-		var day0 = t.start.day(); // first date's day of week
-		cellOffset += dayToCellMap[day0]; // normlize cellOffset to beginning-of-week
-		return Math.floor(cellOffset / cellsPerWeek) * 7 + // # of days from full weeks
-			cellToDayMap[ // # of days from partial last week
-				(cellOffset % cellsPerWeek + cellsPerWeek) % cellsPerWeek // crazy math to handle negative cellOffsets
-			] -
-			day0; // adjustment for beginning-of-week normalization
-	}
-
-	// day offset -> date
-	function dayOffsetToDate(dayOffset) {
-		return t.start.clone().add(dayOffset, 'days');
-	}
-
-
-	//
-	// TRANSFORMATIONS: date -> day offset -> cell offset -> cell
-	//
-
-	// date -> cell (combines all transformations)
-	function dateToCell(date) {
-		var dayOffset = dateToDayOffset(date);
-		var cellOffset = dayOffsetToCellOffset(dayOffset);
-		var cell = cellOffsetToCell(cellOffset);
-		return cell;
-	}
-
-	// date -> day offset
-	function dateToDayOffset(date) {
-		return date.clone().stripTime().diff(t.start, 'days');
-	}
-
-	// day offset -> cell offset
-	function dayOffsetToCellOffset(dayOffset) {
-		var day0 = t.start.day(); // first date's day of week
-		dayOffset += day0; // normalize dayOffset to beginning-of-week
-		return Math.floor(dayOffset / 7) * cellsPerWeek + // # of cells from full weeks
-			dayToCellMap[ // # of cells from partial last week
-				(dayOffset % 7 + 7) % 7 // crazy math to handle negative dayOffsets
-			] -
-			dayToCellMap[day0]; // adjustment for beginning-of-week normalization
-	}
-
-	// cell offset -> cell (object with row & col keys)
-	function cellOffsetToCell(cellOffset) {
-		var colCnt = t.colCnt;
-
-		// rtl variables. wish we could pre-populate these. but where?
-		var dis = isRTL ? -1 : 1;
-		var dit = isRTL ? colCnt - 1 : 0;
-
-		var row = Math.floor(cellOffset / colCnt);
-		var col = ((cellOffset % colCnt + colCnt) % colCnt) * dis + dit; // column, adjusted for RTL (dis & dit)
-		return {
-			row: row,
-			col: col
-		};
-	}
-
-
-	//
-	// Converts a date range into an array of segment objects.
-	// "Segments" are horizontal stretches of time, sliced up by row.
-	// A segment object has the following properties:
-	// - row
-	// - cols
-	// - isStart
-	// - isEnd
-	//
-	function rangeToSegments(start, end) {
-
-		var rowCnt = t.rowCnt;
-		var colCnt = t.colCnt;
-		var segments = []; // array of segments to return
-
-		// day offset for given date range
-		var dayRange = computeDayRange(start, end); // convert to a whole-day range
-		var rangeDayOffsetStart = dateToDayOffset(dayRange.start);
-		var rangeDayOffsetEnd = dateToDayOffset(dayRange.end); // an exclusive value
-
-		// first and last cell offset for the given date range
-		// "last" implies inclusivity
-		var rangeCellOffsetFirst = dayOffsetToCellOffset(rangeDayOffsetStart);
-		var rangeCellOffsetLast = dayOffsetToCellOffset(rangeDayOffsetEnd) - 1;
-
-		// loop through all the rows in the view
-		for (var row=0; row<rowCnt; row++) {
-
-			// first and last cell offset for the row
-			var rowCellOffsetFirst = row * colCnt;
-			var rowCellOffsetLast = rowCellOffsetFirst + colCnt - 1;
-
-			// get the segment's cell offsets by constraining the range's cell offsets to the bounds of the row
-			var segmentCellOffsetFirst = Math.max(rangeCellOffsetFirst, rowCellOffsetFirst);
-			var segmentCellOffsetLast = Math.min(rangeCellOffsetLast, rowCellOffsetLast);
-
-			// make sure segment's offsets are valid and in view
-			if (segmentCellOffsetFirst <= segmentCellOffsetLast) {
-
-				// translate to cells
-				var segmentCellFirst = cellOffsetToCell(segmentCellOffsetFirst);
-				var segmentCellLast = cellOffsetToCell(segmentCellOffsetLast);
-
-				// view might be RTL, so order by leftmost column
-				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort(compareNumbers);
-
-				// Determine if segment's first/last cell is the beginning/end of the date range.
-				// We need to compare "day offset" because "cell offsets" are often ambiguous and
-				// can translate to multiple days, and an edge case reveals itself when we the
-				// range's first cell is hidden (we don't want isStart to be true).
-				var isStart = cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
-				var isEnd = cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd;
-				                                                   // +1 for comparing exclusively
-
-				segments.push({
-					row: row,
-					leftCol: cols[0],
-					rightCol: cols[1],
-					isStart: isStart,
-					isEnd: isEnd
-				});
-			}
-		}
-
-		return segments;
-	}
-
-
 	// Returns the date range of the full days the given range visually appears to occupy.
-	// Returns object with properties `start` (moment) and `end` (moment, exclusive end).
-	function computeDayRange(start, end) {
-		var startDay = start.clone().stripTime(); // the beginning of the day the range starts
-		var endDay;
+	// Returns a new range object.
+	function computeDayRange(range) {
+		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
+		var end = range.end;
+		var endDay = null;
 		var endTimeMS;
 
 		if (end) {
@@ -855,7 +692,7 @@ function View(calendar) {
 
 	// Does the given event visually appear to occupy more than one day?
 	function isMultiDayEvent(event) {
-		var range = computeDayRange(event.start, event.end);
+		var range = computeDayRange(event); // event is range-ish
 
 		return range.end.diff(range.start, 'days') > 1;
 	}
@@ -865,6 +702,7 @@ function View(calendar) {
 
 /* Utils
 ----------------------------------------------------------------------------------------------------------------------*/
+// TODO: move. these utils are used exclusively by Grid
 
 // Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
 // A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.

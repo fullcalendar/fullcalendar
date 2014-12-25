@@ -1,4 +1,10 @@
 
+// exports
+fc.intersectionToSeg = intersectionToSeg;
+fc.applyAll = applyAll;
+fc.debounce = debounce;
+
+
 /* FullCalendar-specific DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -196,27 +202,32 @@ function isPrimaryMouseButton(ev) {
 
 // Creates a basic segment with the intersection of the two ranges. Returns undefined if no intersection.
 // Expects all dates to be normalized to the same timezone beforehand.
-function intersectionToSeg(subjectStart, subjectEnd, intervalStart, intervalEnd) {
+// TODO: move to date section?
+function intersectionToSeg(subjectRange, constraintRange) {
+	var subjectStart = subjectRange.start;
+	var subjectEnd = subjectRange.end;
+	var constraintStart = constraintRange.start;
+	var constraintEnd = constraintRange.end;
 	var segStart, segEnd;
 	var isStart, isEnd;
 
-	if (subjectEnd > intervalStart && subjectStart < intervalEnd) { // in bounds at all?
+	if (subjectEnd > constraintStart && subjectStart < constraintEnd) { // in bounds at all?
 
-		if (subjectStart >= intervalStart) {
+		if (subjectStart >= constraintStart) {
 			segStart = subjectStart.clone();
 			isStart = true;
 		}
 		else {
-			segStart = intervalStart.clone();
+			segStart = constraintStart.clone();
 			isStart =  false;
 		}
 
-		if (subjectEnd <= intervalEnd) {
+		if (subjectEnd <= constraintEnd) {
 			segEnd = subjectEnd.clone();
 			isEnd = true;
 		}
 		else {
-			segEnd = intervalEnd.clone();
+			segEnd = constraintEnd.clone();
 			isEnd = false;
 		}
 
@@ -251,15 +262,86 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 ----------------------------------------------------------------------------------------------------------------------*/
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
+var intervalUnits = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ];
 
 
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
 // Moments will have their timezones normalized.
-function dayishDiff(a, b) {
+function diffDayTime(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days'),
-		ms: a.time() - b.time()
+		ms: a.time() - b.time() // time-of-day from day start. disregards timezone
 	});
+}
+
+
+// Diffs the two moments via their start-of-day (regardless of timezone). Produces whole-day durations.
+function diffDay(a, b) {
+	return moment.duration({
+		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
+	});
+}
+
+
+// Computes the larges whole-unit period of time, as a duration object.
+// For example, 48 hours will be {days:2} whereas 49 hours will be {hours:49}.
+// Accepts start/end, a range object, or an original duration object.
+function computeIntervalDuration(start, end) {
+	var durationInput = {};
+	var i, unit;
+	var val;
+
+	for (i = 0; i < intervalUnits.length; i++) {
+		unit = intervalUnits[i];
+		val = computeIntervalAs(unit, start, end);
+		if (val) {
+			break;
+		}
+	}
+
+	durationInput[unit] = val;
+	return moment.duration(durationInput);
+}
+
+
+// Computes the unit name of the largest whole-unit period of time.
+// For example, 48 hours will be "days" wherewas 49 hours will be "hours".
+// Accepts start/end, a range object, or an original duration object.
+function computeIntervalUnit(start, end) {
+	var i, unit;
+
+	for (i = 0; i < intervalUnits.length; i++) {
+		unit = intervalUnits[i];
+		if (computeIntervalAs(unit, start, end)) {
+			break;
+		}
+	}
+
+	return unit; // will be "milliseconds" if nothing else matches
+}
+
+
+// Computes the number of units the interval is cleanly comprised of.
+// If the given unit does not cleanly divide the interval a whole number of times, `false` is returned.
+// Accepts start/end, a range object, or an original duration object.
+function computeIntervalAs(unit, start, end) {
+	var val;
+
+	if (end != null) { // given start, end
+		val = end.diff(start, unit, true);
+	}
+	else if (moment.isDuration(start)) { // given duration
+		val = start.as(unit);
+	}
+	else { // given { start, end } range object
+		val = start.end.diff(start.start, unit, true);
+	}
+
+	if (val >= 1 && isInt(val)) {
+		return val;
+	}
+
+	return false;
 }
 
 
@@ -277,14 +359,18 @@ function isTimeString(str) {
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.applyAll = applyAll; // export
-
 
 // Create an object that has the given prototype. Just like Object.create
 function createObject(proto) {
 	var f = function() {};
 	f.prototype = proto;
 	return new f();
+}
+
+
+// Is the given value a non-object non-function value?
+function isAtomic(val) {
+	return /undefined|null|boolean|number|string/.test($.type(val));
 }
 
 
@@ -334,6 +420,11 @@ function capitaliseFirstLetter(str) {
 
 function compareNumbers(a, b) { // for .sort()
 	return a - b;
+}
+
+
+function isInt(n) {
+	return n % 1 === 0;
 }
 
 
