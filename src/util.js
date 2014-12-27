@@ -359,12 +359,28 @@ function isTimeString(str) {
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
+var hasOwnPropMethod = {}.hasOwnProperty;
+
 
 // Create an object that has the given prototype. Just like Object.create
 function createObject(proto) {
 	var f = function() {};
 	f.prototype = proto;
 	return new f();
+}
+
+
+function copyOwnProps(src, dest) {
+	for (var name in src) {
+		if (hasOwnProp(src, name)) {
+			dest[name] = src[name];
+		}
+	}
+}
+
+
+function hasOwnProp(obj, name) {
+	return hasOwnPropMethod.call(obj, name);
 }
 
 

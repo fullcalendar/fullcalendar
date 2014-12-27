@@ -2,14 +2,7 @@
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function TimeGrid(view) {
-	Grid.call(this, view); // call the super-constructor
-	this.processOptions();
-}
-
-
-TimeGrid.prototype = createObject(Grid.prototype); // define the super-class
-$.extend(TimeGrid.prototype, {
+var TimeGrid = Grid.extend({
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
@@ -27,6 +20,12 @@ $.extend(TimeGrid.prototype, {
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
 
 	businessHourSegs: null,
+
+
+	constructor: function() {
+		Grid.apply(this, arguments); // call the super-constructor
+		this.processOptions();
+	},
 
 
 	// Renders the time grid into `this.el`, which should already be assigned.

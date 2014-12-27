@@ -1,6 +1,4 @@
 
-fcViews.agenda = AgendaView;
-
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
 ----------------------------------------------------------------------------------------------------------------------*/
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
@@ -18,29 +16,7 @@ setDefaults({
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
-
-function AgendaView() {
-	View.apply(this, arguments); // call the super-constructor
-
-	this.timeGrid = new TimeGrid(this);
-
-	if (this.opt('allDaySlot')) { // should we display the "all-day" area?
-		this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
-
-		// the coordinate grid will be a combination of both subcomponents' grids
-		this.coordMap = new ComboCoordMap([
-			this.dayGrid.coordMap,
-			this.timeGrid.coordMap
-		]);
-	}
-	else {
-		this.coordMap = this.timeGrid.coordMap;
-	}
-}
-
-
-AgendaView.prototype = createObject(View.prototype); // define the super-class
-$.extend(AgendaView.prototype, {
+var AgendaView = fcViews.agenda = View.extend({
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -52,6 +28,26 @@ $.extend(AgendaView.prototype, {
 	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
 	bottomRuleEl: null,
 	bottomRuleHeight: null,
+
+
+	constructor: function() {
+		View_constructor.apply(this, arguments); // call the super-constructor
+
+		this.timeGrid = new TimeGrid(this);
+
+		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
+			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
+
+			// the coordinate grid will be a combination of both subcomponents' grids
+			this.coordMap = new ComboCoordMap([
+				this.dayGrid.coordMap,
+				this.timeGrid.coordMap
+			]);
+		}
+		else {
+			this.coordMap = this.timeGrid.coordMap;
+		}
+	},
 
 
 	/* Rendering

@@ -1,21 +1,10 @@
 
-fcViews.basic = BasicView;
-
 /* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-function BasicView() {
-	View.apply(this, arguments); // call the super-constructor
-
-	this.dayGrid = new DayGrid(this);
-	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
-}
-
-
-BasicView.prototype = createObject(View.prototype); // define the super-class
-$.extend(BasicView.prototype, {
+var BasicView = fcViews.basic = View.extend({
 
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
@@ -25,6 +14,14 @@ $.extend(BasicView.prototype, {
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 
 	headRowEl: null, // the fake row element of the day-of-week header
+
+
+	constructor: function() {
+		View_constructor.apply(this, arguments); // call the super-constructor
+
+		this.dayGrid = new DayGrid(this);
+		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
+	},
 
 
 	// Sets the display range and computes all necessary dates

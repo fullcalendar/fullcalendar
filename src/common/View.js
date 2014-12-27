@@ -1,11 +1,9 @@
 
-fc.View = View;
-
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 // Newer methods should be written as prototype methods, not in the monster `View` function at the bottom.
 
-View.prototype = {
+var View = fc.View = Class.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -39,6 +37,9 @@ View.prototype = {
 
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null,
+
+
+	constructor: View_constructor, // will call init
 
 
 	// Serves as a "constructor" to suppliment the monster `View` constructor below
@@ -515,12 +516,12 @@ View.prototype = {
 		}
 	}
 
-};
+});
 
 
 // We are mixing JavaScript OOP design patterns here by putting methods and member variables in the closed scope of the
 // constructor. Going forward, methods should be part of the prototype.
-function View(calendar, viewOptions, viewType) {
+function View_constructor(calendar, viewOptions, viewType) {
 	var t = this;
 	
 	// exports

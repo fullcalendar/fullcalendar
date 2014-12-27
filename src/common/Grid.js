@@ -1,20 +1,8 @@
 
-fc.Grid = Grid;
-
 /* An abstract class comprised of a "grid" of cells that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function Grid(view) {
-	RowRenderer.call(this, view); // call the super-constructor
-
-	this.coordMap = new GridCoordMap(this);
-	this.elsByFill = {};
-	this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
-}
-
-
-Grid.prototype = createObject(RowRenderer.prototype); // declare the super-class
-$.extend(Grid.prototype, {
+var Grid = fc.Grid = RowRenderer.extend({
 
 	start: null, // the date of the first cell
 	end: null, // the date after the last cell
@@ -34,6 +22,15 @@ $.extend(Grid.prototype, {
 	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
 	eventTimeFormat: null,
 	displayEventEnd: null,
+
+
+	constructor: function() {
+		RowRenderer.apply(this, arguments); // call the super-constructor
+
+		this.coordMap = new GridCoordMap(this);
+		this.elsByFill = {};
+		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
+	},
 
 
 	// Renders the grid into the `el` element.

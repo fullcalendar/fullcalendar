@@ -4,17 +4,17 @@
 // It leverages methods of the subclass and the View to determine custom rendering behavior for each row "type"
 // (such as highlight rows, day rows, helper rows, etc).
 
-function RowRenderer(view) {
-	this.view = view;
-	this.isRTL = view.opt('isRTL');
-}
-
-
-RowRenderer.prototype = {
+var RowRenderer = Class.extend({
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
 	cellHtml: '<td/>', // plain default HTML used for a cell when no other is available
+
+
+	constructor: function(view) {
+		this.view = view;
+		this.isRTL = view.opt('isRTL');
+	},
 
 
 	// Renders the HTML for a row, leveraging custom cell-HTML-renderers based on the `rowType`.
@@ -99,4 +99,4 @@ RowRenderer.prototype = {
 		};
 	}
 
-};
+});

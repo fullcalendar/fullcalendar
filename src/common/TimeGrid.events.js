@@ -2,7 +2,7 @@
 /* Event-rendering methods for the TimeGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(TimeGrid.prototype, {
+TimeGrid.mixin({
 
 	eventSkeletonEl: null, // has cells with event-containers, which contain absolutely positioned event elements
 

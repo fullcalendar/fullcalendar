@@ -13,12 +13,7 @@ Common interface:
 /* Coordinate map for a grid component
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function GridCoordMap(grid) {
-	this.grid = grid;
-}
-
-
-GridCoordMap.prototype = {
+var GridCoordMap = Class.extend({
 
 	grid: null, // reference to the Grid
 	rowCoords: null, // array of {top,bottom} objects
@@ -29,6 +24,11 @@ GridCoordMap.prototype = {
 	maxX: null, // exclusive
 	minY: null,
 	maxY: null, // exclusive
+
+
+	constructor: function(grid) {
+		this.grid = grid;
+	},
 
 
 	// Queries the grid for the coordinates of all the cells
@@ -106,20 +106,20 @@ GridCoordMap.prototype = {
 		return true;
 	}
 
-};
+});
 
 
 /* Coordinate map that is a combination of multiple other coordinate maps
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function ComboCoordMap(coordMaps) {
-	this.coordMaps = coordMaps;
-}
-
-
-ComboCoordMap.prototype = {
+var ComboCoordMap = Class.extend({
 
 	coordMaps: null, // an array of CoordMaps
+
+
+	constructor: function(coordMaps) {
+		this.coordMaps = coordMaps;
+	},
 
 
 	// Builds all coordMaps
@@ -157,4 +157,4 @@ ComboCoordMap.prototype = {
 		}
 	}
 
-};
+});

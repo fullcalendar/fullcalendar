@@ -3,13 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: very useful to have a handler that gets called upon cellOut OR when dragging stops (for cleanup)
 
-function DragListener(coordMap, options) {
-	this.coordMap = coordMap;
-	this.options = options || {};
-}
-
-
-DragListener.prototype = {
+var DragListener = Class.extend({
 
 	coordMap: null,
 	options: null,
@@ -41,6 +35,12 @@ DragListener.prototype = {
 	scrollSensitivity: 30, // pixels from edge for scrolling to start
 	scrollSpeed: 200, // pixels per second, at maximum speed
 	scrollIntervalMs: 50, // millisecond wait between scroll increment
+
+
+	constructor: function(coordMap, options) {
+		this.coordMap = coordMap;
+		this.options = options || {};
+	},
 
 
 	// Call this when the user does a mousedown. Will probably lead to startListening
@@ -401,7 +401,7 @@ DragListener.prototype = {
 		}
 	}
 
-};
+});
 
 
 // Returns `true` if the cells are identically equal. `false` otherwise.

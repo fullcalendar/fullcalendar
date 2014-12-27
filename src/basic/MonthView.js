@@ -6,16 +6,7 @@ setDefaults({
 	fixedWeekCount: true
 });
 
-fcViews.month = MonthView; // register the view
-
-function MonthView() {
-	BasicView.apply(this, arguments); // call the super-constructor
-}
-
-
-MonthView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(MonthView.prototype, {
-
+var MonthView = fcViews.month = BasicView.extend({
 
 	computeRange: function(date) {
 		var rowCnt;

@@ -2,7 +2,7 @@
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(DayGrid.prototype, {
+DayGrid.mixin({
 
 	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
