@@ -1,7 +1,6 @@
 
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
-// Newer methods should be written as prototype methods, not in the monster `View` function at the bottom.
 
 var View = fc.View = Class.extend({
 
@@ -9,6 +8,7 @@ var View = fc.View = Class.extend({
 	name: null, // deprecated. use `type` instead
 
 	calendar: null, // owner Calendar object
+	options: null, // view-specific options
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
@@ -35,23 +35,56 @@ var View = fc.View = Class.extend({
 	widgetContentClass: null,
 	highlightStateClass: null,
 
+	// for date utils, computed from options
+	nextDayThreshold: null,
+	isHiddenDayHash: null,
+
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null,
 
 
-	constructor: View_constructor, // will call init
+	constructor: function(calendar, viewOptions, viewType) {
+		this.calendar = calendar;
+		this.options = viewOptions;
+		this.type = this.name = viewType; // .name is deprecated
 
+		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
+		this.initTheming();
+		this.initHiddenDays();
 
-	// Serves as a "constructor" to suppliment the monster `View` constructor below
-	init: function() {
-		var tm = this.opt('theme') ? 'ui' : 'fc';
-
-		this.widgetHeaderClass = tm + '-widget-header';
-		this.widgetContentClass = tm + '-widget-content';
-		this.highlightStateClass = tm + '-state-highlight';
-
-		// save references to `this`-bound handlers
 		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+	},
+
+
+	// Retrieves an option with the given name
+	opt: function(name) {
+		var val;
+
+		val = this.options[name]; // look at view-specific options first
+		if (val !== undefined) {
+			return val;
+		}
+
+		val = this.calendar.options[name];
+		if ($.isPlainObject(val) && !isForcedAtomicOption(name)) { // view-option-hashes are deprecated
+			return smartProperty(val, this.type);
+		}
+
+		return val;
+	},
+
+
+	// Triggers handlers that are view-related. Modifies args before passing to calendar.
+	trigger: function(name, thisObj) { // arguments beyond thisObj are passed along
+		var calendar = this.calendar;
+
+		return calendar.trigger.apply(
+			calendar,
+			[name, thisObj || this].concat(
+				Array.prototype.slice.call(arguments, 2), // arguments beyond thisObj
+				[ this ] // always make the last argument a reference to the view. TODO: deprecate
+			)
+		);
 	},
 
 
@@ -198,6 +231,16 @@ var View = fc.View = Class.extend({
 		this.el.empty(); // removes inner contents but leaves the element intact
 
 		$(document).off('mousedown', this.documentMousedownProxy);
+	},
+
+
+	// Initializes internal variables related to theming
+	initTheming: function() {
+		var tm = this.opt('theme') ? 'ui' : 'fc';
+
+		this.widgetHeaderClass = tm + '-widget-header';
+		this.widgetContentClass = tm + '-widget-content';
+		this.highlightStateClass = tm + '-state-highlight';
 	},
 
 
@@ -361,6 +404,21 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	// Computes if the given event is allowed to be dragged by the user
+	isEventDraggable: function(event) {
+		var source = event.source || {};
+
+		return firstDefined(
+			event.startEditable,
+			source.startEditable,
+			this.opt('eventStartEditable'),
+			event.editable,
+			source.editable,
+			this.opt('editable')
+		);
+	},
+
+
 	// Must be called when an event in the view is dropped onto new location.
 	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
 	reportEventDrop: function(event, dropLocation, el, ev) {
@@ -435,6 +493,21 @@ var View = fc.View = Class.extend({
 
 	/* Event Resizing
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes if the given event is allowed to be resize by the user
+	isEventResizable: function(event) {
+		var source = event.source || {};
+
+		return firstDefined(
+			event.durationEditable,
+			source.durationEditable,
+			this.opt('eventDurationEditable'),
+			event.editable,
+			source.editable,
+			this.opt('editable')
+		);
+	},
 
 
 	// Must be called when an event in the view has been resized to a new length
@@ -514,156 +587,69 @@ var View = fc.View = Class.extend({
 				this.unselect(ev);
 			}
 		}
-	}
-
-});
-
-
-// We are mixing JavaScript OOP design patterns here by putting methods and member variables in the closed scope of the
-// constructor. Going forward, methods should be part of the prototype.
-function View_constructor(calendar, viewOptions, viewType) {
-	var t = this;
-	
-	// exports
-	t.calendar = calendar;
-	t.opt = opt;
-	t.trigger = trigger;
-	t.isEventDraggable = isEventDraggable;
-	t.isEventResizable = isEventResizable;
-	
-	// locals
-	var options = calendar.options;
-	var nextDayThreshold = moment.duration(options.nextDayThreshold);
-
-
-	// important for view-specific opts
-	viewOptions = viewOptions || {};
-	t.type = t.name = viewType; // .name is deprecated
-
-
-	t.init(); // the "constructor" that concerns the prototype methods
-	
-	
-	function opt(name) {
-		var val;
-
-		val = viewOptions[name];
-		if (val !== undefined) {
-			return val;
-		}
-
-		val = options[name];
-		if ($.isPlainObject(val) && !isForcedAtomicOption(name)) {
-			return smartProperty(val, t.type);
-		}
-
-		return val;
-	}
-
-	
-	function trigger(name, thisObj) {
-		return calendar.trigger.apply(
-			calendar,
-			[name, thisObj || t].concat(Array.prototype.slice.call(arguments, 2), [t])
-		);
-	}
-	
-
-
-	/* Event Editable Boolean Calculations
-	------------------------------------------------------------------------------*/
-
-	
-	function isEventDraggable(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.startEditable,
-			source.startEditable,
-			opt('eventStartEditable'),
-			event.editable,
-			source.editable,
-			opt('editable')
-		);
-	}
-	
-	
-	function isEventResizable(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.durationEditable,
-			source.durationEditable,
-			opt('eventDurationEditable'),
-			event.editable,
-			source.editable,
-			opt('editable')
-		);
-	}
-
+	},
 
 
 	/* Date Utils
-	------------------------------------------------------------------------------*/
-
-	// exports
-	t.isHiddenDay = isHiddenDay;
-	t.skipHiddenDays = skipHiddenDays;
-	t.computeDayRange = computeDayRange;
-	t.isMultiDayEvent = isMultiDayEvent;
+	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// internals
-	var hiddenDays = opt('hiddenDays') || []; // array of day-of-week indices that are hidden
-	var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-	var dayCnt = 0;
+	// Initializes internal variables related to calculating hidden days-of-week
+	initHiddenDays: function() {
+		var hiddenDays = this.opt('hiddenDays') || []; // array of day-of-week indices that are hidden
+		var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
+		var dayCnt = 0;
+		var i;
 
-	if (opt('weekends') === false) {
-		hiddenDays.push(0, 6); // 0=sunday, 6=saturday
-	}
-
-	for (var i = 0; i < 7; i++) {
-		if (
-			!(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
-		) {
-			dayCnt++;
+		if (this.opt('weekends') === false) {
+			hiddenDays.push(0, 6); // 0=sunday, 6=saturday
 		}
-	}
 
-	if (!dayCnt) {
-		throw 'invalid hiddenDays'; // all days were hidden? bad.
-	}
+		for (i = 0; i < 7; i++) {
+			if (
+				!(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
+			) {
+				dayCnt++;
+			}
+		}
+
+		if (!dayCnt) {
+			throw 'invalid hiddenDays'; // all days were hidden? bad.
+		}
+
+		this.isHiddenDayHash = isHiddenDayHash;
+	},
 
 
 	// Is the current day hidden?
 	// `day` is a day-of-week index (0-6), or a Moment
-	function isHiddenDay(day) {
+	isHiddenDay: function(day) {
 		if (moment.isMoment(day)) {
 			day = day.day();
 		}
-		return isHiddenDayHash[day];
-	}
+		return this.isHiddenDayHash[day];
+	},
 
 
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)
-	function skipHiddenDays(date, inc, isExclusive) {
+	skipHiddenDays: function(date, inc, isExclusive) {
 		var out = date.clone();
 		inc = inc || 1;
 		while (
-			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
+			this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
 			out.add(inc, 'days');
 		}
 		return out;
-	}
+	},
 
 
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a new range object.
-	function computeDayRange(range) {
+	computeDayRange: function(range) {
 		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
 		var end = range.end;
 		var endDay = null;
@@ -676,7 +662,7 @@ function View_constructor(calendar, viewOptions, viewType) {
 			// If the end time is actually inclusively part of the next day and is equal to or
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
 			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-			if (endTimeMS && endTimeMS >= nextDayThreshold) {
+			if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
 				endDay.add(1, 'days');
 			}
 		}
@@ -688,17 +674,17 @@ function View_constructor(calendar, viewOptions, viewType) {
 		}
 
 		return { start: startDay, end: endDay };
-	}
+	},
 
 
 	// Does the given event visually appear to occupy more than one day?
-	function isMultiDayEvent(event) {
-		var range = computeDayRange(event); // event is range-ish
+	isMultiDayEvent: function(event) {
+		var range = this.computeDayRange(event); // event is range-ish
 
 		return range.end.diff(range.start, 'days') > 1;
 	}
 
-}
+});
 
 
 /* Utils

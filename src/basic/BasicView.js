@@ -17,7 +17,7 @@ var BasicView = fcViews.basic = View.extend({
 
 
 	constructor: function() {
-		View_constructor.apply(this, arguments); // call the super-constructor
+		View.apply(this, arguments); // call the super-constructor
 
 		this.dayGrid = new DayGrid(this);
 		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's

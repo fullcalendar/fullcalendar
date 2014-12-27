@@ -31,7 +31,7 @@ var AgendaView = fcViews.agenda = View.extend({
 
 
 	constructor: function() {
-		View_constructor.apply(this, arguments); // call the super-constructor
+		View.apply(this, arguments); // call the super-constructor
 
 		this.timeGrid = new TimeGrid(this);
 
