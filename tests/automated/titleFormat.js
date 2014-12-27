@@ -18,7 +18,8 @@ describe('titleFormat', function() {
 
         beforeEach(function() {
             $('#cal').fullCalendar({
-                defaultDate: '2014-06-12'
+                defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - '
             });
         });
 
@@ -46,6 +47,7 @@ describe('titleFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - ',
                 titleFormat: {
                     month: 'YYYY, MMMM',
                     basicWeek: 'D M YYYY',
@@ -80,6 +82,7 @@ describe('titleFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - ',
                 lang: 'fr'
             });
         });
