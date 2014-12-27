@@ -138,7 +138,7 @@ View.prototype = {
 		return this.formatRange(
 			{ start: this.intervalStart, end: this.intervalEnd },
 			this.opt('titleFormat') || this.computeTitleFormat(),
-			' \u2014 ' // emphasized dash
+			this.opt('titleRangeSeparator')
 		);
 	},
 
