@@ -15,8 +15,8 @@ DayGrid.mixin({
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
-	getSegs: function() {
-		return Grid.prototype.getSegs.call(this) // get the segments from the super-method
+	getEventSegs: function() {
+		return Grid.prototype.getEventSegs.call(this) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 

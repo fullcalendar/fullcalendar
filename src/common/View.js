@@ -53,6 +53,14 @@ var View = fc.View = Class.extend({
 		this.initHiddenDays();
 
 		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+
+		this.initialize();
+	},
+
+
+	// A good place for subclasses to initialize member variables
+	initialize: function() {
+		// subclasses can implement
 	},
 
 
@@ -212,10 +220,11 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the view inside an already-defined `this.el`.
-	// Subclasses should override this and then call the super method afterwards.
-	render: function() {
+	// Wraps the basic render() method with more View-specific logic. Called by the owner Calendar.
+	renderView: function() {
+		this.render();
 		this.updateSize();
+		this.initializeScroll();
 		this.trigger('viewRender', this, this, this.el);
 
 		// attach handlers to document. do it here to allow for destroy/rerender
@@ -223,14 +232,26 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Clears all view rendering, event elements, and unregisters handlers
-	destroy: function() {
+	// Renders the view inside an already-defined `this.el`
+	render: function() {
+		// subclasses should implement
+	},
+
+
+	// Wraps the basic destroy() method with more View-specific logic. Called by the owner Calendar.
+	destroyView: function() {
 		this.unselect();
+		this.destroyViewEvents();
+		this.destroy();
 		this.trigger('viewDestroy', this, this, this.el);
-		this.destroyEvents();
-		this.el.empty(); // removes inner contents but leaves the element intact
 
 		$(document).off('mousedown', this.documentMousedownProxy);
+	},
+
+
+	// Clears the view's rendering
+	destroy: function() {
+		this.el.empty(); // removes inner contents but leaves the element intact
 	},
 
 
@@ -282,6 +303,10 @@ var View = fc.View = Class.extend({
 	},
 
 
+	/* Scroller
+	------------------------------------------------------------------------------------------------------------------*/
+
+
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
 	// By default, uses this.scrollerEl, but can pass this in as well.
 	// Utility for subclasses.
@@ -301,6 +326,11 @@ var View = fc.View = Class.extend({
 		both.css({ position: '', left: '' }); // undo hack
 
 		return totalHeight - otherHeight;
+	},
+
+
+	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
+	initializeScroll: function() {
 	},
 
 
@@ -328,22 +358,36 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the events onto the view.
-	// Should be overriden by subclasses. Subclasses should call the super-method afterwards.
-	renderEvents: function(events) {
-		this.segEach(function(seg) {
+	// Wraps the basic renderEvents() method with more View-specific logic
+	renderViewEvents: function(events) {
+		this.renderEvents(events);
+
+		this.eventSegEach(function(seg) {
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
 		this.trigger('eventAfterAllRender');
 	},
 
 
-	// Removes event elements from the view.
-	// Should be overridden by subclasses. Should call this super-method FIRST, then subclass DOM destruction.
-	destroyEvents: function() {
-		this.segEach(function(seg) {
+	// Renders the events onto the view.
+	renderEvents: function() {
+		// subclasses should implement
+	},
+
+
+	// Wraps the basic destroyEvents() method with more View-specific logic
+	destroyViewEvents: function() {
+		this.eventSegEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
+
+		this.destroyEvents();
+	},
+
+
+	// Removes event elements from the view.
+	destroyEvents: function() {
+		// subclasses should implement
 	},
 
 
@@ -365,7 +409,7 @@ var View = fc.View = Class.extend({
 
 	// Hides all rendered event segments linked to the given event
 	showEvent: function(event) {
-		this.segEach(function(seg) {
+		this.eventSegEach(function(seg) {
 			seg.el.css('visibility', '');
 		}, event);
 	},
@@ -373,7 +417,7 @@ var View = fc.View = Class.extend({
 
 	// Shows all rendered event segments linked to the given event
 	hideEvent: function(event) {
-		this.segEach(function(seg) {
+		this.eventSegEach(function(seg) {
 			seg.el.css('visibility', 'hidden');
 		}, event);
 	},
@@ -382,8 +426,8 @@ var View = fc.View = Class.extend({
 	// Iterates through event segments. Goes through all by default.
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
 	// The `this` value of the callback function will be the view.
-	segEach: function(func, event) {
-		var segs = this.getSegs();
+	eventSegEach: function(func, event) {
+		var segs = this.getEventSegs();
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -395,7 +439,7 @@ var View = fc.View = Class.extend({
 
 
 	// Retrieves all the rendered segment objects for the view
-	getSegs: function() {
+	getEventSegs: function() {
 		// subclasses must implement
 	},
 
@@ -528,7 +572,6 @@ var View = fc.View = Class.extend({
 	triggerEventResize: function(event, durationDelta, undoFunc, el, ev) {
 		this.trigger('eventResize', el[0], event, durationDelta, undoFunc, ev, {}); // {} = jqui dummy
 	},
-
 
 
 	/* Selection

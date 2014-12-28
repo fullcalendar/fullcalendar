@@ -49,7 +49,7 @@ Grid.mixin({
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
-	getSegs: function() {
+	getEventSegs: function() {
 		return this.segs || [];
 	},
 

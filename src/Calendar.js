@@ -295,7 +295,7 @@ function Calendar(element, instanceOptions) {
 	function destroy() {
 
 		if (currentView) {
-			currentView.destroy();
+			currentView.destroyView();
 		}
 
 		header.destroy();
@@ -330,7 +330,7 @@ function Calendar(element, instanceOptions) {
 			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
 			if (currentView.start) { // rendered before?
-				currentView.destroy();
+				currentView.destroyView();
 			}
 			currentView.el.remove();
 			currentView = null;
@@ -363,10 +363,10 @@ function Calendar(element, instanceOptions) {
 
 					freezeContentHeight();
 					if (currentView.start) { // rendered before?
-						currentView.destroy();
+						currentView.destroyView();
 					}
 					currentView.setDate(date);
-					currentView.render();
+					currentView.renderView();
 					unfreezeContentHeight();
 
 					// need to do this after View::render, so dates are calculated
@@ -551,8 +551,8 @@ function Calendar(element, instanceOptions) {
 	function renderEvents() { // destroys old events if previously rendered
 		if (elementVisible()) {
 			freezeContentHeight();
-			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
+			currentView.destroyViewEvents(); // no performance cost if never rendered
+			currentView.renderViewEvents(events);
 			unfreezeContentHeight();
 		}
 	}
@@ -560,7 +560,7 @@ function Calendar(element, instanceOptions) {
 
 	function destroyEvents() {
 		freezeContentHeight();
-		currentView.destroyEvents();
+		currentView.destroyViewEvents();
 		unfreezeContentHeight();
 	}
 	

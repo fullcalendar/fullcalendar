@@ -30,9 +30,7 @@ var AgendaView = fcViews.agenda = View.extend({
 	bottomRuleHeight: null,
 
 
-	constructor: function() {
-		View.apply(this, arguments); // call the super-constructor
-
+	initialize: function() {
 		this.timeGrid = new TimeGrid(this);
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
@@ -90,10 +88,6 @@ var AgendaView = fcViews.agenda = View.extend({
 		}
 
 		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
-
-		View.prototype.render.call(this); // call the super-method
-
-		this.resetScroll(); // do this after sizes have been set
 	},
 
 
@@ -277,8 +271,8 @@ var AgendaView = fcViews.agenda = View.extend({
 	},
 
 
-	// Sets the scroll value of the scroller to the intial pre-configured state prior to allowing the user to change it.
-	resetScroll: function() {
+	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
+	initializeScroll: function() {
 		var _this = this;
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
@@ -329,22 +323,19 @@ var AgendaView = fcViews.agenda = View.extend({
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		this.updateHeight();
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.timeGrid.getSegs().concat(
-			this.dayGrid ? this.dayGrid.getSegs() : []
+	getEventSegs: function() {
+		return this.timeGrid.getEventSegs().concat(
+			this.dayGrid ? this.dayGrid.getEventSegs() : []
 		);
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before the grids' segs have been cleared
 
 		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
 		// after, so remember what the scroll value was so we can restore it.

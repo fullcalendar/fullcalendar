@@ -16,9 +16,7 @@ var BasicView = fcViews.basic = View.extend({
 	headRowEl: null, // the fake row element of the day-of-week header
 
 
-	constructor: function() {
-		View.apply(this, arguments); // call the super-constructor
-
+	initialize: function() {
 		this.dayGrid = new DayGrid(this);
 		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
 	},
@@ -47,8 +45,6 @@ var BasicView = fcViews.basic = View.extend({
 
 		this.dayGrid.el = this.el.find('.fc-day-grid');
 		this.dayGrid.render(this.hasRigidRows());
-
-		View.prototype.render.call(this); // call the super-method
 	},
 
 
@@ -240,21 +236,17 @@ var BasicView = fcViews.basic = View.extend({
 		this.dayGrid.renderEvents(events);
 
 		this.updateHeight(); // must compensate for events that overflow the row
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.dayGrid.getSegs();
+	getEventSegs: function() {
+		return this.dayGrid.getEventSegs();
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before dayGrid's segs have been cleared
-
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
