@@ -2,6 +2,11 @@
 View Option Hash
 ================
 
+<div class='removed-notice' markdown='1'>
+View Option Hashes have been deprecated in favor of a new technique.
+Please see [View-Specific Options](View-Specific-Options).
+</div>
+
 A way to specify options on a per-view basis.
 
 This is specified as an object with key/value pairings. The key tells FullCalendar

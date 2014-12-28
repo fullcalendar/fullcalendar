@@ -5,17 +5,14 @@ columnFormat
 Determines the text that will be displayed on the calendar's column headings.
 
 <div class='spec' markdown='1'>
-[format string](../utilities/date_formatting_string)/[View Option Hash](../views/View_Option_Hash), *default*:
+[format string](../utilities/date_formatting_string), *default*:
 
-	{
-		month: 'ddd',    // Mon
-		week: 'ddd M/D', // Mon 9/7
-		day: 'dddd'      // Monday
-	}
+	'ddd'     // like 'Mon', for month view
+	'ddd M/D' // like 'Mon 9/7', for week views
+	'dddd'    // like 'Monday', for day views
 </div>
 
-The default value will change based on the current [lang](../text/lang).
+As noted above, each view has a specific default. Get fine-tuned control with [View-Specific Options](../views/View-Specific-Options).
+A single string alone will set the value for all views.
 
-A single [format string](../utilities/date_formatting_string) will set the title format for all views.
-A [View Option Hash](../views/View_Option_Hash) may be provided to target specific views
-(this is what the default does).
+The default values will change based on the current [lang](../text/lang).

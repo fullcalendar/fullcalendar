@@ -1,0 +1,44 @@
+
+View-Specific Options *2.2.4*
+=============================
+
+If you'd like to specify options that only apply to certain [Views](Available_Views), specify a separate options object within the `views` option, keyed by the name of your view.
+
+	$('#calendar').fullCalendar({
+		header: { center: 'month,agendaWeek' }, // buttons for switching between views
+
+		views: {
+			month: { // name of view
+				titleFormat: 'YYYY, MM, DD'
+				// other view-specific options here
+			}
+		}
+	});
+
+You may also specify options that apply to certain types of views:
+
+	$('#calendar').fullCalendar({
+		views: {
+			basic: {
+				// options apply to month, basicWeek, and basicDay
+			},
+			agenda: {
+				// options apply to agendaWeek and agendaDay views
+			},
+			week: {
+				// options apply to basicWeek and agendaWeek
+			},
+			day: {
+				// options apply to basicDay and agendaDay
+			}
+		}
+	});
+
+If an option is not matched by a View-Specific Option, the option value is taken from the top-level options object (whatever you passed in to `$('#calendar').fullCalendar({ })`).
+
+
+Legacy
+------
+
+Prior to version 2.2.4, View-Specific Options were not available.
+Use the now-deprecated [View Option Hashes](View_Option_Hash) instead.

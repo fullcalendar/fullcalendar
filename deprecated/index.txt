@@ -3,3 +3,4 @@ Deprecated
 ==========
 
 - [weekMode](../display/weekMode)
+- [View Option Hash](../views/View_Option_Hash)

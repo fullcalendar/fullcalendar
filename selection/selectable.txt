@@ -5,7 +5,7 @@ selectable
 Allows a user to highlight multiple days or timeslots by clicking and dragging.
 
 <div class='spec' markdown='1'>
-Boolean/[View Option Hash](../views/View_Option_Hash/), *default*: `false`
+Boolean, *default*: `false`
 </div>
 
 To let the user make selections by clicking and dragging,
