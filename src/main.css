@@ -33,6 +33,7 @@
 	.fc-toolbar .fc-center {
 		float: inherit;
 		margin-bottom: 10px;
+		display: block;
 	}
 	.fc .fc-toolbar > * > * {
 		float: inherit;
