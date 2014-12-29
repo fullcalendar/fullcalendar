@@ -332,25 +332,7 @@ function EventManager(options) { // assumed to be a calendar
 			event.end = null;
 		}
 
-		// if the allDay value has not changed, but one of the dates has been given a time,
-		// infer that the caller wants the event to be timed (not allDay).
-		if (
-			event.allDay == event._allDay &&
-			(event.start.hasTime() || (event.end && event.end.hasTime()))
-		) {
-			event.allDay = false;
-		}
-
-		// if the allDay values has changed, but the end is no longer consistent, clear it
-		if (
-			event.allDay != event._allDay &&
-			event.end &&
-			event.end.hasTime() == event.allDay
-		) {
-			event.end = null;
-		}
-
-		mutateEvent(event, getMiscEventProps(event));
+		mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
 		reportEvents(cache); // reports event modifications (so we can redraw)
 	}
 
