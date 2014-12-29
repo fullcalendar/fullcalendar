@@ -6,40 +6,21 @@ setDefaults({
 	fixedWeekCount: true
 });
 
-fcViews.month = BasicView.extend({ // MonthView
+var MonthView = fcViews.month = BasicView.extend({
 
+	// Produces information about what range to display
 	computeRange: function(date) {
-		var rowCnt;
-		var intervalStart, intervalEnd;
-		var start, end;
+		var range = BasicView.prototype.computeRange.call(this, date); // get value from super-method
 
-		intervalStart = date.clone().stripTime().startOf('month');
-		intervalEnd = intervalStart.clone().add(1, 'months');
-
-		start = intervalStart.clone();
-		start = this.skipHiddenDays(start); // move past the first week if no visible days
-		start.startOf('week');
-		start = this.skipHiddenDays(start); // move past the first invisible days of the week
-
-		end = intervalEnd.clone();
-		end = this.skipHiddenDays(end, -1, true); // move in from the last week if no visible days
-		end.add((7 - end.weekday()) % 7, 'days'); // move to end of week if not already
-		end = this.skipHiddenDays(end, -1, true); // move in from the last invisible days of the week
-
-		rowCnt = Math.ceil( // need to ceil in case there are hidden days
-			end.diff(start, 'weeks', true) // returnfloat=true
-		);
 		if (this.isFixedWeeks()) {
-			end.add(6 - rowCnt, 'weeks');
-			rowCnt = 6;
+			// ensure 6 weeks
+			range.end.add(
+				6 - range.end.diff(range.start, 'weeks'),
+				'weeks'
+			);
 		}
 
-		return {
-			start: start,
-			end: end,
-			intervalStart: intervalStart,
-			intervalEnd: intervalEnd
-		};
+		return range;
 	},
 
 
@@ -67,3 +48,5 @@ fcViews.month = BasicView.extend({ // MonthView
 	}
 
 });
+
+MonthView.duration = { months: 1 };

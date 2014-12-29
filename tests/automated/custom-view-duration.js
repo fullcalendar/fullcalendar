@@ -145,4 +145,45 @@ describe('custom view duration', function() {
 		expect($('.fc-time-grid .fc-day').length).toBe(14);
 		expect($('.fc-time-grid .fc-day:first')).toBeMatchedBy('[data-date="2014-12-21"]'); // week start
 	});
+
+	it('renders a two month agenda view', function() {
+		options.views.agendaTwoMonth = {
+			type: 'agenda',
+			duration: { months: 2 }
+		};
+		options.defaultView = 'agendaTwoMonth';
+		options.defaultDate = '2014-11-27';
+		$('#cal').fullCalendar(options);
+		expect($('.fc-day-grid .fc-row').length).toBe(1);
+		expect($('.fc-day-grid .fc-row .fc-day').length).toBe(61); // one long row
+		expect($('.fc-time-grid .fc-day').length).toBe(61);
+		expect($('.fc-time-grid .fc-day:first')).toBeMatchedBy('[data-date="2014-11-01"]');
+		expect($('.fc-time-grid .fc-day:last')).toBeMatchedBy('[data-date="2014-12-31"]');
+	});
+
+	it('renders a two month basic view', function() {
+		options.views.basicTwoWeek = {
+			type: 'basic',
+			duration: { months: 2 }
+		};
+		options.defaultView = 'basicTwoWeek';
+		options.defaultDate = '2014-11-27';
+		$('#cal').fullCalendar(options);
+		expect($('.fc-day-grid .fc-row').length).toBe(10);
+		expect($('.fc-day-grid .fc-row:first .fc-day').length).toBe(7);
+		expect($('.fc-day-grid .fc-day:first')).toBeMatchedBy('[data-date="2014-10-26"]');
+		expect($('.fc-day-grid .fc-day:last')).toBeMatchedBy('[data-date="2015-01-03"]');
+	});
+
+	it('renders a one year basic view', function() {
+		options.views.basicYear = {
+			type: 'basic',
+			duration: { years: 1 }
+		};
+		options.defaultView = 'basicYear';
+		options.defaultDate = '2014-11-27';
+		$('#cal').fullCalendar(options);
+		expect($('.fc-day-grid .fc-day:first')).toBeMatchedBy('[data-date="2013-12-29"]');
+		expect($('.fc-day-grid .fc-day:last')).toBeMatchedBy('[data-date="2015-01-03"]');
+	});
 });

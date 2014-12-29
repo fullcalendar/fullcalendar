@@ -35,7 +35,6 @@ fcViews.agenda = View.extend({ // AgendaView
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
-			this.dayGrid.breakOnWeeks = false;
 
 			// the coordinate grid will be a combination of both subcomponents' grids
 			this.coordMap = new ComboCoordMap([

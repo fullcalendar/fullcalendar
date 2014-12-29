@@ -286,6 +286,7 @@ function diffDay(a, b) {
 // Computes the larges whole-unit period of time, as a duration object.
 // For example, 48 hours will be {days:2} whereas 49 hours will be {hours:49}.
 // Accepts start/end, a range object, or an original duration object.
+/* (never used)
 function computeIntervalDuration(start, end) {
 	var durationInput = {};
 	var i, unit;
@@ -302,6 +303,7 @@ function computeIntervalDuration(start, end) {
 	durationInput[unit] = val;
 	return moment.duration(durationInput);
 }
+*/
 
 
 // Computes the unit name of the largest whole-unit period of time.

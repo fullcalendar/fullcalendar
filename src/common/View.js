@@ -109,48 +109,45 @@ var View = fc.View = Class.extend({
 	// Updates all internal dates for displaying the given range.
 	// Expects all values to be normalized (like what computeRange does).
 	setRange: function(range) {
-		this.start = range.start;
-		this.end = range.end;
-
-		// all interval-related is computed if not explicitly provided by computeRange
-		this.intervalStart = range.intervalStart || range.start.clone();
-		this.intervalEnd = range.intervalEnd || range.end.clone();
-		this.intervalDuration = range.intervalDuration || computeIntervalDuration(this.intervalStart, this.intervalEnd);
-		this.intervalUnit = range.intervalUnit || computeIntervalUnit(this.intervalDuration);
+		$.extend(this, range);
 	},
 
 
-	// Given a single current, produce information about what range to display.
-	// Subclasses can override. Must return {start,end} at the very least.
+	// Given a single current date, produce information about what range to display.
+	// Subclasses can override. Must return all properties.
 	computeRange: function(date) {
-		var intervalDuration = moment.duration(this.opt('duration') || { days: 1 });
+		var intervalDuration = moment.duration(this.opt('duration') || this.constructor.duration || { days: 1 });
 		var intervalUnit = computeIntervalUnit(intervalDuration);
-		var start = date.clone().startOf(intervalUnit);
-		var end = start.clone().add(intervalDuration);
+		var intervalStart = date.clone().startOf(intervalUnit);
+		var intervalEnd = intervalStart.clone().add(intervalDuration);
+		var start, end;
 
 		// normalize the range's time-ambiguity
 		if (computeIntervalAs('days', intervalDuration)) { // whole-days?
-			start.stripTime();
-			end.stripTime();
+			intervalStart.stripTime();
+			intervalEnd.stripTime();
 		}
 		else { // needs to have a time?
-			if (!start.hasTime()) {
-				start = this.calendar.rezoneDate(start); // convert to current timezone, with a 00:00 time
+			if (!intervalStart.hasTime()) {
+				intervalStart = this.calendar.rezoneDate(intervalStart); // convert to current timezone, with 00:00
 			}
-			if (!end.hasTime()) {
-				end = this.calendar.rezoneDate(end); // convert to current timezone, with a 00:00 time
+			if (!intervalEnd.hasTime()) {
+				intervalEnd = this.calendar.rezoneDate(intervalEnd); // convert to current timezone, with 00:00
 			}
 		}
 
-		// trim the range's edges for hidden days
+		start = intervalStart.clone();
 		start = this.skipHiddenDays(start);
+		end = intervalEnd.clone();
 		end = this.skipHiddenDays(end, -1, true); // exclusively move backwards
 
 		return {
-			start: start,
-			end: end,
 			intervalDuration: intervalDuration,
-			intervalUnit: intervalUnit
+			intervalUnit: intervalUnit,
+			intervalStart: intervalStart,
+			intervalEnd: intervalEnd,
+			start: start,
+			end: end
 		};
 	},
 
