@@ -33,7 +33,6 @@ $.extend(ResourceView.prototype, {
 		this.calendar.trigger.apply(
 			this.calendar, ['select', this, start, end, ev, this, resources]
 		);
-
 	},
 
 	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
