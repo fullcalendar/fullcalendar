@@ -92,6 +92,7 @@ $.extend(Grid.prototype, {
 		var start; // the inclusive start of the selection
 		var end; // the *exclusive* end of the selection
 		var dayEl;
+		var sourceSeg;
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
@@ -111,9 +112,18 @@ $.extend(Grid.prototype, {
 					start = dates[0];
 					end = dates[1].clone().add(_this.cellDuration);
 
+					if (view.name === 'resourceDay') {
+						sourceSeg = {
+							event: {
+								editable: false,
+								resources: [view.resources()[cell.col].id]
+							}
+						};
+					}
+
 					if (isSelectable) {
 						if (calendar.isSelectionAllowedInRange(start, end)) { // allowed to select within this range?
-							_this.renderSelection(start, end);
+							_this.renderSelection(start, end, sourceSeg);
 						}
 						else {
 							dates = null; // flag for an invalid selection
@@ -133,8 +143,14 @@ $.extend(Grid.prototype, {
 						view.trigger('dayClick', dayEl[0], start, ev);
 					}
 					if (isSelectable) {
+						var resources;
+						if(view.name === 'resourceDay') {
+							resources = $.map(dayEl, function(column) {
+								return view.resources()[ $(column).index()-1 ].id;
+							});
+						}
 						// the selection will already have been rendered. just report it
-						view.reportSelection(start, end, ev);
+						view.reportSelection(start, end, ev, resources);
 					}
 				}
 				enableCursor();
@@ -230,8 +246,8 @@ $.extend(Grid.prototype, {
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	renderSelection: function(start, end) {
-		this.renderHighlight(start, end);
+	renderSelection: function(start, end, sourceSeg) {
+		this.renderHighlight(start, end, sourceSeg);
 	},
 
 
@@ -246,8 +262,17 @@ $.extend(Grid.prototype, {
 
 
 	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.renderFill('highlight', this.rangeToSegs(start, end));
+	renderHighlight: function(start, end, sourceSeg) {
+		var segs = this.rangeToSegs(start, end);
+		var view = this.view;
+
+		if(view.name === "resourceDay") {
+			segs = $.grep(segs, function(seg) {
+				return view.hasResource(sourceSeg.event, view.resources()[seg.leftCol]);
+			});
+		}
+
+		this.renderFill('highlight', segs);
 	},
 
 

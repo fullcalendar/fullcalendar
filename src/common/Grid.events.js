@@ -257,6 +257,7 @@ $.extend(Grid.prototype, {
 		var el = seg.el;
 		var event = seg.event;
 		var newStart, newEnd;
+		var originalResources;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -279,6 +280,7 @@ $.extend(Grid.prototype, {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isDraggingSeg = true;
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
+				originalResources = event.resources && event.resources.slice(); // copy the resources;
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
@@ -286,6 +288,10 @@ $.extend(Grid.prototype, {
 				var res = _this.computeDraggedEventDates(seg, origDate, date);
 				newStart = res.start;
 				newEnd = res.end;
+
+				if (view.name === 'resourceDay') {
+					event.resources = [view.resources()[cell.col].id];
+				}
 
 				if (calendar.isEventAllowedInRange(event, newStart, res.visibleEnd)) { // allowed to drop here?
 					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
@@ -310,6 +316,12 @@ $.extend(Grid.prototype, {
 			},
 			dragStop: function(ev) {
 				var hasChanged = newStart && !newStart.isSame(event.start);
+
+				if (view.name === 'resourceDay') {
+					var sameResources = $(originalResources).not(event.resources).length === 0 &&
+							$(event.resources).not(originalResources).length === 0;
+					hasChanged = hasChanged || !sameResources;
+				}
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!hasChanged, function() {
@@ -635,12 +647,22 @@ $.extend(Grid.prototype, {
 	eventRangeToSegs: function(eventRange, rangeToSegsFunc) {
 		var segs;
 		var i, seg;
+		var view = this.view;
 
 		if (rangeToSegsFunc) {
 			segs = rangeToSegsFunc(eventRange.start, eventRange.end);
 		}
 		else {
 			segs = this.rangeToSegs(eventRange.start, eventRange.end); // defined by the subclass
+		}
+
+		if (view.name === 'resourceDay') {
+				// Filters the events according to the resource columns
+				var resources = view.resources();
+
+				segs = $.grep(segs, function(seg, i) {
+					return resources[i] && view.hasResource(eventRange.event, resources[i]);
+				});
 		}
 
 		for (i = 0; i < segs.length; i++) {
@@ -703,4 +725,3 @@ function compareSegs(seg1, seg2) {
 		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
 }
-

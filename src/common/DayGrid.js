@@ -152,7 +152,8 @@ $.extend(DayGrid.prototype, {
 		// always render a highlight underneath
 		this.renderHighlight(
 			start,
-			end || this.view.calendar.getDefaultEventEnd(true, start)
+			end || this.view.calendar.getDefaultEventEnd(true, start),
+			seg
 		);
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
@@ -183,7 +184,7 @@ $.extend(DayGrid.prototype, {
 
 	// Renders a visual indication of an event being resized
 	renderResize: function(start, end, seg) {
-		this.renderHighlight(start, end);
+		this.renderHighlight(start, end, seg);
 		this.renderRangeHelper(start, end, seg);
 	},
 

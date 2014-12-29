@@ -189,7 +189,7 @@ function Calendar(element, instanceOptions) {
 	};
 
 
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
+	// Given an event's allDay status and start date, return what its fallback end date should be.
 	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
 		var end = start.clone();
 
@@ -243,6 +243,7 @@ function Calendar(element, instanceOptions) {
 
 
 	EventManager.call(t, options);
+	ResourceManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
 
@@ -357,6 +358,12 @@ function Calendar(element, instanceOptions) {
 	// Renders a view because of a date change, view-type change, or for the first time
 	function renderView(delta, viewName) {
 		ignoreWindowResize++;
+
+		// if forcing the rendering, pretend we are changing the view
+		if (delta === true) {
+			viewName = viewName || currentView.name;
+			currentView.name = delta = undefined;
+		}
 
 		// if viewName is changing, destroy the old view
 		if (currentView && viewName && currentView.name !== viewName) {
@@ -495,7 +502,15 @@ function Calendar(element, instanceOptions) {
 		if (elementVisible()) {
 			freezeContentHeight();
 			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
+			currentView.renderEvents($.grep(events, function(event) {
+			var end = event.end;
+
+			if(!end) {
+				end = currentView.calendar.getEventEnd(event);
+			}
+
+				return end > currentView.start && event.start < currentView.end;
+			}));
 			unfreezeContentHeight();
 		}
 	}

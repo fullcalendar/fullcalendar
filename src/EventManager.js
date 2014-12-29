@@ -501,6 +501,11 @@ function EventManager(options) { // assumed to be a calendar
 			out.className = [];
 		}
 
+		out.resources = out.resources || [];
+		if (typeof out.resources == 'string') {
+			out.resources = out.resources.split(/\s+/);
+		}
+
 		start = input.start || input.date; // "date" is an alias for "start"
 		end = input.end;
 
