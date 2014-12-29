@@ -17,11 +17,10 @@ describe('view-specific options', function() {
 
 	function testEachView(viewsAndVals) {
 		$('#cal').fullCalendar(options);
-		for (var view in viewsAndVals) {
-			var val = viewsAndVals[view];
+		$.each(viewsAndVals, function(view, val) {
 			$('#cal').fullCalendar('changeView', view);
 			expect($('h2')).toHaveText(val);
-		}
+		});
 	}
 
 	it('can target a specific view (month)', function() {

@@ -403,7 +403,7 @@ function Calendar(element, instanceOptions) {
 		var viewOptionsChain = [];
 		var viewOptions;
 		var viewClass;
-		var duration, unit;
+		var duration;
 
 		if (viewSpecCache[requestedViewType]) {
 			return viewSpecCache[requestedViewType];
@@ -436,10 +436,11 @@ function Calendar(element, instanceOptions) {
 			duration = viewOptions.duration || viewClass.duration;
 			if (duration) {
 				duration = moment.duration(duration);
-				unit = computeIntervalUnit(duration);
-				if (hash[unit]) {
-					viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
-				}
+				$.each(intervalUnits, function(i, unit) {
+					if (hash[unit] && computeIntervalAs(unit, duration) === 1) {
+						viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
+					}
+				});
 			}
 
 			return (viewSpecCache[requestedViewType] = {

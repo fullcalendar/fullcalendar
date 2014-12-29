@@ -711,7 +711,7 @@ function EventManager(options) { // assumed to be a calendar
 		if (props.end === undefined) {
 			props.end = event.end ? event.end.clone() : null;
 		}
-		if (props.allDay == undefined) { // is null or undefined?
+		if (props.allDay == null) { // is null or undefined?
 			props.allDay = event.allDay;
 		}
 

@@ -16,7 +16,7 @@ setDefaults({
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
-var AgendaView = fcViews.agenda = View.extend({
+fcViews.agenda = View.extend({ // AgendaView
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -35,6 +35,7 @@ var AgendaView = fcViews.agenda = View.extend({
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
+			this.dayGrid.breakOnWeeks = false;
 
 			// the coordinate grid will be a combination of both subcomponents' grids
 			this.coordMap = new ComboCoordMap([

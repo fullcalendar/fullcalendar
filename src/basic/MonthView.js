@@ -6,7 +6,7 @@ setDefaults({
 	fixedWeekCount: true
 });
 
-var MonthView = fcViews.month = BasicView.extend({
+fcViews.month = BasicView.extend({ // MonthView
 
 	computeRange: function(date) {
 		var rowCnt;

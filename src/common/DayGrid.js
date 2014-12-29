@@ -6,6 +6,7 @@ var DayGrid = Grid.extend({
 
 	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
+	breakOnWeeks: null, // allows the outside view to override this rendering setting
 
 	cellDates: null, // flat chronological array of each cell's dates
 	dayToCellOffsets: null, // maps days offsets from grid's start date, to cell offsets
@@ -125,11 +126,15 @@ var DayGrid = Grid.extend({
 
 	// Initializes row/col information
 	updateCells: function() {
-		var breakOnWeeks = /year|month|week/.test(this.view.intervalUnit);
+		var breakOnWeeks = this.breakOnWeeks; // look at the override first
 		var cellDates;
 		var firstDay;
 		var rowCnt;
 		var colCnt;
+
+		if (breakOnWeeks == null) { // not overridden. compute it
+			breakOnWeeks = /year|month|week/.test(this.view.intervalUnit);
+		}
 
 		this.updateCellDates(); // populates cellDates and dayToCellOffsets
 		cellDates = this.cellDates;
