@@ -54,7 +54,8 @@ var defaults = {
 	titleFormat: {
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
 		week: 'll', // like "Sep 4 1986"
-		day: 'LL' // like "September 4 1986"
+		day: 'LL', // like "September 4 1986"
+		resourceDay: 'LL - dddd' // like "September 4 1986 - Monday"
 	},
 	columnFormat: {
 		month: 'ddd', // like "Sat"
@@ -9844,7 +9845,6 @@ $.extend(ResourceView.prototype, {
 		this.calendar.trigger.apply(
 			this.calendar, ['select', this, start, end, ev, this, resources]
 		);
-
 	},
 
 	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
