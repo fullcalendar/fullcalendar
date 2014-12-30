@@ -57,8 +57,7 @@ For advanced developers, FullCalendar provides an API for building custom views 
 		},
 
 		renderEvents: function(events) {
-			// reponsible for rendering the given Event Objects. Must return an array of
-			// {event,el} objects, the given Event Object and its associated jQuery element.
+			// reponsible for rendering the given Event Objects
 		},
 
 		destroyEvents: function() {

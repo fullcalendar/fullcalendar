@@ -20,16 +20,16 @@ You may also specify options that apply to certain types of views:
 	$('#calendar').fullCalendar({
 		views: {
 			basic: {
-				// options apply to month, basicWeek, and basicDay
+				// options apply to basicWeek and basicDay views
 			},
 			agenda: {
 				// options apply to agendaWeek and agendaDay views
 			},
 			week: {
-				// options apply to basicWeek and agendaWeek
+				// options apply to basicWeek and agendaWeek views
 			},
 			day: {
-				// options apply to basicDay and agendaDay
+				// options apply to basicDay and agendaDay views
 			}
 		}
 	});
