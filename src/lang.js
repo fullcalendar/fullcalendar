@@ -50,23 +50,28 @@ fc.lang = function(langCode, newFcOptions) {
 	// get the FullCalendar internal option hash for this language. create if necessary
 	fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
 
-	if (newFcOptions) { // provided new options for this language?
-
-		// this is as good a time as any to compute options based off of moment locale data
-		momOptions = getMomentLocaleData(langCode);
-		$.each(momComputableOptions, function(name, func) {
-			fcOptions[name] = func(momOptions, fcOptions);
-		});
-
-		// merge the new options on top of the old
+	// provided new options for this language? merge them in
+	if (newFcOptions) {
 		mergeOptions(fcOptions, newFcOptions);
 	}
+
+	// compute language options that weren't defined.
+	// always do this. newFcOptions can be undefined when initializing from i18n file,
+	// so no way to tell if this is an initialization or a default-setting.
+	momOptions = getMomentLocaleData(langCode); // will fall back to en
+	$.each(momComputableOptions, function(name, func) {
+		if (fcOptions[name] === undefined) {
+			fcOptions[name] = func(momOptions, fcOptions);
+		}
+	});
 
 	// set it as the default language for FullCalendar
 	defaults.lang = langCode;
 };
 
 
+// NOTE: can't guarantee any of these computations will run because not every language has datepicker
+// configs, so make sure there are English fallbacks for these in the defaults file.
 var dpComputableOptions = {
 
 	defaultButtonText: function(dpOptions) {
@@ -139,5 +144,6 @@ function getMomentLocaleData(langCode) {
 }
 
 
-// initialize the default language. forces computation of moment-derived English options.
+// Initialize English by forcing computation of moment-derived options.
+// Also, sets it as the default.
 fc.lang('en', englishDefaults);
