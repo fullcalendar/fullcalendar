@@ -1,6 +1,6 @@
 
-Custom Views
-============
+Custom Views *2.2.5*
+====================
 
 It is possible to customize the existing [Available Views]() in addition to programming your own from scratch.
 
