@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.4
+ * FullCalendar v2.2.5
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -128,7 +128,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.4" };
+var fc = $.fullCalendar = { version: "2.2.5" };
 var fcViews = fc.views = {};
 
 
@@ -6924,7 +6924,7 @@ function Calendar(element, instanceOptions) {
 	t.option = option;
 	t.trigger = trigger;
 	t.isValidViewType = isValidViewType;
-	t.getDefaultViewButtonText = getDefaultViewButtonText;
+	t.getViewButtonText = getViewButtonText;
 
 
 
@@ -6934,7 +6934,7 @@ function Calendar(element, instanceOptions) {
 
 
 	var localeData = createObject( // make a cheap copy
-		getMomentLocaleData(options.lang)
+		getMomentLocaleData(options.lang) // will fall back to en
 	);
 
 	if (options.monthNames) {
@@ -7066,6 +7066,14 @@ function Calendar(element, instanceOptions) {
 
 		return end;
 	};
+
+
+	// Produces a human-readable string for the given duration.
+	// Side-effect: changes the locale of the given duration.
+	function humanizeDuration(duration) {
+		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
+			.humanize();
+	}
 
 
 	
@@ -7263,12 +7271,15 @@ function Calendar(element, instanceOptions) {
 
 	// Gets information about how to create a view
 	function getViewSpec(requestedViewType) {
-		var hash = options.views || {};
+		var allDefaultButtonText = options.defaultButtonText || {};
+		var allButtonText = options.buttonText || {};
+		var hash = options.views || {}; // the `views` option object
 		var viewType = requestedViewType;
 		var viewOptionsChain = [];
 		var viewOptions;
 		var viewClass;
-		var duration;
+		var duration, unit, unitIsSingle = false;
+		var buttonText;
 
 		if (viewSpecCache[requestedViewType]) {
 			return viewSpecCache[requestedViewType];
@@ -7297,20 +7308,33 @@ function Calendar(element, instanceOptions) {
 
 		if (viewClass) {
 
-			// options that are specified per the view's duration, like "week" or "day"
 			duration = viewOptions.duration || viewClass.duration;
 			if (duration) {
 				duration = moment.duration(duration);
-				$.each(intervalUnits, function(i, unit) {
-					if (hash[unit] && computeIntervalAs(unit, duration) === 1) {
-						viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
-					}
-				});
+				unit = computeIntervalUnit(duration);
+				unitIsSingle = computeIntervalAs(unit, duration) === 1;
 			}
+
+			// options that are specified per the view's duration, like "week" or "day"
+			if (unitIsSingle && hash[unit]) {
+				viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
+			}
+
+			// compute the final text for the button representing this view
+			buttonText =
+				allButtonText[requestedViewType] || // init options, like "agendaWeek"
+				(unitIsSingle ? allButtonText[unit] : null) || // init options, like "week"
+				allDefaultButtonText[requestedViewType] || // lang data, like "agendaWeek"
+				(unitIsSingle ? allDefaultButtonText[unit] : null) || // lang data, like "week"
+				viewOptions.buttonText ||
+				viewClass.buttonText ||
+				(duration ? humanizeDuration(duration) : null) ||
+				requestedViewType;
 
 			return (viewSpecCache[requestedViewType] = {
 				'class': viewClass,
-				options: viewOptions
+				options: viewOptions,
+				buttonText: buttonText
 			});
 		}
 	}
@@ -7322,15 +7346,12 @@ function Calendar(element, instanceOptions) {
 	}
 
 
-	// Gets the text that should be displayed on a view's button in the header, by default.
-	// Values in the global `buttonText` option will eventually override this value.
-	function getDefaultViewButtonText(viewType) {
+	// Gets the text that should be displayed on a view's button in the header
+	function getViewButtonText(viewType) {
 		var spec = getViewSpec(viewType);
 
-		if (spec) { // valid view?
-			return smartProperty(options.defaultButtonText, viewType) || // takes precedence. defined by languages
-				spec.options.buttonText || // defined by custom view options
-				viewType; // last resort
+		if (spec) {
+			return spec.buttonText;
 		}
 	}
 	
@@ -7709,7 +7730,7 @@ function Header(calendar, options) {
 					var themeIcon;
 					var normalIcon;
 					var defaultText;
-					var defaultViewText;
+					var viewText; // highest priority
 					var customText;
 					var innerHtml;
 					var classes;
@@ -7730,7 +7751,7 @@ function Header(calendar, options) {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
-							defaultViewText = calendar.getDefaultViewButtonText(buttonName);
+							viewText = calendar.getViewButtonText(buttonName);
 						}
 						if (buttonClick) {
 
@@ -7740,8 +7761,8 @@ function Header(calendar, options) {
 							defaultText = smartProperty(options.defaultButtonText, buttonName); // from languages
 							customText = smartProperty(options.buttonText, buttonName);
 
-							if (customText) {
-								innerHtml = htmlEscape(customText);
+							if (viewText || customText) {
+								innerHtml = htmlEscape(viewText || customText);
 							}
 							else if (themeIcon && options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
@@ -7750,7 +7771,7 @@ function Header(calendar, options) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								innerHtml = htmlEscape(defaultViewText || defaultText || buttonName);
+								innerHtml = htmlEscape(defaultText || buttonName);
 							}
 
 							classes = [
