@@ -22,8 +22,8 @@
 .fc-listMonth-view .fc-row .fc-content-skeleton .fc-day-number {
 	text-align: left;
 	line-height: 2em;
-	background-color: #DBDBDB;
-	border-bottom: 1px solid #BDBDBD;
+	background-color: #E7E7E7;
+	border-bottom: 1px solid #DBDADA;
 	font-weight: bold;
 }
 
