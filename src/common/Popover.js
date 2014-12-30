@@ -82,6 +82,7 @@ var Popover = Class.extend({
 		// only hide the popover if the click happened outside the popover
 		if (this.el && !$(ev.target).closest(this.el).length) {
 			this.hide();
+			ev.stopPropagation();
 		}
 	},
 
