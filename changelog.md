@@ -1,4 +1,12 @@
 
+v2.2.5 (2014-12-30)
+-------------------
+
+- `buttonText` specified for custom views via the `view` option
+	- bugfix: wrong default value, couldn't override default
+	- feature: default value taken from locale
+
+
 v2.2.4 (2014-12-29)
 -------------------
 
