@@ -25,7 +25,6 @@ var ListView = fcViews.list = View.extend({
 	},
 
 	// Renders the view into `this.el`, which should already be assigned.
-	// rowCnt have been calculated by a subclass and passed here.
 	render: function() {
 
 		// needed for cell-to-date and date-to-cell calculations in View
@@ -113,7 +112,8 @@ var ListView = fcViews.list = View.extend({
 
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
-	numberCellHtml: function(row, col, date) {
+	numberCellHtml: function(cell) {
+		var date = cell.start;
 		var classes;
 
 		if (!this.dayNumbersVisible) { // if there are week numbers but not day numbers
