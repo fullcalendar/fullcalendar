@@ -4,30 +4,33 @@
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-function ListView(calendar) {
-	View.call(this, calendar); // call the super-constructor
-	this.dayGrid = new DayGrid(this);
-	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
-}
-
-
-ListView.prototype = createObject(View.prototype); // define the super-class
-$.extend(ListView.prototype, {
-
+var ListView = fcViews.list = View.extend({
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 	dayNumbersVisible: false, // display day numbers on each day cell?
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 	headRowEl: null, // the fake row element of the day-of-week header
 	defultEventLimit: 5, //we need to show some events in each cell 
 
+	initialize: function() {
+		this.dayGrid = new DayGrid(this);
+		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
+	},
+
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
+
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before setRange
+		this.dayGrid.setRange(range);
+	},
+
 	// Renders the view into `this.el`, which should already be assigned.
 	// rowCnt have been calculated by a subclass and passed here.
-	render: function(rowCnt) {
+	render: function() {
 
 		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = rowCnt;
-		this.colCnt = 1;
-
+		this.dayGrid.colCnt = 1;
+		this.dayGrid.rowCnt = this.dayGrid.cellDates.length;
 		this.dayNumbersVisible = false;
 		this.dayGrid.numbersVisible = true;
 
@@ -87,7 +90,7 @@ $.extend(ListView.prototype, {
 		return '' +
 			'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
-					this.cellToDate(row,0).format('ddd MMM D, YYYY') +
+					this.dayGrid.getCell(row, 0).start.format('ddd MMM D, YYYY') +
 				'</span>' +
 			'</td>';
 	},
@@ -278,3 +281,4 @@ $.extend(ListView.prototype, {
 	}
 
 });
+ListView.duration = { months: 1 };
