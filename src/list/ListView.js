@@ -144,7 +144,12 @@ var ListView = fcViews.list = View.extend({
 
 			return '' +
 				'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-					date.format('ddd MMM D, YYYY') +
+					'<span class="fc-list-header-left">' +
+						date.format('dddd') +
+					'</span>' +
+					'<span class="fc-list-header-right">' +
+						date.format('MMM D, YYYY') +
+					'</span>' +
 				'</td>';
 		}
 	},

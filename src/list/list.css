@@ -18,3 +18,30 @@
 .fc-listMonth-view .fc-row .fc-content-skeleton {
 	padding-bottom: 0;
 }
+
+.fc-listMonth-view .fc-row .fc-content-skeleton .fc-day-number {
+	text-align: left;
+	line-height: 2em;
+	background-color: #DBDBDB;
+	border-bottom: 1px solid #BDBDBD;
+	font-weight: bold;
+}
+
+.fc-listMonth-view .fc-row .fc-content-skeleton .fc-day-number .fc-list-header-left {
+	float: left;
+	padding-left: 5px;
+}
+
+.fc-listMonth-view .fc-row .fc-content-skeleton .fc-day-number .fc-list-header-right {
+	float: right;
+	padding-right: 5px;
+	color: #666;
+}
+
+.fc-listMonth-view .fc-row .fc-content-skeleton  tbody:before,
+.fc-listMonth-view .fc-row .fc-content-skeleton  tbody:after {
+	line-height: .5em;
+	content: "-";
+	color: white;
+	display: block;
+}
