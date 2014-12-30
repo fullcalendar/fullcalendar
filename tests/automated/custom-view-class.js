@@ -24,9 +24,6 @@ describe('custom view class', function() {
 				expect(moment.isMoment(events[0].start)).toBe(true);
 				expect(moment.isMoment(events[0].end)).toBe(true);
 			},
-			getEventSegs: function() {
-				return [];
-			},
 			destroyEvents: function() {
 			},
 			renderSelection: function(range) {
@@ -42,7 +39,6 @@ describe('custom view class', function() {
 		spyOn(methods, 'render').and.callThrough();
 		spyOn(methods, 'setHeight').and.callThrough();
 		spyOn(methods, 'renderEvents').and.callThrough();
-		spyOn(methods, 'getEventSegs').and.callThrough();
 		spyOn(methods, 'destroyEvents').and.callThrough();
 		spyOn(methods, 'renderSelection').and.callThrough();
 		spyOn(methods, 'destroySelection').and.callThrough();
@@ -65,7 +61,6 @@ describe('custom view class', function() {
 		expect(methods.render).toHaveBeenCalled();
 		expect(methods.setHeight).toHaveBeenCalled();
 		expect(methods.renderEvents).toHaveBeenCalled();
-		expect(methods.getEventSegs).toHaveBeenCalled();
 
 		$('#cal').fullCalendar('rerenderEvents');
 

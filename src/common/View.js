@@ -438,6 +438,7 @@ var View = fc.View = Class.extend({
 	// Retrieves all the rendered segment objects for the view
 	getEventSegs: function() {
 		// subclasses must implement
+		return [];
 	},
 
 
