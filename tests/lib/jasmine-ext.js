@@ -162,6 +162,25 @@ beforeEach(function() {
 					return result;
 				}
 			};
+		},
+		toIntersectWith: function() {
+			return {
+				compare: function(actual, expected) {
+					var subjectBounds = getBounds(actual);
+					var otherBounds = getBounds(expected);
+					var result = {
+						pass: subjectBounds && otherBounds &&
+							subjectBounds.right > otherBounds.left &&
+							subjectBounds.left < otherBounds.right &&
+							subjectBounds.bottom > otherBounds.top &&
+							subjectBounds.top < otherBounds.bottom
+					};
+					if (!result.pass) {
+						result.message = 'Element does not intersect with other element';
+					}
+					return result;
+				}
+			};
 		}
 
 	});

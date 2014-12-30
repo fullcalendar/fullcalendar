@@ -112,4 +112,63 @@ describe('columnFormat', function() {
             };
         });
     });
+
+    describe('using custom views', function() {
+
+        it('multi-year default only displays day-of-week', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiYear: {
+                        type: 'basic',
+                        duration: { years: 2 }
+                    }
+                },
+                defaultView: 'multiYear',
+                defaultDate: '2014-12-25'
+            });
+            expect($('.fc-day-header:first')).toHaveText('Sun');
+        });
+
+        it('multi-month default only displays day-of-week', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiMonth: {
+                        type: 'basic',
+                        duration: { months: 2 }
+                    }
+                },
+                defaultView: 'multiMonth',
+                defaultDate: '2014-12-25'
+            });
+            expect($('.fc-day-header:first')).toHaveText('Sun');
+        });
+
+        it('multi-week default only displays day-of-week', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiWeek: {
+                        type: 'basic',
+                        duration: { weeks: 2 }
+                    }
+                },
+                defaultView: 'multiWeek',
+                defaultDate: '2014-12-25'
+            });
+            expect($('.fc-day-header:first')).toHaveText('Sun');
+        });
+
+        it('multi-day default displays short full date', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiDay: {
+                        type: 'basic',
+                        duration: { days: 2 }
+                    }
+                },
+                defaultView: 'multiDay',
+                defaultDate: '2014-12-25'
+            });
+            expect($('.fc-day-header:first')).toHaveText('Thu 12/25');
+        });
+    });
 });

@@ -65,4 +65,34 @@ describe('timeFormat', function() {
 			expect(getRenderedEventTime()).toBe('153:00:00 - 175:00:00');
 		});
 	});
+
+	describe('when in multi-day custom basic view', function() {
+
+		beforeEach(function() {
+			options.views = {
+				basicTwoDay: {
+					type: 'basic',
+					duration: { days: 2 }
+				}
+			};
+			options.defaultView = 'basicTwoDay';
+		});
+
+		it('defaults to no end time', function() {
+			$('#cal').fullCalendar(options);
+			expect(getRenderedEventTime()).toBe('3p');
+		});
+	});
+
+	describe('when in basicDay view', function() {
+
+		beforeEach(function() {
+			options.defaultView = 'basicDay';
+		});
+
+		it('defaults to showing the end time', function() {
+			$('#cal').fullCalendar(options);
+			expect(getRenderedEventTime()).toBe('3p - 5p');
+		});
+	});
 });

@@ -356,6 +356,30 @@ describe('updateEvent', function() {
 		expect(relatedEvent.end).toEqualMoment('2014-05-15T06:00:00');
 	});
 
+	it('should copy color-related properties to related events', function() {
+		options.events = [
+			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
+			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+		];
+		init();
+		event.color = 'red';
+		$('#cal').fullCalendar('updateEvent', event);
+		expect(relatedEvent.color).toBe('red');
+	});
+
+	it('should non-standard properties to related events', function() {
+		options.events = [
+			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
+			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+		];
+		init();
+		event.someForeignKey = '123';
+		event.myObj = {};
+		$('#cal').fullCalendar('updateEvent', event);
+		expect(relatedEvent.someForeignKey).toBe('123');
+		expect(relatedEvent.myObj).toBeUndefined();
+	});
+
 	function whenMovingStart(should) {
 		describe('when moving an timed event\'s start', function() {
 			beforeEach(function() {
