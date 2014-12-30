@@ -1,4 +1,4 @@
-describe('custom view duration', function() {
+describe('custom view', function() {
 	var options;
 
 	beforeEach(function() {
@@ -185,5 +185,157 @@ describe('custom view duration', function() {
 		$('#cal').fullCalendar(options);
 		expect($('.fc-day-grid .fc-day:first')).toBeMatchedBy('[data-date="2013-12-29"]');
 		expect($('.fc-day-grid .fc-day:last')).toBeMatchedBy('[data-date="2015-01-03"]');
+	});
+
+	describe('buttonText', function() {
+
+		it('accepts buttonText exact-match override', function() {
+			options.buttonText = {
+				custom: 'over-ridden'
+			};
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 4 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('over-ridden');
+		});
+
+		it('accepts buttonText single-unit-match override', function() {
+			options.buttonText = {
+				day: '1day-over-ridden'
+			};
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 1 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('1day-over-ridden');
+		});
+
+		it('does not accept buttonText unit-match override when unit is more than one', function() {
+			options.buttonText = {
+				day: '1day!!!???'
+			};
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 2 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('awesome');
+		});
+
+		it('accepts lang\'s defaultButtonText single-unit-match override', function() {
+			options.lang = 'fr';
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 1 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('Jour');
+		});
+
+		it('does not accept lang\'s defaultButtonText single-unit-match override when unit>1', function() {
+			options.lang = 'fr';
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 2 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('awesome');
+		});
+
+		it('respects custom view\'s value', function() {
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 4 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('awesome');
+		});
+
+		it('respects custom view\'s value, even when a "smart" property name', function() {
+			options.views.basicFourDay = { // "basicFourDay" is a pitfall for smartProperty
+				type: 'basic',
+				duration: { days: 4 },
+				buttonText: 'awesome'
+			};
+			options.header = {
+				center: 'basicFourDay,month'
+			};
+			options.defaultView = 'basicFourDay';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-basicFourDay-button')).toHaveText('awesome');
+		});
+
+		it('falls back to humanized duration when not given', function() {
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 4 }
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('4 days');
+		});
+
+		it('falls back to humanized duration and respects language', function() {
+			options.lang = 'fr';
+			options.views.custom = {
+				type: 'basic',
+				duration: { days: 4 }
+			};
+			options.header = {
+				center: 'custom,month'
+			};
+			options.defaultView = 'custom';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-custom-button')).toHaveText('4 jours');
+			expect($('.fc-month-button')).toHaveText('Mois'); // test for the heck of it
+		});
+
+		it('falls back to view name when view lacks metadata', function() {
+			options.views = {
+				crazy: $.fullCalendar.View.extend()
+			};
+			options.header = {
+				center: 'crazy,month'
+			};
+			options.defaultView = 'crazy';
+			$('#cal').fullCalendar(options);
+			expect($('.fc-crazy-button')).toHaveText('crazy');
+		});
 	});
 });

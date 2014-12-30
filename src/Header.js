@@ -59,7 +59,7 @@ function Header(calendar, options) {
 					var themeIcon;
 					var normalIcon;
 					var defaultText;
-					var defaultViewText;
+					var viewText; // highest priority
 					var customText;
 					var innerHtml;
 					var classes;
@@ -80,7 +80,7 @@ function Header(calendar, options) {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
-							defaultViewText = calendar.getDefaultViewButtonText(buttonName);
+							viewText = calendar.getViewButtonText(buttonName);
 						}
 						if (buttonClick) {
 
@@ -90,8 +90,8 @@ function Header(calendar, options) {
 							defaultText = smartProperty(options.defaultButtonText, buttonName); // from languages
 							customText = smartProperty(options.buttonText, buttonName);
 
-							if (customText) {
-								innerHtml = htmlEscape(customText);
+							if (viewText || customText) {
+								innerHtml = htmlEscape(viewText || customText);
 							}
 							else if (themeIcon && options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
@@ -100,7 +100,7 @@ function Header(calendar, options) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								innerHtml = htmlEscape(defaultViewText || defaultText || buttonName);
+								innerHtml = htmlEscape(defaultText || buttonName);
 							}
 
 							classes = [
