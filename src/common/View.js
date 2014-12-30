@@ -40,7 +40,7 @@ var View = fc.View = Class.extend({
 	isHiddenDayHash: null,
 
 	// document handlers, bound to `this` object
-	documentMousedownProxy: null,
+	documentMousedownProxy: null, // TODO: doesn't work with touch
 
 
 	constructor: function(calendar, viewOptions, viewType) {

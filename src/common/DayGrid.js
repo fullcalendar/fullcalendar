@@ -248,15 +248,19 @@ var DayGrid = Grid.extend({
 			segFirst = Math.max(rowFirst, first);
 			segLast = Math.min(rowLast, last);
 
+			// deal with in-between indices
+			segFirst = Math.ceil(segFirst); // in-between starts round to next cell
+			segLast = Math.floor(segLast); // in-between ends round to prev cell
+
 			if (segFirst <= segLast) { // was there any intersection with the current row?
 
 				// must be matching integers to be the segment's start/end
 				isStart = segFirst === first;
 				isEnd = segLast === last;
 
-				// deal with in-between indices, and translate offsets to be relative to start-of-row
-				segFirst = Math.ceil(segFirst) - rowFirst; // in-between starts round to next cell
-				segLast = Math.floor(segLast) - rowFirst; // in-between ends round to prev cell
+				// translate offsets to be relative to start-of-row
+				segFirst -= rowFirst;
+				segLast -= rowFirst;
 
 				seg = { row: row, isStart: isStart, isEnd: isEnd };
 				if (isRTL) {
