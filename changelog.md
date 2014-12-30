@@ -1,4 +1,19 @@
 
+v2.2.4 (2014-12-29)
+-------------------
+
+- Arbitrary durations for basic/agenda views with the `views` option ([692])
+- Specify view-specific options using the `views` option. fixes [2283]
+- Deprecate view-option-hashes
+- Formalize and expose View API ([1055])
+- updateEvent method, more intuitive behavior. fixes [2194]
+
+[692]: https://code.google.com/p/fullcalendar/issues/detail?id=692
+[2283]: https://code.google.com/p/fullcalendar/issues/detail?id=2283
+[1055]: https://code.google.com/p/fullcalendar/issues/detail?id=1055
+[2194]: https://code.google.com/p/fullcalendar/issues/detail?id=2194
+
+
 v2.2.3 (2014-11-26)
 -------------------
 
