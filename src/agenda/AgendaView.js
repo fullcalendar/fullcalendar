@@ -7,16 +7,8 @@
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
-
 	scrollTime: '06:00:00',
-
 	slotDuration: '00:30:00',
-
-	axisFormat: generateAgendaAxisFormat,
-	timeFormat: {
-		agenda: generateAgendaTimeFormat
-	},
-
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
 	slotEventOverlap: true
@@ -24,43 +16,7 @@ setDefaults({
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
-
-function generateAgendaAxisFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(':mm', '(:mm)')
-		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-		.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-}
-
-
-function generateAgendaTimeFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(/\s*a$/i, ''); // remove trailing AM/PM
-}
-
-
-function AgendaView(calendar) {
-	View.call(this, calendar); // call the super-constructor
-
-	this.timeGrid = new TimeGrid(this);
-
-	if (this.opt('allDaySlot')) { // should we display the "all-day" area?
-		this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
-
-		// the coordinate grid will be a combination of both subcomponents' grids
-		this.coordMap = new ComboCoordMap([
-			this.dayGrid.coordMap,
-			this.timeGrid.coordMap
-		]);
-	}
-	else {
-		this.coordMap = this.timeGrid.coordMap;
-	}
-}
-
-
-AgendaView.prototype = createObject(View.prototype); // define the super-class
-$.extend(AgendaView.prototype, {
+fcViews.agenda = View.extend({ // AgendaView
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -74,17 +30,41 @@ $.extend(AgendaView.prototype, {
 	bottomRuleHeight: null,
 
 
+	initialize: function() {
+		this.timeGrid = new TimeGrid(this);
+
+		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
+			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
+
+			// the coordinate grid will be a combination of both subcomponents' grids
+			this.coordMap = new ComboCoordMap([
+				this.dayGrid.coordMap,
+				this.timeGrid.coordMap
+			]);
+		}
+		else {
+			this.coordMap = this.timeGrid.coordMap;
+		}
+	},
+
+
 	/* Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the view into `this.el`, which has already been assigned.
-	// `colCnt` has been calculated by a subclass and passed here.
-	render: function(colCnt) {
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
 
-		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = 1;
-		this.colCnt = colCnt;
+		this.timeGrid.setRange(range);
+		if (this.dayGrid) {
+			this.dayGrid.setRange(range);
+		}
+	},
+
+
+	// Renders the view into `this.el`, which has already been assigned
+	render: function() {
 
 		this.el.addClass('fc-agenda-view').html(this.renderHtml());
 
@@ -108,10 +88,6 @@ $.extend(AgendaView.prototype, {
 		}
 
 		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
-
-		View.prototype.render.call(this); // call the super-method
-
-		this.resetScroll(); // do this after sizes have been set
 	},
 
 
@@ -164,7 +140,7 @@ $.extend(AgendaView.prototype, {
 		var weekText;
 
 		if (this.opt('weekNumbers')) {
-			date = this.cellToDate(0, 0);
+			date = this.timeGrid.getCell(0).start;
 			weekNumber = this.calendar.calculateWeekNumber(date);
 			weekTitle = this.opt('weekNumberTitle');
 
@@ -225,6 +201,7 @@ $.extend(AgendaView.prototype, {
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
+
 
 	updateSize: function(isResize) {
 		if (isResize) {
@@ -294,8 +271,8 @@ $.extend(AgendaView.prototype, {
 	},
 
 
-	// Sets the scroll value of the scroller to the intial pre-configured state prior to allowing the user to change it.
-	resetScroll: function() {
+	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
+	initializeScroll: function() {
 		var _this = this;
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
@@ -346,22 +323,19 @@ $.extend(AgendaView.prototype, {
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		this.updateHeight();
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.timeGrid.getSegs().concat(
-			this.dayGrid ? this.dayGrid.getSegs() : []
+	getEventSegs: function() {
+		return this.timeGrid.getEventSegs().concat(
+			this.dayGrid ? this.dayGrid.getEventSegs() : []
 		);
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before the grids' segs have been cleared
 
 		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
 		// after, so remember what the scroll value was so we can restore it.
@@ -379,23 +353,21 @@ $.extend(AgendaView.prototype, {
 	},
 
 
-	/* Event Dragging
+	/* Dragging (for events and external elements)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		if (start.hasTime()) {
-			return this.timeGrid.renderDrag(start, end, seg);
+	renderDrag: function(dropLocation, seg) {
+		if (dropLocation.start.hasTime()) {
+			return this.timeGrid.renderDrag(dropLocation, seg);
 		}
 		else if (this.dayGrid) {
-			return this.dayGrid.renderDrag(start, end, seg);
+			return this.dayGrid.renderDrag(dropLocation, seg);
 		}
 	},
 
 
-	// Unrenders a visual indications of an event being dragged over the view
 	destroyDrag: function() {
 		this.timeGrid.destroyDrag();
 		if (this.dayGrid) {
@@ -409,12 +381,12 @@ $.extend(AgendaView.prototype, {
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(start, end) {
-		if (start.hasTime() || end.hasTime()) {
-			this.timeGrid.renderSelection(start, end);
+	renderSelection: function(range) {
+		if (range.start.hasTime() || range.end.hasTime()) {
+			this.timeGrid.renderSelection(range);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.renderSelection(start, end);
+			this.dayGrid.renderSelection(range);
 		}
 	},
 

@@ -2,14 +2,7 @@
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function MouseFollower(sourceEl, options) {
-	this.options = options = options || {};
-	this.sourceEl = sourceEl;
-	this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
-}
-
-
-MouseFollower.prototype = {
+var MouseFollower = Class.extend({
 
 	options: null,
 
@@ -34,6 +27,12 @@ MouseFollower.prototype = {
 	isFollowing: false,
 	isHidden: false,
 	isAnimating: false, // doing the revert animation?
+
+	constructor: function(sourceEl, options) {
+		this.options = options = options || {};
+		this.sourceEl = sourceEl;
+		this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
+	},
 
 
 	// Causes the element to start following the mouse
@@ -183,4 +182,4 @@ MouseFollower.prototype = {
 		}
 	}
 
-};
+});

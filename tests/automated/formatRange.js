@@ -114,7 +114,8 @@ describe('formatRange', function() {
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
 				isRTL: true,
-				titleFormat: 'MMMM Do YYYY'
+				titleFormat: 'MMMM Do YYYY',
+				titleRangeSeparator: ' - '
 			});
 			expect($('.fc-toolbar h2')).toHaveText('May 24th - 18th 2014');
 		});
@@ -129,7 +130,8 @@ describe('formatRange', function() {
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
 				lang: 'fr',
-				titleFormat: 'dddd MMMM D YYYY'
+				titleFormat: 'dddd MMMM D YYYY',
+				titleRangeSeparator: ' - '
 			});
 			expect($('.fc-toolbar h2')).toHaveText('lundi mai 19 - dimanche mai 25 2014');
 		});
