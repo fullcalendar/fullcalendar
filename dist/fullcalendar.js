@@ -2843,6 +2843,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 		this.el.on('mousedown', function(ev) {
 			if (
 				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
+				!_this.view.el.find('.fc-popover').length && //make sure a popover is not open
 				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
 			) {
 				_this.dayMousedown(ev);
