@@ -26,11 +26,17 @@ var ListView = fcViews.list = View.extend({
 
 	// Renders the view into `this.el`, which should already be assigned.
 	render: function() {
-
-		// needed for cell-to-date and date-to-cell calculations in View
 		this.dayGrid.colCnt = 1;
 		this.dayGrid.rowCnt = this.dayGrid.cellDates.length;
 		this.dayGrid.numbersVisible = true;
+
+		if (this.opt('viewDateOnLeft')) {
+			this.viewDateOnLeft = this.opt('viewDateOnLeft');
+			this.el.removeClass('fc-display-date-above');
+		}
+		else {
+			this.el.addClass('fc-display-date-above');
+		}
 
 		this.el.addClass('fc-basic-view').html(this.renderHtml());
 

@@ -1034,8 +1034,8 @@ be a descendant of the grid when it is being dragged.
 	color: #666;
 }
 
-.fc-listMonth-view .fc-row .fc-content-skeleton  tbody:before,
-.fc-listMonth-view .fc-row .fc-content-skeleton  tbody:after {
+.fc-listMonth-view.fc-display-date-above .fc-row .fc-content-skeleton  tbody:before,
+.fc-listMonth-view.fc-display-date-above .fc-row .fc-content-skeleton  tbody:after {
 	line-height: .5em;
 	content: "-";
 	color: white;
