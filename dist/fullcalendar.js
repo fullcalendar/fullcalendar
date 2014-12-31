@@ -361,31 +361,6 @@ function Calendar(element, instanceOptions) {
 		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
 	}
 
-	if (options.annotations) { // prepare annotations object
-		var annotations = { day: [], timed: [] };
-
-		// separate the annotations into all-day and timed
-		for (var i = 0; i < options.annotations.length; i++) {
-      var annotation = options.annotations[i];
-
-      if(annotation.start) {
-        annotation.start = jQuery.fullCalendar.moment(annotation.start);
-      }
-
-      if(annotation.end) {
-        annotation.end = jQuery.fullCalendar.moment(annotation.end);
-      }
-
-			if (annotation.allDay) {
-				annotations.day.push(annotation);
-			} else {
-				annotations.timed.push(annotation);
-			}
-		}
-
-		options.annotations = annotations;
-	}
-
 
 	// Exports
 	// -----------------------------------------------------------------------------------
@@ -631,6 +606,31 @@ function Calendar(element, instanceOptions) {
 	}
 	else {
 		date = t.getNow();
+	}
+
+	if (options.annotations) { // prepare annotations object
+		var annotations = { day: [], timed: [] };
+
+		// separate the annotations into all-day and timed
+		for (var i = 0; i < options.annotations.length; i++) {
+			var annotation = options.annotations[i];
+
+			if(annotation.start) {
+				annotation.start = t.moment(annotation.start);
+			}
+
+			if(annotation.end) {
+				annotation.end = t.moment(annotation.end);
+			}
+
+			if (annotation.allDay) {
+				annotations.day.push(annotation);
+			} else {
+				annotations.timed.push(annotation);
+			}
+		}
+
+		options.annotations = annotations;
 	}
 	
 	
