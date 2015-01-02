@@ -121,6 +121,13 @@ body .fc { /* extra precedence to overcome jqui */
 	cursor: pointer;
 }
 
+@media print, all and (max-width: 400px) {
+	/* make some room on skinny screens */
+	.fc button {
+		padding: 0 .4em;
+	}
+}
+
 /* Firefox has an annoying inner border */
 .fc button::-moz-focus-inner { margin: 0; padding: 0; }
 	
