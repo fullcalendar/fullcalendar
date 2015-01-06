@@ -233,7 +233,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 		// attach a handler to the grid's root element.
 		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
 		// DOM it automatically unregisters the handlers.
-		this.el.on('mousedown', function(ev) {
+		this.el.on(getMouseDownEvent(), function(ev) {
 			if (
 				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
 				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
@@ -296,6 +296,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 			},
 			listenStop: function(ev) {
 				if (dayClickCell) {
+					ev.preventDefault(); //fixes double click on Android
 					view.trigger('dayClick', _this.getCellDayEl(dayClickCell), dayClickCell.start, ev);
 				}
 				if (selectionRange) {

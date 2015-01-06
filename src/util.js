@@ -49,6 +49,60 @@ function enableCursor() {
 	$('body').removeClass('fc-not-allowed');
 }
 
+function isTouchEvent(e) {
+	if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+function pointerEventToXY(e) {
+	var out = { x: 0, y: 0 };
+	if (isTouchEvent(e)) {
+		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+		out.x = touch.pageX;
+		out.y = touch.pageY;
+	} else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+		out.x = e.pageX;
+		out.y = e.pageY;
+	}
+	return out;
+}
+
+var isPhantomJS = navigator.userAgent.toLowerCase().indexOf('phantom') !== -1;
+var dragOnTouchDevices = false; // do a drag when we are on touch devices, *experimental*, has some issues with scrolling and dragging 
+
+function getMouseDownEvent() {
+	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+		// touch events are supported
+		return 'touchstart';
+	}
+	else {
+		return 'mousedown';
+	}
+}
+
+function getMouseUpEvent() {
+	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+		// touch events are supported
+		return 'touchend';
+	}
+	else {
+		return 'mouseup';
+	}
+}
+
+function getMouseMoveEvent() {
+	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+		// touch events are supported
+		return 'touchmove';
+	}
+	else {
+		return 'mousemove';
+	}
+}
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
@@ -192,7 +246,12 @@ function getScrollbarWidths(container) {
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
 function isPrimaryMouseButton(ev) {
-	return ev.which == 1 && !ev.ctrlKey;
+	if (isTouchEvent(ev)) {
+		return true;
+	}
+	else {
+		return ev.which == 1 && !ev.ctrlKey;
+	}
 }
 
 

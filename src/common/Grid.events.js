@@ -187,26 +187,30 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 
-		$.each(
-			{
-				mouseenter: function(seg, ev) {
-					_this.triggerSegMouseover(seg, ev);
-				},
-				mouseleave: function(seg, ev) {
-					_this.triggerSegMouseout(seg, ev);
-				},
-				click: function(seg, ev) {
-					return view.trigger('eventClick', this, seg.event, ev); // can return `false` to cancel
-				},
-				mousedown: function(seg, ev) {
-					if ($(ev.target).is('.fc-resizer') && view.isEventResizable(seg.event)) {
-						_this.segResizeMousedown(seg, ev);
-					}
-					else if (view.isEventDraggable(seg.event)) {
-						_this.segDragMousedown(seg, ev);
-					}
-				}
-			},
+		var events = {};
+		
+		events.mouseenter = function(seg, ev) {
+			_this.triggerSegMouseover(seg, ev);
+		};
+
+		events.mouseleave = function(seg, ev) {
+			_this.triggerSegMouseout(seg, ev);
+		};
+
+		events.click = function(seg, ev) {
+			return view.trigger('eventClick', this, seg.event, ev); // can return `false` to cancel
+		};
+
+		events[getMouseDownEvent()] = function(seg, ev) {
+			if ($(ev.target).is('.fc-resizer') && view.isEventResizable(seg.event)) {
+				_this.segResizeMousedown(seg, ev);
+			}
+			else if (view.isEventDraggable(seg.event) && (!isTouchEvent(ev) || dragOnTouchDevices)) {
+				_this.segDragMousedown(seg, ev);
+			}
+		};
+
+		$.each(events,
 			function(name, func) {
 				// attach the handler to the container element and only listen for real event elements via bubbling
 				_this.el.on(name, '.fc-event-container > *', function(ev) {

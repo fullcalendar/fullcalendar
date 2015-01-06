@@ -225,7 +225,7 @@ var View = fc.View = Class.extend({
 		this.trigger('viewRender', this, this, this.el);
 
 		// attach handlers to document. do it here to allow for destroy/rerender
-		$(document).on('mousedown', this.documentMousedownProxy);
+		$(document).on(getMouseDownEvent(), this.documentMousedownProxy);
 	},
 
 
@@ -242,7 +242,7 @@ var View = fc.View = Class.extend({
 		this.destroy();
 		this.trigger('viewDestroy', this, this, this.el);
 
-		$(document).off('mousedown', this.documentMousedownProxy);
+		$(document).off(getMouseDownEvent(), this.documentMousedownProxy);
 	},
 
 
