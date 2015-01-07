@@ -410,7 +410,15 @@ function enableCursor() {
 }
 
 function isTouchEvent(e) {
-	if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
+	if (e.type == 'pointerdown' || e.type == 'pointerup' || e.type == 'pointermove') {
+		if (e.originalEvent.pointerType === 'touch') {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
 		return true;
 	}
 	else {
@@ -420,13 +428,14 @@ function isTouchEvent(e) {
 
 function pointerEventToXY(e) {
 	var out = { x: 0, y: 0 };
-	if (isTouchEvent(e)) {
+	if (e.type == 'pointerdown' || e.type == 'pointerup' || e.type == 'pointermove' || e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+		out.x = e.pageX;
+		out.y = e.pageY;
+	}
+	else if (isTouchEvent(e)) {
 		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
 		out.x = touch.pageX;
 		out.y = touch.pageY;
-	} else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
-		out.x = e.pageX;
-		out.y = e.pageY;
 	}
 	return out;
 }
@@ -435,7 +444,10 @@ var isPhantomJS = navigator.userAgent.toLowerCase().indexOf('phantom') !== -1;
 var dragOnTouchDevices = false; // do a drag when we are on touch devices, *experimental*, has some issues with scrolling and dragging 
 
 function getMouseDownEvent() {
-	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+	if (window.navigator.msPointerEnabled) {
+		return 'pointerdown';
+	}
+	else if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
 		// touch events are supported
 		return 'touchstart';
 	}
@@ -445,7 +457,10 @@ function getMouseDownEvent() {
 }
 
 function getMouseUpEvent() {
-	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+	if (window.navigator.msPointerEnabled) {
+		return 'pointerup';
+	}
+	else if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
 		// touch events are supported
 		return 'touchend';
 	}
@@ -455,7 +470,10 @@ function getMouseUpEvent() {
 }
 
 function getMouseMoveEvent() {
-	if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
+	if (window.navigator.msPointerEnabled) {
+		return 'pointermove';
+	}
+	else if (!isPhantomJS && 'ontouchstart' in document.documentElement) {
 		// touch events are supported
 		return 'touchmove';
 	}
