@@ -8,6 +8,7 @@
 .fc {
 	direction: ltr;
 	text-align: left;
+	-ms-touch-action: none;
 }
 
 .fc-rtl {
