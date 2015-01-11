@@ -612,7 +612,8 @@ function Calendar(element, instanceOptions) {
 
 
 	function updateTitle() {
-		header.updateTitle(currentView.computeTitle());
+		currentView.updateTitle();
+		header.updateTitle(currentView.title);
 	}
 
 
