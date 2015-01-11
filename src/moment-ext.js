@@ -188,7 +188,7 @@ newMomentProto.stripTime = function() {
 		this.utc(); // set the internal UTC flag (will clear the ambig flags)
 		setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
 
-		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
 		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigTime = true;
 		this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
@@ -222,11 +222,11 @@ newMomentProto.stripZone = function() {
 		setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
 
 		if (wasAmbigTime) {
-			// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
+			// the above call to .utc()/.utcOffset() unfortunately clears the ambig flags, so reassign
 			this._ambigTime = true;
 		}
 
-		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
 		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigZone = true;
 	}
@@ -239,18 +239,23 @@ newMomentProto.hasZone = function() {
 	return !this._ambigZone;
 };
 
-// this method implicitly marks a zone (will get called upon .utc() and .local())
-newMomentProto.zone = function(tzo) {
+$.each([ 'utcOffset', 'zone' ], function(i, name) { // .zone() is moment-pre-2.9, has been deprecated
+	if (oldMomentProto[name]) {
 
-	if (tzo != null) { // setter
-		// these assignments needs to happen before the original zone method is called.
-		// I forget why, something to do with a browser crash.
-		this._ambigTime = false;
-		this._ambigZone = false;
+		// this method implicitly marks a zone (will get called upon .utc() and .local())
+		newMomentProto[name] = function(tzo) {
+
+			if (tzo != null) { // setter
+				// these assignments needs to happen before the original zone method is called.
+				// I forget why, something to do with a browser crash.
+				this._ambigTime = false;
+				this._ambigZone = false;
+			}
+
+			return oldMomentProto[name].apply(this, arguments);
+		};
 	}
-
-	return oldMomentProto.zone.apply(this, arguments);
-};
+});
 
 // this method implicitly marks a zone
 newMomentProto.local = function() {
