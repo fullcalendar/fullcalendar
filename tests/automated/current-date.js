@@ -238,6 +238,57 @@ describe('current date', function() {
 		});
 	});
 
+	describe('when current date is a hidden day', function() {
+		describeWhenInMonth(function() {
+			it('should display the current month even if first day of month', function() {
+				options.now = options.defaultDate = '2014-06-01'; // a Sunday
+				options.weekends = false;
+				$('#cal').fullCalendar(options);
+				var view = $('#cal').fullCalendar('getView');
+				expect(view.start).toEqualMoment('2014-06-02');
+				expect(view.end).toEqualMoment('2014-07-12');
+				expect(view.intervalStart).toEqualMoment('2014-06-01');
+				expect(view.intervalEnd).toEqualMoment('2014-07-01');
+			});
+			it('should display the current month', function() {
+				options.now = options.defaultDate = '2014-05-04'; // a Sunday
+				options.weekends = false;
+				$('#cal').fullCalendar(options);
+				var view = $('#cal').fullCalendar('getView');
+				expect(view.start).toEqualMoment('2014-04-28');
+				expect(view.end).toEqualMoment('2014-06-07');
+				expect(view.intervalStart).toEqualMoment('2014-05-01');
+				expect(view.intervalEnd).toEqualMoment('2014-06-01');
+			});
+			describe('when navigating back a month', function() {
+				it('should not skip months', function() {
+					options.defaultDate = '2014-07-07';
+					options.weekends = false;
+					$('#cal').fullCalendar(options);
+					var view = $('#cal').fullCalendar('getView');
+					expect(view.intervalStart).toEqualMoment('2014-07-01');
+					expect(view.intervalEnd).toEqualMoment('2014-08-01');
+					$('#cal').fullCalendar('prev'); // will move to Jun 1, which is a Sunday
+					view = $('#cal').fullCalendar('getView');
+					expect(view.intervalStart).toEqualMoment('2014-06-01');
+					expect(view.intervalEnd).toEqualMoment('2014-07-01');
+				});
+			});
+		});
+		describeWhenInDay(function() {
+			it('should display the next visible day', function() {
+				options.now = options.defaultDate = '2014-06-01'; // a Sunday
+				options.weekends = false;
+				$('#cal').fullCalendar(options);
+				var view = $('#cal').fullCalendar('getView');
+				expect(view.start).toEqualMoment('2014-06-02');
+				expect(view.end).toEqualMoment('2014-06-03');
+				expect(view.intervalStart).toEqualMoment('2014-06-02');
+				expect(view.intervalEnd).toEqualMoment('2014-06-03');
+			});
+		});
+	});
+
 
 	// UTILS
 	// -----
