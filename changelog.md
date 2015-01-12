@@ -1,5 +1,5 @@
 
-v2.2.6 (2015-01-10)
+v2.2.6 (2015-01-11)
 -------------------
 
 - Compatibility with Moment v2.9. Was breaking GCal plugin ([2408])
