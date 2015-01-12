@@ -283,38 +283,18 @@ function diffDay(a, b) {
 }
 
 
-// Computes the larges whole-unit period of time, as a duration object.
-// For example, 48 hours will be {days:2} whereas 49 hours will be {hours:49}.
+// Computes the unit name of the largest whole-unit period of time.
+// For example, 48 hours will be "days" whereas 49 hours will be "hours".
 // Accepts start/end, a range object, or an original duration object.
-/* (never used)
-function computeIntervalDuration(start, end) {
-	var durationInput = {};
+function computeIntervalUnit(start, end) {
 	var i, unit;
 	var val;
 
 	for (i = 0; i < intervalUnits.length; i++) {
 		unit = intervalUnits[i];
-		val = computeIntervalAs(unit, start, end);
-		if (val) {
-			break;
-		}
-	}
+		val = computeRangeAs(unit, start, end);
 
-	durationInput[unit] = val;
-	return moment.duration(durationInput);
-}
-*/
-
-
-// Computes the unit name of the largest whole-unit period of time.
-// For example, 48 hours will be "days" wherewas 49 hours will be "hours".
-// Accepts start/end, a range object, or an original duration object.
-function computeIntervalUnit(start, end) {
-	var i, unit;
-
-	for (i = 0; i < intervalUnits.length; i++) {
-		unit = intervalUnits[i];
-		if (computeIntervalAs(unit, start, end)) {
+		if (val >= 1 && isInt(val)) {
 			break;
 		}
 	}
@@ -323,27 +303,21 @@ function computeIntervalUnit(start, end) {
 }
 
 
-// Computes the number of units the interval is cleanly comprised of.
-// If the given unit does not cleanly divide the interval a whole number of times, `false` is returned.
-// Accepts start/end, a range object, or an original duration object.
-function computeIntervalAs(unit, start, end) {
-	var val;
+// Computes the number of units (like "hours") in the given range.
+// Range can be a {start,end} object, separate start/end args, or a Duration.
+// Results are based on Moment's .as() and .diff() methods, so results can depend on internal handling
+// of month-diffing logic (which tends to vary from version to version).
+function computeRangeAs(unit, start, end) {
 
 	if (end != null) { // given start, end
-		val = end.diff(start, unit, true);
+		return end.diff(start, unit, true);
 	}
 	else if (moment.isDuration(start)) { // given duration
-		val = start.as(unit);
+		return start.as(unit);
 	}
 	else { // given { start, end } range object
-		val = start.end.diff(start.start, unit, true);
+		return start.end.diff(start.start, unit, true);
 	}
-
-	if (val >= 1 && isInt(val)) {
-		return val;
-	}
-
-	return false;
 }
 
 

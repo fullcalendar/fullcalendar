@@ -436,7 +436,7 @@ function Calendar(element, instanceOptions) {
 			if (duration) {
 				duration = moment.duration(duration);
 				unit = computeIntervalUnit(duration);
-				unitIsSingle = computeIntervalAs(unit, duration) === 1;
+				unitIsSingle = duration.as(unit) === 1;
 			}
 
 			// options that are specified per the view's duration, like "week" or "day"

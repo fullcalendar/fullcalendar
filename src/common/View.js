@@ -124,7 +124,7 @@ var View = fc.View = Class.extend({
 		var start, end;
 
 		// normalize the range's time-ambiguity
-		if (computeIntervalAs('days', intervalDuration)) { // whole-days?
+		if (/year|month|week|day/.test(intervalUnit)) { // whole-days?
 			intervalStart.stripTime();
 			intervalEnd.stripTime();
 		}
