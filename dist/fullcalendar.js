@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.5
+ * FullCalendar v2.2.6
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -128,7 +128,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.5" };
+var fc = $.fullCalendar = { version: "2.2.6" };
 var fcViews = fc.views = {};
 
 
@@ -1030,7 +1030,7 @@ newMomentProto.stripTime = function() {
 		this.utc(); // set the internal UTC flag (will clear the ambig flags)
 		setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
 
-		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
 		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigTime = true;
 		this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
@@ -1064,11 +1064,11 @@ newMomentProto.stripZone = function() {
 		setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
 
 		if (wasAmbigTime) {
-			// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
+			// the above call to .utc()/.utcOffset() unfortunately clears the ambig flags, so reassign
 			this._ambigTime = true;
 		}
 
-		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
 		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigZone = true;
 	}
@@ -1081,18 +1081,23 @@ newMomentProto.hasZone = function() {
 	return !this._ambigZone;
 };
 
-// this method implicitly marks a zone (will get called upon .utc() and .local())
-newMomentProto.zone = function(tzo) {
+$.each([ 'utcOffset', 'zone' ], function(i, name) { // .zone() is moment-pre-2.9, has been deprecated
+	if (oldMomentProto[name]) {
 
-	if (tzo != null) { // setter
-		// these assignments needs to happen before the original zone method is called.
-		// I forget why, something to do with a browser crash.
-		this._ambigTime = false;
-		this._ambigZone = false;
+		// this method implicitly marks a zone (will get called upon .utc() and .local())
+		newMomentProto[name] = function(tzo) {
+
+			if (tzo != null) { // setter
+				// these assignments needs to happen before the original zone method is called.
+				// I forget why, something to do with a browser crash.
+				this._ambigTime = false;
+				this._ambigZone = false;
+			}
+
+			return oldMomentProto[name].apply(this, arguments);
+		};
 	}
-
-	return oldMomentProto.zone.apply(this, arguments);
-};
+});
 
 // this method implicitly marks a zone
 newMomentProto.local = function() {
@@ -6141,6 +6146,7 @@ var View = fc.View = Class.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
+	title: null, // the text that will be displayed in the header's title
 
 	calendar: null, // owner Calendar object
 	options: null, // view-specific options
@@ -6289,7 +6295,7 @@ var View = fc.View = Class.extend({
 
 	// Computes the new date when the user hits the prev button, given the current date
 	computePrevDate: function(date) {
-		return this.skipHiddenDays(
+		return this.massageCurrentDate(
 			date.clone().startOf(this.intervalUnit).subtract(this.intervalDuration), -1
 		);
 	},
@@ -6297,14 +6303,35 @@ var View = fc.View = Class.extend({
 
 	// Computes the new date when the user hits the next button, given the current date
 	computeNextDate: function(date) {
-		return this.skipHiddenDays(
+		return this.massageCurrentDate(
 			date.clone().startOf(this.intervalUnit).add(this.intervalDuration)
 		);
 	},
 
 
+	// Given an arbitrarily calculated current date of the calendar, returns a date that is ensured to be completely
+	// visible. `direction` is optional and indicates which direction the current date was being
+	// incremented or decremented (1 or -1).
+	massageCurrentDate: function(date, direction) {
+		if (this.intervalDuration <= moment.duration({ days: 1 })) { // if the view displays a single day or smaller
+			if (this.isHiddenDay(date)) {
+				date = this.skipHiddenDays(date, direction);
+				date.startOf('day');
+			}
+		}
+
+		return date;
+	},
+
+
 	/* Title and Date Formatting
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Sets the view's title property to the most updated computed value
+	updateTitle: function() {
+		this.title = this.computeTitle();
+	},
 
 
 	// Computes what the title at the top of the calendar should be for this view
@@ -6907,7 +6934,7 @@ function Calendar(element, instanceOptions) {
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
 	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
-	t.changeView = changeView;
+	t.changeView = renderView; // `renderView` will switch to another view
 	t.select = select;
 	t.unselect = unselect;
 	t.prev = prev;
@@ -7156,7 +7183,7 @@ function Calendar(element, instanceOptions) {
 			element.prepend(headerElement);
 		}
 
-		changeView(options.defaultView);
+		renderView(options.defaultView);
 
 		if (options.handleWindowResize) {
 			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
@@ -7189,13 +7216,8 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 
 
-	function changeView(viewType) {
-		renderView(0, viewType);
-	}
-
-
 	// Renders a view because of a date change, view-type change, or for the first time
-	function renderView(delta, viewType) {
+	function renderView(viewType) {
 		ignoreWindowResize++;
 
 		// if viewType is changing, destroy the old view
@@ -7218,18 +7240,12 @@ function Calendar(element, instanceOptions) {
 
 		if (currentView) {
 
-			// let the view determine what the delta means
-			if (delta < 0) {
-				date = currentView.computePrevDate(date);
-			}
-			else if (delta > 0) {
-				date = currentView.computeNextDate(date);
-			}
+			// in case the view should render a period of time that is completely hidden
+			date = currentView.massageCurrentDate(date);
 
 			// render or rerender the view
 			if (
 				!currentView.start || // never rendered before
-				delta || // explicit date window change
 				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 			) {
 				if (elementVisible()) {
@@ -7488,7 +7504,8 @@ function Calendar(element, instanceOptions) {
 
 
 	function updateTitle() {
-		header.updateTitle(currentView.computeTitle());
+		currentView.updateTitle();
+		header.updateTitle(currentView.title);
 	}
 
 
@@ -7538,12 +7555,14 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function prev() {
-		renderView(-1);
+		date = currentView.computePrevDate(date);
+		renderView();
 	}
 	
 	
 	function next() {
-		renderView(1);
+		date = currentView.computeNextDate(date);
+		renderView();
 	}
 	
 	
@@ -7599,7 +7618,7 @@ function Calendar(element, instanceOptions) {
 		}
 
 		date = newDate;
-		changeView(viewType);
+		renderView(viewType);
 	}
 	
 	
@@ -9310,13 +9329,12 @@ var MonthView = fcViews.month = BasicView.extend({
 	// Produces information about what range to display
 	computeRange: function(date) {
 		var range = BasicView.prototype.computeRange.call(this, date); // get value from super-method
+		var rowCnt;
 
+		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
-			// ensure 6 weeks
-			range.end.add(
-				6 - range.end.diff(range.start, 'weeks'),
-				'weeks'
-			);
+			rowCnt = Math.ceil(range.end.diff(range.start, 'weeks', true)); // could be partial weeks due to hiddenDays
+			range.end.add(6 - rowCnt, 'weeks');
 		}
 
 		return range;
