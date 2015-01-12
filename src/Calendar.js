@@ -367,7 +367,7 @@ function Calendar(element, instanceOptions) {
 					unfreezeContentHeight();
 
 					// need to do this after View::render, so dates are calculated
-					updateTitle();
+					updateHeaderTitle();
 					updateTodayButton();
 
 					getAndRenderEvents();
@@ -611,8 +611,7 @@ function Calendar(element, instanceOptions) {
 	-----------------------------------------------------------------------------*/
 
 
-	function updateTitle() {
-		currentView.updateTitle();
+	function updateHeaderTitle() {
 		header.updateTitle(currentView.title);
 	}
 

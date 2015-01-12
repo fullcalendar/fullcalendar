@@ -111,6 +111,7 @@ var View = fc.View = Class.extend({
 	// Expects all values to be normalized (like what computeRange does).
 	setRange: function(range) {
 		$.extend(this, range);
+		this.updateTitle();
 	},
 
 
