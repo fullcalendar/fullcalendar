@@ -237,7 +237,7 @@ function placeSlotSegs(segs) {
 	var level0;
 	var i;
 
-	segs.sort(compareSegs); // order by date
+	segs.sort(fc.compareSegs); // order by date
 	levels = buildSlotSegLevels(segs);
 	computeForwardSlotSegs(levels);
 
@@ -402,5 +402,5 @@ function compareForwardSlotSegs(seg1, seg2) {
 		// put segments that are closer to initial edge first (and favor ones with no coords yet)
 		(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
 		// do normal sorting...
-		compareSegs(seg1, seg2);
+		fc.compareSegs(seg1, seg2);
 }
