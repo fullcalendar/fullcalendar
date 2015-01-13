@@ -50,4 +50,18 @@ describe('lang', function() {
 		expect(s).toEqual('Thursday May 1st 2014');
 	});
 
+	it('works when certain language has no FC settings defined', function() {
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'en-ca',
+			defaultView: 'agendaWeek',
+			defaultDate: '2014-12-25',
+			events: [
+				{ title: 'Christmas', start: '2014-12-25T10:00:00' }
+			]
+		});
+		expect($('.fc-day-header:first')).toHaveText('Sun 12-21');
+		expect($('.fc-event .fc-time')).toHaveText('10:00');
+	});
+
 });

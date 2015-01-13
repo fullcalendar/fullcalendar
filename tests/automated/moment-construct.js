@@ -80,6 +80,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -87,6 +88,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 	});
 
@@ -146,6 +148,7 @@ function testDefaultProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -154,6 +157,7 @@ function testDefaultProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 	});
 
@@ -229,6 +233,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -236,6 +241,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 	});
 
@@ -305,6 +311,7 @@ function testForcedLocalProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 	});
 
@@ -380,6 +387,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -387,6 +395,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 	});
 
@@ -451,6 +460,7 @@ function testForcedUTCProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 	});
 
@@ -517,6 +527,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('accepts an ambiguous time', function() {
@@ -524,6 +535,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -531,6 +543,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 	});
 
@@ -566,6 +579,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 
 		it('is ambiguously-zoned and has a time even when no hours/minutes/seconds', function() {
@@ -574,6 +588,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
+			expect(mom.zone()).toBe(0);
 		});
 	});
 
@@ -585,6 +600,7 @@ function testLiteralProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -593,6 +609,7 @@ function testLiteralProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
+			expect(newMoment.zone()).toBe(0);
 		});
 	});
 

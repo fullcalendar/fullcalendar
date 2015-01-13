@@ -42,7 +42,7 @@ function Calendar(element, instanceOptions) {
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
 	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
-	t.changeView = changeView;
+	t.changeView = renderView; // `renderView` will switch to another view
 	t.select = select;
 	t.unselect = unselect;
 	t.prev = prev;
@@ -58,6 +58,8 @@ function Calendar(element, instanceOptions) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
+	t.isValidViewType = isValidViewType;
+	t.getViewButtonText = getViewButtonText;
 
 
 
@@ -66,16 +68,9 @@ function Calendar(element, instanceOptions) {
 	// Apply overrides to the current language's data
 
 
-	// Returns moment's internal locale data. If doesn't exist, returns English.
-	// Works with moment-pre-2.8
-	function getLocaleData(langCode) {
-		var f = moment.localeData || moment.langData;
-		return f.call(moment, langCode) ||
-			f.call(moment, 'en'); // the newer localData could return null, so fall back to en
-	}
-
-
-	var localeData = createObject(getLocaleData(options.lang)); // make a cheap copy
+	var localeData = createObject( // make a cheap copy
+		getMomentLocaleData(options.lang) // will fall back to en
+	);
 
 	if (options.monthNames) {
 		localeData._months = options.monthNames;
@@ -208,33 +203,12 @@ function Calendar(element, instanceOptions) {
 	};
 
 
-
-	// Date-formatting Utilities
-	// -----------------------------------------------------------------------------------
-
-
-	// Like the vanilla formatRange, but with calendar-specific settings applied.
-	t.formatRange = function(m1, m2, formatStr) {
-
-		// a function that returns a formatStr // TODO: in future, precompute this
-		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, localeData);
-		}
-
-		return formatRange(m1, m2, formatStr, null, options.isRTL);
-	};
-
-
-	// Like the vanilla formatDate, but with calendar-specific settings applied.
-	t.formatDate = function(mom, formatStr) {
-
-		// a function that returns a formatStr // TODO: in future, precompute this
-		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, localeData);
-		}
-
-		return formatDate(mom, formatStr);
-	};
+	// Produces a human-readable string for the given duration.
+	// Side-effect: changes the locale of the given duration.
+	function humanizeDuration(duration) {
+		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
+			.humanize();
+	}
 
 
 	
@@ -257,6 +231,7 @@ function Calendar(element, instanceOptions) {
 	var headerElement;
 	var content;
 	var tm; // for making theme classes
+	var viewSpecCache = {};
 	var currentView;
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
@@ -316,7 +291,7 @@ function Calendar(element, instanceOptions) {
 			element.prepend(headerElement);
 		}
 
-		changeView(options.defaultView);
+		renderView(options.defaultView);
 
 		if (options.handleWindowResize) {
 			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
@@ -328,7 +303,7 @@ function Calendar(element, instanceOptions) {
 	function destroy() {
 
 		if (currentView) {
-			currentView.destroy();
+			currentView.destroyView();
 		}
 
 		header.destroy();
@@ -349,57 +324,50 @@ function Calendar(element, instanceOptions) {
 	// -----------------------------------------------------------------------------------
 
 
-	function changeView(viewName) {
-		renderView(0, viewName);
-	}
-
-
 	// Renders a view because of a date change, view-type change, or for the first time
-	function renderView(delta, viewName) {
+	function renderView(viewType) {
 		ignoreWindowResize++;
 
-		// if viewName is changing, destroy the old view
-		if (currentView && viewName && currentView.name !== viewName) {
-			header.deactivateButton(currentView.name);
+		// if viewType is changing, destroy the old view
+		if (currentView && viewType && currentView.type !== viewType) {
+			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
 			if (currentView.start) { // rendered before?
-				currentView.destroy();
+				currentView.destroyView();
 			}
 			currentView.el.remove();
 			currentView = null;
 		}
 
-		// if viewName changed, or the view was never created, create a fresh view
-		if (!currentView && viewName) {
-			currentView = new fcViews[viewName](t);
-			currentView.el =  $("<div class='fc-view fc-" + viewName + "-view' />").appendTo(content);
-			header.activateButton(viewName);
+		// if viewType changed, or the view was never created, create a fresh view
+		if (!currentView && viewType) {
+			currentView = instantiateView(viewType);
+			currentView.el =  $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content);
+			header.activateButton(viewType);
 		}
 
 		if (currentView) {
 
-			// let the view determine what the delta means
-			if (delta) {
-				date = currentView.incrementDate(date, delta);
-			}
+			// in case the view should render a period of time that is completely hidden
+			date = currentView.massageCurrentDate(date);
 
 			// render or rerender the view
 			if (
 				!currentView.start || // never rendered before
-				delta || // explicit date window change
 				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 			) {
 				if (elementVisible()) {
 
 					freezeContentHeight();
 					if (currentView.start) { // rendered before?
-						currentView.destroy();
+						currentView.destroyView();
 					}
-					currentView.render(date);
+					currentView.setDate(date);
+					currentView.renderView();
 					unfreezeContentHeight();
 
 					// need to do this after View::render, so dates are calculated
-					updateTitle();
+					updateHeaderTitle();
 					updateTodayButton();
 
 					getAndRenderEvents();
@@ -409,6 +377,106 @@ function Calendar(element, instanceOptions) {
 
 		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
 		ignoreWindowResize--;
+	}
+
+
+
+	// View Instantiation
+	// -----------------------------------------------------------------------------------
+
+
+	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
+	function instantiateView(viewType) {
+		var spec = getViewSpec(viewType);
+
+		return new spec['class'](t, spec.options, viewType);
+	}
+
+
+	// Gets information about how to create a view
+	function getViewSpec(requestedViewType) {
+		var allDefaultButtonText = options.defaultButtonText || {};
+		var allButtonText = options.buttonText || {};
+		var hash = options.views || {}; // the `views` option object
+		var viewType = requestedViewType;
+		var viewOptionsChain = [];
+		var viewOptions;
+		var viewClass;
+		var duration, unit, unitIsSingle = false;
+		var buttonText;
+
+		if (viewSpecCache[requestedViewType]) {
+			return viewSpecCache[requestedViewType];
+		}
+
+		function processSpecInput(input) {
+			if (typeof input === 'function') {
+				viewClass = input;
+			}
+			else if (typeof input === 'object') {
+				$.extend(viewOptions, input);
+			}
+		}
+
+		// iterate up a view's spec ancestor chain util we find a class to instantiate
+		while (viewType && !viewClass) {
+			viewOptions = {}; // only for this specific view in the ancestry
+			processSpecInput(fcViews[viewType]); // $.fullCalendar.views, lower precedence
+			processSpecInput(hash[viewType]); // options at initialization, higher precedence
+			viewOptionsChain.unshift(viewOptions); // record older ancestors first
+			viewType = viewOptions.type;
+		}
+
+		viewOptionsChain.unshift({}); // jQuery's extend needs at least one arg
+		viewOptions = $.extend.apply($, viewOptionsChain); // combine all, newer ancestors overwritting old
+
+		if (viewClass) {
+
+			duration = viewOptions.duration || viewClass.duration;
+			if (duration) {
+				duration = moment.duration(duration);
+				unit = computeIntervalUnit(duration);
+				unitIsSingle = duration.as(unit) === 1;
+			}
+
+			// options that are specified per the view's duration, like "week" or "day"
+			if (unitIsSingle && hash[unit]) {
+				viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
+			}
+
+			// compute the final text for the button representing this view
+			buttonText =
+				allButtonText[requestedViewType] || // init options, like "agendaWeek"
+				(unitIsSingle ? allButtonText[unit] : null) || // init options, like "week"
+				allDefaultButtonText[requestedViewType] || // lang data, like "agendaWeek"
+				(unitIsSingle ? allDefaultButtonText[unit] : null) || // lang data, like "week"
+				viewOptions.buttonText ||
+				viewClass.buttonText ||
+				(duration ? humanizeDuration(duration) : null) ||
+				requestedViewType;
+
+			return (viewSpecCache[requestedViewType] = {
+				'class': viewClass,
+				options: viewOptions,
+				buttonText: buttonText
+			});
+		}
+	}
+
+
+	// Returns a boolean about whether the view is okay to instantiate at some point
+	function isValidViewType(viewType) {
+		return Boolean(getViewSpec(viewType));
+	}
+
+
+	// Gets the text that should be displayed on a view's button in the header
+	function getViewButtonText(viewType) {
+		var spec = getViewSpec(viewType);
+
+		if (spec) {
+			return spec.buttonText;
+		}
 	}
 	
 	
@@ -494,8 +562,8 @@ function Calendar(element, instanceOptions) {
 	function renderEvents() { // destroys old events if previously rendered
 		if (elementVisible()) {
 			freezeContentHeight();
-			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
+			currentView.destroyViewEvents(); // no performance cost if never rendered
+			currentView.renderViewEvents(events);
 			unfreezeContentHeight();
 		}
 	}
@@ -503,7 +571,7 @@ function Calendar(element, instanceOptions) {
 
 	function destroyEvents() {
 		freezeContentHeight();
-		currentView.destroyEvents();
+		currentView.destroyViewEvents();
 		unfreezeContentHeight();
 	}
 	
@@ -543,7 +611,7 @@ function Calendar(element, instanceOptions) {
 	-----------------------------------------------------------------------------*/
 
 
-	function updateTitle() {
+	function updateHeaderTitle() {
 		header.updateTitle(currentView.title);
 	}
 
@@ -577,7 +645,7 @@ function Calendar(element, instanceOptions) {
 			end = start.clone().add(t.defaultAllDayEventDuration);
 		}
 
-		currentView.select(start, end);
+		currentView.select({ start: start, end: end }); // accepts a range
 	}
 	
 
@@ -594,12 +662,14 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function prev() {
-		renderView(-1);
+		date = currentView.computePrevDate(date);
+		renderView();
 	}
 	
 	
 	function next() {
-		renderView(1);
+		date = currentView.computeNextDate(date);
+		renderView();
 	}
 	
 	
@@ -634,28 +704,28 @@ function Calendar(element, instanceOptions) {
 
 
 	// Forces navigation to a view for the given date.
-	// `viewName` can be a specific view name or a generic one like "week" or "day".
-	function zoomTo(newDate, viewName) {
+	// `viewType` can be a specific view name or a generic one like "week" or "day".
+	function zoomTo(newDate, viewType) {
 		var viewStr;
 		var match;
 
-		if (!viewName || fcViews[viewName] === undefined) { // a general view name, or "auto"
-			viewName = viewName || 'day';
+		if (!viewType || !isValidViewType(viewType)) { // a general view name, or "auto"
+			viewType = viewType || 'day';
 			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
 
 			// try to match a general view name, like "week", against a specific one, like "agendaWeek"
-			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewName)));
+			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewType)));
 
 			// fall back to the day view being used in the header
 			if (!match) {
 				match = viewStr.match(/\w+Day/);
 			}
 
-			viewName = match ? match[0] : 'agendaDay'; // fall back to agendaDay
+			viewType = match ? match[0] : 'agendaDay'; // fall back to agendaDay
 		}
 
 		date = newDate;
-		changeView(viewName);
+		renderView(viewType);
 	}
 	
 	

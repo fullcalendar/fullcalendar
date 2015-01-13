@@ -4,15 +4,7 @@
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-function BasicView(calendar) {
-	View.call(this, calendar); // call the super-constructor
-	this.dayGrid = new DayGrid(this);
-	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
-}
-
-
-BasicView.prototype = createObject(View.prototype); // define the super-class
-$.extend(BasicView.prototype, {
+var BasicView = fcViews.basic = View.extend({
 
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
@@ -24,15 +16,45 @@ $.extend(BasicView.prototype, {
 	headRowEl: null, // the fake row element of the day-of-week header
 
 
-	// Renders the view into `this.el`, which should already be assigned.
-	// rowCnt, colCnt, and dayNumbersVisible have been calculated by a subclass and passed here.
-	render: function(rowCnt, colCnt, dayNumbersVisible) {
+	initialize: function() {
+		this.dayGrid = new DayGrid(this);
+		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
+	},
 
-		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = rowCnt;
-		this.colCnt = colCnt;
 
-		this.dayNumbersVisible = dayNumbersVisible;
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
+
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before setRange
+		this.dayGrid.setRange(range);
+	},
+
+
+	// Compute the value to feed into setRange. Overrides superclass.
+	computeRange: function(date) {
+		var range = View.prototype.computeRange.call(this, date); // get value from the super-method
+
+		// year and month views should be aligned with weeks. this is already done for week
+		if (/year|month/.test(range.intervalUnit)) {
+			range.start.startOf('week');
+			range.start = this.skipHiddenDays(range.start);
+
+			// make end-of-week if not already
+			if (range.end.weekday()) {
+				range.end.add(1, 'week').startOf('week');
+				range.end = this.skipHiddenDays(range.end, -1, true); // exclusively move backwards
+			}
+		}
+
+		return range;
+	},
+
+
+	// Renders the view into `this.el`, which should already be assigned
+	render: function() {
+
+		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		this.weekNumbersVisible = this.opt('weekNumbers');
 		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
 
@@ -45,8 +67,6 @@ $.extend(BasicView.prototype, {
 
 		this.dayGrid.el = this.el.find('.fc-day-grid');
 		this.dayGrid.render(this.hasRigidRows());
-
-		View.prototype.render.call(this); // call the super-method
 	},
 
 
@@ -103,7 +123,7 @@ $.extend(BasicView.prototype, {
 			return '' +
 				'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
+						this.calendar.calculateWeekNumber(this.dayGrid.getCell(row, 0).start) +
 					'</span>' +
 				'</td>';
 		}
@@ -131,7 +151,8 @@ $.extend(BasicView.prototype, {
 
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
-	numberCellHtml: function(row, col, date) {
+	numberCellHtml: function(cell) {
+		var date = cell.start;
 		var classes;
 
 		if (!this.dayNumbersVisible) { // if there are week numbers but not day numbers
@@ -237,21 +258,17 @@ $.extend(BasicView.prototype, {
 		this.dayGrid.renderEvents(events);
 
 		this.updateHeight(); // must compensate for events that overflow the row
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.dayGrid.getSegs();
+	getEventSegs: function() {
+		return this.dayGrid.getEventSegs();
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before dayGrid's segs have been cleared
-
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
@@ -261,18 +278,16 @@ $.extend(BasicView.prototype, {
 	},
 
 
-	/* Event Dragging
+	/* Dragging (for both events and external elements)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		return this.dayGrid.renderDrag(start, end, seg);
+	renderDrag: function(dropLocation, seg) {
+		return this.dayGrid.renderDrag(dropLocation, seg);
 	},
 
 
-	// Unrenders the visual indication of an event being dragged over the view
 	destroyDrag: function() {
 		this.dayGrid.destroyDrag();
 	},
@@ -283,8 +298,8 @@ $.extend(BasicView.prototype, {
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(start, end) {
-		this.dayGrid.renderSelection(start, end);
+	renderSelection: function(range) {
+		this.dayGrid.renderSelection(range);
 	},
 
 

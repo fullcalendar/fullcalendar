@@ -4,37 +4,38 @@
 // It leverages methods of the subclass and the View to determine custom rendering behavior for each row "type"
 // (such as highlight rows, day rows, helper rows, etc).
 
-function RowRenderer(view) {
-	this.view = view;
-}
-
-
-RowRenderer.prototype = {
+var RowRenderer = Class.extend({
 
 	view: null, // a View object
+	isRTL: null, // shortcut to the view's isRTL option
 	cellHtml: '<td/>', // plain default HTML used for a cell when no other is available
+
+
+	constructor: function(view) {
+		this.view = view;
+		this.isRTL = view.opt('isRTL');
+	},
 
 
 	// Renders the HTML for a row, leveraging custom cell-HTML-renderers based on the `rowType`.
 	// Also applies the "intro" and "outro" cells, which are specified by the subclass and views.
 	// `row` is an optional row number.
 	rowHtml: function(rowType, row) {
-		var view = this.view;
 		var renderCell = this.getHtmlRenderer('cell', rowType);
-		var cellHtml = '';
+		var rowCellHtml = '';
 		var col;
-		var date;
+		var cell;
 
 		row = row || 0;
 
-		for (col = 0; col < view.colCnt; col++) {
-			date = view.cellToDate(row, col);
-			cellHtml += renderCell(row, col, date);
+		for (col = 0; col < this.colCnt; col++) {
+			cell = this.getCell(row, col);
+			rowCellHtml += renderCell(cell);
 		}
 
-		cellHtml = this.bookendCells(cellHtml, rowType, row); // apply intro and outro
+		rowCellHtml = this.bookendCells(rowCellHtml, rowType, row); // apply intro and outro
 
-		return '<tr>' + cellHtml + '</tr>';
+		return '<tr>' + rowCellHtml + '</tr>';
 	},
 
 
@@ -43,12 +44,10 @@ RowRenderer.prototype = {
 	// `cells` can be an HTML string of <td>'s or a jQuery <tr> element
 	// `row` is an optional row number.
 	bookendCells: function(cells, rowType, row) {
-		var view = this.view;
 		var intro = this.getHtmlRenderer('intro', rowType)(row || 0);
 		var outro = this.getHtmlRenderer('outro', rowType)(row || 0);
-		var isRTL = view.opt('isRTL');
-		var prependHtml = isRTL ? outro : intro;
-		var appendHtml = isRTL ? intro : outro;
+		var prependHtml = this.isRTL ? outro : intro;
+		var appendHtml = this.isRTL ? intro : outro;
 
 		if (typeof cells === 'string') {
 			return prependHtml + cells + appendHtml;
@@ -100,4 +99,4 @@ RowRenderer.prototype = {
 		};
 	}
 
-};
+});

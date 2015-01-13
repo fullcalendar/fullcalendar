@@ -13,16 +13,11 @@ Common interface:
 /* Coordinate map for a grid component
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function GridCoordMap(grid) {
-	this.grid = grid;
-}
-
-
-GridCoordMap.prototype = {
+var GridCoordMap = Class.extend({
 
 	grid: null, // reference to the Grid
-	rows: null, // the top-to-bottom y coordinates. including the bottom of the last item
-	cols: null, // the left-to-right x coordinates. including the right of the last item
+	rowCoords: null, // array of {top,bottom} objects
+	colCoords: null, // array of {left,right} objects
 
 	containerEl: null, // container element that all coordinates are constrained to. optionally assigned
 	minX: null,
@@ -31,49 +26,61 @@ GridCoordMap.prototype = {
 	maxY: null, // exclusive
 
 
+	constructor: function(grid) {
+		this.grid = grid;
+	},
+
+
 	// Queries the grid for the coordinates of all the cells
 	build: function() {
-		this.grid.buildCoords(
-			this.rows = [],
-			this.cols = []
-		);
+		this.rowCoords = this.grid.computeRowCoords();
+		this.colCoords = this.grid.computeColCoords();
 		this.computeBounds();
+	},
+
+
+	// Clears the coordinates data to free up memory
+	clear: function() {
+		this.rowCoords = null;
+		this.colCoords = null;
 	},
 
 
 	// Given a coordinate of the document, gets the associated cell. If no cell is underneath, returns null
 	getCell: function(x, y) {
-		var cell = null;
-		var rows = this.rows;
-		var cols = this.cols;
-		var r = -1;
-		var c = -1;
-		var i;
+		var rowCoords = this.rowCoords;
+		var colCoords = this.colCoords;
+		var hitRow = null;
+		var hitCol = null;
+		var i, coords;
+		var cell;
 
 		if (this.inBounds(x, y)) {
 
-			for (i = 0; i < rows.length; i++) {
-				if (y >= rows[i][0] && y < rows[i][1]) {
-					r = i;
+			for (i = 0; i < rowCoords.length; i++) {
+				coords = rowCoords[i];
+				if (y >= coords.top && y < coords.bottom) {
+					hitRow = i;
 					break;
 				}
 			}
 
-			for (i = 0; i < cols.length; i++) {
-				if (x >= cols[i][0] && x < cols[i][1]) {
-					c = i;
+			for (i = 0; i < colCoords.length; i++) {
+				coords = colCoords[i];
+				if (x >= coords.left && x < coords.right) {
+					hitCol = i;
 					break;
 				}
 			}
 
-			if (r >= 0 && c >= 0) {
-				cell = { row: r, col: c };
-				cell.grid = this.grid;
-				cell.date = this.grid.getCellDate(cell);
+			if (hitRow !== null && hitCol !== null) {
+				cell = this.grid.getCell(hitRow, hitCol);
+				cell.grid = this.grid; // for DragListener's isCellsEqual. dragging between grids
+				return cell;
 			}
 		}
 
-		return cell;
+		return null;
 	},
 
 
@@ -99,20 +106,20 @@ GridCoordMap.prototype = {
 		return true;
 	}
 
-};
+});
 
 
 /* Coordinate map that is a combination of multiple other coordinate maps
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function ComboCoordMap(coordMaps) {
-	this.coordMaps = coordMaps;
-}
-
-
-ComboCoordMap.prototype = {
+var ComboCoordMap = Class.extend({
 
 	coordMaps: null, // an array of CoordMaps
+
+
+	constructor: function(coordMaps) {
+		this.coordMaps = coordMaps;
+	},
 
 
 	// Builds all coordMaps
@@ -137,6 +144,17 @@ ComboCoordMap.prototype = {
 		}
 
 		return cell;
+	},
+
+
+	// Clears all coordMaps
+	clear: function() {
+		var coordMaps = this.coordMaps;
+		var i;
+
+		for (i = 0; i < coordMaps.length; i++) {
+			coordMaps[i].clear();
+		}
 	}
 
-};
+});

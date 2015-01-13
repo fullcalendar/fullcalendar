@@ -3,8 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // NOTE: all the segs being passed around in here are foreground segs
 
-$.extend(DayGrid.prototype, {
-
+DayGrid.mixin({
 
 	segPopover: null, // the Popover that holds events that can't fit in a cell. null when not visible
 	popoverSegs: null, // an array of segment objects that the segPopover holds. null when not visible
@@ -70,10 +69,9 @@ $.extend(DayGrid.prototype, {
 	// `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
 	limitRow: function(row, levelLimit) {
 		var _this = this;
-		var view = this.view;
 		var rowStruct = this.rowStructs[row];
 		var moreNodes = []; // array of "more" <a> links and <td> DOM nodes
-		var col = 0; // col #
+		var col = 0; // col #, left-to-right (not chronologically)
 		var cell;
 		var levelSegs; // array of segment objects in the last allowable level, ordered left-to-right
 		var cellMatrix; // a matrix (by level, then column) of all <td> jQuery elements in the row
@@ -90,7 +88,7 @@ $.extend(DayGrid.prototype, {
 		// Iterates through empty level cells and places "more" links inside if need be
 		function emptyCellsUntil(endCol) { // goes from current `col` to `endCol`
 			while (col < endCol) {
-				cell = { row: row, col: col };
+				cell = _this.getCell(row, col);
 				segsBelow = _this.getCellSegs(cell, levelLimit);
 				if (segsBelow.length) {
 					td = cellMatrix[levelLimit - 1][col];
@@ -119,7 +117,7 @@ $.extend(DayGrid.prototype, {
 				colSegsBelow = [];
 				totalSegsBelow = 0;
 				while (col <= seg.rightCol) {
-					cell = { row: row, col: col };
+					cell = this.getCell(row, col);
 					segsBelow = this.getCellSegs(cell, levelLimit);
 					colSegsBelow.push(segsBelow);
 					totalSegsBelow += segsBelow.length;
@@ -135,7 +133,7 @@ $.extend(DayGrid.prototype, {
 					for (j = 0; j < colSegsBelow.length; j++) {
 						moreTd = $('<td class="fc-more-cell"/>').attr('rowspan', rowspan);
 						segsBelow = colSegsBelow[j];
-						cell = { row: row, col: seg.leftCol + j };
+						cell = this.getCell(row, seg.leftCol + j);
 						moreLink = this.renderMoreLink(cell, [ seg ].concat(segsBelow)); // count seg as hidden too
 						moreWrap = $('<div/>').append(moreLink);
 						moreTd.append(moreWrap);
@@ -148,7 +146,7 @@ $.extend(DayGrid.prototype, {
 				}
 			}
 
-			emptyCellsUntil(view.colCnt); // finish off the level
+			emptyCellsUntil(this.colCnt); // finish off the level
 			rowStruct.moreEls = $(moreNodes); // for easy undoing later
 			rowStruct.limitedEls = $(limitedNodes); // for easy undoing later
 		}
@@ -184,7 +182,7 @@ $.extend(DayGrid.prototype, {
 			)
 			.on('click', function(ev) {
 				var clickOption = view.opt('eventLimitClick');
-				var date = view.cellToDate(cell);
+				var date = cell.start;
 				var moreEl = $(this);
 				var dayEl = _this.getCellDayEl(cell);
 				var allSegs = _this.getCellSegs(cell);
@@ -205,7 +203,7 @@ $.extend(DayGrid.prototype, {
 				}
 
 				if (clickOption === 'popover') {
-					_this.showSegPopover(date, cell, moreEl, reslicedAllSegs);
+					_this.showSegPopover(cell, moreEl, reslicedAllSegs);
 				}
 				else if (typeof clickOption === 'string') { // a view name
 					view.calendar.zoomTo(date, clickOption);
@@ -215,15 +213,15 @@ $.extend(DayGrid.prototype, {
 
 
 	// Reveals the popover that displays all events within a cell
-	showSegPopover: function(date, cell, moreLink, segs) {
+	showSegPopover: function(cell, moreLink, segs) {
 		var _this = this;
 		var view = this.view;
 		var moreWrap = moreLink.parent(); // the <div> wrapper around the <a>
 		var topEl; // the element we want to match the top coordinate of
 		var options;
 
-		if (view.rowCnt == 1) {
-			topEl = this.view.el; // will cause the popover to cover any sort of header
+		if (this.rowCnt == 1) {
+			topEl = view.el; // will cause the popover to cover any sort of header
 		}
 		else {
 			topEl = this.rowEls.eq(cell.row); // will align with top of row
@@ -231,7 +229,7 @@ $.extend(DayGrid.prototype, {
 
 		options = {
 			className: 'fc-more-popover',
-			content: this.renderSegPopoverContent(date, segs),
+			content: this.renderSegPopoverContent(cell, segs),
 			parentEl: this.el,
 			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
@@ -246,7 +244,7 @@ $.extend(DayGrid.prototype, {
 
 		// Determine horizontal coordinate.
 		// We use the moreWrap instead of the <td> to avoid border confusion.
-		if (view.opt('isRTL')) {
+		if (this.isRTL) {
 			options.right = moreWrap.offset().left + moreWrap.outerWidth() + 1; // +1 to be over cell border
 		}
 		else {
@@ -259,10 +257,10 @@ $.extend(DayGrid.prototype, {
 
 
 	// Builds the inner DOM contents of the segment popover
-	renderSegPopoverContent: function(date, segs) {
+	renderSegPopoverContent: function(cell, segs) {
 		var view = this.view;
 		var isTheme = view.opt('theme');
-		var title = date.format(view.opt('dayPopoverFormat'));
+		var title = cell.start.format(view.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
@@ -288,7 +286,7 @@ $.extend(DayGrid.prototype, {
 
 			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
 			// grids that want to do drag-n-drop about which cell it came from
-			segs[i].cellDate = date;
+			segs[i].cell = cell;
 
 			segContainer.append(segs[i].el);
 		}
@@ -307,12 +305,13 @@ $.extend(DayGrid.prototype, {
 
 		var dayStart = dayDate.clone().stripTime();
 		var dayEnd = dayStart.clone().add(1, 'days');
+		var dayRange = { start: dayStart, end: dayEnd };
 
 		// slice the events with a custom slicing function
 		return this.eventsToSegs(
 			events,
-			function(rangeStart, rangeEnd) {
-				var seg = intersectionToSeg(rangeStart, rangeEnd, dayStart, dayEnd); // if no intersection, undefined
+			function(range) {
+				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
 				return seg ? [ seg ] : []; // must return an array of segments
 			}
 		);
@@ -321,8 +320,7 @@ $.extend(DayGrid.prototype, {
 
 	// Generates the text that should be inside a "more" link, given the number of events it represents
 	getMoreLinkText: function(num) {
-		var view = this.view;
-		var opt = view.opt('eventLimitText');
+		var opt = this.view.opt('eventLimitText');
 
 		if (typeof opt === 'function') {
 			return opt(num);

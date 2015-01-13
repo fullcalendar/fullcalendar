@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.3 Stylesheet
+ * FullCalendar v2.2.6 Stylesheet
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -974,4 +974,15 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
+}
+
+hr.fc-timeline {
+	position: absolute;
+	border: 0px;
+	font-size: 0px;
+	height: 3px;
+	margin-top: -1px;
+	z-index: 2;
+	background: rgba(255, 0, 0, 0.25);
+	padding: 0px;
 }
