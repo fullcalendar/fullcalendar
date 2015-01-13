@@ -59,6 +59,7 @@ function Header(calendar, options) {
 					var themeIcon;
 					var normalIcon;
 					var defaultText;
+					var viewText; // highest priority
 					var customText;
 					var innerHtml;
 					var classes;
@@ -74,22 +75,23 @@ function Header(calendar, options) {
 								calendar[buttonName]();
 							};
 						}
-						else if (fcViews[buttonName]) { // a view name
+						else if (calendar.isValidViewType(buttonName)) { // a view type
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
+							viewText = calendar.getViewButtonText(buttonName);
 						}
 						if (buttonClick) {
 
 							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
 							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
 							normalIcon = smartProperty(options.buttonIcons, buttonName);
-							defaultText = smartProperty(options.defaultButtonText, buttonName);
+							defaultText = smartProperty(options.defaultButtonText, buttonName); // from languages
 							customText = smartProperty(options.buttonText, buttonName);
 
-							if (customText) {
-								innerHtml = htmlEscape(customText);
+							if (viewText || customText) {
+								innerHtml = htmlEscape(viewText || customText);
 							}
 							else if (themeIcon && options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";

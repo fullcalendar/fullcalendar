@@ -1,7 +1,8 @@
 
 var defaults = {
 
-	lang: 'en',
+	titleRangeSeparator: ' \u2014 ', // emphasized dash
+	monthYearFormat: 'MMMM YYYY', // required for en. other languages rely on datepicker computable option
 
 	defaultTimedEventDuration: '02:00:00',
 	defaultAllDayEventDuration: { days: 1 },
@@ -33,28 +34,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
-	
-	// time formats
-	titleFormat: {
-		month: 'MMMM YYYY', // like "September 1986". each language will override this
-		week: 'll', // like "Sep 4 1986"
-		day: 'LL' // like "September 4 1986"
-	},
-	columnFormat: {
-		month: 'ddd', // like "Sat"
-		week: generateWeekColumnFormat,
-		day: 'dddd' // like "Saturday"
-	},
-	timeFormat: { // for event elements
-		'default': generateShortTimeFormat
-	},
 
-	displayEventEnd: {
-		month: false,
-		basicWeek: false,
-		'default': true
-	},
-	
 	// locale
 	isRTL: false,
 	defaultButtonText: {
@@ -99,39 +79,13 @@ var defaults = {
 	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
-	windowResizeDelay: 200 // milliseconds before a rerender happens
+	windowResizeDelay: 200 // milliseconds before an updateSize happens
 	
 };
 
 
-function generateShortTimeFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(':mm', '(:mm)')
-		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-		.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
-}
-
-
-function generateWeekColumnFormat(options, langData) {
-	var format = langData.longDateFormat('L'); // for the format like "MM/DD/YYYY"
-	format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, ''); // strip the year off the edge, as well as other misc non-whitespace chars
-	if (options.isRTL) {
-		format += ' ddd'; // for RTL, add day-of-week to end
-	}
-	else {
-		format = 'ddd ' + format; // for LTR, add day-of-week to beginning
-	}
-	return format;
-}
-
-
-var langOptionHash = {
-	en: {
-		columnFormat: {
-			week: 'ddd M/D' // override for english. different from the generated default, which is MM/DD
-		},
-		dayPopoverFormat: 'dddd, MMMM D'
-	}
+var englishDefaults = {
+	dayPopoverFormat: 'dddd, MMMM D'
 };
 
 

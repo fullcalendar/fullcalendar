@@ -2,7 +2,7 @@
 /* Event-rendering and event-interaction methods for the abstract Grid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(Grid.prototype, {
+Grid.mixin({
 
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 	isDraggingSeg: false, // is a segment being dragged? boolean
@@ -49,7 +49,7 @@ $.extend(Grid.prototype, {
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
-	getSegs: function() {
+	getEventSegs: function() {
 		return this.segs || [];
 	},
 
@@ -244,7 +244,7 @@ $.extend(Grid.prototype, {
 	},
 
 
-	/* Dragging
+	/* Event Dragging
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -253,10 +253,9 @@ $.extend(Grid.prototype, {
 	segDragMousedown: function(seg, ev) {
 		var _this = this;
 		var view = this.view;
-		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var newStart, newEnd;
+		var dropLocation;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -281,48 +280,45 @@ $.extend(Grid.prototype, {
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
-			cellOver: function(cell, date) {
-				var origDate = seg.cellDate || dragListener.origDate;
-				var res = _this.computeDraggedEventDates(seg, origDate, date);
-				newStart = res.start;
-				newEnd = res.end;
+			cellOver: function(cell, isOrig) {
+				var origCell = seg.cell || dragListener.origCell; // starting cell could be forced (DayGrid.limit)
 
-				if (calendar.isEventAllowedInRange(event, newStart, res.visibleEnd)) { // allowed to drop here?
-					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
-						mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+				dropLocation = _this.computeEventDrop(origCell, cell, event);
+				if (dropLocation) {
+					if (view.renderDrag(dropLocation, seg)) { // have the subclass render a visual indication
+						mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
 					}
 					else {
 						mouseFollower.show();
 					}
+					if (isOrig) {
+						dropLocation = null; // needs to have moved cells to be a valid drop
+					}
 				}
 				else {
 					// have the helper follow the mouse (no snapping) with a warning-style cursor
-					newStart = null; // mark an invalid drop date
 					mouseFollower.show();
 					disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				newStart = null;
-				view.destroyDrag(); // unrender whatever was done in view.renderDrag
+				dropLocation = null;
+				view.destroyDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
 				enableCursor();
 			},
 			dragStop: function(ev) {
-				var hasChanged = newStart && !newStart.isSame(event.start);
-
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
-				mouseFollower.stop(!hasChanged, function() {
+				mouseFollower.stop(!dropLocation, function() {
 					_this.isDraggingSeg = false;
 					view.destroyDrag();
 					view.showEvent(event);
 					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
 
-					if (hasChanged) {
-						view.eventDrop(el[0], event, newStart, ev); // will rerender all events...
+					if (dropLocation) {
+						view.reportEventDrop(event, dropLocation, el, ev);
 					}
 				});
-
 				enableCursor();
 			},
 			listenStop: function() {
@@ -334,41 +330,156 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates.
-	// Might return a `null` end (even when forceEventDuration is on).
-	computeDraggedEventDates: function(seg, dragStartDate, dropDate) {
-		var view = this.view;
-		var event = seg.event;
-		var start = event.start;
-		var end = view.calendar.getEventEnd(event);
+	// Given the cell an event drag began, and the cell event was dropped, calculates the new start/end/allDay
+	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
+	// A falsy returned value indicates an invalid drop.
+	computeEventDrop: function(startCell, endCell, event) {
+		var dragStart = startCell.start;
+		var dragEnd = endCell.start;
 		var delta;
 		var newStart;
 		var newEnd;
 		var newAllDay;
-		var visibleEnd;
+		var dropLocation;
 
-		if (dropDate.hasTime() === dragStartDate.hasTime()) {
-			delta = dayishDiff(dropDate, dragStartDate);
-			newStart = start.clone().add(delta);
+		if (dragStart.hasTime() === dragEnd.hasTime()) {
+			delta = diffDayTime(dragEnd, dragStart);
+			newStart = event.start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
 				newEnd = null;
 			}
 			else {
-				newEnd = end.clone().add(delta);
+				newEnd = event.end.clone().add(delta);
 			}
 			newAllDay = event.allDay; // keep it the same
 		}
 		else {
 			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
-			newStart = dropDate;
+			newStart = dragEnd.clone();
 			newEnd = null; // end should be cleared
-			newAllDay = !dropDate.hasTime();
+			newAllDay = !dragEnd.hasTime();
 		}
 
-		// compute what the end date will appear to be
-		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(newAllDay, newStart);
+		dropLocation = {
+			start: newStart,
+			end: newEnd,
+			allDay: newAllDay
+		};
 
-		return { start: newStart, end: newEnd, visibleEnd: visibleEnd };
+		if (!this.view.calendar.isEventRangeAllowed(dropLocation, event)) {
+			return null;
+		}
+
+		return dropLocation;
+	},
+
+
+	/* External Element Dragging
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Called when a jQuery UI drag is initiated anywhere in the DOM
+	documentDragStart: function(ev, ui) {
+		var view = this.view;
+		var el;
+		var accept;
+
+		if (view.opt('droppable')) { // only listen if this setting is on
+			el = $(ev.target);
+
+			// Test that the dragged element passes the dropAccept selector or filter function.
+			// FYI, the default is "*" (matches all)
+			accept = view.opt('dropAccept');
+			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
+
+				this.startExternalDrag(el, ev, ui);
+			}
+		}
+	},
+
+
+	// Called when a jQuery UI drag starts and it needs to be monitored for cell dropping
+	startExternalDrag: function(el, ev, ui) {
+		var _this = this;
+		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
+		var dragListener;
+		var dropLocation; // a null value signals an unsuccessful drag
+
+		// listener that tracks mouse movement over date-associated pixel regions
+		dragListener = new DragListener(this.coordMap, {
+			cellOver: function(cell) {
+				dropLocation = _this.computeExternalDrop(cell, meta);
+				if (dropLocation) {
+					_this.renderDrag(dropLocation); // called without a seg parameter
+				}
+				else { // invalid drop cell
+					disableCursor();
+				}
+			},
+			cellOut: function() {
+				dropLocation = null; // signal unsuccessful
+				_this.destroyDrag();
+				enableCursor();
+			}
+		});
+
+		// gets called, only once, when jqui drag is finished
+		$(document).one('dragstop', function(ev, ui) {
+			_this.destroyDrag();
+			enableCursor();
+
+			if (dropLocation) { // element was dropped on a valid date/time cell
+				_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+			}
+		});
+
+		dragListener.startDrag(ev); // start listening immediately
+	},
+
+
+	// Given a cell to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
+	// returns start/end dates for the event that would result from the hypothetical drop. end might be null.
+	// Returning a null value signals an invalid drop cell.
+	computeExternalDrop: function(cell, meta) {
+		var dropLocation = {
+			start: cell.start.clone(),
+			end: null
+		};
+
+		// if dropped on an all-day cell, and element's metadata specified a time, set it
+		if (meta.startTime && !dropLocation.start.hasTime()) {
+			dropLocation.start.time(meta.startTime);
+		}
+
+		if (meta.duration) {
+			dropLocation.end = dropLocation.start.clone().add(meta.duration);
+		}
+
+		if (!this.view.calendar.isExternalDropRangeAllowed(dropLocation, meta.eventProps)) {
+			return null;
+		}
+
+		return dropLocation;
+	},
+
+
+
+	/* Drag Rendering (for both events and an external elements)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of an event or external element being dragged.
+	// `dropLocation` contains hypothetical start/end/allDay values the event would have if dropped. end can be null.
+	// `seg` is the internal segment object that is being dragged. If dragging an external element, `seg` is null.
+	// A truthy returned value indicates this method has rendered a helper element.
+	renderDrag: function(dropLocation, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event or external element being dragged
+	destroyDrag: function() {
+		// subclasses must implement
 	},
 
 
@@ -385,13 +496,14 @@ $.extend(Grid.prototype, {
 		var el = seg.el;
 		var event = seg.event;
 		var start = event.start;
-		var end = view.calendar.getEventEnd(event);
-		var newEnd = null;
+		var oldEnd = calendar.getEventEnd(event);
+		var newEnd; // falsy if invalid resize
 		var dragListener;
 
 		function destroy() { // resets the rendering to show the original event
-			_this.destroyResize();
+			_this.destroyEventResize();
 			view.showEvent(event);
+			enableCursor();
 		}
 
 		// Tracks mouse movement over the *grid's* coordinate map
@@ -403,42 +515,38 @@ $.extend(Grid.prototype, {
 				_this.isResizingSeg = true;
 				view.trigger('eventResizeStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
-			cellOver: function(cell, date) {
-				// compute the new end. don't allow it to go before the event's start
-				if (date.isBefore(start)) { // allows comparing ambig to non-ambig
-					date = start;
-				}
-				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
+			cellOver: function(cell) {
+				newEnd = cell.end;
 
-				if (calendar.isEventAllowedInRange(event, start, newEnd)) { // allowed to be resized here?
-					if (newEnd.isSame(end)) {
-						newEnd = null; // mark an invalid resize
-						destroy();
-					}
-					else {
-						_this.renderResize(start, newEnd, seg);
-						view.hideEvent(event);
-					}
+				if (!newEnd.isAfter(start)) { // was end moved before start?
+					newEnd = start.clone().add( // make the event span a single slot
+						diffDayTime(cell.end, cell.start) // assumes all slot durations are the same
+					);
+				}
+
+				if (newEnd.isSame(oldEnd)) {
+					newEnd = null;
+				}
+				else if (!calendar.isEventRangeAllowed({ start: start, end: newEnd }, event)) {
+					newEnd = null;
+					disableCursor();
 				}
 				else {
-					newEnd = null; // mark an invalid resize
-					destroy();
-					disableCursor();
+					_this.renderEventResize({ start: start, end: newEnd }, seg);
+					view.hideEvent(event);
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newEnd = null;
 				destroy();
-				enableCursor();
 			},
 			dragStop: function(ev) {
 				_this.isResizingSeg = false;
 				destroy();
-				enableCursor();
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
-				if (newEnd) {
-					view.eventResize(el[0], event, newEnd, ev); // will rerender all events...
+				if (newEnd) { // valid date to resize to?
+					view.reportEventResize(event, newEnd, el, ev);
 				}
 			}
 		});
@@ -447,8 +555,37 @@ $.extend(Grid.prototype, {
 	},
 
 
+	// Renders a visual indication of an event being resized.
+	// `range` has the updated dates of the event. `seg` is the original segment object involved in the drag.
+	renderEventResize: function(range, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event being resized.
+	destroyEventResize: function() {
+		// subclasses must implement
+	},
+
+
 	/* Rendering Utils
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Compute the text that should be displayed on an event's element.
+	// `range` can be the Event object itself, or something range-like, with at least a `start`.
+	// The `timeFormat` options and the grid's default format is used, but `formatStr` can override.
+	getEventTimeText: function(range, formatStr) {
+
+		formatStr = formatStr || this.eventTimeFormat;
+
+		if (range.end && this.displayEventEnd) {
+			return this.view.formatRange(range, formatStr);
+		}
+		else {
+			return range.start.format(formatStr);
+		}
+	},
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
@@ -637,10 +774,10 @@ $.extend(Grid.prototype, {
 		var i, seg;
 
 		if (rangeToSegsFunc) {
-			segs = rangeToSegsFunc(eventRange.start, eventRange.end);
+			segs = rangeToSegsFunc(eventRange);
 		}
 		else {
-			segs = this.rangeToSegs(eventRange.start, eventRange.end); // defined by the subclass
+			segs = this.rangeToSegs(eventRange); // defined by the subclass
 		}
 
 		for (i = 0; i < segs.length; i++) {
@@ -702,5 +839,61 @@ function compareSegs(seg1, seg2) {
 		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
 		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
+}
+
+fc.compareSegs = compareSegs; // export
+
+
+/* External-Dragging-Element Data
+----------------------------------------------------------------------------------------------------------------------*/
+
+// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
+// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
+fc.dataAttrPrefix = '';
+
+// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
+// to be used for Event Object creation.
+// A defined `.eventProps`, even when empty, indicates that an event should be created.
+function getDraggedElMeta(el) {
+	var prefix = fc.dataAttrPrefix;
+	var eventProps; // properties for creating the event, not related to date/time
+	var startTime; // a Duration
+	var duration;
+	var stick;
+
+	if (prefix) { prefix += '-'; }
+	eventProps = el.data(prefix + 'event') || null;
+
+	if (eventProps) {
+		if (typeof eventProps === 'object') {
+			eventProps = $.extend({}, eventProps); // make a copy
+		}
+		else { // something like 1 or true. still signal event creation
+			eventProps = {};
+		}
+
+		// pluck special-cased date/time properties
+		startTime = eventProps.start;
+		if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
+		duration = eventProps.duration;
+		stick = eventProps.stick;
+		delete eventProps.start;
+		delete eventProps.time;
+		delete eventProps.duration;
+		delete eventProps.stick;
+	}
+
+	// fallback to standalone attribute values for each of the date/time properties
+	if (startTime == null) { startTime = el.data(prefix + 'start'); }
+	if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
+	if (duration == null) { duration = el.data(prefix + 'duration'); }
+	if (stick == null) { stick = el.data(prefix + 'stick'); }
+
+	// massage into correct data types
+	startTime = startTime != null ? moment.duration(startTime) : null;
+	duration = duration != null ? moment.duration(duration) : null;
+	stick = Boolean(stick);
+
+	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }
 
