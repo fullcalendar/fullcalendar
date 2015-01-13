@@ -21,6 +21,9 @@ var TimeGrid = Grid.extend({
 
 	businessHourSegs: null,
 
+	showTimeIndicator: null, // whether or not to show the time indicator
+
+	currentTimeInterval: null, // variable to store the id for the setInterval that updates the time indicator
 
 	constructor: function() {
 		Grid.apply(this, arguments); // call the super-constructor
@@ -37,7 +40,76 @@ var TimeGrid = Grid.extend({
 
 		this.computeSlatTops();
 		this.renderBusinessHours();
+
+		// Render the time indicator, if applicable.
+		this.renderTimeIndicator();
+
 		Grid.prototype.render.call(this); // call the super-method
+	},
+
+
+	destroy: function() {
+		// Time indicator: If there's an existing interval then clear it.
+		if (this.currentTimeInterval) { clearInterval(this.currentTimeInterval); }
+
+		// Time indicator: Clear the resize event.
+		if (this.setTimeline) { $(window).off("resize", this.setTimeline); }
+
+		Grid.prototype.destroy.call(this); // call the super-method
+	},
+
+
+	renderTimeIndicator: function()
+	{
+		// Detect if the view has the required elements to facilitate showing the current time.
+		if (this.showTimeIndicator && this.view.dayGrid && this.view.dayGrid.dateToCellOffset && this.el.find(".fc-today").length > 0 && this.el.find(".fc-axis").length > 0)
+		{
+			// Define a function to update the position of the 'current time' element.
+			// Note that this takes slotDuration into account.
+			function setTimeline()
+			{
+				if (this.view.axisWidth)
+				{
+					var now          = moment();
+					var duration     = this.slotDuration;
+					var minTime      = moment().stripTime().add(this.minTime);
+
+					// Are we within the bounds of minTime/maxTime? If not we can't show the current time.
+					if (now >=minTime && now <= moment().stripTime().add(this.maxTime).subtract(1, "hours"))
+					{
+						var day      = parseInt(now.format("e"));
+						var width    = this.el.find(".fc-today").outerWidth();
+						var height   = this.el.find(".fc-axis.fc-time").outerHeight() + 1; // +1 pixel for the border?
+						var left     = this.el.find(".fc-axis.fc-time").outerWidth() + (this.view.dayGrid.dateToCellOffset(now) * width);
+
+						// Percentage is the current time in seconds - the minTime in seconds divided by the slotDuration in seconds divided by 0.24 (24 hour day).
+						var perc     = (((now.hours() * 3600) + (now.minutes() * 60) + now.seconds() - (minTime.hours() * 3600) - (minTime.minutes() * 60) - minTime.seconds()) / (duration / 1000)) / 0.24;
+
+						// Top position is calculated as if the height is a period of 24 hours.
+						var top      = ((height * 24) / 100) * perc;
+
+						this.el.find(".fc-timeline").show().css({"width": width + "px", "left": left + "px", "top": top + "px"});
+					}
+					else
+					{
+						this.el.find(".fc-timeline").hide();
+					}
+				}
+				else
+				{
+					// If the width of the left axis hasn't been calculated yet we'll retry in 10ms.
+					// By doing this we avoid having to wait 60 seconds until the indicator becomes visible.
+					setTimeout(setTimeline.bind(this), 10);
+				}
+			};
+
+			this.setTimeline = setTimeline.bind(this);
+
+			// Auto-update the position of the time element and set its initial position.
+			this.currentTimeInterval = setInterval(this.setTimeline, (1000 * 60));
+			$(window).on("resize", this.setTimeline);
+			this.setTimeline();
+		}
 	},
 
 
@@ -50,6 +122,7 @@ var TimeGrid = Grid.extend({
 	// Renders the basic HTML skeleton for the grid
 	renderHtml: function() {
 		return '' +
+			'<hr class="fc-timeline" style="display: none;" />' +
 			'<div class="fc-bg">' +
 				'<table>' +
 					this.rowHtml('slotBg') + // leverages RowRenderer, which will call slotBgCellHtml
@@ -128,6 +201,8 @@ var TimeGrid = Grid.extend({
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
+
+		this.showTimeIndicator = view.opt("showTimeIndicator");
 
 		this.axisFormat = view.opt('axisFormat') || view.opt('smallTimeFormat');
 	},
