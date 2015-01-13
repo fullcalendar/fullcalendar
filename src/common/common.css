@@ -578,7 +578,7 @@ hr.fc-timeline {
 	font-size: 0px;
 	height: 3px;
 	margin-top: -1px;
-	z-index: 2;
+	z-index: 6;
 	background: rgba(255, 0, 0, 0.25);
 	padding: 0px;
 }
