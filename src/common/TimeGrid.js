@@ -62,7 +62,7 @@ $.extend(TimeGrid.prototype, {
 	renderTimeIndicator: function()
 	{
 		// Detect if the view has the required elements to facilitate showing the current time.
-		if (this.showTimeIndicator && this.view.dateToDayOffset && this.el.find(".fc-today").length > 0 && this.el.find(".fc-axis").length > 0)
+		if (this.showTimeIndicator && this.view.dayGrid && this.view.dayGrid.dateToCellOffset && this.el.find(".fc-today").length > 0 && this.el.find(".fc-axis").length > 0)
 		{
 			// Define a function to update the position of the 'current time' element.
 			// Note that this takes slotDuration into account.
@@ -80,7 +80,7 @@ $.extend(TimeGrid.prototype, {
 						var day      = parseInt(now.format("e"));
 						var width    = this.el.find(".fc-today").outerWidth();
 						var height   = this.el.find(".fc-axis.fc-time").outerHeight() + 1; // +1 pixel for the border?
-						var left     = this.el.find(".fc-axis.fc-time").outerWidth() + (this.view.dateToDayOffset(now) * width);
+						var left     = this.el.find(".fc-axis.fc-time").outerWidth() + (this.view.dayGrid.dateToCellOffset(now) * width);
 
 						// Percentage is the current time in seconds - the minTime in seconds divided by the slotDuration in seconds divided by 0.24 (24 hour day).
 						var perc     = (((now.hours() * 3600) + (now.minutes() * 60) + now.seconds() - (minTime.hours() * 3600) - (minTime.minutes() * 60) - minTime.seconds()) / (duration / 1000)) / 0.24;
