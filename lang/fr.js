@@ -1,6 +1,7 @@
 
 $.fullCalendar.lang("fr", {
 	defaultButtonText: {
+		today: "Aujourd'hui",
 		month: "Mois",
 		week: "Semaine",
 		day: "Jour",
