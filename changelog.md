@@ -1,4 +1,16 @@
 
+v2.2.7 (2015-02-10)
+-------------------
+
+- view.title wasn't defined in viewRender callback ([2407])
+- FullCalendar versions >= 2.2.5 brokenness with Moment versions <= 2.8.3 ([2417])
+- Support Bokmal Norwegian language specifically ([2427])
+
+[2407]: https://code.google.com/p/fullcalendar/issues/detail?id=2407
+[2417]: https://code.google.com/p/fullcalendar/issues/detail?id=2417
+[2427]: https://code.google.com/p/fullcalendar/issues/detail?id=2427
+
+
 v2.2.6 (2015-01-11)
 -------------------
 
