@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.6
+ * FullCalendar v2.2.7
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -128,7 +128,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.6" };
+var fc = $.fullCalendar = { version: "2.2.7" };
 var fcViews = fc.views = {};
 
 
@@ -643,38 +643,18 @@ function diffDay(a, b) {
 }
 
 
-// Computes the larges whole-unit period of time, as a duration object.
-// For example, 48 hours will be {days:2} whereas 49 hours will be {hours:49}.
+// Computes the unit name of the largest whole-unit period of time.
+// For example, 48 hours will be "days" whereas 49 hours will be "hours".
 // Accepts start/end, a range object, or an original duration object.
-/* (never used)
-function computeIntervalDuration(start, end) {
-	var durationInput = {};
+function computeIntervalUnit(start, end) {
 	var i, unit;
 	var val;
 
 	for (i = 0; i < intervalUnits.length; i++) {
 		unit = intervalUnits[i];
-		val = computeIntervalAs(unit, start, end);
-		if (val) {
-			break;
-		}
-	}
+		val = computeRangeAs(unit, start, end);
 
-	durationInput[unit] = val;
-	return moment.duration(durationInput);
-}
-*/
-
-
-// Computes the unit name of the largest whole-unit period of time.
-// For example, 48 hours will be "days" wherewas 49 hours will be "hours".
-// Accepts start/end, a range object, or an original duration object.
-function computeIntervalUnit(start, end) {
-	var i, unit;
-
-	for (i = 0; i < intervalUnits.length; i++) {
-		unit = intervalUnits[i];
-		if (computeIntervalAs(unit, start, end)) {
+		if (val >= 1 && isInt(val)) {
 			break;
 		}
 	}
@@ -683,27 +663,21 @@ function computeIntervalUnit(start, end) {
 }
 
 
-// Computes the number of units the interval is cleanly comprised of.
-// If the given unit does not cleanly divide the interval a whole number of times, `false` is returned.
-// Accepts start/end, a range object, or an original duration object.
-function computeIntervalAs(unit, start, end) {
-	var val;
+// Computes the number of units (like "hours") in the given range.
+// Range can be a {start,end} object, separate start/end args, or a Duration.
+// Results are based on Moment's .as() and .diff() methods, so results can depend on internal handling
+// of month-diffing logic (which tends to vary from version to version).
+function computeRangeAs(unit, start, end) {
 
 	if (end != null) { // given start, end
-		val = end.diff(start, unit, true);
+		return end.diff(start, unit, true);
 	}
 	else if (moment.isDuration(start)) { // given duration
-		val = start.as(unit);
+		return start.as(unit);
 	}
 	else { // given { start, end } range object
-		val = start.end.diff(start.start, unit, true);
+		return start.end.diff(start.start, unit, true);
 	}
-
-	if (val >= 1 && isInt(val)) {
-		return val;
-	}
-
-	return false;
 }
 
 
@@ -1027,10 +1001,11 @@ newMomentProto.stripTime = function() {
 		// get the values before any conversion happens
 		a = this.toArray(); // array of y/m/d/h/m/s/ms
 
+		// TODO: use keepLocalTime in the future
 		this.utc(); // set the internal UTC flag (will clear the ambig flags)
 		setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
 
-		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
+		// Mark the time as ambiguous. This needs to happen after the .utc() call, which might call .utcOffset(),
 		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigTime = true;
 		this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
@@ -1051,6 +1026,7 @@ newMomentProto.hasTime = function() {
 // Converts the moment to UTC, stripping out its timezone offset, but preserving its
 // YMD and time-of-day. A moment with a stripped timezone offset will display no
 // timezone offset when .format() is called.
+// TODO: look into Moment's keepLocalTime functionality
 newMomentProto.stripZone = function() {
 	var a, wasAmbigTime;
 
@@ -1060,16 +1036,14 @@ newMomentProto.stripZone = function() {
 		a = this.toArray(); // array of y/m/d/h/m/s/ms
 		wasAmbigTime = this._ambigTime;
 
-		this.utc(); // set the internal UTC flag (will clear the ambig flags)
+		this.utc(); // set the internal UTC flag (might clear the ambig flags, depending on Moment internals)
 		setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
 
-		if (wasAmbigTime) {
-			// the above call to .utc()/.utcOffset() unfortunately clears the ambig flags, so reassign
-			this._ambigTime = true;
-		}
+		// the above call to .utc()/.utcOffset() unfortunately might clear the ambig flags, so restore
+		this._ambigTime = wasAmbigTime || false;
 
-		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .utcOffset(),
-		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
+		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which might call .utcOffset(),
+		// which clears the ambig flags. Same with setUTCValues with moment-timezone.
 		this._ambigZone = true;
 	}
 
@@ -1081,10 +1055,52 @@ newMomentProto.hasZone = function() {
 	return !this._ambigZone;
 };
 
-$.each([ 'utcOffset', 'zone' ], function(i, name) { // .zone() is moment-pre-2.9, has been deprecated
-	if (oldMomentProto[name]) {
 
-		// this method implicitly marks a zone (will get called upon .utc() and .local())
+// this method implicitly marks a zone
+newMomentProto.local = function() {
+	var a = this.toArray(); // year,month,date,hours,minutes,seconds,ms as an array
+	var wasAmbigZone = this._ambigZone;
+
+	oldMomentProto.local.apply(this, arguments);
+
+	// ensure non-ambiguous
+	// this probably already happened via local() -> utcOffset(), but don't rely on Moment's internals
+	this._ambigTime = false;
+	this._ambigZone = false;
+
+	if (wasAmbigZone) {
+		// If the moment was ambiguously zoned, the date fields were stored as UTC.
+		// We want to preserve these, but in local time.
+		// TODO: look into Moment's keepLocalTime functionality
+		setLocalValues(this, a);
+	}
+
+	return this; // for chaining
+};
+
+
+// implicitly marks a zone
+newMomentProto.utc = function() {
+	oldMomentProto.utc.apply(this, arguments);
+
+	// ensure non-ambiguous
+	// this probably already happened via utc() -> utcOffset(), but don't rely on Moment's internals
+	this._ambigTime = false;
+	this._ambigZone = false;
+
+	return this;
+};
+
+
+// methods for arbitrarily manipulating timezone offset.
+// should clear time/zone ambiguity when called.
+$.each([
+	'zone', // only in moment-pre-2.9. deprecated afterwards
+	'utcOffset'
+], function(i, name) {
+	if (oldMomentProto[name]) { // original method exists?
+
+		// this method implicitly marks a zone (will probably get called upon .utc() and .local())
 		newMomentProto[name] = function(tzo) {
 
 			if (tzo != null) { // setter
@@ -1098,22 +1114,6 @@ $.each([ 'utcOffset', 'zone' ], function(i, name) { // .zone() is moment-pre-2.9
 		};
 	}
 });
-
-// this method implicitly marks a zone
-newMomentProto.local = function() {
-	var a = this.toArray(); // year,month,date,hours,minutes,seconds,ms as an array
-	var wasAmbigZone = this._ambigZone;
-
-	oldMomentProto.local.apply(this, arguments); // will clear ambig flags
-
-	if (wasAmbigZone) {
-		// If the moment was ambiguously zoned, the date fields were stored as UTC.
-		// We want to preserve these, but in local time.
-		setLocalValues(this, a);
-	}
-
-	return this; // for chaining
-};
 
 
 // Formatting
@@ -6251,6 +6251,7 @@ var View = fc.View = Class.extend({
 	// Expects all values to be normalized (like what computeRange does).
 	setRange: function(range) {
 		$.extend(this, range);
+		this.updateTitle();
 	},
 
 
@@ -6264,7 +6265,7 @@ var View = fc.View = Class.extend({
 		var start, end;
 
 		// normalize the range's time-ambiguity
-		if (computeIntervalAs('days', intervalDuration)) { // whole-days?
+		if (/year|month|week|day/.test(intervalUnit)) { // whole-days?
 			intervalStart.stripTime();
 			intervalEnd.stripTime();
 		}
@@ -7259,7 +7260,7 @@ function Calendar(element, instanceOptions) {
 					unfreezeContentHeight();
 
 					// need to do this after View::render, so dates are calculated
-					updateTitle();
+					updateHeaderTitle();
 					updateTodayButton();
 
 					getAndRenderEvents();
@@ -7328,7 +7329,7 @@ function Calendar(element, instanceOptions) {
 			if (duration) {
 				duration = moment.duration(duration);
 				unit = computeIntervalUnit(duration);
-				unitIsSingle = computeIntervalAs(unit, duration) === 1;
+				unitIsSingle = duration.as(unit) === 1;
 			}
 
 			// options that are specified per the view's duration, like "week" or "day"
@@ -7503,8 +7504,7 @@ function Calendar(element, instanceOptions) {
 	-----------------------------------------------------------------------------*/
 
 
-	function updateTitle() {
-		currentView.updateTitle();
+	function updateHeaderTitle() {
 		header.updateTitle(currentView.title);
 	}
 
