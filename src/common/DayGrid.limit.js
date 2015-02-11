@@ -308,13 +308,18 @@ DayGrid.mixin({
 		var dayRange = { start: dayStart, end: dayEnd };
 
 		// slice the events with a custom slicing function
-		return this.eventsToSegs(
+		segs = this.eventsToSegs(
 			events,
 			function(range) {
 				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
 				return seg ? [ seg ] : []; // must return an array of segments
 			}
 		);
+
+		// force an order because eventsToSegs doesn't guarantee one
+		segs.sort(compareSegs);
+
+		return segs;
 	},
 
 

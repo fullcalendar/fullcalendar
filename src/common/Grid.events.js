@@ -656,6 +656,7 @@ Grid.mixin({
 
 	// Converts an array of event objects into an array of event segment objects.
 	// A custom `rangeToSegsFunc` may be given for arbitrarily slicing up events.
+	// Doesn't guarantee an order for the resulting array.
 	eventsToSegs: function(events, rangeToSegsFunc) {
 		var eventRanges = this.eventsToRanges(events);
 		var segs = [];
@@ -676,6 +677,7 @@ Grid.mixin({
 	// A "range" object is a plain object with start/end properties denoting the time it covers. Also an event property.
 	// For "normal" events, this will be identical to the event's start/end, but for "inverse-background" events,
 	// will create an array of ranges that span the time *not* covered by the given event.
+	// Doesn't guarantee an order for the resulting array.
 	eventsToRanges: function(events) {
 		var _this = this;
 		var eventsById = groupEventsById(events);

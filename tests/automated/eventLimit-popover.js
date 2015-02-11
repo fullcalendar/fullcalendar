@@ -90,6 +90,72 @@ describe('eventLimit popover', function() {
 			init();
 			expect($('.fc-more-popover .fc-event').length).toBe(4);
 		});
+
+		// issue 2385
+		it('orders events correctly regardless of ID', function() {
+			options.defaultDate = '2012-03-22';
+			options.eventLimit = 3;
+			options.events = [
+				{
+					id: '39957',
+					title: 'event01',
+					start: '2012-03-22T11:00:00',
+					end: '2012-03-22T11:30:00',
+					allDay: false
+				},
+				{
+					id: '40607',
+					title: 'event02',
+					start: '2012-03-22T16:15:00',
+					end: '2012-03-22T16:30:00',
+					allDay: false
+				},
+				{
+					id: '40760',
+					title: 'event03',
+					start: '2012-03-22T16:00:00',
+					end: '2012-03-22T16:15:00',
+					allDay: false
+				},
+				{
+					id: '41284',
+					title: 'event04',
+					start: '2012-03-22T19:00:00',
+					end: '2012-03-22T19:15:00',
+					allDay: false
+				},
+				{
+					id: '41645',
+					title: 'event05',
+					start: '2012-03-22T11:30:00',
+					end: '2012-03-22T12:00:00',
+					allDay: false
+				},
+				{
+					id: '41679',
+					title: 'event07',
+					start: '2012-03-22T12:00:00',
+					end: '2012-03-22T12:15:00',
+					allDay: false
+				},
+				{
+					id: '42246',
+					title: 'event08',
+					start: '2012-03-22T16:45:00',
+					end: '2012-03-22T17:00:00',
+					allDay: false
+				}
+			];
+			init();
+
+			var titles = $('.fc-more-popover .fc-event .fc-title').map(function() {
+				return $(this).text();
+			}).get();
+
+			expect(titles).toEqual([
+				'event01', 'event05', 'event07', 'event03', 'event02', 'event08', 'event04'
+			]);
+		});
 	});
 
 	[ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
