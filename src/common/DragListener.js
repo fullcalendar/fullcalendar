@@ -46,8 +46,10 @@ var DragListener = Class.extend({
 	// Call this when the user does a mousedown. Will probably lead to startListening
 	mousedown: function(ev) {
 		if (isPrimaryMouseButton(ev)) {
-
-			ev.preventDefault(); // prevents native selection in most browsers
+			
+			if (!isTouchEvent(ev)) {
+				ev.preventDefault(); // prevents native selection in most browsers but we still want to scroll on touch devices
+			}
 
 			this.startListening(ev);
 
@@ -85,13 +87,13 @@ var DragListener = Class.extend({
 				cell = this.getCell(ev);
 				this.origCell = cell;
 
-				this.mouseX0 = ev.pageX;
-				this.mouseY0 = ev.pageY;
+				this.mouseX0 = pointerEventToXY(ev).x;
+				this.mouseY0 = pointerEventToXY(ev).y;
 			}
 
 			$(document)
-				.on('mousemove', this.mousemoveProxy = $.proxy(this, 'mousemove'))
-				.on('mouseup', this.mouseupProxy = $.proxy(this, 'mouseup'))
+				.on(getMouseMoveEvent(), this.mousemoveProxy = $.proxy(this, 'mousemove'))
+				.on(getMouseUpEvent(), this.mouseupProxy = $.proxy(this, 'mouseup'))
 				.on('selectstart', this.preventDefault); // prevents native selection in IE<=8
 
 			this.isListening = true;
@@ -115,8 +117,8 @@ var DragListener = Class.extend({
 		if (!this.isDragging) { // if not already dragging...
 			// then start the drag if the minimum distance criteria is met
 			minDistance = this.options.distance || 1;
-			distanceSq = Math.pow(ev.pageX - this.mouseX0, 2) + Math.pow(ev.pageY - this.mouseY0, 2);
-			if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
+			distanceSq = Math.pow(pointerEventToXY(ev).x - this.mouseX0, 2) + Math.pow(pointerEventToXY(ev).y - this.mouseY0, 2);
+			if (distanceSq >= minDistance * minDistance) { // use Pythagorean theorem
 				this.startDrag(ev);
 			}
 		}
@@ -161,7 +163,7 @@ var DragListener = Class.extend({
 				if (this.cell) {
 					this.cellOut();
 				}
-				if (cell) {
+				if (cell && (!isTouchEvent(ev) || dragOnTouchDevices)) {
 					this.cellOver(cell);
 				}
 			}
@@ -216,8 +218,8 @@ var DragListener = Class.extend({
 			}
 
 			$(document)
-				.off('mousemove', this.mousemoveProxy)
-				.off('mouseup', this.mouseupProxy)
+				.off(getMouseMoveEvent(), this.mousemoveProxy)
+				.off(getMouseUpEvent(), this.mouseupProxy)
 				.off('selectstart', this.preventDefault);
 
 			this.mousemoveProxy = null;
@@ -234,7 +236,7 @@ var DragListener = Class.extend({
 
 	// Gets the cell underneath the coordinates for the given mouse event
 	getCell: function(ev) {
-		return this.coordMap.getCell(ev.pageX, ev.pageY);
+		return this.coordMap.getCell(pointerEventToXY(ev).x, pointerEventToXY(ev).y);
 	},
 
 
@@ -286,10 +288,10 @@ var DragListener = Class.extend({
 		if (bounds) { // only scroll if scrollEl exists
 
 			// compute closeness to edges. valid range is from 0.0 - 1.0
-			topCloseness = (sensitivity - (ev.pageY - bounds.top)) / sensitivity;
-			bottomCloseness = (sensitivity - (bounds.bottom - ev.pageY)) / sensitivity;
-			leftCloseness = (sensitivity - (ev.pageX - bounds.left)) / sensitivity;
-			rightCloseness = (sensitivity - (bounds.right - ev.pageX)) / sensitivity;
+			topCloseness = (sensitivity - (pointerEventToXY(ev).y - bounds.top)) / sensitivity;
+			bottomCloseness = (sensitivity - (bounds.bottom - pointerEventToXY(ev).y)) / sensitivity;
+			leftCloseness = (sensitivity - (pointerEventToXY(ev).x - bounds.left)) / sensitivity;
+			rightCloseness = (sensitivity - (bounds.right - pointerEventToXY(ev).x)) / sensitivity;
 
 			// translate vertical closeness into velocity.
 			// mouse must be completely in bounds for velocity to happen.
