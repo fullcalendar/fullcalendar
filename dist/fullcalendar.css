@@ -975,3 +975,14 @@ be a descendant of the grid when it is being dragged.
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
 }
+
+hr.fc-timeline {
+	position: absolute;
+	border: 0px;
+	font-size: 0px;
+	height: 3px;
+	margin-top: -1px;
+	z-index: 6;
+	background: rgba(255, 0, 0, 0.25);
+	padding: 0px;
+}
