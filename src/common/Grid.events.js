@@ -316,7 +316,7 @@ Grid.mixin({
 					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 					if (dropLocation) {
-						view.reportEventDrop(event, dropLocation, el, ev);
+						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
 				});
 				enableCursor();
@@ -546,7 +546,7 @@ Grid.mixin({
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 				if (newEnd) { // valid date to resize to?
-					view.reportEventResize(event, newEnd, el, ev);
+					view.reportEventResize(event, newEnd, this.largeUnit, el, ev);
 				}
 			}
 		});

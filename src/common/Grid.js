@@ -23,6 +23,10 @@ var Grid = fc.Grid = RowRenderer.extend({
 	eventTimeFormat: null,
 	displayEventEnd: null,
 
+	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
+	// of the date cells. if not defined, assumes to be day and time granularity.
+	largeUnit: null,
+
 
 	constructor: function() {
 		RowRenderer.apply(this, arguments); // call the super-constructor
@@ -90,6 +94,17 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
 	rangeToSegs: function(range) {
 		// subclasses must implement
+	},
+
+
+	// Diffs the two dates, returning a duration, based on granularity of the grid
+	diffDates: function(a, b) {
+		if (this.largeUnit) {
+			return diffByUnit(a, b, this.largeUnit);
+		}
+		else {
+			return diffDayTime(a, b);
+		}
 	},
 
 
@@ -344,17 +359,24 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event over the given range.
+	// Renders a mock event over the given range
+	renderRangeHelper: function(range, sourceSeg) {
+		var fakeEvent = this.fabricateHelperEvent(range, sourceSeg);
+
+		this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
+	},
+
+
+	// Builds a fake event given a date range it should cover, and a segment is should be inspired from.
 	// The range's end can be null, in which case the mock event that is rendered will have a null end time.
 	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	renderRangeHelper: function(range, sourceSeg) {
-		var fakeEvent;
+	fabricateHelperEvent: function(range, sourceSeg) {
+		var fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
 
-		fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
 		fakeEvent.start = range.start.clone();
 		fakeEvent.end = range.end ? range.end.clone() : null;
-		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventDateProps
-		this.view.calendar.normalizeEventDateProps(fakeEvent);
+		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventRange
+		this.view.calendar.normalizeEventRange(fakeEvent);
 
 		// this extra className will be useful for differentiating real events from mock events in CSS
 		fakeEvent.className = (fakeEvent.className || []).concat('fc-helper');
@@ -364,7 +386,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 			fakeEvent.editable = false;
 		}
 
-		this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
+		return fakeEvent;
 	},
 
 

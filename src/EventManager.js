@@ -24,7 +24,8 @@ function EventManager(options) { // assumed to be a calendar
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.mutateEvent = mutateEvent;
-	t.normalizeEventDateProps = normalizeEventDateProps;
+	t.normalizeEventRange = normalizeEventRange;
+	t.normalizeEventRangeTimes = normalizeEventRangeTimes;
 	t.ensureVisibleEventRange = ensureVisibleEventRange;
 	
 	
@@ -534,7 +535,7 @@ function EventManager(options) { // assumed to be a calendar
 					source ? source.allDayDefault : undefined,
 					options.allDayDefault
 				);
-				// still undefined? normalizeEventDateProps will calculate it
+				// still undefined? normalizeEventRange will calculate it
 			}
 
 			assignDatesToEvent(start, end, allDay, out);
@@ -550,35 +551,16 @@ function EventManager(options) { // assumed to be a calendar
 		event.start = start;
 		event.end = end;
 		event.allDay = allDay;
-		normalizeEventDateProps(event);
+		normalizeEventRange(event);
 		backupEventDates(event);
 	}
 
 
-	// Ensures the allDay property exists.
-	// Ensures the start/end dates are consistent with allDay and forceEventDuration.
-	// Accepts an Event object, or a plain object with event-ish properties.
+	// Ensures proper values for allDay/start/end. Accepts an Event object, or a plain object with event-ish properties.
 	// NOTE: Will modify the given object.
-	function normalizeEventDateProps(props) {
+	function normalizeEventRange(props) {
 
-		if (props.allDay == null) {
-			props.allDay = !(props.start.hasTime() || (props.end && props.end.hasTime()));
-		}
-
-		if (props.allDay) {
-			props.start.stripTime();
-			if (props.end) {
-				props.end.stripTime();
-			}
-		}
-		else {
-			if (!props.start.hasTime()) {
-				props.start = t.rezoneDate(props.start); // will also give it a 00:00 time
-			}
-			if (props.end && !props.end.hasTime()) {
-				props.end = t.rezoneDate(props.end); // will also give it a 00:00 time
-			}
-		}
+		normalizeEventRangeTimes(props);
 
 		if (props.end && !props.end.isAfter(props.start)) {
 			props.end = null;
@@ -590,6 +572,30 @@ function EventManager(options) { // assumed to be a calendar
 			}
 			else {
 				props.end = null;
+			}
+		}
+	}
+
+
+	// Ensures the allDay property exists and the timeliness of the start/end dates are consistent
+	function normalizeEventRangeTimes(range) {
+		if (range.allDay == null) {
+			range.allDay = !(range.start.hasTime() || (range.end && range.end.hasTime()));
+		}
+
+		if (range.allDay) {
+			range.start.stripTime();
+			if (range.end) {
+				// TODO: consider nextDayThreshold here? If so, will require a lot of testing and adjustment
+				range.end.stripTime();
+			}
+		}
+		else {
+			if (!range.start.hasTime()) {
+				range.start = t.rezoneDate(range.start); // will assign a 00:00 time
+			}
+			if (range.end && !range.end.hasTime()) {
+				range.end = t.rezoneDate(range.end); // will assign a 00:00 time
 			}
 		}
 	}
@@ -694,55 +700,70 @@ function EventManager(options) { // assumed to be a calendar
 	// If `props` does not contain start/end dates, the updated values are assumed to be the event's current start/end.
 	// All date comparisons are done against the event's pristine _start and _end dates.
 	// Returns an object with delta information and a function to undo all operations.
-	//
-	function mutateEvent(event, props) {
+	// For making computations in a granularity greater than day/time, specify largeUnit.
+	// NOTE: The given `newProps` might be mutated for normalization purposes.
+	function mutateEvent(event, newProps, largeUnit) {
 		var miscProps = {};
+		var oldProps;
 		var clearEnd;
-		var dateDelta;
+		var startDelta;
+		var endDelta;
 		var durationDelta;
 		var undoFunc;
 
-		props = props || {};
-
-		// ensure new date-related values to compare against
-		if (!props.start) {
-			props.start = event.start.clone();
+		// diffs the dates in the appropriate way, returning a duration
+		function diffDates(date1, date0) { // date1 - date0
+			if (largeUnit) {
+				return diffByUnit(date1, date0, largeUnit);
+			}
+			else if (newProps.allDay) {
+				return diffDay(date1, date0);
+			}
+			else {
+				return diffDayTime(date1, date0);
+			}
 		}
-		if (props.end === undefined) {
-			props.end = event.end ? event.end.clone() : null;
+
+		newProps = newProps || {};
+
+		// normalize new date-related properties
+		if (!newProps.start) {
+			newProps.start = event.start.clone();
 		}
-		if (props.allDay == null) { // is null or undefined?
-			props.allDay = event.allDay;
+		if (newProps.end === undefined) {
+			newProps.end = event.end ? event.end.clone() : null;
 		}
+		if (newProps.allDay == null) { // is null or undefined?
+			newProps.allDay = event.allDay;
+		}
+		normalizeEventRange(newProps);
 
-		normalizeEventDateProps(props); // massages start/end/allDay
+		// create normalized versions of the original props to compare against
+		// need a real end value, for diffing
+		oldProps = {
+			start: event._start.clone(),
+			end: event._end ? event._end.clone() : t.getDefaultEventEnd(event._allDay, event._start),
+			allDay: newProps.allDay // normalize the dates in the same regard as the new properties
+		};
+		normalizeEventRange(oldProps);
 
-		// clear the end date if explicitly changed to null
-		clearEnd = event._end !== null && props.end === null;
+		// need to clear the end date if explicitly changed to null
+		clearEnd = event._end !== null && newProps.end === null;
 
-		// compute the delta for moving the start and end dates together
-		if (props.allDay) {
-			dateDelta = diffDay(props.start, event._start); // whole-day diff from start-of-day
+		// compute the delta for moving the start date
+		startDelta = diffDates(newProps.start, oldProps.start);
+
+		// compute the delta for moving the end date
+		if (newProps.end) {
+			endDelta = diffDates(newProps.end, oldProps.end);
+			durationDelta = endDelta.subtract(startDelta);
 		}
 		else {
-			dateDelta = diffDayTime(props.start, event._start);
-		}
-
-		// compute the delta for moving the end date (after applying dateDelta)
-		if (!clearEnd && props.end) {
-			durationDelta = diffDayTime(
-				// new duration
-				props.end,
-				props.start
-			).subtract(diffDayTime(
-				// subtract old duration
-				event._end || t.getDefaultEventEnd(event._allDay, event._start),
-				event._start
-			));
+			durationDelta = null;
 		}
 
 		// gather all non-date-related properties
-		$.each(props, function(name, val) {
+		$.each(newProps, function(name, val) {
 			if (isMiscEventPropName(name)) {
 				if (val !== undefined) {
 					miscProps[name] = val;
@@ -754,14 +775,14 @@ function EventManager(options) { // assumed to be a calendar
 		undoFunc = mutateEvents(
 			clientEvents(event._id), // get events with this ID
 			clearEnd,
-			props.allDay,
-			dateDelta,
+			newProps.allDay,
+			startDelta,
 			durationDelta,
 			miscProps
 		);
 
 		return {
-			dateDelta: dateDelta,
+			dateDelta: startDelta,
 			durationDelta: durationDelta,
 			undo: undoFunc
 		};
@@ -807,16 +828,17 @@ function EventManager(options) { // assumed to be a calendar
 			newProps = {
 				start: event._start,
 				end: event._end,
-				allDay: event._allDay
+				allDay: allDay // normalize the dates in the same regard as the new properties
 			};
+			normalizeEventRange(newProps); // massages start/end/allDay
 
+			// strip or ensure the end date
 			if (clearEnd) {
 				newProps.end = null;
 			}
-
-			newProps.allDay = allDay;
-
-			normalizeEventDateProps(newProps); // massages start/end/allDay
+			else if (durationDelta && !newProps.end) { // the duration translation requires an end date
+				newProps.end = t.getDefaultEventEnd(newProps.allDay, newProps.start);
+			}
 
 			if (dateDelta) {
 				newProps.start.add(dateDelta);
@@ -826,10 +848,7 @@ function EventManager(options) { // assumed to be a calendar
 			}
 
 			if (durationDelta) {
-				if (!newProps.end) {
-					newProps.end = t.getDefaultEventEnd(newProps.allDay, newProps.start);
-				}
-				newProps.end.add(durationDelta);
+				newProps.end.add(durationDelta); // end already ensured above
 			}
 
 			// if the dates have changed, and we know it is impossible to recompute the
