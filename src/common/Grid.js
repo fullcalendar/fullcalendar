@@ -21,6 +21,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// derived from options
 	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
 	eventTimeFormat: null,
+	displayEventTime: null,
 	displayEventEnd: null,
 
 	// if all cells are the same length of time, the duration they all share. optional.
@@ -58,9 +59,16 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventTime'.
+	// Only applies to non-all-day events.
+	computeDisplayEventTime: function() {
+		return true;
+	},
+
+
 	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
 	computeDisplayEventEnd: function() {
-		return false;
+		return true;
 	},
 
 
@@ -71,6 +79,8 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Tells the grid about what period of time to display. Grid will subsequently compute dates for cell system.
 	setRange: function(range) {
 		var view = this.view;
+		var displayEventTime;
+		var displayEventEnd;
 
 		this.start = range.start.clone();
 		this.end = range.end.clone();
@@ -81,11 +91,24 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		// Populate option-derived settings. Look for override first, then compute if necessary.
 		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
-		this.eventTimeFormat = view.opt('timeFormat') || this.computeEventTimeFormat();
-		this.displayEventEnd = view.opt('displayEventEnd');
-		if (this.displayEventEnd == null) {
-			this.displayEventEnd = this.computeDisplayEventEnd();
+
+		this.eventTimeFormat =
+			view.opt('eventTimeFormat') ||
+			view.opt('timeFormat') || // deprecated
+			this.computeEventTimeFormat();
+
+		displayEventTime = view.opt('displayEventTime');
+		if (displayEventTime == null) {
+			displayEventTime = this.computeDisplayEventTime(); // might be based off of range
 		}
+
+		displayEventEnd = view.opt('displayEventEnd');
+		if (displayEventEnd == null) {
+			displayEventEnd = this.computeDisplayEventEnd(); // might be based off of range
+		}
+
+		this.displayEventTime = displayEventTime;
+		this.displayEventEnd = displayEventEnd;
 	},
 
 
