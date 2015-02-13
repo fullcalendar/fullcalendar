@@ -23,6 +23,10 @@ var Grid = fc.Grid = RowRenderer.extend({
 	eventTimeFormat: null,
 	displayEventEnd: null,
 
+	// if all cells are the same length of time, the duration they all share. optional.
+	// when defined, allows the computeCellRange shortcut, as well as improved resizing behavior.
+	cellDuration: null,
+
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
 	// of the date cells. if not defined, assumes to be day and time granularity.
 	largeUnit: null,
@@ -139,8 +143,21 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Given a cell object with index and misc data, generates a range object
+	// If the grid is leveraging cellDuration, this doesn't need to be defined. Only computeCellDate does.
+	// If being overridden, should return a range with reference-free date copies.
 	computeCellRange: function(cell) {
-		// subclasses must implement
+		var date = this.computeCellDate(cell);
+
+		return {
+			start: date,
+			end: date.clone().add(this.cellDuration)
+		};
+	},
+
+
+	// Given a cell, returns its start date. Should return a reference-free date copy.
+	computeCellDate: function(cell) {
+		// subclasses can implement
 	},
 
 

@@ -121,6 +121,7 @@ var TimeGrid = Grid.extend({
 
 		this.slotDuration = slotDuration;
 		this.snapDuration = snapDuration;
+		this.cellDuration = snapDuration; // for Grid system
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
@@ -181,13 +182,11 @@ var TimeGrid = Grid.extend({
 	},
 
 
-	// Given a cell object, generates a range object
-	computeCellRange: function(cell) {
+	// Given a cell object, generates its start date. Returns a reference-free copy.
+	computeCellDate: function(cell) {
 		var time = this.computeSnapTime(cell.row);
-		var start = this.view.calendar.rezoneDate(cell.day).time(time);
-		var end = start.clone().add(this.snapDuration);
 
-		return { start: start, end: end };
+		return this.view.calendar.rezoneDate(cell.day).time(time);
 	},
 
 

@@ -16,6 +16,13 @@ var DayGrid = Grid.extend({
 	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
 
 
+	constructor: function() {
+		Grid.apply(this, arguments);
+
+		this.cellDuration = moment.duration(1, 'day'); // for Grid system
+	},
+
+
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
 	// isRigid determins whether the individual rows should ignore the contents and be a constant height.
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -184,14 +191,12 @@ var DayGrid = Grid.extend({
 	},
 
 
-	// Given a cell object, generates a range object
-	computeCellRange: function(cell) {
+	// Given a cell object, generates its start date. Returns a reference-free copy.
+	computeCellDate: function(cell) {
 		var colCnt = this.colCnt;
 		var index = cell.row * colCnt + (this.isRTL ? colCnt - cell.col - 1 : cell.col);
-		var start = this.cellDates[index].clone();
-		var end = start.clone().add(1, 'day');
 
-		return { start: start, end: end };
+		return this.cellDates[index].clone();
 	},
 
 
