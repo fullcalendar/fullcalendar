@@ -1,6 +1,9 @@
 
 /* Tracks mouse movements over a CoordMap and raises events about which cell the mouse is over.
 ------------------------------------------------------------------------------------------------------------------------
+options:
+- subjectEl
+- subjectCenter
 */
 
 var CellDragListener = DragListener.extend({
@@ -8,6 +11,7 @@ var CellDragListener = DragListener.extend({
 	coordMap: null, // converts coordinates to date cells
 	origCell: null, // the cell the mouse was over when listening started
 	cell: null, // the cell the mouse is over
+	coordAdjust: null, // delta that will be added to the mouse coordinates when computing collisions
 
 
 	constructor: function(coordMap, options) {
@@ -17,18 +21,48 @@ var CellDragListener = DragListener.extend({
 	},
 
 
-	// Called when drag listening starts (but a real drag has not necessarily began)
-	listenStart: function(ev) { // ev might be undefined if dragging was started manually
-		var cell;
+	// Called when drag listening starts (but a real drag has not necessarily began).
+	// ev might be undefined if dragging was started manually.
+	listenStart: function(ev) {
+		var subjectEl = this.options.subjectEl;
+		var subjectRect;
+		var origPoint;
+		var point;
 
 		DragListener.prototype.listenStart.apply(this, arguments); // call the super-method
 
 		this.computeCoords();
 
-		// get info on the initial cell and its coordinates
-		this.origCell = ev ?
-			this.getCell(ev) :
-			null;
+		if (ev) {
+			origPoint = { left: ev.pageX, top: ev.pageY };
+			point = origPoint;
+
+			// constrain the point to bounds of the element being dragged
+			if (subjectEl) {
+				subjectRect = getOuterRect(subjectEl); // used for centering as well
+				point = constrainPoint(point, subjectRect);
+			}
+
+			this.origCell = this.getCell(point.left, point.top);
+
+			// treat the center of the subject as the collision point?
+			if (subjectEl && this.options.subjectCenter) {
+
+				// only consider the area the subject overlaps the cell. best for large subjects
+				if (this.origCell) {
+					subjectRect = intersectRects(this.origCell, subjectRect) ||
+						subjectRect; // in case there is no intersection
+				}
+
+				point = getRectCenter(subjectRect);
+			}
+
+			this.coordAdjust = diffPoints(point, origPoint); // point - origPoint
+		}
+		else {
+			this.origCell = null;
+			this.coordAdjust = null;
+		}
 	},
 
 
@@ -45,10 +79,10 @@ var CellDragListener = DragListener.extend({
 
 		DragListener.prototype.dragStart.apply(this, arguments); // call the super-method
 
+		cell = this.getCell(ev.pageX, ev.pageY); // might be different from this.origCell if the min-distance is large
+
 		// report the initial cell the mouse is over
 		// especially important if no min-distance and drag starts immediately
-		cell = this.getCell(ev); // this might be different from this.origCell if the min-distance is large
-
 		if (cell) {
 			this.cellOver(cell);
 		}
@@ -61,7 +95,7 @@ var CellDragListener = DragListener.extend({
 
 		DragListener.prototype.drag.apply(this, arguments); // call the super-method
 
-		cell = this.getCell(ev);
+		cell = this.getCell(ev.pageX, ev.pageY);
 
 		if (!isCellsEqual(cell, this.cell)) { // a different cell than before?
 			if (this.cell) {
@@ -124,8 +158,14 @@ var CellDragListener = DragListener.extend({
 
 
 	// Gets the cell underneath the coordinates for the given mouse event
-	getCell: function(ev) {
-		return this.coordMap.getCell(ev.pageX, ev.pageY);
+	getCell: function(left, top) {
+
+		if (this.coordAdjust) {
+			left += this.coordAdjust.left;
+			top += this.coordAdjust.top;
+		}
+
+		return this.coordMap.getCell(left, top);
 	}
 
 });

@@ -270,6 +270,8 @@ Grid.mixin({
 		var dragListener = new CellDragListener(view.coordMap, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
+			subjectEl: el,
+			subjectCenter: true,
 			listenStart: function(ev) {
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
@@ -514,6 +516,7 @@ Grid.mixin({
 		dragListener = new CellDragListener(this.coordMap, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
+			subjectEl: el,
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.isResizingSeg = true;

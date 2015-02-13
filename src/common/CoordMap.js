@@ -49,7 +49,9 @@ var GridCoordMap = Class.extend({
 	// Given a coordinate of the document, gets the associated cell. If no cell is underneath, returns null
 	getCell: function(x, y) {
 		var rowCoords = this.rowCoords;
+		var rowCnt = rowCoords.length;
 		var colCoords = this.colCoords;
+		var colCnt = colCoords.length;
 		var hitRow = null;
 		var hitCol = null;
 		var i, coords;
@@ -57,7 +59,7 @@ var GridCoordMap = Class.extend({
 
 		if (this.inBounds(x, y)) {
 
-			for (i = 0; i < rowCoords.length; i++) {
+			for (i = 0; i < rowCnt; i++) {
 				coords = rowCoords[i];
 				if (y >= coords.top && y < coords.bottom) {
 					hitRow = i;
@@ -65,7 +67,7 @@ var GridCoordMap = Class.extend({
 				}
 			}
 
-			for (i = 0; i < colCoords.length; i++) {
+			for (i = 0; i < colCnt; i++) {
 				coords = colCoords[i];
 				if (x >= coords.left && x < coords.right) {
 					hitCol = i;
@@ -74,8 +76,13 @@ var GridCoordMap = Class.extend({
 			}
 
 			if (hitRow !== null && hitCol !== null) {
-				cell = this.grid.getCell(hitRow, hitCol);
-				cell.grid = this.grid; // for DragListener's isCellsEqual. dragging between grids
+
+				cell = this.grid.getCell(hitRow, hitCol); // expected to return a fresh object we can modify
+				cell.grid = this.grid; // for CellDragListener's isCellsEqual. dragging between grids
+
+				// make the coordinates available on the cell object
+				$.extend(cell, rowCoords[hitRow], colCoords[hitCol]);
+
 				return cell;
 			}
 		}
