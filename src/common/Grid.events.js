@@ -267,7 +267,7 @@ Grid.mixin({
 
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
-		var dragListener = new DragListener(view.coordMap, {
+		var dragListener = new CellDragListener(view.coordMap, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
 			listenStart: function(ev) {
@@ -280,8 +280,12 @@ Grid.mixin({
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
-			cellOver: function(cell, isOrig) {
-				var origCell = seg.cell || dragListener.origCell; // starting cell could be forced (DayGrid.limit)
+			cellOver: function(cell, isOrig, origCell) {
+
+				// starting cell could be forced (DayGrid.limit)
+				if (seg.cell) {
+					origCell = seg.cell;
+				}
 
 				dropLocation = _this.computeEventDrop(origCell, cell, event);
 				if (dropLocation) {
@@ -406,7 +410,7 @@ Grid.mixin({
 		var dropLocation; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
-		dragListener = new DragListener(this.coordMap, {
+		dragListener = new CellDragListener(this.coordMap, {
 			cellOver: function(cell) {
 				dropLocation = _this.computeExternalDrop(cell, meta);
 				if (dropLocation) {
@@ -507,7 +511,7 @@ Grid.mixin({
 		}
 
 		// Tracks mouse movement over the *grid's* coordinate map
-		dragListener = new DragListener(this.coordMap, {
+		dragListener = new CellDragListener(this.coordMap, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
 			dragStart: function(ev) {

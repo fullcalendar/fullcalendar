@@ -21,6 +21,7 @@
         "src/common/Popover.js",
         "src/common/CoordMap.js",
         "src/common/DragListener.js",
+        "src/common/CellDragListener.js",
         "src/common/MouseFollower.js",
         "src/common/RowRenderer.js",
         "src/common/Grid.js",

@@ -1,25 +1,17 @@
 
-/* Tracks mouse movements over a CoordMap and raises events about which cell the mouse is over.
+/* Tracks a drag's mouse movement, firing various handlers
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: very useful to have a handler that gets called upon cellOut OR when dragging stops (for cleanup)
 
-var DragListener = Class.extend({
+var DragListener = fc.DragListener = Class.extend({
 
-	coordMap: null,
 	options: null,
 
 	isListening: false,
 	isDragging: false,
 
-	// the cell the mouse was over when listening started
-	origCell: null,
-
-	// the cell the mouse is over
-	cell: null,
-
 	// coordinates of the initial mousedown
-	mouseX0: null,
-	mouseY0: null,
+	originX: null,
+	originY: null,
 
 	// handler attached to the document, bound to the DragListener's `this`
 	mousemoveProxy: null,
@@ -37,8 +29,7 @@ var DragListener = Class.extend({
 	scrollIntervalMs: 50, // millisecond wait between scroll increment
 
 
-	constructor: function(coordMap, options) {
-		this.coordMap = coordMap;
+	constructor: function(options) {
 		this.options = options || {};
 	},
 
@@ -62,7 +53,6 @@ var DragListener = Class.extend({
 	// Call this to start tracking mouse movements
 	startListening: function(ev) {
 		var scrollParent;
-		var cell;
 
 		if (!this.isListening) {
 
@@ -78,51 +68,52 @@ var DragListener = Class.extend({
 				}
 			}
 
-			this.computeCoords(); // relies on `scrollEl`
-
-			// get info on the initial cell and its coordinates
-			if (ev) {
-				cell = this.getCell(ev);
-				this.origCell = cell;
-
-				this.mouseX0 = ev.pageX;
-				this.mouseY0 = ev.pageY;
-			}
-
 			$(document)
 				.on('mousemove', this.mousemoveProxy = $.proxy(this, 'mousemove'))
 				.on('mouseup', this.mouseupProxy = $.proxy(this, 'mouseup'))
 				.on('selectstart', this.preventDefault); // prevents native selection in IE<=8
 
+			if (ev) {
+				this.originX = ev.pageX;
+				this.originY = ev.pageY;
+			}
+			else {
+				// if no starting information was given, origin will be the topleft corner of the screen.
+				// if so, dx/dy in the future will be the absolute coordinates.
+				this.originX = 0;
+				this.originY = 0;
+			}
+
 			this.isListening = true;
-			this.trigger('listenStart', ev);
+			this.listenStart(ev);
 		}
 	},
 
 
-	// Recomputes the drag-critical positions of elements
-	computeCoords: function() {
-		this.coordMap.build();
-		this.computeScrollBounds();
+	// Called when drag listening has started (but a real drag has not necessarily began)
+	listenStart: function(ev) {
+		this.trigger('listenStart', ev);
 	},
 
 
 	// Called when the user moves the mouse
 	mousemove: function(ev) {
+		var dx = ev.pageX - this.originX;
+		var dy = ev.pageY - this.originY;
 		var minDistance;
-		var distanceSq; // current distance from mouseX0/mouseY0, squared
+		var distanceSq; // current distance from the origin, squared
 
 		if (!this.isDragging) { // if not already dragging...
 			// then start the drag if the minimum distance criteria is met
 			minDistance = this.options.distance || 1;
-			distanceSq = Math.pow(ev.pageX - this.mouseX0, 2) + Math.pow(ev.pageY - this.mouseY0, 2);
+			distanceSq = dx * dx + dy * dy;
 			if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
 				this.startDrag(ev);
 			}
 		}
 
 		if (this.isDragging) {
-			this.drag(ev); // report a drag, even if this mousemove initiated the drag
+			this.drag(dx, dy, ev); // report a drag, even if this mousemove initiated the drag
 		}
 	},
 
@@ -130,7 +121,6 @@ var DragListener = Class.extend({
 	// Call this to initiate a legitimate drag.
 	// This function is called internally from this class, but can also be called explicitly from outside
 	startDrag: function(ev) {
-		var cell;
 
 		if (!this.isListening) { // startDrag must have manually initiated
 			this.startListening();
@@ -138,52 +128,21 @@ var DragListener = Class.extend({
 
 		if (!this.isDragging) {
 			this.isDragging = true;
-			this.trigger('dragStart', ev);
-
-			// report the initial cell the mouse is over
-			// especially important if no min-distance and drag starts immediately
-			cell = this.getCell(ev); // this might be different from this.origCell if the min-distance is large
-			if (cell) {
-				this.cellOver(cell);
-			}
+			this.dragStart(ev);
 		}
+	},
+
+
+	// Called when the actual drag has started (went beyond minDistance)
+	dragStart: function(ev) {
+		this.trigger('dragStart', ev);
 	},
 
 
 	// Called while the mouse is being moved and when we know a legitimate drag is taking place
-	drag: function(ev) {
-		var cell;
-
-		if (this.isDragging) {
-			cell = this.getCell(ev);
-
-			if (!isCellsEqual(cell, this.cell)) { // a different cell than before?
-				if (this.cell) {
-					this.cellOut();
-				}
-				if (cell) {
-					this.cellOver(cell);
-				}
-			}
-
-			this.dragScroll(ev); // will possibly cause scrolling
-		}
-	},
-
-
-	// Called when a the mouse has just moved over a new cell
-	cellOver: function(cell) {
-		this.cell = cell;
-		this.trigger('cellOver', cell, isCellsEqual(cell, this.origCell));
-	},
-
-
-	// Called when the mouse has just moved out of a cell
-	cellOut: function() {
-		if (this.cell) {
-			this.trigger('cellOut', this.cell);
-			this.cell = null;
-		}
+	drag: function(dx, dy, ev) {
+		this.trigger('drag', dx, dy, ev);
+		this.updateScroll(ev); // will possibly cause scrolling
 	},
 
 
@@ -199,9 +158,15 @@ var DragListener = Class.extend({
 	stopDrag: function(ev) {
 		if (this.isDragging) {
 			this.stopScrolling();
-			this.trigger('dragStop', ev);
+			this.dragStop(ev);
 			this.isDragging = false;
 		}
+	},
+
+
+	// Called when dragging has been stopped
+	dragStop: function(ev) {
+		this.trigger('dragStop', ev);
 	},
 
 
@@ -224,17 +189,14 @@ var DragListener = Class.extend({
 			this.mouseupProxy = null;
 
 			this.isListening = false;
-			this.trigger('listenStop', ev);
-
-			this.origCell = this.cell = null;
-			this.coordMap.clear();
+			this.listenStop(ev);
 		}
 	},
 
 
-	// Gets the cell underneath the coordinates for the given mouse event
-	getCell: function(ev) {
-		return this.coordMap.getCell(ev.pageX, ev.pageY);
+	// Called when drag listening has stopped
+	listenStop: function(ev) {
+		this.trigger('listenStop', ev);
 	},
 
 
@@ -275,7 +237,7 @@ var DragListener = Class.extend({
 
 
 	// Called when the dragging is in progress and scrolling should be updated
-	dragScroll: function(ev) {
+	updateScroll: function(ev) {
 		var sensitivity = this.scrollSensitivity;
 		var bounds = this.scrollBounds;
 		var topCloseness, bottomCloseness;
@@ -388,7 +350,7 @@ var DragListener = Class.extend({
 			this.scrollIntervalId = null;
 
 			// when all done with scrolling, recompute positions since they probably changed
-			this.computeCoords();
+			this.scrollStop();
 		}
 	},
 
@@ -397,27 +359,13 @@ var DragListener = Class.extend({
 	scrollHandler: function() {
 		// recompute all coordinates, but *only* if this is *not* part of our scrolling animation
 		if (!this.scrollIntervalId) {
-			this.computeCoords();
+			this.scrollStop();
 		}
+	},
+
+
+	// Called when scrolling has stopped, whether through auto scroll, or the user scrolling
+	scrollStop: function() {
 	}
 
 });
-
-
-// Returns `true` if the cells are identically equal. `false` otherwise.
-// They must have the same row, col, and be from the same grid.
-// Two null values will be considered equal, as two "out of the grid" states are the same.
-function isCellsEqual(cell1, cell2) {
-
-	if (!cell1 && !cell2) {
-		return true;
-	}
-
-	if (cell1 && cell2) {
-		return cell1.grid === cell2.grid &&
-			cell1.row === cell2.row &&
-			cell1.col === cell2.col;
-	}
-
-	return false;
-}

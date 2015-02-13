@@ -351,14 +351,13 @@ var Grid = fc.Grid = RowRenderer.extend({
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = new DragListener(this.coordMap, {
+		var dragListener = new CellDragListener(this.coordMap, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
-			cellOver: function(cell, isOrig) {
-				var origCell = dragListener.origCell;
+			cellOver: function(cell, isOrig, origCell) {
 				if (origCell) { // click needs to have started on a cell
 					dayClickCell = isOrig ? cell : null; // single-cell selection is a day click
 					if (isSelectable) {
