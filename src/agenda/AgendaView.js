@@ -106,6 +106,10 @@ var AgendaView = fcViews.agenda = View.extend({
 
 	renderBusinessHours: function() {
 		this.timeGrid.renderBusinessHours();
+
+		if (this.dayGrid) {
+			this.dayGrid.renderBusinessHours();
+		}
 	},
 
 

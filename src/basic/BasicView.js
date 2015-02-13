@@ -78,6 +78,11 @@ var BasicView = fcViews.basic = View.extend({
 	},
 
 
+	renderBusinessHours: function() {
+		this.dayGrid.renderBusinessHours();
+	},
+
+
 	// Builds the HTML skeleton for the view.
 	// The day-grid component will render inside of a container defined by this HTML.
 	renderHtml: function() {

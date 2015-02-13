@@ -49,6 +49,14 @@ var DayGrid = Grid.extend({
 	},
 
 
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents(true); // wholeDay=true
+		var segs = this.eventsToSegs(events);
+
+		this.renderFill('businessHours', segs, 'bgevent');
+	},
+
+
 	// Generates the HTML for a single row. `row` is the row number.
 	dayRowHtml: function(row, isRigid) {
 		var view = this.view;

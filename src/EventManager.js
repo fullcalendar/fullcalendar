@@ -870,7 +870,7 @@ function EventManager(options) { // assumed to be a calendar
 
 	// Returns an array of events as to when the business hours occur in the given view.
 	// Abuse of our event system :(
-	function getBusinessHoursEvents() {
+	function getBusinessHoursEvents(wholeDay) {
 		var optionVal = options.businessHours;
 		var defaultVal = {
 			className: 'fc-nonbusiness',
@@ -882,18 +882,22 @@ function EventManager(options) { // assumed to be a calendar
 		var view = t.getView();
 		var eventInput;
 
-		if (optionVal) {
-			if (typeof optionVal === 'object') {
-				// option value is an object that can override the default business hours
-				eventInput = $.extend({}, defaultVal, optionVal);
-			}
-			else {
-				// option value is `true`. use default business hours
-				eventInput = defaultVal;
-			}
+		if (optionVal) { // `true` (which means "use the defaults") or an override object
+			eventInput = $.extend(
+				{}, // copy to a new object in either case
+				defaultVal,
+				typeof optionVal === 'object' ? optionVal : {} // override the defaults
+			);
 		}
 
 		if (eventInput) {
+
+			// if a whole-day series is requested, clear the start/end times
+			if (wholeDay) {
+				eventInput.start = null;
+				eventInput.end = null;
+			}
+
 			return expandEvent(
 				buildEventFromInput(eventInput),
 				view.start,
