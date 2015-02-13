@@ -262,13 +262,22 @@ var View = fc.View = Class.extend({
 	// Does everything necessary to display the view centered around the given date.
 	// Does every type of rendering EXCEPT rendering events.
 	display: function(date) {
+		var scrollState = null;
+
+		if (this.isDisplayed) {
+			scrollState = this.queryScroll();
+		}
+
 		this.clear(); // clear the old content
 		this.setDate(date);
 		this.render();
 		this.updateSize();
 		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-		this.initializeScroll();
 		this.isDisplayed = true;
+
+		scrollState = this.computeInitialScroll(scrollState);
+		this.forceScroll(scrollState);
+
 		this.triggerRender();
 	},
 
@@ -382,11 +391,18 @@ var View = fc.View = Class.extend({
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
 	updateSize: function(isResize) {
+		var scrollState;
+
 		if (isResize) {
-			this.recordScroll();
+			scrollState = this.queryScroll();
 		}
+
 		this.updateHeight();
 		this.updateWidth();
+
+		if (isResize) {
+			this.setScroll(scrollState);
+		}
 	},
 
 
@@ -440,28 +456,37 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
-	initializeScroll: function() {
+	// Computes the initial pre-configured scroll state prior to allowing the user to change it.
+	// Given the scroll state from the previous rendering. If first time rendering, given null.
+	computeInitialScroll: function(previousScrollState) {
+		return 0;
 	},
 
 
-	// Called for remembering the current scroll value of the scroller.
-	// Should be called before there is a destructive operation (like removing DOM elements) that might inadvertently
-	// change the scroll of the container.
-	recordScroll: function() {
+	// Retrieves the view's current natural scroll state. Can return an arbitrary format.
+	queryScroll: function() {
 		if (this.scrollerEl) {
-			this.scrollTop = this.scrollerEl.scrollTop();
+			return this.scrollerEl.scrollTop(); // operates on scrollerEl by default
 		}
 	},
 
 
-	// Set the scroll value of the scroller to the previously recorded value.
-	// Should be called after we know the view's dimensions have been restored following some type of destructive
-	// operation (like temporarily removing DOM elements).
-	restoreScroll: function() {
-		if (this.scrollTop !== null) {
-			this.scrollerEl.scrollTop(this.scrollTop);
+	// Sets the view's scroll state. Will accept the same format computeInitialScroll and queryScroll produce.
+	setScroll: function(scrollState) {
+		if (this.scrollerEl) {
+			return this.scrollerEl.scrollTop(scrollState); // operates on scrollerEl by default
 		}
+	},
+
+
+	// Sets the scroll state, making sure to overcome any predefined scroll value the browser has in mind
+	forceScroll: function(scrollState) {
+		var _this = this;
+
+		this.setScroll(scrollState);
+		setTimeout(function() {
+			_this.setScroll(scrollState);
+		}, 0);
 	},
 
 
@@ -471,9 +496,12 @@ var View = fc.View = Class.extend({
 
 	// Does everything necessary to display the given events onto the current view
 	displayEvents: function(events) {
+		var scrollState = this.queryScroll();
+
 		this.clearEvents();
 		this.renderEvents(events);
 		this.isEventsRendered = true;
+		this.setScroll(scrollState);
 		this.triggerEventRender();
 	},
 

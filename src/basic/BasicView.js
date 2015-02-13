@@ -233,8 +233,6 @@ var BasicView = fcViews.basic = View.extend({
 			// doing the scrollbar compensation might have created text overflow which created more height. redo
 			scrollerHeight = this.computeScrollerHeight(totalHeight);
 			this.scrollerEl.height(scrollerHeight);
-
-			this.restoreScroll();
 		}
 	},
 
@@ -270,7 +268,6 @@ var BasicView = fcViews.basic = View.extend({
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
 		// we DON'T need to call updateHeight() because:

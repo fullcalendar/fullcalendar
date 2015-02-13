@@ -266,8 +266,6 @@ var AgendaView = fcViews.agenda = View.extend({
 				// and reapply the desired height to the scroller.
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
 				this.scrollerEl.height(scrollerHeight);
-
-				this.restoreScroll();
 			}
 			else { // no scrollbars
 				// still, force a height and display the bottom rule (marks the end of day)
@@ -278,9 +276,8 @@ var AgendaView = fcViews.agenda = View.extend({
 	},
 
 
-	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
-	initializeScroll: function() {
-		var _this = this;
+	// Computes the initial pre-configured scroll state prior to allowing the user to change it
+	computeInitialScroll: function() {
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
 
@@ -291,12 +288,7 @@ var AgendaView = fcViews.agenda = View.extend({
 			top++; // to overcome top border that slots beyond the first have. looks better
 		}
 
-		function scroll() {
-			_this.scrollerEl.scrollTop(top);
-		}
-
-		scroll();
-		setTimeout(scroll, 0); // overrides any previous scroll state made by the browser
+		return top;
 	},
 
 
@@ -343,10 +335,6 @@ var AgendaView = fcViews.agenda = View.extend({
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-
-		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
-		// after, so remember what the scroll value was so we can restore it.
-		this.recordScroll();
 
 		// destroy the events in the subcomponents
 		this.timeGrid.destroyEvents();
