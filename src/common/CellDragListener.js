@@ -1,7 +1,6 @@
 
 /* Tracks mouse movements over a CoordMap and raises events about which cell the mouse is over.
 ------------------------------------------------------------------------------------------------------------------------
-TODO: very useful to have a handler that gets called upon cellOut OR when dragging stops (for cleanup)
 */
 
 var CellDragListener = DragListener.extend({
@@ -75,6 +74,13 @@ var CellDragListener = DragListener.extend({
 	},
 
 
+	// Called when dragging has been stopped
+	dragStop: function() {
+		this.cellDone();
+		DragListener.prototype.dragStop.apply(this, arguments); // call the super-method
+	},
+
+
 	// Called when a the mouse has just moved over a new cell
 	cellOver: function(cell) {
 		this.cell = cell;
@@ -86,7 +92,16 @@ var CellDragListener = DragListener.extend({
 	cellOut: function() {
 		if (this.cell) {
 			this.trigger('cellOut', this.cell);
+			this.cellDone();
 			this.cell = null;
+		}
+	},
+
+
+	// Called after a cellOut. Also called before a dragStop
+	cellDone: function() {
+		if (this.cell) {
+			this.trigger('cellDone', this.cell);
 		}
 	},
 
