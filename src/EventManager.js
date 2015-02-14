@@ -614,10 +614,8 @@ function EventManager(options) { // assumed to be a calendar
 				allDay = !range.start.hasTime();
 			}
 
-			range = {
-				start: range.start,
-				end: t.getDefaultEventEnd(allDay, range.start)
-			};
+			range = $.extend({}, range); // make a copy, copying over other misc properties
+			range.end = t.getDefaultEventEnd(allDay, range.start);
 		}
 		return range;
 	}
@@ -990,14 +988,14 @@ function EventManager(options) { // assumed to be a calendar
 	function isRangeAllowed(range, constraint, overlap, event) {
 		var constraintEvents;
 		var anyContainment;
-		var i, otherEvent;
-		var otherOverlap;
+		var peerEvents;
+		var i, peerEvent;
+		var peerOverlap;
 
 		// normalize. fyi, we're normalizing in too many places :(
-		range = {
-			start: range.start.clone().stripZone(),
-			end: range.end.clone().stripZone()
-		};
+		range = $.extend({}, range); // copy all properties in case there are misc non-date properties
+		range.start = range.start.clone().stripZone();
+		range.end = range.end.clone().stripZone();
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {
@@ -1019,37 +1017,36 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 
-		for (i = 0; i < cache.length; i++) { // loop all events and detect overlap
-			otherEvent = cache[i];
+		peerEvents = t.getPeerEvents(event, range);
 
-			// don't compare the event to itself or other related [repeating] events
-			if (event && event._id === otherEvent._id) {
-				continue;
-			}
+		for (i = 0; i < peerEvents.length; i++)  {
+			peerEvent = peerEvents[i];
 
 			// there needs to be an actual intersection before disallowing anything
-			if (eventIntersectsRange(otherEvent, range)) {
+			if (eventIntersectsRange(peerEvent, range)) {
 
 				// evaluate overlap for the given range and short-circuit if necessary
 				if (overlap === false) {
 					return false;
 				}
-				else if (typeof overlap === 'function' && !overlap(otherEvent, event)) {
+				// if the event's overlap is a test function, pass the peer event in question as the first param
+				else if (typeof overlap === 'function' && !overlap(peerEvent, event)) {
 					return false;
 				}
 
 				// if we are computing if the given range is allowable for an event, consider the other event's
 				// EventObject-specific or Source-specific `overlap` property
 				if (event) {
-					otherOverlap = firstDefined(
-						otherEvent.overlap,
-						(otherEvent.source || {}).overlap
+					peerOverlap = firstDefined(
+						peerEvent.overlap,
+						(peerEvent.source || {}).overlap
 						// we already considered the global `eventOverlap`
 					);
-					if (otherOverlap === false) {
+					if (peerOverlap === false) {
 						return false;
 					}
-					if (typeof otherOverlap === 'function' && !otherOverlap(event, otherEvent)) {
+					// if the peer event's overlap is a test function, pass the subject event as the first param
+					if (typeof peerOverlap === 'function' && !peerOverlap(event, peerEvent)) {
 						return false;
 					}
 				}
@@ -1097,7 +1094,33 @@ function EventManager(options) { // assumed to be a calendar
 		return range.start < eventEnd && range.end > eventStart;
 	}
 
+
+	t.getEventCache = function() {
+		return cache;
+	};
+
 }
+
+
+// Returns a list of events that the given event should be compared against when being considered for a move to
+// the specified range. Attached to the Calendar's prototype because EventManager is a mixin for a Calendar.
+Calendar.prototype.getPeerEvents = function(event, range) {
+	var cache = this.getEventCache();
+	var peerEvents = [];
+	var i, otherEvent;
+
+	for (i = 0; i < cache.length; i++) {
+		otherEvent = cache[i];
+		if (
+			!event ||
+			event._id !== otherEvent._id // don't compare the event to itself or other related [repeating] events
+		) {
+			peerEvents.push(otherEvent);
+		}
+	}
+
+	return peerEvents;
+};
 
 
 // updates the "backup" properties, which are preserved in order to compute diffs later on.
