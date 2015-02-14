@@ -694,7 +694,19 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes if the given event is allowed to be resize by the user
+	// Computes if the given event is allowed to be resized from its starting edge
+	isEventResizableFromStart: function(event) {
+		return this.opt('eventResizableFromStart') && this.isEventResizable(event);
+	},
+
+
+	// Computes if the given event is allowed to be resized from its ending edge
+	isEventResizableFromEnd: function(event) {
+		return this.isEventResizable(event);
+	},
+
+
+	// Computes if the given event is allowed to be resized by the user at all
 	isEventResizable: function(event) {
 		var source = event.source || {};
 
@@ -710,9 +722,9 @@ var View = fc.View = Class.extend({
 
 
 	// Must be called when an event in the view has been resized to a new length
-	reportEventResize: function(event, newEnd, largeUnit, el, ev) {
+	reportEventResize: function(event, resizeLocation, largeUnit, el, ev) {
 		var calendar = this.calendar;
-		var mutateResult = calendar.mutateEvent(event, { end: newEnd }, largeUnit);
+		var mutateResult = calendar.mutateEvent(event, resizeLocation, largeUnit);
 		var undoFunc = function() {
 			mutateResult.undo();
 			calendar.reportEventChange();

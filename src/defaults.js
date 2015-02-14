@@ -64,6 +64,7 @@ Calendar.defaults = {
 		nextYear: 'seek-next'
 	},
 
+	//eventResizableFromStart: false,
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,

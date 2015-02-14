@@ -200,7 +200,7 @@ Grid.mixin({
 				},
 				mousedown: function(seg, ev) {
 					if ($(ev.target).is('.fc-resizer') && view.isEventResizable(seg.event)) {
-						_this.segResizeMousedown(seg, ev);
+						_this.segResizeMousedown(seg, ev, $(ev.target).is('.fc-start-resizer'));
 					}
 					else if (view.isEventDraggable(seg.event)) {
 						_this.segDragMousedown(seg, ev);
@@ -516,22 +516,15 @@ Grid.mixin({
 
 	// Called when the user does a mousedown on an event's resizer, which might lead to resizing.
 	// Generic enough to work with any type of Grid.
-	segResizeMousedown: function(seg, ev) {
+	segResizeMousedown: function(seg, ev, isStart) {
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var start = event.start;
-		var oldEnd = calendar.getEventEnd(event);
-		var newEnd; // falsy if invalid resize
+		var eventEnd = calendar.getEventEnd(event);
 		var dragListener;
-
-		function destroy() { // resets the rendering to show the original event
-			_this.destroyEventResize();
-			view.showEvent(event);
-			enableCursor();
-		}
+		var resizeLocation; // falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		dragListener = new CellDragListener(this.coordMap, {
@@ -540,46 +533,121 @@ Grid.mixin({
 			subjectEl: el,
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
-				_this.isResizingSeg = true;
-				view.trigger('eventResizeStart', el[0], event, ev, {}); // last argument is jqui dummy
+				_this.segResizeStart(seg, ev);
 			},
-			cellOver: function(cell) {
-				newEnd = cell.end;
+			cellOver: function(cell, isOrig, origCell) {
+				resizeLocation = isStart ?
+					_this.computeEventStartResize(origCell, cell, event) :
+					_this.computeEventEndResize(origCell, cell, event);
 
-				if (!newEnd.isAfter(start)) { // was end moved before start?
-					newEnd = start.clone().add( // make the event span a single slot
-						diffDayTime(cell.end, cell.start) // assumes all slot durations are the same
-					);
+				if (resizeLocation) {
+					if (!calendar.isEventRangeAllowed(resizeLocation, event)) {
+						disableCursor();
+						resizeLocation = null;
+					}
+					// no change? (TODO: how does this work with timezones?)
+					else if (resizeLocation.start.isSame(event.start) && resizeLocation.end.isSame(eventEnd)) {
+						resizeLocation = null;
+					}
 				}
 
-				if (newEnd.isSame(oldEnd)) {
-					newEnd = null;
-				}
-				else if (!calendar.isEventRangeAllowed({ start: start, end: newEnd }, event)) {
-					newEnd = null;
-					disableCursor();
-				}
-				else {
-					_this.renderEventResize({ start: start, end: newEnd }, seg);
+				if (resizeLocation) {
 					view.hideEvent(event);
+					_this.renderEventResize(resizeLocation, seg);
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				newEnd = null;
-				destroy();
+				resizeLocation = null;
+			},
+			cellDone: function() { // resets the rendering to show the original event
+				_this.destroyEventResize();
+				view.showEvent(event);
+				enableCursor();
 			},
 			dragStop: function(ev) {
-				_this.isResizingSeg = false;
-				destroy();
-				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
+				_this.segResizeStop(seg, ev);
 
-				if (newEnd) { // valid date to resize to?
-					view.reportEventResize(event, newEnd, this.largeUnit, el, ev);
+				if (resizeLocation) { // valid date to resize to?
+					view.reportEventResize(event, resizeLocation, this.largeUnit, el, ev);
 				}
 			}
 		});
 
 		dragListener.mousedown(ev); // start listening, which will eventually lead to a dragStart
+	},
+
+
+	// Called before event segment resizing starts
+	segResizeStart: function(seg, ev) {
+		this.isResizingSeg = true;
+		this.view.trigger('eventResizeStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+	},
+
+
+	// Called after event segment resizing stops
+	segResizeStop: function(seg, ev) {
+		this.isResizingSeg = false;
+		this.view.trigger('eventResizeStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+	},
+
+
+	// Returns new date-information for an event segment being resized from its start
+	computeEventStartResize: function(startCell, endCell, event) {
+		return this.computeEventResize('start', startCell, endCell, event);
+	},
+
+
+	// Returns new date-information for an event segment being resized from its end
+	computeEventEndResize: function(startCell, endCell, event) {
+		return this.computeEventResize('end', startCell, endCell, event);
+	},
+
+
+	// Returns new date-information for an event segment being resized from its start OR end
+	// `type` is either 'start' or 'end'
+	computeEventResize: function(type, startCell, endCell, event) {
+		var calendar = this.view.calendar;
+		var delta = this.diffDates(endCell[type], startCell[type]);
+		var range;
+		var defaultDuration;
+
+		// build original values to work from, guaranteeing a start and end
+		range = {
+			start: event.start.clone(),
+			end: calendar.getEventEnd(event),
+			allDay: event.allDay
+		};
+
+		// if an all-day event was in a timed area and was resized to a time, adjust start/end to have times
+		if (range.allDay && durationHasTime(delta)) {
+			range.allDay = false;
+			calendar.normalizeEventRangeTimes(range);
+		}
+
+		range[type].add(delta); // apply delta to start or end
+
+		// if the event was compressed too small, find a new reasonable duration for it
+		if (!range.start.isBefore(range.end)) {
+
+			defaultDuration = event.allDay ?
+				calendar.defaultAllDayEventDuration :
+				calendar.defaultTimedEventDuration;
+
+			// between the cell's duration and the event's default duration, use the smaller of the two.
+			// example: if year-length slots, and compressed to one slot, we don't want the event to be a year long
+			if (this.cellDuration && this.cellDuration < defaultDuration) {
+				defaultDuration = this.cellDuration;
+			}
+
+			if (type == 'start') { // resizing the start?
+				range.start = range.end.clone().subtract(defaultDuration);
+			}
+			else { // resizing the end?
+				range.end = range.start.clone().add(defaultDuration);
+			}
+		}
+
+		return range;
 	},
 
 

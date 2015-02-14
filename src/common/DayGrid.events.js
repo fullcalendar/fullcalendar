@@ -93,8 +93,11 @@ DayGrid.mixin({
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
-		var isResizable = !disableResizing && event.allDay && seg.isEnd && view.isEventResizable(event);
-		var classes = this.getSegClasses(seg, isDraggable, isResizable);
+		var isResizableFromStart = !disableResizing && event.allDay &&
+			seg.isStart && view.isEventResizableFromStart(event);
+		var isResizableFromEnd = !disableResizing && event.allDay &&
+			seg.isEnd && view.isEventResizableFromEnd(event);
+		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = this.getEventSkinCss(event);
 		var timeHtml = '';
 		var timeText;
@@ -131,8 +134,12 @@ DayGrid.mixin({
 						timeHtml + ' ' + titleHtml   //
 						) +
 				'</div>' +
-				(isResizable ?
-					'<div class="fc-resizer"/>' :
+				(isResizableFromStart ?
+					'<div class="fc-resizer fc-start-resizer" />' :
+					''
+					) +
+				(isResizableFromEnd ?
+					'<div class="fc-resizer fc-end-resizer" />' :
 					''
 					) +
 			'</a>';

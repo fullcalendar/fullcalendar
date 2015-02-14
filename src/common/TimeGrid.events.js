@@ -104,8 +104,9 @@ TimeGrid.mixin({
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
-		var isResizable = !disableResizing && seg.isEnd && view.isEventResizable(event);
-		var classes = this.getSegClasses(seg, isDraggable, isResizable);
+		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
+		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventResizableFromEnd(event);
+		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = this.getEventSkinCss(event);
 		var timeText;
 		var fullTimeText; // more verbose time text. for the print stylesheet
@@ -157,8 +158,14 @@ TimeGrid.mixin({
 						) +
 				'</div>' +
 				'<div class="fc-bg"/>' +
-				(isResizable ?
-					'<div class="fc-resizer"/>' :
+				/* TODO: write CSS for this
+				(isResizableFromStart ?
+					'<div class="fc-resizer fc-start-resizer" />' :
+					''
+					) +
+				*/
+				(isResizableFromEnd ?
+					'<div class="fc-resizer fc-end-resizer" />' :
 					''
 					) +
 			'</a>';
