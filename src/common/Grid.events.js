@@ -253,6 +253,7 @@ Grid.mixin({
 	segDragMousedown: function(seg, ev) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
 		var dropLocation;
@@ -278,9 +279,8 @@ Grid.mixin({
 			},
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
-				_this.isDraggingSeg = true;
+				_this.segDragStart(seg, ev);
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
-				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, isOrig, origCell) {
 
@@ -290,42 +290,43 @@ Grid.mixin({
 				}
 
 				dropLocation = _this.computeEventDrop(origCell, cell, event);
-				if (dropLocation) {
-					if (view.renderDrag(dropLocation, seg)) { // have the subclass render a visual indication
-						mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
-					}
-					else {
-						mouseFollower.show();
-					}
-					if (isOrig) {
-						dropLocation = null; // needs to have moved cells to be a valid drop
-					}
+
+				if (dropLocation && !calendar.isEventRangeAllowed(dropLocation, event)) {
+					disableCursor();
+					dropLocation = null;
+				}
+
+				// if a valid drop location, have the subclass render a visual indication
+				if (dropLocation && view.renderDrag(dropLocation, seg)) {
+					mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
 				}
 				else {
-					// have the helper follow the mouse (no snapping) with a warning-style cursor
-					mouseFollower.show();
-					disableCursor();
+					mouseFollower.show(); // otherwise, have the helper follow the mouse (no snapping)
+				}
+
+				if (isOrig) {
+					dropLocation = null; // needs to have moved cells to be a valid drop
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				dropLocation = null;
 				view.destroyDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
+				dropLocation = null;
+			},
+			cellDone: function() { // Called after a cellOut OR before a dragStop
 				enableCursor();
 			},
 			dragStop: function(ev) {
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!dropLocation, function() {
-					_this.isDraggingSeg = false;
 					view.destroyDrag();
 					view.showEvent(event);
-					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
+					_this.segDragStop(seg, ev);
 
 					if (dropLocation) {
 						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
 				});
-				enableCursor();
 			},
 			listenStop: function() {
 				mouseFollower.stop(); // put in listenStop in case there was a mousedown but the drag never started
@@ -336,44 +337,64 @@ Grid.mixin({
 	},
 
 
+	// Called before event segment dragging starts
+	segDragStart: function(seg, ev) {
+		this.isDraggingSeg = true;
+		this.view.trigger('eventDragStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+	},
+
+
+	// Called after event segment dragging stops
+	segDragStop: function(seg, ev) {
+		this.isDraggingSeg = false;
+		this.view.trigger('eventDragStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+	},
+
+
 	// Given the cell an event drag began, and the cell event was dropped, calculates the new start/end/allDay
 	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
 	// A falsy returned value indicates an invalid drop.
 	computeEventDrop: function(startCell, endCell, event) {
+		var calendar = this.view.calendar;
 		var dragStart = startCell.start;
 		var dragEnd = endCell.start;
 		var delta;
-		var newStart;
-		var newEnd;
-		var newAllDay;
 		var dropLocation;
 
 		if (dragStart.hasTime() === dragEnd.hasTime()) {
-			delta = diffDayTime(dragEnd, dragStart);
-			newStart = event.start.clone().add(delta);
-			if (event.end === null) { // do we need to compute an end?
-				newEnd = null;
+			delta = this.diffDates(dragEnd, dragStart);
+
+			// if an all-day event was in a timed area and it was dragged to a different time,
+			// guarantee an end and adjust start/end to have times
+			if (event.allDay && durationHasTime(delta)) {
+				dropLocation = {
+					start: event.start.clone(),
+					end: calendar.getEventEnd(event), // will be an ambig day
+					allDay: false // for normalizeEventRangeTimes
+				};
+				calendar.normalizeEventRangeTimes(dropLocation);
 			}
+			// othewise, work off existing values
 			else {
-				newEnd = event.end.clone().add(delta);
+				dropLocation = {
+					start: event.start.clone(),
+					end: event.end ? event.end.clone() : null,
+					allDay: event.allDay // keep it the same
+				};
 			}
-			newAllDay = event.allDay; // keep it the same
+
+			dropLocation.start.add(delta);
+			if (dropLocation.end) {
+				dropLocation.end.add(delta);
+			}
 		}
 		else {
 			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
-			newStart = dragEnd.clone();
-			newEnd = null; // end should be cleared
-			newAllDay = !dragEnd.hasTime();
-		}
-
-		dropLocation = {
-			start: newStart,
-			end: newEnd,
-			allDay: newAllDay
-		};
-
-		if (!this.view.calendar.isEventRangeAllowed(dropLocation, event)) {
-			return null;
+			dropLocation = {
+				start: dragEnd.clone(),
+				end: null, // end should be cleared
+				allDay: !dragEnd.hasTime()
+			};
 		}
 
 		return dropLocation;
