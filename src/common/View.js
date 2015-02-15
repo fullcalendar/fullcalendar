@@ -55,7 +55,7 @@ var View = fc.View = Class.extend({
 		this.intervalDuration = intervalDuration || moment.duration(1, 'day');
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
-		this.initTheming();
+		this.initThemingProps();
 		this.initHiddenDays();
 
 		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
@@ -376,7 +376,7 @@ var View = fc.View = Class.extend({
 
 
 	// Initializes internal variables related to theming
-	initTheming: function() {
+	initThemingProps: function() {
 		var tm = this.opt('theme') ? 'ui' : 'fc';
 
 		this.widgetHeaderClass = tm + '-widget-header';
