@@ -409,7 +409,7 @@ var DayGrid = Grid.extend({
 
 	// Renders a set of rectangles over the given segments of days.
 	// Only returns segments that successfully rendered.
-	renderFill: function(type, segs) {
+	renderFill: function(type, segs, className) {
 		var nodes = [];
 		var i, seg;
 		var skeletonEl;
@@ -418,7 +418,7 @@ var DayGrid = Grid.extend({
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
-			skeletonEl = this.renderFillRow(type, seg);
+			skeletonEl = this.renderFillRow(type, seg, className);
 			this.rowEls.eq(seg.row).append(skeletonEl);
 			nodes.push(skeletonEl[0]);
 		}
@@ -430,15 +430,17 @@ var DayGrid = Grid.extend({
 
 
 	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-	renderFillRow: function(type, seg) {
+	renderFillRow: function(type, seg, className) {
 		var colCnt = this.colCnt;
 		var startCol = seg.leftCol;
 		var endCol = seg.rightCol + 1;
 		var skeletonEl;
 		var trEl;
 
+		className = className || type.toLowerCase();
+
 		skeletonEl = $(
-			'<div class="fc-' + type.toLowerCase() + '-skeleton">' +
+			'<div class="fc-' + className + '-skeleton">' +
 				'<table><tr/></table>' +
 			'</div>'
 		);
