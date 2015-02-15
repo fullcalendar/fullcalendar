@@ -94,16 +94,16 @@
 /* TimeGrid Slats (lines that run horizontally)
 --------------------------------------------------------------------------------------------------*/
 
-.fc-slats td {
+.fc-time-grid .fc-slats td {
 	height: 1.5em;
 	border-bottom: 0; /* each cell is responsible for its top border */
 }
 
-.fc-slats .fc-minor td {
+.fc-time-grid .fc-slats .fc-minor td {
 	border-top-style: dotted;
 }
 
-.fc-slats .ui-widget-content { /* for jqui theme */
+.fc-time-grid .fc-slats .ui-widget-content { /* for jqui theme */
 	background: none; /* see through to fc-bg */
 }
 
