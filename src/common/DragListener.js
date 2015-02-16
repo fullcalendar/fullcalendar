@@ -222,17 +222,9 @@ var DragListener = fc.DragListener = Class.extend({
 	// Computes and stores the bounding rectangle of scrollEl
 	computeScrollBounds: function() {
 		var el = this.scrollEl;
-		var offset;
 
-		if (el) {
-			offset = el.offset();
-			this.scrollBounds = {
-				top: offset.top,
-				left: offset.left,
-				bottom: offset.top + el.outerHeight(),
-				right: offset.left + el.outerWidth()
-			};
-		}
+		this.scrollBounds = el ? getOuterRect(el) : null;
+			// TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
 	},
 
 

@@ -20,10 +20,7 @@ var GridCoordMap = Class.extend({
 	colCoords: null, // array of {left,right} objects
 
 	containerEl: null, // container element that all coordinates are constrained to. optionally assigned
-	minX: null,
-	maxX: null, // exclusive
-	minY: null,
-	maxY: null, // exclusive
+	bounds: null,
 
 
 	constructor: function(grid) {
@@ -93,23 +90,20 @@ var GridCoordMap = Class.extend({
 
 	// If there is a containerEl, compute the bounds into min/max values
 	computeBounds: function() {
-		var containerOffset;
-
-		if (this.containerEl) {
-			containerOffset = this.containerEl.offset();
-			this.minX = containerOffset.left;
-			this.maxX = containerOffset.left + this.containerEl.outerWidth();
-			this.minY = containerOffset.top;
-			this.maxY = containerOffset.top + this.containerEl.outerHeight();
-		}
+		this.bounds = this.containerEl ?
+			getClientRect(this.containerEl) : // area within scrollbars
+			null;
 	},
 
 
 	// Determines if the given coordinates are in bounds. If no `containerEl`, always true
 	inBounds: function(x, y) {
-		if (this.containerEl) {
-			return x >= this.minX && x < this.maxX && y >= this.minY && y < this.maxY;
+		var bounds = this.bounds;
+
+		if (bounds) {
+			return x >= bounds.left && x < bounds.right && y >= bounds.top && y < bounds.bottom;
 		}
+
 		return true;
 	}
 
