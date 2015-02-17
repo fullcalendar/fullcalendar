@@ -60,7 +60,7 @@ fc.lang = function(langCode, newFcOptions) {
 	// so no way to tell if this is an initialization or a default-setting.
 	momOptions = getMomentLocaleData(langCode); // will fall back to en
 	$.each(momComputableOptions, function(name, func) {
-		if (fcOptions[name] === undefined) {
+		if (fcOptions[name] == null) {
 			fcOptions[name] = func(momOptions, fcOptions);
 		}
 	});
@@ -94,7 +94,7 @@ var dpComputableOptions = {
 
 var momComputableOptions = {
 
-	// Produces format strings like "ddd MM/DD" -> "Fri 12/10"
+	// Produces format strings like "ddd M/D" -> "Fri 9/15"
 	dayOfMonthFormat: function(momOptions, fcOptions) {
 		var format = momOptions.longDateFormat('l'); // for the format like "M/D/YYYY"
 
@@ -110,7 +110,13 @@ var momComputableOptions = {
 		return format;
 	},
 
-	// Produces format strings like "H(:mm)a" -> "6pm" or "6:30pm"
+	// Produces format strings like "h:mma" -> "6:00pm"
+	mediumTimeFormat: function(momOptions) { // can't be called `timeFormat` because collides with option
+		return momOptions.longDateFormat('LT')
+			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+	},
+
+	// Produces format strings like "h(:mm)a" -> "6pm" / "6:30pm"
 	smallTimeFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(':mm', '(:mm)')
@@ -118,7 +124,7 @@ var momComputableOptions = {
 			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
 	},
 
-	// Produces format strings like "H(:mm)t" -> "6p" or "6:30p"
+	// Produces format strings like "h(:mm)t" -> "6p" / "6:30p"
 	extraSmallTimeFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(':mm', '(:mm)')
@@ -126,13 +132,56 @@ var momComputableOptions = {
 			.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
 	},
 
-	// Produces format strings like "H:mm" -> "6:30" (with no AM/PM)
+	// Produces format strings like "ha" / "H" -> "6pm" / "18"
+	hourFormat: function(momOptions) {
+		return momOptions.longDateFormat('LT')
+			.replace(':mm', '')
+			.replace(/(\Wmm)$/, '') // like above, but for foreign langs
+			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+	},
+
+	// Produces format strings like "h:mm" -> "6:30" (with no AM/PM)
 	noMeridiemTimeFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(/\s*a$/i, ''); // remove trailing AM/PM
 	}
 
 };
+
+
+// options that should be computed off live calendar options (considers override options)
+var instanceComputableOptions = { // TODO: best place for this? related to lang?
+
+	// Produces format strings for results like "Mo 16"
+	smallDayDateFormat: function(options) {
+		return options.isRTL ?
+			'D dd' :
+			'dd D';
+	},
+
+	// Produces format strings for results like "Wk 5"
+	weekFormat: function(options) {
+		return options.isRTL ?
+			'w[ ' + options.weekNumberTitle + ']' :
+			'[' + options.weekNumberTitle + ' ]w';
+	},
+
+	// Produces format strings for results like "Wk5"
+	smallWeekFormat: function(options) {
+		return options.isRTL ?
+			'w[' + options.weekNumberTitle + ']' :
+			'[' + options.weekNumberTitle + ']w';
+	}
+
+};
+
+function populateInstanceComputableOptions(options) {
+	$.each(instanceComputableOptions, function(name, func) {
+		if (options[name] == null) {
+			options[name] = func(options);
+		}
+	});
+}
 
 
 // Returns moment's internal locale data. If doesn't exist, returns English.

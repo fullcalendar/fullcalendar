@@ -46,6 +46,7 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 			langDefaults,
 			overrides
 		);
+		populateInstanceComputableOptions(this.options);
 
 		this.viewSpecCache = {}; // somewhat unrelated
 	},
@@ -132,6 +133,7 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 			this.overrides, // calendar's overrides (options given to constructor)
 			spec.overrides // view's overrides (view-specific options)
 		);
+		populateInstanceComputableOptions(spec.options);
 	},
 
 
