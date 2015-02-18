@@ -93,10 +93,10 @@ describe('background events', function() {
 					$('#cal').fullCalendar(options);
 				});
 			});
-			it('does not render business hours even when activated', function(done) {
+			it('renders "business hours" on whole days', function(done) {
 				options.businessHours = true;
 				options.eventAfterAllRender = function() {
-					expect($('.fc-nonbusiness').length).toBe(0);
+					expect($('.fc-nonbusiness').length).toBe(12); // there are 6 weeks. 2 weekend days each
 					done();
 				};
 				$('#cal').fullCalendar(options);
@@ -482,7 +482,8 @@ describe('background events', function() {
 				it('renders correctly if assumed default', function() {
 					options.businessHours = true;
 					$('#cal').fullCalendar(options);
-					expect($('.fc-nonbusiness').length).toBe(12);
+					expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2); // whole days in the day area
+					expect($('.fc-time-grid .fc-nonbusiness').length).toBe(12); // strips of gray on the timed area
 				});
 				it('renders correctly if custom', function() {
 					options.businessHours = {
@@ -491,14 +492,20 @@ describe('background events', function() {
 						dow: [ 1, 2, 3, 4 ] // Mon-Thu
 					};
 					$('#cal').fullCalendar(options);
-					expect($('.fc-nonbusiness').length).toBe(11);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-nonbusiness').length).toBe(1); // column 0
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-nonbusiness').length).toBe(2); // column 1
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-nonbusiness').length).toBe(2); // column 2
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-nonbusiness').length).toBe(2); // column 3
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-nonbusiness').length).toBe(2); // column 4
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-nonbusiness').length).toBe(1); // column 5
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-nonbusiness').length).toBe(1); // column 6
+
+					// whole days
+					expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2); // each multi-day stretch is one element
+
+					// time area
+					expect($('.fc-time-grid .fc-nonbusiness').length).toBe(11);
+					var containerEls = $('.fc-time-grid .fc-bgevent-skeleton td:not(.fc-axis)'); // background columns
+					expect(containerEls.eq(0).find('.fc-nonbusiness').length).toBe(1);
+					expect(containerEls.eq(1).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(2).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(3).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(4).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(5).find('.fc-nonbusiness').length).toBe(1);
+					expect(containerEls.eq(6).find('.fc-nonbusiness').length).toBe(1);
 				});
 			});
 		});
@@ -543,14 +550,20 @@ describe('background events', function() {
 						dow: [ 1, 2, 3, 4 ] // Mon-Thu
 					};
 					$('#cal').fullCalendar(options);
-					expect($('.fc-nonbusiness').length).toBe(11);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-nonbusiness').length).toBe(1); // column 0
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-nonbusiness').length).toBe(1); // column 1
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-nonbusiness').length).toBe(2); // column 2
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-nonbusiness').length).toBe(2); // column 3
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-nonbusiness').length).toBe(2); // column 4
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-nonbusiness').length).toBe(2); // column 5
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-nonbusiness').length).toBe(1); // column 6
+
+					// whole days
+					expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2); // each stretch of days is one element
+
+					// time area
+					expect($('.fc-time-grid .fc-nonbusiness').length).toBe(11);
+					var containerEls = $('.fc-time-grid .fc-bgevent-skeleton td:not(.fc-axis)'); // background columns
+					expect(containerEls.eq(0).find('.fc-nonbusiness').length).toBe(1);
+					expect(containerEls.eq(1).find('.fc-nonbusiness').length).toBe(1);
+					expect(containerEls.eq(2).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(3).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(4).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(5).find('.fc-nonbusiness').length).toBe(2);
+					expect(containerEls.eq(6).find('.fc-nonbusiness').length).toBe(1);
 				});
 			});
 		});
