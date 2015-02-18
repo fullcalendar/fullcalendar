@@ -240,12 +240,11 @@ describe('custom view', function() {
 			expect($('.fc-custom-button')).toHaveText('awesome');
 		});
 
-		it('accepts lang\'s defaultButtonText single-unit-match override', function() {
+		it('accepts lang\'s single-unit-match override', function() {
 			options.lang = 'fr';
 			options.views.custom = {
 				type: 'basic',
-				duration: { days: 1 },
-				buttonText: 'awesome'
+				duration: { days: 1 }
 			};
 			options.header = {
 				center: 'custom,month'
@@ -255,11 +254,11 @@ describe('custom view', function() {
 			expect($('.fc-custom-button')).toHaveText('Jour');
 		});
 
-		it('does not accept lang\'s defaultButtonText single-unit-match override when unit>1', function() {
+		it('accepts explicit View-Specific buttonText, overriding lang\'s single-unit-match override', function() {
 			options.lang = 'fr';
 			options.views.custom = {
 				type: 'basic',
-				duration: { days: 2 },
+				duration: { days: 1 },
 				buttonText: 'awesome'
 			};
 			options.header = {
@@ -327,15 +326,14 @@ describe('custom view', function() {
 		});
 
 		it('falls back to view name when view lacks metadata', function() {
-			options.views = {
-				crazy: $.fullCalendar.View.extend()
-			};
+			$.fullCalendar.views.crazy = $.fullCalendar.View.extend();
 			options.header = {
 				center: 'crazy,month'
 			};
 			options.defaultView = 'crazy';
 			$('#cal').fullCalendar(options);
 			expect($('.fc-crazy-button')).toHaveText('crazy');
+			delete $.fullCalendar.views.crazy;
 		});
 	});
 });
