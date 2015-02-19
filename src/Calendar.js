@@ -7,6 +7,7 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 	options: null, // all defaults combined with overrides
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
+	header: null,
 
 
 	// a lot of this class' OOP logic is scoped within this constructor function,
@@ -60,6 +61,33 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 	},
 
 
+	// Given a duration singular unit, like "week" or "day", finds a matching view spec.
+	// Preference is given to views that have corresponding buttons.
+	getUnitViewSpec: function(unit) {
+		var viewTypes;
+		var i;
+		var spec;
+
+		if ($.inArray(unit, intervalUnits) != -1) {
+
+			// put views that have buttons first. there will be duplicates, but oh well
+			viewTypes = this.header.getViewsWithButtons();
+			$.each(fc.views, function(viewType) { // all views
+				viewTypes.push(viewType);
+			});
+
+			for (i = 0; i < viewTypes.length; i++) {
+				spec = this.getViewSpec(viewTypes[i]);
+				if (spec) {
+					if (spec.singleUnit == unit) {
+						return spec;
+					}
+				}
+			}
+		}
+	},
+
+
 	// Builds an object with information on how to create a given view
 	buildViewSpec: function(requestedViewType) {
 		var viewOverrides = this.overrides.views || {};
@@ -91,7 +119,7 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 		}
 
 		if (viewClass) {
-			spec = { 'class': viewClass };
+			spec = { 'class': viewClass, type: requestedViewType };
 
 			if (duration) {
 				duration = moment.duration(duration);
@@ -434,7 +462,7 @@ function Calendar_constructor(element, overrides) {
 
 		content = $("<div class='fc-view-container'/>").prependTo(element);
 
-		header = new Header(t, options);
+		header = t.header = new Header(t, options);
 		headerElement = header.render();
 		if (headerElement) {
 			element.prepend(headerElement);
@@ -756,26 +784,13 @@ function Calendar_constructor(element, overrides) {
 	// Forces navigation to a view for the given date.
 	// `viewType` can be a specific view name or a generic one like "week" or "day".
 	function zoomTo(newDate, viewType) {
-		var viewStr;
-		var match;
+		var spec;
 
-		if (!viewType || !t.isValidViewType(viewType)) { // a general view name, or "auto"
-			viewType = viewType || 'day';
-			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
-
-			// try to match a general view name, like "week", against a specific one, like "agendaWeek"
-			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewType)));
-
-			// fall back to the day view being used in the header
-			if (!match) {
-				match = viewStr.match(/\w+Day/);
-			}
-
-			viewType = match ? match[0] : 'agendaDay'; // fall back to agendaDay
-		}
+		viewType = viewType || 'day'; // day is default zoom
+		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
 
 		date = newDate;
-		renderView(viewType);
+		renderView(spec ? spec.type : null);
 	}
 	
 	
