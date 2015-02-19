@@ -435,13 +435,12 @@ var View = fc.View = Class.extend({
 
 
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
-	// By default, uses this.scrollerEl, but can pass this in as well.
 	// Utility for subclasses.
-	computeScrollerHeight: function(totalHeight, scrollerEl) {
+	computeScrollerHeight: function(totalHeight) {
+		var scrollerEl = this.scrollerEl;
 		var both;
 		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
 
-		scrollerEl = scrollerEl || this.scrollerEl;
 		both = this.el.add(scrollerEl);
 
 		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
