@@ -3,6 +3,9 @@
 fc.intersectionToSeg = intersectionToSeg;
 fc.applyAll = applyAll;
 fc.debounce = debounce;
+fc.isInt = isInt;
+fc.htmlEscape = htmlEscape;
+fc.cssToStr = cssToStr;
 
 
 /* FullCalendar-specific DOM Utilities
@@ -157,6 +160,10 @@ function unsetScroller(containerEl) {
 
 /* General DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
+
+fc.getClientRect = getClientRect;
+fc.getContentRect = getContentRect;
+fc.getScrollbarWidths = getScrollbarWidths;
 
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
@@ -380,6 +387,9 @@ function intersectionToSeg(subjectRange, constraintRange) {
 
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
+
+fc.computeIntervalUnit = computeIntervalUnit;
+fc.durationHasTime = durationHasTime;
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
 var intervalUnits = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ];
