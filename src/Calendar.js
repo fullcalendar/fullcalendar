@@ -383,6 +383,7 @@ function Calendar_constructor(element, overrides) {
 	var content;
 	var tm; // for making theme classes
 	var currentView; // NOTE: keep this in sync with this.view
+	var viewsByType = {}; // holds all instantiated view instances, current or not
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
@@ -403,14 +404,14 @@ function Calendar_constructor(element, overrides) {
 	}
 	
 	
-	function render(inc) {
+	function render() {
 		if (!content) {
 			initialRender();
 		}
 		else if (elementVisible()) {
 			// mainly for the public API
 			calcSize();
-			renderView(inc);
+			renderView();
 		}
 	}
 	
@@ -453,7 +454,10 @@ function Calendar_constructor(element, overrides) {
 	function destroy() {
 
 		if (currentView) {
-			currentView.destroyView();
+			currentView.removeElement();
+
+			// NOTE: don't null-out currentView/t.view in case API methods are called after destroy.
+			// It is still the "current" view, just not rendered.
 		}
 
 		header.destroy();
@@ -474,7 +478,8 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
-	// Renders a view because of a date change, view-type change, or for the first time
+	// Renders a view because of a date change, view-type change, or for the first time.
+	// If not given a viewType, keep the current view but render different dates.
 	function renderView(viewType) {
 		ignoreWindowResize++;
 
@@ -482,14 +487,19 @@ function Calendar_constructor(element, overrides) {
 		if (currentView && viewType && currentView.type !== viewType) {
 			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
-			currentView.el.remove();
+			currentView.removeElement();
 			currentView = t.view = null;
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
 		if (!currentView && viewType) {
-			currentView = t.view = t.instantiateView(viewType);
-			currentView.el =  $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content);
+			currentView = t.view =
+				viewsByType[viewType] ||
+				(viewsByType[viewType] = t.instantiateView(viewType));
+
+			currentView.setElement(
+				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content)
+			);
 			header.activateButton(viewType);
 		}
 
@@ -500,17 +510,13 @@ function Calendar_constructor(element, overrides) {
 
 			// render or rerender the view
 			if (
-				!currentView.start || // never rendered before
+				!currentView.isDisplayed ||
 				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 			) {
 				if (elementVisible()) {
 
 					freezeContentHeight();
-					if (currentView.start) { // rendered before?
-						currentView.destroyView();
-					}
-					currentView.setDate(date);
-					currentView.renderView();
+					currentView.display(date);
 					unfreezeContentHeight();
 
 					// need to do this after View::render, so dates are calculated
@@ -609,8 +615,7 @@ function Calendar_constructor(element, overrides) {
 	function renderEvents() { // destroys old events if previously rendered
 		if (elementVisible()) {
 			freezeContentHeight();
-			currentView.destroyViewEvents(); // no performance cost if never rendered
-			currentView.renderViewEvents(events);
+			currentView.displayEvents(events);
 			unfreezeContentHeight();
 		}
 	}
@@ -618,7 +623,7 @@ function Calendar_constructor(element, overrides) {
 
 	function destroyEvents() {
 		freezeContentHeight();
-		currentView.destroyViewEvents();
+		currentView.clearEvents();
 		unfreezeContentHeight();
 	}
 	

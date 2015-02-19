@@ -30,14 +30,10 @@ var TimeGrid = Grid.extend({
 
 	// Renders the time grid into `this.el`, which should already be assigned.
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
-	render: function() {
+	renderDates: function() {
 		this.el.html(this.renderHtml());
 		this.dayEls = this.el.find('.fc-day');
 		this.slatEls = this.el.find('.fc-slats tr');
-
-		this.computeSlatTops();
-		this.renderBusinessHours();
-		Grid.prototype.render.call(this); // call the super-method
 	},
 
 
@@ -247,10 +243,12 @@ var TimeGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Called when there is a window resize/zoom and we need to recalculate coordinates for the grid
-	resize: function() {
+	updateSize: function(isResize) { // NOT a standard Grid method
 		this.computeSlatTops();
-		this.updateSegVerticals();
+
+		if (isResize) {
+			this.updateSegVerticals();
+		}
 	},
 
 

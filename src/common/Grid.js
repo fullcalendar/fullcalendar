@@ -33,19 +33,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Renders the grid into the `el` element.
-	// Subclasses should override and call this super-method when done.
-	render: function() {
-		this.bindHandlers();
-	},
-
-
-	// Called when the grid's resources need to be cleaned up
-	destroy: function() {
-		this.unbindHandlers();
-	},
-
-
 	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -222,18 +209,20 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	/* Handlers
+	/* Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Attaches handlers to DOM
-	bindHandlers: function() {
+	// Sets the container element that the grid should render inside of.
+	// Does other DOM-related initializations.
+	setElement: function(el) {
 		var _this = this;
 
+		this.el = el;
+
 		// attach a handler to the grid's root element.
-		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
-		// DOM it automatically unregisters the handlers.
-		this.el.on('mousedown', function(ev) {
+		// jQuery will take care of unregistering them when removeElement gets called.
+		el.on('mousedown', function(ev) {
 			if (
 				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
 				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
@@ -246,12 +235,52 @@ var Grid = fc.Grid = RowRenderer.extend({
 		// same garbage collection note as above.
 		this.bindSegHandlers();
 
+		this.bindGlobalHandlers();
+	},
+
+
+	// Removes the grid's container element from the DOM. Undoes any other DOM-related attachments.
+	// DOES NOT remove any content before hand (doens't clear events or call destroyDates), unlike View
+	removeElement: function() {
+		this.unbindGlobalHandlers();
+
+		this.el.remove();
+
+		// NOTE: we don't null-out this.el for the same reasons we don't do it within View::removeElement
+	},
+
+
+	// Renders the basic structure of grid view before any content is rendered
+	renderSkeleton: function() {
+		// subclasses should implement
+	},
+
+
+	// Renders the grid's date-related content (like cells that represent days/times).
+	// Assumes setRange has already been called and the skeleton has already been rendered.
+	renderDates: function() {
+		// subclasses should implement
+	},
+
+
+	// Unrenders the grid's date-related content
+	destroyDates: function() {
+		// subclasses should implement
+	},
+
+
+	/* Handlers
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Binds DOM handlers to elements that reside outside the grid, such as the document
+	bindGlobalHandlers: function() {
 		$(document).on('dragstart', this.documentDragStartProxy); // jqui drag
 	},
 
 
-	// Unattaches handlers from the DOM
-	unbindHandlers: function() {
+	// Unbinds DOM handlers from elements that reside outside the grid
+	unbindGlobalHandlers: function() {
 		$(document).off('dragstart', this.documentDragStartProxy); // jqui drag
 	},
 

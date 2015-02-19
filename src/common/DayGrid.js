@@ -19,7 +19,7 @@ var DayGrid = Grid.extend({
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
 	// isRigid determins whether the individual rows should ignore the contents and be a constant height.
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
-	render: function(isRigid) {
+	renderDates: function(isRigid) {
 		var view = this.view;
 		var rowCnt = this.rowCnt;
 		var colCnt = this.colCnt;
@@ -41,14 +41,11 @@ var DayGrid = Grid.extend({
 			cell = this.getCell(i);
 			view.trigger('dayRender', null, cell.start, this.dayEls.eq(i));
 		}
-
-		Grid.prototype.render.call(this); // call the super-method
 	},
 
 
-	destroy: function() {
+	destroyDates: function() {
 		this.destroySegPopover();
-		Grid.prototype.destroy.call(this); // call the super-method
 	},
 
 

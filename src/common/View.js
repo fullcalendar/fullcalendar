@@ -13,6 +13,10 @@ var View = fc.View = Class.extend({
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
+	isDisplayed: false,
+	isSkeletonRendered: false,
+	isEventsRendered: false,
+
 	// range the view is actually displaying (moments)
 	start: null,
 	end: null, // exclusive
@@ -227,38 +231,138 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Wraps the basic render() method with more View-specific logic. Called by the owner Calendar.
-	renderView: function() {
-		this.render();
-		this.updateSize();
-		this.initializeScroll();
-		this.trigger('viewRender', this, this, this.el);
-
-		// attach handlers to document. do it here to allow for destroy/rerender
-		$(document).on('mousedown', this.documentMousedownProxy);
+	// Sets the container element that the view should render inside of.
+	// Does other DOM-related initializations.
+	setElement: function(el) {
+		this.el = el;
+		this.bindGlobalHandlers();
 	},
 
 
-	// Renders the view inside an already-defined `this.el`
+	// Removes the view's container element from the DOM, clearing any content beforehand.
+	// Undoes any other DOM-related attachments.
+	removeElement: function() {
+		this.clear(); // clears all content
+
+		// clean up the skeleton
+		if (this.isSkeletonRendered) {
+			this.destroySkeleton();
+			this.isSkeletonRendered = false;
+		}
+
+		this.unbindGlobalHandlers();
+
+		this.el.remove();
+
+		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
+		// We don't null-out the View's other jQuery element references upon destroy, so why should we kill this.el?
+	},
+
+
+	// Does everything necessary to display the view centered around the given date.
+	// Does every type of rendering EXCEPT rendering events.
+	display: function(date) {
+		this.clear(); // clear the old content
+		this.setDate(date);
+		this.render();
+		this.updateSize();
+		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+		this.initializeScroll();
+		this.isDisplayed = true;
+		this.triggerRender();
+	},
+
+
+	// Does everything necessary to clear the content of the view.
+	// Clears dates and events. Does not clear the skeleton.
+	clear: function() { // clears the view of *content* but not the skeleton
+		if (this.isDisplayed) {
+			this.unselect();
+			this.clearEvents();
+			this.triggerDestroy();
+			this.destroyBusinessHours();
+			this.destroy();
+			this.isDisplayed = false;
+		}
+	},
+
+
+	// Renders the view's date-related content, rendering the view's non-content skeleton if necessary
 	render: function() {
+		if (!this.isSkeletonRendered) {
+			this.renderSkeleton();
+			this.isSkeletonRendered = true;
+		}
+		this.renderDates();
+	},
+
+
+	// Unrenders the view's date-related content.
+	// Call this instead of destroyDates directly in case the View subclass wants to use a render/destroy pattern
+	// where both the skeleton and the content always get rendered/unrendered together.
+	destroy: function() {
+		this.destroyDates();
+	},
+
+
+	// Renders the basic structure of the view before any content is rendered
+	renderSkeleton: function() {
 		// subclasses should implement
 	},
 
 
-	// Wraps the basic destroy() method with more View-specific logic. Called by the owner Calendar.
-	destroyView: function() {
-		this.unselect();
-		this.destroyViewEvents();
-		this.destroy();
-		this.trigger('viewDestroy', this, this, this.el);
-
-		$(document).off('mousedown', this.documentMousedownProxy);
+	// Unrenders the basic structure of the view
+	destroySkeleton: function() {
+		// subclasses should implement
 	},
 
 
-	// Clears the view's rendering
-	destroy: function() {
-		this.el.empty(); // removes inner contents but leaves the element intact
+	// Renders the view's date-related content (like cells that represent days/times).
+	// Assumes setRange has already been called and the skeleton has already been rendered.
+	renderDates: function() {
+		// subclasses should implement
+	},
+
+
+	// Unrenders the view's date-related content
+	destroyDates: function() {
+		// subclasses should override
+	},
+
+
+	// Renders business-hours onto the view. Assumes updateSize has already been called.
+	renderBusinessHours: function() {
+		// subclasses should implement
+	},
+
+
+	// Unrenders previously-rendered business-hours
+	destroyBusinessHours: function() {
+		// subclasses should implement
+	},
+
+
+	// Signals that the view's content has been rendered
+	triggerRender: function() {
+		this.trigger('viewRender', this, this, this.el);
+	},
+
+
+	// Signals that the view's content is about to be unrendered
+	triggerDestroy: function() {
+		this.trigger('viewDestroy', this, this, this.el);
+	},
+
+
+	// Binds DOM handlers to elements that reside outside the view container, such as the document
+	bindGlobalHandlers: function() {
+		$(document).on('mousedown', this.documentMousedownProxy);
+	},
+
+
+	// Unbinds DOM handlers from elements that reside outside the view container
+	unbindGlobalHandlers: function() {
+		$(document).off('mousedown', this.documentMousedownProxy);
 	},
 
 
@@ -365,14 +469,22 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Wraps the basic renderEvents() method with more View-specific logic
-	renderViewEvents: function(events) {
+	// Does everything necessary to display the given events onto the current view
+	displayEvents: function(events) {
+		this.clearEvents();
 		this.renderEvents(events);
+		this.isEventsRendered = true;
+		this.triggerEventRender();
+	},
 
-		this.eventSegEach(function(seg) {
-			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
-		});
-		this.trigger('eventAfterAllRender');
+
+	// Does everything necessary to clear the view's currently-rendered events
+	clearEvents: function() {
+		if (this.isEventsRendered) {
+			this.triggerEventDestroy();
+			this.destroyEvents();
+			this.isEventsRendered = false;
+		}
 	},
 
 
@@ -382,19 +494,26 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Wraps the basic destroyEvents() method with more View-specific logic
-	destroyViewEvents: function() {
-		this.eventSegEach(function(seg) {
-			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
-		});
-
-		this.destroyEvents();
-	},
-
-
 	// Removes event elements from the view.
 	destroyEvents: function() {
 		// subclasses should implement
+	},
+
+
+	// Signals that all events have been rendered
+	triggerEventRender: function() {
+		this.eventSegEach(function(seg) {
+			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
+		});
+		this.trigger('eventAfterAllRender');
+	},
+
+
+	// Signals that all event elements are about to be removed
+	triggerEventDestroy: function() {
+		this.eventSegEach(function(seg) {
+			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
+		});
 	},
 
 

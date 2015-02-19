@@ -72,16 +72,16 @@ var AgendaView = fcViews.agenda = View.extend({
 		this.scrollerEl = this.el.find('.fc-time-grid-container');
 		this.timeGrid.coordMap.containerEl = this.scrollerEl; // don't accept clicks/etc outside of this
 
-		this.timeGrid.el = this.el.find('.fc-time-grid');
-		this.timeGrid.render();
+		this.timeGrid.setElement(this.el.find('.fc-time-grid'));
+		this.timeGrid.renderDates();
 
 		// the <hr> that sometimes displays under the time-grid
 		this.bottomRuleEl = $('<hr class="' + this.widgetHeaderClass + '"/>')
 			.appendTo(this.timeGrid.el); // inject it into the time-grid
 
 		if (this.dayGrid) {
-			this.dayGrid.el = this.el.find('.fc-day-grid');
-			this.dayGrid.render();
+			this.dayGrid.setElement(this.el.find('.fc-day-grid'));
+			this.dayGrid.renderDates();
 
 			// have the day-grid extend it's coordinate area over the <hr> dividing the two grids
 			this.dayGrid.bottomCoordPadding = this.dayGrid.el.next('hr').outerHeight();
@@ -91,13 +91,21 @@ var AgendaView = fcViews.agenda = View.extend({
 	},
 
 
-	// Make subcomponents ready for cleanup
+	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
+	// always completely kill each grid's rendering.
 	destroy: function() {
-		this.timeGrid.destroy();
+		this.timeGrid.destroyDates();
+		this.timeGrid.removeElement();
+
 		if (this.dayGrid) {
-			this.dayGrid.destroy();
+			this.dayGrid.destroyDates();
+			this.dayGrid.removeElement();
 		}
-		View.prototype.destroy.call(this); // call the super-method
+	},
+
+
+	renderBusinessHours: function() {
+		this.timeGrid.renderBusinessHours();
 	},
 
 
@@ -204,10 +212,9 @@ var AgendaView = fcViews.agenda = View.extend({
 
 
 	updateSize: function(isResize) {
-		if (isResize) {
-			this.timeGrid.resize();
-		}
-		View.prototype.updateSize.call(this, isResize);
+		this.timeGrid.updateSize(isResize);
+
+		View.prototype.updateSize.call(this, isResize); // call the super-method
 	},
 
 
