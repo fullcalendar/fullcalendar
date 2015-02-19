@@ -1,5 +1,5 @@
 
-var defaults = {
+Calendar.defaults = {
 
 	titleRangeSeparator: ' \u2014 ', // emphasized dash
 	monthYearFormat: 'MMMM YYYY', // required for en. other languages rely on datepicker computable option
@@ -37,7 +37,7 @@ var defaults = {
 
 	// locale
 	isRTL: false,
-	defaultButtonText: {
+	buttonText: {
 		prev: "prev",
 		next: "next",
 		prevYear: "prev year",
@@ -84,14 +84,13 @@ var defaults = {
 };
 
 
-var englishDefaults = {
+Calendar.englishDefaults = { // used by lang.js
 	dayPopoverFormat: 'dddd, MMMM D'
 };
 
 
-// right-to-left defaults
-var rtlDefaults = {
-	header: {
+Calendar.rtlDefaults = { // right-to-left defaults
+	header: { // TODO: smarter solution (first/center/last ?)
 		left: 'next,prev today',
 		center: '',
 		right: 'title'

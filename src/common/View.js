@@ -9,7 +9,7 @@ var View = fc.View = Class.extend({
 	title: null, // the text that will be displayed in the header's title
 
 	calendar: null, // owner Calendar object
-	options: null, // view-specific options
+	options: null, // hash containing all options. already merged with view-specific-options
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
@@ -21,8 +21,7 @@ var View = fc.View = Class.extend({
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
 	intervalStart: null,
 	intervalEnd: null, // exclusive
-
-	intervalDuration: null, // the whole-unit duration that is being displayed
+	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
 	isSelected: false, // boolean whether a range of time is user-selected or not
@@ -44,10 +43,12 @@ var View = fc.View = Class.extend({
 	documentMousedownProxy: null, // TODO: doesn't work with touch
 
 
-	constructor: function(calendar, viewOptions, viewType) {
+	constructor: function(calendar, type, options, intervalDuration) {
+
 		this.calendar = calendar;
-		this.options = viewOptions;
-		this.type = this.name = viewType; // .name is deprecated
+		this.type = this.name = type; // .name is deprecated
+		this.options = options;
+		this.intervalDuration = intervalDuration || moment.duration(1, 'day');
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initTheming();
@@ -67,19 +68,7 @@ var View = fc.View = Class.extend({
 
 	// Retrieves an option with the given name
 	opt: function(name) {
-		var val;
-
-		val = this.options[name]; // look at view-specific options first
-		if (val !== undefined) {
-			return val;
-		}
-
-		val = this.calendar.options[name];
-		if ($.isPlainObject(val) && !isForcedAtomicOption(name)) { // view-option-hashes are deprecated
-			return smartProperty(val, this.type);
-		}
-
-		return val;
+		return this.options[name];
 	},
 
 
@@ -118,10 +107,9 @@ var View = fc.View = Class.extend({
 	// Given a single current date, produce information about what range to display.
 	// Subclasses can override. Must return all properties.
 	computeRange: function(date) {
-		var intervalDuration = moment.duration(this.opt('duration') || this.constructor.duration || { days: 1 });
-		var intervalUnit = computeIntervalUnit(intervalDuration);
+		var intervalUnit = computeIntervalUnit(this.intervalDuration);
 		var intervalStart = date.clone().startOf(intervalUnit);
-		var intervalEnd = intervalStart.clone().add(intervalDuration);
+		var intervalEnd = intervalStart.clone().add(this.intervalDuration);
 		var start, end;
 
 		// normalize the range's time-ambiguity
@@ -144,7 +132,6 @@ var View = fc.View = Class.extend({
 		end = this.skipHiddenDays(end, -1, true); // exclusively move backwards
 
 		return {
-			intervalDuration: intervalDuration,
 			intervalUnit: intervalUnit,
 			intervalStart: intervalStart,
 			intervalEnd: intervalEnd,
@@ -174,7 +161,7 @@ var View = fc.View = Class.extend({
 	// visible. `direction` is optional and indicates which direction the current date was being
 	// incremented or decremented (1 or -1).
 	massageCurrentDate: function(date, direction) {
-		if (this.intervalDuration <= moment.duration({ days: 1 })) { // if the view displays a single day or smaller
+		if (this.intervalDuration.as('days') <= 1) { // if the view displays a single day or smaller
 			if (this.isHiddenDay(date)) {
 				date = this.skipHiddenDays(date, direction);
 				date.startOf('day');

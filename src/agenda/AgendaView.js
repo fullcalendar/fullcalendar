@@ -4,7 +4,7 @@
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-setDefaults({
+var AGENDA_DEFAULTS = {
 	allDaySlot: true,
 	allDayText: 'all-day',
 	scrollTime: '06:00:00',
@@ -12,11 +12,11 @@ setDefaults({
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
 	slotEventOverlap: true
-});
+};
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
-fcViews.agenda = View.extend({ // AgendaView
+var AgendaView = fcViews.agenda = View.extend({
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -400,3 +400,5 @@ fcViews.agenda = View.extend({ // AgendaView
 	}
 
 });
+
+AgendaView.defaults = AGENDA_DEFAULTS;

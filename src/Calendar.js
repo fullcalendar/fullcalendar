@@ -1,41 +1,194 @@
 
- 
-function Calendar(element, instanceOptions) {
+var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
+
+	dirDefaults: null, // option defaults related to LTR or RTL
+	langDefaults: null, // option defaults related to current locale
+	overrides: null, // option overrides given to the fullCalendar constructor
+	options: null, // all defaults combined with overrides
+	viewSpecCache: null, // cache of view definitions
+	view: null, // current View object
+
+
+	// a lot of this class' OOP logic is scoped within this constructor function,
+	// but in the future, write individual methods on the prototype.
+	constructor: Calendar_constructor,
+
+
+	// Initializes `this.options` and other important options-related objects
+	initOptions: function(overrides) {
+		var lang, langDefaults;
+		var isRTL, dirDefaults;
+
+		// converts legacy options into non-legacy ones.
+		// in the future, when this is removed, don't use `overrides` reference. make a copy.
+		overrides = massageOverrides(overrides);
+
+		lang = overrides.lang;
+		langDefaults = langOptionHash[lang];
+		if (!langDefaults) {
+			lang = Calendar.defaults.lang;
+			langDefaults = langOptionHash[lang] || {};
+		}
+
+		isRTL = firstDefined(
+			overrides.isRTL,
+			langDefaults.isRTL,
+			Calendar.defaults.isRTL
+		);
+		dirDefaults = isRTL ? Calendar.rtlDefaults : {};
+
+		this.dirDefaults = dirDefaults;
+		this.langDefaults = langDefaults;
+		this.overrides = overrides;
+		this.options = mergeOptions( // merge defaults and overrides. lowest to highest precedence
+			Calendar.defaults, // global defaults
+			dirDefaults,
+			langDefaults,
+			overrides
+		);
+
+		this.viewSpecCache = {}; // somewhat unrelated
+	},
+
+
+	// Gets information about how to create a view. Will use a cache.
+	getViewSpec: function(viewType) {
+		var cache = this.viewSpecCache;
+
+		return cache[viewType] || (cache[viewType] = this.buildViewSpec(viewType));
+	},
+
+
+	// Builds an object with information on how to create a given view
+	buildViewSpec: function(requestedViewType) {
+		var viewOverrides = this.overrides.views || {};
+		var defaultsChain = []; // for the view. lowest to highest priority
+		var overridesChain = []; // for the view. lowest to highest priority
+		var viewType = requestedViewType;
+		var viewClass;
+		var defaults; // for the view
+		var overrides; // for the view
+		var duration;
+		var unit;
+		var spec;
+
+		// iterate from the specific view definition to a more general one until we hit an actual View class
+		while (viewType && !viewClass) {
+			defaults = fcViews[viewType] || {};
+			overrides = viewOverrides[viewType] || {};
+			duration = duration || overrides.duration || defaults.duration;
+			viewType = overrides.type || defaults.type; // for next iteration
+
+			if (typeof defaults === 'function') { // a class
+				viewClass = defaults;
+				defaultsChain.unshift(viewClass.defaults || {});
+			}
+			else { // an options object
+				defaultsChain.unshift(defaults);
+			}
+			overridesChain.unshift(overrides);
+		}
+
+		if (viewClass) {
+			spec = { 'class': viewClass };
+
+			if (duration) {
+				duration = moment.duration(duration);
+				if (!duration.valueOf()) { // invalid?
+					duration = null;
+				}
+			}
+			if (duration) {
+				spec.duration = duration;
+				unit = computeIntervalUnit(duration);
+
+				// view is a single-unit duration, like "week" or "day"
+				// incorporate options for this. lowest priority
+				if (duration.as(unit) === 1) {
+					spec.singleUnit = unit;
+					overridesChain.unshift(viewOverrides[unit] || {});
+				}
+			}
+
+			// collapse into single objects
+			spec.defaults = mergeOptions.apply(null, defaultsChain);
+			spec.overrides = mergeOptions.apply(null, overridesChain);
+
+			this.buildViewSpecOptions(spec);
+			this.buildViewSpecButtonText(spec, requestedViewType);
+
+			return spec;
+		}
+	},
+
+
+	// Builds and assigns a view spec's options object from its already-assigned defaults and overrides
+	buildViewSpecOptions: function(spec) {
+		spec.options = mergeOptions( // lowest to highest priority
+			Calendar.defaults, // global defaults
+			spec.defaults, // view's defaults (from ViewSubclass.defaults)
+			this.dirDefaults,
+			this.langDefaults, // locale and dir take precedence over view's defaults!
+			this.overrides, // calendar's overrides (options given to constructor)
+			spec.overrides // view's overrides (view-specific options)
+		);
+	},
+
+
+	// Computes and assigns a view spec's buttonText-related options
+	buildViewSpecButtonText: function(spec, requestedViewType) {
+
+		// given an options object with a possible `buttonText` hash, lookup the buttonText for the
+		// requested view, falling back to a generic unit entry like "week" or "day"
+		function queryButtonText(options) {
+			var buttonText = options.buttonText || {};
+			return buttonText[requestedViewType] ||
+				(spec.singleUnit ? buttonText[spec.singleUnit] : null);
+		}
+
+		// highest to lowest priority
+		spec.buttonTextOverride =
+			queryButtonText(this.overrides) || // constructor-specified buttonText lookup hash takes precedence
+			spec.overrides.buttonText; // `buttonText` for view-specific options is a string
+
+		// highest to lowest priority. mirrors buildViewSpecOptions
+		spec.buttonTextDefault =
+			queryButtonText(this.langDefaults) ||
+			queryButtonText(this.dirDefaults) ||
+			spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
+			queryButtonText(Calendar.defaults) ||
+			(spec.duration ? this.humanizeDuration(spec.duration) : null) || // like "3 days"
+			requestedViewType; // fall back to given view name
+	},
+
+
+	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
+	instantiateView: function(viewType) {
+		var spec = this.getViewSpec(viewType);
+
+		return new spec['class'](this, viewType, spec.options, spec.duration);
+	},
+
+
+	// Returns a boolean about whether the view is okay to instantiate at some point
+	isValidViewType: function(viewType) {
+		return Boolean(this.getViewSpec(viewType));
+	}
+
+});
+
+
+function Calendar_constructor(element, overrides) {
 	var t = this;
 
 
-
-	// Build options object
-	// -----------------------------------------------------------------------------------
-	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
-
-	instanceOptions = instanceOptions || {};
-
-	var options = mergeOptions({}, defaults, instanceOptions);
-	var langOptions;
-
-	// determine language options
-	if (options.lang in langOptionHash) {
-		langOptions = langOptionHash[options.lang];
-	}
-	else {
-		langOptions = langOptionHash[defaults.lang];
-	}
-
-	if (langOptions) { // if language options exist, rebuild...
-		options = mergeOptions({}, defaults, langOptions, instanceOptions);
-	}
-
-	if (options.isRTL) { // is isRTL, rebuild...
-		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
-	}
-
+	t.initOptions(overrides || {});
+	var options = this.options;
 
 	
 	// Exports
 	// -----------------------------------------------------------------------------------
 
-	t.options = options;
 	t.render = render;
 	t.destroy = destroy;
 	t.refetchEvents = refetchEvents;
@@ -58,8 +211,6 @@ function Calendar(element, instanceOptions) {
 	t.getView = getView;
 	t.option = option;
 	t.trigger = trigger;
-	t.isValidViewType = isValidViewType;
-	t.getViewButtonText = getViewButtonText;
 
 
 
@@ -205,10 +356,10 @@ function Calendar(element, instanceOptions) {
 
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
-	function humanizeDuration(duration) {
+	t.humanizeDuration = function(duration) {
 		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
 			.humanize();
-	}
+	};
 
 
 	
@@ -231,8 +382,7 @@ function Calendar(element, instanceOptions) {
 	var headerElement;
 	var content;
 	var tm; // for making theme classes
-	var viewSpecCache = {};
-	var currentView;
+	var currentView; // NOTE: keep this in sync with this.view
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
@@ -332,16 +482,13 @@ function Calendar(element, instanceOptions) {
 		if (currentView && viewType && currentView.type !== viewType) {
 			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
-			if (currentView.start) { // rendered before?
-				currentView.destroyView();
-			}
 			currentView.el.remove();
-			currentView = null;
+			currentView = t.view = null;
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
 		if (!currentView && viewType) {
-			currentView = instantiateView(viewType);
+			currentView = t.view = t.instantiateView(viewType);
 			currentView.el =  $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content);
 			header.activateButton(viewType);
 		}
@@ -379,106 +526,6 @@ function Calendar(element, instanceOptions) {
 		ignoreWindowResize--;
 	}
 
-
-
-	// View Instantiation
-	// -----------------------------------------------------------------------------------
-
-
-	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
-	function instantiateView(viewType) {
-		var spec = getViewSpec(viewType);
-
-		return new spec['class'](t, spec.options, viewType);
-	}
-
-
-	// Gets information about how to create a view
-	function getViewSpec(requestedViewType) {
-		var allDefaultButtonText = options.defaultButtonText || {};
-		var allButtonText = options.buttonText || {};
-		var hash = options.views || {}; // the `views` option object
-		var viewType = requestedViewType;
-		var viewOptionsChain = [];
-		var viewOptions;
-		var viewClass;
-		var duration, unit, unitIsSingle = false;
-		var buttonText;
-
-		if (viewSpecCache[requestedViewType]) {
-			return viewSpecCache[requestedViewType];
-		}
-
-		function processSpecInput(input) {
-			if (typeof input === 'function') {
-				viewClass = input;
-			}
-			else if (typeof input === 'object') {
-				$.extend(viewOptions, input);
-			}
-		}
-
-		// iterate up a view's spec ancestor chain util we find a class to instantiate
-		while (viewType && !viewClass) {
-			viewOptions = {}; // only for this specific view in the ancestry
-			processSpecInput(fcViews[viewType]); // $.fullCalendar.views, lower precedence
-			processSpecInput(hash[viewType]); // options at initialization, higher precedence
-			viewOptionsChain.unshift(viewOptions); // record older ancestors first
-			viewType = viewOptions.type;
-		}
-
-		viewOptionsChain.unshift({}); // jQuery's extend needs at least one arg
-		viewOptions = $.extend.apply($, viewOptionsChain); // combine all, newer ancestors overwritting old
-
-		if (viewClass) {
-
-			duration = viewOptions.duration || viewClass.duration;
-			if (duration) {
-				duration = moment.duration(duration);
-				unit = computeIntervalUnit(duration);
-				unitIsSingle = duration.as(unit) === 1;
-			}
-
-			// options that are specified per the view's duration, like "week" or "day"
-			if (unitIsSingle && hash[unit]) {
-				viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
-			}
-
-			// compute the final text for the button representing this view
-			buttonText =
-				allButtonText[requestedViewType] || // init options, like "agendaWeek"
-				(unitIsSingle ? allButtonText[unit] : null) || // init options, like "week"
-				allDefaultButtonText[requestedViewType] || // lang data, like "agendaWeek"
-				(unitIsSingle ? allDefaultButtonText[unit] : null) || // lang data, like "week"
-				viewOptions.buttonText ||
-				viewClass.buttonText ||
-				(duration ? humanizeDuration(duration) : null) ||
-				requestedViewType;
-
-			return (viewSpecCache[requestedViewType] = {
-				'class': viewClass,
-				options: viewOptions,
-				buttonText: buttonText
-			});
-		}
-	}
-
-
-	// Returns a boolean about whether the view is okay to instantiate at some point
-	function isValidViewType(viewType) {
-		return Boolean(getViewSpec(viewType));
-	}
-
-
-	// Gets the text that should be displayed on a view's button in the header
-	function getViewButtonText(viewType) {
-		var spec = getViewSpec(viewType);
-
-		if (spec) {
-			return spec.buttonText;
-		}
-	}
-	
 	
 
 	// Resizing
@@ -709,7 +756,7 @@ function Calendar(element, instanceOptions) {
 		var viewStr;
 		var match;
 
-		if (!viewType || !isValidViewType(viewType)) { // a general view name, or "auto"
+		if (!viewType || !t.isValidViewType(viewType)) { // a general view name, or "auto"
 			viewType = viewType || 'day';
 			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
 

@@ -2,10 +2,6 @@
 /* A month view with day cells running in rows (one-per-week) and columns
 ----------------------------------------------------------------------------------------------------------------------*/
 
-setDefaults({
-	fixedWeekCount: true
-});
-
 var MonthView = fcViews.month = BasicView.extend({
 
 	// Produces information about what range to display
@@ -48,4 +44,8 @@ var MonthView = fcViews.month = BasicView.extend({
 
 });
 
-MonthView.duration = { months: 1 };
+MonthView.duration = { months: 1 }; // important for prev/next
+
+MonthView.defaults = {
+	fixedWeekCount: true
+};

@@ -52,7 +52,7 @@ fc.lang = function(langCode, newFcOptions) {
 
 	// provided new options for this language? merge them in
 	if (newFcOptions) {
-		mergeOptions(fcOptions, newFcOptions);
+		fcOptions = langOptionHash[langCode] = mergeOptions(fcOptions, newFcOptions);
 	}
 
 	// compute language options that weren't defined.
@@ -66,7 +66,7 @@ fc.lang = function(langCode, newFcOptions) {
 	});
 
 	// set it as the default language for FullCalendar
-	defaults.lang = langCode;
+	Calendar.defaults.lang = langCode;
 };
 
 
@@ -74,7 +74,7 @@ fc.lang = function(langCode, newFcOptions) {
 // configs, so make sure there are English fallbacks for these in the defaults file.
 var dpComputableOptions = {
 
-	defaultButtonText: function(dpOptions) {
+	buttonText: function(dpOptions) {
 		return {
 			// the translations sometimes wrongly contain HTML entities
 			prev: stripHtmlEntities(dpOptions.prevText),
@@ -146,4 +146,4 @@ function getMomentLocaleData(langCode) {
 
 // Initialize English by forcing computation of moment-derived options.
 // Also, sets it as the default.
-fc.lang('en', englishDefaults);
+fc.lang('en', Calendar.englishDefaults);

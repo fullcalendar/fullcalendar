@@ -13,9 +13,7 @@
     "fullcalendar": {
       "scripts": [
         "src/intro.js",
-        "src/defaults.js",
         "src/main.js",
-        "src/lang.js",
         "src/util.js",
         "src/moment-ext.js",
         "src/date-formatting.js",
@@ -34,6 +32,8 @@
         "src/common/TimeGrid.events.js",
         "src/common/View.js",
         "src/Calendar.js",
+        "src/defaults.js",
+        "src/lang.js",
         "src/Header.js",
         "src/EventManager.js",
         "src/basic/BasicView.js",

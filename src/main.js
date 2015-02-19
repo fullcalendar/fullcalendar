@@ -26,7 +26,7 @@ $.fn.fullCalendar = function(options) {
 		}
 		// a new calendar initialization
 		else if (!calendar) { // don't initialize twice
-			calendar = new Calendar(element, options);
+			calendar = new fc.CalendarBase(element, options);
 			element.data('fullCalendar', calendar);
 			calendar.render();
 		}
@@ -36,43 +36,97 @@ $.fn.fullCalendar = function(options) {
 };
 
 
-// function for adding/overriding defaults
-function setDefaults(d) {
-	mergeOptions(defaults, d);
-}
+var complexOptions = [ // names of options that are objects whose properties should be combined
+	'header',
+	'buttonText',
+	'buttonIcons',
+	'themeButtonIcons'
+];
 
 
-// Recursively combines option hash-objects.
-// Better than `$.extend(true, ...)` because arrays are not traversed/copied.
-//
-// called like:
-//     mergeOptions(target, obj1, obj2, ...)
-//
-function mergeOptions(target) {
+// Recursively combines all passed-in option-hash arguments into a new single option-hash.
+// Given option-hashes are ordered from lowest to highest priority.
+function mergeOptions() {
+	var chain = Array.prototype.slice.call(arguments); // convert to a real array
+	var complexVals = {}; // hash for each complex option's combined values
+	var i, name;
+	var combinedVal;
+	var j;
+	var val;
 
-	function mergeIntoTarget(name, value) {
-		if ($.isPlainObject(value) && $.isPlainObject(target[name]) && !isForcedAtomicOption(name)) {
-			// merge into a new object to avoid destruction
-			target[name] = mergeOptions({}, target[name], value); // combine. `value` object takes precedence
+	// for each complex option, loop through each option-hash and accumulate the combined values
+	for (i = 0; i < complexOptions.length; i++) {
+		name = complexOptions[i];
+		combinedVal = null; // an object holding the merge of all the values
+
+		for (j = 0; j < chain.length; j++) {
+			val = chain[j][name];
+
+			if ($.isPlainObject(val)) {
+				combinedVal = $.extend(combinedVal || {}, val); // merge new properties
+			}
+			else if (val != null) { // a non-null non-undefined atomic option
+				combinedVal = null; // signal to use the atomic value
+			}
 		}
-		else if (value !== undefined) { // only use values that are set and not undefined
-			target[name] = value;
+
+		// if not null, the final value was a combination of other objects. record it
+		if (combinedVal !== null) {
+			complexVals[name] = combinedVal;
 		}
 	}
 
-	for (var i=1; i<arguments.length; i++) {
-		$.each(arguments[i], mergeIntoTarget);
-	}
-
-	return target;
+	chain.unshift({}); // $.extend will mutate this with the result
+	chain.push(complexVals); // computed complex values are applied last
+	return $.extend.apply($, chain); // combine
 }
 
 
-// overcome sucky view-option-hash and option-merging behavior messing with options it shouldn't
-function isForcedAtomicOption(name) {
-	// Any option that ends in "Time" or "Duration" is probably a Duration,
-	// and these will commonly be specified as plain objects, which we don't want to mess up.
-	return /(Time|Duration)$/.test(name);
+// Given options specified for the calendar's constructor, massages any legacy options into a non-legacy form.
+// Converts View-Option-Hashes into the View-Specific-Options format.
+function massageOverrides(input) {
+	var overrides = { views: input.views || {} }; // the output. ensure a `views` hash
+	var subObj;
+
+	// iterate through all option override properties (except `views`)
+	$.each(input, function(name, val) {
+		if (name != 'views') {
+
+			// could the value be a legacy View-Option-Hash?
+			if (
+				$.isPlainObject(val) &&
+				!/(time|duration|interval)$/i.test(name) && // exclude duration options. might be given as objects
+				$.inArray(name, complexOptions) == -1 // complex options aren't allowed to be View-Option-Hashes
+			) {
+				subObj = null;
+
+				// iterate through the properties of this possible View-Option-Hash value
+				$.each(val, function(subName, subVal) {
+
+					// is the property targeting a view?
+					if (/^(month|week|day|default|basic(Week|Day)?|agenda(Week|Day)?)$/.test(subName)) {
+						if (!overrides.views[subName]) { // ensure the view-target entry exists
+							overrides.views[subName] = {};
+						}
+						overrides.views[subName][name] = subVal; // record the value in the `views` object
+					}
+					else { // a non-View-Option-Hash property
+						if (!subObj) {
+							subObj = {};
+						}
+						subObj[subName] = subVal; // accumulate these unrelated values for later
+					}
+				});
+
+				if (subObj) { // non-View-Option-Hash properties? transfer them as-is
+					overrides[name] = subObj;
+				}
+			}
+			else {
+				overrides[name] = val; // transfer normal options as-is
+			}
+		}
+	});
+
+	return overrides;
 }
-// FIX: find a different solution for view-option-hashes and have a whitelist
-// for options that can be recursively merged.
