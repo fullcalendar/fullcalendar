@@ -223,42 +223,36 @@ var Grid = fc.Grid = RowRenderer.extend({
 	computeRowCoords: function() {
 		var items = [];
 		var i, el;
-		var item;
+		var top;
 
 		for (i = 0; i < this.rowCnt; i++) {
 			el = this.getRowEl(i);
-			item = {
-				top: el.offset().top
-			};
-			if (i > 0) {
-				items[i - 1].bottom = item.top;
-			}
-			items.push(item);
+			top = el.offset().top;
+			items.push({
+				top: top,
+				bottom: top + el.outerHeight()
+			});
 		}
-		item.bottom = item.top + el.outerHeight();
 
 		return items;
 	},
 
 
 	// Computes the left/right coordinates of all rows.
-	// By default, queries the dimensions of the element provided by getColEl().
+	// By default, queries the dimensions of the element provided by getColEl(). Columns can be LTR or RTL.
 	computeColCoords: function() {
 		var items = [];
 		var i, el;
-		var item;
+		var left;
 
 		for (i = 0; i < this.colCnt; i++) {
 			el = this.getColEl(i);
-			item = {
-				left: el.offset().left
-			};
-			if (i > 0) {
-				items[i - 1].right = item.left;
-			}
-			items.push(item);
+			left = el.offset().left;
+			items.push({
+				left: left,
+				right: left + el.outerWidth()
+			});
 		}
-		item.right = item.left + el.outerWidth();
 
 		return items;
 	},
