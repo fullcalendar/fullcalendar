@@ -637,7 +637,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 		var classes = [ 'fc-' + dayIDs[date.day()] ];
 
 		if (
-			view.name === 'month' &&
+			view.intervalDuration.as('months') == 1 &&
 			date.month() != view.intervalStart.month()
 		) {
 			classes.push('fc-other-month');
