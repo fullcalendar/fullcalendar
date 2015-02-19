@@ -529,7 +529,7 @@ var View = fc.View = Class.extend({
 
 	// Signals that all events have been rendered
 	triggerEventRender: function() {
-		this.eventSegEach(function(seg) {
+		this.renderedEventSegEach(function(seg) {
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
 		this.trigger('eventAfterAllRender');
@@ -538,7 +538,7 @@ var View = fc.View = Class.extend({
 
 	// Signals that all event elements are about to be removed
 	triggerEventDestroy: function() {
-		this.eventSegEach(function(seg) {
+		this.renderedEventSegEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
 	},
@@ -562,7 +562,7 @@ var View = fc.View = Class.extend({
 
 	// Hides all rendered event segments linked to the given event
 	showEvent: function(event) {
-		this.eventSegEach(function(seg) {
+		this.renderedEventSegEach(function(seg) {
 			seg.el.css('visibility', '');
 		}, event);
 	},
@@ -570,22 +570,24 @@ var View = fc.View = Class.extend({
 
 	// Shows all rendered event segments linked to the given event
 	hideEvent: function(event) {
-		this.eventSegEach(function(seg) {
+		this.renderedEventSegEach(function(seg) {
 			seg.el.css('visibility', 'hidden');
 		}, event);
 	},
 
 
-	// Iterates through event segments. Goes through all by default.
+	// Iterates through event segments that have been rendered (have an el). Goes through all by default.
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
 	// The `this` value of the callback function will be the view.
-	eventSegEach: function(func, event) {
+	renderedEventSegEach: function(func, event) {
 		var segs = this.getEventSegs();
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
 			if (!event || segs[i].event._id === event._id) {
-				func.call(this, segs[i]);
+				if (segs[i].el) {
+					func.call(this, segs[i]);
+				}
 			}
 		}
 	},
