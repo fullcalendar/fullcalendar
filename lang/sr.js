@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("sr", {
-	defaultButtonText: {
+	buttonText: {
 		month: "Месец",
 		week: "Недеља",
 		day: "Дан",

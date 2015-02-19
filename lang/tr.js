@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("tr", {
-	defaultButtonText: {
+	buttonText: {
 		next: "ileri", // override JQUI's, which has a non-closing HTML entity in it
 		month: "Ay",
 		week: "Hafta",

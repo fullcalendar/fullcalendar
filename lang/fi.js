@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("fi", {
-	defaultButtonText: {
+	buttonText: {
 		month: "Kuukausi",
 		week: "Viikko",
 		day: "Päivä",
