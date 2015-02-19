@@ -440,6 +440,7 @@ function commonlyAmbiguate(inputs, preserveTime) {
 }
 
 // Transfers all the flags related to ambiguous time/zone from the `src` moment to the `dest` moment
+// TODO: look into moment.momentProperties for this.
 function transferAmbigs(src, dest) {
 	if (src._ambigTime) {
 		dest._ambigTime = true;

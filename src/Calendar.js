@@ -787,6 +787,7 @@ function Calendar_constructor(element, overrides) {
 
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
+	// TODO: move this into the view
 
 
 	function freezeContentHeight() {

@@ -11,7 +11,7 @@ var AGENDA_DEFAULTS = {
 	slotDuration: '00:30:00',
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
-	slotEventOverlap: true
+	slotEventOverlap: true // a bad name. confused with overlap/constraint system
 };
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;

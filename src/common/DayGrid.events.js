@@ -148,6 +148,7 @@ DayGrid.mixin({
 
 	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 	// the segments. Returns object with a bunch of internal data about how the render was calculated.
+	// NOTE: modifies rowSegs
 	renderSegRow: function(row, rowSegs) {
 		var colCnt = this.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
@@ -236,6 +237,7 @@ DayGrid.mixin({
 
 
 	// Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
+	// NOTE: modifies segs
 	buildSegLevels: function(segs) {
 		var levels = [];
 		var i, seg;

@@ -517,7 +517,7 @@ var View = fc.View = Class.extend({
 
 
 	// Renders the events onto the view.
-	renderEvents: function() {
+	renderEvents: function(events) {
 		// subclasses should implement
 	},
 

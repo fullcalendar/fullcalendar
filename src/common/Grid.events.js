@@ -149,6 +149,7 @@ Grid.mixin({
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
 	// Called by the fill system.
 	// TODO: consolidate with getEventSkinCss?
+	// TODO: rename to be consistent
 	bgEventSegStyles: function(seg) {
 		var view = this.view;
 		var event = seg.event;
@@ -742,7 +743,7 @@ Grid.mixin({
 				sourceColor ||
 				view.opt('eventBorderColor') ||
 				optionColor,
-			'color':
+			color:
 				event.textColor ||
 				source.textColor ||
 				view.opt('eventTextColor')

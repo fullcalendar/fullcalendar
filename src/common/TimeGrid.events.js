@@ -238,7 +238,7 @@ TimeGrid.mixin({
 
 
 // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
-// Also reorders the given array by date!
+// NOTE: Also reorders the given array by date!
 function placeSlotSegs(segs) {
 	var levels;
 	var level0;
