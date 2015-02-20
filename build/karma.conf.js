@@ -37,7 +37,7 @@ module.exports = function(config) {
 			'../lib/jasmine-jquery/lib/jasmine-jquery.js',
 			'../lib/jasmine-fixture/dist/jasmine-fixture.js',
 			'../tests/lib/jasmine-ext.js',
-			'../tests/lib/css-utils.js',
+			'../tests/lib/dom-utils.js',
 			'../tests/lib/dnd-resize-utils.js',
 
 			'../dist/fullcalendar.js',
