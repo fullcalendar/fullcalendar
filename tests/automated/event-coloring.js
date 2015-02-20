@@ -85,7 +85,7 @@ describe('event coloring', function() {
 			options.eventColor = 'red';
 			options.events = [ eventInput ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 
 		it('should accept the global eventBorderColor', function() {
@@ -93,7 +93,7 @@ describe('event coloring', function() {
 			options.eventBorderColor = 'red';
 			options.events = [ eventInput ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 
 		it('should accept an event source\'s color for the border', function() {
@@ -103,7 +103,7 @@ describe('event coloring', function() {
 				events: [ eventInput ]
 			} ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 
 		it('should accept an event source\'s borderColor', function() {
@@ -113,7 +113,7 @@ describe('event coloring', function() {
 				events: [ eventInput ]
 			} ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 
 		it('should accept an event object\'s color for the border', function() {
@@ -123,7 +123,7 @@ describe('event coloring', function() {
 				events: [ eventInput ]
 			} ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 
 		it('should accept an event object\'s borderColor', function() {
@@ -133,7 +133,7 @@ describe('event coloring', function() {
 				events: [ eventInput ]
 			} ];
 			$('#cal').fullCalendar(options);
-			expect(getEventCss('border-color')).toMatch(RED_REGEX);
+			expect(getEventCss('border-top-color')).toMatch(RED_REGEX);
 		});
 	}
 
