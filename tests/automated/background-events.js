@@ -1,6 +1,8 @@
 
 describe('background events', function() {
 
+	// SEE ALSO: event-color.js
+
 	var options;
 
 	beforeEach(function() {
@@ -323,62 +325,6 @@ describe('background events', function() {
 					$('#cal').fullCalendar(options);
 				});
 			});
-		});
-
-		it('can have custom Event Object color', function(done) {
-			options.events = [ {
-				start: '2014-11-04',
-				rendering: 'background',
-				color: 'red'
-			} ];
-			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
-				done();
-			};
-			$('#cal').fullCalendar(options);
-		});
-
-		it('can have custom Event Object backgroundColor', function(done) {
-			options.events = [ {
-				start: '2014-11-04',
-				rendering: 'background',
-				backgroundColor: 'red'
-			} ];
-			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
-				done();
-			};
-			$('#cal').fullCalendar(options);
-		});
-
-		it('can have custom Event Source color', function(done) {
-			options.eventSources = [ {
-				color: 'red',
-				events: [ {
-					start: '2014-11-04',
-					rendering: 'background'
-				} ]
-			} ];
-			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
-				done();
-			};
-			$('#cal').fullCalendar(options);
-		});
-
-		it('can have custom Event Source backgroundColor', function(done) {
-			options.eventSources = [ {
-				backgroundColor: 'red',
-				events: [ {
-					start: '2014-11-04',
-					rendering: 'background'
-				} ]
-			} ];
-			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
-				done();
-			};
-			$('#cal').fullCalendar(options);
 		});
 
 		describe('when in month view', function() {
