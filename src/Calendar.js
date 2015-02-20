@@ -490,7 +490,9 @@ function Calendar_constructor(element, overrides) {
 		content.remove();
 		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
 
-		$(window).unbind('resize', windowResizeProxy);
+		if (windowResizeProxy) {
+			$(window).unbind('resize', windowResizeProxy);
+		}
 	}
 	
 	
