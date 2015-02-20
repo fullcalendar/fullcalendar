@@ -103,7 +103,7 @@ DayGrid.mixin({
 		var timeText;
 		var titleHtml;
 
-		classes.unshift('fc-day-grid-event');
+		classes.unshift('fc-day-grid-event', 'fc-h-event');
 
 		// Only display a timed events time if it is the starting segment
 		if (seg.isStart) {

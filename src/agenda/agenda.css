@@ -152,13 +152,10 @@
 }
 
 
-/* TimeGrid Event Styling
-----------------------------------------------------------------------------------------------------
-We use the full "fc-time-grid-event" class instead of using descendants because the event won't
-be a descendant of the grid when it is being dragged.
-*/
+/* Generic Vertical Event
+--------------------------------------------------------------------------------------------------*/
 
-.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
+.fc-v-event.fc-not-start { /* events that are continuing from another day */
 	/* replace space made by the top border with padding */
 	border-top-width: 0;
 	padding-top: 1px;
@@ -168,7 +165,7 @@ be a descendant of the grid when it is being dragged.
 	border-top-right-radius: 0;
 }
 
-.fc-time-grid-event.fc-not-end {
+.fc-v-event.fc-not-end {
 	/* replace space made by the top border with padding */
 	border-bottom-width: 0;
 	padding-bottom: 1px;
@@ -178,13 +175,15 @@ be a descendant of the grid when it is being dragged.
 	border-bottom-right-radius: 0;
 }
 
+
+/* TimeGrid Event Styling
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
+
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */
-}
-
-.fc-time-grid-event > .fc-content { /* contains the time and title, but no bg and resizer */
-	position: relative;
-	z-index: 2; /* above the bg */
 }
 
 .fc-time-grid-event .fc-time,
@@ -195,13 +194,6 @@ be a descendant of the grid when it is being dragged.
 .fc-time-grid-event .fc-time {
 	font-size: .85em;
 	white-space: nowrap;
-}
-
-.fc-time-grid-event .fc-bg {
-	z-index: 1;
-	background: #fff;
-	opacity: .25;
-	filter: alpha(opacity=25); /* for IE */
 }
 
 /* short mode, where time and title are on the same line */
@@ -238,8 +230,6 @@ be a descendant of the grid when it is being dragged.
 /* resizer */
 
 .fc-time-grid-event .fc-resizer {
-	position: absolute;
-	z-index: 3; /* above content */
 	left: 0;
 	right: 0;
 	bottom: 0;

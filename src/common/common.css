@@ -474,6 +474,88 @@ temporary rendered events).
 	cursor: not-allowed;
 }
 
+.fc-event .fc-bg { /* the generic .fc-bg already does position */
+	z-index: 1;
+	background: #fff;
+	opacity: .25;
+	filter: alpha(opacity=25); /* for IE */
+}
+
+.fc-event .fc-content {
+	position: relative;
+	z-index: 2;
+}
+
+.fc-event .fc-resizer {
+	position: absolute;
+	z-index: 3;
+}
+
+
+/* Horizontal Events
+--------------------------------------------------------------------------------------------------*/
+
+/* events that are continuing to/from another week. kill rounded corners and butt up against edge */
+
+.fc-ltr .fc-h-event.fc-not-start,
+.fc-rtl .fc-h-event.fc-not-end {
+	margin-left: 0;
+	border-left-width: 0;
+	padding-left: 1px; /* replace the border with padding */
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.fc-ltr .fc-h-event.fc-not-end,
+.fc-rtl .fc-h-event.fc-not-start {
+	margin-right: 0;
+	border-right-width: 0;
+	padding-right: 1px; /* replace the border with padding */
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+/* resizer */
+
+.fc-h-event .fc-resizer { /* positioned it to overcome the event's borders */
+	top: -1px;
+	bottom: -1px;
+	left: -1px;
+	right: -1px;
+}
+
+.fc-h-event .fc-resizer:before { /* the invisible hit area. conservative overlapping by default */
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 5px;
+}
+
+/* left resizer */
+.fc-ltr .fc-h-event .fc-start-resizer,
+.fc-ltr .fc-h-event .fc-start-resizer:before,
+.fc-ltr .fc-h-event .fc-start-resizer:after, /* can be another styled component */
+.fc-rtl .fc-h-event .fc-end-resizer,
+.fc-rtl .fc-h-event .fc-end-resizer:before,
+.fc-rtl .fc-h-event .fc-end-resizer:after {
+	right: auto; /* ignore the right and only use the left */
+	cursor: w-resize;
+}
+
+/* right resizer */
+.fc-ltr .fc-h-event .fc-end-resizer,
+.fc-ltr .fc-h-event .fc-end-resizer:before,
+.fc-ltr .fc-h-event .fc-end-resizer:after, /* can be another styled component */
+.fc-rtl .fc-h-event .fc-start-resizer,
+.fc-rtl .fc-h-event .fc-start-resizer:before,
+.fc-rtl .fc-h-event .fc-start-resizer:after {
+	left: auto; /* ignore the left and only use the right */
+	cursor: e-resize;
+}
+
 
 /* DayGrid events
 ----------------------------------------------------------------------------------------------------
@@ -486,27 +568,8 @@ be a descendant of the grid when it is being dragged.
 	padding: 0 1px;
 }
 
-/* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
-.fc-ltr .fc-day-grid-event.fc-not-start,
-.fc-rtl .fc-day-grid-event.fc-not-end {
-	margin-left: 0;
-	border-left-width: 0;
-	padding-left: 1px; /* replace the border with padding */
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-}
-
-.fc-ltr .fc-day-grid-event.fc-not-end,
-.fc-rtl .fc-day-grid-event.fc-not-start {
-	margin-right: 0;
-	border-right-width: 0;
-	padding-right: 1px; /* replace the border with padding */
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-}
-
-.fc-day-grid-event > .fc-content { /* force events to be one-line tall */
+.fc-day-grid-event .fc-content { /* force events to be one-line tall */
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -515,23 +578,10 @@ be a descendant of the grid when it is being dragged.
 	font-weight: bold;
 }
 
-/* resize handle (outside of fc-content, so can go outside of bounds) */
-
-.fc-day-grid-event .fc-resizer {
-	position: absolute;
-	top: 0;
-	bottom: 0;
+.fc-day-grid-event .fc-resizer:before { /* enlarge the default hit area */
 	width: 7px;
-}
-
-.fc-ltr .fc-day-grid-event .fc-resizer {
-	right: -3px;
-	cursor: e-resize;
-}
-
-.fc-rtl .fc-day-grid-event .fc-resizer {
 	left: -3px;
-	cursor: w-resize;
+	right: -3px;
 }
 
 
