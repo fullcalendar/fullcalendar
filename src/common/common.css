@@ -310,7 +310,7 @@ previous button's border...
 
 .fc-unthemed .fc-popover .fc-header .fc-close {
 	font-size: .9em;
-	margin-top: 3px;
+	margin-top: 2px;
 }
 
 /* jqui themed */
@@ -575,22 +575,13 @@ temporary rendered events).
 	bottom: -1px;
 	left: -1px;
 	right: -1px;
-}
-
-.fc-h-event .fc-resizer:before { /* the invisible hit area. conservative overlapping by default */
-	content: "";
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
 	width: 5px;
 }
 
-/* left resizer */
+/* left resizer  */
 .fc-ltr .fc-h-event .fc-start-resizer,
 .fc-ltr .fc-h-event .fc-start-resizer:before,
-.fc-ltr .fc-h-event .fc-start-resizer:after, /* can be another styled component */
+.fc-ltr .fc-h-event .fc-start-resizer:after,
 .fc-rtl .fc-h-event .fc-end-resizer,
 .fc-rtl .fc-h-event .fc-end-resizer:before,
 .fc-rtl .fc-h-event .fc-end-resizer:after {
@@ -601,7 +592,7 @@ temporary rendered events).
 /* right resizer */
 .fc-ltr .fc-h-event .fc-end-resizer,
 .fc-ltr .fc-h-event .fc-end-resizer:before,
-.fc-ltr .fc-h-event .fc-end-resizer:after, /* can be another styled component */
+.fc-ltr .fc-h-event .fc-end-resizer:after,
 .fc-rtl .fc-h-event .fc-start-resizer,
 .fc-rtl .fc-h-event .fc-start-resizer:before,
 .fc-rtl .fc-h-event .fc-start-resizer:after {
@@ -631,10 +622,10 @@ be a descendant of the grid when it is being dragged.
 	font-weight: bold;
 }
 
-.fc-day-grid-event .fc-resizer:before { /* enlarge the default hit area */
-	width: 7px;
+.fc-day-grid-event .fc-resizer { /* enlarge the default hit area */
 	left: -3px;
 	right: -3px;
+	width: 7px;
 }
 
 
