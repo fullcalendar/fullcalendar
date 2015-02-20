@@ -149,27 +149,20 @@ Grid.mixin({
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
 	// Called by the fill system.
 	// TODO: consolidate with getEventSkinCss?
-	// TODO: rename to be consistent
-	bgEventSegStyles: function(seg) {
+	bgEventSegCss: function(seg) {
 		var view = this.view;
 		var event = seg.event;
 		var source = event.source || {};
-		var eventColor = event.color;
-		var sourceColor = source.color;
-		var optionColor = view.opt('eventColor');
-		var backgroundColor =
-			event.backgroundColor ||
-			eventColor ||
-			source.backgroundColor ||
-			sourceColor ||
-			view.opt('eventBackgroundColor') ||
-			optionColor;
 
-		if (backgroundColor) {
-			return 'background-color:' + backgroundColor;
-		}
-
-		return '';
+		return {
+			'background-color':
+				event.backgroundColor ||
+				event.color ||
+				source.backgroundColor ||
+				source.color ||
+				view.opt('eventBackgroundColor') ||
+				view.opt('eventColor')
+		};
 	},
 
 

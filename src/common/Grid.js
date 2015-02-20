@@ -573,14 +573,17 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Builds the HTML needed for one fill segment. Generic enought o work with different types.
 	fillSegHtml: function(type, seg) {
-		var classesMethod = this[type + 'SegClasses']; // custom hooks per-type
-		var stylesMethod = this[type + 'SegStyles']; //
+
+		// custom hooks per-type
+		var classesMethod = this[type + 'SegClasses'];
+		var cssMethod = this[type + 'SegCss'];
+
 		var classes = classesMethod ? classesMethod.call(this, seg) : [];
-		var styles = stylesMethod ? stylesMethod.call(this, seg) : ''; // a semi-colon separated CSS property string
+		var css = cssToStr(cssMethod ? cssMethod.call(this, seg) : {});
 
 		return '<' + this.fillSegTag +
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
-			(styles ? ' style="' + styles + '"' : '') +
+			(css ? ' style="' + css + '"' : '') +
 			' />';
 	},
 
