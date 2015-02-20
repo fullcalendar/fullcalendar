@@ -72,32 +72,80 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-icon {
 	display: inline-block;
-	font-size: 2em;
-	line-height: .5em;
-	height: .5em; /* will make the total height 1em */
+	width: 1em;
+	height: 1em;
+	line-height: 1em;
+	font-size: 1em;
+	text-align: center;
+	overflow: hidden;
 	font-family: "Courier New", Courier, monospace;
+}
+
+/*
+Acceptable font-family overrides for individual icons:
+	"Arial", sans-serif
+	"Times New Roman", serif
+
+NOTE: use percentage font sizes or else old IE chokes
+*/
+
+.fc-icon:after {
+	position: relative;
+	margin: 0 -1em; /* ensures character will be centered, regardless of width */
 }
 
 .fc-icon-left-single-arrow:after {
 	content: "\02039";
 	font-weight: bold;
+	font-size: 200%;
+	top: -7%;
+	left: 3%;
 }
 
 .fc-icon-right-single-arrow:after {
 	content: "\0203A";
 	font-weight: bold;
+	font-size: 200%;
+	top: -7%;
+	left: -3%;
 }
 
 .fc-icon-left-double-arrow:after {
 	content: "\000AB";
+	font-size: 160%;
+	top: -7%;
 }
 
 .fc-icon-right-double-arrow:after {
 	content: "\000BB";
+	font-size: 160%;
+	top: -7%;
+}
+
+.fc-icon-left-triangle:after {
+	content: "\25C4";
+	font-size: 125%;
+	top: 3%;
+	left: -2%;
+}
+
+.fc-icon-right-triangle:after {
+	content: "\25BA";
+	font-size: 125%;
+	top: 3%;
+	left: 2%;
+}
+
+.fc-icon-down-triangle:after {
+	content: "\25BC";
+	font-size: 125%;
+	top: 2%;
 }
 
 .fc-icon-x:after {
 	content: "\000D7";
+	font-size: 200%;
+	top: 6%;
 }
 
 
@@ -142,8 +190,9 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc button .fc-icon { /* non-theme */
 	position: relative;
-	top: .05em; /* seems to be a good adjustment across browsers */
-	margin: 0 .1em;
+	top: -0.05em; /* seems to be a good adjustment across browsers */
+	margin: 0 .2em;
+	vertical-align: middle;
 }
 	
 /*
@@ -260,8 +309,8 @@ previous button's border...
 }
 
 .fc-unthemed .fc-popover .fc-header .fc-close {
-	font-size: 25px;
-	margin-top: 4px;
+	font-size: .9em;
+	margin-top: 3px;
 }
 
 /* jqui themed */
