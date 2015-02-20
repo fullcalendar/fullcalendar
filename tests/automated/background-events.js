@@ -332,7 +332,7 @@ describe('background events', function() {
 				color: 'red'
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -345,7 +345,7 @@ describe('background events', function() {
 				backgroundColor: 'red'
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -360,7 +360,7 @@ describe('background events', function() {
 				} ]
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -375,7 +375,7 @@ describe('background events', function() {
 				} ]
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -717,7 +717,7 @@ describe('background events', function() {
 				color: 'red'
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -730,7 +730,7 @@ describe('background events', function() {
 				backgroundColor: 'red'
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -745,7 +745,7 @@ describe('background events', function() {
 				} ]
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);
@@ -760,7 +760,37 @@ describe('background events', function() {
 				} ]
 			} ];
 			options.eventAfterAllRender = function() {
-				expect($('.fc-bgevent').css('background-color')).toMatch(/red|rgb\(255, 0, 0\)/);
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
+				done();
+			};
+			$('#cal').fullCalendar(options);
+		});
+
+		it('is affected by global eventColor', function(done) {
+			options.eventColor = 'red';
+			options.eventSources = [ {
+				events: [ {
+					start: '2014-11-04T01:00:00',
+					rendering: 'background'
+				} ]
+			} ];
+			options.eventAfterAllRender = function() {
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
+				done();
+			};
+			$('#cal').fullCalendar(options);
+		});
+
+		it('is affected by global eventBackgroundColor', function(done) {
+			options.eventBackgroundColor = 'red';
+			options.eventSources = [ {
+				events: [ {
+					start: '2014-11-04T01:00:00',
+					rendering: 'background'
+				} ]
+			} ];
+			options.eventAfterAllRender = function() {
+				expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX);
 				done();
 			};
 			$('#cal').fullCalendar(options);

@@ -1,4 +1,9 @@
 
+var RED_REGEX = /red|rgb\(255,\s*0,\s*0\)/;
+var GREEN_REGEX = /green|rgb\(0,\s*255,\s*0\)/;
+var BLUE_REGEX = /blue|rgb\(0,\s*0,\s*255\)/;
+
+
 function getStockScrollbarWidths(dir) {
 	var el = $('<div><div style="position:relative"/></div>')
 		.css({
