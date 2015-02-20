@@ -49,7 +49,7 @@ var MouseFollower = Class.extend({
 				this.updatePosition();
 			}
 
-			$(document).on('mousemove', this.mousemoveProxy = $.proxy(this, 'mousemove'));
+			$(document).on('mousemove', this.mousemoveProxy = proxy(this, 'mousemove'));
 		}
 	},
 

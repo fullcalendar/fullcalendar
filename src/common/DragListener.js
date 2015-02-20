@@ -63,14 +63,14 @@ var DragListener = fc.DragListener = Class.extend({
 					this.scrollEl = scrollParent;
 
 					// scope to `this`, and use `debounce` to make sure rapid calls don't happen
-					this.scrollHandlerProxy = debounce($.proxy(this, 'scrollHandler'), 100);
+					this.scrollHandlerProxy = debounce(proxy(this, 'scrollHandler'), 100);
 					this.scrollEl.on('scroll', this.scrollHandlerProxy);
 				}
 			}
 
 			$(document)
-				.on('mousemove', this.mousemoveProxy = $.proxy(this, 'mousemove'))
-				.on('mouseup', this.mouseupProxy = $.proxy(this, 'mouseup'))
+				.on('mousemove', this.mousemoveProxy = proxy(this, 'mousemove'))
+				.on('mouseup', this.mouseupProxy = proxy(this, 'mouseup'))
 				.on('selectstart', this.preventDefault); // prevents native selection in IE<=8
 
 			if (ev) {
@@ -278,7 +278,7 @@ var DragListener = fc.DragListener = Class.extend({
 		// if there is non-zero velocity, and an animation loop hasn't already started, then START
 		if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
 			this.scrollIntervalId = setInterval(
-				$.proxy(this, 'scrollIntervalFunc'), // scope to `this`
+				proxy(this, 'scrollIntervalFunc'), // scope to `this`
 				this.scrollIntervalMs
 			);
 		}

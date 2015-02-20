@@ -72,7 +72,7 @@ var Popover = Class.extend({
 		});
 
 		if (options.autoHide) {
-			$(document).on('mousedown', this.documentMousedownProxy = $.proxy(this, 'documentMousedown'));
+			$(document).on('mousedown', this.documentMousedownProxy = proxy(this, 'documentMousedown'));
 		}
 	},
 

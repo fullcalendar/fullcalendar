@@ -38,7 +38,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		this.coordMap = new GridCoordMap(this);
 		this.elsByFill = {};
-		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
+		this.documentDragStartProxy = proxy(this, 'documentDragStart');
 	},
 
 

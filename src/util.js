@@ -6,6 +6,7 @@ fc.debounce = debounce;
 fc.isInt = isInt;
 fc.htmlEscape = htmlEscape;
 fc.cssToStr = cssToStr;
+fc.proxy = proxy;
 
 
 /* FullCalendar-specific DOM Utilities
@@ -593,6 +594,18 @@ function compareNumbers(a, b) { // for .sort()
 
 function isInt(n) {
 	return n % 1 === 0;
+}
+
+
+// Returns a method bound to the given object context.
+// Just like one of the jQuery.proxy signatures, but without the undesired behavior of treating the same method with
+// different contexts as identical when binding/unbinding events.
+function proxy(obj, methodName) {
+	var method = obj[methodName];
+
+	return function() {
+		return method.apply(obj, arguments);
+	};
 }
 
 

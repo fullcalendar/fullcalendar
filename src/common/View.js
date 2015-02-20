@@ -58,7 +58,7 @@ var View = fc.View = Class.extend({
 		this.initThemingProps();
 		this.initHiddenDays();
 
-		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
 		this.initialize();
 	},
