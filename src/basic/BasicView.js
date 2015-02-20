@@ -129,7 +129,7 @@ var BasicView = fcViews.basic = View.extend({
 			return '' +
 				'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						this.calendar.calculateWeekNumber(this.dayGrid.getCell(row, 0).start) +
+						this.dayGrid.getCell(row, 0).start.week() +
 					'</span>' +
 				'</td>';
 		}

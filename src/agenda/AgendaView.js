@@ -147,21 +147,11 @@ var AgendaView = fcViews.agenda = View.extend({
 	// Queried by the TimeGrid subcomponent when generating rows. Ordering depends on isRTL.
 	headIntroHtml: function() {
 		var date;
-		var weekNumber;
-		var weekTitle;
 		var weekText;
 
 		if (this.opt('weekNumbers')) {
 			date = this.timeGrid.getCell(0).start;
-			weekNumber = this.calendar.calculateWeekNumber(date);
-			weekTitle = this.opt('weekNumberTitle');
-
-			if (this.opt('isRTL')) {
-				weekText = weekNumber + weekTitle;
-			}
-			else {
-				weekText = weekTitle + weekNumber;
-			}
+			weekText = date.format(this.opt('smallWeekFormat'));
 
 			return '' +
 				'<th class="fc-axis fc-week-number ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '>' +

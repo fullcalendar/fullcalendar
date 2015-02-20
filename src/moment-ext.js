@@ -124,6 +124,27 @@ newMomentProto.clone = function() {
 };
 
 
+// Week Number
+// -------------------------------------------------------------------------------------------------
+
+
+// Returns the week number, considering the locale's custom week number calcuation
+// `weeks` is an alias for `week`
+newMomentProto.week = newMomentProto.weeks = function(input) {
+	var weekCalc = (this._locale || this._lang) // works pre-moment-2.8
+		._fullCalendar_weekCalc;
+
+	if (input == null && typeof weekCalc === 'function') { // custom function only works for getter
+		return weekCalc(this);
+	}
+	else if (weekCalc === 'ISO') {
+		return oldMomentProto.isoWeek.apply(this, arguments); // ISO getter/setter
+	}
+
+	return oldMomentProto.week.apply(this, arguments); // local getter/setter
+};
+
+
 // Time-of-day
 // -------------------------------------------------------------------------------------------------
 

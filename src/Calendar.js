@@ -241,6 +241,19 @@ function Calendar_constructor(element, overrides) {
 		localeData._week = _week;
 	}
 
+	// assign a normalized value, to be used by our .week() moment extension
+	localeData._fullCalendar_weekCalc = (function(weekCalc) {
+		if (typeof weekCalc === 'function') {
+			return weekCalc;
+		}
+		else if (weekCalc === 'local') {
+			return weekCalc;
+		}
+		else if (weekCalc === 'iso' || weekCalc === 'ISO') {
+			return 'ISO';
+		}
+	})(options.weekNumberCalculation);
+
 
 
 	// Calendar-specific Date Utilities
@@ -304,23 +317,6 @@ function Calendar_constructor(element, overrides) {
 			now = now();
 		}
 		return t.moment(now);
-	};
-
-
-	// Calculates the week number for a moment according to the calendar's
-	// `weekNumberCalculation` setting.
-	t.calculateWeekNumber = function(mom) {
-		var calc = options.weekNumberCalculation;
-
-		if (typeof calc === 'function') {
-			return calc(mom);
-		}
-		else if (calc === 'local') {
-			return mom.week();
-		}
-		else if (calc.toUpperCase() === 'ISO') {
-			return mom.isoWeek();
-		}
 	};
 
 
