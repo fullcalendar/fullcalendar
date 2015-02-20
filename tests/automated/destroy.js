@@ -56,6 +56,26 @@ describe('destroy', function() {
 					done();
 				}, 0);
 			});
+
+			// Issue 2432
+			it('preserves existing window handlers when handleWindowResize is off', function() {
+				var resizeHandler = function() { };
+				var handlerCnt0 = countHandlers(window);
+				var handlerCnt1;
+				var handlerCnt2;
+
+				$(window).on('resize', resizeHandler);
+				handlerCnt1 = countHandlers(window);
+				expect(handlerCnt1).toBe(handlerCnt0 + 1);
+
+				$('#cal').fullCalendar({
+					handleWindowResize: false
+				});
+
+				$('#cal').fullCalendar('destroy');
+				handlerCnt2 = countHandlers(window);
+				expect(handlerCnt2).toBe(handlerCnt1);
+			});
 		});
 	});
 
