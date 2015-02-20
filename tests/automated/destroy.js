@@ -59,20 +59,4 @@ describe('destroy', function() {
 		});
 	});
 
-
-	function countHandlers(el) {
-		var hash = getAllHandlers(el);
-		var cnt = 0;
-
-		$.each(hash, function(name, handlers) {
-			cnt += handlers.length;
-		});
-
-		return cnt;
-	}
-
-	function getAllHandlers(el) {
-		return $._data($(el)[0], 'events') || {};
-	}
-
 });
