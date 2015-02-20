@@ -301,4 +301,22 @@ describe('external drag and drop', function() {
 		});
 	});
 
+	// Issue 2433
+	it('should not have drag handlers cleared when other calendar navigates', function() {
+
+		$('#cal').after('<div id="cal2"/>');
+
+		var el1 = $('#cal').fullCalendar(options);
+		var el2 = $('#cal2').fullCalendar(options);
+		var beforeCnt = countHandlers(document);
+		var afterCnt;
+
+		el1.fullCalendar('next');
+		afterCnt = countHandlers(document);
+		expect(beforeCnt).toBe(afterCnt);
+
+		el1.remove();
+		el2.remove();
+	});
+
 });
