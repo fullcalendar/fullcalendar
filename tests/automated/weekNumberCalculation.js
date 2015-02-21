@@ -42,7 +42,7 @@ describe('weekNumberCalculation', function() {
 				options.lang = 'ar';
 				options.weekNumberCalculation = 'local';
 				$('#cal').fullCalendar(options);
-				expect(getRenderedWeekText()).toMatch('٤٨'); // 48 in Arabic
+				expect(getRenderedWeekText()).toMatch(/٤٨|48/);
 			});
 
 			// another local test, but to make sure it is different from ISO

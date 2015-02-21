@@ -142,7 +142,7 @@ describe('titleFormat', function() {
                 defaultDate: '2014-12-25',
                 titleRangeSeparator: ' - '
             });
-            expect($('h2')).toHaveText('Dec 21, 2014 - Jan 3, 2015');
+            expect($('h2').text()).toMatch(/Dec 21\,? 2014 \- Jan 3\,? 2015/);
         });
 
         it('multi-day default displays short full date', function() {
@@ -157,7 +157,7 @@ describe('titleFormat', function() {
                 defaultDate: '2014-12-25',
                 titleRangeSeparator: ' - '
             });
-            expect($('h2')).toHaveText('Dec 25 - 26, 2014');
+            expect($('h2').text()).toMatch(/Dec 25 \- 26\,? 2014/);
         });
     });
 });
