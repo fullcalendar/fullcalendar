@@ -318,7 +318,6 @@ var DayGrid = Grid.extend({
 	// Renders a visual indication of an event or external element being dragged.
 	// The dropLocation's end can be null. seg can be null. See Grid::renderDrag for more info.
 	renderDrag: function(dropLocation, seg) {
-		var opacity;
 
 		// always render a highlight underneath
 		this.renderHighlight(
@@ -329,11 +328,7 @@ var DayGrid = Grid.extend({
 		if (seg && !seg.el.closest(this.el).length) {
 
 			this.renderRangeHelper(dropLocation, seg);
-
-			opacity = this.view.opt('dragOpacity');
-			if (opacity !== undefined) {
-				this.helperEls.css('opacity', opacity);
-			}
+			this.applyDragOpacity(this.helperEls);
 
 			return true; // a helper has been rendered
 		}

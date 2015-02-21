@@ -406,6 +406,20 @@ Grid.mixin({
 	},
 
 
+	// Utility for apply dragOpacity to a jQuery set
+	applyDragOpacity: function(els) {
+		var opacity = this.view.opt('dragOpacity');
+
+		if (opacity != null) {
+			els.each(function(i, node) {
+				// Don't use jQuery (will set an IE filter), do it the old fashioned way.
+				// In IE8, a helper element will disappears if there's a filter.
+				node.style.opacity = opacity;
+			});
+		}
+	},
+
+
 	/* External Element Dragging
 	------------------------------------------------------------------------------------------------------------------*/
 

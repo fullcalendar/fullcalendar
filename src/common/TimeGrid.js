@@ -335,15 +335,10 @@ var TimeGrid = Grid.extend({
 	// dropLocation's end might be null, as well as `seg`. See Grid::renderDrag for more info.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
 	renderDrag: function(dropLocation, seg) {
-		var opacity;
 
 		if (seg) { // if there is event information for this drag, render a helper event
 			this.renderRangeHelper(dropLocation, seg);
-
-			opacity = this.view.opt('dragOpacity');
-			if (opacity !== undefined) {
-				this.helperEl.css('opacity', opacity);
-			}
+			this.applyDragOpacity(this.helperEl);
 
 			return true; // signal that a helper has been rendered
 		}
