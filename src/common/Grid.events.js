@@ -250,6 +250,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
+		var href;
 		var dropLocation;
 
 		// A clone of the original element that will move with the mouse
@@ -275,6 +276,10 @@ Grid.mixin({
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segDragStart(seg, ev);
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
+
+				if ((href = el.attr('href'))) { // for IE8 bug when dragging links
+					el.removeAttr('href');
+				}
 			},
 			cellOver: function(cell, isOrig, origCell) {
 
@@ -320,6 +325,12 @@ Grid.mixin({
 					if (dropLocation) {
 						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
+
+					setTimeout(function() { // for IE8 bug when dragging links
+						if (href) {
+							el.attr('href', href);
+						}
+					}, 0);
 				});
 			},
 			listenStop: function() {
@@ -517,6 +528,7 @@ Grid.mixin({
 		var el = seg.el;
 		var event = seg.event;
 		var eventEnd = calendar.getEventEnd(event);
+		var href;
 		var dragListener;
 		var resizeLocation; // falsy if invalid resize
 
@@ -528,6 +540,10 @@ Grid.mixin({
 			dragStart: function(ev) {
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segResizeStart(seg, ev);
+
+				if ((href = el.attr('href'))) { // for IE8 bug when dragging links
+					el.removeAttr('href');
+				}
 			},
 			cellOver: function(cell, isOrig, origCell) {
 				resizeLocation = isStart ?
@@ -564,6 +580,12 @@ Grid.mixin({
 				if (resizeLocation) { // valid date to resize to?
 					view.reportEventResize(event, resizeLocation, this.largeUnit, el, ev);
 				}
+
+				setTimeout(function() { // for IE8 bug when dragging links
+					if (href) {
+						el.attr('href', href);
+					}
+				}, 0);
 			}
 		});
 
