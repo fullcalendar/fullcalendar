@@ -151,9 +151,6 @@ describe('eventLimit', function() {
 
 			beforeEach(function() {
 				options.defaultView = 'month';
-			});
-
-			it('renders the heights of all the rows the same, regardless of # of events', function() {
 				options.events = [
 					{ title: 'event1', start: '2014-07-28', end: '2014-07-30' },
 					{ title: 'event2', start: '2014-07-28', end: '2014-07-30' },
@@ -169,6 +166,9 @@ describe('eventLimit', function() {
 					{ title: 'event2', start: '2014-07-29' },
 					{ title: 'event2', start: '2014-07-29' }
 				];
+			});
+
+			it('renders the heights of all the rows the same, regardless of # of events', function() {
 				$('#cal').fullCalendar(options);
 				var rowEls = $('.fc-day-grid .fc-row').slice(0, -1); // remove last b/c it will be a different height
 				expect(rowEls.length).toBeGreaterThan(0);
@@ -176,6 +176,12 @@ describe('eventLimit', function() {
 				rowEls.each(function(i, node) {
 					expect($(node).height()).toBe(height);
 				});
+			});
+
+			it('renders a more link when there are obviously too many events', function() {
+				$('#cal').width(800);
+				$('#cal').fullCalendar(options);
+				expect($('#cal .fc-more').length).toBe(1);
 			});
 		});
 
