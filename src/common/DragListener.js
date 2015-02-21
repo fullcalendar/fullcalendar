@@ -17,6 +17,10 @@ var DragListener = fc.DragListener = Class.extend({
 	mousemoveProxy: null,
 	mouseupProxy: null,
 
+	// for IE8 bug-fighting behavior, for now
+	subjectEl: null, // the element being draged. optional
+	subjectHref: null,
+
 	scrollEl: null,
 	scrollBounds: null, // { top, bottom, left, right }
 	scrollTopVel: null, // pixels per second
@@ -30,7 +34,9 @@ var DragListener = fc.DragListener = Class.extend({
 
 
 	constructor: function(options) {
-		this.options = options || {};
+		options = options || {};
+		this.options = options;
+		this.subjectEl = options.subjectEl;
 	},
 
 
@@ -135,7 +141,14 @@ var DragListener = fc.DragListener = Class.extend({
 
 	// Called when the actual drag has started (went beyond minDistance)
 	dragStart: function(ev) {
+		var subjectEl = this.subjectEl;
+
 		this.trigger('dragStart', ev);
+
+		// remove a mousedown'd <a>'s href so it is not visited (IE8 bug)
+		if ((this.subjectHref = subjectEl ? subjectEl.attr('href') : null)) {
+			subjectEl.removeAttr('href');
+		}
 	},
 
 
@@ -165,7 +178,16 @@ var DragListener = fc.DragListener = Class.extend({
 
 	// Called when dragging has been stopped
 	dragStop: function(ev) {
+		var _this = this;
+
 		this.trigger('dragStop', ev);
+
+		// restore a mousedown'd <a>'s href (for IE8 bug)
+		setTimeout(function() { // must be outside of the click's execution
+			if (_this.subjectHref) {
+				_this.subjectEl.attr('href', _this.subjectHref);
+			}
+		}, 0);
 	},
 
 

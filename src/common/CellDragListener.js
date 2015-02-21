@@ -24,7 +24,7 @@ var CellDragListener = DragListener.extend({
 	// Called when drag listening starts (but a real drag has not necessarily began).
 	// ev might be undefined if dragging was started manually.
 	listenStart: function(ev) {
-		var subjectEl = this.options.subjectEl;
+		var subjectEl = this.subjectEl;
 		var subjectRect;
 		var origPoint;
 		var point;
