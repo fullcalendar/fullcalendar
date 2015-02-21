@@ -466,16 +466,14 @@ Grid.mixin({
 				dropLocation = null; // signal unsuccessful
 				_this.destroyDrag();
 				enableCursor();
-			}
-		});
+			},
+			dragStop: function() {
+				_this.destroyDrag();
+				enableCursor();
 
-		// gets called, only once, when jqui drag is finished
-		$(document).one('dragstop', function(ev, ui) {
-			_this.destroyDrag();
-			enableCursor();
-
-			if (dropLocation) { // element was dropped on a valid date/time cell
-				_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+				if (dropLocation) { // element was dropped on a valid date/time cell
+					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+				}
 			}
 		});
 

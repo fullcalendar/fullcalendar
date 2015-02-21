@@ -148,7 +148,6 @@ var DragListener = fc.DragListener = Class.extend({
 
 	// Called when the user does a mouseup
 	mouseup: function(ev) {
-		this.stopDrag(ev);
 		this.stopListening(ev);
 	},
 
@@ -172,6 +171,8 @@ var DragListener = fc.DragListener = Class.extend({
 
 	// Call this to stop listening to the user's mouse events
 	stopListening: function(ev) {
+		this.stopDrag(ev); // if there's a current drag, kill it
+
 		if (this.isListening) {
 
 			// remove the scroll handler if there is a scrollEl
