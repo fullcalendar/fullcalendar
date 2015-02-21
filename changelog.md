@@ -1,4 +1,30 @@
 
+v2.3.0 (2015-02-21)
+-------------------
+
+- internal refactoring in preparation for other views
+- businessHours now renders on whole-days in addition to timed areas
+- events in "more" popover not sorted by time ([2385])
+- avoid using moment's deprecated zone method ([2443])
+- destroying the calendar sometimes causes all window resize handlers to be unbound ([2432])
+- multiple calendars on one page, can't accept external elements after navigating ([2433])
+- accept external events from jqui sortable ([1698])
+- external jqui drop processed before reverting ([1661])
+- IE8 fix: month view renders incorrectly ([2428])
+- IE8 fix: dragging an event with an href
+- IE8 fix: eventLimit:true wouldn't activate "more" link
+- IE8 fix: invisible element while dragging agenda view events
+- IE8 fix: erratic external element dragging
+
+[2385]: https://code.google.com/p/fullcalendar/issues/detail?id=2385
+[2443]: https://code.google.com/p/fullcalendar/issues/detail?id=2443
+[2432]: https://code.google.com/p/fullcalendar/issues/detail?id=2432
+[2433]: https://code.google.com/p/fullcalendar/issues/detail?id=2433
+[1698]: https://code.google.com/p/fullcalendar/issues/detail?id=1698
+[1661]: https://code.google.com/p/fullcalendar/issues/detail?id=1661
+[2428]: https://code.google.com/p/fullcalendar/issues/detail?id=2428
+
+
 v2.2.7 (2015-02-10)
 -------------------
 
