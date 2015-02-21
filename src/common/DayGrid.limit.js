@@ -53,18 +53,18 @@ DayGrid.mixin({
 		var i, trEl;
 		var trHeight;
 
+		function iterInnerHeights(i, childNode) {
+			trHeight = Math.max(trHeight, $(childNode).outerHeight());
+		}
+
 		// Reveal one level <tr> at a time and stop when we find one out of bounds
 		for (i = 0; i < trEls.length; i++) {
 			trEl = trEls.eq(i).removeClass('fc-limited'); // reset to original state (reveal)
 
 			// with rowspans>1 and IE8, trEl.outerHeight() would return the height of the largest cell,
 			// so instead, find the tallest inner content element.
-			/*jshint -W083 */
 			trHeight = 0;
-			trEl.find('> td > :first-child').each(function(i, childNode) {
-				trHeight = Math.max(trHeight, $(childNode).outerHeight());
-			});
-			/*jshint +W083 */
+			trEl.find('> td > :first-child').each(iterInnerHeights);
 
 			if (trEl.position().top + trHeight > rowHeight) {
 				return i;
