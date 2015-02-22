@@ -352,12 +352,20 @@ module.exports = function(grunt) {
 	};
 
 	grunt.registerTask('cdnjsConfig', function() {
-		var packageConfig = grunt.file.readJSON('package.json');
-		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
+		var config = grunt.file.readJSON('package.json');
+
+		// things that CDNJS doesn't need
+		delete config.devDependencies;
+		delete config.main;
+		delete config.files;
+		delete config.ignore;
+
+		_.extend(config, grunt.file.readJSON('build/cdnjs.json')); // CDNJS-specific settings
+
 		grunt.file.write(
 			'dist/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, packageConfig, cdnjsConfig), // combine 2 configs
+				config,
 				null, // replace
 				2 // indent
 			)
