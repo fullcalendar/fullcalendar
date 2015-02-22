@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 	};
 
 	// for the "meta" template variable (<%= meta.whatever %>)
-	config.meta = grunt.file.readJSON('fullcalendar.jquery.json');
+	config.meta = grunt.file.readJSON('package.json');
 
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'dist');
@@ -305,8 +305,7 @@ module.exports = function(grunt) {
 		options: {
 			files: [
 				'package.json',
-				'bower.json',
-				'fullcalendar.jquery.json'
+				'bower.json'
 			],
 			commit: false,
 			createTag: false,
@@ -354,12 +353,12 @@ module.exports = function(grunt) {
 	};
 
 	grunt.registerTask('cdnjsConfig', function() {
-		var jqueryConfig = grunt.file.readJSON('fullcalendar.jquery.json');
+		var packageConfig = grunt.file.readJSON('package.json');
 		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
 		grunt.file.write(
 			'dist/cdnjs/package.json',
 			JSON.stringify(
-				_.extend({}, jqueryConfig, cdnjsConfig), // combine 2 configs
+				_.extend({}, packageConfig, cdnjsConfig), // combine 2 configs
 				null, // replace
 				2 // indent
 			)
