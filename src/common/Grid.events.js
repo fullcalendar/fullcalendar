@@ -7,6 +7,7 @@ Grid.mixin({
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 	isDraggingSeg: false, // is a segment being dragged? boolean
 	isResizingSeg: false, // is a segment being resized? boolean
+	isDraggingExternal: false, // jqui-dragging an external element? boolean
 	segs: null, // the event segments currently rendered in the grid
 
 
@@ -414,27 +415,28 @@ Grid.mixin({
 
 
 	// Called when a jQuery UI drag is initiated anywhere in the DOM
-	documentDragStart: function(ev, ui) {
+	externalDragStart: function(ev, ui) {
 		var view = this.view;
 		var el;
 		var accept;
 
 		if (view.opt('droppable')) { // only listen if this setting is on
-			el = $(ev.target);
+			el = $((ui ? ui.item : null) || ev.target);
 
 			// Test that the dragged element passes the dropAccept selector or filter function.
 			// FYI, the default is "*" (matches all)
 			accept = view.opt('dropAccept');
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
-
-				this.startExternalDrag(el, ev, ui);
+				if (!this.isDraggingExternal) { // prevent double-listening if fired twice
+					this.listenToExternalDrag(el, ev, ui);
+				}
 			}
 		}
 	},
 
 
 	// Called when a jQuery UI drag starts and it needs to be monitored for cell dropping
-	startExternalDrag: function(el, ev, ui) {
+	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var dragListener;
@@ -442,6 +444,9 @@ Grid.mixin({
 
 		// listener that tracks mouse movement over date-associated pixel regions
 		dragListener = new CellDragListener(this.coordMap, {
+			listenStart: function() {
+				_this.isDraggingExternal = true;
+			},
 			cellOver: function(cell) {
 				dropLocation = _this.computeExternalDrop(cell, meta);
 				if (dropLocation) {
@@ -463,6 +468,9 @@ Grid.mixin({
 				if (dropLocation) { // element was dropped on a valid date/time cell
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
+			},
+			listenStop: function() {
+				_this.isDraggingExternal = false;
 			}
 		});
 

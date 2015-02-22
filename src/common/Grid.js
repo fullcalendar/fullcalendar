@@ -16,7 +16,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
-	documentDragStartProxy: null, // binds the Grid's scope to documentDragStart (in DayGrid.events)
+	externalDragStartProxy: null, // binds the Grid's scope to externalDragStart (in DayGrid.events)
 
 	// derived from options
 	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
@@ -38,7 +38,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		this.coordMap = new GridCoordMap(this);
 		this.elsByFill = {};
-		this.documentDragStartProxy = proxy(this, 'documentDragStart');
+		this.externalDragStartProxy = proxy(this, 'externalDragStart');
 	},
 
 
@@ -324,13 +324,13 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Binds DOM handlers to elements that reside outside the grid, such as the document
 	bindGlobalHandlers: function() {
-		$(document).on('dragstart', this.documentDragStartProxy); // jqui drag
+		$(document).on('dragstart sortstart', this.externalDragStartProxy); // jqui
 	},
 
 
 	// Unbinds DOM handlers from elements that reside outside the grid
 	unbindGlobalHandlers: function() {
-		$(document).off('dragstart', this.documentDragStartProxy); // jqui drag
+		$(document).off('dragstart sortstart', this.externalDragStartProxy); // jqui
 	},
 
 
