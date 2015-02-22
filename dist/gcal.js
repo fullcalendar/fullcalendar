@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.7 Google Calendar Plugin
+ * FullCalendar v2.3.0 Google Calendar Plugin
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
