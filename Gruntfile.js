@@ -44,8 +44,7 @@ module.exports = function(grunt) {
 		'modules',
 		'languages',
 		'karma:single',
-		'archiveDist',
-		'cdnjsDist'
+		'archiveDist'
 	]);
 
 	// Bare minimum for debugging
@@ -319,6 +318,7 @@ module.exports = function(grunt) {
 	----------------------------------------------------------------------------------------------------*/
 
 	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
+		'clean:cdnjs',
 		'modules',
 		'languages',
 		'karma:single',
@@ -326,7 +326,6 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('cdnjsDist', [
-		'clean:cdnjs',
 		'copy:cdnjsModules',
 		'copy:cdnjsLanguages',
 		'copy:cdnjsLanguagesAll',
