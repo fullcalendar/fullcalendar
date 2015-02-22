@@ -5,6 +5,9 @@ module.exports = {
 		globals: {
 			// `false` means read-only
 			define: false,
+			exports: false,
+			module: false,
+			require: false,
 			moment: false,
 			jQuery: false
 		},
