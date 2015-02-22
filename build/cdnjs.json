@@ -1,3 +1,12 @@
 {
-  "filename": "fullcalendar.min.js"
+  "filename": "fullcalendar.min.js",
+  "autoupdate": {
+    "source": "git",
+    "target": "git://github.com/arshaw/fullcalendar.git",
+    "basePath": "dist/",
+    "files": [
+      "*/*",
+      "*"
+    ]
+  }
 }

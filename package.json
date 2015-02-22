@@ -53,8 +53,5 @@
     "changelog.*",
     "license.*",
     "readme.*"
-  ],
-  "scripts": {
-    "install": "bower install"
-  }
+  ]
 }
