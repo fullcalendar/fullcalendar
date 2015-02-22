@@ -3,9 +3,11 @@ describe('external drag and drop', function() {
 
 	// TODO: fill out tests for droppable/drop, with RTL
 
+	var doSortable;
 	var options;
 
 	beforeEach(function() {
+		doSortable = false;
 		options = {
 			defaultDate: '2014-08-23',
 			droppable: true
@@ -19,7 +21,6 @@ describe('external drag and drop', function() {
 			'<div id="cal" style="width:600px;position:absolute;top:10px;left:220px">' +
 			'</div>'
 		);
-		$('#sidebar a').draggable();
 	});
 
 	afterEach(function() {
@@ -27,9 +28,26 @@ describe('external drag and drop', function() {
 		$('#sidebar').remove();
 	});
 
+	function init() {
+		if (doSortable) {
+			$('#sidebar').sortable();
+		}
+		else {
+			$('#sidebar a').draggable();
+		}
+
+		$('#cal').fullCalendar(options);
+	}
+
 	function getMonthCell(row, col) {
 		return $('.fc-day-grid .fc-row:eq(' + row + ') .fc-bg td:not(.fc-axis):eq(' + col + ')');
 	}
+
+	[ false, true ].forEach(function(_doSortable) {
+		describe(_doSortable ? 'with sortable' : 'with draggable', function() {
+			beforeEach(function() {
+				doSortable = _doSortable;
+			});
 
 	describe('in month view', function() {
 
@@ -59,7 +77,8 @@ describe('external drag and drop', function() {
 				callCnt++;
 			};
 
-			$('#cal').fullCalendar(options);
+			init();
+
 			setTimeout(function() { // needed for IE8
 				$('#sidebar .event1').simulate('drag-n-drop', {
 					dropTarget: getMonthCell(1, 3)
@@ -74,7 +93,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -92,7 +111,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -114,7 +133,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -136,7 +155,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -181,7 +200,8 @@ describe('external drag and drop', function() {
 				callCnt++;
 			};
 
-			$('#cal').fullCalendar(options);
+			init();
+
 			setTimeout(function() { // needed for IE8
 				$('#sidebar .event1').simulate('drag-n-drop', {
 					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
@@ -195,7 +215,9 @@ describe('external drag and drop', function() {
 				expect(date).toEqualMoment(moment('2014-08-20T01:00:00')); // compate it to a local moment
 				done();
 			};
-			$('#cal').fullCalendar(options);
+
+			init();
+
 			setTimeout(function() { // needed for IE8
 				$('#sidebar .event1').simulate('drag-n-drop', {
 					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
@@ -209,7 +231,9 @@ describe('external drag and drop', function() {
 				expect(date).toEqualMoment('2014-08-20T01:00:00+00:00');
 				done();
 			};
-			$('#cal').fullCalendar(options);
+
+			init();
+
 			setTimeout(function() { // needed for IE8
 				$('#sidebar .event1').simulate('drag-n-drop', {
 					dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, UTC TIME
@@ -224,7 +248,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -242,7 +266,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -264,7 +288,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -286,7 +310,7 @@ describe('external drag and drop', function() {
 				options.drop = function() { };
 				spyOn(options, 'drop').and.callThrough();
 
-				$('#cal').fullCalendar(options);
+				init();
 
 				setTimeout(function() { // needed for IE8
 					$('#sidebar .event1').simulate('drag-n-drop', {
@@ -304,10 +328,12 @@ describe('external drag and drop', function() {
 	// Issue 2433
 	it('should not have drag handlers cleared when other calendar navigates', function() {
 
-		$('#cal').after('<div id="cal2"/>');
+		init();
+		var el1 = $('#cal');
 
-		var el1 = $('#cal').fullCalendar(options);
+		$('#cal').after('<div id="cal2"/>');
 		var el2 = $('#cal2').fullCalendar(options);
+
 		var beforeCnt = countHandlers(document);
 		var afterCnt;
 
@@ -319,4 +345,7 @@ describe('external drag and drop', function() {
 		el2.remove();
 	});
 
+
+		});
+	});
 });
