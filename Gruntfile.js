@@ -372,7 +372,7 @@ module.exports = function(grunt) {
 		);
 	});
 
-	config.clean.cdnjs = 'dist/cdnjs';
+	//config.clean.cdnjs = 'dist/cdnjs';
 
 
 
