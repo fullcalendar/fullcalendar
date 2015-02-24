@@ -1,6 +1,8 @@
 
 $.fullCalendar.lang("en-gb", {
-	columnFormat: {
-		week: 'ddd D/M'
+	views: {
+		week: {
+			columnFormat: 'ddd D/M'
+		}
 	}
 });
