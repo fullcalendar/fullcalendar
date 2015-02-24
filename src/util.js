@@ -494,7 +494,7 @@ function createObject(proto) {
 
 function copyOwnProps(src, dest) {
 	for (var name in src) {
-		if (hasOwnProp(src, name)) {
+		if (name !== 'prototype' && hasOwnProp(src, name)) {
 			dest[name] = src[name];
 		}
 	}
