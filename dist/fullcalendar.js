@@ -6,9 +6,13 @@
 
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
+        // AMD, register as an anonymous module
 		define([ 'jquery', 'moment' ], factory);
-	}
-	else {
+	} else if (typeof exports === 'object') {
+        // Node/CommonJS
+        module.exports = factory(require('jquery'), require('moment'));
+    } else {
+        // Browser globals
 		factory(jQuery, moment);
 	}
 })(function($, moment) {
