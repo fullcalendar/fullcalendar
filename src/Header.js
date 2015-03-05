@@ -45,6 +45,11 @@ function Header(calendar, options) {
 	
 	
 	function renderSection(position) {
+		var _map = {
+			'agendaWeek': '一周',
+			'month': '一月',
+			'agendaDay': '一天'
+		};
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = options.header[position];
 
@@ -66,14 +71,17 @@ function Header(calendar, options) {
 					var button;
 
 					if (buttonName == 'title') {
-						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
+						groupChildren = groupChildren.add($('<h2>&nbsp;</2>')); // we always want it to take up height
 						isOnlyButtons = false;
 					}
 					else {
 						viewSpec = calendar.getViewSpec(buttonName);
 
 						if (viewSpec) {
+							
 							buttonClick = function() {
+								$('#calendar .fc-prev-button').text('上' + _map[buttonName]);
+								$('#calendar .fc-next-button').text('下' + _map[buttonName]);
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
