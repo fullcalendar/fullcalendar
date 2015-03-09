@@ -49,7 +49,9 @@
   },
   "main": "dist/fullcalendar.js",
   "files": [
-    "dist",
+    "dist/*.js",
+    "dist/*.css",
+    "dist/lang",
     "changelog.*",
     "license.*",
     "readme.*"
