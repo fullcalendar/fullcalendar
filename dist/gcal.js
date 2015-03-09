@@ -1,12 +1,15 @@
 /*!
- * FullCalendar v2.3.0 Google Calendar Plugin
- * Docs & License: http://arshaw.com/fullcalendar/
- * (c) 2013 Adam Shaw
+ * FullCalendar v2.3.1 Google Calendar Plugin
+ * Docs & License: http://fullcalendar.io/
+ * (c) 2015 Adam Shaw
  */
  
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
 		define([ 'jquery' ], factory);
+	}
+	else if (typeof exports === 'object') { // Node/CommonJS
+		module.exports = factory(require('jquery'));
 	}
 	else {
 		factory(jQuery);
@@ -29,7 +32,7 @@ fc.sourceNormalizers.push(function(sourceOptions) {
 
 		// detect if the ID was specified as a single string.
 		// will match calendars like "asdf1234@calendar.google.com" in addition to person email calendars.
-		if ((match = /^[^\/]+@([^\/\.]+\.)*(google|googlemail|gmail)\.com$/.test(url))) {
+		if (/^[^\/]+@([^\/\.]+\.)*(google|googlemail|gmail)\.com$/.test(url)) {
 			googleCalendarId = url;
 		}
 		// try to scrape it out of a V1 or V3 API feed URL
