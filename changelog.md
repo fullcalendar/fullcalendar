@@ -4,7 +4,7 @@ v2.3.1 (2015-03-08)
 
 - Fix week view column title for en-gb ([PR220])
 - Publish to NPM ([2447])
-- Detangle bower from npm package([PR179])
+- Detangle bower from npm package ([PR179])
 
 [PR220]: https://github.com/arshaw/fullcalendar/pull/220
 [2447]: https://code.google.com/p/fullcalendar/issues/detail?id=2447
