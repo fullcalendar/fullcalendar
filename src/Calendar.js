@@ -415,6 +415,7 @@ function Calendar_constructor(element, overrides) {
 	var ignoreWindowResize = 0;
 	var date;
 	var events = [];
+	var autoUpdateIntId; // to cancel interval once view changes
 	
 	
 	
@@ -658,6 +659,14 @@ function Calendar_constructor(element, overrides) {
 
 	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
+			if(options.autoUpdate) {
+				if(autoUpdateIntId) {
+					clearInterval(autoUpdateIntId);
+				}
+				autoUpdateIntId = setInterval(function() {
+					fetchAndRenderEvents();
+				}, options.autoUpdate * 1000);
+			}
 			fetchAndRenderEvents();
 		}
 		else {
