@@ -667,9 +667,7 @@ function Calendar_constructor(element, overrides) {
 					fetchAndRenderEvents();
 				}, options.autoUpdate * 1000);
 			}
-			else {
-				fetchAndRenderEvents();
-			}
+			fetchAndRenderEvents();
 		}
 		else {
 			renderEvents();
