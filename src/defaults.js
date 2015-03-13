@@ -27,6 +27,7 @@ Calendar.defaults = {
 	
 	// event ajax
 	lazyFetching: true,
+	autoUpdate: 0,
 	startParam: 'start',
 	endParam: 'end',
 	timezoneParam: 'timezone',
