@@ -71,7 +71,7 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var isRTL = this.isRTL;
 		var html = '';
-		var slotNormal = this.slotDuration.asMinutes() % 15 === 0;
+		var slotNormal = this.slotDuration.asMinutes() % 5 === 0;
 		var slotTime = moment.duration(+this.minTime); // wish there was .clone() for durations
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var minutes;
