@@ -441,7 +441,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
 	renderSelection: function(range) {
-		this.renderHighlight(range);
+		this.renderHighlight(this.selectionRangeToSegs(range));
 	},
 
 
@@ -478,13 +478,18 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+	selectionRangeToSegs: function(range) {
+		return this.rangeToSegs(range);
+	},
+
+
 	/* Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(range) {
-		this.renderFill('highlight', this.rangeToSegs(range));
+	// Renders an emphasis on the given date range. Given an array of segments.
+	renderHighlight: function(segs) {
+		this.renderFill('highlight', segs);
 	},
 
 

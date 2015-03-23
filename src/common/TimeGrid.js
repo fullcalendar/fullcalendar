@@ -344,9 +344,7 @@ var TimeGrid = Grid.extend({
 		}
 		else {
 			// otherwise, just render a highlight
-			this.renderHighlight(
-				this.view.calendar.ensureVisibleEventRange(dropLocation) // needs to be a proper range
-			);
+			this.renderHighlight(this.eventRangeToSegs(dropLocation));
 		}
 	},
 
@@ -427,7 +425,7 @@ var TimeGrid = Grid.extend({
 			this.renderRangeHelper(range);
 		}
 		else {
-			this.renderHighlight(range);
+			this.renderHighlight(this.selectionRangeToSegs(range));
 		}
 	},
 

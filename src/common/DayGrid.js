@@ -320,9 +320,7 @@ var DayGrid = Grid.extend({
 	renderDrag: function(dropLocation, seg) {
 
 		// always render a highlight underneath
-		this.renderHighlight(
-			this.view.calendar.ensureVisibleEventRange(dropLocation) // needs to be a proper range
-		);
+		this.renderHighlight(this.eventRangeToSegs(dropLocation));
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
@@ -348,7 +346,7 @@ var DayGrid = Grid.extend({
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(range, seg) {
-		this.renderHighlight(range);
+		this.renderHighlight(this.eventRangeToSegs(range));
 		this.renderRangeHelper(range, seg);
 	},
 

@@ -889,6 +889,8 @@ Grid.mixin({
 		var segs;
 		var i, seg;
 
+		eventRange = this.view.calendar.ensureVisibleEventRange(eventRange);
+
 		if (rangeToSegsFunc) {
 			segs = rangeToSegsFunc(eventRange);
 		}
