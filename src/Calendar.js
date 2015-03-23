@@ -15,6 +15,11 @@ var Calendar = fc.Calendar = Class.extend({
 	constructor: Calendar_constructor,
 
 
+	// Subclasses can override this for initialization logic after the constructor has been called
+	initialize: function() {
+	},
+
+
 	// Initializes `this.options` and other important options-related objects
 	initOptions: function(overrides) {
 		var lang, langDefaults;
@@ -860,4 +865,5 @@ function Calendar_constructor(element, overrides) {
 		}
 	}
 
+	t.initialize();
 }
