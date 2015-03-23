@@ -4,7 +4,7 @@
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-var BasicView = fcViews.basic = View.extend({
+var BasicView = View.extend({
 
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
