@@ -7,6 +7,7 @@ fc.isInt = isInt;
 fc.htmlEscape = htmlEscape;
 fc.cssToStr = cssToStr;
 fc.proxy = proxy;
+fc.capitaliseFirstLetter = capitaliseFirstLetter;
 
 
 /* FullCalendar-specific DOM Utilities
