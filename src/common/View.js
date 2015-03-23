@@ -28,6 +28,7 @@ var View = fc.View = Class.extend({
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
+	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 
 	// subclasses can optionally use a scroll container
@@ -57,6 +58,7 @@ var View = fc.View = Class.extend({
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initThemingProps();
 		this.initHiddenDays();
+		this.isRTL = this.opt('isRTL');
 
 		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
