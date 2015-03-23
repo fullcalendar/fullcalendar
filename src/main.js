@@ -26,7 +26,7 @@ $.fn.fullCalendar = function(options) {
 		}
 		// a new calendar initialization
 		else if (!calendar) { // don't initialize twice
-			calendar = new fc.CalendarBase(element, options);
+			calendar = new Calendar(element, options);
 			element.data('fullCalendar', calendar);
 			calendar.render();
 		}

@@ -1,5 +1,5 @@
 
-var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
+var Calendar = fc.Calendar = Class.extend({
 
 	dirDefaults: null, // option defaults related to LTR or RTL
 	langDefaults: null, // option defaults related to current locale
