@@ -46,12 +46,12 @@ var Calendar = fc.Calendar = Class.extend({
 		this.dirDefaults = dirDefaults;
 		this.langDefaults = langDefaults;
 		this.overrides = overrides;
-		this.options = mergeOptions( // merge defaults and overrides. lowest to highest precedence
+		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
 			Calendar.defaults, // global defaults
 			dirDefaults,
 			langDefaults,
 			overrides
-		);
+		]);
 		populateInstanceComputableOptions(this.options);
 
 		this.viewSpecCache = {}; // somewhat unrelated
@@ -140,32 +140,31 @@ var Calendar = fc.Calendar = Class.extend({
 				// incorporate options for this. lowest priority
 				if (duration.as(unit) === 1) {
 					spec.singleUnit = unit;
-					overridesChain.unshift(viewOverrides[unit] || {});
+					defaultsChain.unshift(viewOverrides[unit] || {});
 				}
 			}
-
-			// collapse into single objects
-			spec.defaults = mergeOptions.apply(null, defaultsChain);
-			spec.overrides = mergeOptions.apply(null, overridesChain);
-
-			this.buildViewSpecOptions(spec);
-			this.buildViewSpecButtonText(spec, requestedViewType);
-
-			return spec;
 		}
+
+		spec.defaults = mergeOptions(defaultsChain);
+		spec.overrides = mergeOptions(overridesChain);
+
+		this.buildViewSpecOptions(spec);
+		this.buildViewSpecButtonText(spec, requestedViewType);
+
+		return spec;
 	},
 
 
 	// Builds and assigns a view spec's options object from its already-assigned defaults and overrides
 	buildViewSpecOptions: function(spec) {
-		spec.options = mergeOptions( // lowest to highest priority
+		spec.options = mergeOptions([ // lowest to highest priority
 			Calendar.defaults, // global defaults
 			spec.defaults, // view's defaults (from ViewSubclass.defaults)
 			this.dirDefaults,
 			this.langDefaults, // locale and dir take precedence over view's defaults!
 			this.overrides, // calendar's overrides (options given to constructor)
 			spec.overrides // view's overrides (view-specific options)
-		);
+		]);
 		populateInstanceComputableOptions(spec.options);
 	},
 
