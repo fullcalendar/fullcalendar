@@ -96,43 +96,49 @@ var Calendar = fc.Calendar = Class.extend({
 	// Builds an object with information on how to create a given view
 	buildViewSpec: function(requestedViewType) {
 		var viewOverrides = this.overrides.views || {};
+		var specChain = []; // for the view. lowest to highest priority
 		var defaultsChain = []; // for the view. lowest to highest priority
 		var overridesChain = []; // for the view. lowest to highest priority
 		var viewType = requestedViewType;
-		var viewClass;
+		var spec; // for the view
 		var defaults; // for the view
 		var overrides; // for the view
 		var duration;
 		var unit;
-		var spec;
 
 		// iterate from the specific view definition to a more general one until we hit an actual View class
-		while (viewType && !viewClass) {
-			defaults = fcViews[viewType] || {};
-			overrides = viewOverrides[viewType] || {};
-			duration = duration || overrides.duration || defaults.duration;
-			viewType = overrides.type || defaults.type; // for next iteration
+		while (viewType) {
+			spec = fcViews[viewType];
+			overrides = viewOverrides[viewType];
+			viewType = null; // clear. might repopulate for another iteration
 
-			if (typeof defaults === 'function') { // a class
-				viewClass = defaults;
-				defaultsChain.unshift(viewClass.defaults || {});
+			if (typeof spec === 'function') { // TODO: deprecate
+				spec = { 'class': spec };
 			}
-			else { // an options object
-				defaultsChain.unshift(defaults);
+
+			if (spec) {
+				specChain.unshift(spec);
+				defaultsChain.unshift(spec.defaults || {});
+				duration = duration || spec.duration;
+				viewType = viewType || spec.type;
 			}
-			overridesChain.unshift(overrides);
+
+			if (overrides) {
+				overridesChain.unshift(overrides); // view-specific option hashes have options at zero-level
+				duration = duration || overrides.duration;
+				viewType = viewType || overrides.type;
+			}
 		}
 
-		if (viewClass) {
-			spec = { 'class': viewClass, type: requestedViewType };
+		spec = mergeProps(specChain);
+		spec.type = requestedViewType;
+		if (!spec['class']) {
+			return false;
+		}
 
-			if (duration) {
-				duration = moment.duration(duration);
-				if (!duration.valueOf()) { // invalid?
-					duration = null;
-				}
-			}
-			if (duration) {
+		if (duration) {
+			duration = moment.duration(duration);
+			if (duration.valueOf()) { // valid?
 				spec.duration = duration;
 				unit = computeIntervalUnit(duration);
 
