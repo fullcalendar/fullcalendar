@@ -510,7 +510,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Renders a set of rectangles over the given segments of time.
-	// Returns a subset of segs, the segs that were actually rendered.
+	// MUST RETURN a subset of segs, the segs that were actually rendered.
 	// Responsible for populating this.elsByFill. TODO: better API for expressing this requirement
 	renderFill: function(type, segs) {
 		// subclasses must implement

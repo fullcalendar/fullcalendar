@@ -37,5 +37,5 @@ Class.extend = function(members) {
 // adds new member variables/methods to the class's prototype.
 // can be called with another class, or a plain object hash containing new members.
 Class.mixin = function(members) {
-	copyOwnProps(members.prototype || members, this.prototype);
+	copyOwnProps(members.prototype || members, this.prototype); // TODO: copyNativeMethods?
 };
