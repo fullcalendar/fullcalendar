@@ -45,7 +45,7 @@
   "ignore": [
     "*",
     "**/.*",
-    "!/dist/**",
+    "!/dist/*",
     "!/changelog.*",
     "!/license.*",
     "!/readme.*"
