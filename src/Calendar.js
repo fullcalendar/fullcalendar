@@ -147,7 +147,7 @@ var Calendar = fc.Calendar = Class.extend({
 				// incorporate options for this. lowest priority
 				if (duration.as(unit) === 1) {
 					spec.singleUnit = unit;
-					defaultsChain.unshift(viewOverrides[unit] || {});
+					overridesChain.unshift(viewOverrides[unit] || {});
 				}
 			}
 		}
