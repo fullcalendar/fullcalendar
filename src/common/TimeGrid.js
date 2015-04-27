@@ -156,14 +156,10 @@ var TimeGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Tells the grid about what period of time to display.
-	// Any date-related cell system internal data should be generated.
-	setRange: function() {
+	rangeUpdated: function() {
 		var view = this.view;
 		var colDates = [];
 		var date;
-
-		Grid.prototype.setRange.apply(this, arguments); // call the super-method
 
 		date = this.start.clone();
 		while (date.isBefore(this.end)) {

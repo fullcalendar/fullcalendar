@@ -74,27 +74,27 @@ var Grid = fc.Grid = RowRenderer.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Called before the grid will need to be queried for cells.
-	// Any non-date-related cell system internal data should be built.
-	build: function() {
-	},
-
-
-	// Called after the grid is done being relied upon.
-	// Any non-date-related cell system internal data should be cleared.
-	clear: function() {
-	},
-
-
 	// Tells the grid about what period of time to display.
 	// Any date-related cell system internal data should be generated.
 	setRange: function(range) {
+		this.start = range.start.clone();
+		this.end = range.end.clone();
+
+		this.rangeUpdated();
+		this.processRangeOptions();
+	},
+
+
+	// Called when internal variables that rely on the range should be updated
+	rangeUpdated: function() {
+	},
+
+
+	// Updates values that rely on options and also relate to range
+	processRangeOptions: function() {
 		var view = this.view;
 		var displayEventTime;
 		var displayEventEnd;
-
-		this.start = range.start.clone();
-		this.end = range.end.clone();
 
 		// Populate option-derived settings. Look for override first, then compute if necessary.
 		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
@@ -116,6 +116,18 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		this.displayEventTime = displayEventTime;
 		this.displayEventEnd = displayEventEnd;
+	},
+
+
+	// Called before the grid's coordinates will need to be queried for cells.
+	// Any non-date-related cell system internal data should be built.
+	build: function() {
+	},
+
+
+	// Called after the grid's coordinates are done being relied upon.
+	// Any non-date-related cell system internal data should be cleared.
+	clear: function() {
 	},
 
 
