@@ -565,14 +565,14 @@ function Calendar_constructor(element, overrides) {
 
 			// render or rerender the view
 			if (
-				!currentView.isDisplayed ||
+				!currentView.displaying ||
 				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 			) {
 				if (elementVisible()) {
 
 					freezeContentHeight();
 					currentView.display(date);
-					unfreezeContentHeight();
+					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
 					updateHeaderTitle();
