@@ -417,8 +417,8 @@ var View = fc.View = Class.extend({
 			scrollState = this.queryScroll();
 		}
 
-		this.updateHeight();
-		this.updateWidth();
+		this.updateHeight(isResize);
+		this.updateWidth(isResize);
 
 		if (isResize) {
 			this.setScroll(scrollState);
@@ -427,13 +427,13 @@ var View = fc.View = Class.extend({
 
 
 	// Refreshes the horizontal dimensions of the calendar
-	updateWidth: function() {
+	updateWidth: function(isResize) {
 		// subclasses should implement
 	},
 
 
 	// Refreshes the vertical dimensions of the calendar
-	updateHeight: function() {
+	updateHeight: function(isResize) {
 		var calendar = this.calendar; // we poll the calendar for height information
 
 		this.setHeight(
