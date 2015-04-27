@@ -530,6 +530,9 @@ var View = fc.View = Class.extend({
 	clearEvents: function() {
 		if (this.isEventsRendered) {
 			this.triggerEventUnrender();
+			if (this.destroyEvents) {
+				this.destroyEvents(); // TODO: deprecate
+			}
 			this.unrenderEvents();
 			this.isEventsRendered = false;
 		}
@@ -794,6 +797,9 @@ var View = fc.View = Class.extend({
 	unselect: function(ev) {
 		if (this.isSelected) {
 			this.isSelected = false;
+			if (this.destroySelection) {
+				this.destroySelection(); // TODO: deprecate
+			}
 			this.unrenderSelection();
 			this.trigger('unselect', null, ev);
 		}
