@@ -30,6 +30,7 @@ var GridCoordMap = Class.extend({
 
 	// Queries the grid for the coordinates of all the cells
 	build: function() {
+		this.grid.build();
 		this.rowCoords = this.grid.computeRowCoords();
 		this.colCoords = this.grid.computeColCoords();
 		this.computeBounds();
@@ -38,6 +39,7 @@ var GridCoordMap = Class.extend({
 
 	// Clears the coordinates data to free up memory
 	clear: function() {
+		this.grid.clear();
 		this.rowCoords = null;
 		this.colCoords = null;
 	},

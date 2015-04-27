@@ -6,10 +6,9 @@ var TimeGrid = Grid.extend({
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
-
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
-
+	colDates: null, // whole-day dates for each column. left to right
 	axisFormat: null, // formatting string for times running along vertical axis
 
 	dayEls: null, // cells elements in the day-row background
@@ -157,36 +156,41 @@ var TimeGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Initializes row/col information
-	updateCells: function() {
+	// Tells the grid about what period of time to display.
+	// Any date-related cell system internal data should be generated.
+	setRange: function() {
 		var view = this.view;
-		var colData = [];
+		var colDates = [];
 		var date;
+
+		Grid.prototype.setRange.apply(this, arguments); // call the super-method
 
 		date = this.start.clone();
 		while (date.isBefore(this.end)) {
-			colData.push({
-				day: date.clone()
-			});
+			colDates.push(date.clone());
 			date.add(1, 'day');
 			date = view.skipHiddenDays(date);
 		}
 
 		if (this.isRTL) {
-			colData.reverse();
+			colDates.reverse();
 		}
 
-		this.colData = colData;
-		this.colCnt = colData.length;
+		this.colDates = colDates;
+		this.colCnt = colDates.length;
 		this.rowCnt = Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
 	},
 
 
 	// Given a cell object, generates its start date. Returns a reference-free copy.
 	computeCellDate: function(cell) {
+		var date = this.colDates[cell.col];
 		var time = this.computeSnapTime(cell.row);
 
-		return this.view.calendar.rezoneDate(cell.day).time(time);
+		date = this.view.calendar.rezoneDate(date); // give it a 00:00 time
+		date.time(time);
+
+		return date;
 	},
 
 
@@ -222,7 +226,7 @@ var TimeGrid = Grid.extend({
 		};
 
 		for (col = 0; col < colCnt; col++) {
-			colDate = this.colData[col].day; // will be ambig time/timezone
+			colDate = this.colDates[col]; // will be ambig time/timezone
 			colRange = {
 				start: colDate.clone().time(this.minTime),
 				end: colDate.clone().time(this.maxTime)
@@ -472,7 +476,7 @@ var TimeGrid = Grid.extend({
 
 				if (colSegs.length) {
 					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
-					dayDate = this.colData[col].day;
+					dayDate = this.colDates[col];
 
 					for (i = 0; i < colSegs.length; i++) {
 						seg = colSegs[i];

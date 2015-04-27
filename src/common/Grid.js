@@ -9,8 +9,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	rowCnt: 0, // number of rows
 	colCnt: 0, // number of cols
-	rowData: null, // array of objects, holding misc data for each row
-	colData: null, // array of objects, holding misc data for each column
 
 	el: null, // the containing element
 	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
@@ -76,7 +74,20 @@ var Grid = fc.Grid = RowRenderer.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Tells the grid about what period of time to display. Grid will subsequently compute dates for cell system.
+	// Called before the grid will need to be queried for cells.
+	// Any non-date-related cell system internal data should be built.
+	build: function() {
+	},
+
+
+	// Called after the grid is done being relied upon.
+	// Any non-date-related cell system internal data should be cleared.
+	clear: function() {
+	},
+
+
+	// Tells the grid about what period of time to display.
+	// Any date-related cell system internal data should be generated.
 	setRange: function(range) {
 		var view = this.view;
 		var displayEventTime;
@@ -84,10 +95,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		this.start = range.start.clone();
 		this.end = range.end.clone();
-
-		this.rowData = [];
-		this.colData = [];
-		this.updateCells();
 
 		// Populate option-derived settings. Look for override first, then compute if necessary.
 		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
@@ -109,12 +116,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 		this.displayEventTime = displayEventTime;
 		this.displayEventEnd = displayEventEnd;
-	},
-
-
-	// Responsible for setting rowCnt/colCnt and any other row/col data
-	updateCells: function() {
-		// subclasses must implement
 	},
 
 
@@ -186,13 +187,13 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Retrieves misc data about the given row
 	getRowData: function(row) {
-		return this.rowData[row] || {};
+		return {};
 	},
 
 
 	// Retrieves misc data baout the given column
 	getColData: function(col) {
-		return this.colData[col] || {};
+		return {};
 	},
 
 

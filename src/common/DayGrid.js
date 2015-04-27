@@ -136,12 +136,15 @@ var DayGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Initializes row/col information
-	updateCells: function() {
+	// Tells the grid about what period of time to display.
+	// Any date-related cell system internal data should be generated.
+	setRange: function() {
 		var cellDates;
 		var firstDay;
 		var rowCnt;
 		var colCnt;
+
+		Grid.prototype.setRange.apply(this, arguments); // call the super-method
 
 		this.updateCellDates(); // populates cellDates and dayToCellOffsets
 		cellDates = this.cellDates;
