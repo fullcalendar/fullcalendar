@@ -354,9 +354,9 @@ var TimeGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of an event being dragged
-	destroyDrag: function() {
-		this.destroyHelper();
-		this.destroyHighlight();
+	unrenderDrag: function() {
+		this.unrenderHelper();
+		this.unrenderHighlight();
 	},
 
 
@@ -371,8 +371,8 @@ var TimeGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of an event being resized
-	destroyEventResize: function() {
-		this.destroyHelper();
+	unrenderEventResize: function() {
+		this.unrenderHelper();
 	},
 
 
@@ -411,7 +411,7 @@ var TimeGrid = Grid.extend({
 
 
 	// Unrenders any mock helper event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		if (this.helperEl) {
 			this.helperEl.remove();
 			this.helperEl = null;
@@ -435,9 +435,9 @@ var TimeGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of a selection
-	destroySelection: function() {
-		this.destroyHelper();
-		this.destroyHighlight();
+	unrenderSelection: function() {
+		this.unrenderHelper();
+		this.unrenderHighlight();
 	},
 
 

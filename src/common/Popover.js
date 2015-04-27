@@ -87,7 +87,7 @@ var Popover = Class.extend({
 
 
 	// Hides and unregisters any handlers
-	destroy: function() {
+	removeElement: function() {
 		this.hide();
 
 		if (this.el) {

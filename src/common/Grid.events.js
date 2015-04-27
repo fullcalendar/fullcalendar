@@ -39,11 +39,11 @@ Grid.mixin({
 
 
 	// Unrenders all events currently rendered on the grid
-	destroyEvents: function() {
+	unrenderEvents: function() {
 		this.triggerSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 
-		this.destroyFgSegs();
-		this.destroyBgSegs();
+		this.unrenderFgSegs();
+		this.unrenderBgSegs();
 
 		this.segs = null;
 	},
@@ -66,7 +66,7 @@ Grid.mixin({
 
 
 	// Unrenders all currently rendered foreground segments
-	destroyFgSegs: function() {
+	unrenderFgSegs: function() {
 		// subclasses must implement
 	},
 
@@ -123,8 +123,8 @@ Grid.mixin({
 
 
 	// Unrenders all the currently rendered background event segments
-	destroyBgSegs: function() {
-		this.destroyFill('bgEvent');
+	unrenderBgSegs: function() {
+		this.unrenderFill('bgEvent');
 	},
 
 
@@ -304,7 +304,7 @@ Grid.mixin({
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				view.destroyDrag(); // unrender whatever was done in renderDrag
+				view.unrenderDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
 				dropLocation = null;
 			},
@@ -314,7 +314,7 @@ Grid.mixin({
 			dragStop: function(ev) {
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!dropLocation, function() {
-					view.destroyDrag();
+					view.unrenderDrag();
 					view.showEvent(event);
 					_this.segDragStop(seg, ev);
 
@@ -458,11 +458,11 @@ Grid.mixin({
 			},
 			cellOut: function() {
 				dropLocation = null; // signal unsuccessful
-				_this.destroyDrag();
+				_this.unrenderDrag();
 				enableCursor();
 			},
 			dragStop: function() {
-				_this.destroyDrag();
+				_this.unrenderDrag();
 				enableCursor();
 
 				if (dropLocation) { // element was dropped on a valid date/time cell
@@ -519,7 +519,7 @@ Grid.mixin({
 
 
 	// Unrenders a visual indication of an event or external element being dragged
-	destroyDrag: function() {
+	unrenderDrag: function() {
 		// subclasses must implement
 	},
 
@@ -574,7 +574,7 @@ Grid.mixin({
 				resizeLocation = null;
 			},
 			cellDone: function() { // resets the rendering to show the original event
-				_this.destroyEventResize();
+				_this.unrenderEventResize();
 				view.showEvent(event);
 				enableCursor();
 			},
@@ -673,7 +673,7 @@ Grid.mixin({
 
 
 	// Unrenders a visual indication of an event being resized.
-	destroyEventResize: function() {
+	unrenderEventResize: function() {
 		// subclasses must implement
 	},
 

@@ -290,7 +290,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Removes the grid's container element from the DOM. Undoes any other DOM-related attachments.
-	// DOES NOT remove any content before hand (doens't clear events or call destroyDates), unlike View
+	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
 		this.unbindGlobalHandlers();
 
@@ -314,7 +314,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders the grid's date-related content
-	destroyDates: function() {
+	unrenderDates: function() {
 		// subclasses should implement
 	},
 
@@ -369,7 +369,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 			cellOut: function(cell) {
 				dayClickCell = null;
 				selectionRange = null;
-				_this.destroySelection();
+				_this.unrenderSelection();
 				enableCursor();
 			},
 			listenStop: function(ev) {
@@ -431,7 +431,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders a mock event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		// subclasses must implement
 	},
 
@@ -447,8 +447,8 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders any visual indications of a selection. Will unrender a highlight by default.
-	destroySelection: function() {
-		this.destroyHighlight();
+	unrenderSelection: function() {
+		this.unrenderHighlight();
 	},
 
 
@@ -495,8 +495,8 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders the emphasis on a date range
-	destroyHighlight: function() {
-		this.destroyFill('highlight');
+	unrenderHighlight: function() {
+		this.unrenderFill('highlight');
 	},
 
 
@@ -519,7 +519,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders a specific type of fill that is currently rendered on the grid
-	destroyFill: function(type) {
+	unrenderFill: function(type) {
 		var el = this.elsByFill[type];
 
 		if (el) {

@@ -51,8 +51,8 @@ var DayGrid = Grid.extend({
 	},
 
 
-	destroyDates: function() {
-		this.destroySegPopover();
+	unrenderDates: function() {
+		this.removeSegPopover();
 	},
 
 
@@ -337,9 +337,9 @@ var DayGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of a hovering event
-	destroyDrag: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderDrag: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -355,9 +355,9 @@ var DayGrid = Grid.extend({
 
 
 	// Unrenders a visual indication of an event being resized
-	destroyEventResize: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderEventResize: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -401,7 +401,7 @@ var DayGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of a mock helper event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		if (this.helperEls) {
 			this.helperEls.remove();
 			this.helperEls = null;

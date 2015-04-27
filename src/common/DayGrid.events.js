@@ -8,9 +8,9 @@ DayGrid.mixin({
 
 
 	// Unrenders all events currently rendered on the grid
-	destroyEvents: function() {
-		this.destroySegPopover(); // removes the "more.." events popover
-		Grid.prototype.destroyEvents.apply(this, arguments); // calls the super-method
+	unrenderEvents: function() {
+		this.removeSegPopover(); // removes the "more.." events popover
+		Grid.prototype.unrenderEvents.apply(this, arguments); // calls the super-method
 	},
 
 
@@ -55,7 +55,7 @@ DayGrid.mixin({
 
 
 	// Unrenders all currently rendered foreground event segments
-	destroyFgSegs: function() {
+	unrenderFgSegs: function() {
 		var rowStructs = this.rowStructs || [];
 		var rowStruct;
 

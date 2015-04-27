@@ -248,7 +248,7 @@ var View = fc.View = Class.extend({
 
 		// clean up the skeleton
 		if (this.isSkeletonRendered) {
-			this.destroySkeleton();
+			this.unrenderSkeleton();
 			this.isSkeletonRendered = false;
 		}
 
@@ -257,7 +257,8 @@ var View = fc.View = Class.extend({
 		this.el.remove();
 
 		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-		// We don't null-out the View's other jQuery element references upon destroy, so why should we kill this.el?
+		// We don't null-out the View's other jQuery element references upon destroy,
+		//  so we shouldn't kill this.el either.
 	},
 
 
@@ -325,9 +326,9 @@ var View = fc.View = Class.extend({
 	// Can be asynchronous and return a promise.
 	clearView: function() {
 		this.unselect();
-		this.triggerDestroy();
-		this.destroyBusinessHours();
-		this.destroyDates();
+		this.triggerUnrender();
+		this.unrenderBusinessHours();
+		this.unrenderDates();
 		if (this.destroy) {
 			this.destroy(); // TODO: deprecate
 		}
@@ -341,7 +342,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders the basic structure of the view
-	destroySkeleton: function() {
+	unrenderSkeleton: function() {
 		// subclasses should implement
 	},
 
@@ -354,7 +355,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders the view's date-related content
-	destroyDates: function() {
+	unrenderDates: function() {
 		// subclasses should override
 	},
 
@@ -366,7 +367,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders previously-rendered business-hours
-	destroyBusinessHours: function() {
+	unrenderBusinessHours: function() {
 		// subclasses should implement
 	},
 
@@ -378,7 +379,7 @@ var View = fc.View = Class.extend({
 
 
 	// Signals that the view's content is about to be unrendered
-	triggerDestroy: function() {
+	triggerUnrender: function() {
 		this.trigger('viewDestroy', this, this, this.el);
 	},
 
@@ -528,8 +529,8 @@ var View = fc.View = Class.extend({
 	// Does everything necessary to clear the view's currently-rendered events
 	clearEvents: function() {
 		if (this.isEventsRendered) {
-			this.triggerEventDestroy();
-			this.destroyEvents();
+			this.triggerEventUnrender();
+			this.unrenderEvents();
 			this.isEventsRendered = false;
 		}
 	},
@@ -542,7 +543,7 @@ var View = fc.View = Class.extend({
 
 
 	// Removes event elements from the view.
-	destroyEvents: function() {
+	unrenderEvents: function() {
 		// subclasses should implement
 	},
 
@@ -557,7 +558,7 @@ var View = fc.View = Class.extend({
 
 
 	// Signals that all event elements are about to be removed
-	triggerEventDestroy: function() {
+	triggerEventUnrender: function() {
 		this.renderedEventSegEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
@@ -706,7 +707,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders a visual indication of an event or external-element being dragged.
-	destroyDrag: function() {
+	unrenderDrag: function() {
 		// subclasses must implement
 	},
 
@@ -793,14 +794,14 @@ var View = fc.View = Class.extend({
 	unselect: function(ev) {
 		if (this.isSelected) {
 			this.isSelected = false;
-			this.destroySelection();
+			this.unrenderSelection();
 			this.trigger('unselect', null, ev);
 		}
 	},
 
 
 	// Unrenders a visual indication of selection
-	destroySelection: function() {
+	unrenderSelection: function() {
 		// subclasses should implement
 	},
 

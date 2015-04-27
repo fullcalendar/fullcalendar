@@ -62,7 +62,7 @@ var MouseFollower = Class.extend({
 
 		function complete() {
 			this.isAnimating = false;
-			_this.destroyEl();
+			_this.removeElement();
 
 			this.top0 = this.left0 = null; // reset state for future updatePosition calls
 
@@ -120,7 +120,7 @@ var MouseFollower = Class.extend({
 
 
 	// Removes the tracking element if it has already been created
-	destroyEl: function() {
+	removeElement: function() {
 		if (this.el) {
 			this.el.remove();
 			this.el = null;

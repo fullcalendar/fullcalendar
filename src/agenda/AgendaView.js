@@ -52,7 +52,7 @@ var AgendaView = View.extend({
 
 
 	// Renders the view into `this.el`, which has already been assigned
-	render: function() {
+	renderDates: function() {
 
 		this.el.addClass('fc-agenda-view').html(this.renderHtml());
 
@@ -81,12 +81,12 @@ var AgendaView = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
-	destroy: function() {
-		this.timeGrid.destroyDates();
+	unrenderDates: function() {
+		this.timeGrid.unrenderDates();
 		this.timeGrid.removeElement();
 
 		if (this.dayGrid) {
-			this.dayGrid.destroyDates();
+			this.dayGrid.unrenderDates();
 			this.dayGrid.removeElement();
 		}
 	},
@@ -225,7 +225,7 @@ var AgendaView = View.extend({
 
 		// limit number of events in the all-day area
 		if (this.dayGrid) {
-			this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+			this.dayGrid.removeSegPopover(); // kill the "more" popover if displayed
 
 			eventLimit = this.opt('eventLimit');
 			if (eventLimit && typeof eventLimit !== 'number') {
@@ -316,12 +316,12 @@ var AgendaView = View.extend({
 
 
 	// Unrenders all event elements and clears internal segment data
-	destroyEvents: function() {
+	unrenderEvents: function() {
 
-		// destroy the events in the subcomponents
-		this.timeGrid.destroyEvents();
+		// unrender the events in the subcomponents
+		this.timeGrid.unrenderEvents();
 		if (this.dayGrid) {
-			this.dayGrid.destroyEvents();
+			this.dayGrid.unrenderEvents();
 		}
 
 		// we DON'T need to call updateHeight() because:
@@ -345,10 +345,10 @@ var AgendaView = View.extend({
 	},
 
 
-	destroyDrag: function() {
-		this.timeGrid.destroyDrag();
+	unrenderDrag: function() {
+		this.timeGrid.unrenderDrag();
 		if (this.dayGrid) {
-			this.dayGrid.destroyDrag();
+			this.dayGrid.unrenderDrag();
 		}
 	},
 
@@ -369,10 +369,10 @@ var AgendaView = View.extend({
 
 
 	// Unrenders a visual indications of a selection
-	destroySelection: function() {
-		this.timeGrid.destroySelection();
+	unrenderSelection: function() {
+		this.timeGrid.unrenderSelection();
 		if (this.dayGrid) {
-			this.dayGrid.destroySelection();
+			this.dayGrid.unrenderSelection();
 		}
 	}
 
