@@ -332,6 +332,9 @@ Grid.mixin({
 					if (dropLocation) {
 						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
+					else {
+						view.reportEventDropOutside(event, el, ev);
+					}
 				});
 			},
 			listenStop: function() {
