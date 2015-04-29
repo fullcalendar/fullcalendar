@@ -640,6 +640,24 @@ var View = fc.View = Class.extend({
 	},
 
 
+	// Must be called when an event in the view is dropped outside the calendar
+	reportEventDropOutside: function(event, el, ev) {
+		var calendar = this.calendar;
+		var undoFunc = function() {
+			calendar.reportEventChange();
+		};
+
+		this.triggerEventDropOutside(event, undoFunc, el, ev);
+		calendar.reportEventChange(); // will rerender events
+	},
+
+
+	// Triggers event-drop handlers that have subscribed via the API
+	triggerEventDropOutside: function(event, undoFunc, el, ev) {
+		this.trigger('eventDropOutside', el[0], event, undoFunc, ev, {}); // {} = jqui dummy
+	},
+
+
 	/* External Element Drag-n-Drop
 	------------------------------------------------------------------------------------------------------------------*/
 
