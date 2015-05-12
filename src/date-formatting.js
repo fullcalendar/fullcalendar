@@ -150,6 +150,8 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 var similarUnitMap = {
 	Y: 'year',
 	M: 'month',
+	w: 'week', // week of year
+	W: 'week', // week of year (ISO)
 	D: 'day', // day of month
 	d: 'day', // day of week
 	// prevents a separator between anything time-related...
@@ -162,7 +164,6 @@ var similarUnitMap = {
 	m: 'second', // minute
 	s: 'second' // second
 };
-// TODO: week maybe?
 
 
 // Given a formatting chunk, and given that both dates are similar in the regard the
