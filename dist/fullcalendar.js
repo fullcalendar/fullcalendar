@@ -9742,7 +9742,6 @@ function EventManager(options) { // assumed to be a calendar
 	// Returns an array of events as to when the business hours occur in the given view.
 	// Abuse of our event system :(
 	function getBusinessHoursEvents(wholeDay) {
-		var optionVal = options.businessHours;
 		var defaultVal = {
 			className: 'fc-nonbusiness',
 			start: '09:00',
@@ -9750,33 +9749,68 @@ function EventManager(options) { // assumed to be a calendar
 			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
 			rendering: 'inverse-background'
 		};
+		var optionVal = options.businessHours;
 		var view = t.getView();
 		var eventInput;
 
-		if (optionVal) { // `true` (which means "use the defaults") or an override object
-			eventInput = $.extend(
-				{}, // copy to a new object in either case
-				defaultVal,
-				typeof optionVal === 'object' ? optionVal : {} // override the defaults
-			);
-		}
-
-		if (eventInput) {
-
-			// if a whole-day series is requested, clear the start/end times
-			if (wholeDay) {
-				eventInput.start = null;
-				eventInput.end = null;
+		// verify if we have and array of business hours
+		if (Object.prototype.toString.call(optionVal) === '[object Array]') {
+			// proccess multiple business hours definitions
+			var businessHours = [];
+			for (var i in optionVal) {
+				if (optionVal.hasOwnProperty(i)) {
+					var ev = optionVal[i];
+					ev.id = 'multiple-business-hours';	// force all events to have the same id so the rendering it's only done once
+					if (ev) { // `true` (which means "use the defaults") or an override object
+						eventInput = $.extend(
+							{}, // copy to a new object in either case
+							defaultVal,
+							typeof ev === 'object' ? ev : {} // override the defaults
+						);
+					}
+					if (eventInput) {
+						// if a whole-day series is requested, clear the start/end times
+						if (wholeDay) {
+							eventInput.start = null;
+							eventInput.end = null;
+						}
+						businessHours = businessHours.concat(
+							expandEvent(
+								buildEventFromInput(eventInput),
+								view.start,
+								view.end
+							)
+						);
+					}
+					// reset variable
+					eventInput = null;
+				}
 			}
-
-			return expandEvent(
-				buildEventFromInput(eventInput),
-				view.start,
-				view.end
-			);
+			return businessHours;
+		} else {
+			// its a single business hour definition
+			if (optionVal) { // `true` (which means "use the defaults") or an override object
+				eventInput = $.extend(
+					{}, // copy to a new object in either case
+					defaultVal,
+					typeof optionVal === 'object' ? optionVal : {} // override the defaults
+				);
+			}
+			if (eventInput) {
+				// if a whole-day series is requested, clear the start/end times
+				if (wholeDay) {
+					eventInput.start = null;
+					eventInput.end = null;
+				}
+				return expandEvent(
+					buildEventFromInput(eventInput),
+					view.start,
+					view.end
+				);
+			}
+			return [];
 		}
 
-		return [];
 	}
 
 
