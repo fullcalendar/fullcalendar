@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
+<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../dist/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultDate: '2015-02-12',
+			selectable: true,
+			selectConstraint: 'businessHours',
+			eventConstraint: 'businessHours',
+			selectHelper: true,
+			select: function(start, end) {
+				var title = prompt('Event Title:');
+				var eventData;
+				if (title) {
+					eventData = {
+						title: title,
+						start: start,
+						end: end
+					};
+					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+				}
+				$('#calendar').fullCalendar('unselect');
+			},
+			businessHours:[ 
+				{
+					start: '09:00',
+					end: '13:00',
+					dow: [1, 2]
+				},
+				{
+					start: '14:00',
+					end: '16:00',
+					dow: [1, 2]
+				},
+				{
+					start: '10:00',
+					end: '19:00',
+					dow: [4]
+				},
+				{
+					start: '06:00',
+					end: '10:30',
+					dow: [6]
+				},
+				{
+					start: '13:00',
+					end: '17:00',
+					dow: [6]
+				},
+				{
+					start: '20:00',
+					end: '23:00',
+					dow: [6]
+				}
+			],
+			allDaySlot: false,
+			defaultView: 'agendaWeek',
+			editable: true,
+			eventLimit: true, // allow "more" link when too many events
+		});
+		
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+</style>
+</head>
+<body>
+
+	<div id='calendar'></div>
+
+</body>
+</html>
