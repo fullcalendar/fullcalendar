@@ -102,7 +102,6 @@ var Calendar = fc.Calendar = Class.extend({
 		var overridesChain = []; // for the view. lowest to highest priority
 		var viewType = requestedViewType;
 		var spec; // for the view
-		var defaults; // for the view
 		var overrides; // for the view
 		var duration;
 		var unit;
