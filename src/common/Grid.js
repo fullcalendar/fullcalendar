@@ -386,7 +386,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 			},
 			listenStop: function(ev) {
 				if (dayClickCell) {
-					view.trigger('dayClick', _this.getCellDayEl(dayClickCell), dayClickCell.start, ev);
+					view.triggerDayClick(dayClickCell, _this.getCellDayEl(dayClickCell), ev);
 				}
 				if (selectionRange) {
 					// the selection will already have been rendered. just report it

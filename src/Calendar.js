@@ -229,6 +229,24 @@ var Calendar = fc.Calendar = Class.extend({
 		if (!(--this.loadingLevel)) {
 			this.trigger('loading', null, false, this.view);
 		}
+	},
+
+
+	// Given arguments to the select method in the API, returns a range
+	buildSelectRange: function(start, end) {
+
+		start = this.moment(start);
+		if (end) {
+			end = this.moment(end);
+		}
+		else if (start.hasTime()) {
+			end = start.clone().add(this.defaultTimedEventDuration);
+		}
+		else {
+			end = start.clone().add(this.defaultAllDayEventDuration);
+		}
+
+		return { start: start, end: end };
 	}
 
 });
@@ -739,19 +757,9 @@ function Calendar_constructor(element, overrides) {
 	
 
 	function select(start, end) {
-
-		start = t.moment(start);
-		if (end) {
-			end = t.moment(end);
-		}
-		else if (start.hasTime()) {
-			end = start.clone().add(t.defaultTimedEventDuration);
-		}
-		else {
-			end = start.clone().add(t.defaultAllDayEventDuration);
-		}
-
-		currentView.select({ start: start, end: end }); // accepts a range
+		currentView.select(
+			t.buildSelectRange.apply(t, arguments)
+		);
 	}
 	
 

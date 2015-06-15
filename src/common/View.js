@@ -790,6 +790,12 @@ var View = fc.View = Class.extend({
 	// Called when a new selection is made. Updates internal state and triggers handlers.
 	reportSelection: function(range, ev) {
 		this.isSelected = true;
+		this.triggerSelect(range, ev);
+	},
+
+
+	// Triggers handlers to 'select'
+	triggerSelect: function(range, ev) {
 		this.trigger('select', null, range.start, range.end, ev);
 	},
 
@@ -827,6 +833,16 @@ var View = fc.View = Class.extend({
 				this.unselect(ev);
 			}
 		}
+	},
+
+
+	/* Day Click
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Triggers handlers to 'dayClick'
+	triggerDayClick: function(cell, dayEl, ev) {
+		this.trigger('dayClick', dayEl, cell.start, ev);
 	},
 
 
