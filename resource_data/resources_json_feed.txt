@@ -1,0 +1,20 @@
+
+resources (as a JSON feed)
+==========================
+
+Tells the calendar to fetch the resource list from a remote script. The value can be a string url:
+
+	$('#calendar').fullCalendar({
+		resources: '/my-resource-script.php'
+	});
+
+The value can also be an object with a `url` field and other options accepted by jQuery's [ajax method](http://api.jquery.com/jquery.ajax/):
+
+	$('#calendar').fullCalendar({
+		resources: {
+			url: '/my-resource-script.php',
+			type: 'POST'
+		}
+	});
+
+The remote script must return a JSON array of [Resource Object]()s.

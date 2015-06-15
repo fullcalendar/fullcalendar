@@ -1,0 +1,12 @@
+
+slotLabelFormat
+===============
+
+[Date formatting string(s)](../utilities/date_formatting_string) that determine the text in the header labels above the vertical slots. One string can be given for creating a single header row, or an array of strings can be given to create multiple tiers of header rows.
+
+	slotLabelFormat: [
+		'MMMM YYYY', // top level of text
+		'ddd'        // lower level of text
+	]
+
+When not specified, a reasonable value will be automatically computed based on the duration of the view.

@@ -1,0 +1,30 @@
+
+Customizing Timeline View's Duration
+====================================
+
+To control the length of time the view displays, you can use one of the stock timeline views:
+
+- timelineDay
+- timelineWeek
+- timelineMonth
+- timelineYear
+
+Example:
+
+	$('#calendar').fullCalendar({
+		defaultView: 'timelineDay'
+	});
+
+If you need a different duration, make a [Custom View](../views/Custom_Views) from the generic `"timeline"` view:
+
+	$('#calendar').fullCalendar({
+		header: [
+			center: 'month,timelineFourDays'
+		],
+		views: {
+			timelineFourDays: {
+				type: 'timeline',
+				duration: { days: 4 }
+			}
+		}
+	});

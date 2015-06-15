@@ -1,0 +1,13 @@
+
+Timeline View
+=============
+
+<ul>
+<li><a href='customizing_duration'>customizing duration</a></li>
+<li><a href='resourceAreaWidth'>resourceAreaWidth</a></li>
+<li><a href='resourceLabelText'>resourceLabelText</a></li>
+<li><a href='resourceColumns'>resourceColumns</a></li>
+<li><a href='slotWidth'>slotWidth</a></li>
+<li><a href='slotLabelInterval'>slotLabelInterval</a></li>
+<li><a href='slotLabelFormat'>slotLabelFormat</a></li>
+</ul>

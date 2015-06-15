@@ -1,0 +1,15 @@
+
+Resource Data
+=============
+
+<ul>
+<li><a href='Resource_Object'>Resource Object</a></li>
+<li><a href='associating_events'>associating events with resources</a></li>
+<li><a href='resources_array'>resources (as an array)</a></li>
+<li><a href='resources_json_feed'>resources (as a JSON feed)</a></li>
+<li><a href='resources_function'>resources (as a function)</a></li>
+<li><a href='eventResourceField'>eventResourceField</a></li>
+<li><a href='getResources'>getResources (method)</a></li>
+<li><a href='addResource'>addResource (method)</a></li>
+<li><a href='removeResource'>removeResource (method)</a></li>
+</ul>

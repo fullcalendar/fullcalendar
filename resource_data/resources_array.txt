@@ -1,0 +1,20 @@
+
+resources (as an array)
+=======================
+
+Tells the calendar to display resources from an array input.
+
+	$('#calendar').fullCalendar({
+		resources: [
+			{
+				id: 'a',
+				title: 'Room A'
+			},
+			{
+				id: 'b',
+				title: 'Room B'
+			}
+		]
+	});
+
+The `id` property is the most important because it allows [associating events with resources](associating_events). See the [Resource Object]() spec for a full list of fields.

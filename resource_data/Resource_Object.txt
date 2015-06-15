@@ -1,0 +1,104 @@
+
+Resource Object
+===============
+
+<table>
+<tr>
+	<th>id</th>
+	<td markdown='1'>
+		Uniquely identifies this resource. [Event Objects](../event_data/Event_Object/) with a corresponding `resourceId` field will be linked to this event, unless customized by [eventResourceField]().
+	</td>
+</tr>
+<tr>
+	<th>eventColor</th>
+	<td markdown='1'>
+		events associated with this resources will have their backgrounds and borders colored. Any CSS string color format can be specified, like `"#f00"` or `"rgb(255,0,0)"`. This value will take precedence over the global [eventColor](../event_rendering/eventColor) option and the [Event Source Object] `color` option, but it will not take precedence over the [Event Object](../event_data/Event_Object) `color` option.
+	</td>
+</tr>
+<tr>
+	<th>eventBackgroundColor</th>
+	<td markdown='1'>
+		like `eventColor` but only for the background color
+	</td>
+</tr>
+<tr>
+	<th>eventBorderColor</th>
+	<td markdown='1'>
+		like `eventColor` but only for the border color
+	</td>
+</tr>
+<tr>
+	<th>eventTextColor</th>
+	<td markdown='1'>
+		like `eventColor` but only for the text color
+	</td>
+</tr>
+<tr>
+	<th>eventClassName</th>
+	<td markdown='1'>
+		className(s) that will apply to events
+	</td>
+</tr>
+<tr>
+	<th>children</th>
+	<td markdown='1'>
+		See below
+	</td>
+</tr>
+<tr>
+	<th>parentId</th>
+	<td markdown='1'>
+		See below
+	</td>
+</tr>
+</table>
+
+For the color-related properties, even when an event is rendered on a non-resource view (views other than Timeline), these properties will still take effect.
+
+Resources can be nested within each other. This will be displayed as an expander arrow in the UI which expands and contracts the child resources. Specifying nested resources can be done via one of two possible techniques...
+
+
+Nested resources with a nested array
+------------------------------------
+
+Child resources can be specified directly within the parent resource via the `children` property. This technique is often more pleasant when hardcoding an array because it is visually easier to understand the code.
+
+	resources: [
+		{
+			id: 'a',
+			title: 'Room A',
+			children: [
+				{
+					id: 'a1',
+					title: 'Room A1'
+				},
+				{
+					id: 'a2',
+					title: 'Rooma A2'
+				}
+			]
+		}
+	]
+
+
+Nested resources with a flat array
+----------------------------------
+
+An alternative method for specify child resources is via linking them together with the `parentId` property. This is often more pleasant when dealing with resource data that originates from a database.
+
+	resources: [
+		{
+			id: 'a',
+			title: 'Room A'
+		},
+		{
+			id: 'a1',
+			parentId: 'a',
+			title: 'Room A1'
+		},
+		{
+			id: 'a2',
+			parentId: 'a',
+			title: 'Room A2'
+		}
+	]

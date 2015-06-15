@@ -1,0 +1,23 @@
+
+eventResourceField
+==================
+
+Normally [Event Objects](../event_data/Event_Object) are linked to resources via the event's `resourceId` field. However, if you wish to use another field name, you may specify it with `eventResourceField`:
+
+	$('#calendar').fullCalendar({
+		resources: [
+			{
+				id: 'a',
+				title: 'Room A'
+			}
+		]
+		eventResourceField: 'roomId',
+		events: [
+			{
+				id: '1',
+				roomId: 'a',
+				title: 'Meeting',
+				start: '2015-02-14'
+			}
+		]
+	});

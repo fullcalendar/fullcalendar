@@ -1,0 +1,7 @@
+
+slotLabelInterval
+=================
+
+Determines how often a header label cell is placed above the vertical slots of the timeline.
+
+Without this option, a reasonable value will be automatically computed based on `slotDuration`. When specifying this option, give a [Duration](../utilities/Duration)-ish input, like `"01:00"` or `{hours:1}`. This will cause the header labels to appear on the hour marks, even if `slotDuration` was hypothetically 15 or 30 minutes long.

@@ -1,0 +1,9 @@
+
+getResources
+===========
+
+A method that retrieves all [Resource Objects](Resource_Object) in memory.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'getResources' )
+</div>

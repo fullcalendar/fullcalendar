@@ -1,0 +1,7 @@
+
+slotWidth
+=========
+
+Determines how wide each of the vertical slots will be. Specified as a number of pixels.
+
+When not specified, a reasonable value will be automatically computed.

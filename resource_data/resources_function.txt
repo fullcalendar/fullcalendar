@@ -1,0 +1,13 @@
+
+resources (as a function)
+=========================
+
+Tells the calendar to fetch the resources list by executing a function. The function is given a `callback` argument that should be called with an array of [Resource Object]()s:
+
+	resources: function(callback) {
+		somethingAsynchonous(function(resourceObjects) {
+			callback(resourceObjects);
+		});
+	}
+
+This allows for any sort of asynchronous means of obtaining the resource list.

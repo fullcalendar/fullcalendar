@@ -1,0 +1,155 @@
+
+<h3>Support for Existing Options</h3>
+
+<table class='additional-options'>
+	<tr>
+		<th>
+			<a href='agenda/slotDuration'>slotDuration</a>
+		</th>
+		<td>
+			<p>
+				The length of time each vertical line of the timeline represents. Without this option, a reasonable value will be automatically computed based on the view's total duration.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='agenda/snapDuration'>snapDuration</a>
+		</th>
+		<td>
+			<p>
+				The time interval at which a dragged event will snap to the vertical lines of the timeline. 
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='agenda/minTime'>minTime</a> /
+			<a href='agenda/maxTime'>maxTime</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				When `slotDuration` is an hour or less, `minTime` and `maxTime` will limit the time displayed for each day in timeline view.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='agenda/scrollTime'>scrollTime</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				When `slotDuration` is an hour or less, determines the initial horizontal scroll of the timeline view.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='display/businessHours'>businessHours</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				Determines which vertical slots of time are visually indicated to be business hours.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='display/weekNumbers'>weekNumbers</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				Affects the automatic calculation of [slotLabelFormat](timeline/slotLabelFormat)
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='display/isRTL'>isRTL</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				Timeline view has right-to-left support.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='display/loading'>loading</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				The `loading` callback will be fired when resources are being fetched.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='event_ui/eventOverlap'>eventOverlap</a>
+		</th>
+		<td>
+			<p markdown='1'>
+				When set to `false`, the each event will span to the height of each resource row.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='mouse/dayClick'>dayClick</a> (callback)
+		</th>
+		<td>
+			<p>
+				Reports when the user clicks on a region of time. An argument has been added to report the resource object:
+			</p>
+			<p>
+				<code>function( date, jsEvent, view, resourceObj )</code>
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='selection/select_callback'>select</a> (callback)
+		</th>
+		<td>
+			<p markdown='1'>
+				Reports when the user selects a region of time. An argument has been added to report the resource object:
+			</p>
+			<p>
+				<code>function( start, end, jsEvent, view, resourceObj )</code>
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='selection/select_method'>select</a> (method)
+		</th>
+		<td>
+			<p>
+				A method for programmatically selecting a period of time. A parameter has been added for specifying the resource object:
+			</p>
+			<p>
+				<code>.fullCalendar('select', start, end, resourceObj )</code>
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='event_ui/eventDrop'>eventDrop</a> (callback)
+		</th>
+		<td>
+			<p>
+				When this callback is called, the event's resource ID property will have been updated.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<a href='dropping/eventReceive'>eventReceive</a> (callback)
+		</th>
+		<td>
+			<p>
+				When this callback is called, the event's resource ID property will have been set.
+			</p>
+		</td>
+	</tr>
+</table>

@@ -2,6 +2,7 @@
 <ul>
 <li><a href='usage'>Basic Usage</a></li>
 <li><a href='google_calendar'>Google Calendar</a></li>
+<li><a href='scheduler'>Scheduler</a></li>
 <li><a href='display'>General Display</a></li>
 <li><a href='timezone'>Timezone</a></li>
 <li><a href='views'>Views</a></li>

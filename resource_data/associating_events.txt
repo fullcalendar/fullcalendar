@@ -1,0 +1,24 @@
+
+Associating Events with Resources
+=================================
+
+An [Event Object](../event_data/Event_Object) becomes associated with a resource when its `resourceId` property matches one of the [Resource Object]()'s `id` fields:
+
+	$('#calendar').fullCalendar({
+		resources: [
+			{
+				id: 'a',
+				title: 'Room A'
+			}
+		],
+		events: [
+			{
+				id: '1',
+				resourceId: 'a',
+				title: 'Meeting',
+				start: '2015-02-14'
+			}
+		]
+	});
+
+If you would prefer not to use `resourceId` for the field name, you can customize it with [eventResourceField]().
