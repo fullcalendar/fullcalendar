@@ -5782,7 +5782,8 @@ var TimeGrid = Grid.extend({
 					"</tr>"  + breakHtml;
 				breakHtml = '';
 			}			
-		} else {
+		} 
+		else {
 			// Calculate the time for each slot
 			while (slotTime < this.maxTime) {
 				slotDate = this.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
@@ -5910,7 +5911,18 @@ var TimeGrid = Grid.extend({
 
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTime: function(row) {
-		return moment.duration(this.minTime + this.snapDuration * row);
+		var slots = this.view.opt('slots');
+		if (slots) {
+			// var lastIndex = slots.length;
+			
+			// var startTime = this.start.clone().time(slots[0].start);
+			// var endTime = this.start.clone().time(slots[lastIndex - 1].end);
+			
+			return moment.duration(this.minTime + this.snapDuration * row);
+		}
+		else {
+			return moment.duration(this.minTime + this.snapDuration * row);
+		}
 	},
 
 
@@ -5997,11 +6009,14 @@ var TimeGrid = Grid.extend({
 		var slatCoverage;
 		var slots = this.view.opt('slots');
 		if (slots) {
-			// for (var i=0; i<slots.length; i++) {
-				// TODO Implement 'slatCoverage' calculating here
-			// }
-			slatCoverage = (time - this.minTime) / this.slotDuration;
-		} else {
+			var lastIndex = slots.length;
+			
+			var startTime = this.start.clone().time(slots[0].start);
+			var endTime = this.start.clone().time(slots[lastIndex - 1].end);
+			
+			slatCoverage = (time - this.minTime) / (moment.duration(endTime.diff(startTime)) / lastIndex);
+		} 
+		else {
 			slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
 		}
 		
@@ -6017,10 +6032,16 @@ var TimeGrid = Grid.extend({
 		slatIndex = Math.floor(slatCoverage); // an integer index of the furthest whole slot
 		slatRemainder = slatCoverage - slatIndex;
 		slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
-
+		
 		if (slatRemainder) { // time spans part-way into the slot
-			slatBottom = this.slatTops[slatIndex + 1];
-			return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
+			if (slots) {
+				slatBottom = this.slatTops[slatIndex + 1];
+				return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
+			} 
+			else {
+				slatBottom = this.slatTops[slatIndex + 1];
+				return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
+			}
 		}
 		else {
 			return slatTop;
