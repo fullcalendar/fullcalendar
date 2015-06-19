@@ -5696,7 +5696,7 @@ var TimeGrid = Grid.extend({
 	renderDates: function() {
 		this.el.html(this.renderHtml());
 		this.dayEls = this.el.find('.fc-day');
-		this.slatEls = this.el.find('.fc-slats tr');
+		this.slatEls = this.el.find('.fc-slats tr:not(.fc-timeslots-break)');
 	},
 
 
@@ -5739,30 +5739,74 @@ var TimeGrid = Grid.extend({
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var minutes;
 		var axisHtml;
+        
+		var slots = view.opt('slots');
+		
+		if(slots) {
+			var slot;
+			var nextSlot;
+			var startTime;
+			var endTime;
+			var nextStartTime;
+			var breakHtml;
+			var breakHeight;
+			var slotHeight;
+			
+			for (var i=0; i<slots.length; i++) {
+				slot = slots[i];
+				nextSlot = slots[i + 1];
+				startTime = this.start.clone().time(slot.start);
+				endTime = this.start.clone().time(slot.end);
+				
+				if(nextSlot) {
+					nextStartTime = this.start.clone().time(nextSlot.start);
+					
+					breakHeight = moment.duration(nextStartTime.diff(endTime)).asMinutes();
+					breakHtml = (breakHeight > 0) ? '<tr class="fc-timeslots-break" style="height:' + breakHeight + 'px;"><td class="fc-break-axis"></td><td class="fc-timeslots-break-content"></td></tr>' : '';
+				}
+				
+				slotHeight = moment.duration(endTime.diff(startTime)).asMinutes();
+				
+				axisHtml =
+					'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+						'<div class="fc-timeslots-axis">' + 
+							htmlEscape(startTime.format(this.axisFormat) + "\n" + endTime.format(this.axisFormat)) +
+						'</div>' +
+					'</td>';
 
-		// Calculate the time for each slot
-		while (slotTime < this.maxTime) {
-			slotDate = this.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
-			minutes = slotDate.minutes();
+				html +=
+					'<tr class="fc-minor" '+ 'style="height: '+ slotHeight + 'px">' +
+						(!isRTL ? axisHtml : '') +
+						'<td class="' + view.widgetContentClass + '"/>' +
+						(isRTL ? axisHtml : '') +
+					"</tr>"  + breakHtml;
+				breakHtml = '';
+			}			
+		} else {
+			// Calculate the time for each slot
+			while (slotTime < this.maxTime) {
+				slotDate = this.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
+				minutes = slotDate.minutes();
 
-			axisHtml =
-				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
-						'<span>' + // for matchCellWidths
-							htmlEscape(slotDate.format(this.axisFormat)) +
-						'</span>' :
-						''
-						) +
-				'</td>';
+				axisHtml =
+					'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+						((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
+							'<span>' + // for matchCellWidths
+								htmlEscape(slotDate.format(this.axisFormat)) +
+							'</span>' :
+							''
+							) +
+					'</td>';
 
-			html +=
-				'<tr ' + (!minutes ? '' : 'class="fc-minor"') + '>' +
-					(!isRTL ? axisHtml : '') +
-					'<td class="' + view.widgetContentClass + '"/>' +
-					(isRTL ? axisHtml : '') +
-				"</tr>";
+				html +=
+					'<tr ' + (!minutes ? '' : 'class="fc-minor"') + '>' +
+						(!isRTL ? axisHtml : '') +
+						'<td class="' + view.widgetContentClass + '"/>' +
+						(isRTL ? axisHtml : '') +
+					"</tr>";
 
-			slotTime.add(this.slotDuration);
+				slotTime.add(this.slotDuration);
+			}
 		}
 
 		return html;
@@ -5838,7 +5882,7 @@ var TimeGrid = Grid.extend({
 
 		this.colDates = colDates;
 		this.colCnt = colDates.length;
-		this.rowCnt = Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
+		this.rowCnt = view.opt('slots') ? view.opt('slots').length : Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
 	},
 
 
@@ -5950,7 +5994,17 @@ var TimeGrid = Grid.extend({
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
-		var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
+		var slatCoverage;
+		var slots = this.view.opt('slots');
+		if (slots) {
+			// for (var i=0; i<slots.length; i++) {
+				// TODO Implement 'slatCoverage' calculating here
+			// }
+			slatCoverage = (time - this.minTime) / this.slotDuration;
+		} else {
+			slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
+		}
+		
 		var slatIndex;
 		var slatRemainder;
 		var slatTop;

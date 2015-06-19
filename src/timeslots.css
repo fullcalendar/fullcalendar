@@ -1,0 +1,12 @@
+.fc-timeslots-axis {
+	width: 50px;
+	padding: 0 5px 0 4px;
+	text-align: right;
+}
+.fc-time-grid .fc-slats td {
+	height: auto;
+}
+.fc-timeslots-break
+{
+	background: #eee;
+}

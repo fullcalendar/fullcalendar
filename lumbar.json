@@ -48,7 +48,8 @@
         "src/common/common.css",
         "src/main.css",
         "src/basic/basic.css",
-        "src/agenda/agenda.css"
+        "src/agenda/agenda.css",
+        "src/timeslots.css"
       ]
     },
     "fullcalendar.print": {
