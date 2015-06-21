@@ -5679,6 +5679,7 @@ var TimeGrid = Grid.extend({
 	slatEls: null, // elements running horizontally across all columns
 
 	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
+	breakHeights: null, // an array of break heights
 
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
 
@@ -5781,7 +5782,7 @@ var TimeGrid = Grid.extend({
 						(isRTL ? axisHtml : '') +
 					"</tr>"  + breakHtml;
 				breakHtml = '';
-			}			
+			}
 		} 
 		else {
 			// Calculate the time for each slot
@@ -5964,6 +5965,7 @@ var TimeGrid = Grid.extend({
 
 	updateSize: function(isResize) { // NOT a standard Grid method
 		this.computeSlatTops();
+		this.computeBreakHeights();
 
 		if (isResize) {
 			this.updateSegVerticals();
@@ -6006,45 +6008,77 @@ var TimeGrid = Grid.extend({
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
-		var slatCoverage;
 		var slots = this.view.opt('slots');
 		if (slots) {
-			var lastIndex = slots.length;
+			var beginTime = this.start.clone();
 			
-			var startTime = this.start.clone().time(slots[0].start);
-			var endTime = this.start.clone().time(slots[lastIndex - 1].end);
+			var slatIndex;
+			var isBottom = false;
+
+			var slot;
+			var startTime;
+			var endTime;
 			
-			slatCoverage = (time - this.minTime) / (moment.duration(endTime.diff(startTime)) / lastIndex);
+			var duration;
+			var duration2;
+			
+			for (var i=0; i<slots.length; i++) {
+				slot = slots[i];
+				startTime = this.start.clone().time(slot.start);
+				endTime = this.start.clone().time(slot.end);
+				
+				duration = moment.duration(startTime.diff(beginTime));
+				duration2 = moment.duration(endTime.diff(beginTime));
+				
+				if(time.asMinutes() >= duration.asMinutes() && time.asMinutes() <= duration2.asMinutes()) {
+					if(time.asMinutes() == duration2.asMinutes()) {
+						isBottom = true;
+						i++;
+					}
+					slatIndex = i;
+					break;
+				}
+				if (i == slots.length - 1) {
+					slatIndex = i;
+				}
+			}
+			
+			var slatTop;
+			var slatBottom;
+			
+			var breakHeightTop;
+			var breakHeightBottom;
+			
+			slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
+			
+			breakHeightBottom = isNaN(this.breakHeights[slatIndex - 1]) ? 0 : this.breakHeights[slatIndex - 1];
+			
+			slatBottom = this.slatTops[slatIndex + 1];
+			
+			return (isBottom) ? slatTop - breakHeightBottom : slatTop;
 		} 
 		else {
-			slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
-		}
-		
-		var slatIndex;
-		var slatRemainder;
-		var slatTop;
-		var slatBottom;
+			var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
+			var slatIndex;
+			var slatRemainder;
+			var slatTop;
+			var slatBottom;
 
-		// constrain. because minTime/maxTime might be customized
-		slatCoverage = Math.max(0, slatCoverage);
-		slatCoverage = Math.min(this.slatEls.length, slatCoverage);
+			// constrain. because minTime/maxTime might be customized
+			slatCoverage = Math.max(0, slatCoverage);
+			slatCoverage = Math.min(this.slatEls.length, slatCoverage);
 
-		slatIndex = Math.floor(slatCoverage); // an integer index of the furthest whole slot
-		slatRemainder = slatCoverage - slatIndex;
-		slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
-		
-		if (slatRemainder) { // time spans part-way into the slot
-			if (slots) {
-				slatBottom = this.slatTops[slatIndex + 1];
-				return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
-			} 
-			else {
+			slatIndex = Math.floor(slatCoverage); // an integer index of the furthest whole slot
+			slatRemainder = slatCoverage - slatIndex;
+			slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
+
+			if (slatRemainder) { // time spans part-way into the slot
 				slatBottom = this.slatTops[slatIndex + 1];
 				return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
 			}
-		}
-		else {
-			return slatTop;
+			else {
+				return slatTop;
+			}
 		}
 	},
 
@@ -6063,6 +6097,27 @@ var TimeGrid = Grid.extend({
 		tops.push(top + this.slatEls.last().outerHeight()); // bottom of the last slat
 
 		this.slatTops = tops;
+	},
+	
+	// Queries each `slatEl` and check if it's next item has a break 
+	// if so, store the height of the break in `breakHeights`.
+	computeBreakHeights: function() {
+		var heights = [];
+		var height;
+		
+		var breakNode;
+
+		this.slatEls.each(function(i, node) {
+			breakNode = $(node).next(".fc-timeslots-break");
+			if (breakNode.length !== 0) {
+				height = breakNode.height();
+			} else {
+				height = 0;
+			}
+			heights.push(height);
+		});
+
+		this.breakHeights = heights;
 	},
 
 
