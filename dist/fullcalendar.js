@@ -5914,16 +5914,36 @@ var TimeGrid = Grid.extend({
 	computeSnapTime: function(row) {
 		var slots = this.view.opt('slots');
 		if (slots) {
-			// var lastIndex = slots.length;
+			var beginTime = this.start.clone();
+			var rowTime;
 			
-			// var startTime = this.start.clone().time(slots[0].start);
-			// var endTime = this.start.clone().time(slots[lastIndex - 1].end);
+			if(row == slots.length) {
+				rowTime = this.start.clone().time(slots[row - 1].start);
+			} 
+			else {
+				rowTime = this.start.clone().time(slots[row].start);
+			}
 			
-			return moment.duration(this.minTime + this.snapDuration * row);
+			return moment.duration(rowTime.diff(beginTime));
 		}
 		else {
 			return moment.duration(this.minTime + this.snapDuration * row);
 		}
+	},
+	
+	// Given a row number of the grid for a bottom, representing a "snap", returns a time (Duration) from its start-of-day
+	computeSnapTimeBottom: function(row) {
+		var slots = this.view.opt('slots');
+		var beginTime = this.start.clone();
+		var rowTime;
+		
+		if(row == slots.length) {
+			rowTime = this.start.clone().time(slots[row - 1].end);
+		} else {
+			rowTime = this.start.clone().time(slots[row].end);
+		}
+		
+		return moment.duration(rowTime.diff(beginTime));
 	},
 
 
@@ -5971,7 +5991,24 @@ var TimeGrid = Grid.extend({
 			this.updateSegVerticals();
 		}
 	},
-
+	
+	// Given a cell object with index and misc data, generates a range object
+	computeCellRange: function(cell) {
+		var date = this.computeCellDate(cell);
+		var slots = this.view.opt('slots');
+		
+		if (slots) {
+			return {
+				start: date.clone().time(slots[cell.row].start),
+				end: date.clone().time(slots[cell.row].end)
+			};
+		} else {
+			return {
+				start: date,
+				end: date.clone().add(this.cellDuration)
+			};
+		}
+	},
 
 	// Computes the top/bottom coordinates of each "snap" rows
 	computeRowCoords: function() {
@@ -5979,17 +6016,27 @@ var TimeGrid = Grid.extend({
 		var items = [];
 		var i;
 		var item;
+		
+		var slots = this.view.opt('slots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
 				top: originTop + this.computeTimeTop(this.computeSnapTime(i))
 			};
-			if (i > 0) {
+			if (i > 0 && slots) {
+				items[i - 1].bottom = item.top - this.breakHeights[i - 1];
+			}
+			else if (i > 0) {
 				items[i - 1].bottom = item.top;
 			}
 			items.push(item);
 		}
-		item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
+		
+		if(slots) {
+			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
+		} else {
+			item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
+		}
 
 		return items;
 	},
@@ -6012,7 +6059,7 @@ var TimeGrid = Grid.extend({
 		if (slots) {
 			var beginTime = this.start.clone();
 			
-			var slatIndex;
+			var row;
 			var isBottom = false;
 
 			var slot;
@@ -6035,25 +6082,14 @@ var TimeGrid = Grid.extend({
 						isBottom = true;
 						i++;
 					}
-					slatIndex = i;
+					row = i;
 					break;
-				}
-				if (i == slots.length - 1) {
-					slatIndex = i;
 				}
 			}
 			
-			var slatTop;
-			var slatBottom;
+			var slatTop = this.slatTops[row]; // the top position of the furthest whole slot;
 			
-			var breakHeightTop;
-			var breakHeightBottom;
-			
-			slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
-			
-			breakHeightBottom = isNaN(this.breakHeights[slatIndex - 1]) ? 0 : this.breakHeights[slatIndex - 1];
-			
-			slatBottom = this.slatTops[slatIndex + 1];
+			var breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
 			
 			return (isBottom) ? slatTop - breakHeightBottom : slatTop;
 		} 
@@ -8067,7 +8103,25 @@ function Calendar_constructor(element, overrides) {
 			end.stripTime().add(t.defaultAllDayEventDuration);
 		}
 		else {
-			end.add(t.defaultTimedEventDuration);
+			var slots = options.slots;
+			var startTime;
+			
+			if(slots) {
+				var slot;
+				for (var i=0; i<slots.length; i++) {
+					slot = slots[i];
+					startTime = start.clone().time(slot.start);
+					
+					if(startTime.isSame(start)) {
+						end.time(slot.end)
+						break;
+					}
+				}
+			}
+			else {
+				end.add(t.defaultTimedEventDuration);
+			}
+		
 		}
 
 		if (t.getIsAmbigTimezone()) {
