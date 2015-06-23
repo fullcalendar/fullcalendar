@@ -252,7 +252,7 @@ var TimeGrid = Grid.extend({
 		if (slots) {
 			var beginTime = this.start.clone();
 			var rowTime;
-			
+
 			if(row == slots.length) {
 				rowTime = this.start.clone().time(slots[row - 1].start);
 			} 
@@ -275,7 +275,8 @@ var TimeGrid = Grid.extend({
 		
 		if(row == slots.length) {
 			rowTime = this.start.clone().time(slots[row - 1].end);
-		} else {
+		}
+		else {
 			rowTime = this.start.clone().time(slots[row].end);
 		}
 		
@@ -327,24 +328,6 @@ var TimeGrid = Grid.extend({
 			this.updateSegVerticals();
 		}
 	},
-	
-	// Given a cell object with index and misc data, generates a range object
-	computeCellRange: function(cell) {
-		var date = this.computeCellDate(cell);
-		var slots = this.view.opt('slots');
-		
-		if (slots) {
-			return {
-				start: date.clone().time(slots[cell.row].start),
-				end: date.clone().time(slots[cell.row].end)
-			};
-		} else {
-			return {
-				start: date,
-				end: date.clone().add(this.cellDuration)
-			};
-		}
-	},
 
 	// Computes the top/bottom coordinates of each "snap" rows
 	computeRowCoords: function() {
@@ -353,16 +336,15 @@ var TimeGrid = Grid.extend({
 		var i;
 		var item;
 		
+		var breakHeightBottom;
+		
 		var slots = this.view.opt('slots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
 				top: originTop + this.computeTimeTop(this.computeSnapTime(i))
 			};
-			if (i > 0 && slots) {
-				items[i - 1].bottom = item.top - this.breakHeights[i - 1];
-			}
-			else if (i > 0) {
+			if (i > 0) {
 				items[i - 1].bottom = item.top;
 			}
 			items.push(item);
@@ -370,7 +352,8 @@ var TimeGrid = Grid.extend({
 		
 		if(slots) {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
-		} else {
+		}
+		else {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
 		}
 
@@ -397,6 +380,7 @@ var TimeGrid = Grid.extend({
 			
 			var row;
 			var isBottom = false;
+			var remainder = false;
 
 			var slot;
 			var startTime;
@@ -418,6 +402,10 @@ var TimeGrid = Grid.extend({
 						isBottom = true;
 						i++;
 					}
+					else if (time.asMinutes() != duration.asMinutes()) {
+						remainder = true;
+						i++;
+					}
 					row = i;
 					break;
 				}
@@ -427,7 +415,7 @@ var TimeGrid = Grid.extend({
 			
 			var breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
 			
-			return (isBottom) ? slatTop - breakHeightBottom : slatTop;
+			return (isBottom || remainder) ? slatTop - breakHeightBottom : slatTop;
 		} 
 		else {
 			var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered

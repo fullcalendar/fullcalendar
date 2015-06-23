@@ -2981,13 +2981,21 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// If being overridden, should return a range with reference-free date copies.
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
-
-		return {
-			start: date,
-			end: date.clone().add(this.cellDuration)
-		};
+		var slots = this.view.opt('slots');
+		
+		if (slots) {
+			return {
+				start: date.clone().time(slots[cell.row].start),
+				end: date.clone().time(slots[cell.row].end)
+			};
+		}
+		else {
+			return {
+				start: date,
+				end: date.clone().add(this.cellDuration)
+			};
+		}
 	},
-
 
 	// Given a cell, returns its start date. Should return a reference-free date copy.
 	computeCellDate: function(cell) {
@@ -5916,7 +5924,7 @@ var TimeGrid = Grid.extend({
 		if (slots) {
 			var beginTime = this.start.clone();
 			var rowTime;
-			
+
 			if(row == slots.length) {
 				rowTime = this.start.clone().time(slots[row - 1].start);
 			} 
@@ -5939,7 +5947,8 @@ var TimeGrid = Grid.extend({
 		
 		if(row == slots.length) {
 			rowTime = this.start.clone().time(slots[row - 1].end);
-		} else {
+		}
+		else {
 			rowTime = this.start.clone().time(slots[row].end);
 		}
 		
@@ -5991,24 +6000,6 @@ var TimeGrid = Grid.extend({
 			this.updateSegVerticals();
 		}
 	},
-	
-	// Given a cell object with index and misc data, generates a range object
-	computeCellRange: function(cell) {
-		var date = this.computeCellDate(cell);
-		var slots = this.view.opt('slots');
-		
-		if (slots) {
-			return {
-				start: date.clone().time(slots[cell.row].start),
-				end: date.clone().time(slots[cell.row].end)
-			};
-		} else {
-			return {
-				start: date,
-				end: date.clone().add(this.cellDuration)
-			};
-		}
-	},
 
 	// Computes the top/bottom coordinates of each "snap" rows
 	computeRowCoords: function() {
@@ -6017,16 +6008,15 @@ var TimeGrid = Grid.extend({
 		var i;
 		var item;
 		
+		var breakHeightBottom;
+		
 		var slots = this.view.opt('slots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
 				top: originTop + this.computeTimeTop(this.computeSnapTime(i))
 			};
-			if (i > 0 && slots) {
-				items[i - 1].bottom = item.top - this.breakHeights[i - 1];
-			}
-			else if (i > 0) {
+			if (i > 0) {
 				items[i - 1].bottom = item.top;
 			}
 			items.push(item);
@@ -6034,7 +6024,8 @@ var TimeGrid = Grid.extend({
 		
 		if(slots) {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
-		} else {
+		}
+		else {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
 		}
 
@@ -6061,6 +6052,7 @@ var TimeGrid = Grid.extend({
 			
 			var row;
 			var isBottom = false;
+			var remainder = false;
 
 			var slot;
 			var startTime;
@@ -6082,6 +6074,10 @@ var TimeGrid = Grid.extend({
 						isBottom = true;
 						i++;
 					}
+					else if (time.asMinutes() != duration.asMinutes()) {
+						remainder = true;
+						i++;
+					}
 					row = i;
 					break;
 				}
@@ -6091,7 +6087,7 @@ var TimeGrid = Grid.extend({
 			
 			var breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
 			
-			return (isBottom) ? slatTop - breakHeightBottom : slatTop;
+			return (isBottom || remainder) ? slatTop - breakHeightBottom : slatTop;
 		} 
 		else {
 			var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
@@ -9843,8 +9839,10 @@ function EventManager(options) { // assumed to be a calendar
 		var durationDelta;
 		var undoFunc;
 
+		var slots = options.slots;
+		
 		// diffs the dates in the appropriate way, returning a duration
-		function diffDates(date1, date0) { // date1 - date0
+		function diffDates(date1, date0, isStart) { // date1 - date0
 			if (largeUnit) {
 				return diffByUnit(date1, date0, largeUnit);
 			}
@@ -9852,7 +9850,64 @@ function EventManager(options) { // assumed to be a calendar
 				return diffDay(date1, date0);
 			}
 			else {
-				return diffDayTime(date1, date0);
+				if(slots) {
+					var diffDuration = diffDayTime(date1, date0);
+					
+					var slot;
+					var nextSlot;
+					var previousSlot;
+					
+					var startTime;
+					var endTime;
+					
+					var previousEndTime;
+					
+					for (var i=0; i<slots.length; i++) {
+						slot = slots[i];
+						nextSlot = slots[i + 1];
+						previousSlot = slots[i - 1];
+						
+						startTime = date1.clone().time(slot.start);
+						endTime = date1.clone().time(slot.end);
+						
+						if(previousSlot) {
+							previousEndTime = date1.clone().time(previousSlot.end);
+						}
+						
+						if(isStart && i == 0 && date1.isBefore(startTime)) {
+							diffDuration = diffDayTime(endTime, date0);
+							break;
+						}
+						
+						if(!isStart && i == slots.length - 1 && date1.isAfter(endTime)) {
+							diffDuration = diffDayTime(endTime, date0);
+							break;
+						}
+						
+						if(date1.isBetween(startTime, endTime) || (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime))) {
+							if(isStart) {
+								diffDuration = diffDayTime(startTime, date0);
+								break;
+							}
+							else {
+								diffDuration = diffDayTime(endTime, date0);
+								break;
+							}
+						}
+						
+						if(isStart && date1.isSame(startTime)) {
+							break;
+						}
+						
+						if(!isStart && date1.isSame(endTime)) {
+							break;
+						}
+					}
+					
+					return diffDuration;
+				} else {
+					return diffDayTime(date1, date0);
+				}
 			}
 		}
 
@@ -9883,11 +9938,11 @@ function EventManager(options) { // assumed to be a calendar
 		clearEnd = event._end !== null && newProps.end === null;
 
 		// compute the delta for moving the start date
-		startDelta = diffDates(newProps.start, oldProps.start);
+		startDelta = diffDates(newProps.start, oldProps.start, true);
 
 		// compute the delta for moving the end date
 		if (newProps.end) {
-			endDelta = diffDates(newProps.end, oldProps.end);
+			endDelta = diffDates(newProps.end, oldProps.end, false);
 			durationDelta = endDelta.subtract(startDelta);
 		}
 		else {
@@ -10130,6 +10185,43 @@ function EventManager(options) { // assumed to be a calendar
 		range = $.extend({}, range); // copy all properties in case there are misc non-date properties
 		range.start = range.start.clone().stripZone();
 		range.end = range.end.clone().stripZone();
+		
+		var slots = options.slots;
+		
+		if(slots){
+			var slot;
+			var startTime;
+			var endTime;
+			
+			var isAllowed = false;
+			var isInRange = true;
+			
+			var minTime = range.start.clone().time(slots[0].start);
+			var maxTime = range.end.clone().time(slots[slots.length - 1].end);
+			
+			if(range.start.isBefore(minTime) || range.end.isAfter(maxTime)) {
+				isInRange = false;
+			}
+			
+			if(isInRange) {
+				for (var i=0; i<slots.length; i++) {
+					slot = slots[i];
+					startTime = range.start.clone().time(slot.start);
+					endTime = range.end.clone().time(slot.end);
+					
+					if(range.start.isSame(startTime)) {
+						isAllowed = true;
+					}
+					if(range.end.isSame(endTime)) {
+						isAllowed = true;
+					}
+				}
+			}
+			
+			if(!isAllowed || !isInRange) {
+				return false;
+			}
+		}
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {
