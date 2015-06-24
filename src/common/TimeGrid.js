@@ -380,8 +380,8 @@ var TimeGrid = Grid.extend({
 			
 			var row;
 			var isBottom = false;
-			var remainder = false;
-
+			var remainder;
+			
 			var slot;
 			var startTime;
 			var endTime;
@@ -403,8 +403,11 @@ var TimeGrid = Grid.extend({
 						i++;
 					}
 					else if (time.asMinutes() != duration.asMinutes()) {
-						remainder = true;
-						i++;
+						if((endTime.diff(startTime, "minutes") / 2) == (time.asMinutes() - duration.asMinutes())) { // time is half of timeslot
+							remainder = Number.MAX_VALUE;
+						} else {
+							remainder = time.asMinutes() - duration.asMinutes();
+						}
 					}
 					row = i;
 					break;
@@ -415,7 +418,18 @@ var TimeGrid = Grid.extend({
 			
 			var breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
 			
-			return (isBottom || remainder) ? slatTop - breakHeightBottom : slatTop;
+			var slatBottom;
+			
+			var breakHeightTop
+			
+			if (remainder) { // time spans part-way into the slot
+				slatBottom = this.slatTops[row + 1];
+				breakHeightTop = isNaN(this.breakHeights[row]) ? 0 : this.breakHeights[row];
+				return (remainder == Number.MAX_VALUE) ? ((slatTop + slatBottom - breakHeightTop) / 2) : slatTop + remainder;
+			}
+			else {
+				return (isBottom) ? slatTop - breakHeightBottom : slatTop;
+			}
 		} 
 		else {
 			var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
