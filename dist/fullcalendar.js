@@ -6075,10 +6075,14 @@ var TimeGrid = Grid.extend({
 						i++;
 					}
 					else if (time.asMinutes() != duration.asMinutes()) {
-						if((endTime.diff(startTime, "minutes") / 2) == (time.asMinutes() - duration.asMinutes())) { // time is half of timeslot
-							remainder = Number.MAX_VALUE;
-						} else {
-							remainder = time.asMinutes() - duration.asMinutes();
+						if (endTime.diff(startTime, "minutes") > 32) { // Higher than 32 minutes (= 32 pixels = 2em)
+							remainder = time.asMinutes() - duration.asMinutes(); // So 1 minute == 1 pixel
+						}
+						else {  // Not higher than 2em but the timeslot minimal height is 2em
+							var oldMinutes = time.asMinutes() - duration.asMinutes();
+							var newMinutes = (moment.duration(endTime.diff(startTime)).asMinutes() - moment.duration(startTime.clone().add(33, 'm').diff(endTime)).asMinutes()) + oldMinutes;
+							
+							remainder = newMinutes; // So 1 minute > 1 pixel
 						}
 					}
 					row = i;
@@ -6088,18 +6092,13 @@ var TimeGrid = Grid.extend({
 			
 			var slatTop = this.slatTops[row]; // the top position of the furthest whole slot;
 			
-			var breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
-			
-			var slatBottom;
-			
-			var breakHeightTop
+			var breakHeightBottom;
 			
 			if (remainder) { // time spans part-way into the slot
-				slatBottom = this.slatTops[row + 1];
-				breakHeightTop = isNaN(this.breakHeights[row]) ? 0 : this.breakHeights[row];
-				return (remainder == Number.MAX_VALUE) ? ((slatTop + slatBottom - breakHeightTop) / 2) : slatTop + remainder;
+				return slatTop + remainder;
 			}
 			else {
+				breakHeightBottom = isNaN(this.breakHeights[row - 1]) ? 0 : this.breakHeights[row - 1];
 				return (isBottom) ? slatTop - breakHeightBottom : slatTop;
 			}
 		} 
