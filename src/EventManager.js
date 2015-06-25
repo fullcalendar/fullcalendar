@@ -688,6 +688,7 @@ function EventManager(options) { // assumed to be a calendar
 		var undoFunc;
 
 		var slots = options.slots;
+		var snapOnSlots = options.snapOnSlots;
 		
 		// diffs the dates in the appropriate way, returning a duration
 		function diffDates(date1, date0, isStart) { // date1 - date0
@@ -698,7 +699,7 @@ function EventManager(options) { // assumed to be a calendar
 				return diffDay(date1, date0);
 			}
 			else {
-				if(slots) {
+				if(slots && snapOnSlots) {
 					var diffDuration = diffDayTime(date1, date0);
 					
 					var slot;
@@ -723,7 +724,7 @@ function EventManager(options) { // assumed to be a calendar
 						}
 						
 						if(isStart && i == 0 && date1.isBefore(startTime)) {
-							diffDuration = diffDayTime(endTime, date0);
+							diffDuration = diffDayTime(startTime, date0);
 							break;
 						}
 						
@@ -1034,7 +1035,7 @@ function EventManager(options) { // assumed to be a calendar
 		range.start = range.start.clone().stripZone();
 		range.end = range.end.clone().stripZone();
 		
-		var slots = options.slots;
+		/* var slots = options.slots;
 		
 		if(slots){
 			var slot;
@@ -1069,7 +1070,7 @@ function EventManager(options) { // assumed to be a calendar
 			if(!isAllowed || !isInRange) {
 				return false;
 			}
-		}
+		} */
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {

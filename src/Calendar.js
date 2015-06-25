@@ -414,9 +414,10 @@ function Calendar_constructor(element, overrides) {
 		}
 		else {
 			var slots = options.slots;
+			var snapOnSlots = options.snapOnSlots;
 			var startTime;
 			
-			if(slots) {
+			if(slots && snapOnSlots) {
 				var slot;
 				for (var i=0; i<slots.length; i++) {
 					slot = slots[i];

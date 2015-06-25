@@ -184,10 +184,11 @@ var Grid = fc.Grid = RowRenderer.extend({
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
 		var slots = this.view.opt('slots');
+		var snapOnSlots = this.view.opt('snapOnSlots');
 		
-		if (slots) {
+		if (slots && snapOnSlots) {
 			return {
-				start: date.clone().time(slots[cell.row].start),
+				start: date,
 				end: date.clone().time(slots[cell.row].end)
 			};
 		}

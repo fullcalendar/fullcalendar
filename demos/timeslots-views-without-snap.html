@@ -24,7 +24,8 @@
 			eventLimit: true, // allow "more" link when too many events
 			axisFormat: 'H:mm', // uppercase H for 24-hour clock
 			timeFormat: 'H:mm',
-			snapOnSlots: true, // When dragging/resizing a event it snaps on the timeslot
+			snapOnSlots: false, // When dragging/resizing a event it snaps not on the timeslot
+			snapDuration: '00:15:00', // instead it does steps of 15 minutes
 			slots: [
 				{start: '07:35', end: '08:20'},
 				{start: '08:25', end: '09:10'},

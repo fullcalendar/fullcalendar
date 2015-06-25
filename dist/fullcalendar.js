@@ -2982,10 +2982,11 @@ var Grid = fc.Grid = RowRenderer.extend({
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
 		var slots = this.view.opt('slots');
+		var snapOnSlots = this.view.opt('snapOnSlots');
 		
-		if (slots) {
+		if (slots && snapOnSlots) {
 			return {
-				start: date.clone().time(slots[cell.row].start),
+				start: date,
 				end: date.clone().time(slots[cell.row].end)
 			};
 		}
@@ -5878,6 +5879,8 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var colDates = [];
 		var date;
+		var slots = view.opt('slots');
+		var snapOnSlots = view.opt('snapOnSlots');
 
 		date = this.start.clone();
 		while (date.isBefore(this.end)) {
@@ -5892,7 +5895,7 @@ var TimeGrid = Grid.extend({
 
 		this.colDates = colDates;
 		this.colCnt = colDates.length;
-		this.rowCnt = view.opt('slots') ? view.opt('slots').length : Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
+		this.rowCnt = (slots && snapOnSlots) ? slots.length : Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
 	},
 
 
@@ -5921,7 +5924,8 @@ var TimeGrid = Grid.extend({
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTime: function(row) {
 		var slots = this.view.opt('slots');
-		if (slots) {
+		var snapOnSlots = this.view.opt('snapOnSlots');
+		if (slots && snapOnSlots) {
 			var beginTime = this.start.clone();
 			var rowTime;
 
@@ -6011,6 +6015,7 @@ var TimeGrid = Grid.extend({
 		var breakHeightBottom;
 		
 		var slots = this.view.opt('slots');
+		var snapOnSlots = this.view.opt('snapOnSlots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
@@ -6022,7 +6027,7 @@ var TimeGrid = Grid.extend({
 			items.push(item);
 		}
 		
-		if(slots) {
+		if(slots && snapOnSlots) {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
 		}
 		else {
@@ -6080,7 +6085,7 @@ var TimeGrid = Grid.extend({
 						}
 						else {  // Not higher than 2em but the timeslot minimal height is 2em
 							var oldMinutes = time.asMinutes() - duration.asMinutes();
-							var newMinutes = (moment.duration(endTime.diff(startTime)).asMinutes() - moment.duration(startTime.clone().add(33, 'm').diff(endTime)).asMinutes()) + oldMinutes;
+							var newMinutes = (endTime.diff(startTime, "minutes") - startTime.clone().add(33, 'm').diff(endTime, "minutes")) + oldMinutes;
 							
 							remainder = newMinutes; // So 1 minute > 1 pixel
 						}
@@ -8113,9 +8118,10 @@ function Calendar_constructor(element, overrides) {
 		}
 		else {
 			var slots = options.slots;
+			var snapOnSlots = options.snapOnSlots;
 			var startTime;
 			
-			if(slots) {
+			if(slots && snapOnSlots) {
 				var slot;
 				for (var i=0; i<slots.length; i++) {
 					slot = slots[i];
@@ -9853,6 +9859,7 @@ function EventManager(options) { // assumed to be a calendar
 		var undoFunc;
 
 		var slots = options.slots;
+		var snapOnSlots = options.snapOnSlots;
 		
 		// diffs the dates in the appropriate way, returning a duration
 		function diffDates(date1, date0, isStart) { // date1 - date0
@@ -9863,7 +9870,7 @@ function EventManager(options) { // assumed to be a calendar
 				return diffDay(date1, date0);
 			}
 			else {
-				if(slots) {
+				if(slots && snapOnSlots) {
 					var diffDuration = diffDayTime(date1, date0);
 					
 					var slot;
@@ -9888,7 +9895,7 @@ function EventManager(options) { // assumed to be a calendar
 						}
 						
 						if(isStart && i == 0 && date1.isBefore(startTime)) {
-							diffDuration = diffDayTime(endTime, date0);
+							diffDuration = diffDayTime(startTime, date0);
 							break;
 						}
 						
@@ -10199,7 +10206,7 @@ function EventManager(options) { // assumed to be a calendar
 		range.start = range.start.clone().stripZone();
 		range.end = range.end.clone().stripZone();
 		
-		var slots = options.slots;
+		/* var slots = options.slots;
 		
 		if(slots){
 			var slot;
@@ -10234,7 +10241,7 @@ function EventManager(options) { // assumed to be a calendar
 			if(!isAllowed || !isInRange) {
 				return false;
 			}
-		}
+		} */
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {

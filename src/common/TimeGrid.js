@@ -206,6 +206,8 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var colDates = [];
 		var date;
+		var slots = view.opt('slots');
+		var snapOnSlots = view.opt('snapOnSlots');
 
 		date = this.start.clone();
 		while (date.isBefore(this.end)) {
@@ -220,7 +222,7 @@ var TimeGrid = Grid.extend({
 
 		this.colDates = colDates;
 		this.colCnt = colDates.length;
-		this.rowCnt = view.opt('slots') ? view.opt('slots').length : Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
+		this.rowCnt = (slots && snapOnSlots) ? slots.length : Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
 	},
 
 
@@ -249,7 +251,8 @@ var TimeGrid = Grid.extend({
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTime: function(row) {
 		var slots = this.view.opt('slots');
-		if (slots) {
+		var snapOnSlots = this.view.opt('snapOnSlots');
+		if (slots && snapOnSlots) {
 			var beginTime = this.start.clone();
 			var rowTime;
 
@@ -339,6 +342,7 @@ var TimeGrid = Grid.extend({
 		var breakHeightBottom;
 		
 		var slots = this.view.opt('slots');
+		var snapOnSlots = this.view.opt('snapOnSlots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
@@ -350,7 +354,7 @@ var TimeGrid = Grid.extend({
 			items.push(item);
 		}
 		
-		if(slots) {
+		if(slots && snapOnSlots) {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
 		}
 		else {
@@ -408,7 +412,7 @@ var TimeGrid = Grid.extend({
 						}
 						else {  // Not higher than 2em but the timeslot minimal height is 2em
 							var oldMinutes = time.asMinutes() - duration.asMinutes();
-							var newMinutes = (moment.duration(endTime.diff(startTime)).asMinutes() - moment.duration(startTime.clone().add(33, 'm').diff(endTime)).asMinutes()) + oldMinutes;
+							var newMinutes = (endTime.diff(startTime, "minutes") - startTime.clone().add(33, 'm').diff(endTime, "minutes")) + oldMinutes;
 							
 							remainder = newMinutes; // So 1 minute > 1 pixel
 						}
