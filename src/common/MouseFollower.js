@@ -87,7 +87,7 @@ var MouseFollower = Class.extend({
 				});
 			}
 			else {
-				complete();
+				complete.call(this.el.get(0));
 			}
 		}
 	},
