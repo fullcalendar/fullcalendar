@@ -52,7 +52,7 @@ fc.lang = function(langCode, newFcOptions) {
 
 	// provided new options for this language? merge them in
 	if (newFcOptions) {
-		fcOptions = langOptionHash[langCode] = mergeOptions(fcOptions, newFcOptions);
+		fcOptions = langOptionHash[langCode] = mergeOptions([ fcOptions, newFcOptions ]);
 	}
 
 	// compute language options that weren't defined.

@@ -4,19 +4,7 @@
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-var AGENDA_DEFAULTS = {
-	allDaySlot: true,
-	allDayText: 'all-day',
-	scrollTime: '06:00:00',
-	slotDuration: '00:30:00',
-	minTime: '00:00:00',
-	maxTime: '24:00:00',
-	slotEventOverlap: true // a bad name. confused with overlap/constraint system
-};
-
-var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
-
-var AgendaView = fcViews.agenda = View.extend({
+var AgendaView = View.extend({
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -64,7 +52,7 @@ var AgendaView = fcViews.agenda = View.extend({
 
 
 	// Renders the view into `this.el`, which has already been assigned
-	render: function() {
+	renderDates: function() {
 
 		this.el.addClass('fc-agenda-view').html(this.renderHtml());
 
@@ -93,12 +81,12 @@ var AgendaView = fcViews.agenda = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
-	destroy: function() {
-		this.timeGrid.destroyDates();
+	unrenderDates: function() {
+		this.timeGrid.unrenderDates();
 		this.timeGrid.removeElement();
 
 		if (this.dayGrid) {
-			this.dayGrid.destroyDates();
+			this.dayGrid.unrenderDates();
 			this.dayGrid.removeElement();
 		}
 	},
@@ -237,7 +225,7 @@ var AgendaView = fcViews.agenda = View.extend({
 
 		// limit number of events in the all-day area
 		if (this.dayGrid) {
-			this.dayGrid.destroySegPopover(); // kill the "more" popover if displayed
+			this.dayGrid.removeSegPopover(); // kill the "more" popover if displayed
 
 			eventLimit = this.opt('eventLimit');
 			if (eventLimit && typeof eventLimit !== 'number') {
@@ -328,12 +316,12 @@ var AgendaView = fcViews.agenda = View.extend({
 
 
 	// Unrenders all event elements and clears internal segment data
-	destroyEvents: function() {
+	unrenderEvents: function() {
 
-		// destroy the events in the subcomponents
-		this.timeGrid.destroyEvents();
+		// unrender the events in the subcomponents
+		this.timeGrid.unrenderEvents();
 		if (this.dayGrid) {
-			this.dayGrid.destroyEvents();
+			this.dayGrid.unrenderEvents();
 		}
 
 		// we DON'T need to call updateHeight() because:
@@ -357,10 +345,10 @@ var AgendaView = fcViews.agenda = View.extend({
 	},
 
 
-	destroyDrag: function() {
-		this.timeGrid.destroyDrag();
+	unrenderDrag: function() {
+		this.timeGrid.unrenderDrag();
 		if (this.dayGrid) {
-			this.dayGrid.destroyDrag();
+			this.dayGrid.unrenderDrag();
 		}
 	},
 
@@ -381,13 +369,11 @@ var AgendaView = fcViews.agenda = View.extend({
 
 
 	// Unrenders a visual indications of a selection
-	destroySelection: function() {
-		this.timeGrid.destroySelection();
+	unrenderSelection: function() {
+		this.timeGrid.unrenderSelection();
 		if (this.dayGrid) {
-			this.dayGrid.destroySelection();
+			this.dayGrid.unrenderSelection();
 		}
 	}
 
 });
-
-AgendaView.defaults = AGENDA_DEFAULTS;

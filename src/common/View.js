@@ -13,7 +13,7 @@ var View = fc.View = Class.extend({
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
-	isDisplayed: false,
+	displaying: null, // a promise representing the state of rendering. null if no render requested
 	isSkeletonRendered: false,
 	isEventsRendered: false,
 
@@ -28,6 +28,7 @@ var View = fc.View = Class.extend({
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
+	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 
 	// subclasses can optionally use a scroll container
@@ -57,6 +58,7 @@ var View = fc.View = Class.extend({
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initThemingProps();
 		this.initHiddenDays();
+		this.isRTL = this.opt('isRTL');
 
 		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
@@ -246,7 +248,7 @@ var View = fc.View = Class.extend({
 
 		// clean up the skeleton
 		if (this.isSkeletonRendered) {
-			this.destroySkeleton();
+			this.unrenderSkeleton();
 			this.isSkeletonRendered = false;
 		}
 
@@ -255,62 +257,83 @@ var View = fc.View = Class.extend({
 		this.el.remove();
 
 		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-		// We don't null-out the View's other jQuery element references upon destroy, so why should we kill this.el?
+		// We don't null-out the View's other jQuery element references upon destroy,
+		//  so we shouldn't kill this.el either.
 	},
 
 
 	// Does everything necessary to display the view centered around the given date.
 	// Does every type of rendering EXCEPT rendering events.
+	// Is asychronous and returns a promise.
 	display: function(date) {
+		var _this = this;
 		var scrollState = null;
 
-		if (this.isDisplayed) {
+		if (this.displaying) {
 			scrollState = this.queryScroll();
 		}
 
-		this.clear(); // clear the old content
-		this.setDate(date);
-		this.render();
-		this.updateSize();
-		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-		this.isDisplayed = true;
-
-		scrollState = this.computeInitialScroll(scrollState);
-		this.forceScroll(scrollState);
-
-		this.triggerRender();
+		return this.clear().then(function() { // clear the content first (async)
+			return (
+				_this.displaying =
+					$.when(_this.displayView(date)) // displayView might return a promise
+						.then(function() {
+							_this.forceScroll(_this.computeInitialScroll(scrollState));
+							_this.triggerRender();
+						})
+			);
+		});
 	},
 
 
 	// Does everything necessary to clear the content of the view.
 	// Clears dates and events. Does not clear the skeleton.
-	clear: function() { // clears the view of *content* but not the skeleton
-		if (this.isDisplayed) {
-			this.unselect();
-			this.clearEvents();
-			this.triggerDestroy();
-			this.destroyBusinessHours();
-			this.destroy();
-			this.isDisplayed = false;
+	// Is asychronous and returns a promise.
+	clear: function() {
+		var _this = this;
+		var displaying = this.displaying;
+
+		if (displaying) { // previously displayed, or in the process of being displayed?
+			return displaying.then(function() { // wait for the display to finish
+				_this.displaying = null;
+				_this.clearEvents();
+				return _this.clearView(); // might return a promise. chain it
+			});
+		}
+		else {
+			return $.when(); // an immediately-resolved promise
 		}
 	},
 
 
-	// Renders the view's date-related content, rendering the view's non-content skeleton if necessary
-	render: function() {
+	// Displays the view's non-event content, such as date-related content or anything required by events.
+	// Renders the view's non-content skeleton if necessary.
+	// Can be asynchronous and return a promise.
+	displayView: function(date) {
 		if (!this.isSkeletonRendered) {
 			this.renderSkeleton();
 			this.isSkeletonRendered = true;
 		}
+		this.setDate(date);
+		if (this.render) {
+			this.render(); // TODO: deprecate
+		}
 		this.renderDates();
+		this.updateSize();
+		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
 	},
 
 
-	// Unrenders the view's date-related content.
-	// Call this instead of destroyDates directly in case the View subclass wants to use a render/destroy pattern
-	// where both the skeleton and the content always get rendered/unrendered together.
-	destroy: function() {
-		this.destroyDates();
+	// Unrenders the view content that was rendered in displayView.
+	// Can be asynchronous and return a promise.
+	clearView: function() {
+		this.unselect();
+		this.triggerUnrender();
+		this.unrenderBusinessHours();
+		this.unrenderDates();
+		if (this.destroy) {
+			this.destroy(); // TODO: deprecate
+		}
 	},
 
 
@@ -321,7 +344,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders the basic structure of the view
-	destroySkeleton: function() {
+	unrenderSkeleton: function() {
 		// subclasses should implement
 	},
 
@@ -334,7 +357,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders the view's date-related content
-	destroyDates: function() {
+	unrenderDates: function() {
 		// subclasses should override
 	},
 
@@ -346,7 +369,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders previously-rendered business-hours
-	destroyBusinessHours: function() {
+	unrenderBusinessHours: function() {
 		// subclasses should implement
 	},
 
@@ -358,7 +381,7 @@ var View = fc.View = Class.extend({
 
 
 	// Signals that the view's content is about to be unrendered
-	triggerDestroy: function() {
+	triggerUnrender: function() {
 		this.trigger('viewDestroy', this, this, this.el);
 	},
 
@@ -397,8 +420,8 @@ var View = fc.View = Class.extend({
 			scrollState = this.queryScroll();
 		}
 
-		this.updateHeight();
-		this.updateWidth();
+		this.updateHeight(isResize);
+		this.updateWidth(isResize);
 
 		if (isResize) {
 			this.setScroll(scrollState);
@@ -407,13 +430,13 @@ var View = fc.View = Class.extend({
 
 
 	// Refreshes the horizontal dimensions of the calendar
-	updateWidth: function() {
+	updateWidth: function(isResize) {
 		// subclasses should implement
 	},
 
 
 	// Refreshes the vertical dimensions of the calendar
-	updateHeight: function() {
+	updateHeight: function(isResize) {
 		var calendar = this.calendar; // we poll the calendar for height information
 
 		this.setHeight(
@@ -508,8 +531,11 @@ var View = fc.View = Class.extend({
 	// Does everything necessary to clear the view's currently-rendered events
 	clearEvents: function() {
 		if (this.isEventsRendered) {
-			this.triggerEventDestroy();
-			this.destroyEvents();
+			this.triggerEventUnrender();
+			if (this.destroyEvents) {
+				this.destroyEvents(); // TODO: deprecate
+			}
+			this.unrenderEvents();
 			this.isEventsRendered = false;
 		}
 	},
@@ -522,7 +548,7 @@ var View = fc.View = Class.extend({
 
 
 	// Removes event elements from the view.
-	destroyEvents: function() {
+	unrenderEvents: function() {
 		// subclasses should implement
 	},
 
@@ -537,7 +563,7 @@ var View = fc.View = Class.extend({
 
 
 	// Signals that all event elements are about to be removed
-	triggerEventDestroy: function() {
+	triggerEventUnrender: function() {
 		this.renderedEventSegEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
@@ -686,7 +712,7 @@ var View = fc.View = Class.extend({
 
 
 	// Unrenders a visual indication of an event or external-element being dragged.
-	destroyDrag: function() {
+	unrenderDrag: function() {
 		// subclasses must implement
 	},
 
@@ -764,6 +790,12 @@ var View = fc.View = Class.extend({
 	// Called when a new selection is made. Updates internal state and triggers handlers.
 	reportSelection: function(range, ev) {
 		this.isSelected = true;
+		this.triggerSelect(range, ev);
+	},
+
+
+	// Triggers handlers to 'select'
+	triggerSelect: function(range, ev) {
 		this.trigger('select', null, range.start, range.end, ev);
 	},
 
@@ -773,14 +805,17 @@ var View = fc.View = Class.extend({
 	unselect: function(ev) {
 		if (this.isSelected) {
 			this.isSelected = false;
-			this.destroySelection();
+			if (this.destroySelection) {
+				this.destroySelection(); // TODO: deprecate
+			}
+			this.unrenderSelection();
 			this.trigger('unselect', null, ev);
 		}
 	},
 
 
 	// Unrenders a visual indication of selection
-	destroySelection: function() {
+	unrenderSelection: function() {
 		// subclasses should implement
 	},
 
@@ -798,6 +833,16 @@ var View = fc.View = Class.extend({
 				this.unselect(ev);
 			}
 		}
+	},
+
+
+	/* Day Click
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Triggers handlers to 'dayClick'
+	triggerDayClick: function(cell, dayEl, ev) {
+		this.trigger('dayClick', dayEl, cell.start, ev);
 	},
 
 

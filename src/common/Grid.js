@@ -9,8 +9,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	rowCnt: 0, // number of rows
 	colCnt: 0, // number of cols
-	rowData: null, // array of objects, holding misc data for each row
-	colData: null, // array of objects, holding misc data for each column
 
 	el: null, // the containing element
 	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
@@ -76,18 +74,27 @@ var Grid = fc.Grid = RowRenderer.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Tells the grid about what period of time to display. Grid will subsequently compute dates for cell system.
+	// Tells the grid about what period of time to display.
+	// Any date-related cell system internal data should be generated.
 	setRange: function(range) {
-		var view = this.view;
-		var displayEventTime;
-		var displayEventEnd;
-
 		this.start = range.start.clone();
 		this.end = range.end.clone();
 
-		this.rowData = [];
-		this.colData = [];
-		this.updateCells();
+		this.rangeUpdated();
+		this.processRangeOptions();
+	},
+
+
+	// Called when internal variables that rely on the range should be updated
+	rangeUpdated: function() {
+	},
+
+
+	// Updates values that rely on options and also relate to range
+	processRangeOptions: function() {
+		var view = this.view;
+		var displayEventTime;
+		var displayEventEnd;
 
 		// Populate option-derived settings. Look for override first, then compute if necessary.
 		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
@@ -112,9 +119,15 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Responsible for setting rowCnt/colCnt and any other row/col data
-	updateCells: function() {
-		// subclasses must implement
+	// Called before the grid's coordinates will need to be queried for cells.
+	// Any non-date-related cell system internal data should be built.
+	build: function() {
+	},
+
+
+	// Called after the grid's coordinates are done being relied upon.
+	// Any non-date-related cell system internal data should be cleared.
+	clear: function() {
 	},
 
 
@@ -186,13 +199,13 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Retrieves misc data about the given row
 	getRowData: function(row) {
-		return this.rowData[row] || {};
+		return {};
 	},
 
 
 	// Retrieves misc data baout the given column
 	getColData: function(col) {
-		return this.colData[col] || {};
+		return {};
 	},
 
 
@@ -289,7 +302,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Removes the grid's container element from the DOM. Undoes any other DOM-related attachments.
-	// DOES NOT remove any content before hand (doens't clear events or call destroyDates), unlike View
+	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
 		this.unbindGlobalHandlers();
 
@@ -313,7 +326,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders the grid's date-related content
-	destroyDates: function() {
+	unrenderDates: function() {
 		// subclasses should implement
 	},
 
@@ -368,12 +381,12 @@ var Grid = fc.Grid = RowRenderer.extend({
 			cellOut: function(cell) {
 				dayClickCell = null;
 				selectionRange = null;
-				_this.destroySelection();
+				_this.unrenderSelection();
 				enableCursor();
 			},
 			listenStop: function(ev) {
 				if (dayClickCell) {
-					view.trigger('dayClick', _this.getCellDayEl(dayClickCell), dayClickCell.start, ev);
+					view.triggerDayClick(dayClickCell, _this.getCellDayEl(dayClickCell), ev);
 				}
 				if (selectionRange) {
 					// the selection will already have been rendered. just report it
@@ -430,7 +443,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders a mock event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		// subclasses must implement
 	},
 
@@ -441,13 +454,13 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
 	renderSelection: function(range) {
-		this.renderHighlight(range);
+		this.renderHighlight(this.selectionRangeToSegs(range));
 	},
 
 
 	// Unrenders any visual indications of a selection. Will unrender a highlight by default.
-	destroySelection: function() {
-		this.destroyHighlight();
+	unrenderSelection: function() {
+		this.unrenderHighlight();
 	},
 
 
@@ -478,19 +491,24 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+	selectionRangeToSegs: function(range) {
+		return this.rangeToSegs(range);
+	},
+
+
 	/* Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(range) {
-		this.renderFill('highlight', this.rangeToSegs(range));
+	// Renders an emphasis on the given date range. Given an array of segments.
+	renderHighlight: function(segs) {
+		this.renderFill('highlight', segs);
 	},
 
 
 	// Unrenders the emphasis on a date range
-	destroyHighlight: function() {
-		this.destroyFill('highlight');
+	unrenderHighlight: function() {
+		this.unrenderFill('highlight');
 	},
 
 
@@ -505,7 +523,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Renders a set of rectangles over the given segments of time.
-	// Returns a subset of segs, the segs that were actually rendered.
+	// MUST RETURN a subset of segs, the segs that were actually rendered.
 	// Responsible for populating this.elsByFill. TODO: better API for expressing this requirement
 	renderFill: function(type, segs) {
 		// subclasses must implement
@@ -513,7 +531,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Unrenders a specific type of fill that is currently rendered on the grid
-	destroyFill: function(type) {
+	unrenderFill: function(type) {
 		var el = this.elsByFill[type];
 
 		if (el) {

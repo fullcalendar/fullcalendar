@@ -1,5 +1,5 @@
 
-var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
+var Calendar = fc.Calendar = Class.extend({
 
 	dirDefaults: null, // option defaults related to LTR or RTL
 	langDefaults: null, // option defaults related to current locale
@@ -8,11 +8,17 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
 	header: null,
+	loadingLevel: 0, // number of simultaneous loading tasks
 
 
 	// a lot of this class' OOP logic is scoped within this constructor function,
 	// but in the future, write individual methods on the prototype.
 	constructor: Calendar_constructor,
+
+
+	// Subclasses can override this for initialization logic after the constructor has been called
+	initialize: function() {
+	},
 
 
 	// Initializes `this.options` and other important options-related objects
@@ -41,12 +47,12 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 		this.dirDefaults = dirDefaults;
 		this.langDefaults = langDefaults;
 		this.overrides = overrides;
-		this.options = mergeOptions( // merge defaults and overrides. lowest to highest precedence
+		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
 			Calendar.defaults, // global defaults
 			dirDefaults,
 			langDefaults,
 			overrides
-		);
+		]);
 		populateInstanceComputableOptions(this.options);
 
 		this.viewSpecCache = {}; // somewhat unrelated
@@ -91,43 +97,48 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 	// Builds an object with information on how to create a given view
 	buildViewSpec: function(requestedViewType) {
 		var viewOverrides = this.overrides.views || {};
+		var specChain = []; // for the view. lowest to highest priority
 		var defaultsChain = []; // for the view. lowest to highest priority
 		var overridesChain = []; // for the view. lowest to highest priority
 		var viewType = requestedViewType;
-		var viewClass;
-		var defaults; // for the view
+		var spec; // for the view
 		var overrides; // for the view
 		var duration;
 		var unit;
-		var spec;
 
 		// iterate from the specific view definition to a more general one until we hit an actual View class
-		while (viewType && !viewClass) {
-			defaults = fcViews[viewType] || {};
-			overrides = viewOverrides[viewType] || {};
-			duration = duration || overrides.duration || defaults.duration;
-			viewType = overrides.type || defaults.type; // for next iteration
+		while (viewType) {
+			spec = fcViews[viewType];
+			overrides = viewOverrides[viewType];
+			viewType = null; // clear. might repopulate for another iteration
 
-			if (typeof defaults === 'function') { // a class
-				viewClass = defaults;
-				defaultsChain.unshift(viewClass.defaults || {});
+			if (typeof spec === 'function') { // TODO: deprecate
+				spec = { 'class': spec };
 			}
-			else { // an options object
-				defaultsChain.unshift(defaults);
+
+			if (spec) {
+				specChain.unshift(spec);
+				defaultsChain.unshift(spec.defaults || {});
+				duration = duration || spec.duration;
+				viewType = viewType || spec.type;
 			}
-			overridesChain.unshift(overrides);
+
+			if (overrides) {
+				overridesChain.unshift(overrides); // view-specific option hashes have options at zero-level
+				duration = duration || overrides.duration;
+				viewType = viewType || overrides.type;
+			}
 		}
 
-		if (viewClass) {
-			spec = { 'class': viewClass, type: requestedViewType };
+		spec = mergeProps(specChain);
+		spec.type = requestedViewType;
+		if (!spec['class']) {
+			return false;
+		}
 
-			if (duration) {
-				duration = moment.duration(duration);
-				if (!duration.valueOf()) { // invalid?
-					duration = null;
-				}
-			}
-			if (duration) {
+		if (duration) {
+			duration = moment.duration(duration);
+			if (duration.valueOf()) { // valid?
 				spec.duration = duration;
 				unit = computeIntervalUnit(duration);
 
@@ -138,29 +149,28 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 					overridesChain.unshift(viewOverrides[unit] || {});
 				}
 			}
-
-			// collapse into single objects
-			spec.defaults = mergeOptions.apply(null, defaultsChain);
-			spec.overrides = mergeOptions.apply(null, overridesChain);
-
-			this.buildViewSpecOptions(spec);
-			this.buildViewSpecButtonText(spec, requestedViewType);
-
-			return spec;
 		}
+
+		spec.defaults = mergeOptions(defaultsChain);
+		spec.overrides = mergeOptions(overridesChain);
+
+		this.buildViewSpecOptions(spec);
+		this.buildViewSpecButtonText(spec, requestedViewType);
+
+		return spec;
 	},
 
 
 	// Builds and assigns a view spec's options object from its already-assigned defaults and overrides
 	buildViewSpecOptions: function(spec) {
-		spec.options = mergeOptions( // lowest to highest priority
+		spec.options = mergeOptions([ // lowest to highest priority
 			Calendar.defaults, // global defaults
 			spec.defaults, // view's defaults (from ViewSubclass.defaults)
 			this.dirDefaults,
 			this.langDefaults, // locale and dir take precedence over view's defaults!
 			this.overrides, // calendar's overrides (options given to constructor)
 			spec.overrides // view's overrides (view-specific options)
-		);
+		]);
 		populateInstanceComputableOptions(spec.options);
 	},
 
@@ -203,6 +213,40 @@ var Calendar = fc.Calendar = fc.CalendarBase = Class.extend({
 	// Returns a boolean about whether the view is okay to instantiate at some point
 	isValidViewType: function(viewType) {
 		return Boolean(this.getViewSpec(viewType));
+	},
+
+
+	// Should be called when any type of async data fetching begins
+	pushLoading: function() {
+		if (!(this.loadingLevel++)) {
+			this.trigger('loading', null, true, this.view);
+		}
+	},
+
+
+	// Should be called when any type of async data fetching completes
+	popLoading: function() {
+		if (!(--this.loadingLevel)) {
+			this.trigger('loading', null, false, this.view);
+		}
+	},
+
+
+	// Given arguments to the select method in the API, returns a range
+	buildSelectRange: function(start, end) {
+
+		start = this.moment(start);
+		if (end) {
+			end = this.moment(end);
+		}
+		else if (start.hasTime()) {
+			end = start.clone().add(this.defaultTimedEventDuration);
+		}
+		else {
+			end = start.clone().add(this.defaultAllDayEventDuration);
+		}
+
+		return { start: start, end: end };
 	}
 
 });
@@ -486,7 +530,7 @@ function Calendar_constructor(element, overrides) {
 			// It is still the "current" view, just not rendered.
 		}
 
-		header.destroy();
+		header.removeElement();
 		content.remove();
 		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
 
@@ -511,7 +555,7 @@ function Calendar_constructor(element, overrides) {
 	function renderView(viewType) {
 		ignoreWindowResize++;
 
-		// if viewType is changing, destroy the old view
+		// if viewType is changing, remove the old view's rendering
 		if (currentView && viewType && currentView.type !== viewType) {
 			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
@@ -538,14 +582,14 @@ function Calendar_constructor(element, overrides) {
 
 			// render or rerender the view
 			if (
-				!currentView.isDisplayed ||
+				!currentView.displaying ||
 				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
 			) {
 				if (elementVisible()) {
 
 					freezeContentHeight();
 					currentView.display(date);
-					unfreezeContentHeight();
+					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
 					updateHeaderTitle();
@@ -713,19 +757,9 @@ function Calendar_constructor(element, overrides) {
 	
 
 	function select(start, end) {
-
-		start = t.moment(start);
-		if (end) {
-			end = t.moment(end);
-		}
-		else if (start.hasTime()) {
-			end = start.clone().add(t.defaultTimedEventDuration);
-		}
-		else {
-			end = start.clone().add(t.defaultAllDayEventDuration);
-		}
-
-		currentView.select({ start: start, end: end }); // accepts a range
+		currentView.select(
+			t.buildSelectRange.apply(t, arguments)
+		);
 	}
 	
 
@@ -860,4 +894,5 @@ function Calendar_constructor(element, overrides) {
 		}
 	}
 
+	t.initialize();
 }

@@ -24,6 +24,8 @@ Calendar.defaults = {
 	weekNumberCalculation: 'local',
 	
 	//editable: false,
+
+	scrollTime: '06:00:00',
 	
 	// event ajax
 	lazyFetching: true,

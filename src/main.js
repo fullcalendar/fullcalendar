@@ -26,7 +26,7 @@ $.fn.fullCalendar = function(options) {
 		}
 		// a new calendar initialization
 		else if (!calendar) { // don't initialize twice
-			calendar = new fc.CalendarBase(element, options);
+			calendar = new Calendar(element, options);
 			element.data('fullCalendar', calendar);
 			calendar.render();
 		}
@@ -44,41 +44,9 @@ var complexOptions = [ // names of options that are objects whose properties sho
 ];
 
 
-// Recursively combines all passed-in option-hash arguments into a new single option-hash.
-// Given option-hashes are ordered from lowest to highest priority.
-function mergeOptions() {
-	var chain = Array.prototype.slice.call(arguments); // convert to a real array
-	var complexVals = {}; // hash for each complex option's combined values
-	var i, name;
-	var combinedVal;
-	var j;
-	var val;
-
-	// for each complex option, loop through each option-hash and accumulate the combined values
-	for (i = 0; i < complexOptions.length; i++) {
-		name = complexOptions[i];
-		combinedVal = null; // an object holding the merge of all the values
-
-		for (j = 0; j < chain.length; j++) {
-			val = chain[j][name];
-
-			if ($.isPlainObject(val)) {
-				combinedVal = $.extend(combinedVal || {}, val); // merge new properties
-			}
-			else if (val != null) { // a non-null non-undefined atomic option
-				combinedVal = null; // signal to use the atomic value
-			}
-		}
-
-		// if not null, the final value was a combination of other objects. record it
-		if (combinedVal !== null) {
-			complexVals[name] = combinedVal;
-		}
-	}
-
-	chain.unshift({}); // $.extend will mutate this with the result
-	chain.push(complexVals); // computed complex values are applied last
-	return $.extend.apply($, chain); // combine
+// Merges an array of option objects into a single object
+function mergeOptions(optionObjs) {
+	return mergeProps(optionObjs, complexOptions);
 }
 
 

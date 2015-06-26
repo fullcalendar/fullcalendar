@@ -8,7 +8,7 @@ function Header(calendar, options) {
 	
 	// exports
 	t.render = render;
-	t.destroy = destroy;
+	t.removeElement = removeElement;
 	t.updateTitle = updateTitle;
 	t.activateButton = activateButton;
 	t.deactivateButton = deactivateButton;
@@ -39,8 +39,9 @@ function Header(calendar, options) {
 	}
 	
 	
-	function destroy() {
+	function removeElement() {
 		el.remove();
+		el = $();
 	}
 	
 	

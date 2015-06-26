@@ -51,8 +51,8 @@ var DayGrid = Grid.extend({
 	},
 
 
-	destroyDates: function() {
-		this.destroySegPopover();
+	unrenderDates: function() {
+		this.removeSegPopover();
 	},
 
 
@@ -136,8 +136,7 @@ var DayGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Initializes row/col information
-	updateCells: function() {
+	rangeUpdated: function() {
 		var cellDates;
 		var firstDay;
 		var rowCnt;
@@ -320,9 +319,7 @@ var DayGrid = Grid.extend({
 	renderDrag: function(dropLocation, seg) {
 
 		// always render a highlight underneath
-		this.renderHighlight(
-			this.view.calendar.ensureVisibleEventRange(dropLocation) // needs to be a proper range
-		);
+		this.renderHighlight(this.eventRangeToSegs(dropLocation));
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
@@ -336,9 +333,9 @@ var DayGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of a hovering event
-	destroyDrag: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderDrag: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -348,15 +345,15 @@ var DayGrid = Grid.extend({
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(range, seg) {
-		this.renderHighlight(range);
+		this.renderHighlight(this.eventRangeToSegs(range));
 		this.renderRangeHelper(range, seg);
 	},
 
 
 	// Unrenders a visual indication of an event being resized
-	destroyEventResize: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderEventResize: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -400,7 +397,7 @@ var DayGrid = Grid.extend({
 
 
 	// Unrenders any visual indication of a mock helper event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		if (this.helperEls) {
 			this.helperEls.remove();
 			this.helperEls = null;

@@ -1,4 +1,10 @@
 
+v2.3.2 (2015-06-14)
+-------------------
+
+- minor code adjustment in preparation for plugins
+
+
 v2.3.1 (2015-03-08)
 -------------------
 
