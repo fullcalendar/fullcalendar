@@ -703,7 +703,6 @@ function EventManager(options) { // assumed to be a calendar
 					var diffDuration = diffDayTime(date1, date0);
 					
 					var slot;
-					var nextSlot;
 					var previousSlot;
 					
 					var startTime;
@@ -713,7 +712,6 @@ function EventManager(options) { // assumed to be a calendar
 					
 					for (var i=0; i<slots.length; i++) {
 						slot = slots[i];
-						nextSlot = slots[i + 1];
 						previousSlot = slots[i - 1];
 						
 						startTime = date1.clone().time(slot.start);
@@ -733,7 +731,7 @@ function EventManager(options) { // assumed to be a calendar
 							break;
 						}
 						
-						if(date1.isBetween(startTime, endTime) || (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime))) {
+						if(date1.isBetween(startTime, endTime) || (previousSlot && (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime)))) {
 							if(isStart) {
 								diffDuration = diffDayTime(startTime, date0);
 								break;
