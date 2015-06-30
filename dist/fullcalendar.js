@@ -10282,43 +10282,6 @@ function EventManager(options) { // assumed to be a calendar
 		range = $.extend({}, range); // copy all properties in case there are misc non-date properties
 		range.start = range.start.clone().stripZone();
 		range.end = range.end.clone().stripZone();
-		
-		/* var slots = options.slots;
-		
-		if(slots){
-			var slot;
-			var startTime;
-			var endTime;
-			
-			var isAllowed = false;
-			var isInRange = true;
-			
-			var minTime = range.start.clone().time(slots[0].start);
-			var maxTime = range.end.clone().time(slots[slots.length - 1].end);
-			
-			if(range.start.isBefore(minTime) || range.end.isAfter(maxTime)) {
-				isInRange = false;
-			}
-			
-			if(isInRange) {
-				for (var i=0; i<slots.length; i++) {
-					slot = slots[i];
-					startTime = range.start.clone().time(slot.start);
-					endTime = range.end.clone().time(slot.end);
-					
-					if(range.start.isSame(startTime)) {
-						isAllowed = true;
-					}
-					if(range.end.isSame(endTime)) {
-						isAllowed = true;
-					}
-				}
-			}
-			
-			if(!isAllowed || !isInRange) {
-				return false;
-			}
-		} */
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {
