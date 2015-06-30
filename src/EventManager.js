@@ -687,8 +687,11 @@ function EventManager(options) { // assumed to be a calendar
 		var durationDelta;
 		var undoFunc;
 
+		var slots = options.slots;
+		var snapOnSlots = options.snapOnSlots;
+		
 		// diffs the dates in the appropriate way, returning a duration
-		function diffDates(date1, date0) { // date1 - date0
+		function diffDates(date1, date0, isStart) { // date1 - date0
 			if (largeUnit) {
 				return diffByUnit(date1, date0, largeUnit);
 			}
@@ -696,7 +699,62 @@ function EventManager(options) { // assumed to be a calendar
 				return diffDay(date1, date0);
 			}
 			else {
-				return diffDayTime(date1, date0);
+				if(slots && snapOnSlots) {
+					var diffDuration = diffDayTime(date1, date0);
+					
+					var slot;
+					var previousSlot;
+					
+					var startTime;
+					var endTime;
+					
+					var previousEndTime;
+					
+					for (var i=0; i<slots.length; i++) {
+						slot = slots[i];
+						previousSlot = slots[i - 1];
+						
+						startTime = date1.clone().time(slot.start);
+						endTime = date1.clone().time(slot.end);
+						
+						if(previousSlot) {
+							previousEndTime = date1.clone().time(previousSlot.end);
+						}
+						
+						if(isStart && i == 0 && date1.isBefore(startTime)) {
+							diffDuration = diffDayTime(startTime, date0);
+							break;
+						}
+						
+						if(!isStart && i == slots.length - 1 && date1.isAfter(endTime)) {
+							diffDuration = diffDayTime(endTime, date0);
+							break;
+						}
+						
+						if(date1.isBetween(startTime, endTime) || (previousSlot && (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime)))) {
+							if(isStart) {
+								diffDuration = diffDayTime(startTime, date0);
+								break;
+							}
+							else {
+								diffDuration = diffDayTime(endTime, date0);
+								break;
+							}
+						}
+						
+						if(isStart && date1.isSame(startTime)) {
+							break;
+						}
+						
+						if(!isStart && date1.isSame(endTime)) {
+							break;
+						}
+					}
+					
+					return diffDuration;
+				} else {
+					return diffDayTime(date1, date0);
+				}
 			}
 		}
 
@@ -727,11 +785,11 @@ function EventManager(options) { // assumed to be a calendar
 		clearEnd = event._end !== null && newProps.end === null;
 
 		// compute the delta for moving the start date
-		startDelta = diffDates(newProps.start, oldProps.start);
+		startDelta = diffDates(newProps.start, oldProps.start, true);
 
 		// compute the delta for moving the end date
 		if (newProps.end) {
-			endDelta = diffDates(newProps.end, oldProps.end);
+			endDelta = diffDates(newProps.end, oldProps.end, false);
 			durationDelta = endDelta.subtract(startDelta);
 		}
 		else {

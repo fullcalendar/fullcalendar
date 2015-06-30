@@ -183,13 +183,22 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// If being overridden, should return a range with reference-free date copies.
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
-
-		return {
-			start: date,
-			end: date.clone().add(this.cellDuration)
-		};
+		var slots = this.view.opt('slots');
+		var snapOnSlots = this.view.opt('snapOnSlots');
+		
+		if (slots && snapOnSlots) {
+			return {
+				start: date,
+				end: date.clone().time(slots[cell.row].end)
+			};
+		}
+		else {
+			return {
+				start: date,
+				end: date.clone().add(this.cellDuration)
+			};
+		}
 	},
-
 
 	// Given a cell, returns its start date. Should return a reference-free date copy.
 	computeCellDate: function(cell) {
