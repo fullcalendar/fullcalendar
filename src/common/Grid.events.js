@@ -222,7 +222,7 @@ Grid.mixin({
 
 		$.each(
 			{
-				click: function(seg, ev) {					
+				click: function(seg, ev) {
 					return view.trigger('bgEventClick', this, seg.event, ev); // can return `false` to cancel
 				}
 			},
