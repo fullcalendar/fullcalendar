@@ -296,6 +296,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
 		this.bindSegHandlers();
+		this.bindBgSegHandlers();
 
 		this.bindGlobalHandlers();
 	},
@@ -575,6 +576,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 					// correct element type? (would be bad if a non-TD were inserted into a table for example)
 					if (el.is(_this.fillSegTag)) {
+						el.data('fc-seg', seg); // used by handlers
 						seg.el = el;
 						renderedSegs.push(seg);
 					}
