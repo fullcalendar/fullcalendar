@@ -8,6 +8,7 @@ var TimeGrid = Grid.extend({
 	snapDuration: null, // granularity of time for dragging and selecting
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	dayBreakTime: null, // the time when we should break for a new day (NOTE: Overrides minTime and maxTime)
 	colDates: null, // whole-day dates for each column. left to right
 	axisFormat: null, // formatting string for times running along vertical axis
 
@@ -114,6 +115,7 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var slotDuration = view.opt('slotDuration');
 		var snapDuration = view.opt('snapDuration');
+		var dayBreakTime = view.opt('dayBreakTime');
 
 		slotDuration = moment.duration(slotDuration);
 		snapDuration = snapDuration ? moment.duration(snapDuration) : slotDuration;
@@ -122,8 +124,9 @@ var TimeGrid = Grid.extend({
 		this.snapDuration = snapDuration;
 		this.cellDuration = snapDuration; // for Grid system
 
-		this.minTime = moment.duration(view.opt('minTime'));
-		this.maxTime = moment.duration(view.opt('maxTime'));
+		this.dayBreakTime = moment.duration(dayBreakTime);
+		this.minTime = dayBreakTime ? this.dayBreakTime : moment.duration(view.opt('minTime'));
+		this.maxTime = dayBreakTime ? moment.duration('24:00:00').add(this.dayBreakTime) : moment.duration(view.opt('maxTime'));
 
 		this.axisFormat = view.opt('axisFormat') || view.opt('smallTimeFormat');
 	},
