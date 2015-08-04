@@ -265,6 +265,14 @@ var BasicView = View.extend({
 	},
 
 
+	// Renders the background events from the given events onto the view and populates the segments array
+	renderBgEvents: function(events) {
+		this.dayGrid.renderBgEvents(events);
+
+		this.updateHeight(); // must compensate for events that overflow the row
+	},
+
+
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
 		return this.dayGrid.getEventSegs();
@@ -274,6 +282,16 @@ var BasicView = View.extend({
 	// Unrenders all event elements and clears internal segment data
 	unrenderEvents: function() {
 		this.dayGrid.unrenderEvents();
+
+		// we DON'T need to call updateHeight() because:
+		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// B) in IE8, this causes a flash whenever events are rerendered
+	},
+
+
+	// Unrenders all background event elements and clears internal segment data
+	unrenderBgEvents: function() {
+		this.dayGrid.unrenderBgEvents();
 
 		// we DON'T need to call updateHeight() because:
 		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()

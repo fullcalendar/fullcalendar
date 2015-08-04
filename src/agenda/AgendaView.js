@@ -307,6 +307,35 @@ var AgendaView = View.extend({
 	},
 
 
+	// Renders the background events from the given events onto the view and populates the View's segment array
+	renderBgEvents: function(events) {
+		var dayEvents = [];
+		var timedEvents = [];
+		var daySegs = [];
+		var timedSegs;
+		var i;
+
+		// separate the events into all-day and timed
+		for (i = 0; i < events.length; i++) {
+			if (events[i].allDay) {
+				dayEvents.push(events[i]);
+			}
+			else {
+				timedEvents.push(events[i]);
+			}
+		}
+
+		// render the events in the subcomponents
+		timedSegs = this.timeGrid.renderBgEvents(timedEvents);
+		if (this.dayGrid) {
+			daySegs = this.dayGrid.renderBgEvents(dayEvents);
+		}
+
+		// the all-day area is flexible and might have a lot of events, so shift the height
+		this.updateHeight();
+	},
+
+
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
 		return this.timeGrid.getEventSegs().concat(
@@ -322,6 +351,21 @@ var AgendaView = View.extend({
 		this.timeGrid.unrenderEvents();
 		if (this.dayGrid) {
 			this.dayGrid.unrenderEvents();
+		}
+
+		// we DON'T need to call updateHeight() because:
+		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// B) in IE8, this causes a flash whenever events are rerendered
+	},
+
+
+	// Unrenders all background event elements and clears internal segment data
+	unrenderBgEvents: function() {
+
+		// unrender the events in the subcomponents
+		this.timeGrid.unrenderBgEvents();
+		if (this.dayGrid) {
+			this.dayGrid.unrenderBgEvents();
 		}
 
 		// we DON'T need to call updateHeight() because:

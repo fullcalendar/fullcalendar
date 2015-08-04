@@ -16,6 +16,7 @@ var View = fc.View = Class.extend({
 	displaying: null, // a promise representing the state of rendering. null if no render requested
 	isSkeletonRendered: false,
 	isEventsRendered: false,
+	isBgEventsRendered: false,
 
 	// range the view is actually displaying (moments)
 	start: null,
@@ -527,6 +528,19 @@ var View = fc.View = Class.extend({
 		this.clearEvents();
 		this.renderEvents(events);
 		this.isEventsRendered = true;
+		this.isBgEventsRendered = true;
+		this.setScroll(scrollState);
+		this.triggerEventRender();
+	},
+
+
+	// Does everything necessary to display the given background events onto the current view
+	displayBgEvents: function(events) {
+		var scrollState = this.queryScroll();
+
+		this.clearBgEvents();
+		this.renderBgEvents(events);
+		this.isBgEventsRendered = true;
 		this.setScroll(scrollState);
 		this.triggerEventRender();
 	},
@@ -545,14 +559,35 @@ var View = fc.View = Class.extend({
 	},
 
 
+	// Does everything necessary to clear the view's currently-rendered background events
+	clearBgEvents: function() {
+		if (this.isBgEventsRendered) {
+			this.unrenderBgEvents();
+			this.isBgEventsRendered = false;
+		}
+	},
+
+
 	// Renders the events onto the view.
 	renderEvents: function(events) {
 		// subclasses should implement
 	},
 
 
+	// Renders the background events from the given events onto the view.
+	renderBgEvents: function(events) {
+		// subclasses should implement
+	},
+
+
 	// Removes event elements from the view.
 	unrenderEvents: function() {
+		// subclasses should implement
+	},
+
+
+	// Removes background event elements from the view.
+	unrenderBgEvents: function() {
 		// subclasses should implement
 	},
 
