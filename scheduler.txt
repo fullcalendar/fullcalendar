@@ -1,5 +1,5 @@
 
-## Getting started with Scheduler
+# Getting started with Scheduler
 
 
 This document describes the settings for FullCalendar **Scheduler** plugin.
