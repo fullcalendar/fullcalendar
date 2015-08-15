@@ -391,6 +391,9 @@ function intersectionToSeg(subjectRange, constraintRange) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 fc.computeIntervalUnit = computeIntervalUnit;
+fc.divideRangeByDuration = divideRangeByDuration;
+fc.divideDurationByDuration = divideDurationByDuration;
+fc.multiplyDuration = multiplyDuration;
 fc.durationHasTime = durationHasTime;
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
@@ -459,6 +462,55 @@ function computeRangeAs(unit, start, end) {
 	else { // given { start, end } range object
 		return start.end.diff(start.start, unit, true);
 	}
+}
+
+
+// Intelligently divides a range (specified by a start/end params) by a duration
+function divideRangeByDuration(start, end, dur) {
+	var months;
+
+	if (durationHasTime(dur)) {
+		return (end - start) / dur;
+	}
+	months = dur.asMonths();
+	if (Math.abs(months) >= 1 && isInt(months)) {
+		return end.diff(start, 'months', true) / months;
+	}
+	return end.diff(start, 'days', true) / dur.asDays();
+}
+
+
+// Intelligently divides one duration by another
+function divideDurationByDuration(dur1, dur2) {
+	var months1, months2;
+
+	if (durationHasTime(dur1) || durationHasTime(dur2)) {
+		return dur1 / dur2;
+	}
+	months1 = dur1.asMonths();
+	months2 = dur2.asMonths();
+	if (
+		Math.abs(months1) >= 1 && isInt(months1) &&
+		Math.abs(months2) >= 1 && isInt(months2)
+	) {
+		return months1 / months2;
+	}
+	return dur1.asDays() / dur2.asDays();
+}
+
+
+// Intelligently multiplies a duration by a number
+function multiplyDuration(dur, n) {
+	var months;
+
+	if (durationHasTime(dur)) {
+		return moment.duration(dur * n);
+	}
+	months = dur.asMonths();
+	if (Math.abs(months) >= 1 && isInt(months)) {
+		return moment.duration({ months: months * n });
+	}
+	return moment.duration({ days: dur.asDays() * n });
 }
 
 
