@@ -252,6 +252,9 @@ var Calendar = fc.Calendar = Class.extend({
 });
 
 
+Calendar.mixin(Emitter);
+
+
 function Calendar_constructor(element, overrides) {
 	var t = this;
 
@@ -885,12 +888,14 @@ function Calendar_constructor(element, overrides) {
 	}
 	
 	
-	function trigger(name, thisObj) {
+	function trigger(name, thisObj) { // overrides the Emitter's trigger method :(
+		var args = Array.prototype.slice.call(arguments, 2);
+
+		thisObj = thisObj || _element;
+		this.triggerWith(name, thisObj, args); // Emitter's method
+
 		if (options[name]) {
-			return options[name].apply(
-				thisObj || _element,
-				Array.prototype.slice.call(arguments, 2)
-			);
+			return options[name].apply(thisObj, args);
 		}
 	}
 
