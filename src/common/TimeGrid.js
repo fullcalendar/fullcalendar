@@ -9,7 +9,7 @@ var TimeGrid = Grid.extend({
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
 	colDates: null, // whole-day dates for each column. left to right
-	slotLabelFormat: null, // formatting string for times running along vertical axis
+	labelFormat: null, // formatting string for times running along vertical axis
 
 	dayEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
@@ -85,7 +85,7 @@ var TimeGrid = Grid.extend({
 				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
 					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
 						'<span>' + // for matchCellWidths
-							htmlEscape(slotDate.format(this.slotLabelFormat)) +
+							htmlEscape(slotDate.format(this.labelFormat)) +
 						'</span>' :
 						''
 						) +
@@ -125,7 +125,7 @@ var TimeGrid = Grid.extend({
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
 
-		this.slotLabelFormat =
+		this.labelFormat =
 			view.opt('slotLabelFormat') ||
 			view.opt('axisFormat') || // deprecated
 			view.opt('smallTimeFormat'); // the computed default
