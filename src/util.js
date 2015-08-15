@@ -531,6 +531,25 @@ function isTimeString(str) {
 }
 
 
+/* Logging and Debug
+----------------------------------------------------------------------------------------------------------------------*/
+
+fc.log = function() {
+	if (window.console && window.console.log) {
+		return console.log.apply(console, arguments);
+	}
+};
+
+fc.warn = function() {
+	if (window.console && window.console.warn) {
+		return console.warn.apply(console, arguments);
+	}
+	else {
+		return fc.log.apply(fc, arguments);
+	}
+};
+
+
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
