@@ -1,5 +1,5 @@
 
-var Emitter = fc.Emitter = Class.extend({ // TODO: make public
+var Emitter = fc.Emitter = Class.extend({
 
 	callbackHash: null,
 
@@ -16,7 +16,6 @@ var Emitter = fc.Emitter = Class.extend({ // TODO: make public
 	},
 
 
-	// TODO: rename to emit?
 	trigger: function (name) { // args...
 		var args = Array.prototype.slice.call(arguments, 1);
 
@@ -26,7 +25,6 @@ var Emitter = fc.Emitter = Class.extend({ // TODO: make public
 	},
 
 
-	// TODO: rename to emitWith?
 	triggerWith: function(name, context, args) {
 		var callbacks = this.getCallbacks(name);
 
