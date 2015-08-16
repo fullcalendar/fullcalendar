@@ -126,8 +126,15 @@ var TimeGrid = Grid.extend({
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
 
+		// might be an array value (for TimelineView).
+		// if so, getting the most granular entry (the last one probably).
+		input = view.opt('slotLabelFormat');
+		if ($.isArray(input)) {
+			input = input[input.length - 1];
+		}
+
 		this.labelFormat =
-			view.opt('slotLabelFormat') ||
+			input ||
 			view.opt('axisFormat') || // deprecated
 			view.opt('smallTimeFormat'); // the computed default
 
