@@ -14,4 +14,6 @@ Boolean, *default*:
 As noted above, each view has a specific default. Get fine-tuned control with [View-Specific Options](../views/View-Specific-Options).
 A single boolean alone will set the value for all views.
 
-If an event does not have an end date/time, it won't be displayed anyway, regardless of this setting.
+If an event does not have an end date/time,
+or [displayEventTime]() is `false`,
+it won't be displayed anyway, regardless of this setting.

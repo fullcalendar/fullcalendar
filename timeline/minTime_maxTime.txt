@@ -1,0 +1,9 @@
+
+minTime / maxTime
+=================
+
+When [slotDuration]() is an hour or less, `minTime` and `maxTime` will limit the time displayed for each day in timeline view.
+
+Each value is a [Duration-ish](../utilities/Duration) input.
+
+Very similar to the [minTime](../agenda/minTime) and [maxTime](../agenda/maxTime) arguments defined the Agenda view documentation.

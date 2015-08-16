@@ -1,0 +1,13 @@
+
+getEventsForResource
+====================
+
+Retrieves a list of [Event Objects](../event_data/Event_Object/)
+that are associated with the given resource.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'getEventsForResource', *idOrResource* )
+</div>
+
+`idOrResource` can either be the raw ID for the resource,
+or a [Resource Object](Resource_Object/).

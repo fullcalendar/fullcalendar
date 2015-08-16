@@ -1,0 +1,13 @@
+
+Event Drag-n-drop
+=================
+
+Timeline view supports the following two options for event drag-n-drop:
+
+- [eventDrop (callback)](../event_ui/eventDrop)
+- [eventReceive (callback)](../dropping/eventReceive)
+
+These callbacks are part of the standard FullCalendar release and
+have been modified to support resources. When an event has been newly dropped on a
+resource, the [Event Object's](../event_data/Event_Object) `resourceId` will be
+updated to reflect.

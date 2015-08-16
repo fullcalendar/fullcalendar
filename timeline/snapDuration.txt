@@ -1,0 +1,5 @@
+
+snapDuration
+============
+
+The time interval at which a dragged event will snap to the vertical lines of the timeline. 

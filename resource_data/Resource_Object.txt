@@ -7,12 +7,13 @@ Resource Object
 	<th>id</th>
 	<td markdown='1'>
 		Uniquely identifies this resource. [Event Objects](../event_data/Event_Object/) with a corresponding `resourceId` field will be linked to this event, unless customized by [eventResourceField]().
+		Will be coerced into a string.
 	</td>
 </tr>
 <tr>
 	<th>eventColor</th>
 	<td markdown='1'>
-		events associated with this resources will have their backgrounds and borders colored. Any CSS string color format can be specified, like `"#f00"` or `"rgb(255,0,0)"`. This value will take precedence over the global [eventColor](../event_rendering/eventColor) option and the [Event Source Object] `color` option, but it will not take precedence over the [Event Object](../event_data/Event_Object) `color` option.
+		events associated with this resources will have their backgrounds and borders colored. Any CSS string color format can be specified, like `"#f00"` or `"rgb(255,0,0)"`. This value will take precedence over the global [eventColor](../event_rendering/eventColor) option and the [Event Source Object](../event_data/Event_Source_Object) `color` option, but it will not take precedence over the [Event Object](../event_data/Event_Object) `color` option.
 	</td>
 </tr>
 <tr>
@@ -51,6 +52,12 @@ Resource Object
 		See below
 	</td>
 </tr>
+<tr>
+	<th>parent</th>
+	<td markdown='1'>
+		See below
+	</td>
+</tr>
 </table>
 
 For the color-related properties, even when an event is rendered on a non-resource view (views other than Timeline), these properties will still take effect.
@@ -74,7 +81,7 @@ Child resources can be specified directly within the parent resource via the `ch
 				},
 				{
 					id: 'a2',
-					title: 'Rooma A2'
+					title: 'Room A2'
 				}
 			]
 		}
@@ -102,3 +109,15 @@ An alternative method for specify child resources is via linking them together w
 			title: 'Room A2'
 		}
 	]
+
+
+The `parent` and `children` properties
+--------------------------------------
+
+Regardless of which method is used to set the parent/child relationship,
+the resulting Resource Objects throughout the API will still get the
+`parent` and `children` properties assigned.
+
+`parent` is a reference to the parent Resource Object. It will be `null` if there is no parent.
+
+`children` is an array of child Resource Objects.

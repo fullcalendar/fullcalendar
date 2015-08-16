@@ -1,0 +1,10 @@
+
+selecting
+=========
+
+Timeline view supports the following two options for range selection:
+
+- [select (callback)](../selection/select_callback)
+- [select (method)](../selection/select_method)
+
+Note the final `resource` parameter in each function.

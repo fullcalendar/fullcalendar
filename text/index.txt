@@ -13,6 +13,7 @@ Text/Time Customization
 <li>dayNames</li>
 <li>dayNamesShort</li>
 <li>weekNumberTitle</li>
+<li>displayEventTime</li>
 <li>displayEventEnd</li>
 <li>eventLimitText</li>
 <li>dayPopoverFormat</li>

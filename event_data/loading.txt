@@ -13,3 +13,5 @@ Triggered with a `true` argument when the calendar begins fetching events via AJ
 `view` is the current [View Object](../views/View_Object).
 
 This function is often used to show/hide a loading indicator.
+
+When the [Scheduler](../../Scheduler/) plugin is loaded, this callback is also fired when resources are fetched.

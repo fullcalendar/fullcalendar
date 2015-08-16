@@ -28,3 +28,15 @@ If you need a different duration, make a [Custom View](../views/Custom_Views) fr
 			}
 		}
 	});
+
+
+Other Duration-related Settings
+-------------------------------
+
+Reasonable defaults for these settings will be chosen based on the view's duration,
+however each setting can be individually overridden:
+
+- [slotDuration]()
+- [slotLabelFormat]()
+- [slotLabelInterval]()
+- [snapDuration]()

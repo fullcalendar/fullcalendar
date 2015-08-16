@@ -1,0 +1,5 @@
+
+scrollTime
+==========
+
+When `slotDuration` is an hour or less, determines the initial horizontal scroll of the timeline view.

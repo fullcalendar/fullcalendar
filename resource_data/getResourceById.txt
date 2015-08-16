@@ -1,0 +1,11 @@
+
+getResourceById
+===============
+
+A method that retrieves a specific [Resource Object](Resource_Object) in memory.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'getResourceById', *resourceId* )
+</div>
+
+If no resource matches the given `resourceId`, will return `null`.

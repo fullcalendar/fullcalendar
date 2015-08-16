@@ -5,7 +5,7 @@ dayClick
 Triggered when the user clicks on a day.
 
 <div class='spec' markdown='1'>
-function( *date*, *jsEvent*, *view* ) { }
+function( *date*, *jsEvent*, *view*, [ *resourceObj* ] ) { }
 </div>
 
 `date` holds a [Moment](../utilities/Moment) for the clicked day.
@@ -36,3 +36,11 @@ Here is an example that demonstrates all of these variables:
 			
 		}
 	});
+
+
+The `resourceObj` parameter
+---------------------------
+
+Since the introductin of the [Scheduler plugin](../../scheduler/), this callback
+reports a [Resource Object](../resource_data/Resource_Object/) parameter if the
+click happened on a resource. [More information](../timeline/dayClick).

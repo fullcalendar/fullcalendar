@@ -1,0 +1,12 @@
+
+loading
+=======
+
+Triggered when resource fetching starts/stops.
+
+<div class='spec' markdown='1'>
+function( *isLoading*, *view* )
+</div>
+
+See the [event loading callback](../event_data/loading/) for more information.
+It is the same callback.

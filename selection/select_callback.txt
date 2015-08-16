@@ -5,7 +5,7 @@ select
 A callback that will fire after a selection is made.
 
 <div class='spec' markdown='1'>
-function( *start*, *end*, *jsEvent*, *view* )
+function( *start*, *end*, *jsEvent*, *view*, [ *resource* ] )
 </div>
 
 `start` is a [Moment](../utilities/Moment) indicating the beginning of the selection.
@@ -18,3 +18,6 @@ You can test if the `start`/`end` is timed or all-day by calling `hasTime`
 
 `jsEvent` holds the primitive JavaScript event with information such as mouse coordinates.
 If `select` has been triggered via the [select method](select_method), `jsEvent` will be `undefined`.
+
+If the [Scheduler plugin](../../scheduler/) is installed, the final `resource` argument
+is the [Resource Object](../resource_data/Resource_Object/) the user selected.

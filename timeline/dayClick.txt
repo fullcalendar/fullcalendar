@@ -1,0 +1,23 @@
+
+dayClick
+========
+
+This callback gets called when the user clicks on a date within a resource.
+
+<div class='spec' markdown='1'>
+function( *date*, *jsEvent*, *view*, *resourceObj* ) { }
+</div>
+
+Is is the same callback mentioned in the [main dayClick article](../mouse/dayClick).
+
+The final argument is a [Resource Object](../resource_data/Resource_Object/).
+Example:
+
+	$('#calendar').fullCalendar({
+		dayClick: function(date, jsEvent, view, resourceObj) {
+		
+			alert('Date: ' + date.format());
+			alert('Resource ID: ' + resourceObj.id);
+			
+		}
+	});

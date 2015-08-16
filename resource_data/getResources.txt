@@ -1,9 +1,13 @@
 
 getResources
-===========
+============
 
 A method that retrieves all [Resource Objects](Resource_Object) in memory.
 
 <div class='spec' markdown='1'>
 .fullCalendar( 'getResources' )
 </div>
+
+An array of top-level resource objects will be returned.
+Nested child resources are accessible by traversing the `children`
+array of each resource object.

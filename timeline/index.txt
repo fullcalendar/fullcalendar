@@ -3,11 +3,18 @@ Timeline View
 =============
 
 <ul>
-<li><a href='customizing_duration'>customizing duration</a></li>
+<li><a href='customizing_duration'>customizing the duration</a></li>
+<li><a href='event_dnd'>event drag-n-drop</a></li>
+<li><a href='selecting'>selecting</a></li>
 <li><a href='resourceAreaWidth'>resourceAreaWidth</a></li>
 <li><a href='resourceLabelText'>resourceLabelText</a></li>
 <li><a href='resourceColumns'>resourceColumns</a></li>
 <li><a href='slotWidth'>slotWidth</a></li>
-<li><a href='slotLabelInterval'>slotLabelInterval</a></li>
+<li><a href='slotDuration'>slotDuration</a></li>
 <li><a href='slotLabelFormat'>slotLabelFormat</a></li>
+<li><a href='slotLabelInterval'>slotLabelInterval</a></li>
+<li><a href='snapDuration'>snapDuration</a></li>
+<li><a href='minTime_maxTime'>minTime / maxTime</a></li>
+<li><a href='scrollTime'>scrollTime</a></li>
+<li><a href='dayClick'>dayClick (callback)</a></li>
 </ul>
