@@ -342,6 +342,74 @@ function diffPoints(point1, point2) {
 }
 
 
+/* Object Ordering by Field
+----------------------------------------------------------------------------------------------------------------------*/
+
+fc.parseFieldSpecs = parseFieldSpecs;
+fc.compareByFieldSpecs = compareByFieldSpecs;
+fc.compareByFieldSpec = compareByFieldSpec;
+fc.flexibleCompare = flexibleCompare;
+
+
+function parseFieldSpecs(input) {
+	var specs = [];
+	var tokens =
+		typeof input === 'string' ?
+			input.split(/\s*,\s*/) :
+			(input || []);
+	var i, token;
+
+	for (i = 0; i < tokens.length; i++) {
+		token = tokens[i];
+		specs.push(
+			token.charAt(0) == '-' ?
+				{ field: token.substring(1), order: -1 } :
+				{ field: token, order: 1 }
+		);
+	}
+
+	return specs;
+}
+
+
+function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
+	var i;
+	var cmp;
+
+	for (i = 0; i < fieldSpecs.length; i++) {
+		cmp = compareByFieldSpec(obj1, obj2, fieldSpecs[i]);
+		if (cmp) {
+			return cmp;
+		}
+	}
+
+	return 0;
+}
+
+
+function compareByFieldSpec(obj1, obj2, fieldSpec) {
+	return flexibleCompare(obj1[fieldSpec.field], obj2[fieldSpec.field]) *
+		(fieldSpec.order || 1);
+}
+
+
+function flexibleCompare(a, b) {
+	if (!a && !b) {
+		return 0;
+	}
+	if (b == null) {
+		return -1;
+	}
+	if (a == null) {
+		return 1;
+	}
+	if ($.type(a) === 'string' || $.type(b) === 'string') {
+		return String(a).localeCompare(String(b));
+	}
+	return a - b;
+}
+
+
 /* FullCalendar-specific Misc Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
