@@ -7,4 +7,5 @@ Utilities
 <li class='article'><a href='Duration'>Duration</a></li>
 <li class='article'><a href='date_formatting_string'>date formatting string</a></li>
 <li class='function'><a href='formatRange'>formatRange (function)</a></li>
+<li><a href='handlers'>on / off</a></li>
 </ul>

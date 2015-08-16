@@ -1,10 +1,6 @@
 
-axisFormat
-==========
-
-<div class='removed-notice' markdown='1'>
-This method has been renamed to [slotLabelFormat]().
-</div>
+slotLabelFormat *2.4.0*
+=======================
 
 Determines the time-text that will be displayed on the vertical axis of the agenda views.
 
@@ -15,3 +11,7 @@ Determines the time-text that will be displayed on the vertical axis of the agen
 The default value depends on the current [lang](../text/lang).
 
 The default English value will produce times that look like "5pm" and "5:30pm".
+
+<div class="version-info" markdown="1">
+Prior to v2.4.0, this setting was named *axisFormat*.
+</div>

@@ -1,0 +1,12 @@
+
+slotLabelInterval *2.4.0*
+=========================
+
+Determines how often the time-axis is labeled with text displaying the date/time of slots.
+
+<div class="spec" markdown="1">
+[Duration](../utilities/Duration)
+</div>
+
+If not specified, this value is automatically computed from [slotDuration]().
+With `slotDuration`'s default value of **30 minutes**, this value will be **1 hour**.

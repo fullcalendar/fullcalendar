@@ -1,0 +1,18 @@
+
+on / off *2.4.0*
+================
+
+Allows dynamic adding / removing of handler functions.
+This method can be called for any **callback** in the API.
+
+The below example dynamically binds a [dayClick](../mouse/dayClick) handler.
+
+	// a convenient utility for getting the calendar object.
+	// you can call methods on the calendar object directly.
+	var calendar = $('#calendar').fullCalendar('getCalendar');
+
+	calendar.on('dayClick', function(date, jsEvent, view) {
+		console.log('clicked on ' + date.format());
+	});
+
+The API for on / off are very similar to [Backbone's on / off](http://backbonejs.org/#Events).

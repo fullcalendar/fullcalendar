@@ -10,6 +10,7 @@ Event Rendering
 <li>eventBorderColor</li>
 <li>eventTextColor</li>
 <li>nextDayThreshold</li>
+<li>eventOrder</li>
 <li class='callback'><a href='eventRender'>eventRender (callback)</a></li>
 <li class='callback'><a href='eventAfterRender'>eventAfterRender (callback)</a></li>
 <li class='callback'><a href='eventAfterAllRender'>eventAfterAllRender (callback)</a></li>

@@ -6,8 +6,9 @@ The following options only apply to the `agendaWeek` and `agendaDay` views:
 
 - allDaySlot
 - allDayText
-- axisFormat
 - slotDuration
+- slotLabelFormat
+- slotLabelInterval
 - snapDuration
 - scrollTime
 - minTime
