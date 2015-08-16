@@ -353,19 +353,32 @@ fc.flexibleCompare = flexibleCompare;
 
 function parseFieldSpecs(input) {
 	var specs = [];
-	var tokens =
-		typeof input === 'string' ?
-			input.split(/\s*,\s*/) :
-			(input || []);
+	var tokens = [];
 	var i, token;
+
+	if (typeof input === 'string') {
+		tokens = input.split(/\s*,\s*/);
+	}
+	else if (typeof input === 'function') {
+		tokens = [ input ];
+	}
+	else if ($.isArray(input)) {
+		tokens = input;
+	}
 
 	for (i = 0; i < tokens.length; i++) {
 		token = tokens[i];
-		specs.push(
-			token.charAt(0) == '-' ?
-				{ field: token.substring(1), order: -1 } :
-				{ field: token, order: 1 }
-		);
+
+		if (typeof token === 'string') {
+			specs.push(
+				token.charAt(0) == '-' ?
+					{ field: token.substring(1), order: -1 } :
+					{ field: token, order: 1 }
+			);
+		}
+		else if (typeof token === 'function') {
+			specs.push({ func: token });
+		}
 	}
 
 	return specs;
@@ -388,6 +401,9 @@ function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
 
 
 function compareByFieldSpec(obj1, obj2, fieldSpec) {
+	if (fieldSpec.func) {
+		return fieldSpec.func(obj1, obj2);
+	}
 	return flexibleCompare(obj1[fieldSpec.field], obj2[fieldSpec.field]) *
 		(fieldSpec.order || 1);
 }
