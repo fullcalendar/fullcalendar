@@ -11,8 +11,8 @@ Resource Data
 <li><a href='eventResourceField'>eventResourceField</a></li>
 <li><a href='getResources'>getResources (method)</a></li>
 <li><a href='getResourceById'>getResourceById (method)</a></li>
-<li><a href='getEventsForResource'>getEventsForResource (method)</a></li>
-<li><a href='getResourceForEvent'>getResourceForEvent (method)</a></li>
+<li><a href='getResourceEvents'>getResourceEvents (method)</a></li>
+<li><a href='getEventResource'>getEventResource (method)</a></li>
 <li><a href='addResource'>addResource (method)</a></li>
 <li><a href='removeResource'>removeResource (method)</a></li>
 <li><a href='refetchResources'>refetchResources (method)</a></li>

@@ -1,11 +1,11 @@
 
-getResourceForEvent
-===================
+getEventResource
+================
 
 Gets the [Resource Object](Resource_Object) that is associated with the given event.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'getResourceForEvent', *idOrEvent* )
+.fullCalendar( 'getEventResource', *idOrEvent* )
 </div>
 
 `idOrEvent` can either be a raw event ID, or an [Event Object](../event_data/Event_Object).
