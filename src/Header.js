@@ -78,8 +78,8 @@ function Header(calendar, options) {
 									customButtonProps.click.call(button[0], ev);
 								}
 							};
-							overrideText = customButtonProps.text;
-							defaultText = '';
+							overrideText = ''; // icons will override text
+							defaultText = customButtonProps.text;
 						}
 						else if (viewSpec = calendar.getViewSpec(buttonName)) {
 							buttonClick = function() {
@@ -99,8 +99,15 @@ function Header(calendar, options) {
 
 						if (buttonClick) {
 
-							themeIcon = options.themeButtonIcons[buttonName];
-							normalIcon = options.buttonIcons[buttonName];
+							themeIcon =
+								customButtonProps ?
+									customButtonProps.themeIcon :
+									options.themeButtonIcons[buttonName];
+
+							normalIcon =
+								customButtonProps ?
+									customButtonProps.icon :
+									options.buttonIcons[buttonName];
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
