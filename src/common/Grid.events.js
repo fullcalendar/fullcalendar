@@ -920,12 +920,7 @@ Grid.mixin({
 		return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
 			seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
 			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
-			this.compareEvents(seg1.event, seg2.event);
-	},
-
-
-	compareEvents: function(event1, event2) {
-		return (event1.title || '').localeCompare(event2.title); // tie? alphabetically by title
+			compareByFieldSpecs(seg1.event, seg2.event, this.view.eventOrderSpecs);
 	}
 
 });

@@ -31,6 +31,8 @@ var View = fc.View = Class.extend({
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 
+	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
+
 	// subclasses can optionally use a scroll container
 	scrollerEl: null, // the element that will most likely scroll when content is too tall
 	scrollTop: null, // cached vertical scroll value
@@ -59,6 +61,8 @@ var View = fc.View = Class.extend({
 		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
+
+		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 

@@ -77,6 +77,8 @@ Calendar.defaults = {
 	
 	dropAccept: '*',
 
+	eventOrder: 'title',
+
 	eventLimit: false,
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
