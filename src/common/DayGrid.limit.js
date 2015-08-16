@@ -328,7 +328,7 @@ DayGrid.mixin({
 		);
 
 		// force an order because eventsToSegs doesn't guarantee one
-		segs.sort(compareSegs);
+		this.sortSegs(segs);
 
 		return segs;
 	},

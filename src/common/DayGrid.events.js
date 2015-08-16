@@ -245,7 +245,7 @@ DayGrid.mixin({
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segs.sort(compareSegs);
+		this.sortSegs(segs);
 		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
