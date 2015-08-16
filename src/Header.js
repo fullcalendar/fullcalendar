@@ -56,6 +56,7 @@ function Header(calendar, options) {
 				var groupEl;
 
 				$.each(this.split(','), function(j, buttonName) {
+					var customButtonProps;
 					var viewSpec;
 					var buttonClick;
 					var overrideText; // text explicitly set by calendar's constructor options. overcomes icons
@@ -64,16 +65,23 @@ function Header(calendar, options) {
 					var normalIcon;
 					var innerHtml;
 					var classes;
-					var button;
+					var button; // the element
 
 					if (buttonName == 'title') {
 						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
 						isOnlyButtons = false;
 					}
 					else {
-						viewSpec = calendar.getViewSpec(buttonName);
-
-						if (viewSpec) {
+						if (customButtonProps = (calendar.options.customButtons || {})[buttonName]) {
+							buttonClick = function(ev) {
+								if (customButtonProps.click) {
+									customButtonProps.click.call(button[0], ev);
+								}
+							};
+							overrideText = customButtonProps.text;
+							defaultText = '';
+						}
+						else if (viewSpec = calendar.getViewSpec(buttonName)) {
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
@@ -118,11 +126,11 @@ function Header(calendar, options) {
 									innerHtml +
 								'</button>'
 								)
-								.click(function() {
+								.click(function(ev) {
 									// don't process clicks for disabled buttons
 									if (!button.hasClass(tm + '-state-disabled')) {
 
-										buttonClick();
+										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.
