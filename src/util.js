@@ -298,6 +298,7 @@ function isPrimaryMouseButton(ev) {
 /* Geometry
 ----------------------------------------------------------------------------------------------------------------------*/
 
+fc.intersectRects = intersectRects;
 
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
 function intersectRects(rect1, rect2) {
