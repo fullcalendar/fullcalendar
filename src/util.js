@@ -620,13 +620,17 @@ function isTimeString(str) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 fc.log = function() {
-	if (window.console && window.console.log) {
+	var console = window.console;
+
+	if (console && console.log) {
 		return console.log.apply(console, arguments);
 	}
 };
 
 fc.warn = function() {
-	if (window.console && window.console.warn) {
+	var console = window.console;
+
+	if (console && console.warn) {
 		return console.warn.apply(console, arguments);
 	}
 	else {

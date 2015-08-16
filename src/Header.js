@@ -72,7 +72,7 @@ function Header(calendar, options) {
 						isOnlyButtons = false;
 					}
 					else {
-						if (customButtonProps = (calendar.options.customButtons || {})[buttonName]) {
+						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
 									customButtonProps.click.call(button[0], ev);
@@ -81,7 +81,7 @@ function Header(calendar, options) {
 							overrideText = ''; // icons will override text
 							defaultText = customButtonProps.text;
 						}
-						else if (viewSpec = calendar.getViewSpec(buttonName)) {
+						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};

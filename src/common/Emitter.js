@@ -10,13 +10,13 @@ var Emitter = fc.Emitter = Class.extend({
 	},
 
 
-	off: function (name, callback) {
+	off: function(name, callback) {
 		this.getCallbacks(name).remove(callback);
 		return this; // for chaining
 	},
 
 
-	trigger: function (name) { // args...
+	trigger: function(name) { // args...
 		var args = Array.prototype.slice.call(arguments, 1);
 
 		this.triggerWith(name, this, args);
