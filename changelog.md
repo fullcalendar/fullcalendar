@@ -1,6 +1,6 @@
 
-v2.4.0
-------
+v2.4.0 (2015-08-16)
+-------------------
 
 - add new buttons to the header via `customButtons` ([225])
 - control stacking order of events via `eventOrder` ([364])
