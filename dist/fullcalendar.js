@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.3.2
+ * FullCalendar v2.4.0
  * Docs & License: http://fullcalendar.io/
  * (c) 2015 Adam Shaw
  */
@@ -18,7 +18,7 @@
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.3.2" };
+var fc = $.fullCalendar = { version: "2.4.0" };
 var fcViews = fc.views = {};
 
 
@@ -419,6 +419,7 @@ function isPrimaryMouseButton(ev) {
 /* Geometry
 ----------------------------------------------------------------------------------------------------------------------*/
 
+fc.intersectRects = intersectRects;
 
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
 function intersectRects(rect1, rect2) {
@@ -460,6 +461,90 @@ function diffPoints(point1, point2) {
 		left: point1.left - point2.left,
 		top: point1.top - point2.top
 	};
+}
+
+
+/* Object Ordering by Field
+----------------------------------------------------------------------------------------------------------------------*/
+
+fc.parseFieldSpecs = parseFieldSpecs;
+fc.compareByFieldSpecs = compareByFieldSpecs;
+fc.compareByFieldSpec = compareByFieldSpec;
+fc.flexibleCompare = flexibleCompare;
+
+
+function parseFieldSpecs(input) {
+	var specs = [];
+	var tokens = [];
+	var i, token;
+
+	if (typeof input === 'string') {
+		tokens = input.split(/\s*,\s*/);
+	}
+	else if (typeof input === 'function') {
+		tokens = [ input ];
+	}
+	else if ($.isArray(input)) {
+		tokens = input;
+	}
+
+	for (i = 0; i < tokens.length; i++) {
+		token = tokens[i];
+
+		if (typeof token === 'string') {
+			specs.push(
+				token.charAt(0) == '-' ?
+					{ field: token.substring(1), order: -1 } :
+					{ field: token, order: 1 }
+			);
+		}
+		else if (typeof token === 'function') {
+			specs.push({ func: token });
+		}
+	}
+
+	return specs;
+}
+
+
+function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
+	var i;
+	var cmp;
+
+	for (i = 0; i < fieldSpecs.length; i++) {
+		cmp = compareByFieldSpec(obj1, obj2, fieldSpecs[i]);
+		if (cmp) {
+			return cmp;
+		}
+	}
+
+	return 0;
+}
+
+
+function compareByFieldSpec(obj1, obj2, fieldSpec) {
+	if (fieldSpec.func) {
+		return fieldSpec.func(obj1, obj2);
+	}
+	return flexibleCompare(obj1[fieldSpec.field], obj2[fieldSpec.field]) *
+		(fieldSpec.order || 1);
+}
+
+
+function flexibleCompare(a, b) {
+	if (!a && !b) {
+		return 0;
+	}
+	if (b == null) {
+		return -1;
+	}
+	if (a == null) {
+		return 1;
+	}
+	if ($.type(a) === 'string' || $.type(b) === 'string') {
+		return String(a).localeCompare(String(b));
+	}
+	return a - b;
 }
 
 
@@ -512,6 +597,9 @@ function intersectionToSeg(subjectRange, constraintRange) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 fc.computeIntervalUnit = computeIntervalUnit;
+fc.divideRangeByDuration = divideRangeByDuration;
+fc.divideDurationByDuration = divideDurationByDuration;
+fc.multiplyDuration = multiplyDuration;
 fc.durationHasTime = durationHasTime;
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
@@ -583,6 +671,55 @@ function computeRangeAs(unit, start, end) {
 }
 
 
+// Intelligently divides a range (specified by a start/end params) by a duration
+function divideRangeByDuration(start, end, dur) {
+	var months;
+
+	if (durationHasTime(dur)) {
+		return (end - start) / dur;
+	}
+	months = dur.asMonths();
+	if (Math.abs(months) >= 1 && isInt(months)) {
+		return end.diff(start, 'months', true) / months;
+	}
+	return end.diff(start, 'days', true) / dur.asDays();
+}
+
+
+// Intelligently divides one duration by another
+function divideDurationByDuration(dur1, dur2) {
+	var months1, months2;
+
+	if (durationHasTime(dur1) || durationHasTime(dur2)) {
+		return dur1 / dur2;
+	}
+	months1 = dur1.asMonths();
+	months2 = dur2.asMonths();
+	if (
+		Math.abs(months1) >= 1 && isInt(months1) &&
+		Math.abs(months2) >= 1 && isInt(months2)
+	) {
+		return months1 / months2;
+	}
+	return dur1.asDays() / dur2.asDays();
+}
+
+
+// Intelligently multiplies a duration by a number
+function multiplyDuration(dur, n) {
+	var months;
+
+	if (durationHasTime(dur)) {
+		return moment.duration(dur * n);
+	}
+	months = dur.asMonths();
+	if (Math.abs(months) >= 1 && isInt(months)) {
+		return moment.duration({ months: months * n });
+	}
+	return moment.duration({ days: dur.asDays() * n });
+}
+
+
 // Returns a boolean about whether the given duration has any time parts (hours/minutes/seconds/ms)
 function durationHasTime(dur) {
 	return Boolean(dur.hours() || dur.minutes() || dur.seconds() || dur.milliseconds());
@@ -598,6 +735,29 @@ function isNativeDate(input) {
 function isTimeString(str) {
 	return /^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
 }
+
+
+/* Logging and Debug
+----------------------------------------------------------------------------------------------------------------------*/
+
+fc.log = function() {
+	var console = window.console;
+
+	if (console && console.log) {
+		return console.log.apply(console, arguments);
+	}
+};
+
+fc.warn = function() {
+	var console = window.console;
+
+	if (console && console.warn) {
+		return console.warn.apply(console, arguments);
+	}
+	else {
+		return fc.log.apply(fc, arguments);
+	}
+};
 
 
 /* General Utilities
@@ -1590,6 +1750,59 @@ Class.extend = function(members) {
 Class.mixin = function(members) {
 	copyOwnProps(members.prototype || members, this.prototype); // TODO: copyNativeMethods?
 };
+;;
+
+var Emitter = fc.Emitter = Class.extend({
+
+	callbackHash: null,
+
+
+	on: function(name, callback) {
+		this.getCallbacks(name).add(callback);
+		return this; // for chaining
+	},
+
+
+	off: function(name, callback) {
+		this.getCallbacks(name).remove(callback);
+		return this; // for chaining
+	},
+
+
+	trigger: function(name) { // args...
+		var args = Array.prototype.slice.call(arguments, 1);
+
+		this.triggerWith(name, this, args);
+
+		return this; // for chaining
+	},
+
+
+	triggerWith: function(name, context, args) {
+		var callbacks = this.getCallbacks(name);
+
+		callbacks.fireWith(context, args);
+
+		return this; // for chaining
+	},
+
+
+	getCallbacks: function(name) {
+		var callbacks;
+
+		if (!this.callbackHash) {
+			this.callbackHash = {};
+		}
+
+		callbacks = this.callbackHash[name];
+		if (!callbacks) {
+			callbacks = this.callbackHash[name] = $.Callbacks();
+		}
+
+		return callbacks;
+	}
+
+});
 ;;
 
 /* A rectangular panel that is absolutely positioned over other content
@@ -4389,6 +4602,21 @@ Grid.mixin({
 		}
 
 		return segs;
+	},
+
+
+	sortSegs: function(segs) {
+		segs.sort(proxy(this, 'compareSegs'));
+	},
+
+
+	// A cmp function for determining which segments should take visual priority
+	// DOES NOT WORK ON INVERTED BACKGROUND EVENTS because they have no eventStartMS/eventDurationMS
+	compareSegs: function(seg1, seg2) {
+		return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
+			seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
+			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
+			compareByFieldSpecs(seg1.event, seg2.event, this.view.eventOrderSpecs);
 	}
 
 });
@@ -4431,18 +4659,6 @@ function groupEventsById(events) {
 function compareNormalRanges(range1, range2) {
 	return range1.eventStartMS - range2.eventStartMS; // earlier ranges go first
 }
-
-
-// A cmp function for determining which segments should take visual priority
-// DOES NOT WORK ON INVERTED BACKGROUND EVENTS because they have no eventStartMS/eventDurationMS
-function compareSegs(seg1, seg2) {
-	return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
-		seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
-		seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
-		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
-}
-
-fc.compareSegs = compareSegs; // export
 
 
 /* External-Dragging-Element Data
@@ -5220,7 +5436,7 @@ DayGrid.mixin({
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segs.sort(compareSegs);
+		this.sortSegs(segs);
 		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
@@ -5621,7 +5837,7 @@ DayGrid.mixin({
 		);
 
 		// force an order because eventsToSegs doesn't guarantee one
-		segs.sort(compareSegs);
+		this.sortSegs(segs);
 
 		return segs;
 	},
@@ -5673,7 +5889,8 @@ var TimeGrid = Grid.extend({
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
 	colDates: null, // whole-day dates for each column. left to right
-	axisFormat: null, // formatting string for times running along vertical axis
+	labelFormat: null, // formatting string for times running along vertical axis
+	labelInterval: null, // duration of how often a label should be displayed for a slot
 
 	dayEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
@@ -5734,29 +5951,28 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var isRTL = this.isRTL;
 		var html = '';
-		var slotNormal = this.slotDuration.asMinutes() % 15 === 0;
 		var slotTime = moment.duration(+this.minTime); // wish there was .clone() for durations
 		var slotDate; // will be on the view's first day, but we only care about its time
-		var minutes;
+		var isLabeled;
 		var axisHtml;
 
 		// Calculate the time for each slot
 		while (slotTime < this.maxTime) {
-			slotDate = this.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
-			minutes = slotDate.minutes();
+			slotDate = this.start.clone().time(slotTime); // after .time() will be in UTC. but that's good, avoids DST issues
+			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
 				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
+					(isLabeled ?
 						'<span>' + // for matchCellWidths
-							htmlEscape(slotDate.format(this.axisFormat)) +
+							htmlEscape(slotDate.format(this.labelFormat)) +
 						'</span>' :
 						''
 						) +
 				'</td>';
 
 			html +=
-				'<tr ' + (!minutes ? '' : 'class="fc-minor"') + '>' +
+				'<tr ' + (isLabeled ? '' : 'class="fc-minor"') + '>' +
 					(!isRTL ? axisHtml : '') +
 					'<td class="' + view.widgetContentClass + '"/>' +
 					(isRTL ? axisHtml : '') +
@@ -5778,6 +5994,7 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var slotDuration = view.opt('slotDuration');
 		var snapDuration = view.opt('snapDuration');
+		var input;
 
 		slotDuration = moment.duration(slotDuration);
 		snapDuration = snapDuration ? moment.duration(snapDuration) : slotDuration;
@@ -5789,7 +6006,41 @@ var TimeGrid = Grid.extend({
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
 
-		this.axisFormat = view.opt('axisFormat') || view.opt('smallTimeFormat');
+		// might be an array value (for TimelineView).
+		// if so, getting the most granular entry (the last one probably).
+		input = view.opt('slotLabelFormat');
+		if ($.isArray(input)) {
+			input = input[input.length - 1];
+		}
+
+		this.labelFormat =
+			input ||
+			view.opt('axisFormat') || // deprecated
+			view.opt('smallTimeFormat'); // the computed default
+
+		input = view.opt('slotLabelInterval');
+		this.labelInterval = input ?
+			moment.duration(input) :
+			this.computeLabelInterval(slotDuration);
+	},
+
+
+	// Computes an automatic value for slotLabelInterval
+	computeLabelInterval: function(slotDuration) {
+		var i;
+		var labelInterval;
+		var slotsPerLabel;
+
+		// find the smallest stock label interval that results in more than one slots-per-label
+		for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
+			labelInterval = moment.duration(AGENDA_STOCK_SUB_DURATIONS[i]);
+			slotsPerLabel = divideDurationByDuration(labelInterval, slotDuration);
+			if (isInt(slotsPerLabel) && slotsPerLabel > 1) {
+				return labelInterval;
+			}
+		}
+
+		return moment.duration(slotDuration); // fall back. clone
 	},
 
 
@@ -6209,7 +6460,7 @@ TimeGrid.mixin({
 
 		for (col = 0; col < segCols.length; col++) { // iterate each column grouping
 			colSegs = segCols[col];
-			placeSlotSegs(colSegs); // compute horizontal coordinates, z-index's, and reorder the array
+			this.placeSlotSegs(colSegs); // compute horizontal coordinates, z-index's, and reorder the array
 
 			containerEl = $('<div class="fc-event-container"/>');
 
@@ -6232,6 +6483,74 @@ TimeGrid.mixin({
 		this.bookendCells(trEl, 'eventSkeleton');
 
 		return tableEl;
+	},
+
+
+	// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
+	// NOTE: Also reorders the given array by date!
+	placeSlotSegs: function(segs) {
+		var levels;
+		var level0;
+		var i;
+
+		this.sortSegs(segs); // order by date
+		levels = buildSlotSegLevels(segs);
+		computeForwardSlotSegs(levels);
+
+		if ((level0 = levels[0])) {
+
+			for (i = 0; i < level0.length; i++) {
+				computeSlotSegPressures(level0[i]);
+			}
+
+			for (i = 0; i < level0.length; i++) {
+				this.computeSlotSegCoords(level0[i], 0, 0);
+			}
+		}
+	},
+
+
+	// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
+	// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
+	// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
+	//
+	// The segment might be part of a "series", which means consecutive segments with the same pressure
+	// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
+	// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
+	// coordinate of the first segment in the series.
+	computeSlotSegCoords: function(seg, seriesBackwardPressure, seriesBackwardCoord) {
+		var forwardSegs = seg.forwardSegs;
+		var i;
+
+		if (seg.forwardCoord === undefined) { // not already computed
+
+			if (!forwardSegs.length) {
+
+				// if there are no forward segments, this segment should butt up against the edge
+				seg.forwardCoord = 1;
+			}
+			else {
+
+				// sort highest pressure first
+				this.sortForwardSlotSegs(forwardSegs);
+
+				// this segment's forwardCoord will be calculated from the backwardCoord of the
+				// highest-pressure forward segment.
+				this.computeSlotSegCoords(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord);
+				seg.forwardCoord = forwardSegs[0].backwardCoord;
+			}
+
+			// calculate the backwardCoord from the forwardCoord. consider the series
+			seg.backwardCoord = seg.forwardCoord -
+				(seg.forwardCoord - seriesBackwardCoord) / // available width for series
+				(seriesBackwardPressure + 1); // # of segments in the series
+
+			// use this segment's coordinates to computed the coordinates of the less-pressurized
+			// forward segments
+			for (i=0; i<forwardSegs.length; i++) {
+				this.computeSlotSegCoords(forwardSegs[i], 0, seg.forwardCoord);
+			}
+		}
 	},
 
 
@@ -6396,33 +6715,25 @@ TimeGrid.mixin({
 		}
 
 		return segCols;
+	},
+
+
+	sortForwardSlotSegs: function(forwardSegs) {
+		forwardSegs.sort(proxy(this, 'compareForwardSlotSegs'));
+	},
+
+
+	// A cmp function for determining which forward segment to rely on more when computing coordinates.
+	compareForwardSlotSegs: function(seg1, seg2) {
+		// put higher-pressure first
+		return seg2.forwardPressure - seg1.forwardPressure ||
+			// put segments that are closer to initial edge first (and favor ones with no coords yet)
+			(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
+			// do normal sorting...
+			this.compareSegs(seg1, seg2);
 	}
 
 });
-
-
-// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
-// NOTE: Also reorders the given array by date!
-function placeSlotSegs(segs) {
-	var levels;
-	var level0;
-	var i;
-
-	segs.sort(compareSegs); // order by date
-	levels = buildSlotSegLevels(segs);
-	computeForwardSlotSegs(levels);
-
-	if ((level0 = levels[0])) {
-
-		for (i = 0; i < level0.length; i++) {
-			computeSlotSegPressures(level0[i]);
-		}
-
-		for (i = 0; i < level0.length; i++) {
-			computeSlotSegCoords(level0[i], 0, 0);
-		}
-	}
-}
 
 
 // Builds an array of segments "levels". The first level will be the leftmost tier of segments if the calendar is
@@ -6501,50 +6812,6 @@ function computeSlotSegPressures(seg) {
 }
 
 
-// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
-// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
-// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
-//
-// The segment might be part of a "series", which means consecutive segments with the same pressure
-// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
-// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
-// coordinate of the first segment in the series.
-function computeSlotSegCoords(seg, seriesBackwardPressure, seriesBackwardCoord) {
-	var forwardSegs = seg.forwardSegs;
-	var i;
-
-	if (seg.forwardCoord === undefined) { // not already computed
-
-		if (!forwardSegs.length) {
-
-			// if there are no forward segments, this segment should butt up against the edge
-			seg.forwardCoord = 1;
-		}
-		else {
-
-			// sort highest pressure first
-			forwardSegs.sort(compareForwardSlotSegs);
-
-			// this segment's forwardCoord will be calculated from the backwardCoord of the
-			// highest-pressure forward segment.
-			computeSlotSegCoords(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord);
-			seg.forwardCoord = forwardSegs[0].backwardCoord;
-		}
-
-		// calculate the backwardCoord from the forwardCoord. consider the series
-		seg.backwardCoord = seg.forwardCoord -
-			(seg.forwardCoord - seriesBackwardCoord) / // available width for series
-			(seriesBackwardPressure + 1); // # of segments in the series
-
-		// use this segment's coordinates to computed the coordinates of the less-pressurized
-		// forward segments
-		for (i=0; i<forwardSegs.length; i++) {
-			computeSlotSegCoords(forwardSegs[i], 0, seg.forwardCoord);
-		}
-	}
-}
-
-
 // Find all the segments in `otherSegs` that vertically collide with `seg`.
 // Append into an optionally-supplied `results` array and return.
 function computeSlotSegCollisions(seg, otherSegs, results) {
@@ -6563,17 +6830,6 @@ function computeSlotSegCollisions(seg, otherSegs, results) {
 // Do these segments occupy the same vertical space?
 function isSlotSegCollision(seg1, seg2) {
 	return seg1.bottom > seg2.top && seg1.top < seg2.bottom;
-}
-
-
-// A cmp function for determining which forward segment to rely on more when computing coordinates.
-function compareForwardSlotSegs(seg1, seg2) {
-	// put higher-pressure first
-	return seg2.forwardPressure - seg1.forwardPressure ||
-		// put segments that are closer to initial edge first (and favor ones with no coords yet)
-		(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
-		// do normal sorting...
-		compareSegs(seg1, seg2);
 }
 
 ;;
@@ -6610,6 +6866,8 @@ var View = fc.View = Class.extend({
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 
+	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
+
 	// subclasses can optionally use a scroll container
 	scrollerEl: null, // the element that will most likely scroll when content is too tall
 	scrollTop: null, // cached vertical scroll value
@@ -6638,6 +6896,8 @@ var View = fc.View = Class.extend({
 		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
+
+		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
@@ -7776,6 +8036,9 @@ var Calendar = fc.Calendar = Class.extend({
 });
 
 
+Calendar.mixin(Emitter);
+
+
 function Calendar_constructor(element, overrides) {
 	var t = this;
 
@@ -8409,12 +8672,14 @@ function Calendar_constructor(element, overrides) {
 	}
 	
 	
-	function trigger(name, thisObj) {
+	function trigger(name, thisObj) { // overrides the Emitter's trigger method :(
+		var args = Array.prototype.slice.call(arguments, 2);
+
+		thisObj = thisObj || _element;
+		this.triggerWith(name, thisObj, args); // Emitter's method
+
 		if (options[name]) {
-			return options[name].apply(
-				thisObj || _element,
-				Array.prototype.slice.call(arguments, 2)
-			);
+			return options[name].apply(thisObj, args);
 		}
 	}
 
@@ -8500,6 +8765,8 @@ Calendar.defaults = {
 	unselectAuto: true,
 	
 	dropAccept: '*',
+
+	eventOrder: 'title',
 
 	eventLimit: false,
 	eventLimitText: 'more',
@@ -8796,6 +9063,7 @@ function Header(calendar, options) {
 				var groupEl;
 
 				$.each(this.split(','), function(j, buttonName) {
+					var customButtonProps;
 					var viewSpec;
 					var buttonClick;
 					var overrideText; // text explicitly set by calendar's constructor options. overcomes icons
@@ -8804,16 +9072,23 @@ function Header(calendar, options) {
 					var normalIcon;
 					var innerHtml;
 					var classes;
-					var button;
+					var button; // the element
 
 					if (buttonName == 'title') {
 						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
 						isOnlyButtons = false;
 					}
 					else {
-						viewSpec = calendar.getViewSpec(buttonName);
-
-						if (viewSpec) {
+						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
+							buttonClick = function(ev) {
+								if (customButtonProps.click) {
+									customButtonProps.click.call(button[0], ev);
+								}
+							};
+							overrideText = ''; // icons will override text
+							defaultText = customButtonProps.text;
+						}
+						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
@@ -8831,8 +9106,15 @@ function Header(calendar, options) {
 
 						if (buttonClick) {
 
-							themeIcon = options.themeButtonIcons[buttonName];
-							normalIcon = options.buttonIcons[buttonName];
+							themeIcon =
+								customButtonProps ?
+									customButtonProps.themeIcon :
+									options.themeButtonIcons[buttonName];
+
+							normalIcon =
+								customButtonProps ?
+									customButtonProps.icon :
+									options.buttonIcons[buttonName];
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
@@ -8858,11 +9140,11 @@ function Header(calendar, options) {
 									innerHtml +
 								'</button>'
 								)
-								.click(function() {
+								.click(function(ev) {
 									// don't process clicks for disabled buttons
 									if (!button.hasClass(tm + '-state-disabled')) {
 
-										buttonClick();
+										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.
@@ -10850,6 +11132,16 @@ var AgendaView = View.extend({
 ;;
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
+
+// potential nice values for the slot-duration and interval-duration
+// from largest to smallest
+var AGENDA_STOCK_SUB_DURATIONS = [
+	{ hours: 1 },
+	{ minutes: 30 },
+	{ minutes: 15 },
+	{ seconds: 30 },
+	{ seconds: 15 }
+];
 
 fcViews.agenda = {
 	'class': AgendaView,

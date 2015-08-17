@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.3.2 Google Calendar Plugin
+ * FullCalendar v2.4.0 Google Calendar Plugin
  * Docs & License: http://fullcalendar.io/
  * (c) 2015 Adam Shaw
  */
@@ -80,17 +80,13 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 
 	function reportError(message, apiErrorObjs) {
 		var errorObjs = apiErrorObjs || [ { message: message } ]; // to be passed into error handlers
-		var consoleObj = window.console;
-		var consoleWarnFunc = consoleObj ? (consoleObj.warn || consoleObj.log) : null;
 
 		// call error handlers
 		(sourceOptions.googleCalendarError || $.noop).apply(calendar, errorObjs);
 		(calendar.options.googleCalendarError || $.noop).apply(calendar, errorObjs);
 
 		// print error to debug console
-		if (consoleWarnFunc) {
-			consoleWarnFunc.apply(consoleObj, [ message ].concat(apiErrorObjs || []));
-		}
+		fc.warn.apply(null, [ message ].concat(apiErrorObjs || []));
 	}
 
 	if (!apiKey) {
