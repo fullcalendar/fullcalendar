@@ -12,5 +12,12 @@ The following 5 views are all built in to FullCalendar:
 - **agendaWeek** - [see example](../../views/agendaWeek/)
 - **agendaDay** - [see example](../../views/agendaDay/)
 
+The following views are included in the [premium Scheduler add-on](../../scheduler/):
+
+- **timelineDay**
+- **timelineWeek**
+- **timelineMonth**
+- **timelineYear**
+
 You can define [header](../display/header) buttons to allow the user to switch between them.
 You can set the initial view of the calendar with the [defaultView]() option.

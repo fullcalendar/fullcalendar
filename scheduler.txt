@@ -1,29 +1,44 @@
 
 # Getting started with Scheduler
 
+The Scheduler add-on provides FullCalendar with additional functionality for displaying resources.
+Some important terminology:
 
-This document describes the settings for FullCalendar **Scheduler** plugin.
-It supports the notion of **resources**, things that events can be assigned to such as team members and conference rooms.
-The plugin also provides a new view called **Timeline View**, which is very good at displaying resources.
-In the future, other FullCalendar views will display resources as well.
+- <b><i>Scheduler</i></b> : the advertised name of the add-on
+- <b><i>Resources</i></b> : things that events can be assigned to, like team members or conference rooms
+- <b><i>Timeline</i></b> : the name of a new [Available View](views/Available_Views/).
+  it has its time axis running left-to-right and is especially suited for displaying resources
+  (and is currently the only view that is able to do so).
 
 
 ## Basic Usage
 
-Include the fullcalendar *and* the scheduler plugin files:
+In the HEAD of your HTML, include the necessary FullCalendar *and* Scheduler files:
 
-	<link href='lib/fullcalendar.css' rel='stylesheet' />
-	<link href='scheduler.min.css' rel='stylesheet' />
-	<script src='lib/moment.min.js'></script>
-	<script src='lib/jquery.min.js'></script>
-	<script src='lib/fullcalendar.min.js'></script>
-	<script src='scheduler.min.js'></script>
+	<link href='fullcalendar.css' rel='stylesheet' />
+	<link href='scheduler.css' rel='stylesheet' />
+	<script src='moment.js'></script>
+	<script src='jquery.js'></script>
+	<script src='fullcalendar.js'></script>
+	<script src='scheduler.js'></script>
 
-Then, in your JavaScript:
+Then, in your JavaScript, do something like this:
 
 	$('#calendar').fullCalendar({
 		defaultView: 'timelineMonth',
-		events: [ /* events go here */ ],
-		resources: [ /* resources go here */ ]
-		/* other options go here */
+		events: [
+			// events go here
+		],
+		resources: [
+			// resources go here
+		]
+		// other options go here...
 	});
+
+
+## More Settings
+
+A full list of Scheduler-related settings can be see on the main docs page on the right hand column
+(Timeline View, Resource Data, Resource Rendering, etc).
+
+<a href='.'>Visit the main docs page &raquo;</a> <!-- wha? confused urls -->
