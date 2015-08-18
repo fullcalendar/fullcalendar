@@ -2981,9 +2981,9 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// If being overridden, should return a range with reference-free date copies.
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
-		var slots = this.view.opt('slots');
-		var snapOnSlots = this.view.opt('snapOnSlots');
-		
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
+
 		if (slots && snapOnSlots) {
 			return {
 				start: date,
@@ -5679,6 +5679,8 @@ var TimeGrid = Grid.extend({
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
+	slots: null, // an array of custom slots, replacing the automatic slots every 'slotDuration'
+	snapOnSlots: null, // snap to whole slots when using custom slots
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
 	colDates: null, // whole-day dates for each column. left to right
@@ -5687,7 +5689,7 @@ var TimeGrid = Grid.extend({
 	dayEls: null, // cells elements in the day-row background
 	slatElsBreaks: null, // elements minus breaks running horizontally across all columns
 	slatEls: null, // elements running horizontally across all columns
-	
+
 	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
 	breakHeights: null, // an array of break heights
 
@@ -5707,10 +5709,10 @@ var TimeGrid = Grid.extend({
 	renderDates: function() {
 		this.el.html(this.renderHtml());
 		this.dayEls = this.el.find('.fc-day');
-		
-		var slots = this.view.opt('slots');
-		var snapOnSlots = this.view.opt('snapOnSlots');
-		
+
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
+
 		this.slatElsBreaks = this.el.find('.fc-slats tr:not(.fc-timeslots-break)');
 		this.slatEls = (slots && snapOnSlots) ? this.slatElsBreaks : this.el.find('.fc-slats tr');
 	},
@@ -5755,10 +5757,9 @@ var TimeGrid = Grid.extend({
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var minutes;
 		var axisHtml;
-        
-		var slots = view.opt('slots');
-		
-		if(slots) {
+
+		var slots = this.slots;
+		if (slots) {
 			var slot;
 			var nextSlot;
 			var startTime;
@@ -5767,25 +5768,25 @@ var TimeGrid = Grid.extend({
 			var breakHtml;
 			var breakHeight;
 			var slotHeight;
-			
-			for (var i=0; i<slots.length; i++) {
+
+			for (var i = 0; i < slots.length; i++) {
 				slot = slots[i];
 				nextSlot = slots[i + 1];
 				startTime = this.start.clone().time(slot.start);
 				endTime = this.start.clone().time(slot.end);
-				
-				if(nextSlot) {
+
+				if (nextSlot) {
 					nextStartTime = this.start.clone().time(nextSlot.start);
-					
+
 					breakHeight = moment.duration(nextStartTime.diff(endTime)).asMinutes();
 					breakHtml = (breakHeight > 0) ? '<tr class="fc-timeslots-break" style="height:' + breakHeight + 'px;"><td class="fc-break-axis"></td><td class="fc-timeslots-break-content"></td></tr>' : '';
 				}
-				
+
 				slotHeight = moment.duration(endTime.diff(startTime)).asMinutes();
-				
+
 				axisHtml =
 					'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-						'<div class="fc-timeslots-axis">' + 
+						'<div class="fc-timeslots-axis">' +
 							htmlEscape(startTime.format(this.axisFormat) + "\n" + endTime.format(this.axisFormat)) +
 						'</div>' +
 					'</td>';
@@ -5798,7 +5799,7 @@ var TimeGrid = Grid.extend({
 					"</tr>"  + breakHtml;
 				breakHtml = '';
 			}
-		} 
+		}
 		else {
 			// Calculate the time for each slot
 			while (slotTime < this.maxTime) {
@@ -5851,6 +5852,54 @@ var TimeGrid = Grid.extend({
 		this.maxTime = moment.duration(view.opt('maxTime'));
 
 		this.axisFormat = view.opt('axisFormat') || view.opt('smallTimeFormat');
+
+		// custom slots
+		var slots = view.opt('slots');
+		if (slots && Array.isArray(slots)) {
+			// filter valid slots
+			slots = $.grep(slots, function(sl) {
+				return sl.hasOwnProperty("start") && sl.hasOwnProperty("end") &&
+					typeof(sl.start) === "string" && typeof(sl.end) === "string" &&
+					sl.start.match(/^[0-9]{1,2}:[0-9]{1,2}(:[0-9]{1,2})?$/) &&
+					sl.end.match(/^[0-9]{1,2}:[0-9]{1,2}(:[0-9]{1,2})?$/) &&
+					true;
+			});
+			if (slots.length >= 2) { // require at least 2 slots to display properly
+				// sort slots by start time
+				slots.sort(function(sl1, sl2) {
+					var start1 = moment(sl1.start, "HH:mm:ss");
+					var start2 = moment(sl2.start, "HH:mm:ss");
+					if (start1.isBefore(start2)) {
+						return -1;
+					} else if (start2.isBefore(start1)) {
+						return 1;
+					} else {
+						return 0;
+					}
+				});
+				// make sure each slot ends after it starts, and before the next one starts
+				for (var i = 0; i < slots.length; i++) {
+					var start1 = moment(slots[i].start, "HH:mm:ss");
+					var end1 = moment(slots[i].end, "HH:mm:ss");
+					if (end1.isBefore(start1)) {
+						slots[i].end = slots[i].start;
+					}
+					if (i + 1 < slots.length) {
+						var start2 = moment(slots[i+1].start, "HH:mm:ss");
+						if (start2.isBefore(end1)) {
+							slots[i].end = slots[i+1].start;
+						}
+					}
+				}
+				this.slots = slots;
+
+				// options related to slots
+				var snapOnSlots = this.view.opt('snapOnSlots');
+				if (snapOnSlots === true) { // defaults to false
+					this.snapOnSlots = true;
+				}
+			}
+		}
 	},
 
 
@@ -5885,8 +5934,8 @@ var TimeGrid = Grid.extend({
 		var view = this.view;
 		var colDates = [];
 		var date;
-		var slots = view.opt('slots');
-		var snapOnSlots = view.opt('snapOnSlots');
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
 
 		date = this.start.clone();
 		while (date.isBefore(this.end)) {
@@ -5929,39 +5978,40 @@ var TimeGrid = Grid.extend({
 
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTime: function(row) {
-		var slots = this.view.opt('slots');
-		var snapOnSlots = this.view.opt('snapOnSlots');
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
 		if (slots && snapOnSlots) {
 			var beginTime = this.start.clone();
 			var rowTime;
 
 			if(row == slots.length) {
 				rowTime = this.start.clone().time(slots[row - 1].start);
-			} 
+			}
 			else {
 				rowTime = this.start.clone().time(slots[row].start);
 			}
-			
+
 			return moment.duration(rowTime.diff(beginTime));
 		}
 		else {
 			return moment.duration(this.minTime + this.snapDuration * row);
 		}
 	},
-	
+
+
 	// Given a row number of the grid for a bottom, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTimeBottom: function(row) {
 		var slots = this.view.opt('slots');
 		var beginTime = this.start.clone();
 		var rowTime;
-		
+
 		if(row == slots.length) {
 			rowTime = this.start.clone().time(slots[row - 1].end);
 		}
 		else {
 			rowTime = this.start.clone().time(slots[row].end);
 		}
-		
+
 		return moment.duration(rowTime.diff(beginTime));
 	},
 
@@ -6017,11 +6067,6 @@ var TimeGrid = Grid.extend({
 		var items = [];
 		var i;
 		var item;
-		
-		var breakHeightBottom;
-		
-		var slots = this.view.opt('slots');
-		var snapOnSlots = this.view.opt('snapOnSlots');
 
 		for (i = 0; i < this.rowCnt; i++) {
 			item = {
@@ -6032,12 +6077,14 @@ var TimeGrid = Grid.extend({
 			}
 			items.push(item);
 		}
-		
-		if(slots && snapOnSlots) {
+
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
+		if (slots && snapOnSlots) {
 			item.bottom = item.top + this.computeTimeTop(this.computeSnapTimeBottom(i));
 		}
 		else {
-			item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
+			item.bottom = originTop + this.computeTimeTop(this.computeSnapTime(i));
 		}
 
 		return items;
@@ -6059,50 +6106,51 @@ var TimeGrid = Grid.extend({
 	computeTimeTop: function(time) {
 		var slots = this.view.opt('slots');
 		var snapOnSlots = this.view.opt('snapOnSlots');
+		var slatTop;
 		if (slots) {
-			var beginTime = this.start.clone();
 			var time2 = this.start.clone().time(moment.utc(time.asMilliseconds()).format("HH:mm:ss")); // Convert duration to time;
-			
+
 			var row;
 			var isBottom = false;
 			var remainder;
 			var remainder2;
-			
+
 			var slot;
 			var previousSlot;
-			
+
 			var startTime;
 			var endTime;
-			
+
 			var previousEndTime;
 			var previousStartTime;
-			
+
 			var isSameAsEnd = false;
 			var isSameAsStart = false;
 			var isBetween = false;
-			
-			var isBetween2 = false
+
+			var isBetween2 = false;
 			var isSameAsPreviousEnd = false;
-			
-			for (var i=0; i<slots.length; i++) {
+
+			var i;
+			for (i=0; i<slots.length; i++) {
 				slot = slots[i];
 				previousSlot = slots[i - 1];
-				
+
 				startTime = this.start.clone().time(slot.start);
 				endTime = this.start.clone().time(slot.end);
-				
+
 				isSameAsEnd = time2.isSame(endTime);
 				isSameAsStart = time2.isSame(startTime);
 				isBetween = time2.isBetween(startTime, endTime);
-				
+
 				if(previousSlot) {
 					previousEndTime = this.start.clone().time(previousSlot.end);
 					previousStartTime = this.start.clone().time(previousSlot.start);
-					
+
 					isBetween2 = time2.isBetween(previousEndTime, startTime);
 					isSameAsPreviousEnd = time2.isSame(previousEndTime);
 				}
-				
+
 				if((isSameAsStart || isSameAsEnd || isBetween) || (isBetween2 || isSameAsPreviousEnd)) {
 					if(isSameAsEnd) {
 						isBottom = true;
@@ -6125,14 +6173,14 @@ var TimeGrid = Grid.extend({
 								diffTop = time2.diff(startTime, 'm');
 								diffBottom = startTime.clone().add(33, 'm').diff(time2, 'm');
 								diffStartEnd = endTime.diff(startTime, 'm');
-								
+
 								remainder = Number((diffTop * (((diffTop + diffBottom) / 2) / (diffStartEnd / 2))).toFixed(2)); // So 1 minute > 1 pixel
 							}
 							else {
 								diffTop = time2.diff(previousEndTime, 'm');
 								diffBottom = previousEndTime.clone().add(33, 'm').diff(time2, 'm');
 								diffStartEnd = endTime.diff(previousEndTime, 'm');
-								
+
 								remainder2 = Number((diffTop * (((diffTop + diffBottom) / 2) / (diffStartEnd / 2))).toFixed(2)); // So 1 minute > 1 pixel
 							}
 						}
@@ -6141,18 +6189,18 @@ var TimeGrid = Grid.extend({
 					break;
 				}
 			}
-			
+
 			var orginalRow = row;
 			if(!snapOnSlots) {
 				var previousSlotSnap;
 				var slotSnap;
 				var nextSlotSnap;
-				
-				for (var i=0; i<orginalRow; i++) {
+
+				for (i=0; i<orginalRow; i++) {
 					previousSlotSnap = slots[i - 1];
 					slotSnap = slots[i];
 					nextSlotSnap = slots[i + 1];
-					
+
 					if(isBottom && nextSlotSnap && !(this.start.clone().time(slotSnap.end).isSame(this.start.clone().time(nextSlotSnap.start)))) {
 						row++;
 					}
@@ -6161,13 +6209,13 @@ var TimeGrid = Grid.extend({
 					}
 				}
 			}
-			
-			var slatTop = this.slatTops[row]; // the top position of the furthest whole slot;
-			
-			var breakHeight = isNaN(this.breakHeights[orginalRow - 1]) ? 0 : this.breakHeights[orginalRow - 1];	
+
+			slatTop = this.slatTops[row]; // the top position of the furthest whole slot;
+
+			var breakHeight = isNaN(this.breakHeights[orginalRow - 1]) ? 0 : this.breakHeights[orginalRow - 1];
 			if (remainder) { // time spans part-way into the slot
 				return (!snapOnSlots) ? slatTop + breakHeight + remainder : slatTop + remainder;
-			} 
+			}
 			else if (remainder2) {  // time spans part-way into the break
 				return (!snapOnSlots) ? slatTop + remainder2 : (slatTop - breakHeight) + remainder2;
 			}
@@ -6185,12 +6233,11 @@ var TimeGrid = Grid.extend({
 					return slatTop;
 				}
 			}
-		} 
+		}
 		else {
 			var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
 			var slatIndex;
 			var slatRemainder;
-			var slatTop;
 			var slatBottom;
 
 			// constrain. because minTime/maxTime might be customized
@@ -6213,7 +6260,7 @@ var TimeGrid = Grid.extend({
 
 
 	// Queries each `slatEl` for its position relative to the grid's container and stores it in `slatTops`.
-	// Includes the the bottom of the last slat as the last item in the array.
+	// Includes the bottom of the last slat as the last item in the array.
 	computeSlatTops: function() {
 		var tops = [];
 		var top;
@@ -6227,13 +6274,13 @@ var TimeGrid = Grid.extend({
 
 		this.slatTops = tops;
 	},
-	
-	// Queries each `slatEl` and check if it's next item has a break 
+
+	// Queries each `slatEl` and check if it's next item has a break
 	// if so, store the height of the break in `breakHeights`.
 	computeBreakHeights: function() {
 		var heights = [];
 		var height;
-		
+
 		var breakNode;
 
 		this.slatElsBreaks.each(function(i, node) {
@@ -8042,7 +8089,7 @@ function Calendar_constructor(element, overrides) {
 	t.initOptions(overrides || {});
 	var options = this.options;
 
-	
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -8188,7 +8235,7 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
+	// Given an event's allDay status and start date, returns what its fallback end date should be.
 	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
 		var end = start.clone();
 
@@ -8199,15 +8246,15 @@ function Calendar_constructor(element, overrides) {
 			var slots = options.slots;
 			var snapOnSlots = options.snapOnSlots;
 			var startTime;
-			
+
 			if(slots && snapOnSlots) {
 				var slot;
 				for (var i=0; i<slots.length; i++) {
 					slot = slots[i];
 					startTime = start.clone().time(slot.start);
-					
+
 					if(startTime.isSame(start)) {
-						end.time(slot.end)
+						end.time(slot.end);
 						break;
 					}
 				}
@@ -8215,7 +8262,7 @@ function Calendar_constructor(element, overrides) {
 			else {
 				end.add(t.defaultTimedEventDuration);
 			}
-		
+
 		}
 
 		if (t.getIsAmbigTimezone()) {
@@ -8234,7 +8281,7 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	
+
 	// Imports
 	// -----------------------------------------------------------------------------------
 
@@ -8261,9 +8308,9 @@ function Calendar_constructor(element, overrides) {
 	var ignoreWindowResize = 0;
 	var date;
 	var events = [];
-	
-	
-	
+
+
+
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
 
@@ -8274,8 +8321,8 @@ function Calendar_constructor(element, overrides) {
 	else {
 		date = t.getNow();
 	}
-	
-	
+
+
 	function render() {
 		if (!content) {
 			initialRender();
@@ -8286,8 +8333,8 @@ function Calendar_constructor(element, overrides) {
 			renderView();
 		}
 	}
-	
-	
+
+
 	function initialRender() {
 		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
@@ -8321,8 +8368,8 @@ function Calendar_constructor(element, overrides) {
 			$(window).resize(windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function destroy() {
 
 		if (currentView) {
@@ -8340,13 +8387,13 @@ function Calendar_constructor(element, overrides) {
 			$(window).unbind('resize', windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function elementVisible() {
 		return element.is(':visible');
 	}
-	
-	
+
+
 
 	// View Rendering
 	// -----------------------------------------------------------------------------------
@@ -8406,7 +8453,7 @@ function Calendar_constructor(element, overrides) {
 		ignoreWindowResize--;
 	}
 
-	
+
 
 	// Resizing
 	// -----------------------------------------------------------------------------------
@@ -8423,8 +8470,8 @@ function Calendar_constructor(element, overrides) {
 	t.isHeightAuto = function() {
 		return options.contentHeight === 'auto' || options.height === 'auto';
 	};
-	
-	
+
+
 	function updateSize(shouldRecalc) {
 		if (elementVisible()) {
 
@@ -8446,8 +8493,8 @@ function Calendar_constructor(element, overrides) {
 			_calcSize();
 		}
 	}
-	
-	
+
+
 	function _calcSize() { // assumes elementVisible
 		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
 			suggestedViewHeight = options.contentHeight;
@@ -8459,8 +8506,8 @@ function Calendar_constructor(element, overrides) {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 		}
 	}
-	
-	
+
+
 	function windowResize(ev) {
 		if (
 			!ignoreWindowResize &&
@@ -8472,9 +8519,9 @@ function Calendar_constructor(element, overrides) {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
@@ -8500,7 +8547,7 @@ function Calendar_constructor(element, overrides) {
 		currentView.clearEvents();
 		unfreezeContentHeight();
 	}
-	
+
 
 	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
@@ -8518,7 +8565,7 @@ function Calendar_constructor(element, overrides) {
 			// ... which will call renderEvents
 	}
 
-	
+
 	// called when event data arrives
 	function reportEvents(_events) {
 		events = _events;
@@ -8551,68 +8598,68 @@ function Calendar_constructor(element, overrides) {
 			header.enableButton('today');
 		}
 	}
-	
+
 
 
 	/* Selection
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function select(start, end) {
 		currentView.select(
 			t.buildSelectRange.apply(t, arguments)
 		);
 	}
-	
+
 
 	function unselect() { // safe to be called before renderView
 		if (currentView) {
 			currentView.unselect();
 		}
 	}
-	
-	
-	
+
+
+
 	/* Date
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function prev() {
 		date = currentView.computePrevDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function next() {
 		date = currentView.computeNextDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function prevYear() {
 		date.add(-1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function nextYear() {
 		date.add(1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function today() {
 		date = t.getNow();
 		renderView();
 	}
-	
-	
+
+
 	function gotoDate(dateInput) {
 		date = t.moment(dateInput);
 		renderView();
 	}
-	
-	
+
+
 	function incrementDate(delta) {
 		date.add(moment.duration(delta));
 		renderView();
@@ -8630,8 +8677,8 @@ function Calendar_constructor(element, overrides) {
 		date = newDate;
 		renderView(spec ? spec.type : null);
 	}
-	
-	
+
+
 	function getDate() {
 		return date.clone();
 	}
@@ -8659,23 +8706,23 @@ function Calendar_constructor(element, overrides) {
 			overflow: ''
 		});
 	}
-	
-	
-	
+
+
+
 	/* Misc
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function getCalendar() {
 		return t;
 	}
 
-	
+
 	function getView() {
 		return currentView;
 	}
-	
-	
+
+
 	function option(name, value) {
 		if (value === undefined) {
 			return options[name];
@@ -8685,8 +8732,8 @@ function Calendar_constructor(element, overrides) {
 			updateSize(true); // true = allow recalculation of height
 		}
 	}
-	
-	
+
+
 	function trigger(name, thisObj) {
 		if (options[name]) {
 			return options[name].apply(
@@ -9262,8 +9309,8 @@ var eventGUID = 1;
 
 function EventManager(options) { // assumed to be a calendar
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -9277,12 +9324,12 @@ function EventManager(options) { // assumed to be a calendar
 	t.normalizeEventRange = normalizeEventRange;
 	t.normalizeEventRangeTimes = normalizeEventRangeTimes;
 	t.ensureVisibleEventRange = ensureVisibleEventRange;
-	
-	
+
+
 	// imports
 	var reportEvents = t.reportEvents;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -9301,21 +9348,21 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function isFetchNeeded(start, end) {
 		return !rangeStart || // nothing has been fetched yet?
 			// or, a part of the new range is outside of the old range? (after normalizing)
 			start.clone().stripZone() < rangeStart.clone().stripZone() ||
 			end.clone().stripZone() > rangeEnd.clone().stripZone();
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -9327,8 +9374,8 @@ function EventManager(options) { // assumed to be a calendar
 			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
@@ -9364,8 +9411,8 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		});
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = fc.sourceFetchers;
@@ -9474,12 +9521,12 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
@@ -9561,9 +9608,9 @@ function EventManager(options) { // assumed to be a calendar
 		) ||
 		source; // the given argument *is* the primitive
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 
@@ -9605,7 +9652,7 @@ function EventManager(options) { // assumed to be a calendar
 		return !/^_|^(id|allDay|start|end)$/.test(name);
 	}
 
-	
+
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
 		var abstractEvent = buildEventFromInput(eventInput);
@@ -9634,8 +9681,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		return [];
 	}
-	
-	
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;
@@ -9664,8 +9711,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -9678,9 +9725,9 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		return cache; // else, return all
 	}
-	
-	
-	
+
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
@@ -9939,7 +9986,7 @@ function EventManager(options) { // assumed to be a calendar
 
 		var slots = options.slots;
 		var snapOnSlots = options.snapOnSlots;
-		
+
 		// diffs the dates in the appropriate way, returning a duration
 		function diffDates(date1, date0, isStart) { // date1 - date0
 			if (largeUnit) {
@@ -9951,36 +9998,36 @@ function EventManager(options) { // assumed to be a calendar
 			else {
 				if(slots && snapOnSlots) {
 					var diffDuration = diffDayTime(date1, date0);
-					
+
 					var slot;
 					var previousSlot;
-					
+
 					var startTime;
 					var endTime;
-					
+
 					var previousEndTime;
-					
+
 					for (var i=0; i<slots.length; i++) {
 						slot = slots[i];
 						previousSlot = slots[i - 1];
-						
+
 						startTime = date1.clone().time(slot.start);
 						endTime = date1.clone().time(slot.end);
-						
+
 						if(previousSlot) {
 							previousEndTime = date1.clone().time(previousSlot.end);
 						}
-						
-						if(isStart && i == 0 && date1.isBefore(startTime)) {
+
+						if(isStart && i === 0 && date1.isBefore(startTime)) {
 							diffDuration = diffDayTime(startTime, date0);
 							break;
 						}
-						
+
 						if(!isStart && i == slots.length - 1 && date1.isAfter(endTime)) {
 							diffDuration = diffDayTime(endTime, date0);
 							break;
 						}
-						
+
 						if(date1.isBetween(startTime, endTime) || (previousSlot && (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime)))) {
 							if(isStart) {
 								diffDuration = diffDayTime(startTime, date0);
@@ -9991,16 +10038,16 @@ function EventManager(options) { // assumed to be a calendar
 								break;
 							}
 						}
-						
+
 						if(isStart && date1.isSame(startTime)) {
 							break;
 						}
-						
+
 						if(!isStart && date1.isSame(endTime)) {
 							break;
 						}
 					}
-					
+
 					return diffDuration;
 				} else {
 					return diffDayTime(date1, date0);

@@ -3,7 +3,7 @@
  * Docs & License: <%= meta.homepage %>
  * (c) <%= meta.copyright %>
  */
- 
+
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
 		define([ 'jquery' ], factory);

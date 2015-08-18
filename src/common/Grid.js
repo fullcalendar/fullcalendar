@@ -183,9 +183,9 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// If being overridden, should return a range with reference-free date copies.
 	computeCellRange: function(cell) {
 		var date = this.computeCellDate(cell);
-		var slots = this.view.opt('slots');
-		var snapOnSlots = this.view.opt('snapOnSlots');
-		
+		var slots = this.slots;
+		var snapOnSlots = this.snapOnSlots;
+
 		if (slots && snapOnSlots) {
 			return {
 				start: date,
