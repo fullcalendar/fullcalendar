@@ -219,6 +219,12 @@ DayGrid.mixin({
 				else if (typeof clickOption === 'string') { // a view name
 					view.calendar.zoomTo(date, clickOption);
 				}
+			})
+			.each(function() {
+				var renderCallback = view.opt('eventLimitRender');
+				if (typeof renderCallback === 'function') {
+					renderCallback.call(_this, $(this), cell, hiddenSegs);
+				}
 			});
 	},
 
