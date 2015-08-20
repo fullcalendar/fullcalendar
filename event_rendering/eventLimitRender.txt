@@ -16,8 +16,6 @@ The `eventLimitRender` callback function can modify `element`. For example, it c
 
 The function can also return a brand new element that will be used for rendering instead. For all-day [background events](../event_rendering/Background_Events/), you must be sure to return a `<td>`.
 
-The function can also return `false` to completely cancel the rendering of the event.
-
 `eventLimitRender` is a great way to attach other jQuery plugins to "more" links,
 such as a [tooltip](http://getbootstrap.com/javascript/#tooltips) tooltip effect:
 
