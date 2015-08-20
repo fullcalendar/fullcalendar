@@ -223,7 +223,7 @@ DayGrid.mixin({
 			.each(function() {
 				var renderCallback = view.opt('eventLimitRender');
 				if (typeof renderCallback === 'function') {
-					renderCallback.call(_this, $(this), cell, hiddenSegs);
+					renderCallback.call(_this, $(this), _this.resliceDaySegs(hiddenSegs, cell.start));
 				}
 			});
 	},
