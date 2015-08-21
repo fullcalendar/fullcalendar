@@ -13,11 +13,11 @@
   "bugs": "http://fullcalendar.io/wiki/Reporting-Bugs/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/arshaw/fullcalendar.git"
+    "url": "https://github.com/fullcalendar/fullcalendar.git"
   },
   "license": {
     "type": "MIT",
-    "url": "https://github.com/arshaw/fullcalendar/blob/master/license.txt"
+    "url": "https://github.com/fullcalendar/fullcalendar/blob/master/license.txt"
   },
   "author": {
     "name": "Adam Shaw",
