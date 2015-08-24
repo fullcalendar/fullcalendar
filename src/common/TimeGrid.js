@@ -129,8 +129,28 @@ var TimeGrid = Grid.extend({
 						'<div class="fc-timeslots-axis">' + timeHtml + '</div>' +
 					'</td>';
 
+				var slotClasses = [];
+				if (slot.className) {
+					if (typeof slot.className === "string") {
+						slotClasses.push(slot.className);
+					}
+					else if (Array.isArray(slot.className) === true) {
+						for (var j = 0; j < slot.className.length; j++) {
+							var cl = slot.className[j];
+							if (typeof cl === "string") {
+								slotClasses.push(cl);
+							}
+						}
+					}
+				}
+				if (slot.minor === true) {
+					slotClasses.push('fc-minor');
+				}
+				else {
+					slotClasses.push('fc-major');
+				}
 				html +=
-					'<tr class="' + (slot.minor === true ? 'fc-minor' : 'fc-major') + '" '+ 'style="height: '+ slotHeight + 'px">' +
+					'<tr class="' + slotClasses.join(" ") + '" '+ 'style="height: '+ slotHeight + 'px">' +
 						(!isRTL ? axisHtml : '') +
 						'<td class="' + view.widgetContentClass + '"/>' +
 						(isRTL ? axisHtml : '') +
