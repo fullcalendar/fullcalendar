@@ -7,6 +7,7 @@ var TimeGrid = Grid.extend({
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
 	slots: null, // an array of custom slots, replacing the automatic slots every 'slotDuration'
+	showSlotEndTime: null, // display the end time of each custom slot
 	snapOnSlots: null, // snap to whole slots when using custom slots
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
@@ -97,6 +98,9 @@ var TimeGrid = Grid.extend({
 			var slotHeight;
 
 			for (var i = 0; i < slots.length; i++) {
+				// generate HTML for each horizontal slot
+				var showSlotEndTime = this.showSlotEndTime;
+
 				slot = slots[i];
 				nextSlot = slots[i + 1];
 				startTime = this.start.clone().time(slot.start);
@@ -111,11 +115,13 @@ var TimeGrid = Grid.extend({
 
 				slotHeight = moment.duration(endTime.diff(startTime)).asMinutes();
 
+				var timeHtml = htmlEscape(startTime.format(this.axisFormat));
+				if (showSlotEndTime === true) {
+					timeHtml += htmlEscape("\n" + endTime.format(this.axisFormat));
+				}
 				axisHtml =
 					'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-						'<div class="fc-timeslots-axis">' +
-							htmlEscape(startTime.format(this.axisFormat) + "\n" + endTime.format(this.axisFormat)) +
-						'</div>' +
+						'<div class="fc-timeslots-axis">' + timeHtml + '</div>' +
 					'</td>';
 
 				html +=
@@ -221,6 +227,10 @@ var TimeGrid = Grid.extend({
 				this.slots = slots;
 
 				// options related to slots
+				var showSlotEndTime = this.view.opt('showSlotEndTime');
+				if (showSlotEndTime !== false) { // defaults to true
+					this.showSlotEndTime = true;
+				}
 				var snapOnSlots = this.view.opt('snapOnSlots');
 				if (snapOnSlots === true) { // defaults to false
 					this.snapOnSlots = true;
