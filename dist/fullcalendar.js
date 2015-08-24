@@ -5681,6 +5681,7 @@ var TimeGrid = Grid.extend({
 	snapDuration: null, // granularity of time for dragging and selecting
 	slots: null, // an array of custom slots, replacing the automatic slots every 'slotDuration'
 	showSlotEndTime: null, // display the end time of each custom slot
+	showMinorSlotTime: null, // display the time of 'minor' slots
 	snapOnSlots: null, // snap to whole slots when using custom slots
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
@@ -5773,6 +5774,7 @@ var TimeGrid = Grid.extend({
 			for (var i = 0; i < slots.length; i++) {
 				// generate HTML for each horizontal slot
 				var showSlotEndTime = this.showSlotEndTime;
+				var showMinorSlotTime = this.showMinorSlotTime;
 
 				slot = slots[i];
 				nextSlot = slots[i + 1];
@@ -5788,9 +5790,12 @@ var TimeGrid = Grid.extend({
 
 				slotHeight = moment.duration(endTime.diff(startTime)).asMinutes();
 
-				var timeHtml = htmlEscape(startTime.format(this.axisFormat));
-				if (showSlotEndTime === true) {
-					timeHtml += htmlEscape("\n" + endTime.format(this.axisFormat));
+				var timeHtml = '';
+				if (showMinorSlotTime === true || !slot.minor) {
+					timeHtml = htmlEscape(startTime.format(this.axisFormat));
+					if (showSlotEndTime === true) {
+						timeHtml += htmlEscape("\n" + endTime.format(this.axisFormat));
+					}
 				}
 				axisHtml =
 					'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
@@ -5798,7 +5803,7 @@ var TimeGrid = Grid.extend({
 					'</td>';
 
 				html +=
-					'<tr class="fc-minor" '+ 'style="height: '+ slotHeight + 'px">' +
+					'<tr class="' + (slot.minor === true ? 'fc-minor' : 'fc-major') + '" '+ 'style="height: '+ slotHeight + 'px">' +
 						(!isRTL ? axisHtml : '') +
 						'<td class="' + view.widgetContentClass + '"/>' +
 						(isRTL ? axisHtml : '') +
@@ -5903,6 +5908,10 @@ var TimeGrid = Grid.extend({
 				var showSlotEndTime = this.view.opt('showSlotEndTime');
 				if (showSlotEndTime !== false) { // defaults to true
 					this.showSlotEndTime = true;
+				}
+				var showMinorSlotTime = this.view.opt('showMinorSlotTime');
+				if (showMinorSlotTime !== false) { // defaults to true
+					this.showMinorSlotTime = true;
 				}
 				var snapOnSlots = this.view.opt('snapOnSlots');
 				if (snapOnSlots === true) { // defaults to false
