@@ -255,8 +255,21 @@ var TimeGrid = Grid.extend({
 					this.showMinorSlotTime = true;
 				}
 				var snapOnSlots = this.view.opt('snapOnSlots');
-				if (snapOnSlots === true) { // defaults to false
-					this.snapOnSlots = true;
+				if (snapOnSlots &&
+					(snapOnSlots === true || // defaults to false
+						snapOnSlots.hasOwnProperty('snapEffectiveDuration') ||
+						snapOnSlots.hasOwnProperty('snapPolicy')
+					)) {
+					this.snapOnSlots = {
+						snapEffectiveDuration: false,
+						snapPolicy: 'enlarge' // could also be 'closest'
+					};
+					if (snapOnSlots.snapEffectiveDuration === true) {
+						this.snapOnSlots.snapEffectiveDuration = true;
+					}
+					if (snapOnSlots.snapPolicy === 'closest') {
+						this.snapOnSlots.snapPolicy = 'closest';
+					}
 				}
 			}
 		}
