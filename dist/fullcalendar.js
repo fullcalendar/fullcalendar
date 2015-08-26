@@ -9966,7 +9966,7 @@ function EventManager(options) { // assumed to be a calendar
 				date.isSame(startTime)
 			)) {
 				// end of event is before the current slot
-				var previousEndTime = date.clone().time(Math.max(0, slots[i - 1]).end);
+				var previousEndTime = date.clone().time(slots[Math.max(0, i - 1)].end);
 				return previousEndTime.diff(date, "seconds");
 			}
 			if (!isStart && (
