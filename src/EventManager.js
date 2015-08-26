@@ -12,8 +12,8 @@ var eventGUID = 1;
 
 function EventManager(options) { // assumed to be a calendar
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -27,12 +27,12 @@ function EventManager(options) { // assumed to be a calendar
 	t.normalizeEventRange = normalizeEventRange;
 	t.normalizeEventRangeTimes = normalizeEventRangeTimes;
 	t.ensureVisibleEventRange = ensureVisibleEventRange;
-	
-	
+
+
 	// imports
 	var reportEvents = t.reportEvents;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -51,21 +51,21 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function isFetchNeeded(start, end) {
 		return !rangeStart || // nothing has been fetched yet?
 			// or, a part of the new range is outside of the old range? (after normalizing)
 			start.clone().stripZone() < rangeStart.clone().stripZone() ||
 			end.clone().stripZone() > rangeEnd.clone().stripZone();
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -77,8 +77,8 @@ function EventManager(options) { // assumed to be a calendar
 			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
@@ -114,8 +114,8 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		});
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = fc.sourceFetchers;
@@ -224,12 +224,12 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
@@ -311,9 +311,9 @@ function EventManager(options) { // assumed to be a calendar
 		) ||
 		source; // the given argument *is* the primitive
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 
@@ -355,7 +355,7 @@ function EventManager(options) { // assumed to be a calendar
 		return !/^_|^(id|allDay|start|end)$/.test(name);
 	}
 
-	
+
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
 		var abstractEvent = buildEventFromInput(eventInput);
@@ -384,8 +384,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		return [];
 	}
-	
-	
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;
@@ -414,8 +414,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -428,9 +428,9 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		return cache; // else, return all
 	}
-	
-	
-	
+
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
@@ -671,14 +671,212 @@ function EventManager(options) { // assumed to be a calendar
 	-----------------------------------------------------------------------------------------*/
 
 
+	// Auxiliary function, used by diffDates() in mutateEvent() to find the event
+	// enclosing the given date.
+	// If isStart is set, returns the diff (in seconds) to its start, otherwise
+	// returns the diff to its end.
+	function computeDiffWithSlotContainingDate(date, isStart, slots) {
+		// look for the slot containing date
+		for (var i = 0; i < slots.length; i++) {
+			var slot = slots[i];
+			var startTime = date.clone().time(slot.start);
+			var endTime = date.clone().time(slot.end);
+			if (isStart && date.isBefore(endTime)) {
+				// found matching slot for start of event
+				return startTime.diff(date, "seconds");
+			}
+			if (!isStart && (
+				date.isBefore(startTime) ||
+				date.isSame(startTime)
+			)) {
+				// end of event is before the current slot
+				var previousEndTime = date.clone().time(Math.max(0, slots[i - 1]).end);
+				return previousEndTime.diff(date, "seconds");
+			}
+			if (!isStart && (
+				date.isBetween(startTime, endTime) ||
+				date.isSame(endTime)
+			)) {
+				// found matching slot for end of event
+				return endTime.diff(date, "seconds");
+			}
+		}
+		// not found because date is too late
+		var lastSlot = slots[slots.length - 1];
+		if (isStart) {
+			// move to start of last slot
+			return date.clone().time(lastSlot.start).diff(date, "seconds");
+		}
+		else {
+			// move to end of last slot
+			return date.clone().time(lastSlot.end).diff(date, "seconds");
+		}
+	}
+
+
+	// Auxiliary function, used by diffDates() in mutateEvent() to find the event
+	// boundary closest to the given date.
+	// If isStart is set, returns the diff (in seconds) to its start, otherwise
+	// returns the diff to its end.
+	function computeDiffWithClosestSlot(date, isStart, slots) {
+		// look for the slots around date
+		var beforeTime, afterTime = null;
+		if (isStart) {
+			beforeTime = date.clone().time(slots[0].start);
+		}
+		else {
+			beforeTime = date.clone().time(slots[0].end);
+		}
+		for (var i = 0; i < slots.length; i++) {
+			var slot = slots[i];
+			var startTime = date.clone().time(slot.start);
+			var endTime = date.clone().time(slot.end);
+			if (date.isBefore(startTime) || date.isSame(startTime)) {
+				// slot after date
+				if (isStart) {
+					afterTime = startTime;
+				}
+				else {
+					afterTime = endTime;
+				}
+				break;
+			}
+			if (date.isBetween(startTime, endTime) || date.isSame(endTime)) {
+				// date inside slot
+				if (isStart) {
+					beforeTime = startTime;
+				}
+				else {
+					afterTime = endTime;
+					break;
+				}
+			}
+			if (date.isAfter(endTime)) {
+				// date after slot
+				if (isStart) {
+					beforeTime = startTime;
+				}
+				else {
+					beforeTime = endTime;
+				}
+			}
+		}
+
+		if (afterTime === null) {
+			// not found because date is too late
+			var lastSlot = slots[slots.length - 1];
+			if (isStart) {
+				afterTime = date.clone().time(lastSlot.start);
+			}
+			else {
+				afterTime = date.clone().time(lastSlot.end);
+			}
+		}
+
+		// find which one is closest and return result
+		var diffBefore = beforeTime.diff(date, "seconds");
+		var diffAfter = afterTime.diff(date, "seconds");
+		return (Math.abs(diffBefore) <= Math.abs(diffAfter)) ? diffBefore : diffAfter;
+	}
+
+
+	// auxiliary function used by mutateEvent() when slots are active, in order
+	// to compute the effective duration (in seconds) between start and end (removing breaks)
+	function computeEffectiveDuration(start, end, slots) {
+		var duration = end.diff(start, "seconds");
+
+		// browse slots and look for breaks
+		var previousEndTime = null;
+		var isInside = false;
+		for (var i = 0; i < slots.length; i++) {
+			var slot = slots[i];
+			var startTime = start.clone().time(slot.start);
+			var endTime = end.clone().time(slot.end);
+			if (!isInside) {
+				// counting has not started yet
+				if (start.isBefore(startTime)) {
+					// event started before => inside a break
+					// start counting and set a time reference
+					isInside = true;
+					previousEndTime = start.clone();
+				}
+				else if (start.isBefore(endTime)) {
+					// start counting
+					isInside = true;
+				}
+			}
+
+			if (isInside) {
+				// counting has started already (possibly in the same iteration)
+				if (end.isBefore(startTime)) {
+					// event ended in the break before
+					// remove time spent in the break and stop
+					duration -= end.diff(previousEndTime, "seconds");
+					break;
+				}
+				else {
+					// counting is continuing
+					if (previousEndTime !== null) {
+						duration -= startTime.diff(previousEndTime, "seconds");
+					}
+					previousEndTime = endTime;
+					if (end.isBefore(endTime)) {
+						// counting stops
+						break;
+					}
+				}
+			}
+		}
+		return duration;
+	}
+
+
+	// determines whether a moment is the start of a slot, and returns
+	// the number of seconds elapsed since the beginning of the slot (0 if it is
+	// the start)
+	function diffWithStartOfSlot(start, slots) {
+		var slot = slots[0];
+		var startTime = start.clone().time(slot.start);
+		for (var i = 0; i < slots.length - 1; i++) {
+			var nextSlot = slots[i + 1];
+			var nextStartTime = start.clone().time(nextSlot.start);
+			if (start.isBefore(nextStartTime)) {
+				// inside slot
+				return start.diff(startTime, "seconds");
+			}
+			startTime = nextStartTime;
+		}
+		// inside or after last slot
+		return start.diff(startTime, "seconds");
+	}
+
+
+	// determines whether a moment is the end of a slot, and returns
+	// the number of seconds before the end of the slot (0 if it is the end)
+	function diffWithEndOfSlot(end, slots) {
+		var endTime;
+		for (var i = 0; i < slots.length; i++) {
+			var slot = slots[i];
+			endTime = end.clone().time(slot.end);
+			if (end.isBefore(endTime) || end.isSame(endTime)) {
+				// inside slot
+				return end.diff(endTime, "seconds");
+			}
+		}
+		// after last slot
+		return end.diff(endTime, "seconds");
+	}
+
+
 	// Modifies an event and all related events by applying the given properties.
 	// Special date-diffing logic is used for manipulation of dates.
 	// If `props` does not contain start/end dates, the updated values are assumed to be the event's current start/end.
 	// All date comparisons are done against the event's pristine _start and _end dates.
 	// Returns an object with delta information and a function to undo all operations.
 	// For making computations in a granularity greater than day/time, specify largeUnit.
+	// The 'isResize' option indicates whether the mutation follows a resize.
 	// NOTE: The given `newProps` might be mutated for normalization purposes.
-	function mutateEvent(event, newProps, largeUnit) {
+	function mutateEvent(event, newProps, largeUnit, isResize) {
 		var miscProps = {};
 		var oldProps;
 		var clearEnd;
@@ -689,7 +887,7 @@ function EventManager(options) { // assumed to be a calendar
 
 		var slots = options.slots;
 		var snapOnSlots = options.snapOnSlots;
-		
+
 		// diffs the dates in the appropriate way, returning a duration
 		function diffDates(date1, date0, isStart) { // date1 - date0
 			if (largeUnit) {
@@ -699,62 +897,19 @@ function EventManager(options) { // assumed to be a calendar
 				return diffDay(date1, date0);
 			}
 			else {
-				if(slots && snapOnSlots) {
-					var diffDuration = diffDayTime(date1, date0);
-					
-					var slot;
-					var previousSlot;
-					
-					var startTime;
-					var endTime;
-					
-					var previousEndTime;
-					
-					for (var i=0; i<slots.length; i++) {
-						slot = slots[i];
-						previousSlot = slots[i - 1];
-						
-						startTime = date1.clone().time(slot.start);
-						endTime = date1.clone().time(slot.end);
-						
-						if(previousSlot) {
-							previousEndTime = date1.clone().time(previousSlot.end);
-						}
-						
-						if(isStart && i == 0 && date1.isBefore(startTime)) {
-							diffDuration = diffDayTime(startTime, date0);
-							break;
-						}
-						
-						if(!isStart && i == slots.length - 1 && date1.isAfter(endTime)) {
-							diffDuration = diffDayTime(endTime, date0);
-							break;
-						}
-						
-						if(date1.isBetween(startTime, endTime) || (previousSlot && (date1.isBetween(previousEndTime, startTime) || date1.isSame(previousEndTime)))) {
-							if(isStart) {
-								diffDuration = diffDayTime(startTime, date0);
-								break;
-							}
-							else {
-								diffDuration = diffDayTime(endTime, date0);
-								break;
-							}
-						}
-						
-						if(isStart && date1.isSame(startTime)) {
-							break;
-						}
-						
-						if(!isStart && date1.isSame(endTime)) {
-							break;
-						}
+				var diffDuration = diffDayTime(date1, date0);
+				var diffSlot;
+				if (slots && snapOnSlots) {
+					if (snapOnSlots.snapPolicy === "closest") {
+						diffSlot = computeDiffWithClosestSlot(date1, isStart, slots);
 					}
-					
-					return diffDuration;
-				} else {
-					return diffDayTime(date1, date0);
+					else { // snapOnSlots.snapPolicy === "enlarge"
+						diffSlot = computeDiffWithSlotContainingDate(date1, isStart, slots);
+					}
+					// snap event boundary to slot boundary
+					diffDuration.add(diffSlot, "seconds");
 				}
+				return diffDuration;
 			}
 		}
 
@@ -789,6 +944,26 @@ function EventManager(options) { // assumed to be a calendar
 
 		// compute the delta for moving the end date
 		if (newProps.end) {
+			if (!isResize && slots && snapOnSlots &&
+				snapOnSlots.snapEffectiveDuration && snapOnSlots.snapEffectiveDuration === true) {
+				// it is not a resize, and we are asked to try to maintain effective duration
+				var diffEffectiveDuration = computeEffectiveDuration(oldProps.start, oldProps.end, slots) -
+					computeEffectiveDuration(newProps.start, newProps.end, slots);
+				var diffWithStart = diffWithStartOfSlot(newProps.start, slots);
+				var diffWithEnd = diffWithEndOfSlot(newProps.end, slots);
+				if (Math.abs(diffWithStart) <= Math.abs(diffWithEnd)) {
+					// start easier to align: align it and try to align end
+					newProps.start.add(-diffWithStart, "seconds");
+					startDelta = diffDates(newProps.start, oldProps.start, true);
+					newProps.end.add(diffEffectiveDuration - diffWithStart, "seconds");
+				}
+				else {
+					// end easier to align: align it and try to align start
+					newProps.start.add(-diffEffectiveDuration - diffWithEnd, "seconds");
+					startDelta = diffDates(newProps.start, oldProps.start, true);
+					newProps.end.add(-diffWithEnd, "seconds");
+				}
+			}
 			endDelta = diffDates(newProps.end, oldProps.end, false);
 			durationDelta = endDelta.subtract(startDelta);
 		}

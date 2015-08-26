@@ -649,7 +649,7 @@ var View = fc.View = Class.extend({
 	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
 	reportEventDrop: function(event, dropLocation, largeUnit, el, ev) {
 		var calendar = this.calendar;
-		var mutateResult = calendar.mutateEvent(event, dropLocation, largeUnit);
+		var mutateResult = calendar.mutateEvent(event, dropLocation, largeUnit, false);
 		var undoFunc = function() {
 			mutateResult.undo();
 			calendar.reportEventChange();
@@ -751,7 +751,7 @@ var View = fc.View = Class.extend({
 	// Must be called when an event in the view has been resized to a new length
 	reportEventResize: function(event, resizeLocation, largeUnit, el, ev) {
 		var calendar = this.calendar;
-		var mutateResult = calendar.mutateEvent(event, resizeLocation, largeUnit);
+		var mutateResult = calendar.mutateEvent(event, resizeLocation, largeUnit, true);
 		var undoFunc = function() {
 			mutateResult.undo();
 			calendar.reportEventChange();
