@@ -27,4 +27,6 @@ then
 	echo
 	echo 'DONE. It is now up to you to run `'"git push origin master && git push origin v$version"'`'
 	echo
+	echo 'and `npm publish`'
+	echo
 fi
