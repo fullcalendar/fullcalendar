@@ -2197,15 +2197,19 @@ var DragListener = fc.DragListener = Class.extend({
 
 
 	// Call this to start tracking mouse movements
-	startListening: function(ev) {
+	startListening: function(ev, isExternalDrag) {
 		var scrollParent;
 
 		if (!this.isListening) {
 
 			// grab scroll container and attach handler
-			if (ev && this.options.scroll) {
-				scrollParent = getScrollParent($(ev.target));
-				if (!scrollParent.is(window) && !scrollParent.is(document)) {
+			if (ev && (this.options.scroll || isExternalDrag)) {
+
+				if(!isExternalDrag)
+					scrollParent = getScrollParent($(ev.target));
+				else scrollParent = $(this.coordMap.containerEl);
+
+				if (scrollParent.length && !scrollParent.is(window) && !scrollParent.is(document)) {
 					this.scrollEl = scrollParent;
 
 					// scope to `this`, and use `debounce` to make sure rapid calls don't happen
@@ -2266,10 +2270,10 @@ var DragListener = fc.DragListener = Class.extend({
 
 	// Call this to initiate a legitimate drag.
 	// This function is called internally from this class, but can also be called explicitly from outside
-	startDrag: function(ev) {
+	startDrag: function(ev, isExternalDrag) {
 
 		if (!this.isListening) { // startDrag must have manually initiated
-			this.startListening();
+			this.startListening(ev, isExternalDrag);
 		}
 
 		if (!this.isDragging) {
@@ -4170,7 +4174,9 @@ Grid.mixin({
 			}
 		});
 
-		dragListener.startDrag(ev); // start listening immediately
+		//we need to explicity tell the drag handler when we're draggin an external event
+		var isExternal = true;
+		dragListener.startDrag(ev, isExternal); // start listening immediately
 	},
 
 
