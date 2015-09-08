@@ -5286,7 +5286,7 @@ DayGrid.mixin({
 		var isDraggable = view.isEventDraggable(event);
 		var isResizableFromStart = !disableResizing && event.allDay &&
 			seg.isStart && view.isEventResizableFromStart(event);
-		var isResizableFromEnd = !disableResizing && event.allDay &&
+		var isResizableFromEnd = !disableResizing &&
 			seg.isEnd && view.isEventResizableFromEnd(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getEventSkinCss(event));
