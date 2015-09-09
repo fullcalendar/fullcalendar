@@ -93,7 +93,7 @@ DayGrid.mixin({
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
-		var isResizableFromStart = !disableResizing && event.allDay &&
+		var isResizableFromStart = !disableResizing &&
 			seg.isStart && view.isEventResizableFromStart(event);
 		var isResizableFromEnd = !disableResizing && event.allDay &&
 			seg.isEnd && view.isEventResizableFromEnd(event);
