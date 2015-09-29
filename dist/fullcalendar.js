@@ -5366,7 +5366,7 @@ DayGrid.mixin({
 					);
 				}
 				else {
-					td = $('<td/>');
+					td = $('<td/>').css('width', (100/colCnt) + '%');
 					tr.append(td);
 				}
 				cellMatrix[i][col] = td;
@@ -5398,7 +5398,7 @@ DayGrid.mixin({
 						td.attr('colspan', seg.rightCol - seg.leftCol + 1).css('width', (100/colCnt*(seg.rightCol - seg.leftCol + 1)) + '%');
 					}
 					else { // a single-column segment
-						loneCellMatrix[i][col] = td;
+						loneCellMatrix[i][col] = td.css('width', (100/colCnt) + '%');
 					}
 
 					while (col <= seg.rightCol) {
