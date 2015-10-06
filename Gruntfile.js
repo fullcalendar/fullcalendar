@@ -275,7 +275,8 @@ module.exports = function(grunt) {
 	config.copy.archiveMisc = {
 		files: {
 			'build/temp/archive/LICENSE.txt': 'LICENSE.txt',
-			'build/temp/archive/CHANGELOG.txt': 'CHANGELOG.md'
+			'build/temp/archive/CHANGELOG.txt': 'CHANGELOG.md',
+			'build/temp/archive/CONTRIBUTING.txt': 'CONTRIBUTING.md'
 		}
 	};
 
