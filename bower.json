@@ -46,8 +46,9 @@
     "*",
     "**/.*",
     "!/dist/**",
-    "!/changelog.*",
-    "!/license.*",
-    "!/readme.*"
+    "!/README.*",
+    "!/LICENSE.*",
+    "!/CHANGELOG.*",
+    "!/CONTRIBUTING.*"
   ]
 }

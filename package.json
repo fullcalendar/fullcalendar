@@ -52,8 +52,9 @@
     "dist/*.js",
     "dist/*.css",
     "dist/lang",
-    "changelog.*",
-    "license.*",
-    "readme.*"
+    "README.*",
+    "LICENSE.*",
+    "CHANGELOG.*",
+    "CONTRIBUTING.*"
   ]
 }
