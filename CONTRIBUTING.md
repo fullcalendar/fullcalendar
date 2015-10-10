@@ -28,7 +28,7 @@ Please edit the original files in the `lang/` directory. DO NOT edit anything in
 
 ## Other Ways to Contribute
 
-For other ways to contribute to the FullCalendar project, such as answering questions and triage, please visit [this page](http://fullcalendar.io/wiki/Contributing/).
+[Read about other ways to contribute &raquo;](http://fullcalendar.io/wiki/Contributing/)
 
 
 ## Getting Set Up
