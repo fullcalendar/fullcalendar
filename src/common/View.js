@@ -696,7 +696,7 @@ var View = fc.View = Class.extend({
 	triggerExternalDrop: function(event, dropLocation, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
-		this.trigger('drop', el[0], dropLocation.start, ev, ui);
+		this.trigger('drop', el[0], event, ev, ui);
 
 		if (event) {
 			this.trigger('eventReceive', null, event); // signal an external event landed
