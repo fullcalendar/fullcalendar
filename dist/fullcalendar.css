@@ -681,14 +681,17 @@ a.fc-more:hover {
 }
 
 .fc-toolbar .fc-left {
+	margin-top: 5px;
 	float: left;
 }
 
 .fc-toolbar .fc-right {
+	margin-top: 5px;
 	float: right;
 }
 
 .fc-toolbar .fc-center {
+	margin-top: 10px;
 	display: inline-block;
 }
 
