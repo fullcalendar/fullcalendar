@@ -3296,6 +3296,16 @@ var Grid = fc.Grid = RowRenderer.extend({
 		// attach a handler to the grid's root element.
 		// jQuery will take care of unregistering them when removeElement gets called.
 		el.on('mousedown', function(ev) {
+			ev.preventDefault();
+			if (
+				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
+				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
+			) {
+				_this.dayMousedown(ev);
+			}
+		});
+		
+		el.on('touchstart', function(ev) {
 			if (
 				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
 				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
