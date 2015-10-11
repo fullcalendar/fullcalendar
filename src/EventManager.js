@@ -373,8 +373,8 @@ function EventManager(options) { // assumed to be a calendar
 						stickySource.events.push(event);
 						event.source = stickySource;
 					}
-					cache.push(event);
 				}
+				cache.push(event);
 			}
 
 			reportEvents(cache);
