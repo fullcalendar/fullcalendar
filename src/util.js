@@ -57,7 +57,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 

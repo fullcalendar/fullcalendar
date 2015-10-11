@@ -38,6 +38,31 @@ Grid.mixin({
 	},
 
 
+	// Renders the background events from the given events onto the grid
+	renderBgEvents: function(events) {
+		var segs = this.eventsToSegs(events);
+		var fgSegs = $.grep(this.segs, function(seg) {
+			return !isBgEvent(seg.event);
+		});
+		var bgSegs = [];
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (isBgEvent(seg.event)) {
+				bgSegs.push(seg);
+			}
+		}
+
+		// Render each background segment.
+		// The function may return a subset of the segs, segs that were actually rendered.
+		bgSegs = this.renderBgSegs(bgSegs) || bgSegs;
+
+		this.segs = bgSegs.concat(fgSegs);
+	},
+
+
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.triggerSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
@@ -46,6 +71,16 @@ Grid.mixin({
 		this.unrenderBgSegs();
 
 		this.segs = null;
+	},
+
+
+	// Unrenders all background events currently rendered on the grid
+	unrenderBgEvents: function() {
+		this.unrenderBgSegs();
+
+		this.segs = $.grep(this.segs, function(seg) {
+			return !isBgEvent(seg.event);
+		});
 	},
 
 
@@ -936,6 +971,11 @@ function isBgEvent(event) { // returns true if background OR inverse-background
 }
 
 
+function isBgSource(source) { // returns true if background OR inverse-background
+	return source.rendering === 'background' || source.rendering === 'inverse-background';
+}
+
+
 function isInverseBgEvent(event) {
 	return getEventRendering(event) === 'inverse-background';
 }
@@ -1017,4 +1057,3 @@ function getDraggedElMeta(el) {
 
 	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }
-
