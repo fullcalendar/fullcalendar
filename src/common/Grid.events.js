@@ -215,6 +215,30 @@ Grid.mixin({
 			}
 		);
 	},
+	
+	bindBgSegHandlers: function() {
+		var _this = this;
+		var view = this.view;
+
+		$.each(
+			{
+				click: function(seg, ev) {
+					return view.trigger('bgEventClick', this, seg.event, ev); // can return `false` to cancel
+				}
+			},
+			function(name, func) {
+				// attach the handler to the container element and only listen for real event elements via bubbling
+				_this.el.on(name, '.fc-bgevent-container > *', function(ev) {
+					var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
+
+					// only call the handlers if there is not a drag/resize in progress
+					if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
+						return func.call(this, seg, ev); // `this` will be the event element
+					}
+				});
+			}
+		);
+	},
 
 
 	// Updates internal state and triggers handlers for when an event element is moused over
