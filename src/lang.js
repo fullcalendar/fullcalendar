@@ -150,7 +150,9 @@ var momComputableOptions = {
 
 
 // options that should be computed off live calendar options (considers override options)
-var instanceComputableOptions = { // TODO: best place for this? related to lang?
+// TODO: best place for this? related to lang?
+// TODO: flipping text based on isRTL is a bad idea because the CSS `direction` might want to handle it
+var instanceComputableOptions = {
 
 	// Produces format strings for results like "Mo 16"
 	smallDayDateFormat: function(options) {
