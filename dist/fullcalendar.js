@@ -5170,15 +5170,15 @@ var DayGrid = Grid.extend({
 		trEl = skeletonEl.find('tr');
 
 		if (startCol > 0) {
-			trEl.append('<td colspan="' + startCol + '"/>');
+			trEl.append('<td colspan="' + startCol + '" style="width:' + (100/colCnt*startCol) + '%"/>');
 		}
 
 		trEl.append(
-			seg.el.attr('colspan', endCol - startCol)
+			seg.el.attr('colspan', endCol - startCol).css('width', (100/colCnt*(endCol - startCol)) + '%')
 		);
 
 		if (endCol < colCnt) {
-			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
+			trEl.append('<td colspan="' + (colCnt - endCol) + '" style="width:' + (100/colCnt*(colCnt - endCol)) + '%"/>');
 		}
 
 		this.bookendCells(trEl, type);
@@ -5366,7 +5366,7 @@ DayGrid.mixin({
 					);
 				}
 				else {
-					td = $('<td/>');
+					td = $('<td/>').css('width', (100/colCnt) + '%');
 					tr.append(td);
 				}
 				cellMatrix[i][col] = td;
@@ -5395,10 +5395,10 @@ DayGrid.mixin({
 					// create a container that occupies or more columns. append the event element.
 					td = $('<td class="fc-event-container"/>').append(seg.el);
 					if (seg.leftCol != seg.rightCol) {
-						td.attr('colspan', seg.rightCol - seg.leftCol + 1);
+						td.attr('colspan', seg.rightCol - seg.leftCol + 1).css('width', (100/colCnt*(seg.rightCol - seg.leftCol + 1)) + '%');
 					}
 					else { // a single-column segment
-						loneCellMatrix[i][col] = td;
+						loneCellMatrix[i][col] = td.css('width', (100/colCnt) + '%');
 					}
 
 					while (col <= seg.rightCol) {

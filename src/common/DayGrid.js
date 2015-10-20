@@ -452,15 +452,15 @@ var DayGrid = Grid.extend({
 		trEl = skeletonEl.find('tr');
 
 		if (startCol > 0) {
-			trEl.append('<td colspan="' + startCol + '"/>');
+			trEl.append('<td colspan="' + startCol + '" style="width:' + (100/colCnt*startCol) + '%"/>');
 		}
 
 		trEl.append(
-			seg.el.attr('colspan', endCol - startCol)
+			seg.el.attr('colspan', endCol - startCol).css('width', (100/colCnt*(endCol - startCol)) + '%')
 		);
 
 		if (endCol < colCnt) {
-			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
+			trEl.append('<td colspan="' + (colCnt - endCol) + '" style="width:' + (100/colCnt*(colCnt - endCol)) + '%"/>');
 		}
 
 		this.bookendCells(trEl, type);
