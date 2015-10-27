@@ -1,6 +1,7 @@
 
 $.fullCalendar.lang("fr", {
 	buttonText: {
+		year: "Année",
 		month: "Mois",
 		week: "Semaine",
 		day: "Jour",
