@@ -22,7 +22,7 @@
 /* the things within each left/right/center section */
 .fc .fc-toolbar > * > * { /* extra precedence to override button border margins */
 	float: left;
-	margin-left: .75em;
+	margin-left: .75rem;
 }
 
 /* the first thing within each left/center/right section */
