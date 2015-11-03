@@ -29,7 +29,23 @@
 .fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
 	margin-left: 0;
 }
-	
+
+.fc .fc-toolbar > * > button + h2 {
+	margin: 0 .75em;
+}
+
+.fc .fc-toolbar > * > h2 + button {
+	margin-left: 0;
+}
+
+.fc .fc-toolbar > * > h2:first-child {
+	margin-right: .75em;
+}
+
+.fc .fc-toolbar > * > h2:last-child {
+	margin-right: 0;
+}
+
 /* title text */
 
 .fc-toolbar h2 {
