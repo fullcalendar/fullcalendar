@@ -801,7 +801,7 @@ var View = FC.View = Class.extend({
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
 	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
+	reportExternalDrop: function(meta, dropLocation, el, ev, ui, dropEv) {
 		var eventProps = meta.eventProps;
 		var eventInput;
 		var event;
@@ -812,15 +812,15 @@ var View = FC.View = Class.extend({
 			event = this.calendar.renderEvent(eventInput, meta.stick)[0]; // renderEvent returns an array
 		}
 
-		this.triggerExternalDrop(event, dropLocation, el, ev, ui);
+		this.triggerExternalDrop(event, dropLocation, el, ev, ui, dropEv);
 	},
 
 
 	// Triggers external-drop handlers that have subscribed via the API
-	triggerExternalDrop: function(event, dropLocation, el, ev, ui) {
+	triggerExternalDrop: function(event, dropLocation, el, ev, ui, dropEv) {
 
 		// trigger 'drop' regardless of whether element represents an event
-		this.trigger('drop', el[0], dropLocation.start, ev, ui);
+		this.trigger('drop', el[0], dropLocation.start, ev, ui, dropEv);
 
 		if (event) {
 			this.trigger('eventReceive', null, event); // signal an external event landed

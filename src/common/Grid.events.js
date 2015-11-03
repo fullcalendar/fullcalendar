@@ -484,9 +484,9 @@ Grid.mixin({
 				enableCursor();
 				_this.unrenderDrag();
 			},
-			dragStop: function() {
+			dragStop: function(dropEvent) {
 				if (dropLocation) { // element was dropped on a valid hit
-					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui, dropEvent);
 				}
 			},
 			listenStop: function() {
