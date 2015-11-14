@@ -202,6 +202,36 @@ var BasicView = fc.BasicView = View.extend({
 	},
 
 
+	/* Hit Areas
+	------------------------------------------------------------------------------------------------------------------*/
+	// forward all hit-related method calls to dayGrid
+
+
+	prepareHits: function() {
+		this.dayGrid.prepareHits();
+	},
+
+
+	releaseHits: function() {
+		this.dayGrid.releaseHits();
+	},
+
+
+	queryHit: function(left, top) {
+		return this.dayGrid.queryHit(left, top);
+	},
+
+
+	getHitSpan: function(hit) {
+		return this.dayGrid.getHitSpan(hit);
+	},
+
+
+	getHitEl: function(hit) {
+		return this.dayGrid.getHitEl(hit);
+	},
+
+
 	/* Events
 	------------------------------------------------------------------------------------------------------------------*/
 
