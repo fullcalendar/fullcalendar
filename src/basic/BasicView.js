@@ -293,6 +293,7 @@ var BasicView = fc.BasicView = View.extend({
 });
 
 
+// Methods that will customize the rendering behavior of the BasicView's dayGrid
 var basicDayGridMethods = {
 
 
