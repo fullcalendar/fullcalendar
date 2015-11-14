@@ -11,6 +11,7 @@ var AgendaView = View.extend({
 
 	axisWidth: null, // the width of the time axis running down the side
 
+	headContainerEl: null, // div that hold's the timeGrid's rendered date header
 	noScrollRowEls: null, // set of fake row elements that must compensate when scrollerEl has scrollbars
 
 	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
@@ -54,7 +55,8 @@ var AgendaView = View.extend({
 	// Renders the view into `this.el`, which has already been assigned
 	renderDates: function() {
 
-		this.el.addClass('fc-agenda-view').html(this.renderHtml());
+		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
+		this.renderHead();
 
 		// the element that wraps the time-grid that will probably scroll
 		this.scrollerEl = this.el.find('.fc-time-grid-container');
@@ -76,6 +78,14 @@ var AgendaView = View.extend({
 		}
 
 		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
+	},
+
+
+	// render the day-of-week headers
+	renderHead: function() {
+		this.headContainerEl =
+			this.el.find('.fc-head-container')
+				.html(this.timeGrid.getHeadHtml());
 	},
 
 
@@ -103,14 +113,12 @@ var AgendaView = View.extend({
 
 	// Builds the HTML skeleton for the view.
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
-	renderHtml: function() {
+	renderSkeletonHtml: function() {
 		return '' +
 			'<table>' +
 				'<thead class="fc-head">' +
 					'<tr>' +
-						'<td class="' + this.widgetHeaderClass + '">' +
-							this.timeGrid.headHtml() + // render the day-of-week headers
-						'</td>' +
+						'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +
 					'</tr>' +
 				'</thead>' +
 				'<tbody class="fc-body">' +
