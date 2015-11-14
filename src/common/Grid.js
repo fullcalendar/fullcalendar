@@ -238,45 +238,52 @@ var Grid = fc.Grid = Class.extend({
 		var _this = this;
 		var view = this.view;
 		var isSelectable = view.opt('selectable');
-		var dayClickCell; // null if invalid dayClick
-		var selectionRange; // null if invalid selection
+		var dayClickHit; // null if invalid dayClick
+		var selectionSpan; // null if invalid selection
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = new CellDragListener(this.coordMap, {
+		var dragListener = new HitDragListener(this, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
-			cellOver: function(cell, isOrig, origCell) {
-				if (origCell) { // click needs to have started on a cell
-					dayClickCell = isOrig ? cell : null; // single-cell selection is a day click
+			hitOver: function(hit, isOrig, origHit) {
+				if (origHit) { // click needs to have started on a hit
+					dayClickHit = isOrig ? hit : null; // single-hit selection is a day click
 					if (isSelectable) {
-						selectionRange = _this.computeSelection(origCell, cell);
-						if (selectionRange) {
-							_this.renderSelection(selectionRange);
+						selectionSpan = _this.computeSelection(
+							_this.getHitSpan(origHit),
+							_this.getHitSpan(hit)
+						);
+						if (selectionSpan) {
+							_this.renderSelection(selectionSpan);
 						}
-						else {
+						else if (selectionSpan === false) {
 							disableCursor();
 						}
 					}
 				}
 			},
-			cellOut: function(cell) {
-				dayClickCell = null;
-				selectionRange = null;
+			hitOut: function() {
+				dayClickHit = null;
+				selectionSpan = null;
 				_this.unrenderSelection();
 				enableCursor();
 			},
 			listenStop: function(ev) {
-				if (dayClickCell) {
-					view.triggerDayClick(dayClickCell, _this.getCellDayEl(dayClickCell), ev);
+				if (dayClickHit) {
+					view.triggerDayClick(
+						_this.getHitSpan(dayClickHit).start,
+						_this.getHitEl(dayClickHit),
+						ev
+					);
 				}
-				if (selectionRange) {
+				if (selectionSpan) {
 					// the selection will already have been rendered. just report it
-					view.reportSelection(selectionRange, ev);
+					view.reportSelection(selectionSpan, ev);
 				}
 				enableCursor();
 			}
@@ -350,30 +357,22 @@ var Grid = fc.Grid = Class.extend({
 	},
 
 
-	// Given the first and last cells of a selection, returns a range object.
-	// Will return something falsy if the selection is invalid (when outside of selectionConstraint for example).
-	// Subclasses can override and provide additional data in the range object. Will be passed to renderSelection().
-	computeSelection: function(firstCell, lastCell) {
-		var dates = [
-			firstCell.start,
-			firstCell.end,
-			lastCell.start,
-			lastCell.end
-		];
-		var range;
+	// Given the first and last date-spans of a selection, returns another date-span object.
+	// Subclasses can override and provide additional data in the span object. Will be passed to renderSelection().
+	// Will return false if the selection is invalid and this should be indicated to the user.
+	// Will return null/undefined if a selection invalid but no error should be reported.
+	computeSelection: function(span0, span1) {
+		var dates = [ span0.start, span0.end, span1.start, span1.end ];
+		var combinedSpan;
 
 		dates.sort(compareNumbers); // sorts chronologically. works with Moments
+		combinedSpan = { start: dates[0].clone(), end: dates[3].clone() };
 
-		range = {
-			start: dates[0].clone(),
-			end: dates[3].clone()
-		};
-
-		if (!this.view.calendar.isSelectionRangeAllowed(range)) {
-			return null;
+		if (!this.view.calendar.isSelectionRangeAllowed(combinedSpan)) {
+			return false;
 		}
 
-		return range;
+		return combinedSpan;
 	},
 
 
