@@ -2,7 +2,7 @@
 /* A month view with day cells running in rows (one-per-week) and columns
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var MonthView = BasicView.extend({
+var MonthView = fc.MonthView = BasicView.extend({
 
 	// Produces information about what range to display
 	computeRange: function(date) {
