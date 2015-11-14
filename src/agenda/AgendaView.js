@@ -242,6 +242,50 @@ var AgendaView = fc.AgendaView = View.extend({
 	},
 
 
+	/* Hit Areas
+	------------------------------------------------------------------------------------------------------------------*/
+	// forward all hit-related method calls to the grids (dayGrid might not be defined)
+
+
+	prepareHits: function() {
+		this.timeGrid.prepareHits();
+		if (this.dayGrid) {
+			this.dayGrid.prepareHits();
+		}
+	},
+
+
+	releaseHits: function() {
+		this.timeGrid.releaseHits();
+		if (this.dayGrid) {
+			this.dayGrid.releaseHits();
+		}
+	},
+
+
+	queryHit: function(left, top) {
+		var hit = this.timeGrid.queryHit(left, top);
+
+		if (!hit && this.dayGrid) {
+			hit = this.dayGrid.queryHit(left, top);
+		}
+
+		return hit;
+	},
+
+
+	getHitSpan: function(hit) {
+		// TODO: hit.grid is set as a hack to identify which grid the hit came from
+		return hit.grid.getHitSpan(hit);
+	},
+
+
+	getHitEl: function(hit) {
+		// TODO: hit.grid is set as a hack to identify which grid the hit came from
+		return hit.grid.getHitEl(hit);
+	},
+
+
 	/* Events
 	------------------------------------------------------------------------------------------------------------------*/
 
