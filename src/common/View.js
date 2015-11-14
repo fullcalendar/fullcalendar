@@ -10,7 +10,6 @@ var View = fc.View = Class.extend({
 
 	calendar: null, // owner Calendar object
 	options: null, // hash containing all options. already merged with view-specific-options
-	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
 	displaying: null, // a promise representing the state of rendering. null if no render requested
@@ -353,7 +352,7 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Renders the view's date-related content (like cells that represent days/times).
+	// Renders the view's date-related content.
 	// Assumes setRange has already been called and the skeleton has already been rendered.
 	renderDates: function() {
 		// subclasses should implement
@@ -845,8 +844,8 @@ var View = fc.View = Class.extend({
 
 
 	// Triggers handlers to 'dayClick'
-	triggerDayClick: function(cell, dayEl, ev) {
-		this.trigger('dayClick', dayEl, cell.start, ev);
+	triggerDayClick: function(date, dayEl, ev) {
+		this.trigger('dayClick', dayEl, date, ev);
 	},
 
 
