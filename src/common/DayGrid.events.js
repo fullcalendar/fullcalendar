@@ -221,7 +221,7 @@ DayGrid.mixin({
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
-			this.bookendCells(tr, 'eventSkeleton');
+			this.bookendCells(tr);
 			tbody.append(tr);
 		}
 
