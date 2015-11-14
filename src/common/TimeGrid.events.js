@@ -65,7 +65,7 @@ TimeGrid.mixin({
 			trEl.append($('<td/>').append(containerEl));
 		}
 
-		this.bookendCells(trEl, 'eventSkeleton');
+		this.bookendCells(trEl);
 
 		return tableEl;
 	},

@@ -1,29 +1,31 @@
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
+// We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = Grid.extend({
+var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
+	snapsPerSlot: null,
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
-	colDates: null, // whole-day dates for each column. left to right
 	labelFormat: null, // formatting string for times running along vertical axis
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
-	dayEls: null, // cells elements in the day-row background
+	colEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
-
-	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
-
 	helperEl: null, // cell skeleton element for rendering the mock event "helper"
+
+	colCoordCache: null,
+	slatCoordCache: null,
 
 	businessHourSegs: null,
 
 
 	constructor: function() {
 		Grid.apply(this, arguments); // call the super-constructor
+
 		this.processOptions();
 	},
 
@@ -32,8 +34,17 @@ var TimeGrid = Grid.extend({
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
 	renderDates: function() {
 		this.el.html(this.renderHtml());
-		this.dayEls = this.el.find('.fc-day');
+		this.colEls = this.el.find('.fc-day');
 		this.slatEls = this.el.find('.fc-slats tr');
+
+		this.colCoordCache = new CoordCache({
+			els: this.colEls,
+			isHorizontal: true
+		});
+		this.slatCoordCache = new CoordCache({
+			els: this.slatEls,
+			isVertical: true
+		});
 	},
 
 
@@ -48,26 +59,19 @@ var TimeGrid = Grid.extend({
 		return '' +
 			'<div class="fc-bg">' +
 				'<table>' +
-					this.rowHtml('slotBg') + // leverages RowRenderer, which will call slotBgCellHtml
+					this.getBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
 				'<table>' +
-					this.slatRowHtml() +
+					this.getSlatRowHtml() +
 				'</table>' +
 			'</div>';
 	},
 
 
-	// Renders the HTML for a vertical background cell behind the slots.
-	// This method is distinct from 'bg' because we wanted a new `rowType` so the View could customize the rendering.
-	slotBgCellHtml: function(cell) {
-		return this.bgCellHtml(cell);
-	},
-
-
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
-	slatRowHtml: function() {
+	getSlatRowHtml: function() {
 		var view = this.view;
 		var isRTL = this.isRTL;
 		var html = '';
@@ -121,7 +125,9 @@ var TimeGrid = Grid.extend({
 
 		this.slotDuration = slotDuration;
 		this.snapDuration = snapDuration;
-		this.cellDuration = snapDuration; // for Grid system
+		this.snapsPerSlot = slotDuration / snapDuration; // TODO: ensure an integer multiple?
+
+		this.minResizeDuration = snapDuration; // hack
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
@@ -164,17 +170,6 @@ var TimeGrid = Grid.extend({
 	},
 
 
-	// Computes a default column header formatting string if `colFormat` is not explicitly defined
-	computeColHeadFormat: function() {
-		if (this.colCnt > 1) { // multiple days, so full single date string WON'T be in title text
-			return this.view.opt('dayOfMonthFormat'); // "Sat 12/10"
-		}
-		else { // single day, so full single date string will probably be in title text
-			return 'dddd'; // "Saturday"
-		}
-	},
-
-
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
 	computeEventTimeFormat: function() {
 		return this.view.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
@@ -187,47 +182,66 @@ var TimeGrid = Grid.extend({
 	},
 
 
-	/* Cell System
+	/* Hit System
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	rangeUpdated: function() {
-		var view = this.view;
-		var colDates = [];
-		var date;
-
-		date = this.start.clone();
-		while (date.isBefore(this.end)) {
-			colDates.push(date.clone());
-			date.add(1, 'day');
-			date = view.skipHiddenDays(date);
-		}
-
-		if (this.isRTL) {
-			colDates.reverse();
-		}
-
-		this.colDates = colDates;
-		this.colCnt = colDates.length;
-		this.rowCnt = Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
+	prepareHits: function() {
+		this.colCoordCache.build();
+		this.slatCoordCache.build();
 	},
 
 
-	// Given a cell object, generates its start date. Returns a reference-free copy.
-	computeCellDate: function(cell) {
-		var date = this.colDates[cell.col];
-		var time = this.computeSnapTime(cell.row);
-
-		date = this.view.calendar.rezoneDate(date); // give it a 00:00 time
-		date.time(time);
-
-		return date;
+	releaseHits: function() {
+		this.colCoordCache.clear();
+		// NOTE: don't clear slatCoordCache because we rely on it for computeTimeTop
 	},
 
 
-	// Retrieves the element representing the given column
-	getColEl: function(col) {
-		return this.dayEls.eq(col);
+	queryHit: function(leftOffset, topOffset) {
+		var snapsPerSlot = this.snapsPerSlot;
+		var colCoordCache = this.colCoordCache;
+		var slatCoordCache = this.slatCoordCache;
+		var colIndex = colCoordCache.getHorizontalIndex(leftOffset);
+		var slatIndex = slatCoordCache.getVerticalIndex(topOffset);
+
+		if (colIndex != null && slatIndex != null) {
+			var slatTop = slatCoordCache.getTopOffset(slatIndex);
+			var slatHeight = slatCoordCache.getHeight(slatIndex);
+			var partial = (topOffset - slatTop) / slatHeight; // floating point number between 0 and 1
+			var localSnapIndex = Math.floor(partial * snapsPerSlot); // the snap # relative to start of slat
+			var snapIndex = slatIndex * snapsPerSlot + localSnapIndex;
+			var snapTop = slatTop + (localSnapIndex / snapsPerSlot) * slatHeight;
+			var snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight;
+
+			return {
+				grid: this, // needed unfortunately :(
+				id: [ colIndex, snapIndex ], // TODO: move away from id index
+				left: colCoordCache.getLeftOffset(colIndex),
+				right: colCoordCache.getRightOffset(colIndex),
+				top: snapTop,
+				bottom: snapBottom
+			};
+		}
+	},
+
+
+	getHitSpan: function(hit) {
+		var colIndex = hit.id[0];
+		var snapIndex = hit.id[1];
+		var date = this.getCellDate(0, colIndex); // row=0
+		var time = this.computeSnapTime(snapIndex);
+
+		var start = this.view.calendar.rezoneDate(date); // gives it a 00:00 time
+		start.time(time);
+		var end = start.clone().add(this.snapDuration);
+
+		return { start: start, end: end };
+	},
+
+
+	getHitEl: function(hit) {
+		return this.colEls.eq(hit.id[0]);
 	},
 
 
@@ -235,20 +249,36 @@ var TimeGrid = Grid.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	rangeUpdated: function() {
+		this.updateDayTable();
+	},
+
+
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
-	computeSnapTime: function(row) {
-		return moment.duration(this.minTime + this.snapDuration * row);
+	computeSnapTime: function(snapIndex) {
+		return moment.duration(this.minTime + this.snapDuration * snapIndex);
 	},
 
 
 	// Slices up a date range by column into an array of segments
 	rangeToSegs: function(range) {
-		var colCnt = this.colCnt;
+		var segs = this.sliceRangeByTimes(range);
+		var i;
+
+		for (i = 0; i < segs.length; i++) {
+			segs[i].col = segs[i].dayIndex;
+		}
+
+		return segs;
+	},
+
+
+	sliceRangeByTimes: function(range) {
 		var segs = [];
 		var seg;
-		var col;
-		var colDate;
-		var colRange;
+		var dayIndex;
+		var dayDate;
+		var dayRange;
 
 		// normalize :(
 		range = {
@@ -256,15 +286,15 @@ var TimeGrid = Grid.extend({
 			end: range.end.clone().stripZone()
 		};
 
-		for (col = 0; col < colCnt; col++) {
-			colDate = this.colDates[col]; // will be ambig time/timezone
-			colRange = {
-				start: colDate.clone().time(this.minTime),
-				end: colDate.clone().time(this.maxTime)
+		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
+			dayDate = this.dayDates[dayIndex].clone(); // TODO: better API for this?
+			dayRange = {
+				start: dayDate.clone().time(this.minTime),
+				end: dayDate.clone().time(this.maxTime)
 			};
-			seg = intersectionToSeg(range, colRange); // both will be ambig timezone
+			seg = intersectionToSeg(range, dayRange); // both will be ambig timezone
 			if (seg) {
-				seg.col = col;
+				seg.dayIndex = dayIndex;
 				segs.push(seg);
 			}
 		}
@@ -278,33 +308,11 @@ var TimeGrid = Grid.extend({
 
 
 	updateSize: function(isResize) { // NOT a standard Grid method
-		this.computeSlatTops();
+		this.slatCoordCache.build();
 
 		if (isResize) {
 			this.updateSegVerticals();
 		}
-	},
-
-
-	// Computes the top/bottom coordinates of each "snap" rows
-	computeRowCoords: function() {
-		var originTop = this.el.offset().top;
-		var items = [];
-		var i;
-		var item;
-
-		for (i = 0; i < this.rowCnt; i++) {
-			item = {
-				top: originTop + this.computeTimeTop(this.computeSnapTime(i))
-			};
-			if (i > 0) {
-				items[i - 1].bottom = item.top;
-			}
-			items.push(item);
-		}
-		item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
-
-		return items;
 	},
 
 
@@ -321,45 +329,30 @@ var TimeGrid = Grid.extend({
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
+		var len = this.slatEls.length;
 		var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
 		var slatIndex;
 		var slatRemainder;
-		var slatTop;
-		var slatBottom;
 
-		// constrain. because minTime/maxTime might be customized
+		// compute a floating-point number for how many slats should be progressed through.
+		// from 0 to number of slats (inclusive)
+		// constrained because minTime/maxTime might be customized.
 		slatCoverage = Math.max(0, slatCoverage);
-		slatCoverage = Math.min(this.slatEls.length, slatCoverage);
+		slatCoverage = Math.min(len, slatCoverage);
 
-		slatIndex = Math.floor(slatCoverage); // an integer index of the furthest whole slot
+		// an integer index of the furthest whole slat
+		// from 0 to number slats (*exclusive*, so len-1)
+		slatIndex = Math.floor(slatCoverage);
+		slatIndex = Math.min(slatIndex, len - 1);
+
+		// how much further through the slatIndex slat (from 0.0-1.0) must be covered in addition.
+		// could be 1.0 if slatCoverage is covering *all* the slots
 		slatRemainder = slatCoverage - slatIndex;
-		slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
 
-		if (slatRemainder) { // time spans part-way into the slot
-			slatBottom = this.slatTops[slatIndex + 1];
-			return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
-		}
-		else {
-			return slatTop;
-		}
+		return this.slatCoordCache.getTopPosition(slatIndex) +
+			this.slatCoordCache.getHeight(slatIndex) * slatRemainder;
 	},
 
-
-	// Queries each `slatEl` for its position relative to the grid's container and stores it in `slatTops`.
-	// Includes the the bottom of the last slat as the last item in the array.
-	computeSlatTops: function() {
-		var tops = [];
-		var top;
-
-		this.slatEls.each(function(i, node) {
-			top = $(node).position().top;
-			tops.push(top);
-		});
-
-		tops.push(top + this.slatEls.last().outerHeight()); // bottom of the last slat
-
-		this.slatTops = tops;
-	},
 
 
 	/* Event Drag Visualization
@@ -507,7 +500,7 @@ var TimeGrid = Grid.extend({
 
 				if (colSegs.length) {
 					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
-					dayDate = this.colDates[col];
+					dayDate = this.getCellDate(0, col); // row=0
 
 					for (i = 0; i < colSegs.length; i++) {
 						seg = colSegs[i];
@@ -521,7 +514,7 @@ var TimeGrid = Grid.extend({
 				}
 			}
 
-			this.bookendCells(trEl, type);
+			this.bookendCells(trEl);
 
 			this.el.append(skeletonEl);
 			this.elsByFill[type] = skeletonEl;
@@ -530,4 +523,4 @@ var TimeGrid = Grid.extend({
 		return segs;
 	}
 
-});
+}));
