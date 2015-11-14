@@ -4,9 +4,12 @@
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-var AgendaView = View.extend({
+var AgendaView = fc.AgendaView = View.extend({
 
+	timeGridClass: TimeGrid, // class used to instantiate the timeGrid. subclasses can override
 	timeGrid: null, // the main time-grid subcomponent of this view
+
+	dayGridClass: DayGrid, // class used to instantiate the dayGrid. subclasses can override
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
 
 	axisWidth: null, // the width of the time axis running down the side
@@ -20,20 +23,27 @@ var AgendaView = View.extend({
 
 
 	initialize: function() {
-		this.timeGrid = new TimeGrid(this);
+		this.timeGrid = this.instantiateTimeGrid();
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
-			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
+			this.dayGrid = this.instantiateDayGrid(); // the all-day subcomponent of this view
+		}
+	},
 
-			// the coordinate grid will be a combination of both subcomponents' grids
-			this.coordMap = new ComboCoordMap([
-				this.dayGrid.coordMap,
-				this.timeGrid.coordMap
-			]);
-		}
-		else {
-			this.coordMap = this.timeGrid.coordMap;
-		}
+
+	// Instantiates the TimeGrid object this view needs. Draws from this.timeGridClass
+	instantiateTimeGrid: function() {
+		var subclass = this.timeGridClass.extend(agendaTimeGridMethods);
+
+		return new subclass(this);
+	},
+
+
+	// Instantiates the DayGrid object this view might need. Draws from this.dayGridClass
+	instantiateDayGrid: function() {
+		var subclass = this.dayGridClass.extend(agendaDayGridMethods);
+
+		return new subclass(this);
 	},
 
 
@@ -60,7 +70,6 @@ var AgendaView = View.extend({
 
 		// the element that wraps the time-grid that will probably scroll
 		this.scrollerEl = this.el.find('.fc-time-grid-container');
-		this.timeGrid.coordMap.containerEl = this.scrollerEl; // don't accept clicks/etc outside of this
 
 		this.timeGrid.setElement(this.el.find('.fc-time-grid'));
 		this.timeGrid.renderDates();
@@ -136,55 +145,6 @@ var AgendaView = View.extend({
 					'</tr>' +
 				'</tbody>' +
 			'</table>';
-	},
-
-
-	// Generates the HTML that will go before the day-of week header cells.
-	// Queried by the TimeGrid subcomponent when generating rows. Ordering depends on isRTL.
-	headIntroHtml: function() {
-		var date;
-		var weekText;
-
-		if (this.opt('weekNumbers')) {
-			date = this.timeGrid.getCell(0).start;
-			weekText = date.format(this.opt('smallWeekFormat'));
-
-			return '' +
-				'<th class="fc-axis fc-week-number ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '>' +
-					'<span>' + // needed for matchCellWidths
-						htmlEscape(weekText) +
-					'</span>' +
-				'</th>';
-		}
-		else {
-			return '<th class="fc-axis ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '></th>';
-		}
-	},
-
-
-	// Generates the HTML that goes before the all-day cells.
-	// Queried by the DayGrid subcomponent when generating rows. Ordering depends on isRTL.
-	dayIntroHtml: function() {
-		return '' +
-			'<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '>' +
-				'<span>' + // needed for matchCellWidths
-					(this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'))) +
-				'</span>' +
-			'</td>';
-	},
-
-
-	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
-	slotBgIntroHtml: function() {
-		return '<td class="fc-axis ' + this.widgetContentClass + '" ' + this.axisStyleAttr() + '></td>';
-	},
-
-
-	// Generates the HTML that goes before all other types of cells.
-	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-	// Queried by the TimeGrid and DayGrid subcomponents when generating rows. Ordering depends on isRTL.
-	introHtml: function() {
-		return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>';
 	},
 
 
@@ -385,3 +345,75 @@ var AgendaView = View.extend({
 	}
 
 });
+
+
+// Methods that will customize the rendering behavior of the AgendaView's timeGrid
+var agendaTimeGridMethods = {
+
+
+	// Generates the HTML that will go before the day-of week header cells
+	getHeadIntroHtml: function() {
+		var view = this.view;
+		var weekText;
+
+		if (view.opt('weekNumbers')) {
+			weekText = this.start.format(view.opt('smallWeekFormat'));
+
+			return '' +
+				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
+					'<span>' + // needed for matchCellWidths
+						htmlEscape(weekText) +
+					'</span>' +
+				'</th>';
+		}
+		else {
+			return '<th class="fc-axis ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '></th>';
+		}
+	},
+
+
+	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
+	getBgIntroHtml: function() {
+		var view = this.view;
+
+		return '<td class="fc-axis ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '></td>';
+	},
+
+
+	// Generates the HTML that goes before all other types of cells.
+	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+	getIntroHtml: function() {
+		var view = this.view;
+
+		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
+	}
+
+};
+
+
+// Methods that will customize the rendering behavior of the AgendaView's dayGrid
+var agendaDayGridMethods = {
+
+
+	// Generates the HTML that goes before the all-day cells
+	getBgIntroHtml: function() {
+		var view = this.view;
+
+		return '' +
+			'<td class="fc-axis ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+				'<span>' + // needed for matchCellWidths
+					(view.opt('allDayHtml') || htmlEscape(view.opt('allDayText'))) +
+				'</span>' +
+			'</td>';
+	},
+
+
+	// Generates the HTML that goes before all other types of cells.
+	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+	getIntroHtml: function() {
+		var view = this.view;
+
+		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
+	}
+
+};
