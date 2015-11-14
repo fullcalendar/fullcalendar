@@ -251,7 +251,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var dropLocation;
+		var dropLocation; // a "span" (start/end possibly with additional properties)
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -263,7 +263,7 @@ Grid.mixin({
 
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
-		var dragListener = new CellDragListener(view.coordMap, {
+		var dragListener = new HitDragListener(view, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
@@ -277,14 +277,19 @@ Grid.mixin({
 				_this.segDragStart(seg, ev);
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 			},
-			cellOver: function(cell, isOrig, origCell) {
+			hitOver: function(hit, isOrig, origHit) {
 
-				// starting cell could be forced (DayGrid.limit)
-				if (seg.cell) {
-					origCell = seg.cell;
+				// starting hit could be forced (DayGrid.limit)
+				if (seg.hit) {
+					origHit = seg.hit;
 				}
 
-				dropLocation = _this.computeEventDrop(origCell, cell, event);
+				// since we are querying the parent view, might not belong to this grid
+				dropLocation = _this.computeEventDrop(
+					origHit.grid.getHitSpan(origHit),
+					hit.grid.getHitSpan(hit),
+					event
+				);
 
 				if (dropLocation && !calendar.isEventRangeAllowed(dropLocation, event)) {
 					disableCursor();
@@ -300,15 +305,15 @@ Grid.mixin({
 				}
 
 				if (isOrig) {
-					dropLocation = null; // needs to have moved cells to be a valid drop
+					dropLocation = null; // needs to have moved hits to be a valid drop
 				}
 			},
-			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
+			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				view.unrenderDrag(); // unrender whatever was done in renderDrag
-				mouseFollower.show(); // show in case we are moving out of all cells
+				mouseFollower.show(); // show in case we are moving out of all hits
 				dropLocation = null;
 			},
-			cellDone: function() { // Called after a cellOut OR before a dragStop
+			hitDone: function() { // Called after a hitOut OR before a dragStop
 				enableCursor();
 			},
 			dragStop: function(ev) {
@@ -346,13 +351,13 @@ Grid.mixin({
 	},
 
 
-	// Given the cell an event drag began, and the cell event was dropped, calculates the new start/end/allDay
+	// Given the spans an event drag began, and the span event was dropped, calculates the new start/end/allDay
 	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
 	// A falsy returned value indicates an invalid drop.
-	computeEventDrop: function(startCell, endCell, event) {
+	computeEventDrop: function(startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
-		var dragStart = startCell.start;
-		var dragEnd = endCell.start;
+		var dragStart = startSpan.start;
+		var dragEnd = endSpan.start;
 		var delta;
 		var dropLocation;
 
@@ -435,28 +440,30 @@ Grid.mixin({
 	},
 
 
-	// Called when a jQuery UI drag starts and it needs to be monitored for cell dropping
+	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
-		var dragListener;
 		var dropLocation; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
-		dragListener = new CellDragListener(this.coordMap, {
+		var dragListener = new HitDragListener(this, {
 			listenStart: function() {
 				_this.isDraggingExternal = true;
 			},
-			cellOver: function(cell) {
-				dropLocation = _this.computeExternalDrop(cell, meta);
+			hitOver: function(hit) {
+				dropLocation = _this.computeExternalDrop(
+					hit.grid.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
+					meta
+				);
 				if (dropLocation) {
 					_this.renderDrag(dropLocation); // called without a seg parameter
 				}
-				else { // invalid drop cell
+				else { // invalid hit
 					disableCursor();
 				}
 			},
-			cellOut: function() {
+			hitOut: function() {
 				dropLocation = null; // signal unsuccessful
 				_this.unrenderDrag();
 				enableCursor();
@@ -465,7 +472,7 @@ Grid.mixin({
 				_this.unrenderDrag();
 				enableCursor();
 
-				if (dropLocation) { // element was dropped on a valid date/time cell
+				if (dropLocation) { // element was dropped on a valid hit
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
 			},
@@ -478,16 +485,16 @@ Grid.mixin({
 	},
 
 
-	// Given a cell to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
+	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
 	// returns start/end dates for the event that would result from the hypothetical drop. end might be null.
-	// Returning a null value signals an invalid drop cell.
-	computeExternalDrop: function(cell, meta) {
+	// Returning a null value signals an invalid drop hit.
+	computeExternalDrop: function(span, meta) {
 		var dropLocation = {
-			start: cell.start.clone(),
+			start: span.start,
 			end: null
 		};
 
-		// if dropped on an all-day cell, and element's metadata specified a time, set it
+		// if dropped on an all-day span, and element's metadata specified a time, set it
 		if (meta.startTime && !dropLocation.start.hasTime()) {
 			dropLocation.start.time(meta.startTime);
 		}
@@ -537,11 +544,10 @@ Grid.mixin({
 		var el = seg.el;
 		var event = seg.event;
 		var eventEnd = calendar.getEventEnd(event);
-		var dragListener;
 		var resizeLocation; // falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
-		dragListener = new CellDragListener(this.coordMap, {
+		var dragListener = new HitDragListener(this, {
 			distance: 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
@@ -549,10 +555,13 @@ Grid.mixin({
 				_this.triggerSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segResizeStart(seg, ev);
 			},
-			cellOver: function(cell, isOrig, origCell) {
+			hitOver: function(hit, isOrig, origHit) {
+				var origHitSpan = _this.getHitSpan(origHit);
+				var hitSpan = _this.getHitSpan(hit);
+
 				resizeLocation = isStart ?
-					_this.computeEventStartResize(origCell, cell, event) :
-					_this.computeEventEndResize(origCell, cell, event);
+					_this.computeEventStartResize(origHitSpan, hitSpan, event) :
+					_this.computeEventEndResize(origHitSpan, hitSpan, event);
 
 				if (resizeLocation) {
 					if (!calendar.isEventRangeAllowed(resizeLocation, event)) {
@@ -570,10 +579,10 @@ Grid.mixin({
 					_this.renderEventResize(resizeLocation, seg);
 				}
 			},
-			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
+			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				resizeLocation = null;
 			},
-			cellDone: function() { // resets the rendering to show the original event
+			hitDone: function() { // resets the rendering to show the original event
 				_this.unrenderEventResize();
 				view.showEvent(event);
 				enableCursor();
@@ -606,22 +615,22 @@ Grid.mixin({
 
 
 	// Returns new date-information for an event segment being resized from its start
-	computeEventStartResize: function(startCell, endCell, event) {
-		return this.computeEventResize('start', startCell, endCell, event);
+	computeEventStartResize: function(startSpan, endSpan, event) {
+		return this.computeEventResize('start', startSpan, endSpan, event);
 	},
 
 
 	// Returns new date-information for an event segment being resized from its end
-	computeEventEndResize: function(startCell, endCell, event) {
-		return this.computeEventResize('end', startCell, endCell, event);
+	computeEventEndResize: function(startSpan, endSpan, event) {
+		return this.computeEventResize('end', startSpan, endSpan, event);
 	},
 
 
 	// Returns new date-information for an event segment being resized from its start OR end
 	// `type` is either 'start' or 'end'
-	computeEventResize: function(type, startCell, endCell, event) {
+	computeEventResize: function(type, startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
-		var delta = this.diffDates(endCell[type], startCell[type]);
+		var delta = this.diffDates(endSpan[type], startSpan[type]);
 		var range;
 		var defaultDuration;
 
@@ -643,15 +652,11 @@ Grid.mixin({
 		// if the event was compressed too small, find a new reasonable duration for it
 		if (!range.start.isBefore(range.end)) {
 
-			defaultDuration = event.allDay ?
-				calendar.defaultAllDayEventDuration :
-				calendar.defaultTimedEventDuration;
-
-			// between the cell's duration and the event's default duration, use the smaller of the two.
-			// example: if year-length slots, and compressed to one slot, we don't want the event to be a year long
-			if (this.cellDuration && this.cellDuration < defaultDuration) {
-				defaultDuration = this.cellDuration;
-			}
+			defaultDuration =
+				this.minResizeDuration || // TODO: hack
+				(event.allDay ?
+					calendar.defaultAllDayEventDuration :
+					calendar.defaultTimedEventDuration);
 
 			if (type == 'start') { // resizing the start?
 				range.start = range.end.clone().subtract(defaultDuration);
