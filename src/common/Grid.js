@@ -1,40 +1,37 @@
 
-/* An abstract class comprised of a "grid" of cells that each represent a specific datetime
+/* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = fc.Grid = RowRenderer.extend({
+var Grid = fc.Grid = Class.extend({
 
-	start: null, // the date of the first cell
-	end: null, // the date after the last cell
+	view: null, // a View object
+	isRTL: null, // shortcut to the view's isRTL option
 
-	rowCnt: 0, // number of rows
-	colCnt: 0, // number of cols
+	start: null,
+	end: null,
 
 	el: null, // the containing element
-	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 	externalDragStartProxy: null, // binds the Grid's scope to externalDragStart (in DayGrid.events)
 
 	// derived from options
-	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
 	eventTimeFormat: null,
 	displayEventTime: null,
 	displayEventEnd: null,
 
-	// if all cells are the same length of time, the duration they all share. optional.
-	// when defined, allows the computeCellRange shortcut, as well as improved resizing behavior.
-	cellDuration: null,
+	minResizeDuration: null, // TODO: hack. set by subclasses. minumum event resize duration
 
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
-	// of the date cells. if not defined, assumes to be day and time granularity.
+	// of the date areas. if not defined, assumes to be day and time granularity.
+	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
 
-	constructor: function() {
-		RowRenderer.apply(this, arguments); // call the super-constructor
+	constructor: function(view) {
+		this.view = view;
+		this.isRTL = view.opt('isRTL');
 
-		this.coordMap = new GridCoordMap(this);
 		this.elsByFill = {};
 		this.externalDragStartProxy = proxy(this, 'externalDragStart');
 	},
@@ -42,13 +39,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generates the format string used for the text in column headers, if not explicitly defined by 'columnFormat'
-	// TODO: move to another class. not applicable to all Grids
-	computeColHeadFormat: function() {
-		// subclasses must implement if they want to use headHtml()
-	},
 
 
 	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
@@ -75,7 +65,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Tells the grid about what period of time to display.
-	// Any date-related cell system internal data should be generated.
+	// Any date-related internal data should be generated.
 	setRange: function(range) {
 		this.start = range.start.clone();
 		this.end = range.end.clone();
@@ -95,9 +85,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 		var view = this.view;
 		var displayEventTime;
 		var displayEventEnd;
-
-		// Populate option-derived settings. Look for override first, then compute if necessary.
-		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
 
 		this.eventTimeFormat =
 			view.opt('eventTimeFormat') ||
@@ -119,18 +106,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Called before the grid's coordinates will need to be queried for cells.
-	// Any non-date-related cell system internal data should be built.
-	build: function() {
-	},
-
-
-	// Called after the grid's coordinates are done being relied upon.
-	// Any non-date-related cell system internal data should be cleared.
-	clear: function() {
-	},
-
-
 	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
 	rangeToSegs: function(range) {
 		// subclasses must implement
@@ -138,6 +113,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Diffs the two dates, returning a duration, based on granularity of the grid
+	// TODO: port isTimeScale into this system?
 	diffDates: function(a, b) {
 		if (this.largeUnit) {
 			return diffByUnit(a, b, this.largeUnit);
@@ -148,126 +124,36 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	/* Cells
-	------------------------------------------------------------------------------------------------------------------*/
-	// NOTE: columns are ordered left-to-right
-
-
-	// Gets an object containing row/col number, misc data, and range information about the cell.
-	// Accepts row/col values, an object with row/col properties, or a single-number offset from the first cell.
-	getCell: function(row, col) {
-		var cell;
-
-		if (col == null) {
-			if (typeof row === 'number') { // a single-number offset
-				col = row % this.colCnt;
-				row = Math.floor(row / this.colCnt);
-			}
-			else { // an object with row/col properties
-				col = row.col;
-				row = row.row;
-			}
-		}
-
-		cell = { row: row, col: col };
-
-		$.extend(cell, this.getRowData(row), this.getColData(col));
-		$.extend(cell, this.computeCellRange(cell));
-
-		return cell;
-	},
-
-
-	// Given a cell object with index and misc data, generates a range object
-	// If the grid is leveraging cellDuration, this doesn't need to be defined. Only computeCellDate does.
-	// If being overridden, should return a range with reference-free date copies.
-	computeCellRange: function(cell) {
-		var date = this.computeCellDate(cell);
-
-		return {
-			start: date,
-			end: date.clone().add(this.cellDuration)
-		};
-	},
-
-
-	// Given a cell, returns its start date. Should return a reference-free date copy.
-	computeCellDate: function(cell) {
-		// subclasses can implement
-	},
-
-
-	// Retrieves misc data about the given row
-	getRowData: function(row) {
-		return {};
-	},
-
-
-	// Retrieves misc data baout the given column
-	getColData: function(col) {
-		return {};
-	},
-
-
-	// Retrieves the element representing the given row
-	getRowEl: function(row) {
-		// subclasses should implement if leveraging the default getCellDayEl() or computeRowCoords()
-	},
-
-
-	// Retrieves the element representing the given column
-	getColEl: function(col) {
-		// subclasses should implement if leveraging the default getCellDayEl() or computeColCoords()
-	},
-
-
-	// Given a cell object, returns the element that represents the cell's whole-day
-	getCellDayEl: function(cell) {
-		return this.getColEl(cell.col) || this.getRowEl(cell.row);
-	},
-
-
-	/* Cell Coordinates
+	/* Hit Area
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes the top/bottom coordinates of all rows.
-	// By default, queries the dimensions of the element provided by getRowEl().
-	computeRowCoords: function() {
-		var items = [];
-		var i, el;
-		var top;
-
-		for (i = 0; i < this.rowCnt; i++) {
-			el = this.getRowEl(i);
-			top = el.offset().top;
-			items.push({
-				top: top,
-				bottom: top + el.outerHeight()
-			});
-		}
-
-		return items;
+	// Called before one or more queryHit calls might happen. Should prepare any cached coordinates for queryHit
+	prepareHits: function() {
 	},
 
 
-	// Computes the left/right coordinates of all rows.
-	// By default, queries the dimensions of the element provided by getColEl(). Columns can be LTR or RTL.
-	computeColCoords: function() {
-		var items = [];
-		var i, el;
-		var left;
+	// Called when queryHit calls have subsided. Good place to clear any coordinate caches.
+	releaseHits: function() {
+	},
 
-		for (i = 0; i < this.colCnt; i++) {
-			el = this.getColEl(i);
-			left = el.offset().left;
-			items.push({
-				left: left,
-				right: left + el.outerWidth()
-			});
-		}
 
-		return items;
+	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
+	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
+	// The returned object must be processed by getHitSpan and getHitEl.
+	queryHit: function(leftOffset, topOffset) {
+	},
+
+
+	// Given position-level information about a date-related area within the grid,
+	// should return an object with at least a start/end date. Can provide other information as well.
+	getHitSpan: function(hit) {
+	},
+
+
+	// Given position-level information about a date-related area within the grid,
+	// should return a jQuery element that best represents it. passed to dayClick callback.
+	getHitEl: function(hit) {
 	},
 
 
@@ -318,7 +204,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Renders the grid's date-related content (like cells that represent days/times).
+	// Renders the grid's date-related content (like areas that represent days/times).
 	// Assumes setRange has already been called and the skeleton has already been rendered.
 	renderDates: function() {
 		// subclasses should implement
@@ -606,52 +492,12 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+
 	/* Generic rendering utilities for subclasses
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a day-of-week header row.
-	// TODO: move to another class. not applicable to all Grids
-	headHtml: function() {
-		return '' +
-			'<div class="fc-row ' + this.view.widgetHeaderClass + '">' +
-				'<table>' +
-					'<thead>' +
-						this.rowHtml('head') + // leverages RowRenderer
-					'</thead>' +
-				'</table>' +
-			'</div>';
-	},
-
-
-	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
-	// TODO: move to another class. not applicable to all Grids
-	headCellHtml: function(cell) {
-		var view = this.view;
-		var date = cell.start;
-
-		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
-				htmlEscape(date.format(this.colHeadFormat)) +
-			'</th>';
-	},
-
-
-	// Renders the HTML for a single-day background cell
-	bgCellHtml: function(cell) {
-		var view = this.view;
-		var date = cell.start;
-		var classes = this.getDayClasses(date);
-
-		classes.unshift('fc-day', view.widgetContentClass);
-
-		return '<td class="' + classes.join(' ') + '"' +
-			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
-			'></td>';
-	},
-
-
-	// Computes HTML classNames for a single-day cell
+	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date) {
 		var view = this.view;
 		var today = view.calendar.getNow().stripTime();
