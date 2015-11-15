@@ -20,7 +20,7 @@
         "src/common/Class.js",
         "src/common/Emitter.js",
         "src/common/Popover.js",
-        "src/common/CoordMap.js",
+        "src/common/CoordCache.js",
         "src/common/DragListener.js",
         "src/common/HitDragListener.js",
         "src/common/MouseFollower.js",
