@@ -140,7 +140,8 @@ var Grid = fc.Grid = Class.extend({
 
 	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
 	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
-	// The returned object must be processed by getHitSpan and getHitEl.
+	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
+	// The returned object will be processed by getHitSpan and getHitEl.
 	queryHit: function(leftOffset, topOffset) {
 	},
 

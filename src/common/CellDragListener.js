@@ -1,23 +1,25 @@
 
-/* Tracks mouse movements over a CoordMap and raises events about which cell the mouse is over.
+/* Tracks mouse movements over a component and raises events about which hit the mouse is over.
 ------------------------------------------------------------------------------------------------------------------------
 options:
 - subjectEl
 - subjectCenter
 */
 
-var CellDragListener = DragListener.extend({
+var HitDragListener = DragListener.extend({
 
-	coordMap: null, // converts coordinates to date cells
-	origCell: null, // the cell the mouse was over when listening started
-	cell: null, // the cell the mouse is over
+	component: null, // converts coordinates to hits
+		// methods: prepareHits, releaseHits, queryHit
+
+	origHit: null, // the hit the mouse was over when listening started
+	hit: null, // the hit the mouse is over
 	coordAdjust: null, // delta that will be added to the mouse coordinates when computing collisions
 
 
-	constructor: function(coordMap, options) {
+	constructor: function(component, options) {
 		DragListener.prototype.constructor.call(this, options); // call the super-constructor
 
-		this.coordMap = coordMap;
+		this.component = component;
 	},
 
 
@@ -43,14 +45,15 @@ var CellDragListener = DragListener.extend({
 				point = constrainPoint(point, subjectRect);
 			}
 
-			this.origCell = this.getCell(point.left, point.top);
+			this.origHit = this.queryHit(point.left, point.top);
 
 			// treat the center of the subject as the collision point?
 			if (subjectEl && this.options.subjectCenter) {
 
-				// only consider the area the subject overlaps the cell. best for large subjects
-				if (this.origCell) {
-					subjectRect = intersectRects(this.origCell, subjectRect) ||
+				// only consider the area the subject overlaps the hit. best for large subjects.
+				// TODO: skip this if hit didn't supply left/right/top/bottom
+				if (this.origHit) {
+					subjectRect = intersectRects(this.origHit, subjectRect) ||
 						subjectRect; // in case there is no intersection
 				}
 
@@ -60,7 +63,7 @@ var CellDragListener = DragListener.extend({
 			this.coordAdjust = diffPoints(point, origPoint); // point - origPoint
 		}
 		else {
-			this.origCell = null;
+			this.origHit = null;
 			this.coordAdjust = null;
 		}
 	},
@@ -68,41 +71,42 @@ var CellDragListener = DragListener.extend({
 
 	// Recomputes the drag-critical positions of elements
 	computeCoords: function() {
-		this.coordMap.build();
-		this.computeScrollBounds();
+		this.component.prepareHits();
+		this.computeScrollBounds(); // why is this here???
 	},
 
 
 	// Called when the actual drag has started
 	dragStart: function(ev) {
-		var cell;
+		var hit;
 
 		DragListener.prototype.dragStart.apply(this, arguments); // call the super-method
 
-		cell = this.getCell(ev.pageX, ev.pageY); // might be different from this.origCell if the min-distance is large
+		// might be different from this.origHit if the min-distance is large
+		hit = this.queryHit(ev.pageX, ev.pageY);
 
-		// report the initial cell the mouse is over
+		// report the initial hit the mouse is over
 		// especially important if no min-distance and drag starts immediately
-		if (cell) {
-			this.cellOver(cell);
+		if (hit) {
+			this.hitOver(hit);
 		}
 	},
 
 
 	// Called when the drag moves
 	drag: function(dx, dy, ev) {
-		var cell;
+		var hit;
 
 		DragListener.prototype.drag.apply(this, arguments); // call the super-method
 
-		cell = this.getCell(ev.pageX, ev.pageY);
+		hit = this.queryHit(ev.pageX, ev.pageY);
 
-		if (!isCellsEqual(cell, this.cell)) { // a different cell than before?
-			if (this.cell) {
-				this.cellOut();
+		if (!isHitsEqual(hit, this.hit)) { // a different hit than before?
+			if (this.hit) {
+				this.hitOut();
 			}
-			if (cell) {
-				this.cellOver(cell);
+			if (hit) {
+				this.hitOver(hit);
 			}
 		}
 	},
@@ -110,32 +114,35 @@ var CellDragListener = DragListener.extend({
 
 	// Called when dragging has been stopped
 	dragStop: function() {
-		this.cellDone();
+		this.hitDone();
 		DragListener.prototype.dragStop.apply(this, arguments); // call the super-method
 	},
 
 
-	// Called when a the mouse has just moved over a new cell
-	cellOver: function(cell) {
-		this.cell = cell;
-		this.trigger('cellOver', cell, isCellsEqual(cell, this.origCell), this.origCell);
+	// Called when a the mouse has just moved over a new hit
+	hitOver: function(hit) {
+		var isOrig = isHitsEqual(hit, this.origHit);
+
+		this.hit = hit;
+
+		this.trigger('hitOver', this.hit, isOrig, this.origHit);
 	},
 
 
-	// Called when the mouse has just moved out of a cell
-	cellOut: function() {
-		if (this.cell) {
-			this.trigger('cellOut', this.cell);
-			this.cellDone();
-			this.cell = null;
+	// Called when the mouse has just moved out of a hit
+	hitOut: function() {
+		if (this.hit) {
+			this.trigger('hitOut', this.hit);
+			this.hitDone();
+			this.hit = null;
 		}
 	},
 
 
-	// Called after a cellOut. Also called before a dragStop
-	cellDone: function() {
-		if (this.cell) {
-			this.trigger('cellDone', this.cell);
+	// Called after a hitOut. Also called before a dragStop
+	hitDone: function() {
+		if (this.hit) {
+			this.trigger('hitDone', this.hit);
 		}
 	},
 
@@ -144,8 +151,10 @@ var CellDragListener = DragListener.extend({
 	listenStop: function() {
 		DragListener.prototype.listenStop.apply(this, arguments); // call the super-method
 
-		this.origCell = this.cell = null;
-		this.coordMap.clear();
+		this.origHit = null;
+		this.hit = null;
+
+		this.component.releaseHits();
 	},
 
 
@@ -153,38 +162,54 @@ var CellDragListener = DragListener.extend({
 	scrollStop: function() {
 		DragListener.prototype.scrollStop.apply(this, arguments); // call the super-method
 
-		this.computeCoords(); // cells' absolute positions will be in new places. recompute
+		this.computeCoords(); // hits' absolute positions will be in new places. recompute
 	},
 
 
-	// Gets the cell underneath the coordinates for the given mouse event
-	getCell: function(left, top) {
+	// Gets the hit underneath the coordinates for the given mouse event
+	queryHit: function(left, top) {
 
 		if (this.coordAdjust) {
 			left += this.coordAdjust.left;
 			top += this.coordAdjust.top;
 		}
 
-		return this.coordMap.getCell(left, top);
+		return this.component.queryHit(left, top);
 	}
 
 });
 
 
-// Returns `true` if the cells are identically equal. `false` otherwise.
-// They must have the same row, col, and be from the same grid.
-// Two null values will be considered equal, as two "out of the grid" states are the same.
-function isCellsEqual(cell1, cell2) {
+// Returns `true` if the hits are identically equal. `false` otherwise. Must be from the same component.
+// Two null values will be considered equal, as two "out of the component" states are the same.
+function isHitsEqual(hit0, hit1) {
 
-	if (!cell1 && !cell2) {
+	if (!hit0 && !hit1) {
 		return true;
 	}
 
-	if (cell1 && cell2) {
-		return cell1.grid === cell2.grid &&
-			cell1.row === cell2.row &&
-			cell1.col === cell2.col;
+	if (hit0 && hit1) {
+		return hit0.grid === hit1.grid && // TODO: referencing a "grid" is bad. should be more general
+			isHitIdsEqual(hit0.id, hit1.id);
 	}
 
 	return false;
+}
+
+
+function isHitIdsEqual(id0, id1) {
+	id0 = [].concat(id0);
+	id1 = [].concat(id1);
+
+	if (id0.length !== id1.length) {
+		return false;
+	}
+
+	for (var i = 0; i < id0.length; i++) {
+		if (id0[i] !== id1[i]) {
+			return false;
+		}
+	}
+
+	return true;
 }
