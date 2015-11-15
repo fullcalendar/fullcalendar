@@ -18,11 +18,11 @@
 
 
 var API_BASE = 'https://www.googleapis.com/calendar/v3/calendars';
-var fc = $.fullCalendar;
-var applyAll = fc.applyAll;
+var FC = $.fullCalendar;
+var applyAll = FC.applyAll;
 
 
-fc.sourceNormalizers.push(function(sourceOptions) {
+FC.sourceNormalizers.push(function(sourceOptions) {
 	var googleCalendarId = sourceOptions.googleCalendarId;
 	var url = sourceOptions.url;
 	var match;
@@ -64,7 +64,7 @@ fc.sourceNormalizers.push(function(sourceOptions) {
 });
 
 
-fc.sourceFetchers.push(function(sourceOptions, start, end, timezone) {
+FC.sourceFetchers.push(function(sourceOptions, start, end, timezone) {
 	if (sourceOptions.googleCalendarId) {
 		return transformOptions(sourceOptions, start, end, timezone, this); // `this` is the calendar
 	}
@@ -86,7 +86,7 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 		(calendar.options.googleCalendarError || $.noop).apply(calendar, errorObjs);
 
 		// print error to debug console
-		fc.warn.apply(null, [ message ].concat(apiErrorObjs || []));
+		FC.warn.apply(null, [ message ].concat(apiErrorObjs || []));
 	}
 
 	if (!apiKey) {

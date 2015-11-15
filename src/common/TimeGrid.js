@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
+var TimeGrid = FC.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting

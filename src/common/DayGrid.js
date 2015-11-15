@@ -2,7 +2,7 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
+var DayGrid = FC.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid

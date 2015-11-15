@@ -1,6 +1,6 @@
 
-fc.sourceNormalizers = [];
-fc.sourceFetchers = [];
+FC.sourceNormalizers = [];
+FC.sourceFetchers = [];
 
 var ajaxDefaults = {
 	dataType: 'json',
@@ -118,7 +118,7 @@ function EventManager(options) { // assumed to be a calendar
 	
 	function _fetchEventSource(source, callback) {
 		var i;
-		var fetchers = fc.sourceFetchers;
+		var fetchers = FC.sourceFetchers;
 		var res;
 
 		for (i=0; i<fetchers.length; i++) {
@@ -242,7 +242,7 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	function buildEventSource(sourceInput) { // will return undefined if invalid source
-		var normalizers = fc.sourceNormalizers;
+		var normalizers = FC.sourceNormalizers;
 		var source;
 		var i;
 

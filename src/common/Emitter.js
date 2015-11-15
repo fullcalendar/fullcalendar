@@ -1,5 +1,5 @@
 
-var Emitter = fc.Emitter = Class.extend({
+var Emitter = FC.Emitter = Class.extend({
 
 	callbackHash: null,
 

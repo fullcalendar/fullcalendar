@@ -8,7 +8,7 @@ options:
 - isHorizontal
 - isVertical
 */
-var CoordCache = fc.CoordCache = Class.extend({
+var CoordCache = FC.CoordCache = Class.extend({
 
 	els: null, // jQuery set (assumed to be siblings)
 	origin: null, // {left,top} position of offsetParent of els

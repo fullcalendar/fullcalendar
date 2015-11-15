@@ -1,13 +1,13 @@
 
 // exports
-fc.intersectionToSeg = intersectionToSeg;
-fc.applyAll = applyAll;
-fc.debounce = debounce;
-fc.isInt = isInt;
-fc.htmlEscape = htmlEscape;
-fc.cssToStr = cssToStr;
-fc.proxy = proxy;
-fc.capitaliseFirstLetter = capitaliseFirstLetter;
+FC.intersectionToSeg = intersectionToSeg;
+FC.applyAll = applyAll;
+FC.debounce = debounce;
+FC.isInt = isInt;
+FC.htmlEscape = htmlEscape;
+FC.cssToStr = cssToStr;
+FC.proxy = proxy;
+FC.capitaliseFirstLetter = capitaliseFirstLetter;
 
 
 /* FullCalendar-specific DOM Utilities
@@ -163,10 +163,10 @@ function unsetScroller(containerEl) {
 /* General DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.getOuterRect = getOuterRect;
-fc.getClientRect = getClientRect;
-fc.getContentRect = getContentRect;
-fc.getScrollbarWidths = getScrollbarWidths;
+FC.getOuterRect = getOuterRect;
+FC.getClientRect = getClientRect;
+FC.getContentRect = getContentRect;
+FC.getScrollbarWidths = getScrollbarWidths;
 
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
@@ -299,7 +299,7 @@ function isPrimaryMouseButton(ev) {
 /* Geometry
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.intersectRects = intersectRects;
+FC.intersectRects = intersectRects;
 
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
 function intersectRects(rect1, rect2) {
@@ -347,10 +347,10 @@ function diffPoints(point1, point2) {
 /* Object Ordering by Field
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.parseFieldSpecs = parseFieldSpecs;
-fc.compareByFieldSpecs = compareByFieldSpecs;
-fc.compareByFieldSpec = compareByFieldSpec;
-fc.flexibleCompare = flexibleCompare;
+FC.parseFieldSpecs = parseFieldSpecs;
+FC.compareByFieldSpecs = compareByFieldSpecs;
+FC.compareByFieldSpec = compareByFieldSpec;
+FC.flexibleCompare = flexibleCompare;
 
 
 function parseFieldSpecs(input) {
@@ -476,11 +476,11 @@ function intersectionToSeg(subjectRange, constraintRange) {
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.computeIntervalUnit = computeIntervalUnit;
-fc.divideRangeByDuration = divideRangeByDuration;
-fc.divideDurationByDuration = divideDurationByDuration;
-fc.multiplyDuration = multiplyDuration;
-fc.durationHasTime = durationHasTime;
+FC.computeIntervalUnit = computeIntervalUnit;
+FC.divideRangeByDuration = divideRangeByDuration;
+FC.divideDurationByDuration = divideDurationByDuration;
+FC.multiplyDuration = multiplyDuration;
+FC.durationHasTime = durationHasTime;
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
 var intervalUnits = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ];
@@ -620,7 +620,7 @@ function isTimeString(str) {
 /* Logging and Debug
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.log = function() {
+FC.log = function() {
 	var console = window.console;
 
 	if (console && console.log) {
@@ -628,14 +628,14 @@ fc.log = function() {
 	}
 };
 
-fc.warn = function() {
+FC.warn = function() {
 	var console = window.console;
 
 	if (console && console.warn) {
 		return console.warn.apply(console, arguments);
 	}
 	else {
-		return fc.log.apply(fc, arguments);
+		return FC.log.apply(FC, arguments);
 	}
 };
 

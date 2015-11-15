@@ -1,5 +1,5 @@
 
-fc.Class = Class; // export
+FC.Class = Class; // export
 
 // class that all other classes will inherit from
 function Class() { }

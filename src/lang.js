@@ -1,5 +1,5 @@
 
-var langOptionHash = fc.langs = {}; // initialize and expose
+var langOptionHash = FC.langs = {}; // initialize and expose
 
 
 // TODO: document the structure and ordering of a FullCalendar lang file
@@ -8,7 +8,7 @@ var langOptionHash = fc.langs = {}; // initialize and expose
 
 // Initialize jQuery UI datepicker translations while using some of the translations
 // Will set this as the default language for datepicker.
-fc.datepickerLang = function(langCode, dpLangCode, dpOptions) {
+FC.datepickerLang = function(langCode, dpLangCode, dpOptions) {
 
 	// get the FullCalendar internal option hash for this language. create if necessary
 	var fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
@@ -43,7 +43,7 @@ fc.datepickerLang = function(langCode, dpLangCode, dpOptions) {
 
 
 // Sets FullCalendar-specific translations. Will set the language as the global default.
-fc.lang = function(langCode, newFcOptions) {
+FC.lang = function(langCode, newFcOptions) {
 	var fcOptions;
 	var momOptions;
 
@@ -197,4 +197,4 @@ function getMomentLocaleData(langCode) {
 
 // Initialize English by forcing computation of moment-derived options.
 // Also, sets it as the default.
-fc.lang('en', Calendar.englishDefaults);
+FC.lang('en', Calendar.englishDefaults);

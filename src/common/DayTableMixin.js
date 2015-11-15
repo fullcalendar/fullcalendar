@@ -3,7 +3,7 @@
 A set of rendering and date-related methods for a visual component comprised of one or more rows of day columns.
 Prerequisite: the object being mixed into needs to be a *Grid*
 */
-var DayTableMixin = fc.DayTableMixin = {
+var DayTableMixin = FC.DayTableMixin = {
 
 	breakOnWeeks: false, // should create a new row for each week?
 	dayDates: null, // whole-day dates for each column. left to right
