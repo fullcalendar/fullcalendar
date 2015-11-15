@@ -62,7 +62,7 @@ var CoordCache = FC.CoordCache = Class.extend({
 		var scrollParentEl = getScrollParent(this.els.eq(0));
 
 		if (!scrollParentEl.is(document)) {
-			return getOuterRect(scrollParentEl);
+			return getClientRect(scrollParentEl);
 		}
 	},
 

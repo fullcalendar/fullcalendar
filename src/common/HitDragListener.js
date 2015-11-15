@@ -17,7 +17,7 @@ var HitDragListener = DragListener.extend({
 
 
 	constructor: function(component, options) {
-		DragListener.prototype.constructor.call(this, options); // call the super-constructor
+		DragListener.call(this, options); // call the super-constructor
 
 		this.component = component;
 	},
