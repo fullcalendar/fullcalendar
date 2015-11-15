@@ -286,8 +286,8 @@ Grid.mixin({
 
 				// since we are querying the parent view, might not belong to this grid
 				dropLocation = _this.computeEventDrop(
-					origHit.grid.getHitSpan(origHit),
-					hit.grid.getHitSpan(hit),
+					origHit.component.getHitSpan(origHit),
+					hit.component.getHitSpan(hit),
 					event
 				);
 
@@ -453,7 +453,7 @@ Grid.mixin({
 			},
 			hitOver: function(hit) {
 				dropLocation = _this.computeExternalDrop(
-					hit.grid.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
+					hit.component.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
 					meta
 				);
 				if (dropLocation) {

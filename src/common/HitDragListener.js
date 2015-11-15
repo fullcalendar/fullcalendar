@@ -189,27 +189,23 @@ function isHitsEqual(hit0, hit1) {
 	}
 
 	if (hit0 && hit1) {
-		return hit0.grid === hit1.grid && // TODO: referencing a "grid" is bad. should be more general
-			isHitIdsEqual(hit0.id, hit1.id);
+		return hit0.component === hit1.component &&
+			isHitPropsWithin(hit0, hit1) &&
+			isHitPropsWithin(hit1, hit0); // ensures all props are identical
 	}
 
 	return false;
 }
 
 
-function isHitIdsEqual(id0, id1) {
-	id0 = [].concat(id0);
-	id1 = [].concat(id1);
-
-	if (id0.length !== id1.length) {
-		return false;
-	}
-
-	for (var i = 0; i < id0.length; i++) {
-		if (id0[i] !== id1[i]) {
-			return false;
+// Returns true if all of subHit's non-standard properties are within superHit
+function isHitPropsWithin(subHit, superHit) {
+	for (var propName in subHit) {
+		if (!/^(component|left|right|top|bottom)$/.test(propName)) {
+			if (subHit[propName] !== superHit[propName]) {
+				return false;
+			}
 		}
 	}
-
 	return true;
 }

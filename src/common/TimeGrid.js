@@ -215,8 +215,9 @@ var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 			var snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight;
 
 			return {
-				grid: this, // needed unfortunately :(
-				id: [ colIndex, snapIndex ], // TODO: move away from id index
+				col: colIndex,
+				snap: snapIndex,
+				component: this, // needed unfortunately :(
 				left: colCoordCache.getLeftOffset(colIndex),
 				right: colCoordCache.getRightOffset(colIndex),
 				top: snapTop,
@@ -227,21 +228,20 @@ var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 
 	getHitSpan: function(hit) {
-		var colIndex = hit.id[0];
-		var snapIndex = hit.id[1];
-		var date = this.getCellDate(0, colIndex); // row=0
-		var time = this.computeSnapTime(snapIndex);
-
+		var date = this.getCellDate(0, hit.col); // row=0
+		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
 		var start = this.view.calendar.rezoneDate(date); // gives it a 00:00 time
+		var end;
+
 		start.time(time);
-		var end = start.clone().add(this.snapDuration);
+		end = start.clone().add(this.snapDuration);
 
 		return { start: start, end: end };
 	},
 
 
 	getHitEl: function(hit) {
-		return this.colEls.eq(hit.id[0]);
+		return this.colEls.eq(hit.col);
 	},
 
 

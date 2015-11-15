@@ -275,14 +275,14 @@ var AgendaView = fc.AgendaView = View.extend({
 
 
 	getHitSpan: function(hit) {
-		// TODO: hit.grid is set as a hack to identify which grid the hit came from
-		return hit.grid.getHitSpan(hit);
+		// TODO: hit.component is set as a hack to identify where the hit came from
+		return hit.component.getHitSpan(hit);
 	},
 
 
 	getHitEl: function(hit) {
-		// TODO: hit.grid is set as a hack to identify which grid the hit came from
-		return hit.grid.getHitEl(hit);
+		// TODO: hit.component is set as a hack to identify where the hit came from
+		return hit.component.getHitEl(hit);
 	},
 
 

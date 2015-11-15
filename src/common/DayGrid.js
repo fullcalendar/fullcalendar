@@ -226,12 +226,12 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 
 	getHitSpan: function(hit) {
-		return this.getCellRange(hit.id[0], hit.id[1]);
+		return this.getCellRange(hit.row, hit.col);
 	},
 
 
 	getHitEl: function(hit) {
-		return this.getCellEl(hit.id[0], hit.id[1]);
+		return this.getCellEl(hit.row, hit.col);
 	},
 
 
@@ -242,8 +242,9 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	getCellHit: function(row, col) {
 		return {
-			grid: this, // needed unfortunately :(
-			id: [ row, col ], // TODO: move away from id array
+			row: row,
+			col: col,
+			component: this, // needed unfortunately :(
 			left: this.colCoordCache.getLeftOffset(col),
 			right: this.colCoordCache.getRightOffset(col),
 			top: this.rowCoordCache.getTopOffset(row),
