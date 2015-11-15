@@ -163,6 +163,7 @@ function unsetScroller(containerEl) {
 /* General DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
+fc.getOuterRect = getOuterRect;
 fc.getClientRect = getClientRect;
 fc.getContentRect = getContentRect;
 fc.getScrollbarWidths = getScrollbarWidths;
