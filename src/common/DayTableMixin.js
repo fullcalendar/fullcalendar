@@ -248,49 +248,49 @@ var DayTableMixin = fc.DayTableMixin = {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getHeadHtml: function() {
+	renderHeadHtml: function() {
 		var view = this.view;
 
 		return '' +
 			'<div class="fc-row ' + view.widgetHeaderClass + '">' +
 				'<table>' +
 					'<thead>' +
-						this.getHeadTrHtml() +
+						this.renderHeadTrHtml() +
 					'</thead>' +
 				'</table>' +
 			'</div>';
 	},
 
 
-	getHeadIntroHtml: function() {
-		return this.getIntroHtml(); // fall back to generic
+	renderHeadIntroHtml: function() {
+		return this.renderIntroHtml(); // fall back to generic
 	},
 
 
-	getHeadTrHtml: function() {
+	renderHeadTrHtml: function() {
 		return '' +
 			'<tr>' +
-				(this.isRTL ? '' : this.getHeadIntroHtml()) +
-				this.getHeadDateCellsHtml() +
-				(this.isRTL ? this.getHeadIntroHtml() : '') +
+				(this.isRTL ? '' : this.renderHeadIntroHtml()) +
+				this.renderHeadDateCellsHtml() +
+				(this.isRTL ? this.renderHeadIntroHtml() : '') +
 			'</tr>';
 	},
 
 
-	getHeadDateCellsHtml: function() {
+	renderHeadDateCellsHtml: function() {
 		var htmls = [];
 		var col, date;
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(0, col);
-			htmls.push(this.getHeadDateCellHtml(date));
+			htmls.push(this.renderHeadDateCellHtml(date));
 		}
 
 		return htmls.join('');
 	},
 
 
-	getHeadDateCellHtml: function(date, colspan) {
+	renderHeadDateCellHtml: function(date, colspan) {
 		var view = this.view;
 
 		return '' +
@@ -306,35 +306,35 @@ var DayTableMixin = fc.DayTableMixin = {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getBgTrHtml: function(row) {
+	renderBgTrHtml: function(row) {
 		return '' +
 			'<tr>' +
-				(this.isRTL ? '' : this.getBgIntroHtml(row)) +
-				this.getBgCellsHtml(row) +
-				(this.isRTL ? this.getBgIntroHtml(row) : '') +
+				(this.isRTL ? '' : this.renderBgIntroHtml(row)) +
+				this.renderBgCellsHtml(row) +
+				(this.isRTL ? this.renderBgIntroHtml(row) : '') +
 			'</tr>';
 	},
 
 
-	getBgIntroHtml: function(row) {
-		return this.getIntroHtml(); // fall back to generic
+	renderBgIntroHtml: function(row) {
+		return this.renderIntroHtml(); // fall back to generic
 	},
 
 
-	getBgCellsHtml: function(row) {
+	renderBgCellsHtml: function(row) {
 		var htmls = [];
 		var col, date;
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(row, col);
-			htmls.push(this.getBgCellHtml(date));
+			htmls.push(this.renderBgCellHtml(date));
 		}
 
 		return htmls.join('');
 	},
 
 
-	getBgCellHtml: function(date) {
+	renderBgCellHtml: function(date) {
 		var view = this.view;
 		var classes = this.getDayClasses(date);
 
@@ -346,6 +346,15 @@ var DayTableMixin = fc.DayTableMixin = {
 	},
 
 
+	/* Generic
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Generates the default HTML intro for any row. User classes should override
+	renderIntroHtml: function() {
+	},
+
+
 	/* Utils
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -353,7 +362,7 @@ var DayTableMixin = fc.DayTableMixin = {
 	// Applies the generic "intro" and "outro" HTML to the given cells.
 	// Intro means the leftmost cell when the calendar is LTR and the rightmost cell when RTL. Vice-versa for outro.
 	bookendCells: function(trEl) {
-		var introHtml = this.getIntroHtml();
+		var introHtml = this.renderIntroHtml();
 
 		if (introHtml) {
 			if (this.isRTL) {

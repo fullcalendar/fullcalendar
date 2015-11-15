@@ -27,7 +27,7 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 		var col;
 
 		for (row = 0; row < rowCnt; row++) {
-			html += this.getDayRowHtml(row, isRigid);
+			html += this.renderDayRowHtml(row, isRigid);
 		}
 		this.el.html(html);
 
@@ -72,7 +72,7 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	// Generates the HTML for a single row, which is a div that wraps a table.
 	// `row` is the row number.
-	getDayRowHtml: function(row, isRigid) {
+	renderDayRowHtml: function(row, isRigid) {
 		var view = this.view;
 		var classes = [ 'fc-row', 'fc-week', view.widgetContentClass ];
 
@@ -84,14 +84,14 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 			'<div class="' + classes.join(' ') + '">' +
 				'<div class="fc-bg">' +
 					'<table>' +
-						this.getBgTrHtml(row) +
+						this.renderBgTrHtml(row) +
 					'</table>' +
 				'</div>' +
 				'<div class="fc-content-skeleton">' +
 					'<table>' +
 						(this.numbersVisible ?
 							'<thead>' +
-								this.getNumberTrHtml(row) +
+								this.renderNumberTrHtml(row) +
 							'</thead>' :
 							''
 							) +
@@ -105,28 +105,28 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getNumberTrHtml: function(row) {
+	renderNumberTrHtml: function(row) {
 		return '' +
 			'<tr>' +
-				(this.isRTL ? '' : this.getNumberIntroHtml(row)) +
-				this.getNumberCellsHtml(row) +
-				(this.isRTL ? this.getNumberIntroHtml(row) : '') +
+				(this.isRTL ? '' : this.renderNumberIntroHtml(row)) +
+				this.renderNumberCellsHtml(row) +
+				(this.isRTL ? this.renderNumberIntroHtml(row) : '') +
 			'</tr>';
 	},
 
 
-	getNumberIntroHtml: function(row) {
-		return this.getIntroHtml();
+	renderNumberIntroHtml: function(row) {
+		return this.renderIntroHtml();
 	},
 
 
-	getNumberCellsHtml: function(row) {
+	renderNumberCellsHtml: function(row) {
 		var htmls = [];
 		var col, date;
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(row, col);
-			htmls.push(this.getNumberCellHtml(date));
+			htmls.push(this.renderNumberCellHtml(date));
 		}
 
 		return htmls.join('');
@@ -135,7 +135,7 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
-	getNumberCellHtml: function(date) {
+	renderNumberCellHtml: function(date) {
 		var classes;
 
 		if (!this.view.dayNumbersVisible) { // if there are week numbers but not day numbers

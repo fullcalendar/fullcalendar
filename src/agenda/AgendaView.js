@@ -94,7 +94,7 @@ var AgendaView = fc.AgendaView = View.extend({
 	renderHead: function() {
 		this.headContainerEl =
 			this.el.find('.fc-head-container')
-				.html(this.timeGrid.getHeadHtml());
+				.html(this.timeGrid.renderHeadHtml());
 	},
 
 
@@ -396,7 +396,7 @@ var agendaTimeGridMethods = {
 
 
 	// Generates the HTML that will go before the day-of week header cells
-	getHeadIntroHtml: function() {
+	renderHeadIntroHtml: function() {
 		var view = this.view;
 		var weekText;
 
@@ -417,7 +417,7 @@ var agendaTimeGridMethods = {
 
 
 	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
-	getBgIntroHtml: function() {
+	renderBgIntroHtml: function() {
 		var view = this.view;
 
 		return '<td class="fc-axis ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '></td>';
@@ -426,7 +426,7 @@ var agendaTimeGridMethods = {
 
 	// Generates the HTML that goes before all other types of cells.
 	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-	getIntroHtml: function() {
+	renderIntroHtml: function() {
 		var view = this.view;
 
 		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
@@ -440,7 +440,7 @@ var agendaDayGridMethods = {
 
 
 	// Generates the HTML that goes before the all-day cells
-	getBgIntroHtml: function() {
+	renderBgIntroHtml: function() {
 		var view = this.view;
 
 		return '' +
@@ -454,7 +454,7 @@ var agendaDayGridMethods = {
 
 	// Generates the HTML that goes before all other types of cells.
 	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-	getIntroHtml: function() {
+	renderIntroHtml: function() {
 		var view = this.view;
 
 		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';

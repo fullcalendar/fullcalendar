@@ -59,19 +59,19 @@ var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 		return '' +
 			'<div class="fc-bg">' +
 				'<table>' +
-					this.getBgTrHtml(0) + // row=0
+					this.renderBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
 				'<table>' +
-					this.getSlatRowHtml() +
+					this.renderSlatRowHtml() +
 				'</table>' +
 			'</div>';
 	},
 
 
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
-	getSlatRowHtml: function() {
+	renderSlatRowHtml: function() {
 		var view = this.view;
 		var isRTL = this.isRTL;
 		var html = '';
