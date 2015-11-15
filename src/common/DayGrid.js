@@ -8,7 +8,7 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
 
 	rowEls: null, // set of fake row elements
-	dayEls: null, // set of whole-day elements comprising the row's background
+	cellEls: null, // set of whole-day elements comprising the row's background
 	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
 
 	rowCoordCache: null,
@@ -32,14 +32,14 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 		this.el.html(html);
 
 		this.rowEls = this.el.find('.fc-row');
-		this.dayEls = this.el.find('.fc-day'); // TODO: rename to cellEls?
+		this.cellEls = this.el.find('.fc-day');
 
 		this.rowCoordCache = new CoordCache({
 			els: this.rowEls,
 			isVertical: true
 		});
 		this.colCoordCache = new CoordCache({
-			els: this.dayEls.slice(0, this.colCnt), // only the first row
+			els: this.cellEls.slice(0, this.colCnt), // only the first row
 			isHorizontal: true
 		});
 
@@ -253,7 +253,7 @@ var DayGrid = fc.DayGrid = Grid.extend($.extend({}, DayTableMixin, {
 
 
 	getCellEl: function(row, col) {
-		return this.dayEls.eq(row * this.colCnt + col);
+		return this.cellEls.eq(row * this.colCnt + col);
 	},
 
 
