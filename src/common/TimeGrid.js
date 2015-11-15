@@ -266,7 +266,12 @@ var TimeGrid = fc.TimeGrid = Grid.extend($.extend({}, DayTableMixin, {
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
-			segs[i].col = segs[i].dayIndex;
+			if (this.isRTL) {
+				segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex;
+			}
+			else {
+				segs[i].col = segs[i].dayIndex;
+			}
 		}
 
 		return segs;
