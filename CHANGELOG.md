@@ -1,4 +1,11 @@
 
+v2.5.0-beta (2015-11-15)
+------------------------
+
+internal refactor of the "grid" system, providing increased flexbility for plugins like
+[fullcalendar-scheduler](https://github.com/fullcalendar/fullcalendar-scheduler/releases)
+
+
 v2.4.0 (2015-08-16)
 -------------------
 
