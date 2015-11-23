@@ -370,12 +370,12 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(range) {
-		if (range.start.hasTime() || range.end.hasTime()) {
-			this.timeGrid.renderSelection(range);
+	renderSelection: function(span) {
+		if (span.start.hasTime() || span.end.hasTime()) {
+			this.timeGrid.renderSelection(span);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.renderSelection(range);
+			this.dayGrid.renderSelection(span);
 		}
 	},
 

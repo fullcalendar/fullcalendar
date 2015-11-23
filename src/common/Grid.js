@@ -106,8 +106,9 @@ var Grid = FC.Grid = Class.extend({
 	},
 
 
-	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
-	rangeToSegs: function(range) {
+	// Converts a span (has unzoned start/end and any other grid-specific location information)
+	// into an array of segments (pieces of events whose format is decided by the grid).
+	spanToSegs: function(span) {
 		// subclasses must implement
 	},
 
@@ -299,24 +300,24 @@ var Grid = FC.Grid = Class.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event over the given range
-	renderRangeHelper: function(range, sourceSeg) {
-		var fakeEvent = this.fabricateHelperEvent(range, sourceSeg);
+	// Renders a mock event at the given event location, which contains zoned start/end properties.
+	renderEventLocationHelper: function(eventLocation, sourceSeg) {
+		var fakeEvent = this.fabricateHelperEvent(eventLocation, sourceSeg);
 
 		this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
 	},
 
 
-	// Builds a fake event given a date range it should cover, and a segment is should be inspired from.
+	// Builds a fake event given zoned event date properties and a segment is should be inspired from.
 	// The range's end can be null, in which case the mock event that is rendered will have a null end time.
 	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	fabricateHelperEvent: function(range, sourceSeg) {
+	fabricateHelperEvent: function(eventLocation, sourceSeg) {
 		var fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
 
-		fakeEvent.start = range.start.clone();
-		fakeEvent.end = range.end ? range.end.clone() : null;
-		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventRange
-		this.view.calendar.normalizeEventRange(fakeEvent);
+		fakeEvent.start = eventLocation.start.clone();
+		fakeEvent.end = eventLocation.end ? eventLocation.end.clone() : null;
+		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventDates
+		this.view.calendar.normalizeEventDates(fakeEvent);
 
 		// this extra className will be useful for differentiating real events from mock events in CSS
 		fakeEvent.className = (fakeEvent.className || []).concat('fc-helper');
@@ -330,8 +331,8 @@ var Grid = FC.Grid = Class.extend({
 	},
 
 
-	// Renders a mock event
-	renderHelper: function(event, sourceSeg) {
+	// Renders a mock event. Given zoned event date properties.
+	renderHelper: function(eventLocation, sourceSeg) {
 		// subclasses must implement
 	},
 
@@ -347,8 +348,9 @@ var Grid = FC.Grid = Class.extend({
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	renderSelection: function(range) {
-		this.renderHighlight(this.selectionRangeToSegs(range));
+	// Given a span (unzoned start/end and other misc data)
+	renderSelection: function(span) {
+		this.renderHighlight(span);
 	},
 
 
@@ -377,18 +379,13 @@ var Grid = FC.Grid = Class.extend({
 	},
 
 
-	selectionRangeToSegs: function(range) {
-		return this.rangeToSegs(range);
-	},
-
-
 	/* Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. Given an array of segments.
-	renderHighlight: function(segs) {
-		this.renderFill('highlight', segs);
+	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
+	renderHighlight: function(span) {
+		this.renderFill('highlight', this.spanToSegs(span));
 	},
 
 

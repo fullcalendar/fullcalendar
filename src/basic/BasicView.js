@@ -280,8 +280,8 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(range) {
-		this.dayGrid.renderSelection(range);
+	renderSelection: function(span) {
+		this.dayGrid.renderSelection(span);
 	},
 
 

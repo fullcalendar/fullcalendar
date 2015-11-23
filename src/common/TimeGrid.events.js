@@ -78,7 +78,7 @@ TimeGrid.mixin({
 		var level0;
 		var i;
 
-		this.sortSegs(segs); // order by date
+		this.sortEventSegs(segs); // order by certain criteria
 		levels = buildSlotSegLevels(segs);
 		computeForwardSlotSegs(levels);
 
@@ -315,7 +315,7 @@ TimeGrid.mixin({
 			// put segments that are closer to initial edge first (and favor ones with no coords yet)
 			(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
 			// do normal sorting...
-			this.compareSegs(seg1, seg2);
+			this.compareEventSegs(seg1, seg2);
 	}
 
 });

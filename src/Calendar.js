@@ -232,12 +232,13 @@ var Calendar = FC.Calendar = Class.extend({
 	},
 
 
-	// Given arguments to the select method in the API, returns a range
-	buildSelectRange: function(start, end) {
+	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
+	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
+		var start = this.moment(zonedStartInput).stripZone();
+		var end;
 
-		start = this.moment(start);
-		if (end) {
-			end = this.moment(end);
+		if (zonedEndInput) {
+			end = this.moment(zonedEndInput).stripZone();
 		}
 		else if (start.hasTime()) {
 			end = start.clone().add(this.defaultTimedEventDuration);
@@ -379,21 +380,24 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	// Returns a copy of the given date in the current timezone of it is ambiguously zoned.
-	// This will also give the date an unambiguous time.
-	t.rezoneDate = function(date) {
+	// Returns a copy of the given date in the current timezone. Has no effect on dates without times.
+	// TODO: coerce the date further if bugs happen.
+	t.applyTimezone = function(date) {
+		if (!date.hasTime()) {
+			return date.clone();
+		}
 		return t.moment(date.toArray());
 	};
 
 
-	// Returns a moment for the current date, as defined by the client's computer,
-	// or overridden by the `now` option.
+	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
+	// Will return an moment with an ambiguous timezone.
 	t.getNow = function() {
 		var now = options.now;
 		if (typeof now === 'function') {
 			now = now();
 		}
-		return t.moment(now);
+		return t.moment(now).stripZone();
 	};
 
 
@@ -408,9 +412,10 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
-	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
-		var end = start.clone();
+	// Given an event's allDay status and start date, return what its fallback end date should be.
+	// TODO: rename to computeDefaultEventEnd
+	t.getDefaultEventEnd = function(allDay, zonedStart) {
+		var end = zonedStart.clone();
 
 		if (allDay) {
 			end.stripTime().add(t.defaultAllDayEventDuration);
@@ -460,8 +465,8 @@ function Calendar_constructor(element, overrides) {
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
-	var date;
 	var events = [];
+	var date; // unzoned
 	
 	
 	
@@ -469,11 +474,12 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
+	// compute the initial ambig-timezone date
 	if (options.defaultDate != null) {
-		date = t.moment(options.defaultDate);
+		date = t.moment(options.defaultDate).stripZone();
 	}
 	else {
-		date = t.getNow();
+		date = t.getNow(); // getNow already returns unzoned
 	}
 	
 	
@@ -759,9 +765,10 @@ function Calendar_constructor(element, overrides) {
 	-----------------------------------------------------------------------------*/
 	
 
-	function select(start, end) {
+	// this public method receives start/end dates in any format, with any timezone
+	function select(zonedStartInput, zonedEndInput) {
 		currentView.select(
-			t.buildSelectRange.apply(t, arguments)
+			t.buildSelectSpan.apply(t, arguments)
 		);
 	}
 	
@@ -808,8 +815,8 @@ function Calendar_constructor(element, overrides) {
 	}
 	
 	
-	function gotoDate(dateInput) {
-		date = t.moment(dateInput);
+	function gotoDate(zonedDateInput) {
+		date = t.moment(zonedDateInput).stripZone();
 		renderView();
 	}
 	
@@ -828,13 +835,14 @@ function Calendar_constructor(element, overrides) {
 		viewType = viewType || 'day'; // day is default zoom
 		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
 
-		date = newDate;
+		date = newDate.clone();
 		renderView(spec ? spec.type : null);
 	}
 	
 	
+	// for external API
 	function getDate() {
-		return date.clone();
+		return t.applyTimezone(date); // infuse the calendar's timezone
 	}
 
 

@@ -316,7 +316,7 @@ DayGrid.mixin({
 			return seg.event;
 		});
 
-		var dayStart = dayDate.clone().stripTime();
+		var dayStart = dayDate.clone();
 		var dayEnd = dayStart.clone().add(1, 'days');
 		var dayRange = { start: dayStart, end: dayEnd };
 
@@ -324,13 +324,13 @@ DayGrid.mixin({
 		segs = this.eventsToSegs(
 			events,
 			function(range) {
-				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
+				var seg = intersectRanges(range, dayRange); // undefind if no intersection
 				return seg ? [ seg ] : []; // must return an array of segments
 			}
 		);
 
 		// force an order because eventsToSegs doesn't guarantee one
-		this.sortSegs(segs);
+		this.sortEventSegs(segs);
 
 		return segs;
 	},

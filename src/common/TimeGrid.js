@@ -82,7 +82,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.maxTime) {
-			slotDate = this.start.clone().time(slotTime); // after .time() will be in UTC. but that's good, avoids DST issues
+			slotDate = this.start.clone().time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
@@ -228,9 +228,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	getHitSpan: function(hit) {
-		var date = this.getCellDate(0, hit.col); // row=0
+		var start = this.getCellDate(0, hit.col); // row=0
 		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
-		var start = this.view.calendar.rezoneDate(date); // gives it a 00:00 time
 		var end;
 
 		start.time(time);
@@ -260,9 +259,9 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	// Slices up a date range by column into an array of segments
-	rangeToSegs: function(range) {
-		var segs = this.sliceRangeByTimes(range);
+	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
+	spanToSegs: function(span) {
+		var segs = this.sliceRangeByTimes(span);
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -285,19 +284,13 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var dayDate;
 		var dayRange;
 
-		// normalize :(
-		range = {
-			start: range.start.clone().stripZone(),
-			end: range.end.clone().stripZone()
-		};
-
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 			dayDate = this.dayDates[dayIndex].clone(); // TODO: better API for this?
 			dayRange = {
 				start: dayDate.clone().time(this.minTime),
 				end: dayDate.clone().time(this.maxTime)
 			};
-			seg = intersectionToSeg(range, dayRange); // both will be ambig timezone
+			seg = intersectRanges(range, dayRange); // both will be ambig timezone
 			if (seg) {
 				seg.dayIndex = dayIndex;
 				segs.push(seg);
@@ -326,7 +319,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	computeDateTop: function(date, startOfDayDate) {
 		return this.computeTimeTop(
 			moment.duration(
-				date.clone().stripZone() - startOfDayDate.clone().stripTime()
+				date - startOfDayDate.clone().stripTime()
 			)
 		);
 	},
@@ -365,19 +358,18 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
-	// dropLocation's end might be null, as well as `seg`. See Grid::renderDrag for more info.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
+	renderDrag: function(eventLocation, seg) {
 
 		if (seg) { // if there is event information for this drag, render a helper event
-			this.renderRangeHelper(dropLocation, seg);
+			this.renderEventLocationHelper(eventLocation, seg);
 			this.applyDragOpacity(this.helperEl);
 
 			return true; // signal that a helper has been rendered
 		}
 		else {
 			// otherwise, just render a highlight
-			this.renderHighlight(this.eventRangeToSegs(dropLocation));
+			this.renderHighlight(this.eventToSpan(eventLocation));
 		}
 	},
 
@@ -394,8 +386,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(range, seg) {
-		this.renderRangeHelper(range, seg);
+	renderEventResize: function(eventLocation, seg) {
+		this.renderEventLocationHelper(eventLocation, seg);
 	},
 
 
@@ -411,7 +403,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		var segs = this.eventsToSegs([ event ]);
+		var segs = this.eventToSegs(event);
 		var tableEl;
 		var i, seg;
 		var sourceEl;
@@ -453,12 +445,14 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(range) {
+	renderSelection: function(span) {
 		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderRangeHelper(range);
+
+			// normally acceps an eventLocation, span has a start/end, which is good enough
+			this.renderEventLocationHelper(span);
 		}
 		else {
-			this.renderHighlight(this.selectionRangeToSegs(range));
+			this.renderHighlight(span);
 		}
 	},
 

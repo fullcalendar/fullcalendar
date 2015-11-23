@@ -177,9 +177,9 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	// Slices up a date range by row into an array of segments
-	rangeToSegs: function(range) {
-		var segs = this.sliceRangeByRow(range);
+	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
+	spanToSegs: function(span) {
+		var segs = this.sliceRangeByRow(span);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
@@ -264,16 +264,16 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event or external element being dragged.
-	// The dropLocation's end can be null. seg can be null. See Grid::renderDrag for more info.
-	renderDrag: function(dropLocation, seg) {
+	// `eventLocation` has zoned start and end (optional)
+	renderDrag: function(eventLocation, seg) {
 
 		// always render a highlight underneath
-		this.renderHighlight(this.eventRangeToSegs(dropLocation));
+		this.renderHighlight(this.eventToSpan(eventLocation));
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
 
-			this.renderRangeHelper(dropLocation, seg);
+			this.renderEventLocationHelper(eventLocation, seg);
 			this.applyDragOpacity(this.helperEls);
 
 			return true; // a helper has been rendered
@@ -293,9 +293,9 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(range, seg) {
-		this.renderHighlight(this.eventRangeToSegs(range));
-		this.renderRangeHelper(range, seg);
+	renderEventResize: function(eventLocation, seg) {
+		this.renderHighlight(this.eventToSpan(eventLocation));
+		this.renderEventLocationHelper(eventLocation, seg);
 	},
 
 
@@ -313,7 +313,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
 	renderHelper: function(event, sourceSeg) {
 		var helperNodes = [];
-		var segs = this.eventsToSegs([ event ]);
+		var segs = this.eventToSegs(event);
 		var rowStructs;
 
 		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered

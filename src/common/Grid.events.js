@@ -251,7 +251,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var dropLocation; // a "span" (start/end possibly with additional properties)
+		var dropLocation; // zoned event date properties
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -291,7 +291,7 @@ Grid.mixin({
 					event
 				);
 
-				if (dropLocation && !calendar.isEventRangeAllowed(dropLocation, event)) {
+				if (dropLocation && !calendar.isEventLocationAllowed(dropLocation, event)) {
 					disableCursor();
 					dropLocation = null;
 				}
@@ -351,7 +351,7 @@ Grid.mixin({
 	},
 
 
-	// Given the spans an event drag began, and the span event was dropped, calculates the new start/end/allDay
+	// Given the spans an event drag began, and the span event was dropped, calculates the new zoned start/end/allDay
 	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
 	// A falsy returned value indicates an invalid drop.
 	computeEventDrop: function(startSpan, endSpan, event) {
@@ -359,7 +359,7 @@ Grid.mixin({
 		var dragStart = startSpan.start;
 		var dragEnd = endSpan.start;
 		var delta;
-		var dropLocation;
+		var dropLocation; // zoned event date properties
 
 		if (dragStart.hasTime() === dragEnd.hasTime()) {
 			delta = this.diffDates(dragEnd, dragStart);
@@ -370,9 +370,9 @@ Grid.mixin({
 				dropLocation = {
 					start: event.start.clone(),
 					end: calendar.getEventEnd(event), // will be an ambig day
-					allDay: false // for normalizeEventRangeTimes
+					allDay: false // for normalizeEventTimes
 				};
-				calendar.normalizeEventRangeTimes(dropLocation);
+				calendar.normalizeEventTimes(dropLocation);
 			}
 			// othewise, work off existing values
 			else {
@@ -486,11 +486,12 @@ Grid.mixin({
 
 
 	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
-	// returns start/end dates for the event that would result from the hypothetical drop. end might be null.
+	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
 	computeExternalDrop: function(span, meta) {
+		var calendar = this.view.calendar;
 		var dropLocation = {
-			start: span.start,
+			start: calendar.applyTimezone(span.start), // simulate a zoned event start date
 			end: null
 		};
 
@@ -503,7 +504,7 @@ Grid.mixin({
 			dropLocation.end = dropLocation.start.clone().add(meta.duration);
 		}
 
-		if (!this.view.calendar.isExternalDropRangeAllowed(dropLocation, meta.eventProps)) {
+		if (!calendar.isExternalLocationAllowed(dropLocation, meta.eventProps)) {
 			return null;
 		}
 
@@ -544,7 +545,7 @@ Grid.mixin({
 		var el = seg.el;
 		var event = seg.event;
 		var eventEnd = calendar.getEventEnd(event);
-		var resizeLocation; // falsy if invalid resize
+		var resizeLocation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = new HitDragListener(this, {
@@ -564,7 +565,7 @@ Grid.mixin({
 					_this.computeEventEndResize(origHitSpan, hitSpan, event);
 
 				if (resizeLocation) {
-					if (!calendar.isEventRangeAllowed(resizeLocation, event)) {
+					if (!calendar.isEventLocationAllowed(resizeLocation, event)) {
 						disableCursor();
 						resizeLocation = null;
 					}
@@ -626,31 +627,31 @@ Grid.mixin({
 	},
 
 
-	// Returns new date-information for an event segment being resized from its start OR end
+	// Returns new zoned date information for an event segment being resized from its start OR end
 	// `type` is either 'start' or 'end'
 	computeEventResize: function(type, startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
 		var delta = this.diffDates(endSpan[type], startSpan[type]);
-		var range;
+		var resizeLocation; // zoned event date properties
 		var defaultDuration;
 
 		// build original values to work from, guaranteeing a start and end
-		range = {
+		resizeLocation = {
 			start: event.start.clone(),
 			end: calendar.getEventEnd(event),
 			allDay: event.allDay
 		};
 
 		// if an all-day event was in a timed area and was resized to a time, adjust start/end to have times
-		if (range.allDay && durationHasTime(delta)) {
-			range.allDay = false;
-			calendar.normalizeEventRangeTimes(range);
+		if (resizeLocation.allDay && durationHasTime(delta)) {
+			resizeLocation.allDay = false;
+			calendar.normalizeEventTimes(resizeLocation);
 		}
 
-		range[type].add(delta); // apply delta to start or end
+		resizeLocation[type].add(delta); // apply delta to start or end
 
 		// if the event was compressed too small, find a new reasonable duration for it
-		if (!range.start.isBefore(range.end)) {
+		if (!resizeLocation.start.isBefore(resizeLocation.end)) {
 
 			defaultDuration =
 				this.minResizeDuration || // TODO: hack
@@ -659,14 +660,14 @@ Grid.mixin({
 					calendar.defaultTimedEventDuration);
 
 			if (type == 'start') { // resizing the start?
-				range.start = range.end.clone().subtract(defaultDuration);
+				resizeLocation.start = resizeLocation.end.clone().subtract(defaultDuration);
 			}
 			else { // resizing the end?
-				range.end = range.start.clone().add(defaultDuration);
+				resizeLocation.end = resizeLocation.start.clone().add(defaultDuration);
 			}
 		}
 
-		return range;
+		return resizeLocation;
 	},
 
 
@@ -769,116 +770,130 @@ Grid.mixin({
 	},
 
 
-	/* Converting events -> ranges -> segs
+	/* Converting events -> eventRange -> eventSpan -> eventSegs
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Converts an array of event objects into an array of event segment objects.
-	// A custom `rangeToSegsFunc` may be given for arbitrarily slicing up events.
-	// Doesn't guarantee an order for the resulting array.
-	eventsToSegs: function(events, rangeToSegsFunc) {
-		var eventRanges = this.eventsToRanges(events);
-		var segs = [];
-		var i;
+	// Generates an array of segments for the given single event
+	eventToSegs: function(event) {
+		return this.eventsToSegs([ event ]);
+	},
 
-		for (i = 0; i < eventRanges.length; i++) {
-			segs.push.apply(
-				segs,
-				this.eventRangeToSegs(eventRanges[i], rangeToSegsFunc)
-			);
-		}
+
+	// Generates a single span (always unzoned) by using the given event's dates.
+	// Does not do any inverting for inverse-background events.
+	eventToSpan: function(event) {
+		var range = this.eventToRange(event);
+		this.transformEventSpan(range, event); // convert it to a span, in-place
+		return range;
+	},
+
+
+	// Converts an array of event objects into an array of event segment objects.
+	// A custom `segSliceFunc` may be given for arbitrarily slicing up events.
+	// Doesn't guarantee an order for the resulting array.
+	eventsToSegs: function(allEvents, segSliceFunc) {
+		var _this = this;
+		var eventsById = groupEventsById(allEvents);
+		var segs = [];
+
+		$.each(eventsById, function(id, events) {
+			var ranges = [];
+			var i;
+
+			for (i = 0; i < events.length; i++) {
+				ranges.push(_this.eventToRange(events[i]));
+			}
+
+			// inverse-background events (utilize only the first event in calculations)
+			if (isInverseBgEvent(events[0])) {
+				ranges = _this.invertRanges(ranges);
+
+				for (i = 0; i < ranges.length; i++) {
+					_this.generateEventSegs(ranges[i], events[0], segSliceFunc, segs);
+				}
+			}
+			// normal event ranges
+			else {
+				for (i = 0; i < ranges.length; i++) {
+					_this.generateEventSegs(ranges[i], events[i], segSliceFunc, segs);
+				}
+			}
+		});
 
 		return segs;
 	},
 
 
-	// Converts an array of events into an array of "range" objects.
-	// A "range" object is a plain object with start/end properties denoting the time it covers. Also an event property.
-	// For "normal" events, this will be identical to the event's start/end, but for "inverse-background" events,
-	// will create an array of ranges that span the time *not* covered by the given event.
-	// Doesn't guarantee an order for the resulting array.
-	eventsToRanges: function(events) {
-		var _this = this;
-		var eventsById = groupEventsById(events);
-		var ranges = [];
-
-		// group by ID so that related inverse-background events can be rendered together
-		$.each(eventsById, function(id, eventGroup) {
-			if (eventGroup.length) {
-				ranges.push.apply(
-					ranges,
-					isInverseBgEvent(eventGroup[0]) ?
-						_this.eventsToInverseRanges(eventGroup) :
-						_this.eventsToNormalRanges(eventGroup)
-				);
-			}
-		});
-
-		return ranges;
+	// Convert an event's zoned dates into a visible unzoned range. Convenience.
+	eventToRange: function(event) {
+		return this.view.calendar.eventToRange(event);
 	},
 
 
-	// Converts an array of "normal" events (not inverted rendering) into a parallel array of ranges
-	eventsToNormalRanges: function(events) {
-		var calendar = this.view.calendar;
-		var ranges = [];
-		var i, event;
-		var eventStart, eventEnd;
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slice into segments (using the segSliceFunc function if specified) and append to the `out` array.
+	// SIDE EFFECT: will mutate the given `range`.
+	generateEventSegs: function(range, event, segSliceFunc, out) {
+		var segs;
+		var i;
 
-		for (i = 0; i < events.length; i++) {
-			event = events[i];
+		this.transformEventSpan(range, event); // converts the range to a span
 
-			// make copies and normalize by stripping timezone
-			eventStart = event.start.clone().stripZone();
-			eventEnd = calendar.getEventEnd(event).stripZone();
+		segs = segSliceFunc ? segSliceFunc(range) : this.spanToSegs(range);
 
-			ranges.push({
-				event: event,
-				start: eventStart,
-				end: eventEnd,
-				eventStartMS: +eventStart,
-				eventDurationMS: eventEnd - eventStart
-			});
+		for (i = 0; i < segs.length; i++) {
+			this.transformEventSeg(segs[i], range, event);
+			out.push(segs[i]);
 		}
-
-		return ranges;
 	},
 
 
-	// Converts an array of events, with inverse-background rendering, into an array of range objects.
-	// The range objects will cover all the time NOT covered by the events.
-	eventsToInverseRanges: function(events) {
+	// Given a range (unzoned start/end) that is about to become a span,
+	// attach any event-derived properties to it.
+	transformEventSpan: function(range, event) {
+		// subclasses can implement
+	},
+
+
+	// Given a segment object, attach any extra properties, based off of its source span and event.
+	transformEventSeg: function(seg, span, event) {
+		seg.event = event;
+		seg.eventStartMS = +span.start; // TODO: not the best name after making spans unzoned
+		seg.eventDurationMS = span.end - span.start;
+	},
+
+
+	// Produces a new array of range objects that will cover all the time NOT covered by the given ranges.
+	// SIDE EFFECT: will mutate the given array and will use its date references.
+	invertRanges: function(ranges) {
 		var view = this.view;
-		var viewStart = view.start.clone().stripZone(); // normalize timezone
-		var viewEnd = view.end.clone().stripZone(); // normalize timezone
-		var normalRanges = this.eventsToNormalRanges(events); // will give us normalized dates we can use w/o copies
+		var viewStart = view.start.clone(); // need a copy
+		var viewEnd = view.end.clone(); // need a copy
 		var inverseRanges = [];
-		var event0 = events[0]; // assign this to each range's `.event`
 		var start = viewStart; // the end of the previous range. the start of the new range
-		var i, normalRange;
+		var i, range;
 
 		// ranges need to be in order. required for our date-walking algorithm
-		normalRanges.sort(compareNormalRanges);
+		ranges.sort(compareRanges);
 
-		for (i = 0; i < normalRanges.length; i++) {
-			normalRange = normalRanges[i];
+		for (i = 0; i < ranges.length; i++) {
+			range = ranges[i];
 
 			// add the span of time before the event (if there is any)
-			if (normalRange.start > start) { // compare millisecond time (skip any ambig logic)
+			if (range.start > start) { // compare millisecond time (skip any ambig logic)
 				inverseRanges.push({
-					event: event0,
 					start: start,
-					end: normalRange.start
+					end: range.start
 				});
 			}
 
-			start = normalRange.end;
+			start = range.end;
 		}
 
 		// add the span of time after the last event (if there is any)
 		if (start < viewEnd) { // compare millisecond time (skip any ambig logic)
 			inverseRanges.push({
-				event: event0,
 				start: start,
 				end: viewEnd
 			});
@@ -888,40 +903,13 @@ Grid.mixin({
 	},
 
 
-	// Slices the given event range into one or more segment objects.
-	// A `rangeToSegsFunc` custom slicing function can be given.
-	eventRangeToSegs: function(eventRange, rangeToSegsFunc) {
-		var segs;
-		var i, seg;
-
-		eventRange = this.view.calendar.ensureVisibleEventRange(eventRange);
-
-		if (rangeToSegsFunc) {
-			segs = rangeToSegsFunc(eventRange);
-		}
-		else {
-			segs = this.rangeToSegs(eventRange); // defined by the subclass
-		}
-
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			seg.event = eventRange.event;
-			seg.eventStartMS = eventRange.eventStartMS;
-			seg.eventDurationMS = eventRange.eventDurationMS;
-		}
-
-		return segs;
-	},
-
-
-	sortSegs: function(segs) {
-		segs.sort(proxy(this, 'compareSegs'));
+	sortEventSegs: function(segs) {
+		segs.sort(proxy(this, 'compareEventSegs'));
 	},
 
 
 	// A cmp function for determining which segments should take visual priority
-	// DOES NOT WORK ON INVERTED BACKGROUND EVENTS because they have no eventStartMS/eventDurationMS
-	compareSegs: function(seg1, seg2) {
+	compareEventSegs: function(seg1, seg2) {
 		return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
 			seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
 			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
@@ -965,8 +953,8 @@ function groupEventsById(events) {
 
 
 // A cmp function for determining which non-inverted "ranges" (see above) happen earlier
-function compareNormalRanges(range1, range2) {
-	return range1.eventStartMS - range2.eventStartMS; // earlier ranges go first
+function compareRanges(range1, range2) {
+	return range1.start - range2.start; // earlier ranges go first
 }
 
 

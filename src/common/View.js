@@ -99,21 +99,20 @@ var View = FC.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Updates all internal dates to center around the given current date
+	// Updates all internal dates to center around the given current unzoned date.
 	setDate: function(date) {
 		this.setRange(this.computeRange(date));
 	},
 
 
-	// Updates all internal dates for displaying the given range.
-	// Expects all values to be normalized (like what computeRange does).
+	// Updates all internal dates for displaying the given unzoned range.
 	setRange: function(range) {
-		$.extend(this, range);
+		$.extend(this, range); // assigns every property to this object's member variables
 		this.updateTitle();
 	},
 
 
-	// Given a single current date, produce information about what range to display.
+	// Given a single current unzoned date, produce information about what range to display.
 	// Subclasses can override. Must return all properties.
 	computeRange: function(date) {
 		var intervalUnit = computeIntervalUnit(this.intervalDuration);
@@ -128,10 +127,10 @@ var View = FC.View = Class.extend({
 		}
 		else { // needs to have a time?
 			if (!intervalStart.hasTime()) {
-				intervalStart = this.calendar.rezoneDate(intervalStart); // convert to current timezone, with 00:00
+				intervalStart = this.calendar.time(0); // give 00:00 time
 			}
 			if (!intervalEnd.hasTime()) {
-				intervalEnd = this.calendar.rezoneDate(intervalEnd); // convert to current timezone, with 00:00
+				intervalEnd = this.calendar.time(0); // give 00:00 time
 			}
 		}
 
@@ -194,7 +193,11 @@ var View = FC.View = Class.extend({
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
 		return this.formatRange(
-			{ start: this.intervalStart, end: this.intervalEnd },
+			{
+				// in case intervalStart/End has a time, make sure timezone is correct
+				start: this.calendar.applyTimezone(this.intervalStart),
+				end: this.calendar.applyTimezone(this.intervalEnd)
+			},
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
 		);
@@ -221,6 +224,7 @@ var View = FC.View = Class.extend({
 
 	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
 	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
+	// The timezones of the dates within `range` will be respected.
 	formatRange: function(range, formatStr, separator) {
 		var end = range.end;
 
@@ -265,7 +269,7 @@ var View = FC.View = Class.extend({
 	},
 
 
-	// Does everything necessary to display the view centered around the given date.
+	// Does everything necessary to display the view centered around the given unzoned date.
 	// Does every type of rendering EXCEPT rendering events.
 	// Is asychronous and returns a promise.
 	display: function(date) {
@@ -667,7 +671,7 @@ var View = FC.View = Class.extend({
 
 
 	// Must be called when an event in the view is dropped onto new location.
-	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
 	reportEventDrop: function(event, dropLocation, largeUnit, el, ev) {
 		var calendar = this.calendar;
 		var mutateResult = calendar.mutateEvent(event, dropLocation, largeUnit);
@@ -693,7 +697,7 @@ var View = FC.View = Class.extend({
 
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
-	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
 	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
 		var eventProps = meta.eventProps;
 		var eventInput;
@@ -793,31 +797,37 @@ var View = FC.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Selects a date range on the view. `start` and `end` are both Moments.
+	// Selects a date span on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(range, ev) {
+	select: function(span, ev) {
 		this.unselect(ev);
-		this.renderSelection(range);
-		this.reportSelection(range, ev);
+		this.renderSelection(span);
+		this.reportSelection(span, ev);
 	},
 
 
 	// Renders a visual indication of the selection
-	renderSelection: function(range) {
+	renderSelection: function(span) {
 		// subclasses should implement
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(range, ev) {
+	reportSelection: function(span, ev) {
 		this.isSelected = true;
-		this.triggerSelect(range, ev);
+		this.triggerSelect(span, ev);
 	},
 
 
 	// Triggers handlers to 'select'
-	triggerSelect: function(range, ev) {
-		this.trigger('select', null, range.start, range.end, ev);
+	triggerSelect: function(span, ev) {
+		this.trigger(
+			'select',
+			null,
+			this.calendar.applyTimezone(span.start), // convert to calendar's tz for external API
+			this.calendar.applyTimezone(span.end), // "
+			ev
+		);
 	},
 
 
@@ -862,8 +872,14 @@ var View = FC.View = Class.extend({
 
 
 	// Triggers handlers to 'dayClick'
+	// Date is guaranteed timezone-ambig.
 	triggerDayClick: function(date, dayEl, ev) {
-		this.trigger('dayClick', dayEl, date, ev);
+		this.trigger(
+			'dayClick',
+			dayEl,
+			this.calendar.applyTimezone(date), // convert to calendar's timezone for external API
+			ev
+		);
 	},
 
 

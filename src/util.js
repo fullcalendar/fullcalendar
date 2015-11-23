@@ -1,6 +1,6 @@
 
 // exports
-FC.intersectionToSeg = intersectionToSeg;
+FC.intersectRanges = intersectRanges;
 FC.applyAll = applyAll;
 FC.debounce = debounce;
 FC.isInt = isInt;
@@ -432,10 +432,10 @@ function flexibleCompare(a, b) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-// Creates a basic segment with the intersection of the two ranges. Returns undefined if no intersection.
+// Computes the intersection of the two ranges. Returns undefined if no intersection.
 // Expects all dates to be normalized to the same timezone beforehand.
 // TODO: move to date section?
-function intersectionToSeg(subjectRange, constraintRange) {
+function intersectRanges(subjectRange, constraintRange) {
 	var subjectStart = subjectRange.start;
 	var subjectEnd = subjectRange.end;
 	var constraintStart = constraintRange.start;

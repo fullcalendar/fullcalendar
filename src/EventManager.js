@@ -24,9 +24,9 @@ function EventManager(options) { // assumed to be a calendar
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.mutateEvent = mutateEvent;
-	t.normalizeEventRange = normalizeEventRange;
-	t.normalizeEventRangeTimes = normalizeEventRangeTimes;
-	t.ensureVisibleEventRange = ensureVisibleEventRange;
+	t.normalizeEventDates = normalizeEventDates;
+	t.normalizeEventTimes = normalizeEventTimes;
+	t.eventToRange = eventToRange;
 	
 	
 	// imports
@@ -56,13 +56,12 @@ function EventManager(options) { // assumed to be a calendar
 	
 	/* Fetching
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
+	// start and end are assumed to be unzoned
 	function isFetchNeeded(start, end) {
 		return !rangeStart || // nothing has been fetched yet?
-			// or, a part of the new range is outside of the old range? (after normalizing)
-			start.clone().stripZone() < rangeStart.clone().stripZone() ||
-			end.clone().stripZone() > rangeEnd.clone().stripZone();
+			start < rangeStart || end > rangeEnd; // is part of the new range outside of the old range?
 	}
 	
 	
@@ -513,7 +512,7 @@ function EventManager(options) { // assumed to be a calendar
 					source ? source.allDayDefault : undefined,
 					options.allDayDefault
 				);
-				// still undefined? normalizeEventRange will calculate it
+				// still undefined? normalizeEventDates will calculate it
 			}
 
 			assignDatesToEvent(start, end, allDay, out);
@@ -529,73 +528,62 @@ function EventManager(options) { // assumed to be a calendar
 		event.start = start;
 		event.end = end;
 		event.allDay = allDay;
-		normalizeEventRange(event);
+		normalizeEventDates(event);
 		backupEventDates(event);
 	}
 
 
 	// Ensures proper values for allDay/start/end. Accepts an Event object, or a plain object with event-ish properties.
 	// NOTE: Will modify the given object.
-	function normalizeEventRange(props) {
+	function normalizeEventDates(eventProps) {
 
-		normalizeEventRangeTimes(props);
+		normalizeEventTimes(eventProps);
 
-		if (props.end && !props.end.isAfter(props.start)) {
-			props.end = null;
+		if (eventProps.end && !eventProps.end.isAfter(eventProps.start)) {
+			eventProps.end = null;
 		}
 
-		if (!props.end) {
+		if (!eventProps.end) {
 			if (options.forceEventDuration) {
-				props.end = t.getDefaultEventEnd(props.allDay, props.start);
+				eventProps.end = t.getDefaultEventEnd(eventProps.allDay, eventProps.start);
 			}
 			else {
-				props.end = null;
+				eventProps.end = null;
 			}
 		}
 	}
 
 
 	// Ensures the allDay property exists and the timeliness of the start/end dates are consistent
-	function normalizeEventRangeTimes(range) {
-		if (range.allDay == null) {
-			range.allDay = !(range.start.hasTime() || (range.end && range.end.hasTime()));
+	function normalizeEventTimes(eventProps) {
+		if (eventProps.allDay == null) {
+			eventProps.allDay = !(eventProps.start.hasTime() || (eventProps.end && eventProps.end.hasTime()));
 		}
 
-		if (range.allDay) {
-			range.start.stripTime();
-			if (range.end) {
+		if (eventProps.allDay) {
+			eventProps.start.stripTime();
+			if (eventProps.end) {
 				// TODO: consider nextDayThreshold here? If so, will require a lot of testing and adjustment
-				range.end.stripTime();
+				eventProps.end.stripTime();
 			}
 		}
 		else {
-			if (!range.start.hasTime()) {
-				range.start = t.rezoneDate(range.start); // will assign a 00:00 time
+			if (!eventProps.start.hasTime()) {
+				eventProps.start = t.applyTimezone(eventProps.start.time(0)); // will assign a 00:00 time
 			}
-			if (range.end && !range.end.hasTime()) {
-				range.end = t.rezoneDate(range.end); // will assign a 00:00 time
+			if (eventProps.end && !eventProps.end.hasTime()) {
+				eventProps.end = t.applyTimezone(eventProps.end.time(0)); // will assign a 00:00 time
 			}
 		}
 	}
 
 
-	// If `range` is a proper range with a start and end, returns the original object.
-	// If missing an end, computes a new range with an end, computing it as if it were an event.
-	// TODO: make this a part of the event -> eventRange system
-	function ensureVisibleEventRange(range) {
-		var allDay;
-
-		if (!range.end) {
-
-			allDay = range.allDay; // range might be more event-ish than we think
-			if (allDay == null) {
-				allDay = !range.start.hasTime();
-			}
-
-			range = $.extend({}, range); // make a copy, copying over other misc properties
-			range.end = t.getDefaultEventEnd(allDay, range.start);
-		}
-		return range;
+	// Generates the unzoned start/end dates an event appears to occupy
+	function eventToRange(event) {
+		return {
+			start: event.start.clone().stripZone(),
+			end: t.getEventEnd(event).stripZone()
+		};
 	}
 
 
@@ -712,7 +700,7 @@ function EventManager(options) { // assumed to be a calendar
 		if (newProps.allDay == null) { // is null or undefined?
 			newProps.allDay = event.allDay;
 		}
-		normalizeEventRange(newProps);
+		normalizeEventDates(newProps);
 
 		// create normalized versions of the original props to compare against
 		// need a real end value, for diffing
@@ -721,7 +709,7 @@ function EventManager(options) { // assumed to be a calendar
 			end: event._end ? event._end.clone() : t.getDefaultEventEnd(event._allDay, event._start),
 			allDay: newProps.allDay // normalize the dates in the same regard as the new properties
 		};
-		normalizeEventRange(oldProps);
+		normalizeEventDates(oldProps);
 
 		// need to clear the end date if explicitly changed to null
 		clearEnd = event._end !== null && newProps.end === null;
@@ -806,7 +794,7 @@ function EventManager(options) { // assumed to be a calendar
 				end: event._end,
 				allDay: allDay // normalize the dates in the same regard as the new properties
 			};
-			normalizeEventRange(newProps); // massages start/end/allDay
+			normalizeEventDates(newProps); // massages start/end/allDay
 
 			// strip or ensure the end date
 			if (clearEnd) {
@@ -907,11 +895,18 @@ function EventManager(options) { // assumed to be a calendar
 	/* Overlapping / Constraining
 	-----------------------------------------------------------------------------------------*/
 
-	t.isEventRangeAllowed = isEventRangeAllowed;
+	t.isEventLocationAllowed = isEventLocationAllowed;
+	t.isExternalLocationAllowed = isExternalLocationAllowed;
 	t.isSelectionRangeAllowed = isSelectionRangeAllowed;
-	t.isExternalDropRangeAllowed = isExternalDropRangeAllowed;
 
 
+	// Determines if an event location (zoned start/end/allDay) is valid
+	function isEventLocationAllowed(eventLocation, event) {
+		return isEventRangeAllowed(eventToRange(eventLocation), event);
+	}
+
+
+	// Determines if an event range (unzoned start/end) is valid
 	function isEventRangeAllowed(range, event) {
 		var source = event.source || {};
 		var constraint = firstDefined(
@@ -924,39 +919,34 @@ function EventManager(options) { // assumed to be a calendar
 			source.overlap,
 			options.eventOverlap
 		);
-
-		range = ensureVisibleEventRange(range); // ensure a proper range with an end for isRangeAllowed
-
 		return isRangeAllowed(range, constraint, overlap, event);
 	}
 
 
-	function isSelectionRangeAllowed(range) {
-		return isRangeAllowed(range, options.selectConstraint, options.selectOverlap);
-	}
-
-
-	// when `eventProps` is defined, consider this an event.
-	// `eventProps` can contain misc non-date-related info about the event.
-	function isExternalDropRangeAllowed(range, eventProps) {
+	// Determines if an drop location (zoned start/end/allDay) for an external event is valid
+	function isExternalLocationAllowed(eventLocation, eventProps) {
 		var eventInput;
 		var event;
 
 		// note: very similar logic is in View's reportExternalDrop
 		if (eventProps) {
-			eventInput = $.extend({}, eventProps, range);
+			eventInput = $.extend({}, eventProps, eventLocation);
 			event = expandEvent(buildEventFromInput(eventInput))[0];
 		}
 
 		if (event) {
-			return isEventRangeAllowed(range, event);
+			return isEventLocationAllowed(eventLocation, event);
 		}
 		else { // treat it as a selection
 
-			range = ensureVisibleEventRange(range); // ensure a proper range with an end for isSelectionRangeAllowed
-
-			return isSelectionRangeAllowed(range);
+			return isSelectionRangeAllowed(eventToRange(eventLocation));
 		}
+	}
+
+
+	// Determines if a range (unzoned start/end) is valid
+	function isSelectionRangeAllowed(range) {
+		return isRangeAllowed(range, options.selectConstraint, options.selectOverlap);
 	}
 
 
@@ -969,11 +959,6 @@ function EventManager(options) { // assumed to be a calendar
 		var peerEvents;
 		var i, peerEvent;
 		var peerOverlap;
-
-		// normalize. fyi, we're normalizing in too many places :(
-		range = $.extend({}, range); // copy all properties in case there are misc non-date properties
-		range.start = range.start.clone().stripZone();
-		range.end = range.end.clone().stripZone();
 
 		// the range must be fully contained by at least one of produced constraint events
 		if (constraint != null) {
