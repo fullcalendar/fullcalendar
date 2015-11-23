@@ -381,12 +381,24 @@ function Calendar_constructor(element, overrides) {
 
 
 	// Returns a copy of the given date in the current timezone. Has no effect on dates without times.
-	// TODO: coerce the date further if bugs happen.
 	t.applyTimezone = function(date) {
 		if (!date.hasTime()) {
 			return date.clone();
 		}
-		return t.moment(date.toArray());
+
+		var zonedDate = t.moment(date.toArray());
+		var timeAdjust = date.time() - zonedDate.time();
+		var adjustedZonedDate;
+
+		// Safari sometimes has problems with this coersion when near DST. Adjust if necessary. (bug #2396)
+		if (timeAdjust) { // is the time result different than expected?
+			adjustedZonedDate = zonedDate.clone().add(timeAdjust); // add milliseconds
+			if (date.time() - adjustedZonedDate.time() === 0) { // does it match perfectly now?
+				zonedDate = adjustedZonedDate;
+			}
+		}
+
+		return zonedDate;
 	};
 
 
