@@ -872,12 +872,12 @@ var View = FC.View = Class.extend({
 
 
 	// Triggers handlers to 'dayClick'
-	// Date is guaranteed timezone-ambig.
-	triggerDayClick: function(date, dayEl, ev) {
+	// Span has start/end of the clicked area. Only the start is useful.
+	triggerDayClick: function(span, dayEl, ev) {
 		this.trigger(
 			'dayClick',
 			dayEl,
-			this.calendar.applyTimezone(date), // convert to calendar's timezone for external API
+			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
 			ev
 		);
 	},

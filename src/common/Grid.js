@@ -278,7 +278,7 @@ var Grid = FC.Grid = Class.extend({
 			listenStop: function(ev) {
 				if (dayClickHit) {
 					view.triggerDayClick(
-						_this.getHitSpan(dayClickHit).start,
+						_this.getHitSpan(dayClickHit),
 						_this.getHitEl(dayClickHit),
 						ev
 					);
