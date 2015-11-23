@@ -365,17 +365,24 @@ var Grid = FC.Grid = Class.extend({
 	// Will return false if the selection is invalid and this should be indicated to the user.
 	// Will return null/undefined if a selection invalid but no error should be reported.
 	computeSelection: function(span0, span1) {
-		var dates = [ span0.start, span0.end, span1.start, span1.end ];
-		var combinedSpan;
+		var span = this.computeSelectionSpan(span0, span1);
 
-		dates.sort(compareNumbers); // sorts chronologically. works with Moments
-		combinedSpan = { start: dates[0].clone(), end: dates[3].clone() };
-
-		if (!this.view.calendar.isSelectionRangeAllowed(combinedSpan)) {
+		if (span && !this.view.calendar.isSelectionSpanAllowed(span)) {
 			return false;
 		}
 
-		return combinedSpan;
+		return span;
+	},
+
+
+	// Given two spans, must return the combination of the two.
+	// TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
+	computeSelectionSpan: function(span0, span1) {
+		var dates = [ span0.start, span0.end, span1.start, span1.end ];
+
+		dates.sort(compareNumbers); // sorts chronologically. works with Moments
+
+		return { start: dates[0].clone(), end: dates[3].clone() };
 	},
 
 

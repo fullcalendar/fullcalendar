@@ -291,7 +291,7 @@ Grid.mixin({
 					event
 				);
 
-				if (dropLocation && !calendar.isEventLocationAllowed(dropLocation, event)) {
+				if (dropLocation &&!calendar.isEventSpanAllowed(_this.eventToSpan(dropLocation), event)) {
 					disableCursor();
 					dropLocation = null;
 				}
@@ -504,7 +504,7 @@ Grid.mixin({
 			dropLocation.end = dropLocation.start.clone().add(meta.duration);
 		}
 
-		if (!calendar.isExternalLocationAllowed(dropLocation, meta.eventProps)) {
+		if (!calendar.isExternalSpanAllowed(this.eventToSpan(dropLocation), dropLocation, meta.eventProps)) {
 			return null;
 		}
 
@@ -565,7 +565,7 @@ Grid.mixin({
 					_this.computeEventEndResize(origHitSpan, hitSpan, event);
 
 				if (resizeLocation) {
-					if (!calendar.isEventLocationAllowed(resizeLocation, event)) {
+					if (!calendar.isEventSpanAllowed(_this.eventToSpan(resizeLocation), event)) {
 						disableCursor();
 						resizeLocation = null;
 					}
@@ -825,9 +825,12 @@ Grid.mixin({
 	},
 
 
-	// Convert an event's zoned dates into a visible unzoned range. Convenience.
+	// Generates the unzoned start/end dates an event appears to occupy
 	eventToRange: function(event) {
-		return this.view.calendar.eventToRange(event);
+		return {
+			start: event.start.clone().stripZone(),
+			end: this.view.calendar.getEventEnd(event).stripZone()
+		};
 	},
 
 
