@@ -1,4 +1,11 @@
 
+v2.5.0-beta2 (2015-11-23)
+-------------------------
+
+refactor of internal timezone representation.
+Fixes DST-related bugs: #2396, #2900, #2945, #2711
+
+
 v2.5.0-beta (2015-11-15)
 ------------------------
 
