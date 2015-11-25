@@ -280,12 +280,15 @@ var View = FC.View = Class.extend({
 			scrollState = this.queryScroll();
 		}
 
+		this.calendar.freezeContentHeight();
+
 		return this.clear().then(function() { // clear the content first (async)
 			return (
 				_this.displaying =
 					$.when(_this.displayView(date)) // displayView might return a promise
 						.then(function() {
 							_this.forceScroll(_this.computeInitialScroll(scrollState));
+							_this.calendar.unfreezeContentHeight();
 							_this.triggerRender();
 						})
 			);

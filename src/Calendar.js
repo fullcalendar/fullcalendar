@@ -608,8 +608,7 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					freezeContentHeight();
-					currentView.display(date);
+					currentView.display(date); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
@@ -862,6 +861,9 @@ function Calendar_constructor(element, overrides) {
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
 	// TODO: move this into the view
+
+	t.freezeContentHeight = freezeContentHeight;
+	t.unfreezeContentHeight = unfreezeContentHeight;
 
 
 	function freezeContentHeight() {
