@@ -46,6 +46,10 @@ module.exports = function(config) {
 			'../dist/fullcalendar.css',
 			'../tests/base.css',
 
+			// For testing if scheduler's JS, even when not actived, screws anything up
+			//'../../fullcalendar-scheduler/dist/scheduler.js',
+			//'../../fullcalendar-scheduler/dist/scheduler.css',
+
 			// For IE8 testing. Because it can't handle running all the tests at once.
 			// Comment out the *.js line and run karma with each of the lines below.
 			//'../tests/automated/{a,b,c,d,e,f,g,h,i,j,k,l}*.js'
