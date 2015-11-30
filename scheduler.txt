@@ -1,14 +1,19 @@
 
 # Getting started with Scheduler
 
-The Scheduler add-on provides FullCalendar with additional functionality for displaying resources.
+The Scheduler add-on provides FullCalendar with functionality for displaying resources.
 Some important terminology:
 
 - <b><i>Scheduler</i></b> : the advertised name of the add-on
 - <b><i>Resources</i></b> : things that events can be assigned to, like team members or conference rooms
-- <b><i>Timeline</i></b> : the name of a new [Available View](views/Available_Views/).
-  it has its time axis running left-to-right and is especially suited for displaying resources
-  (and is currently the only view that is able to do so).
+- <b><i>Timeline</i></b> : the name of a premium view that has its time axis running left-to-right.
+  It is specially suited for displaying a large number of resources.
+  [full list of settings &raquo;](timeline/)
+- <b><i>Vertical Resource View</i></b> : when one of the standard
+  [agenda views](../views/agendaDay/) or [basic views](../views/basicWeek/)
+  has been told to display resource columns.
+  [more information &raquo;](vertical_resource_view/getting_started)
+
 
 
 ## Basic Usage
@@ -22,7 +27,7 @@ In the HEAD of your HTML, include the necessary FullCalendar *and* Scheduler fil
 	<script src='fullcalendar.js'></script>
 	<script src='scheduler.js'></script>
 
-Then, in your JavaScript, do something like this:
+Then, in your JavaScript, if you'd like to do a **timeline** resource view:
 
 	$('#calendar').fullCalendar({
 		defaultView: 'timelineMonth',
@@ -35,10 +40,25 @@ Then, in your JavaScript, do something like this:
 		// other options go here...
 	});
 
+Alternatively, you can display an agenda view with resource columns (a **vertical** resource view):
+
+	$('#calendar').fullCalendar({
+		defaultView: 'agendaDay',
+		events: [
+			// events go here
+		],
+		resources: [
+			// resources go here
+		]
+		// other options go here...
+	});
+
+[Learn more about Vertical Resource View &raquo;](vertical_resource_view/getting_started)
+
 
 ## More Settings
 
 A full list of Scheduler-related settings can be see on the main docs page on the right hand column
-(Timeline View, Resource Data, Resource Rendering, etc).
+(Timeline View, Vertical Resource View, Resource Data, Resource Rendering, etc).
 
 <a href='.'>Visit the main docs page &raquo;</a> <!-- wha? confused urls -->

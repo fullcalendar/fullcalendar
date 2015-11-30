@@ -1,0 +1,37 @@
+
+Vertical Resource View *scheduler 1.1*
+======================================
+
+The Scheduler add-on provides functionality to the standard
+[agenda views](../../views/agendaDay/) and
+[basic views](../../views/basicWeek/)
+for displaying **resources as columns**.
+
+To activate this functionality in a single-day view, simply
+specify `resources`:
+
+	$('#calendar').fullCalendar({
+		defaultView: 'agendaDay',
+		events: [
+			// events go here
+		],
+		resources: [
+			{ id: 'a', title: 'Room A' },
+			{ id: 'b', title: 'Room B' },
+			{ id: 'c', title: 'Room C' },
+			{ id: 'd', title: 'Room D' }
+		]
+	});
+
+If you would like resource column functionality in a multi-day view,
+which is turned **off** by default, you'll need to activate either the
+[groupByResource]() or [groupByDateAndResource]() flags.
+
+
+Screenshot:
+-----------
+
+<img src='../../../pages/docs/_images/resource-agendaDay.png'
+	width='616'
+	style='margin-left:-8px'
+	/>
