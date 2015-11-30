@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.5.0-beta2
+ * FullCalendar v2.5.0
  * Docs & License: http://fullcalendar.io/
  * (c) 2015 Adam Shaw
  */
@@ -18,7 +18,10 @@
 
 ;;
 
-var FC = $.fullCalendar = { version: "2.5.0-beta2" };
+var FC = $.fullCalendar = {
+	version: "2.5.0",
+	internalApiVersion: 1
+};
 var fcViews = FC.views = {};
 
 
@@ -2012,6 +2015,7 @@ options:
 var CoordCache = FC.CoordCache = Class.extend({
 
 	els: null, // jQuery set (assumed to be siblings)
+	forcedOffsetParentEl: null, // options can override the natural offsetParent
 	origin: null, // {left,top} position of offsetParent of els
 	boundingRect: null, // constrain cordinates to this rectangle. {left,right,top,bottom} or null
 	isHorizontal: false, // whether to query for left/right/width
@@ -2028,13 +2032,16 @@ var CoordCache = FC.CoordCache = Class.extend({
 		this.els = $(options.els);
 		this.isHorizontal = options.isHorizontal;
 		this.isVertical = options.isVertical;
+		this.forcedOffsetParentEl = options.offsetParent ? $(options.offsetParent) : null;
 	},
 
 
 	// Queries the els for coordinates and stores them.
 	// Call this method before using and of the get* methods below.
 	build: function() {
-		this.origin = this.els.eq(0).offsetParent().offset();
+		var offsetParentEl = this.forcedOffsetParentEl || this.els.eq(0).offsetParent();
+
+		this.origin = offsetParentEl.offset();
 		this.boundingRect = this.queryBoundingRect();
 
 		if (this.isHorizontal) {
@@ -3548,28 +3555,34 @@ Grid.mixin({
 
 	// Renders the given events onto the grid
 	renderEvents: function(events) {
-		var segs = this.eventsToSegs(events);
-		var bgSegs = [];
-		var fgSegs = [];
-		var i, seg;
+		var bgEvents = [];
+		var fgEvents = [];
+		var i;
 
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-
-			if (isBgEvent(seg.event)) {
-				bgSegs.push(seg);
-			}
-			else {
-				fgSegs.push(seg);
-			}
+		for (i = 0; i < events.length; i++) {
+			(isBgEvent(events[i]) ? bgEvents : fgEvents).push(events[i]);
 		}
 
-		// Render each different type of segment.
-		// Each function may return a subset of the segs, segs that were actually rendered.
-		bgSegs = this.renderBgSegs(bgSegs) || bgSegs;
-		fgSegs = this.renderFgSegs(fgSegs) || fgSegs;
+		this.segs = [].concat( // record all segs
+			this.renderBgEvents(bgEvents),
+			this.renderFgEvents(fgEvents)
+		);
+	},
 
-		this.segs = bgSegs.concat(fgSegs);
+
+	renderBgEvents: function(events) {
+		var segs = this.eventsToSegs(events);
+
+		// renderBgSegs might return a subset of segs, segs that were actually rendered
+		return this.renderBgSegs(segs) || segs;
+	},
+
+
+	renderFgEvents: function(events) {
+		var segs = this.eventsToSegs(events);
+
+		// renderFgSegs might return a subset of segs, segs that were actually rendered
+		return this.renderFgSegs(segs) || segs;
 	},
 
 
@@ -7272,12 +7285,15 @@ var View = FC.View = Class.extend({
 			scrollState = this.queryScroll();
 		}
 
+		this.calendar.freezeContentHeight();
+
 		return this.clear().then(function() { // clear the content first (async)
 			return (
 				_this.displaying =
 					$.when(_this.displayView(date)) // displayView might return a promise
 						.then(function() {
 							_this.forceScroll(_this.computeInitialScroll(scrollState));
+							_this.calendar.unfreezeContentHeight();
 							_this.triggerRender();
 						})
 			);
@@ -8582,8 +8598,7 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					freezeContentHeight();
-					currentView.display(date);
+					currentView.display(date); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
@@ -8836,6 +8851,9 @@ function Calendar_constructor(element, overrides) {
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
 	// TODO: move this into the view
+
+	t.freezeContentHeight = freezeContentHeight;
+	t.unfreezeContentHeight = unfreezeContentHeight;
 
 
 	function freezeContentHeight() {
