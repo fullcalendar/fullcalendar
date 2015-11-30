@@ -11,6 +11,7 @@ options:
 var CoordCache = FC.CoordCache = Class.extend({
 
 	els: null, // jQuery set (assumed to be siblings)
+	forcedOffsetParentEl: null, // options can override the natural offsetParent
 	origin: null, // {left,top} position of offsetParent of els
 	boundingRect: null, // constrain cordinates to this rectangle. {left,right,top,bottom} or null
 	isHorizontal: false, // whether to query for left/right/width
@@ -27,13 +28,16 @@ var CoordCache = FC.CoordCache = Class.extend({
 		this.els = $(options.els);
 		this.isHorizontal = options.isHorizontal;
 		this.isVertical = options.isVertical;
+		this.forcedOffsetParentEl = options.offsetParent ? $(options.offsetParent) : null;
 	},
 
 
 	// Queries the els for coordinates and stores them.
 	// Call this method before using and of the get* methods below.
 	build: function() {
-		this.origin = this.els.eq(0).offsetParent().offset();
+		var offsetParentEl = this.forcedOffsetParentEl || this.els.eq(0).offsetParent();
+
+		this.origin = offsetParentEl.offset();
 		this.boundingRect = this.queryBoundingRect();
 
 		if (this.isHorizontal) {
