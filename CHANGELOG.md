@@ -1,16 +1,9 @@
 
-v2.5.0-beta2 (2015-11-23)
--------------------------
+v2.5.0 (2015-11-30)
+-------------------
 
-refactor of internal timezone representation.
-Fixes DST-related bugs: #2396, #2900, #2945, #2711
-
-
-v2.5.0-beta (2015-11-15)
-------------------------
-
-internal refactor of the "grid" system, providing increased flexbility for plugins like
-[fullcalendar-scheduler](https://github.com/fullcalendar/fullcalendar-scheduler/releases)
+- internal timezone refactor. fixes #2396, #2900, #2945, #2711
+- internal "grid" system refactor. improved API for plugins.
 
 
 v2.4.0 (2015-08-16)
