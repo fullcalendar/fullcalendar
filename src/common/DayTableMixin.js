@@ -365,6 +365,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	},
 
 
+	// TODO: a generic method for dealing with <tr>, RTL, intro
+	// when increment internalApiVersion
+	// wrapTr (scheduler)
+
+
 	/* Utils
 	------------------------------------------------------------------------------------------------------------------*/
 
