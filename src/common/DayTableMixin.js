@@ -290,18 +290,23 @@ var DayTableMixin = FC.DayTableMixin = {
 	},
 
 
-	renderHeadDateCellHtml: function(date, colspan) {
+	// TODO: when internalApiVersion, accept an object for HTML attributes
+	// (colspan should be no different)
+	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
 
 		return '' +
 			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '"' +
+				(this.rowCnt == 1 ?
+					' data-date="' + date.format('YYYY-MM-DD') + '"' :
+					'') +
 				(colspan > 1 ?
 					' colspan="' + colspan + '"' :
 					'') +
-				(this.rowCnt == 1 ?
-					' data-date="' + date.format('YYYY-MM-DD') + '"' : // if date has a time, won't format it
+				(otherAttrs ?
+					' ' + otherAttrs :
 					'') +
-				'>' +
+			'>' +
 				htmlEscape(date.format(this.colHeadFormat)) +
 			'</th>';
 	},
