@@ -344,7 +344,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	},
 
 
-	renderBgCellHtml: function(date) {
+	renderBgCellHtml: function(date, otherAttrs) {
 		var view = this.view;
 		var classes = this.getDayClasses(date);
 
@@ -352,6 +352,9 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		return '<td class="' + classes.join(' ') + '"' +
 			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
+			(otherAttrs ?
+				' ' + otherAttrs :
+				'') +
 			'></td>';
 	},
 
