@@ -29,7 +29,7 @@ describe('eventDrop', function() {
 
 				init(
 					function() {
-						$('.fc-event').simulate('drag-n-drop', {
+						$('.fc-event').simulate('drag', {
 							dx: $('.fc-day').width() * 2,
 							dy: $('.fc-day').height()
 						});
@@ -63,7 +63,7 @@ describe('eventDrop', function() {
 
 				init(
 					function() {
-						$('.fc-event').simulate('drag-n-drop', {
+						$('.fc-event').simulate('drag', {
 							dx: $('.fc-day').width() * -2,
 							dy: $('.fc-day').height()
 						});
@@ -110,13 +110,11 @@ describe('eventDrop', function() {
 
 			init(
 				function() {
-					$('.event1').simulate('drag-n-drop', {
+					$('.event1').simulate('drag', {
 						dx: $('.fc-day').width() * 2,
 						dy: $('.fc-day').height(),
-						interpolation: {
-							stepCount: 10,
-							duration: 1000
-						}
+						moves: 10,
+						duration: 1000
 					});
 					setTimeout(function() { // wait until half way through drag
 						$('.event2')
@@ -150,7 +148,7 @@ describe('eventDrop', function() {
 
 				init(
 					function() {
-						$('.fc-event .fc-time').simulate('drag-n-drop', {
+						$('.fc-event .fc-time').simulate('drag', {
 							dx: $('th.fc-wed').width(), // 1 day
 							dy: $('.fc-slats tr:eq(1)').outerHeight() * 2.9 // 1.5 hours
 						});
@@ -184,7 +182,7 @@ describe('eventDrop', function() {
 
 				init(
 					function() {
-						$('.fc-event').simulate('drag-n-drop', {
+						$('.fc-event').simulate('drag', {
 							dx: $('th.fc-wed').width() * 2 // 2 days
 						});
 					},
@@ -221,7 +219,7 @@ describe('eventDrop', function() {
 					function() {
 						var allDayGrid = $('.fc-agenda-view .fc-day-grid');
 						var hr = allDayGrid.next('hr');
-						$('.fc-event').simulate('drag-n-drop', {
+						$('.fc-event').simulate('drag', {
 							dx: $('th.fc-wed').width() * -1,
 							dy: allDayGrid.outerHeight() + hr.outerHeight()
 						});
@@ -264,7 +262,7 @@ describe('eventDrop', function() {
 						eventElm = $('.fc-event .fc-time').simulate('drag', { // grabs the top of the event
 							dx: $('th.fc-wed').width() * -1,
 							dy: -$('.fc-agenda-view .fc-day-grid').outerHeight(),
-							callback: function() {
+							onBeforeRelease: function() {
 								// the all day slot works off of mouse-moving coordinates
 								var offset = eventElm.offset();
 								$('.fc-agenda-allday .fc-day-content')
@@ -276,9 +274,6 @@ describe('eventDrop', function() {
 										clientX: offset.left + 10,
 										clientY: offset.top + 10
 									});
-								setTimeout(function() {
-									eventElm.simulate('drop');
-								}, 100);
 							}
 						});
 					},
@@ -320,10 +315,9 @@ describe('eventDrop', function() {
 					function() {
 						eventElm = $('.fc-event .fc-time').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
-							callback: function() {
+							onBeforeRelease: function() {
 								dragged = true;
 								expect($('.fc-event.fc-helper .fc-time')).toHaveText('2:30');
-								eventElm.simulate('drop');
 							}
 						});
 					},
@@ -353,10 +347,9 @@ describe('eventDrop', function() {
 					function() {
 						eventElm = $('.fc-event .fc-time').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
-							callback: function() {
+							onBeforeRelease: function() {
 								dragged = true;
 								expect($('.fc-event.fc-helper .fc-time')).toHaveText('2:30 - 3:30');
-								eventElm.simulate('drop');
 							}
 						});
 					},
