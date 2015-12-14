@@ -11,16 +11,14 @@ fi
 
 grunt bump --setversion=$version && \
 grunt dist && \
-grunt shell:no-assume-unchanged && \
 git add -f dist/*.js dist/*.css dist/lang/*.js && \
 git commit -a -e -m "version $version" && \
 git tag -a v$version -m "version $version"
 
 status=$?
 
-# regardless of error/success, undo the temporary no-assume-unchanged
+# regardless of error/success
 git reset
-grunt shell:assume-unchanged
 
 if [ $status -eq 0 ]
 then

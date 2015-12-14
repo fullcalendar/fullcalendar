@@ -49,7 +49,6 @@ module.exports = function(grunt) {
 
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
-		'shell:assume-unchanged',
 		'lumbar:build',
 		'languages'
 	]);
@@ -390,24 +389,6 @@ module.exports = function(grunt) {
 	// configs located elsewhere
 	config.jshint = require('./build/jshint.conf');
 	config.jscs = require('./build/jscs.conf');
-
-
-
-	/* dist & git hacks
-	----------------------------------------------------------------------------------------------------
-	// These shell commands are used to force/unforce git from thinking that files have changed.
-	// Used to ignore changes when dist files are overwritten, but not committed, during development.
-	*/
-
-	config.shell['assume-unchanged'] = {
-		command: 'git update-index --assume-unchanged `git ls-files dist`'
-	};
-	config.shell['no-assume-unchanged'] = {
-		command: 'git update-index --no-assume-unchanged `git ls-files dist`'
-	};
-	config.shell['list-assume-unchanged'] = {
-		command: 'git ls-files -v | grep \'^h\''
-	};
 
 
 
