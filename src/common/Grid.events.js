@@ -206,6 +206,10 @@ Grid.mixin({
 					else if (view.isEventDraggable(seg.event)) {
 						_this.segDragMousedown(seg, ev);
 					}
+				},
+				contextmenu: function(seg, ev) {
+					// can return `false` to prevent context menu from displaying
+					return view.trigger('eventContextMenu', this, seg.event, ev);
 				}
 			},
 			function(name, func) {
