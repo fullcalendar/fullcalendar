@@ -143,11 +143,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		}
 
 		classes = this.getDayClasses(date);
-		classes.unshift('fc-day-number');
+		classes.unshift('fc-numbercell');
 
 		return '' +
 			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-				date.date() +
+				'<span class="fc-day-number">' +
+					date.date() +
+				'</span>' +
 			'</td>';
 	},
 

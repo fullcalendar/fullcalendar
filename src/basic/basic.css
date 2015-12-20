@@ -36,7 +36,7 @@
 }
 
 .fc-basic-view td.fc-week-number span,
-.fc-basic-view td.fc-day-number {
+.fc-basic-view td.fc-numbercell span {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
@@ -52,14 +52,14 @@
 }
 
 .fc-ltr .fc-basic-view .fc-day-number {
-	text-align: right;
+	float: right;
 }
 
 .fc-rtl .fc-basic-view .fc-day-number {
-	text-align: left;
+	float: left;
 }
 
-.fc-day-number.fc-other-month {
+.fc-numbercell.fc-other-month {
 	opacity: 0.3;
 	filter: alpha(opacity=30); /* for IE */
 	/* opacity with small font can sometimes look too faded
