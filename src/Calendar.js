@@ -350,6 +350,7 @@ function Calendar_constructor(element, overrides) {
 			weekCalcFirstDoW = 1;
 		}
 		else if (typeof weekCalc === 'function') {
+			var i;
 			var m;
 			var wkNr;
 			var wkNrPrev;
