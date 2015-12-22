@@ -66,28 +66,39 @@
 	z-index: 2;
 }
 
-.fc-time-grid .fc-bgevent-skeleton,
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
+	z-index: 3;
 	top: 0;
 	left: 0;
 	right: 0;
 }
 
-.fc-time-grid .fc-bgevent-skeleton {
+/* divs within a cell within the fc-content-skeleton */
+
+.fc-time-grid .fc-business-container {
+	position: relative;
+	z-index: 1;
+}
+
+.fc-time-grid .fc-bgevent-container {
+	position: relative;
+	z-index: 2;
+}
+
+.fc-time-grid .fc-highlight-container {
+	position: relative;
 	z-index: 3;
 }
 
-.fc-time-grid .fc-highlight-skeleton {
+.fc-time-grid .fc-event-container {
+	position: relative;
 	z-index: 4;
 }
 
-.fc-time-grid .fc-content-skeleton {
+.fc-time-grid .fc-helper-container { /* also is fc-event-container */
+	position: relative;
 	z-index: 5;
-}
-
-.fc-time-grid .fc-helper-skeleton {
-	z-index: 6;
 }
 
 
@@ -125,11 +136,6 @@
 
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
-
-.fc-time-grid .fc-event-container, /* a div within a cell within the fc-content-skeleton */
-.fc-time-grid .fc-bgevent-container { /* a div within a cell within the fc-bgevent-skeleton */
-	position: relative;
-}
 
 .fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
 	margin: 0 2.5% 0 2px;

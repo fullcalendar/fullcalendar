@@ -8,7 +8,7 @@ Grid.mixin({
 	isDraggingSeg: false, // is a segment being dragged? boolean
 	isResizingSeg: false, // is a segment being resized? boolean
 	isDraggingExternal: false, // jqui-dragging an external element? boolean
-	segs: null, // the event segments currently rendered in the grid
+	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
 	// Renders the given events onto the grid

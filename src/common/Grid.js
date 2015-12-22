@@ -409,7 +409,9 @@ var Grid = FC.Grid = Class.extend({
 
 
 	/* Fill System (highlight, background events, business hours)
-	------------------------------------------------------------------------------------------------------------------*/
+	--------------------------------------------------------------------------------------------------------------------
+	TODO: remove this system. like we did in TimeGrid
+	*/
 
 
 	// Renders a set of rectangles over the given segments of time.

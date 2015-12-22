@@ -15,12 +15,9 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	colEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
-	helperEl: null, // cell skeleton element for rendering the mock event "helper"
 
 	colCoordCache: null,
 	slatCoordCache: null,
-
-	businessHourSegs: null,
 
 
 	constructor: function() {
@@ -45,12 +42,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 			els: this.slatEls,
 			isVertical: true
 		});
-	},
 
-
-	renderBusinessHours: function() {
-		var events = this.view.calendar.getBusinessHoursEvents();
-		this.businessHourSegs = this.renderFill('businessHours', this.eventsToSegs(events), 'bgevent');
+		this.renderContentSkeleton();
 	},
 
 
@@ -311,7 +304,9 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		this.slatCoordCache.build();
 
 		if (isResize) {
-			this.updateSegVerticals();
+			this.updateSegVerticals(
+				[].concat(this.fgSegs || [], this.bgSegs || [], this.businessSegs || [])
+			);
 		}
 	},
 
@@ -365,7 +360,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		if (seg) { // if there is event information for this drag, render a helper event
 			this.renderEventLocationHelper(eventLocation, seg);
-			this.applyDragOpacity(this.helperEl);
+
+			for (var i = 0; i < this.helperSegs.length; i++) {
+				this.applyDragOpacity(this.helperSegs[i].el);
+			}
 
 			return true; // signal that a helper has been rendered
 		}
@@ -405,40 +403,30 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		var segs = this.eventToSegs(event);
-		var tableEl;
-		var i, seg;
-		var sourceEl;
-
-		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
-		tableEl = this.renderSegTable(segs);
-
-		// Try to make the segment that is in the same row as sourceSeg look the same
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			if (sourceSeg && sourceSeg.col === seg.col) {
-				sourceEl = sourceSeg.el;
-				seg.el.css({
-					left: sourceEl.css('left'),
-					right: sourceEl.css('right'),
-					'margin-left': sourceEl.css('margin-left'),
-					'margin-right': sourceEl.css('margin-right')
-				});
-			}
-		}
-
-		this.helperEl = $('<div class="fc-helper-skeleton"/>')
-			.append(tableEl)
-				.appendTo(this.el);
+		this.renderHelperSegs(this.eventToSegs(event), sourceSeg);
 	},
 
 
 	// Unrenders any mock helper event
 	unrenderHelper: function() {
-		if (this.helperEl) {
-			this.helperEl.remove();
-			this.helperEl = null;
-		}
+		this.unrenderHelperSegs();
+	},
+
+
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents();
+		var segs = this.eventsToSegs(events);
+
+		this.renderBusinessSegs(segs);
+	},
+
+
+	unrenderBusinessHours: function() {
+		this.unrenderBusinessSegs();
 	},
 
 
@@ -466,62 +454,17 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	/* Fill System (highlight, background events, business hours)
+	/* Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a set of rectangles over the given time segments.
-	// Only returns segments that successfully rendered.
-	renderFill: function(type, segs, className) {
-		var segCols;
-		var skeletonEl;
-		var trEl;
-		var col, colSegs;
-		var tdEl;
-		var containerEl;
-		var dayDate;
-		var i, seg;
+	renderHighlight: function(span) {
+		this.renderHighlightSegs(this.spanToSegs(span));
+	},
 
-		if (segs.length) {
 
-			segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
-			segCols = this.groupSegCols(segs); // group into sub-arrays, and assigns 'col' to each seg
-
-			className = className || type.toLowerCase();
-			skeletonEl = $(
-				'<div class="fc-' + className + '-skeleton">' +
-					'<table><tr/></table>' +
-				'</div>'
-			);
-			trEl = skeletonEl.find('tr');
-
-			for (col = 0; col < segCols.length; col++) {
-				colSegs = segCols[col];
-				tdEl = $('<td/>').appendTo(trEl);
-
-				if (colSegs.length) {
-					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
-					dayDate = this.getCellDate(0, col); // row=0
-
-					for (i = 0; i < colSegs.length; i++) {
-						seg = colSegs[i];
-						containerEl.append(
-							seg.el.css({
-								top: this.computeDateTop(seg.start, dayDate),
-								bottom: -this.computeDateTop(seg.end, dayDate) // the y position of the bottom edge
-							})
-						);
-					}
-				}
-			}
-
-			this.bookendCells(trEl);
-
-			this.el.append(skeletonEl);
-			this.elsByFill[type] = skeletonEl;
-		}
-
-		return segs;
+	unrenderHighlight: function() {
+		this.unrenderHighlightSegs();
 	}
 
 });

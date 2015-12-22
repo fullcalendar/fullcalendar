@@ -42,11 +42,17 @@ tbody,
 	background: #fff !important;
 }
 
-/* kill the overlaid, absolutely-positioned common components */
+/* kill the overlaid, absolutely-positioned components */
+/* common... */
 .fc-bg,
 .fc-bgevent-skeleton,
 .fc-highlight-skeleton,
-.fc-helper-skeleton {
+.fc-helper-skeleton,
+/* timegrid... */
+.fc-bgevent-container,
+.fc-business-container,
+.fc-highlight-container,
+.fc-helper-container {
 	display: none;
 }
 
