@@ -5,13 +5,16 @@
 
 TimeGrid.mixin({
 
-	colContainerEls: null,
+	colContainerEls: null, // containers for each column
+
+	// inner-containers for each column where different types of segs live
 	fgContainerEls: null,
 	bgContainerEls: null,
 	helperContainerEls: null,
 	highlightContainerEls: null,
 	businessContainerEls: null,
 
+	// arrays of different types of displayed segments
 	fgSegs: null,
 	bgSegs: null,
 	helperSegs: null,
@@ -19,6 +22,7 @@ TimeGrid.mixin({
 	businessSegs: null,
 
 
+	// Renders the DOM that the view's content will live in
 	renderContentSkeleton: function() {
 		var cellHtml = '';
 		var i;
@@ -179,6 +183,8 @@ TimeGrid.mixin({
 	},
 
 
+	// Given segments grouped by column, insert the segments' elements into a parallel array of container
+	// elements, each living within a column.
 	attachSegsByCol: function(segsByCol, containerEls) {
 		var col;
 		var segs;
@@ -194,6 +200,8 @@ TimeGrid.mixin({
 	},
 
 
+	// Given the name of a property of `this` object, assumed to be an array of segments,
+	// loops through each segment and removes from DOM. Will null-out the property afterwards.
 	unrenderNamedSegs: function(propName) {
 		var segs = this[propName];
 		var i;
@@ -212,6 +220,8 @@ TimeGrid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	// Given an array of foreground segments, render a DOM element for each, computes position,
+	// and attaches to the column inner-container elements.
 	renderFgSegsIntoContainers: function(segs, containerEls) {
 		var segsByCol;
 		var col;
@@ -306,8 +316,8 @@ TimeGrid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Refreshes the CSS top/bottom coordinates for each segment element. Probably after a window resize/zoom.
-	// Repositions business hours segs too, so not just for events. Maybe shouldn't be here.
+	// Refreshes the CSS top/bottom coordinates for each segment element.
+	// Works when called after initial render, after a window resize/zoom for example.
 	updateSegVerticals: function(segs) {
 		this.computeSegVerticals(segs);
 		this.assignSegVerticals(segs);
@@ -326,6 +336,8 @@ TimeGrid.mixin({
 	},
 
 
+	// Given segments that already have their top/bottom properties computed, applies those values to
+	// the segments' elements.
 	assignSegVerticals: function(segs) {
 		var i, seg;
 
@@ -349,6 +361,8 @@ TimeGrid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	// Given segments that are assumed to all live in the *same column*,
+	// compute their verical/horizontal coordinates and assign to their elements.
 	updateFgSegCoords: function(segs) {
 		this.computeSegVerticals(segs); // horizontals relies on this
 		this.computeFgSegHorizontals(segs); // compute horizontal coordinates, z-index's, and reorder the array
@@ -441,11 +455,13 @@ TimeGrid.mixin({
 	},
 
 
-	assignFgSegHorizontals: function(colSegs) {
+	// Given foreground event segments that have already had their position coordinates computed,
+	// assigns position-related CSS values to their elements.
+	assignFgSegHorizontals: function(segs) {
 		var i, seg;
 
-		for (i = 0; i < colSegs.length; i++) {
-			seg = colSegs[i];
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
 			seg.el.css(this.generateFgSegHorizontalCss(seg));
 
 			// if the height is short, add a className for alternate styling
