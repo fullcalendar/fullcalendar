@@ -23,13 +23,18 @@ describe('businessHours', function() {
 
 		// timed area
 		expect($('.fc-time-grid .fc-nonbusiness').length).toBe(12);
-		var containerEls = $('.fc-time-grid .fc-bgevent-skeleton td:not(.fc-axis)'); // background columns
-		expect(containerEls.eq(0).find('.fc-nonbusiness').length).toBe(1);
-		expect(containerEls.eq(1).find('.fc-nonbusiness').length).toBe(2);
-		expect(containerEls.eq(2).find('.fc-nonbusiness').length).toBe(2);
-		expect(containerEls.eq(3).find('.fc-nonbusiness').length).toBe(2);
-		expect(containerEls.eq(4).find('.fc-nonbusiness').length).toBe(2);
-		expect(containerEls.eq(5).find('.fc-nonbusiness').length).toBe(2);
-		expect(containerEls.eq(6).find('.fc-nonbusiness').length).toBe(1);
+		expect(queryNonBusinessSegsInCol(0).length).toBe(1);
+		expect(queryNonBusinessSegsInCol(1).length).toBe(2);
+		expect(queryNonBusinessSegsInCol(2).length).toBe(2);
+		expect(queryNonBusinessSegsInCol(3).length).toBe(2);
+		expect(queryNonBusinessSegsInCol(4).length).toBe(2);
+		expect(queryNonBusinessSegsInCol(5).length).toBe(2);
+		expect(queryNonBusinessSegsInCol(6).length).toBe(1);
 	});
+
+
+	function queryNonBusinessSegsInCol(col) {
+		return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-nonbusiness');
+	}
+
 });
