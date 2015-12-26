@@ -405,6 +405,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 // Methods that will customize the rendering behavior of the AgendaView's timeGrid
+// TODO: move into TimeGrid
 var agendaTimeGridMethods = {
 
 
