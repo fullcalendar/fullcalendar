@@ -420,6 +420,22 @@ var Grid = FC.Grid = Class.extend({
 	},
 
 
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	getNowIndicatorUnit: function() {
+	},
+
+
+	renderNowIndicator: function(date) {
+	},
+
+
+	unrenderNowIndicator: function() {
+	},
+
+
 	/* Fill System (highlight, background events, business hours)
 	--------------------------------------------------------------------------------------------------------------------
 	TODO: remove this system. like we did in TimeGrid

@@ -66,6 +66,10 @@
 	z-index: 2;
 }
 
+.fc-time-grid .fc-content-col {
+	position: relative; /* because now-indicator lives directly inside */
+}
+
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
 	z-index: 3;
@@ -96,9 +100,13 @@
 	z-index: 4;
 }
 
+.fc-time-grid .fc-now-indicator-line {
+	z-index: 5;
+}
+
 .fc-time-grid .fc-helper-container { /* also is fc-event-container */
 	position: relative;
-	z-index: 5;
+	z-index: 6;
 }
 
 
@@ -250,4 +258,36 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
+}
+
+
+/* Now Indicator
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-now-indicator-line {
+	border-top-width: 1px;
+	left: 0;
+	right: 0;
+}
+
+/* arrow on axis */
+
+.fc-time-grid .fc-now-indicator-arrow {
+	margin-top: -5px; /* vertically center on top coordinate */
+}
+
+.fc-ltr .fc-time-grid .fc-now-indicator-arrow {
+	left: 0;
+	/* triangle pointing right... */
+	border-width: 5px 0 5px 6px;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.fc-rtl .fc-time-grid .fc-now-indicator-arrow {
+	right: 0;
+	/* triangle pointing left... */
+	border-width: 5px 6px 5px 0;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
 }

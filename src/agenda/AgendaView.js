@@ -170,6 +170,25 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	getNowIndicatorUnit: function() {
+		return this.timeGrid.getNowIndicatorUnit();
+	},
+
+
+	renderNowIndicator: function(date) {
+		this.timeGrid.renderNowIndicator(date);
+	},
+
+
+	unrenderNowIndicator: function() {
+		this.timeGrid.unrenderNowIndicator();
+	},
+
+
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
 
