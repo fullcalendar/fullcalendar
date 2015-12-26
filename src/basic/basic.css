@@ -51,7 +51,15 @@
 	min-width: 1.25em;
 }
 
+.fc-ltr .fc-basic-view .fc-numbercell span.fc-week-number {
+	float: left;
+}
+
 .fc-ltr .fc-basic-view .fc-numbercell span.fc-day-number {
+	float: right;
+}
+
+.fc-rtl .fc-basic-view .fc-numbercell span.fc-week-number {
 	float: right;
 }
 

@@ -137,19 +137,35 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// The number row will only exist if either day numbers or week numbers are turned on.
 	renderNumberCellHtml: function(date) {
 		var classes;
+		var weekCalcFirstDoW;
 
-		if (!this.view.dayNumbersVisible) { // if there are week numbers but not day numbers
+		if (!this.view.dayNumbersVisible && !this.view.cellWeekNumbersVisible) {
+			// no numbers in day cell (week number must be along the side)
 			return '<td/>'; //  will create an empty space above events :(
 		}
 
 		classes = this.getDayClasses(date);
 		classes.unshift('fc-numbercell');
 
+		if (this.view.cellWeekNumbersVisible) {
+			weekCalcFirstDoW = (date._locale || date._lang).
+				_fullCalendar_weekCalcFirstDoW;
+		}
+
 		return '' +
 			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-				'<span class="fc-day-number">' +
-					date.date() +
-				'</span>' +
+				((this.view.cellWeekNumbersVisible && (date.day() === weekCalcFirstDoW)) ?
+					'<span class="fc-week-number fc-weeknr-daycell">' +
+						date.format('w') +
+					'</span>' :
+					''
+					) +
+				(this.view.dayNumbersVisible ?
+					'<span class="fc-day-number">' +
+						date.date() +
+					'</span>' :
+					''
+					) +
 			'</td>';
 	},
 
