@@ -41,21 +41,21 @@
 	padding-bottom: 2px;
 }
 
-.fc-basic-view .fc-week-number {
+.fc-basic-view td.fc-week-number {
 	text-align: center;
 }
 
-.fc-basic-view .fc-week-number span {
+.fc-basic-view td.fc-week-number span {
 	/* work around the way we do column resizing and ensure a minimum width */
 	display: inline-block;
 	min-width: 1.25em;
 }
 
-.fc-ltr .fc-basic-view .fc-day-number {
+.fc-ltr .fc-basic-view .fc-numbercell span.fc-day-number {
 	float: right;
 }
 
-.fc-rtl .fc-basic-view .fc-day-number {
+.fc-rtl .fc-basic-view .fc-numbercell span.fc-day-number {
 	float: left;
 }
 
