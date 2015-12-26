@@ -353,7 +353,10 @@ var View = FC.View = Class.extend({
 		this.renderDates();
 		this.updateSize();
 		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-		this.startNowIndicator();
+
+		if (this.opt('nowIndicator')) {
+			this.startNowIndicator();
+		}
 	},
 
 
@@ -486,7 +489,8 @@ var View = FC.View = Class.extend({
 	},
 
 
-	// Immediately unrenders the view's current time indicator and stops any re-rendering timers
+	// Immediately unrenders the view's current time indicator and stops any re-rendering timers.
+	// Won't cause side effects if indicator isn't rendered.
 	stopNowIndicator: function() {
 		var cleared = false;
 
