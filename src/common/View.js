@@ -483,6 +483,7 @@ var View = FC.View = Class.extend({
 				this.nowIndicatorTimeoutID = null;
 				update();
 				delay = +moment.duration(1, unit);
+				delay = Math.max(100, delay); // prevent too frequent
 				this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
 			}, delay);
 		}
