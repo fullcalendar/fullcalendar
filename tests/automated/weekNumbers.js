@@ -7,7 +7,7 @@ describe('weekNumbers', function() {
 
 	describe('when using month view', function() {
 
-		describe('when using default weekNumbers', function() {
+		describe('with default weekNumbers', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'month'
@@ -17,7 +17,7 @@ describe('weekNumbers', function() {
 			});
 		});
 
-		describe('when setting weekNumbers to false', function() {
+		describe('with weekNumbers to false', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'month',
@@ -28,8 +28,8 @@ describe('weekNumbers', function() {
 			});
 		});
 
-		describe('when setting weekNumbers to true', function() {
-			it('should not display weekNumbers', function() {
+		describe('with weekNumbers to true', function() {
+			it('should display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'month',
 					weekNumbers: true,
@@ -44,7 +44,7 @@ describe('weekNumbers', function() {
 
 	describe('when using basicWeek view', function() {
 
-		describe('with default weekNumbers ', function() {
+		describe('with default weekNumbers', function() {
 			it('should not display weekNumbers', function() {
 				$('#cal').fullCalendar({
 					defaultView: 'basicWeek'
