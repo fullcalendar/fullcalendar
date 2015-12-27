@@ -1,0 +1,19 @@
+
+nowIndicator *2.6.0*
+====================
+
+Whether or not to display a marker indicating the current time.
+
+<div class="spec" markdown="1">
+Boolean. *default*: `false`
+</div>
+
+The indicator will automatically reposition itself while the user is viewing the calendar.
+
+When set to `true` in one of the **agenda** views:
+
+<img src="../../../pages/docs/_images/agenda-nowIndicator.png" width="413" height="330" />
+
+When set to `true` in one of the **timeline** views:
+
+<img src="../../../pages/docs/_images/timeline-nowIndicator.png" width="472" height="194" />
