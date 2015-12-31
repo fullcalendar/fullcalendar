@@ -786,6 +786,7 @@ Grid.mixin({
 
 
 	// Generates an array of segments for the given single event
+	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToSegs: function(event) {
 		return this.eventsToSegs([ event ]);
 	},
@@ -793,6 +794,7 @@ Grid.mixin({
 
 	// Generates a single span (always unzoned) by using the given event's dates.
 	// Does not do any inverting for inverse-background events.
+	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToSpan: function(event) {
 		var range = this.eventToRange(event);
 		this.transformEventSpan(range, event); // convert it to a span, in-place
@@ -837,10 +839,21 @@ Grid.mixin({
 
 
 	// Generates the unzoned start/end dates an event appears to occupy
+	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToRange: function(event) {
 		return {
 			start: event.start.clone().stripZone(),
-			end: this.view.calendar.getEventEnd(event).stripZone()
+			end: (
+				event.end ?
+					event.end.clone() :
+					// derive the end from the start and allDay. compute allDay if necessary
+					this.view.calendar.getDefaultEventEnd(
+						event.allDay != null ?
+							event.allDay :
+							!event.start.hasTime(),
+						event.start
+					)
+			).stripZone()
 		};
 	},
 
