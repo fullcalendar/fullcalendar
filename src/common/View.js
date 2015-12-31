@@ -330,7 +330,7 @@ var View = FC.View = Class.extend({
 			this.clearView();
 			this.displayView();
 			if (wasEventsRendered) { // only render and trigger handlers if events previously rendered
-				this.displayEvents();
+				this.displayEvents(this.calendar.getEventCache());
 			}
 		}
 	},
