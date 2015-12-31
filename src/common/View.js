@@ -651,12 +651,19 @@ var View = FC.View = Class.extend({
 
 	// Does everything necessary to clear the view's currently-rendered events
 	clearEvents: function() {
+		var scrollState;
+
 		if (this.isEventsRendered) {
+
+			// TODO: optimize: if we know this is part of a displayEvents call, don't queryScroll/setScroll
+			scrollState = this.queryScroll();
+
 			this.triggerEventUnrender();
 			if (this.destroyEvents) {
 				this.destroyEvents(); // TODO: deprecate
 			}
 			this.unrenderEvents();
+			this.setScroll(scrollState);
 			this.isEventsRendered = false;
 		}
 	},
