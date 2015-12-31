@@ -297,7 +297,7 @@ Grid.mixin({
 					event
 				);
 
-				if (dropLocation &&!calendar.isEventSpanAllowed(_this.eventToSpan(dropLocation), event)) {
+				if (dropLocation && !calendar.isEventSpanAllowed(_this.eventToSpan(dropLocation), event)) {
 					disableCursor();
 					dropLocation = null;
 				}
@@ -360,6 +360,7 @@ Grid.mixin({
 	// Given the spans an event drag began, and the span event was dropped, calculates the new zoned start/end/allDay
 	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
 	// A falsy returned value indicates an invalid drop.
+	// DOES NOT consider overlap/constraint.
 	computeEventDrop: function(startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
 		var dragStart = startSpan.start;
@@ -449,6 +450,7 @@ Grid.mixin({
 	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
+		var calendar = this.view.calendar;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var dropLocation; // a null value signals an unsuccessful drag
 
@@ -462,22 +464,27 @@ Grid.mixin({
 					hit.component.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
 					meta
 				);
+
+				if ( // invalid hit?
+					dropLocation &&
+					!calendar.isExternalSpanAllowed(_this.eventToSpan(dropLocation), dropLocation, meta.eventProps)
+				) {
+					disableCursor();
+					dropLocation = null;
+				}
+
 				if (dropLocation) {
 					_this.renderDrag(dropLocation); // called without a seg parameter
-				}
-				else { // invalid hit
-					disableCursor();
 				}
 			},
 			hitOut: function() {
 				dropLocation = null; // signal unsuccessful
-				_this.unrenderDrag();
+			},
+			hitDone: function() { // Called after a hitOut OR before a dragStop
 				enableCursor();
+				_this.unrenderDrag();
 			},
 			dragStop: function() {
-				_this.unrenderDrag();
-				enableCursor();
-
 				if (dropLocation) { // element was dropped on a valid hit
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
@@ -494,6 +501,7 @@ Grid.mixin({
 	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
 	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
+	// DOES NOT consider overlap/constraint.
 	computeExternalDrop: function(span, meta) {
 		var calendar = this.view.calendar;
 		var dropLocation = {
@@ -508,10 +516,6 @@ Grid.mixin({
 
 		if (meta.duration) {
 			dropLocation.end = dropLocation.start.clone().add(meta.duration);
-		}
-
-		if (!calendar.isExternalSpanAllowed(this.eventToSpan(dropLocation), dropLocation, meta.eventProps)) {
-			return null;
 		}
 
 		return dropLocation;
@@ -634,7 +638,8 @@ Grid.mixin({
 
 
 	// Returns new zoned date information for an event segment being resized from its start OR end
-	// `type` is either 'start' or 'end'
+	// `type` is either 'start' or 'end'.
+	// DOES NOT consider overlap/constraint.
 	computeEventResize: function(type, startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
 		var delta = this.diffDates(endSpan[type], startSpan[type]);
