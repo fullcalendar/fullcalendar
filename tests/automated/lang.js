@@ -15,7 +15,7 @@ describe('lang', function() {
 		expect(s).toEqual('Thursday May 1st 2014');
 	});
 
-	it('is not affected by global moment lang when unset', function() {
+	it('is not affected by global moment lang when set', function() {
 		moment.lang('fr');
 		affix('#cal');
 		$('#cal').fullCalendar({
@@ -24,7 +24,7 @@ describe('lang', function() {
 		var calendar = $('#cal').fullCalendar('getCalendar');
 		var mom = calendar.moment('2014-05-01');
 		var s = mom.format('dddd MMMM Do YYYY');
-		expect(s).toEqual('jueves mayo 1º 2014');
+		expect(s).toEqual('Jueves Mayo 1º 2014');
 	});
 
 	it('doesn\'t side-effect the global moment lang when customized', function() {
