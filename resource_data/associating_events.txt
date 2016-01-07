@@ -22,3 +22,30 @@ An [Event Object](../event_data/Event_Object) becomes associated with a resource
 	});
 
 If you would prefer not to use `resourceId` for the field name, you can customize it with [eventResourceField]().
+
+
+Multiple Resources
+------------------
+
+It is also possible to associate an event with *multiple* resources using the `resourceIds` property, which is an array:
+
+	$('#calendar').fullCalendar({
+		resources: [
+			{
+				id: 'a',
+				title: 'Room A'
+			},
+			{
+				id: 'b',
+				title: 'Room B'
+			}
+		],
+		events: [
+			{
+				id: '1',
+				resourceIds: ['a', 'b'],
+				title: 'Meeting',
+				start: '2015-02-14'
+			}
+		]
+	});
