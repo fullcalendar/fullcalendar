@@ -1,5 +1,5 @@
 
-describe('when timeline events are rerendered', function() {
+describe('when agenda events are rerendered', function() {
 	beforeEach(function() {
 		affix('#cal');
 	});
@@ -10,6 +10,7 @@ describe('when timeline events are rerendered', function() {
 		$('#cal').fullCalendar({
 			now: '2015-08-07',
 			scrollTime: '00:00',
+			height: 400, // makes this test more consistent across viewports
 			defaultView: 'agendaDay',
 			events: function(start, end, timezone, callback) {
 				setTimeout(function() {
