@@ -792,14 +792,19 @@ Grid.mixin({
 	},
 
 
-	// Generates a single span (always unzoned) by using the given event's dates.
+	eventToSpan: function(event) {
+		return this.eventToSpans(event)[0];
+	},
+
+
+	// Generates spans (always unzoned) for the given event.
 	// Does not do any inverting for inverse-background events.
 	// Can accept an event "location" as well (which only has start/end and no allDay)
-	eventToSpan: function(event) {
+	eventToSpans: function(event) {
 		var range = this.eventToRange(event);
-		this.transformEventSpan(range, event); // convert it to a span, in-place
-		return range;
+		return this.eventRangeToSpans(range, event);
 	},
+
 
 
 	// Converts an array of event objects into an array of event segment objects.
@@ -823,13 +828,15 @@ Grid.mixin({
 				ranges = _this.invertRanges(ranges);
 
 				for (i = 0; i < ranges.length; i++) {
-					_this.generateEventSegs(ranges[i], events[0], segSliceFunc, segs);
+					segs.push.apply(segs, // append to
+						_this.eventRangeToSegs(ranges[i], events[0], segSliceFunc));
 				}
 			}
 			// normal event ranges
 			else {
 				for (i = 0; i < ranges.length; i++) {
-					_this.generateEventSegs(ranges[i], events[i], segSliceFunc, segs);
+					segs.push.apply(segs, // append to
+						_this.eventRangeToSegs(ranges[i], events[i], segSliceFunc));
 				}
 			}
 		});
@@ -858,36 +865,43 @@ Grid.mixin({
 	},
 
 
-	// Given an event's span (unzoned start/end and other misc data), and the event itself,
-	// slice into segments (using the segSliceFunc function if specified) and append to the `out` array.
-	// SIDE EFFECT: will mutate the given `range`.
-	generateEventSegs: function(range, event, segSliceFunc, out) {
-		var segs;
+	// Given an event's range (unzoned start/end), and the event itself,
+	// slice into segments (using the segSliceFunc function if specified)
+	eventRangeToSegs: function(range, event, segSliceFunc) {
+		var spans = this.eventRangeToSpans(range, event);
+		var segs = [];
 		var i;
 
-		this.transformEventSpan(range, event); // converts the range to a span
+		for (i = 0; i < spans.length; i++) {
+			segs.push.apply(segs, // append to
+				this.eventSpanToSegs(spans[i], event, segSliceFunc));
+		}
 
-		segs = segSliceFunc ? segSliceFunc(range) : this.spanToSegs(range);
+		return segs;
+	},
+
+
+	// Given an event's unzoned date range, return an array of "span" objects.
+	// Subclasses can override.
+	eventRangeToSpans: function(range, event) {
+		return [ $.extend({}, range) ]; // copy into a single-item array
+	},
+
+
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slices into segments and attaches event-derived properties to them.
+	eventSpanToSegs: function(span, event, segSliceFunc) {
+		var segs = segSliceFunc ? segSliceFunc(span) : this.spanToSegs(span);
+		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
-			this.transformEventSeg(segs[i], range, event);
-			out.push(segs[i]);
+			seg = segs[i];
+			seg.event = event;
+			seg.eventStartMS = +span.start; // TODO: not the best name after making spans unzoned
+			seg.eventDurationMS = span.end - span.start;
 		}
-	},
 
-
-	// Given a range (unzoned start/end) that is about to become a span,
-	// attach any event-derived properties to it.
-	transformEventSpan: function(range, event) {
-		// subclasses can implement
-	},
-
-
-	// Given a segment object, attach any extra properties, based off of its source span and event.
-	transformEventSeg: function(seg, span, event) {
-		seg.event = event;
-		seg.eventStartMS = +span.start; // TODO: not the best name after making spans unzoned
-		seg.eventDurationMS = span.end - span.start;
+		return segs;
 	},
 
 
@@ -954,6 +968,7 @@ function isBgEvent(event) { // returns true if background OR inverse-background
 	var rendering = getEventRendering(event);
 	return rendering === 'background' || rendering === 'inverse-background';
 }
+FC.isBgEvent = isBgEvent; // export
 
 
 function isInverseBgEvent(event) {
