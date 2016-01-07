@@ -24,7 +24,7 @@ describe('when timeline events are rerendered', function() {
 			},
 			eventAfterAllRender: function() {
 				var scrollEl = $('.fc-time-grid-container.fc-scroller');
-				renderCalls++
+				renderCalls++;
 				if (renderCalls == 1) {
 					setTimeout(function() {
 						scrollEl.scrollTop(100);
