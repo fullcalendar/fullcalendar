@@ -49,3 +49,7 @@ It is also possible to associate an event with *multiple* resources using the `r
 			}
 		]
 	});
+
+<div class='version-info'>
+Multiple resources-per-event are only available in Scheduler v1.2.0 and onward.
+</div>
