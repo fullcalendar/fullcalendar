@@ -133,12 +133,18 @@ module.exports = function(grunt) {
 			}
 		);
 
-		// replace the `return` statement so execution continues
-		// compatible with moment-pre-2.8
+		// remove the var/return wrap
+		var lc;
 		js = js.replace(
-			/^(\s*)return moment\.(defineLocale|lang)\(/m,
-			'$1(moment.defineLocale || moment.lang).call(moment, '
+			/^(\s*)var (\w*) = moment\.(defineLocale|lang)\(/m,
+			function(m0, p1, p2) {
+				lc = p2;
+				var rs = p1 + '(moment.defineLocale || moment.lang).call(moment, ';
+				return rs;
+			}
 		);
+		var re = new RegExp('^(\s*)return ' + lc + ';', 'm');
+		js = js.replace(re, '$1');
 
 		return js;
 	}
