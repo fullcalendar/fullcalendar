@@ -225,8 +225,8 @@ describe('eventDrop', function() {
 						});
 					},
 					function(event, delta, revertFunc) {
-						expect(delta.days()).toBe(-1);
-						expect(delta.hours()).toBe(1);
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(-23);
 						expect(delta.minutes()).toBe(0);
 						expect(delta.seconds()).toBe(0);
 						expect(delta.milliseconds()).toBe(0);

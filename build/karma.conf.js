@@ -34,6 +34,8 @@ module.exports = function(config) {
 			'../tests/lib/dom-utils.js',
 			'../tests/lib/dnd-resize-utils.js',
 
+			'../tests/lib/time-grid.js',
+
 			'../dist/fullcalendar.js',
 			'../dist/gcal.js',
 			'../dist/lang-all.js',
