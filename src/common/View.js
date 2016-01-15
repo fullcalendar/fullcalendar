@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = fc.View = Class.extend({
+var View = FC.View = Class.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -10,7 +10,6 @@ var View = fc.View = Class.extend({
 
 	calendar: null, // owner Calendar object
 	options: null, // hash containing all options. already merged with view-specific-options
-	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
 	displaying: null, // a promise representing the state of rendering. null if no render requested
@@ -31,6 +30,8 @@ var View = fc.View = Class.extend({
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 
+	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
+
 	// subclasses can optionally use a scroll container
 	scrollerEl: null, // the element that will most likely scroll when content is too tall
 	scrollTop: null, // cached vertical scroll value
@@ -47,6 +48,10 @@ var View = fc.View = Class.extend({
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null, // TODO: doesn't work with touch
 
+	// for refresh timing of now indicator
+	nowIndicatorTimeoutID: null,
+	nowIndicatorIntervalID: null,
+
 
 	constructor: function(calendar, type, options, intervalDuration) {
 
@@ -59,6 +64,8 @@ var View = fc.View = Class.extend({
 		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
+
+		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
@@ -96,21 +103,20 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Updates all internal dates to center around the given current date
+	// Updates all internal dates to center around the given current unzoned date.
 	setDate: function(date) {
 		this.setRange(this.computeRange(date));
 	},
 
 
-	// Updates all internal dates for displaying the given range.
-	// Expects all values to be normalized (like what computeRange does).
+	// Updates all internal dates for displaying the given unzoned range.
 	setRange: function(range) {
-		$.extend(this, range);
+		$.extend(this, range); // assigns every property to this object's member variables
 		this.updateTitle();
 	},
 
 
-	// Given a single current date, produce information about what range to display.
+	// Given a single current unzoned date, produce information about what range to display.
 	// Subclasses can override. Must return all properties.
 	computeRange: function(date) {
 		var intervalUnit = computeIntervalUnit(this.intervalDuration);
@@ -125,10 +131,10 @@ var View = fc.View = Class.extend({
 		}
 		else { // needs to have a time?
 			if (!intervalStart.hasTime()) {
-				intervalStart = this.calendar.rezoneDate(intervalStart); // convert to current timezone, with 00:00
+				intervalStart = this.calendar.time(0); // give 00:00 time
 			}
 			if (!intervalEnd.hasTime()) {
-				intervalEnd = this.calendar.rezoneDate(intervalEnd); // convert to current timezone, with 00:00
+				intervalEnd = this.calendar.time(0); // give 00:00 time
 			}
 		}
 
@@ -191,7 +197,11 @@ var View = fc.View = Class.extend({
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
 		return this.formatRange(
-			{ start: this.intervalStart, end: this.intervalEnd },
+			{
+				// in case intervalStart/End has a time, make sure timezone is correct
+				start: this.calendar.applyTimezone(this.intervalStart),
+				end: this.calendar.applyTimezone(this.intervalEnd)
+			},
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
 		);
@@ -218,6 +228,7 @@ var View = fc.View = Class.extend({
 
 	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
 	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
+	// The timezones of the dates within `range` will be respected.
 	formatRange: function(range, formatStr, separator) {
 		var end = range.end;
 
@@ -262,7 +273,7 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Does everything necessary to display the view centered around the given date.
+	// Does everything necessary to display the view centered around the given unzoned date.
 	// Does every type of rendering EXCEPT rendering events.
 	// Is asychronous and returns a promise.
 	display: function(date) {
@@ -273,12 +284,15 @@ var View = fc.View = Class.extend({
 			scrollState = this.queryScroll();
 		}
 
+		this.calendar.freezeContentHeight();
+
 		return this.clear().then(function() { // clear the content first (async)
 			return (
 				_this.displaying =
 					$.when(_this.displayView(date)) // displayView might return a promise
 						.then(function() {
 							_this.forceScroll(_this.computeInitialScroll(scrollState));
+							_this.calendar.unfreezeContentHeight();
 							_this.triggerRender();
 						})
 			);
@@ -306,6 +320,22 @@ var View = fc.View = Class.extend({
 	},
 
 
+	// If the view has already been displayed, tears it down and displays it again.
+	// Will re-render the events if necessary, which display/clear DO NOT do.
+	// TODO: make behavior more consistent.
+	redisplay: function() {
+		if (this.isSkeletonRendered) {
+			var wasEventsRendered = this.isEventsRendered;
+			this.clearEvents(); // won't trigger handlers if events never rendered
+			this.clearView();
+			this.displayView();
+			if (wasEventsRendered) { // only render and trigger handlers if events previously rendered
+				this.displayEvents(this.calendar.getEventCache());
+			}
+		}
+	},
+
+
 	// Displays the view's non-event content, such as date-related content or anything required by events.
 	// Renders the view's non-content skeleton if necessary.
 	// Can be asynchronous and return a promise.
@@ -314,13 +344,19 @@ var View = fc.View = Class.extend({
 			this.renderSkeleton();
 			this.isSkeletonRendered = true;
 		}
-		this.setDate(date);
+		if (date) {
+			this.setDate(date);
+		}
 		if (this.render) {
 			this.render(); // TODO: deprecate
 		}
 		this.renderDates();
 		this.updateSize();
 		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+
+		if (this.opt('nowIndicator')) {
+			this.startNowIndicator();
+		}
 	},
 
 
@@ -328,6 +364,7 @@ var View = fc.View = Class.extend({
 	// Can be asynchronous and return a promise.
 	clearView: function() {
 		this.unselect();
+		this.stopNowIndicator();
 		this.triggerUnrender();
 		this.unrenderBusinessHours();
 		this.unrenderDates();
@@ -349,7 +386,7 @@ var View = fc.View = Class.extend({
 	},
 
 
-	// Renders the view's date-related content (like cells that represent days/times).
+	// Renders the view's date-related content.
 	// Assumes setRange has already been called and the skeleton has already been rendered.
 	renderDates: function() {
 		// subclasses should implement
@@ -359,18 +396,6 @@ var View = fc.View = Class.extend({
 	// Unrenders the view's date-related content
 	unrenderDates: function() {
 		// subclasses should override
-	},
-
-
-	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders previously-rendered business-hours
-	unrenderBusinessHours: function() {
-		// subclasses should implement
 	},
 
 
@@ -405,6 +430,102 @@ var View = fc.View = Class.extend({
 		this.widgetHeaderClass = tm + '-widget-header';
 		this.widgetContentClass = tm + '-widget-content';
 		this.highlightStateClass = tm + '-state-highlight';
+	},
+
+
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders business-hours onto the view. Assumes updateSize has already been called.
+	renderBusinessHours: function() {
+		// subclasses should implement
+	},
+
+
+	// Unrenders previously-rendered business-hours
+	unrenderBusinessHours: function() {
+		// subclasses should implement
+	},
+
+
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Immediately render the current time indicator and begins re-rendering it at an interval,
+	// which is defined by this.getNowIndicatorUnit().
+	// TODO: somehow do this for the current whole day's background too
+	startNowIndicator: function() {
+		var _this = this;
+		var unit = this.getNowIndicatorUnit();
+		var initialNow; // result first getNow call
+		var initialNowQueried; // ms time of then getNow was called
+		var delay; // ms wait value
+
+		// rerenders the now indicator, computing the new current time from the amount of time that has passed
+		// since the initial getNow call.
+		function update() {
+			_this.unrenderNowIndicator();
+			_this.renderNowIndicator(
+				initialNow.clone().add(new Date() - initialNowQueried) // add ms
+			);
+		}
+
+		if (unit) {
+			initialNow = this.calendar.getNow();
+			initialNowQueried = +new Date();
+			this.renderNowIndicator(initialNow);
+
+			// wait until the beginning of the next interval
+			delay = initialNow.clone().startOf(unit).add(1, unit) - initialNow;
+			this.nowIndicatorTimeoutID = setTimeout(function() {
+				this.nowIndicatorTimeoutID = null;
+				update();
+				delay = +moment.duration(1, unit);
+				delay = Math.max(100, delay); // prevent too frequent
+				this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
+			}, delay);
+		}
+	},
+
+
+	// Immediately unrenders the view's current time indicator and stops any re-rendering timers.
+	// Won't cause side effects if indicator isn't rendered.
+	stopNowIndicator: function() {
+		var cleared = false;
+
+		if (this.nowIndicatorTimeoutID) {
+			clearTimeout(this.nowIndicatorTimeoutID);
+			cleared = true;
+		}
+		if (this.nowIndicatorIntervalID) {
+			clearTimeout(this.nowIndicatorIntervalID);
+			cleared = true;
+		}
+
+		if (cleared) { // is the indicator currently display?
+			this.unrenderNowIndicator();
+		}
+	},
+
+
+	// Returns a string unit, like 'second' or 'minute' that defined how often the current time indicator
+	// should be refreshed. If something falsy is returned, no time indicator is rendered at all.
+	getNowIndicatorUnit: function() {
+		// subclasses should implement
+	},
+
+
+	// Renders a current time indicator at the given datetime
+	renderNowIndicator: function(date) {
+		// subclasses should implement
+	},
+
+
+	// Undoes the rendering actions from renderNowIndicator
+	unrenderNowIndicator: function() {
+		// subclasses should implement
 	},
 
 
@@ -530,12 +651,19 @@ var View = fc.View = Class.extend({
 
 	// Does everything necessary to clear the view's currently-rendered events
 	clearEvents: function() {
+		var scrollState;
+
 		if (this.isEventsRendered) {
+
+			// TODO: optimize: if we know this is part of a displayEvents call, don't queryScroll/setScroll
+			scrollState = this.queryScroll();
+
 			this.triggerEventUnrender();
 			if (this.destroyEvents) {
 				this.destroyEvents(); // TODO: deprecate
 			}
 			this.unrenderEvents();
+			this.setScroll(scrollState);
 			this.isEventsRendered = false;
 		}
 	},
@@ -646,7 +774,7 @@ var View = fc.View = Class.extend({
 
 
 	// Must be called when an event in the view is dropped onto new location.
-	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
 	reportEventDrop: function(event, dropLocation, largeUnit, el, ev) {
 		var calendar = this.calendar;
 		var mutateResult = calendar.mutateEvent(event, dropLocation, largeUnit);
@@ -672,7 +800,7 @@ var View = fc.View = Class.extend({
 
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
-	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
 	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
 		var eventProps = meta.eventProps;
 		var eventInput;
@@ -772,31 +900,37 @@ var View = fc.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Selects a date range on the view. `start` and `end` are both Moments.
+	// Selects a date span on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(range, ev) {
+	select: function(span, ev) {
 		this.unselect(ev);
-		this.renderSelection(range);
-		this.reportSelection(range, ev);
+		this.renderSelection(span);
+		this.reportSelection(span, ev);
 	},
 
 
 	// Renders a visual indication of the selection
-	renderSelection: function(range) {
+	renderSelection: function(span) {
 		// subclasses should implement
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(range, ev) {
+	reportSelection: function(span, ev) {
 		this.isSelected = true;
-		this.triggerSelect(range, ev);
+		this.triggerSelect(span, ev);
 	},
 
 
 	// Triggers handlers to 'select'
-	triggerSelect: function(range, ev) {
-		this.trigger('select', null, range.start, range.end, ev);
+	triggerSelect: function(span, ev) {
+		this.trigger(
+			'select',
+			null,
+			this.calendar.applyTimezone(span.start), // convert to calendar's tz for external API
+			this.calendar.applyTimezone(span.end), // "
+			ev
+		);
 	},
 
 
@@ -841,8 +975,14 @@ var View = fc.View = Class.extend({
 
 
 	// Triggers handlers to 'dayClick'
-	triggerDayClick: function(cell, dayEl, ev) {
-		this.trigger('dayClick', dayEl, cell.start, ev);
+	// Span has start/end of the clicked area. Only the start is useful.
+	triggerDayClick: function(span, dayEl, ev) {
+		this.trigger(
+			'dayClick',
+			dayEl,
+			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
+			ev
+		);
 	},
 
 

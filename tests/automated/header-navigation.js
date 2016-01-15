@@ -53,7 +53,8 @@ describe('header navigation', function() {
 		it('should change view to prev month', function() {
 			$('#calendar').fullCalendar('gotoDate', '2010-02-01');
 			$('.fc-today-button').simulate('click');
-			var newDate = $('#calendar').fullCalendar('getDate');
+			var newDate = $('#calendar').fullCalendar('getDate'); // will be ambig zone
+			newDate.local(); // assign the local timezone
 			expect(newDate).toEqualNow();
 		});
 	});

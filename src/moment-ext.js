@@ -16,12 +16,12 @@ var setLocalValues; // function defined below
 // extra features (ambiguous time, enhanced formatting). When given an existing moment,
 // it will function as a clone (and retain the zone of the moment). Anything else will
 // result in a moment in the local zone.
-fc.moment = function() {
+FC.moment = function() {
 	return makeMoment(arguments);
 };
 
-// Sames as fc.moment, but forces the resulting moment to be in the UTC timezone.
-fc.moment.utc = function() {
+// Sames as FC.moment, but forces the resulting moment to be in the UTC timezone.
+FC.moment.utc = function() {
 	var mom = makeMoment(arguments, true);
 
 	// Force it into UTC because makeMoment doesn't guarantee it
@@ -33,9 +33,9 @@ fc.moment.utc = function() {
 	return mom;
 };
 
-// Same as fc.moment, but when given an ISO8601 string, the timezone offset is preserved.
+// Same as FC.moment, but when given an ISO8601 string, the timezone offset is preserved.
 // ISO8601 strings with no timezone offset will become ambiguously zoned.
-fc.moment.parseZone = function() {
+FC.moment.parseZone = function() {
 	return makeMoment(arguments, true, true);
 };
 
@@ -378,7 +378,7 @@ newMomentProto.isSame = function(input, units) {
 		return oldMomentProto.isSame.call(a[0], a[1], units);
 	}
 	else {
-		input = fc.moment.parseZone(input); // normalize input
+		input = FC.moment.parseZone(input); // normalize input
 		return oldMomentProto.isSame.call(this, input) &&
 			Boolean(this._ambigTime) === Boolean(input._ambigTime) &&
 			Boolean(this._ambigZone) === Boolean(input._ambigZone);
@@ -422,7 +422,7 @@ function commonlyAmbiguate(inputs, preserveTime) {
 	for (i = 0; i < len; i++) {
 		mom = inputs[i];
 		if (!moment.isMoment(mom)) {
-			mom = fc.moment.parseZone(mom);
+			mom = FC.moment.parseZone(mom);
 		}
 		anyAmbigTime = anyAmbigTime || mom._ambigTime;
 		anyAmbigZone = anyAmbigZone || mom._ambigZone;

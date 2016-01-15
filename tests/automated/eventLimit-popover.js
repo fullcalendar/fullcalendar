@@ -229,8 +229,8 @@ describe('eventLimit popover', function() {
 				init();
 
 				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
-					$('.fc-more-popover .event4').simulate('drag-n-drop', {
-						dragTarget: $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(1)') // one day before
+					$('.fc-more-popover .event4').simulate('drag', {
+						end: $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(1)') // one day before
 					});
 				}, 0);
 			});
@@ -253,8 +253,8 @@ describe('eventLimit popover', function() {
 				init();
 
 				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
-					$('.fc-more-popover .event5').simulate('drag-n-drop', {
-						dragTarget: $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(1)') // one day before
+					$('.fc-more-popover .event5').simulate('drag', {
+						end: $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(1)') // one day before
 					});
 				}, 0);
 			});
@@ -274,8 +274,8 @@ describe('eventLimit popover', function() {
 				init();
 
 				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
-					$('.fc-more-popover .event4').simulate('drag-n-drop', {
-						dragTarget: $('.fc-slats tr:eq(6)') // the middle will be 7/30, 3:00am
+					$('.fc-more-popover .event4').simulate('drag', {
+						end: $('.fc-slats tr:eq(6)') // the middle will be 7/30, 3:00am
 					});
 				}, 0);
 			});
@@ -294,7 +294,7 @@ describe('eventLimit popover', function() {
 				init();
 
 				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
-					$('.fc-more-popover .event1 .fc-title').simulate('drag-n-drop', {
+					$('.fc-more-popover .event1 .fc-title').simulate('drag', {
 						dx: 20
 					});
 				}, 0);

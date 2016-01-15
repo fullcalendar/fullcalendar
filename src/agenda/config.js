@@ -1,6 +1,16 @@
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
+// potential nice values for the slot-duration and interval-duration
+// from largest to smallest
+var AGENDA_STOCK_SUB_DURATIONS = [
+	{ hours: 1 },
+	{ minutes: 30 },
+	{ minutes: 15 },
+	{ seconds: 30 },
+	{ seconds: 15 }
+];
+
 fcViews.agenda = {
 	'class': AgendaView,
 	defaults: {

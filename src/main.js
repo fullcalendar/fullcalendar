@@ -1,6 +1,9 @@
 
-var fc = $.fullCalendar = { version: "<%= meta.version %>" };
-var fcViews = fc.views = {};
+var FC = $.fullCalendar = {
+	version: "<%= meta.version %>",
+	internalApiVersion: 2
+};
+var fcViews = FC.views = {};
 
 
 $.fn.fullCalendar = function(options) {
