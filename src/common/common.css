@@ -671,3 +671,12 @@ a.fc-more:hover {
 .fc-more-popover .fc-event-container {
 	padding: 10px;
 }
+
+
+/* Now Indicator
+--------------------------------------------------------------------------------------------------*/
+
+.fc-now-indicator {
+	position: absolute;
+	border: 0 solid red;
+}

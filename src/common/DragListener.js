@@ -1,8 +1,9 @@
 
 /* Tracks a drag's mouse movement, firing various handlers
 ----------------------------------------------------------------------------------------------------------------------*/
+// TODO: use Emitter
 
-var DragListener = fc.DragListener = Class.extend({
+var DragListener = FC.DragListener = Class.extend({
 
 	options: null,
 

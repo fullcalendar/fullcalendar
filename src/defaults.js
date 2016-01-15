@@ -25,6 +25,8 @@ Calendar.defaults = {
 	
 	//editable: false,
 
+	//nowIndicator: false,
+
 	scrollTime: '06:00:00',
 	
 	// event ajax
@@ -76,6 +78,8 @@ Calendar.defaults = {
 	unselectAuto: true,
 	
 	dropAccept: '*',
+
+	eventOrder: 'title',
 
 	eventLimit: false,
 	eventLimitText: 'more',

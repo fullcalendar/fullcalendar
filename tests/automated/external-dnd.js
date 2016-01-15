@@ -65,8 +65,8 @@ describe('external drag and drop', function() {
 							$('#cal').fullCalendar('next');
 							$('#cal').fullCalendar('prev');
 							setTimeout(function() { // needed for IE8
-								$('#sidebar .event2').simulate('drag-n-drop', {
-									dropTarget: getMonthCell(1, 3)
+								$('#sidebar .event2').simulate('drag', {
+									end: getMonthCell(1, 3)
 								});
 							}, 0);
 						}
@@ -80,8 +80,8 @@ describe('external drag and drop', function() {
 					init();
 
 					setTimeout(function() { // needed for IE8
-						$('#sidebar .event1').simulate('drag-n-drop', {
-							dropTarget: getMonthCell(1, 3)
+						$('#sidebar .event1').simulate('drag', {
+							end: getMonthCell(1, 3)
 						});
 					}, 0);
 				});
@@ -96,8 +96,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: getMonthCell(1, 3),
+							$('#sidebar .event1').simulate('drag', {
+								end: getMonthCell(1, 3),
 								callback: function() {
 									expect(options.drop).toHaveBeenCalled();
 									done();
@@ -114,8 +114,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: getMonthCell(1, 3),
+							$('#sidebar .event1').simulate('drag', {
+								end: getMonthCell(1, 3),
 								callback: function() {
 									expect(options.drop).not.toHaveBeenCalled();
 									done();
@@ -136,8 +136,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: getMonthCell(1, 3),
+							$('#sidebar .event1').simulate('drag', {
+								end: getMonthCell(1, 3),
 								callback: function() {
 									expect(options.drop).toHaveBeenCalled();
 									done();
@@ -158,8 +158,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: getMonthCell(1, 3),
+							$('#sidebar .event1').simulate('drag', {
+								end: getMonthCell(1, 3),
 								callback: function() {
 									expect(options.drop).not.toHaveBeenCalled();
 									done();
@@ -188,8 +188,8 @@ describe('external drag and drop', function() {
 							$('#cal').fullCalendar('next');
 							$('#cal').fullCalendar('prev');
 							setTimeout(function() { // needed for IE8, for firing the second time, for some reason
-								$('#sidebar .event2').simulate('drag-n-drop', {
-									dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
+								$('#sidebar .event2').simulate('drag', {
+									end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
 								});
 							}, 0);
 						}
@@ -203,8 +203,8 @@ describe('external drag and drop', function() {
 					init();
 
 					setTimeout(function() { // needed for IE8
-						$('#sidebar .event1').simulate('drag-n-drop', {
-							dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
+						$('#sidebar .event1').simulate('drag', {
+							end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
 						});
 					}, 0);
 				});
@@ -219,8 +219,8 @@ describe('external drag and drop', function() {
 					init();
 
 					setTimeout(function() { // needed for IE8
-						$('#sidebar .event1').simulate('drag-n-drop', {
-							dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
+						$('#sidebar .event1').simulate('drag', {
+							end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
 						});
 					}, 0);
 				});
@@ -235,8 +235,8 @@ describe('external drag and drop', function() {
 					init();
 
 					setTimeout(function() { // needed for IE8
-						$('#sidebar .event1').simulate('drag-n-drop', {
-							dropTarget: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, UTC TIME
+						$('#sidebar .event1').simulate('drag', {
+							end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, UTC TIME
 						});
 					}, 0);
 				});
@@ -251,8 +251,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: $('.fc-slats tr:eq(2)'),
+							$('#sidebar .event1').simulate('drag', {
+								end: $('.fc-slats tr:eq(2)'),
 								callback: function() {
 									expect(options.drop).toHaveBeenCalled();
 									done();
@@ -269,8 +269,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: $('.fc-slats tr:eq(2)'),
+							$('#sidebar .event1').simulate('drag', {
+								end: $('.fc-slats tr:eq(2)'),
 								callback: function() {
 									expect(options.drop).not.toHaveBeenCalled();
 									done();
@@ -291,8 +291,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: $('.fc-slats tr:eq(2)'),
+							$('#sidebar .event1').simulate('drag', {
+								end: $('.fc-slats tr:eq(2)'),
 								callback: function() {
 									expect(options.drop).toHaveBeenCalled();
 									done();
@@ -313,8 +313,8 @@ describe('external drag and drop', function() {
 						init();
 
 						setTimeout(function() { // needed for IE8
-							$('#sidebar .event1').simulate('drag-n-drop', {
-								dropTarget: $('.fc-slats tr:eq(2)'),
+							$('#sidebar .event1').simulate('drag', {
+								end: $('.fc-slats tr:eq(2)'),
 								callback: function() {
 									expect(options.drop).not.toHaveBeenCalled();
 									done();

@@ -49,7 +49,6 @@ module.exports = function(grunt) {
 
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
-		'shell:assume-unchanged',
 		'lumbar:build',
 		'languages'
 	]);
@@ -274,8 +273,9 @@ module.exports = function(grunt) {
 	// copy license and changelog
 	config.copy.archiveMisc = {
 		files: {
-			'build/temp/archive/license.txt': 'license.txt',
-			'build/temp/archive/changelog.txt': 'changelog.md'
+			'build/temp/archive/LICENSE.txt': 'LICENSE.txt',
+			'build/temp/archive/CHANGELOG.txt': 'CHANGELOG.md',
+			'build/temp/archive/CONTRIBUTING.txt': 'CONTRIBUTING.md'
 		}
 	};
 
@@ -314,68 +314,6 @@ module.exports = function(grunt) {
 
 
 
-	/* CDNJS (http://cdnjs.com/)
-	----------------------------------------------------------------------------------------------------*/
-
-	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
-		'clean:cdnjs',
-		'modules',
-		'languages',
-		'karma:single',
-		'cdnjsDist'
-	]);
-
-	grunt.registerTask('cdnjsDist', [
-		'copy:cdnjsModules',
-		'copy:cdnjsLanguages',
-		'copy:cdnjsLanguagesAll',
-		'cdnjsConfig'
-	]);
-
-	config.copy.cdnjsModules = {
-		expand: true,
-		cwd: 'dist/',
-		src: [ '*.js', '*.css' ],
-		dest: 'dist/cdnjs/<%= meta.version %>/'
-	};
-
-	config.copy.cdnjsLanguages = {
-		expand: true,
-		cwd: 'dist/lang/',
-		src: '*.js',
-		dest: 'dist/cdnjs/<%= meta.version %>/lang/'
-	};
-
-	config.copy.cdnjsLanguagesAll = {
-		src: 'dist/lang-all.js',
-		dest: 'dist/cdnjs/<%= meta.version %>/lang-all.js'
-	};
-
-	grunt.registerTask('cdnjsConfig', function() {
-		var config = grunt.file.readJSON('package.json');
-
-		// things that CDNJS doesn't need
-		delete config.devDependencies;
-		delete config.main;
-		delete config.files;
-		delete config.ignore;
-
-		_.extend(config, grunt.file.readJSON('build/cdnjs.json')); // CDNJS-specific settings
-
-		grunt.file.write(
-			'dist/cdnjs/package.json',
-			JSON.stringify(
-				config,
-				null, // replace
-				2 // indent
-			)
-		);
-	});
-
-	//config.clean.cdnjs = 'dist/cdnjs';
-
-
-
 	/* Linting and Code Style Checking
 	----------------------------------------------------------------------------------------------------*/
 
@@ -389,24 +327,6 @@ module.exports = function(grunt) {
 	// configs located elsewhere
 	config.jshint = require('./build/jshint.conf');
 	config.jscs = require('./build/jscs.conf');
-
-
-
-	/* dist & git hacks
-	----------------------------------------------------------------------------------------------------
-	// These shell commands are used to force/unforce git from thinking that files have changed.
-	// Used to ignore changes when dist files are overwritten, but not committed, during development.
-	*/
-
-	config.shell['assume-unchanged'] = {
-		command: 'git update-index --assume-unchanged `git ls-files dist`'
-	};
-	config.shell['no-assume-unchanged'] = {
-		command: 'git update-index --no-assume-unchanged `git ls-files dist`'
-	};
-	config.shell['list-assume-unchanged'] = {
-		command: 'git ls-files -v | grep \'^h\''
-	};
 
 
 

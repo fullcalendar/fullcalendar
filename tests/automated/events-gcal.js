@@ -1,5 +1,7 @@
 
-describe('Google Calendar plugin', function() {
+// TODO: revive
+// Google removes holidays that are old, and returns no results, breaking these tests
+xdescribe('Google Calendar plugin', function() {
 
 	var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE';
 	var options;
