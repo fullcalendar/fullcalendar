@@ -370,7 +370,7 @@ function Calendar_constructor(element, overrides) {
 			}
 		}
 		else if (weekCalc === 'local') {
-			weekCalcFirstDoW = localeDoW;
+			weekCalcFirstDoW = +localeDoW; // Unary plus ensures type number
 		}
 		return weekCalcFirstDoW;
 	})(localeData._fullCalendar_weekCalc, localeData._week.dow);
