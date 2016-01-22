@@ -8,7 +8,7 @@ Grid.mixin({
 	isDraggingSeg: false, // is a segment being dragged? boolean
 	isResizingSeg: false, // is a segment being resized? boolean
 	isDraggingExternal: false, // jqui-dragging an external element? boolean
-	segs: null, // the event segments currently rendered in the grid
+	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
 	// Renders the given events onto the grid
@@ -297,7 +297,7 @@ Grid.mixin({
 					event
 				);
 
-				if (dropLocation &&!calendar.isEventSpanAllowed(_this.eventToSpan(dropLocation), event)) {
+				if (dropLocation && !calendar.isEventSpanAllowed(_this.eventToSpan(dropLocation), event)) {
 					disableCursor();
 					dropLocation = null;
 				}
@@ -360,6 +360,7 @@ Grid.mixin({
 	// Given the spans an event drag began, and the span event was dropped, calculates the new zoned start/end/allDay
 	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
 	// A falsy returned value indicates an invalid drop.
+	// DOES NOT consider overlap/constraint.
 	computeEventDrop: function(startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
 		var dragStart = startSpan.start;
@@ -449,6 +450,7 @@ Grid.mixin({
 	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
+		var calendar = this.view.calendar;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var dropLocation; // a null value signals an unsuccessful drag
 
@@ -462,22 +464,27 @@ Grid.mixin({
 					hit.component.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
 					meta
 				);
+
+				if ( // invalid hit?
+					dropLocation &&
+					!calendar.isExternalSpanAllowed(_this.eventToSpan(dropLocation), dropLocation, meta.eventProps)
+				) {
+					disableCursor();
+					dropLocation = null;
+				}
+
 				if (dropLocation) {
 					_this.renderDrag(dropLocation); // called without a seg parameter
-				}
-				else { // invalid hit
-					disableCursor();
 				}
 			},
 			hitOut: function() {
 				dropLocation = null; // signal unsuccessful
-				_this.unrenderDrag();
+			},
+			hitDone: function() { // Called after a hitOut OR before a dragStop
 				enableCursor();
+				_this.unrenderDrag();
 			},
 			dragStop: function() {
-				_this.unrenderDrag();
-				enableCursor();
-
 				if (dropLocation) { // element was dropped on a valid hit
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
@@ -494,6 +501,7 @@ Grid.mixin({
 	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
 	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
+	// DOES NOT consider overlap/constraint.
 	computeExternalDrop: function(span, meta) {
 		var calendar = this.view.calendar;
 		var dropLocation = {
@@ -508,10 +516,6 @@ Grid.mixin({
 
 		if (meta.duration) {
 			dropLocation.end = dropLocation.start.clone().add(meta.duration);
-		}
-
-		if (!calendar.isExternalSpanAllowed(this.eventToSpan(dropLocation), dropLocation, meta.eventProps)) {
-			return null;
 		}
 
 		return dropLocation;
@@ -634,7 +638,8 @@ Grid.mixin({
 
 
 	// Returns new zoned date information for an event segment being resized from its start OR end
-	// `type` is either 'start' or 'end'
+	// `type` is either 'start' or 'end'.
+	// DOES NOT consider overlap/constraint.
 	computeEventResize: function(type, startSpan, endSpan, event) {
 		var calendar = this.view.calendar;
 		var delta = this.diffDates(endSpan[type], startSpan[type]);
@@ -781,18 +786,25 @@ Grid.mixin({
 
 
 	// Generates an array of segments for the given single event
+	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToSegs: function(event) {
 		return this.eventsToSegs([ event ]);
 	},
 
 
-	// Generates a single span (always unzoned) by using the given event's dates.
-	// Does not do any inverting for inverse-background events.
 	eventToSpan: function(event) {
-		var range = this.eventToRange(event);
-		this.transformEventSpan(range, event); // convert it to a span, in-place
-		return range;
+		return this.eventToSpans(event)[0];
 	},
+
+
+	// Generates spans (always unzoned) for the given event.
+	// Does not do any inverting for inverse-background events.
+	// Can accept an event "location" as well (which only has start/end and no allDay)
+	eventToSpans: function(event) {
+		var range = this.eventToRange(event);
+		return this.eventRangeToSpans(range, event);
+	},
+
 
 
 	// Converts an array of event objects into an array of event segment objects.
@@ -816,13 +828,15 @@ Grid.mixin({
 				ranges = _this.invertRanges(ranges);
 
 				for (i = 0; i < ranges.length; i++) {
-					_this.generateEventSegs(ranges[i], events[0], segSliceFunc, segs);
+					segs.push.apply(segs, // append to
+						_this.eventRangeToSegs(ranges[i], events[0], segSliceFunc));
 				}
 			}
 			// normal event ranges
 			else {
 				for (i = 0; i < ranges.length; i++) {
-					_this.generateEventSegs(ranges[i], events[i], segSliceFunc, segs);
+					segs.push.apply(segs, // append to
+						_this.eventRangeToSegs(ranges[i], events[i], segSliceFunc));
 				}
 			}
 		});
@@ -832,44 +846,62 @@ Grid.mixin({
 
 
 	// Generates the unzoned start/end dates an event appears to occupy
+	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToRange: function(event) {
 		return {
 			start: event.start.clone().stripZone(),
-			end: this.view.calendar.getEventEnd(event).stripZone()
+			end: (
+				event.end ?
+					event.end.clone() :
+					// derive the end from the start and allDay. compute allDay if necessary
+					this.view.calendar.getDefaultEventEnd(
+						event.allDay != null ?
+							event.allDay :
+							!event.start.hasTime(),
+						event.start
+					)
+			).stripZone()
 		};
 	},
 
 
-	// Given an event's span (unzoned start/end and other misc data), and the event itself,
-	// slice into segments (using the segSliceFunc function if specified) and append to the `out` array.
-	// SIDE EFFECT: will mutate the given `range`.
-	generateEventSegs: function(range, event, segSliceFunc, out) {
-		var segs;
+	// Given an event's range (unzoned start/end), and the event itself,
+	// slice into segments (using the segSliceFunc function if specified)
+	eventRangeToSegs: function(range, event, segSliceFunc) {
+		var spans = this.eventRangeToSpans(range, event);
+		var segs = [];
 		var i;
 
-		this.transformEventSpan(range, event); // converts the range to a span
+		for (i = 0; i < spans.length; i++) {
+			segs.push.apply(segs, // append to
+				this.eventSpanToSegs(spans[i], event, segSliceFunc));
+		}
 
-		segs = segSliceFunc ? segSliceFunc(range) : this.spanToSegs(range);
+		return segs;
+	},
+
+
+	// Given an event's unzoned date range, return an array of "span" objects.
+	// Subclasses can override.
+	eventRangeToSpans: function(range, event) {
+		return [ $.extend({}, range) ]; // copy into a single-item array
+	},
+
+
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slices into segments and attaches event-derived properties to them.
+	eventSpanToSegs: function(span, event, segSliceFunc) {
+		var segs = segSliceFunc ? segSliceFunc(span) : this.spanToSegs(span);
+		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
-			this.transformEventSeg(segs[i], range, event);
-			out.push(segs[i]);
+			seg = segs[i];
+			seg.event = event;
+			seg.eventStartMS = +span.start; // TODO: not the best name after making spans unzoned
+			seg.eventDurationMS = span.end - span.start;
 		}
-	},
 
-
-	// Given a range (unzoned start/end) that is about to become a span,
-	// attach any event-derived properties to it.
-	transformEventSpan: function(range, event) {
-		// subclasses can implement
-	},
-
-
-	// Given a segment object, attach any extra properties, based off of its source span and event.
-	transformEventSeg: function(seg, span, event) {
-		seg.event = event;
-		seg.eventStartMS = +span.start; // TODO: not the best name after making spans unzoned
-		seg.eventDurationMS = span.end - span.start;
+		return segs;
 	},
 
 
@@ -936,6 +968,7 @@ function isBgEvent(event) { // returns true if background OR inverse-background
 	var rendering = getEventRendering(event);
 	return rendering === 'background' || rendering === 'inverse-background';
 }
+FC.isBgEvent = isBgEvent; // export
 
 
 function isInverseBgEvent(event) {

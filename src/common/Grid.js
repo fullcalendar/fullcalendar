@@ -408,8 +408,38 @@ var Grid = FC.Grid = Class.extend({
 	},
 
 
-	/* Fill System (highlight, background events, business hours)
+	/* Business Hours
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderBusinessHours: function() {
+	},
+
+
+	unrenderBusinessHours: function() {
+	},
+
+
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	getNowIndicatorUnit: function() {
+	},
+
+
+	renderNowIndicator: function(date) {
+	},
+
+
+	unrenderNowIndicator: function() {
+	},
+
+
+	/* Fill System (highlight, background events, business hours)
+	--------------------------------------------------------------------------------------------------------------------
+	TODO: remove this system. like we did in TimeGrid
+	*/
 
 
 	// Renders a set of rectangles over the given segments of time.
@@ -504,7 +534,7 @@ var Grid = FC.Grid = Class.extend({
 	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date) {
 		var view = this.view;
-		var today = view.calendar.getNow().stripTime();
+		var today = view.calendar.getNow();
 		var classes = [ 'fc-' + dayIDs[date.day()] ];
 
 		if (
