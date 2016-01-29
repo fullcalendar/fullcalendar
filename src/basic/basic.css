@@ -41,6 +41,21 @@
 	padding-bottom: 2px;
 }
 
+.fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+	width: 1.5em;
+	text-align: center;
+	background-color: #f2f2f2;
+	color: #808080;
+}
+
+.fc-ltr .fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+	border-radius: 0 0 3px 0;
+}
+
+.fc-rtl .fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+	border-radius: 0 0 0 3px;
+}
+
 .fc-basic-view td.fc-week-number {
 	text-align: center;
 }
