@@ -2,57 +2,77 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function DayGrid(view) {
-	Grid.call(this, view); // call the super-constructor
-}
+var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
-
-DayGrid.prototype = createObject(Grid.prototype); // declare the super-class
-$.extend(DayGrid.prototype, {
-
-	numbersVisible: false, // should render a row for day/week numbers? manually set by the view
-	cellDuration: moment.duration({ days: 1 }), // required for Grid.event.js. Each cell is always a single day
+	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
 
 	rowEls: null, // set of fake row elements
-	dayEls: null, // set of whole-day elements comprising the row's background
+	cellEls: null, // set of whole-day elements comprising the row's background
 	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
-	highlightEls: null, // set of cell skeleton elements for rendering the highlight
+
+	rowCoordCache: null,
+	colCoordCache: null,
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
 	// isRigid determins whether the individual rows should ignore the contents and be a constant height.
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
-	render: function(isRigid) {
+	renderDates: function(isRigid) {
 		var view = this.view;
+		var rowCnt = this.rowCnt;
+		var colCnt = this.colCnt;
 		var html = '';
 		var row;
+		var col;
 
-		for (row = 0; row < view.rowCnt; row++) {
-			html += this.dayRowHtml(row, isRigid);
+		for (row = 0; row < rowCnt; row++) {
+			html += this.renderDayRowHtml(row, isRigid);
 		}
 		this.el.html(html);
 
 		this.rowEls = this.el.find('.fc-row');
-		this.dayEls = this.el.find('.fc-day');
+		this.cellEls = this.el.find('.fc-day');
 
-		// run all the day cells through the dayRender callback
-		this.dayEls.each(function(i, node) {
-			var date = view.cellToDate(Math.floor(i / view.colCnt), i % view.colCnt);
-			view.trigger('dayRender', null, date, $(node));
+		this.rowCoordCache = new CoordCache({
+			els: this.rowEls,
+			isVertical: true
+		});
+		this.colCoordCache = new CoordCache({
+			els: this.cellEls.slice(0, this.colCnt), // only the first row
+			isHorizontal: true
 		});
 
-		Grid.prototype.render.call(this); // call the super-method
+		// trigger dayRender with each cell's element
+		for (row = 0; row < rowCnt; row++) {
+			for (col = 0; col < colCnt; col++) {
+				view.trigger(
+					'dayRender',
+					null,
+					this.getCellDate(row, col),
+					this.getCellEl(row, col)
+				);
+			}
+		}
 	},
 
 
-	destroy: function() {
-		this.destroySegPopover();
+	unrenderDates: function() {
+		this.removeSegPopover();
 	},
 
 
-	// Generates the HTML for a single row. `row` is the row number.
-	dayRowHtml: function(row, isRigid) {
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents(true); // wholeDay=true
+		var segs = this.eventsToSegs(events);
+
+		this.renderFill('businessHours', segs, 'bgevent');
+	},
+
+
+	// Generates the HTML for a single row, which is a div that wraps a table.
+	// `row` is the row number.
+	renderDayRowHtml: function(row, isRigid) {
 		var view = this.view;
 		var classes = [ 'fc-row', 'fc-week', view.widgetContentClass ];
 
@@ -64,14 +84,14 @@ $.extend(DayGrid.prototype, {
 			'<div class="' + classes.join(' ') + '">' +
 				'<div class="fc-bg">' +
 					'<table>' +
-						this.rowHtml('day', row) + // leverages RowRenderer. calls dayCellHtml()
+						this.renderBgTrHtml(row) +
 					'</table>' +
 				'</div>' +
 				'<div class="fc-content-skeleton">' +
 					'<table>' +
 						(this.numbersVisible ?
 							'<thead>' +
-								this.rowHtml('number', row) + // leverages RowRenderer. View will define render method
+								this.renderNumberTrHtml(row) +
 							'</thead>' :
 							''
 							) +
@@ -81,90 +101,180 @@ $.extend(DayGrid.prototype, {
 	},
 
 
-	// Renders the HTML for a whole-day cell. Will eventually end up in the day-row's background.
-	// We go through a 'day' row type instead of just doing a 'bg' row type so that the View can do custom rendering
-	// specifically for whole-day rows, whereas a 'bg' might also be used for other purposes (TimeGrid bg for example).
-	dayCellHtml: function(row, col, date) {
-		return this.bgCellHtml(row, col, date);
-	},
-
-
-	/* Coordinates & Cells
+	/* Grid Number Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Populates the empty `rows` and `cols` arrays with coordinates of the cells. For CoordGrid.
-	buildCoords: function(rows, cols) {
-		var colCnt = this.view.colCnt;
-		var e, n, p;
+	renderNumberTrHtml: function(row) {
+		return '' +
+			'<tr>' +
+				(this.isRTL ? '' : this.renderNumberIntroHtml(row)) +
+				this.renderNumberCellsHtml(row) +
+				(this.isRTL ? this.renderNumberIntroHtml(row) : '') +
+			'</tr>';
+	},
 
-		this.dayEls.slice(0, colCnt).each(function(i, _e) { // iterate the first row of day elements
-			e = $(_e);
-			n = e.offset().left;
-			if (i) {
-				p[1] = n;
+
+	renderNumberIntroHtml: function(row) {
+		return this.renderIntroHtml();
+	},
+
+
+	renderNumberCellsHtml: function(row) {
+		var htmls = [];
+		var col, date;
+
+		for (col = 0; col < this.colCnt; col++) {
+			date = this.getCellDate(row, col);
+			htmls.push(this.renderNumberCellHtml(date));
+		}
+
+		return htmls.join('');
+	},
+
+
+	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
+	// The number row will only exist if either day numbers or week numbers are turned on.
+	renderNumberCellHtml: function(date) {
+		var classes;
+
+		if (!this.view.dayNumbersVisible) { // if there are week numbers but not day numbers
+			return '<td/>'; //  will create an empty space above events :(
+		}
+
+		classes = this.getDayClasses(date);
+		classes.unshift('fc-day-number');
+
+		return '' +
+			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
+				date.date() +
+			'</td>';
+	},
+
+
+	/* Options
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+	computeEventTimeFormat: function() {
+		return this.view.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
+	},
+
+
+	// Computes a default `displayEventEnd` value if one is not expliclty defined
+	computeDisplayEventEnd: function() {
+		return this.colCnt == 1; // we'll likely have space if there's only one day
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	rangeUpdated: function() {
+		this.updateDayTable();
+	},
+
+
+	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
+	spanToSegs: function(span) {
+		var segs = this.sliceRangeByRow(span);
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			if (this.isRTL) {
+				seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex;
+				seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex;
 			}
-			p = [ n ];
-			cols[i] = p;
-		});
-		p[1] = n + e.outerWidth();
-
-		this.rowEls.each(function(i, _e) {
-			e = $(_e);
-			n = e.offset().top;
-			if (i) {
-				p[1] = n;
+			else {
+				seg.leftCol = seg.firstRowDayIndex;
+				seg.rightCol = seg.lastRowDayIndex;
 			}
-			p = [ n ];
-			rows[i] = p;
-		});
-		p[1] = n + e.outerHeight() + this.bottomCoordPadding; // hack to extend hit area of last row
+		}
+
+		return segs;
 	},
 
 
-	// Converts a cell to a date
-	getCellDate: function(cell) {
-		return this.view.cellToDate(cell); // leverages the View's cell system
+	/* Hit System
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	prepareHits: function() {
+		this.colCoordCache.build();
+		this.rowCoordCache.build();
+		this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding; // hack
 	},
 
 
-	// Gets the whole-day element associated with the cell
-	getCellDayEl: function(cell) {
-		return this.dayEls.eq(cell.row * this.view.colCnt + cell.col);
+	releaseHits: function() {
+		this.colCoordCache.clear();
+		this.rowCoordCache.clear();
 	},
 
 
-	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
-	rangeToSegs: function(start, end) {
-		return this.view.rangeToSegments(start, end); // leverages the View's cell system
+	queryHit: function(leftOffset, topOffset) {
+		var col = this.colCoordCache.getHorizontalIndex(leftOffset);
+		var row = this.rowCoordCache.getVerticalIndex(topOffset);
+
+		if (row != null && col != null) {
+			return this.getCellHit(row, col);
+		}
+	},
+
+
+	getHitSpan: function(hit) {
+		return this.getCellRange(hit.row, hit.col);
+	},
+
+
+	getHitEl: function(hit) {
+		return this.getCellEl(hit.row, hit.col);
+	},
+
+
+	/* Cell System
+	------------------------------------------------------------------------------------------------------------------*/
+	// FYI: the first column is the leftmost column, regardless of date
+
+
+	getCellHit: function(row, col) {
+		return {
+			row: row,
+			col: col,
+			component: this, // needed unfortunately :(
+			left: this.colCoordCache.getLeftOffset(col),
+			right: this.colCoordCache.getRightOffset(col),
+			top: this.rowCoordCache.getTopOffset(row),
+			bottom: this.rowCoordCache.getBottomOffset(row)
+		};
+	},
+
+
+	getCellEl: function(row, col) {
+		return this.cellEls.eq(row * this.colCnt + col);
 	},
 
 
 	/* Event Drag Visualization
 	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: move to DayGrid.event, similar to what we did with Grid's drag methods
 
 
-	// Renders a visual indication of an event hovering over the given date(s).
-	// `end` can be null, as well as `seg`. See View's documentation on renderDrag for more info.
-	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		var opacity;
+	// Renders a visual indication of an event or external element being dragged.
+	// `eventLocation` has zoned start and end (optional)
+	renderDrag: function(eventLocation, seg) {
 
 		// always render a highlight underneath
-		this.renderHighlight(
-			start,
-			end || this.view.calendar.getDefaultEventEnd(true, start)
-		);
+		this.renderHighlight(this.eventToSpan(eventLocation));
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
 
-			this.renderRangeHelper(start, end, seg);
-
-			opacity = this.view.opt('dragOpacity');
-			if (opacity !== undefined) {
-				this.helperEls.css('opacity', opacity);
-			}
+			this.renderEventLocationHelper(eventLocation, seg);
+			this.applyDragOpacity(this.helperEls);
 
 			return true; // a helper has been rendered
 		}
@@ -172,9 +282,9 @@ $.extend(DayGrid.prototype, {
 
 
 	// Unrenders any visual indication of a hovering event
-	destroyDrag: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderDrag: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -183,16 +293,16 @@ $.extend(DayGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
-		this.renderHighlight(start, end);
-		this.renderRangeHelper(start, end, seg);
+	renderEventResize: function(eventLocation, seg) {
+		this.renderHighlight(this.eventToSpan(eventLocation));
+		this.renderEventLocationHelper(eventLocation, seg);
 	},
 
 
 	// Unrenders a visual indication of an event being resized
-	destroyResize: function() {
-		this.destroyHighlight();
-		this.destroyHelper();
+	unrenderEventResize: function() {
+		this.unrenderHighlight();
+		this.unrenderHelper();
 	},
 
 
@@ -203,7 +313,11 @@ $.extend(DayGrid.prototype, {
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
 	renderHelper: function(event, sourceSeg) {
 		var helperNodes = [];
-		var rowStructs = this.renderEventRows([ event ]);
+		var segs = this.eventToSegs(event);
+		var rowStructs;
+
+		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		rowStructs = this.renderSegRows(segs);
 
 		// inject each new event skeleton into each associated row
 		this.rowEls.each(function(row, rowNode) {
@@ -232,7 +346,7 @@ $.extend(DayGrid.prototype, {
 
 
 	// Unrenders any visual indication of a mock helper event
-	destroyHelper: function() {
+	unrenderHelper: function() {
 		if (this.helperEls) {
 			this.helperEls.remove();
 			this.helperEls = null;
@@ -240,65 +354,67 @@ $.extend(DayGrid.prototype, {
 	},
 
 
-	/* Highlighting
+	/* Fill System (highlight, background events, business hours)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is an inclusive, `end` is exclusive.
-	renderHighlight: function(start, end) {
-		var segs = this.rangeToSegs(start, end);
-		var highlightNodes = [];
-		var i, seg;
-		var el;
+	fillSegTag: 'td', // override the default tag name
 
-		// build an event skeleton for each row that needs it
+
+	// Renders a set of rectangles over the given segments of days.
+	// Only returns segments that successfully rendered.
+	renderFill: function(type, segs, className) {
+		var nodes = [];
+		var i, seg;
+		var skeletonEl;
+
+		segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
-			el = $(
-				this.highlightSkeletonHtml(seg.leftCol, seg.rightCol + 1) // make end exclusive
-			);
-			el.appendTo(this.rowEls[seg.row]);
-			highlightNodes.push(el[0]);
+			skeletonEl = this.renderFillRow(type, seg, className);
+			this.rowEls.eq(seg.row).append(skeletonEl);
+			nodes.push(skeletonEl[0]);
 		}
 
-		this.highlightEls = $(highlightNodes); // array -> jQuery set
+		this.elsByFill[type] = $(nodes);
+
+		return segs;
 	},
 
 
-	// Unrenders any visual emphasis on a date range
-	destroyHighlight: function() {
-		if (this.highlightEls) {
-			this.highlightEls.remove();
-			this.highlightEls = null;
-		}
-	},
+	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
+	renderFillRow: function(type, seg, className) {
+		var colCnt = this.colCnt;
+		var startCol = seg.leftCol;
+		var endCol = seg.rightCol + 1;
+		var skeletonEl;
+		var trEl;
 
+		className = className || type.toLowerCase();
 
-	// Generates the HTML used to build a single-row "highlight skeleton", a table that frames highlight cells
-	highlightSkeletonHtml: function(startCol, endCol) {
-		var colCnt = this.view.colCnt;
-		var cellHtml = '';
+		skeletonEl = $(
+			'<div class="fc-' + className + '-skeleton">' +
+				'<table><tr/></table>' +
+			'</div>'
+		);
+		trEl = skeletonEl.find('tr');
 
 		if (startCol > 0) {
-			cellHtml += '<td colspan="' + startCol + '"/>';
-		}
-		if (endCol > startCol) {
-			cellHtml += '<td colspan="' + (endCol - startCol) + '" class="fc-highlight" />';
-		}
-		if (colCnt > endCol) {
-			cellHtml += '<td colspan="' + (colCnt - endCol) + '"/>';
+			trEl.append('<td colspan="' + startCol + '"/>');
 		}
 
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
+		trEl.append(
+			seg.el.attr('colspan', endCol - startCol)
+		);
 
-		return '' +
-			'<div class="fc-highlight-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>';
+		if (endCol < colCnt) {
+			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
+		}
+
+		this.bookendCells(trEl);
+
+		return skeletonEl;
 	}
 
 });

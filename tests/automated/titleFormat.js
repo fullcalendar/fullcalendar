@@ -18,7 +18,8 @@ describe('titleFormat', function() {
 
         beforeEach(function() {
             $('#cal').fullCalendar({
-                defaultDate: '2014-06-12'
+                defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - '
             });
         });
 
@@ -46,6 +47,7 @@ describe('titleFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - ',
                 titleFormat: {
                     month: 'YYYY, MMMM',
                     basicWeek: 'D M YYYY',
@@ -80,6 +82,7 @@ describe('titleFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
+                titleRangeSeparator: ' - ',
                 lang: 'fr'
             });
         });
@@ -92,6 +95,69 @@ describe('titleFormat', function() {
                 cal.fullCalendar('changeView', crtView.view);
                 expect(cal.find(SELECTOR).text()).toBe(crtView.expected);
             };
+        });
+    });
+
+    describe('using custom views', function() {
+
+        it('multi-year default only displays year', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiYear: {
+                        type: 'basic',
+                        duration: { years: 2 }
+                    }
+                },
+                defaultView: 'multiYear',
+                defaultDate: '2014-12-25',
+                titleRangeSeparator: ' - '
+            });
+            expect($('h2')).toHaveText('2014 - 2015');
+        });
+
+        it('multi-month default only displays month/year', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiMonth: {
+                        type: 'basic',
+                        duration: { months: 2 }
+                    }
+                },
+                defaultView: 'multiMonth',
+                defaultDate: '2014-12-25',
+                titleRangeSeparator: ' - '
+            });
+            expect($('h2')).toHaveText('December 2014 - January 2015');
+        });
+
+        it('multi-week default displays short full date', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiWeek: {
+                        type: 'basic',
+                        duration: { weeks: 2 }
+                    }
+                },
+                defaultView: 'multiWeek',
+                defaultDate: '2014-12-25',
+                titleRangeSeparator: ' - '
+            });
+            expect($('h2').text()).toMatch(/Dec 21\,? 2014 \- Jan 3\,? 2015/);
+        });
+
+        it('multi-day default displays short full date', function() {
+            $('#cal').fullCalendar({
+                views: {
+                    multiDay: {
+                        type: 'basic',
+                        duration: { days: 2 }
+                    }
+                },
+                defaultView: 'multiDay',
+                defaultDate: '2014-12-25',
+                titleRangeSeparator: ' - '
+            });
+            expect($('h2').text()).toMatch(/Dec 25 \- 26\,? 2014/);
         });
     });
 });

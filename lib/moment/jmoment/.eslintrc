@@ -1,0 +1,15 @@
+env:
+  node: true
+
+rules:
+  curly: 0
+  strict: 0
+  semi: [2, never]
+  quotes: [2, single, avoid-escape]
+  no-use-before-define: [2, nofunc]
+  no-underscore-dangle: 0
+  no-proto: 0
+  no-plusplus: 2
+  eqeqeq: [2, smart]
+  key-spacing: 0
+  no-multi-spaces: 0

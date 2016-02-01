@@ -16,7 +16,6 @@ module.exports = {
 		disallowRightStickedOperators: [ ':' ],
 		disallowSpaceAfterPrefixUnaryOperators: [ '++', '--', '+', '-', '~', '!' ],
 		disallowSpaceBeforePostfixUnaryOperators: [ '++', '--' ],
-		requireCamelCaseOrUpperCaseIdentifiers: true,
 		disallowKeywords: [ 'with' ],
 		disallowMultipleLineStrings: true,
 		requireDotNotation: true,

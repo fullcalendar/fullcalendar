@@ -65,3 +65,40 @@ describe('FCMoment::time', function() {
 		});
 	});
 });
+
+describe('FCMoment::week', function() {
+
+	beforeEach(function() {
+		affix('#cal');
+	});
+
+	it('computes based on a weekNumberCalculation function', function() {
+		$('#cal').fullCalendar({
+			weekNumberCalculation: function(date) {
+				expect(moment.isMoment(date)).toBe(true);
+				return 999;
+			}
+		});
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment();
+		expect(mom.week()).toBe(999);
+	});
+
+	it('computes based on a weekNumberCalculation "ISO" value', function() {
+		$('#cal').fullCalendar({
+			weekNumberCalculation: 'ISO'
+		});
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment('2015-02-22'); // is 9 local week, 8 ISO week
+		expect(mom.week()).toBe(8);
+	});
+
+	it('computes based on a weekNumberCalculation "local" value', function() {
+		$('#cal').fullCalendar({
+			weekNumberCalculation: 'local'
+		});
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var mom = calendar.moment('2015-02-22'); // is 9 local week, 8 ISO week
+		expect(mom.week()).toBe(9);
+	});
+});

@@ -2,8 +2,6 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='../src/pwt-date.js'></script>
-
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/dist/jquery.js'></script>
@@ -35,8 +33,7 @@
 		console.log("Events " + events.length);
 		var runStart = new Date();
 		$('#calendar').fullCalendar({
-	            lang:'persianJalali',
-		//eventLimit:true,
+			//eventLimit:true,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -47,12 +44,12 @@
 			events: events
 		});
 		var runSetup = new Date();
+		console.log("Milliseconds to setup: " + (runSetup.getTime() - runStart.getTime()));
 		$('#calendar').fullCalendar("removeEventSource", events);
 		var runRemove = new Date();
+		console.log("Remove source: " + (runRemove.getTime() - runSetup.getTime()));
 		$('#calendar').fullCalendar("addEventSource", events);
 		var runAdd = new Date();
-		console.log("Milliseconds to setup: " + (runSetup.getTime() - runStart.getTime()));
-		console.log("Remove source: " + (runRemove.getTime() - runSetup.getTime()));
 		console.log("Add source: " + (runAdd.getTime() - runRemove.getTime()));
 
 	});

@@ -1,117 +1,366 @@
 
-describe('Google Calendar plugin', function() {
+// TODO: revive
+// Google removes holidays that are old, and returns no results, breaking these tests
+xdescribe('Google Calendar plugin', function() {
 
+	var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE';
 	var options;
 	var currentRequest;
+	var currentWarnArgs;
+	var oldConsoleWarn;
 
 	beforeEach(function() {
 		affix('#cal');
 
 		options = {
 			defaultView: 'month',
-			defaultDate: '2014-05-01',
-			events: 'http://www.google.com/calendar/feeds/notarealfeed/public/basic'
+			defaultDate: '2014-11-01'
 		};
 
-		// workaround. wanted to use mockedAjaxCalls(), but JSONP requests get mangled later on
+		// Mockjax is bad with JSONP (https://github.com/jakerella/jquery-mockjax/issues/136)
+		// Workaround. Wanted to use mockedAjaxCalls(), but JSONP requests get mangled later on.
 		currentRequest = null;
 		$.mockjaxSettings.log = function(mockHandler, request) {
 			currentRequest = currentRequest || $.extend({}, request); // copy
 		};
 
-		// fake the JSONP call (which actually calls to /full)
+		// Will cause all requests to go through $.mockjaxSettings.log, but will not actually handle
+		// any of the requests due to the JSONP bug mentioned above.
+		// THE REAL REQUESTS WILL GO THROUGH TO THE GOOGLE CALENDAR API!
 		$.mockjax({
-			url: 'http://www.google.com/calendar/feeds/notarealfeed/public/*',
-			responseText: JSON.parse(
-				'{"version":"1.0","encoding":"UTF-8","feed":{"xmlns":"http://www.w3.org/2005/Atom","xmlns$openSearch"' +
-				':"http://a9.com/-/spec/opensearchrss/1.0/","xmlns$gCal":"http://schemas.google.com/gCal/2005","xmlns' +
-				'$gd":"http://schemas.google.com/g/2005","id":{"$t":"http://www.google.com/calendar/feeds/usa__en%40h' +
-				'oliday.calendar.google.com/public/full"},"updated":{"$t":"2014-05-22T13:00:40.000Z"},"category":[{"s' +
-				'cheme":"http://schemas.google.com/g/2005#kind","term":"http://schemas.google.com/g/2005#event"}],"ti' +
-				'tle":{"$t":"Holidays in United States","type":"text"},"subtitle":{"$t":"Holidays and Observances in ' +
-				'United States","type":"text"},"link":[{"rel":"alternate","type":"text/html","href":"http://www.googl' +
-				'e.com/calendar/embed?src=usa__en%40holiday.calendar.google.com"},{"rel":"http://schemas.google.com/g' +
-				'/2005#feed","type":"application/atom+xml","href":"http://www.google.com/calendar/feeds/usa__en%40hol' +
-				'iday.calendar.google.com/public/full"},{"rel":"http://schemas.google.com/g/2005#batch","type":"appli' +
-				'cation/atom+xml","href":"http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/' +
-				'public/full/batch"},{"rel":"self","type":"application/atom+xml","href":"http://www.google.com/calend' +
-				'ar/feeds/usa__en%40holiday.calendar.google.com/public/full?alt=json-in-script&max-results=9999&start' +
-				'-min=2014-04-27T00%3A00%3A00Z&singleevents=true&start-max=2014-06-08T00%3A00%3A00Z"}],"author":[{"na' +
-				'me":{"$t":"Holidays in United States"}}],"generator":{"$t":"Google Calendar","version":"1.0","uri":"' +
-				'http://www.google.com/calendar"},"openSearch$totalResults":{"$t":2},"openSearch$startIndex":{"$t":1}' +
-				',"openSearch$itemsPerPage":{"$t":9999},"gCal$timezone":{"value":"UTC"},"gCal$timesCleaned":{"value":' +
-				'0},"entry":[{"id":{"$t":"http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/' +
-				'public/full/20140511_60o30dr560o30e1g60o30dr4ck"},"published":{"$t":"2014-05-22T13:00:40.000Z"},"upd' +
-				'ated":{"$t":"2014-05-22T13:00:40.000Z"},"category":[{"scheme":"http://schemas.google.com/g/2005#kind' +
-				'","term":"http://schemas.google.com/g/2005#event"}],"title":{"$t":"Mothers Day","type":"text"},"cont' +
-				'ent":{"$t":"","type":"text"},"link":[{"rel":"alternate","type":"text/html","href":"http://www.google' +
-				'.com/calendar/event?eid=MjAxNDA1MTFfNjBvMzBkcjU2MG8zMGUxZzYwbzMwZHI0Y2sgdXNhX19lbkBo","title":"alter' +
-				'nate"},{"rel":"self","type":"application/atom+xml","href":"http://www.google.com/calendar/feeds/usa_' +
-				'_en%40holiday.calendar.google.com/public/full/20140511_60o30dr560o30e1g60o30dr4ck"}],"author":[{"nam' +
-				'e":{"$t":"Holidays in United States"}}],"gd$comments":{"gd$feedLink":{"href":"http://www.google.com/' +
-				'calendar/feeds/usa__en%40holiday.calendar.google.com/public/full/20140511_60o30dr560o30e1g60o30dr4ck' +
-				'/comments"}},"gd$eventStatus":{"value":"http://schemas.google.com/g/2005#event.confirmed"},"gd$where' +
-				'":[{}],"gd$who":[{"email":"usa__en@holiday.calendar.google.com","rel":"http://schemas.google.com/g/2' +
-				'005#event.organizer","valueString":"Holidays in United States"}],"gd$when":[{"endTime":"2014-05-12",' +
-				'"startTime":"2014-05-11"}],"gd$transparency":{"value":"http://schemas.google.com/g/2005#event.transp' +
-				'arent"},"gCal$anyoneCanAddSelf":{"value":"false"},"gCal$guestsCanInviteOthers":{"value":"true"},"gCa' +
-				'l$guestsCanModify":{"value":"false"},"gCal$guestsCanSeeGuests":{"value":"true"},"gCal$sequence":{"va' +
-				'lue":0},"gCal$uid":{"value":"20140511_60o30dr560o30e1g60o30dr4ck@google.com"}},{"id":{"$t":"http://w' +
-				'ww.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/full/20140526_60o30dr56co3' +
-				'0e1g60o30dr4ck"},"published":{"$t":"2014-05-22T13:00:40.000Z"},"updated":{"$t":"2014-05-22T13:00:40.' +
-				'000Z"},"category":[{"scheme":"http://schemas.google.com/g/2005#kind","term":"http://schemas.google.c' +
-				'om/g/2005#event"}],"title":{"$t":"Memorial Day","type":"text"},"content":{"$t":"","type":"text"},"li' +
-				'nk":[{"rel":"alternate","type":"text/html","href":"http://www.google.com/calendar/event?eid=MjAxNDA1' +
-				'MjZfNjBvMzBkcjU2Y28zMGUxZzYwbzMwZHI0Y2sgdXNhX19lbkBo","title":"alternate"},{"rel":"self","type":"app' +
-				'lication/atom+xml","href":"http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.co' +
-				'm/public/full/20140526_60o30dr56co30e1g60o30dr4ck"}],"author":[{"name":{"$t":"Holidays in United Sta' +
-				'tes"}}],"gd$comments":{"gd$feedLink":{"href":"http://www.google.com/calendar/feeds/usa__en%40holiday' +
-				'.calendar.google.com/public/full/20140526_60o30dr56co30e1g60o30dr4ck/comments"}},"gd$eventStatus":{"' +
-				'value":"http://schemas.google.com/g/2005#event.confirmed"},"gd$where":[{}],"gd$who":[{"email":"usa__' +
-				'en@holiday.calendar.google.com","rel":"http://schemas.google.com/g/2005#event.organizer","valueStrin' +
-				'g":"Holidays in United States"}],"gd$when":[{"endTime":"2014-05-27","startTime":"2014-05-26"}],"gd$t' +
-				'ransparency":{"value":"http://schemas.google.com/g/2005#event.transparent"},"gCal$anyoneCanAddSelf":' +
-				'{"value":"false"},"gCal$guestsCanInviteOthers":{"value":"true"},"gCal$guestsCanModify":{"value":"fal' +
-				'se"},"gCal$guestsCanSeeGuests":{"value":"true"},"gCal$sequence":{"value":0},"gCal$uid":{"value":"201' +
-				'40526_60o30dr56co30e1g60o30dr4ck@google.com"}}]}}'
-			)
+			url: '*',
+			responseText: {}
 		});
+
+		// Intercept calls to console.warn
+		currentWarnArgs = null;
+		oldConsoleWarn = console.warn;
+		console.warn = function() {
+			currentWarnArgs = arguments;
+		};
 	});
 
 	afterEach(function() {
 		$.mockjaxClear();
 		$.mockjaxSettings.log = function() { };
+		console.warn = oldConsoleWarn;
 	});
 
-	it('sends request correctly when no timezone', function() {
-		$('#cal').fullCalendar(options);
-		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
-		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(currentRequest.data.ctz).toBeUndefined();
-	});
-
-	it('sends request correctly when local timezone', function() {
+	it('request/receives correctly when local timezone', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
 		options.timezone = 'local';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toBeUndefined();
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).not.toMatch('ctz=');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
-		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(currentRequest.data.ctz).toBeUndefined();
 	});
 
-	it('sends request correctly when UTC timezone', function() {
+	it('request/receives correctly when UTC timezone', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
 		options.timezone = 'UTC';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toEqual('UTC');
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).toMatch('ctz=UTC');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
-		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(currentRequest.data.ctz).toEqual('UTC');
 	});
 
-	it('sends request correctly when custom timezone', function() {
-		options.timezone = 'America/Chicago';
+	it('request/receives correctly when custom timezone', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
+		options.timezone = 'America/New York';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toEqual('America/New_York'); // space should be escaped
+
+			expect(events.length).toBe(4);
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).toMatch('ctz=America/New_York');
+			}
+
+			done();
+		};
 		$('#cal').fullCalendar(options);
-		expect(currentRequest.data['start-min']).toEqual('2014-04-27');
-		expect(currentRequest.data['start-max']).toEqual('2014-06-08');
-		expect(currentRequest.data.ctz).toEqual('America/Chicago');
+	});
+
+	it('requests/receives correctly when no timezone, defaults to not editable', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = { googleCalendarId: 'usa__en@holiday.calendar.google.com' };
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			var eventEls = $('.fc-event');
+			var i;
+
+			expect(currentRequest.data.timeMin).toEqual('2014-10-25T00:00:00+00:00'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2014-12-08T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeZone).toBeUndefined();
+
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			for (i = 0; i < events.length; i++) {
+				expect(events[i].url).not.toMatch('ctz=');
+			}
+
+			expect(eventEls.length).toBe(4);
+			expect(eventEls.find('.fc-resizer').length).toBe(0); // not editable
+
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('allows editable to explicitly be set to true', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = {
+			googleCalendarId: 'usa__en@holiday.calendar.google.com',
+			editable: true
+		};
+		options.eventAfterAllRender = function() {
+			var eventEls = $('.fc-event');
+			expect(eventEls.length).toBe(4);
+			expect(eventEls.find('.fc-resizer').length).toBeGreaterThan(0); // editable!
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('fetches events correctly when API key is in the event source', function(done) {
+		options.events = {
+			googleCalendarId: 'usa__en@holiday.calendar.google.com',
+			googleCalendarApiKey: API_KEY
+		};
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	describe('when not given an API key', function() {
+		it('calls error handlers, raises warning, and receives no events', function(done) {
+			options.googleCalendarError = function(err) {
+				expect(typeof err).toBe('object');
+			};
+			options.events = {
+				googleCalendarError: function(err) {
+					expect(typeof err).toBe('object');
+				},
+				googleCalendarId: 'usa__en@holiday.calendar.google.com'
+			};
+			options.eventAfterAllRender = function() {
+				var events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(0);
+				expect(currentWarnArgs.length).toBeGreaterThan(0);
+				expect(options.googleCalendarError).toHaveBeenCalled();
+				expect(options.events.googleCalendarError).toHaveBeenCalled();
+				expect(currentRequest).toBeNull(); // AJAX request should have never been made!
+				done();
+			};
+			spyOn(options, 'googleCalendarError').and.callThrough();
+			spyOn(options.events, 'googleCalendarError').and.callThrough();
+			$('#cal').fullCalendar(options);
+		});
+	});
+
+	describe('when given a bad API key', function() {
+		it('calls error handlers, raises warning, and receives no event', function(done) {
+			options.googleCalendarApiKey = 'asdfasdfasdf';
+			options.googleCalendarError = function(err) {
+				expect(typeof err).toBe('object');
+			};
+			options.events = {
+				googleCalendarError: function(err) {
+					expect(typeof err).toBe('object');
+				},
+				googleCalendarId: 'usa__en@holiday.calendar.google.com'
+			};
+			options.eventAfterAllRender = function() {
+				var events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(0);
+				expect(currentWarnArgs.length).toBeGreaterThan(0);
+				expect(options.googleCalendarError).toHaveBeenCalled();
+				expect(options.events.googleCalendarError).toHaveBeenCalled();
+				expect(typeof currentRequest).toBe('object'); // request should have been sent
+				done();
+			};
+			spyOn(options, 'googleCalendarError').and.callThrough();
+			spyOn(options.events, 'googleCalendarError').and.callThrough();
+			$('#cal').fullCalendar(options);
+		});
+	});
+
+	it('works when `events` is the actual calendar ID', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'usa__en@holiday.calendar.google.com';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, with complicated characters (1)', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.com_jlr7e6hpcuiald27@whatever.import.calendar.google.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, with complicated characters (2)', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'ar-shaw.com_jlr7e6hpcuiald27@calendar.google.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, person gmail', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.arshaw@gmail.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('detects a gcal when `events` is the actual calendar ID, person googlemail', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'arshaw.arshaw@googlemail.com';
+		options.eventAfterAllRender = function() {
+			expect(currentWarnArgs.length).toBe(2);
+			expect(typeof currentWarnArgs[1]).toBe('object'); // sent the request to google, but not-found warning
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('works with requesting an HTTP V1 API feed URL', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('works with requesting an HTTPS V1 API feed URL', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events = 'https://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	it('works with requesting an V3 API feed URL', function(done) {
+		options.googleCalendarApiKey = API_KEY;
+		options.events =
+			'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events';
+		options.eventAfterAllRender = function() {
+			var events = $('#cal').fullCalendar('clientEvents');
+			expect(events.length).toBe(4); // 4 holidays in November 2014
+			done();
+		};
+		$('#cal').fullCalendar(options);
+	});
+
+	describe('removeEventSource', function() {
+
+		it('works when specifying only the Google Calendar ID', function(done) {
+			var CALENDAR_ID = 'usa__en@holiday.calendar.google.com';
+			var called = false;
+
+			options.googleCalendarApiKey = API_KEY;
+			options.eventSources = [ { googleCalendarId: CALENDAR_ID } ];
+			options.eventAfterAllRender = function() {
+				var events;
+
+				if (called) { return; } // only the first time
+				called = true;
+
+				events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(4); // 4 holidays in November 2014
+
+				setTimeout(function() {
+					$('#cal').fullCalendar('removeEventSource', CALENDAR_ID);
+					events = $('#cal').fullCalendar('clientEvents');
+					expect(events.length).toBe(0);
+					done();
+				}, 0);
+			};
+
+			$('#cal').fullCalendar(options);
+		});
+
+		it('works when specifying a raw Google Calendar source object', function(done) {
+			var CALENDAR_ID = 'usa__en@holiday.calendar.google.com';
+			var googleSource = { googleCalendarId: CALENDAR_ID };
+			var called = false;
+
+			options.googleCalendarApiKey = API_KEY;
+			options.eventSources = [ googleSource ];
+			options.eventAfterAllRender = function() {
+				var events;
+
+				if (called) { return; } // only the first time
+				called = true;
+
+				events = $('#cal').fullCalendar('clientEvents');
+				expect(events.length).toBe(4); // 4 holidays in November 2014
+
+				setTimeout(function() {
+					$('#cal').fullCalendar('removeEventSource', googleSource);
+					events = $('#cal').fullCalendar('clientEvents');
+					expect(events.length).toBe(0);
+					done();
+				}, 0);
+			};
+
+			$('#cal').fullCalendar(options);
+		});
 	});
 
 });

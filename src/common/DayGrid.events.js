@@ -2,69 +2,85 @@
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(DayGrid.prototype, {
+DayGrid.mixin({
 
-	segs: null,
-	rowStructs: null, // an array of objects, each holding information about a row's event-rendering
+	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
 
-	// Render the given events onto the Grid and return the rendered segments
-	renderEvents: function(events) {
-		var rowStructs = this.rowStructs = this.renderEventRows(events);
-		var segs = [];
+	// Unrenders all events currently rendered on the grid
+	unrenderEvents: function() {
+		this.removeSegPopover(); // removes the "more.." events popover
+		Grid.prototype.unrenderEvents.apply(this, arguments); // calls the super-method
+	},
+
+
+	// Retrieves all rendered segment objects currently rendered on the grid
+	getEventSegs: function() {
+		return Grid.prototype.getEventSegs.call(this) // get the segments from the super-method
+			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
+	},
+
+
+	// Renders the given background event segments onto the grid
+	renderBgSegs: function(segs) {
+
+		// don't render timed background events
+		var allDaySegs = $.grep(segs, function(seg) {
+			return seg.event.allDay;
+		});
+
+		return Grid.prototype.renderBgSegs.call(this, allDaySegs); // call the super-method
+	},
+
+
+	// Renders the given foreground event segments onto the grid
+	renderFgSegs: function(segs) {
+		var rowStructs;
+
+		// render an `.el` on each seg
+		// returns a subset of the segs. segs that were actually rendered
+		segs = this.renderFgSegEls(segs);
+
+		rowStructs = this.rowStructs = this.renderSegRows(segs);
 
 		// append to each row's content skeleton
 		this.rowEls.each(function(i, rowNode) {
 			$(rowNode).find('.fc-content-skeleton > table').append(
 				rowStructs[i].tbodyEl
 			);
-			segs.push.apply(segs, rowStructs[i].segs);
 		});
 
-		this.segs = segs;
+		return segs; // return only the segs that were actually rendered
 	},
 
 
-	// Retrieves all segment objects that have been rendered
-	getSegs: function() {
-		return (this.segs || []).concat(
-			this.popoverSegs || [] // segs rendered in the "more" events popover
-		);
-	},
-
-
-	// Removes all rendered event elements
-	destroyEvents: function() {
-		var rowStructs;
+	// Unrenders all currently rendered foreground event segments
+	unrenderFgSegs: function() {
+		var rowStructs = this.rowStructs || [];
 		var rowStruct;
 
-		Grid.prototype.destroyEvents.call(this); // call the super-method
-
-		rowStructs = this.rowStructs || [];
 		while ((rowStruct = rowStructs.pop())) {
 			rowStruct.tbodyEl.remove();
 		}
 
-		this.segs = null;
-		this.destroySegPopover(); // removes the "more.." events popover
+		this.rowStructs = null;
 	},
 
 
 	// Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
-	// Returns an array of rowStruct objects (see the bottom of `renderEventRow`).
-	renderEventRows: function(events) {
-		var segs = this.eventsToSegs(events);
+	// Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
+	// PRECONDITION: each segment shoud already have a rendered and assigned `.el`
+	renderSegRows: function(segs) {
 		var rowStructs = [];
 		var segRows;
 		var row;
 
-		segs = this.renderSegs(segs); // returns a new array with only visible segments
 		segRows = this.groupSegRows(segs); // group into nested arrays
 
 		// iterate each row of segment groupings
 		for (row = 0; row < segRows.length; row++) {
 			rowStructs.push(
-				this.renderEventRow(row, segRows[row])
+				this.renderSegRow(row, segRows[row])
 			);
 		}
 
@@ -73,22 +89,28 @@ $.extend(DayGrid.prototype, {
 
 
 	// Builds the HTML to be used for the default element for an individual segment
-	renderSegHtml: function(seg, disableResizing) {
+	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var isRTL = view.opt('isRTL');
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
-		var isResizable = !disableResizing && event.allDay && seg.isEnd && view.isEventResizable(event);
-		var classes = this.getSegClasses(seg, isDraggable, isResizable);
-		var skinCss = this.getEventSkinCss(event);
+		var isResizableFromStart = !disableResizing && event.allDay &&
+			seg.isStart && view.isEventResizableFromStart(event);
+		var isResizableFromEnd = !disableResizing && event.allDay &&
+			seg.isEnd && view.isEventResizableFromEnd(event);
+		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
+		var skinCss = cssToStr(this.getEventSkinCss(event));
 		var timeHtml = '';
+		var timeText;
 		var titleHtml;
 
-		classes.unshift('fc-day-grid-event');
+		classes.unshift('fc-day-grid-event', 'fc-h-event');
 
 		// Only display a timed events time if it is the starting segment
-		if (!event.allDay && seg.isStart) {
-			timeHtml = '<span class="fc-time">' + htmlEscape(view.getEventTimeText(event)) + '</span>';
+		if (seg.isStart) {
+			timeText = this.getEventTimeText(event);
+			if (timeText) {
+				timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>';
+			}
 		}
 
 		titleHtml =
@@ -107,13 +129,17 @@ $.extend(DayGrid.prototype, {
 					) +
 			'>' +
 				'<div class="fc-content">' +
-					(isRTL ?
+					(this.isRTL ?
 						titleHtml + ' ' + timeHtml : // put a natural space in between
 						timeHtml + ' ' + titleHtml   //
 						) +
 				'</div>' +
-				(isResizable ?
-					'<div class="fc-resizer"/>' :
+				(isResizableFromStart ?
+					'<div class="fc-resizer fc-start-resizer" />' :
+					''
+					) +
+				(isResizableFromEnd ?
+					'<div class="fc-resizer fc-end-resizer" />' :
 					''
 					) +
 			'</a>';
@@ -122,9 +148,9 @@ $.extend(DayGrid.prototype, {
 
 	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 	// the segments. Returns object with a bunch of internal data about how the render was calculated.
-	renderEventRow: function(row, rowSegs) {
-		var view = this.view;
-		var colCnt = view.colCnt;
+	// NOTE: modifies rowSegs
+	renderSegRow: function(row, rowSegs) {
+		var colCnt = this.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
 		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
 		var tbody = $('<tbody/>');
@@ -195,7 +221,7 @@ $.extend(DayGrid.prototype, {
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
-			this.bookendCells(tr, 'eventSkeleton');
+			this.bookendCells(tr);
 			tbody.append(tr);
 		}
 
@@ -211,6 +237,7 @@ $.extend(DayGrid.prototype, {
 
 
 	// Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
+	// NOTE: modifies segs
 	buildSegLevels: function(segs) {
 		var levels = [];
 		var i, seg;
@@ -218,7 +245,7 @@ $.extend(DayGrid.prototype, {
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		segs.sort(compareSegs);
+		this.sortEventSegs(segs);
 		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
@@ -247,11 +274,10 @@ $.extend(DayGrid.prototype, {
 
 	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
 	groupSegRows: function(segs) {
-		var view = this.view;
 		var segRows = [];
 		var i;
 
-		for (i = 0; i < view.rowCnt; i++) {
+		for (i = 0; i < this.rowCnt; i++) {
 			segRows.push([]);
 		}
 

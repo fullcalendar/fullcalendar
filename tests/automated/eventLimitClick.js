@@ -48,7 +48,8 @@ describe('eventLimitClick', function() { // simulate a click
 			$('#cal').fullCalendar(options);
 			$('.fc-more').simulate('click');
 			var view = $('#cal').fullCalendar('getView');
-			expect(view.name).toBe('basicWeek');
+			expect(view.name).toBe('basicWeek'); // .name should be deprecated
+			expect(view.type).toBe('basicWeek');
 		});
 
 		it('should go to agendaWeek if it is one of the available views', function() {
@@ -60,7 +61,8 @@ describe('eventLimitClick', function() { // simulate a click
 			$('#cal').fullCalendar(options);
 			$('.fc-more').simulate('click');
 			var view = $('#cal').fullCalendar('getView');
-			expect(view.name).toBe('agendaWeek');
+			expect(view.name).toBe('agendaWeek'); // .name should be deprecated
+			expect(view.type).toBe('agendaWeek');
 		});
 	});
 

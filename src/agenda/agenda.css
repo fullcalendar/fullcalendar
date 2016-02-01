@@ -66,36 +66,63 @@
 	z-index: 2;
 }
 
-.fc-time-grid .fc-highlight-skeleton {
-	z-index: 3;
+.fc-time-grid .fc-content-col {
+	position: relative; /* because now-indicator lives directly inside */
 }
 
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
-	z-index: 4;
+	z-index: 3;
 	top: 0;
 	left: 0;
 	right: 0;
 }
 
-.fc-time-grid > .fc-helper-skeleton {
+/* divs within a cell within the fc-content-skeleton */
+
+.fc-time-grid .fc-business-container {
+	position: relative;
+	z-index: 1;
+}
+
+.fc-time-grid .fc-bgevent-container {
+	position: relative;
+	z-index: 2;
+}
+
+.fc-time-grid .fc-highlight-container {
+	position: relative;
+	z-index: 3;
+}
+
+.fc-time-grid .fc-event-container {
+	position: relative;
+	z-index: 4;
+}
+
+.fc-time-grid .fc-now-indicator-line {
 	z-index: 5;
+}
+
+.fc-time-grid .fc-helper-container { /* also is fc-event-container */
+	position: relative;
+	z-index: 6;
 }
 
 
 /* TimeGrid Slats (lines that run horizontally)
 --------------------------------------------------------------------------------------------------*/
 
-.fc-slats td {
+.fc-time-grid .fc-slats td {
 	height: 1.5em;
 	border-bottom: 0; /* each cell is responsible for its top border */
 }
 
-.fc-slats .fc-minor td {
+.fc-time-grid .fc-slats .fc-minor td {
 	border-top-style: dotted;
 }
 
-.fc-slats .ui-widget-content { /* for jqui theme */
+.fc-time-grid .fc-slats .ui-widget-content { /* for jqui theme */
 	background: none; /* see through to fc-bg */
 }
 
@@ -118,10 +145,6 @@
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
 
-.fc-time-grid .fc-event-container { /* a div within a cell within the fc-content-skeleton */
-	position: relative;
-}
-
 .fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
 	margin: 0 2.5% 0 2px;
 }
@@ -130,19 +153,23 @@
 	margin: 0 2px 0 2.5%;
 }
 
-.fc-time-grid .fc-event {
+.fc-time-grid .fc-event,
+.fc-time-grid .fc-bgevent {
 	position: absolute;
 	z-index: 1; /* scope inner z-index's */
 }
 
+.fc-time-grid .fc-bgevent {
+	/* background events always span full width */
+	left: 0;
+	right: 0;
+}
 
-/* TimeGrid Event Styling
-----------------------------------------------------------------------------------------------------
-We use the full "fc-time-grid-event" class instead of using descendants because the event won't
-be a descendant of the grid when it is being dragged.
-*/
 
-.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
+/* Generic Vertical Event
+--------------------------------------------------------------------------------------------------*/
+
+.fc-v-event.fc-not-start { /* events that are continuing from another day */
 	/* replace space made by the top border with padding */
 	border-top-width: 0;
 	padding-top: 1px;
@@ -152,7 +179,7 @@ be a descendant of the grid when it is being dragged.
 	border-top-right-radius: 0;
 }
 
-.fc-time-grid-event.fc-not-end {
+.fc-v-event.fc-not-end {
 	/* replace space made by the top border with padding */
 	border-bottom-width: 0;
 	padding-bottom: 1px;
@@ -162,13 +189,15 @@ be a descendant of the grid when it is being dragged.
 	border-bottom-right-radius: 0;
 }
 
+
+/* TimeGrid Event Styling
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
+
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */
-}
-
-.fc-time-grid-event > .fc-content { /* contains the time and title, but no bg and resizer */
-	position: relative;
-	z-index: 2; /* above the bg */
 }
 
 .fc-time-grid-event .fc-time,
@@ -179,13 +208,6 @@ be a descendant of the grid when it is being dragged.
 .fc-time-grid-event .fc-time {
 	font-size: .85em;
 	white-space: nowrap;
-}
-
-.fc-time-grid-event .fc-bg {
-	z-index: 1;
-	background: #fff;
-	opacity: .25;
-	filter: alpha(opacity=25); /* for IE */
 }
 
 /* short mode, where time and title are on the same line */
@@ -222,8 +244,6 @@ be a descendant of the grid when it is being dragged.
 /* resizer */
 
 .fc-time-grid-event .fc-resizer {
-	position: absolute;
-	z-index: 3; /* above content */
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -238,4 +258,36 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
+}
+
+
+/* Now Indicator
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-now-indicator-line {
+	border-top-width: 1px;
+	left: 0;
+	right: 0;
+}
+
+/* arrow on axis */
+
+.fc-time-grid .fc-now-indicator-arrow {
+	margin-top: -5px; /* vertically center on top coordinate */
+}
+
+.fc-ltr .fc-time-grid .fc-now-indicator-arrow {
+	left: 0;
+	/* triangle pointing right... */
+	border-width: 5px 0 5px 6px;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.fc-rtl .fc-time-grid .fc-now-indicator-arrow {
+	right: 0;
+	/* triangle pointing left... */
+	border-width: 5px 6px 5px 0;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
 }

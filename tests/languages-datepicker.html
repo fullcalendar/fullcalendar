@@ -2,13 +2,11 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='../src/pwt-date.js'></script>
-
-
 <link rel='stylesheet' href='../lib/jquery-ui/themes/cupertino/jquery-ui.min.css' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/jquery-ui/jquery-ui.js'></script>
 <script src='../lib/moment/moment.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script src='../dist/lang-all.js'></script>
@@ -53,8 +51,7 @@
 
 		function renderCalendar() {
 			$('#calendar').fullCalendar({
-	            lang:'persianJalali',
-			header: {
+				header: {
 					left: 'prev,next today',
 					center: 'title',
 					right: 'month,agendaWeek,agendaDay'

@@ -28,7 +28,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
 							dy: $('.fc-day').height()
 						});
@@ -83,7 +83,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('th.fc-wed').width() * 1.5 // two days
 						});
 					},
@@ -119,7 +119,7 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta', function(done) {
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
 					},
@@ -145,7 +145,7 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day-header:first').width() * .9, // one day
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -172,7 +172,7 @@ describe('eventResize', function() {
 				options.timezone = 'local';
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
 					},
@@ -198,7 +198,7 @@ describe('eventResize', function() {
 				options.timezone = 'UTC';
 				init(
 					function() {
-						$('.fc-event .fc-resizer').simulate('drag-n-drop', {
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
 					},
@@ -221,86 +221,67 @@ describe('eventResize', function() {
 			});
 
 			it('should display the correct time text while resizing', function(done) {
-				var dy;
-				var handle;
 
-				init(
-					function() {
-						dy = $('.fc-slats tr:eq(1)').height() * 4.5; // 5 slots, so 2.5 hours
-						handle = $('.fc-event .fc-resizer').simulate('drag', {
+				options.eventAfterAllRender = function() {
+					setTimeout(function() {
+						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
-							callback: function() {
+							onBeforeRelease: function() {
 								expect($('.fc-event.fc-helper .fc-time')).toHaveText('5:00 - 9:30');
-								handle.simulate('drag', {
-									// BUG with jquery-simulate-ext
-									// I guess the delta is still relative to the original position, so should be zero.
-									// But zero causes nothing to happen, so make it a tiny non-zero delta.
-									dy: -1,
-
-									callback: function() {
+								$('.fc-event.fc-helper .fc-resizer').simulate('drag', {
+									dy: -dy,
+									onBeforeRelease: function() {
 										expect($('.fc-event.fc-helper')).not.toExist();
 										expect($('.fc-event')).toBeVisible();
 										expect($('.fc-event .fc-time')).toHaveText('5:00 - 7:00');
-										handle.simulate('drop', {
-											callback: function() {
-												done();
-											}
-										});
+									},
+									onRelease: function() {
+										done();
 									}
 								});
 							}
 						});
-					},
-					function() {
-						// this wasn't firing for some reason. do it in the drop callback instead
-						//done();
-					}
-				);
+					}, 0); // idk
+				};
+
+				$('#cal').fullCalendar(options);
 			});
 
 			it('should run the temporarily rendered event through eventRender', function(done) {
-				var dy;
-				var handle;
 
 				options.eventRender = function(event, element) {
 					element.addClass('didEventRender');
 				};
 
-				init(
-					function() {
-						dy = $('.fc-slats tr:eq(1)').height() * 4.5; // 5 slots, so 2.5 hours
-						handle = $('.fc-event .fc-resizer').simulate('drag', {
+				options.eventAfterAllRender = function() {
+					setTimeout(function() {
+						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
-							callback: function() {
+							onBeforeRelease: function() {
 								expect($('.fc-event.fc-helper')).toHaveClass('didEventRender');
-								handle.simulate('drag', {
-									// BUG with jquery-simulate-ext
-									// I guess the delta is still relative to the original position, so should be zero.
-									// But zero causes nothing to happen, so make it a tiny non-zero delta.
-									dy: -1,
-
-									callback: function() {
+								$('.fc-event.fc-helper .fc-resizer').simulate('drag', {
+									dy: -dy,
+									onBeforeRelease: function() {
 										expect($('.fc-event.fc-helper')).not.toExist();
-										handle.simulate('drop', {
-											callback: function() {
-												done();
-											}
-										});
+									},
+									onRelease: function() {
+										done();
 									}
 								});
 							}
 						});
-					},
-					function() {
-						// this wasn't firing for some reason. do it in the drop callback instead
-						//done();
-					}
-				);
+					}, 0); // idk
+				};
+
+				$('#cal').fullCalendar(options);
 			});
 
 			it('should not fire the windowResize handler', function(done) { // bug 1116
 
 				// has to do this crap because PhantomJS was trigger false window resizes unrelated to the fc-event resize
+				var alreadyRendered = false;
 				var isDragging = false;
 				var calledWhileDragging = false;
 
@@ -311,20 +292,27 @@ describe('eventResize', function() {
 					}
 				};
 
-				init(
-					function() {
-						setTimeout(function() {
-							isDragging = true;
-							$('.fc-event .fc-resizer').simulate('drag-n-drop', {
-								dy: 100
-							});
-						}, 100); // hack for PhantomJS. after any initial false window resizes
-					},
-					function() {
-						expect(calledWhileDragging).toBe(false);
-						done();
+				options.eventAfterAllRender = function() {
+					if (alreadyRendered) {
+						return;
 					}
-				);
+					alreadyRendered = true;
+					setTimeout(function() {
+						isDragging = true;
+						$('.fc-event .fc-resizer').simulate('drag', {
+							dy: 100,
+							onBeforeRelease: function() {
+								isDragging = false;
+							},
+							onRelease: function() {
+								expect(calledWhileDragging).toBe(false);
+								done();
+							}
+						});
+					}, 100); // hack for PhantomJS. after any initial false window resizes
+				};
+
+				$('#cal').fullCalendar(options);
 			});
 		});
 
@@ -338,41 +326,31 @@ describe('eventResize', function() {
 			});
 
 			it('should display the correct time text while resizing', function(done) {
-				var dy;
-				var handle;
 
-				init(
-					function() {
-						dy = $('.fc-slats tr:eq(1)').height() * 4.5; // 5 slots, so 2.5 hours
-						handle = $('.fc-event .fc-resizer').simulate('drag', {
+				options.eventAfterAllRender = function() {
+					setTimeout(function() {
+						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
-							callback: function() {
+							onBeforeRelease: function() {
 								expect($('.fc-event.fc-helper .fc-time')).toHaveText('5:00 - 9:30');
-								handle.simulate('drag', {
-									// BUG with jquery-simulate-ext
-									// I guess the delta is still relative to the original position, so should be zero.
-									// But zero causes nothing to happen, so make it a tiny non-zero delta.
-									dy: -1,
-
-									callback: function() {
+								$('.fc-event.fc-helper .fc-resizer').simulate('drag', {
+									dy: -dy,
+									onBeforeRelease: function() {
 										expect($('.fc-event.fc-helper')).not.toExist();
 										expect($('.fc-event')).toBeVisible();
 										expect($('.fc-event .fc-time')).toHaveText('5:00');
-										handle.simulate('drop', {
-											callback: function() {
-												done();
-											}
-										});
+									},
+									onRelease: function() {
+										done();
 									}
 								});
 							}
 						});
-					},
-					function() {
-						// this wasn't firing for some reason. do it in the drop callback instead
-						//done();
-					}
-				);
+					}, 0); // idk
+				};
+
+				$('#cal').fullCalendar(options);
 			});
 		});
 	});

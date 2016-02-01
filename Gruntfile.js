@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 	};
 
 	// for the "meta" template variable (<%= meta.whatever %>)
-	config.meta = grunt.file.readJSON('fullcalendar.jquery.json');
+	config.meta = grunt.file.readJSON('package.json');
 
 	// The "grunt" command with no arguments
 	grunt.registerTask('default', 'dist');
@@ -44,13 +44,11 @@ module.exports = function(grunt) {
 		'modules',
 		'languages',
 		'karma:single',
-		'archiveDist',
-		'cdnjsDist'
+		'archiveDist'
 	]);
 
 	// Bare minimum for debugging
 	grunt.registerTask('dev', [
-		'shell:assume-unchanged',
 		'lumbar:build',
 		'languages'
 	]);
@@ -275,8 +273,9 @@ module.exports = function(grunt) {
 	// copy license and changelog
 	config.copy.archiveMisc = {
 		files: {
-			'build/temp/archive/license.txt': 'license.txt',
-			'build/temp/archive/changelog.txt': 'changelog.md'
+			'build/temp/archive/LICENSE.txt': 'LICENSE.txt',
+			'build/temp/archive/CHANGELOG.txt': 'CHANGELOG.md',
+			'build/temp/archive/CONTRIBUTING.txt': 'CONTRIBUTING.md'
 		}
 	};
 
@@ -305,68 +304,13 @@ module.exports = function(grunt) {
 		options: {
 			files: [
 				'package.json',
-				'bower.json',
-				'fullcalendar.jquery.json'
+				'bower.json'
 			],
 			commit: false,
 			createTag: false,
 			push: false
 		}
 	};
-
-
-
-	/* CDNJS (http://cdnjs.com/)
-	----------------------------------------------------------------------------------------------------*/
-
-	grunt.registerTask('cdnjs', 'Build files for CDNJS\'s hosted version of FullCalendar', [
-		'modules',
-		'languages',
-		'karma:single',
-		'cdnjsDist'
-	]);
-
-	grunt.registerTask('cdnjsDist', [
-		'clean:cdnjs',
-		'copy:cdnjsModules',
-		'copy:cdnjsLanguages',
-		'copy:cdnjsLanguagesAll',
-		'cdnjsConfig'
-	]);
-
-	config.copy.cdnjsModules = {
-		expand: true,
-		cwd: 'dist/',
-		src: [ '*.js', '*.css' ],
-		dest: 'dist/cdnjs/<%= meta.version %>/'
-	};
-
-	config.copy.cdnjsLanguages = {
-		expand: true,
-		cwd: 'dist/lang/',
-		src: '*.js',
-		dest: 'dist/cdnjs/<%= meta.version %>/lang/'
-	};
-
-	config.copy.cdnjsLanguagesAll = {
-		src: 'dist/lang-all.js',
-		dest: 'dist/cdnjs/<%= meta.version %>/lang-all.js'
-	};
-
-	grunt.registerTask('cdnjsConfig', function() {
-		var jqueryConfig = grunt.file.readJSON('fullcalendar.jquery.json');
-		var cdnjsConfig = grunt.file.readJSON('build/cdnjs.json');
-		grunt.file.write(
-			'dist/cdnjs/package.json',
-			JSON.stringify(
-				_.extend({}, jqueryConfig, cdnjsConfig), // combine 2 configs
-				null, // replace
-				2 // indent
-			)
-		);
-	});
-
-	config.clean.cdnjs = 'dist/cdnjs';
 
 
 
@@ -383,24 +327,6 @@ module.exports = function(grunt) {
 	// configs located elsewhere
 	config.jshint = require('./build/jshint.conf');
 	config.jscs = require('./build/jscs.conf');
-
-
-
-	/* dist & git hacks
-	----------------------------------------------------------------------------------------------------
-	// These shell commands are used to force/unforce git from thinking that files have changed.
-	// Used to ignore changes when dist files are overwritten, but not committed, during development.
-	*/
-
-	config.shell['assume-unchanged'] = {
-		command: 'git update-index --assume-unchanged `git ls-files dist`'
-	};
-	config.shell['no-assume-unchanged'] = {
-		command: 'git update-index --no-assume-unchanged `git ls-files dist`'
-	};
-	config.shell['list-assume-unchanged'] = {
-		command: 'git ls-files -v | grep \'^h\''
-	};
 
 
 

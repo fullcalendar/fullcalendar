@@ -1,43 +1,50 @@
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
+// We mixin DayTable, even though there is only a single row of days
 
-function TimeGrid(view) {
-	Grid.call(this, view); // call the super-constructor
-}
-
-
-TimeGrid.prototype = createObject(Grid.prototype); // define the super-class
-$.extend(TimeGrid.prototype, {
+var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
-
+	snapsPerSlot: null,
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	labelFormat: null, // formatting string for times running along vertical axis
+	labelInterval: null, // duration of how often a label should be displayed for a slot
 
-	dayEls: null, // cells elements in the day-row background
+	colEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
+	nowIndicatorEls: null,
 
-	slatTops: null, // an array of top positions, relative to the container. last item holds bottom of last slot
+	colCoordCache: null,
+	slatCoordCache: null,
 
-	highlightEl: null, // cell skeleton element for rendering the highlight
-	helperEl: null, // cell skeleton element for rendering the mock event "helper"
+
+	constructor: function() {
+		Grid.apply(this, arguments); // call the super-constructor
+
+		this.processOptions();
+	},
 
 
 	// Renders the time grid into `this.el`, which should already be assigned.
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
-	render: function() {
-		this.processOptions();
-
+	renderDates: function() {
 		this.el.html(this.renderHtml());
-
-		this.dayEls = this.el.find('.fc-day');
+		this.colEls = this.el.find('.fc-day');
 		this.slatEls = this.el.find('.fc-slats tr');
 
-		this.computeSlatTops();
+		this.colCoordCache = new CoordCache({
+			els: this.colEls,
+			isHorizontal: true
+		});
+		this.slatCoordCache = new CoordCache({
+			els: this.slatEls,
+			isVertical: true
+		});
 
-		Grid.prototype.render.call(this); // call the super-method
+		this.renderContentSkeleton();
 	},
 
 
@@ -46,53 +53,46 @@ $.extend(TimeGrid.prototype, {
 		return '' +
 			'<div class="fc-bg">' +
 				'<table>' +
-					this.rowHtml('slotBg') + // leverages RowRenderer, which will call slotBgCellHtml
+					this.renderBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
 				'<table>' +
-					this.slatRowHtml() +
+					this.renderSlatRowHtml() +
 				'</table>' +
 			'</div>';
 	},
 
 
-	// Renders the HTML for a vertical background cell behind the slots.
-	// This method is distinct from 'bg' because we wanted a new `rowType` so the View could customize the rendering.
-	slotBgCellHtml: function(row, col, date) {
-		return this.bgCellHtml(row, col, date);
-	},
-
-
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
-	slatRowHtml: function() {
+	renderSlatRowHtml: function() {
 		var view = this.view;
-		var calendar = view.calendar;
-		var isRTL = view.opt('isRTL');
+		var isRTL = this.isRTL;
 		var html = '';
-		var slotNormal = this.slotDuration.asMinutes() % 15 === 0;
 		var slotTime = moment.duration(+this.minTime); // wish there was .clone() for durations
 		var slotDate; // will be on the view's first day, but we only care about its time
-		var minutes;
+		var isLabeled;
 		var axisHtml;
 
 		// Calculate the time for each slot
 		while (slotTime < this.maxTime) {
-			slotDate = view.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
-			minutes = slotDate.minutes();
+			slotDate = this.start.clone().time(slotTime);
+			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
 				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
+					(isLabeled ?
 						'<span>' + // for matchCellWidths
-							htmlEscape(calendar.formatDate(slotDate, view.opt('axisFormat'))) +
+							htmlEscape(slotDate.format(this.labelFormat)) +
 						'</span>' :
 						''
 						) +
 				'</td>';
 
 			html +=
-				'<tr ' + (!minutes ? '' : 'class="fc-minor"') + '>' +
+				'<tr data-time="' + slotDate.format('HH:mm:ss') + '"' +
+					(isLabeled ? '' : ' class="fc-minor"') +
+					'>' +
 					(!isRTL ? axisHtml : '') +
 					'<td class="' + view.widgetContentClass + '"/>' +
 					(isRTL ? axisHtml : '') +
@@ -105,44 +105,190 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
+	/* Options
+	------------------------------------------------------------------------------------------------------------------*/
+
+
 	// Parses various options into properties of this object
 	processOptions: function() {
 		var view = this.view;
 		var slotDuration = view.opt('slotDuration');
 		var snapDuration = view.opt('snapDuration');
+		var input;
 
 		slotDuration = moment.duration(slotDuration);
 		snapDuration = snapDuration ? moment.duration(snapDuration) : slotDuration;
 
 		this.slotDuration = slotDuration;
 		this.snapDuration = snapDuration;
-		this.cellDuration = snapDuration; // important to assign this for Grid.events.js
+		this.snapsPerSlot = slotDuration / snapDuration; // TODO: ensure an integer multiple?
+
+		this.minResizeDuration = snapDuration; // hack
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
+
+		// might be an array value (for TimelineView).
+		// if so, getting the most granular entry (the last one probably).
+		input = view.opt('slotLabelFormat');
+		if ($.isArray(input)) {
+			input = input[input.length - 1];
+		}
+
+		this.labelFormat =
+			input ||
+			view.opt('axisFormat') || // deprecated
+			view.opt('smallTimeFormat'); // the computed default
+
+		input = view.opt('slotLabelInterval');
+		this.labelInterval = input ?
+			moment.duration(input) :
+			this.computeLabelInterval(slotDuration);
 	},
 
 
-	// Slices up a date range into a segment for each column
-	rangeToSegs: function(rangeStart, rangeEnd) {
-		var view = this.view;
+	// Computes an automatic value for slotLabelInterval
+	computeLabelInterval: function(slotDuration) {
+		var i;
+		var labelInterval;
+		var slotsPerLabel;
+
+		// find the smallest stock label interval that results in more than one slots-per-label
+		for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
+			labelInterval = moment.duration(AGENDA_STOCK_SUB_DURATIONS[i]);
+			slotsPerLabel = divideDurationByDuration(labelInterval, slotDuration);
+			if (isInt(slotsPerLabel) && slotsPerLabel > 1) {
+				return labelInterval;
+			}
+		}
+
+		return moment.duration(slotDuration); // fall back. clone
+	},
+
+
+	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+	computeEventTimeFormat: function() {
+		return this.view.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
+	},
+
+
+	// Computes a default `displayEventEnd` value if one is not expliclty defined
+	computeDisplayEventEnd: function() {
+		return true;
+	},
+
+
+	/* Hit System
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	prepareHits: function() {
+		this.colCoordCache.build();
+		this.slatCoordCache.build();
+	},
+
+
+	releaseHits: function() {
+		this.colCoordCache.clear();
+		// NOTE: don't clear slatCoordCache because we rely on it for computeTimeTop
+	},
+
+
+	queryHit: function(leftOffset, topOffset) {
+		var snapsPerSlot = this.snapsPerSlot;
+		var colCoordCache = this.colCoordCache;
+		var slatCoordCache = this.slatCoordCache;
+		var colIndex = colCoordCache.getHorizontalIndex(leftOffset);
+		var slatIndex = slatCoordCache.getVerticalIndex(topOffset);
+
+		if (colIndex != null && slatIndex != null) {
+			var slatTop = slatCoordCache.getTopOffset(slatIndex);
+			var slatHeight = slatCoordCache.getHeight(slatIndex);
+			var partial = (topOffset - slatTop) / slatHeight; // floating point number between 0 and 1
+			var localSnapIndex = Math.floor(partial * snapsPerSlot); // the snap # relative to start of slat
+			var snapIndex = slatIndex * snapsPerSlot + localSnapIndex;
+			var snapTop = slatTop + (localSnapIndex / snapsPerSlot) * slatHeight;
+			var snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight;
+
+			return {
+				col: colIndex,
+				snap: snapIndex,
+				component: this, // needed unfortunately :(
+				left: colCoordCache.getLeftOffset(colIndex),
+				right: colCoordCache.getRightOffset(colIndex),
+				top: snapTop,
+				bottom: snapBottom
+			};
+		}
+	},
+
+
+	getHitSpan: function(hit) {
+		var start = this.getCellDate(0, hit.col); // row=0
+		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
+		var end;
+
+		start.time(time);
+		end = start.clone().add(this.snapDuration);
+
+		return { start: start, end: end };
+	},
+
+
+	getHitEl: function(hit) {
+		return this.colEls.eq(hit.col);
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	rangeUpdated: function() {
+		this.updateDayTable();
+	},
+
+
+	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
+	computeSnapTime: function(snapIndex) {
+		return moment.duration(this.minTime + this.snapDuration * snapIndex);
+	},
+
+
+	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
+	spanToSegs: function(span) {
+		var segs = this.sliceRangeByTimes(span);
+		var i;
+
+		for (i = 0; i < segs.length; i++) {
+			if (this.isRTL) {
+				segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex;
+			}
+			else {
+				segs[i].col = segs[i].dayIndex;
+			}
+		}
+
+		return segs;
+	},
+
+
+	sliceRangeByTimes: function(range) {
 		var segs = [];
 		var seg;
-		var col;
-		var cellDate;
-		var colStart, colEnd;
+		var dayIndex;
+		var dayDate;
+		var dayRange;
 
-		// normalize
-		rangeStart = rangeStart.clone().stripZone();
-		rangeEnd = rangeEnd.clone().stripZone();
-
-		for (col = 0; col < view.colCnt; col++) {
-			cellDate = view.cellToDate(0, col); // use the View's cell system for this
-			colStart = cellDate.clone().time(this.minTime);
-			colEnd = cellDate.clone().time(this.maxTime);
-			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
+		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
+			dayDate = this.dayDates[dayIndex].clone(); // TODO: better API for this?
+			dayRange = {
+				start: dayDate.clone().time(this.minTime),
+				end: dayDate.clone().time(this.maxTime)
+			};
+			seg = intersectRanges(range, dayRange); // both will be ambig timezone
 			if (seg) {
-				seg.col = col;
+				seg.dayIndex = dayIndex;
 				segs.push(seg);
 			}
 		}
@@ -155,62 +301,14 @@ $.extend(TimeGrid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Called when there is a window resize/zoom and we need to recalculate coordinates for the grid
-	resize: function() {
-		this.computeSlatTops();
-		this.updateSegVerticals();
-	},
+	updateSize: function(isResize) { // NOT a standard Grid method
+		this.slatCoordCache.build();
 
-
-	// Populates the given empty `rows` and `cols` arrays with offset positions of the "snap" cells.
-	// "Snap" cells are different the slots because they might have finer granularity.
-	buildCoords: function(rows, cols) {
-		var colCnt = this.view.colCnt;
-		var originTop = this.el.offset().top;
-		var snapTime = moment.duration(+this.minTime);
-		var p = null;
-		var e, n;
-
-		this.dayEls.slice(0, colCnt).each(function(i, _e) {
-			e = $(_e);
-			n = e.offset().left;
-			if (p) {
-				p[1] = n;
-			}
-			p = [ n ];
-			cols[i] = p;
-		});
-		p[1] = n + e.outerWidth();
-
-		p = null;
-		while (snapTime < this.maxTime) {
-			n = originTop + this.computeTimeTop(snapTime);
-			if (p) {
-				p[1] = n;
-			}
-			p = [ n ];
-			rows.push(p);
-			snapTime.add(this.snapDuration);
+		if (isResize) {
+			this.updateSegVerticals(
+				[].concat(this.fgSegs || [], this.bgSegs || [], this.businessSegs || [])
+			);
 		}
-		p[1] = originTop + this.computeTimeTop(snapTime); // the position of the exclusive end
-	},
-
-
-	// Gets the datetime for the given slot cell
-	getCellDate: function(cell) {
-		var view = this.view;
-		var calendar = view.calendar;
-
-		return calendar.rezoneDate( // since we are adding a time, it needs to be in the calendar's timezone
-			view.cellToDate(0, cell.col) // View's coord system only accounts for start-of-day for column
-				.time(this.minTime + this.snapDuration * cell.row)
-		);
-	},
-
-
-	// Gets the element that represents the whole-day the cell resides on
-	getCellDayEl: function(cell) {
-		return this.dayEls.eq(cell.col);
 	},
 
 
@@ -219,7 +317,7 @@ $.extend(TimeGrid.prototype, {
 	computeDateTop: function(date, startOfDayDate) {
 		return this.computeTimeTop(
 			moment.duration(
-				date.clone().stripZone() - startOfDayDate.clone().stripTime()
+				date - startOfDayDate.clone().stripTime()
 			)
 		);
 	},
@@ -227,45 +325,30 @@ $.extend(TimeGrid.prototype, {
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
+		var len = this.slatEls.length;
 		var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
 		var slatIndex;
 		var slatRemainder;
-		var slatTop;
-		var slatBottom;
 
-		// constrain. because minTime/maxTime might be customized
+		// compute a floating-point number for how many slats should be progressed through.
+		// from 0 to number of slats (inclusive)
+		// constrained because minTime/maxTime might be customized.
 		slatCoverage = Math.max(0, slatCoverage);
-		slatCoverage = Math.min(this.slatEls.length, slatCoverage);
+		slatCoverage = Math.min(len, slatCoverage);
 
-		slatIndex = Math.floor(slatCoverage); // an integer index of the furthest whole slot
+		// an integer index of the furthest whole slat
+		// from 0 to number slats (*exclusive*, so len-1)
+		slatIndex = Math.floor(slatCoverage);
+		slatIndex = Math.min(slatIndex, len - 1);
+
+		// how much further through the slatIndex slat (from 0.0-1.0) must be covered in addition.
+		// could be 1.0 if slatCoverage is covering *all* the slots
 		slatRemainder = slatCoverage - slatIndex;
-		slatTop = this.slatTops[slatIndex]; // the top position of the furthest whole slot
 
-		if (slatRemainder) { // time spans part-way into the slot
-			slatBottom = this.slatTops[slatIndex + 1];
-			return slatTop + (slatBottom - slatTop) * slatRemainder; // part-way between slots
-		}
-		else {
-			return slatTop;
-		}
+		return this.slatCoordCache.getTopPosition(slatIndex) +
+			this.slatCoordCache.getHeight(slatIndex) * slatRemainder;
 	},
 
-
-	// Queries each `slatEl` for its position relative to the grid's container and stores it in `slatTops`.
-	// Includes the the bottom of the last slat as the last item in the array.
-	computeSlatTops: function() {
-		var tops = [];
-		var top;
-
-		this.slatEls.each(function(i, node) {
-			top = $(node).position().top;
-			tops.push(top);
-		});
-
-		tops.push(top + this.slatEls.last().outerHeight()); // bottom of the last slat
-
-		this.slatTops = tops;
-	},
 
 
 	/* Event Drag Visualization
@@ -273,34 +356,29 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
-	// `end` and `seg` can be null. See View's documentation on renderDrag for more info.
-	renderDrag: function(start, end, seg) {
-		var opacity;
+	// A returned value of `true` signals that a mock "helper" event has been rendered.
+	renderDrag: function(eventLocation, seg) {
 
 		if (seg) { // if there is event information for this drag, render a helper event
-			this.renderRangeHelper(start, end, seg);
+			this.renderEventLocationHelper(eventLocation, seg);
 
-			opacity = this.view.opt('dragOpacity');
-			if (opacity !== undefined) {
-				this.helperEl.css('opacity', opacity);
+			for (var i = 0; i < this.helperSegs.length; i++) {
+				this.applyDragOpacity(this.helperSegs[i].el);
 			}
 
 			return true; // signal that a helper has been rendered
 		}
 		else {
 			// otherwise, just render a highlight
-			this.renderHighlight(
-				start,
-				end || this.view.calendar.getDefaultEventEnd(false, start)
-			);
+			this.renderHighlight(this.eventToSpan(eventLocation));
 		}
 	},
 
 
 	// Unrenders any visual indication of an event being dragged
-	destroyDrag: function() {
-		this.destroyHelper();
-		this.destroyHighlight();
+	unrenderDrag: function() {
+		this.unrenderHelper();
+		this.unrenderHighlight();
 	},
 
 
@@ -309,14 +387,14 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
-		this.renderRangeHelper(start, end, seg);
+	renderEventResize: function(eventLocation, seg) {
+		this.renderEventLocationHelper(eventLocation, seg);
 	},
 
 
 	// Unrenders any visual indication of an event being resized
-	destroyResize: function() {
-		this.destroyHelper();
+	unrenderEventResize: function() {
+		this.unrenderHelper();
 	},
 
 
@@ -326,37 +404,72 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		var res = this.renderEventTable([ event ]);
-		var tableEl = res.tableEl;
-		var segs = res.segs;
-		var i, seg;
-		var sourceEl;
-
-		// Try to make the segment that is in the same row as sourceSeg look the same
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			if (sourceSeg && sourceSeg.col === seg.col) {
-				sourceEl = sourceSeg.el;
-				seg.el.css({
-					left: sourceEl.css('left'),
-					right: sourceEl.css('right'),
-					'margin-left': sourceEl.css('margin-left'),
-					'margin-right': sourceEl.css('margin-right')
-				});
-			}
-		}
-
-		this.helperEl = $('<div class="fc-helper-skeleton"/>')
-			.append(tableEl)
-				.appendTo(this.el);
+		this.renderHelperSegs(this.eventToSegs(event), sourceSeg);
 	},
 
 
 	// Unrenders any mock helper event
-	destroyHelper: function() {
-		if (this.helperEl) {
-			this.helperEl.remove();
-			this.helperEl = null;
+	unrenderHelper: function() {
+		this.unrenderHelperSegs();
+	},
+
+
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderBusinessHours: function() {
+		var events = this.view.calendar.getBusinessHoursEvents();
+		var segs = this.eventsToSegs(events);
+
+		this.renderBusinessSegs(segs);
+	},
+
+
+	unrenderBusinessHours: function() {
+		this.unrenderBusinessSegs();
+	},
+
+
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	getNowIndicatorUnit: function() {
+		return 'minute'; // will refresh on the minute
+	},
+
+
+	renderNowIndicator: function(date) {
+		// seg system might be overkill, but it handles scenario where line needs to be rendered
+		//  more than once because of columns with the same date (resources columns for example)
+		var segs = this.spanToSegs({ start: date, end: date });
+		var top = this.computeDateTop(date, date);
+		var nodes = [];
+		var i;
+
+		// render lines within the columns
+		for (i = 0; i < segs.length; i++) {
+			nodes.push($('<div class="fc-now-indicator fc-now-indicator-line"></div>')
+				.css('top', top)
+				.appendTo(this.colContainerEls.eq(segs[i].col))[0]);
+		}
+
+		// render an arrow over the axis
+		if (segs.length > 0) { // is the current time in view?
+			nodes.push($('<div class="fc-now-indicator fc-now-indicator-arrow"></div>')
+				.css('top', top)
+				.appendTo(this.el.find('.fc-content-skeleton'))[0]);
+		}
+
+		this.nowIndicatorEls = $(nodes);
+	},
+
+
+	unrenderNowIndicator: function() {
+		if (this.nowIndicatorEls) {
+			this.nowIndicatorEls.remove();
+			this.nowIndicatorEls = null;
 		}
 	},
 
@@ -366,20 +479,22 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(start, end) {
+	renderSelection: function(span) {
 		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderRangeHelper(start, end);
+
+			// normally acceps an eventLocation, span has a start/end, which is good enough
+			this.renderEventLocationHelper(span);
 		}
 		else {
-			this.renderHighlight(start, end);
+			this.renderHighlight(span);
 		}
 	},
 
 
 	// Unrenders any visual indication of a selection
-	destroySelection: function() {
-		this.destroyHelper();
-		this.destroyHighlight();
+	unrenderSelection: function() {
+		this.unrenderHelper();
+		this.unrenderHighlight();
 	},
 
 
@@ -387,75 +502,13 @@ $.extend(TimeGrid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.highlightEl = $(
-			this.highlightSkeletonHtml(start, end)
-		).appendTo(this.el);
+	renderHighlight: function(span) {
+		this.renderHighlightSegs(this.spanToSegs(span));
 	},
 
 
-	// Unrenders the emphasis on a date range
-	destroyHighlight: function() {
-		if (this.highlightEl) {
-			this.highlightEl.remove();
-			this.highlightEl = null;
-		}
-	},
-
-
-	// Generates HTML for a table element with containers in each column, responsible for absolutely positioning the
-	// highlight elements to cover the highlighted slots.
-	highlightSkeletonHtml: function(start, end) {
-		var view = this.view;
-		var segs = this.rangeToSegs(start, end);
-		var cellHtml = '';
-		var col = 0;
-		var i, seg;
-		var dayDate;
-		var top, bottom;
-
-		for (i = 0; i < segs.length; i++) { // loop through the segments. one per column
-			seg = segs[i];
-
-			// need empty cells beforehand?
-			if (col < seg.col) {
-				cellHtml += '<td colspan="' + (seg.col - col) + '"/>';
-				col = seg.col;
-			}
-
-			// compute vertical position
-			dayDate = view.cellToDate(0, col);
-			top = this.computeDateTop(seg.start, dayDate);
-			bottom = this.computeDateTop(seg.end, dayDate); // the y position of the bottom edge
-
-			// generate the cell HTML. bottom becomes negative because it needs to be a CSS value relative to the
-			// bottom edge of the zero-height container.
-			cellHtml +=
-				'<td>' +
-					'<div class="fc-highlight-container">' +
-						'<div class="fc-highlight" style="top:' + top + 'px;bottom:-' + bottom + 'px"/>' +
-					'</div>' +
-				'</td>';
-
-			col++;
-		}
-
-		// need empty cells after the last segment?
-		if (col < view.colCnt) {
-			cellHtml += '<td colspan="' + (view.colCnt - col) + '"/>';
-		}
-
-		cellHtml = this.bookendCells(cellHtml, 'highlight');
-
-		return '' +
-			'<div class="fc-highlight-skeleton">' +
-				'<table>' +
-					'<tr>' +
-						cellHtml +
-					'</tr>' +
-				'</table>' +
-			'</div>';
+	unrenderHighlight: function() {
+		this.unrenderHighlightSegs();
 	}
 
 });

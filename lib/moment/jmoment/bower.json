@@ -1,0 +1,48 @@
+{
+  "name": "moment-jalaali",
+  "version": "0.3.9",
+  "description": "Jalaali (Jalali, Persian, Khorshidi, Shamsi) calendar system plugin for moment.js",
+  "keywords": [
+    "jalaali",
+    "jalali",
+    "persian",
+    "khorshidi",
+    "shamsi",
+    "date",
+    "calendar",
+    "conversion",
+    "convert"
+  ],
+  "main": "build/moment-jalaali.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jalaali/moment-jalaali"
+  },
+  "ignore": [
+    "bower.json",
+    "component.json",
+    "LICENSE",
+    "Makefile",
+    "package.json",
+    "README.md",
+    "test.js",
+    "builder",
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jalaali/moment-jalaali",
+  "authors": [
+    "Behrang Noruzi Niya <behrangn@gmail.com>"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "dependencies": {
+    "moment": "^2.9.0"
+  }
+}

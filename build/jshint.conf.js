@@ -5,12 +5,14 @@ module.exports = {
 		globals: {
 			// `false` means read-only
 			define: false,
+			exports: false,
+			module: false,
+			require: false,
 			moment: false,
 			jQuery: false
 		},
 		es3: true,
 		bitwise: true,
-		camelcase: true,
 		curly: true,
 		forin: true,
 		freeze: true,
@@ -20,7 +22,7 @@ module.exports = {
 		trailing: true,
 		eqnull: true,
 		'-W032': true, // Unnecessary semicolon. (lumbar's ;;)
-		'-W008': true // A leading decimal point can be confused with a dot (ex: .5)
+		'-W008': true // A leading decimal point can be confused with a dot (ex: .5) // TODO: think about enabling!
 	},
 
 	srcModules: [

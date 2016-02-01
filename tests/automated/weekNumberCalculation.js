@@ -9,9 +9,13 @@ describe('weekNumberCalculation', function() {
 		};
 	});
 
-	function getRenderedWeekNumber() {
+	function getRenderedWeekText() {
 		// works for both kinds of views
-		var text = $('.fc-agenda-view .fc-week-number, .fc-week:first .fc-content-skeleton .fc-week-number').text();
+		return $('.fc-agenda-view .fc-week-number, .fc-week:first .fc-content-skeleton .fc-week-number').text();
+	}
+
+	function getRenderedWeekNumber() {
+		var text = getRenderedWeekText() || '';
 		return parseInt(text.replace(/\D/g, ''), 10);
 	}
 
@@ -38,7 +42,7 @@ describe('weekNumberCalculation', function() {
 				options.lang = 'ar';
 				options.weekNumberCalculation = 'local';
 				$('#cal').fullCalendar(options);
-				expect(getRenderedWeekNumber()).toBe(48);
+				expect(getRenderedWeekText()).toMatch(/٤٨|48/);
 			});
 
 			// another local test, but to make sure it is different from ISO

@@ -39,7 +39,10 @@ describe('lang', function() {
 		expect(moment.lang()).toEqual('fr');
 	});
 
-	it('defaults to English when configured to language that isn\'t loaded', function() {
+	// the most recent version of moment will actually throw a cryptic exception,
+	// and instead of papering over this, just let it be thrown. will indicate that something
+	// needs to be fixed to the developer.
+	xit('defaults to English when configured to language that isn\'t loaded', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
 			lang: 'zz'
@@ -48,6 +51,20 @@ describe('lang', function() {
 		var mom = calendar.moment('2014-05-01');
 		var s = mom.format('dddd MMMM Do YYYY');
 		expect(s).toEqual('Thursday May 1st 2014');
+	});
+
+	it('works when certain language has no FC settings defined', function() {
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'en-ca',
+			defaultView: 'agendaWeek',
+			defaultDate: '2014-12-25',
+			events: [
+				{ title: 'Christmas', start: '2014-12-25T10:00:00' }
+			]
+		});
+		expect($('.fc-day-header:first')).toHaveText('Sun 12-21');
+		expect($('.fc-event .fc-time')).toHaveText('10:00');
 	});
 
 });

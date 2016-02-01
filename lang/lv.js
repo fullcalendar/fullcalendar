@@ -1,6 +1,6 @@
 
 $.fullCalendar.lang("lv", {
-	defaultButtonText: {
+	buttonText: {
 		month: "Mēnesis",
 		week: "Nedēļa",
 		day: "Diena",

@@ -8,7 +8,7 @@ function Header(calendar, options) {
 	
 	// exports
 	t.render = render;
-	t.destroy = destroy;
+	t.removeElement = removeElement;
 	t.updateTitle = updateTitle;
 	t.activateButton = activateButton;
 	t.deactivateButton = deactivateButton;
@@ -39,8 +39,9 @@ function Header(calendar, options) {
 	}
 	
 	
-	function destroy() {
+	function removeElement() {
 		el.remove();
+		el = $();
 	}
 	
 	
@@ -55,41 +56,61 @@ function Header(calendar, options) {
 				var groupEl;
 
 				$.each(this.split(','), function(j, buttonName) {
+					var customButtonProps;
+					var viewSpec;
 					var buttonClick;
+					var overrideText; // text explicitly set by calendar's constructor options. overcomes icons
+					var defaultText;
 					var themeIcon;
 					var normalIcon;
-					var defaultText;
-					var customText;
 					var innerHtml;
 					var classes;
-					var button;
+					var button; // the element
 
 					if (buttonName == 'title') {
 						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
 						isOnlyButtons = false;
 					}
 					else {
-						if (calendar[buttonName]) { // a calendar method
-							buttonClick = function() {
-								calendar[buttonName]();
+						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
+							buttonClick = function(ev) {
+								if (customButtonProps.click) {
+									customButtonProps.click.call(button[0], ev);
+								}
 							};
+							overrideText = ''; // icons will override text
+							defaultText = customButtonProps.text;
 						}
-						else if (fcViews[buttonName]) { // a view name
+						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							viewsWithButtons.push(buttonName);
+							overrideText = viewSpec.buttonTextOverride;
+							defaultText = viewSpec.buttonTextDefault;
 						}
+						else if (calendar[buttonName]) { // a calendar method
+							buttonClick = function() {
+								calendar[buttonName]();
+							};
+							overrideText = (calendar.overrides.buttonText || {})[buttonName];
+							defaultText = options.buttonText[buttonName]; // everything else is considered default
+						}
+
 						if (buttonClick) {
 
-							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
-							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
-							normalIcon = smartProperty(options.buttonIcons, buttonName);
-							defaultText = smartProperty(options.defaultButtonText, buttonName);
-							customText = smartProperty(options.buttonText, buttonName);
+							themeIcon =
+								customButtonProps ?
+									customButtonProps.themeIcon :
+									options.themeButtonIcons[buttonName];
 
-							if (customText) {
-								innerHtml = htmlEscape(customText);
+							normalIcon =
+								customButtonProps ?
+									customButtonProps.icon :
+									options.buttonIcons[buttonName];
+
+							if (overrideText) {
+								innerHtml = htmlEscape(overrideText);
 							}
 							else if (themeIcon && options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
@@ -98,7 +119,7 @@ function Header(calendar, options) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
-								innerHtml = htmlEscape(defaultText || buttonName);
+								innerHtml = htmlEscape(defaultText);
 							}
 
 							classes = [
@@ -112,11 +133,11 @@ function Header(calendar, options) {
 									innerHtml +
 								'</button>'
 								)
-								.click(function() {
+								.click(function(ev) {
 									// don't process clicks for disabled buttons
 									if (!button.hasClass(tm + '-state-disabled')) {
 
-										buttonClick();
+										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.

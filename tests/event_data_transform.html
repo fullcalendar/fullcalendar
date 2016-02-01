@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/jquery/dist/jquery.js'></script>
 <script src='../lib/moment/moment.js'></script>
-<script src='../src/pwt-date.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
@@ -18,14 +16,12 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
-	            lang:'persianJalali',
-		header: {
+			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
-           lang:'persianJalali',
 
 			eventDataTransform: function(event) {
 				var copy = $.extend({}, event);

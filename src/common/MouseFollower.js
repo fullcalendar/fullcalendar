@@ -2,14 +2,7 @@
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function MouseFollower(sourceEl, options) {
-	this.options = options = options || {};
-	this.sourceEl = sourceEl;
-	this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
-}
-
-
-MouseFollower.prototype = {
+var MouseFollower = Class.extend({
 
 	options: null,
 
@@ -35,6 +28,12 @@ MouseFollower.prototype = {
 	isHidden: false,
 	isAnimating: false, // doing the revert animation?
 
+	constructor: function(sourceEl, options) {
+		this.options = options = options || {};
+		this.sourceEl = sourceEl;
+		this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
+	},
+
 
 	// Causes the element to start following the mouse
 	start: function(ev) {
@@ -50,7 +49,7 @@ MouseFollower.prototype = {
 				this.updatePosition();
 			}
 
-			$(document).on('mousemove', this.mousemoveProxy = $.proxy(this, 'mousemove'));
+			$(document).on('mousemove', this.mousemoveProxy = proxy(this, 'mousemove'));
 		}
 	},
 
@@ -63,7 +62,7 @@ MouseFollower.prototype = {
 
 		function complete() {
 			this.isAnimating = false;
-			_this.destroyEl();
+			_this.removeElement();
 
 			this.top0 = this.left0 = null; // reset state for future updatePosition calls
 
@@ -121,7 +120,7 @@ MouseFollower.prototype = {
 
 
 	// Removes the tracking element if it has already been created
-	destroyEl: function() {
+	removeElement: function() {
 		if (this.el) {
 			this.el.remove();
 			this.el = null;
@@ -183,4 +182,4 @@ MouseFollower.prototype = {
 		}
 	}
 
-};
+});

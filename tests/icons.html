@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<script src='../lib/jquery/dist/jquery.js'></script>
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../src/timeline/timeline.css' rel='stylesheet' />
+<style>
+
+	.fc-icon {
+		clear: left;
+		float: left;
+		margin-bottom: .1em;
+		border: 5px solid #fff;
+		color: #000;
+		background: #fff;
+	}
+
+	.inverse .fc-icon {
+		color: #fff;
+		background: #000;
+	}
+
+	.bordered .fc-icon {
+		border-color: #666;
+	}
+
+	td {
+		vertical-align: top;
+		padding: 10px 25px;
+	}
+
+</style>
+<script>
+
+	$(function() {
+		var fontSizes = [ '50px', '26px', '16px', '14px' ];
+		var td = $('td');
+		var i;
+
+		for (i = 1; i < fontSizes.length; i++) {
+			td.after(td.clone());
+		}
+
+		$('td').each(function(i) {
+			$(this).css('font-size', fontSizes[i]);
+		});
+
+		$(document)
+			.on('click', function() {
+				$('body').toggleClass('inverse');
+			})
+			.on('mousedown', function() {
+				return false; // prevent native text selection
+			});
+
+		$('td').on('click', function() {
+			$(this).toggleClass('bordered');
+			return false; // prevent native text selection
+		});
+	});
+
+</script>
+</head>
+<body>
+<table><tr><td>
+
+	<span class='fc-icon fc-icon-left-single-arrow'></span>
+	<span class='fc-icon fc-icon-right-single-arrow'></span>
+	<span class='fc-icon fc-icon-left-double-arrow'></span>
+	<span class='fc-icon fc-icon-right-double-arrow'></span>
+	<span class='fc-icon fc-icon-left-triangle'></span>
+	<span class='fc-icon fc-icon-right-triangle'></span>
+	<span class='fc-icon fc-icon-down-triangle'></span>
+	<span class='fc-icon fc-icon-x'></span>
+
+</td></tr></table>
+</body>
+</html>

@@ -2,55 +2,20 @@
 /* A month view with day cells running in rows (one-per-week) and columns
 ----------------------------------------------------------------------------------------------------------------------*/
 
-setDefaults({
-	fixedWeekCount: true
-});
+var MonthView = FC.MonthView = BasicView.extend({
 
-fcViews.month = MonthView; // register the view
-
-function MonthView(calendar) {
-	BasicView.call(this, calendar); // call the super-constructor
-}
-
-
-MonthView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(MonthView.prototype, {
-
-	name: 'month',
-
-
-	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add(delta, 'months').startOf('month');
-	},
-
-
-	render: function(date) {
+	// Produces information about what range to display
+	computeRange: function(date) {
+		var range = BasicView.prototype.computeRange.call(this, date); // get value from super-method
 		var rowCnt;
 
-		this.intervalStart = date.clone().stripTime().startOf('month');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
-
-		this.start = this.intervalStart.clone();
-		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
-		this.start.startOf('week');
-		this.start = this.skipHiddenDays(this.start); // move past the first invisible days of the week
-
-		this.end = this.intervalEnd.clone();
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
-		this.end.add((7 - this.end.weekday()) % 7, 'days'); // move to end of week if not already
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
-
-		rowCnt = Math.ceil( // need to ceil in case there are hidden days
-			this.end.diff(this.start, 'weeks', true) // returnfloat=true
-		);
+		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
-			this.end.add(6 - rowCnt, 'weeks');
-			rowCnt = 6;
+			rowCnt = Math.ceil(range.end.diff(range.start, 'weeks', true)); // could be partial weeks due to hiddenDays
+			range.end.add(6 - rowCnt, 'weeks');
 		}
 
-		this.title = this.calendar.formatDate(this.intervalStart, this.opt('titleFormat'));
-
-		BasicView.prototype.render.call(this, rowCnt, this.getCellsPerWeek(), true); // call the super-method
+		return range;
 	},
 
 

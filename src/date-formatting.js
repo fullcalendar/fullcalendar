@@ -4,8 +4,8 @@
 
 
 // call this if you want Moment's original format method to be used
-function momentFormat(mom, formatStr) {
-	return moment.fn.format.call(mom, formatStr);
+function oldMomentFormat(mom, formatStr) {
+	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
 }
 
 
@@ -31,10 +31,10 @@ function formatDateWithChunks(date, chunks) {
 // addition formatting tokens we want recognized
 var tokenOverrides = {
 	t: function(date) { // "a" or "p"
-		return momentFormat(date, 'a').charAt(0);
+		return oldMomentFormat(date, 'a').charAt(0);
 	},
 	T: function(date) { // "A" or "P"
-		return momentFormat(date, 'A').charAt(0);
+		return oldMomentFormat(date, 'A').charAt(0);
 	}
 };
 
@@ -50,7 +50,7 @@ function formatDateWithChunk(date, chunk) {
 		if (tokenOverrides[token]) {
 			return tokenOverrides[token](date); // use our custom token
 		}
-		return momentFormat(date, token);
+		return oldMomentFormat(date, token);
 	}
 	else if (chunk.maybe) { // a grouping of other chunks that must be non-zero
 		maybeStr = formatDateWithChunks(date, chunk.maybe);
@@ -74,8 +74,8 @@ function formatDateWithChunk(date, chunk) {
 function formatRange(date1, date2, formatStr, separator, isRTL) {
 	var localeData;
 
-	date1 = fc.moment.parseZone(date1);
-	date2 = fc.moment.parseZone(date2);
+	date1 = FC.moment.parseZone(date1);
+	date2 = FC.moment.parseZone(date2);
 
 	localeData = (date1.localeData || date1.lang).call(date1); // works with moment-pre-2.8
 
@@ -94,10 +94,12 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 		isRTL
 	);
 }
-fc.formatRange = formatRange; // expose
+FC.formatRange = formatRange; // expose
 
 
 function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
+	var unzonedDate1 = date1.clone().stripZone(); // for formatSimilarChunk
+	var unzonedDate2 = date2.clone().stripZone(); // "
 	var chunkStr; // the rendering of the chunk
 	var leftI;
 	var leftStr = '';
@@ -111,7 +113,7 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 	// Start at the leftmost side of the formatting string and continue until you hit a token
 	// that is not the same between dates.
 	for (leftI=0; leftI<chunks.length; leftI++) {
-		chunkStr = formatSimilarChunk(date1, date2, chunks[leftI]);
+		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunks[leftI]);
 		if (chunkStr === false) {
 			break;
 		}
@@ -120,7 +122,7 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 
 	// Similarly, start at the rightmost side of the formatting string and move left
 	for (rightI=chunks.length-1; rightI>leftI; rightI--) {
-		chunkStr = formatSimilarChunk(date1, date2, chunks[rightI]);
+		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2,  chunks[rightI]);
 		if (chunkStr === false) {
 			break;
 		}
@@ -167,7 +169,7 @@ var similarUnitMap = {
 
 // Given a formatting chunk, and given that both dates are similar in the regard the
 // formatting chunk is concerned, format date1 against `chunk`. Otherwise, return `false`.
-function formatSimilarChunk(date1, date2, chunk) {
+function formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunk) {
 	var token;
 	var unit;
 
@@ -176,9 +178,11 @@ function formatSimilarChunk(date1, date2, chunk) {
 	}
 	else if ((token = chunk.token)) {
 		unit = similarUnitMap[token.charAt(0)];
+
 		// are the dates the same for this unit of measurement?
-		if (unit && date1.isSame(date2, unit)) {
-			return momentFormat(date1, token); // would be the same if we used `date2`
+		// use the unzoned dates for this calculation because unreliable when near DST (bug #2396)
+		if (unit && unzonedDate1.isSame(unzonedDate2, unit)) {
+			return oldMomentFormat(date1, token); // would be the same if we used `date2`
 			// BTW, don't support custom tokens
 		}
 	}
@@ -206,7 +210,7 @@ function getFormatStringChunks(formatStr) {
 // Break the formatting string into an array of chunks
 function chunkFormatString(formatStr) {
 	var chunks = [];
-	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|(LT|(\w)\4*o?)|([^\w\[\(]+)/g; // TODO: more descrimination
+	var chunker = /\[([^\]]*)\]|\(([^\)]*)\)|(LTS|LT|(\w)\4*o?)|([^\w\[\(]+)/g; // TODO: more descrimination
 	var match;
 
 	while ((match = chunker.exec(formatStr))) {

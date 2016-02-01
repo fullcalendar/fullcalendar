@@ -11,7 +11,7 @@
 	padding-bottom: 1em; /* ensure a space at bottom of cell for user selecting/clicking */
 }
 
-.fc-basic-view tbody .fc-row {
+.fc-basic-view .fc-body .fc-row {
 	min-height: 4em; /* ensure that all rows are at least this tall */
 }
 

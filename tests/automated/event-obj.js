@@ -40,11 +40,70 @@ describe('event object creation', function() {
 		expect(event).toBeUndefined();
 	});
 
-	it('doesn\'t produce an event when an invalid end', function() {
+	it('produces null end when given an invalid date', function() {
 		init({
+			start: '2014-05-01',
 			end: new Date('asdf') // we use Date constructor to avoid annoying momentjs warning
 		});
-		expect(event).toBeUndefined();
+		expect(event.start).toEqualMoment('2014-05-01');
+		expect(event.end).toBe(null);
+	});
+
+	it('produces null end when given a timed end before the start', function() {
+		init({
+			start: '2014-05-02T00:00:00',
+			end: '2014-05-01T23:00:00'
+		});
+		expect(event.start).toEqualMoment('2014-05-02T00:00:00');
+		expect(event.end).toBe(null);
+	});
+
+	it('produces null end when given a timed end equal to the start', function() {
+		init({
+			start: '2014-05-02T00:00:00',
+			end: '2014-05-01T00:00:00'
+		});
+		expect(event.start).toEqualMoment('2014-05-02T00:00:00');
+		expect(event.end).toBe(null);
+	});
+
+	it('produces null end when given an all-day end before the start', function() {
+		init({
+			start: '2014-05-02',
+			end: '2014-05-02'
+		});
+		expect(event.start).toEqualMoment('2014-05-02');
+		expect(event.end).toBe(null);
+	});
+
+	it('produces null end when given an all-day end equal to the start', function() {
+		init({
+			start: '2014-05-02T00:00:00',
+			end: '2014-05-02T00:00:00'
+		});
+		expect(event.start).toEqualMoment('2014-05-02T00:00:00');
+		expect(event.end).toBe(null);
+	});
+
+	it('allows ASP dates for start', function() {
+		init({
+			start: '\/Date(1239018869048)\/',
+			end: '\/Date(1239105269048)\/'
+		});
+		expect(moment.isMoment(event.start)).toBe(true);
+		expect(+event.start).toBe(1239018869048);
+		expect(moment.isMoment(event.end)).toBe(true);
+		expect(+event.end).toBe(1239105269048);
+	});
+
+	it('produces null end when given an invalid ASP date end', function() {
+		init({
+			start: '\/Date(1239018869048)\/',
+			end: '\/Date(1239018869048)\/' // same as start
+		});
+		expect(moment.isMoment(event.start)).toBe(true);
+		expect(+event.start).toBe(1239018869048);
+		expect(event.end).toBe(null);
 	});
 
 	it('strips times of dates when event is all-day', function() {
