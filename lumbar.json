@@ -43,6 +43,10 @@
         "src/basic/config.js",
         "src/agenda/AgendaView.js",
         "src/agenda/config.js",
+        "src/evsAgenda/evsTimeGrid.js",
+        "src/evsAgenda/evsTimeGrid.events.js",
+        "src/evsAgenda/evsAgendaView.js",
+        "src/evsAgenda/config.js",
         "src/outro.js"
       ],
       "styles": [
