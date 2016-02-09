@@ -667,6 +667,10 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function _calcSize() { // assumes elementVisible
+		if (typeof options.getContainerHeight === 'function') {
+			suggestedViewHeight = options.getContainerHeight() - (headerElement ? headerElement.outerHeight(true) : 0);
+			return;
+		}
 		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
 			suggestedViewHeight = options.contentHeight;
 		}
