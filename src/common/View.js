@@ -320,22 +320,6 @@ var View = FC.View = Class.extend({
 	},
 
 
-	// If the view has already been displayed, tears it down and displays it again.
-	// Will re-render the events if necessary, which display/clear DO NOT do.
-	// TODO: make behavior more consistent.
-	redisplay: function() {
-		if (this.isSkeletonRendered) {
-			var wasEventsRendered = this.isEventsRendered;
-			this.clearEvents(); // won't trigger handlers if events never rendered
-			this.clearView();
-			this.displayView();
-			if (wasEventsRendered) { // only render and trigger handlers if events previously rendered
-				this.displayEvents(this.calendar.getEventCache());
-			}
-		}
-	},
-
-
 	// Displays the view's non-event content, such as date-related content or anything required by events.
 	// Renders the view's non-content skeleton if necessary.
 	// Can be asynchronous and return a promise.
