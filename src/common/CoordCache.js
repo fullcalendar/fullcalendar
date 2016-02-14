@@ -60,6 +60,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 	},
 
 
+	// When called, if coord caches aren't built, builds them
+	ensureBuilt: function() {
+		if (!this.origin) {
+			this.build();
+		}
+	},
+
+
 	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
 	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
 	queryBoundingRect: function() {
@@ -112,6 +120,8 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Given a left offset (from document left), returns the index of the el that it horizontally intersects.
 	// If no intersection is made, or outside of the boundingRect, returns undefined.
 	getHorizontalIndex: function(leftOffset) {
+		this.ensureBuilt();
+
 		var boundingRect = this.boundingRect;
 		var lefts = this.lefts;
 		var rights = this.rights;
@@ -131,6 +141,8 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Given a top offset (from document top), returns the index of the el that it vertically intersects.
 	// If no intersection is made, or outside of the boundingRect, returns undefined.
 	getVerticalIndex: function(topOffset) {
+		this.ensureBuilt();
+
 		var boundingRect = this.boundingRect;
 		var tops = this.tops;
 		var bottoms = this.bottoms;
@@ -149,12 +161,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 
 	// Gets the left offset (from document left) of the element at the given index
 	getLeftOffset: function(leftIndex) {
+		this.ensureBuilt();
 		return this.lefts[leftIndex];
 	},
 
 
 	// Gets the left position (from offsetParent left) of the element at the given index
 	getLeftPosition: function(leftIndex) {
+		this.ensureBuilt();
 		return this.lefts[leftIndex] - this.origin.left;
 	},
 
@@ -162,6 +176,7 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the right offset (from document left) of the element at the given index.
 	// This value is NOT relative to the document's right edge, like the CSS concept of "right" would be.
 	getRightOffset: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex];
 	},
 
@@ -169,30 +184,35 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the right position (from offsetParent left) of the element at the given index.
 	// This value is NOT relative to the offsetParent's right edge, like the CSS concept of "right" would be.
 	getRightPosition: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex] - this.origin.left;
 	},
 
 
 	// Gets the width of the element at the given index
 	getWidth: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex] - this.lefts[leftIndex];
 	},
 
 
 	// Gets the top offset (from document top) of the element at the given index
 	getTopOffset: function(topIndex) {
+		this.ensureBuilt();
 		return this.tops[topIndex];
 	},
 
 
 	// Gets the top position (from offsetParent top) of the element at the given position
 	getTopPosition: function(topIndex) {
+		this.ensureBuilt();
 		return this.tops[topIndex] - this.origin.top;
 	},
 
 	// Gets the bottom offset (from the document top) of the element at the given index.
 	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
 	getBottomOffset: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex];
 	},
 
@@ -200,12 +220,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the bottom position (from the offsetParent top) of the element at the given index.
 	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
 	getBottomPosition: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex] - this.origin.top;
 	},
 
 
 	// Gets the height of the element at the given index
 	getHeight: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex] - this.tops[topIndex];
 	}
 
