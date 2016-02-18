@@ -1,5 +1,5 @@
 
-v2.6.1 (2016-02-15)
+v2.6.1 (2016-02-17)
 -------------------
 
 - make nowIndicator positioning refresh on window resize
