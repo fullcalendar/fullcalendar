@@ -1,13 +1,13 @@
 Package.describe({
   name: 'fullcalendar:fullcalendar',
-  version: '2.6.1',
+  version: '2.6.1_1',
   summary: 'Full-sized drag & drop event calendar',
   git: 'https://github.com/fullcalendar/fullcalendar.git',
   documentation: 'README.md'
 });
 
 Package.onUse(function(api) {
-  api.use(['momentjs:moment','jquery','templating']);
+  api.use(['momentjs:moment@2.5.0','jquery@1.11.4','templating@1.1.5']);
   api.addAssets(["dist/fullcalendar.print.css"], 'client');
   api.addFiles([
     "dist/fullcalendar.css",
