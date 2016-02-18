@@ -7,8 +7,11 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
+  api.use(['momentjs:moment']);
   api.addFiles([
+    "dist/fullcalendar.css",
+    "dist/fullcalendar.print.css",
     "dist/fullcalendar.js",
-    "dist/fullcalendar.css"
+    "dist/gcal.js"
   ], 'client');
 });
