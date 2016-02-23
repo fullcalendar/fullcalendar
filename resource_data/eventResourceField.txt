@@ -2,6 +2,10 @@
 eventResourceField
 ==================
 
+<div class='removed-notice' markdown='1'>
+This setting has been deprecated. Use [eventDataTransform](../event_data/eventDataTransform) instead.
+</div>
+
 Normally [Event Objects](../event_data/Event_Object) are linked to resources via the event's `resourceId` field. However, if you wish to use another field name, you may specify it with `eventResourceField`:
 
 	$('#calendar').fullCalendar({

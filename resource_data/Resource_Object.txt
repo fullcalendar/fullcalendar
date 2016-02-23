@@ -6,7 +6,7 @@ Resource Object
 <tr>
 	<th>id</th>
 	<td markdown='1'>
-		Uniquely identifies this resource. [Event Objects](../event_data/Event_Object/) with a corresponding `resourceId` field will be linked to this event, unless customized by [eventResourceField]().
+		Uniquely identifies this resource. [Event Objects](../event_data/Event_Object/) with a corresponding `resourceId` field will be linked to this event.
 		Will be coerced into a string.
 	</td>
 </tr>

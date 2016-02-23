@@ -21,8 +21,6 @@ An [Event Object](../event_data/Event_Object) becomes associated with a resource
 		]
 	});
 
-If you would prefer not to use `resourceId` for the field name, you can customize it with [eventResourceField]().
-
 
 Multiple Resources
 ------------------

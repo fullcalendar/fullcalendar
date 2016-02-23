@@ -8,7 +8,6 @@ Resource Data
 <li><a href='resources_array'>resources (as an array)</a></li>
 <li><a href='resources_json_feed'>resources (as a JSON feed)</a></li>
 <li><a href='resources_function'>resources (as a function)</a></li>
-<li><a href='eventResourceField'>eventResourceField</a></li>
 <li><a href='getResources'>getResources (method)</a></li>
 <li><a href='getResourceById'>getResourceById (method)</a></li>
 <li><a href='getResourceEvents'>getResourceEvents (method)</a></li>
