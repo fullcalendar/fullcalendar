@@ -4,12 +4,19 @@ resourceRender
 
 Allows manipulation of the elements associated with a resource row.
 
-The first argument will be the cell's `<td>` from the resources area, as a jQuery object. If [resourceColumns](../timeline/resourceColumns) is activated, this jQuery object will be comprised of all the `<td>` elements of the row.
+The first argument is the [Resource Object](../resource_data/Resource_Object/).
 
-The second argument is the container element for the events of the resource, as a jQuery object.
+The second argument is the `<td>` or `<th>` that holds the name of the resource (jQuery object).
+The exact DOM node depends on the type of the current view.
 
-	resourceRender: function(dataTds, eventTd) {
-		dataTds.css('background', 'blue');
+The third argument holds the elements that visually contain the resource's events (jQuery object).
+The exact DOM node depends on the type of the current view.
+Certain views might not support this argument, and will provide an empty jQuery set.
+
+Example:
+
+	resourceRender: function(resourceObj, labelTds, bodyTds) {
+		labelTds.css('background', 'blue');
 	}
 
 This callback will not allow manipulating of *event* elements, as they will not yet have been drawn at the time of invocation. Use [eventRender](../event_rendering/eventRender) for that.
