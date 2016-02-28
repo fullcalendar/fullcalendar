@@ -14,6 +14,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
 	colEls: null, // cells elements in the day-row background
+	slatContainerEl: null, // div that wraps all the slat rows
 	slatEls: null, // elements running horizontally across all columns
 	nowIndicatorEls: null,
 
@@ -33,7 +34,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderDates: function() {
 		this.el.html(this.renderHtml());
 		this.colEls = this.el.find('.fc-day');
-		this.slatEls = this.el.find('.fc-slats tr');
+		this.slatContainerEl = this.el.find('.fc-slats');
+		this.slatEls = this.slatContainerEl.find('tr');
 
 		this.colCoordCache = new CoordCache({
 			els: this.colEls,
@@ -309,6 +311,11 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 				[].concat(this.fgSegs || [], this.bgSegs || [], this.businessSegs || [])
 			);
 		}
+	},
+
+
+	getTotalSlatHeight: function() {
+		return this.slatContainerEl.outerHeight();
 	},
 
 
