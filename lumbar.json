@@ -33,6 +33,7 @@
         "src/common/TimeGrid.js",
         "src/common/TimeGrid.events.js",
         "src/common/View.js",
+        "src/common/Scroller.js",
         "src/Calendar.js",
         "src/defaults.js",
         "src/lang.js",
