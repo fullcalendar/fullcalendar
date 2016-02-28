@@ -491,12 +491,13 @@ temporary rendered events).
 /* Scrolling Container
 --------------------------------------------------------------------------------------------------*/
 
-.fc-scroller { /* this class goes on elements for guaranteed vertical scrollbars */
-	overflow-y: scroll;
-	overflow-x: hidden;
+.fc-scroller {
+	-webkit-overflow-scrolling: touch;
 }
 
-.fc-scroller > * { /* we expect an immediate inner element */
+/* TODO: move to agenda/basic */
+.fc-scroller > .fc-day-grid,
+.fc-scroller > .fc-time-grid {
 	position: relative; /* re-scope all positions */
 	width: 100%; /* hack to force re-sizing this inner element when scrollbars appear/disappear */
 	overflow: hidden; /* don't let negative margins or absolute positioning create further scroll */

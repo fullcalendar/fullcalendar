@@ -138,25 +138,21 @@ function matchCellWidths(els) {
 }
 
 
-// Turns a container element into a scroller if its contents is taller than the allotted height.
-// Returns true if the element is now a scroller, false otherwise.
-// NOTE: this method is best because it takes weird zooming dimensions into account
-function setPotentialScroller(containerEl, height) {
-	containerEl.height(height).addClass('fc-scroller');
+// Given one element that resides inside another,
+// Subtracts the height of the inner element from the outer element.
+function subtractInnerElHeight(outerEl, innerEl) {
+	var both = outerEl.add(innerEl);
+	var diff;
 
-	// are scrollbars needed?
-	if (containerEl[0].scrollHeight - 1 > containerEl[0].clientHeight) { // !!! -1 because IE is often off-by-one :(
-		return true;
-	}
+	// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
+	both.css({
+		position: 'relative', // cause a reflow, which will force fresh dimension recalculation
+		left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
+	});
+	diff = outerEl.outerHeight() - innerEl.outerHeight(); // grab the dimensions
+	both.css({ position: '', left: '' }); // undo hack
 
-	unsetScroller(containerEl); // undo
-	return false;
-}
-
-
-// Takes an element that might have been a scroller, and turns it back into a normal element.
-function unsetScroller(containerEl) {
-	containerEl.height('').removeClass('fc-scroller');
+	return diff;
 }
 
 

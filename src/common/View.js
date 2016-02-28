@@ -32,10 +32,6 @@ var View = FC.View = Class.extend({
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 
-	// subclasses can optionally use a scroll container
-	scrollerEl: null, // the element that will most likely scroll when content is too tall
-	scrollTop: null, // cached vertical scroll value
-
 	// classNames styled by jqui themes
 	widgetHeaderClass: null,
 	widgetContentClass: null,
@@ -571,27 +567,6 @@ var View = FC.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Given the total height of the view, return the number of pixels that should be used for the scroller.
-	// Utility for subclasses.
-	computeScrollerHeight: function(totalHeight) {
-		var scrollerEl = this.scrollerEl;
-		var both;
-		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
-
-		both = this.el.add(scrollerEl);
-
-		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
-		both.css({
-			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
-			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
-		});
-		otherHeight = this.el.outerHeight() - scrollerEl.height(); // grab the dimensions
-		both.css({ position: '', left: '' }); // undo hack
-
-		return totalHeight - otherHeight;
-	},
-
-
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it.
 	// Given the scroll state from the previous rendering. If first time rendering, given null.
 	computeInitialScroll: function(previousScrollState) {
@@ -601,17 +576,13 @@ var View = FC.View = Class.extend({
 
 	// Retrieves the view's current natural scroll state. Can return an arbitrary format.
 	queryScroll: function() {
-		if (this.scrollerEl) {
-			return this.scrollerEl.scrollTop(); // operates on scrollerEl by default
-		}
+		// subclasses must implement
 	},
 
 
 	// Sets the view's scroll state. Will accept the same format computeInitialScroll and queryScroll produce.
 	setScroll: function(scrollState) {
-		if (this.scrollerEl) {
-			return this.scrollerEl.scrollTop(scrollState); // operates on scrollerEl by default
-		}
+		// subclasses must implement
 	},
 
 
