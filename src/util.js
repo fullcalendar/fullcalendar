@@ -818,22 +818,21 @@ function proxy(obj, methodName) {
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
-// N milliseconds.
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
 // https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
-function debounce(func, wait) {
-	var timeoutId;
-	var args;
-	var context;
-	var timestamp; // of most recent call
+function debounce(func, wait, immediate) {
+	var timeout, args, context, timestamp, result;
+
 	var later = function() {
 		var last = +new Date() - timestamp;
-		if (last < wait && last > 0) {
-			timeoutId = setTimeout(later, wait - last);
+		if (last < wait) {
+			timeout = setTimeout(later, wait - last);
 		}
 		else {
-			timeoutId = null;
-			func.apply(context, args);
-			if (!timeoutId) {
+			timeout = null;
+			if (!immediate) {
+				result = func.apply(context, args);
 				context = args = null;
 			}
 		}
@@ -843,8 +842,14 @@ function debounce(func, wait) {
 		context = this;
 		args = arguments;
 		timestamp = +new Date();
-		if (!timeoutId) {
-			timeoutId = setTimeout(later, wait);
+		var callNow = immediate && !timeout;
+		if (!timeout) {
+			timeout = setTimeout(later, wait);
 		}
+		if (callNow) {
+			result = func.apply(context, args);
+			context = args = null;
+		}
+		return result;
 	};
 }
