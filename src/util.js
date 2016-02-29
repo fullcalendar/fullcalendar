@@ -181,26 +181,30 @@ function getScrollParent(el) {
 
 // Queries the outer bounding area of a jQuery element.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
-function getOuterRect(el) {
+// Origin is optional.
+function getOuterRect(el, origin) {
 	var offset = el.offset();
+	var left = offset.left - (origin ? origin.left : 0);
+	var top = offset.top - (origin ? origin.top : 0);
 
 	return {
-		left: offset.left,
-		right: offset.left + el.outerWidth(),
-		top: offset.top,
-		bottom: offset.top + el.outerHeight()
+		left: left,
+		right: left + el.outerWidth(),
+		top: top,
+		bottom: top + el.outerHeight()
 	};
 }
 
 
 // Queries the area within the margin/border/scrollbars of a jQuery element. Does not go within the padding.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
+// Origin is optional.
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-function getClientRect(el) {
+function getClientRect(el, origin) {
 	var offset = el.offset();
 	var scrollbarWidths = getScrollbarWidths(el);
-	var left = offset.left + getCssFloat(el, 'border-left-width') + scrollbarWidths.left;
-	var top = offset.top + getCssFloat(el, 'border-top-width') + scrollbarWidths.top;
+	var left = offset.left + getCssFloat(el, 'border-left-width') + scrollbarWidths.left - (origin ? origin.left : 0);
+	var top = offset.top + getCssFloat(el, 'border-top-width') + scrollbarWidths.top - (origin ? origin.top : 0);
 
 	return {
 		left: left,
@@ -213,10 +217,13 @@ function getClientRect(el) {
 
 // Queries the area within the margin/border/padding of a jQuery element. Assumed not to have scrollbars.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
-function getContentRect(el) {
+// Origin is optional.
+function getContentRect(el, origin) {
 	var offset = el.offset(); // just outside of border, margin not included
-	var left = offset.left + getCssFloat(el, 'border-left-width') + getCssFloat(el, 'padding-left');
-	var top = offset.top + getCssFloat(el, 'border-top-width') + getCssFloat(el, 'padding-top');
+	var left = offset.left + getCssFloat(el, 'border-left-width') + getCssFloat(el, 'padding-left') -
+		(origin ? origin.left : 0);
+	var top = offset.top + getCssFloat(el, 'border-top-width') + getCssFloat(el, 'padding-top') -
+		(origin ? origin.top : 0);
 
 	return {
 		left: left,
