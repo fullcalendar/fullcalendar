@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: use Emitter
 
-var DragListener = FC.DragListener = Class.extend({
+var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	options: null,
 
@@ -14,10 +14,6 @@ var DragListener = FC.DragListener = Class.extend({
 	originX: null,
 	originY: null,
 
-	// handler attached to the document, bound to the DragListener's `this`
-	mousemoveProxy: null,
-	mouseupProxy: null,
-
 	// for IE8 bug-fighting behavior, for now
 	subjectEl: null, // the element being draged. optional
 	subjectHref: null,
@@ -27,7 +23,6 @@ var DragListener = FC.DragListener = Class.extend({
 	scrollTopVel: null, // pixels per second
 	scrollLeftVel: null, // pixels per second
 	scrollIntervalId: null, // ID of setTimeout for scrolling animation loop
-	scrollHandlerProxy: null, // this-scoped function for handling when scrollEl is scrolled
 
 	scrollSensitivity: 30, // pixels from edge for scrolling to start
 	scrollSpeed: 200, // pixels per second, at maximum speed
@@ -69,16 +64,19 @@ var DragListener = FC.DragListener = Class.extend({
 				if (!scrollParent.is(window) && !scrollParent.is(document)) {
 					this.scrollEl = scrollParent;
 
-					// scope to `this`, and use `debounce` to make sure rapid calls don't happen
-					this.scrollHandlerProxy = debounce(proxy(this, 'scrollHandler'), 100);
-					this.scrollEl.on('scroll', this.scrollHandlerProxy);
+					this.listenTo(
+						this.scrollEl,
+						'scroll',
+						debounce(proxy(this, 'scrollHandler'), 100) // make sure rapid calls don't happen
+					);
 				}
 			}
 
-			$(document)
-				.on('mousemove', this.mousemoveProxy = proxy(this, 'mousemove'))
-				.on('mouseup', this.mouseupProxy = proxy(this, 'mouseup'))
-				.on('selectstart', this.preventDefault); // prevents native selection in IE<=8
+			this.listenTo($(document), {
+				mousemove: this.mousemove,
+				mouseup: this.mouseup,
+				selectstart: this.preventDefault // prevents native selection in IE<=8
+			});
 
 			if (ev) {
 				this.originX = ev.pageX;
@@ -200,17 +198,11 @@ var DragListener = FC.DragListener = Class.extend({
 
 			// remove the scroll handler if there is a scrollEl
 			if (this.scrollEl) {
-				this.scrollEl.off('scroll', this.scrollHandlerProxy);
-				this.scrollHandlerProxy = null;
+				this.stopListeningTo(this.scrollEl, 'scroll');
 			}
 
-			$(document)
-				.off('mousemove', this.mousemoveProxy)
-				.off('mouseup', this.mouseupProxy)
-				.off('selectstart', this.preventDefault);
-
-			this.mousemoveProxy = null;
-			this.mouseupProxy = null;
+			// stops listening to mousemove, mouseup, selectstart
+			this.stopListeningTo($(document));
 
 			this.isListening = false;
 			this.listenStop(ev);

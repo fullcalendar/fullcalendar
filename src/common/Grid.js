@@ -2,7 +2,7 @@
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = FC.Grid = Class.extend({
+var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
@@ -12,8 +12,6 @@ var Grid = FC.Grid = Class.extend({
 
 	el: null, // the containing element
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
-
-	externalDragStartProxy: null, // binds the Grid's scope to externalDragStart (in DayGrid.events)
 
 	// derived from options
 	eventTimeFormat: null,
@@ -33,7 +31,6 @@ var Grid = FC.Grid = Class.extend({
 		this.isRTL = view.opt('isRTL');
 
 		this.elsByFill = {};
-		this.externalDragStartProxy = proxy(this, 'externalDragStart');
 	},
 
 
@@ -225,13 +222,16 @@ var Grid = FC.Grid = Class.extend({
 
 	// Binds DOM handlers to elements that reside outside the grid, such as the document
 	bindGlobalHandlers: function() {
-		$(document).on('dragstart sortstart', this.externalDragStartProxy); // jqui
+		this.listenTo($(document), {
+			dragstart: this.externalDragStart, // jqui
+			sortstart: this.externalDragStart // jqui
+		});
 	},
 
 
 	// Unbinds DOM handlers from elements that reside outside the grid
 	unbindGlobalHandlers: function() {
-		$(document).off('dragstart sortstart', this.externalDragStartProxy); // jqui
+		this.stopListeningTo($(document));
 	},
 
 

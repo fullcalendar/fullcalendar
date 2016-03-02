@@ -2,7 +2,7 @@
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var MouseFollower = Class.extend({
+var MouseFollower = Class.extend(ListenerMixin, {
 
 	options: null,
 
@@ -21,8 +21,6 @@ var MouseFollower = Class.extend({
 	// the number of pixels the mouse has moved from its initial position
 	topDelta: null,
 	leftDelta: null,
-
-	mousemoveProxy: null, // document mousemove handler, bound to the MouseFollower's `this`
 
 	isFollowing: false,
 	isHidden: false,
@@ -49,7 +47,7 @@ var MouseFollower = Class.extend({
 				this.updatePosition();
 			}
 
-			$(document).on('mousemove', this.mousemoveProxy = proxy(this, 'mousemove'));
+			this.listenTo($(document), 'mousemove', this.mousemove);
 		}
 	},
 
@@ -74,7 +72,7 @@ var MouseFollower = Class.extend({
 		if (this.isFollowing && !this.isAnimating) { // disallow more than one stop animation at a time
 			this.isFollowing = false;
 
-			$(document).off('mousemove', this.mousemoveProxy);
+			this.stopListeningTo($(document), 'mousemove');
 
 			if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
 				this.isAnimating = true;

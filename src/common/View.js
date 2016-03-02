@@ -41,9 +41,6 @@ var View = FC.View = Class.extend({
 	nextDayThreshold: null,
 	isHiddenDayHash: null,
 
-	// document handlers, bound to `this` object
-	documentMousedownProxy: null, // TODO: doesn't work with touch
-
 	// now indicator
 	isNowIndicatorRendered: null,
 	initialNowDate: null, // result first getNow call
@@ -65,8 +62,6 @@ var View = FC.View = Class.extend({
 		this.isRTL = this.opt('isRTL');
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
-
-		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
 		this.initialize();
 	},
@@ -393,13 +388,13 @@ var View = FC.View = Class.extend({
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
-		$(document).on('mousedown', this.documentMousedownProxy);
+		this.listenTo($(document), 'mousedown', this.documentMousedown);
 	},
 
 
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
-		$(document).off('mousedown', this.documentMousedownProxy);
+		this.stopListeningTo($(document), 'mousedown');
 	},
 
 
