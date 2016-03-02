@@ -5,13 +5,15 @@ var EmitterMixin = FC.EmitterMixin = {
 
 
 	on: function(name, callback) {
-		this.getCallbacks(name).add(callback);
+		this.loopCallbacks(name, 'add', [ callback ]);
+
 		return this; // for chaining
 	},
 
 
 	off: function(name, callback) {
-		this.getCallbacks(name).remove(callback);
+		this.loopCallbacks(name, 'remove', [ callback ]);
+
 		return this; // for chaining
 	},
 
@@ -26,27 +28,39 @@ var EmitterMixin = FC.EmitterMixin = {
 
 
 	triggerWith: function(name, context, args) {
-		var callbacks = this.getCallbacks(name);
-
-		callbacks.fireWith(context, args);
+		this.loopCallbacks(name, 'fireWith', [ context, args ]);
 
 		return this; // for chaining
 	},
 
 
-	getCallbacks: function(name) {
-		var callbacks;
+	/*
+	Given an event name string with possible namespaces,
+	call the given methodName on all the internal Callback object with the given arguments.
+	*/
+	loopCallbacks: function(name, methodName, args) {
+		var parts = name.split('.'); // "click.namespace" -> [ "click", "namespace" ]
+		var i, part;
+		var callbackObj;
 
+		for (i = 0; i < parts.length; i++) {
+			part = parts[i];
+			if (part) { // in case no event name like "click"
+				callbackObj = this.ensureCallbackObj((i ? '.' : '') + part); // put periods in front of namespaces
+				callbackObj[methodName].apply(callbackObj, args);
+			}
+		}
+	},
+
+
+	ensureCallbackObj: function(name) {
 		if (!this.callbackHash) {
 			this.callbackHash = {};
 		}
-
-		callbacks = this.callbackHash[name];
-		if (!callbacks) {
-			callbacks = this.callbackHash[name] = $.Callbacks();
+		if (!this.callbackHash[name]) {
+			this.callbackHash[name] = $.Callbacks();
 		}
-
-		return callbacks;
+		return this.callbackHash[name];
 	}
 
 };
