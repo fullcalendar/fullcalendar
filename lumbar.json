@@ -19,6 +19,7 @@
         "src/date-formatting.js",
         "src/common/Class.js",
         "src/common/EmitterMixin.js",
+        "src/common/ListenerMixin.js",
         "src/common/Popover.js",
         "src/common/CoordCache.js",
         "src/common/DragListener.js",
