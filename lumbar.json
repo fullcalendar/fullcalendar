@@ -18,7 +18,7 @@
         "src/moment-ext.js",
         "src/date-formatting.js",
         "src/common/Class.js",
-        "src/common/Emitter.js",
+        "src/common/EmitterMixin.js",
         "src/common/Popover.js",
         "src/common/CoordCache.js",
         "src/common/DragListener.js",

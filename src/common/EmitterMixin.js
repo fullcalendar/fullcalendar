@@ -1,5 +1,5 @@
 
-var Emitter = FC.Emitter = Class.extend({
+var EmitterMixin = FC.EmitterMixin = {
 
 	callbackHash: null,
 
@@ -49,4 +49,4 @@ var Emitter = FC.Emitter = Class.extend({
 		return callbacks;
 	}
 
-});
+};

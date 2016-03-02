@@ -253,7 +253,7 @@ var Calendar = FC.Calendar = Class.extend({
 });
 
 
-Calendar.mixin(Emitter);
+Calendar.mixin(EmitterMixin);
 
 
 function Calendar_constructor(element, overrides) {
