@@ -70,14 +70,15 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var isRTL = this.isRTL;
 		var html = '';
 		var slotTime = moment.duration(+this.minTime); // wish there was .clone() for durations
+		var slotIterator = moment.duration(0);
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var isLabeled;
 		var axisHtml;
 
 		// Calculate the time for each slot
-		while (slotTime < this.maxTime) {
+		while (slotIterator < (this.maxTime-this.minTime)) {
 			slotDate = this.start.clone().time(slotTime);
-			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
+			isLabeled = isInt(divideDurationByDuration(slotIterator, this.labelInterval));
 
 			axisHtml =
 				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
@@ -99,6 +100,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 				"</tr>";
 
 			slotTime.add(this.slotDuration);
+			slotIterator.add(this.slotDuration);
 		}
 
 		return html;
