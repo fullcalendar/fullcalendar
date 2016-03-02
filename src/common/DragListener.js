@@ -67,7 +67,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 					this.listenTo(
 						this.scrollEl,
 						'scroll',
-						debounce(proxy(this, 'scrollHandler'), 100) // make sure rapid calls don't happen
+						debounce(this.scrollHandler, 100) // make sure rapid calls don't happen
 					);
 				}
 			}
