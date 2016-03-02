@@ -1,11 +1,13 @@
 
-var Scroller = FC.Scroller = Class.extend(Emitter, {
+/*
+Embodies a div that has potential scrollbars
+*/
+var Scroller = FC.Scroller = Class.extend({
 
 	el: null, // the guaranteed outer element
 	scrollEl: null, // the element with the scrollbars
 	overflowX: null,
 	overflowY: null,
-	height: null,
 
 
 	constructor: function(options) {
@@ -53,7 +55,8 @@ var Scroller = FC.Scroller = Class.extend(Emitter, {
 
 	// Causes any 'auto' overflow values to resolves to 'scroll' or 'hidden'.
 	// Useful for preserving scrollbar widths regardless of future resizes.
-	lockOverflow: function(scrollbarWidths) { // can pass in scrollbarWidths for optimization
+	// Can pass in scrollbarWidths for optimization.
+	lockOverflow: function(scrollbarWidths) {
 		var overflowX = this.overflowX;
 		var overflowY = this.overflowY;
 
