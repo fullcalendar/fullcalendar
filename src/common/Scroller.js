@@ -37,7 +37,6 @@ var Scroller = FC.Scroller = Class.extend({
 
 	destroy: function() {
 		this.el.remove();
-		this.el = null;
 	},
 
 
