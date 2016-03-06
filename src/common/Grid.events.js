@@ -175,9 +175,14 @@ Grid.mixin({
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
 		this.bindSegHandler('click', this.handleSegClick);
-		this.bindSegHandler('mouseenter', this.handleSegMouseover);
-		this.bindSegHandler('mouseleave', this.handleSegMouseout);
-		this.bindSegHandler('mousedown', this.handleSegMousedown);
+
+		if (!FC.isSimulatingTouch) {
+			this.bindSegHandler('mouseenter', this.handleSegMouseover);
+			this.bindSegHandler('mouseleave', this.handleSegMouseout);
+			this.bindSegHandler('mousedown', this.handleSegMousedown);
+		}
+
+		this.bindSegHandler(FC.touchstart, this.handleSegTouchStart);
 	},
 
 
@@ -231,6 +236,10 @@ Grid.mixin({
 		else if (this.view.isEventDraggable(seg.event)) {
 			this.segDragMousedown(seg, ev);
 		}
+	},
+
+
+	handleSegTouchStart: function(seg, ev) {
 	},
 
 
