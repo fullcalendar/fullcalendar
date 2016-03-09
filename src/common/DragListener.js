@@ -206,9 +206,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		//}
 
 		if (delay) {
-			console.log('delaying', delay);
 			this.delayTimeoutId = setTimeout(function() {
-				console.log('end delay');
 				_this.handleDelayEnd(initialEv);
 			}, delay);
 		}

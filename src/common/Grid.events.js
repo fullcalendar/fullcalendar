@@ -239,14 +239,17 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var isSelected = seg.event._id === view.selectedEvent._id; // compare IDs in case of out-of-date references
+		var selectedEvent = view.selectedEvent;
+		var isSelected =
+			selectedEvent &&
+				seg.event._id === selectedEvent._id; // compare IDs in case of out-of-date references
 		var dragListener = this.buildSegDragListener(
 			seg,
 			isSelected ? 0 : 1000, // do a delay if not currently selected
 			0 // don't require a min-distance for touch
 		);
 
-		dragListener._dragStart = function() {
+		dragListener._dragStart = function() { // TODO: better way of binding
 			// if not previously selected, will fire after a delay. then, select the event
 			if (!isSelected) {
 				view.selectEvent(seg.event);
