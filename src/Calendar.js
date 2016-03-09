@@ -518,6 +518,10 @@ function Calendar_constructor(element, overrides) {
 			element.addClass('fc-ltr');
 		}
 
+		if (FC.isTouchEnabled) {
+			element.addClass('fc-touch');
+		}
+
 		if (options.theme) {
 			element.addClass('ui-widget');
 		}
