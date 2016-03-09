@@ -164,6 +164,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// Does other DOM-related initializations.
 	setElement: function(el) {
 		this.el = el;
+		preventSelection(el);
 
 		this.bindDayHandler('mousedown', this.dayMousedown);
 		this.bindDayHandler('touchstart', this.dayTouchStart);
