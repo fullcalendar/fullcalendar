@@ -555,6 +555,22 @@ temporary rendered events).
 }
 
 
+/* Event Selection
+--------------------------------------------------------------------------------------------------*/
+
+.fc-event-selected {
+	z-index: 9999 !important;
+}
+
+.fc-event-selected.fc-event-dragging {
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* will appear to float */
+}
+
+.fc-event-selected .fc-bg {
+	display: none; /* hide semi-transparent bg. will make the event look darker */
+}
+
+
 /* Horizontal Events
 --------------------------------------------------------------------------------------------------*/
 
@@ -636,6 +652,13 @@ be a descendant of the grid when it is being dragged.
 	left: -3px;
 	right: -3px;
 	width: 7px;
+}
+
+/* event selection */
+
+.fc-day-grid-event.fc-event-selected .fc-content {
+	background-color: rgba(0, 0, 0, .2); /* will appear darker */
+		/* TODO: improve visuals of this technique! */
 }
 
 
