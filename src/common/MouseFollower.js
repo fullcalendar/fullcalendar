@@ -14,9 +14,9 @@ var MouseFollower = Class.extend(ListenerMixin, {
 	top0: null,
 	left0: null,
 
-	// the initial position of the mouse
-	mouseY0: null,
-	mouseX0: null,
+	// the absolute coordinates of the initiating touch/mouse action
+	y0: null,
+	x0: null,
 
 	// the number of pixels the mouse has moved from its initial position
 	topDelta: null,
@@ -38,8 +38,8 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		if (!this.isFollowing) {
 			this.isFollowing = true;
 
-			this.mouseY0 = ev.pageY;
-			this.mouseX0 = ev.pageX;
+			this.y0 = getEvY(ev);
+			this.x0 = getEvX(ev);
 			this.topDelta = 0;
 			this.leftDelta = 0;
 
@@ -47,7 +47,8 @@ var MouseFollower = Class.extend(ListenerMixin, {
 				this.updatePosition();
 			}
 
-			this.listenTo($(document), 'mousemove', this.mousemove);
+			this.listenTo($(document), 'mousemove', this.handleMove);
+			this.listenTo($(document), 'touchmove', this.handleMove);
 		}
 	},
 
@@ -72,7 +73,7 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		if (this.isFollowing && !this.isAnimating) { // disallow more than one stop animation at a time
 			this.isFollowing = false;
 
-			this.stopListeningTo($(document), 'mousemove');
+			this.stopListeningTo($(document));
 
 			if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
 				this.isAnimating = true;
@@ -98,6 +99,7 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		if (!el) {
 			this.sourceEl.width(); // hack to force IE8 to compute correct bounding box
 			el = this.el = this.sourceEl.clone()
+				.addClass(this.options.additionalClass || '')
 				.css({
 					position: 'absolute',
 					visibility: '', // in case original element was hidden (commonly through hideEvents())
@@ -150,9 +152,9 @@ var MouseFollower = Class.extend(ListenerMixin, {
 
 
 	// Gets called when the user moves the mouse
-	mousemove: function(ev) {
-		this.topDelta = ev.pageY - this.mouseY0;
-		this.leftDelta = ev.pageX - this.mouseX0;
+	handleMove: function(ev) {
+		this.topDelta = getEvY(ev) - this.y0;
+		this.leftDelta = getEvX(ev) - this.x0;
 
 		if (!this.isHidden) {
 			this.updatePosition();
