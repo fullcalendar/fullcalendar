@@ -23,6 +23,7 @@
         "src/common/Popover.js",
         "src/common/CoordCache.js",
         "src/common/DragListener.js",
+        "src/common/DragListener.autoscroll.js",
         "src/common/HitDragListener.js",
         "src/common/MouseFollower.js",
         "src/common/Grid.js",

@@ -7,26 +7,22 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	options: null,
 
-	isListening: false,
-	isDragging: false,
+	subjectEl: null, // the element being dragged
+	subjectHref: null, // for IE8 bug-fighting behavior
 
 	// coordinates of the initial mousedown
 	originX: null,
 	originY: null,
 
-	// for IE8 bug-fighting behavior, for now
-	subjectEl: null, // the element being draged. optional
-	subjectHref: null,
-
 	scrollEl: null,
-	scrollBounds: null, // { top, bottom, left, right }
-	scrollTopVel: null, // pixels per second
-	scrollLeftVel: null, // pixels per second
-	scrollIntervalId: null, // ID of setTimeout for scrolling animation loop
 
-	scrollSensitivity: 30, // pixels from edge for scrolling to start
-	scrollSpeed: 200, // pixels per second, at maximum speed
-	scrollIntervalMs: 50, // millisecond wait between scroll increment
+	isInteracting: false,
+	isTouch: false,
+	isDistanceSurpassed: false,
+	isDelayEnded: false,
+	isDragging: false,
+
+	delayTimeoutId: null,
 
 
 	constructor: function(options) {
@@ -36,113 +32,267 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	// Call this when the user does a mousedown. Will probably lead to startListening
-	mousedown: function(ev) {
-		if (isPrimaryMouseButton(ev)) {
+	// Interaction (high-level)
+	// -----------------------------------------------------------------------------------------------------------------
 
-			ev.preventDefault(); // prevents native selection in most browsers
 
-			this.startListening(ev);
+	startInteraction: function(ev, isTouch) {
+		if (!this.isInteracting) {
 
-			// start the drag immediately if there is no minimum distance for a drag start
+			this.isInteracting = true;
+			this.isDelayEnded = false;
+			this.isDistanceSurpassed = false;
+
+			this.isTouch = isTouch || false;
+			this.originX = getEvX(ev);
+			this.originY = getEvY(ev);
+			this.scrollEl = getScrollParent($(ev.target));
+
+			this.bindHandlers();
+			this.initAutoScroll();
+
+			this.handleInteractionStart(ev);
+
+			this.processDelay(this.options.delay || 0, ev);
+
 			if (!this.options.distance) {
-				this.startDrag(ev);
+				this.handleDistanceSurpassed(ev);
 			}
 		}
 	},
 
 
-	// Call this to start tracking mouse movements
-	startListening: function(ev) {
-		var scrollParent;
+	handleInteractionStart: function(ev) {
+		this.trigger('interactionStart', ev);
+	},
 
-		if (!this.isListening) {
 
-			// grab scroll container and attach handler
-			if (ev && this.options.scroll) {
-				scrollParent = getScrollParent($(ev.target));
-				if (!scrollParent.is(window) && !scrollParent.is(document)) {
-					this.scrollEl = scrollParent;
+	endInteraction: function(ev) {
+		if (this.isInteracting) {
+			this.endDrag(ev);
 
-					this.listenTo(
-						this.scrollEl,
-						'scroll',
-						debounce(this.scrollHandler, 100) // make sure rapid calls don't happen
-					);
-				}
+			if (this.delayTimeoutId) {
+				clearTimeout(this.delayTimeoutId);
+				this.delayTimeoutId = null;
 			}
 
+			this.destroyAutoScroll();
+			this.unbindHandlers();
+
+			this.isInteracting = false;
+			this.handleInteractionEnd(ev);
+		}
+	},
+
+
+	handleInteractionEnd: function(ev) {
+		this.trigger('interactionEnd', ev);
+	},
+
+
+	// Binding To DOM
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	bindHandlers: function() {
+
+		if (this.isTouch) {
 			this.listenTo($(document), {
-				mousemove: this.mousemove,
-				mouseup: this.mouseup,
-				selectstart: this.preventDefault // prevents native selection in IE<=8
+				touchmove: this.handleTouchMove,
+				touchend: this.endInteraction,
+				touchcancel: this.endInteraction
 			});
+		}
+		else {
+			this.listenTo($(document), {
+				mousemove: this.handleMouseMove,
+				mouseup: this.endInteraction
+			});
+		}
 
-			if (ev) {
-				this.originX = ev.pageX;
-				this.originY = ev.pageY;
-			}
-			else {
-				// if no starting information was given, origin will be the topleft corner of the screen.
-				// if so, dx/dy in the future will be the absolute coordinates.
-				this.originX = 0;
-				this.originY = 0;
-			}
+		this.listenTo($(document), {
+			selectstart: preventDefault, // don't allow selection while dragging
+			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
+		});
 
-			this.isListening = true;
-			this.listenStart(ev);
+		if (this.scrollEl) {
+			this.listenTo(this.scrollEl, 'scroll', this.handleScroll);
 		}
 	},
 
 
-	// Called when drag listening has started (but a real drag has not necessarily began)
-	listenStart: function(ev) {
-		this.trigger('listenStart', ev);
+	unbindHandlers: function() {
+		this.stopListeningTo($(document));
+
+		if (this.scrollEl) {
+			this.stopListeningTo(this.scrollEl);
+		}
 	},
 
 
-	// Called when the user moves the mouse
-	mousemove: function(ev) {
-		var dx = ev.pageX - this.originX;
-		var dy = ev.pageY - this.originY;
+	// Drag (high-level)
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// isTouch is only required if startInteraction not called
+	startDrag: function(ev, isTouch) {
+		this.startInteraction(ev, isTouch); // ensure interaction began
+
+		if (!this.isDragging) {
+			this.isDragging = true;
+			this.handleDragStart(ev);
+		}
+	},
+
+
+	handleDragStart: function(ev) {
+		this.trigger('dragStart', ev);
+		this.initHrefHack();
+	},
+
+
+	handleMove: function(ev) {
+		var dx = getEvX(ev) - this.originX;
+		var dy = getEvY(ev) - this.originY;
 		var minDistance;
 		var distanceSq; // current distance from the origin, squared
 
-		if (!this.isDragging) { // if not already dragging...
-			// then start the drag if the minimum distance criteria is met
-			minDistance = this.options.distance || 1;
+		if (!this.isDistanceSurpassed) {
+			minDistance = this.options.distance || 0;
 			distanceSq = dx * dx + dy * dy;
 			if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
-				this.startDrag(ev);
+				this.handleDistanceSurpassed(ev);
 			}
 		}
 
 		if (this.isDragging) {
-			this.drag(dx, dy, ev); // report a drag, even if this mousemove initiated the drag
+			this.handleDrag(dx, dy, ev);
 		}
 	},
 
 
-	// Call this to initiate a legitimate drag.
-	// This function is called internally from this class, but can also be called explicitly from outside
-	startDrag: function(ev) {
+	// Called while the mouse is being moved and when we know a legitimate drag is taking place
+	handleDrag: function(dx, dy, ev) {
+		this.trigger('drag', dx, dy, ev);
+		this.updateAutoScroll(ev); // will possibly cause scrolling
+	},
 
-		if (!this.isListening) { // startDrag must have manually initiated
-			this.startListening();
-		}
 
-		if (!this.isDragging) {
-			this.isDragging = true;
-			this.dragStart(ev);
+	endDrag: function(ev) {
+		if (this.isDragging) {
+			this.isDragging = false;
+			this.handleDragEnd(ev);
 		}
 	},
 
 
-	// Called when the actual drag has started (went beyond minDistance)
-	dragStart: function(ev) {
+	handleDragEnd: function(ev) {
+		this.trigger('dragEnd', ev);
+		this.destroyHrefHack();
+	},
+
+
+	// Delay
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	processDelay: function(delay, initialEv) {
+		var _this = this;
+
+		// TODO: fix this
+		//// prevents mousemove+mousedown+click for touch "click"
+		//if (FC.isTouchEnabled) {
+		//	delay = Math.max(1, delay);
+		//}
+
+		if (delay) {
+			console.log('delaying', delay);
+			this.delayTimeoutId = setTimeout(function() {
+				console.log('end delay');
+				_this.handleDelayEnd(initialEv);
+			}, delay);
+		}
+		else {
+			this.handleDelayEnd(initialEv);
+		}
+	},
+
+
+	handleDelayEnd: function(ev) {
+		this.isDelayEnded = true;
+
+		if (this.isDistanceSurpassed) {
+			this.startDrag(ev);
+		}
+	},
+
+
+	// Distance
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	handleDistanceSurpassed: function(ev) {
+		this.isDistanceSurpassed = true;
+
+		if (this.isDelayEnded) {
+			this.startDrag(ev);
+		}
+	},
+
+
+	// Mouse / Touch
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	handleMouseDown: function(ev) {
+		if (isPrimaryMouseButton(ev)) {
+			ev.preventDefault(); // prevents native selection in most browsers
+			this.startInteraction(ev, false); // isTouch=false
+		}
+	},
+
+
+	handleTouchStart: function(ev) {
+		if (isSingleTouch(ev)) {
+			this.startInteraction(ev, true); // isTouch=true
+		}
+	},
+
+
+	handleMouseMove: function(ev) {
+		this.handleMove(ev);
+	},
+
+
+	handleTouchMove: function(ev) {
+		// prevent inertia and touchmove-scrolling while dragging
+		if (this.isDragging) {
+			ev.preventDefault();
+		}
+
+		this.handleMove(ev);
+	},
+
+
+	// Scrolling (unrelated to auto-scroll)
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	handleScroll: function(ev) {
+		// if the drag is being initiated by touch, but a scroll happens before
+		// the drag-initiating delay is over, cancel the drag
+		if (this.isTouch && !this.isDragging) {
+			this.endInteraction();
+		}
+	},
+
+
+	// <A> HREF Hack
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	initHrefHack: function() {
 		var subjectEl = this.subjectEl;
-
-		this.trigger('dragStart', ev);
 
 		// remove a mousedown'd <a>'s href so it is not visited (IE8 bug)
 		if ((this.subjectHref = subjectEl ? subjectEl.attr('href') : null)) {
@@ -151,69 +301,21 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	// Called while the mouse is being moved and when we know a legitimate drag is taking place
-	drag: function(dx, dy, ev) {
-		this.trigger('drag', dx, dy, ev);
-		this.updateScroll(ev); // will possibly cause scrolling
-	},
-
-
-	// Called when the user does a mouseup
-	mouseup: function(ev) {
-		this.stopListening(ev);
-	},
-
-
-	// Called when the drag is over. Will not cause listening to stop however.
-	// A concluding 'cellOut' event will NOT be triggered.
-	stopDrag: function(ev) {
-		if (this.isDragging) {
-			this.stopScrolling();
-			this.dragStop(ev);
-			this.isDragging = false;
-		}
-	},
-
-
-	// Called when dragging has been stopped
-	dragStop: function(ev) {
-		var _this = this;
-
-		this.trigger('dragStop', ev);
+	destroyHrefHack: function() {
+		var subjectEl = this.subjectEl;
+		var subjectHref = this.subjectHref;
 
 		// restore a mousedown'd <a>'s href (for IE8 bug)
 		setTimeout(function() { // must be outside of the click's execution
-			if (_this.subjectHref) {
-				_this.subjectEl.attr('href', _this.subjectHref);
+			if (subjectHref) {
+				subjectEl.attr('href', subjectHref);
 			}
 		}, 0);
 	},
 
 
-	// Call this to stop listening to the user's mouse events
-	stopListening: function(ev) {
-		this.stopDrag(ev); // if there's a current drag, kill it
-
-		if (this.isListening) {
-
-			// remove the scroll handler if there is a scrollEl
-			if (this.scrollEl) {
-				this.stopListeningTo(this.scrollEl, 'scroll');
-			}
-
-			// stops listening to mousemove, mouseup, selectstart
-			this.stopListeningTo($(document));
-
-			this.isListening = false;
-			this.listenStop(ev);
-		}
-	},
-
-
-	// Called when drag listening has stopped
-	listenStop: function(ev) {
-		this.trigger('listenStop', ev);
-	},
+	// Utils
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// Triggers a callback. Calls a function in the option hash of the same name.
@@ -222,158 +324,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		if (this.options[name]) {
 			this.options[name].apply(this, Array.prototype.slice.call(arguments, 1));
 		}
-	},
-
-
-	// Stops a given mouse event from doing it's native browser action. In our case, text selection.
-	preventDefault: function(ev) {
-		ev.preventDefault();
-	},
-
-
-	/* Scrolling
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Computes and stores the bounding rectangle of scrollEl
-	computeScrollBounds: function() {
-		var el = this.scrollEl;
-
-		this.scrollBounds = el ? getOuterRect(el) : null;
-			// TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
-	},
-
-
-	// Called when the dragging is in progress and scrolling should be updated
-	updateScroll: function(ev) {
-		var sensitivity = this.scrollSensitivity;
-		var bounds = this.scrollBounds;
-		var topCloseness, bottomCloseness;
-		var leftCloseness, rightCloseness;
-		var topVel = 0;
-		var leftVel = 0;
-
-		if (bounds) { // only scroll if scrollEl exists
-
-			// compute closeness to edges. valid range is from 0.0 - 1.0
-			topCloseness = (sensitivity - (ev.pageY - bounds.top)) / sensitivity;
-			bottomCloseness = (sensitivity - (bounds.bottom - ev.pageY)) / sensitivity;
-			leftCloseness = (sensitivity - (ev.pageX - bounds.left)) / sensitivity;
-			rightCloseness = (sensitivity - (bounds.right - ev.pageX)) / sensitivity;
-
-			// translate vertical closeness into velocity.
-			// mouse must be completely in bounds for velocity to happen.
-			if (topCloseness >= 0 && topCloseness <= 1) {
-				topVel = topCloseness * this.scrollSpeed * -1; // negative. for scrolling up
-			}
-			else if (bottomCloseness >= 0 && bottomCloseness <= 1) {
-				topVel = bottomCloseness * this.scrollSpeed;
-			}
-
-			// translate horizontal closeness into velocity
-			if (leftCloseness >= 0 && leftCloseness <= 1) {
-				leftVel = leftCloseness * this.scrollSpeed * -1; // negative. for scrolling left
-			}
-			else if (rightCloseness >= 0 && rightCloseness <= 1) {
-				leftVel = rightCloseness * this.scrollSpeed;
-			}
+		// makes _methods callable by event name. TODO: kill this
+		if (this['_' + name]) {
+			this['_' + name].apply(this, Array.prototype.slice.call(arguments, 1));
 		}
-
-		this.setScrollVel(topVel, leftVel);
-	},
-
-
-	// Sets the speed-of-scrolling for the scrollEl
-	setScrollVel: function(topVel, leftVel) {
-
-		this.scrollTopVel = topVel;
-		this.scrollLeftVel = leftVel;
-
-		this.constrainScrollVel(); // massages into realistic values
-
-		// if there is non-zero velocity, and an animation loop hasn't already started, then START
-		if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
-			this.scrollIntervalId = setInterval(
-				proxy(this, 'scrollIntervalFunc'), // scope to `this`
-				this.scrollIntervalMs
-			);
-		}
-	},
-
-
-	// Forces scrollTopVel and scrollLeftVel to be zero if scrolling has already gone all the way
-	constrainScrollVel: function() {
-		var el = this.scrollEl;
-
-		if (this.scrollTopVel < 0) { // scrolling up?
-			if (el.scrollTop() <= 0) { // already scrolled all the way up?
-				this.scrollTopVel = 0;
-			}
-		}
-		else if (this.scrollTopVel > 0) { // scrolling down?
-			if (el.scrollTop() + el[0].clientHeight >= el[0].scrollHeight) { // already scrolled all the way down?
-				this.scrollTopVel = 0;
-			}
-		}
-
-		if (this.scrollLeftVel < 0) { // scrolling left?
-			if (el.scrollLeft() <= 0) { // already scrolled all the left?
-				this.scrollLeftVel = 0;
-			}
-		}
-		else if (this.scrollLeftVel > 0) { // scrolling right?
-			if (el.scrollLeft() + el[0].clientWidth >= el[0].scrollWidth) { // already scrolled all the way right?
-				this.scrollLeftVel = 0;
-			}
-		}
-	},
-
-
-	// This function gets called during every iteration of the scrolling animation loop
-	scrollIntervalFunc: function() {
-		var el = this.scrollEl;
-		var frac = this.scrollIntervalMs / 1000; // considering animation frequency, what the vel should be mult'd by
-
-		// change the value of scrollEl's scroll
-		if (this.scrollTopVel) {
-			el.scrollTop(el.scrollTop() + this.scrollTopVel * frac);
-		}
-		if (this.scrollLeftVel) {
-			el.scrollLeft(el.scrollLeft() + this.scrollLeftVel * frac);
-		}
-
-		this.constrainScrollVel(); // since the scroll values changed, recompute the velocities
-
-		// if scrolled all the way, which causes the vels to be zero, stop the animation loop
-		if (!this.scrollTopVel && !this.scrollLeftVel) {
-			this.stopScrolling();
-		}
-	},
-
-
-	// Kills any existing scrolling animation loop
-	stopScrolling: function() {
-		if (this.scrollIntervalId) {
-			clearInterval(this.scrollIntervalId);
-			this.scrollIntervalId = null;
-
-			// when all done with scrolling, recompute positions since they probably changed
-			this.scrollStop();
-		}
-	},
-
-
-	// Get called when the scrollEl is scrolled (NOTE: this is delayed via debounce)
-	scrollHandler: function() {
-		// recompute all coordinates, but *only* if this is *not* part of our scrolling animation
-		if (!this.scrollIntervalId) {
-			this.scrollStop();
-		}
-	},
-
-
-	// Called when scrolling has stopped, whether through auto scroll, or the user scrolling
-	scrollStop: function() {
 	}
+
 
 });
