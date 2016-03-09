@@ -227,15 +227,33 @@ Grid.mixin({
 
 	handleSegMousedown: function(seg, ev) {
 		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
-			this.segResizeMousedown(seg, ev, $(ev.target).is('.fc-start-resizer'));
+			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
+				.handleMouseDown(ev);
 		}
 		else if (this.view.isEventDraggable(seg.event)) {
-			this.segDragMousedown(seg, ev);
+			this.buildSegDragListener(seg)
+				.handleMouseDown(ev);
 		}
 	},
 
 
 	handleSegTouchStart: function(seg, ev) {
+		var view = this.view;
+		var isSelected = seg.event._id === view.selectedEvent._id; // compare IDs in case of out-of-date references
+		var dragListener = this.buildSegDragListener(
+			seg,
+			isSelected ? 0 : 1000, // do a delay if not currently selected
+			0 // don't require a min-distance for touch
+		);
+
+		dragListener._dragStart = function() {
+			// if not previously selected, will fire after a delay. then, select the event
+			if (!isSelected) {
+				view.selectEvent(seg.event);
+			}
+		};
+
+		dragListener.handleTouchStart(ev);
 	},
 
 
@@ -243,32 +261,33 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Called when the user does a mousedown on an event, which might lead to dragging.
+	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
-	segDragMousedown: function(seg, ev) {
+	buildSegDragListener: function(seg, delay, distance) {
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
+		var mouseFollower; // A clone of the original element that will move with the mouse
 		var dropLocation; // zoned event date properties
-
-		// A clone of the original element that will move with the mouse
-		var mouseFollower = new MouseFollower(seg.el, {
-			parentEl: view.el,
-			opacity: view.opt('dragOpacity'),
-			revertDuration: view.opt('dragRevertDuration'),
-			zIndex: 2 // one above the .fc-view
-		});
 
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = new HitDragListener(view, {
-			distance: 5,
+			delay: delay || 0,
+			distance: distance != null ? distance : 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
-			listenStart: function(ev) {
+			interactionStart: function(ev) {
+				mouseFollower = new MouseFollower(seg.el, {
+					additionalClass: 'fc-event-dragging',
+					parentEl: view.el,
+					opacity: dragListener.isTouch ? null : view.opt('dragOpacity'),
+					revertDuration: view.opt('dragRevertDuration'),
+					zIndex: 2 // one above the .fc-view
+				});
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
 			},
@@ -278,6 +297,7 @@ Grid.mixin({
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 			},
 			hitOver: function(hit, isOrig, origHit) {
+				var dragHelperEls;
 
 				// starting hit could be forced (DayGrid.limit)
 				if (seg.hit) {
@@ -297,7 +317,13 @@ Grid.mixin({
 				}
 
 				// if a valid drop location, have the subclass render a visual indication
-				if (dropLocation && view.renderDrag(dropLocation, seg)) {
+				if (dropLocation && (dragHelperEls = view.renderDrag(dropLocation, seg))) {
+
+					dragHelperEls.addClass('fc-event-dragging');
+					if (!dragListener.isTouch) {
+						_this.applyDragOpacity(dragHelperEls);
+					}
+
 					mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
 				}
 				else {
@@ -313,10 +339,10 @@ Grid.mixin({
 				mouseFollower.show(); // show in case we are moving out of all hits
 				dropLocation = null;
 			},
-			hitDone: function() { // Called after a hitOut OR before a dragStop
+			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 			},
-			dragStop: function(ev) {
+			dragEnd: function(ev) {
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!dropLocation, function() {
 					view.unrenderDrag();
@@ -328,12 +354,12 @@ Grid.mixin({
 					}
 				});
 			},
-			listenStop: function() {
-				mouseFollower.stop(); // put in listenStop in case there was a mousedown but the drag never started
+			interactionEnd: function() {
+				mouseFollower.stop(); // put in interactionEnd in case there was a mousedown but the drag never started
 			}
 		});
 
-		dragListener.mousedown(ev); // start listening, which will eventually lead to a dragStart
+		return dragListener;
 	},
 
 
@@ -450,7 +476,7 @@ Grid.mixin({
 
 		// listener that tracks mouse movement over date-associated pixel regions
 		var dragListener = new HitDragListener(this, {
-			listenStart: function() {
+			interactionStart: function() {
 				_this.isDraggingExternal = true;
 			},
 			hitOver: function(hit) {
@@ -474,16 +500,16 @@ Grid.mixin({
 			hitOut: function() {
 				dropLocation = null; // signal unsuccessful
 			},
-			hitDone: function() { // Called after a hitOut OR before a dragStop
+			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 				_this.unrenderDrag();
 			},
-			dragStop: function() {
+			dragEnd: function() {
 				if (dropLocation) { // element was dropped on a valid hit
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
 			},
-			listenStop: function() {
+			interactionEnd: function() {
 				_this.isDraggingExternal = false;
 			}
 		});
@@ -541,9 +567,9 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Called when the user does a mousedown on an event's resizer, which might lead to resizing.
+	// Creates a listener that tracks the user as they resize an event segment.
 	// Generic enough to work with any type of Grid.
-	segResizeMousedown: function(seg, ev, isStart) {
+	buildSegResizeListener: function(seg, isStart) {
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
@@ -593,7 +619,7 @@ Grid.mixin({
 				view.showEvent(event);
 				enableCursor();
 			},
-			dragStop: function(ev) {
+			dragEnd: function(ev) {
 				_this.segResizeStop(seg, ev);
 
 				if (resizeLocation) { // valid date to resize to?
@@ -602,7 +628,7 @@ Grid.mixin({
 			}
 		});
 
-		dragListener.mousedown(ev); // start listening, which will eventually lead to a dragStart
+		return dragListener;
 	},
 
 
