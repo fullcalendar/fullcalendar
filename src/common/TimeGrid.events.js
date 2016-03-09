@@ -101,7 +101,7 @@ TimeGrid.mixin({
 			}
 		}
 
-		this.helperSegs = segs;
+		return (this.helperSegs = segs); // must return rendered helpers
 	},
 
 
