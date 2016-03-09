@@ -6,10 +6,7 @@ var FC = $.fullCalendar = {
 var fcViews = FC.views = {};
 
 
-// touch
-FC.isSimulatingTouch = false;
-FC.touchstart = FC.isSimulatingTouch ? 'mousedown' : 'touchstart';
-FC.touchend = FC.isSimulatingTouch ? 'mouseup' : 'touchend';
+FC.isTouchEnabled = 'ontouchstart' in document;
 
 
 $.fn.fullCalendar = function(options) {
