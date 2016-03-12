@@ -43,7 +43,12 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.isDelayEnded = false;
 			this.isDistanceSurpassed = false;
 
-			this.isTouch = isTouch || false;
+			// only ever turn it on
+			// will be reset when interactions is over
+			if (isTouch) {
+				this.isTouch = true;
+			}
+
 			this.originX = getEvX(ev);
 			this.originY = getEvY(ev);
 			this.scrollEl = getScrollParent($(ev.target));
@@ -81,6 +86,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.isInteracting = false;
 			this.handleInteractionEnd(ev);
+
+			this.isTouch = false;
 		}
 	},
 
@@ -96,21 +103,12 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	bindHandlers: function() {
 
-		if (this.isTouch) {
-			this.listenTo($(document), {
-				touchmove: this.handleTouchMove,
-				touchend: this.endInteraction,
-				touchcancel: this.endInteraction
-			});
-		}
-		else {
-			this.listenTo($(document), {
-				mousemove: this.handleMouseMove,
-				mouseup: this.endInteraction
-			});
-		}
-
 		this.listenTo($(document), {
+			touchmove: this.handleTouchMove,
+			touchend: this.endInteraction,
+			touchcancel: this.endInteraction,
+			mousemove: this.handleMouseMove,
+			mouseup: this.endInteraction
 			selectstart: preventDefault, // don't allow selection while dragging
 			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
 		});
@@ -237,16 +235,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	// Mouse / Touch
+	// Touch / Mouse
 	// -----------------------------------------------------------------------------------------------------------------
-
-
-	handleMouseDown: function(ev) {
-		if (isPrimaryMouseButton(ev)) {
-			ev.preventDefault(); // prevents native selection in most browsers
-			this.startInteraction(ev, false); // isTouch=false
-		}
-	},
 
 
 	handleTouchStart: function(ev) {
@@ -256,8 +246,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	handleMouseMove: function(ev) {
-		this.handleMove(ev);
+	handleMouseDown: function(ev) {
+		if (isPrimaryMouseButton(ev)) {
+			ev.preventDefault(); // prevents native selection in most browsers
+			this.startInteraction(ev, false); // isTouch=true
+		}
 	},
 
 
@@ -268,6 +261,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		}
 
 		this.handleMove(ev);
+	},
+
+
+	handleMouseMove: function(ev) {
+		if (!this.isTouch) {
+			this.handleMove(ev);
+		}
 	},
 
 
