@@ -53,7 +53,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.handleInteractionStart(ev);
 
-			this.processDelay(this.options.delay || 0, ev);
+			this.processDelay(this.options.delay, ev);
 
 			if (!this.options.distance) {
 				this.handleDistanceSurpassed(ev);
@@ -199,11 +199,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	processDelay: function(delay, initialEv) {
 		var _this = this;
 
-		// TODO: fix this
-		//// prevents mousemove+mousedown+click for touch "click"
-		//if (FC.isTouchEnabled) {
-		//	delay = Math.max(1, delay);
-		//}
+		// prevents mousemove+mousedown+click for touch "click"
+		if (delay == null && FC.isTouchEnabled) {
+			delay = 1;
+		}
 
 		if (delay) {
 			this.delayTimeoutId = setTimeout(function() {

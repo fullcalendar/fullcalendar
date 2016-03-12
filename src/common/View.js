@@ -390,6 +390,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
 		this.listenTo($(document), 'mousedown', this.handleDocumentMousedown);
+		this.listenTo($(document), 'touchstart', this.handleDocumentTouchStart);
 		this.listenTo($(document), 'touchend', this.handleDocumentTouchEnd);
 	},
 
@@ -948,34 +949,40 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	handleDocumentMousedown: function(ev) {
 		if (isPrimaryMouseButton(ev)) {
-			this.processUnselect(ev);
+			this.processRangeUnselect(ev);
+			this.processEventUnselect(ev);
 		}
+	},
+
+
+	handleDocumentTouchStart: function(ev) {
+		this.processRangeUnselect(ev);
 	},
 
 
 	handleDocumentTouchEnd: function(ev) {
-		if (isSingleTouch(ev)) {
-			this.processUnselect(ev);
-		}
+		// TODO: don't do this if because of touch-scrolling
+		this.processEventUnselect(ev);
 	},
 
 
-	processUnselect: function(ev) {
-		var targetEl = $(ev.target);
+	processRangeUnselect: function(ev) {
 		var ignore;
 
 		// is there a time-range selection?
 		if (this.isSelected && this.opt('unselectAuto')) {
 			// only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
 			ignore = this.opt('unselectCancel');
-			if (!ignore || !targetEl.closest(ignore).length) {
+			if (!ignore || !$(ev.target).closest(ignore).length) {
 				this.unselect(ev);
 			}
 		}
+	},
 
-		// is there an event selection?
+
+	processEventUnselect: function(ev) {
 		if (this.selectedEvent) {
-			if (!targetEl.closest('.fc-event-selected').length) {
+			if (!$(ev.target).closest('.fc-event-selected').length) {
 				this.unselectEvent();
 			}
 		}

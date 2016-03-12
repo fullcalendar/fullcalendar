@@ -266,7 +266,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
 		var dragListener = new HitDragListener(this, {
-			delay: delay != null ? delay : 0,
+			delay: delay,
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 			scroll: view.opt('dragScroll'),
 			dragStart: function() {

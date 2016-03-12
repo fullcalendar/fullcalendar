@@ -278,7 +278,7 @@ Grid.mixin({
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = new HitDragListener(view, {
-			delay: delay || 0,
+			delay: delay,
 			distance: distance != null ? distance : 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
