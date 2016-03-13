@@ -29,8 +29,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	constructor: function(view) {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
-
 		this.elsByFill = {};
+		this.dayDragListener = this.buildDayDragListener();
 	},
 
 
@@ -244,18 +244,22 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.buildDayDragListener().handleMouseDown(ev);
+		this.dayDragListener.startInteraction(ev, {
+			//distance: 5, // needs more work if we want dayClick to fire correctly
+		});
 	},
 
 
 	dayTouchStart: function(ev) {
-		this.buildDayDragListener(1000).handleTouchStart(ev); // with a delay
+		this.dayDragListener.startInteraction(ev, {
+			delay: 1000
+		});
 	},
 
 
 	// Creates a listener that tracks the user's drag across day elements.
 	// For day clicking and selecting.
-	buildDayDragListener: function(delay) {
+	buildDayDragListener: function() {
 		var _this = this;
 		var view = this.view;
 		var isSelectable = view.opt('selectable');
@@ -266,8 +270,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
 		var dragListener = new HitDragListener(this, {
-			delay: delay,
-			//distance: 5, // needs more work if we want dayClick to fire correctly
 			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one

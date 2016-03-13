@@ -228,11 +228,15 @@ Grid.mixin({
 	handleSegMousedown: function(seg, ev) {
 		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
 			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
-				.handleMouseDown(ev);
+				.startInteraction(ev, {
+					distance: 5
+				});
 		}
 		else if (this.view.isEventDraggable(seg.event)) {
 			this.buildSegDragListener(seg)
-				.handleMouseDown(ev);
+				.startInteraction(ev, {
+					distance: 5
+				});
 		}
 	},
 
@@ -240,14 +244,9 @@ Grid.mixin({
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
 		var selectedEvent = view.selectedEvent;
-		var isSelected =
-			selectedEvent &&
-				seg.event._id === selectedEvent._id; // compare IDs in case of out-of-date references
-		var dragListener = this.buildSegDragListener(
-			seg,
-			isSelected ? 0 : 1000, // do a delay if not currently selected
-			0 // don't require a min-distance for touch
-		);
+		var dragListener = this.buildSegDragListener(seg);
+		var isSelected = selectedEvent &&
+			seg.event._id === selectedEvent._id; // compare IDs in case of out-of-date references
 
 		dragListener._dragStart = function() { // TODO: better way of binding
 			// if not previously selected, will fire after a delay. then, select the event
@@ -256,7 +255,9 @@ Grid.mixin({
 			}
 		};
 
-		dragListener.handleTouchStart(ev);
+		dragListener.startInteraction(ev, {
+			delay: isSelected ? 0 : 1000
+		});
 	},
 
 
@@ -266,7 +267,7 @@ Grid.mixin({
 
 	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
-	buildSegDragListener: function(seg, delay, distance) {
+	buildSegDragListener: function(seg) {
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
@@ -278,8 +279,6 @@ Grid.mixin({
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = new HitDragListener(view, {
-			delay: delay,
-			distance: distance != null ? distance : 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
@@ -583,7 +582,6 @@ Grid.mixin({
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = new HitDragListener(this, {
-			distance: 5,
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
 			dragStart: function(ev) {
