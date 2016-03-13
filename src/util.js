@@ -331,6 +331,11 @@ function getEvY(ev) {
 }
 
 
+function getEvIsTouch(ev) {
+	return /^touch/.test(ev.type);
+}
+
+
 function preventSelection(el) {
 	el.addClass('fc-unselectable')
 		.on('selectstart', preventDefault);

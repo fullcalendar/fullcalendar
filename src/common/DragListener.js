@@ -7,8 +7,9 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	options: null,
 
-	subjectEl: null, // the element being dragged
-	subjectHref: null, // for IE8 bug-fighting behavior
+	// for IE8 bug-fighting behavior
+	subjectEl: null,
+	subjectHref: null,
 
 	// coordinates of the initial mousedown
 	originX: null,
@@ -22,13 +23,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	isDelayEnded: false,
 	isDragging: false,
 
+	delay: null,
 	delayTimeoutId: null,
+	minDistance: null,
 
 
 	constructor: function(options) {
-		options = options || {};
-		this.options = options;
-		this.subjectEl = options.subjectEl;
+		this.options = options || {};
 	},
 
 
@@ -36,18 +37,38 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	startInteraction: function(ev, isTouch) {
+	startInteraction: function(ev, extraOptions) {
+
+		if (getEvIsTouch(ev)) {
+			if (!isSingleTouch(ev)) {
+				return;
+			}
+			else {
+				// only ever turn it on.
+				// will be reset when interactions is over.
+				this.isTouch = true;
+			}
+		}
+		else {
+			if (!isPrimaryMouseButton(ev)) {
+				return;
+			}
+			else {
+				ev.preventDefault(); // prevents native selection in most browsers
+			}
+		}
+
 		if (!this.isInteracting) {
+
+			// process options
+			extraOptions = extraOptions || {};
+			this.delay = firstDefined(extraOptions.delay, this.options.delay, 0);
+			this.minDistance = firstDefined(extraOptions.distance, this.options.distance, 0);
+			this.subjectEl = this.options.subjectEl;
 
 			this.isInteracting = true;
 			this.isDelayEnded = false;
 			this.isDistanceSurpassed = false;
-
-			// only ever turn it on
-			// will be reset when interactions is over
-			if (isTouch) {
-				this.isTouch = true;
-			}
 
 			this.originX = getEvX(ev);
 			this.originY = getEvY(ev);
@@ -55,12 +76,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.bindHandlers();
 			this.initAutoScroll();
-
 			this.handleInteractionStart(ev);
+			this.startDelay(ev);
 
-			this.processDelay(this.options.delay, ev);
-
-			if (!this.options.distance) {
+			if (!this.minDistance) {
 				this.handleDistanceSurpassed(ev);
 			}
 		}
@@ -132,9 +151,9 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// isTouch is only required if startInteraction not called
-	startDrag: function(ev, isTouch) {
-		this.startInteraction(ev, isTouch); // ensure interaction began
+	// extraOptions ignored if drag already started
+	startDrag: function(ev, extraOptions) {
+		this.startInteraction(ev, extraOptions); // ensure interaction began
 
 		if (!this.isDragging) {
 			this.isDragging = true;
@@ -152,11 +171,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	handleMove: function(ev) {
 		var dx = getEvX(ev) - this.originX;
 		var dy = getEvY(ev) - this.originY;
-		var minDistance;
+		var minDistance = this.minDistance;
 		var distanceSq; // current distance from the origin, squared
 
 		if (!this.isDistanceSurpassed) {
-			minDistance = this.options.distance || 0;
 			distanceSq = dx * dx + dy * dy;
 			if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
 				this.handleDistanceSurpassed(ev);
@@ -194,11 +212,12 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	processDelay: function(delay, initialEv) {
+	startDelay: function(initialEv) {
 		var _this = this;
+		var delay = this.delay;
 
-		// prevents mousemove+mousedown+click for touch "click"
-		if (delay == null && FC.isTouchEnabled) {
+		// prevents mousemove+mousedown+click for before "click" on touch devices
+		if (!delay && FC.isTouchEnabled && !getIsEvTouch(initialEv)) {
 			delay = 1;
 		}
 
@@ -213,11 +232,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	handleDelayEnd: function(ev) {
+	handleDelayEnd: function(initialEv) {
 		this.isDelayEnded = true;
 
 		if (this.isDistanceSurpassed) {
-			this.startDrag(ev);
+			this.startDrag(initialEv);
 		}
 	},
 
@@ -235,26 +254,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	// Touch / Mouse
+	// Moving via Mouse/Touch
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleTouchStart: function(ev) {
-		if (isSingleTouch(ev)) {
-			this.startInteraction(ev, true); // isTouch=true
-		}
-	},
-
-
-	handleMouseDown: function(ev) {
-		if (isPrimaryMouseButton(ev)) {
-			ev.preventDefault(); // prevents native selection in most browsers
-			this.startInteraction(ev, false); // isTouch=true
-		}
-	},
-
-
 	handleTouchMove: function(ev) {
+		//this.isTouch = true; // assumed
+
 		// prevent inertia and touchmove-scrolling while dragging
 		if (this.isDragging) {
 			ev.preventDefault();
