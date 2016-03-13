@@ -111,8 +111,13 @@ var MouseFollower = Class.extend(ListenerMixin, {
 					height: this.sourceEl.height(), // explicit width in case there was a 'bottom' value
 					opacity: this.options.opacity || '',
 					zIndex: this.options.zIndex
-				})
-				.appendTo(this.parentEl);
+				});
+
+			// we don't want long taps or any mouse interaction causing selection/menus.
+			// would use preventSelection(), but that prevents selectstart, causing problems.
+			el.addClass('fc-unselectable');
+
+			el.appendTo(this.parentEl);
 		}
 
 		return el;

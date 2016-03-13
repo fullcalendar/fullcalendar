@@ -124,10 +124,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 		this.listenTo($(document), {
 			touchmove: this.handleTouchMove,
-			touchend: this.endInteraction,
-			touchcancel: this.endInteraction,
+			touchend: this.endInteraction, // always guaranteed to end the interaction
+			touchcancel: this.endInteraction, // "
 			mousemove: this.handleMouseMove,
-			mouseup: this.endInteraction
+			mouseup: this.handleMouseUp,
 			selectstart: preventDefault, // don't allow selection while dragging
 			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
 		});
@@ -216,8 +216,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		var _this = this;
 		var delay = this.delay;
 
-		// prevents mousemove+mousedown+click for before "click" on touch devices
-		if (!delay && FC.isTouchEnabled && !getIsEvTouch(initialEv)) {
+		// ignores mousemove+mousedown+mouseup for before "click" on touch devices
+		if (!delay && FC.isTouchEnabled && !getEvIsTouch(initialEv)) {
 			delay = 1;
 		}
 
@@ -254,7 +254,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	// Moving via Mouse/Touch
+	// Mouse / Touch
 	// -----------------------------------------------------------------------------------------------------------------
 
 
@@ -273,6 +273,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	handleMouseMove: function(ev) {
 		if (!this.isTouch) {
 			this.handleMove(ev);
+		}
+	},
+
+
+	handleMouseUp: function(ev) {
+		if (!this.isTouch) {
+			this.endInteraction(ev);
 		}
 	},
 

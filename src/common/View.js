@@ -948,7 +948,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	handleDocumentMousedown: function(ev) {
-		if (isPrimaryMouseButton(ev)) {
+		// touch devices fire simulated mouse events on a "click".
+		// only process mousedown if we know this isn't a touch device.
+		if (!FC.isTouchEnabled && isPrimaryMouseButton(ev)) {
 			this.processRangeUnselect(ev);
 			this.processEventUnselect(ev);
 		}

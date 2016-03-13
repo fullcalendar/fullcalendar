@@ -33,6 +33,8 @@ DragListener.mixin({
 
 
 	destroyAutoScroll: function() {
+		this.endAutoScroll(); // kill any animation loop
+
 		// remove the scroll handler if there is a scrollEl
 		if (this.isAutoScroll) {
 			this.stopListeningTo(this.scrollEl, 'scroll'); // will probably get removed by unbindHandlers too :(
