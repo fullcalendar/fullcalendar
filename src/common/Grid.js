@@ -453,9 +453,14 @@ var Grid = FC.Grid = Class.extend({
 	// Unrenders a specific type of fill that is currently rendered on the grid
 	unrenderFill: function(type) {
 		var el = this.elsByFill[type];
+		var _this = this;
 
 		if (el) {
-			el.remove();
+			this.el.on('segsRendered', function() {
+				el.remove();
+				
+				_this.el.off('segsRendered');
+			});
 			delete this.elsByFill[type];
 		}
 	},
