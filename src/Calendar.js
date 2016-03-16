@@ -518,9 +518,9 @@ function Calendar_constructor(element, overrides) {
 			element.addClass('fc-ltr');
 		}
 
-		if (FC.isTouchEnabled) {
-			element.addClass('fc-touch');
-		}
+		element.addClass(
+			FC.isTouchEnabled ? 'fc-touch' : 'fc-cursor'
+		);
 
 		if (options.theme) {
 			element.addClass('ui-widget');

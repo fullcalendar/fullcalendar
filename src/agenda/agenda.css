@@ -200,6 +200,12 @@ be a descendant of the grid when it is being dragged.
 	overflow: hidden; /* don't let the bg flow over rounded corners */
 }
 
+.fc-time-grid-event.fc-selected {
+	/* need to allow touch resizers to extend outside event's bounding box */
+	/* common fc-selected styles hide the fc-bg, so don't need this anyway */
+	overflow: visible;
+}
+
 .fc-time-grid-event .fc-time,
 .fc-time-grid-event .fc-title {
 	padding: 0 1px;
@@ -241,9 +247,9 @@ be a descendant of the grid when it is being dragged.
 	padding: 0; /* undo padding from above */
 }
 
-/* resizer */
+/* resizer (mouse device) */
 
-.fc-time-grid-event .fc-resizer {
+.fc-mouse .fc-time-grid-event .fc-resizer {
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -256,8 +262,26 @@ be a descendant of the grid when it is being dragged.
 	cursor: s-resize;
 }
 
-.fc-time-grid-event .fc-resizer:after {
+.fc-mouse .fc-time-grid-event .fc-resizer:after {
 	content: "=";
+}
+
+/* resizer (touch device) */
+
+.fc-touch .fc-time-grid-event .fc-resizer {
+	/* 10x10 dot */
+	border-radius: 5px;
+	border-width: 1px;
+	width: 8px;
+	height: 8px;
+	border-style: solid;
+	border-color: inherit;
+	background: #fff;
+	/* horizontally center */
+	left: 50%;
+	margin-left: -5px;
+	/* center on the bottom edge */
+	bottom: -5px;
 }
 
 

@@ -284,7 +284,7 @@ Grid.mixin({
 			subjectCenter: true,
 			interactionStart: function(ev) {
 				mouseFollower = new MouseFollower(seg.el, {
-					additionalClass: 'fc-event-dragging',
+					additionalClass: 'fc-dragging',
 					parentEl: view.el,
 					opacity: dragListener.isTouch ? null : view.opt('dragOpacity'),
 					revertDuration: view.opt('dragRevertDuration'),
@@ -321,7 +321,7 @@ Grid.mixin({
 				// if a valid drop location, have the subclass render a visual indication
 				if (dropLocation && (dragHelperEls = view.renderDrag(dropLocation, seg))) {
 
-					dragHelperEls.addClass('fc-event-dragging');
+					dragHelperEls.addClass('fc-dragging');
 					if (!dragListener.isTouch) {
 						_this.applyDragOpacity(dragHelperEls);
 					}
@@ -774,7 +774,7 @@ Grid.mixin({
 		// event references might change on refetchEvents(), while selectedEvent doesn't,
 		// so compare IDs
 		if (selectedEvent && selectedEvent._id === event._id) {
-			classes.push('fc-event-selected');
+			classes.push('fc-selected');
 		}
 
 		return classes;

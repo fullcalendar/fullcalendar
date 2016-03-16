@@ -549,24 +549,48 @@ temporary rendered events).
 	z-index: 2;
 }
 
+/* resizer (cursor AND touch devices) */
+
 .fc-event .fc-resizer {
 	position: absolute;
 	z-index: 3;
+}
+
+/* resizer (touch devices) */
+
+.fc-touch .fc-event .fc-resizer {
+	display: none; /* only show when selected */
+}
+
+.fc-touch .fc-event.fc-selected .fc-resizer {
+	display: block;
+}
+
+.fc-touch .fc-event .fc-resizer:after {
+	/* 20x20 touch area */
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 20px;
+	height: 20px;
+	margin-left: -10px;
+	margin-top: -10px;
 }
 
 
 /* Event Selection
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event-selected {
+.fc-event.fc-selected {
 	z-index: 9999 !important;
 }
 
-.fc-event-selected.fc-event-dragging {
+.fc-event.fc-selected.fc-dragging {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* will appear to float */
 }
 
-.fc-event-selected .fc-bg {
+.fc-event.fc-selected .fc-bg {
 	display: none; /* hide semi-transparent bg. will make the event look darker */
 }
 
@@ -594,36 +618,55 @@ temporary rendered events).
 	border-bottom-right-radius: 0;
 }
 
-/* resizer */
-
-.fc-h-event .fc-resizer { /* positioned it to overcome the event's borders */
-	top: -1px;
-	bottom: -1px;
-	left: -1px;
-	right: -1px;
-	width: 5px;
-}
+/* resizer (cursor AND touch devices) */
 
 /* left resizer  */
 .fc-ltr .fc-h-event .fc-start-resizer,
-.fc-ltr .fc-h-event .fc-start-resizer:before,
-.fc-ltr .fc-h-event .fc-start-resizer:after,
-.fc-rtl .fc-h-event .fc-end-resizer,
-.fc-rtl .fc-h-event .fc-end-resizer:before,
-.fc-rtl .fc-h-event .fc-end-resizer:after {
-	right: auto; /* ignore the right and only use the left */
+.fc-rtl .fc-h-event .fc-end-resizer {
 	cursor: w-resize;
 }
 
 /* right resizer */
 .fc-ltr .fc-h-event .fc-end-resizer,
-.fc-ltr .fc-h-event .fc-end-resizer:before,
-.fc-ltr .fc-h-event .fc-end-resizer:after,
-.fc-rtl .fc-h-event .fc-start-resizer,
-.fc-rtl .fc-h-event .fc-start-resizer:before,
-.fc-rtl .fc-h-event .fc-start-resizer:after {
-	left: auto; /* ignore the left and only use the right */
+.fc-rtl .fc-h-event .fc-start-resizer {
 	cursor: e-resize;
+}
+
+/* resizer (cursor devices) */
+
+.fc-cursor.fc-ltr .fc-h-event .fc-resizer {
+	width: 7px;
+	top: 0;
+	bottom: 0;
+	/* more specific classes are responsible for left/right */
+}
+
+/* resizer (touch devices) */
+
+.fc-touch .fc-h-event .fc-resizer {
+	/* 8x8 little dot */
+	border-radius: 4px;
+	border-width: 1px;
+	width: 6px;
+	height: 6px;
+	border-style: solid;
+	border-color: inherit;
+	background: #fff;
+	/* vertically center */
+	top: 50%;
+	margin-top: -4px;
+}
+
+/* left resizer  */
+.fc-touch.fc-ltr .fc-h-event .fc-start-resizer,
+.fc-touch.fc-rtl .fc-h-event .fc-end-resizer {
+	left: -4px; /* centers the 8x8 dot on the left edge */
+}
+
+/* right resizer */
+.fc-touch.fc-ltr .fc-h-event .fc-end-resizer,
+.fc-touch.fc-rtl .fc-h-event .fc-start-resizer {
+	right: -4px; /* centers the 8x8 dot on the right edge */
 }
 
 
@@ -648,17 +691,24 @@ be a descendant of the grid when it is being dragged.
 	font-weight: bold;
 }
 
-.fc-day-grid-event .fc-resizer { /* enlarge the default hit area */
-	left: -3px;
-	right: -3px;
-	width: 7px;
+/* resizer (cursor devices) */
+
+/* left resizer  */
+.fc-cursor.fc-ltr .fc-day-grid-event .fc-start-resizer,
+.fc-cursor.fc-rtl .fc-day-grid-event .fc-end-resizer {
+	left: -3px; /* to the day cell's edge */
+}
+
+/* right resizer */
+.fc-cursor.fc-ltr .fc-day-grid-event .fc-end-resizer,
+.fc-cursor.fc-rtl .fc-day-grid-event .fc-start-resizer {
+	right: -3px; /* to the day cell's edge */
 }
 
 /* event selection */
 
-.fc-day-grid-event.fc-event-selected .fc-content {
+.fc-day-grid-event.fc-selected .fc-content {
 	background-color: rgba(0, 0, 0, .2); /* will appear darker */
-		/* TODO: improve visuals of this technique! */
 }
 
 

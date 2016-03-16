@@ -925,7 +925,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		if (!this.selectedEvent || this.selectedEvent !== event) {
 			this.unselectEvent();
 			this.renderedEventSegEach(function(seg) {
-				seg.el.addClass('fc-event-selected');
+				seg.el.addClass('fc-selected');
 			}, event);
 			this.selectedEvent = event;
 		}
@@ -935,7 +935,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	unselectEvent: function() {
 		if (this.selectedEvent) {
 			this.renderedEventSegEach(function(seg) {
-				seg.el.removeClass('fc-event-selected');
+				seg.el.removeClass('fc-selected');
 			}, this.selectedEvent);
 			this.selectedEvent = null;
 		}
@@ -984,7 +984,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	processEventUnselect: function(ev) {
 		if (this.selectedEvent) {
-			if (!$(ev.target).closest('.fc-event-selected').length) {
+			if (!$(ev.target).closest('.fc-selected').length) {
 				this.unselectEvent();
 			}
 		}
