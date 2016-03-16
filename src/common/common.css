@@ -583,15 +583,11 @@ temporary rendered events).
 --------------------------------------------------------------------------------------------------*/
 
 .fc-event.fc-selected {
-	z-index: 9999 !important;
+	z-index: 9999 !important; /* overcomes inline z-index */
 }
 
 .fc-event.fc-selected.fc-dragging {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* will appear to float */
-}
-
-.fc-event.fc-selected .fc-bg {
-	display: none; /* hide semi-transparent bg. will make the event look darker */
 }
 
 
@@ -624,21 +620,22 @@ temporary rendered events).
 .fc-ltr .fc-h-event .fc-start-resizer,
 .fc-rtl .fc-h-event .fc-end-resizer {
 	cursor: w-resize;
+	left: -1px; /* overcome border */
 }
 
 /* right resizer */
 .fc-ltr .fc-h-event .fc-end-resizer,
 .fc-rtl .fc-h-event .fc-start-resizer {
 	cursor: e-resize;
+	right: -1px; /* overcome border */
 }
 
 /* resizer (cursor devices) */
 
-.fc-cursor.fc-ltr .fc-h-event .fc-resizer {
+.fc-cursor .fc-h-event .fc-resizer {
 	width: 7px;
-	top: 0;
-	bottom: 0;
-	/* more specific classes are responsible for left/right */
+	top: -1px; /* overcome top border */
+	bottom: -1px; /* overcome bottom border */
 }
 
 /* resizer (touch devices) */
@@ -660,13 +657,13 @@ temporary rendered events).
 /* left resizer  */
 .fc-touch.fc-ltr .fc-h-event .fc-start-resizer,
 .fc-touch.fc-rtl .fc-h-event .fc-end-resizer {
-	left: -4px; /* centers the 8x8 dot on the left edge */
+	margin-left: -4px; /* centers the 8x8 dot on the left edge */
 }
 
 /* right resizer */
 .fc-touch.fc-ltr .fc-h-event .fc-end-resizer,
 .fc-touch.fc-rtl .fc-h-event .fc-start-resizer {
-	right: -4px; /* centers the 8x8 dot on the right edge */
+	margin-right: -4px; /* centers the 8x8 dot on the right edge */
 }
 
 
@@ -681,6 +678,20 @@ be a descendant of the grid when it is being dragged.
 	padding: 0 1px;
 }
 
+.fc-day-grid-event.fc-selected:after {
+	content: "";
+	position: absolute;
+	z-index: 1; /* same z-index as fc-bg, behind text */
+	/* overcome the borders */
+	top: -1px;
+	right: -1px;
+	bottom: -1px;
+	left: -1px;
+	/* darkening effect */
+	background: #000;
+	opacity: .25;
+	filter: alpha(opacity=25); /* for IE */
+}
 
 .fc-day-grid-event .fc-content { /* force events to be one-line tall */
 	white-space: nowrap;
@@ -696,19 +707,13 @@ be a descendant of the grid when it is being dragged.
 /* left resizer  */
 .fc-cursor.fc-ltr .fc-day-grid-event .fc-start-resizer,
 .fc-cursor.fc-rtl .fc-day-grid-event .fc-end-resizer {
-	left: -3px; /* to the day cell's edge */
+	margin-left: -2px; /* to the day cell's edge */
 }
 
 /* right resizer */
 .fc-cursor.fc-ltr .fc-day-grid-event .fc-end-resizer,
 .fc-cursor.fc-rtl .fc-day-grid-event .fc-start-resizer {
-	right: -3px; /* to the day cell's edge */
-}
-
-/* event selection */
-
-.fc-day-grid-event.fc-selected .fc-content {
-	background-color: rgba(0, 0, 0, .2); /* will appear darker */
+	margin-right: -2px; /* to the day cell's edge */
 }
 
 

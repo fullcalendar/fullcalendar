@@ -206,6 +206,10 @@ be a descendant of the grid when it is being dragged.
 	overflow: visible;
 }
 
+.fc-time-grid-event.fc-selected .fc-bg {
+	display: none; /* hide semi-white background, to appear darker */
+}
+
 .fc-time-grid-event .fc-time,
 .fc-time-grid-event .fc-title {
 	padding: 0 1px;
@@ -247,9 +251,9 @@ be a descendant of the grid when it is being dragged.
 	padding: 0; /* undo padding from above */
 }
 
-/* resizer (mouse device) */
+/* resizer (cursor device) */
 
-.fc-mouse .fc-time-grid-event .fc-resizer {
+.fc-cursor .fc-time-grid-event .fc-resizer {
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -262,7 +266,7 @@ be a descendant of the grid when it is being dragged.
 	cursor: s-resize;
 }
 
-.fc-mouse .fc-time-grid-event .fc-resizer:after {
+.fc-cursor .fc-time-grid-event .fc-resizer:after {
 	content: "=";
 }
 
