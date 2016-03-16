@@ -584,10 +584,11 @@ temporary rendered events).
 
 .fc-event.fc-selected {
 	z-index: 9999 !important; /* overcomes inline z-index */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .fc-event.fc-selected.fc-dragging {
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* will appear to float */
+	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
 }
 
 
