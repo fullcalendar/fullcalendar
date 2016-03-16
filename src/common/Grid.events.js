@@ -225,14 +225,39 @@ Grid.mixin({
 	},
 
 
-	handleSegMousedown: function(seg, ev) {
-		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
-			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
-				.startInteraction(ev, {
-					distance: 5
-				});
+	handleSegTouchStart: function(seg, ev) {
+		var view = this.view;
+		var event = seg.event;
+		var isSelected = view.isEventSelected(event);
+		var isResizing = false;
+		var dragListener;
+
+		if (isSelected) {
+			// only allow resizing of the event is selected
+			isResizing = this.startSegResize(seg, ev);
 		}
-		else if (this.view.isEventDraggable(seg.event)) {
+
+		if (!isResizing && view.isEventDraggable(event)) {
+			dragListener = this.buildSegDragListener(seg);
+
+			dragListener._dragStart = function() { // TODO: better way of binding
+				// if not previously selected, will fire after a delay. then, select the event
+				if (!isSelected) {
+					view.selectEvent(event);
+				}
+			};
+
+			dragListener.startInteraction(ev, {
+				delay: isSelected ? 0 : 1000 // do delay if not already selected
+			});
+		}
+	},
+
+
+	handleSegMousedown: function(seg, ev) {
+		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
+
+		if (!isResizing && this.view.isEventDraggable(seg.event)) {
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -241,24 +266,17 @@ Grid.mixin({
 	},
 
 
-	handleSegTouchStart: function(seg, ev) {
-		var view = this.view;
-		var selectedEvent = view.selectedEvent;
-		var dragListener = this.buildSegDragListener(seg);
-		var isSelected = selectedEvent &&
-			seg.event._id === selectedEvent._id; // compare IDs in case of out-of-date references
-
-		dragListener._dragStart = function() { // TODO: better way of binding
-			// if not previously selected, will fire after a delay. then, select the event
-			if (!isSelected) {
-				view.selectEvent(seg.event);
-			}
-		};
-
-		dragListener.startInteraction(ev, {
-			delay: isSelected ? 0 : 1000
-		});
+	// returns boolean whether resizing actually started or not
+	// `dragOptions` are optional
+	startSegResize: function(seg, ev, dragOptions) {
+		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
+			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
+				.startInteraction(ev, dragOptions);
+			return true;
+		}
+		return false;
 	},
+
 
 
 	/* Event Dragging
