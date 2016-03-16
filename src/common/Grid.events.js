@@ -752,7 +752,7 @@ Grid.mixin({
 
 	// Generic utility for generating the HTML classNames for an event segment's element
 	getSegClasses: function(seg, isDraggable, isResizable) {
-		var selectedEvent = this.view.selectedEvent;
+		var view = this.view;
 		var event = seg.event;
 		var classes = [
 			'fc-event',
@@ -771,9 +771,7 @@ Grid.mixin({
 		}
 
 		// event is currently selected? attach a className.
-		// event references might change on refetchEvents(), while selectedEvent doesn't,
-		// so compare IDs
-		if (selectedEvent && selectedEvent._id === event._id) {
+		if (view.isEventSelected(event)) {
 			classes.push('fc-selected');
 		}
 

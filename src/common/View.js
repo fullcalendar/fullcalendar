@@ -942,6 +942,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	isEventSelected: function(event) {
+		// event references might change on refetchEvents(), while selectedEvent doesn't,
+		// so compare IDs
+		return this.selectedEvent && this.selectedEvent._id === event._id;
+	},
+
+
 	/* Mouse / Touch Unselecting (time range & event unselection)
 	------------------------------------------------------------------------------------------------------------------*/
 	// TODO: move consistently to down/start or up/end?
