@@ -553,7 +553,7 @@ temporary rendered events).
 
 .fc-event .fc-resizer {
 	position: absolute;
-	z-index: 3;
+	z-index: 4;
 }
 
 /* resizer (touch devices) */
@@ -567,19 +567,19 @@ temporary rendered events).
 }
 
 .fc-touch .fc-event .fc-resizer:after {
-	/* 20x20 touch area */
+	/* 50x50 touch area */
 	content: "";
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 20px;
-	height: 20px;
-	margin-left: -10px;
-	margin-top: -10px;
+	width: 50px;
+	height: 50px;
+	margin-left: -25px;
+	margin-top: -25px;
 }
 
 
-/* Event Selection
+/* Event Selection (only for touch devices)
 --------------------------------------------------------------------------------------------------*/
 
 .fc-event.fc-selected {
@@ -594,6 +594,17 @@ temporary rendered events).
 
 /* Horizontal Events
 --------------------------------------------------------------------------------------------------*/
+
+/* bigger touch area when selected */
+.fc-h-event.fc-selected:before {
+	content: "";
+	position: absolute;
+	z-index: 3; /* below resizers */
+	top: -10px;
+	bottom: -10px;
+	left: 0;
+	right: 0;
+}
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
