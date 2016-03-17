@@ -870,6 +870,26 @@ function EventManager(options) { // assumed to be a calendar
 				eventInput.start = null;
 				eventInput.end = null;
 			}
+			else{
+				if(view.name=="agendaDay"){		// check view_name.
+					var dowHash = view.start.stripTime().day();	// get day of week value.
+					var dow = view.options.businessHours.dow;	// get days of week value that you set businessHours options.
+					var isFullTimeNonBusinessDay = true;		// set full-time non-business day flag
+					for(var i=0;i<dow.length;i++){
+						if(dow[i]==dowHash){
+							isFullTimeNonBusinessDay = false;	// if this day is not full-time non-business day, then flag is false
+							break;
+						}
+					}
+					if(isFullTimeNonBusinessDay){
+						// set eventInput data to full-time non-business day's data
+						console.log("This day is full-time non-business day");
+						eventInput.dow = null;
+						eventInput.start = '24:00';
+						eventInput.end = '24:00';
+					}
+				}
+			}
 
 			return expandEvent(
 				buildEventFromInput(eventInput),
