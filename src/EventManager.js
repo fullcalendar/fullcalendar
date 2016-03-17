@@ -883,7 +883,6 @@ function EventManager(options) { // assumed to be a calendar
 					}
 					if(isFullTimeNonBusinessDay){
 						// set eventInput data to full-time non-business day's data
-						console.log("This day is full-time non-business day");
 						eventInput.dow = null;
 						eventInput.start = '24:00';
 						eventInput.end = '24:00';
