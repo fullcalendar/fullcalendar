@@ -25,6 +25,11 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
+	dayDragListener: null,
+	segDragListener: null,
+	segResizeListener: null,
+	externalDragListener: null,
+
 
 	constructor: function(view) {
 		this.view = view;
@@ -197,6 +202,15 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
 		this.unbindGlobalHandlers();
+
+		// if an API method somehow rerenders the grid w/o user action initiating drag end,
+		// then forcefully stop listening to dragging.
+		if (this.dayDragListener) {
+			this.dayDragListener.endInteraction(); // will clear this.dayDragListener
+		}
+		if (this.externalDragListener) {
+			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
+		}
 
 		this.el.remove();
 

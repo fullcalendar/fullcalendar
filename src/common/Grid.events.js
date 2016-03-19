@@ -48,6 +48,17 @@ Grid.mixin({
 	unrenderEvents: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 
+		// if an API method rerenders events mid-drag,
+		// or if for some reason the user action that should initiate the event doesn't fire
+		// (probably a touch device that locked the DOM while scrolling)
+		// then forcefully stop listening to dragging.
+		if (this.segDragListener) {
+			this.segDragListener.endInteraction(); // will clear this.segDragListener
+		}
+		if (this.segResizeListener) {
+			this.segResizeListener.endInteraction(); // will clear this.segResizeListener
+		}
+
 		this.unrenderFgSegs();
 		this.unrenderBgSegs();
 
@@ -296,7 +307,7 @@ Grid.mixin({
 
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
-		var dragListener = new HitDragListener(view, {
+		var dragListener = this.segDragListener = new HitDragListener(view, {
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
@@ -376,6 +387,7 @@ Grid.mixin({
 			},
 			interactionEnd: function() {
 				mouseFollower.stop(); // put in interactionEnd in case there was a mousedown but the drag never started
+				_this.segDragListener = null;
 			}
 		});
 
@@ -495,7 +507,7 @@ Grid.mixin({
 		var dropLocation; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
-		var dragListener = new HitDragListener(this, {
+		var dragListener = _this.externalDragListener = new HitDragListener(this, {
 			interactionStart: function() {
 				_this.isDraggingExternal = true;
 			},
@@ -531,6 +543,7 @@ Grid.mixin({
 			},
 			interactionEnd: function() {
 				_this.isDraggingExternal = false;
+				_this.externalDragListener = null;
 			}
 		});
 
@@ -599,7 +612,7 @@ Grid.mixin({
 		var resizeLocation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
-		var dragListener = new HitDragListener(this, {
+		var dragListener = this.segResizeListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
 			dragStart: function(ev) {
@@ -644,6 +657,9 @@ Grid.mixin({
 				if (resizeLocation) { // valid date to resize to?
 					view.reportEventResize(event, resizeLocation, this.largeUnit, el, ev);
 				}
+			},
+			interactionEnd: function() {
+				_this.segResizeListener = null;
 			}
 		});
 
