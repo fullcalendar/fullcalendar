@@ -71,7 +71,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.originY = getEvY(ev);
 			this.scrollEl = getScrollParent($(ev.target));
 
-			this.bindHandlers(isTouch);
+			this.bindHandlers();
 			this.initAutoScroll();
 			this.handleInteractionStart(ev);
 			this.startDelay(ev);
@@ -117,7 +117,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	bindHandlers: function(isTouch) {
 
-		if (isTouch) {
+		if (this.isTouch) {
 			this.listenTo($(document), {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
