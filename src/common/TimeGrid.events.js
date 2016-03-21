@@ -99,8 +99,8 @@ TimeGrid.mixin({
 					'margin-left': sourceEl.css('margin-left'),
 					'margin-right': sourceEl.css('margin-right')
 				});
-				helperEls.push(seg.el[0]);
 			}
+			helperEls.push(seg.el[0]);
 		}
 
 		this.helperSegs = segs;

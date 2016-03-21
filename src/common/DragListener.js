@@ -21,6 +21,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	isDistanceSurpassed: false,
 	isDelayEnded: false,
 	isDragging: false,
+	isTouch: false,
 
 	delay: null,
 	delayTimeoutId: null,
@@ -62,6 +63,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.subjectEl = this.options.subjectEl;
 
 			this.isInteracting = true;
+			this.isTouch = isTouch;
 			this.isDelayEnded = false;
 			this.isDistanceSurpassed = false;
 
