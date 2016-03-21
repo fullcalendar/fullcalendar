@@ -18,7 +18,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	scrollEl: null,
 
 	isInteracting: false,
-	isTouch: false,
 	isDistanceSurpassed: false,
 	isDelayEnded: false,
 	isDragging: false,
@@ -38,15 +37,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 
 	startInteraction: function(ev, extraOptions) {
+		var isTouch = getEvIsTouch(ev);
 
-		if (getEvIsTouch(ev)) {
+		if (isTouch) {
 			if (!isSingleTouch(ev)) {
 				return;
-			}
-			else {
-				// only ever turn it on.
-				// will be reset when interactions is over.
-				this.isTouch = true;
 			}
 		}
 		else {
@@ -74,7 +69,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.originY = getEvY(ev);
 			this.scrollEl = getScrollParent($(ev.target));
 
-			this.bindHandlers();
+			this.bindHandlers(isTouch);
 			this.initAutoScroll();
 			this.handleInteractionStart(ev);
 			this.startDelay(ev);
@@ -105,8 +100,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.isInteracting = false;
 			this.handleInteractionEnd(ev);
-
-			this.isTouch = false;
 		}
 	},
 
@@ -120,14 +113,23 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindHandlers: function() {
+	bindHandlers: function(isTouch) {
+
+		if (isTouch) {
+			this.listenTo($(document), {
+				touchmove: this.handleTouchMove,
+				touchend: this.endInteraction,
+				touchcancel: this.endInteraction,
+			});
+		}
+		else {
+			this.listenTo($(document), {
+				mousemove: this.handleMouseMove,
+				mouseup: this.endInteraction,
+			});
+		}
 
 		this.listenTo($(document), {
-			touchmove: this.handleTouchMove,
-			touchend: this.endInteraction, // always guaranteed to end the interaction
-			touchcancel: this.endInteraction, // "
-			mousemove: this.handleMouseMove,
-			mouseup: this.handleMouseUp,
 			selectstart: preventDefault, // don't allow selection while dragging
 			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
 		});
@@ -214,17 +216,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	startDelay: function(initialEv) {
 		var _this = this;
-		var delay = this.delay;
 
-		// ignores mousemove+mousedown+mouseup for before "click" on touch devices
-		if (!delay && FC.isTouchEnabled && !getEvIsTouch(initialEv)) {
-			delay = 1;
-		}
-
-		if (delay) {
+		if (this.delay) {
 			this.delayTimeoutId = setTimeout(function() {
 				_this.handleDelayEnd(initialEv);
-			}, delay);
+			}, this.delay);
 		}
 		else {
 			this.handleDelayEnd(initialEv);
@@ -259,8 +255,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 
 	handleTouchMove: function(ev) {
-		//this.isTouch = true; // assumed
-
 		// prevent inertia and touchmove-scrolling while dragging
 		if (this.isDragging) {
 			ev.preventDefault();
@@ -271,16 +265,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 
 	handleMouseMove: function(ev) {
-		if (!this.isTouch) {
-			this.handleMove(ev);
-		}
-	},
-
-
-	handleMouseUp: function(ev) {
-		if (!this.isTouch) {
-			this.endInteraction(ev);
-		}
+		this.handleMove(ev);
 	},
 
 
@@ -291,7 +276,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	handleScroll: function(ev) {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
-		if (this.isTouch && !this.isDragging) {
+		if (!this.isDragging) {
 			this.endInteraction();
 		}
 	},
