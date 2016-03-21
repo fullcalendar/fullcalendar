@@ -47,17 +47,7 @@ Grid.mixin({
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
-
-		// if an API method rerenders events mid-drag,
-		// or if for some reason the user action that should initiate the event doesn't fire
-		// (probably a touch device that locked the DOM while scrolling)
-		// then forcefully stop listening to dragging.
-		if (this.segDragListener) {
-			this.segDragListener.endInteraction(); // will clear this.segDragListener
-		}
-		if (this.segResizeListener) {
-			this.segResizeListener.endInteraction(); // will clear this.segResizeListener
-		}
+		this.clearDragListeners();
 
 		this.unrenderFgSegs();
 		this.unrenderBgSegs();
@@ -185,11 +175,16 @@ Grid.mixin({
 
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
-		this.bindSegHandler('mouseenter', this.handleSegMouseover);
-		this.bindSegHandler('mouseleave', this.handleSegMouseout);
-		this.bindSegHandler('mousedown', this.handleSegMousedown);
+		if (FC.isTouchEnabled) {
+			this.bindSegHandler('touchstart', this.handleSegTouchStart);
+		}
+		else {
+			this.bindSegHandler('mouseenter', this.handleSegMouseover);
+			this.bindSegHandler('mouseleave', this.handleSegMouseout);
+			this.bindSegHandler('mousedown', this.handleSegMousedown);
+		}
+
 		this.bindSegHandler('click', this.handleSegClick);
-		this.bindSegHandler('touchstart', this.handleSegTouchStart);
 	},
 
 
@@ -249,6 +244,7 @@ Grid.mixin({
 		}
 
 		if (!isResizing && view.isEventDraggable(event)) {
+			this.clearDragListeners();
 			dragListener = this.buildSegDragListener(seg);
 
 			dragListener._dragStart = function() { // TODO: better way of binding
@@ -269,6 +265,7 @@ Grid.mixin({
 		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
 
 		if (!isResizing && this.view.isEventDraggable(seg.event)) {
+			this.clearDragListeners();
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -281,6 +278,7 @@ Grid.mixin({
 	// `dragOptions` are optional
 	startSegResize: function(seg, ev, dragOptions) {
 		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
+			this.clearDragListeners();
 			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
 				.startInteraction(ev, dragOptions);
 			return true;

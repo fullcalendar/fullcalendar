@@ -35,7 +35,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
 		this.elsByFill = {};
-		this.dayDragListener = this.buildDayDragListener();
 	},
 
 
@@ -171,8 +170,12 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.el = el;
 		preventSelection(el);
 
-		this.bindDayHandler('mousedown', this.dayMousedown);
-		this.bindDayHandler('touchstart', this.dayTouchStart);
+		if (FC.isTouchEnabled) {
+			this.bindDayHandler('touchstart', this.dayTouchStart);
+		}
+		else {
+			this.bindDayHandler('mousedown', this.dayMousedown);
+		}
 
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
@@ -202,15 +205,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
 		this.unbindGlobalHandlers();
-
-		// if an API method somehow rerenders the grid w/o user action initiating drag end,
-		// then forcefully stop listening to dragging.
-		if (this.dayDragListener) {
-			this.dayDragListener.endInteraction(); // will clear this.dayDragListener
-		}
-		if (this.externalDragListener) {
-			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
-		}
+		this.clearDragListeners();
 
 		this.el.remove();
 
@@ -258,14 +253,16 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.dayDragListener.startInteraction(ev, {
+		this.clearDragListeners();
+		this.buildDayDragListener().startInteraction(ev, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 		});
 	},
 
 
 	dayTouchStart: function(ev) {
-		this.dayDragListener.startInteraction(ev, {
+		this.clearDragListeners();
+		this.buildDayDragListener().startInteraction(ev, {
 			delay: 1000
 		});
 	},
@@ -283,7 +280,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = new HitDragListener(this, {
+		var dragListener = this.dayDragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
@@ -324,10 +321,30 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 					view.reportSelection(selectionSpan, ev);
 				}
 				enableCursor();
+				_this.dayDragListener = null;
 			}
 		});
 
 		return dragListener;
+	},
+
+
+	// Kills all in-progress dragging.
+	// Useful for when public API methods that result in re-rendering are invoked during a drag.
+	// Also useful for when touch devices misbehave and don't fire their touchend.
+	clearDragListeners: function() {
+		if (this.dayDragListener) {
+			this.dayDragListener.endInteraction(); // will clear this.dayDragListener
+		}
+		if (this.segDragListener) {
+			this.segDragListener.endInteraction(); // will clear this.segDragListener
+		}
+		if (this.segResizeListener) {
+			this.segResizeListener.endInteraction(); // will clear this.segResizeListener
+		}
+		if (this.externalDragListener) {
+			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
+		}
 	},
 
 
