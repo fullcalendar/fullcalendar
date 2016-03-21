@@ -296,6 +296,8 @@ function getCssFloat(el, prop) {
 /* Mouse / Touch Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
+FC.preventDefault = preventDefault;
+
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
 function isPrimaryMouseButton(ev) {
