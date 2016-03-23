@@ -41,7 +41,7 @@ xdescribe('Google Calendar plugin', function() {
 	});
 
 	afterEach(function() {
-		$.mockjaxClear();
+		$.mockjax.clear();
 		$.mockjaxSettings.log = function() { };
 		console.warn = oldConsoleWarn;
 	});
