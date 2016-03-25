@@ -300,6 +300,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
+		var isDragging;
 		var mouseFollower; // A clone of the original element that will move with the mouse
 		var dropLocation; // zoned event date properties
 
@@ -310,6 +311,7 @@ Grid.mixin({
 			subjectEl: el,
 			subjectCenter: true,
 			interactionStart: function(ev) {
+				isDragging = false;
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
 					parentEl: view.el,
@@ -321,6 +323,7 @@ Grid.mixin({
 				mouseFollower.start(ev);
 			},
 			dragStart: function(ev) {
+				isDragging = true;
 				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segDragStart(seg, ev);
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
@@ -371,20 +374,18 @@ Grid.mixin({
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 			},
-			dragEnd: function(ev) {
+			interactionEnd: function(ev) {
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!dropLocation, function() {
-					view.unrenderDrag();
-					view.showEvent(event);
-					_this.segDragStop(seg, ev);
-
+					if (isDragging) {
+						view.unrenderDrag();
+						view.showEvent(event);
+						_this.segDragStop(seg, ev);
+					}
 					if (dropLocation) {
 						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
 				});
-			},
-			interactionEnd: function() {
-				mouseFollower.stop(); // put in interactionEnd in case there was a mousedown but the drag never started
 				_this.segDragListener = null;
 			}
 		});
@@ -534,12 +535,10 @@ Grid.mixin({
 				enableCursor();
 				_this.unrenderDrag();
 			},
-			dragEnd: function() {
+			interactionEnd: function(ev) {
 				if (dropLocation) { // element was dropped on a valid hit
 					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
-			},
-			interactionEnd: function() {
 				_this.isDraggingExternal = false;
 				_this.externalDragListener = null;
 			}
@@ -607,13 +606,18 @@ Grid.mixin({
 		var el = seg.el;
 		var event = seg.event;
 		var eventEnd = calendar.getEventEnd(event);
+		var isDragging;
 		var resizeLocation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = this.segResizeListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
 			subjectEl: el,
+			interactionStart: function() {
+				isDragging = false;
+			},
 			dragStart: function(ev) {
+				isDragging = true;
 				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segResizeStart(seg, ev);
 			},
@@ -649,14 +653,13 @@ Grid.mixin({
 				view.showEvent(event);
 				enableCursor();
 			},
-			dragEnd: function(ev) {
-				_this.segResizeStop(seg, ev);
-
+			interactionEnd: function(ev) {
+				if (isDragging) {
+					_this.segResizeStop(seg, ev);
+				}
 				if (resizeLocation) { // valid date to resize to?
 					view.reportEventResize(event, resizeLocation, this.largeUnit, el, ev);
 				}
-			},
-			interactionEnd: function() {
 				_this.segResizeListener = null;
 			}
 		});

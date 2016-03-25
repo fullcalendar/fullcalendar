@@ -40,12 +40,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	startInteraction: function(ev, extraOptions) {
 		var isTouch = getEvIsTouch(ev);
 
-		if (isTouch) {
-			if (!isSingleTouch(ev)) {
-				return;
-			}
-		}
-		else {
+		if (!isTouch) {
 			if (!isPrimaryMouseButton(ev)) {
 				return;
 			}
@@ -115,19 +110,34 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindHandlers: function(isTouch) {
+	bindHandlers: function() {
+		var _this = this;
+		var touchStartIgnores = 1;
 
 		if (this.isTouch) {
 			this.listenTo($(document), {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
 				touchcancel: this.endInteraction,
+
+				// Sometimes touchend doesn't fire
+				// (can't figure out why. touchcancel doesn't fire either. has to do with scrolling?)
+				// If another touchstart happens, we know it's bogus, so cancel the drag.
+				// touchend will continue to be broken until user does a shorttap/scroll, but this is best we can do.
+				touchstart: function(ev) {
+					if (touchStartIgnores) { // bindHandlers is called from within a touchstart,
+						touchStartIgnores--; // and we don't want this to fire immediately, so ignore.
+					}
+					else {
+						_this.endInteraction(ev);
+					}
+				}
 			});
 		}
 		else {
 			this.listenTo($(document), {
 				mousemove: this.handleMouseMove,
-				mouseup: this.endInteraction,
+				mouseup: this.endInteraction
 			});
 		}
 
@@ -279,7 +289,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
 		if (!this.isDragging) {
-			this.endInteraction();
+			this.endInteraction(ev);
 		}
 	},
 

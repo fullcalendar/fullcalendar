@@ -47,8 +47,12 @@ var MouseFollower = Class.extend(ListenerMixin, {
 				this.updatePosition();
 			}
 
-			this.listenTo($(document), 'mousemove', this.handleMove);
-			this.listenTo($(document), 'touchmove', this.handleMove);
+			if (getEvIsTouch(ev)) {
+				this.listenTo($(document), 'touchmove', this.handleMove);
+			}
+			else {
+				this.listenTo($(document), 'mousemove', this.handleMove);
+			}
 		}
 	},
 
