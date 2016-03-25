@@ -210,6 +210,10 @@ be a descendant of the grid when it is being dragged.
 	display: none; /* hide semi-white background, to appear darker */
 }
 
+.fc-time-grid-event .fc-content {
+	overflow: hidden; /* for when .fc-selected */
+}
+
 .fc-time-grid-event .fc-time,
 .fc-time-grid-event .fc-title {
 	padding: 0 1px;
