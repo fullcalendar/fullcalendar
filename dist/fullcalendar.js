@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.6.0
+ * FullCalendar v2.6.1
  * Docs & License: http://fullcalendar.io/
  * (c) 2015 Adam Shaw
  */
@@ -19,8 +19,8 @@
 ;;
 
 var FC = $.fullCalendar = {
-	version: "2.6.0",
-	internalApiVersion: 2
+	version: "2.6.1",
+	internalApiVersion: 3
 };
 var fcViews = FC.views = {};
 
@@ -53,7 +53,7 @@ $.fn.fullCalendar = function(options) {
 			calendar.render();
 		}
 	});
-	
+
 	return res;
 };
 
@@ -108,7 +108,7 @@ function persianNumber(enNum){
 }
 
 function noJalaaliUnit(formatStr, isJalaali){
-	return (isJalaali ? formatStr.replace(/j/g,"") : formatStr); 
+	return (isJalaali ? formatStr.replace(/j/g,"") : formatStr);
 }
 
 
@@ -117,7 +117,7 @@ function addJalaaliToArgs(args,isJalaali){
 	for (var i in args){
 		out.push(args[i]);
 	}
-	out.push(isJalaali);	
+	out.push(isJalaali);
 	return out;
 }
 
@@ -237,7 +237,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -1146,10 +1146,10 @@ function makeMoment(args, parseAsUTC, parseZone) {
 		}
 	}
 
-	mom._fullCalendar = true; // flag for extended functionality
-	if (isJalaali){
-		moment.loadPersian();	
-	} 
+    mom._fullCalendar = true; // flag for extended functionality
+    if (isJalaali){
+		moment.loadPersian();
+	}
 
 	return mom;
 }
@@ -1554,7 +1554,7 @@ setLocalValues = allowValueOptimization ? function(mom, a) {
 
 
 function toJalaaliUnit(formatStr, isJalaali){
-	if (isJalaali){		
+	if (isJalaali){
 		//formatStr=formatStr.replace(/(.*)(\bYY\b|\bYYYY\b|\bYYYYY\b|\bM\b|\bMM\b|\bMMM\b|\bMMMM\b|\bMMMMM\b|\bD\b|\bDD\b|\bDDD\b|\bDDDD\b|\bgg\b|\bgggg\b|\bggggg\b|\byear\b|\bmonth\b|\bw\b)(.*)/g,"$1j$2$3");
 		formatStr=formatStr.replace(/(.*)(\bYY\b)(.*)/g,"$1j$2$3");
 		formatStr=formatStr.replace(/(.*)(\bYYYY\b)(.*)/g,"$1j$2$3");
@@ -1672,7 +1672,7 @@ function formatRange(date1, date2, formatStr, separator, isRTL, isJalaali) {
 		getFormatStringChunks(formatStr, isJalaali),
 		separator,
 		isRTL,
-		isJalaali
+        isJalaali
 	);
 }
 FC.formatRange = formatRange; // expose
@@ -2161,6 +2161,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 	},
 
 
+	// When called, if coord caches aren't built, builds them
+	ensureBuilt: function() {
+		if (!this.origin) {
+			this.build();
+		}
+	},
+
+
 	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
 	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
 	queryBoundingRect: function() {
@@ -2213,6 +2221,8 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Given a left offset (from document left), returns the index of the el that it horizontally intersects.
 	// If no intersection is made, or outside of the boundingRect, returns undefined.
 	getHorizontalIndex: function(leftOffset) {
+		this.ensureBuilt();
+
 		var boundingRect = this.boundingRect;
 		var lefts = this.lefts;
 		var rights = this.rights;
@@ -2232,6 +2242,8 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Given a top offset (from document top), returns the index of the el that it vertically intersects.
 	// If no intersection is made, or outside of the boundingRect, returns undefined.
 	getVerticalIndex: function(topOffset) {
+		this.ensureBuilt();
+
 		var boundingRect = this.boundingRect;
 		var tops = this.tops;
 		var bottoms = this.bottoms;
@@ -2250,12 +2262,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 
 	// Gets the left offset (from document left) of the element at the given index
 	getLeftOffset: function(leftIndex) {
+		this.ensureBuilt();
 		return this.lefts[leftIndex];
 	},
 
 
 	// Gets the left position (from offsetParent left) of the element at the given index
 	getLeftPosition: function(leftIndex) {
+		this.ensureBuilt();
 		return this.lefts[leftIndex] - this.origin.left;
 	},
 
@@ -2263,6 +2277,7 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the right offset (from document left) of the element at the given index.
 	// This value is NOT relative to the document's right edge, like the CSS concept of "right" would be.
 	getRightOffset: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex];
 	},
 
@@ -2270,30 +2285,35 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the right position (from offsetParent left) of the element at the given index.
 	// This value is NOT relative to the offsetParent's right edge, like the CSS concept of "right" would be.
 	getRightPosition: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex] - this.origin.left;
 	},
 
 
 	// Gets the width of the element at the given index
 	getWidth: function(leftIndex) {
+		this.ensureBuilt();
 		return this.rights[leftIndex] - this.lefts[leftIndex];
 	},
 
 
 	// Gets the top offset (from document top) of the element at the given index
 	getTopOffset: function(topIndex) {
+		this.ensureBuilt();
 		return this.tops[topIndex];
 	},
 
 
 	// Gets the top position (from offsetParent top) of the element at the given position
 	getTopPosition: function(topIndex) {
+		this.ensureBuilt();
 		return this.tops[topIndex] - this.origin.top;
 	},
 
 	// Gets the bottom offset (from the document top) of the element at the given index.
 	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
 	getBottomOffset: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex];
 	},
 
@@ -2301,12 +2321,14 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Gets the bottom position (from the offsetParent top) of the element at the given index.
 	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
 	getBottomPosition: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex] - this.origin.top;
 	},
 
 
 	// Gets the height of the element at the given index
 	getHeight: function(topIndex) {
+		this.ensureBuilt();
 		return this.bottoms[topIndex] - this.tops[topIndex];
 	}
 
@@ -3110,7 +3132,7 @@ var Grid = FC.Grid = Class.extend({
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
-	isJalaali: false,
+    isJalaali: false,
 
 	start: null,
 	end: null,
@@ -3136,7 +3158,7 @@ var Grid = FC.Grid = Class.extend({
 	constructor: function(view) {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
-		this.isJalaali = view.opt('isJalaali');
+        this.isJalaali = view.opt('isJalaali');
 
 		this.elsByFill = {};
 		this.externalDragStartProxy = proxy(this, 'externalDragStart');
@@ -3826,20 +3848,9 @@ Grid.mixin({
 
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
 	// Called by the fill system.
-	// TODO: consolidate with getEventSkinCss?
 	bgEventSegCss: function(seg) {
-		var view = this.view;
-		var event = seg.event;
-		var source = event.source || {};
-
 		return {
-			'background-color':
-				event.backgroundColor ||
-				event.color ||
-				source.backgroundColor ||
-				source.color ||
-				view.opt('eventBackgroundColor') ||
-				view.opt('eventColor')
+			'background-color': this.getSegSkinCss(seg)['background-color']
 		};
 	},
 
@@ -4422,7 +4433,8 @@ Grid.mixin({
 
 
 	// Utility for generating event skin-related CSS properties
-	getEventSkinCss: function(event) {
+	getSegSkinCss: function(seg) {
+		var event = seg.event;
 		var view = this.view;
 		var source = event.source || {};
 		var eventColor = event.color;
@@ -4784,7 +4796,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		this.dayIndices = dayIndices;
 		this.daysPerRow = daysPerRow;
 		this.rowCnt = rowCnt;
-		
+
 		this.updateDayTableCols();
 	},
 
@@ -5645,7 +5657,7 @@ DayGrid.mixin({
 		var isResizableFromEnd = !disableResizing && event.allDay &&
 			seg.isEnd && view.isEventResizableFromEnd(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getEventSkinCss(event));
+		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeHtml = '';
 		var timeText;
 		var titleHtml;
@@ -5664,7 +5676,7 @@ DayGrid.mixin({
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-		
+
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -5793,7 +5805,7 @@ DayGrid.mixin({
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		this.sortEventSegs(segs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
@@ -7001,7 +7013,7 @@ TimeGrid.mixin({
 		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
 		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventResizableFromEnd(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getEventSkinCss(event));
+		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeText;
 		var fullTimeText; // more verbose time text. for the print stylesheet
 		var startTimeText; // just the start time text
@@ -7413,9 +7425,12 @@ var View = FC.View = Class.extend({
 	// document handlers, bound to `this` object
 	documentMousedownProxy: null, // TODO: doesn't work with touch
 
-	// for refresh timing of now indicator
-	nowIndicatorTimeoutID: null,
-	nowIndicatorIntervalID: null,
+	// now indicator
+	isNowIndicatorRendered: null,
+	initialNowDate: null, // result first getNow call
+	initialNowQueriedMs: null, // ms time the getNow was called
+	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
+	nowIndicatorIntervalID: null, // "
 
 
 	constructor: function(calendar, type, options, intervalDuration) {
@@ -7487,12 +7502,12 @@ var View = FC.View = Class.extend({
 	computeRange: function(date) {
 		var intervalUnit = computeIntervalUnit(this.intervalDuration);
 		var intervalStart = date.clone().startOf(toJalaaliUnit(intervalUnit,this.isJalaali));
-		
-		if (this.isJalaali && ( intervalUnit === "year" || intervalUnit === "month")) {
+
+        if (this.isJalaali && ( intervalUnit === "year" || intervalUnit === "month")) {
 			var intervalEnd = intervalStart.clone().add(1,toJalaaliUnit(intervalUnit,this.isJalaali));
 		}
 		else {
-			var intervalEnd = intervalStart.clone().add(this.intervalDuration);	
+			var intervalEnd = intervalStart.clone().add(this.intervalDuration);
 		}
 		var start, end;
 
@@ -7692,22 +7707,6 @@ var View = FC.View = Class.extend({
 	},
 
 
-	// If the view has already been displayed, tears it down and displays it again.
-	// Will re-render the events if necessary, which display/clear DO NOT do.
-	// TODO: make behavior more consistent.
-	redisplay: function() {
-		if (this.isSkeletonRendered) {
-			var wasEventsRendered = this.isEventsRendered;
-			this.clearEvents(); // won't trigger handlers if events never rendered
-			this.clearView();
-			this.displayView();
-			if (wasEventsRendered) { // only render and trigger handlers if events previously rendered
-				this.displayEvents(this.calendar.getEventCache());
-			}
-		}
-	},
-
-
 	// Displays the view's non-event content, such as date-related content or anything required by events.
 	// Renders the view's non-content skeleton if necessary.
 	// Can be asynchronous and return a promise.
@@ -7725,10 +7724,7 @@ var View = FC.View = Class.extend({
 		this.renderDates();
 		this.updateSize();
 		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-
-		if (this.opt('nowIndicator')) {
-			this.startNowIndicator();
-		}
+		this.startNowIndicator();
 	},
 
 
@@ -7830,34 +7826,42 @@ var View = FC.View = Class.extend({
 	// TODO: somehow do this for the current whole day's background too
 	startNowIndicator: function() {
 		var _this = this;
-		var unit = this.getNowIndicatorUnit();
-		var initialNow; // result first getNow call
-		var initialNowQueried; // ms time of then getNow was called
+		var unit;
+		var update;
 		var delay; // ms wait value
 
-		// rerenders the now indicator, computing the new current time from the amount of time that has passed
-		// since the initial getNow call.
-		function update() {
-			_this.unrenderNowIndicator();
-			_this.renderNowIndicator(
-				initialNow.clone().add(new Date() - initialNowQueried) // add ms
-			);
+		if (this.opt('nowIndicator')) {
+			unit = this.getNowIndicatorUnit();
+			if (unit) {
+				update = proxy(this, 'updateNowIndicator'); // bind to `this`
+
+				this.initialNowDate = this.calendar.getNow();
+				this.initialNowQueriedMs = +new Date();
+				this.renderNowIndicator(this.initialNowDate);
+				this.isNowIndicatorRendered = true;
+
+				// wait until the beginning of the next interval
+				delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate;
+				this.nowIndicatorTimeoutID = setTimeout(function() {
+					_this.nowIndicatorTimeoutID = null;
+					update();
+					delay = +moment.duration(1, unit);
+					delay = Math.max(100, delay); // prevent too frequent
+					_this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
+				}, delay);
+			}
 		}
+	},
 
-		if (unit) {
-			initialNow = this.calendar.getNow();
-			initialNowQueried = +new Date();
-			this.renderNowIndicator(initialNow);
 
-			// wait until the beginning of the next interval
-			delay = initialNow.clone().startOf(unit).add(1, unit) - initialNow;
-			this.nowIndicatorTimeoutID = setTimeout(function() {
-				this.nowIndicatorTimeoutID = null;
-				update();
-				delay = +moment.duration(1, unit);
-				delay = Math.max(100, delay); // prevent too frequent
-				this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
-			}, delay);
+	// rerenders the now indicator, computing the new current time from the amount of time that has passed
+	// since the initial getNow call.
+	updateNowIndicator: function() {
+		if (this.isNowIndicatorRendered) {
+			this.unrenderNowIndicator();
+			this.renderNowIndicator(
+				this.initialNowDate.clone().add(new Date() - this.initialNowQueriedMs) // add ms
+			);
 		}
 	},
 
@@ -7865,19 +7869,19 @@ var View = FC.View = Class.extend({
 	// Immediately unrenders the view's current time indicator and stops any re-rendering timers.
 	// Won't cause side effects if indicator isn't rendered.
 	stopNowIndicator: function() {
-		var cleared = false;
+		if (this.isNowIndicatorRendered) {
 
-		if (this.nowIndicatorTimeoutID) {
-			clearTimeout(this.nowIndicatorTimeoutID);
-			cleared = true;
-		}
-		if (this.nowIndicatorIntervalID) {
-			clearTimeout(this.nowIndicatorIntervalID);
-			cleared = true;
-		}
+			if (this.nowIndicatorTimeoutID) {
+				clearTimeout(this.nowIndicatorTimeoutID);
+				this.nowIndicatorTimeoutID = null;
+			}
+			if (this.nowIndicatorIntervalID) {
+				clearTimeout(this.nowIndicatorIntervalID);
+				this.nowIndicatorIntervalID = null;
+			}
 
-		if (cleared) { // is the indicator currently display?
 			this.unrenderNowIndicator();
+			this.isNowIndicatorRendered = false;
 		}
 	},
 
@@ -7915,6 +7919,7 @@ var View = FC.View = Class.extend({
 
 		this.updateHeight(isResize);
 		this.updateWidth(isResize);
+		this.updateNowIndicator();
 
 		if (isResize) {
 			this.setScroll(scrollState);
@@ -8720,7 +8725,7 @@ function Calendar_constructor(element, overrides) {
 	t.initOptions(overrides || {});
 	var options = this.options;
 
-	
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -8910,7 +8915,7 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	
+
 	// Imports
 	// -----------------------------------------------------------------------------------
 
@@ -8937,9 +8942,9 @@ function Calendar_constructor(element, overrides) {
 	var ignoreWindowResize = 0;
 	var events = [];
 	var date; // unzoned
-	
-	
-	
+
+
+
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
 
@@ -8951,8 +8956,8 @@ function Calendar_constructor(element, overrides) {
 	else {
 		date = t.getNow(); // getNow already returns unzoned
 	}
-	
-	
+
+
 	function render() {
 		if (!content) {
 			initialRender();
@@ -8963,8 +8968,8 @@ function Calendar_constructor(element, overrides) {
 			renderView();
 		}
 	}
-	
-	
+
+
 	function initialRender() {
 		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
@@ -8998,8 +9003,8 @@ function Calendar_constructor(element, overrides) {
 			$(window).resize(windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function destroy() {
 
 		if (currentView) {
@@ -9017,13 +9022,13 @@ function Calendar_constructor(element, overrides) {
 			$(window).unbind('resize', windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function elementVisible() {
 		return element.is(':visible');
 	}
-	
-	
+
+
 
 	// View Rendering
 	// -----------------------------------------------------------------------------------
@@ -9082,7 +9087,7 @@ function Calendar_constructor(element, overrides) {
 		ignoreWindowResize--;
 	}
 
-	
+
 
 	// Resizing
 	// -----------------------------------------------------------------------------------
@@ -9099,8 +9104,8 @@ function Calendar_constructor(element, overrides) {
 	t.isHeightAuto = function() {
 		return options.contentHeight === 'auto' || options.height === 'auto';
 	};
-	
-	
+
+
 	function updateSize(shouldRecalc) {
 		if (elementVisible()) {
 
@@ -9122,8 +9127,8 @@ function Calendar_constructor(element, overrides) {
 			_calcSize();
 		}
 	}
-	
-	
+
+
 	function _calcSize() { // assumes elementVisible
 		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
 			suggestedViewHeight = options.contentHeight;
@@ -9135,8 +9140,8 @@ function Calendar_constructor(element, overrides) {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
 		}
 	}
-	
-	
+
+
 	function windowResize(ev) {
 		if (
 			!ignoreWindowResize &&
@@ -9148,9 +9153,9 @@ function Calendar_constructor(element, overrides) {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
@@ -9176,7 +9181,7 @@ function Calendar_constructor(element, overrides) {
 		currentView.clearEvents();
 		unfreezeContentHeight();
 	}
-	
+
 
 	function getAndRenderEvents() {
 		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
@@ -9194,7 +9199,7 @@ function Calendar_constructor(element, overrides) {
 			// ... which will call renderEvents
 	}
 
-	
+
 	// called when event data arrives
 	function reportEvents(_events) {
 		events = _events;
@@ -9227,12 +9232,12 @@ function Calendar_constructor(element, overrides) {
 			header.enableButton('today');
 		}
 	}
-	
+
 
 
 	/* Selection
 	-----------------------------------------------------------------------------*/
-	
+
 
 	// this public method receives start/end dates in any format, with any timezone
 	function select(zonedStartInput, zonedEndInput) {
@@ -9240,56 +9245,56 @@ function Calendar_constructor(element, overrides) {
 			t.buildSelectSpan.apply(t, arguments)
 		);
 	}
-	
+
 
 	function unselect() { // safe to be called before renderView
 		if (currentView) {
 			currentView.unselect();
 		}
 	}
-	
-	
-	
+
+
+
 	/* Date
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function prev() {
 		date = currentView.computePrevDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function next() {
 		date = currentView.computeNextDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function prevYear() {
 		date.add(-1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function nextYear() {
 		date.add(1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function today() {
 		date = t.getNow();
 		renderView();
 	}
-	
-	
+
+
 	function gotoDate(zonedDateInput) {
 		date = t.moment(zonedDateInput).stripZone();
 		renderView();
 	}
-	
-	
+
+
 	function incrementDate(delta) {
 		date.add(moment.duration(delta));
 		renderView();
@@ -9307,8 +9312,8 @@ function Calendar_constructor(element, overrides) {
 		date = newDate.clone();
 		renderView(spec ? spec.type : null);
 	}
-	
-	
+
+
 	// for external API
 	function getDate() {
 		return t.applyTimezone(date); // infuse the calendar's timezone
@@ -9340,23 +9345,23 @@ function Calendar_constructor(element, overrides) {
 			overflow: ''
 		});
 	}
-	
-	
-	
+
+
+
 	/* Misc
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function getCalendar() {
 		return t;
 	}
 
-	
+
 	function getView() {
 		return currentView;
 	}
-	
-	
+
+
 	function option(name, value) {
 		if (value === undefined) {
 			return options[name];
@@ -9366,8 +9371,8 @@ function Calendar_constructor(element, overrides) {
 			updateSize(true); // true = allow recalculation of height
 		}
 	}
-	
-	
+
+
 	function trigger(name, thisObj) { // overrides the Emitter's trigger method :(
 		var args = Array.prototype.slice.call(arguments, 2);
 
@@ -9407,13 +9412,13 @@ Calendar.defaults = {
 
 	weekNumberTitle: 'W',
 	weekNumberCalculation: 'local',
-	
+
 	//editable: false,
 
 	//nowIndicator: false,
 
 	scrollTime: '06:00:00',
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
@@ -9444,7 +9449,7 @@ Calendar.defaults = {
 		prevYear: 'left-double-arrow',
 		nextYear: 'right-double-arrow'
 	},
-	
+
 	// jquery-ui theming
 	theme: false,
 	themeButtonIcons: {
@@ -9458,10 +9463,10 @@ Calendar.defaults = {
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,
-	
+
 	//selectable: false,
 	unselectAuto: true,
-	
+
 	dropAccept: '*',
 
 	eventOrder: 'title',
@@ -9470,11 +9475,11 @@ Calendar.defaults = {
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
 	dayPopoverFormat: 'LL',
-	
+
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before an updateSize happens
 	isJalaali: false
-	
+
 };
 
 
@@ -9713,7 +9718,7 @@ FC.lang('en', Calendar.englishDefaults);
 
 function Header(calendar, options) {
 	var t = this;
-	
+
 	// exports
 	t.render = render;
 	t.removeElement = removeElement;
@@ -9723,7 +9728,7 @@ function Header(calendar, options) {
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
 	t.getViewsWithButtons = getViewsWithButtons;
-	
+
 	// locals
 	var el = $();
 	var viewsWithButtons = [];
@@ -9745,14 +9750,14 @@ function Header(calendar, options) {
 			return el;
 		}
 	}
-	
-	
+
+
 	function removeElement() {
 		el.remove();
 		el = $();
 	}
-	
-	
+
+
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = options.header[position];
@@ -9913,32 +9918,32 @@ function Header(calendar, options) {
 
 		return sectionEl;
 	}
-	
-	
+
+
 	function updateTitle(text) {
 		el.find('h2').text(text);
 	}
-	
-	
+
+
 	function activateButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.addClass(tm + '-state-active');
 	}
-	
-	
+
+
 	function deactivateButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.removeClass(tm + '-state-active');
 	}
-	
-	
+
+
 	function disableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.attr('disabled', 'disabled')
 			.addClass(tm + '-state-disabled');
 	}
-	
-	
+
+
 	function enableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
 			.removeAttr('disabled')
@@ -9967,8 +9972,8 @@ var eventGUID = 1;
 
 function EventManager(options) { // assumed to be a calendar
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -9981,12 +9986,12 @@ function EventManager(options) { // assumed to be a calendar
 	t.mutateEvent = mutateEvent;
 	t.normalizeEventDates = normalizeEventDates;
 	t.normalizeEventTimes = normalizeEventTimes;
-	
-	
+
+
 	// imports
 	var reportEvents = t.reportEvents;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -10005,9 +10010,9 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	);
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
 
@@ -10017,8 +10022,8 @@ function EventManager(options) { // assumed to be a calendar
 		return !rangeStart || // nothing has been fetched yet?
 			start < rangeStart || end > rangeEnd; // is part of the new range outside of the old range?
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -10030,8 +10035,8 @@ function EventManager(options) { // assumed to be a calendar
 			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
@@ -10067,8 +10072,8 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		});
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = FC.sourceFetchers;
@@ -10177,12 +10182,12 @@ function EventManager(options) { // assumed to be a calendar
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
@@ -10264,9 +10269,9 @@ function EventManager(options) { // assumed to be a calendar
 		) ||
 		source; // the given argument *is* the primitive
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 
@@ -10308,7 +10313,7 @@ function EventManager(options) { // assumed to be a calendar
 		return !/^_|^(id|allDay|start|end)$/.test(name);
 	}
 
-	
+
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
 		var abstractEvent = buildEventFromInput(eventInput);
@@ -10337,8 +10342,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		return [];
 	}
-	
-	
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;
@@ -10367,8 +10372,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		reportEvents(cache);
 	}
-	
-	
+
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -10381,9 +10386,9 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		return cache; // else, return all
 	}
-	
-	
-	
+
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
