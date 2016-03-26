@@ -305,12 +305,6 @@ function isPrimaryMouseButton(ev) {
 }
 
 
-function isSingleTouch(ev) {
-	var touches = ev.originalEvent.touches;
-	return touches && touches.length == 1;
-}
-
-
 function getEvX(ev) {
 	if (ev.pageX !== undefined) {
 		return ev.pageX;
