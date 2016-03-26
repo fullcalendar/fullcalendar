@@ -40,7 +40,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	startInteraction: function(ev, extraOptions) {
 		var isTouch = getEvIsTouch(ev);
 
-		if (!isTouch) {
+		if (ev.type === 'mousedown') {
 			if (!isPrimaryMouseButton(ev)) {
 				return;
 			}
@@ -288,7 +288,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	handleScroll: function(ev) {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
-		if (!this.isDragging) {
+		if (this.isTouch && !this.isDragging) {
 			this.endInteraction(ev);
 		}
 	},
