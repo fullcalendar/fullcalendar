@@ -87,7 +87,9 @@ Calendar.defaults = {
 	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
-	windowResizeDelay: 200 // milliseconds before an updateSize happens
+	windowResizeDelay: 200, // milliseconds before an updateSize happens
+
+	longPressDelay: 1000
 	
 };
 

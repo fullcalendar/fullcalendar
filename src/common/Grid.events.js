@@ -255,7 +255,7 @@ Grid.mixin({
 			};
 
 			dragListener.startInteraction(ev, {
-				delay: isSelected ? 0 : 1000 // do delay if not already selected
+				delay: isSelected ? 0 : this.view.opt('longPressDelay') // do delay if not already selected
 			});
 		}
 	},

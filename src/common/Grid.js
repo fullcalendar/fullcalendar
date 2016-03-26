@@ -263,7 +263,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	dayTouchStart: function(ev) {
 		this.clearDragListeners();
 		this.buildDayDragListener().startInteraction(ev, {
-			delay: 1000
+			delay: this.view.opt('longPressDelay')
 		});
 	},
 
