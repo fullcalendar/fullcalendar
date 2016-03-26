@@ -511,16 +511,16 @@ function Calendar_constructor(element, overrides) {
 		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
 
+		element.addClass(
+			FC.isTouchEnabled ? 'fc-touch' : 'fc-cursor'
+		);
+
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
 		}
 		else {
 			element.addClass('fc-ltr');
 		}
-
-		element.addClass(
-			FC.isTouchEnabled ? 'fc-touch' : 'fc-cursor'
-		);
 
 		if (options.theme) {
 			element.addClass('ui-widget');
@@ -557,7 +557,7 @@ function Calendar_constructor(element, overrides) {
 
 		header.removeElement();
 		content.remove();
-		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
+		element.removeClass('fc fc-touch fc-cursor fc-ltr fc-rtl fc-unthemed ui-widget');
 
 		if (windowResizeProxy) {
 			$(window).unbind('resize', windowResizeProxy);
