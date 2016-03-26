@@ -565,16 +565,26 @@ temporary rendered events).
 	display: block;
 }
 
-.fc-touch .fc-event .fc-resizer:after {
-	/* 50x50 touch area */
+
+/* Hit Area (for events and expander)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-expander { /* fc-event is already position:relative */
+	position: relative;
+}
+
+.fc-touch .fc-expander:before,
+.fc-touch .fc-event .fc-resizer:before {
+	/* 40x40 touch area */
 	content: "";
 	position: absolute;
+	z-index: 9999; /* user of this util can scope within a lower z-index */
 	top: 50%;
 	left: 50%;
-	width: 50px;
-	height: 50px;
-	margin-left: -25px;
-	margin-top: -25px;
+	width: 40px;
+	height: 40px;
+	margin-left: -20px;
+	margin-top: -20px;
 }
 
 
