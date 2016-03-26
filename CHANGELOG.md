@@ -1,4 +1,16 @@
 
+v2.7.0-beta (2016-03-26)
+------------------------
+
+touch device support (#994):
+	- smoother scrolling
+	- interactions initiated via "long press":
+		- event drag-n-drop
+		- event resize
+		- time-range selecting
+	- `longPressDelay`
+
+
 v2.6.1 (2016-02-17)
 -------------------
 
