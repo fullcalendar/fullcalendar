@@ -310,7 +310,7 @@ function getEvX(ev) {
 		return ev.pageX;
 	}
 	var touches = ev.originalEvent.touches;
-	if (touches && touches.length == 1) {
+	if (touches) {
 		return touches[0].pageX;
 	}
 }
@@ -321,7 +321,7 @@ function getEvY(ev) {
 		return ev.pageY;
 	}
 	var touches = ev.originalEvent.touches;
-	if (touches && touches.length == 1) {
+	if (touches) {
 		return touches[0].pageY;
 	}
 }
