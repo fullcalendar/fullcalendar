@@ -133,6 +133,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 					}
 				}
 			});
+
+			if (this.scrollEl) {
+				this.listenTo(this.scrollEl, 'scroll', this.handleTouchScroll);
+			}
 		}
 		else {
 			this.listenTo($(document), {
@@ -145,10 +149,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			selectstart: preventDefault, // don't allow selection while dragging
 			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
 		});
-
-		if (this.scrollEl) {
-			this.listenTo(this.scrollEl, 'scroll', this.handleScroll);
-		}
 	},
 
 
@@ -285,10 +285,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleScroll: function(ev) {
+	handleTouchScroll: function(ev) {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
-		if (this.isTouch && !this.isDragging) {
+		if (!this.isDragging) {
 			this.endInteraction(ev);
 		}
 	},
