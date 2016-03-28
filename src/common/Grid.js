@@ -170,7 +170,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.el = el;
 		preventSelection(el);
 
-		if (FC.isTouchEnabled) {
+		if (this.view.calendar.isTouch) {
 			this.bindDayHandler('touchstart', this.dayTouchStart);
 		}
 		else {

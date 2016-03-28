@@ -175,7 +175,7 @@ Grid.mixin({
 
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
-		if (FC.isTouchEnabled) {
+		if (this.view.calendar.isTouch) {
 			this.bindSegHandler('touchstart', this.handleSegTouchStart);
 		}
 		else {

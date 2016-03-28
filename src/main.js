@@ -6,8 +6,7 @@ var FC = $.fullCalendar = {
 var fcViews = FC.views = {};
 
 
-FC.isTouchEnabled = ('ontouchstart' in document) &&
-	!window.__karma__; // workaround for phantomjs falsely reporting touch
+FC.isTouch = 'ontouchstart' in document;
 
 
 $.fn.fullCalendar = function(options) {

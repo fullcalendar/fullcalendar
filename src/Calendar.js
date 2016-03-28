@@ -9,6 +9,7 @@ var Calendar = FC.Calendar = Class.extend({
 	view: null, // current View object
 	header: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
+	isTouch: false,
 
 
 	// a lot of this class' OOP logic is scoped within this constructor function,
@@ -54,6 +55,10 @@ var Calendar = FC.Calendar = Class.extend({
 			overrides
 		]);
 		populateInstanceComputableOptions(this.options);
+
+		this.isTouch = this.options.isTouch != null ?
+			this.options.isTouch :
+			FC.isTouch;
 
 		this.viewSpecCache = {}; // somewhat unrelated
 	},
@@ -512,7 +517,7 @@ function Calendar_constructor(element, overrides) {
 		element.addClass('fc');
 
 		element.addClass(
-			FC.isTouchEnabled ? 'fc-touch' : 'fc-cursor'
+			t.isTouch ? 'fc-touch' : 'fc-cursor'
 		);
 
 		if (options.isRTL) {
