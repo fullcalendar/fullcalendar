@@ -40,6 +40,7 @@
   },
   "main": [
     "dist/fullcalendar.js",
+    "dist/lang-all.js",
     "dist/fullcalendar.css"
   ],
   "ignore": [
