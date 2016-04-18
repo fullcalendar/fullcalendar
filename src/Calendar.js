@@ -699,7 +699,6 @@ function Calendar_constructor(element, overrides) {
 
 
 	function refetchEvents() { // can be called as an API method
-		destroyEvents(); // so that events are cleared before user starts waiting for AJAX
 		fetchAndRenderEvents();
 	}
 
