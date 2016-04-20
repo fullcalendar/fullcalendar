@@ -93,7 +93,7 @@ DayGrid.mixin({
 		var td, rowspan;
 		var segMoreNodes; // array of "more" <td> cells that will stand-in for the current seg's cell
 		var j;
-		var moreTd, moreWrap, moreLink;
+		var moreDiv, moreWrap, moreLink;
 
 		// Iterates through empty level cells and places "more" links inside if need be
 		function emptyCellsUntil(endCol) { // goes from current `col` to `endCol`
@@ -139,7 +139,7 @@ DayGrid.mixin({
 
 					// make a replacement <td> for each column the segment occupies. will be one for each colspan
 					for (j = 0; j < colSegsBelow.length; j++) {
-						moreTd = $('<td class="fc-more-cell"/>').attr('rowspan', rowspan);
+						moreDiv = $('<div class="fc-more-cell"/>').attr('rowspan', rowspan);
 						segsBelow = colSegsBelow[j];
 						moreLink = this.renderMoreLink(
 							row,
@@ -147,12 +147,12 @@ DayGrid.mixin({
 							[ seg ].concat(segsBelow) // count seg as hidden too
 						);
 						moreWrap = $('<div/>').append(moreLink);
-						moreTd.append(moreWrap);
-						segMoreNodes.push(moreTd[0]);
-						moreNodes.push(moreTd[0]);
+						moreDiv.append(moreWrap);
+						segMoreNodes.push(moreDiv[0]);
+						moreNodes.push(moreDiv[0]);
 					}
 
-					td.addClass('fc-limited').after($(segMoreNodes)); // hide original <td> and inject replacements
+					td.append($(segMoreNodes)); // hide original <td> and inject replacements
 					limitedNodes.push(td[0]);
 				}
 			}
@@ -189,7 +189,7 @@ DayGrid.mixin({
 
 		return $('<a class="fc-more"/>')
 			.text(
-				this.getMoreLinkText(hiddenSegs.length)
+				this.getMoreLinkText(hiddenSegs.length - 1)
 			)
 			.on('click', function(ev) {
 				var clickOption = view.opt('eventLimitClick');
