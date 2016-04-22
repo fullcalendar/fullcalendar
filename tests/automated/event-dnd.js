@@ -19,37 +19,49 @@ describe('eventDrop', function() {
 			options.defaultView = 'month';
 		});
 
-		describe('when dragging an all-day event to another day', function() {
-			it('should be given correct arguments, with whole-day delta', function(done) {
-				options.events = [ {
-					title: 'all-day event',
-					start: '2014-06-11',
-					allDay: true
-				} ];
+		[ false, true ].forEach(function(isTouch) {
+			describe('with ' + (isTouch ? 'touch' : 'mouse'), function() {
+				beforeEach(function() {
+					options.isTouch = isTouch;
+					options.longPressDelay = isTouch ? 100 : 0;
+				});
 
-				init(
-					function() {
-						$('.fc-event').simulate('drag', {
-							dx: $('.fc-day').width() * 2,
-							dy: $('.fc-day').height()
-						});
-					},
-					function(event, delta, revertFunc) {
-						expect(delta.asDays()).toBe(9);
-						expect(delta.hours()).toBe(0);
-						expect(delta.minutes()).toBe(0);
-						expect(delta.seconds()).toBe(0);
-						expect(delta.milliseconds()).toBe(0);
+				describe('when dragging an all-day event to another day', function() {
+					it('should be given correct arguments, with whole-day delta', function(done) {
 
-						expect(event.start).toEqualMoment('2014-06-20');
-						expect(event.end).toBeNull();
-						revertFunc();
-						expect(event.start).toEqualMoment('2014-06-11');
-						expect(event.end).toBeNull();
+						options.events = [ {
+							title: 'all-day event',
+							start: '2014-06-11',
+							allDay: true
+						} ];
 
-						done();
-					}
-				);
+						init(
+							function() {
+								$('.fc-event').simulate('drag', {
+									dx: $('.fc-day').width() * 2,
+									dy: $('.fc-day').height(),
+									isTouch: isTouch,
+									delay: isTouch ? 200 : 0
+								});
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.asDays()).toBe(9);
+								expect(delta.hours()).toBe(0);
+								expect(delta.minutes()).toBe(0);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
+
+								expect(event.start).toEqualMoment('2014-06-20');
+								expect(event.end).toBeNull();
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toBeNull();
+
+								done();
+							}
+						);
+					});
+				});
 			});
 		});
 
