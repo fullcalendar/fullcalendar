@@ -183,10 +183,15 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 			self.simulateEvent(targetNode, isTouch ? 'touchstart' : 'mousedown', clientCoords);
 		}
 
+		var delay = options.delay || 0;
 		if (debug) {
+			delay = Math.max(delay, DEBUG_DELAY);
+		}
+
+		if (delay) {
 			setTimeout(function() {
 				startMoving();
-			}, DEBUG_DELAY);
+			}, delay);
 		}
 		else {
 			startMoving();
