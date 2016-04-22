@@ -186,6 +186,44 @@ describe('eventResize', function() {
 				);
 			});
 
+			it('should have correct arguments with a timed delta via touch', function(done) {
+				options.isTouch = true;
+				options.longPressDelay = 100;
+				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+
+				init(
+					function() {
+						setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
+							$('.fc-event').simulate('drag', {
+								isTouch: true,
+								delay: 200,
+								onRelease: function() {
+									$('.fc-event .fc-resizer').simulate('drag', {
+										dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
+										isTouch: true
+									});
+								}
+							});
+						}, 0);
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
+
+						done();
+					}
+				);
+			});
+
 			// TODO: test RTL
 			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
 				init(
