@@ -54,46 +54,55 @@ describe('eventResize', function() {
 
 		describe('when resizing an all-day event via touch', function() {
 
-			it('should have correct arguments with a whole-day delta', function(done) {
-				options.isTouch = true;
-				options.longPressDelay = 100;
-				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
-				options.events = [ {
-					title: 'all-day event',
-					start: '2014-06-11',
-					allDay: true
-				} ];
+			// for https://github.com/fullcalendar/fullcalendar/issues/3118
+			[ true, false ].forEach(function(eventStartEditable) {
+				describe('when eventStartEditable is ' + eventStartEditable, function() {
+					beforeEach(function() {
+						options.eventStartEditable = eventStartEditable;
+					});
 
-				init(
-					function() {
-						$('.fc-event').simulate('drag', {
-							isTouch: true,
-							delay: 200,
-							onRelease: function() {
-								$('.fc-event .fc-resizer').simulate('drag', {
-									dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
-									dy: $('.fc-day').height(),
-									isTouch: true
+					it('should have correct arguments with a whole-day delta', function(done) {
+						options.isTouch = true;
+						options.longPressDelay = 100;
+						options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+						options.events = [ {
+							title: 'all-day event',
+							start: '2014-06-11',
+							allDay: true
+						} ];
+
+						init(
+							function() {
+								$('.fc-event').simulate('drag', {
+									isTouch: true,
+									delay: 200,
+									onRelease: function() {
+										$('.fc-event .fc-resizer').simulate('drag', {
+											dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
+											dy: $('.fc-day').height(),
+											isTouch: true
+										});
+									}
 								});
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.asDays()).toBe(5);
+								expect(delta.hours()).toBe(0);
+								expect(delta.minutes()).toBe(0);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
+
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toEqualMoment('2014-06-17');
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toBeNull();
+
+								done();
 							}
-						});
-					},
-					function(event, delta, revertFunc) {
-						expect(delta.asDays()).toBe(5);
-						expect(delta.hours()).toBe(0);
-						expect(delta.minutes()).toBe(0);
-						expect(delta.seconds()).toBe(0);
-						expect(delta.milliseconds()).toBe(0);
-
-						expect(event.start).toEqualMoment('2014-06-11');
-						expect(event.end).toEqualMoment('2014-06-17');
-						revertFunc();
-						expect(event.start).toEqualMoment('2014-06-11');
-						expect(event.end).toBeNull();
-
-						done();
-					}
-				);
+						);
+					});
+				});
 			});
 		});
 

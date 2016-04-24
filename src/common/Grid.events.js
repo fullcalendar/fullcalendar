@@ -235,17 +235,23 @@ Grid.mixin({
 		var view = this.view;
 		var event = seg.event;
 		var isSelected = view.isEventSelected(event);
+		var isDraggable = view.isEventDraggable(event);
+		var isResizable = view.isEventResizable(event);
 		var isResizing = false;
 		var dragListener;
 
-		if (isSelected) {
+		if (isSelected && isResizable) {
 			// only allow resizing of the event is selected
 			isResizing = this.startSegResize(seg, ev);
 		}
 
-		if (!isResizing && view.isEventDraggable(event)) {
+		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
 			this.clearDragListeners();
-			dragListener = this.buildSegDragListener(seg);
+
+			dragListener = isDraggable ?
+				this.buildSegDragListener(seg) :
+				new DragListener(); // seg isn't draggable, but let's use a generic DragListener
+				                    // simply for the delay, so it can be selected.
 
 			dragListener._dragStart = function() { // TODO: better way of binding
 				// if not previously selected, will fire after a delay. then, select the event
@@ -274,10 +280,11 @@ Grid.mixin({
 	},
 
 
-	// returns boolean whether resizing actually started or not
-	// `dragOptions` are optional
+	// returns boolean whether resizing actually started or not.
+	// assumes the seg allows resizing.
+	// `dragOptions` are optional.
 	startSegResize: function(seg, ev, dragOptions) {
-		if ($(ev.target).is('.fc-resizer') && this.view.isEventResizable(seg.event)) {
+		if ($(ev.target).is('.fc-resizer')) {
 			this.clearDragListeners();
 			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
 				.startInteraction(ev, dragOptions);
