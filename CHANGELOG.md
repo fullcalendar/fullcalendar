@@ -1,6 +1,6 @@
 
-v2.7.0-beta (2016-03-26)
-------------------------
+v2.7.0 (2016-04-23)
+-------------------
 
 touch device support (#994):
 	- smoother scrolling
@@ -14,7 +14,7 @@ touch device support (#994):
 v2.6.1 (2016-02-17)
 -------------------
 
-- make nowIndicator positioning refresh on window resize
+- make `nowIndicator` positioning refresh on window resize
 
 
 v2.6.0 (2016-01-07)
