@@ -50,6 +50,18 @@ $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
 	this.dispatchEvent(elem, type, event, options);
 };
 
+$.simulateTouchClick = function(elem) {
+	var $elem = $(elem);
+	var clientCoords = {
+		clientX: $elem.offset().left,
+		clientY: $elem.offset().top
+	};
+	$elem.simulate('mousemove', clientCoords);
+	$elem.simulate('mousedown', clientCoords);
+	$elem.simulate('mouseup', clientCoords);
+	$elem.simulate('click', clientCoords);
+};
+
 
 /* Drag-n-drop
 ----------------------------------------------------------------------------------------------------------------------*/
