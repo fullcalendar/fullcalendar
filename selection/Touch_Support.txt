@@ -1,0 +1,8 @@
+
+Selection Touch Support
+=======================
+
+Please read the [main article on touch support &raquo;](../event_ui/Touch_Support)
+
+For selecting date ranges on touch devices,
+**the end-user must do a long tap-and-hold!**

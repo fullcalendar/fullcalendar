@@ -1,0 +1,26 @@
+
+Touch Support
+=============
+
+Since version 2.7.0, FullCalendar has improved support on touch devices. Touch support is also available in [Scheduler](../../scheduler/) v1.3.0 and later. Touch support includes:
+
+- smooth scrolling
+- selection via [longPressDelay]()
+- event drag-n-drop/resizing via [longPressDelay]()
+
+In order for the end-user to begin drag-n-dropping events,
+**they must first tap-and-hold on the event in order to "select" it!**
+
+Example of an agenda-view event in the selected state:
+
+<img src='../../../pages/docs/_images/touch-agenda.png'
+	width='257'
+	height='164'
+	/>
+
+Example of a timeline-view event in the selected state:
+
+<img src='../../../pages/docs/_images/touch-scheduler.png'
+	width='314'
+	height='164'
+	/>
