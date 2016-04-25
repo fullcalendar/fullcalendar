@@ -144,7 +144,7 @@ function subtractInnerElHeight(outerEl, innerEl) {
 	var both = outerEl.add(innerEl);
 	var diff;
 
-	// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
+	// effin' IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
 	both.css({
 		position: 'relative', // cause a reflow, which will force fresh dimension recalculation
 		left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
