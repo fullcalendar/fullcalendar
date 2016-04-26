@@ -125,7 +125,7 @@ DayGrid.mixin({
 				// determine *all* segments below `seg` that occupy the same columns
 				colSegsBelow = [];
 				totalSegsBelow = 0;
-				while (col <= seg.rightCol) {
+				while (col < seg.rightCol) {
 					segsBelow = this.getCellSegs(row, col, levelLimit);
 					colSegsBelow.push(segsBelow);
 					totalSegsBelow += segsBelow.length;
