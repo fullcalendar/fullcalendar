@@ -1,8 +1,20 @@
 
+v2.7.0 (2016-04-23)
+-------------------
+
+touch device support (#994):
+	- smoother scrolling
+	- interactions initiated via "long press":
+		- event drag-n-drop
+		- event resize
+		- time-range selecting
+	- `longPressDelay`
+
+
 v2.6.1 (2016-02-17)
 -------------------
 
-- make nowIndicator positioning refresh on window resize
+- make `nowIndicator` positioning refresh on window resize
 
 
 v2.6.0 (2016-01-07)

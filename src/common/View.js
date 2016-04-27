@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = Class.extend({
+var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -29,12 +29,9 @@ var View = FC.View = Class.extend({
 
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
+	selectedEvent: null,
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
-
-	// subclasses can optionally use a scroll container
-	scrollerEl: null, // the element that will most likely scroll when content is too tall
-	scrollTop: null, // cached vertical scroll value
 
 	// classNames styled by jqui themes
 	widgetHeaderClass: null,
@@ -44,9 +41,6 @@ var View = FC.View = Class.extend({
 	// for date utils, computed from options
 	nextDayThreshold: null,
 	isHiddenDayHash: null,
-
-	// document handlers, bound to `this` object
-	documentMousedownProxy: null, // TODO: doesn't work with touch
 
 	// now indicator
 	isNowIndicatorRendered: null,
@@ -69,8 +63,6 @@ var View = FC.View = Class.extend({
 		this.isRTL = this.opt('isRTL');
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
-
-		this.documentMousedownProxy = proxy(this, 'documentMousedown');
 
 		this.initialize();
 	},
@@ -397,13 +389,15 @@ var View = FC.View = Class.extend({
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
-		$(document).on('mousedown', this.documentMousedownProxy);
+		this.listenTo($(document), 'mousedown', this.handleDocumentMousedown);
+		this.listenTo($(document), 'touchstart', this.handleDocumentTouchStart);
+		this.listenTo($(document), 'touchend', this.handleDocumentTouchEnd);
 	},
 
 
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
-		$(document).off('mousedown', this.documentMousedownProxy);
+		this.stopListeningTo($(document));
 	},
 
 
@@ -571,27 +565,6 @@ var View = FC.View = Class.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Given the total height of the view, return the number of pixels that should be used for the scroller.
-	// Utility for subclasses.
-	computeScrollerHeight: function(totalHeight) {
-		var scrollerEl = this.scrollerEl;
-		var both;
-		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
-
-		both = this.el.add(scrollerEl);
-
-		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
-		both.css({
-			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
-			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
-		});
-		otherHeight = this.el.outerHeight() - scrollerEl.height(); // grab the dimensions
-		both.css({ position: '', left: '' }); // undo hack
-
-		return totalHeight - otherHeight;
-	},
-
-
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it.
 	// Given the scroll state from the previous rendering. If first time rendering, given null.
 	computeInitialScroll: function(previousScrollState) {
@@ -601,17 +574,13 @@ var View = FC.View = Class.extend({
 
 	// Retrieves the view's current natural scroll state. Can return an arbitrary format.
 	queryScroll: function() {
-		if (this.scrollerEl) {
-			return this.scrollerEl.scrollTop(); // operates on scrollerEl by default
-		}
+		// subclasses must implement
 	},
 
 
 	// Sets the view's scroll state. Will accept the same format computeInitialScroll and queryScroll produce.
 	setScroll: function(scrollState) {
-		if (this.scrollerEl) {
-			return this.scrollerEl.scrollTop(scrollState); // operates on scrollerEl by default
-		}
+		// subclasses must implement
 	},
 
 
@@ -826,7 +795,8 @@ var View = FC.View = Class.extend({
 
 
 	// Renders a visual indication of a event or external-element drag over the given drop zone.
-	// If an external-element, seg will be `null`
+	// If an external-element, seg will be `null`.
+	// Must return elements used for any mock events.
 	renderDrag: function(dropLocation, seg) {
 		// subclasses must implement
 	},
@@ -889,7 +859,7 @@ var View = FC.View = Class.extend({
 	},
 
 
-	/* Selection
+	/* Selection (time range)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -947,17 +917,82 @@ var View = FC.View = Class.extend({
 	},
 
 
-	// Handler for unselecting when the user clicks something and the 'unselectAuto' setting is on
-	documentMousedown: function(ev) {
+	/* Event Selection
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	selectEvent: function(event) {
+		if (!this.selectedEvent || this.selectedEvent !== event) {
+			this.unselectEvent();
+			this.renderedEventSegEach(function(seg) {
+				seg.el.addClass('fc-selected');
+			}, event);
+			this.selectedEvent = event;
+		}
+	},
+
+
+	unselectEvent: function() {
+		if (this.selectedEvent) {
+			this.renderedEventSegEach(function(seg) {
+				seg.el.removeClass('fc-selected');
+			}, this.selectedEvent);
+			this.selectedEvent = null;
+		}
+	},
+
+
+	isEventSelected: function(event) {
+		// event references might change on refetchEvents(), while selectedEvent doesn't,
+		// so compare IDs
+		return this.selectedEvent && this.selectedEvent._id === event._id;
+	},
+
+
+	/* Mouse / Touch Unselecting (time range & event unselection)
+	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: move consistently to down/start or up/end?
+
+
+	handleDocumentMousedown: function(ev) {
+		// touch devices fire simulated mouse events on a "click".
+		// only process mousedown if we know this isn't a touch device.
+		if (!this.calendar.isTouch && isPrimaryMouseButton(ev)) {
+			this.processRangeUnselect(ev);
+			this.processEventUnselect(ev);
+		}
+	},
+
+
+	handleDocumentTouchStart: function(ev) {
+		this.processRangeUnselect(ev);
+	},
+
+
+	handleDocumentTouchEnd: function(ev) {
+		// TODO: don't do this if because of touch-scrolling
+		this.processEventUnselect(ev);
+	},
+
+
+	processRangeUnselect: function(ev) {
 		var ignore;
 
-		// is there a selection, and has the user made a proper left click?
-		if (this.isSelected && this.opt('unselectAuto') && isPrimaryMouseButton(ev)) {
-
+		// is there a time-range selection?
+		if (this.isSelected && this.opt('unselectAuto')) {
 			// only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
 			ignore = this.opt('unselectCancel');
 			if (!ignore || !$(ev.target).closest(ignore).length) {
 				this.unselect(ev);
+			}
+		}
+	},
+
+
+	processEventUnselect: function(ev) {
+		if (this.selectedEvent) {
+			if (!$(ev.target).closest('.fc-selected').length) {
+				this.unselectEvent();
 			}
 		}
 	},

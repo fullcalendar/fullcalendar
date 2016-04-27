@@ -25,18 +25,18 @@ var HitDragListener = DragListener.extend({
 
 	// Called when drag listening starts (but a real drag has not necessarily began).
 	// ev might be undefined if dragging was started manually.
-	listenStart: function(ev) {
+	handleInteractionStart: function(ev) {
 		var subjectEl = this.subjectEl;
 		var subjectRect;
 		var origPoint;
 		var point;
 
-		DragListener.prototype.listenStart.apply(this, arguments); // call the super-method
+		DragListener.prototype.handleInteractionStart.apply(this, arguments); // call the super-method
 
 		this.computeCoords();
 
 		if (ev) {
-			origPoint = { left: ev.pageX, top: ev.pageY };
+			origPoint = { left: getEvX(ev), top: getEvY(ev) };
 			point = origPoint;
 
 			// constrain the point to bounds of the element being dragged
@@ -72,55 +72,55 @@ var HitDragListener = DragListener.extend({
 	// Recomputes the drag-critical positions of elements
 	computeCoords: function() {
 		this.component.prepareHits();
-		this.computeScrollBounds(); // why is this here???
+		this.computeScrollBounds(); // why is this here??????
 	},
 
 
 	// Called when the actual drag has started
-	dragStart: function(ev) {
+	handleDragStart: function(ev) {
 		var hit;
 
-		DragListener.prototype.dragStart.apply(this, arguments); // call the super-method
+		DragListener.prototype.handleDragStart.apply(this, arguments); // call the super-method
 
 		// might be different from this.origHit if the min-distance is large
-		hit = this.queryHit(ev.pageX, ev.pageY);
+		hit = this.queryHit(getEvX(ev), getEvY(ev));
 
 		// report the initial hit the mouse is over
 		// especially important if no min-distance and drag starts immediately
 		if (hit) {
-			this.hitOver(hit);
+			this.handleHitOver(hit);
 		}
 	},
 
 
 	// Called when the drag moves
-	drag: function(dx, dy, ev) {
+	handleDrag: function(dx, dy, ev) {
 		var hit;
 
-		DragListener.prototype.drag.apply(this, arguments); // call the super-method
+		DragListener.prototype.handleDrag.apply(this, arguments); // call the super-method
 
-		hit = this.queryHit(ev.pageX, ev.pageY);
+		hit = this.queryHit(getEvX(ev), getEvY(ev));
 
 		if (!isHitsEqual(hit, this.hit)) { // a different hit than before?
 			if (this.hit) {
-				this.hitOut();
+				this.handleHitOut();
 			}
 			if (hit) {
-				this.hitOver(hit);
+				this.handleHitOver(hit);
 			}
 		}
 	},
 
 
 	// Called when dragging has been stopped
-	dragStop: function() {
-		this.hitDone();
-		DragListener.prototype.dragStop.apply(this, arguments); // call the super-method
+	handleDragEnd: function() {
+		this.handleHitDone();
+		DragListener.prototype.handleDragEnd.apply(this, arguments); // call the super-method
 	},
 
 
 	// Called when a the mouse has just moved over a new hit
-	hitOver: function(hit) {
+	handleHitOver: function(hit) {
 		var isOrig = isHitsEqual(hit, this.origHit);
 
 		this.hit = hit;
@@ -130,26 +130,26 @@ var HitDragListener = DragListener.extend({
 
 
 	// Called when the mouse has just moved out of a hit
-	hitOut: function() {
+	handleHitOut: function() {
 		if (this.hit) {
 			this.trigger('hitOut', this.hit);
-			this.hitDone();
+			this.handleHitDone();
 			this.hit = null;
 		}
 	},
 
 
 	// Called after a hitOut. Also called before a dragStop
-	hitDone: function() {
+	handleHitDone: function() {
 		if (this.hit) {
 			this.trigger('hitDone', this.hit);
 		}
 	},
 
 
-	// Called when drag listening has stopped
-	listenStop: function() {
-		DragListener.prototype.listenStop.apply(this, arguments); // call the super-method
+	// Called when the interaction ends, whether there was a real drag or not
+	handleInteractionEnd: function() {
+		DragListener.prototype.handleInteractionEnd.apply(this, arguments); // call the super-method
 
 		this.origHit = null;
 		this.hit = null;
@@ -159,8 +159,8 @@ var HitDragListener = DragListener.extend({
 
 
 	// Called when scrolling has stopped, whether through auto scroll, or the user scrolling
-	scrollStop: function() {
-		DragListener.prototype.scrollStop.apply(this, arguments); // call the super-method
+	handleScrollEnd: function() {
+		DragListener.prototype.handleScrollEnd.apply(this, arguments); // call the super-method
 
 		this.computeCoords(); // hits' absolute positions will be in new places. recompute
 	},

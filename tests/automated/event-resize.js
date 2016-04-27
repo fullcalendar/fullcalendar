@@ -18,7 +18,7 @@ describe('eventResize', function() {
 			options.defaultView = 'month';
 		});
 
-		describe('when resizing an all-day event', function() {
+		describe('when resizing an all-day event with mouse', function() {
 			it('should have correct arguments with a whole-day delta', function(done) {
 				options.events = [ {
 					title: 'all-day event',
@@ -49,6 +49,60 @@ describe('eventResize', function() {
 						done();
 					}
 				);
+			});
+		});
+
+		describe('when resizing an all-day event via touch', function() {
+
+			// for https://github.com/fullcalendar/fullcalendar/issues/3118
+			[ true, false ].forEach(function(eventStartEditable) {
+				describe('when eventStartEditable is ' + eventStartEditable, function() {
+					beforeEach(function() {
+						options.eventStartEditable = eventStartEditable;
+					});
+
+					it('should have correct arguments with a whole-day delta', function(done) {
+						options.isTouch = true;
+						options.longPressDelay = 100;
+						options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+						options.events = [ {
+							title: 'all-day event',
+							start: '2014-06-11',
+							allDay: true
+						} ];
+
+						init(
+							function() {
+								$('.fc-event').simulate('drag', {
+									isTouch: true,
+									delay: 200,
+									onRelease: function() {
+										$('.fc-event .fc-resizer').simulate('drag', {
+											dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
+											dy: $('.fc-day').height(),
+											isTouch: true
+										});
+									}
+								});
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.asDays()).toBe(5);
+								expect(delta.hours()).toBe(0);
+								expect(delta.minutes()).toBe(0);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
+
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toEqualMoment('2014-06-17');
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toBeNull();
+
+								done();
+							}
+						);
+					});
+				});
 			});
 		});
 
@@ -122,6 +176,44 @@ describe('eventResize', function() {
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
+
+						done();
+					}
+				);
+			});
+
+			it('should have correct arguments with a timed delta via touch', function(done) {
+				options.isTouch = true;
+				options.longPressDelay = 100;
+				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+
+				init(
+					function() {
+						setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
+							$('.fc-event').simulate('drag', {
+								isTouch: true,
+								delay: 200,
+								onRelease: function() {
+									$('.fc-event .fc-resizer').simulate('drag', {
+										dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
+										isTouch: true
+									});
+								}
+							});
+						}, 0);
 					},
 					function(event, delta, revertFunc) {
 						expect(delta.days()).toBe(0);

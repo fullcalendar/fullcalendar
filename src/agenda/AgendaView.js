@@ -6,6 +6,8 @@
 
 var AgendaView = FC.AgendaView = View.extend({
 
+	scroller: null,
+
 	timeGridClass: TimeGrid, // class used to instantiate the timeGrid. subclasses can override
 	timeGrid: null, // the main time-grid subcomponent of this view
 
@@ -15,11 +17,10 @@ var AgendaView = FC.AgendaView = View.extend({
 	axisWidth: null, // the width of the time axis running down the side
 
 	headContainerEl: null, // div that hold's the timeGrid's rendered date header
-	noScrollRowEls: null, // set of fake row elements that must compensate when scrollerEl has scrollbars
+	noScrollRowEls: null, // set of fake row elements that must compensate when scroller has scrollbars
 
 	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
 	bottomRuleEl: null,
-	bottomRuleHeight: null,
 
 
 	initialize: function() {
@@ -28,6 +29,11 @@ var AgendaView = FC.AgendaView = View.extend({
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 			this.dayGrid = this.instantiateDayGrid(); // the all-day subcomponent of this view
 		}
+
+		this.scroller = new Scroller({
+			overflowX: 'hidden',
+			overflowY: 'auto'
+		});
 	},
 
 
@@ -68,10 +74,12 @@ var AgendaView = FC.AgendaView = View.extend({
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
 		this.renderHead();
 
-		// the element that wraps the time-grid that will probably scroll
-		this.scrollerEl = this.el.find('.fc-time-grid-container');
+		this.scroller.render();
+		var timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container');
+		var timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl);
+		this.el.find('.fc-body > tr > td').append(timeGridWrapEl);
 
-		this.timeGrid.setElement(this.el.find('.fc-time-grid'));
+		this.timeGrid.setElement(timeGridEl);
 		this.timeGrid.renderDates();
 
 		// the <hr> that sometimes displays under the time-grid
@@ -108,6 +116,8 @@ var AgendaView = FC.AgendaView = View.extend({
 			this.dayGrid.unrenderDates();
 			this.dayGrid.removeElement();
 		}
+
+		this.scroller.destroy();
 	},
 
 
@@ -129,9 +139,6 @@ var AgendaView = FC.AgendaView = View.extend({
 								'<hr class="fc-divider ' + this.widgetHeaderClass + '"/>' :
 								''
 								) +
-							'<div class="fc-time-grid-container">' +
-								'<div class="fc-time-grid"/>' +
-							'</div>' +
 						'</td>' +
 					'</tr>' +
 				'</tbody>' +
@@ -211,16 +218,11 @@ var AgendaView = FC.AgendaView = View.extend({
 	setHeight: function(totalHeight, isAuto) {
 		var eventLimit;
 		var scrollerHeight;
-
-		if (this.bottomRuleHeight === null) {
-			// calculate the height of the rule the very first time
-			this.bottomRuleHeight = this.bottomRuleEl.outerHeight();
-		}
-		this.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
+		var scrollbarWidths;
 
 		// reset all dimensions back to the original state
-		this.scrollerEl.css('overflow', '');
-		unsetScroller(this.scrollerEl);
+		this.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
+		this.scroller.clear(); // sets height to 'auto' and clears overflow
 		uncompensateScroll(this.noScrollRowEls);
 
 		// limit number of events in the all-day area
@@ -236,26 +238,44 @@ var AgendaView = FC.AgendaView = View.extend({
 			}
 		}
 
-		if (!isAuto) { // should we force dimensions of the scroll container, or let the contents be natural height?
+		if (!isAuto) { // should we force dimensions of the scroll container?
 
 			scrollerHeight = this.computeScrollerHeight(totalHeight);
-			if (setPotentialScroller(this.scrollerEl, scrollerHeight)) { // using scrollbars?
+			this.scroller.setHeight(scrollerHeight);
+			scrollbarWidths = this.scroller.getScrollbarWidths();
+
+			if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
 				// make the all-day and header rows lines up
-				compensateScroll(this.noScrollRowEls, getScrollbarWidths(this.scrollerEl));
+				compensateScroll(this.noScrollRowEls, scrollbarWidths);
 
 				// the scrollbar compensation might have changed text flow, which might affect height, so recalculate
 				// and reapply the desired height to the scroller.
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
-				this.scrollerEl.height(scrollerHeight);
+				this.scroller.setHeight(scrollerHeight);
 			}
-			else { // no scrollbars
-				// still, force a height and display the bottom rule (marks the end of day)
-				this.scrollerEl.height(scrollerHeight).css('overflow', 'hidden'); // in case <hr> goes outside
+
+			// guarantees the same scrollbar widths
+			this.scroller.lockOverflow(scrollbarWidths);
+
+			// if there's any space below the slats, show the horizontal rule.
+			// this won't cause any new overflow, because lockOverflow already called.
+			if (this.timeGrid.getTotalSlatHeight() < scrollerHeight) {
 				this.bottomRuleEl.show();
 			}
 		}
 	},
+
+
+	// given a desired total height of the view, returns what the height of the scroller should be
+	computeScrollerHeight: function(totalHeight) {
+		return totalHeight -
+			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
+	},
+
+
+	/* Scroll
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it
@@ -271,6 +291,16 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		return top;
+	},
+
+
+	queryScroll: function() {
+		return this.scroller.getScrollTop();
+	},
+
+
+	setScroll: function(top) {
+		this.scroller.setScrollTop(top);
 	},
 
 

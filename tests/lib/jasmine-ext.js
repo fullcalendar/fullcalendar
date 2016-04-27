@@ -7,6 +7,12 @@ beforeEach(function() {
 	// (not the best place for this)
 	moment.suppressDeprecationWarnings = true;
 
+	// phantom JS falsely reports touch abilities, so explicitly disable.
+	// tests can override this on a per-calendar basis.
+	// (not the best place for this)
+	$.fullCalendar.isTouch = false;
+
+
 	jasmine.addMatchers({
 
 		// Moment and Duration

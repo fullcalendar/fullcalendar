@@ -58,5 +58,5 @@ function extendClass(superClass, members) {
 
 
 function mixIntoClass(theClass, members) {
-	copyOwnProps(members.prototype || members, theClass.prototype); // TODO: copyNativeMethods?
+	copyOwnProps(members, theClass.prototype); // TODO: copyNativeMethods?
 }

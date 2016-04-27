@@ -14,6 +14,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
 	colEls: null, // cells elements in the day-row background
+	slatContainerEl: null, // div that wraps all the slat rows
 	slatEls: null, // elements running horizontally across all columns
 	nowIndicatorEls: null,
 
@@ -33,7 +34,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderDates: function() {
 		this.el.html(this.renderHtml());
 		this.colEls = this.el.find('.fc-day');
-		this.slatEls = this.el.find('.fc-slats tr');
+		this.slatContainerEl = this.el.find('.fc-slats');
+		this.slatEls = this.slatContainerEl.find('tr');
 
 		this.colCoordCache = new CoordCache({
 			els: this.colEls,
@@ -312,6 +314,11 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
+	getTotalSlatHeight: function() {
+		return this.slatContainerEl.outerHeight();
+	},
+
+
 	// Computes the top coordinate, relative to the bounds of the grid, of the given date.
 	// A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
 	computeDateTop: function(date, startOfDayDate) {
@@ -360,13 +367,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderDrag: function(eventLocation, seg) {
 
 		if (seg) { // if there is event information for this drag, render a helper event
-			this.renderEventLocationHelper(eventLocation, seg);
 
-			for (var i = 0; i < this.helperSegs.length; i++) {
-				this.applyDragOpacity(this.helperSegs[i].el);
-			}
-
-			return true; // signal that a helper has been rendered
+			// returns mock event elements
+			// signal that a helper has been rendered
+			return this.renderEventLocationHelper(eventLocation, seg);
 		}
 		else {
 			// otherwise, just render a highlight
@@ -388,7 +392,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventLocation, seg) {
-		this.renderEventLocationHelper(eventLocation, seg);
+		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
 	},
 
 
@@ -404,7 +408,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
 	renderHelper: function(event, sourceSeg) {
-		this.renderHelperSegs(this.eventToSegs(event), sourceSeg);
+		return this.renderHelperSegs(this.eventToSegs(event), sourceSeg); // returns mock event elements
 	},
 
 

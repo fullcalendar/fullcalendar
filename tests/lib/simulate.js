@@ -1,5 +1,7 @@
 (function($) {
 
+/* General Utils
+----------------------------------------------------------------------------------------------------------------------*/
 
 $.simulateByPoint = function(type, options) {
 	var docEl = $(document);
@@ -15,6 +17,54 @@ $.simulateByPoint = function(type, options) {
 	}
 };
 
+
+/* Touch
+----------------------------------------------------------------------------------------------------------------------*/
+
+var origSimulateEvent = $.simulate.prototype.simulateEvent;
+var touchUID = Date.now();
+
+$.simulate.prototype.simulateEvent = function(elem, type, options) {
+	if (/^touch/.test(type)) {
+		return this.simulateTouchEvent(elem, type, options);
+	}
+	else {
+		return origSimulateEvent.apply(this, arguments);
+	}
+};
+
+$.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
+	// http://stackoverflow.com/a/29019278/96342
+	var event = document.createEvent('Event');
+	event.initEvent(type, true, true); // cancelable, bubbleable
+	event.touches = [{
+		target: elem,
+		identifier: touchUID++,
+		pageX: options.clientX,
+		pageY: options.clientY,
+		screenX: options.clientX,
+		screenY: options.clientY,
+		clientX: options.clientX,
+		clientY: options.clientY
+	}];
+	this.dispatchEvent(elem, type, event, options);
+};
+
+$.simulateTouchClick = function(elem) {
+	var $elem = $(elem);
+	var clientCoords = {
+		clientX: $elem.offset().left,
+		clientY: $elem.offset().top
+	};
+	$elem.simulate('mousemove', clientCoords);
+	$elem.simulate('mousedown', clientCoords);
+	$elem.simulate('mouseup', clientCoords);
+	$elem.simulate('click', clientCoords);
+};
+
+
+/* Drag-n-drop
+----------------------------------------------------------------------------------------------------------------------*/
 
 var DEBUG_DELAY = 500;
 var DEBUG_MIN_DURATION = 2000;
@@ -99,6 +149,7 @@ $.simulate.prototype.simulateDrag = function() {
 
 function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, options) {
 	var debug = options.debug;
+	var isTouch = options.isTouch;
 	var docNode = targetNode.ownerDocument;
 	var docEl = $(docNode);
 	var waitTime = duration / moveCnt;
@@ -141,13 +192,18 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 
 		// simulate a drag-start only if another drag isn't already happening
 		if (dragStackCnt === 1) {
-			self.simulateEvent(targetNode, 'mousedown', clientCoords);
+			self.simulateEvent(targetNode, isTouch ? 'touchstart' : 'mousedown', clientCoords);
 		}
 
+		var delay = options.delay || 0;
 		if (debug) {
+			delay = Math.max(delay, DEBUG_DELAY);
+		}
+
+		if (delay) {
 			setTimeout(function() {
 				startMoving();
-			}, DEBUG_DELAY);
+			}, delay);
 		}
 		else {
 			startMoving();
@@ -161,7 +217,9 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 	function tick() { // called one interval after start
 		moveIndex++;
 		updateCoords(); // update clientCoords before mousemove
-		self.simulateEvent(docNode, 'mousemove', clientCoords);
+
+		self.simulateEvent(docNode, isTouch ? 'touchmove' : 'mousemove', clientCoords);
+
 		if (moveIndex >= moveCnt) {
 			stopMoving();
 		}
@@ -188,11 +246,11 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 		// otherwise, this means another drag has begun via onBeforeRelease.
 		if (dragId === dragStackCnt) {
 			if ($.contains(docNode, targetNode)) {
-				self.simulateEvent(targetNode, 'mouseup', clientCoords);
+				self.simulateEvent(targetNode, isTouch ? 'touchend' : 'mouseup', clientCoords);
 				self.simulateEvent(targetNode, 'click', clientCoords);
 			}
 			else {
-				self.simulateEvent(docNode, 'mouseup', clientCoords);
+				self.simulateEvent(docNode, isTouch ? 'touchend' : 'mouseup', clientCoords);
 			}
 		}
 
