@@ -47,7 +47,8 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "lumbar": "^2.6.2",
     "underscore": "^1.4.4",
-    "vow": "0.3.13"
+    "vow": "0.3.13",
+    "npm-shrinkwrap": "^200.5.1"
   },
   "main": "dist/fullcalendar.js",
   "files": [
@@ -58,5 +59,8 @@
     "LICENSE.*",
     "CHANGELOG.*",
     "CONTRIBUTING.*"
-  ]
+  ],
+  "scripts": {
+    "shrinkwrap": "npm-shrinkwrap"
+  }
 }
