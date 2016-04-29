@@ -671,7 +671,7 @@ function EventManager(options) { // assumed to be a calendar
 				return diffByUnit(date1, date0, largeUnit);
 			}
 			else if (newProps.allDay) {
-				return diffDay(date1, date0);
+				return diffDay(date1, (date0 !== null) ? date0 : date1));
 			}
 			else {
 				return diffDayTime(date1, date0);
