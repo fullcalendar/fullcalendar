@@ -12,6 +12,9 @@ beforeEach(function() {
 	// (not the best place for this)
 	$.fullCalendar.isTouch = false;
 
+	// increase the default timeout
+	jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
 
 	jasmine.addMatchers({
 
