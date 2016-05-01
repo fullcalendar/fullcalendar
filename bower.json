@@ -21,7 +21,7 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2015 Adam Shaw",
+  "copyright": "2016 Adam Shaw",
   "dependencies": {
     "jquery": ">=1.7.1",
     "moment": ">=2.5.0"
