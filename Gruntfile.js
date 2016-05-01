@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks('grunt-jscs-checker');
+	grunt.loadNpmTasks('grunt-jscs');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
