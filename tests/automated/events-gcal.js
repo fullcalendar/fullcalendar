@@ -4,7 +4,6 @@ describe('Google Calendar plugin', function() {
 	var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE';
 	var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com';
 	var options;
-	var currentRequest;
 	var currentWarnArgs;
 	var oldConsoleWarn;
 
@@ -16,21 +15,6 @@ describe('Google Calendar plugin', function() {
 			defaultDate: '2016-11-01'
 		};
 
-		// Mockjax is bad with JSONP (https://github.com/jakerella/jquery-mockjax/issues/136)
-		// Workaround. Wanted to use mockedAjaxCalls(), but JSONP requests get mangled later on.
-		currentRequest = null;
-		$.mockjaxSettings.log = function(mockHandler, request) {
-			currentRequest = currentRequest || $.extend({}, request); // copy
-		};
-
-		// Will cause all requests to go through $.mockjaxSettings.log, but will not actually handle
-		// any of the requests due to the JSONP bug mentioned above.
-		// THE REAL REQUESTS WILL GO THROUGH TO THE GOOGLE CALENDAR API!
-		$.mockjax({
-			url: '*',
-			responseText: {}
-		});
-
 		// Intercept calls to console.warn
 		currentWarnArgs = null;
 		oldConsoleWarn = console.warn;
@@ -40,7 +24,7 @@ describe('Google Calendar plugin', function() {
 	});
 
 	afterEach(function() {
-		$.mockjaxClear();
+		$.mockjax.clear();
 		$.mockjaxSettings.log = function() { };
 		console.warn = oldConsoleWarn;
 	});
@@ -50,11 +34,12 @@ describe('Google Calendar plugin', function() {
 		options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID };
 		options.timezone = 'local';
 		options.eventAfterAllRender = function() {
+			var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 			var events = $('#cal').fullCalendar('clientEvents');
 			var i;
 
-			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00+00:00'); // one day before, by design
-			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z'); // one day after, by design
 			expect(currentRequest.data.timeZone).toBeUndefined();
 
 			expect(events.length).toBe(5);
@@ -72,11 +57,12 @@ describe('Google Calendar plugin', function() {
 		options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID };
 		options.timezone = 'UTC';
 		options.eventAfterAllRender = function() {
+			var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 			var events = $('#cal').fullCalendar('clientEvents');
 			var i;
 
-			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00+00:00'); // one day before, by design
-			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z'); // one day after, by design
 			expect(currentRequest.data.timeZone).toEqual('UTC');
 
 			expect(events.length).toBe(5);
@@ -94,11 +80,12 @@ describe('Google Calendar plugin', function() {
 		options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID };
 		options.timezone = 'America/New York';
 		options.eventAfterAllRender = function() {
+			var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 			var events = $('#cal').fullCalendar('clientEvents');
 			var i;
 
-			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00+00:00'); // one day before, by design
-			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z'); // one day after, by design
 			expect(currentRequest.data.timeZone).toEqual('America/New_York'); // space should be escaped
 
 			expect(events.length).toBe(5);
@@ -115,12 +102,13 @@ describe('Google Calendar plugin', function() {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID };
 		options.eventAfterAllRender = function() {
+			var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 			var events = $('#cal').fullCalendar('clientEvents');
 			var eventEls = $('.fc-event');
 			var i;
 
-			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00+00:00'); // one day before, by design
-			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00+00:00'); // one day after, by design
+			expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z'); // one day before, by design
+			expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z'); // one day after, by design
 			expect(currentRequest.data.timeZone).toBeUndefined();
 
 			expect(events.length).toBe(5); // 5 holidays in November 2016 (and end of Oct)
@@ -176,12 +164,14 @@ describe('Google Calendar plugin', function() {
 				googleCalendarId: HOLIDAY_CALENDAR_ID
 			};
 			options.eventAfterAllRender = function() {
+				var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 				var events = $('#cal').fullCalendar('clientEvents');
+
 				expect(events.length).toBe(0);
 				expect(currentWarnArgs.length).toBeGreaterThan(0);
 				expect(options.googleCalendarError).toHaveBeenCalled();
 				expect(options.events.googleCalendarError).toHaveBeenCalled();
-				expect(currentRequest).toBeNull(); // AJAX request should have never been made!
+				expect(currentRequest).toBeUndefined(); // AJAX request should have never been made!
 				done();
 			};
 			spyOn(options, 'googleCalendarError').and.callThrough();
@@ -203,7 +193,9 @@ describe('Google Calendar plugin', function() {
 				googleCalendarId: HOLIDAY_CALENDAR_ID
 			};
 			options.eventAfterAllRender = function() {
+				var currentRequest = $.mockjax.unmockedAjaxCalls()[0];
 				var events = $('#cal').fullCalendar('clientEvents');
+
 				expect(events.length).toBe(0);
 				expect(currentWarnArgs.length).toBeGreaterThan(0);
 				expect(options.googleCalendarError).toHaveBeenCalled();
