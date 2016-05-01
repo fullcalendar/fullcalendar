@@ -163,7 +163,7 @@ describe('select callback', function() {
 					});
 					it('gets fired correctly when the user selects slots via touch', function(done) {
 						options.isTouch = true;
-						options.longPressDelay = 1000;
+						options.longPressDelay = 100;
 						options.select = function(start, end, jsEvent, view) {
 							expect(moment.isMoment(start)).toEqual(true);
 							expect(moment.isMoment(end)).toEqual(true);
@@ -179,7 +179,7 @@ describe('select callback', function() {
 						setTimeout(function() { // prevent scroll from being triggered, killing the select interaction
 							$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
 								isTouch: true,
-								delay: 1500,
+								delay: 200,
 								dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
 								callback: function() {
 									expect(options.select).toHaveBeenCalled();
