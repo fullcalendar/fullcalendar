@@ -31,8 +31,6 @@ var HitDragListener = DragListener.extend({
 		var origPoint;
 		var point;
 
-		DragListener.prototype.handleInteractionStart.apply(this, arguments); // call the super-method
-
 		this.computeCoords();
 
 		if (ev) {
@@ -66,6 +64,9 @@ var HitDragListener = DragListener.extend({
 			this.origHit = null;
 			this.coordAdjust = null;
 		}
+
+		// call the super-method. do it after origHit has been computed
+		DragListener.prototype.handleInteractionStart.apply(this, arguments);
 	},
 
 

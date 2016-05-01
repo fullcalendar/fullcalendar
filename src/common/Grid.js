@@ -282,12 +282,20 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// if 'selectable' is enabled, this listener also detects selections.
 		var dragListener = this.dayDragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
+			interactionStart: function() {
+				dayClickHit = dragListener.origHit;
+			},
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				if (origHit) { // click needs to have started on a hit
-					dayClickHit = isOrig ? hit : null; // single-hit selection is a day click
+
+					// if user dragged to another cell at any point, it can no longer be a dayClick
+					if (!isOrig) {
+						dayClickHit = null;
+					}
+
 					if (isSelectable) {
 						selectionSpan = _this.computeSelection(
 							_this.getHitSpan(origHit),
