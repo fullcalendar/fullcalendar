@@ -15,10 +15,7 @@
     "type": "git",
     "url": "https://github.com/fullcalendar/fullcalendar.git"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/fullcalendar/fullcalendar/blob/master/LICENSE.txt"
-  },
+  "license": "MIT",
   "author": {
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
