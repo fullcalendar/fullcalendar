@@ -495,6 +495,7 @@ temporary rendered events).
 .fc-scroller > .fc-time-grid {
 	position: relative; /* re-scope all positions */
 	width: 100%; /* hack to force re-sizing this inner element when scrollbars appear/disappear */
+	overflow: hidden;
 }
 
 
