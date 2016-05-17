@@ -710,13 +710,6 @@ function Calendar_constructor(element, overrides) {
 			unfreezeContentHeight();
 		}
 	}
-
-
-	function destroyEvents() {
-		freezeContentHeight();
-		currentView.clearEvents();
-		unfreezeContentHeight();
-	}
 	
 
 	function getAndRenderEvents() {
