@@ -257,7 +257,7 @@ be a descendant of the grid when it is being dragged.
 
 /* resizer (cursor device) */
 
-.fc-time-grid-event:hover .fc-resizer {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -270,7 +270,7 @@ be a descendant of the grid when it is being dragged.
 	cursor: s-resize;
 }
 
-.fc-time-grid-event:hover .fc-resizer:after {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
 	content: "=";
 }
 
