@@ -279,7 +279,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var dragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
 			interactionStart: function() {
-				dayClickHit = dragListener.origHit;
+				dayClickHit = dragListener.origHit; // for dayClick, where no dragging happens
 			},
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
