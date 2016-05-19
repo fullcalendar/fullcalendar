@@ -285,6 +285,7 @@ Grid.mixin({
 
 	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
+	// Has side effect of setting/unsetting `segDragListener`
 	buildSegDragListener: function(seg) {
 		var _this = this;
 		var view = this.view;
@@ -395,6 +396,7 @@ Grid.mixin({
 
 	// seg isn't draggable, but let's use a generic DragListener
 	// simply for the delay, so it can be selected.
+	// Has side effect of setting/unsetting `segDragListener`
 	buildSegSelectListener: function(seg) {
 		var _this = this;
 		var view = this.view;

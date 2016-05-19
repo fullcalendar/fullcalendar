@@ -22,6 +22,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	isDelayEnded: false,
 	isDragging: false,
 	isTouch: false,
+	isIgnoringMouse: false,
 
 	delay: null,
 	delayTimeoutId: null,
@@ -41,7 +42,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		var isTouch = getEvIsTouch(ev);
 
 		if (ev.type === 'mousedown') {
-			if (!isPrimaryMouseButton(ev)) {
+			if (this.isIgnoringMouse) {
+				return;
+			}
+			else if (!isPrimaryMouseButton(ev)) {
 				return;
 			}
 			else {
@@ -97,6 +101,20 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.isInteracting = false;
 			this.handleInteractionEnd(ev);
+
+			// a touchstart+touchend on the same element will result in the following addition simulated events:
+			// +mouseover
+			// +mouseout
+			// +click
+			//
+			// let's ignore these bogus events
+			if (this.isTouch) {
+				var _this = this;
+				this.isIgnoringMouse = true;
+				setTimeout(function() {
+					_this.isIgnoringMouse = false;
+				}, 500);
+			}
 		}
 	},
 

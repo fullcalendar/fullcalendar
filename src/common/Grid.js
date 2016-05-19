@@ -35,6 +35,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
 		this.elsByFill = {};
+
+		this.dayDragListener = this.buildDayDragListener();
 	},
 
 
@@ -249,14 +251,14 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.buildDayDragListener().startInteraction(ev, {
+		this.dayDragListener.startInteraction(ev, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 		});
 	},
 
 
 	dayTouchStart: function(ev) {
-		this.buildDayDragListener().startInteraction(ev, {
+		this.dayDragListener.startInteraction(ev, {
 			delay: this.view.opt('longPressDelay')
 		});
 	},
@@ -271,14 +273,10 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var dayClickHit; // null if invalid dayClick
 		var selectionSpan; // null if invalid selection
 
-		if (this.dayDragListener) {
-			return this.dayDragListener;
-		}
-
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = this.dayDragListener = new HitDragListener(this, {
+		var dragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
 			interactionStart: function() {
 				dayClickHit = dragListener.origHit;
@@ -327,7 +325,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 					view.reportSelection(selectionSpan, ev);
 				}
 				enableCursor();
-				_this.dayDragListener = null;
 			}
 		});
 
