@@ -170,12 +170,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.el = el;
 		preventSelection(el);
 
-		if (this.view.calendar.isTouch) {
-			this.bindDayHandler('touchstart', this.dayTouchStart);
-		}
-		else {
-			this.bindDayHandler('mousedown', this.dayMousedown);
-		}
+		this.bindDayHandler('touchstart', this.dayTouchStart);
+		this.bindDayHandler('mousedown', this.dayMousedown);
 
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
@@ -253,7 +249,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.clearDragListeners();
 		this.buildDayDragListener().startInteraction(ev, {
 			//distance: 5, // needs more work if we want dayClick to fire correctly
 		});
@@ -261,7 +256,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 
 	dayTouchStart: function(ev) {
-		this.clearDragListeners();
 		this.buildDayDragListener().startInteraction(ev, {
 			delay: this.view.opt('longPressDelay')
 		});
@@ -276,6 +270,10 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var isSelectable = view.opt('selectable');
 		var dayClickHit; // null if invalid dayClick
 		var selectionSpan; // null if invalid selection
+
+		if (this.dayDragListener) {
+			return this.dayDragListener;
+		}
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.

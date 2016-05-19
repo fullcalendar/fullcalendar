@@ -175,15 +175,10 @@ Grid.mixin({
 
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
-		if (this.view.calendar.isTouch) {
-			this.bindSegHandler('touchstart', this.handleSegTouchStart);
-		}
-		else {
-			this.bindSegHandler('mouseenter', this.handleSegMouseover);
-			this.bindSegHandler('mouseleave', this.handleSegMouseout);
-			this.bindSegHandler('mousedown', this.handleSegMousedown);
-		}
-
+		this.bindSegHandler('touchstart', this.handleSegTouchStart);
+		this.bindSegHandler('mouseenter', this.handleSegMouseover);
+		this.bindSegHandler('mouseleave', this.handleSegMouseout);
+		this.bindSegHandler('mousedown', this.handleSegMousedown);
 		this.bindSegHandler('click', this.handleSegClick);
 	},
 
@@ -246,21 +241,12 @@ Grid.mixin({
 		}
 
 		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
-			this.clearDragListeners();
 
 			dragListener = isDraggable ?
 				this.buildSegDragListener(seg) :
-				new DragListener(); // seg isn't draggable, but let's use a generic DragListener
-				                    // simply for the delay, so it can be selected.
+				this.buildSegSelectListener(seg); // seg isn't draggable, but still needs to be selected
 
-			dragListener._dragStart = function() { // TODO: better way of binding
-				// if not previously selected, will fire after a delay. then, select the event
-				if (!isSelected) {
-					view.selectEvent(event);
-				}
-			};
-
-			dragListener.startInteraction(ev, {
+			dragListener.startInteraction(ev, { // won't start if already started
 				delay: isSelected ? 0 : this.view.opt('longPressDelay') // do delay if not already selected
 			});
 		}
@@ -271,7 +257,6 @@ Grid.mixin({
 		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
 
 		if (!isResizing && this.view.isEventDraggable(seg.event)) {
-			this.clearDragListeners();
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -285,7 +270,6 @@ Grid.mixin({
 	// `dragOptions` are optional.
 	startSegResize: function(seg, ev, dragOptions) {
 		if ($(ev.target).is('.fc-resizer')) {
-			this.clearDragListeners();
 			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
 				.startInteraction(ev, dragOptions);
 			return true;
@@ -311,6 +295,10 @@ Grid.mixin({
 		var mouseFollower; // A clone of the original element that will move with the mouse
 		var dropLocation; // zoned event date properties
 
+		if (this.segDragListener) {
+			return this.segDragListener;
+		}
+
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = this.segDragListener = new HitDragListener(view, {
@@ -330,6 +318,10 @@ Grid.mixin({
 				mouseFollower.start(ev);
 			},
 			dragStart: function(ev) {
+				if (dragListener.isTouch && !view.isEventSelected(event)) {
+					// if not previously selected, will fire after a delay. then, select the event
+					view.selectEvent(event);
+				}
 				isDragging = true;
 				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segDragStart(seg, ev);
@@ -393,6 +385,29 @@ Grid.mixin({
 						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
 					}
 				});
+				_this.segDragListener = null;
+			}
+		});
+
+		return dragListener;
+	},
+
+
+	// seg isn't draggable, but let's use a generic DragListener
+	// simply for the delay, so it can be selected.
+	buildSegSelectListener: function(seg) {
+		var _this = this;
+		var view = this.view;
+		var event = seg.event;
+
+		var dragListener = this.segDragListener = new DragListener({
+			dragStart: function(ev) {
+				if (!view.isEventSelected(event)) {
+					// if not previously selected, will fire after a delay. then, select the event
+					view.selectEvent(event);
+				}
+			},
+			interactionEnd: function(ev) {
 				_this.segDragListener = null;
 			}
 		});
