@@ -17,6 +17,12 @@
 			.on('mousemove', function(ev) {
 				console.log('mousemove'); //, ev.target);
 			})
+			.on('mouseover', function(ev) {
+				console.log('mouseover'); //, ev.target);
+			})
+			.on('mouseout', function(ev) {
+				console.log('mouseout'); //, ev.target);
+			})
 			.on('click', function(ev) {
 				console.log('click'); //, ev.target);
 			})
@@ -28,7 +34,7 @@
 			})
 			.on('touchmove', function(ev) {
 				console.log('touchmove'); //, ev.target);
-				ev.preventDefault();
+				//ev.preventDefault();
 			});
 
 		$('#scroll')
