@@ -390,8 +390,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
 		this.listenTo($(document), 'mousedown', this.handleDocumentMousedown);
-		this.listenTo($(document), 'touchstart', this.handleDocumentTouchStart);
-		this.listenTo($(document), 'touchend', this.handleDocumentTouchEnd);
+		this.listenTo($(document), 'touchstart', this.processUnselect);
 	},
 
 
@@ -952,25 +951,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	/* Mouse / Touch Unselecting (time range & event unselection)
 	------------------------------------------------------------------------------------------------------------------*/
 	// TODO: move consistently to down/start or up/end?
+	// TODO: don't kill previous selection if touch scrolling
 
 
 	handleDocumentMousedown: function(ev) {
-		// touch devices fire simulated mouse events on a "click".
-		// only process mousedown if we know this isn't a touch device.
-		if (!this.calendar.isTouch && isPrimaryMouseButton(ev)) {
-			this.processRangeUnselect(ev);
-			this.processEventUnselect(ev);
+		if (isPrimaryMouseButton(ev)) {
+			this.processUnselect(ev);
 		}
 	},
 
 
-	handleDocumentTouchStart: function(ev) {
+	processUnselect: function(ev) {
 		this.processRangeUnselect(ev);
-	},
-
-
-	handleDocumentTouchEnd: function(ev) {
-		// TODO: don't do this if because of touch-scrolling
 		this.processEventUnselect(ev);
 	},
 
