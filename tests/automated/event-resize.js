@@ -29,6 +29,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
 							dy: $('.fc-day').height()
@@ -136,6 +137,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('th.fc-wed').width() * 1.5 // two days
 						});
@@ -172,6 +174,7 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta', function(done) {
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -233,6 +236,7 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day-header:first').width() * .9, // one day
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
@@ -260,6 +264,7 @@ describe('eventResize', function() {
 				options.timezone = 'local';
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -286,6 +291,7 @@ describe('eventResize', function() {
 				options.timezone = 'UTC';
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -313,6 +319,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {
@@ -345,6 +352,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {
@@ -387,6 +395,7 @@ describe('eventResize', function() {
 					alreadyRendered = true;
 					setTimeout(function() {
 						isDragging = true;
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: 100,
 							onBeforeRelease: function() {
@@ -418,6 +427,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {
