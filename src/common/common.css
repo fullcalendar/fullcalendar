@@ -555,7 +555,7 @@ temporary rendered events).
 	display: none;
 }
 
-.fc-event:hover .fc-resizer,
+.fc-event.fc-allow-mouse-resize .fc-resizer,
 .fc-event.fc-selected .fc-resizer {
 	/* only show when hovering or selected (with touch) */
 	display: block;
@@ -640,9 +640,9 @@ temporary rendered events).
 	right: -1px; /* overcome border */
 }
 
-/* resizer (cursor devices) */
+/* resizer (mouse devices) */
 
-.fc-h-event:hover .fc-resizer {
+.fc-h-event.fc-allow-mouse-resize .fc-resizer {
 	width: 7px;
 	top: -1px; /* overcome top border */
 	bottom: -1px; /* overcome bottom border */
@@ -715,14 +715,14 @@ be a descendant of the grid when it is being dragged.
 /* resizer (cursor devices) */
 
 /* left resizer  */
-.fc-ltr .fc-day-grid-event:hover .fc-start-resizer,
-.fc-rtl .fc-day-grid-event:hover .fc-end-resizer {
+.fc-ltr .fc-day-grid-event.fc-allow-mouse-resize .fc-start-resizer,
+.fc-rtl .fc-day-grid-event.fc-allow-mouse-resize .fc-end-resizer {
 	margin-left: -2px; /* to the day cell's edge */
 }
 
 /* right resizer */
-.fc-ltr .fc-day-grid-event:hover .fc-end-resizer,
-.fc-rtl .fc-day-grid-event:hover .fc-start-resizer {
+.fc-ltr .fc-day-grid-event.fc-allow-mouse-resize .fc-end-resizer,
+.fc-rtl .fc-day-grid-event.fc-allow-mouse-resize .fc-start-resizer {
 	margin-right: -2px; /* to the day cell's edge */
 }
 
