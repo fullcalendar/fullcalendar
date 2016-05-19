@@ -4,7 +4,8 @@ describe('eventResize', function() {
 	beforeEach(function() {
 		options = {
 			defaultDate: '2014-06-11',
-			editable: true
+			editable: true,
+			longPressDelay: 100
 		};
 		affix('#cal');
 	});
@@ -62,8 +63,6 @@ describe('eventResize', function() {
 					});
 
 					it('should have correct arguments with a whole-day delta', function(done) {
-						options.isTouch = true;
-						options.longPressDelay = 100;
 						options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
 						options.events = [ {
 							title: 'all-day event',
@@ -196,10 +195,7 @@ describe('eventResize', function() {
 			});
 
 			it('should have correct arguments with a timed delta via touch', function(done) {
-				options.isTouch = true;
-				options.longPressDelay = 100;
 				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
-
 				init(
 					function() {
 						setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
