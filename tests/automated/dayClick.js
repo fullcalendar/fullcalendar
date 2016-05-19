@@ -141,9 +141,6 @@ describe('dayClick', function() {
 	});
 
 	describe('when touch', function() {
-		beforeEach(function() {
-			options.isTouch = true;
-		});
 
 		it('fires correctly when simulated short drag on a cell', function(done) {
 			options.dayClick = function(date, jsEvent, view) {

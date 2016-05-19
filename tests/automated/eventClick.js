@@ -23,7 +23,6 @@ describe('eventClick', function() {
 	});
 
 	it('works in month view via touch', function(done) {
-		options.isTouch = true;
 		options.events = [
 			{ start: '2014-08-01', title: 'event1', className: 'event1' }
 		];

@@ -5,7 +5,8 @@ describe('eventDrop', function() {
 		options = {
 			defaultDate: '2014-06-11',
 			editable: true,
-			dragScroll: false
+			dragScroll: false,
+			longPressDelay: 100
 		};
 		affix('#cal');
 	});
@@ -19,13 +20,11 @@ describe('eventDrop', function() {
 			options.defaultView = 'month';
 		});
 
+		// TODO: test that event's dragged via touch that don't wait long enough for longPressDelay
+		// SHOULD NOT drag
+
 		[ false, true ].forEach(function(isTouch) {
 			describe('with ' + (isTouch ? 'touch' : 'mouse'), function() {
-				beforeEach(function() {
-					options.isTouch = isTouch;
-					options.longPressDelay = isTouch ? 100 : 0;
-				});
-
 				describe('when dragging an all-day event to another day', function() {
 					it('should be given correct arguments, with whole-day delta', function(done) {
 
@@ -152,11 +151,6 @@ describe('eventDrop', function() {
 
 		[ false, true ].forEach(function(isTouch) {
 			describe('with ' + (isTouch ? 'touch' : 'mouse'), function() {
-				beforeEach(function() {
-					options.isTouch = isTouch;
-					options.longPressDelay = isTouch ? 100 : 0;
-				});
-
 				describe('when dragging a timed event to another time on a different day', function() {
 					it('should be given correct arguments and delta with days/time', function(done) {
 						options.events = [ {

@@ -6,7 +6,8 @@ describe('select callback', function() {
 		affix('#cal');
 		options = {
 			defaultDate: '2014-05-25',
-			selectable: true
+			selectable: true,
+			longPressDelay: 100
 		};
 	});
 
@@ -45,8 +46,6 @@ describe('select callback', function() {
 					});
 				});
 				it('gets fired correctly when the user selects cells via touch', function(done) {
-					options.isTouch = true;
-					options.longPressDelay = 100;
 					options.select = function(start, end, jsEvent, view) {
 						expect(moment.isMoment(start)).toEqual(true);
 						expect(moment.isMoment(end)).toEqual(true);
@@ -162,8 +161,6 @@ describe('select callback', function() {
 						});
 					});
 					it('gets fired correctly when the user selects slots via touch', function(done) {
-						options.isTouch = true;
-						options.longPressDelay = 100;
 						options.select = function(start, end, jsEvent, view) {
 							expect(moment.isMoment(start)).toEqual(true);
 							expect(moment.isMoment(end)).toEqual(true);
