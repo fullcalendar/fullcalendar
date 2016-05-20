@@ -424,7 +424,7 @@ Grid.mixin({
 
 		var dragListener = this.segDragListener = new DragListener({
 			dragStart: function(ev) {
-				if (!view.isEventSelected(event)) {
+				if (dragListener.isTouch && !view.isEventSelected(event)) {
 					// if not previously selected, will fire after a delay. then, select the event
 					view.selectEvent(event);
 				}
