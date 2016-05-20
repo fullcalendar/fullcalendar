@@ -30,6 +30,10 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	segResizeListener: null,
 	externalDragListener: null,
 
+	isIgnoringMouse: false, // bool
+	delayUnignoreMouse: null, // method
+
+
 
 	constructor: function(view) {
 		this.view = view;
@@ -37,6 +41,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.elsByFill = {};
 
 		this.dayDragListener = this.buildDayDragListener();
+		this.delayUnignoreMouse = debounce(proxy(this, 'unignoreMouse'), 1000);
 	},
 
 

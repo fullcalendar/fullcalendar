@@ -207,7 +207,10 @@ Grid.mixin({
 
 	// Updates internal state and triggers handlers for when an event element is moused over
 	handleSegMouseover: function(seg, ev) {
-		if (!this.mousedOverSeg) {
+		if (
+			!this.isIgnoringMouse &&
+			!this.mousedOverSeg
+		) {
 			this.mousedOverSeg = seg;
 			seg.el.addClass('fc-allow-mouse-resize');
 			this.view.trigger('eventMouseover', seg.el[0], seg.event, ev);
@@ -241,6 +244,19 @@ Grid.mixin({
 	},
 
 
+	// temporarily ignore mouse actions on segments
+	tempIgnoreMouse: function() {
+		this.isIgnoringMouse = true;
+		this.delayUnignoreMouse();
+	},
+
+
+	// delayUnignoreMouse eventually calls this
+	unignoreMouse: function() {
+		this.isIgnoringMouse = false;
+	},
+
+
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
 		var event = seg.event;
@@ -265,10 +281,16 @@ Grid.mixin({
 				delay: isSelected ? 0 : this.view.opt('longPressDelay') // do delay if not already selected
 			});
 		}
+
+		// a long tap simulates a mouseover. ignore this bogus mouseover.
+		this.tempIgnoreMouse();
 	},
 
 
 	handleSegTouchEnd: function(seg, ev) {
+		// touchstart+touchend = click, which simulates a mouseover.
+		// ignore this bogus mouseover.
+		this.tempIgnoreMouse();
 	},
 
 
