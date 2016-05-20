@@ -404,6 +404,10 @@ Grid.mixin({
 		var view = this.view;
 		var event = seg.event;
 
+		if (this.segDragListener) {
+			return this.segDragListener;
+		}
+
 		var dragListener = this.segDragListener = new DragListener({
 			dragStart: function(ev) {
 				if (!view.isEventSelected(event)) {
