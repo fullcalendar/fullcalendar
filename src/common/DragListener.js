@@ -87,7 +87,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	endInteraction: function(ev) {
+	endInteraction: function(ev, isCancelled) {
 		if (this.isInteracting) {
 			this.endDrag(ev);
 
@@ -100,7 +100,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.unbindHandlers();
 
 			this.isInteracting = false;
-			this.handleInteractionEnd(ev);
+			this.handleInteractionEnd(ev, isCancelled);
 
 			// a touchstart+touchend on the same element will result in the following addition simulated events:
 			// +mouseover
@@ -119,8 +119,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	handleInteractionEnd: function(ev) {
-		this.trigger('interactionEnd', ev);
+	handleInteractionEnd: function(ev, isCancelled) {
+		this.trigger('interactionEnd', ev, isCancelled || false);
 	},
 
 
@@ -147,7 +147,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 						touchStartIgnores--; // and we don't want this to fire immediately, so ignore.
 					}
 					else {
-						_this.endInteraction(ev);
+						_this.endInteraction(ev, true); // isCancelled=true
 					}
 				}
 			});
@@ -307,7 +307,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
 		if (!this.isDragging) {
-			this.endInteraction(ev);
+			this.endInteraction(ev, true); // isCancelled=true
 		}
 	},
 
