@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: use Emitter
 
-var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
+var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	options: null,
 
@@ -15,6 +15,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	originX: null,
 	originY: null,
 
+	// the wrapping element that scrolls, or MIGHT scroll if there's overflow.
+	// TODO: do this for wrappers that have overflow:hidden as well.
 	scrollEl: null,
 
 	isInteracting: false,
@@ -22,15 +24,18 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	isDelayEnded: false,
 	isDragging: false,
 	isTouch: false,
-	isIgnoringMouse: false,
 
 	delay: null,
 	delayTimeoutId: null,
 	minDistance: null,
 
+	handleTouchScrollProxy: null, // calls handleTouchScroll, always bound to `this`
+
 
 	constructor: function(options) {
 		this.options = options || {};
+		this.handleTouchScrollProxy = proxy(this, 'handleTouchScroll');
+		this.initMouseIgnoring(500);
 	},
 
 
@@ -103,17 +108,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.handleInteractionEnd(ev, isCancelled);
 
 			// a touchstart+touchend on the same element will result in the following addition simulated events:
-			// +mouseover
-			// +mouseout
-			// +click
-			//
+			// mouseover + mouseout + click
 			// let's ignore these bogus events
 			if (this.isTouch) {
-				var _this = this;
-				this.isIgnoringMouse = true;
-				setTimeout(function() {
-					_this.isIgnoringMouse = false;
-				}, 500);
+				this.tempIgnoreMouse();
 			}
 		}
 	},
@@ -152,7 +150,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 				}
 			});
 
-			if (this.scrollEl) {
+			// listen to ALL scroll actions on the page
+			if (
+				!bindAnyScroll(this.handleTouchScrollProxy) && // hopefully this works and short-circuits the rest
+				this.scrollEl // otherwise, attach a single handler to this
+			) {
 				this.listenTo(this.scrollEl, 'scroll', this.handleTouchScroll);
 			}
 		}
@@ -173,8 +175,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	unbindHandlers: function() {
 		this.stopListeningTo($(document));
 
+		// unbind scroll listening
+		unbindAnyScroll(this.handleTouchScrollProxy)
 		if (this.scrollEl) {
-			this.stopListeningTo(this.scrollEl);
+			this.stopListeningTo(this.scrollEl, 'scroll');
 		}
 	},
 

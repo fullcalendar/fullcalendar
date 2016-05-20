@@ -244,19 +244,6 @@ Grid.mixin({
 	},
 
 
-	// temporarily ignore mouse actions on segments
-	tempIgnoreMouse: function() {
-		this.isIgnoringMouse = true;
-		this.delayUnignoreMouse();
-	},
-
-
-	// delayUnignoreMouse eventually calls this
-	unignoreMouse: function() {
-		this.isIgnoringMouse = false;
-	},
-
-
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
 		var event = seg.event;

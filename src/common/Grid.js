@@ -2,7 +2,7 @@
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = FC.Grid = Class.extend(ListenerMixin, {
+var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
@@ -30,10 +30,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	segResizeListener: null,
 	externalDragListener: null,
 
-	isIgnoringMouse: false, // bool
-	delayUnignoreMouse: null, // method
-
-
 
 	constructor: function(view) {
 		this.view = view;
@@ -41,7 +37,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.elsByFill = {};
 
 		this.dayDragListener = this.buildDayDragListener();
-		this.delayUnignoreMouse = debounce(proxy(this, 'unignoreMouse'), 1000);
+		this.initMouseIgnoring();
 	},
 
 
