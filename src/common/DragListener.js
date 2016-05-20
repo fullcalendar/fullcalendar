@@ -176,7 +176,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 		this.stopListeningTo($(document));
 
 		// unbind scroll listening
-		unbindAnyScroll(this.handleTouchScrollProxy)
+		unbindAnyScroll(this.handleTouchScrollProxy);
 		if (this.scrollEl) {
 			this.stopListeningTo(this.scrollEl, 'scroll');
 		}
