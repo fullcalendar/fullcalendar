@@ -252,13 +252,23 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.dayDragListener.startInteraction(ev, {
-			//distance: 5, // needs more work if we want dayClick to fire correctly
-		});
+		if (!this.isIgnoringMouse) {
+			this.dayDragListener.startInteraction(ev, {
+				//distance: 5, // needs more work if we want dayClick to fire correctly
+			});
+		}
 	},
 
 
 	dayTouchStart: function(ev) {
+		var view = this.view;
+
+		// HACK to prevent a user's clickaway for unselecting a range or an event
+		// from causing a dayClick.
+		if (view.isSelected || view.selectedEvent) {
+			this.tempIgnoreMouse();
+		}
+
 		this.dayDragListener.startInteraction(ev, {
 			delay: this.view.opt('longPressDelay')
 		});
@@ -315,7 +325,10 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 			},
 			interactionEnd: function(ev, isCancelled) {
 				if (!isCancelled) {
-					if (dayClickHit) {
+					if (
+						dayClickHit &&
+						!_this.isIgnoringMouse // see hack in dayTouchStart
+					) {
 						view.triggerDayClick(
 							_this.getHitSpan(dayClickHit),
 							_this.getHitEl(dayClickHit),
