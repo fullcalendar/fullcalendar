@@ -97,7 +97,8 @@ module.exports = function(grunt) {
 	// create minified versions of JS
 	config.uglify.modules = {
 		options: {
-			preserveComments: 'some' // keep comments starting with /*!
+			preserveComments: /(?:^!|@(?:license|preserve|cc_on))/ // keep certain comments
+				// https://github.com/gruntjs/grunt-contrib-uglify/issues/366#issuecomment-157208530
 		},
 		expand: true,
 		src: 'dist/fullcalendar.js', // only do it for fullcalendar.js
