@@ -176,6 +176,7 @@ Grid.mixin({
 	// Attaches event-element-related handlers to the container element and leverage bubbling
 	bindSegHandlers: function() {
 		this.bindSegHandler('touchstart', this.handleSegTouchStart);
+		this.bindSegHandler('touchend', this.handleSegTouchEnd);
 		this.bindSegHandler('mouseenter', this.handleSegMouseover);
 		this.bindSegHandler('mouseleave', this.handleSegMouseout);
 		this.bindSegHandler('mousedown', this.handleSegMousedown);
@@ -228,6 +229,18 @@ Grid.mixin({
 	},
 
 
+	handleSegMousedown: function(seg, ev) {
+		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
+
+		if (!isResizing && this.view.isEventDraggable(seg.event)) {
+			this.buildSegDragListener(seg)
+				.startInteraction(ev, {
+					distance: 5
+				});
+		}
+	},
+
+
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
 		var event = seg.event;
@@ -255,15 +268,7 @@ Grid.mixin({
 	},
 
 
-	handleSegMousedown: function(seg, ev) {
-		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
-
-		if (!isResizing && this.view.isEventDraggable(seg.event)) {
-			this.buildSegDragListener(seg)
-				.startInteraction(ev, {
-					distance: 5
-				});
-		}
+	handleSegTouchEnd: function(seg, ev) {
 	},
 
 
