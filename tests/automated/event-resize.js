@@ -4,7 +4,8 @@ describe('eventResize', function() {
 	beforeEach(function() {
 		options = {
 			defaultDate: '2014-06-11',
-			editable: true
+			editable: true,
+			longPressDelay: 100
 		};
 		affix('#cal');
 	});
@@ -18,7 +19,7 @@ describe('eventResize', function() {
 			options.defaultView = 'month';
 		});
 
-		describe('when resizing an all-day event', function() {
+		describe('when resizing an all-day event with mouse', function() {
 			it('should have correct arguments with a whole-day delta', function(done) {
 				options.events = [ {
 					title: 'all-day event',
@@ -28,6 +29,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
 							dy: $('.fc-day').height()
@@ -49,6 +51,58 @@ describe('eventResize', function() {
 						done();
 					}
 				);
+			});
+		});
+
+		describe('when resizing an all-day event via touch', function() {
+
+			// for https://github.com/fullcalendar/fullcalendar/issues/3118
+			[ true, false ].forEach(function(eventStartEditable) {
+				describe('when eventStartEditable is ' + eventStartEditable, function() {
+					beforeEach(function() {
+						options.eventStartEditable = eventStartEditable;
+					});
+
+					it('should have correct arguments with a whole-day delta', function(done) {
+						options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+						options.events = [ {
+							title: 'all-day event',
+							start: '2014-06-11',
+							allDay: true
+						} ];
+
+						init(
+							function() {
+								$('.fc-event').simulate('drag', {
+									isTouch: true,
+									delay: 200,
+									onRelease: function() {
+										$('.fc-event .fc-resizer').simulate('drag', {
+											dx: $('.fc-day').width() * -2.5, // guarantee 2 days to left
+											dy: $('.fc-day').height(),
+											isTouch: true
+										});
+									}
+								});
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.asDays()).toBe(5);
+								expect(delta.hours()).toBe(0);
+								expect(delta.minutes()).toBe(0);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
+
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toEqualMoment('2014-06-17');
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toBeNull();
+
+								done();
+							}
+						);
+					});
+				});
 			});
 		});
 
@@ -83,6 +137,7 @@ describe('eventResize', function() {
 
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('th.fc-wed').width() * 1.5 // two days
 						});
@@ -119,9 +174,45 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta', function(done) {
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
+					},
+					function(event, delta, revertFunc) {
+						expect(delta.days()).toBe(0);
+						expect(delta.hours()).toBe(2);
+						expect(delta.minutes()).toBe(30);
+						expect(delta.seconds()).toBe(0);
+						expect(delta.milliseconds()).toBe(0);
+
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
+						revertFunc();
+						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
+						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
+
+						done();
+					}
+				);
+			});
+
+			it('should have correct arguments with a timed delta via touch', function(done) {
+				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
+				init(
+					function() {
+						setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
+							$('.fc-event').simulate('drag', {
+								isTouch: true,
+								delay: 200,
+								onRelease: function() {
+									$('.fc-event .fc-resizer').simulate('drag', {
+										dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
+										isTouch: true
+									});
+								}
+							});
+						}, 0);
 					},
 					function(event, delta, revertFunc) {
 						expect(delta.days()).toBe(0);
@@ -145,6 +236,7 @@ describe('eventResize', function() {
 			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dx: $('.fc-day-header:first').width() * .9, // one day
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
@@ -172,6 +264,7 @@ describe('eventResize', function() {
 				options.timezone = 'local';
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -198,6 +291,7 @@ describe('eventResize', function() {
 				options.timezone = 'UTC';
 				init(
 					function() {
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
 						});
@@ -225,6 +319,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {
@@ -257,6 +352,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {
@@ -299,6 +395,7 @@ describe('eventResize', function() {
 					alreadyRendered = true;
 					setTimeout(function() {
 						isDragging = true;
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: 100,
 							onBeforeRelease: function() {
@@ -330,6 +427,7 @@ describe('eventResize', function() {
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
 							dy: dy,
 							onBeforeRelease: function() {

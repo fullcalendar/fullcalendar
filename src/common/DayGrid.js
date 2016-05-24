@@ -273,10 +273,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
 
-			this.renderEventLocationHelper(eventLocation, seg);
-			this.applyDragOpacity(this.helperEls);
-
-			return true; // a helper has been rendered
+			return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
 		}
 	},
 
@@ -295,7 +292,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventLocation, seg) {
 		this.renderHighlight(this.eventToSpan(eventLocation));
-		this.renderEventLocationHelper(eventLocation, seg);
+		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
 	},
 
 
@@ -341,7 +338,9 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			helperNodes.push(skeletonEl[0]);
 		});
 
-		this.helperEls = $(helperNodes); // array -> jQuery set
+		return ( // must return the elements rendered
+			this.helperEls = $(helperNodes) // array -> jQuery set
+		);
 	},
 
 

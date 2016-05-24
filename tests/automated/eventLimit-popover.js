@@ -289,7 +289,7 @@ describe('eventLimit popover', function() {
 					setTimeout(function() { // try to wait until drag is over. eventDrop won't fire BTW
 						expect($('.fc-more-popover')).toBeInDOM();
 						done();
-					},0);
+					}, 0);
 				};
 				init();
 

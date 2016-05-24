@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks('grunt-jscs-checker');
+	grunt.loadNpmTasks('grunt-jscs');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
@@ -97,7 +97,8 @@ module.exports = function(grunt) {
 	// create minified versions of JS
 	config.uglify.modules = {
 		options: {
-			preserveComments: 'some' // keep comments starting with /*!
+			preserveComments: /(?:^!|@(?:license|preserve|cc_on))/ // keep certain comments
+				// https://github.com/gruntjs/grunt-contrib-uglify/issues/366#issuecomment-157208530
 		},
 		expand: true,
 		src: 'dist/fullcalendar.js', // only do it for fullcalendar.js

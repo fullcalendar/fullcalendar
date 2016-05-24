@@ -1,8 +1,43 @@
 
+v2.7.2 (2016-05-20)
+-------------------
+
+- fixed desktops/laptops with touch support not accepting mouse events for
+  dayClick/dragging/resizing (#3154, #3149)
+- fixed dayClick incorrectly triggered on touch scroll (#3152)
+- fixed touch event dragging wrongfully beginning upon scrolling document (#3160)
+- fixed minified JS still contained comments
+- UI change: mouse users must hover over an event to reveal its resizers
+
+
+v2.7.1 (2016-05-01)
+-------------------
+
+- dayClick not firing on touch devices (#3138)
+- icons for prev/next not working in MS Edge (#2852)
+- fix bad languages troubles with firewalls (#3133, #3132)
+- update all dev dependencies (#3145, #3010, #2901, #251)
+- git-ignore npm debug logs (#3011)
+- misc automated test updates (#3139, #3147)
+- Google Calendar htmlLink not always defined (#2844)
+
+
+v2.7.0 (2016-04-23)
+-------------------
+
+touch device support (#994):
+	- smoother scrolling
+	- interactions initiated via "long press":
+		- event drag-n-drop
+		- event resize
+		- time-range selecting
+	- `longPressDelay`
+
+
 v2.6.1 (2016-02-17)
 -------------------
 
-- make nowIndicator positioning refresh on window resize
+- make `nowIndicator` positioning refresh on window resize
 
 
 v2.6.0 (2016-01-07)

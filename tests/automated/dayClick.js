@@ -139,4 +139,50 @@ describe('dayClick', function() {
 			});
 		});
 	});
+
+	describe('when touch', function() {
+
+		it('fires correctly when simulated short drag on a cell', function(done) {
+			options.dayClick = function(date, jsEvent, view) {
+				expect(moment.isMoment(date)).toEqual(true);
+				expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+				expect(typeof view).toEqual('object'); // "
+				expect(date.hasTime()).toEqual(false);
+				expect(date).toEqualMoment('2014-05-07');
+			};
+			spyOn(options, 'dayClick').and.callThrough();
+			$('#cal').fullCalendar(options);
+
+			var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
+
+			// for simulating the mousedown/mouseup/click (relevant for selectable)
+			dayCell.simulate('drag', {
+				isTouch: true,
+				callback: function() {
+					expect(options.dayClick).toHaveBeenCalled();
+					done();
+				}
+			});
+		});
+
+		it('fires correctly when simulated click on a cell', function(done) {
+			options.dayClick = function(date, jsEvent, view) {
+				expect(moment.isMoment(date)).toEqual(true);
+				expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+				expect(typeof view).toEqual('object'); // "
+				expect(date.hasTime()).toEqual(false);
+				expect(date).toEqualMoment('2014-05-07');
+			};
+			spyOn(options, 'dayClick').and.callThrough();
+			$('#cal').fullCalendar(options);
+
+			var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
+
+			$.simulateTouchClick(dayCell);
+
+			expect(options.dayClick).toHaveBeenCalled();
+			done();
+		});
+	});
+
 });
