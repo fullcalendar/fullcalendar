@@ -517,6 +517,8 @@ function EventManager(options) { // assumed to be a calendar
 			assignDatesToEvent(start, end, allDay, out);
 		}
 
+		t.normalizeEvent(out); // hook for external use. a prototype method
+
 		return out;
 	}
 
@@ -1047,6 +1049,12 @@ function EventManager(options) { // assumed to be a calendar
 	};
 
 }
+
+
+// hook for external libs to manipulate event properties upon creation.
+// should manipulate the event in-place.
+Calendar.prototype.normalizeEvent = function(event) {
+};
 
 
 // Returns a list of events that the given event should be compared against when being considered for a move to
