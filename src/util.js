@@ -144,7 +144,7 @@ function subtractInnerElHeight(outerEl, innerEl) {
 	var both = outerEl.add(innerEl);
 	var diff;
 
-	// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
+	// effin' IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
 	both.css({
 		position: 'relative', // cause a reflow, which will force fresh dimension recalculation
 		left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
@@ -156,7 +156,7 @@ function subtractInnerElHeight(outerEl, innerEl) {
 }
 
 
-/* General DOM Utilities
+/* Element Geom Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
 FC.getOuterRect = getOuterRect;
@@ -293,13 +293,82 @@ function getCssFloat(el, prop) {
 }
 
 
+/* Mouse / Touch Utilities
+----------------------------------------------------------------------------------------------------------------------*/
+
+FC.preventDefault = preventDefault;
+
+
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
 function isPrimaryMouseButton(ev) {
 	return ev.which == 1 && !ev.ctrlKey;
 }
 
 
-/* Geometry
+function getEvX(ev) {
+	if (ev.pageX !== undefined) {
+		return ev.pageX;
+	}
+	var touches = ev.originalEvent.touches;
+	if (touches) {
+		return touches[0].pageX;
+	}
+}
+
+
+function getEvY(ev) {
+	if (ev.pageY !== undefined) {
+		return ev.pageY;
+	}
+	var touches = ev.originalEvent.touches;
+	if (touches) {
+		return touches[0].pageY;
+	}
+}
+
+
+function getEvIsTouch(ev) {
+	return /^touch/.test(ev.type);
+}
+
+
+function preventSelection(el) {
+	el.addClass('fc-unselectable')
+		.on('selectstart', preventDefault);
+}
+
+
+// Stops a mouse/touch event from doing it's native browser action
+function preventDefault(ev) {
+	ev.preventDefault();
+}
+
+
+// attach a handler to get called when ANY scroll action happens on the page.
+// this was impossible to do with normal on/off because 'scroll' doesn't bubble.
+// http://stackoverflow.com/a/32954565/96342
+// returns `true` on success.
+function bindAnyScroll(handler) {
+	if (window.addEventListener) {
+		window.addEventListener('scroll', handler, true); // useCapture=true
+		return true;
+	}
+	return false;
+}
+
+
+// undoes bindAnyScroll. must pass in the original function.
+// returns `true` on success.
+function unbindAnyScroll(handler) {
+	if (window.removeEventListener) {
+		window.removeEventListener('scroll', handler, true); // useCapture=true
+		return true;
+	}
+	return false;
+}
+
+
+/* General Geometry Utils
 ----------------------------------------------------------------------------------------------------------------------*/
 
 FC.intersectRects = intersectRects;

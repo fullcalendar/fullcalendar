@@ -5,7 +5,8 @@ describe('eventDrop', function() {
 		options = {
 			defaultDate: '2014-06-11',
 			editable: true,
-			dragScroll: false
+			dragScroll: false,
+			longPressDelay: 100
 		};
 		affix('#cal');
 	});
@@ -19,37 +20,47 @@ describe('eventDrop', function() {
 			options.defaultView = 'month';
 		});
 
-		describe('when dragging an all-day event to another day', function() {
-			it('should be given correct arguments, with whole-day delta', function(done) {
-				options.events = [ {
-					title: 'all-day event',
-					start: '2014-06-11',
-					allDay: true
-				} ];
+		// TODO: test that event's dragged via touch that don't wait long enough for longPressDelay
+		// SHOULD NOT drag
 
-				init(
-					function() {
-						$('.fc-event').simulate('drag', {
-							dx: $('.fc-day').width() * 2,
-							dy: $('.fc-day').height()
-						});
-					},
-					function(event, delta, revertFunc) {
-						expect(delta.asDays()).toBe(9);
-						expect(delta.hours()).toBe(0);
-						expect(delta.minutes()).toBe(0);
-						expect(delta.seconds()).toBe(0);
-						expect(delta.milliseconds()).toBe(0);
+		[ false, true ].forEach(function(isTouch) {
+			describe('with ' + (isTouch ? 'touch' : 'mouse'), function() {
+				describe('when dragging an all-day event to another day', function() {
+					it('should be given correct arguments, with whole-day delta', function(done) {
 
-						expect(event.start).toEqualMoment('2014-06-20');
-						expect(event.end).toBeNull();
-						revertFunc();
-						expect(event.start).toEqualMoment('2014-06-11');
-						expect(event.end).toBeNull();
+						options.events = [ {
+							title: 'all-day event',
+							start: '2014-06-11',
+							allDay: true
+						} ];
 
-						done();
-					}
-				);
+						init(
+							function() {
+								$('.fc-event').simulate('drag', {
+									dx: $('.fc-day').width() * 2,
+									dy: $('.fc-day').height(),
+									isTouch: isTouch,
+									delay: isTouch ? 200 : 0
+								});
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.asDays()).toBe(9);
+								expect(delta.hours()).toBe(0);
+								expect(delta.minutes()).toBe(0);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
+
+								expect(event.start).toEqualMoment('2014-06-20');
+								expect(event.end).toBeNull();
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11');
+								expect(event.end).toBeNull();
+
+								done();
+							}
+						);
+					});
+				});
 			});
 		});
 
@@ -138,37 +149,47 @@ describe('eventDrop', function() {
 			options.defaultView = 'agendaWeek';
 		});
 
-		describe('when dragging a timed event to another time on a different day', function() {
-			it('should be given correct arguments and delta with days/time', function(done) {
-				options.events = [ {
-					title: 'timed event',
-					start: '2014-06-11T06:00:00',
-					allDay: false
-				} ];
+		[ false, true ].forEach(function(isTouch) {
+			describe('with ' + (isTouch ? 'touch' : 'mouse'), function() {
+				describe('when dragging a timed event to another time on a different day', function() {
+					it('should be given correct arguments and delta with days/time', function(done) {
+						options.events = [ {
+							title: 'timed event',
+							start: '2014-06-11T06:00:00',
+							allDay: false
+						} ];
 
-				init(
-					function() {
-						$('.fc-event .fc-time').simulate('drag', {
-							dx: $('th.fc-wed').width(), // 1 day
-							dy: $('.fc-slats tr:eq(1)').outerHeight() * 2.9 // 1.5 hours
-						});
-					},
-					function(event, delta, revertFunc) {
-						expect(delta.days()).toBe(1);
-						expect(delta.hours()).toBe(1);
-						expect(delta.minutes()).toBe(30);
-						expect(delta.seconds()).toBe(0);
-						expect(delta.milliseconds()).toBe(0);
+						init(
+							function() {
+								// setTimeout waits for full render, so there's no scroll,
+								// because scroll kills touch drag
+								setTimeout(function() {
+									$('.fc-event .fc-time').simulate('drag', {
+										dx: $('th.fc-wed').width(), // 1 day
+										dy: $('.fc-slats tr:eq(1)').outerHeight() * 2.9, // 1.5 hours
+										isTouch: isTouch,
+										delay: isTouch ? 200 : 0
+									});
+								}, 0);
+							},
+							function(event, delta, revertFunc) {
+								expect(delta.days()).toBe(1);
+								expect(delta.hours()).toBe(1);
+								expect(delta.minutes()).toBe(30);
+								expect(delta.seconds()).toBe(0);
+								expect(delta.milliseconds()).toBe(0);
 
-						expect(event.start).toEqualMoment('2014-06-12T07:30:00');
-						expect(event.end).toBeNull();
-						revertFunc();
-						expect(event.start).toEqualMoment('2014-06-11T06:00:00');
-						expect(event.end).toBeNull();
+								expect(event.start).toEqualMoment('2014-06-12T07:30:00');
+								expect(event.end).toBeNull();
+								revertFunc();
+								expect(event.start).toEqualMoment('2014-06-11T06:00:00');
+								expect(event.end).toBeNull();
 
-						done();
-					}
-				);
+								done();
+							}
+						);
+					});
+				});
 			});
 		});
 

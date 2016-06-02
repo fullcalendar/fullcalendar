@@ -136,10 +136,10 @@ function transformOptions(sourceOptions, start, end, timezone, calendar) {
 			}
 			else if (data.items) {
 				$.each(data.items, function(i, entry) {
-					var url = entry.htmlLink;
+					var url = entry.htmlLink || null;
 
 					// make the URLs for each event show times in the correct timezone
-					if (timezoneArg) {
+					if (timezoneArg && url !== null) {
 						url = injectQsComponent(url, 'ctz=' + timezoneArg);
 					}
 

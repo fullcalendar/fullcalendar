@@ -81,10 +81,10 @@ describe('timezone', function() {
 			expect(allDayEvent.start.format()).toEqual('2014-05-02');
 			expect(timedEvent.start.hasZone()).toEqual(true);
 			expect(timedEvent.start.hasTime()).toEqual(true);
-			expect(timedEvent.start.format()).toEqual('2014-05-10T12:00:00+00:00');
+			expect(timedEvent.start.format()).toEqual('2014-05-10T12:00:00Z');
 			expect(zonedEvent.start.hasZone()).toEqual(true);
 			expect(zonedEvent.start.hasTime()).toEqual(true);
-			expect(zonedEvent.start.format()).toEqual('2014-05-10T03:00:00+00:00');
+			expect(zonedEvent.start.format()).toEqual('2014-05-10T03:00:00Z');
 			done();
 		};
 		$('#cal').fullCalendar(options);

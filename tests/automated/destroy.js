@@ -34,6 +34,7 @@ describe('destroy', function() {
 					defaultView: viewName,
 					defaultDate: '2014-12-01',
 					droppable: true, // likely to attach document handler
+					editable: true, // same
 					events: [
 						{ title: 'event1', start: '2014-12-01' }
 					]

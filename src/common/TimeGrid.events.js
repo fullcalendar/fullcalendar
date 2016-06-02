@@ -82,6 +82,7 @@ TimeGrid.mixin({
 
 
 	renderHelperSegs: function(segs, sourceSeg) {
+		var helperEls = [];
 		var i, seg;
 		var sourceEl;
 
@@ -99,9 +100,12 @@ TimeGrid.mixin({
 					'margin-right': sourceEl.css('margin-right')
 				});
 			}
+			helperEls.push(seg.el[0]);
 		}
 
 		this.helperSegs = segs;
+
+		return $(helperEls); // must return rendered helpers
 	},
 
 

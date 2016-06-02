@@ -213,7 +213,7 @@ var BasicView = FC.BasicView = View.extend({
 	// given a desired total height of the view, returns what the height of the scroller should be
 	computeScrollerHeight: function(totalHeight) {
 		return totalHeight -
-			subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
 	},
 
 

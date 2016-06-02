@@ -25,7 +25,7 @@ describe('events as a json feed', function() {
 	});
 
 	afterEach(function() {
-		$.mockjaxClear();
+		$.mockjax.clear();
 	});
 
 	it('requests correctly when no timezone', function() {

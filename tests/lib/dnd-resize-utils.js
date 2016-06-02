@@ -125,6 +125,7 @@ function testEventResize(options, resizeDate, expectSuccess, callback, eventClas
 		expect(dragEl.length).toBe(1);
 		dx = lastDayEl.offset().left + lastDayEl.outerWidth() - 2 - (eventEl.offset().left + eventEl.outerWidth());
 
+		dragEl.simulate('mouseover'); // resizer only shows up on mouseover
 		dragEl.simulate('drag', {
 			dx: dx,
 			dy: dy,

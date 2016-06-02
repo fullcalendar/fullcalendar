@@ -7,6 +7,10 @@ beforeEach(function() {
 	// (not the best place for this)
 	moment.suppressDeprecationWarnings = true;
 
+	// increase the default timeout
+	jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
+
 	jasmine.addMatchers({
 
 		// Moment and Duration

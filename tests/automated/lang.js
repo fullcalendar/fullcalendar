@@ -42,6 +42,7 @@ describe('lang', function() {
 	// the most recent version of moment will actually throw a cryptic exception,
 	// and instead of papering over this, just let it be thrown. will indicate that something
 	// needs to be fixed to the developer.
+	/*
 	xit('defaults to English when configured to language that isn\'t loaded', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
@@ -52,6 +53,7 @@ describe('lang', function() {
 		var s = mom.format('dddd MMMM Do YYYY');
 		expect(s).toEqual('Thursday May 1st 2014');
 	});
+	*/
 
 	it('works when certain language has no FC settings defined', function() {
 		affix('#cal');
