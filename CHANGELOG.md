@@ -1,4 +1,12 @@
 
+v2.7.3 (2016-06-02)
+-------------------
+
+internal enhancements that plugins can benefit from:
+- EventEmitter not correctly working with stopListeningTo
+- normalizeEvent hook for manipulating event data
+
+
 v2.7.2 (2016-05-20)
 -------------------
 
