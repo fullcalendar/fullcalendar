@@ -1,12 +1,9 @@
 
 var FC = $.fullCalendar = {
 	version: "<%= meta.version %>",
-	internalApiVersion: 3
+	internalApiVersion: 4
 };
 var fcViews = FC.views = {};
-
-
-FC.isTouch = 'ontouchstart' in document;
 
 
 $.fn.fullCalendar = function(options) {

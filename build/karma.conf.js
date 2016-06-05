@@ -25,7 +25,7 @@ module.exports = function(config) {
 			'../lib/jquery-ui/jquery-ui.js',
 
 			'../lib/jquery-simulate/jquery.simulate.js',
-			'../lib/jquery-mockjax/jquery.mockjax.js',
+			'../lib/jquery-mockjax/dist/jquery.mockjax.js',
 			'../lib/jasmine-jquery/lib/jasmine-jquery.js',
 			'../lib/jasmine-fixture/dist/jasmine-fixture.js',
 

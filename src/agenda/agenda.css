@@ -256,7 +256,7 @@ be a descendant of the grid when it is being dragged.
 
 /* resizer (cursor device) */
 
-.fc-cursor .fc-time-grid-event .fc-resizer {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -269,13 +269,13 @@ be a descendant of the grid when it is being dragged.
 	cursor: s-resize;
 }
 
-.fc-cursor .fc-time-grid-event .fc-resizer:after {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
 	content: "=";
 }
 
 /* resizer (touch device) */
 
-.fc-touch .fc-time-grid-event .fc-resizer {
+.fc-time-grid-event.fc-selected .fc-resizer {
 	/* 10x10 dot */
 	border-radius: 5px;
 	border-width: 1px;

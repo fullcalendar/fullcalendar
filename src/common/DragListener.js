@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: use Emitter
 
-var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
+var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	options: null,
 
@@ -15,6 +15,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	originX: null,
 	originY: null,
 
+	// the wrapping element that scrolls, or MIGHT scroll if there's overflow.
+	// TODO: do this for wrappers that have overflow:hidden as well.
 	scrollEl: null,
 
 	isInteracting: false,
@@ -27,9 +29,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	delayTimeoutId: null,
 	minDistance: null,
 
+	handleTouchScrollProxy: null, // calls handleTouchScroll, always bound to `this`
+
 
 	constructor: function(options) {
 		this.options = options || {};
+		this.handleTouchScrollProxy = proxy(this, 'handleTouchScroll');
+		this.initMouseIgnoring(500);
 	},
 
 
@@ -41,7 +47,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		var isTouch = getEvIsTouch(ev);
 
 		if (ev.type === 'mousedown') {
-			if (!isPrimaryMouseButton(ev)) {
+			if (this.isIgnoringMouse) {
+				return;
+			}
+			else if (!isPrimaryMouseButton(ev)) {
 				return;
 			}
 			else {
@@ -83,7 +92,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	},
 
 
-	endInteraction: function(ev) {
+	endInteraction: function(ev, isCancelled) {
 		if (this.isInteracting) {
 			this.endDrag(ev);
 
@@ -96,13 +105,20 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.unbindHandlers();
 
 			this.isInteracting = false;
-			this.handleInteractionEnd(ev);
+			this.handleInteractionEnd(ev, isCancelled);
+
+			// a touchstart+touchend on the same element will result in the following addition simulated events:
+			// mouseover + mouseout + click
+			// let's ignore these bogus events
+			if (this.isTouch) {
+				this.tempIgnoreMouse();
+			}
 		}
 	},
 
 
-	handleInteractionEnd: function(ev) {
-		this.trigger('interactionEnd', ev);
+	handleInteractionEnd: function(ev, isCancelled) {
+		this.trigger('interactionEnd', ev, isCancelled || false);
 	},
 
 
@@ -129,12 +145,16 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 						touchStartIgnores--; // and we don't want this to fire immediately, so ignore.
 					}
 					else {
-						_this.endInteraction(ev);
+						_this.endInteraction(ev, true); // isCancelled=true
 					}
 				}
 			});
 
-			if (this.scrollEl) {
+			// listen to ALL scroll actions on the page
+			if (
+				!bindAnyScroll(this.handleTouchScrollProxy) && // hopefully this works and short-circuits the rest
+				this.scrollEl // otherwise, attach a single handler to this
+			) {
 				this.listenTo(this.scrollEl, 'scroll', this.handleTouchScroll);
 			}
 		}
@@ -155,8 +175,10 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	unbindHandlers: function() {
 		this.stopListeningTo($(document));
 
+		// unbind scroll listening
+		unbindAnyScroll(this.handleTouchScrollProxy);
 		if (this.scrollEl) {
-			this.stopListeningTo(this.scrollEl);
+			this.stopListeningTo(this.scrollEl, 'scroll');
 		}
 	},
 
@@ -289,7 +311,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
 		if (!this.isDragging) {
-			this.endInteraction(ev);
+			this.endInteraction(ev, true); // isCancelled=true
 		}
 	},
 

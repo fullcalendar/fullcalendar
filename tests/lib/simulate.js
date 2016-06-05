@@ -53,9 +53,11 @@ $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
 $.simulateTouchClick = function(elem) {
 	var $elem = $(elem);
 	var clientCoords = {
-		clientX: $elem.offset().left,
-		clientY: $elem.offset().top
+		clientX: $elem.offset().left + $elem.outerWidth() / 2,
+		clientY: $elem.offset().top + $elem.outerHeight() / 2
 	};
+	$elem.simulate('touchstart', clientCoords);
+	$elem.simulate('touchend', clientCoords);
 	$elem.simulate('mousemove', clientCoords);
 	$elem.simulate('mousedown', clientCoords);
 	$elem.simulate('mouseup', clientCoords);

@@ -2,7 +2,7 @@
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = FC.Grid = Class.extend(ListenerMixin, {
+var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
@@ -35,6 +35,9 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
 		this.elsByFill = {};
+
+		this.dayDragListener = this.buildDayDragListener();
+		this.initMouseIgnoring();
 	},
 
 
@@ -170,12 +173,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.el = el;
 		preventSelection(el);
 
-		if (this.view.calendar.isTouch) {
-			this.bindDayHandler('touchstart', this.dayTouchStart);
-		}
-		else {
-			this.bindDayHandler('mousedown', this.dayMousedown);
-		}
+		this.bindDayHandler('touchstart', this.dayTouchStart);
+		this.bindDayHandler('mousedown', this.dayMousedown);
 
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
@@ -253,16 +252,24 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		this.clearDragListeners();
-		this.buildDayDragListener().startInteraction(ev, {
-			//distance: 5, // needs more work if we want dayClick to fire correctly
-		});
+		if (!this.isIgnoringMouse) {
+			this.dayDragListener.startInteraction(ev, {
+				//distance: 5, // needs more work if we want dayClick to fire correctly
+			});
+		}
 	},
 
 
 	dayTouchStart: function(ev) {
-		this.clearDragListeners();
-		this.buildDayDragListener().startInteraction(ev, {
+		var view = this.view;
+
+		// HACK to prevent a user's clickaway for unselecting a range or an event
+		// from causing a dayClick.
+		if (view.isSelected || view.selectedEvent) {
+			this.tempIgnoreMouse();
+		}
+
+		this.dayDragListener.startInteraction(ev, {
 			delay: this.view.opt('longPressDelay')
 		});
 	},
@@ -280,14 +287,22 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = this.dayDragListener = new HitDragListener(this, {
+		var dragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
+			interactionStart: function() {
+				dayClickHit = dragListener.origHit; // for dayClick, where no dragging happens
+			},
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				if (origHit) { // click needs to have started on a hit
-					dayClickHit = isOrig ? hit : null; // single-hit selection is a day click
+
+					// if user dragged to another cell at any point, it can no longer be a dayClick
+					if (!isOrig) {
+						dayClickHit = null;
+					}
+
 					if (isSelectable) {
 						selectionSpan = _this.computeSelection(
 							_this.getHitSpan(origHit),
@@ -308,20 +323,24 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 				_this.unrenderSelection();
 				enableCursor();
 			},
-			interactionEnd: function(ev) {
-				if (dayClickHit) {
-					view.triggerDayClick(
-						_this.getHitSpan(dayClickHit),
-						_this.getHitEl(dayClickHit),
-						ev
-					);
+			interactionEnd: function(ev, isCancelled) {
+				if (!isCancelled) {
+					if (
+						dayClickHit &&
+						!_this.isIgnoringMouse // see hack in dayTouchStart
+					) {
+						view.triggerDayClick(
+							_this.getHitSpan(dayClickHit),
+							_this.getHitEl(dayClickHit),
+							ev
+						);
+					}
+					if (selectionSpan) {
+						// the selection will already have been rendered. just report it
+						view.reportSelection(selectionSpan, ev);
+					}
+					enableCursor();
 				}
-				if (selectionSpan) {
-					// the selection will already have been rendered. just report it
-					view.reportSelection(selectionSpan, ev);
-				}
-				enableCursor();
-				_this.dayDragListener = null;
 			}
 		});
 
@@ -333,9 +352,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// Useful for when public API methods that result in re-rendering are invoked during a drag.
 	// Also useful for when touch devices misbehave and don't fire their touchend.
 	clearDragListeners: function() {
-		if (this.dayDragListener) {
-			this.dayDragListener.endInteraction(); // will clear this.dayDragListener
-		}
+		this.dayDragListener.endInteraction();
+
 		if (this.segDragListener) {
 			this.segDragListener.endInteraction(); // will clear this.segDragListener
 		}

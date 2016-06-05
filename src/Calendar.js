@@ -9,7 +9,6 @@ var Calendar = FC.Calendar = Class.extend({
 	view: null, // current View object
 	header: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
-	isTouch: false,
 
 
 	// a lot of this class' OOP logic is scoped within this constructor function,
@@ -55,10 +54,6 @@ var Calendar = FC.Calendar = Class.extend({
 			overrides
 		]);
 		populateInstanceComputableOptions(this.options);
-
-		this.isTouch = this.options.isTouch != null ?
-			this.options.isTouch :
-			FC.isTouch;
 
 		this.viewSpecCache = {}; // somewhat unrelated
 	},
@@ -558,10 +553,6 @@ function Calendar_constructor(element, overrides) {
 		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
 
-		element.addClass(
-			t.isTouch ? 'fc-touch' : 'fc-cursor'
-		);
-
 		if (options.isRTL) {
 			element.addClass('fc-rtl');
 		}
@@ -604,7 +595,7 @@ function Calendar_constructor(element, overrides) {
 
 		header.removeElement();
 		content.remove();
-		element.removeClass('fc fc-touch fc-cursor fc-ltr fc-rtl fc-unthemed ui-widget');
+		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
 
 		if (windowResizeProxy) {
 			$(window).unbind('resize', windowResizeProxy);
