@@ -643,11 +643,15 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Signals that all events have been rendered
-	triggerEventRender: function() {
+	triggerEventRender: function(inPopover) {
 		this.renderedEventSegEach(function(seg) {
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
-		this.trigger('eventAfterAllRender');
+		if(!inPopover) {
+			this.trigger('eventAfterAllRender');
+		} else {
+			this.trigger('eventAfterAllPopoverRender');
+		}
 	},
 
 

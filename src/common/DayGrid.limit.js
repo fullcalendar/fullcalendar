@@ -264,6 +264,7 @@ DayGrid.mixin({
 
 		this.segPopover = new Popover(options);
 		this.segPopover.show();
+		view.triggerEventRender(true);
 	},
 
 
