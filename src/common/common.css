@@ -359,6 +359,7 @@ hr.fc-divider {
 
 .fc-bg table {
 	height: 100%; /* strech bg to bottom edge */
+	box-sizing: border-box; /* fix scrollbar issue in firefox */
 }
 
 
