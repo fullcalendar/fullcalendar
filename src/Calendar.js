@@ -582,8 +582,7 @@ function Calendar_constructor(element, overrides) {
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
 			currentView.removeElement();
 			currentView = t.view = null;
-			if(typeof t.options.changeView == 'function')
-				t.options.changeView(viewType);
+			t.trigger('changeView', null, viewType, currentView.type);
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
