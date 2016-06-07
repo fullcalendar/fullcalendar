@@ -378,7 +378,7 @@ describe('background events', function() {
 				} ];
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(1);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
+					expect(queryBgEventsInCol(2).length).toBe(1); // column 2
 					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(0)'); // should be 1am (eq(1)) but FF cmplaning
 					expect($('.fc-bgevent')).toBeAbove('.fc-slats tr:eq(10)'); // 5am
 					expect($('.fc-event').length).toBe(0);
@@ -395,8 +395,8 @@ describe('background events', function() {
 				} ];
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(2);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
+					expect(queryBgEventsInCol(2).length).toBe(1);
+					expect(queryBgEventsInCol(3).length).toBe(1);
 					// TODO: maybe check y coords
 					done();
 				};
@@ -417,8 +417,8 @@ describe('background events', function() {
 				];
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(4);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(2); // column 2
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(2); // column 3
+					expect(queryBgEventsInCol(2).length).toBe(2);
+					expect(queryBgEventsInCol(3).length).toBe(2);
 					// TODO: maybe check y coords
 					done();
 				};
@@ -444,14 +444,13 @@ describe('background events', function() {
 
 					// time area
 					expect($('.fc-time-grid .fc-nonbusiness').length).toBe(11);
-					var containerEls = $('.fc-time-grid .fc-bgevent-skeleton td:not(.fc-axis)'); // background columns
-					expect(containerEls.eq(0).find('.fc-nonbusiness').length).toBe(1);
-					expect(containerEls.eq(1).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(2).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(3).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(4).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(5).find('.fc-nonbusiness').length).toBe(1);
-					expect(containerEls.eq(6).find('.fc-nonbusiness').length).toBe(1);
+					expect(queryNonBusinessSegsInCol(0).length).toBe(1);
+					expect(queryNonBusinessSegsInCol(1).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(2).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(3).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(4).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(5).length).toBe(1);
+					expect(queryNonBusinessSegsInCol(6).length).toBe(1);
 				});
 			});
 		});
@@ -467,7 +466,7 @@ describe('background events', function() {
 				} ];
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(1);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
+					expect(queryBgEventsInCol(4).length).toBe(1);
 					expect($('.fc-bgevent')).toBeBelow('.fc-slats tr:eq(0)'); // should be 1am (eq(1)) but FF cmplaining
 					expect($('.fc-bgevent')).toBeAbove('.fc-slats tr:eq(10)'); // 5am
 					done();
@@ -482,8 +481,8 @@ describe('background events', function() {
 				} ];
 				options.eventAfterAllRender = function() {
 					expect($('.fc-bgevent').length).toBe(2);
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
-					expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
+					expect(queryBgEventsInCol(3).length).toBe(1);
+					expect(queryBgEventsInCol(4).length).toBe(1);
 					done();
 				};
 				$('#cal').fullCalendar(options);
@@ -502,14 +501,13 @@ describe('background events', function() {
 
 					// time area
 					expect($('.fc-time-grid .fc-nonbusiness').length).toBe(11);
-					var containerEls = $('.fc-time-grid .fc-bgevent-skeleton td:not(.fc-axis)'); // background columns
-					expect(containerEls.eq(0).find('.fc-nonbusiness').length).toBe(1);
-					expect(containerEls.eq(1).find('.fc-nonbusiness').length).toBe(1);
-					expect(containerEls.eq(2).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(3).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(4).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(5).find('.fc-nonbusiness').length).toBe(2);
-					expect(containerEls.eq(6).find('.fc-nonbusiness').length).toBe(1);
+					expect(queryNonBusinessSegsInCol(0).length).toBe(1);
+					expect(queryNonBusinessSegsInCol(1).length).toBe(1);
+					expect(queryNonBusinessSegsInCol(2).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(3).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(4).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(5).length).toBe(2);
+					expect(queryNonBusinessSegsInCol(6).length).toBe(1);
 				});
 			});
 		});
@@ -526,13 +524,13 @@ describe('background events', function() {
 					} ];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(8);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(1); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(1); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(2); // column 2
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-bgevent').length).toBe(1); // column 5
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-bgevent').length).toBe(1); // column 6
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(1);
+						expect(queryBgEventsInCol(2).length).toBe(2);
+						expect(queryBgEventsInCol(3).length).toBe(1);
+						expect(queryBgEventsInCol(4).length).toBe(1);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -547,13 +545,13 @@ describe('background events', function() {
 					} ];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(7);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(1); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(1); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-bgevent').length).toBe(1); // column 5
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-bgevent').length).toBe(1); // column 6
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(1);
+						expect(queryBgEventsInCol(2).length).toBe(1);
+						expect(queryBgEventsInCol(3).length).toBe(1);
+						expect(queryBgEventsInCol(4).length).toBe(1);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -568,13 +566,13 @@ describe('background events', function() {
 					} ];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(5);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(0); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(0); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-bgevent').length).toBe(1); // column 5
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-bgevent').length).toBe(1); // column 6
+						expect(queryBgEventsInCol(0).length).toBe(0);
+						expect(queryBgEventsInCol(1).length).toBe(0);
+						expect(queryBgEventsInCol(2).length).toBe(1);
+						expect(queryBgEventsInCol(3).length).toBe(1);
+						expect(queryBgEventsInCol(4).length).toBe(1);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -589,9 +587,9 @@ describe('background events', function() {
 					} ];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(3);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(1); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(1); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(1);
+						expect(queryBgEventsInCol(2).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -615,13 +613,13 @@ describe('background events', function() {
 					];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(9);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(1); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(2); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(2); // column 3
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(1); // column 4
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-bgevent').length).toBe(1); // column 5
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-bgevent').length).toBe(1); // column 6
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(2);
+						expect(queryBgEventsInCol(2).length).toBe(1);
+						expect(queryBgEventsInCol(3).length).toBe(2);
+						expect(queryBgEventsInCol(4).length).toBe(1);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -641,13 +639,13 @@ describe('background events', function() {
 					} ];
 					options.eventAfterAllRender = function() {
 						expect($('.fc-bgevent').length).toBe(8);
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(0) .fc-bgevent').length).toBe(1); // column 0
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(1) .fc-bgevent').length).toBe(1); // column 1
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(2) .fc-bgevent').length).toBe(1); // column 2
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(3) .fc-bgevent').length).toBe(1); // column 3
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(4) .fc-bgevent').length).toBe(2); // column 4
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(5) .fc-bgevent').length).toBe(1); // column 5
-						expect($('.fc-bgevent-skeleton td:not(.fc-axis):eq(6) .fc-bgevent').length).toBe(1); // column 6
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(1);
+						expect(queryBgEventsInCol(2).length).toBe(1);
+						expect(queryBgEventsInCol(3).length).toBe(1);
+						expect(queryBgEventsInCol(4).length).toBe(2);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
 						// TODO: maybe check y coords
 						done();
 					};
@@ -742,4 +740,14 @@ describe('background events', function() {
 			$('#cal').fullCalendar(options);
 		});
 	});
+
+
+	function queryBgEventsInCol(col) {
+		return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-bgevent');
+	}
+
+	function queryNonBusinessSegsInCol(col) {
+		return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-nonbusiness');
+	}
+
 });

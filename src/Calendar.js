@@ -1,5 +1,5 @@
 
-var Calendar = fc.Calendar = Class.extend({
+var Calendar = FC.Calendar = Class.extend({
 
 	dirDefaults: null, // option defaults related to LTR or RTL
 	langDefaults: null, // option defaults related to current locale
@@ -78,7 +78,7 @@ var Calendar = fc.Calendar = Class.extend({
 
 			// put views that have buttons first. there will be duplicates, but oh well
 			viewTypes = this.header.getViewsWithButtons();
-			$.each(fc.views, function(viewType) { // all views
+			$.each(FC.views, function(viewType) { // all views
 				viewTypes.push(viewType);
 			});
 
@@ -232,12 +232,13 @@ var Calendar = fc.Calendar = Class.extend({
 	},
 
 
-	// Given arguments to the select method in the API, returns a range
-	buildSelectRange: function(start, end) {
+	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
+	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
+		var start = this.moment(zonedStartInput).stripZone();
+		var end;
 
-		start = this.moment(start);
-		if (end) {
-			end = this.moment(end);
+		if (zonedEndInput) {
+			end = this.moment(zonedEndInput).stripZone();
 		}
 		else if (start.hasTime()) {
 			end = start.clone().add(this.defaultTimedEventDuration);
@@ -252,7 +253,7 @@ var Calendar = fc.Calendar = Class.extend({
 });
 
 
-Calendar.mixin(Emitter);
+Calendar.mixin(EmitterMixin);
 
 
 function Calendar_constructor(element, overrides) {
@@ -347,18 +348,18 @@ function Calendar_constructor(element, overrides) {
 		var mom;
 
 		if (options.timezone === 'local') {
-			mom = fc.moment.apply(null, arguments);
+			mom = FC.moment.apply(null, arguments);
 
-			// Force the moment to be local, because fc.moment doesn't guarantee it.
+			// Force the moment to be local, because FC.moment doesn't guarantee it.
 			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
 				mom.local();
 			}
 		}
 		else if (options.timezone === 'UTC') {
-			mom = fc.moment.utc.apply(null, arguments); // process as UTC
+			mom = FC.moment.utc.apply(null, arguments); // process as UTC
 		}
 		else {
-			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
+			mom = FC.moment.parseZone.apply(null, arguments); // let the input decide the zone
 		}
 
 		if ('_locale' in mom) { // moment 2.8 and above
@@ -379,21 +380,36 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	// Returns a copy of the given date in the current timezone of it is ambiguously zoned.
-	// This will also give the date an unambiguous time.
-	t.rezoneDate = function(date) {
-		return t.moment(date.toArray());
+	// Returns a copy of the given date in the current timezone. Has no effect on dates without times.
+	t.applyTimezone = function(date) {
+		if (!date.hasTime()) {
+			return date.clone();
+		}
+
+		var zonedDate = t.moment(date.toArray());
+		var timeAdjust = date.time() - zonedDate.time();
+		var adjustedZonedDate;
+
+		// Safari sometimes has problems with this coersion when near DST. Adjust if necessary. (bug #2396)
+		if (timeAdjust) { // is the time result different than expected?
+			adjustedZonedDate = zonedDate.clone().add(timeAdjust); // add milliseconds
+			if (date.time() - adjustedZonedDate.time() === 0) { // does it match perfectly now?
+				zonedDate = adjustedZonedDate;
+			}
+		}
+
+		return zonedDate;
 	};
 
 
-	// Returns a moment for the current date, as defined by the client's computer,
-	// or overridden by the `now` option.
+	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
+	// Will return an moment with an ambiguous timezone.
 	t.getNow = function() {
 		var now = options.now;
 		if (typeof now === 'function') {
 			now = now();
 		}
-		return t.moment(now);
+		return t.moment(now).stripZone();
 	};
 
 
@@ -408,9 +424,10 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
-	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
-		var end = start.clone();
+	// Given an event's allDay status and start date, return what its fallback end date should be.
+	// TODO: rename to computeDefaultEventEnd
+	t.getDefaultEventEnd = function(allDay, zonedStart) {
+		var end = zonedStart.clone();
 
 		if (allDay) {
 			end.stripTime().add(t.defaultAllDayEventDuration);
@@ -460,8 +477,8 @@ function Calendar_constructor(element, overrides) {
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
-	var date;
 	var events = [];
+	var date; // unzoned
 	
 	
 	
@@ -469,11 +486,12 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
+	// compute the initial ambig-timezone date
 	if (options.defaultDate != null) {
-		date = t.moment(options.defaultDate);
+		date = t.moment(options.defaultDate).stripZone();
 	}
 	else {
-		date = t.getNow();
+		date = t.getNow(); // getNow already returns unzoned
 	}
 	
 	
@@ -590,8 +608,7 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					freezeContentHeight();
-					currentView.display(date);
+					currentView.display(date); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
@@ -759,9 +776,10 @@ function Calendar_constructor(element, overrides) {
 	-----------------------------------------------------------------------------*/
 	
 
-	function select(start, end) {
+	// this public method receives start/end dates in any format, with any timezone
+	function select(zonedStartInput, zonedEndInput) {
 		currentView.select(
-			t.buildSelectRange.apply(t, arguments)
+			t.buildSelectSpan.apply(t, arguments)
 		);
 	}
 	
@@ -808,8 +826,8 @@ function Calendar_constructor(element, overrides) {
 	}
 	
 	
-	function gotoDate(dateInput) {
-		date = t.moment(dateInput);
+	function gotoDate(zonedDateInput) {
+		date = t.moment(zonedDateInput).stripZone();
 		renderView();
 	}
 	
@@ -828,13 +846,14 @@ function Calendar_constructor(element, overrides) {
 		viewType = viewType || 'day'; // day is default zoom
 		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
 
-		date = newDate;
+		date = newDate.clone();
 		renderView(spec ? spec.type : null);
 	}
 	
 	
+	// for external API
 	function getDate() {
-		return date.clone();
+		return t.applyTimezone(date); // infuse the calendar's timezone
 	}
 
 
@@ -842,6 +861,9 @@ function Calendar_constructor(element, overrides) {
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
 	// TODO: move this into the view
+
+	t.freezeContentHeight = freezeContentHeight;
+	t.unfreezeContentHeight = unfreezeContentHeight;
 
 
 	function freezeContentHeight() {

@@ -66,27 +66,46 @@
 	z-index: 2;
 }
 
-.fc-time-grid .fc-bgevent-skeleton,
+.fc-time-grid .fc-content-col {
+	position: relative; /* because now-indicator lives directly inside */
+}
+
 .fc-time-grid .fc-content-skeleton {
 	position: absolute;
+	z-index: 3;
 	top: 0;
 	left: 0;
 	right: 0;
 }
 
-.fc-time-grid .fc-bgevent-skeleton {
+/* divs within a cell within the fc-content-skeleton */
+
+.fc-time-grid .fc-business-container {
+	position: relative;
+	z-index: 1;
+}
+
+.fc-time-grid .fc-bgevent-container {
+	position: relative;
+	z-index: 2;
+}
+
+.fc-time-grid .fc-highlight-container {
+	position: relative;
 	z-index: 3;
 }
 
-.fc-time-grid .fc-highlight-skeleton {
+.fc-time-grid .fc-event-container {
+	position: relative;
 	z-index: 4;
 }
 
-.fc-time-grid .fc-content-skeleton {
+.fc-time-grid .fc-now-indicator-line {
 	z-index: 5;
 }
 
-.fc-time-grid .fc-helper-skeleton {
+.fc-time-grid .fc-helper-container { /* also is fc-event-container */
+	position: relative;
 	z-index: 6;
 }
 
@@ -125,11 +144,6 @@
 
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
-
-.fc-time-grid .fc-event-container, /* a div within a cell within the fc-content-skeleton */
-.fc-time-grid .fc-bgevent-container { /* a div within a cell within the fc-bgevent-skeleton */
-	position: relative;
-}
 
 .fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
 	margin: 0 2.5% 0 2px;
@@ -186,6 +200,20 @@ be a descendant of the grid when it is being dragged.
 	overflow: hidden; /* don't let the bg flow over rounded corners */
 }
 
+.fc-time-grid-event.fc-selected {
+	/* need to allow touch resizers to extend outside event's bounding box */
+	/* common fc-selected styles hide the fc-bg, so don't need this anyway */
+	overflow: visible;
+}
+
+.fc-time-grid-event.fc-selected .fc-bg {
+	display: none; /* hide semi-white background, to appear darker */
+}
+
+.fc-time-grid-event .fc-content {
+	overflow: hidden; /* for when .fc-selected */
+}
+
 .fc-time-grid-event .fc-time,
 .fc-time-grid-event .fc-title {
 	padding: 0 1px;
@@ -227,9 +255,9 @@ be a descendant of the grid when it is being dragged.
 	padding: 0; /* undo padding from above */
 }
 
-/* resizer */
+/* resizer (cursor device) */
 
-.fc-time-grid-event .fc-resizer {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -242,6 +270,56 @@ be a descendant of the grid when it is being dragged.
 	cursor: s-resize;
 }
 
-.fc-time-grid-event .fc-resizer:after {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
 	content: "=";
+}
+
+/* resizer (touch device) */
+
+.fc-time-grid-event.fc-selected .fc-resizer {
+	/* 10x10 dot */
+	border-radius: 5px;
+	border-width: 1px;
+	width: 8px;
+	height: 8px;
+	border-style: solid;
+	border-color: inherit;
+	background: #fff;
+	/* horizontally center */
+	left: 50%;
+	margin-left: -5px;
+	/* center on the bottom edge */
+	bottom: -5px;
+}
+
+
+/* Now Indicator
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-now-indicator-line {
+	border-top-width: 1px;
+	left: 0;
+	right: 0;
+}
+
+/* arrow on axis */
+
+.fc-time-grid .fc-now-indicator-arrow {
+	margin-top: -5px; /* vertically center on top coordinate */
+}
+
+.fc-ltr .fc-time-grid .fc-now-indicator-arrow {
+	left: 0;
+	/* triangle pointing right... */
+	border-width: 5px 0 5px 6px;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.fc-rtl .fc-time-grid .fc-now-indicator-arrow {
+	right: 0;
+	/* triangle pointing left... */
+	border-width: 5px 6px 5px 0;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
 }

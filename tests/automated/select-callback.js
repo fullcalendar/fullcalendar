@@ -6,7 +6,8 @@ describe('select callback', function() {
 		affix('#cal');
 		options = {
 			defaultDate: '2014-05-25',
-			selectable: true
+			selectable: true,
+			longPressDelay: 100
 		};
 	});
 
@@ -36,8 +37,31 @@ describe('select callback', function() {
 					};
 					spyOn(options, 'select').and.callThrough();
 					$('#cal').fullCalendar(options);
-					$('.fc-day[data-date="2014-04-28"]').simulate('drag-n-drop', {
-						dropTarget: '.fc-day[data-date="2014-05-06"]',
+					$('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+						end: '.fc-day[data-date="2014-05-06"]',
+						callback: function() {
+							expect(options.select).toHaveBeenCalled();
+							done();
+						}
+					});
+				});
+				it('gets fired correctly when the user selects cells via touch', function(done) {
+					options.select = function(start, end, jsEvent, view) {
+						expect(moment.isMoment(start)).toEqual(true);
+						expect(moment.isMoment(end)).toEqual(true);
+						expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+						expect(typeof view).toEqual('object'); // "
+						expect(start.hasTime()).toEqual(false);
+						expect(end.hasTime()).toEqual(false);
+						expect(start).toEqualMoment('2014-04-28');
+						expect(end).toEqualMoment('2014-05-07');
+					};
+					spyOn(options, 'select').and.callThrough();
+					$('#cal').fullCalendar(options);
+					$('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+						isTouch: true,
+						delay: 200,
+						end: '.fc-day[data-date="2014-05-06"]',
 						callback: function() {
 							expect(options.select).toHaveBeenCalled();
 							done();
@@ -57,8 +81,8 @@ describe('select callback', function() {
 					};
 					spyOn(options, 'select').and.callThrough();
 					$('#cal').fullCalendar(options);
-					$('.fc-day[data-date="2014-04-28"]').simulate('drag-n-drop', {
-						dropTarget: '.fc-day[data-date="2014-04-28"]',
+					$('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+						end: '.fc-day[data-date="2014-04-28"]',
 						callback: function() {
 							expect(options.select).toHaveBeenCalled();
 							done();
@@ -85,7 +109,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag-n-drop', { // will be 2014-05-28 for LTR and RTL
+						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
 							dx: $('.fc-sun').outerWidth() * (isRTL ? -1 : 1), // the width of one column
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
@@ -106,7 +130,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag-n-drop', { // will be 2014-05-28 for LTR and RTL
+						$('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
@@ -128,13 +152,38 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
 							dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();
 							}
 						});
+					});
+					it('gets fired correctly when the user selects slots via touch', function(done) {
+						options.select = function(start, end, jsEvent, view) {
+							expect(moment.isMoment(start)).toEqual(true);
+							expect(moment.isMoment(end)).toEqual(true);
+							expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
+							expect(typeof view).toEqual('object'); // "
+							expect(start.hasTime()).toEqual(true);
+							expect(end.hasTime()).toEqual(true);
+							expect(start).toEqualMoment('2014-05-28T09:00:00');
+							expect(end).toEqualMoment('2014-05-28T10:30:00');
+						};
+						spyOn(options, 'select').and.callThrough();
+						$('#cal').fullCalendar(options);
+						setTimeout(function() { // prevent scroll from being triggered, killing the select interaction
+							$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
+								isTouch: true,
+								delay: 200,
+								dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
+								callback: function() {
+									expect(options.select).toHaveBeenCalled();
+									done();
+								}
+							});
+						}, 0);
 					});
 					it('gets fired correctly when the user selects slots in a different day', function(done) {
 						options.select = function(start, end, jsEvent, view) {
@@ -149,7 +198,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
 							dx: $('.fc-day-header:first').outerWidth() * .9 * (isRTL ? -1 : 1), // one day ahead
 							dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
 							callback: function() {
@@ -171,7 +220,7 @@ describe('select callback', function() {
 						};
 						spyOn(options, 'select').and.callThrough();
 						$('#cal').fullCalendar(options);
-						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag-n-drop', { // middle will be 2014-05-28T09:00:00
+						$('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
 							callback: function() {
 								expect(options.select).toHaveBeenCalled();
 								done();

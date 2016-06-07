@@ -1,54 +1,48 @@
 
-/* An abstract class comprised of a "grid" of cells that each represent a specific datetime
+/* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = fc.Grid = RowRenderer.extend({
+var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
-	start: null, // the date of the first cell
-	end: null, // the date after the last cell
+	view: null, // a View object
+	isRTL: null, // shortcut to the view's isRTL option
 
-	rowCnt: 0, // number of rows
-	colCnt: 0, // number of cols
+	start: null,
+	end: null,
 
 	el: null, // the containing element
-	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
-	externalDragStartProxy: null, // binds the Grid's scope to externalDragStart (in DayGrid.events)
-
 	// derived from options
-	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
 	eventTimeFormat: null,
 	displayEventTime: null,
 	displayEventEnd: null,
 
-	// if all cells are the same length of time, the duration they all share. optional.
-	// when defined, allows the computeCellRange shortcut, as well as improved resizing behavior.
-	cellDuration: null,
+	minResizeDuration: null, // TODO: hack. set by subclasses. minumum event resize duration
 
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
-	// of the date cells. if not defined, assumes to be day and time granularity.
+	// of the date areas. if not defined, assumes to be day and time granularity.
+	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
+	dayDragListener: null,
+	segDragListener: null,
+	segResizeListener: null,
+	externalDragListener: null,
 
-	constructor: function() {
-		RowRenderer.apply(this, arguments); // call the super-constructor
 
-		this.coordMap = new GridCoordMap(this);
+	constructor: function(view) {
+		this.view = view;
+		this.isRTL = view.opt('isRTL');
 		this.elsByFill = {};
-		this.externalDragStartProxy = proxy(this, 'externalDragStart');
+
+		this.dayDragListener = this.buildDayDragListener();
+		this.initMouseIgnoring();
 	},
 
 
 	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generates the format string used for the text in column headers, if not explicitly defined by 'columnFormat'
-	// TODO: move to another class. not applicable to all Grids
-	computeColHeadFormat: function() {
-		// subclasses must implement if they want to use headHtml()
-	},
 
 
 	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
@@ -75,7 +69,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Tells the grid about what period of time to display.
-	// Any date-related cell system internal data should be generated.
+	// Any date-related internal data should be generated.
 	setRange: function(range) {
 		this.start = range.start.clone();
 		this.end = range.end.clone();
@@ -95,9 +89,6 @@ var Grid = fc.Grid = RowRenderer.extend({
 		var view = this.view;
 		var displayEventTime;
 		var displayEventEnd;
-
-		// Populate option-derived settings. Look for override first, then compute if necessary.
-		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
 
 		this.eventTimeFormat =
 			view.opt('eventTimeFormat') ||
@@ -119,25 +110,15 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Called before the grid's coordinates will need to be queried for cells.
-	// Any non-date-related cell system internal data should be built.
-	build: function() {
-	},
-
-
-	// Called after the grid's coordinates are done being relied upon.
-	// Any non-date-related cell system internal data should be cleared.
-	clear: function() {
-	},
-
-
-	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
-	rangeToSegs: function(range) {
+	// Converts a span (has unzoned start/end and any other grid-specific location information)
+	// into an array of segments (pieces of events whose format is decided by the grid).
+	spanToSegs: function(span) {
 		// subclasses must implement
 	},
 
 
 	// Diffs the two dates, returning a duration, based on granularity of the grid
+	// TODO: port isTimeScale into this system?
 	diffDates: function(a, b) {
 		if (this.largeUnit) {
 			return diffByUnit(a, b, this.largeUnit);
@@ -148,126 +129,37 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	/* Cells
-	------------------------------------------------------------------------------------------------------------------*/
-	// NOTE: columns are ordered left-to-right
-
-
-	// Gets an object containing row/col number, misc data, and range information about the cell.
-	// Accepts row/col values, an object with row/col properties, or a single-number offset from the first cell.
-	getCell: function(row, col) {
-		var cell;
-
-		if (col == null) {
-			if (typeof row === 'number') { // a single-number offset
-				col = row % this.colCnt;
-				row = Math.floor(row / this.colCnt);
-			}
-			else { // an object with row/col properties
-				col = row.col;
-				row = row.row;
-			}
-		}
-
-		cell = { row: row, col: col };
-
-		$.extend(cell, this.getRowData(row), this.getColData(col));
-		$.extend(cell, this.computeCellRange(cell));
-
-		return cell;
-	},
-
-
-	// Given a cell object with index and misc data, generates a range object
-	// If the grid is leveraging cellDuration, this doesn't need to be defined. Only computeCellDate does.
-	// If being overridden, should return a range with reference-free date copies.
-	computeCellRange: function(cell) {
-		var date = this.computeCellDate(cell);
-
-		return {
-			start: date,
-			end: date.clone().add(this.cellDuration)
-		};
-	},
-
-
-	// Given a cell, returns its start date. Should return a reference-free date copy.
-	computeCellDate: function(cell) {
-		// subclasses can implement
-	},
-
-
-	// Retrieves misc data about the given row
-	getRowData: function(row) {
-		return {};
-	},
-
-
-	// Retrieves misc data baout the given column
-	getColData: function(col) {
-		return {};
-	},
-
-
-	// Retrieves the element representing the given row
-	getRowEl: function(row) {
-		// subclasses should implement if leveraging the default getCellDayEl() or computeRowCoords()
-	},
-
-
-	// Retrieves the element representing the given column
-	getColEl: function(col) {
-		// subclasses should implement if leveraging the default getCellDayEl() or computeColCoords()
-	},
-
-
-	// Given a cell object, returns the element that represents the cell's whole-day
-	getCellDayEl: function(cell) {
-		return this.getColEl(cell.col) || this.getRowEl(cell.row);
-	},
-
-
-	/* Cell Coordinates
+	/* Hit Area
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes the top/bottom coordinates of all rows.
-	// By default, queries the dimensions of the element provided by getRowEl().
-	computeRowCoords: function() {
-		var items = [];
-		var i, el;
-		var top;
-
-		for (i = 0; i < this.rowCnt; i++) {
-			el = this.getRowEl(i);
-			top = el.offset().top;
-			items.push({
-				top: top,
-				bottom: top + el.outerHeight()
-			});
-		}
-
-		return items;
+	// Called before one or more queryHit calls might happen. Should prepare any cached coordinates for queryHit
+	prepareHits: function() {
 	},
 
 
-	// Computes the left/right coordinates of all rows.
-	// By default, queries the dimensions of the element provided by getColEl(). Columns can be LTR or RTL.
-	computeColCoords: function() {
-		var items = [];
-		var i, el;
-		var left;
+	// Called when queryHit calls have subsided. Good place to clear any coordinate caches.
+	releaseHits: function() {
+	},
 
-		for (i = 0; i < this.colCnt; i++) {
-			el = this.getColEl(i);
-			left = el.offset().left;
-			items.push({
-				left: left,
-				right: left + el.outerWidth()
-			});
-		}
 
-		return items;
+	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
+	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
+	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
+	// The returned object will be processed by getHitSpan and getHitEl.
+	queryHit: function(leftOffset, topOffset) {
+	},
+
+
+	// Given position-level information about a date-related area within the grid,
+	// should return an object with at least a start/end date. Can provide other information as well.
+	getHitSpan: function(hit) {
+	},
+
+
+	// Given position-level information about a date-related area within the grid,
+	// should return a jQuery element that best represents it. passed to dayClick callback.
+	getHitEl: function(hit) {
 	},
 
 
@@ -278,20 +170,11 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Sets the container element that the grid should render inside of.
 	// Does other DOM-related initializations.
 	setElement: function(el) {
-		var _this = this;
-
 		this.el = el;
+		preventSelection(el);
 
-		// attach a handler to the grid's root element.
-		// jQuery will take care of unregistering them when removeElement gets called.
-		el.on('mousedown', function(ev) {
-			if (
-				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
-				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
-			) {
-				_this.dayMousedown(ev);
-			}
-		});
+		this.bindDayHandler('touchstart', this.dayTouchStart);
+		this.bindDayHandler('mousedown', this.dayMousedown);
 
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
@@ -301,10 +184,27 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+	bindDayHandler: function(name, handler) {
+		var _this = this;
+
+		// attach a handler to the grid's root element.
+		// jQuery will take care of unregistering them when removeElement gets called.
+		this.el.on(name, function(ev) {
+			if (
+				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
+				!$(ev.target).closest('.fc-popover').length // not on a popover (like the "more.." events one)
+			) {
+				return handler.call(_this, ev);
+			}
+		});
+	},
+
+
 	// Removes the grid's container element from the DOM. Undoes any other DOM-related attachments.
 	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
 		this.unbindGlobalHandlers();
+		this.clearDragListeners();
 
 		this.el.remove();
 
@@ -318,7 +218,7 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Renders the grid's date-related content (like cells that represent days/times).
+	// Renders the grid's date-related content (like areas that represent days/times).
 	// Assumes setRange has already been called and the skeleton has already been rendered.
 	renderDates: function() {
 		// subclasses should implement
@@ -337,66 +237,132 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 	// Binds DOM handlers to elements that reside outside the grid, such as the document
 	bindGlobalHandlers: function() {
-		$(document).on('dragstart sortstart', this.externalDragStartProxy); // jqui
+		this.listenTo($(document), {
+			dragstart: this.externalDragStart, // jqui
+			sortstart: this.externalDragStart // jqui
+		});
 	},
 
 
 	// Unbinds DOM handlers from elements that reside outside the grid
 	unbindGlobalHandlers: function() {
-		$(document).off('dragstart sortstart', this.externalDragStartProxy); // jqui
+		this.stopListeningTo($(document));
 	},
 
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
+		if (!this.isIgnoringMouse) {
+			this.dayDragListener.startInteraction(ev, {
+				//distance: 5, // needs more work if we want dayClick to fire correctly
+			});
+		}
+	},
+
+
+	dayTouchStart: function(ev) {
+		var view = this.view;
+
+		// HACK to prevent a user's clickaway for unselecting a range or an event
+		// from causing a dayClick.
+		if (view.isSelected || view.selectedEvent) {
+			this.tempIgnoreMouse();
+		}
+
+		this.dayDragListener.startInteraction(ev, {
+			delay: this.view.opt('longPressDelay')
+		});
+	},
+
+
+	// Creates a listener that tracks the user's drag across day elements.
+	// For day clicking and selecting.
+	buildDayDragListener: function() {
 		var _this = this;
 		var view = this.view;
 		var isSelectable = view.opt('selectable');
-		var dayClickCell; // null if invalid dayClick
-		var selectionRange; // null if invalid selection
+		var dayClickHit; // null if invalid dayClick
+		var selectionSpan; // null if invalid selection
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
 		// if 'selectable' is enabled, this listener also detects selections.
-		var dragListener = new CellDragListener(this.coordMap, {
-			//distance: 5, // needs more work if we want dayClick to fire correctly
+		var dragListener = new HitDragListener(this, {
 			scroll: view.opt('dragScroll'),
+			interactionStart: function() {
+				dayClickHit = dragListener.origHit; // for dayClick, where no dragging happens
+			},
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
-			cellOver: function(cell, isOrig, origCell) {
-				if (origCell) { // click needs to have started on a cell
-					dayClickCell = isOrig ? cell : null; // single-cell selection is a day click
+			hitOver: function(hit, isOrig, origHit) {
+				if (origHit) { // click needs to have started on a hit
+
+					// if user dragged to another cell at any point, it can no longer be a dayClick
+					if (!isOrig) {
+						dayClickHit = null;
+					}
+
 					if (isSelectable) {
-						selectionRange = _this.computeSelection(origCell, cell);
-						if (selectionRange) {
-							_this.renderSelection(selectionRange);
+						selectionSpan = _this.computeSelection(
+							_this.getHitSpan(origHit),
+							_this.getHitSpan(hit)
+						);
+						if (selectionSpan) {
+							_this.renderSelection(selectionSpan);
 						}
-						else {
+						else if (selectionSpan === false) {
 							disableCursor();
 						}
 					}
 				}
 			},
-			cellOut: function(cell) {
-				dayClickCell = null;
-				selectionRange = null;
+			hitOut: function() {
+				dayClickHit = null;
+				selectionSpan = null;
 				_this.unrenderSelection();
 				enableCursor();
 			},
-			listenStop: function(ev) {
-				if (dayClickCell) {
-					view.triggerDayClick(dayClickCell, _this.getCellDayEl(dayClickCell), ev);
+			interactionEnd: function(ev, isCancelled) {
+				if (!isCancelled) {
+					if (
+						dayClickHit &&
+						!_this.isIgnoringMouse // see hack in dayTouchStart
+					) {
+						view.triggerDayClick(
+							_this.getHitSpan(dayClickHit),
+							_this.getHitEl(dayClickHit),
+							ev
+						);
+					}
+					if (selectionSpan) {
+						// the selection will already have been rendered. just report it
+						view.reportSelection(selectionSpan, ev);
+					}
+					enableCursor();
 				}
-				if (selectionRange) {
-					// the selection will already have been rendered. just report it
-					view.reportSelection(selectionRange, ev);
-				}
-				enableCursor();
 			}
 		});
 
-		dragListener.mousedown(ev); // start listening, which will eventually initiate a dragStart
+		return dragListener;
+	},
+
+
+	// Kills all in-progress dragging.
+	// Useful for when public API methods that result in re-rendering are invoked during a drag.
+	// Also useful for when touch devices misbehave and don't fire their touchend.
+	clearDragListeners: function() {
+		this.dayDragListener.endInteraction();
+
+		if (this.segDragListener) {
+			this.segDragListener.endInteraction(); // will clear this.segDragListener
+		}
+		if (this.segResizeListener) {
+			this.segResizeListener.endInteraction(); // will clear this.segResizeListener
+		}
+		if (this.externalDragListener) {
+			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
+		}
 	},
 
 
@@ -405,24 +371,25 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event over the given range
-	renderRangeHelper: function(range, sourceSeg) {
-		var fakeEvent = this.fabricateHelperEvent(range, sourceSeg);
+	// Renders a mock event at the given event location, which contains zoned start/end properties.
+	// Returns all mock event elements.
+	renderEventLocationHelper: function(eventLocation, sourceSeg) {
+		var fakeEvent = this.fabricateHelperEvent(eventLocation, sourceSeg);
 
-		this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
+		return this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
 	},
 
 
-	// Builds a fake event given a date range it should cover, and a segment is should be inspired from.
+	// Builds a fake event given zoned event date properties and a segment is should be inspired from.
 	// The range's end can be null, in which case the mock event that is rendered will have a null end time.
 	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	fabricateHelperEvent: function(range, sourceSeg) {
+	fabricateHelperEvent: function(eventLocation, sourceSeg) {
 		var fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
 
-		fakeEvent.start = range.start.clone();
-		fakeEvent.end = range.end ? range.end.clone() : null;
-		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventRange
-		this.view.calendar.normalizeEventRange(fakeEvent);
+		fakeEvent.start = eventLocation.start.clone();
+		fakeEvent.end = eventLocation.end ? eventLocation.end.clone() : null;
+		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventDates
+		this.view.calendar.normalizeEventDates(fakeEvent);
 
 		// this extra className will be useful for differentiating real events from mock events in CSS
 		fakeEvent.className = (fakeEvent.className || []).concat('fc-helper');
@@ -436,8 +403,9 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Renders a mock event
-	renderHelper: function(event, sourceSeg) {
+	// Renders a mock event. Given zoned event date properties.
+	// Must return all mock event elements.
+	renderHelper: function(eventLocation, sourceSeg) {
 		// subclasses must implement
 	},
 
@@ -453,8 +421,9 @@ var Grid = fc.Grid = RowRenderer.extend({
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	renderSelection: function(range) {
-		this.renderHighlight(this.selectionRangeToSegs(range));
+	// Given a span (unzoned start/end and other misc data)
+	renderSelection: function(span) {
+		this.renderHighlight(span);
 	},
 
 
@@ -464,35 +433,29 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	// Given the first and last cells of a selection, returns a range object.
-	// Will return something falsy if the selection is invalid (when outside of selectionConstraint for example).
-	// Subclasses can override and provide additional data in the range object. Will be passed to renderSelection().
-	computeSelection: function(firstCell, lastCell) {
-		var dates = [
-			firstCell.start,
-			firstCell.end,
-			lastCell.start,
-			lastCell.end
-		];
-		var range;
+	// Given the first and last date-spans of a selection, returns another date-span object.
+	// Subclasses can override and provide additional data in the span object. Will be passed to renderSelection().
+	// Will return false if the selection is invalid and this should be indicated to the user.
+	// Will return null/undefined if a selection invalid but no error should be reported.
+	computeSelection: function(span0, span1) {
+		var span = this.computeSelectionSpan(span0, span1);
 
-		dates.sort(compareNumbers); // sorts chronologically. works with Moments
-
-		range = {
-			start: dates[0].clone(),
-			end: dates[3].clone()
-		};
-
-		if (!this.view.calendar.isSelectionRangeAllowed(range)) {
-			return null;
+		if (span && !this.view.calendar.isSelectionSpanAllowed(span)) {
+			return false;
 		}
 
-		return range;
+		return span;
 	},
 
 
-	selectionRangeToSegs: function(range) {
-		return this.rangeToSegs(range);
+	// Given two spans, must return the combination of the two.
+	// TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
+	computeSelectionSpan: function(span0, span1) {
+		var dates = [ span0.start, span0.end, span1.start, span1.end ];
+
+		dates.sort(compareNumbers); // sorts chronologically. works with Moments
+
+		return { start: dates[0].clone(), end: dates[3].clone() };
 	},
 
 
@@ -500,9 +463,9 @@ var Grid = fc.Grid = RowRenderer.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders an emphasis on the given date range. Given an array of segments.
-	renderHighlight: function(segs) {
-		this.renderFill('highlight', segs);
+	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
+	renderHighlight: function(span) {
+		this.renderFill('highlight', this.spanToSegs(span));
 	},
 
 
@@ -518,8 +481,38 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
-	/* Fill System (highlight, background events, business hours)
+	/* Business Hours
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderBusinessHours: function() {
+	},
+
+
+	unrenderBusinessHours: function() {
+	},
+
+
+	/* Now Indicator
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	getNowIndicatorUnit: function() {
+	},
+
+
+	renderNowIndicator: function(date) {
+	},
+
+
+	unrenderNowIndicator: function() {
+	},
+
+
+	/* Fill System (highlight, background events, business hours)
+	--------------------------------------------------------------------------------------------------------------------
+	TODO: remove this system. like we did in TimeGrid
+	*/
 
 
 	// Renders a set of rectangles over the given segments of time.
@@ -606,55 +599,15 @@ var Grid = fc.Grid = RowRenderer.extend({
 	},
 
 
+
 	/* Generic rendering utilities for subclasses
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a day-of-week header row.
-	// TODO: move to another class. not applicable to all Grids
-	headHtml: function() {
-		return '' +
-			'<div class="fc-row ' + this.view.widgetHeaderClass + '">' +
-				'<table>' +
-					'<thead>' +
-						this.rowHtml('head') + // leverages RowRenderer
-					'</thead>' +
-				'</table>' +
-			'</div>';
-	},
-
-
-	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
-	// TODO: move to another class. not applicable to all Grids
-	headCellHtml: function(cell) {
-		var view = this.view;
-		var date = cell.start;
-
-		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
-				htmlEscape(date.format(this.colHeadFormat)) +
-			'</th>';
-	},
-
-
-	// Renders the HTML for a single-day background cell
-	bgCellHtml: function(cell) {
-		var view = this.view;
-		var date = cell.start;
-		var classes = this.getDayClasses(date);
-
-		classes.unshift('fc-day', view.widgetContentClass);
-
-		return '<td class="' + classes.join(' ') + '"' +
-			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
-			'></td>';
-	},
-
-
-	// Computes HTML classNames for a single-day cell
+	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date) {
 		var view = this.view;
-		var today = view.calendar.getNow().stripTime();
+		var today = view.calendar.getNow();
 		var classes = [ 'fc-' + dayIDs[date.day()] ];
 
 		if (

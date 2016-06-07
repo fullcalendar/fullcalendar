@@ -15,7 +15,7 @@ describe('removeEventSource', function() {
 	});
 
 	afterEach(function() {
-		$.mockjaxClear();
+		$.mockjax.clear();
 	});
 
 	describe('with a URL', function() {

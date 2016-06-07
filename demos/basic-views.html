@@ -4,8 +4,10 @@
 <meta charset='utf-8' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link href='../lib/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet' />
 <script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../lib/bootstrap/dist/js/bootstrap.min.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
@@ -17,63 +19,81 @@
 				center: 'title',
 				right: 'month,basicWeek,basicDay'
 			},
-			defaultDate: '2015-02-12',
+			defaultDate: '2016-05-12',
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
+			eventLimitRender:
+			function(opts) {
+			  opts.moreEl.tooltip({
+			    html: true,
+			    animation: false,
+			    title: opts.hiddenSegs.reduce(
+			      function(value, item) {
+			        return value
+			          + '<div class="text-overflow">'
+			          + item.event.start.format('h:mm A')
+			          + ' - '
+			          + item.event.title
+			          + '</div>';
+			      },
+			      ""
+			    )
+			  });
+			},
 			events: [
 				{
 					title: 'All Day Event',
-					start: '2015-02-01'
+					start: '2016-05-01'
 				},
 				{
 					title: 'Long Event',
-					start: '2015-02-07',
-					end: '2015-02-10'
+					start: '2016-05-07',
+					end: '2016-05-10'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: '2015-02-09T16:00:00'
+					start: '2016-05-09T16:00:00'
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: '2015-02-16T16:00:00'
+					start: '2016-05-16T16:00:00'
 				},
 				{
 					title: 'Conference',
-					start: '2015-02-11',
-					end: '2015-02-13'
+					start: '2016-05-11',
+					end: '2016-05-13'
 				},
 				{
 					title: 'Meeting',
-					start: '2015-02-12T10:30:00',
-					end: '2015-02-12T12:30:00'
+					start: '2016-05-12T10:30:00',
+					end: '2016-05-12T12:30:00'
 				},
 				{
 					title: 'Lunch',
-					start: '2015-02-12T12:00:00'
+					start: '2016-05-12T12:00:00'
 				},
 				{
 					title: 'Meeting',
-					start: '2015-02-12T14:30:00'
+					start: '2016-05-12T14:30:00'
 				},
 				{
 					title: 'Happy Hour',
-					start: '2015-02-12T17:30:00'
+					start: '2016-05-12T17:30:00'
 				},
 				{
 					title: 'Dinner',
-					start: '2015-02-12T20:00:00'
+					start: '2016-05-12T20:00:00'
 				},
 				{
 					title: 'Birthday Party',
-					start: '2015-02-13T07:00:00'
+					start: '2016-05-13T07:00:00'
 				},
 				{
 					title: 'Click for Google',
 					url: 'http://google.com/',
-					start: '2015-02-28'
+					start: '2016-05-28'
 				}
 			]
 		});
@@ -100,6 +120,6 @@
 <body>
 
 	<div id='calendar'></div>
-
+<button class="btn btn-success">Success</button>
 </body>
 </html>

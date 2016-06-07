@@ -24,27 +24,27 @@ module.exports = function(config) {
 			'../lib/jquery/dist/jquery.js',
 			'../lib/jquery-ui/jquery-ui.js',
 
-			// for jquery simulate
-			'../lib/jquery-simulate-ext/libs/bililiteRange.js',
-			'../lib/jquery-simulate-ext/libs/jquery.simulate.js',
-			'../lib/jquery-simulate-ext/src/jquery.simulate.ext.js',
-			'../lib/jquery-simulate-ext/src/jquery.simulate.drag-n-drop.js',
-			'../lib/jquery-simulate-ext/src/jquery.simulate.key-sequence.js',
-			'../lib/jquery-simulate-ext/src/jquery.simulate.key-combo.js',
-			'../tests/lib/jquery-simulate-hacks.js', // needs to be last
-
-			'../lib/jquery-mockjax/jquery.mockjax.js',
+			'../lib/jquery-simulate/jquery.simulate.js',
+			'../lib/jquery-mockjax/dist/jquery.mockjax.js',
 			'../lib/jasmine-jquery/lib/jasmine-jquery.js',
 			'../lib/jasmine-fixture/dist/jasmine-fixture.js',
+
 			'../tests/lib/jasmine-ext.js',
+			'../tests/lib/simulate.js',
 			'../tests/lib/dom-utils.js',
 			'../tests/lib/dnd-resize-utils.js',
+
+			'../tests/lib/time-grid.js',
 
 			'../dist/fullcalendar.js',
 			'../dist/gcal.js',
 			'../dist/lang-all.js',
 			'../dist/fullcalendar.css',
 			'../tests/base.css',
+
+			// For testing if scheduler's JS, even when not actived, screws anything up
+			//'../../fullcalendar-scheduler/dist/scheduler.js',
+			//'../../fullcalendar-scheduler/dist/scheduler.css',
 
 			// For IE8 testing. Because it can't handle running all the tests at once.
 			// Comment out the *.js line and run karma with each of the lines below.

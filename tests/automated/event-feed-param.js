@@ -24,7 +24,7 @@ describe('event feed params', function() {
 	});
 
 	afterEach(function() {
-		$.mockjaxClear();
+		$.mockjax.clear();
 	});
 
 	it('utilizes custom startParam, endParam, and timezoneParam names', function() {

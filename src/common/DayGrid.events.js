@@ -98,7 +98,7 @@ DayGrid.mixin({
 		var isResizableFromEnd = !disableResizing && event.allDay &&
 			seg.isEnd && view.isEventResizableFromEnd(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getEventSkinCss(event));
+		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeHtml = '';
 		var timeText;
 		var titleHtml;
@@ -221,7 +221,7 @@ DayGrid.mixin({
 			}
 
 			emptyCellsUntil(colCnt); // finish off the row
-			this.bookendCells(tr, 'eventSkeleton');
+			this.bookendCells(tr);
 			tbody.append(tr);
 		}
 
@@ -245,7 +245,7 @@ DayGrid.mixin({
 
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
-		this.sortSegs(segs);
+		this.sortEventSegs(segs);
 		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];

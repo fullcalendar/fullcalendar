@@ -13,6 +13,7 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 		var slatIndex;
 		var slatEl;
 		var dx, dy;
+		var allowed;
 
 		if (eventsRendered) { return; }
 		eventsRendered = true;
@@ -45,43 +46,40 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 		dx = dayEl.offset().left - eventEl.offset().left;
 
 		dragEl.simulate('drag', {
-			dx: dx || 1,
-			dy: dy || 1,
-			callback: function() {
-				var allowed = !$('body').hasClass('fc-not-allowed');
+			dx: dx,
+			dy: dy,
+			onBeforeRelease: function() {
+				allowed = !$('body').hasClass('fc-not-allowed');
 				expect(allowed).toBe(expectSuccess);
+			},
+			onRelease: function() {
+				var eventObj;
+				var successfulDrop;
 
-				dragEl.simulate('drop', {
-					callback: function() {
-						var eventObj;
-						var successfulDrop;
+				if (!isDraggingExternal) { // if dragging an event within the calendar, check dates
 
-						if (!isDraggingExternal) { // if dragging an event within the calendar, check dates
-
-							if (eventClassName) {
-								eventObj = calendar.clientEvents(function(o) {
-									return o.className.join(' ') === eventClassName;
-								})[0];
-							}
-							else {
-								eventObj = calendar.clientEvents()[0];
-							}
-
-							if (dropDate.hasTime()) { // dropped on a slot
-								successfulDrop = eventObj.start.format() == dropDate.format(); // compare exact times
-							}
-							else { // dropped on a whole day
-								// only compare days
-								successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD');
-							}
-
-							expect(successfulDrop).toBe(allowed);
-							expect(successfulDrop).toBe(expectSuccess);
-						}
-
-						callback();
+					if (eventClassName) {
+						eventObj = calendar.clientEvents(function(o) {
+							return o.className.join(' ') === eventClassName;
+						})[0];
 					}
-				});
+					else {
+						eventObj = calendar.clientEvents()[0];
+					}
+
+					if (dropDate.hasTime()) { // dropped on a slot
+						successfulDrop = eventObj.start.format() == dropDate.format(); // compare exact times
+					}
+					else { // dropped on a whole day
+						// only compare days
+						successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD');
+					}
+
+					expect(successfulDrop).toBe(allowed);
+					expect(successfulDrop).toBe(expectSuccess);
+				}
+
+				callback();
 			}
 		});
 	};
@@ -101,6 +99,7 @@ function testEventResize(options, resizeDate, expectSuccess, callback, eventClas
 		var eventEl;
 		var dragEl;
 		var dx, dy;
+		var allowed;
 
 		if (eventsRendered) { return; }
 		eventsRendered = true;
@@ -126,23 +125,21 @@ function testEventResize(options, resizeDate, expectSuccess, callback, eventClas
 		expect(dragEl.length).toBe(1);
 		dx = lastDayEl.offset().left + lastDayEl.outerWidth() - 2 - (eventEl.offset().left + eventEl.outerWidth());
 
+		dragEl.simulate('mouseover'); // resizer only shows up on mouseover
 		dragEl.simulate('drag', {
-			dx: dx || 1,
-			dy: dy || 1,
-			callback: function() {
-				var allowed = !$('body').hasClass('fc-not-allowed');
+			dx: dx,
+			dy: dy,
+			onBeforeRelease: function() {
+				allowed = !$('body').hasClass('fc-not-allowed');
+			},
+			onRelease: function() {
+				var eventObj = calendar.clientEvents()[0];
+				var successfulDrop = eventObj.end && eventObj.end.format() === resizeDate.format();
 
-				dragEl.simulate('drop', {
-					callback: function() {
-						var eventObj = calendar.clientEvents()[0];
-						var successfulDrop = eventObj.end && eventObj.end.format() === resizeDate.format();
-
-						expect(allowed).toBe(successfulDrop);
-						expect(allowed).toBe(expectSuccess);
-						expect(successfulDrop).toBe(expectSuccess);
-						callback();
-					}
-				});
+				expect(allowed).toBe(successfulDrop);
+				expect(allowed).toBe(expectSuccess);
+				expect(successfulDrop).toBe(expectSuccess);
+				callback();
 			}
 		});
 	};
@@ -159,6 +156,7 @@ function testSelection(options, startTime, end, expectSuccess, callback) {
 	var firstSlatEl, lastSlatEl;
 	var dx, dy;
 	var dragEl;
+	var allowed;
 
 	options.selectable = true;
 	options.select = function(selectionStart, selectionEnd) {
@@ -199,22 +197,19 @@ function testSelection(options, startTime, end, expectSuccess, callback) {
 	dx = lastDayEl.offset().left - firstDayEl.offset().left;
 
 	dragEl.simulate('drag', {
-		dx: dx || 1,
-		dy: dy || 1,
-		callback: function() {
-			var allowed = !$('body').hasClass('fc-not-allowed');
-
-			dragEl.simulate('drop', {
-				callback: function() {
-					if (expectSuccess) {
-						expect(options.select).toHaveBeenCalled();
-					}
-					expect(expectSuccess).toBe(allowed);
-					expect(expectSuccess).toBe(successfulSelection);
-					expect(allowed).toBe(successfulSelection);
-					callback();
-				}
-			});
+		dx: dx,
+		dy: dy,
+		onBeforeRelease: function() {
+			allowed = !$('body').hasClass('fc-not-allowed');
+		},
+		onRelease: function() {
+			if (expectSuccess) {
+				expect(options.select).toHaveBeenCalled();
+			}
+			expect(expectSuccess).toBe(allowed);
+			expect(expectSuccess).toBe(successfulSelection);
+			expect(allowed).toBe(successfulSelection);
+			callback();
 		}
 	});
 }

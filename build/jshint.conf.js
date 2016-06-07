@@ -14,7 +14,7 @@ module.exports = {
 		es3: true,
 		bitwise: true,
 		curly: true,
-		forin: true,
+		//forin: true, // couldn't handle `for (k in o) if (!`
 		freeze: true,
 		immed: true,
 		noarg: true,
@@ -35,8 +35,8 @@ module.exports = {
 		options: {
 			// Built modules are ready to be checked for...
 			undef: true, // use of undeclared globals
-			unused: 'vars', // functions/variables (excluding function arguments) that are never used
-			latedef: 'nofunc' // variables that are referenced before their `var` statement
+			unused: 'vars' // functions/variables (excluding function arguments) that are never used
+			//latedef: 'nofunc' // variables that are referenced before their `var` statement // TODO: revisit
 		},
 		src: [
 			'dist/*.js',

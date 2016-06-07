@@ -25,6 +25,8 @@ Calendar.defaults = {
 	
 	//editable: false,
 
+	//nowIndicator: false,
+
 	scrollTime: '06:00:00',
 	
 	// event ajax
@@ -85,7 +87,9 @@ Calendar.defaults = {
 	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
-	windowResizeDelay: 200 // milliseconds before an updateSize happens
+	windowResizeDelay: 200, // milliseconds before an updateSize happens
+
+	longPressDelay: 1000
 	
 };
 
