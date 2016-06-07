@@ -4,10 +4,8 @@
 <meta charset='utf-8' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<link href='../lib/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet' />
 <script src='../lib/moment/moment.js'></script>
 <script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../lib/bootstrap/dist/js/bootstrap.min.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
@@ -22,24 +20,6 @@
 			defaultDate: '2016-05-12',
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
-			eventLimitRender:
-			function(opts) {
-			  opts.moreEl.tooltip({
-			    html: true,
-			    animation: false,
-			    title: opts.hiddenSegs.reduce(
-			      function(value, item) {
-			        return value
-			          + '<div class="text-overflow">'
-			          + item.event.start.format('h:mm A')
-			          + ' - '
-			          + item.event.title
-			          + '</div>';
-			      },
-			      ""
-			    )
-			  });
-			},
 			events: [
 				{
 					title: 'All Day Event',
@@ -120,6 +100,6 @@
 <body>
 
 	<div id='calendar'></div>
-<button class="btn btn-success">Success</button>
+
 </body>
 </html>
