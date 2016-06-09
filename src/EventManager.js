@@ -17,6 +17,7 @@ function EventManager(options) { // assumed to be a calendar
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
+	t.getEventSources = getEventSources;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -227,7 +228,12 @@ function EventManager(options) { // assumed to be a calendar
 	
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
+
+	function getEventSources() {
+		return sources.slice(1); // returns a shallow copy of sources with stickySource removed
+	}
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
