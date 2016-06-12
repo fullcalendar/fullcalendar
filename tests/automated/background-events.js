@@ -369,7 +369,7 @@ describe('background events', function() {
 			options.defaultView = 'agendaWeek';
 		});
 
-		describe('when LTR', function(done) {
+		describe('when LTR', function() {
 			it('render correctly on one day', function(done) {
 				options.events = [ {
 					start: '2014-11-04T01:00:00',
