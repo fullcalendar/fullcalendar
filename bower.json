@@ -23,7 +23,7 @@
   },
   "copyright": "2016 Adam Shaw",
   "dependencies": {
-    "jquery": ">=1.7.1",
+    "jquery": ">=1.7.1 && <=2.1.3",
     "moment": ">=2.5.0"
   },
   "devDependencies": {
