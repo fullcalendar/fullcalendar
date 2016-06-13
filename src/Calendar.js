@@ -270,6 +270,7 @@ function Calendar_constructor(element, overrides) {
 	t.render = render;
 	t.destroy = destroy;
 	t.refetchEvents = refetchEvents;
+	t.refetchEventSources = refetchEventSources;
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
 	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
@@ -704,6 +705,14 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
+	function refetchEventSources(eventSources) {
+		if (eventSources && !$.isArray(eventSources)) {
+			eventSources = [ eventSources ];
+		}
+		fetchAndRenderEvents(eventSources);
+	}
+
+
 	function renderEvents() { // destroys old events if previously rendered
 		if (elementVisible()) {
 			freezeContentHeight();
@@ -730,8 +739,8 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function fetchAndRenderEvents() {
-		fetchEvents(currentView.start, currentView.end);
+	function fetchAndRenderEvents(eventSources) {
+		fetchEvents(currentView.start, currentView.end, eventSources);
 			// ... will call reportEvents
 			// ... which will call renderEvents
 	}

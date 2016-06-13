@@ -64,15 +64,25 @@ function EventManager(options) { // assumed to be a calendar
 	}
 	
 	
-	function fetchEvents(start, end) {
+	function fetchEvents(start, end, eventSources) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
+		cache = eventSources ? cache : [];
 		var fetchID = ++currentFetchID;
-		var len = sources.length;
+		var len = eventSources ? eventSources.length : sources.length;
 		pendingSourceCnt = len;
+		function checkSources(e) {
+			return !isSourcesEqual(e.source, source);
+		}
 		for (var i=0; i<len; i++) {
-			fetchEventSource(sources[i], fetchID);
+			var source = eventSources ? eventSources[i] : sources[i];
+
+			if (eventSources) {
+        		// remove events from the cache that are part of the source being refetched
+        		cache = $.grep(cache, checkSources);
+    		}
+
+			fetchEventSource(source, fetchID);
 		}
 	}
 	
