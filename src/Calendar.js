@@ -706,6 +706,7 @@ function Calendar_constructor(element, overrides) {
 
 
 	function refetchEventSources(eventSources) {
+		// if eventSources isn't an array (i.e. one event source), add it to an array
 		if (eventSources && !$.isArray(eventSources)) {
 			eventSources = [ eventSources ];
 		}
