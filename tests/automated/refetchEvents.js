@@ -1,4 +1,4 @@
-ddescribe('refetchEvents', function() {
+describe('refetchEvents', function() {
 	describe('when agenda events are rerendered', function() {
 		beforeEach(function() {
 			affix('#cal');
