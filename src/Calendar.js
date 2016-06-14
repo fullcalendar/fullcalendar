@@ -461,6 +461,7 @@ function Calendar_constructor(element, overrides) {
 	EventManager.call(t, options);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
+	var fetchEventSources = t.fetchEventSources;
 
 
 
@@ -705,12 +706,12 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function refetchEventSources(eventSources) {
+	function refetchEventSources(eventSources, shouldClearAll) {
 		// if eventSources isn't an array (i.e. one event source), add it to an array
 		if (eventSources && !$.isArray(eventSources)) {
 			eventSources = [ eventSources ];
 		}
-		fetchAndRenderEvents(eventSources);
+		fetchEventSources(eventSources, shouldClearAll);
 	}
 
 
@@ -740,8 +741,8 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function fetchAndRenderEvents(eventSources) {
-		fetchEvents(currentView.start, currentView.end, eventSources);
+	function fetchAndRenderEvents() {
+		fetchEvents(currentView.start, currentView.end);
 			// ... will call reportEvents
 			// ... which will call renderEvents
 	}

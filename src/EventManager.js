@@ -17,6 +17,7 @@ function EventManager(options) { // assumed to be a calendar
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
+	t.fetchEventSources = fetchEventSources;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -64,29 +65,39 @@ function EventManager(options) { // assumed to be a calendar
 	}
 	
 	
-	function fetchEvents(start, end, eventSources) {
+	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = eventSources ? cache : [];
+		cache = [];
 		var fetchID = ++currentFetchID;
-		var len = eventSources ? eventSources.length : sources.length;
+		var len = sources.length;
 		pendingSourceCnt = len;
-		function checkSources(e) {
-			return !isSourcesEqual(e.source, source);
-		}
 		for (var i=0; i<len; i++) {
-			var source = eventSources ? eventSources[i] : sources[i];
-
-			if (eventSources) {
-        		// remove events from the cache that are part of the source being refetched
-        		cache = $.grep(cache, checkSources);
-    		}
-
-			fetchEventSource(source, fetchID);
+			fetchEventSource(sources[i], fetchID);
 		}
 	}
-	
-	
+
+
+	function fetchEventSources(eventSources, shouldClearAll) {
+		if (shouldClearAll) {
+			cache = [];
+		}
+		var fetchID = ++currentFetchID;
+		var len = eventSources.length;
+		pendingSourceCnt += len;
+		function checkSources(e) {
+			return !isSourcesEqual(e.source, eventSources[i]);
+		}
+		for (var i=0; i<len; i++) {
+			if (!shouldClearAll) {
+        		// remove events from the cache that belong to the source being refetched
+        		cache = $.grep(cache, checkSources);
+        	}
+        	fetchEventSource(eventSources[i], fetchID);
+        }
+	}
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
