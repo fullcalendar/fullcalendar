@@ -1,5 +1,6 @@
 describe('getEventSources', function() {
 	var options;
+	var calendarEl;
 
 	beforeEach(function() {
 		affix('#cal');
