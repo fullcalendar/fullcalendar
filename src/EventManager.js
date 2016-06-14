@@ -84,11 +84,11 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		for (var i=0; i<len; i++) {
 			if (!shouldClearAll) {
-        		// remove events from the cache that belong to the source being refetched
-        		cache = $.grep(cache, checkSources);
-        	}
-        	fetchEventSource(specificSources[i], fetchID);
-        }
+				// remove events from the cache that belong to the source being refetched
+				cache = $.grep(cache, checkSources);
+			}
+			fetchEventSource(specificSources[i], fetchID);
+		}
 	}
 
 
