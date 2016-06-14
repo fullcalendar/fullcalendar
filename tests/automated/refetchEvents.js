@@ -1,4 +1,4 @@
-describe('refetchEvents', function() {
+ddescribe('refetchEvents', function() {
 	describe('when agenda events are rerendered', function() {
 		beforeEach(function() {
 			affix('#cal');
@@ -56,17 +56,17 @@ describe('refetchEvents', function() {
 				defaultView: 'agendaWeek',
 				eventSources: [
 					{
-						events: createEvents(1),
+						events: createEvents(),
 						color: 'green',
 						id: 'source1'
 					},
 					{
-						events: createEvents(2),
+						events: createEvents(),
 						color: 'blue',
 						id: 'source2'
 					},
 					{
-						events: createEvents(3),
+						events: createEvents(),
 						color: 'red',
 						id: 'source3'
 					}
@@ -88,7 +88,16 @@ describe('refetchEvents', function() {
 		describe('and one event source is asynchronous', function() {
 			it('original events remain on the calendar until all events have been refetched', function(done) {
 				count = 0;
-				options.eventSources[0].events = createEvents(1, 100); // set a 100ms timeout on this event source
+				// set a 100ms timeout on this event source
+				options.eventSources[0].events = function(start, end, timezone, callback) {
+					var events = [
+						{ id: '1', start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + count }
+					];
+
+					setTimeout(function() {
+						callback(events);
+					}, 100);
+				};
 				options.eventAfterAllRender = function() {
 					count++;
 					if (count === 1) {
@@ -109,20 +118,13 @@ describe('refetchEvents', function() {
 			});
 		});
 
-		function createEvents(id, delay) {
+		function createEvents() {
 			return function(start, end, timezone, callback) {
 				var events = [
 					{ id: 1, start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + count }
 				];
 
-				if (delay) {
-					setTimeout(function() {
-						callback(events);
-					}, delay);
-				}
-				else {
-					callback(events);
-				}
+				callback(events);
 			};
 		}
 
