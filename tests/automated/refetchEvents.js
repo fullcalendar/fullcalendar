@@ -45,7 +45,7 @@ ddescribe('refetchEvents', function() {
 
 	describe('when there are multiple event sources', function() {
 		var options;
-		var count;
+		var fetchCount;
 		var currentCalendar;
 
 		beforeEach(function() {
@@ -56,17 +56,17 @@ ddescribe('refetchEvents', function() {
 				defaultView: 'agendaWeek',
 				eventSources: [
 					{
-						events: createEvents(),
+						events: createEventGenerator(),
 						color: 'green',
 						id: 'source1'
 					},
 					{
-						events: createEvents(),
+						events: createEventGenerator(),
 						color: 'blue',
 						id: 'source2'
 					},
 					{
-						events: createEvents(),
+						events: createEventGenerator(),
 						color: 'red',
 						id: 'source3'
 					}
@@ -76,9 +76,9 @@ ddescribe('refetchEvents', function() {
 
 		describe('and all events are fetched synchronously', function() {
 			it('all events are immediately updated', function(done) {
-				count = 0;
+				fetchCount = 0;
 				currentCalendar.fullCalendar(options);
-				count++;
+				fetchCount++;
 				currentCalendar.fullCalendar('refetchEvents');
 				checkAllEvents();
 				done();
@@ -87,11 +87,11 @@ ddescribe('refetchEvents', function() {
 
 		describe('and one event source is asynchronous', function() {
 			it('original events remain on the calendar until all events have been refetched', function(done) {
-				count = 0;
+				fetchCount = 0;
 				// set a 100ms timeout on this event source
 				options.eventSources[0].events = function(start, end, timezone, callback) {
 					var events = [
-						{ id: '1', start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + count }
+						{ id: '1', start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + fetchCount }
 					];
 
 					setTimeout(function() {
@@ -99,8 +99,8 @@ ddescribe('refetchEvents', function() {
 					}, 100);
 				};
 				options.eventAfterAllRender = function() {
-					count++;
-					if (count === 1) {
+					fetchCount++;
+					if (fetchCount === 1) {
 						// after the initial rendering of events, call refetchEvents
 						currentCalendar.fullCalendar('refetchEvents');
 
@@ -118,10 +118,10 @@ ddescribe('refetchEvents', function() {
 			});
 		});
 
-		function createEvents() {
+		function createEventGenerator() {
 			return function(start, end, timezone, callback) {
 				var events = [
-					{ id: 1, start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + count }
+					{ id: 1, start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + fetchCount }
 				];
 
 				callback(events);
