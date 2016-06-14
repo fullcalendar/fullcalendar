@@ -80,7 +80,7 @@ function EventManager(options) { // assumed to be a calendar
 		var len = specificSources.length;
 		pendingSourceCnt += len;
 		function checkSources(e) {
-			return !isSourcesEqual(e.source, specificSources[i]);
+			return e.source !== specificSources[i];
 		}
 		for (var i=0; i<len; i++) {
 			if (!shouldClearAll) {
