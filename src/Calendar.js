@@ -706,12 +706,12 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function refetchEventSources(eventSources, shouldClearAll) {
-		// if eventSources isn't an array (i.e. one event source), add it to an array
-		if (eventSources && !$.isArray(eventSources)) {
-			eventSources = [ eventSources ];
+	function refetchEventSources(specificSources, shouldClearAll) {
+		// if specificSources isn't an array (i.e. one event source), add it to an array
+		if (specificSources && !$.isArray(specificSources)) {
+			specificSources = [ specificSources ];
 		}
-		fetchEventSources(eventSources, shouldClearAll);
+		fetchEventSources(specificSources, shouldClearAll);
 	}
 
 

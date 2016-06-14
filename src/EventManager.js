@@ -78,22 +78,22 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	function fetchEventSources(eventSources, shouldClearAll) {
+	function fetchEventSources(specificSources, shouldClearAll) {
 		if (shouldClearAll) {
 			cache = [];
 		}
 		var fetchID = ++currentFetchID;
-		var len = eventSources.length;
+		var len = specificSources.length;
 		pendingSourceCnt += len;
 		function checkSources(e) {
-			return !isSourcesEqual(e.source, eventSources[i]);
+			return !isSourcesEqual(e.source, specificSources[i]);
 		}
 		for (var i=0; i<len; i++) {
 			if (!shouldClearAll) {
         		// remove events from the cache that belong to the source being refetched
         		cache = $.grep(cache, checkSources);
         	}
-        	fetchEventSource(eventSources[i], fetchID);
+        	fetchEventSource(specificSources[i], fetchID);
         }
 	}
 
