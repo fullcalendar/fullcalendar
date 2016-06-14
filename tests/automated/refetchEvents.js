@@ -50,6 +50,7 @@ ddescribe('refetchEvents', function() {
 
 		beforeEach(function() {
 			affix('#cal');
+			fetchCount = 0;
 			currentCalendar = $('#cal');
 			options = {
 				now: '2015-08-07',
@@ -76,7 +77,6 @@ ddescribe('refetchEvents', function() {
 
 		describe('and all events are fetched synchronously', function() {
 			it('all events are immediately updated', function(done) {
-				fetchCount = 0;
 				currentCalendar.fullCalendar(options);
 				fetchCount++;
 				currentCalendar.fullCalendar('refetchEvents');
@@ -87,7 +87,6 @@ ddescribe('refetchEvents', function() {
 
 		describe('and one event source is asynchronous', function() {
 			it('original events remain on the calendar until all events have been refetched', function(done) {
-				fetchCount = 0;
 				// set a 100ms timeout on this event source
 				options.eventSources[0].events = function(start, end, timezone, callback) {
 					var events = [
