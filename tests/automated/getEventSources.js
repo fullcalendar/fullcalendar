@@ -3,6 +3,7 @@ describe('getEventSources', function() {
 
 	beforeEach(function() {
 		affix('#cal');
+		calendarEl = $('#cal');
 		options = {
 			now: '2015-08-07',
 			defaultView: 'agendaWeek',
@@ -27,15 +28,14 @@ describe('getEventSources', function() {
 	});
 
 	it('does not mutate when removeEventSource is called', function(done) {
-		var currentCalendar = $('#cal');
 		var eventSources;
 
-		currentCalendar.fullCalendar(options);
+		calendarEl.fullCalendar(options);
 
-		eventSources = currentCalendar.fullCalendar('getEventSources');
+		eventSources = calendarEl.fullCalendar('getEventSources');
 		expect(eventSources.length).toBe(3);
 
-		currentCalendar.fullCalendar('removeEventSource', eventSources[0]);
+		calendarEl.fullCalendar('removeEventSource', eventSources[0]);
 		expect(eventSources.length).toBe(3);
 
 		done();
