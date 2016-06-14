@@ -12,7 +12,6 @@ var BasicView = FC.BasicView = View.extend({
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
 	dayNumbersVisible: false, // display day numbers on each day cell?
-	weekNumbersVisible: false, // display week numbers?
 	colWeekNumbersVisible: false, // display week numbers along the side?
 	cellWeekNumbersVisible: false, // display week numbers in day cell?
 
@@ -75,17 +74,18 @@ var BasicView = FC.BasicView = View.extend({
 	renderDates: function() {
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
-		this.weekNumbersVisible = this.opt('weekNumbers');
-		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
-		if (this.weekNumbersVisible) {
+		if (this.opt('weekNumbers')) {
 			if (this.opt('basicViewWeekNrPosition') === 'weekNrDayCell') {
 				this.cellWeekNumbersVisible = true;
 				this.colWeekNumbersVisible = false;
-			} else {
+			}
+			else {
 				this.cellWeekNumbersVisible = false;
 				this.colWeekNumbersVisible = true;
 			};
 		}
+		this.dayGrid.numbersVisible = this.dayNumbersVisible ||
+			this.cellWeekNumbersVisible || this.colWeekNumbersVisible;
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
 		this.renderHead();
