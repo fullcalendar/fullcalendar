@@ -46,12 +46,12 @@ ddescribe('refetchEvents', function() {
 	describe('when there are multiple event sources', function() {
 		var options;
 		var fetchCount;
-		var currentCalendar;
+		var calendarEl;
 
 		beforeEach(function() {
 			affix('#cal');
 			fetchCount = 0;
-			currentCalendar = $('#cal');
+			calendarEl = $('#cal');
 			options = {
 				now: '2015-08-07',
 				defaultView: 'agendaWeek',
@@ -77,9 +77,9 @@ ddescribe('refetchEvents', function() {
 
 		describe('and all events are fetched synchronously', function() {
 			it('all events are immediately updated', function(done) {
-				currentCalendar.fullCalendar(options);
+				calendarEl.fullCalendar(options);
 				fetchCount++;
-				currentCalendar.fullCalendar('refetchEvents');
+				calendarEl.fullCalendar('refetchEvents');
 				checkAllEvents();
 				done();
 			});
@@ -101,7 +101,7 @@ ddescribe('refetchEvents', function() {
 					fetchCount++;
 					if (fetchCount === 1) {
 						// after the initial rendering of events, call refetchEvents
-						currentCalendar.fullCalendar('refetchEvents');
+						calendarEl.fullCalendar('refetchEvents');
 
 						expect($('.fetch0').length).toEqual(3); // original events still on the calendar
 						expect($('.fetch1').length).toEqual(0); // new events not yet refetched
@@ -113,7 +113,7 @@ ddescribe('refetchEvents', function() {
 					}
 				};
 
-				currentCalendar.fullCalendar(options);
+				calendarEl.fullCalendar(options);
 			});
 		});
 
