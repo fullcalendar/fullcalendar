@@ -31,16 +31,17 @@ describe('getEventSource', function() {
 		};
 	});
 
-	it('does not mutate when removeEventSource is called', function(done) {
-		var eventSource;
+	it('retreives the queried event source', function(done) {
+		var eventSource1;
+		var eventSource2;
 
 		calendarEl.fullCalendar(options);
 
-		eventSource = calendarEl.fullCalendar('getEventSource', 'source1');
-		expect(typeof eventSource).toBe('object');
+		eventSource1 = calendarEl.fullCalendar('getEventSource', 'source1');
+		eventSource2 = calendarEl.fullCalendar('getEventSource', 'source2');
 
-		calendarEl.fullCalendar('removeEventSource', eventSource);
-		expect(typeof eventSource).toBe('object'); // instead of 'undefined'
+		expect(eventSource1.id).toBe('source1');
+		expect(eventSource2.id).toBe('source2');
 
 		done();
 	});
