@@ -148,8 +148,12 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		classes.unshift('fc-numbercell');
 
 		if (this.view.cellWeekNumbersVisible) {
-			weekCalcFirstDoW = (date._locale || date._lang).
-				_fullCalendar_weekCalcFirstDoW;
+			if ((date._locale || date._lang)._fullCalendar_weekCalc === 'ISO') {
+				weekCalcFirstDoW = 1;
+			}
+			else {
+				weekCalcFirstDoW = (date._locale || date._lang).firstDayOfWeek();
+			}
 		}
 
 		return '' +

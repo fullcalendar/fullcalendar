@@ -332,48 +332,6 @@ function Calendar_constructor(element, overrides) {
 		}
 	})(options.weekNumberCalculation);
 
-	// Store the first day of the week according to the week number
-	// *calculation* method, not the week *display*.
-	// With ISO: Always 1 (Monday). Is not influenced by the firstDay
-	//   option.
-	// With custom function: Test a sequence of 7 days with the custom
-	//   function to determine on which day of the week the week number
-	//   changes. Is not influenced by the firstDay option.
-	// With local: Set to the value of localeData._week.dow, which will
-	//   contain the value of firstDay, or else will return the dow value
-	//   from a protype, such as the locale or moment's Locale object
-	//   default 0 (Sunday).
-
-	localeData._fullCalendar_weekCalcFirstDoW = (function(weekCalc, localeDoW) {
-		var weekCalcFirstDoW;
-		if (weekCalc === 'ISO') {
-			weekCalcFirstDoW = 1;
-		}
-		else if (typeof weekCalc === 'function') {
-			var i;
-			var m;
-			var wkNr;
-			var wkNrPrev;
-			// Test for first day of week. Start comparing with Sunday (0).
-			m = moment.utc("2015-01-04T00:00Z");
-			wkNrPrev = weekCalc(m);
-			weekCalcFirstDoW = 0; // Assume Sunday.
-			// Check Monday through Saturday for change in week number.
-			for (i = 1; i < 7; i++) {
-				m.add(1, 'days');
-				wkNr = weekCalc(m);
-				if (wkNr != wkNrPrev) {
-					weekCalcFirstDoW = i;
-					break;
-				}
-				wkNrPrev = wkNr;
-			}
-		}
-		else if (weekCalc === 'local') {
-			weekCalcFirstDoW = +localeDoW; // Unary plus ensures type number
-		}
-		return weekCalcFirstDoW;
-	})(localeData._fullCalendar_weekCalc, localeData._week.dow);
 
 
 	// Calendar-specific Date Utilities
