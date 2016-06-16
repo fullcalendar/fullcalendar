@@ -53,7 +53,7 @@ describe('refetchEventSources', function() {
 			expect($('.source2').length).toEqual(2);
 			expect($('.source3').length).toEqual(1);
 
-			done();			
+			done();
 		});
 	});
 
@@ -79,7 +79,7 @@ describe('refetchEventSources', function() {
 			expect($('.source2').length).toEqual(1);
 			expect($('.source3').length).toEqual(2);
 
-			done();			
+			done();
 		});
 	});
 
