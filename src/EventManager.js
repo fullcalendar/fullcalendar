@@ -17,6 +17,8 @@ function EventManager(options) { // assumed to be a calendar
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
+	t.fetchEventSources = fetchEventSources;
+	t.getEventSources = getEventSources;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -67,16 +69,30 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
+		fetchEventSources(sources, true);
+	}
+
+
+	function fetchEventSources(specificSources, shouldClearAll) {
+		if (shouldClearAll) {
+			cache = [];
+		}
 		var fetchID = ++currentFetchID;
-		var len = sources.length;
-		pendingSourceCnt = len;
+		var len = specificSources.length;
+		pendingSourceCnt += len;
+		function checkSources(e) {
+			return e.source !== specificSources[i];
+		}
 		for (var i=0; i<len; i++) {
-			fetchEventSource(sources[i], fetchID);
+			if (!shouldClearAll) {
+				// remove events from the cache that belong to the source being refetched
+				cache = $.grep(cache, checkSources);
+			}
+			fetchEventSource(specificSources[i], fetchID);
 		}
 	}
-	
-	
+
+
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
@@ -227,7 +243,12 @@ function EventManager(options) { // assumed to be a calendar
 	
 	/* Sources
 	-----------------------------------------------------------------------------*/
-	
+
+
+	function getEventSources() {
+		return sources.slice(1); // returns a shallow copy of sources with stickySource removed
+	}
+
 
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
