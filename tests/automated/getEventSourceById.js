@@ -31,14 +31,14 @@ describe('getEventSource', function() {
 		};
 	});
 
-	it('retreives the queried event source', function(done) {
+	iit('retreives the queried event source', function(done) {
 		var eventSource1;
 		var eventSource2;
 
 		calendarEl.fullCalendar(options);
 
-		eventSource1 = calendarEl.fullCalendar('getEventSource', 'source1');
-		eventSource2 = calendarEl.fullCalendar('getEventSource', 'source2');
+		eventSource1 = calendarEl.fullCalendar('getEventSourceById', 'source1');
+		eventSource2 = calendarEl.fullCalendar('getEventSourceById', 'source2');
 
 		expect(eventSource1.id).toBe('source1');
 		expect(eventSource2.id).toBe('source2');

@@ -19,7 +19,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.fetchEvents = fetchEvents;
 	t.fetchEventSources = fetchEventSources;
 	t.getEventSources = getEventSources;
-	t.getEventSource = getEventSource;
+	t.getEventSourceById = getEventSourceById;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
@@ -287,7 +287,7 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	function getEventSource(id) {
+	function getEventSourceById(id) {
 		return $.grep(sources, function(src) {
 			return src.id && src.id === id;
 		})[0];
