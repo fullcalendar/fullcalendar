@@ -1,4 +1,4 @@
-ddescribe('refetchEventSources', function() {
+describe('refetchEventSources', function() {
 	var calendarEl;
 	var options;
 
@@ -101,9 +101,12 @@ ddescribe('refetchEventSources', function() {
 	});
 
 	describe('when called while initial fetch is still pending', function() {
-		it('rerenders the new events', function(done) {
+		it('keeps old events and rerenders new', function(done) {
 
 			options.eventAfterAllRender = function() {
+
+				// events from unaffected sources remain
+				expect($('.source2-7').length).toEqual(1);
 
 				// events from old fetch were cleared
 				expect($('.source1-7').length).toEqual(0);
@@ -112,34 +115,6 @@ ddescribe('refetchEventSources', function() {
 				// events from new fetch were rendered
 				expect($('.source1-8').length).toEqual(2);
 				expect($('.source3-8').length).toEqual(2);
-
-				done();
-			};
-
-			fetchDelay = 100;
-			calendarEl.fullCalendar(options);
-
-			var allEventSources = calendarEl.fullCalendar('getEventSources');
-			var greenEventSources = $.grep(allEventSources, function(eventSource) {
-				return eventSource.color === 'green';
-			});
-
-			// increase the number of events for the refetched sources
-			eventCount = 2;
-			fetchId = 8;
-
-			calendarEl.fullCalendar('refetchEventSources', greenEventSources);
-		});
-	});
-
-	describe('when called while initial fetch is still pending', function() {
-		// TODO: once this is fixed, merge with above test
-		xit('maintains old events', function(done) {
-
-			options.eventAfterAllRender = function() {
-
-				// events from unaffected sources remain
-				expect($('.source2-7').length).toEqual(1);
 
 				done();
 			};

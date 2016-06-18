@@ -38,8 +38,7 @@ function EventManager(options) { // assumed to be a calendar
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
-	var currentFetchID = 0;
-	var pendingSourceCnt = 0; // for the current fetchID
+	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
 
 
@@ -69,53 +68,54 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		fetchEventSources(sources, true);
+		fetchEventSources(sources, 'reset');
 	}
 
 
 	// expects an array of event source objects (the originals, not copies)
-	function fetchEventSources(specificSources, shouldClearAll) {
-		var fetchID = ++currentFetchID;
-		var len = specificSources.length;
-		var i;
+	// `specialFetchType` is an optimization parameter that affects purging of the event cache.
+	function fetchEventSources(specificSources, specialFetchType) {
+		var i, source;
 
-		if (shouldClearAll) {
+		if (specialFetchType === 'reset') {
 			cache = [];
 		}
-		else {
+		else if (specialFetchType !== 'add') {
 			cache = excludeEventsBySources(cache, specificSources);
 		}
 
-		pendingSourceCnt = len;
-		for (i = 0; i < len; i++) {
-			fetchEventSource(specificSources[i], fetchID);
+		for (i = 0; i < specificSources.length; i++) {
+			source = specificSources[i];
+
+			// already-pending sources have already been accounted for in pendingSourceCnt
+			if (source._status !== 'pending') {
+				pendingSourceCnt++;
+			}
+
+			source._fetchId = (source._fetchId || 0) + 1;
+			source._status = 'pending';
+		}
+
+		for (i = 0; i < specificSources.length; i++) {
+			source = specificSources[i];
+
+			tryFetchEventSource(source, source._fetchId);
 		}
 	}
 
 
-	// returns a filtered array without events that are part of any of the given sources
-	function excludeEventsBySources(specificEvents, specificSources) {
-		return $.grep(specificEvents, function(event) {
-			for (var i = 0; i < specificSources.length; i++) {
-				if (event.source === specificSources[i]) {
-					return false; // exclude
-				}
-			}
-			return true; // keep
-		});
-	}
-
-
+	// fetches an event source and processes its result ONLY if it is still the current fetch.
 	// caller is responsible for incrementing pendingSourceCnt first.
-	// (done so that caller can increment in batch, preventing single
-	//  synchronous event source fetches from calling reportEvents immediately)
-	function fetchEventSource(source, fetchID) {
+	function tryFetchEventSource(source, fetchId) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
 			var i, eventInput;
 			var abstractEvent;
 
-			if (fetchID == currentFetchID) {
+			// is this the source's most recent fetch?
+			if (fetchId === source._fetchId) {
+
+				source._status = 'resolved';
 
 				if (eventInputs) {
 					for (i = 0; i < eventInputs.length; i++) {
@@ -270,8 +270,7 @@ function EventManager(options) { // assumed to be a calendar
 		var source = buildEventSource(sourceInput);
 		if (source) {
 			sources.push(source);
-			pendingSourceCnt++;
-			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
+			fetchEventSources([ source ], 'add'); // will eventually call reportEvents
 		}
 	}
 
@@ -345,6 +344,20 @@ function EventManager(options) { // assumed to be a calendar
 				null
 		) ||
 		source; // the given argument *is* the primitive
+	}
+
+
+	// util
+	// returns a filtered array without events that are part of any of the given sources
+	function excludeEventsBySources(specificEvents, specificSources) {
+		return $.grep(specificEvents, function(event) {
+			for (var i = 0; i < specificSources.length; i++) {
+				if (event.source === specificSources[i]) {
+					return false; // exclude
+				}
+			}
+			return true; // keep
+		});
 	}
 	
 	
