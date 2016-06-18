@@ -112,9 +112,13 @@ function EventManager(options) { // assumed to be a calendar
 			var i, eventInput;
 			var abstractEvent;
 
-			// is this the source's most recent fetch?
-			if (fetchId === source._fetchId) {
-
+			if (
+				// is this the source's most recent fetch?
+				// if not, rely on an upcoming fetch of this source to decrement pendingSourceCnt
+				fetchId === source._fetchId &&
+				// event source no longer valid?
+				source._status !== 'rejected'
+			) {
 				source._status = 'resolved';
 
 				if (eventInputs) {
@@ -137,12 +141,28 @@ function EventManager(options) { // assumed to be a calendar
 					}
 				}
 
-				pendingSourceCnt--;
-				if (!pendingSourceCnt) {
-					reportEvents(cache);
-				}
+				decrementPendingSourceCnt();
 			}
 		});
+	}
+
+
+	function rejectEventSource(source) {
+		var wasPending = source._status === 'pending';
+
+		source._status = 'rejected';
+
+		if (wasPending) {
+			decrementPendingSourceCnt();
+		}
+	}
+
+
+	function decrementPendingSourceCnt() {
+		pendingSourceCnt--;
+		if (!pendingSourceCnt) {
+			reportEvents(cache);
+		}
 	}
 	
 	
@@ -320,14 +340,25 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	function removeEventSource(source) {
+	function removeEventSource(targetSource) {
+
+		// cancel pending requests
+		for (var i = 0; i < sources.length; i++) {
+			if (isSourcesEqual(sources[i], targetSource)) {
+				rejectEventSource(sources[i]);
+			}
+		}
+
+		// remove from source list
 		sources = $.grep(sources, function(src) {
-			return !isSourcesEqual(src, source);
+			return !isSourcesEqual(src, targetSource);
 		});
+
 		// remove all client events from that source
 		cache = $.grep(cache, function(e) {
-			return !isSourcesEqual(e.source, source);
+			return !isSourcesEqual(e.source, targetSource);
 		});
+
 		reportEvents(cache);
 	}
 

@@ -52,6 +52,46 @@ describe('removeEventSource', function() {
 		});
 	});
 
+	it('won\'t render removed events when subsequent addEventSource', function(done) {
+
+		var source1 = function(start, end, timezone, callback) {
+			setTimeout(function() {
+				callback([{
+					title: 'event1',
+					className: 'event1',
+					start: '2014-08-01T02:00:00'
+				}]);
+			}, 100);
+		};
+
+		var source2 = function(start, end, timezone, callback) {
+			setTimeout(function() {
+				callback([{
+					title: 'event2',
+					className: 'event2',
+					start: '2014-08-01T02:00:00'
+				}]);
+			}, 100);
+		};
+
+		options.eventSources = [ source1 ];
+
+		options.eventAfterAllRender = function() {
+			if (!$('.fc-event').length) {
+				; // might have rendered no events after removeEventSource call
+			}
+			else {
+				expect($('.event1').length).toBe(0);
+				expect($('.event2').length).toBe(1);
+				done();
+			}
+		};
+
+		$('#cal').fullCalendar(options);
+		$('#cal').fullCalendar('removeEventSource', source1);
+		$('#cal').fullCalendar('addEventSource', source2);
+	});
+
 	function testInput(eventInput) {
 
 		it('correctly removes events provided via `events` at initialization', function(done) {
