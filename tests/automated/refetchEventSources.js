@@ -12,20 +12,17 @@ describe('refetchEventSources', function() {
 			defaultView: 'agendaWeek',
 			eventSources: [
 				{
-					events: createEventGenerator('source1', 'A'),
-					color: 'green',
-					id: 'source1'
+					events: createEventGenerator('source1'),
+					color: 'green'
 				},
 				{
-					events: createEventGenerator('source2', 'B'),
-					color: 'blue',
-					id: 'source2'
+					events: createEventGenerator('source2'),
+					color: 'blue'
 				},
 				{
-					events: createEventGenerator('source3', 'C'),
-					color: 'green',
+					events: createEventGenerator('source3'),
 					rendering: 'background',
-					id: 'source3'
+					color: 'green'
 				}
 			]
 		};
@@ -39,14 +36,15 @@ describe('refetchEventSources', function() {
 			expect($('.source2').length).toEqual(1);
 			expect($('.source3').length).toEqual(1);
 
-			var eventSources = $.grep(calendarEl.fullCalendar('getEventSources'), function(eventSource) {
+			var allEventSources = calendarEl.fullCalendar('getEventSources');
+			var blueEventSource = $.grep(allEventSources, function(eventSource) {
 				return eventSource.color === 'blue';
-			});
+			})[0];
 
 			// increase the number of events for the refetched source
 			eventCount = 2;
 
-			calendarEl.fullCalendar('refetchEventSources', eventSources[0]);
+			calendarEl.fullCalendar('refetchEventSources', blueEventSource);
 
 			// ensure events have been updated
 			expect($('.source1').length).toEqual(1);
@@ -65,14 +63,15 @@ describe('refetchEventSources', function() {
 			expect($('.source2').length).toEqual(1);
 			expect($('.source3').length).toEqual(1);
 
-			var eventSources = $.grep(calendarEl.fullCalendar('getEventSources'), function(eventSource) {
+			var allEventSources = calendarEl.fullCalendar('getEventSources');
+			var greenEventSources = $.grep(allEventSources, function(eventSource) {
 				return eventSource.color === 'green';
 			});
 
 			// increase the number of events for the refetched sources
 			eventCount = 2;
 
-			calendarEl.fullCalendar('refetchEventSources', eventSources);
+			calendarEl.fullCalendar('refetchEventSources', greenEventSources);
 
 			// ensure events have been updated
 			expect($('.source1').length).toEqual(2);
@@ -83,17 +82,16 @@ describe('refetchEventSources', function() {
 		});
 	});
 
-	function createEventGenerator(sourceId, eventId) {
+	function createEventGenerator(className) {
 		return function(start, end, timezone, callback) {
 			var events = [];
 
 			for (var i = 0; i < eventCount; i++) {
 				events.push({
-					id: eventId + i,
 					start: '2015-08-07T02:00:00',
 					end: '2015-08-07T03:00:00',
-					title: 'event ' + eventId,
-					className: sourceId
+					className: className,
+					title: className // also make it the title
 				});
 			}
 
