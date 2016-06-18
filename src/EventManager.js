@@ -73,26 +73,42 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
+	// expects an array of event source objects (the originals, not copies)
 	function fetchEventSources(specificSources, shouldClearAll) {
+		var fetchID = ++currentFetchID;
+		var len = specificSources.length;
+		var i;
+
 		if (shouldClearAll) {
 			cache = [];
 		}
-		var fetchID = ++currentFetchID;
-		var len = specificSources.length;
-		pendingSourceCnt += len;
-		function checkSources(e) {
-			return e.source !== specificSources[i];
+		else {
+			cache = excludeEventsBySources(cache, specificSources);
 		}
-		for (var i=0; i<len; i++) {
-			if (!shouldClearAll) {
-				// remove events from the cache that belong to the source being refetched
-				cache = $.grep(cache, checkSources);
-			}
+
+		pendingSourceCnt += len;
+		for (i = 0; i < len; i++) {
 			fetchEventSource(specificSources[i], fetchID);
 		}
 	}
 
 
+	// returns a filtered array without events that are part of any of the given sources
+	function excludeEventsBySources(specificEvents, specificSources) {
+		return $.grep(specificEvents, function(event) {
+			for (var i = 0; i < specificSources.length; i++) {
+				if (event.source === specificSources[i]) {
+					return false; // exclude
+				}
+			}
+			return true; // keep
+		});
+	}
+
+
+	// caller is responsible for incrementing pendingSourceCnt first.
+	// (done so that caller can increment in batch, preventing single
+	//  synchronous event source fetches from calling reportEvents immediately)
 	function fetchEventSource(source, fetchID) {
 		_fetchEventSource(source, function(eventInputs) {
 			var isArraySource = $.isArray(source.events);
