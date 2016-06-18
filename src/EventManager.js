@@ -39,7 +39,7 @@ function EventManager(options) { // assumed to be a calendar
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
 	var currentFetchID = 0;
-	var pendingSourceCnt = 0;
+	var pendingSourceCnt = 0; // for the current fetchID
 	var cache = []; // holds events that have already been expanded
 
 
@@ -86,7 +86,7 @@ function EventManager(options) { // assumed to be a calendar
 			cache = excludeEventsBySources(cache, specificSources);
 		}
 
-		pendingSourceCnt += len;
+		pendingSourceCnt = len;
 		for (i = 0; i < len; i++) {
 			fetchEventSource(specificSources[i], fetchID);
 		}
