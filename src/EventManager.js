@@ -23,7 +23,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.getEventSourcesByMatch = getEventSourcesByMatch;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
-	t.removeEventSources = removeEventSources; // removes ALL
+	t.removeEventSources = removeEventSources;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
@@ -345,9 +345,16 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	// removes ALL event sources
-	function removeEventSources() {
-		removeSpecificEventSources(sources, true); // isAll=true
+	// if called with no arguments, removes all.
+	function removeEventSources(matchInput) {
+		if (matchInput == null) {
+			removeSpecificEventSources(sources, true); // isAll=true
+		}
+		else {
+			removeSpecificEventSources(
+				getEventSourcesByMatch(matchInput)
+			);
+		}
 	}
 
 

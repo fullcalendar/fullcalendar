@@ -706,6 +706,7 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
+	// TODO: move this into EventManager?
 	function refetchEventSources(matchInputs) {
 		if (matchInputs) {
 
