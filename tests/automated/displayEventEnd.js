@@ -43,7 +43,7 @@ describe('displayEventEnd', function() {
 					});
 				});
 
-				describe('with a timed event with no end time', function(done) {
+				describe('with a timed event with no end time', function() {
 					beforeEach(function() {
 						options.events = [ {
 							title: 'timed event',
@@ -102,7 +102,7 @@ describe('displayEventEnd', function() {
 					});
 				});
 
-				describe('with a timed event with no end time', function(done) {
+				describe('with a timed event with no end time', function() {
 					beforeEach(function() {
 						options.events = [ {
 							title: 'timed event',
@@ -119,7 +119,7 @@ describe('displayEventEnd', function() {
 					});
 				});
 
-				describe('with a timed event given an invalid end time', function(done) {
+				describe('with a timed event given an invalid end time', function() {
 					beforeEach(function() {
 						options.events = [ {
 							title: 'timed event',
