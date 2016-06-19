@@ -27,6 +27,7 @@ Event Data
 <li class='method'><a href='addEventSource'>addEventSource (method)</a></li>
 <li class='method'><a href='removeEventSource'>removeEventSource (method)</a></li>
 <li class='method'><a href='removeEventSources'>removeEventSources (method)</a></li>
+<li class='method'><a href='getEventSources'>getEventSources (method)</a></li>
 <li class='method'><a href='getEventSourceById'>getEventSourceById (method)</a></li>
 </ul>
 
