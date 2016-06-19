@@ -929,3 +929,17 @@ function debounce(func, wait, immediate) {
 		return result;
 	};
 }
+
+
+// HACK around jQuery's now A+ promises: execute callback synchronously if already resolved.
+// thenFunc shouldn't accept args.
+// similar to whenResources in Scheduler plugin.
+function syncThen(promise, thenFunc) {
+	// not a promise, or an already-resolved promise?
+	if (!promise || !promise.then || promise.state() === 'resolved') {
+		return $.when(thenFunc()); // resolve immediately
+	}
+	else if (thenFunc) {
+		return promise.then(thenFunc);
+	}
+}

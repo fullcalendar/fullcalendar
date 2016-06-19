@@ -281,15 +281,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.calendar.freezeContentHeight();
 
-		return this.clear().then(function() { // clear the content first (async)
+		return syncThen(this.clear(), function() { // clear the content first
 			return (
 				_this.displaying =
-					$.when(_this.displayView(date)) // displayView might return a promise
-						.then(function() {
-							_this.forceScroll(_this.computeInitialScroll(scrollState));
-							_this.calendar.unfreezeContentHeight();
-							_this.triggerRender();
-						})
+					syncThen(_this.displayView(date), function() { // displayView might return a promise
+						_this.forceScroll(_this.computeInitialScroll(scrollState));
+						_this.calendar.unfreezeContentHeight();
+						_this.triggerRender();
+					})
 			);
 		});
 	},
@@ -303,7 +302,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var displaying = this.displaying;
 
 		if (displaying) { // previously displayed, or in the process of being displayed?
-			return displaying.then(function() { // wait for the display to finish
+			return syncThen(displaying, function() { // wait for the display to finish
 				_this.displaying = null;
 				_this.clearEvents();
 				return _this.clearView(); // might return a promise. chain it
