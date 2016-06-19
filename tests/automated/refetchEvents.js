@@ -80,7 +80,8 @@ describe('refetchEvents', function() {
 				calendarEl.fullCalendar(options);
 				fetchCount++;
 				calendarEl.fullCalendar('refetchEvents');
-				checkAllEvents();
+				expect($('.fetch0').length).toEqual(0);
+				expect($('.fetch1').length).toEqual(3);
 				done();
 			});
 		});
@@ -107,7 +108,8 @@ describe('refetchEvents', function() {
 						expect($('.fetch1').length).toEqual(0); // new events not yet refetched
 
 						setTimeout(function() {
-							checkAllEvents();
+							expect($('.fetch0').length).toEqual(0);
+							expect($('.fetch1').length).toEqual(3);
 							done();
 						}, 100);
 					}
@@ -125,12 +127,6 @@ describe('refetchEvents', function() {
 
 				callback(events);
 			};
-		}
-
-		// Checks to make sure all refetched events have been rendered
-		function checkAllEvents() {
-			expect($('.fetch0').length).toEqual(0);
-			expect($('.fetch1').length).toEqual(3);
 		}
 	});
 });
