@@ -44,8 +44,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.0",
     "lumbar": "^4.0.2",
-    "phantomjs-prebuilt": "^2.1.7",
-    "underscore": "^1.4.4"
+    "phantomjs-prebuilt": "^2.1.7"
   },
   "main": "dist/fullcalendar.js",
   "files": [
