@@ -1,4 +1,15 @@
 
+v2.8.0
+------
+
+- getEventSources method (#3103)
+- getEventSourceById method (#3223)
+- refetchEventSources method (#3103)
+- removeEventSources method (#3165, #948)
+- prevent flicker when refetchEvents is called (#3123, #2558)
+- fix for removing event sources that share same URL (#3209)
+
+
 v2.7.3 (2016-06-02)
 -------------------
 
