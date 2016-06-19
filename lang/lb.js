@@ -4,13 +4,8 @@ $.fullCalendar.lang("lb", {
 		month: "Mount",
 		week: "Woch",
 		day: "Dag",
-		list: "Terminiwwersiicht",
-		prev: "zréck",
-		next: "weider",
-		today: "haut"
+		list: "Terminiwwersiicht"
 	},
 	allDayText: "Ganzen Dag",
-	eventLimitText: function(n) {
-		return "+ " + n + " méi";
-	}
+	eventLimitText: "méi"
 });
