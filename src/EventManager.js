@@ -23,6 +23,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.getEventSourcesByMatch = getEventSourcesByMatch;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
+	t.removeEventSources = removeEventSources;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
@@ -359,6 +360,15 @@ function EventManager(options) { // assumed to be a calendar
 		cache = excludeEventsBySources(cache, targetSources);
 
 		reportEvents(cache);
+	}
+	
+	
+	function removeEventSources() {
+		 sources = [];
+		 // remove all client events from all sources
+		 cache = [];
+		 
+		 reportEvents(cache);
 	}
 
 
