@@ -20,6 +20,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.fetchEventSources = fetchEventSources;
 	t.getEventSources = getEventSources;
 	t.getEventSourceById = getEventSourceById;
+	t.getEventSourcesByMatchArray = getEventSourcesByMatchArray;
 	t.getEventSourcesByMatch = getEventSourcesByMatch;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
@@ -346,13 +347,13 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	// if called with no arguments, removes all.
-	function removeEventSources(matchInput) {
-		if (matchInput == null) {
+	function removeEventSources(matchInputs) {
+		if (matchInputs == null) {
 			removeSpecificEventSources(sources, true); // isAll=true
 		}
 		else {
 			removeSpecificEventSources(
-				getEventSourcesByMatch(matchInput)
+				getEventSourcesByMatchArray(matchInputs)
 			);
 		}
 	}
@@ -397,6 +398,32 @@ function EventManager(options) { // assumed to be a calendar
 		return $.grep(sources, function(source) {
 			return source.id && source.id === id;
 		})[0];
+	}
+
+
+	// like getEventSourcesByMatch, but accepts multple match criteria (like multiple IDs)
+	function getEventSourcesByMatchArray(matchInputs) {
+
+		// coerce into an array
+		if (!matchInputs) {
+			matchInputs = [];
+		}
+		else if (!$.isArray(matchInputs)) {
+			matchInputs = [ matchInputs ];
+		}
+
+		var matchingSources = [];
+		var i;
+
+		// resolve raw inputs to real event source objects
+		for (i = 0; i < matchInputs.length; i++) {
+			matchingSources.push.apply( // append
+				matchingSources,
+				getEventSourcesByMatch(matchInputs[i])
+			);
+		}
+
+		return matchingSources;
 	}
 
 
