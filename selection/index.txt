@@ -3,6 +3,7 @@
 <h1>Selection</h1>
 
 <ul>
+<li>Touch Support</li>
 <li><a href='selectable'>selectable</a></li>
 <li><a href='selectHelper'>selectHelper</a></li>
 <li><a href='unselectAuto'>unselectAuto</a></li>
