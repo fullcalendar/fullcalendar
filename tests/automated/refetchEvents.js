@@ -45,7 +45,7 @@ describe('refetchEvents', function() {
 
 	describe('when there are multiple event sources', function() {
 		var options;
-		var fetchCount;
+		var fetchCount; // affects events created in createEventGenerator
 		var calendarEl;
 
 		beforeEach(function() {
@@ -107,11 +107,11 @@ describe('refetchEvents', function() {
 						expect($('.fetch0').length).toEqual(3); // original events still on the calendar
 						expect($('.fetch1').length).toEqual(0); // new events not yet refetched
 
-						setTimeout(function() {
+						setTimeout(function() { // wait until refetch+rerender is over
 							expect($('.fetch0').length).toEqual(0);
 							expect($('.fetch1').length).toEqual(3);
 							done();
-						}, 100);
+						}, 101);
 					}
 				};
 
@@ -119,6 +119,7 @@ describe('refetchEvents', function() {
 			});
 		});
 
+		// relies on fetchCount
 		function createEventGenerator() {
 			return function(start, end, timezone, callback) {
 				var events = [
