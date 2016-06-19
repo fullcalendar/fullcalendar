@@ -11,6 +11,11 @@ v2.8.0
 - Travis CI integration (#3218)
 - EditorConfig for promoting consistent code style (#141)
 - use en dash when formatting ranges (#3077)
+- height:auto always shows scrollbars in month view on FF (#3202)
+- new languages:
+	- Basque (#2992)
+	- Galician (#194)
+	- Luxembourgish (#2979)
 
 
 v2.7.3 (2016-06-02)
