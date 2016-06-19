@@ -10,6 +10,7 @@ v2.8.0
 - fix for removing event sources that share same URL (#3209)
 - Travis CI integration (#3218)
 - EditorConfig for promoting consistent code style (#141)
+- use en dash when formatting ranges (#3077)
 
 
 v2.7.3 (2016-06-02)
