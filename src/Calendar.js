@@ -706,12 +706,25 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function refetchEventSources(specificSources) {
-		if (specificSources) {
-			// if specificSources isn't an array (i.e. one event source), add it to an array
-			if (!$.isArray(specificSources)) {
-				specificSources = [ specificSources ];
+	function refetchEventSources(matchInputs) {
+		if (matchInputs) {
+
+			// coerce into an array
+			if (!$.isArray(matchInputs)) {
+				matchInputs = [ matchInputs ];
 			}
+
+			var specificSources = [];
+			var i;
+
+			// resolve raw inputs to real event source objects
+			for (i = 0; i < matchInputs.length; i++) {
+				specificSources.push.apply( // append
+					specificSources,
+					t.getEventSourcesByMatch(matchInputs[i])
+				);
+			}
+
 			fetchEventSources(specificSources);
 		}
 	}

@@ -18,14 +18,17 @@ describe('refetchEventSources', function() {
 			scrollTime: '00:00',
 			eventSources: [
 				{
+					id: 1,
 					events: createEventGenerator('source1-'),
 					color: 'green'
 				},
 				{
+					id: 2,
 					events: createEventGenerator('source2-'),
 					color: 'blue'
 				},
 				{
+					id: 3,
 					events: createEventGenerator('source3-'),
 					color: 'green'
 				}
@@ -65,6 +68,33 @@ describe('refetchEventSources', function() {
 			done();
 		});
 	});
+	describe('with a single event source ID passed in', function() {
+		it('only refetches events for the specified event source', function(done) {
+			calendarEl.fullCalendar(options);
+
+			expect($('.source1-7').length).toEqual(1);
+			expect($('.source2-7').length).toEqual(1);
+			expect($('.source3-7').length).toEqual(1);
+
+			// increase the number of events for the refetched source
+			eventCount = 2;
+			fetchId = 8;
+
+			calendarEl.fullCalendar('refetchEventSources', 2);
+
+			// events from unaffected sources remain
+			expect($('.source1-7').length).toEqual(1);
+			expect($('.source3-7').length).toEqual(1);
+
+			// events from old fetch were cleared
+			expect($('.source2-7').length).toEqual(0);
+
+			// events from new fetch were rendered
+			expect($('.source2-8').length).toEqual(2);
+
+			done();
+		});
+	});
 
 	describe('with an array of multiple event sources passed in', function() {
 		it('only refetches events for the specified event sources', function(done) {
@@ -84,6 +114,35 @@ describe('refetchEventSources', function() {
 			fetchId = 8;
 
 			calendarEl.fullCalendar('refetchEventSources', greenEventSources);
+
+			// events from unaffected sources remain
+			expect($('.source2-7').length).toEqual(1);
+
+			// events from old fetch were cleared
+			expect($('.source1-7').length).toEqual(0);
+			expect($('.source3-7').length).toEqual(0);
+
+			// events from new fetch were rendered
+			expect($('.source1-8').length).toEqual(2);
+			expect($('.source3-8').length).toEqual(2);
+
+			done();
+		});
+	});
+
+	describe('with an array of multiple event source IDs passed in', function() {
+		it('only refetches events for the specified event sources', function(done) {
+			calendarEl.fullCalendar(options);
+
+			expect($('.source1-7').length).toEqual(1);
+			expect($('.source2-7').length).toEqual(1);
+			expect($('.source3-7').length).toEqual(1);
+
+			// increase the number of events for the refetched sources
+			eventCount = 2;
+			fetchId = 8;
+
+			calendarEl.fullCalendar('refetchEventSources', [ 1, 3 ]);
 
 			// events from unaffected sources remain
 			expect($('.source2-7').length).toEqual(1);
