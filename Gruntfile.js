@@ -301,8 +301,7 @@ module.exports = function(grunt) {
 	config.bump = { // changes the version number in the configs
 		options: {
 			files: [
-				'package.json',
-				'bower.json'
+				'package.json'
 			],
 			commit: false,
 			createTag: false,

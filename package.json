@@ -1,7 +1,6 @@
 {
   "name": "fullcalendar",
   "title": "FullCalendar",
-  "version": "0.0.0",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
     "calendar",
@@ -26,6 +25,7 @@
     "jquery": ">=1.7.1",
     "moment": ">=2.5.0"
   },
+  "version": "0.0.0",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-bump": "^0.8.0",
