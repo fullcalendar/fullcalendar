@@ -31,7 +31,7 @@ describe('getEventSource', function() {
 		};
 	});
 
-	iit('retreives the queried event source', function(done) {
+	it('retreives the queried event source', function(done) {
 		var eventSource1;
 		var eventSource2;
 

@@ -282,18 +282,6 @@ function EventManager(options) { // assumed to be a calendar
 	-----------------------------------------------------------------------------*/
 
 
-	function getEventSources() {
-		return sources.slice(1); // returns a shallow copy of sources with stickySource removed
-	}
-
-
-	function getEventSourceById(id) {
-		return $.grep(sources, function(src) {
-			return src.id && src.id === id;
-		})[0];
-	}
-
-
 	function addEventSource(sourceInput) {
 		var source = buildEventSource(sourceInput);
 		if (source) {
@@ -348,30 +336,69 @@ function EventManager(options) { // assumed to be a calendar
 	}
 
 
-	function removeEventSource(targetSource) {
+	function removeEventSource(matchInput) {
+		var targetSources = getEventSourcesByMatch(matchInput); // allow for multiple matches
+		var i;
 
 		// cancel pending requests
-		for (var i = 0; i < sources.length; i++) {
-			if (isSourcesEqual(sources[i], targetSource)) {
-				rejectEventSource(sources[i]);
-			}
+		for (i = 0; i < targetSources.length; i++) {
+			rejectEventSource(targetSources[i]);
 		}
 
-		// remove from source list
-		sources = $.grep(sources, function(src) {
-			return !isSourcesEqual(src, targetSource);
+		// remove from persisted source list
+		sources = $.grep(sources, function(source) {
+			for (i = 0; i < targetSources.length; i++) {
+				if (source === targetSources[i]) {
+					return false; // exclude
+				}
+			}
+			return true; // include
 		});
 
-		// remove all client events from that source
-		cache = $.grep(cache, function(e) {
-			return !isSourcesEqual(e.source, targetSource);
-		});
+		cache = excludeEventsBySources(cache, targetSources);
 
 		reportEvents(cache);
 	}
 
 
-	function isSourcesEqual(source1, source2) {
+	function getEventSources() {
+		return sources.slice(1); // returns a shallow copy of sources with stickySource removed
+	}
+
+
+	function getEventSourceById(id) {
+		return $.grep(sources, function(source) {
+			return source.id && source.id === id;
+		})[0];
+	}
+
+
+	// matchInput can either by a real event source object, an ID, or the function/URL for the source.
+	// returns an array of matching source objects.
+	function getEventSourcesByMatch(matchInput) {
+		var i, source;
+
+		// given an proper event source object
+		for (i = 0; i < sources.length; i++) {
+			source = sources[i];
+			if (source === matchInput) {
+				return [ source ];
+			}
+		}
+
+		// an ID match
+		source = getEventSourceById(matchInput);
+		if (source) {
+			return [ source ];
+		}
+
+		return $.grep(sources, function(source) {
+			return isSourcesEquivalent(matchInput, source);
+		});
+	}
+
+
+	function isSourcesEquivalent(source1, source2) {
 		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
 	}
 
