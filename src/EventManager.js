@@ -23,7 +23,7 @@ function EventManager(options) { // assumed to be a calendar
 	t.getEventSourcesByMatch = getEventSourcesByMatch;
 	t.addEventSource = addEventSource;
 	t.removeEventSource = removeEventSource;
-	t.removeEventSources = removeEventSources;
+	t.removeEventSources = removeEventSources; // removes ALL
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
 	t.removeEvents = removeEvents;
@@ -339,7 +339,19 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	function removeEventSource(matchInput) {
-		var targetSources = getEventSourcesByMatch(matchInput); // allow for multiple matches
+		removeSpecificEventSources(
+			getEventSourcesByMatch(matchInput)
+		);
+	}
+
+
+	// removes ALL event sources
+	function removeEventSources() {
+		removeSpecificEventSources(sources, true); // isAll=true
+	}
+
+
+	function removeSpecificEventSources(targetSources, isAll) {
 		var i;
 
 		// cancel pending requests
@@ -347,28 +359,25 @@ function EventManager(options) { // assumed to be a calendar
 			rejectEventSource(targetSources[i]);
 		}
 
-		// remove from persisted source list
-		sources = $.grep(sources, function(source) {
-			for (i = 0; i < targetSources.length; i++) {
-				if (source === targetSources[i]) {
-					return false; // exclude
+		if (isAll) { // an optimization
+			sources = [];
+			cache = [];
+		}
+		else {
+			// remove from persisted source list
+			sources = $.grep(sources, function(source) {
+				for (i = 0; i < targetSources.length; i++) {
+					if (source === targetSources[i]) {
+						return false; // exclude
+					}
 				}
-			}
-			return true; // include
-		});
+				return true; // include
+			});
 
-		cache = excludeEventsBySources(cache, targetSources);
+			cache = excludeEventsBySources(cache, targetSources);
+		}
 
 		reportEvents(cache);
-	}
-	
-	
-	function removeEventSources() {
-		 sources = [];
-		 // remove all client events from all sources
-		 cache = [];
-		 
-		 reportEvents(cache);
 	}
 
 
