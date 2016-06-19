@@ -63,6 +63,14 @@ Event Source Options
 <table id='options'>
 <tr>
 <th>
+id
+</th>
+<td markdown='1'>
+Optional. Useful for <a href='getEventSourceById'>getEventSourceById</a>.
+</td>
+</tr>
+<tr>
+<th>
 color
 </th>
 <td markdown='1'>
