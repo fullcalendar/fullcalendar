@@ -52,6 +52,90 @@ describe('removeEventSource', function() {
 		});
 	});
 
+	it('won\'t render removed events when subsequent addEventSource', function(done) {
+
+		var source1 = function(start, end, timezone, callback) {
+			setTimeout(function() {
+				callback([{
+					title: 'event1',
+					className: 'event1',
+					start: '2014-08-01T02:00:00'
+				}]);
+			}, 100);
+		};
+
+		var source2 = function(start, end, timezone, callback) {
+			setTimeout(function() {
+				callback([{
+					title: 'event2',
+					className: 'event2',
+					start: '2014-08-01T02:00:00'
+				}]);
+			}, 100);
+		};
+
+		options.eventSources = [ source1 ];
+
+		options.eventAfterAllRender = function() {
+			if (!$('.fc-event').length) {
+				; // might have rendered no events after removeEventSource call
+			}
+			else {
+				expect($('.event1').length).toBe(0);
+				expect($('.event2').length).toBe(1);
+				done();
+			}
+		};
+
+		$('#cal').fullCalendar(options);
+		$('#cal').fullCalendar('removeEventSource', source1);
+		$('#cal').fullCalendar('addEventSource', source2);
+	});
+
+	describe('when multiple sources share the same fetching function', function() {
+		var fetchFunc = function(start, end, timezone, callback) {
+			callback([{
+				title: 'event',
+				start: '2014-08-01T02:00:00'
+			}]);
+		};
+		beforeEach(function() {
+			options.eventSources = [
+				{ events: fetchFunc, className: 'event1', id: 'source1' },
+				{ events: fetchFunc, className: 'event2', id: 'source2' }
+			];
+		});
+
+		describe('when called with the raw function', function() {
+			it('removes events from all matching sources', function() {
+
+				$('#cal').fullCalendar(options);
+				expect($('.fc-event').length).toBe(2);
+				expect($('.event1').length).toBe(1);
+				expect($('.event2').length).toBe(1);
+
+				$('#cal').fullCalendar('removeEventSource', fetchFunc);
+				expect($('.fc-event').length).toBe(0);
+			});
+		});
+
+		describe('when called with proper source object', function() {
+			it('removes events only from the specific source', function() {
+
+				$('#cal').fullCalendar(options);
+				expect($('.fc-event').length).toBe(2);
+				expect($('.event1').length).toBe(1);
+				expect($('.event2').length).toBe(1);
+
+				var source = $('#cal').fullCalendar('getEventSourceById', 'source2');
+				$('#cal').fullCalendar('removeEventSource', source);
+				expect($('.fc-event').length).toBe(1);
+				expect($('.event1').length).toBe(1);
+				expect($('.event2').length).toBe(0);
+			});
+		});
+	});
+
 	function testInput(eventInput) {
 
 		it('correctly removes events provided via `events` at initialization', function(done) {

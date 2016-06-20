@@ -61,7 +61,7 @@
 			describe('as a number, when there are no events', function() {
 				it('should be the specified height, with no scrollbars', function() {
 					init(600);
-					expect(heightElm.outerHeight()).toBe(600);
+					expect(Math.round(heightElm.outerHeight())).toBe(600);
 					expect('.fc-day-grid-container').not.toHaveScrollbars();
 				});
 			});

@@ -138,7 +138,7 @@ describe('select callback', function() {
 						});
 					});
 				});
-				describe('when selecting timed slots', function(done) {
+				describe('when selecting timed slots', function() {
 					it('gets fired correctly when the user selects slots', function(done) {
 						options.select = function(start, end, jsEvent, view) {
 							expect(moment.isMoment(start)).toEqual(true);

@@ -226,14 +226,14 @@ function Header(calendar, options) {
 	
 	function disableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
-			.attr('disabled', 'disabled')
+			.prop('disabled', true)
 			.addClass(tm + '-state-disabled');
 	}
 	
 	
 	function enableButton(buttonName) {
 		el.find('.fc-' + buttonName + '-button')
-			.removeAttr('disabled')
+			.prop('disabled', false)
 			.removeClass(tm + '-state-disabled');
 	}
 
