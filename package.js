@@ -1,6 +1,6 @@
 Package.describe({
   name: 'fullcalendar:fullcalendar',
-  version: '2.6.1_1',
+  version: '2.8.0',
   summary: 'Full-sized drag & drop event calendar',
   git: 'https://github.com/rgnevashev/fullcalendar.git',
   documentation: 'README.md'
