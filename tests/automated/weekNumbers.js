@@ -348,7 +348,7 @@ describe('weekNumbers', function() {
 
 		t.allWeekNumbers = $('.fc-week-number').length;
 		t.colWeekNumbers = $('.fc-content-skeleton thead td.fc-week-number').length;
-		t.cellWeekNumbers = $('.fc-content-skeleton thead .fc-numbercell span.fc-week-number').length;
+		t.cellWeekNumbers = $('.fc-content-skeleton thead .fc-day-top span.fc-week-number').length;
 		t.cornerWeekNumbers = $('.fc-axis.fc-widget-header.fc-week-number').length;
 
 		return t;

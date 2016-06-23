@@ -145,7 +145,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		}
 
 		classes = this.getDayClasses(date);
-		classes.unshift('fc-numbercell');
+		classes.unshift('fc-day-top');
 
 		if (this.view.cellWeekNumbersVisible) {
 			if ((date._locale || date._lang)._fullCalendar_weekCalc === 'ISO') {

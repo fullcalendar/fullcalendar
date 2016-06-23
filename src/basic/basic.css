@@ -35,23 +35,23 @@
 }
 
 .fc-basic-view td.fc-week-number span,
-.fc-basic-view td.fc-numbercell span {
+.fc-basic-view td.fc-day-top span {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
 
-.fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+.fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
 	width: 1.5em;
 	text-align: center;
 	background-color: #f2f2f2;
 	color: #808080;
 }
 
-.fc-ltr .fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+.fc-ltr .fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
 	border-radius: 0 0 3px 0;
 }
 
-.fc-rtl .fc-basic-view td.fc-numbercell span.fc-weeknr-daycell {
+.fc-rtl .fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
 	border-radius: 0 0 0 3px;
 }
 
@@ -65,23 +65,23 @@
 	min-width: 1.25em;
 }
 
-.fc-ltr .fc-basic-view .fc-numbercell span.fc-week-number {
+.fc-ltr .fc-basic-view .fc-day-top span.fc-week-number {
 	float: left;
 }
 
-.fc-ltr .fc-basic-view .fc-numbercell span.fc-day-number {
+.fc-ltr .fc-basic-view .fc-day-top span.fc-day-number {
 	float: right;
 }
 
-.fc-rtl .fc-basic-view .fc-numbercell span.fc-week-number {
+.fc-rtl .fc-basic-view .fc-day-top span.fc-week-number {
 	float: right;
 }
 
-.fc-rtl .fc-basic-view .fc-numbercell span.fc-day-number {
+.fc-rtl .fc-basic-view .fc-day-top span.fc-day-number {
 	float: left;
 }
 
-.fc-numbercell.fc-other-month {
+.fc-day-top.fc-other-month {
 	opacity: 0.3;
 	filter: alpha(opacity=30); /* for IE */
 	/* opacity with small font can sometimes look too faded
