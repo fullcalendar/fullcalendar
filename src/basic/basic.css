@@ -40,18 +40,18 @@
 	padding-bottom: 2px;
 }
 
-.fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
+.fc-basic-view td.fc-day-top span.fc-week-number {
 	width: 1.5em;
 	text-align: center;
 	background-color: #f2f2f2;
 	color: #808080;
 }
 
-.fc-ltr .fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
+.fc-ltr .fc-basic-view td.fc-day-top span.fc-week-number {
 	border-radius: 0 0 3px 0;
 }
 
-.fc-rtl .fc-basic-view td.fc-day-top span.fc-weeknr-daycell {
+.fc-rtl .fc-basic-view td.fc-day-top span.fc-week-number {
 	border-radius: 0 0 0 3px;
 }
 
