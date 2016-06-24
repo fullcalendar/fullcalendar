@@ -158,7 +158,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		return '' +
 			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-				((this.view.cellWeekNumbersVisible && (date.day() === weekCalcFirstDoW)) ?
+				((this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) ?
 					'<span class="fc-week-number">' +
 						date.format('w') +
 					'</span>' :
