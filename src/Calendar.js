@@ -314,11 +314,6 @@ function Calendar_constructor(element, overrides) {
 	if (options.dayNamesShort) {
 		localeData._weekdaysShort = options.dayNamesShort;
 	}
-	if (options.firstDay != null) {
-		var _week = createObject(localeData._week); // _week: { dow: # }
-		_week.dow = options.firstDay;
-		localeData._week = _week;
-	}
 
 	// assign a normalized value, to be used by our .week() moment extension
 	localeData._fullCalendar_weekCalc = (function(weekCalc) {
@@ -333,6 +328,16 @@ function Calendar_constructor(element, overrides) {
 		}
 	})(options.weekNumberCalculation);
 
+	var _week = createObject(localeData._week); // _week: { dow: # }
+	if (options.firstDay != null) {
+		_week.dow = options.firstDay;
+	}
+	else {
+		if (localeData._fullCalendar_weekCalc === 'ISO') {
+			_week.dow = 1;
+		}
+	}
+	localeData._week = _week;
 
 
 	// Calendar-specific Date Utilities
