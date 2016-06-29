@@ -148,8 +148,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		classes.unshift('fc-day-top');
 
 		if (this.view.cellWeekNumbersVisible) {
+			// To determine the day of week number change under ISO, we cannot
+			// rely on moment.js methods such as firstDayOfWeek() or weekday(),
+			// because they rely on the locale's dow (possibly overridden by
+			// our firstDay option), which may not be Monday. We cannot change
+			// dow, because that would affect the calendar start day as well.
 			if ((date._locale || date._lang)._fullCalendar_weekCalc === 'ISO') {
-				weekCalcFirstDoW = 1;
+				weekCalcFirstDoW = 1;  // Monday by ISO 8601 definition
 			}
 			else {
 				weekCalcFirstDoW = (date._locale || date._lang).firstDayOfWeek();
