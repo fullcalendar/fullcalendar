@@ -1,5 +1,5 @@
 
-describe('weekMode', function() {
+fdescribe('weekMode', function() {
 
 	beforeEach(function() {
 		affix('#cal');
@@ -83,14 +83,14 @@ describe('weekMode', function() {
 			var weekCount = $('.fc-week').length;
 			expect(weekCount).toEqual(6);
 		});
-		it('should increase height when moving from 6 week to 5 weeks', function() {
+		fit('should increase height when moving from 6 week to 5 weeks', function() {
 			$('#cal').fullCalendar('gotoDate', '2013-10-01');
 			var fiveWeekHeight = $('.fc-week:first').outerHeight();
 			$('#cal').fullCalendar('gotoDate', '2013-06-01');
 			var sixWeekHeight = $('.fc-week:first').outerHeight();
 			expect(fiveWeekHeight).toBeGreaterThan(sixWeekHeight);
 		});
-		it('should reduce height when moving from 5 weeks to 6 weeks', function() {
+		fit('should reduce height when moving from 5 weeks to 6 weeks', function() {
 			$('#cal').fullCalendar('gotoDate', '2013-06-01');
 			var sixWeekHeight = $('.fc-week:first').outerHeight();
 			$('#cal').fullCalendar('gotoDate', '2013-10-01');
