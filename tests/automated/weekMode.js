@@ -84,9 +84,29 @@ fdescribe('weekMode', function() {
 			expect(weekCount).toEqual(6);
 		});
 		fit('should increase height when moving from 6 week to 5 weeks', function() {
+			(function() {
+				var $view = $('.fc-view');
+				console.log('view count', $view.length);
+				console.log('view width', $view.outerWidth());
+				console.log('view height', $view.outerHeight());
+				console.log('window width', $(window).outerWidth());
+				console.log('window height', $(window).outerHeight());
+			})();
+			function printRowHeights() {
+				$('.fc-row').each(function(i, rowNode) {
+					var $row = $(rowNode);
+					console.log(i, $row.outerHeight());
+				});
+			}
+			console.log('--- initial rows');
+			printRowHeights();
 			$('#cal').fullCalendar('gotoDate', '2013-10-01');
+			console.log('--- A rows');
+			printRowHeights();
 			var fiveWeekHeight = $('.fc-week:first').outerHeight();
 			$('#cal').fullCalendar('gotoDate', '2013-06-01');
+			console.log('--- B rows');
+			printRowHeights();
 			var sixWeekHeight = $('.fc-week:first').outerHeight();
 			expect(fiveWeekHeight).toBeGreaterThan(sixWeekHeight);
 		});
