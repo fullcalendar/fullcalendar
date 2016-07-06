@@ -1,7 +1,6 @@
 language: node_js
 node_js:
-  - 'node'
-  - 'stable'
+  - 'node' # implies latest version
 
 before_script:
   - bower install
