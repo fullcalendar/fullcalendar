@@ -165,8 +165,8 @@ module.exports = function(grunt) {
 			configFile: 'build/karma.conf.js'
 		},
 		url: {}, // visit a URL in a browser
-		headless: { browsers: [ 'PhantomJS' ] },
-		single: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false }
+		headless: { browsers: [ 'PhantomJS_custom' ] },
+		single: { browsers: [ 'PhantomJS_custom' ], singleRun: true, autoWatch: false }
 	};
 
 

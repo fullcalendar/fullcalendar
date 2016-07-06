@@ -76,6 +76,19 @@ module.exports = function(config) {
 		autoWatch: true,
 
 		// If browser does not capture in given timeout [ms], kill it
-		captureTimeout: 60000
+		captureTimeout: 60000,
+
+		// force a window size for PhantomJS, because it's usually unreasonably small, resulting in offset problems
+		customLaunchers: {
+			PhantomJS_custom: {
+				base: 'PhantomJS',
+				options: {
+					viewportSize: {
+						width: 1024,
+						height: 768
+					}
+				}
+			}
+		}
 	});
 };
