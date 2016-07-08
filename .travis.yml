@@ -2,5 +2,11 @@ language: node_js
 node_js:
   - 'node' # implies latest version
 
+env:
+  - CMD=test
+  - CMD=lint
+
 before_script:
   - bower install
+
+script: npm run $CMD

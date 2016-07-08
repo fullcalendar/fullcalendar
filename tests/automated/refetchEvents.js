@@ -91,7 +91,11 @@ describe('refetchEvents', function() {
 				// set a 100ms timeout on this event source
 				options.eventSources[0].events = function(start, end, timezone, callback) {
 					var events = [
-						{ id: '1', start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + fetchCount }
+						{ id: '1',
+						  start: '2015-08-07T02:00:00',
+						  end: '2015-08-07T03:00:00',
+						  title: 'event A', className: 'fetch' + fetchCount
+						}
 					];
 
 					setTimeout(function() {
@@ -123,7 +127,13 @@ describe('refetchEvents', function() {
 		function createEventGenerator() {
 			return function(start, end, timezone, callback) {
 				var events = [
-					{ id: 1, start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A', className: 'fetch' + fetchCount }
+					{
+					  id: 1,
+					  start: '2015-08-07T02:00:00',
+					  end: '2015-08-07T03:00:00',
+					  title: 'event A',
+					  className: 'fetch' + fetchCount
+					}
 				];
 
 				callback(events);
