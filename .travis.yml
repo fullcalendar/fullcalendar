@@ -2,6 +2,11 @@ language: node_js
 node_js:
   - 'node' # implies latest version
 
+cache:
+  directories:
+  - node_modules
+  - lib
+
 env:
   - CMD=test
   - CMD=lint
