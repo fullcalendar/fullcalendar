@@ -541,13 +541,16 @@ function Calendar_constructor(element, overrides) {
 	function initialRender() {
 		element.addClass('fc');
 
-		t.bindOption('theme', function(theme) { // called immediately, and upon option change
+		// called immediately, and upon option change
+		t.bindOption('theme', function(theme) {
 			tm = theme ? 'ui' : 'fc'; // affects a larger scope
 			element.toggleClass('ui-widget', theme);
 			element.toggleClass('fc-unthemed', !theme);
 		});
 
-		t.bindOption('isRTL', function(isRTL) { // called immediately, and upon option change
+		// called immediately, and upon option change.
+		// HACK: lang often affects isRTL, so we explicitly listen to that too.
+		t.bindOptions([ 'isRTL', 'lang' ], function(isRTL) {
 			element.toggleClass('fc-ltr', !isRTL);
 			element.toggleClass('fc-rtl', isRTL);
 		});
