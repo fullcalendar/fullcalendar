@@ -993,7 +993,7 @@ function Calendar_constructor(element, overrides) {
 
 		// special-case handling of single option change.
 		// if only one option change, `optionName` will be its name.
-		if (optionCnt == 1) {
+		if (optionCnt === 1) {
 			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
 				updateSize(true); // true = allow recalculation of height
 				return;
