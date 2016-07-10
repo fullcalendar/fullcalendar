@@ -11,15 +11,22 @@
 <script>
 
 	$(document).ready(function() {
+		var theme = false;
+		var isRTL = false;
 
-		var val = false;
+		$('#change-theme-button').on('click', function() {
+			theme = !theme;
+			$('#calendar').fullCalendar('option', 'theme', theme);
+		});
 
-		$('#change-button').on('click', function() {
-			val = !val;
-			$('#calendar').fullCalendar('option', 'theme', val);
+		$('#change-dir-button').on('click', function() {
+			isRTL = !isRTL;
+			$('#calendar').fullCalendar('option', 'isRTL', isRTL);
 		});
 
 		$('#calendar').fullCalendar({
+			theme: theme,
+			isRTL: isRTL,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -88,7 +95,8 @@
 </style>
 </head>
 <body>
-<button id='change-button'>change</button>
+<button id='change-theme-button'>change theme</button>
+<button id='change-dir-button'>change dir</button>
 <div id='calendar'></div>
 </body>
 </html>
