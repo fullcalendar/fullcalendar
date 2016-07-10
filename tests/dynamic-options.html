@@ -13,6 +13,7 @@
 	$(document).ready(function() {
 		var theme = false;
 		var isRTL = false;
+		var businessHours = false;
 
 		$('#change-theme-button').on('click', function() {
 			theme = !theme;
@@ -24,9 +25,26 @@
 			$('#calendar').fullCalendar('option', 'isRTL', isRTL);
 		});
 
+		$('#change-businessHours-button').on('click', function() {
+			businessHours = !businessHours;
+			$('#calendar').fullCalendar('option', 'businessHours', businessHours);
+		});
+
+		$('#change-all-button').on('click', function() {
+			theme = !theme;
+			isRTL = !isRTL;
+			businessHours = !businessHours;
+			$('#calendar').fullCalendar('option', {
+				theme: theme,
+				isRTL: isRTL,
+				businessHours: businessHours
+			});
+		});
+
 		$('#calendar').fullCalendar({
 			theme: theme,
 			isRTL: isRTL,
+			businessHours: businessHours,
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -97,6 +115,8 @@
 <body>
 <button id='change-theme-button'>change theme</button>
 <button id='change-dir-button'>change dir</button>
+<button id='change-businessHours-button'>change businessHours</button>
+<button id='change-all-button'>change all</button>
 <div id='calendar'></div>
 </body>
 </html>
