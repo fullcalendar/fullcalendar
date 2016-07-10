@@ -86,6 +86,27 @@ describe('events as a function', function() {
 		$('#cal').fullCalendar(options);
 	});
 
+	it('requests correctly when timezone changed dynamically', function(done) {
+		var callCnt = 0;
+
+		options.timezone = 'America/Chicago';
+		options.events = function(start, end, timezone, callback) {
+			callCnt++;
+			if (callCnt === 1) {
+				expect(timezone).toEqual('America/Chicago');
+				setTimeout(function() {
+					$('#cal').fullCalendar('option', 'timezone', 'UTC');
+				}, 0);
+			}
+			else if (callCnt === 2) {
+				expect(timezone).toEqual('UTC');
+				done();
+			}
+		};
+
+		$('#cal').fullCalendar(options);
+	});
+
 	it('requests correctly with event source extended form', function(done) {
 		var eventSource = {
 			className: 'customeventclass',

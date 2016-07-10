@@ -130,4 +130,28 @@ describe('timezone', function() {
 		expect(zonedEvent.start.format()).toEqual('2014-05-10T14:00:00+11:00');
 	}
 
+
+	it('can be set dynamically', function(done) {
+		var callCnt = 0;
+		var rootEl;
+
+		options.timezone = false;
+		options.eventAfterAllRender = function() {
+			callCnt++;
+			if (callCnt === 1) {
+				expectNoTimezone();
+				rootEl = $('.fc-view > *:first');
+				expect(rootEl.length).toBe(1);
+				$('#cal').fullCalendar('option', 'timezone', 'UTC'); // will cause second call...
+			}
+			else if (callCnt === 2) {
+				expectUtcTimezone();
+				expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // ensure didn't rerender whole calendar
+				done();
+			}
+		};
+
+		$('#cal').fullCalendar(options);
+	});
+
 });
