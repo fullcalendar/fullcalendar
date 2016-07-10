@@ -475,7 +475,6 @@ function Calendar_constructor(element, overrides) {
 
 	var _element = element[0];
 	var header;
-	var headerElement;
 	var content;
 	var tm; // for making theme classes
 	var currentView; // NOTE: keep this in sync with this.view
@@ -533,17 +532,23 @@ function Calendar_constructor(element, overrides) {
 
 		content = $("<div class='fc-view-container'/>").prependTo(element);
 
-		header = t.header = new Header(t, options);
-		headerElement = header.render();
-		if (headerElement) {
-			element.prepend(headerElement);
-		}
+		header = t.header = new Header(t);
+		renderHeader();
 
 		renderView(options.defaultView);
 
 		if (options.handleWindowResize) {
 			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
 			$(window).resize(windowResizeProxy);
+		}
+	}
+
+
+	// can be called repeatedly and Header will rerender
+	function renderHeader() {
+		header.render();
+		if (header.el) {
+			element.prepend(header.el);
 		}
 	}
 	
@@ -677,7 +682,7 @@ function Calendar_constructor(element, overrides) {
 			suggestedViewHeight = options.contentHeight;
 		}
 		else if (typeof options.height === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.height - (headerElement ? headerElement.outerHeight(true) : 0);
+			suggestedViewHeight = options.height - (header.el ? header.el.outerHeight(true) : 0);
 		}
 		else {
 			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
