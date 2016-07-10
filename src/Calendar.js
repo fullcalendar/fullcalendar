@@ -1009,6 +1009,7 @@ function Calendar_constructor(element, overrides) {
 				return;
 			}
 			else if (optionName === 'timezone') {
+				t.rezoneArrayEventSources();
 				refetchEvents();
 				return;
 			}
