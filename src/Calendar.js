@@ -584,7 +584,8 @@ function Calendar_constructor(element, overrides) {
 
 	// Renders a view because of a date change, view-type change, or for the first time.
 	// If not given a viewType, keep the current view but render different dates.
-	function renderView(viewType) {
+	// Accepts an optional scroll state to restore to.
+	function renderView(viewType, explicitScrollState) {
 		ignoreWindowResize++;
 
 		// if viewType is changing, remove the old view's rendering
@@ -619,7 +620,7 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					currentView.display(date); // will call freezeContentHeight
+					currentView.display(date, explicitScrollState); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
