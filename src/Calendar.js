@@ -934,12 +934,33 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function option(name, value) {
+
+		// getter
 		if (value === undefined) {
 			return options[name];
 		}
-		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-			options[name] = value;
-			updateSize(true); // true = allow recalculation of height
+
+		// setter
+		if (name !== 'defaultDate') { // can't change date this way. use gotoDate instead
+
+			options[name] = value; // same object as this.options
+
+			// special-case option changes for dimensions
+			if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
+				updateSize(true); // true = allow recalculation of height
+			}
+			// catch-all. rerender the header and re-initialize and rerender the view
+			else {
+				renderHeader();
+
+				// this dynamic value should override any view-specific options.
+				// view spec cache has precomputed option hashes that will now be obsolete.
+				t.dynamicOverrides[name] = value;
+				t.viewSpecCache = {};
+
+				viewsByType = {}; // even non-current views will be affected by this option change
+				reinitView();
+			}
 		}
 	}
 	
