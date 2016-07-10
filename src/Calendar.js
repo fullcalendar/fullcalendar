@@ -343,8 +343,8 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
-	t.defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration);
-	t.defaultTimedEventDuration = moment.duration(options.defaultTimedEventDuration);
+	t.defaultAllDayEventDuration = moment.duration(t.options.defaultAllDayEventDuration);
+	t.defaultTimedEventDuration = moment.duration(t.options.defaultTimedEventDuration);
 
 
 	// Builds a moment using the settings of the current calendar: timezone and language.
@@ -352,7 +352,7 @@ function Calendar_constructor(element, overrides) {
 	t.moment = function() {
 		var mom;
 
-		if (options.timezone === 'local') {
+		if (t.options.timezone === 'local') {
 			mom = FC.moment.apply(null, arguments);
 
 			// Force the moment to be local, because FC.moment doesn't guarantee it.
@@ -381,7 +381,7 @@ function Calendar_constructor(element, overrides) {
 	// Returns a boolean about whether or not the calendar knows how to calculate
 	// the timezone offset of arbitrary dates in the current timezone.
 	t.getIsAmbigTimezone = function() {
-		return options.timezone !== 'local' && options.timezone !== 'UTC';
+		return t.options.timezone !== 'local' && t.options.timezone !== 'UTC';
 	};
 
 
@@ -410,7 +410,7 @@ function Calendar_constructor(element, overrides) {
 	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
 	// Will return an moment with an ambiguous timezone.
 	t.getNow = function() {
-		var now = options.now;
+		var now = t.options.now;
 		if (typeof now === 'function') {
 			now = now();
 		}
@@ -452,7 +452,7 @@ function Calendar_constructor(element, overrides) {
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
 	t.humanizeDuration = function(duration) {
-		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
+		return (duration.locale || duration.lang).call(duration, t.options.lang) // works moment-pre-2.8
 			.humanize();
 	};
 
@@ -462,7 +462,7 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
-	EventManager.call(t, options);
+	EventManager.call(t);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
 	var fetchEventSources = t.fetchEventSources;
@@ -492,8 +492,8 @@ function Calendar_constructor(element, overrides) {
 
 
 	// compute the initial ambig-timezone date
-	if (options.defaultDate != null) {
-		date = t.moment(options.defaultDate).stripZone();
+	if (t.options.defaultDate != null) {
+		date = t.moment(t.options.defaultDate).stripZone();
 	}
 	else {
 		date = t.getNow(); // getNow already returns unzoned
@@ -535,10 +535,10 @@ function Calendar_constructor(element, overrides) {
 		header = t.header = new Header(t);
 		renderHeader();
 
-		renderView(options.defaultView);
+		renderView(t.options.defaultView);
 
-		if (options.handleWindowResize) {
-			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
+		if (t.options.handleWindowResize) {
+			windowResizeProxy = debounce(windowResize, t.options.windowResizeDelay); // prevents rapid calls
 			$(window).resize(windowResizeProxy);
 		}
 	}
@@ -675,7 +675,7 @@ function Calendar_constructor(element, overrides) {
 
 
 	t.isHeightAuto = function() {
-		return options.contentHeight === 'auto' || options.height === 'auto';
+		return t.options.contentHeight === 'auto' || t.options.height === 'auto';
 	};
 	
 	
@@ -703,14 +703,14 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function _calcSize() { // assumes elementVisible
-		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.contentHeight;
+		if (typeof t.options.contentHeight === 'number') { // exists and not 'auto'
+			suggestedViewHeight = t.options.contentHeight;
 		}
-		else if (typeof options.height === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.height - (header.el ? header.el.outerHeight(true) : 0);
+		else if (typeof t.options.height === 'number') { // exists and not 'auto'
+			suggestedViewHeight = t.options.height - (header.el ? header.el.outerHeight(true) : 0);
 		}
 		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+			suggestedViewHeight = Math.round(content.width() / Math.max(t.options.aspectRatio, .5));
 		}
 	}
 	
@@ -755,7 +755,7 @@ function Calendar_constructor(element, overrides) {
 	
 
 	function getAndRenderEvents() {
-		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
+		if (!t.options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
 			fetchAndRenderEvents();
 		}
 		else {
@@ -937,7 +937,7 @@ function Calendar_constructor(element, overrides) {
 
 		// getter
 		if (value === undefined) {
-			return options[name];
+			return t.options[name];
 		}
 
 		// setter
@@ -971,8 +971,8 @@ function Calendar_constructor(element, overrides) {
 		thisObj = thisObj || _element;
 		this.triggerWith(name, thisObj, args); // Emitter's method
 
-		if (options[name]) {
-			return options[name].apply(thisObj, args);
+		if (t.options[name]) {
+			return t.options[name].apply(thisObj, args);
 		}
 	}
 
