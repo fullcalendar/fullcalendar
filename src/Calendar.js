@@ -956,41 +956,68 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function option(name, value) {
+		var newOptionHash;
 
-		// getter
-		if (value === undefined) {
-			return t.options[name];
-		}
-
-		// setter...
-
-		t.dynamicOverrides[name] = value;
-		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
-		t.populateOptionsHash(); // needs to be recomputed after the dynamic override
-		t.triggerOptionHandlers(name); // recall bindOption/bindOptions
-
-		// special-case handling of option change
-		//
-		if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
-			updateSize(true); // true = allow recalculation of height
-		}
-		else if (name === 'defaultDate') {
-			// can't change date this way. use gotoDate instead
-		}
-		else if (name === 'businessHours') {
-			if (currentView) {
-				currentView.unrenderBusinessHours();
-				currentView.renderBusinessHours();
+		if (typeof name === 'string') {
+			if (value === undefined) { // getter
+				return t.options[name];
+			}
+			else { // setter for individual option
+				newOptionHash = {};
+				newOptionHash[name] = value;
+				setOptions(newOptionHash);
 			}
 		}
-		else if (name === 'timezone') {
-			refetchEvents();
+		else if (typeof name === 'object') { // compound setter with object input
+			setOptions(name);
 		}
-		else { // catch-all. rerender the header and rebuild/rerender the current view
-			renderHeader();
-			viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
-			reinitView();
+	}
+
+
+	function setOptions(newOptionHash) {
+		var optionCnt = 0;
+		var optionName;
+
+		for (optionName in newOptionHash) {
+			t.dynamicOverrides[optionName] = newOptionHash[optionName];
 		}
+
+		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		t.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
+
+		// trigger handlers after this.options has been updated
+		for (optionName in newOptionHash) {
+			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
+			optionCnt++;
+		}
+
+		// special-case handling of single option change.
+		// if only one option change, `optionName` will be its name.
+		if (optionCnt == 1) {
+			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
+				updateSize(true); // true = allow recalculation of height
+				return;
+			}
+			else if (optionName === 'defaultDate') {
+				return; // can't change date this way. use gotoDate instead
+			}
+			else if (optionName === 'businessHours') {
+				if (currentView) {
+					currentView.unrenderBusinessHours();
+					currentView.renderBusinessHours();
+				}
+				return;
+			}
+			else if (optionName === 'timezone') {
+				refetchEvents();
+				return;
+			}
+		}
+
+		// catch-all. rerender the header and rebuild/rerender the current view
+		renderHeader();
+		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
+		reinitView();
 	}
 	
 	
