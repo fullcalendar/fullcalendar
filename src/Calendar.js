@@ -4,6 +4,7 @@ var Calendar = FC.Calendar = Class.extend({
 	dirDefaults: null, // option defaults related to LTR or RTL
 	langDefaults: null, // option defaults related to current locale
 	overrides: null, // option overrides given to the fullCalendar constructor
+	dynamicOverrides: null, // options set with dynamic setter method
 	options: null, // all defaults combined with overrides
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
@@ -54,6 +55,8 @@ var Calendar = FC.Calendar = Class.extend({
 			overrides
 		]);
 		populateInstanceComputableOptions(this.options);
+
+		this.dynamicOverrides = {};
 
 		this.viewSpecCache = {}; // somewhat unrelated
 	},
@@ -169,7 +172,8 @@ var Calendar = FC.Calendar = Class.extend({
 			this.dirDefaults,
 			this.langDefaults, // locale and dir take precedence over view's defaults!
 			this.overrides, // calendar's overrides (options given to constructor)
-			spec.overrides // view's overrides (view-specific options)
+			spec.overrides, // view's overrides (view-specific options)
+			this.dynamicOverrides // dynamically set via getter. highest precedence
 		]);
 		populateInstanceComputableOptions(spec.options);
 	},
