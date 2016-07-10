@@ -275,7 +275,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 		var prevScrollState = null;
 
-		if (!explicitScrollState && this.displaying) { // don't need prevScrollState if explicitScrollState
+		if (explicitScrollState != null && this.displaying) { // don't need prevScrollState if explicitScrollState
 			prevScrollState = this.queryScroll();
 		}
 
@@ -287,7 +287,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 					syncThen(_this.displayView(date), function() { // displayView might return a promise
 
 						// caller of display() wants a specific scroll state?
-						if (explicitScrollState) {
+						if (explicitScrollState != null) {
 							// we make an assumption that this is NOT the initial render,
 							// and thus don't need forceScroll (is inconveniently asynchronous)
 							_this.setScroll(explicitScrollState);
