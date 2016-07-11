@@ -1,4 +1,12 @@
 
+v2.9.0 (2016-07-10)
+-------------------
+
+- Setters for (almost) all options (#564).
+  See [docs](http://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
+- Travis CI improvements (#3266)
+
+
 v2.8.0 (2016-06-19)
 -------------------
 
