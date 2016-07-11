@@ -12,4 +12,17 @@ describe('isRTL', function() {
 	// NOTE: don't put tests related to other options in here!
 	// Put them in the test file for the individual option!
 
+	it('adapts to dynamic option change', function() {
+		affix('#cal');
+		$('#cal').fullCalendar({
+			isRTL: false
+		});
+		expect($('#cal')).toHaveClass('fc-ltr');
+		expect($('#cal')).not.toHaveClass('fc-rtl');
+
+		$('#cal').fullCalendar('option', 'isRTL', true);
+		expect($('#cal')).toHaveClass('fc-rtl');
+		expect($('#cal')).not.toHaveClass('fc-ltr');
+	});
+
 });

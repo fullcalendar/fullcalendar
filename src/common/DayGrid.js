@@ -70,6 +70,11 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	},
 
 
+	unrenderBusinessHours: function() {
+		this.unrenderFill('businessHours');
+	},
+
+
 	// Generates the HTML for a single row, which is a div that wraps a table.
 	// `row` is the row number.
 	renderDayRowHtml: function(row, isRigid) {

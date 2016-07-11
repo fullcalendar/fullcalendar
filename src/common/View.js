@@ -271,12 +271,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Does everything necessary to display the view centered around the given unzoned date.
 	// Does every type of rendering EXCEPT rendering events.
 	// Is asychronous and returns a promise.
-	display: function(date) {
+	display: function(date, explicitScrollState) {
 		var _this = this;
-		var scrollState = null;
+		var prevScrollState = null;
 
-		if (this.displaying) {
-			scrollState = this.queryScroll();
+		if (explicitScrollState != null && this.displaying) { // don't need prevScrollState if explicitScrollState
+			prevScrollState = this.queryScroll();
 		}
 
 		this.calendar.freezeContentHeight();
@@ -285,7 +285,17 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			return (
 				_this.displaying =
 					syncThen(_this.displayView(date), function() { // displayView might return a promise
-						_this.forceScroll(_this.computeInitialScroll(scrollState));
+
+						// caller of display() wants a specific scroll state?
+						if (explicitScrollState != null) {
+							// we make an assumption that this is NOT the initial render,
+							// and thus don't need forceScroll (is inconveniently asynchronous)
+							_this.setScroll(explicitScrollState);
+						}
+						else {
+							_this.forceScroll(_this.computeInitialScroll(prevScrollState));
+						}
+
 						_this.calendar.unfreezeContentHeight();
 						_this.triggerRender();
 					})

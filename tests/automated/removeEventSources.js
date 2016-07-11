@@ -41,11 +41,11 @@ describe('removeEventSources', function() {
 		return {
 			id: id,
 			events: function(start, end, timezone, callback) {
-				callback([{
+				callback([ {
 					title: 'event' + id,
 					className: 'event' + id,
 					start: '2014-08-01T02:00:00'
-				}]);
+				} ]);
 			}
 		};
 	}

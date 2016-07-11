@@ -33,8 +33,48 @@ describe('businessHours', function() {
 	});
 
 
+	describe('when used as a dynamic option', function() {
+		[ 'agendaWeek', 'month' ].forEach(function(viewName) {
+
+			it('allows dynamic turning on', function() {
+				$('#cal').fullCalendar({
+					defaultView: viewName,
+					businessHours: false
+				});
+				var rootEl = $('.fc-view > *:first');
+				expect(rootEl.length).toBe(1);
+
+				expect(queryNonBusinessSegs().length).toBe(0);
+				$('#cal').fullCalendar('option', 'businessHours', true);
+				expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
+
+				expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
+			});
+
+			it('allows dynamic turning off', function() {
+				$('#cal').fullCalendar({
+					defaultView: viewName,
+					businessHours: true
+				});
+				var rootEl = $('.fc-view > *:first');
+				expect(rootEl.length).toBe(1);
+
+				expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
+				$('#cal').fullCalendar('option', 'businessHours', false);
+				expect(queryNonBusinessSegs().length).toBe(0);
+
+				expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
+			});
+		});
+	});
+
+
 	function queryNonBusinessSegsInCol(col) {
 		return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-nonbusiness');
+	}
+
+	function queryNonBusinessSegs() {
+		return $('.fc-nonbusiness');
 	}
 
 });

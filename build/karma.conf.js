@@ -23,6 +23,7 @@ module.exports = function(config) {
 			'../lib/moment/moment.js',
 			'../lib/jquery/dist/jquery.js',
 			'../lib/jquery-ui/jquery-ui.js',
+			'../lib/jquery-ui/themes/cupertino/jquery-ui.min.css',
 
 			'../lib/jquery-simulate/jquery.simulate.js',
 			'../lib/jquery-mockjax/dist/jquery.mockjax.js',
@@ -76,6 +77,19 @@ module.exports = function(config) {
 		autoWatch: true,
 
 		// If browser does not capture in given timeout [ms], kill it
-		captureTimeout: 60000
+		captureTimeout: 60000,
+
+		// force a window size for PhantomJS, because it's usually unreasonably small, resulting in offset problems
+		customLaunchers: {
+			PhantomJS_custom: {
+				base: 'PhantomJS',
+				options: {
+					viewportSize: {
+						width: 1024,
+						height: 768
+					}
+				}
+			}
+		}
 	});
 };

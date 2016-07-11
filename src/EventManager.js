@@ -10,7 +10,7 @@ var ajaxDefaults = {
 var eventGUID = 1;
 
 
-function EventManager(options) { // assumed to be a calendar
+function EventManager() { // assumed to be a calendar
 	var t = this;
 	
 	
@@ -47,7 +47,7 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	$.each(
-		(options.events ? [ options.events ] : []).concat(options.eventSources || []),
+		(t.options.events ? [ t.options.events ] : []).concat(t.options.eventSources || []),
 		function(i, sourceInput) {
 			var source = buildEventSource(sourceInput);
 			if (source) {
@@ -181,7 +181,7 @@ function EventManager(options) { // assumed to be a calendar
 				source,
 				rangeStart.clone(),
 				rangeEnd.clone(),
-				options.timezone,
+				t.options.timezone,
 				callback
 			);
 
@@ -204,7 +204,7 @@ function EventManager(options) { // assumed to be a calendar
 					t, // this, the Calendar object
 					rangeStart.clone(),
 					rangeEnd.clone(),
-					options.timezone,
+					t.options.timezone,
 					function(events) {
 						callback(events);
 						t.popLoading();
@@ -239,9 +239,9 @@ function EventManager(options) { // assumed to be a calendar
 				// and not affect the passed-in object.
 				var data = $.extend({}, customData || {});
 
-				var startParam = firstDefined(source.startParam, options.startParam);
-				var endParam = firstDefined(source.endParam, options.endParam);
-				var timezoneParam = firstDefined(source.timezoneParam, options.timezoneParam);
+				var startParam = firstDefined(source.startParam, t.options.startParam);
+				var endParam = firstDefined(source.endParam, t.options.endParam);
+				var timezoneParam = firstDefined(source.timezoneParam, t.options.timezoneParam);
 
 				if (startParam) {
 					data[startParam] = rangeStart.format();
@@ -249,8 +249,8 @@ function EventManager(options) { // assumed to be a calendar
 				if (endParam) {
 					data[endParam] = rangeEnd.format();
 				}
-				if (options.timezone && options.timezone != 'local') {
-					data[timezoneParam] = options.timezone;
+				if (t.options.timezone && t.options.timezone != 'local') {
+					data[timezoneParam] = t.options.timezone;
 				}
 
 				t.pushLoading();
@@ -582,7 +582,7 @@ function EventManager(options) { // assumed to be a calendar
 
 		reportEvents(cache);
 	}
-	
+
 	
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
@@ -596,7 +596,33 @@ function EventManager(options) { // assumed to be a calendar
 		}
 		return cache; // else, return all
 	}
-	
+
+
+	// Makes sure all array event sources have their internal event objects
+	// converted over to the Calendar's current timezone.
+	t.rezoneArrayEventSources = function() {
+		var i;
+		var events;
+		var j;
+
+		for (i = 0; i < sources.length; i++) {
+			events = sources[i].events;
+			if ($.isArray(events)) {
+
+				for (j = 0; j < events.length; j++) {
+					rezoneEventDates(events[j]);
+				}
+			}
+		}
+	};
+
+	function rezoneEventDates(event) {
+		event.start = t.moment(event.start);
+		if (event.end) {
+			event.end = t.moment(event.end);
+		}
+		backupEventDates(event);
+	}
 	
 	
 	/* Event Normalization
@@ -612,8 +638,8 @@ function EventManager(options) { // assumed to be a calendar
 		var start, end;
 		var allDay;
 
-		if (options.eventDataTransform) {
-			input = options.eventDataTransform(input);
+		if (t.options.eventDataTransform) {
+			input = t.options.eventDataTransform(input);
 		}
 		if (source && source.eventDataTransform) {
 			input = source.eventDataTransform(input);
@@ -679,7 +705,7 @@ function EventManager(options) { // assumed to be a calendar
 			if (allDay === undefined) { // still undefined? fallback to default
 				allDay = firstDefined(
 					source ? source.allDayDefault : undefined,
-					options.allDayDefault
+					t.options.allDayDefault
 				);
 				// still undefined? normalizeEventDates will calculate it
 			}
@@ -715,7 +741,7 @@ function EventManager(options) { // assumed to be a calendar
 		}
 
 		if (!eventProps.end) {
-			if (options.forceEventDuration) {
+			if (t.options.forceEventDuration) {
 				eventProps.end = t.getDefaultEventEnd(eventProps.allDay, eventProps.start);
 			}
 			else {
@@ -1016,7 +1042,7 @@ function EventManager(options) { // assumed to be a calendar
 	// Returns an array of events as to when the business hours occur in the given view.
 	// Abuse of our event system :(
 	function getBusinessHoursEvents(wholeDay) {
-		var optionVal = options.businessHours;
+		var optionVal = t.options.businessHours;
 		var defaultVal = {
 			className: 'fc-nonbusiness',
 			start: '09:00',
@@ -1068,12 +1094,12 @@ function EventManager(options) { // assumed to be a calendar
 		var constraint = firstDefined(
 			event.constraint,
 			source.constraint,
-			options.eventConstraint
+			t.options.eventConstraint
 		);
 		var overlap = firstDefined(
 			event.overlap,
 			source.overlap,
-			options.eventOverlap
+			t.options.eventOverlap
 		);
 		return isSpanAllowed(span, constraint, overlap, event);
 	}
@@ -1102,7 +1128,7 @@ function EventManager(options) { // assumed to be a calendar
 
 	// Determines the given span (unzoned start/end with other misc data) can be selected.
 	function isSelectionSpanAllowed(span) {
-		return isSpanAllowed(span, options.selectConstraint, options.selectOverlap);
+		return isSpanAllowed(span, t.options.selectConstraint, t.options.selectOverlap);
 	}
 
 

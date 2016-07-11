@@ -69,4 +69,19 @@ describe('lang', function() {
 		expect($('.fc-event .fc-time')).toHaveText('10:00');
 	});
 
+	it('allows dynamic setting', function() {
+		affix('#cal');
+		$('#cal').fullCalendar({
+			lang: 'es',
+			defaultDate: '2016-07-10',
+			defaultView: 'month'
+		});
+		expect($('.fc h2')).toHaveText('julio 2016');
+		expect($('.fc')).not.toHaveClass('fc-rtl');
+
+		$('#cal').fullCalendar('option', 'lang', 'ar');
+		expect($('.fc h2')).toHaveText('تموز يوليو ٢٠١٦');
+		expect($('.fc')).toHaveClass('fc-rtl');
+	});
+
 });
