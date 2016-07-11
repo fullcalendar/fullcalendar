@@ -56,21 +56,21 @@ describe('removeEventSource', function() {
 
 		var source1 = function(start, end, timezone, callback) {
 			setTimeout(function() {
-				callback([{
+				callback([ {
 					title: 'event1',
 					className: 'event1',
 					start: '2014-08-01T02:00:00'
-				}]);
+				} ]);
 			}, 100);
 		};
 
 		var source2 = function(start, end, timezone, callback) {
 			setTimeout(function() {
-				callback([{
+				callback([ {
 					title: 'event2',
 					className: 'event2',
 					start: '2014-08-01T02:00:00'
-				}]);
+				} ]);
 			}, 100);
 		};
 
@@ -94,10 +94,10 @@ describe('removeEventSource', function() {
 
 	describe('when multiple sources share the same fetching function', function() {
 		var fetchFunc = function(start, end, timezone, callback) {
-			callback([{
+			callback([ {
 				title: 'event',
 				start: '2014-08-01T02:00:00'
-			}]);
+			} ]);
 		};
 		beforeEach(function() {
 			options.eventSources = [
