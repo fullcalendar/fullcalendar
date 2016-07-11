@@ -68,6 +68,13 @@ describe('header rendering', function() {
 		});
 	});
 
+	it('allow for dynamically changing', function() {
+		$('#calendar').fullCalendar();
+		expect($('.fc-toolbar')).toBeInDOM();
+		$('#calendar').fullCalendar('option', 'header', false);
+		expect($('.fc-toolbar')).not.toBeInDOM();
+	});
+
 	describe('renders left and right literally', function() {
 		[ true, false ].forEach(function(isRTL) {
 			describe('when isRTL is ' + isRTL, function() {

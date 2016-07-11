@@ -51,7 +51,7 @@ function Header(calendar) {
 	function removeElement() {
 		if (el) {
 			el.remove();
-			el = this.el = null;
+			el = t.el = null;
 		}
 	}
 	
