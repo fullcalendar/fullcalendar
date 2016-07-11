@@ -2,26 +2,32 @@
 
 [ 'height', 'contentHeight' ].forEach(function(heightProp) { describe(heightProp, function() {
 
+	var calendarEl;
 	var options;
 	var heightElm;
 	var asAMethod;
 
 	beforeEach(function() {
 		affix('#cal');
-		$('#cal').width(900);
+		calendarEl = $('#cal');
+		calendarEl.width(900);
 		options = {
 			defaultDate: '2014-08-01'
 		};
 	});
 
+	function getParentHeight() {
+		return calendarEl.parent().height();
+	}
+
 	function init(heightVal) {
 		if (asAMethod) {
-			$('#cal').fullCalendar(options);
-			$('#cal').fullCalendar('option', heightProp, heightVal);
+			calendarEl.fullCalendar(options);
+			calendarEl.fullCalendar('option', heightProp, heightVal);
 		}
 		else {
 			options[heightProp] = heightVal;
-			$('#cal').fullCalendar(options);
+			calendarEl.fullCalendar(options);
 		}
 
 		if (heightProp === 'height') {
@@ -103,6 +109,61 @@
 				});
 				it('height is correct and scrollbars show up', function() {
 					init(600);
+					expectHeight(600);
+					expect($('.fc-day-grid-container')).toHaveScrollbars();
+				});
+			});
+
+			describe('as a function, when there are no events', function() {
+				beforeEach(function() {
+					calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />');
+				});
+				it('should be the specified height, with no scrollbars', function() {
+					init(getParentHeight);
+					expect(Math.round(heightElm.outerHeight())).toBe(600);
+					expect('.fc-day-grid-container').not.toHaveScrollbars();
+				});
+			});
+
+			describe('as a function, when there is one tall row of events', function() {
+				beforeEach(function() {
+					calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />');
+					options.events = repeatClone({ title: 'event', start: '2014-08-04' }, 9);
+				});
+				it('should take away height from other rows, but not do scrollbars', function() {
+					init(getParentHeight);
+					var rows = $('.fc-day-grid .fc-row');
+					var tallRow = rows.eq(1);
+					var shortRows = rows.not(tallRow); // 0, 2, 3, 4, 5
+					var shortHeight = shortRows.eq(0).outerHeight();
+
+					expectHeight(600);
+
+					shortRows.each(function(i, node) {
+						var rowHeight = $(node).outerHeight();
+						var diff = Math.abs(rowHeight - shortHeight);
+						expect(diff).toBeLessThan(10); // all roughly the same
+					});
+
+					expect(tallRow.outerHeight()).toBeGreaterThan(shortHeight * 2); // much taller
+					expect('.fc-day-grid-container').not.toHaveScrollbars();
+				});
+			});
+
+			describe('as a function, when there are many tall rows of events', function() {
+				beforeEach(function() {
+					calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />');
+					options.events = [].concat(
+						repeatClone({ title: 'event0', start: '2014-07-28' }, 9),
+						repeatClone({ title: 'event1', start: '2014-08-04' }, 9),
+						repeatClone({ title: 'event2', start: '2014-08-11' }, 9),
+						repeatClone({ title: 'event3', start: '2014-08-18' }, 9),
+						repeatClone({ title: 'event4', start: '2014-08-25' }, 9),
+						repeatClone({ title: 'event5', start: '2014-09-01' }, 9)
+					);
+				});
+				it('height is correct and scrollbars show up', function() {
+					init(getParentHeight);
 					expectHeight(600);
 					expect($('.fc-day-grid-container')).toHaveScrollbars();
 				});
