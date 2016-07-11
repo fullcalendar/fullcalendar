@@ -23,6 +23,7 @@ module.exports = function(config) {
 			'../lib/moment/moment.js',
 			'../lib/jquery/dist/jquery.js',
 			'../lib/jquery-ui/jquery-ui.js',
+			'../lib/jquery-ui/themes/cupertino/jquery-ui.min.css',
 
 			'../lib/jquery-simulate/jquery.simulate.js',
 			'../lib/jquery-mockjax/dist/jquery.mockjax.js',
