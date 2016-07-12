@@ -81,7 +81,7 @@
 							});
 						}
 
-						ddescribe('when there are no events', function() {
+						describe('when there are no events', function() {
 							it('should be the specified height, with no scrollbars', function() {
 								init(testInfo.height);
 								expect(Math.round(heightElm.outerHeight())).toBe(600);
