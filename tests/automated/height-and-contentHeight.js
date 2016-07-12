@@ -1,11 +1,19 @@
 (function() {
 
-[ 'height', 'contentHeight' ].forEach(function(heightProp) { describe(heightProp, function() {
+[ 'height', 'contentHeight' ].forEach(function(heightProp) { ddescribe(heightProp, function() {
 
 	var calendarEl;
 	var options;
 	var heightElm;
 	var asAMethod;
+	var heightPropDescriptions = [
+		{ description: 'as a number', height: 600 },
+		{ description: 'as a function', height: getParentHeight, heightWrapper: true }
+	];
+
+	if (heightProp === 'height') {
+		heightPropDescriptions.push({ description: 'as "parent"', height: 'parent', heightWrapper: true });
+	}
 
 	beforeEach(function() {
 		affix('#cal');
@@ -65,10 +73,7 @@
 					options.defaultView = 'month';
 				});
 
-				[
-					{ description: 'as a number', height: 600 },
-					{ description: 'as a function', height: getParentHeight, heightWrapper: true }
-				].forEach(function(testInfo) {
+				heightPropDescriptions.forEach(function(testInfo) {
 					describe(testInfo.description, function() {
 						if (testInfo.heightWrapper) {
 							beforeEach(function() {
@@ -76,7 +81,7 @@
 							});
 						}
 
-						describe('when there are no events', function() {
+						ddescribe('when there are no events', function() {
 							it('should be the specified height, with no scrollbars', function() {
 								init(testInfo.height);
 								expect(Math.round(heightElm.outerHeight())).toBe(600);
@@ -155,10 +160,7 @@
 						options.defaultView = viewName;
 					});
 
-					[
-						{ description: 'as a number', height: 600 },
-						{ description: 'as a function', height: getParentHeight, heightWrapper: true }
-					].forEach(function(testInfo) {
+					heightPropDescriptions.forEach(function(testInfo) {
 						describe(testInfo.description, function() {
 							if (testInfo.heightWrapper) {
 								beforeEach(function() {
@@ -216,10 +218,7 @@
 								$.extend(options, moreOptions);
 							});
 
-							[
-								{ description: 'as a number', height: 600 },
-								{ description: 'as a function', height: getParentHeight, heightWrapper: true }
-							].forEach(function(testInfo) {
+							heightPropDescriptions.forEach(function(testInfo) {
 								describe(testInfo.description, function() {
 									if (testInfo.heightWrapper) {
 										beforeEach(function() {
