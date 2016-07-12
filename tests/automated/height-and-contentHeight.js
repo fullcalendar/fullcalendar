@@ -1,6 +1,6 @@
 (function() {
 
-[ 'height', 'contentHeight' ].forEach(function(heightProp) { ddescribe(heightProp, function() {
+[ 'height', 'contentHeight' ].forEach(function(heightProp) { describe(heightProp, function() {
 
 	var calendarEl;
 	var options;
