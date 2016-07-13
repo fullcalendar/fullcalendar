@@ -34,18 +34,24 @@ module.exports = function(config) {
 			'../tests/lib/simulate.js',
 			'../tests/lib/dom-utils.js',
 			'../tests/lib/dnd-resize-utils.js',
-
 			'../tests/lib/time-grid.js',
+			'../tests/base.css',
 
 			'../dist/fullcalendar.js',
 			'../dist/gcal.js',
 			'../dist/lang-all.js',
 			'../dist/fullcalendar.css',
-			'../tests/base.css',
 
 			// For testing if scheduler's JS, even when not actived, screws anything up
 			//'../../fullcalendar-scheduler/dist/scheduler.js',
 			//'../../fullcalendar-scheduler/dist/scheduler.css',
+
+			// serve everything in the dist directory, like sourcemaps and the files they reference (in dist/src).
+			// above files take precedence of over this, and will be watched. never cache (always serve from disk).
+			{ pattern: '../dist/**/*', included: false, watched: false, nocache: true },
+
+			// serve assets for 3rd-party libs, like jquery-ui theme images.
+			{ pattern: '../lib/**/*', included: false, watched: false, nocache: true },
 
 			// For IE8 testing. Because it can't handle running all the tests at once.
 			// Comment out the *.js line and run karma with each of the lines below.
