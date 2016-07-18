@@ -38,6 +38,7 @@
         "src/common/View.js",
         "src/common/Scroller.js",
         "src/Calendar.js",
+        "src/Calendar.options.js",
         "src/defaults.js",
         "src/lang.js",
         "src/Header.js",
