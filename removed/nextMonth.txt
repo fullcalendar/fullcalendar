@@ -1,0 +1,13 @@
+
+nextMonth
+=========
+
+<div class='removed-notice' markdown='1'>
+In version 1.3, this method was renamed to [next](../current_date/next).
+</div>
+
+Moves the calendar forward one month.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'nextMonth' )
+</div>

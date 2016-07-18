@@ -1,0 +1,16 @@
+
+Agenda Options
+==============
+
+The following options only apply to the `agendaWeek` and `agendaDay` views:
+
+- allDaySlot
+- allDayText
+- axisFormat
+- slotMinutes
+- snapMinutes
+- defaultEventMinutes
+- firstHour
+- minTime
+- maxTime
+- slotEventOverlap

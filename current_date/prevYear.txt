@@ -1,0 +1,11 @@
+
+prevYear *1.2.x and 1.4 onward*
+===============================
+
+Moves the calendar back one year.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'prevYear' )
+</div>
+
+Version 1.3.x did not include this method, but you can use `.fullCalendar('incrementDate', -1)` instead.

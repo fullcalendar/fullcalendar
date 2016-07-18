@@ -1,0 +1,26 @@
+
+updateEvent *1.2*
+=================
+
+Reports changes to an event and renders them on the calendar.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'updateEvent', *event* )
+</div>
+
+`event` must be the original [Event Object]() for an event,
+**not** merely a reconstructed object.
+The original Event Object can obtained by callbacks such as [eventClick](../mouse/eventClick),
+or by the [clientEvents]() method.
+
+Here is how you might update an event after a click:
+
+	$('#calendar').fullCalendar({
+		eventClick: function(event, element) {
+		
+			event.title = "CLICKED!";
+			
+			$('#calendar').fullCalendar('updateEvent', event);
+		
+		}
+	});
