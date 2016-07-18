@@ -1,0 +1,28 @@
+
+General Display
+===============
+
+<ul>
+<li>header</li>
+<li>theme</li>
+<li>buttonIcons</li>
+<li>firstDay</li>
+<li>isRTL</li>
+<li>weekends</li>
+<li>hiddenDays</li>
+<li>weekMode</li>
+<li>weekNumbers</li>
+<li>weekNumberCalculation</li>
+<li>height</li>
+<li>contentHeight</li>
+<li>aspectRatio</li>
+<li>handleWindowResize</li>
+<li class='callback'><a href='viewRender'>viewRender (callback)</a></li>
+<li class='callback'><a href='viewDestroy'>viewDestroy (callback)</a></li>
+<li class='callback'><a href='dayRender'>dayRender (callback)</a></li>
+<li class='callback'><a href='windowResize'>windowResize (callback)</a></li>
+<li class='method'><a href='render'>render (method)</a></li>
+<li class='method'><a href='destroy'>destroy (method)</a></li>
+</ul>
+
+See also: [buttonText](../text/buttonText)

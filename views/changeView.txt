@@ -1,0 +1,11 @@
+
+changeView *1.3.1*
+==================
+
+Immediately switches to a different view.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'changeView', *viewName* )
+</div>
+
+`viewName` must be a string value containing one of the [Available Views]().

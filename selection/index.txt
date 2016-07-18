@@ -1,0 +1,14 @@
+
+
+<h1>Selection</h1>
+
+<ul>
+<li><a href='selectable'>selectable</a></li>
+<li><a href='selectHelper'>selectHelper</a></li>
+<li><a href='unselectAuto'>unselectAuto</a></li>
+<li><a href='unselectCancel'>unselectCancel</a></li>
+<li class='callback'><a href='select_callback'>select (callback)</a></li>
+<li class='callback'><a href='unselect_callback'>unselect (callback)</a></li>
+<li class='method'><a href='select_method'>select (method)</a></li>
+<li class='method'><a href='unselect_method'>unselect (method)</a></li>
+</ul>

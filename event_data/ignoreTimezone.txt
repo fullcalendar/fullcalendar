@@ -1,0 +1,18 @@
+
+ignoreTimezone *1.4.8*
+======================
+
+When parsing ISO8601 dates, whether UTC offsets should be ignored
+while processing event source data.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: `true`
+</div>
+
+The default is `true`, which means the UTC offset for all ISO8601 dates will be ignored.
+For example, the date `"2008-11-05T08:15:30-05:00"` will be processed as
+November 5th, 2008 at 8:15am *in the local offset of the browser*.
+
+If you are using ISO8601 dates with UTC offsets, chances are you want them
+processed. You must set this option to `false`. In the future, the default
+for this option will probably be changed to `false`.
