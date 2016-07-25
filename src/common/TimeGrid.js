@@ -10,6 +10,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	snapsPerSlot: null,
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	customTimeSlot: null,
 	labelFormat: null, // formatting string for times running along vertical axis
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
@@ -75,9 +76,18 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var isLabeled;
 		var axisHtml;
+		var customRangeMode;
+		var slotCounter = 1;
+
+		if (typeof this.customTimeSlot !== "undefined" && this.customTimeSlot !== null) {
+			customRangeMode = true;
+			slotTime = this.customTimeSlot[0];
+		} else {
+			customRangeMode = false;
+		}
 
 		// Calculate the time for each slot
-		while (slotTime < this.maxTime) {
+		while (((slotTime < this.maxTime) && !customRangeMode) || ((slotCounter <= this.customTimeSlot.length) && customRangeMode)) {
 			slotDate = this.start.clone().time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
@@ -99,8 +109,15 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 					'<td class="' + view.widgetContentClass + '"/>' +
 					(isRTL ? axisHtml : '') +
 				"</tr>";
+			
+			if(customRangeMode){
+				slotTime.add(this.customTimeSlot[slotCounter]);
+			}
+			else {
+				slotTime.add(this.slotDuration);
+			}
 
-			slotTime.add(this.slotDuration);
+			slotCounter++;
 		}
 
 		return html;
@@ -129,6 +146,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
+		this.customTimeSlot = view.opt('customTimeSlot');
 
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
