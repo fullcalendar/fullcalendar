@@ -275,6 +275,10 @@ describe('eventLimit popover', function() {
 
 				setTimeout(function() { // simulate was getting confused about which thing was being clicked :(
 					$('.fc-more-popover .event4').simulate('drag', {
+						localPoint: {
+							left: '0%', // leftmost is guaranteed to be over the 30th
+							top: '50%'
+						},
 						end: $('.fc-slats tr:eq(6)') // the middle will be 7/30, 3:00am
 					});
 				}, 0);

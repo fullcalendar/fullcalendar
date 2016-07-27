@@ -1,8 +1,5 @@
 
 module.exports = function(grunt) {
-
-	var _ = require('underscore');
-
 	// Load required NPM tasks.
 	// You must first run `npm install` in the project's root directory to get these dependencies.
 	grunt.loadNpmTasks('grunt-contrib-concat');
@@ -17,7 +14,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('lumbar');
-	
+
 	// This will eventually get passed to grunt.initConfig()
 	// Initialize multitasks...
 	var config = {
@@ -168,8 +165,8 @@ module.exports = function(grunt) {
 			configFile: 'build/karma.conf.js'
 		},
 		url: {}, // visit a URL in a browser
-		headless: { browsers: [ 'PhantomJS' ] },
-		single: { browsers: [ 'PhantomJS' ], singleRun: true, autoWatch: false }
+		headless: { browsers: [ 'PhantomJS_custom' ] },
+		single: { browsers: [ 'PhantomJS_custom' ], singleRun: true, autoWatch: false }
 	};
 
 
@@ -304,8 +301,7 @@ module.exports = function(grunt) {
 	config.bump = { // changes the version number in the configs
 		options: {
 			files: [
-				'package.json',
-				'bower.json'
+				'package.json'
 			],
 			commit: false,
 			createTag: false,

@@ -1,4 +1,40 @@
 
+v2.9.0 (2016-07-10)
+-------------------
+
+- Setters for (almost) all options (#564).
+  See [docs](http://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
+- Travis CI improvements (#3266)
+
+
+v2.8.0 (2016-06-19)
+-------------------
+
+- getEventSources method (#3103, #2433)
+- getEventSourceById method (#3223)
+- refetchEventSources method (#3103, #1328, #254)
+- removeEventSources method (#3165, #948)
+- prevent flicker when refetchEvents is called (#3123, #2558)
+- fix for removing event sources that share same URL (#3209)
+- jQuery 3 support (#3197, #3124)
+- Travis CI integration (#3218)
+- EditorConfig for promoting consistent code style (#141)
+- use en dash when formatting ranges (#3077)
+- height:auto always shows scrollbars in month view on FF (#3202)
+- new languages:
+	- Basque (#2992)
+	- Galician (#194)
+	- Luxembourgish (#2979)
+
+
+v2.7.3 (2016-06-02)
+-------------------
+
+internal enhancements that plugins can benefit from:
+- EventEmitter not correctly working with stopListeningTo
+- normalizeEvent hook for manipulating event data
+
+
 v2.7.2 (2016-05-20)
 -------------------
 

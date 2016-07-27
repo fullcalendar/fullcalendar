@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: rename all header-related things to "toolbar"
 
-function Header(calendar, options) {
+function Header(calendar) {
 	var t = this;
 	
 	// exports
@@ -15,38 +15,50 @@ function Header(calendar, options) {
 	t.disableButton = disableButton;
 	t.enableButton = enableButton;
 	t.getViewsWithButtons = getViewsWithButtons;
+	t.el = null; // mirrors local `el`
 	
 	// locals
-	var el = $();
+	var el;
 	var viewsWithButtons = [];
 	var tm;
 
 
+	// can be called repeatedly and will rerender
 	function render() {
+		var options = calendar.options;
 		var sections = options.header;
 
 		tm = options.theme ? 'ui' : 'fc';
 
 		if (sections) {
-			el = $("<div class='fc-toolbar'/>")
-				.append(renderSection('left'))
+			if (!el) {
+				el = this.el = $("<div class='fc-toolbar'/>");
+			}
+			else {
+				el.empty();
+			}
+			el.append(renderSection('left'))
 				.append(renderSection('right'))
 				.append(renderSection('center'))
 				.append('<div class="fc-clear"/>');
-
-			return el;
+		}
+		else {
+			removeElement();
 		}
 	}
 	
 	
 	function removeElement() {
-		el.remove();
-		el = $();
+		if (el) {
+			el.remove();
+			el = t.el = null;
+		}
 	}
 	
 	
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
+		var options = calendar.options;
 		var buttonStr = options.header[position];
 
 		if (buttonStr) {
@@ -72,7 +84,7 @@ function Header(calendar, options) {
 						isOnlyButtons = false;
 					}
 					else {
-						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
+						if ((customButtonProps = (options.customButtons || {})[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
 									customButtonProps.click.call(button[0], ev);
@@ -208,33 +220,43 @@ function Header(calendar, options) {
 	
 	
 	function updateTitle(text) {
-		el.find('h2').text(text);
+		if (el) {
+			el.find('h2').text(text);
+		}
 	}
 	
 	
 	function activateButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.addClass(tm + '-state-active');
+		if (el) {
+			el.find('.fc-' + buttonName + '-button')
+				.addClass(tm + '-state-active');
+		}
 	}
 	
 	
 	function deactivateButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.removeClass(tm + '-state-active');
+		if (el) {
+			el.find('.fc-' + buttonName + '-button')
+				.removeClass(tm + '-state-active');
+		}
 	}
 	
 	
 	function disableButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.attr('disabled', 'disabled')
-			.addClass(tm + '-state-disabled');
+		if (el) {
+			el.find('.fc-' + buttonName + '-button')
+				.prop('disabled', true)
+				.addClass(tm + '-state-disabled');
+		}
 	}
 	
 	
 	function enableButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.removeAttr('disabled')
-			.removeClass(tm + '-state-disabled');
+		if (el) {
+			el.find('.fc-' + buttonName + '-button')
+				.prop('disabled', false)
+				.removeClass(tm + '-state-disabled');
+		}
 	}
 
 

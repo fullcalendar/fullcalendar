@@ -4,6 +4,7 @@ var Calendar = FC.Calendar = Class.extend({
 	dirDefaults: null, // option defaults related to LTR or RTL
 	langDefaults: null, // option defaults related to current locale
 	overrides: null, // option overrides given to the fullCalendar constructor
+	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
 	options: null, // all defaults combined with overrides
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
@@ -21,24 +22,25 @@ var Calendar = FC.Calendar = Class.extend({
 	},
 
 
-	// Initializes `this.options` and other important options-related objects
-	initOptions: function(overrides) {
+	// Computes the flattened options hash for the calendar and assigns to `this.options`.
+	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
+	populateOptionsHash: function() {
 		var lang, langDefaults;
 		var isRTL, dirDefaults;
 
-		// converts legacy options into non-legacy ones.
-		// in the future, when this is removed, don't use `overrides` reference. make a copy.
-		overrides = massageOverrides(overrides);
-
-		lang = overrides.lang;
+		lang = firstDefined( // explicit lang option given?
+			this.dynamicOverrides.lang,
+			this.overrides.lang
+		);
 		langDefaults = langOptionHash[lang];
-		if (!langDefaults) {
+		if (!langDefaults) { // explicit lang option not given or invalid?
 			lang = Calendar.defaults.lang;
 			langDefaults = langOptionHash[lang] || {};
 		}
 
-		isRTL = firstDefined(
-			overrides.isRTL,
+		isRTL = firstDefined( // based on options computed so far, is direction RTL?
+			this.dynamicOverrides.isRTL,
+			this.overrides.isRTL,
 			langDefaults.isRTL,
 			Calendar.defaults.isRTL
 		);
@@ -46,16 +48,14 @@ var Calendar = FC.Calendar = Class.extend({
 
 		this.dirDefaults = dirDefaults;
 		this.langDefaults = langDefaults;
-		this.overrides = overrides;
 		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
 			Calendar.defaults, // global defaults
 			dirDefaults,
 			langDefaults,
-			overrides
+			this.overrides,
+			this.dynamicOverrides
 		]);
-		populateInstanceComputableOptions(this.options);
-
-		this.viewSpecCache = {}; // somewhat unrelated
+		populateInstanceComputableOptions(this.options); // fill in gaps with computed options
 	},
 
 
@@ -169,7 +169,8 @@ var Calendar = FC.Calendar = Class.extend({
 			this.dirDefaults,
 			this.langDefaults, // locale and dir take precedence over view's defaults!
 			this.overrides, // calendar's overrides (options given to constructor)
-			spec.overrides // view's overrides (view-specific options)
+			spec.overrides, // view's overrides (view-specific options)
+			this.dynamicOverrides // dynamically set via setter. highest precedence
 		]);
 		populateInstanceComputableOptions(spec.options);
 	},
@@ -188,6 +189,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 		// highest to lowest priority
 		spec.buttonTextOverride =
+			queryButtonText(this.dynamicOverrides) ||
 			queryButtonText(this.overrides) || // constructor-specified buttonText lookup hash takes precedence
 			spec.overrides.buttonText; // `buttonText` for view-specific options is a string
 
@@ -260,16 +262,13 @@ function Calendar_constructor(element, overrides) {
 	var t = this;
 
 
-	t.initOptions(overrides || {});
-	var options = this.options;
-
-	
 	// Exports
 	// -----------------------------------------------------------------------------------
 
 	t.render = render;
 	t.destroy = destroy;
 	t.refetchEvents = refetchEvents;
+	t.refetchEventSources = refetchEventSources;
 	t.reportEvents = reportEvents;
 	t.reportEventChange = reportEventChange;
 	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
@@ -287,8 +286,22 @@ function Calendar_constructor(element, overrides) {
 	t.getDate = getDate;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
-	t.option = option;
+	t.option = option; // getter/setter method
 	t.trigger = trigger;
+
+
+	// Options
+	// -----------------------------------------------------------------------------------
+
+	t.dynamicOverrides = {};
+	t.viewSpecCache = {};
+	t.optionHandlers = {}; // for Calendar.options.js
+
+	// convert legacy options into non-legacy ones.
+	// in the future, when this is removed, don't use `overrides` reference. make a copy.
+	t.overrides = massageOverrides(overrides || {});
+
+	t.populateOptionsHash(); // sets this.options
 
 
 
@@ -296,41 +309,53 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 	// Apply overrides to the current language's data
 
+	var localeData;
 
-	var localeData = createObject( // make a cheap copy
-		getMomentLocaleData(options.lang) // will fall back to en
-	);
+	// Called immediately, and when any of the options change.
+	// Happens before any internal objects rebuild or rerender, because this is very core.
+	t.bindOptions([
+		'lang', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort', 'firstDay', 'weekNumberCalculation'
+	], function(lang, monthNames, monthNamesShort, dayNames, dayNamesShort, firstDay, weekNumberCalculation) {
 
-	if (options.monthNames) {
-		localeData._months = options.monthNames;
-	}
-	if (options.monthNamesShort) {
-		localeData._monthsShort = options.monthNamesShort;
-	}
-	if (options.dayNames) {
-		localeData._weekdays = options.dayNames;
-	}
-	if (options.dayNamesShort) {
-		localeData._weekdaysShort = options.dayNamesShort;
-	}
-	if (options.firstDay != null) {
-		var _week = createObject(localeData._week); // _week: { dow: # }
-		_week.dow = options.firstDay;
-		localeData._week = _week;
-	}
+		localeData = createObject( // make a cheap copy
+			getMomentLocaleData(lang) // will fall back to en
+		);
 
-	// assign a normalized value, to be used by our .week() moment extension
-	localeData._fullCalendar_weekCalc = (function(weekCalc) {
-		if (typeof weekCalc === 'function') {
-			return weekCalc;
+		if (monthNames) {
+			localeData._months = monthNames;
 		}
-		else if (weekCalc === 'local') {
-			return weekCalc;
+		if (monthNamesShort) {
+			localeData._monthsShort = monthNamesShort;
 		}
-		else if (weekCalc === 'iso' || weekCalc === 'ISO') {
-			return 'ISO';
+		if (dayNames) {
+			localeData._weekdays = dayNames;
 		}
-	})(options.weekNumberCalculation);
+		if (dayNamesShort) {
+			localeData._weekdaysShort = dayNamesShort;
+		}
+		if (firstDay != null) {
+			var _week = createObject(localeData._week); // _week: { dow: # }
+			_week.dow = firstDay;
+			localeData._week = _week;
+		}
+
+		if (weekNumberCalculation === 'iso') {
+			weekNumberCalculation = 'ISO'; // normalize
+		}
+		if ( // whitelist certain kinds of input
+			weekNumberCalculation === 'ISO' ||
+			weekNumberCalculation === 'local' ||
+			typeof weekNumberCalculation === 'function'
+		) {
+			localeData._fullCalendar_weekCalc = weekNumberCalculation; // moment-ext will know what to do with it
+		}
+
+		// If the internal current date object already exists, move to new locale.
+		// We do NOT need to do this technique for event dates, because this happens when converting to "segments".
+		if (date) {
+			localizeMoment(date); // sets to localeData
+		}
+	});
 
 
 
@@ -338,8 +363,8 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
-	t.defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration);
-	t.defaultTimedEventDuration = moment.duration(options.defaultTimedEventDuration);
+	t.defaultAllDayEventDuration = moment.duration(t.options.defaultAllDayEventDuration);
+	t.defaultTimedEventDuration = moment.duration(t.options.defaultTimedEventDuration);
 
 
 	// Builds a moment using the settings of the current calendar: timezone and language.
@@ -347,7 +372,7 @@ function Calendar_constructor(element, overrides) {
 	t.moment = function() {
 		var mom;
 
-		if (options.timezone === 'local') {
+		if (t.options.timezone === 'local') {
 			mom = FC.moment.apply(null, arguments);
 
 			// Force the moment to be local, because FC.moment doesn't guarantee it.
@@ -355,28 +380,34 @@ function Calendar_constructor(element, overrides) {
 				mom.local();
 			}
 		}
-		else if (options.timezone === 'UTC') {
+		else if (t.options.timezone === 'UTC') {
 			mom = FC.moment.utc.apply(null, arguments); // process as UTC
 		}
 		else {
 			mom = FC.moment.parseZone.apply(null, arguments); // let the input decide the zone
 		}
 
+		localizeMoment(mom);
+
+		return mom;
+	};
+
+
+	// Updates the given moment's locale settings to the current calendar locale settings.
+	function localizeMoment(mom) {
 		if ('_locale' in mom) { // moment 2.8 and above
 			mom._locale = localeData;
 		}
 		else { // pre-moment-2.8
 			mom._lang = localeData;
 		}
-
-		return mom;
-	};
+	}
 
 
 	// Returns a boolean about whether or not the calendar knows how to calculate
 	// the timezone offset of arbitrary dates in the current timezone.
 	t.getIsAmbigTimezone = function() {
-		return options.timezone !== 'local' && options.timezone !== 'UTC';
+		return t.options.timezone !== 'local' && t.options.timezone !== 'UTC';
 	};
 
 
@@ -405,7 +436,7 @@ function Calendar_constructor(element, overrides) {
 	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
 	// Will return an moment with an ambiguous timezone.
 	t.getNow = function() {
-		var now = options.now;
+		var now = t.options.now;
 		if (typeof now === 'function') {
 			now = now();
 		}
@@ -447,7 +478,7 @@ function Calendar_constructor(element, overrides) {
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
 	t.humanizeDuration = function(duration) {
-		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
+		return (duration.locale || duration.lang).call(duration, t.options.lang) // works moment-pre-2.8
 			.humanize();
 	};
 
@@ -457,9 +488,10 @@ function Calendar_constructor(element, overrides) {
 	// -----------------------------------------------------------------------------------
 
 
-	EventManager.call(t, options);
+	EventManager.call(t);
 	var isFetchNeeded = t.isFetchNeeded;
 	var fetchEvents = t.fetchEvents;
+	var fetchEventSources = t.fetchEventSources;
 
 
 
@@ -469,7 +501,6 @@ function Calendar_constructor(element, overrides) {
 
 	var _element = element[0];
 	var header;
-	var headerElement;
 	var content;
 	var tm; // for making theme classes
 	var currentView; // NOTE: keep this in sync with this.view
@@ -487,8 +518,8 @@ function Calendar_constructor(element, overrides) {
 
 
 	// compute the initial ambig-timezone date
-	if (options.defaultDate != null) {
-		date = t.moment(options.defaultDate).stripZone();
+	if (t.options.defaultDate != null) {
+		date = t.moment(t.options.defaultDate).stripZone();
 	}
 	else {
 		date = t.getNow(); // getNow already returns unzoned
@@ -508,36 +539,41 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function initialRender() {
-		tm = options.theme ? 'ui' : 'fc';
 		element.addClass('fc');
 
-		if (options.isRTL) {
-			element.addClass('fc-rtl');
-		}
-		else {
-			element.addClass('fc-ltr');
-		}
+		// called immediately, and upon option change
+		t.bindOption('theme', function(theme) {
+			tm = theme ? 'ui' : 'fc'; // affects a larger scope
+			element.toggleClass('ui-widget', theme);
+			element.toggleClass('fc-unthemed', !theme);
+		});
 
-		if (options.theme) {
-			element.addClass('ui-widget');
-		}
-		else {
-			element.addClass('fc-unthemed');
-		}
+		// called immediately, and upon option change.
+		// HACK: lang often affects isRTL, so we explicitly listen to that too.
+		t.bindOptions([ 'isRTL', 'lang' ], function(isRTL) {
+			element.toggleClass('fc-ltr', !isRTL);
+			element.toggleClass('fc-rtl', isRTL);
+		});
 
 		content = $("<div class='fc-view-container'/>").prependTo(element);
 
-		header = t.header = new Header(t, options);
-		headerElement = header.render();
-		if (headerElement) {
-			element.prepend(headerElement);
-		}
+		header = t.header = new Header(t);
+		renderHeader();
 
-		renderView(options.defaultView);
+		renderView(t.options.defaultView);
 
-		if (options.handleWindowResize) {
-			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
+		if (t.options.handleWindowResize) {
+			windowResizeProxy = debounce(windowResize, t.options.windowResizeDelay); // prevents rapid calls
 			$(window).resize(windowResizeProxy);
+		}
+	}
+
+
+	// can be called repeatedly and Header will rerender
+	function renderHeader() {
+		header.render();
+		if (header.el) {
+			element.prepend(header.el);
 		}
 	}
 	
@@ -573,15 +609,14 @@ function Calendar_constructor(element, overrides) {
 
 	// Renders a view because of a date change, view-type change, or for the first time.
 	// If not given a viewType, keep the current view but render different dates.
-	function renderView(viewType) {
+	// Accepts an optional scroll state to restore to.
+	function renderView(viewType, explicitScrollState) {
 		ignoreWindowResize++;
 
 		// if viewType is changing, remove the old view's rendering
 		if (currentView && viewType && currentView.type !== viewType) {
-			header.deactivateButton(currentView.type);
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
-			currentView.removeElement();
-			currentView = t.view = null;
+			clearView();
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
@@ -608,7 +643,7 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					currentView.display(date); // will call freezeContentHeight
+					currentView.display(date, explicitScrollState); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
@@ -621,6 +656,32 @@ function Calendar_constructor(element, overrides) {
 		}
 
 		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
+		ignoreWindowResize--;
+	}
+
+
+	// Unrenders the current view and reflects this change in the Header.
+	// Unregsiters the `currentView`, but does not remove from viewByType hash.
+	function clearView() {
+		header.deactivateButton(currentView.type);
+		currentView.removeElement();
+		currentView = t.view = null;
+	}
+
+
+	// Destroys the view, including the view object. Then, re-instantiates it and renders it.
+	// Maintains the same scroll state.
+	// TODO: maintain any other user-manipulated state.
+	function reinitView() {
+		ignoreWindowResize++;
+		freezeContentHeight();
+
+		var viewType = currentView.type;
+		var scrollState = currentView.queryScroll();
+		clearView();
+		renderView(viewType, scrollState);
+
+		unfreezeContentHeight();
 		ignoreWindowResize--;
 	}
 
@@ -639,7 +700,7 @@ function Calendar_constructor(element, overrides) {
 
 
 	t.isHeightAuto = function() {
-		return options.contentHeight === 'auto' || options.height === 'auto';
+		return t.options.contentHeight === 'auto' || t.options.height === 'auto';
 	};
 	
 	
@@ -667,14 +728,14 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function _calcSize() { // assumes elementVisible
-		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.contentHeight;
+		if (typeof t.options.contentHeight === 'number') { // exists and not 'auto'
+			suggestedViewHeight = t.options.contentHeight;
 		}
-		else if (typeof options.height === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.height - (headerElement ? headerElement.outerHeight(true) : 0);
+		else if (typeof t.options.height === 'number') { // exists and not 'auto'
+			suggestedViewHeight = t.options.height - (header.el ? header.el.outerHeight(true) : 0);
 		}
 		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+			suggestedViewHeight = Math.round(content.width() / Math.max(t.options.aspectRatio, .5));
 		}
 	}
 	
@@ -699,8 +760,13 @@ function Calendar_constructor(element, overrides) {
 
 
 	function refetchEvents() { // can be called as an API method
-		destroyEvents(); // so that events are cleared before user starts waiting for AJAX
 		fetchAndRenderEvents();
+	}
+
+
+	// TODO: move this into EventManager?
+	function refetchEventSources(matchInputs) {
+		fetchEventSources(t.getEventSourcesByMatchArray(matchInputs));
 	}
 
 
@@ -711,17 +777,10 @@ function Calendar_constructor(element, overrides) {
 			unfreezeContentHeight();
 		}
 	}
-
-
-	function destroyEvents() {
-		freezeContentHeight();
-		currentView.clearEvents();
-		unfreezeContentHeight();
-	}
 	
 
 	function getAndRenderEvents() {
-		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
+		if (!t.options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
 			fetchAndRenderEvents();
 		}
 		else {
@@ -900,13 +959,69 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function option(name, value) {
-		if (value === undefined) {
-			return options[name];
+		var newOptionHash;
+
+		if (typeof name === 'string') {
+			if (value === undefined) { // getter
+				return t.options[name];
+			}
+			else { // setter for individual option
+				newOptionHash = {};
+				newOptionHash[name] = value;
+				setOptions(newOptionHash);
+			}
 		}
-		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-			options[name] = value;
-			updateSize(true); // true = allow recalculation of height
+		else if (typeof name === 'object') { // compound setter with object input
+			setOptions(name);
 		}
+	}
+
+
+	function setOptions(newOptionHash) {
+		var optionCnt = 0;
+		var optionName;
+
+		for (optionName in newOptionHash) {
+			t.dynamicOverrides[optionName] = newOptionHash[optionName];
+		}
+
+		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		t.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
+
+		// trigger handlers after this.options has been updated
+		for (optionName in newOptionHash) {
+			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
+			optionCnt++;
+		}
+
+		// special-case handling of single option change.
+		// if only one option change, `optionName` will be its name.
+		if (optionCnt === 1) {
+			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
+				updateSize(true); // true = allow recalculation of height
+				return;
+			}
+			else if (optionName === 'defaultDate') {
+				return; // can't change date this way. use gotoDate instead
+			}
+			else if (optionName === 'businessHours') {
+				if (currentView) {
+					currentView.unrenderBusinessHours();
+					currentView.renderBusinessHours();
+				}
+				return;
+			}
+			else if (optionName === 'timezone') {
+				t.rezoneArrayEventSources();
+				refetchEvents();
+				return;
+			}
+		}
+
+		// catch-all. rerender the header and rebuild/rerender the current view
+		renderHeader();
+		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
+		reinitView();
 	}
 	
 	
@@ -916,8 +1031,8 @@ function Calendar_constructor(element, overrides) {
 		thisObj = thisObj || _element;
 		this.triggerWith(name, thisObj, args); // Emitter's method
 
-		if (options[name]) {
-			return options[name].apply(thisObj, args);
+		if (t.options[name]) {
+			return t.options[name].apply(thisObj, args);
 		}
 	}
 
