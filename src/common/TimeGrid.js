@@ -147,7 +147,15 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		this.customTimeSlot = view.opt('customTimeSlot');
 
 		if (typeof this.customTimeSlot !== "undefined" && this.customTimeSlot !== null)
+		{
 			this.customRangeMode = true;
+			this.maxTime = moment.duration(this.minTime);
+			
+			var thisProxy = this;
+			$.each(this.customTimeSlot, function() {
+				thisProxy.maxTime.add(this);
+			});
+		}
 
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
