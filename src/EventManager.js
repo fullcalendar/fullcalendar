@@ -717,6 +717,7 @@ function EventManager() { // assumed to be a calendar
 
 		return out;
 	}
+	t.buildEventFromInput = buildEventFromInput;
 
 
 	// Normalizes and assigns the given dates to the given partially-formed event object.
@@ -840,6 +841,7 @@ function EventManager() { // assumed to be a calendar
 
 		return events;
 	}
+	t.expandEvent = expandEvent;
 
 
 
