@@ -1106,7 +1106,7 @@ function EventManager() { // assumed to be a calendar
 
 			anyContainment = false;
 			for (i = 0; i < constraintEvents.length; i++) {
-				if (eventContainsRange(constraintEvents[i], span)) {
+				if (t.spanContainsSpan(constraintEvents[i], span)) {
 					anyContainment = true;
 					break;
 				}
@@ -1175,16 +1175,6 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	// Does the event's date range fully contain the given range?
-	// start/end already assumed to have stripped zones :(
-	function eventContainsRange(event, range) {
-		var eventStart = event.start.clone().stripZone();
-		var eventEnd = t.getEventEnd(event).stripZone();
-
-		return range.start >= eventStart && range.end <= eventEnd;
-	}
-
-
 	// Does the event's date range intersect with the given range?
 	// start/end already assumed to have stripped zones :(
 	function eventIntersectsRange(event, range) {
@@ -1205,6 +1195,16 @@ function EventManager() { // assumed to be a calendar
 // hook for external libs to manipulate event properties upon creation.
 // should manipulate the event in-place.
 Calendar.prototype.normalizeEvent = function(event) {
+};
+
+
+// Does the given span (start, end, and other location information)
+// fully contain the other?
+Calendar.prototype.spanContainsSpan = function(outerSpan, innerSpan) {
+	var eventStart = outerSpan.start.clone().stripZone();
+	var eventEnd = this.getEventEnd(outerSpan).stripZone();
+
+	return innerSpan.start >= eventStart && innerSpan.end <= eventEnd;
 };
 
 
