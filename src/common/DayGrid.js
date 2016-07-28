@@ -63,7 +63,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	renderBusinessHours: function() {
-		var events = this.view.calendar.getBusinessHoursEvents(true); // wholeDay=true
+		var events = this.view.calendar.getCurrentBusinessHourEvents(true); // wholeDay=true
 		var segs = this.eventsToSegs(events);
 
 		this.renderFill('businessHours', segs, 'bgevent');

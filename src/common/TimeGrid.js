@@ -423,7 +423,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	renderBusinessHours: function() {
-		var events = this.view.calendar.getBusinessHoursEvents();
+		var events = this.view.calendar.getCurrentBusinessHourEvents();
 		var segs = this.eventsToSegs(events);
 
 		this.renderBusinessSegs(segs);

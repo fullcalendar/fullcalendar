@@ -1035,53 +1035,6 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	/* Business Hours
-	-----------------------------------------------------------------------------------------*/
-
-	t.getBusinessHoursEvents = getBusinessHoursEvents;
-
-
-	// Returns an array of events as to when the business hours occur in the given view.
-	// Abuse of our event system :(
-	function getBusinessHoursEvents(wholeDay) {
-		var optionVal = t.options.businessHours;
-		var defaultVal = {
-			className: 'fc-nonbusiness',
-			start: '09:00',
-			end: '17:00',
-			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
-			rendering: 'inverse-background'
-		};
-		var view = t.getView();
-		var eventInput;
-
-		if (optionVal) { // `true` (which means "use the defaults") or an override object
-			eventInput = $.extend(
-				{}, // copy to a new object in either case
-				defaultVal,
-				typeof optionVal === 'object' ? optionVal : {} // override the defaults
-			);
-		}
-
-		if (eventInput) {
-
-			// if a whole-day series is requested, clear the start/end times
-			if (wholeDay) {
-				eventInput.start = null;
-				eventInput.end = null;
-			}
-
-			return expandEvent(
-				buildEventFromInput(eventInput),
-				view.start,
-				view.end
-			);
-		}
-
-		return [];
-	}
-
-
 	/* Overlapping / Constraining
 	-----------------------------------------------------------------------------------------*/
 
@@ -1211,7 +1164,7 @@ function EventManager() { // assumed to be a calendar
 	function constraintToEvents(constraintInput) {
 
 		if (constraintInput === 'businessHours') {
-			return getBusinessHoursEvents();
+			return t.getCurrentBusinessHourEvents();
 		}
 
 		if (typeof constraintInput === 'object') {
@@ -1282,3 +1235,52 @@ function backupEventDates(event) {
 	event._start = event.start.clone();
 	event._end = event.end ? event.end.clone() : null;
 }
+
+
+/* Business Hours
+-----------------------------------------------------------------------------------------*/
+
+// Return events objects for business hours within the current view.
+// Abuse of our event system :(
+Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
+	return this.computeBusinessHourEvents(wholeDay, this.options.businessHours);
+};
+
+
+// Given a raw input value from options, return events objects for business hours within the current view.
+Calendar.prototype.computeBusinessHourEvents = function(wholeDay, optionVal) {
+	var defaultVal = {
+		className: 'fc-nonbusiness',
+		start: '09:00',
+		end: '17:00',
+		dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+		rendering: 'inverse-background'
+	};
+	var view = this.getView();
+	var eventInput;
+
+	if (optionVal) { // `true` (which means "use the defaults") or an override object
+		eventInput = $.extend(
+			{}, // copy to a new object in either case
+			defaultVal,
+			typeof optionVal === 'object' ? optionVal : {} // override the defaults
+		);
+	}
+
+	if (eventInput) {
+
+		// if a whole-day series is requested, clear the start/end times
+		if (wholeDay) {
+			eventInput.start = null;
+			eventInput.end = null;
+		}
+
+		return this.expandEvent(
+			this.buildEventFromInput(eventInput),
+			view.start,
+			view.end
+		);
+	}
+
+	return [];
+};
