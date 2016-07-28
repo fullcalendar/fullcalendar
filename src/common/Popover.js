@@ -147,6 +147,11 @@ var Popover = Class.extend(ListenerMixin, {
 			left = Math.max(left, viewportLeft + this.margin);
 		}
 
+		if (options.centeredPopover !== false) {
+			top = (options.viewHeight / 2) - (this.el.outerHeight() / 2) + origin.top;
+			left = (options.viewWidth / 2) - 110 + origin.left;
+		}
+
 		this.el.css({
 			top: top - origin.top,
 			left: left - origin.left

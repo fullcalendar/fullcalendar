@@ -22,13 +22,13 @@ Calendar.defaults = {
 
 	weekNumberTitle: 'W',
 	weekNumberCalculation: 'local',
-	
+
 	//editable: false,
 
 	//nowIndicator: false,
 
 	scrollTime: '06:00:00',
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
@@ -59,7 +59,7 @@ Calendar.defaults = {
 		prevYear: 'left-double-arrow',
 		nextYear: 'right-double-arrow'
 	},
-	
+
 	// jquery-ui theming
 	theme: false,
 	themeButtonIcons: {
@@ -73,10 +73,10 @@ Calendar.defaults = {
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,
-	
+
 	//selectable: false,
 	unselectAuto: true,
-	
+
 	dropAccept: '*',
 
 	eventOrder: 'title',
@@ -85,12 +85,13 @@ Calendar.defaults = {
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
 	dayPopoverFormat: 'LL',
-	
+	popoverCentered: false,
+
 	handleWindowResize: true,
 	windowResizeDelay: 200, // milliseconds before an updateSize happens
 
 	longPressDelay: 1000
-	
+
 };
 
 

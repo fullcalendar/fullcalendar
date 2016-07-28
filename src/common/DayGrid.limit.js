@@ -243,8 +243,11 @@ DayGrid.mixin({
 			content: this.renderSegPopoverContent(row, col, segs),
 			parentEl: this.el,
 			top: topEl.offset().top,
+			viewHeight: view.el.outerHeight(),
+			viewWidth: view.el.outerWidth(),
 			autoHide: true, // when the user clicks elsewhere, hide the popover
 			viewportConstrain: view.opt('popoverViewportConstrain'),
+			centeredPopover: view.opt('popoverCentered'),
 			hide: function() {
 				// kill everything when the popover is hidden
 				_this.segPopover.removeElement();
