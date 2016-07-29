@@ -102,8 +102,6 @@ var Popover = Class.extend(ListenerMixin, {
 	position: function() {
 		var options = this.options;
 		var origin = this.el.offsetParent().offset();
-		var width = this.el.outerWidth();
-		var height = this.el.outerHeight();
 		var windowEl = $(window);
 		var viewportEl = getScrollParent(this.el);
 		var viewportTop;
@@ -111,6 +109,18 @@ var Popover = Class.extend(ListenerMixin, {
 		var viewportOffset;
 		var top; // the "position" (not "offset") values for the popover
 		var left; //
+
+		this.el.find('.fc-body').css({
+			maxHeight: options.viewHeight / 2,
+			overflowY: 'auto'
+		});
+
+		var width = this.el.outerWidth();
+		var height = this.el.outerHeight();
+		var limit = {
+			right: origin.left + options.viewWidth - width,
+			bottom: origin.top + options.viewHeight - (height + 20)
+		};
 
 		// compute top and left
 		top = options.top || 0;
@@ -147,10 +157,23 @@ var Popover = Class.extend(ListenerMixin, {
 			left = Math.max(left, viewportLeft + this.margin);
 		}
 
-		if (options.centeredPopover !== false) {
-			top = (options.viewHeight / 2) - (this.el.outerHeight() / 2) + origin.top;
-			left = (options.viewWidth / 2) - 110 + origin.left;
+
+        if (top > limit.bottom) {
+			top = limit.bottom;
 		}
+		if (left > limit.right) {
+			left = limit.right;
+		}
+
+		if (options.centeredPopover !== false) {
+			top = (options.viewHeight / 2) - (height / 2) - 20 + origin.top;
+			left = (options.viewWidth / 2) - (width /2) + origin.left;
+		}
+
+
+		console.log(origin);
+		console.log(top - origin.top);
+		console.log(left - origin.left);
 
 		this.el.css({
 			top: top - origin.top,
