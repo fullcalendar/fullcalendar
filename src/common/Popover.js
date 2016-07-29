@@ -170,11 +170,6 @@ var Popover = Class.extend(ListenerMixin, {
 			left = (options.viewWidth / 2) - (width /2) + origin.left;
 		}
 
-
-		console.log(origin);
-		console.log(top - origin.top);
-		console.log(left - origin.left);
-
 		this.el.css({
 			top: top - origin.top,
 			left: left - origin.left
