@@ -168,6 +168,19 @@ describe('businessHours', function() {
 	});
 
 
+	it('will grey-out a totally non-business-hour view', function() {
+		$('#cal').fullCalendar({
+			defaultDate: '2016-07-23', // sat
+			defaultView: 'agendaDay',
+			businessHours: true
+		});
+
+		// timed area
+		expect(isTimeGridNonBusinessSegsRendered([
+			{ start: '2016-07-23T00:00', end: '2016-07-24T00:00' }
+		])).toBe(true);
+	});
+
 
 	function queryNonBusinessSegs() {
 		return $('.fc-nonbusiness');

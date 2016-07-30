@@ -170,6 +170,35 @@ Grid.mixin({
 	},
 
 
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Compute business hour segs for the grid's current date range.
+	// Caller must ask if whole-day business hours are needed.
+	buildBusinessHourSegs: function(wholeDay) {
+		var events = this.view.calendar.getCurrentBusinessHourEvents(wholeDay);
+
+		// HACK. Eventually refactor business hours "events" system.
+		// If no events are given, but businessHours is activated, this means the entire visible range should be
+		// marked as *not* business-hours, via inverse-background rendering.
+		if (
+			!events.length &&
+			this.view.calendar.options.businessHours // don't access view option. doesn't update with dynamic options
+		) {
+			events = [
+				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
+					start: this.view.end, // guaranteed out-of-range
+					end: this.view.end,   // "
+					dow: null
+				})
+			];
+		}
+
+		return this.eventsToSegs(events);
+	},
+
+
 	/* Handlers
 	------------------------------------------------------------------------------------------------------------------*/
 
