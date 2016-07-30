@@ -1240,6 +1240,15 @@ function backupEventDates(event) {
 /* Business Hours
 -----------------------------------------------------------------------------------------*/
 
+var BUSINESS_HOUR_EVENT_DEFAULTS = {
+	id: '_fcBusinessHours', // will relate events from different calls to expandEvent
+	start: '09:00',
+	end: '17:00',
+	dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+	rendering: 'inverse-background'
+	// classNames are defined in businessHoursSegClasses
+};
+
 // Return events objects for business hours within the current view.
 // Abuse of our event system :(
 Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
@@ -1277,14 +1286,7 @@ Calendar.prototype.expandBusinessHourEvents = function(wholeDay, inputs, ignoreN
 		}
 
 		// give defaults. will make a copy
-		input = $.extend({
-			id: '_fcBusinessHours', // will relate events from different calls to expandEvent
-			start: '09:00',
-			end: '17:00',
-			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
-			rendering: 'inverse-background',
-			className: 'fc-nonbusiness'
-		}, input);
+		input = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, input);
 
 		// if a whole-day series is requested, clear the start/end times
 		if (wholeDay) {
