@@ -1246,41 +1246,60 @@ Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
 	return this.computeBusinessHourEvents(wholeDay, this.options.businessHours);
 };
 
-
 // Given a raw input value from options, return events objects for business hours within the current view.
-Calendar.prototype.computeBusinessHourEvents = function(wholeDay, optionVal) {
-	var defaultVal = {
-		className: 'fc-nonbusiness',
-		start: '09:00',
-		end: '17:00',
-		dow: [ 1, 2, 3, 4, 5 ], // monday - friday
-		rendering: 'inverse-background'
-	};
-	var view = this.getView();
-	var eventInput;
-
-	if (optionVal) { // `true` (which means "use the defaults") or an override object
-		eventInput = $.extend(
-			{}, // copy to a new object in either case
-			defaultVal,
-			typeof optionVal === 'object' ? optionVal : {} // override the defaults
-		);
+Calendar.prototype.computeBusinessHourEvents = function(wholeDay, input) {
+	if (input === true) {
+		return this.expandBusinessHourEvents(wholeDay, [ {} ]);
 	}
+	else if ($.isPlainObject(input)) {
+		return this.expandBusinessHourEvents(wholeDay, [ input ]);
+	}
+	else if ($.isArray(input)) {
+		return this.expandBusinessHourEvents(wholeDay, input, true);
+	}
+	else {
+		return [];
+	}
+}
 
-	if (eventInput) {
+// inputs expected to be an array of objects.
+// if ignoreNoDow is true, will ignore entries that don't specify a day-of-week (dow) key.
+Calendar.prototype.expandBusinessHourEvents = function(wholeDay, inputs, ignoreNoDow) {
+	var view = this.getView();
+	var events = [];
+	var i, input;
+
+	for (i = 0; i < inputs.length; i++) {
+		input = inputs[i];
+
+		if (ignoreNoDow && !input.dow) {
+			continue;
+		}
+
+		// give defaults. will make a copy
+		input = $.extend({
+			id: '_fcBusinessHours', // will relate events from different calls to expandEvent
+			start: '09:00',
+			end: '17:00',
+			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+			rendering: 'inverse-background',
+			className: 'fc-nonbusiness'
+		}, input);
 
 		// if a whole-day series is requested, clear the start/end times
 		if (wholeDay) {
-			eventInput.start = null;
-			eventInput.end = null;
+			input.start = null;
+			input.end = null;
 		}
 
-		return this.expandEvent(
-			this.buildEventFromInput(eventInput),
-			view.start,
-			view.end
+		events.push.apply(events, // append
+			this.expandEvent(
+				this.buildEventFromInput(input),
+				view.start,
+				view.end
+			)
 		);
 	}
 
-	return [];
+	return events;
 };
