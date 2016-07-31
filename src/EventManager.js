@@ -1269,7 +1269,7 @@ Calendar.prototype.computeBusinessHourEvents = function(wholeDay, input) {
 	else {
 		return [];
 	}
-}
+};
 
 // inputs expected to be an array of objects.
 // if ignoreNoDow is true, will ignore entries that don't specify a day-of-week (dow) key.

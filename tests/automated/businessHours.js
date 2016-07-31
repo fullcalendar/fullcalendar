@@ -248,7 +248,8 @@ describe('businessHours', function() {
 			if (targetTime < slotTime) {
 				if (!prevSlotTime) {
 					return slotEl.offset().top + topBorderWidth;
-				} else {
+				}
+				else {
 					prevSlotEl = slotEls.eq(i - 1);
 					return prevSlotEl.offset().top + topBorderWidth +
 						prevSlotEl.outerHeight() * ((targetTime - prevSlotTime) / (slotTime - prevSlotTime));
@@ -261,12 +262,12 @@ describe('businessHours', function() {
 	}
 
 	function getTimeGridDayEls(date) {
-		var date = $.fullCalendar.moment.parseZone(date);
+		date = $.fullCalendar.moment.parseZone(date);
 		return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]');
 	}
 
 	function getTimeGridSlotEls(timeDuration) {
-		var timeDuration = moment.duration(timeDuration);
+		timeDuration = moment.duration(timeDuration);
 		var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration);
 		if (date.date() == 1) { // ensure no time overflow/underflow
 			return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]');
