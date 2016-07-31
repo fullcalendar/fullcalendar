@@ -6,7 +6,7 @@ Duration objects are used throughout the API.
 They are a creation of the MomentJS third-party library
 and can be instantiated with the `moment.duration` constructor.
 
-> **[Visit the Moment's Duration docs](http://momentjs.com/docs/#/durations/)**
+> **[Visit the MomentJS Duration docs](http://momentjs.com/docs/#/durations/)**
 
 Durations are sometimes used to express:
 

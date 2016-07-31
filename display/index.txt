@@ -20,6 +20,7 @@ General Display
 <li>contentHeight</li>
 <li>aspectRatio</li>
 <li>handleWindowResize</li>
+<li>windowResizeDelay</li>
 <li>eventLimit</li>
 <li>eventLimitClick</li>
 <li class='callback'><a href='viewRender'>viewRender (callback)</a></li>

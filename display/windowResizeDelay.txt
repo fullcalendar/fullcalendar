@@ -1,0 +1,13 @@
+
+windowResizeDelay
+=================
+
+Time, in milliseconds, the calendar will wait to adjust its size after
+a window resize event occurs.
+
+<div class="spec" markdown="1">
+Integer. *default:* `100`
+</div>
+
+This delay exists in order to prevent overly frequent size adjustments
+while the user drags and resizes their browser window.
