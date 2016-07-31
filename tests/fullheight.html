@@ -69,7 +69,7 @@
 				}
 			],
 			weekMode: 'liquid',
-			height: calcCalendarHeight()
+			height: calcCalendarHeight
 		});
 		
 		function calcCalendarHeight() {
@@ -77,10 +77,6 @@
 			console.log(h);
 			return h;
 		}
-		
-		$(window).resize(function() {
-			$('#calendar').fullCalendar('option', 'height', calcCalendarHeight());
-		});
 		
 	});
 
