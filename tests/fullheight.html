@@ -69,34 +69,41 @@
 				}
 			],
 			weekMode: 'liquid',
-			height: calcCalendarHeight
+			height: 'parent'
 		});
-		
-		function calcCalendarHeight() {
-			var h = $(window).height() - 40;
-			console.log(h);
-			return h;
-		}
 		
 	});
 
 </script>
 <style>
 
-	body {
-		margin: 20px 200px 20px 20px;
-		text-align: center;
-		font-size: 13px;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+	html, body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+	}
 
-	#calendar {
-		width: 100%;
-		}
+	body {
+		position: relative;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+	}
+
+	#calendar-wrap {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		bottom: 20px;
+		left: 20px;
+	}
 
 </style>
 </head>
 <body>
-<div id='calendar'></div>
+
+	<div id='calendar-wrap'>
+		<div id='calendar'></div>
+	</div>
+
 </body>
 </html>
