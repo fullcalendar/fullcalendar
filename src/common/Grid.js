@@ -290,6 +290,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 			scroll: view.opt('dragScroll'),
 			interactionStart: function() {
 				dayClickHit = dragListener.origHit; // for dayClick, where no dragging happens
+				selectionSpan = null;
 			},
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
@@ -316,10 +317,12 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 					}
 				}
 			},
-			hitOut: function() {
+			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				dayClickHit = null;
 				selectionSpan = null;
 				_this.unrenderSelection();
+			},
+			hitDone: function() { // called after a hitOut OR before a dragEnd
 				enableCursor();
 			},
 			interactionEnd: function(ev, isCancelled) {
@@ -338,7 +341,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 						// the selection will already have been rendered. just report it
 						view.reportSelection(selectionSpan, ev);
 					}
-					enableCursor();
 				}
 			}
 		});
