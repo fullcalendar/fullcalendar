@@ -1,6 +1,9 @@
 
 beforeEach(function() {
 
+	// HACK. PhantomJS fails otherwise
+	$.fullCalendar.Calendar.defaults.windowResizeDelay = 200;
+
 	// don't show warnings about deprecated methods like `moment.lang`, etc.
 	// at some point we'll require moment version above 2.8.
 	// until then, it's too annoying to support two versions.
