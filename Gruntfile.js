@@ -40,6 +40,7 @@ module.exports = function(grunt) {
 		'clean',
 		'modules',
 		'languages',
+		'check',
 		'karma:single',
 		'archiveDist'
 	]);
