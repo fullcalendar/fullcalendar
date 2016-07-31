@@ -219,11 +219,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	queryHit: function(leftOffset, topOffset) {
-		var col = this.colCoordCache.getHorizontalIndex(leftOffset);
-		var row = this.rowCoordCache.getVerticalIndex(topOffset);
+		if (this.colCoordCache.isLeftInBounds(leftOffset) && this.rowCoordCache.isTopInBounds(topOffset)) {
+			var col = this.colCoordCache.getHorizontalIndex(leftOffset);
+			var row = this.rowCoordCache.getVerticalIndex(topOffset);
 
-		if (row != null && col != null) {
-			return this.getCellHit(row, col);
+			if (row != null && col != null) {
+				return this.getCellHit(row, col);
+			}
 		}
 	},
 

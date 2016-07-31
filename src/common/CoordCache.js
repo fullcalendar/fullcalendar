@@ -68,17 +68,6 @@ var CoordCache = FC.CoordCache = Class.extend({
 	},
 
 
-	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
-	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
-	queryBoundingRect: function() {
-		var scrollParentEl = getScrollParent(this.els.eq(0));
-
-		if (!scrollParentEl.is(document)) {
-			return getClientRect(scrollParentEl);
-		}
-	},
-
-
 	// Populates the left/right internal coordinate arrays
 	buildElHorizontals: function() {
 		var lefts = [];
@@ -118,42 +107,36 @@ var CoordCache = FC.CoordCache = Class.extend({
 
 
 	// Given a left offset (from document left), returns the index of the el that it horizontally intersects.
-	// If no intersection is made, or outside of the boundingRect, returns undefined.
+	// If no intersection is made, returns undefined.
 	getHorizontalIndex: function(leftOffset) {
 		this.ensureBuilt();
 
-		var boundingRect = this.boundingRect;
 		var lefts = this.lefts;
 		var rights = this.rights;
 		var len = lefts.length;
 		var i;
 
-		if (!boundingRect || (leftOffset >= boundingRect.left && leftOffset < boundingRect.right)) {
-			for (i = 0; i < len; i++) {
-				if (leftOffset >= lefts[i] && leftOffset < rights[i]) {
-					return i;
-				}
+		for (i = 0; i < len; i++) {
+			if (leftOffset >= lefts[i] && leftOffset < rights[i]) {
+				return i;
 			}
 		}
 	},
 
 
 	// Given a top offset (from document top), returns the index of the el that it vertically intersects.
-	// If no intersection is made, or outside of the boundingRect, returns undefined.
+	// If no intersection is made, returns undefined.
 	getVerticalIndex: function(topOffset) {
 		this.ensureBuilt();
 
-		var boundingRect = this.boundingRect;
 		var tops = this.tops;
 		var bottoms = this.bottoms;
 		var len = tops.length;
 		var i;
 
-		if (!boundingRect || (topOffset >= boundingRect.top && topOffset < boundingRect.bottom)) {
-			for (i = 0; i < len; i++) {
-				if (topOffset >= tops[i] && topOffset < bottoms[i]) {
-					return i;
-				}
+		for (i = 0; i < len; i++) {
+			if (topOffset >= tops[i] && topOffset < bottoms[i]) {
+				return i;
 			}
 		}
 	},
@@ -229,6 +212,32 @@ var CoordCache = FC.CoordCache = Class.extend({
 	getHeight: function(topIndex) {
 		this.ensureBuilt();
 		return this.bottoms[topIndex] - this.tops[topIndex];
+	},
+
+
+	// Bounding Rect
+	// TODO: decouple this from CoordCache
+
+	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
+	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
+	queryBoundingRect: function() {
+		var scrollParentEl = getScrollParent(this.els.eq(0));
+
+		if (!scrollParentEl.is(document)) {
+			return getClientRect(scrollParentEl);
+		}
+	},
+
+	isPointInBounds: function(leftOffset, topOffset) {
+		return this.isLeftInBounds(leftOffset) && this.isTopInBounds(topOffset);
+	},
+
+	isLeftInBounds: function(leftOffset) {
+		return !this.boundingRect || (leftOffset >= this.boundingRect.left && leftOffset < this.boundingRect.right);
+	},
+
+	isTopInBounds: function(topOffset) {
+		return !this.boundingRect || (topOffset >= this.boundingRect.top && topOffset < this.boundingRect.bottom);
 	}
 
 });

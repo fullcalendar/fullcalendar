@@ -200,27 +200,30 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var snapsPerSlot = this.snapsPerSlot;
 		var colCoordCache = this.colCoordCache;
 		var slatCoordCache = this.slatCoordCache;
-		var colIndex = colCoordCache.getHorizontalIndex(leftOffset);
-		var slatIndex = slatCoordCache.getVerticalIndex(topOffset);
 
-		if (colIndex != null && slatIndex != null) {
-			var slatTop = slatCoordCache.getTopOffset(slatIndex);
-			var slatHeight = slatCoordCache.getHeight(slatIndex);
-			var partial = (topOffset - slatTop) / slatHeight; // floating point number between 0 and 1
-			var localSnapIndex = Math.floor(partial * snapsPerSlot); // the snap # relative to start of slat
-			var snapIndex = slatIndex * snapsPerSlot + localSnapIndex;
-			var snapTop = slatTop + (localSnapIndex / snapsPerSlot) * slatHeight;
-			var snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight;
+		if (colCoordCache.isLeftInBounds(leftOffset) && slatCoordCache.isTopInBounds(topOffset)) {
+			var colIndex = colCoordCache.getHorizontalIndex(leftOffset);
+			var slatIndex = slatCoordCache.getVerticalIndex(topOffset);
 
-			return {
-				col: colIndex,
-				snap: snapIndex,
-				component: this, // needed unfortunately :(
-				left: colCoordCache.getLeftOffset(colIndex),
-				right: colCoordCache.getRightOffset(colIndex),
-				top: snapTop,
-				bottom: snapBottom
-			};
+			if (colIndex != null && slatIndex != null) {
+				var slatTop = slatCoordCache.getTopOffset(slatIndex);
+				var slatHeight = slatCoordCache.getHeight(slatIndex);
+				var partial = (topOffset - slatTop) / slatHeight; // floating point number between 0 and 1
+				var localSnapIndex = Math.floor(partial * snapsPerSlot); // the snap # relative to start of slat
+				var snapIndex = slatIndex * snapsPerSlot + localSnapIndex;
+				var snapTop = slatTop + (localSnapIndex / snapsPerSlot) * slatHeight;
+				var snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight;
+
+				return {
+					col: colIndex,
+					snap: snapIndex,
+					component: this, // needed unfortunately :(
+					left: colCoordCache.getLeftOffset(colIndex),
+					right: colCoordCache.getRightOffset(colIndex),
+					top: snapTop,
+					bottom: snapBottom
+				};
+			}
 		}
 	},
 
