@@ -728,15 +728,32 @@ function Calendar_constructor(element, overrides) {
 	
 	
 	function _calcSize() { // assumes elementVisible
-		if (typeof t.options.contentHeight === 'number') { // exists and not 'auto'
-			suggestedViewHeight = t.options.contentHeight;
+		var contentHeightInput = t.options.contentHeight;
+		var heightInput = t.options.height;
+
+		if (typeof contentHeightInput === 'number') { // exists and not 'auto'
+			suggestedViewHeight = contentHeightInput;
 		}
-		else if (typeof t.options.height === 'number') { // exists and not 'auto'
-			suggestedViewHeight = t.options.height - (header.el ? header.el.outerHeight(true) : 0);
+		else if (typeof contentHeightInput === 'function') { // exists and is a function
+			suggestedViewHeight = contentHeightInput();
+		}
+		else if (typeof heightInput === 'number') { // exists and not 'auto'
+			suggestedViewHeight = heightInput - queryHeaderHeight();
+		}
+		else if (typeof heightInput === 'function') { // exists and is a function
+			suggestedViewHeight = heightInput() - queryHeaderHeight();
+		}
+		else if (heightInput === 'parent') { // set to height of parent element
+			suggestedViewHeight = element.parent().height() - queryHeaderHeight();
 		}
 		else {
 			suggestedViewHeight = Math.round(content.width() / Math.max(t.options.aspectRatio, .5));
 		}
+	}
+
+
+	function queryHeaderHeight() {
+		return header.el ? header.el.outerHeight(true) : 0; // includes margin
 	}
 	
 	

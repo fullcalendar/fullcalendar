@@ -63,11 +63,11 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		var _this = this;
 		var revertDuration = this.options.revertDuration;
 
-		function complete() {
-			this.isAnimating = false;
+		function complete() { // might be called by .animate(), which might change `this` context
+			_this.isAnimating = false;
 			_this.removeElement();
 
-			this.top0 = this.left0 = null; // reset state for future updatePosition calls
+			_this.top0 = _this.left0 = null; // reset state for future updatePosition calls
 
 			if (callback) {
 				callback();

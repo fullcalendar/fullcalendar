@@ -1,4 +1,16 @@
 
+v2.9.1 (2016-7-31)
+------------------
+
+- multiple definitions for businessHours (#2686)
+- businessHours for single day doesn't display weekends (#2944)
+- height/contentHeight can accept a function or 'parent' for dynamic value (#3271)
+- fix +more popover clipped by overflow (#3232)
+- fix +more popover positioned incorrectly when scrolled (#3137)
+- Norwegian Nynorsk translation (#3246)
+- fix isAnimating JS error (#3285)
+
+
 v2.9.0 (2016-07-10)
 -------------------
 

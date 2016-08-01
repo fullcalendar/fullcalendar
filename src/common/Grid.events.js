@@ -142,7 +142,7 @@ Grid.mixin({
 
 
 	// Generates an array of classNames to be used for the default rendering of a background event.
-	// Called by the fill system.
+	// Called by fillSegHtml.
 	bgEventSegClasses: function(seg) {
 		var event = seg.event;
 		var source = event.source || {};
@@ -155,7 +155,7 @@ Grid.mixin({
 
 
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-	// Called by the fill system.
+	// Called by fillSegHtml.
 	bgEventSegCss: function(seg) {
 		return {
 			'background-color': this.getSegSkinCss(seg)['background-color']
@@ -164,8 +164,38 @@ Grid.mixin({
 
 
 	// Generates an array of classNames to be used for the rendering business hours overlay. Called by the fill system.
+	// Called by fillSegHtml.
 	businessHoursSegClasses: function(seg) {
 		return [ 'fc-nonbusiness', 'fc-bgevent' ];
+	},
+
+
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Compute business hour segs for the grid's current date range.
+	// Caller must ask if whole-day business hours are needed.
+	buildBusinessHourSegs: function(wholeDay) {
+		var events = this.view.calendar.getCurrentBusinessHourEvents(wholeDay);
+
+		// HACK. Eventually refactor business hours "events" system.
+		// If no events are given, but businessHours is activated, this means the entire visible range should be
+		// marked as *not* business-hours, via inverse-background rendering.
+		if (
+			!events.length &&
+			this.view.calendar.options.businessHours // don't access view option. doesn't update with dynamic options
+		) {
+			events = [
+				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
+					start: this.view.end, // guaranteed out-of-range
+					end: this.view.end,   // "
+					dow: null
+				})
+			];
+		}
+
+		return this.eventsToSegs(events);
 	},
 
 
@@ -173,23 +203,29 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Attaches event-element-related handlers to the container element and leverage bubbling
+	// Attaches event-element-related handlers for *all* rendered event segments of the view.
 	bindSegHandlers: function() {
-		this.bindSegHandler('touchstart', this.handleSegTouchStart);
-		this.bindSegHandler('touchend', this.handleSegTouchEnd);
-		this.bindSegHandler('mouseenter', this.handleSegMouseover);
-		this.bindSegHandler('mouseleave', this.handleSegMouseout);
-		this.bindSegHandler('mousedown', this.handleSegMousedown);
-		this.bindSegHandler('click', this.handleSegClick);
+		this.bindSegHandlersToEl(this.el);
+	},
+
+
+	// Attaches event-element-related handlers to an arbitrary container element. leverages bubbling.
+	bindSegHandlersToEl: function(el) {
+		this.bindSegHandlerToEl(el, 'touchstart', this.handleSegTouchStart);
+		this.bindSegHandlerToEl(el, 'touchend', this.handleSegTouchEnd);
+		this.bindSegHandlerToEl(el, 'mouseenter', this.handleSegMouseover);
+		this.bindSegHandlerToEl(el, 'mouseleave', this.handleSegMouseout);
+		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
+		this.bindSegHandlerToEl(el, 'click', this.handleSegClick);
 	},
 
 
 	// Executes a handler for any a user-interaction on a segment.
 	// Handler gets called with (seg, ev), and with the `this` context of the Grid
-	bindSegHandler: function(name, handler) {
+	bindSegHandlerToEl: function(el, name, handler) {
 		var _this = this;
 
-		this.el.on(name, '.fc-event-container > *', function(ev) {
+		el.on(name, '.fc-event-container > *', function(ev) {
 			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
 
 			// only call the handlers if there is not a drag/resize in progress
@@ -323,6 +359,7 @@ Grid.mixin({
 			subjectEl: el,
 			subjectCenter: true,
 			interactionStart: function(ev) {
+				seg.component = _this; // for renderDrag
 				isDragging = false;
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
@@ -391,6 +428,8 @@ Grid.mixin({
 				enableCursor();
 			},
 			interactionEnd: function(ev) {
+				delete seg.component; // prevent side effects
+
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!dropLocation, function() {
 					if (isDragging) {

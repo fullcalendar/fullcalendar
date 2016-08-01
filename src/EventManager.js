@@ -717,6 +717,7 @@ function EventManager() { // assumed to be a calendar
 
 		return out;
 	}
+	t.buildEventFromInput = buildEventFromInput;
 
 
 	// Normalizes and assigns the given dates to the given partially-formed event object.
@@ -840,6 +841,7 @@ function EventManager() { // assumed to be a calendar
 
 		return events;
 	}
+	t.expandEvent = expandEvent;
 
 
 
@@ -1033,53 +1035,6 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	/* Business Hours
-	-----------------------------------------------------------------------------------------*/
-
-	t.getBusinessHoursEvents = getBusinessHoursEvents;
-
-
-	// Returns an array of events as to when the business hours occur in the given view.
-	// Abuse of our event system :(
-	function getBusinessHoursEvents(wholeDay) {
-		var optionVal = t.options.businessHours;
-		var defaultVal = {
-			className: 'fc-nonbusiness',
-			start: '09:00',
-			end: '17:00',
-			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
-			rendering: 'inverse-background'
-		};
-		var view = t.getView();
-		var eventInput;
-
-		if (optionVal) { // `true` (which means "use the defaults") or an override object
-			eventInput = $.extend(
-				{}, // copy to a new object in either case
-				defaultVal,
-				typeof optionVal === 'object' ? optionVal : {} // override the defaults
-			);
-		}
-
-		if (eventInput) {
-
-			// if a whole-day series is requested, clear the start/end times
-			if (wholeDay) {
-				eventInput.start = null;
-				eventInput.end = null;
-			}
-
-			return expandEvent(
-				buildEventFromInput(eventInput),
-				view.start,
-				view.end
-			);
-		}
-
-		return [];
-	}
-
-
 	/* Overlapping / Constraining
 	-----------------------------------------------------------------------------------------*/
 
@@ -1151,7 +1106,7 @@ function EventManager() { // assumed to be a calendar
 
 			anyContainment = false;
 			for (i = 0; i < constraintEvents.length; i++) {
-				if (eventContainsRange(constraintEvents[i], span)) {
+				if (t.spanContainsSpan(constraintEvents[i], span)) {
 					anyContainment = true;
 					break;
 				}
@@ -1209,7 +1164,7 @@ function EventManager() { // assumed to be a calendar
 	function constraintToEvents(constraintInput) {
 
 		if (constraintInput === 'businessHours') {
-			return getBusinessHoursEvents();
+			return t.getCurrentBusinessHourEvents();
 		}
 
 		if (typeof constraintInput === 'object') {
@@ -1217,16 +1172,6 @@ function EventManager() { // assumed to be a calendar
 		}
 
 		return clientEvents(constraintInput); // probably an ID
-	}
-
-
-	// Does the event's date range fully contain the given range?
-	// start/end already assumed to have stripped zones :(
-	function eventContainsRange(event, range) {
-		var eventStart = event.start.clone().stripZone();
-		var eventEnd = t.getEventEnd(event).stripZone();
-
-		return range.start >= eventStart && range.end <= eventEnd;
 	}
 
 
@@ -1250,6 +1195,16 @@ function EventManager() { // assumed to be a calendar
 // hook for external libs to manipulate event properties upon creation.
 // should manipulate the event in-place.
 Calendar.prototype.normalizeEvent = function(event) {
+};
+
+
+// Does the given span (start, end, and other location information)
+// fully contain the other?
+Calendar.prototype.spanContainsSpan = function(outerSpan, innerSpan) {
+	var eventStart = outerSpan.start.clone().stripZone();
+	var eventEnd = this.getEventEnd(outerSpan).stripZone();
+
+	return innerSpan.start >= eventStart && innerSpan.end <= eventEnd;
 };
 
 
@@ -1280,3 +1235,73 @@ function backupEventDates(event) {
 	event._start = event.start.clone();
 	event._end = event.end ? event.end.clone() : null;
 }
+
+
+/* Business Hours
+-----------------------------------------------------------------------------------------*/
+
+var BUSINESS_HOUR_EVENT_DEFAULTS = {
+	id: '_fcBusinessHours', // will relate events from different calls to expandEvent
+	start: '09:00',
+	end: '17:00',
+	dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+	rendering: 'inverse-background'
+	// classNames are defined in businessHoursSegClasses
+};
+
+// Return events objects for business hours within the current view.
+// Abuse of our event system :(
+Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
+	return this.computeBusinessHourEvents(wholeDay, this.options.businessHours);
+};
+
+// Given a raw input value from options, return events objects for business hours within the current view.
+Calendar.prototype.computeBusinessHourEvents = function(wholeDay, input) {
+	if (input === true) {
+		return this.expandBusinessHourEvents(wholeDay, [ {} ]);
+	}
+	else if ($.isPlainObject(input)) {
+		return this.expandBusinessHourEvents(wholeDay, [ input ]);
+	}
+	else if ($.isArray(input)) {
+		return this.expandBusinessHourEvents(wholeDay, input, true);
+	}
+	else {
+		return [];
+	}
+};
+
+// inputs expected to be an array of objects.
+// if ignoreNoDow is true, will ignore entries that don't specify a day-of-week (dow) key.
+Calendar.prototype.expandBusinessHourEvents = function(wholeDay, inputs, ignoreNoDow) {
+	var view = this.getView();
+	var events = [];
+	var i, input;
+
+	for (i = 0; i < inputs.length; i++) {
+		input = inputs[i];
+
+		if (ignoreNoDow && !input.dow) {
+			continue;
+		}
+
+		// give defaults. will make a copy
+		input = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, input);
+
+		// if a whole-day series is requested, clear the start/end times
+		if (wholeDay) {
+			input.start = null;
+			input.end = null;
+		}
+
+		events.push.apply(events, // append
+			this.expandEvent(
+				this.buildEventFromInput(input),
+				view.start,
+				view.end
+			)
+		);
+	}
+
+	return events;
+};

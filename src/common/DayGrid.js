@@ -63,9 +63,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	renderBusinessHours: function() {
-		var events = this.view.calendar.getBusinessHoursEvents(true); // wholeDay=true
-		var segs = this.eventsToSegs(events);
-
+		var segs = this.buildBusinessHourSegs(true); // wholeDay=true
 		this.renderFill('businessHours', segs, 'bgevent');
 	},
 
@@ -221,11 +219,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	queryHit: function(leftOffset, topOffset) {
-		var col = this.colCoordCache.getHorizontalIndex(leftOffset);
-		var row = this.rowCoordCache.getVerticalIndex(topOffset);
+		if (this.colCoordCache.isLeftInBounds(leftOffset) && this.rowCoordCache.isTopInBounds(topOffset)) {
+			var col = this.colCoordCache.getHorizontalIndex(leftOffset);
+			var row = this.rowCoordCache.getVerticalIndex(topOffset);
 
-		if (row != null && col != null) {
-			return this.getCellHit(row, col);
+			if (row != null && col != null) {
+				return this.getCellHit(row, col);
+			}
 		}
 	},
 
@@ -276,8 +276,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		this.renderHighlight(this.eventToSpan(eventLocation));
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
-		if (seg && !seg.el.closest(this.el).length) {
-
+		if (seg && seg.component !== this) {
 			return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
 		}
 	},
