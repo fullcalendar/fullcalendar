@@ -372,7 +372,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 			{
 				// Simple math logic
 				var isBefore = (((slatProgress - time) > 0) && (slatPrevious - time) < 0);
-				var isEqual = ((slatProgress - time) == 0);
+				var isEqual = ((slatProgress - time) === 0);
 
 				if(isEqual)
 				{
