@@ -4,7 +4,14 @@
 
 .fc-toolbar {
 	text-align: center;
+}
+
+.fc-toolbar.fc-header {
 	margin-bottom: 1em;
+}
+
+.fc-toolbar.fc-footer {
+	margin-top: 1em;
 }
 
 .fc-toolbar .fc-left {
