@@ -1,12 +1,12 @@
 
-/* Top toolbar area with buttons and title
+/* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: rename all header-related things to "toolbar"
 
-function Header(calendar) {
+function Toolbar(calendar, options) {
 	var t = this;
-	
+
 	// exports
+	t.setOptions = setOptions;
 	t.render = render;
 	t.removeElement = removeElement;
 	t.updateTitle = updateTitle;
@@ -16,23 +16,26 @@ function Header(calendar) {
 	t.enableButton = enableButton;
 	t.getViewsWithButtons = getViewsWithButtons;
 	t.el = null; // mirrors local `el`
-	
+
 	// locals
 	var el;
 	var viewsWithButtons = [];
 	var tm;
 
 
+	function setOptions(newOptions) {
+		options = newOptions;
+	}
+
 	// can be called repeatedly and will rerender
 	function render() {
-		var options = calendar.options;
-		var sections = options.header;
+		var sections = options.layout;
 
 		tm = options.theme ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
-				el = this.el = $("<div class='fc-toolbar'/>");
+				el = this.el = $("<div class='fc-toolbar "+ options.extraClasses + "'/>");
 			}
 			else {
 				el.empty();
@@ -46,20 +49,19 @@ function Header(calendar) {
 			removeElement();
 		}
 	}
-	
-	
+
+
 	function removeElement() {
 		if (el) {
 			el.remove();
 			el = t.el = null;
 		}
 	}
-	
-	
+
+
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
-		var options = calendar.options;
-		var buttonStr = options.header[position];
+		var buttonStr = options.layout[position];
 
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
@@ -217,31 +219,31 @@ function Header(calendar) {
 
 		return sectionEl;
 	}
-	
-	
+
+
 	function updateTitle(text) {
 		if (el) {
 			el.find('h2').text(text);
 		}
 	}
-	
-	
+
+
 	function activateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.addClass(tm + '-state-active');
 		}
 	}
-	
-	
+
+
 	function deactivateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.removeClass(tm + '-state-active');
 		}
 	}
-	
-	
+
+
 	function disableButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
@@ -249,8 +251,8 @@ function Header(calendar) {
 				.addClass(tm + '-state-disabled');
 		}
 	}
-	
-	
+
+
 	function enableButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
