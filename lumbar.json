@@ -41,7 +41,7 @@
         "src/Calendar.options.js",
         "src/defaults.js",
         "src/lang.js",
-        "src/Header.js",
+        "src/Toolbar.js",
         "src/EventManager.js",
         "src/basic/BasicView.js",
         "src/basic/MonthView.js",
