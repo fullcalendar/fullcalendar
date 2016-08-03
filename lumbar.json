@@ -18,6 +18,7 @@
         "src/moment-ext.js",
         "src/date-formatting.js",
         "src/common/Class.js",
+        "src/common/Iterator.js",
         "src/common/EmitterMixin.js",
         "src/common/ListenerMixin.js",
         "src/common/MouseIgnorerMixin.js",
