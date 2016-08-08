@@ -65,7 +65,7 @@
     "CONTRIBUTING.*"
   ],
   "scripts": {
-    "test" : "grunt dev && grunt karma:single",
-    "lint" : "grunt check"
+    "test": "gulp test:single",
+    "lint": "gulp lint"
   }
 }
