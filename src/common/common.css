@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %> Stylesheet
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * <%= title %> v<%= version %> Stylesheet
+ * Docs & License: <%= homepage %>
+ * (c) <%= copyright %>
  */
 
 

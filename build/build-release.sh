@@ -22,10 +22,18 @@ then
 	exit 1
 fi
 
-# will do everything necessary for a release,
-# including bumping version in .json files
-grunt bump --setversion=$version
-grunt dist
+# ensures stray files stay out of the release
+gulp clean
+
+# make sure deps are as new as possible for bundle
+bower install
+npm install
+
+# update package manager json files with version number and release date
+gulp bump --version=$version
+
+# build all dist files and run tests
+gulp release
 
 # save reference to current branch
 orig_ref=$(git symbolic-ref --quiet HEAD)

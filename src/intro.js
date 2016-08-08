@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %>
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * <%= title %> v<%= version %>
+ * Docs & License: <%= homepage %>
+ * (c) <%= copyright %>
  */
 
 (function(factory) {

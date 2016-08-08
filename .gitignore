@@ -1,4 +1,4 @@
-build/temp
+tmp
 dist
 
 # npm modules
