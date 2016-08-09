@@ -24,10 +24,9 @@ gulp.task('lint', [
 // for non-browser JS
 gulp.task('jshint:base', function() {
 	return gulp.src([
-			'tests/automated/*.js',
+			'*.js', // like gulpfile and root configs
 			'tasks/*.js',
-			'build/*.js', // like karma config
-			'*.js' // like gulpfile and root configs
+			'tests/automated/*.js'
 		])
 		.pipe(jshint(jshintBase))
 		.pipe(jshint.reporter('default'))
@@ -74,9 +73,8 @@ gulp.task('jscs:strict', function() {
 // more relaxed linting. eventually move these to strict
 gulp.task('jscs:relaxed', function() {
 	return gulp.src([
-			'tasks/*.js',
-			'build/*.js', // like karma config
 			'*.js', // like gulpfile and root configs
+			'tasks/*.js',
 			'src/**/*.js',
 			'!src/intro.js', // exclude
 			'!src/outro.js', // "
