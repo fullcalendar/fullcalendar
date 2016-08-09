@@ -46,7 +46,7 @@ Then, clone FullCalendar's git repo:
 Enter the directory and install FullCalendar's development dependencies:
 
 	cd fullcalendar
-	./build/init.sh
+	./bin/init.sh
 
 
 ## What to edit

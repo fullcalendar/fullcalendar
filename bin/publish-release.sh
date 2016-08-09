@@ -6,7 +6,7 @@ set -e
 # start in project root
 cd "`dirname $0`/.."
 
-./build/require-clean-working-tree.sh
+./bin/require-clean-working-tree.sh
 
 read -p "Enter the version you want to publish, with no 'v' (for example '1.0.1'): " version
 if [[ ! "$version" ]]

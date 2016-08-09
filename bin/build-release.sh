@@ -6,7 +6,7 @@ set -e
 # start in project root
 cd "`dirname $0`/.."
 
-./build/require-clean-working-tree.sh
+./bin/require-clean-working-tree.sh
 
 read -p "Have you already updated the changelog? (y/n): " updated_changelog
 if [[ "$updated_changelog" != "y" ]]
@@ -26,8 +26,7 @@ fi
 gulp clean
 
 # make sure deps are as new as possible for bundle
-bower install
-npm install
+./bin/install-deps.sh
 
 # update package manager json files with version number and release date
 gulp bump --version=$version
