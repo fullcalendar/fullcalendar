@@ -35,9 +35,9 @@ Please edit the original files in the `lang/` directory. DO NOT edit anything in
 
 You will need [Git][git], [Node][node], and NPM installed. For clarification, please view the [jQuery readme][jq-readme], which requires a similar setup.
 
-Also, you will need the [grunt-cli][grunt-cli] and [bower][bower] packages installed globally (`-g`) on your system:
+Also, you will need the [gulp-cli][gulp-cli] and [bower][bower] packages installed globally (`-g`) on your system:
 
-	npm install -g grunt-cli bower
+	npm install -g gulp-cli bower
 
 Then, clone FullCalendar's git repo:
 
@@ -46,7 +46,7 @@ Then, clone FullCalendar's git repo:
 Enter the directory and install FullCalendar's development dependencies:
 
 	cd fullcalendar
-	./bin/init.sh
+	./bin/install-deps.sh
 
 
 ## What to edit
@@ -58,19 +58,19 @@ When modifying files, please do not edit the generated or minified files in the 
 
 After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and demos. You can either manually rebuild each time you make a change:
 
-	grunt dev
+	gulp dev
 
 Or, you can run a script that automatically rebuilds whenever you save a source file:
 
-	./build/watch.sh
+	gulp watch
 
 When you are finished, run the following command to write the distributable files into the `./dist/` directory:
 
-	grunt
+	gulp dist
 
 If you want to clean up the generated files, run:
 
-	grunt clean
+	gulp clean
 
 
 ## Style Guide
@@ -103,14 +103,14 @@ Notes about whitespace:
 
 Run the command line tool to automatically check your style:
 
-	grunt check
+	gulp lint
 
 
 ## Before Submitting your Code
 
 If you have edited code (including **tests** and **translations**) and would like to submit a pull request, please make sure you have done the following:
 
-1. Conformed to the style guide (successfully run `grunt check`)
+1. Conformed to the style guide (successfully run `gulp lint`)
 
 2. Written automated tests. View the [Automated Test Readme]
 
@@ -121,7 +121,7 @@ If you have edited code (including **tests** and **translations**) and would lik
 [MomentJS locale data]: https://github.com/moment/moment/tree/develop/locale
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
-[grunt-cli]: http://gruntjs.com/getting-started#installing-the-cli
+[gulp-cli]: https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
 [bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
 [Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
