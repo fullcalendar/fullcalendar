@@ -92,10 +92,11 @@ gulp.task('archive:demos', function() {
 	return gulp.src('**/*', { cwd: 'demos/', base: 'demos/' })
 		.pipe(htmlFileFilter)
 		.pipe(demoPathReplace)
+		.pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
 		.pipe(gulp.dest('tmp/' + packageId + '/demos/'));
 });
 
-var htmlFileFilter = filter('*.html');
+var htmlFileFilter = filter('*.html', { restore: true });
 var demoPathReplace = replace(
 	/((?:src|href)=['"])([^'"]*)(['"])/g,
 	function(m0, m1, m2, m3) {
