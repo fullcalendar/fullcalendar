@@ -1,26 +1,26 @@
 var gulp = require('gulp');
-var file = require('gulp-file');
+var gfile = require('gulp-file'); // for virtual files from string buffers
 var gutil = require('gulp-util');
-var concat = require('gulp-concat');
 var modify = require('gulp-modify');
+var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var del = require('del');
 var fs = require('fs');
+var del = require('del');
 
-var langData;
+// global state for lang:each:data
+var langData; // array of virtual files that gulp-file accepts
 var skippedLangCodes;
 
-
+// generates individual lang files and the combined one
 gulp.task('lang', [ 'lang:each', 'lang:all' ], function() {
 	gutil.log(skippedLangCodes.length + ' skipped languages: ' + skippedLangCodes.join(', '));
 	gutil.log(langData.length + ' generated languages.');
 });
 
-
+// watches changes to any language, and rebuilds all
 gulp.task('lang:watch', [ 'lang' ], function() {
 	return gulp.watch('lang/*.js', [ 'lang' ]);
 });
-
 
 gulp.task('lang:clean', function() {
 	return del([
@@ -29,9 +29,9 @@ gulp.task('lang:clean', function() {
 	]);
 });
 
-
+// generates the combined lang file, minified
 gulp.task('lang:all', [ 'lang:each:data' ], function() {
-	return file(langData, { src: true }) // why src?/
+	return gfile(langData, { src: true }) // src:true for using at beginning of pipeline
 		.pipe(modify({
 			fileModifier: function(file, content) {
 				return wrapWithClosure(content);
@@ -40,7 +40,6 @@ gulp.task('lang:all', [ 'lang:each:data' ], function() {
 		.pipe(concat('lang-all.js'))
 		.pipe(modify({
 			fileModifier: function(file, content) {
-
 				// code for resetting the language back to English
 				content += '\n(moment.locale || moment.lang).call(moment, "en");'; // works with moment-pre-2.8
 				content += '\n$.fullCalendar.lang("en");';
@@ -53,19 +52,19 @@ gulp.task('lang:all', [ 'lang:each:data' ], function() {
 		.pipe(gulp.dest('dist/'));
 });
 
-
+// generates each individual language file, minified
 gulp.task('lang:each', [ 'lang:each:data' ], function() {
-	return file(langData, { src: true })
+	return gfile(langData, { src: true }) // src:true for using at beginning of pipeline
 		.pipe(modify({
 			fileModifier: function(file, content) {
-				return wrapWithUMD(content);
+				return wrapWithUMD(content); // each lang file needs its own UMD wrap
 			}
 		}))
 		.pipe(uglify())
 		.pipe(gulp.dest('dist/lang/'));
 });
 
-
+// populates global-state variables with individual lang code
 gulp.task('lang:each:data', function() {
 	langData = [];
 	skippedLangCodes = [];
@@ -83,22 +82,23 @@ gulp.task('lang:each:data', function() {
 					skippedLangCodes.push(langCode);
 				}
 
-				return '';
+				return ''; // `modify` needs a string result
 			}
 		}));
 });
 
 
+// inserts into the global-state lang array, maintaining alphabetical order
 function insertLangData(langCode, js) {
 	var i;
 
 	for (i = 0; i < langData.length; i++) {
-		if (langCode < langData[i].name) {
+		if (langCode < langData[i].name) { // string comparison
 			break;
 		}
 	}
 
-	langData.splice(i, 0, {
+	langData.splice(i, 0, { // insert at index
 		name: langCode + '.js',
 		source: js
 	});
@@ -179,7 +179,7 @@ function wrapWithClosure(body) {
 }
 
 
-function extractMomentLangJS(js) { // file assumed to exist
+function extractMomentLangJS(js) {
 
 	// remove the UMD wrap
 	js = js.replace(

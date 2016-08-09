@@ -1,20 +1,22 @@
-var del = require('del');
 var gulp = require('gulp');
-var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var cssmin = require('gulp-cssmin');
+var rename = require('gulp-rename');
+var del = require('del');
 
-// only for dist
-// does not do gcal.js or lang-all.js or fullcalendar.print.css
+gulp.task('minify', [
+	'minify:js',
+	'minify:css'
+]);
 
-gulp.task('minify', [ 'minify:js', 'minify:css' ]);
+gulp.task('minify:clean', function() {
+	return del('dist/*.min.{js,css}');
+});
 
-gulp.task('minify:clean', [ 'minify:js:clean', 'minify:css:clean' ]);
-
-gulp.task('minify:js', [ 'minify:js:clean', 'modules' ], function() {
+// minifies the core modules's js
+gulp.task('minify:js', [ 'modules' ], function() {
 	return gulp.src([
-			'dist/fullcalendar*.js',
-			'!**/*.min.js'
+			'dist/fullcalendar.js'
 		])
 		.pipe(uglify({
 			preserveComments: 'some' // keep comments starting with !
@@ -23,21 +25,12 @@ gulp.task('minify:js', [ 'minify:js:clean', 'modules' ], function() {
 		.pipe(gulp.dest('dist/'));
 });
 
-gulp.task('minify:js:clean', function() {
-	return del('dist/*.min.js');
-});
-
-gulp.task('minify:css', [ 'minify:css:clean', 'modules' ], function() {
+// minifies the core modules's css
+gulp.task('minify:css', [ 'modules' ], function() {
 	return gulp.src([
-			'dist/fullcalendar*.css',
-			'!**/*.print.css',
-			'!**/*.min.css'
+			'dist/fullcalendar.css'
 		])
 		.pipe(cssmin())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(gulp.dest('dist/'));
-});
-
-gulp.task('minify:css:clean', function() {
-	return del('dist/*.min.css');
 });

@@ -2,10 +2,11 @@ var gulp = require('gulp');
 var path = require('path');
 var KarmaServer = require('karma').Server;
 
-var KARMA_CONFIG_FILE = path.join(__dirname, '../build/karma.conf.js'); // was getting confused with relative URLs
+// TODO: move this file into project root
 // TODO: when moved, adjust linting as well
+var KARMA_CONFIG_FILE = path.join(__dirname, '../build/karma.conf.js'); // was getting confused with relative URLs
 
-// Runs a server, outputs a URL to visit
+// runs a server, outputs a URL to visit
 gulp.task('test', [ 'modules', 'lang' ], function(done) {
 	new KarmaServer({
 		configFile: KARMA_CONFIG_FILE,
@@ -16,8 +17,7 @@ gulp.task('test', [ 'modules', 'lang' ], function(done) {
 	}).start();
 });
 
-
-// Runs headlessly and continuously, watching files
+// runs headlessly and continuously, watching files
 gulp.task('test:headless', [ 'modules', 'lang' ], function(done) {
 	new KarmaServer({
 		configFile: KARMA_CONFIG_FILE,
@@ -29,8 +29,7 @@ gulp.task('test:headless', [ 'modules', 'lang' ], function(done) {
 	}).start();
 });
 
-
-// Runs headlessly once, then exits
+// runs headlessly once, then exits
 gulp.task('test:single', [ 'modules', 'lang' ], function(done) {
 	new KarmaServer({
 		configFile: KARMA_CONFIG_FILE,

@@ -1,13 +1,14 @@
 var gulp = require('gulp');
+var rename = require('gulp-rename');
 var concat = require('gulp-concat');
 var filter = require('gulp-filter');
 var replace = require('gulp-replace');
-var rename = require('gulp-rename');
 var zip = require('gulp-zip');
 var del = require('del');
 
-var packageInfo = require('../package.json');
-var PACKAGE_ID = packageInfo.name + '-' + packageInfo.version;
+// determines the name of the ZIP file
+var packageConf = require('../package.json');
+var packageId = packageConf.name + '-' + packageConf.version;
 
 gulp.task('archive', [
 	'archive:dist',
@@ -16,21 +17,22 @@ gulp.task('archive', [
 	'archive:deps',
 	'archive:demos'
 ], function() {
-	return gulp.src('tmp/' + PACKAGE_ID + '/**/*', { base: 'tmp/' })
-		.pipe(zip(PACKAGE_ID + '.zip'))
+	// make the zip, with a single root directory of a similar name
+	return gulp.src('tmp/' + packageId + '/**/*', { base: 'tmp/' })
+		.pipe(zip(packageId + '.zip'))
 		.pipe(gulp.dest('dist/'));
 });
 
 gulp.task('archive:clean', function() {
 	return del([
-		'tmp/' + PACKAGE_ID + '/',
-		'dist/' + PACKAGE_ID + '.zip'
+		'tmp/' + packageId + '/',
+		'dist/' + packageId + '.zip'
 	]);
 });
 
 gulp.task('archive:dist', [ 'modules', 'minify' ], function() {
-	return gulp.src('dist/*.{css,js}') // matches unminified and minified files
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/'));
+	return gulp.src('dist/*.{js,css}') // matches unminified and minified files
+		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:lang', [ 'lang' ], function() {
@@ -40,7 +42,7 @@ gulp.task('archive:lang', [ 'lang' ], function() {
 		], {
 			base: 'dist/'
 		})
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:misc', function() {
@@ -50,7 +52,7 @@ gulp.task('archive:misc', function() {
 			'CONTRIBUTING.*'
 		])
 		.pipe(rename({ extname: '.txt' }))
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:deps', [ 'archive:jqui' ], function() {
@@ -58,9 +60,10 @@ gulp.task('archive:deps', [ 'archive:jqui' ], function() {
 			'lib/moment/min/moment.min.js',
 			'lib/jquery/dist/jquery.min.js'
 		])
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/lib/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
+// makes a custom build of jQuery UI
 gulp.task('archive:jqui', [ 'archive:jqui:theme' ], function() {
 	return gulp.src([
 			'lib/jquery-ui/ui/minified/core.min.js',
@@ -69,9 +72,10 @@ gulp.task('archive:jqui', [ 'archive:jqui:theme' ], function() {
 			'lib/jquery-ui/ui/minified/draggable.min.js'
 		])
 		.pipe(concat('jquery-ui.custom.min.js'))
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/lib/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
+// transfers a single jQuery UI theme
 gulp.task('archive:jqui:theme', function() {
 	return gulp.src([
 			'jquery-ui.min.css',
@@ -80,18 +84,18 @@ gulp.task('archive:jqui:theme', function() {
 			cwd: 'lib/jquery-ui/themes/cupertino/',
 			base: 'lib/jquery-ui/themes/'
 		})
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/lib/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
+// transfers demo files, transforming their paths to dependencies
 gulp.task('archive:demos', function() {
 	return gulp.src('**/*', { cwd: 'demos/', base: 'demos/' })
 		.pipe(htmlFileFilter)
 		.pipe(demoPathReplace)
-		.pipe(htmlFileFilter.restore)
-		.pipe(gulp.dest('tmp/' + PACKAGE_ID + '/demos/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/demos/'));
 });
 
-var htmlFileFilter = filter('*.html', { restore: true }); // what?
+var htmlFileFilter = filter('*.html');
 var demoPathReplace = replace(
 	/((?:src|href)=['"])([^'"]*)(['"])/g,
 	function(m0, m1, m2, m3) {
