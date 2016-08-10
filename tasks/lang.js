@@ -69,7 +69,7 @@ gulp.task('lang:each:data', function() {
 	langData = [];
 	skippedLangCodes = [];
 
-	return gulp.src('lib/moment/{locale,lang}/*.js') // lang directory is pre-moment-2.8
+	return gulp.src('node_modules/moment/{locale,lang}/*.js') // lang directory is pre-moment-2.8
 		.pipe(modify({
 			fileModifier: function(file, momentContent) {
 				var langCode = file.path.match(/([^\/]*)\.js$/)[1];
@@ -209,7 +209,7 @@ function getDatepickerLangJS(langCode, targetLangCode) {
 		return '-' + m1.toUpperCase();
 	});
 
-	var path = 'lib/jquery-ui/ui/i18n/datepicker-' + datepickerLangCode + '.js';
+	var path = 'node_modules/components-jqueryui/ui/i18n/datepicker-' + datepickerLangCode + '.js';
 	var js;
 
 	try {
@@ -220,7 +220,7 @@ function getDatepickerLangJS(langCode, targetLangCode) {
 	}
 
 	js = js.replace( // remove the UMD wrap
-		/\(\s*function[\S\s]*?function\s*\(\s*datepicker\s*\)\s*\{([\S\s]*)\}\)\);?/m,
+		/\(\s*function[\S\s]*?function\s*\(\s*datepicker\s*\)\s*\{([\S\s]*)\}\s*\)\s*\)\s*;?/m,
 		function(m0, body) { // use only the function body, modified
 
 			var match = body.match(/datepicker\.regional[\S\s]*?(\{[\S\s]*?\});?/);

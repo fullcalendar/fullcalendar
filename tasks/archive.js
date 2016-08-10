@@ -55,23 +55,12 @@ gulp.task('archive:misc', function() {
 		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
-gulp.task('archive:deps', [ 'archive:jqui' ], function() {
+gulp.task('archive:deps', [ 'archive:jqui:theme' ], function() {
 	return gulp.src([
-			'lib/moment/min/moment.min.js',
-			'lib/jquery/dist/jquery.min.js'
+			'node_modules/moment/min/moment.min.js',
+			'node_modules/jquery/dist/jquery.min.js',
+			'node_modules/components-jqueryui/jquery-ui.min.js'
 		])
-		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
-});
-
-// makes a custom build of jQuery UI
-gulp.task('archive:jqui', [ 'archive:jqui:theme' ], function() {
-	return gulp.src([
-			'lib/jquery-ui/ui/minified/core.min.js',
-			'lib/jquery-ui/ui/minified/widget.min.js',
-			'lib/jquery-ui/ui/minified/mouse.min.js',
-			'lib/jquery-ui/ui/minified/draggable.min.js'
-		])
-		.pipe(concat('jquery-ui.custom.min.js'))
 		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
@@ -81,8 +70,8 @@ gulp.task('archive:jqui:theme', function() {
 			'jquery-ui.min.css',
 			'images/*'
 		], {
-			cwd: 'lib/jquery-ui/themes/cupertino/',
-			base: 'lib/jquery-ui/themes/'
+			cwd: 'node_modules/components-jqueryui/themes/cupertino/',
+			base: 'node_modules/components-jqueryui/themes/'
 		})
 		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
@@ -105,10 +94,11 @@ var demoPathReplace = replace(
 );
 
 function transformDemoPath(path) {
-	path = path.replace('../lib/moment/moment.js', '../lib/moment.min.js');
-	path = path.replace('../lib/jquery/dist/jquery.js', '../lib/jquery.min.js');
-	path = path.replace('../lib/jquery-ui/jquery-ui.js', '../lib/jquery-ui.custom.min.js');
-	path = path.replace('../lib/jquery-ui/themes/cupertino/', '../lib/cupertino/');
+	path = path.replace('../node_modules/moment/moment.js', '../lib/moment.min.js');
+	path = path.replace('../node_modules/jquery/dist/jquery.js', '../lib/jquery.min.js');
+	path = path.replace('../node_modules/components-jqueryui/jquery-ui.js', '../lib/jquery-ui.min.js');
+	path = path.replace('../node_modules/components-jqueryui/themes/cupertino/', '../lib/cupertino/');
+	path = path.replace('/jquery-ui.css', '/jquery-ui.min.css'); // within the above theme
 	path = path.replace('../dist/', '../');
 	path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
 	return path;

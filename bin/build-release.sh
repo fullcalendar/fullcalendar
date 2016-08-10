@@ -26,7 +26,7 @@ fi
 gulp clean
 
 # make sure deps are as new as possible for bundle
-./bin/install-deps.sh
+npm install
 
 # update package manager json files with version number and release date
 gulp bump --version=$version

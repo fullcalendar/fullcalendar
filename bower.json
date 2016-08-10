@@ -25,15 +25,6 @@
     "jquery": ">=1.7.1",
     "moment": ">=2.5.0"
   },
-  "devDependencies": {
-    "jquery-ui": ">=1.11.1",
-    "jquery-simulate": "~1.0.1",
-    "jasmine-jquery": "~2.1.1",
-    "jasmine-fixture": "~2.0.0",
-    "moment-timezone": "~0.2.1",
-    "bootstrap": "~3.2.0",
-    "jquery-mockjax": "~2.2.0"
-  },
   "main": [
     "dist/fullcalendar.js",
     "dist/fullcalendar.css"
