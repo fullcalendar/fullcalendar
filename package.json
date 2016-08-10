@@ -28,6 +28,7 @@
   "version": "0.0.0",
   "releaseDate": "1970-01-01",
   "devDependencies": {
+    "bootstrap": "^3.3.7",
     "components-jqueryui": "github:components/jqueryui",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
