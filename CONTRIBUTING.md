@@ -35,18 +35,18 @@ Please edit the original files in the `lang/` directory. DO NOT edit anything in
 
 You will need [Git][git], [Node][node], and NPM installed. For clarification, please view the [jQuery readme][jq-readme], which requires a similar setup.
 
-Also, you will need the [gulp-cli][gulp-cli] and [bower][bower] packages installed globally (`-g`) on your system:
+Also, you will need the [gulp-cli][gulp-cli] package installed globally (`-g`) on your system:
 
-	npm install -g gulp-cli bower
+	npm install -g gulp-cli
 
 Then, clone FullCalendar's git repo:
 
 	git clone git://github.com/fullcalendar/fullcalendar.git
 
-Enter the directory and install FullCalendar's development dependencies:
+Enter the directory and install FullCalendar's dependencies:
 
 	cd fullcalendar
-	./bin/install-deps.sh
+	npm install
 
 
 ## What to edit
@@ -122,7 +122,6 @@ If you have edited code (including **tests** and **translations**) and would lik
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
 [gulp-cli]: https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
-[bower]: http://bower.io/
 [jq-readme]: https://github.com/jquery/jquery/blob/master/README.md#what-you-need-to-build-your-own-jquery
 [Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
 [Automated Test Readme]: https://github.com/fullcalendar/fullcalendar/wiki/Automated-Tests
