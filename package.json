@@ -57,6 +57,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.0",
     "lodash": "^4.14.1",
+    "moment-timezone": "^0.5.5",
     "phantomjs-prebuilt": "^2.1.7",
     "yargs": "^4.8.1"
   },
