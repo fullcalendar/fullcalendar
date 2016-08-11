@@ -6,7 +6,7 @@
 <script src='../../node_modules/jquery/dist/jquery.js'></script>
 <script src='../../node_modules/moment/moment.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
-<script src='lib/themeswitcher/jquery.themeswitcher.js'></script>
+<script src='../lib/themeswitcher/jquery.themeswitcher.js'></script>
 <script>
 
 function initCalendar() {
@@ -87,7 +87,7 @@ $(document).ready(function() {
 	initCalendar();
 	
 	$('#switcher').themeswitcher({
-		imgPath: 'lib/themeswitcher/images/',
+		imgPath: '../lib/themeswitcher/images/',
 		loadTheme: 'Cupertino',
 		height: 400,
 		onSelect: function(theme) {
