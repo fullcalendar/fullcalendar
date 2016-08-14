@@ -22,8 +22,8 @@
   },
   "copyright": "2016 Adam Shaw",
   "dependencies": {
-    "jquery": ">=1.7.1",
-    "moment": ">=2.5.0"
+    "jquery": ">=2.0.0",
+    "moment": ">=2.8.1"
   },
   "main": [
     "dist/fullcalendar.js",
