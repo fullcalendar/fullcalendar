@@ -405,6 +405,7 @@ function Calendar_constructor(element, overrides) {
 			mom._lang = localeData;
 		}
 	}
+	t.localizeMoment = localizeMoment;
 
 
 	// Returns a boolean about whether or not the calendar knows how to calculate

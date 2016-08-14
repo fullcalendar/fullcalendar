@@ -1042,20 +1042,25 @@ Grid.mixin({
 	// Generates the unzoned start/end dates an event appears to occupy
 	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToRange: function(event) {
-		return {
-			start: event.start.clone().stripZone(),
-			end: (
+		var calendar = this.view.calendar;
+		var start = event.start.clone().stripZone();
+		var end = (
 				event.end ?
 					event.end.clone() :
 					// derive the end from the start and allDay. compute allDay if necessary
-					this.view.calendar.getDefaultEventEnd(
+					calendar.getDefaultEventEnd(
 						event.allDay != null ?
 							event.allDay :
 							!event.start.hasTime(),
 						event.start
 					)
-			).stripZone()
-		};
+			).stripZone();
+
+		// hack: dynamic lang change forgets to upate stored event localed
+		calendar.localizeMoment(start);
+		calendar.localizeMoment(end);
+
+		return { start: start, end: end };
 	},
 
 
