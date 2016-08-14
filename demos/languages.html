@@ -7,11 +7,11 @@
 <script src='../node_modules/moment/moment.js'></script>
 <script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../dist/fullcalendar.js'></script>
-<script src='../dist/lang-all.js'></script>
+<script src='../dist/locale-all.js'></script>
 <script>
 
 	$(document).ready(function() {
-		var initialLangCode = 'en';
+		var initialLocaleCode = 'en';
 
 		$('#calendar').fullCalendar({
 			header: {
@@ -20,7 +20,7 @@
 				right: 'month,agendaWeek,agendaDay,listMonth'
 			},
 			defaultDate: '2016-06-12',
-			lang: initialLangCode,
+			locale: initialLocaleCode,
 			buttonIcons: false, // show the prev/next text
 			weekNumbers: true,
 			editable: true,
@@ -83,20 +83,20 @@
 			]
 		});
 
-		// build the language selector's options
-		$.each($.fullCalendar.langs, function(langCode) {
-			$('#lang-selector').append(
+		// build the locale selector's options
+		$.each($.fullCalendar.locales, function(localeCode) {
+			$('#locale-selector').append(
 				$('<option/>')
-					.attr('value', langCode)
-					.prop('selected', langCode == initialLangCode)
-					.text(langCode)
+					.attr('value', localeCode)
+					.prop('selected', localeCode == initialLocaleCode)
+					.text(localeCode)
 			);
 		});
 
 		// when the selected option changes, dynamically change the calendar option
-		$('#lang-selector').on('change', function() {
+		$('#locale-selector').on('change', function() {
 			if (this.value) {
-				$('#calendar').fullCalendar('option', 'lang', this.value);
+				$('#calendar').fullCalendar('option', 'locale', this.value);
 			}
 		});
 	});
@@ -131,8 +131,8 @@
 
 	<div id='top'>
 
-		Language:
-		<select id='lang-selector'></select>
+		Locales:
+		<select id='locale-selector'></select>
 
 	</div>
 
