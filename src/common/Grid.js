@@ -4,6 +4,9 @@
 
 var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
+	// self-config, overridable by subclasses
+	hasDayInteractions: true, // can user click/select ranges of time?
+
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
 
@@ -171,10 +174,13 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 	// Does other DOM-related initializations.
 	setElement: function(el) {
 		this.el = el;
-		preventSelection(el);
 
-		this.bindDayHandler('touchstart', this.dayTouchStart);
-		this.bindDayHandler('mousedown', this.dayMousedown);
+		if (this.hasDayInteractions) {
+			preventSelection(el);
+
+			this.bindDayHandler('touchstart', this.dayTouchStart);
+			this.bindDayHandler('mousedown', this.dayMousedown);
+		}
 
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
