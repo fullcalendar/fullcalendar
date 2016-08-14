@@ -9,28 +9,28 @@
 <script src='../../node_modules/components-jqueryui/jquery-ui.js'></script>
 <script src='../../node_modules/moment/moment.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
-<script src='../../dist/lang-all.js'></script>
+<script src='../../dist/locale-all.js'></script>
 <script>
 
 	$(document).ready(function() {
-		var currentLangCode = 'en';
+		var currentLocaleCode = 'en';
 
-		// build the language selector's options
-		$.each($.fullCalendar.langs, function(langCode) {
-			$('#lang-selector').append(
+		// build the locale selector's options
+		$.each($.fullCalendar.locales, function(localeCode) {
+			$('#locale-selector').append(
 				$('<option/>')
-					.attr('value', langCode)
-					.prop('selected', langCode == currentLangCode)
-					.text(langCode)
+					.attr('value', localeCode)
+					.prop('selected', localeCode == currentLocaleCode)
+					.text(localeCode)
 			);
 		});
 
-		// update the language when the selected option changes
-		$('#lang-selector').on('change', function() {
+		// update the locale when the selected option changes
+		$('#locale-selector').on('change', function() {
 			if (this.value) {
-				currentLangCode = this.value;
-				// change the language on the datepicker
-				$('#datepicker').datepicker('option', $.datepicker.regional[currentLangCode]);
+				currentLocaleCode = this.value;
+				// change the locale on the datepicker
+				$('#datepicker').datepicker('option', $.datepicker.regional[currentLocaleCode]);
 				// rerender the calendar
 				$('#calendar').fullCalendar('destroy');
 				renderCalendar();
@@ -45,7 +45,7 @@
 			showButtonPanel: true,
 			calculateWeek: function(nativeDate) {
 				// use Moment to calculate the local week number
-				return moment(nativeDate).lang(currentLangCode).week();
+				return moment(nativeDate).locale(currentLocaleCode).week();
 			}
 		});
 
@@ -57,7 +57,7 @@
 					right: 'month,agendaWeek,agendaDay'
 				},
 				date: '2014-01-12',
-				lang: currentLangCode,
+				locale: currentLocaleCode,
 				buttonIcons: false, // show the prev/next text
 				weekNumbers: true,
 				editable: true,
@@ -141,8 +141,8 @@
 
 	<div id='top'>
 
-		Language:
-		<select id='lang-selector'></select>
+		Locales:
+		<select id='locale-selector'></select>
 
 	</div>
 
