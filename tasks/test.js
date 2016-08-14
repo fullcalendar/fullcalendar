@@ -5,7 +5,7 @@ var KarmaServer = require('karma').Server;
 var karmaConf = path.join(__dirname, '../karma.conf.js'); // was getting confused with relative URLs
 
 // runs a server, outputs a URL to visit
-gulp.task('test', [ 'modules', 'lang' ], function(done) {
+gulp.task('test', [ 'modules', 'locale' ], function(done) {
 	new KarmaServer({
 		configFile: karmaConf,
 		singleRun: false,
@@ -16,7 +16,7 @@ gulp.task('test', [ 'modules', 'lang' ], function(done) {
 });
 
 // runs headlessly and continuously, watching files
-gulp.task('test:headless', [ 'modules', 'lang' ], function(done) {
+gulp.task('test:headless', [ 'modules', 'locale' ], function(done) {
 	new KarmaServer({
 		configFile: karmaConf,
 		browsers: [ 'PhantomJS_custom' ],
@@ -28,7 +28,7 @@ gulp.task('test:headless', [ 'modules', 'lang' ], function(done) {
 });
 
 // runs headlessly once, then exits
-gulp.task('test:single', [ 'modules', 'lang' ], function(done) {
+gulp.task('test:single', [ 'modules', 'locale' ], function(done) {
 	new KarmaServer({
 		configFile: karmaConf,
 		browsers: [ 'PhantomJS_custom' ],

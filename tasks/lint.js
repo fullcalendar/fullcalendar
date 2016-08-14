@@ -39,7 +39,7 @@ gulp.task('jshint:browser', function() {
 			'src/**/*.js',
 			'!src/intro.js', // exclude
 			'!src/outro.js', // "
-			'lang/*.js',
+			'locale/*.js',
 		])
 		.pipe(jshint(jshintBrowser))
 		.pipe(jshint.reporter('default'))
@@ -47,11 +47,11 @@ gulp.task('jshint:browser', function() {
 });
 
 // for browser JS, after concat
-gulp.task('jshint:built', [ 'modules', 'lang:all' ], function() {
+gulp.task('jshint:built', [ 'modules', 'locale:all' ], function() {
 	return gulp.src([
 			'dist/*.js',
 			'!dist/*.min.js', // exclude
-			'!dist/lang-all.js' // "
+			'!dist/locale-all.js' // "
 		])
 		.pipe(jshint(jshintBuilt))
 		.pipe(jshint.reporter('default'))
@@ -78,7 +78,7 @@ gulp.task('jscs:relaxed', function() {
 			'src/**/*.js',
 			'!src/intro.js', // exclude
 			'!src/outro.js', // "
-			'lang/*.js'
+			'locale/*.js'
 		])
 		.pipe(jscs({
 			configPath: '.jscs.js' // needs to be an external config

@@ -7,42 +7,42 @@ var uglify = require('gulp-uglify');
 var fs = require('fs');
 var del = require('del');
 
-// global state for lang:each:data
-var langData; // array of virtual files that gulp-file accepts
-var skippedLangCodes;
+// global state for locale:each:data
+var localeData; // array of virtual files that gulp-file accepts
+var skippedLocaleCodes;
 
-// generates individual lang files and the combined one
-gulp.task('lang', [ 'lang:each', 'lang:all' ], function() {
-	gutil.log(skippedLangCodes.length + ' skipped languages: ' + skippedLangCodes.join(', '));
-	gutil.log(langData.length + ' generated languages.');
+// generates individual locale files and the combined one
+gulp.task('locale', [ 'locale:each', 'locale:all' ], function() {
+	gutil.log(skippedLocaleCodes.length + ' skipped locales: ' + skippedLocaleCodes.join(', '));
+	gutil.log(localeData.length + ' generated locales.');
 });
 
-// watches changes to any language, and rebuilds all
-gulp.task('lang:watch', [ 'lang' ], function() {
-	return gulp.watch('lang/*.js', [ 'lang' ]);
+// watches changes to any locale, and rebuilds all
+gulp.task('locale:watch', [ 'locale' ], function() {
+	return gulp.watch('locale/*.js', [ 'locale' ]);
 });
 
-gulp.task('lang:clean', function() {
+gulp.task('locale:clean', function() {
 	return del([
-		'dist/lang-all.js',
-		'dist/lang/'
+		'dist/locale-all.js',
+		'dist/locale/'
 	]);
 });
 
-// generates the combined lang file, minified
-gulp.task('lang:all', [ 'lang:each:data' ], function() {
-	return gfile(langData, { src: true }) // src:true for using at beginning of pipeline
+// generates the combined locale file, minified
+gulp.task('locale:all', [ 'locale:each:data' ], function() {
+	return gfile(localeData, { src: true }) // src:true for using at beginning of pipeline
 		.pipe(modify({
 			fileModifier: function(file, content) {
 				return wrapWithClosure(content);
 			}
 		}))
-		.pipe(concat('lang-all.js'))
+		.pipe(concat('locale-all.js'))
 		.pipe(modify({
 			fileModifier: function(file, content) {
-				// code for resetting the language back to English
-				content += '\n(moment.locale || moment.lang).call(moment, "en");'; // works with moment-pre-2.8
-				content += '\n$.fullCalendar.lang("en");';
+				// code for resetting the locale back to English
+				content += '\nmoment.locale("en");';
+				content += '\n$.fullCalendar.locale("en");';
 				content += '\nif ($.datepicker) $.datepicker.setDefaults($.datepicker.regional[""]);';
 
 				return wrapWithUMD(content);
@@ -52,34 +52,34 @@ gulp.task('lang:all', [ 'lang:each:data' ], function() {
 		.pipe(gulp.dest('dist/'));
 });
 
-// generates each individual language file, minified
-gulp.task('lang:each', [ 'lang:each:data' ], function() {
-	return gfile(langData, { src: true }) // src:true for using at beginning of pipeline
+// generates each individual locale file, minified
+gulp.task('locale:each', [ 'locale:each:data' ], function() {
+	return gfile(localeData, { src: true }) // src:true for using at beginning of pipeline
 		.pipe(modify({
 			fileModifier: function(file, content) {
-				return wrapWithUMD(content); // each lang file needs its own UMD wrap
+				return wrapWithUMD(content); // each locale file needs its own UMD wrap
 			}
 		}))
 		.pipe(uglify())
-		.pipe(gulp.dest('dist/lang/'));
+		.pipe(gulp.dest('dist/locale/'));
 });
 
-// populates global-state variables with individual lang code
-gulp.task('lang:each:data', function() {
-	langData = [];
-	skippedLangCodes = [];
+// populates global-state variables with individual locale code
+gulp.task('locale:each:data', function() {
+	localeData = [];
+	skippedLocaleCodes = [];
 
-	return gulp.src('node_modules/moment/{locale,lang}/*.js') // lang directory is pre-moment-2.8
+	return gulp.src('node_modules/moment/locale/*.js')
 		.pipe(modify({
 			fileModifier: function(file, momentContent) {
-				var langCode = file.path.match(/([^\/]*)\.js$/)[1];
-				var js = getLangJS(langCode, momentContent);
+				var localeCode = file.path.match(/([^\/]*)\.js$/)[1];
+				var js = getLocaleJs(localeCode, momentContent);
 
 				if (js) {
-					insertLangData(langCode, js);
+					insertLocaleData(localeCode, js);
 				}
 				else {
-					skippedLangCodes.push(langCode);
+					skippedLocaleCodes.push(localeCode);
 				}
 
 				return ''; // `modify` needs a string result
@@ -88,61 +88,61 @@ gulp.task('lang:each:data', function() {
 });
 
 
-// inserts into the global-state lang array, maintaining alphabetical order
-function insertLangData(langCode, js) {
+// inserts into the global-state locale array, maintaining alphabetical order
+function insertLocaleData(localeCode, js) {
 	var i;
 
-	for (i = 0; i < langData.length; i++) {
-		if (langCode < langData[i].name) { // string comparison
+	for (i = 0; i < localeData.length; i++) {
+		if (localeCode < localeData[i].name) { // string comparison
 			break;
 		}
 	}
 
-	langData.splice(i, 0, { // insert at index
-		name: langCode + '.js',
+	localeData.splice(i, 0, { // insert at index
+		name: localeCode + '.js',
 		source: js
 	});
 }
 
 
-function getLangJS(langCode, momentContent) {
+function getLocaleJs(localeCode, momentContent) {
 	
-	var shortLangCode;
-	var momentLangJS;
-	var datepickerLangJS;
-	var fullCalendarLangJS;
+	var shortLocaleCode;
+	var momentLocaleJS;
+	var datepickerLocaleJS;
+	var fullCalendarLocaleJS;
 
 	// given "fr-ca", get just "fr"
-	if (langCode.indexOf('-') != -1) {
-		shortLangCode = langCode.replace(/-.*/, '');
+	if (localeCode.indexOf('-') != -1) {
+		shortLocaleCode = localeCode.replace(/-.*/, '');
 	}
 
-	momentLangJS = extractMomentLangJS(momentContent);
+	momentLocaleJS = extractMomentLocaleJS(momentContent);
 
-	datepickerLangJS = getDatepickerLangJS(langCode);
-	if (!datepickerLangJS && shortLangCode) {
-		datepickerLangJS = getDatepickerLangJS(shortLangCode, langCode);
+	datepickerLocaleJS = getDatepickerLocaleJS(localeCode);
+	if (!datepickerLocaleJS && shortLocaleCode) {
+		datepickerLocaleJS = getDatepickerLocaleJS(shortLocaleCode, localeCode);
 	}
 
-	fullCalendarLangJS = getFullCalendarLangJS(langCode);
-	if (!fullCalendarLangJS && shortLangCode) {
-		fullCalendarLangJS = getFullCalendarLangJS(shortLangCode, langCode);
+	fullCalendarLocaleJS = getFullCalendarLocaleJS(localeCode);
+	if (!fullCalendarLocaleJS && shortLocaleCode) {
+		fullCalendarLocaleJS = getFullCalendarLocaleJS(shortLocaleCode, localeCode);
 	}
 
-	// If this is an "en" language, only the Moment config is needed.
-	// For all other languages, all 3 configs are needed.
-	if (momentLangJS && (shortLangCode == 'en' || (datepickerLangJS && fullCalendarLangJS))) {
+	// If this is an "en" locale, only the Moment config is needed.
+	// For all other locales, all 3 configs are needed.
+	if (momentLocaleJS && (shortLocaleCode == 'en' || (datepickerLocaleJS && fullCalendarLocaleJS))) {
 
 		// if there is no definition, we still need to tell FC to set the default
-		if (!fullCalendarLangJS) {
-			fullCalendarLangJS = '$.fullCalendar.lang("' + langCode + '");';
+		if (!fullCalendarLocaleJS) {
+			fullCalendarLocaleJS = '$.fullCalendar.locale("' + localeCode + '");';
 		}
 
-		datepickerLangJS = datepickerLangJS || '';
+		datepickerLocaleJS = datepickerLocaleJS || '';
 
-		return momentLangJS + '\n' +
-			datepickerLangJS + '\n' +
-			fullCalendarLangJS;
+		return momentLocaleJS + '\n' +
+			datepickerLocaleJS + '\n' +
+			fullCalendarLocaleJS;
 	}
 }
 
@@ -179,7 +179,7 @@ function wrapWithClosure(body) {
 }
 
 
-function extractMomentLangJS(js) {
+function extractMomentLocaleJS(js) {
 
 	// remove the UMD wrap
 	js = js.replace(
@@ -192,24 +192,18 @@ function extractMomentLangJS(js) {
 	// the JS will return a value. wrap in a closure to avoid haulting execution
 	js = '(function() {\n' + js + '})();\n';
 
-	// make the defineLocale statement compatible with moment-pre-2.8
-	js = js.replace(
-		/moment\.(defineLocale|lang)\(/m,
-		'(moment.defineLocale || moment.lang).call(moment, '
-	);
-
 	return js;
 }
 
 
-function getDatepickerLangJS(langCode, targetLangCode) {
+function getDatepickerLocaleJS(localeCode, targetLocaleCode) {
 
 	// convert "en-ca" to "en-CA"
-	var datepickerLangCode = langCode.replace(/\-(\w+)/, function(m0, m1) {
+	var datepickerLocaleCode = localeCode.replace(/\-(\w+)/, function(m0, m1) {
 		return '-' + m1.toUpperCase();
 	});
 
-	var path = 'node_modules/components-jqueryui/ui/i18n/datepicker-' + datepickerLangCode + '.js';
+	var path = 'node_modules/components-jqueryui/ui/i18n/datepicker-' + datepickerLocaleCode + '.js';
 	var js;
 
 	try {
@@ -229,9 +223,9 @@ function getDatepickerLangJS(langCode, targetLangCode) {
 			// remove 1 level of tab indentation
 			props = props.replace(/^\t/mg, '');
 
-			return "$.fullCalendar.datepickerLang(" +
-				"'" + (targetLangCode || langCode) + "', " + // for FullCalendar
-				"'" + datepickerLangCode + "', " + // for datepicker
+			return "$.fullCalendar.datepickerLocale(" +
+				"'" + (targetLocaleCode || localeCode) + "', " + // for FullCalendar
+				"'" + datepickerLocaleCode + "', " + // for datepicker
 				props +
 				");";
 		}
@@ -241,9 +235,9 @@ function getDatepickerLangJS(langCode, targetLangCode) {
 }
 
 
-function getFullCalendarLangJS(langCode, targetLangCode) {
+function getFullCalendarLocaleJS(localeCode, targetLocaleCode) {
 
-	var path = 'lang/' + langCode + '.js';
+	var path = 'locale/' + localeCode + '.js';
 	var js;
 
 	try {
@@ -255,10 +249,10 @@ function getFullCalendarLangJS(langCode, targetLangCode) {
 
 	// if we originally wanted "ar-ma", but only "ar" is available, we have to adjust
 	// the declaration
-	if (targetLangCode && targetLangCode != langCode) {
+	if (targetLocaleCode && targetLocaleCode != localeCode) {
 		js = js.replace(
-			/\$\.fullCalendar\.lang\(['"]([^'"]*)['"]/,
-			'$.fullCalendar.lang("' + targetLangCode + '"'
+			/\$\.fullCalendar\.locale\(['"]([^'"]*)['"]/,
+			'$.fullCalendar.locale("' + targetLocaleCode + '"'
 		);
 	}
 

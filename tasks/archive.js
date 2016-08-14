@@ -12,7 +12,7 @@ var packageId = packageConf.name + '-' + packageConf.version;
 
 gulp.task('archive', [
 	'archive:dist',
-	'archive:lang',
+	'archive:locale',
 	'archive:misc',
 	'archive:deps',
 	'archive:demos'
@@ -35,10 +35,10 @@ gulp.task('archive:dist', [ 'modules', 'minify' ], function() {
 		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
-gulp.task('archive:lang', [ 'lang' ], function() {
+gulp.task('archive:locale', [ 'locale' ], function() {
 	return gulp.src([
-			'dist/lang-all.js',
-			'dist/lang/*.js'
+			'dist/locale-all.js',
+			'dist/locale/*.js'
 		], {
 			base: 'dist/'
 		})
