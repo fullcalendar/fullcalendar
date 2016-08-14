@@ -21,9 +21,9 @@ Furthermore, each new feature should be designed as robustly as possible and be 
 In the description of your [Pull Request][Using Pull Requests], please include recreation steps for the bug as well as a [JSFiddle/JSBin] demo. Communicating the buggy behavior is a requirement before a merge can happen.
 
 
-## Contributing Languages
+## Contributing Locales
 
-Please edit the original files in the `lang/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `lang/` data with the [MomentJS locale data].
+Please edit the original files in the `locale/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `locale/` data with the [MomentJS locale data].
 
 
 ## Other Ways to Contribute
