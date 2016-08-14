@@ -240,7 +240,10 @@ Grid.mixin({
 
 
 	handleSegClick: function(seg, ev) {
-		return this.view.trigger('eventClick', seg.el[0], seg.event, ev); // can return `false` to cancel
+		var res = this.view.trigger('eventClick', seg.el[0], seg.event, ev); // can return `false` to cancel
+		if (res === false) {
+			ev.preventDefault();
+		}
 	},
 
 
