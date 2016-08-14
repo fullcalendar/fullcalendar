@@ -1056,7 +1056,7 @@ Grid.mixin({
 					)
 			).stripZone();
 
-		// hack: dynamic lang change forgets to upate stored event localed
+		// hack: dynamic locale change forgets to upate stored event localed
 		calendar.localizeMoment(start);
 		calendar.localizeMoment(end);
 

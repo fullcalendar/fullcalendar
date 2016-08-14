@@ -2,7 +2,7 @@
 var Calendar = FC.Calendar = Class.extend({
 
 	dirDefaults: null, // option defaults related to LTR or RTL
-	langDefaults: null, // option defaults related to current locale
+	localeDefaults: null, // option defaults related to current locale
 	overrides: null, // option overrides given to the fullCalendar constructor
 	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
 	options: null, // all defaults combined with overrides
@@ -25,33 +25,33 @@ var Calendar = FC.Calendar = Class.extend({
 	// Computes the flattened options hash for the calendar and assigns to `this.options`.
 	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
 	populateOptionsHash: function() {
-		var lang, langDefaults;
+		var locale, localeDefaults;
 		var isRTL, dirDefaults;
 
-		lang = firstDefined( // explicit lang option given?
-			this.dynamicOverrides.lang,
-			this.overrides.lang
+		locale = firstDefined( // explicit locale option given?
+			this.dynamicOverrides.locale,
+			this.overrides.locale
 		);
-		langDefaults = langOptionHash[lang];
-		if (!langDefaults) { // explicit lang option not given or invalid?
-			lang = Calendar.defaults.lang;
-			langDefaults = langOptionHash[lang] || {};
+		localeDefaults = localeOptionHash[locale];
+		if (!localeDefaults) { // explicit locale option not given or invalid?
+			locale = Calendar.defaults.locale;
+			localeDefaults = localeOptionHash[locale] || {};
 		}
 
 		isRTL = firstDefined( // based on options computed so far, is direction RTL?
 			this.dynamicOverrides.isRTL,
 			this.overrides.isRTL,
-			langDefaults.isRTL,
+			localeDefaults.isRTL,
 			Calendar.defaults.isRTL
 		);
 		dirDefaults = isRTL ? Calendar.rtlDefaults : {};
 
 		this.dirDefaults = dirDefaults;
-		this.langDefaults = langDefaults;
+		this.localeDefaults = localeDefaults;
 		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
 			Calendar.defaults, // global defaults
 			dirDefaults,
-			langDefaults,
+			localeDefaults,
 			this.overrides,
 			this.dynamicOverrides
 		]);
@@ -167,7 +167,7 @@ var Calendar = FC.Calendar = Class.extend({
 			Calendar.defaults, // global defaults
 			spec.defaults, // view's defaults (from ViewSubclass.defaults)
 			this.dirDefaults,
-			this.langDefaults, // locale and dir take precedence over view's defaults!
+			this.localeDefaults, // locale and dir take precedence over view's defaults!
 			this.overrides, // calendar's overrides (options given to constructor)
 			spec.overrides, // view's overrides (view-specific options)
 			this.dynamicOverrides // dynamically set via setter. highest precedence
@@ -198,7 +198,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 		// highest to lowest priority. mirrors buildViewSpecOptions
 		spec.buttonTextDefault =
-			queryButtonText(this.langDefaults) ||
+			queryButtonText(this.localeDefaults) ||
 			queryButtonText(this.dirDefaults) ||
 			spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
 			queryButtonText(Calendar.defaults) ||
@@ -308,20 +308,20 @@ function Calendar_constructor(element, overrides) {
 
 
 
-	// Language-data Internals
+	// Locale-data Internals
 	// -----------------------------------------------------------------------------------
-	// Apply overrides to the current language's data
+	// Apply overrides to the current locale's data
 
 	var localeData;
 
 	// Called immediately, and when any of the options change.
 	// Happens before any internal objects rebuild or rerender, because this is very core.
 	t.bindOptions([
-		'lang', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort', 'firstDay', 'weekNumberCalculation'
-	], function(lang, monthNames, monthNamesShort, dayNames, dayNamesShort, firstDay, weekNumberCalculation) {
+		'locale', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort', 'firstDay', 'weekNumberCalculation'
+	], function(locale, monthNames, monthNamesShort, dayNames, dayNamesShort, firstDay, weekNumberCalculation) {
 
 		localeData = createObject( // make a cheap copy
-			getMomentLocaleData(lang) // will fall back to en
+			getMomentLocaleData(locale) // will fall back to en
 		);
 
 		if (monthNames) {
@@ -370,7 +370,7 @@ function Calendar_constructor(element, overrides) {
 	t.defaultTimedEventDuration = moment.duration(t.options.defaultTimedEventDuration);
 
 
-	// Builds a moment using the settings of the current calendar: timezone and language.
+	// Builds a moment using the settings of the current calendar: timezone and locale.
 	// Accepts anything the vanilla moment() constructor accepts.
 	t.moment = function() {
 		var mom;
@@ -398,12 +398,7 @@ function Calendar_constructor(element, overrides) {
 
 	// Updates the given moment's locale settings to the current calendar locale settings.
 	function localizeMoment(mom) {
-		if ('_locale' in mom) { // moment 2.8 and above
-			mom._locale = localeData;
-		}
-		else { // pre-moment-2.8
-			mom._lang = localeData;
-		}
+		mom._locale = localeData;
 	}
 	t.localizeMoment = localizeMoment;
 
@@ -482,8 +477,7 @@ function Calendar_constructor(element, overrides) {
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
 	t.humanizeDuration = function(duration) {
-		return (duration.locale || duration.lang).call(duration, t.options.lang) // works moment-pre-2.8
-			.humanize();
+		return duration.locale(t.options.locale).humanize();
 	};
 
 
@@ -553,8 +547,8 @@ function Calendar_constructor(element, overrides) {
 		});
 
 		// called immediately, and upon option change.
-		// HACK: lang often affects isRTL, so we explicitly listen to that too.
-		t.bindOptions([ 'isRTL', 'lang' ], function(isRTL) {
+		// HACK: locale often affects isRTL, so we explicitly listen to that too.
+		t.bindOptions([ 'isRTL', 'locale' ], function(isRTL) {
 			element.toggleClass('fc-ltr', !isRTL);
 			element.toggleClass('fc-rtl', isRTL);
 		});

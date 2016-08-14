@@ -1,17 +1,16 @@
 
-var langOptionHash = FC.langs = {}; // initialize and expose
+var localeOptionHash = FC.locales = {}; // initialize and expose
 
 
-// TODO: document the structure and ordering of a FullCalendar lang file
-// TODO: rename everything "lang" to "locale", like what the moment project did
+// TODO: document the structure and ordering of a FullCalendar locale file
 
 
 // Initialize jQuery UI datepicker translations while using some of the translations
-// Will set this as the default language for datepicker.
-FC.datepickerLang = function(langCode, dpLangCode, dpOptions) {
+// Will set this as the default locales for datepicker.
+FC.datepickerLocale = function(localeCode, dpLocaleCode, dpOptions) {
 
-	// get the FullCalendar internal option hash for this language. create if necessary
-	var fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
+	// get the FullCalendar internal option hash for this locale. create if necessary
+	var fcOptions = localeOptionHash[localeCode] || (localeOptionHash[localeCode] = {});
 
 	// transfer some simple options from datepicker to fc
 	fcOptions.isRTL = dpOptions.isRTL;
@@ -25,15 +24,15 @@ FC.datepickerLang = function(langCode, dpLangCode, dpOptions) {
 	// is jQuery UI Datepicker is on the page?
 	if ($.datepicker) {
 
-		// Register the language data.
-		// FullCalendar and MomentJS use language codes like "pt-br" but Datepicker
-		// does it like "pt-BR" or if it doesn't have the language, maybe just "pt".
-		// Make an alias so the language can be referenced either way.
-		$.datepicker.regional[dpLangCode] =
-			$.datepicker.regional[langCode] = // alias
+		// Register the locale data.
+		// FullCalendar and MomentJS use locale codes like "pt-br" but Datepicker
+		// does it like "pt-BR" or if it doesn't have the locale, maybe just "pt".
+		// Make an alias so the locale can be referenced either way.
+		$.datepicker.regional[dpLocaleCode] =
+			$.datepicker.regional[localeCode] = // alias
 				dpOptions;
 
-		// Alias 'en' to the default language data. Do this every time.
+		// Alias 'en' to the default locale data. Do this every time.
 		$.datepicker.regional.en = $.datepicker.regional[''];
 
 		// Set as Datepicker's global defaults.
@@ -42,35 +41,35 @@ FC.datepickerLang = function(langCode, dpLangCode, dpOptions) {
 };
 
 
-// Sets FullCalendar-specific translations. Will set the language as the global default.
-FC.lang = function(langCode, newFcOptions) {
+// Sets FullCalendar-specific translations. Will set the locales as the global default.
+FC.locale = function(localeCode, newFcOptions) {
 	var fcOptions;
 	var momOptions;
 
-	// get the FullCalendar internal option hash for this language. create if necessary
-	fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
+	// get the FullCalendar internal option hash for this locale. create if necessary
+	fcOptions = localeOptionHash[localeCode] || (localeOptionHash[localeCode] = {});
 
-	// provided new options for this language? merge them in
+	// provided new options for this locales? merge them in
 	if (newFcOptions) {
-		fcOptions = langOptionHash[langCode] = mergeOptions([ fcOptions, newFcOptions ]);
+		fcOptions = localeOptionHash[localeCode] = mergeOptions([ fcOptions, newFcOptions ]);
 	}
 
-	// compute language options that weren't defined.
+	// compute locale options that weren't defined.
 	// always do this. newFcOptions can be undefined when initializing from i18n file,
 	// so no way to tell if this is an initialization or a default-setting.
-	momOptions = getMomentLocaleData(langCode); // will fall back to en
+	momOptions = getMomentLocaleData(localeCode); // will fall back to en
 	$.each(momComputableOptions, function(name, func) {
 		if (fcOptions[name] == null) {
 			fcOptions[name] = func(momOptions, fcOptions);
 		}
 	});
 
-	// set it as the default language for FullCalendar
-	Calendar.defaults.lang = langCode;
+	// set it as the default locale for FullCalendar
+	Calendar.defaults.locale = localeCode;
 };
 
 
-// NOTE: can't guarantee any of these computations will run because not every language has datepicker
+// NOTE: can't guarantee any of these computations will run because not every locale has datepicker
 // configs, so make sure there are English fallbacks for these in the defaults file.
 var dpComputableOptions = {
 
@@ -120,7 +119,7 @@ var momComputableOptions = {
 	smallTimeFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(':mm', '(:mm)')
-			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
 			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
 	},
 
@@ -128,7 +127,7 @@ var momComputableOptions = {
 	extraSmallTimeFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(':mm', '(:mm)')
-			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
 			.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
 	},
 
@@ -136,7 +135,7 @@ var momComputableOptions = {
 	hourFormat: function(momOptions) {
 		return momOptions.longDateFormat('LT')
 			.replace(':mm', '')
-			.replace(/(\Wmm)$/, '') // like above, but for foreign langs
+			.replace(/(\Wmm)$/, '') // like above, but for foreign locales
 			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
 	},
 
@@ -150,7 +149,7 @@ var momComputableOptions = {
 
 
 // options that should be computed off live calendar options (considers override options)
-// TODO: best place for this? related to lang?
+// TODO: best place for this? related to locale?
 // TODO: flipping text based on isRTL is a bad idea because the CSS `direction` might want to handle it
 var instanceComputableOptions = {
 
@@ -188,13 +187,11 @@ function populateInstanceComputableOptions(options) {
 
 // Returns moment's internal locale data. If doesn't exist, returns English.
 // Works with moment-pre-2.8
-function getMomentLocaleData(langCode) {
-	var func = moment.localeData || moment.langData;
-	return func.call(moment, langCode) ||
-		func.call(moment, 'en'); // the newer localData could return null, so fall back to en
+function getMomentLocaleData(localeCode) {
+	return moment.localeData(localeCode) || moment.localeData('en');
 }
 
 
 // Initialize English by forcing computation of moment-derived options.
 // Also, sets it as the default.
-FC.lang('en', Calendar.englishDefaults);
+FC.locale('en', Calendar.englishDefaults);

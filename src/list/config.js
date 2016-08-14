@@ -1,7 +1,7 @@
 
 fcViews.list = {
 	'class': ListView,
-	buttonTextKey: 'list', // what to lookup in lang files
+	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
 		buttonText: 'list', // text to display for English
 		listTime: true, // show the time column?
