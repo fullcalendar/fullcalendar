@@ -96,7 +96,7 @@ Calendar.defaults = {
 };
 
 
-Calendar.englishDefaults = { // used by lang.js
+Calendar.englishDefaults = { // used by locale.js
 	dayPopoverFormat: 'dddd, MMMM D'
 };
 

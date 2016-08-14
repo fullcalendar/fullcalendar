@@ -28,7 +28,7 @@
     "Calendar.js",
     "Calendar.options.js",
     "defaults.js",
-    "lang.js",
+    "locale.js",
     "Header.js",
     "EventManager.js",
     "basic/BasicView.js",
