@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("sl", {
+$.fullCalendar.locale("sl", {
 	buttonText: {
 		month: "Mesec",
 		week: "Teden",

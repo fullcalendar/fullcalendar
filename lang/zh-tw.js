@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("zh-tw", {
+$.fullCalendar.locale("zh-tw", {
 	buttonText: {
 		month: "月",
 		week: "週",

@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("ko", {
+$.fullCalendar.locale("ko", {
 	buttonText: {
 		month: "월",
 		week: "주",

@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("ar", {
+$.fullCalendar.locale("ar", {
 	buttonText: {
 		month: "شهر",
 		week: "أسبوع",

@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("fi", {
+$.fullCalendar.locale("fi", {
 	buttonText: {
 		month: "Kuukausi",
 		week: "Viikko",

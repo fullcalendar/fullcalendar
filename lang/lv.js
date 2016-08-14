@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("lv", {
+$.fullCalendar.locale("lv", {
 	buttonText: {
 		month: "Mēnesis",
 		week: "Nedēļa",

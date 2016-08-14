@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("ro", {
+$.fullCalendar.locale("ro", {
 	buttonText: {
 		prev: "precedentă", // override JQUI's translations, which contains the word "month"
 		next: "următoare",  // "

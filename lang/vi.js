@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("vi", {
+$.fullCalendar.locale("vi", {
 	buttonText: {
 		month: "Tháng",
 		week: "Tuần",

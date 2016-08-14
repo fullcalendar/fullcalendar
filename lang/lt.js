@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("lt", {
+$.fullCalendar.locale("lt", {
 	buttonText: {
 		month: "Mėnuo",
 		week: "Savaitė",

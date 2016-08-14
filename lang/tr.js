@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("tr", {
+$.fullCalendar.locale("tr", {
 	buttonText: {
 		next: "ileri", // override JQUI's, which has a non-closing HTML entity in it
 		month: "Ay",

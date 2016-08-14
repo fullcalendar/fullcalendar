@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("el", {
+$.fullCalendar.locale("el", {
 	buttonText: {
 		month: "Μήνας",
 		week: "Εβδομάδα",

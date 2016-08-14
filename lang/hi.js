@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("hi", {
+$.fullCalendar.locale("hi", {
 	buttonText: {
 		month: "महीना",
 		week: "सप्ताह",

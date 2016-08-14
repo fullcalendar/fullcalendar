@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("ca", {
+$.fullCalendar.locale("ca", {
 	buttonText: {
 		month: "Mes",
 		week: "Setmana",

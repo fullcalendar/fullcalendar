@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("sk", {
+$.fullCalendar.locale("sk", {
 	buttonText: {
 		month: "Mesiac",
 		week: "Týždeň",

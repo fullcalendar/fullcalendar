@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("uk", {
+$.fullCalendar.locale("uk", {
 	buttonText: {
 		month: "Місяць",
 		week: "Тиждень",

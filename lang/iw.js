@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("iw", {
+$.fullCalendar.locale("iw", {
 	buttonText: {
 		month: "חודש",
 		week: "שבוע",

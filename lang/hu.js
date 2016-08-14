@@ -1,5 +1,5 @@
 
-$.fullCalendar.lang("hu", {
+$.fullCalendar.locale("hu", {
 	buttonText: {
 		month: "Hónap",
 		week: "Hét",
