@@ -98,12 +98,7 @@ function makeMoment(args, parseAsUTC, parseZone) {
 				mom._ambigZone = true;
 			}
 			else if (isSingleString) {
-				if (mom.utcOffset) {
-					mom.utcOffset(input); // if not a valid zone, will assign UTC
-				}
-				else {
-					mom.zone(input); // for moment-pre-2.9
-				}
+				mom.utcOffset(input); // if not a valid zone, will assign UTC
 			}
 		}
 	}
@@ -304,7 +299,6 @@ newMomentProto.utc = function() {
 // methods for arbitrarily manipulating timezone offset.
 // should clear time/zone ambiguity when called.
 $.each([
-	'zone', // only in moment-pre-2.9. deprecated afterwards
 	'utcOffset'
 ], function(i, name) {
 	if (oldMomentProto[name]) { // original method exists?

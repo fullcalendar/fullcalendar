@@ -186,7 +186,6 @@ function populateInstanceComputableOptions(options) {
 
 
 // Returns moment's internal locale data. If doesn't exist, returns English.
-// Works with moment-pre-2.8
 function getMomentLocaleData(localeCode) {
 	return moment.localeData(localeCode) || moment.localeData('en');
 }
