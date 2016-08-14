@@ -42,7 +42,7 @@ orig_ref=$(git symbolic-ref --quiet HEAD)
 # make this a boolean expression that doesn't exit upon error.
 git checkout --detach --quiet && \
 git add *.json && \
-git add -f dist/*.js dist/*.css dist/lang/*.js && \
+git add -f dist/*.js dist/*.css dist/locale/*.js && \
 git commit -e -m "version $version" && \
 git tag -a "v$version" -m "version $version" || true
 

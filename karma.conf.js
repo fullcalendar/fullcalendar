@@ -41,7 +41,7 @@ module.exports = function(config) {
 
 			'dist/fullcalendar.js',
 			'dist/gcal.js',
-			'dist/lang-all.js',
+			'dist/locale-all.js',
 			'dist/fullcalendar.css',
 
 			// For testing if scheduler's JS, even when not actived, screws anything up
