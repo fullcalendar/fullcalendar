@@ -29,7 +29,9 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-unthemed .fc-divider,
 .fc-unthemed .fc-row,
 .fc-unthemed .fc-content, /* for gutter border */
-.fc-unthemed .fc-popover {
+.fc-unthemed .fc-popover,
+.fc-unthemed .fc-list-view,
+.fc-unthemed .fc-list-heading td {
 	border-color: #ddd;
 }
 
@@ -38,7 +40,8 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-unthemed .fc-divider,
-.fc-unthemed .fc-popover .fc-header {
+.fc-unthemed .fc-popover .fc-header,
+.fc-unthemed .fc-list-heading td {
 	background: #eee;
 }
 
@@ -509,8 +512,12 @@ temporary rendered events).
 	line-height: 1.3;
 	border-radius: 3px;
 	border: 1px solid #3a87ad; /* default BORDER color */
-	background-color: #3a87ad; /* default BACKGROUND color */
 	font-weight: normal; /* undo jqui's ui-widget-header bold */
+}
+
+.fc-event,
+.fc-event-dot {
+	background-color: #3a87ad; /* default BACKGROUND color */
 }
 
 /* overpower some of bootstrap's and jqui's styles on <a> tags */

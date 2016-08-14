@@ -36,13 +36,16 @@
     "basic/config.js",
     "agenda/AgendaView.js",
     "agenda/config.js",
+    "list/ListView.js",
+    "list/config.js",
     "outro.js"
   ],
   "fullcalendar.css": [
     "common/common.css",
     "main.css",
     "basic/basic.css",
-    "agenda/agenda.css"
+    "agenda/agenda.css",
+    "list/list.css"
   ],
   "fullcalendar.print.css": [
     "common/print.css"
