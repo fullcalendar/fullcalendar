@@ -53,9 +53,9 @@ describe('allDayText', function() {
 		});
 	});
 
-	describe('when allDaySlots is set true and language is not default', function() {
+	describe('when allDaySlots is set true and locale is not default', function() {
 		describe('in agendaWeek', function() {
-			it('should use the language\'s all-day value', function() {
+			it('should use the locale\'s all-day value', function() {
 				var options = {
 					defaultView: 'agendaWeek',
 					allDaySlot: true,
@@ -67,7 +67,7 @@ describe('allDayText', function() {
 			});
 		});
 		describe('in agendaDay', function() {
-			it('should use the language\'s all-day value', function() {
+			it('should use the locale\'s all-day value', function() {
 				var options = {
 					defaultView: 'agendaDay',
 					allDaySlot: true,

@@ -240,7 +240,7 @@ describe('custom view', function() {
 			expect($('.fc-custom-button')).toHaveText('awesome');
 		});
 
-		it('accepts lang\'s single-unit-match override', function() {
+		it('accepts locale\'s single-unit-match override', function() {
 			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',
@@ -254,7 +254,7 @@ describe('custom view', function() {
 			expect($('.fc-custom-button')).toHaveText('Jour');
 		});
 
-		it('accepts explicit View-Specific buttonText, overriding lang\'s single-unit-match override', function() {
+		it('accepts explicit View-Specific buttonText, overriding locale\'s single-unit-match override', function() {
 			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',
@@ -310,7 +310,7 @@ describe('custom view', function() {
 			expect($('.fc-custom-button')).toHaveText('4 days');
 		});
 
-		it('falls back to humanized duration and respects language', function() {
+		it('falls back to humanized duration and respects locale', function() {
 			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',

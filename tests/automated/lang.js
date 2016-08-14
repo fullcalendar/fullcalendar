@@ -1,11 +1,11 @@
 
-describe('lang', function() {
+describe('locale', function() {
 
 	afterEach(function() {
 		moment.locale('en');
 	});
 
-	it('is not affected by global moment lang when unset', function() {
+	it('is not affected by global moment locale when unset', function() {
 		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar();
@@ -15,7 +15,7 @@ describe('lang', function() {
 		expect(s).toEqual('Thursday May 1st 2014');
 	});
 
-	it('is not affected by global moment lang when unset', function() {
+	it('is not affected by global moment locale when unset', function() {
 		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar({
@@ -27,7 +27,7 @@ describe('lang', function() {
 		expect(s).toEqual('jueves mayo 1º 2014');
 	});
 
-	it('doesn\'t side-effect the global moment lang when customized', function() {
+	it('doesn\'t side-effect the global moment locale when customized', function() {
 		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar({
@@ -43,7 +43,7 @@ describe('lang', function() {
 	// and instead of papering over this, just let it be thrown. will indicate that something
 	// needs to be fixed to the developer.
 	/*
-	xit('defaults to English when configured to language that isn\'t loaded', function() {
+	xit('defaults to English when configured to locale that isn\'t loaded', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
 			locale: 'zz'
@@ -55,7 +55,7 @@ describe('lang', function() {
 	});
 	*/
 
-	it('works when certain language has no FC settings defined', function() {
+	it('works when certain locale has no FC settings defined', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
 			locale: 'en-ca',

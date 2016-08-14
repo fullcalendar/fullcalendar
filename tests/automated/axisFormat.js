@@ -19,7 +19,7 @@ describe('axisFormat', function() {
 		expect(getAxisText()).toBe('12am');
 	});
 
-	it('renders correctly when default and the language is customized', function() {
+	it('renders correctly when default and the locale is customized', function() {
 		options.locale = 'en-gb';
 		$('#cal').fullCalendar(options);
 		expect(getAxisText()).toBe('00');

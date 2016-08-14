@@ -14,7 +14,7 @@ describe('short day names', function() {
     '.fc-fri',
     '.fc-sat'
   ];
-  var languages = [ 'es', 'fr', 'de', 'zh-cn', 'es' ];
+  var locales = [ 'es', 'fr', 'de', 'zh-cn', 'es' ];
 
   beforeEach(function() {
     affix('#cal');
@@ -22,7 +22,7 @@ describe('short day names', function() {
   });
 
   afterEach(function() {
-    moment.locale('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global locale
   });
 
   testableClasses.forEach(function(viewClass, index, viewClasses) {
@@ -31,7 +31,7 @@ describe('short day names', function() {
         settings.defaultView = viewClass;
       });
 
-      describe('when lang is default', function() {
+      describe('when locale is default', function() {
         it('should be in English', function() {
           moment.locale('en');
           $('#cal').fullCalendar(settings);
@@ -43,14 +43,14 @@ describe('short day names', function() {
         });
       });
 
-      describe('when lang is not default', function() {
-        languages.forEach(function(language, index, languages) {
-          it('should be in the selected language', function() {
-            settings.locale = language;
+      describe('when locale is not default', function() {
+        locales.forEach(function(locale, index, locales) {
+          it('should be in the selected locale', function() {
+            settings.locale = locale;
             $('#cal').fullCalendar(settings);
 
-            moment.locale(language);
-            var dow = moment.localeData(language)._week.dow;
+            moment.locale(locale);
+            var dow = moment.localeData(locale)._week.dow;
             var weekdays = moment.weekdaysShort();
 
             dayClasses.forEach(function(cls, index, classes) {

@@ -37,7 +37,7 @@ describe('weekNumberCalculation', function() {
 				expect(getRenderedWeekNumber()).toBe(47);
 			});
 
-			it('should display a language-specific local week number', function() {
+			it('should display a locale-specific local week number', function() {
 				options.defaultDate = '2013-11-23'; // a Saturday
 				options.locale = 'ar';
 				options.weekNumberCalculation = 'local';

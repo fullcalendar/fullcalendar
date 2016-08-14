@@ -34,7 +34,7 @@ describe('dayPopoverFormat', function() {
 		expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('29 juillet 2014');
 	});
 
-	it('still maintains the same format when explicitly set, and there is a lang', function() {
+	it('still maintains the same format when explicitly set, and there is a locale', function() {
 		options.locale = 'fr';
 		options.dayPopoverFormat = 'YYYY';
 		init();

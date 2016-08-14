@@ -69,7 +69,7 @@ describe('titleFormat', function() {
         });
     });
 
-    describe('when default and language is French', function() {
+    describe('when default and locale is French', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: 'juin 2014' },

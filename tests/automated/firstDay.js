@@ -183,7 +183,7 @@ describe('First Day', function() {
 		});
 	});
 
-	it('should have a different default value based on the language', function() {
+	it('should have a different default value based on the locale', function() {
 		$('#cal').fullCalendar({
 			locale: 'en-gb'
 		});
