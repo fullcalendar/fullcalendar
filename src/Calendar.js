@@ -796,7 +796,7 @@ function Calendar_constructor(element, overrides) {
 
 
 	function queryToolbarsHeight() {
-		return toolbarsManager.items.reduce(function (accumulator, toolbar) {
+		return toolbarsManager.items.reduce(function(accumulator, toolbar) {
 			var toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0; // includes margin
 			return accumulator + toolbarHeight;
 		}, 0);
