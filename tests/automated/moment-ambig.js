@@ -143,7 +143,7 @@ describe('ambiguously-timed moment', function() {
 		expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.utcOffset()).toBe(equivDate.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-equivDate.getTimezoneOffset());
 	});
 
 	it('can be given a time and zone via zone', function() {
