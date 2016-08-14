@@ -59,6 +59,8 @@ Calendar.defaults = {
 		prevYear: 'left-double-arrow',
 		nextYear: 'right-double-arrow'
 	},
+
+	allDayText: 'all-day',
 	
 	// jquery-ui theming
 	theme: false,

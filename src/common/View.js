@@ -235,6 +235,11 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	getAllDayHtml: function() {
+		return this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'));
+	},
+
+
 	/* Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
