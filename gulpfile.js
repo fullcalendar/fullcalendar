@@ -4,7 +4,7 @@ var del = require('del');
 require('./tasks/modules');
 require('./tasks/minify');
 require('./tasks/archive');
-require('./tasks/lang');
+require('./tasks/locale');
 require('./tasks/test');
 require('./tasks/lint');
 require('./tasks/bump');
@@ -14,7 +14,7 @@ gulp.task('default', [ 'dist' ]);
 
 gulp.task('clean', [
 	'modules:clean',
-	'lang:clean',
+	'locale:clean',
 	'minify:clean',
 	'archive:clean'
 ], function() {
@@ -26,19 +26,19 @@ gulp.task('clean', [
 
 gulp.task('watch', [
 	'modules:watch',
-	'lang:watch'
+	'locale:watch'
 ]);
 
 // everything needed for running demos and developing
 gulp.task('dev', [
 	'modules',
-	'lang'
+	'locale'
 ]);
 
 // generates all files that end up in package manager release
 gulp.task('dist', [
 	'modules',
-	'lang',
+	'locale',
 	'minify'
 ]);
 
