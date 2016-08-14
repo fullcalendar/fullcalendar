@@ -4,6 +4,9 @@
 
 Grid.mixin({
 
+	// self-config, overridable by subclasses
+	segSelector: '.fc-event-container > *', // what constitutes an event element?
+
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 	isDraggingSeg: false, // is a segment being dragged? boolean
 	isResizingSeg: false, // is a segment being resized? boolean
@@ -225,7 +228,7 @@ Grid.mixin({
 	bindSegHandlerToEl: function(el, name, handler) {
 		var _this = this;
 
-		el.on(name, '.fc-event-container > *', function(ev) {
+		el.on(name, this.segSelector, function(ev) {
 			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
 
 			// only call the handlers if there is not a drag/resize in progress
