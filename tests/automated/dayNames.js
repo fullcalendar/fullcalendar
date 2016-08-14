@@ -24,7 +24,7 @@ describe('day names', function() {
   });
 
   afterEach(function() {
-    moment.lang('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global language
   });
 
   testableClasses.forEach(function(viewClass, index, viewClasses) {
@@ -35,7 +35,7 @@ describe('day names', function() {
 
       describe('when lang is default', function() {
         beforeEach(function() {
-          settings.lang = 'en';
+          settings.locale = 'en';
         });
 
         dayClasses.forEach(function(cls, index, classes) {
@@ -52,12 +52,12 @@ describe('day names', function() {
       $.each(languages, function(index, language) {
         describe('when lang is ' + language, function() {
           beforeEach(function() {
-            moment.lang(language);
+            moment.locale(language);
           });
 
           dayClasses.forEach(function(cls, index, classes) {
             it('should be the translation for ' + moment.weekdays()[index], function() {
-              settings.lang = language;
+              settings.locale = language;
               settings.now = moment(referenceDate).add(index, 'days');
               $('#cal').fullCalendar(settings);
 

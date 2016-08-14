@@ -185,7 +185,7 @@ describe('First Day', function() {
 
 	it('should have a different default value based on the language', function() {
 		$('#cal').fullCalendar({
-			lang: 'en-gb'
+			locale: 'en-gb'
 		});
 		// firstDay will be 1 (Monday) in Great Britain
 		var daysOfWeek = $('.fc-day-header');

@@ -20,7 +20,7 @@ describe('axisFormat', function() {
 	});
 
 	it('renders correctly when default and the language is customized', function() {
-		options.lang = 'en-gb';
+		options.locale = 'en-gb';
 		$('#cal').fullCalendar(options);
 		expect(getAxisText()).toBe('00');
 	});

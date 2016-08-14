@@ -59,7 +59,7 @@ describe('allDayText', function() {
 				var options = {
 					defaultView: 'agendaWeek',
 					allDaySlot: true,
-					lang: 'pt-br'
+					locale: 'pt-br'
 				};
 				$('#cal').fullCalendar(options);
 				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();
@@ -71,7 +71,7 @@ describe('allDayText', function() {
 				var options = {
 					defaultView: 'agendaDay',
 					allDaySlot: true,
-					lang: 'pt-br'
+					locale: 'pt-br'
 				};
 				$('#cal').fullCalendar(options);
 				var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text();

@@ -118,7 +118,7 @@ describe('button text', function() {
   describe('when lang is not default', function() {
 
     beforeEach(function() {
-      settings.lang = 'fr';
+      settings.locale = 'fr';
     });
 
     describe('with default buttonIcons', function() {

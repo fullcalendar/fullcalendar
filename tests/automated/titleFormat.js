@@ -83,7 +83,7 @@ describe('titleFormat', function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
                 titleRangeSeparator: ' - ',
-                lang: 'fr'
+                locale: 'fr'
             });
         });
 

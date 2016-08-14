@@ -22,7 +22,7 @@ describe('short day names', function() {
   });
 
   afterEach(function() {
-    moment.lang('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global language
   });
 
   testableClasses.forEach(function(viewClass, index, viewClasses) {
@@ -33,7 +33,7 @@ describe('short day names', function() {
 
       describe('when lang is default', function() {
         it('should be in English', function() {
-          moment.lang('en');
+          moment.locale('en');
           $('#cal').fullCalendar(settings);
           var weekdays = moment.weekdaysShort();
 
@@ -46,11 +46,11 @@ describe('short day names', function() {
       describe('when lang is not default', function() {
         languages.forEach(function(language, index, languages) {
           it('should be in the selected language', function() {
-            settings.lang = language;
+            settings.locale = language;
             $('#cal').fullCalendar(settings);
 
-            moment.lang(language);
-            var dow = moment.langData(language)._week.dow;
+            moment.locale(language);
+            var dow = moment.localeData(language)._week.dow;
             var weekdays = moment.weekdaysShort();
 
             dayClasses.forEach(function(cls, index, classes) {

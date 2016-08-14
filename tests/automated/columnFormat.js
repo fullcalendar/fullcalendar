@@ -72,7 +72,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'fr'
+                locale: 'fr'
             });
         });
 
@@ -98,7 +98,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'en-gb'
+                locale: 'en-gb'
             });
         });
 
@@ -124,7 +124,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'ko'
+                locale: 'ko'
             });
         });
 

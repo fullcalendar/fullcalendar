@@ -129,7 +129,7 @@ describe('formatRange', function() {
 			$('#cal').fullCalendar({
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
-				lang: 'fr',
+				locale: 'fr',
 				titleFormat: 'dddd MMMM D YYYY',
 				titleRangeSeparator: ' - '
 			});

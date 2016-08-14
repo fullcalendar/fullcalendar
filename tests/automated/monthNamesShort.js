@@ -11,7 +11,7 @@ describe('short month name', function() {
   });
 
   afterEach(function() {
-    moment.lang('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global language
   });
 
   [ 'agendaWeek', 'basicWeek' ].forEach(function(viewClass, index, viewClasses) {
@@ -22,8 +22,8 @@ describe('short month name', function() {
 
       describe('when lang is default', function() {
         beforeEach(function() {
-          settings.lang = 'en';
-          moment.lang('en');
+          settings.locale = 'en';
+          moment.locale('en');
         });
 
         moment.monthsShort().forEach(function(monthShort, index) {
@@ -42,8 +42,8 @@ describe('short month name', function() {
       languages.forEach(function(language, index, languages) {
         describe('when lang is ' + language, function() {
           beforeEach(function() {
-            settings.lang = language;
-            moment.lang(language);
+            settings.locale = language;
+            moment.locale(language);
           });
 
           moment.monthsShort().forEach(function(monthShort, index) { // `monthShort` will always be English

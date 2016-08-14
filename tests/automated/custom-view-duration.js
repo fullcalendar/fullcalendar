@@ -241,7 +241,7 @@ describe('custom view', function() {
 		});
 
 		it('accepts lang\'s single-unit-match override', function() {
-			options.lang = 'fr';
+			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',
 				duration: { days: 1 }
@@ -255,7 +255,7 @@ describe('custom view', function() {
 		});
 
 		it('accepts explicit View-Specific buttonText, overriding lang\'s single-unit-match override', function() {
-			options.lang = 'fr';
+			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',
 				duration: { days: 1 },
@@ -311,7 +311,7 @@ describe('custom view', function() {
 		});
 
 		it('falls back to humanized duration and respects language', function() {
-			options.lang = 'fr';
+			options.locale = 'fr';
 			options.views.custom = {
 				type: 'basic',
 				duration: { days: 4 }

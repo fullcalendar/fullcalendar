@@ -2,11 +2,11 @@
 describe('lang', function() {
 
 	afterEach(function() {
-		moment.lang('en');
+		moment.locale('en');
 	});
 
 	it('is not affected by global moment lang when unset', function() {
-		moment.lang('fr');
+		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar();
 		var calendar = $('#cal').fullCalendar('getCalendar');
@@ -16,10 +16,10 @@ describe('lang', function() {
 	});
 
 	it('is not affected by global moment lang when unset', function() {
-		moment.lang('fr');
+		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'es'
+			locale: 'es'
 		});
 		var calendar = $('#cal').fullCalendar('getCalendar');
 		var mom = calendar.moment('2014-05-01');
@@ -28,15 +28,15 @@ describe('lang', function() {
 	});
 
 	it('doesn\'t side-effect the global moment lang when customized', function() {
-		moment.lang('fr');
+		moment.locale('fr');
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'es'
+			locale: 'es'
 		});
 		var mom = moment.utc('2014-05-01');
 		var s = mom.format('dddd MMMM Do YYYY');
 		expect(s).toEqual('jeudi mai 1er 2014');
-		expect(moment.lang()).toEqual('fr');
+		expect(moment.locale()).toEqual('fr');
 	});
 
 	// the most recent version of moment will actually throw a cryptic exception,
@@ -46,7 +46,7 @@ describe('lang', function() {
 	xit('defaults to English when configured to language that isn\'t loaded', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'zz'
+			locale: 'zz'
 		});
 		var calendar = $('#cal').fullCalendar('getCalendar');
 		var mom = calendar.moment('2014-05-01');
@@ -58,7 +58,7 @@ describe('lang', function() {
 	it('works when certain language has no FC settings defined', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'en-ca',
+			locale: 'en-ca',
 			defaultView: 'agendaWeek',
 			defaultDate: '2014-12-25',
 			events: [
@@ -72,14 +72,14 @@ describe('lang', function() {
 	it('allows dynamic setting', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'es',
+			locale: 'es',
 			defaultDate: '2016-07-10',
 			defaultView: 'month'
 		});
 		expect($('.fc h2')).toHaveText('julio 2016');
 		expect($('.fc')).not.toHaveClass('fc-rtl');
 
-		$('#cal').fullCalendar('option', 'lang', 'ar');
+		$('#cal').fullCalendar('option', 'locale', 'ar');
 		expect($('.fc h2')).toHaveText('تموز يوليو ٢٠١٦');
 		expect($('.fc')).toHaveClass('fc-rtl');
 	});
