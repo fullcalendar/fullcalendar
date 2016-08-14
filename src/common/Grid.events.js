@@ -928,11 +928,11 @@ Grid.mixin({
 	getSegBackgroundColor: function(seg) {
 		return seg.event.backgroundColor ||
 			seg.event.color ||
-			this.getSegBackgroundColorFallback(seg);
+			this.getSegDefaultBackgroundColor(seg);
 	},
 
 
-	getSegBackgroundColorFallback: function(seg) {
+	getSegDefaultBackgroundColor: function(seg) {
 		var source = seg.event.source || {};
 
 		return source.backgroundColor ||
@@ -946,11 +946,11 @@ Grid.mixin({
 	getSegBorderColor: function(seg) {
 		return seg.event.borderColor ||
 			seg.event.color ||
-			this.getSegBorderColorFallback(seg);
+			this.getSegDefaultBorderColor(seg);
 	},
 
 
-	getSegBorderColorFallback: function(seg) {
+	getSegDefaultBorderColor: function(seg) {
 		var source = seg.event.source || {};
 
 		return source.borderColor ||
@@ -963,11 +963,11 @@ Grid.mixin({
 	// Queries for caller-specified color, then falls back to default
 	getSegTextColor: function(seg) {
 		return seg.event.textColor ||
-			this.getSegTextColorFallback(seg);
+			this.getSegDefaultTextColor(seg);
 	},
 
 
-	getSegTextColorFallback: function(seg) {
+	getSegDefaultTextColor: function(seg) {
 		var source = seg.event.source || {};
 
 		return source.textColor ||
