@@ -1,4 +1,4 @@
-(function() {
+describe('moment constructor', function() {
 
 describe('$.fullCalendar.moment', function() {
 	testDefaultProcessing($.fullCalendar.moment);
@@ -660,4 +660,4 @@ function testLiteralProcessing(construct) {
 	});
 }
 
-})();
+});

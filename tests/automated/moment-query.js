@@ -1,5 +1,5 @@
 
-(function() {
+describe('querying', function() {
 
 	var momentTypeSuffixes = {
 		'ambiguously-timed': '',
@@ -197,4 +197,4 @@
 		});
 	});
 
-})();
+});
