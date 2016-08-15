@@ -4,8 +4,12 @@ v3.0.0-beta (2016-08-14)
 
 Features:
 - List View (#560)
+	- `listDayFormat`
+	- `listDayAltFormat`
+	- `listTime` (set to `false` to hide times/all-day)
+	- `noEventsMessage`
 - Option to display week numbers in cells (#3024)
-   (new weekNumbersWithinDays option)
+	- `weekNumbersWithinDays` (set to `true` to activate)
 - When week calc is ISO, default first day-of-week to Monday (#3255)
 - Macedonian language (#2739)
 
@@ -32,7 +36,7 @@ Behind the Scenes:
 
 
 v2.9.1 (2016-07-31)
-------------------
+-------------------
 
 - multiple definitions for businessHours (#2686)
 - businessHours for single day doesn't display weekends (#2944)
