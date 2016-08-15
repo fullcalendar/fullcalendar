@@ -1,5 +1,35 @@
 
-v2.9.1 (2016-7-31)
+v3.0.0-beta (2016-08-14)
+------------------------
+
+Features:
+- List View (#560)
+- Option to display week numbers in cells (#3024)
+- Macedonian language (#2739)
+
+Bugfixes:
+- $.fullCalendar.version incorrect (#3292)
+
+Breaking Changes:
+- IE8 support dropped
+- jQuery: minimum support raised to v2.0.0
+- MomentJS: minimum support raised to v2.9.0
+- dist files have been renamed to be more consistent with MomentJS:
+   lang/ -> locale/
+   lang-all.js locale-all.js
+- behavior of moment methods no longer affected by ambiguousness:
+   isSame
+   isBefore
+   isAfter
+- DOM structure of month/basic-view day cell numbers changed
+
+Behind the Scenes:
+- using gulp instead of grunt (faster build process)
+- using npm internally for dependencies instead of bower
+- changed repo directory structure
+
+
+v2.9.1 (2016-07-31)
 ------------------
 
 - multiple definitions for businessHours (#2686)
