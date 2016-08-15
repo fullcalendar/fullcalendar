@@ -54,7 +54,9 @@
 			expect(diff).toBeLessThan(2); // off-by-one or exactly the same
 		}
 		else {
-			expect(heightElm.outerHeight()).toBe(heightVal);
+			expect(
+				Math.round(heightElm.outerHeight())
+			).toBe(heightVal);
 		}
 	}
 

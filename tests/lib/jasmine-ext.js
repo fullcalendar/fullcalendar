@@ -5,7 +5,7 @@ beforeEach(function() {
 	$.fullCalendar.Calendar.defaults.windowResizeDelay = 200;
 
 	// increase the default timeout
-	jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 
 
 	jasmine.addMatchers({
