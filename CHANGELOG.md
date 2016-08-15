@@ -14,23 +14,23 @@ Features:
 - Macedonian language (#2739)
 
 Bugfixes:
-- $.fullCalendar.version incorrect (#3292)
+- `$.fullCalendar.version` incorrect (#3292)
 
 Breaking Changes:
 - IE8 support dropped
 - jQuery: minimum support raised to v2.0.0
 - MomentJS: minimum support raised to v2.9.0
 - dist files have been renamed to be more consistent with MomentJS:
-   lang/ -> locale/
-   lang-all.js locale-all.js
+	- `lang/` -> `locale/`
+	- `lang-all.js` -> `locale-all.js`
 - behavior of moment methods no longer affected by ambiguousness:
-   isSame
-   isBefore
-   isAfter
+	- `isSame`
+	- `isBefore`
+	- `isAfter`
 - DOM structure of month/basic-view day cell numbers changed
 
-Behind the Scenes:
-- using gulp instead of grunt (faster build process)
+Build System:
+- using gulp instead of grunt (faster)
 - using npm internally for dependencies instead of bower
 - changed repo directory structure
 
