@@ -637,7 +637,10 @@ function Calendar_constructor(element, overrides) {
 			// render or rerender the view
 			if (
 				!currentView.displaying ||
-				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
+				!( // NOT within interval range signals an implicit date window change
+					date >= currentView.intervalStart &&
+					date < currentView.intervalEnd
+				)
 			) {
 				if (elementVisible()) {
 
@@ -836,7 +839,8 @@ function Calendar_constructor(element, overrides) {
 
 	function updateTodayButton() {
 		var now = t.getNow();
-		if (now.isWithin(currentView.intervalStart, currentView.intervalEnd)) {
+
+		if (now >= currentView.intervalStart && now < currentView.intervalEnd) {
 			header.disableButton('today');
 		}
 		else {

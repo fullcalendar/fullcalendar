@@ -316,13 +316,6 @@ newMomentProto.toISOString = function() {
 // Querying
 // -------------------------------------------------------------------------------------------------
 
-// Is the moment within the specified range? `end` is exclusive.
-// FYI, this method is not a standard Moment method, so always do our enhanced logic.
-newMomentProto.isWithin = function(start, end) {
-	var a = commonlyAmbiguate([ this, start, end ]);
-	return a[0] >= a[1] && a[0] < a[2];
-};
-
 // When isSame is called with units, timezone ambiguity is normalized before the comparison happens.
 // If no units specified, the two moments must be identically the same, with matching ambig flags.
 newMomentProto.isSame = function(input, units) {
