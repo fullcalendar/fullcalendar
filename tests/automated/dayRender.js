@@ -73,7 +73,7 @@ describe('dayRender', function() {
 			weekMode: 'fixed',
 			defaultDate: '2014-05-01',
 			dayRender: function(date, cell) {
-				if (date.isSame('2014-05-01')) {
+				if (date.format() === '2014-05-01') {
 					cell.addClass('mycustomclass');
 				}
 			}
