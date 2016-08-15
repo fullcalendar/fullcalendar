@@ -4,6 +4,7 @@ v3.0.0-beta (2016-08-14)
 
 Features:
 - List View (#560)
+	- new views: `listDay`, `listWeek`, `listMonth`, `listYear`, and simply `list`
 	- `listDayFormat`
 	- `listDayAltFormat`
 	- `listTime` (set to `false` to hide times/all-day)
