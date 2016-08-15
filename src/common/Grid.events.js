@@ -723,8 +723,11 @@ Grid.mixin({
 						disableCursor();
 						resizeLocation = null;
 					}
-					// no change? (TODO: how does this work with timezones?)
-					else if (resizeLocation.start.isSame(event.start) && resizeLocation.end.isSame(eventEnd)) {
+					// no change? (FYI, event dates might have zones)
+					else if (
+						resizeLocation.start.isSame(event.start.clone().stripZone()) &&
+						resizeLocation.end.isSame(eventEnd.clone().stripZone())
+					) {
 						resizeLocation = null;
 					}
 				}

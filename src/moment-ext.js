@@ -316,28 +316,6 @@ newMomentProto.toISOString = function() {
 // Querying
 // -------------------------------------------------------------------------------------------------
 
-// When isSame is called with units, timezone ambiguity is normalized before the comparison happens.
-// If no units specified, the two moments must be identically the same, with matching ambig flags.
-newMomentProto.isSame = function(input, units) {
-	var a;
-
-	// only do custom logic if this is an enhanced moment
-	if (!this._fullCalendar) {
-		return oldMomentProto.isSame.apply(this, arguments);
-	}
-
-	if (units) {
-		a = commonlyAmbiguate([ this, input ], true); // normalize timezones but don't erase times
-		return oldMomentProto.isSame.call(a[0], a[1], units);
-	}
-	else {
-		input = FC.moment.parseZone(input); // normalize input
-		return oldMomentProto.isSame.call(this, input) &&
-			Boolean(this._ambigTime) === Boolean(input._ambigTime) &&
-			Boolean(this._ambigZone) === Boolean(input._ambigZone);
-	}
-};
-
 // Make these query methods work with ambiguous moments
 $.each([
 	'isBefore',
