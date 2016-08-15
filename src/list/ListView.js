@@ -184,7 +184,7 @@ var ListViewGrid = Grid.extend({
 					'<span class="fc-list-heading-alt">' +
 						htmlEscape(dayDate.format(altFormat)) +
 					'</span>' :
-					'')
+					'') +
 			'</td>' +
 		'</tr>';
 	},
