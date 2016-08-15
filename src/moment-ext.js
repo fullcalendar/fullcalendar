@@ -8,6 +8,12 @@ var allowValueOptimization;
 var setUTCValues; // function defined below
 var setLocalValues; // function defined below
 
+// tell momentjs to transfer these properties upon clone
+var momentProperties = moment.momentProperties;
+momentProperties.push('_fullCalendar');
+momentProperties.push('_ambigTime');
+momentProperties.push('_ambigZone');
+
 
 // Creating
 // -------------------------------------------------------------------------------------------------
@@ -52,12 +58,8 @@ function makeMoment(args, parseAsUTC, parseZone) {
 	var ambigMatch;
 	var mom;
 
-	if (moment.isMoment(input)) {
-		mom = moment.apply(null, args); // clone it
-		transferAmbigs(input, mom); // the ambig flags weren't transfered with the clone
-	}
-	else if (isNativeDate(input) || input === undefined) {
-		mom = moment.apply(null, args); // will be local
+	if (moment.isMoment(input) || isNativeDate(input) || input === undefined) {
+		mom = moment.apply(null, args);
 	}
 	else { // "parsing" is required
 		isAmbigTime = false;
@@ -107,21 +109,6 @@ function makeMoment(args, parseAsUTC, parseZone) {
 
 	return mom;
 }
-
-
-// A clone method that works with the flags related to our enhanced functionality.
-// In the future, use moment.momentProperties
-newMomentProto.clone = function() {
-	var mom = oldMomentProto.clone.apply(this, arguments);
-
-	// these flags weren't transfered with the clone
-	transferAmbigs(this, mom);
-	if (this._fullCalendar) {
-		mom._fullCalendar = true;
-	}
-
-	return mom;
-};
 
 
 // Week Number
