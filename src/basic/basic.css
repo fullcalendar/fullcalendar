@@ -6,8 +6,7 @@
 
 .fc-basicWeek-view .fc-content-skeleton,
 .fc-basicDay-view .fc-content-skeleton {
-	/* we are sure there are no day numbers in these views, so... */
-	padding-top: 1px; /* add a pixel to make sure there are 2px padding above events */
+	/* there may be week numbers in these views, so no padding-top */
 	padding-bottom: 1em; /* ensure a space at bottom of cell for user selecting/clicking */
 }
 
@@ -36,29 +35,52 @@
 }
 
 .fc-basic-view td.fc-week-number span,
-.fc-basic-view td.fc-day-number {
+.fc-basic-view td.fc-day-top span {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
 
-.fc-basic-view .fc-week-number {
+.fc-basic-view td.fc-day-top span.fc-week-number {
+	width: 1.5em;
+	text-align: center;
+	background-color: #f2f2f2;
+	color: #808080;
+}
+
+.fc-ltr .fc-basic-view td.fc-day-top span.fc-week-number {
+	border-radius: 0 0 3px 0;
+}
+
+.fc-rtl .fc-basic-view td.fc-day-top span.fc-week-number {
+	border-radius: 0 0 0 3px;
+}
+
+.fc-basic-view td.fc-week-number {
 	text-align: center;
 }
 
-.fc-basic-view .fc-week-number span {
+.fc-basic-view td.fc-week-number span {
 	/* work around the way we do column resizing and ensure a minimum width */
 	display: inline-block;
 	min-width: 1.25em;
 }
 
-.fc-ltr .fc-basic-view .fc-day-number {
-	text-align: right;
+.fc-ltr .fc-basic-view .fc-day-top span.fc-week-number {
+	float: left;
 }
 
-.fc-rtl .fc-basic-view .fc-day-number {
-	text-align: left;
+.fc-ltr .fc-basic-view .fc-day-top span.fc-day-number {
+	float: right;
 }
 
-.fc-day-number.fc-other-month {
+.fc-rtl .fc-basic-view .fc-day-top span.fc-week-number {
+	float: right;
+}
+
+.fc-rtl .fc-basic-view .fc-day-top span.fc-day-number {
+	float: left;
+}
+
+.fc-day-top.fc-other-month {
 	opacity: 0.3;
 }

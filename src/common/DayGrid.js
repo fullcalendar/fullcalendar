@@ -140,17 +140,44 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// The number row will only exist if either day numbers or week numbers are turned on.
 	renderNumberCellHtml: function(date) {
 		var classes;
+		var weekCalcFirstDoW;
 
-		if (!this.view.dayNumbersVisible) { // if there are week numbers but not day numbers
+		if (!this.view.dayNumbersVisible && !this.view.cellWeekNumbersVisible) {
+			// no numbers in day cell (week number must be along the side)
 			return '<td/>'; //  will create an empty space above events :(
 		}
 
 		classes = this.getDayClasses(date);
-		classes.unshift('fc-day-number');
+		classes.unshift('fc-day-top');
+
+		if (this.view.cellWeekNumbersVisible) {
+			// To determine the day of week number change under ISO, we cannot
+			// rely on moment.js methods such as firstDayOfWeek() or weekday(),
+			// because they rely on the locale's dow (possibly overridden by
+			// our firstDay option), which may not be Monday. We cannot change
+			// dow, because that would affect the calendar start day as well.
+			if ((date._locale || date._lang)._fullCalendar_weekCalc === 'ISO') {
+				weekCalcFirstDoW = 1;  // Monday by ISO 8601 definition
+			}
+			else {
+				weekCalcFirstDoW = (date._locale || date._lang).firstDayOfWeek();
+			}
+		}
 
 		return '' +
 			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-				date.date() +
+				((this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) ?
+					'<span class="fc-week-number">' +
+						date.format('w') +
+					'</span>' :
+					''
+					) +
+				(this.view.dayNumbersVisible ?
+					'<span class="fc-day-number">' +
+						date.date() +
+					'</span>' :
+					''
+					) +
 			'</td>';
 	},
 

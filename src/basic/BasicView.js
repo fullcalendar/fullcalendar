@@ -12,7 +12,8 @@ var BasicView = FC.BasicView = View.extend({
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
 	dayNumbersVisible: false, // display day numbers on each day cell?
-	weekNumbersVisible: false, // display week numbers along the side?
+	colWeekNumbersVisible: false, // display week numbers along the side?
+	cellWeekNumbersVisible: false, // display week numbers in day cell?
 
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 
@@ -73,8 +74,18 @@ var BasicView = FC.BasicView = View.extend({
 	renderDates: function() {
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
-		this.weekNumbersVisible = this.opt('weekNumbers');
-		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
+		if (this.opt('weekNumbers')) {
+			if (this.opt('weekNumberColumn') === 'auto') {
+				this.cellWeekNumbersVisible = true;
+				this.colWeekNumbersVisible = false;
+			}
+			else {
+				this.cellWeekNumbersVisible = false;
+				this.colWeekNumbersVisible = true;
+			};
+		}
+		this.dayGrid.numbersVisible = this.dayNumbersVisible ||
+			this.cellWeekNumbersVisible || this.colWeekNumbersVisible;
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
 		this.renderHead();
@@ -158,7 +169,7 @@ var BasicView = FC.BasicView = View.extend({
 
 	// Refreshes the horizontal dimensions of the view
 	updateWidth: function() {
-		if (this.weekNumbersVisible) {
+		if (this.colWeekNumbersVisible) {
 			// Make sure all week number cells running down the side have the same width.
 			// Record the width for cells created later.
 			this.weekNumberWidth = matchCellWidths(
@@ -345,7 +356,7 @@ var basicDayGridMethods = {
 	renderHeadIntroHtml: function() {
 		var view = this.view;
 
-		if (view.weekNumbersVisible) {
+		if (view.colWeekNumbersVisible) {
 			return '' +
 				'<th class="fc-week-number ' + view.widgetHeaderClass + '" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
@@ -362,7 +373,7 @@ var basicDayGridMethods = {
 	renderNumberIntroHtml: function(row) {
 		var view = this.view;
 
-		if (view.weekNumbersVisible) {
+		if (view.colWeekNumbersVisible) {
 			return '' +
 				'<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
@@ -379,7 +390,7 @@ var basicDayGridMethods = {
 	renderBgIntroHtml: function() {
 		var view = this.view;
 
-		if (view.weekNumbersVisible) {
+		if (view.colWeekNumbersVisible) {
 			return '<td class="fc-week-number ' + view.widgetContentClass + '" ' +
 				view.weekNumberStyleAttr() + '></td>';
 		}
@@ -393,7 +404,7 @@ var basicDayGridMethods = {
 	renderIntroHtml: function() {
 		var view = this.view;
 
-		if (view.weekNumbersVisible) {
+		if (view.colWeekNumbersVisible) {
 			return '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '></td>';
 		}
 
