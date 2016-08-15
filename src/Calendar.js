@@ -320,6 +320,11 @@ function Calendar_constructor(element, overrides) {
 		'locale', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort', 'firstDay', 'weekNumberCalculation'
 	], function(locale, monthNames, monthNamesShort, dayNames, dayNamesShort, firstDay, weekNumberCalculation) {
 
+		// normalize
+		if (weekNumberCalculation === 'iso') {
+			weekNumberCalculation = 'ISO'; // normalize
+		}
+
 		localeData = createObject( // make a cheap copy
 			getMomentLocaleData(locale) // will fall back to en
 		);
@@ -336,15 +341,16 @@ function Calendar_constructor(element, overrides) {
 		if (dayNamesShort) {
 			localeData._weekdaysShort = dayNamesShort;
 		}
+
+		if (firstDay == null && weekNumberCalculation === 'ISO') {
+			firstDay = 1;
+		}
 		if (firstDay != null) {
 			var _week = createObject(localeData._week); // _week: { dow: # }
 			_week.dow = firstDay;
 			localeData._week = _week;
 		}
 
-		if (weekNumberCalculation === 'iso') {
-			weekNumberCalculation = 'ISO'; // normalize
-		}
 		if ( // whitelist certain kinds of input
 			weekNumberCalculation === 'ISO' ||
 			weekNumberCalculation === 'local' ||
@@ -360,6 +366,16 @@ function Calendar_constructor(element, overrides) {
 		}
 	});
 
+	var _week = createObject(localeData._week); // _week: { dow: # }
+	if (options.firstDay != null) {
+		_week.dow = options.firstDay;
+	}
+	else {
+		if (localeData._fullCalendar_weekCalc === 'ISO') {
+			_week.dow = 1;
+		}
+	}
+	localeData._week = _week;
 
 
 	// Calendar-specific Date Utilities
