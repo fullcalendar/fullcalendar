@@ -21,26 +21,26 @@ describe('weekNumbers', function() {
 			options.weekMode = 'fixed'; // will make 6 rows
 		});
 
-		describe('with default weekNumbers', function() {
+		describe('with default weekNumbers', function() { // which is false!
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -54,24 +54,24 @@ describe('weekNumbers', function() {
 				options.weekNumbers = false;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -85,7 +85,7 @@ describe('weekNumbers', function() {
 				options.weekNumbers = true;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should display week numbers along the side only', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
@@ -97,9 +97,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should display week numbers along the side only', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 6?
@@ -110,9 +110,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should display week numbers in the day cells only', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(6);
 					expect(counts.colWeekNumbers).toEqual(0);
@@ -133,24 +133,24 @@ describe('weekNumbers', function() {
 
 		describe('with default weekNumbers', function() {
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -164,24 +164,24 @@ describe('weekNumbers', function() {
 				options.weekNumbers = false;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -195,7 +195,7 @@ describe('weekNumbers', function() {
 				options.weekNumbers = true;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should display week numbers along the side only', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
@@ -207,9 +207,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should display week numbers along the side only', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 1?
@@ -220,9 +220,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should display week numbers in the day cells only', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(1);
 					expect(counts.colWeekNumbers).toEqual(0);
@@ -243,24 +243,24 @@ describe('weekNumbers', function() {
 
 		describe('with default weekNumbers', function() {
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -274,24 +274,24 @@ describe('weekNumbers', function() {
 				options.weekNumbers = false;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should not display week numbers at all', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should not display week numbers at all', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(0);
 				});
@@ -305,7 +305,7 @@ describe('weekNumbers', function() {
 				options.weekNumbers = true;
 			});
 
-			describe('and default weekNumberColumn', function() {
+			describe('and default weekNumbersWithinDays', function() {
 				it('should display week numbers in the top left corner only', function() {
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(1);
@@ -315,9 +315,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to true', function() {
+			describe('and weekNumbersWithinDays set to false', function() {
 				it('should display week numbers in the top left corner only', function() {
-					options.weekNumberColumn = true;
+					options.weekNumbersWithinDays = false;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(1);
 					expect(counts.colWeekNumbers).toEqual(0);
@@ -326,9 +326,9 @@ describe('weekNumbers', function() {
 				});
 			});
 
-			describe('and weekNumberColumn set to auto', function() {
+			describe('and weekNumbersWithinDays set to true', function() {
 				it('should display week numbers in the top left corner only', function() {
-					options.weekNumberColumn = 'auto';
+					options.weekNumbersWithinDays = true;
 					counts = getCounts();
 					expect(counts.allWeekNumbers).toEqual(1);
 					expect(counts.colWeekNumbers).toEqual(0);

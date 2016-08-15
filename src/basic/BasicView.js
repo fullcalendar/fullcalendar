@@ -75,7 +75,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		if (this.opt('weekNumbers')) {
-			if (this.opt('weekNumberColumn') === 'auto') {
+			if (this.opt('weekNumbersWithinDays')) {
 				this.cellWeekNumbersVisible = true;
 				this.colWeekNumbersVisible = false;
 			}

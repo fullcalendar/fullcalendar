@@ -5,6 +5,7 @@ v3.0.0-beta (2016-08-14)
 Features:
 - List View (#560)
 - Option to display week numbers in cells (#3024)
+   (new weekNumbersWithinDays option)
 - When week calc is ISO, default first day-of-week to Monday (#3255)
 - Macedonian language (#2739)
 
