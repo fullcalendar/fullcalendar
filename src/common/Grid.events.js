@@ -557,11 +557,7 @@ Grid.mixin({
 		var opacity = this.view.opt('dragOpacity');
 
 		if (opacity != null) {
-			els.each(function(i, node) {
-				// Don't use jQuery (will set an IE filter), do it the old fashioned way.
-				// In IE8, a helper element will disappears if there's a filter.
-				node.style.opacity = opacity;
-			});
+			els.css('opacity', opacity);
 		}
 	},
 

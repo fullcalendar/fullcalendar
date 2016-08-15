@@ -299,9 +299,8 @@ var BasicView = FC.BasicView = View.extend({
 	unrenderEvents: function() {
 		this.dayGrid.unrenderEvents();
 
-		// we DON'T need to call updateHeight() because:
-		// A) a renderEvents() call always happens after this, which will eventually call updateHeight()
-		// B) in IE8, this causes a flash whenever events are rerendered
+		// we DON'T need to call updateHeight() because
+		// a renderEvents() call always happens after this, which will eventually call updateHeight()
 	},
 
 

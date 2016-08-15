@@ -10,18 +10,6 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-
-			//// TODO: update for npm
-			// For IE8 testing. Because doesn't have forEach and other ES5 methods
-			// which are common in the tests.
-			// You must run `bower install es5-shim` first.
-			//'lib/es5-shim/es5-shim.js',
-
-			//// TODO: update for npm
-			// For IE8 testing, we'll need jQuery 1.x. Before running karma, force the version:
-			// `bower install jquery#1` and choose 1
-			// to undo: `bower update jquery`
-
 			'node_modules/moment/moment.js',
 			'node_modules/jquery/dist/jquery.js',
 			'node_modules/components-jqueryui/jquery-ui.js',
@@ -54,12 +42,6 @@ module.exports = function(config) {
 
 			// serve assets for 3rd-party libs, like jquery-ui theme images.
 			{ pattern: 'node_modules/**/*', included: false, watched: false, nocache: true },
-
-			// For IE8 testing. Because it can't handle running all the tests at once.
-			// Comment out the *.js line and run karma with each of the lines below.
-			//'tests/automated/{a,b,c,d,e,f,g,h,i,j,k,l}*.js'
-			//'tests/automated/{m,n}*.js' // mostly moment tests
-			//'tests/automated/{o,p,q,r,s,t,u,v,w,x,y,z}*.js'
 
 			'tests/automated/*.js'
 		],

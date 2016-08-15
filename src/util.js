@@ -785,22 +785,6 @@ function copyOwnProps(src, dest) {
 }
 
 
-// Copies over certain methods with the same names as Object.prototype methods. Overcomes an IE<=8 bug:
-// https://developer.mozilla.org/en-US/docs/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-function copyNativeMethods(src, dest) {
-	var names = [ 'constructor', 'toString', 'valueOf' ];
-	var i, name;
-
-	for (i = 0; i < names.length; i++) {
-		name = names[i];
-
-		if (src[name] !== Object.prototype[name]) {
-			dest[name] = src[name];
-		}
-	}
-}
-
-
 function hasOwnProp(obj, name) {
 	return hasOwnPropMethod.call(obj, name);
 }
