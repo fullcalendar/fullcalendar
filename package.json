@@ -59,6 +59,7 @@
     "lodash": "^4.14.1",
     "moment-timezone": "^0.5.5",
     "phantomjs-prebuilt": "^2.1.7",
+    "socket.io": "1.4.5",
     "yargs": "^4.8.1"
   },
   "main": "dist/fullcalendar.js",
