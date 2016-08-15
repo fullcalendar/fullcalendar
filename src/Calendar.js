@@ -366,17 +366,6 @@ function Calendar_constructor(element, overrides) {
 		}
 	});
 
-	var _week = createObject(localeData._week); // _week: { dow: # }
-	if (options.firstDay != null) {
-		_week.dow = options.firstDay;
-	}
-	else {
-		if (localeData._fullCalendar_weekCalc === 'ISO') {
-			_week.dow = 1;
-		}
-	}
-	localeData._week = _week;
-
 
 	// Calendar-specific Date Utilities
 	// -----------------------------------------------------------------------------------
