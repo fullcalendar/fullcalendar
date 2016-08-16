@@ -25,6 +25,7 @@ Breaking Changes:
 - IE8 support dropped
 - jQuery: minimum support raised to v2.0.0
 - MomentJS: minimum support raised to v2.9.0
+- `lang` option renamed to `locale`
 - dist files have been renamed to be more consistent with MomentJS:
 	- `lang/` -> `locale/`
 	- `lang-all.js` -> `locale-all.js`
