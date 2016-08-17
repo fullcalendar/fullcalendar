@@ -40,12 +40,12 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                columnFormat: {
-                    month: 'dddd',
-                    agendaDay: 'dddd M/D',
-                    agendaWeek: 'dddd D , M',
-                    basicDay: 'dddd D | M',
-                    basicWeek: 'dddd D - M'
+                views: {
+                    month: { columnFormat: 'dddd' },
+                    agendaDay: { columnFormat: 'dddd M/D' },
+                    agendaWeek: { columnFormat: 'dddd D , M' },
+                    basicDay: { columnFormat: 'dddd D | M' },
+                    basicWeek: { columnFormat: 'dddd D - M' }
                 }
             });
         });

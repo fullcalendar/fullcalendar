@@ -48,12 +48,12 @@ describe('titleFormat', function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
                 titleRangeSeparator: ' - ',
-                titleFormat: {
-                    month: 'YYYY, MMMM',
-                    basicWeek: 'D M YYYY',
-                    agendaWeek: 'D, M, YYYY',
-                    basicDay: 'dddd MMMM D YYYY',
-                    agendaDay: 'dddd, MMMM, D, YYYY'
+                views: {
+                    month: { titleFormat: 'YYYY, MMMM' },
+                    basicWeek: { titleFormat: 'D M YYYY' },
+                    agendaWeek: { titleFormat: 'D, M, YYYY' },
+                    basicDay: { titleFormat: 'dddd MMMM D YYYY' },
+                    agendaDay: { titleFormat: 'dddd, MMMM, D, YYYY' }
                 }
             });
         });
