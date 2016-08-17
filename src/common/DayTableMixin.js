@@ -297,7 +297,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		return '' +
 			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '"' +
-				(this.rowCnt == 1 ?
+				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
 				(colspan > 1 ?
@@ -306,8 +306,12 @@ var DayTableMixin = FC.DayTableMixin = {
 				(otherAttrs ?
 					' ' + otherAttrs :
 					'') +
-			'>' +
-				htmlEscape(date.format(this.colHeadFormat)) +
+				'>' +
+				// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
+				view.buildGotoAnchorHtml(
+					{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
+					htmlEscape(date.format(this.colHeadFormat)) // inner HTML
+				) +
 			'</th>';
 	},
 

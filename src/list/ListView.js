@@ -170,20 +170,25 @@ var ListViewGrid = Grid.extend({
 
 	// generates the HTML for the day headers that live amongst the event rows
 	dayHeaderHtml: function(dayDate) {
-		var mainFormat = this.view.opt('listDayFormat');
-		var altFormat = this.view.opt('listDayAltFormat');
+		var view = this.view;
+		var mainFormat = view.opt('listDayFormat');
+		var altFormat = view.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading">' +
-			'<td class="' + this.view.widgetHeaderClass + '" colspan="3">' +
+			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +
 				(mainFormat ?
-					'<span class="fc-list-heading-main">' +
-						htmlEscape(dayDate.format(mainFormat)) +
-					'</span>' :
+					view.buildGotoAnchorHtml(
+						dayDate,
+						{ 'class': 'fc-list-heading-main' },
+						htmlEscape(dayDate.format(mainFormat)) // inner HTML
+					) :
 					'') +
 				(altFormat ?
-					'<span class="fc-list-heading-alt">' +
-						htmlEscape(dayDate.format(altFormat)) +
-					'</span>' :
+					view.buildGotoAnchorHtml(
+						dayDate,
+						{ 'class': 'fc-list-heading-alt' },
+						htmlEscape(dayDate.format(altFormat)) // inner HTML
+					) :
 					'') +
 			'</td>' +
 		'</tr>';

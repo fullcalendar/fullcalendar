@@ -139,6 +139,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
 	renderNumberCellHtml: function(date) {
+		var html = '';
 		var classes;
 		var weekCalcFirstDoW;
 
@@ -164,21 +165,27 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			}
 		}
 
-		return '' +
-			'<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
-				((this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) ?
-					'<span class="fc-week-number">' +
-						date.format('w') +
-					'</span>' :
-					''
-					) +
-				(this.view.dayNumbersVisible ?
-					'<span class="fc-day-number">' +
-						date.date() +
-					'</span>' :
-					''
-					) +
-			'</td>';
+		html += '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">';
+
+		if (this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
+			html += this.view.buildGotoAnchorHtml(
+				{ date: date, type: 'week' },
+				{ 'class': 'fc-week-number' },
+				date.format('w') // inner HTML
+			);
+		}
+
+		if (this.view.dayNumbersVisible) {
+			html += this.view.buildGotoAnchorHtml(
+				date,
+				{ 'class': 'fc-day-number' },
+				date.date() // inner HTML
+			);
+		}
+
+		html += '</td>';
+
+		return html;
 	},
 
 

@@ -544,6 +544,14 @@ function Calendar_constructor(element, overrides) {
 	function initialRender() {
 		element.addClass('fc');
 
+		// event delegation for nav links
+		element.on('click', 'a[data-fc-goto]', function(ev) {
+			var anchorEl = $(this);
+			var gotoOptions = anchorEl.data('fc-goto'); // will automatically parse JSON
+
+			zoomTo(t.moment(gotoOptions.date), gotoOptions.type);
+		});
+
 		// called immediately, and upon option change
 		t.bindOption('theme', function(theme) {
 			tm = theme ? 'ui' : 'fc'; // affects a larger scope
