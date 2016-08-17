@@ -29,58 +29,41 @@
 
 /* week and day number styling */
 
+.fc-day-top.fc-other-month {
+	opacity: 0.3;
+}
+
 .fc-basic-view .fc-week-number,
 .fc-basic-view .fc-day-number {
-	padding: 0 2px;
+	padding: 2px;
 }
 
-.fc-basic-view td.fc-week-number span,
-.fc-basic-view td.fc-day-top span {
-	padding-top: 2px;
-	padding-bottom: 2px;
+.fc-basic-view th.fc-week-number,
+.fc-basic-view th.fc-day-number {
+	padding: 0 2px; /* column headers can't have as much v space */
 }
 
-.fc-basic-view td.fc-day-top span.fc-week-number {
-	width: 1.5em;
+.fc-ltr .fc-basic-view .fc-day-top .fc-day-number { float: right; }
+.fc-rtl .fc-basic-view .fc-day-top .fc-day-number { float: left; }
+
+.fc-ltr .fc-basic-view .fc-day-top .fc-week-number { float: left; border-radius: 0 0 3px 0; }
+.fc-rtl .fc-basic-view .fc-day-top .fc-week-number { float: right; border-radius: 0 0 0 3px; }
+
+.fc-basic-view .fc-day-top .fc-week-number {
+	min-width: 1.5em;
 	text-align: center;
 	background-color: #f2f2f2;
 	color: #808080;
 }
 
-.fc-ltr .fc-basic-view td.fc-day-top span.fc-week-number {
-	border-radius: 0 0 3px 0;
-}
-
-.fc-rtl .fc-basic-view td.fc-day-top span.fc-week-number {
-	border-radius: 0 0 0 3px;
-}
+/* when week/day number have own column */
 
 .fc-basic-view td.fc-week-number {
 	text-align: center;
 }
 
-.fc-basic-view td.fc-week-number span {
+.fc-basic-view td.fc-week-number > * {
 	/* work around the way we do column resizing and ensure a minimum width */
 	display: inline-block;
 	min-width: 1.25em;
-}
-
-.fc-ltr .fc-basic-view .fc-day-top span.fc-week-number {
-	float: left;
-}
-
-.fc-ltr .fc-basic-view .fc-day-top span.fc-day-number {
-	float: right;
-}
-
-.fc-rtl .fc-basic-view .fc-day-top span.fc-week-number {
-	float: right;
-}
-
-.fc-rtl .fc-basic-view .fc-day-top span.fc-day-number {
-	float: left;
-}
-
-.fc-day-top.fc-other-month {
-	opacity: 0.3;
 }
