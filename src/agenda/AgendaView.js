@@ -468,7 +468,7 @@ var agendaTimeGridMethods = {
 			return '' +
 				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
 					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-						{ date: this.start, type: 'week', forceOff: this.colCnt === 1  },
+						{ date: this.start, type: 'week', forceOff: this.colCnt > 1  },
 						htmlEscape(weekText) // inner HTML
 					) +
 				'</th>';
