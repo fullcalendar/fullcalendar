@@ -542,7 +542,7 @@ function Calendar_constructor(element, overrides) {
 		element.addClass('fc');
 
 		// event delegation for nav links
-		element.on('click', 'a[data-fc-goto]', function(ev) {
+		element.on('click.fc', 'a[data-fc-goto]', function(ev) {
 			var anchorEl = $(this);
 			var gotoOptions = anchorEl.data('fc-goto'); // will automatically parse JSON
 
@@ -598,6 +598,8 @@ function Calendar_constructor(element, overrides) {
 		header.removeElement();
 		content.remove();
 		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
+
+		element.off('.fc'); // unbind nav link handlers
 
 		if (windowResizeProxy) {
 			$(window).unbind('resize', windowResizeProxy);
