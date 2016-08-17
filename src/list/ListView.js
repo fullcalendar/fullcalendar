@@ -209,6 +209,11 @@ var ListViewGrid = Grid.extend({
 		}
 
 		return '<tr class="' + classes.join(' ') + '">' +
+			(view.opt('listTime') ?
+				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
+					timeHtml +
+				'</td>' :
+				'') +
 			'<td class="fc-list-item-marker ' + view.widgetContentClass + '">' +
 				'<span class="fc-event-dot"' +
 				(bgColor ?
@@ -216,11 +221,6 @@ var ListViewGrid = Grid.extend({
 					'') +
 				'></span>' +
 			'</td>' +
-			(view.opt('listTime') ?
-				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
-					timeHtml +
-				'</td>' :
-				'') +
 			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
 					htmlEscape(seg.event.title) +

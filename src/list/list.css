@@ -69,6 +69,10 @@
 	width: 1px;
 }
 
+/* make the dot closer to the event title */
+.fc-ltr .fc-list-item-marker { padding-right: 0; }
+.fc-rtl .fc-list-item-marker { padding-left: 0; }
+
 .fc-list-item-title a {
 	/* every event title cell has an <a> tag */
 	text-decoration: none;
