@@ -28,6 +28,7 @@ Breaking Changes:
 	- `isSame`
 	- `isBefore`
 	- `isAfter`
+- View-Option-Hashes no longer supported (deprecated in 2.2.4)
 - DOM structure of month/basic-view day cell numbers changed
 
 Build System:

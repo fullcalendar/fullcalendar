@@ -299,10 +299,7 @@ function Calendar_constructor(element, overrides) {
 	t.dynamicOverrides = {};
 	t.viewSpecCache = {};
 	t.optionHandlers = {}; // for Calendar.options.js
-
-	// convert legacy options into non-legacy ones.
-	// in the future, when this is removed, don't use `overrides` reference. make a copy.
-	t.overrides = massageOverrides(overrides || {});
+	t.overrides = $.extend({}, overrides); // make a copy
 
 	t.populateOptionsHash(); // sets this.options
 
