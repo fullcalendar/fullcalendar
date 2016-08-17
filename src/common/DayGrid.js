@@ -157,11 +157,11 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			// because they rely on the locale's dow (possibly overridden by
 			// our firstDay option), which may not be Monday. We cannot change
 			// dow, because that would affect the calendar start day as well.
-			if ((date._locale || date._lang)._fullCalendar_weekCalc === 'ISO') {
+			if (date._locale._fullCalendar_weekCalc === 'ISO') {
 				weekCalcFirstDoW = 1;  // Monday by ISO 8601 definition
 			}
 			else {
-				weekCalcFirstDoW = (date._locale || date._lang).firstDayOfWeek();
+				weekCalcFirstDoW = date._locale.firstDayOfWeek();
 			}
 		}
 
