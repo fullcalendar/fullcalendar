@@ -545,8 +545,15 @@ function Calendar_constructor(element, overrides) {
 		element.on('click.fc', 'a[data-fc-goto]', function(ev) {
 			var anchorEl = $(this);
 			var gotoOptions = anchorEl.data('fc-goto'); // will automatically parse JSON
+			var optValue = currentView.opt('navLinks');
+			var viewType = gotoOptions.type;
 
-			zoomTo(t.moment(gotoOptions.date), gotoOptions.type);
+			// map to for generic types like "day" to specific view types
+			if ($.isPlainObject(optValue)) {
+				viewType = optValue[viewType] || viewType;
+			}
+
+			zoomTo(t.moment(gotoOptions.date), viewType);
 		});
 
 		// called immediately, and upon option change
