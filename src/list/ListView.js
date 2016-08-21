@@ -174,7 +174,7 @@ var ListViewGrid = Grid.extend({
 		var mainFormat = view.opt('listDayFormat');
 		var altFormat = view.opt('listDayAltFormat');
 
-		return '<tr class="fc-list-heading">' +
+		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
 			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +
 				(mainFormat ?
 					view.buildGotoAnchorHtml(
