@@ -1,4 +1,4 @@
-describe('axisFormat', function() {
+describe('slotLabelFormat', function() {
 
 	var options;
 
@@ -26,7 +26,7 @@ describe('axisFormat', function() {
 	});
 
 	it('renders correctly when customized', function() {
-		options.axisFormat = 'H:mm:mm[!]';
+		options.slotLabelFormat = 'H:mm:mm[!]';
 		$('#cal').fullCalendar(options);
 		expect(getAxisText()).toBe('0:00:00!');
 	});

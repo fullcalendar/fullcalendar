@@ -139,7 +139,6 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		this.labelFormat =
 			input ||
-			view.opt('axisFormat') || // deprecated
 			view.opt('smallTimeFormat'); // the computed default
 
 		input = view.opt('slotLabelInterval');
