@@ -7,12 +7,16 @@ Features:
 	- new views: `listDay`, `listWeek`, `listMonth`, `listYear`, and simply `list`
 	- `listDayFormat`
 	- `listDayAltFormat`
-	- `listTime` (set to `false` to hide times/all-day)
 	- `noEventsMessage`
+- Clickable day/week numbers for easier navigation (#424)
+	- `navLinks`
+	- `navLinkDayClick`
+	- `navLinkWeekClick`
 - Option to display week numbers in cells (#3024)
 	- `weekNumbersWithinDays` (set to `true` to activate)
 - When week calc is ISO, default first day-of-week to Monday (#3255)
-- Macedonian language (#2739)
+- Macedonian locale (#2739)
+- Malay locale
 
 Bugfixes:
 - `$.fullCalendar.version` incorrect (#3292)
