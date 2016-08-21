@@ -199,14 +199,17 @@ var ListViewGrid = Grid.extend({
 		var view = this.view;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
-		var url = seg.event.url;
+		var event = seg.event;
+		var url = event.url;
 		var timeHtml;
 
 		if (!seg.start.hasTime()) {
-			timeHtml = view.getAllDayHtml();
+			if (this.displayEventTime) {
+				timeHtml = view.getAllDayHtml();
+			}
 		}
 		else {
-			timeHtml = htmlEscape(this.getEventTimeText(seg));
+			timeHtml = htmlEscape(this.getEventTimeText(event)); // might return empty
 		}
 
 		if (url) {
@@ -214,7 +217,7 @@ var ListViewGrid = Grid.extend({
 		}
 
 		return '<tr class="' + classes.join(' ') + '">' +
-			(view.opt('listTime') ?
+			(timeHtml ?
 				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
 					timeHtml +
 				'</td>' :
