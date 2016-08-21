@@ -3,8 +3,9 @@ weekMode
 ========
 
 <div class='removed-notice' markdown='1'>
-This method has been deprecated in favor of [fixedWeekCount](), which controls the number of rows,
-and the [height]()/[contentHeight]() settings, which can now be set to `"auto"`.
+This method has been removed in v3.
+In its place, use [fixedWeekCount](), which controls the number of rows,
+and the [height]()/[contentHeight]() settings, which can be set to `"auto"`.
 </div>
 
 Determines the number of weeks displayed in a month view. Also determines each week's height.

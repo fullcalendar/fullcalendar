@@ -3,8 +3,8 @@ View Option Hash
 ================
 
 <div class='removed-notice' markdown='1'>
-View Option Hashes have been deprecated in favor of a new technique.
-Please see [View-Specific Options](View-Specific-Options).
+View Option Hashes have been removed in v3.
+Please use [View-Specific Options](View-Specific-Options) instead.
 </div>
 
 A way to specify options on a per-view basis.

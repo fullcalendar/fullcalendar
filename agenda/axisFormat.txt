@@ -3,7 +3,7 @@ axisFormat
 ==========
 
 <div class='removed-notice' markdown='1'>
-This method has been renamed to [slotLabelFormat]().
+This method has been removed in v3. Please use [slotLabelFormat]() instead.
 </div>
 
 Determines the time-text that will be displayed on the vertical axis of the agenda views.

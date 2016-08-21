@@ -2,7 +2,4 @@
 Deprecated
 ==========
 
-- [weekMode](../display/weekMode)
-- [View Option Hash](../views/View_Option_Hash)
-- [axisFormat](../agenda/axisFormat)
 - [eventResourceField](../resource_data/eventResourceField)
