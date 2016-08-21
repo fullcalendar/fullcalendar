@@ -44,6 +44,18 @@ describe('navLinks', function() {
 			expect(options.dayClick).not.toHaveBeenCalled();
 		});
 
+		it('executes a custom handler', function() {
+			options.navLinkDayClick = function(date, ev) {
+				expect(date.format()).toBe('2016-08-09');
+				expect(typeof ev).toBe('object');
+			};
+			spyOn(options, 'navLinkDayClick').and.callThrough();
+			$('#cal').fullCalendar(options);
+			$.simulateMouseClick(getDayGridNumberEl('2016-08-09'));
+			expect(options.navLinkDayClick).toHaveBeenCalled();
+			expect(options.dayClick).not.toHaveBeenCalled();
+		});
+
 		describe('with weekNumbers', function() {
 			beforeEach(function() {
 				options.weekNumbers = true;
