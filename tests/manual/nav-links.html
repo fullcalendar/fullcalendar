@@ -18,9 +18,19 @@
 				right: 'month,agendaWeek,agendaDay,listWeek'
 			},
 			defaultDate: '2014-06-12',
+			weekNumberCalculation: 'ISO',
 			weekNumbersWithinDays: true,
 			weekNumbers: true,
+
 			navLinks: true,
+			//navLinks: {
+			//	day: 'agendaDay'
+			//},
+
+			dayClick: function() {
+				alert('dayClick!!!'); // should not fire
+			},
+
 			editable: true,
 			events: [
 				{

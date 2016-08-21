@@ -197,7 +197,11 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 		// jQuery will take care of unregistering them when removeElement gets called.
 		this.el.on(name, function(ev) {
 			if (
-				!$(ev.target).is('.fc-event-container *, .fc-more') // not an an event element, or "more.." link
+				!$(ev.target).is(
+					this.segSelector + ',' + // an event element
+					'.fc-more,' + // a "more.." link
+					'[data-fc-goto]' // a clickable nav link
+				)
 			) {
 				return handler.call(_this, ev);
 			}
