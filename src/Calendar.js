@@ -542,9 +542,9 @@ function Calendar_constructor(element, overrides) {
 		element.addClass('fc');
 
 		// event delegation for nav links
-		element.on('click.fc', 'a[data-fc-goto]', function(ev) {
+		element.on('click.fc', 'a[data-goto]', function(ev) {
 			var anchorEl = $(this);
-			var gotoOptions = anchorEl.data('fc-goto'); // will automatically parse JSON
+			var gotoOptions = anchorEl.data('goto'); // will automatically parse JSON
 			var optValue = currentView.opt('navLinks');
 			var viewType = gotoOptions.type;
 

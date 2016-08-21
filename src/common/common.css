@@ -394,11 +394,11 @@ hr.fc-divider {
 /* Internal Nav Links
 --------------------------------------------------------------------------------------------------*/
 
-a[data-fc-goto] {
+a[data-goto] {
 	cursor: pointer;
 }
 
-a[data-fc-goto]:hover {
+a[data-goto]:hover {
 	text-decoration: underline;
 }
 

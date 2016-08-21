@@ -201,7 +201,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 					_this.segSelector + ',' + // directly on an event element
 					_this.segSelector + ' *,' + // within an event element
 					'.fc-more,' + // a "more.." link
-					'a[data-fc-goto]' // a clickable nav link
+					'a[data-goto]' // a clickable nav link
 				)
 			) {
 				return handler.call(_this, ev);

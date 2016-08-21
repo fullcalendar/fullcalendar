@@ -279,7 +279,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		if (!forceOff && this.opt('navLinks')) {
 			return '<a' + attrs +
-				' data-fc-goto="' + htmlEscape(JSON.stringify(finalOptions)) + '">' +
+				' data-goto="' + htmlEscape(JSON.stringify(finalOptions)) + '">' +
 				innerHtml +
 				'</a>';
 		}
