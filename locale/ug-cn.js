@@ -1,6 +1,6 @@
 
 $.fullCalendar.locale("ug-cn", {
-	defaultButtonText: {
+	buttonText: {
 		month: "ئاي",
 		week: "ھەپتە",
 		day: "كۈن",
