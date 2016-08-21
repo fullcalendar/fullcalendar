@@ -1,5 +1,5 @@
 
-$.fullCalendar.locale("in", {
+$.fullCalendar.locale("ms", {
 	buttonText: {
 		month: "Bulan",
 		week: "Minggu",
