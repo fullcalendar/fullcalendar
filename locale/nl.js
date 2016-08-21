@@ -7,5 +7,6 @@ $.fullCalendar.locale("nl", {
 		list: "Agenda"
 	},
 	allDayText: "Hele dag",
-	eventLimitText: "extra"
+	eventLimitText: "extra",
+	noEventsMessage: "Geen evenementen om te laten zien"
 });
