@@ -18,7 +18,7 @@ describe('weekNumbers', function() {
 
 		beforeEach(function() {
 			options.defaultView = 'month';
-			options.weekMode = 'fixed'; // will make 6 rows
+			options.fixedWeekCount = true; // will make 6 rows
 		});
 
 		describe('with default weekNumbers', function() { // which is false!

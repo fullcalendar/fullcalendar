@@ -143,7 +143,8 @@ describe('events as a function', function() {
 		options.currentView = 'month';
 		options.defaultDate = '2013-06-01'; // June 2013 has first day as Saturday, and last as Sunday!
 		options.weekends = false;
-		options.weekMode = 'variable';
+		options.height = 'auto';
+		options.fixedWeekCount = false;
 		options.events = function(start, end, timezone, callback) {
 			expect(start).toEqualMoment('2013-06-03');
 			expect(end).toEqualMoment('2013-06-29');

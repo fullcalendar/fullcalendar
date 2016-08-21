@@ -22,8 +22,6 @@ var MonthView = FC.MonthView = BasicView.extend({
 	// Overrides the default BasicView behavior to have special multi-week auto-height logic
 	setGridHeight: function(height, isAuto) {
 
-		isAuto = isAuto || this.opt('weekMode') === 'variable'; // LEGACY: weekMode is deprecated
-
 		// if auto, make the height of each row the height that it would be if there were 6 weeks
 		if (isAuto) {
 			height *= this.rowCnt / 6;
@@ -34,11 +32,6 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 
 	isFixedWeeks: function() {
-		var weekMode = this.opt('weekMode'); // LEGACY: weekMode is deprecated
-		if (weekMode) {
-			return weekMode === 'fixed'; // if any other type of weekMode, assume NOT fixed
-		}
-
 		return this.opt('fixedWeekCount');
 	}
 

@@ -8,7 +8,7 @@ describe('dayRender', function() {
 	it('is triggered upon initialization of a view, with correct parameters', function() {
 		var options = {
 			defaultView: 'month',
-			weekMode: 'fixed',
+			fixedWeekCount: true,
 			defaultDate: '2014-05-01',
 			dayRender: function(date, cell) {
 				expect(moment.isMoment(date)).toEqual(true);
@@ -26,7 +26,7 @@ describe('dayRender', function() {
 	it('is called when view is changed', function() {
 		var options = {
 			defaultView: 'month',
-			weekMode: 'fixed',
+			fixedWeekCount: true,
 			defaultDate: '2014-05-01',
 			dayRender: function(date, cell) { }
 		};
@@ -70,7 +70,7 @@ describe('dayRender', function() {
 	it('allows you to modify the element', function() {
 		var options = {
 			defaultView: 'month',
-			weekMode: 'fixed',
+			fixedWeekCount: true,
 			defaultDate: '2014-05-01',
 			dayRender: function(date, cell) {
 				if (date.format() === '2014-05-01') {
