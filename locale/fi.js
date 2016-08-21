@@ -7,5 +7,6 @@ $.fullCalendar.locale("fi", {
 		list: "Tapahtumat"
 	},
 	allDayText: "Koko päivä",
-	eventLimitText: "lisää"
+	eventLimitText: "lisää",
+	noEventsMessage: "Ei tapahtumia näytettäviä"
 });

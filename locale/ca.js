@@ -7,5 +7,6 @@ $.fullCalendar.locale("ca", {
 		list: "Agenda"
 	},
 	allDayText: "Tot el dia",
-	eventLimitText: "més"
+	eventLimitText: "més",
+	noEventsMessage: "No hi ha esdeveniments per mostrar"
 });

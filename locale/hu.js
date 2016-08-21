@@ -7,5 +7,6 @@ $.fullCalendar.locale("hu", {
 		list: "Napló"
 	},
 	allDayText: "Egész nap",
-	eventLimitText: "további"
+	eventLimitText: "további",
+	noEventsMessage: "Nincs megjeleníthető események"
 });

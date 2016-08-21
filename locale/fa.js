@@ -9,5 +9,6 @@ $.fullCalendar.locale("fa", {
 	allDayText: "تمام روز",
 	eventLimitText: function(n) {
 		return "بیش از " + n;
-	}
+	},
+	noEventsMessage: "هیچ رویدادی به نمایش"
 });

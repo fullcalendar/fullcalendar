@@ -7,5 +7,6 @@ $.fullCalendar.locale("eu", {
 		list: "Agenda"
 	},
 	allDayHtml: "Egun<br/>osoa",
-	eventLimitText: "gehiago"
+	eventLimitText: "gehiago",
+	noEventsMessage: "Ez dago ekitaldirik erakusteko"
 });

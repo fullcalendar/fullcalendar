@@ -9,5 +9,6 @@ $.fullCalendar.locale("it", {
 	allDayHtml: "Tutto il<br/>giorno",
 	eventLimitText: function(n) {
 		return "+altri " + n;
-	}
+	},
+	noEventsMessage: "Non ci sono eventi da visualizzare"
 });

@@ -8,5 +8,6 @@ $.fullCalendar.locale("tr", {
 		list: "Ajanda"
 	},
 	allDayText: "Tüm gün",
-	eventLimitText: "daha fazla"
+	eventLimitText: "daha fazla",
+	noEventsMessage: "Herhangi bir etkinlik görüntülemek için"
 });

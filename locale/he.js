@@ -8,5 +8,6 @@ $.fullCalendar.locale("he", {
 	},
 	weekNumberTitle: "שבוע",
 	allDayText: "כל היום",
-	eventLimitText: "אחר"
+	eventLimitText: "אחר",
+	noEventsMessage: "אין אירועים להצגה"
 });

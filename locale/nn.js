@@ -6,5 +6,6 @@ $.fullCalendar.locale("nn", {
 		list: "Agenda"
 	},
 	allDayText: "Heile dagen",
-	eventLimitText: "til"
+	eventLimitText: "til",
+	noEventsMessage: "Ingen hendelser å vise"
 });

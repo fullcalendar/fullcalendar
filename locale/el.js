@@ -7,5 +7,6 @@ $.fullCalendar.locale("el", {
 		list: "Ατζέντα"
 	},
 	allDayText: "Ολοήμερο",
-	eventLimitText: "περισσότερα"
+	eventLimitText: "περισσότερα",
+	noEventsMessage: "Δεν υπάρχουν γεγονότα για να εμφανιστεί"
 });

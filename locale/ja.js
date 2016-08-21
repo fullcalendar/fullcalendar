@@ -9,5 +9,6 @@ $.fullCalendar.locale("ja", {
 	allDayText: "終日",
 	eventLimitText: function(n) {
 		return "他 " + n + " 件";
-	}
+	},
+	noEventsMessage: "イベントが表示されないように"
 });

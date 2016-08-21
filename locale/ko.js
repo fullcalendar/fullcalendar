@@ -7,5 +7,6 @@ $.fullCalendar.locale("ko", {
 		list: "일정목록"
 	},
 	allDayText: "종일",
-	eventLimitText: "개"
+	eventLimitText: "개",
+	noEventsMessage: "일정이 표시 없습니다"
 });

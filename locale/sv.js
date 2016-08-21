@@ -7,5 +7,6 @@ $.fullCalendar.locale("sv", {
 		list: "Program"
 	},
 	allDayText: "Heldag",
-	eventLimitText: "till"
+	eventLimitText: "till",
+	noEventsMessage: "Inga händelser att visa"
 });

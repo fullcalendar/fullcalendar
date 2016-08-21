@@ -7,5 +7,6 @@ $.fullCalendar.locale("id", {
 		list: "Agenda"
 	},
 	allDayHtml: "Sehari<br/>penuh",
-	eventLimitText: "lebih"
+	eventLimitText: "lebih",
+	noEventsMessage: "Tidak ada acara untuk ditampilkan"
 });

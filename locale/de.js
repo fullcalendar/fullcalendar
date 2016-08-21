@@ -9,5 +9,6 @@ $.fullCalendar.locale("de", {
 	allDayText: "Ganztägig",
 	eventLimitText: function(n) {
 		return "+ weitere " + n;
-	}
+	},
+	noEventsMessage: "Keine Ereignisse anzeigen"
 });

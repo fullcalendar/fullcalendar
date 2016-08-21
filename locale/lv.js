@@ -9,5 +9,6 @@ $.fullCalendar.locale("lv", {
 	allDayText: "Visu dienu",
 	eventLimitText: function(n) {
 		return "+vēl " + n;
-	}
+	},
+	noEventsMessage: "Nav notikumu, lai parādītu"
 });

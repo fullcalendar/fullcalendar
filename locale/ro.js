@@ -11,5 +11,6 @@ $.fullCalendar.locale("ro", {
 	allDayText: "Toată ziua",
 	eventLimitText: function(n) {
 		return "+alte " + n;
-	}
+	},
+	noEventsMessage: "Nu există evenimente de afișat"
 });

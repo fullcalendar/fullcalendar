@@ -7,5 +7,6 @@ $.fullCalendar.locale("th", {
 		list: "แผนงาน"
 	},
 	allDayText: "ตลอดวัน",
-	eventLimitText: "เพิ่มเติม"
+	eventLimitText: "เพิ่มเติม",
+	noEventsMessage: "ไม่มีกิจกรรมที่จะแสดง"
 });

@@ -7,5 +7,6 @@ $.fullCalendar.locale("is", {
 		list: "Dagskrá"
 	},
 	allDayHtml: "Allan<br/>daginn",
-	eventLimitText: "meira"
+	eventLimitText: "meira",
+	noEventsMessage: "Engir viðburðir til að sýna"
 });

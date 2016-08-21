@@ -9,5 +9,6 @@ $.fullCalendar.locale("zh-cn", {
 	allDayText: "全天",
 	eventLimitText: function(n) {
 		return "另外 " + n + " 个";
-	}
+	},
+	noEventsMessage: "没有事件显示"
 });

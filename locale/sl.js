@@ -7,5 +7,6 @@ $.fullCalendar.locale("sl", {
 		list: "Dnevni red"
 	},
 	allDayText: "Ves dan",
-	eventLimitText: "več"
+	eventLimitText: "več",
+	noEventsMessage: "Ni dogodkov za prikaz"
 });

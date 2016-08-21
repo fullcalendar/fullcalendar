@@ -9,5 +9,6 @@ $.fullCalendar.locale("mk", {
 	allDayText: "Цел ден",
 	eventLimitText: function(n) {
 		return "+повеќе " + n;
-	}
+	},
+	noEventsMessage: "Нема настани за прикажување"
 });

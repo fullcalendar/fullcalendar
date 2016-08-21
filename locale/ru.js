@@ -9,5 +9,6 @@ $.fullCalendar.locale("ru", {
 	allDayText: "Весь день",
 	eventLimitText: function(n) {
 		return "+ ещё " + n;
-	}
+	},
+	noEventsMessage: "Нет событий для отображения"
 });

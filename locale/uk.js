@@ -9,5 +9,6 @@ $.fullCalendar.locale("uk", {
 	allDayText: "Увесь день",
 	eventLimitText: function(n) {
 		return "+ще " + n + "...";
-	}
+	},
+	noEventsMessage: "Немає подій для відображення"
 });

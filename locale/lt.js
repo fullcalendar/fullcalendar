@@ -7,5 +7,6 @@ $.fullCalendar.locale("lt", {
 		list: "Darbotvarkė"
 	},
 	allDayText: "Visą dieną",
-	eventLimitText: "daugiau"
+	eventLimitText: "daugiau",
+	noEventsMessage: "Nėra įvykių rodyti"
 });

@@ -9,5 +9,6 @@ $.fullCalendar.locale("bg", {
 	allDayText: "Цял ден",
 	eventLimitText: function(n) {
 		return "+още " + n;
-	}
+	},
+	noEventsMessage: "Няма събития за показване"
 });

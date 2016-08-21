@@ -9,5 +9,6 @@ $.fullCalendar.locale("sk", {
 	allDayText: "Celý deň",
 	eventLimitText: function(n) {
 		return "+ďalšie: " + n;
-	}
+	},
+	noEventsMessage: "Žiadne akcie na zobrazenie"
 });

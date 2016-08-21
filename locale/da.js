@@ -7,5 +7,6 @@ $.fullCalendar.locale("da", {
 		list: "Agenda"
 	},
 	allDayText: "Hele dagen",
-	eventLimitText: "flere"
+	eventLimitText: "flere",
+	noEventsMessage: "Ingen arrangementer at vise"
 });

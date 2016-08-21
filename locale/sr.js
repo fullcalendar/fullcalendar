@@ -9,5 +9,6 @@ $.fullCalendar.locale("sr", {
 	allDayText: "Цео дан",
 	eventLimitText: function(n) {
 		return "+ још " + n;
-	}
+	},
+	noEventsMessage: "Нема догађаја за приказ"
 });

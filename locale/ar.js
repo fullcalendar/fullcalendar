@@ -7,5 +7,6 @@ $.fullCalendar.locale("ar", {
 		list: "أجندة"
 	},
 	allDayText: "اليوم كله",
-	eventLimitText: "أخرى"
+	eventLimitText: "أخرى",
+	noEventsMessage: "أي أحداث لعرض"
 });

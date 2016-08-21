@@ -7,5 +7,6 @@ $.fullCalendar.locale("lb", {
 		list: "Terminiwwersiicht"
 	},
 	allDayText: "Ganzen Dag",
-	eventLimitText: "méi"
+	eventLimitText: "méi",
+	noEventsMessage: "Nee Evenementer ze affichéieren"
 });

@@ -7,5 +7,6 @@ $.fullCalendar.locale("gl", {
 		list: "Axenda"
 	},
 	allDayHtml: "Todo<br/>o día",
-	eventLimitText: "máis"
+	eventLimitText: "máis",
+	noEventsMessage: "Non hai eventos para amosar"
 });

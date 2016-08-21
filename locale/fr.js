@@ -8,5 +8,6 @@ $.fullCalendar.locale("fr", {
 		list: "Mon planning"
 	},
 	allDayHtml: "Toute la<br/>journée",
-	eventLimitText: "en plus"
+	eventLimitText: "en plus",
+	noEventsMessage: "Aucun événement à afficher"
 });
