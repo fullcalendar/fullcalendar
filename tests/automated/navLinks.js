@@ -28,16 +28,16 @@ describe('navLinks', function() {
 			expect(options.dayClick).not.toHaveBeenCalled();
 		});
 
-		it('moves to agendaDay with specific map', function() {
-			options.navLinks = { day: 'agendaDay' };
+		it('moves to agendaDay specifically', function() {
+			options.navLinkDayClick = 'agendaDay';
 			$('#cal').fullCalendar(options);
 			$.simulateMouseClick(getDayGridNumberEl('2016-08-09'));
 			expectDayView('agendaDay', '2016-08-09');
 			expect(options.dayClick).not.toHaveBeenCalled();
 		});
 
-		it('moves to basicDay with specific map', function() {
-			options.navLinks = { day: 'basicDay' };
+		it('moves to basicDay specifically', function() {
+			options.navLinkDayClick = 'basicDay';
 			$('#cal').fullCalendar(options);
 			$.simulateMouseClick(getDayGridNumberEl('2016-08-09'));
 			expectDayView('basicDay', '2016-08-09');
