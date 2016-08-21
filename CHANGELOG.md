@@ -34,6 +34,8 @@ Breaking Changes:
 	- `isBefore`
 	- `isAfter`
 - View-Option-Hashes no longer supported (deprecated in 2.2.4)
+- removed `weekMode` setting
+- removed `axisFormat` setting
 - DOM structure of month/basic-view day cell numbers changed
 
 Build System:
