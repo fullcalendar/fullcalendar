@@ -133,7 +133,7 @@ describe('ListView rendering', function() {
 				altText: el.find('.fc-list-heading-alt').text() || '',
 				date: $.fullCalendar.moment(el.data('date'))
 			};
-		}).get()
+		}).get();
 	}
 
 	function getEventInfo() {

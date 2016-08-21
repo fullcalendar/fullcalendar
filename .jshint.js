@@ -15,6 +15,7 @@ var baseConfig = {
 
 var browserConfig = Object.assign({}, baseConfig, { // extends the base config
 	browser: true,
+	esversion: 3, // for IE9
 	globals: {
 		// `false` means read-only
 		define: false,
@@ -22,9 +23,9 @@ var browserConfig = Object.assign({}, baseConfig, { // extends the base config
 		module: false,
 		require: false,
 		moment: false,
-		jQuery: false
-	},
-	es3: true // for IE
+		jQuery: false,
+		JSON: false // esversion:3 complains, but IE9 has this
+	}
 });
 
 // for concatenated JS files that end up in browser
