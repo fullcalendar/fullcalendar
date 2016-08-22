@@ -1,0 +1,17 @@
+
+weekNumbersWithinDays *3.0*
+===========================
+
+Determines the styling for week numbers in month view and the basic views.
+
+<div class="spec" markdown="1">
+boolean. *default*: `false`
+</div>
+
+When `weekNumbersWithinDays:false` (the default)
+
+<img src='../../../pages/docs/_images/weekNumbersStandard.png' width='308' height='206' style='box-shadow: 0 1px 4px rgba(0,0,0,.3)' />
+
+When `weekNumbersWithinDays:true`
+
+<img src='../../../pages/docs/_images/weekNumbersWithinDays.png' width='306' height='216' style='box-shadow: 0 1px 4px rgba(0,0,0,.3)' />

@@ -14,6 +14,7 @@ General Display
 <li>hiddenDays</li>
 <li>fixedWeekCount</li>
 <li>weekNumbers</li>
+<li>weekNumbersWithinDays</li>
 <li>weekNumberCalculation</li>
 <li>businessHours</li>
 <li>height</li>
