@@ -14,4 +14,4 @@ The value must be a number that represents the day of the week.
 
 Sunday=`0`, Monday=`1`, Tuesday=`2`, etc.
 
-This option is useful for UK users who need the week to start on Monday (`1`).
+If [weekNumberCalculation]() is set to `'ISO'`, this option defaults to `1` (Monday).

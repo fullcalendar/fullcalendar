@@ -14,6 +14,7 @@ This is the default.
 
 Specifiying `"ISO"` results in
 [ISO8601 week numbers](http://en.wikipedia.org/wiki/ISO_8601#Week_dates).
+Since v3.0, specifying `"ISO"` changes the default value of [firstDay]() to `1` (Monday).
 
 You may also specify a function, which must accept a single [Moment](../utilities/Moment) and return
 an integer week number.
