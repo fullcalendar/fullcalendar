@@ -12,17 +12,18 @@
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar({
-
-			weekNumbers: true,
-			weekNumbersWithinDays: true,
-			weekNumberCalculation: 'ISO',
-
 			header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay,listWeek'
 			},
 			defaultDate: '2016-08-12',
+			navLinks: true, // can click day/week names to navigate views
+
+			weekNumbers: true,
+			weekNumbersWithinDays: true,
+			weekNumberCalculation: 'ISO',
+
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
 			events: [
