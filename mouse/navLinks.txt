@@ -1,0 +1,19 @@
+
+navLinks *3.0*
+==============
+
+Determines if day names and week names are clickable.
+
+<div class="spec" markdown="1">
+boolean. *default*: `false`
+</div>
+
+When `true`, day headings and [weekNumbers](../display/weekNumbers/) will become clickable.
+When clicked, these links will bring the user to a view that represents the day/week.
+
+The destination views are automatically determined by the views that are in the [header](../display/header).
+However, they can be explicity defined using [navLinkDayClick]() and [navLinkWeekClick]().
+
+Example:
+
+<img src='../../../pages/docs/_images/navLinks.png' width='397' height='223' style='box-shadow: 0 1px 4px rgba(0,0,0,.3)' />

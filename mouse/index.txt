@@ -3,6 +3,9 @@ Clicking & Hovering
 ===================
 
 <ul>
+<li><a href='navLinks'>navLinks</a></li>
+<li class='callback'><a href='navLinkDayClick'>navLinkDayClick (callback)</a></li>
+<li class='callback'><a href='navLinkWeekClick'>navLinkWeekClick (callback)</a></li>
 <li class='callback'><a href='dayClick'>dayClick (callback)</a></li>
 <li class='callback'><a href='eventClick'>eventClick (callback)</a></li>
 <li class='callback'><a href='eventMouseover'>eventMouseover (callback)</a></li>
