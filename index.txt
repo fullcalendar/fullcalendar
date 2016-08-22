@@ -7,6 +7,7 @@
 <li><a href='timezone'>Timezone</a></li>
 <li><a href='views'>Views</a></li>
 <li><a href='agenda'>Agenda Options</a></li>
+<li><a href='list_view'>List View</a></li>
 <li><a href='current_date'>Current Date</a></li>
 <li><a href='text'>Text/Time Customization</a></li>
 <li><a href='mouse'>Clicking &amp; Hovering</a></li>

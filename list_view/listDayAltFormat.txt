@@ -1,0 +1,14 @@
+
+listDayAltFormat *3.0*
+======================
+
+<div class='spec' markdown='1'>
+String, `false`
+</div>
+
+A [date formatting string](../utilities/date_formatting_string/)
+that affects the text on the right side of the day headings in list view.
+
+<img src='../../../pages/docs/_images/listDayAltFormat.png' width='468' height='259' style='box-shadow: 0 1px 4px rgba(0,0,0,.3)' />
+
+If `false` is specified, no text is displayed.

@@ -4,13 +4,17 @@ Available Views
 
 FullCalendar has a number of different "views", or ways of displaying days and events.
 
-The following 5 views are all built in to FullCalendar:
+The following 9 views are all built in to FullCalendar:
 
 - **month** - [see example](../../views/month/)
 - **basicWeek** - [see example](../../views/basicWeek/)
 - **basicDay** - [see example](../../views/basicDay/)
 - **agendaWeek** - [see example](../../views/agendaWeek/)
 - **agendaDay** - [see example](../../views/agendaDay/)
+- **listYear** - [see example](../../views/listYear/)
+- **listMonth** - [see example](../../views/listMonth/)
+- **listWeek** - [see example](../../views/listWeek/)
+- **listDay** - [see example](../../views/listDay/)
 
 The following views are included in the [premium Scheduler add-on](../../scheduler/):
 

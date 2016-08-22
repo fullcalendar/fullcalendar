@@ -1,0 +1,30 @@
+
+List View Intro
+===============
+
+A list view is a type of [Available View](../views/Available_Views/) that displays events in a flat list.
+Only days with events are displayed.
+
+Example `listWeek` view:
+
+<img src='../../../pages/docs/_images/listWeek.png' width='468' height='259' style='box-shadow: 0 1px 4px rgba(0,0,0,.3)' />
+
+A list view displays events during a specific interval of time.
+There are 4 preset list views: `listDay`, `listWeek`, `listMonth`, and `listYear`.
+If you'd like a different interval of time,
+you can create a [Custom View](../views/Custom_Views/) with type `'list'`.
+
+If there are no events during a specific interval of time,
+the [noEventsMessage]() is displayed.
+
+
+Inherited Settings
+------------------
+
+Many of the settings documented elsewhere apply to the list views, including:
+
+- [eventClick](../mouse/eventClick/) - fired when the user clicks an event list item
+- [displayEventTime](../text/displayEventTime/) - can set to `false` to hide all event times
+- [displayEventEnd](../text/displayEventEnd/) - can set to `false` to hide all event *end* times
+
+The [dayClick](../mouse/dayClick) trigger is **not** fired when the user clicks a day heading in list view.
