@@ -14,7 +14,7 @@ Determines the time-text that will be displayed on each event.
 As noted above, each view has a specific default. Get fine-tuned control with [View-Specific Options](../views/View-Specific-Options).
 A single string alone will set the value for all views.
 
-The default values will change based on the current [lang](../text/lang).
+The default values will change based on the current [locale](../text/locale).
 
 Time-text will only be displayed for [Event Objects](../event_data/Event_Object) that have `allDay` equal to `false`.
 

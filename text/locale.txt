@@ -1,6 +1,6 @@
 
-locale
-======
+locale *changed in 3.0 from <strong>lang</strong>*
+==================================================
 
 Customize the language and localization options for the calendar.
 

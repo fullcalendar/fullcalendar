@@ -8,7 +8,7 @@ The day that each week begins.
 Integer, *default*: `0` (Sunday)
 </div>
 
-The default value depends on the current [lang](../text/lang).
+The default value depends on the current [locale](../text/locale).
 
 The value must be a number that represents the day of the week.
 

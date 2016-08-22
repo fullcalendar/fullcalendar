@@ -6,7 +6,7 @@ Get / Set Options Dynamically
 
 You can query for the current value of a calendar option:
 
-	var lang = $('#calendar').fullCalendar('option', 'lang');
+	var locale = $('#calendar').fullCalendar('option', 'locale');
 
 This will only return options that are global to the calendar.
 This method will *not* return [View-Specific Options].
@@ -20,13 +20,13 @@ It is not currently possible to set [View-Specific Options] in this manner.
 
 Can you dynamically set a single option:
 
-	$('#calendar').fullCalendar('option', 'lang', 'fr');
+	$('#calendar').fullCalendar('option', 'locale', 'fr');
 
 Or if you would like to set multiple options at once, limiting the calendar to at most
 one repaint, pass in an option hash:
 
 	$('#calendar').fullCalendar('option', {
-		lang: 'fr',
+		locale: 'fr',
 		isRTL: true
 	});
 

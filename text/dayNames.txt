@@ -11,4 +11,4 @@ Array, *default*:
 	 'Thursday', 'Friday', 'Saturday']
 </div>
 
-The default value will change based on the current [lang](../text/lang).
+The default value will change based on the current [locale](../text/locale).

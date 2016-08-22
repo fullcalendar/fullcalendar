@@ -41,7 +41,7 @@ use FullCalendar's version of the `moment`, `moment.utc`, and `moment.parseZone`
 	var noTZ = $.fullCalendar.moment.parseZone('2014-05-01T12:00:00');
 
 To create a moment with extended functionality that is already scoped within a given
-calendar's [timezone](../timezone/timezone) and [lang](../text/lang) settings,
+calendar's [timezone](../timezone/timezone) and [locale](../text/locale) settings,
 use the `Calendar` object's version of the `moment` constructor:
 
 	var calendar = $('#calendar').fullCalendar('getCalendar');

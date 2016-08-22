@@ -8,4 +8,4 @@ The text titling the "all-day" slot at the top of the calendar.
 String, *default*: `'all-day'`
 </div>
 
-The default value depends on the current [lang](../text/lang).
+The default value depends on the current [locale](../text/locale).

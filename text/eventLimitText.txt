@@ -14,4 +14,4 @@ like "+2", resulting in something like "+2 more".
 If a function is specified, the function will be given a single argument, the number of events being obscured,
 and must return the final text string to be used.
 
-The default value of this option is affected by the current [lang]().
+The default value of this option is affected by the current [locale]().

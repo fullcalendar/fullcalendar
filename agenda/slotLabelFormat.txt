@@ -8,7 +8,7 @@ Determines the time-text that will be displayed on the vertical axis of the agen
 [format string](../utilities/date_formatting_string), *default*: `'h(:mm)a'`
 </div>
 
-The default value depends on the current [lang](../text/lang).
+The default value depends on the current [locale](../text/locale).
 
 The default English value will produce times that look like "5pm" and "5:30pm".
 

@@ -9,7 +9,7 @@ The method for calculating week numbers that are displayed with the [weekNumbers
 </div>
 
 Specifying `"local"` causes the locale-specific calculation to be used,
-as determined by the calendar's [lang](../text/lang) setting.
+as determined by the calendar's [locale](../text/locale) setting.
 This is the default.
 
 Specifiying `"ISO"` results in
