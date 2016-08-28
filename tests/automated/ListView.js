@@ -39,6 +39,16 @@ describe('ListView rendering', function() {
 			expect(events[1].title).toBe('event 2');
 			expect(events[1].timeText).toBe('all-day');
 		});
+
+		it('filters events through eventRender', function() {
+			options.eventRender = function(event, el) {
+				el.find('.fc-event-dot').replaceWith('<span class="custom-icon" />');
+			};
+
+			$('#cal').fullCalendar(options);
+
+			expect($('.custom-icon').length).toBe(2);
+		});
 	});
 
 	describe('with timed events', function() {
