@@ -11,10 +11,10 @@ The following 9 views are all built in to FullCalendar:
 - **basicDay** - [see example](../../views/basicDay/)
 - **agendaWeek** - [see example](../../views/agendaWeek/)
 - **agendaDay** - [see example](../../views/agendaDay/)
-- **listYear** - [see example](../../views/listYear/)
-- **listMonth** - [see example](../../views/listMonth/)
-- **listWeek** - [see example](../../views/listWeek/)
-- **listDay** - [see example](../../views/listDay/)
+- **listYear**
+- **listMonth**
+- **listWeek**
+- **listDay**
 
 The following views are included in the [premium Scheduler add-on](../../scheduler/):
 
