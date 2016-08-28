@@ -23,6 +23,7 @@ Inherited Settings
 
 Many of the settings documented elsewhere apply to the list views, including:
 
+- [eventRender](../event_rendering/eventRender/) - for manipulating an event list item's DOM
 - [eventClick](../mouse/eventClick/) - fired when the user clicks an event list item
 - [displayEventTime](../text/displayEventTime/) - can set to `false` to hide all event times
 - [displayEventEnd](../text/displayEventEnd/) - can set to `false` to hide all event *end* times
