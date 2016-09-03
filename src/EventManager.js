@@ -1046,17 +1046,21 @@ function EventManager() { // assumed to be a calendar
 	// Determines if the given event can be relocated to the given span (unzoned start/end with other misc data)
 	function isEventSpanAllowed(span, event) {
 		var source = event.source || {};
+
 		var constraint = firstDefined(
 			event.constraint,
 			source.constraint,
 			t.options.eventConstraint
 		);
+
 		var overlap = firstDefined(
 			event.overlap,
 			source.overlap,
 			t.options.eventOverlap
 		);
-		return isSpanAllowed(span, constraint, overlap, event);
+
+		return isSpanAllowed(span, constraint, overlap, event) &&
+			(!t.options.eventAllow || t.options.eventAllow(span, event) !== false);
 	}
 
 
@@ -1083,7 +1087,8 @@ function EventManager() { // assumed to be a calendar
 
 	// Determines the given span (unzoned start/end with other misc data) can be selected.
 	function isSelectionSpanAllowed(span) {
-		return isSpanAllowed(span, t.options.selectConstraint, t.options.selectOverlap);
+		return isSpanAllowed(span, t.options.selectConstraint, t.options.selectOverlap) &&
+			(!t.options.selectAllow || t.options.selectAllow(span) !== false);
 	}
 
 
