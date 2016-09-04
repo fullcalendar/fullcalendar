@@ -527,11 +527,7 @@ Grid.mixin({
 			}
 			// othewise, work off existing values
 			else {
-				dropLocation = {
-					start: event.start.clone(),
-					end: event.end ? event.end.clone() : null,
-					allDay: event.allDay // keep it the same
-				};
+				dropLocation = pluckEventDateProps(event);
 			}
 
 			dropLocation.start.add(delta);
@@ -1160,6 +1156,16 @@ Grid.mixin({
 
 /* Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
+
+
+function pluckEventDateProps(event) {
+	return {
+		start: event.start.clone(),
+		end: event.end ? event.end.clone() : null,
+		allDay: event.allDay // keep it the same
+	};
+}
+FC.pluckEventDateProps = pluckEventDateProps;
 
 
 function isBgEvent(event) { // returns true if background OR inverse-background
