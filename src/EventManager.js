@@ -1153,26 +1153,24 @@ Calendar.prototype.isSpanAllowed = function(span, constraint, overlap, event) {
 	var peerOverlap;
 
 	// the range must be fully contained by at least one of produced constraint events
-	if (
-		constraint != null &&
-		constraint.start != null &&
-		constraint.end != null
-	) {
+	if (constraint != null) {
 
 		// not treated as an event! intermediate data structure
 		// TODO: use ranges in the future
 		constraintEvents = this.constraintToEvents(constraint);
+		if (constraintEvents) { // not invalid
 
-		anyContainment = false;
-		for (i = 0; i < constraintEvents.length; i++) {
-			if (this.spanContainsSpan(constraintEvents[i], span)) {
-				anyContainment = true;
-				break;
+			anyContainment = false;
+			for (i = 0; i < constraintEvents.length; i++) {
+				if (this.spanContainsSpan(constraintEvents[i], span)) {
+					anyContainment = true;
+					break;
+				}
 			}
-		}
 
-		if (!anyContainment) {
-			return false;
+			if (!anyContainment) {
+				return false;
+			}
 		}
 	}
 
@@ -1227,7 +1225,12 @@ Calendar.prototype.constraintToEvents = function(constraintInput) {
 	}
 
 	if (typeof constraintInput === 'object') {
-		return this.expandEvent(this.buildEventFromInput(constraintInput));
+		if (constraintInput.start != null) { // needs to be event-like input
+			return this.expandEvent(this.buildEventFromInput(constraintInput));
+		}
+		else {
+			return null; // invalid
+		}
 	}
 
 	return this.clientEvents(constraintInput); // probably an ID
