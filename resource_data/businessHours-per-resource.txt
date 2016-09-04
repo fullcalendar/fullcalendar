@@ -1,0 +1,28 @@
+
+businessHours-per-resource
+==========================
+
+The [main `businessHours` settings](../display/businessHours/) can be applied more
+granularly to individual resources via the `businessHours` property on the [Resource Object]() like so:
+
+	$('#calendar').fullCalendar({
+		defaultView: 'timelineWeek',
+		resources: [
+			{
+				id: 'a',
+				title: 'Resource A',
+				businessHours: {
+					start: '10:00',
+					end: '18:00'
+				}
+			},
+			{
+				id: 'b',
+				title: 'Resource B',
+				businessHours: {
+					start: '11:00',
+					end: '17:00'
+				}
+			}
+		]
+	});

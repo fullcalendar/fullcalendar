@@ -45,6 +45,7 @@ Resource Object
 	<td markdown='1'>
 		A [businessHours](../display/businessHours/) declaration
 		that will only apply to this resource.
+		[See example](businessHours-per-resource).
 	</td>
 </tr>
 <tr>

@@ -5,6 +5,7 @@ Resource Data
 <ul>
 <li><a href='Resource_Object'>Resource Object</a></li>
 <li><a href='associating_events'>associating events &amp; resources</a></li>
+<li><a href='businessHours-per-resource'>businessHours-per-resource</a></li>
 <li><a href='resources_array'>resources (as an array)</a></li>
 <li><a href='resources_json_feed'>resources (as a JSON feed)</a></li>
 <li><a href='resources_function'>resources (as a function)</a></li>
