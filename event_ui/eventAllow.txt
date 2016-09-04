@@ -1,0 +1,30 @@
+
+eventAllow *3.0*
+================
+
+Exact programmatic control over where an event can be dropped.
+
+<div class='spec' markdown='1'>
+function(dropInfo, draggedEvent)
+</div>
+
+After it has been determined that the [eventOverlap]() and [eventConstraint]()
+settings will allow the user to drop an event at a given position on the calendar,
+the `eventAllow` callback will be called. If specified, it must return either `true` or `false`
+as to whether the calendar will allow the given event (`draggedEvent`) to be dropped
+at the given location (`dropInfo`).
+
+	eventAllow: function(dropLocation, draggedEvent) {
+		if (draggedEvent.id === '999') {
+			return dropLocation.isAfter('2016-01-01'); // a boolean
+		}
+		else {
+			return true;
+		}
+	}
+
+The `dropLocation` object will have the following properties:
+
+- `start` (a [Moment](../utilities/Moment/))
+- `end` exclusive end date/time (a [Moment](../utilities/Moment/))
+- `resourceId` if you are using a [Resource View](../scheduler/)

@@ -1,0 +1,7 @@
+
+Event Dragging within Resources
+===============================
+
+- eventResourceEditable
+- eventConstraint
+- eventAllow

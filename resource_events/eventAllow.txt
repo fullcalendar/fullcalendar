@@ -1,0 +1,18 @@
+
+eventAllow
+==========
+
+The `eventAllow` callback, [explained in the master eventAllow article](../event_ui/eventAllow/),
+gives programmatic control over where an event can be dropped.
+
+In addition to receiving information about which date the user is attempting to drop the event upon,
+it will also receive information about the *resource*:
+
+	eventAllow: function(dropLocation, draggedEvent) {
+		if (draggedEvent.id === '999') {
+			return String(dropLocation.resourceId).indexOf('a') >= 0; // boolean
+		}
+		else {
+			return true;
+		}
+	}

@@ -37,6 +37,9 @@ A specific period of time with concrete start/end dates can also be given, simil
 For more granular control over constraining event dates/times, use the `constraint` property
 on an [Event Source] or the `constraint` property on an [Event Object].
 
+If you are using a resource view and would like to constrain an event to cerain resources,
+[read this article](../resource_events/eventConstraint/).
+
 
 [businessHours]: ../display/businessHours
 [Event Object]: ../event_data/Event_Object

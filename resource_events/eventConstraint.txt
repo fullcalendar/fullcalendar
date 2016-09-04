@@ -1,0 +1,29 @@
+
+eventConstraint
+===============
+
+The [master article for `eventConstraint`](../event_ui/eventConstraint/)
+explains how to force an event to stay within a given date range while it's being dragged.
+Additional properties can be applied to force an event to stay within specific *resources*:
+
+	$('#calendar').fullCalendar({
+		defaultView: 'timelineWeek',
+		resources: [
+			// resource data...
+		]
+		events: [
+			{
+				title: 'my event',
+				start: '2016-01-01',
+				resourceId: 'b' // start out in resource 'b'
+				constraint: {
+					resourceIds: [ 'a', 'b', 'c' ] // constrain dragging to these
+				}
+			}
+		]
+	});
+
+The `resourceId` and `resourceIds` (an array) properties are available to you.
+
+You can also apply the same technique to an [Event Source](../event_data/Event_Source_Object/)'s
+`constraint` setting as well as the master [eventConstraint](../event_ui/eventConstraint/) setting.

@@ -138,6 +138,17 @@ Overrides the master [eventDurationEditable](../event_ui/eventDurationEditable) 
 <!-- ------------------- -->
 <tr>
 <th>
+resourceEditable
+</th>
+<td markdown='block'>
+`true` or `false`. Optional.
+
+Overrides the master [eventResourceEditable](../resource_events/eventResourceEditable) option for this single event.
+</td>
+</tr>
+<!-- ------------------- -->
+<tr>
+<th>
 rendering
 </th>
 <td markdown='block'>
