@@ -786,14 +786,24 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes if the given event is allowed to be dragged by the user
 	isEventDraggable: function(event) {
-		var source = event.source || {};
+		return this.isEventStartEditable(event);
+	},
 
+
+	isEventStartEditable: function(event) {
 		return firstDefined(
 			event.startEditable,
-			source.startEditable,
+			(event.source || {}).startEditable,
 			this.opt('eventStartEditable'),
+			this.isEventGenerallyEditable(event)
+		);
+	},
+
+
+	isEventGenerallyEditable: function(event) {
+		return firstDefined(
 			event.editable,
-			source.editable,
+			(event.source || {}).editable,
 			this.opt('editable')
 		);
 	},
