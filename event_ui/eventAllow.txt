@@ -10,7 +10,10 @@ function(dropInfo, draggedEvent)
 
 After it has been determined that the [eventOverlap]() and [eventConstraint]()
 settings will allow the user to drop an event at a given position on the calendar,
-the `eventAllow` callback will be called. If specified, it must return either `true` or `false`
+the `eventAllow` callback will be called.
+It will be called for every new potential droppable position as the user is dragging.
+
+If specified, it must return either `true` or `false`
 as to whether the calendar will allow the given event (`draggedEvent`) to be dropped
 at the given location (`dropInfo`).
 
