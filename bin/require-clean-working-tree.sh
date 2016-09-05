@@ -2,15 +2,18 @@
 
 # http://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommited-changes
 
+# optional argument
+working_subdir="$1"
+
 # Update the index
 git update-index -q --ignore-submodules --refresh
 err=0
 
 # Disallow unstaged changes in the working tree
-if ! git diff-files --quiet --ignore-submodules --
+if ! git diff-files --quiet --ignore-submodules -- "$working_subdir"
 then
 	echo >&2 "You have unstaged changes."
-	git diff-files --name-status -r --ignore-submodules -- >&2
+	git diff-files --name-status -r --ignore-submodules -- "$working_subdir" >&2
 	err=1
 fi
 
