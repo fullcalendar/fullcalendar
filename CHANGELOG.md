@@ -1,6 +1,6 @@
 
-v3.0.0-beta (2016-08-14)
-------------------------
+v3.0.0 (2016-09-04)
+-------------------
 
 Features:
 - List View (#560)
@@ -18,9 +18,6 @@ Features:
 - Macedonian locale (#2739)
 - Malay locale
 
-Bugfixes:
-- `$.fullCalendar.version` incorrect (#3292)
-
 Breaking Changes:
 - IE8 support dropped
 - jQuery: minimum support raised to v2.0.0
@@ -37,6 +34,9 @@ Breaking Changes:
 - removed `weekMode` setting
 - removed `axisFormat` setting
 - DOM structure of month/basic-view day cell numbers changed
+
+Bugfixes:
+- `$.fullCalendar.version` incorrect (#3292)
 
 Build System:
 - using gulp instead of grunt (faster)
