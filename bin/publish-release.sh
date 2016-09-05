@@ -19,10 +19,10 @@ fi
 git push
 git push origin "v$version"
 
+success=0
+
 # save reference to current branch
 current_branch=$(git symbolic-ref --quiet --short HEAD)
-
-success=0
 
 # temporarily checkout the tag's commit, publish to NPM
 git checkout --quiet "v$version"

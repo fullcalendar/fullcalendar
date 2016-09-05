@@ -47,7 +47,7 @@ then
 	git checkout -- *.json
 else
 	# save reference to current branch
-	orig_ref=$(git symbolic-ref --quiet HEAD)
+	current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 	# make a tagged detached commit of the dist files.
 	# no-verify (-n) avoids commit hooks.
@@ -63,10 +63,7 @@ else
 	fi
 
 	# return to branch
-	git symbolic-ref HEAD "$orig_ref"
-
-	# unstage ignored generated files or files leftover from failed git add's
-	git reset
+	git checkout --quiet "$current_branch"
 fi
 
 if [[ "$success" = "1" ]]
