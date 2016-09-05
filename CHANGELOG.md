@@ -12,6 +12,9 @@ Features:
 	- `navLinks`
 	- `navLinkDayClick`
 	- `navLinkWeekClick`
+- Programmatically allow/disallow user interactions:
+	- `eventAllow` (#2740)
+	- `selectAllow` (#2511)
 - Option to display week numbers in cells (#3024)
 	- `weekNumbersWithinDays` (set to `true` to activate)
 - When week calc is ISO, default first day-of-week to Monday (#3255)
