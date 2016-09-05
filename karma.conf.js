@@ -10,6 +10,7 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
+			'node_modules/native-promise-only/lib/npo.src.js',
 			'node_modules/moment/moment.js',
 			'node_modules/jquery/dist/jquery.js',
 			'node_modules/components-jqueryui/jquery-ui.js',
