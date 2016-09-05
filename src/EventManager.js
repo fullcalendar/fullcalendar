@@ -1211,7 +1211,7 @@ Calendar.prototype.isSpanAllowed = function(span, constraint, overlap, event) {
 	}
 
 	return true;
-}
+};
 
 
 // Given an event input from the API, produces an array of event objects. Possible event inputs:
