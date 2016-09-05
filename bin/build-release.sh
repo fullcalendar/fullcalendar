@@ -8,11 +8,17 @@ cd "`dirname $0`/.."
 
 ./bin/require-clean-working-tree.sh
 
-read -p "Have you already updated the changelog? (y/n): " updated_changelog
+read -p "Have you already updated the changelog? (y/N): " updated_changelog
 if [[ "$updated_changelog" != "y" ]]
 then
 	echo "Go do that!"
 	exit 1
+fi
+
+read -p "Would you like to update dates in the demos? (y/N): " update_demos
+if [[ "$update_demos" == "y" ]]
+then
+	./bin/update-demo-dates.sh
 fi
 
 read -p "Enter the new version number with no 'v' (for example '1.0.1'): " version
