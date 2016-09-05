@@ -19,10 +19,25 @@ fi
 git push
 git push origin "v$version"
 
-# temporarily checkout the tag's commit for publishing to NPM
+# save reference to current branch
 current_branch=$(git symbolic-ref --quiet --short HEAD)
+
+success=0
+
+# temporarily checkout the tag's commit, publish to NPM
 git checkout --quiet "v$version"
-npm publish
+if npm publish
+then
+	success=1
+fi
+
+# return to branch
 git checkout --quiet "$current_branch"
 
-echo "DONE"
+if [[ "$success" = "1" ]]
+then
+	echo "Success."
+else
+	echo "Failure."
+	exit 1
+fi
