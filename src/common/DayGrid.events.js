@@ -114,7 +114,7 @@ DayGrid.mixin({
 		}
 
 		titleHtml =
-			'<span class="fc-title">' +
+			'<span class="fc-title ' + event.titleClass + '">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
 		
@@ -246,7 +246,7 @@ DayGrid.mixin({
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		this.sortEventSegs(segs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
