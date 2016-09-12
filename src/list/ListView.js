@@ -88,8 +88,18 @@ var ListViewGrid = Grid.extend({
 				end: dayEnd
 			});
 			if (seg) {
+				// might have ambig-timed dates. ensure all have times.
+				// TODO: consolidate
+				if (!seg.start.hasTime()) {
+					seg.start.time(0);
+				}
+				if (!seg.end.hasTime()) {
+					seg.end.time(0);
+				}
+
 				segs.push(seg);
 			}
+
 			dayStart = dayEnd;
 		}
 
@@ -203,13 +213,20 @@ var ListViewGrid = Grid.extend({
 		var url = event.url;
 		var timeHtml;
 
-		if (!seg.start.hasTime()) {
-			if (this.displayEventTime) {
+		if (event.allDay) {
+			timeHtml = view.getAllDayHtml();
+		}
+		else if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day
+			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
+				timeHtml = htmlEscape(this.getEventTimeText(seg));
+			}
+			else { // inner segment that lasts the whole day
 				timeHtml = view.getAllDayHtml();
 			}
 		}
 		else {
-			timeHtml = htmlEscape(this.getEventTimeText(event)); // might return empty
+			// Display the normal time text for the *event's* times
+			timeHtml = htmlEscape(this.getEventTimeText(event));
 		}
 
 		if (url) {
@@ -217,9 +234,9 @@ var ListViewGrid = Grid.extend({
 		}
 
 		return '<tr class="' + classes.join(' ') + '">' +
-			(timeHtml ?
+			(this.displayEventTime ?
 				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
-					timeHtml +
+					(timeHtml || '') +
 				'</td>' :
 				'') +
 			'<td class="fc-list-item-marker ' + view.widgetContentClass + '">' +
