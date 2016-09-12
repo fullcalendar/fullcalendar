@@ -2,6 +2,50 @@
 // TODO: consolidate with scheduler
 
 
+function dragTimeGridEvent(eventEl, dropDate) {
+	return new Promise(function(resolve) {
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var modifiedEvent = null;
+
+		calendar.on('eventDragStop', function() {
+			setTimeout(function() { // wait for eventDrop to be called
+				resolve(modifiedEvent);
+			});
+		});
+		calendar.on('eventDrop', function(event) {
+			modifiedEvent = event;
+		});
+
+		eventEl.simulate('drag', {
+			localPoint: { left: '50%', top: 0 },
+			end: getTimeGridPoint(dropDate),
+		});
+	});
+}
+
+
+function selectTimeGrid(start, inclusiveEnd) {
+	return new Promise(function(resolve) {
+		var calendar = $('#cal').fullCalendar('getCalendar');
+		var selectInfo = null;
+
+		calendar.on('select', function(start, end) {
+			selectInfo = { start: start, end: end };
+		});
+
+		getTimeGridDayEls(start).simulate('drag', {
+			point: getTimeGridPoint(start),
+			end: getTimeGridPoint(inclusiveEnd),
+			onRelease: function() {
+				setTimeout(function() { // wait for eventDrop to be called
+					resolve(selectInfo);
+				});
+			}
+		});
+	});
+}
+
+
 function getTimeGridPoint(date) {
 	var date = $.fullCalendar.moment.parseZone(date);
 	var top = getTimeGridTop(date.time());

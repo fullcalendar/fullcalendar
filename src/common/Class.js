@@ -48,7 +48,6 @@ function extendClass(superClass, members) {
 
 	// copy each member variable/method onto the the subclass's prototype
 	copyOwnProps(members, subClass.prototype);
-	copyNativeMethods(members, subClass.prototype); // hack for IE8
 
 	// copy over all class variables/methods to the subclass, such as `extend` and `mixin`
 	copyOwnProps(superClass, subClass);
@@ -58,5 +57,5 @@ function extendClass(superClass, members) {
 
 
 function mixIntoClass(theClass, members) {
-	copyOwnProps(members, theClass.prototype); // TODO: copyNativeMethods?
+	copyOwnProps(members, theClass.prototype);
 }

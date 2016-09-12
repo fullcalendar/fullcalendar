@@ -1,0 +1,12 @@
+
+$.fullCalendar.locale("lb", {
+	buttonText: {
+		month: "Mount",
+		week: "Woch",
+		day: "Dag",
+		list: "Terminiwwersiicht"
+	},
+	allDayText: "Ganzen Dag",
+	eventLimitText: "méi",
+	noEventsMessage: "Nee Evenementer ze affichéieren"
+});

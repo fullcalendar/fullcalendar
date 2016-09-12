@@ -1,7 +1,7 @@
 describe('month name', function() {
   var settings = {};
   var referenceDate = '2014-01-01'; // The day the world is hung-over
-  var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
+  var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
 
   beforeEach(function() {
     affix('#cal');
@@ -11,7 +11,7 @@ describe('month name', function() {
   });
 
   afterEach(function() {
-    moment.lang('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global locale
   });
 
   [ 'month', 'agendaDay', 'basicDay' ].forEach(function(viewClass, index, viewClasses) {
@@ -20,10 +20,10 @@ describe('month name', function() {
         settings.defaultView = viewClass;
       });
 
-      describe('when lang is default', function() {
+      describe('when locale is default', function() {
         beforeEach(function() {
-          settings.lang = 'en';
-          moment.lang('en');
+          settings.locale = 'en';
+          moment.locale('en');
         });
 
         moment.months().forEach(function(month, index, months) {
@@ -39,22 +39,22 @@ describe('month name', function() {
         });
       });
 
-      languages.forEach(function(language, index, languages) {
-        describe('when lang is ' + language, function() {
+      locales.forEach(function(locale, index, locales) {
+        describe('when locale is ' + locale, function() {
           beforeEach(function() {
-            settings.lang = language;
-            moment.lang(language);
+            settings.locale = locale;
+            moment.locale(locale);
           });
 
           moment.months().forEach(function(month, index, months) { // `month` will always be English
             it('should be the translated name for ' + month, function(done) {
-              var langMonths = moment.months();
-              var langMonth = langMonths[index];
+              var localeMonths = moment.months();
+              var localeMonth = localeMonths[index];
 
               settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months');
               settings.eventAfterAllRender = function() {
                 if (viewClass == 'month') { // with month view check for occurence of the monthname in the title
-                  expect($('.fc-toolbar h2')).toContainText(langMonth);
+                  expect($('.fc-toolbar h2')).toContainText(localeMonth);
                 }
                 else { // with day views ensure that title contains the properly formatted phrase
                   expect($('.fc-toolbar h2')).toHaveText(settings.defaultDate.format('LL'));

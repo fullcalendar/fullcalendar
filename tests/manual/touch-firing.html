@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<script src='../../node_modules/jquery/dist/jquery.js'></script>
+<script>
+
+	$(function() {
+
+		$(document)
+			.on('mousedown', function(ev) {
+				console.log('mousedown'); //, ev.target);
+			})
+			.on('mouseup', function(ev) {
+				console.log('mouseup'); //, ev.target);
+			})
+			.on('mousemove', function(ev) {
+				console.log('mousemove'); //, ev.target);
+			})
+			.on('mouseover', function(ev) {
+				console.log('mouseover'); //, ev.target);
+			})
+			.on('mouseout', function(ev) {
+				console.log('mouseout'); //, ev.target);
+			})
+			.on('click', function(ev) {
+				console.log('click'); //, ev.target);
+			})
+			.on('touchstart', function(ev) {
+				console.log('touchstart'); //, ev.target);
+			})
+			.on('touchend', function(ev) {
+				console.log('touchend'); //, ev.target);
+			})
+			.on('touchmove', function(ev) {
+				console.log('touchmove'); //, ev.target);
+				//ev.preventDefault();
+			});
+
+		$('#scroll')
+			.on('scroll', function(ev) {
+				console.log('scroll'); //, ev.target);
+			});
+
+		/*
+
+		tap:
+		+touchstart
+		(delay)
+		+touchend
+		(delay)
+		+mousemove
+		+mousedown
+		+mouseup
+		+click
+
+		*/
+
+	});
+
+</script>
+<style>
+
+</style>
+</head>
+<body>
+
+	<div id='scroll' style='width:400px;height:400px;overflow:auto;border:1px solid #000;float:left'>
+		<div style='width:800px;height:800px'>
+			test
+		</div>
+	</div>
+
+	<a href='#' style='float:left;margin-left:1em'>this is a link</a>
+
+</body>
+</html>

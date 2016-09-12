@@ -74,10 +74,10 @@ describe('timezone', function() {
 		expect(allDayEvent.start.format()).toEqual('2014-05-02');
 		expect(timedEvent.start.hasZone()).toEqual(true);
 		expect(timedEvent.start.hasTime()).toEqual(true);
-		expect(timedEvent.start.zone()).toEqual(new Date(2014, 4, 10, 12).getTimezoneOffset());
+		expect(timedEvent.start.utcOffset()).toEqual(-new Date(2014, 4, 10, 12).getTimezoneOffset());
 		expect(zonedEvent.start.hasZone()).toEqual(true);
 		expect(zonedEvent.start.hasTime()).toEqual(true);
-		expect(zonedEvent.start.zone()).toEqual(new Date('Sat May 10 2014 14:00:00 GMT+1100').getTimezoneOffset());
+		expect(zonedEvent.start.utcOffset()).toEqual(-new Date('Sat May 10 2014 14:00:00 GMT+1100').getTimezoneOffset());
 	}
 
 

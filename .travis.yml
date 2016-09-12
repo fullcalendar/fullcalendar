@@ -5,13 +5,9 @@ node_js:
 cache:
   directories:
   - node_modules
-  - lib
 
 env:
   - CMD=test
   - CMD=lint
-
-before_script:
-  - bower install
 
 script: npm run $CMD

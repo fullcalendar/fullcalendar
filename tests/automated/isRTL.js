@@ -1,9 +1,9 @@
 describe('isRTL', function() {
 
-	it('has it\'s default value computed differently based off of the language', function() {
+	it('has it\'s default value computed differently based off of the locale', function() {
 		affix('#cal');
 		$('#cal').fullCalendar({
-			lang: 'ar' // Arabic is RTL
+			locale: 'ar' // Arabic is RTL
 		});
 		var isRTL = $('#cal').fullCalendar('option', 'isRTL');
 		expect(isRTL).toEqual(true);

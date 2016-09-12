@@ -77,7 +77,7 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	date1 = FC.moment.parseZone(date1);
 	date2 = FC.moment.parseZone(date2);
 
-	localeData = (date1.localeData || date1.lang).call(date1); // works with moment-pre-2.8
+	localeData = date1.localeData();
 
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
 	formatStr = localeData.longDateFormat(formatStr) || formatStr;

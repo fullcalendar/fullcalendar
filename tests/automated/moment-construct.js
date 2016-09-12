@@ -1,4 +1,4 @@
-(function() {
+describe('moment constructor', function() {
 
 describe('$.fullCalendar.moment', function() {
 	testDefaultProcessing($.fullCalendar.moment);
@@ -63,7 +63,7 @@ function testDefaultProcessing(construct) {
 			var simpleMoment = moment('2014-06-08T10:00:00+0130');
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(simpleMoment.zone());
+			expect(mom.utcOffset()).toBe(simpleMoment.utcOffset());
 		});
 
 		it('parses as local when no zone', function() {
@@ -72,7 +72,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 10, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 
 		it('accepts an ambiguous time', function() {
@@ -80,7 +80,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -88,7 +88,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -98,7 +98,7 @@ function testDefaultProcessing(construct) {
 		expect(mom.toArray()).toEqual([ 1995, 11, 25, 0, 0, 0, 0 ]);
 		expect(mom.hasZone()).toBe(true);
 		expect(mom.hasTime()).toBe(true);
-		expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 	});
 
 	it('is local when given no arguments', function() {
@@ -106,7 +106,7 @@ function testDefaultProcessing(construct) {
 		var dateEquiv = new Date();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 	});
 
 	it('is local when given a native Date', function() {
@@ -114,7 +114,7 @@ function testDefaultProcessing(construct) {
 		var mom = construct(date);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(date.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-date.getTimezoneOffset());
 	});
 
 	describe('when given an array', function() {
@@ -126,7 +126,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 
 		it('is local and has a time even when no hours/minutes/seconds', function() {
@@ -136,7 +136,7 @@ function testDefaultProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 	});
 
@@ -148,7 +148,7 @@ function testDefaultProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -157,7 +157,7 @@ function testDefaultProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 	});
 
@@ -174,7 +174,7 @@ function testDefaultProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(localMoment.zone());
+				expect(newMoment.utcOffset()).toBe(localMoment.utcOffset());
 			});
 
 			it('remains UTC', function() {
@@ -183,7 +183,7 @@ function testDefaultProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(0);
+				expect(newMoment.utcOffset()).toBe(0);
 			});
 
 			it('remains in a custom timezone', function() {
@@ -192,7 +192,7 @@ function testDefaultProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(-780);
+				expect(newMoment.utcOffset()).toBe(780);
 			});
 
 			it('produces a new moment that is in no way bound to the old', function() {
@@ -216,7 +216,7 @@ function testForcedLocalProcessing(construct) {
 			var simpleMoment = moment('2014-06-08T10:00:00+0130');
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(simpleMoment.zone());
+			expect(mom.utcOffset()).toBe(simpleMoment.utcOffset());
 		});
 
 		it('parses as local when no zone', function() {
@@ -225,7 +225,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 10, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 
 		it('accepts an ambiguous time', function() {
@@ -233,7 +233,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -241,7 +241,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -251,7 +251,7 @@ function testForcedLocalProcessing(construct) {
 		expect(mom.toArray()).toEqual([ 1995, 11, 25, 0, 0, 0, 0 ]);
 		expect(mom.hasZone()).toBe(true);
 		expect(mom.hasTime()).toBe(true);
-		expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 	});
 
 	it('is local when given no arguments', function() {
@@ -259,7 +259,7 @@ function testForcedLocalProcessing(construct) {
 		var dateEquiv = new Date();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 	});
 
 	it('is local when given a native Date', function() {
@@ -267,7 +267,7 @@ function testForcedLocalProcessing(construct) {
 		var mom = construct(date);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(date.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-date.getTimezoneOffset());
 	});
 
 	describe('when given an array', function() {
@@ -279,7 +279,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 
 		it('is local and has a time even when no hours/minutes/seconds', function() {
@@ -289,7 +289,7 @@ function testForcedLocalProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 	});
 
@@ -302,7 +302,7 @@ function testForcedLocalProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(true);
-			expect(newMoment.zone()).toBe(dateEquiv.getTimezoneOffset());
+			expect(newMoment.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -311,7 +311,7 @@ function testForcedLocalProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 	});
 
@@ -328,7 +328,7 @@ function testForcedLocalProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(localMoment.zone());
+				expect(newMoment.utcOffset()).toBe(localMoment.utcOffset());
 			});
 
 			it('converts to local when UTC', function() {
@@ -338,7 +338,7 @@ function testForcedLocalProcessing(construct) {
 				expect(+newMoment).toBe(+dateEquiv);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(dateEquiv.getTimezoneOffset());
+				expect(newMoment.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 			});
 
 			it('converts to local when in a custom zone', function() {
@@ -348,7 +348,7 @@ function testForcedLocalProcessing(construct) {
 				expect(+newMoment).toBe(+dateEquiv);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(dateEquiv.getTimezoneOffset());
+				expect(newMoment.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 			});
 
 			it('produces a new moment that is in no way bound to the old', function() {
@@ -371,7 +371,7 @@ function testForcedUTCProcessing(construct) {
 			var mom = construct('2014-06-08T10:00:00+0130');
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('parses as UTC when no zone', function() {
@@ -379,7 +379,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 10, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('accepts an ambiguous time', function() {
@@ -387,7 +387,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -395,7 +395,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -404,14 +404,14 @@ function testForcedUTCProcessing(construct) {
 		expect(mom.toArray()).toEqual([ 1995, 11, 25, 0, 0, 0, 0 ]);
 		expect(mom.hasZone()).toBe(true);
 		expect(mom.hasTime()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('is UTC when given no arguments', function() {
 		var mom = construct();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('is UTC when given a native Date', function() {
@@ -419,7 +419,7 @@ function testForcedUTCProcessing(construct) {
 		var mom = construct(date);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	describe('when given an array', function() {
@@ -430,7 +430,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('is UTC and has a time even when no hours/minutes/seconds', function() {
@@ -439,7 +439,7 @@ function testForcedUTCProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -451,7 +451,7 @@ function testForcedUTCProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(true);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -460,7 +460,7 @@ function testForcedUTCProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 	});
 
@@ -477,7 +477,7 @@ function testForcedUTCProcessing(construct) {
 				expect(+newMoment).toBe(+localMoment); // same point in time
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(0);
+				expect(newMoment.utcOffset()).toBe(0);
 			});
 
 			it('remains UTC', function() {
@@ -486,7 +486,7 @@ function testForcedUTCProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(0);
+				expect(newMoment.utcOffset()).toBe(0);
 			});
 
 			it('converts to UTC when in a custom zone', function() {
@@ -495,7 +495,7 @@ function testForcedUTCProcessing(construct) {
 				expect(+newMoment).toBe(+tzMoment); // same point in time
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(0);
+				expect(newMoment.utcOffset()).toBe(0);
 			});
 
 			it('produces a new moment that is in no way bound to the old', function() {
@@ -519,7 +519,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(true);
-			expect(mom.zone()).toBe(-90);
+			expect(mom.utcOffset()).toBe(90);
 		});
 
 		it('accepts an ambiguous zone', function() {
@@ -527,7 +527,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('accepts an ambiguous time', function() {
@@ -535,7 +535,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('assumes first-of-month and ambiguous time when no date-of-month', function() {
@@ -543,7 +543,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 1, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(false);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -552,7 +552,7 @@ function testLiteralProcessing(construct) {
 		expect(mom.toArray()).toEqual([ 1995, 11, 25, 0, 0, 0, 0 ]);
 		expect(mom.hasZone()).toBe(true);
 		expect(mom.hasTime()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('is local when given no arguments', function() {
@@ -560,7 +560,7 @@ function testLiteralProcessing(construct) {
 		var dateEquiv = new Date();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(dateEquiv.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-dateEquiv.getTimezoneOffset());
 	});
 
 	it('is local when given a native Date', function() {
@@ -568,7 +568,7 @@ function testLiteralProcessing(construct) {
 		var mom = construct(date);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(date.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-date.getTimezoneOffset());
 	});
 
 	describe('when given an array', function() {
@@ -579,7 +579,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 11, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 
 		it('is ambiguously-zoned and has a time even when no hours/minutes/seconds', function() {
@@ -588,7 +588,7 @@ function testLiteralProcessing(construct) {
 			expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 			expect(mom.hasTime()).toBe(true);
 			expect(mom.hasZone()).toBe(false);
-			expect(mom.zone()).toBe(0);
+			expect(mom.utcOffset()).toBe(0);
 		});
 	});
 
@@ -600,7 +600,7 @@ function testLiteralProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(true);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 
 		it('remains ambiguously-timed', function() {
@@ -609,7 +609,7 @@ function testLiteralProcessing(construct) {
 			expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 			expect(newMoment.hasTime()).toBe(false);
 			expect(newMoment.hasZone()).toBe(false);
-			expect(newMoment.zone()).toBe(0);
+			expect(newMoment.utcOffset()).toBe(0);
 		});
 	});
 
@@ -626,7 +626,7 @@ function testLiteralProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(localMoment.zone());
+				expect(newMoment.utcOffset()).toBe(localMoment.utcOffset());
 			});
 
 			it('remains UTC', function() {
@@ -635,7 +635,7 @@ function testLiteralProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(0);
+				expect(newMoment.utcOffset()).toBe(0);
 			});
 
 			it('remains in a custom timezone', function() {
@@ -644,7 +644,7 @@ function testLiteralProcessing(construct) {
 				expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ]);
 				expect(newMoment.hasTime()).toBe(true);
 				expect(newMoment.hasZone()).toBe(true);
-				expect(newMoment.zone()).toBe(-780);
+				expect(newMoment.utcOffset()).toBe(780);
 			});
 
 			it('produces a new moment that is in no way bound to the old', function() {
@@ -660,4 +660,4 @@ function testLiteralProcessing(construct) {
 	});
 }
 
-})();
+});

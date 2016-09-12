@@ -48,12 +48,12 @@ describe('titleFormat', function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
                 titleRangeSeparator: ' - ',
-                titleFormat: {
-                    month: 'YYYY, MMMM',
-                    basicWeek: 'D M YYYY',
-                    agendaWeek: 'D, M, YYYY',
-                    basicDay: 'dddd MMMM D YYYY',
-                    agendaDay: 'dddd, MMMM, D, YYYY'
+                views: {
+                    month: { titleFormat: 'YYYY, MMMM' },
+                    basicWeek: { titleFormat: 'D M YYYY' },
+                    agendaWeek: { titleFormat: 'D, M, YYYY' },
+                    basicDay: { titleFormat: 'dddd MMMM D YYYY' },
+                    agendaDay: { titleFormat: 'dddd, MMMM, D, YYYY' }
                 }
             });
         });
@@ -69,7 +69,7 @@ describe('titleFormat', function() {
         });
     });
 
-    describe('when default and language is French', function() {
+    describe('when default and locale is French', function() {
 
         var viewWithFormat = [
             { view: 'month', expected: 'juin 2014' },
@@ -83,7 +83,7 @@ describe('titleFormat', function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-06-12',
                 titleRangeSeparator: ' - ',
-                lang: 'fr'
+                locale: 'fr'
             });
         });
 

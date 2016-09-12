@@ -10,7 +10,7 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = false
 
-[{tests/,}lib/**]
+[tests/]
 indent_style = ignore
 end_of_line = ignore
 insert_final_newline = ignore

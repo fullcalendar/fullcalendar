@@ -6,10 +6,7 @@
 var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	options: null,
-
-	// for IE8 bug-fighting behavior
 	subjectEl: null,
-	subjectHref: null,
 
 	// coordinates of the initial mousedown
 	originX: null,
@@ -200,7 +197,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 	handleDragStart: function(ev) {
 		this.trigger('dragStart', ev);
-		this.initHrefHack();
 	},
 
 
@@ -240,7 +236,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 	handleDragEnd: function(ev) {
 		this.trigger('dragEnd', ev);
-		this.destroyHrefHack();
 	},
 
 
@@ -313,33 +308,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 		if (!this.isDragging) {
 			this.endInteraction(ev, true); // isCancelled=true
 		}
-	},
-
-
-	// <A> HREF Hack
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	initHrefHack: function() {
-		var subjectEl = this.subjectEl;
-
-		// remove a mousedown'd <a>'s href so it is not visited (IE8 bug)
-		if ((this.subjectHref = subjectEl ? subjectEl.attr('href') : null)) {
-			subjectEl.removeAttr('href');
-		}
-	},
-
-
-	destroyHrefHack: function() {
-		var subjectEl = this.subjectEl;
-		var subjectHref = this.subjectHref;
-
-		// restore a mousedown'd <a>'s href (for IE8 bug)
-		setTimeout(function() { // must be outside of the click's execution
-			if (subjectHref) {
-				subjectEl.attr('href', subjectHref);
-			}
-		}, 0);
 	},
 
 

@@ -123,7 +123,7 @@ function undistributeHeight(els) {
 function matchCellWidths(els) {
 	var maxInnerWidth = 0;
 
-	els.find('> span').each(function(i, innerEl) {
+	els.find('> *').each(function(i, innerEl) {
 		var innerWidth = $(innerEl).outerWidth();
 		if (innerWidth > maxInnerWidth) {
 			maxInnerWidth = innerWidth;
@@ -504,7 +504,8 @@ function flexibleCompare(a, b) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-// Computes the intersection of the two ranges. Returns undefined if no intersection.
+// Computes the intersection of the two ranges. Will return fresh date clones in a range.
+// Returns undefined if no intersection.
 // Expects all dates to be normalized to the same timezone beforehand.
 // TODO: move to date section?
 function intersectRanges(subjectRange, constraintRange) {
@@ -784,22 +785,6 @@ function copyOwnProps(src, dest) {
 }
 
 
-// Copies over certain methods with the same names as Object.prototype methods. Overcomes an IE<=8 bug:
-// https://developer.mozilla.org/en-US/docs/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-function copyNativeMethods(src, dest) {
-	var names = [ 'constructor', 'toString', 'valueOf' ];
-	var i, name;
-
-	for (i = 0; i < names.length; i++) {
-		name = names[i];
-
-		if (src[name] !== Object.prototype[name]) {
-			dest[name] = src[name];
-		}
-	}
-}
-
-
 function hasOwnProp(obj, name) {
 	return hasOwnPropMethod.call(obj, name);
 }
@@ -862,6 +847,21 @@ function cssToStr(cssProps) {
 	});
 
 	return statements.join(';');
+}
+
+
+// Given an object hash of HTML attribute names to values,
+// generates a string that can be injected between < > in HTML
+function attrsToStr(attrs) {
+	var parts = [];
+
+	$.each(attrs, function(name, val) {
+		if (val != null) {
+			parts.push(name + '="' + htmlEscape(val) + '"');
+		}
+	});
+
+	return parts.join(' ');
 }
 
 
