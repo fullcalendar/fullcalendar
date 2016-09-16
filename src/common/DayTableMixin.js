@@ -12,6 +12,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	rowCnt: null,
 	colCnt: null,
 	colHeadFormat: null,
+	colHeadFormatRaw: false,
 
 
 	// Populates internal variables used for date calculation and rendering
@@ -56,7 +57,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		this.dayIndices = dayIndices;
 		this.daysPerRow = daysPerRow;
 		this.rowCnt = rowCnt;
-		
+
 		this.updateDayTableCols();
 	},
 
@@ -65,6 +66,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
 		this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		this.colHeadFormatRaw = this.view.opt('columnFormatRaw') || false;
 	},
 
 
@@ -295,8 +297,10 @@ var DayTableMixin = FC.DayTableMixin = {
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
 
+		var todayClass = date.isSame(view.calendar.getNow(), 'day') ? ' fc-today' : '';
+
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '"' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass + todayClass + ' fc-' + dayIDs[date.day()] + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
@@ -310,7 +314,7 @@ var DayTableMixin = FC.DayTableMixin = {
 				// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
 				view.buildGotoAnchorHtml(
 					{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
-					htmlEscape(date.format(this.colHeadFormat)) // inner HTML
+					this.colHeadFormatRaw ? date.format(this.colHeadFormat) : htmlEscape(date.format(this.colHeadFormat)) // inner HTML
 				) +
 			'</th>';
 	},
