@@ -186,9 +186,30 @@ describe('ListView rendering', function() {
 			});
 		});
 
-		// does not currently respect it. probably better this way.
-		/*
-		it('respects nextDayThreshold', function() {
+		it('renders same days when equal to nextDayThreshold', function() {
+			options.nextDayThreshold = '09:00';
+			options.events = [
+				{
+					title: 'event 1',
+					start: '2016-08-15T07:00',
+					end: '2016-08-17T09:00'
+				}
+			];
+
+			$('#cal').fullCalendar(options);
+
+			var events = getEventInfo();
+
+			expect(events.length).toBe(3);
+			expect(events[0].title).toBe('event 1');
+			expect(events[0].timeText).toBe('7:00am - 12:00am');
+			expect(events[1].title).toBe('event 1');
+			expect(events[1].timeText).toBe('all-day');
+			expect(events[2].title).toBe('event 1');
+			expect(events[2].timeText).toBe('12:00am - 9:00am');
+		});
+
+		it('renders fewer days when before nextDayThreshold', function() {
 			options.nextDayThreshold = '09:00';
 			options.events = [
 				{
@@ -206,9 +227,8 @@ describe('ListView rendering', function() {
 			expect(events[0].title).toBe('event 1');
 			expect(events[0].timeText).toBe('7:00am - 12:00am');
 			expect(events[1].title).toBe('event 1');
-			expect(events[1].timeText).toBe('all-day');
+			expect(events[1].timeText).toBe('12:00am - 8:00am');
 		});
-		*/
 	});
 
 	describe('when an event has no title', function() {

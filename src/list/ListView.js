@@ -76,31 +76,30 @@ var ListViewGrid = Grid.extend({
 	// slices by day
 	spanToSegs: function(span) {
 		var view = this.view;
-		var dayStart = view.start.clone();
-		var dayEnd;
+		var dayStart = view.start.clone().time(0); // timed, so segs get times!
 		var seg;
 		var segs = [];
 
 		while (dayStart < view.end) {
-			dayEnd = dayStart.clone().add(1, 'day');
+
 			seg = intersectRanges(span, {
 				start: dayStart,
-				end: dayEnd
+				end: dayStart.clone().add(1, 'day')
 			});
-			if (seg) {
-				// might have ambig-timed dates. ensure all have times.
-				// TODO: consolidate
-				if (!seg.start.hasTime()) {
-					seg.start.time(0);
-				}
-				if (!seg.end.hasTime()) {
-					seg.end.time(0);
-				}
 
+			if (seg) {
 				segs.push(seg);
 			}
 
-			dayStart = dayEnd;
+			dayStart.add(1, 'day');
+
+			// detect when span won't go fully into the next day,
+			// and mutate the latest seg to the be the end.
+			if (span.end.hasTime() && span.end < dayStart.clone().add(this.view.nextDayThreshold)) {
+				seg.end = span.end.clone();
+				seg.isEnd = true;
+				break;
+			}
 		}
 
 		return segs;
