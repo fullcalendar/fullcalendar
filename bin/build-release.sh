@@ -29,7 +29,7 @@ then
 fi
 
 success=0
-if ! {
+if {
 	# make sure deps are as new as possible for bundle
 	npm install && \
 
@@ -43,19 +43,16 @@ if ! {
 	gulp release
 }
 then
-	# failure. discard changes from version bump
-	git checkout -- *.json
-else
 	# save reference to current branch
 	current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 	# make a tagged detached commit of the dist files.
-	# no-verify (-n) avoids commit hooks.
+	# no-verify avoids commit hooks.
 	if {
-		git checkout --detach --quiet && \
+		git checkout --quiet --detach && \
 		git add *.json && \
 		git add -f dist/*.js dist/*.css dist/locale/*.js && \
-		git commit -n -e -m "version $version" && \
+		git commit --quiet --no-verify -e -m "version $version" && \
 		git tag -a "v$version" -m "version $version"
 	}
 	then
@@ -66,10 +63,17 @@ else
 	git checkout --quiet "$current_branch"
 fi
 
-if [[ "$success" = "1" ]]
+if [[ "$success" == "1" ]]
 then
+	# keep newly generated dist files around
+	git checkout --quiet "v$version" -- dist
+	git reset --quiet -- dist
+
 	echo "Success."
 else
+	# discard changes from version bump
+	git checkout --quiet -- *.json
+
 	echo "Failure."
 	exit 1
 fi
