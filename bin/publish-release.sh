@@ -34,7 +34,7 @@ fi
 # return to branch
 git checkout --quiet "$current_branch"
 
-if [[ "$success" = "1" ]]
+if [[ "$success" == "1" ]]
 then
 	echo "Success."
 else
