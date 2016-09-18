@@ -31,13 +31,13 @@ fi
 success=0
 if {
 	# make sure deps are as new as possible for bundle
-	npm install && \
+	npm install &&
 
 	# ensures stray files stay out of the release
-	gulp clean && \
+	gulp clean &&
 
 	# update package manager json files with version number and release date
-	gulp bump --version=$version && \
+	gulp bump --version=$version &&
 
 	# build all dist files, lint, and run tests
 	gulp release
@@ -49,10 +49,10 @@ then
 	# make a tagged detached commit of the dist files.
 	# no-verify avoids commit hooks.
 	if {
-		git checkout --quiet --detach && \
-		git add *.json && \
-		git add -f dist/*.js dist/*.css dist/locale/*.js && \
-		git commit --quiet --no-verify -e -m "version $version" && \
+		git checkout --quiet --detach &&
+		git add *.json &&
+		git add -f dist/*.js dist/*.css dist/locale/*.js &&
+		git commit --quiet --no-verify -e -m "version $version" &&
 		git tag -a "v$version" -m "version $version"
 	}
 	then
