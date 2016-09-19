@@ -12,8 +12,8 @@ var eventGUID = 1;
 
 function EventManager() { // assumed to be a calendar
 	var t = this;
-	
-	
+
+
 	// exports
 	t.isFetchNeeded = isFetchNeeded;
 	t.fetchEvents = fetchEvents;
@@ -27,17 +27,18 @@ function EventManager() { // assumed to be a calendar
 	t.removeEventSources = removeEventSources;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
+	t.batchRenderEvent = batchRenderEvent;
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.mutateEvent = mutateEvent;
 	t.normalizeEventDates = normalizeEventDates;
 	t.normalizeEventTimes = normalizeEventTimes;
-	
-	
+
+
 	// imports
 	var reportEvents = t.reportEvents;
-	
-	
+
+
 	// locals
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
@@ -55,9 +56,9 @@ function EventManager() { // assumed to be a calendar
 			}
 		}
 	);
-	
-	
-	
+
+
+
 	/* Fetching
 	-----------------------------------------------------------------------------*/
 
@@ -67,8 +68,8 @@ function EventManager() { // assumed to be a calendar
 		return !rangeStart || // nothing has been fetched yet?
 			start < rangeStart || end > rangeEnd; // is part of the new range outside of the old range?
 	}
-	
-	
+
+
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
@@ -168,8 +169,8 @@ function EventManager() { // assumed to be a calendar
 			reportEvents(cache);
 		}
 	}
-	
-	
+
+
 	function _fetchEventSource(source, callback) {
 		var i;
 		var fetchers = FC.sourceFetchers;
@@ -278,9 +279,9 @@ function EventManager() { // assumed to be a calendar
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Sources
 	-----------------------------------------------------------------------------*/
 
@@ -479,9 +480,9 @@ function EventManager() { // assumed to be a calendar
 			return true; // keep
 		});
 	}
-	
-	
-	
+
+
+
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
 
@@ -523,7 +524,7 @@ function EventManager() { // assumed to be a calendar
 		return !/^_|^(id|allDay|start|end)$/.test(name);
 	}
 
-	
+
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
 		var abstractEvent = buildEventFromInput(eventInput);
@@ -552,8 +553,43 @@ function EventManager() { // assumed to be a calendar
 
 		return [];
 	}
-	
-	
+
+
+	// returns the expanded events that were created
+	function batchRenderEvent (eventInput, stick) {
+		var renderedEvents = [];
+		var renderableEvents;
+		var abstractEvent;
+		var i, j, event;
+
+		for(i = 0; i < eventInput.length; i++) {
+			abstractEvent = buildEventFromInput(eventInput[i]);
+
+			if (abstractEvent) { // not false (a valid input)
+				renderableEvents = expandEvent(abstractEvent);
+
+				for (j = 0; j < renderableEvents.length; j++) {
+					event = renderableEvents[j];
+
+					if (!event.source) {
+						if (stick) {
+							stickySource.events.push(event);
+							event.source = stickySource;
+						}
+						cache.push(event);
+					}
+				}
+
+				renderedEvents = renderedEvents.concat(renderableEvents);
+			}
+		}
+
+		reportEvents(cache);
+
+		return renderedEvents;
+	}
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;
@@ -583,7 +619,7 @@ function EventManager() { // assumed to be a calendar
 		reportEvents(cache);
 	}
 
-	
+
 	function clientEvents(filter) {
 		if ($.isFunction(filter)) {
 			return $.grep(cache, filter);
@@ -623,8 +659,8 @@ function EventManager() { // assumed to be a calendar
 		}
 		backupEventDates(event);
 	}
-	
-	
+
+
 	/* Event Normalization
 	-----------------------------------------------------------------------------*/
 
