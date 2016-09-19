@@ -26,6 +26,7 @@ function EventManager() { // assumed to be a calendar
 	t.removeEventSource = removeEventSource;
 	t.removeEventSources = removeEventSources;
 	t.updateEvent = updateEvent;
+	t.batchUpdateEvent = batchUpdateEvent;
 	t.renderEvent = renderEvent;
 	t.batchRenderEvent = batchRenderEvent;
 	t.removeEvents = removeEvents;
@@ -500,6 +501,30 @@ function EventManager() { // assumed to be a calendar
 		}
 
 		mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
+		reportEvents(cache); // reports event modifications (so we can redraw)
+	}
+
+
+	// Only ever called from the externally-facing API
+	function batchUpdateEvent(events) {
+		var event;
+		var i;
+
+		for(i = 0; i < events.length; i++) {
+			event = events[i];
+
+			// massage start/end values, even if date string values
+			event.start = t.moment(event.start);
+			if (event.end) {
+				event.end = t.moment(event.end);
+			}
+			else {
+				event.end = null;
+			}
+
+			mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
+		}
+
 		reportEvents(cache); // reports event modifications (so we can redraw)
 	}
 
