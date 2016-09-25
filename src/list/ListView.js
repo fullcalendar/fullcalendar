@@ -77,6 +77,7 @@ var ListViewGrid = Grid.extend({
 	spanToSegs: function(span) {
 		var view = this.view;
 		var dayStart = view.start.clone().time(0); // timed, so segs get times!
+		var dayIndex = 0;
 		var seg;
 		var segs = [];
 
@@ -88,10 +89,12 @@ var ListViewGrid = Grid.extend({
 			});
 
 			if (seg) {
+				seg.dayIndex = dayIndex;
 				segs.push(seg);
 			}
 
 			dayStart.add(1, 'day');
+			dayIndex++;
 
 			// detect when span won't go fully into the next day,
 			// and mutate the latest seg to the be the end.
@@ -132,11 +135,12 @@ var ListViewGrid = Grid.extend({
 
 		if (!segs.length) {
 			this.renderEmptyMessage();
-			return segs;
 		}
 		else {
-			return this.renderSegList(segs);
+			this.renderSegList(segs);
 		}
+
+		return segs;
 	},
 
 	renderEmptyMessage: function() {
@@ -151,30 +155,47 @@ var ListViewGrid = Grid.extend({
 		);
 	},
 
-	// render the event segments in the view. returns the mutated array.
-	renderSegList: function(segs) {
+	// render the event segments in the view
+	renderSegList: function(allSegs) {
+		var segsByDay = this.groupSegsByDay(allSegs); // sparse array
+		var dayIndex;
+		var daySegs;
+		var i;
 		var tableEl = $('<table class="fc-list-table"><tbody/></table>');
 		var tbodyEl = tableEl.find('tbody');
-		var i, seg;
-		var dayDate;
 
-		this.sortEventSegs(segs);
+		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
+			daySegs = segsByDay[dayIndex];
+			if (daySegs) { // sparse array, so might be undefined
 
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
+				// append a day header
+				tbodyEl.append(this.dayHeaderHtml(
+					this.view.start.clone().add(dayIndex, 'days')
+				));
 
-			// append a day header
-			if (!dayDate || !seg.start.isSame(dayDate, 'day')) {
-				dayDate = seg.start.clone().stripTime();
-				tbodyEl.append(this.dayHeaderHtml(dayDate));
+				this.sortEventSegs(daySegs);
+
+				for (i = 0; i < daySegs.length; i++) {
+					tbodyEl.append(daySegs[i].el); // append event row
+				}
 			}
-
-			tbodyEl.append(seg.el); // append event row
 		}
 
 		this.el.empty().append(tableEl);
+	},
 
-		return segs; // return the sorted list
+	// Returns a sparse array of arrays, segs grouped by their dayIndex
+	groupSegsByDay: function(segs) {
+		var segsByDay = []; // sparse array
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			(segsByDay[seg.dayIndex] || (segsByDay[seg.dayIndex] = []))
+				.push(seg);
+		}
+
+		return segsByDay;
 	},
 
 	// generates the HTML for the day headers that live amongst the event rows
