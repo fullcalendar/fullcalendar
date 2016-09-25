@@ -37,12 +37,12 @@ module.exports = function(config) {
 			//'../fullcalendar-scheduler/dist/scheduler.js',
 			//'../fullcalendar-scheduler/dist/scheduler.css',
 
-			// serve everything in the dist directory, like sourcemaps and the files they reference (in dist/src).
-			// above files take precedence of over this, and will be watched. never cache (always serve from disk).
-			{ pattern: 'dist/**/*', included: false, watched: false, nocache: true },
-
-			// serve assets for 3rd-party libs, like jquery-ui theme images.
-			{ pattern: 'node_modules/**/*', included: false, watched: false, nocache: true },
+			// we want everything in these directories to be served, but not included as script tags:
+			//   dist - for sourcemap files
+			//   src - for source files the sourcemap references
+			//   node_modules - 3rd party lib dependencies, like jquery-ui theme images
+			// (don't let the webserver cache the results)
+			{ pattern: '{dist,src,node_modules}/**/*', included: false, watched: false, nocache: true },
 
 			'tests/automated/*.js'
 		],

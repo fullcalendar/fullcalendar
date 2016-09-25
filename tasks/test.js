@@ -4,8 +4,9 @@ var KarmaServer = require('karma').Server;
 
 var karmaConf = path.join(__dirname, '../karma.conf.js'); // was getting confused with relative URLs
 
-// runs a server, outputs a URL to visit
-gulp.task('test', [ 'modules', 'locale' ], function(done) {
+// runs a server, outputs a URL to visit.
+// we want sourcemaps (modules:dev).
+gulp.task('test', [ 'modules:dev', 'locale' ], function(done) {
 	new KarmaServer({
 		configFile: karmaConf,
 		singleRun: false,
