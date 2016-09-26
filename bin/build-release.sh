@@ -71,6 +71,9 @@ then
 
 	echo "Success."
 else
+	# unstage all dist/ or *.json changes
+	git reset --quiet
+
 	# discard changes from version bump
 	git checkout --quiet -- *.json
 
