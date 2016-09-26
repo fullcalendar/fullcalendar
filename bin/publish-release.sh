@@ -34,6 +34,10 @@ fi
 # return to branch
 git checkout --quiet "$current_branch"
 
+# restore generated dist files
+git checkout --quiet "v$version" -- dist
+git reset --quiet -- dist
+
 if [[ "$success" == "1" ]]
 then
 	echo "Success."
