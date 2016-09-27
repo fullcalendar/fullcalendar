@@ -26,9 +26,9 @@ function EventManager() { // assumed to be a calendar
 	t.removeEventSource = removeEventSource;
 	t.removeEventSources = removeEventSources;
 	t.updateEvent = updateEvent;
-	t.batchUpdateEvent = batchUpdateEvent;
+	t.updateEvents = updateEvents;
 	t.renderEvent = renderEvent;
-	t.batchRenderEvent = batchRenderEvent;
+	t.renderEvents = renderEvents;
 	t.removeEvents = removeEvents;
 	t.clientEvents = clientEvents;
 	t.mutateEvent = mutateEvent;
@@ -490,23 +490,12 @@ function EventManager() { // assumed to be a calendar
 
 	// Only ever called from the externally-facing API
 	function updateEvent(event) {
-
-		// massage start/end values, even if date string values
-		event.start = t.moment(event.start);
-		if (event.end) {
-			event.end = t.moment(event.end);
-		}
-		else {
-			event.end = null;
-		}
-
-		mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
-		reportEvents(cache); // reports event modifications (so we can redraw)
+		updateEvents([event]);
 	}
 
 
 	// Only ever called from the externally-facing API
-	function batchUpdateEvent(events) {
+	function updateEvents(events) {
 		var event;
 		var i;
 
@@ -552,36 +541,12 @@ function EventManager() { // assumed to be a calendar
 
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
-		var abstractEvent = buildEventFromInput(eventInput);
-		var events;
-		var i, event;
-
-		if (abstractEvent) { // not false (a valid input)
-			events = expandEvent(abstractEvent);
-
-			for (i = 0; i < events.length; i++) {
-				event = events[i];
-
-				if (!event.source) {
-					if (stick) {
-						stickySource.events.push(event);
-						event.source = stickySource;
-					}
-					cache.push(event);
-				}
-			}
-
-			reportEvents(cache);
-
-			return events;
-		}
-
-		return [];
+		return renderEvents([eventInput], stick);
 	}
 
 
 	// returns the expanded events that were created
-	function batchRenderEvent (eventInput, stick) {
+	function renderEvents (eventInput, stick) {
 		var renderedEvents = [];
 		var renderableEvents;
 		var abstractEvent;
