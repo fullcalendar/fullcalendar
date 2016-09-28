@@ -16,8 +16,8 @@ describe('footer rendering', function() {
 			};
 			$('#calendar').fullCalendar(options);
 		});
-		it('should append a .fc-footer to the DOM', function() {
-			var footer = $('#calendar .fc-footer');
+		it('should append a .fc-footer-toolbar to the DOM', function() {
+			var footer = $('#calendar .fc-footer-toolbar');
 			expect(footer.length).toBe(1);
 		});
 	});
@@ -30,7 +30,7 @@ describe('footer rendering', function() {
 			$('#calendar').fullCalendar(options);
 		});
 		it('should not have footer table', function() {
-			expect($('.fc-footer')).not.toBeInDOM();
+			expect($('.fc-footer-toolbar')).not.toBeInDOM();
 		});
 	});
 
@@ -43,9 +43,9 @@ describe('footer rendering', function() {
 			}
 		};
 		$('#calendar').fullCalendar(options);
-		expect($('.fc-footer')).toBeInDOM();
+		expect($('.fc-footer-toolbar')).toBeInDOM();
 		$('#calendar').fullCalendar('option', 'footer', false);
-		expect($('.fc-footer')).not.toBeInDOM();
+		expect($('.fc-footer-toolbar')).not.toBeInDOM();
 	});
 
 });

@@ -608,7 +608,7 @@ function Calendar_constructor(element, overrides) {
 
 	function computeHeaderOptions() {
 		return $.extend(
-			{ extraClasses: 'fc-header' },
+			{ extraClasses: 'fc-header-toolbar' },
 			t.options,
 			{ layout: t.options.header });
 	}
@@ -616,7 +616,7 @@ function Calendar_constructor(element, overrides) {
 
 	function computeFooterOptions() {
 		return $.extend(
-			{ extraClasses: 'fc-footer' },
+			{ extraClasses: 'fc-footer-toolbar' },
 			t.options,
 			{ layout: t.options.footer });
 	}
