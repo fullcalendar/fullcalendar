@@ -4,7 +4,6 @@ fcViews.list = {
 	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
 		buttonText: 'list', // text to display for English
-		listTime: true, // show the time column?
 		listDayFormat: 'LL', // like "January 1, 2016"
 		noEventsMessage: 'No events to display'
 	}

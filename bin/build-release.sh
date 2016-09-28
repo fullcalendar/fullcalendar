@@ -29,33 +29,30 @@ then
 fi
 
 success=0
-if ! {
+if {
 	# make sure deps are as new as possible for bundle
-	npm install && \
+	npm install &&
 
 	# ensures stray files stay out of the release
-	gulp clean && \
+	gulp clean &&
 
 	# update package manager json files with version number and release date
-	gulp bump --version=$version && \
+	gulp bump --version=$version &&
 
 	# build all dist files, lint, and run tests
 	gulp release
 }
 then
-	# failure. discard changes from version bump
-	git checkout -- *.json
-else
 	# save reference to current branch
 	current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 	# make a tagged detached commit of the dist files.
-	# no-verify (-n) avoids commit hooks.
+	# no-verify avoids commit hooks.
 	if {
-		git checkout --detach --quiet && \
-		git add *.json && \
-		git add -f dist/*.js dist/*.css dist/locale/*.js && \
-		git commit -n -e -m "version $version" && \
+		git checkout --quiet --detach &&
+		git add *.json &&
+		git add -f dist/*.js dist/*.css dist/locale/*.js &&
+		git commit --quiet --no-verify -e -m "version $version" &&
 		git tag -a "v$version" -m "version $version"
 	}
 	then
@@ -66,10 +63,20 @@ else
 	git checkout --quiet "$current_branch"
 fi
 
-if [[ "$success" = "1" ]]
+if [[ "$success" == "1" ]]
 then
+	# keep newly generated dist files around
+	git checkout --quiet "v$version" -- dist
+	git reset --quiet -- dist
+
 	echo "Success."
 else
+	# unstage all dist/ or *.json changes
+	git reset --quiet
+
+	# discard changes from version bump
+	git checkout --quiet -- *.json
+
 	echo "Failure."
 	exit 1
 fi

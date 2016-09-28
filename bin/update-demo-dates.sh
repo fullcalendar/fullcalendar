@@ -25,6 +25,6 @@ find demos -type f \( -name '*.html' -o -name '*.json' \) -print0 \
 
 # build the commit
 git add demos
-git commit -m "updated demo dates"
+git commit --quiet -m "updated demo dates"
 
-echo "DONE"
+echo "Success."

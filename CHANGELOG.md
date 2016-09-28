@@ -1,4 +1,15 @@
 
+v3.0.1 (2016-09-26)
+-------------------
+
+Bugfixes:
+- list view rendering event times incorrectly (#3334)
+- list view rendering events/days out of order (#3347)
+- events with no title rendering as "undefined"
+- add .fc scope to table print styles (#3343)
+- "display no events" text fix for German (#3354)
+
+
 v3.0.0 (2016-09-04)
 -------------------
 

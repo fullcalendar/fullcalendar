@@ -10,5 +10,5 @@ $.fullCalendar.locale("de", {
 	eventLimitText: function(n) {
 		return "+ weitere " + n;
 	},
-	noEventsMessage: "Keine Ereignisse anzeigen"
+	noEventsMessage: "Keine Ereignisse anzuzeigen"
 });
