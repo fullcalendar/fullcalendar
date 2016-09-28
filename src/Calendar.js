@@ -607,24 +607,24 @@ function Calendar_constructor(element, overrides) {
 
 
 	function computeHeaderOptions() {
-		return $.extend(
-			{ extraClasses: 'fc-header-toolbar' },
-			t.options,
-			{ layout: t.options.header });
+		return {
+			extraClasses: 'fc-header-toolbar',
+			layout: t.options.header
+		};
 	}
 
 
 	function computeFooterOptions() {
-		return $.extend(
-			{ extraClasses: 'fc-footer-toolbar' },
-			t.options,
-			{ layout: t.options.footer });
+		return {
+			extraClasses: 'fc-footer-toolbar',
+			layout: t.options.footer
+		};
 	}
 
 
 	// can be called repeatedly and Header will rerender
 	function renderHeader() {
-		header.setOptions(computeHeaderOptions());
+		header.setToolbarOptions(computeHeaderOptions());
 		header.render();
 		if (header.el) {
 			element.prepend(header.el);
@@ -634,7 +634,7 @@ function Calendar_constructor(element, overrides) {
 
 	// can be called repeatedly and Footer will rerender
 	function renderFooter() {
-		footer.setOptions(computeFooterOptions());
+		footer.setToolbarOptions(computeFooterOptions());
 		footer.render();
 		if (footer.el) {
 			element.append(footer.el);

@@ -2,11 +2,11 @@
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function Toolbar(calendar, options) {
+function Toolbar(calendar, toolbarOptions) {
 	var t = this;
 
 	// exports
-	t.setOptions = setOptions;
+	t.setToolbarOptions = setToolbarOptions;
 	t.render = render;
 	t.removeElement = removeElement;
 	t.updateTitle = updateTitle;
@@ -22,20 +22,19 @@ function Toolbar(calendar, options) {
 	var viewsWithButtons = [];
 	var tm;
 
-
-	function setOptions(newOptions) {
-		options = newOptions;
+	function setToolbarOptions(newToolbarOptions) {
+		toolbarOptions = newToolbarOptions;
 	}
 
 	// can be called repeatedly and will rerender
 	function render() {
-		var sections = options.layout;
+		var sections = toolbarOptions.layout;
 
-		tm = options.theme ? 'ui' : 'fc';
+		tm = calendar.options.theme ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
-				el = this.el = $("<div class='fc-toolbar "+ options.extraClasses + "'/>");
+				el = this.el = $("<div class='fc-toolbar "+ toolbarOptions.extraClasses + "'/>");
 			}
 			else {
 				el.empty();
@@ -61,7 +60,7 @@ function Toolbar(calendar, options) {
 
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
-		var buttonStr = options.layout[position];
+		var buttonStr = toolbarOptions.layout[position];
 
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
@@ -86,7 +85,7 @@ function Toolbar(calendar, options) {
 						isOnlyButtons = false;
 					}
 					else {
-						if ((customButtonProps = (options.customButtons || {})[buttonName])) {
+						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
 									customButtonProps.click.call(button[0], ev);
@@ -108,7 +107,7 @@ function Toolbar(calendar, options) {
 								calendar[buttonName]();
 							};
 							overrideText = (calendar.overrides.buttonText || {})[buttonName];
-							defaultText = options.buttonText[buttonName]; // everything else is considered default
+							defaultText = calendar.options.buttonText[buttonName]; // everything else is considered default
 						}
 
 						if (buttonClick) {
@@ -116,20 +115,20 @@ function Toolbar(calendar, options) {
 							themeIcon =
 								customButtonProps ?
 									customButtonProps.themeIcon :
-									options.themeButtonIcons[buttonName];
+									calendar.options.themeButtonIcons[buttonName];
 
 							normalIcon =
 								customButtonProps ?
 									customButtonProps.icon :
-									options.buttonIcons[buttonName];
+									calendar.options.buttonIcons[buttonName];
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
 							}
-							else if (themeIcon && options.theme) {
+							else if (themeIcon && calendar.options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
 							}
-							else if (normalIcon && !options.theme) {
+							else if (normalIcon && !calendar.options.theme) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
