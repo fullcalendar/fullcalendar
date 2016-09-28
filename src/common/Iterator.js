@@ -4,11 +4,7 @@ function Iterator(items) {
 
 
 Iterator.prototype.iterate = function(callback) {
-    var itemCount = this.items.length;
-
-    for (var i = 0; i < itemCount; i++) {
-        callback(this.items[i]);
-    }
+    this.items.forEach(callback);
 };
 
 
