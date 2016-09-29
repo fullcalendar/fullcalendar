@@ -20,7 +20,7 @@ describe('weekViewRender', function() {
             var cal = $('#cal');
             cal.fullCalendar('changeView', weekView.view);
             var allHeaders = cal.find(weekView.selector);
-            for(var i = 0; i < allHeaders.length; ++i) {
+            for (var i = 0; i < allHeaders.length; ++i) {
                 var jQueryHeader = $(allHeaders[i]);
                 var today = jQueryHeader.data('date') == dataNow;
                 var hasTodayClass = jQueryHeader.hasClass('fc-today');
