@@ -56,7 +56,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		this.dayIndices = dayIndices;
 		this.daysPerRow = daysPerRow;
 		this.rowCnt = rowCnt;
-		
+
 		this.updateDayTableCols();
 	},
 
@@ -295,8 +295,10 @@ var DayTableMixin = FC.DayTableMixin = {
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
 
+        var todayClass = date.isSame(view.calendar.getNow(), 'day') ? ' fc-today' : '';
+
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '"' +
+            '<th class="fc-day-header ' + view.widgetHeaderClass + todayClass + ' fc-' + dayIDs[date.day()] + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
