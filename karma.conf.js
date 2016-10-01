@@ -10,16 +10,29 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			'node_modules/native-promise-only/lib/npo.src.js',
+
+			// dependencies for main lib
 			'node_modules/moment/moment.js',
 			'node_modules/jquery/dist/jquery.js',
 			'node_modules/components-jqueryui/jquery-ui.js',
 			'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
 
-			'node_modules/jquery-simulate/jquery.simulate.js',
+			// main lib files
+			'dist/fullcalendar.js',
+			'dist/fullcalendar.css',
+			'dist/gcal.js',
+			'dist/locale-all.js',
+
+			// For testing if scheduler's JS, even when not actived, screws anything up
+			//'../fullcalendar-scheduler/dist/scheduler.js',
+			//'../fullcalendar-scheduler/dist/scheduler.css',
+
+			// dependencies for tests
+			'node_modules/native-promise-only/lib/npo.src.js',
 			'node_modules/jquery-mockjax/dist/jquery.mockjax.js',
 			'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
 			'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
+			'node_modules/jquery-simulate/jquery.simulate.js',
 
 			'tests/lib/jasmine-ext.js',
 			'tests/lib/simulate.js',
@@ -27,24 +40,19 @@ module.exports = function(config) {
 			'tests/lib/dnd-resize-utils.js',
 			'tests/lib/time-grid.js',
 			'tests/base.css',
+			'tests/automated/*.js',
 
-			'dist/fullcalendar.js',
-			'dist/gcal.js',
-			'dist/locale-all.js',
-			'dist/fullcalendar.css',
-
-			// For testing if scheduler's JS, even when not actived, screws anything up
-			//'../fullcalendar-scheduler/dist/scheduler.js',
-			//'../fullcalendar-scheduler/dist/scheduler.css',
-
-			// we want everything in these directories to be served, but not included as script tags:
-			//   dist - for sourcemap files
-			//   src - for source files the sourcemap references
-			//   node_modules - 3rd party lib dependencies, like jquery-ui theme images
-			// (don't let the webserver cache the results)
-			{ pattern: '{dist,src,node_modules}/**/*', included: false, watched: false, nocache: true },
-
-			'tests/automated/*.js'
+			// serve misc files, but don't watch
+			{
+				included: false, // don't immediately execute
+				nocache: true, // don't let the webserver cache
+				watched: false, // don't let changes trigger tests to restart
+				pattern: '{' + [
+					'dist', // for sourcemap files
+					'src', // for files referenced by sourcemaps
+					'node_modules' // 3rd party lib dependencies, like jquery-ui theme images
+				].join(',') + '}/**/*'
+			}
 		],
 
 		// list of files to exclude

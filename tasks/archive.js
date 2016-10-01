@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var rename = require('gulp-rename');
-var concat = require('gulp-concat');
 var filter = require('gulp-filter');
 var replace = require('gulp-replace');
 var zip = require('gulp-zip');
@@ -37,43 +36,43 @@ gulp.task('archive:dist', [ 'modules', 'minify' ], function() {
 
 gulp.task('archive:locale', [ 'locale' ], function() {
 	return gulp.src([
-			'dist/locale-all.js',
-			'dist/locale/*.js'
-		], {
-			base: 'dist/'
-		})
-		.pipe(gulp.dest('tmp/' + packageId + '/'));
+		'dist/locale-all.js',
+		'dist/locale/*.js'
+	], {
+		base: 'dist/'
+	})
+	.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:misc', function() {
 	return gulp.src([
-			'LICENSE.*',
-			'CHANGELOG.*',
-			'CONTRIBUTING.*'
-		])
-		.pipe(rename({ extname: '.txt' }))
-		.pipe(gulp.dest('tmp/' + packageId + '/'));
+		'LICENSE.*',
+		'CHANGELOG.*',
+		'CONTRIBUTING.*'
+	])
+	.pipe(rename({ extname: '.txt' }))
+	.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:deps', [ 'archive:jqui:theme' ], function() {
 	return gulp.src([
-			'node_modules/moment/min/moment.min.js',
-			'node_modules/jquery/dist/jquery.min.js',
-			'node_modules/components-jqueryui/jquery-ui.min.js'
-		])
-		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
+		'node_modules/moment/min/moment.min.js',
+		'node_modules/jquery/dist/jquery.min.js',
+		'node_modules/components-jqueryui/jquery-ui.min.js'
+	])
+	.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
 // transfers a single jQuery UI theme
 gulp.task('archive:jqui:theme', function() {
 	return gulp.src([
-			'jquery-ui.min.css',
-			'images/*'
-		], {
-			cwd: 'node_modules/components-jqueryui/themes/cupertino/',
-			base: 'node_modules/components-jqueryui/themes/'
-		})
-		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
+		'jquery-ui.min.css',
+		'images/*'
+	], {
+		cwd: 'node_modules/components-jqueryui/themes/cupertino/',
+		base: 'node_modules/components-jqueryui/themes/'
+	})
+	.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
 // transfers demo files, transforming their paths to dependencies
@@ -94,12 +93,18 @@ var demoPathReplace = replace(
 );
 
 function transformDemoPath(path) {
-	path = path.replace('../node_modules/moment/moment.js', '../lib/moment.min.js');
-	path = path.replace('../node_modules/jquery/dist/jquery.js', '../lib/jquery.min.js');
-	path = path.replace('../node_modules/components-jqueryui/jquery-ui.js', '../lib/jquery-ui.min.js');
-	path = path.replace('../node_modules/components-jqueryui/themes/cupertino/', '../lib/cupertino/');
-	path = path.replace('/jquery-ui.css', '/jquery-ui.min.css'); // within the above theme
+	// reroot 3rd party libs
+	path = path.replace('../node_modules/moment/', '../lib/');
+	path = path.replace('../node_modules/jquery/dist/', '../lib/');
+	path = path.replace('../node_modules/components-jqueryui/themes/cupertino/', '../lib/cupertino/'); // must be first
+	path = path.replace('../node_modules/components-jqueryui/', '../lib/');
+
+	// reroot dist files to archive root
 	path = path.replace('../dist/', '../');
-	path = path.replace('/fullcalendar.js', '/fullcalendar.min.js');
+
+	// always use minified
+	// won't mutate .print.css thankfully
+	path = path.replace(/\/([^\.]+)\.(js|css)/, '/$1.min.$2');
+
 	return path;
 }

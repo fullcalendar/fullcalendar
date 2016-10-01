@@ -12,27 +12,16 @@ require('./tasks/bump');
 // when running just `gulp`
 gulp.task('default', [ 'dist' ]);
 
-gulp.task('clean', [
-	'modules:clean',
-	'locale:clean',
-	'minify:clean',
-	'archive:clean'
-], function() {
-	return del([ // kill these directories, and anything leftover in them
-		'dist/',
-		'tmp/'
-	]);
-});
-
-gulp.task('watch', [
-	'modules:watch',
-	'locale:watch'
-]);
-
 // everything needed for running demos and developing
 gulp.task('dev', [
 	'modules',
 	'locale'
+]);
+
+// watch anything that needs to be built
+gulp.task('watch', [
+	'modules:watch',
+	'locale:watch'
 ]);
 
 // generates all files that end up in package manager release
@@ -49,3 +38,15 @@ gulp.task('release', [
 	'archive',
 	'test:single' // headless, single run
 ]);
+
+gulp.task('clean', [
+	'modules:clean',
+	'locale:clean',
+	'minify:clean',
+	'archive:clean'
+], function() {
+	return del([ // kill these directories, and anything leftover in them
+		'dist/',
+		'tmp/'
+	]);
+});
