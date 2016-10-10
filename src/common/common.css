@@ -40,12 +40,12 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-unthemed .fc-divider,
-.fc-unthemed .fc-popover .fc-header-toolbar,
+.fc-unthemed .fc-popover .fc-header,
 .fc-unthemed .fc-list-heading td {
 	background: #eee;
 }
 
-.fc-unthemed .fc-popover .fc-header-toolbar .fc-close {
+.fc-unthemed .fc-popover .fc-header .fc-close {
 	color: #666;
 }
 
@@ -282,25 +282,25 @@ previous button's border...
 	box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
 
-.fc-popover .fc-header-toolbar { /* TODO: be more consistent with fc-head/fc-body */
+.fc-popover .fc-header { /* TODO: be more consistent with fc-head/fc-body */
 	padding: 2px 4px;
 }
 
-.fc-popover .fc-header-toolbar .fc-title {
+.fc-popover .fc-header .fc-title {
 	margin: 0 2px;
 }
 
-.fc-popover .fc-header-toolbar .fc-close {
+.fc-popover .fc-header .fc-close {
 	cursor: pointer;
 }
 
-.fc-ltr .fc-popover .fc-header-toolbar .fc-title,
-.fc-rtl .fc-popover .fc-header-toolbar .fc-close {
+.fc-ltr .fc-popover .fc-header .fc-title,
+.fc-rtl .fc-popover .fc-header .fc-close {
 	float: left;
 }
 
-.fc-rtl .fc-popover .fc-header-toolbar .fc-title,
-.fc-ltr .fc-popover .fc-header-toolbar .fc-close {
+.fc-rtl .fc-popover .fc-header .fc-title,
+.fc-ltr .fc-popover .fc-header .fc-close {
 	float: right;
 }
 
@@ -311,7 +311,7 @@ previous button's border...
 	border-style: solid;
 }
 
-.fc-unthemed .fc-popover .fc-header-toolbar .fc-close {
+.fc-unthemed .fc-popover .fc-header .fc-close {
 	font-size: .9em;
 	margin-top: 2px;
 }
