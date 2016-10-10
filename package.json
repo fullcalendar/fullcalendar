@@ -67,7 +67,7 @@
   "files": [
     "dist/*.js",
     "dist/*.css",
-    "dist/locale",
+    "dist/locale/*.js",
     "README.*",
     "LICENSE.*",
     "CHANGELOG.*",
