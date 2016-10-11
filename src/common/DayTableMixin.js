@@ -295,10 +295,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
 
-        var todayClass = date.isSame(view.calendar.getNow(), 'day') ? ' fc-today' : '';
+		var todayClass = (this.rowCnt === 1) ? this.getDayClasses(date).join(' ')
+		        : 'fc-' + dayIDs[date.day()];
 
 		return '' +
-            '<th class="fc-day-header ' + view.widgetHeaderClass + todayClass + ' fc-' + dayIDs[date.day()] + '"' +
+            '<th class="fc-day-header ' + view.widgetHeaderClass + ' ' + todayClass + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
