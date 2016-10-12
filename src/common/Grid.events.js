@@ -311,7 +311,7 @@ Grid.mixin({
 				this.buildSegSelectListener(seg); // seg isn't draggable, but still needs to be selected
 
 			dragListener.startInteraction(ev, { // won't start if already started
-				delay: isSelected ? 0 : this.view.opt('longPressDelay') // do delay if not already selected
+				delay: isSelected ? 0 : this.view.opt('eventLongPressDelay') || this.view.opt('longPressDelay') // do delay if not already selected
 			});
 		}
 

@@ -280,7 +280,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 		}
 
 		this.dayDragListener.startInteraction(ev, {
-			delay: this.view.opt('longPressDelay')
+			delay: this.view.opt('selectLongPressDelay') || this.view.opt('longPressDelay')
 		});
 	},
 
