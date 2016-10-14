@@ -272,6 +272,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	dayTouchStart: function(ev) {
 		var view = this.view;
+		var selectLongPressDelay = this.view.opt('selectLongPressDelay');
 
 		// HACK to prevent a user's clickaway for unselecting a range or an event
 		// from causing a dayClick.
@@ -280,7 +281,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 		}
 
 		this.dayDragListener.startInteraction(ev, {
-			delay: this.view.opt('selectLongPressDelay') || this.view.opt('longPressDelay')
+			delay: selectLongPressDelay != null ? selectLongPressDelay : this.view.opt('longPressDelay')
 		});
 	},
 
