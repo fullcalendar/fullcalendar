@@ -1024,6 +1024,8 @@ function Calendar_constructor(element, overrides) {
 	function setOptions(newOptionHash) {
 		var optionCnt = 0;
 		var optionName;
+		var optionNamesToUpdateSize = [ 'height', 'contentHeight', 'aspectRatio' ];
+		var optionNames = [];
 
 		for (optionName in newOptionHash) {
 			t.dynamicOverrides[optionName] = newOptionHash[optionName];
@@ -1035,13 +1037,14 @@ function Calendar_constructor(element, overrides) {
 		// trigger handlers after this.options has been updated
 		for (optionName in newOptionHash) {
 			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
+			optionNames.push(optionName);
 			optionCnt++;
 		}
 
 		// special-case handling of single option change.
 		// if only one option change, `optionName` will be its name.
 		if (optionCnt === 1) {
-			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
+			if (optionNamesToUpdateSize.indexOf(optionName) > -1) {
 				updateSize(true); // true = allow recalculation of height
 				return;
 			}
@@ -1059,6 +1062,16 @@ function Calendar_constructor(element, overrides) {
 				t.rezoneArrayEventSources();
 				refetchEvents();
 				return;
+			}
+		}
+		else {
+			// if many options change and one of them is about size update
+			var anyOptionNameToUpdateSize = optionNames.filter(
+				function(n) {
+					return optionNamesToUpdateSize.indexOf(n) !== -1;
+				}).length > 0;
+			if(anyOptionNameToUpdateSize){
+				updateSize(true);
 			}
 		}
 
