@@ -31,14 +31,14 @@
 	function init(heightVal, calOpt) {
 		if (asAMethod) {
 			calendarEl.fullCalendar(options);
-			if(calOpt === undefined) {
+			if (calOpt === undefined) {
 				calendarEl.fullCalendar('option', heightProp, heightVal);
 			}
 			else {
 				calOpt[heightProp] = heightVal;
 				calendarEl.fullCalendar('option', calOpt);
 			}
-			
+
 		}
 		else {
 			options[heightProp] = heightVal;
@@ -146,7 +146,7 @@
 							beforeEach(function() {
 								var calOpt = {};
 								calOpt.minTime = '00:00'; // any other option
-								options[heightProp] = 600; // initialize with another height						
+								options[heightProp] = 600; // initialize with another height
 								init(250, calOpt); // then change height
 							});
 
