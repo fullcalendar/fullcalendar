@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../../node_modules/jquery/dist/jquery.js'></script>
+<script src='../../node_modules/moment/moment.js'></script>
+<script src='../../dist/fullcalendar.js'></script>
+<script>
+$(function() { // document ready
+  
+  $('#calendar').fullCalendar({
+    contentHeight: 500,
+    minTime: '08:00',
+    defaultView: 'agendaWeek',
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay'
+    },
+    defaultDate: '2014-11-12',
+    editable: true,
+    eventLimit: true, // allow "more" link when too many events
+    events: [
+      {
+        title: 'All Day Event',
+        start: '2014-11-01'
+      },
+      {
+        title: 'Long Event',
+        start: '2014-11-07',
+        end: '2014-11-10'
+      },
+      {
+        id: 999,
+        title: 'Repeating Event',
+        start: '2014-11-09T16:00:00'
+      },
+      {
+        id: 999,
+        title: 'Repeating Event',
+        start: '2014-11-16T16:00:00'
+      },
+      {
+        title: 'Conference',
+        start: '2014-11-11',
+        end: '2014-11-13'
+      },
+      {
+        title: 'Meeting',
+        start: '2014-11-12T10:30:00',
+        end: '2014-11-12T12:30:00'
+      },
+      {
+        title: 'Lunch',
+        start: '2014-11-12T12:00:00'
+      },
+      {
+        title: 'Meeting',
+        start: '2014-11-12T14:30:00'
+      },
+      {
+        title: 'Happy Hour',
+        start: '2014-11-12T17:30:00'
+      },
+      {
+        title: 'Dinner',
+        start: '2014-11-12T20:00:00'
+      },
+      {
+        title: 'Birthday Party',
+        start: '2014-11-13T07:00:00'
+      },
+      {
+        title: 'Click for Google',
+        url: 'http://google.com/',
+        start: '2014-11-28'
+      }
+    ]
+  });
+  
+  $('#working_dynamic_change').on( 'click', function(){
+    var option1 = {};
+    var option2 = {};
+    option1.contentHeight = 250;
+    option2.minTime = '06:00';
+    $('#calendar').fullCalendar( 'option', option1 );
+    $('#calendar').fullCalendar( 'option', option2 );
+  });
+  
+  $('#not_working_dynamic_change').on( 'click', function(){
+    var options = {};
+    options.contentHeight = 250; //Only trying contentHeight, but the bug is also on height, contentHeight, and aspectRatio
+    options.minTime = '06:00';
+    $('#calendar').fullCalendar( 'option', options );
+  });
+  
+  $('#reset').on( 'click', function(){
+    $('#calendar').fullCalendar( 'option', 'minTime', '08:00' );
+    $('#calendar').fullCalendar( 'option', 'contentHeight', 500 );
+    $('#calendar').fullCalendar( 'option', 'eventLimit', true );
+  });
+  
+  $('#eventlimit').on( 'click', function(){
+    $('#calendar').fullCalendar( 'option', 'eventLimit', 2 );
+  });
+});
+</script>
+<style>
+
+</style>
+</head>
+<body>
+<body>
+  <div style='margin:40px; text-align: center;' >
+    <button id='working_dynamic_change'>Working Height Dynamic change</button>
+	<button id='not_working_dynamic_change'>Not Working Height Dynamic change</button>
+    <button id='reset'>Reset</button>
+  </div>
+    <div id='calendar'></div>
+
+</body>
+</body>
+</html>
