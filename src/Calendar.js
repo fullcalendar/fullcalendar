@@ -669,7 +669,9 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 					
-					if (t.dynamicOverrides.height !== undefined || t.dynamicOverrides.contentHeight !== undefined) {
+					if (t.dynamicOverrides.height !== undefined || 
+						t.dynamicOverrides.contentHeight !== undefined || 
+						t.dynamicOverrides.aspectRatio !== undefined) {
 						_calcSize();
 					}
 					currentView.display(date, explicitScrollState); // will call freezeContentHeight
