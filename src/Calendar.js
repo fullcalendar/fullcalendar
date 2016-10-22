@@ -668,12 +668,8 @@ function Calendar_constructor(element, overrides) {
 				)
 			) {
 				if (elementVisible()) {
-					
-					if (t.dynamicOverrides.height !== undefined || 
-						t.dynamicOverrides.contentHeight !== undefined || 
-						t.dynamicOverrides.aspectRatio !== undefined) {
-						_calcSize();
-					}
+
+					updateSizeWithOvverides();
 					currentView.display(date, explicitScrollState); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
@@ -798,6 +794,14 @@ function Calendar_constructor(element, overrides) {
 				currentView.trigger('windowResize', _element);
 			}
 		}
+	}
+
+	function updateSizeWithOvverides() {
+		if (t.dynamicOverrides.height !== undefined || 
+			t.dynamicOverrides.contentHeight !== undefined || 
+			t.dynamicOverrides.aspectRatio !== undefined) {
+				_calcSize();
+			}
 	}
 	
 	
