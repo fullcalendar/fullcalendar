@@ -1,4 +1,4 @@
-$.fullCalendar.locale("fr", {
+$.fullCalendar.locale("af", {
 	buttonText: {
 		year: "Jaar",
 		month: "Maand",
