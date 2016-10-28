@@ -1,23 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../dist/fullcalendar.css' rel='stylesheet' />
-<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/moment/moment-jalaali.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../dist/fullcalendar.js'></script>
-<script src='../dist/gcal.js'></script>
-<script src='../lang/fa.js'></script>
+<link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
+<script src='../gcal.js'></script>
 <script>
 
 	$(document).ready(function() {
 	
 		$('#calendar').fullCalendar({
-			lang: 'fa',
-			isJalaali: true,
-			isRTL: true,
+
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,listYear'
+			},
+
+			displayEventTime: false, // don't show the time column in list view
 
 			// THIS KEY WON'T WORK IN PRODUCTION!!!
 			// To make your own Google API key, follow the directions here:
@@ -25,7 +28,7 @@
 			googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
 		
 			// US Holidays
-			events: 'usa__en@holiday.calendar.google.com',
+			events: 'en.usa#holiday@group.v.calendar.google.com',
 			
 			eventClick: function(event) {
 				// opens events in a popup window

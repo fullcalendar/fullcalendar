@@ -2,19 +2,52 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../dist/fullcalendar.css' rel='stylesheet' />
-<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/moment/moment-jalaali.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../dist/fullcalendar.js'></script>
-<script src='../lang/fa.js'></script>
+<link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
 <script>
 
 	$(document).ready(function() {
-		var currentTimezone = false;
 
-		// load the list of available timezones
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,listWeek'
+			},
+			defaultDate: '2016-09-12',
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,
+			selectable: true,
+			eventLimit: true, // allow "more" link when too many events
+			events: {
+				url: 'php/get-events.php',
+				error: function() {
+					$('#script-warning').show();
+				}
+			},
+			loading: function(bool) {
+				$('#loading').toggle(bool);
+			},
+			eventRender: function(event, el) {
+				// render the timezone offset below the event title
+				if (event.start.hasZone()) {
+					el.find('.fc-title').after(
+						$('<div class="tzo"/>').text(event.start.format('Z'))
+					);
+				}
+			},
+			dayClick: function(date) {
+				console.log('dayClick', date.format());
+			},
+			select: function(startDate, endDate) {
+				console.log('select', startDate.format(), endDate.format());
+			}
+		});
+
+		// load the list of available timezones, build the <select> options
 		$.getJSON('php/get-timezones.php', function(timezones) {
 			$.each(timezones, function(i, timezone) {
 				if (timezone != 'UTC') { // UTC is already in the list
@@ -25,55 +58,10 @@
 			});
 		});
 
-		// when the timezone selector changes, rerender the calendar
+		// when the timezone selector changes, dynamically change the calendar option
 		$('#timezone-selector').on('change', function() {
-			currentTimezone = this.value || false;
-			$('#calendar').fullCalendar('destroy');
-			renderCalendar();
+			$('#calendar').fullCalendar('option', 'timezone', this.value || false);
 		});
-
-		function renderCalendar() {
-			$('#calendar').fullCalendar({
-				header: {
-					left: 'prev,next today',
-					center: 'title',
-					right: 'month,agendaWeek,agendaDay'
-				},
-				lang: 'fa',
-				isJalaali: true,
-				isRTL: true,
-				defaultDate: '2016-01-12',
-				timezone: currentTimezone,
-				editable: true,
-				selectable: true,
-				eventLimit: true, // allow "more" link when too many events
-				events: {
-					url: 'php/get-events.php',
-					error: function() {
-						$('#script-warning').show();
-					}
-				},
-				loading: function(bool) {
-					$('#loading').toggle(bool);
-				},
-				eventRender: function(event, el) {
-					// render the timezone offset below the event title
-					if (event.start.hasZone()) {
-						el.find('.fc-title').after(
-							$('<div class="tzo"/>').text(event.start.format('Z'))
-						);
-					}
-				},
-				dayClick: function(date) {
-					console.log('dayClick', date.format());
-				},
-				select: function(startDate, endDate) {
-					console.log('select', startDate.format(), endDate.format());
-				}
-			});
-		}
-
-		renderCalendar();
 	});
 
 </script>

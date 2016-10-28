@@ -2,13 +2,11 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../dist/fullcalendar.css' rel='stylesheet' />
-<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/moment/moment-jalaali.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../dist/fullcalendar.js'></script>
-<script src='../lang/fa.js'></script>
+<link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
 <script>
 
 	$(document).ready(function() {
@@ -17,13 +15,11 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'month,agendaWeek,agendaDay,listWeek'
 			},
-			lang: 'fa',
-			isJalaali: true,
-			isRTL: true,
-			defaultDate: '2016-01-12',
+			defaultDate: '2016-09-12',
 			editable: true,
+			navLinks: true, // can click day/week names to navigate views
 			eventLimit: true, // allow "more" link when too many events
 			events: {
 				url: 'php/get-events.php',

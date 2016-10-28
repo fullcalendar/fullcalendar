@@ -2,14 +2,12 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../dist/fullcalendar.css' rel='stylesheet' />
-<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/moment/moment-jalaali.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../lib/jquery-ui/jquery-ui.js'></script>
-<script src='../dist/fullcalendar.js'></script>
-<script src='../lang/fa.js'></script>
+<link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../lib/jquery-ui.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
 <script>
 
 	$(document).ready(function() {
@@ -45,9 +43,6 @@
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
-			lang: 'fa',
-			isJalaali: true,
-			isRTL: true,
 			editable: true,
 			droppable: true, // this allows things to be dropped onto the calendar
 			drop: function() {

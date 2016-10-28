@@ -2,13 +2,11 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../dist/fullcalendar.css' rel='stylesheet' />
-<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/moment/moment-jalaali.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
-<script src='../dist/fullcalendar.js'></script>
-<script src='../lang/fa.js'></script>
+<link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
 <script>
 
 	$(document).ready(function() {
@@ -17,61 +15,59 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'month,agendaWeek,agendaDay,listMonth'
 			},
-			lang: 'fa',
-			isJalaali: true,
-			isRTL: true,
-			defaultDate: '2016-01-12',
+			defaultDate: '2016-09-12',
+			navLinks: true, // can click day/week names to navigate views
 			businessHours: true, // display business hours
 			editable: true,
 			events: [
 				{
 					title: 'Business Lunch',
-					start: '2016-01-03T13:00:00',
+					start: '2016-09-03T13:00:00',
 					constraint: 'businessHours'
 				},
 				{
 					title: 'Meeting',
-					start: '2016-01-13T11:00:00',
+					start: '2016-09-13T11:00:00',
 					constraint: 'availableForMeeting', // defined below
 					color: '#257e4a'
 				},
 				{
 					title: 'Conference',
-					start: '2016-01-18',
-					end: '2016-01-20'
+					start: '2016-09-18',
+					end: '2016-09-20'
 				},
 				{
 					title: 'Party',
-					start: '2016-01-29T20:00:00'
+					start: '2016-09-29T20:00:00'
 				},
 
 				// areas where "Meeting" must be dropped
 				{
 					id: 'availableForMeeting',
-					start: '2016-01-11T10:00:00',
-					end: '2016-01-11T16:00:00',
+					start: '2016-09-11T10:00:00',
+					end: '2016-09-11T16:00:00',
 					rendering: 'background'
 				},
 				{
 					id: 'availableForMeeting',
-					start: '2016-01-13T10:00:00',
-					end: '2016-01-13T16:00:00',
+					start: '2016-09-13T10:00:00',
+					end: '2016-09-13T16:00:00',
 					rendering: 'background'
 				},
 
 				// red areas where no events can be dropped
 				{
-					start: '2016-01-24',
-					end: '2016-01-28',
+					start: '2016-09-24',
+					end: '2016-09-28',
 					overlap: false,
 					rendering: 'background',
 					color: '#ff9f89'
 				},
 				{
-					start: '2016-01-06',
-					end: '2016-01-08',
+					start: '2016-09-06',
+					end: '2016-09-08',
 					overlap: false,
 					rendering: 'background',
 					color: '#ff9f89'
