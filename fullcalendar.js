@@ -65,6 +65,62 @@ var complexOptions = [ // names of options that are objects whose properties sho
 	'themeButtonIcons'
 ];
 
+	function checkArgsForJalaali(args){
+		for (var i in args){
+			if ( args[i] === true)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	function delJalaaliFromArgs(args){
+		var out = [];
+		for (var i in args){
+			if ( typeof(args[i]) === "boolean")
+			{
+				continue;
+			}
+			out.push(args[i]);
+		}
+		return out;
+	}
+
+	function persianNumber(enNum){
+		var c = {
+			1: "۱",
+			2: "۲",
+			3: "۳",
+			4: "۴",
+			5: "۵",
+			6: "۶",
+			7: "۷",
+			8: "۸",
+			9: "۹",
+			0: "۰"
+		}
+		return enNum.toString().replace(/\d/g, function(enNum) {
+			return c[enNum]
+		}).replace(/,/g, "،");
+	}
+
+	function noJalaaliUnit(formatStr, isJalaali){
+		return (isJalaali ? formatStr.replace(/j/g,"") : formatStr);
+	}
+
+
+	function addJalaaliToArgs(args,isJalaali){
+		var out = [];
+		for (var i in args){
+			out.push(args[i]);
+		}
+		out.push(isJalaali);
+		return out;
+	}
+
+
 
 // Merges an array of option objects into a single object
 function mergeOptions(optionObjs) {
@@ -131,7 +187,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -1076,6 +1132,9 @@ FC.moment.parseZone = function() {
 //    parseAsUTC - if there is no zone information, should we parse the input in UTC?
 //    parseZone - if there is zone information, should we force the zone of the moment?
 function makeMoment(args, parseAsUTC, parseZone) {
+	var isJalaali = checkArgsForJalaali(args);
+	args = delJalaaliFromArgs(args);
+
 	var input = args[0];
 	var isSingleString = args.length == 1 && typeof input === 'string';
 	var isAmbigTime;
@@ -1131,7 +1190,9 @@ function makeMoment(args, parseAsUTC, parseZone) {
 	}
 
 	mom._fullCalendar = true; // flag for extended functionality
-
+	if (isJalaali){
+		moment.loadPersian();
+	}
 	return mom;
 }
 
@@ -1318,24 +1379,28 @@ newMomentProto.utcOffset = function(tzo) {
 // -------------------------------------------------------------------------------------------------
 
 newMomentProto.format = function() {
+	var isJalaali = checkArgsForJalaali(arguments);
+	arguments = delJalaaliFromArgs(arguments);
 	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
-		return formatDate(this, arguments[0]); // our extended formatting
+		return formatDate(this, arguments[0], isJalaali); // our extended formatting
 	}
 	if (this._ambigTime) {
-		return oldMomentFormat(this, 'YYYY-MM-DD');
+		return oldMomentFormat(this, 'YYYY-MM-DD', isJalaali);
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss', isJalaali);
 	}
 	return oldMomentProto.format.apply(this, arguments);
 };
 
 newMomentProto.toISOString = function() {
+	isJalaali = checkArgsForJalaali(arguments);
+	arguments = delJalaaliFromArgs(arguments);
 	if (this._ambigTime) {
-		return oldMomentFormat(this, 'YYYY-MM-DD');
+		return oldMomentFormat(this, 'YYYY-MM-DD', isJalaali);
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss', isJalaali);
 	}
 	return oldMomentProto.toISOString.apply(this, arguments);
 };
@@ -1345,65 +1410,94 @@ newMomentProto.toISOString = function() {
 // Single Date Formatting
 // -------------------------------------------------------------------------------------------------
 
+	function toJalaaliUnit(formatStr, isJalaali){
+		if (isJalaali){
+			//formatStr=formatStr.replace(/(.*)(\bYY\b|\bYYYY\b|\bYYYYY\b|\bM\b|\bMM\b|\bMMM\b|\bMMMM\b|\bMMMMM\b|\bD\b|\bDD\b|\bDDD\b|\bDDDD\b|\bgg\b|\bgggg\b|\bggggg\b|\byear\b|\bmonth\b|\bw\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bYY\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bYYYY\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bYYYYY\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bM\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bMM\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bMMM\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bMMMM\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bMMMMM\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bD\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bDD\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bDDD\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bDDDD\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bgg\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bgggg\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bggggg\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\byear\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bmonth\b)(.*)/g,"$1j$2$3");
+			formatStr=formatStr.replace(/(.*)(\bw\b)(.*)/g,"$1j$2$3");
+			if ( ! formatStr.match(/^j.*/g))
+			{
+				formatStr = "j" + formatStr;
+			}
+		}
+		return formatStr;
+	}
 
 // call this if you want Moment's original format method to be used
-function oldMomentFormat(mom, formatStr) {
-	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
-}
+	function oldMomentFormat(mom, formatStr, isJalaali) {
+		return oldMomentProto.format.call(mom, toJalaaliUnit(formatStr, isJalaali)).replace(/j/g,""); // oldMomentProto defined in moment-ext.js
+	}
 
 
 // Formats `date` with a Moment formatting string, but allow our non-zero areas and
 // additional token.
-function formatDate(date, formatStr) {
-	return formatDateWithChunks(date, getFormatStringChunks(formatStr));
-}
-
-
-function formatDateWithChunks(date, chunks) {
-	var s = '';
-	var i;
-
-	for (i=0; i<chunks.length; i++) {
-		s += formatDateWithChunk(date, chunks[i]);
+	function formatDate(date, formatStr, isJalaali) {
+		return formatDateWithChunks(date, getFormatStringChunks(formatStr, isJalaali), isJalaali);
 	}
 
-	return s;
-}
+
+	function formatDateWithChunks(date, chunks, isJalaali) {
+		var s = '';
+		var i;
+
+		for (i=0; i<chunks.length; i++) {
+			s += formatDateWithChunk(date, chunks[i], isJalaali);
+		}
+
+		return s;
+	}
 
 
 // addition formatting tokens we want recognized
-var tokenOverrides = {
-	t: function(date) { // "a" or "p"
-		return oldMomentFormat(date, 'a').charAt(0);
-	},
-	T: function(date) { // "A" or "P"
-		return oldMomentFormat(date, 'A').charAt(0);
-	}
-};
-
-
-function formatDateWithChunk(date, chunk) {
-	var token;
-	var maybeStr;
-
-	if (typeof chunk === 'string') { // a literal string
-		return chunk;
-	}
-	else if ((token = chunk.token)) { // a token, like "YYYY"
-		if (tokenOverrides[token]) {
-			return tokenOverrides[token](date); // use our custom token
+	var tokenOverrides = {
+		t: function(date, isJalaali) { // "a" or "p"
+			return oldMomentFormat(date, 'a', isJalaali).charAt(0);
+		},
+		T: function(date, isJalaali) { // "A" or "P"
+			return oldMomentFormat(date, 'A', isJalaali).charAt(0);
 		}
-		return oldMomentFormat(date, token);
-	}
-	else if (chunk.maybe) { // a grouping of other chunks that must be non-zero
-		maybeStr = formatDateWithChunks(date, chunk.maybe);
-		if (maybeStr.match(/[1-9]/)) {
-			return maybeStr;
+	};
+
+
+	function formatDateWithChunk(date, chunk, isJalaali) {
+		var token;
+		var maybeStr;
+
+		if (typeof chunk === 'string') { // a literal string
+			return chunk;
 		}
+		else if ((token = chunk.token)) { // a token, like "YYYY"
+			if (tokenOverrides[token]) {
+				return tokenOverrides[token](date, isJalaali); // use our custom token
+			}
+			return oldMomentFormat(date, token, isJalaali);
+		}
+		else if (chunk.maybe) { // a grouping of other chunks that must be non-zero
+			maybeStr = formatDateWithChunks(date, chunk.maybe, isJalaali);
+			if (maybeStr.match(/[1-9]/)) {
+				return maybeStr;
+			}
+		}
+
+		return '';
 	}
 
-	return '';
-}
 
 
 // Date Range Formatting
@@ -1414,7 +1508,7 @@ function formatDateWithChunk(date, chunk) {
 // "Sep 2 - 9 2013", that intelligently inserts a separator where the dates differ.
 // If the dates are the same as far as the format string is concerned, just return a single
 // rendering of one date, without any separator.
-function formatRange(date1, date2, formatStr, separator, isRTL) {
+function formatRange(date1, date2, formatStr, separator, isRTL, isJalaali) {
 	var localeData;
 
 	date1 = FC.moment.parseZone(date1);
@@ -1432,15 +1526,16 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	return formatRangeWithChunks(
 		date1,
 		date2,
-		getFormatStringChunks(formatStr),
+		getFormatStringChunks(formatStr, isJalaali),
 		separator,
-		isRTL
+		isRTL,
+		isJalaali
 	);
 }
 FC.formatRange = formatRange; // expose
 
 
-function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
+	function formatRangeWithChunks(date1, date2, chunks, separator, isRTL, isJalaali) {
 	var unzonedDate1 = date1.clone().stripZone(); // for formatSimilarChunk
 	var unzonedDate2 = date2.clone().stripZone(); // "
 	var chunkStr; // the rendering of the chunk
@@ -1456,7 +1551,7 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 	// Start at the leftmost side of the formatting string and continue until you hit a token
 	// that is not the same between dates.
 	for (leftI=0; leftI<chunks.length; leftI++) {
-		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunks[leftI]);
+		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunks[leftI], isJalaali);
 		if (chunkStr === false) {
 			break;
 		}
@@ -1465,7 +1560,7 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 
 	// Similarly, start at the rightmost side of the formatting string and move left
 	for (rightI=chunks.length-1; rightI>leftI; rightI--) {
-		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2,  chunks[rightI]);
+		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2,  chunks[rightI], isJalaali);
 		if (chunkStr === false) {
 			break;
 		}
@@ -1475,8 +1570,8 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 	// The area in the middle is different for both of the dates.
 	// Collect them distinctly so we can jam them together later.
 	for (middleI=leftI; middleI<=rightI; middleI++) {
-		middleStr1 += formatDateWithChunk(date1, chunks[middleI]);
-		middleStr2 += formatDateWithChunk(date2, chunks[middleI]);
+		middleStr1 += formatDateWithChunk(date1, chunks[middleI], isJalaali);
+		middleStr2 += formatDateWithChunk(date2, chunks[middleI], isJalaali);
 	}
 
 	if (middleStr1 || middleStr2) {
@@ -1512,7 +1607,7 @@ var similarUnitMap = {
 
 // Given a formatting chunk, and given that both dates are similar in the regard the
 // formatting chunk is concerned, format date1 against `chunk`. Otherwise, return `false`.
-function formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunk) {
+function formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunk, isJalaali) {
 	var token;
 	var unit;
 
@@ -1524,8 +1619,8 @@ function formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunk) {
 
 		// are the dates the same for this unit of measurement?
 		// use the unzoned dates for this calculation because unreliable when near DST (bug #2396)
-		if (unit && unzonedDate1.isSame(unzonedDate2, unit)) {
-			return oldMomentFormat(date1, token); // would be the same if we used `date2`
+		if (unit && unzonedDate1.isSame(unzonedDate2, toJalaaliUnit(unit, isJalaali))) {
+			return oldMomentFormat(date1, token, isJalaali); // would be the same if we used `date2`
 			// BTW, don't support custom tokens
 		}
 	}
@@ -1542,7 +1637,8 @@ function formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunk) {
 var formatStringChunkCache = {};
 
 
-function getFormatStringChunks(formatStr) {
+function getFormatStringChunks(formatStr, isJalaali) {
+	formatStr = noJalaaliUnit(formatStr, isJalaali);
 	if (formatStr in formatStringChunkCache) {
 		return formatStringChunkCache[formatStr];
 	}
@@ -3185,6 +3281,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
+	isJalaali: false,
 
 	start: null,
 	end: null,
@@ -3213,6 +3310,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 	constructor: function(view) {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
+		this.isJalaali = view.opt('isJalaali');
+
 		this.elsByFill = {};
 
 		this.dayDragListener = this.buildDayDragListener();
@@ -3800,7 +3899,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 		if (
 			view.intervalDuration.as('months') == 1 &&
-			date.month() != view.intervalStart.month()
+			(this.isJalaali ? date.jMonth() != view.intervalStart.jMonth() : date.month() != view.intervalStart.month())
 		) {
 			classes.push('fc-other-month');
 		}
@@ -5143,7 +5242,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		this.dayIndices = dayIndices;
 		this.daysPerRow = daysPerRow;
 		this.rowCnt = rowCnt;
-		
+
 		this.updateDayTableCols();
 	},
 
@@ -5385,7 +5484,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		return '' +
 			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '"' +
 				(this.rowCnt === 1 ?
-					' data-date="' + date.format('YYYY-MM-DD') + '"' :
+					' data-date="' + date.format('YYYY-MM-DD',this.isJalaali) + '"' :
 					'') +
 				(colspan > 1 ?
 					' colspan="' + colspan + '"' :
@@ -5397,7 +5496,7 @@ var DayTableMixin = FC.DayTableMixin = {
 				// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
 				view.buildGotoAnchorHtml(
 					{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
-					htmlEscape(date.format(this.colHeadFormat)) // inner HTML
+					htmlEscape(date.format(this.colHeadFormat,this.isJalaali)) // inner HTML
 				) +
 			'</th>';
 	},
@@ -5442,7 +5541,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		classes.unshift('fc-day', view.widgetContentClass);
 
 		return '<td class="' + classes.join(' ') + '"' +
-			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
+			' data-date="' + date.format('YYYY-MM-DD',this.isJalaali) + '"' + // if date has a time, won't format it
 			(otherAttrs ?
 				' ' + otherAttrs :
 				'') +
@@ -5653,7 +5752,9 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			}
 		}
 
-		html += '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">';
+		html += '<td class="' + classes.join(' ') + '" data-date="' + date.format(this.isJalaali) + '">' ;
+
+
 
 		if (this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
 			html += this.view.buildGotoAnchorHtml(
@@ -5667,7 +5768,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			html += this.view.buildGotoAnchorHtml(
 				date,
 				{ 'class': 'fc-day-number' },
-				date.date() // inner HTML
+				(this.isJalaali  ? persianNumber(date.jDate()) :  date.date())
 			);
 		}
 
@@ -6064,7 +6165,7 @@ DayGrid.mixin({
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
-		
+
 		return '<a class="' + classes.join(' ') + '"' +
 				(event.url ?
 					' href="' + htmlEscape(event.url) + '"' :
@@ -6193,7 +6294,7 @@ DayGrid.mixin({
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		this.sortEventSegs(segs);
-		
+
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
@@ -7804,6 +7905,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
+	isJalaali: false,
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 	selectedEvent: null,
@@ -7838,6 +7940,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
+		this.isJalaali = this.opt('isJalaali');
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
@@ -7892,8 +7995,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Subclasses can override. Must return all properties.
 	computeRange: function(date) {
 		var intervalUnit = computeIntervalUnit(this.intervalDuration);
-		var intervalStart = date.clone().startOf(intervalUnit);
-		var intervalEnd = intervalStart.clone().add(this.intervalDuration);
+		var intervalStart = date.clone().startOf(toJalaaliUnit(intervalUnit,this.isJalaali));
+		if (this.isJalaali && ( intervalUnit === "year" || intervalUnit === "month")) {
+			var intervalEnd = intervalStart.clone().add(1,toJalaaliUnit(intervalUnit,this.isJalaali));
+		}
+		else {
+			var intervalEnd = intervalStart.clone().add(this.intervalDuration);
+		}
 		var start, end;
 
 		// normalize the range's time-ambiguity
@@ -8008,7 +8116,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
 		}
 
-		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
+		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'), this.opt('isJalaali'));
 	},
 
 
@@ -9343,6 +9451,7 @@ function Calendar_constructor(element, overrides) {
 	var t = this;
 
 
+
 	// Exports
 	// -----------------------------------------------------------------------------------
 
@@ -9454,6 +9563,7 @@ function Calendar_constructor(element, overrides) {
 	// Accepts anything the vanilla moment() constructor accepts.
 	t.moment = function() {
 		var mom;
+		arguments = addJalaaliToArgs(arguments,t.options.isJalaali);
 
 		if (t.options.timezone === 'local') {
 			mom = FC.moment.apply(null, arguments);
@@ -9561,7 +9671,7 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	
+
 	// Imports
 	// -----------------------------------------------------------------------------------
 
@@ -9588,9 +9698,9 @@ function Calendar_constructor(element, overrides) {
 	var ignoreWindowResize = 0;
 	var events = [];
 	var date; // unzoned
-	
-	
-	
+
+
+
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
 
@@ -9602,8 +9712,8 @@ function Calendar_constructor(element, overrides) {
 	else {
 		date = t.getNow(); // getNow already returns unzoned
 	}
-	
-	
+
+
 	function render() {
 		if (!content) {
 			initialRender();
@@ -9614,8 +9724,8 @@ function Calendar_constructor(element, overrides) {
 			renderView();
 		}
 	}
-	
-	
+
+
 	function initialRender() {
 		element.addClass('fc');
 
@@ -9675,8 +9785,8 @@ function Calendar_constructor(element, overrides) {
 			element.prepend(header.el);
 		}
 	}
-	
-	
+
+
 	function destroy() {
 
 		if (currentView) {
@@ -9696,13 +9806,13 @@ function Calendar_constructor(element, overrides) {
 			$(window).unbind('resize', windowResizeProxy);
 		}
 	}
-	
-	
+
+
 	function elementVisible() {
 		return element.is(':visible');
 	}
-	
-	
+
+
 
 	// View Rendering
 	// -----------------------------------------------------------------------------------
@@ -9789,7 +9899,7 @@ function Calendar_constructor(element, overrides) {
 		ignoreWindowResize--;
 	}
 
-	
+
 
 	// Resizing
 	// -----------------------------------------------------------------------------------
@@ -9806,8 +9916,8 @@ function Calendar_constructor(element, overrides) {
 	t.isHeightAuto = function() {
 		return t.options.contentHeight === 'auto' || t.options.height === 'auto';
 	};
-	
-	
+
+
 	function updateSize(shouldRecalc) {
 		if (elementVisible()) {
 
@@ -9829,8 +9939,8 @@ function Calendar_constructor(element, overrides) {
 			_calcSize();
 		}
 	}
-	
-	
+
+
 	function _calcSize() { // assumes elementVisible
 		var contentHeightInput = t.options.contentHeight;
 		var heightInput = t.options.height;
@@ -9859,8 +9969,8 @@ function Calendar_constructor(element, overrides) {
 	function queryHeaderHeight() {
 		return header.el ? header.el.outerHeight(true) : 0; // includes margin
 	}
-	
-	
+
+
 	function windowResize(ev) {
 		if (
 			!ignoreWindowResize &&
@@ -9872,9 +9982,9 @@ function Calendar_constructor(element, overrides) {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
 	// TODO: going forward, most of this stuff should be directly handled by the view
@@ -9898,7 +10008,7 @@ function Calendar_constructor(element, overrides) {
 			unfreezeContentHeight();
 		}
 	}
-	
+
 
 	function getAndRenderEvents() {
 		if (!t.options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
@@ -9916,7 +10026,7 @@ function Calendar_constructor(element, overrides) {
 			// ... which will call renderEvents
 	}
 
-	
+
 	// called when event data arrives
 	function reportEvents(_events) {
 		events = _events;
@@ -9950,12 +10060,12 @@ function Calendar_constructor(element, overrides) {
 			header.enableButton('today');
 		}
 	}
-	
+
 
 
 	/* Selection
 	-----------------------------------------------------------------------------*/
-	
+
 
 	// this public method receives start/end dates in any format, with any timezone
 	function select(zonedStartInput, zonedEndInput) {
@@ -9963,56 +10073,56 @@ function Calendar_constructor(element, overrides) {
 			t.buildSelectSpan.apply(t, arguments)
 		);
 	}
-	
+
 
 	function unselect() { // safe to be called before renderView
 		if (currentView) {
 			currentView.unselect();
 		}
 	}
-	
-	
-	
+
+
+
 	/* Date
 	-----------------------------------------------------------------------------*/
-	
-	
+
+
 	function prev() {
 		date = currentView.computePrevDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function next() {
 		date = currentView.computeNextDate(date);
 		renderView();
 	}
-	
-	
+
+
 	function prevYear() {
 		date.add(-1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function nextYear() {
 		date.add(1, 'years');
 		renderView();
 	}
-	
-	
+
+
 	function today() {
 		date = t.getNow();
 		renderView();
 	}
-	
-	
+
+
 	function gotoDate(zonedDateInput) {
 		date = t.moment(zonedDateInput).stripZone();
 		renderView();
 	}
-	
-	
+
+
 	function incrementDate(delta) {
 		date.add(moment.duration(delta));
 		renderView();
@@ -10030,8 +10140,8 @@ function Calendar_constructor(element, overrides) {
 		date = newDate.clone();
 		renderView(spec ? spec.type : null);
 	}
-	
-	
+
+
 	// for external API
 	function getDate() {
 		return t.applyTimezone(date); // infuse the calendar's timezone
@@ -10063,23 +10173,23 @@ function Calendar_constructor(element, overrides) {
 			overflow: ''
 		});
 	}
-	
-	
-	
+
+
+
 	/* Misc
 	-----------------------------------------------------------------------------*/
-	
+
 
 	function getCalendar() {
 		return t;
 	}
 
-	
+
 	function getView() {
 		return currentView;
 	}
-	
-	
+
+
 	function option(name, value) {
 		var newOptionHash;
 
@@ -10145,8 +10255,8 @@ function Calendar_constructor(element, overrides) {
 		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
 		reinitView();
 	}
-	
-	
+
+
 	function trigger(name, thisObj) { // overrides the Emitter's trigger method :(
 		var args = Array.prototype.slice.call(arguments, 2);
 
@@ -10173,7 +10283,7 @@ Calendar.mixin({
 	//   func // callback function to be called upon change
 	//   names // option names whose values should be given to func
 	// }
-	optionHandlers: null, 
+	optionHandlers: null,
 
 	// Calls handlerFunc immediately, and when the given option has changed.
 	// handlerFunc will be given the option value.
@@ -10250,13 +10360,13 @@ Calendar.defaults = {
 
 	weekNumberTitle: 'W',
 	weekNumberCalculation: 'local',
-	
+
 	//editable: false,
 
 	//nowIndicator: false,
 
 	scrollTime: '06:00:00',
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
@@ -10289,7 +10399,7 @@ Calendar.defaults = {
 	},
 
 	allDayText: 'all-day',
-	
+
 	// jquery-ui theming
 	theme: false,
 	themeButtonIcons: {
@@ -10303,10 +10413,10 @@ Calendar.defaults = {
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,
-	
+
 	//selectable: false,
 	unselectAuto: true,
-	
+
 	dropAccept: '*',
 
 	eventOrder: 'title',
@@ -10315,9 +10425,10 @@ Calendar.defaults = {
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
 	dayPopoverFormat: 'LL',
-	
+
 	handleWindowResize: true,
 	windowResizeDelay: 100, // milliseconds before an updateSize happens
+	isJalaali: false,
 
 	longPressDelay: 1000
 	
