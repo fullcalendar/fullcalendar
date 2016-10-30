@@ -1,12 +1,12 @@
 
-/* Top toolbar area with buttons and title
+/* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: rename all header-related things to "toolbar"
 
-function Header(calendar) {
+function Toolbar(calendar, toolbarOptions) {
 	var t = this;
-	
+
 	// exports
+	t.setToolbarOptions = setToolbarOptions;
 	t.render = render;
 	t.removeElement = removeElement;
 	t.updateTitle = updateTitle;
@@ -16,23 +16,25 @@ function Header(calendar) {
 	t.enableButton = enableButton;
 	t.getViewsWithButtons = getViewsWithButtons;
 	t.el = null; // mirrors local `el`
-	
+
 	// locals
 	var el;
 	var viewsWithButtons = [];
 	var tm;
 
+	function setToolbarOptions(newToolbarOptions) {
+		toolbarOptions = newToolbarOptions;
+	}
 
 	// can be called repeatedly and will rerender
 	function render() {
-		var options = calendar.options;
-		var sections = options.header;
+		var sections = toolbarOptions.layout;
 
-		tm = options.theme ? 'ui' : 'fc';
+		tm = calendar.options.theme ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
-				el = this.el = $("<div class='fc-toolbar'/>");
+				el = this.el = $("<div class='fc-toolbar "+ toolbarOptions.extraClasses + "'/>");
 			}
 			else {
 				el.empty();
@@ -46,20 +48,19 @@ function Header(calendar) {
 			removeElement();
 		}
 	}
-	
-	
+
+
 	function removeElement() {
 		if (el) {
 			el.remove();
 			el = t.el = null;
 		}
 	}
-	
-	
+
+
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
-		var options = calendar.options;
-		var buttonStr = options.header[position];
+		var buttonStr = toolbarOptions.layout[position];
 
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
@@ -84,7 +85,7 @@ function Header(calendar) {
 						isOnlyButtons = false;
 					}
 					else {
-						if ((customButtonProps = (options.customButtons || {})[buttonName])) {
+						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
 									customButtonProps.click.call(button[0], ev);
@@ -106,7 +107,7 @@ function Header(calendar) {
 								calendar[buttonName]();
 							};
 							overrideText = (calendar.overrides.buttonText || {})[buttonName];
-							defaultText = options.buttonText[buttonName]; // everything else is considered default
+							defaultText = calendar.options.buttonText[buttonName]; // everything else is considered default
 						}
 
 						if (buttonClick) {
@@ -114,20 +115,20 @@ function Header(calendar) {
 							themeIcon =
 								customButtonProps ?
 									customButtonProps.themeIcon :
-									options.themeButtonIcons[buttonName];
+									calendar.options.themeButtonIcons[buttonName];
 
 							normalIcon =
 								customButtonProps ?
 									customButtonProps.icon :
-									options.buttonIcons[buttonName];
+									calendar.options.buttonIcons[buttonName];
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
 							}
-							else if (themeIcon && options.theme) {
+							else if (themeIcon && calendar.options.theme) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
 							}
-							else if (normalIcon && !options.theme) {
+							else if (normalIcon && !calendar.options.theme) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {
@@ -217,31 +218,31 @@ function Header(calendar) {
 
 		return sectionEl;
 	}
-	
-	
+
+
 	function updateTitle(text) {
 		if (el) {
 			el.find('h2').text(text);
 		}
 	}
-	
-	
+
+
 	function activateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.addClass(tm + '-state-active');
 		}
 	}
-	
-	
+
+
 	function deactivateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.removeClass(tm + '-state-active');
 		}
 	}
-	
-	
+
+
 	function disableButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
@@ -249,8 +250,8 @@ function Header(calendar) {
 				.addClass(tm + '-state-disabled');
 		}
 	}
-	
-	
+
+
 	function enableButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')

@@ -25,6 +25,8 @@
     "common/TimeGrid.events.js",
     "common/View.js",
     "common/Scroller.js",
+    "common/Iterator.js",
+    "Toolbar.js",
     "Calendar.js",
     "Calendar.options.js",
     "defaults.js",

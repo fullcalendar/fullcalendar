@@ -277,7 +277,7 @@ DayGrid.mixin({
 		var isTheme = view.opt('theme');
 		var title = this.getCellDate(row, col).format(view.opt('dayPopoverFormat'));
 		var content = $(
-			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
+			'<div class="fc-header-toolbar ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
 					(isTheme ? 'ui-icon ui-icon-closethick' : 'fc-icon fc-icon-x') +
 				'"></span>' +
