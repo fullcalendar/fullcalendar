@@ -1,5 +1,5 @@
 
-fdescribe('footer navigation', function() {
+describe('footer navigation', function() {
 	var options;
 
 	beforeEach(function() {
