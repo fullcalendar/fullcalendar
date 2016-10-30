@@ -78,7 +78,7 @@ var Calendar = FC.Calendar = Class.extend({
 		if ($.inArray(unit, intervalUnits) != -1) {
 
 			// put views that have buttons first. there will be duplicates, but oh well
-			viewTypes = this.header.getViewsWithButtons();
+			viewTypes = this.header.getViewsWithButtons(); // TODO: include footer as well?
 			$.each(FC.views, function(viewType) { // all views
 				viewTypes.push(viewType);
 			});
