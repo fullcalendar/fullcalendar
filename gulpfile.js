@@ -14,7 +14,7 @@ gulp.task('default', [ 'dist' ]);
 
 // everything needed for running demos and developing
 gulp.task('dev', [
-	'modules',
+	'modules:dev',
 	'locale'
 ]);
 

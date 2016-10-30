@@ -17,7 +17,8 @@ gulp.task('minify:clean', function() {
 gulp.task('minify:js', [ 'modules' ], function() {
 	return gulp.src([
 		'dist/*.js',
-		'!dist/*.min.js' // avoid double minify
+		'!dist/*.min.js', // avoid double minify
+		'!dist/locale-all.js' // already minified
 	])
 	.pipe(uglify({
 		preserveComments: 'some' // keep comments starting with !

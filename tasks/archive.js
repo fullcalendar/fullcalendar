@@ -102,9 +102,13 @@ function transformDemoPath(path) {
 	// reroot dist files to archive root
 	path = path.replace('../dist/', '../');
 
-	// always use minified
-	// won't mutate .print.css thankfully
-	path = path.replace(/\/([^\.]+)\.(js|css)/, '/$1.min.$2');
+	if (
+		!/\.min\.(js|css)$/.test(path) && // not already minified
+		path !== '../locale-all.js' // this file is already minified
+	) {
+		// use minified
+		path = path.replace(/\/([^\/]*)\.(js|css)$/, '/$1.min.$2');
+	}
 
 	return path;
 }
