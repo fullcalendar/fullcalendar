@@ -490,16 +490,15 @@ function EventManager() { // assumed to be a calendar
 
 	// Only ever called from the externally-facing API
 	function updateEvent(event) {
-		updateEvents([event]);
+		updateEvents([ event ]);
 	}
 
 
 	// Only ever called from the externally-facing API
 	function updateEvents(events) {
-		var event;
-		var i;
+		var i, event;
 
-		for(i = 0; i < events.length; i++) {
+		for (i = 0; i < events.length; i++) {
 			event = events[i];
 
 			// massage start/end values, even if date string values
@@ -541,19 +540,19 @@ function EventManager() { // assumed to be a calendar
 
 	// returns the expanded events that were created
 	function renderEvent(eventInput, stick) {
-		return renderEvents([eventInput], stick);
+		return renderEvents([ eventInput ], stick);
 	}
 
 
 	// returns the expanded events that were created
-	function renderEvents (eventInput, stick) {
+	function renderEvents(eventInputs, stick) {
 		var renderedEvents = [];
 		var renderableEvents;
 		var abstractEvent;
 		var i, j, event;
 
-		for(i = 0; i < eventInput.length; i++) {
-			abstractEvent = buildEventFromInput(eventInput[i]);
+		for (i = 0; i < eventInputs.length; i++) {
+			abstractEvent = buildEventFromInput(eventInputs[i]);
 
 			if (abstractEvent) { // not false (a valid input)
 				renderableEvents = expandEvent(abstractEvent);
@@ -574,7 +573,9 @@ function EventManager() { // assumed to be a calendar
 			}
 		}
 
-		reportEvents(cache);
+		if (renderedEvents.length) { // any new events rendered?
+			reportEvents(cache);
+		}
 
 		return renderedEvents;
 	}
