@@ -1,4 +1,4 @@
-fdescribe('weekViewRender', function() {
+describe('weekViewRender', function() {
 
 	beforeEach(function() {
 		affix('#cal');
