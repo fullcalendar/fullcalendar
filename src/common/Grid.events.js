@@ -448,7 +448,7 @@ Grid.mixin({
 						_this.segDragStop(seg, ev);
 					}
 					if (dropLocation) {
-						view.reportEventDrop(event, dropLocation, this.largeUnit, el, ev);
+						view.reportEventDrop(event, dropLocation, _this.largeUnit, el, ev);
 					}
 				});
 				_this.segDragListener = null;
@@ -746,7 +746,7 @@ Grid.mixin({
 					_this.segResizeStop(seg, ev);
 				}
 				if (resizeLocation) { // valid date to resize to?
-					view.reportEventResize(event, resizeLocation, this.largeUnit, el, ev);
+					view.reportEventResize(event, resizeLocation, _this.largeUnit, el, ev);
 				}
 				_this.segResizeListener = null;
 			}
