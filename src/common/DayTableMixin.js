@@ -294,12 +294,21 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
+		var classNames = [
+			'fc-day-header',
+			view.widgetHeaderClass
+		];
 
-		var todayClass = (this.rowCnt === 1) ? this.getDayClasses(date).join(' ')
-		        : 'fc-' + dayIDs[date.day()];
+		// if only one row of days, the classNames on the header can represent the specific days beneath
+		if (this.rowCnt === 1) {
+			classNames = classNames.concat(this.getDayClasses(date)); // includes the day-of-week class
+		}
+		else {
+			classNames.push('fc-' + dayIDs[date.day()]); // only add the day-of-week class
+		}
 
 		return '' +
-            '<th class="fc-day-header ' + view.widgetHeaderClass + ' ' + todayClass + '"' +
+            '<th class="' + classNames.join(' ') + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
