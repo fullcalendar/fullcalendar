@@ -49,7 +49,7 @@ body .fc { /* extra precedence to overcome jqui */
 	color: #666;
 }
 
-.fc-unthemed .fc-today {
+.fc-unthemed td.fc-today {
 	background: #fcf8e3;
 }
 

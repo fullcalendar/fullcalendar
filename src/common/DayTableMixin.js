@@ -301,7 +301,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (this.rowCnt === 1) {
-			classNames = classNames.concat(this.getDayClasses(date)); // includes the day-of-week class
+			classNames = classNames.concat(
+				// includes the day-of-week class
+				// noThemeHighlight=true (don't highlight the header)
+				this.getDayClasses(date, true)
+			);
 		}
 		else {
 			classNames.push('fc-' + dayIDs[date.day()]); // only add the day-of-week class

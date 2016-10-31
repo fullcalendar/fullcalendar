@@ -622,7 +622,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 
 	// Computes HTML classNames for a single-day element
-	getDayClasses: function(date) {
+	getDayClasses: function(date, noThemeHighlight) {
 		var view = this.view;
 		var today = view.calendar.getNow();
 		var classes = [ 'fc-' + dayIDs[date.day()] ];
@@ -635,10 +635,11 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 		}
 
 		if (date.isSame(today, 'day')) {
-			classes.push(
-				'fc-today',
-				view.highlightStateClass
-			);
+			classes.push('fc-today');
+
+			if (noThemeHighlight !== true) {
+				classes.push(view.highlightStateClass);
+			}
 		}
 		else if (date < today) {
 			classes.push('fc-past');
