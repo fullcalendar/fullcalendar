@@ -298,6 +298,7 @@ Grid.mixin({
 		var isResizable = view.isEventResizable(event);
 		var isResizing = false;
 		var dragListener;
+		var eventLongPressDelay;
 
 		if (isSelected && isResizable) {
 			// only allow resizing of the event is selected
@@ -305,14 +306,18 @@ Grid.mixin({
 		}
 
 		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
-			var eventLongPressDelay = this.view.opt('eventLongPressDelay');
+
+			eventLongPressDelay = view.opt('eventLongPressDelay');
+			if (eventLongPressDelay == null) {
+				eventLongPressDelay = view.opt('longPressDelay'); // fallback
+			}
 
 			dragListener = isDraggable ?
 				this.buildSegDragListener(seg) :
 				this.buildSegSelectListener(seg); // seg isn't draggable, but still needs to be selected
 
 			dragListener.startInteraction(ev, { // won't start if already started
-				delay: isSelected ? 0 : (eventLongPressDelay != null ? eventLongPressDelay : this.view.opt('longPressDelay')) // do delay if not already selected
+				delay: isSelected ? 0 : eventLongPressDelay // do delay if not already selected
 			});
 		}
 
