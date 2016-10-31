@@ -598,50 +598,6 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function buildToolbars() {
-		return [
-			new Toolbar(t, computeHeaderOptions()),
-			new Toolbar(t, computeFooterOptions())
-		];
-	}
-
-
-	function computeHeaderOptions() {
-		return {
-			extraClasses: 'fc-header-toolbar',
-			layout: t.options.header
-		};
-	}
-
-
-	function computeFooterOptions() {
-		return {
-			extraClasses: 'fc-footer-toolbar',
-			layout: t.options.footer
-		};
-	}
-
-
-	// can be called repeatedly and Header will rerender
-	function renderHeader() {
-		header.setToolbarOptions(computeHeaderOptions());
-		header.render();
-		if (header.el) {
-			element.prepend(header.el);
-		}
-	}
-
-
-	// can be called repeatedly and Footer will rerender
-	function renderFooter() {
-		footer.setToolbarOptions(computeFooterOptions());
-		footer.render();
-		if (footer.el) {
-			element.append(footer.el);
-		}
-	}
-
-
 	function destroy() {
 
 		if (currentView) {
@@ -900,8 +856,52 @@ function Calendar_constructor(element, overrides) {
 
 
 
-	/* Toolbars Updating
+	/* Toolbars
 	-----------------------------------------------------------------------------*/
+
+
+	function buildToolbars() {
+		return [
+			new Toolbar(t, computeHeaderOptions()),
+			new Toolbar(t, computeFooterOptions())
+		];
+	}
+
+
+	function computeHeaderOptions() {
+		return {
+			extraClasses: 'fc-header-toolbar',
+			layout: t.options.header
+		};
+	}
+
+
+	function computeFooterOptions() {
+		return {
+			extraClasses: 'fc-footer-toolbar',
+			layout: t.options.footer
+		};
+	}
+
+
+	// can be called repeatedly and Header will rerender
+	function renderHeader() {
+		header.setToolbarOptions(computeHeaderOptions());
+		header.render();
+		if (header.el) {
+			element.prepend(header.el);
+		}
+	}
+
+
+	// can be called repeatedly and Footer will rerender
+	function renderFooter() {
+		footer.setToolbarOptions(computeFooterOptions());
+		footer.render();
+		if (footer.el) {
+			element.append(footer.el);
+		}
+	}
 
 
 	function updateToolbarsTitle() {

@@ -22,6 +22,7 @@ function Toolbar(calendar, toolbarOptions) {
 	var viewsWithButtons = [];
 	var tm;
 
+	// method to update toolbar-specific options, not calendar-wide options
 	function setToolbarOptions(newToolbarOptions) {
 		toolbarOptions = newToolbarOptions;
 	}
