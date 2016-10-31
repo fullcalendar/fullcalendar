@@ -748,6 +748,7 @@ function Calendar_constructor(element, overrides) {
 		var viewType = currentView.type;
 		var scrollState = currentView.queryScroll();
 		clearView();
+		calcSize();
 		renderView(viewType, scrollState);
 
 		unfreezeContentHeight();

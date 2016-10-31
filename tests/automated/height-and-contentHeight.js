@@ -28,10 +28,17 @@
 		return calendarEl.parent().height();
 	}
 
-	function init(heightVal) {
+	function init(heightVal, calOpt) {
 		if (asAMethod) {
 			calendarEl.fullCalendar(options);
-			calendarEl.fullCalendar('option', heightProp, heightVal);
+			if (calOpt === undefined) {
+				calendarEl.fullCalendar('option', heightProp, heightVal);
+			}
+			else {
+				calOpt[heightProp] = heightVal;
+				calendarEl.fullCalendar('option', calOpt);
+			}
+
 		}
 		else {
 			options[heightProp] = heightVal;
@@ -132,6 +139,19 @@
 								init(testInfo.height);
 								expectHeight(600);
 								expect($('.fc-day-grid-container')).toHaveScrollbars();
+							});
+						});
+
+						describe('when setting height, contentHeight option with other options', function() {
+							beforeEach(function() {
+								var calOpt = {};
+								calOpt.minTime = '00:00'; // any other option
+								options[heightProp] = 600; // initialize with another height
+								init(250, calOpt); // then change height
+							});
+
+							it('height of the view container should change', function() {
+								expectHeight(250);
 							});
 						});
 					});
