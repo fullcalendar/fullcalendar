@@ -28,17 +28,19 @@
 		return calendarEl.parent().height();
 	}
 
-	function init(heightVal, calOpt) {
+	// relies on asAMethod (boolean)
+	// otherOptions: other calendar options to dynamically set (assumes asAMethod)
+	function init(heightVal, otherOptions) {
 		if (asAMethod) {
 			calendarEl.fullCalendar(options);
-			if (calOpt === undefined) {
+
+			if (otherOptions === undefined) {
 				calendarEl.fullCalendar('option', heightProp, heightVal);
 			}
 			else {
-				calOpt[heightProp] = heightVal;
-				calendarEl.fullCalendar('option', calOpt);
+				otherOptions[heightProp] = heightVal; // reuse same object. insert height option
+				calendarEl.fullCalendar('option', otherOptions);
 			}
-
 		}
 		else {
 			options[heightProp] = heightVal;
@@ -144,10 +146,8 @@
 
 						describe('when setting height, contentHeight option with other options', function() {
 							beforeEach(function() {
-								var calOpt = {};
-								calOpt.minTime = '00:00'; // any other option
 								options[heightProp] = 600; // initialize with another height
-								init(250, calOpt); // then change height
+								init(250, { minTime: '00:00' }); // then change height, providing other opts to set too
 							});
 
 							it('height of the view container should change', function() {
