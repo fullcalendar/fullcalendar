@@ -179,16 +179,33 @@ Grid.mixin({
 
 	// Compute business hour segs for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
-	buildBusinessHourSegs: function(wholeDay) {
-		var events = this.view.calendar.getCurrentBusinessHourEvents(wholeDay);
+	// If no `businessHours` configuration value is specified, assumes the calendar default.
+	buildBusinessHourSegs: function(wholeDay, businessHours) {
+		return this.eventsToSegs(
+			this.buildBusinessHourEvents(wholeDay, businessHours)
+		);
+	},
+
+
+	// Compute business hour *events* for the grid's current date range.
+	// Caller must ask if whole-day business hours are needed.
+	// If no `businessHours` configuration value is specified, assumes the calendar default.
+	buildBusinessHourEvents: function(wholeDay, businessHours) {
+		var calendar = this.view.calendar;
+		var events;
+
+		if (businessHours == null) {
+			// fallback
+			// access from calendawr. don't access from view. doesn't update with dynamic options.
+			businessHours = calendar.options.businessHours;
+		}
+
+		events = calendar.computeBusinessHourEvents(wholeDay, businessHours);
 
 		// HACK. Eventually refactor business hours "events" system.
 		// If no events are given, but businessHours is activated, this means the entire visible range should be
 		// marked as *not* business-hours, via inverse-background rendering.
-		if (
-			!events.length &&
-			this.view.calendar.options.businessHours // don't access view option. doesn't update with dynamic options
-		) {
+		if (!events.length && businessHours) {
 			events = [
 				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
 					start: this.view.end, // guaranteed out-of-range
@@ -198,7 +215,7 @@ Grid.mixin({
 			];
 		}
 
-		return this.eventsToSegs(events);
+		return events;
 	},
 
 
