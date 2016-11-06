@@ -6,6 +6,7 @@
     "moment-ext.js",
     "date-formatting.js",
     "common/Class.js",
+    "common/Promise.js",
     "common/EmitterMixin.js",
     "common/ListenerMixin.js",
     "common/MouseIgnorerMixin.js",
