@@ -668,11 +668,11 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
-					currentView.display(date, explicitScrollState); // will call freezeContentHeight
+					currentView.setDate(date, explicitScrollState); // will call freezeContentHeight
 					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
-					updateToolbarsTitle();
+					// NOTE: view updates title text proactively
 					updateToolbarsTodayButton();
 
 					getAndRenderEvents();
@@ -818,9 +818,7 @@ function Calendar_constructor(element, overrides) {
 
 	function renderEvents() { // destroys old events if previously rendered
 		if (elementVisible()) {
-			freezeContentHeight();
-			currentView.displayEvents(events);
-			unfreezeContentHeight();
+			//currentView.displayEvents(events);
 		}
 	}
 
@@ -904,9 +902,9 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function updateToolbarsTitle() {
-		toolbarsManager.proxyCall('updateTitle', currentView.title);
-	}
+	t.setToolbarsTitle = function(title) {
+		toolbarsManager.proxyCall('updateTitle', title);
+	};
 
 
 	function updateToolbarsTodayButton() {
