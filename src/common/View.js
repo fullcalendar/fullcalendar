@@ -814,16 +814,34 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Returns a potentially-asynchronous promise.
 	displayEvents: function() {
 		var _this = this;
+
+		return this.displayGivenEvents(this.requestEvents()).then(function() {
+			_this.listenTo(_this.calendar, 'resetEvents', _this.displayGivenEvents); // react to changes
+		});
+	},
+
+
+	clearEvents: function() {
+		var _this = this;
+
+		return this.clearGivenEvents().then(function() {
+			_this.stopListeningTo(_this.calendar, 'resetEvents'); // stop reacting to changes
+		});
+	},
+
+
+	displayGivenEvents: function(eventArg) { // eventArg can be an array or a promise
+		var _this = this;
 		var scrollState = this.queryScroll();
 
 		this.calendar.freezeContentHeight();
 
-		return this.displayingEvents = this.clearEvents().then(function() {
+		return this.displayingEvents = this.clearGivenEvents().then(function() {
 			return Promise.all([
-				_this.requestEvents(),
+				eventArg,
 				_this.displayDates()
 			]).then(function(values) {
-				_this.renderEvents(values[0]); // value[0] is the events array
+				_this.renderEvents(values[0]); // values[0] is the resolved event argument
 				_this.calendar.unfreezeContentHeight();
 				_this.setScroll(scrollState);
 				_this.triggerEventRender();
@@ -834,7 +852,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Does everything necessary to clear the view's currently-rendered events.
 	// Returns a potentially-asynchronous promise.
-	clearEvents: function() {
+	clearGivenEvents: function() {
 		var _this = this;
 		// TODO: optimize: if we know this is part of a displayEvents call, don't queryScroll/setScroll
 		var scrollState = this.queryScroll();
@@ -856,9 +874,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// stub
 	requestEvents: function() {
-		return Promise.resolve([]);
+		return this.calendar.requestEvents(this.start, this.end);
 	},
 
 

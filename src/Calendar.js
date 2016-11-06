@@ -271,11 +271,7 @@ function Calendar_constructor(element, overrides) {
 
 	t.render = render;
 	t.destroy = destroy;
-	t.refetchEvents = refetchEvents;
-	t.refetchEventSources = refetchEventSources;
-	t.reportEvents = reportEvents;
-	t.reportEventChange = reportEventChange;
-	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
+	t.rerenderEvents = rerenderEvents;
 	t.changeView = renderView; // `renderView` will switch to another view
 	t.select = select;
 	t.unselect = unselect;
@@ -511,7 +507,6 @@ function Calendar_constructor(element, overrides) {
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
-	var events = [];
 	var date; // unzoned
 
 
@@ -674,8 +669,6 @@ function Calendar_constructor(element, overrides) {
 					// need to do this after View::render, so dates are calculated
 					// NOTE: view updates title text proactively
 					updateToolbarsTodayButton();
-
-					getAndRenderEvents();
 				}
 			}
 		}
@@ -800,56 +793,14 @@ function Calendar_constructor(element, overrides) {
 
 
 
-	/* Event Fetching/Rendering
+	/* Event Rendering
 	-----------------------------------------------------------------------------*/
-	// TODO: going forward, most of this stuff should be directly handled by the view
 
 
-	function refetchEvents() { // can be called as an API method
-		fetchAndRenderEvents();
-	}
-
-
-	// TODO: move this into EventManager?
-	function refetchEventSources(matchInputs) {
-		fetchEventSources(t.getEventSourcesByMatchArray(matchInputs));
-	}
-
-
-	function renderEvents() { // destroys old events if previously rendered
+	function rerenderEvents() { // API method. destroys old events if previously rendered.
 		if (elementVisible()) {
-			//currentView.displayEvents(events);
+			currentView.displayEvents();
 		}
-	}
-
-
-	function getAndRenderEvents() {
-		if (!t.options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
-			fetchAndRenderEvents();
-		}
-		else {
-			renderEvents();
-		}
-	}
-
-
-	function fetchAndRenderEvents() {
-		fetchEvents(currentView.start, currentView.end);
-			// ... will call reportEvents
-			// ... which will call renderEvents
-	}
-
-
-	// called when event data arrives
-	function reportEvents(_events) {
-		events = _events;
-		renderEvents();
-	}
-
-
-	// called when a single event's data has been changed
-	function reportEventChange() {
-		renderEvents();
 	}
 
 
@@ -1101,7 +1052,7 @@ function Calendar_constructor(element, overrides) {
 			}
 			else if (optionName === 'timezone') {
 				t.rezoneArrayEventSources();
-				refetchEvents();
+				t.refetchEvents();
 				return;
 			}
 		}
