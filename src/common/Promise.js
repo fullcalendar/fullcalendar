@@ -27,12 +27,13 @@ function Promise(executor) {
 			
 			if (state === 'resolved') {
 				if (typeof onFulfilled === 'function') {
-					return coercePromiseReturn(onFulfilled(promise._value), promise);
+					return Promise.resolve(onFulfilled(promise._value));
 				}
 			}
 			else if (state === 'rejected') {
 				if (typeof onRejected === 'function') {
-					return coercePromiseReturn(onRejected(), promise);
+					onRejected();
+					return promise; // already rejected
 				}
 			}
 
@@ -66,7 +67,7 @@ Promise.resolve = function(value) {
 
 			promise.then = function(onFulfilled, onRejected) {
 				if (typeof onFulfilled === 'function') {
-					return coercePromiseReturn(onFulfilled(value), promise);
+					return Promise.resolve(onFulfilled(value));
 				}
 				return origThen.call(promise, onFulfilled, onRejected);
 			};
@@ -111,16 +112,3 @@ Promise.all = function(inputs) {
 		});
 	}
 };
-
-
-function coercePromiseReturn(returnValue, origPromise) {
-	if (returnValue && typeof returnValue.resolve === 'function') {
-		return returnValue.promise();
-	}
-	else if (returnValue && typeof returnValue.then === 'function') {
-		return returnValue;
-	}
-	else {
-		return origPromise;
-	}
-}
