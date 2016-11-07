@@ -390,8 +390,10 @@ describe('eventDrop', function() {
 
 		options.eventAfterAllRender = function() {
 			if (!eventsRendered) { // because event rerendering will happen upon drop
-				dragFunc();
-				eventsRendered = true;
+				setTimeout(function() { // because initial scroll state and/or height freezing might not be done
+					dragFunc();
+					eventsRendered = true;
+				}, 0);
 			}
 		};
 		options.eventDragStart = function(event, jsEvent, uiEvent, view) {

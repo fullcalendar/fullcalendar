@@ -115,7 +115,7 @@ describe('refetchEvents', function() {
 							expect($('.fetch0').length).toEqual(0);
 							expect($('.fetch1').length).toEqual(3);
 							done();
-						}, 101);
+						}, 200);
 					}
 				};
 

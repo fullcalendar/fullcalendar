@@ -144,8 +144,10 @@ describe('removeEventSource', function() {
 				if (!(callCnt++)) { // only the first time
 					expectEventCnt(2);
 					$('#cal').fullCalendar('removeEventSource', eventInput);
-					expectEventCnt(0);
-					done();
+					setTimeout(function() { // because event rerender will queue up for later
+						expectEventCnt(0);
+						done();
+					}, 0);
 				}
 			};
 			options.events = eventInput;
@@ -158,8 +160,10 @@ describe('removeEventSource', function() {
 				if (!(callCnt++)) { // only the first time
 					expectEventCnt(2);
 					$('#cal').fullCalendar('removeEventSource', eventInput);
-					expectEventCnt(0);
-					done();
+					setTimeout(function() { // because event rerender will queue up for later
+						expectEventCnt(0);
+						done();
+					}, 0);
 				}
 			};
 			options.eventSources = [ eventInput ];
@@ -172,8 +176,10 @@ describe('removeEventSource', function() {
 				if ((callCnt++) === 1) { // the second time (the first time is upon initial render)
 					expectEventCnt(2);
 					$('#cal').fullCalendar('removeEventSource', eventInput);
-					expectEventCnt(0);
-					done();
+					setTimeout(function() { // because event rerender will queue up for later
+						expectEventCnt(0);
+						done();
+					}, 0);
 				}
 			};
 			$('#cal').fullCalendar(options);
