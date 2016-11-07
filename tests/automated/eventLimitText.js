@@ -34,13 +34,13 @@ describe('eventLimitText', function() {
 	});
 
 	it('has a default value that is affected by the custom locale', function() {
-		options.lang = 'fr';
+		options.locale = 'fr';
 		$('#cal').fullCalendar(options);
 		expect($('.fc-more')).toHaveText('+2 en plus');
 	});
 
 	it('is not affected by a custom locale when the value is explicitly specified', function() {
-		options.lang = 'fr';
+		options.locale = 'fr';
 		options.eventLimitText = 'extra';
 		$('#cal').fullCalendar(options);
 		expect($('.fc-more')).toHaveText('+2 extra');

@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %> Print Stylesheet
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * <%= title %> v<%= version %> Print Stylesheet
+ * Docs & License: <%= homepage %>
+ * (c) <%= copyright %>
  */
 
 /*
@@ -32,11 +32,11 @@
 /* Table & Day-Row Restyling
 --------------------------------------------------------------------------------------------------*/
 
-th,
-td,
-hr,
-thead,
-tbody,
+.fc th,
+.fc td,
+.fc hr,
+.fc thead,
+.fc tbody,
 .fc-row {
 	border-color: #ccc !important;
 	background: #fff !important;

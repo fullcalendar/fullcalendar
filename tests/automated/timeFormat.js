@@ -29,8 +29,8 @@ describe('timeFormat', function() {
 			expect(getRenderedEventTime()).toBe('3p');
 		});
 
-		it('renders correctly when default and the language is customized', function() {
-			options.lang = 'en-gb';
+		it('renders correctly when default and the locale is customized', function() {
+			options.locale = 'en-gb';
 			$('#cal').fullCalendar(options);
 			expect(getRenderedEventTime()).toBe('15');
 		});
@@ -53,8 +53,8 @@ describe('timeFormat', function() {
 			expect(getRenderedEventTime()).toBe('3:00 - 5:00');
 		});
 
-		it('renders correctly when default and the language is customized', function() {
-			options.lang = 'en-gb';
+		it('renders correctly when default and the locale is customized', function() {
+			options.locale = 'en-gb';
 			$('#cal').fullCalendar(options);
 			expect(getRenderedEventTime()).toBe('15:00 - 17:00');
 		});

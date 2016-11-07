@@ -1,6 +1,65 @@
 
-v2.9.1 (2016-7-31)
-------------------
+v3.0.1 (2016-09-26)
+-------------------
+
+Bugfixes:
+- list view rendering event times incorrectly (#3334)
+- list view rendering events/days out of order (#3347)
+- events with no title rendering as "undefined"
+- add .fc scope to table print styles (#3343)
+- "display no events" text fix for German (#3354)
+
+
+v3.0.0 (2016-09-04)
+-------------------
+
+Features:
+- List View (#560)
+	- new views: `listDay`, `listWeek`, `listMonth`, `listYear`, and simply `list`
+	- `listDayFormat`
+	- `listDayAltFormat`
+	- `noEventsMessage`
+- Clickable day/week numbers for easier navigation (#424)
+	- `navLinks`
+	- `navLinkDayClick`
+	- `navLinkWeekClick`
+- Programmatically allow/disallow user interactions:
+	- `eventAllow` (#2740)
+	- `selectAllow` (#2511)
+- Option to display week numbers in cells (#3024)
+	- `weekNumbersWithinDays` (set to `true` to activate)
+- When week calc is ISO, default first day-of-week to Monday (#3255)
+- Macedonian locale (#2739)
+- Malay locale
+
+Breaking Changes:
+- IE8 support dropped
+- jQuery: minimum support raised to v2.0.0
+- MomentJS: minimum support raised to v2.9.0
+- `lang` option renamed to `locale`
+- dist files have been renamed to be more consistent with MomentJS:
+	- `lang/` -> `locale/`
+	- `lang-all.js` -> `locale-all.js`
+- behavior of moment methods no longer affected by ambiguousness:
+	- `isSame`
+	- `isBefore`
+	- `isAfter`
+- View-Option-Hashes no longer supported (deprecated in 2.2.4)
+- removed `weekMode` setting
+- removed `axisFormat` setting
+- DOM structure of month/basic-view day cell numbers changed
+
+Bugfixes:
+- `$.fullCalendar.version` incorrect (#3292)
+
+Build System:
+- using gulp instead of grunt (faster)
+- using npm internally for dependencies instead of bower
+- changed repo directory structure
+
+
+v2.9.1 (2016-07-31)
+-------------------
 
 - multiple definitions for businessHours (#2686)
 - businessHours for single day doesn't display weekends (#2944)

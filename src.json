@@ -1,0 +1,56 @@
+{
+  "fullcalendar.js": [
+    "intro.js",
+    "main.js",
+    "util.js",
+    "moment-ext.js",
+    "date-formatting.js",
+    "common/Class.js",
+    "common/EmitterMixin.js",
+    "common/ListenerMixin.js",
+    "common/MouseIgnorerMixin.js",
+    "common/Popover.js",
+    "common/CoordCache.js",
+    "common/DragListener.js",
+    "common/DragListener.autoscroll.js",
+    "common/HitDragListener.js",
+    "common/MouseFollower.js",
+    "common/Grid.js",
+    "common/Grid.events.js",
+    "common/DayTableMixin.js",
+    "common/DayGrid.js",
+    "common/DayGrid.events.js",
+    "common/DayGrid.limit.js",
+    "common/TimeGrid.js",
+    "common/TimeGrid.events.js",
+    "common/View.js",
+    "common/Scroller.js",
+    "Calendar.js",
+    "Calendar.options.js",
+    "defaults.js",
+    "locale.js",
+    "Header.js",
+    "EventManager.js",
+    "basic/BasicView.js",
+    "basic/MonthView.js",
+    "basic/config.js",
+    "agenda/AgendaView.js",
+    "agenda/config.js",
+    "list/ListView.js",
+    "list/config.js",
+    "outro.js"
+  ],
+  "fullcalendar.css": [
+    "common/common.css",
+    "main.css",
+    "basic/basic.css",
+    "agenda/agenda.css",
+    "list/list.css"
+  ],
+  "fullcalendar.print.css": [
+    "common/print.css"
+  ],
+  "gcal.js": [
+    "gcal/gcal.js"
+  ]
+}

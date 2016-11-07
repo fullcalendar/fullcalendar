@@ -77,7 +77,7 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	date1 = FC.moment.parseZone(date1);
 	date2 = FC.moment.parseZone(date2);
 
-	localeData = (date1.localeData || date1.lang).call(date1); // works with moment-pre-2.8
+	localeData = date1.localeData();
 
 	// Expand localized format strings, like "LL" -> "MMMM D YYYY"
 	formatStr = localeData.longDateFormat(formatStr) || formatStr;
@@ -230,3 +230,46 @@ function chunkFormatString(formatStr) {
 
 	return chunks;
 }
+
+
+// Misc Utils
+// -------------------------------------------------------------------------------------------------
+
+
+// granularity only goes up until day
+// TODO: unify with similarUnitMap
+var tokenGranularities = {
+	Y: { value: 1, unit: 'year' },
+	M: { value: 2, unit: 'month' },
+	W: { value: 3, unit: 'week' },
+	w: { value: 3, unit: 'week' },
+	D: { value: 4, unit: 'day' }, // day of month
+	d: { value: 4, unit: 'day' } // day of week
+};
+
+// returns a unit string, either 'year', 'month', 'day', or null
+// for the most granular formatting token in the string.
+FC.queryMostGranularFormatUnit = function(formatStr) {
+	var chunks = getFormatStringChunks(formatStr);
+	var i, chunk;
+	var candidate;
+	var best;
+
+	for (i = 0; i < chunks.length; i++) {
+		chunk = chunks[i];
+		if (chunk.token) {
+			candidate = tokenGranularities[chunk.token.charAt(0)];
+			if (candidate) {
+				if (!best || candidate.value > best.value) {
+					best = candidate;
+				}
+			}
+		}
+	}
+
+	if (best) {
+		return best.unit;
+	}
+
+	return null;
+};

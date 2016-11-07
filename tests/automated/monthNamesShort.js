@@ -1,7 +1,7 @@
 describe('short month name', function() {
   var settings = {};
   var referenceDate = '2014-01-01'; // The day the world is hung-over
-  var languages = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
+  var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ];
 
   beforeEach(function() {
     affix('#cal');
@@ -11,7 +11,7 @@ describe('short month name', function() {
   });
 
   afterEach(function() {
-    moment.lang('en'); // reset moment's global language
+    moment.locale('en'); // reset moment's global locale
   });
 
   [ 'agendaWeek', 'basicWeek' ].forEach(function(viewClass, index, viewClasses) {
@@ -20,10 +20,10 @@ describe('short month name', function() {
         settings.defaultView = viewClass;
       });
 
-      describe('when lang is default', function() {
+      describe('when locale is default', function() {
         beforeEach(function() {
-          settings.lang = 'en';
-          moment.lang('en');
+          settings.locale = 'en';
+          moment.locale('en');
         });
 
         moment.monthsShort().forEach(function(monthShort, index) {
@@ -39,21 +39,21 @@ describe('short month name', function() {
         });
       });
 
-      languages.forEach(function(language, index, languages) {
-        describe('when lang is ' + language, function() {
+      locales.forEach(function(locale, index, locales) {
+        describe('when locale is ' + locale, function() {
           beforeEach(function() {
-            settings.lang = language;
-            moment.lang(language);
+            settings.locale = locale;
+            moment.locale(locale);
           });
 
           moment.monthsShort().forEach(function(monthShort, index) { // `monthShort` will always be English
             it('should be the translated name for ' + monthShort, function(done) {
-              var langMonthsShort = moment.monthsShort();
-              var langMonthShort = langMonthsShort[index];
+              var localeMonthsShort = moment.monthsShort();
+              var localeMonthShort = localeMonthsShort[index];
 
               settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months');
               settings.eventAfterAllRender = function() {
-                expect($('.fc-toolbar h2')).toContainText(langMonthShort);
+                expect($('.fc-toolbar h2')).toContainText(localeMonthShort);
                 done();
               };
 

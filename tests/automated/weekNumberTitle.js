@@ -27,8 +27,8 @@ describe('weekNumberTitle', function() {
 				expect(getRenderedWeekNumberTitle()).toBe('W');
 			});
 
-			it('renders correctly when unspecified and when language is customized', function() {
-				options.lang = 'es';
+			it('renders correctly when unspecified and when locale is customized', function() {
+				options.locale = 'es';
 				$('#cal').fullCalendar(options);
 				expect(getRenderedWeekNumberTitle()).toBe('Sm');
 			});

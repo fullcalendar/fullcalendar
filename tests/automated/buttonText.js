@@ -13,7 +13,7 @@ describe('button text', function() {
     };
   });
 
-  describe('with default language', function() {
+  describe('with default locale', function() {
 
     describe('with default buttonIcons', function() {
 
@@ -115,10 +115,10 @@ describe('button text', function() {
 
   });
 
-  describe('when lang is not default', function() {
+  describe('when locale is not default', function() {
 
     beforeEach(function() {
-      settings.lang = 'fr';
+      settings.locale = 'fr';
     });
 
     describe('with default buttonIcons', function() {
@@ -177,10 +177,10 @@ describe('button text', function() {
       it('should contain default text values', function() {
         $('#cal').fullCalendar(settings);
 
-        // will have the language's actual text now
+        // will have the locale's actual text now
         expect($('.fc-next-button')).toHaveText('Suivant');
         expect($('.fc-prev-button')).toHaveText('Précédent');
-        //// languages files don't have data for prev/next *year*
+        //// locales files don't have data for prev/next *year*
         //expect($('.fc-nextYear-button')).toHaveText('Suivant');
         //expect($('.fc-prevYear-button')).toHaveText('Précédent');
 

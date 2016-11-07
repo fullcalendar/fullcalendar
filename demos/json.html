@@ -4,8 +4,8 @@
 <meta charset='utf-8' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../lib/moment/moment.js'></script>
-<script src='../lib/jquery/dist/jquery.js'></script>
+<script src='../node_modules/moment/moment.js'></script>
+<script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
@@ -15,10 +15,11 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'month,agendaWeek,agendaDay,listWeek'
 			},
-			defaultDate: '2016-06-12',
+			defaultDate: '2016-09-12',
 			editable: true,
+			navLinks: true, // can click day/week names to navigate views
 			eventLimit: true, // allow "more" link when too many events
 			events: {
 				url: 'php/get-events.php',

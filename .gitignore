@@ -1,11 +1,6 @@
-build/temp
+tmp
 dist
 
-# npm modules
+# npm
 node_modules
-
-# bower components
-lib/*/*
-
-# ignore NPM logs
 npm-debug.log

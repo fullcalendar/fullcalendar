@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %> Stylesheet
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * <%= title %> v<%= version %> Stylesheet
+ * Docs & License: <%= homepage %>
+ * (c) <%= copyright %>
  */
 
 
@@ -29,7 +29,9 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-unthemed .fc-divider,
 .fc-unthemed .fc-row,
 .fc-unthemed .fc-content, /* for gutter border */
-.fc-unthemed .fc-popover {
+.fc-unthemed .fc-popover,
+.fc-unthemed .fc-list-view,
+.fc-unthemed .fc-list-heading td {
 	border-color: #ddd;
 }
 
@@ -38,7 +40,8 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-unthemed .fc-divider,
-.fc-unthemed .fc-popover .fc-header {
+.fc-unthemed .fc-popover .fc-header,
+.fc-unthemed .fc-list-heading td {
 	background: #eee;
 }
 
@@ -53,13 +56,11 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-highlight { /* when user is selecting cells */
 	background: #bce8f1;
 	opacity: .3;
-	filter: alpha(opacity=30); /* for IE */
 }
 
 .fc-bgevent { /* default look for background events */
 	background: rgb(143, 223, 130);
 	opacity: .3;
-	filter: alpha(opacity=30); /* for IE */
 }
 
 .fc-nonbusiness { /* default look for non-business-hours areas */
@@ -247,7 +248,6 @@ NOTE: use percentage font sizes or else old IE chokes
 	cursor: default;
 	background-image: none;
 	opacity: 0.65;
-	filter: alpha(opacity=65);
 	box-shadow: none;
 }
 
@@ -391,6 +391,18 @@ hr.fc-divider {
 }
 
 
+/* Internal Nav Links
+--------------------------------------------------------------------------------------------------*/
+
+a[data-goto] {
+	cursor: pointer;
+}
+
+a[data-goto]:hover {
+	text-decoration: underline;
+}
+
+
 /* Fake Table Rows
 --------------------------------------------------------------------------------------------------*/
 
@@ -509,8 +521,12 @@ temporary rendered events).
 	line-height: 1.3;
 	border-radius: 3px;
 	border: 1px solid #3a87ad; /* default BORDER color */
-	background-color: #3a87ad; /* default BACKGROUND color */
 	font-weight: normal; /* undo jqui's ui-widget-header bold */
+}
+
+.fc-event,
+.fc-event-dot {
+	background-color: #3a87ad; /* default BACKGROUND color */
 }
 
 /* overpower some of bootstrap's and jqui's styles on <a> tags */
@@ -535,7 +551,6 @@ temporary rendered events).
 	z-index: 1;
 	background: #fff;
 	opacity: .25;
-	filter: alpha(opacity=25); /* for IE */
 }
 
 .fc-event .fc-content {
@@ -689,6 +704,10 @@ be a descendant of the grid when it is being dragged.
 	padding: 0 1px;
 }
 
+tr:first-child > td > .fc-day-grid-event {
+	margin-top: 2px; /* a little bit more space before the first event */
+}
+
 .fc-day-grid-event.fc-selected:after {
 	content: "";
 	position: absolute;
@@ -701,7 +720,6 @@ be a descendant of the grid when it is being dragged.
 	/* darkening effect */
 	background: #000;
 	opacity: .25;
-	filter: alpha(opacity=25); /* for IE */
 }
 
 .fc-day-grid-event .fc-content { /* force events to be one-line tall */

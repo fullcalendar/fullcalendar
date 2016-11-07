@@ -53,6 +53,25 @@ describe('First Day', function() {
 		});
 	});
 
+	describe('when setting weekNumberCalculation to ISO', function() {
+		beforeEach(function() {
+			var options = {
+				weekNumberCalculation: 'ISO'
+			};
+			$('#cal').fullCalendar(options);
+		});
+		it('should make Monday the first day of the week', function() {
+			var daysOfWeek = $('.fc-day-header');
+			expect(daysOfWeek[0]).toHaveClass('fc-mon');
+			expect(daysOfWeek[1]).toHaveClass('fc-tue');
+			expect(daysOfWeek[2]).toHaveClass('fc-wed');
+			expect(daysOfWeek[3]).toHaveClass('fc-thu');
+			expect(daysOfWeek[4]).toHaveClass('fc-fri');
+			expect(daysOfWeek[5]).toHaveClass('fc-sat');
+			expect(daysOfWeek[6]).toHaveClass('fc-sun');
+		});
+	});
+
 	describe('when setting firstDay to 2', function() {
 		beforeEach(function() {
 			var options = {
@@ -183,9 +202,9 @@ describe('First Day', function() {
 		});
 	});
 
-	it('should have a different default value based on the language', function() {
+	it('should have a different default value based on the locale', function() {
 		$('#cal').fullCalendar({
-			lang: 'en-gb'
+			locale: 'en-gb'
 		});
 		// firstDay will be 1 (Monday) in Great Britain
 		var daysOfWeek = $('.fc-day-header');

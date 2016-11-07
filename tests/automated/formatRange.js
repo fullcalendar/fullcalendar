@@ -122,14 +122,14 @@ describe('formatRange', function() {
 
 	});
 
-	describe('when calendar has a customized lang', function() {
+	describe('when calendar has a customized locale', function() {
 
-		it('uses language and splits correctly on day when dates have same month', function() {
+		it('uses locale and splits correctly on day when dates have same month', function() {
 			affix('#cal');
 			$('#cal').fullCalendar({
 				defaultView: 'basicWeek',
 				defaultDate: '2014-05-20',
-				lang: 'fr',
+				locale: 'fr',
 				titleFormat: 'dddd MMMM D YYYY',
 				titleRangeSeparator: ' - '
 			});

@@ -101,7 +101,6 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		var el = this.el;
 
 		if (!el) {
-			this.sourceEl.width(); // hack to force IE8 to compute correct bounding box
 			el = this.el = this.sourceEl.clone()
 				.addClass(this.options.additionalClass || '')
 				.css({
@@ -146,7 +145,6 @@ var MouseFollower = Class.extend(ListenerMixin, {
 
 		// make sure origin info was computed
 		if (this.top0 === null) {
-			this.sourceEl.width(); // hack to force IE8 to compute correct bounding box
 			sourceOffset = this.sourceEl.offset();
 			origin = this.el.offsetParent().offset();
 			this.top0 = sourceOffset.top - origin.top;

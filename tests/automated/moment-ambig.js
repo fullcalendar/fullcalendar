@@ -13,7 +13,7 @@ describe('ambiguously-zoned moment', function() {
 
 	it('has a zero zone', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08T10:00:00');
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('formats without a zone part', function() {
@@ -40,11 +40,11 @@ describe('ambiguously-zoned moment', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08T10:00:00');
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 		mom.utc();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('can be given a zone via local', function() {
@@ -53,23 +53,23 @@ describe('ambiguously-zoned moment', function() {
 		expect(mom.toArray()).toEqual([ 2014, 5, 8, 10, 0, 0, 0 ]);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 		mom.local();
 		expect(mom.toArray()).toEqual([ 2014, 5, 8, 10, 0, 0, 0 ]);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(equivDate.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-equivDate.getTimezoneOffset());
 	});
 
 	it('can be given a zone via zone', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08T10:00:00');
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
-		mom.zone(-420);
+		expect(mom.utcOffset()).toBe(0);
+		mom.utcOffset(-420);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(-420);
+		expect(mom.utcOffset()).toBe(-420);
 	});
 
 });
@@ -125,11 +125,11 @@ describe('ambiguously-timed moment', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08');
 		expect(mom.hasTime()).toBe(false);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 		mom.utc();
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 	});
 
 	it('can be given a time and zone via local', function() {
@@ -138,23 +138,23 @@ describe('ambiguously-timed moment', function() {
 		expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 		expect(mom.hasTime()).toBe(false);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
+		expect(mom.utcOffset()).toBe(0);
 		mom.local();
 		expect(mom.toArray()).toEqual([ 2014, 5, 8, 0, 0, 0, 0 ]);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(equivDate.getTimezoneOffset());
+		expect(mom.utcOffset()).toBe(-equivDate.getTimezoneOffset());
 	});
 
 	it('can be given a time and zone via zone', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08');
 		expect(mom.hasTime()).toBe(false);
 		expect(mom.hasZone()).toBe(false);
-		expect(mom.zone()).toBe(0);
-		mom.zone(-420);
+		expect(mom.utcOffset()).toBe(0);
+		mom.utcOffset(-420);
 		expect(mom.hasTime()).toBe(true);
 		expect(mom.hasZone()).toBe(true);
-		expect(mom.zone()).toBe(-420);
+		expect(mom.utcOffset()).toBe(-420);
 	});
 
 });

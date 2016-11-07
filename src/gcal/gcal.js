@@ -1,7 +1,7 @@
 /*!
- * <%= meta.title %> v<%= meta.version %> Google Calendar Plugin
- * Docs & License: <%= meta.homepage %>
- * (c) <%= meta.copyright %>
+ * <%= title %> v<%= version %> Google Calendar Plugin
+ * Docs & License: <%= homepage %>
+ * (c) <%= copyright %>
  */
  
 (function(factory) {

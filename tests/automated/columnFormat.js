@@ -40,12 +40,12 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                columnFormat: {
-                    month: 'dddd',
-                    agendaDay: 'dddd M/D',
-                    agendaWeek: 'dddd D , M',
-                    basicDay: 'dddd D | M',
-                    basicWeek: 'dddd D - M'
+                views: {
+                    month: { columnFormat: 'dddd' },
+                    agendaDay: { columnFormat: 'dddd M/D' },
+                    agendaWeek: { columnFormat: 'dddd D , M' },
+                    basicDay: { columnFormat: 'dddd D | M' },
+                    basicWeek: { columnFormat: 'dddd D - M' }
                 }
             });
         });
@@ -61,7 +61,7 @@ describe('columnFormat', function() {
         });
     });
 
-    describe('when lang is French', function() {
+    describe('when locale is French', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'dim.', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: 'dim. 11/5', selector: 'th.fc-day-header.fc-sun' },
@@ -72,7 +72,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'fr'
+                locale: 'fr'
             });
         });
 
@@ -87,7 +87,7 @@ describe('columnFormat', function() {
         });
     });
 
-    describe('when lang is en-gb', function() {
+    describe('when locale is en-gb', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'Sun', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: 'Sun 11/5', selector: 'th.fc-day-header.fc-sun' },
@@ -98,7 +98,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'en-gb'
+                locale: 'en-gb'
             });
         });
 
@@ -113,7 +113,7 @@ describe('columnFormat', function() {
         });
     });
 
-    describe('when lang is Korean', function() {
+    describe('when locale is Korean', function() {
 
         var viewWithFormat = [ { view: 'month', expected: '일', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: '일 5.11', selector: 'th.fc-day-header.fc-sun' },
@@ -124,7 +124,7 @@ describe('columnFormat', function() {
         beforeEach(function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
-                lang: 'ko'
+                locale: 'ko'
             });
         });
 
