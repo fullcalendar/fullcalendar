@@ -12,14 +12,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	options: null, // hash containing all options. already merged with view-specific-options
 	el: null, // the view's containing element. set by Calendar
 
-	// promises
-	settingElement: null,
-	settingDate: null,
-	displayingNonChrono: null,
-	displayingChrono: null,
-	displayingSkeleton: null,
-	displayingDates: null,
-	displayingEvents: null,
+	isDateSet: false,
+	dateSetQueue: null,
+
+	isEventsSet: false,
+	isEventsBounds: false,
+	eventRenderQueue: null,
 
 	// range the view is actually displaying (moments)
 	start: null,
@@ -68,6 +66,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.isRTL = this.opt('isRTL');
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
+
+		this.dateSetQueue = new RunQueue();
+		this.eventRenderQueue = new RunQueue();
 
 		this.initialize();
 	},
@@ -301,217 +302,26 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Sets the container element that the view should render inside of, does global DOM-related initializations,
 	// and renders all the non-date-related content inside.
-	// Returns a potentially-asynchronous promise.
 	setElement: function(el) {
-		var _this = this;
-
-		return this.settingElement = this.removeElement().then(function() {
-			_this.el = el;
-			_this.bindGlobalHandlers();
-			return _this.displayNonChrono();
-		});
+		this.el = el;
+		this.bindGlobalHandlers();
+		this.renderSkeleton();
 	},
 
 
 	// Removes the view's container element from the DOM, clearing any content beforehand.
 	// Undoes any other DOM-related attachments.
-	// Returns a potentially-asynchronous promise.
 	removeElement: function() {
-		var _this = this;
+		this.unbindGlobalHandlers();
+		this.unsetDate();
+		this.unrenderSkeleton();
 
-		if (this.settingElement) {
-			return this.settingElement.then(function() {
-				return Promise.all([
-					_this.clearNonChrono(),
-					_this.clearChrono()
-				]).then(function() {
-
-					_this.el.remove();
-					// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-					// We don't null-out the View's other jQuery element references upon destroy,
-					//  so we shouldn't kill this.el either.
-
-					_this.unbindGlobalHandlers();
-					_this.settingElement = null;
-				});
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
+		this.el.remove();
+		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
+		// We don't null-out the View's other jQuery element references upon destroy,
+		//  so we shouldn't kill this.el either.
 	},
 
-
-	// Returns a potentially-asynchronous promise.
-	ensureNonChrono: function() {
-		return this.displayingNonChrono || this.displayNonChrono();
-	},
-
-
-	// Returns a potentially-asynchronous promise.
-	displayNonChrono: function() {
-		var _this = this;
-
-		return this.displayingNonChrono = this.clearNonChrono().then(function() {
-			return _this.ensureSkeleton();
-		});
-	},
-
-
-	// Returns a potentially-asynchronous promise.
-	clearNonChrono: function() {
-		var _this = this;
-
-		if (this.displayingNonChrono) {
-			return this.displayingNonChrono.then(function() {
-				return _this.clearSkeleton().then(function() {
-					_this.displayingNonChrono = null;
-				});
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
-	},
-
-
-	// Date-related-content, like date cells, date indicators, and events
-	// ------------------------------------------------------------------
-
-
-	isDateSet: function() {
-		return this.settingDate && this.settingDate.state() === 'resolved';
-	},
-
-
-	// Renders ALL date related content, including events. Guaranteed to redraw content.
-	// Returns a potentially-asynchronous promise.
-	setDate: function(date, explicitScrollState) {
-		var _this = this;
-		var prevScrollState = null;
-
-		if (explicitScrollState != null && this.isDateSet()) { // don't need prevScrollState if explicitScrollState
-			prevScrollState = this.queryScroll();
-		}
-
-		this.calendar.freezeContentHeight();
-
-		return this.settingDate = this.unsetDate().then(function() {
-			_this.setRange(_this.computeRange(date));
-			_this.displayChrono();
-
-			// hack for freezeContentHeight, scrollState, and triggerRender
-			// TODO: refactor
-			Promise.all([
-				_this.ensureNonChrono(),
-				_this.displayingChrono
-			]).then(function() {
-
-				// caller of display() wants a specific scroll state?
-				if (explicitScrollState != null) {
-					// we make an assumption that this is NOT the initial render,
-					// and thus don't need forceScroll (is inconveniently asynchronous)
-					_this.setScroll(explicitScrollState);
-				}
-				else {
-					_this.forceScroll(_this.computeInitialScroll(prevScrollState));
-				}
-
-				_this.calendar.unfreezeContentHeight();
-				_this.triggerRender();
-			});
-
-			return _this.displayingChrono;
-		});
-	},
-
-
-	// NOTE: triggerUnrender is called in clearChrono -> clearDates
-	unsetDate: function() {
-		var _this = this;
-
-		if (this.settingDate) {
-			return this.settingDate.then(function() {
-				return _this.clearChrono().then(function() {
-					_this.settingDate = null;
-				});
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
-	},
-
-
-	// Renders ALL date related content, including events. Guaranteed to redraw content.
-	// Returns a potentially-asynchronous promise.
-	displayChrono: function() {
-		var _this = this;
-
-		return this.displayingChrono = this.clearChrono().then(function() {
-			return Promise.all([
-				_this.displayDates(),
-				_this.displayEvents()
-			]);
-		});
-	},
-
-
-	// Returns a potentially-asynchronous promise.
-	clearChrono: function() {
-		var _this = this;
-
-		if (this.displayingChrono) {
-			return this.displayingChrono.then(function() {
-				return Promise.all([
-					_this.clearEvents(),
-					_this.clearDates()
-				]).then(function() {
-					_this.displayingChrono = null;
-				});
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
-	},
-
-
-	// Skeleton rendering
-	// ------------------
-
-
-	// Renders the skeleton if it has not already been rendered.
-	// Returns a potentially-asynchronous promise.
-	ensureSkeleton: function() {
-		return this.displayingSkeleton || this.displaySkeleton();
-	},
-
-
-	// Returns a potentially-asynchronous promise. Guaranteed to redraw content.
-	displaySkeleton: function() {
-		var _this = this;
-
-		this.displayingSkeleton = this.clearSkeleton().then(function() {
-			_this.renderSkeleton();
-		});
-	},
-
-
-	// Returns a potentially-asynchronous promise.
-	clearSkeleton: function() {
-		var _this = this;
-
-		if (this.displayingSkeleton) {
-			return this.displayingSkeleton.then(function() {
-				_this.unrenderSkeleton();
-				_this.displayingSkeleton = null;
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
-	},
 
 	// Renders the basic structure of the view before any content is rendered
 	renderSkeleton: function() {
@@ -525,47 +335,97 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Date rendering (usually some type of date cells that events eventually live on)
-	// -------------------------------------------------------------------------------
+	// Date-related-content, like date cells, date indicators, and events
+	// ------------------------------------------------------------------
 
 
-	// Renders date cells ONLY. Does not render events. Guaranteed to redraw content.
-	// Returns a potentially-asynchronous promise.
-	displayDates: function() {
+	// Renders ALL date related content, including events. Guaranteed to redraw content.
+	// async
+	// TODO: refactor explicitScrollState
+	setDate: function(date, explicitScrollState) {
 		var _this = this;
+		var prevScrollState = null;
 
-		return this.displayingDates = this.clearDates().then(function() {
-			return _this.ensureSkeleton().then(function() {
-				if (_this.render) {
-					_this.render(); // TODO: deprecate
-				}
-				_this.renderDates();
-				_this.updateSize();
-				_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-				_this.startNowIndicator();
-			});
+		if (explicitScrollState != null && this.isDateSet) { // don't need prevScrollState if explicitScrollState
+			prevScrollState = this.queryScroll();
+		}
+
+		this.unsetDate();
+		this.isDateSet = true;
+
+		return this.dateSetQueue.push(function() {
+			_this.setRange(_this.computeRange(date));
+			_this.calendar.freezeContentHeight();
+			_this.displayDateVisuals();
+
+			// caller wants a specific scroll state?
+			if (explicitScrollState != null) {
+				// we make an assumption that this is NOT the initial render,
+				// and thus don't need forceScroll (is inconveniently asynchronous)
+				_this.setScroll(explicitScrollState);
+			}
+			else {
+				_this.forceScroll(_this.computeInitialScroll(prevScrollState));
+			}
+
+			_this.calendar.unfreezeContentHeight();
+			_this.triggerRender();
+		}).then(function() {
+			return _this.displayEvents();
 		});
 	},
 
 
-	clearDates: function() {
-		var _this = this;
+	// sync
+	unsetDate: function() {
+		if (this.isDateSet) {
+			this.isDateSet = false; // important to do first
+			this.dateSetQueue.clear();
 
-		if (this.displayingDates) {
-			return this.displayingDates.then(function() {
-				_this.unselect();
-				_this.stopNowIndicator();
-				_this.triggerUnrender();
-				_this.unrenderBusinessHours();
-				_this.unrenderDates();
-				if (_this.destroy) {
-					_this.destroy(); // TODO: deprecate
-				}
-				_this.displayingDates = null;
-			});
+			this.stopDisplayingEvents();
+			this.stopDisplayingDateVisuals();
 		}
-		else {
-			return Promise.resolve();
+	},
+
+
+	// sync
+	ensureDisplayingDateVisuals: function() {
+		if (!this.isDisplayingDateVisuals) {
+			this.displayDateVisuals();
+		}
+	},
+
+
+	// sync
+	displayDateVisuals: function() {
+		this.stopDisplayingDateVisuals();
+		this.isDisplayingDateVisuals = true;
+
+		if (this.render) {
+			this.render(); // TODO: deprecate
+		}
+
+		this.renderDates();
+		this.updateSize();
+		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+		this.startNowIndicator();
+	},
+
+
+	// sync
+	stopDisplayingDateVisuals: function() {
+		if (this.isDisplayingDateVisuals) {
+			this.isDisplayingDateVisuals = false;
+
+			this.unselect();
+			this.stopNowIndicator();
+			this.triggerUnrender();
+			this.unrenderBusinessHours();
+			this.unrenderDates();
+
+			if (this.destroy) {
+				this.destroy(); // TODO: deprecate
+			}
 		}
 	},
 
@@ -811,71 +671,97 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Does everything necessary to display the given events onto the current view. Guaranteed to redraw content.
-	// Returns a potentially-asynchronous promise.
+	// async. promise might not resolve if rendering cancelled.
 	displayEvents: function() {
 		var _this = this;
 
-		return this.displayGivenEvents(this.requestEvents()).then(function() {
-			_this.listenTo(_this.calendar, 'resetEvents', _this.displayGivenEvents); // react to changes
-		});
-	},
+		this.ensureDisplayingDateVisuals();
 
-
-	clearEvents: function() {
-		var _this = this;
-
-		return this.clearGivenEvents().then(function() {
-			_this.stopListeningTo(_this.calendar, 'resetEvents'); // stop reacting to changes
-		});
-	},
-
-
-	displayGivenEvents: function(eventArg) { // eventArg can be an array or a promise
-		var _this = this;
-		var scrollState = this.queryScroll();
-
-		this.calendar.freezeContentHeight();
-
-		return this.displayingEvents = this.clearGivenEvents().then(function() {
-			return Promise.all([
-				eventArg,
-				_this.displayDates()
-			]).then(function(values) {
-				_this.renderEvents(values[0]); // values[0] is the resolved event argument
-				_this.calendar.unfreezeContentHeight();
-				_this.setScroll(scrollState);
-				_this.triggerEventRender();
-			});
+		return this.requestEvents().then(function(events) {
+			_this.bindEvents(); // listen to changes. do this before the setEvents, because might trigger a reset itself
+			return _this.setEvents(events);
 		});
 	},
 
 
 	// Does everything necessary to clear the view's currently-rendered events.
-	// Returns a potentially-asynchronous promise.
-	clearGivenEvents: function() {
-		var _this = this;
-		// TODO: optimize: if we know this is part of a displayEvents call, don't queryScroll/setScroll
-		var scrollState = this.queryScroll();
-
-		if (this.displayingEvents) {
-			return this.displayingEvents.then(function() {
-				_this.triggerEventUnrender();
-				if (_this.destroyEvents) {
-					_this.destroyEvents(); // TODO: deprecate
-				}
-				_this.unrenderEvents();
-				_this.setScroll(scrollState);
-				_this.displayingEvents = null;
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
+	// sync
+	stopDisplayingEvents: function() {
+		this.unbindEvents();
+		this.unsetEvents();
 	},
 
 
 	requestEvents: function() {
 		return this.calendar.requestEvents(this.start, this.end);
+	},
+
+
+	bindEvents: function() {
+		if (!this.isEventsBounds) {
+			this.listenTo(this.calendar, 'resetEvents', this.resetEvents);
+			this.isEventsBounds = true;
+		}
+	},
+
+
+	unbindEvents: function() {
+		if (this.isEventsBounds) {
+			this.stopListeningTo(this.calendar, 'resetEvents');
+			this.isEventsBounds = false;
+		}
+	},
+
+
+	// async
+	resetEvents: function(events) {
+		var _this = this;
+		var scrollState = this.queryScroll();
+
+		this.unsetEvents();
+
+		return this.setEvents(events).then(function() {
+			_this.setScroll(scrollState);
+		});
+	},
+
+
+	// async
+	setEvents: function(events) {
+		var _this = this;
+		var scrollState = this.queryScroll();
+
+		if (this.isEventsSet) {
+			return this.resetEvents(events);
+		}
+		else {
+			this.isEventsSet = true;
+
+			return this.eventRenderQueue.push(function() {
+				_this.renderEvents(events);
+				_this.setScroll(scrollState);
+				_this.triggerEventRender();
+			});
+		}
+	},
+
+
+	// sync
+	unsetEvents: function() {
+		var _this = this;
+
+		if (this.isEventsSet) {
+			this.isEventsSet = false; // must go first. so triggers don't reinvoke unsetEvents
+			this.eventRenderQueue.clear(); // kill in-progress renders
+
+			this.triggerEventUnrender();
+
+			if (this.destroyEvents) {
+				this.destroyEvents(); // TODO: deprecate
+			}
+
+			this.unrenderEvents();
+		}
 	},
 
 

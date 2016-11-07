@@ -655,7 +655,7 @@ function Calendar_constructor(element, overrides) {
 
 			// render or rerender the view
 			if (
-				!currentView.displaying ||
+				!currentView.isDateSet ||
 				!( // NOT within interval range signals an implicit date window change
 					date >= currentView.intervalStart &&
 					date < currentView.intervalEnd
