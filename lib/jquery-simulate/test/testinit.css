@@ -1,0 +1,15 @@
+.top-left {
+	position: fixed;
+	top: 1;
+	left: 1;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.hidden {
+	position: absolute;
+	left: -9999px;
+}

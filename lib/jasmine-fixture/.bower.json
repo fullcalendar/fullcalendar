@@ -1,0 +1,27 @@
+{
+  "name": "jasmine-fixture",
+  "version": "2.0.0",
+  "main": "dist/jasmine-fixture.js",
+  "ignore": [
+    "app",
+    "config",
+    "spec",
+    "tasks",
+    ".travis.yml",
+    "Gruntfile.js",
+    "main.js",
+    "package.json"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/searls/jasmine-fixture",
+  "_release": "2.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.0",
+    "commit": "394f0a9bd73e94b681a417cd8c7c94e34c0c9fd3"
+  },
+  "_source": "https://github.com/searls/jasmine-fixture.git",
+  "_target": "~2.0.0",
+  "_originalSource": "jasmine-fixture"
+}
