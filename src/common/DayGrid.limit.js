@@ -247,6 +247,14 @@ DayGrid.mixin({
 			viewportConstrain: view.opt('popoverViewportConstrain'),
 			hide: function() {
 				// kill everything when the popover is hidden
+				// notify events to be removed
+				if(_this.popoverSegs) {
+					var seg;
+					for (var i = 0; i < _this.popoverSegs.length; ++i) {
+						seg = _this.popoverSegs[i];
+						view.trigger('eventDestroy', seg.event, seg.event, seg.el);
+					};
+				}
 				_this.segPopover.removeElement();
 				_this.segPopover = null;
 				_this.popoverSegs = null;
