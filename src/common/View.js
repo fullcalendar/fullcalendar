@@ -15,6 +15,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	isDateSet: false,
 	dateSetQueue: null,
 
+	displayingEvents: null, // a promise
 	isEventsSet: false,
 	isEventsBounds: false,
 	eventRenderQueue: null,
@@ -677,7 +678,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.ensureDisplayingDateVisuals();
 
-		return this.requestEvents().then(function(events) {
+		return this.displayingEvents = this.requestEvents().then(function(events) {
 			_this.bindEvents(); // listen to changes. do this before the setEvents, because might trigger a reset itself
 			return _this.setEvents(events);
 		});
@@ -687,6 +688,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Does everything necessary to clear the view's currently-rendered events.
 	// sync
 	stopDisplayingEvents: function() {
+		this.displayingEvents = null;
 		this.unbindEvents();
 		this.unsetEvents();
 	},
