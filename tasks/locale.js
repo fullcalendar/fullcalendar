@@ -72,7 +72,7 @@ gulp.task('locale:each:data', function() {
 	return gulp.src('node_modules/moment/locale/*.js')
 		.pipe(modify({
 			fileModifier: function(file, momentContent) {
-				var localeCode = file.path.match(/([^\/]*)\.js$/)[1];
+				var localeCode = file.path.match(/([^\/\\]*)\.js$/)[1];
 				var js = getLocaleJs(localeCode, momentContent);
 
 				if (js) {
