@@ -370,7 +370,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 
 			_this.calendar.unfreezeContentHeight();
-			_this.triggerRender();
+			_this.triggerDateVisualsRendered();
 		}).then(function() {
 			return _this.displayEvents();
 		});
@@ -438,6 +438,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Misc rendering utils
 	// --------------------
+
+
+	// Can be extended to rely on other things
+	triggerDateVisualsRendered: function() {
+		this.triggerRender();
+	},
 
 
 	// Signals that the view's content has been rendered
