@@ -183,7 +183,7 @@ function extractMomentLocaleJS(js) {
 
 	// remove the UMD wrap
 	js = js.replace(
-		/\(\s*function[\S\s]*?function\s*\(\s*moment\s*\)\s*\{([\S\s]*)\}\)\)\);?/,
+		/\(\s*function[\S\s]*?function\s*\(\s*moment\s*\)\s*\{([\S\s]*)\}\)\)\)?;?/,
 		function(m0, body) {
 			return body;
 		}
