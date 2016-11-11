@@ -390,14 +390,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// sync
-	ensureDisplayingDateVisuals: function() {
-		if (!this.isDisplayingDateVisuals) {
-			this.displayDateVisuals();
-		}
-	},
-
-
-	// sync
 	displayDateVisuals: function() {
 		this.stopDisplayingDateVisuals();
 		this.isDisplayingDateVisuals = true;
@@ -673,10 +665,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Does everything necessary to display the given events onto the current view. Guaranteed to redraw content.
 	// async. promise might not resolve if rendering cancelled.
+	// Assumes date visuals already displayed.
 	displayEvents: function() {
 		var _this = this;
-
-		this.ensureDisplayingDateVisuals();
 
 		return this.displayingEvents = this.requestEvents().then(function(events) {
 			_this.bindEvents(); // listen to changes. do this before the setEvents, because might trigger a reset itself
