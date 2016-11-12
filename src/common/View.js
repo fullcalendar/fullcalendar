@@ -357,7 +357,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.displayDateVisuals();
 
 			_this.thawHeight();
-			_this.releaseScroll(true, forcedScroll); // isInitial=true
+			if (forcedScroll) {
+				_this.discardScroll();
+				_this.setScroll(forcedScroll);
+			}
+			else {
+				_this.releaseInitialScroll();
+			}
 
 			_this.triggerDateVisualsRendered();
 		}).then(function() {
@@ -639,28 +645,30 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	releaseScroll: function(isInitial, forcedScroll) {
-		var _this = this;
-		var scroll = forcedScroll || this.capturedScroll;
-		var exec;
+	releaseScroll: function() {
+		var scroll = this.capturedScroll;
 
-		if (!(--this.capturedScrollDepth)) {
-			this.capturedScroll = null;
-		}
-
+		this.discardScroll();
 		// we always act on a releaseScroll operation, as opposed to captureScroll.
 		// if capture/release wraps a render operation that screws up the scroll,
 		// we still want to restore it a good state after, regardless of depth.
+		this.setScroll(scroll);
+	},
 
-		if (isInitial) {
-			$.extend(scroll, this.computeInitialScroll());
-		}
 
-		exec = function() { _this.setScroll(scroll); };
+	releaseInitialScroll: function() {
+		var scroll = $.extend({}, this.capturedScroll, this.computeInitialScroll());
+
+		this.discardScroll();
+		this.hardSetScroll(scroll); // since it's the initial rendering, we need to outsmart DOM
+	},
+
+
+	hardSetScroll: function(scroll) {
+		var _this = this;
+		var exec = function() { _this.setScroll(scroll); };
 		exec();
-		if (isInitial) {
-			setTimeout(exec, 0);
-		}
+		setTimeout(exec, 0); // to surely clear the browser's initial scroll for the DOM
 	},
 
 
