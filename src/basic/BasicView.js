@@ -248,13 +248,18 @@ var BasicView = FC.BasicView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	queryScroll: function() {
-		return this.scroller.getScrollTop();
+	computeInitialScroll: function() {
+		return { top: 0 };
 	},
 
 
-	setScroll: function(top) {
-		this.scroller.setScrollTop(top);
+	queryScroll: function() {
+		return { top: this.scroller.getScrollTop() };
+	},
+
+
+	setScroll: function(scroll) {
+		this.scroller.setScrollTop(scroll.top);
 	},
 
 

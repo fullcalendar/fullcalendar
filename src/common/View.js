@@ -342,37 +342,29 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Renders ALL date related content, including events. Guaranteed to redraw content.
 	// async
-	// TODO: refactor explicitScrollState
-	setDate: function(date, explicitScrollState) {
+	setDate: function(date, forcedScroll) {
 		var _this = this;
-		var prevScrollState = null;
 
-		if (explicitScrollState != null && this.isDateSet) { // don't need prevScrollState if explicitScrollState
-			prevScrollState = this.queryScroll();
-		}
+		this.captureScroll();
+		this.calendar.freezeContentHeight();
 
 		this.unsetDate();
 		this.isDateSet = true;
 
 		return this.dateSetQueue.push(function() {
 			_this.setRange(_this.computeRange(date));
-			_this.calendar.freezeContentHeight();
 			_this.displayDateVisuals();
 
-			// caller wants a specific scroll state?
-			if (explicitScrollState != null) {
-				// we make an assumption that this is NOT the initial render,
-				// and thus don't need forceScroll (is inconveniently asynchronous)
-				_this.setScroll(explicitScrollState);
-			}
-			else {
-				_this.forceScroll(_this.computeInitialScroll(prevScrollState));
-			}
-
 			_this.calendar.unfreezeContentHeight();
+			_this.releaseScroll(true, forcedScroll); // isInitial=true
+
 			_this.triggerDateVisualsRendered();
 		}).then(function() {
 			return _this.displayEvents();
+		}, function() {
+			// failure. TODO: implement in RunQueue
+			_this.calendar.unfreezeContentHeight();
+			_this.discardScroll();
 		});
 	},
 
@@ -594,7 +586,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var scrollState;
 
 		if (isResize) {
-			scrollState = this.queryScroll();
+			this.capturedScroll();
 		}
 
 		this.updateHeight(isResize);
@@ -602,7 +594,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.updateNowIndicator();
 
 		if (isResize) {
-			this.setScroll(scrollState);
+			this.releaseScroll();
 		}
 	},
 
@@ -635,33 +627,57 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes the initial pre-configured scroll state prior to allowing the user to change it.
-	// Given the scroll state from the previous rendering. If first time rendering, given null.
-	computeInitialScroll: function(previousScrollState) {
-		return 0;
+	capturedScrollDepth: 0,
+	capturedScroll: null,
+
+
+	captureScroll: function() {
+		if (!(this.capturedScrollDepth++)) {
+			this.capturedScroll = this.isDisplayingDateVisuals ? this.queryScroll() : {};
+		}
 	},
 
 
-	// Retrieves the view's current natural scroll state. Can return an arbitrary format.
-	queryScroll: function() {
-		// subclasses must implement
-	},
-
-
-	// Sets the view's scroll state. Will accept the same format computeInitialScroll and queryScroll produce.
-	setScroll: function(scrollState) {
-		// subclasses must implement
-	},
-
-
-	// Sets the scroll state, making sure to overcome any predefined scroll value the browser has in mind
-	forceScroll: function(scrollState) {
+	releaseScroll: function(isInitial, forcedScroll) {
 		var _this = this;
+		var scroll;
+		var exec;
 
-		this.setScroll(scrollState);
-		setTimeout(function() {
-			_this.setScroll(scrollState);
-		}, 0);
+		if (!(--this.capturedScrollDepth)) {
+			scroll = forcedScroll || this.capturedScroll;
+			this.capturedScroll = null;
+
+			if (isInitial) {
+				$.extend(scroll, this.computeInitialScroll());
+			}
+
+			exec = function() { _this.setScroll(scroll); };
+			exec();
+			if (isInitial) {
+				setTimeout(exec, 0);
+			}
+		}
+	},
+
+
+	discardScroll: function() {
+		if (!(--this.capturedScrollDepth)) {
+			this.capturedScroll = null;
+		}
+	},
+
+
+	computeInitialScroll: function() {
+		return {};
+	},
+
+
+	queryScroll: function() {
+		return {};
+	},
+
+
+	setScroll: function(scroll) {
 	},
 
 
@@ -715,12 +731,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// async
 	resetEvents: function(events) {
 		var _this = this;
-		var scrollState = this.queryScroll();
 
+		this.captureScroll();
 		this.unsetEvents();
 
 		return this.setEvents(events).then(function() {
-			_this.setScroll(scrollState);
+			_this.releaseScroll();
 		});
 	},
 
@@ -728,7 +744,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// async
 	setEvents: function(events) {
 		var _this = this;
-		var scrollState = this.queryScroll();
 
 		if (this.isEventsSet) {
 			return this.resetEvents(events);
@@ -737,8 +752,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			this.isEventsSet = true;
 
 			return this.eventRenderQueue.push(function() {
+				_this.captureScroll();
 				_this.renderEvents(events);
-				_this.setScroll(scrollState);
+				_this.releaseScroll();
 				_this.triggerEventRender();
 			});
 		}
