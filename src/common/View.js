@@ -345,6 +345,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	setDate: function(date, forcedScroll) {
 		var _this = this;
 
+		// do this before unsetDate, which is destructive
 		this.captureScroll();
 		this.calendar.freezeContentHeight();
 
@@ -732,11 +733,15 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	resetEvents: function(events) {
 		var _this = this;
 
+		// do this before unsetEvents, a destructive action
 		this.captureScroll();
+		this.calendar.freezeContentHeight();
+
 		this.unsetEvents();
 
 		return this.setEvents(events).then(function() {
 			_this.releaseScroll();
+			_this.calendar.freezeContentHeight();
 		});
 	},
 
@@ -753,8 +758,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 			return this.eventRenderQueue.push(function() {
 				_this.captureScroll();
+				_this.calendar.freezeContentHeight();
+
 				_this.renderEvents(events);
+
+				_this.calendar.unfreezeContentHeight();
 				_this.releaseScroll();
+
 				_this.triggerEventRender();
 			});
 		}
