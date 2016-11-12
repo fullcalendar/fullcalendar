@@ -641,22 +641,25 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	releaseScroll: function(isInitial, forcedScroll) {
 		var _this = this;
-		var scroll;
+		var scroll = forcedScroll || this.capturedScroll;
 		var exec;
 
 		if (!(--this.capturedScrollDepth)) {
-			scroll = forcedScroll || this.capturedScroll;
 			this.capturedScroll = null;
+		}
 
-			if (isInitial) {
-				$.extend(scroll, this.computeInitialScroll());
-			}
+		// we always act on a releaseScroll operation, as opposed to captureScroll.
+		// if capture/release wraps a render operation that screws up the scroll,
+		// we still want to restore it a good state after, regardless of depth.
 
-			exec = function() { _this.setScroll(scroll); };
-			exec();
-			if (isInitial) {
-				setTimeout(exec, 0);
-			}
+		if (isInitial) {
+			$.extend(scroll, this.computeInitialScroll());
+		}
+
+		exec = function() { _this.setScroll(scroll); };
+		exec();
+		if (isInitial) {
+			setTimeout(exec, 0);
 		}
 	},
 
