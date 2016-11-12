@@ -347,7 +347,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		// do this before unsetDate, which is destructive
 		this.captureScroll();
-		this.calendar.freezeContentHeight();
+		this.freezeHeight();
 
 		this.unsetDate();
 		this.isDateSet = true;
@@ -356,7 +356,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.setRange(_this.computeRange(date));
 			_this.displayDateVisuals();
 
-			_this.calendar.unfreezeContentHeight();
+			_this.thawHeight();
 			_this.releaseScroll(true, forcedScroll); // isInitial=true
 
 			_this.triggerDateVisualsRendered();
@@ -364,7 +364,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			return _this.displayEvents();
 		}, function() {
 			// failure. TODO: implement in RunQueue
-			_this.calendar.unfreezeContentHeight();
+			_this.thawHeight();
 			_this.discardScroll();
 		});
 	},
@@ -587,7 +587,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var scrollState;
 
 		if (isResize) {
-			this.capturedScroll();
+			this.captureScroll();
 		}
 
 		this.updateHeight(isResize);
@@ -682,6 +682,20 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	/* Height Freezing
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	freezeHeight: function() {
+		this.calendar.freezeContentHeight();
+	},
+
+
+	thawHeight: function() {
+		this.calendar.thawContentHeight();
+	},
+
+
 	/* Event Elements / Segments
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -735,13 +749,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		// do this before unsetEvents, a destructive action
 		this.captureScroll();
-		this.calendar.freezeContentHeight();
+		this.freezeHeight();
 
 		this.unsetEvents();
 
 		return this.setEvents(events).then(function() {
 			_this.releaseScroll();
-			_this.calendar.freezeContentHeight();
+			_this.thawHeight();
 		});
 	},
 
@@ -758,11 +772,11 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 			return this.eventRenderQueue.push(function() {
 				_this.captureScroll();
-				_this.calendar.freezeContentHeight();
+				_this.freezeHeight();
 
 				_this.renderEvents(events);
 
-				_this.calendar.unfreezeContentHeight();
+				_this.thawHeight();
 				_this.releaseScroll();
 
 				_this.triggerEventRender();

@@ -630,8 +630,10 @@ function Calendar_constructor(element, overrides) {
 	function renderView(viewType, forcedScroll) {
 		ignoreWindowResize++;
 
+		var needsClearView = currentView && viewType && currentView.type !== viewType;
+
 		// if viewType is changing, remove the old view's rendering
-		if (currentView && viewType && currentView.type !== viewType) {
+		if (needsClearView) {
 			freezeContentHeight(); // prevent a scroll jump when view element is removed
 			clearView();
 		}
@@ -664,7 +666,6 @@ function Calendar_constructor(element, overrides) {
 				if (elementVisible()) {
 
 					currentView.setDate(date, forcedScroll); // will call freezeContentHeight
-					unfreezeContentHeight(); // immediately unfreeze regardless of whether display is async
 
 					// need to do this after View::render, so dates are calculated
 					// NOTE: view updates title text proactively
@@ -673,7 +674,10 @@ function Calendar_constructor(element, overrides) {
 			}
 		}
 
-		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
+		if (needsClearView) {
+			thawContentHeight();
+		}
+
 		ignoreWindowResize--;
 	}
 
@@ -700,7 +704,7 @@ function Calendar_constructor(element, overrides) {
 		calcSize();
 		renderView(viewType, scrollState);
 
-		unfreezeContentHeight();
+		thawContentHeight();
 		ignoreWindowResize--;
 	}
 
@@ -958,27 +962,33 @@ function Calendar_constructor(element, overrides) {
 
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
-	// TODO: move this into the view
+
 
 	t.freezeContentHeight = freezeContentHeight;
-	t.unfreezeContentHeight = unfreezeContentHeight;
+	t.thawContentHeight = thawContentHeight;
+
+	var freezeContentHeightDepth = 0;
 
 
 	function freezeContentHeight() {
-		content.css({
-			width: '100%',
-			height: content.height(),
-			overflow: 'hidden'
-		});
+		if (!(freezeContentHeightDepth++)) {
+			content.css({
+				width: '100%',
+				height: content.height(),
+				overflow: 'hidden'
+			});
+		}
 	}
 
 
-	function unfreezeContentHeight() {
-		content.css({
-			width: '',
-			height: '',
-			overflow: ''
-		});
+	function thawContentHeight() {
+		if (!(--freezeContentHeightDepth)) {
+			content.css({
+				width: '',
+				height: '',
+				overflow: ''
+			});
+		}
 	}
 
 
