@@ -6,7 +6,18 @@ var EmitterMixin = FC.EmitterMixin = {
 
 
 	on: function(types, handler) {
+		$(this).on(types, this._prepareIntercept(handler));
+		return this; // for chaining
+	},
 
+
+	one: function(types, handler) {
+		$(this).one(types, this._prepareIntercept(handler));
+		return this; // for chaining
+	},
+
+
+	_prepareIntercept: function(handler) {
 		// handlers are always called with an "event" object as their first param.
 		// sneak the `this` context and arguments into the extra parameter object
 		// and forward them on to the original handler.
@@ -26,9 +37,7 @@ var EmitterMixin = FC.EmitterMixin = {
 		}
 		intercept.guid = handler.guid;
 
-		$(this).on(types, intercept);
-
-		return this; // for chaining
+		return intercept;
 	},
 
 
