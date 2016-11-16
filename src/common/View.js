@@ -363,12 +363,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	resetDate: function(date, forcedScroll) {
 		var _this = this;
 
+		this.captureInitialScroll(forcedScroll);
 		this.freezeHeight(); // because requestUnrenderDate will kill height
-		// we don't care about the scroll tho because we know it will be reset by requestRenderDate
 
 		this.unsetDate();
-		return this.setDate(date, forcedScroll).then(function() {
+		return this.setDate(date).then(function() {
 			_this.thawHeight();
+			_this.releaseScroll();
 		});
 	},
 
