@@ -117,23 +117,27 @@ describe('removeEvents', function() {
 				called = true;
 
 				checkAllEvents(); // make sure all events initially rendered correctly
+
 				removeFunc(); // remove the events
-				checkFunc(); // check correctness
+				setTimeout(function() { // because the event rerender will be queued because we're a level deep
 
-				// move the calendar back out of view, then back in
-				$('#cal').fullCalendar('next');
-				$('#cal').fullCalendar('prev');
+					checkFunc(); // check correctness
 
-				// array event sources should maintain the same state
-				// whereas "dynamic" event sources should refetch and reset the state
-				if ($.isArray(events)) {
-					checkFunc(); // for issue 2187
-				}
-				else {
-					checkAllEvents();
-				}
+					// move the calendar back out of view, then back in
+					$('#cal').fullCalendar('next');
+					$('#cal').fullCalendar('prev');
 
-				doneFunc();
+					// array event sources should maintain the same state
+					// whereas "dynamic" event sources should refetch and reset the state
+					if ($.isArray(events)) {
+						checkFunc(); // for issue 2187
+					}
+					else {
+						checkAllEvents();
+					}
+
+					doneFunc();
+				}, 0);
 			}
 		};
 		$('#cal').fullCalendar(options);

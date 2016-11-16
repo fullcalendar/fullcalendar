@@ -42,24 +42,26 @@ describe('destroy', function() {
 			});
 
 			it('leaves no handlers attached to DOM', function(done) {
-				var origDocCnt = countHandlers(document);
-				var origElCnt = countHandlers('#cal');
-
-				$('#cal').fullCalendar(options);
-
 				setTimeout(function() { // in case there are delayed attached handlers
 
+					var origDocCnt = countHandlers(document);
+					var origElCnt = countHandlers('#cal');
+
+					$('#cal').fullCalendar(options);
+
 					$('#cal').fullCalendar('destroy');
+					setTimeout(function() { // might not have detached handlers synchronously
 
-					expect(countHandlers(document)).toBe(origDocCnt);
-					expect(countHandlers('#cal')).toBe(origElCnt);
+						expect(countHandlers(document)).toBe(origDocCnt);
+						expect(countHandlers('#cal')).toBe(origElCnt);
 
-					done();
-				}, 0);
+						done();
+					}, 100);
+				}, 100);
 			});
 
 			// Issue 2432
-			it('preserves existing window handlers when handleWindowResize is off', function() {
+			it('preserves existing window handlers when handleWindowResize is off', function(done) {
 				var resizeHandler = function() { };
 				var handlerCnt0 = countHandlers(window);
 				var handlerCnt1;
@@ -74,8 +76,13 @@ describe('destroy', function() {
 				});
 
 				$('#cal').fullCalendar('destroy');
-				handlerCnt2 = countHandlers(window);
-				expect(handlerCnt2).toBe(handlerCnt1);
+				setTimeout(function() { // might not have detached handlers synchronously
+
+					handlerCnt2 = countHandlers(window);
+					expect(handlerCnt2).toBe(handlerCnt1);
+
+					done();
+				}, 100);
 			});
 		});
 	});
