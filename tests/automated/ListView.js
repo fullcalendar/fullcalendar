@@ -341,6 +341,23 @@ describe('ListView rendering', function() {
 		expect(events[12].timeText).toBe('all-day');
 	});
 
+	it('updates rendered events despite fetch range being lazy', function() {
+		options.now = '2016-09-12';
+		options.defaultView = 'month';
+		options.events = [
+			{ title: 'event1', start: '2016-09-12' }
+		];
+
+		$('#cal').fullCalendar(options);
+		$('#cal').fullCalendar('changeView', 'listWeek');
+
+		expect($('.fc-list-item').length).toBe(1);
+
+		$('#cal').fullCalendar('prev');
+
+		expect($('.fc-list-item').length).toBe(0);
+	});
+
 	function getDayInfo() {
 		return $('.fc-list-heading').map(function(i, el) {
 			el = $(el);
