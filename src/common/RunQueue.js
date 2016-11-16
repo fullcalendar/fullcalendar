@@ -4,7 +4,6 @@
 function RunQueue() {
 	var _this = this;
 	var q = []; // array of runFuncs
-	var completedCnt = 0;
 
 	$.extend(this, EmitterMixin);
 
@@ -19,8 +18,7 @@ function RunQueue() {
 					.then(function() {
 						q.shift(); // pop itself off
 
-						completedCnt++;
-						_this.trigger('add');
+						_this.trigger('ran');
 
 						// run the next task, if any
 						if (q.length) {
@@ -36,23 +34,6 @@ function RunQueue() {
 			if (q.length === 1) {
 				runFunc();
 			}
-		});
-	};
-
-	this.completed = function() {
-		return completedCnt;
-	};
-
-	this.forgetCompleted = function() {
-		completedCnt = 0;
-	};
-
-	this.promise = function() {
-		if (this.completedCnt) {
-			return Promise.resolve();
-		}
-		return new Promise(function(resolve) {
-			_this.one('add', resolve);
 		});
 	};
 }
