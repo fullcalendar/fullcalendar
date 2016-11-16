@@ -1,13 +1,14 @@
 
+// TODO: write tests and clean up code
+
 function RunQueue() {
+	var _this = this;
 	var q = []; // array of runFuncs
+	var completedCnt = 0;
 
+	$.extend(this, EmitterMixin);
 
-	this.clear = function() {
-		q = []; // TODO: reject all promises?
-	};
-
-	this.push = function(taskFunc) {
+	this.add = function(taskFunc) {
 		return new Promise(function(resolve) {
 
 			// should run this function when it's taskFunc's turn to run.
@@ -17,6 +18,9 @@ function RunQueue() {
 					.then(resolve) // resolve RunQueue::push's promise, for the caller. will receive result of taskFunc.
 					.then(function() {
 						q.shift(); // pop itself off
+
+						completedCnt++;
+						_this.trigger('add');
 
 						// run the next task, if any
 						if (q.length) {
@@ -32,6 +36,23 @@ function RunQueue() {
 			if (q.length === 1) {
 				runFunc();
 			}
+		});
+	};
+
+	this.completed = function() {
+		return completedCnt;
+	};
+
+	this.forgetCompleted = function() {
+		completedCnt = 0;
+	};
+
+	this.promise = function() {
+		if (this.completedCnt) {
+			return Promise.resolve();
+		}
+		return new Promise(function(resolve) {
+			_this.one('add', resolve);
 		});
 	};
 }
