@@ -13,11 +13,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	el: null, // the view's containing element. set by Calendar
 
 	isDateSet: false,
-	dateSetQueue: null,
+	dateRenderQueue: null,
 
-	displayingEvents: null, // a promise
+	isEventsBound: false,
 	isEventsSet: false,
-	isEventsBounds: false,
 	eventRenderQueue: null,
 
 	// range the view is actually displaying (moments)
@@ -68,7 +67,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
-		this.dateSetQueue = new RunQueue();
+		this.dateRenderQueue = new RunQueue();
 		this.eventRenderQueue = new RunQueue();
 
 		this.initialize();
@@ -313,9 +312,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Removes the view's container element from the DOM, clearing any content beforehand.
 	// Undoes any other DOM-related attachments.
 	removeElement: function() {
-		this.unbindGlobalHandlers();
 		this.unsetDate();
 		this.unrenderSkeleton();
+
+		this.unbindGlobalHandlers();
 
 		this.el.remove();
 		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
@@ -340,96 +340,101 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// ------------------------------------------------------------------
 
 
-	// Renders ALL date related content, including events. Guaranteed to redraw content.
-	// async
 	setDate: function(date, forcedScroll) {
 		var _this = this;
 
-		// do this before unsetDate, which is destructive
-		this.captureScroll();
-		this.freezeHeight();
+		if (this.isDateSet) {
+			return this.resetDate(date, forcedScroll);
+		}
+		else {
+			this.isDateSet = true;
+
+			return this.requestRenderDate(date, forcedScroll).then(function() {
+				// i wish we could start earlier, but setRange/computeRange needs to execute first
+				_this.bindEvents();
+			});
+		}
+	},
+
+
+	resetDate: function(date, forcedScroll) {
+		var _this = this;
+
+		this.freezeHeight(); // because requestUnrenderDate will kill height
+		// we don't care about the scroll tho because we know it will be reset by requestRenderDate
 
 		this.unsetDate();
-		this.isDateSet = true;
-
-		return this.dateSetQueue.push(function() {
-			_this.setRange(_this.computeRange(date));
-			_this.displayDateVisuals();
-
+		return this.setDate(date, forcedScroll).then(function() {
 			_this.thawHeight();
-			if (forcedScroll) {
-				_this.discardScroll();
-				_this.setScroll(forcedScroll);
-			}
-			else {
-				_this.releaseInitialScroll();
-			}
-
-			_this.triggerDateVisualsRendered();
-		}).then(function() {
-			return _this.displayEvents();
-		}, function() {
-			// failure. TODO: implement in RunQueue
-			_this.thawHeight();
-			_this.discardScroll();
 		});
 	},
 
 
-	// sync
 	unsetDate: function() {
 		if (this.isDateSet) {
-			this.isDateSet = false; // important to do first
-			this.dateSetQueue.clear();
-
-			this.stopDisplayingEvents();
-			this.stopDisplayingDateVisuals();
+			this.isDateSet = false;
+			this.unbindEvents();
+			return this.requestUnrenderDate();
 		}
 	},
 
 
-	// sync
-	displayDateVisuals: function() {
-		this.stopDisplayingDateVisuals();
-		this.isDisplayingDateVisuals = true;
+	requestRenderDate: function(date, forcedScroll) {
+		var _this = this;
 
-		if (this.render) {
-			this.render(); // TODO: deprecate
-		}
+		return this.dateRenderQueue.add(function() {
+			_this.setRange(_this.computeRange(date));
 
-		this.renderDates();
-		this.updateSize();
-		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-		this.startNowIndicator();
-	},
+			_this.captureInitialScroll(forcedScroll);
+			_this.freezeHeight();
 
-
-	// sync
-	stopDisplayingDateVisuals: function() {
-		if (this.isDisplayingDateVisuals) {
-			this.isDisplayingDateVisuals = false;
-
-			this.unselect();
-			this.stopNowIndicator();
-			this.triggerUnrender();
-			this.unrenderBusinessHours();
-			this.unrenderDates();
-
-			if (this.destroy) {
-				this.destroy(); // TODO: deprecate
+			if (_this.render) {
+				_this.render(); // TODO: deprecate
 			}
-		}
+
+			_this.renderDates();
+			_this.updateSize();
+			_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+			_this.startNowIndicator();
+
+			_this.thawHeight();
+			_this.releaseScroll();
+
+			_this.triggerDateRender();
+		});
 	},
 
 
-	// Renders the view's date-related content.
-	// Assumes setRange has already been called and the skeleton has already been rendered.
+	requestUnrenderDate: function() { // assumes already at least one render job
+		var _this = this;
+
+		return this.dateRenderQueue.add(function() {
+			return _this.requestUnrenderEvents().then(function() {
+				// there will be so much destruction, we don't care about freezing height or maintaining scroll
+
+				_this.dateRenderQueue.forgetCompleted();
+
+				_this.unselect();
+				_this.stopNowIndicator();
+				_this.triggerUnrender();
+				_this.unrenderBusinessHours();
+				_this.unrenderDates();
+
+				if (_this.destroy) {
+					_this.destroy(); // TODO: deprecate
+				}
+			});
+		});
+	},
+
+
+	// date-cell content only
 	renderDates: function() {
 		// subclasses should implement
 	},
 
 
-	// Unrenders the view's date-related content
+	// date-cell content only
 	unrenderDates: function() {
 		// subclasses should override
 	},
@@ -439,8 +444,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// --------------------
 
 
-	// Can be extended to rely on other things
-	triggerDateVisualsRendered: function() {
+	triggerDateRender: function() {
 		this.triggerRender();
 	},
 
@@ -634,48 +638,71 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	capturedScrollDepth: 0,
 	capturedScroll: null,
+	capturedScrollDepth: 0,
 
 
 	captureScroll: function() {
 		if (!(this.capturedScrollDepth++)) {
-			this.capturedScroll = this.isDisplayingDateVisuals ? this.queryScroll() : {};
+			this.capturedScroll =
+				this.dateRenderQueue.completed() ? // guarantee a render before querying scroll
+					this.queryScroll() :
+					{};
+			return true; // root?
+		}
+		return false;
+	},
+
+
+	captureInitialScroll: function(forcedScroll) {
+		if (this.captureScroll()) {
+			this.capturedScroll.isInitial = true;
+
+			if (forcedScroll) {
+				$.extend(this.capturedScroll, forcedScroll);
+			}
+			else {
+				this.capturedScroll.isComputed = true;
+			}
 		}
 	},
 
 
 	releaseScroll: function() {
 		var scroll = this.capturedScroll;
+		var isRoot = this.discardScroll();
 
-		this.discardScroll();
-		// we always act on a releaseScroll operation, as opposed to captureScroll.
-		// if capture/release wraps a render operation that screws up the scroll,
-		// we still want to restore it a good state after, regardless of depth.
-		this.setScroll(scroll);
-	},
+		if (scroll.isComputed) {
+			if (isRoot) {
+				// only compute initial scroll if it will actually be used (is the root capture)
+				$.extend(scroll, this.computeInitialScroll());
+			}
+			else {
+				scroll = null; // scroll couldn't be computed. don't apply it to the DOM
+			}
+		}
 
+		if (scroll) {
+			// we act immediately on a releaseScroll operation, as opposed to captureScroll.
+			// if capture/release wraps a render operation that screws up the scroll,
+			// we still want to restore it a good state after, regardless of depth.
 
-	releaseInitialScroll: function() {
-		var scroll = $.extend({}, this.capturedScroll, this.computeInitialScroll());
-
-		this.discardScroll();
-		this.hardSetScroll(scroll); // since it's the initial rendering, we need to outsmart DOM
-	},
-
-
-	hardSetScroll: function(scroll) {
-		var _this = this;
-		var exec = function() { _this.setScroll(scroll); };
-		exec();
-		setTimeout(exec, 0); // to surely clear the browser's initial scroll for the DOM
+			if (scroll.isInitial) {
+				this.hardSetScroll(scroll); // outsmart how browsers set scroll on initial DOM
+			}
+			else {
+				this.setScroll(scroll);
+			}
+		}
 	},
 
 
 	discardScroll: function() {
 		if (!(--this.capturedScrollDepth)) {
 			this.capturedScroll = null;
+			return true; // root?
 		}
+		return false;
 	},
 
 
@@ -686,6 +713,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	queryScroll: function() {
 		return {};
+	},
+
+
+	hardSetScroll: function(scroll) {
+		var _this = this;
+		var exec = function() { _this.setScroll(scroll); };
+		exec();
+		setTimeout(exec, 0); // to surely clear the browser's initial scroll for the DOM
 	},
 
 
@@ -711,25 +746,27 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Does everything necessary to display the given events onto the current view. Guaranteed to redraw content.
-	// async. promise might not resolve if rendering cancelled.
-	// Assumes date visuals already displayed.
-	displayEvents: function() {
+	bindEvents: function() {
 		var _this = this;
 
-		return this.displayingEvents = this.requestEvents().then(function(events) {
-			_this.bindEvents(); // listen to changes. do this before the setEvents, because might trigger a reset itself
-			return _this.setEvents(events);
-		});
+		if (!this.isEventsBound) {
+			this.isEventsBound = true;
+			this.requestEvents().then(function(events) {
+				if (_this.isEventsBound) { // in case it was unbound in the meantime
+					_this.listenTo(_this.calendar, 'resetEvents', _this.resetEvents);
+					_this.setEvents(events);
+				}
+			});
+		}
 	},
 
 
-	// Does everything necessary to clear the view's currently-rendered events.
-	// sync
-	stopDisplayingEvents: function() {
-		this.displayingEvents = null;
-		this.unbindEvents();
-		this.unsetEvents();
+	unbindEvents: function() {
+		if (this.isEventsBound) {
+			this.isEventsBound = false;
+			this.stopListeningTo(this.calendar, 'resetEvents');
+			this.unsetEvents();
+		}
 	},
 
 
@@ -738,40 +775,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	bindEvents: function() {
-		if (!this.isEventsBounds) {
-			this.listenTo(this.calendar, 'resetEvents', this.resetEvents);
-			this.isEventsBounds = true;
-		}
-	},
-
-
-	unbindEvents: function() {
-		if (this.isEventsBounds) {
-			this.stopListeningTo(this.calendar, 'resetEvents');
-			this.isEventsBounds = false;
-		}
-	},
-
-
-	// async
-	resetEvents: function(events) {
-		var _this = this;
-
-		// do this before unsetEvents, a destructive action
-		this.captureScroll();
-		this.freezeHeight();
-
-		this.unsetEvents();
-
-		return this.setEvents(events).then(function() {
-			_this.releaseScroll();
-			_this.thawHeight();
-		});
-	},
-
-
-	// async
 	setEvents: function(events) {
 		var _this = this;
 
@@ -781,37 +784,79 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		else {
 			this.isEventsSet = true;
 
-			return this.eventRenderQueue.push(function() {
-				_this.captureScroll();
-				_this.freezeHeight();
-
-				_this.renderEvents(events);
-
-				_this.thawHeight();
-				_this.releaseScroll();
-
-				_this.triggerEventRender();
-			});
+			return this.requestRenderEvents(events);
 		}
 	},
 
 
-	// sync
+	resetEvents: function(events) {
+		var _this = this;
+
+		// do this before unsetEvents, a destructive action
+		this.captureScroll();
+		this.freezeHeight();
+
+		this.unsetEvents();
+		return this.setEvents(events).then(function() {
+			_this.thawHeight();
+			_this.releaseScroll();
+		});
+	},
+
+
 	unsetEvents: function() {
 		var _this = this;
 
 		if (this.isEventsSet) {
-			this.isEventsSet = false; // must go first. so triggers don't reinvoke unsetEvents
-			this.eventRenderQueue.clear(); // kill in-progress renders
+			this.isEventsSet = false;
+			return this.requestUnrenderEvents();
+		}
+	},
 
-			this.triggerEventUnrender();
 
-			if (this.destroyEvents) {
-				this.destroyEvents(); // TODO: deprecate
+	// assumes any previous event renders have been cleared already
+	requestRenderEvents: function(events) {
+		var _this = this;
+
+		return this.eventRenderQueue.add(function() {
+			_this.captureScroll();
+			_this.freezeHeight();
+
+			_this.renderEvents(events);
+
+			_this.thawHeight();
+			_this.releaseScroll();
+
+			_this.triggerEventRender();
+		});
+	},
+
+
+	requestUnrenderEvents: function() { // assumes there was already at least one job in eventRenderQueue
+		var _this = this;
+
+		return this.eventRenderQueue.add(function() {
+			_this.eventRenderQueue.forgetCompleted(); // for ensureRenderEvents
+
+			_this.triggerEventUnrender();
+
+			_this.captureScroll();
+			_this.freezeHeight();
+
+			if (_this.destroyEvents) {
+				_this.destroyEvents(); // TODO: deprecate
 			}
 
-			this.unrenderEvents();
-		}
+			_this.unrenderEvents();
+
+			_this.thawHeight();
+			_this.releaseScroll();
+		});
+	},
+
+
+	ensureRenderEvents: function() {
+		return this.eventRenderQueue.promise();
 	},
 
 
