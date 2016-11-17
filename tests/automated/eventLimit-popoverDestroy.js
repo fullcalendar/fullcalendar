@@ -29,21 +29,21 @@ describe('eventLimit popover', function() {
 		var renderCount = 0;
 		var activated = false;
 		options.eventRender = function(eventObject, element, view) {
-			if(activated) {
+			if (activated) {
 				eventsRendered[eventObject.title] = eventObject;
 				++renderCount;
 			}
-		}
+		};
 		options.eventDestroy = function(eventObject, element, view) {
 			delete eventsRendered[eventObject.title];
 			--renderCount;
-		}
+		};
 		//Create calendar
 		$('#cal').fullCalendar(options);
 		//Activate flags and pop event limit popover
 		activated = true;
 		$('.fc-more').simulate('click');
-		
+
 		expect($('.fc-more-popover')).toBeVisible();
 		$('.fc-more-popover .fc-close')
 			.simulate('click');
@@ -57,15 +57,15 @@ describe('eventLimit popover', function() {
 		var renderCount = 0;
 		var activated = false;
 		options.eventRender = function(eventObject, element, view) {
-			if(activated) {
+			if (activated) {
 				eventsRendered[eventObject.title] = eventObject;
 				++renderCount;
 			}
-		}
+		};
 		options.eventDestroy = function(eventObject, element, view) {
 			delete eventsRendered[eventObject.title];
 			--renderCount;
-		}
+		};
 		//Create calendar
 		$('#cal').fullCalendar(options);
 		//Activate flags and pop event limit popover
