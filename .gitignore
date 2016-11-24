@@ -4,3 +4,5 @@ dist
 # npm
 node_modules
 npm-debug.log
+/.settings/
+/.project

@@ -61,6 +61,49 @@ describe('columnFormat', function() {
         });
     });
 
+    describe('when columnFormat is set on a per-view basis with a RAW option', function() {
+
+        //Month view Sunday's header takes the 27th of April.
+        var viewWithFormat = [ { view: 'month', expected: 'Sunday <span class="custom-number">27</span>',
+                selector: 'th.fc-day-header.fc-sun span' },
+            { view: 'basicWeek', expected: 'Sunday <span class="custom-number">11</span> - 5',
+                selector: 'th.fc-day-header.fc-sun span' },
+            { view: 'agendaWeek', expected: 'Sunday <span class="custom-number">11</span> , 5',
+                selector: 'th.fc-widget-header.fc-sun span' },
+            { view: 'basicDay', expected: 'Sunday <span class="custom-number">11</span> | 5',
+                selector: 'th.fc-day-header.fc-sun span' },
+            { view: 'agendaDay', expected: 'Sunday 5/<span class="custom-number">11</span>',
+                selector: 'th.fc-widget-header.fc-sun span' } ];
+
+        beforeEach(function() {
+            $('#cal').fullCalendar({
+                defaultDate: '2014-05-11',
+                views: {
+                    month: { columnFormat: 'dddd [<span class="custom-number">]D[</span>]',
+                        columnFormatRaw: true },
+                    basicWeek: { columnFormat: 'dddd [<span class="custom-number">]D[</span>] - M',
+                        columnFormatRaw: true },
+                    agendaWeek: { columnFormat: 'dddd [<span class="custom-number">]D[</span>] , M',
+                        columnFormatRaw: true },
+                    basicDay: { columnFormat: 'dddd [<span class="custom-number">]D[</span>] | M',
+                        columnFormatRaw: true },
+                    agendaDay: { columnFormat: 'dddd M/[<span class="custom-number">]D[</span>]',
+                        columnFormatRaw: true }
+                }
+            });
+        });
+
+        it('should have the correct values', function() {
+            var cal = $('#cal');
+
+            for (var i = 0; i <  viewWithFormat.length; i++) {
+                var crtView = viewWithFormat[i];
+                cal.fullCalendar('changeView', crtView.view);
+                expect(cal.find(crtView.selector)[0].innerHTML).toBe(crtView.expected);
+            };
+        });
+    });
+
     describe('when locale is French', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'dim.', selector: 'th.fc-day-header.fc-sun' },
