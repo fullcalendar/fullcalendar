@@ -1,11 +1,10 @@
 
 // TODO: write tests and clean up code
+// TODO: for debounce, always let current task finish
 
 function RunQueue() {
 	var _this = this;
 	var q = []; // array of runFuncs
-
-	$.extend(this, EmitterMixin);
 
 	this.add = function(taskFunc) {
 		return new Promise(function(resolve) {
@@ -17,8 +16,6 @@ function RunQueue() {
 					.then(resolve) // resolve RunQueue::push's promise, for the caller. will receive result of taskFunc.
 					.then(function() {
 						q.shift(); // pop itself off
-
-						_this.trigger('ran');
 
 						// run the next task, if any
 						if (q.length) {

@@ -803,7 +803,7 @@ function Calendar_constructor(element, overrides) {
 
 	function rerenderEvents() { // API method. destroys old events if previously rendered.
 		if (elementVisible()) {
-			t.reportEventChange(); // will cause a reset, and thus a rerender
+			currentView.requestEventsRerender();
 		}
 	}
 

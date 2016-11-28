@@ -68,7 +68,7 @@ function EventManager() { // assumed to be a calendar
 
 
 	function reportEventChange() {
-		t.triggerWith('resetEvents', t, [ cache ]); // NOTE: wish we could use .trigger, but Calendar overrides it :(
+		t.triggerWith('eventsReset', t, [ cache ]); // NOTE: wish we could use .trigger, but Calendar overrides it :(
 	}
 
 
