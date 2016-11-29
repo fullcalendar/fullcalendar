@@ -422,8 +422,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.releaseScroll();
 
 			_this.isDateRendered = true;
-
-			_this.triggerRender();
+			_this.triggerDateRender();
 		});
 	},
 
@@ -475,6 +474,11 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Misc rendering utils
 	// --------------------
+
+
+	triggerDateRender: function() {
+		this.triggerRender();
+	},
 
 
 	// Signals that the view's content has been rendered
@@ -845,9 +849,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	requestEventsUnrender: function() {
 		var _this = this;
 
-		return this.eventRenderQueue.add(function() {
-			return _this.forceEventsUnrender();
-		});
+		if (this.isEventsRendered) {
+			return this.eventRenderQueue.add(function() {
+				return _this.forceEventsUnrender();
+			});
+		}
+		else {
+			return Promise.resolve();
+		}
 	},
 
 
