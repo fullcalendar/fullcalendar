@@ -78,6 +78,11 @@ Promise.resolve = function(value) {
 };
 
 
+Promise.reject = function() {
+	return $.Deferred().reject().promise();
+};
+
+
 Promise.all = function(inputs) {
 	var hasAllValues = false;
 	var values;
