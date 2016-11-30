@@ -38,7 +38,7 @@ function Promise(executor) {
 			}
 
 			return origThen.call(promise, onFulfilled, onRejected);
-		}
+		};
 	}
 
 	return promise;

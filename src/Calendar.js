@@ -486,9 +486,6 @@ function Calendar_constructor(element, overrides) {
 
 
 	EventManager.call(t);
-	var isFetchNeeded = t.isFetchNeeded;
-	var fetchEvents = t.fetchEvents;
-	var fetchEventSources = t.fetchEventSources;
 
 
 

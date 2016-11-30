@@ -633,7 +633,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
 	updateSize: function(isResize) {
-		var scrollState;
 
 		if (isResize) {
 			this.captureScroll();

@@ -3,7 +3,6 @@
 // TODO: for debounce, always let current task finish
 
 function RunQueue() {
-	var _this = this;
 	var q = []; // array of runFuncs
 
 	this.add = function(taskFunc) {
