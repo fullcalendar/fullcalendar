@@ -400,7 +400,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	forceDateRender: function(date, forcedScroll) {
 		var _this = this;
 
-		this.captureInitialScroll(forcedScroll);
+		// if rendering a new date (or forced scroll), reset scroll to initial state (scrollTime)
+		if (date || forcedScroll) {
+			this.captureInitialScroll(forcedScroll);
+		}
+		else {
+			this.captureScroll(); // a rerender of the current date
+		}
+
 		this.freezeHeight();
 
 		return this.forceDateUnrender().then(function() {
