@@ -891,7 +891,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEventsRerender: function() {
-		this.requestEventsRender(this.calendar.clientEvents());
+		if (this.isEventsSet) {
+			return this.requestEventsRender(this.calendar.clientEvents());
+		}
+		else {
+			return Promise.reject();
+		}
 	},
 
 
