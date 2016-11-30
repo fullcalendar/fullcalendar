@@ -801,7 +801,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			this.isEventsBound = false;
 			this.stopListeningTo(this.calendar, 'eventsReset');
 			this.unsetEvents();
-			this.triggerWith('eventsUnbind', this, []); // TODO: .trigger()
+			this.trigger('eventsUnbind');
 		}
 	},
 
