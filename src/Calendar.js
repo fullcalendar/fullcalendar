@@ -225,7 +225,7 @@ var Calendar = FC.Calendar = Class.extend({
 	// Should be called when any type of async data fetching begins
 	pushLoading: function() {
 		if (!(this.loadingLevel++)) {
-			this.trigger('loading', null, true, this.view);
+			this.publiclyTrigger('loading', null, true, this.view);
 		}
 	},
 
@@ -233,7 +233,7 @@ var Calendar = FC.Calendar = Class.extend({
 	// Should be called when any type of async data fetching completes
 	popLoading: function() {
 		if (!(--this.loadingLevel)) {
-			this.trigger('loading', null, false, this.view);
+			this.publiclyTrigger('loading', null, false, this.view);
 		}
 	},
 
@@ -287,7 +287,7 @@ function Calendar_constructor(element, overrides) {
 	t.getCalendar = getCalendar;
 	t.getView = getView;
 	t.option = option; // getter/setter method
-	t.trigger = trigger;
+	t.publiclyTrigger = publiclyTrigger;
 
 
 	// Options
@@ -790,7 +790,7 @@ function Calendar_constructor(element, overrides) {
 			currentView.start // view has already been rendered
 		) {
 			if (updateSize(true)) {
-				currentView.trigger('windowResize', _element);
+				currentView.publiclyTrigger('windowResize', _element);
 			}
 		}
 	}
@@ -1075,7 +1075,7 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-	function trigger(name, thisObj) { // overrides the Emitter's trigger method :(
+	function publiclyTrigger(name, thisObj) {
 		var args = Array.prototype.slice.call(arguments, 2);
 
 		thisObj = thisObj || _element;
