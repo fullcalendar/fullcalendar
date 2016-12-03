@@ -662,7 +662,15 @@ function Calendar_constructor(element, overrides) {
 			) {
 				if (elementVisible()) {
 
+					if (forcedScroll) {
+						currentView.captureInitialScroll(forcedScroll);
+					}
+
 					currentView.setDate(date, forcedScroll); // will call freezeContentHeight
+
+					if (forcedScroll) {
+						currentView.releaseScroll();
+					}
 
 					// need to do this after View::render, so dates are calculated
 					// NOTE: view updates title text proactively
@@ -800,7 +808,7 @@ function Calendar_constructor(element, overrides) {
 
 	function rerenderEvents() { // API method. destroys old events if previously rendered.
 		if (elementVisible()) {
-			currentView.requestEventsRerender();
+			currentView.requestCurrentEventsRender();
 		}
 	}
 

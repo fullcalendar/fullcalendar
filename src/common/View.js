@@ -365,13 +365,20 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// ------------------------------------------------------------------
 
 
-	setDate: function(date, forcedScroll) {
+	setDate: function(date) {
 		var _this = this;
+		var isReset = this.isDateSet;
 
 		this.isDateSet = true;
+		this.handleDate(date, isReset);
+		this.trigger(isReset ? 'dateReset' : 'dateSet', date);
+	},
+
+
+	handleDate: function(date, isReset) {
 		this.unbindEvents(); // will do nothing if not already bound
-		this.requestDateRender(date, forcedScroll).then(function() {
-			// I wish we could start earlier, but setRange/computeRange needs to execute first
+		this.requestDateRender(date).then(function() {
+			// wish we could start earlier, but setRange/computeRange needs to execute first
 			_this.bindEvents(); // will request events
 		});
 	},
@@ -380,29 +387,35 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	unsetDate: function() {
 		if (this.isDateSet) {
 			this.isDateSet = false;
-			this.unbindEvents();
-			this.requestDateUnrender();
+			this.handleUnsetDate();
+			this.trigger('dateUnset');
 		}
 	},
 
 
+	handleUnsetDate: function() {
+		this.unbindEvents();
+		this.requestDateUnrender();
+	},
+
+
 	// if date not specified, uses current
-	requestDateRender: function(date, forcedScroll) {
+	requestDateRender: function(date) {
 		var _this = this;
 
 		return this.dateRenderQueue.add(function() {
-			return _this.forceDateRender(date, forcedScroll);
+			return _this.forceDateRender(date);
 		});
 	},
 
 
 	// if date not specified, uses current
-	forceDateRender: function(date, forcedScroll) {
+	forceDateRender: function(date) {
 		var _this = this;
 
-		// if rendering a new date (or forced scroll), reset scroll to initial state (scrollTime)
-		if (date || forcedScroll) {
-			this.captureInitialScroll(forcedScroll);
+		// if rendering a new date, reset scroll to initial state (scrollTime)
+		if (date) {
+			this.captureInitialScroll();
 		}
 		else {
 			this.captureScroll(); // a rerender of the current date
@@ -415,6 +428,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			if (date) {
 				_this.setRange(_this.computeRange(date));
 			}
+
+			_this.onBeforeDateRender();
+			_this.trigger('beforeDateRender');
 
 			if (_this.render) {
 				_this.render(); // TODO: deprecate
@@ -429,8 +445,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.releaseScroll();
 
 			_this.isDateRendered = true;
-			_this.triggerDateRender();
+			_this.onDateRender();
+			_this.trigger('dateRender');
 		});
+	},
+
+
+	onBeforeDateRender: function() {
+	},
+
+
+	onDateRender: function() {
+		this.triggerRender();
 	},
 
 
@@ -448,6 +474,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		if (_this.isDateRendered) {
 			return this.requestEventsUnrender().then(function() {
+
+				_this.onBeforeDateUnrender();
+				_this.trigger('beforeDateUnrender');
+
 				_this.unselect();
 				_this.stopNowIndicator();
 				_this.triggerUnrender();
@@ -459,11 +489,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 				}
 
 				_this.isDateRendered = false;
+				_this.onDateUnrender();
+				_this.trigger('dateUnrender');
 			});
 		}
 		else {
 			return Promise.resolve();
 		}
+	},
+
+
+	onBeforeDateUnrender: function() {
+	},
+
+
+	onDateUnrender: function() {
 	},
 
 
@@ -481,11 +521,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Misc rendering utils
 	// --------------------
-
-
-	triggerDateRender: function() {
-		this.triggerRender();
-	},
 
 
 	// Signals that the view's content has been rendered
@@ -786,7 +821,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		if (!this.isEventsBound) {
 			this.isEventsBound = true;
-
 			this.rejectOn('eventsUnbind', this.requestEvents()).then(function(events) { // TODO: test rejection
 				_this.listenTo(_this.calendar, 'eventsReset', _this.setEvents);
 				_this.setEvents(events);
@@ -810,8 +844,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	getCurrentEvents: function() {
+		return this.calendar.clientEvents();
+	},
+
+
 	setEvents: function(events) {
+		var isReset = this.isEventSet;
+
 		this.isEventsSet = true;
+		this.handleEvents(events, isReset);
+		this.trigger(isReset ? 'eventsReset' : 'eventsSet', events);
+	},
+
+
+	handleEvents: function(events, isReset) {
 		this.requestEventsRender(events);
 	},
 
@@ -819,7 +866,37 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	unsetEvents: function() {
 		if (this.isEventsSet) {
 			this.isEventsSet = false;
-			this.requestEventsUnrender();
+			this.handleEventsUnset();
+			this.trigger('eventsUnset');
+		}
+	},
+
+
+	handleEventsUnset: function() {
+		this.requestEventsUnrender();
+	},
+
+
+	whenEventsSet: function() {
+		var _this = this;
+
+		if (this.isEventsSet) {
+			return Promise.resolve(this.getCurrentEvents());
+		}
+		else {
+			return new Promise(function(resolve) {
+				_this.one('eventsSet', resolve);
+			});
+		}
+	},
+
+
+	requestCurrentEventsRender: function() {
+		if (this.isEventsSet) {
+			return this.requestEventsRender(this.getCurrentEvents());
+		}
+		else {
+			return Promise.reject();
 		}
 	},
 
@@ -841,13 +918,16 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.freezeHeight();
 
 		return this.forceEventsUnrender().then(function() {
+			_this.trigger('beforeEventsRender');
+
 			_this.renderEvents(events);
 
 			_this.thawHeight();
 			_this.releaseScroll();
 
 			_this.isEventsRendered = true;
-			_this.triggerEventRender();
+			_this.onEventsRender();
+			_this.trigger('eventsRender');
 		});
 	},
 
@@ -868,7 +948,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	forceEventsUnrender: function() {
 		if (this.isEventsRendered) {
-			this.triggerEventUnrender();
+			this.onBeforeEventsUnrender();
+			this.trigger('beforeEventsUnrender');
 
 			this.captureScroll();
 			this.freezeHeight();
@@ -883,19 +964,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			this.releaseScroll();
 
 			this.isEventsRendered = false;
+			this.trigger('eventsUnrender');
 		}
 
 		return Promise.resolve(); // always synchronous
-	},
-
-
-	requestEventsRerender: function() {
-		if (this.isEventsSet) {
-			return this.requestEventsRender(this.calendar.clientEvents());
-		}
-		else {
-			return Promise.reject();
-		}
 	},
 
 
@@ -912,7 +984,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Signals that all events have been rendered
-	triggerEventRender: function() {
+	onEventsRender: function() {
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
@@ -921,7 +993,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Signals that all event elements are about to be removed
-	triggerEventUnrender: function() {
+	onBeforeEventsUnrender: function() {
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
