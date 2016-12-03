@@ -35,9 +35,15 @@ var CoordCache = FC.CoordCache = Class.extend({
 	// Queries the els for coordinates and stores them.
 	// Call this method before using and of the get* methods below.
 	build: function() {
-		var offsetParentEl = this.forcedOffsetParentEl || this.els.eq(0).offsetParent();
+		var offsetParentEl = this.forcedOffsetParentEl;
+		if (!offsetParentEl && this.els.length > 0) {
+			offsetParentEl = this.els.eq(0).offsetParent();
+		}
 
-		this.origin = offsetParentEl.offset();
+		this.origin = offsetParentEl ?
+			offsetParentEl.offset() :
+			null;
+
 		this.boundingRect = this.queryBoundingRect();
 
 		if (this.isHorizontal) {
@@ -220,12 +226,19 @@ var CoordCache = FC.CoordCache = Class.extend({
 
 	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
 	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
+	// Returns null if there are no elements
 	queryBoundingRect: function() {
-		var scrollParentEl = getScrollParent(this.els.eq(0));
+		var scrollParentEl;
 
-		if (!scrollParentEl.is(document)) {
-			return getClientRect(scrollParentEl);
+		if (this.els.length > 0) {
+			scrollParentEl = getScrollParent(this.els.eq(0));
+
+			if (!scrollParentEl.is(document)) {
+				return getClientRect(scrollParentEl);
+			}
 		}
+
+		return null;
 	},
 
 	isPointInBounds: function(leftOffset, topOffset) {
