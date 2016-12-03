@@ -68,7 +68,26 @@ function EventManager() { // assumed to be a calendar
 
 
 	function reportEventChange() {
-		t.trigger('eventsReset', cache);
+		t.trigger('eventsReset', filterEventsWithinRange(cache));
+	}
+
+
+	function filterEventsWithinRange(events) {
+		var filteredEvents = [];
+		var i, event;
+
+		for (i = 0; i < events.length; i++) {
+			event = events[i];
+
+			if (
+				event.start.clone().stripZone() < rangeEnd &&
+				t.getEventEnd(event).stripZone() > rangeStart
+			) {
+				filteredEvents.push(event);
+			}
+		}
+
+		return filteredEvents;
 	}
 
 
