@@ -366,7 +366,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	setDate: function(date) {
-		var _this = this;
 		var isReset = this.isDateSet;
 
 		this.isDateSet = true;
@@ -376,6 +375,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	handleDate: function(date, isReset) {
+		var _this = this;
+
 		this.unbindEvents(); // will do nothing if not already bound
 		this.requestDateRender(date).then(function() {
 			// wish we could start earlier, but setRange/computeRange needs to execute first
