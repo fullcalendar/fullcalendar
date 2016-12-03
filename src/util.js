@@ -774,6 +774,7 @@ function createObject(proto) {
 	f.prototype = proto;
 	return new f();
 }
+FC.createObject = createObject;
 
 
 function copyOwnProps(src, dest) {
