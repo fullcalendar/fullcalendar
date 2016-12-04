@@ -892,16 +892,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	requestCurrentEventsRender: function() {
-		if (this.isEventsSet) {
-			return this.requestEventsRender(this.getCurrentEvents());
-		}
-		else {
-			return Promise.reject();
-		}
-	},
-
-
 	// assumes any previous event renders have been cleared already
 	requestEventsRender: function(events) {
 		var _this = this;
