@@ -182,7 +182,7 @@ describe('refetchEventSources', function() {
 			calendarEl.fullCalendar(options);
 
 			var allEventSources = calendarEl.fullCalendar('getEventSources');
-			var greenEventSources = $.grep(allEventSources, function(eventSource) {
+			var greenEventSources = $.grep(allEventSources, function(eventSource) { // source 1 and 3
 				return eventSource.color === 'green';
 			});
 

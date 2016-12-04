@@ -48,11 +48,12 @@ describe('custom view class', function() {
 
 		$('#cal').fullCalendar({
 			defaultView: 'custom',
+			defaultDate: '2014-12-25',
 			events: [
 				{
 					title: 'Holidays',
-					start: '2014-12-24',
-					end: '2014-12-26'
+					start: '2014-12-25T09:00:00',
+					end: '2014-12-25T11:00:00'
 				}
 			]
 		});
