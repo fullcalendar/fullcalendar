@@ -42,6 +42,7 @@ function EventManager() { // assumed to be a calendar
 	var stickySource = { events: [] };
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
+	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
 	var prunedCache; // like cache, but only events that intersect with rangeStart/rangeEnd
 
@@ -75,9 +76,6 @@ function EventManager() { // assumed to be a calendar
 
 
 	function filterEventsWithinRange(events) {
-		return events;
-		//return Array.prototype.slice.call(events);
-
 		var filteredEvents = [];
 		var i, event;
 
@@ -141,7 +139,6 @@ function EventManager() { // assumed to be a calendar
 	// `specialFetchType` is an optimization parameter that affects purging of the event cache.
 	function fetchEventSources(specificSources, specialFetchType) {
 		var i, source;
-		var promises = [];
 
 		if (specialFetchType === 'reset') {
 			cache = [];
@@ -152,65 +149,92 @@ function EventManager() { // assumed to be a calendar
 
 		for (i = 0; i < specificSources.length; i++) {
 			source = specificSources[i];
+
+			// already-pending sources have already been accounted for in pendingSourceCnt
+			if (source._status !== 'pending') {
+				pendingSourceCnt++;
+			}
+
 			source._fetchId = (source._fetchId || 0) + 1;
+			source._status = 'pending';
 		}
 
 		for (i = 0; i < specificSources.length; i++) {
 			source = specificSources[i];
-			promises.push(tryFetchEventSource(source, source._fetchId));
+			tryFetchEventSource(source, source._fetchId);
 		}
 
-		return Promise.all(promises).then(function(sourcesResults) {
-
-			for (i = 0; i < sourcesResults.length; i++) {
-				cache.push.apply(cache, // append
-					sourcesResults[i]);
-			}
-
-			reportEventChange(); // updates prunedCache
-
-			return prunedCache;
-		});
+		if (pendingSourceCnt) {
+			return new Promise(function(resolve) {
+				t.one('eventsReceived', resolve); // will send prunedCache
+			});
+		}
+		else { // executed all synchronously, or no sources at all
+			return Promise.resolve(prunedCache);
+		}
 	}
 
 
 	// fetches an event source and processes its result ONLY if it is still the current fetch.
+	// caller is responsible for incrementing pendingSourceCnt first.
 	function tryFetchEventSource(source, fetchId) {
-		return new Promise(function(resolve) {
-			_fetchEventSource(source, function(eventInputs) {
-				var processedEvents = [];
-				var isArraySource = $.isArray(source.events);
-				var i, eventInput;
-				var abstractEvent;
+		_fetchEventSource(source, function(eventInputs) {
+			var isArraySource = $.isArray(source.events);
+			var i, eventInput;
+			var abstractEvent;
 
-				if (fetchId === source._fetchId) { // still a valid fetch?
-					if (eventInputs) {
-						for (i = 0; i < eventInputs.length; i++) {
-							eventInput = eventInputs[i];
+			if (
+				// is this the source's most recent fetch?
+				// if not, rely on an upcoming fetch of this source to decrement pendingSourceCnt
+				fetchId === source._fetchId &&
+				// event source no longer valid?
+				source._status !== 'rejected'
+			) {
+				source._status = 'resolved';
 
-							if (isArraySource) { // array sources have already been convert to Event Objects
-								abstractEvent = eventInput;
-							}
-							else {
-								abstractEvent = buildEventFromInput(eventInput, source);
-							}
+				if (eventInputs) {
+					for (i = 0; i < eventInputs.length; i++) {
+						eventInput = eventInputs[i];
 
-							if (abstractEvent) { // not false (an invalid event)
-								processedEvents.push.apply(processedEvents, // append
-									expandEvent(abstractEvent));
-							}
+						if (isArraySource) { // array sources have already been convert to Event Objects
+							abstractEvent = eventInput;
+						}
+						else {
+							abstractEvent = buildEventFromInput(eventInput, source);
+						}
+
+						if (abstractEvent) { // not false (an invalid event)
+							cache.push.apply( // append
+								cache,
+								expandEvent(abstractEvent) // add individual expanded events to the cache
+							);
 						}
 					}
 				}
 
-				resolve(processedEvents);
-			});
+				decrementPendingSourceCnt();
+			}
 		});
 	}
 
 
 	function rejectEventSource(source) {
-		source._fetchId++; // invalidates current fetch // TODO: don't wait for it!
+		var wasPending = source._status === 'pending';
+
+		source._status = 'rejected';
+
+		if (wasPending) {
+			decrementPendingSourceCnt();
+		}
+	}
+
+
+	function decrementPendingSourceCnt() {
+		pendingSourceCnt--;
+		if (!pendingSourceCnt) {
+			reportEventChange(cache); // updates prunedCache
+			t.trigger('eventsReceived', prunedCache);
+		}
 	}
 
 
