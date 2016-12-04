@@ -74,12 +74,10 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	t.getPrunedEventCache = function() {
-		return prunedCache;
-	};
-
-
 	function filterEventsWithinRange(events) {
+		return events;
+		//return Array.prototype.slice.call(events);
+
 		var filteredEvents = [];
 		var i, event;
 
@@ -96,6 +94,16 @@ function EventManager() { // assumed to be a calendar
 
 		return filteredEvents;
 	}
+
+
+	t.getEventCache = function() {
+		return cache;
+	};
+
+
+	t.getPrunedEventCache = function() {
+		return prunedCache;
+	};
 
 
 
@@ -1094,11 +1102,6 @@ function EventManager() { // assumed to be a calendar
 			}
 		};
 	}
-
-
-	t.getEventCache = function() {
-		return cache;
-	};
 
 }
 
