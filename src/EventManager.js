@@ -43,6 +43,7 @@ function EventManager() { // assumed to be a calendar
 	var sources = [ stickySource ];
 	var rangeStart, rangeEnd;
 	var cache = []; // holds events that have already been expanded
+	var prunedCache; // like cache, but only events that intersect with rangeStart/rangeEnd
 
 
 	$.each(
@@ -62,14 +63,20 @@ function EventManager() { // assumed to be a calendar
 			return fetchEvents(start, end);
 		}
 		else {
-			return Promise.resolve(cache);
+			return Promise.resolve(prunedCache);
 		}
 	}
 
 
 	function reportEventChange() {
-		t.trigger('eventsReset', filterEventsWithinRange(cache));
+		prunedCache = filterEventsWithinRange(cache);
+		t.trigger('eventsReset', prunedCache);
 	}
+
+
+	t.getPrunedEventCache = function() {
+		return prunedCache;
+	};
 
 
 	function filterEventsWithinRange(events) {
@@ -152,9 +159,9 @@ function EventManager() { // assumed to be a calendar
 					sourcesResults[i]);
 			}
 
-			reportEventChange();
+			reportEventChange(); // updates prunedCache
 
-			return cache;
+			return prunedCache;
 		});
 	}
 

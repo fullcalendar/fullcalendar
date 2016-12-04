@@ -846,7 +846,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	getCurrentEvents: function() {
-		return this.calendar.clientEvents();
+		return this.calendar.getPrunedEventCache();
 	},
 
 
