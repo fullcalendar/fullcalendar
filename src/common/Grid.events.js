@@ -467,11 +467,15 @@ Grid.mixin({
 				mouseFollower.stop(!dropLocation, function() {
 					if (isDragging) {
 						view.unrenderDrag();
-						view.showEvent(event);
 						_this.segDragStop(seg, ev);
 					}
+
 					if (dropLocation) {
+						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
 						view.reportEventDrop(event, dropLocation, _this.largeUnit, el, ev);
+					}
+					else {
+						view.showEvent(event);
 					}
 				});
 				_this.segDragListener = null;
@@ -758,18 +762,23 @@ Grid.mixin({
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				resizeLocation = null;
+				view.showEvent(event); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
 				_this.unrenderEventResize();
-				view.showEvent(event);
 				enableCursor();
 			},
 			interactionEnd: function(ev) {
 				if (isDragging) {
 					_this.segResizeStop(seg, ev);
 				}
+
 				if (resizeLocation) { // valid date to resize to?
+					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
 					view.reportEventResize(event, resizeLocation, _this.largeUnit, el, ev);
+				}
+				else {
+					view.showEvent(event);
 				}
 				_this.segResizeListener = null;
 			}
