@@ -430,9 +430,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 				_this.setRange(_this.computeRange(date));
 			}
 
-			_this.onBeforeDateRender();
-			_this.trigger('beforeDateRender');
-
 			if (_this.render) {
 				_this.render(); // TODO: deprecate
 			}
@@ -449,10 +446,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.onDateRender();
 			_this.trigger('dateRender');
 		});
-	},
-
-
-	onBeforeDateRender: function() {
 	},
 
 
@@ -476,9 +469,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		if (_this.isDateRendered) {
 			return this.requestEventsUnrender().then(function() {
 
-				_this.onBeforeDateUnrender();
-				_this.trigger('beforeDateUnrender');
-
 				_this.unselect();
 				_this.stopNowIndicator();
 				_this.triggerUnrender();
@@ -490,21 +480,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 				}
 
 				_this.isDateRendered = false;
-				_this.onDateUnrender();
 				_this.trigger('dateUnrender');
 			});
 		}
 		else {
 			return Promise.resolve();
 		}
-	},
-
-
-	onBeforeDateUnrender: function() {
-	},
-
-
-	onDateUnrender: function() {
 	},
 
 
@@ -919,8 +900,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.freezeHeight();
 
 		return this.executeEventsUnrender().then(function() {
-			_this.trigger('beforeEventsRender');
-
 			_this.renderEvents(events);
 
 			_this.thawHeight();
@@ -950,7 +929,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	executeEventsUnrender: function() {
 		if (this.isEventsRendered) {
 			this.onBeforeEventsUnrender();
-			this.trigger('beforeEventsUnrender');
 
 			this.captureScroll();
 			this.freezeHeight();
