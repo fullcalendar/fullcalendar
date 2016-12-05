@@ -2,7 +2,8 @@
 v3.1.0 (2016-12-05)
 -------------------
 
-- new `footer` option, similar to header toolbar (#3299)
+- `eventRenderWait` for implicit batch event rerendering, for performance (#2938)
+- new `footer` option, similar to header toolbar (#654, #3299)
 - event rendering batch methods (#3351):
 	- `renderEvents`
 	- `updateEvents`
