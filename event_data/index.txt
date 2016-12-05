@@ -20,6 +20,7 @@ Event Data
 <li class='callback'><a href='eventDataTransform'>eventDataTransform (callback)</a></li>
 <li class='callback'><a href='loading'>loading (callback)</a></li>
 <li class='method'><a href='updateEvent'>updateEvent (method)</a></li>
+<li class='method'><a href='updateEvents'>updateEvents (method)</a></li>
 <li class='method'><a href='clientEvents'>clientEvents (method)</a></li>
 <li class='method'><a href='removeEvents'>removeEvents (method)</a></li>
 <li class='method'><a href='refetchEvents'>refetchEvents (method)</a></li>

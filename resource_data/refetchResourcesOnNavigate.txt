@@ -1,0 +1,9 @@
+
+refetchResourcesOnNavigate *scheduler 1.5.0*
+============================================
+
+Whether to refetch and rerender resources when the user navigates to a different date or changes the view.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: `false`
+</div>

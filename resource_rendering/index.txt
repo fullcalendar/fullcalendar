@@ -6,6 +6,7 @@ Resource Rendering
 <li><a href='resourceOrder'>resourceOrder</a></li>
 <li><a href='resourceGroupField'>resourceGroupField</a></li>
 <li><a href='resourceGroupText'>resourceGroupText</a></li>
+<li><a href='filterResourcesWithEvents'>filterResourcesWithEvents</a></li>
 <li><a href='resourceText'>resourceText (callback)</a></li>
 <li><a href='resourceRender'>resourceRender (callback)</a></li>
 </ul>

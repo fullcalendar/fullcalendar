@@ -1,0 +1,13 @@
+
+footer *3.1*
+============
+
+Renders a set of controls at the bottom of the calendar.
+
+<div class='spec' markdown='1'>
+Object / `false` (the default)
+</div>
+
+This settings accepts the same exact values as the [header]() option.
+
+It is `false` by default, meaning no controls will be rendered at the foot of the calendar.

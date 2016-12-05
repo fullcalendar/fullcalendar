@@ -11,3 +11,8 @@ Integer, *default*: `1000` (1 second)
 This value is specified in milliseconds.
 
 Only applicable when the calendar is being used on a touch device. Otherwise, there is no delay.
+
+This setting controls event dragging **and** date selecting. For further granularity, please see the following settings:
+
+- [eventLongPressDelay]()
+- [selectLongPressDelay]()

@@ -1,0 +1,11 @@
+
+renderEvents *3.1*
+==================
+
+Renders a multiple new event on the calendar in batch.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'renderEvent', *events* [, *stick* ] )
+</div>
+
+This method is similar to the [renderEvent]() method though it accepts an **array of events** as its main argument, to render multiple events at the same time. This reduces the number of event rerenders that must happen, for performance reasons.

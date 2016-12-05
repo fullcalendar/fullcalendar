@@ -4,6 +4,7 @@ General Display
 
 <ul>
 <li>header</li>
+<li>footer</li>
 <li>customButtons</li>
 <li>buttonIcons</li>
 <li>theme</li>
