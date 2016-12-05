@@ -1,11 +1,10 @@
 
 // TODO: write tests and clean up code
-// TODO: for debounce, always let current task finish
 
-function TaskQueue() {
+function TaskQueue(debounceWait) {
 	var q = []; // array of runFuncs
 
-	this.add = function(taskFunc) {
+	function addTask(taskFunc) {
 		return new Promise(function(resolve) {
 
 			// should run this function when it's taskFunc's turn to run.
@@ -31,7 +30,12 @@ function TaskQueue() {
 				runFunc();
 			}
 		});
-	};
+	}
+
+	this.add = // potentially debounce, for the public method
+		typeof debounceWait === 'number' ?
+			debounce(addTask, debounceWait) :
+			addTask; // if not a number (null/undefined/false), no debounce at all
 }
 
 FC.TaskQueue = TaskQueue;

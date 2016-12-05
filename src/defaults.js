@@ -82,6 +82,7 @@ Calendar.defaults = {
 	dropAccept: '*',
 
 	eventOrder: 'title',
+	//eventRenderWait: null,
 
 	eventLimit: false,
 	eventLimitText: 'more',
