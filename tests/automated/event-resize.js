@@ -460,10 +460,8 @@ describe('eventResize', function() {
 
 		options.eventAfterAllRender = function() {
 			if (!eventsRendered) { // because event rerendering will happen when resize is over
-				setTimeout(function() { // because initial scroll state and/or height freezing might not be done
-					resizeStartFunc();
-					eventsRendered = true;
-				}, 0);
+				resizeStartFunc();
+				eventsRendered = true;
 			}
 		};
 		options.eventResizeStart = function(event, jsEvent, uiEvent, view) {
