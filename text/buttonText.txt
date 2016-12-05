@@ -18,6 +18,4 @@ Object, *default*:
 
 [buttonIcons](../display/buttonIcons) and [themeButtonIcons](../display/themeButtonIcons) affects the appearance of certain other buttons.
 
-Note: The list property is only used in fullCalendar v3 and later.
-
 HTML injection is not supported. All special characters will be escaped.
