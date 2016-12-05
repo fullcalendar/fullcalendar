@@ -317,12 +317,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	/* Rendering
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Non-date-related content, like the view's skeleton
-	// --------------------------------------------------
+	// Rendering Non-date-related Content
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// Sets the container element that the view should render inside of, does global DOM-related initializations,
@@ -361,8 +357,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Date-related-content, like date cells, date indicators, and events
-	// ------------------------------------------------------------------
+	// Date Setting/Unsetting
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	setDate: function(date) {
@@ -372,6 +368,19 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.handleDate(date, isReset);
 		this.trigger(isReset ? 'dateReset' : 'dateSet', date);
 	},
+
+
+	unsetDate: function() {
+		if (this.isDateSet) {
+			this.isDateSet = false;
+			this.handleUnsetDate();
+			this.trigger('dateUnset');
+		}
+	},
+
+
+	// Date Handling
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	handleDate: function(date, isReset) {
@@ -385,19 +394,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	unsetDate: function() {
-		if (this.isDateSet) {
-			this.isDateSet = false;
-			this.handleUnsetDate();
-			this.trigger('dateUnset');
-		}
-	},
-
-
-	handleUnsetDate: function() {
+	handleUnsetDate: function() { // TODO: more consistent naming. handleDateUnset?
 		this.unbindEvents();
 		this.requestDateUnrender();
 	},
+
+
+	// Date Render Queuing
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// if date not specified, uses current
@@ -408,6 +412,19 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			return _this.executeDateRender(date);
 		});
 	},
+
+
+	requestDateUnrender: function() {
+		var _this = this;
+
+		return this.dateRenderQueue.add(function() {
+			return _this.executeDateUnrender();
+		});
+	},
+
+
+	// Date High-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// if date not specified, uses current
@@ -449,20 +466,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	onDateRender: function() {
-		this.triggerRender();
-	},
-
-
-	requestDateUnrender: function() {
-		var _this = this;
-
-		return this.dateRenderQueue.add(function() {
-			return _this.executeDateUnrender();
-		});
-	},
-
-
 	executeDateUnrender: function() {
 		var _this = this;
 
@@ -489,6 +492,19 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// Date Rendering Triggers
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	onDateRender: function() {
+		this.triggerRender();
+	},
+
+
+	// Date Low-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
 	// date-cell content only
 	renderDates: function() {
 		// subclasses should implement
@@ -501,8 +517,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Misc rendering utils
-	// --------------------
+	// Misc view rendering utils
+	// -------------------------
 
 
 	// Signals that the view's content has been rendered
@@ -794,8 +810,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	/* Event Elements / Segments
-	------------------------------------------------------------------------------------------------------------------*/
+	// Event Binding/Unbinding
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	bindEvents: function() {
@@ -821,14 +837,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	requestEvents: function() {
-		return this.calendar.requestEvents(this.start, this.end);
-	},
-
-
-	getCurrentEvents: function() {
-		return this.calendar.getPrunedEventCache();
-	},
+	// Event Setting/Unsetting
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	setEvents: function(events) {
@@ -840,22 +850,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	handleEvents: function(events, isReset) {
-		this.requestEventsRender(events);
-	},
-
-
 	unsetEvents: function() {
 		if (this.isEventsSet) {
 			this.isEventsSet = false;
 			this.handleEventsUnset();
 			this.trigger('eventsUnset');
 		}
-	},
-
-
-	handleEventsUnset: function() {
-		this.requestEventsUnrender();
 	},
 
 
@@ -873,14 +873,22 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	requestCurrentEventsRender: function() {
-		if (this.isEventsSet) {
-			this.requestEventsRender(this.getCurrentEvents());
-		}
-		else {
-			return Promise.reject();
-		}
+	// Event Handling
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	handleEvents: function(events, isReset) {
+		this.requestEventsRender(events);
 	},
+
+
+	handleEventsUnset: function() {
+		this.requestEventsUnrender();
+	},
+
+
+	// Event Render Queuing
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// assumes any previous event renders have been cleared already
@@ -891,6 +899,34 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			return _this.executeEventsRender(events);
 		});
 	},
+
+
+	requestEventsUnrender: function() {
+		var _this = this;
+
+		if (this.isEventsRendered) {
+			return this.eventRenderQueue.add(function() {
+				return _this.executeEventsUnrender();
+			});
+		}
+		else {
+			return Promise.resolve();
+		}
+	},
+
+
+	requestCurrentEventsRender: function() {
+		if (this.isEventsSet) {
+			this.requestEventsRender(this.getCurrentEvents());
+		}
+		else {
+			return Promise.reject();
+		}
+	},
+
+
+	// Event High-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	executeEventsRender: function(events) {
@@ -909,20 +945,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.onEventsRender();
 			_this.trigger('eventsRender');
 		});
-	},
-
-
-	requestEventsUnrender: function() {
-		var _this = this;
-
-		if (this.isEventsRendered) {
-			return this.eventRenderQueue.add(function() {
-				return _this.executeEventsUnrender();
-			});
-		}
-		else {
-			return Promise.resolve();
-		}
 	},
 
 
@@ -950,16 +972,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Renders the events onto the view.
-	renderEvents: function(events) {
-		// subclasses should implement
-	},
-
-
-	// Removes event elements from the view.
-	unrenderEvents: function() {
-		// subclasses should implement
-	},
+	// Event Rendering Triggers
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// Signals that all events have been rendered
@@ -977,6 +991,40 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
 	},
+
+
+	// Event Low-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// Renders the events onto the view.
+	renderEvents: function(events) {
+		// subclasses should implement
+	},
+
+
+	// Removes event elements from the view.
+	unrenderEvents: function() {
+		// subclasses should implement
+	},
+
+
+	// Event Data Access
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	requestEvents: function() {
+		return this.calendar.requestEvents(this.start, this.end);
+	},
+
+
+	getCurrentEvents: function() {
+		return this.calendar.getPrunedEventCache();
+	},
+
+
+	// Event Rendering Utils
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
