@@ -11,6 +11,7 @@ v3.1.0 (2016-12-05)
 - more granular touch settings (#3377):
 	- `eventLongPressDelay`
 	- `selectLongPressDelay`
+- eventDestroy not called when removing the popover (#3416, #3419)
 - print stylesheet and gcal extension now offered as minified (#3415)
 - fc-today in agenda header cells (#3361, #3365)
 - height-related options in tandem with other options (#3327, #3384)
