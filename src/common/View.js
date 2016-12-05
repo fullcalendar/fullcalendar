@@ -405,13 +405,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 
 		return this.dateRenderQueue.add(function() {
-			return _this.forceDateRender(date);
+			return _this.executeDateRender(date);
 		});
 	},
 
 
 	// if date not specified, uses current
-	forceDateRender: function(date) {
+	executeDateRender: function(date) {
 		var _this = this;
 
 		// if rendering a new date, reset scroll to initial state (scrollTime)
@@ -424,7 +424,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.freezeHeight();
 
-		return this.forceDateUnrender().then(function() {
+		return this.executeDateUnrender().then(function() {
 
 			if (date) {
 				_this.setRange(_this.computeRange(date));
@@ -465,12 +465,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 
 		return this.dateRenderQueue.add(function() {
-			return _this.forceDateUnrender();
+			return _this.executeDateUnrender();
 		});
 	},
 
 
-	forceDateUnrender: function() {
+	executeDateUnrender: function() {
 		var _this = this;
 
 		if (_this.isDateRendered) {
@@ -907,18 +907,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 
 		return this.eventRenderQueue.add(function() {
-			return _this.forceEventsRender(events);
+			return _this.executeEventsRender(events);
 		});
 	},
 
 
-	forceEventsRender: function(events) {
+	executeEventsRender: function(events) {
 		var _this = this;
 
 		this.captureScroll();
 		this.freezeHeight();
 
-		return this.forceEventsUnrender().then(function() {
+		return this.executeEventsUnrender().then(function() {
 			_this.trigger('beforeEventsRender');
 
 			_this.renderEvents(events);
@@ -938,7 +938,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		if (this.isEventsRendered) {
 			return this.eventRenderQueue.add(function() {
-				return _this.forceEventsUnrender();
+				return _this.executeEventsUnrender();
 			});
 		}
 		else {
@@ -947,7 +947,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	forceEventsUnrender: function() {
+	executeEventsUnrender: function() {
 		if (this.isEventsRendered) {
 			this.onBeforeEventsUnrender();
 			this.trigger('beforeEventsUnrender');
