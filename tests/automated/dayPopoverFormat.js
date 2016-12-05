@@ -25,19 +25,19 @@ describe('dayPopoverFormat', function() {
 	it('can be set to a custom value', function() {
 		options.dayPopoverFormat = 'ddd, MMMM';
 		init();
-		expect($('.fc-more-popover > .fc-header-toolbar .fc-title')).toHaveText('Tue, July');
+		expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('Tue, July');
 	});
 
 	it('is affected by the current locale when the value is default', function() {
 		options.locale = 'fr';
 		init();
-		expect($('.fc-more-popover > .fc-header-toolbar .fc-title')).toHaveText('29 juillet 2014');
+		expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('29 juillet 2014');
 	});
 
 	it('still maintains the same format when explicitly set, and there is a locale', function() {
 		options.locale = 'fr';
 		options.dayPopoverFormat = 'YYYY';
 		init();
-		expect($('.fc-more-popover > .fc-header-toolbar .fc-title')).toHaveText('2014');
+		expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('2014');
 	});
 });

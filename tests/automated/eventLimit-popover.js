@@ -189,8 +189,8 @@ describe('eventLimit popover', function() {
 	it('doesn\'t close when user clicks somewhere inside of the popover', function() {
 		init();
 		expect($('.fc-more-popover')).toBeVisible();
-		expect($('.fc-more-popover .fc-header-toolbar')).toBeInDOM();
-		$('.fc-more-popover .fc-header-toolbar').simulate('mousedown').simulate('click');
+		expect($('.fc-more-popover .fc-header')).toBeInDOM();
+		$('.fc-more-popover .fc-header').simulate('mousedown').simulate('click');
 		expect($('.fc-more-popover')).toBeVisible();
 	});
 
