@@ -1,5 +1,12 @@
 
-// TODO: write comments and tests
+/*
+Wrap jQuery's Deferred Promise object to be slightly more Promise/A+ compliant.
+With the added non-standard feature of synchronously executing handlers on resolved promises,
+which doesn't always happen otherwise (esp with nested .then handlers!?),
+so, this makes things a lot easier, esp because jQuery 3 changed the synchronicity for Deferred objects.
+
+TODO: write tests and more comments
+*/
 
 function Promise(executor) {
 	var deferred = $.Deferred();
@@ -41,7 +48,7 @@ function Promise(executor) {
 		};
 	}
 
-	return promise;
+	return promise; // instanceof Promise will break :( TODO: make Promise a real class
 }
 
 FC.Promise = Promise;

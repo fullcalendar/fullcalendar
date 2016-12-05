@@ -666,7 +666,7 @@ function Calendar_constructor(element, overrides) {
 						currentView.captureInitialScroll(forcedScroll);
 					}
 
-					currentView.setDate(date, forcedScroll); // will call freezeContentHeight
+					currentView.setDate(date, forcedScroll);
 
 					if (forcedScroll) {
 						currentView.releaseScroll();

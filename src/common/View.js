@@ -726,7 +726,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	captureInitialScroll: function(forcedScroll) {
-		if (this.captureScroll()) {
+		if (this.captureScroll()) { // root?
 			this.capturedScroll.isInitial = true;
 
 			if (forcedScroll) {
