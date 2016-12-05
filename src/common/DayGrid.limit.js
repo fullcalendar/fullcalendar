@@ -252,7 +252,7 @@ DayGrid.mixin({
 					var seg;
 					for (var i = 0; i < _this.popoverSegs.length; ++i) {
 						seg = _this.popoverSegs[i];
-						view.trigger('eventDestroy', seg.event, seg.event, seg.el);
+						view.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
 					}
 				}
 				_this.segPopover.removeElement();
