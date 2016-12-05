@@ -895,7 +895,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	requestEventsRender: function(events) {
 		var _this = this;
 
-		return this.eventRenderQueue.add(function() {
+		return this.eventRenderQueue.add(function() { // might not return a promise if debounced!? bad
 			return _this.executeEventsRender(events);
 		});
 	},

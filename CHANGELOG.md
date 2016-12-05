@@ -2,7 +2,8 @@
 v3.1.0 (2016-12-05)
 -------------------
 
-- `eventRenderWait` for implicit batch event rerendering, for performance (#2938)
+- experimental support for implicitly batched ("debounced") event rendering (#2938)
+	- `eventRenderWait` (off by default)
 - new `footer` option, similar to header toolbar (#654, #3299)
 - event rendering batch methods (#3351):
 	- `renderEvents`
