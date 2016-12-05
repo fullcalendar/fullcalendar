@@ -2,7 +2,7 @@
 // TODO: write tests and clean up code
 // TODO: for debounce, always let current task finish
 
-function RunQueue() {
+function TaskQueue() {
 	var q = []; // array of runFuncs
 
 	this.add = function(taskFunc) {
@@ -12,7 +12,7 @@ function RunQueue() {
 			// responsible for popping itself off the queue.
 			var runFunc = function() {
 				Promise.resolve(taskFunc()) // result might be async, coerce to promise
-					.then(resolve) // resolve RunQueue::push's promise, for the caller. will receive result of taskFunc.
+					.then(resolve) // resolve TaskQueue::push's promise, for the caller. will receive result of taskFunc.
 					.then(function() {
 						q.shift(); // pop itself off
 
@@ -34,10 +34,10 @@ function RunQueue() {
 	};
 }
 
-FC.RunQueue = RunQueue;
+FC.TaskQueue = TaskQueue;
 
 /*
-q = new RunQueue();
+q = new TaskQueue();
 
 function work(i) {
 	return q.push(function() {

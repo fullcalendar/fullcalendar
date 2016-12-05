@@ -69,8 +69,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
-		this.dateRenderQueue = new RunQueue();
-		this.eventRenderQueue = new RunQueue();
+		this.dateRenderQueue = new TaskQueue();
+		this.eventRenderQueue = new TaskQueue();
 
 		this.initialize();
 	},
