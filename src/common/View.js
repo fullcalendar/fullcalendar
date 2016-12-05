@@ -373,7 +373,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	unsetDate: function() {
 		if (this.isDateSet) {
 			this.isDateSet = false;
-			this.handleUnsetDate();
+			this.handleDateUnset();
 			this.trigger('dateUnset');
 		}
 	},
@@ -394,7 +394,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	handleUnsetDate: function() { // TODO: more consistent naming. handleDateUnset?
+	handleDateUnset: function() {
 		this.unbindEvents();
 		this.requestDateUnrender();
 	},
