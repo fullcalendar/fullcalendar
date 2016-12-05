@@ -36,6 +36,8 @@ function TaskQueue(debounceWait) {
 		typeof debounceWait === 'number' ?
 			debounce(addTask, debounceWait) :
 			addTask; // if not a number (null/undefined/false), no debounce at all
+
+	this.addQuickly = addTask; // guaranteed no debounce
 }
 
 FC.TaskQueue = TaskQueue;

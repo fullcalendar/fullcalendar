@@ -905,7 +905,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 
 		if (this.isEventsRendered) {
-			return this.eventRenderQueue.add(function() {
+			return this.eventRenderQueue.addQuickly(function() {
 				return _this.executeEventsUnrender();
 			});
 		}
