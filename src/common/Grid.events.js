@@ -1171,6 +1171,9 @@ Grid.mixin({
 
 
 	sortEventSegs: function(segs) {
+		if (this.view.options.noSort) {
+			return;
+		}
 		segs.sort(proxy(this, 'compareEventSegs'));
 	},
 
@@ -1288,4 +1291,3 @@ function getDraggedElMeta(el) {
 
 	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }
-
