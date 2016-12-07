@@ -1176,6 +1176,7 @@ Grid.mixin({
 		}
 		segs.sort(proxy(this, 'compareEventSegs'));
 	},
+	
 
 
 	// A cmp function for determining which segments should take visual priority
