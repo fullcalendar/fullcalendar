@@ -67,8 +67,8 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		this.colHeadFormat = this.view.opt('columnFormat');
 		if (this.colHeadFormat !== false) {
-		    this.colHeadFormat = this.colHeadFormat || this.computeColHeadFormat();
-	    }
+			this.colHeadFormat = this.colHeadFormat || this.computeColHeadFormat();
+		}
 	},
 
 
@@ -298,9 +298,9 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 
-        if (this.colHeadFormat === false) {
-            return '';
-        }
+		if (this.colHeadFormat === false) {
+			return '';
+		}
 
 		var view = this.view;
 		var classNames = [
@@ -320,10 +320,10 @@ var DayTableMixin = FC.DayTableMixin = {
 			classNames.push('fc-' + dayIDs[date.day()]); // only add the day-of-week class
 		}
 
-        var headerHtml = typeof this.colHeadFormat === 'function' ? this.colHeadFormat(date, colspan, otherAttrs) : htmlEscape(date.format(this.colHeadFormat));
+		var headerHtml = typeof this.colHeadFormat === 'function' ? this.colHeadFormat(date, colspan, otherAttrs) : htmlEscape(date.format(this.colHeadFormat));
 
 		return '' +
-            '<th class="' + classNames.join(' ') + '"' +
+			'<th class="' + classNames.join(' ') + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
