@@ -57,7 +57,7 @@ function enableCursor() {
 
 // Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
+// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
 function distributeHeight(els, availableHeight, shouldRedistribute) {
 
@@ -306,23 +306,25 @@ function isPrimaryMouseButton(ev) {
 
 
 function getEvX(ev) {
+	var touches = ev.originalEvent.touches;
+	if (touches && touches.length > 0) {
+		return touches[0].pageX;
+	}
+
 	if (ev.pageX !== undefined) {
 		return ev.pageX;
-	}
-	var touches = ev.originalEvent.touches;
-	if (touches) {
-		return touches[0].pageX;
 	}
 }
 
 
 function getEvY(ev) {
+	var touches = ev.originalEvent.touches;
+	if (touches && touches.length > 0) {
+		return touches[0].pageY;
+	}
+
 	if (ev.pageY !== undefined) {
 		return ev.pageY;
-	}
-	var touches = ev.originalEvent.touches;
-	if (touches) {
-		return touches[0].pageY;
 	}
 }
 
