@@ -62,16 +62,16 @@ class Event {
 
 		// Normalize our event's dates for comparison with the all-day range.
 		$eventStart = stripTime($this->start);
-		$eventEnd = isset($this->end) ? stripTime($this->end) : null;
 
-		if (!$eventEnd) {
-			// No end time? Only check if the start is within range.
-			return $eventStart < $rangeEnd && $eventStart >= $rangeStart;
+		if (isset($this->end)) {
+			$eventEnd = stripTime($this->end); // normalize
 		}
 		else {
-			// Check if the two ranges intersect.
-			return $eventStart < $rangeEnd && $eventEnd > $rangeStart;
+			$eventEnd = $eventStart; // consider this a zero-duration event
 		}
+
+		// Check if the two whole-day ranges intersect.
+		return $eventStart < $rangeEnd && $eventEnd >= $rangeStart;
 	}
 
 
