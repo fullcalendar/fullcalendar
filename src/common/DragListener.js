@@ -26,13 +26,11 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 	delayTimeoutId: null,
 	minDistance: null,
 
-	handleTouchScrollProxy: null, // calls handleTouchScroll, always bound to `this`
-
 
 	constructor: function(options) {
+		this.initMouseIgnoring(500); // init mixin
+
 		this.options = options || {};
-		this.handleTouchScrollProxy = proxy(this, 'handleTouchScroll');
-		this.initMouseIgnoring(500);
 	},
 
 
@@ -127,11 +125,17 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 		var _this = this;
 		var touchStartIgnores = 1;
 
+		// some browsers (Safari in iOS 10) don't allow preventDefault on touch events that are bound after touchstart,
+		// so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
+		var globalEmitter = GlobalEmitter.get();
+
 		if (this.isTouch) {
-			this.listenTo($(document), {
+			this.listenTo(globalEmitter, {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
 				touchcancel: this.endInteraction,
+
+				scroll: this.handleTouchScroll,
 
 				// Sometimes touchend doesn't fire
 				// (can't figure out why. touchcancel doesn't fire either. has to do with scrolling?)
@@ -146,23 +150,15 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 					}
 				}
 			});
-
-			// listen to ALL scroll actions on the page
-			if (
-				!bindAnyScroll(this.handleTouchScrollProxy) && // hopefully this works and short-circuits the rest
-				this.scrollEl // otherwise, attach a single handler to this
-			) {
-				this.listenTo(this.scrollEl, 'scroll', this.handleTouchScroll);
-			}
 		}
 		else {
-			this.listenTo($(document), {
+			this.listenTo(globalEmitter, {
 				mousemove: this.handleMouseMove,
 				mouseup: this.endInteraction
 			});
 		}
 
-		this.listenTo($(document), {
+		this.listenTo(globalEmitter, {
 			selectstart: preventDefault, // don't allow selection while dragging
 			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
 		});
@@ -170,13 +166,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 
 	unbindHandlers: function() {
-		this.stopListeningTo($(document));
-
-		// unbind scroll listening
-		unbindAnyScroll(this.handleTouchScrollProxy);
-		if (this.scrollEl) {
-			this.stopListeningTo(this.scrollEl, 'scroll');
-		}
+		this.stopListeningTo(GlobalEmitter.get());
 	},
 
 

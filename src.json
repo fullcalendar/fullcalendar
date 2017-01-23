@@ -16,6 +16,7 @@
     "common/DragListener.js",
     "common/DragListener.autoscroll.js",
     "common/HitDragListener.js",
+    "common/GlobalEmitter.js",
     "common/MouseFollower.js",
     "common/Grid.js",
     "common/Grid.events.js",
