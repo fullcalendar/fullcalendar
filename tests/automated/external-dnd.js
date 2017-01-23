@@ -61,10 +61,13 @@ describe('external drag and drop', function() {
 					options.drop = function(date, jsEvent, ui) {
 						if (callCnt === 0) {
 							expect(date).toEqualMoment('2014-08-06');
-							$('#sidebar .event1').remove();
+
 							$('#cal').fullCalendar('next');
 							$('#cal').fullCalendar('prev');
-							setTimeout(function() { // needed for IE8
+
+							setTimeout(function() {
+								$('#sidebar .event1').remove();
+
 								$('#sidebar .event2').simulate('drag', {
 									end: getMonthCell(1, 3)
 								});
@@ -184,10 +187,13 @@ describe('external drag and drop', function() {
 					options.drop = function(date, jsEvent, ui) {
 						if (callCnt === 0) {
 							expect(date).toEqualMoment('2014-08-20T01:00:00');
-							$('#sidebar .event1').remove();
+
 							$('#cal').fullCalendar('next');
 							$('#cal').fullCalendar('prev');
+
 							setTimeout(function() { // needed for IE8, for firing the second time, for some reason
+								$('#sidebar .event1').remove();
+
 								$('#sidebar .event2').simulate('drag', {
 									end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
 								});
