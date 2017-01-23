@@ -265,6 +265,9 @@ Calendar.mixin(EmitterMixin);
 function Calendar_constructor(element, overrides) {
 	var t = this;
 
+	// declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
+	GlobalEmitter.needed();
+
 
 	// Exports
 	// -----------------------------------------------------------------------------------
@@ -608,6 +611,8 @@ function Calendar_constructor(element, overrides) {
 		if (windowResizeProxy) {
 			$(window).unbind('resize', windowResizeProxy);
 		}
+
+		GlobalEmitter.unneeded();
 	}
 
 

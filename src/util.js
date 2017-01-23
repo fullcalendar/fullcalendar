@@ -344,30 +344,6 @@ function preventDefault(ev) {
 }
 
 
-// attach a handler to get called when ANY scroll action happens on the page.
-// this was impossible to do with normal on/off because 'scroll' doesn't bubble.
-// http://stackoverflow.com/a/32954565/96342
-// returns `true` on success.
-function bindAnyScroll(handler) {
-	if (window.addEventListener) {
-		window.addEventListener('scroll', handler, true); // useCapture=true
-		return true;
-	}
-	return false;
-}
-
-
-// undoes bindAnyScroll. must pass in the original function.
-// returns `true` on success.
-function unbindAnyScroll(handler) {
-	if (window.removeEventListener) {
-		window.removeEventListener('scroll', handler, true); // useCapture=true
-		return true;
-	}
-	return false;
-}
-
-
 /* General Geometry Utils
 ----------------------------------------------------------------------------------------------------------------------*/
 
