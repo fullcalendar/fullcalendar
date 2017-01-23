@@ -86,6 +86,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 					(isLabeled ?
 						'<span>' + // for matchCellWidths
 							htmlEscape(slotDate.format(this.labelFormat)) +
+					 		(view.opt('viewSubSlotLabel') ? '~' + 
+							 htmlEscape(slotDate.add(30, 'minutes').format(this.labelFormat)) : '') +
 						'</span>' :
 						''
 						) +
