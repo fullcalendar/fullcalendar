@@ -5,7 +5,7 @@ updateEvents *3.1*
 Reports changes to multiple events and renders them in batch.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'updateEvent', *events* )
+.fullCalendar( 'updateEvents', *events* )
 </div>
 
 This method is similar to the [updateEvent]() method though it accepts an **array of events** as its main argument, to update multiple events at the same time. This reduces the number of event rerenders that must happen, for performance reasons.
