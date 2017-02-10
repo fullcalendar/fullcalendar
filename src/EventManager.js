@@ -1130,6 +1130,12 @@ function EventManager() { // assumed to be a calendar
 }
 
 
+// returns an undo function
+Calendar.prototype.mutateSeg = function(seg, newProps) {
+	return this.mutateEvent(seg.event, newProps);
+};
+
+
 // hook for external libs to manipulate event properties upon creation.
 // should manipulate the event in-place.
 Calendar.prototype.normalizeEvent = function(event) {

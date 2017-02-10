@@ -472,7 +472,7 @@ Grid.mixin({
 
 					if (dropLocation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-						view.reportEventDrop(event, dropLocation, _this.largeUnit, el, ev);
+						view.reportSegDrop(seg, dropLocation, _this.largeUnit, el, ev);
 					}
 					else {
 						view.showEvent(event);
@@ -775,7 +775,7 @@ Grid.mixin({
 
 				if (resizeLocation) { // valid date to resize to?
 					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-					view.reportEventResize(event, resizeLocation, _this.largeUnit, el, ev);
+					view.reportSegResize(seg, resizeLocation, _this.largeUnit, el, ev);
 				}
 				else {
 					view.showEvent(event);
