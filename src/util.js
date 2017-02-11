@@ -306,24 +306,28 @@ function isPrimaryMouseButton(ev) {
 
 
 function getEvX(ev) {
-	if (ev.pageX !== undefined) {
-		return ev.pageX;
-	}
 	var touches = ev.originalEvent.touches;
-	if (touches) {
+
+	// on mobile FF, pageX for touch events is present, but incorrect,
+	// so, look at touch coordinates first.
+	if (touches && touches.length) {
 		return touches[0].pageX;
 	}
+
+	return ev.pageX;
 }
 
 
 function getEvY(ev) {
-	if (ev.pageY !== undefined) {
-		return ev.pageY;
-	}
 	var touches = ev.originalEvent.touches;
-	if (touches) {
+
+	// on mobile FF, pageX for touch events is present, but incorrect,
+	// so, look at touch coordinates first.
+	if (touches && touches.length) {
 		return touches[0].pageY;
 	}
+
+	return ev.pageY;
 }
 
 
