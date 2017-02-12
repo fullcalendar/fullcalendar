@@ -62,6 +62,11 @@ describe('formatRange', function() {
 		expect(s).toEqual('January 1st 2014');
 	});
 
+	it('outputs the single week number when dates have the same week and format string is week', function() {
+		var s = $.fullCalendar.formatRange('2014-01-01', '2014-01-01', 'W');
+		expect(s).toEqual('1');
+	});
+
 	it('uses a custom separator', function() {
 		var s = $.fullCalendar.formatRange(
 			'2014-01-01T06:00:00',
