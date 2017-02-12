@@ -1,6 +1,8 @@
 
 $.fullCalendar.locale("hr", {
 	buttonText: {
+		prev: "Prijašnji", // jqui datepicker has weird html entities. override.
+		next: "Sljedeći", // "
 		month: "Mjesec",
 		week: "Tjedan",
 		day: "Dan",
