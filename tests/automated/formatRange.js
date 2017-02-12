@@ -45,6 +45,13 @@ describe('formatRange', function() {
 		expect(s).toEqual('15. - 21. 1. 2017');
 	});
 
+	it('uses non-standalone version of month (Russian)', function() {
+		var date1 = moment('2015-01-02').locale('ru');
+		var date2 = moment('2015-01-08').locale('ru');
+		var s = $.fullCalendar.formatRange(date1, date2, 'DD MMMM YYYY');
+		expect(s).toEqual('02 - 08 января 2015');
+	});
+
 	it('outputs the single date when the dates have the same day and time', function() {
 		var s = $.fullCalendar.formatRange('2014-01-01T06:00:00', '2014-01-01T06:00:00', 'MMMM Do YYYY h:mma');
 		expect(s).toEqual('January 1st 2014 6:00am');
