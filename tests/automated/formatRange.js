@@ -31,6 +31,20 @@ describe('formatRange', function() {
 		expect(s).toEqual('January 1st 2014 6:00am - 6:30am');
 	});
 
+	it('doesn\'t split a period (German)', function() {
+		var date1 = moment('2014-08-11').locale('de');
+		var date2 = moment('2014-08-17').locale('de');
+		var s = $.fullCalendar.formatRange(date1, date2, 'll');
+		expect(s).toEqual('11. - 17. Aug. 2014');
+	});
+
+	it('doesn\'t split a period (Czech)', function() {
+		var date1 = moment('2017-01-15').locale('cs');
+		var date2 = moment('2017-01-21').locale('cs');
+		var s = $.fullCalendar.formatRange(date1, date2, 'D. M. YYYY');
+		expect(s).toEqual('15. - 21. 1. 2017');
+	});
+
 	it('outputs the single date when the dates have the same day and time', function() {
 		var s = $.fullCalendar.formatRange('2014-01-01T06:00:00', '2014-01-01T06:00:00', 'MMMM Do YYYY h:mma');
 		expect(s).toEqual('January 1st 2014 6:00am');

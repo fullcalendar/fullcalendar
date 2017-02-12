@@ -122,7 +122,15 @@ function formatRangeWithChunks(date1, date2, chunks, separator, isRTL) {
 
 	// Similarly, start at the rightmost side of the formatting string and move left
 	for (rightI=chunks.length-1; rightI>leftI; rightI--) {
-		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2,  chunks[rightI]);
+
+		// If current chunk is on the boundary of unique date-content, and is a special-case
+		// date-formatting postfix character, then don't consume it. Consider it unique date-content.
+		// TODO: configurable special-case characters.
+		if (rightI - 1 === leftI && chunks[rightI] === '.') {
+			break;
+		}
+
+		chunkStr = formatSimilarChunk(date1, date2, unzonedDate1, unzonedDate2, chunks[rightI]);
 		if (chunkStr === false) {
 			break;
 		}
@@ -224,7 +232,15 @@ function chunkFormatString(formatStr) {
 			chunks.push({ token: match[3] });
 		}
 		else if (match[5]) { // an unenclosed literal string
-			chunks.push(match[5]);
+
+			// separate non-whitespace spans from whitespace spans.
+			// TODO: generalize whitespace-splitting instead of hardcoding for one scenario.
+			if (match[5] === '. ') {
+				chunks.push('.', ' ');
+			}
+			else {
+				chunks.push(match[5]);
+			}
 		}
 	}
 
