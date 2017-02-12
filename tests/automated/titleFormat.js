@@ -160,4 +160,17 @@ describe('titleFormat', function() {
             expect($('h2').text()).toMatch(/Dec 25 \- 26\,? 2014/);
         });
     });
+
+    describe('when not all days are shown', function() {
+
+        it('doesn\'t include hidden days in the title', function() {
+            $('#cal').fullCalendar({
+                defaultView: 'agendaWeek',
+                defaultDate: '2017-02-13',
+                weekends: false,
+                titleRangeSeparator: ' - '
+            });
+            expect($('h2')).toHaveText('Feb 13 - 17, 2017'); // does not include Sunday
+        });
+    });
 });

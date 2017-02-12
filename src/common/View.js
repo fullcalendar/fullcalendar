@@ -217,11 +217,23 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
+		var start, end;
+
+		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
+		if (this.intervalUnit === 'year' || this.intervalUnit === 'month') {
+			start = this.intervalStart;
+			end = this.intervalEnd;
+		}
+		else { // for day units or smaller, use the actual day range
+			start = this.start;
+			end = this.end;
+		}
+
 		return this.formatRange(
 			{
 				// in case intervalStart/End has a time, make sure timezone is correct
-				start: this.calendar.applyTimezone(this.intervalStart),
-				end: this.calendar.applyTimezone(this.intervalEnd)
+				start: this.calendar.applyTimezone(start),
+				end: this.calendar.applyTimezone(end)
 			},
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
