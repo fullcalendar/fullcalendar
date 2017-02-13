@@ -26,6 +26,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 	delayTimeoutId: null,
 	minDistance: null,
 
+	shouldCancelTouchScroll: true,
+
 
 	constructor: function(options) {
 		this.initMouseIgnoring(500); // init mixin
@@ -274,8 +276,9 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 
 	handleTouchMove: function(ev) {
+
 		// prevent inertia and touchmove-scrolling while dragging
-		if (this.isDragging) {
+		if (this.isDragging && this.shouldCancelTouchScroll) {
 			ev.preventDefault();
 		}
 
