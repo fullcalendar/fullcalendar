@@ -547,8 +547,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
-		this.listenTo($(document), 'mousedown', this.handleDocumentMousedown);
-		this.listenTo($(document), 'touchstart', this.processUnselect);
+		this.listenTo($(document), {
+			touchstart: this.processUnselect,
+			mousedown: this.handleDocumentMousedown
+		});
 	},
 
 

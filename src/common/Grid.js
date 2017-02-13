@@ -2,7 +2,7 @@
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
+var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// self-config, overridable by subclasses
 	hasDayInteractions: true, // can user click/select ranges of time?
@@ -42,7 +42,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 		this.dayClickListener = this.buildDayClickListener();
 		this.daySelectListener = this.buildDaySelectListener();
-		this.initMouseIgnoring();
 	},
 
 
@@ -266,29 +265,33 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 	dayMousedown: function(ev) {
 		var view = this.view;
 
-		if (!this.isIgnoringMouse) {
+		// prevent a user's clickaway for unselecting a range or an event from
+		// causing a dayClick or starting an immediate new selection.
+		if (view.isSelected || view.selectedEvent) {
+			return;
+		}
 
-			this.dayClickListener.startInteraction(ev);
+		this.dayClickListener.startInteraction(ev);
 
-			if (view.opt('selectable')) {
-				this.daySelectListener.startInteraction(ev, {
-					distance: view.opt('selectMinDistance')
-				});
-			}
+		if (view.opt('selectable')) {
+			this.daySelectListener.startInteraction(ev, {
+				distance: view.opt('selectMinDistance')
+			});
 		}
 	},
 
 
 	dayTouchStart: function(ev) {
 		var view = this.view;
-		var selectLongPressDelay = view.opt('selectLongPressDelay');
+		var selectLongPressDelay;
 
-		// HACK to prevent a user's clickaway for unselecting a range or an event
-		// from causing a dayClick.
+		// prevent a user's clickaway for unselecting a range or an event from
+		// causing a dayClick or starting an immediate new selection.
 		if (view.isSelected || view.selectedEvent) {
-			this.tempIgnoreMouse();
+			return;
 		}
 
+		selectLongPressDelay = view.opt('selectLongPressDelay');
 		if (selectLongPressDelay == null) {
 			selectLongPressDelay = view.opt('longPressDelay'); // fallback
 		}
@@ -324,11 +327,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 				dayClickHit = null;
 			},
 			interactionEnd: function(ev, isCancelled) {
-				if (
-					!isCancelled &&
-					dayClickHit &&
-					!_this.isIgnoringMouse // see hack in dayTouchStart
-				) {
+				if (!isCancelled && dayClickHit) {
 					view.triggerDayClick(
 						_this.getHitSpan(dayClickHit),
 						_this.getHitEl(dayClickHit),
