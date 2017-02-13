@@ -264,13 +264,15 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
+		var view = this.view;
+
 		if (!this.isIgnoringMouse) {
 
 			this.dayClickListener.startInteraction(ev);
 
-			if (this.view.opt('selectable')) {
+			if (view.opt('selectable')) {
 				this.daySelectListener.startInteraction(ev, {
-					//distance: 5, // needs more work
+					distance: view.opt('selectMinDistance')
 				});
 			}
 		}

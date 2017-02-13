@@ -78,6 +78,7 @@ Calendar.defaults = {
 	
 	//selectable: false,
 	unselectAuto: true,
+	//selectMinDistance: 0,
 	
 	dropAccept: '*',
 
