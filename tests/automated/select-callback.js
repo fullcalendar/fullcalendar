@@ -231,4 +231,42 @@ describe('select callback', function() {
 			});
 		});
 	});
+
+	describe('when selectMinDistance', function() {
+		beforeEach(function() {
+			options.selectMinDistance = 10;
+		});
+
+		it('will fire when dragged beyond distance', function(done) {
+			options.select = function() {};
+			spyOn(options, 'select').and.callThrough();
+
+			$('#cal').fullCalendar(options);
+
+			$('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+				dx: 12,
+				dy: 0,
+				callback: function() {
+					expect(options.select).toHaveBeenCalled();
+					done();
+				}
+			});
+		});
+
+		it('will not fire when not dragged beyond distance', function(done) {
+			options.select = function() {};
+			spyOn(options, 'select').and.callThrough();
+
+			$('#cal').fullCalendar(options);
+
+			$('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+				dx: 8,
+				dy: 0,
+				callback: function() {
+					expect(options.select).not.toHaveBeenCalled();
+					done();
+				}
+			});
+		});
+	});
 });
