@@ -61,6 +61,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.minDistance = firstDefined(extraOptions.distance, this.options.distance, 0);
 			this.subjectEl = this.options.subjectEl;
 
+			preventSelection($('body'));
+
 			this.isInteracting = true;
 			this.isTouch = isTouch;
 			this.isDelayEnded = false;
@@ -101,6 +103,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 			this.isInteracting = false;
 			this.handleInteractionEnd(ev, isCancelled);
+
+			allowSelection($('body'));
 		}
 	},
 

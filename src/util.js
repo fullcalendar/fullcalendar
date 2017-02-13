@@ -352,6 +352,12 @@ function preventSelection(el) {
 }
 
 
+function allowSelection(el) {
+	el.removeClass('fc-unselectable')
+		.off('selectstart', preventDefault);
+}
+
+
 // Stops a mouse/touch event from doing it's native browser action
 function preventDefault(ev) {
 	ev.preventDefault();
