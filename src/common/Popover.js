@@ -65,6 +65,9 @@ var Popover = Class.extend(ListenerMixin, {
 			.append(options.content)
 			.appendTo(options.parentEl);
 
+		// prevent a touch-related native selection
+		preventSelection(this.el);
+
 		// when a click happens on anything inside with a 'fc-close' className, hide the popover
 		this.el.on('click', '.fc-close', function() {
 			_this.hide();
