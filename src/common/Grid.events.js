@@ -232,7 +232,6 @@ Grid.mixin({
 	// Attaches event-element-related handlers to an arbitrary container element. leverages bubbling.
 	bindSegHandlersToEl: function(el) {
 		this.bindSegHandlerToEl(el, 'touchstart', this.handleSegTouchStart);
-		this.bindSegHandlerToEl(el, 'touchend', this.handleSegTouchEnd);
 		this.bindSegHandlerToEl(el, 'mouseenter', this.handleSegMouseover);
 		this.bindSegHandlerToEl(el, 'mouseleave', this.handleSegMouseout);
 		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
@@ -337,16 +336,6 @@ Grid.mixin({
 				delay: isSelected ? 0 : eventLongPressDelay // do delay if not already selected
 			});
 		}
-
-		// a long tap simulates a mouseover. ignore this bogus mouseover.
-		this.tempIgnoreMouse();
-	},
-
-
-	handleSegTouchEnd: function(seg, ev) {
-		// touchstart+touchend = click, which simulates a mouseover.
-		// ignore this bogus mouseover.
-		this.tempIgnoreMouse();
 	},
 
 

@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: use Emitter
 
-var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMixin, {
+var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	options: null,
 	subjectEl: null,
@@ -30,8 +30,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 
 	constructor: function(options) {
-		this.initMouseIgnoring(500); // init mixin
-
 		this.options = options || {};
 	},
 
@@ -44,7 +42,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 		var isTouch = getEvIsTouch(ev);
 
 		if (ev.type === 'mousedown') {
-			if (this.isIgnoringMouse) {
+			if (GlobalEmitter.get().shouldIgnoreMouse()) {
 				return;
 			}
 			else if (!isPrimaryMouseButton(ev)) {
@@ -103,13 +101,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 			this.isInteracting = false;
 			this.handleInteractionEnd(ev, isCancelled);
-
-			// a touchstart+touchend on the same element will result in the following addition simulated events:
-			// mouseover + mouseout + click
-			// let's ignore these bogus events
-			if (this.isTouch) {
-				this.tempIgnoreMouse();
-			}
 		}
 	},
 
@@ -125,7 +116,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 
 	bindHandlers: function() {
 		var _this = this;
-		var touchStartIgnores = 1;
 
 		// some browsers (Safari in iOS 10) don't allow preventDefault on touch events that are bound after touchstart,
 		// so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
@@ -135,22 +125,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 			this.listenTo(globalEmitter, {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
-				touchcancel: this.endInteraction,
-
 				scroll: this.handleTouchScroll,
-
-				// Sometimes touchend doesn't fire
-				// (can't figure out why. touchcancel doesn't fire either. has to do with scrolling?)
-				// If another touchstart happens, we know it's bogus, so cancel the drag.
-				// touchend will continue to be broken until user does a shorttap/scroll, but this is best we can do.
-				touchstart: function(ev) {
-					if (touchStartIgnores) { // bindHandlers is called from within a touchstart,
-						touchStartIgnores--; // and we don't want this to fire immediately, so ignore.
-					}
-					else {
-						_this.endInteraction(ev, true); // isCancelled=true
-					}
-				}
 			});
 		}
 		else {

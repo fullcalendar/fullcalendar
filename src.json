@@ -10,7 +10,6 @@
     "common/TaskQueue.js",
     "common/EmitterMixin.js",
     "common/ListenerMixin.js",
-    "common/MouseIgnorerMixin.js",
     "common/Popover.js",
     "common/CoordCache.js",
     "common/DragListener.js",
