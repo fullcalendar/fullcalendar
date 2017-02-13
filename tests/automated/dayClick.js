@@ -165,6 +165,27 @@ describe('dayClick', function() {
 			});
 		});
 
+		it('won\'t fire if touch moves outside of date cell', function(done) {
+			options.dayClick = function(date, jsEvent, view) {};
+			spyOn(options, 'dayClick').and.callThrough();
+
+			$('#cal').fullCalendar(options);
+
+			var startCell = $('.fc-day[data-date="2014-05-07"]');
+			var endCell = $('.fc-day[data-date="2014-05-08"]');
+
+			startCell.simulate('drag', {
+				// FYI, when debug:true, not a good representation because the minimal  delay is required
+				// to recreate bug #3332
+				isTouch: true,
+				end: endCell,
+				callback: function() {
+					expect(options.dayClick).not.toHaveBeenCalled();
+					done();
+				}
+			});
+		});
+
 		it('fires correctly when simulated click on a cell', function(done) {
 			options.dayClick = function(date, jsEvent, view) {
 				expect(moment.isMoment(date)).toEqual(true);
