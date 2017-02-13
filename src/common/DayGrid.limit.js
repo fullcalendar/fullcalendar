@@ -309,9 +309,9 @@ DayGrid.mixin({
 
 			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
 			// grids that want to do drag-n-drop about which cell it came from
-			this.prepareHits();
+			this.hitsNeeded();
 			segs[i].hit = this.getCellHit(row, col);
-			this.releaseHits();
+			this.hitsNotNeeded();
 
 			segContainer.append(segs[i].el);
 		}

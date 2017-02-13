@@ -9,7 +9,7 @@ options:
 var HitDragListener = DragListener.extend({
 
 	component: null, // converts coordinates to hits
-		// methods: prepareHits, releaseHits, queryHit
+		// methods: hitsNeeded, hitsNotNeeded, queryHit
 
 	origHit: null, // the hit the mouse was over when listening started
 	hit: null, // the hit the mouse is over
@@ -31,7 +31,8 @@ var HitDragListener = DragListener.extend({
 		var origPoint;
 		var point;
 
-		this.computeCoords();
+		this.component.hitsNeeded();
+		this.computeScrollBounds(); // for autoscroll
 
 		if (ev) {
 			origPoint = { left: getEvX(ev), top: getEvY(ev) };
@@ -67,13 +68,6 @@ var HitDragListener = DragListener.extend({
 
 		// call the super-method. do it after origHit has been computed
 		DragListener.prototype.handleInteractionStart.apply(this, arguments);
-	},
-
-
-	// Recomputes the drag-critical positions of elements
-	computeCoords: function() {
-		this.component.prepareHits();
-		this.computeScrollBounds(); // why is this here??????
 	},
 
 
@@ -155,7 +149,7 @@ var HitDragListener = DragListener.extend({
 		this.origHit = null;
 		this.hit = null;
 
-		this.component.releaseHits();
+		this.component.hitsNotNeeded();
 	},
 
 
@@ -163,7 +157,12 @@ var HitDragListener = DragListener.extend({
 	handleScrollEnd: function() {
 		DragListener.prototype.handleScrollEnd.apply(this, arguments); // call the super-method
 
-		this.computeCoords(); // hits' absolute positions will be in new places. recompute
+		// hits' absolute positions will be in new places after a user's scroll.
+		// HACK for recomputing.
+		if (this.isDragging) {
+			this.component.releaseHits();
+			this.component.prepareHits();
+		}
 	},
 
 
