@@ -10,5 +10,5 @@ $.fullCalendar.locale("lv", {
 	eventLimitText: function(n) {
 		return "+vēl " + n;
 	},
-	noEventsMessage: "Nav notikumu, lai parādītu"
+	noEventsMessage: "Nav notikumu"
 });
