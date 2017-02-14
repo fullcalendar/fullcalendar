@@ -64,7 +64,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+
+		this.colHeadFormat = this.view.opt('columnFormat');
+		if (this.colHeadFormat !== false) {
+			this.colHeadFormat = this.colHeadFormat || this.computeColHeadFormat();
+		}
 	},
 
 
@@ -293,6 +297,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	// TODO: when internalApiVersion, accept an object for HTML attributes
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
+
+		if (this.colHeadFormat === false) {
+			return '';
+		}
+
 		var view = this.view;
 		var classNames = [
 			'fc-day-header',
@@ -311,8 +320,10 @@ var DayTableMixin = FC.DayTableMixin = {
 			classNames.push('fc-' + dayIDs[date.day()]); // only add the day-of-week class
 		}
 
+		var headerHtml = typeof this.colHeadFormat === 'function' ? this.colHeadFormat(date, colspan, otherAttrs) : htmlEscape(date.format(this.colHeadFormat));
+
 		return '' +
-            '<th class="' + classNames.join(' ') + '"' +
+			'<th class="' + classNames.join(' ') + '"' +
 				(this.rowCnt === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
@@ -326,7 +337,7 @@ var DayTableMixin = FC.DayTableMixin = {
 				// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
 				view.buildGotoAnchorHtml(
 					{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
-					htmlEscape(date.format(this.colHeadFormat)) // inner HTML
+					headerHtml // inner HTML
 				) +
 			'</th>';
 	},
