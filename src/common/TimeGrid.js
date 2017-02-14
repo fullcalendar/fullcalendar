@@ -10,9 +10,9 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	snapsPerSlot: null,
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	dayBreakTime: null, // the time when we should break for a new day (NOTE: Overrides minTime and maxTime)
 	labelFormat: null, // formatting string for times running along vertical axis
 	labelInterval: null, // duration of how often a label should be displayed for a slot
-
 	colEls: null, // cells elements in the day-row background
 	slatContainerEl: null, // div that wraps all the slat rows
 	slatEls: null, // elements running horizontally across all columns
@@ -116,6 +116,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var view = this.view;
 		var slotDuration = view.opt('slotDuration');
 		var snapDuration = view.opt('snapDuration');
+		var dayBreakTime = view.opt('dayBreakTime');
 		var input;
 
 		slotDuration = moment.duration(slotDuration);
@@ -127,8 +128,9 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		this.minResizeDuration = snapDuration; // hack
 
-		this.minTime = moment.duration(view.opt('minTime'));
-		this.maxTime = moment.duration(view.opt('maxTime'));
+		this.dayBreakTime = moment.duration(dayBreakTime);
+		this.minTime = dayBreakTime ? this.dayBreakTime : moment.duration(view.opt('minTime'));
+		this.maxTime = dayBreakTime ? moment.duration('24:00:00').add(this.dayBreakTime) : moment.duration(view.opt('maxTime'));
 
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
