@@ -266,7 +266,7 @@ Grid.mixin({
 	// Updates internal state and triggers handlers for when an event element is moused over
 	handleSegMouseover: function(seg, ev) {
 		if (
-			!this.isIgnoringMouse &&
+			!GlobalEmitter.get().shouldIgnoreMouse() &&
 			!this.mousedOverSeg
 		) {
 			this.mousedOverSeg = seg;
