@@ -19,9 +19,10 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 
 
 	bind: function() {
+		var _this = this;
+
 		this.listenTo($(document), {
 			touchstart: this.handleTouchStart,
-			touchmove: this.handleTouchMove,
 			touchcancel: this.handleTouchCancel,
 			touchend: this.handleTouchEnd,
 			mousedown: this.handleMouseDown,
@@ -32,18 +33,36 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 			contextmenu: this.handleContextMenu
 		});
 
+		// because we need to call preventDefault
+		// because https://www.chromestatus.com/features/5093566007214080
+		// TODO: investigate performance because this is a global handler
+		window.addEventListener(
+			'touchmove',
+			this.handleTouchMoveProxy = function(ev) {
+				_this.handleTouchMove($.Event(ev));
+			},
+			{ passive: false } // allows preventDefault()
+		);
+
 		// attach a handler to get called when ANY scroll action happens on the page.
 		// this was impossible to do with normal on/off because 'scroll' doesn't bubble.
 		// http://stackoverflow.com/a/32954565/96342
 		window.addEventListener(
 			'scroll',
-			this.handleScrollProxy = proxy(this, 'handleScroll'),
+			this.handleScrollProxy = function(ev) {
+				_this.handleScroll($.Event(ev));
+			},
 			true // useCapture
 		);
 	},
 
 	unbind: function() {
 		this.stopListeningTo($(document));
+
+		window.removeEventListener(
+			'touchmove',
+			this.handleTouchMoveProxy
+		);
 
 		window.removeEventListener(
 			'scroll',
