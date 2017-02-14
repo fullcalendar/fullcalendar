@@ -120,8 +120,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 
 	bindHandlers: function() {
-		var _this = this;
-
 		// some browsers (Safari in iOS 10) don't allow preventDefault on touch events that are bound after touchstart,
 		// so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
 		var globalEmitter = GlobalEmitter.get();
@@ -130,7 +128,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			this.listenTo(globalEmitter, {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
-				scroll: this.handleTouchScroll,
+				scroll: this.handleTouchScroll
 			});
 		}
 		else {
