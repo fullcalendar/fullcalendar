@@ -355,6 +355,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// which will kill any touchmoving/scrolling. Prevent this.
 		dragListener.shouldCancelTouchScroll = false;
 
+		dragListener.scrollAlwaysKills = true;
+
 		return dragListener;
 	},
 

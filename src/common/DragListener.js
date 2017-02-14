@@ -27,6 +27,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	minDistance: null,
 
 	shouldCancelTouchScroll: true,
+	scrollAlwaysKills: false,
 
 
 	constructor: function(options) {
@@ -277,7 +278,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	handleTouchScroll: function(ev) {
 		// if the drag is being initiated by touch, but a scroll happens before
 		// the drag-initiating delay is over, cancel the drag
-		if (!this.isDragging) {
+		if (!this.isDragging || this.scrollAlwaysKills) {
 			this.endInteraction(ev, true); // isCancelled=true
 		}
 	},
