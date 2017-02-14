@@ -8,8 +8,8 @@
     "full-sized",
     "jquery-plugin"
   ],
-  "homepage": "http://fullcalendar.io/",
-  "bugs": "http://fullcalendar.io/wiki/Reporting-Bugs/",
+  "homepage": "https://fullcalendar.io/",
+  "bugs": "https://fullcalendar.io/wiki/Reporting-Bugs/",
   "repository": {
     "type": "git",
     "url": "https://github.com/fullcalendar/fullcalendar.git"
