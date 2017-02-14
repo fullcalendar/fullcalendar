@@ -16,7 +16,6 @@ Event Dragging & Resizing
 <li>eventAllow</li>
 <li>longPressDelay</li>
 <li>eventLongPressDelay</li>
-<li>selectLongPressDelay</li>
 <li class='callback'><a href='eventDragStart'>eventDragStart (callback)</a></li>
 <li class='callback'><a href='eventDragStop'>eventDragStop (callback)</a></li>
 <li class='callback'><a href='eventDrop'>eventDrop (callback)</a></li>

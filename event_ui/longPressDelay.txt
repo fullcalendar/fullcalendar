@@ -15,4 +15,4 @@ Only applicable when the calendar is being used on a touch device. Otherwise, th
 This setting controls event dragging **and** date selecting. For further granularity, please see the following settings:
 
 - [eventLongPressDelay]()
-- [selectLongPressDelay]()
+- [selectLongPressDelay](../selection/selectLongPressDelay)
