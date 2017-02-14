@@ -1,4 +1,25 @@
 
+v3.1.1 (2017-02-14)
+-------------------
+
+Features:
+- `selectMinDistance`, threshold before a mouse selection begins (#2428)
+
+Bugfixes:
+- iOS 10, unwanted scrolling while dragging events/selection (#3403)
+- dayClick triggered when swiping on touch devices (#3332)
+- dayClick not functioning on Firefix mobile (#3450)
+- title computed incorrectly for views with no weekends (#2884)
+- unwanted scrollbars in month-view when non-integer width (#3453, #3444)
+- incorrect date formatting for locales with non-standlone month/day names (#3478)
+- date formatting, incorrect omission of trailing period for certain locales (#2504, #3486)
+- formatRange should collapse same week numbers (#3467)
+- Taiwanese locale updated (#3426)
+- Finnish noEventsMessage updated (#3476)
+- Croatian (hr) buttonText is blank (#3270)
+- JSON feed PHP example, date range math bug (#3485)
+
+
 v3.1.0 (2016-12-05)
 -------------------
 
