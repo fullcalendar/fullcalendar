@@ -11,6 +11,7 @@
 <li><a href='selectOverlap'>selectOverlap</a></li>
 <li><a href='selectConstraint'>selectConstraint</a></li>
 <li><a href='selectAllow'>selectAllow</a></li>
+<li>selectMinDistance</li>
 <li>selectLongPressDelay</li>
 <li class='callback'><a href='select_callback'>select (callback)</a></li>
 <li class='callback'><a href='unselect_callback'>unselect (callback)</a></li>
