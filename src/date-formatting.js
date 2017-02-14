@@ -348,7 +348,9 @@ function renderFakeFormatStringParts(fakeFormatString, date) {
 
 		if (fakePart.charAt(0) === SPECIAL_TOKEN_MARKER) {
 			parts.push(
-				specialTokens[fakePart.substring(1)](date) // the literal string IS the token's name
+				// the literal string IS the token's name.
+				// call special token's registered function.
+				specialTokens[fakePart.substring(1)](date)
 			);
 		}
 		else {
@@ -377,7 +379,7 @@ function processMaybeMarkers(s) {
 // Misc Utils
 // -------------------------------------------------------------------------------------------------
 
-/* TODO: test with Scheduler
+/*
 Returns a unit string, either 'year', 'month', 'day', or null for the most granular formatting token in the string.
 */
 function queryMostGranularFormatUnit(formatStr) {
