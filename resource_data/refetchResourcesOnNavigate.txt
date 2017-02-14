@@ -7,3 +7,8 @@ Whether to refetch and rerender resources when the user navigates to a different
 <div class='spec' markdown='1'>
 Boolean, *default*: `false`
 </div>
+
+Since v1.5.1, if `refetchResourcesOnNavigate` is set to `true`...
+
+- A [resources function](resources_function) will receive `start`, `end`, and `timezone` parameters
+- A [resources JSON feed](resources_json_feed) will be requested with `start`, `end`, and `timezone` parameters
