@@ -1,0 +1,9 @@
+
+select *1.4.6*
+==============
+
+A method for programmatically selecting a period of time.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'select', *startDate*, *endDate*, *allDay* )
+</div>

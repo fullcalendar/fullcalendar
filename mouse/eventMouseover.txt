@@ -1,0 +1,18 @@
+
+eventMouseover
+==============
+
+Triggered when the user mouses over an event.
+
+<div class='spec' markdown='1'>
+function( *event*, *jsEvent*, *view* ) { }
+</div>
+
+`event` is an [Event Object](../event_data/Event_Object) that holds the event's information (date, title, etc).
+
+`jsEvent` holds the native JavaScript event with low-level information such as mouse coordinates.
+
+`view` holds the current [View Object](../views/View_Object).
+
+Within the callback function, `this` is set to the event's `<div>` element.
+

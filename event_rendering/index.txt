@@ -1,0 +1,17 @@
+
+Event Rendering
+===============
+
+<ul>
+<li class='article'>Colors</li>
+<li>eventColor</li>
+<li>eventBackgroundColor</li>
+<li>eventBorderColor</li>
+<li>eventTextColor</li>
+<li class='callback'><a href='eventRender'>eventRender (callback)</a></li>
+<li class='callback'><a href='eventAfterRender'>eventAfterRender (callback)</a></li>
+<li class='callback'><a href='eventAfterAllRender'>eventAfterAllRender (callback)</a></li>
+<li class='callback'><a href='eventDestroy'>eventDestroy (callback)</a></li>
+<li class='method'><a href='renderEvent'>renderEvent (method)</a></li>
+<li class='method'><a href='rerenderEvents'>rerenderEvents (method)</a></li>
+</ul>

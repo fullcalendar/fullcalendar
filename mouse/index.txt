@@ -1,0 +1,10 @@
+
+Clicking & Hovering
+===================
+
+<ul>
+<li class='callback'><a href='dayClick'>dayClick (callback)</a></li>
+<li class='callback'><a href='eventClick'>eventClick (callback)</a></li>
+<li class='callback'><a href='eventMouseover'>eventMouseover (callback)</a></li>
+<li class='callback'><a href='eventMouseout'>eventMouseout (callback)</a></li>
+</ul>

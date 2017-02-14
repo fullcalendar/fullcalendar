@@ -1,0 +1,19 @@
+
+Text/Time Customization
+=======================
+
+<ul>
+<li>timeFormat</li>
+<li>columnFormat</li>
+<li>titleFormat</li>
+<li>buttonText</li>
+<li>monthNames</li>
+<li>monthNamesShort</li>
+<li>dayNames</li>
+<li>dayNamesShort</li>
+<li>weekNumberTitle</li>
+</ul>
+
+Related agenda options: [allDayText](../agenda/allDayText), [axisFormat](../agenda/axisFormat)
+
+Essential for date/time formatting: [formatDate](../utilities/formatDate) commands.

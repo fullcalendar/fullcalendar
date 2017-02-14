@@ -1,0 +1,2914 @@
+[
+	{
+		"name": "Europe/Andorra",
+		"lat": 42.5,
+		"long": 1.5167,
+		"country": "AD",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Dubai",
+		"lat": 25.3,
+		"long": 55.3,
+		"country": "AE",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Kabul",
+		"lat": 34.5167,
+		"long": 69.2,
+		"country": "AF",
+		"comments": ""
+	},
+	{
+		"name": "America/Antigua",
+		"lat": 17.05,
+		"long": -60.2,
+		"country": "AG",
+		"comments": ""
+	},
+	{
+		"name": "America/Anguilla",
+		"lat": 18.2,
+		"long": -62.9333,
+		"country": "AI",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Tirane",
+		"lat": 41.3333,
+		"long": 19.8333,
+		"country": "AL",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Yerevan",
+		"lat": 40.1833,
+		"long": 44.5,
+		"country": "AM",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Luanda",
+		"lat": -7.2,
+		"long": 13.2333,
+		"country": "AO",
+		"comments": ""
+	},
+	{
+		"name": "Antarctica/McMurdo",
+		"lat": -76.1667,
+		"long": 166.6,
+		"country": "AQ",
+		"comments": "McMurdo, South Pole, Scott (New Zealand time)"
+	},
+	{
+		"name": "Antarctica/Rothera",
+		"lat": -66.4333,
+		"long": -67.8667,
+		"country": "AQ",
+		"comments": "Rothera Station, Adelaide Island"
+	},
+	{
+		"name": "Antarctica/Palmer",
+		"lat": -63.2,
+		"long": -63.9,
+		"country": "AQ",
+		"comments": "Palmer Station, Anvers Island"
+	},
+	{
+		"name": "Antarctica/Mawson",
+		"lat": -66.4,
+		"long": 62.8833,
+		"country": "AQ",
+		"comments": "Mawson Station, Holme Bay"
+	},
+	{
+		"name": "Antarctica/Davis",
+		"lat": -67.4167,
+		"long": 77.9667,
+		"country": "AQ",
+		"comments": "Davis Station, Vestfold Hills"
+	},
+	{
+		"name": "Antarctica/Casey",
+		"lat": -65.7167,
+		"long": 110.5167,
+		"country": "AQ",
+		"comments": "Casey Station, Bailey Peninsula"
+	},
+	{
+		"name": "Antarctica/Vostok",
+		"lat": -77.6,
+		"long": 106.9,
+		"country": "AQ",
+		"comments": "Vostok Station, Lake Vostok"
+	},
+	{
+		"name": "Antarctica/DumontDUrville",
+		"lat": -65.3333,
+		"long": 140.0167,
+		"country": "AQ",
+		"comments": "Dumont-d'Urville Station, Adelie Land"
+	},
+	{
+		"name": "Antarctica/Syowa",
+		"lat": -68.9939,
+		"long": 39.59,
+		"country": "AQ",
+		"comments": "Syowa Station, E Ongul I"
+	},
+	{
+		"name": "Antarctica/Troll",
+		"lat": -71.9886,
+		"long": 2.535,
+		"country": "AQ",
+		"comments": "Troll Station, Queen Maud Land"
+	},
+	{
+		"name": "America/Argentina/Buenos_Aires",
+		"lat": -33.4,
+		"long": -57.55,
+		"country": "AR",
+		"comments": "Buenos Aires (BA, CF)"
+	},
+	{
+		"name": "America/Argentina/Cordoba",
+		"lat": -30.6,
+		"long": -63.8167,
+		"country": "AR",
+		"comments": "most locations (CB, CC, CN, ER, FM, MN, SE, SF)"
+	},
+	{
+		"name": "America/Argentina/Salta",
+		"lat": -23.2167,
+		"long": -64.5833,
+		"country": "AR",
+		"comments": "(SA, LP, NQ, RN)"
+	},
+	{
+		"name": "America/Argentina/Jujuy",
+		"lat": -23.8167,
+		"long": -64.7,
+		"country": "AR",
+		"comments": "Jujuy (JY)"
+	},
+	{
+		"name": "America/Argentina/Tucuman",
+		"lat": -25.1833,
+		"long": -64.7833,
+		"country": "AR",
+		"comments": "Tucuman (TM)"
+	},
+	{
+		"name": "America/Argentina/Catamarca",
+		"lat": -27.5333,
+		"long": -64.2167,
+		"country": "AR",
+		"comments": "Catamarca (CT), Chubut (CH)"
+	},
+	{
+		"name": "America/Argentina/La_Rioja",
+		"lat": -28.5667,
+		"long": -65.15,
+		"country": "AR",
+		"comments": "La Rioja (LR)"
+	},
+	{
+		"name": "America/Argentina/San_Juan",
+		"lat": -30.4667,
+		"long": -67.4833,
+		"country": "AR",
+		"comments": "San Juan (SJ)"
+	},
+	{
+		"name": "America/Argentina/Mendoza",
+		"lat": -31.1167,
+		"long": -67.1833,
+		"country": "AR",
+		"comments": "Mendoza (MZ)"
+	},
+	{
+		"name": "America/Argentina/San_Luis",
+		"lat": -32.6833,
+		"long": -65.65,
+		"country": "AR",
+		"comments": "San Luis (SL)"
+	},
+	{
+		"name": "America/Argentina/Rio_Gallegos",
+		"lat": -50.3667,
+		"long": -68.7833,
+		"country": "AR",
+		"comments": "Santa Cruz (SC)"
+	},
+	{
+		"name": "America/Argentina/Ushuaia",
+		"lat": -53.2,
+		"long": -67.7,
+		"country": "AR",
+		"comments": "Tierra del Fuego (TF)"
+	},
+	{
+		"name": "Pacific/Pago_Pago",
+		"lat": -13.7333,
+		"long": -169.3,
+		"country": "AS",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Vienna",
+		"lat": 48.2167,
+		"long": 16.3333,
+		"country": "AT",
+		"comments": ""
+	},
+	{
+		"name": "Australia/Lord_Howe",
+		"lat": -30.45,
+		"long": 159.0833,
+		"country": "AU",
+		"comments": "Lord Howe Island"
+	},
+	{
+		"name": "Antarctica/Macquarie",
+		"lat": -53.5,
+		"long": 158.95,
+		"country": "AU",
+		"comments": "Macquarie Island"
+	},
+	{
+		"name": "Australia/Hobart",
+		"lat": -41.1167,
+		"long": 147.3167,
+		"country": "AU",
+		"comments": "Tasmania - most locations"
+	},
+	{
+		"name": "Australia/Currie",
+		"lat": -38.0667,
+		"long": 143.8667,
+		"country": "AU",
+		"comments": "Tasmania - King Island"
+	},
+	{
+		"name": "Australia/Melbourne",
+		"lat": -36.1833,
+		"long": 144.9667,
+		"country": "AU",
+		"comments": "Victoria"
+	},
+	{
+		"name": "Australia/Sydney",
+		"lat": -32.1333,
+		"long": 151.2167,
+		"country": "AU",
+		"comments": "New South Wales - most locations"
+	},
+	{
+		"name": "Australia/Broken_Hill",
+		"lat": -30.05,
+		"long": 141.45,
+		"country": "AU",
+		"comments": "New South Wales - Yancowinna"
+	},
+	{
+		"name": "Australia/Brisbane",
+		"lat": -26.5333,
+		"long": 153.0333,
+		"country": "AU",
+		"comments": "Queensland - most locations"
+	},
+	{
+		"name": "Australia/Lindeman",
+		"lat": -19.7333,
+		"long": 149,
+		"country": "AU",
+		"comments": "Queensland - Holiday Islands"
+	},
+	{
+		"name": "Australia/Adelaide",
+		"lat": -33.0833,
+		"long": 138.5833,
+		"country": "AU",
+		"comments": "South Australia"
+	},
+	{
+		"name": "Australia/Darwin",
+		"lat": -11.5333,
+		"long": 130.8333,
+		"country": "AU",
+		"comments": "Northern Territory"
+	},
+	{
+		"name": "Australia/Perth",
+		"lat": -30.05,
+		"long": 115.85,
+		"country": "AU",
+		"comments": "Western Australia - most locations"
+	},
+	{
+		"name": "Australia/Eucla",
+		"lat": -30.2833,
+		"long": 128.8667,
+		"country": "AU",
+		"comments": "Western Australia - Eucla area"
+	},
+	{
+		"name": "America/Aruba",
+		"lat": 12.5,
+		"long": -68.0333,
+		"country": "AW",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Mariehamn",
+		"lat": 60.1,
+		"long": 19.95,
+		"country": "AX",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Baku",
+		"lat": 40.3833,
+		"long": 49.85,
+		"country": "AZ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Sarajevo",
+		"lat": 43.8667,
+		"long": 18.4167,
+		"country": "BA",
+		"comments": ""
+	},
+	{
+		"name": "America/Barbados",
+		"lat": 13.1,
+		"long": -58.3833,
+		"country": "BB",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Dhaka",
+		"lat": 23.7167,
+		"long": 90.4167,
+		"country": "BD",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Brussels",
+		"lat": 50.8333,
+		"long": 4.3333,
+		"country": "BE",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Ouagadougou",
+		"lat": 12.3667,
+		"long": -0.4833,
+		"country": "BF",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Sofia",
+		"lat": 42.6833,
+		"long": 23.3167,
+		"country": "BG",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Bahrain",
+		"lat": 26.3833,
+		"long": 50.5833,
+		"country": "BH",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Bujumbura",
+		"lat": -2.6167,
+		"long": 29.3667,
+		"country": "BI",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Porto-Novo",
+		"lat": 6.4833,
+		"long": 2.6167,
+		"country": "BJ",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Barthelemy",
+		"lat": 17.8833,
+		"long": -61.15,
+		"country": "BL",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/Bermuda",
+		"lat": 32.2833,
+		"long": -63.2333,
+		"country": "BM",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Brunei",
+		"lat": 4.9333,
+		"long": 114.9167,
+		"country": "BN",
+		"comments": ""
+	},
+	{
+		"name": "America/La_Paz",
+		"lat": -15.5,
+		"long": -67.85,
+		"country": "BO",
+		"comments": ""
+	},
+	{
+		"name": "America/Kralendijk",
+		"lat": 12.1508,
+		"long": -67.7233,
+		"country": "BQ",
+		"comments": ""
+	},
+	{
+		"name": "America/Noronha",
+		"lat": -2.15,
+		"long": -31.5833,
+		"country": "BR",
+		"comments": "Atlantic islands"
+	},
+	{
+		"name": "America/Belem",
+		"lat": -0.55,
+		"long": -47.5167,
+		"country": "BR",
+		"comments": "Amapa, E Para"
+	},
+	{
+		"name": "America/Fortaleza",
+		"lat": -2.2833,
+		"long": -37.5,
+		"country": "BR",
+		"comments": "NE Brazil (MA, PI, CE, RN, PB)"
+	},
+	{
+		"name": "America/Recife",
+		"lat": -7.95,
+		"long": -33.1,
+		"country": "BR",
+		"comments": "Pernambuco"
+	},
+	{
+		"name": "America/Araguaina",
+		"lat": -6.8,
+		"long": -47.8,
+		"country": "BR",
+		"comments": "Tocantins"
+	},
+	{
+		"name": "America/Maceio",
+		"lat": -8.3333,
+		"long": -34.2833,
+		"country": "BR",
+		"comments": "Alagoas, Sergipe"
+	},
+	{
+		"name": "America/Bahia",
+		"lat": -11.0167,
+		"long": -37.4833,
+		"country": "BR",
+		"comments": "Bahia"
+	},
+	{
+		"name": "America/Sao_Paulo",
+		"lat": -22.4667,
+		"long": -45.3833,
+		"country": "BR",
+		"comments": "S & SE Brazil (GO, DF, MG, ES, RJ, SP, PR, SC, RS)"
+	},
+	{
+		"name": "America/Campo_Grande",
+		"lat": -19.55,
+		"long": -53.3833,
+		"country": "BR",
+		"comments": "Mato Grosso do Sul"
+	},
+	{
+		"name": "America/Cuiaba",
+		"lat": -14.4167,
+		"long": -55.9167,
+		"country": "BR",
+		"comments": "Mato Grosso"
+	},
+	{
+		"name": "America/Santarem",
+		"lat": -1.5667,
+		"long": -53.1333,
+		"country": "BR",
+		"comments": "W Para"
+	},
+	{
+		"name": "America/Porto_Velho",
+		"lat": -7.2333,
+		"long": -62.1,
+		"country": "BR",
+		"comments": "Rondonia"
+	},
+	{
+		"name": "America/Boa_Vista",
+		"lat": 2.8167,
+		"long": -59.3333,
+		"country": "BR",
+		"comments": "Roraima"
+	},
+	{
+		"name": "America/Manaus",
+		"lat": -2.8667,
+		"long": -59.9833,
+		"country": "BR",
+		"comments": "E Amazonas"
+	},
+	{
+		"name": "America/Eirunepe",
+		"lat": -5.3333,
+		"long": -68.1333,
+		"country": "BR",
+		"comments": "W Amazonas"
+	},
+	{
+		"name": "America/Rio_Branco",
+		"lat": -8.0333,
+		"long": -66.2,
+		"country": "BR",
+		"comments": "Acre"
+	},
+	{
+		"name": "America/Nassau",
+		"lat": 25.0833,
+		"long": -76.65,
+		"country": "BS",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Thimphu",
+		"lat": 27.4667,
+		"long": 89.65,
+		"country": "BT",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Gaborone",
+		"lat": -23.35,
+		"long": 25.9167,
+		"country": "BW",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Minsk",
+		"lat": 53.9,
+		"long": 27.5667,
+		"country": "BY",
+		"comments": ""
+	},
+	{
+		"name": "America/Belize",
+		"lat": 17.5,
+		"long": -87.8,
+		"country": "BZ",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Johns",
+		"lat": 47.5667,
+		"long": -51.2833,
+		"country": "CA",
+		"comments": "Newfoundland Time, including SE Labrador"
+	},
+	{
+		"name": "America/Halifax",
+		"lat": 44.65,
+		"long": -62.4,
+		"country": "CA",
+		"comments": "Atlantic Time - Nova Scotia (most places), PEI"
+	},
+	{
+		"name": "America/Glace_Bay",
+		"lat": 46.2,
+		"long": -58.05,
+		"country": "CA",
+		"comments": "Atlantic Time - Nova Scotia - places that did not observe DST 1966-1971"
+	},
+	{
+		"name": "America/Moncton",
+		"lat": 46.1,
+		"long": -63.2167,
+		"country": "CA",
+		"comments": "Atlantic Time - New Brunswick"
+	},
+	{
+		"name": "America/Goose_Bay",
+		"lat": 53.3333,
+		"long": -59.5833,
+		"country": "CA",
+		"comments": "Atlantic Time - Labrador - most locations"
+	},
+	{
+		"name": "America/Blanc-Sablon",
+		"lat": 51.4167,
+		"long": -56.8833,
+		"country": "CA",
+		"comments": "Atlantic Standard Time - Quebec - Lower North Shore"
+	},
+	{
+		"name": "America/Toronto",
+		"lat": 43.65,
+		"long": -78.6167,
+		"country": "CA",
+		"comments": "Eastern Time - Ontario & Quebec - most locations"
+	},
+	{
+		"name": "America/Nipigon",
+		"lat": 49.0167,
+		"long": -87.7333,
+		"country": "CA",
+		"comments": "Eastern Time - Ontario & Quebec - places that did not observe DST 1967-1973"
+	},
+	{
+		"name": "America/Thunder_Bay",
+		"lat": 48.3833,
+		"long": -88.75,
+		"country": "CA",
+		"comments": "Eastern Time - Thunder Bay, Ontario"
+	},
+	{
+		"name": "America/Iqaluit",
+		"lat": 63.7333,
+		"long": -67.5333,
+		"country": "CA",
+		"comments": "Eastern Time - east Nunavut - most locations"
+	},
+	{
+		"name": "America/Pangnirtung",
+		"lat": 66.1333,
+		"long": -64.2667,
+		"country": "CA",
+		"comments": "Eastern Time - Pangnirtung, Nunavut"
+	},
+	{
+		"name": "America/Resolute",
+		"lat": 74.6956,
+		"long": -93.1708,
+		"country": "CA",
+		"comments": "Central Time - Resolute, Nunavut"
+	},
+	{
+		"name": "America/Atikokan",
+		"lat": 48.7586,
+		"long": -90.3783,
+		"country": "CA",
+		"comments": "Eastern Standard Time - Atikokan, Ontario and Southampton I, Nunavut"
+	},
+	{
+		"name": "America/Rankin_Inlet",
+		"lat": 62.8167,
+		"long": -91.9169,
+		"country": "CA",
+		"comments": "Central Time - central Nunavut"
+	},
+	{
+		"name": "America/Winnipeg",
+		"lat": 49.8833,
+		"long": -96.85,
+		"country": "CA",
+		"comments": "Central Time - Manitoba & west Ontario"
+	},
+	{
+		"name": "America/Rainy_River",
+		"lat": 48.7167,
+		"long": -93.4333,
+		"country": "CA",
+		"comments": "Central Time - Rainy River & Fort Frances, Ontario"
+	},
+	{
+		"name": "America/Regina",
+		"lat": 50.4,
+		"long": -103.35,
+		"country": "CA",
+		"comments": "Central Standard Time - Saskatchewan - most locations"
+	},
+	{
+		"name": "America/Swift_Current",
+		"lat": 50.2833,
+		"long": -106.1667,
+		"country": "CA",
+		"comments": "Central Standard Time - Saskatchewan - midwest"
+	},
+	{
+		"name": "America/Edmonton",
+		"lat": 53.55,
+		"long": -112.5333,
+		"country": "CA",
+		"comments": "Mountain Time - Alberta, east British Columbia & west Saskatchewan"
+	},
+	{
+		"name": "America/Cambridge_Bay",
+		"lat": 69.1139,
+		"long": -104.9472,
+		"country": "CA",
+		"comments": "Mountain Time - west Nunavut"
+	},
+	{
+		"name": "America/Yellowknife",
+		"lat": 62.45,
+		"long": -113.65,
+		"country": "CA",
+		"comments": "Mountain Time - central Northwest Territories"
+	},
+	{
+		"name": "America/Inuvik",
+		"lat": 68.3497,
+		"long": -132.2833,
+		"country": "CA",
+		"comments": "Mountain Time - west Northwest Territories"
+	},
+	{
+		"name": "America/Creston",
+		"lat": 49.1,
+		"long": -115.4833,
+		"country": "CA",
+		"comments": "Mountain Standard Time - Creston, British Columbia"
+	},
+	{
+		"name": "America/Dawson_Creek",
+		"lat": 59.7667,
+		"long": -119.7667,
+		"country": "CA",
+		"comments": "Mountain Standard Time - Dawson Creek & Fort Saint John, British Columbia"
+	},
+	{
+		"name": "America/Vancouver",
+		"lat": 49.2667,
+		"long": -122.8833,
+		"country": "CA",
+		"comments": "Pacific Time - west British Columbia"
+	},
+	{
+		"name": "America/Whitehorse",
+		"lat": 60.7167,
+		"long": -134.95,
+		"country": "CA",
+		"comments": "Pacific Time - south Yukon"
+	},
+	{
+		"name": "America/Dawson",
+		"lat": 64.0667,
+		"long": -138.5833,
+		"country": "CA",
+		"comments": "Pacific Time - north Yukon"
+	},
+	{
+		"name": "Indian/Cocos",
+		"lat": -11.8333,
+		"long": 96.9167,
+		"country": "CC",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Kinshasa",
+		"lat": -3.7,
+		"long": 15.3,
+		"country": "CD",
+		"comments": "west Dem. Rep. of Congo"
+	},
+	{
+		"name": "Africa/Lubumbashi",
+		"lat": -10.3333,
+		"long": 27.4667,
+		"country": "CD",
+		"comments": "east Dem. Rep. of Congo"
+	},
+	{
+		"name": "Africa/Bangui",
+		"lat": 4.3667,
+		"long": 18.5833,
+		"country": "CF",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Brazzaville",
+		"lat": -3.7333,
+		"long": 15.2833,
+		"country": "CG",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Zurich",
+		"lat": 47.3833,
+		"long": 8.5333,
+		"country": "CH",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Abidjan",
+		"lat": 5.3167,
+		"long": -3.9667,
+		"country": "CI",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Rarotonga",
+		"lat": -20.7667,
+		"long": -158.2333,
+		"country": "CK",
+		"comments": ""
+	},
+	{
+		"name": "America/Santiago",
+		"lat": -32.55,
+		"long": -69.3333,
+		"country": "CL",
+		"comments": "most locations"
+	},
+	{
+		"name": "Pacific/Easter",
+		"lat": -26.85,
+		"long": -108.5667,
+		"country": "CL",
+		"comments": "Easter Island"
+	},
+	{
+		"name": "Africa/Douala",
+		"lat": 4.05,
+		"long": 9.7,
+		"country": "CM",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Shanghai",
+		"lat": 31.2333,
+		"long": 121.4667,
+		"country": "CN",
+		"comments": "Beijing Time"
+	},
+	{
+		"name": "Asia/Urumqi",
+		"lat": 43.8,
+		"long": 87.5833,
+		"country": "CN",
+		"comments": "Xinjiang Time"
+	},
+	{
+		"name": "America/Bogota",
+		"lat": 4.6,
+		"long": -73.9167,
+		"country": "CO",
+		"comments": ""
+	},
+	{
+		"name": "America/Costa_Rica",
+		"lat": 9.9333,
+		"long": -83.9167,
+		"country": "CR",
+		"comments": ""
+	},
+	{
+		"name": "America/Havana",
+		"lat": 23.1333,
+		"long": -81.6333,
+		"country": "CU",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/Cape_Verde",
+		"lat": 14.9167,
+		"long": -22.4833,
+		"country": "CV",
+		"comments": ""
+	},
+	{
+		"name": "America/Curacao",
+		"lat": 12.1833,
+		"long": -69,
+		"country": "CW",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Christmas",
+		"lat": -9.5833,
+		"long": 105.7167,
+		"country": "CX",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Nicosia",
+		"lat": 35.1667,
+		"long": 33.3667,
+		"country": "CY",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Prague",
+		"lat": 50.0833,
+		"long": 14.4333,
+		"country": "CZ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Berlin",
+		"lat": 52.5,
+		"long": 13.3667,
+		"country": "DE",
+		"comments": "most locations"
+	},
+	{
+		"name": "Europe/Busingen",
+		"lat": 47.7,
+		"long": 8.6833,
+		"country": "DE",
+		"comments": "Busingen"
+	},
+	{
+		"name": "Africa/Djibouti",
+		"lat": 11.6,
+		"long": 43.15,
+		"country": "DJ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Copenhagen",
+		"lat": 55.6667,
+		"long": 12.5833,
+		"country": "DK",
+		"comments": ""
+	},
+	{
+		"name": "America/Dominica",
+		"lat": 15.3,
+		"long": -60.6,
+		"country": "DM",
+		"comments": ""
+	},
+	{
+		"name": "America/Santo_Domingo",
+		"lat": 18.4667,
+		"long": -68.1,
+		"country": "DO",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Algiers",
+		"lat": 36.7833,
+		"long": 3.05,
+		"country": "DZ",
+		"comments": ""
+	},
+	{
+		"name": "America/Guayaquil",
+		"lat": -1.8333,
+		"long": -78.1667,
+		"country": "EC",
+		"comments": "mainland"
+	},
+	{
+		"name": "Pacific/Galapagos",
+		"lat": 0.9,
+		"long": -88.4,
+		"country": "EC",
+		"comments": "Galapagos Islands"
+	},
+	{
+		"name": "Europe/Tallinn",
+		"lat": 59.4167,
+		"long": 24.75,
+		"country": "EE",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Cairo",
+		"lat": 30.05,
+		"long": 31.25,
+		"country": "EG",
+		"comments": ""
+	},
+	{
+		"name": "Africa/El_Aaiun",
+		"lat": 27.15,
+		"long": -12.8,
+		"country": "EH",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Asmara",
+		"lat": 15.3333,
+		"long": 38.8833,
+		"country": "ER",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Madrid",
+		"lat": 40.4,
+		"long": -2.3167,
+		"country": "ES",
+		"comments": "mainland"
+	},
+	{
+		"name": "Africa/Ceuta",
+		"lat": 35.8833,
+		"long": -4.6833,
+		"country": "ES",
+		"comments": "Ceuta & Melilla"
+	},
+	{
+		"name": "Atlantic/Canary",
+		"lat": 28.1,
+		"long": -14.6,
+		"country": "ES",
+		"comments": "Canary Islands"
+	},
+	{
+		"name": "Africa/Addis_Ababa",
+		"lat": 9.0333,
+		"long": 38.7,
+		"country": "ET",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Helsinki",
+		"lat": 60.1667,
+		"long": 24.9667,
+		"country": "FI",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Fiji",
+		"lat": -17.8667,
+		"long": 178.4167,
+		"country": "FJ",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/Stanley",
+		"lat": -50.3,
+		"long": -56.15,
+		"country": "FK",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Chuuk",
+		"lat": 7.4167,
+		"long": 151.7833,
+		"country": "FM",
+		"comments": "Chuuk (Truk) and Yap"
+	},
+	{
+		"name": "Pacific/Pohnpei",
+		"lat": 6.9667,
+		"long": 158.2167,
+		"country": "FM",
+		"comments": "Pohnpei (Ponape)"
+	},
+	{
+		"name": "Pacific/Kosrae",
+		"lat": 5.3167,
+		"long": 162.9833,
+		"country": "FM",
+		"comments": "Kosrae"
+	},
+	{
+		"name": "Atlantic/Faroe",
+		"lat": 62.0167,
+		"long": -5.2333,
+		"country": "FO",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Paris",
+		"lat": 48.8667,
+		"long": 2.3333,
+		"country": "FR",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Libreville",
+		"lat": 0.3833,
+		"long": 9.45,
+		"country": "GA",
+		"comments": ""
+	},
+	{
+		"name": "Europe/London",
+		"lat": 51.5083,
+		"long": 0.1253,
+		"country": "GB",
+		"comments": ""
+	},
+	{
+		"name": "America/Grenada",
+		"lat": 12.05,
+		"long": -60.25,
+		"country": "GD",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Tbilisi",
+		"lat": 41.7167,
+		"long": 44.8167,
+		"country": "GE",
+		"comments": ""
+	},
+	{
+		"name": "America/Cayenne",
+		"lat": 4.9333,
+		"long": -51.6667,
+		"country": "GF",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Guernsey",
+		"lat": 49.45,
+		"long": -1.4667,
+		"country": "GG",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Accra",
+		"lat": 5.55,
+		"long": 0.2167,
+		"country": "GH",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Gibraltar",
+		"lat": 36.1333,
+		"long": -4.65,
+		"country": "GI",
+		"comments": ""
+	},
+	{
+		"name": "America/Godthab",
+		"lat": 64.1833,
+		"long": -50.2667,
+		"country": "GL",
+		"comments": "most locations"
+	},
+	{
+		"name": "America/Danmarkshavn",
+		"lat": 76.7667,
+		"long": -17.3333,
+		"country": "GL",
+		"comments": "east coast, north of Scoresbysund"
+	},
+	{
+		"name": "America/Scoresbysund",
+		"lat": 70.4833,
+		"long": -20.0333,
+		"country": "GL",
+		"comments": "Scoresbysund / Ittoqqortoormiit"
+	},
+	{
+		"name": "America/Thule",
+		"lat": 76.5667,
+		"long": -67.2167,
+		"country": "GL",
+		"comments": "Thule / Pituffik"
+	},
+	{
+		"name": "Africa/Banjul",
+		"lat": 13.4667,
+		"long": -15.35,
+		"country": "GM",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Conakry",
+		"lat": 9.5167,
+		"long": -12.2833,
+		"country": "GN",
+		"comments": ""
+	},
+	{
+		"name": "America/Guadeloupe",
+		"lat": 16.2333,
+		"long": -60.4667,
+		"country": "GP",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Malabo",
+		"lat": 3.75,
+		"long": 8.7833,
+		"country": "GQ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Athens",
+		"lat": 37.9667,
+		"long": 23.7167,
+		"country": "GR",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/South_Georgia",
+		"lat": -53.7333,
+		"long": -35.4667,
+		"country": "GS",
+		"comments": ""
+	},
+	{
+		"name": "America/Guatemala",
+		"lat": 14.6333,
+		"long": -89.4833,
+		"country": "GT",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Guam",
+		"lat": 13.4667,
+		"long": 144.75,
+		"country": "GU",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Bissau",
+		"lat": 11.85,
+		"long": -14.4167,
+		"country": "GW",
+		"comments": ""
+	},
+	{
+		"name": "America/Guyana",
+		"lat": 6.8,
+		"long": -57.8333,
+		"country": "GY",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Hong_Kong",
+		"lat": 22.2833,
+		"long": 114.15,
+		"country": "HK",
+		"comments": ""
+	},
+	{
+		"name": "America/Tegucigalpa",
+		"lat": 14.1,
+		"long": -86.7833,
+		"country": "HN",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Zagreb",
+		"lat": 45.8,
+		"long": 15.9667,
+		"country": "HR",
+		"comments": ""
+	},
+	{
+		"name": "America/Port-au-Prince",
+		"lat": 18.5333,
+		"long": -71.6667,
+		"country": "HT",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Budapest",
+		"lat": 47.5,
+		"long": 19.0833,
+		"country": "HU",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Jakarta",
+		"lat": -5.8333,
+		"long": 106.8,
+		"country": "ID",
+		"comments": "Java & Sumatra"
+	},
+	{
+		"name": "Asia/Pontianak",
+		"lat": 0.0333,
+		"long": 109.3333,
+		"country": "ID",
+		"comments": "west & central Borneo"
+	},
+	{
+		"name": "Asia/Makassar",
+		"lat": -4.8833,
+		"long": 119.4,
+		"country": "ID",
+		"comments": "east & south Borneo, Sulawesi (Celebes), Bali, Nusa Tengarra, west Timor"
+	},
+	{
+		"name": "Asia/Jayapura",
+		"lat": -1.4667,
+		"long": 140.7,
+		"country": "ID",
+		"comments": "west New Guinea (Irian Jaya) & Malukus (Moluccas)"
+	},
+	{
+		"name": "Europe/Dublin",
+		"lat": 53.3333,
+		"long": -5.75,
+		"country": "IE",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Jerusalem",
+		"lat": 31.7806,
+		"long": 35.2239,
+		"country": "IL",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Isle_of_Man",
+		"lat": 54.15,
+		"long": -3.5333,
+		"country": "IM",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Kolkata",
+		"lat": 22.5333,
+		"long": 88.3667,
+		"country": "IN",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Chagos",
+		"lat": -6.6667,
+		"long": 72.4167,
+		"country": "IO",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Baghdad",
+		"lat": 33.35,
+		"long": 44.4167,
+		"country": "IQ",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Tehran",
+		"lat": 35.6667,
+		"long": 51.4333,
+		"country": "IR",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/Reykjavik",
+		"lat": 64.15,
+		"long": -20.15,
+		"country": "IS",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Rome",
+		"lat": 41.9,
+		"long": 12.4833,
+		"country": "IT",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Jersey",
+		"lat": 49.2,
+		"long": -1.8833,
+		"country": "JE",
+		"comments": ""
+	},
+	{
+		"name": "America/Jamaica",
+		"lat": 17.9681,
+		"long": -75.2067,
+		"country": "JM",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Amman",
+		"lat": 31.95,
+		"long": 35.9333,
+		"country": "JO",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Tokyo",
+		"lat": 35.6544,
+		"long": 139.7447,
+		"country": "JP",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Nairobi",
+		"lat": -0.7167,
+		"long": 36.8167,
+		"country": "KE",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Bishkek",
+		"lat": 42.9,
+		"long": 74.6,
+		"country": "KG",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Phnom_Penh",
+		"lat": 11.55,
+		"long": 104.9167,
+		"country": "KH",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Tarawa",
+		"lat": 1.4167,
+		"long": 173,
+		"country": "KI",
+		"comments": "Gilbert Islands"
+	},
+	{
+		"name": "Pacific/Enderbury",
+		"lat": -2.8667,
+		"long": -170.9167,
+		"country": "KI",
+		"comments": "Phoenix Islands"
+	},
+	{
+		"name": "Pacific/Kiritimati",
+		"lat": 1.8667,
+		"long": -156.6667,
+		"country": "KI",
+		"comments": "Line Islands"
+	},
+	{
+		"name": "Indian/Comoro",
+		"lat": -10.3167,
+		"long": 43.2667,
+		"country": "KM",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Kitts",
+		"lat": 17.3,
+		"long": -61.2833,
+		"country": "KN",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Pyongyang",
+		"lat": 39.0167,
+		"long": 125.75,
+		"country": "KP",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Seoul",
+		"lat": 37.55,
+		"long": 126.9667,
+		"country": "KR",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Kuwait",
+		"lat": 29.3333,
+		"long": 47.9833,
+		"country": "KW",
+		"comments": ""
+	},
+	{
+		"name": "America/Cayman",
+		"lat": 19.3,
+		"long": -80.6167,
+		"country": "KY",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Almaty",
+		"lat": 43.25,
+		"long": 76.95,
+		"country": "KZ",
+		"comments": "most locations"
+	},
+	{
+		"name": "Asia/Qyzylorda",
+		"lat": 44.8,
+		"long": 65.4667,
+		"country": "KZ",
+		"comments": "Qyzylorda (Kyzylorda, Kzyl-Orda)"
+	},
+	{
+		"name": "Asia/Aqtobe",
+		"lat": 50.2833,
+		"long": 57.1667,
+		"country": "KZ",
+		"comments": "Aqtobe (Aktobe)"
+	},
+	{
+		"name": "Asia/Aqtau",
+		"lat": 44.5167,
+		"long": 50.2667,
+		"country": "KZ",
+		"comments": "Atyrau (Atirau, Gur'yev), Mangghystau (Mankistau)"
+	},
+	{
+		"name": "Asia/Oral",
+		"lat": 51.2167,
+		"long": 51.35,
+		"country": "KZ",
+		"comments": "West Kazakhstan"
+	},
+	{
+		"name": "Asia/Vientiane",
+		"lat": 17.9667,
+		"long": 102.6,
+		"country": "LA",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Beirut",
+		"lat": 33.8833,
+		"long": 35.5,
+		"country": "LB",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Lucia",
+		"lat": 14.0167,
+		"long": -61,
+		"country": "LC",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Vaduz",
+		"lat": 47.15,
+		"long": 9.5167,
+		"country": "LI",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Colombo",
+		"lat": 6.9333,
+		"long": 79.85,
+		"country": "LK",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Monrovia",
+		"lat": 6.3,
+		"long": -9.2167,
+		"country": "LR",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Maseru",
+		"lat": -28.5333,
+		"long": 27.5,
+		"country": "LS",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Vilnius",
+		"lat": 54.6833,
+		"long": 25.3167,
+		"country": "LT",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Luxembourg",
+		"lat": 49.6,
+		"long": 6.15,
+		"country": "LU",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Riga",
+		"lat": 56.95,
+		"long": 24.1,
+		"country": "LV",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Tripoli",
+		"lat": 32.9,
+		"long": 13.1833,
+		"country": "LY",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Casablanca",
+		"lat": 33.65,
+		"long": -6.4167,
+		"country": "MA",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Monaco",
+		"lat": 43.7,
+		"long": 7.3833,
+		"country": "MC",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Chisinau",
+		"lat": 47,
+		"long": 28.8333,
+		"country": "MD",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Podgorica",
+		"lat": 42.4333,
+		"long": 19.2667,
+		"country": "ME",
+		"comments": ""
+	},
+	{
+		"name": "America/Marigot",
+		"lat": 18.0667,
+		"long": -62.9167,
+		"country": "MF",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Antananarivo",
+		"lat": -17.0833,
+		"long": 47.5167,
+		"country": "MG",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Majuro",
+		"lat": 7.15,
+		"long": 171.2,
+		"country": "MH",
+		"comments": "most locations"
+	},
+	{
+		"name": "Pacific/Kwajalein",
+		"lat": 9.0833,
+		"long": 167.3333,
+		"country": "MH",
+		"comments": "Kwajalein"
+	},
+	{
+		"name": "Europe/Skopje",
+		"lat": 41.9833,
+		"long": 21.4333,
+		"country": "MK",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Bamako",
+		"lat": 12.65,
+		"long": -8,
+		"country": "ML",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Rangoon",
+		"lat": 16.7833,
+		"long": 96.1667,
+		"country": "MM",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Ulaanbaatar",
+		"lat": 47.9167,
+		"long": 106.8833,
+		"country": "MN",
+		"comments": "most locations"
+	},
+	{
+		"name": "Asia/Hovd",
+		"lat": 48.0167,
+		"long": 91.65,
+		"country": "MN",
+		"comments": "Bayan-Olgiy, Govi-Altai, Hovd, Uvs, Zavkhan"
+	},
+	{
+		"name": "Asia/Choibalsan",
+		"lat": 48.0667,
+		"long": 114.5,
+		"country": "MN",
+		"comments": "Dornod, Sukhbaatar"
+	},
+	{
+		"name": "Asia/Macau",
+		"lat": 22.2333,
+		"long": 113.5833,
+		"country": "MO",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Saipan",
+		"lat": 15.2,
+		"long": 145.75,
+		"country": "MP",
+		"comments": ""
+	},
+	{
+		"name": "America/Martinique",
+		"lat": 14.6,
+		"long": -60.9167,
+		"country": "MQ",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Nouakchott",
+		"lat": 18.1,
+		"long": -14.05,
+		"country": "MR",
+		"comments": ""
+	},
+	{
+		"name": "America/Montserrat",
+		"lat": 16.7167,
+		"long": -61.7833,
+		"country": "MS",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Malta",
+		"lat": 35.9,
+		"long": 14.5167,
+		"country": "MT",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Mauritius",
+		"lat": -19.8333,
+		"long": 57.5,
+		"country": "MU",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Maldives",
+		"lat": 4.1667,
+		"long": 73.5,
+		"country": "MV",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Blantyre",
+		"lat": -14.2167,
+		"long": 35,
+		"country": "MW",
+		"comments": ""
+	},
+	{
+		"name": "America/Mexico_City",
+		"lat": 19.4,
+		"long": -98.85,
+		"country": "MX",
+		"comments": "Central Time - most locations"
+	},
+	{
+		"name": "America/Cancun",
+		"lat": 21.0833,
+		"long": -85.2333,
+		"country": "MX",
+		"comments": "Central Time - Quintana Roo"
+	},
+	{
+		"name": "America/Merida",
+		"lat": 20.9667,
+		"long": -88.3833,
+		"country": "MX",
+		"comments": "Central Time - Campeche, Yucatan"
+	},
+	{
+		"name": "America/Monterrey",
+		"lat": 25.6667,
+		"long": -99.6833,
+		"country": "MX",
+		"comments": "Mexican Central Time - Coahuila, Durango, Nuevo Leon, Tamaulipas away from US border"
+	},
+	{
+		"name": "America/Matamoros",
+		"lat": 25.8333,
+		"long": -96.5,
+		"country": "MX",
+		"comments": "US Central Time - Coahuila, Durango, Nuevo Leon, Tamaulipas near US border"
+	},
+	{
+		"name": "America/Mazatlan",
+		"lat": 23.2167,
+		"long": -105.5833,
+		"country": "MX",
+		"comments": "Mountain Time - S Baja, Nayarit, Sinaloa"
+	},
+	{
+		"name": "America/Chihuahua",
+		"lat": 28.6333,
+		"long": -105.9167,
+		"country": "MX",
+		"comments": "Mexican Mountain Time - Chihuahua away from US border"
+	},
+	{
+		"name": "America/Ojinaga",
+		"lat": 29.5667,
+		"long": -103.5833,
+		"country": "MX",
+		"comments": "US Mountain Time - Chihuahua near US border"
+	},
+	{
+		"name": "America/Hermosillo",
+		"lat": 29.0667,
+		"long": -109.0333,
+		"country": "MX",
+		"comments": "Mountain Standard Time - Sonora"
+	},
+	{
+		"name": "America/Tijuana",
+		"lat": 32.5333,
+		"long": -116.9833,
+		"country": "MX",
+		"comments": "US Pacific Time - Baja California near US border"
+	},
+	{
+		"name": "America/Santa_Isabel",
+		"lat": 30.3,
+		"long": -113.1333,
+		"country": "MX",
+		"comments": "Mexican Pacific Time - Baja California away from US border"
+	},
+	{
+		"name": "America/Bahia_Banderas",
+		"lat": 20.8,
+		"long": -104.75,
+		"country": "MX",
+		"comments": "Mexican Central Time - Bahia de Banderas"
+	},
+	{
+		"name": "Asia/Kuala_Lumpur",
+		"lat": 3.1667,
+		"long": 101.7,
+		"country": "MY",
+		"comments": "peninsular Malaysia"
+	},
+	{
+		"name": "Asia/Kuching",
+		"lat": 1.55,
+		"long": 110.3333,
+		"country": "MY",
+		"comments": "Sabah & Sarawak"
+	},
+	{
+		"name": "Africa/Maputo",
+		"lat": -24.0333,
+		"long": 32.5833,
+		"country": "MZ",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Windhoek",
+		"lat": -21.4333,
+		"long": 17.1,
+		"country": "NA",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Noumea",
+		"lat": -21.7333,
+		"long": 166.45,
+		"country": "NC",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Niamey",
+		"lat": 13.5167,
+		"long": 2.1167,
+		"country": "NE",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Norfolk",
+		"lat": -28.95,
+		"long": 167.9667,
+		"country": "NF",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Lagos",
+		"lat": 6.45,
+		"long": 3.4,
+		"country": "NG",
+		"comments": ""
+	},
+	{
+		"name": "America/Managua",
+		"lat": 12.15,
+		"long": -85.7167,
+		"country": "NI",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Amsterdam",
+		"lat": 52.3667,
+		"long": 4.9,
+		"country": "NL",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Oslo",
+		"lat": 59.9167,
+		"long": 10.75,
+		"country": "NO",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Kathmandu",
+		"lat": 27.7167,
+		"long": 85.3167,
+		"country": "NP",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Nauru",
+		"lat": 0.5167,
+		"long": 166.9167,
+		"country": "NR",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Niue",
+		"lat": -18.9833,
+		"long": -168.0833,
+		"country": "NU",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Auckland",
+		"lat": -35.1333,
+		"long": 174.7667,
+		"country": "NZ",
+		"comments": "most locations"
+	},
+	{
+		"name": "Pacific/Chatham",
+		"lat": -42.05,
+		"long": -175.45,
+		"country": "NZ",
+		"comments": "Chatham Islands"
+	},
+	{
+		"name": "Asia/Muscat",
+		"lat": 23.6,
+		"long": 58.5833,
+		"country": "OM",
+		"comments": ""
+	},
+	{
+		"name": "America/Panama",
+		"lat": 8.9667,
+		"long": -78.4667,
+		"country": "PA",
+		"comments": ""
+	},
+	{
+		"name": "America/Lima",
+		"lat": -11.95,
+		"long": -76.95,
+		"country": "PE",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Tahiti",
+		"lat": -16.4667,
+		"long": -148.4333,
+		"country": "PF",
+		"comments": "Society Islands"
+	},
+	{
+		"name": "Pacific/Marquesas",
+		"lat": -9,
+		"long": -138.5,
+		"country": "PF",
+		"comments": "Marquesas Islands"
+	},
+	{
+		"name": "Pacific/Gambier",
+		"lat": -22.8667,
+		"long": -133.05,
+		"country": "PF",
+		"comments": "Gambier Islands"
+	},
+	{
+		"name": "Pacific/Port_Moresby",
+		"lat": -8.5,
+		"long": 147.1667,
+		"country": "PG",
+		"comments": "most locations"
+	},
+	{
+		"name": "Pacific/Bougainville",
+		"lat": -5.7833,
+		"long": 155.5667,
+		"country": "PG",
+		"comments": "Bougainville"
+	},
+	{
+		"name": "Asia/Manila",
+		"lat": 14.5833,
+		"long": 121,
+		"country": "PH",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Karachi",
+		"lat": 24.8667,
+		"long": 67.05,
+		"country": "PK",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Warsaw",
+		"lat": 52.25,
+		"long": 21,
+		"country": "PL",
+		"comments": ""
+	},
+	{
+		"name": "America/Miquelon",
+		"lat": 47.05,
+		"long": -55.6667,
+		"country": "PM",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Pitcairn",
+		"lat": -24.9333,
+		"long": -129.9167,
+		"country": "PN",
+		"comments": ""
+	},
+	{
+		"name": "America/Puerto_Rico",
+		"lat": 18.4683,
+		"long": -65.8939,
+		"country": "PR",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Gaza",
+		"lat": 31.5,
+		"long": 34.4667,
+		"country": "PS",
+		"comments": "Gaza Strip"
+	},
+	{
+		"name": "Asia/Hebron",
+		"lat": 31.5333,
+		"long": 35.095,
+		"country": "PS",
+		"comments": "West Bank"
+	},
+	{
+		"name": "Europe/Lisbon",
+		"lat": 38.7167,
+		"long": -8.8667,
+		"country": "PT",
+		"comments": "mainland"
+	},
+	{
+		"name": "Atlantic/Madeira",
+		"lat": 32.6333,
+		"long": -15.1,
+		"country": "PT",
+		"comments": "Madeira Islands"
+	},
+	{
+		"name": "Atlantic/Azores",
+		"lat": 37.7333,
+		"long": -24.3333,
+		"country": "PT",
+		"comments": "Azores"
+	},
+	{
+		"name": "Pacific/Palau",
+		"lat": 7.3333,
+		"long": 134.4833,
+		"country": "PW",
+		"comments": ""
+	},
+	{
+		"name": "America/Asuncion",
+		"lat": -24.7333,
+		"long": -56.3333,
+		"country": "PY",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Qatar",
+		"lat": 25.2833,
+		"long": 51.5333,
+		"country": "QA",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Reunion",
+		"lat": -19.1333,
+		"long": 55.4667,
+		"country": "RE",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Bucharest",
+		"lat": 44.4333,
+		"long": 26.1,
+		"country": "RO",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Belgrade",
+		"lat": 44.8333,
+		"long": 20.5,
+		"country": "RS",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Kaliningrad",
+		"lat": 54.7167,
+		"long": 20.5,
+		"country": "RU",
+		"comments": "Moscow-01 - Kaliningrad"
+	},
+	{
+		"name": "Europe/Moscow",
+		"lat": 55.7558,
+		"long": 37.6178,
+		"country": "RU",
+		"comments": "Moscow+00 - west Russia"
+	},
+	{
+		"name": "Europe/Simferopol",
+		"lat": 44.95,
+		"long": 34.1,
+		"country": "RU",
+		"comments": "Moscow+00 - Crimea"
+	},
+	{
+		"name": "Europe/Volgograd",
+		"lat": 48.7333,
+		"long": 44.4167,
+		"country": "RU",
+		"comments": "Moscow+00 - Caspian Sea"
+	},
+	{
+		"name": "Europe/Samara",
+		"lat": 53.2,
+		"long": 50.15,
+		"country": "RU",
+		"comments": "Moscow+00 (Moscow+01 after 2014-10-26) - Samara, Udmurtia"
+	},
+	{
+		"name": "Asia/Yekaterinburg",
+		"lat": 56.85,
+		"long": 60.6,
+		"country": "RU",
+		"comments": "Moscow+02 - Urals"
+	},
+	{
+		"name": "Asia/Omsk",
+		"lat": 55,
+		"long": 73.4,
+		"country": "RU",
+		"comments": "Moscow+03 - west Siberia"
+	},
+	{
+		"name": "Asia/Novosibirsk",
+		"lat": 55.0333,
+		"long": 82.9167,
+		"country": "RU",
+		"comments": "Moscow+03 - Novosibirsk"
+	},
+	{
+		"name": "Asia/Novokuznetsk",
+		"lat": 53.75,
+		"long": 87.1167,
+		"country": "RU",
+		"comments": "Moscow+03 (Moscow+04 after 2014-10-26) - Kemerovo"
+	},
+	{
+		"name": "Asia/Krasnoyarsk",
+		"lat": 56.0167,
+		"long": 92.8333,
+		"country": "RU",
+		"comments": "Moscow+04 - Yenisei River"
+	},
+	{
+		"name": "Asia/Irkutsk",
+		"lat": 52.2667,
+		"long": 104.3333,
+		"country": "RU",
+		"comments": "Moscow+05 - Lake Baikal"
+	},
+	{
+		"name": "Asia/Chita",
+		"lat": 52.05,
+		"long": 113.4667,
+		"country": "RU",
+		"comments": "Moscow+06 (Moscow+05 after 2014-10-26) - Zabaykalsky"
+	},
+	{
+		"name": "Asia/Yakutsk",
+		"lat": 62,
+		"long": 129.6667,
+		"country": "RU",
+		"comments": "Moscow+06 - Lena River"
+	},
+	{
+		"name": "Asia/Khandyga",
+		"lat": 62.6564,
+		"long": 135.5539,
+		"country": "RU",
+		"comments": "Moscow+06 - Tomponsky, Ust-Maysky"
+	},
+	{
+		"name": "Asia/Vladivostok",
+		"lat": 43.1667,
+		"long": 131.9333,
+		"country": "RU",
+		"comments": "Moscow+07 - Amur River"
+	},
+	{
+		"name": "Asia/Sakhalin",
+		"lat": 46.9667,
+		"long": 142.7,
+		"country": "RU",
+		"comments": "Moscow+07 - Sakhalin Island"
+	},
+	{
+		"name": "Asia/Ust-Nera",
+		"lat": 64.5603,
+		"long": 143.2267,
+		"country": "RU",
+		"comments": "Moscow+07 - Oymyakonsky"
+	},
+	{
+		"name": "Asia/Magadan",
+		"lat": 59.5667,
+		"long": 150.8,
+		"country": "RU",
+		"comments": "Moscow+08 (Moscow+07 after 2014-10-26) - Magadan"
+	},
+	{
+		"name": "Asia/Srednekolymsk",
+		"lat": 67.4667,
+		"long": 153.7167,
+		"country": "RU",
+		"comments": "Moscow+08 - E Sakha, N Kuril Is"
+	},
+	{
+		"name": "Asia/Kamchatka",
+		"lat": 53.0167,
+		"long": 158.65,
+		"country": "RU",
+		"comments": "Moscow+08 (Moscow+09 after 2014-10-26) - Kamchatka"
+	},
+	{
+		"name": "Asia/Anadyr",
+		"lat": 64.75,
+		"long": 177.4833,
+		"country": "RU",
+		"comments": "Moscow+08 (Moscow+09 after 2014-10-26) - Bering Sea"
+	},
+	{
+		"name": "Africa/Kigali",
+		"lat": -0.05,
+		"long": 30.0667,
+		"country": "RW",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Riyadh",
+		"lat": 24.6333,
+		"long": 46.7167,
+		"country": "SA",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Guadalcanal",
+		"lat": -8.4667,
+		"long": 160.2,
+		"country": "SB",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Mahe",
+		"lat": -3.3333,
+		"long": 55.4667,
+		"country": "SC",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Khartoum",
+		"lat": 15.6,
+		"long": 32.5333,
+		"country": "SD",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Stockholm",
+		"lat": 59.3333,
+		"long": 18.05,
+		"country": "SE",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Singapore",
+		"lat": 1.2833,
+		"long": 103.85,
+		"country": "SG",
+		"comments": ""
+	},
+	{
+		"name": "Atlantic/St_Helena",
+		"lat": -14.0833,
+		"long": -4.3,
+		"country": "SH",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Ljubljana",
+		"lat": 46.05,
+		"long": 14.5167,
+		"country": "SI",
+		"comments": ""
+	},
+	{
+		"name": "Arctic/Longyearbyen",
+		"lat": 78,
+		"long": 16,
+		"country": "SJ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Bratislava",
+		"lat": 48.15,
+		"long": 17.1167,
+		"country": "SK",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Freetown",
+		"lat": 8.5,
+		"long": -12.75,
+		"country": "SL",
+		"comments": ""
+	},
+	{
+		"name": "Europe/San_Marino",
+		"lat": 43.9167,
+		"long": 12.4667,
+		"country": "SM",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Dakar",
+		"lat": 14.6667,
+		"long": -16.5667,
+		"country": "SN",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Mogadishu",
+		"lat": 2.0667,
+		"long": 45.3667,
+		"country": "SO",
+		"comments": ""
+	},
+	{
+		"name": "America/Paramaribo",
+		"lat": 5.8333,
+		"long": -54.8333,
+		"country": "SR",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Juba",
+		"lat": 4.85,
+		"long": 31.6,
+		"country": "SS",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Sao_Tome",
+		"lat": 0.3333,
+		"long": 6.7333,
+		"country": "ST",
+		"comments": ""
+	},
+	{
+		"name": "America/El_Salvador",
+		"lat": 13.7,
+		"long": -88.8,
+		"country": "SV",
+		"comments": ""
+	},
+	{
+		"name": "America/Lower_Princes",
+		"lat": 18.0514,
+		"long": -62.9528,
+		"country": "SX",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Damascus",
+		"lat": 33.5,
+		"long": 36.3,
+		"country": "SY",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Mbabane",
+		"lat": -25.7,
+		"long": 31.1,
+		"country": "SZ",
+		"comments": ""
+	},
+	{
+		"name": "America/Grand_Turk",
+		"lat": 21.4667,
+		"long": -70.8667,
+		"country": "TC",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Ndjamena",
+		"lat": 12.1167,
+		"long": 15.05,
+		"country": "TD",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Kerguelen",
+		"lat": -48.6472,
+		"long": 70.2175,
+		"country": "TF",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Lome",
+		"lat": 6.1333,
+		"long": 1.2167,
+		"country": "TG",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Bangkok",
+		"lat": 13.75,
+		"long": 100.5167,
+		"country": "TH",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Dushanbe",
+		"lat": 38.5833,
+		"long": 68.8,
+		"country": "TJ",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Fakaofo",
+		"lat": -8.6333,
+		"long": -170.7667,
+		"country": "TK",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Dili",
+		"lat": -7.45,
+		"long": 125.5833,
+		"country": "TL",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Ashgabat",
+		"lat": 37.95,
+		"long": 58.3833,
+		"country": "TM",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Tunis",
+		"lat": 36.8,
+		"long": 10.1833,
+		"country": "TN",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Tongatapu",
+		"lat": -20.8333,
+		"long": -174.8333,
+		"country": "TO",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Istanbul",
+		"lat": 41.0167,
+		"long": 28.9667,
+		"country": "TR",
+		"comments": ""
+	},
+	{
+		"name": "America/Port_of_Spain",
+		"lat": 10.65,
+		"long": -60.4833,
+		"country": "TT",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Funafuti",
+		"lat": -7.4833,
+		"long": 179.2167,
+		"country": "TV",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Taipei",
+		"lat": 25.05,
+		"long": 121.5,
+		"country": "TW",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Dar_es_Salaam",
+		"lat": -5.2,
+		"long": 39.2833,
+		"country": "TZ",
+		"comments": ""
+	},
+	{
+		"name": "Europe/Kiev",
+		"lat": 50.4333,
+		"long": 30.5167,
+		"country": "UA",
+		"comments": "most locations"
+	},
+	{
+		"name": "Europe/Uzhgorod",
+		"lat": 48.6167,
+		"long": 22.3,
+		"country": "UA",
+		"comments": "Ruthenia"
+	},
+	{
+		"name": "Europe/Zaporozhye",
+		"lat": 47.8333,
+		"long": 35.1667,
+		"country": "UA",
+		"comments": "Zaporozh'ye, E Lugansk / Zaporizhia, E Luhansk"
+	},
+	{
+		"name": "Africa/Kampala",
+		"lat": 0.3167,
+		"long": 32.4167,
+		"country": "UG",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Johnston",
+		"lat": 16.75,
+		"long": -168.4833,
+		"country": "UM",
+		"comments": "Johnston Atoll"
+	},
+	{
+		"name": "Pacific/Midway",
+		"lat": 28.2167,
+		"long": -176.6333,
+		"country": "UM",
+		"comments": "Midway Islands"
+	},
+	{
+		"name": "Pacific/Wake",
+		"lat": 19.2833,
+		"long": 166.6167,
+		"country": "UM",
+		"comments": "Wake Island"
+	},
+	{
+		"name": "America/New_York",
+		"lat": 40.7142,
+		"long": -73.9936,
+		"country": "US",
+		"comments": "Eastern Time"
+	},
+	{
+		"name": "America/Detroit",
+		"lat": 42.3314,
+		"long": -82.9542,
+		"country": "US",
+		"comments": "Eastern Time - Michigan - most locations"
+	},
+	{
+		"name": "America/Kentucky/Louisville",
+		"lat": 38.2542,
+		"long": -84.2406,
+		"country": "US",
+		"comments": "Eastern Time - Kentucky - Louisville area"
+	},
+	{
+		"name": "America/Kentucky/Monticello",
+		"lat": 36.8297,
+		"long": -83.1508,
+		"country": "US",
+		"comments": "Eastern Time - Kentucky - Wayne County"
+	},
+	{
+		"name": "America/Indiana/Indianapolis",
+		"lat": 39.7683,
+		"long": -85.8419,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - most locations"
+	},
+	{
+		"name": "America/Indiana/Vincennes",
+		"lat": 38.6772,
+		"long": -86.4714,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - Daviess, Dubois, Knox & Martin Counties"
+	},
+	{
+		"name": "America/Indiana/Winamac",
+		"lat": 41.0514,
+		"long": -85.3969,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - Pulaski County"
+	},
+	{
+		"name": "America/Indiana/Marengo",
+		"lat": 38.3756,
+		"long": -85.6553,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - Crawford County"
+	},
+	{
+		"name": "America/Indiana/Petersburg",
+		"lat": 38.4919,
+		"long": -86.7214,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - Pike County"
+	},
+	{
+		"name": "America/Indiana/Vevay",
+		"lat": 38.7478,
+		"long": -84.9328,
+		"country": "US",
+		"comments": "Eastern Time - Indiana - Switzerland County"
+	},
+	{
+		"name": "America/Chicago",
+		"lat": 41.85,
+		"long": -86.35,
+		"country": "US",
+		"comments": "Central Time"
+	},
+	{
+		"name": "America/Indiana/Tell_City",
+		"lat": 37.9531,
+		"long": -85.2386,
+		"country": "US",
+		"comments": "Central Time - Indiana - Perry County"
+	},
+	{
+		"name": "America/Indiana/Knox",
+		"lat": 41.2958,
+		"long": -85.375,
+		"country": "US",
+		"comments": "Central Time - Indiana - Starke County"
+	},
+	{
+		"name": "America/Menominee",
+		"lat": 45.1078,
+		"long": -86.3858,
+		"country": "US",
+		"comments": "Central Time - Michigan - Dickinson, Gogebic, Iron & Menominee Counties"
+	},
+	{
+		"name": "America/North_Dakota/Center",
+		"lat": 47.1164,
+		"long": -100.7008,
+		"country": "US",
+		"comments": "Central Time - North Dakota - Oliver County"
+	},
+	{
+		"name": "America/North_Dakota/New_Salem",
+		"lat": 46.845,
+		"long": -100.5892,
+		"country": "US",
+		"comments": "Central Time - North Dakota - Morton County (except Mandan area)"
+	},
+	{
+		"name": "America/North_Dakota/Beulah",
+		"lat": 47.2642,
+		"long": -100.2222,
+		"country": "US",
+		"comments": "Central Time - North Dakota - Mercer County"
+	},
+	{
+		"name": "America/Denver",
+		"lat": 39.7392,
+		"long": -103.0158,
+		"country": "US",
+		"comments": "Mountain Time"
+	},
+	{
+		"name": "America/Boise",
+		"lat": 43.6136,
+		"long": -115.7975,
+		"country": "US",
+		"comments": "Mountain Time - south Idaho & east Oregon"
+	},
+	{
+		"name": "America/Phoenix",
+		"lat": 33.4483,
+		"long": -111.9267,
+		"country": "US",
+		"comments": "Mountain Standard Time - Arizona (except Navajo)"
+	},
+	{
+		"name": "America/Los_Angeles",
+		"lat": 34.0522,
+		"long": -117.7572,
+		"country": "US",
+		"comments": "Pacific Time"
+	},
+	{
+		"name": "America/Metlakatla",
+		"lat": 55.1269,
+		"long": -130.4236,
+		"country": "US",
+		"comments": "Pacific Standard Time - Annette Island, Alaska"
+	},
+	{
+		"name": "America/Anchorage",
+		"lat": 61.2181,
+		"long": -148.0997,
+		"country": "US",
+		"comments": "Alaska Time"
+	},
+	{
+		"name": "America/Juneau",
+		"lat": 58.3019,
+		"long": -133.5803,
+		"country": "US",
+		"comments": "Alaska Time - Alaska panhandle"
+	},
+	{
+		"name": "America/Sitka",
+		"lat": 57.1764,
+		"long": -134.6981,
+		"country": "US",
+		"comments": "Alaska Time - southeast Alaska panhandle"
+	},
+	{
+		"name": "America/Yakutat",
+		"lat": 59.5469,
+		"long": -138.2728,
+		"country": "US",
+		"comments": "Alaska Time - Alaska panhandle neck"
+	},
+	{
+		"name": "America/Nome",
+		"lat": 64.5011,
+		"long": -164.5936,
+		"country": "US",
+		"comments": "Alaska Time - west Alaska"
+	},
+	{
+		"name": "America/Adak",
+		"lat": 51.88,
+		"long": -175.3419,
+		"country": "US",
+		"comments": "Aleutian Islands"
+	},
+	{
+		"name": "Pacific/Honolulu",
+		"lat": 21.3069,
+		"long": -156.1417,
+		"country": "US",
+		"comments": "Hawaii"
+	},
+	{
+		"name": "America/Montevideo",
+		"lat": -33.1167,
+		"long": -55.8167,
+		"country": "UY",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Samarkand",
+		"lat": 39.6667,
+		"long": 66.8,
+		"country": "UZ",
+		"comments": "west Uzbekistan"
+	},
+	{
+		"name": "Asia/Tashkent",
+		"lat": 41.3333,
+		"long": 69.3,
+		"country": "UZ",
+		"comments": "east Uzbekistan"
+	},
+	{
+		"name": "Europe/Vatican",
+		"lat": 41.9022,
+		"long": 12.4531,
+		"country": "VA",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Vincent",
+		"lat": 13.15,
+		"long": -60.7667,
+		"country": "VC",
+		"comments": ""
+	},
+	{
+		"name": "America/Caracas",
+		"lat": 10.5,
+		"long": -65.0667,
+		"country": "VE",
+		"comments": ""
+	},
+	{
+		"name": "America/Tortola",
+		"lat": 18.45,
+		"long": -63.3833,
+		"country": "VG",
+		"comments": ""
+	},
+	{
+		"name": "America/St_Thomas",
+		"lat": 18.35,
+		"long": -63.0667,
+		"country": "VI",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Ho_Chi_Minh",
+		"lat": 10.75,
+		"long": 106.6667,
+		"country": "VN",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Efate",
+		"lat": -16.3333,
+		"long": 168.4167,
+		"country": "VU",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Wallis",
+		"lat": -12.7,
+		"long": -175.8333,
+		"country": "WF",
+		"comments": ""
+	},
+	{
+		"name": "Pacific/Apia",
+		"lat": -12.1667,
+		"long": -170.2667,
+		"country": "WS",
+		"comments": ""
+	},
+	{
+		"name": "Asia/Aden",
+		"lat": 12.75,
+		"long": 45.2,
+		"country": "YE",
+		"comments": ""
+	},
+	{
+		"name": "Indian/Mayotte",
+		"lat": -11.2167,
+		"long": 45.2333,
+		"country": "YT",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Johannesburg",
+		"lat": -25.75,
+		"long": 28,
+		"country": "ZA",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Lusaka",
+		"lat": -14.5833,
+		"long": 28.2833,
+		"country": "ZM",
+		"comments": ""
+	},
+	{
+		"name": "Africa/Harare",
+		"lat": -16.1667,
+		"long": 31.05,
+		"country": "ZW",
+		"comments": ""
+	}
+]

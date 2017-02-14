@@ -1,0 +1,18 @@
+
+slotEventOverlap *1.6.4*
+========================
+
+Determines if timed events in agenda view should visually overlap.
+
+<div class='spec' markdown='1'>
+Boolean, *default*: `true`
+</div>
+
+When set to <code>true</code> (the default), events will overlap each other.
+At most *half* of each event will be obscured:
+
+<img src='../../../pages/docs/_images/slotEventOverlap_true.png' />
+
+When set to <code>false</code>, there will be absolutely no overlapping:
+
+<img src='../../../pages/docs/_images/slotEventOverlap_false.png' />

@@ -1,0 +1,46 @@
+{
+  "name": "jquery-simulate",
+  "title": "jQuery Simulate",
+  "description": "jQuery plugin for simulating browser mouse and keyboard events",
+  "version": "1.0.1",
+  "homepage": "https://github.com/jquery/jquery-simulate",
+  "author": {
+    "name": "jQuery Foundation and other contributors",
+    "url": "https://github.com/jquery/jquery-simulate/blob/master/AUTHORS.txt"
+  },
+  "maintainers": [
+    {
+      "name": "Mike Sherov",
+      "email": "mike.sherov@gmail.com",
+      "url": "http://mike.sherov.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jquery/jquery-simulate.git"
+  },
+  "bugs": "https://github.com/jquery/jquery-simulate/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/jquery/jquery-simulate/blob/master/LICENSE.txt"
+    }
+  ],
+  "devDependencies": {
+    "grunt": "0.4.1",
+    "grunt-bowercopy": "1.0.0",
+    "grunt-contrib-qunit": "0.3.0",
+    "grunt-contrib-uglify": "0.2.7",
+    "grunt-compare-size": "0.4.0-rc.3",
+    "grunt-git-authors": "1.2.0",
+    "testswarm": "1.1.0",
+    "grunt-contrib-jshint": "0.7.1"
+  },
+  "keywords": [
+    "simulate",
+    "events",
+    "keyboard",
+    "mouse",
+    "jquery"
+  ]
+}

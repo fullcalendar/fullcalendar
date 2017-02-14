@@ -1,0 +1,17 @@
+{
+  "name": "jasmine-fixture",
+  "version": "2.0.0",
+  "main": "dist/jasmine-fixture.js",
+  "ignore": [
+    "app",
+    "config",
+    "spec",
+    "tasks",
+    ".travis.yml",
+    "Gruntfile.js",
+    "main.js",
+    "package.json"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}

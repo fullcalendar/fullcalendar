@@ -10,6 +10,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	snapsPerSlot: null,
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	customTimeSlot: null,
+	customRangeMode: false,
 	labelFormat: null, // formatting string for times running along vertical axis
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
@@ -75,9 +77,15 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var slotDate; // will be on the view's first day, but we only care about its time
 		var isLabeled;
 		var axisHtml;
+		var customRangeLength = 0;
+		var slotCounter = 1;
+
+		if (this.customRangeMode) {
+			customRangeLength = this.customTimeSlot.length;
+		}
 
 		// Calculate the time for each slot
-		while (slotTime < this.maxTime) {
+		while (((slotTime < this.maxTime) && !this.customRangeMode) || ((slotCounter <= customRangeLength) && this.customRangeMode)) {
 			slotDate = this.start.clone().time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
@@ -99,10 +107,17 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 					'<td class="' + view.widgetContentClass + '"/>' +
 					(isRTL ? axisHtml : '') +
 				"</tr>";
+			
+			if(this.customRangeMode){
+				slotTime.add(this.customTimeSlot[slotCounter]);
+			}
+			else {
+				slotTime.add(this.slotDuration);
+			}
 
-			slotTime.add(this.slotDuration);
+			slotCounter++;
 		}
-
+		
 		return html;
 	},
 
@@ -129,6 +144,18 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
+		this.customTimeSlot = view.opt('customTimeSlot');
+
+		if (typeof this.customTimeSlot !== "undefined" && this.customTimeSlot !== null)
+		{
+			this.customRangeMode = true;
+			this.maxTime = moment.duration(this.minTime);
+			
+			var thisProxy = this;
+			$.each(this.customTimeSlot, function() {
+				thisProxy.maxTime.add(this);
+			});
+		}
 
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
@@ -335,7 +362,39 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
 		var len = this.slatEls.length;
-		var slatCoverage = (time - this.minTime) / this.slotDuration; // floating-point value of # of slots covered
+		// floating-point value of # of slots covered
+		var slatCoverage = 0;
+
+		if (this.customRangeMode) {
+			// Need to keep track of the previous slat to evaluate if the given time is between the current and previous slat.
+			var slatProgress = moment.duration(+this.minTime);
+			var slatPrevious = moment.duration(+this.minTime);
+
+			for(var i = 0; i <= this.customTimeSlot.length; i++)
+			{
+				// Simple math logic
+				var isBefore = (((slatProgress - time) > 0) && (slatPrevious - time) < 0);
+				var isEqual = ((slatProgress - time) === 0);
+
+				if(isEqual)
+				{
+					slatCoverage = i;	// It should be positioned on the current slat.
+					break;
+				}
+				else if(isBefore)
+				{
+					slatCoverage = i - 1 - ((slatProgress - time)/10000000);	// It is between two slat, so lets calculate an offset based on time difference.
+					break;
+				}
+				
+				// We save the current slatProgress before moving to the next one
+				slatPrevious = moment.duration(+slatProgress);
+				slatProgress.add(this.customTimeSlot[i]);	 
+			}
+		}else{
+			slatCoverage = (time - this.minTime) / this.slotDuration;
+		}
+		
 		var slatIndex;
 		var slatRemainder;
 
