@@ -113,17 +113,11 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mousedown', ev);
 		}
-		else {
-			this.stopTouch(ev); // kill touch interaction if touchend neglected to fire
-		}
 	},
 
 	handleMouseMove: function(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mousemove', ev);
-		}
-		else {
-			this.stopTouch(ev); // kill touch interaction if touchend neglected to fire
 		}
 	},
 
@@ -131,17 +125,11 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mouseup', ev);
 		}
-		else {
-			this.stopTouch(ev); // kill touch interaction if touchend neglected to fire
-		}
 	},
 
 	handleClick: function(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('click', ev);
-		}
-		else {
-			this.stopTouch(ev); // kill touch interaction if touchend neglected to fire
 		}
 	},
 
