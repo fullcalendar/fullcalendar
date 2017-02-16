@@ -71,4 +71,10 @@ describe('moment date formatting', function() {
 		expect(s).toEqual('November 11th 2014, 12(:00)');
 	});
 
+	it('should output Buddhist year with the \'B\' formatting character', function() {
+		var mom1 = $.fullCalendar.moment.utc('2017-02-16T06:00:00');
+		var s1 = mom1.format('MMMM B');
+		expect(s1).toEqual('February 2560');
+	});
+
 });

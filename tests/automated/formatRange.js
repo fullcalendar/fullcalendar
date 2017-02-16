@@ -173,4 +173,13 @@ describe('formatRange', function() {
 		expect(s).toEqual('January 1st 2014 - January 1st 2015');
 	});
 
+	it('doesn\'t do any splitting when dates have same year', function() {
+		var s = $.fullCalendar.formatRange(
+			moment.utc('2017-01-01'),
+			moment.utc('2017-01-01'),
+			'MMMM B'
+		);
+		expect(s).toEqual('January 2560');
+	});
+
 });

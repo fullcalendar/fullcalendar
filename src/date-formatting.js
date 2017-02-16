@@ -39,6 +39,9 @@ var specialTokens = {
 	},
 	T: function(date) { // "A" or "P"
 		return oldMomentFormat(date, 'A').charAt(0);
+	},
+	B: function(date) {
+		return date.year() + 543;
 	}
 };
 
@@ -48,6 +51,7 @@ The first characters of formatting tokens for units that are 1 day or larger.
 `unit` is a normalized unit, used for comparing moments.
 */
 var largeTokenMap = {
+	B: { value: 1, unit: 'year' },
 	Y: { value: 1, unit: 'year' },
 	M: { value: 2, unit: 'month' },
 	W: { value: 3, unit: 'week' }, // ISO week
