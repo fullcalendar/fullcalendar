@@ -468,8 +468,8 @@ TimeGrid.mixin({
 			seg = segs[i];
 			seg.el.css(this.generateFgSegHorizontalCss(seg));
 
-			// if the height is short, add a className for alternate styling
-			if (seg.bottom - seg.top < 30) {
+			// if the height is short (or shorter than set in view options), add a className for alternate styling
+			if (seg.bottom - seg.top < (this.view.opt('minSegHeight') || 15)*2 ) {
 				seg.el.addClass('fc-short');
 			}
 		}
