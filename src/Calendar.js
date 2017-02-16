@@ -508,6 +508,7 @@ function Calendar_constructor(element, overrides) {
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
 	var date; // unzoned
+	var navigationButtonClicks = 0;
 
 
 
@@ -680,6 +681,7 @@ function Calendar_constructor(element, overrides) {
 					// need to do this after View::render, so dates are calculated
 					// NOTE: view updates title text proactively
 					updateToolbarsTodayButton();
+					updateNavigationButtons();
 				}
 			}
 		}
@@ -883,6 +885,31 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
+	function updateNavigationButtons() {
+	    var nextButtonLimit = parseInt(t.options.limitNextClicks, 10),
+            prevButtonLimit = parseInt(t.options.limitPrevClicks, 10);
+
+		//checking next button
+        if (nextButtonLimit >= 0) {
+            if (navigationButtonClicks >= nextButtonLimit) {
+                toolbarsManager.proxyCall('disableButton', 'next');
+            } else {
+                toolbarsManager.proxyCall('enableButton', 'next');
+            }
+        }
+
+        //checking prev button
+        if (prevButtonLimit >= 0) {
+            prevButtonLimit = prevButtonLimit  * -1;
+
+            if (navigationButtonClicks <= prevButtonLimit ) {
+                toolbarsManager.proxyCall('disableButton', 'prev');
+            } else {
+                toolbarsManager.proxyCall('enableButton', 'prev');
+            }
+        }
+	}
+
 
 	/* Selection
 	-----------------------------------------------------------------------------*/
@@ -910,12 +937,14 @@ function Calendar_constructor(element, overrides) {
 
 	function prev() {
 		date = currentView.computePrevDate(date);
+		navigationButtonClicks--;
 		renderView();
 	}
 
 
 	function next() {
 		date = currentView.computeNextDate(date);
+		navigationButtonClicks++;
 		renderView();
 	}
 
@@ -934,6 +963,7 @@ function Calendar_constructor(element, overrides) {
 
 	function today() {
 		date = t.getNow();
+		navigationButtonClicks = 0;
 		renderView();
 	}
 
