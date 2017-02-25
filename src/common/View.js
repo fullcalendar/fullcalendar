@@ -1519,14 +1519,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Computes if a renderable date should be displayed as disabled because it's out of range
-	isDisabledDate: function(date) { // TODO: rename
-		return date < this.contentStart || date >= this.contentEnd;
+	isDateWithinContentRange: function(date) { // best place?
+		return date >= this.contentStart && date < this.contentEnd;
 	},
 
 
-	isValidRange: function(range) {
-		return range.start >= this.contentStart && range.end <= this.contentEnd; // TODO: date util. also, what about timezone?
+	isRangeWithinContentRange: function(range) { // best place?
+		return range.start >= this.contentStart && range.end <= this.contentEnd;
 	},
 
 

@@ -139,12 +139,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
 	renderNumberCellHtml: function(date) {
+		var view = this.view;
 		var html = '';
-		var isDayNumberVisible = this.view.dayNumbersVisible && !this.view.isDisabledDate(date);
+		var isDayNumberVisible = view.dayNumbersVisible && view.isDateWithinContentRange(date);
 		var classes;
 		var weekCalcFirstDoW;
 
-		if (!isDayNumberVisible && !this.view.cellWeekNumbersVisible) {
+		if (!isDayNumberVisible && !view.cellWeekNumbersVisible) {
 			// no numbers in day cell (week number must be along the side)
 			return '<td/>'; //  will create an empty space above events :(
 		}
@@ -152,7 +153,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		classes = this.getDayClasses(date);
 		classes.unshift('fc-day-top');
 
-		if (this.view.cellWeekNumbersVisible) {
+		if (view.cellWeekNumbersVisible) {
 			// To determine the day of week number change under ISO, we cannot
 			// rely on moment.js methods such as firstDayOfWeek() or weekday(),
 			// because they rely on the locale's dow (possibly overridden by
@@ -168,8 +169,8 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		html += '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">';
 
-		if (this.view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
-			html += this.view.buildGotoAnchorHtml(
+		if (view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
+			html += view.buildGotoAnchorHtml(
 				{ date: date, type: 'week' },
 				{ 'class': 'fc-week-number' },
 				date.format('w') // inner HTML
@@ -177,7 +178,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		}
 
 		if (isDayNumberVisible) {
-			html += this.view.buildGotoAnchorHtml(
+			html += view.buildGotoAnchorHtml(
 				date,
 				{ 'class': 'fc-day-number' },
 				date.date() // inner HTML

@@ -379,7 +379,7 @@ Grid.mixin({
 		var calendar = this.view.calendar;
 		var rawEventRange = this.eventToRawEventRange(eventLocation); // always returns some value
 
-		if (!this.view.isValidRange(rawEventRange)) {
+		if (!this.view.isRangeWithinContentRange(rawEventRange)) {
 			return false;
 		}
 
@@ -405,7 +405,7 @@ Grid.mixin({
 		var calendar = this.view.calendar;
 		var rawEventRange = this.eventToRawEventRange(eventLocation); // always returns some value
 
-		if (!this.view.isValidRange(rawEventRange)) {
+		if (!this.view.isRangeWithinContentRange(rawEventRange)) {
 			return false;
 		}
 
