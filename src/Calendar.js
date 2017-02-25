@@ -797,7 +797,7 @@ function Calendar_constructor(element, overrides) {
 		if (
 			!ignoreWindowResize &&
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			currentView.start // view has already been rendered
+			currentView.renderStart // view has already been rendered
 		) {
 			if (updateSize(true)) {
 				currentView.publiclyTrigger('windowResize', _element);

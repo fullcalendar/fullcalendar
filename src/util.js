@@ -669,6 +669,30 @@ function multiplyDuration(dur, n) {
 }
 
 
+function cloneRange(range) {
+	return {
+		start: range.start.clone(),
+		end: range.end.clone()
+	};
+}
+
+
+function minMoment(mom1, mom2) {
+	if (mom1.isBefore(mom2)) {
+		return mom1;
+	}
+	return mom2;
+}
+
+
+function maxMoment(mom1, mom2) {
+	if (mom1.isAfter(mom2)) {
+		return mom1;
+	}
+	return mom2;
+}
+
+
 // Returns a boolean about whether the given duration has any time parts (hours/minutes/seconds/ms)
 function durationHasTime(dur) {
 	return Boolean(dur.hours() || dur.minutes() || dur.seconds() || dur.milliseconds());

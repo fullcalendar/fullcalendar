@@ -58,12 +58,19 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Sets the display range and computes all necessary dates
-	setRange: function(range) {
-		View.prototype.setRange.call(this, range); // call the super-method
+	setRangeFromDate: function(date) {
+		View.prototype.setRangeFromDate.call(this, date); // call the super-method
 
-		this.timeGrid.setRange(range);
+		this.timeGrid.setRange({
+			start: this.renderStart,
+			end: this.renderEnd
+		});
+
 		if (this.dayGrid) {
-			this.dayGrid.setRange(range);
+			this.dayGrid.setRange({
+				start: this.renderStart,
+				end: this.renderEnd
+			});
 		}
 	},
 

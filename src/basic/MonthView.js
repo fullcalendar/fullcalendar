@@ -4,18 +4,20 @@
 
 var MonthView = FC.MonthView = BasicView.extend({
 
-	// Produces information about what range to display
-	computeRange: function(date) {
-		var range = BasicView.prototype.computeRange.call(this, date); // get value from super-method
-		var rowCnt;
+
+	// Computes the date range that will be rendered.
+	computeRenderRange: function(intervalRange) {
+		var renderRange = BasicView.prototype.computeRenderRange.call(this, intervalRange);
 
 		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
-			rowCnt = Math.ceil(range.end.diff(range.start, 'weeks', true)); // could be partial weeks due to hiddenDays
-			range.end.add(6 - rowCnt, 'weeks');
+			rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
+				renderRange.end.diff(renderRange.start, 'weeks', true) // dontRound=true
+			);
+			renderRange.end.add(6 - rowCnt, 'weeks');
 		}
 
-		return range;
+		return renderRange;
 	},
 
 

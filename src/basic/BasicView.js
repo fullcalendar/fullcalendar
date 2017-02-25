@@ -42,31 +42,34 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Sets the display range and computes all necessary dates
-	setRange: function(range) {
-		View.prototype.setRange.call(this, range); // call the super-method
+	setRangeFromDate: function(date) {
+		View.prototype.setRangeFromDate.call(this, date); // call the super-method
 
-		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before setRange
-		this.dayGrid.setRange(range);
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before Grid::setRange
+		this.dayGrid.setRange({
+			start: this.renderStart,
+			end: this.renderEnd
+		});
 	},
 
 
-	// Compute the value to feed into setRange. Overrides superclass.
-	computeRange: function(date) {
-		var range = View.prototype.computeRange.call(this, date); // get value from the super-method
+	// Computes the date range that will be rendered.
+	computeRenderRange: function(intervalRange) {
+		var renderRange = View.prototype.computeRenderRange.call(this, intervalRange);
 
 		// year and month views should be aligned with weeks. this is already done for week
-		if (/year|month/.test(range.intervalUnit)) {
-			range.start.startOf('week');
-			range.start = this.skipHiddenDays(range.start);
+		if (/^(year|month)$/.test(this.intervalUnit)) {
+			renderRange.start.startOf('week');
 
 			// make end-of-week if not already
-			if (range.end.weekday()) {
-				range.end.add(1, 'week').startOf('week');
-				range.end = this.skipHiddenDays(range.end, -1, true); // exclusively move backwards
+			if (renderRange.end.weekday()) {
+				renderRange.end.add(1, 'week').startOf('week'); // exclusively move backwards
 			}
+
+			renderRange = this.sanitizeRenderRange(renderRange); // resanitize
 		}
 
-		return range;
+		return renderRange;
 	},
 
 

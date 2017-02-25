@@ -21,16 +21,36 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	isEventsRendered: false,
 	eventRenderQueue: null,
 
-	// range the view is actually displaying (moments)
-	start: null,
-	end: null, // exclusive
-
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
 	intervalStart: null,
 	intervalEnd: null, // exclusive
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
+
+	// date range with a rendered skeleton
+	// includes not-active days that need some sort of DOM
+	renderStart: null,
+	renderEnd: null,
+
+	// active dates that display events and accept drag-nd-drop
+	validStart: null,
+	validEnd: null,
+
+	// DEPRECATED: use validStart/validEnd instead
+	start: null,
+	end: null,
+
+	// date constraints
+	// TODO: render populate and use in rendering
+	// TODO: enforce this in prev/next/gotoDate
+	minDate: null,
+	maxDate: null,
+
+	// for dates that are outside of minDate/maxDate
+	// true = not rendered at all
+	// false = rendered, but disabled
+	isOutOfRangeHidden: false,
 
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
@@ -60,7 +80,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.calendar = calendar;
 		this.type = this.name = type; // .name is deprecated
 		this.options = options;
+
 		this.intervalDuration = intervalDuration || moment.duration(1, 'day');
+		this.intervalUnit = computeIntervalUnit(this.intervalDuration);
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initThemingProps();
@@ -130,22 +152,33 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Updates all internal dates for displaying the given unzoned range.
-	setRange: function(range) {
-		$.extend(this, range); // assigns every property to this object's member variables
+	setRangeFromDate: function(date) {
+		var intervalRange = this.computeIntervalRange(date);
+		var renderRange = this.computeRenderRange(intervalRange);
+		var validRange = this.computeValidRange(renderRange);
+
+		this.intervalStart = intervalRange.start;
+		this.intervalEnd = intervalRange.end;
+		this.renderStart = renderRange.start;
+		this.renderEnd = renderRange.end;
+		this.validStart = validRange.start;
+		this.validEnd = validRange.end;
+
+		// DEPRECATED, but we need to keep it updated
+		// TODO: run automated tests with this commented out
+		this.start = this.validStart;
+		this.end = this.validEnd;
+
 		this.updateTitle();
 	},
 
 
-	// Given a single current unzoned date, produce information about what range to display.
-	// Subclasses can override. Must return all properties.
-	computeRange: function(date) {
-		var intervalUnit = computeIntervalUnit(this.intervalDuration);
-		var intervalStart = date.clone().startOf(intervalUnit);
+	computeIntervalRange: function(date) {
+		var intervalStart = date.clone().startOf(this.intervalUnit);
 		var intervalEnd = intervalStart.clone().add(this.intervalDuration);
-		var start, end;
 
 		// normalize the range's time-ambiguity
-		if (/year|month|week|day/.test(intervalUnit)) { // whole-days?
+		if (/^(year|month|week|day)$/.test(this.intervalUnit)) { // whole-days?
 			intervalStart.stripTime();
 			intervalEnd.stripTime();
 		}
@@ -158,18 +191,39 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 		}
 
-		start = intervalStart.clone();
-		start = this.skipHiddenDays(start);
-		end = intervalEnd.clone();
-		end = this.skipHiddenDays(end, -1, true); // exclusively move backwards
+		return { start: intervalStart, end: intervalEnd };
+	},
 
-		return {
-			intervalUnit: intervalUnit,
-			intervalStart: intervalStart,
-			intervalEnd: intervalEnd,
-			start: start,
-			end: end
-		};
+
+	// Computes the date range that will be rendered.
+	computeRenderRange: function(intervalRange) {
+		return this.sanitizeRenderRange(
+			cloneRange(intervalRange)
+		);
+	},
+
+
+	sanitizeRenderRange: function(renderRange) {
+		renderRange = this.trimHiddenDays(renderRange);
+
+		if (this.isOutOfRangeHidden) {
+			renderRange = this.intersectValidRange(renderRange);
+		}
+
+		return renderRange;
+	},
+
+
+	// Computes the date range that will be fully visible (not greyed out),
+	// and that will contain events and allow drag-n-drop.
+	computeValidRange: function(renderRange) {
+		var validRange = cloneRange(renderRange);
+
+		// probably already done in sanitizeRenderRange,
+		// but do again in case subclass added special behavior to computeRenderRange
+		validRange = this.intersectValidRange(validRange);
+
+		return validRange;
 	},
 
 
@@ -204,6 +258,28 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	trimHiddenDays: function(inputRange) {
+		return {
+			start: this.skipHiddenDays(inputRange.start),
+			end: this.skipHiddenDays(inputRange.end, -1, true) // exclusively move backwards
+		};
+	},
+
+
+	intersectValidRange: function(inputRange) {
+		var range = cloneRange(inputRange);
+
+		if (this.minDate) {
+			range.start = maxMoment(range.start, this.minDate);
+		}
+		if (this.maxDate) {
+			range.end = minMoment(range.end, this.maxDate);
+		}
+
+		return range;
+	},
+
+
 	/* Title and Date Formatting
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -220,13 +296,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var start, end;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-		if (this.intervalUnit === 'year' || this.intervalUnit === 'month') {
+		if (/^(year|month)$/.test(this.intervalUnit)) {
 			start = this.intervalStart;
 			end = this.intervalEnd;
 		}
 		else { // for day units or smaller, use the actual day range
-			start = this.start;
-			end = this.end;
+			start = this.validStart;
+			end = this.validEnd;
 		}
 
 		return this.formatRange(
@@ -400,7 +476,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.unbindEvents(); // will do nothing if not already bound
 		this.requestDateRender(date).then(function() {
-			// wish we could start earlier, but setRange/computeRange needs to execute first
+			// wish we could start earlier, but setRangeFromDate needs to execute first
 			_this.bindEvents(); // will request events
 		});
 	},
@@ -456,7 +532,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		return this.executeDateUnrender().then(function() {
 
 			if (date) {
-				_this.setRange(_this.computeRange(date));
+				_this.setRangeFromDate(date);
 			}
 
 			if (_this.render) {
@@ -1028,7 +1104,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEvents: function() {
-		return this.calendar.requestEvents(this.start, this.end);
+		return this.calendar.requestEvents(this.validStart, this.validEnd);
 	},
 
 
@@ -1439,7 +1515,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// Computes if a renderable date should be displayed as disabled because it's out of range
+	isDisabledDay: function(date) {
+		return date < this.validStart || date >= this.validEnd;
+	},
+
+
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
+	// DOES NOT CONSIDER minDate/maxDate RANGE!
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)
