@@ -670,28 +670,37 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date, noThemeHighlight) {
 		var view = this.view;
-		var today = view.calendar.getNow();
-		var classes = [ 'fc-' + dayIDs[date.day()] ];
+		var classes = [];
+		var today;
 
-		if (
-			view.intervalDuration.as('months') == 1 &&
-			date.month() != view.intervalStart.month()
-		) {
-			classes.push('fc-other-month');
-		}
-
-		if (date.isSame(today, 'day')) {
-			classes.push('fc-today');
-
-			if (noThemeHighlight !== true) {
-				classes.push(view.highlightStateClass);
-			}
-		}
-		else if (date < today) {
-			classes.push('fc-past');
+		if (view.isDisabledDate(date)) {
+			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
 		}
 		else {
-			classes.push('fc-future');
+			classes.push('fc-' + dayIDs[date.day()]);
+
+			if (
+				view.intervalDuration.as('months') == 1 &&
+				date.month() != view.intervalStart.month()
+			) {
+				classes.push('fc-other-month');
+			}
+
+			today = view.calendar.getNow()
+
+			if (date.isSame(today, 'day')) {
+				classes.push('fc-today');
+
+				if (noThemeHighlight !== true) {
+					classes.push(view.highlightStateClass);
+				}
+			}
+			else if (date < today) {
+				classes.push('fc-past');
+			}
+			else {
+				classes.push('fc-future');
+			}
 		}
 
 		return classes;

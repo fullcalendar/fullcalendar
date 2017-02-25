@@ -155,7 +155,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	setRangeFromDate: function(date) {
 		var intervalRange = this.computeIntervalRange(date);
 		var renderRange = this.computeRenderRange(intervalRange);
-		var validRange = this.computeValidRange(renderRange);
+		var validRange = this.computeValidRange(renderRange, intervalRange);
 
 		this.intervalStart = intervalRange.start;
 		this.intervalEnd = intervalRange.end;
@@ -207,7 +207,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		renderRange = this.trimHiddenDays(renderRange);
 
 		if (this.isOutOfRangeHidden) {
-			renderRange = this.intersectValidRange(renderRange);
+			renderRange = this.transformWithMinMaxDate(renderRange);
 		}
 
 		return renderRange;
@@ -216,12 +216,16 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the date range that will be fully visible (not greyed out),
 	// and that will contain events and allow drag-n-drop.
-	computeValidRange: function(renderRange) {
+	computeValidRange: function(renderRange, intervalRange) {
 		var validRange = cloneRange(renderRange);
+
+		if (this.opt('disableNonCurrentDates')) {
+			validRange = intersectRanges(validRange, intervalRange);
+		}
 
 		// probably already done in sanitizeRenderRange,
 		// but do again in case subclass added special behavior to computeRenderRange
-		validRange = this.intersectValidRange(validRange);
+		validRange = this.transformWithMinMaxDate(validRange);
 
 		return validRange;
 	},
@@ -266,7 +270,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	intersectValidRange: function(inputRange) {
+	transformWithMinMaxDate: function(inputRange) {
 		var range = cloneRange(inputRange);
 
 		if (this.minDate) {
@@ -1516,8 +1520,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Computes if a renderable date should be displayed as disabled because it's out of range
-	isDisabledDay: function(date) {
+	isDisabledDate: function(date) { // TODO: rename
 		return date < this.validStart || date >= this.validEnd;
+	},
+
+
+	isValidRange: function(range) {
+		return range.start >= this.validStart && range.end <= this.validEnd; // TODO: date util. also, what about timezone?
 	},
 
 

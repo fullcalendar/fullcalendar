@@ -140,10 +140,11 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// The number row will only exist if either day numbers or week numbers are turned on.
 	renderNumberCellHtml: function(date) {
 		var html = '';
+		var isDayNumberVisible = this.view.dayNumbersVisible && !this.view.isDisabledDate(date);
 		var classes;
 		var weekCalcFirstDoW;
 
-		if (!this.view.dayNumbersVisible && !this.view.cellWeekNumbersVisible) {
+		if (!isDayNumberVisible && !this.view.cellWeekNumbersVisible) {
 			// no numbers in day cell (week number must be along the side)
 			return '<td/>'; //  will create an empty space above events :(
 		}
@@ -175,7 +176,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			);
 		}
 
-		if (this.view.dayNumbersVisible) {
+		if (isDayNumberVisible) {
 			html += this.view.buildGotoAnchorHtml(
 				date,
 				{ 'class': 'fc-day-number' },
@@ -305,9 +306,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Renders a visual indication of an event or external element being dragged.
 	// `eventLocation` has zoned start and end (optional)
 	renderDrag: function(eventLocation, seg) {
+		var eventSpans = this.eventToSpans(eventLocation);
+		var i;
 
 		// always render a highlight underneath
-		this.renderHighlight(this.eventToSpan(eventLocation));
+		for (i = 0; i < eventSpans.length; i++) {
+			this.renderHighlight(eventSpans[i]);
+		}
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
@@ -329,7 +334,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventLocation, seg) {
-		this.renderHighlight(this.eventToSpan(eventLocation));
+		var eventSpans = this.eventToSpans(eventLocation);
+		var i;
+
+		for (i = 0; i < eventSpans.length; i++) {
+			this.renderHighlight(eventSpans[i]);
+		}
+
 		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
 	},
 
