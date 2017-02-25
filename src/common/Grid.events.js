@@ -1,6 +1,16 @@
 
 /* Event-rendering and event-interaction methods for the abstract Grid class
-----------------------------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------------------------
+
+Data Types:
+	event - { title, id, start, (end), whatever }
+	location - { start, (end), allDay }
+	rawEventRange - { start, end }
+	eventRange - { start, end, isStart, isEnd }
+	eventSpan - { start, end, isStart, isEnd, whatever }
+	eventSeg - { event, whatever }
+	seg - { whatever }
+*/
 
 Grid.mixin({
 
@@ -357,78 +367,6 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-
-	/*
-
-	TODO: cursor not disabled when dragging?
-	TODO: should multi-day event be allowed to drag into non-current-month range?
-		> YES ... might be hard. still needs to respect minDate/maxDate
-		> ... need to come up with a different system?
-
-	event - { title, id, start, (end) }
-	location? - { start, (end), allDay } **
-	unsafeEventRange - { start, end, allDay }
-	eventRange - { start, end, allDay, isStart, isEnd }
-	unsafeEventSpan - { start, end, allDay, whatever }
-	eventSpan - { start, end, allDay, isStart, isEnd, event, whatever } ***
-	eventSeg - { whatever, event }
-	seg - { whatever }
-
-	*/
-	isEventLocationValid: function(eventLocation, event) {
-		var calendar = this.view.calendar;
-		var rawEventRange = this.eventToRawEventRange(eventLocation); // always returns some value
-
-		if (!this.view.isRangeWithinContentRange(rawEventRange)) {
-			return false;
-		}
-
-		var eventRange = this.refineRawEventRange(rawEventRange);
-
-		if (!eventRange) {
-			return false;
-		}
-
-		var eventSpans = this.eventRangeToSpans(eventRange);
-		var i;
-
-		for (i = 0; i < eventSpans.length; i++) {
-			if (!calendar.isEventSpanAllowed(eventSpans[i], event)) {
-				return false;
-			}
-		}
-
-		return true;
-	},
-
-	isExternalLocationValid: function(eventLocation, metaProps) { // FOR the external element
-		var calendar = this.view.calendar;
-		var rawEventRange = this.eventToRawEventRange(eventLocation); // always returns some value
-
-		if (!this.view.isRangeWithinContentRange(rawEventRange)) {
-			return false;
-		}
-
-		var eventRange = this.refineRawEventRange(rawEventRange);
-
-		if (!eventRange) {
-			return false;
-		}
-
-		var eventSpans = this.eventRangeToSpans(eventRange);
-		var i;
-
-		for (i = 0; i < eventSpans.length; i++) {
-			if (!calendar.isExternalSpanAllowed(eventSpans[i], eventLocation, metaProps)) {
-				return false;
-			}
-		}
-
-		return true;
-	},
-
-
-
 	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
 	// Has side effect of setting/unsetting `segDragListener`
@@ -476,23 +414,29 @@ Grid.mixin({
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 			},
 			hitOver: function(hit, isOrig, origHit) {
+				var isAllowed = true;
+				var hitSpan = hit.component.getHitSpan(hit); // hit might not belong to this grid
+				var origHitSpan;
 				var dragHelperEls;
 
-				// starting hit could be forced (DayGrid.limit)
-				if (seg.hit) {
-					origHit = seg.hit;
+				if (view.isRangeWithinContentRange(hitSpan)) {
+
+					// starting hit could be forced (DayGrid.limit)
+					if (seg.hit) {
+						origHit = seg.hit;
+					}
+
+					origHitSpan = origHit.component.getHitSpan(origHit); // hit might not belong to this grid
+					dropLocation = _this.computeEventDrop(origHitSpan, hitSpan, event);
+					isAllowed = dropLocation && _this.isEventLocationAllowed(dropLocation, event);
+				}
+				else {
+					isAllowed = false;
 				}
 
-				// since we are querying the parent view, might not belong to this grid
-				dropLocation = _this.computeEventDrop(
-					origHit.component.getHitSpan(origHit),
-					hit.component.getHitSpan(hit),
-					event
-				);
-
-				if (dropLocation && !_this.isEventLocationValid(dropLocation, event)) {
-					disableCursor();
+				if (!isAllowed) {
 					dropLocation = null;
+					disableCursor();
 				}
 
 				// if a valid drop location, have the subclass render a visual indication
@@ -674,7 +618,8 @@ Grid.mixin({
 	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
-		var calendar = this.view.calendar;
+		var view = this.view;
+		var calendar = view.calendar;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var dropLocation; // a null value signals an unsuccessful drag
 
@@ -684,15 +629,20 @@ Grid.mixin({
 				_this.isDraggingExternal = true;
 			},
 			hitOver: function(hit) {
+				var isAllowed = true;
+				var hitSpan = hit.component.getHitSpan(hit); // hit might not belong to this grid
 
-				dropLocation = _this.computeExternalDrop(
-					hit.component.getHitSpan(hit), // since we are querying the parent view, might not belong to this grid
-					meta
-				);
+				if (view.isRangeWithinContentRange(hitSpan)) {
+					dropLocation = _this.computeExternalDrop(hitSpan, meta);
+					isAllowed = dropLocation && this.isExternalLocationAllowed(dropLocation, meta.eventProps);
+				}
+				else {
+					isAllowed = false;
+				}
 
-				if (dropLocation && !this.isExternalLocationValid(dropLocation, meta.eventProps)) {
-					disableCursor();
+				if (!isAllowed) {
 					dropLocation = null;
+					disableCursor();
 				}
 
 				if (dropLocation) {
@@ -708,7 +658,7 @@ Grid.mixin({
 			},
 			interactionEnd: function(ev) {
 				if (dropLocation) { // element was dropped on a valid hit
-					_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+					view.reportExternalDrop(meta, dropLocation, el, ev, ui);
 				}
 				_this.isDraggingExternal = false;
 				_this.externalDragListener = null;
@@ -793,23 +743,33 @@ Grid.mixin({
 				_this.segResizeStart(seg, ev);
 			},
 			hitOver: function(hit, isOrig, origHit) {
-				var origHitSpan = _this.getHitSpan(origHit);
+				var isAllowed = true;
 				var hitSpan = _this.getHitSpan(hit);
+				var origHitSpan;
 
-				resizeLocation = isStart ?
-					_this.computeEventStartResize(origHitSpan, hitSpan, event) :
-					_this.computeEventEndResize(origHitSpan, hitSpan, event);
+				if (view.isRangeWithinContentRange(hitSpan)) {
+					origHitSpan = _this.getHitSpan(origHit);
 
-				if (resizeLocation) {
-					if (!_this.isEventLocationValid(resizeLocation, event)) {
-						disableCursor();
-						resizeLocation = null;
-					}
-					// no change? (FYI, event dates might have zones)
-					else if (
+					resizeLocation = isStart ?
+						_this.computeEventStartResize(origHitSpan, hitSpan, event) :
+						_this.computeEventEndResize(origHitSpan, hitSpan, event);
+
+					isAllowed = resizeLocation && _this.isEventLocationAllowed(resizeLocation, event);
+				}
+				else {
+					isAllowed = false;
+				}
+
+				if (!isAllowed) {
+					resizeLocation = null;
+					disableCursor();
+				}
+				else {
+					if (
 						resizeLocation.start.isSame(event.start.clone().stripZone()) &&
 						resizeLocation.end.isSame(eventEnd.clone().stripZone())
 					) {
+						// no change. (FYI, event dates might have zones)
 						resizeLocation = null;
 					}
 				}
@@ -1061,6 +1021,61 @@ Grid.mixin({
 	},
 
 
+	/* Event Location Validation
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	isEventLocationAllowed: function(eventLocation, event) {
+		if (this.isEventLocationInRange(eventLocation)) {
+			var calendar = this.view.calendar;
+			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
+			var eventSpans = this.eventRangeToSpans(eventRange);
+			var i;
+
+			if (eventSpans.length) {
+				for (i = 0; i < eventSpans.length; i++) {
+					if (!calendar.isEventSpanAllowed(eventSpans[i], event)) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+
+	isExternalLocationAllowed: function(eventLocation, metaProps) { // FOR the external element
+		if (this.isEventLocationInRange(eventLocation)) {
+			var calendar = this.view.calendar;
+			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
+			var eventSpans = this.eventRangeToSpans(eventRange);
+			var i;
+
+			if (eventSpans.length) {
+				for (i = 0; i < eventSpans.length; i++) {
+					if (!calendar.isExternalSpanAllowed(eventSpans[i], eventLocation, metaProps)) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+
+	isEventLocationInRange: function(eventLocation) {
+		return this.view.isRangeWithinMinMaxDate(
+			this.eventToRawRange(eventLocation)
+		);
+	},
+
+
 	/* Converting events -> eventRange -> eventSpan -> eventSegs
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -1139,11 +1154,12 @@ Grid.mixin({
 	// If the event is completely outside of the grid's valid range, will return undefined.
 	eventToRange: function(event) {
 		return this.refineRawEventRange(
-			this.eventToRawEventRange(event)
+			this.eventToRawRange(event)
 		);
 	},
 
 
+	// always returns a result
 	refineRawEventRange: function(rawRange) {
 		var view = this.view;
 		var calendar = view.calendar;
@@ -1165,7 +1181,7 @@ Grid.mixin({
 
 	// not constrained to valid dates
 	// not given localizeMoment hack
-	eventToRawEventRange: function(event) {
+	eventToRawRange: function(event) {
 		var calendar = this.view.calendar;
 		var start = event.start.clone().stripZone();
 		var end = (

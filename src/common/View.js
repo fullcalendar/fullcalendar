@@ -155,14 +155,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	setRangeFromDate: function(date) {
 		var intervalRange = this.computeIntervalRange(date);
 		var renderRange = this.computeRenderRange(intervalRange);
-		var validRange = this.computeValidRange(renderRange, intervalRange);
+		var contentRange = this.computeContentRange(renderRange, intervalRange);
 
 		this.intervalStart = intervalRange.start;
 		this.intervalEnd = intervalRange.end;
 		this.renderStart = renderRange.start;
 		this.renderEnd = renderRange.end;
-		this.contentStart = validRange.start;
-		this.contentEnd = validRange.end;
+		this.contentStart = contentRange.start;
+		this.contentEnd = contentRange.end;
 
 		// DEPRECATED, but we need to keep it updated
 		// TODO: run automated tests with this commented out
@@ -216,18 +216,54 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the date range that will be fully visible (not greyed out),
 	// and that will contain events and allow drag-n-drop.
-	computeValidRange: function(renderRange, intervalRange) {
-		var validRange = cloneRange(renderRange);
+	computeContentRange: function(renderRange, intervalRange) {
+		var contentRange = cloneRange(renderRange);
 
 		if (this.opt('disableNonCurrentDates')) {
-			validRange = intersectRanges(validRange, intervalRange);
+			contentRange = intersectRanges(contentRange, intervalRange);
 		}
 
 		// probably already done in sanitizeRenderRange,
 		// but do again in case subclass added special behavior to computeRenderRange
-		validRange = this.transformWithMinMaxDate(validRange);
+		contentRange = this.transformWithMinMaxDate(contentRange);
 
-		return validRange;
+		return contentRange;
+	},
+
+
+	transformWithMinMaxDate: function(inputRange) {
+		var range = cloneRange(inputRange);
+
+		if (this.minDate) {
+			range.start = maxMoment(range.start, this.minDate);
+		}
+		if (this.maxDate) {
+			range.end = minMoment(range.end, this.maxDate);
+		}
+
+		return range;
+	},
+
+
+	isDateWithinMinMaxDate: function(date) {
+		return (!this.minDate || date >= this.minDate) &&
+			(!this.maxDate || date < this.maxDate);
+	},
+
+
+	isRangeWithinMinMaxDate: function(range) {
+		return (!this.minDate || range.start >= this.minDate) &&
+			(!this.maxDate || range.end <= this.maxDate);
+	},
+
+
+	isDateWithinContentRange: function(date) {
+		return date >= this.contentStart && date < this.contentEnd;
+	},
+
+
+	isRangeWithinContentRange: function(range) {
+		return range.start >= this.contentStart && range.end <= this.contentEnd;
 	},
 
 
@@ -267,20 +303,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			start: this.skipHiddenDays(inputRange.start),
 			end: this.skipHiddenDays(inputRange.end, -1, true) // exclusively move backwards
 		};
-	},
-
-
-	transformWithMinMaxDate: function(inputRange) {
-		var range = cloneRange(inputRange);
-
-		if (this.minDate) {
-			range.start = maxMoment(range.start, this.minDate);
-		}
-		if (this.maxDate) {
-			range.end = minMoment(range.end, this.maxDate);
-		}
-
-		return range;
 	},
 
 
@@ -1516,16 +1538,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			day = day.day();
 		}
 		return this.isHiddenDayHash[day];
-	},
-
-
-	isDateWithinContentRange: function(date) { // best place?
-		return date >= this.contentStart && date < this.contentEnd;
-	},
-
-
-	isRangeWithinContentRange: function(range) { // best place?
-		return range.start >= this.contentStart && range.end <= this.contentEnd;
 	},
 
 
