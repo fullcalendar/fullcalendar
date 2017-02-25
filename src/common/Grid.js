@@ -673,7 +673,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var classes = [];
 		var today;
 
-		if (!view.isDateWithinContentRange(date)) {
+		if (!view.isDateInContentRange(date)) {
 			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
 		}
 		else {

@@ -419,7 +419,7 @@ Grid.mixin({
 				var origHitSpan;
 				var dragHelperEls;
 
-				if (view.isRangeWithinContentRange(hitSpan)) {
+				if (view.isRangeInContentRange(hitSpan)) {
 
 					// starting hit could be forced (DayGrid.limit)
 					if (seg.hit) {
@@ -632,7 +632,7 @@ Grid.mixin({
 				var isAllowed = true;
 				var hitSpan = hit.component.getHitSpan(hit); // hit might not belong to this grid
 
-				if (view.isRangeWithinContentRange(hitSpan)) {
+				if (view.isRangeInContentRange(hitSpan)) {
 					dropLocation = _this.computeExternalDrop(hitSpan, meta);
 					isAllowed = dropLocation && this.isExternalLocationAllowed(dropLocation, meta.eventProps);
 				}
@@ -747,7 +747,7 @@ Grid.mixin({
 				var hitSpan = _this.getHitSpan(hit);
 				var origHitSpan;
 
-				if (view.isRangeWithinContentRange(hitSpan)) {
+				if (view.isRangeInContentRange(hitSpan)) {
 					origHitSpan = _this.getHitSpan(origHit);
 
 					resizeLocation = isStart ?
@@ -1070,7 +1070,7 @@ Grid.mixin({
 
 
 	isEventLocationInRange: function(eventLocation) {
-		return this.view.isRangeWithinMinMaxDate(
+		return this.view.isRangeInValidRange(
 			this.eventToRawRange(eventLocation)
 		);
 	},

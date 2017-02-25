@@ -41,8 +41,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	start: null,
 	end: null,
 
-	// date constraints
-	// TODO: render populate and use in rendering
+	// date constraints. defines the "valid range"
 	// TODO: enforce this in prev/next/gotoDate
 	minDate: null,
 	maxDate: null,
@@ -207,7 +206,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		renderRange = this.trimHiddenDays(renderRange);
 
 		if (this.isOutOfRangeHidden) {
-			renderRange = this.transformWithMinMaxDate(renderRange);
+			renderRange = this.trimToValidRange(renderRange);
 		}
 
 		return renderRange;
@@ -225,13 +224,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		// probably already done in sanitizeRenderRange,
 		// but do again in case subclass added special behavior to computeRenderRange
-		contentRange = this.transformWithMinMaxDate(contentRange);
+		contentRange = this.trimToValidRange(contentRange);
 
 		return contentRange;
 	},
 
 
-	transformWithMinMaxDate: function(inputRange) {
+	trimToValidRange: function(inputRange) {
 		var range = cloneRange(inputRange);
 
 		if (this.minDate) {
@@ -245,24 +244,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	isDateWithinMinMaxDate: function(date) {
-		return (!this.minDate || date >= this.minDate) &&
-			(!this.maxDate || date < this.maxDate);
-	},
-
-
-	isRangeWithinMinMaxDate: function(range) {
+	isRangeInValidRange: function(range) {
 		return (!this.minDate || range.start >= this.minDate) &&
 			(!this.maxDate || range.end <= this.maxDate);
 	},
 
 
-	isDateWithinContentRange: function(date) {
+	isDateInContentRange: function(date) {
 		return date >= this.contentStart && date < this.contentEnd;
 	},
 
 
-	isRangeWithinContentRange: function(range) {
+	isRangeInContentRange: function(range) {
 		return range.start >= this.contentStart && range.end <= this.contentEnd;
 	},
 
