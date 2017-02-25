@@ -152,6 +152,17 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Updates all internal dates for displaying the given unzoned range.
 	setRangeFromDate: function(date) {
+
+		// best place for this?
+		var minDateInput = this.opt('minDate');
+		var maxDateInput = this.opt('maxDate');
+		if (minDateInput) {
+			this.minDate = this.calendar.moment(minDateInput);
+		}
+		if (maxDateInput) {
+			this.maxDate = this.calendar.moment(maxDateInput);
+		}
+
 		var intervalRange = this.computeIntervalRange(date);
 		var renderRange = this.computeRenderRange(intervalRange);
 		var contentRange = this.computeContentRange(renderRange, intervalRange);
