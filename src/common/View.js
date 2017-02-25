@@ -34,10 +34,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	renderEnd: null,
 
 	// active dates that display events and accept drag-nd-drop
-	validStart: null,
-	validEnd: null,
+	contentStart: null,
+	contentEnd: null,
 
-	// DEPRECATED: use validStart/validEnd instead
+	// DEPRECATED: use contentStart/contentEnd instead
 	start: null,
 	end: null,
 
@@ -161,13 +161,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.intervalEnd = intervalRange.end;
 		this.renderStart = renderRange.start;
 		this.renderEnd = renderRange.end;
-		this.validStart = validRange.start;
-		this.validEnd = validRange.end;
+		this.contentStart = validRange.start;
+		this.contentEnd = validRange.end;
 
 		// DEPRECATED, but we need to keep it updated
 		// TODO: run automated tests with this commented out
-		this.start = this.validStart;
-		this.end = this.validEnd;
+		this.start = this.contentStart;
+		this.end = this.contentEnd;
 
 		this.updateTitle();
 	},
@@ -305,8 +305,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			end = this.intervalEnd;
 		}
 		else { // for day units or smaller, use the actual day range
-			start = this.validStart;
-			end = this.validEnd;
+			start = this.contentStart;
+			end = this.contentEnd;
 		}
 
 		return this.formatRange(
@@ -1108,7 +1108,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEvents: function() {
-		return this.calendar.requestEvents(this.validStart, this.validEnd);
+		return this.calendar.requestEvents(this.contentStart, this.contentEnd);
 	},
 
 
@@ -1521,12 +1521,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes if a renderable date should be displayed as disabled because it's out of range
 	isDisabledDate: function(date) { // TODO: rename
-		return date < this.validStart || date >= this.validEnd;
+		return date < this.contentStart || date >= this.contentEnd;
 	},
 
 
 	isValidRange: function(range) {
-		return range.start >= this.validStart && range.end <= this.validEnd; // TODO: date util. also, what about timezone?
+		return range.start >= this.contentStart && range.end <= this.contentEnd; // TODO: date util. also, what about timezone?
 	},
 
 
