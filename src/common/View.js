@@ -580,6 +580,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			_this.isDateRendered = true;
 			_this.onDateRender();
 			_this.trigger('dateRender');
+
+			_this.calendar.updateToolbarButtons();
 		});
 	},
 

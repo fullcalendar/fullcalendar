@@ -671,15 +671,11 @@ function Calendar_constructor(element, overrides) {
 						currentView.captureInitialScroll(forcedScroll);
 					}
 
-					currentView.setDate(date, forcedScroll);
+					currentView.setDate(date);
 
 					if (forcedScroll) {
 						currentView.releaseScroll();
 					}
-
-					// need to do this after View::render, so dates are calculated
-					// NOTE: view updates title text proactively
-					updateToolbarsTodayButton();
 				}
 			}
 		}
@@ -872,7 +868,7 @@ function Calendar_constructor(element, overrides) {
 	};
 
 
-	function updateToolbarsTodayButton() {
+	t.updateToolbarButtons = function() {
 		var now = t.getNow();
 		if (now >= currentView.intervalStart && now < currentView.intervalEnd) {
 			toolbarsManager.proxyCall('disableButton', 'today');
@@ -880,7 +876,7 @@ function Calendar_constructor(element, overrides) {
 		else {
 			toolbarsManager.proxyCall('enableButton', 'today');
 		}
-	}
+	};
 
 
 
