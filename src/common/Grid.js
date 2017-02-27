@@ -169,6 +169,18 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	},
 
 
+	// like getHitSpan, but returns null if the resulting span's range is invalid
+	getSafeHitSpan: function(hit) {
+		var hitSpan = this.getHitSpan(hit);
+
+		if (!this.view.isRangeInContentRange(hitSpan)) {
+			return null;
+		}
+
+		return hitSpan;
+	},
+
+
 	// Given position-level information about a date-related area within the grid,
 	// should return an object with at least a start/end date. Can provide other information as well.
 	getHitSpan: function(hit) {
@@ -341,12 +353,14 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 				dayClickHit = null;
 			},
 			interactionEnd: function(ev, isCancelled) {
+				var hitSpan;
+
 				if (!isCancelled && dayClickHit) {
-					view.triggerDayClick(
-						_this.getHitSpan(dayClickHit),
-						_this.getHitEl(dayClickHit),
-						ev
-					);
+					hitSpan = _this.getSafeHitSpan(dayClickHit);
+
+					if (hitSpan) {
+						view.triggerDayClick(hitSpan, _this.getHitEl(dayClickHit), ev);
+					}
 				}
 			}
 		});
@@ -376,12 +390,20 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
+				var origHitSpan;
+				var hitSpan;
+
 				if (origHit) { // click needs to have started on a hit
 
-					selectionSpan = _this.computeSelection(
-						_this.getHitSpan(origHit),
-						_this.getHitSpan(hit)
-					);
+					origHitSpan = _this.getSafeHitSpan(origHit);
+					hitSpan = _this.getSafeHitSpan(hit);
+
+					if (origHitSpan && hitSpan) {
+						selectionSpan = _this.computeSelection(origHitSpan, hitSpan);
+					}
+					else {
+						selectionSpan = null;
+					}
 
 					if (selectionSpan) {
 						_this.renderSelection(selectionSpan);

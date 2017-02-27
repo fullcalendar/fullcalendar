@@ -415,18 +415,20 @@ Grid.mixin({
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var hitSpan = hit.component.getHitSpan(hit); // hit might not belong to this grid
 				var origHitSpan;
+				var hitSpan;
 				var dragHelperEls;
 
-				if (view.isRangeInContentRange(hitSpan)) {
+				// starting hit could be forced (DayGrid.limit)
+				if (seg.hit) {
+					origHit = seg.hit;
+				}
 
-					// starting hit could be forced (DayGrid.limit)
-					if (seg.hit) {
-						origHit = seg.hit;
-					}
+				// hit might not belong to this grid, so query origin grid
+				origHitSpan = origHit.component.getSafeHitSpan(origHit);
+				hitSpan = hit.component.getSafeHitSpan(hit);
 
-					origHitSpan = origHit.component.getHitSpan(origHit); // hit might not belong to this grid
+				if (origHitSpan && hitSpan) {
 					dropLocation = _this.computeEventDrop(origHitSpan, hitSpan, event);
 					isAllowed = dropLocation && _this.isEventLocationAllowed(dropLocation, event);
 				}
@@ -630,9 +632,9 @@ Grid.mixin({
 			},
 			hitOver: function(hit) {
 				var isAllowed = true;
-				var hitSpan = hit.component.getHitSpan(hit); // hit might not belong to this grid
+				var hitSpan = hit.component.getSafeHitSpan(hit); // hit might not belong to this grid
 
-				if (view.isRangeInContentRange(hitSpan)) {
+				if (hitSpan) {
 					dropLocation = _this.computeExternalDrop(hitSpan, meta);
 					isAllowed = dropLocation && this.isExternalLocationAllowed(dropLocation, meta.eventProps);
 				}
@@ -744,12 +746,10 @@ Grid.mixin({
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var hitSpan = _this.getHitSpan(hit);
-				var origHitSpan;
+				var origHitSpan = _this.getSafeHitSpan(origHit);
+				var hitSpan = _this.getSafeHitSpan(hit);
 
-				if (view.isRangeInContentRange(hitSpan)) {
-					origHitSpan = _this.getHitSpan(origHit);
-
+				if (origHitSpan && hitSpan) {
 					resizeLocation = isStart ?
 						_this.computeEventStartResize(origHitSpan, hitSpan, event) :
 						_this.computeEventEndResize(origHitSpan, hitSpan, event);
