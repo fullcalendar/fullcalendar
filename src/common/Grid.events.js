@@ -636,7 +636,7 @@ Grid.mixin({
 
 				if (hitSpan) {
 					dropLocation = _this.computeExternalDrop(hitSpan, meta);
-					isAllowed = dropLocation && this.isExternalLocationAllowed(dropLocation, meta.eventProps);
+					isAllowed = dropLocation && _this.isExternalLocationAllowed(dropLocation, meta.eventProps);
 				}
 				else {
 					isAllowed = false;
