@@ -73,12 +73,6 @@ body .fc { /* extra precedence to overcome jqui */
 	opacity: .3;
 }
 
-.fc td.fc-disabled-day { /* needed for precedence too */
-	border-left-style: none;
-	border-right-style: none;
-	/* is this specific to basic view? */
-}
-
 
 /* Icons (inline elements with styled text that mock arrow icons)
 --------------------------------------------------------------------------------------------------*/
