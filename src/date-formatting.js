@@ -159,8 +159,13 @@ function renderParsedFormat(parsedFormat, date1, date2, separator, isRTL) {
 	// The area in the middle is different for both of the dates.
 	// Collect them distinctly so we can jam them together later.
 	for (middleI = leftI; middleI <= rightI; middleI++) {
-		middleStr1 += renderedParts1[middleI];
-		middleStr2 += renderedParts2[middleI];
+		if (renderedParts1[middleI] !== undefined) {
+			middleStr1 += renderedParts1[middleI];
+		}
+
+		if (renderedParts2[middleI] !== undefined) {
+			middleStr2 += renderedParts2[middleI];
+		}
 	}
 
 	if (middleStr1 || middleStr2) {
@@ -201,7 +206,7 @@ Parses a format string into the following:
 */
 function parseFormatString(formatStr) {
 	var chunks = chunkFormatString(formatStr);
-	
+
 	return {
 		fakeFormatString: buildFakeFormatString(chunks),
 		sameUnits: buildSameUnits(chunks)
