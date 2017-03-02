@@ -708,7 +708,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 				classes.push('fc-other-month');
 			}
 
-			today = view.calendar.getNow()
+			today = view.calendar.getNow();
 
 			if (date.isSame(today, 'day')) {
 				classes.push('fc-today');

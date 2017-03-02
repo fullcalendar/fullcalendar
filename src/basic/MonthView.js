@@ -8,6 +8,7 @@ var MonthView = FC.MonthView = BasicView.extend({
 	// Computes the date range that will be rendered.
 	computeRenderRange: function(intervalRange) {
 		var renderRange = BasicView.prototype.computeRenderRange.call(this, intervalRange);
+		var rowCnt;
 
 		// ensure 6 weeks
 		if (this.isFixedWeeks()) {

@@ -373,7 +373,6 @@ Grid.mixin({
 	buildSegDragListener: function(seg) {
 		var _this = this;
 		var view = this.view;
-		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
 		var isDragging;
@@ -621,7 +620,6 @@ Grid.mixin({
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
 		var view = this.view;
-		var calendar = view.calendar;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var dropLocation; // a null value signals an unsuccessful drag
 
