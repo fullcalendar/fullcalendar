@@ -537,11 +537,9 @@ var View = FC.View = Model.extend({
 
 	// Initializes internal variables related to theming
 	initThemingProps: function() {
-		var tm = this.opt('theme') ? 'ui' : 'fc';
-
-		this.widgetHeaderClass = tm + '-widget-header';
-		this.widgetContentClass = tm + '-widget-content';
-		this.highlightStateClass = tm + '-state-highlight';
+		this.widgetHeaderClass = this.calendar.theme.getClass('widgetHeader');
+		this.widgetContentClass = this.calendar.theme.getClass('widgetContent');
+		this.highlightStateClass = this.calendar.theme.getClass('stateHighlight');
 	},
 
 

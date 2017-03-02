@@ -20,7 +20,6 @@ function Toolbar(calendar, toolbarOptions) {
 	// locals
 	var el;
 	var viewsWithButtons = [];
-	var tm;
 
 	// method to update toolbar-specific options, not calendar-wide options
 	function setToolbarOptions(newToolbarOptions) {
@@ -30,8 +29,6 @@ function Toolbar(calendar, toolbarOptions) {
 	// can be called repeatedly and will rerender
 	function render() {
 		var sections = toolbarOptions.layout;
-
-		tm = calendar.opt('theme') ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
@@ -140,8 +137,8 @@ function Toolbar(calendar, toolbarOptions) {
 
 							classes = [
 								'fc-' + buttonName + '-button',
-								tm + '-button',
-								tm + '-state-default'
+								calendar.theme.getClass('button'),
+								calendar.theme.getClass('stateDefault')
 							];
 
 							button = $( // type="button" so that it doesn't submit a form
@@ -151,17 +148,17 @@ function Toolbar(calendar, toolbarOptions) {
 								)
 								.click(function(ev) {
 									// don't process clicks for disabled buttons
-									if (!button.hasClass(tm + '-state-disabled')) {
+									if (!button.hasClass(calendar.theme.getClass('stateDisabled'))) {
 
 										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.
 										if (
-											button.hasClass(tm + '-state-active') ||
-											button.hasClass(tm + '-state-disabled')
+											button.hasClass(calendar.theme.getClass('stateActive')) ||
+											button.hasClass(calendar.theme.getClass('stateDisabled'))
 										) {
-											button.removeClass(tm + '-state-hover');
+											button.removeClass(calendar.theme.getClass('stateHover'));
 										}
 									}
 								})
@@ -169,28 +166,28 @@ function Toolbar(calendar, toolbarOptions) {
 									// the *down* effect (mouse pressed in).
 									// only on buttons that are not the "active" tab, or disabled
 									button
-										.not('.' + tm + '-state-active')
-										.not('.' + tm + '-state-disabled')
-										.addClass(tm + '-state-down');
+										.not('.' + calendar.theme.getClass('stateActive'))
+										.not('.' + calendar.theme.getClass('stateDisabled'))
+										.addClass(calendar.theme.getClass('stateDown'));
 								})
 								.mouseup(function() {
 									// undo the *down* effect
-									button.removeClass(tm + '-state-down');
+									button.removeClass(calendar.theme.getClass('stateDown'));
 								})
 								.hover(
 									function() {
 										// the *hover* effect.
 										// only on buttons that are not the "active" tab, or disabled
 										button
-											.not('.' + tm + '-state-active')
-											.not('.' + tm + '-state-disabled')
-											.addClass(tm + '-state-hover');
+											.not('.' + calendar.theme.getClass('stateActive'))
+											.not('.' + calendar.theme.getClass('stateDisabled'))
+											.addClass(calendar.theme.getClass('stateHover'));
 									},
 									function() {
 										// undo the *hover* effect
 										button
-											.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
+											.removeClass(calendar.theme.getClass('stateHover'))
+											.removeClass(calendar.theme.getClass('stateDown')); // if mouseleave happens before mouseup
 									}
 								);
 
@@ -201,8 +198,8 @@ function Toolbar(calendar, toolbarOptions) {
 
 				if (isOnlyButtons) {
 					groupChildren
-						.first().addClass(tm + '-corner-left').end()
-						.last().addClass(tm + '-corner-right').end();
+						.first().addClass(calendar.theme.getClass('cornerLeft')).end()
+						.last().addClass(calendar.theme.getClass('cornerRight')).end();
 				}
 
 				if (groupChildren.length > 1) {
@@ -233,7 +230,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function activateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
-				.addClass(tm + '-state-active');
+				.addClass(calendar.theme.getClass('stateActive'));
 		}
 	}
 
@@ -241,7 +238,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function deactivateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
-				.removeClass(tm + '-state-active');
+				.removeClass(calendar.theme.getClass('stateActive'));
 		}
 	}
 
@@ -250,7 +247,7 @@ function Toolbar(calendar, toolbarOptions) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', true)
-				.addClass(tm + '-state-disabled');
+				.addClass(calendar.theme.getClass('stateDisabled'));
 		}
 	}
 
@@ -259,7 +256,7 @@ function Toolbar(calendar, toolbarOptions) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', false)
-				.removeClass(tm + '-state-disabled');
+				.removeClass(calendar.theme.getClass('stateDisabled'));
 		}
 	}
 

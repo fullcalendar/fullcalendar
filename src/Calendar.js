@@ -21,6 +21,8 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
 
+		this.theme = new FC.Theme(this.option('theme'));
+
 		EventManager.call(this); // needs options immediately
 		this.initialize();
 	},

@@ -51,6 +51,7 @@ Calendar.mixin({
 		this.optionsModel.watch('applyingThemeClasses', [ '?theme' ], function(opts) {
 			el.toggleClass('ui-widget', opts.theme);
 			el.toggleClass('fc-unthemed', !opts.theme);
+			_this.theme.setTheme(opts.theme);
 		});
 
 		// called immediately, and upon option change.
