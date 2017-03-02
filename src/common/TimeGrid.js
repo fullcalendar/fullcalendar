@@ -52,12 +52,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderHtml: function() {
 		return '' +
 			'<div class="fc-bg">' +
-				'<table>' +
+				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
 					this.renderBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
-				'<table>' +
+				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
 					this.renderSlatRowHtml() +
 				'</table>' +
 			'</div>';

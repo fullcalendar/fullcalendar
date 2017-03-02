@@ -205,7 +205,7 @@ function Toolbar(calendar, toolbarOptions) {
 				if (groupChildren.length > 1) {
 					groupEl = $('<div/>');
 					if (isOnlyButtons) {
-						groupEl.addClass('fc-button-group');
+						groupEl.addClass(calendar.theme.getClass('buttonGroup'));
 					}
 					groupEl.append(groupChildren);
 					sectionEl.append(groupEl);

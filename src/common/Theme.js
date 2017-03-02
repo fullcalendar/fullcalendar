@@ -26,6 +26,14 @@ var themes = {
 		cornerLeft: 'ui-corner-left',
 		cornerRight: 'ui-corner-right',
 		buttonGroup: 'fc-button-group'
+	},
+	bootstrap3: {
+		stateActive: 'active',
+		stateDisabled: 'disabled',
+		button: 'btn btn-default',
+		buttonGroup: 'btn-group',
+		tableGrid: 'table-bordered',
+		tableList: 'table'
 	}
 };
 

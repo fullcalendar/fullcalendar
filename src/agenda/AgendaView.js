@@ -123,7 +123,7 @@ var AgendaView = FC.AgendaView = View.extend({
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
 	renderSkeletonHtml: function() {
 		return '' +
-			'<table>' +
+			'<table class="' + this.calendar.theme.getClass('tableGrid') + '">' +
 				'<thead class="fc-head">' +
 					'<tr>' +
 						'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +

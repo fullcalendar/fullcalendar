@@ -86,7 +86,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		return '' +
 			'<div class="' + classes.join(' ') + '">' +
 				'<div class="fc-bg">' +
-					'<table>' +
+					'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
 						this.renderBgTrHtml(row) +
 					'</table>' +
 				'</div>' +
