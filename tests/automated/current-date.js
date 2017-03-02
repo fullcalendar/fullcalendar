@@ -12,7 +12,7 @@ describe('current date', function() {
 		};
 	});
 
-	describe('defaultDate & getDate', function() {
+	describe('defaultDate & getDate', function() { // keep getDate
 		describeWhenInMonth(function() {
 			it('should initialize at the date', function() {
 				options.defaultDate = '2011-03-10';

@@ -26,7 +26,8 @@ gulp.task('jshint:base', function() {
 	return gulp.src([
 			'*.js', // like gulpfile and root configs
 			'tasks/*.js',
-			'tests/automated/*.js'
+			'tests/automated/*.js',
+			'tests/automated-better/*.js'
 		])
 		.pipe(jshint(jshintBase))
 		.pipe(jshint.reporter('default'))
@@ -61,7 +62,8 @@ gulp.task('jshint:built', [ 'modules', 'locale:all' ], function() {
 // files we want to lint to a higher standard
 gulp.task('jscs:strict', function() {
 	return gulp.src([
-			'tests/automated/*.js'
+			'tests/automated/*.js',
+			'tests/automated-better/*.js'
 		])
 		.pipe(jscs({
 			configPath: '.jscs.strict.js' // needs to be an external config

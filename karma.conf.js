@@ -40,7 +40,8 @@ module.exports = function(config) {
 			'tests/lib/dnd-resize-utils.js',
 			'tests/lib/time-grid.js',
 			'tests/base.css',
-			'tests/automated/*.js',
+			'tests/automated-better/**/*.js',
+			//'tests/automated/*.js',
 
 			// serve misc files, but don't watch
 			{
