@@ -141,7 +141,8 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	renderNumberCellHtml: function(date) {
 		var view = this.view;
 		var html = '';
-		var isDayNumberVisible = view.dayNumbersVisible && view.isDateInContentRange(date);
+		var isDateValid = view.isDateInContentRange(date); // TODO: called too frequently. cache somehow.
+		var isDayNumberVisible = view.dayNumbersVisible && isDateValid;
 		var classes;
 		var weekCalcFirstDoW;
 
@@ -167,7 +168,12 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			}
 		}
 
-		html += '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">';
+		html += '<td class="' + classes.join(' ') + '"' +
+			(isDateValid ?
+				' data-date="' + date.format() + '"' :
+				''
+				) +
+			'>';
 
 		if (view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
 			html += view.buildGotoAnchorHtml(

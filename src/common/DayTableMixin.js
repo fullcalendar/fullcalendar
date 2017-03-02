@@ -294,10 +294,12 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
+		var isDateValid = view.isDateInContentRange(date); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.widgetHeaderClass
 		];
+		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (this.rowCnt === 1) {
@@ -313,7 +315,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		return '' +
             '<th class="' + classNames.join(' ') + '"' +
-				(this.rowCnt === 1 ?
+				((isDateValid && this.rowCnt) === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
 				(colspan > 1 ?
@@ -323,10 +325,14 @@ var DayTableMixin = FC.DayTableMixin = {
 					' ' + otherAttrs :
 					'') +
 				'>' +
-				// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
-				view.buildGotoAnchorHtml(
-					{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
-					htmlEscape(date.format(this.colHeadFormat)) // inner HTML
+				(isDateValid ?
+					// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
+					view.buildGotoAnchorHtml(
+						{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
+						innerHtml
+					) :
+					// if not valid, display text, but no link
+					innerHtml
 				) +
 			'</th>';
 	},
@@ -366,12 +372,15 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	renderBgCellHtml: function(date, otherAttrs) {
 		var view = this.view;
+		var isDateValid = view.isDateInContentRange(date); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
 		classes.unshift('fc-day', view.widgetContentClass);
 
 		return '<td class="' + classes.join(' ') + '"' +
-			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
+			(isDateValid ?
+				' data-date="' + date.format('YYYY-MM-DD') + '"' : // if date has a time, won't format it
+				'') +
 			(otherAttrs ?
 				' ' + otherAttrs :
 				'') +
