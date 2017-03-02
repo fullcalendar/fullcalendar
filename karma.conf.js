@@ -40,6 +40,7 @@ module.exports = function(config) {
 			'tests/lib/dnd-resize-utils.js',
 			'tests/lib/time-grid.js',
 			'tests/base.css',
+			'tests/automated-better/globals.js',
 			'tests/automated-better/**/*.js',
 			//'tests/automated/*.js',
 
