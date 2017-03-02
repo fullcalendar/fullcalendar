@@ -151,6 +151,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Updates all internal dates for displaying the given unzoned range.
+	// Will return a boolean about whether there was some sort of change.
 	setRangeFromDate: function(date) {
 
 		// best place for this?
@@ -167,19 +168,32 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var renderRange = this.computeRenderRange(intervalRange);
 		var contentRange = this.computeContentRange(renderRange, intervalRange);
 
-		this.intervalStart = intervalRange.start;
-		this.intervalEnd = intervalRange.end;
-		this.renderStart = renderRange.start;
-		this.renderEnd = renderRange.end;
-		this.contentStart = contentRange.start;
-		this.contentEnd = contentRange.end;
+		if (
+			!this.contentStart ||
+			!this.contentStart.isSame(contentRange.start) ||
+			!this.contentEnd.isSame(contentRange.end)
+		) {
+			// some sort of change
 
-		// DEPRECATED, but we need to keep it updated
-		// TODO: run automated tests with this commented out
-		this.start = this.contentStart;
-		this.end = this.contentEnd;
+			this.intervalStart = intervalRange.start;
+			this.intervalEnd = intervalRange.end;
+			this.renderStart = renderRange.start;
+			this.renderEnd = renderRange.end;
+			this.contentStart = contentRange.start;
+			this.contentEnd = contentRange.end;
 
-		this.updateTitle();
+			// DEPRECATED, but we need to keep it updated
+			// TODO: run automated tests with this commented out
+			this.start = this.contentStart;
+			this.end = this.contentEnd;
+
+			this.updateTitle();
+			this.calendar.updateToolbarButtons();
+
+			return true;
+		}
+
+		return false;
 	},
 
 
@@ -548,41 +562,47 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// if date not specified, uses current
 	executeDateRender: function(date) {
 		var _this = this;
+		var rangeChanged = false;
 
-		// if rendering a new date, reset scroll to initial state (scrollTime)
 		if (date) {
-			this.captureInitialScroll();
+			rangeChanged = _this.setRangeFromDate(date);
+		}
+
+		if (!date || rangeChanged || !_this.isDateRendered) { // should render?
+
+			// if rendering a new date, reset scroll to initial state (scrollTime)
+			if (date) {
+				this.captureInitialScroll();
+			}
+			else {
+				this.captureScroll(); // a rerender of the current date
+			}
+
+			this.freezeHeight();
+
+			// potential issue: date-unrendering will happen with the *new* range
+			return this.executeDateUnrender().then(function() {
+
+				if (_this.render) {
+					_this.render(); // TODO: deprecate
+				}
+
+				_this.renderDates();
+				_this.updateSize();
+				_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+				_this.startNowIndicator();
+
+				_this.thawHeight();
+				_this.releaseScroll();
+
+				_this.isDateRendered = true;
+				_this.onDateRender();
+				_this.trigger('dateRender');
+			});
 		}
 		else {
-			this.captureScroll(); // a rerender of the current date
+			return Promise.resolve();
 		}
-
-		this.freezeHeight();
-
-		return this.executeDateUnrender().then(function() {
-
-			if (date) {
-				_this.setRangeFromDate(date);
-			}
-
-			if (_this.render) {
-				_this.render(); // TODO: deprecate
-			}
-
-			_this.renderDates();
-			_this.updateSize();
-			_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-			_this.startNowIndicator();
-
-			_this.thawHeight();
-			_this.releaseScroll();
-
-			_this.isDateRendered = true;
-			_this.onDateRender();
-			_this.trigger('dateRender');
-
-			_this.calendar.updateToolbarButtons();
-		});
 	},
 
 

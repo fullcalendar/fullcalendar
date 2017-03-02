@@ -15,15 +15,6 @@ var ListView = View.extend({
 		});
 	},
 
-	setRangeFromDate: function(date) {
-		View.prototype.setRangeFromDate.call(this, date); // super
-
-		this.grid.setRange({ // needs to process range-related options
-			start: this.renderStart,
-			end: this.renderEnd
-		});
-	},
-
 	renderSkeleton: function() {
 		this.el.addClass(
 			'fc-list-view ' +
@@ -47,6 +38,13 @@ var ListView = View.extend({
 	computeScrollerHeight: function(totalHeight) {
 		return totalHeight -
 			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
+	},
+
+	renderDates: function() {
+		this.grid.setRange({ // needs to process range-related options
+			start: this.renderStart,
+			end: this.renderEnd
+		});
 	},
 
 	renderEvents: function(events) {

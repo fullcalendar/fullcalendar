@@ -57,9 +57,8 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Sets the display range and computes all necessary dates
-	setRangeFromDate: function(date) {
-		View.prototype.setRangeFromDate.call(this, date); // call the super-method
+	// Renders the view into `this.el`, which has already been assigned
+	renderDates: function() {
 
 		this.timeGrid.setRange({
 			start: this.renderStart,
@@ -72,11 +71,6 @@ var AgendaView = FC.AgendaView = View.extend({
 				end: this.renderEnd
 			});
 		}
-	},
-
-
-	// Renders the view into `this.el`, which has already been assigned
-	renderDates: function() {
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
 		this.renderHead();

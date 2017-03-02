@@ -41,18 +41,6 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	// Sets the display range and computes all necessary dates
-	setRangeFromDate: function(date) {
-		View.prototype.setRangeFromDate.call(this, date); // call the super-method
-
-		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before Grid::setRange
-		this.dayGrid.setRange({
-			start: this.renderStart,
-			end: this.renderEnd
-		});
-	},
-
-
 	// Computes the date range that will be rendered.
 	computeRenderRange: function(intervalRange) {
 		var renderRange = View.prototype.computeRenderRange.call(this, intervalRange);
@@ -75,6 +63,12 @@ var BasicView = FC.BasicView = View.extend({
 
 	// Renders the view into `this.el`, which should already be assigned
 	renderDates: function() {
+
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before Grid::setRange
+		this.dayGrid.setRange({
+			start: this.renderStart,
+			end: this.renderEnd
+		});
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		if (this.opt('weekNumbers')) {
