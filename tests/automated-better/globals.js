@@ -116,6 +116,7 @@ var timezoneScenarios = {
 	},
 	UTC: {
 		description: 'when UTC timezone',
+		value: 'UTC',
 		moment: function(str) {
 			return moment.utc(str);
 		}
