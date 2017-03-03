@@ -375,7 +375,9 @@ var DayTableMixin = FC.DayTableMixin = {
 		var isDateValid = view.isDateInContentRange(date); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
-		classes.unshift('fc-day', view.widgetContentClass);
+		if (isDateValid) {
+			classes.unshift('fc-day', view.widgetContentClass);
+		}
 
 		return '<td class="' + classes.join(' ') + '"' +
 			(isDateValid ?
