@@ -22,10 +22,13 @@ var EventDragUtils = {
 		currentCalendar.on('eventDragStop', function() {
 			setTimeout(function() {
 				deferred.resolve({ isSuccess: false }); // won't do anything if already eventDrop
-			}, 100); // must be greater that dragRevertDuration
+			}, 20);  // will happen after eventDrop's timeout
 		});
+
 		currentCalendar.on('eventDrop', function(event) { // always called after eventDragStop, if success
-			deferred.resolve({ isSuccess: false, event: event });
+			setTimeout(function() {
+				deferred.resolve({ isSuccess: true, event: event });
+			}, 10); // will happen first
 		});
 
 		return deferred.promise();
@@ -33,6 +36,8 @@ var EventDragUtils = {
 
 };
 
+// makes the setTimeout's work.
+// also makes the tests faster.
 pushOptions({
 	dragRevertDuration: 0
 });
