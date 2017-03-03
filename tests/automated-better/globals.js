@@ -1,4 +1,27 @@
 
+// Jasmine Enhancements
+// ---------------------------------------------------------------------------------------------------------------------
+
+/*
+Give it/fit the ability to return promises
+*/
+[ 'it', 'fit' ].forEach(function(funcName) {
+	var origFunc = window[funcName];
+
+	window[funcName] = function(description, runFunc) {
+		origFunc(description, function(done) {
+			var res = runFunc(done);
+			if (res && res.then) {
+				res.then(done);
+			}
+			else {
+				done();
+			}
+		});
+	};
+});
+
+
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
 

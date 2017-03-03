@@ -2,27 +2,31 @@
 var EventRenderUtils = {
 
 	expectIsStart: function(bool) {
-		var els = $('.fc-event');
-		expect(els).toHaveLength(1);
+		var el = this.getSingleEl();
 
 		if (bool) {
-			expect(els).toHaveClass('fc-start');
+			expect(el).toHaveClass('fc-start');
 		}
 		else {
-			expect(els).not.toHaveClass('fc-start');
+			expect(el).not.toHaveClass('fc-start');
 		}
 	},
 
 	expectIsEnd: function(bool) {
-		var els = $('.fc-event');
-		expect(els).toHaveLength(1);
+		var el = this.getSingleEl();
 
 		if (bool) {
-			expect(els).toHaveClass('fc-end');
+			expect(el).toHaveClass('fc-end');
 		}
 		else {
-			expect(els).not.toHaveClass('fc-end');
+			expect(el).not.toHaveClass('fc-end');
 		}
+	},
+
+	getSingleEl: function() {
+		var els = $('.fc-event');
+		expect(els).toHaveLength(1);
+		return els;
 	}
 
 };
