@@ -4,6 +4,10 @@ TODO: Don't rely on legacy simulateDrag
 */
 var EventDragUtils = {
 
+	/*
+	Given the rectangles of the origin and destination
+	slot or day area.
+	*/
 	drag: function(rect0, rect1, debug) {
 		var el = EventRenderUtils.getSingleEl();
 		var elRect = el[0].getBoundingClientRect();

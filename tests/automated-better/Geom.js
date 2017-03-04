@@ -44,6 +44,24 @@ var Geom = {
 			left: left,
 			top: top
 		};
+	},
+
+	subtractPoints: function(point1, point0) {
+		return this.buildPoint(
+			point1.left - point0.left,
+			point1.top - point0.top
+		);
+	},
+
+	addPoints: function(point0, point1) {
+		return this.buildPoint(
+			point0.left + point1.left,
+			point0.top + point1.top
+		);
+	},
+
+	getRectTopLeft: function(rect) {
+		return this.buildPoint(rect.left, rect.top);
 	}
 
 };
