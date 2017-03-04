@@ -8,6 +8,7 @@ var Calendar = FC.Calendar = Class.extend({
 	options: null, // all defaults combined with overrides
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
+	currentDate: null, // unzoned moment. private (public API should use getDate instead)
 	header: null,
 	footer: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
@@ -254,6 +255,72 @@ var Calendar = FC.Calendar = Class.extend({
 		}
 
 		return { start: start, end: end };
+	},
+
+
+	// Current Date
+	// ------------
+
+
+	/*
+	Called before initialize()
+	*/
+	initCurrentDate: function() {
+		// compute the initial ambig-timezone date
+		if (this.options.defaultDate != null) {
+			this.currentDate = this.moment(this.options.defaultDate).stripZone();
+		}
+		else {
+			this.currentDate = this.getNow(); // getNow already returns unzoned
+		}
+	},
+
+
+	prev: function() {
+		this.currentDate = this.view.computePrevDate(this.currentDate);
+		this.renderView();
+	},
+
+
+	next: function() {
+		this.currentDate = this.view.computeNextDate(this.currentDate);
+		this.renderView();
+	},
+
+
+	prevYear: function() {
+		this.currentDate.add(-1, 'years');
+		this.renderView();
+	},
+
+
+	nextYear: function() {
+		this.currentDate.add(1, 'years');
+		this.renderView();
+	},
+
+
+	today: function() {
+		this.currentDate = this.getNow();
+		this.renderView();
+	},
+
+
+	gotoDate: function(zonedDateInput) {
+		this.currentDate = this.moment(zonedDateInput).stripZone();
+		this.renderView();
+	},
+
+
+	incrementDate: function(delta) {
+		this.currentDate.add(moment.duration(delta));
+		this.renderView();
+	},
+
+
+	// for external API
+	getDate: function() {
+		return this.applyTimezone(this.currentDate); // infuse the calendar's timezone
 	}
 
 });
@@ -278,15 +345,7 @@ function Calendar_constructor(element, overrides) {
 	t.changeView = renderView; // `renderView` will switch to another view
 	t.select = select;
 	t.unselect = unselect;
-	t.prev = prev;
-	t.next = next;
-	t.prevYear = prevYear;
-	t.nextYear = nextYear;
-	t.today = today;
-	t.gotoDate = gotoDate;
-	t.incrementDate = incrementDate;
 	t.zoomTo = zoomTo;
-	t.getDate = getDate;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
 	t.option = option; // getter/setter method
@@ -358,8 +417,8 @@ function Calendar_constructor(element, overrides) {
 
 		// If the internal current date object already exists, move to new locale.
 		// We do NOT need to do this technique for event dates, because this happens when converting to "segments".
-		if (date) {
-			localizeMoment(date); // sets to localeData
+		if (t.currentDate) {
+			localizeMoment(t.currentDate); // sets to localeData
 		}
 	});
 
@@ -507,21 +566,13 @@ function Calendar_constructor(element, overrides) {
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
-	var date; // unzoned
 
+
+	this.initCurrentDate();
 
 
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
-
-
-	// compute the initial ambig-timezone date
-	if (t.options.defaultDate != null) {
-		date = t.moment(t.options.defaultDate).stripZone();
-	}
-	else {
-		date = t.getNow(); // getNow already returns unzoned
-	}
 
 
 	function render() {
@@ -655,7 +706,7 @@ function Calendar_constructor(element, overrides) {
 		if (currentView) {
 
 			// in case the view should render a period of time that is completely hidden
-			date = currentView.massageCurrentDate(date);
+			t.currentDate = currentView.massageCurrentDate(t.currentDate);
 
 			if (elementVisible()) {
 
@@ -663,7 +714,7 @@ function Calendar_constructor(element, overrides) {
 					currentView.captureInitialScroll(forcedScroll);
 				}
 
-				currentView.setDate(date);
+				currentView.setDate(t.currentDate);
 
 				if (forcedScroll) {
 					currentView.releaseScroll();
@@ -677,6 +728,7 @@ function Calendar_constructor(element, overrides) {
 
 		ignoreWindowResize--;
 	}
+	t.renderView = renderView;
 
 
 	// Unrenders the current view and reflects this change in the Header.
@@ -890,53 +942,6 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
-
-	/* Date
-	-----------------------------------------------------------------------------*/
-
-
-	function prev() {
-		date = currentView.computePrevDate(date);
-		renderView();
-	}
-
-
-	function next() {
-		date = currentView.computeNextDate(date);
-		renderView();
-	}
-
-
-	function prevYear() {
-		date.add(-1, 'years');
-		renderView();
-	}
-
-
-	function nextYear() {
-		date.add(1, 'years');
-		renderView();
-	}
-
-
-	function today() {
-		date = t.getNow();
-		renderView();
-	}
-
-
-	function gotoDate(zonedDateInput) {
-		date = t.moment(zonedDateInput).stripZone();
-		renderView();
-	}
-
-
-	function incrementDate(delta) {
-		date.add(moment.duration(delta));
-		renderView();
-	}
-
-
 	// Forces navigation to a view for the given date.
 	// `viewType` can be a specific view name or a generic one like "week" or "day".
 	function zoomTo(newDate, viewType) {
@@ -945,14 +950,8 @@ function Calendar_constructor(element, overrides) {
 		viewType = viewType || 'day'; // day is default zoom
 		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
 
-		date = newDate.clone();
+		t.currentDate = newDate.clone();
 		renderView(spec ? spec.type : null);
-	}
-
-
-	// for external API
-	function getDate() {
-		return t.applyTimezone(date); // infuse the calendar's timezone
 	}
 
 
