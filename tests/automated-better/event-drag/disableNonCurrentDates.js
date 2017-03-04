@@ -11,7 +11,7 @@ describe('disableNonCurrentDates event dragging', function() {
 	});
 
 	describe('when dragging pointer into disabled region', function() {
-		it('won\'t allow the drop', function() {
+		pit('won\'t allow the drop', function() {
 			initCalendar();
 			return EventDragUtils.drag(
 				DayGridRenderUtils.getSingleDayEl('2017-06-08')[0].getBoundingClientRect(),
@@ -23,7 +23,7 @@ describe('disableNonCurrentDates event dragging', function() {
 	});
 
 	describe('when dragging an event\'s start into a disabled region', function() {
-		it('allow the drop if the cursor stays over non-disabled cells', function() {
+		pit('allow the drop if the cursor stays over non-disabled cells', function() {
 			initCalendar();
 			return DayGridEventDragUtils.drag('2017-06-08', '2017-06-01')
 				.then(function(res) {

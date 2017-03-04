@@ -12,7 +12,7 @@ describe('maxDate event resizing', function() {
 			editable: true
 		});
 
-		it('won\'t go after maxDate', function() {
+		pit('won\'t go after maxDate', function() {
 			initCalendar();
 			return EventResizeUtils.resize(
 				DayGridRenderUtils.getSingleDayEl('2017-06-06')[0].getBoundingClientRect(),

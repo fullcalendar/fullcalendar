@@ -12,7 +12,7 @@ describe('minDate event dragging', function() {
 			editable: true
 		});
 
-		it('won\'t go before minDate', function() {
+		pit('won\'t go before minDate', function() {
 			initCalendar();
 			return DayGridEventDragUtils.drag('2017-06-08', '2017-06-06')
 				.then(function(res) {

@@ -2,24 +2,12 @@
 // Jasmine Enhancements
 // ---------------------------------------------------------------------------------------------------------------------
 
-/*
-Give it/fit the ability to return promises
-*/
-[ 'it', 'fit' ].forEach(function(funcName) {
-	var origFunc = window[funcName];
-
-	window[funcName] = function(description, runFunc) {
-		origFunc(description, function(done) {
-			var res = runFunc(done);
-			if (res && res.then) {
-				res.then(done);
-			}
-			else {
-				done();
-			}
-		});
-	};
-});
+// like `it`, but with the ability to return a promise
+function pit(description, runFunc) {
+	it(description, function(done) {
+		runFunc().then(done);
+	});
+}
 
 
 // Setup / Teardown

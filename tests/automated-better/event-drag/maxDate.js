@@ -12,7 +12,7 @@ describe('maxDate event dragging', function() {
 			editable: true
 		});
 
-		it('won\'t go after maxDate', function() {
+		pit('won\'t go after maxDate', function() {
 			initCalendar();
 			return DayGridEventDragUtils.drag('2017-06-05', '2017-06-08')
 				.then(function(res) {
