@@ -32,7 +32,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		this.el.html(html);
 
 		this.rowEls = this.el.find('.fc-row');
-		this.cellEls = this.el.find('.fc-day');
+		this.cellEls = this.el.find('.fc-day, .fc-disabled-day');
 
 		this.rowCoordCache = new CoordCache({
 			els: this.rowEls,

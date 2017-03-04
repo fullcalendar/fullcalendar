@@ -33,7 +33,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
 	renderDates: function() {
 		this.el.html(this.renderHtml());
-		this.colEls = this.el.find('.fc-day');
+		this.colEls = this.el.find('.fc-day, .fc-disabled-day');
 		this.slatContainerEl = this.el.find('.fc-slats');
 		this.slatEls = this.slatContainerEl.find('tr');
 
