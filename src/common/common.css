@@ -488,12 +488,16 @@ temporary rendered events).
 	z-index: 5;
 }
 
+.fc-row .fc-content-skeleton table,
 .fc-row .fc-content-skeleton td,
 .fc-row .fc-helper-skeleton td {
 	/* see-through to the background below */
 	background: none; /* in case <td>s are globally styled */
 	border-color: transparent;
+}
 
+.fc-row .fc-content-skeleton td,
+.fc-row .fc-helper-skeleton td {
 	/* don't put a border between events and/or the day number */
 	border-bottom: 0;
 }
