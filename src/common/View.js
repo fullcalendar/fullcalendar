@@ -34,13 +34,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// active dates that display events and accept drag-nd-drop
 	contentRange: null, // TODO: rename to "visibleRange"
 
-	// DEPRECATED: use contentRange instead
-	start: null,
-	end: null,
-
 	// date constraints. defines the "valid range"
 	// TODO: enforce this in prev/next/gotoDate
 	validRange: null,
+
+	start: null, // DEPRECATED: use contentRange instead
+	end: null,   // "
+	intervalStart: null, // DEPRECATED: use intervalRange instead
+	intervalEnd: null,    // "
 
 	// for dates that are outside of validRange
 	// true = not rendered at all
@@ -177,6 +178,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			// TODO: run automated tests with this commented out
 			this.start = contentRange.start;
 			this.end = contentRange.end;
+			this.intervalStart = intervalRange.start;
+			this.intervalEnd = intervalRange.end;
 
 			this.updateTitle();
 			this.calendar.updateToolbarButtons();
