@@ -703,7 +703,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 			if (
 				view.intervalDuration.as('months') == 1 &&
-				date.month() != view.intervalRange.start.month()
+				date.month() != view.currentRange.start.month()
 			) {
 				classes.push('fc-other-month');
 			}

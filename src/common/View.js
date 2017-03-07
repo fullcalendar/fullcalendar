@@ -23,7 +23,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
-	intervalRange: null, // TODO: rename to "currentRange"
+	currentRange: null,
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
@@ -40,7 +40,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	start: null, // DEPRECATED: use contentRange instead
 	end: null,   // "
-	intervalStart: null, // DEPRECATED: use intervalRange instead
+	intervalStart: null, // DEPRECATED: use currentRange instead
 	intervalEnd: null,    // "
 
 	// for dates that are outside of validRange
@@ -163,14 +163,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 		this.validRange = validRange;
 
-		var intervalRange = this.computeIntervalRange(date);
-		var renderRange = this.computeRenderRange(intervalRange);
-		var contentRange = this.computeContentRange(renderRange, intervalRange);
+		var currentRange = this.computeCurrentRange(date);
+		var renderRange = this.computeRenderRange(currentRange);
+		var contentRange = this.computeContentRange(renderRange, currentRange);
 
 		if (!this.contentRange || !isRangesEqual(this.contentRange, contentRange)) {
 			// some sort of change
 
-			this.intervalRange = intervalRange;
+			this.currentRange = currentRange;
 			this.renderRange = renderRange;
 			this.contentRange = contentRange;
 
@@ -178,8 +178,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			// TODO: run automated tests with this commented out
 			this.start = contentRange.start;
 			this.end = contentRange.end;
-			this.intervalStart = intervalRange.start;
-			this.intervalEnd = intervalRange.end;
+			this.intervalStart = currentRange.start;
+			this.intervalEnd = currentRange.end;
 
 			this.updateTitle();
 			this.calendar.updateToolbarButtons();
@@ -191,7 +191,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	computeIntervalRange: function(date) {
+	computeCurrentRange: function(date) {
 		var intervalStart = date.clone().startOf(this.intervalUnit);
 		var intervalEnd = intervalStart.clone().add(this.intervalDuration);
 
@@ -214,9 +214,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Computes the date range that will be rendered.
-	computeRenderRange: function(intervalRange) {
+	computeRenderRange: function(currentRange) {
 		return this.sanitizeRenderRange(
-			cloneRange(intervalRange)
+			cloneRange(currentRange)
 		);
 	},
 
@@ -234,11 +234,11 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the date range that will be fully visible (not greyed out),
 	// and that will contain events and allow drag-n-drop.
-	computeContentRange: function(renderRange, intervalRange) {
+	computeContentRange: function(renderRange, currentRange) {
 		var contentRange = cloneRange(renderRange);
 
 		if (this.opt('disableNonCurrentDates')) {
-			contentRange = intersectRanges(contentRange, intervalRange);
+			contentRange = intersectRanges(contentRange, currentRange);
 		}
 
 		// probably already done in sanitizeRenderRange,
@@ -320,7 +320,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
 		if (/^(year|month)$/.test(this.intervalUnit)) {
-			range = this.intervalRange;
+			range = this.currentRange;
 		}
 		else { // for day units or smaller, use the actual day range
 			range = this.contentRange;
@@ -328,7 +328,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		return this.formatRange(
 			{
-				// in case intervalRange has a time, make sure timezone is correct
+				// in case currentRange has a time, make sure timezone is correct
 				start: this.calendar.applyTimezone(range.start),
 				end: this.calendar.applyTimezone(range.end)
 			},
