@@ -677,6 +677,53 @@ function cloneRange(range) {
 }
 
 
+function constrainRange(innerRange, outerRange) {
+	var range = cloneRange(innerRange);
+
+	if (outerRange.start) {
+		range.start = maxMoment(range.start, outerRange.start);
+	}
+	if (outerRange.end) {
+		range.end = minMoment(range.end, outerRange.end);
+	}
+
+	return range;
+}
+
+
+function isDateWithinRange(date, range) {
+	return (!range.start || date >= range.start) &&
+		(!range.end || date < range.end);
+}
+
+
+function isRangeWithinRange(innerRange, outerRange) {
+	return (!outerRange.start || innerRange.start >= outerRange.start) &&
+		(!outerRange.end || innerRange.end <= outerRange.end);
+}
+
+
+function isRangesEqual(range0, range1) {
+	return ((range0.start && range1.start && range0.start.isSame(range1.start)) || (!range0.start && !range1.start)) &&
+		((range0.end && range1.end && range0.end.isSame(range1.end)) || (!range0.end && !range1.end));
+}
+
+
+/*function constrainDateToRange(date, range) {
+	date = date.clone();
+
+	if (range.start) {
+		date = maxMoment(date, range.start);
+	}
+
+	if (range.end && date >= range.end) {
+		date = range.end.clone().subtract(1);
+	}
+
+	return date;
+}*/
+
+
 function minMoment(mom1, mom2) {
 	if (mom1.isBefore(mom2)) {
 		return mom1;
