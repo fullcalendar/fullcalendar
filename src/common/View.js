@@ -23,30 +23,26 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
-	intervalStart: null,
-	intervalEnd: null, // exclusive
+	intervalRange: null, // TODO: rename to "currentRange"
 	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
 
 	// date range with a rendered skeleton
 	// includes not-active days that need some sort of DOM
-	renderStart: null,
-	renderEnd: null,
+	renderRange: null,
 
 	// active dates that display events and accept drag-nd-drop
-	contentStart: null,
-	contentEnd: null,
+	contentRange: null, // TODO: rename to "visibleRange"
 
-	// DEPRECATED: use contentStart/contentEnd instead
+	// DEPRECATED: use contentRange instead
 	start: null,
 	end: null,
 
 	// date constraints. defines the "valid range"
 	// TODO: enforce this in prev/next/gotoDate
-	minDate: null,
-	maxDate: null,
+	validRange: null,
 
-	// for dates that are outside of minDate/maxDate
+	// for dates that are outside of validRange
 	// true = not rendered at all
 	// false = rendered, but disabled
 	isOutOfRangeHidden: false,
@@ -157,35 +153,30 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		// best place for this?
 		var minDateInput = this.opt('minDate');
 		var maxDateInput = this.opt('maxDate');
+		var validRange = {};
 		if (minDateInput) {
-			this.minDate = this.calendar.moment(minDateInput);
+			validRange.start = this.calendar.moment(minDateInput).stripZone();
 		}
 		if (maxDateInput) {
-			this.maxDate = this.calendar.moment(maxDateInput);
+			validRange.end = this.calendar.moment(maxDateInput).stripZone();
 		}
+		this.validRange = validRange;
 
 		var intervalRange = this.computeIntervalRange(date);
 		var renderRange = this.computeRenderRange(intervalRange);
 		var contentRange = this.computeContentRange(renderRange, intervalRange);
 
-		if (
-			!this.contentStart ||
-			!this.contentStart.isSame(contentRange.start) ||
-			!this.contentEnd.isSame(contentRange.end)
-		) {
+		if (!this.contentRange || !isRangesEqual(this.contentRange, contentRange)) {
 			// some sort of change
 
-			this.intervalStart = intervalRange.start;
-			this.intervalEnd = intervalRange.end;
-			this.renderStart = renderRange.start;
-			this.renderEnd = renderRange.end;
-			this.contentStart = contentRange.start;
-			this.contentEnd = contentRange.end;
+			this.intervalRange = intervalRange;
+			this.renderRange = renderRange;
+			this.contentRange = contentRange;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
-			this.start = this.contentStart;
-			this.end = this.contentEnd;
+			this.start = contentRange.start;
+			this.end = contentRange.end;
 
 			this.updateTitle();
 			this.calendar.updateToolbarButtons();
@@ -231,7 +222,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		renderRange = this.trimHiddenDays(renderRange);
 
 		if (this.isOutOfRangeHidden) {
-			renderRange = this.trimToValidRange(renderRange);
+			renderRange = constrainRange(renderRange, this.validRange);
 		}
 
 		return renderRange;
@@ -249,39 +240,24 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		// probably already done in sanitizeRenderRange,
 		// but do again in case subclass added special behavior to computeRenderRange
-		contentRange = this.trimToValidRange(contentRange);
+		contentRange = constrainRange(contentRange, this.validRange);
 
 		return contentRange;
 	},
 
 
-	trimToValidRange: function(inputRange) {
-		var range = cloneRange(inputRange);
-
-		if (this.minDate) {
-			range.start = maxMoment(range.start, this.minDate);
-		}
-		if (this.maxDate) {
-			range.end = minMoment(range.end, this.maxDate);
-		}
-
-		return range;
-	},
-
-
 	isRangeInValidRange: function(range) {
-		return (!this.minDate || range.start >= this.minDate) &&
-			(!this.maxDate || range.end <= this.maxDate);
+		return isRangeWithinRange(range, this.validRange);
 	},
 
 
 	isDateInContentRange: function(date) {
-		return date >= this.contentStart && date < this.contentEnd;
+		return isDateWithinRange(date, this.contentRange);
 	},
 
 
 	isRangeInContentRange: function(range) {
-		return range.start >= this.contentStart && range.end <= this.contentEnd;
+		return isRangeWithinRange(range, this.contentRange);
 	},
 
 
@@ -337,23 +313,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
-		var start, end;
+		var range;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
 		if (/^(year|month)$/.test(this.intervalUnit)) {
-			start = this.intervalStart;
-			end = this.intervalEnd;
+			range = this.intervalRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			start = this.contentStart;
-			end = this.contentEnd;
+			range = this.contentRange;
 		}
 
 		return this.formatRange(
 			{
-				// in case intervalStart/End has a time, make sure timezone is correct
-				start: this.calendar.applyTimezone(start),
-				end: this.calendar.applyTimezone(end)
+				// in case intervalRange has a time, make sure timezone is correct
+				start: this.calendar.applyTimezone(range.start),
+				end: this.calendar.applyTimezone(range.end)
 			},
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
@@ -1156,7 +1130,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEvents: function() {
-		return this.calendar.requestEvents(this.contentStart, this.contentEnd);
+		return this.calendar.requestEvents(this.contentRange.start, this.contentRange.end);
 	},
 
 
@@ -1568,7 +1542,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
-	// DOES NOT CONSIDER minDate/maxDate RANGE!
+	// DOES NOT CONSIDER validRange!
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)

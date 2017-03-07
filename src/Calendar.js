@@ -321,7 +321,23 @@ var Calendar = FC.Calendar = Class.extend({
 	// for external API
 	getDate: function() {
 		return this.applyTimezone(this.currentDate); // infuse the calendar's timezone
-	}
+	},
+
+
+	/*parseRange: function(rangeInput) {
+		var start = null;
+		var end = null;
+
+		if (rangeInput.start) {
+			start = this.moment(rangeInput.start);
+		}
+
+		if (rangeInput.end) {
+			end = this.moment(rangeInput.end);
+		}
+
+		return { start: start, end: end };
+	}*/
 
 });
 
@@ -836,7 +852,7 @@ function Calendar_constructor(element, overrides) {
 		if (
 			!ignoreWindowResize &&
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			currentView.renderStart // view has already been rendered
+			currentView.renderRange // view has already been rendered
 		) {
 			if (updateSize(true)) {
 				currentView.publiclyTrigger('windowResize', _element);
@@ -913,7 +929,8 @@ function Calendar_constructor(element, overrides) {
 
 	t.updateToolbarButtons = function() {
 		var now = t.getNow();
-		if (now >= currentView.intervalStart && now < currentView.intervalEnd) {
+
+		if (isDateWithinRange(now, currentView.intervalRange)) {
 			toolbarsManager.proxyCall('disableButton', 'today');
 		}
 		else {

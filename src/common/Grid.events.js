@@ -218,8 +218,8 @@ Grid.mixin({
 		if (!events.length && businessHours) {
 			events = [
 				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
-					start: this.view.contentEnd, // guaranteed out-of-range
-					end: this.view.contentEnd,   // "
+					start: this.view.contentRange.end, // guaranteed out-of-range
+					end: this.view.contentRange.end,   // "
 					dow: null
 				})
 			];
@@ -1161,10 +1161,7 @@ Grid.mixin({
 	refineRawEventRange: function(rawRange) {
 		var view = this.view;
 		var calendar = view.calendar;
-		var range = intersectRanges(rawRange, {
-			start: view.contentStart,
-			end: view.contentEnd
-		});
+		var range = intersectRanges(rawRange, view.contentRange);
 
 		if (range) { // otherwise, event doesn't have valid range
 
@@ -1256,8 +1253,8 @@ Grid.mixin({
 	// SIDE EFFECT: will mutate the given array and will use its date references.
 	invertRanges: function(ranges) {
 		var view = this.view;
-		var viewStart = view.contentStart.clone(); // need a copy
-		var viewEnd = view.contentEnd.clone(); // need a copy
+		var viewStart = view.contentRange.start.clone(); // need a copy
+		var viewEnd = view.contentRange.end.clone(); // need a copy
 		var inverseRanges = [];
 		var start = viewStart; // the end of the previous range. the start of the new range
 		var i, range;
