@@ -32,13 +32,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	renderRange: null,
 
 	// active dates that display events and accept drag-nd-drop
-	contentRange: null, // TODO: rename to "visibleRange"
+	visibleRange: null,
 
 	// date constraints. defines the "valid range"
 	// TODO: enforce this in prev/next/gotoDate
 	validRange: null,
 
-	start: null, // DEPRECATED: use contentRange instead
+	start: null, // DEPRECATED: use visibleRange instead
 	end: null,   // "
 	intervalStart: null, // DEPRECATED: use currentRange instead
 	intervalEnd: null,    // "
@@ -165,19 +165,19 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		var currentRange = this.computeCurrentRange(date);
 		var renderRange = this.computeRenderRange(currentRange);
-		var contentRange = this.computeContentRange(renderRange, currentRange);
+		var visibleRange = this.computeVisibleRange(renderRange, currentRange);
 
-		if (!this.contentRange || !isRangesEqual(this.contentRange, contentRange)) {
+		if (!this.visibleRange || !isRangesEqual(this.visibleRange, visibleRange)) {
 			// some sort of change
 
 			this.currentRange = currentRange;
 			this.renderRange = renderRange;
-			this.contentRange = contentRange;
+			this.visibleRange = visibleRange;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
-			this.start = contentRange.start;
-			this.end = contentRange.end;
+			this.start = visibleRange.start;
+			this.end = visibleRange.end;
 			this.intervalStart = currentRange.start;
 			this.intervalEnd = currentRange.end;
 
@@ -234,33 +234,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the date range that will be fully visible (not greyed out),
 	// and that will contain events and allow drag-n-drop.
-	computeContentRange: function(renderRange, currentRange) {
-		var contentRange = cloneRange(renderRange);
+	computeVisibleRange: function(renderRange, currentRange) {
+		var visibleRange = cloneRange(renderRange);
 
 		if (this.opt('disableNonCurrentDates')) {
-			contentRange = intersectRanges(contentRange, currentRange);
+			visibleRange = intersectRanges(visibleRange, currentRange);
 		}
 
 		// probably already done in sanitizeRenderRange,
 		// but do again in case subclass added special behavior to computeRenderRange
-		contentRange = constrainRange(contentRange, this.validRange);
+		visibleRange = constrainRange(visibleRange, this.validRange);
 
-		return contentRange;
-	},
-
-
-	isRangeInValidRange: function(range) {
-		return isRangeWithinRange(range, this.validRange);
-	},
-
-
-	isDateInContentRange: function(date) {
-		return isDateWithinRange(date, this.contentRange);
-	},
-
-
-	isRangeInContentRange: function(range) {
-		return isRangeWithinRange(range, this.contentRange);
+		return visibleRange;
 	},
 
 
@@ -323,7 +308,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			range = this.currentRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			range = this.contentRange;
+			range = this.visibleRange;
 		}
 
 		return this.formatRange(
@@ -1133,7 +1118,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEvents: function() {
-		return this.calendar.requestEvents(this.contentRange.start, this.contentRange.end);
+		return this.calendar.requestEvents(this.visibleRange.start, this.visibleRange.end);
 	},
 
 
