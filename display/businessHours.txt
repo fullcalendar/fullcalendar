@@ -17,7 +17,7 @@ The object may have any of the following properties:
 
 	businessHours: {
 		// days of week. an array of zero-based day of week integers (0=Sunday)
-		dow: [ 1, 2, 3, 4 ] // Monday - Thursday
+		dow: [ 1, 2, 3, 4 ], // Monday - Thursday
 
 		start: '10:00', // a start time (10am in this example)
 		end: '18:00', // an end time (6pm in this example)
@@ -29,7 +29,7 @@ You may also break your business hour declaration into parts for additional cont
 	businessHours: [ // specify an array instead
 		{
 			dow: [ 1, 2, 3 ], // Monday, Tuesday, Wednesday
-			start: '08:00' // 8am
+			start: '08:00', // 8am
 			end: '18:00' // 6pm
 		},
 		{
