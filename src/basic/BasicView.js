@@ -42,22 +42,20 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Computes the date range that will be rendered.
-	computeRenderRange: function(currentRange) {
-		var renderRange = View.prototype.computeRenderRange.call(this, currentRange);
+	computeUnfilteredVisibleRange: function(currentRange) {
+		var visibleRange = View.prototype.computeUnfilteredVisibleRange.call(this, currentRange);
 
 		// year and month views should be aligned with weeks. this is already done for week
 		if (/^(year|month)$/.test(this.intervalUnit)) {
-			renderRange.start.startOf('week');
+			visibleRange.start.startOf('week');
 
 			// make end-of-week if not already
-			if (renderRange.end.weekday()) {
-				renderRange.end.add(1, 'week').startOf('week'); // exclusively move backwards
+			if (visibleRange.end.weekday()) {
+				visibleRange.end.add(1, 'week').startOf('week'); // exclusively move backwards
 			}
-
-			renderRange = this.sanitizeRenderRange(renderRange); // resanitize
 		}
 
-		return renderRange;
+		return visibleRange;
 	},
 
 

@@ -153,6 +153,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		var ranges = this.resolveRangesForDate(date);
 
+		this.validRange = ranges.validRange;
+
 		if (!this.visibleRange || !isRangesEqual(this.visibleRange, ranges.visibleRange)) {
 			// some sort of change
 
@@ -178,14 +180,47 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	resolveRangesForDate: function(date) {
-		var ranges = {};
+		var validRange = this.buildValidRange();
+		var currentRange = this.computeCurrentRange(date);
+		var unfilteredVisibleRange = this.computeUnfilteredVisibleRange(currentRange);
+		var renderRange;
+		var visibleRange;
 
-		ranges.currentRange = this.computeCurrentRange(date);
-		ranges.renderRange = this.computeRenderRange(ranges.currentRange);
-		ranges.visibleRange = this.computeVisibleRange(ranges.renderRange, ranges.currentRange);
-		ranges.validRange = this.buildValidRange();
+		if (this.isOutOfRangeHidden) {
+			renderRange = constrainRange(unfilteredVisibleRange, validRange);
+			visibleRange = renderRange;
+		}
+		else {
+			renderRange = unfilteredVisibleRange;
+			visibleRange = constrainRange(visibleRange, validRange)
+		}
 
-		return ranges;
+		if (this.opt('disableNonCurrentDates')) {
+			visibleRange = constrainRange(visibleRange, currentRange);
+		}
+
+		return {
+			validRange: validRange,
+			currentRange: currentRange,
+			visibleRange: visibleRange,
+			renderRange: renderRange
+		};
+	},
+
+
+	buildValidRange: function() {
+		var minDateInput = this.opt('minDate');
+		var maxDateInput = this.opt('maxDate');
+		var validRange = {};
+
+		if (minDateInput) {
+			validRange.start = this.calendar.moment(minDateInput).stripZone();
+		}
+		if (maxDateInput) {
+			validRange.end = this.calendar.moment(maxDateInput).stripZone();
+		}
+
+		return validRange;
 	},
 
 
@@ -212,38 +247,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Computes the date range that will be rendered.
-	computeRenderRange: function(currentRange) {
-		return this.sanitizeRenderRange(
-			cloneRange(currentRange)
-		);
-	},
-
-
-	sanitizeRenderRange: function(renderRange) {
-		renderRange = this.trimHiddenDays(renderRange);
-
-		if (this.isOutOfRangeHidden) {
-			renderRange = constrainRange(renderRange, this.validRange);
-		}
-
-		return renderRange;
-	},
-
-
-	// Computes the date range that will be fully visible (not greyed out),
-	// and that will contain events and allow drag-n-drop.
-	computeVisibleRange: function(renderRange, currentRange) {
-		var visibleRange = cloneRange(renderRange);
-
-		if (this.opt('disableNonCurrentDates')) {
-			visibleRange = intersectRanges(visibleRange, currentRange);
-		}
-
-		// probably already done in sanitizeRenderRange,
-		// but do again in case subclass added special behavior to computeRenderRange
-		visibleRange = constrainRange(visibleRange, this.validRange);
-
-		return visibleRange;
+	computeUnfilteredVisibleRange: function(currentRange) {
+		return cloneRange(currentRange);
 	},
 
 
@@ -283,22 +288,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			start: this.skipHiddenDays(inputRange.start),
 			end: this.skipHiddenDays(inputRange.end, -1, true) // exclusively move backwards
 		};
-	},
-
-
-	buildValidRange: function() {
-		var minDateInput = this.opt('minDate');
-		var maxDateInput = this.opt('maxDate');
-		var validRange = {};
-
-		if (minDateInput) {
-			validRange.start = this.calendar.moment(minDateInput).stripZone();
-		}
-		if (maxDateInput) {
-			validRange.end = this.calendar.moment(maxDateInput).stripZone();
-		}
-
-		return validRange;
 	},
 
 
