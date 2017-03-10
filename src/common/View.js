@@ -151,17 +151,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Will return a boolean about whether there was some sort of change.
 	setRangeFromDate: function(date) {
 
-		// best place for this?
-		var minDateInput = this.opt('minDate');
-		var maxDateInput = this.opt('maxDate');
-		var validRange = {};
-		if (minDateInput) {
-			validRange.start = this.calendar.moment(minDateInput).stripZone();
-		}
-		if (maxDateInput) {
-			validRange.end = this.calendar.moment(maxDateInput).stripZone();
-		}
-		this.validRange = validRange;
+		this.validRange = this.buildValidRange();
 
 		var currentRange = this.computeCurrentRange(date);
 		var renderRange = this.computeRenderRange(currentRange);
@@ -285,6 +275,22 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			start: this.skipHiddenDays(inputRange.start),
 			end: this.skipHiddenDays(inputRange.end, -1, true) // exclusively move backwards
 		};
+	},
+
+
+	buildValidRange: function() {
+		var minDateInput = this.opt('minDate');
+		var maxDateInput = this.opt('maxDate');
+		var validRange = {};
+
+		if (minDateInput) {
+			validRange.start = this.calendar.moment(minDateInput).stripZone();
+		}
+		if (maxDateInput) {
+			validRange.end = this.calendar.moment(maxDateInput).stripZone();
+		}
+
+		return validRange;
 	},
 
 
