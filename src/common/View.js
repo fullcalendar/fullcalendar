@@ -26,7 +26,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
 	currentRange: null,
-	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
+	currentRangeUnit: null, // name of largest unit being displayed, like "month" or "week"
+
 	dateIncrement: null,
 
 	// date range with a rendered skeleton
@@ -155,7 +156,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			// some sort of change
 
 			this.currentRange = ranges.currentRange;
-			this.intervalUnit = ranges.currentRangeUnit; // TODO: rename intervalUnit
+			this.currentRangeUnit = ranges.currentRangeUnit;
 			this.renderRange = ranges.renderRange;
 			this.visibleRange = ranges.visibleRange;
 			this.dateIncrement = ranges.dateIncrement;
@@ -278,7 +279,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Computes the new date when the user hits the prev button, given the current date
 	computePrevDate: function(date) {
 		return this.massageCurrentDate(
-			date.clone().startOf(this.intervalUnit).subtract(this.dateIncrement), -1
+			date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement), -1
 		);
 	},
 
@@ -286,7 +287,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Computes the new date when the user hits the next button, given the current date
 	computeNextDate: function(date) {
 		return this.massageCurrentDate(
-			date.clone().startOf(this.intervalUnit).add(this.dateIncrement)
+			date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement)
 		);
 	},
 
@@ -336,7 +337,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var range;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-		if (/^(year|month)$/.test(this.intervalUnit)) {
+		if (/^(year|month)$/.test(this.currentRangeUnit)) {
 			range = this.currentRange;
 		}
 		else { // for day units or smaller, use the actual day range
@@ -358,10 +359,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Generates the format string that should be used to generate the title for the current date range.
 	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
 	computeTitleFormat: function() {
-		if (this.intervalUnit == 'year') {
+		if (this.currentRangeUnit == 'year') {
 			return 'YYYY';
 		}
-		else if (this.intervalUnit == 'month') {
+		else if (this.currentRangeUnit == 'month') {
 			return this.opt('monthYearFormat'); // like "September 2014"
 		}
 		else if (this.currentRangeAs('days') > 1) {

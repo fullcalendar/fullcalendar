@@ -46,7 +46,7 @@ var BasicView = FC.BasicView = View.extend({
 		var renderRange = View.prototype.computeRenderRange.call(this, currentRange);
 
 		// year and month views should be aligned with weeks. this is already done for week
-		if (/^(year|month)$/.test(this.intervalUnit)) {
+		if (/^(year|month)$/.test(this.currentRangeUnit)) {
 			renderRange.start.startOf('week');
 
 			// make end-of-week if not already
@@ -62,7 +62,7 @@ var BasicView = FC.BasicView = View.extend({
 	// Renders the view into `this.el`, which should already be assigned
 	renderDates: function() {
 
-		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before Grid::setRange
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.currentRangeUnit); // do before Grid::setRange
 		this.dayGrid.setRange(this.renderRange);
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
