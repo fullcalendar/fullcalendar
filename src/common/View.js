@@ -151,25 +151,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Will return a boolean about whether there was some sort of change.
 	setRangeFromDate: function(date) {
 
-		this.validRange = this.buildValidRange();
+		var ranges = this.resolveRangesForDate(date);
 
-		var currentRange = this.computeCurrentRange(date);
-		var renderRange = this.computeRenderRange(currentRange);
-		var visibleRange = this.computeVisibleRange(renderRange, currentRange);
-
-		if (!this.visibleRange || !isRangesEqual(this.visibleRange, visibleRange)) {
+		if (!this.visibleRange || !isRangesEqual(this.visibleRange, ranges.visibleRange)) {
 			// some sort of change
 
-			this.currentRange = currentRange;
-			this.renderRange = renderRange;
-			this.visibleRange = visibleRange;
+			this.currentRange = ranges.currentRange;
+			this.renderRange = ranges.renderRange;
+			this.visibleRange = ranges.visibleRange;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
-			this.start = visibleRange.start;
-			this.end = visibleRange.end;
-			this.intervalStart = currentRange.start;
-			this.intervalEnd = currentRange.end;
+			this.start = ranges.visibleRange.start;
+			this.end = ranges.visibleRange.end;
+			this.intervalStart = ranges.currentRange.start;
+			this.intervalEnd = ranges.currentRange.end;
 
 			this.updateTitle();
 			this.calendar.updateToolbarButtons();
@@ -178,6 +174,18 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return false;
+	},
+
+
+	resolveRangesForDate: function(date) {
+		var ranges = {};
+
+		ranges.currentRange = this.computeCurrentRange(date);
+		ranges.renderRange = this.computeRenderRange(ranges.currentRange);
+		ranges.visibleRange = this.computeVisibleRange(ranges.renderRange, ranges.currentRange);
+		ranges.validRange = this.buildValidRange();
+
+		return ranges;
 	},
 
 
