@@ -21,11 +21,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	isEventsRendered: false,
 	eventRenderQueue: null,
 
+	viewSpecDuration: null,
+
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
 	currentRange: null,
-	intervalDuration: null,
 	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
+	dateIncrement: null,
 
 	// date range with a rendered skeleton
 	// includes not-active days that need some sort of DOM
@@ -66,14 +68,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	nowIndicatorIntervalID: null, // "
 
 
-	constructor: function(calendar, type, options, intervalDuration) {
+	constructor: function(calendar, type, options, viewSpecDuration) {
 
 		this.calendar = calendar;
 		this.type = this.name = type; // .name is deprecated
 		this.options = options;
 
-		this.intervalDuration = intervalDuration || moment.duration(1, 'day');
-		this.intervalUnit = computeIntervalUnit(this.intervalDuration);
+		this.viewSpecDuration = viewSpecDuration;
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initThemingProps();
@@ -154,8 +155,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			// some sort of change
 
 			this.currentRange = ranges.currentRange;
+			this.intervalUnit = ranges.currentRangeUnit; // TODO: rename intervalUnit
 			this.renderRange = ranges.renderRange;
 			this.visibleRange = ranges.visibleRange;
+			this.dateIncrement = ranges.dateIncrement;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
@@ -175,25 +178,55 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	resolveRangesForDate: function(date) {
-		var validRange = this.buildValidRange();
-		var currentRange = this.computeCurrentRange(date);
-		var renderRange = this.computeRenderRange(currentRange);
-		var visibleRange = constrainRange(renderRange, validRange);
+		var validRange = this.buildValidRange(date);
+		var customVisibleRange = this.buildCustomVisibleRange(date);
+		var currentRangeDuration = moment.duration(1, 'day'); // with default value
+		var currentRangeUnit;
+		var currentRange;
+		var renderRange;
+		var visibleRange;
+		var dateIncrementInput;
+		var dateIncrement;
+
+		if (customVisibleRange) {
+			currentRange = customVisibleRange;
+			renderRange = customVisibleRange;
+
+			currentRangeUnit = computeIntervalUnit(
+				customVisibleRange.start,
+				customVisibleRange.end
+			);
+		}
+		else {
+			currentRangeDuration = this.viewSpecDuration || currentRangeDuration;
+			currentRangeUnit = computeIntervalUnit(currentRangeDuration);
+
+			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
+			renderRange = this.computeRenderRange(currentRange);
+		}
+
+		visibleRange = constrainRange(renderRange, validRange);
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
 		}
 
+		dateIncrementInput = this.opt('dateIncrement'); // TODO: util for getting date options
+		dateIncrement = (dateIncrementInput ? moment.duration(dateIncrementInput) : null) ||
+			currentRangeDuration;
+
 		return {
 			validRange: validRange,
 			currentRange: currentRange,
+			currentRangeUnit: currentRangeUnit,
 			visibleRange: visibleRange,
-			renderRange: renderRange
+			renderRange: renderRange,
+			dateIncrement: dateIncrement
 		};
 	},
 
 
-	buildValidRange: function() {
+	buildValidRange: function(date) {
 		var minDateInput = this.opt('minDate');
 		var maxDateInput = this.opt('maxDate');
 		var validRange = {};
@@ -209,12 +242,17 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	computeCurrentRange: function(date) {
-		var intervalStart = date.clone().startOf(this.intervalUnit);
-		var intervalEnd = intervalStart.clone().add(this.intervalDuration);
+	buildCustomVisibleRange: function(date) {
+		return null;
+	},
+
+
+	computeCurrentRange: function(date, duration, unit) {
+		var intervalStart = date.clone().startOf(unit);
+		var intervalEnd = intervalStart.clone().add(duration);
 
 		// normalize the range's time-ambiguity
-		if (/^(year|month|week|day)$/.test(this.intervalUnit)) { // whole-days?
+		if (/^(year|month|week|day)$/.test(unit)) { // whole-days?
 			intervalStart.stripTime();
 			intervalEnd.stripTime();
 		}
@@ -240,7 +278,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Computes the new date when the user hits the prev button, given the current date
 	computePrevDate: function(date) {
 		return this.massageCurrentDate(
-			date.clone().startOf(this.intervalUnit).subtract(this.intervalDuration), -1
+			date.clone().startOf(this.intervalUnit).subtract(this.dateIncrement), -1
 		);
 	},
 
@@ -248,7 +286,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Computes the new date when the user hits the next button, given the current date
 	computeNextDate: function(date) {
 		return this.massageCurrentDate(
-			date.clone().startOf(this.intervalUnit).add(this.intervalDuration)
+			date.clone().startOf(this.intervalUnit).add(this.dateIncrement)
 		);
 	},
 
@@ -257,7 +295,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// visible. `direction` is optional and indicates which direction the current date was being
 	// incremented or decremented (1 or -1).
 	massageCurrentDate: function(date, direction) {
-		if (this.intervalDuration.as('days') <= 1) { // if the view displays a single day or smaller
+		if (this.currentRangeAs('days') <= 1) { // if the view displays a single day or smaller
 			if (this.isHiddenDay(date)) {
 				date = this.skipHiddenDays(date, direction);
 				date.startOf('day');
@@ -273,6 +311,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			start: this.skipHiddenDays(inputRange.start),
 			end: this.skipHiddenDays(inputRange.end, -1, true) // exclusively move backwards
 		};
+	},
+
+
+	currentRangeAs: function(unit) {
+		var currentRange = this.currentRange;
+		return currentRange.end.diff(currentRange.start, unit, true);
 	},
 
 
@@ -320,7 +364,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		else if (this.intervalUnit == 'month') {
 			return this.opt('monthYearFormat'); // like "September 2014"
 		}
-		else if (this.intervalDuration.as('days') > 1) {
+		else if (this.currentRangeAs('days') > 1) {
 			return 'll'; // multi-day range. shorter, like "Sep 9 - 10 2014"
 		}
 		else {
