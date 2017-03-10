@@ -6,19 +6,19 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 
 	// Computes the date range that will be rendered.
-	computeUnfilteredVisibleRange: function(currentRange) {
-		var visibleRange = BasicView.prototype.computeUnfilteredVisibleRange.call(this, currentRange);
+	computeRenderRange: function(currentRange) {
+		var renderRange = BasicView.prototype.computeRenderRange.call(this, currentRange);
 		var rowCnt;
 
 		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
 			rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-				visibleRange.end.diff(visibleRange.start, 'weeks', true) // dontRound=true
+				renderRange.end.diff(renderRange.start, 'weeks', true) // dontRound=true
 			);
-			visibleRange.end.add(6 - rowCnt, 'weeks');
+			renderRange.end.add(6 - rowCnt, 'weeks');
 		}
 
-		return visibleRange;
+		return renderRange;
 	},
 
 

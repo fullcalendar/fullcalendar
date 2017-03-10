@@ -177,7 +177,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	resolveRangesForDate: function(date) {
 		var validRange = this.buildValidRange();
 		var currentRange = this.computeCurrentRange(date);
-		var renderRange = this.computeUnfilteredVisibleRange(currentRange);
+		var renderRange = this.computeRenderRange(currentRange);
 		var visibleRange = constrainRange(renderRange, validRange);
 
 		if (this.opt('disableNonCurrentDates')) {
@@ -232,7 +232,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Computes the date range that will be rendered.
-	computeUnfilteredVisibleRange: function(currentRange) {
+	computeRenderRange: function(currentRange) {
 		return cloneRange(currentRange);
 	},
 
