@@ -321,7 +321,7 @@ var Calendar = FC.Calendar = Class.extend({
 	// for external API
 	getDate: function() {
 		return this.applyTimezone(this.currentDate); // infuse the calendar's timezone
-	},
+	}
 
 
 	/*parseRange: function(rangeInput) {
