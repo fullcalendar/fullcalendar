@@ -43,11 +43,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	intervalStart: null, // DEPRECATED: use currentRange instead
 	intervalEnd: null,    // "
 
-	// for dates that are outside of validRange
-	// true = not rendered at all
-	// false = rendered, but disabled
-	isOutOfRangeHidden: false,
-
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 	selectedEvent: null,
@@ -182,18 +177,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	resolveRangesForDate: function(date) {
 		var validRange = this.buildValidRange();
 		var currentRange = this.computeCurrentRange(date);
-		var unfilteredVisibleRange = this.computeUnfilteredVisibleRange(currentRange);
-		var renderRange;
-		var visibleRange;
-
-		if (this.isOutOfRangeHidden) {
-			renderRange = constrainRange(unfilteredVisibleRange, validRange);
-			visibleRange = renderRange;
-		}
-		else {
-			renderRange = unfilteredVisibleRange;
-			visibleRange = constrainRange(visibleRange, validRange)
-		}
+		var renderRange = this.computeUnfilteredVisibleRange(currentRange);
+		var visibleRange = constrainRange(renderRange, validRange);
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
