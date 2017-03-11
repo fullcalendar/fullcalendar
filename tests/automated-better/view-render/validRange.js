@@ -1,5 +1,5 @@
 
-describe('visibleRange rendering', function() {
+describe('validRange rendering', function() {
 
 	describe('start constraint', function() {
 
@@ -7,7 +7,7 @@ describe('visibleRange rendering', function() {
 			pushOptions({
 				defaultView: 'month',
 				defaultDate: '2017-06-01',
-				visibleRange: { start: '2017-06-07' }
+				validRange: { start: '2017-06-07' }
 			});
 
 			it('does not render days before', function() {
@@ -20,7 +20,7 @@ describe('visibleRange rendering', function() {
 			pushOptions({
 				defaultView: 'agendaWeek',
 				defaultDate: '2017-06-08',
-				visibleRange: { start: '2017-06-06' }
+				validRange: { start: '2017-06-06' }
 			});
 
 			it('does not render days before', function() {
@@ -36,7 +36,7 @@ describe('visibleRange rendering', function() {
 			pushOptions({
 				defaultView: 'month',
 				defaultDate: '2017-06-01',
-				visibleRange: { end: '2017-06-07' }
+				validRange: { end: '2017-06-07' }
 			});
 
 			it('does not render days on or after', function() {
@@ -49,7 +49,7 @@ describe('visibleRange rendering', function() {
 			pushOptions({
 				defaultView: 'agendaWeek',
 				defaultDate: '2017-06-08',
-				visibleRange: { end: '2017-06-06' }
+				validRange: { end: '2017-06-06' }
 			});
 
 			it('does not render days on or after', function() {
