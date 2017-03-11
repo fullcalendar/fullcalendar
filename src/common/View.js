@@ -229,7 +229,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		visibleRange = constrainRange(renderRange, validRange);
-		// TODO: if completely outside of validRange, should return null
+
+		if (!intersectRanges(visibleRange, currentRange)) {
+			return null;
+		}
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
@@ -302,7 +305,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
 		var ranges = this.resolveRangesForDate(prevDate, -1);
 
-		return ranges.date;
+		if (ranges) {
+			return ranges.date;
+		}
+		else {
+			console.log('cant move prev');
+		}
 	},
 
 
@@ -311,7 +319,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
 		var ranges = this.resolveRangesForDate(nextDate, 1);
 
-		return ranges.date;
+		if (ranges) {
+			return ranges.date;
+		}
+		else {
+			console.log('cant move next');
+		}
 	},
 
 
