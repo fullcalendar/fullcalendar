@@ -68,12 +68,12 @@ describe('gotoDate', function() {
 		});
 	})
 
-	describe('when rangeComputation\'s range is same as current', function() {
+	describe('when visibleRange function\'s range is same as current', function() {
 
 		pushOptions({
 			defaultView: 'agenda',
 			defaultDate: '2017-07-01',
-			rangeComputation: function() {
+			visibleRange: function() {
 				return {
 					start: '2017-07-01',
 					end: '2017-07-05'
@@ -83,7 +83,7 @@ describe('gotoDate', function() {
 
 		xit('does not rerender', function() {
 			initCalendar();
-			currentCalendar.gotoDate('2017-12-01'); // rangeComputation won't consider this
+			currentCalendar.gotoDate('2017-12-01'); // visibleRange won't consider this
 			expect(hasRerendered).toBe(false);
 		});
 	});

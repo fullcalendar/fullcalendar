@@ -37,16 +37,16 @@ describe('today button', function() {
 			defaultDate: '2017-08-01'
 		});
 
-		describe('when no minDate', function() {
+		describe('when no specified validRange', function() {
 			xit('is enabled', function() {
 				initCalendar();
 				ToolbarUtils.expectButtonEnabled('today', true);
 			});
 		});
 
-		describe('when now\'s month is entirely before minDate', function() {
+		describe('when now\'s month is entirely before validRange', function() {
 			pushOptions({
-				minDate: '2017-07-02' // previous day is visible in the June
+				validRange: { start: '2017-07-02' } // previous day is visible in the June
 			});
 			xit('is disabled', function() {
 				initCalendar();

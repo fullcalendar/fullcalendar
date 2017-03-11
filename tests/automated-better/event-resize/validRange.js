@@ -1,18 +1,18 @@
 
-describe('maxDate event resizing', function() {
+describe('validRange event resizing', function() {
 
 	describe('when in month view', function() {
 		pushOptions({
 			defaultView: 'month',
 			defaultDate: '2017-06-01',
-			maxDate: '2017-06-09',
+			validRange: { end: '2017-06-09' },
 			events: [
 				{ start: '2017-06-04', end: '2017-06-07' }
 			],
 			editable: true
 		});
 
-		pit('won\'t go after maxDate', function() {
+		pit('won\'t go after validRange', function() {
 			initCalendar();
 			return EventResizeUtils.resize(
 				DayGridRenderUtils.getSingleDayEl('2017-06-06')[0].getBoundingClientRect(),

@@ -13,16 +13,16 @@ describe('prev button', function() {
 		dateIncrement: { years: 1 } // prev range is 2016-06-05 - 2016-06-12
 	});
 
-	describe('when there is no minDate', function() {
+	describe('when there is no specified validRange', function() {
 		xit('is enabled', function() {
 			initCalendar();
 			ToolbarUtils.expectButtonEnabled('next', true);
 		});
 	});
 
-	describe('when prev date range is completely before minDate', function() {
+	describe('when prev date range is completely before validRange', function() {
 		pushOptions({
-			minDate: '2018-06-12'
+			validRange: { start: '2018-06-12' }
 		});
 		xit('is disabled', function() {
 			initCalendar();

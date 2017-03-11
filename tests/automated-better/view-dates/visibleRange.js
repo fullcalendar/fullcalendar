@@ -1,5 +1,5 @@
 
-describe('rangeComputation', function() {
+describe('visibleRange function', function() {
 	pushOptions({
 		defaultDate: '2017-06-08'
 	});
@@ -12,7 +12,7 @@ describe('rangeComputation', function() {
 		});
 
 		pushOptions({
-			rangeComputation: function(date) {
+			visibleRange: function(date) {
 				receivedDate = date.clone();
 				return {
 					start: date.clone().subtract(1, 'days'),
@@ -39,21 +39,21 @@ describe('rangeComputation', function() {
 			});
 		});
 
-		describe('when defaultDate is before minDate', function() {
+		describe('when defaultDate is before validRange', function() {
 			pushOptions({
-				minDate: '2017-07-01'
+				validRange: { start: '2017-07-01' }
 			});
-			xit('receives minDate', function() {
+			xit('receives validRange\'s start', function() {
 				initCalendar();
 				expect(receivedDate).toEqualMoment('2017-07-01');
 			});
 		});
 
-		describe('when defaultDate is after maxDate', function() {
+		describe('when defaultDate is after validRange', function() {
 			pushOptions({
-				minDate: '2017-06-02'
+				validRange: { end: '2017-06-02' }
 			});
-			xit('receives the millisecond before maxDate', function() {
+			xit('receives the millisecond before validRange\'s end', function() {
 				initCalendar();
 				expect(receivedDate).toEqualMoment(
 					$.fullCalendar.moment('2017-07-01T00:00:00').subtract(1)
@@ -64,7 +64,7 @@ describe('rangeComputation', function() {
 
 	describe('for far-future view', function() {
 		pushOptions({
-			rangeComputation: function(date) {
+			visibleRange: function(date) {
 				return {
 					start: date.clone().add(1, 'years'),
 					end: date.clone().add(2, 'years')
@@ -72,11 +72,11 @@ describe('rangeComputation', function() {
 			}
 		});
 
-		describe('when returned range is beyond maxDate', function() {
+		describe('when returned range is beyond validRange', function() {
 			pushOptions({
-				maxDate: '2017-07-01'
+				validRange: { start: '2017-07-01' }
 			});
-			xit('renders the day before maxDate', function() {
+			xit('renders the day before validRange\'s start', function() {
 				initCalendar();
 				ViewUtils.expectRange('2017-06-30', '2017-07-01');
 			});
@@ -89,7 +89,7 @@ describe('rangeComputation', function() {
 
 		pushOptions({
 			defaultView: 'agenda',
-			rangeComputation: function() {
+			visibleRange: function() {
 				return {
 					start: initialStartVal,
 					end: initialEndVal
@@ -115,7 +115,7 @@ describe('rangeComputation', function() {
 			pushOptions({
 				defaultView: 'agenda',
 				defaultDate: '2017-06-29',
-				rangeComputation: function() {
+				visibleRange: function() {
 					return badRange;
 				}
 			})
@@ -137,7 +137,7 @@ describe('rangeComputation', function() {
 					start: initialStartVal,
 					end: initialEndVal
 				},
-				rangeComputation: function() {
+				visibleRange: function() {
 					return badRange;
 				}
 			});

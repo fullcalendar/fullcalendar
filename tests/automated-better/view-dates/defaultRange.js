@@ -50,19 +50,19 @@ describe('defaultRange', function() {
 			});
 		});
 
-		xit('causes rangeComputation to be ignored', function() {
-			var rangeComputationCalled = false;
+		xit('causes a visibleRange function to be ignored', function() {
+			var visibleRangeCalled = false;
 
 			initCalendar({
 				defaultRange: {
 					start: '2017-06-26',
 					end: '2017-06-29'
 				},
-				rangeComputation: function() {
-					rangeComputationCalled = true;
+				visibleRange: function() {
+					visibleRangeCalled = true;
 				}
 			});
-			expect(rangeComputationCalled).toBe(false);
+			expect(visibleRangeCalled).toBe(false);
 		});
 
 		describe('when later switching to a one-day view', function() {
@@ -78,13 +78,13 @@ describe('defaultRange', function() {
 			});
 		});
 
-		describe('when range is partially before minDate', function() {
+		describe('when range is partially before validRange', function() {
 			pushOptions({
 				defaultRange: {
 					start: '2017-05-30',
 					end: '2017-06-03'
 				},
-				minDate: '2017-06-01'
+				validRange: { start: '2017-06-01' }
 			});
 
 			xit('navigates to specified range', function() {
@@ -93,7 +93,7 @@ describe('defaultRange', function() {
 			});
 
 			describe('when later switching to a one-day view', function() {
-				xit('shows the view at minDate', function() {
+				xit('shows the view at validRange\'s start', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
 					ViewUtils.expectRange('2017-06-01', '2017-06-02');
@@ -101,13 +101,13 @@ describe('defaultRange', function() {
 			});
 		});
 
-		describe('when range is partially after maxDate', function() {
+		describe('when range is partially after validRange', function() {
 			pushOptions({
 				defaultRange: {
 					start: '2017-06-29',
 					end: '2017-07-04',
 				},
-				maxDate: '2017-07-01'
+				validRange: { end: '2017-07-01' }
 			});
 
 			xit('navigates to specified range', function() {
@@ -116,7 +116,7 @@ describe('defaultRange', function() {
 			});
 
 			describe('when later switching to a one-day view', function() {
-				xit('shows the view at the ms before maxDate', function() {
+				xit('shows the view at the ms before validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
 					ViewUtils.expectRange('2017-06-30', '2017-07-01');
@@ -124,22 +124,22 @@ describe('defaultRange', function() {
 			});
 		});
 
-		describe('when range is completely before minDate', function() {
+		describe('when range is completely before validRange', function() {
 			pushOptions({
 				defaultRange: {
 					start: '2017-05-25',
 					end: '2017-05-28',
 				},
-				maxDate: '2017-07-01'
+				validRange: { end: '2017-07-01' }
 			});
 
-			xit('navigates to minDate', function() {
+			xit('navigates to validRange\'s end', function() {
 				initCalendar();
 				ViewUtils.expectRange('2017-06-01', '2017-06-02');
 			});
 
 			describe('when later switching to a one-day view', function() {
-				xit('shows the view at minDate', function() {
+				xit('shows the view at validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
 					ViewUtils.expectRange('2017-06-01', '2017-06-02');
@@ -147,22 +147,22 @@ describe('defaultRange', function() {
 			});
 		});
 
-		describe('when range is completely after minDate', function() {
+		describe('when range is completely after validRange', function() {
 			pushOptions({
 				defaultRange: {
 					start: '2017-07-01',
 					end: '2017-07-04'
 				},
-				minDate: '2017-06-01'
+				validRange: { end: '2017-06-01' }
 			});
 
-			xit('navigates to maxDate', function() {
+			xit('navigates to validRange\'s end', function() {
 				initCalendar();
 				ViewUtils.expectRange('2017-06-30', '2017-07-01');
 			});
 
 			describe('when later switching to a one-day view', function() {
-				xit('shows the view at maxDate', function() {
+				xit('shows the view at validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
 					ViewUtils.expectRange('2017-06-30', '2017-07-01');
