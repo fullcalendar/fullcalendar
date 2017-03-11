@@ -230,7 +230,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			visibleRange = constrainRange(visibleRange, currentRange);
 		}
 
-		date = constrainDateToRange(date, visibleRange);
+		date = constrainDate(date, visibleRange);
 
 		dateIncrementInput = this.opt('dateIncrement'); // TODO: util for getting date options
 		dateIncrement = (dateIncrementInput ? moment.duration(dateIncrementInput) : null) ||

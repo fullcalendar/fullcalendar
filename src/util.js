@@ -678,16 +678,33 @@ function cloneRange(range) {
 
 
 function constrainRange(innerRange, outerRange) {
-	var range = cloneRange(innerRange);
+	innerRange = cloneRange(innerRange);
 
 	if (outerRange.start) {
-		range.start = maxMoment(range.start, outerRange.start);
-	}
-	if (outerRange.end) {
-		range.end = minMoment(range.end, outerRange.end);
+		// needs to be inclusively in outerRange
+		innerRange.start = constrainDate(innerRange.start, outerRange);
 	}
 
-	return range;
+	if (outerRange.end) {
+		innerRange.end = minMoment(innerRange.end, outerRange.end);
+	}
+
+	return innerRange;
+}
+
+
+function constrainDate(date, range) {
+	date = date.clone();
+
+	if (range.start) {
+		date = maxMoment(date, range.start);
+	}
+
+	if (range.end && date >= range.end) {
+		date = range.end.clone().subtract(1);
+	}
+
+	return date;
 }
 
 
@@ -706,21 +723,6 @@ function isRangeWithinRange(innerRange, outerRange) {
 function isRangesEqual(range0, range1) {
 	return ((range0.start && range1.start && range0.start.isSame(range1.start)) || (!range0.start && !range1.start)) &&
 		((range0.end && range1.end && range0.end.isSame(range1.end)) || (!range0.end && !range1.end));
-}
-
-
-function constrainDateToRange(date, range) {
-	date = date.clone();
-
-	if (range.start) {
-		date = maxMoment(date, range.start);
-	}
-
-	if (range.end && date >= range.end) {
-		date = range.end.clone().subtract(1);
-	}
-
-	return date;
 }
 
 
