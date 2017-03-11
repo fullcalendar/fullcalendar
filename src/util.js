@@ -709,7 +709,7 @@ function isRangesEqual(range0, range1) {
 }
 
 
-/*function constrainDateToRange(date, range) {
+function constrainDateToRange(date, range) {
 	date = date.clone();
 
 	if (range.start) {
@@ -721,7 +721,7 @@ function isRangesEqual(range0, range1) {
 	}
 
 	return date;
-}*/
+}
 
 
 function minMoment(mom1, mom2) {

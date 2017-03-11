@@ -22,6 +22,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	eventRenderQueue: null,
 
 	viewSpecDuration: null,
+	currentDate: null,
 
 	// range the view is formally responsible for (moments)
 	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
@@ -160,6 +161,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			this.renderRange = ranges.renderRange;
 			this.visibleRange = ranges.visibleRange;
 			this.dateIncrement = ranges.dateIncrement;
+			this.currentDate = ranges.date;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
@@ -178,7 +180,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	resolveRangesForDate: function(date) {
+	resolveRangesForDate: function(date, direction) {
 		var validRange = this.buildValidRange(date);
 		var customVisibleRange = this.buildCustomVisibleRange(date);
 		var currentRangeDuration = moment.duration(1, 'day'); // with default value
@@ -193,6 +195,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			currentRange = customVisibleRange;
 			renderRange = customVisibleRange;
 
+			// if the view displays a single day or smaller
+			if (customVisibleRange.end.diff(customVisibleRange.start, 'days', true) <= 1) {
+				if (this.isHiddenDay(date)) {
+					date = this.skipHiddenDays(date, direction);
+					date.startOf('day');
+				}
+			}
+
 			currentRangeUnit = computeIntervalUnit(
 				customVisibleRange.start,
 				customVisibleRange.end
@@ -201,6 +211,14 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		else {
 			currentRangeDuration = this.viewSpecDuration || currentRangeDuration;
 			currentRangeUnit = computeIntervalUnit(currentRangeDuration);
+
+			// if the view displays a single day or smaller
+			if (currentRangeDuration.as('days') <= 1) {
+				if (this.isHiddenDay(date)) {
+					date = this.skipHiddenDays(date, direction);
+					date.startOf('day');
+				}
+			}
 
 			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
 			renderRange = this.computeRenderRange(currentRange);
@@ -212,6 +230,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			visibleRange = constrainRange(visibleRange, currentRange);
 		}
 
+		date = constrainDateToRange(date, visibleRange);
+
 		dateIncrementInput = this.opt('dateIncrement'); // TODO: util for getting date options
 		dateIncrement = (dateIncrementInput ? moment.duration(dateIncrementInput) : null) ||
 			currentRangeDuration;
@@ -222,7 +242,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			currentRangeUnit: currentRangeUnit,
 			visibleRange: visibleRange,
 			renderRange: renderRange,
-			dateIncrement: dateIncrement
+			dateIncrement: dateIncrement,
+			date: date // the revised date
 		};
 	},
 
@@ -278,32 +299,19 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the new date when the user hits the prev button, given the current date
 	computePrevDate: function(date) {
-		return this.massageCurrentDate(
-			date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement), -1
-		);
+		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
+		var ranges = this.resolveRangesForDate(prevDate, -1);
+
+		return ranges.date;
 	},
 
 
 	// Computes the new date when the user hits the next button, given the current date
 	computeNextDate: function(date) {
-		return this.massageCurrentDate(
-			date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement)
-		);
-	},
+		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
+		var ranges = this.resolveRangesForDate(nextDate, 1);
 
-
-	// Given an arbitrarily calculated current date of the calendar, returns a date that is ensured to be completely
-	// visible. `direction` is optional and indicates which direction the current date was being
-	// incremented or decremented (1 or -1).
-	massageCurrentDate: function(date, direction) {
-		if (this.currentRangeAs('days') <= 1) { // if the view displays a single day or smaller
-			if (this.isHiddenDay(date)) {
-				date = this.skipHiddenDays(date, direction);
-				date.startOf('day');
-			}
-		}
-
-		return date;
+		return ranges.date;
 	},
 
 

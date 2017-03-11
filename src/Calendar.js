@@ -721,9 +721,6 @@ function Calendar_constructor(element, overrides) {
 
 		if (currentView) {
 
-			// in case the view should render a period of time that is completely hidden
-			t.currentDate = currentView.massageCurrentDate(t.currentDate);
-
 			if (elementVisible()) {
 
 				if (forcedScroll) {
@@ -731,6 +728,10 @@ function Calendar_constructor(element, overrides) {
 				}
 
 				currentView.setDate(t.currentDate);
+
+				// TODO: make setDate return the revised date.
+				// Difficult because of the pseudo-async nature, promises.
+				t.currentDate = currentView.currentDate;
 
 				if (forcedScroll) {
 					currentView.releaseScroll();
