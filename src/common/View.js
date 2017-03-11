@@ -221,7 +221,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 
 			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
-			renderRange = this.computeRenderRange(currentRange);
+			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
 		}
 
 		visibleRange = constrainRange(renderRange, validRange);

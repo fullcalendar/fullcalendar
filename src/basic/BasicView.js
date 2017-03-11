@@ -42,11 +42,11 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Computes the date range that will be rendered.
-	computeRenderRange: function(currentRange) {
-		var renderRange = View.prototype.computeRenderRange.call(this, currentRange);
+	computeRenderRange: function(currentRange, unit) {
+		var renderRange = View.prototype.computeRenderRange.apply(this, arguments);
 
 		// year and month views should be aligned with weeks. this is already done for week
-		if (/^(year|month)$/.test(this.currentRangeUnit)) {
+		if (/^(year|month)$/.test(unit)) {
 			renderRange.start.startOf('week');
 
 			// make end-of-week if not already
