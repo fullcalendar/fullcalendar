@@ -181,7 +181,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	resolveRangesForDate: function(date, direction) {
-		var validRange = this.buildValidRange(date);
+		var validRange = this.buildValidRange() || {};
 		var customVisibleRange = this.buildCustomVisibleRange(date);
 		var currentRangeDuration = moment.duration(1, 'day'); // with default value
 		var currentRangeUnit;
@@ -229,6 +229,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		visibleRange = constrainRange(renderRange, validRange);
+		// TODO: if completely outside of validRange, should return null
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
@@ -252,24 +253,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	buildValidRange: function(date) {
-		var minDateInput = this.opt('minDate');
-		var maxDateInput = this.opt('maxDate');
-		var validRange = {};
-
-		if (minDateInput) {
-			validRange.start = this.calendar.moment(minDateInput).stripZone();
-		}
-		if (maxDateInput) {
-			validRange.end = this.calendar.moment(maxDateInput).stripZone();
-		}
-
-		return validRange;
+	buildValidRange: function() {
+		return this.getRangeOption('validRange', this.calendar.getNow());
 	},
 
 
 	buildCustomVisibleRange: function(date) {
-		return null;
+		return this.getRangeOption('visibleRange', date);
 	},
 
 
@@ -351,7 +341,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 				)
 			);
 		}
-		else {
+		else if (val) {
 			return this.calendar.parseRange(val);
 		}
 	},
