@@ -339,6 +339,24 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// arguments after name will be forwarded to a hypothetical function value
+	getRangeOption: function(name) {
+		var val = this.opt(name);
+
+		if (typeof val === 'function') {
+			return this.calendar.parseRange(
+				val.apply(
+					null,
+					Array.prototype.slice.call(arguments, 1)
+				)
+			);
+		}
+		else {
+			return this.calendar.parseRange(val);
+		}
+	},
+
+
 	/* Title and Date Formatting
 	------------------------------------------------------------------------------------------------------------------*/
 
