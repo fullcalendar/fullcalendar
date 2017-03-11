@@ -681,7 +681,7 @@ function constrainRange(innerRange, outerRange) {
 	innerRange = cloneRange(innerRange);
 
 	if (outerRange.start) {
-		// needs to be inclusively in outerRange
+		// needs to be inclusively before outerRange's end
 		innerRange.start = constrainDate(innerRange.start, outerRange);
 	}
 
