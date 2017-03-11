@@ -192,21 +192,23 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var dateIncrement;
 
 		if (customVisibleRange) {
-			currentRange = customVisibleRange;
-			renderRange = customVisibleRange;
-
-			// if the view displays a single day or smaller
-			if (customVisibleRange.end.diff(customVisibleRange.start, 'days', true) <= 1) {
-				if (this.isHiddenDay(date)) {
-					date = this.skipHiddenDays(date, direction);
-					date.startOf('day');
-				}
-			}
 
 			currentRangeUnit = computeIntervalUnit(
 				customVisibleRange.start,
 				customVisibleRange.end
 			);
+
+			currentRange = this.filterCurrentRange(customVisibleRange, currentRangeUnit);
+			renderRange = currentRange;
+			renderRange = this.trimHiddenDays(renderRange);
+
+			// if the view displays a single day or smaller
+			if (currentRange.end.diff(currentRange.start, 'days', true) <= 1) {
+				if (this.isHiddenDay(date)) {
+					date = this.skipHiddenDays(date, direction);
+					date.startOf('day');
+				}
+			}
 		}
 		else {
 			currentRangeDuration = this.viewSpecDuration || currentRangeDuration;
@@ -221,7 +223,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 
 			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
+			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
 			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
+			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
 		}
 
 		visibleRange = constrainRange(renderRange, validRange);
@@ -270,30 +274,36 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	computeCurrentRange: function(date, duration, unit) {
-		var intervalStart = date.clone().startOf(unit);
-		var intervalEnd = intervalStart.clone().add(duration);
+		var start = date.clone().startOf(unit);
+		var end = start.clone().add(duration);
+
+		return { start: start, end: end };
+	},
+
+
+	filterCurrentRange: function(currentRange, unit) {
 
 		// normalize the range's time-ambiguity
 		if (/^(year|month|week|day)$/.test(unit)) { // whole-days?
-			intervalStart.stripTime();
-			intervalEnd.stripTime();
+			currentRange.start.stripTime();
+			currentRange.end.stripTime();
 		}
 		else { // needs to have a time?
-			if (!intervalStart.hasTime()) {
-				intervalStart = this.calendar.time(0); // give 00:00 time
+			if (!currentRange.start.hasTime()) {
+				currentRange.start.time(0); // give 00:00 time
 			}
-			if (!intervalEnd.hasTime()) {
-				intervalEnd = this.calendar.time(0); // give 00:00 time
+			if (!currentRange.end.hasTime()) {
+				currentRange.end.time(0); // give 00:00 time
 			}
 		}
 
-		return { start: intervalStart, end: intervalEnd };
+		return currentRange;
 	},
 
 
 	// Computes the date range that will be rendered.
 	computeRenderRange: function(currentRange) {
-		return cloneRange(currentRange);
+		return this.trimHiddenDays(currentRange);
 	},
 
 
