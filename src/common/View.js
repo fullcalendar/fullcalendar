@@ -266,8 +266,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	computeCurrentRange: function(date, duration, unit) {
-		var start = date.clone().startOf(unit);
+	computeCurrentRange: function(date, duration, durationUnit) {
+		var customAlignment = this.opt('dateAlignment');
+		var start = date.clone().startOf(customAlignment || durationUnit);
 		var end = start.clone().add(duration);
 
 		return { start: start, end: end };
