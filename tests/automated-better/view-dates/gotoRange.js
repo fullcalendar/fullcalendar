@@ -1,11 +1,11 @@
 /*
 SEE ALSO:
-- defaultRange (for core of range setting and constraining)
+- visibleRange (for core of range setting and constraining)
 */
 describe('gotoRange', function() {
 	pushOptions({
 		defaultView: 'agenda',
-		defaultRange: {
+		visibleRange: {
 			start: '2017-06-15',
 			end: '2017-06-18'
 		}
