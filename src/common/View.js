@@ -188,6 +188,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var currentRange;
 		var renderRange;
 		var visibleRange;
+		var isValid;
 		var dateIncrementInput;
 		var dateIncrement;
 
@@ -230,9 +231,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		visibleRange = constrainRange(renderRange, validRange);
 
-		if (!intersectRanges(visibleRange, currentRange)) {
-			return null;
-		}
+		isValid = Boolean(intersectRanges(visibleRange, currentRange));
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
@@ -249,6 +248,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			currentRange: currentRange,
 			currentRangeUnit: currentRangeUnit,
 			visibleRange: visibleRange,
+			isValid: isValid,
 			renderRange: renderRange,
 			dateIncrement: dateIncrement,
 			date: date // the revised date
@@ -306,7 +306,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
 		var ranges = this.resolveRangesForDate(prevDate, -1);
 
-		if (ranges) {
+		if (ranges.isValid) {
 			return ranges.date;
 		}
 		else {
@@ -320,7 +320,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
 		var ranges = this.resolveRangesForDate(nextDate, 1);
 
-		if (ranges) {
+		if (ranges.isValid) {
 			return ranges.date;
 		}
 		else {
