@@ -276,6 +276,24 @@ var Calendar = FC.Calendar = Class.extend({
 	},
 
 
+	changeView: function(viewName, dateOrRange) {
+
+		if (dateOrRange) {
+
+			if (dateOrRange.start && dateOrRange.end) {
+				this.recordOptionOverrides({ // will not rerender
+					visibleRange: dateOrRange
+				});
+			}
+			else {
+				this.currentDate = this.moment(zonedDateInput).stripZone(); // just like gotoDate
+			}
+		}
+
+		this.renderView(viewName);
+	},
+
+
 	prev: function() {
 		this.currentDate = this.view.computePrevDate(this.currentDate);
 		this.renderView();
@@ -358,13 +376,13 @@ function Calendar_constructor(element, overrides) {
 	t.render = render;
 	t.destroy = destroy;
 	t.rerenderEvents = rerenderEvents;
-	t.changeView = renderView; // `renderView` will switch to another view
 	t.select = select;
 	t.unselect = unselect;
 	t.zoomTo = zoomTo;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
 	t.option = option; // getter/setter method
+	t.recordOptionOverrides = recordOptionOverrides;
 	t.publiclyTrigger = publiclyTrigger;
 
 
@@ -1044,16 +1062,9 @@ function Calendar_constructor(element, overrides) {
 		var optionCnt = 0;
 		var optionName;
 
-		for (optionName in newOptionHash) {
-			t.dynamicOverrides[optionName] = newOptionHash[optionName];
-		}
+		recordOptionOverrides(newOptionHash);
 
-		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
-		t.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
-
-		// trigger handlers after this.options has been updated
 		for (optionName in newOptionHash) {
-			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
 			optionCnt++;
 		}
 
@@ -1086,6 +1097,23 @@ function Calendar_constructor(element, overrides) {
 		renderFooter();
 		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
 		reinitView();
+	}
+
+
+	function recordOptionOverrides(newOptionHash) {
+		var optionName;
+
+		for (optionName in newOptionHash) {
+			t.dynamicOverrides[optionName] = newOptionHash[optionName];
+		}
+
+		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		t.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
+
+		// trigger handlers after this.options has been updated
+		for (optionName in newOptionHash) {
+			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
+		}
 	}
 
 
