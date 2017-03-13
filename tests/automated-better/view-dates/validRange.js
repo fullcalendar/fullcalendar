@@ -1,43 +1,37 @@
-/*
-How a given defaultDate results in a rendered date range.
 
-SEE ALSO:
-- dateAlignment (how a custom view can force alignment)
-- validRange function (how is interprets defaultDate differently)
-*/
-describe('defaultDate', function() {
+fdescribe('validRange dates', function() {
 	pushOptions({
 		defaultDate: '2017-06-08'
 	});
+
+	// TODO: function that receives now date
 
 	describe('when one week view', function() { // a view that has date-alignment by default
 		pushOptions({
 			defaultView: 'agendaWeek'
 		});
 
-		// when there is no shifting
+		describe('when default range is partially before validRange', function() {
+			pushOptions({
+				validRange: { start: '2017-06-06' }
+			});
+		});
 
-		describeOptions({
-			'when no validRange': {},
-			'when range is partially before of validRange': { validRange: { start: '2017-06-06' } },
-			'when range is partially after of validRange': { validRange: { end: '2017-06-05' } }
-		}, function() {
-
-			xit('displays the whole range', function() {
-				initCalendar();
-				ViewUtils.expectRange('2017-06-04', '2017-06-11');
+		describe('when default range is partially after validRange', function() {
+			pushOptions({
+				validRange: { end: '2017-06-05' }
 			});
 		});
 
 		// when validRange shifts range
 
-		describe('when range is completely before validRange (which is week start)', function() {
+		describe('when default range is completely before validRange (which is week start)', function() {
 			pushOptions({
 				validRange: { start: '2017-06-11' }
 			});
-			xit('displays the first week on or after validRange', function() {
+			it('displays the first week on or after validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-11', '2017-06-18');
+				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-18');
 			});
 		});
 
@@ -47,7 +41,7 @@ describe('defaultDate', function() {
 			});
 			xit('displays the first week on or after validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-11', '2017-06-18');
+				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-18');
 			});
 		});
 
@@ -57,7 +51,7 @@ describe('defaultDate', function() {
 			});
 			xit('displays the last week on or before validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-05-28', '2017-06-04');
+				ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
 			});
 		});
 
@@ -67,7 +61,7 @@ describe('defaultDate', function() {
 			});
 			xit('displays the last week on or before validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-05-28', '2017-06-04');
+				ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
 			});
 		});
 	});
@@ -88,7 +82,7 @@ describe('defaultDate', function() {
 
 			xit('displays the whole range', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-08', '2017-06-11');
+				ViewDateUtils.expectVisibleRange('2017-06-08', '2017-06-11');
 			});
 		});
 
@@ -100,7 +94,7 @@ describe('defaultDate', function() {
 			});
 			xit('displays the last full day as validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-14', '2017-06-17');
+				ViewDateUtils.expectVisibleRange('2017-06-14', '2017-06-17');
 			});
 		});
 
@@ -110,7 +104,7 @@ describe('defaultDate', function() {
 			});
 			xit('displays the first full date as validRange', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-05-31', '2017-06-03');
+				ViewDateUtils.expectVisibleRange('2017-05-31', '2017-06-03');
 			});
 		});
 	});

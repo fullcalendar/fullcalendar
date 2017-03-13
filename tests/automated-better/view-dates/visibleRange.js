@@ -23,7 +23,7 @@ describe('visibleRange function', function() {
 
 		xit('renders the correct range', function() {
 			initCalendar();
-			ViewUtils.expectRange('2017-06-07', '2017-06-10');
+			ViewDateUtils.expectVisibleRange('2017-06-07', '2017-06-10');
 		});
 
 		describe('when visibleRange is specified', function() {
@@ -78,7 +78,7 @@ describe('visibleRange function', function() {
 			});
 			xit('renders the day before validRange\'s start', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-30', '2017-07-01');
+				ViewDateUtils.expectVisibleRange('2017-06-30', '2017-07-01');
 			});
 		});
 	});
@@ -99,7 +99,7 @@ describe('visibleRange function', function() {
 
 		xit('is respected by initial render', function() {
 			initCalendar();
-			ViewUtils.expectRange(initialStartVal, initialEndVal);
+			ViewDateUtils.expectVisibleRange(initialStartVal, initialEndVal);
 		})
 	});
 
@@ -122,7 +122,7 @@ describe('visibleRange function', function() {
 
 			xit('reports a warning and renders single day at defaultDate', function() {
 				initCalendar()
-				ViewUtils.expectRange('2017-06-29', '2017-06-30');
+				ViewDateUtils.expectVisibleRange('2017-06-29', '2017-06-30');
 				// TODO: detect console.warn
 			});
 		});
@@ -145,7 +145,7 @@ describe('visibleRange function', function() {
 			xit('resports a warning and does not navigate', function() {
 				initCalendar()
 				currentCalendar.gotoDate('2017-06-01');
-				ViewUtils.expectRange(initialStartVal, initialEndVal);
+				ViewDateUtils.expectVisibleRange(initialStartVal, initialEndVal);
 				// TODO: detect console.warn
 			});
 		});
@@ -168,7 +168,7 @@ describe('visibleRange value', function() {
 			});
 			xit('displays the range', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-26', '2017-06-29');
+				ViewDateUtils.expectVisibleRange('2017-06-26', '2017-06-29');
 			});
 		});
 
@@ -182,7 +182,7 @@ describe('visibleRange value', function() {
 
 			xit('displays the range', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-26', '2017-06-29');
+				ViewDateUtils.expectVisibleRange('2017-06-26', '2017-06-29');
 			});
 		});
 
@@ -198,7 +198,7 @@ describe('visibleRange value', function() {
 				initCalendar({
 					now: '2017-08-01'
 				})
-				ViewUtils.expectRange('2017-08-01', '2017-08-02');
+				ViewDateUtils.expectVisibleRange('2017-08-01', '2017-08-02');
 				// TODO: detect error reporting
 			});
 		});
@@ -227,7 +227,7 @@ describe('visibleRange value', function() {
 					}
 				});
 				calendar.changeView('agendaDay');
-				ViewUtils.expectRange('2017-06-26', '2017-06-27');
+				ViewDateUtils.expectVisibleRange('2017-06-26', '2017-06-27');
 			});
 		});
 
@@ -242,14 +242,14 @@ describe('visibleRange value', function() {
 
 			xit('navigates to specified range', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-05-30', '2017-06-03');
+				ViewDateUtils.expectVisibleRange('2017-05-30', '2017-06-03');
 			});
 
 			describe('when later switching to a one-day view', function() {
 				xit('shows the view at validRange\'s start', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
-					ViewUtils.expectRange('2017-06-01', '2017-06-02');
+					ViewDateUtils.expectVisibleRange('2017-06-01', '2017-06-02');
 				});
 			});
 		});
@@ -265,14 +265,14 @@ describe('visibleRange value', function() {
 
 			xit('navigates to specified range', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-29', '2017-07-04');
+				ViewDateUtils.expectVisibleRange('2017-06-29', '2017-07-04');
 			});
 
 			describe('when later switching to a one-day view', function() {
 				xit('shows the view at the ms before validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
-					ViewUtils.expectRange('2017-06-30', '2017-07-01');
+					ViewDateUtils.expectVisibleRange('2017-06-30', '2017-07-01');
 				});
 			});
 		});
@@ -288,14 +288,14 @@ describe('visibleRange value', function() {
 
 			xit('navigates to validRange\'s end', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-01', '2017-06-02');
+				ViewDateUtils.expectVisibleRange('2017-06-01', '2017-06-02');
 			});
 
 			describe('when later switching to a one-day view', function() {
 				xit('shows the view at validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
-					ViewUtils.expectRange('2017-06-01', '2017-06-02');
+					ViewDateUtils.expectVisibleRange('2017-06-01', '2017-06-02');
 				});
 			});
 		});
@@ -311,14 +311,14 @@ describe('visibleRange value', function() {
 
 			xit('navigates to validRange\'s end', function() {
 				initCalendar();
-				ViewUtils.expectRange('2017-06-30', '2017-07-01');
+				ViewDateUtils.expectVisibleRange('2017-06-30', '2017-07-01');
 			});
 
 			describe('when later switching to a one-day view', function() {
 				xit('shows the view at validRange\'s end', function() {
 					initCalendar();
 					calendar.changeView('agendaDay');
-					ViewUtils.expectRange('2017-06-30', '2017-07-01');
+					ViewDateUtils.expectVisibleRange('2017-06-30', '2017-07-01');
 				});
 			});
 		});
@@ -337,7 +337,7 @@ describe('visibleRange value', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewUtils.expectRange('2017-06-29', '2017-07-01');
+			ViewDateUtils.expectVisibleRange('2017-06-29', '2017-07-01');
 		});
 	});
 
@@ -353,7 +353,7 @@ describe('visibleRange value', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewUtils.expectRange('2017-06-29', '2017-06-30');
+			ViewDateUtils.expectVisibleRange('2017-06-29', '2017-06-30');
 		});
 	});
 });

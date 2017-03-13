@@ -10,6 +10,6 @@ describe('dateAlignment', function() {
 		initCalendar({
 			defaultDate: '2017-06-15'
 		});
-		ViewUtils.expectRange('2017-06-11', '2017-06-14');
+		ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-14');
 	});
 });

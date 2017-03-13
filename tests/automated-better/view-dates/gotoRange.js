@@ -17,7 +17,7 @@ describe('gotoRange', function() {
 			start: '2017-07-01',
 			end: '2017-07-05'
 		});
-		ViewUtil.expectRange('2017-07-01', '2017-07-05');
+		ViewDateUtils.expectVisibleRange('2017-07-01', '2017-07-05');
 	});
 
 	describe('when navigating to an invalid range', function() {
@@ -27,7 +27,7 @@ describe('gotoRange', function() {
 		xit('reports an error and stays at current range', function() {
 			initCalendar();
 			currentCalendar.gotoRange({ start: startVal, end: endVal });
-			ViewUtil.expectRange('2017-06-15', '2017-06-18');
+			ViewDateUtils.expectVisibleRange('2017-06-15', '2017-06-18');
 			// TODO: detect error reporting
 		});
 	});
@@ -45,7 +45,7 @@ describe('gotoRange', function() {
 				}
 			});
 			currentCalendar.gotoRange({ start: startVal, end: endVal });
-			ViewUtil.expectRange('2017-06-15', '2017-06-18');
+			ViewDateUtils.expectVisibleRange('2017-06-15', '2017-06-18');
 			expect(viewRenderCalled).toBe(false);
 		});
 	});
