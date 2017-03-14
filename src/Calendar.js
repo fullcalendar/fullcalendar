@@ -138,6 +138,11 @@ var Calendar = FC.Calendar = Class.extend({
 			return false;
 		}
 
+		// fall back to top-level `duration` option
+		duration = duration ||
+			this.dynamicOverrides.duration ||
+			this.overrides.duration;
+
 		if (duration) {
 			duration = moment.duration(duration);
 			if (duration.valueOf()) { // valid?

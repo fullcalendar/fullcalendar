@@ -182,6 +182,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	resolveRangesForDate: function(date, direction) {
 		var validRange = this.buildValidRange() || {};
+
+		date = constrainDate(date, validRange);
+
 		var customVisibleRange = this.buildCustomVisibleRange(date);
 		var currentRangeDuration = moment.duration(1, 'day'); // with default value
 		var currentRangeUnit;
@@ -348,14 +351,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var val = this.opt(name);
 
 		if (typeof val === 'function') {
-			return this.calendar.parseRange(
-				val.apply(
-					null,
-					Array.prototype.slice.call(arguments, 1)
-				)
+			val = val.apply(
+				null,
+				Array.prototype.slice.call(arguments, 1)
 			);
 		}
-		else if (val) {
+
+		if (val) {
 			return this.calendar.parseRange(val);
 		}
 	},
