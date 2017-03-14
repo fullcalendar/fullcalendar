@@ -7,16 +7,15 @@ SEE ALSO:
 */
 describe('next button', function() {
 	pushOptions({
-		header: { left: 'next' },
-		defaultView: 'week',
+		defaultView: 'agendaWeek',
 		defaultDate: '2017-06-08',
 		dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
 	});
 
 	describe('when there is no validRange', function() {
-		xit('is enabled', function() {
+		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expecButtonEnabled('next', true);
+			ToolbarUtils.expectButtonEnabled('next', true);
 		});
 	});
 
@@ -24,19 +23,19 @@ describe('next button', function() {
 		pushOptions({
 			validRange: { end: '2018-06-10' }
 		});
-		xit('is enabled', function() {
+		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expecButtonEnabled('next', true);
+			ToolbarUtils.expectButtonEnabled('next', true);
 		});
 	});
 
 	describe('when next date range is partially outside validRange', function() {
 		pushOptions({
 			validRange: { end: '2018-06-05' }
-		})
-		xit('is enabled', function() {
+		});
+		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expecButtonEnabled('next', true);
+			ToolbarUtils.expectButtonEnabled('next', true);
 		});
 	});
 
@@ -44,9 +43,9 @@ describe('next button', function() {
 		pushOptions({
 			validRange: { end: '2018-06-03' }
 		});
-		xit('is enabled', function() {
+		it('is disabled', function() {
 			initCalendar();
-			ToolbarUtils.expecButtonEnabled('next', false);
+			ToolbarUtils.expectButtonEnabled('next', false);
 		});
 	});
 });

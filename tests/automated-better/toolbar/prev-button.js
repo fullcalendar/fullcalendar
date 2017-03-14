@@ -8,13 +8,13 @@ SEE ALSO:
 describe('prev button', function() {
 	pushOptions({
 		header: { left: 'prev' },
-		defaultView: 'week',
+		defaultView: 'agendaWeek',
 		defaultDate: '2017-06-08',
 		dateIncrement: { years: 1 } // prev range is 2016-06-05 - 2016-06-12
 	});
 
 	describe('when there is no specified validRange', function() {
-		xit('is enabled', function() {
+		it('is enabled', function() {
 			initCalendar();
 			ToolbarUtils.expectButtonEnabled('next', true);
 		});
@@ -24,7 +24,7 @@ describe('prev button', function() {
 		pushOptions({
 			validRange: { start: '2018-06-12' }
 		});
-		xit('is disabled', function() {
+		it('is disabled', function() {
 			initCalendar();
 			ToolbarUtils.expectButtonEnabled('next', false);
 		});
