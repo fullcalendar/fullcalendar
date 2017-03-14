@@ -40,6 +40,18 @@ function pushOptions(options) {
 	});
 }
 
+// called within an `it`
+function spyOnCalendarCallback(name, func) {
+	var options = {};
+
+	options[name] = func;
+	spyOn(options, name).and.callThrough();
+
+	optionsStack.push(options);
+
+	return options[name];
+}
+
 function initCalendar(options, el) {
 	var Calendar = $.fullCalendar.Calendar;
 	var $el;
