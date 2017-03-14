@@ -183,6 +183,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	resolveRangesForDate: function(date, direction) {
 		var validRange = this.buildValidRange() || {};
 
+		var isDateValid = isDateWithinRange(date, validRange);
+
 		date = constrainDate(date, validRange);
 
 		var customVisibleRange = this.buildCustomVisibleRange(date);
@@ -191,7 +193,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var currentRange;
 		var renderRange;
 		var visibleRange;
-		var isValid;
 		var dateIncrementInput;
 		var dateIncrement;
 
@@ -234,7 +235,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		visibleRange = constrainRange(renderRange, validRange);
 
-		isValid = Boolean(intersectRanges(visibleRange, currentRange));
+		var isVisibleRangeValid = Boolean(intersectRanges(visibleRange, currentRange));
 
 		if (this.opt('disableNonCurrentDates')) {
 			visibleRange = constrainRange(visibleRange, currentRange);
@@ -251,7 +252,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			currentRange: currentRange,
 			currentRangeUnit: currentRangeUnit,
 			visibleRange: visibleRange,
-			isValid: isValid,
+			isValid: isDateValid && isVisibleRangeValid,
 			renderRange: renderRange,
 			dateIncrement: dateIncrement,
 			date: date // the revised date
@@ -306,29 +307,35 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Computes the new date when the user hits the prev button, given the current date
 	computePrevDate: function(date) {
-		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
-		var ranges = this.resolveRangesForDate(prevDate, -1);
+		var ranges = this.computePrevRanges(date);
 
 		if (ranges.isValid) {
 			return ranges.date;
 		}
-		else {
-			console.log('cant move prev');
-		}
+	},
+
+
+	computePrevRanges: function(date) {
+		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
+
+		return this.resolveRangesForDate(prevDate, -1);
 	},
 
 
 	// Computes the new date when the user hits the next button, given the current date
 	computeNextDate: function(date) {
-		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
-		var ranges = this.resolveRangesForDate(nextDate, 1);
+		var ranges = this.computeNextRanges(date);
 
 		if (ranges.isValid) {
 			return ranges.date;
 		}
-		else {
-			console.log('cant move next');
-		}
+	},
+
+
+	computeNextRanges: function(date) {
+		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
+
+		return this.resolveRangesForDate(nextDate, 1);
 	},
 
 

@@ -300,14 +300,22 @@ var Calendar = FC.Calendar = Class.extend({
 
 
 	prev: function() {
-		this.currentDate = this.view.computePrevDate(this.currentDate);
-		this.renderView();
+		var date = this.view.computePrevDate(this.currentDate);
+
+		if (date) {
+			this.currentDate = date;
+			this.renderView();
+		}
 	},
 
 
 	next: function() {
-		this.currentDate = this.view.computeNextDate(this.currentDate);
-		this.renderView();
+		var date = this.view.computeNextDate(this.currentDate);
+
+		if (date) {
+			this.currentDate = date;
+			this.renderView();
+		}
 	},
 
 
@@ -324,7 +332,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 
 	today: function() {
-		this.currentDate = this.getNow();
+		this.currentDate = this.getNow(); // should deny like prev/next?
 		this.renderView();
 	},
 
@@ -959,6 +967,20 @@ function Calendar_constructor(element, overrides) {
 		}
 		else {
 			toolbarsManager.proxyCall('enableButton', 'today');
+		}
+
+		if (currentView.computePrevDate(t.currentDate)) {
+			toolbarsManager.proxyCall('enableButton', 'prev');
+		}
+		else {
+			toolbarsManager.proxyCall('disableButton', 'prev');
+		}
+
+		if (currentView.computeNextDate(t.currentDate)) {
+			toolbarsManager.proxyCall('enableButton', 'next');
+		}
+		else {
+			toolbarsManager.proxyCall('disableButton', 'next');
 		}
 	};
 
