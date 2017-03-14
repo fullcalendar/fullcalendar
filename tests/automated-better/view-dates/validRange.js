@@ -1,19 +1,23 @@
 
-fdescribe('validRange dates', function() {
+describe('validRange dates', function() {
 	pushOptions({
 		defaultDate: '2017-06-08'
 	});
 
-	// TODO: function that receives now date
-
 	describe('when one week view', function() { // a view that has date-alignment by default
 		pushOptions({
-			defaultView: 'agendaWeek'
+			defaultView: 'agendaWeek' // default range = 2017-06-04 - 2017-06-11
 		});
 
 		describe('when default range is partially before validRange', function() {
 			pushOptions({
 				validRange: { start: '2017-06-06' }
+			});
+
+			it('allows full renderRange but restricts visibleRange', function() {
+				initCalendar();
+				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
+				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
 			});
 		});
 
@@ -21,47 +25,77 @@ fdescribe('validRange dates', function() {
 			pushOptions({
 				validRange: { end: '2017-06-05' }
 			});
-		});
 
-		// when validRange shifts range
-
-		describe('when default range is completely before validRange (which is week start)', function() {
-			pushOptions({
-				validRange: { start: '2017-06-11' }
-			});
-			it('displays the first week on or after validRange', function() {
+			it('allows full renderRange but restricts visibleRange', function() {
 				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-18');
+				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
+				ViewDateUtils.expectVisibleRange('2017-06-04', '2017-06-05');
 			});
 		});
 
-		describe('when range is completely before validRange (which is a Wednesday)', function() {
+		describe('when default range is completely before validRange', function() {
 			pushOptions({
-				validRange: { start: '2017-06-14' }
+				validRange: { start: '2017-06-14' } // a Wednesday
 			});
-			xit('displays the first week on or after validRange', function() {
+
+			it('initializes at earliest partially visible week', function() {
 				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-18');
+				ViewDateUtils.expectRenderRange('2017-06-11', '2017-06-18');
+				ViewDateUtils.expectVisibleRange('2017-06-14', '2017-06-18');
 			});
 		});
 
-		describe('when range is completely after validRange (which is week start)', function() {
+		describe('when default range is completely before validRange', function() {
 			pushOptions({
-				validRange: { end: '2017-06-04' }
+				validRange: { end: '2017-05-24' } // a Wednesday
 			});
-			xit('displays the last week on or before validRange', function() {
+
+			it('initializes at latest partially visible week', function() {
 				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
+				ViewDateUtils.expectRenderRange('2017-05-21', '2017-05-28');
+				ViewDateUtils.expectVisibleRange('2017-05-21', '2017-05-24');
 			});
 		});
 
-		describe('when range is completely after validRange (which is a Wednesday)', function() {
-			pushOptions({
-				validRange: { end: '2017-05-31' }
+		describe('when validRange is a function', function() {
+
+			it('receives the nowDate', function() {
+				var nowInput = '2017-06-09T06:00:00';
+
+				var validRangeSpy = spyOnCalendarCallback('validRange', function(date) {
+					expect(moment.isMoment(date)).toBe(true);
+					expect(date).toEqualMoment(nowInput);
+				});
+
+				initCalendar({
+					now: nowInput
+				});
+
+				expect(validRangeSpy).toHaveBeenCalled();
 			});
-			xit('displays the last week on or before validRange', function() {
+
+			it('can return a range object with strings', function() {
+				var validRangeSpy = spyOnCalendarCallback('validRange', function() {
+					return { start: '2017-06-06' };
+				});
+
 				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
+
+				expect(validRangeSpy).toHaveBeenCalled();
+				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
+				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
+			});
+
+			it('can return a range object with moments', function() {
+				var validRangeSpy = spyOnCalendarCallback('validRange', function() {
+					return { start: $.fullCalendar.moment.parseZone('2017-06-06') };
+				});
+
+				initCalendar();
+
+				expect(validRangeSpy).toHaveBeenCalled();
+				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
+				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
 			});
 		});
 	});
@@ -72,39 +106,25 @@ fdescribe('validRange dates', function() {
 			duration: { days: 3 }
 		});
 
-		// when there is no shifting
-
-		describeOptions({
-			'when no validRange': {},
-			'when range is partially before validRange': { validRange: { start: '2017-06-09' } },
-			'when range is partially after validRange': { validRange: { end: '2017-06-10' } }
-		}, function() {
-
-			xit('displays the whole range', function() {
-				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-06-08', '2017-06-11');
-			});
-		});
-
-		// when validRange shifts range
-
-		describe('when range is completely before of validRange (which is a Wednesday)', function() {
+		describe('when default range is completely before of validRange', function() {
 			pushOptions({
 				validRange: { start: '2017-06-14' }
 			});
-			xit('displays the last full day as validRange', function() {
+			it('renders earliest three valid days', function() {
 				initCalendar();
+				ViewDateUtils.expectRenderRange('2017-06-14', '2017-06-17');
 				ViewDateUtils.expectVisibleRange('2017-06-14', '2017-06-17');
 			});
 		});
 
-		describe('when range is completely after validRange (which is a Wednesday)', function() {
+		describe('when default range is completely after validRange', function() {
 			pushOptions({
 				validRange: { end: '2017-05-31' }
 			});
-			xit('displays the first full date as validRange', function() {
+			it('renders latest possible valid day and two invalid days', function() {
 				initCalendar();
-				ViewDateUtils.expectVisibleRange('2017-05-31', '2017-06-03');
+				ViewDateUtils.expectRenderRange('2017-05-30', '2017-06-02');
+				ViewDateUtils.expectVisibleRange('2017-05-30', '2017-05-31');
 			});
 		});
 	});

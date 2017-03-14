@@ -1,7 +1,7 @@
 
 describe('validRange rendering', function() {
 
-	describe('start constraint', function() {
+	describe('with hardcoded start constraint', function() {
 
 		describe('when month view', function() {
 			pushOptions({
@@ -30,7 +30,7 @@ describe('validRange rendering', function() {
 		});
 	});
 
-	describe('end constraint', function() {
+	describe('with hardcoded end constraint', function() {
 
 		describe('when month view', function() {
 			pushOptions({
