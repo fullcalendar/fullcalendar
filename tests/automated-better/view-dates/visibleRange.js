@@ -38,6 +38,22 @@ describe('visibleRange', function() {
 				});
 			});
 
+			it('works as a custom view', function() {
+				initCalendar({
+					views: {
+						myCustomView: {
+							type: 'agenda',
+							visibleRange: {
+								start: startInput,
+								end: endInput
+							}
+						}
+					},
+					defaultView: 'myCustomView'
+				});
+				ViewDateUtils.expectVisibleRange(startInput, endInput);
+			});
+
 			it('ignores dateAlignment', function() {
 				initCalendar({
 					dateAlignment: 'month',
