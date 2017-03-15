@@ -264,8 +264,16 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		date = constrainDate(date, visibleRange);
 
 		dateIncrementInput = this.opt('dateIncrement'); // TODO: util for getting date options
-		dateIncrement = (dateIncrementInput ? moment.duration(dateIncrementInput) : null) ||
-			currentRangeDuration;
+
+		if (dateIncrementInput) {
+			dateIncrement = moment.duration(dateIncrementInput);
+		}
+		else if (this.opt('dateAlignment')) {
+			dateIncrement = moment.duration(1, this.opt('dateAlignment'));
+		}
+		else {
+			dateIncrement = currentRangeDuration;
+		}
 
 		return {
 			validRange: validRange,
