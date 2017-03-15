@@ -115,54 +115,6 @@ describe('current date', function() {
 		});
 	});
 
-	describe('prev', function() {
-		describeWhenInMonth(function() {
-			it('should move the calendar back a month', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('prev');
-				expectViewDates('2014-04-27', '2014-06-08', '2014-05-01', '2014-06-01');
-			});
-		});
-		describeWhenInWeek(function() {
-			it('should move the calendar back a week', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('prev');
-				expectViewDates('2014-05-25', '2014-06-01');
-			});
-		});
-		describeWhenInDay(function() {
-			it('should move the calendar back a week', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('prev');
-				expectViewDates('2014-05-31');
-			});
-		});
-	});
-
-	describe('next', function() {
-		describeWhenInMonth(function() {
-			it('should move the calendar forward a month', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('next');
-				expectViewDates('2014-06-29', '2014-08-10', '2014-07-01', '2014-08-01');
-			});
-		});
-		describeWhenInWeek(function() {
-			it('should move the calendar forward a week', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('next');
-				expectViewDates('2014-06-08', '2014-06-15');
-			});
-		});
-		describeWhenInDay(function() {
-			it('should move the calendar forward a week', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('next');
-				expectViewDates('2014-06-02');
-			});
-		});
-	});
-
 	describe('prevYear', function() {
 		describeWhenInMonth(function() {
 			it('should move the calendar back a year', function() {
@@ -207,33 +159,6 @@ describe('current date', function() {
 				$('#cal').fullCalendar(options);
 				$('#cal').fullCalendar('nextYear');
 				expectViewDates('2015-06-01');
-			});
-		});
-	});
-
-	describe('today', function() {
-		beforeEach(function() {
-			options.now = '2016-03-15'; // the "today" date
-		});
-		describeWhenInMonth(function() {
-			it('should move the calendar to now', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('today');
-				expectViewDates('2016-02-28', '2016-04-10', '2016-03-01', '2016-04-01');
-			});
-		});
-		describeWhenInWeek(function() {
-			it('should move the calendar to now', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('today');
-				expectViewDates('2016-03-13', '2016-03-20');
-			});
-		});
-		describeWhenInDay(function() {
-			it('should move the calendar to now', function() {
-				$('#cal').fullCalendar(options);
-				$('#cal').fullCalendar('today');
-				expectViewDates('2016-03-15');
 			});
 		});
 	});
