@@ -365,6 +365,11 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	computeDateIsValid: function(date) {
+		return this.resolveRangesForDate(date).isValid;
+	},
+
+
 	trimHiddenDays: function(inputRange) {
 		return {
 			start: this.skipHiddenDays(inputRange.start),

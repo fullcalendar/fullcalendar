@@ -970,7 +970,10 @@ function Calendar_constructor(element, overrides) {
 	t.updateToolbarButtons = function() {
 		var now = t.getNow();
 
-		if (isDateWithinRange(now, currentView.currentRange)) {
+		if (
+			isDateWithinRange(now, currentView.currentRange) ||
+			!currentView.computeDateIsValid(now)
+		) {
 			toolbarsManager.proxyCall('disableButton', 'today');
 		}
 		else {
