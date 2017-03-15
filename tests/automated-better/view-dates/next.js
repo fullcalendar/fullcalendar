@@ -10,18 +10,10 @@ describe('next', function() {
 		});
 
 		describe('when dateIncrement not specified', function() {
-
-			xit('moves back by one week', function() {
-				initCalendar();
-				currentCalendar.prev();
-				ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
-			});
-
-			xit('moves forward by one week', function() {
+			it('moves forward by one week', function() {
 				initCalendar();
 				currentCalendar.next();
-				var view = currentCalendar.getView();
-				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-24');
+				ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-18');
 			});
 		})
 
@@ -30,17 +22,10 @@ describe('next', function() {
 			'when two week dateIncrement specified as a Duration object': moment.duration({ weeks: 2 }),
 			'when two week dateIncrement specified as a string': '14.00:00:00'
 		}, function() {
-
-			xit('moves back by two weeks', function() {
-				initCalendar();
-				currentCalendar.prev();
-				ViewDateUtils.expectVisibleRange('2017-05-21', '2017-05-28');
-			});
-
-			xit('moves forward by two weeks', function() {
+			it('moves forward by two weeks', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectVisibleRange('2017-06-18', '2017-07-02');
+				ViewDateUtils.expectVisibleRange('2017-06-18', '2017-06-25');
 			});
 		});
 	});
@@ -52,13 +37,7 @@ describe('next', function() {
 
 		describe('when dateIncrement not specified', function() {
 
-			xit('moves back by one month', function() {
-				initCalendar();
-				currentCalendar.next();
-				ViewDateUtils.expectVisibleRange('2017-05-30', '2017-06-04');
-			});
-
-			xit('moves forward by one month', function() {
+			it('moves forward by one month', function() {
 				initCalendar();
 				currentCalendar.next();
 				ViewDateUtils.expectVisibleRange('2017-06-25', '2017-08-06');
@@ -70,16 +49,10 @@ describe('next', function() {
 				dateIncrement: { months: 2 }
 			});
 
-			xit('moves back by two months', function() {
+			it('moves forward by two months', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectVisibleRange('2017-03-26', '2017-05-07');
-			});
-
-			xit('moves forward by two months', function() {
-				initCalendar();
-				currentCalendar.next();
-				ViewDateUtils.expectVisibleRange('2017-07-30', '2017-09-03');
+				ViewDateUtils.expectVisibleRange('2017-07-30', '2017-09-10');
 			});
 		});
 	});
@@ -93,9 +66,9 @@ describe('next', function() {
 		describe('when no dateAlignment is specified', function() {
 
 			describe('when dateIncrement not specified', function() {
-				xit('moves forward three days', function() {
+				it('moves forward three days', function() {
 					initCalendar();
-					calendar.next();
+					currentCalendar.next();
 					ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-14');
 				});
 			});
@@ -104,9 +77,9 @@ describe('next', function() {
 				pushOptions({
 					dateIncrement: { days: 2 }
 				})
-				xit('moves forward two days', function() {
+				it('moves forward two days', function() {
 					initCalendar();
-					calendar.next();
+					currentCalendar.next();
 					ViewDateUtils.expectVisibleRange('2017-06-10', '2017-06-13');
 				});
 			});
@@ -118,9 +91,9 @@ describe('next', function() {
 			});
 
 			describe('when dateIncrement not specified', function() {
-				xit('moves back one week', function() {
+				it('moves forward one week', function() {
 					initCalendar();
-					calendar.next();
+					currentCalendar.next();
 					ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-14');
 				});
 			});
@@ -130,16 +103,20 @@ describe('next', function() {
 					dateIncrement: { days: 2 }
 				});
 
-				xit('does not navigate nor rerender', function() {
-					viewRenderCalled = false
+				it('does not navigate nor rerender', function() {
+					var called;
+
 					initCalendar({
 						viewRender: function() {
-							viewRenderCalled = true
+							called = true;
 						}
 					});
-					calendar.next();
+
+					called = false;
+					currentCalendar.next();
+
 					ViewDateUtils.expectVisibleRange('2017-06-04', '2017-06-07'); // the same as how it started
-					expect(viewRenderCalled).toBe(false)
+					expect(called).toBe(false);
 				});
 			});
 		});

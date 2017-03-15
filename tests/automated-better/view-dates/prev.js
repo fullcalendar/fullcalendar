@@ -12,7 +12,7 @@ describe('prev', function() {
 			defaultView: 'agendaWeek'
 		});
 
-		xit('moves back by one week', function() {
+		it('moves back by one week', function() {
 			initCalendar();
 			currentCalendar.prev();
 			ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
@@ -23,7 +23,7 @@ describe('prev', function() {
 				dateIncrement: { weeks: 2 }
 			});
 
-			xit('moves back by two weeks', function() {
+			it('moves back by two weeks', function() {
 				initCalendar();
 				currentCalendar.prev();
 				ViewDateUtils.expectVisibleRange('2017-05-21', '2017-05-28');
