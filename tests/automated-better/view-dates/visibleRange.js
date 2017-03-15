@@ -37,6 +37,17 @@ describe('visibleRange', function() {
 					ViewDateUtils.expectVisibleRange(startInput, endInput);
 				});
 			});
+
+			it('ignores dateAlignment', function() {
+				initCalendar({
+					dateAlignment: 'month',
+					visibleRange: {
+						start: startInput,
+						end: endInput
+					}
+				});
+				ViewDateUtils.expectVisibleRange(startInput, endInput);
+			});
 		});
 
 		describe('when a function', function() {

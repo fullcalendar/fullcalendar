@@ -6,7 +6,7 @@ describe('dateAlignment', function() {
 		dateAlignment: 'week'
 	});
 
-	xit('aligns with the week', function() {
+	it('aligns with the week', function() {
 		initCalendar({
 			defaultDate: '2017-06-15'
 		});
