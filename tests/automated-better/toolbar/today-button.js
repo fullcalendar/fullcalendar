@@ -7,7 +7,6 @@ SEE ALSO:
 */
 describe('today button', function() {
 	pushOptions({
-		header: { left: 'today' },
 		defaultView: 'month',
 		now: '2017-06-30'
 	});
@@ -16,7 +15,7 @@ describe('today button', function() {
 		pushOptions({
 			defaultDate: '2017-06-01'
 		});
-		xit('is disabled', function() {
+		it('is disabled', function() {
 			initCalendar();
 			ToolbarUtils.expectButtonEnabled('today', false);
 		});
@@ -26,9 +25,9 @@ describe('today button', function() {
 		pushOptions({
 			defaultDate: '2017-07-01'
 		});
-		xit('is disabled', function() {
+		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('today', false);
+			ToolbarUtils.expectButtonEnabled('today', true);
 		});
 	});
 
@@ -38,7 +37,7 @@ describe('today button', function() {
 		});
 
 		describe('when no specified validRange', function() {
-			xit('is enabled', function() {
+			it('is enabled', function() {
 				initCalendar();
 				ToolbarUtils.expectButtonEnabled('today', true);
 			});
@@ -48,7 +47,7 @@ describe('today button', function() {
 			pushOptions({
 				validRange: { start: '2017-07-02' } // previous day is visible in the June
 			});
-			xit('is disabled', function() {
+			it('is disabled', function() {
 				initCalendar();
 				ToolbarUtils.expectButtonEnabled('today', false);
 			});
