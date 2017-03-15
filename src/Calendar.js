@@ -291,7 +291,7 @@ var Calendar = FC.Calendar = Class.extend({
 				});
 			}
 			else {
-				this.currentDate = this.moment(zonedDateInput).stripZone(); // just like gotoDate
+				this.currentDate = this.moment(dateOrRange).stripZone(); // just like gotoDate
 			}
 		}
 

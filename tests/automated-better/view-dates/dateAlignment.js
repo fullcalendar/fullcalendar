@@ -1,4 +1,7 @@
 
+/*
+SEE ALSO: next/prev
+*/
 describe('dateAlignment', function() {
 	pushOptions({
 		defaultView: 'agenda',

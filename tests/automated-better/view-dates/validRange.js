@@ -1,5 +1,5 @@
 
-describe('validRange dates', function() {
+describe('validRange', function() {
 	pushOptions({
 		defaultDate: '2017-06-08'
 	});
