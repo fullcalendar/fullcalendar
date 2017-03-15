@@ -367,6 +367,14 @@ var Calendar = FC.Calendar = Class.extend({
 			end = this.moment(rangeInput.end);
 		}
 
+		if (!start && !end) {
+			return null;
+		}
+
+		if (start && end && end.isBefore(start)) {
+			return null;
+		}
+
 		return { start: start, end: end };
 	}
 

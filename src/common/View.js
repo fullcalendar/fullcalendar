@@ -187,8 +187,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		date = constrainDate(date, validRange);
 
-		var customVisibleRange = this.buildCustomVisibleRange(date);
-		var currentRangeDuration = moment.duration(1, 'day'); // with default value
+		var customVisibleRange;
+		var currentRangeDuration;
 		var currentRangeUnit;
 		var currentRange;
 		var renderRange;
@@ -196,27 +196,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var dateIncrementInput;
 		var dateIncrement;
 
-		if (customVisibleRange) {
-
-			currentRangeUnit = computeIntervalUnit(
-				customVisibleRange.start,
-				customVisibleRange.end
-			);
-
-			currentRange = this.filterCurrentRange(customVisibleRange, currentRangeUnit);
-			renderRange = currentRange;
-			renderRange = this.trimHiddenDays(renderRange);
-
-			// if the view displays a single day or smaller
-			if (currentRange.end.diff(currentRange.start, 'days', true) <= 1) {
-				if (this.isHiddenDay(date)) {
-					date = this.skipHiddenDays(date, direction);
-					date.startOf('day');
-				}
-			}
-		}
-		else {
-			currentRangeDuration = this.viewSpecDuration || currentRangeDuration;
+		if (this.viewSpecDuration) {
+			currentRangeDuration = this.viewSpecDuration;
 			currentRangeUnit = computeIntervalUnit(currentRangeDuration);
 
 			// if the view displays a single day or smaller
@@ -231,6 +212,45 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
 			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
 			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
+		}
+		else {
+			customVisibleRange = this.buildCustomVisibleRange(date);
+			if (customVisibleRange) {
+
+				currentRangeUnit = computeIntervalUnit(
+					customVisibleRange.start,
+					customVisibleRange.end
+				);
+
+				currentRange = this.filterCurrentRange(customVisibleRange, currentRangeUnit);
+				renderRange = currentRange;
+				renderRange = this.trimHiddenDays(renderRange);
+
+				// if the view displays a single day or smaller
+				if (currentRange.end.diff(currentRange.start, 'days', true) <= 1) {
+					if (this.isHiddenDay(date)) {
+						date = this.skipHiddenDays(date, direction);
+						date.startOf('day');
+					}
+				}
+			}
+			else { // lots of repeat code
+				currentRangeDuration = moment.duration(1, 'day');
+				currentRangeUnit = computeIntervalUnit(currentRangeDuration);
+
+				// if the view displays a single day or smaller
+				if (currentRangeDuration.as('days') <= 1) {
+					if (this.isHiddenDay(date)) {
+						date = this.skipHiddenDays(date, direction);
+						date.startOf('day');
+					}
+				}
+
+				currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
+				currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
+				renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
+				renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
+			}
 		}
 
 		visibleRange = constrainRange(renderRange, validRange);
@@ -266,7 +286,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	buildCustomVisibleRange: function(date) {
-		return this.getRangeOption('visibleRange', date);
+		var visibleRange = this.getRangeOption('visibleRange', date);
+
+		if (visibleRange && (!visibleRange.start || !visibleRange.end)) {
+			return null;
+		}
+
+		return visibleRange;
 	},
 
 
