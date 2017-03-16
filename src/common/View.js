@@ -195,6 +195,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var visibleRange;
 		var dateIncrementInput;
 		var dateIncrement;
+		var dayCount;
 
 		if (this.viewSpecDuration) {
 			currentRangeDuration = this.viewSpecDuration;
@@ -210,6 +211,30 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
 			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
+			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
+			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
+		}
+		else if ((dayCount = this.opt('dayCount'))) {
+
+			currentRangeUnit = 'day';
+
+			if (this.isHiddenDay(date)) {
+				date = this.skipHiddenDays(date, direction);
+				date.startOf('day');
+			}
+
+			var runningCount = 0;
+			var end = date.clone().startOf('day');
+
+			do {
+				end.add(1, 'day');
+				if (!this.isHiddenDay(end)) {
+					runningCount++;
+				}
+			} while (runningCount < dayCount);
+
+			currentRange = { start: date.clone(), end: end };
+			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit); // needed here?
 			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
 			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
 		}
