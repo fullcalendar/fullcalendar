@@ -278,18 +278,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var start = date.clone();
 		var end;
 
-		// if the view displays a single day or smaller
-		if (dayCount <= 1) {
-			if (this.isHiddenDay(start)) {
-				start = this.skipHiddenDays(start, direction);
-				start.startOf('day');
-			}
-		}
-
 		if (customAlignment) {
 			start.startOf(customAlignment);
 		}
+
 		start.startOf('day');
+		start = this.skipHiddenDays(start, direction);
 
 		end = start.clone();
 		do {

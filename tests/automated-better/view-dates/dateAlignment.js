@@ -5,14 +5,30 @@ SEE ALSO: next/prev
 describe('dateAlignment', function() {
 	pushOptions({
 		defaultView: 'agenda',
-		duration: { days: 3 },
-		dateAlignment: 'week'
+		dateAlignment: 'week',
+		defaultDate: '2017-06-15'
 	});
 
-	it('aligns with the week', function() {
-		initCalendar({
-			defaultDate: '2017-06-15'
+	describe('when 3 day duration', function() {
+		pushOptions({
+			duration: { days: 3 }
 		});
-		ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-14');
+
+		it('aligns with the week', function() {
+			initCalendar();
+			ViewDateUtils.expectVisibleRange('2017-06-11', '2017-06-14');
+		});
+	});
+
+	describe('when 5 day count', function() {
+		pushOptions({
+			dayCount: 5,
+			weekends: false
+		});
+
+		it('aligns with first visible day of the week', function() {
+			initCalendar();
+			ViewDateUtils.expectVisibleRange('2017-06-12', '2017-06-17');
+		});
 	});
 });
