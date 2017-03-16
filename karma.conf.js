@@ -42,7 +42,7 @@ module.exports = function(config) {
 			'tests/base.css',
 			'tests/automated-better/globals.js',
 			'tests/automated-better/**/*.js',
-			//'tests/automated/*.js',
+			'tests/automated/*.js',
 
 			// serve misc files, but don't watch
 			{
