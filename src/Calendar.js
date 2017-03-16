@@ -105,6 +105,7 @@ var Calendar = FC.Calendar = Class.extend({
 		var viewType = requestedViewType;
 		var spec; // for the view
 		var overrides; // for the view
+		var durationInput;
 		var duration;
 		var unit;
 
@@ -121,13 +122,13 @@ var Calendar = FC.Calendar = Class.extend({
 			if (spec) {
 				specChain.unshift(spec);
 				defaultsChain.unshift(spec.defaults || {});
-				duration = duration || spec.duration;
+				durationInput = durationInput || spec.duration;
 				viewType = viewType || spec.type;
 			}
 
 			if (overrides) {
 				overridesChain.unshift(overrides); // view-specific option hashes have options at zero-level
-				duration = duration || overrides.duration;
+				durationInput = durationInput || overrides.duration;
 				viewType = viewType || overrides.type;
 			}
 		}
@@ -139,15 +140,22 @@ var Calendar = FC.Calendar = Class.extend({
 		}
 
 		// fall back to top-level `duration` option
-		duration = duration ||
+		durationInput = durationInput ||
 			this.dynamicOverrides.duration ||
 			this.overrides.duration;
 
-		if (duration) {
-			duration = moment.duration(duration);
+		if (durationInput) {
+			duration = moment.duration(durationInput);
+
 			if (duration.valueOf()) { // valid?
-				spec.duration = duration;
+
 				unit = computeIntervalUnit(duration);
+				if (unit === 'week' && typeof durationInput === 'object' && durationInput.days) {
+					unit = 'day';
+				}
+
+				spec.duration = duration;
+				spec.durationUnit = unit;
 
 				// view is a single-unit duration, like "week" or "day"
 				// incorporate options for this. lowest priority
@@ -218,7 +226,7 @@ var Calendar = FC.Calendar = Class.extend({
 	instantiateView: function(viewType) {
 		var spec = this.getViewSpec(viewType);
 
-		return new spec['class'](this, viewType, spec.options, spec.duration);
+		return new spec['class'](this, spec);
 	},
 
 

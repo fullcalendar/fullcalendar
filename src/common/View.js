@@ -21,7 +21,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	isEventsRendered: false,
 	eventRenderQueue: null,
 
-	viewSpecDuration: null,
+	viewSpec: null,
 	currentDate: null,
 
 	// range the view is formally responsible for (moments)
@@ -70,13 +70,17 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	nowIndicatorIntervalID: null, // "
 
 
-	constructor: function(calendar, type, options, viewSpecDuration) {
+	constructor: function(calendar, viewSpec) {
 
 		this.calendar = calendar;
-		this.type = this.name = type; // .name is deprecated
-		this.options = options;
+		this.viewSpec = viewSpec;
 
-		this.viewSpecDuration = viewSpecDuration;
+		// shortcuts
+		this.type = viewSpec.type;
+		this.options = viewSpec.options;
+
+		// .name is deprecated
+		this.name = this.type;
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.initThemingProps();
@@ -197,9 +201,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var dateIncrement;
 		var dayCount;
 
-		if (this.viewSpecDuration) {
-			currentRangeDuration = this.viewSpecDuration;
-			currentRangeUnit = computeIntervalUnit(currentRangeDuration);
+		if (this.viewSpec.duration) {
+			currentRangeDuration = this.viewSpec.duration;
+			currentRangeUnit = this.viewSpec.durationUnit;
 
 			// if the view displays a single day or smaller
 			if (currentRangeDuration.as('days') <= 1) {
@@ -261,7 +265,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 			else { // lots of repeat code
 				currentRangeDuration = moment.duration(1, 'day');
-				currentRangeUnit = computeIntervalUnit(currentRangeDuration);
+				currentRangeUnit = 'day';
 
 				// if the view displays a single day or smaller
 				if (currentRangeDuration.as('days') <= 1) {
