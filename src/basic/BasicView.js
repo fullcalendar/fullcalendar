@@ -55,7 +55,7 @@ var BasicView = FC.BasicView = View.extend({
 			}
 		}
 
-		return renderRange;
+		return this.trimHiddenDays(renderRange);
 	},
 
 

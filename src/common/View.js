@@ -185,140 +185,121 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	resolveRangesForDate: function(date, direction) {
-		var validRange = this.buildValidRange() || {};
-
+		var validRange = this.buildValidRange();
 		var isDateValid = isDateWithinRange(date, validRange);
-
-		date = constrainDate(date, validRange);
-
-		var customVisibleRange;
-		var currentRangeDuration;
-		var currentRangeUnit;
-		var currentRange;
+		var currentInfo;
 		var renderRange;
 		var visibleRange;
-		var dateIncrementInput;
-		var dateIncrement;
-		var dayCount;
+		var isVisibleRangeValid;
 
-		if (this.viewSpec.duration) {
-			currentRangeDuration = this.viewSpec.duration;
-			currentRangeUnit = this.viewSpec.durationUnit;
-
-			// if the view displays a single day or smaller
-			if (currentRangeDuration.as('days') <= 1) {
-				if (this.isHiddenDay(date)) {
-					date = this.skipHiddenDays(date, direction);
-					date.startOf('day');
-				}
-			}
-
-			currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
-			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
-			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
-			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
-		}
-		else if ((dayCount = this.opt('dayCount'))) {
-
-			currentRangeUnit = 'day';
-
-			if (this.isHiddenDay(date)) {
-				date = this.skipHiddenDays(date, direction);
-				date.startOf('day');
-			}
-
-			var runningCount = 0;
-			var end = date.clone().startOf('day');
-
-			do {
-				end.add(1, 'day');
-				if (!this.isHiddenDay(end)) {
-					runningCount++;
-				}
-			} while (runningCount < dayCount);
-
-			currentRange = { start: date.clone(), end: end };
-			currentRange = this.filterCurrentRange(currentRange, currentRangeUnit); // needed here?
-			renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
-			renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
-		}
-		else {
-			customVisibleRange = this.buildCustomVisibleRange(date);
-			if (customVisibleRange) {
-
-				currentRangeUnit = computeIntervalUnit(
-					customVisibleRange.start,
-					customVisibleRange.end
-				);
-
-				currentRange = this.filterCurrentRange(customVisibleRange, currentRangeUnit);
-				renderRange = currentRange;
-				renderRange = this.trimHiddenDays(renderRange);
-
-				// if the view displays a single day or smaller
-				if (currentRange.end.diff(currentRange.start, 'days', true) <= 1) {
-					if (this.isHiddenDay(date)) {
-						date = this.skipHiddenDays(date, direction);
-						date.startOf('day');
-					}
-				}
-			}
-			else { // lots of repeat code
-				currentRangeDuration = moment.duration(1, 'day');
-				currentRangeUnit = 'day';
-
-				// if the view displays a single day or smaller
-				if (currentRangeDuration.as('days') <= 1) {
-					if (this.isHiddenDay(date)) {
-						date = this.skipHiddenDays(date, direction);
-						date.startOf('day');
-					}
-				}
-
-				currentRange = this.computeCurrentRange(date, currentRangeDuration, currentRangeUnit);
-				currentRange = this.filterCurrentRange(currentRange, currentRangeUnit);
-				renderRange = this.computeRenderRange(currentRange, currentRangeUnit);
-				renderRange = this.trimHiddenDays(renderRange); // should computeRenderRange be responsible?
-			}
-		}
-
+		date = constrainDate(date, validRange);
+		currentInfo = this.buildCurrentRangeInfo(date, direction);
+		renderRange = this.computeRenderRange(currentInfo.range, currentInfo.unit);
 		visibleRange = constrainRange(renderRange, validRange);
 
-		var isVisibleRangeValid = Boolean(intersectRanges(visibleRange, currentRange));
-
 		if (this.opt('disableNonCurrentDates')) {
-			visibleRange = constrainRange(visibleRange, currentRange);
+			visibleRange = constrainRange(visibleRange, currentInfo.range);
 		}
 
 		date = constrainDate(date, visibleRange);
-
-		dateIncrementInput = this.opt('dateIncrement'); // TODO: util for getting date options
-
-		if (dateIncrementInput) {
-			dateIncrement = moment.duration(dateIncrementInput);
-		}
-		else if (this.opt('dateAlignment')) {
-			dateIncrement = moment.duration(1, this.opt('dateAlignment'));
-		}
-		else {
-			dateIncrement = currentRangeDuration;
-		}
+		isVisibleRangeValid = Boolean(intersectRanges(visibleRange, currentInfo.range));
 
 		return {
 			validRange: validRange,
-			currentRange: currentRange,
-			currentRangeUnit: currentRangeUnit,
+			currentRange: currentInfo.range,
+			currentRangeUnit: currentInfo.unit,
 			visibleRange: visibleRange,
-			isValid: isDateValid && isVisibleRangeValid,
 			renderRange: renderRange,
-			dateIncrement: dateIncrement,
-			date: date // the revised date
+			isValid: isDateValid && isVisibleRangeValid,
+			date: date,
+			dateIncrement: this.computeDateIncrement(currentInfo.duration)
 		};
 	},
 
 
 	buildValidRange: function() {
-		return this.getRangeOption('validRange', this.calendar.getNow());
+		return this.getRangeOption('validRange', this.calendar.getNow()) || {};
+	},
+
+
+	buildCurrentRangeInfo: function(date, direction) {
+		var duration = null;
+		var unit = null;
+		var range = null;
+		var dayCount;
+
+		if (this.viewSpec.duration) {
+			duration = this.viewSpec.duration;
+			unit = this.viewSpec.durationUnit;
+			range = this.buildRangeFromDuration(date, direction, duration, unit);
+		}
+		else if ((dayCount = this.opt('dayCount'))) {
+			unit = 'day';
+			range = this.buildRangeFromDayCount(date, direction, dayCount);
+		}
+		else if ((range = this.buildCustomVisibleRange(date))) {
+			unit = computeIntervalUnit(range.start, range.end);
+		}
+		else {
+			unit = 'day';
+			duration = moment.duration({ days: 1 });
+			range = this.buildRangeFromDuration(date, direction, duration, unit);
+		}
+
+		range = this.filterCurrentRange(range, unit);
+
+		return { duration: duration, unit: unit, range: range };
+	},
+
+
+	buildRangeFromDuration: function(date, direction, duration, unit) {
+		var customAlignment = this.opt('dateAlignment');
+		var start = date.clone();
+		var end;
+
+		// if the view displays a single day or smaller
+		if (duration.as('days') <= 1) {
+			if (this.isHiddenDay(start)) {
+				start = this.skipHiddenDays(start, direction);
+				start.startOf('day');
+			}
+		}
+
+		start.startOf(customAlignment || unit);
+		end = start.clone().add(duration);
+
+		return { start: start, end: end };
+	},
+
+
+	buildRangeFromDayCount: function(date, direction, dayCount) {
+		var customAlignment = this.opt('dateAlignment');
+		var runningCount = 0;
+		var start = date.clone();
+		var end;
+
+		// if the view displays a single day or smaller
+		if (dayCount <= 1) {
+			if (this.isHiddenDay(start)) {
+				start = this.skipHiddenDays(start, direction);
+				start.startOf('day');
+			}
+		}
+
+		if (customAlignment) {
+			start.startOf(customAlignment);
+		}
+		start.startOf('day');
+
+		end = start.clone();
+		do {
+			end.add(1, 'day');
+			if (!this.isHiddenDay(end)) {
+				runningCount++;
+			}
+		} while (runningCount < dayCount);
+
+		return { start: start, end: end };
 	},
 
 
@@ -330,15 +311,6 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return visibleRange;
-	},
-
-
-	computeCurrentRange: function(date, duration, durationUnit) {
-		var customAlignment = this.opt('dateAlignment');
-		var start = date.clone().startOf(customAlignment || durationUnit);
-		var end = start.clone().add(duration);
-
-		return { start: start, end: end };
 	},
 
 
@@ -365,6 +337,24 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Computes the date range that will be rendered.
 	computeRenderRange: function(currentRange) {
 		return this.trimHiddenDays(currentRange);
+	},
+
+
+	computeDateIncrement: function(fallback) {
+		var dateIncrementInput = this.opt('dateIncrement');
+
+		if (dateIncrementInput) {
+			return moment.duration(dateIncrementInput);
+		}
+		else if (this.opt('dateAlignment')) {
+			return moment.duration(1, this.opt('dateAlignment'));
+		}
+		else if (fallback) {
+			return fallback;
+		}
+		else {
+			return moment.duration(1, 'day');
+		}
 	},
 
 
