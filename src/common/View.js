@@ -153,7 +153,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// Will return a boolean about whether there was some sort of change.
 	setRangeFromDate: function(date) {
 
-		var ranges = this.resolveRangesForDate(date);
+		var ranges = this.buildRangeInfo(date);
 
 		this.validRange = ranges.validRange;
 
@@ -184,7 +184,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	resolveRangesForDate: function(date, direction) {
+	buildRangeInfo: function(date, direction) {
 		var validRange = this.buildValidRange();
 		var isDateValid = isDateWithinRange(date, validRange);
 		var currentInfo;
@@ -194,7 +194,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		date = constrainDate(date, validRange);
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
-		renderRange = this.computeRenderRange(currentInfo.range, currentInfo.unit);
+		renderRange = this.buildRenderRange(currentInfo.range, currentInfo.unit);
 		visibleRange = constrainRange(renderRange, validRange);
 
 		if (this.opt('disableNonCurrentDates')) {
@@ -212,7 +212,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			renderRange: renderRange,
 			isValid: isDateValid && isVisibleRangeValid,
 			date: date,
-			dateIncrement: this.computeDateIncrement(currentInfo.duration)
+			dateIncrement: this.buildDateIncrement(currentInfo.duration)
 		};
 	},
 
@@ -249,6 +249,26 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		range = this.filterCurrentRange(range, unit);
 
 		return { duration: duration, unit: unit, range: range };
+	},
+
+
+	filterCurrentRange: function(currentRange, unit) {
+
+		// normalize the range's time-ambiguity
+		if (/^(year|month|week|day)$/.test(unit)) { // whole-days?
+			currentRange.start.stripTime();
+			currentRange.end.stripTime();
+		}
+		else { // needs to have a time?
+			if (!currentRange.start.hasTime()) {
+				currentRange.start.time(0); // give 00:00 time
+			}
+			if (!currentRange.end.hasTime()) {
+				currentRange.end.time(0); // give 00:00 time
+			}
+		}
+
+		return currentRange;
 	},
 
 
@@ -308,40 +328,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	filterCurrentRange: function(currentRange, unit) {
-
-		// normalize the range's time-ambiguity
-		if (/^(year|month|week|day)$/.test(unit)) { // whole-days?
-			currentRange.start.stripTime();
-			currentRange.end.stripTime();
-		}
-		else { // needs to have a time?
-			if (!currentRange.start.hasTime()) {
-				currentRange.start.time(0); // give 00:00 time
-			}
-			if (!currentRange.end.hasTime()) {
-				currentRange.end.time(0); // give 00:00 time
-			}
-		}
-
-		return currentRange;
-	},
-
-
 	// Computes the date range that will be rendered.
-	computeRenderRange: function(currentRange) {
+	buildRenderRange: function(currentRange) {
 		return this.trimHiddenDays(currentRange);
 	},
 
 
-	computeDateIncrement: function(fallback) {
+	buildDateIncrement: function(fallback) {
 		var dateIncrementInput = this.opt('dateIncrement');
+		var customAlignment;
 
 		if (dateIncrementInput) {
 			return moment.duration(dateIncrementInput);
 		}
-		else if (this.opt('dateAlignment')) {
-			return moment.duration(1, this.opt('dateAlignment'));
+		else if ((customAlignment = this.opt('dateAlignment'))) {
+			return moment.duration(1, customAlignment);
 		}
 		else if (fallback) {
 			return fallback;
@@ -352,42 +353,17 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Computes the new date when the user hits the prev button, given the current date
-	computePrevDate: function(date) {
-		var ranges = this.computePrevRanges(date);
-
-		if (ranges.isValid) {
-			return ranges.date;
-		}
-	},
-
-
-	computePrevRanges: function(date) {
+	buildPrevRangeInfo: function(date) {
 		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
 
-		return this.resolveRangesForDate(prevDate, -1);
+		return this.buildRangeInfo(prevDate, -1);
 	},
 
 
-	// Computes the new date when the user hits the next button, given the current date
-	computeNextDate: function(date) {
-		var ranges = this.computeNextRanges(date);
-
-		if (ranges.isValid) {
-			return ranges.date;
-		}
-	},
-
-
-	computeNextRanges: function(date) {
+	buildNextRangeInfo: function(date) {
 		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
 
-		return this.resolveRangesForDate(nextDate, 1);
-	},
-
-
-	computeDateIsValid: function(date) {
-		return this.resolveRangesForDate(date).isValid;
+		return this.buildRangeInfo(nextDate, 1);
 	},
 
 

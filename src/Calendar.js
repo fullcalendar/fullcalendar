@@ -308,20 +308,20 @@ var Calendar = FC.Calendar = Class.extend({
 
 
 	prev: function() {
-		var date = this.view.computePrevDate(this.currentDate);
+		var prevInfo = this.view.buildPrevRangeInfo(this.currentDate);
 
-		if (date) {
-			this.currentDate = date;
+		if (prevInfo.isValid) {
+			this.currentDate = prevInfo.date;
 			this.renderView();
 		}
 	},
 
 
 	next: function() {
-		var date = this.view.computeNextDate(this.currentDate);
+		var nextInfo = this.view.buildNextRangeInfo(this.currentDate);
 
-		if (date) {
-			this.currentDate = date;
+		if (nextInfo.isValid) {
+			this.currentDate = nextInfo.date;
 			this.renderView();
 		}
 	},
@@ -977,30 +977,30 @@ function Calendar_constructor(element, overrides) {
 
 	t.updateToolbarButtons = function() {
 		var now = t.getNow();
+		var todayInfo = currentView.buildRangeInfo(now);
+		var prevInfo = currentView.buildPrevRangeInfo(t.currentDate);
+		var nextInfo = currentView.buildNextRangeInfo(t.currentDate);
 
-		if (
-			isDateWithinRange(now, currentView.currentRange) ||
-			!currentView.computeDateIsValid(now)
-		) {
-			toolbarsManager.proxyCall('disableButton', 'today');
-		}
-		else {
-			toolbarsManager.proxyCall('enableButton', 'today');
-		}
+		toolbarsManager.proxyCall(
+			(todayInfo.isValid && !isDateWithinRange(now, currentView.currentRange)) ?
+				'enableButton' :
+				'disableButton',
+			'today'
+		);
 
-		if (currentView.computePrevDate(t.currentDate)) {
-			toolbarsManager.proxyCall('enableButton', 'prev');
-		}
-		else {
-			toolbarsManager.proxyCall('disableButton', 'prev');
-		}
+		toolbarsManager.proxyCall(
+			prevInfo.isValid ?
+				'enableButton' :
+				'disableButton',
+			'prev'
+		);
 
-		if (currentView.computeNextDate(t.currentDate)) {
-			toolbarsManager.proxyCall('enableButton', 'next');
-		}
-		else {
-			toolbarsManager.proxyCall('disableButton', 'next');
-		}
+		toolbarsManager.proxyCall(
+			nextInfo.isValid ?
+				'enableButton' :
+				'disableButton',
+			'next'
+		);
 	};
 
 
