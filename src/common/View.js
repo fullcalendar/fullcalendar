@@ -36,13 +36,13 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	renderRange: null,
 
 	// active dates that display events and accept drag-nd-drop
-	visibleRange: null,
+	activeRange: null,
 
 	// date constraints. defines the "valid range"
 	// TODO: enforce this in prev/next/gotoDate
 	validRange: null,
 
-	start: null, // DEPRECATED: use visibleRange instead
+	start: null, // DEPRECATED: use activeRange instead
 	end: null,   // "
 	intervalStart: null, // DEPRECATED: use currentRange instead
 	intervalEnd: null,    // "
@@ -157,20 +157,20 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.validRange = ranges.validRange;
 
-		if (!this.visibleRange || !isRangesEqual(this.visibleRange, ranges.visibleRange)) {
+		if (!this.activeRange || !isRangesEqual(this.activeRange, ranges.activeRange)) {
 			// some sort of change
 
 			this.currentRange = ranges.currentRange;
 			this.currentRangeUnit = ranges.currentRangeUnit;
 			this.renderRange = ranges.renderRange;
-			this.visibleRange = ranges.visibleRange;
+			this.activeRange = ranges.activeRange;
 			this.dateIncrement = ranges.dateIncrement;
 			this.currentDate = ranges.date;
 
 			// DEPRECATED, but we need to keep it updated
 			// TODO: run automated tests with this commented out
-			this.start = ranges.visibleRange.start;
-			this.end = ranges.visibleRange.end;
+			this.start = ranges.activeRange.start;
+			this.end = ranges.activeRange.end;
 			this.intervalStart = ranges.currentRange.start;
 			this.intervalEnd = ranges.currentRange.end;
 
@@ -189,26 +189,26 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var isDateValid = isDateWithinRange(date, validRange);
 		var currentInfo;
 		var renderRange;
-		var visibleRange;
+		var activeRange;
 		var isVisibleRangeValid;
 
 		date = constrainDate(date, validRange);
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
 		renderRange = this.buildRenderRange(currentInfo.range, currentInfo.unit);
-		visibleRange = constrainRange(renderRange, validRange);
+		activeRange = constrainRange(renderRange, validRange);
 
 		if (this.opt('disableNonCurrentDates')) {
-			visibleRange = constrainRange(visibleRange, currentInfo.range);
+			activeRange = constrainRange(activeRange, currentInfo.range);
 		}
 
-		date = constrainDate(date, visibleRange);
-		isVisibleRangeValid = Boolean(intersectRanges(visibleRange, currentInfo.range));
+		date = constrainDate(date, activeRange);
+		isVisibleRangeValid = Boolean(intersectRanges(activeRange, currentInfo.range));
 
 		return {
 			validRange: validRange,
 			currentRange: currentInfo.range,
 			currentRangeUnit: currentInfo.unit,
-			visibleRange: visibleRange,
+			activeRange: activeRange,
 			renderRange: renderRange,
 			isValid: isDateValid && isVisibleRangeValid,
 			date: date,
@@ -418,7 +418,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			range = this.currentRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			range = this.visibleRange;
+			range = this.activeRange;
 		}
 
 		return this.formatRange(
@@ -1228,7 +1228,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	requestEvents: function() {
-		return this.calendar.requestEvents(this.visibleRange.start, this.visibleRange.end);
+		return this.calendar.requestEvents(
+			this.activeRange.start,
+			this.activeRange.end
+		);
 	},
 
 

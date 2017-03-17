@@ -14,10 +14,10 @@ describe('validRange', function() {
 				validRange: { start: '2017-06-06' }
 			});
 
-			it('allows full renderRange but restricts visibleRange', function() {
+			it('allows full renderRange but restricts activeRange', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
-				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
+				ViewDateUtils.expectActiveRange('2017-06-06', '2017-06-11');
 			});
 		});
 
@@ -26,10 +26,10 @@ describe('validRange', function() {
 				validRange: { end: '2017-06-05' }
 			});
 
-			it('allows full renderRange but restricts visibleRange', function() {
+			it('allows full renderRange but restricts activeRange', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
-				ViewDateUtils.expectVisibleRange('2017-06-04', '2017-06-05');
+				ViewDateUtils.expectActiveRange('2017-06-04', '2017-06-05');
 			});
 		});
 
@@ -41,7 +41,7 @@ describe('validRange', function() {
 			it('initializes at earliest partially visible week', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-06-11', '2017-06-18');
-				ViewDateUtils.expectVisibleRange('2017-06-14', '2017-06-18');
+				ViewDateUtils.expectActiveRange('2017-06-14', '2017-06-18');
 			});
 		});
 
@@ -53,7 +53,7 @@ describe('validRange', function() {
 			it('initializes at latest partially visible week', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-05-21', '2017-05-28');
-				ViewDateUtils.expectVisibleRange('2017-05-21', '2017-05-24');
+				ViewDateUtils.expectActiveRange('2017-05-21', '2017-05-24');
 			});
 		});
 
@@ -83,7 +83,7 @@ describe('validRange', function() {
 
 				expect(validRangeSpy).toHaveBeenCalled();
 				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
-				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
+				ViewDateUtils.expectActiveRange('2017-06-06', '2017-06-11');
 			});
 
 			it('can return a range object with moments', function() {
@@ -95,7 +95,7 @@ describe('validRange', function() {
 
 				expect(validRangeSpy).toHaveBeenCalled();
 				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
-				ViewDateUtils.expectVisibleRange('2017-06-06', '2017-06-11');
+				ViewDateUtils.expectActiveRange('2017-06-06', '2017-06-11');
 			});
 		});
 	});
@@ -113,7 +113,7 @@ describe('validRange', function() {
 			it('renders earliest three valid days', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-06-14', '2017-06-17');
-				ViewDateUtils.expectVisibleRange('2017-06-14', '2017-06-17');
+				ViewDateUtils.expectActiveRange('2017-06-14', '2017-06-17');
 			});
 		});
 
@@ -124,7 +124,7 @@ describe('validRange', function() {
 			it('renders latest possible valid day and two invalid days', function() {
 				initCalendar();
 				ViewDateUtils.expectRenderRange('2017-05-30', '2017-06-02');
-				ViewDateUtils.expectVisibleRange('2017-05-30', '2017-05-31');
+				ViewDateUtils.expectActiveRange('2017-05-30', '2017-05-31');
 			});
 		});
 	});

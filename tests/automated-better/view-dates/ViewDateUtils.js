@@ -7,10 +7,10 @@ var ViewDateUtils = {
 		expect(currentView.renderRange.end).toEqualMoment(end);
 	},
 
-	expectVisibleRange: function(start, end) {
+	expectActiveRange: function(start, end) {
 		var currentView = currentCalendar.getView();
-		expect(currentView.visibleRange.start).toEqualMoment(start);
-		expect(currentView.visibleRange.end).toEqualMoment(end);
+		expect(currentView.activeRange.start).toEqualMoment(start);
+		expect(currentView.activeRange.end).toEqualMoment(end);
 	}
 
 };

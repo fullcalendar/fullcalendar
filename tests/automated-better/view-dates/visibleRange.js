@@ -34,7 +34,7 @@ describe('visibleRange', function() {
 			}, function() {
 				it('gets set to the given range', function() {
 					initCalendar();
-					ViewDateUtils.expectVisibleRange(startInput, endInput);
+					ViewDateUtils.expectActiveRange(startInput, endInput);
 				});
 			});
 
@@ -51,7 +51,7 @@ describe('visibleRange', function() {
 					},
 					defaultView: 'myCustomView'
 				});
-				ViewDateUtils.expectVisibleRange(startInput, endInput);
+				ViewDateUtils.expectActiveRange(startInput, endInput);
 			});
 
 			it('ignores dateAlignment', function() {
@@ -62,7 +62,7 @@ describe('visibleRange', function() {
 						end: endInput
 					}
 				});
-				ViewDateUtils.expectVisibleRange(startInput, endInput);
+				ViewDateUtils.expectActiveRange(startInput, endInput);
 			});
 		});
 
@@ -104,7 +104,7 @@ describe('visibleRange', function() {
 					initCalendar({
 						defaultDate: '2017-08-01'
 					})
-					ViewDateUtils.expectVisibleRange('2017-08-01', '2017-08-02');
+					ViewDateUtils.expectActiveRange('2017-08-01', '2017-08-02');
 				});
 			});
 		});
@@ -120,7 +120,7 @@ describe('visibleRange', function() {
 					}
 				});
 				currentCalendar.changeView('agendaDay');
-				ViewDateUtils.expectVisibleRange('2017-06-26', '2017-06-27');
+				ViewDateUtils.expectActiveRange('2017-06-26', '2017-06-27');
 			});
 
 			it('constrains the current date to the end of visibleRange', function() {
@@ -132,7 +132,7 @@ describe('visibleRange', function() {
 					}
 				});
 				currentCalendar.changeView('agendaDay');
-				ViewDateUtils.expectVisibleRange('2017-06-28', '2017-06-29');
+				ViewDateUtils.expectActiveRange('2017-06-28', '2017-06-29');
 			});
 		});
 	});
@@ -151,7 +151,7 @@ describe('visibleRange', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewDateUtils.expectVisibleRange('2015-06-08', '2015-06-11');
+			ViewDateUtils.expectActiveRange('2015-06-08', '2015-06-11');
 		});
 	});
 
@@ -168,7 +168,7 @@ describe('visibleRange', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewDateUtils.expectVisibleRange('2015-06-07', '2015-06-14');
+			ViewDateUtils.expectActiveRange('2015-06-07', '2015-06-14');
 		});
 	});
 });

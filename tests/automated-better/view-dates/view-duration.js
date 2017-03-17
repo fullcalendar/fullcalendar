@@ -11,7 +11,7 @@ describe('view duration', function() {
 		});
 		it('aligns with start of week', function() {
 			initCalendar();
-			ViewDateUtils.expectVisibleRange('2017-03-12', '2017-03-19');
+			ViewDateUtils.expectActiveRange('2017-03-12', '2017-03-19');
 		});
 	});
 
@@ -21,7 +21,7 @@ describe('view duration', function() {
 		});
 		it('aligns with start of week', function() {
 			initCalendar();
-			ViewDateUtils.expectVisibleRange('2017-03-15', '2017-03-22');
+			ViewDateUtils.expectActiveRange('2017-03-15', '2017-03-22');
 		});
 	});
 });

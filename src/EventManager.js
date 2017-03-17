@@ -1401,8 +1401,8 @@ Calendar.prototype.expandBusinessHourEvents = function(wholeDay, inputs, ignoreN
 		events.push.apply(events, // append
 			this.expandEvent(
 				this.buildEventFromInput(input),
-				view.visibleRange.start,
-				view.visibleRange.end
+				view.activeRange.start,
+				view.activeRange.end
 			)
 		);
 	}

@@ -173,7 +173,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	getSafeHitSpan: function(hit) {
 		var hitSpan = this.getHitSpan(hit);
 
-		if (!isRangeWithinRange(hitSpan, this.view.visibleRange)) {
+		if (!isRangeWithinRange(hitSpan, this.view.activeRange)) {
 			return null;
 		}
 
@@ -695,7 +695,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var classes = [];
 		var today;
 
-		if (!isDateWithinRange(date, view.visibleRange)) {
+		if (!isDateWithinRange(date, view.activeRange)) {
 			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
 		}
 		else {

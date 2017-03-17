@@ -15,7 +15,7 @@ describe('prev', function() {
 		it('moves back by one week', function() {
 			initCalendar();
 			currentCalendar.prev();
-			ViewDateUtils.expectVisibleRange('2017-05-28', '2017-06-04');
+			ViewDateUtils.expectActiveRange('2017-05-28', '2017-06-04');
 		});
 
 		describe('when two week dateIncrement', function() {
@@ -26,7 +26,7 @@ describe('prev', function() {
 			it('moves back by two weeks', function() {
 				initCalendar();
 				currentCalendar.prev();
-				ViewDateUtils.expectVisibleRange('2017-05-21', '2017-05-28');
+				ViewDateUtils.expectActiveRange('2017-05-21', '2017-05-28');
 			});
 		});
 	});

@@ -294,7 +294,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
-		var isDateValid = isDateWithinRange(date, view.visibleRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.widgetHeaderClass
@@ -372,7 +372,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	renderBgCellHtml: function(date, otherAttrs) {
 		var view = this.view;
-		var isDateValid = isDateWithinRange(date, view.visibleRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
 		if (isDateValid) {
