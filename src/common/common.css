@@ -68,9 +68,13 @@ body .fc { /* extra precedence to overcome jqui */
 	background: #d7d7d7;
 }
 
-.fc-disabled-day {
+.fc-unthemed .fc-disabled-day {
 	background: #d7d7d7;
 	opacity: .3;
+}
+
+.ui-widget .fc-disabled-day { /* themed */
+	background-image: none;
 }
 
 
