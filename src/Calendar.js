@@ -149,7 +149,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 			if (duration.valueOf()) { // valid?
 
-				unit = computeIntervalUnit(duration);
+				unit = computeGreatestUnit(duration);
 				if (unit === 'week' && typeof durationInput === 'object' && durationInput.days) {
 					unit = 'day';
 				}

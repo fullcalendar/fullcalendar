@@ -148,7 +148,7 @@ View.mixin({å
 			range = this.buildRangeFromDayCount(date, direction, dayCount);
 		}
 		else if ((range = this.buildCustomVisibleRange(date))) {
-			unit = computeIntervalUnit(range.start, range.end);
+			unit = computeGreatestUnit(range.start, range.end);
 		}
 		else {
 			unit = 'day';
@@ -181,7 +181,7 @@ View.mixin({å
 
 
 	// Builds the "current" range when it is specified as an explicit duration.
-	// `unit` is the already-computed computeIntervalUnit value of duration.
+	// `unit` is the already-computed computeGreatestUnit value of duration.
 	buildRangeFromDuration: function(date, direction, duration, unit) {
 		var customAlignment = this.opt('dateAlignment');
 		var start = date.clone();

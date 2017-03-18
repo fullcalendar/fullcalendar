@@ -545,14 +545,14 @@ function intersectRanges(subjectRange, constraintRange) {
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.computeIntervalUnit = computeIntervalUnit; // TODO: rename to greatestUnit or something
+FC.computeGreatestUnit = computeGreatestUnit;
 FC.divideRangeByDuration = divideRangeByDuration;
 FC.divideDurationByDuration = divideDurationByDuration;
 FC.multiplyDuration = multiplyDuration;
 FC.durationHasTime = durationHasTime;
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
-var intervalUnits = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ];
+var unitsDesc = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ]; // descending
 
 
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
@@ -585,12 +585,12 @@ function diffByUnit(a, b, unit) {
 // Computes the unit name of the largest whole-unit period of time.
 // For example, 48 hours will be "days" whereas 49 hours will be "hours".
 // Accepts start/end, a range object, or an original duration object.
-function computeIntervalUnit(start, end) {
+function computeGreatestUnit(start, end) {
 	var i, unit;
 	var val;
 
-	for (i = 0; i < intervalUnits.length; i++) {
-		unit = intervalUnits[i];
+	for (i = 0; i < unitsDesc.length; i++) {
+		unit = unitsDesc[i];
 		val = computeRangeAs(unit, start, end);
 
 		if (val >= 1 && isInt(val)) {
