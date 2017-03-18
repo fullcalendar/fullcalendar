@@ -677,6 +677,8 @@ function cloneRange(range) {
 }
 
 
+// Trims the beginning and end of inner range to be completely within outerRange.
+// Returns a new range object.
 function constrainRange(innerRange, outerRange) {
 	innerRange = cloneRange(innerRange);
 
@@ -693,6 +695,8 @@ function constrainRange(innerRange, outerRange) {
 }
 
 
+// If the given date is not within the given range, move it inside.
+// Always returns a new moment.
 function constrainDate(date, range) {
 	date = date.clone();
 
@@ -726,19 +730,15 @@ function isRangesEqual(range0, range1) {
 }
 
 
+// Returns the moment that's earlier in time. Always a copy.
 function minMoment(mom1, mom2) {
-	if (mom1.isBefore(mom2)) {
-		return mom1;
-	}
-	return mom2;
+	return (mom1.isBefore(mom2) ? mom1 : mom2).clone();
 }
 
 
+// Returns the moment that's later in time. Always a copy.
 function maxMoment(mom1, mom2) {
-	if (mom1.isAfter(mom2)) {
-		return mom1;
-	}
-	return mom2;
+	return (mom1.isAfter(mom2) ? mom1 : mom2).clone();
 }
 
 

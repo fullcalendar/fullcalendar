@@ -1,5 +1,5 @@
 
-View.mixin({å
+View.mixin({
 
 	// range the view is formally responsible for.
 	// for example, a month view might have 1st-31st, excluding padded dates
@@ -243,7 +243,7 @@ View.mixin({å
 
 	// Computes the range that will represent the element/cells for *rendering*,
 	// but which may have voided days/times.
-	buildRenderRange: function(currentRange) {
+	buildRenderRange: function(currentRange, currentRangeUnit) {
 		// cut off days in the currentRange that are hidden
 		return this.trimHiddenDays(currentRange);
 	},

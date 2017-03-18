@@ -150,6 +150,8 @@ var Calendar = FC.Calendar = Class.extend({
 			if (duration.valueOf()) { // valid?
 
 				unit = computeGreatestUnit(duration);
+
+				// prevent days:7 from being interpreted as a week
 				if (unit === 'week' && typeof durationInput === 'object' && durationInput.days) {
 					unit = 'day';
 				}
@@ -293,12 +295,12 @@ var Calendar = FC.Calendar = Class.extend({
 
 		if (dateOrRange) {
 
-			if (dateOrRange.start && dateOrRange.end) {
+			if (dateOrRange.start && dateOrRange.end) { // a range
 				this.recordOptionOverrides({ // will not rerender
 					visibleRange: dateOrRange
 				});
 			}
-			else {
+			else { // a date
 				this.currentDate = this.moment(dateOrRange).stripZone(); // just like gotoDate
 			}
 		}
@@ -363,16 +365,17 @@ var Calendar = FC.Calendar = Class.extend({
 	},
 
 
+	// will return `null` if invalid range
 	parseRange: function(rangeInput) {
 		var start = null;
 		var end = null;
 
 		if (rangeInput.start) {
-			start = this.moment(rangeInput.start);
+			start = this.moment(rangeInput.start).stripZone();
 		}
 
 		if (rangeInput.end) {
-			end = this.moment(rangeInput.end);
+			end = this.moment(rangeInput.end).stripZone();
 		}
 
 		if (!start && !end) {
@@ -1146,6 +1149,7 @@ function Calendar_constructor(element, overrides) {
 	}
 
 
+	// stores the new options internally, but does not rerender anything.
 	function recordOptionOverrides(newOptionHash) {
 		var optionName;
 

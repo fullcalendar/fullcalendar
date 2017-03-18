@@ -1158,7 +1158,8 @@ Grid.mixin({
 	},
 
 
-	// always returns a result
+	// Ensures the given range is within the view's activeRange and is correctly localized.
+	// Always returns a result
 	refineRawEventRange: function(rawRange) {
 		var view = this.view;
 		var calendar = view.calendar;
