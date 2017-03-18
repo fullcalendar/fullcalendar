@@ -76,7 +76,7 @@ var Calendar = FC.Calendar = Class.extend({
 		var i;
 		var spec;
 
-		if ($.inArray(unit, intervalUnits) != -1) {
+		if ($.inArray(unit, unitsDesc) != -1) {
 
 			// put views that have buttons first. there will be duplicates, but oh well
 			viewTypes = this.header.getViewsWithButtons(); // TODO: include footer as well?

@@ -723,7 +723,7 @@ function isDateWithinRange(date, range) {
 // constraintRange can have unspecified start/end, an open-ended range.
 function doRangesIntersect(subjectRange, constraintRange) {
 	return (!constraintRange.start || subjectRange.end >= constraintRange.start) &&
-		(!constrainRange.end || subjectRange.start < constrainRange.end);
+		(!constraintRange.end || subjectRange.start < constraintRange.end);
 }
 
 
