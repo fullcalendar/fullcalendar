@@ -89,23 +89,25 @@ View.mixin({
 	// from its previous value. decremented = -1, incremented = 1 (default).
 	buildRangeInfo: function(date, direction) {
 		var validRange = this.buildValidRange();
-		var isDateValid = isDateWithinRange(date, validRange);
 		var currentInfo;
 		var renderRange;
 		var activeRange;
-		var isVisibleRangeValid;
+		var isActiveRangeValid;
 
-		date = constrainDate(date, validRange);
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
 		renderRange = this.buildRenderRange(currentInfo.range, currentInfo.unit);
-		activeRange = constrainRange(renderRange, validRange);
+		activeRange = cloneRange(renderRange);
 
 		if (this.opt('disableNonCurrentDates')) {
 			activeRange = constrainRange(activeRange, currentInfo.range);
 		}
 
+		isActiveRangeValid = doRangesIntersect(activeRange, validRange);
+		if (isActiveRangeValid) {
+			activeRange = constrainRange(activeRange, validRange);
+		}
+
 		date = constrainDate(date, activeRange);
-		isVisibleRangeValid = Boolean(intersectRanges(activeRange, currentInfo.range));
 
 		return {
 			validRange: validRange,
@@ -113,7 +115,7 @@ View.mixin({
 			currentRangeUnit: currentInfo.unit,
 			activeRange: activeRange,
 			renderRange: renderRange,
-			isValid: isDateValid && isVisibleRangeValid,
+			isValid: isActiveRangeValid,
 			date: date,
 			dateIncrement: this.buildDateIncrement(currentInfo.duration)
 				// pass a fallback (might be null) ^

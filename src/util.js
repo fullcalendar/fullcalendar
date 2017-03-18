@@ -696,6 +696,7 @@ function constrainRange(innerRange, outerRange) {
 
 
 // If the given date is not within the given range, move it inside.
+// (If it's past the end, make it one millisecond before the end).
 // Always returns a new moment.
 function constrainDate(date, range) {
 	date = date.clone();
@@ -715,6 +716,14 @@ function constrainDate(date, range) {
 function isDateWithinRange(date, range) {
 	return (!range.start || date >= range.start) &&
 		(!range.end || date < range.end);
+}
+
+
+// TODO: deal with repeat code in intersectRanges
+// constraintRange can have unspecified start/end, an open-ended range.
+function doRangesIntersect(subjectRange, constraintRange) {
+	return (!constraintRange.start || subjectRange.end >= constraintRange.start) &&
+		(!constrainRange.end || subjectRange.start < constrainRange.end);
 }
 
 
