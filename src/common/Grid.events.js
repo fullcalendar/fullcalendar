@@ -1027,7 +1027,7 @@ Grid.mixin({
 		if (this.isEventLocationInRange(eventLocation)) {
 			var calendar = this.view.calendar;
 			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
-			var eventSpans = this.eventRangeToSpans(eventRange);
+			var eventSpans = this.eventRangeToSpans(eventRange, event);
 			var i;
 
 			if (eventSpans.length) {
@@ -1049,7 +1049,7 @@ Grid.mixin({
 		if (this.isEventLocationInRange(eventLocation)) {
 			var calendar = this.view.calendar;
 			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
-			var eventSpans = this.eventRangeToSpans(eventRange);
+			var eventSpans = this.eventRangeToSpans(eventRange, event);
 			var i;
 
 			if (eventSpans.length) {
