@@ -155,14 +155,19 @@ View.mixin({
 			unit = computeGreatestUnit(range.start, range.end);
 		}
 		else {
-			unit = 'day';
-			duration = moment.duration({ days: 1 });
+			duration = this.getFallbackDuration();
+			unit = computeGreatestUnit(duration);
 			range = this.buildRangeFromDuration(date, direction, duration, unit);
 		}
 
 		this.normalizeRange(range, unit); // modifies in-place
 
 		return { duration: duration, unit: unit, range: range };
+	},
+
+
+	getFallbackDuration: function() {
+		return moment.duration({ days: 1 });
 	},
 
 
