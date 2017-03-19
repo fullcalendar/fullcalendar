@@ -24,6 +24,10 @@ View.mixin({
 	// TODO: entirely Calendar's responsibility
 	currentDate: null,
 
+	minTime: null, // Duration object that denotes the first visible time of any given day
+	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeRange. Views must opt-in.
+
 	// DEPRECATED
 	start: null, // use activeRange.start
 	end: null, // use activeRange.end
@@ -51,6 +55,8 @@ View.mixin({
 			this.validRange = rangeInfo.validRange;
 			this.dateIncrement = rangeInfo.dateIncrement;
 			this.currentDate = rangeInfo.date;
+			this.minTime = rangeInfo.minTime;
+			this.maxTime = rangeInfo.maxTime;
 
 			// DEPRECATED, but we need to keep it updated
 			this.start = rangeInfo.activeRange.start;
@@ -90,6 +96,8 @@ View.mixin({
 	buildRangeInfo: function(givenDate, direction) {
 		var validRange = this.buildValidRange();
 		var constrainedDate = constrainDate(givenDate, validRange);
+		var minTime = null;
+		var maxTime = null;
 		var currentInfo;
 		var renderRange;
 		var activeRange;
@@ -102,6 +110,10 @@ View.mixin({
 		if (this.opt('disableNonCurrentDates')) {
 			activeRange = constrainRange(activeRange, currentInfo.range);
 		}
+
+		minTime = moment.duration(this.opt('minTime'));
+		maxTime = moment.duration(this.opt('maxTime'));
+		this.adjustActiveRange(activeRange, minTime, maxTime);
 
 		activeRange = constrainRange(activeRange, validRange);
 		constrainedDate = constrainDate(constrainedDate, activeRange);
@@ -117,6 +129,8 @@ View.mixin({
 			currentRangeUnit: currentInfo.unit,
 			activeRange: activeRange,
 			renderRange: renderRange,
+			minTime: minTime,
+			maxTime: maxTime,
 			isValid: isValid,
 			date: constrainedDate,
 			dateIncrement: this.buildDateIncrement(currentInfo.duration)
@@ -160,7 +174,7 @@ View.mixin({
 			range = this.buildRangeFromDuration(date, direction, duration, unit);
 		}
 
-		this.normalizeRange(range, unit); // modifies in-place
+		this.normalizeCurrentRange(range, unit); // modifies in-place
 
 		return { duration: duration, unit: unit, range: range };
 	},
@@ -172,7 +186,7 @@ View.mixin({
 
 
 	// If the range has day units or larger, remove times. Otherwise, ensure times.
-	normalizeRange: function(range, unit) {
+	normalizeCurrentRange: function(range, unit) {
 
 		if (/^(year|month|week|day)$/.test(unit)) { // whole-days?
 			range.start.stripTime();
@@ -184,6 +198,36 @@ View.mixin({
 			}
 			if (!range.end.hasTime()) {
 				range.end.time(0); // give 00:00 time
+			}
+		}
+	},
+
+
+	// Mutates the given activeRange to have time values (un-ambiguate)
+	// if the minTime or maxTime causes the range to expand.
+	// TODO: eventually activeRange should *always* have times.
+	adjustActiveRange: function(range, minTime, maxTime) {
+		var hasSpecialTimes = false;
+
+		if (this.usesMinMaxTime) {
+
+			if (minTime < 0) {
+				range.start.time(0).subtract(minTime);
+				hasSpecialTimes = true;
+			}
+
+			if (maxTime > 24 * 60 * 60 * 1000) { // beyond 24 hours?
+				range.end.time(maxTime - (24 * 60 * 60 * 1000));
+				hasSpecialTimes = true;
+			}
+
+			if (hasSpecialTimes) {
+				if (!range.start.hasTime()) {
+					range.start.time(0);
+				}
+				if (!range.end.hasTime()) {
+					range.end.time(0);
+				}
 			}
 		}
 	},

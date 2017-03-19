@@ -22,6 +22,9 @@ var AgendaView = FC.AgendaView = View.extend({
 	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
 	bottomRuleEl: null,
 
+	// indicates that minTime/maxTime affects rendering
+	usesMinMaxTime: true,
+
 
 	initialize: function() {
 		this.timeGrid = this.instantiateTimeGrid();
