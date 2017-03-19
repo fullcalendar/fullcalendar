@@ -1026,8 +1026,7 @@ Grid.mixin({
 	isEventLocationAllowed: function(eventLocation, event) {
 		if (this.isEventLocationInRange(eventLocation)) {
 			var calendar = this.view.calendar;
-			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
-			var eventSpans = this.eventRangeToSpans(eventRange, event);
+			var eventSpans = this.eventToSpans(eventLocation);
 			var i;
 
 			if (eventSpans.length) {
@@ -1048,8 +1047,7 @@ Grid.mixin({
 	isExternalLocationAllowed: function(eventLocation, metaProps) { // FOR the external element
 		if (this.isEventLocationInRange(eventLocation)) {
 			var calendar = this.view.calendar;
-			var eventRange = this.eventToRange(eventLocation); // result is assumed, since passed isEventLocationInRange
-			var eventSpans = this.eventRangeToSpans(eventRange, event);
+			var eventSpans = this.eventToSpans(eventLocation);
 			var i;
 
 			if (eventSpans.length) {
