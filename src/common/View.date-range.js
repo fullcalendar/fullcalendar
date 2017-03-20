@@ -212,7 +212,7 @@ View.mixin({
 		if (this.usesMinMaxTime) {
 
 			if (minTime < 0) {
-				range.start.time(0).subtract(minTime);
+				range.start.time(0).add(minTime);
 				hasSpecialTimes = true;
 			}
 
