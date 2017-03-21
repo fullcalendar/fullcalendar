@@ -1,4 +1,29 @@
 
+v3.3.0
+------
+
+Features:
+- `visibleRange` - complete control over view's date range (#2847, #3105, #3245)
+- `validRange` - restrict date range (#429)
+- `changeView` - pass in a date or visibleRange as second param (#3366)
+- `dateIncrement` - customize prev/next jump (#2710)
+- `dateAlignment` - custom view alignment, like start-of-week (#3113)
+- `dayCount` - force a fixed number-of-days, even with hiddenDays (#2753)
+- `disableNonCurrentDates` - option to hide day cells for prev/next months (#437)
+
+Behavior Changes:
+- when custom view is specified with duration `{days:7}`,
+  it will no longer align with the start of the week. (#2847)
+- when `gotoDate` is called on a custom view with a duration of multiple days,
+  the view will always shift to begin with the given date. (#3515)
+
+Bugfixes:
+- excessive `minTime`/`maxTime` not reflected in event fetching (#3514)
+	- note about timed-ness
+- event rendering when excessive `minTime`/`maxTime` (#2530)
+- event dragging not shown when excessive `minTime`/`maxTime` (#3055)
+
+
 v3.2.0 (2017-02-14)
 -------------------
 
