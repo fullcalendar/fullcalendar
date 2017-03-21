@@ -18,10 +18,11 @@ Behavior Changes:
   the view will always shift to begin with the given date. (#3515)
 
 Bugfixes:
-- excessive `minTime`/`maxTime` not reflected in event fetching (#3514)
-	- note about timed-ness
 - event rendering when excessive `minTime`/`maxTime` (#2530)
 - event dragging not shown when excessive `minTime`/`maxTime` (#3055)
+- excessive `minTime`/`maxTime` not reflected in event fetching (#3514)
+	- when minTime is negative, or maxTime beyond 24 hours, when event data is requested
+	  via a function or a feed, the given data params will have time parts.
 
 
 v3.2.0 (2017-02-14)
