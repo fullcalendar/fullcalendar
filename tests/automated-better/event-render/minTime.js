@@ -14,7 +14,7 @@ describe('event rendering with minTime', function() {
 			]
 		});
 
-		xit('renders two event elements in the correct places', function() {
+		it('renders two event elements in the correct places', function() {
 			initCalendar();
 			var res = TimeGridEventRenderUtils.checkEventRendering(
 				'2017-03-22T22:00:00',

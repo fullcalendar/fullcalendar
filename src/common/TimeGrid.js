@@ -280,10 +280,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var dayRange;
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
-			dayDate = this.dayDates[dayIndex].clone(); // TODO: better API for this?
+			dayDate = this.dayDates[dayIndex].clone().time(0); // TODO: better API for this?
 			dayRange = {
-				start: dayDate.clone().time(this.view.minTime),
-				end: dayDate.clone().time(this.view.maxTime)
+				start: dayDate.clone().add(this.view.minTime), // don't use .time() because it sux with negatives
+				end: dayDate.clone().add(this.view.maxTime)
 			};
 			seg = intersectRanges(range, dayRange); // both will be ambig timezone
 			if (seg) {
