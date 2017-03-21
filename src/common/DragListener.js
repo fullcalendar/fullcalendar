@@ -21,6 +21,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 	isDelayEnded: false,
 	isDragging: false,
 	isTouch: false,
+	isGeneric: false, // initiated by 'dragstart' (jqui)
 
 	delay: null,
 	delayTimeoutId: null,
@@ -40,7 +41,6 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 
 	startInteraction: function(ev, extraOptions) {
-		var isTouch = getEvIsTouch(ev);
 
 		if (ev.type === 'mousedown') {
 			if (GlobalEmitter.get().shouldIgnoreMouse()) {
@@ -65,7 +65,8 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 			preventSelection($('body'));
 
 			this.isInteracting = true;
-			this.isTouch = isTouch;
+			this.isTouch = getEvIsTouch(ev);
+			this.isGeneric = ev.type === 'dragstart';
 			this.isDelayEnded = false;
 			this.isDistanceSurpassed = false;
 
@@ -124,7 +125,13 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 		// so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
 		var globalEmitter = GlobalEmitter.get();
 
-		if (this.isTouch) {
+		if (this.isGeneric) {
+			this.listenTo($(document), { // might only work on iOS because of GlobalEmitter's bind :(
+				drag: this.handleMove,
+				dragstop: this.endInteraction
+			});
+		}
+		else if (this.isTouch) {
 			this.listenTo(globalEmitter, {
 				touchmove: this.handleTouchMove,
 				touchend: this.endInteraction,
@@ -147,6 +154,7 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, {
 
 	unbindHandlers: function() {
 		this.stopListeningTo(GlobalEmitter.get());
+		this.stopListeningTo($(document)); // for isGeneric
 	},
 
 
