@@ -1,9 +1,9 @@
 
-describe('disableNonCurrentDates event dragging', function() {
+describe('showNonCurrentDates event dragging', function() {
 	pushOptions({
 		defaultView: 'month',
 		defaultDate: '2017-06-01',
-		disableNonCurrentDates: true,
+		showNonCurrentDates: false,
 		events: [
 			{ start: '2017-06-07', end: '2017-06-10' }
 		],

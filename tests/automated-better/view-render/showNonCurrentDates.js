@@ -1,7 +1,7 @@
 
-describe('disableNonCurrentDates', function() {
+describe('showNonCurrentDates', function() {
 	pushOptions({
-		disableNonCurrentDates: true
+		showNonCurrentDates: false
 	});
 
 	describe('when in month view', function() {

@@ -107,7 +107,7 @@ View.mixin({
 		renderRange = this.buildRenderRange(currentInfo.range, currentInfo.unit);
 		activeRange = cloneRange(renderRange);
 
-		if (this.opt('disableNonCurrentDates')) {
+		if (!this.opt('showNonCurrentDates')) {
 			activeRange = constrainRange(activeRange, currentInfo.range);
 		}
 

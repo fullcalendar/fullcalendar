@@ -15,11 +15,11 @@ describe('events as a function', function() {
 		});
 	});
 
-	it('does not request dates excluded by disableNonCurrentDates', function(done) {
+	it('does not request dates excluded by showNonCurrentDates:false', function(done) {
 		initCalendar({
 			defaultView: 'month',
 			defaultDate: '2013-06-01',
-			disableNonCurrentDates: true,
+			showNonCurrentDates: false,
 			events: function(start, end, timezone, callback) {
 				expect(start).toEqualMoment('2013-06-01');
 				expect(end).toEqualMoment('2013-07-01');

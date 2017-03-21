@@ -9,7 +9,7 @@ Features:
 - `dateIncrement` - customize prev/next jump (#2710)
 - `dateAlignment` - custom view alignment, like start-of-week (#3113)
 - `dayCount` - force a fixed number-of-days, even with hiddenDays (#2753)
-- `disableNonCurrentDates` - option to hide day cells for prev/next months (#437)
+- `showNonCurrentDates` - option to hide day cells for prev/next months (#437)
 
 Behavior Changes:
 - when custom view is specified with duration `{days:7}`,
