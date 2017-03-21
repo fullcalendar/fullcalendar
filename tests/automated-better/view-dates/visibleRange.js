@@ -137,6 +137,24 @@ describe('visibleRange', function() {
 		});
 	});
 
+	describe('when a list view', function() {
+		pushOptions({
+			defaultView: 'list',
+			visibleRange: {
+				start: '2017-06-07',
+				end: '2017-06-10'
+			},
+			events: [
+				{ start: '2017-06-08' }
+			]
+		});
+
+		it('respects the given range', function() {
+			initCalendar();
+			ViewDateUtils.expectActiveRange('2017-06-07', '2017-06-10');
+		});
+	});
+
 	describe('when custom view with fixed duration', function() {
 		pushOptions({
 			defaultDate: '2015-06-08',
