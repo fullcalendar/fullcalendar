@@ -5,6 +5,7 @@ Views
 <ul>
 <li class='article'>Available Views</li>
 <li class='article'>Custom Views</li>
+<li class='article'>Generic Views</li>
 <li class='article'><a href='View-Specific-Options'>View-Specific Options</a></li>
 <li class='article'>View Object</li>
 <li>defaultView</li>

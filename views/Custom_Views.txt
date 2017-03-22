@@ -23,11 +23,13 @@ If you'd like to take one of the existing view types, like "basic" or "agenda", 
 		}
 	});
 
-We use the `views` option similar to how [View-Specific Options](View-Specific-Options) work but with the very important addition of the `type` property and the `duration` property (a [Duration]-ish object).
+We use the `views` option similar to how [View-Specific Options](View-Specific-Options) work but with the very important addition of the `type` property. Also, a date-range parameter is required, whether is be [duration](../current_date/duration/), [visibleRange](../current_date/visibleRange/), or [dayCount](../current_date/dayCount/).
 
 We have chosen `"agendaFourDay"` to be the name of our new custom view. It is advised to choose view names with the numbers spelled out like "four" instead of "4" because JavaScript disallows identifiers beginning with numbers, like "4day".
 
 Also, in the above example, `buttonText` has been used to customize the header button's text. Notice how it has been specified as a single string, as opposed to an object hash, the way it is done in the global options.
+
+If your calendar hosts only one custom view, a [Generic View](Generic_Views) is a simpler way to define it.
 
 
 Coding a View From Scratch

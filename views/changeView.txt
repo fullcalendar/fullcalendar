@@ -5,7 +5,23 @@ changeView
 Immediately switches to a different view.
 
 <div class='spec' markdown='1'>
-.fullCalendar( 'changeView', *viewName* )
+.fullCalendar( 'changeView', viewName, *dateOrRange* )
 </div>
 
 `viewName` must be a string value containing one of the [Available Views]().
+
+	$('#calendar').fullCalendar('changeView', 'agendaDay');
+
+If you'd like to navigate to a new date while simultaneously switching to a new view,
+you can specify a date parameter:
+
+	$('#calendar').fullCalendar('changeView', 'agendaDay', '2017-06-01');
+
+If you are using [Generic Views](Generic_Views), you can change the [visibleRange](../current_date/visibleRange/) in the same way:
+
+	$('#calendar').fullCalendar('changeView', 'agendaDay', {
+		start: '2017-06-01',
+		end: '2017-06-08'
+	});
+
+This date/visibleRange parameter was added in version 3.3.0.

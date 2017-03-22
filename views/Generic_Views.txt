@@ -1,0 +1,18 @@
+
+Generic Views *3.3.0*
+=====================
+
+A Generic View is similar to a [Custom View](Custom_View) in that it gives you
+complete control over the displayed date range. However, it is much simpler to define.
+
+When your calendar needs to display a *single* view with custom date range logic,
+you should use a Generic View instead:
+
+	$('#calendar').fullCalendar({
+		defaultView: 'timeline', // or 'agenda' or 'basic'
+
+		duration: { days: 3 }
+		// can also specify:
+		// - visibleRange
+		// - dayCount
+	});

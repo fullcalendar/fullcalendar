@@ -18,6 +18,7 @@ General Display
 <li>weekNumbersWithinDays</li>
 <li>weekNumberCalculation</li>
 <li>businessHours</li>
+<li>showNonCurrentDates</li>
 <li>height</li>
 <li>contentHeight</li>
 <li>aspectRatio</li>

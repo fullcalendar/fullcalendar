@@ -1,0 +1,35 @@
+
+duration *3.3.0*
+================
+
+Sets the exact duration of a Custom or Generic view.
+
+<div class="spec" markdown="1">
+[Duration](../utilities/Duration/)-ish object
+</div>
+
+Example for a [Custom View](../views/Custom_Views/):
+
+	$('#calendar').fullCalendar({
+		defaultView: 'agendaFourDay',
+		views: {
+			agendaFourDay: {
+				type: 'agenda',
+				duration: { days: 4 }
+			}
+		}
+	});
+
+Example for a [Generic View](../views/Generic_Views/):
+
+	$('#calendar').fullCalendar({
+		defaultView: 'agenda',
+		duration: { days: 4 }
+	});
+
+
+Special Case
+------------
+
+If the duration is specified like `{weeks:1}`, then the [dateAlignment]() will automatically
+default to start-of-week. However, if it is specified as `{days:7}`, then no such alignment will happen.

@@ -1,0 +1,24 @@
+
+showNonCurrentDates *3.3.0*
+===========================
+
+In month view, whether dates in the previous or next month should be rendered at all.
+
+<div class="spec" markdown="1">
+Boolean, default: `true`
+</div>
+
+When set to `false` in month view:
+
+<img src='../../../pages/docs/_images/showNonCurrentDates-false.png' width='456' height='365' style='margin:20px 0 20px 40px' />
+
+When set to `true` in month view (the default):
+
+<img src='../../../pages/docs/_images/showNonCurrentDates-true.png' width='455' height='363' style='margin:20px 0 20px 40px' />
+
+
+See Also
+--------
+
+To customize the number of week rows displayed in month view,
+see [fixedWeekCount](fixedWeekCount).

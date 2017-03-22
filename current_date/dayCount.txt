@@ -1,0 +1,35 @@
+
+dayCount *3.3.0*
+================
+
+Sets the exact number of days displayed in a Custom or Generic view, regardless of
+[weekends](../display/weekends/) or [hiddenDays](../display/hiddenDays/).
+
+<div class="spec" markdown="1">
+Integer
+</div>
+
+When a view's range is specified with a [duration](), hidden days will simply be omitted,
+and the view will stretch to fill the missing space. However, if you specify `dayCount`,
+you are guaranteed to see a certain number of days.
+
+Example for a [Custom View](../views/Custom_Views/):
+
+	$('#calendar').fullCalendar({
+		weekends: false,
+		defaultView: 'agendaFourDay',
+		views: {
+			agendaFourDay: {
+				type: 'agenda',
+				dayCount: 4
+			}
+		}
+	});
+
+Example for a [Generic View](../views/Generic_Views/):
+
+	$('#calendar').fullCalendar({
+		weekends: false,
+		defaultView: 'agenda',
+		dayCount: 4
+	});

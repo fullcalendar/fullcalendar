@@ -1,0 +1,17 @@
+
+dateIncrement *3.3.0*
+=====================
+
+How far into the future/past the calendar navigates when prev/next is executed.
+
+<div class="spec" markdown="1">
+[Duration](../utilities/Duration/)-ish object
+</div>
+
+Determines how far the calendar will jump when the user presses the prev/next buttons
+in the [header](../display/header/) or when the [prev](../current_date/prev/) or [next](../current_date/next/) methods are executed.
+
+When using a [Standard View](../views/Available_Views/), it is unnecessary to specify `dateIncrement`.
+
+When using a [Custom View](../views/Custom_Views/) or [Generic View](../views/Generic_Views/) with a specified `duration`,
+the `duration` value will be the default for `dateIncrement`.

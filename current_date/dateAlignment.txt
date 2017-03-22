@@ -1,0 +1,17 @@
+
+dateAlignment *3.3.0*
+=====================
+
+Determines the first visible day for a Custom or Generic view.
+
+<div class="spec" markdown="1">
+String
+</div>
+
+When a [Custom View](../views/Custom_Views) or [Generic View](../views/Generic_Views) is being used, and you'd like to guarantee
+that the view begins at a certain interval, like the start-of-week or start-of-month,
+specify a value like `"week"` or `"month"`.
+
+If not specified, a reasonable default will be generated based on the view's duration.
+
+If a view's range is explicity defined with [visibleRange](), `dateAlignment` will be ignored.

@@ -5,6 +5,12 @@ Current Date
 <ul>
 <li>defaultDate</li>
 <li>nowIndicator</li>
+<li>visibleRange</li>
+<li>validRange</li>
+<li>dateIncrement</li>
+<li>dateAlignment</li>
+<li>duration</li>
+<li>dayCount</li>
 <li class='method'><a href='prev'>prev (method)</a></li>
 <li class='method'><a href='next'>next (method)</a></li>
 <li class='method'><a href='prevYear'>prevYear (method)</a></li>
