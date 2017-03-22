@@ -1109,16 +1109,13 @@ Grid.mixin({
 		var segs = [];
 
 		$.each(eventsById, function(id, events) {
-			var eventRanges = [];
-			var eventRange; // { start, end, isStart, isEnd }
+			var eventRanges = []; // array of { start, end, isStart, isEnd }
 			var i;
 
 			for (i = 0; i < events.length; i++) {
-				eventRange = _this.eventToRange(events[i]);
-
-				if (eventRange) { // otherwise, out of view's valid range
-					eventRanges.push(eventRange);
-				}
+				eventRanges.push(
+					_this.eventToRange(events[i]) || null // null means out of view's valid range
+				);
 			}
 
 			// inverse-background events (utilize only the first event in calculations)
@@ -1134,9 +1131,11 @@ Grid.mixin({
 			// normal event ranges
 			else {
 				for (i = 0; i < eventRanges.length; i++) {
-					segs.push.apply(segs, // append to
-						_this.eventRangeToSegs(eventRanges[i], events[i], segSliceFunc)
-					);
+					if (eventRanges[i]) { // could be null if completely out of view
+						segs.push.apply(segs, // append to
+							_this.eventRangeToSegs(eventRanges[i], events[i], segSliceFunc)
+						);
+					}
 				}
 			}
 		});
