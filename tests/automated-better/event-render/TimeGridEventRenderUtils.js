@@ -95,7 +95,9 @@ var TimeGridEventRenderUtils = {
 							left: dayStruct.left,
 							right: dayStruct.right,
 							top: startTop,
-							bottom: endTop
+							bottom: endTop,
+							width: dayStruct.right - dayStruct.left,
+							height: endTop - startTop
 						});
 						startTop = null;
 					}
@@ -107,7 +109,9 @@ var TimeGridEventRenderUtils = {
 					left: dayStruct.left,
 					right: dayStruct.right,
 					top: startTop,
-					bottom: slotStruct.bottom
+					bottom: slotStruct.bottom,
+					width: dayStruct.right - dayStruct.left,
+					height: slotStruct.bottom - startTop
 				});
 				startTop = slotStructs[0].top; // top of next column
 			}
