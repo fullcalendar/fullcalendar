@@ -24,6 +24,8 @@ Bugfixes:
 	- when minTime is negative, or maxTime beyond 24 hours, when event data is requested
 	  via a function or a feed, the given data params will have time parts.
 - external event dragging via touchpunch broken (#3544)
+- can't make an immediate new selection after existing selection, with mouse.
+  introduced in v3.2.0 (#3558)
 
 
 v3.2.0 (2017-02-14)
