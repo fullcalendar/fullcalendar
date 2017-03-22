@@ -291,9 +291,9 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	dayMousedown: function(ev) {
 		var view = this.view;
 
-		// prevent a user's clickaway for unselecting a range or an event from
-		// causing a dayClick or starting an immediate new selection.
-		if (view.isSelected || view.selectedEvent) {
+		// HACK
+		// This will still work even though bindDayHandler doesn't use GlobalEmitter.
+		if (GlobalEmitter.get().shouldIgnoreMouse()) {
 			return;
 		}
 
@@ -311,8 +311,10 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		var view = this.view;
 		var selectLongPressDelay;
 
-		// prevent a user's clickaway for unselecting a range or an event from
-		// causing a dayClick or starting an immediate new selection.
+		// On iOS (and Android?) when a new selection is initiated overtop another selection,
+		// the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
+		// HACK: simply don't allow this to happen.
+		// ALSO: prevent selection when an *event* is already raised.
 		if (view.isSelected || view.selectedEvent) {
 			return;
 		}
