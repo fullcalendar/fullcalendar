@@ -10,6 +10,8 @@ Features:
 - `dateAlignment` - custom view alignment, like start-of-week (#3113)
 - `dayCount` - force a fixed number-of-days, even with hiddenDays (#2753)
 - `showNonCurrentDates` - option to hide day cells for prev/next months (#437)
+- can define a defaultView with a duration/visibleRange/dayCount with needing
+  to create a custom view in the `views` object. Known as a "Generic View".
 
 Behavior Changes:
 - when custom view is specified with duration `{days:7}`,
