@@ -104,7 +104,6 @@ describe('visibleRange', function() {
 					timezone: 'UTC',
 					defaultDate: defaultDateInput,
 					visibleRange: function(date) {
-						console.log(date.format());
 						// this function will receive the date for prev/next,
 						// which should be ignored. make sure just one call matches.
 						if (date.format() === defaultDateInput + 'Z') {
