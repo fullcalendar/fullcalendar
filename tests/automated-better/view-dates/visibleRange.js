@@ -78,8 +78,9 @@ describe('visibleRange', function() {
 		});
 
 		describe('when a function', function() {
-			it('receives the calendar\'s defaultDate', function() {
-				var defaultDateInput = '2017-06-08T12:30:00';
+			var defaultDateInput = '2017-06-08T12:30:00';
+
+			it('receives the calendar\'s defaultDate, timezoneless', function() {
 				var matched = false;
 
 				initCalendar({
@@ -94,6 +95,35 @@ describe('visibleRange', function() {
 				});
 
 				expect(matched).toBe(true);
+			});
+
+			it('receives the calendar\'s defaultDate, with UTC timezone', function() {
+				var matched = false;
+
+				initCalendar({
+					timezone: 'UTC',
+					defaultDate: defaultDateInput,
+					visibleRange: function(date) {
+						console.log(date.format());
+						// this function will receive the date for prev/next,
+						// which should be ignored. make sure just one call matches.
+						if (date.format() === defaultDateInput + 'Z') {
+							matched = true;
+						}
+					}
+				});
+
+				expect(matched).toBe(true);
+			});
+
+			it('does not cause side effects when given date is mutated', function() {
+				initCalendar({
+					defaultDate: defaultDateInput,
+					visibleRange: function(date) {
+						date.add(1, 'year');
+					}
+				});
+				expect(currentCalendar.getDate()).toEqualMoment(defaultDateInput);
 			});
 		});
 

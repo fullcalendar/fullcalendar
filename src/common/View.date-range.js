@@ -284,7 +284,10 @@ View.mixin({
 	// Builds a normalized range object for the "visible" range,
 	// which is a way to define the currentRange and activeRange at the same time.
 	buildCustomVisibleRange: function(date) {
-		var visibleRange = this.getRangeOption('visibleRange', date);
+		var visibleRange = this.getRangeOption(
+			'visibleRange',
+			this.calendar.moment(date) // correct zone. also generates new obj that avoids mutations
+		);
 
 		if (visibleRange && (!visibleRange.start || !visibleRange.end)) {
 			return null;
@@ -340,7 +343,9 @@ View.mixin({
 	},
 
 
-	// arguments after name will be forwarded to a hypothetical function value
+	// Arguments after name will be forwarded to a hypothetical function value
+	// WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
+	// Always clone your objects if you fear mutation.
 	getRangeOption: function(name) {
 		var val = this.opt(name);
 
