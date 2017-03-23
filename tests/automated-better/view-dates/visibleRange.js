@@ -64,6 +64,17 @@ describe('visibleRange', function() {
 				});
 				ViewDateUtils.expectActiveRange(startInput, endInput);
 			});
+
+			it('works as a dynamic option', function() {
+				initCalendar({
+					defaultView: 'basic'
+				});
+				currentCalendar.option('visibleRange', {
+					start: startInput,
+					end: endInput
+				});
+				ViewDateUtils.expectActiveRange(startInput, endInput);
+			});
 		});
 
 		describe('when a function', function() {
