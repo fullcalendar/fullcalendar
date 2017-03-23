@@ -97,6 +97,16 @@ describe('validRange', function() {
 				ViewDateUtils.expectRenderRange('2017-06-04', '2017-06-11');
 				ViewDateUtils.expectActiveRange('2017-06-06', '2017-06-11');
 			});
+
+			it('does not cause side effects when given date is mutated', function() {
+				initCalendar({
+					now: '2018-06-09T06:00:00',
+					validRange: function(nowDate) {
+						nowDate.add(2, 'years');
+					}
+				});
+				expect(currentCalendar.getNow().year()).toBe(2018);
+			});
 		});
 	});
 
