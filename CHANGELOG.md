@@ -1,6 +1,6 @@
 
-v3.3.0
-------
+v3.3.0 (2017-03-23)
+-------------------
 
 Features:
 - `visibleRange` - complete control over view's date range (#2847, #3105, #3245)
