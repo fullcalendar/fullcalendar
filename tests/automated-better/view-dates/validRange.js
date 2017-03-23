@@ -58,10 +58,9 @@ describe('validRange', function() {
 		});
 
 		describe('when validRange is a function', function() {
+			var nowInput = '2017-06-09T06:00:00';
 
-			it('receives the nowDate', function() {
-				var nowInput = '2017-06-09T06:00:00';
-
+			it('receives the nowDate, timezoneless', function() {
 				var validRangeSpy = spyOnCalendarCallback('validRange', function(date) {
 					expect(moment.isMoment(date)).toBe(true);
 					expect(date).toEqualMoment(nowInput);
@@ -73,6 +72,20 @@ describe('validRange', function() {
 
 				expect(validRangeSpy).toHaveBeenCalled();
 			});
+
+			/* getNow() always returns ambig zone for some reason. intentional?
+			xit('receives the nowDate, with UTC timezone', function() {
+				var validRangeSpy = spyOnCalendarCallback('validRange', function(date) {
+					expect(date).toEqualMoment(nowInput + 'Z');
+				});
+
+				initCalendar({
+					timezone: 'UTC',
+					now: nowInput
+				});
+
+				expect(validRangeSpy).toHaveBeenCalled();
+			});*/
 
 			it('can return a range object with strings', function() {
 				var validRangeSpy = spyOnCalendarCallback('validRange', function() {
@@ -100,12 +113,12 @@ describe('validRange', function() {
 
 			it('does not cause side effects when given date is mutated', function() {
 				initCalendar({
-					now: '2018-06-09T06:00:00',
+					now: nowInput,
 					validRange: function(nowDate) {
 						nowDate.add(2, 'years');
 					}
 				});
-				expect(currentCalendar.getNow().year()).toBe(2018);
+				expect(currentCalendar.getNow().year()).toBe(2017);
 			});
 		});
 	});
