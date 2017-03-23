@@ -8,6 +8,8 @@ In month view, whether dates in the previous or next month should be rendered at
 Boolean, default: `true`
 </div>
 
+Days that are disabled will not render events.
+
 When set to `false` in month view:
 
 <img src='../../../pages/docs/_images/showNonCurrentDates-false.png' width='456' height='365' style='margin:20px 0 20px 40px' />
