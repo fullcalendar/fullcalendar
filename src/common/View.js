@@ -362,6 +362,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 			rangeChanged = _this.setRangeFromDate(date);
 		}
 
+		this.updateTitle();
+		this.calendar.updateToolbarButtons();
+
 		if (!date || rangeChanged || !_this.isDateRendered) { // should render?
 
 			// if rendering a new date, reset scroll to initial state (scrollTime)

@@ -64,9 +64,6 @@ View.mixin({
 			this.intervalStart = rangeInfo.currentRange.start;
 			this.intervalEnd = rangeInfo.currentRange.end;
 
-			this.updateTitle();
-			this.calendar.updateToolbarButtons();
-
 			return true;
 		}
 
