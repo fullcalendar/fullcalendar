@@ -39,50 +39,50 @@ View.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	isRangeInfoSame: function(rangeInfo) {
-		return this.activeRange && isRangesEqual(this.activeRange, rangeInfo.activeRange);
+	isSameDateProfile: function(dateProfile) {
+		return this.activeRange && isRangesEqual(this.activeRange, dateProfile.activeRange);
 	},
 
 
-	setRangeInfo: function(rangeInfo) {
-		this.currentRange = rangeInfo.currentRange;
-		this.currentRangeUnit = rangeInfo.currentRangeUnit;
-		this.renderRange = rangeInfo.renderRange;
-		this.activeRange = rangeInfo.activeRange;
-		this.validRange = rangeInfo.validRange;
-		this.dateIncrement = rangeInfo.dateIncrement;
-		this.currentDate = rangeInfo.date;
-		this.minTime = rangeInfo.minTime;
-		this.maxTime = rangeInfo.maxTime;
+	setDateProfile: function(dateProfile) {
+		this.currentRange = dateProfile.currentRange;
+		this.currentRangeUnit = dateProfile.currentRangeUnit;
+		this.renderRange = dateProfile.renderRange;
+		this.activeRange = dateProfile.activeRange;
+		this.validRange = dateProfile.validRange;
+		this.dateIncrement = dateProfile.dateIncrement;
+		this.currentDate = dateProfile.date;
+		this.minTime = dateProfile.minTime;
+		this.maxTime = dateProfile.maxTime;
 
 		// DEPRECATED, but we need to keep it updated
-		this.start = rangeInfo.activeRange.start;
-		this.end = rangeInfo.activeRange.end;
-		this.intervalStart = rangeInfo.currentRange.start;
-		this.intervalEnd = rangeInfo.currentRange.end;
+		this.start = dateProfile.activeRange.start;
+		this.end = dateProfile.activeRange.end;
+		this.intervalStart = dateProfile.currentRange.start;
+		this.intervalEnd = dateProfile.currentRange.end;
 	},
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "prev" view.
-	buildPrevRangeInfo: function(date) {
+	buildPrevDateProfile: function(date) {
 		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
 
-		return this.buildRangeInfo(prevDate, -1);
+		return this.buildDateProfile(prevDate, -1);
 	},
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "next" view.
-	buildNextRangeInfo: function(date) {
+	buildNextDateProfile: function(date) {
 		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
 
-		return this.buildRangeInfo(nextDate, 1);
+		return this.buildDateProfile(nextDate, 1);
 	},
 
 
 	// Builds a structure holding dates/ranges for rendering around the given date.
 	// Optional direction param indicates whether the date is being incremented/decremented
 	// from its previous value. decremented = -1, incremented = 1 (default).
-	buildRangeInfo: function(givenDate, direction) {
+	buildDateProfile: function(givenDate, direction) {
 		var validRange = this.buildValidRange();
 		var constrainedDate = constrainDate(givenDate, validRange);
 		var minTime = null;
@@ -137,7 +137,7 @@ View.mixin({
 
 	// Builds a structure with info about the "current" range, the range that is
 	// highlighted as being the current month for example.
-	// See buildRangeInfo for a description of `direction`.
+	// See buildDateProfile for a description of `direction`.
 	// Guaranteed to have `range` and `unit` properties. `duration` is optional.
 	buildCurrentRangeInfo: function(date, direction) {
 		var duration = null;

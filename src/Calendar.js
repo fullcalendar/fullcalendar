@@ -310,7 +310,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 
 	prev: function() {
-		var prevInfo = this.view.buildPrevRangeInfo(this.currentDate);
+		var prevInfo = this.view.buildPrevDateProfile(this.currentDate);
 
 		if (prevInfo.isValid) {
 			this.currentDate = prevInfo.date;
@@ -320,7 +320,7 @@ var Calendar = FC.Calendar = Class.extend({
 
 
 	next: function() {
-		var nextInfo = this.view.buildNextRangeInfo(this.currentDate);
+		var nextInfo = this.view.buildNextDateProfile(this.currentDate);
 
 		if (nextInfo.isValid) {
 			this.currentDate = nextInfo.date;
@@ -980,9 +980,9 @@ function Calendar_constructor(element, overrides) {
 
 	t.updateToolbarButtons = function() {
 		var now = t.getNow();
-		var todayInfo = currentView.buildRangeInfo(now);
-		var prevInfo = currentView.buildPrevRangeInfo(t.currentDate);
-		var nextInfo = currentView.buildNextRangeInfo(t.currentDate);
+		var todayInfo = currentView.buildDateProfile(now);
+		var prevInfo = currentView.buildPrevDateProfile(t.currentDate);
+		var nextInfo = currentView.buildNextDateProfile(t.currentDate);
 
 		toolbarsManager.proxyCall(
 			(todayInfo.isValid && !isDateWithinRange(now, currentView.currentRange)) ?
