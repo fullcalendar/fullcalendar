@@ -310,9 +310,9 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	handleDate: function(date) {
-		var dateProfile = this.buildRangeInfo(date); // TODO: rename
+		var dateProfile = this.buildDateProfile(date);
 
-		if (!this.isRangeInfoSame(dateProfile)) { // TODO: rename
+		if (!this.isSameDateProfile(dateProfile)) {
 			this.handleDateChange(dateProfile);
 		}
 	},
@@ -323,7 +323,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.unbindEvents(); // will do nothing if not already bound
 		this.requestDateRender(dateProfile).then(function() {
-			// wish we could start earlier, but setRangeInfo needs to execute first
+			// wish we could start earlier, but setDateProfile needs to execute first
 			_this.bindEvents(); // will request events
 		});
 	},
@@ -367,7 +367,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var _this = this;
 
 		if (dateProfile) {
-			_this.setRangeInfo(dateProfile); // TODO: rename
+			_this.setDateProfile(dateProfile);
 		}
 
 		this.updateTitle();
