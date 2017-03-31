@@ -310,11 +310,20 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	handleDate: function(date, isReset) {
+		var dateProfile = this.buildRangeInfo(date); // TODO: rename
+
+		if (!this.isRangeInfoSame(dateProfile)) { // TODO: rename
+			this.handleDateChange(dateProfile);
+		}
+	},
+
+
+	handleDateChange: function(dateProfile) {
 		var _this = this;
 
 		this.unbindEvents(); // will do nothing if not already bound
-		this.requestDateRender(date).then(function() {
-			// wish we could start earlier, but setRangeFromDate needs to execute first
+		this.requestDateRender(dateProfile).then(function() {
+			// wish we could start earlier, but setRangeInfo needs to execute first
 			_this.bindEvents(); // will request events
 		});
 	},
@@ -330,12 +339,12 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// if date not specified, uses current
-	requestDateRender: function(date) {
+	// if dateProfile not specified, uses current
+	requestDateRender: function(dateProfile) {
 		var _this = this;
 
 		return this.dateRenderQueue.add(function() {
-			return _this.executeDateRender(date);
+			return _this.executeDateRender(dateProfile);
 		});
 	},
 
@@ -353,22 +362,21 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// if date not specified, uses current
-	executeDateRender: function(date) {
+	// if dateProfile not specified, uses current
+	executeDateRender: function(dateProfile) {
 		var _this = this;
-		var rangeChanged = false;
 
-		if (date) {
-			rangeChanged = _this.setRangeFromDate(date);
+		if (dateProfile) {
+			_this.setRangeInfo(dateProfile); // TODO: rename
 		}
 
 		this.updateTitle();
 		this.calendar.updateToolbarButtons();
 
-		if (!date || rangeChanged || !_this.isDateRendered) { // should render?
+		if (!dateProfile || !_this.isDateRendered) { // should render?
 
 			// if rendering a new date, reset scroll to initial state (scrollTime)
-			if (date) {
+			if (dateProfile) {
 				this.captureInitialScroll();
 			}
 			else {
