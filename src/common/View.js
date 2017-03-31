@@ -312,7 +312,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	handleDate: function(date) {
 		var dateProfile = this.buildDateProfile(date);
 
-		if (!this.isSameDateProfile(dateProfile)) {
+		if (!this.isDateRendered || !this.isSameDateProfile(dateProfile)) {
 			this.handleDateChange(dateProfile);
 		}
 	},
@@ -373,41 +373,35 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		this.updateTitle();
 		this.calendar.updateToolbarButtons();
 
-		if (!dateProfile || !_this.isDateRendered) { // should render?
-
-			// if rendering a new date, reset scroll to initial state (scrollTime)
-			if (dateProfile) {
-				this.captureInitialScroll();
-			}
-			else {
-				this.captureScroll(); // a rerender of the current date
-			}
-
-			this.freezeHeight();
-
-			// potential issue: date-unrendering will happen with the *new* range
-			return this.executeDateUnrender().then(function() {
-
-				if (_this.render) {
-					_this.render(); // TODO: deprecate
-				}
-
-				_this.renderDates();
-				_this.updateSize();
-				_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
-				_this.startNowIndicator();
-
-				_this.thawHeight();
-				_this.releaseScroll();
-
-				_this.isDateRendered = true;
-				_this.onDateRender();
-				_this.trigger('dateRender');
-			});
+		// if rendering a new date, reset scroll to initial state (scrollTime)
+		if (dateProfile) {
+			this.captureInitialScroll();
 		}
 		else {
-			return Promise.resolve();
+			this.captureScroll(); // a rerender of the current date
 		}
+
+		this.freezeHeight();
+
+		// potential issue: date-unrendering will happen with the *new* range
+		return this.executeDateUnrender().then(function() {
+
+			if (_this.render) {
+				_this.render(); // TODO: deprecate
+			}
+
+			_this.renderDates();
+			_this.updateSize();
+			_this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
+			_this.startNowIndicator();
+
+			_this.thawHeight();
+			_this.releaseScroll();
+
+			_this.isDateRendered = true;
+			_this.onDateRender();
+			_this.trigger('dateRender');
+		});
 	},
 
 
