@@ -291,7 +291,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var isReset = this.isDateSet;
 
 		this.isDateSet = true;
-		this.handleDate(date, isReset);
+		this.handleDate(date);
 		this.trigger(isReset ? 'dateReset' : 'dateSet', date);
 	},
 
@@ -309,7 +309,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleDate: function(date, isReset) {
+	handleDate: function(date) {
 		var dateProfile = this.buildRangeInfo(date); // TODO: rename
 
 		if (!this.isRangeInfoSame(dateProfile)) { // TODO: rename
