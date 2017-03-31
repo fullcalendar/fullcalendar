@@ -39,35 +39,27 @@ View.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Updates all internal dates/ranges for eventual rendering around the given date.
-	// Returns a boolean about whether there was some sort of change.
-	setRangeFromDate: function(date) {
+	isRangeInfoSame: function(rangeInfo) {
+		return this.activeRange && isRangesEqual(this.activeRange, rangeInfo.activeRange);
+	},
 
-		var rangeInfo = this.buildRangeInfo(date);
 
-		// some sort of change? (TODO: compare other ranges too?)
-		if (!this.activeRange || !isRangesEqual(this.activeRange, rangeInfo.activeRange)) {
+	setRangeInfo: function(rangeInfo) {
+		this.currentRange = rangeInfo.currentRange;
+		this.currentRangeUnit = rangeInfo.currentRangeUnit;
+		this.renderRange = rangeInfo.renderRange;
+		this.activeRange = rangeInfo.activeRange;
+		this.validRange = rangeInfo.validRange;
+		this.dateIncrement = rangeInfo.dateIncrement;
+		this.currentDate = rangeInfo.date;
+		this.minTime = rangeInfo.minTime;
+		this.maxTime = rangeInfo.maxTime;
 
-			this.currentRange = rangeInfo.currentRange;
-			this.currentRangeUnit = rangeInfo.currentRangeUnit;
-			this.renderRange = rangeInfo.renderRange;
-			this.activeRange = rangeInfo.activeRange;
-			this.validRange = rangeInfo.validRange;
-			this.dateIncrement = rangeInfo.dateIncrement;
-			this.currentDate = rangeInfo.date;
-			this.minTime = rangeInfo.minTime;
-			this.maxTime = rangeInfo.maxTime;
-
-			// DEPRECATED, but we need to keep it updated
-			this.start = rangeInfo.activeRange.start;
-			this.end = rangeInfo.activeRange.end;
-			this.intervalStart = rangeInfo.currentRange.start;
-			this.intervalEnd = rangeInfo.currentRange.end;
-
-			return true;
-		}
-
-		return false;
+		// DEPRECATED, but we need to keep it updated
+		this.start = rangeInfo.activeRange.start;
+		this.end = rangeInfo.activeRange.end;
+		this.intervalStart = rangeInfo.currentRange.start;
+		this.intervalEnd = rangeInfo.currentRange.end;
 	},
 
 
