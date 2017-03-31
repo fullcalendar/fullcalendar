@@ -108,7 +108,7 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							Math.round(subjectBounds.right) <= Math.round(otherBounds.left)
+							Math.round(subjectBounds.right) <= Math.round(otherBounds.left) + 2
 							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
@@ -125,7 +125,7 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							Math.round(subjectBounds.left) >= Math.round(otherBounds.right)
+							Math.round(subjectBounds.left) >= Math.round(otherBounds.right) - 2
 							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
@@ -142,7 +142,7 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							Math.round(subjectBounds.bottom) <= Math.round(otherBounds.top)
+							Math.round(subjectBounds.bottom) <= Math.round(otherBounds.top) + 2
 							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
@@ -159,7 +159,7 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							Math.round(subjectBounds.top) >= Math.round(otherBounds.bottom)
+							Math.round(subjectBounds.top) >= Math.round(otherBounds.bottom) - 2
 							// need to round because IE was giving weird fractions
 					};
 					if (!result.pass) {
