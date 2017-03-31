@@ -17,16 +17,15 @@ function getStockScrollbarWidths(dir) {
 		})
 		.appendTo('body');
 
+	var elRect = el[0].getBoundingClientRect();
 	var innerEl = el.children();
-	var width = el.width();
-	var height = el.height();
-	var offset = el.offset();
-	var innerOffset = innerEl.offset();
+	var innerElRect = innerEl[0].getBoundingClientRect();
+
 	var girths = {
-		left: innerOffset.left - offset.left,
-		right: offset.left + width - innerOffset.left,
-		top: innerOffset.top - offset.top,
-		bottom: offset.top + height - innerOffset.top
+		left: innerElRect.left - elRect.left,
+		right: elRect.left + elRect.width - innerElRect.left,
+		top: innerElRect.top - elRect.top,
+		bottom: elRect.top + elRect.height - innerElRect.top
 	};
 
 	el.remove();

@@ -199,6 +199,7 @@ function getOuterRect(el, origin) {
 // Queries the area within the margin/border/scrollbars of a jQuery element. Does not go within the padding.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
+// WARNING: given element can't have borders
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
 function getClientRect(el, origin) {
 	var offset = el.offset();
@@ -235,10 +236,11 @@ function getContentRect(el, origin) {
 
 
 // Returns the computed left/right/top/bottom scrollbar widths for the given jQuery element.
+// WARNING: given element can't have borders (which will cause offsetWidth/offsetHeight to be larger).
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
 function getScrollbarWidths(el) {
-	var leftRightWidth = el.innerWidth() - el[0].clientWidth; // the paddings cancel out, leaving the scrollbars
-	var bottomWidth = el.innerHeight() - el[0].clientHeight; // "
+	var leftRightWidth = el[0].offsetWidth - el[0].clientWidth;
+	var bottomWidth = el[0].offsetHeight - el[0].clientHeight;
 	var widths;
 
 	leftRightWidth = sanitizeScrollbarWidth(leftRightWidth);
