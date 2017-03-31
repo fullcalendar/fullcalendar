@@ -54,7 +54,7 @@ describe('events as a function', function() {
 		});
 	});
 
-	/*it('works with a subsequent gotoDate', function(done) {
+	it('works with a subsequent gotoDate', function(done) {
 		initCalendar({
 			defaultView: 'month',
 			defaultDate: '2017-03-30',
@@ -64,12 +64,12 @@ describe('events as a function', function() {
 						title: 'test',
 						start: '2017-03-15'
 					}]);
-					setTimeout(function() {
+					setTimeout(function() { // can simplify?
 						done();
 					}, 1000);
 				}, 1000);
 			}
 		});
 		currentCalendar.gotoDate('2017-03-01');
-	});*/
+	});
 });
