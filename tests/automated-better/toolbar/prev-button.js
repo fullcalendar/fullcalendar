@@ -41,4 +41,16 @@ describe('prev button', function() {
 			ToolbarUtils.expectButtonEnabled('prev', false);
 		});
 	});
+
+	describe('when day before current day is a hidden day', function() {
+		pushOptions({
+			defaultDate: '2017-03-27',
+			defaultView: 'basicDay',
+			weekends: false
+		});
+		it('is enabled', function() {
+			initCalendar();
+			ToolbarUtils.expectButtonEnabled('prev', true);
+		});
+	});
 });

@@ -48,4 +48,16 @@ describe('next button', function() {
 			ToolbarUtils.expectButtonEnabled('next', false);
 		});
 	});
+
+	describe('when day after current day is a hidden day', function() {
+		pushOptions({
+			defaultDate: '2017-03-31',
+			defaultView: 'basicDay',
+			weekends: false
+		});
+		it('is enabled', function() {
+			initCalendar();
+			ToolbarUtils.expectButtonEnabled('next', true);
+		});
+	});
 });
