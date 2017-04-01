@@ -4,7 +4,7 @@ var FC = $.fullCalendar = {
 	// When introducing internal API incompatibilities (where fullcalendar plugins would break),
 	// the minor version of the calendar should be upped (ex: 2.7.2 -> 2.8.0)
 	// and the below integer should be incremented.
-	internalApiVersion: 8
+	internalApiVersion: 9
 };
 var fcViews = FC.views = {};
 
