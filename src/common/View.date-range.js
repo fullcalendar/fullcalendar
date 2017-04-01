@@ -227,11 +227,11 @@ View.mixin({
 	// Builds the "current" range when it is specified as an explicit duration.
 	// `unit` is the already-computed computeGreatestUnit value of duration.
 	buildRangeFromDuration: function(date, direction, duration, unit) {
-		var customAlignment = this.opt('dateAlignment');
-		var customIncrementInput = this.opt('dateIncrement');
-		var customIncrementUnit;
+		var alignment = this.opt('dateAlignment');
 		var start = date.clone();
 		var end;
+		var dateIncrementInput;
+		var dateIncrementDuration;
 
 		// if the view displays a single day or smaller
 		if (duration.as('days') <= 1) {
@@ -241,14 +241,27 @@ View.mixin({
 			}
 		}
 
-		if (customIncrementInput) {
-			customIncrementUnit = computeDurationGreatestUnit(
-				moment.duration(customIncrementInput),
-				customIncrementInput
-			);
+		// compute what the alignment should be
+		if (!alignment) {
+			dateIncrementInput = this.opt('dateIncrement');
+
+			if (dateIncrementInput) {
+				dateIncrementDuration = moment.duration(dateIncrementInput);
+
+				// use the smaller of the two units
+				if (dateIncrementDuration < duration) {
+					alignment = computeDurationGreatestUnit(dateIncrementDuration, dateIncrementInput);
+				}
+				else {
+					alignment = unit;
+				}
+			}
+			else {
+				alignment = unit;
+			}
 		}
 
-		start.startOf(customAlignment || customIncrementUnit || unit);
+		start.startOf(alignment);
 		end = start.clone().add(duration);
 
 		return { start: start, end: end };
