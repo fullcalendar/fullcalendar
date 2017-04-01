@@ -311,7 +311,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 
 	handleRawDate: function(date) {
 		var _this = this;
-		var dateProfile = this.buildDateProfile(date);
+		var dateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
 
 		if (!this.isSameDateProfile(dateProfile)) { // real change
 			this.handleDate(dateProfile);

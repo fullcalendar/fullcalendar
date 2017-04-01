@@ -82,9 +82,8 @@ View.mixin({
 	// Builds a structure holding dates/ranges for rendering around the given date.
 	// Optional direction param indicates whether the date is being incremented/decremented
 	// from its previous value. decremented = -1, incremented = 1 (default).
-	buildDateProfile: function(givenDate, direction) {
+	buildDateProfile: function(date, direction, forceToValid) {
 		var validRange = this.buildValidRange();
-		var constrainedDate = constrainDate(givenDate, validRange);
 		var minTime = null;
 		var maxTime = null;
 		var currentInfo;
@@ -92,7 +91,11 @@ View.mixin({
 		var activeRange;
 		var isValid;
 
-		currentInfo = this.buildCurrentRangeInfo(constrainedDate, direction);
+		if (forceToValid) {
+			date = constrainDate(date, validRange);
+		}
+
+		currentInfo = this.buildCurrentRangeInfo(date, direction);
 		renderRange = this.buildRenderRange(currentInfo.range, currentInfo.unit);
 		activeRange = cloneRange(renderRange);
 
@@ -105,12 +108,11 @@ View.mixin({
 		this.adjustActiveRange(activeRange, minTime, maxTime);
 
 		activeRange = constrainRange(activeRange, validRange);
-		constrainedDate = constrainDate(constrainedDate, activeRange);
+		date = constrainDate(date, activeRange);
 
 		// it's invalid if the originally requested date is not contained,
 		// or if the range is completely outside of the valid range.
-		isValid = isDateWithinRange(givenDate, currentInfo.range) &&
-			doRangesIntersect(currentInfo.range, validRange);
+		isValid = doRangesIntersect(currentInfo.range, validRange);
 
 		return {
 			validRange: validRange,
@@ -121,7 +123,7 @@ View.mixin({
 			minTime: minTime,
 			maxTime: maxTime,
 			isValid: isValid,
-			date: constrainedDate,
+			date: date,
 			dateIncrement: this.buildDateIncrement(currentInfo.duration)
 				// pass a fallback (might be null) ^
 		};
