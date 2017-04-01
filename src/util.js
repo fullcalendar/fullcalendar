@@ -604,6 +604,19 @@ function computeGreatestUnit(start, end) {
 }
 
 
+// like computeGreatestUnit, but has special abilities to interpret the source input for clues
+function computeDurationGreatestUnit(duration, durationInput) {
+	var unit = computeGreatestUnit(duration);
+
+	// prevent days:7 from being interpreted as a week
+	if (unit === 'week' && typeof durationInput === 'object' && durationInput.days) {
+		unit = 'day';
+	}
+
+	return unit;
+}
+
+
 // Computes the number of units (like "hours") in the given range.
 // Range can be a {start,end} object, separate start/end args, or a Duration.
 // Results are based on Moment's .as() and .diff() methods, so results can depend on internal handling
