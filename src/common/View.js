@@ -291,7 +291,7 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		var isReset = this.isDateSet;
 
 		this.isDateSet = true;
-		this.handleDate(date);
+		this.handleRawDate(date);
 		this.trigger(isReset ? 'dateReset' : 'dateSet', date);
 	},
 
@@ -309,16 +309,26 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleDate: function(date) {
+	handleRawDate: function(date) {
+		var _this = this;
 		var dateProfile = this.buildDateProfile(date);
 
-		if (!this.isDateRendered || !this.isSameDateProfile(dateProfile)) {
-			this.handleDateChange(dateProfile);
+		if (!this.isSameDateProfile(dateProfile)) { // real change
+			this.handleDate(dateProfile);
+		}
+		else {
+			// View might have no date change, but still needs to render (because of a view unrender/rerender).
+			// Wait for possible queued unrenders. TODO: refactor.
+			this.dateRenderQueue.add(function() {
+				if (!_this.isDateRendered) {
+					_this.handleDate(dateProfile);
+				}
+			});
 		}
 	},
 
 
-	handleDateChange: function(dateProfile) {
+	handleDate: function(dateProfile) {
 		var _this = this;
 
 		this.unbindEvents(); // will do nothing if not already bound
