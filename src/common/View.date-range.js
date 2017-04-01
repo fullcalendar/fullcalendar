@@ -228,6 +228,8 @@ View.mixin({
 	// `unit` is the already-computed computeGreatestUnit value of duration.
 	buildRangeFromDuration: function(date, direction, duration, unit) {
 		var customAlignment = this.opt('dateAlignment');
+		var customIncrementInput = this.opt('dateIncrement');
+		var customIncrementUnit;
 		var start = date.clone();
 		var end;
 
@@ -239,7 +241,14 @@ View.mixin({
 			}
 		}
 
-		start.startOf(customAlignment || unit);
+		if (customIncrementInput) {
+			customIncrementUnit = computeDurationGreatestUnit(
+				moment.duration(customIncrementInput),
+				customIncrementInput
+			);
+		}
+
+		start.startOf(customAlignment || customIncrementUnit || unit);
 		end = start.clone().add(duration);
 
 		return { start: start, end: end };
