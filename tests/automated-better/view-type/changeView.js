@@ -25,4 +25,36 @@ describe('changeView', function() {
 		});
 		ViewDateUtils.expectActiveRange('2017-07-04', '2017-07-08');
 	});
+
+	describe('when switching away from view, then back', function() {
+		it('correctly renders original view again', function(done) {
+			var renderCalls = 0;
+
+			initCalendar({
+				defaultView: 'month',
+				eventAfterAllRender: function(view) {
+					renderCalls++;
+
+					switch (renderCalls) {
+						case 1:
+							expect(view.type).toBe('month');
+							currentCalendar.changeView('agendaWeek');
+							break;
+						case 2:
+							expect(view.type).toBe('agendaWeek');
+							currentCalendar.changeView('basicWeek');
+							break;
+						case 3:
+							expect(view.type).toBe('basicWeek');
+							currentCalendar.changeView('month');
+							break;
+						case 4:
+							expect(view.type).toBe('month');
+							done();
+							break;
+					}
+				}
+			});
+		});
+	});
 });
