@@ -1,4 +1,15 @@
 
+v3.3.1 (2017-04-01)
+-------------------
+
+Bugfixes:
+- stale calendar title when navigate away from then back to the a view (#3604)
+- js error when gotoDate immediately after calendar initialization (#3598)
+- agenda view scrollbars causes misalignment in jquery 3.2.1 (#3612)
+- navigation bug when trying to navigate to a day of another week (#3610)
+- dateIncrement not working when duration and dateIncrement have different units
+
+
 v3.3.0 (2017-03-23)
 -------------------
 
