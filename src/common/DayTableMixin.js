@@ -299,7 +299,7 @@ var DayTableMixin = FC.DayTableMixin = {
 			'fc-day-header',
 			view.widgetHeaderClass
 		];
-		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
+		var innerHtml = typeof this.colHeadFormat === 'function' ? this.colHeadFormat(date, colspan, otherAttrs) : htmlEscape(date.format(this.colHeadFormat));
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (this.rowCnt === 1) {
