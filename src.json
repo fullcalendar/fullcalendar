@@ -6,6 +6,7 @@
     "moment-ext.js",
     "date-formatting.js",
     "common/Class.js",
+    "common/Model.js",
     "common/Promise.js",
     "common/TaskQueue.js",
     "common/EmitterMixin.js",
