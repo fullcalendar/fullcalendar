@@ -311,10 +311,10 @@ newMomentProto.format = function() {
 
 newMomentProto.toISOString = function() {
 	if (this._ambigTime) {
-		return oldMomentFormat(this, 'YYYY-MM-DD');
+		return oldMomentFormat(moment(this).locale('en'), 'YYYY-MM-DD');
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(moment(this).locale('en'), 'YYYY-MM-DD[T]HH:mm:ss');
 	}
 	return oldMomentProto.toISOString.apply(this, arguments);
 };

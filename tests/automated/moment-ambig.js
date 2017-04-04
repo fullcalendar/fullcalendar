@@ -26,6 +26,11 @@ describe('ambiguously-zoned moment', function() {
 		expect(mom.toISOString()).toBe('2014-06-08T10:00:00');
 	});
 
+	it('formats via toISOString for locales with non-trivial formatting', function() {
+		var mom = $.fullCalendar.moment.parseZone('2014-06-08T10:00:00').locale('ar');
+		expect(mom.toISOString()).toBe('2014-06-08T10:00:00');
+	});
+
 	it('is correctly cloned', function() {
 		var mom = $.fullCalendar.moment.parseZone('2014-06-08T10:00:00');
 		var clone = mom.clone();
