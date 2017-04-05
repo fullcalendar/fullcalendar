@@ -19,6 +19,8 @@ $.fullCalendar.locale("et", {
 		list: "Nimekiri"
 	},
 	allDayText: "Terve päev",
-	eventLimitText: "veel",
+	eventLimitText: function(n) {
+		return "+veel " + n;
+	},
 	noEventsMessage: "sündmused puuduvad"
 });
