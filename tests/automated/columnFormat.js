@@ -116,8 +116,8 @@ describe('columnFormat', function() {
     describe('when locale is Korean', function() {
 
         var viewWithFormat = [ { view: 'month', expected: '일', selector: 'th.fc-day-header.fc-sun' },
-            { view: 'basicWeek', expected: '일 5.11', selector: 'th.fc-day-header.fc-sun' },
-            { view: 'agendaWeek', expected: '일 5.11', selector: 'th.fc-widget-header.fc-sun' },
+            { view: 'basicWeek', expected: '일 05.11', selector: 'th.fc-day-header.fc-sun' },
+            { view: 'agendaWeek', expected: '일 05.11', selector: 'th.fc-widget-header.fc-sun' },
             { view: 'basicDay', expected: '일요일', selector: 'th.fc-day-header.fc-sun' },
             { view: 'agendaDay', expected: '일요일', selector: 'th.fc-widget-header.fc-sun' } ];
 
@@ -197,4 +197,33 @@ describe('columnFormat', function() {
             expect($('.fc-day-header:first')).toHaveText('Thu 12/25');
         });
     });
+
+    describe('columnHeader different options', function() {
+        it('should not render at all when false', function() {
+
+            $('#cal').fullCalendar({
+                columnFormat: false,
+                defaultView: 'agendaWeek'
+            });
+
+            var header = $('#cal th.fc-day-header');
+
+            expect(header.length).toEqual(0);
+        });
+
+        it('should render the method content', function() {
+
+            $('#cal').fullCalendar({
+                defaultView: 'agendaWeek',
+                columnFormat: function(date, colspan, otherAttrs) {
+                    return '<span class="custom"><span>';
+                }
+            });
+
+            var header = $('#cal th.fc-day-header .custom');
+
+            expect(header.length).toEqual(7);
+        });
+    });
+
 });

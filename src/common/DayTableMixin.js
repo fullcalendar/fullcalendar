@@ -64,7 +64,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		if (this.view.opt('columnFormat') === false) {
+			this.colHeadFormat = false;
+        } else {
+			this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		}
 	},
 
 
@@ -293,13 +297,18 @@ var DayTableMixin = FC.DayTableMixin = {
 	// TODO: when internalApiVersion, accept an object for HTML attributes
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
+
+		if (this.colHeadFormat === false) {
+			return '';
+		}
+
 		var view = this.view;
 		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.widgetHeaderClass
 		];
-		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
+		var innerHtml = typeof this.colHeadFormat === 'function' ? this.colHeadFormat(date, colspan, otherAttrs) : htmlEscape(date.format(this.colHeadFormat));
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (this.rowCnt === 1) {
@@ -314,7 +323,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 
 		return '' +
-            '<th class="' + classNames.join(' ') + '"' +
+			'<th class="' + classNames.join(' ') + '"' +
 				((isDateValid && this.rowCnt) === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
