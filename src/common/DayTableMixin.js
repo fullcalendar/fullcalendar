@@ -64,7 +64,9 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		if (this.colHeadFormat !== false) {
+			this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		}
 	},
 
 
@@ -293,6 +295,11 @@ var DayTableMixin = FC.DayTableMixin = {
 	// TODO: when internalApiVersion, accept an object for HTML attributes
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
+
+		if (this.colHeadFormat === false) {
+			return '';
+		}
+
 		var view = this.view;
 		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classNames = [
@@ -314,7 +321,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 
 		return '' +
-            '<th class="' + classNames.join(' ') + '"' +
+			'<th class="' + classNames.join(' ') + '"' +
 				((isDateValid && this.rowCnt) === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
