@@ -1,7 +1,7 @@
 $.fullCalendar.locale("et", {
 	closeText: "Sulge",
-	prevText: "&#xAB;Järgmine",
-	nextText: "Eelmine&#xBB;",
+	prevText: "&#xAB;Eelmine",
+	nextText: "Järgmine&#xBB;",
 	currentText: "Täna",
 	monthNames: ["Jaanuar", "Veebruar", "Märts", "Aprill", "Mai", "Juuni", "Juuli", "August", "September", "Oktoober", "November", "Detsember"],
 	monthNamesShort: ["Jaan", "Veeb", "Mär", "Apr", "Mai", "Juun", "Juul", "Aug", "Sep", "Okt", "Nov", "Dets"],
