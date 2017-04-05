@@ -64,7 +64,9 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
-		if (this.colHeadFormat !== false) {
+		if (this.view.opt('columnFormat') === false) {
+			this.colHeadFormat = false;
+        } else {
 			this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
 		}
 	},

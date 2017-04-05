@@ -116,8 +116,8 @@ describe('columnFormat', function() {
     describe('when locale is Korean', function() {
 
         var viewWithFormat = [ { view: 'month', expected: '일', selector: 'th.fc-day-header.fc-sun' },
-            { view: 'basicWeek', expected: '일 5.11', selector: 'th.fc-day-header.fc-sun' },
-            { view: 'agendaWeek', expected: '일 5.11', selector: 'th.fc-widget-header.fc-sun' },
+            { view: 'basicWeek', expected: '일 05.11', selector: 'th.fc-day-header.fc-sun' },
+            { view: 'agendaWeek', expected: '일 05.11', selector: 'th.fc-widget-header.fc-sun' },
             { view: 'basicDay', expected: '일요일', selector: 'th.fc-day-header.fc-sun' },
             { view: 'agendaDay', expected: '일요일', selector: 'th.fc-widget-header.fc-sun' } ];
 
