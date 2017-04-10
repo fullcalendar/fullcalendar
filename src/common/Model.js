@@ -166,7 +166,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			var depName;
 
 			for (depName in watchMap) {
-				_this.off('change:' + name, watchMap[name]);
+				_this.off('change:' + depName, watchMap[depName]);
 			}
 
 			if (satisfyCnt === len) { // was satisfied
