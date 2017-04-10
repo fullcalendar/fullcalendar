@@ -16,6 +16,7 @@ var View = FC.View = Model.extend({
 	renderQueue: null,
 	isDatesRendered: false,
 	isEventsRendered: false,
+	isBaseRendered: false, // related to viewRender/viewDestroy triggers
 
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
@@ -378,13 +379,19 @@ var View = FC.View = Model.extend({
 
 	// Signals that the view's content has been rendered
 	triggerRender: function() {
-		this.publiclyTrigger('viewRender', this, this, this.el);
+		if (!this.isBaseRendered) {
+			this.isBaseRendered = true;
+			this.publiclyTrigger('viewRender', this, this, this.el);
+		}
 	},
 
 
 	// Signals that the view's content is about to be unrendered
 	triggerUnrender: function() {
-		this.publiclyTrigger('viewDestroy', this, this, this.el);
+		if (this.isBaseRendered) {
+			this.isBaseRendered = false;
+			this.publiclyTrigger('viewDestroy', this, this, this.el);
+		}
 	},
 
 
