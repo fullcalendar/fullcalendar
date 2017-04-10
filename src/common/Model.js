@@ -42,7 +42,13 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			val = null;
 		}
 
-		if (val !== this._props[name]) { // if not set, will be undefined, and will be truthy
+		// a change in value?
+		// if an object, don't check equality, because might have been mutated internally.
+		// TODO: eventually enforce immutability.
+		if (
+			typeof val === 'object' ||
+			val !== this._props[name]
+		) {
 			this._props[name] = val;
 			this.trigger('change:' + name, val);
 		}
