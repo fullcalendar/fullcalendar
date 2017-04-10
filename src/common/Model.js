@@ -106,8 +106,13 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		var watchMap = {};
 		var revisionId = 0;
 
-		function reportUpdate(depName, val) {
+		function reportUpdate(depName, val, isOptional) {
 			var thisRevisionId = ++revisionId;
+
+			// consider optional deps to always have a value
+			if (isOptional && val === undefined) {
+				val = null;
+			}
 
 			if (val !== undefined) { // set
 
@@ -151,8 +156,15 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		depList.forEach(function(depName) {
+			var isOptional = false;
+
+			if (depName.charAt(0) === '?') { // TODO: more DRY
+				depName = depName.substring(1);
+				isOptional = true;
+			}
+
 			var onChange = function(val) {
-				reportUpdate(depName, val);
+				reportUpdate(depName, val, isOptional);
 			};
 
 			_this.on('change:' + depName, onChange);
@@ -164,8 +176,15 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 		else {
 			depList.forEach(function(depName) {
-				if (_this.has(depName)) {
-					reportUpdate(depName, _this.get(depName));
+				var isOptional = false;
+
+				if (depName.charAt(0) === '?') { // TODO: more DRY
+					depName = depName.substring(1);
+					isOptional = true;
+				}
+
+				if (isOptional || _this.has(depName)) {
+					reportUpdate(depName, _this.get(depName), isOptional);
 				}
 			});
 		}
