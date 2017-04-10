@@ -130,6 +130,64 @@ describe('Model', function() {
 					expect(m.has('myid')).toBe(false);
 				});
 			});
+
+			describe('with an optional value', function() {
+
+				it('resolves immediately', function() {
+					var funcs = {
+						start: function() { },
+						stop: function() { }
+					};
+					var startSpy = spyOn(funcs, 'start');
+					var stopSpy = spyOn(funcs, 'stop');
+
+					var m = new Model();
+
+					m.watch('myid', [ '?optvar' ], funcs.start, funcs.stop);
+					expect(startSpy).toHaveBeenCalled();
+					expect(stopSpy).not.toHaveBeenCalled();
+				});
+
+				it('calls stop/start when value changed', function() {
+					var funcs = {
+						start: function() { },
+						stop: function() { }
+					};
+					var startSpy = spyOn(funcs, 'start');
+					var stopSpy = spyOn(funcs, 'stop');
+
+					var m = new Model();
+					m.set('optvar', 5);
+
+					m.watch('myid', [ '?optvar' ], funcs.start, funcs.stop);
+					expect(startSpy).toHaveBeenCalledTimes(1);
+					expect(stopSpy).not.toHaveBeenCalledTimes(1);
+
+					m.set('optvar', 6);
+					expect(startSpy).toHaveBeenCalledTimes(2);
+					expect(stopSpy).not.toHaveBeenCalledTimes(2);
+				});
+
+				it('calls stop/start when value unset', function() {
+					var funcs = {
+						start: function() { },
+						stop: function() { }
+					};
+					var startSpy = spyOn(funcs, 'start');
+					var stopSpy = spyOn(funcs, 'stop');
+
+					var m = new Model();
+					m.set('optvar', 5);
+
+					m.watch('myid', [ '?optvar' ], funcs.start, funcs.stop);
+					expect(startSpy).toHaveBeenCalledTimes(1);
+					expect(stopSpy).not.toHaveBeenCalledTimes(1);
+
+					m.unset('optvar');
+					expect(startSpy).toHaveBeenCalledTimes(2);
+					expect(stopSpy).not.toHaveBeenCalledTimes(2);
+				});
+			});
 		});
 
 		describe('when called as a computed value', function() {
