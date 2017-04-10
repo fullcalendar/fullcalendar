@@ -772,11 +772,7 @@ function Calendar_constructor(element, overrides) {
 					currentView.captureInitialScroll(forcedScroll);
 				}
 
-				currentView.setDate(t.currentDate);
-
-				// TODO: make setDate return the revised date.
-				// Difficult because of the pseudo-async nature, promises.
-				t.currentDate = currentView.currentDate;
+				t.currentDate = currentView.setDate(t.currentDate);
 
 				if (forcedScroll) {
 					currentView.releaseScroll();

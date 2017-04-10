@@ -99,11 +99,6 @@ function EventManager() { // assumed to be a calendar
 	};
 
 
-	t.getPrunedEventCache = function() {
-		return prunedCache;
-	};
-
-
 
 	/* Fetching
 	-----------------------------------------------------------------------------*/

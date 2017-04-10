@@ -20,10 +20,6 @@ View.mixin({
 	// how far the current date will move for a prev/next operation
 	dateIncrement: null,
 
-	// stores the *calendar's* current date after setDate
-	// TODO: entirely Calendar's responsibility
-	currentDate: null,
-
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
 	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeRange. Views must opt-in.
@@ -51,7 +47,6 @@ View.mixin({
 		this.activeRange = dateProfile.activeRange;
 		this.validRange = dateProfile.validRange;
 		this.dateIncrement = dateProfile.dateIncrement;
-		this.currentDate = dateProfile.date;
 		this.minTime = dateProfile.minTime;
 		this.maxTime = dateProfile.maxTime;
 
@@ -60,6 +55,11 @@ View.mixin({
 		this.end = dateProfile.activeRange.end;
 		this.intervalStart = dateProfile.currentRange.start;
 		this.intervalEnd = dateProfile.currentRange.end;
+	},
+
+
+	unsetDateProfile: function() {
+		this.activeRange = null;
 	},
 
 
