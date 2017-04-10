@@ -104,8 +104,10 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		var satisfyCnt = 0;
 		var values = {}; // what's passed as the `deps` arguments
 		var watchMap = {};
+		var revisionId = 0;
 
 		function reportUpdate(depName, val) {
+			var thisRevisionId = ++revisionId;
 
 			if (val !== undefined) { // set
 
@@ -117,11 +119,17 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 						startFunc(values);
 					}
 				}
-				else { // was previously set
+				// was previously set, so "restart" (call stop+start function)
+				else {
 					if (satisfyCnt === len) { // was satisfied
 						stopFunc();
 						values[depName] = val;
-						startFunc(values);
+
+						// if stopFunc changed the value again, don't fire the start function
+						// because it's assumed that will happen soon anyway.
+						if (thisRevisionId === revisionId) {
+							startFunc(values);
+						}
 					}
 					else {
 						values[depName] = val;
