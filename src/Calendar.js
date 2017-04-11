@@ -140,8 +140,8 @@ var Calendar = FC.Calendar = Class.extend({
 		}
 
 		// fall back to top-level `duration` option
-		durationInput = durationInput ||
-			this.dynamicOverrides.duration ||
+		durationInput = this.dynamicOverrides.duration ||
+			durationInput ||
 			this.overrides.duration;
 
 		if (durationInput) {
