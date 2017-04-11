@@ -76,6 +76,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			var res = startFunc.call(_this, deps);
 
 			if (res && res.then) {
+				_this.unset(name); // put in an unset state while resolving
 				res.then(function(val) {
 					_this.set(name, val);
 				});
