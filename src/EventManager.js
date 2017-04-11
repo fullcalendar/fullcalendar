@@ -287,6 +287,7 @@ function EventManager() { // assumed to be a calendar
 			}
 		}else{
 			var url = source.url;
+			var eventTransform = source.eventTransform || options.eventTransform;
 			if (url) {
 				var success = source.success;
 				var error = source.error;
@@ -330,7 +331,9 @@ function EventManager() { // assumed to be a calendar
 						if ($.isArray(res)) {
 							events = res;
 						}
-						callback(events);
+						callback(events && eventTransform
+							? $.map(events, eventTransform)
+							: events);
 					},
 					error: function() {
 						applyAll(error, this, arguments);
