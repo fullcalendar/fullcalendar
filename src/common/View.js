@@ -226,6 +226,7 @@ var View = FC.View = Model.extend({
 	setElement: function(el) {
 		this.el = el;
 		this.bindGlobalHandlers();
+		this.bindBaseRenderHandlers();
 		this.renderSkeleton();
 	},
 
@@ -237,6 +238,7 @@ var View = FC.View = Model.extend({
 		this.unrenderSkeleton();
 
 		this.unbindGlobalHandlers();
+		this.unbindBaseRenderHandlers();
 
 		this.el.remove();
 		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
@@ -337,15 +339,18 @@ var View = FC.View = Model.extend({
 
 		this.thawHeight();
 		this.releaseScroll();
+
 		this.isDatesRendered = true;
-		this.triggerRender(); // TODO: revisit this
+		this.trigger('datesRendered');
 	},
 
 
 	executeDateUnrender: function() {
 		this.unselect();
 		this.stopNowIndicator();
-		this.triggerUnrender();
+
+		this.trigger('before:datesUnrendered');
+
 		this.unrenderBusinessHours();
 		this.unrenderDates();
 
@@ -373,26 +378,40 @@ var View = FC.View = Model.extend({
 	},
 
 
+	// Determing when the "meat" of the view is rendered (aka the base)
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	bindBaseRenderHandlers: function() {
+		var _this = this;
+
+		this.on('datesRendered.baseHandler', function() {
+			_this.onBaseRender();
+		});
+
+		this.on('before:datesUnrendered.baseHandler', function() {
+			_this.onBeforeBaseUnrender();
+		});
+	},
+
+
+	unbindBaseRenderHandlers: function() {
+		this.off('.baseHandler');
+	},
+
+
+	onBaseRender: function() {
+		this.publiclyTrigger('viewRender', this, this, this.el);
+	},
+
+
+	onBeforeBaseUnrender: function() {
+		this.publiclyTrigger('viewDestroy', this, this, this.el);
+	},
+
+
 	// Misc view rendering utils
-	// -------------------------
-
-
-	// Signals that the view's content has been rendered
-	triggerRender: function() {
-		if (!this.isBaseRendered) {
-			this.isBaseRendered = true;
-			this.publiclyTrigger('viewRender', this, this, this.el);
-		}
-	},
-
-
-	// Signals that the view's content is about to be unrendered
-	triggerUnrender: function() {
-		if (this.isBaseRendered) {
-			this.isBaseRendered = false;
-			this.publiclyTrigger('viewDestroy', this, this, this.el);
-		}
-	},
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
