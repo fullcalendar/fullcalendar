@@ -131,6 +131,39 @@ describe('Model', function() {
 				});
 			});
 
+			describe('when resetting a dependency', function() {
+
+				it('calls all shutdown funcs before all startup funcs', function() {
+					var m = new Model();
+					var ops = [];
+
+					m.set('var1', 5);
+
+					m.watch('doingSomething1', [ 'var1' ], function() {
+						ops.push('start1');
+					}, function() {
+						ops.push('stop1');
+					});
+
+					m.watch('doingSomething2', [ 'var1' ], function() {
+						ops.push('start2');
+					}, function() {
+						ops.push('stop2');
+					});
+
+					expect(ops).toEqual([
+						'start1', 'start2'
+					]);
+
+					m.set('var1', 6);
+					expect(ops).toEqual([
+						'start1', 'start2',
+						'stop1', 'stop2',
+						'start1', 'start2'
+					]);
+				});
+			});
+
 			describe('with an optional value', function() {
 
 				it('resolves immediately', function() {
@@ -160,12 +193,12 @@ describe('Model', function() {
 					m.set('optvar', 5);
 
 					m.watch('myid', [ '?optvar' ], funcs.start, funcs.stop);
+					expect(stopSpy).not.toHaveBeenCalled();
 					expect(startSpy).toHaveBeenCalledTimes(1);
-					expect(stopSpy).not.toHaveBeenCalledTimes(1);
 
 					m.set('optvar', 6);
+					expect(stopSpy).toHaveBeenCalledTimes(1);
 					expect(startSpy).toHaveBeenCalledTimes(2);
-					expect(stopSpy).not.toHaveBeenCalledTimes(2);
 				});
 
 				it('calls stop/start when value unset', function() {
@@ -180,12 +213,12 @@ describe('Model', function() {
 					m.set('optvar', 5);
 
 					m.watch('myid', [ '?optvar' ], funcs.start, funcs.stop);
+					expect(stopSpy).not.toHaveBeenCalled();
 					expect(startSpy).toHaveBeenCalledTimes(1);
-					expect(stopSpy).not.toHaveBeenCalledTimes(1);
 
 					m.unset('optvar');
+					expect(stopSpy).toHaveBeenCalledTimes(1);
 					expect(startSpy).toHaveBeenCalledTimes(2);
-					expect(stopSpy).not.toHaveBeenCalledTimes(2);
 				});
 			});
 		});

@@ -49,6 +49,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			typeof val === 'object' ||
 			val !== this._props[name]
 		) {
+			this.trigger('before:change:' + name, val);
 			this._props[name] = val;
 			this.trigger('change:' + name, val);
 		}
@@ -56,6 +57,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 	unset: function(name) {
 		if (this.has(name)) {
+			this.trigger('before:change:' + name, undefined);
 			delete this._props[name];
 			this.trigger('change:' + name, undefined);
 		}
@@ -100,61 +102,59 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 	_watchDeps: function(depList, startFunc, stopFunc) {
 		var _this = this;
-		var len = depList.length;
+		var depCnt = depList.length;
 		var satisfyCnt = 0;
 		var values = {}; // what's passed as the `deps` arguments
-		var watchMap = {};
-		var revisionId = 0;
+		var bindTuples = []; // array of [ eventName, handlerFunc ] arrays
+		var isCallingStop = false;
 
-		function reportUpdate(depName, val, isOptional) {
-			var thisRevisionId = ++revisionId;
-
-			// consider optional deps to always have a value
-			if (isOptional && val === undefined) {
-				val = null;
-			}
-
-			if (val !== undefined) { // set
-
-				if (!(depName in values)) { // not previously set
-					values[depName] = val;
-					satisfyCnt++;
-
-					if (satisfyCnt === len) { // finally now satisfied
-						startFunc(values);
-					}
-				}
-				// was previously set, so "restart" (call stop+start function)
-				else {
-					if (satisfyCnt === len) { // was satisfied
-						stopFunc();
-						values[depName] = val;
-
-						// if stopFunc changed the value again, don't fire the start function
-						// because it's assumed that will happen soon anyway.
-						if (thisRevisionId === revisionId) {
-							startFunc(values);
-						}
-					}
-					else {
-						values[depName] = val;
-					}
-				}
-			}
-			else { // unset
-
-				if (depName in values) { // previously set
-					delete values[depName];
-					satisfyCnt--;
-
-					if (satisfyCnt === len - 1) { // was previously satisfied
-						stopFunc();
-					}
-				}
-				// else, not previously set. who cares.
+		function onBeforeDepChange(depName, val, isOptional) {
+			if (satisfyCnt === depCnt) { // all deps previously satisfied?
+				isCallingStop = true;
+				stopFunc();
+				isCallingStop = false;
 			}
 		}
 
+		function onDepChange(depName, val, isOptional) {
+
+			if (val === undefined) { // unsetting a value?
+
+				// required dependency that was previously set?
+				if (!isOptional && values[depName] !== undefined) {
+					satisfyCnt--;
+				}
+
+				delete values[depName];
+			}
+			else { // setting a value?
+
+				// required dependency that was previously unset?
+				if (!isOptional && values[depName] === undefined) {
+					satisfyCnt++;
+				}
+
+				values[depName] = val;
+			}
+
+			// now finally satisfied or satisfied all along?
+			if (satisfyCnt === depCnt) {
+
+				// if the stopFunc initiated another value change, ignore it.
+				// it will be processed by another change event anyway.
+				if (!isCallingStop) {
+					startFunc(values);
+				}
+			}
+		}
+
+		// intercept for .on() that remembers handlers
+		function bind(eventName, handler) {
+			_this.on(eventName, handler);
+			bindTuples.push([ eventName, handler ]);
+		}
+
+		// listen to dependency changes
 		depList.forEach(function(depName) {
 			var isOptional = false;
 
@@ -163,40 +163,48 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 				isOptional = true;
 			}
 
-			var onChange = function(val) {
-				reportUpdate(depName, val, isOptional);
-			};
+			bind('before:change:' + depName, function(val) {
+				onBeforeDepChange(depName, val, isOptional);
+			});
 
-			_this.on('change:' + depName, onChange);
-			watchMap[depName] = onChange;
+			bind('change:' + depName, function(val) {
+				onDepChange(depName, val, isOptional);
+			});
 		});
 
-		if (!len) { // no deps, so resolve immediately
+		// process current dependency values
+		depList.forEach(function(depName) {
+			var isOptional = false;
+
+			if (depName.charAt(0) === '?') { // TODO: more DRY
+				depName = depName.substring(1);
+				isOptional = true;
+			}
+
+			if (_this.has(depName)) {
+				values[depName] = _this.get(depName);
+				satisfyCnt++;
+			}
+			else if (isOptional) {
+				satisfyCnt++;
+			}
+		});
+
+		// initially satisfied
+		if (satisfyCnt === depCnt) {
 			startFunc(values);
-		}
-		else {
-			depList.forEach(function(depName) {
-				var isOptional = false;
-
-				if (depName.charAt(0) === '?') { // TODO: more DRY
-					depName = depName.substring(1);
-					isOptional = true;
-				}
-
-				if (isOptional || _this.has(depName)) {
-					reportUpdate(depName, _this.get(depName), isOptional);
-				}
-			});
 		}
 
 		return function() { // teardown
-			var depName;
 
-			for (depName in watchMap) {
-				_this.off('change:' + depName, watchMap[depName]);
+			// remove all handlers
+			for (var i = 0; i < bindTuples.length; i++) {
+				_this.off(bindTuples[i][0], bindTuples[i][1]);
 			}
+			bindTuples = null;
 
-			if (satisfyCnt === len) { // was satisfied
+			// was satisfied, so call stopFunc
+			if (satisfyCnt === depCnt) {
 				stopFunc();
 			}
 		};
