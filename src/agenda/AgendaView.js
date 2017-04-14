@@ -277,7 +277,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it
-	computeInitialScroll: function() {
+	computeInitialDateScroll: function() {
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
 
@@ -292,13 +292,15 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	queryScroll: function() {
+	queryDateScroll: function() {
 		return { top: this.scroller.getScrollTop() };
 	},
 
 
-	setScroll: function(scroll) {
-		this.scroller.setScrollTop(scroll.top);
+	applyDateScroll: function(scroll) {
+		if (scroll.top !== undefined) {
+			this.scroller.setScrollTop(scroll.top);
+		}
 	},
 
 

@@ -263,7 +263,7 @@ var View = FC.View = Model.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setDate: function(date) {
+	setDate: function(date, forcedScroll) {
 		var currentDateProfile = this.get('dateProfile');
 		var newDateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
 
@@ -271,7 +271,7 @@ var View = FC.View = Model.extend({
 			!currentDateProfile ||
 			!isRangesEqual(currentDateProfile.activeRange, newDateProfile.activeRange)
 		) {
-			this.setDateProfile(newDateProfile);
+			this.setDateProfile(newDateProfile, forcedScroll);
 		}
 
 		return newDateProfile.date;
@@ -285,12 +285,12 @@ var View = FC.View = Model.extend({
 	},
 
 
-	setDateProfile: function(dateProfile) {
+	setDateProfile: function(dateProfile, forcedScroll) {
 		var _this = this;
 
 		// render first, so that dependants of dateProfile know rendering already happened
 		this.renderQueue.add(function() {
-			_this.executeDateRender(dateProfile);
+			_this.executeDateRender(dateProfile, forcedScroll);
 		});
 
 		this.set('dateProfile', dateProfile); // for watchers
@@ -363,16 +363,17 @@ var View = FC.View = Model.extend({
 
 
 	// if dateProfile not specified, uses current
-	executeDateRender: function(dateProfile) {
+	executeDateRender: function(dateProfile, forcedScroll) {
+		var scroll;
 
 		this.setDateProfileForRendering(dateProfile);
 		this.updateTitle();
 		this.calendar.updateToolbarButtons();
 
-		this.captureInitialScroll();
+		scroll = forcedScroll || this.queryScroll();
 		this.freezeHeight();
 
-		this.executeDateUnrender();
+		this.executeDateUnrender(true);
 
 		if (this.render) {
 			this.render(); // TODO: deprecate
@@ -384,17 +385,26 @@ var View = FC.View = Model.extend({
 		this.startNowIndicator();
 
 		this.thawHeight();
-		this.releaseScroll();
+
+		if (!forcedScroll) {
+			$.extend(scroll, this.computeInitialDateScroll());
+		}
+		this.applyScroll(scroll);
 
 		this.isDatesRendered = true;
 		this.trigger('datesRendered');
 	},
 
 
-	executeDateUnrender: function() {
+	executeDateUnrender: function(willRender) {
+		var scroll;
+
 		if (this.isDatesRendered) {
-			this.captureScroll();
-			this.freezeHeight();
+
+			if (!willRender) {
+				scroll = this.queryScroll();
+				this.freezeHeight();
+			}
 
 			this.unselect();
 			this.stopNowIndicator();
@@ -408,8 +418,10 @@ var View = FC.View = Model.extend({
 				this.destroy(); // TODO: deprecate
 			}
 
-			this.thawHeight();
-			this.releaseScroll();
+			if (!willRender) {
+				this.thawHeight();
+				this.applyScroll(scroll);
+			}
 
 			this.isDatesRendered = false;
 		}
@@ -603,9 +615,10 @@ var View = FC.View = Model.extend({
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
 	updateSize: function(isResize) {
+		var scroll;
 
 		if (isResize) {
-			this.captureScroll();
+			scroll = this.queryScroll();
 		}
 
 		this.updateHeight(isResize);
@@ -613,7 +626,7 @@ var View = FC.View = Model.extend({
 		this.updateNowIndicator();
 
 		if (isResize) {
-			this.releaseScroll();
+			this.applyScroll(scroll);
 		}
 	},
 
@@ -646,90 +659,34 @@ var View = FC.View = Model.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	capturedScroll: null,
-	capturedScrollDepth: 0,
-
-
-	captureScroll: function() {
-		if (!(this.capturedScrollDepth++)) {
-			this.capturedScroll = this.isDatesRendered ? this.queryScroll() : {}; // require a render first
-			return true; // root?
-		}
-		return false;
-	},
-
-
-	captureInitialScroll: function(forcedScroll) {
-		if (this.captureScroll()) { // root?
-			this.capturedScroll.isInitial = true;
-
-			if (forcedScroll) {
-				$.extend(this.capturedScroll, forcedScroll);
-			}
-			else {
-				this.capturedScroll.isComputed = true;
-			}
-		}
-	},
-
-
-	releaseScroll: function() {
-		var scroll = this.capturedScroll;
-		var isRoot = this.discardScroll();
-
-		if (scroll.isComputed) {
-			if (isRoot) {
-				// only compute initial scroll if it will actually be used (is the root capture)
-				$.extend(scroll, this.computeInitialScroll());
-			}
-			else {
-				scroll = null; // scroll couldn't be computed. don't apply it to the DOM
-			}
-		}
-
-		if (scroll) {
-			// we act immediately on a releaseScroll operation, as opposed to captureScroll.
-			// if capture/release wraps a render operation that screws up the scroll,
-			// we still want to restore it a good state after, regardless of depth.
-
-			if (scroll.isInitial) {
-				this.hardSetScroll(scroll); // outsmart how browsers set scroll on initial DOM
-			}
-			else {
-				this.setScroll(scroll);
-			}
-		}
-	},
-
-
-	discardScroll: function() {
-		if (!(--this.capturedScrollDepth)) {
-			this.capturedScroll = null;
-			return true; // root?
-		}
-		return false;
-	},
-
-
-	computeInitialScroll: function() {
-		return {};
-	},
-
-
 	queryScroll: function() {
-		return {};
+		var scroll = {};
+
+		if (this.isDatesRendered) {
+			$.extend(scroll, this.queryDateScroll());
+		}
+
+		return scroll;
 	},
 
 
-	hardSetScroll: function(scroll) {
-		var _this = this;
-		var exec = function() { _this.setScroll(scroll); };
-		exec();
-		setTimeout(exec, 0); // to surely clear the browser's initial scroll for the DOM
+	applyScroll: function(scroll) {
+		this.applyDateScroll(scroll);
 	},
 
 
-	setScroll: function(scroll) {
+	computeInitialDateScroll: function() {
+		return {}; // subclasses must implement
+	},
+
+
+	queryDateScroll: function() {
+		return {}; // subclasses must implement
+	},
+
+
+	applyDateScroll: function(scroll) {
+		; // subclasses must implement
 	},
 
 
@@ -752,27 +709,33 @@ var View = FC.View = Model.extend({
 
 
 	executeEventsRender: function(events) {
-		this.captureScroll();
+		var scroll;
+
+		scroll = this.queryScroll();
 		this.freezeHeight();
 
-		this.executeEventsUnrender();
+		this.executeEventsUnrender(true);
 
 		this.renderEvents(events);
 
 		this.thawHeight();
-		this.releaseScroll();
+		this.applyScroll(scroll);
 
 		this.isEventsRendered = true;
 		this.onEventsRender();
 	},
 
 
-	executeEventsUnrender: function() {
+	executeEventsUnrender: function(willRender) {
+		var scroll;
+
 		if (this.isEventsRendered) {
 			this.onBeforeEventsUnrender();
 
-			this.captureScroll();
-			this.freezeHeight();
+			if (!willRender) {
+				scroll = this.queryScroll();
+				this.freezeHeight();
+			}
 
 			if (this.destroyEvents) {
 				this.destroyEvents(); // TODO: deprecate
@@ -780,8 +743,10 @@ var View = FC.View = Model.extend({
 
 			this.unrenderEvents();
 
-			this.thawHeight();
-			this.releaseScroll();
+			if (!willRender) {
+				this.thawHeight();
+				this.applyScroll(scroll);
+			}
 
 			this.isEventsRendered = false;
 		}

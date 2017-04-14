@@ -240,18 +240,20 @@ var BasicView = FC.BasicView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	computeInitialScroll: function() {
+	computeInitialDateScroll: function() {
 		return { top: 0 };
 	},
 
 
-	queryScroll: function() {
+	queryDateScroll: function() {
 		return { top: this.scroller.getScrollTop() };
 	},
 
 
-	setScroll: function(scroll) {
-		this.scroller.setScrollTop(scroll.top);
+	applyDateScroll: function(scroll) {
+		if (scroll.top !== undefined) {
+			this.scroller.setScrollTop(scroll.top);
+		}
 	},
 
 
