@@ -97,6 +97,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		var teardown = this._watchTeardowns[name];
 
 		if (teardown) {
+			delete this._watchTeardowns[name];
 			teardown();
 		}
 	},
