@@ -35,12 +35,7 @@ View.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	isSameDateProfile: function(dateProfile) {
-		return this.activeRange && isRangesEqual(this.activeRange, dateProfile.activeRange);
-	},
-
-
-	setDateProfile: function(dateProfile) {
+	setDateProfileForRendering: function(dateProfile) {
 		this.currentRange = dateProfile.currentRange;
 		this.currentRangeUnit = dateProfile.currentRangeUnit;
 		this.renderRange = dateProfile.renderRange;
@@ -55,11 +50,6 @@ View.mixin({
 		this.end = dateProfile.activeRange.end;
 		this.intervalStart = dateProfile.currentRange.start;
 		this.intervalEnd = dateProfile.currentRange.end;
-	},
-
-
-	unsetDateProfile: function() {
-		this.activeRange = null;
 	},
 
 

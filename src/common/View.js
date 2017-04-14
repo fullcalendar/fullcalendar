@@ -264,42 +264,96 @@ var View = FC.View = Model.extend({
 
 
 	setDate: function(date) {
-		var dateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
+		var currentDateProfile = this.get('dateProfile');
+		var newDateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
 
-		if (!this.isSameDateProfile(dateProfile)) {
-			this.setDateProfile(dateProfile);
-			this.set('dateProfile', dateProfile); // for watchers
+		if (
+			!currentDateProfile ||
+			!isRangesEqual(currentDateProfile.activeRange, newDateProfile.activeRange)
+		) {
+			this.setDateProfile(newDateProfile);
 		}
 
-		return dateProfile.date;
+		return newDateProfile.date;
 	},
 
 
 	unsetDate: function() {
-		this.unsetDateProfile();
-		this.unset('dateProfile'); // for watchers
+		if (this.has('dateProfile')) {
+			this.unsetDateProfile();
+		}
 	},
 
 
-	// Date Render Queuing
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// if dateProfile not specified, uses current
-	requestDateRender: function(dateProfile) {
+	setDateProfile: function(dateProfile) {
 		var _this = this;
 
-		return this.renderQueue.add(function() {
-			return _this.executeDateRender(dateProfile);
+		// render first, so that dependants of dateProfile know rendering already happened
+		this.renderQueue.add(function() {
+			_this.executeDateRender(dateProfile);
+		});
+
+		this.set('dateProfile', dateProfile); // for watchers
+	},
+
+
+	unsetDateProfile: function() {
+		var _this = this;
+
+		this.unset('dateProfile'); // for watchers. let them react before unrendering.
+
+		this.renderQueue.add(function() {
+			_this.executeDateUnrender();
 		});
 	},
 
 
-	requestDateUnrender: function() {
+	// Event Data
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	fetchInitialEvents: function(dateProfile) {
+		return this.calendar.requestEvents(
+			dateProfile.activeRange.start,
+			dateProfile.activeRange.end
+		);
+	},
+
+
+	bindEventChanges: function() {
 		var _this = this;
 
-		return this.renderQueue.add(function() {
-			return _this.executeDateUnrender();
+		this.listenTo(this.calendar, 'eventsReset', function(events) {
+			_this.setEvents(events);
+		});
+	},
+
+
+	unbindEventChanges: function() {
+		this.stopListeningTo(this.calendar, 'eventsReset');
+		this.unsetEvents();
+	},
+
+
+	setEvents: function(events) {
+		var _this = this;
+
+		// render first, so that dependants of bindingEvents/currentEvents know rendering already happened
+		this.renderQueue.add(function() {
+			_this.executeEventsRender(events);
+		});
+
+		this.set('currentEvents', events); // for watchers
+	},
+
+
+	unsetEvents: function() {
+		var _this = this;
+
+		this.unset('currentEvents'); // for watchers. let them react before unrendering.
+
+		this.renderQueue.add(function() {
+			_this.executeEventsUnrender();
 		});
 	},
 
@@ -311,22 +365,14 @@ var View = FC.View = Model.extend({
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile) {
 
-		if (dateProfile) {
-			this.setDateProfile(dateProfile);
-		}
-
+		this.setDateProfileForRendering(dateProfile);
 		this.updateTitle();
 		this.calendar.updateToolbarButtons();
 
-		// if rendering a new date, reset scroll to initial state (scrollTime)
-		if (dateProfile) {
-			this.captureInitialScroll();
-		}
-		else {
-			this.captureScroll(); // a rerender of the current date
-		}
-
+		this.captureInitialScroll();
 		this.freezeHeight();
+
+		this.executeDateUnrender();
 
 		if (this.render) {
 			this.render(); // TODO: deprecate
@@ -346,19 +392,27 @@ var View = FC.View = Model.extend({
 
 
 	executeDateUnrender: function() {
-		this.unselect();
-		this.stopNowIndicator();
+		if (this.isDatesRendered) {
+			this.captureScroll();
+			this.freezeHeight();
 
-		this.trigger('before:datesUnrendered');
+			this.unselect();
+			this.stopNowIndicator();
 
-		this.unrenderBusinessHours();
-		this.unrenderDates();
+			this.trigger('before:datesUnrendered');
 
-		if (this.destroy) {
-			this.destroy(); // TODO: deprecate
+			this.unrenderBusinessHours();
+			this.unrenderDates();
+
+			if (this.destroy) {
+				this.destroy(); // TODO: deprecate
+			}
+
+			this.thawHeight();
+			this.releaseScroll();
+
+			this.isDatesRendered = false;
 		}
-
-		this.isDatesRendered = false;
 	},
 
 
@@ -693,29 +747,6 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Event Render Queuing
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// assumes any previous event renders have been cleared already
-	requestEventsRender: function(events) {
-		var _this = this;
-
-		this.renderQueue.add(function() {
-			_this.executeEventsRender(events);
-		});
-	},
-
-
-	requestEventsUnrender: function() {
-		var _this = this;
-
-		this.renderQueue.addQuickly(function() {
-			_this.executeEventsUnrender();
-		});
-	},
-
-
 	// Event High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -723,6 +754,8 @@ var View = FC.View = Model.extend({
 	executeEventsRender: function(events) {
 		this.captureScroll();
 		this.freezeHeight();
+
+		this.executeEventsUnrender();
 
 		this.renderEvents(events);
 
@@ -735,21 +768,23 @@ var View = FC.View = Model.extend({
 
 
 	executeEventsUnrender: function() {
-		this.onBeforeEventsUnrender();
+		if (this.isEventsRendered) {
+			this.onBeforeEventsUnrender();
 
-		this.captureScroll();
-		this.freezeHeight();
+			this.captureScroll();
+			this.freezeHeight();
 
-		if (this.destroyEvents) {
-			this.destroyEvents(); // TODO: deprecate
+			if (this.destroyEvents) {
+				this.destroyEvents(); // TODO: deprecate
+			}
+
+			this.unrenderEvents();
+
+			this.thawHeight();
+			this.releaseScroll();
+
+			this.isEventsRendered = false;
 		}
-
-		this.unrenderEvents();
-
-		this.thawHeight();
-		this.releaseScroll();
-
-		this.isEventsRendered = false;
 	},
 
 
@@ -1195,38 +1230,15 @@ var View = FC.View = Model.extend({
 });
 
 
-View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestDateRender(deps.dateProfile);
-}, function() {
-	this.requestDateUnrender();
-});
-
-
 View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
-	return this.calendar.requestEvents(
-		deps.dateProfile.activeRange.start,
-		deps.dateProfile.activeRange.end
-	);
+	return this.fetchInitialEvents(deps.dateProfile);
 });
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	var _this = this;
-
-	this.listenTo(this.calendar, 'eventsReset', function(events) {
-		_this.set('currentEvents', events);
-	});
-
-	// initially set
-	this.set('currentEvents', deps.initialEvents);
+	this.bindEventChanges();
+	this.setEvents(deps.initialEvents);
 }, function() {
-	this.stopListeningTo(this.calendar, 'eventsReset');
-	this.unset('currentEvents');
-});
-
-
-View.watch('displayingEvents', [ 'displayingDates', 'currentEvents' ], function(deps) {
-	this.requestEventsRender(deps.currentEvents);
-}, function() {
-	this.requestEventsUnrender();
+	this.unbindEventChanges();
+	this.unsetEvents();
 });
