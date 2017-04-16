@@ -49,17 +49,21 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			typeof val === 'object' ||
 			val !== this._props[name]
 		) {
+			this.trigger('before:change', name, val);
 			this.trigger('before:change:' + name, val);
 			this._props[name] = val;
 			this.trigger('change:' + name, val);
+			this.trigger('change', name, val);
 		}
 	},
 
 	unset: function(name) {
 		if (this.has(name)) {
-			this.trigger('before:change:' + name, undefined);
+			this.trigger('before:change', name); // val=undefined
+			this.trigger('before:change:' + name); // val=undefined
 			delete this._props[name];
-			this.trigger('change:' + name, undefined);
+			this.trigger('change:' + name); // val=undefined
+			this.trigger('change', name); // val=undefined
 		}
 	},
 

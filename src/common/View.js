@@ -74,6 +74,7 @@ var View = FC.View = Model.extend({
 	buildRenderQueue: function() {
 		var _this = this;
 		var renderQueue = new TaskQueue();
+		var changeDepth = 0;
 
 		renderQueue.on('start', function() {
 			_this.freezeHeight();
@@ -83,6 +84,18 @@ var View = FC.View = Model.extend({
 		renderQueue.on('stop', function() {
 			_this.thawHeight();
 			_this.popScroll();
+		});
+
+		this.on('before:change', function(name) {
+			if (!(changeDepth++)) {
+				renderQueue.pause();
+			}
+		});
+
+		this.on('change', function(name) {
+			if (!(--changeDepth)) {
+				renderQueue.resume();
+			}
 		});
 
 		return renderQueue;
