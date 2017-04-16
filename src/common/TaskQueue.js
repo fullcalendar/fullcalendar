@@ -1,65 +1,38 @@
 
-// TODO: write tests and clean up code
+function TaskQueue() {
+	var isRunning = 0;
+	var q = [];
 
-function TaskQueue(debounceWait) {
-	var q = []; // array of runFuncs
+	this.queue = function(taskFunc) {
+		if (!isRunning) {
+			executeTaskFunc(taskFunc);
+		}
+		else {
+			q.push(taskFunc);
+		}
+	};
 
-	function addTask(taskFunc) {
-		return new Promise(function(resolve) {
+	function executeTaskFunc(taskFunc) {
+		var res;
 
-			// should run this function when it's taskFunc's turn to run.
-			// responsible for popping itself off the queue.
-			var runFunc = function() {
-				Promise.resolve(taskFunc()) // result might be async, coerce to promise
-					.then(resolve) // resolve TaskQueue::push's promise, for the caller. will receive result of taskFunc.
-					.then(function() {
-						q.shift(); // pop itself off
+		isRunning = true;
+		res = taskFunc();
 
-						// run the next task, if any
-						if (q.length) {
-							q[0]();
-						}
-					});
-			};
+		if (res && res.then) {
+			res.then(done);
+		}
+		else {
+			done();
+		}
 
-			// always put the task at the end of the queue, BEFORE running the task
-			q.push(runFunc);
+		function done() {
+			isRunning = false;
 
-			// if it's the only task in the queue, run immediately
-			if (q.length === 1) {
-				runFunc();
+			if (q.length) {
+				executeTaskFunc(q.shift());
 			}
-		});
+		}
 	}
-
-	this.add = // potentially debounce, for the public method
-		typeof debounceWait === 'number' ?
-			debounce(addTask, debounceWait) :
-			addTask; // if not a number (null/undefined/false), no debounce at all
-
-	this.addQuickly = addTask; // guaranteed no debounce
 }
 
 FC.TaskQueue = TaskQueue;
-
-/*
-q = new TaskQueue();
-
-function work(i) {
-	return q.push(function() {
-		trigger();
-		console.log('work' + i);
-	});
-}
-
-var cnt = 0;
-
-function trigger() {
-	if (cnt < 5) {
-		cnt++;
-		work(cnt);
-	}
-}
-
-work(9);
-*/

@@ -62,7 +62,8 @@ var View = FC.View = Model.extend({
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		// TODO: differentiate eventRenderWait from date rendering
-		this.renderQueue = new TaskQueue(this.opt('eventRenderWait'));
+		//this.opt('eventRenderWait')
+		this.renderQueue = new TaskQueue();
 
 		this.initialize();
 	},
@@ -289,7 +290,7 @@ var View = FC.View = Model.extend({
 		var _this = this;
 
 		// render first, so that dependants of dateProfile know rendering already happened
-		this.renderQueue.add(function() {
+		this.renderQueue.queue(function() {
 			_this.executeDateRender(dateProfile, forcedScroll);
 		});
 
@@ -302,7 +303,7 @@ var View = FC.View = Model.extend({
 
 		this.unset('dateProfile'); // for watchers. let them react before unrendering.
 
-		this.renderQueue.add(function() {
+		this.renderQueue.queue(function() {
 			_this.executeDateUnrender();
 		});
 	},
@@ -339,7 +340,7 @@ var View = FC.View = Model.extend({
 		var _this = this;
 
 		// render first, so that dependants of bindingEvents/currentEvents know rendering already happened
-		this.renderQueue.add(function() {
+		this.renderQueue.queue(function() {
 			_this.executeEventsRender(events);
 		});
 
@@ -352,7 +353,7 @@ var View = FC.View = Model.extend({
 
 		this.unset('currentEvents'); // for watchers. let them react before unrendering.
 
-		this.renderQueue.add(function() {
+		this.renderQueue.queue(function() {
 			_this.executeEventsUnrender();
 		});
 	},
