@@ -484,11 +484,13 @@ var View = FC.View = Model.extend({
 
 
 	onBaseRender: function() {
+		this.applyQueuedScroll();
 		this.publiclyTrigger('viewRender', this, this, this.el);
 	},
 
 
 	onBeforeBaseUnrender: function() {
+		this.applyQueuedScroll();
 		this.publiclyTrigger('viewDestroy', this, this, this.el);
 	},
 
@@ -693,8 +695,15 @@ var View = FC.View = Model.extend({
 
 
 	popScroll: function() {
-		this.applyScroll(this.queuedScroll || {});
+		this.applyQueuedScroll();
 		this.queuedScroll = null;
+	},
+
+
+	applyQueuedScroll: function() {
+		if (this.queuedScroll) {
+			this.applyScroll(this.queuedScroll);
+		}
 	},
 
 
@@ -750,16 +759,14 @@ var View = FC.View = Model.extend({
 
 
 	executeEventsRender: function(events) {
-
 		this.renderEvents(events);
-
 		this.isEventsRendered = true;
+
 		this.onEventsRender();
 	},
 
 
 	executeEventsUnrender: function() {
-
 		this.onBeforeEventsUnrender();
 
 		if (this.destroyEvents) {
@@ -767,7 +774,6 @@ var View = FC.View = Model.extend({
 		}
 
 		this.unrenderEvents();
-
 		this.isEventsRendered = false;
 	},
 
@@ -778,6 +784,8 @@ var View = FC.View = Model.extend({
 
 	// Signals that all events have been rendered
 	onEventsRender: function() {
+		this.applyQueuedScroll();
+
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
@@ -787,6 +795,8 @@ var View = FC.View = Model.extend({
 
 	// Signals that all event elements are about to be removed
 	onBeforeEventsUnrender: function() {
+		this.applyQueuedScroll();
+
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
