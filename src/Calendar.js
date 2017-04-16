@@ -766,8 +766,12 @@ function Calendar_constructor(element, overrides) {
 
 		if (currentView) {
 
+			if (forcedScroll) {
+				currentView.addForcedScroll(forcedScroll);
+			}
+
 			if (elementVisible()) {
-				t.currentDate = currentView.setDate(t.currentDate, forcedScroll);
+				t.currentDate = currentView.setDate(t.currentDate);
 			}
 		}
 
