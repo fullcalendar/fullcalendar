@@ -77,4 +77,36 @@ describe('TaskQueue', function() {
 			done();
 		}, 200);
 	});
+
+	it('serially executes two tasks, the first with a promise', function(done) {
+		var q = new TaskQueue();
+		var ops = [];
+
+		q.on('start', function() {
+			ops.push('start-event');
+		});
+		q.on('stop', function() {
+			ops.push('stop-event');
+		});
+
+		q.queue(function() {
+			var deferred = $.Deferred();
+
+			ops.push('start1');
+
+			setTimeout(function() {
+				ops.push('stop1');
+				deferred.resolve();
+			}, 100);
+
+			return deferred.promise();
+		}, function() {
+			ops.push('run2');
+		});
+
+		setTimeout(function() {
+			expect(ops).toEqual([ 'start-event', 'start1', 'stop1', 'run2', 'stop-event' ]);
+			done();
+		}, 200);
+	});
 });

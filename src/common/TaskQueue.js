@@ -6,21 +6,22 @@ function TaskQueue() {
 
 	$.extend(this, EmitterMixin);
 
-	this.queue = function(taskFunc) {
+	this.queue = function(/* taskFunc, taskFunc... */) {
+		q.push.apply(q, arguments); // append
+
 		if (!isRunning) {
+			isRunning = true;
 			_this.trigger('start');
-			executeTaskFunc(taskFunc);
-		}
-		else {
-			q.push(taskFunc);
+
+			if (q.length) { // at least one new task added?
+				runNext();
+			}
 		}
 	};
 
-	function executeTaskFunc(taskFunc) {
-		var res;
-
-		isRunning = true;
-		res = taskFunc();
+	function runNext() { // does not check for empty q
+		var taskFunc = q.shift();
+		var res = taskFunc();
 
 		if (res && res.then) {
 			res.then(done);
@@ -30,12 +31,11 @@ function TaskQueue() {
 		}
 
 		function done() {
-			isRunning = false;
-
 			if (q.length) {
-				executeTaskFunc(q.shift());
+				runNext();
 			}
 			else {
+				isRunning = false;
 				_this.trigger('stop');
 			}
 		}
