@@ -1,6 +1,7 @@
 
 function TaskQueue() {
 	var _this = this;
+	var isPaused = false;
 	var isRunning = 0;
 	var q = [];
 
@@ -8,16 +9,25 @@ function TaskQueue() {
 
 	this.queue = function(/* taskFunc, taskFunc... */) {
 		q.push.apply(q, arguments); // append
+		tryStart();
+	};
 
-		if (!isRunning) {
+	this.pause = function() {
+		isPaused = true;
+	};
+
+	this.resume = function() {
+		isPaused = false;
+		tryStart();
+	};
+
+	function tryStart() {
+		if (!isRunning && !isPaused && q.length) {
 			isRunning = true;
 			_this.trigger('start');
-
-			if (q.length) { // at least one new task added?
-				runNext();
-			}
+			runNext();
 		}
-	};
+	}
 
 	function runNext() { // does not check for empty q
 		var taskFunc = q.shift();
@@ -31,7 +41,7 @@ function TaskQueue() {
 		}
 
 		function done() {
-			if (q.length) {
+			if (!isPaused && q.length) {
 				runNext();
 			}
 			else {

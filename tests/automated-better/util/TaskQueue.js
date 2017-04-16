@@ -109,4 +109,34 @@ describe('TaskQueue', function() {
 			done();
 		}, 200);
 	});
+
+	describe('pausing', function() {
+
+		it('prevents task from rendering', function() {
+			var q = new TaskQueue();
+			var ops = [];
+
+			q.on('start', function() {
+				ops.push('start-event');
+			});
+			q.on('stop', function() {
+				ops.push('stop-event');
+			});
+
+			q.pause();
+
+			q.queue(function() {
+				ops.push('run1');
+			});
+			q.queue(function() {
+				ops.push('run2');
+			});
+
+			expect(ops).toEqual([ ]);
+
+			q.resume();
+
+			expect(ops).toEqual([ 'start-event', 'run1', 'run2', 'stop-event' ]);
+		});
+	});
 });
