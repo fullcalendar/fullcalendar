@@ -1,10 +1,14 @@
 
 function TaskQueue() {
+	var _this = this;
 	var isRunning = 0;
 	var q = [];
 
+	$.extend(this, EmitterMixin);
+
 	this.queue = function(taskFunc) {
 		if (!isRunning) {
+			_this.trigger('start');
 			executeTaskFunc(taskFunc);
 		}
 		else {
@@ -30,6 +34,9 @@ function TaskQueue() {
 
 			if (q.length) {
 				executeTaskFunc(q.shift());
+			}
+			else {
+				_this.trigger('stop');
 			}
 		}
 	}

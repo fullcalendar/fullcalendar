@@ -6,16 +6,30 @@ describe('TaskQueue', function() {
 		var q = new TaskQueue();
 		var ops = [];
 
+		q.on('start', function() {
+			ops.push('start-event');
+		});
+		q.on('stop', function() {
+			ops.push('stop-event');
+		});
+
 		q.queue(function() {
 			ops.push('run1');
 		});
 
-		expect(ops).toEqual([ 'run1' ]);
+		expect(ops).toEqual([ 'start-event', 'run1', 'stop-event' ]);
 	});
 
 	it('executes second task after first has fully completed', function() {
 		var q = new TaskQueue();
 		var ops = [];
+
+		q.on('start', function() {
+			ops.push('start-event');
+		});
+		q.on('stop', function() {
+			ops.push('stop-event');
+		});
 
 		q.queue(function() {
 			ops.push('start1');
@@ -24,15 +38,22 @@ describe('TaskQueue', function() {
 				ops.push('run2');
 			});
 
-			ops.push('end1');
+			ops.push('stop1');
 		});
 
-		expect(ops).toEqual([ 'start1', 'end1', 'run2' ]);
+		expect(ops).toEqual([ 'start-event', 'start1', 'stop1', 'run2', 'stop-event' ]);
 	});
 
 	it('executes second task after first promise resolves', function(done) {
 		var q = new TaskQueue();
 		var ops = [];
+
+		q.on('start', function() {
+			ops.push('start-event');
+		});
+		q.on('stop', function() {
+			ops.push('stop-event');
+		});
 
 		q.queue(function() {
 			var deferred = $.Deferred();
@@ -44,7 +65,7 @@ describe('TaskQueue', function() {
 			});
 
 			setTimeout(function() {
-				ops.push('end1');
+				ops.push('stop1');
 				deferred.resolve();
 			}, 100);
 
@@ -52,7 +73,7 @@ describe('TaskQueue', function() {
 		});
 
 		setTimeout(function() {
-			expect(ops).toEqual([ 'start1', 'end1', 'run2' ]);
+			expect(ops).toEqual([ 'start-event', 'start1', 'stop1', 'run2', 'stop-event' ]);
 			done();
 		}, 200);
 	});
