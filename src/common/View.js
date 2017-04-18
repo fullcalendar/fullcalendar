@@ -365,34 +365,36 @@ var View = FC.View = Model.extend({
 	},
 
 
-	setEvents: function(events) {
-		var _this = this;
-
-		this.set('currentEvents', events);
-
-		this.renderQueue.queue(function() {
-			_this.executeEventsRender(events);
-		});
-	},
-
-
 	resetEvents: function(events) {
 		var _this = this;
 
 		this.set('currentEvents', events);
 
+		if (this.has('displayingEvents')) {
+			this.renderQueue.queue(function() { // TODO: move to below section?
+				_this.executeEventsUnrender();
+			}, function() {
+				_this.executeEventsRender(events);
+			});
+		}
+	},
+
+
+	// Event Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	requestEventsRender: function(events) {
+		var _this = this;
+
 		this.renderQueue.queue(function() {
-			_this.executeEventsUnrender();
-		}, function() {
 			_this.executeEventsRender(events);
 		});
 	},
 
 
-	unsetEvents: function() {
+	requestEventsUnrender: function() {
 		var _this = this;
-
-		this.unset('currentEvents');
 
 		this.renderQueue.queue(function() {
 			_this.executeEventsUnrender();
@@ -484,13 +486,19 @@ var View = FC.View = Model.extend({
 
 
 	onBaseRender: function() {
+		this.thawHeight();
+		this.freezeHeight();
 		this.applyQueuedScroll();
+
 		this.publiclyTrigger('viewRender', this, this, this.el);
 	},
 
 
 	onBeforeBaseUnrender: function() {
+		this.thawHeight();
+		this.freezeHeight();
 		this.applyQueuedScroll();
+
 		this.publiclyTrigger('viewDestroy', this, this, this.el);
 	},
 
@@ -784,6 +792,8 @@ var View = FC.View = Model.extend({
 
 	// Signals that all events have been rendered
 	onEventsRender: function() {
+		this.thawHeight();
+		this.freezeHeight();
 		this.applyQueuedScroll();
 
 		this.renderedEventSegEach(function(seg) {
@@ -795,6 +805,8 @@ var View = FC.View = Model.extend({
 
 	// Signals that all event elements are about to be removed
 	onBeforeEventsUnrender: function() {
+		this.thawHeight();
+		this.freezeHeight();
 		this.applyQueuedScroll();
 
 		this.renderedEventSegEach(function(seg) {
@@ -1236,10 +1248,17 @@ View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('bindingEvents', [ 'initialEvents', 'displayingDates' ], function(deps) {
+View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
+	this.set('currentEvents', deps.initialEvents);
 	this.bindEventChanges();
-	this.setEvents(deps.initialEvents);
 }, function() {
 	this.unbindEventChanges();
-	this.unsetEvents();
+	this.unset('currentEvents');
+});
+
+
+View.watch('displayingEvents', [ 'displayingDates', 'bindingEvents' ], function() {
+	this.requestEventsRender(this.get('currentEvents')); // if there were event mutations after initialEvents
+}, function() {
+	this.requestEventsUnrender();
 });
