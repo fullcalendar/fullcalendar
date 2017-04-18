@@ -380,37 +380,21 @@ var View = FC.View = Model.extend({
 
 	setEvents: function(events) {
 		this.set('currentEvents', events);
-
-		if (this.has('displayingEvents')) {
-			this.requestEventsRender(events);
-		}
+		this.set('hasEvents', true);
 	},
 
 
 	unsetEvents: function() {
 		this.unset('currentEvents');
-
-		if (this.has('displayingEvents')) {
-			this.requestEventsUnrender();
-		}
+		this.unset('hasEvents');
 	},
 
 
 	resetEvents: function(events) {
-		var _this = this;
-
-		this.set('currentEvents', events);
-
-		if (this.has('displayingEvents')) {
-
-			// queue 2 render actions, guarantees serial execution.
-			// TODO: move this into rendering section?
-			this.renderQueue.queue(function() {
-				_this.executeEventsUnrender();
-			}, function() {
-				_this.executeEventsRender(events);
-			});
-		}
+		this.startBatchRender();
+		this.unsetEvents();
+		this.setEvents(events);
+		this.stopBatchRender();
 	},
 
 
@@ -1291,7 +1275,7 @@ View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
 });
 
 
-View.watch('displayingEvents', [ 'displayingDates', 'bindingEvents' ], function() {
+View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 	this.requestEventsRender(this.get('currentEvents')); // if there were event mutations after initialEvents
 }, function() {
 	this.requestEventsUnrender();
