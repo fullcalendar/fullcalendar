@@ -352,16 +352,30 @@ var View = FC.View = Model.extend({
 
 
 	bindEventChanges: function() {
-		var _this = this;
-
-		this.listenTo(this.calendar, 'eventsReset', function(events) {
-			_this.resetEvents(events);
-		});
+		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
 	},
 
 
 	unbindEventChanges: function() {
 		this.stopListeningTo(this.calendar, 'eventsReset');
+	},
+
+
+	setEvents: function(events) {
+		this.set('currentEvents', events);
+
+		if (this.has('displayingEvents')) {
+			this.requestEventsRender(events);
+		}
+	},
+
+
+	unsetEvents: function() {
+		this.unset('currentEvents');
+
+		if (this.has('displayingEvents')) {
+			this.requestEventsUnrender();
+		}
 	},
 
 
@@ -371,7 +385,10 @@ var View = FC.View = Model.extend({
 		this.set('currentEvents', events);
 
 		if (this.has('displayingEvents')) {
-			this.renderQueue.queue(function() { // TODO: move to below section?
+
+			// queue 2 render actions, guarantees serial execution.
+			// TODO: move this into rendering section?
+			this.renderQueue.queue(function() {
 				_this.executeEventsUnrender();
 			}, function() {
 				_this.executeEventsRender(events);
@@ -1249,11 +1266,11 @@ View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	this.set('currentEvents', deps.initialEvents);
+	this.setEvents(deps.initialEvents);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.unset('currentEvents');
+	this.unsetEvents();
 });
 
 
