@@ -1034,28 +1034,22 @@ function Calendar_constructor(element, overrides) {
 	t.freezeContentHeight = freezeContentHeight;
 	t.thawContentHeight = thawContentHeight;
 
-	var freezeContentHeightDepth = 0;
-
 
 	function freezeContentHeight() {
-		if (!(freezeContentHeightDepth++)) {
-			content.css({
-				width: '100%',
-				height: content.height(),
-				overflow: 'hidden'
-			});
-		}
+		content.css({
+			width: '100%',
+			height: content.height(),
+			overflow: 'hidden'
+		});
 	}
 
 
 	function thawContentHeight() {
-		if (!(--freezeContentHeightDepth)) {
-			content.css({
-				width: '',
-				height: '',
-				overflow: ''
-			});
-		}
+		content.css({
+			width: '',
+			height: '',
+			overflow: ''
+		});
 	}
 
 
