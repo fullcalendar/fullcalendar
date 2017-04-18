@@ -14,6 +14,7 @@ var View = FC.View = Model.extend({
 	el: null, // the view's containing element. set by Calendar
 
 	renderQueue: null,
+	batchRenderDepth: 0,
 	isDatesRendered: false,
 	isEventsRendered: false,
 	isBaseRendered: false, // related to viewRender/viewDestroy triggers
@@ -66,6 +67,7 @@ var View = FC.View = Model.extend({
 		// TODO: differentiate eventRenderWait from date rendering
 		//this.opt('eventRenderWait')
 		this.renderQueue = this.buildRenderQueue();
+		this.initAutoBatchRender();
 
 		this.initialize();
 	},
@@ -86,19 +88,34 @@ var View = FC.View = Model.extend({
 			_this.popScroll();
 		});
 
+		return renderQueue;
+	},
+
+
+	initAutoBatchRender: function() {
+		var _this = this;
+
 		this.on('before:change', function(name) {
-			if (!(changeDepth++)) {
-				renderQueue.pause();
-			}
+			_this.startBatchRender();
 		});
 
 		this.on('change', function(name) {
-			if (!(--changeDepth)) {
-				renderQueue.resume();
-			}
+			_this.stopBatchRender();
 		});
+	},
 
-		return renderQueue;
+
+	startBatchRender: function() {
+		if (!(this.batchRenderDepth++)) {
+			this.renderQueue.pause();
+		}
+	},
+
+
+	stopBatchRender: function() {
+		if (!(--this.batchRenderDepth)) {
+			this.renderQueue.resume();
+		}
 	},
 
 
