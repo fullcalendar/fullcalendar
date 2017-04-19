@@ -9,6 +9,7 @@
     "common/Model.js",
     "common/Promise.js",
     "common/TaskQueue.js",
+    "common/RenderQueue.js",
     "common/EmitterMixin.js",
     "common/ListenerMixin.js",
     "common/Popover.js",
