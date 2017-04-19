@@ -39,14 +39,14 @@ var RenderQueue = TaskQueue.extend({
 			}
 		}
 
-		if (this.canStart()) {
+		if (!this.isPaused && !this.waitNamespace) { // can execute immediately?
 			this.q.push(task);
-			this.start();
 		}
 		else {
 			this.compoundTask(task);
-			this.tryStart();
 		}
+
+		this.tryStart();
 	},
 
 
@@ -81,9 +81,12 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
-	canRunNext: function() {
-		return !this.waitNamespace &&
-			TaskQueue.prototype.canRunNext.apply(this, arguments);
+	canRunTask: function(task) {
+		if (!this.waitNamespace) {
+			return true;
+		}
+
+		return task.namespace !== this.waitNamespace;
 	},
 
 

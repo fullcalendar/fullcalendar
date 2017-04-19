@@ -184,5 +184,30 @@ describe('RenderQueue', function() {
 				done();
 			}, 200);
 		});
+
+		it('resumes non-waiting tasks when unpaused', function(done) {
+			var ops = [];
+			var q = new RenderQueue({
+				foo: 100
+			});
+
+			q.pause();
+
+			q.queue(function() {
+				ops.push('barinit');
+			}, 'bar', 'init');
+
+			q.queue(function() {
+				ops.push('fooinit');
+			}, 'foo', 'init');
+
+			q.resume();
+			expect(ops).toEqual([ 'barinit' ]);
+
+			setTimeout(function() {
+				expect(ops).toEqual([ 'barinit', 'fooinit' ]);
+				done();
+			}, 200);
+		});
 	});
 });

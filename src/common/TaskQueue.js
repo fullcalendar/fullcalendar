@@ -29,30 +29,28 @@ var TaskQueue = Class.extend(EmitterMixin, {
 
 
 	tryStart: function() {
-		if (this.canStart()) {
-			this.start();
+		if (!this.isRunning && this.canRunNext()) {
+			this.isRunning = true;
+			this.trigger('start');
+			this.runNext();
 		}
 	},
 
 
-	canStart: function() {
-		return !this.isRunning && this.canRunNext();
-	},
-
-
 	canRunNext: function() {
-		return !this.isPaused && this.q.length;
+		if (!this.isPaused && this.q.length) {
+			return this.canRunTask(this.q[0]);
+		}
+		return false;
 	},
 
 
-	start: function() { // does not check canStart
-		this.isRunning = true;
-		this.trigger('start');
-		this.runNext();
+	canRunTask: function(task) {
+		return true;
 	},
 
 
-	runNext: function() { // does not check for empty q
+	runNext: function() { // does not check canRunNext
 		this.runTask(this.q.shift());
 	},
 
