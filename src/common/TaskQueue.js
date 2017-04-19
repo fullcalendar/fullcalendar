@@ -1,36 +1,69 @@
 
-function TaskQueue() {
-	var _this = this;
-	var isPaused = false;
-	var isRunning = 0;
-	var q = [];
+var TaskQueue = Class.extend(EmitterMixin, {
 
-	$.extend(this, EmitterMixin);
+	q: null,
+	isPaused: false,
+	isRunning: false,
 
-	this.queue = function(/* taskFunc, taskFunc... */) {
-		q.push.apply(q, arguments); // append
-		tryStart();
-	};
 
-	this.pause = function() {
-		isPaused = true;
-	};
+	constructor: function() {
+		this.q = [];
+	},
 
-	this.resume = function() {
-		isPaused = false;
-		tryStart();
-	};
 
-	function tryStart() {
-		if (!isRunning && !isPaused && q.length) {
-			isRunning = true;
-			_this.trigger('start');
-			runNext();
+	queue: function(/* taskFunc, taskFunc... */) {
+		this.q.push.apply(this.q, arguments); // append
+		this.tryStart();
+	},
+
+
+	pause: function() {
+		this.isPaused = true;
+	},
+
+
+	resume: function() {
+		this.isPaused = false;
+		this.tryStart();
+	},
+
+
+	tryStart: function() {
+		if (this.canStart()) {
+			this.start();
 		}
-	}
+	},
 
-	function runNext() { // does not check for empty q
-		var taskFunc = q.shift();
+
+	canStart: function() {
+		return !this.isRunning && this.canRunNext();
+	},
+
+
+	canRunNext: function() {
+		return !this.isPaused && this.q.length;
+	},
+
+
+	start: function() { // does not check canStart
+		this.isRunning = true;
+		this.trigger('start');
+		this.runNext();
+	},
+
+
+	runNext: function() { // does not check for empty q
+		this.runTask(this.q.shift());
+	},
+
+
+	runTask: function(task) {
+		this.runTaskFunc(task);
+	},
+
+
+	runTaskFunc: function(taskFunc) {
+		var _this = this;
 		var res = taskFunc();
 
 		if (res && res.then) {
@@ -41,15 +74,16 @@ function TaskQueue() {
 		}
 
 		function done() {
-			if (!isPaused && q.length) {
-				runNext();
+			if (_this.canRunNext()) {
+				_this.runNext();
 			}
 			else {
-				isRunning = false;
+				_this.isRunning = false;
 				_this.trigger('stop');
 			}
 		}
 	}
-}
+
+});
 
 FC.TaskQueue = TaskQueue;
