@@ -64,8 +64,6 @@ var View = FC.View = Model.extend({
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
-		// TODO: differentiate eventRenderWait from date rendering
-		//this.opt('eventRenderWait')
 		this.renderQueue = this.buildRenderQueue();
 		this.initAutoBatchRender();
 
@@ -75,8 +73,9 @@ var View = FC.View = Model.extend({
 
 	buildRenderQueue: function() {
 		var _this = this;
-		var renderQueue = new TaskQueue();
-		var changeDepth = 0;
+		var renderQueue = new RenderQueue({
+			event: this.opt('eventRenderWait')
+		});
 
 		renderQueue.on('start', function() {
 			_this.freezeHeight();
@@ -343,7 +342,7 @@ var View = FC.View = Model.extend({
 
 		this.renderQueue.queue(function() {
 			_this.executeDateRender(dateProfile);
-		});
+		}, 'date', 'init');
 	},
 
 
@@ -352,7 +351,7 @@ var View = FC.View = Model.extend({
 
 		this.renderQueue.queue(function() {
 			_this.executeDateUnrender();
-		});
+		}, 'date', 'destroy');
 	},
 
 
@@ -407,7 +406,7 @@ var View = FC.View = Model.extend({
 
 		this.renderQueue.queue(function() {
 			_this.executeEventsRender(events);
-		});
+		}, 'event', 'init');
 	},
 
 
@@ -416,7 +415,7 @@ var View = FC.View = Model.extend({
 
 		this.renderQueue.queue(function() {
 			_this.executeEventsUnrender();
-		});
+		}, 'event', 'destroy');
 	},
 
 
