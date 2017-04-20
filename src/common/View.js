@@ -94,11 +94,11 @@ var View = FC.View = Model.extend({
 	initAutoBatchRender: function() {
 		var _this = this;
 
-		this.on('before:change', function(name) {
+		this.on('before:change', function() {
 			_this.startBatchRender();
 		});
 
-		this.on('change', function(name) {
+		this.on('change', function() {
 			_this.stopBatchRender();
 		});
 	},
