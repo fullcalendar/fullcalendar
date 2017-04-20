@@ -19,14 +19,14 @@ var RenderQueue = TaskQueue.extend({
 			namespace: namespace,
 			type: type
 		};
-		var waitMs = 0;
+		var waitMs;
 
 		if (namespace) {
-			waitMs = this.waitsByNamespace[namespace] || 0;
+			waitMs = this.waitsByNamespace[namespace];
 		}
 
 		if (this.waitNamespace) {
-			if (namespace === this.waitNamespace) {
+			if (namespace === this.waitNamespace && waitMs != null) {
 				this.delayWait(waitMs);
 			}
 			else {
@@ -37,7 +37,7 @@ var RenderQueue = TaskQueue.extend({
 
 		if (this.compoundTask(task)) { // appended to queue?
 
-			if (waitMs && !this.waitNamespace) {
+			if (!this.waitNamespace && waitMs != null) {
 				this.startWait(namespace, waitMs);
 			}
 			else {
