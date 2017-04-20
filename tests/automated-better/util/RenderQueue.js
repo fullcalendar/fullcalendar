@@ -209,5 +209,42 @@ describe('RenderQueue', function() {
 				done();
 			}, 200);
 		});
+
+		it('paused+queued tasks from a previous namespace wait resume immediately', function(done) {
+			var ops = [];
+			var q = new RenderQueue({
+				foo: 100
+			});
+
+			q.pause();
+
+			q.queue(function() {
+				ops.push('foodestroy');
+			}, 'foo', 'destroy');
+
+			q.queue(function() {
+				ops.push('bardestroy');
+			}, 'bar', 'destroy');
+
+			expect(ops).toEqual([]);
+
+			q.queue(function() {
+				ops.push('barinit');
+			}, 'bar', 'init');
+
+			q.queue(function() {
+				ops.push('fooinit');
+			}, 'foo', 'init');
+
+			expect(ops).toEqual([]);
+
+			q.resume();
+			expect(ops).toEqual([ 'foodestroy', 'bardestroy', 'barinit' ]);
+
+			setTimeout(function() {
+				expect(ops).toEqual([ 'foodestroy', 'bardestroy', 'barinit', 'fooinit' ]);
+				done();
+			}, 200);
+		});
 	});
 });

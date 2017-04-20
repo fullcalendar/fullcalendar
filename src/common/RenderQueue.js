@@ -19,34 +19,31 @@ var RenderQueue = TaskQueue.extend({
 			namespace: namespace,
 			type: type
 		};
-		var waitMs;
+		var waitMs = 0;
 
 		if (namespace) {
-			waitMs = this.waitsByNamespace[namespace];
+			waitMs = this.waitsByNamespace[namespace] || 0;
 		}
 
-		if (namespace && namespace === this.waitNamespace) {
-			this.delayWait(waitMs || 0);
-		}
-		else {
-			if (this.waitNamespace) {
+		if (this.waitNamespace) {
+			if (namespace === this.waitNamespace) {
+				this.delayWait(waitMs);
+			}
+			else {
 				this.clearWait();
 				this.tryStart();
 			}
+		}
 
-			if (waitMs) {
+		if (this.compoundTask(task)) { // appended to queue?
+
+			if (waitMs && !this.waitNamespace) {
 				this.startWait(namespace, waitMs);
 			}
+			else {
+				this.tryStart();
+			}
 		}
-
-		if (!this.isPaused && !this.waitNamespace) { // can execute immediately?
-			this.q.push(task);
-		}
-		else {
-			this.compoundTask(task);
-		}
-
-		this.tryStart();
 	},
 
 
@@ -81,12 +78,27 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
-	canRunTask: function(task) {
-		if (!this.waitNamespace) {
-			return true;
+	canRunNext: function() {
+		if (!TaskQueue.prototype.canRunNext.apply(this, arguments)) {
+			return false;
 		}
 
-		return task.namespace !== this.waitNamespace;
+		// waiting for a certain namespace to stop receiving tasks?
+		if (this.waitNamespace) {
+
+			// if there was a different namespace task in the meantime,
+			// that forces all previously-waiting tasks to suddenly execute.
+			// TODO: find a way to do this in constant time.
+			for (var q = this.q, i = 0; i < q.length; i++) {
+				if (q[i].namespace !== this.waitNamespace) {
+					return true; // allow execution
+				}
+			}
+
+			return false;
+		}
+
+		return true;
 	},
 
 
@@ -124,6 +136,8 @@ var RenderQueue = TaskQueue.extend({
 		if (shouldAppend) {
 			q.push(newTask);
 		}
+
+		return shouldAppend;
 	}
 
 });

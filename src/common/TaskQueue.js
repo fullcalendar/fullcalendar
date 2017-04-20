@@ -38,15 +38,7 @@ var TaskQueue = Class.extend(EmitterMixin, {
 
 
 	canRunNext: function() {
-		if (!this.isPaused && this.q.length) {
-			return this.canRunTask(this.q[0]);
-		}
-		return false;
-	},
-
-
-	canRunTask: function(task) {
-		return true;
+		return !this.isPaused && this.q.length;
 	},
 
 
