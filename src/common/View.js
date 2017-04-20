@@ -424,7 +424,7 @@ var View = FC.View = Model.extend({
 
 
 	// if dateProfile not specified, uses current
-	executeDateRender: function(dateProfile) {
+	executeDateRender: function(dateProfile, skipScroll) {
 
 		this.setDateProfileForRendering(dateProfile);
 		this.updateTitle();
@@ -439,7 +439,9 @@ var View = FC.View = Model.extend({
 		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
 		this.startNowIndicator();
 
-		this.addScroll(this.computeInitialDateScroll());
+		if (!skipScroll) {
+			this.addScroll(this.computeInitialDateScroll());
+		}
 
 		this.isDatesRendered = true;
 		this.trigger('datesRendered');
