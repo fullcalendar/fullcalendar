@@ -160,7 +160,7 @@ function EventManager() { // assumed to be a calendar
 		}
 
 		if (pendingSourceCnt) {
-			return new Promise(function(resolve) {
+			return Promise.construct(function(resolve) {
 				t.one('eventsReceived', resolve); // will send prunedCache
 			});
 		}
