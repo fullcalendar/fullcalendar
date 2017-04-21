@@ -58,7 +58,7 @@ describe('RenderQueue', function() {
 
 				q.queue(function() {
 					ops.push('barinit');
-				}, 'foo', 'init');
+				}, 'bar', 'init');
 
 				q.queue(function() {
 					ops.push('fooinit');

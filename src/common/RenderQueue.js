@@ -110,26 +110,36 @@ var RenderQueue = TaskQueue.extend({
 	compoundTask: function(newTask) {
 		var q = this.q;
 		var shouldAppend = true;
-		var i, lastTask;
+		var i, task;
 
-		if (newTask.type === 'destroy') {
+		if (newTask.namespace && newTask.type === 'destroy') {
 
-			while (q.length) {
-				lastTask = q[q.length - 1];
+			// remove all add/remove ops with same namespace, regardless of order
+			for (i = q.length - 1; i >= 0; i--) {
+				task = q[i];
 
-				if (newTask.namespace && newTask.namespace === lastTask.namespace) {
-
-					if (lastTask.type === 'add' || lastTask.type === 'remove') {
-						q.pop();
-						continue;
-					}
-					else if (lastTask.type === 'init') {
-						q.pop();
-						shouldAppend = false;
-					}
+				if (
+					task.namespace === newTask.namespace &&
+					(task.type === 'add' || task.type === 'remove')
+				) {
+					q.splice(i, 1); // remove task
 				}
+			}
 
-				break;
+			// eat away queued init operations
+			while (q.length) {
+				task = q[q.length - 1]; // last task
+
+				if (
+					task.namespace === newTask.namespace &&
+					task.type === 'init'
+				) {
+					q.pop();
+					shouldAppend = false;
+				}
+				else {
+					break;
+				}
 			}
 		}
 
