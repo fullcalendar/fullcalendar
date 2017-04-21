@@ -505,19 +505,13 @@ var View = FC.View = Model.extend({
 
 
 	onBaseRender: function() {
-		this.thawHeight();
-		this.freezeHeight();
-		this.applyQueuedScroll();
-
+		this.applyScreenState();
 		this.publiclyTrigger('viewRender', this, this, this.el);
 	},
 
 
 	onBeforeBaseUnrender: function() {
-		this.thawHeight();
-		this.freezeHeight();
-		this.applyQueuedScroll();
-
+		this.applyScreenState();
 		this.publiclyTrigger('viewDestroy', this, this, this.el);
 	},
 
@@ -811,9 +805,7 @@ var View = FC.View = Model.extend({
 
 	// Signals that all events have been rendered
 	onEventsRender: function() {
-		this.thawHeight();
-		this.freezeHeight();
-		this.applyQueuedScroll();
+		this.applyScreenState();
 
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventAfterRender', seg.event, seg.event, seg.el);
@@ -824,13 +816,18 @@ var View = FC.View = Model.extend({
 
 	// Signals that all event elements are about to be removed
 	onBeforeEventsUnrender: function() {
-		this.thawHeight();
-		this.freezeHeight();
-		this.applyQueuedScroll();
+		this.applyScreenState();
 
 		this.renderedEventSegEach(function(seg) {
 			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
+	},
+
+
+	applyScreenState: function() {
+		this.thawHeight();
+		this.freezeHeight();
+		this.applyQueuedScroll();
 	},
 
 
