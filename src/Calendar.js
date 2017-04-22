@@ -339,6 +339,75 @@ var Calendar = FC.Calendar = Class.extend({
 		}
 
 		return { start: start, end: end };
+	},
+
+
+	/* Event Rendering
+	-----------------------------------------------------------------------------*/
+
+
+	rerenderEvents: function() { // API method. destroys old events if previously rendered.
+		if (this.elementVisible()) {
+			this.reportEventChange(); // will re-trasmit events to the view, causing a rerender
+		}
+	},
+
+
+	/* Selection
+	-----------------------------------------------------------------------------*/
+
+
+	// this public method receives start/end dates in any format, with any timezone
+	select: function(zonedStartInput, zonedEndInput) {
+		this.view.select(
+			this.buildSelectSpan.apply(this, arguments)
+		);
+	},
+
+
+	unselect: function() { // safe to be called before renderView
+		if (this.view) {
+			this.view.unselect();
+		}
+	},
+
+
+	/* Misc
+	-----------------------------------------------------------------------------*/
+
+
+	// Forces navigation to a view for the given date.
+	// `viewType` can be a specific view name or a generic one like "week" or "day".
+	zoomTo: function(newDate, viewType) {
+		var spec;
+
+		viewType = viewType || 'day'; // day is default zoom
+		spec = this.getViewSpec(viewType) || this.getUnitViewSpec(viewType);
+
+		this.currentDate = newDate.clone();
+		this.renderView(spec ? spec.type : null);
+	},
+
+
+	getCalendar: function() {
+		return this;
+	},
+
+
+	getView: function() {
+		return this.view;
+	},
+
+
+	publiclyTrigger: function(name, thisObj) {
+		var args = Array.prototype.slice.call(arguments, 2);
+
+		thisObj = thisObj || this.el[0];
+		this.triggerWith(name, thisObj, args); // Emitter's method
+
+		if (this.options[name]) {
+			return this.options[name].apply(thisObj, args);
+		}
 	}
 
 });
@@ -357,23 +426,8 @@ function Calendar_constructor(element, overrides) {
 	EventManager.call(t);
 
 
-	// Exports
-	// -----------------------------------------------------------------------------------
-
-	t.rerenderEvents = rerenderEvents;
-	t.select = select;
-	t.unselect = unselect;
-	t.zoomTo = zoomTo;
-	t.getCalendar = getCalendar;
-	t.getView = getView;
-	t.publiclyTrigger = publiclyTrigger;
-
-
 	// Locals
 	// -----------------------------------------------------------------------------------
-
-
-	var _element = element[0];
 
 
 	t.initCurrentDate();
@@ -381,76 +435,9 @@ function Calendar_constructor(element, overrides) {
 
 
 
-
-	/* Event Rendering
-	-----------------------------------------------------------------------------*/
-
-
-	function rerenderEvents() { // API method. destroys old events if previously rendered.
-		if (t.elementVisible()) {
-			t.reportEventChange(); // will re-trasmit events to the view, causing a rerender
-		}
-	}
-
-
-
-	/* Selection
-	-----------------------------------------------------------------------------*/
-
-
-	// this public method receives start/end dates in any format, with any timezone
-	function select(zonedStartInput, zonedEndInput) {
-		t.view.select(
-			t.buildSelectSpan.apply(t, arguments)
-		);
-	}
-
-
-	function unselect() { // safe to be called before renderView
-		if (t.view) {
-			t.view.unselect();
-		}
-	}
-
-
-	// Forces navigation to a view for the given date.
-	// `viewType` can be a specific view name or a generic one like "week" or "day".
-	function zoomTo(newDate, viewType) {
-		var spec;
-
-		viewType = viewType || 'day'; // day is default zoom
-		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
-
-		t.currentDate = newDate.clone();
-		t.renderView(spec ? spec.type : null);
-	}
-
-
-
 	/* Misc
 	-----------------------------------------------------------------------------*/
 
-
-	function getCalendar() {
-		return t;
-	}
-
-
-	function getView() {
-		return t.view;
-	}
-
-
-	function publiclyTrigger(name, thisObj) {
-		var args = Array.prototype.slice.call(arguments, 2);
-
-		thisObj = thisObj || _element;
-		this.triggerWith(name, thisObj, args); // Emitter's method
-
-		if (t.options[name]) {
-			return t.options[name].apply(thisObj, args);
-		}
-	}
 
 	t.initialize();
 }
