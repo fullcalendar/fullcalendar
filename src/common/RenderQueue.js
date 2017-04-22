@@ -9,7 +9,7 @@ var RenderQueue = TaskQueue.extend({
 	constructor: function(waitsByNamespace) {
 		TaskQueue.call(this); // super-constructor
 
-		this.waitsByNamespace = waitsByNamespace || {}
+		this.waitsByNamespace = waitsByNamespace || {};
 	},
 
 
