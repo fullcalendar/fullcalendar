@@ -1,11 +1,6 @@
 
 var Calendar = FC.Calendar = Class.extend({
 
-	dirDefaults: null, // option defaults related to LTR or RTL
-	localeDefaults: null, // option defaults related to current locale
-	overrides: null, // option overrides given to the fullCalendar constructor
-	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
-	options: null, // all defaults combined with overrides
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
@@ -21,43 +16,6 @@ var Calendar = FC.Calendar = Class.extend({
 
 	// Subclasses can override this for initialization logic after the constructor has been called
 	initialize: function() {
-	},
-
-
-	// Computes the flattened options hash for the calendar and assigns to `this.options`.
-	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
-	populateOptionsHash: function() {
-		var locale, localeDefaults;
-		var isRTL, dirDefaults;
-
-		locale = firstDefined( // explicit locale option given?
-			this.dynamicOverrides.locale,
-			this.overrides.locale
-		);
-		localeDefaults = localeOptionHash[locale];
-		if (!localeDefaults) { // explicit locale option not given or invalid?
-			locale = Calendar.defaults.locale;
-			localeDefaults = localeOptionHash[locale] || {};
-		}
-
-		isRTL = firstDefined( // based on options computed so far, is direction RTL?
-			this.dynamicOverrides.isRTL,
-			this.overrides.isRTL,
-			localeDefaults.isRTL,
-			Calendar.defaults.isRTL
-		);
-		dirDefaults = isRTL ? Calendar.rtlDefaults : {};
-
-		this.dirDefaults = dirDefaults;
-		this.localeDefaults = localeDefaults;
-		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
-			Calendar.defaults, // global defaults
-			dirDefaults,
-			localeDefaults,
-			this.overrides,
-			this.dynamicOverrides
-		]);
-		populateInstanceComputableOptions(this.options); // fill in gaps with computed options
 	},
 
 
@@ -393,8 +351,10 @@ Calendar.mixin(EmitterMixin);
 function Calendar_constructor(element, overrides) {
 	var t = this;
 
-	// declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
-	GlobalEmitter.needed();
+	GlobalEmitter.needed(); // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
+	t.initOptionsInternals(overrides);
+	t.initMomentInternals(); // needs to happen after options hash initialized
+	EventManager.call(t);
 
 
 	// Exports
@@ -409,32 +369,7 @@ function Calendar_constructor(element, overrides) {
 	t.getCalendar = getCalendar;
 	t.getView = getView;
 	t.option = option; // getter/setter method
-	t.recordOptionOverrides = recordOptionOverrides;
 	t.publiclyTrigger = publiclyTrigger;
-
-
-	// Options
-	// -----------------------------------------------------------------------------------
-
-	t.dynamicOverrides = {};
-	t.viewSpecCache = {};
-	t.optionHandlers = {}; // for Calendar.options.js
-	t.overrides = $.extend({}, overrides); // make a copy
-
-	t.populateOptionsHash(); // sets this.options
-
-
-
-	t.initMomentInternals(); // needs to happen after options hash initialized
-
-
-
-	// Imports
-	// -----------------------------------------------------------------------------------
-
-
-	EventManager.call(t);
-
 
 
 	// Locals
@@ -916,7 +851,7 @@ function Calendar_constructor(element, overrides) {
 		var optionCnt = 0;
 		var optionName;
 
-		recordOptionOverrides(newOptionHash);
+		t.recordOptionOverrides(newOptionHash);
 
 		for (optionName in newOptionHash) {
 			optionCnt++;
@@ -951,24 +886,6 @@ function Calendar_constructor(element, overrides) {
 		renderFooter();
 		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
 		reinitView();
-	}
-
-
-	// stores the new options internally, but does not rerender anything.
-	function recordOptionOverrides(newOptionHash) {
-		var optionName;
-
-		for (optionName in newOptionHash) {
-			t.dynamicOverrides[optionName] = newOptionHash[optionName];
-		}
-
-		t.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
-		t.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
-
-		// trigger handlers after this.options has been updated
-		for (optionName in newOptionHash) {
-			t.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
-		}
 	}
 
 

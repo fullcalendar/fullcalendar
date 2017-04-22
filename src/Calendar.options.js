@@ -3,6 +3,81 @@ Options binding/triggering system.
 */
 Calendar.mixin({
 
+	dirDefaults: null, // option defaults related to LTR or RTL
+	localeDefaults: null, // option defaults related to current locale
+	overrides: null, // option overrides given to the fullCalendar constructor
+	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
+	options: null, // all defaults combined with overrides
+
+
+	initOptionsInternals: function(overrides) {
+		this.dynamicOverrides = {};
+		this.viewSpecCache = {}; // TODO: wrong place to do this
+		this.optionHandlers = {};
+		this.overrides = $.extend({}, overrides); // make a copy
+
+		this.populateOptionsHash();
+	},
+
+
+	// Computes the flattened options hash for the calendar and assigns to `this.options`.
+	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
+	populateOptionsHash: function() {
+		var locale, localeDefaults;
+		var isRTL, dirDefaults;
+
+		locale = firstDefined( // explicit locale option given?
+			this.dynamicOverrides.locale,
+			this.overrides.locale
+		);
+		localeDefaults = localeOptionHash[locale];
+		if (!localeDefaults) { // explicit locale option not given or invalid?
+			locale = Calendar.defaults.locale;
+			localeDefaults = localeOptionHash[locale] || {};
+		}
+
+		isRTL = firstDefined( // based on options computed so far, is direction RTL?
+			this.dynamicOverrides.isRTL,
+			this.overrides.isRTL,
+			localeDefaults.isRTL,
+			Calendar.defaults.isRTL
+		);
+		dirDefaults = isRTL ? Calendar.rtlDefaults : {};
+
+		this.dirDefaults = dirDefaults;
+		this.localeDefaults = localeDefaults;
+		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
+			Calendar.defaults, // global defaults
+			dirDefaults,
+			localeDefaults,
+			this.overrides,
+			this.dynamicOverrides
+		]);
+		populateInstanceComputableOptions(this.options); // fill in gaps with computed options
+	},
+
+
+	// stores the new options internally, but does not rerender anything.
+	recordOptionOverrides: function(newOptionHash) {
+		var optionName;
+
+		for (optionName in newOptionHash) {
+			this.dynamicOverrides[optionName] = newOptionHash[optionName];
+		}
+
+		this.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		this.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
+
+		// trigger handlers after this.options has been updated
+		for (optionName in newOptionHash) {
+			this.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
+		}
+	},
+
+
+	// Binding
+	// -----------------------------------------------------------------------------------------------------------------
+
 	// A map of option names to arrays of handler objects. Initialized to {} in Calendar.
 	// Format for a handler object:
 	// {
