@@ -5,8 +5,6 @@ var Calendar = FC.Calendar = Class.extend({
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
-	header: null,
-	footer: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
 
@@ -353,6 +351,7 @@ function Calendar_constructor(element, overrides) {
 	var t = this;
 
 	GlobalEmitter.needed(); // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
+	t.el = element;
 	t.initOptionsInternals(overrides);
 	t.initMomentInternals(); // needs to happen after options hash initialized
 	EventManager.call(t);
@@ -361,8 +360,6 @@ function Calendar_constructor(element, overrides) {
 	// Exports
 	// -----------------------------------------------------------------------------------
 
-	t.render = render;
-	t.destroy = destroy;
 	t.rerenderEvents = rerenderEvents;
 	t.select = select;
 	t.unselect = unselect;
@@ -377,284 +374,11 @@ function Calendar_constructor(element, overrides) {
 
 
 	var _element = element[0];
-	var toolbarsManager;
-	var header;
-	var footer;
-	var content;
-	var tm; // for making theme classes
-	var currentView; // NOTE: keep this in sync with this.view
-	var suggestedViewHeight;
-	var windowResizeProxy; // wraps the windowResize function
-	var ignoreWindowResize = 0;
 
 
 	t.initCurrentDate();
 	t.viewsByType = {};
 
-
-	// Main Rendering
-	// -----------------------------------------------------------------------------------
-
-
-	function render() {
-		if (!content) {
-			initialRender();
-		}
-		else if (elementVisible()) {
-			// mainly for the public API
-			calcSize();
-			t.renderView();
-		}
-	}
-
-
-	function initialRender() {
-		element.addClass('fc');
-
-		// event delegation for nav links
-		element.on('click.fc', 'a[data-goto]', function(ev) {
-			var anchorEl = $(this);
-			var gotoOptions = anchorEl.data('goto'); // will automatically parse JSON
-			var date = t.moment(gotoOptions.date);
-			var viewType = gotoOptions.type;
-
-			// property like "navLinkDayClick". might be a string or a function
-			var customAction = currentView.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
-
-			if (typeof customAction === 'function') {
-				customAction(date, ev);
-			}
-			else {
-				if (typeof customAction === 'string') {
-					viewType = customAction;
-				}
-				zoomTo(date, viewType);
-			}
-		});
-
-		// called immediately, and upon option change
-		t.bindOption('theme', function(theme) {
-			tm = theme ? 'ui' : 'fc'; // affects a larger scope
-			element.toggleClass('ui-widget', theme);
-			element.toggleClass('fc-unthemed', !theme);
-		});
-
-		// called immediately, and upon option change.
-		// HACK: locale often affects isRTL, so we explicitly listen to that too.
-		t.bindOptions([ 'isRTL', 'locale' ], function(isRTL) {
-			element.toggleClass('fc-ltr', !isRTL);
-			element.toggleClass('fc-rtl', isRTL);
-		});
-
-		content = $("<div class='fc-view-container'/>").prependTo(element);
-
-		var toolbars = buildToolbars();
-		toolbarsManager = new Iterator(toolbars);
-
-		header = t.header = toolbars[0];
-		footer = t.footer = toolbars[1];
-
-		t.renderHeader();
-		t.renderFooter();
-		t.renderView(t.options.defaultView);
-
-		if (t.options.handleWindowResize) {
-			windowResizeProxy = debounce(windowResize, t.options.windowResizeDelay); // prevents rapid calls
-			$(window).resize(windowResizeProxy);
-		}
-	}
-
-
-	function destroy() {
-
-		if (currentView) {
-			currentView.removeElement();
-
-			// NOTE: don't null-out currentView/t.view in case API methods are called after destroy.
-			// It is still the "current" view, just not rendered.
-		}
-
-		toolbarsManager.proxyCall('removeElement');
-		content.remove();
-		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
-
-		element.off('.fc'); // unbind nav link handlers
-
-		if (windowResizeProxy) {
-			$(window).unbind('resize', windowResizeProxy);
-		}
-
-		GlobalEmitter.unneeded();
-	}
-
-
-	function elementVisible() {
-		return element.is(':visible');
-	}
-
-
-
-	// View Rendering
-	// -----------------------------------------------------------------------------------
-
-
-	// Renders a view because of a date change, view-type change, or for the first time.
-	// If not given a viewType, keep the current view but render different dates.
-	// Accepts an optional scroll state to restore to.
-	t.renderView = function(viewType, forcedScroll) {
-		ignoreWindowResize++;
-
-		var needsClearView = currentView && viewType && currentView.type !== viewType;
-
-		// if viewType is changing, remove the old view's rendering
-		if (needsClearView) {
-			freezeContentHeight(); // prevent a scroll jump when view element is removed
-			clearView();
-		}
-
-		// if viewType changed, or the view was never created, create a fresh view
-		if (!currentView && viewType) {
-			currentView = t.view =
-				t.viewsByType[viewType] ||
-				(t.viewsByType[viewType] = t.instantiateView(viewType));
-
-			currentView.setElement(
-				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content)
-			);
-			toolbarsManager.proxyCall('activateButton', viewType);
-		}
-
-		if (currentView) {
-
-			if (forcedScroll) {
-				currentView.addForcedScroll(forcedScroll);
-			}
-
-			if (elementVisible()) {
-				t.currentDate = currentView.setDate(t.currentDate);
-			}
-		}
-
-		if (needsClearView) {
-			thawContentHeight();
-		}
-
-		ignoreWindowResize--;
-	};
-
-
-	// Unrenders the current view and reflects this change in the Header.
-	// Unregsiters the `currentView`, but does not remove from viewByType hash.
-	function clearView() {
-		toolbarsManager.proxyCall('deactivateButton', currentView.type);
-		currentView.removeElement();
-		currentView = t.view = null;
-	}
-
-
-	// Destroys the view, including the view object. Then, re-instantiates it and renders it.
-	// Maintains the same scroll state.
-	// TODO: maintain any other user-manipulated state.
-	this.reinitView = function() {
-		ignoreWindowResize++;
-		freezeContentHeight();
-
-		var viewType = currentView.type;
-		var scrollState = currentView.queryScroll();
-		clearView();
-		calcSize();
-		t.renderView(viewType, scrollState);
-
-		thawContentHeight();
-		ignoreWindowResize--;
-	};
-
-
-
-	// Resizing
-	// -----------------------------------------------------------------------------------
-
-
-	t.getSuggestedViewHeight = function() {
-		if (suggestedViewHeight === undefined) {
-			calcSize();
-		}
-		return suggestedViewHeight;
-	};
-
-
-	t.isHeightAuto = function() {
-		return t.options.contentHeight === 'auto' || t.options.height === 'auto';
-	};
-
-
-	function updateSize(shouldRecalc) {
-		if (elementVisible()) {
-
-			if (shouldRecalc) {
-				_calcSize();
-			}
-
-			ignoreWindowResize++;
-			currentView.updateSize(true); // isResize=true. will poll getSuggestedViewHeight() and isHeightAuto()
-			ignoreWindowResize--;
-
-			return true; // signal success
-		}
-	}
-
-
-	function calcSize() {
-		if (elementVisible()) {
-			_calcSize();
-		}
-	}
-
-
-	function _calcSize() { // assumes elementVisible
-		var contentHeightInput = t.options.contentHeight;
-		var heightInput = t.options.height;
-
-		if (typeof contentHeightInput === 'number') { // exists and not 'auto'
-			suggestedViewHeight = contentHeightInput;
-		}
-		else if (typeof contentHeightInput === 'function') { // exists and is a function
-			suggestedViewHeight = contentHeightInput();
-		}
-		else if (typeof heightInput === 'number') { // exists and not 'auto'
-			suggestedViewHeight = heightInput - queryToolbarsHeight();
-		}
-		else if (typeof heightInput === 'function') { // exists and is a function
-			suggestedViewHeight = heightInput() - queryToolbarsHeight();
-		}
-		else if (heightInput === 'parent') { // set to height of parent element
-			suggestedViewHeight = element.parent().height() - queryToolbarsHeight();
-		}
-		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(t.options.aspectRatio, .5));
-		}
-	}
-
-
-	function queryToolbarsHeight() {
-		return toolbarsManager.items.reduce(function(accumulator, toolbar) {
-			var toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0; // includes margin
-			return accumulator + toolbarHeight;
-		}, 0);
-	}
-
-
-	function windowResize(ev) {
-		if (
-			!ignoreWindowResize &&
-			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			currentView.renderRange // view has already been rendered
-		) {
-			if (updateSize(true)) {
-				currentView.publiclyTrigger('windowResize', _element);
-			}
-		}
-	}
 
 
 
@@ -663,93 +387,10 @@ function Calendar_constructor(element, overrides) {
 
 
 	function rerenderEvents() { // API method. destroys old events if previously rendered.
-		if (elementVisible()) {
+		if (t.elementVisible()) {
 			t.reportEventChange(); // will re-trasmit events to the view, causing a rerender
 		}
 	}
-
-
-
-	/* Toolbars
-	-----------------------------------------------------------------------------*/
-
-
-	function buildToolbars() {
-		return [
-			new Toolbar(t, computeHeaderOptions()),
-			new Toolbar(t, computeFooterOptions())
-		];
-	}
-
-
-	function computeHeaderOptions() {
-		return {
-			extraClasses: 'fc-header-toolbar',
-			layout: t.options.header
-		};
-	}
-
-
-	function computeFooterOptions() {
-		return {
-			extraClasses: 'fc-footer-toolbar',
-			layout: t.options.footer
-		};
-	}
-
-
-	// can be called repeatedly and Header will rerender
-	t.renderHeader = function() {
-		header.setToolbarOptions(computeHeaderOptions());
-		header.render();
-		if (header.el) {
-			element.prepend(header.el);
-		}
-	};
-
-
-	// can be called repeatedly and Footer will rerender
-	t.renderFooter = function() {
-		footer.setToolbarOptions(computeFooterOptions());
-		footer.render();
-		if (footer.el) {
-			element.append(footer.el);
-		}
-	};
-
-
-	t.setToolbarsTitle = function(title) {
-		toolbarsManager.proxyCall('updateTitle', title);
-	};
-
-
-	t.updateToolbarButtons = function() {
-		var now = t.getNow();
-		var todayInfo = currentView.buildDateProfile(now);
-		var prevInfo = currentView.buildPrevDateProfile(t.currentDate);
-		var nextInfo = currentView.buildNextDateProfile(t.currentDate);
-
-		toolbarsManager.proxyCall(
-			(todayInfo.isValid && !isDateWithinRange(now, currentView.currentRange)) ?
-				'enableButton' :
-				'disableButton',
-			'today'
-		);
-
-		toolbarsManager.proxyCall(
-			prevInfo.isValid ?
-				'enableButton' :
-				'disableButton',
-			'prev'
-		);
-
-		toolbarsManager.proxyCall(
-			nextInfo.isValid ?
-				'enableButton' :
-				'disableButton',
-			'next'
-		);
-	};
 
 
 
@@ -759,15 +400,15 @@ function Calendar_constructor(element, overrides) {
 
 	// this public method receives start/end dates in any format, with any timezone
 	function select(zonedStartInput, zonedEndInput) {
-		currentView.select(
+		t.view.select(
 			t.buildSelectSpan.apply(t, arguments)
 		);
 	}
 
 
 	function unselect() { // safe to be called before renderView
-		if (currentView) {
-			currentView.unselect();
+		if (t.view) {
+			t.view.unselect();
 		}
 	}
 
@@ -786,33 +427,6 @@ function Calendar_constructor(element, overrides) {
 
 
 
-	/* Height "Freezing"
-	-----------------------------------------------------------------------------*/
-
-
-	t.freezeContentHeight = freezeContentHeight;
-	t.thawContentHeight = thawContentHeight;
-
-
-	function freezeContentHeight() {
-		content.css({
-			width: '100%',
-			height: content.height(),
-			overflow: 'hidden'
-		});
-	}
-
-
-	function thawContentHeight() {
-		content.css({
-			width: '',
-			height: '',
-			overflow: ''
-		});
-	}
-
-
-
 	/* Misc
 	-----------------------------------------------------------------------------*/
 
@@ -823,7 +437,7 @@ function Calendar_constructor(element, overrides) {
 
 
 	function getView() {
-		return currentView;
+		return t.view;
 	}
 
 
