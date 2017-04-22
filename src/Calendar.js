@@ -1,6 +1,7 @@
 
 var Calendar = FC.Calendar = Class.extend({
 
+	viewsByType: null, // holds all instantiated view instances, current or not
 	viewSpecCache: null, // cache of view definitions
 	view: null, // current View object
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
@@ -368,7 +369,6 @@ function Calendar_constructor(element, overrides) {
 	t.zoomTo = zoomTo;
 	t.getCalendar = getCalendar;
 	t.getView = getView;
-	t.option = option; // getter/setter method
 	t.publiclyTrigger = publiclyTrigger;
 
 
@@ -383,13 +383,13 @@ function Calendar_constructor(element, overrides) {
 	var content;
 	var tm; // for making theme classes
 	var currentView; // NOTE: keep this in sync with this.view
-	var viewsByType = {}; // holds all instantiated view instances, current or not
 	var suggestedViewHeight;
 	var windowResizeProxy; // wraps the windowResize function
 	var ignoreWindowResize = 0;
 
 
-	this.initCurrentDate();
+	t.initCurrentDate();
+	t.viewsByType = {};
 
 
 	// Main Rendering
@@ -403,7 +403,7 @@ function Calendar_constructor(element, overrides) {
 		else if (elementVisible()) {
 			// mainly for the public API
 			calcSize();
-			renderView();
+			t.renderView();
 		}
 	}
 
@@ -454,9 +454,9 @@ function Calendar_constructor(element, overrides) {
 		header = t.header = toolbars[0];
 		footer = t.footer = toolbars[1];
 
-		renderHeader();
-		renderFooter();
-		renderView(t.options.defaultView);
+		t.renderHeader();
+		t.renderFooter();
+		t.renderView(t.options.defaultView);
 
 		if (t.options.handleWindowResize) {
 			windowResizeProxy = debounce(windowResize, t.options.windowResizeDelay); // prevents rapid calls
@@ -501,7 +501,7 @@ function Calendar_constructor(element, overrides) {
 	// Renders a view because of a date change, view-type change, or for the first time.
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
-	function renderView(viewType, forcedScroll) {
+	t.renderView = function(viewType, forcedScroll) {
 		ignoreWindowResize++;
 
 		var needsClearView = currentView && viewType && currentView.type !== viewType;
@@ -515,8 +515,8 @@ function Calendar_constructor(element, overrides) {
 		// if viewType changed, or the view was never created, create a fresh view
 		if (!currentView && viewType) {
 			currentView = t.view =
-				viewsByType[viewType] ||
-				(viewsByType[viewType] = t.instantiateView(viewType));
+				t.viewsByType[viewType] ||
+				(t.viewsByType[viewType] = t.instantiateView(viewType));
 
 			currentView.setElement(
 				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content)
@@ -540,8 +540,7 @@ function Calendar_constructor(element, overrides) {
 		}
 
 		ignoreWindowResize--;
-	}
-	t.renderView = renderView;
+	};
 
 
 	// Unrenders the current view and reflects this change in the Header.
@@ -556,7 +555,7 @@ function Calendar_constructor(element, overrides) {
 	// Destroys the view, including the view object. Then, re-instantiates it and renders it.
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
-	function reinitView() {
+	this.reinitView = function() {
 		ignoreWindowResize++;
 		freezeContentHeight();
 
@@ -564,11 +563,11 @@ function Calendar_constructor(element, overrides) {
 		var scrollState = currentView.queryScroll();
 		clearView();
 		calcSize();
-		renderView(viewType, scrollState);
+		t.renderView(viewType, scrollState);
 
 		thawContentHeight();
 		ignoreWindowResize--;
-	}
+	};
 
 
 
@@ -700,23 +699,23 @@ function Calendar_constructor(element, overrides) {
 
 
 	// can be called repeatedly and Header will rerender
-	function renderHeader() {
+	t.renderHeader = function() {
 		header.setToolbarOptions(computeHeaderOptions());
 		header.render();
 		if (header.el) {
 			element.prepend(header.el);
 		}
-	}
+	};
 
 
 	// can be called repeatedly and Footer will rerender
-	function renderFooter() {
+	t.renderFooter = function() {
 		footer.setToolbarOptions(computeFooterOptions());
 		footer.render();
 		if (footer.el) {
 			element.append(footer.el);
 		}
-	}
+	};
 
 
 	t.setToolbarsTitle = function(title) {
@@ -782,7 +781,7 @@ function Calendar_constructor(element, overrides) {
 		spec = t.getViewSpec(viewType) || t.getUnitViewSpec(viewType);
 
 		t.currentDate = newDate.clone();
-		renderView(spec ? spec.type : null);
+		t.renderView(spec ? spec.type : null);
 	}
 
 
@@ -825,67 +824,6 @@ function Calendar_constructor(element, overrides) {
 
 	function getView() {
 		return currentView;
-	}
-
-
-	function option(name, value) {
-		var newOptionHash;
-
-		if (typeof name === 'string') {
-			if (value === undefined) { // getter
-				return t.options[name];
-			}
-			else { // setter for individual option
-				newOptionHash = {};
-				newOptionHash[name] = value;
-				setOptions(newOptionHash);
-			}
-		}
-		else if (typeof name === 'object') { // compound setter with object input
-			setOptions(name);
-		}
-	}
-
-
-	function setOptions(newOptionHash) {
-		var optionCnt = 0;
-		var optionName;
-
-		t.recordOptionOverrides(newOptionHash);
-
-		for (optionName in newOptionHash) {
-			optionCnt++;
-		}
-
-		// special-case handling of single option change.
-		// if only one option change, `optionName` will be its name.
-		if (optionCnt === 1) {
-			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-				updateSize(true); // true = allow recalculation of height
-				return;
-			}
-			else if (optionName === 'defaultDate') {
-				return; // can't change date this way. use gotoDate instead
-			}
-			else if (optionName === 'businessHours') {
-				if (currentView) {
-					currentView.unrenderBusinessHours();
-					currentView.renderBusinessHours();
-				}
-				return;
-			}
-			else if (optionName === 'timezone') {
-				t.rezoneArrayEventSources();
-				t.refetchEvents();
-				return;
-			}
-		}
-
-		// catch-all. rerender the header and footer and rebuild/rerender the current view
-		renderHeader();
-		renderFooter();
-		viewsByType = {}; // even non-current views will be affected by this option change. do before rerender
-		reinitView();
 	}
 
 

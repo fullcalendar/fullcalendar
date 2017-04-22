@@ -20,6 +20,72 @@ Calendar.mixin({
 	},
 
 
+	// public getter/setter
+	option: function(name, value) {
+		var newOptionHash;
+
+		if (typeof name === 'string') {
+			if (value === undefined) { // getter
+				return this.options[name];
+			}
+			else { // setter for individual option
+				newOptionHash = {};
+				newOptionHash[name] = value;
+				this.setOptions(newOptionHash);
+			}
+		}
+		else if (typeof name === 'object') { // compound setter with object input
+			this.setOptions(name);
+		}
+	},
+
+
+	setOptions: function(newOptionHash) {
+		var optionCnt = 0;
+		var optionName;
+
+		this.recordOptionOverrides(newOptionHash);
+
+		for (optionName in newOptionHash) {
+			optionCnt++;
+		}
+
+		// special-case handling of single option change.
+		// if only one option change, `optionName` will be its name.
+		if (optionCnt === 1) {
+			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
+				this.updateSize(true); // true = allow recalculation of height
+				return;
+			}
+			else if (optionName === 'defaultDate') {
+				return; // can't change date this way. use gotoDate instead
+			}
+			else if (optionName === 'businessHours') {
+				if (this.view) {
+					this.view.unrenderBusinessHours();
+					this.view.renderBusinessHours();
+				}
+				return;
+			}
+			else if (optionName === 'timezone') {
+				this.rezoneArrayEventSources();
+				this.refetchEvents();
+				return;
+			}
+		}
+
+		// catch-all. rerender the header and footer and rebuild/rerender the current view
+		this.renderHeader();
+		this.renderFooter();
+
+		// even non-current views will be affected by this option change. do before rerender
+		// TODO: detangle
+		this.viewsByType = {};
+
+		this.reinitView();
+	},
+
+
 	// Computes the flattened options hash for the calendar and assigns to `this.options`.
 	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
 	populateOptionsHash: function() {
