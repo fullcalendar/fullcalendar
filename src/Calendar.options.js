@@ -11,10 +11,9 @@ Calendar.mixin({
 
 
 	initOptionsInternals: function(overrides) {
-		this.dynamicOverrides = {};
-		this.viewSpecCache = {}; // TODO: wrong place to do this
-		this.optionHandlers = {};
 		this.overrides = $.extend({}, overrides); // make a copy
+		this.dynamicOverrides = {};
+		this.optionHandlers = {};
 
 		this.populateOptionsHash();
 	},

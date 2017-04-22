@@ -1,13 +1,11 @@
 
 Calendar.mixin({
 
-	// todo: populate
 	el: null,
 	contentEl: null,
-
+	suggestedViewHeight: null,
 	windowResizeProxy: null,
 	ignoreWindowResize: 0,
-	suggestedViewHeight: null,
 
 
 	render: function() {

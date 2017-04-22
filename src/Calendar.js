@@ -1,5 +1,5 @@
 
-var Calendar = FC.Calendar = Class.extend({
+var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	viewsByType: null, // holds all instantiated view instances, current or not
 	viewSpecCache: null, // cache of view definitions
@@ -8,9 +8,23 @@ var Calendar = FC.Calendar = Class.extend({
 	loadingLevel: 0, // number of simultaneous loading tasks
 
 
-	// a lot of this class' OOP logic is scoped within this constructor function,
-	// but in the future, write individual methods on the prototype.
-	constructor: Calendar_constructor,
+	constructor: function(el, overrides) {
+
+		// declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
+		// unneeded() is called in destroy.
+		GlobalEmitter.needed();
+
+		this.el = el;
+		this.viewSpecCache = {};
+		this.viewsByType = {};
+
+		this.initOptionsInternals(overrides);
+		this.initMomentInternals(); // needs to happen after options hash initialized
+		this.initCurrentDate();
+
+		EventManager.call(this); // needs options immediately
+		this.initialize();
+	},
 
 
 	// Subclasses can override this for initialization logic after the constructor has been called
@@ -411,33 +425,3 @@ var Calendar = FC.Calendar = Class.extend({
 	}
 
 });
-
-
-Calendar.mixin(EmitterMixin);
-
-
-function Calendar_constructor(element, overrides) {
-	var t = this;
-
-	GlobalEmitter.needed(); // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
-	t.el = element;
-	t.initOptionsInternals(overrides);
-	t.initMomentInternals(); // needs to happen after options hash initialized
-	EventManager.call(t);
-
-
-	// Locals
-	// -----------------------------------------------------------------------------------
-
-
-	t.initCurrentDate();
-	t.viewsByType = {};
-
-
-
-	/* Misc
-	-----------------------------------------------------------------------------*/
-
-
-	t.initialize();
-}
