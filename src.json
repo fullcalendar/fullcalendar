@@ -34,6 +34,7 @@
     "Toolbar.js",
     "Calendar.js",
     "Calendar.options.js",
+    "Calendar.moment.js",
     "defaults.js",
     "locale.js",
     "Header.js",
