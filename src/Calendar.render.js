@@ -34,7 +34,7 @@ Calendar.mixin({
 			var viewType = gotoOptions.type;
 
 			// property like "navLinkDayClick". might be a string or a function
-			var customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
+			var customAction = _this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
 
 			if (typeof customAction === 'function') {
 				customAction(date, ev);
@@ -233,13 +233,13 @@ Calendar.mixin({
 			this.suggestedViewHeight = contentHeightInput;
 		}
 		else if (typeof contentHeightInput === 'function') { // exists and is a function
-			this.suggestedViewHeight = this.contentHeightInput();
+			this.suggestedViewHeight = contentHeightInput();
 		}
 		else if (typeof heightInput === 'number') { // exists and not 'auto'
 			this.suggestedViewHeight = heightInput - this.queryToolbarsHeight();
 		}
 		else if (typeof heightInput === 'function') { // exists and is a function
-			this.suggestedViewHeight = this.heightInput() - this.queryToolbarsHeight();
+			this.suggestedViewHeight = heightInput() - this.queryToolbarsHeight();
 		}
 		else if (heightInput === 'parent') { // set to height of parent element
 			this.suggestedViewHeight = this.el.parent().height() - this.queryToolbarsHeight();
