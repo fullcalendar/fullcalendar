@@ -24,51 +24,110 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		return name in this._props;
 	},
 
-	set: function(props, val) {
-		var name;
+	get: function(name) {
+		if (name === undefined) {
+			return this._props;
+		}
 
-		if (typeof props === 'object') {
-			for (name in props) {
-				this._setProp(name, props[name]);
-			}
+		return this._props[name];
+	},
+
+	set: function(name, val) {
+		var newProps;
+
+		if (typeof name === 'string') {
+			newProps = {};
+			newProps[name] = val === undefined ? null : val;
 		}
 		else {
-			this._setProp(props, val);
+			newProps = name;
 		}
+
+		this.setProps(newProps);
 	},
 
-	_setProp: function(name, val) {
-		if (val === undefined) {
-			val = null;
+	reset: function(newProps) {
+		var oldProps = this._props;
+		var changeset = {}; // will have undefined's to signal unsets
+		var name;
+
+		for (name in oldProps) {
+			changeset[name] = undefined;
 		}
 
-		// a change in value?
-		// if an object, don't check equality, because might have been mutated internally.
-		// TODO: eventually enforce immutability.
-		if (
-			typeof val === 'object' ||
-			val !== this._props[name]
-		) {
-			this.trigger('before:change', name, val);
-			this.trigger('before:change:' + name, val);
-			this._props[name] = val;
-			this.trigger('change:' + name, val);
-			this.trigger('change', name, val);
+		for (name in newProps) {
+			changeset[name] = newProps[name];
 		}
+
+		this.setProps(changeset);
 	},
 
-	unset: function(name) {
-		if (this.has(name)) {
-			this.trigger('before:change', name); // val=undefined
-			this.trigger('before:change:' + name); // val=undefined
-			delete this._props[name];
-			this.trigger('change:' + name); // val=undefined
-			this.trigger('change', name); // val=undefined
+	unset: function(name) { // accepts a string or array of strings
+		var newProps = {};
+		var names;
+		var i;
+
+		if (typeof name === 'string') {
+			names = [ name ];
 		}
+		else {
+			names = name;
+		}
+
+		for (i = 0; i < names.length; i++) {
+			newProps[names[i]] = undefined;
+		}
+
+		this.setProps(newProps);
 	},
 
-	get: function(name) {
-		return this._props[name];
+	setProps: function(newProps) {
+		var changedProps = {};
+		var changedCnt = 0;
+		var name, val;
+
+		for (name in newProps) {
+			val = newProps[name];
+
+			// a change in value?
+			// if an object, don't check equality, because might have been mutated internally.
+			// TODO: eventually enforce immutability.
+			if (
+				typeof val === 'object' ||
+				val !== this._props[name]
+			) {
+				changedProps[name] = val;
+				changedCnt++;
+			}
+		}
+
+		if (changedCnt) {
+
+			this.trigger('before:batchChange', changedProps);
+
+			for (name in changedProps) {
+				val = changedProps[name];
+
+				this.trigger('before:change', name, val);
+				this.trigger('before:change:' + name, val);
+			}
+
+			for (name in changedProps) {
+				val = changedProps[name];
+
+				if (val === undefined) {
+					delete this._props[name];
+				}
+				else {
+					this._props[name] = val;
+				}
+
+				this.trigger('change:' + name, val);
+				this.trigger('change', name, val);
+			}
+
+			this.trigger('batchChange', changedProps);
+		}
 	},
 
 	watch: function(name, depList, startFunc, stopFunc) {
@@ -108,6 +167,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 	_watchDeps: function(depList, startFunc, stopFunc) {
 		var _this = this;
+		var queuedChangeCnt = 0;
 		var depCnt = depList.length;
 		var satisfyCnt = 0;
 		var values = {}; // what's passed as the `deps` arguments
@@ -115,10 +175,13 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		var isCallingStop = false;
 
 		function onBeforeDepChange(depName, val, isOptional) {
-			if (satisfyCnt === depCnt) { // all deps previously satisfied?
-				isCallingStop = true;
-				stopFunc();
-				isCallingStop = false;
+			queuedChangeCnt++;
+			if (queuedChangeCnt === 1) { // first change to cause a "stop" ?
+				if (satisfyCnt === depCnt) { // all deps previously satisfied?
+					isCallingStop = true;
+					stopFunc();
+					isCallingStop = false;
+				}
 			}
 		}
 
@@ -143,13 +206,17 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 				values[depName] = val;
 			}
 
-			// now finally satisfied or satisfied all along?
-			if (satisfyCnt === depCnt) {
+			queuedChangeCnt--;
+			if (!queuedChangeCnt) { // last change to cause a "start"?
 
-				// if the stopFunc initiated another value change, ignore it.
-				// it will be processed by another change event anyway.
-				if (!isCallingStop) {
-					startFunc(values);
+				// now finally satisfied or satisfied all along?
+				if (satisfyCnt === depCnt) {
+
+					// if the stopFunc initiated another value change, ignore it.
+					// it will be processed by another change event anyway.
+					if (!isCallingStop) {
+						startFunc(values);
+					}
 				}
 			}
 		}

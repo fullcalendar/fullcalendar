@@ -34,6 +34,96 @@ describe('Model', function() {
 			var m = new Model();
 			expect(m.get('myvar')).toBeUndefined();
 		});
+
+		it('can retreive whole internal object', function() {
+			var m = new Model();
+			m.set({
+				myvar: 5,
+				myothervar: 6
+			});
+			expect(m.get()).toEqual({
+				myvar: 5,
+				myothervar: 6
+			});
+		});
+
+		it('fires all before:change events beforehand when setting in bulk', function() {
+			var ops = [];
+			var m = new Model();
+			m.set({
+				myvar: 5,
+				myothervar: 6
+			});
+			m.on('before:change:myvar', function(val) {
+				ops.push('before:change:myvar');
+			});
+			m.on('before:change:myothervar', function(val) {
+				ops.push('before:change:myothervar');
+			});
+			m.on('change:myvar', function(val) {
+				ops.push('change:myvar');
+			});
+			m.on('change:myothervar', function(val) {
+				ops.push('change:myothervar');
+			});
+			m.set({
+				myvar: 7,
+				myothervar: 8
+			});
+			expect(ops).toEqual([
+				'before:change:myvar',
+				'before:change:myothervar',
+				'change:myvar',
+				'change:myothervar'
+			]);
+		});
+	});
+
+	describe('unset', function() {
+
+		it('can unset a single prop', function() {
+			var m = new Model();
+			m.set({
+				myvar: 5,
+				myothervar: 6
+			});
+			m.unset('myvar');
+			expect(m.get()).toEqual({
+				myothervar: 6
+			});
+		});
+
+		it('can unset multiple props', function() {
+			var m = new Model();
+			m.set({
+				myvar: 5,
+				myothervar: 6,
+				myothervarr: 7
+			});
+			m.unset([ 'myvar', 'myothervar' ]);
+			expect(m.get()).toEqual({
+				myothervarr: 7
+			});
+		});
+	});
+
+	describe('reset', function() {
+
+		it('will change all props', function() {
+			var m = new Model();
+			m.set({
+				foo1: 5,
+				foo2: 6
+			});
+			m.reset({
+				bar1: 7,
+				bar2: 8
+			});
+			expect(m.get()).toEqual({
+				bar1: 7,
+				bar2: 8
+			});
+		});
 	});
 
 	describe('has', function() {
@@ -217,6 +307,34 @@ describe('Model', function() {
 					expect(startSpy).toHaveBeenCalledTimes(1);
 
 					m.unset('optvar');
+					expect(stopSpy).toHaveBeenCalledTimes(1);
+					expect(startSpy).toHaveBeenCalledTimes(2);
+				});
+			});
+
+			describe('when multiple deps changed atomically', function() {
+
+				it('fires stop/start only once per change', function() {
+					var funcs = {
+						start: function() { },
+						stop: function() { }
+					};
+					var startSpy = spyOn(funcs, 'start');
+					var stopSpy = spyOn(funcs, 'stop');
+
+					var m = new Model();
+					m.set({
+						myvar1: 5,
+						myvar2: 6
+					});
+
+					m.watch('taskid', [ 'myvar1', 'myvar2' ], funcs.start, funcs.stop);
+
+					m.set({
+						myvar1: 7,
+						myvar2: 8
+					});
+
 					expect(stopSpy).toHaveBeenCalledTimes(1);
 					expect(startSpy).toHaveBeenCalledTimes(2);
 				});
