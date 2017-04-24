@@ -35,6 +35,7 @@
     "Calendar.js",
     "Calendar.options.js",
     "Calendar.moment.js",
+    "Calendar.view-spec.js",
     "Calendar.render.js",
     "Calendar.toolbar.js",
     "defaults.js",
