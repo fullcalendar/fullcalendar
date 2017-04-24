@@ -31,6 +31,37 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
+	// Public API
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	getCalendar: function() {
+		return this;
+	},
+
+
+	getView: function() {
+		return this.view;
+	},
+
+
+	publiclyTrigger: function(name, thisObj) {
+		var args = Array.prototype.slice.call(arguments, 2);
+		var optHandler = this.opt(name);
+
+		thisObj = thisObj || this.el[0];
+		this.triggerWith(name, thisObj, args); // Emitter's method
+
+		if (optHandler) {
+			return optHandler.apply(thisObj, args);
+		}
+	},
+
+
+	// View
+	// -----------------------------------------------------------------------------------------------------------------
+
+
 	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
 	instantiateView: function(viewType) {
 		var spec = this.getViewSpec(viewType);
@@ -42,61 +73,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// Returns a boolean about whether the view is okay to instantiate at some point
 	isValidViewType: function(viewType) {
 		return Boolean(this.getViewSpec(viewType));
-	},
-
-
-	// Should be called when any type of async data fetching begins
-	pushLoading: function() {
-		if (!(this.loadingLevel++)) {
-			this.publiclyTrigger('loading', null, true, this.view);
-		}
-	},
-
-
-	// Should be called when any type of async data fetching completes
-	popLoading: function() {
-		if (!(--this.loadingLevel)) {
-			this.publiclyTrigger('loading', null, false, this.view);
-		}
-	},
-
-
-	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
-		var start = this.moment(zonedStartInput).stripZone();
-		var end;
-
-		if (zonedEndInput) {
-			end = this.moment(zonedEndInput).stripZone();
-		}
-		else if (start.hasTime()) {
-			end = start.clone().add(this.defaultTimedEventDuration);
-		}
-		else {
-			end = start.clone().add(this.defaultAllDayEventDuration);
-		}
-
-		return { start: start, end: end };
-	},
-
-
-	// Current Date
-	// ------------
-
-
-	/*
-	Called before initialize()
-	*/
-	initCurrentDate: function() {
-		var defaultDateInput = this.opt('defaultDate');
-
-		// compute the initial ambig-timezone date
-		if (defaultDateInput != null) {
-			this.currentDate = this.moment(defaultDateInput).stripZone();
-		}
-		else {
-			this.currentDate = this.getNow(); // getNow already returns unzoned
-		}
 	},
 
 
@@ -115,6 +91,36 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		}
 
 		this.renderView(viewName);
+	},
+
+
+	// Forces navigation to a view for the given date.
+	// `viewType` can be a specific view name or a generic one like "week" or "day".
+	zoomTo: function(newDate, viewType) {
+		var spec;
+
+		viewType = viewType || 'day'; // day is default zoom
+		spec = this.getViewSpec(viewType) || this.getUnitViewSpec(viewType);
+
+		this.currentDate = newDate.clone();
+		this.renderView(spec ? spec.type : null);
+	},
+
+
+	// Current Date
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	initCurrentDate: function() {
+		var defaultDateInput = this.opt('defaultDate');
+
+		// compute the initial ambig-timezone date
+		if (defaultDateInput != null) {
+			this.currentDate = this.moment(defaultDateInput).stripZone();
+		}
+		else {
+			this.currentDate = this.getNow(); // getNow already returns unzoned
+		}
 	},
 
 
@@ -174,6 +180,68 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
+	// Loading Triggering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// Should be called when any type of async data fetching begins
+	pushLoading: function() {
+		if (!(this.loadingLevel++)) {
+			this.publiclyTrigger('loading', null, true, this.view);
+		}
+	},
+
+
+	// Should be called when any type of async data fetching completes
+	popLoading: function() {
+		if (!(--this.loadingLevel)) {
+			this.publiclyTrigger('loading', null, false, this.view);
+		}
+	},
+
+
+	// Selection
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// this public method receives start/end dates in any format, with any timezone
+	select: function(zonedStartInput, zonedEndInput) {
+		this.view.select(
+			this.buildSelectSpan.apply(this, arguments)
+		);
+	},
+
+
+	unselect: function() { // safe to be called before renderView
+		if (this.view) {
+			this.view.unselect();
+		}
+	},
+
+
+	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
+	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
+		var start = this.moment(zonedStartInput).stripZone();
+		var end;
+
+		if (zonedEndInput) {
+			end = this.moment(zonedEndInput).stripZone();
+		}
+		else if (start.hasTime()) {
+			end = start.clone().add(this.defaultTimedEventDuration);
+		}
+		else {
+			end = start.clone().add(this.defaultAllDayEventDuration);
+		}
+
+		return { start: start, end: end };
+	},
+
+
+	// Misc
+	// -----------------------------------------------------------------------------------------------------------------
+
+
 	// will return `null` if invalid range
 	parseRange: function(rangeInput) {
 		var start = null;
@@ -199,72 +267,9 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
-	/* Event Rendering
-	-----------------------------------------------------------------------------*/
-
-
 	rerenderEvents: function() { // API method. destroys old events if previously rendered.
 		if (this.elementVisible()) {
 			this.reportEventChange(); // will re-trasmit events to the view, causing a rerender
-		}
-	},
-
-
-	/* Selection
-	-----------------------------------------------------------------------------*/
-
-
-	// this public method receives start/end dates in any format, with any timezone
-	select: function(zonedStartInput, zonedEndInput) {
-		this.view.select(
-			this.buildSelectSpan.apply(this, arguments)
-		);
-	},
-
-
-	unselect: function() { // safe to be called before renderView
-		if (this.view) {
-			this.view.unselect();
-		}
-	},
-
-
-	/* Misc
-	-----------------------------------------------------------------------------*/
-
-
-	// Forces navigation to a view for the given date.
-	// `viewType` can be a specific view name or a generic one like "week" or "day".
-	zoomTo: function(newDate, viewType) {
-		var spec;
-
-		viewType = viewType || 'day'; // day is default zoom
-		spec = this.getViewSpec(viewType) || this.getUnitViewSpec(viewType);
-
-		this.currentDate = newDate.clone();
-		this.renderView(spec ? spec.type : null);
-	},
-
-
-	getCalendar: function() {
-		return this;
-	},
-
-
-	getView: function() {
-		return this.view;
-	},
-
-
-	publiclyTrigger: function(name, thisObj) {
-		var args = Array.prototype.slice.call(arguments, 2);
-		var optHandler = this.opt(name);
-
-		thisObj = thisObj || this.el[0];
-		this.triggerWith(name, thisObj, args); // Emitter's method
-
-		if (optHandler) {
-			return optHandler.apply(thisObj, args);
 		}
 	}
 
