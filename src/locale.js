@@ -176,6 +176,7 @@ var instanceComputableOptions = {
 
 };
 
+// TODO: make these computable properties in optionsModel
 function populateInstanceComputableOptions(options) {
 	$.each(instanceComputableOptions, function(name, func) {
 		if (options[name] == null) {

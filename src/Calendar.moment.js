@@ -14,9 +14,13 @@ Calendar.mixin({
 
 		// Called immediately, and when any of the options change.
 		// Happens before any internal objects rebuild or rerender, because this is very core.
-		this.bindOptions([
-			'locale', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort', 'firstDay', 'weekNumberCalculation'
-		], function(locale, monthNames, monthNamesShort, dayNames, dayNamesShort, firstDay, weekNumberCalculation) {
+		this.optionsModel.watch('buildingMomentLocale', [
+			'?locale', '?monthNames', '?monthNamesShort', '?dayNames', '?dayNamesShort',
+			'?firstDay', '?weekNumberCalculation'
+		], function(opts) {
+			var weekNumberCalculation = opts.weekNumberCalculation;
+			var firstDay = opts.firstDay;
+			var _week;
 
 			// normalize
 			if (weekNumberCalculation === 'iso') {
@@ -24,27 +28,27 @@ Calendar.mixin({
 			}
 
 			var localeData = createObject( // make a cheap copy
-				getMomentLocaleData(locale) // will fall back to en
+				getMomentLocaleData(opts.locale) // will fall back to en
 			);
 
-			if (monthNames) {
-				localeData._months = monthNames;
+			if (opts.monthNames) {
+				localeData._months = opts.monthNames;
 			}
-			if (monthNamesShort) {
-				localeData._monthsShort = monthNamesShort;
+			if (opts.monthNamesShort) {
+				localeData._monthsShort = opts.monthNamesShort;
 			}
-			if (dayNames) {
-				localeData._weekdays = dayNames;
+			if (opts.dayNames) {
+				localeData._weekdays = opts.dayNames;
 			}
-			if (dayNamesShort) {
-				localeData._weekdaysShort = dayNamesShort;
+			if (opts.dayNamesShort) {
+				localeData._weekdaysShort = opts.dayNamesShort;
 			}
 
 			if (firstDay == null && weekNumberCalculation === 'ISO') {
 				firstDay = 1;
 			}
 			if (firstDay != null) {
-				var _week = createObject(localeData._week); // _week: { dow: # }
+				_week = createObject(localeData._week); // _week: { dow: # }
 				_week.dow = firstDay;
 				localeData._week = _week;
 			}

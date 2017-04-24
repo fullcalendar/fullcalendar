@@ -48,16 +48,16 @@ Calendar.mixin({
 		});
 
 		// called immediately, and upon option change
-		this.bindOption('theme', function(theme) {
-			el.toggleClass('ui-widget', theme);
-			el.toggleClass('fc-unthemed', !theme);
+		this.optionsModel.watch('applyingThemeClasses', [ '?theme' ], function(opts) {
+			el.toggleClass('ui-widget', opts.theme);
+			el.toggleClass('fc-unthemed', !opts.theme);
 		});
 
 		// called immediately, and upon option change.
 		// HACK: locale often affects isRTL, so we explicitly listen to that too.
-		this.bindOptions([ 'isRTL', 'locale' ], function(isRTL) {
-			el.toggleClass('fc-ltr', !isRTL);
-			el.toggleClass('fc-rtl', isRTL);
+		this.optionsModel.watch('applyingDirClasses', [ '?isRTL', '?locale' ], function(opts) {
+			el.toggleClass('fc-ltr', !opts.isRTL);
+			el.toggleClass('fc-rtl', opts.isRTL);
 		});
 
 		this.contentEl = $("<div class='fc-view-container'/>").prependTo(el);

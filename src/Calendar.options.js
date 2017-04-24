@@ -7,13 +7,13 @@ Calendar.mixin({
 	localeDefaults: null, // option defaults related to current locale
 	overrides: null, // option overrides given to the fullCalendar constructor
 	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
-	options: null, // all defaults combined with overrides
+	optionsModel: null, // all defaults combined with overrides
 
 
 	initOptionsInternals: function(overrides) {
 		this.overrides = $.extend({}, overrides); // make a copy
 		this.dynamicOverrides = {};
-		this.optionHandlers = {};
+		this.optionsModel = new Model();
 
 		this.populateOptionsHash();
 	},
@@ -25,7 +25,7 @@ Calendar.mixin({
 
 		if (typeof name === 'string') {
 			if (value === undefined) { // getter
-				return this.options[name];
+				return this.optionsModel.get(name);
 			}
 			else { // setter for individual option
 				newOptionHash = {};
@@ -41,7 +41,7 @@ Calendar.mixin({
 
 	// private getter
 	opt: function(name) {
-		return this.options[name];
+		return this.optionsModel.get(name);
 	},
 
 
@@ -96,6 +96,7 @@ Calendar.mixin({
 	populateOptionsHash: function() {
 		var locale, localeDefaults;
 		var isRTL, dirDefaults;
+		var rawOptions;
 
 		locale = firstDefined( // explicit locale option given?
 			this.dynamicOverrides.locale,
@@ -117,14 +118,17 @@ Calendar.mixin({
 
 		this.dirDefaults = dirDefaults;
 		this.localeDefaults = localeDefaults;
-		this.options = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
+
+		rawOptions = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
 			Calendar.defaults, // global defaults
 			dirDefaults,
 			localeDefaults,
 			this.overrides,
 			this.dynamicOverrides
 		]);
-		populateInstanceComputableOptions(this.options); // fill in gaps with computed options
+		populateInstanceComputableOptions(rawOptions); // fill in gaps with computed options
+
+		this.optionsModel.reset(rawOptions);
 	},
 
 
@@ -138,71 +142,6 @@ Calendar.mixin({
 
 		this.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
 		this.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
-
-		// trigger handlers after this.options has been updated
-		for (optionName in newOptionHash) {
-			this.triggerOptionHandlers(optionName); // recall bindOption/bindOptions
-		}
-	},
-
-
-	// Binding
-	// -----------------------------------------------------------------------------------------------------------------
-
-	// A map of option names to arrays of handler objects. Initialized to {} in Calendar.
-	// Format for a handler object:
-	// {
-	//   func // callback function to be called upon change
-	//   names // option names whose values should be given to func
-	// }
-	optionHandlers: null, 
-
-	// Calls handlerFunc immediately, and when the given option has changed.
-	// handlerFunc will be given the option value.
-	bindOption: function(optionName, handlerFunc) {
-		this.bindOptions([ optionName ], handlerFunc);
-	},
-
-	// Calls handlerFunc immediately, and when any of the given options change.
-	// handlerFunc will be given each option value as ordered function arguments.
-	bindOptions: function(optionNames, handlerFunc) {
-		var handlerObj = { func: handlerFunc, names: optionNames };
-		var i;
-
-		for (i = 0; i < optionNames.length; i++) {
-			this.registerOptionHandlerObj(optionNames[i], handlerObj);
-		}
-
-		this.triggerOptionHandlerObj(handlerObj);
-	},
-
-	// Puts the given handler object into the internal hash
-	registerOptionHandlerObj: function(optionName, handlerObj) {
-		(this.optionHandlers[optionName] || (this.optionHandlers[optionName] = []))
-			.push(handlerObj);
-	},
-
-	// Reports that the given option has changed, and calls all appropriate handlers.
-	triggerOptionHandlers: function(optionName) {
-		var handlerObjs = this.optionHandlers[optionName] || [];
-		var i;
-
-		for (i = 0; i < handlerObjs.length; i++) {
-			this.triggerOptionHandlerObj(handlerObjs[i]);
-		}
-	},
-
-	// Calls the callback for a specific handler object, passing in the appropriate arguments.
-	triggerOptionHandlerObj: function(handlerObj) {
-		var optionNames = handlerObj.names;
-		var optionValues = [];
-		var i;
-
-		for (i = 0; i < optionNames.length; i++) {
-			optionValues.push(this.options[optionNames[i]]);
-		}
-
-		handlerObj.func.apply(this, optionValues); // maintain the Calendar's `this` context
 	}
 
 });

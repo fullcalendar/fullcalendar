@@ -417,12 +417,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	publiclyTrigger: function(name, thisObj) {
 		var args = Array.prototype.slice.call(arguments, 2);
+		var optHandler = this.opt(name);
 
 		thisObj = thisObj || this.el[0];
 		this.triggerWith(name, thisObj, args); // Emitter's method
 
-		if (this.options[name]) {
-			return this.options[name].apply(thisObj, args);
+		if (optHandler) {
+			return optHandler.apply(thisObj, args);
 		}
 	}
 
