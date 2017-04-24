@@ -31,7 +31,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function render() {
 		var sections = toolbarOptions.layout;
 
-		tm = calendar.options.theme ? 'ui' : 'fc';
+		tm = calendar.opt('theme') ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
@@ -62,6 +62,8 @@ function Toolbar(calendar, toolbarOptions) {
 	function renderSection(position) {
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = toolbarOptions.layout[position];
+		var calendarCustomButtons = calendar.opt('customButtons') || {};
+		var calendarButtonText = calendar.opt('buttonText') || {};
 
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {
@@ -86,7 +88,7 @@ function Toolbar(calendar, toolbarOptions) {
 						isOnlyButtons = false;
 					}
 					else {
-						if ((customButtonProps = (calendar.options.customButtons || {})[buttonName])) {
+						if ((customButtonProps = calendarCustomButtons[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
 									customButtonProps.click.call(button[0], ev);
@@ -108,7 +110,7 @@ function Toolbar(calendar, toolbarOptions) {
 								calendar[buttonName]();
 							};
 							overrideText = (calendar.overrides.buttonText || {})[buttonName];
-							defaultText = calendar.options.buttonText[buttonName]; // everything else is considered default
+							defaultText = calendarButtonText[buttonName]; // everything else is considered default
 						}
 
 						if (buttonClick) {
@@ -116,20 +118,20 @@ function Toolbar(calendar, toolbarOptions) {
 							themeIcon =
 								customButtonProps ?
 									customButtonProps.themeIcon :
-									calendar.options.themeButtonIcons[buttonName];
+									calendar.opt('themeButtonIcons')[buttonName];
 
 							normalIcon =
 								customButtonProps ?
 									customButtonProps.icon :
-									calendar.options.buttonIcons[buttonName];
+									calendar.opt('buttonIcons')[buttonName];
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
 							}
-							else if (themeIcon && calendar.options.theme) {
+							else if (themeIcon && calendar.opt('theme')) {
 								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
 							}
-							else if (normalIcon && !calendar.options.theme) {
+							else if (normalIcon && !calendar.opt('theme')) {
 								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
 							}
 							else {

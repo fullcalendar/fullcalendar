@@ -16,7 +16,7 @@ Calendar.mixin({
 	computeHeaderOptions: function() {
 		return {
 			extraClasses: 'fc-header-toolbar',
-			layout: this.options.header
+			layout: this.opt('header')
 		};
 	},
 
@@ -24,7 +24,7 @@ Calendar.mixin({
 	computeFooterOptions: function() {
 		return {
 			extraClasses: 'fc-footer-toolbar',
-			layout: this.options.footer
+			layout: this.opt('footer')
 		};
 	},
 

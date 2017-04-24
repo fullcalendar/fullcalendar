@@ -39,6 +39,12 @@ Calendar.mixin({
 	},
 
 
+	// private getter
+	opt: function(name) {
+		return this.options[name];
+	},
+
+
 	setOptions: function(newOptionHash) {
 		var optionCnt = 0;
 		var optionName;

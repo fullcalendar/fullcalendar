@@ -48,7 +48,7 @@ function EventManager() { // assumed to be a calendar
 
 
 	$.each(
-		(t.options.events ? [ t.options.events ] : []).concat(t.options.eventSources || []),
+		(t.opt('events') ? [ t.opt('events') ] : []).concat(t.opt('eventSources') || []),
 		function(i, sourceInput) {
 			var source = buildEventSource(sourceInput);
 			if (source) {
@@ -60,7 +60,7 @@ function EventManager() { // assumed to be a calendar
 
 
 	function requestEvents(start, end) {
-		if (!t.options.lazyFetching || isFetchNeeded(start, end)) {
+		if (!t.opt('lazyFetching') || isFetchNeeded(start, end)) {
 			return fetchEvents(start, end);
 		}
 		else {
@@ -244,7 +244,7 @@ function EventManager() { // assumed to be a calendar
 				source,
 				rangeStart.clone(),
 				rangeEnd.clone(),
-				t.options.timezone,
+				t.opt('timezone'),
 				callback
 			);
 
@@ -267,7 +267,7 @@ function EventManager() { // assumed to be a calendar
 					t, // this, the Calendar object
 					rangeStart.clone(),
 					rangeEnd.clone(),
-					t.options.timezone,
+					t.opt('timezone'),
 					function(events) {
 						callback(events);
 						t.popLoading();
@@ -302,9 +302,9 @@ function EventManager() { // assumed to be a calendar
 				// and not affect the passed-in object.
 				var data = $.extend({}, customData || {});
 
-				var startParam = firstDefined(source.startParam, t.options.startParam);
-				var endParam = firstDefined(source.endParam, t.options.endParam);
-				var timezoneParam = firstDefined(source.timezoneParam, t.options.timezoneParam);
+				var startParam = firstDefined(source.startParam, t.opt('startParam'));
+				var endParam = firstDefined(source.endParam, t.opt('endParam'));
+				var timezoneParam = firstDefined(source.timezoneParam, t.opt('timezoneParam'));
 
 				if (startParam) {
 					data[startParam] = rangeStart.format();
@@ -312,8 +312,8 @@ function EventManager() { // assumed to be a calendar
 				if (endParam) {
 					data[endParam] = rangeEnd.format();
 				}
-				if (t.options.timezone && t.options.timezone != 'local') {
-					data[timezoneParam] = t.options.timezone;
+				if (t.opt('timezone') && t.opt('timezone') != 'local') {
+					data[timezoneParam] = t.opt('timezone');
 				}
 
 				t.pushLoading();
@@ -722,12 +722,13 @@ function EventManager() { // assumed to be a calendar
 	// Will return `false` when input is invalid.
 	// `source` is optional
 	function buildEventFromInput(input, source) {
+		var calendarEventDataTransform = t.opt('eventDataTransform');
 		var out = {};
 		var start, end;
 		var allDay;
 
-		if (t.options.eventDataTransform) {
-			input = t.options.eventDataTransform(input);
+		if (calendarEventDataTransform) {
+			input = calendarEventDataTransform(input);
 		}
 		if (source && source.eventDataTransform) {
 			input = source.eventDataTransform(input);
@@ -793,7 +794,7 @@ function EventManager() { // assumed to be a calendar
 			if (allDay === undefined) { // still undefined? fallback to default
 				allDay = firstDefined(
 					source ? source.allDayDefault : undefined,
-					t.options.allDayDefault
+					t.opt('allDayDefault')
 				);
 				// still undefined? normalizeEventDates will calculate it
 			}
@@ -830,7 +831,7 @@ function EventManager() { // assumed to be a calendar
 		}
 
 		if (!eventProps.end) {
-			if (t.options.forceEventDuration) {
+			if (t.opt('forceEventDuration')) {
 				eventProps.end = t.getDefaultEventEnd(eventProps.allDay, eventProps.start);
 			}
 			else {
@@ -1183,21 +1184,22 @@ function backupEventDates(event) {
 // Determines if the given event can be relocated to the given span (unzoned start/end with other misc data)
 Calendar.prototype.isEventSpanAllowed = function(span, event) {
 	var source = event.source || {};
+	var eventAllowFunc = this.opt('eventAllow');
 
 	var constraint = firstDefined(
 		event.constraint,
 		source.constraint,
-		this.options.eventConstraint
+		this.opt('eventConstraint')
 	);
 
 	var overlap = firstDefined(
 		event.overlap,
 		source.overlap,
-		this.options.eventOverlap
+		this.opt('eventOverlap')
 	);
 
 	return this.isSpanAllowed(span, constraint, overlap, event) &&
-		(!this.options.eventAllow || this.options.eventAllow(span, event) !== false);
+		(!eventAllowFunc || eventAllowFunc(span, event) !== false);
 };
 
 
@@ -1226,8 +1228,10 @@ Calendar.prototype.isExternalSpanAllowed = function(eventSpan, eventLocation, ev
 
 // Determines the given span (unzoned start/end with other misc data) can be selected.
 Calendar.prototype.isSelectionSpanAllowed = function(span) {
-	return this.isSpanAllowed(span, this.options.selectConstraint, this.options.selectOverlap) &&
-		(!this.options.selectAllow || this.options.selectAllow(span) !== false);
+	var selectAllowFunc = this.opt('selectAllow');
+
+	return this.isSpanAllowed(span, this.opt('selectConstraint'), this.opt('selectOverlap')) &&
+		(!selectAllowFunc || selectAllowFunc(span) !== false);
 };
 
 
@@ -1351,7 +1355,7 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 // Return events objects for business hours within the current view.
 // Abuse of our event system :(
 Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
-	return this.computeBusinessHourEvents(wholeDay, this.options.businessHours);
+	return this.computeBusinessHourEvents(wholeDay, this.opt('businessHours'));
 };
 
 // Given a raw input value from options, return events objects for business hours within the current view.

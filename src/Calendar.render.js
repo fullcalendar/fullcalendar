@@ -65,13 +65,13 @@ Calendar.mixin({
 		this.initToolbars();
 		this.renderHeader();
 		this.renderFooter();
-		this.renderView(this.options.defaultView);
+		this.renderView(this.opt('defaultView'));
 
-		if (this.options.handleWindowResize) {
+		if (this.opt('handleWindowResize')) {
 			$(window).resize(
 				this.windowResizeProxy = debounce( // prevents rapid calls
 					this.windowResize.bind(this),
-					this.options.windowResizeDelay
+					this.opt('windowResizeDelay')
 				)
 			);
 		}
@@ -198,7 +198,7 @@ Calendar.mixin({
 
 
 	isHeightAuto: function() {
-		return this.options.contentHeight === 'auto' || this.options.height === 'auto';
+		return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto';
 	},
 
 
@@ -226,8 +226,8 @@ Calendar.mixin({
 
 
 	_calcSize: function() { // assumes elementVisible
-		var contentHeightInput = this.options.contentHeight;
-		var heightInput = this.options.height;
+		var contentHeightInput = this.opt('contentHeight');
+		var heightInput = this.opt('height');
 
 		if (typeof contentHeightInput === 'number') { // exists and not 'auto'
 			this.suggestedViewHeight = contentHeightInput;
@@ -245,7 +245,10 @@ Calendar.mixin({
 			this.suggestedViewHeight = this.el.parent().height() - this.queryToolbarsHeight();
 		}
 		else {
-			this.suggestedViewHeight = Math.round(this.contentEl.width() / Math.max(this.options.aspectRatio, .5));
+			this.suggestedViewHeight = Math.round(
+				this.contentEl.width() /
+				Math.max(this.opt('aspectRatio'), .5)
+			);
 		}
 	},
 

@@ -247,9 +247,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	Called before initialize()
 	*/
 	initCurrentDate: function() {
+		var defaultDateInput = this.opt('defaultDate');
+
 		// compute the initial ambig-timezone date
-		if (this.options.defaultDate != null) {
-			this.currentDate = this.moment(this.options.defaultDate).stripZone();
+		if (defaultDateInput != null) {
+			this.currentDate = this.moment(defaultDateInput).stripZone();
 		}
 		else {
 			this.currentDate = this.getNow(); // getNow already returns unzoned

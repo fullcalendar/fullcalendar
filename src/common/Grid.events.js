@@ -207,7 +207,7 @@ Grid.mixin({
 		if (businessHours == null) {
 			// fallback
 			// access from calendawr. don't access from view. doesn't update with dynamic options.
-			businessHours = calendar.options.businessHours;
+			businessHours = calendar.opt('businessHours');
 		}
 
 		events = calendar.computeBusinessHourEvents(wholeDay, businessHours);

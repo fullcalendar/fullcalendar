@@ -9,8 +9,8 @@ Calendar.mixin({
 	initMomentInternals: function() {
 		var _this = this;
 
-		this.defaultAllDayEventDuration = moment.duration(this.options.defaultAllDayEventDuration);
-		this.defaultTimedEventDuration = moment.duration(this.options.defaultTimedEventDuration);
+		this.defaultAllDayEventDuration = moment.duration(this.opt('defaultAllDayEventDuration'));
+		this.defaultTimedEventDuration = moment.duration(this.opt('defaultTimedEventDuration'));
 
 		// Called immediately, and when any of the options change.
 		// Happens before any internal objects rebuild or rerender, because this is very core.
@@ -73,7 +73,7 @@ Calendar.mixin({
 	moment: function() {
 		var mom;
 
-		if (this.options.timezone === 'local') {
+		if (this.opt('timezone') === 'local') {
 			mom = FC.moment.apply(null, arguments);
 
 			// Force the moment to be local, because FC.moment doesn't guarantee it.
@@ -81,7 +81,7 @@ Calendar.mixin({
 				mom.local();
 			}
 		}
-		else if (this.options.timezone === 'UTC') {
+		else if (this.opt('timezone') === 'UTC') {
 			mom = FC.moment.utc.apply(null, arguments); // process as UTC
 		}
 		else {
@@ -103,7 +103,7 @@ Calendar.mixin({
 	// Returns a boolean about whether or not the calendar knows how to calculate
 	// the timezone offset of arbitrary dates in the current timezone.
 	getIsAmbigTimezone: function() {
-		return this.options.timezone !== 'local' && this.options.timezone !== 'UTC';
+		return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC';
 	},
 
 
@@ -132,7 +132,7 @@ Calendar.mixin({
 	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
 	// Will return an moment with an ambiguous timezone.
 	getNow: function() {
-		var now = this.options.now;
+		var now = this.opt('now');
 		if (typeof now === 'function') {
 			now = now();
 		}
@@ -143,7 +143,7 @@ Calendar.mixin({
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
 	humanizeDuration: function(duration) {
-		return duration.locale(this.options.locale).humanize();
+		return duration.locale(this.opt('locale')).humanize();
 	},
 
 
