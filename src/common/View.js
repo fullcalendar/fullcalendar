@@ -668,8 +668,10 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 		if (!(this.capturedScrollDepth++)) {
 			this.capturedScroll = this.isDateRendered ? this.queryScroll() : {}; // require a render first
 
-			if(this.opt('scrollTime') != ''){
-				this.capturedScroll.isComputed = true;
+			if(this.capturedScroll){
+				if(this.opt('scrollTime') != '' && this.captureScroll.left == 0){
+					this.capturedScroll.isComputed = true;
+				}
 			}
 			return true; // root?
 		}
