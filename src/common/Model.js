@@ -2,11 +2,11 @@
 var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 	_props: null,
-	_watchTeardowns: null,
+	_watchers: null,
 	_globalWatchArgs: null,
 
 	constructor: function() {
-		this._watchTeardowns = {};
+		this._watchers = {};
 		this._props = {};
 		this.applyGlobalWatchers();
 	},
@@ -135,7 +135,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.unwatch(name);
 
-		this._watchTeardowns[name] = this._watchDeps(depList, function(deps) {
+		this._watchers[name] = this._watchDeps(depList, function(deps) {
 			var res = startFunc.call(_this, deps);
 
 			if (res && res.then) {
@@ -157,11 +157,11 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 	unwatch: function(name) {
-		var teardown = this._watchTeardowns[name];
+		var watcher = this._watchers[name];
 
-		if (teardown) {
-			delete this._watchTeardowns[name];
-			teardown();
+		if (watcher) {
+			delete this._watchers[name];
+			watcher.teardown();
 		}
 	},
 
@@ -268,19 +268,34 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			startFunc(values);
 		}
 
-		return function() { // teardown
+		return {
+			teardown: function() {
+				// remove all handlers
+				for (var i = 0; i < bindTuples.length; i++) {
+					_this.off(bindTuples[i][0], bindTuples[i][1]);
+				}
+				bindTuples = null;
 
-			// remove all handlers
-			for (var i = 0; i < bindTuples.length; i++) {
-				_this.off(bindTuples[i][0], bindTuples[i][1]);
-			}
-			bindTuples = null;
-
-			// was satisfied, so call stopFunc
-			if (satisfyCnt === depCnt) {
-				stopFunc();
+				// was satisfied, so call stopFunc
+				if (satisfyCnt === depCnt) {
+					stopFunc();
+				}
+			},
+			flash: function() {
+				if (satisfyCnt === depCnt) {
+					stopFunc();
+					startFunc();
+				}
 			}
 		};
+	},
+
+	flash: function(name) {
+		var watcher = this._watchers[name];
+
+		if (watcher) {
+			watcher.flash();
+		}
 	}
 
 });

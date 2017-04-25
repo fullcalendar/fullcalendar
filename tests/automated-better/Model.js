@@ -510,4 +510,50 @@ describe('Model', function() {
 			expect(startSpy).toHaveBeenCalledTimes(1);
 		});
 	});
+
+	describe('flash', function() {
+
+		describe('if already satisfied', function() {
+			it('calls stop+start', function() {
+				var funcs = {
+					start: function() { },
+					stop: function() { }
+				};
+				var startSpy = spyOn(funcs, 'start');
+				var stopSpy = spyOn(funcs, 'stop');
+
+				var m = new Model();
+				m.set({ dep1: 6 });
+				m.watch('task1', [ 'dep1' ], startSpy, stopSpy);
+
+				expect(stopSpy).toHaveBeenCalledTimes(0);
+				expect(startSpy).toHaveBeenCalledTimes(1);
+
+				m.flash('task1');
+				expect(stopSpy).toHaveBeenCalledTimes(1);
+				expect(startSpy).toHaveBeenCalledTimes(2);
+			});
+		});
+
+		describe('if not satisfied', function() {
+			it('does not call stop+start', function() {
+				var funcs = {
+					start: function() { },
+					stop: function() { }
+				};
+				var startSpy = spyOn(funcs, 'start');
+				var stopSpy = spyOn(funcs, 'stop');
+
+				var m = new Model();
+				m.watch('task1', [ 'dep1' ], startSpy, stopSpy);
+
+				expect(stopSpy).toHaveBeenCalledTimes(0);
+				expect(startSpy).toHaveBeenCalledTimes(0);
+
+				m.flash('task1');
+				expect(stopSpy).toHaveBeenCalledTimes(0);
+				expect(startSpy).toHaveBeenCalledTimes(0);
+			});
+		});
+	});
 });
