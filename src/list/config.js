@@ -41,3 +41,13 @@ fcViews.listYear = {
 		listDayAltFormat: 'dddd' // day-of-week is nice-to-have
 	}
 };
+
+fcViews.listrev = {
+	'class': ListViewReversed,
+	buttonTextKey: 'past', // what to lookup in locale files
+	defaults: {
+		buttonText: 'past', // text to display for English
+		listDayFormat: 'LL', // like "January 1, 2016"
+		noEventsMessage: 'No events to display'
+	}
+};
