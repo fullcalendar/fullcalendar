@@ -284,7 +284,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			flash: function() {
 				if (satisfyCnt === depCnt) {
 					stopFunc();
-					startFunc();
+					startFunc(values);
 				}
 			}
 		};

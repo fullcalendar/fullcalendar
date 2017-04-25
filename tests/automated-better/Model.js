@@ -516,10 +516,12 @@ describe('Model', function() {
 		describe('if already satisfied', function() {
 			it('calls stop+start', function() {
 				var funcs = {
-					start: function() { },
+					start: function(deps) {
+						expect(deps.dep1).toBe(6);
+					},
 					stop: function() { }
 				};
-				var startSpy = spyOn(funcs, 'start');
+				var startSpy = spyOn(funcs, 'start').and.callThrough();
 				var stopSpy = spyOn(funcs, 'stop');
 
 				var m = new Model();
