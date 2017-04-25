@@ -1,4 +1,6 @@
 describe('refetchEvents', function() {
+
+	// there IS a similar test in automated-better, but does month view
 	describe('when agenda events are rerendered', function() {
 		beforeEach(function() {
 			affix('#cal');
