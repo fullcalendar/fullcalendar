@@ -78,11 +78,11 @@ function EventManager() { // assumed to be a calendar
 	function filterEventsWithinRange(events) {
 		var filteredEvents = [];
 		var i, event;
-
 		for (i = 0; i < events.length; i++) {
 			event = events[i];
-
+			// inverse-background events are always rendered
 			if (
+				event.rendering === 'inverse-background' ||
 				event.start.clone().stripZone() < rangeEnd &&
 				t.getEventEnd(event).stripZone() > rangeStart
 			) {
