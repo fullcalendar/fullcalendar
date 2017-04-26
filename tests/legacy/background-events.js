@@ -687,8 +687,8 @@ describe('background events', function() {
 				});
 			});
 
-			describe('when out of view range', function () {
-				it('should still render', function (done) {
+			describe('when out of view range', function() {
+				it('should still render', function(done) {
 					options.events = [ {
 						start: '2014-01-01T01:00:00',
 						end: '2014-01-01T05:00:00',
@@ -701,7 +701,7 @@ describe('background events', function() {
 					$('#cal').fullCalendar(options);
 
 				});
-			})
+			});
 		});
 
 		it('can have custom Event Object color', function(done) {
