@@ -1,0 +1,25 @@
+{
+    "name": "fullcalendar/fullcalendar",
+    "description": "Full-sized drag & drop event calendar",
+    "authors": [
+        {
+          "name": "Adam Shaw",
+          "email": "arshaw@arshaw.com",
+          "homepage": "http://arshaw.com/"
+        }
+    ],
+    "keywords": [
+        "calendar",
+        "event",
+        "full-sized",
+        "jquery-plugin"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "homepage": "https://fullcalendar.io/",
+    "require": {
+        "components/jquery": "^3.1.0",
+        "moment/moment": "^2.9.0"
+    }
+}
