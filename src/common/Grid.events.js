@@ -1275,7 +1275,9 @@ Grid.mixin({
 				});
 			}
 
-			start = range.end;
+			if (range.end > start) {
+				start = range.end;
+			}
 		}
 
 		// add the span of time after the last event (if there is any)

@@ -625,6 +625,40 @@ describe('background events', function() {
 					};
 					$('#cal').fullCalendar(options);
 				});
+
+				it('render correctly with two related events, nested', function(done) {
+					options.events = [
+						{
+							id: 'hello',
+							start: '2014-11-05T01:00:00',
+							end: '2014-11-05T05:00:00',
+							rendering: 'inverse-background'
+						},
+						{
+							id: 'hello',
+							start: '2014-11-05T02:00:00',
+							end: '2014-11-05T04:00:00',
+							rendering: 'inverse-background'
+						}
+					];
+					options.eventAfterAllRender = function() {
+						expect($('.fc-bgevent').length).toBe(8);
+						expect(queryBgEventsInCol(0).length).toBe(1);
+						expect(queryBgEventsInCol(1).length).toBe(1);
+						expect(queryBgEventsInCol(2).length).toBe(1);
+						expect(queryBgEventsInCol(3).length).toBe(2);
+						expect(queryBgEventsInCol(4).length).toBe(1);
+						expect(queryBgEventsInCol(5).length).toBe(1);
+						expect(queryBgEventsInCol(6).length).toBe(1);
+
+						expect($('.fc-bgevent:eq(3)')).toBeAbove('.fc-slats tr:eq(2)'); // first part before 1am
+						expect($('.fc-bgevent:eq(4)')).toBeBelow('.fc-slats tr:eq(9)'); // second part after 5am
+
+						done();
+					};
+					$('#cal').fullCalendar(options);
+				});
+
 			});
 
 			describe('when RTL', function() {
