@@ -112,33 +112,54 @@ var RenderQueue = TaskQueue.extend({
 		var shouldAppend = true;
 		var i, task;
 
-		if (newTask.namespace && newTask.type === 'destroy') {
+		if (newTask.namespace) {
 
-			// remove all add/remove ops with same namespace, regardless of order
-			for (i = q.length - 1; i >= 0; i--) {
-				task = q[i];
+			if (newTask.type === 'destroy' || newTask.type === 'init') {
 
-				if (
-					task.namespace === newTask.namespace &&
-					(task.type === 'add' || task.type === 'remove')
-				) {
-					q.splice(i, 1); // remove task
+				// remove all add/remove ops with same namespace, regardless of order
+				for (i = q.length - 1; i >= 0; i--) {
+					task = q[i];
+
+					if (
+						task.namespace === newTask.namespace &&
+						(task.type === 'add' || task.type === 'remove')
+					) {
+						q.splice(i, 1); // remove task
+					}
 				}
-			}
 
-			// eat away queued init operations
-			while (q.length) {
-				task = q[q.length - 1]; // last task
+				if (newTask.type === 'destroy') {
+					// eat away final init/destroy operation
+					if (q.length) {
+						task = q[q.length - 1]; // last task
 
-				if (
-					task.namespace === newTask.namespace &&
-					task.type === 'init'
-				) {
-					q.pop();
-					shouldAppend = false;
+						if (task.namespace === newTask.namespace) {
+
+							// the init and our destroy cancel each other out
+							if (task.type === 'init') {
+								shouldAppend = false;
+								q.pop();
+							}
+							// prefer to use the destroy operation that's already present
+							else if (task.type === 'destroy') {
+								shouldAppend = false;
+							}
+						}
+					}
 				}
-				else {
-					break;
+				else if (newTask.type === 'init') {
+					// eat away final init operation
+					if (q.length) {
+						task = q[q.length - 1]; // last task
+
+						if (
+							task.namespace === newTask.namespace &&
+							task.type === 'init'
+						) {
+							// our init operation takes precedence
+							q.pop();
+						}
+					}
 				}
 			}
 		}
