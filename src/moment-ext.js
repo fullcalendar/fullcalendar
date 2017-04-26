@@ -297,15 +297,19 @@ newMomentProto.utcOffset = function(tzo) {
 // -------------------------------------------------------------------------------------------------
 
 newMomentProto.format = function() {
+
 	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
 		return formatDate(this, arguments[0]); // our extended formatting
 	}
-
 	if (this._ambigTime) {
 		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
 	}
 	if (this._ambigZone) {
 		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+	}
+	if (this._fullCalendar) { // enhanced non-ambig moment?
+		// moment.format() doesn't ensure english, but we want to.
+		return oldMomentFormat(englishMoment(this));
 	}
 
 	return oldMomentProto.format.apply(this, arguments);
@@ -318,6 +322,11 @@ newMomentProto.toISOString = function() {
 	}
 	if (this._ambigZone) {
 		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+	}
+	if (this._fullCalendar) { // enhanced non-ambig moment?
+		// depending on browser, moment might not output english. ensure english.
+		// https://github.com/moment/moment/blob/2.18.1/src/lib/moment/format.js#L22
+		return oldMomentProto.toISOString.apply(englishMoment(this), arguments);
 	}
 
 	return oldMomentProto.toISOString.apply(this, arguments);
