@@ -300,21 +300,32 @@ newMomentProto.format = function() {
 	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
 		return formatDate(this, arguments[0]); // our extended formatting
 	}
+
 	if (this._ambigTime) {
-		return oldMomentFormat(this, 'YYYY-MM-DD');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(this, 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
 	}
+
 	return oldMomentProto.format.apply(this, arguments);
 };
 
 newMomentProto.toISOString = function() {
+
 	if (this._ambigTime) {
-		return oldMomentFormat(moment(this).locale('en'), 'YYYY-MM-DD');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(moment(this).locale('en'), 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
 	}
+
 	return oldMomentProto.toISOString.apply(this, arguments);
 };
+
+function englishMoment(mom) {
+	if (mom.locale() !== 'en') {
+		return mom.clone().locale('en');
+	}
+	return mom;
+}
