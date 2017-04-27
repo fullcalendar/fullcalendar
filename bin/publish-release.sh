@@ -40,6 +40,7 @@ git reset --quiet -- dist
 
 if [[ "$success" == "1" ]]
 then
+	./bin/verify-npm.sh
 	echo "Success."
 else
 	echo "Failure."
