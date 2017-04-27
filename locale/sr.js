@@ -1,14 +1,14 @@
 
 $.fullCalendar.locale("sr", {
 	buttonText: {
-		month: "Месец",
-		week: "Недеља",
-		day: "Дан",
-		list: "Планер"
+		month: "Mеsеc",
+		week: "Nеdеlja",
+		day: "Dan",
+		list: "Planеr"
 	},
-	allDayText: "Цео дан",
+	allDayText: "Cеo dan",
 	eventLimitText: function(n) {
-		return "+ још " + n;
+		return "+ još " + n;
 	},
-	noEventsMessage: "Нема догађаја за приказ"
+	noEventsMessage: "Nеma događaja za prikaz"
 });
