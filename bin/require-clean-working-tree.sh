@@ -5,6 +5,12 @@
 # optional argument
 working_subdir="$1"
 
+# git complains if empty string path in statements below
+if [[ -z "$working_subdir" ]]
+then
+	working_subdir="."
+fi
+
 # Update the index
 git update-index -q --ignore-submodules --refresh
 err=0
