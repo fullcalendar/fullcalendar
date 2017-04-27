@@ -34,15 +34,10 @@ module.exports = function(config) {
 			'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
 			'node_modules/jquery-simulate/jquery.simulate.js',
 
-			'tests/lib/jasmine-ext.js',
-			'tests/lib/simulate.js',
-			'tests/lib/dom-utils.js',
-			'tests/lib/dnd-resize-utils.js',
-			'tests/lib/time-grid.js',
+			'tests/lib/**/*.js',
+			'tests/**/*.js',
+
 			'tests/base.css',
-			'tests/automated-better/globals.js',
-			'tests/automated-better/**/*.js',
-			'tests/automated/*.js',
 
 			// serve misc files, but don't watch
 			{
