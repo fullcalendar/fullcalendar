@@ -336,6 +336,7 @@ previous button's border...
 --------------------------------------------------------------------------------------------------*/
 
 .fc-divider {
+	border-color: inherit;
 	border-style: solid;
 	border-width: 1px;
 }
