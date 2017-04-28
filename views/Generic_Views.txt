@@ -2,7 +2,7 @@
 Generic Views *3.3.0*
 =====================
 
-A Generic View is similar to a [Custom View](Custom_View) in that it gives you
+A Generic View is similar to a [Custom View](Custom_Views) in that it gives you
 complete control over the displayed date range. However, it is much simpler to define.
 
 When your calendar needs to display a *single* view with custom date range logic,
