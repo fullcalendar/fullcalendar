@@ -483,6 +483,9 @@ Grid.mixin({
 					else {
 						view.showEvent(event);
 					}
+					else {
+						view.reportEventDropOutside(event, el, ev);
+					}
 				});
 				_this.segDragListener = null;
 			}
