@@ -90,7 +90,7 @@ var MouseFollower = Class.extend(ListenerMixin, {
 				});
 			}
 			else {
-				complete();
+				complete.call(this.el.get(0));
 			}
 		}
 	},
