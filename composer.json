@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar/fullcalendar",
-  "type": "library",
+  "type": "component",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
     "calendar",
@@ -21,5 +21,25 @@
   "require": {
     "components/jquery": "2 - 3",
     "moment/moment": "^2.9.0"
+  },
+  "extra": {
+    "component": {
+      "scripts": [
+        "dist/fullcalendar.js",
+        "dist/gcal.js"
+      ],
+      "styles": [
+        "dist/fullcalendar.css",
+        "dist/fullcalendar.print.css"
+      ],
+      "files": [
+        "dist/fullcalendar.min.js",
+        "dist/fullcalendar.min.css",
+        "dist/fullcalendar.print.min.css",
+        "dist/gcal.min.js",
+        "dist/locale-all.js",
+        "dist/locale/*.js"
+      ]
+    }
   }
 }
