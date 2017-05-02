@@ -1,0 +1,47 @@
+
+eventLimitRender
+===========
+
+Triggered while a "more" link created by the [eventLimit]() option is being rendered.
+
+<div class='spec' markdown='1'>
+function( *element*, *hiddenSegs* ) { }
+</div>
+
+`element` is a newly created jQuery element that will be used for rendering.
+
+`hiddenSegs` - array of only the segment objects that were not displayed prior.
+
+The `eventLimitRender` callback function can modify `element`. For example, it can change its appearance via jQuery's `.css()`.
+
+The function can also return a brand new element that will be used for rendering instead. For all-day [background events](../event_rendering/Background_Events/), you must be sure to return a `<td>`.
+
+`eventLimitRender` is a great way to attach other jQuery plugins to "more" links,
+such as a [tooltip](http://getbootstrap.com/javascript/#tooltips) tooltip effect:
+
+	$('#calendar').fullCalendar({
+		eventLimit: 4,
+		events: [
+			{
+				title: 'My Event',
+				start: '2010-01-01'
+			}
+			// more events here
+		],
+		eventLimitRender: function(element, cell, hiddenSegs) {
+			element.tooltip({
+				html: true,
+				title: hiddenSegs.reduce(
+					function(value, item) {
+						return value
+							+ '<p class="text-left">'
+							+ item.event.start.format("h:mm A")
+						 	+ ' - '
+						 	+ item.event.title
+						 	+ '</p>'
+					},
+					""
+				)
+			});
+		}
+	});
