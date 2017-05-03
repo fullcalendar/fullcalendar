@@ -490,13 +490,6 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	// Returns a string unit, like 'second' or 'minute' that defined how often the current time indicator
-	// should be refreshed. If something falsy is returned, no time indicator is rendered at all.
-	getNowIndicatorUnit: function() {
-		// subclasses should implement
-	},
-
-
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
 	// TODO: move some of these to ChronoComponent

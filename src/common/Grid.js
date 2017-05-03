@@ -553,15 +553,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	/* Now Indicator
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// TODO: move this to ChronoComponent
-	getNowIndicatorUnit: function() {
-	},
-
-
 	/* Fill System (highlight, background events, business hours)
 	--------------------------------------------------------------------------------------------------------------------
 	TODO: remove this system. like we did in TimeGrid
