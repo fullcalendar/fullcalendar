@@ -27,6 +27,7 @@
     "common/DayGrid.limit.js",
     "common/TimeGrid.js",
     "common/TimeGrid.events.js",
+    "common/ChronoComponent.js",
     "common/View.js",
     "common/View.date-range.js",
     "common/Scroller.js",

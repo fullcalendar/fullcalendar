@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = Model.extend({
+var View = FC.View = ChronoComponent.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -11,7 +11,6 @@ var View = FC.View = Model.extend({
 	calendar: null, // owner Calendar object
 	viewSpec: null,
 	options: null, // hash containing all options. already merged with view-specific-options
-	el: null, // the view's containing element. set by Calendar
 
 	renderQueue: null,
 	batchRenderDepth: 0,
@@ -21,19 +20,12 @@ var View = FC.View = Model.extend({
 
 	queuedScroll: null,
 
-	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 	selectedEvent: null,
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 
-	// classNames styled by jqui themes
-	widgetHeaderClass: null,
-	widgetContentClass: null,
-	highlightStateClass: null,
-
 	// for date utils, computed from options
-	nextDayThreshold: null,
 	isHiddenDayHash: null,
 
 	// now indicator
@@ -45,7 +37,7 @@ var View = FC.View = Model.extend({
 
 
 	constructor: function(calendar, viewSpec) {
-		Model.prototype.constructor.call(this);
+		ChronoComponent.call(this);
 
 		this.calendar = calendar;
 		this.viewSpec = viewSpec;
@@ -57,17 +49,20 @@ var View = FC.View = Model.extend({
 		// .name is deprecated
 		this.name = this.type;
 
-		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
-		this.initThemingProps();
-		this.initHiddenDays();
-		this.isRTL = this.opt('isRTL');
-
-		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
+		this.processOptions();
 
 		this.renderQueue = this.buildRenderQueue();
 		this.initAutoBatchRender();
 
 		this.initialize();
+	},
+
+
+	processOptions: function() {
+		ChronoComponent.prototype.processOptions.apply(this, arguments);
+
+		this.initHiddenDays();
+		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 	},
 
 
@@ -197,115 +192,23 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
-	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
-	// The timezones of the dates within `range` will be respected.
-	formatRange: function(range, formatStr, separator) {
-		var end = range.end;
-
-		if (!end.hasTime()) { // all-day?
-			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
-		}
-
-		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
-	},
-
-
-	getAllDayHtml: function() {
-		return this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'));
-	},
-
-
-	/* Navigation
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generates HTML for an anchor to another view into the calendar.
-	// Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
-	// `gotoOptions` can either be a moment input, or an object with the form:
-	// { date, type, forceOff }
-	// `type` is a view-type like "day" or "week". default value is "day".
-	// `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
-	buildGotoAnchorHtml: function(gotoOptions, attrs, innerHtml) {
-		var date, type, forceOff;
-		var finalOptions;
-
-		if ($.isPlainObject(gotoOptions)) {
-			date = gotoOptions.date;
-			type = gotoOptions.type;
-			forceOff = gotoOptions.forceOff;
-		}
-		else {
-			date = gotoOptions; // a single moment input
-		}
-		date = FC.moment(date); // if a string, parse it
-
-		finalOptions = { // for serialization into the link
-			date: date.format('YYYY-MM-DD'),
-			type: type || 'day'
-		};
-
-		if (typeof attrs === 'string') {
-			innerHtml = attrs;
-			attrs = null;
-		}
-
-		attrs = attrs ? ' ' + attrsToStr(attrs) : ''; // will have a leading space
-		innerHtml = innerHtml || '';
-
-		if (!forceOff && this.opt('navLinks')) {
-			return '<a' + attrs +
-				' data-goto="' + htmlEscape(JSON.stringify(finalOptions)) + '">' +
-				innerHtml +
-				'</a>';
-		}
-		else {
-			return '<span' + attrs + '>' +
-				innerHtml +
-				'</span>';
-		}
-	},
-
-
-	// Rendering Non-date-related Content
+	// Element
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// Sets the container element that the view should render inside of, does global DOM-related initializations,
-	// and renders all the non-date-related content inside.
 	setElement: function(el) {
-		this.el = el;
+		ChronoComponent.prototype.setElement.apply(this, arguments);
+
 		this.bindGlobalHandlers();
 		this.bindBaseRenderHandlers();
-		this.renderSkeleton();
 	},
 
 
-	// Removes the view's container element from the DOM, clearing any content beforehand.
-	// Undoes any other DOM-related attachments.
 	removeElement: function() {
-		this.unsetDate();
-		this.unrenderSkeleton();
-
 		this.unbindGlobalHandlers();
 		this.unbindBaseRenderHandlers();
 
-		this.el.remove();
-		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-		// We don't null-out the View's other jQuery element references upon destroy,
-		//  so we shouldn't kill this.el either.
-	},
-
-
-	// Renders the basic structure of the view before any content is rendered
-	renderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders the basic structure of the view
-	unrenderSkeleton: function() {
-		// subclasses should implement
+		ChronoComponent.prototype.removeElement.apply(this, arguments);
 	},
 
 
@@ -466,22 +369,6 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Date Low-level Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// date-cell content only
-	renderDates: function() {
-		// subclasses should implement
-	},
-
-
-	// date-cell content only
-	unrenderDates: function() {
-		// subclasses should override
-	},
-
-
 	// Determing when the "meat" of the view is rendered (aka the base)
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -532,32 +419,6 @@ var View = FC.View = Model.extend({
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
 		this.stopListeningTo(GlobalEmitter.get());
-	},
-
-
-	// Initializes internal variables related to theming
-	initThemingProps: function() {
-		var tm = this.opt('theme') ? 'ui' : 'fc';
-
-		this.widgetHeaderClass = tm + '-widget-header';
-		this.widgetContentClass = tm + '-widget-content';
-		this.highlightStateClass = tm + '-state-highlight';
-	},
-
-
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders previously-rendered business-hours
-	unrenderBusinessHours: function() {
-		// subclasses should implement
 	},
 
 
@@ -637,20 +498,9 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Renders a current time indicator at the given datetime
-	renderNowIndicator: function(date) {
-		// subclasses should implement
-	},
-
-
-	// Undoes the rendering actions from renderNowIndicator
-	unrenderNowIndicator: function() {
-		// subclasses should implement
-	},
-
-
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: move some of these to ChronoComponent
 
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
@@ -831,24 +681,9 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Event Low-level Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// Renders the events onto the view.
-	renderEvents: function(events) {
-		// subclasses should implement
-	},
-
-
-	// Removes event elements from the view.
-	unrenderEvents: function() {
-		// subclasses should implement
-	},
-
-
 	// Event Rendering Utils
 	// -----------------------------------------------------------------------------------------------------------------
+	// TODO: move this to ChronoComponent
 
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
@@ -911,31 +746,6 @@ var View = FC.View = Model.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes if the given event is allowed to be dragged by the user
-	isEventDraggable: function(event) {
-		return this.isEventStartEditable(event);
-	},
-
-
-	isEventStartEditable: function(event) {
-		return firstDefined(
-			event.startEditable,
-			(event.source || {}).startEditable,
-			this.opt('eventStartEditable'),
-			this.isEventGenerallyEditable(event)
-		);
-	},
-
-
-	isEventGenerallyEditable: function(event) {
-		return firstDefined(
-			event.editable,
-			(event.source || {}).editable,
-			this.opt('editable')
-		);
-	},
-
-
 	// Must be called when an event in the view is dropped onto new location.
 	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
 	reportSegDrop: function(seg, dropLocation, largeUnit, el, ev) {
@@ -991,53 +801,8 @@ var View = FC.View = Model.extend({
 	},
 
 
-	/* Drag-n-Drop Rendering (for both events and external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of a event or external-element drag over the given drop zone.
-	// If an external-element, seg will be `null`.
-	// Must return elements used for any mock events.
-	renderDrag: function(dropLocation, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event or external-element being dragged.
-	unrenderDrag: function() {
-		// subclasses must implement
-	},
-
-
 	/* Event Resizing
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Computes if the given event is allowed to be resized from its starting edge
-	isEventResizableFromStart: function(event) {
-		return this.opt('eventResizableFromStart') && this.isEventResizable(event);
-	},
-
-
-	// Computes if the given event is allowed to be resized from its ending edge
-	isEventResizableFromEnd: function(event) {
-		return this.isEventResizable(event);
-	},
-
-
-	// Computes if the given event is allowed to be resized by the user at all
-	isEventResizable: function(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.durationEditable,
-			source.durationEditable,
-			this.opt('eventDurationEditable'),
-			event.editable,
-			source.editable,
-			this.opt('editable')
-		);
-	},
 
 
 	// Must be called when an event in the view has been resized to a new length
@@ -1073,12 +838,6 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Renders a visual indication of the selection
-	renderSelection: function(span) {
-		// subclasses should implement
-	},
-
-
 	// Called when a new selection is made. Updates internal state and triggers handlers.
 	reportSelection: function(span, ev) {
 		this.isSelected = true;
@@ -1109,12 +868,6 @@ var View = FC.View = Model.extend({
 			this.unrenderSelection();
 			this.publiclyTrigger('unselect', null, ev);
 		}
-	},
-
-
-	// Unrenders a visual indication of selection
-	unrenderSelection: function() {
-		// subclasses should implement
 	},
 
 
@@ -1205,48 +958,6 @@ var View = FC.View = Model.extend({
 			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
 			ev
 		);
-	},
-
-
-	/* Date Utils
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Returns the date range of the full days the given range visually appears to occupy.
-	// Returns a new range object.
-	computeDayRange: function(range) {
-		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
-		var end = range.end;
-		var endDay = null;
-		var endTimeMS;
-
-		if (end) {
-			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
-			endTimeMS = +end.time(); // # of milliseconds into `endDay`
-
-			// If the end time is actually inclusively part of the next day and is equal to or
-			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-			if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
-				endDay.add(1, 'days');
-			}
-		}
-
-		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
-		// assign the default duration of one day.
-		if (!end || endDay <= startDay) {
-			endDay = startDay.clone().add(1, 'days');
-		}
-
-		return { start: startDay, end: endDay };
-	},
-
-
-	// Does the given event visually appear to occupy more than one day?
-	isMultiDayEvent: function(event) {
-		var range = this.computeDayRange(event); // event is range-ish
-
-		return range.end.diff(range.start, 'days') > 1;
 	}
 
 });
