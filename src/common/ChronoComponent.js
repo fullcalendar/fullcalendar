@@ -14,19 +14,21 @@ var ChronoComponent = Model.extend({
 	highlightStateClass: null,
 
 
+	constructor: function() {
+		Model.call(this);
+
+		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
+		this.isRTL = this.opt('isRTL');
+		this.initThemingProps();
+	},
+
+
 	// Options
 	// -----------------------------------------------------------------------------------------------------------------
 
 
 	opt: function(name) {
 		// subclasses must implement
-	},
-
-
-	processOptions: function() {
-		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
-		this.isRTL = this.opt('isRTL');
-		this.initThemingProps();
 	},
 
 

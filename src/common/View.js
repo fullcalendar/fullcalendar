@@ -37,8 +37,6 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	constructor: function(calendar, viewSpec) {
-		ChronoComponent.call(this);
-
 		this.calendar = calendar;
 		this.viewSpec = viewSpec;
 
@@ -49,20 +47,15 @@ var View = FC.View = ChronoComponent.extend({
 		// .name is deprecated
 		this.name = this.type;
 
-		this.processOptions();
+		ChronoComponent.call(this);
+
+		this.initHiddenDays();
+		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		this.renderQueue = this.buildRenderQueue();
 		this.initAutoBatchRender();
 
 		this.initialize();
-	},
-
-
-	processOptions: function() {
-		ChronoComponent.prototype.processOptions.apply(this, arguments);
-
-		this.initHiddenDays();
-		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 	},
 
 

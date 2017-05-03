@@ -13,7 +13,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	start: null,
 	end: null,
 
-	el: null, // the containing element
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 	// derived from options
@@ -37,7 +36,9 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	constructor: function(view) {
 		this.view = view;
-		this.isRTL = view.opt('isRTL');
+
+		ChronoComponent.call(this);
+
 		this.elsByFill = {};
 
 		this.dayClickListener = this.buildDayClickListener();
@@ -45,7 +46,10 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	// TODO: opt()
+	// TODO: use everywhere
+	opt: function(name) {
+		return this.view.opt(name);
+	},
 
 
 	/* Options
