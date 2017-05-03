@@ -2,7 +2,7 @@
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var Grid = FC.Grid = Class.extend(ListenerMixin, {
+var Grid = FC.Grid = ChronoComponent.extend({
 
 	// self-config, overridable by subclasses
 	hasDayInteractions: true, // can user click/select ranges of time?
@@ -43,6 +43,9 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		this.dayClickListener = this.buildDayClickListener();
 		this.daySelectListener = this.buildDaySelectListener();
 	},
+
+
+	// TODO: opt()
 
 
 	/* Options
@@ -200,7 +203,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// Sets the container element that the grid should render inside of.
 	// Does other DOM-related initializations.
 	setElement: function(el) {
-		this.el = el;
+		ChronoComponent.prototype.setElement.apply(this, arguments);
 
 		if (this.hasDayInteractions) {
 			preventSelection(el);
@@ -212,8 +215,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
 		this.bindSegHandlers();
-
-		this.bindGlobalHandlers();
 	},
 
 
@@ -240,31 +241,9 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	// Removes the grid's container element from the DOM. Undoes any other DOM-related attachments.
 	// DOES NOT remove any content beforehand (doesn't clear events or call unrenderDates), unlike View
 	removeElement: function() {
-		this.unbindGlobalHandlers();
+		ChronoComponent.prototype.removeElement.apply(this, arguments);
+
 		this.clearDragListeners();
-
-		this.el.remove();
-
-		// NOTE: we don't null-out this.el for the same reasons we don't do it within View::removeElement
-	},
-
-
-	// Renders the basic structure of grid view before any content is rendered
-	renderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
-	// Renders the grid's date-related content (like areas that represent days/times).
-	// Assumes setRange has already been called and the skeleton has already been rendered.
-	renderDates: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders the grid's date-related content
-	unrenderDates: function() {
-		// subclasses should implement
 	},
 
 
@@ -274,6 +253,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Binds DOM handlers to elements that reside outside the grid, such as the document
 	bindGlobalHandlers: function() {
+		ChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+
 		this.listenTo($(document), {
 			dragstart: this.externalDragStart, // jqui
 			sortstart: this.externalDragStart // jqui
@@ -283,6 +264,8 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Unbinds DOM handlers from elements that reside outside the grid
 	unbindGlobalHandlers: function() {
+		ChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+
 		this.stopListeningTo($(document));
 	},
 
@@ -492,12 +475,14 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	// Renders a mock event. Given zoned event date properties.
 	// Must return all mock event elements.
+	// TODO: have this in ChronoComponent
 	renderHelper: function(eventLocation, sourceSeg) {
 		// subclasses must implement
 	},
 
 
 	// Unrenders a mock event
+	// TODO: have this in ChronoComponent
 	unrenderHelper: function() {
 		// subclasses must implement
 	},
@@ -568,31 +553,12 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	},
 
 
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderBusinessHours: function() {
-	},
-
-
-	unrenderBusinessHours: function() {
-	},
-
-
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	// TODO: move this to ChronoComponent
 	getNowIndicatorUnit: function() {
-	},
-
-
-	renderNowIndicator: function(date) {
-	},
-
-
-	unrenderNowIndicator: function() {
 	},
 
 
@@ -683,51 +649,6 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';
-	},
-
-
-
-	/* Generic rendering utilities for subclasses
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Computes HTML classNames for a single-day element
-	getDayClasses: function(date, noThemeHighlight) {
-		var view = this.view;
-		var classes = [];
-		var today;
-
-		if (!isDateWithinRange(date, view.activeRange)) {
-			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
-		}
-		else {
-			classes.push('fc-' + dayIDs[date.day()]);
-
-			if (
-				view.currentRangeAs('months') == 1 && // TODO: somehow get into MonthView
-				date.month() != view.currentRange.start.month()
-			) {
-				classes.push('fc-other-month');
-			}
-
-			today = view.calendar.getNow();
-
-			if (date.isSame(today, 'day')) {
-				classes.push('fc-today');
-
-				if (noThemeHighlight !== true) {
-					classes.push(view.highlightStateClass);
-				}
-			}
-			else if (date < today) {
-				classes.push('fc-past');
-			}
-			else {
-				classes.push('fc-future');
-			}
-		}
-
-		return classes;
 	}
 
 });

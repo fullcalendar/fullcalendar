@@ -56,7 +56,6 @@ var ChronoComponent = Model.extend({
 	// Removes the view's container element from the DOM, clearing any content beforehand.
 	// Undoes any other DOM-related attachments.
 	removeElement: function() {
-		this.unsetDate();
 		this.unrenderSkeleton();
 		this.unbindGlobalHandlers();
 
@@ -320,6 +319,46 @@ var ChronoComponent = Model.extend({
 
 	getAllDayHtml: function() {
 		return this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'));
+	},
+
+
+	// Computes HTML classNames for a single-day element
+	getDayClasses: function(date, noThemeHighlight) {
+		var view = this.view;
+		var classes = [];
+		var today;
+
+		if (!isDateWithinRange(date, view.activeRange)) {
+			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
+		}
+		else {
+			classes.push('fc-' + dayIDs[date.day()]);
+
+			if (
+				view.currentRangeAs('months') == 1 && // TODO: somehow get into MonthView
+				date.month() != view.currentRange.start.month()
+			) {
+				classes.push('fc-other-month');
+			}
+
+			today = view.calendar.getNow();
+
+			if (date.isSame(today, 'day')) {
+				classes.push('fc-today');
+
+				if (noThemeHighlight !== true) {
+					classes.push(view.highlightStateClass);
+				}
+			}
+			else if (date < today) {
+				classes.push('fc-past');
+			}
+			else {
+				classes.push('fc-future');
+			}
+		}
+
+		return classes;
 	},
 
 

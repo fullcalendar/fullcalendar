@@ -204,6 +204,7 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	removeElement: function() {
+		this.unsetDate();
 		this.unbindBaseRenderHandlers();
 
 		ChronoComponent.prototype.removeElement.apply(this, arguments);
