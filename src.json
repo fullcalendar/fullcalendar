@@ -21,6 +21,7 @@
     "common/MouseFollower.js",
     "common/ChronoComponent.js",
     "common/Grid.js",
+    "common/Grid.fill.js",
     "common/Grid.events.js",
     "common/DayTableMixin.js",
     "common/DayGrid.js",
