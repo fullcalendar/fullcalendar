@@ -199,13 +199,11 @@ var View = FC.View = ChronoComponent.extend({
 	setElement: function(el) {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
-		this.bindGlobalHandlers();
 		this.bindBaseRenderHandlers();
 	},
 
 
 	removeElement: function() {
-		this.unbindGlobalHandlers();
 		this.unbindBaseRenderHandlers();
 
 		ChronoComponent.prototype.removeElement.apply(this, arguments);
