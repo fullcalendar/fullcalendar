@@ -252,7 +252,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		var view = this.view;
 
 		return '' +
-			'<div class="fc-row ' + view.widgetHeaderClass + '">' +
+			'<div class="fc-row ' + view.calendar.theme.getClass('widgetHeader') + '">' +
 				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
 					'<thead>' +
 						this.renderHeadTrHtml() +
@@ -297,7 +297,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
-			view.widgetHeaderClass
+			view.calendar.theme.getClass('widgetHeader')
 		];
 		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
 
@@ -375,7 +375,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
-		classes.unshift('fc-day', view.widgetContentClass);
+		classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'));
 
 		return '<td class="' + classes.join(' ') + '"' +
 			(isDateValid ?

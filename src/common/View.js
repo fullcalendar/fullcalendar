@@ -27,11 +27,6 @@ var View = FC.View = Model.extend({
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 
-	// classNames styled by jqui themes
-	widgetHeaderClass: null,
-	widgetContentClass: null,
-	highlightStateClass: null,
-
 	// for date utils, computed from options
 	nextDayThreshold: null,
 	isHiddenDayHash: null,
@@ -58,7 +53,6 @@ var View = FC.View = Model.extend({
 		this.name = this.type;
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
-		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
 
@@ -532,14 +526,6 @@ var View = FC.View = Model.extend({
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
 		this.stopListeningTo(GlobalEmitter.get());
-	},
-
-
-	// Initializes internal variables related to theming
-	initThemingProps: function() {
-		this.widgetHeaderClass = this.calendar.theme.getClass('widgetHeader');
-		this.widgetContentClass = this.calendar.theme.getClass('widgetContent');
-		this.highlightStateClass = this.calendar.theme.getClass('stateHighlight');
 	},
 
 

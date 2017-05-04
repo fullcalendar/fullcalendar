@@ -18,7 +18,7 @@ var ListView = View.extend({
 	renderSkeleton: function() {
 		this.el.addClass(
 			'fc-list-view ' +
-			this.widgetContentClass
+			this.calendar.theme.getClass('widgetContent')
 		);
 
 		this.scroller.render();
@@ -206,7 +206,7 @@ var ListViewGrid = Grid.extend({
 		var altFormat = view.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +
+			'<td class="' + view.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
 				(mainFormat ?
 					view.buildGotoAnchorHtml(
 						dayDate,
@@ -256,18 +256,18 @@ var ListViewGrid = Grid.extend({
 
 		return '<tr class="' + classes.join(' ') + '">' +
 			(this.displayEventTime ?
-				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
+				'<td class="fc-list-item-time ' + view.calendar.theme.getClass('widgetContent') + '">' +
 					(timeHtml || '') +
 				'</td>' :
 				'') +
-			'<td class="fc-list-item-marker ' + view.widgetContentClass + '">' +
+			'<td class="fc-list-item-marker ' + view.calendar.theme.getClass('widgetContent') + '">' +
 				'<span class="fc-event-dot"' +
 				(bgColor ?
 					' style="background-color:' + bgColor + '"' :
 					'') +
 				'></span>' +
 			'</td>' +
-			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
+			'<td class="fc-list-item-title ' + view.calendar.theme.getClass('widgetContent') + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
 					htmlEscape(seg.event.title || '') +
 				'</a>' +

@@ -127,12 +127,12 @@ var BasicView = FC.BasicView = View.extend({
 			'<table class="' + this.calendar.theme.getClass('tableGrid') + '">' +
 				'<thead class="fc-head">' +
 					'<tr>' +
-						'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +
+						'<td class="fc-head-container ' + this.calendar.theme.getClass('widgetHeader') + '"></td>' +
 					'</tr>' +
 				'</thead>' +
 				'<tbody class="fc-body">' +
 					'<tr>' +
-						'<td class="' + this.widgetContentClass + '"></td>' +
+						'<td class="' + this.calendar.theme.getClass('widgetContent') + '"></td>' +
 					'</tr>' +
 				'</tbody>' +
 			'</table>';
@@ -367,7 +367,7 @@ var basicDayGridMethods = {
 
 		if (view.colWeekNumbersVisible) {
 			return '' +
-				'<th class="fc-week-number ' + view.widgetHeaderClass + '" ' + view.weekNumberStyleAttr() + '>' +
+				'<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
 						htmlEscape(view.opt('weekNumberTitle')) +
 					'</span>' +
@@ -402,7 +402,7 @@ var basicDayGridMethods = {
 		var view = this.view;
 
 		if (view.colWeekNumbersVisible) {
-			return '<td class="fc-week-number ' + view.widgetContentClass + '" ' +
+			return '<td class="fc-week-number ' + view.calendar.theme.getClass('widgetContent') + '" ' +
 				view.weekNumberStyleAttr() + '></td>';
 		}
 
