@@ -333,9 +333,9 @@ Grid.mixin({
 
 		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
 
-			eventLongPressDelay = view.opt('eventLongPressDelay');
+			eventLongPressDelay = this.opt('eventLongPressDelay');
 			if (eventLongPressDelay == null) {
-				eventLongPressDelay = view.opt('longPressDelay'); // fallback
+				eventLongPressDelay = this.opt('longPressDelay'); // fallback
 			}
 
 			dragListener = isDraggable ?
@@ -386,7 +386,7 @@ Grid.mixin({
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = this.segDragListener = new HitDragListener(view, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
 			interactionStart: function(ev) {
@@ -395,8 +395,8 @@ Grid.mixin({
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
 					parentEl: view.el,
-					opacity: dragListener.isTouch ? null : view.opt('dragOpacity'),
-					revertDuration: view.opt('dragRevertDuration'),
+					opacity: dragListener.isTouch ? null : _this.opt('dragOpacity'),
+					revertDuration: _this.opt('dragRevertDuration'),
 					zIndex: 2 // one above the .fc-view
 				});
 				mouseFollower.hide(); // don't show until we know this is a real drag
@@ -583,7 +583,7 @@ Grid.mixin({
 
 	// Utility for apply dragOpacity to a jQuery set
 	applyDragOpacity: function(els) {
-		var opacity = this.view.opt('dragOpacity');
+		var opacity = this.opt('dragOpacity');
 
 		if (opacity != null) {
 			els.css('opacity', opacity);
@@ -597,16 +597,15 @@ Grid.mixin({
 
 	// Called when a jQuery UI drag is initiated anywhere in the DOM
 	externalDragStart: function(ev, ui) {
-		var view = this.view;
 		var el;
 		var accept;
 
-		if (view.opt('droppable')) { // only listen if this setting is on
+		if (this.opt('droppable')) { // only listen if this setting is on
 			el = $((ui ? ui.item : null) || ev.target);
 
 			// Test that the dragged element passes the dropAccept selector or filter function.
 			// FYI, the default is "*" (matches all)
-			accept = view.opt('dropAccept');
+			accept = this.opt('dropAccept');
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 				if (!this.isDraggingExternal) { // prevent double-listening if fired twice
 					this.listenToExternalDrag(el, ev, ui);
@@ -732,7 +731,7 @@ Grid.mixin({
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = this.segResizeListener = new HitDragListener(this, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			interactionStart: function() {
 				isDragging = false;
@@ -981,8 +980,8 @@ Grid.mixin({
 
 		return source.backgroundColor ||
 			source.color ||
-			this.view.opt('eventBackgroundColor') ||
-			this.view.opt('eventColor');
+			this.opt('eventBackgroundColor') ||
+			this.opt('eventColor');
 	},
 
 
@@ -999,8 +998,8 @@ Grid.mixin({
 
 		return source.borderColor ||
 			source.color ||
-			this.view.opt('eventBorderColor') ||
-			this.view.opt('eventColor');
+			this.opt('eventBorderColor') ||
+			this.opt('eventColor');
 	},
 
 
@@ -1015,7 +1014,7 @@ Grid.mixin({
 		var source = seg.event.source || {};
 
 		return source.textColor ||
-			this.view.opt('eventTextColor');
+			this.opt('eventTextColor');
 	},
 
 

@@ -111,9 +111,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Parses various options into properties of this object
 	processOptions: function() {
-		var view = this.view;
-		var slotDuration = view.opt('slotDuration');
-		var snapDuration = view.opt('snapDuration');
+		var slotDuration = this.opt('slotDuration');
+		var snapDuration = this.opt('snapDuration');
 		var input;
 
 		slotDuration = moment.duration(slotDuration);
@@ -127,16 +126,15 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
-		input = view.opt('slotLabelFormat');
+		input = this.opt('slotLabelFormat');
 		if ($.isArray(input)) {
 			input = input[input.length - 1];
 		}
 
-		this.labelFormat =
-			input ||
-			view.opt('smallTimeFormat'); // the computed default
+		this.labelFormat = input ||
+			this.opt('smallTimeFormat'); // the computed default
 
-		input = view.opt('slotLabelInterval');
+		input = this.opt('slotLabelInterval');
 		this.labelInterval = input ?
 			moment.duration(input) :
 			this.computeLabelInterval(slotDuration);
@@ -164,7 +162,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
 	computeEventTimeFormat: function() {
-		return this.view.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
+		return this.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
 	},
 
 
@@ -485,7 +483,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
 	renderSelection: function(span) {
-		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
+		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
 
 			// normally acceps an eventLocation, span has a start/end, which is good enough
 			this.renderEventLocationHelper(span);

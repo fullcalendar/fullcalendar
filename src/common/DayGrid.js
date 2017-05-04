@@ -203,7 +203,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
 	computeEventTimeFormat: function() {
-		return this.view.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
+		return this.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
 	},
 
 

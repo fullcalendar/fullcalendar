@@ -111,7 +111,7 @@ var ListViewGrid = Grid.extend({
 
 	// like "4:00am"
 	computeEventTimeFormat: function() {
-		return this.view.opt('mediumTimeFormat');
+		return this.opt('mediumTimeFormat');
 	},
 
 	// for events with a url, the whole <tr> should be clickable,
@@ -149,7 +149,7 @@ var ListViewGrid = Grid.extend({
 			'<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
 			'<div class="fc-list-empty-wrap1">' +
 			'<div class="fc-list-empty">' +
-				htmlEscape(this.view.opt('noEventsMessage')) +
+				htmlEscape(this.opt('noEventsMessage')) +
 			'</div>' +
 			'</div>' +
 			'</div>'
@@ -202,8 +202,8 @@ var ListViewGrid = Grid.extend({
 	// generates the HTML for the day headers that live amongst the event rows
 	dayHeaderHtml: function(dayDate) {
 		var view = this.view;
-		var mainFormat = view.opt('listDayFormat');
-		var altFormat = view.opt('listDayAltFormat');
+		var mainFormat = this.opt('listDayFormat');
+		var altFormat = this.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
 			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +

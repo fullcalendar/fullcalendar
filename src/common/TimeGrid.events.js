@@ -482,7 +482,7 @@ TimeGrid.mixin({
 	// Generates an object with CSS properties/values that should be applied to an event segment element.
 	// Contains important positioning-related properties that should be applied to any event element, customized or not.
 	generateFgSegHorizontalCss: function(seg) {
-		var shouldOverlap = this.view.opt('slotEventOverlap');
+		var shouldOverlap = this.opt('slotEventOverlap');
 		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
 		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
 		var props = this.generateSegVerticalCss(seg); // get top/bottom first

@@ -56,7 +56,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
 	computeEventTimeFormat: function() {
-		return this.view.opt('smallTimeFormat');
+		return this.opt('smallTimeFormat');
 	},
 
 
@@ -95,21 +95,20 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Updates values that rely on options and also relate to range
 	processRangeOptions: function() {
-		var view = this.view;
 		var displayEventTime;
 		var displayEventEnd;
 
 		this.eventTimeFormat =
-			view.opt('eventTimeFormat') ||
-			view.opt('timeFormat') || // deprecated
+			this.opt('eventTimeFormat') ||
+			this.opt('timeFormat') || // deprecated
 			this.computeEventTimeFormat();
 
-		displayEventTime = view.opt('displayEventTime');
+		displayEventTime = this.opt('displayEventTime');
 		if (displayEventTime == null) {
 			displayEventTime = this.computeDisplayEventTime(); // might be based off of range
 		}
 
-		displayEventEnd = view.opt('displayEventEnd');
+		displayEventEnd = this.opt('displayEventEnd');
 		if (displayEventEnd == null) {
 			displayEventEnd = this.computeDisplayEventEnd(); // might be based off of range
 		}
@@ -274,7 +273,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Process a mousedown on an element that represents a day. For day clicking and selecting.
 	dayMousedown: function(ev) {
-		var view = this.view;
 
 		// HACK
 		// This will still work even though bindDayHandler doesn't use GlobalEmitter.
@@ -284,9 +282,9 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 		this.dayClickListener.startInteraction(ev);
 
-		if (view.opt('selectable')) {
+		if (this.opt('selectable')) {
 			this.daySelectListener.startInteraction(ev, {
-				distance: view.opt('selectMinDistance')
+				distance: this.opt('selectMinDistance')
 			});
 		}
 	},
@@ -304,14 +302,14 @@ var Grid = FC.Grid = ChronoComponent.extend({
 			return;
 		}
 
-		selectLongPressDelay = view.opt('selectLongPressDelay');
+		selectLongPressDelay = this.opt('selectLongPressDelay');
 		if (selectLongPressDelay == null) {
-			selectLongPressDelay = view.opt('longPressDelay'); // fallback
+			selectLongPressDelay = this.opt('longPressDelay'); // fallback
 		}
 
 		this.dayClickListener.startInteraction(ev);
 
-		if (view.opt('selectable')) {
+		if (this.opt('selectable')) {
 			this.daySelectListener.startInteraction(ev, {
 				delay: selectLongPressDelay
 			});
@@ -322,11 +320,10 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Creates a listener that tracks the user's drag across day elements, for day clicking.
 	buildDayClickListener: function() {
 		var _this = this;
-		var view = this.view;
 		var dayClickHit; // null if invalid dayClick
 
 		var dragListener = new HitDragListener(this, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			interactionStart: function() {
 				dayClickHit = dragListener.origHit;
 			},
@@ -346,7 +343,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 					hitSpan = _this.getSafeHitSpan(dayClickHit);
 
 					if (hitSpan) {
-						view.triggerDayClick(hitSpan, _this.getHitEl(dayClickHit), ev);
+						_this.view.triggerDayClick(hitSpan, _this.getHitEl(dayClickHit), ev);
 					}
 				}
 			}
@@ -365,16 +362,15 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Creates a listener that tracks the user's drag across day elements, for day selecting.
 	buildDaySelectListener: function() {
 		var _this = this;
-		var view = this.view;
 		var selectionSpan; // null if invalid selection
 
 		var dragListener = new HitDragListener(this, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			interactionStart: function() {
 				selectionSpan = null;
 			},
 			dragStart: function() {
-				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
+				_this.view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var origHitSpan;
@@ -410,7 +406,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 			interactionEnd: function(ev, isCancelled) {
 				if (!isCancelled && selectionSpan) {
 					// the selection will already have been rendered. just report it
-					view.reportSelection(selectionSpan, ev);
+					_this.view.reportSelection(selectionSpan, ev);
 				}
 			}
 		});

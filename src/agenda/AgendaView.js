@@ -478,8 +478,8 @@ var agendaTimeGridMethods = {
 		var view = this.view;
 		var weekText;
 
-		if (view.opt('weekNumbers')) {
-			weekText = this.start.format(view.opt('smallWeekFormat'));
+		if (this.opt('weekNumbers')) {
+			weekText = this.start.format(this.opt('smallWeekFormat'));
 
 			return '' +
 				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +

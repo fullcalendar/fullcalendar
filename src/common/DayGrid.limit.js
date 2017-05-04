@@ -192,7 +192,7 @@ DayGrid.mixin({
 				this.getMoreLinkText(hiddenSegs.length)
 			)
 			.on('click', function(ev) {
-				var clickOption = view.opt('eventLimitClick');
+				var clickOption = _this.opt('eventLimitClick');
 				var date = _this.getCellDate(row, col);
 				var moreEl = $(this);
 				var dayEl = _this.getCellEl(row, col);
@@ -241,10 +241,10 @@ DayGrid.mixin({
 		options = {
 			className: 'fc-more-popover',
 			content: this.renderSegPopoverContent(row, col, segs),
-			parentEl: this.view.el, // attach to root of view. guarantees outside of scrollbars.
+			parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
 			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
-			viewportConstrain: view.opt('popoverViewportConstrain'),
+			viewportConstrain: this.opt('popoverViewportConstrain'),
 			hide: function() {
 				// kill everything when the popover is hidden
 				// notify events to be removed
@@ -282,8 +282,8 @@ DayGrid.mixin({
 	// Builds the inner DOM contents of the segment popover
 	renderSegPopoverContent: function(row, col, segs) {
 		var view = this.view;
-		var isTheme = view.opt('theme');
-		var title = this.getCellDate(row, col).format(view.opt('dayPopoverFormat'));
+		var isTheme = this.opt('theme');
+		var title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
@@ -350,7 +350,7 @@ DayGrid.mixin({
 
 	// Generates the text that should be inside a "more" link, given the number of events it represents
 	getMoreLinkText: function(num) {
-		var opt = this.view.opt('eventLimitText');
+		var opt = this.opt('eventLimitText');
 
 		if (typeof opt === 'function') {
 			return opt(num);

@@ -369,7 +369,7 @@ var basicDayGridMethods = {
 			return '' +
 				'<th class="fc-week-number ' + view.widgetHeaderClass + '" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						htmlEscape(view.opt('weekNumberTitle')) +
+						htmlEscape(this.opt('weekNumberTitle')) +
 					'</span>' +
 				'</th>';
 		}
