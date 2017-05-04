@@ -92,7 +92,7 @@ var ListViewGrid = Grid.extend({
 			// and mutate the latest seg to the be the end.
 			if (
 				seg && !seg.isEnd && span.end.hasTime() &&
-				span.end < dayStart.clone().add(this.view.nextDayThreshold)
+				span.end < dayStart.clone().add(view.nextDayThreshold)
 			) {
 				seg.end = span.end.clone();
 				seg.isEnd = true;
