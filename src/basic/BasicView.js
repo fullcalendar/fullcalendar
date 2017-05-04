@@ -23,6 +23,7 @@ var BasicView = FC.BasicView = View.extend({
 
 	initialize: function() {
 		this.dayGrid = this.instantiateDayGrid();
+		this.addChild(this.dayGrid);
 
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
@@ -107,16 +108,6 @@ var BasicView = FC.BasicView = View.extend({
 		this.dayGrid.unrenderDates();
 		this.dayGrid.removeElement();
 		this.scroller.destroy();
-	},
-
-
-	renderBusinessHours: function() {
-		this.dayGrid.renderBusinessHours();
-	},
-
-
-	unrenderBusinessHours: function() {
-		this.dayGrid.unrenderBusinessHours();
 	},
 
 
@@ -257,46 +248,6 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	/* Hit Areas
-	------------------------------------------------------------------------------------------------------------------*/
-	// forward all hit-related method calls to dayGrid
-
-
-	hitsNeeded: function() {
-		this.dayGrid.hitsNeeded();
-	},
-
-
-	hitsNotNeeded: function() {
-		this.dayGrid.hitsNotNeeded();
-	},
-
-
-	prepareHits: function() {
-		this.dayGrid.prepareHits();
-	},
-
-
-	releaseHits: function() {
-		this.dayGrid.releaseHits();
-	},
-
-
-	queryHit: function(left, top) {
-		return this.dayGrid.queryHit(left, top);
-	},
-
-
-	getHitSpan: function(hit) {
-		return this.dayGrid.getHitSpan(hit);
-	},
-
-
-	getHitEl: function(hit) {
-		return this.dayGrid.getHitEl(hit);
-	},
-
-
 	/* Events
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -305,53 +256,9 @@ var BasicView = FC.BasicView = View.extend({
 	renderEvents: function(events) {
 		this.dayGrid.renderEvents(events);
 
-		this.updateHeight(); // must compensate for events that overflow the row
-	},
-
-
-	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
-		return this.dayGrid.getEventSegs();
-	},
-
-
-	// Unrenders all event elements and clears internal segment data
-	unrenderEvents: function() {
-		this.dayGrid.unrenderEvents();
-
-		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
-	},
-
-
-	/* Dragging (for both events and external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
-		return this.dayGrid.renderDrag(dropLocation, seg);
-	},
-
-
-	unrenderDrag: function() {
-		this.dayGrid.unrenderDrag();
-	},
-
-
-	/* Selection
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of a selection
-	renderSelection: function(span) {
-		this.dayGrid.renderSelection(span);
-	},
-
-
-	// Unrenders a visual indications of a selection
-	unrenderSelection: function() {
-		this.dayGrid.unrenderSelection();
+		// must compensate for events that overflow the row
+		// TODO: how will ChronoComponent handle this?
+		this.updateHeight();
 	}
 
 });

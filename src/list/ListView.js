@@ -9,6 +9,8 @@ var ListView = View.extend({
 
 	initialize: function() {
 		this.grid = new ListViewGrid(this);
+		this.addChild(this.grid);
+
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
@@ -42,14 +44,6 @@ var ListView = View.extend({
 
 	renderDates: function() {
 		this.grid.setRange(this.renderRange); // needs to process range-related options
-	},
-
-	renderEvents: function(events) {
-		this.grid.renderEvents(events);
-	},
-
-	unrenderEvents: function() {
-		this.grid.unrenderEvents();
 	},
 
 	isEventResizable: function(event) {

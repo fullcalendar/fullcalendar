@@ -1,6 +1,8 @@
 
 var ChronoComponent = Model.extend({
 
+	children: null,
+
 	el: null, // the view's containing element. set by Calendar(?)
 
 	// TODO: move below props to Options object
@@ -17,9 +19,16 @@ var ChronoComponent = Model.extend({
 	constructor: function() {
 		Model.call(this);
 
+		this.children = [];
+
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
 		this.initThemingProps();
+	},
+
+
+	addChild: function(chronoComponent) {
+		this.children.push(chronoComponent);
 	},
 
 
@@ -121,29 +130,29 @@ var ChronoComponent = Model.extend({
 
 	// Renders a current time indicator at the given datetime
 	renderNowIndicator: function(date) {
-		// subclasses should implement
+		this.callChildren('renderNowIndicator', date);
 	},
 
 
 	// Undoes the rendering actions from renderNowIndicator
 	unrenderNowIndicator: function() {
-		// subclasses should implement
+		this.callChildren('unrenderNowIndicator');
 	},
 
 
 	// Business Hours
-	// ---------------------------------------------------------------------------------------------------------------*/
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
 	renderBusinessHours: function() {
-		// subclasses should implement
+		this.callChildren('renderBusinessHours');
 	},
 
 
 	// Unrenders previously-rendered business-hours
 	unrenderBusinessHours: function() {
-		// subclasses should implement
+		this.callChildren('unrenderBusinessHours');
 	},
 
 
@@ -153,52 +162,114 @@ var ChronoComponent = Model.extend({
 
 	// Renders the events onto the view.
 	renderEvents: function(events) {
-		// subclasses should implement
+		this.callChildren('renderEvents', events);
 	},
 
 
 	// Removes event elements from the view.
 	unrenderEvents: function() {
-		// subclasses should implement
+		this.callChildren('unrenderEvents');
+
+		// we DON'T need to call updateHeight() because
+		// a renderEvents() call always happens after this, which will eventually call updateHeight()
+	},
+
+
+	// Retrieves all segment objects that are rendered in the view
+	getEventSegs: function() {
+		var children = this.children;
+		var segs = [];
+		var i;
+
+		for (i = 0; i < children.length; i++) {
+			segs.push.apply( // append
+				segs,
+				children[i].getEventSegs()
+			);
+		}
+
+		return segs;
 	},
 
 
 	// Drag-n-Drop Rendering (for both events and external elements)
-	// ---------------------------------------------------------------------------------------------------------------*/
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Renders a visual indication of a event or external-element drag over the given drop zone.
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(dropLocation, seg) {
-		// subclasses must implement
+		this.callChildren('renderDrag', dropLocation, seg);
 	},
 
 
 	// Unrenders a visual indication of an event or external-element being dragged.
 	unrenderDrag: function() {
-		// subclasses must implement
+		this.callChildren('unrenderDrag');
 	},
 
 
 	// Selection
-	// ---------------------------------------------------------------------------------------------------------------*/
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Renders a visual indication of the selection
 	renderSelection: function(span) {
-		// subclasses should implement
+		this.callChildren('renderSelection', span);
 	},
 
 
 	// Unrenders a visual indication of selection
 	unrenderSelection: function() {
-		// subclasses should implement
+		this.callChildren('unrenderSelection');
 	},
 
 
-	/* Event Drag-n-Drop
-	------------------------------------------------------------------------------------------------------------------*/
+	// Hit Areas
+	// ---------------------------------------------------------------------------------------------------------------
+
+
+	hitsNeeded: function() {
+		this.callChildren('hitsNeeded');
+	},
+
+
+	hitsNotNeeded: function() {
+		this.callChildren('hitsNotNeeded');
+	},
+
+
+	prepareHits: function() {
+		this.callChildren('prepareHits');
+	},
+
+
+	releaseHits: function() {
+		this.callChildren('releaseHits');
+	},
+
+
+	queryHit: function(left, top) {
+		var children = this.children;
+		var i;
+		var hit;
+
+		for (i = 0; i < children.length; i++) {
+			hit = children[i].queryHit(left, top);
+
+			if (hit) {
+				break;
+			}
+		}
+
+		return hit;
+	},
+
+
+
+	// Event Drag-n-Drop
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Computes if the given event is allowed to be dragged by the user
@@ -226,8 +297,8 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	/* Event Resizing
-	------------------------------------------------------------------------------------------------------------------*/
+	// Event Resizing
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Computes if the given event is allowed to be resized from its starting edge
@@ -258,7 +329,7 @@ var ChronoComponent = Model.extend({
 
 
 	// Navigation
-	// ----------------------------------------------------------------------------------------------------------------*/
+	// ----------------------------------------------------------------------------------------------------------------
 
 
 	// Generates HTML for an anchor to another view into the calendar.
@@ -309,7 +380,7 @@ var ChronoComponent = Model.extend({
 
 
 	// Date Formatting Utils
-	// ---------------------------------------------------------------------------------------------------------------*/
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
@@ -372,7 +443,7 @@ var ChronoComponent = Model.extend({
 
 
 	// Date Utils
-	// ---------------------------------------------------------------------------------------------------------------*/
+	// ---------------------------------------------------------------------------------------------------------------
 
 
 	// Returns the date range of the full days the given range visually appears to occupy.
@@ -410,6 +481,22 @@ var ChronoComponent = Model.extend({
 		var range = this.computeDayRange(event); // event is range-ish
 
 		return range.end.diff(range.start, 'days') > 1;
+	},
+
+
+	// Utils
+	// ---------------------------------------------------------------------------------------------------------------
+
+
+	callChildren: function(methodName) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		var children = this.children;
+		var i, child;
+
+		for (i = 0; i < children.length; i++) {
+			child = children[i];
+			child[methodName].apply(child, args);
+		}
 	}
 
 });

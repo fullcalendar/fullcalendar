@@ -720,13 +720,6 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	// Retrieves all the rendered segment objects for the view
-	getEventSegs: function() {
-		// subclasses must implement
-		return [];
-	},
-
-
 	/* Event Drag-n-Drop
 	------------------------------------------------------------------------------------------------------------------*/
 

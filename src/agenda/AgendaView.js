@@ -28,9 +28,11 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	initialize: function() {
 		this.timeGrid = this.instantiateTimeGrid();
+		this.addChild(this.timeGrid);
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 			this.dayGrid = this.instantiateDayGrid(); // the all-day subcomponent of this view
+			this.addChild(this.dayGrid);
 		}
 
 		this.scroller = new Scroller({
@@ -106,6 +108,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
+	// TODO: move this over to ChronoComponent
 	unrenderDates: function() {
 		this.timeGrid.unrenderDates();
 		this.timeGrid.removeElement();
@@ -153,44 +156,12 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderBusinessHours: function() {
-		this.timeGrid.renderBusinessHours();
-
-		if (this.dayGrid) {
-			this.dayGrid.renderBusinessHours();
-		}
-	},
-
-
-	unrenderBusinessHours: function() {
-		this.timeGrid.unrenderBusinessHours();
-
-		if (this.dayGrid) {
-			this.dayGrid.unrenderBusinessHours();
-		}
-	},
-
-
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	getNowIndicatorUnit: function() {
 		return this.timeGrid.getNowIndicatorUnit();
-	},
-
-
-	renderNowIndicator: function(date) {
-		this.timeGrid.renderNowIndicator(date);
-	},
-
-
-	unrenderNowIndicator: function() {
-		this.timeGrid.unrenderNowIndicator();
 	},
 
 
@@ -309,49 +280,6 @@ var AgendaView = FC.AgendaView = View.extend({
 	// forward all hit-related method calls to the grids (dayGrid might not be defined)
 
 
-	hitsNeeded: function() {
-		this.timeGrid.hitsNeeded();
-		if (this.dayGrid) {
-			this.dayGrid.hitsNeeded();
-		}
-	},
-
-
-	hitsNotNeeded: function() {
-		this.timeGrid.hitsNotNeeded();
-		if (this.dayGrid) {
-			this.dayGrid.hitsNotNeeded();
-		}
-	},
-
-
-	prepareHits: function() {
-		this.timeGrid.prepareHits();
-		if (this.dayGrid) {
-			this.dayGrid.prepareHits();
-		}
-	},
-
-
-	releaseHits: function() {
-		this.timeGrid.releaseHits();
-		if (this.dayGrid) {
-			this.dayGrid.releaseHits();
-		}
-	},
-
-
-	queryHit: function(left, top) {
-		var hit = this.timeGrid.queryHit(left, top);
-
-		if (!hit && this.dayGrid) {
-			hit = this.dayGrid.queryHit(left, top);
-		}
-
-		return hit;
-	},
-
-
 	getHitSpan: function(hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
 		return hit.component.getHitSpan(hit);
@@ -393,29 +321,8 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
+		// TODO: how will ChronoComponent handle this?
 		this.updateHeight();
-	},
-
-
-	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
-		return this.timeGrid.getEventSegs().concat(
-			this.dayGrid ? this.dayGrid.getEventSegs() : []
-		);
-	},
-
-
-	// Unrenders all event elements and clears internal segment data
-	unrenderEvents: function() {
-
-		// unrender the events in the subcomponents
-		this.timeGrid.unrenderEvents();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderEvents();
-		}
-
-		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
 	},
 
 
@@ -434,14 +341,6 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	unrenderDrag: function() {
-		this.timeGrid.unrenderDrag();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderDrag();
-		}
-	},
-
-
 	/* Selection
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -453,15 +352,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 		else if (this.dayGrid) {
 			this.dayGrid.renderSelection(span);
-		}
-	},
-
-
-	// Unrenders a visual indications of a selection
-	unrenderSelection: function() {
-		this.timeGrid.unrenderSelection();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderSelection();
 		}
 	}
 
