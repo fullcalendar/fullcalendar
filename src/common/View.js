@@ -671,22 +671,6 @@ var View = FC.View = ChronoComponent.extend({
 	// TODO: move this to ChronoComponent
 
 
-	// Given an event and the default element used for rendering, returns the element that should actually be used.
-	// Basically runs events and elements through the eventRender hook.
-	resolveEventEl: function(event, el) {
-		var custom = this.publiclyTrigger('eventRender', event, event, el);
-
-		if (custom === false) { // means don't render at all
-			el = null;
-		}
-		else if (custom && custom !== true) {
-			el = $(custom);
-		}
-
-		return el;
-	},
-
-
 	// Hides all rendered event segments linked to the given event
 	showEvent: function(event) {
 		this.renderedEventSegEach(function(seg) {

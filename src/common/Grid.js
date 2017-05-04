@@ -44,9 +44,15 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	// TODO: use everywhere
 	opt: function(name) {
 		return this.view.opt(name);
+	},
+
+
+	publiclyTrigger: function(name, thisObj) {
+		var view = this.view;
+
+		return view.publiclyTrigger.apply(view, arguments);
 	},
 
 
