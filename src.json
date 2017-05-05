@@ -43,6 +43,7 @@
     "defaults.js",
     "locale.js",
     "Header.js",
+    "models/EventDefinition.js",
     "models/EventDefinitionCollection.js",
     "EventManager.js",
     "basic/BasicView.js",

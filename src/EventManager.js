@@ -44,7 +44,7 @@ function EventManager() { // assumed to be a calendar
 	var rangeStart, rangeEnd;
 	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
-	var eventDefCollection = new EventDefinitionCollection();
+	var eventDefCollection = new EventDefinitionCollection(t);
 
 
 	$.each(

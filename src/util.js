@@ -779,7 +779,8 @@ function isNativeDate(input) {
 
 // Returns a boolean about whether the given input is a time string, like "06:40:00" or "06:00"
 function isTimeString(str) {
-	return /^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
+	return typeof str === 'string' &&
+		/^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
 }
 
 
