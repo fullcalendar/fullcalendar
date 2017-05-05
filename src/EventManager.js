@@ -44,7 +44,6 @@ function EventManager() { // assumed to be a calendar
 	var rangeStart, rangeEnd;
 	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
-	var prunedCache; // like cache, but only events that intersect with rangeStart/rangeEnd
 
 
 	$.each(
@@ -64,33 +63,13 @@ function EventManager() { // assumed to be a calendar
 			return fetchEvents(start, end);
 		}
 		else {
-			return Promise.resolve(prunedCache);
+			return Promise.resolve(cache);
 		}
 	}
 
 
 	function reportEventChange() {
-		prunedCache = filterEventsWithinRange(cache);
-		t.trigger('eventsReset', prunedCache);
-	}
-
-
-	function filterEventsWithinRange(events) {
-		var filteredEvents = [];
-		var i, event;
-
-		for (i = 0; i < events.length; i++) {
-			event = events[i];
-
-			if (
-				event.start.clone().stripZone() < rangeEnd &&
-				t.getEventEnd(event).stripZone() > rangeStart
-			) {
-				filteredEvents.push(event);
-			}
-		}
-
-		return filteredEvents;
+		t.trigger('eventsReset', cache);
 	}
 
 
@@ -161,11 +140,11 @@ function EventManager() { // assumed to be a calendar
 
 		if (pendingSourceCnt) {
 			return Promise.construct(function(resolve) {
-				t.one('eventsReceived', resolve); // will send prunedCache
+				t.one('eventsReceived', resolve);
 			});
 		}
 		else { // executed all synchronously, or no sources at all
-			return Promise.resolve(prunedCache);
+			return Promise.resolve(cache);
 		}
 	}
 
@@ -227,8 +206,8 @@ function EventManager() { // assumed to be a calendar
 	function decrementPendingSourceCnt() {
 		pendingSourceCnt--;
 		if (!pendingSourceCnt) {
-			reportEventChange(cache); // updates prunedCache
-			t.trigger('eventsReceived', prunedCache);
+			reportEventChange(cache);
+			t.trigger('eventsReceived', cache);
 		}
 	}
 
