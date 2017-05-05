@@ -44,6 +44,7 @@ function EventManager() { // assumed to be a calendar
 	var rangeStart, rangeEnd;
 	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
+	var eventDefCollection = new EventDefinitionCollection();
 
 
 	$.each(
@@ -116,9 +117,11 @@ function EventManager() { // assumed to be a calendar
 
 		if (specialFetchType === 'reset') {
 			cache = [];
+			eventDefCollection.clear();
 		}
 		else if (specialFetchType !== 'add') {
 			cache = excludeEventsBySources(cache, specificSources);
+			eventDefCollection.clearBySource(specificSources);
 		}
 
 		for (i = 0; i < specificSources.length; i++) {
@@ -167,6 +170,16 @@ function EventManager() { // assumed to be a calendar
 				source._status = 'resolved';
 
 				if (eventInputs) {
+
+					$.each(
+						isArraySource ?
+							source.origArray :
+							eventInputs,
+						function(i, eventInput) {
+							eventDefCollection.addRaw(eventInput, source);
+						}
+					);
+
 					for (i = 0; i < eventInputs.length; i++) {
 						eventInput = eventInputs[i];
 
@@ -412,6 +425,7 @@ function EventManager() { // assumed to be a calendar
 		if (isAll) { // an optimization
 			sources = [];
 			cache = [];
+			eventDefCollection.clear();
 		}
 		else {
 			// remove from persisted source list
@@ -425,6 +439,7 @@ function EventManager() { // assumed to be a calendar
 			});
 
 			cache = excludeEventsBySources(cache, targetSources);
+			eventDefCollection.clearBySource(targetSources);
 		}
 
 		reportEventChange();
@@ -592,6 +607,7 @@ function EventManager() { // assumed to be a calendar
 		var i, j, event;
 
 		for (i = 0; i < eventInputs.length; i++) {
+			eventDefCollection.addRaw(eventInputs[i], eventInputs[i].source || stickySource);
 			abstractEvent = buildEventFromInput(eventInputs[i]);
 
 			if (abstractEvent) { // not false (a valid input)
@@ -637,6 +653,7 @@ function EventManager() { // assumed to be a calendar
 
 		// Purge event(s) from our local cache
 		cache = $.grep(cache, filter, true); // inverse=true
+		eventDefCollection.clearByFilter(filter);
 
 		// Remove events from array sources.
 		// This works because they have been converted to official Event Objects up front.
