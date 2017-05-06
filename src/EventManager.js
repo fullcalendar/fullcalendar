@@ -143,12 +143,12 @@ function EventManager() { // assumed to be a calendar
 
 		if (pendingSourceCnt) {
 			return Promise.construct(function(resolve) {
-				console.log(eventDefCollection);
+				console.log(eventDefCollection.buildPeriods(rangeStart, rangeEnd));
 				t.one('eventsReceived', resolve);
 			});
 		}
 		else { // executed all synchronously, or no sources at all
-			console.log(eventDefCollection);
+			console.log(eventDefCollection.buildPeriods(rangeStart, rangeEnd));
 			return Promise.resolve(cache);
 		}
 	}
