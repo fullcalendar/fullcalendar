@@ -43,7 +43,7 @@ var EventDefinitionCollection = Class.extend({
 
 	buildRenderRanges: function(start, end, calendar) {
 		var renderRanges = [];
-		var instanceGroups = this.buildInstanceCollections(start, end);
+		var instanceGroups = this.buildInstanceGroups(start, end);
 		var constraintRange = new UnzonedRange(start, end);
 		var i;
 
@@ -56,8 +56,8 @@ var EventDefinitionCollection = Class.extend({
 		return renderRanges;
 	},
 
-	buildInstanceCollections: function(start, end) {
-		var eventInstanceCollections = [];
+	buildInstanceGroups: function(start, end) {
+		var eventInstanceGroups = [];
 		var eventDefsById = this.eventDefsById;
 		var eventId;
 		var relatedEventDefs;
@@ -77,12 +77,12 @@ var EventDefinitionCollection = Class.extend({
 				);
 			}
 
-			eventInstanceCollections.push(
-				new EventInstanceCollection(relatedEventInstances)
+			eventInstanceGroups.push(
+				new EventInstanceGroup(relatedEventInstances)
 			);
 		}
 
-		return eventInstanceCollections;
+		return eventInstanceGroups;
 	}
 
 });

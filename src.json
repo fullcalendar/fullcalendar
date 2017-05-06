@@ -51,7 +51,7 @@
     "models/SingleEventDefinition.js",
     "models/RecurringEventDefinition.js",
     "models/EventDefinitionCollection.js",
-    "models/EventInstanceCollection.js",
+    "models/EventInstanceGroup.js",
     "EventManager.js",
     "basic/BasicView.js",
     "basic/MonthView.js",

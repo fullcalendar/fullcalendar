@@ -1,10 +1,21 @@
 
-var EventInstanceCollection = Class.extend({
+var EventInstanceGroup = Class.extend({
 
 	eventInstances: null,
 
 	constructor: function(eventInstances) {
 		this.eventInstances = eventInstances;
+	},
+
+	buildRenderRanges: function(constraintRange, calendar) {
+		var eventInstances = this.eventInstances;
+		var ranges = this.buildRanges(constraintRange, calendar);
+
+		if (eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background') {
+			ranges = invertEventRanges(ranges, constraintRange, eventInstances[0]);
+		}
+
+		return ranges;
 	},
 
 	buildRanges: function(constraintRange, calendar) {
@@ -26,17 +37,6 @@ var EventInstanceCollection = Class.extend({
 		}
 
 		return eventRanges;
-	},
-
-	buildRenderRanges: function(constraintRange, calendar) {
-		var eventInstances = this.eventInstances;
-		var ranges = this.buildRanges(constraintRange, calendar);
-
-		if (eventInstances.length && eventInstances[0].rendering === 'inverse-background') {
-			ranges = invertEventRanges(ranges, constraintRange, eventInstances[0]);
-		}
-
-		return ranges;
 	}
 
 });

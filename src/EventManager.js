@@ -164,6 +164,7 @@ function EventManager() { // assumed to be a calendar
 			range = ranges[i];
 
 			console.log(range.eventInstance.eventDefinition.title);
+			console.log(' allDay', range.eventInstance.eventDateProfile.isAllDay());
 			console.log(' start', range.getStart().format());
 			console.log(' end', range.getEnd().format());
 			console.log(' isStart', range.isStart);

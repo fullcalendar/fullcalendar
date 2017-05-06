@@ -8,8 +8,13 @@ var RecurringEventDefinition = EventDefinition.extend({
 	constructor: function(rawProps, source, calendar) {
 		EventDefinition.apply(this, arguments);
 
-		this.startTime = moment.duration(rawProps.start);
-		this.endTime = rawProps.end ? moment.duration(rawProps.end) : null;
+		if (rawProps.start) {
+			this.startTime = moment.duration(rawProps.start);
+		}
+
+		if (rawProps.end) {
+			this.endTime = moment.duration(rawProps.end);
+		}
 
 		if (rawProps.dow) {
 			this.dowHash = this.buildDowHash(rawProps.dow);
@@ -36,6 +41,9 @@ var RecurringEventDefinition = EventDefinition.extend({
 
 				if (this.startTime) {
 					instanceStart.time(this.startTime);
+				}
+				else {
+					instanceStart.stripTime();
 				}
 
 				if (this.endTime) {
