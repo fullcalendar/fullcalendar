@@ -21,7 +21,7 @@ var EventDateProfile = Class.extend({
 					this.end.clone() :
 					// derive the end from the start and allDay. compute allDay if necessary
 					calendar.getDefaultEventEnd(
-						this.isAllDay()
+						this.isAllDay(),
 						this.start
 					)
 			).stripZone().valueOf();
