@@ -143,14 +143,33 @@ function EventManager() { // assumed to be a calendar
 
 		if (pendingSourceCnt) {
 			return Promise.construct(function(resolve) {
-				console.log(eventDefCollection.buildPeriods(rangeStart, rangeEnd));
+				debugEventDefCollection();
 				t.one('eventsReceived', resolve);
 			});
 		}
 		else { // executed all synchronously, or no sources at all
-			console.log(eventDefCollection.buildPeriods(rangeStart, rangeEnd));
+			debugEventDefCollection();
 			return Promise.resolve(cache);
 		}
+	}
+
+
+	function debugEventDefCollection() {
+		var ranges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
+		var i, range;
+
+		console.log('ranges');
+		console.log('------------------');
+
+		for (i = 0; i < ranges.length; i++) {
+			range = ranges[i];
+
+			console.log(range.eventInstance.eventDefinition.title);
+			console.log(' isStart', range.isStart);
+			console.log(' isEnd', range.isEnd);
+		}
+
+		console.log();
 	}
 
 
