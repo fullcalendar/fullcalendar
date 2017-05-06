@@ -41,8 +41,23 @@ var EventDefinitionCollection = Class.extend({
 		// TODO
 	},
 
-	buildPeriods: function(start, end) {
-		var eventPeriods = [];
+	buildRenderRanges: function(start, end, calendar) {
+		var renderRanges = [];
+		var instanceGroups = this.buildInstanceCollections(start, end);
+		var constraintRange = new UnzonedRange(start, end);
+		var i;
+
+		for (i = 0; i < instanceGroups.length; i++) {
+			renderRanges.push.apply(renderRanges, // append
+				instanceGroups[i].buildRenderRanges(constraintRange, calendar)
+			);
+		}
+
+		return renderRanges;
+	},
+
+	buildInstanceCollections: function(start, end) {
+		var eventInstanceCollections = [];
 		var eventDefsById = this.eventDefsById;
 		var eventId;
 		var relatedEventDefs;
@@ -62,16 +77,12 @@ var EventDefinitionCollection = Class.extend({
 				);
 			}
 
-			eventPeriods.push(
-				new EventPeriod(
-					relatedEventInstances,
-					new UnzonedRange(start, end),
-					this.calendar // for computing event ends
-				)
+			eventInstanceCollections.push(
+				new EventInstanceCollection(relatedEventInstances)
 			);
 		}
 
-		return eventPeriods;
+		return eventInstanceCollections;
 	}
 
 });

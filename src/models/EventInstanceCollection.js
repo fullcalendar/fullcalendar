@@ -1,17 +1,13 @@
 
-var EventPeriod = Class.extend({
+var EventInstanceCollection = Class.extend({
 
 	eventInstances: null,
-	constraintRange: null,
-	calendar: null,
 
-	constructor: function(eventInstances, constraintRange, calendar) {
+	constructor: function(eventInstances) {
 		this.eventInstances = eventInstances;
-		this.constraintRange = constraintRange;
-		this.calendar = calendar;
 	},
 
-	buildRanges: function() {
+	buildRanges: function(constraintRange, calendar) {
 		var eventRanges = [];
 		var eventInstances = this.eventInstances;
 		var i, eventInstance;
@@ -20,9 +16,9 @@ var EventPeriod = Class.extend({
 		for (i = 0; i < eventInstances.length; i++) {
 			eventInstance = eventInstances[i];
 
-			eventRange = eventInstance.eventDateProfile.buildRange(this.calendar); // merely UnzonedRange here
-			eventRange = new EventRange(eventInstance, range.startMs, range.endMs);
-			eventRange = eventRange.constrainTo(this.constraintRange);
+			eventRange = eventInstance.eventDateProfile.buildRange(calendar);
+			eventRange = new EventRange(eventInstance, eventRange.startMs, eventRange.endMs);
+			eventRange = eventRange.constrainTo(constraintRange);
 
 			if (eventRange) {
 				eventRanges.push(eventRange);
@@ -32,12 +28,12 @@ var EventPeriod = Class.extend({
 		return eventRanges;
 	},
 
-	buildRenderRanges: function() {
+	buildRenderRanges: function(constraintRange, calendar) {
 		var eventInstances = this.eventInstances;
-		var ranges = this.buildRanges();
+		var ranges = this.buildRanges(constraintRange, calendar);
 
 		if (eventInstances.length && eventInstances[0].rendering === 'inverse-background') {
-			ranges = invertEventRanges(ranges, this.constraintRange, eventInstances[0]);
+			ranges = invertEventRanges(ranges, constraintRange, eventInstances[0]);
 		}
 
 		return ranges;
