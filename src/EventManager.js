@@ -164,6 +164,8 @@ function EventManager() { // assumed to be a calendar
 			range = ranges[i];
 
 			console.log(range.eventInstance.eventDefinition.title);
+			console.log(' start', range.getStart().format());
+			console.log(' end', range.getEnd().format());
 			console.log(' isStart', range.isStart);
 			console.log(' isEnd', range.isEnd);
 		}
