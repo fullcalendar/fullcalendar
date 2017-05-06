@@ -70,6 +70,7 @@ function EventManager() { // assumed to be a calendar
 
 
 	function reportEventChange() {
+		debugEventDefCollection();
 		t.trigger('eventsReset', cache);
 	}
 
@@ -143,12 +144,10 @@ function EventManager() { // assumed to be a calendar
 
 		if (pendingSourceCnt) {
 			return Promise.construct(function(resolve) {
-				debugEventDefCollection();
 				t.one('eventsReceived', resolve);
 			});
 		}
 		else { // executed all synchronously, or no sources at all
-			debugEventDefCollection();
 			return Promise.resolve(cache);
 		}
 	}
