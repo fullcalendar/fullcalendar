@@ -72,7 +72,7 @@ function EventManager() { // assumed to be a calendar
 
 	function reportEventChange() {
 		debugEventDefCollection();
-		t.trigger('eventsReset', cache);
+		t.trigger('eventsReset', eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
 	}
 
 
@@ -149,7 +149,7 @@ function EventManager() { // assumed to be a calendar
 			});
 		}
 		else { // executed all synchronously, or no sources at all
-			return Promise.resolve(cache);
+			return Promise.resolve(eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
 		}
 	}
 
@@ -243,8 +243,8 @@ function EventManager() { // assumed to be a calendar
 	function decrementPendingSourceCnt() {
 		pendingSourceCnt--;
 		if (!pendingSourceCnt) {
-			reportEventChange(cache);
-			t.trigger('eventsReceived', cache);
+			reportEventChange();
+			t.trigger('eventsReceived', eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
 		}
 	}
 

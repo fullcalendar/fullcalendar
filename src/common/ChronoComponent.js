@@ -166,17 +166,17 @@ var ChronoComponent = Model.extend({
 
 
 	// Renders the events onto the view.
-	renderEvents: function(events) {
-		this.callChildren('renderEvents', events);
+	renderEventRanges: function(eventRanges) {
+		this.callChildren('renderEventRanges', eventRanges);
 	},
 
 
 	// Removes event elements from the view.
-	unrenderEvents: function() {
-		this.callChildren('unrenderEvents');
+	unrenderEventRanges: function() {
+		this.callChildren('unrenderEventRanges');
 
 		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// a renderEventRanges() call always happens after this, which will eventually call updateHeight()
 	},
 
 

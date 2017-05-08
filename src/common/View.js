@@ -263,7 +263,7 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
+		this.listenTo(this.calendar, 'eventsReset', this.resetEventRanges);
 	},
 
 
@@ -272,22 +272,22 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	setEvents: function(events) {
-		this.set('currentEvents', events);
+	setEventRanges: function(eventRanges) {
+		this.set('currentEventRanges', eventRanges);
 		this.set('hasEvents', true);
 	},
 
 
 	unsetEvents: function() {
-		this.unset('currentEvents');
+		this.unset('currentEventRanges');
 		this.unset('hasEvents');
 	},
 
 
-	resetEvents: function(events) {
+	resetEventRanges: function(eventRanges) {
 		this.startBatchRender();
 		this.unsetEvents();
-		this.setEvents(events);
+		this.setEventRanges(eventRanges);
 		this.stopBatchRender();
 	},
 
@@ -296,11 +296,11 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestEventsRender: function(events) {
+	requestEventsRender: function(eventRanges) {
 		var _this = this;
 
 		this.renderQueue.queue(function() {
-			_this.executeEventsRender(events);
+			_this.executeEventsRender(eventRanges);
 		}, 'event', 'init');
 	},
 
@@ -614,8 +614,9 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventsRender: function(events) {
-		this.renderEvents(events);
+	executeEventsRender: function(eventRanges) {
+
+		this.renderEventRanges(eventRanges);
 		this.isEventsRendered = true;
 
 		this.onEventsRender();
@@ -629,7 +630,7 @@ var View = FC.View = ChronoComponent.extend({
 			this.destroyEvents(); // TODO: deprecate
 		}
 
-		this.unrenderEvents();
+		this.unrenderEventRanges();
 		this.isEventsRendered = false;
 	},
 
@@ -932,13 +933,13 @@ View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
+View.watch('initialEventRanges', [ 'dateProfile' ], function(deps) {
 	return this.fetchInitialEvents(deps.dateProfile);
 });
 
 
-View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	this.setEvents(deps.initialEvents);
+View.watch('bindingEvents', [ 'initialEventRanges' ], function(deps) {
+	this.setEventRanges(deps.initialEventRanges);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
@@ -947,7 +948,7 @@ View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	this.requestEventsRender(this.get('currentEvents')); // if there were event mutations after initialEvents
+	this.requestEventsRender(this.get('currentEventRanges')); // if there were event mutations after initialEventRanges
 }, function() {
 	this.requestEventsUnrender();
 });
