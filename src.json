@@ -46,6 +46,8 @@
     "models/UnzonedRange.js",
     "models/EventRange.js",
     "models/EventDateProfile.js",
+    "models/EventDateMutation.js",
+    "models/EventMutation.js",
     "models/EventInstance.js",
     "models/EventDefinition.js",
     "models/SingleEventDefinition.js",

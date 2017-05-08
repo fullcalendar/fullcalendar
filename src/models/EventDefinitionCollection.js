@@ -28,6 +28,10 @@ var EventDefinitionCollection = Class.extend({
 			.push(eventDef);
 	},
 
+	getById: function(id) {
+		return this.eventDefsById[id];
+	},
+
 	clear: function() {
 		this.eventDefs = [];
 		this.eventDefsById = {};

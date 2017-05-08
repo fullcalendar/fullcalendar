@@ -45,6 +45,7 @@ function EventManager() { // assumed to be a calendar
 	var pendingSourceCnt = 0; // outstanding fetch requests, max one per source
 	var cache = []; // holds events that have already been expanded
 	var eventDefCollection = new EventDefinitionCollection(t);
+	t.eventDefCollection = eventDefCollection;
 
 
 	$.each(
@@ -589,6 +590,16 @@ function EventManager() { // assumed to be a calendar
 			}
 
 			mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
+
+			var eventDef = eventDefCollection.getById(event._id);
+			var eventInstance = eventDef.buildInstances()[0];
+			var eventMutation = EventMutation.createFromRawProps(
+				eventInstance,
+				event, // raw props
+				null, // largeUnit -- who uses it?
+				t // calendar
+			);
+			eventMutation.mutateSingleEventDefinition(eventDef);
 		}
 
 		reportEventChange(); // reports event modifications (so we can redraw)
@@ -1146,8 +1157,25 @@ function EventManager() { // assumed to be a calendar
 
 
 // returns an undo function
+// newProps will only have start/end
 Calendar.prototype.mutateSeg = function(seg, newProps) {
-	return this.mutateEvent(seg.event, newProps);
+
+	var eventDef = this.eventDefCollection.getById(seg.event._id)[0];
+	var eventInstance = eventDef.buildInstances()[0];
+	var newEventDateProfile = new EventDateProfile(
+		this.moment(newProps.start),
+		newProps.end ? this.moment(newProps.end) : null
+	);
+	var eventDateMutation = EventDateMutation.createFromDiff(
+		eventInstance.eventDateProfile,
+		newEventDateProfile
+	);
+	eventDateMutation.mutateSingleEventDefinition( // returns an undo function
+		eventDef,
+		this.getIsAmbigTimezone()
+	);
+
+	return this.mutateEvent(seg.event, newProps); // what about largeUnit? who uses that?
 };
 
 
