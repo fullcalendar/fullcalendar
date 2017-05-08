@@ -24,41 +24,38 @@ Grid.mixin({
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	// Renders the given events onto the grid
-	renderEvents: function(events) {
-		var bgEvents = [];
-		var fgEvents = [];
-		var i;
+	renderEventRanges: function(eventRanges) {
+		var i, eventRange;
+		var eventRendering;
+		var bgSegs = [];
+		var fgSegs = [];
 
-		for (i = 0; i < events.length; i++) {
-			(isBgEvent(events[i]) ? bgEvents : fgEvents).push(events[i]);
+		for (i = 0; i < eventRanges.length; i++) {
+			eventRange = eventRanges[i];
+			eventRendering = eventRange.eventInstance.eventDefinition.rendering;
+
+			// TODO: query up to event's source and calendar
+			if (eventRendering === 'background' || eventRendering === 'inverse-background') {
+				bgSegs.push.apply(bgSegs, // append
+					this.eventRangeToSegs(eventRange)
+				);
+			}
+			else {
+				fgSegs.push.apply(fgSegs, // append
+					this.eventRangeToSegs(eventRange)
+				);
+			}
 		}
 
 		this.segs = [].concat( // record all segs
-			this.renderBgEvents(bgEvents),
-			this.renderFgEvents(fgEvents)
+			this.renderBgSegs(bgSegs) || bgSegs,
+			this.renderFgSegs(fgSegs) || fgSegs
 		);
 	},
 
 
-	renderBgEvents: function(events) {
-		var segs = this.eventsToSegs(events);
-
-		// renderBgSegs might return a subset of segs, segs that were actually rendered
-		return this.renderBgSegs(segs) || segs;
-	},
-
-
-	renderFgEvents: function(events) {
-		var segs = this.eventsToSegs(events);
-
-		// renderFgSegs might return a subset of segs, segs that were actually rendered
-		return this.renderFgSegs(segs) || segs;
-	},
-
-
 	// Unrenders all events currently rendered on the grid
-	unrenderEvents: function() {
+	unrenderEventRanges: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 		this.clearDragListeners();
 
@@ -1024,134 +1021,21 @@ Grid.mixin({
 	// Generates an array of segments for the given single event
 	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToSegs: function(event) {
-		return this.eventsToSegs([ event ]);
-	},
-
-
-	// Generates spans (always unzoned) for the given event.
-	// Does not do any inverting for inverse-background events.
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	eventToSpans: function(event) {
-		var eventRange = this.eventToRange(event); // { start, end, isStart, isEnd }
-
-		if (eventRange) {
-			return this.eventRangeToSpans(eventRange, event);
-		}
-		else { // out of view's valid range
-			return [];
-		}
-	},
-
-
-
-	// Converts an array of event objects into an array of event segment objects.
-	// A custom `segSliceFunc` may be given for arbitrarily slicing up events.
-	// Doesn't guarantee an order for the resulting array.
-	eventsToSegs: function(allEvents, segSliceFunc) {
-		var _this = this;
-		var eventsById = groupEventsById(allEvents);
-		var segs = [];
-
-		$.each(eventsById, function(id, events) {
-			var visibleEvents = [];
-			var eventRanges = [];
-			var eventRange; // { start, end, isStart, isEnd }
-			var i;
-
-			for (i = 0; i < events.length; i++) {
-				eventRange = _this.eventToRange(events[i]); // might be null if completely out of range
-
-				if (eventRange) {
-					eventRanges.push(eventRange);
-					visibleEvents.push(events[i]);
-				}
-			}
-
-			// inverse-background events (utilize only the first event in calculations)
-			if (isInverseBgEvent(events[0])) {
-				eventRanges = _this.invertRanges(eventRanges); // will lose isStart/isEnd
-
-				for (i = 0; i < eventRanges.length; i++) {
-					segs.push.apply(segs, // append to
-						_this.eventRangeToSegs(eventRanges[i], events[0], segSliceFunc)
-					);
-				}
-			}
-			// normal event ranges
-			else {
-				for (i = 0; i < eventRanges.length; i++) {
-					segs.push.apply(segs, // append to
-						_this.eventRangeToSegs(eventRanges[i], visibleEvents[i], segSliceFunc)
-					);
-				}
-			}
-		});
-
-		return segs;
-	},
-
-
-	// Generates the unzoned start/end dates an event appears to occupy
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	// returns { start, end, isStart, isEnd }
-	// If the event is completely outside of the grid's valid range, will return undefined.
-	eventToRange: function(event) {
-		return this.refineRawEventRange(
-			this.eventToRawRange(event)
-		);
-	},
-
-
-	// Ensures the given range is within the view's activeRange and is correctly localized.
-	// Always returns a result
-	refineRawEventRange: function(rawRange) {
-		var view = this.view;
-		var calendar = view.calendar;
-		var range = intersectRanges(rawRange, view.activeRange);
-
-		if (range) { // otherwise, event doesn't have valid range
-
-			// hack: dynamic locale change forgets to upate stored event localed
-			calendar.localizeMoment(range.start);
-			calendar.localizeMoment(range.end);
-
-			return range;
-		}
-	},
-
-
-	// not constrained to valid dates
-	// not given localizeMoment hack
-	eventToRawRange: function(event) {
-		var calendar = this.view.calendar;
-		var start = event.start.clone().stripZone();
-		var end = (
-				event.end ?
-					event.end.clone() :
-					// derive the end from the start and allDay. compute allDay if necessary
-					calendar.getDefaultEventEnd(
-						event.allDay != null ?
-							event.allDay :
-							!event.start.hasTime(),
-						event.start
-					)
-			).stripZone();
-
-		return { start: start, end: end };
+		return []; // TODO!!!
 	},
 
 
 	// Given an event's range (unzoned start/end), and the event itself,
 	// slice into segments (using the segSliceFunc function if specified)
 	// eventRange - { start, end, isStart, isEnd }
-	eventRangeToSegs: function(eventRange, event, segSliceFunc) {
-		var eventSpans = this.eventRangeToSpans(eventRange, event);
+	eventRangeToSegs: function(eventRange, segSliceFunc) {
+		var eventSpans = this.eventRangeToSpans(eventRange);
 		var segs = [];
 		var i;
 
 		for (i = 0; i < eventSpans.length; i++) {
 			segs.push.apply(segs, // append to
-				this.eventSpanToSegs(eventSpans[i], event, segSliceFunc)
+				this.eventSpanToSegs(eventSpans[i], segSliceFunc)
 			);
 		}
 
@@ -1163,15 +1047,21 @@ Grid.mixin({
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	// Subclasses can override.
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
-	eventRangeToSpans: function(eventRange, event) {
-		return [ $.extend({}, eventRange) ]; // copy into a single-item array
+	eventRangeToSpans: function(eventRange) {
+		return [ {
+			start: eventRange.getStart(),
+			end: eventRange.getEnd(),
+			isStart: eventRange.isStart,
+			isEnd: eventRange.isEnd,
+			event: eventRange.eventInstance.toLegacy()
+		} ];
 	},
 
 
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventSpanToSegs: function(eventSpan, event, segSliceFunc) {
+	eventSpanToSegs: function(eventSpan, segSliceFunc) {
 		var segs = segSliceFunc ? segSliceFunc(eventSpan) : this.spanToSegs(eventSpan);
 		var i, seg;
 
@@ -1186,7 +1076,7 @@ Grid.mixin({
 				seg.isEnd = false;
 			}
 
-			seg.event = event;
+			seg.event = eventSpan.event;
 			seg.eventStartMS = +eventSpan.start; // TODO: not the best name after making spans unzoned
 			seg.eventDurationMS = eventSpan.end - eventSpan.start;
 		}

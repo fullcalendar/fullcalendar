@@ -11,6 +11,7 @@ var EventInstanceGroup = Class.extend({
 		var eventInstances = this.eventInstances;
 		var ranges = this.buildRanges(constraintRange, calendar);
 
+		// TODO: must query up to event's source and calendar
 		if (eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background') {
 			ranges = invertEventRanges(ranges, constraintRange, eventInstances[0]);
 		}
