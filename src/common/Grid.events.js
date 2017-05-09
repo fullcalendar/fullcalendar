@@ -1056,37 +1056,36 @@ Grid.mixin({
 	// Subclasses can override.
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
 	eventRangeToSpans: function(eventRange) {
-		return [ {
-			start: eventRange.dateRange.getStart(),
-			end: eventRange.dateRange.getEnd(),
-			isStart: eventRange.dateRange.isStart,
-			isEnd: eventRange.dateRange.isEnd,
-			event: eventRange.eventInstance.toLegacy()
-		} ];
+		return [
+			new EventSpan(
+				eventRange.eventInstance,
+				new Span(eventRange.dateRange)
+			)
+		];
 	},
 
 
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventSpanToSegs: function(eventSpan, segSliceFunc) {
-		var segs = segSliceFunc ? segSliceFunc(eventSpan) : this.spanToSegs(eventSpan);
+	eventSpanToSegs: function(eventSpan) {
+		var segs = this.spanToSegs(eventSpan.span);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
 			// the eventSpan's isStart/isEnd takes precedence over the seg's
-			if (!eventSpan.isStart) {
+			if (!eventSpan.span.dateRange.isStart) {
 				seg.isStart = false;
 			}
-			if (!eventSpan.isEnd) {
+			if (!eventSpan.span.dateRange.isEnd) {
 				seg.isEnd = false;
 			}
 
-			seg.event = eventSpan.event;
-			seg.eventStartMS = +eventSpan.start; // TODO: not the best name after making spans unzoned
-			seg.eventDurationMS = eventSpan.end - eventSpan.start;
+			seg.event = eventSpan.eventInstance.toLegacy();
+			seg.eventStartMS = +eventSpan.span.dateRange.startMs; // TODO: not the best name after making spans unzoned
+			seg.eventDurationMS = eventSpan.span.dateRange.endMs - eventSpan.span.dateRange.startMs;
 		}
 
 		return segs;

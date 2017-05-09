@@ -44,6 +44,8 @@
     "locale.js",
     "Header.js",
     "models/UnzonedRange.js",
+    "models/Span.js",
+    "models/EventSpan.js",
     "models/EventRange.js",
     "models/EventDateProfile.js",
     "models/EventDateMutation.js",
