@@ -1071,23 +1071,23 @@ Grid.mixin({
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	eventFootprintToSegs: function(eventFootprint) {
+		var dateRange = eventFootprint.componentFootprint.dateRange;
 		var segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
-			// the eventFootprint's isStart/isEnd takes precedence over the seg's
-			if (!eventFootprint.componentFootprint.dateRange.isStart) {
+			if (!dateRange.isStart) {
 				seg.isStart = false;
 			}
-			if (!eventFootprint.componentFootprint.dateRange.isEnd) {
+			if (!dateRange.isEnd) {
 				seg.isEnd = false;
 			}
 
 			seg.event = eventFootprint.eventInstance.toLegacy();
-			seg.eventStartMS = +eventFootprint.componentFootprint.dateRange.startMs; // TODO: not the best name after making spans unzoned
-			seg.eventDurationMS = eventFootprint.componentFootprint.dateRange.endMs - eventFootprint.componentFootprint.dateRange.startMs;
+			seg.eventStartMS = dateRange.startMs;
+			seg.eventDurationMS = dateRange.endMs - dateRange.startMs;
 		}
 
 		return segs;
