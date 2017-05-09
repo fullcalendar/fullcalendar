@@ -1093,47 +1093,6 @@ Grid.mixin({
 	},
 
 
-	// Produces a new array of range objects that will cover all the time NOT covered by the given ranges.
-	// SIDE EFFECT: will mutate the given array and will use its date references.
-	invertRanges: function(ranges) {
-		var view = this.view;
-		var viewStart = view.activeRange.start.clone(); // need a copy
-		var viewEnd = view.activeRange.end.clone(); // need a copy
-		var inverseRanges = [];
-		var start = viewStart; // the end of the previous range. the start of the new range
-		var i, range;
-
-		// ranges need to be in order. required for our date-walking algorithm
-		ranges.sort(compareRanges);
-
-		for (i = 0; i < ranges.length; i++) {
-			range = ranges[i];
-
-			// add the span of time before the event (if there is any)
-			if (range.start > start) { // compare millisecond time (skip any ambig logic)
-				inverseRanges.push({
-					start: start,
-					end: range.start
-				});
-			}
-
-			if (range.end > start) {
-				start = range.end;
-			}
-		}
-
-		// add the span of time after the last event (if there is any)
-		if (start < viewEnd) { // compare millisecond time (skip any ambig logic)
-			inverseRanges.push({
-				start: start,
-				end: viewEnd
-			});
-		}
-
-		return inverseRanges;
-	},
-
-
 	sortEventSegs: function(segs) {
 		segs.sort(proxy(this, 'compareEventSegs'));
 	},
