@@ -1,32 +1,12 @@
 
-var EventRange = UnzonedRange.extend({
+var EventRange = Class.extend({
 
 	eventInstance: null,
-	isStart: true,
-	isEnd: true,
+	dateRange: null,
 
-	constructor: function(eventInstance, startMs, endMs) {
-		UnzonedRange.call(this, startMs, endMs);
-
+	constructor: function(eventInstance, dateRange) {
 		this.eventInstance = eventInstance;
-	},
-
-	constrainTo: function(constraintRange) {
-		var plainRange = UnzonedRange.prototype.constrainTo.apply(this, arguments);
-		var eventRange;
-
-		if (plainRange) {
-			eventRange = new EventRange(
-				this.eventInstance,
-				plainRange.startMs,
-				plainRange.endMs
-			);
-
-			eventRange.isStart = this.isStart && (this.startMs === plainRange.startMs);
-			eventRange.isEnd = this.isEnd && (this.endMs === plainRange.endMs);
-
-			return eventRange;
-		}
+		this.dateRange = dateRange;
 	}
 
 });

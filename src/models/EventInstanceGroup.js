@@ -7,79 +7,110 @@ var EventInstanceGroup = Class.extend({
 		this.eventInstances = eventInstances;
 	},
 
-	buildRenderRanges: function(constraintRange, calendar) {
+	isInverse: function() {
 		var eventInstances = this.eventInstances;
-		var ranges = this.buildRanges(constraintRange, calendar);
 
-		// TODO: must query up to event's source and calendar
-		if (eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background') {
-			ranges = invertEventRanges(ranges, constraintRange, eventInstances[0]);
-		}
-
-		return ranges;
+		return eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background';
 	},
 
-	buildRanges: function(constraintRange, calendar) {
-		var eventRanges = [];
+	buildRenderRanges: function(constraintRange, calendar) { // TODO: buildRenderableEventRanges ?
+		if (this.isInverse()) {
+			return this.buildInverseEventRanges(constraintRange, calendar);
+		}
+		else {
+			return this.buildEventRanges(constraintRange, calendar);
+		}
+	},
+
+	buildEventRanges: function(constraintRange, calendar) {
 		var eventInstances = this.eventInstances;
 		var i, eventInstance;
-		var eventRange;
+		var dateRange;
+		var eventRanges = [];
 
 		for (i = 0; i < eventInstances.length; i++) {
 			eventInstance = eventInstances[i];
 
-			eventRange = eventInstance.eventDateProfile.buildRange(calendar);
-			eventRange = new EventRange(eventInstance, eventRange.startMs, eventRange.endMs);
-			eventRange = eventRange.constrainTo(constraintRange);
+			dateRange = eventInstance.eventDateProfile.buildRange(calendar);
+			dateRange = dateRange.constrainTo(constraintRange);
 
-			if (eventRange) {
-				eventRanges.push(eventRange);
+			if (dateRange) {
+				eventRanges.push(
+					new EventRange(eventInstance, dateRange)
+				);
 			}
 		}
 
 		return eventRanges;
+	},
+
+	buildInverseEventRanges: function(constraintRange, calendar) {
+		var dateRanges = this.buildDateRanges(constraintRange, calendar);
+		var ownerEventInstance = this.eventInstances[0];
+		var i;
+		var eventRanges = [];
+
+		dateRanges = invertDateRanges(dateRanges, constraintRange);
+
+		for (i = 0; i < dateRanges.length; i++) {
+			eventRanges.push(
+				new EventRange(ownerEventInstance, dateRanges[i])
+			);
+		}
+
+		return eventRanges;
+	},
+
+	buildDateRanges: function(constraintRange, calendar) {
+		var eventInstances = this.eventInstances;
+		var i, eventInstance;
+		var dateRange;
+		var dateRanges = [];
+
+		for (i = 0; i < eventInstances.length; i++) {
+			eventInstance = eventInstances[i];
+
+			dateRange = eventInstance.eventDateProfile.buildRange(calendar);
+			dateRange = dateRange.constrainTo(constraintRange);
+
+			if (dateRange) {
+				dateRanges.push(dateRange);
+			}
+		}
+
+		return dateRanges;
 	}
 
 });
 
 
-function invertEventRanges(eventRanges, constraintRange, ownerEventInstance) {
-	var inverseRanges = [];
+// will sort eventRanges in place
+function invertDateRanges(dateRanges, constraintRange) {
+	var invertedRanges = [];
 	var startMs = constraintRange.startMs; // the end of the previous range. the start of the new range
-	var i, eventRange;
+	var i;
+	var dateRange;
 
 	// ranges need to be in order. required for our date-walking algorithm
-	eventRanges.sort(compareUnzonedRanges);
+	dateRanges.sort(compareUnzonedRanges);
 
-	for (i = 0; i < eventRanges.length; i++) {
-		eventRange = eventRanges[i];
+	for (i = 0; i < dateRanges.length; i++) {
+		dateRange = dateRanges[i];
 
 		// add the span of time before the event (if there is any)
-		if (eventRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)
-			inverseRanges.push(
-				new EventRange(
-					ownerEventInstance,
-					startMs,
-					eventRange.startMs
-				)
-			);
+		if (dateRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)
+			invertedRanges.push(new UnzonedRange(startMs, dateRange.startMs));
 		}
 
-		if (eventRange.endMs > startMs) {
-			startMs = eventRange.endMs;
+		if (dateRange.endMs > startMs) {
+			startMs = dateRange.endMs;
 		}
 	}
 
 	// add the span of time after the last event (if there is any)
 	if (startMs < constraintRange.endMs) { // compare millisecond time (skip any ambig logic)
-		inverseRanges.push(
-			new EventRange(
-				ownerEventInstance,
-				startMs,
-				constraintRange.endMs
-			)
-		);
+		invertedRanges.push(new UnzonedRange(startMs, constraintRange.endMs));
 	}
 
-	return inverseRanges;
+	return invertedRanges;
 }

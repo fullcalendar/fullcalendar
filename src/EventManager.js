@@ -155,21 +155,21 @@ function EventManager() { // assumed to be a calendar
 
 
 	function debugEventDefCollection() {
-		var ranges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
-		var i, range;
+		var eventRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
+		var i, eventRange;
 
 		console.log('ranges');
 		console.log('------------------');
 
-		for (i = 0; i < ranges.length; i++) {
-			range = ranges[i];
+		for (i = 0; i < eventRanges.length; i++) {
+			eventRange = eventRanges[i];
 
-			console.log(range.eventInstance.eventDefinition.title);
-			console.log(' allDay', range.eventInstance.eventDateProfile.isAllDay());
-			console.log(' start', range.getStart().format());
-			console.log(' end', range.getEnd().format());
-			console.log(' isStart', range.isStart);
-			console.log(' isEnd', range.isEnd);
+			console.log(eventRange.eventInstance.eventDefinition.title);
+			console.log(' allDay', eventRange.eventInstance.eventDateProfile.isAllDay());
+			console.log(' start', eventRange.dateRange.getStart().format());
+			console.log(' end', eventRange.dateRange.getEnd().format());
+			console.log(' isStart', eventRange.dateRange.isStart);
+			console.log(' isEnd', eventRange.dateRange.isEnd);
 		}
 
 		console.log();
@@ -1410,8 +1410,6 @@ Calendar.prototype.buildCurrentBusinessGroup = function(wholeDay) {
 		this.opt('businessHours'),
 		activeRange.start,
 		activeRange.end
-	).buildRanges(
-		new UnzonedRange(activeRange.start, activeRange.end)
 	);
 };
 

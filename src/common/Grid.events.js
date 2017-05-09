@@ -1057,10 +1057,10 @@ Grid.mixin({
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
 	eventRangeToSpans: function(eventRange) {
 		return [ {
-			start: eventRange.getStart(),
-			end: eventRange.getEnd(),
-			isStart: eventRange.isStart,
-			isEnd: eventRange.isEnd,
+			start: eventRange.dateRange.getStart(),
+			end: eventRange.dateRange.getEnd(),
+			isStart: eventRange.dateRange.isStart,
+			isEnd: eventRange.dateRange.isEnd,
 			event: eventRange.eventInstance.toLegacy()
 		} ];
 	},

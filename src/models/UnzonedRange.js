@@ -3,6 +3,8 @@ var UnzonedRange = Class.extend({
 
 	startMs: null,
 	endMs: null,
+	isStart: true,
+	isEnd: true,
 
 	constructor: function(startInput, endInput) {
 
@@ -21,10 +23,15 @@ var UnzonedRange = Class.extend({
 	constrainTo: function(constraintRange) {
 		var startMs = Math.max(this.startMs, constraintRange.startMs);
 		var endMs = Math.min(this.endMs, constraintRange.endMs);
+		var newRange = null;
 
 		if (startMs < endMs) {
-			return new UnzonedRange(startMs, endMs);
+			newRange = new UnzonedRange(startMs, endMs);
+			newRange.isStart = this.isStart && startMs === this.startMs;
+			newRange.isEnd = this.isEnd && endMs === this.endMs;
 		}
+
+		return newRange;
 	},
 
 	getStart: function() {
