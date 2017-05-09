@@ -65,7 +65,7 @@ function EventManager() { // assumed to be a calendar
 			return fetchEvents(start, end);
 		}
 		else {
-			return Promise.resolve(cache);
+			return Promise.resolve(eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
 		}
 	}
 
