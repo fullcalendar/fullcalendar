@@ -322,29 +322,22 @@ DayGrid.mixin({
 
 	// Given the events within an array of segment objects, reslice them to be in a single day
 	resliceDaySegs: function(segs, dayDate) {
-
-		// build an array of the original events
-		var events = $.map(segs, function(seg) {
-			return seg.event;
-		});
-
 		var dayStart = dayDate.clone();
 		var dayEnd = dayStart.clone().add(1, 'days');
-		var dayRange = { start: dayStart, end: dayEnd };
+		var dayRange = new UnzonedRange(dayStart, dayEnd);
 
-		// slice the events with a custom slicing function
-		segs = this.eventsToSegs(
-			events,
-			function(range) {
-				var seg = intersectRanges(range, dayRange); // undefind if no intersection
-				return seg ? [ seg ] : []; // must return an array of segments
-			}
-		);
+		// build an array of the original events
+		var eventRanges = $.map(segs, function(seg) {
+			return seg.eventRange.constrainTo(dayRange);
+		});
+
+		var eventSpans = this.eventRangesToSpans(eventRanges);
+		var eventSegs = this.eventSpansToSegs(eventSegs);
 
 		// force an order because eventsToSegs doesn't guarantee one
-		this.sortEventSegs(segs);
+		this.sortEventSegs(eventSegs);
 
-		return segs;
+		return eventSegs;
 	},
 
 
