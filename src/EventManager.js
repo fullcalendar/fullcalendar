@@ -1399,59 +1399,66 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 	// classNames are defined in businessHoursSegClasses
 };
 
+
 // Return events objects for business hours within the current view.
 // Abuse of our event system :(
-Calendar.prototype.getCurrentBusinessHourEvents = function(wholeDay) {
-	return this.computeBusinessHourEvents(wholeDay, this.opt('businessHours'));
+Calendar.prototype.buildCurrentBusinessGroup = function(wholeDay) {
+	var activeRange = this.getView().activeRange;
+
+	return this.buildBusinessGroup(
+		wholeDay,
+		this.opt('businessHours'),
+		activeRange.start,
+		activeRange.end
+	).buildRanges(
+		new UnzonedRange(activeRange.start, activeRange.end)
+	);
 };
 
+
 // Given a raw input value from options, return events objects for business hours within the current view.
-Calendar.prototype.computeBusinessHourEvents = function(wholeDay, input) {
+Calendar.prototype.buildBusinessGroup = function(wholeDay, input, rangeStart, rangeEnd) {
 	if (input === true) {
-		return this.expandBusinessHourEvents(wholeDay, [ {} ]);
+		return this._buildBusinessGroup(wholeDay, [ {} ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isPlainObject(input)) {
-		return this.expandBusinessHourEvents(wholeDay, [ input ]);
+		return this._buildBusinessGroup(wholeDay, [ input ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isArray(input)) {
-		return this.expandBusinessHourEvents(wholeDay, input, true);
+		return this._buildBusinessGroup(wholeDay, input, true, rangeStart, rangeEnd);
 	}
 	else {
 		return [];
 	}
 };
 
-// inputs expected to be an array of objects.
-// if ignoreNoDow is true, will ignore entries that don't specify a day-of-week (dow) key.
-Calendar.prototype.expandBusinessHourEvents = function(wholeDay, inputs, ignoreNoDow) {
-	var view = this.getView();
-	var events = [];
-	var i, input;
 
-	for (i = 0; i < inputs.length; i++) {
-		input = inputs[i];
+Calendar.prototype._buildBusinessGroup = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+	var rawDef;
+	var fullRawDef;
+	var eventDef;
+	var eventInstances = [];
 
-		if (ignoreNoDow && !input.dow) {
+	for (i = 0; i < rawDefs.length; i++) {
+		rawDef = rawDefs[i];
+
+		if (ignoreNoDow && !rawDef.dow) {
 			continue;
 		}
 
-		// give defaults. will make a copy
-		input = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, input);
+		fullRawDef = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDefs[i]);
 
-		// if a whole-day series is requested, clear the start/end times
 		if (wholeDay) {
-			input.start = null;
-			input.end = null;
+			fullRawDef.start = null;
+			fullRawDef.end = null;
 		}
 
-		events.push.apply(events, // append
-			this.expandEvent(
-				this.buildEventFromInput(input),
-				view.activeRange.start,
-				view.activeRange.end
-			)
+		eventDef = new RecurringEventDefinition(fullRawDef);
+
+		eventInstances.push.apply(eventInstances, // append
+			eventDef.buildInstances(rangeStart, rangeEnd)
 		);
 	}
 
-	return events;
+	return new EventInstanceGroup(eventInstances);
 };

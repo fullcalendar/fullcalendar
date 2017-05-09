@@ -133,8 +133,8 @@ Grid.mixin({
 	// Caller must ask if whole-day business hours are needed.
 	// If no `businessHours` configuration value is specified, assumes the calendar default.
 	buildBusinessHourSegs: function(wholeDay, businessHours) {
-		return this.eventsToSegs(
-			this.buildBusinessHourEvents(wholeDay, businessHours)
+		return this.eventRangesToSegs(
+			this.buildBusinessHourRanges(wholeDay, businessHours)
 		);
 	},
 
@@ -142,7 +142,8 @@ Grid.mixin({
 	// Compute business hour *events* for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
 	// If no `businessHours` configuration value is specified, assumes the calendar default.
-	buildBusinessHourEvents: function(wholeDay, businessHours) {
+	// FOR RENDERING
+	buildBusinessHourRanges: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
 		var events;
 
@@ -152,22 +153,15 @@ Grid.mixin({
 			businessHours = calendar.opt('businessHours');
 		}
 
-		events = calendar.computeBusinessHourEvents(wholeDay, businessHours);
-
-		// HACK. Eventually refactor business hours "events" system.
-		// If no events are given, but businessHours is activated, this means the entire visible range should be
-		// marked as *not* business-hours, via inverse-background rendering.
-		if (!events.length && businessHours) {
-			events = [
-				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
-					start: this.view.activeRange.end, // guaranteed out-of-range
-					end: this.view.activeRange.end,   // "
-					dow: null
-				})
-			];
-		}
-
-		return events;
+		return calendar.buildBusinessGroup(
+			wholeDay,
+			businessHours,
+			this.start,
+			this.end
+		).buildRenderRanges(
+			new UnzonedRange(this.start, this.end),
+			calendar
+		);
 	},
 
 
@@ -1022,6 +1016,20 @@ Grid.mixin({
 	// Can accept an event "location" as well (which only has start/end and no allDay)
 	eventToSegs: function(event) {
 		return []; // TODO!!!
+	},
+
+
+	eventRangesToSegs: function(eventRanges) {
+		var segs = [];
+		var i, eventRange;
+
+		for (i = 0; i < eventRanges.length; i++) {
+			segs.push.apply(segs,
+				this.eventRangeToSegs(eventRanges[i])
+			);
+		}
+
+		return segs;
 	},
 
 
