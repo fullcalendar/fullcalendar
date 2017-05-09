@@ -10,6 +10,7 @@ var EventInstanceGroup = Class.extend({
 	isInverse: function() {
 		var eventInstances = this.eventInstances;
 
+		// TODO: ask the source/calendar
 		return eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background';
 	},
 

@@ -1001,14 +1001,16 @@ Grid.mixin({
 
 
 	isEventLocationInRange: function(eventLocation) {
+		return false;
+
 		return isRangeWithinRange(
-			this.eventToRawRange(eventLocation),
+			//this.eventToRawRange(eventLocation),
 			this.view.validRange
 		);
 	},
 
 
-	/* Converting events -> eventRange -> eventSpan -> eventSegs
+	/* Converting events -> eventRange -> eventFootprint -> eventSegs
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -1036,14 +1038,14 @@ Grid.mixin({
 	// Given an event's range (unzoned start/end), and the event itself,
 	// slice into segments (using the segSliceFunc function if specified)
 	// eventRange - { start, end, isStart, isEnd }
-	eventRangeToSegs: function(eventRange, segSliceFunc) {
-		var eventSpans = this.eventRangeToSpans(eventRange);
+	eventRangeToSegs: function(eventRange) {
+		var eventFootprints = this.eventRangeToEventFootprints(eventRange);
 		var segs = [];
 		var i;
 
-		for (i = 0; i < eventSpans.length; i++) {
+		for (i = 0; i < eventFootprints.length; i++) {
 			segs.push.apply(segs, // append to
-				this.eventSpanToSegs(eventSpans[i], segSliceFunc)
+				this.eventFootprintToSegs(eventFootprints[i])
 			);
 		}
 
@@ -1055,11 +1057,11 @@ Grid.mixin({
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	// Subclasses can override.
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
-	eventRangeToSpans: function(eventRange) {
+	eventRangeToEventFootprints: function(eventRange) {
 		return [
-			new EventSpan(
+			new EventFootprint(
 				eventRange.eventInstance,
-				new Span(eventRange.dateRange)
+				new ComponentFootprint(eventRange.dateRange)
 			)
 		];
 	},
@@ -1068,24 +1070,24 @@ Grid.mixin({
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventSpanToSegs: function(eventSpan) {
-		var segs = this.spanToSegs(eventSpan.span);
+	eventFootprintToSegs: function(eventFootprint) {
+		var segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
-			// the eventSpan's isStart/isEnd takes precedence over the seg's
-			if (!eventSpan.span.dateRange.isStart) {
+			// the eventFootprint's isStart/isEnd takes precedence over the seg's
+			if (!eventFootprint.componentFootprint.dateRange.isStart) {
 				seg.isStart = false;
 			}
-			if (!eventSpan.span.dateRange.isEnd) {
+			if (!eventFootprint.componentFootprint.dateRange.isEnd) {
 				seg.isEnd = false;
 			}
 
-			seg.event = eventSpan.eventInstance.toLegacy();
-			seg.eventStartMS = +eventSpan.span.dateRange.startMs; // TODO: not the best name after making spans unzoned
-			seg.eventDurationMS = eventSpan.span.dateRange.endMs - eventSpan.span.dateRange.startMs;
+			seg.event = eventFootprint.eventInstance.toLegacy();
+			seg.eventStartMS = +eventFootprint.componentFootprint.dateRange.startMs; // TODO: not the best name after making spans unzoned
+			seg.eventDurationMS = eventFootprint.componentFootprint.dateRange.endMs - eventFootprint.componentFootprint.dateRange.startMs;
 		}
 
 		return segs;

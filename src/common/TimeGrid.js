@@ -253,8 +253,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
-	spanToSegs: function(span) {
-		var segs = this.sliceRangeByTimes(span);
+	componentFootprintToSegs: function(componentFootprint) {
+		var segs = this.sliceRangeByTimes({ start: componentFootprint.dateRange.getStart(), end: componentFootprint.dateRange.getEnd() });
 		var i;
 
 		for (i = 0; i < segs.length; i++) {

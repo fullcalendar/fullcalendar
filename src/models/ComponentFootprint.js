@@ -1,5 +1,5 @@
 
-var Span = Class.extend({ // TODO: ComponentFootprint
+var ComponentFootprint = Class.extend({
 
 	dateRange: null,
 
