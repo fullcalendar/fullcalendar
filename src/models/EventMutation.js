@@ -1,5 +1,5 @@
 
-var EventMutation = Class.extend({
+var EventMutation = Class.extend({ // TODO: EventDefMutation
 
 	newTitle: null,
 	newRendering: null,

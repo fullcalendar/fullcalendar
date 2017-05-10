@@ -23,7 +23,7 @@ var EventInstanceGroup = Class.extend({
 		}
 	},
 
-	buildEventRanges: function(constraintRange, calendar) {
+	buildEventRanges: function(constraintRange, calendar) { // TODO: use this.source.calendar
 		var eventInstances = this.eventInstances;
 		var i, eventInstance;
 		var dateRange;
