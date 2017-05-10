@@ -437,7 +437,12 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			nodes.push(skeletonEl[0]);
 		}
 
-		this.elsByFill[type] = $(nodes);
+		if (this.elsByFill[type]) {
+			this.elsByFill[type] = this.elsByFill[type].add(nodes);
+		}
+		else {
+			this.elsByFill[type] = $(nodes);
+		}
 
 		return segs;
 	},
