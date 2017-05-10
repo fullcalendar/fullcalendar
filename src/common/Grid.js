@@ -340,13 +340,13 @@ var Grid = FC.Grid = ChronoComponent.extend({
 				dayClickHit = null;
 			},
 			interactionEnd: function(ev, isCancelled) {
-				var hitSpan;
+				var componentFootprint;
 
 				if (!isCancelled && dayClickHit) {
-					hitSpan = _this.getSafeHitSpan(dayClickHit);
+					componentFootprint = _this.getSafeHitFootprint(dayClickHit);
 
-					if (hitSpan) {
-						_this.view.triggerDayClick(hitSpan, _this.getHitEl(dayClickHit), ev);
+					if (componentFootprint) {
+						_this.view.triggerDayClick(componentFootprint, _this.getHitEl(dayClickHit), ev);
 					}
 				}
 			}
@@ -365,51 +365,51 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Creates a listener that tracks the user's drag across day elements, for day selecting.
 	buildDaySelectListener: function() {
 		var _this = this;
-		var selectionSpan; // null if invalid selection
+		var selectionFootprint; // null if invalid selection
 
 		var dragListener = new HitDragListener(this, {
 			scroll: this.opt('dragScroll'),
 			interactionStart: function() {
-				selectionSpan = null;
+				selectionFootprint = null;
 			},
 			dragStart: function() {
 				_this.view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
-				var origHitSpan;
-				var hitSpan;
+				var origHitFootprint;
+				var hitFootprint;
 
 				if (origHit) { // click needs to have started on a hit
 
-					origHitSpan = _this.getSafeHitSpan(origHit);
-					hitSpan = _this.getSafeHitSpan(hit);
+					origHitFootprint = _this.getSafeHitFootprint(origHit);
+					hitFootprint = _this.getSafeHitFootprint(hit);
 
-					if (origHitSpan && hitSpan) {
-						selectionSpan = _this.computeSelection(origHitSpan, hitSpan);
+					if (origHitFootprint && hitFootprint) {
+						selectionFootprint = _this.computeSelection(origHitFootprint, hitFootprint);
 					}
 					else {
-						selectionSpan = null;
+						selectionFootprint = null;
 					}
 
-					if (selectionSpan) {
-						_this.renderSelection(selectionSpan);
+					if (selectionFootprint) {
+						_this.renderSelection(selectionFootprint);
 					}
-					else if (selectionSpan === false) {
+					else if (selectionFootprint === false) {
 						disableCursor();
 					}
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
-				selectionSpan = null;
+				selectionFootprint = null;
 				_this.unrenderSelection();
 			},
 			hitDone: function() { // called after a hitOut OR before a dragEnd
 				enableCursor();
 			},
 			interactionEnd: function(ev, isCancelled) {
-				if (!isCancelled && selectionSpan) {
+				if (!isCancelled && selectionFootprint) {
 					// the selection will already have been rendered. just report it
-					_this.view.reportSelection(selectionSpan, ev);
+					_this.view.reportSelection(selectionFootprint, ev);
 				}
 			}
 		});
@@ -493,8 +493,8 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
 	// Given a span (unzoned start/end and other misc data)
-	renderSelection: function(span) {
-		this.renderHighlight(span);
+	renderSelection: function(componentFootprint) {
+		this.renderHighlight(componentFootprint);
 	},
 
 
@@ -508,25 +508,33 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Subclasses can override and provide additional data in the span object. Will be passed to renderSelection().
 	// Will return false if the selection is invalid and this should be indicated to the user.
 	// Will return null/undefined if a selection invalid but no error should be reported.
-	computeSelection: function(span0, span1) {
-		var span = this.computeSelectionSpan(span0, span1);
+	computeSelection: function(footprint0, footprint1) {
+		var wholeFootprint = this.computeSelectionFootprint(footprint0, footprint1);
 
 		if (span && !this.view.calendar.isSelectionSpanAllowed(span)) {
 			return false;
 		}
 
-		return span;
+		return wholeFootprint;
 	},
 
 
 	// Given two spans, must return the combination of the two.
 	// TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
-	computeSelectionSpan: function(span0, span1) {
-		var dates = [ span0.start, span0.end, span1.start, span1.end ];
+	computeSelectionFootprint: function(footprint0, footprint1) {
+		var ms = [
+			footprint0.dateRange.startMs,
+			footprint0.dateRange.endMs,
+			footprint1.dateRange.startMs,
+			footprint1.dateRange.endMs
+		];
 
-		dates.sort(compareNumbers); // sorts chronologically. works with Moments
+		ms.sort(compareNumbers);
 
-		return { start: dates[0].clone(), end: dates[3].clone() };
+		return new ComponentFootprint(
+			new UnzonedRange(ms[0], ms[3]),
+			footprint0.isAllDay
+		);
 	},
 
 

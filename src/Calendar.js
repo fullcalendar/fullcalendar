@@ -207,7 +207,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// this public method receives start/end dates in any format, with any timezone
 	select: function(zonedStartInput, zonedEndInput) {
 		this.view.select(
-			this.buildSelectSpan.apply(this, arguments)
+			this.buildSelectFootprint.apply(this, arguments)
 		);
 	},
 
@@ -220,7 +220,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 
 	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
+	buildSelectFootprint: function(zonedStartInput, zonedEndInput) {
 		var start = this.moment(zonedStartInput).stripZone();
 		var end;
 
@@ -234,7 +234,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			end = start.clone().add(this.defaultAllDayEventDuration);
 		}
 
-		return { start: start, end: end };
+		return new ComponentFootprint(
+			new UnzonedRange(start, end),
+			!start.hasTime()
+		);
 	},
 
 

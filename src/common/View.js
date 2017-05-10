@@ -794,29 +794,32 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Selects a date span on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(span, ev) {
+	select: function(footprint, ev) {
 		this.unselect(ev);
-		this.renderSelection(span);
-		this.reportSelection(span, ev);
+		this.renderSelection(footprint);
+		this.reportSelection(footprint, ev);
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(span, ev) {
+	reportSelection: function(footprint, ev) {
 		this.isSelected = true;
-		this.triggerSelect(span, ev);
+		this.triggerSelect(footprint, ev);
 	},
 
 
 	// Triggers handlers to 'select'
-	triggerSelect: function(span, ev) {
-		this.publiclyTrigger(
-			'select',
-			null,
-			this.calendar.applyTimezone(span.start), // convert to calendar's tz for external API
-			this.calendar.applyTimezone(span.end), // "
-			ev
-		);
+	triggerSelect: function(footprint, ev) {
+		var calendar = this.calendar;
+		var start = calendar.moment(footprint.dateRange.getStart());
+		var end = calendar.moment(footprint.dateRange.getEnd());
+
+		if (footprint.isAllDay) {
+			start.stripTime();
+			end.stripTime();
+		}
+
+		this.publiclyTrigger('select', null, start, end, ev);
 	},
 
 
@@ -914,13 +917,14 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Triggers handlers to 'dayClick'
 	// Span has start/end of the clicked area. Only the start is useful.
-	triggerDayClick: function(span, dayEl, ev) {
-		this.publiclyTrigger(
-			'dayClick',
-			dayEl,
-			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
-			ev
-		);
+	triggerDayClick: function(footprint, dayEl, ev) {
+		var date = this.calendar.moment(footprint.dateRange.getStart()); // need the calendar's timezone
+
+		if (footprint.isAllDay) {
+			date.stripTime();
+		}
+
+		this.publiclyTrigger('dayClick', dayEl, date, ev);
 	}
 
 });
