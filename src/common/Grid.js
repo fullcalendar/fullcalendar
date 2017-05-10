@@ -449,29 +449,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	// Builds a fake event given zoned event date properties and a segment is should be inspired from.
-	// The range's end can be null, in which case the mock event that is rendered will have a null end time.
-	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	fabricateHelperEvent: function(eventLocation, sourceSeg) {
-		var fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
-
-		fakeEvent.start = eventLocation.start.clone();
-		fakeEvent.end = eventLocation.end ? eventLocation.end.clone() : null;
-		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventDates
-		this.view.calendar.normalizeEventDates(fakeEvent);
-
-		// this extra className will be useful for differentiating real events from mock events in CSS
-		fakeEvent.className = (fakeEvent.className || []).concat('fc-helper');
-
-		// if something external is being dragged in, don't render a resizer
-		if (!sourceSeg) {
-			fakeEvent.editable = false;
-		}
-
-		return fakeEvent;
-	},
-
-
 	// Renders a mock event. Given zoned event date properties.
 	// Must return all mock event elements.
 	// TODO: have this in ChronoComponent
