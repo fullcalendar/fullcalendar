@@ -8,7 +8,7 @@ var EventMutation = Class.extend({ // TODO: EventDefMutation
 
 
 	// will not provide an undo function
-	mutateSingleEventDefinition: function(eventDef, isAmbigTimezone) {
+	mutateSingleEventDefinition: function(eventDef, calendar) {
 		var origTitle = eventDef.title;
 		var origRendering = eventDef.rendering;
 		var origMiscProps = eventDef.miscProps;
@@ -26,7 +26,7 @@ var EventMutation = Class.extend({ // TODO: EventDefMutation
 
 		undoDateMutation = this.dateMutation.mutateSingleEventDefinition(
 			eventDef,
-			isAmbigTimezone
+			calendar
 		);
 
 		return function() {

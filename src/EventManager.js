@@ -599,7 +599,7 @@ function EventManager() { // assumed to be a calendar
 				null, // largeUnit -- who uses it?
 				t // calendar
 			);
-			eventMutation.mutateSingleEventDefinition(eventDef);
+			eventMutation.mutateSingleEventDefinition(eventDef, t); // calendar=t
 		}
 
 		reportEventChange(); // reports event modifications (so we can redraw)
@@ -1166,7 +1166,7 @@ Calendar.prototype.mutateEventsWithId = function(id, eventMutation) {
 			undoFuncs.push(
 				eventMutation.mutateSingleEventDefinition(
 					eventDefs[i],
-					this.getIsAmbigTimezone()
+					this // calendar
 				)
 			);
 		}
@@ -1474,7 +1474,7 @@ Calendar.prototype.buildMutatedEventInstanceGroup = function(eventId, eventMutat
 
 		if (defCopy instanceof SingleEventDefinition) {
 
-			eventMutation.mutateSingleEventDefinition(defCopy);
+			eventMutation.mutateSingleEventDefinition(defCopy, this); // calendar=this
 			eventInstances = defCopy.buildInstances(viewRange.start, viewRange.end);
 
 			allInstances.push.apply(allInstances,

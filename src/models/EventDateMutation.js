@@ -5,10 +5,11 @@ var EventDateMutation = Class.extend({ // TODO: EventDefDateMutation
 	forceTimed: false,
 	forceAllDay: false,
 	dateDelta: null,
-	durationDelta: null,
+	startDelta: null,
+	endDelta: null,
 
 
-	mutateSingleEventDefinition: function(eventDef, isAmbigTimezone) {
+	mutateSingleEventDefinition: function(eventDef, calendar) {
 		var origStart = eventDef.start;
 		var origEnd = eventDef.end;
 		var start = origStart.clone();
@@ -48,16 +49,25 @@ var EventDateMutation = Class.extend({ // TODO: EventDefDateMutation
 			}
 		}
 
-		if (this.durationDelta) {
+		// do this before adding startDelta to start,
+		// so we can work off of start
+		if (this.endDelta) {
 
-			if (end) {
-				end.add(this.durationDelta);
+			if (!end) {
+				// eventDef better be a SingleEventDefinition!
+				end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
 			}
+
+			end.add(this.endDelta);
 		}
 
-		if (isAmbigTimezone) {
+		if (this.startDelta) {
+			start.add(this.startDelta);
+		}
 
-			if (start.hasTime() && this.dateDelta) {
+		if (calendar.getIsAmbigTimezone()) {
+
+			if (start.hasTime() && (this.dateDelta || this.startDelta)) {
 				start.stripZone();
 			}
 
@@ -97,8 +107,8 @@ EventDateMutation.createFromDiff = function(profile1, profile2, largeUnit) {
 	var forceTimed = profile1.isAllDay() && !profile2.isAllDay();
 	var forceAllDay = !profile1.isAllDay() && profile2.isAllDay();
 	var dateDelta;
+	var endDiff;
 	var endDelta;
-	var durationDelta;
 	var mutation;
 
 	// diffs the dates in the appropriate way, returning a duration
@@ -117,8 +127,8 @@ EventDateMutation.createFromDiff = function(profile1, profile2, largeUnit) {
 	dateDelta = diffDates(profile2.start, profile1.start);
 
 	if (profile2.end) {
-		endDelta = diffDates(profile2.end, profile1.getEnd());
-		durationDelta = endDelta.subtract(dateDelta);
+		endDiff = diffDates(profile2.end, profile1.getEnd());
+		endDelta = endDiff.subtract(dateDelta);
 	}
 
 	mutation = new EventDateMutation();

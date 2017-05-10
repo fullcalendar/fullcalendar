@@ -25,6 +25,11 @@ var SingleEventDefinition = EventDefinition.extend({
 		}
 
 		return def;
+	},
+
+
+	isAllDay: function() {
+		return !(this.start.hasTime() || this.end.hasTime());
 	}
 
 });
