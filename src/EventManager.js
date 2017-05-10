@@ -1460,3 +1460,27 @@ Calendar.prototype._buildBusinessGroup = function(wholeDay, rawDefs, ignoreNoDow
 
 	return new EventInstanceGroup(eventInstances);
 };
+
+
+Calendar.prototype.buildMutatedEventInstanceGroup = function(eventId, eventMutation) {
+	var viewRange = this.getView().activeRange;
+	var defs = this.eventDefCollection.getById(eventId);
+	var i;
+	var allInstances = [];
+
+	for (i = 0; i < defs.length; i++) {
+		defCopy = defs[i].clone();
+
+		if (defCopy instanceof SingleEventDefinition) {
+
+			eventMutation.mutateSingleEventDefinition(defCopy);
+			eventInstances = defCopy.buildInstances(viewRange.start, viewRange.end);
+
+			allInstances.push.apply(allInstances,
+				eventInstances
+			);
+		}
+	}
+
+	return new EventInstanceGroup(allInstances);
+};

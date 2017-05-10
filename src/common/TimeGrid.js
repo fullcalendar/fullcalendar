@@ -220,7 +220,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	getHitSpan: function(hit) {
+	getHitFootprint: function(hit) {
 		var start = this.getCellDate(0, hit.col); // row=0
 		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
 		var end;
@@ -228,7 +228,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		start.time(time);
 		end = start.clone().add(this.snapDuration);
 
-		return { start: start, end: end };
+		return new ComponentFootprint(
+			new UnzonedRange(start, end),
+			false // all-day?
+		);
 	},
 
 
@@ -359,21 +362,22 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventLocation, seg) {
-		var eventSpans;
+	renderDrag: function(eventRanges, seg) {
+		var eventFootprints;
 		var i;
 
 		if (seg) { // if there is event information for this drag, render a helper event
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.renderEventLocationHelper(eventLocation, seg);
+			return this.renderEventLocationHelper(eventRanges);
 		}
 		else { // otherwise, just render a highlight
-			eventSpans = this.eventToSpans(eventLocation);
 
-			for (i = 0; i < eventSpans.length; i++) {
-				this.renderHighlight(eventSpans[i]);
+			eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+
+			for (i = 0; i < eventFootprints.length; i++) {
+				this.renderHighlight(eventFootprints[i].componentFootprint);
 			}
 		}
 	},
@@ -407,8 +411,14 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
-	renderHelper: function(event, sourceSeg) {
-		return this.renderHelperSegs(this.eventToSegs(event), sourceSeg); // returns mock event elements
+	renderHelper: function(eventRanges, sourceSeg) {
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		return this.renderHelperSegs( // returns mock event elements
+			segs,
+			sourceSeg
+		);
 	},
 
 
@@ -505,8 +515,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderHighlight: function(span) {
-		this.renderHighlightSegs(this.spanToSegs(span));
+	renderHighlight: function(componentFootprint) {
+		this.renderHighlightSegs(
+			this.componentFootprintToSegs(componentFootprint)
+		);
 	},
 
 

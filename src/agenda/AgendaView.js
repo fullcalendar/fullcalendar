@@ -280,9 +280,9 @@ var AgendaView = FC.AgendaView = View.extend({
 	// forward all hit-related method calls to the grids (dayGrid might not be defined)
 
 
-	getHitSpan: function(hit) {
+	getHitFootprint: function(hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
-		return hit.component.getHitSpan(hit);
+		return hit.component.getHitFootprint(hit);
 	},
 
 
@@ -331,12 +331,15 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
-		if (dropLocation.start.hasTime()) {
-			return this.timeGrid.renderDrag(dropLocation, seg);
+	renderDrag: function(eventRanges, seg) {
+		var isAllDay = eventRanges.length &&
+			eventRanges[0].eventInstance.eventDateProfile.isAllDay();
+
+		if (!isAllDay) {
+			return this.timeGrid.renderDrag(eventRanges, seg);
 		}
 		else if (this.dayGrid) {
-			return this.dayGrid.renderDrag(dropLocation, seg);
+			return this.dayGrid.renderDrag(eventRanges, seg);
 		}
 	},
 

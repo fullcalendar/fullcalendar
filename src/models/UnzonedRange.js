@@ -34,12 +34,18 @@ var UnzonedRange = Class.extend({
 		return newRange;
 	},
 
+	// hopefully we'll remove these...
+
 	getStart: function() {
 		return FC.moment.utc(this.startMs).stripZone();
 	},
 
 	getEnd: function() {
 		return FC.moment.utc(this.endMs).stripZone();
+	},
+
+	getRange: function() {
+		return { start: this.getStart(), end: this.getEnd() };
 	}
 
 });

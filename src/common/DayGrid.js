@@ -224,7 +224,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
 	componentFootprintToSegs: function(componentFootprint) {
-		var segs = this.sliceRangeByRow({ start: componentFootprint.dateRange.getStart(), end: componentFootprint.dateRange.getEnd() });
+		var segs = this.sliceRangeByRow(componentFootprint.dateRange.getRange());
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
@@ -272,8 +272,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	getHitSpan: function(hit) {
-		return this.getCellRange(hit.row, hit.col);
+	getHitFootprint: function(hit) {
+		var range = this.getCellRange(hit.row, hit.col);
+
+		return new ComponentFootprint(
+			new UnzonedRange(range.start, range.end),
+			true // all-day?
+		);
 	},
 
 
@@ -312,18 +317,17 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event or external element being dragged.
 	// `eventLocation` has zoned start and end (optional)
-	renderDrag: function(eventLocation, seg) {
-		var eventSpans = this.eventToSpans(eventLocation);
+	renderDrag: function(eventRanges, seg) {
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 		var i;
 
-		// always render a highlight underneath
-		for (i = 0; i < eventSpans.length; i++) {
-			this.renderHighlight(eventSpans[i]);
+		for (i = 0; i < eventFootprints.length; i++) {
+			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+			return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
 		}
 	},
 
@@ -364,9 +368,10 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderHelper: function(event, sourceSeg) {
+	renderHelper: function(eventRanges, sourceSeg) {
 		var helperNodes = [];
-		var segs = this.eventToSegs(event);
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+		var segs = this.eventFootprintsToSegs(eventFootprints);
 		var rowStructs;
 
 		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered

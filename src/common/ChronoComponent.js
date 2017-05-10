@@ -204,8 +204,8 @@ var ChronoComponent = Model.extend({
 	// Renders a visual indication of a event or external-element drag over the given drop zone.
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
-	renderDrag: function(dropLocation, seg) {
-		this.callChildren('renderDrag', dropLocation, seg);
+	renderDrag: function(eventRanges, seg) {
+		this.callChildren('renderDrag', eventRanges, seg);
 	},
 
 

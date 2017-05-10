@@ -174,26 +174,23 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
 	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
 	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
-	// The returned object will be processed by getHitSpan and getHitEl.
+	// The returned object will be processed by getHitFootprint and getHitEl.
 	queryHit: function(leftOffset, topOffset) {
 	},
 
 
-	// like getHitSpan, but returns null if the resulting span's range is invalid
-	getSafeHitSpan: function(hit) {
-		var hitSpan = this.getHitSpan(hit);
+	getSafeHitFootprint: function(hit) {
+		var footprint = this.getHitFootprint(hit);
 
-		if (!isRangeWithinRange(hitSpan, this.view.activeRange)) {
+		if (!isRangeWithinRange(footprint.dateRange.getRange(), this.view.activeRange)) {
 			return null;
 		}
 
-		return hitSpan;
+		return footprint;
 	},
 
 
-	// Given position-level information about a date-related area within the grid,
-	// should return an object with at least a start/end date. Can provide other information as well.
-	getHitSpan: function(hit) {
+	getHitFootprint: function(hit) {
 	},
 
 
@@ -447,10 +444,8 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Renders a mock event at the given event location, which contains zoned start/end properties.
 	// Returns all mock event elements.
-	renderEventLocationHelper: function(eventLocation, sourceSeg) {
-		var fakeEvent = this.fabricateHelperEvent(eventLocation, sourceSeg);
-
-		return this.renderHelper(fakeEvent, sourceSeg); // do the actual rendering
+	renderEventLocationHelper: function(eventRanges, sourceSeg) {
+		return this.renderHelper(eventRanges, sourceSeg); // do the actual rendering
 	},
 
 
@@ -480,7 +475,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Renders a mock event. Given zoned event date properties.
 	// Must return all mock event elements.
 	// TODO: have this in ChronoComponent
-	renderHelper: function(eventLocation, sourceSeg) {
+	renderHelper: function(eventRanges, sourceSeg) {
 		// subclasses must implement
 	},
 
@@ -540,8 +535,8 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
-	renderHighlight: function(span) {
-		this.renderFill('highlight', this.spanToSegs(span));
+	renderHighlight: function(componentFootprint) {
+		this.renderFill('highlight', this.componentFootprintToSegs(componentFootprint));
 	},
 
 
