@@ -5,26 +5,6 @@ var RecurringEventDefinition = EventDefinition.extend({
 	endTime: null,
 	dowHash: null,
 
-	constructor: function(rawProps, source, calendar) {
-		EventDefinition.apply(this, arguments);
-
-		if (rawProps.start) {
-			this.startTime = moment.duration(rawProps.start);
-		}
-
-		if (rawProps.end) {
-			this.endTime = moment.duration(rawProps.end);
-		}
-
-		if (rawProps.dow) {
-			this.dowHash = this.buildDowHash(rawProps.dow);
-		}
-	},
-
-	isStandardProp: function(name) {
-		return EventDefinition.prototype.isStandardProp(name) ||
-			name === 'start' || name === 'end' || name === 'dow';
-	},
 
 	buildInstances: function(start, end) {
 		var date = start.clone();
@@ -64,16 +44,56 @@ var RecurringEventDefinition = EventDefinition.extend({
 		return eventInstances;
 	},
 
-	buildDowHash: function(dowArray) {
-		var dowHash = {};
-		var i;
 
-		// make a boolean hash as to whether the event occurs on each day-of-week
-		for (i = 0; i < dowArray.length; i++) {
-			dowHash[dowArray[i]] = true;
+	setDow: function(dowArray) {
+		if (!this.dowHash) {
+			this.dowHash = {};
 		}
 
-		return dowHash;
+		for (var i = 0; i < dowArray.length; i++) {
+			this.dowHash[dowArray[i]] = true;
+		}
+	},
+
+
+	clone: function() {
+		var def = EventDefinition.prototype.clone.call(this);
+
+		if (def.startTime) {
+			def.startTime = moment.duration(this.startTime);
+		}
+
+		if (def.endTime) {
+			def.endTime = moment.duration(this.endTime);
+		}
+
+		if (this.dowHash) {
+			def.dowHash = $.extend({}, this.dowHash);
+		}
+
+		return def;
 	}
 
 });
+
+
+RecurringEventDefinition.addReservedProps([ 'start', 'end', 'dow' ]);
+
+
+RecurringEventDefinition.parse = function(rawProps) {
+	var def = EventDefinition.parse.call(this, rawProps); // RecurringEventDefinition
+
+	if (rawProps.start) {
+		def.startTime = moment.duration(rawProps.start);
+	}
+
+	if (rawProps.end) {
+		def.endTime = moment.duration(rawProps.end);
+	}
+
+	if (rawProps.dow) {
+		def.setDow(rawProps.dow);
+	}
+
+	return def;
+};

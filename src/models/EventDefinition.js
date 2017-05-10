@@ -7,38 +7,73 @@ var EventDefinition = Class.extend({
 	rendering: null,
 	miscProps: null,
 
-	// calendar needed for zoned moment instantiation
-	constructor: function(rawProps, source, calendar) {
-		this.source = source;
-		this.id = rawProps.id || ('_fc' + (++EventDefinition.uuid));
-		this.title = rawProps.title || '';
-		this.rendering = rawProps.rendering || null;
 
-		this.assignMiscProps(rawProps);
+	constructor: function() {
+		this.miscProps = {};
 	},
 
-	assignMiscProps: function(rawProps) {
-		var miscProps = {};
-		var name;
-
-		for (name in rawProps) {
-			if (!this.isStandardProp(name)) {
-				miscProps[name] = rawProps[name];
-			}
-		}
-
-		this.miscProps = miscProps;
-	},
-
-	isStandardProp: function(name) {
-		return name === 'id' || name === 'title' || name === 'rendering';
-	},
 
 	buildInstances: function(start, end) {
 		// subclasses must implement
+	},
+
+
+	clone: function() {
+		var copy = new this.constructor();
+
+		copy.source = this.source;
+		copy.id = this.id;
+		copy.title = this.title;
+		copy.rendering = this.rendering;
+		copy.miscProps = $.extend({}, this.miscProps);
+
+		return copy;
 	}
 
 });
 
-EventDefinition.uuid = 0;
 
+EventDefinition.uuid = 0;
+EventDefinition.reservedPropMap = {};
+
+
+EventDefinition.addReservedProps = function(props) {
+	var map = {};
+	var propName;
+
+	for (propName in props) {
+		map[propName] = true;
+	}
+
+	// won't modify original object. don't want sideeffects on superclasses
+	this.reservedPropMap = $.extend({}, this.reservedPropMap, map);
+};
+
+
+EventDefinition.isReservedProp = function(propName) {
+	return this.reservedPropMap[propName] || false;
+};
+
+
+EventDefinition.parse = function(rawProps) {
+	var def = new this();
+	var propName;
+	var miscProps = {};
+
+	def.id = rawProps.id || ('_fc' + (++EventDefinition.uuid));
+	def.title = rawProps.title || '';
+	def.rendering = rawProps.rendering || null;
+
+	for (propName in rawProps) {
+		if (!this.isReservedProp(propName)) {
+			miscProps[propName] = rawProps[propName];
+		}
+	}
+
+	def.miscProps = miscProps;
+
+	return def;
+};
+
+
+EventDefinition.addReservedProps([ 'id', 'title', 'rendering' ]);

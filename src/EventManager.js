@@ -1451,7 +1451,7 @@ Calendar.prototype._buildBusinessGroup = function(wholeDay, rawDefs, ignoreNoDow
 			fullRawDef.end = null;
 		}
 
-		eventDef = new RecurringEventDefinition(fullRawDef);
+		eventDef = RecurringEventDefinition.parse(fullRawDef);
 
 		eventInstances.push.apply(eventInstances, // append
 			eventDef.buildInstances(rangeStart, rangeEnd)
