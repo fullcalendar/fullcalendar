@@ -422,9 +422,8 @@ Grid.mixin({
 					}
 
 					if (eventMutation) {
-						console.log('DO eventMutation', eventMutation);
-						//// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-						//view.reportSegDrop(seg, dropLocation, _this.largeUnit, el, ev);
+						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
+						view.reportEventDrop(event, eventMutation, el, ev);
 					}
 					else {
 						view.showEvent(event);

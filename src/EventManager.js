@@ -1156,26 +1156,27 @@ function EventManager() { // assumed to be a calendar
 }
 
 
-// returns an undo function
-// newProps will only have start/end
-Calendar.prototype.mutateSeg = function(seg, newProps) {
+Calendar.prototype.mutateEventsWithId = function(id, eventMutation) {
+	var eventDefs = this.eventDefCollection.getById(id);
+	var i;
+	var undoFuncs = [];
 
-	var eventDef = this.eventDefCollection.getById(seg.event._id)[0];
-	var eventInstance = eventDef.buildInstances()[0];
-	var newEventDateProfile = new EventDateProfile(
-		this.moment(newProps.start),
-		newProps.end ? this.moment(newProps.end) : null
-	);
-	var eventDateMutation = EventDateMutation.createFromDiff(
-		eventInstance.eventDateProfile,
-		newEventDateProfile
-	);
-	eventDateMutation.mutateSingleEventDefinition( // returns an undo function
-		eventDef,
-		this.getIsAmbigTimezone()
-	);
+	for (i = 0; i < eventDefs.length; i++) {
+		if (eventDefs[i] instanceof SingleEventDefinition) {
+			undoFuncs.push(
+				eventMutation.mutateSingleEventDefinition(
+					eventDefs[i],
+					this.getIsAmbigTimezone()
+				)
+			);
+		}
+	}
 
-	return this.mutateEvent(seg.event, newProps); // what about largeUnit? who uses that?
+	return function() {
+		for (var i = 0; i < undoFuncs.length; i++) {
+			undoFuncs[i]();
+		}
+	};
 };
 
 

@@ -709,17 +709,16 @@ var View = FC.View = ChronoComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Must be called when an event in the view is dropped onto new location.
-	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportSegDrop: function(seg, dropLocation, largeUnit, el, ev) {
+	reportEventDrop: function(legacyEvent, eventMutation, el, ev) {
 		var calendar = this.calendar;
-		var mutateResult = calendar.mutateSeg(seg, dropLocation, largeUnit);
+		var undoDataFunc = calendar.mutateEventsWithId(legacyEvent._id, eventMutation);
+
 		var undoFunc = function() {
-			mutateResult.undo();
+			undoDataFunc();
 			calendar.reportEventChange();
 		};
 
-		this.triggerEventDrop(seg.event, mutateResult.dateDelta, undoFunc, el, ev);
+		this.triggerEventDrop(legacyEvent, eventMutation.dateDelta, undoFunc, el, ev);
 		calendar.reportEventChange(); // will rerender events
 	},
 
