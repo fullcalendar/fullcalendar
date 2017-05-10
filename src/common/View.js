@@ -768,15 +768,16 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	// Must be called when an event in the view has been resized to a new length
-	reportSegResize: function(seg, resizeLocation, largeUnit, el, ev) {
+	reportEventResize: function(legacyEvent, eventMutation, el, ev) {
 		var calendar = this.calendar;
-		var mutateResult = calendar.mutateSeg(seg, resizeLocation, largeUnit);
+		var undoDataFunc = calendar.mutateEventsWithId(legacyEvent._id, eventMutation);
+
 		var undoFunc = function() {
-			mutateResult.undo();
+			undoDataFunc();
 			calendar.reportEventChange();
 		};
 
-		this.triggerEventResize(seg.event, mutateResult.durationDelta, undoFunc, el, ev);
+		this.triggerEventResize(legacyEvent, eventMutation.endDelta, undoFunc, el, ev);
 		calendar.reportEventChange(); // will rerender events
 	},
 

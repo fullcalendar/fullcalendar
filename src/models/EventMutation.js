@@ -36,6 +36,12 @@ var EventMutation = Class.extend({ // TODO: EventDefMutation
 
 			undoDateMutation();
 		};
+	},
+
+
+	isSomething: function() {
+		return this.newTitle != null || this.newRendering != null || this.additionalMiscProps ||
+			(this.dateMutation && this.dateMutation.isSomething());
 	}
 
 });

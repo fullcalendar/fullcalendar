@@ -83,6 +83,14 @@ var EventDateMutation = Class.extend({ // TODO: EventDefDateMutation
 			eventDef.start = origStart;
 			eventDef.end = origEnd;
 		};
+	},
+
+
+	isSomething: function() {
+		return this.clearEnd || this.forceTimed || this.forceAllDay ||
+			(this.dateDelta && this.dateDelta.valueOf()) ||
+			(this.startDelta && this.startDelta.valueOf()) ||
+			(this.endDelta && this.endDelta.valueOf());
 	}
 
 });

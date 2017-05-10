@@ -395,8 +395,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventLocation, seg) {
-		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+	renderEventResize: function(eventRanges, seg) {
+		return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
 	},
 
 

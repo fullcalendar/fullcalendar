@@ -344,15 +344,15 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventLocation, seg) {
-		var eventSpans = this.eventToSpans(eventLocation);
+	renderEventResize: function(eventRanges, seg) {
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 		var i;
 
-		for (i = 0; i < eventSpans.length; i++) {
-			this.renderHighlight(eventSpans[i]);
+		for (i = 0; i < eventFootprints.length; i++) {
+			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+		return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
 	},
 
 

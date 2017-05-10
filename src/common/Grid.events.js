@@ -362,7 +362,6 @@ Grid.mixin({
 
 				if (origFootprint && footprint) {
 					eventMutation = _this.computeEventDropMutation(origFootprint, footprint);
-					console.log('eventMutation', eventMutation);
 					eventInstanceGroup = view.calendar.buildMutatedEventInstanceGroup(event._id, eventMutation);
 					isAllowed = Boolean(eventMutation); // TODO && _this.isEventLocationAllowed(dropLocation, event);
 				}
@@ -663,7 +662,7 @@ Grid.mixin({
 		var event = seg.event;
 		var eventEnd = calendar.getEventEnd(event);
 		var isDragging;
-		var resizeLocation; // zoned event date properties. falsy if invalid resize
+		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = this.segResizeListener = new HitDragListener(this, {
@@ -679,41 +678,50 @@ Grid.mixin({
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var origHitSpan = _this.getSafeHitSpan(origHit);
-				var hitSpan = _this.getSafeHitSpan(hit);
+				var origHitFootprint = _this.getSafeHitFootprint(origHit);
+				var hitFootprint = _this.getSafeHitFootprint(hit);
+				var eventInstanceGroup;
 
-				if (origHitSpan && hitSpan) {
-					resizeLocation = isStart ?
-						_this.computeEventStartResize(origHitSpan, hitSpan, event) :
-						_this.computeEventEndResize(origHitSpan, hitSpan, event);
+				if (origHitFootprint && hitFootprint) {
+					resizeMutation = isStart ?
+						_this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, event) :
+						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, event);
 
-					isAllowed = resizeLocation && _this.isEventLocationAllowed(resizeLocation, event);
+					if (resizeMutation) {
+						eventInstanceGroup = calendar.buildMutatedEventInstanceGroup(event._id, resizeMutation);
+						isAllowed = true; // TODO && _this.isEventLocationAllowed(resizeLocation, event);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
 				}
 
 				if (!isAllowed) {
-					resizeLocation = null;
+					resizeMutation = null;
 					disableCursor();
 				}
-				else {
-					if (
-						resizeLocation.start.isSame(event.start.clone().stripZone()) &&
-						resizeLocation.end.isSame(eventEnd.clone().stripZone())
-					) {
-						// no change. (FYI, event dates might have zones)
-						resizeLocation = null;
-					}
+				else if (!resizeMutation.isSomething()) {
+					// no change. (FYI, event dates might have zones)
+					resizeMutation = null;
 				}
 
-				if (resizeLocation) {
+				if (resizeMutation) {
 					view.hideEvent(event);
-					_this.renderEventResize(resizeLocation, seg);
+
+					_this.renderEventResize(
+						eventInstanceGroup.buildRenderRanges(
+							new UnzonedRange(_this.start, _this.end),
+							calendar
+						),
+						seg
+					);
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
-				resizeLocation = null;
+				resizeMutation = null;
 				view.showEvent(event); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
@@ -725,9 +733,9 @@ Grid.mixin({
 					_this.segResizeStop(seg, ev);
 				}
 
-				if (resizeLocation) { // valid date to resize to?
+				if (resizeMutation) { // valid date to resize to?
 					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-					view.reportSegResize(seg, resizeLocation, _this.largeUnit, el, ev);
+					view.reportEventResize(event, resizeMutation, el, ev);
 				}
 				else {
 					view.showEvent(event);
@@ -755,59 +763,54 @@ Grid.mixin({
 
 
 	// Returns new date-information for an event segment being resized from its start
-	computeEventStartResize: function(startSpan, endSpan, event) {
-		return this.computeEventResize('start', startSpan, endSpan, event);
+	// TODO: what about minResizeDuration?
+	computeEventStartResizeMutation: function(startFootprint, endFootprint, event) {
+		var startDelta = this.diffDates(
+			endFootprint.dateRange.getStart(),
+			startFootprint.dateRange.getStart()
+		);
+		var eventEnd = this.view.calendar.getEventEnd(event);
+		var dateMutation;
+		var eventMutation;
+
+		if (event.start.clone().add(startDelta) < eventEnd) {
+
+			dateMutation = new EventDateMutation();
+			dateMutation.startDelta = startDelta;
+
+			eventMutation = new EventMutation();
+			eventMutation.dateMutation = dateMutation;
+
+			return eventMutation;
+		}
+
+		return false;
 	},
 
 
 	// Returns new date-information for an event segment being resized from its end
-	computeEventEndResize: function(startSpan, endSpan, event) {
-		return this.computeEventResize('end', startSpan, endSpan, event);
-	},
+	// TODO: what about minResizeDuration?
+	computeEventEndResizeMutation: function(startFootprint, endFootprint, event) {
+		var endDelta = this.diffDates(
+			endFootprint.dateRange.getEnd(),
+			startFootprint.dateRange.getEnd()
+		);
+		var eventEnd = this.view.calendar.getEventEnd(event);
+		var dateMutation;
+		var eventMutation;
 
+		if (eventEnd.add(endDelta) > event.start) {
 
-	// Returns new zoned date information for an event segment being resized from its start OR end
-	// `type` is either 'start' or 'end'.
-	// DOES NOT consider overlap/constraint.
-	computeEventResize: function(type, startSpan, endSpan, event) {
-		var calendar = this.view.calendar;
-		var delta = this.diffDates(endSpan[type], startSpan[type]);
-		var resizeLocation; // zoned event date properties
-		var defaultDuration;
+			dateMutation = new EventDateMutation();
+			dateMutation.endDelta = endDelta;
 
-		// build original values to work from, guaranteeing a start and end
-		resizeLocation = {
-			start: event.start.clone(),
-			end: calendar.getEventEnd(event),
-			allDay: event.allDay
-		};
+			eventMutation = new EventMutation();
+			eventMutation.dateMutation = dateMutation;
 
-		// if an all-day event was in a timed area and was resized to a time, adjust start/end to have times
-		if (resizeLocation.allDay && durationHasTime(delta)) {
-			resizeLocation.allDay = false;
-			calendar.normalizeEventTimes(resizeLocation);
+			return eventMutation;
 		}
 
-		resizeLocation[type].add(delta); // apply delta to start or end
-
-		// if the event was compressed too small, find a new reasonable duration for it
-		if (!resizeLocation.start.isBefore(resizeLocation.end)) {
-
-			defaultDuration =
-				this.minResizeDuration || // TODO: hack
-				(event.allDay ?
-					calendar.defaultAllDayEventDuration :
-					calendar.defaultTimedEventDuration);
-
-			if (type == 'start') { // resizing the start?
-				resizeLocation.start = resizeLocation.end.clone().subtract(defaultDuration);
-			}
-			else { // resizing the end?
-				resizeLocation.end = resizeLocation.start.clone().add(defaultDuration);
-			}
-		}
-
-		return resizeLocation;
+		return false;
 	},
 
 
