@@ -9,14 +9,33 @@ var EventMutation = Class.extend({ // TODO: EventDefMutation
 
 	// will not provide an undo function
 	mutateSingleEventDefinition: function(eventDef, isAmbigTimezone) {
-		eventDef.title = this.newTitle;
-		eventDef.rendering = this.newRendering;
-		$.extend(eventDef.miscProps, this.additionalMiscProps || {});
+		var origTitle = eventDef.title;
+		var origRendering = eventDef.rendering;
+		var origMiscProps = eventDef.miscProps;
+		var undoDateMutation;
 
-		this.dateMutation.mutateSingleEventDefinition(
+		if (this.newTitle != null) {
+			eventDef.title = this.newTitle;
+		}
+
+		if (this.newRendering != null) {
+			eventDef.rendering = this.newRendering;
+		}
+
+		$.extend({}, eventDef.miscProps, this.additionalMiscProps || {});
+
+		undoDateMutation = this.dateMutation.mutateSingleEventDefinition(
 			eventDef,
 			isAmbigTimezone
 		);
+
+		return function() {
+			eventDef.title = origTitle;
+			eventDef.rendering = origRendering;
+			eventDef.miscProps = origMiscProps;
+
+			undoDateMutation();
+		};
 	}
 
 });
@@ -27,7 +46,6 @@ EventMutation.createFromRawProps = function(eventInstance, newRawProps, largeUni
 	var newRendering = newRawProps.rendering;
 	var additionalMiscProps = {};
 	var propName;
-	var newEventDateProfile;
 	var dateMutation;
 	var eventMutation;
 
@@ -37,15 +55,8 @@ EventMutation.createFromRawProps = function(eventInstance, newRawProps, largeUni
 		}
 	}
 
-	newEventDateProfile = new EventDateProfile(
-		calendar.moment(newRawProps.start),
-		newRawProps.end ? calendar.moment(newRawProps.end) : null
-	);
-
-	dateMutation = EventDateMutation.createFromDiff(
-		eventInstance.eventDateProfile,
-		newEventDateProfile,
-		largeUnit
+	dateMutation = EventDateMutation.createFromRawProps(
+		eventInstance, newRawProps, largeUnit, calendar
 	);
 
 	eventMutation = new EventMutation();
