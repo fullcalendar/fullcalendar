@@ -124,9 +124,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	// Converts a span (has unzoned start/end and any other grid-specific location information)
-	// into an array of segments (pieces of events whose format is decided by the grid).
-	spanToSegs: function(span) {
+	componentFootprintToSegs: function(componentFootprint) {
 		// subclasses must implement
 	},
 

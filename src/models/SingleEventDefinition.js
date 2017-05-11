@@ -29,7 +29,8 @@ var SingleEventDefinition = EventDefinition.extend({ // TODO: mix-in some of Eve
 
 
 	isAllDay: function() {
-		return !(this.start.hasTime() || this.end.hasTime());
+		// TODO: make more DRY
+		return !(this.start.hasTime() || (this.end && this.end.hasTime()));
 	}
 
 });
