@@ -1,5 +1,5 @@
 
-var SingleEventDefinition = EventDefinition.extend({
+var SingleEventDefinition = EventDefinition.extend({ // TODO: mix-in some of EventInstance's methods?
 
 	start: null,
 	end: null,

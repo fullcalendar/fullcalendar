@@ -1427,7 +1427,7 @@ Calendar.prototype.buildBusinessGroup = function(wholeDay, input, rangeStart, ra
 		return this._buildBusinessGroup(wholeDay, input, true, rangeStart, rangeEnd);
 	}
 	else {
-		return [];
+		return new EventInstanceGroup([]);
 	}
 };
 
