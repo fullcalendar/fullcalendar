@@ -5,6 +5,8 @@ var EventDefinition = Class.extend({
 	id: null,
 	title: null,
 	rendering: null,
+	constraint: null,
+	overlap: null,
 	miscProps: null,
 
 
@@ -25,6 +27,8 @@ var EventDefinition = Class.extend({
 		copy.id = this.id;
 		copy.title = this.title;
 		copy.rendering = this.rendering;
+		copy.constraint = this.constraint;
+		copy.overlap = this.overlap;
 		copy.miscProps = $.extend({}, this.miscProps);
 
 		return copy;
@@ -63,6 +67,8 @@ EventDefinition.parse = function(rawProps) {
 	def.id = rawProps.id || ('_fc' + (++EventDefinition.uuid));
 	def.title = rawProps.title || '';
 	def.rendering = rawProps.rendering || null;
+	def.constraint = rawProps.constraint;
+	def.overlap = rawProps.overlap;
 
 	for (propName in rawProps) {
 		if (!this.isReservedProp(propName)) {
@@ -76,4 +82,4 @@ EventDefinition.parse = function(rawProps) {
 };
 
 
-EventDefinition.addReservedProps([ 'id', 'title', 'rendering' ]);
+EventDefinition.addReservedProps([ 'id', 'title', 'rendering', 'constraint', 'overlap' ]);
