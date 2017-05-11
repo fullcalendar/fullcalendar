@@ -37,12 +37,12 @@ EventDefinition.uuid = 0;
 EventDefinition.reservedPropMap = {};
 
 
-EventDefinition.addReservedProps = function(props) {
+EventDefinition.addReservedProps = function(propArray) {
 	var map = {};
-	var propName;
+	var i;
 
-	for (propName in props) {
-		map[propName] = true;
+	for (i = 0; i < propArray.length; i++) {
+		map[propArray[i]] = true;
 	}
 
 	// won't modify original object. don't want sideeffects on superclasses
