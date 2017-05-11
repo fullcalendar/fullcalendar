@@ -11,15 +11,48 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 
 // Return events objects for business hours within the current view.
 // Abuse of our event system :(
-Calendar.prototype.buildCurrentBusinessGroup = function(wholeDay) {
+Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
 	var activeRange = this.getView().activeRange;
 
-	return this.buildBusinessGroup(
-		wholeDay,
-		this.opt('businessHours'),
-		activeRange.start,
-		activeRange.end
+	return this.eventInstanceGroupToFootprints(
+		this.buildBusinessGroup(
+			wholeDay,
+			this.opt('businessHours'),
+			activeRange.start,
+			activeRange.end
+		)
 	);
+};
+
+
+// doesn't consider resources :(
+// this is not only used for business hours
+Calendar.prototype.eventInstanceGroupToFootprints = function(eventInstanceGroup) {
+	var activeRange = this.getView().activeRange;
+
+	var eventRanges = eventInstanceGroup.buildEventRanges(
+		new UnzonedRange(activeRange.start, activeRange.end),
+		this // calendar
+	);
+
+	var i, eventRange;
+	var footprints = [];
+
+	for (i = 0; i < eventRanges.length; i++) {
+		eventRange = eventRanges[i];
+
+		footprints.push(
+			new EventFootprint( // TODO: DRY. also in Grid.event.js
+				eventRange.eventInstance,
+				new ComponentFootprint(
+					eventRange.dateRange,
+					eventRange.eventInstance.eventDateProfile.isAllDay()
+				)
+			)
+		);
+	}
+
+	return footprints;
 };
 
 

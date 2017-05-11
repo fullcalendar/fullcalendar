@@ -12,14 +12,7 @@ var EventDefinitionCollection = Class.extend({
 	},
 
 	addRaw: function(eventInput, source) {
-		var eventDef;
-
-		if (isEventInputRecurring(eventInput)) {
-			eventDef = RecurringEventDefinition.parse(eventInput);
-		}
-		else {
-			eventDef = SingleEventDefinition.parse(eventInput, this.calendar);
-		}
+		var eventDef = parseEventInput(eventInput, this.calendar);
 
 		if (source) {
 			eventDef.source = source;
@@ -99,6 +92,16 @@ var EventDefinitionCollection = Class.extend({
 	}
 
 });
+
+
+function parseEventInput(eventInput, calendar) {
+	if (isEventInputRecurring(eventInput)) {
+		return RecurringEventDefinition.parse(eventInput);
+	}
+	else {
+		return SingleEventDefinition.parse(eventInput, calendar);
+	}
+}
 
 
 function isEventInputRecurring(eventInput) {
