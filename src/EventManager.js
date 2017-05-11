@@ -1259,6 +1259,25 @@ Calendar.prototype.buildMutatedEventInstanceGroup = function(eventId, eventMutat
 -----------------------------------------------------------------------------------------*/
 
 
+Calendar.prototype.isEventFootprintAllowed = function(eventFootprint) {
+	console.log('isEventFootprintAllowed', eventFootprint);
+	return true;
+};
+
+
+// when it's a completely anonymous external drag, no event.
+Calendar.prototype.isExternalFootprintAllowed = function(componentFootprint) {
+	console.log('isExternalFootprintAllowed', componentFootprint);
+	return true;
+};
+
+
+Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
+	console.log('isSelectionFootprintAllowed', componentFootprint);
+	return true;
+};
+
+
 // Determines if the given event can be relocated to the given span (unzoned start/end with other misc data)
 Calendar.prototype.isEventSpanAllowed = function(span, event) {
 	var source = event.source || {};

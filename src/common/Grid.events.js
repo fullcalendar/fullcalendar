@@ -362,8 +362,14 @@ Grid.mixin({
 
 				if (origFootprint && footprint) {
 					eventMutation = _this.computeEventDropMutation(origFootprint, footprint);
-					eventInstanceGroup = view.calendar.buildMutatedEventInstanceGroup(event._id, eventMutation);
-					isAllowed = Boolean(eventMutation); // TODO && _this.isEventLocationAllowed(dropLocation, event);
+
+					if (eventMutation) {
+						eventInstanceGroup = view.calendar.buildMutatedEventInstanceGroup(event._id, eventMutation);
+						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
@@ -565,10 +571,20 @@ Grid.mixin({
 			hitOver: function(hit) {
 				var isAllowed = true;
 				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
+				var eventInstanceGroup;
 
 				if (hitFootprint) {
 					singleEventDef = _this.computeExternalDrop(hitFootprint, meta);
-					isAllowed = Boolean(singleEventDef); // TODO --- && _this.isExternalLocationAllowed(singleEventDef, meta.eventProps);
+
+					if (singleEventDef) {
+						eventInstanceGroup = new EventInstanceGroup(singleEventDef.buildInstances());
+						isAllowed = meta.eventProps ? // isEvent?
+							_this.isEventInstanceGroupAllowed(eventInstanceGroup) :
+							_this.isExternalInstanceGroupAllowed(eventInstanceGroup);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
@@ -717,7 +733,7 @@ Grid.mixin({
 
 					if (resizeMutation) {
 						eventInstanceGroup = calendar.buildMutatedEventInstanceGroup(event._id, resizeMutation);
-						isAllowed = true; // TODO && _this.isEventLocationAllowed(resizeLocation, event);
+						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
 					}
 					else {
 						isAllowed = false;
@@ -989,55 +1005,50 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	isEventLocationAllowed: function(eventLocation, event) {
-		if (this.isEventLocationInRange(eventLocation)) {
-			var calendar = this.view.calendar;
-			var eventSpans = this.eventToSpans(eventLocation);
-			var i;
+	// TODO: more DRY
+	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
+		var calendar = this.view.calendar;
+		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar);
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+		var i;
 
-			if (eventSpans.length) {
-				for (i = 0; i < eventSpans.length; i++) {
-					if (!calendar.isEventSpanAllowed(eventSpans[i], event)) {
-						return false;
-					}
-				}
-
-				return true;
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
+				return false;
 			}
 		}
 
-		return false;
-	},
-
-
-	isExternalLocationAllowed: function(eventLocation, metaProps) { // FOR the external element
-		if (this.isEventLocationInRange(eventLocation)) {
-			var calendar = this.view.calendar;
-			var eventSpans = this.eventToSpans(eventLocation);
-			var i;
-
-			if (eventSpans.length) {
-				for (i = 0; i < eventSpans.length; i++) {
-					if (!calendar.isExternalSpanAllowed(eventSpans[i], eventLocation, metaProps)) {
-						return false;
-					}
-				}
-
-				return true;
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!calendar.isEventFootprintAllowed(eventFootprints[i])) {
+				return false;
 			}
 		}
 
-		return false;
+		return true;
 	},
 
 
-	isEventLocationInRange: function(eventLocation) {
-		return false;
+	// TODO: more DRY
+	// when it's a completely anonymous external drag, no event.
+	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
+		var calendar = this.view.calendar;
+		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar);
+		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+		var i;
 
-		return isRangeWithinRange(
-			//this.eventToRawRange(eventLocation),
-			this.view.validRange
-		);
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
+				return false;
+			}
+		}
+
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!calendar.isExternalFootprintAllowed(eventFootprints[i])) {
+				return false;
+			}
+		}
+
+		return true;
 	},
 
 

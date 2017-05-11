@@ -488,7 +488,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	computeSelection: function(footprint0, footprint1) {
 		var wholeFootprint = this.computeSelectionFootprint(footprint0, footprint1);
 
-		if (span && !this.view.calendar.isSelectionSpanAllowed(span)) {
+		if (wholeFootprint && !this.isSelectionFootprintAllowed(wholeFootprint)) {
 			return false;
 		}
 
@@ -511,6 +511,20 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		return new ComponentFootprint(
 			new UnzonedRange(ms[0], ms[3]),
 			footprint0.isAllDay
+		);
+	},
+
+
+	isSelectionFootprintAllowed: function(componentFootprint) {
+		return this.isFootprintInRange(componentFootprint) &&
+			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
+	},
+
+
+	isFootprintInRange: function(componentFootprint) { // used by other things too
+		return isRangeWithinRange(
+			componentFootprint.dateRange.getRange(),
+			this.view.validRange
 		);
 	},
 
