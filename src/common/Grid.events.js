@@ -555,7 +555,7 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
-		var dropLocation; // a null value signals an unsuccessful drag
+		var singleEventDef; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
 		var dragListener = _this.externalDragListener = new HitDragListener(this, {
@@ -564,36 +564,44 @@ Grid.mixin({
 			},
 			hitOver: function(hit) {
 				var isAllowed = true;
-				var hitSpan = hit.component.getSafeHitSpan(hit); // hit might not belong to this grid
+				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
 
-				if (hitSpan) {
-					dropLocation = _this.computeExternalDrop(hitSpan, meta);
-					isAllowed = dropLocation && _this.isExternalLocationAllowed(dropLocation, meta.eventProps);
+				if (hitFootprint) {
+					singleEventDef = _this.computeExternalDrop(hitFootprint, meta);
+					isAllowed = Boolean(singleEventDef); // TODO --- && _this.isExternalLocationAllowed(singleEventDef, meta.eventProps);
 				}
 				else {
 					isAllowed = false;
 				}
 
 				if (!isAllowed) {
-					dropLocation = null;
+					singleEventDef = null;
 					disableCursor();
 				}
 
-				if (dropLocation) {
-					_this.renderDrag(dropLocation); // called without a seg parameter
+				if (singleEventDef) {
+					_this.renderDrag( // called without a seg parameter
+						new EventInstanceGroup(singleEventDef.buildInstances())
+							.buildRenderRanges(
+								new UnzonedRange(_this.start, _this.end),
+								view.calendar
+							)
+					);
 				}
 			},
 			hitOut: function() {
-				dropLocation = null; // signal unsuccessful
+				singleEventDef = null; // signal unsuccessful
 			},
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 				_this.unrenderDrag();
 			},
 			interactionEnd: function(ev) {
-				if (dropLocation) { // element was dropped on a valid hit
-					view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+
+				if (singleEventDef) { // element was dropped on a valid hit
+					view.reportExternalDrop(meta, singleEventDef, el, ev, ui);
 				}
+
 				_this.isDraggingExternal = false;
 				_this.externalDragListener = null;
 			}
@@ -607,23 +615,34 @@ Grid.mixin({
 	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
 	// DOES NOT consider overlap/constraint.
-	computeExternalDrop: function(span, meta) {
+	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
-		var dropLocation = {
-			start: calendar.applyTimezone(span.start), // simulate a zoned event start date
-			end: null
-		};
+		var start = calendar.moment(componentFootprint.dateRange.startMs);
+		var end;
+		var eventDef;
 
 		// if dropped on an all-day span, and element's metadata specified a time, set it
-		if (meta.startTime && !dropLocation.start.hasTime()) {
-			dropLocation.start.time(meta.startTime);
+		if (meta.startTime && componentFootprint.isAllDay) {
+			start.time(meta.startTime);
 		}
 
 		if (meta.duration) {
-			dropLocation.end = dropLocation.start.clone().add(meta.duration);
+			end = start.clone().add(meta.duration);
 		}
 
-		return dropLocation;
+		if (componentFootprint.isAllDay) {
+			start.stripTime();
+
+			if (end) {
+				end.stripTime();
+			}
+		}
+
+		eventDef = new SingleEventDefinition();
+		eventDef.start = start;
+		eventDef.end = end;
+
+		return eventDef;
 	},
 
 
