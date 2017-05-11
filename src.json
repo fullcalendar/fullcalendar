@@ -41,6 +41,7 @@
     "Calendar.render.js",
     "Calendar.toolbar.js",
     "Calendar.business.js",
+    "Calendar.constraints.js",
     "defaults.js",
     "locale.js",
     "Header.js",

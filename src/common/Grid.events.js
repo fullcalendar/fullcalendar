@@ -1043,7 +1043,8 @@ Grid.mixin({
 		}
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!calendar.isExternalFootprintAllowed(eventFootprints[i])) {
+			// treat it as a selection
+			if (!calendar.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
 				return false;
 			}
 		}
