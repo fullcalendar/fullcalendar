@@ -33,7 +33,10 @@ var EventInstanceGroup = Class.extend({
 			eventInstance = eventInstances[i];
 
 			dateRange = eventInstance.eventDateProfile.buildRange(calendar);
-			dateRange = dateRange.constrainTo(constraintRange);
+
+			if (constraintRange) {
+				dateRange = dateRange.constrainTo(constraintRange);
+			}
 
 			if (dateRange) {
 				eventRanges.push(

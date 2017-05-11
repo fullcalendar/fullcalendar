@@ -671,6 +671,12 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
+	t.addEventDef = function(eventDef, isSticky) { // TODO: respect isSticky
+		eventDefCollection.add(eventDef);
+		reportEventChange();
+	};
+
+
 	function removeEvents(filter) {
 		var eventID;
 		var i;

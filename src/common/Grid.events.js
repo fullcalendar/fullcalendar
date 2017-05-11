@@ -599,7 +599,12 @@ Grid.mixin({
 			interactionEnd: function(ev) {
 
 				if (singleEventDef) { // element was dropped on a valid hit
-					view.reportExternalDrop(meta, singleEventDef, el, ev, ui);
+					view.reportExternalDrop(
+						singleEventDef,
+						Boolean(meta.eventProps), // isEvent
+						Boolean(meta.stick), // isSticky
+						el, ev, ui
+					);
 				}
 
 				_this.isDraggingExternal = false;
@@ -638,9 +643,13 @@ Grid.mixin({
 			}
 		}
 
-		eventDef = new SingleEventDefinition();
-		eventDef.start = start;
-		eventDef.end = end;
+		eventDef = SingleEventDefinition.parse(
+			$.extend({}, meta.eventProps, {
+				start: start,
+				end: end
+			}),
+			calendar
+		);
 
 		return eventDef;
 	},

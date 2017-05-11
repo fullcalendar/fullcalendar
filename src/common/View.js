@@ -736,33 +736,29 @@ var View = FC.View = ChronoComponent.extend({
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
 	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportExternalDrop: function(meta, singleEventDef, el, ev, ui) {
-		var eventProps = meta.eventProps;
-		var eventInput;
-		var event;
+	reportExternalDrop: function(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
-		// Try to build an event object and render it. TODO: decouple the two
-		// TODO: use singleEventDef directly without reparsing. but meta's props inside the def beforehand.
-		if (eventProps) {
-			eventInput = $.extend({}, eventProps, {
-				start: singleEventDef.start,
-				end: singleEventDef.end
-			});
-			event = this.calendar.renderEvent(eventInput, meta.stick)[0]; // renderEvent returns an array
+		if (isEvent) {
+			this.calendar.addEventDef(singleEventDef, isSticky);
 		}
 
-		this.triggerExternalDrop(event, singleEventDef, el, ev, ui);
+		this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
 	},
 
 
 	// Triggers external-drop handlers that have subscribed via the API
-	triggerExternalDrop: function(event, singleEventDef, el, ev, ui) {
+	triggerExternalDrop: function(singleEventDef, isEvent, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
 		this.publiclyTrigger('drop', el[0], singleEventDef.start, ev, ui);
 
-		if (event) {
-			this.publiclyTrigger('eventReceive', null, event); // signal an external event landed
+		if (isEvent) {
+			// signal an external event landed
+			this.publiclyTrigger(
+				'eventReceive',
+				null,
+				singleEventDef.buildInstances()[0].toLegacy()
+			);
 		}
 	},
 
