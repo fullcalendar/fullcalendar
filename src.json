@@ -40,6 +40,7 @@
     "Calendar.view-spec.js",
     "Calendar.render.js",
     "Calendar.toolbar.js",
+    "Calendar.business.js",
     "defaults.js",
     "locale.js",
     "Header.js",
