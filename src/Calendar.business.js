@@ -13,36 +13,37 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 // Abuse of our event system :(
 Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
 	var activeRange = this.getView().activeRange;
-
-	return this.eventInstanceGroupToFootprints(
-		this.buildBusinessGroup(
-			wholeDay,
-			this.opt('businessHours'),
-			activeRange.start,
-			activeRange.end
-		)
+	var eventInstances = this.buildBusinessInstances(
+		wholeDay,
+		this.opt('businessHours'),
+		activeRange.start,
+		activeRange.end
 	);
+
+	var eventRanges = this.eventInstancesToEventRanges(eventInstances);
+
+	return this.eventRangesToEventFootprints(eventRanges);
 };
 
 
 // Given a raw input value from options, return events objects for business hours within the current view.
-Calendar.prototype.buildBusinessGroup = function(wholeDay, input, rangeStart, rangeEnd) {
+Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart, rangeEnd) {
 	if (input === true) {
-		return this._buildBusinessGroup(wholeDay, [ {} ], false, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isPlainObject(input)) {
-		return this._buildBusinessGroup(wholeDay, [ input ], false, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isArray(input)) {
-		return this._buildBusinessGroup(wholeDay, input, true, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
 	}
 	else {
-		return new EventInstanceGroup([]);
+		return [];
 	}
 };
 
 
-Calendar.prototype._buildBusinessGroup = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
 	var rawDef;
 	var fullRawDef;
 	var eventDef;
@@ -69,5 +70,5 @@ Calendar.prototype._buildBusinessGroup = function(wholeDay, rawDefs, ignoreNoDow
 		);
 	}
 
-	return new EventInstanceGroup(eventInstances);
+	return eventInstances;
 };

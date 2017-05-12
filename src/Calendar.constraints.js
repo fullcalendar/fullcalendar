@@ -259,6 +259,7 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 
 // Conversion: eventDefs -> eventInstances -> eventRanges -> eventFootprints -> componentFootprints
 // ------------------------------------------------------------------------------------------------
+// TODO: this is not DRY with Grid
 
 
 Calendar.prototype.eventDefsToInstances = function(eventDefs) {
