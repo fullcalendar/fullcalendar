@@ -7,6 +7,10 @@ var ComponentFootprint = Class.extend({
 	constructor: function(dateRange, isAllDay) {
 		this.dateRange = dateRange;
 		this.isAllDay = isAllDay;
+	},
+
+	toLegacy: function() {
+		return this.dateRange.getRange();
 	}
 
 });
