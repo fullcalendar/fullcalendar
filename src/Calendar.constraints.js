@@ -1,7 +1,3 @@
-/*
-TODO: caching. dont want to regenerate all these ranges
-twice if there are two events being dragged at once.
-*/
 
 Calendar.prototype.isEventFootprintAllowed = function(eventFootprint) {
 	var eventDef = eventFootprint.eventInstance.eventDefinition;
@@ -39,11 +35,13 @@ Calendar.prototype.isEventFootprintAllowed = function(eventFootprint) {
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
 	var selectAllowFunc;
 
-	if (this.isFootprintAllowed(
-		componentFootprint,
-		this.opt('selectConstraint'),
-		this.opt('selectOverlap')
-	)) {
+	if (
+		this.isFootprintAllowed(
+			componentFootprint,
+			this.opt('selectConstraint'),
+			this.opt('selectOverlap')
+		)
+	) {
 		selectAllowFunc = this.opt('selectAllow');
 
 		if (selectAllowFunc) {
@@ -75,6 +73,7 @@ Calendar.prototype.isFootprintAllowed = function(
 		}
 	}
 
+	// TODO: somehow cache this for multiple calls that all share the same EventDefinition
 	overlapEventFootprints = this.getOverlappingEventFootprints(componentFootprint, subjectEventInstance);
 
 	if (overlapVal === false) {
@@ -158,15 +157,17 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal) {
 
 
 Calendar.prototype.getOverlappingEventFootprints = function(componentFootprint, subjectEventInstance) {
-	var peerEventFootprints = this.getPeerEventFootprints(componentFootprint, subjectEventInstance);
+	var peerEventFootprints = this.getPeerEventFootprints(subjectEventInstance);
 	var overlapEventFootprints = [];
 	var i;
 
 	for (i = 0; i < peerEventFootprints.length; i++) {
-		if (this.footprintsIntersect(
-			componentFootprint,
-			peerEventFootprints[i].componentFootprint
-		)) {
+		if (
+			this.footprintsIntersect(
+				componentFootprint,
+				peerEventFootprints[i].componentFootprint
+			)
+		) {
 			overlapEventFootprints.push(peerEventFootprints[i]);
 		}
 	}
@@ -175,7 +176,7 @@ Calendar.prototype.getOverlappingEventFootprints = function(componentFootprint, 
 };
 
 
-Calendar.prototype.getPeerEventFootprints = function(componentFootprint, subjectEventInstance) {
+Calendar.prototype.getPeerEventFootprints = function(subjectEventInstance) {
 	var peerEventDefs = subjectEventInstance ?
 		this.getUnrelatedEventDefs(subjectEventInstance.eventDefinition) :
 		this.eventDefCollection.eventDefs.slice(); // all. clone
