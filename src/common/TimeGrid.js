@@ -257,7 +257,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
 	componentFootprintToSegs: function(componentFootprint) {
-		var segs = this.sliceRangeByTimes({ start: componentFootprint.dateRange.getStart(), end: componentFootprint.dateRange.getEnd() });
+		var segs = this.sliceRangeByTimes(componentFootprint.dateRange.getRange());
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -456,7 +456,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderNowIndicator: function(date) {
 		// seg system might be overkill, but it handles scenario where line needs to be rendered
 		//  more than once because of columns with the same date (resources columns for example)
-		var segs = this.spanToSegs({ start: date, end: date });
+		var segs = this.componentFootprintToSegs(
+			new ComponentFootprint(
+				new UnzonedRange(date, date),
+				false // all-day
+			)
+		);
 		var top = this.computeDateTop(date, date);
 		var nodes = [];
 		var i;
