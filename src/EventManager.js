@@ -47,6 +47,9 @@ function EventManager() { // assumed to be a calendar
 	var eventDefCollection = new EventDefinitionCollection(t);
 	t.eventDefCollection = eventDefCollection;
 
+	var currentRenderRanges;
+	var currentEventRanges;
+
 
 	$.each(
 		(t.opt('events') ? [ t.opt('events') ] : []).concat(t.opt('eventSources') || []),
@@ -65,14 +68,17 @@ function EventManager() { // assumed to be a calendar
 			return fetchEvents(start, end);
 		}
 		else {
-			return Promise.resolve(eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
+			currentRenderRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
+			currentEventRanges = eventDefCollection.buildEventRanges(rangeStart, rangeEnd, t);
+			return Promise.resolve(currentRenderRanges);
 		}
 	}
 
 
 	function reportEventChange() {
-		debugEventDefCollection();
-		t.trigger('eventsReset', eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
+		currentRenderRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
+		currentEventRanges = eventDefCollection.buildEventRanges(rangeStart, rangeEnd, t);
+		t.trigger('eventsReset', currentRenderRanges);
 	}
 
 
@@ -154,28 +160,6 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	function debugEventDefCollection() {
-		var eventRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
-		var i, eventRange;
-
-		console.log('ranges');
-		console.log('------------------');
-
-		for (i = 0; i < eventRanges.length; i++) {
-			eventRange = eventRanges[i];
-
-			console.log(eventRange.eventInstance.eventDefinition.title);
-			console.log(' allDay', eventRange.eventInstance.eventDateProfile.isAllDay());
-			console.log(' start', eventRange.dateRange.getStart().format());
-			console.log(' end', eventRange.dateRange.getEnd().format());
-			console.log(' isStart', eventRange.dateRange.isStart);
-			console.log(' isEnd', eventRange.dateRange.isEnd);
-		}
-
-		console.log();
-	}
-
-
 	// fetches an event source and processes its result ONLY if it is still the current fetch.
 	// caller is responsible for incrementing pendingSourceCnt first.
 	function tryFetchEventSource(source, fetchId) {
@@ -243,8 +227,8 @@ function EventManager() { // assumed to be a calendar
 	function decrementPendingSourceCnt() {
 		pendingSourceCnt--;
 		if (!pendingSourceCnt) {
-			reportEventChange();
-			t.trigger('eventsReceived', eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t));
+			reportEventChange(); // populates currentRenderRanges
+			t.trigger('eventsReceived', currentRenderRanges);
 		}
 	}
 

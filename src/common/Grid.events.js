@@ -1060,13 +1060,6 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Generates an array of segments for the given single event
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	eventToSegs: function(event) {
-		return []; // TODO!!!
-	},
-
-
 	eventRangesToEventFootprints: function(eventRanges) {
 		var eventFootprints = [];
 		var i;

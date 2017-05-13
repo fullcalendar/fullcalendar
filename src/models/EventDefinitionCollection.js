@@ -47,6 +47,22 @@ var EventDefinitionCollection = Class.extend({
 		// TODO
 	},
 
+	// TODO: make DRY with buildRenderRanges. REUSE same instanceGroups somehow
+	buildEventRanges: function(start, end, calendar) {
+		var renderRanges = [];
+		var instanceGroups = this.buildInstanceGroups(start, end);
+		var constraintRange = new UnzonedRange(start, end);
+		var i;
+
+		for (i = 0; i < instanceGroups.length; i++) {
+			renderRanges.push.apply(renderRanges, // append
+				instanceGroups[i].buildEventRanges(constraintRange, calendar)
+			);
+		}
+
+		return renderRanges;
+	},
+
 	buildRenderRanges: function(start, end, calendar) {
 		var renderRanges = [];
 		var instanceGroups = this.buildInstanceGroups(start, end);
