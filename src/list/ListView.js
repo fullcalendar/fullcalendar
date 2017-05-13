@@ -66,7 +66,7 @@ var ListViewGrid = Grid.extend({
 	hasDayInteractions: false, // no day selection or day clicking
 
 	// slices by day
-	spanToSegs: function(span) {
+	componentFootprintToSegs: function(footprint) {
 		var view = this.view;
 		var dayStart = view.renderRange.start.clone().time(0); // timed, so segs get times!
 		var dayIndex = 0;
@@ -75,7 +75,7 @@ var ListViewGrid = Grid.extend({
 
 		while (dayStart < view.renderRange.end) {
 
-			seg = intersectRanges(span, {
+			seg = intersectRanges(footprint.dateRange.getRange(), {
 				start: dayStart,
 				end: dayStart.clone().add(1, 'day')
 			});
@@ -88,13 +88,13 @@ var ListViewGrid = Grid.extend({
 			dayStart.add(1, 'day');
 			dayIndex++;
 
-			// detect when span won't go fully into the next day,
+			// detect when footprint won't go fully into the next day,
 			// and mutate the latest seg to the be the end.
 			if (
-				seg && !seg.isEnd && span.end.hasTime() &&
-				span.end < dayStart.clone().add(view.nextDayThreshold)
+				seg && !seg.isEnd && footprint.isAllDay &&
+				footprint.dateRange.getEnd() < dayStart.clone().add(view.nextDayThreshold)
 			) {
-				seg.end = span.end.clone();
+				seg.end = footprint.dateRange.getEnd();
 				seg.isEnd = true;
 				break;
 			}
