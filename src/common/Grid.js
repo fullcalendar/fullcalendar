@@ -129,6 +129,14 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
+	isFootprintInRange: function(componentFootprint) { // used by other things too
+		return isRangeWithinRange(
+			componentFootprint.dateRange.getRange(),
+			this.view.validRange
+		);
+	},
+
+
 	// Diffs the two dates, returning a duration, based on granularity of the grid
 	// TODO: port isTimeScale into this system?
 	diffDates: function(a, b) {
@@ -180,7 +188,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	getSafeHitFootprint: function(hit) {
 		var footprint = this.getHitFootprint(hit);
 
-		if (!isRangeWithinRange(footprint.dateRange.getRange(), this.view.activeRange)) {
+		if (!this.isFootprintInRange(footprint)) {
 			return null;
 		}
 
@@ -516,14 +524,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	isSelectionFootprintAllowed: function(componentFootprint) {
 		return this.isFootprintInRange(componentFootprint) &&
 			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
-	},
-
-
-	isFootprintInRange: function(componentFootprint) { // used by other things too
-		return isRangeWithinRange(
-			componentFootprint.dateRange.getRange(),
-			this.view.validRange
-		);
 	},
 
 

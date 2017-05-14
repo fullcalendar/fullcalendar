@@ -1016,12 +1016,6 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
-				return false;
-			}
-		}
-
-		for (i = 0; i < eventFootprints.length; i++) {
 			if (!calendar.isEventFootprintAllowed(eventFootprints[i])) {
 				return false;
 			}
@@ -1038,12 +1032,6 @@ Grid.mixin({
 		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar);
 		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 		var i;
-
-		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
-				return false;
-			}
-		}
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			// treat it as a selection
