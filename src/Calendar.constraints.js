@@ -1,27 +1,8 @@
 
 Calendar.prototype.isEventFootprintAllowed = function(eventFootprint) {
 	var eventDef = eventFootprint.eventInstance.eventDefinition;
-	var source = eventDef.source || {};
-	var constraintVal;
-	var overlapVal;
-
-	// TODO: use EventDef
-	constraintVal = eventDef.constraint;
-	if (constraintVal == null) {
-		constraintVal = source.constraint;
-		if (constraintVal == null) {
-			constraintVal = this.opt('eventConstraint');
-		}
-	}
-
-	// TODO: use EventDef
-	overlapVal = eventDef.overlap;
-	if (overlapVal == null) {
-		overlapVal = source.overlap;
-		if (overlapVal == null) {
-			overlapVal = this.opt('eventOverlap');
-		}
-	}
+	var constraintVal = eventDef.getConstraint(this);
+	var overlapVal = eventDef.getOverlap(this);
 
 	return this.isFootprintAllowed(
 		eventFootprint.componentFootprint,

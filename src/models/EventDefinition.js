@@ -54,6 +54,32 @@ var EventDefinition = Class.extend({
 		var rendering = this.getRendering();
 
 		return rendering === 'inverse-background' || rendering === 'background';
+	},
+
+
+	getConstraint: function(calendar) {
+		if (this.constraint != null) {
+			return this.constraint;
+		}
+
+		if (this.source && this.source.constraint != null) {
+			return this.source.constraint;
+		}
+
+		return calendar.opt('eventConstraint');
+	},
+
+
+	getOverlap: function(calendar) {
+		if (this.overlap != null) {
+			return this.overlap;
+		}
+
+		if (this.source && this.source.overlap != null) {
+			return this.source.overlap;
+		}
+
+		return calendar.opt('eventOverlap');
 	}
 
 
