@@ -32,7 +32,30 @@ var EventDefinition = Class.extend({
 		copy.miscProps = $.extend({}, this.miscProps);
 
 		return copy;
+	},
+
+
+	getRendering: function() {
+		if (this.rendering != null) {
+			return this.rendering;
+		}
+		if (this.source) {
+			return this.source.rendering;
+		}
+	},
+
+
+	isInverseBgEvent: function() {
+		return this.getRendering() === 'inverse-background';
+	},
+
+
+	isBgEvent: function() {
+		var rendering = this.getRendering();
+
+		return rendering === 'inverse-background' || rendering === 'background';
 	}
+
 
 });
 

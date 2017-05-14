@@ -1150,36 +1150,6 @@ function pluckEventDateProps(event) {
 FC.pluckEventDateProps = pluckEventDateProps;
 
 
-function isBgEvent(event) { // returns true if background OR inverse-background
-	var rendering = getEventRendering(event);
-	return rendering === 'background' || rendering === 'inverse-background';
-}
-FC.isBgEvent = isBgEvent; // export
-
-
-function isInverseBgEvent(event) {
-	return getEventRendering(event) === 'inverse-background';
-}
-
-
-function getEventRendering(event) {
-	return firstDefined((event.source || {}).rendering, event.rendering);
-}
-
-
-function groupEventsById(events) {
-	var eventsById = {};
-	var i, event;
-
-	for (i = 0; i < events.length; i++) {
-		event = events[i];
-		(eventsById[event._id] || (eventsById[event._id] = [])).push(event);
-	}
-
-	return eventsById;
-}
-
-
 // A cmp function for determining which non-inverted "ranges" (see above) happen earlier
 function compareRanges(range1, range2) {
 	return range1.start - range2.start; // earlier ranges go first

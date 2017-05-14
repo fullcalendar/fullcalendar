@@ -7,11 +7,16 @@ var EventInstanceGroup = Class.extend({
 		this.eventInstances = eventInstances;
 	},
 
-	isInverse: function() {
-		var eventInstances = this.eventInstances;
+	getEventDef: function() {
+		if (this.eventInstances.length) {
+			return this.eventInstances[0].eventDefinition;
+		}
+	},
 
-		// TODO: ask the source/calendar
-		return eventInstances.length && eventInstances[0].eventDefinition.rendering === 'inverse-background';
+	isInverse: function() {
+		var eventDef = this.getEventDef();
+
+		return eventDef && eventDef.isInverseBgEvent();
 	},
 
 	buildRenderRanges: function(constraintRange, calendar) { // TODO: buildRenderableEventRanges ?
