@@ -48,7 +48,6 @@ function EventManager() { // assumed to be a calendar
 	t.eventDefCollection = eventDefCollection;
 
 	var currentRenderRanges;
-	var currentEventRanges;
 
 
 	$.each(
@@ -69,7 +68,6 @@ function EventManager() { // assumed to be a calendar
 		}
 		else {
 			currentRenderRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
-			currentEventRanges = eventDefCollection.buildEventRanges(rangeStart, rangeEnd, t);
 			return Promise.resolve(currentRenderRanges);
 		}
 	}
@@ -77,7 +75,6 @@ function EventManager() { // assumed to be a calendar
 
 	function reportEventChange() {
 		currentRenderRanges = eventDefCollection.buildRenderRanges(rangeStart, rangeEnd, t);
-		currentEventRanges = eventDefCollection.buildEventRanges(rangeStart, rangeEnd, t);
 		t.trigger('eventsReset', currentRenderRanges);
 	}
 
