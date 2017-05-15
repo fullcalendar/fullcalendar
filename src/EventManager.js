@@ -593,7 +593,7 @@ function EventManager() { // assumed to be a calendar
 			eventDef = parseEventInput(eventInputs[i], eventInputs[i].source || stickySource);
 
 			if (eventDef) { // not invalid
-				t.addEventDef(eventDef, isSticky);
+				addEventDef(eventDef, isSticky);
 				successCnt++;
 			}
 		}
@@ -604,15 +604,19 @@ function EventManager() { // assumed to be a calendar
 	}
 
 
-	t.addEventDef = function(eventDef, isSticky) {
+	t.addEventDefAndRender = function(eventDef, isSticky) {
+		addEventDef(eventDef, isSticky);
+		reportEventChange();
+	};
+
+
+	function addEventDef(eventDef, isSticky) {
 		eventDefCollection.add(eventDef);
 
 		if (isSticky) {
 			stickySource.events.push(eventDef);
 		}
-
-		reportEventChange();
-	};
+	}
 
 
 	function removeEvents(filter) {

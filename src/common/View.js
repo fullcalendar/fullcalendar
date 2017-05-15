@@ -739,7 +739,7 @@ var View = FC.View = ChronoComponent.extend({
 	reportExternalDrop: function(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
 		if (isEvent) {
-			this.calendar.addEventDef(singleEventDef, isSticky);
+			this.calendar.addEventDefAndRender(singleEventDef, isSticky);
 		}
 
 		this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
