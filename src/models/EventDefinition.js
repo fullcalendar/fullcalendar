@@ -8,9 +8,11 @@ var EventDefinition = Class.extend({
 	constraint: null,
 	overlap: null,
 	miscProps: null,
+	className: null, // an array. TODO: rename to className*s*
 
 
-	constructor: function() {
+	constructor: function(source) {
+		this.source = source;
 		this.miscProps = {};
 	},
 
@@ -110,16 +112,33 @@ EventDefinition.isReservedProp = function(propName) {
 };
 
 
-EventDefinition.parse = function(rawProps) {
-	var def = new this();
+EventDefinition.parse = function(rawProps, source, calendar) {
+	var def = new this(source);
 	var propName;
 	var miscProps = {};
+	var className;
+
+	var calendarTransform = calendar.opt('eventDataTransform');
+	var sourceTransform = source.eventDataTransform;
+
+	if (calendarTransform) {
+		rawProps = calendarTransform(rawProps);
+	}
+	if (sourceTransform) {
+		rawProps = sourceTransform(rawProps);
+	}
+
+	className = rawProps.className || [];
+	if (typeof className === 'string') {
+		className = className.split(/\s+/);
+	}
 
 	def.id = rawProps.id || ('_fc' + (++EventDefinition.uuid));
 	def.title = rawProps.title || '';
 	def.rendering = rawProps.rendering || null;
 	def.constraint = rawProps.constraint;
 	def.overlap = rawProps.overlap;
+	def.className = className;
 
 	for (propName in rawProps) {
 		if (!this.isReservedProp(propName)) {

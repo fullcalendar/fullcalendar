@@ -21,7 +21,8 @@ var EventInstance = Class.extend({
 			start: dateProfile.start.clone(),
 			end: dateProfile.end ? dateProfile.end.clone() : null,
 			allDay: dateProfile.isAllDay(),
-			source: def.source
+			source: def.source,
+			className: def.className
 		});
 	}
 

@@ -29,13 +29,13 @@ Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
 // Given a raw input value from options, return events objects for business hours within the current view.
 Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart, rangeEnd) {
 	if (input === true) {
-		return _buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isPlainObject(input)) {
-		return _buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isArray(input)) {
-		return _buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
+		return this._buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
 	}
 	else {
 		return [];
@@ -43,7 +43,7 @@ Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart
 };
 
 
-function _buildBusinessInstances(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
 	var i;
 	var rawDef;
 	var fullRawDef;
@@ -64,7 +64,11 @@ function _buildBusinessInstances(wholeDay, rawDefs, ignoreNoDow, rangeStart, ran
 			fullRawDef.end = null;
 		}
 
-		eventDef = RecurringEventDefinition.parse(fullRawDef);
+		eventDef = RecurringEventDefinition.parse(
+			fullRawDef,
+			{}, // dummy source
+			this // calendar
+		);
 
 		eventInstances.push.apply(eventInstances, // append
 			eventDef.buildInstances(rangeStart, rangeEnd)
@@ -72,4 +76,4 @@ function _buildBusinessInstances(wholeDay, rawDefs, ignoreNoDow, rangeStart, ran
 	}
 
 	return eventInstances;
-}
+};

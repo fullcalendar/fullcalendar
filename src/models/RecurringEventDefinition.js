@@ -81,7 +81,7 @@ RecurringEventDefinition.addReservedProps([ 'start', 'end', 'dow' ]);
 
 
 RecurringEventDefinition.parse = function(rawProps) {
-	var def = EventDefinition.parse.call(this, rawProps); // RecurringEventDefinition
+	var def = EventDefinition.parse.apply(this, arguments); // a RecurringEventDefinition
 
 	if (rawProps.start) {
 		def.startTime = moment.duration(rawProps.start);
