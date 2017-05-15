@@ -577,12 +577,14 @@ function EventManager() { // assumed to be a calendar
 
 
 	// CHANGELOG: note how it does not return objects anymore
+	// called from public API only
 	function renderEvent(eventInput, isSticky) {
 		renderEvents([ eventInput ], isSticky);
 	}
 
 
 	// CHANGELOG: note how it does not return objects anymore
+	// called from public API only
 	function renderEvents(eventInputs, isSticky) {
 		var i;
 		var eventDef;
@@ -590,7 +592,7 @@ function EventManager() { // assumed to be a calendar
 
 		for (i = 0; i < eventInputs.length; i++) {
 
-			eventDef = parseEventInput(eventInputs[i], eventInputs[i].source || stickySource);
+			eventDef = parseEventInput(eventInputs[i], stickySource, t);
 
 			if (eventDef) { // not invalid
 				addEventDef(eventDef, isSticky);
@@ -614,6 +616,7 @@ function EventManager() { // assumed to be a calendar
 		eventDefCollection.add(eventDef);
 
 		if (isSticky) {
+			// will cause the addition to persist
 			stickySource.events.push(eventDef);
 		}
 	}
