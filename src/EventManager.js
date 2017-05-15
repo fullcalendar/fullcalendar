@@ -1188,6 +1188,7 @@ Calendar.prototype.buildMutatedEventInstanceGroup = function(eventId, eventMutat
 	var viewRange = this.getView().activeRange;
 	var defs = this.eventDefCollection.getById(eventId);
 	var i;
+	var defCopy;
 	var allInstances = [];
 
 	for (i = 0; i < defs.length; i++) {
@@ -1196,10 +1197,9 @@ Calendar.prototype.buildMutatedEventInstanceGroup = function(eventId, eventMutat
 		if (defCopy instanceof SingleEventDefinition) {
 
 			eventMutation.mutateSingleEventDefinition(defCopy, this); // calendar=this
-			eventInstances = defCopy.buildInstances(viewRange.start, viewRange.end);
 
-			allInstances.push.apply(allInstances,
-				eventInstances
+			allInstances.push.apply(allInstances, // append
+				defCopy.buildInstances(viewRange.start, viewRange.end)
 			);
 		}
 	}

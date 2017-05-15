@@ -141,7 +141,6 @@ Grid.mixin({
 	// FOR RENDERING
 	buildBusinessHourRanges: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
-		var events;
 		var group;
 
 		if (businessHours == null) {
@@ -707,7 +706,6 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var eventEnd = calendar.getEventEnd(event);
 		var isDragging;
 		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
@@ -1135,12 +1133,6 @@ function pluckEventDateProps(event) {
 	};
 }
 FC.pluckEventDateProps = pluckEventDateProps;
-
-
-// A cmp function for determining which non-inverted "ranges" (see above) happen earlier
-function compareRanges(range1, range2) {
-	return range1.start - range2.start; // earlier ranges go first
-}
 
 
 /* External-Dragging-Element Data

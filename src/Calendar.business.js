@@ -44,6 +44,7 @@ Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart
 
 
 function _buildBusinessInstances(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+	var i;
 	var rawDef;
 	var fullRawDef;
 	var eventDef;

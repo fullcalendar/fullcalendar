@@ -147,4 +147,4 @@ EventDateMutation.createFromDiff = function(profile1, profile2, largeUnit) {
 	mutation.endDelta = endDelta;
 
 	return mutation;
-}
+};
