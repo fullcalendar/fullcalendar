@@ -1008,28 +1008,15 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// TODO: more DRY
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
-		var calendar = this.view.calendar;
-		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar);
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
-		var i;
-
-		for (i = 0; i < eventFootprints.length; i++) {
-			if (!calendar.isEventFootprintAllowed(eventFootprints[i])) {
-				return false;
-			}
-		}
-
-		return true;
+		return this.view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
 	},
 
 
-	// TODO: more DRY
 	// when it's a completely anonymous external drag, no event.
 	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
 		var calendar = this.view.calendar;
-		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar);
+		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar); // TODO: fix signature
 		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 		var i;
 

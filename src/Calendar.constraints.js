@@ -1,24 +1,48 @@
 
-Calendar.prototype.isEventFootprintAllowed = function(eventFootprint) {
-	var eventDef = eventFootprint.eventInstance.eventDefinition;
+Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
+	var eventDef = eventInstanceGroup.getEventDef();
+	var eventRanges = eventInstanceGroup.buildEventRanges(null, this); // TODO: fix signature
+	var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+	var i;
+
 	var constraintVal = eventDef.getConstraint(this);
 	var overlapVal = eventDef.getOverlap(this);
 
-	return this.isFootprintAllowed(
-		eventFootprint.componentFootprint,
-		constraintVal,
-		overlapVal,
-		eventFootprint.eventInstance
-	);
+	var peerEventDefs = this.getPeerEventDefs(eventDef);
+	var peerEventInstances = this.eventDefsToInstances(peerEventDefs);
+	var peerEventRanges = this.eventInstancesToEventRanges(peerEventInstances); // TODO: loop through pre-cached ranges instead?
+	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
+
+	for (i = 0; i < eventFootprints.length; i++) {
+		if (
+			!this.isFootprintAllowed(
+				eventFootprints[i].componentFootprint,
+				peerEventFootprints,
+				constraintVal,
+				overlapVal,
+				eventFootprints[i].eventInstance
+			)
+		) {
+			return false;
+		}
+	}
+
+	return true;
 };
 
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
+	var peerEventDefs = this.eventDefCollection.eventDefs; // all
+	var peerEventInstances = this.eventDefsToInstances(peerEventDefs);
+	var peerEventRanges = this.eventInstancesToEventRanges(peerEventInstances); // TODO: loop through pre-cached ranges instead?
+	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
+
 	var selectAllowFunc;
 
 	if (
 		this.isFootprintAllowed(
 			componentFootprint,
+			peerEventFootprints,
 			this.opt('selectConstraint'),
 			this.opt('selectOverlap')
 		)
@@ -39,23 +63,23 @@ Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
 
 Calendar.prototype.isFootprintAllowed = function(
 	componentFootprint,
+	peerEventFootprints,
 	constraintVal,
 	overlapVal,
-	subjectEventInstance
+	subjectEventInstance // optional
 ) {
 	var constraintFootprints; // ComponentFootprint[]
 	var overlapEventFootprints; // EventFootprint[]
 
 	if (constraintVal != null) {
-		constraintFootprints = this.constraintValToFootprints(constraintVal);
+		constraintFootprints = this.constraintValToFootprints(constraintVal, componentFootprint.isAllDay);
 
 		if (!this.isFootprintWithinConstraints(componentFootprint, constraintFootprints)) {
 			return false;
 		}
 	}
 
-	// TODO: somehow cache this for multiple calls that all share the same EventDefinition
-	overlapEventFootprints = this.getOverlappingEventFootprints(componentFootprint, subjectEventInstance);
+	overlapEventFootprints = this.collectOverlapEventFootprints(peerEventFootprints, componentFootprint);
 
 	if (overlapVal === false) {
 		if (overlapEventFootprints.length) {
@@ -67,7 +91,8 @@ Calendar.prototype.isFootprintAllowed = function(
 			return false;
 		}
 	}
-	else if (subjectEventInstance) {
+
+	if (subjectEventInstance) {
 		if (!isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance)) {
 			return false;
 		}
@@ -85,10 +110,7 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 	var i;
 
 	for (i = 0; i < constraintFootprints.length; i++) {
-		if (this.footprintContainsFootprint(
-			constraintFootprints[i],
-			componentFootprint
-		)) {
+		if (this.footprintContainsFootprint(constraintFootprints[i], componentFootprint)) {
 			return true;
 		}
 	}
@@ -97,7 +119,7 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 };
 
 
-Calendar.prototype.constraintValToFootprints = function(constraintVal) {
+Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
 	var eventDefs;
 	var eventDef;
 	var eventInstances;
@@ -106,7 +128,7 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal) {
 
 	if (constraintVal === 'businessHours') {
 
-		eventFootprints = this.buildCurrentBusinessFootprints();
+		eventFootprints = this.buildCurrentBusinessFootprints(isAllDay);
 
 		return eventFootprintsToComponentFootprints(eventFootprints);
 	}
@@ -137,39 +159,7 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal) {
 // ------------------------------------------------------------------------------------------------
 
 
-Calendar.prototype.getOverlappingEventFootprints = function(componentFootprint, subjectEventInstance) {
-	var peerEventFootprints = this.getPeerEventFootprints(subjectEventInstance);
-	var overlapEventFootprints = [];
-	var i;
-
-	for (i = 0; i < peerEventFootprints.length; i++) {
-		if (
-			this.footprintsIntersect(
-				componentFootprint,
-				peerEventFootprints[i].componentFootprint
-			)
-		) {
-			overlapEventFootprints.push(peerEventFootprints[i]);
-		}
-	}
-
-	return overlapEventFootprints;
-};
-
-
-Calendar.prototype.getPeerEventFootprints = function(subjectEventInstance) {
-	var peerEventDefs = subjectEventInstance ?
-		this.getUnrelatedEventDefs(subjectEventInstance.eventDefinition) :
-		this.eventDefCollection.eventDefs.slice(); // all. clone
-
-	var peerEventInstances = this.eventDefsToInstances(peerEventDefs);
-	var peerEventRanges = this.eventInstancesToEventRanges(peerEventInstances);
-
-	return this.eventRangesToEventFootprints(peerEventRanges);
-};
-
-
-Calendar.prototype.getUnrelatedEventDefs = function(subjectEventDef) {
+Calendar.prototype.getPeerEventDefs = function(subjectEventDef) {
 	var eventDefs = this.eventDefCollection.eventDefs;
 	var i, eventDef;
 	var unrelated = [];
@@ -186,14 +176,36 @@ Calendar.prototype.getUnrelatedEventDefs = function(subjectEventDef) {
 };
 
 
+Calendar.prototype.collectOverlapEventFootprints = function(peerEventFootprints, targetFootprint) {
+	var overlapEventFootprints = [];
+	var i;
+
+	for (i = 0; i < peerEventFootprints.length; i++) {
+		if (
+			this.footprintsIntersect(
+				targetFootprint,
+				peerEventFootprints[i].componentFootprint
+			)
+		) {
+			overlapEventFootprints.push(peerEventFootprints[i]);
+		}
+	}
+
+	return overlapEventFootprints;
+};
+
+
+// optional subjectEventInstance
 function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEventInstance) {
 	var i;
 
 	for (i = 0; i < overlapEventFootprints.length; i++) {
-		if (!overlapFunc(
-			overlapEventFootprints[i].eventInstance.toLegacy(),
-			subjectEventInstance ? subjectEventInstance.toLegacy() : null
-		)) {
+		if (
+			!overlapFunc(
+				overlapEventFootprints[i].eventInstance.toLegacy(),
+				subjectEventInstance ? subjectEventInstance.toLegacy() : null
+			)
+		) {
 			return false;
 		}
 	}
@@ -204,32 +216,28 @@ function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEve
 
 function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance) {
 	var i;
-	var overlapEventFootprint;
 	var overlapEventInstance;
 	var overlapEventDef;
 	var overlapVal;
 
 	for (i = 0; i < overlapEventFootprints.length; i++) {
-		overlapEventFootprint = overlapEventFootprints[i];
-		overlapEventInstance = overlapEventFootprint.eventInstance;
+		overlapEventInstance = overlapEventFootprints[i].eventInstance;
 		overlapEventDef = overlapEventInstance.eventDefinition;
 
-		// TODO: use EventDef
-		overlapVal = overlapEventDef.overlap;
-		if (overlapVal == null) {
-			if (overlapEventDef.source) {
-				overlapVal = overlapEventDef.source.overlap;
-			}
-		}
+		// don't need to pass in calendar, because don't want to consider global eventOverlap property,
+		// because we already considered that earlier in the process.
+		overlapVal = overlapEventDef.getOverlap();
 
 		if (overlapVal === false) {
 			return false;
 		}
 		else if (typeof overlapVal === 'function') {
-			if (!overlapVal(
-				subjectEventInstance.toLegacy(),
-				overlapEventInstance.toLegacy()
-			)) {
+			if (
+				!overlapVal(
+					subjectEventInstance.toLegacy(),
+					overlapEventInstance.toLegacy()
+				)
+			) {
 				return false;
 			}
 		}
@@ -241,7 +249,10 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 
 // Conversion: eventDefs -> eventInstances -> eventRanges -> eventFootprints -> componentFootprints
 // ------------------------------------------------------------------------------------------------
-// TODO: this is not DRY with Grid
+// NOTE: this might seem like repetitive code with the Grid class, however, this code is related to
+// constraints whereas the Grid code is related to rendering. Each approach might want to convert
+// eventRanges -> eventFootprints in a different way. Regardless, there are opportunities to make
+// this more DRY.
 
 
 Calendar.prototype.eventDefsToInstances = function(eventDefs) {
@@ -259,7 +270,7 @@ Calendar.prototype.eventDefsToInstances = function(eventDefs) {
 
 
 Calendar.prototype.eventDefToInstances = function(eventDef) {
-	var activeRange = this.getView().activeRange;
+	var activeRange = this.getView().activeRange; // TODO: use EventManager's range?
 
 	return eventDef.buildInstances(activeRange.start, activeRange.end);
 };
@@ -267,7 +278,7 @@ Calendar.prototype.eventDefToInstances = function(eventDef) {
 
 Calendar.prototype.eventInstancesToEventRanges = function(eventInstances) {
 	var group = new EventInstanceGroup(eventInstances);
-	var activeRange = this.getView().activeRange;
+	var activeRange = this.getView().activeRange; // TODO: use EventManager's range?
 
 	return group.buildEventRanges(
 		new UnzonedRange(activeRange.start, activeRange.end),
@@ -277,22 +288,29 @@ Calendar.prototype.eventInstancesToEventRanges = function(eventInstances) {
 
 
 Calendar.prototype.eventRangesToEventFootprints = function(eventRanges) {
-	var _this = this;
+	var i;
+	var eventFootprints = [];
 
-	return eventRanges.map(function(eventRange) {
-		return _this.eventRangeToEventFootprint(eventRange);
-	});
+	for (i = 0; i < eventRanges.length; i++) {
+		eventFootprints.push.apply(eventFootprints, // append
+			this.eventRangeToEventFootprints(eventRanges[i])
+		);
+	}
+
+	return eventFootprints;
 };
 
 
-Calendar.prototype.eventRangeToEventFootprint = function(eventRange) {
-	return new EventFootprint( // TODO: DRY. also in Grid.event.js
-		eventRange.eventInstance,
-		new ComponentFootprint(
-			eventRange.dateRange,
-			eventRange.eventInstance.eventDateProfile.isAllDay()
+Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
+	return [
+		new EventFootprint(
+			eventRange.eventInstance,
+			new ComponentFootprint(
+				eventRange.dateRange,
+				eventRange.eventInstance.eventDateProfile.isAllDay()
+			)
 		)
-	);
+	];
 };
 
 

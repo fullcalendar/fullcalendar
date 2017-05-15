@@ -79,7 +79,9 @@ var EventDefinition = Class.extend({
 			return this.source.overlap;
 		}
 
-		return calendar.opt('eventOverlap');
+		if (calendar) {
+			return calendar.opt('eventOverlap');
+		}
 	}
 
 
