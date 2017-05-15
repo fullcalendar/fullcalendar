@@ -29,13 +29,13 @@ Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
 // Given a raw input value from options, return events objects for business hours within the current view.
 Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart, rangeEnd) {
 	if (input === true) {
-		return this._buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
+		return _buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isPlainObject(input)) {
-		return this._buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
+		return _buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
 	}
 	else if ($.isArray(input)) {
-		return this._buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
+		return _buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
 	}
 	else {
 		return [];
@@ -43,7 +43,7 @@ Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart
 };
 
 
-Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+function _buildBusinessInstances(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
 	var rawDef;
 	var fullRawDef;
 	var eventDef;
@@ -71,4 +71,4 @@ Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreN
 	}
 
 	return eventInstances;
-};
+}
