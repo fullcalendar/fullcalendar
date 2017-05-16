@@ -95,6 +95,7 @@ Calendar.defaults = {
 	
 	handleWindowResize: true,
 	windowResizeDelay: 100, // milliseconds before an updateSize happens
+	isJalaali: false,
 
 	longPressDelay: 1000
 	

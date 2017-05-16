@@ -55,6 +55,8 @@ FC.moment.parseZone = function() {
 //    parseAsUTC - if there is no zone information, should we parse the input in UTC?
 //    parseZone - if there is zone information, should we force the zone of the moment?
 function makeMoment(args, parseAsUTC, parseZone) {
+	var isJalaali = checkArgsForJalaali(args);
+	args = delJalaaliFromArgs(args); //check if it should be jalali
 	var input = args[0];
 	var isSingleString = args.length == 1 && typeof input === 'string';
 	var isAmbigTime;
@@ -316,12 +318,13 @@ newMomentProto.format = function() {
 };
 
 newMomentProto.toISOString = function() {
-
+	isJalaali = checkArgsForJalaali(arguments);
+	arguments = delJalaaliFromArgs(arguments);
 	if (this._ambigTime) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD', isJalaali);
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss', isJalaali);
 	}
 	if (this._fullCalendar) { // enhanced non-ambig moment?
 		// depending on browser, moment might not output english. ensure english.

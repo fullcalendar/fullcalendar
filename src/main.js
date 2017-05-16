@@ -55,3 +55,36 @@ var complexOptions = [ // names of options that are objects whose properties sho
 function mergeOptions(optionObjs) {
 	return mergeProps(optionObjs, complexOptions);
 }
+
+function checkArgsForJalaali(args){
+	for (var i in args){
+		if ( args[i] === true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+function delJalaaliFromArgs(args){
+	var out = [];
+	for (var i in args){
+		if ( typeof(args[i]) === "boolean")
+		{
+			continue;
+		}
+		out.push(args[i]);
+	}
+	return out;
+}
+
+
+function addJalaaliToArgs(args,isJalaali){
+	var out = [];
+	for (var i in args){
+		out.push(args[i]);
+	}
+	out.push(isJalaali);
+	return out;
+}

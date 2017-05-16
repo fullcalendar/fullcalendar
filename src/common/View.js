@@ -21,6 +21,7 @@ var View = FC.View = Model.extend({
 
 	queuedScroll: null,
 
+	isJalaali: false,
 	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
 	selectedEvent: null,
@@ -61,6 +62,7 @@ var View = FC.View = Model.extend({
 		this.initThemingProps();
 		this.initHiddenDays();
 		this.isRTL = this.opt('isRTL');
+		this.isJalaali = this.opt('isJalaali');
 
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
@@ -207,7 +209,7 @@ var View = FC.View = Model.extend({
 			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
 		}
 
-		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
+		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'), this.opt('isJalaali'));
 	},
 
 
@@ -577,6 +579,7 @@ var View = FC.View = Model.extend({
 		if (this.opt('nowIndicator')) {
 			unit = this.getNowIndicatorUnit();
 			if (unit) {
+				unit = toJalaaliUnit(unit,this.isJalaali);
 				update = proxy(this, 'updateNowIndicator'); // bind to `this`
 
 				this.initialNowDate = this.calendar.getNow();

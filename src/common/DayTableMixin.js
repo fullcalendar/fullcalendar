@@ -299,7 +299,7 @@ var DayTableMixin = FC.DayTableMixin = {
 			'fc-day-header',
 			view.widgetHeaderClass
 		];
-		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
+		var innerHtml = htmlEscape(date.format(this.colHeadFormat,this.isJalaali));
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (this.rowCnt === 1) {
@@ -316,7 +316,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		return '' +
             '<th class="' + classNames.join(' ') + '"' +
 				((isDateValid && this.rowCnt) === 1 ?
-					' data-date="' + date.format('YYYY-MM-DD') + '"' :
+					' data-date="' + date.format('YYYY-MM-DD',this.isJalaali) + '"' :
 					'') +
 				(colspan > 1 ?
 					' colspan="' + colspan + '"' :
@@ -379,7 +379,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		return '<td class="' + classes.join(' ') + '"' +
 			(isDateValid ?
-				' data-date="' + date.format('YYYY-MM-DD') + '"' : // if date has a time, won't format it
+				' data-date="' + date.format('YYYY-MM-DD',this.isJalaali) + '"' : // if date has a time, won't format it
 				'') +
 			(otherAttrs ?
 				' ' + otherAttrs :

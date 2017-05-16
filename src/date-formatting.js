@@ -34,11 +34,11 @@ var MAYBE_REGEXP = new RegExp(MAYBE_MARKER + '([^' + MAYBE_MARKER + ']*)' + MAYB
 Addition formatting tokens we want recognized
 */
 var specialTokens = {
-	t: function(date) { // "a" or "p"
-		return oldMomentFormat(date, 'a').charAt(0);
+	t: function(date, isJalaali) { // "a" or "p"
+		return oldMomentFormat(date, 'a', isJalaali).charAt(0);
 	},
-	T: function(date) { // "A" or "P"
-		return oldMomentFormat(date, 'A').charAt(0);
+	T: function(date, isJalaali) { // "A" or "P"
+		return oldMomentFormat(date, 'A', isJalaali).charAt(0);
 	}
 };
 
@@ -63,17 +63,52 @@ var largeTokenMap = {
 /*
 Formats `date` with a Moment formatting string, but allow our non-zero areas and special token
 */
-function formatDate(date, formatStr) {
+function formatDate(date, formatStr, isJalaali) {
 	return renderFakeFormatString(
-		getParsedFormatString(formatStr).fakeFormatString,
-		date
+		getParsedFormatString(formatStr, isJalaali).fakeFormatString,
+		date,
+		isJalaali
 	);
+}
+
+function toJalaaliUnit(formatStr){
+	//formatStr=formatStr.replace(/(.*)(\bYY\b|\bYYYY\b|\bYYYYY\b|\bM\b|\bMM\b|\bMMM\b|\bMMMM\b|\bMMMMM\b|\bD\b|\bDD\b|\bDDD\b|\bDDDD\b|\bgg\b|\bgggg\b|\bggggg\b|\byear\b|\bmonth\b|\bw\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bYY\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bYYYY\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bYYYYY\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bM\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMM\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMM\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMMM\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMMMM\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bD\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDD\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDDD\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDDDD\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bgg\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bgggg\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bggggg\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\byear\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bmonth\b)(.*)/g,"$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bw\b)(.*)/g,"$1j$2$3");
+	if ( ! formatStr.match(/^j.*/g))
+	{
+		formatStr = "j" + formatStr;
+	}
+	return formatStr;
+}
+
+function noJalaaliUnit(formatStr){
+	return formatStr.replace(/j/g,"");
 }
 
 /*
 Call this if you want Moment's original format method to be used
 */
-function oldMomentFormat(mom, formatStr) {
+function oldMomentFormat(mom, formatStr, isJalaali) {
+	if (isJalaali){
+		return oldMomentProto.format.call(mom, toJalaaliUnit(formatStr)).replace(/j/g,""); // oldMomentProto defined in moment-ext.js in jalaali format
+	}
 	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
 }
 
@@ -88,7 +123,7 @@ Using a formatting string meant for a single date, generate a range string, like
 If the dates are the same as far as the format string is concerned, just return a single
 rendering of one date, without any separator.
 */
-function formatRange(date1, date2, formatStr, separator, isRTL) {
+function formatRange(date1, date2, formatStr, separator, isRTL, isJalaali) {
 	var localeData;
 
 	date1 = FC.moment.parseZone(date1);
@@ -102,24 +137,25 @@ function formatRange(date1, date2, formatStr, separator, isRTL) {
 	formatStr = localeData.longDateFormat(formatStr) || formatStr;
 
 	return renderParsedFormat(
-		getParsedFormatString(formatStr),
+		getParsedFormatString(formatStr, isJalaali),
 		date1,
 		date2,
 		separator || ' - ',
-		isRTL
+		isRTL,
+		isJalaali
 	);
 }
 
 /*
 Renders a range with an already-parsed format string.
 */
-function renderParsedFormat(parsedFormat, date1, date2, separator, isRTL) {
+function renderParsedFormat(parsedFormat, date1, date2, separator, isRTL, isJalaali) {
 	var sameUnits = parsedFormat.sameUnits;
 	var unzonedDate1 = date1.clone().stripZone(); // for same-unit comparisons
 	var unzonedDate2 = date2.clone().stripZone(); // "
 
-	var renderedParts1 = renderFakeFormatStringParts(parsedFormat.fakeFormatString, date1);
-	var renderedParts2 = renderFakeFormatStringParts(parsedFormat.fakeFormatString, date2);
+	var renderedParts1 = renderFakeFormatStringParts(parsedFormat.fakeFormatString, date1, isJalaali);
+	var renderedParts2 = renderFakeFormatStringParts(parsedFormat.fakeFormatString, date2, isJalaali);
 
 	var leftI;
 	var leftStr = '';
@@ -186,9 +222,9 @@ var parsedFormatStrCache = {};
 /*
 Returns a parsed format string, leveraging a cache.
 */
-function getParsedFormatString(formatStr) {
+function getParsedFormatString(formatStr, isJalaali) {
 	return parsedFormatStrCache[formatStr] ||
-		(parsedFormatStrCache[formatStr] = parseFormatString(formatStr));
+		(parsedFormatStrCache[formatStr] = parseFormatString(formatStr, isJalaali));
 }
 
 /*
@@ -199,7 +235,8 @@ Parses a format string into the following:
   If not a token, then the value is null.
   Always a flat array (not nested liked "chunks").
 */
-function parseFormatString(formatStr) {
+function parseFormatString(formatStr, isJalaali) {
+	formatStr = noJalaaliUnit(formatStr);// has been defined in main.js
 	var chunks = chunkFormatString(formatStr);
 	
 	return {
@@ -328,18 +365,18 @@ function buildSameUnits(chunks) {
 /*
 Formats a date with a fake format string, post-processes the control characters, then returns.
 */
-function renderFakeFormatString(fakeFormatString, date) {
+function renderFakeFormatString(fakeFormatString, date, isJalaali) {
 	return processMaybeMarkers(
-		renderFakeFormatStringParts(fakeFormatString, date).join('')
+		renderFakeFormatStringParts(fakeFormatString, date, isJalaali).join('')
 	);
 }
 
 /*
 Formats a date into parts that will have been post-processed, EXCEPT for the "maybe" markers.
 */
-function renderFakeFormatStringParts(fakeFormatString, date) {
+function renderFakeFormatStringParts(fakeFormatString, date, isJalaali) {
 	var parts = [];
-	var fakeRender = oldMomentFormat(date, fakeFormatString);
+	var fakeRender = oldMomentFormat(date, fakeFormatString, isJalaali);
 	var fakeParts = fakeRender.split(PART_SEPARATOR);
 	var i, fakePart;
 
@@ -350,7 +387,7 @@ function renderFakeFormatStringParts(fakeFormatString, date) {
 			parts.push(
 				// the literal string IS the token's name.
 				// call special token's registered function.
-				specialTokens[fakePart.substring(1)](date)
+				specialTokens[fakePart.substring(1)](date, isJalaali)
 			);
 		}
 		else {

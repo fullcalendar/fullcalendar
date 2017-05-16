@@ -9,6 +9,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
+	isJalaali: false,
 
 	start: null,
 	end: null,
@@ -38,6 +39,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 	constructor: function(view) {
 		this.view = view;
 		this.isRTL = view.opt('isRTL');
+		this.isJalaali = view.opt('isJalaali');
 		this.elsByFill = {};
 
 		this.dayClickListener = this.buildDayClickListener();
@@ -705,7 +707,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, {
 
 			if (
 				view.currentRangeAs('months') == 1 && // TODO: somehow get into MonthView
-				date.month() != view.currentRange.start.month()
+			(this.isJalaali ? date.jMonth() != view.intervalStart.jMonth() : date.month() != view.intervalStart.month())
 			) {
 				classes.push('fc-other-month');
 			}

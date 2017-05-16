@@ -4,6 +4,7 @@ Calendar.mixin({
 	defaultAllDayEventDuration: null,
 	defaultTimedEventDuration: null,
 	localeData: null,
+	isJalaali: options.isJalaali,
 
 
 	initMomentInternals: function() {
@@ -76,6 +77,7 @@ Calendar.mixin({
 	// Accepts anything the vanilla moment() constructor accepts.
 	moment: function() {
 		var mom;
+		arguments = addJalaaliToArgs(arguments,isJalaali);
 
 		if (this.opt('timezone') === 'local') {
 			mom = FC.moment.apply(null, arguments);
