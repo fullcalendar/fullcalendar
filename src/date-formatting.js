@@ -199,11 +199,16 @@ function renderParsedFormat(parsedFormat, date1, date2, separator, isRTL, isJala
 	}
 
 	if (middleStr1 || middleStr2) {
-		if (isRTL) {
-			middleStr = middleStr2 + separator + middleStr1;
+		if (middleStr2 == middleStr1) {
+				middleStr = middleStr1;
 		}
 		else {
-			middleStr = middleStr1 + separator + middleStr2;
+			if (isRTL) {
+				middleStr = middleStr2 + separator + middleStr1;
+			}
+			else {
+				middleStr = middleStr1 + separator + middleStr2;
+			}
 		}
 	}
 

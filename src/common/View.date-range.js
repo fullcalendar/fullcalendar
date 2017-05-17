@@ -218,6 +218,7 @@ View.mixin({
 	// `unit` is the already-computed computeGreatestUnit value of duration.
 	buildRangeFromDuration: function(date, direction, duration, unit) {
 		var alignment = this.opt('dateAlignment');
+		var isJalaali = this.opt('isJalaali');
 		var start = date.clone();
 		var end;
 		var dateIncrementInput;
@@ -251,6 +252,9 @@ View.mixin({
 			}
 		}
 
+		if (isJalaali && /^(year|month|week)$/.test(alignment)) {
+			alignment = 'j' + alignment;
+		}
 		start.startOf(alignment);
 		end = start.clone().add(duration);
 
