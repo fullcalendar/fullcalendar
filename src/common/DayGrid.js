@@ -179,7 +179,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			html += view.buildGotoAnchorHtml(
 				{ date: date, type: 'week' },
 				{ 'class': 'fc-week-number' },
-				date.format('w') // inner HTML
+				date.format('w', this.isJalaali) // inner HTML
 			);
 		}
 

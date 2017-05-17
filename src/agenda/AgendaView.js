@@ -479,7 +479,7 @@ var agendaTimeGridMethods = {
 		var weekText;
 
 		if (view.opt('weekNumbers')) {
-			weekText = this.start.format(view.opt('smallWeekFormat'));
+			weekText = this.start.format(view.opt('smallWeekFormat'), this.isJalaali);
 
 			return '' +
 				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
