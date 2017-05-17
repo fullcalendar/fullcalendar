@@ -98,8 +98,8 @@
 		// when the selected option changes, dynamically change the calendar option
 		$('#locale-selector').on('change', function() {
 			if (this.value) {
-				$('#calendar').fullCalendar('option', 'locale', this.value);
 				$('#calendar').fullCalendar('option', 'isJalaali', (this.value == 'fa' ? true : false));
+				$('#calendar').fullCalendar('option', 'locale', this.value);
 			}
 		});
 	});

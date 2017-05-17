@@ -302,22 +302,24 @@ newMomentProto.utcOffset = function(tzo) {
 // -------------------------------------------------------------------------------------------------
 
 newMomentProto.format = function() {
+	var isJalaali = checkArgsForJalaali(arguments);
+	var args = delJalaaliFromArgs(arguments);
 
-	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
-		return formatDate(this, arguments[0]); // our extended formatting
+	if (this._fullCalendar && args[0]) { // an enhanced moment? and a format string provided?
+		return formatDate(this, args[0], isJalaali); // our extended formatting
 	}
 	if (this._ambigTime) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD', isJalaali);
 	}
 	if (this._ambigZone) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss', isJalaali);
 	}
 	if (this._fullCalendar) { // enhanced non-ambig moment?
 		// moment.format() doesn't ensure english, but we want to.
-		return oldMomentFormat(englishMoment(this));
+		return oldMomentFormat(englishMoment(this), isJalaali);
 	}
 
-	return oldMomentProto.format.apply(this, arguments);
+	return oldMomentProto.format.apply(this, args);
 };
 
 newMomentProto.toISOString = function() {

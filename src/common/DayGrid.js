@@ -170,7 +170,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		html += '<td class="' + classes.join(' ') + '"' +
 			(isDateValid ?
-				' data-date="' + date.format() + '"' :
+				' data-date="' + date.format(this.isJalaali) + '"' :
 				''
 				) +
 			'>';
@@ -187,7 +187,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			html += view.buildGotoAnchorHtml(
 				date,
 				{ 'class': 'fc-day-number' },
-				date.date() // inner HTML
+				this.isJalaali ? date.jDate() : date.date() // inner HTML
 			);
 		}
 
