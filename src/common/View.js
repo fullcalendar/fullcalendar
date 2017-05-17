@@ -579,7 +579,6 @@ var View = FC.View = Model.extend({
 		if (this.opt('nowIndicator')) {
 			unit = this.getNowIndicatorUnit();
 			if (unit) {
-				unit = this.toJalaaliUnit(unit, this.isJalaali);
 				update = proxy(this, 'updateNowIndicator'); // bind to `this`
 
 				this.initialNowDate = this.calendar.getNow();
