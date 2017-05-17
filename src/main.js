@@ -80,9 +80,9 @@ function delJalaaliFromArgs(args){
 }
 
 
-function addJalaaliToArgs(args,isJalaali){
+function addJalaaliToArgs(args, isJalaali){
 	var out = [];
-	for (var i in args){
+	for (var i in args) {
 		out.push(args[i]);
 	}
 	out.push(isJalaali);

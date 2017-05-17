@@ -112,6 +112,9 @@ function makeMoment(args, parseAsUTC, parseZone) {
 	}
 
 	mom._fullCalendar = true; // flag for extended functionality
+	if (isJalaali) {
+		moment.loadPersian();
+	}
 
 	return mom;
 }
@@ -318,8 +321,8 @@ newMomentProto.format = function() {
 };
 
 newMomentProto.toISOString = function() {
-	isJalaali = checkArgsForJalaali(arguments);
-	arguments = delJalaaliFromArgs(arguments);
+	var isJalaali = checkArgsForJalaali(arguments);
+	var args = delJalaaliFromArgs(arguments);
 	if (this._ambigTime) {
 		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD', isJalaali);
 	}
@@ -329,10 +332,10 @@ newMomentProto.toISOString = function() {
 	if (this._fullCalendar) { // enhanced non-ambig moment?
 		// depending on browser, moment might not output english. ensure english.
 		// https://github.com/moment/moment/blob/2.18.1/src/lib/moment/format.js#L22
-		return oldMomentProto.toISOString.apply(englishMoment(this), arguments);
+		return oldMomentProto.toISOString.apply(englishMoment(this), args);
 	}
 
-	return oldMomentProto.toISOString.apply(this, arguments);
+	return oldMomentProto.toISOString.apply(this, args);
 };
 
 function englishMoment(mom) {

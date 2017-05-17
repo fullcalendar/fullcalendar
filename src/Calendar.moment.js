@@ -4,7 +4,7 @@ Calendar.mixin({
 	defaultAllDayEventDuration: null,
 	defaultTimedEventDuration: null,
 	localeData: null,
-	isJalaali: options.isJalaali,
+	isJalaali: this.options.isJalaali,
 
 
 	initMomentInternals: function() {
@@ -77,10 +77,10 @@ Calendar.mixin({
 	// Accepts anything the vanilla moment() constructor accepts.
 	moment: function() {
 		var mom;
-		arguments = addJalaaliToArgs(arguments,isJalaali);
+		var args = addJalaaliToArgs(arguments, this.isJalaali);
 
 		if (this.opt('timezone') === 'local') {
-			mom = FC.moment.apply(null, arguments);
+			mom = FC.moment.apply(null, args);
 
 			// Force the moment to be local, because FC.moment doesn't guarantee it.
 			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
@@ -88,10 +88,10 @@ Calendar.mixin({
 			}
 		}
 		else if (this.opt('timezone') === 'UTC') {
-			mom = FC.moment.utc.apply(null, arguments); // process as UTC
+			mom = FC.moment.utc.apply(null, args); // process as UTC
 		}
 		else {
-			mom = FC.moment.parseZone.apply(null, arguments); // let the input decide the zone
+			mom = FC.moment.parseZone.apply(null, args); // let the input decide the zone
 		}
 
 		this.localizeMoment(mom); // TODO

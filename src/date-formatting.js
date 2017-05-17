@@ -73,33 +73,32 @@ function formatDate(date, formatStr, isJalaali) {
 
 function toJalaaliUnit(formatStr){
 	//formatStr=formatStr.replace(/(.*)(\bYY\b|\bYYYY\b|\bYYYYY\b|\bM\b|\bMM\b|\bMMM\b|\bMMMM\b|\bMMMMM\b|\bD\b|\bDD\b|\bDDD\b|\bDDDD\b|\bgg\b|\bgggg\b|\bggggg\b|\byear\b|\bmonth\b|\bw\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bYY\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bYYYY\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bYYYYY\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bM\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bMM\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bMMM\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bMMMM\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bMMMMM\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bD\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bDD\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bDDD\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bDDDD\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bgg\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bgggg\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bggggg\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\byear\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bmonth\b)(.*)/g,"$1j$2$3");
-	formatStr=formatStr.replace(/(.*)(\bw\b)(.*)/g,"$1j$2$3");
-	if ( ! formatStr.match(/^j.*/g))
-	{
+	formatStr=formatStr.replace(/(.*)(\bYY\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bYYYY\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bYYYYY\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bM\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMM\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMM\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMMM\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bMMMMM\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bD\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDD\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDDD\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bDDDD\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bgg\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bgggg\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bggggg\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\byear\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bmonth\b)(.*)/g, "$1j$2$3");
+	formatStr=formatStr.replace(/(.*)(\bw\b)(.*)/g, "$1j$2$3");
+	if (!formatStr.match(/^j.*/g)) {
 		formatStr = "j" + formatStr;
 	}
 	return formatStr;
 }
 
-function noJalaaliUnit(formatStr){
-	return formatStr.replace(/j/g,"");
+function noJalaaliUnit(formatStr) {
+	return formatStr.replace(/j/g, "");
 }
 
 /*
@@ -107,7 +106,7 @@ Call this if you want Moment's original format method to be used
 */
 function oldMomentFormat(mom, formatStr, isJalaali) {
 	if (isJalaali){
-		return oldMomentProto.format.call(mom, toJalaaliUnit(formatStr)).replace(/j/g,""); // oldMomentProto defined in moment-ext.js in jalaali format
+		return oldMomentProto.format.call(mom, toJalaaliUnit(formatStr)).replace(/j/g, ""); // oldMomentProto defined in moment-ext.js in jalaali format
 	}
 	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
 }
