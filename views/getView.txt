@@ -1,0 +1,16 @@
+
+getView *1.4.2*
+===============
+
+Returns the [View Object]() for the current view.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'getView' ) -> [View Object]()
+</div>
+
+This is useful if you want to get information about the calendar’s title or start/end dates.
+
+Example Usage:
+
+	var view = $('#calendar').fullCalendar('getView');
+	alert("The view's title is " + view.title);

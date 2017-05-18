@@ -1,0 +1,15 @@
+
+loading
+=======
+
+Triggered when event fetching starts/stops.
+
+<div class='spec' markdown='1'>
+function( *isLoading*, *view* )
+</div>
+
+Triggered with a `true` argument when the calendar begins fetching events via AJAX. Triggered with `false` when done.
+
+`view` is the current [View Object](../views/View_Object).
+
+This function is often used to show/hide a loading indicator.

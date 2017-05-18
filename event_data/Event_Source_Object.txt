@@ -1,0 +1,155 @@
+
+Event Source Object
+===================
+
+An "event source" is anything that provides FullCalendar with data about
+events. It can be a <a href='events_array'>simple array</a>,
+an <a href='events_function'>event-generating function</a> that you define,
+a <a href='events_json_feed'>URL to a json feed</a>,
+or a <a href='../google_calendar'>Google Calendar feed</a>.
+
+Since version 1.5, Event Objects can have "options" associated with them.
+However, before you can start specifying options, you must write an Event Object in its
+*extended form*. It must be a traditional JavaScript object with properties.
+Here are the extended forms for each type of Event Source:
+
+Array of events:
+
+	{
+		events: [
+			{
+				title: 'Event1',
+				start: '2011-04-04'
+			},
+			{
+				title: 'Event2',
+				start: '2011-05-05'
+			}
+			// etc...
+		],
+		color: 'yellow',   // an option!
+		textColor: 'black' // an option!
+	}
+	
+Event-generating function:
+
+	{
+		events: function(start, end, callback) {
+			// ...
+		},
+		color: 'yellow',   // an option!
+		textColor: 'black' // an option!
+	}
+
+JSON feed:
+
+	{
+		url: '/myfeed.php',
+		color: 'yellow',   // an option!
+		textColor: 'black' // an option!
+	}
+	
+Google Calendar feed:
+
+	{
+		googleCalendarId: 'abcd1234@group.calendar.google.com',
+		color: 'yellow',   // an option!
+		textColor: 'black' // an option!
+	}
+	
+Event Source Options
+--------------------
+
+<table id='options'>
+<tr>
+<th>
+color
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `color` for this source.
+</td>
+</tr>
+<tr>
+<th>
+backgroundColor
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `backgroundColor` for this source.
+</td>
+</tr>
+<tr>
+<th>
+borderColor
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `borderColor` for this source.
+</td>
+</tr>
+<tr>
+<th>
+textColor
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `textColor` for this source.
+</td>
+</tr>
+<tr>
+<th>
+className
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `className` for this source.
+</td>
+</tr>
+<tr>
+<th>
+editable
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `editable` for this source.
+</td>
+</tr>
+<tr>
+<th>
+startEditable
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `startEditable` for this source.
+</td>
+</tr>
+<tr>
+<th>
+durationEditable
+</th>
+<td markdown='1'>
+Sets every <a href='Event_Object'>Event Object's</a> `durationEditable` for this source.
+</td>
+</tr>
+<tr>
+<th>
+allDayDefault
+</th>
+<td markdown='1'>
+Sets the [allDayDefault]() option, but only for this source.
+</td>
+</tr>
+<tr>
+<th>
+ignoreTimezone
+</th>
+<td markdown='1'>
+Sets the [ignoreTimezone]() option, but only for this source.
+</td>
+</tr>
+<tr>
+<th>
+eventTransform
+</th>
+<td markdown='1'>
+Sets the [eventTransform]() callback, but only for this source.
+</td>
+</tr>
+</table>
+
+**For JSON feeds**, [there are additional options you can set](events_json_feed#options).
+

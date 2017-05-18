@@ -1,0 +1,14 @@
+
+refresh
+=======
+
+<div class='removed-notice' markdown='1'>
+This method was removed in version 1.3 in favor of [refetchEvents](../event_data/refetchEvents)
+and [rerenderEvents](../event_rendering/rerenderEvents).
+</div>
+
+Refetches and redraws the events for the current month.
+
+<div class='spec' markdown='1'>
+.fullCalendar( 'refresh' )
+</div>

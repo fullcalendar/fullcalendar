@@ -1,0 +1,25 @@
+
+selectable *1.4.6*
+==================
+
+Allows a user to highlight multiple days or timeslots by clicking and dragging.
+
+<div class='spec' markdown='1'>
+Boolean/[View Option Hash](../views/View_Option_Hash/), *default*: `false`
+</div>
+
+To let the user make selections by clicking and dragging,
+this option must be set to `true`.
+
+The [select](select_callback) and [unselect](unselect_callback) callbacks
+will be useful for monitoring when selections are made and cleared.
+
+To learn the ways in which selections can be cleared, read the docs
+for the [unselect](unselect_callback) callback.
+
+To view an example of how to create a new event based on a user's selection
+see "demos/selectable.html" in the download, or [visit this page](../../../js/fullcalendar-1-latest/demos/selectable.html).
+
+<div class='version-info' markdown='1'>
+A View Option Hash has been supported since version 1.4.7
+</div>
