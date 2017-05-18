@@ -1,7 +1,7 @@
 
 ## Reporting Bugs
 
-Each bug report MUST have a [JSFiddle/JSBin] recreation before any work can begin. [further instructions &raquo;](http://fullcalendar.io/wiki/Reporting-Bugs/)
+Each bug report MUST have a [Codepen/JSBin] recreation before any work can begin. [further instructions &raquo;](http://fullcalendar.io/wiki/Reporting-Bugs/)
 
 
 ## Requesting Features
