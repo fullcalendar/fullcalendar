@@ -123,6 +123,10 @@ DayGrid.mixin({
 					' href="' + htmlEscape(event.url) + '"' :
 					''
 					) +
+                (event.url && event.target ?
+                    ' target="' + htmlEscape(event.target) + '"' :
+                    ''
+                ) +
 				(skinCss ?
 					' style="' + skinCss + '"' :
 					''
