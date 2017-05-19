@@ -383,6 +383,11 @@ var basicDayGridMethods = {
 		var view = this.view;
 		var weekStart = this.getCellDate(row, 0);
 
+		// If week number calc is ISO, then we need to use the week of Monday
+		if (weekStart._locale._fullCalendar_weekCalc === 'ISO') {
+			weekStart = weekStart.day(1);
+		}
+
 		if (view.colWeekNumbersVisible) {
 			return '' +
 				'<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
