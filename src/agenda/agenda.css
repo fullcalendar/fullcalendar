@@ -197,6 +197,7 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */
+	cursor: pointer;
 }
 
 .fc-time-grid-event.fc-selected {
