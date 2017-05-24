@@ -1,17 +1,15 @@
 
 Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
-	var eventDef = eventInstanceGroup.getEventDef();
-	var eventRanges = eventInstanceGroup.buildEventRanges(null, this); // TODO: fix signature
-	var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+	var eventRangeGroup = eventInstanceGroup.buildRangeGroup();
+	var eventDef = eventRangeGroup.getEventDef();
+	var eventFootprints = this.eventRangesToEventFootprints(eventRangeGroup.eventRanges);
 	var i;
 
-	var constraintVal = eventDef.getConstraint(this);
-	var overlapVal = eventDef.getOverlap(this);
-
-	var peerEventDefs = this.getPeerEventDefs(eventDef);
-	var peerEventInstances = this.eventDefsToInstances(peerEventDefs);
-	var peerEventRanges = this.eventInstancesToEventRanges(peerEventInstances); // TODO: loop through pre-cached ranges instead?
+	var peerEventRanges = this.eventManager.getEventRangesWithoutId(eventDef.id);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
+
+	var constraintVal = eventDef.getConstraint();
+	var overlapVal = eventDef.getOverlap();
 
 	for (i = 0; i < eventFootprints.length; i++) {
 		if (
@@ -32,9 +30,7 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
-	var peerEventDefs = this.eventDefCollection.eventDefs; // all
-	var peerEventInstances = this.eventDefsToInstances(peerEventDefs);
-	var peerEventRanges = this.eventInstancesToEventRanges(peerEventInstances); // TODO: loop through pre-cached ranges instead?
+	var peerEventRanges = this.eventManager.getEventRanges();
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
 	var selectAllowFunc;
@@ -120,60 +116,26 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
-	var eventDefs;
-	var eventDef;
-	var eventInstances;
-	var eventRanges;
-	var eventFootprints;
+	var eventRanges = [];
 
 	if (constraintVal === 'businessHours') {
-
-		eventFootprints = this.buildCurrentBusinessFootprints(isAllDay);
-
-		return eventFootprintsToComponentFootprints(eventFootprints);
+		eventRanges = this.buildCurrentBusinessRanges(isAllDay);
 	}
 	else if (typeof constraintVal === 'object') {
-
-		eventDef = parseEventInput(constraintVal, this);
-		eventInstances = this.eventDefToInstances(eventDef);
-		eventRanges = this.eventInstancesToEventRanges(eventInstances);
-		eventFootprints = this.eventRangesToEventFootprints(eventRanges);
-
-		return eventFootprintsToComponentFootprints(eventFootprints);
+		eventRanges = this.parseEventDefToEventRanges(constraintVal);
 	}
 	else if (constraintVal != null) { // an ID
-
-		eventDefs = this.eventDefCollection.getById(constraintVal);
-		eventInstances = this.eventDefsToInstances(eventDefs);
-		eventRanges = this.eventInstancesToEventRanges(eventInstances);
-		eventFootprints = this.eventRangesToEventFootprints(eventRanges);
-
-		return eventFootprintsToComponentFootprints(eventFootprints);
+		eventRanges = this.eventManager.getEventRangesWithId(constraintVal);
 	}
 
-	return [];
+	return eventFootprintsToComponentFootprints(
+		this.eventRangesToEventFootprints(eventRanges)
+	);
 };
 
 
 // Overlap
 // ------------------------------------------------------------------------------------------------
-
-
-Calendar.prototype.getPeerEventDefs = function(subjectEventDef) {
-	var eventDefs = this.eventDefCollection.eventDefs;
-	var i, eventDef;
-	var unrelated = [];
-
-	for (i = 0; i < eventDefs.length; i++) {
-		eventDef = eventDefs[i];
-
-		if (eventDef.id !== subjectEventDef.id) {
-			unrelated.push(eventDef);
-		}
-	}
-
-	return unrelated;
-};
 
 
 Calendar.prototype.collectOverlapEventFootprints = function(peerEventFootprints, targetFootprint) {
@@ -222,7 +184,7 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 
 	for (i = 0; i < overlapEventFootprints.length; i++) {
 		overlapEventInstance = overlapEventFootprints[i].eventInstance;
-		overlapEventDef = overlapEventInstance.eventDefinition;
+		overlapEventDef = overlapEventInstance.def;
 
 		// don't need to pass in calendar, because don't want to consider global eventOverlap property,
 		// because we already considered that earlier in the process.
@@ -255,35 +217,21 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 // this more DRY.
 
 
-Calendar.prototype.eventDefsToInstances = function(eventDefs) {
-	var eventInstances = [];
-	var i;
+Calendar.prototype.parseEventDefToEventRanges = function(eventInput) {
+	var eventPeriod = this.eventManager.currentPeriod;
+	var eventDef = EventDefParser.parse(eventInput, this.eventManager.stickySource);
+	var instanceGroup;
 
-	for (i = 0; i < eventDefs.length; i++) {
-		eventInstances.push.apply(eventInstances, // append
-			this.eventDefToInstances(eventDefs[i])
+	if (eventPeriod && eventDef) {
+		instanceGroup = new EventInstanceGroup(
+			eventDef.buildInstances(eventPeriod.start, eventPeriod.end)
 		);
+
+		return instanceGroup.buildRanges();
 	}
-
-	return eventInstances;
-};
-
-
-Calendar.prototype.eventDefToInstances = function(eventDef) {
-	var activeRange = this.getView().activeRange; // TODO: use EventManager's range?
-
-	return eventDef.buildInstances(activeRange.start, activeRange.end);
-};
-
-
-Calendar.prototype.eventInstancesToEventRanges = function(eventInstances) {
-	var group = new EventInstanceGroup(eventInstances);
-	var activeRange = this.getView().activeRange; // TODO: use EventManager's range?
-
-	return group.buildEventRanges(
-		new UnzonedRange(activeRange.start, activeRange.end),
-		this // calendar
-	);
+	else {
+		return [];
+	}
 };
 
 
@@ -307,7 +255,7 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 			eventRange.eventInstance,
 			new ComponentFootprint(
 				eventRange.dateRange,
-				eventRange.eventInstance.eventDateProfile.isAllDay()
+				eventRange.eventInstance.dateProfile.isAllDay()
 			)
 		)
 	];

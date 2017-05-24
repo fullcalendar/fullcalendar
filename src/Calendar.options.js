@@ -73,7 +73,7 @@ Calendar.mixin({
 				return;
 			}
 			else if (optionName === 'timezone') {
-				this.rezoneArrayEventSources();
+				this.eventManager.rezoneEvents();
 				this.refetchEvents();
 				return;
 			}

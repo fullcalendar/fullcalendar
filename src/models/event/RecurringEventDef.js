@@ -1,15 +1,15 @@
 
-var RecurringEventDefinition = EventDefinition.extend({
+var RecurringEventDef = EventDef.extend({
 
-	startTime: null,
-	endTime: null,
-	dowHash: null,
+	startTime: null, // duration
+	endTime: null, // duration, or null
+	dowHash: null, // object hash, or null
 
 
 	buildInstances: function(start, end) {
 		var date = start.clone();
 		var instanceStart, instanceEnd;
-		var eventInstances = [];
+		var instances = [];
 
 		while (date.isBefore(end)) {
 
@@ -30,7 +30,7 @@ var RecurringEventDefinition = EventDefinition.extend({
 					instanceEnd = date.clone().time(this.endTime);
 				}
 
-				eventInstances.push(
+				instances.push(
 					new EventInstance(
 						this, // definition
 						new EventDateProfile(instanceStart, instanceEnd)
@@ -41,23 +41,24 @@ var RecurringEventDefinition = EventDefinition.extend({
 			date.add(1, 'days');
 		}
 
-		return eventInstances;
+		return instances;
 	},
 
 
-	setDow: function(dowArray) {
+	setDow: function(dowNumbers) {
+
 		if (!this.dowHash) {
 			this.dowHash = {};
 		}
 
-		for (var i = 0; i < dowArray.length; i++) {
-			this.dowHash[dowArray[i]] = true;
+		for (var i = 0; i < dowNumbers.length; i++) {
+			this.dowHash[dowNumbers[i]] = true;
 		}
 	},
 
 
 	clone: function() {
-		var def = EventDefinition.prototype.clone.call(this);
+		var def = EventDef.prototype.clone.call(this);
 
 		if (def.startTime) {
 			def.startTime = moment.duration(this.startTime);
@@ -77,11 +78,15 @@ var RecurringEventDefinition = EventDefinition.extend({
 });
 
 
-RecurringEventDefinition.addReservedProps([ 'start', 'end', 'dow' ]);
+RecurringEventDef.addReservedProps([ 'start', 'end', 'dow' ]);
 
 
-RecurringEventDefinition.parse = function(rawProps) {
-	var def = EventDefinition.parse.apply(this, arguments); // a RecurringEventDefinition
+// Parsing
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+RecurringEventDef.parse = function(rawProps) {
+	var def = EventDef.parse.apply(this, arguments); // a RecurringEventDef
 
 	if (rawProps.start) {
 		def.startTime = moment.duration(rawProps.start);

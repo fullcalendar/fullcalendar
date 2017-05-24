@@ -297,27 +297,27 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders events onto the view and populates the View's segment array
-	renderEventRanges: function(eventRanges) {
-		var dayEventRanges = [];
-		var timedEventRanges = [];
+	renderEventRangeGroups: function(eventRangeGroups) {
+		var dayEventRangeGroups = [];
+		var timedEventRangeGroups = [];
 		var daySegs = [];
 		var timedSegs;
 		var i;
 
 		// separate the events into all-day and timed
-		for (i = 0; i < eventRanges.length; i++) {
-			if (eventRanges[i].eventInstance.eventDateProfile.isAllDay()) {
-				dayEventRanges.push(eventRanges[i]);
+		for (i = 0; i < eventRangeGroups.length; i++) {
+			if (eventRangeGroups[i].getEventInstance().dateProfile.isAllDay()) {
+				dayEventRangeGroups.push(eventRangeGroups[i]);
 			}
 			else {
-				timedEventRanges.push(eventRanges[i]);
+				timedEventRangeGroups.push(eventRangeGroups[i]);
 			}
 		}
 
 		// render the events in the subcomponents
-		timedSegs = this.timeGrid.renderEventRanges(timedEventRanges);
+		timedSegs = this.timeGrid.renderEventRangeGroups(timedEventRangeGroups);
 		if (this.dayGrid) {
-			daySegs = this.dayGrid.renderEventRanges(dayEventRanges);
+			daySegs = this.dayGrid.renderEventRangeGroups(dayEventRangeGroups);
 		}
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
@@ -333,7 +333,7 @@ var AgendaView = FC.AgendaView = View.extend({
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
 	renderDrag: function(eventRanges, seg) {
 		var isAllDay = eventRanges.length &&
-			eventRanges[0].eventInstance.eventDateProfile.isAllDay();
+			eventRanges[0].eventInstance.dateProfile.isAllDay();
 
 		if (!isAllDay) {
 			return this.timeGrid.renderDrag(eventRanges, seg);

@@ -885,12 +885,6 @@ function hasOwnProp(obj, name) {
 }
 
 
-// Is the given value a non-object non-function value?
-function isAtomic(val) {
-	return /undefined|null|boolean|number|string/.test($.type(val));
-}
-
-
 function applyAll(functions, thisObj, args) {
 	if ($.isFunction(functions)) {
 		functions = [ functions ];
@@ -903,6 +897,70 @@ function applyAll(functions, thisObj, args) {
 		}
 		return ret;
 	}
+}
+
+
+function pluckProp(obj, propName) {
+	var res = null;
+
+	if (propName in obj) {
+		res = obj[propName];
+		delete obj[propName];
+	}
+
+	return res;
+}
+FC.pluckProp = pluckProp;
+
+
+function pluckProps(obj, propNames) {
+	var i, propName;
+	var res = {};
+
+	for (i = 0; i < propNames.length; i++) {
+		propName = propNames[i];
+
+		if (propName in obj) {
+			res[propName] = obj[propName];
+			delete obj[propName];
+		}
+	}
+
+	return res;
+}
+
+
+function removeMatching(array, testFunc) {
+	var removeCnt = 0;
+	var i;
+
+	while (i < array.length) {
+		if (testFunc(array[i])) { // truthy value means *remove*
+			array.splice(i, 1);
+		}
+		else {
+			i++;
+		}
+	}
+
+	return removeCnt;
+}
+
+
+function removeExact(array, exactVal) {
+	var removeCnt = 0;
+	var i;
+
+	while (i < array.length) {
+		if (array[i] === exactVal) {
+			array.splice(i, 1);
+		}
+		else {
+			i++;
+		}
+	}
+
+	return removeCnt;
 }
 
 

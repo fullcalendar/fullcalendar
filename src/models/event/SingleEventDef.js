@@ -1,11 +1,11 @@
 
-var SingleEventDefinition = EventDefinition.extend({ // TODO: mix-in some of EventInstance's methods?
-
-	start: null,
-	end: null,
+var SingleEventDef = EventDef.extend(EventStartEndMixin, {
 
 
-	buildInstances: function() { // disregards start/end
+	/*
+	Will receive start/end params, but will be ignored.
+	*/
+	buildInstances: function() {
 		return [
 			new EventInstance(
 				this, // definition
@@ -16,7 +16,7 @@ var SingleEventDefinition = EventDefinition.extend({ // TODO: mix-in some of Eve
 
 
 	clone: function() {
-		var def = EventDefinition.prototype.clone.call(this);
+		var def = EventDef.prototype.clone.call(this);
 
 		def.start = this.start.clone();
 
@@ -28,21 +28,33 @@ var SingleEventDefinition = EventDefinition.extend({ // TODO: mix-in some of Eve
 	},
 
 
-	isAllDay: function() {
-		// TODO: make more DRY
-		return !(this.start.hasTime() || (this.end && this.end.hasTime()));
+	rezone: function() {
+		var calendar = this.source.calendar;
+
+		this.start = calendar.moment(this.start);
+
+		if (this.end) {
+			this.end = calendar.moment(this.end);
+		}
 	}
 
 });
 
 
-SingleEventDefinition.addReservedProps([ 'start', 'end', 'date' ]);
+SingleEventDef.addReservedProps([ 'start', 'end', 'date' ]);
 
 
-SingleEventDefinition.parse = function(rawProps, source, calendar) {
-	var def = EventDefinition.parse.apply(this, arguments); // a SingleEventDefinition
+// Parsing
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+SingleEventDef.parse = function(rawProps, source) {
+	var def = EventDef.parse.apply(this, arguments); // a SingleEventDef
+	var calendar = source.calendar;
 	var start = calendar.moment(rawProps.start || rawProps.date); // 'date' is an alias
 	var end = rawProps.end ? calendar.moment(rawProps.end) : null;
+	var forcedAllDay;
+	var forceEventDuration;
 
 	if (!start.isValid()) {
 		return false;
@@ -52,7 +64,7 @@ SingleEventDefinition.parse = function(rawProps, source, calendar) {
 		end = null;
 	}
 
-	var forcedAllDay = rawProps.allDay;
+	forcedAllDay = rawProps.allDay;
 	if (forcedAllDay == null) {
 		forcedAllDay = source.allDayDefault;
 		if (forcedAllDay == null) {
@@ -73,7 +85,7 @@ SingleEventDefinition.parse = function(rawProps, source, calendar) {
 		}
 	}
 
-	var forceEventDuration = calendar.opt('forceEventDuration');
+	forceEventDuration = calendar.opt('forceEventDuration');
 	if (!end && forceEventDuration) {
 		end = calendar.getDefaultEventEnd(!start.hasTime(), start);
 	}

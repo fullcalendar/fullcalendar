@@ -1,6 +1,5 @@
 
 var BUSINESS_HOUR_EVENT_DEFAULTS = {
-	id: '_fcBusinessHours', // will relate events from different calls to expandEvent
 	start: '09:00',
 	end: '17:00',
 	dow: [ 1, 2, 3, 4, 5 ], // monday - friday
@@ -11,18 +10,22 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 
 // Return events objects for business hours within the current view.
 // Abuse of our event system :(
-Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
-	var activeRange = this.getView().activeRange;
-	var eventInstances = this.buildBusinessInstances(
-		wholeDay,
-		this.opt('businessHours'),
-		activeRange.start,
-		activeRange.end
-	);
+Calendar.prototype.buildCurrentBusinessRanges = function(wholeDay) {
+	var eventPeriod = this.eventManager.currentPeriod;
 
-	var eventRanges = this.eventInstancesToEventRanges(eventInstances);
-
-	return this.eventRangesToEventFootprints(eventRanges);
+	if (eventPeriod) {
+		return new EventInstanceGroup(
+			this.buildBusinessInstances(
+				wholeDay,
+				this.opt('businessHours'),
+				eventPeriod.start,
+				eventPeriod.end
+			)
+		).buildRanges();
+	}
+	else {
+		return [];
+	}
 };
 
 
@@ -64,9 +67,9 @@ Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreN
 			fullRawDef.end = null;
 		}
 
-		eventDef = RecurringEventDefinition.parse(
+		eventDef = RecurringEventDef.parse(
 			fullRawDef,
-			{}, // dummy source
+			new EventSource(this), // dummy source
 			this // calendar
 		);
 

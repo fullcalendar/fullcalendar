@@ -253,8 +253,8 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Renders the given events onto the view and populates the segments array
-	renderEventRanges: function(eventRanges) {
-		this.dayGrid.renderEventRanges(eventRanges);
+	renderEventRangeGroups: function(eventRangeGroups) {
+		this.dayGrid.renderEventRangeGroups(eventRangeGroups);
 
 		// must compensate for events that overflow the row
 		// TODO: how will ChronoComponent handle this?

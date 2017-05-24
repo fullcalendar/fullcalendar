@@ -20,6 +20,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initOptionsInternals(overrides);
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
+		this.initEventManager();
 
 		EventManager.call(this); // needs options immediately
 		this.initialize();
@@ -272,8 +273,52 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	rerenderEvents: function() { // API method. destroys old events if previously rendered.
 		if (this.elementVisible()) {
-			this.reportEventChange(); // will re-trasmit events to the view, causing a rerender
+			this.view.flash('displayingEvents');
 		}
+	},
+
+
+	initEventManager: function() {
+		var _this = this;
+		var eventManager = new EventManager();
+		var rawSources = this.opt('eventSources') || [];
+		var singleRawSource = this.opt('events');
+
+		this.eventManager = eventManager;
+
+		if (singleRawSource) {
+			rawSources.unshift(singleRawSource);
+		}
+
+		eventManager.on('release', function(eventRangeGroups) {
+			_this.trigger('eventsReset', eventRangeGroups);
+		});
+
+		eventManager.freeze();
+		rawSources.forEach(function(rawSource) {
+			var source = EventSourceParser.parse(rawSource, _this);
+
+			if (source) {
+				eventManager.addSource(source);
+			}
+		});
+		eventManager.thaw();
+	},
+
+
+	requestEventRangeGroups: function(start, end) {
+		return this.eventManager.requestEventRangeGroups(
+			start,
+			end,
+			this.opt('timezone'),
+			this.opt('lazyFetching')
+		);
+	},
+
+
+	// hook for external libs to manipulate event properties upon creation.
+	// should manipulate the event in-place.
+	normalizeEvent: function(event) {
 	}
 
 });

@@ -15,22 +15,22 @@ Grid.mixin({
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	renderEventRanges: function(eventRanges) {
-		var i, eventRange;
+	renderEventRangeGroups: function(eventRangeGroups) {
+		var unzonedRange = new UnzonedRange(this.start, this.end);
+		var i, eventRangeGroup;
+		var eventRenderRanges;
 		var eventFootprints;
 		var eventSegs;
-		var eventRendering;
 		var bgSegs = [];
 		var fgSegs = [];
 
-		for (i = 0; i < eventRanges.length; i++) {
-			eventRange = eventRanges[i];
-			eventFootprints = this.eventRangeToEventFootprints(eventRange);
+		for (i = 0; i < eventRangeGroups.length; i++) {
+			eventRangeGroup = eventRangeGroups[i];
+			eventRenderRanges = eventRangeGroup.sliceRenderRanges(unzonedRange);
+			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
 			eventSegs = this.eventFootprintsToSegs(eventFootprints);
-			eventRendering = eventRange.eventInstance.eventDefinition.rendering;
 
-			// TODO: query up to event's source and calendar
-			if (eventRendering === 'background' || eventRendering === 'inverse-background') {
+			if (eventRangeGroup.getEventDef().hasBgRendering()) {
 				bgSegs.push.apply(bgSegs, // append
 					eventSegs
 				);
@@ -50,7 +50,7 @@ Grid.mixin({
 
 
 	// Unrenders all events currently rendered on the grid
-	unrenderEventRanges: function() {
+	unrenderEventRangeGroups: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 		this.clearDragListeners();
 
@@ -141,7 +141,7 @@ Grid.mixin({
 	// FOR RENDERING
 	buildBusinessHourRanges: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
-		var group;
+		var instanceGroup;
 
 		if (businessHours == null) {
 			// fallback
@@ -149,14 +149,14 @@ Grid.mixin({
 			businessHours = calendar.opt('businessHours');
 		}
 
-		group = new EventInstanceGroup(calendar.buildBusinessInstances(
+		instanceGroup = new EventInstanceGroup(calendar.buildBusinessInstances(
 			wholeDay,
 			businessHours,
 			this.start,
 			this.end
 		));
 
-		return group.buildRenderRanges(
+		return instanceGroup.buildRangeGroup().sliceRenderRanges(
 			new UnzonedRange(this.start, this.end),
 			calendar
 		);
@@ -311,7 +311,7 @@ Grid.mixin({
 		var event = seg.event;
 		var isDragging;
 		var mouseFollower; // A clone of the original element that will move with the mouse
-		var eventMutation;
+		var eventDefMutation;
 
 		if (this.segDragListener) {
 			return this.segDragListener;
@@ -363,10 +363,10 @@ Grid.mixin({
 				footprint = hit.component.getSafeHitFootprint(hit);
 
 				if (origFootprint && footprint) {
-					eventMutation = _this.computeEventDropMutation(origFootprint, footprint);
+					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint);
 
-					if (eventMutation) {
-						eventInstanceGroup = view.calendar.buildMutatedEventInstanceGroup(event._id, eventMutation);
+					if (eventDefMutation) {
+						eventInstanceGroup = view.calendar.eventManager.buildMutatedEventInstanceGroup(event._id, eventDefMutation);
 						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
 					}
 					else {
@@ -378,13 +378,13 @@ Grid.mixin({
 				}
 
 				if (!isAllowed) {
-					eventMutation = null;
+					eventDefMutation = null;
 					disableCursor();
 				}
 
 				// if a valid drop location, have the subclass render a visual indication
 				if (
-					eventMutation &&
+					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
 						eventInstanceGroup.buildRenderRanges(
 							new UnzonedRange(_this.start, _this.end),
@@ -407,13 +407,13 @@ Grid.mixin({
 
 				if (isOrig) {
 					// needs to have moved hits to be a valid drop
-					eventMutation = null;
+					eventDefMutation = null;
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				view.unrenderDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all hits
-				eventMutation = null;
+				eventDefMutation = null;
 			},
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
@@ -422,15 +422,15 @@ Grid.mixin({
 				delete seg.component; // prevent side effects
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
-				mouseFollower.stop(!eventMutation, function() {
+				mouseFollower.stop(!eventDefMutation, function() {
 					if (isDragging) {
 						view.unrenderDrag();
 						_this.segDragStop(seg, ev);
 					}
 
-					if (eventMutation) {
+					if (eventDefMutation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-						view.reportEventDrop(event, eventMutation, el, ev);
+						view.reportEventDrop(event, eventDefMutation, el, ev);
 					}
 					else {
 						view.showEvent(event);
@@ -495,7 +495,7 @@ Grid.mixin({
 		var forceAllDay = false;
 		var dateDelta;
 		var dateMutation;
-		var eventMutation;
+		var eventDefMutation;
 
 		if (startFootprint.isAllDay !== endFootprint.isAllDay) {
 			clearEnd = true;
@@ -511,16 +511,16 @@ Grid.mixin({
 
 		dateDelta = this.diffDates(date1, date0);
 
-		dateMutation = new EventDateMutation();
+		dateMutation = new EventDefDateMutation();
 		dateMutation.clearEnd = clearEnd;
 		dateMutation.forceTimed = forceTimed;
 		dateMutation.forceAllDay = forceAllDay;
 		dateMutation.dateDelta = dateDelta;
 
-		eventMutation = new EventMutation();
-		eventMutation.dateMutation = dateMutation;
+		eventDefMutation = new EventDefMutation();
+		eventDefMutation.dateMutation = dateMutation;
 
-		return eventMutation;
+		return eventDefMutation;
 	},
 
 
@@ -661,7 +661,7 @@ Grid.mixin({
 			}
 		}
 
-		eventDef = SingleEventDefinition.parse(
+		eventDef = SingleEventDef.parse(
 			$.extend({}, meta.eventProps, {
 				start: start,
 				end: end
@@ -733,7 +733,7 @@ Grid.mixin({
 						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, event);
 
 					if (resizeMutation) {
-						eventInstanceGroup = calendar.buildMutatedEventInstanceGroup(event._id, resizeMutation);
+						eventInstanceGroup = calendar.eventManager.buildMutatedEventInstanceGroup(event._id, resizeMutation);
 						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
 					}
 					else {
@@ -748,7 +748,7 @@ Grid.mixin({
 					resizeMutation = null;
 					disableCursor();
 				}
-				else if (!resizeMutation.isSomething()) {
+				else if (resizeMutation.isEmpty()) {
 					// no change. (FYI, event dates might have zones)
 					resizeMutation = null;
 				}
@@ -816,17 +816,17 @@ Grid.mixin({
 		);
 		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
-		var eventMutation;
+		var eventDefMutation;
 
 		if (event.start.clone().add(startDelta) < eventEnd) {
 
-			dateMutation = new EventDateMutation();
+			dateMutation = new EventDefDateMutation();
 			dateMutation.startDelta = startDelta;
 
-			eventMutation = new EventMutation();
-			eventMutation.dateMutation = dateMutation;
+			eventDefMutation = new EventDefMutation();
+			eventDefMutation.dateMutation = dateMutation;
 
-			return eventMutation;
+			return eventDefMutation;
 		}
 
 		return false;
@@ -842,17 +842,17 @@ Grid.mixin({
 		);
 		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
-		var eventMutation;
+		var eventDefMutation;
 
 		if (eventEnd.add(endDelta) > event.start) {
 
-			dateMutation = new EventDateMutation();
+			dateMutation = new EventDefDateMutation();
 			dateMutation.endDelta = endDelta;
 
-			eventMutation = new EventMutation();
-			eventMutation.dateMutation = dateMutation;
+			eventDefMutation = new EventDefMutation();
+			eventDefMutation.dateMutation = dateMutation;
 
-			return eventMutation;
+			return eventDefMutation;
 		}
 
 		return false;
@@ -1057,7 +1057,7 @@ Grid.mixin({
 				eventRange.eventInstance,
 				new ComponentFootprint(
 					eventRange.dateRange,
-					eventRange.eventInstance.eventDateProfile.isAllDay()
+					eventRange.eventInstance.dateProfile.isAllDay()
 				)
 			)
 		];

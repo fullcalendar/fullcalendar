@@ -254,8 +254,8 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	fetchInitialEvents: function(dateProfile) {
-		return this.calendar.requestEvents(
+	fetchInitialEventRangeGroups: function(dateProfile) {
+		return this.calendar.requestEventRangeGroups(
 			dateProfile.activeRange.start,
 			dateProfile.activeRange.end
 		);
@@ -263,7 +263,7 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar, 'eventsReset', this.resetEventRanges);
+		this.listenTo(this.calendar, 'eventsReset', this.resetEventRangeGroups);
 	},
 
 
@@ -272,22 +272,22 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	setEventRanges: function(eventRanges) {
-		this.set('currentEventRanges', eventRanges);
+	setEventRangeGroups: function(eventRangeGroups) {
+		this.set('currentEventRangeGroups', eventRangeGroups);
 		this.set('hasEvents', true);
 	},
 
 
-	unsetEvents: function() {
-		this.unset('currentEventRanges');
+	unsetEventRangeGroups: function() {
+		this.unset('currentEventRangeGroups');
 		this.unset('hasEvents');
 	},
 
 
-	resetEventRanges: function(eventRanges) {
+	resetEventRangeGroups: function(eventRangeGroups) {
 		this.startBatchRender();
-		this.unsetEvents();
-		this.setEventRanges(eventRanges);
+		this.unsetEventRangeGroups();
+		this.setEventRangeGroups(eventRangeGroups);
 		this.stopBatchRender();
 	},
 
@@ -296,11 +296,11 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestEventsRender: function(eventRanges) {
+	requestEventsRender: function(eventRangeGroups) {
 		var _this = this;
 
 		this.renderQueue.queue(function() {
-			_this.executeEventsRender(eventRanges);
+			_this.executeEventsRender(eventRangeGroups);
 		}, 'event', 'init');
 	},
 
@@ -614,9 +614,9 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventsRender: function(eventRanges) {
+	executeEventsRender: function(eventRangeGroups) {
 
-		this.renderEventRanges(eventRanges);
+		this.renderEventRangeGroups(eventRangeGroups);
 		this.isEventsRendered = true;
 
 		this.onEventsRender();
@@ -630,7 +630,7 @@ var View = FC.View = ChronoComponent.extend({
 			this.destroyEvents(); // TODO: deprecate
 		}
 
-		this.unrenderEventRanges();
+		this.unrenderEventRangeGroups();
 		this.isEventsRendered = false;
 	},
 
@@ -710,16 +710,14 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	reportEventDrop: function(legacyEvent, eventMutation, el, ev) {
-		var calendar = this.calendar;
-		var undoDataFunc = calendar.mutateEventsWithId(legacyEvent._id, eventMutation);
-
-		var undoFunc = function() {
-			undoDataFunc();
-			calendar.reportEventChange();
-		};
+		var undoFunc = this.calendar.eventManager
+			.mutateEventsWithId(
+				EventManager.normalizeId(legacyEvent._id),
+				eventMutation,
+				this.calendar
+			);
 
 		this.triggerEventDrop(legacyEvent, eventMutation.dateDelta, undoFunc, el, ev);
-		calendar.reportEventChange(); // will rerender events
 	},
 
 
@@ -739,7 +737,7 @@ var View = FC.View = ChronoComponent.extend({
 	reportExternalDrop: function(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
 		if (isEvent) {
-			this.calendar.addEventDefAndRender(singleEventDef, isSticky);
+			this.calendar.eventManager.addEventDef(singleEventDef, isSticky);
 		}
 
 		this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
@@ -769,16 +767,14 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Must be called when an event in the view has been resized to a new length
 	reportEventResize: function(legacyEvent, eventMutation, el, ev) {
-		var calendar = this.calendar;
-		var undoDataFunc = calendar.mutateEventsWithId(legacyEvent._id, eventMutation);
-
-		var undoFunc = function() {
-			undoDataFunc();
-			calendar.reportEventChange();
-		};
+		var undoFunc = this.calendar.eventManager
+			.mutateEventsWithId(
+				EventManager.normalizeId(legacyEvent._id),
+				eventMutation,
+				this.calendar
+			);
 
 		this.triggerEventResize(legacyEvent, eventMutation.endDelta, undoFunc, el, ev);
-		calendar.reportEventChange(); // will rerender events
 	},
 
 
@@ -937,22 +933,22 @@ View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('initialEventRanges', [ 'dateProfile' ], function(deps) {
-	return this.fetchInitialEvents(deps.dateProfile);
+View.watch('initialEventRangeGroups', [ 'dateProfile' ], function(deps) {
+	return this.fetchInitialEventRangeGroups(deps.dateProfile);
 });
 
 
-View.watch('bindingEvents', [ 'initialEventRanges' ], function(deps) {
-	this.setEventRanges(deps.initialEventRanges);
+View.watch('bindingEvents', [ 'initialEventRangeGroups' ], function(deps) {
+	this.setEventRangeGroups(deps.initialEventRangeGroups);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.unsetEvents();
+	this.unsetEventRangeGroups();
 });
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	this.requestEventsRender(this.get('currentEventRanges')); // if there were event mutations after initialEventRanges
+	this.requestEventsRender(this.get('currentEventRangeGroups')); // if there were event mutations after initialEventRangeGroups
 }, function() {
 	this.requestEventsUnrender();
 });
