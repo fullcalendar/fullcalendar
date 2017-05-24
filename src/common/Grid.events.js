@@ -1140,20 +1140,6 @@ Grid.mixin({
 });
 
 
-/* Utilities
-----------------------------------------------------------------------------------------------------------------------*/
-
-
-function pluckEventDateProps(event) {
-	return {
-		start: event.start.clone(),
-		end: event.end ? event.end.clone() : null,
-		allDay: event.allDay // keep it the same
-	};
-}
-FC.pluckEventDateProps = pluckEventDateProps;
-
-
 /* External-Dragging-Element Data
 ----------------------------------------------------------------------------------------------------------------------*/
 

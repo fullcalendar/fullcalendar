@@ -71,10 +71,3 @@ var EventRangeGroup = Class.extend({
 	}
 
 });
-
-
-function collectDateRangesFromEventRanges(eventRanges) {
-	return eventRanges.map(function(eventRange) {
-		return eventRange.dateRange;
-	});
-}

@@ -258,13 +258,6 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 };
 
 
-function eventFootprintsToComponentFootprints(eventFootprints) {
-	return eventFootprints.map(function(eventFootprint) {
-		return eventFootprint.componentFootprint;
-	});
-}
-
-
 // Footprint Utils
 // ----------------------------------------------------------------------------------------
 
