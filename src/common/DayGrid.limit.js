@@ -325,19 +325,20 @@ DayGrid.mixin({
 		var dayStart = dayDate.clone();
 		var dayEnd = dayStart.clone().add(1, 'days');
 		var dayRange = new UnzonedRange(dayStart, dayEnd);
+		var newSegs = [];
+		var i;
 
-		// build an array of the original events
-		var eventRanges = $.map(segs, function(seg) {
-			return seg.eventRange.constrainTo(dayRange);
-		});
-
-		var eventSpans = this.eventRangesToSpans(eventRanges);
-		var eventSegs = this.eventSpansToSegs(eventSegs);
+		for (i = 0; i < segs.length; i++) {
+			newSegs.push.apply(newSegs, // append
+				this.eventFootprintToSegs(segs[i].footprint, dayRange)
+			);
+		}
 
 		// force an order because eventsToSegs doesn't guarantee one
-		this.sortEventSegs(eventSegs);
+		// TODO: research if still needed
+		this.sortEventSegs(newSegs);
 
-		return eventSegs;
+		return newSegs;
 	},
 
 

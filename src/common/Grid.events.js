@@ -1100,10 +1100,17 @@ Grid.mixin({
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventFootprintToSegs: function(eventFootprint) {
+	// constraintRange allow additional clipping. optional.
+	eventFootprintToSegs: function(eventFootprint, constraintRange) {
 		var dateRange = eventFootprint.componentFootprint.dateRange;
-		var segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
+		var segs;
 		var i, seg;
+
+		if (constraintRange) {
+			dateRange = dateRange.constrainTo(constraintRange);
+		}
+
+		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
@@ -1116,8 +1123,9 @@ Grid.mixin({
 			}
 
 			seg.event = eventFootprint.eventInstance.toLegacy();
-			seg.eventStartMS = dateRange.startMs;
-			seg.eventDurationMS = dateRange.endMs - dateRange.startMs;
+			seg.footprint = eventFootprint;
+			seg.footprintStartMs = dateRange.startMs;
+			seg.footprintDurationMs = dateRange.endMs - dateRange.startMs;
 		}
 
 		return segs;
@@ -1131,8 +1139,8 @@ Grid.mixin({
 
 	// A cmp function for determining which segments should take visual priority
 	compareEventSegs: function(seg1, seg2) {
-		return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
-			seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
+		return seg1.footprintStartMs - seg2.footprintStartMs || // earlier events go first
+			seg2.footprintDurationMs - seg1.footprintDurationMs || // tie? longer events go first
 			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
 			compareByFieldSpecs(seg1.event, seg2.event, this.view.eventOrderSpecs);
 	}
