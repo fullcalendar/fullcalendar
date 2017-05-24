@@ -209,11 +209,16 @@ TimeGrid.mixin({
 	unrenderNamedSegs: function(propName) {
 		var segs = this[propName];
 		var i;
+		var _this = this;
 
 		if (segs) {
-			for (i = 0; i < segs.length; i++) {
-				segs[i].el.remove();
-			}
+			this.el.on('segsRendered', function(e) {
+				for (i = 0; i < segs.length; i++) {
+					segs[i].el.remove();
+				}
+				_this.el.off('segsRendered');
+			});
+
 			this[propName] = null;
 		}
 	},

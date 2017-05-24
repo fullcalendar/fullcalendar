@@ -58,10 +58,15 @@ DayGrid.mixin({
 	unrenderFgSegs: function() {
 		var rowStructs = this.rowStructs || [];
 		var rowStruct;
+		var _this = this;
 
-		while ((rowStruct = rowStructs.pop())) {
-			rowStruct.tbodyEl.remove();
-		}
+		this.el.on('segsRendered', function() {
+			while ((rowStruct = rowStructs.pop())) {
+				rowStruct.tbodyEl.remove();
+			}
+
+			_this.el.off('segsRendered');			
+		});
 
 		this.rowStructs = null;
 	},

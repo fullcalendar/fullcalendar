@@ -38,6 +38,8 @@ Grid.mixin({
 			this.renderBgEvents(bgEvents),
 			this.renderFgEvents(fgEvents)
 		);
+
+		this.el.trigger('segsRendered');
 	},
 
 
