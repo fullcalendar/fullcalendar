@@ -13,7 +13,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	requestEventRangeGroups: function(start, end, timezone, force) {
+	requestEvents: function(start, end, timezone, force) {
 		if (
 			force ||
 			!this.currentPeriod ||

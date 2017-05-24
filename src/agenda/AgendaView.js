@@ -297,27 +297,29 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders events onto the view and populates the View's segment array
-	renderEventRangeGroups: function(eventRangeGroups) {
-		var dayEventRangeGroups = [];
-		var timedEventRangeGroups = [];
+	renderEvents: function(eventsPayload) {
+		var dayEventsPayload = {};
+		var timedEventsPayload = {};
 		var daySegs = [];
 		var timedSegs;
-		var i;
+		var id, eventRangeGroup;
 
 		// separate the events into all-day and timed
-		for (i = 0; i < eventRangeGroups.length; i++) {
-			if (eventRangeGroups[i].getEventInstance().dateProfile.isAllDay()) {
-				dayEventRangeGroups.push(eventRangeGroups[i]);
+		for (id in eventsPayload) {
+			eventRangeGroup = eventsPayload[id];
+
+			if (eventRangeGroup.getEventInstance().dateProfile.isAllDay()) {
+				dayEventsPayload[id] = eventRangeGroup;
 			}
 			else {
-				timedEventRangeGroups.push(eventRangeGroups[i]);
+				timedEventsPayload[id] = eventRangeGroup;
 			}
 		}
 
 		// render the events in the subcomponents
-		timedSegs = this.timeGrid.renderEventRangeGroups(timedEventRangeGroups);
+		timedSegs = this.timeGrid.renderEvents(timedEventsPayload);
 		if (this.dayGrid) {
-			daySegs = this.dayGrid.renderEventRangeGroups(dayEventRangeGroups);
+			daySegs = this.dayGrid.renderEvents(dayEventsPayload);
 		}
 
 		// the all-day area is flexible and might have a lot of events, so shift the height

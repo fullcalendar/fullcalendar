@@ -15,17 +15,18 @@ Grid.mixin({
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	renderEventRangeGroups: function(eventRangeGroups) {
+	renderEvents: function(eventsPayload) {
 		var unzonedRange = new UnzonedRange(this.start, this.end);
-		var i, eventRangeGroup;
+		var id, eventRangeGroup;
 		var eventRenderRanges;
 		var eventFootprints;
 		var eventSegs;
 		var bgSegs = [];
 		var fgSegs = [];
 
-		for (i = 0; i < eventRangeGroups.length; i++) {
-			eventRangeGroup = eventRangeGroups[i];
+		for (id in eventsPayload) {
+			eventRangeGroup = eventsPayload[id];
+
 			eventRenderRanges = eventRangeGroup.sliceRenderRanges(unzonedRange);
 			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
 			eventSegs = this.eventFootprintsToSegs(eventFootprints);
@@ -50,7 +51,7 @@ Grid.mixin({
 
 
 	// Unrenders all events currently rendered on the grid
-	unrenderEventRangeGroups: function() {
+	unrenderEvents: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
 		this.clearDragListeners();
 

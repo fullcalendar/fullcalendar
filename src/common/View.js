@@ -254,8 +254,8 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	fetchInitialEventRangeGroups: function(dateProfile) {
-		return this.calendar.requestEventRangeGroups(
+	fetchInitialEvents: function(dateProfile) {
+		return this.calendar.requestEvents(
 			dateProfile.activeRange.start,
 			dateProfile.activeRange.end
 		);
@@ -263,7 +263,7 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar, 'eventsReset', this.resetEventRangeGroups);
+		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
 	},
 
 
@@ -272,22 +272,22 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	setEventRangeGroups: function(eventRangeGroups) {
-		this.set('currentEventRangeGroups', eventRangeGroups);
+	setEvents: function(eventsPayload) {
+		this.set('currentEvents', eventsPayload);
 		this.set('hasEvents', true);
 	},
 
 
-	unsetEventRangeGroups: function() {
-		this.unset('currentEventRangeGroups');
+	unsetEvents: function() {
+		this.unset('currentEvents');
 		this.unset('hasEvents');
 	},
 
 
-	resetEventRangeGroups: function(eventRangeGroups) {
+	resetEvents: function(eventsPayload) {
 		this.startBatchRender();
-		this.unsetEventRangeGroups();
-		this.setEventRangeGroups(eventRangeGroups);
+		this.unsetEvents();
+		this.setEvents(eventsPayload);
 		this.stopBatchRender();
 	},
 
@@ -296,11 +296,11 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestEventsRender: function(eventRangeGroups) {
+	requestEventsRender: function(eventsPayload) {
 		var _this = this;
 
 		this.renderQueue.queue(function() {
-			_this.executeEventsRender(eventRangeGroups);
+			_this.executeEventsRender(eventsPayload);
 		}, 'event', 'init');
 	},
 
@@ -614,9 +614,9 @@ var View = FC.View = ChronoComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventsRender: function(eventRangeGroups) {
+	executeEventsRender: function(eventsPayload) {
 
-		this.renderEventRangeGroups(eventRangeGroups);
+		this.renderEvents(eventsPayload);
 		this.isEventsRendered = true;
 
 		this.onEventsRender();
@@ -630,7 +630,7 @@ var View = FC.View = ChronoComponent.extend({
 			this.destroyEvents(); // TODO: deprecate
 		}
 
-		this.unrenderEventRangeGroups();
+		this.unrenderEvents();
 		this.isEventsRendered = false;
 	},
 
@@ -933,22 +933,22 @@ View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('initialEventRangeGroups', [ 'dateProfile' ], function(deps) {
-	return this.fetchInitialEventRangeGroups(deps.dateProfile);
+View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
+	return this.fetchInitialEvents(deps.dateProfile);
 });
 
 
-View.watch('bindingEvents', [ 'initialEventRangeGroups' ], function(deps) {
-	this.setEventRangeGroups(deps.initialEventRangeGroups);
+View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
+	this.setEvents(deps.initialEvents);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.unsetEventRangeGroups();
+	this.unsetEvents();
 });
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	this.requestEventsRender(this.get('currentEventRangeGroups')); // if there were event mutations after initialEventRangeGroups
+	this.requestEventsRender(this.get('currentEvents')); // if there were event mutations after initialEvents
 }, function() {
 	this.requestEventsUnrender();
 });
