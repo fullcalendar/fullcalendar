@@ -14,14 +14,14 @@ Calendar.prototype.buildCurrentBusinessRanges = function(wholeDay) {
 	var eventPeriod = this.eventManager.currentPeriod;
 
 	if (eventPeriod) {
-		return new EventInstanceGroup(
+		return eventInstancesToEventRanges(
 			this.buildBusinessInstances(
 				wholeDay,
 				this.opt('businessHours'),
 				eventPeriod.start,
 				eventPeriod.end
 			)
-		).buildRanges();
+		);
 	}
 	else {
 		return [];

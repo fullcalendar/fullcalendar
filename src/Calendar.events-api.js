@@ -110,7 +110,7 @@ Calendar.mixin({
 		eventManager.freeze();
 
 		for (i = 0; i < eventIds.length; i++) {
-			eventManager.removeEventsById(eventIds[i]);
+			eventManager.removeEventDefsById(eventIds[i]);
 		}
 
 		eventManager.unfreeze();

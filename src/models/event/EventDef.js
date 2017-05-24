@@ -150,12 +150,10 @@ EventDef.parse = function(rawProps, source) {
 	}
 
 	if (rawProps.id != null) {
-		def.id = EventDef.normalizeId(
-			(def.rawId = rawProps.id)
-		);
+		def.id = EventDef.normalizeId((def.rawId = rawProps.id));
 	}
 	else {
-		def.id = def.rawId = EventDef.generateId();
+		def.id = EventDef.generateId();
 	}
 
 	def.internalId = String(EventDef.uuid++);

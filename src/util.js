@@ -932,7 +932,7 @@ function pluckProps(obj, propNames) {
 
 function removeMatching(array, testFunc) {
 	var removeCnt = 0;
-	var i;
+	var i = 0;
 
 	while (i < array.length) {
 		if (testFunc(array[i])) { // truthy value means *remove*
@@ -949,7 +949,7 @@ function removeMatching(array, testFunc) {
 
 function removeExact(array, exactVal) {
 	var removeCnt = 0;
-	var i;
+	var i = 0;
 
 	while (i < array.length) {
 		if (array[i] === exactVal) {

@@ -141,7 +141,6 @@ Grid.mixin({
 	// FOR RENDERING
 	buildBusinessHourRanges: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
-		var instanceGroup;
 
 		if (businessHours == null) {
 			// fallback
@@ -149,14 +148,16 @@ Grid.mixin({
 			businessHours = calendar.opt('businessHours');
 		}
 
-		instanceGroup = new EventInstanceGroup(calendar.buildBusinessInstances(
-			wholeDay,
-			businessHours,
-			this.start,
-			this.end
-		));
-
-		return instanceGroup.buildRangeGroup().sliceRenderRanges(
+		return new EventRangeGroup(
+			eventInstancesToEventRanges(
+				calendar.buildBusinessInstances(
+					wholeDay,
+					businessHours,
+					this.start,
+					this.end
+				)
+			)
+		).sliceRenderRanges(
 			new UnzonedRange(this.start, this.end),
 			calendar
 		);
@@ -307,6 +308,8 @@ Grid.mixin({
 	buildSegDragListener: function(seg) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
+		var eventManager = calendar.eventManager;
 		var el = seg.el;
 		var event = seg.event;
 		var isDragging;
@@ -350,7 +353,7 @@ Grid.mixin({
 				var isAllowed = true;
 				var origFootprint;
 				var footprint;
-				var eventInstanceGroup;
+				var mutatedEventRangeGroup;
 				var dragHelperEls;
 
 				// starting hit could be forced (DayGrid.limit)
@@ -366,8 +369,15 @@ Grid.mixin({
 					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint);
 
 					if (eventDefMutation) {
-						eventInstanceGroup = view.calendar.eventManager.buildMutatedEventInstanceGroup(event._id, eventDefMutation);
-						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
+						mutatedEventRangeGroup = new EventRangeGroup(
+							eventInstancesToEventRanges(
+								eventManager.buildMutatedEventInstances(
+									eventManager.getEventDefByInternalId(event._id).id,
+									eventDefMutation
+								)
+							)
+						);
+						isAllowed = _this.isEventRangeGroupAllowed(mutatedEventRangeGroup);
 					}
 					else {
 						isAllowed = false;
@@ -386,14 +396,13 @@ Grid.mixin({
 				if (
 					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
-						eventInstanceGroup.buildRenderRanges(
+						mutatedEventRangeGroup.sliceRenderRanges(
 							new UnzonedRange(_this.start, _this.end),
-							view.calendar
+							calendar
 						),
 						seg
 					))
 				) {
-
 					dragHelperEls.addClass('fc-dragging');
 					if (!dragListener.isTouch) {
 						_this.applyDragOpacity(dragHelperEls);
@@ -573,16 +582,20 @@ Grid.mixin({
 			hitOver: function(hit) {
 				var isAllowed = true;
 				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
-				var eventInstanceGroup;
+				var mutatedEventRangeGroup;
 
 				if (hitFootprint) {
 					singleEventDef = _this.computeExternalDrop(hitFootprint, meta);
 
 					if (singleEventDef) {
-						eventInstanceGroup = new EventInstanceGroup(singleEventDef.buildInstances());
+						mutatedEventRangeGroup = new EventRangeGroup(
+							eventInstancesToEventRanges(
+								singleEventDef.buildInstances()
+							)
+						);
 						isAllowed = meta.eventProps ? // isEvent?
-							_this.isEventInstanceGroupAllowed(eventInstanceGroup) :
-							_this.isExternalInstanceGroupAllowed(eventInstanceGroup);
+							_this.isEventRangeGroupAllowed(mutatedEventRangeGroup) :
+							_this.isExternalRangeGroupAllowed(mutatedEventRangeGroup);
 					}
 					else {
 						isAllowed = false;
@@ -599,11 +612,10 @@ Grid.mixin({
 
 				if (singleEventDef) {
 					_this.renderDrag( // called without a seg parameter
-						new EventInstanceGroup(singleEventDef.buildInstances())
-							.buildRenderRanges(
-								new UnzonedRange(_this.start, _this.end),
-								view.calendar
-							)
+						mutatedEventRangeGroup.sliceRenderRanges(
+							new UnzonedRange(_this.start, _this.end),
+							view.calendar
+						)
 					);
 				}
 			},
@@ -704,6 +716,7 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
+		var eventManager = calendar.eventManager;
 		var el = seg.el;
 		var event = seg.event;
 		var isDragging;
@@ -725,7 +738,7 @@ Grid.mixin({
 				var isAllowed = true;
 				var origHitFootprint = _this.getSafeHitFootprint(origHit);
 				var hitFootprint = _this.getSafeHitFootprint(hit);
-				var eventInstanceGroup;
+				var mutatedEventRangeGroup;
 
 				if (origHitFootprint && hitFootprint) {
 					resizeMutation = isStart ?
@@ -733,8 +746,15 @@ Grid.mixin({
 						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, event);
 
 					if (resizeMutation) {
-						eventInstanceGroup = calendar.eventManager.buildMutatedEventInstanceGroup(event._id, resizeMutation);
-						isAllowed = _this.isEventInstanceGroupAllowed(eventInstanceGroup);
+						mutatedEventRangeGroup = new EventRangeGroup(
+							eventInstancesToEventRanges(
+								eventManager.buildMutatedEventInstances(
+									eventManager.getEventDefByInternalId(event._id).id,
+									resizeMutation
+								)
+							)
+						);
+						isAllowed = _this.isEventRangeGroupAllowed(mutatedEventRangeGroup);
 					}
 					else {
 						isAllowed = false;
@@ -757,7 +777,7 @@ Grid.mixin({
 					view.hideEvent(event);
 
 					_this.renderEventResize(
-						eventInstanceGroup.buildRenderRanges(
+						mutatedEventRangeGroup.sliceRenderRanges(
 							new UnzonedRange(_this.start, _this.end),
 							calendar
 						),
@@ -1006,16 +1026,15 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
-		return this.view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
+	isEventRangeGroupAllowed: function(eventRangeGroup) {
+		return this.view.calendar.isEventRangeGroupAllowed(eventRangeGroup);
 	},
 
 
 	// when it's a completely anonymous external drag, no event.
-	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
+	isExternalRangeGroupAllowed: function(eventRangeGroup) {
 		var calendar = this.view.calendar;
-		var eventRanges = eventInstanceGroup.buildEventRanges(null, calendar); // TODO: fix signature
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+		var eventFootprints = this.eventRangesToEventFootprints(eventRangeGroup.eventRanges);
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {

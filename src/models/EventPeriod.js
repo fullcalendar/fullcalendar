@@ -12,6 +12,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	stuntedReleaseCnt: 0,
 	releaseCnt: 0,
 
+	eventDefsByInternalId: null,
 	eventDefsById: null,
 	eventInstancesById: null,
 	eventRangesById: null,
@@ -22,6 +23,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.end = end;
 		this.timezone = timezone;
 		this.requests = [];
+		this.eventDefsByInternalId = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
 		this.eventRangesById = {};
@@ -66,7 +68,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	purgeSource: function(source, isSilent) {
+	purgeSource: function(source) {
 		var _this = this;
 
 		var removeCnt = removeMatching(this.requests, function(request) {
@@ -80,14 +82,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		});
 
 		if (removeCnt) {
-			this.removeEventsBySource(source, isSilent); // might release
+			this.removeEventDefsBySource(source); // might release
 		}
 
 		return removeCnt;
 	},
 
 
-	purgeAllSources: function(isSilent) {
+	purgeAllSources: function() {
 		if (this.requests.length) {
 			this.requests.forEach(function(request) {
 				request.status = 'cancelled';
@@ -95,125 +97,18 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 			this.requests = [];
 			this.pendingCnt = 0;
-			this.removeAllEvents(isSilent); // might release
+			this.removeAllEventDefs(); // might release
 		}
 	},
 
 
-	// Event Def/Instance/Range ADDING
+	// Event Definitions
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	addEventDefs: function(eventDefs) {
-		for (var i = 0; i < eventDefs.length; i++) {
-			this.addEventDef(eventDefs[i]);
-		}
+	getEventDefByInternalId: function(eventDefInternalId) {
+		return this.eventDefsByInternalId[eventDefInternalId];
 	},
-
-
-	addEventDef: function(eventDef) {
-		var eventDefsById = this.eventDefsById;
-		var eventDefId = eventDef.id;
-		var eventInstances = eventDef.buildInstances(this.start, this.end);
-		var i;
-
-		(eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []))
-			.push(eventDef);
-
-		for (i = 0; i < eventInstances.length; i++) {
-			this.addEventInstance(eventInstances[i], eventDefId);
-		}
-	},
-
-
-	addEventInstance: function(eventInstance, eventDefId) {
-		var eventInstancesById = this.eventInstancesById;
-
-		(eventInstancesById[eventDefId] || (eventInstancesById[eventDefId] = []))
-			.push(eventInstance);
-
-		this.addEventRange(eventInstance.buildEventRange(), eventDefId);
-	},
-
-
-	addEventRange: function(eventRange, eventDefId) {
-		var eventRangesById = this.eventRangesById;
-
-		(eventRangesById[eventDefId] || (eventRangesById[eventDefId] = []))
-			.push(eventRange);
-
-		this.tryRelease();
-	},
-
-
-	// Event Def/Instance/Range REMOVING
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	removeEventsById: function(eventDefId) {
-		delete this.eventDefsById[eventDefId];
-		delete this.eventInstancesById[eventDefId];
-
-		if (eventDefId in this.eventRangesById) {
-			delete this.eventRangesById[eventDefId];
-
-			this.tryRelease();
-		}
-	},
-
-
-	removeEventsBySource: function(source, isSilent) {
-		var eventDefsById = this.eventDefsById;
-		var eventInstancesById = this.eventInstancesById;
-		var eventRangesById = this.eventRangesById;
-		var id;
-		var removeCnt = 0;
-
-		function matchEventDef(eventDef) {
-			return eventDef.source === source;
-		}
-
-		function matchEventInstance(eventInstance) {
-			return eventInstance.def.source === source;
-		}
-
-		function matchEventRange(eventRange) {
-			return eventRange.eventInstance.def.source === source;
-		}
-
-		for (id in eventDefsById) {
-			removeMatching(eventDefsById[id], matchEventDef);
-		}
-
-		for (id in eventInstancesById) {
-			removeMatching(eventInstancesById[id], matchEventInstance);
-		}
-
-		for (id in eventRangesById) {
-			removeCnt += removeMatching(eventRangesById[id], matchEventRange);
-		}
-
-		if (removeCnt && !isSilent) {
-			this.tryRelease();
-		}
-	},
-
-
-	removeAllEvents: function(isSilent) {
-		var hasAny = !$.isEmptyObject(this.eventRangesById);
-
-		this.eventDefsById = {};
-		this.eventInstancesById = {};
-		this.eventRangesById = {};
-
-		if (hasAny && !isSilent) {
-			this.tryRelease();
-		}
-	},
-
-
-	// Event Def/Instance/Range GETTING
-	// -----------------------------------------------------------------------------------------------------------------
 
 
 	getEventDefsById: function(eventDefId) {
@@ -237,6 +132,72 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
+	addEventDefs: function(eventDefs) {
+		for (var i = 0; i < eventDefs.length; i++) {
+			this.addEventDef(eventDefs[i]);
+		}
+	},
+
+
+	addEventDef: function(eventDef) {
+		var eventDefsById = this.eventDefsById;
+		var eventDefId = eventDef.id;
+		var eventInstances = eventDef.buildInstances(this.start, this.end);
+		var i;
+
+		this.eventDefsByInternalId[eventDef.internalId] = eventDef;
+
+		(eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []))
+			.push(eventDef);
+
+		for (i = 0; i < eventInstances.length; i++) {
+			this.addEventInstance(eventInstances[i], eventDefId);
+		}
+	},
+
+
+	removeEventDefsById: function(eventDefId) {
+		var _this = this;
+
+		this.getEventDefsById(eventDefId).forEach(function(eventDef) {
+			_this.removeEventDef(eventDef);
+		});
+	},
+
+
+	removeEventDefsBySource: function(source) {
+		var _this = this;
+
+		this.iterEventDefs(function(eventDef) {
+			if (eventDef.source === source) {
+				_this.removeEventDef(eventDef);
+			}
+		});
+	},
+
+
+	removeAllEventDefs: function() {
+		this.eventDefsByInternalId = {};
+		this.eventDefsById = {};
+		this.eventInstancesById = {};
+		this.eventRangesById = {};
+		this.tryRelease();
+	},
+
+
+	removeEventDef: function(eventDef) {
+		delete this.eventDefsByInternalId[eventDef.internalId];
+
+		removeExact(this.eventDefsById[eventDef.id] || [], eventDef);
+
+		this.removeEventInstancesForDef(eventDef);
+	},
+
+
+	// Event Instances
+	// -----------------------------------------------------------------------------------------------------------------
+
+
 	getEventInstances: function() { // TODO: consider iterator
 		var eventInstancesById = this.eventInstancesById;
 		var allInstances = [];
@@ -250,6 +211,29 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		return allInstances;
 	},
+
+
+	addEventInstance: function(eventInstance, eventDefId) {
+		var eventInstancesById = this.eventInstancesById;
+
+		(eventInstancesById[eventDefId] || (eventInstancesById[eventDefId] = []))
+			.push(eventInstance);
+
+		this.addEventRange(eventInstance.buildEventRange(), eventDefId);
+	},
+
+
+	removeEventInstancesForDef: function(eventDef) {
+		removeMatching(this.eventInstancesById[eventDef.id] || [], function(currentEventInstance) {
+			return currentEventInstance.def === eventDef;
+		});
+
+		this.removeEventRangesForDef(eventDef);
+	},
+
+
+	// Event Ranges
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	getEventRanges: function() { // TODO: consider iterator
@@ -286,6 +270,27 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		return matchingRanges;
+	},
+
+
+	addEventRange: function(eventRange, eventDefId) {
+		var eventRangesById = this.eventRangesById;
+
+		(eventRangesById[eventDefId] || (eventRangesById[eventDefId] = []))
+			.push(eventRange);
+
+		this.tryRelease();
+	},
+
+
+	removeEventRangesForDef: function(eventDef) {
+		var removeCnt = removeMatching(this.eventRangesById[eventDef.id] || [], function(currentEventRange) {
+			return currentEventRange.eventInstance.def === eventDef;
+		});
+
+		if (removeCnt) {
+			this.tryRelease();
+		}
 	},
 
 

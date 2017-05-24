@@ -30,15 +30,10 @@ var ArrayEventSource = EventSource.extend({
 	},
 
 
-	iterEventDefs: function(func) {
-		this.eventDefs.forEach(func);
-	},
-
-
 	/*
 	eventDefId already normalized to a string
 	*/
-	removeEventsById: function(eventDefId) {
+	removeEventDefsById: function(eventDefId) {
 		return removeMatching(this.eventDefs, function(eventDef) {
 			return eventDef.id === eventDefId;
 		});

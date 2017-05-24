@@ -31,7 +31,7 @@ var EventSource = Class.extend({
 	},
 
 
-	removeEventsById: function(eventDefId) {
+	removeEventDefsById: function(eventDefId) {
 		// optional for subclasses to implement
 	},
 

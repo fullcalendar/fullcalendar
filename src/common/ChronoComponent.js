@@ -284,21 +284,29 @@ var ChronoComponent = Model.extend({
 
 
 	isEventStartEditable: function(event) {
-		return firstDefined(
-			event.startEditable,
-			(event.source || {}).startEditable,
-			this.opt('eventStartEditable'),
-			this.isEventGenerallyEditable(event)
-		);
+		var isEditable = event.startEditable;
+		if (isEditable == null) {
+			isEditable = event.source.startEditable;
+			if (isEditable == null) {
+				isEditable = this.opt('eventStartEditable');
+				if (isEditable == null) {
+					isEditable = this.isEventGenerallyEditable(event);
+				}
+			}
+		}
+		return isEditable;
 	},
 
 
 	isEventGenerallyEditable: function(event) {
-		return firstDefined(
-			event.editable,
-			(event.source || {}).editable,
-			this.opt('editable')
-		);
+		var isEditable = event.editable;
+		if (isEditable == null) {
+			isEditable = event.source.editable;
+			if (isEditable == null) {
+				isEditable = this.opt('editable');
+			}
+		}
+		return isEditable;
 	},
 
 
@@ -320,16 +328,23 @@ var ChronoComponent = Model.extend({
 
 	// Computes if the given event is allowed to be resized by the user at all
 	isEventResizable: function(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.durationEditable,
-			source.durationEditable,
-			this.opt('eventDurationEditable'),
-			event.editable,
-			source.editable,
-			this.opt('editable')
-		);
+		var isResizable = event.durationEditable;
+		if (isResizable == null) {
+			isResizable = event.source.durationEditable;
+			if (isResizable == null) {
+				isResizable = this.opt('eventDurationEditable');
+				if (isResizable == null) {
+					isResizable = event.editable;
+					if (isResizable == null) {
+						isResizable = event.source.editable;
+						if (isResizable == null) {
+							isResizable = this.opt('editable');
+						}
+					}
+				}
+			}
+		}
+		return isResizable;
 	},
 
 

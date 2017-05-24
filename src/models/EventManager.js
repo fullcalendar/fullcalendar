@@ -64,17 +64,25 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	refetchSource: function(eventSource) {
-		if (this.currentPeriod) {
-			this.currentPeriod.purgeSource(eventSource, true); // isSilent=true
-			this.currentPeriod.requestSource(eventSource);
+		var currentPeriod = this.currentPeriod;
+
+		if (currentPeriod) {
+			currentPeriod.freeze();
+			currentPeriod.purgeSource(eventSource);
+			currentPeriod.requestSource(eventSource);
+			currentPeriod.thaw();
 		}
 	},
 
 
 	refetchAllSources: function() {
-		if (this.currentPeriod) {
-			this.currentPeriod.purgeAllSources(true); // isSilent=true
-			this.currentPeriod.requestSources(this.getSources());
+		var currentPeriod = this.currentPeriod;
+
+		if (currentPeriod) {
+			currentPeriod.freeze();
+			currentPeriod.purgeAllSources();
+			currentPeriod.requestSources(this.getSources());
+			currentPeriod.thaw();
 		}
 	},
 
@@ -183,6 +191,20 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	getEventDefByInternalId: function(internalId) {
+		if (this.currentPeriod) {
+			return this.currentPeriod.getEventDefByInternalId(internalId);
+		}
+	},
+
+
+	iterEventDefs: function(func) {
+		if (this.currentPeriod) {
+			this.currentPeriod.iterEventDefs(func);
+		}
+	},
+
+
 	addEventDef: function(eventDef, isSticky) {
 		if (isSticky) {
 			this.stickySource.addEventDef(eventDef);
@@ -194,45 +216,13 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	removeEventsById: function(eventId) {
+	removeEventDefsById: function(eventId) {
 		this.getSources().forEach(function(eventSource) {
-			eventSource.removeEventsById(eventId);
+			eventSource.removeEventDefsById(eventId);
 		});
 
 		if (this.currentPeriod) {
-			this.currentPeriod.removeEventsById(eventId); // might release
-		}
-	},
-
-
-	getEventDefByInternalId: function(internalId) {
-		var foundEventDef = null;
-
-		// TODO: somehow break after first match
-		// TODO: somehow cache
-		this.iterEventDefs(function(eventDef) {
-			if (eventDef.internalId === internalId) {
-				foundEventDef = eventDef;
-			}
-		});
-
-		return foundEventDef;
-	},
-
-
-	iterEventDefs: function(func) {
-		this.sources.each(function(source) {
-			if (source instanceof ArrayEventSource) {
-				source.iterEventDefs(func);
-			}
-		});
-
-		if (this.currentPeriod) {
-			this.currentPeriod.iterEventDefs(function(eventDef) {
-				if (!(eventDef.source instanceof ArrayEventSource)) {
-					func(eventDef);
-				}
-			});
+			this.currentPeriod.removeEventDefsById(eventId); // might release
 		}
 	},
 
@@ -249,45 +239,47 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	/*
-	Returns an undo function
+	Returns an undo function.
 	*/
 	mutateEventsWithId: function(eventDefId, eventDefMutation) {
-		var undoFuncs = [];
 		var currentPeriod = this.currentPeriod;
+		var eventDefs;
+		var undoFuncs = [];
 
-		// TODO: somehow use EventPeriod::getEventDefsById
-		this.iterEventDefs(function(eventDef) {
-			if (eventDef.id === eventDefId) {
-				if (eventDef instanceof SingleEventDef) {
-					undoFuncs.push(
-						eventDefMutation.mutateSingle(eventDef)
-					);
+		if (currentPeriod) {
+
+			currentPeriod.freeze();
+
+			eventDefs = currentPeriod.getEventDefsById(eventDefId);
+			eventDefs.forEach(function(eventDef) {
+				currentPeriod.removeEventDef(eventDef);
+				undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
+				currentPeriod.addEventDef(eventDef);
+			});
+
+			currentPeriod.thaw();
+
+			return function() {
+				currentPeriod.freeze();
+
+				for (var i = 0; i < eventDefs.length; i++) {
+					currentPeriod.removeEventDef(eventDefs[i]);
+					undoFuncs[i]();
+					currentPeriod.addEventDef(eventDefs[i]);
 				}
-			}
-		});
 
-		if (currentPeriod && undoFuncs.length) {
-			// EventManager is responsible for triggering release
-			currentPeriod.tryRelease();
+				currentPeriod.thaw();
+			};
 		}
 
-		return function() {
-			for (var i = 0; i < undoFuncs.length; i++) {
-				undoFuncs[i]();
-			}
-
-			if (currentPeriod && undoFuncs.length) {
-				// EventManager is responsible for triggering release
-				currentPeriod.tryRelease();
-			}
-		};
+		return function() { };
 	},
 
 
 	/*
 	copies and then mutates
 	*/
-	buildMutatedEventInstanceGroup: function(eventDefId, eventDefMutation) {
+	buildMutatedEventInstances: function(eventDefId, eventDefMutation) {
 		var eventDefs = this.getEventDefsById(eventDefId);
 		var i;
 		var defCopy;
@@ -305,7 +297,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 		}
 
-		return new EventInstanceGroup(allInstances);
+		return allInstances;
 	},
 
 

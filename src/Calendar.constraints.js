@@ -1,6 +1,5 @@
 
-Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
-	var eventRangeGroup = eventInstanceGroup.buildRangeGroup();
+Calendar.prototype.isEventRangeGroupAllowed = function(eventRangeGroup) {
 	var eventDef = eventRangeGroup.getEventDef();
 	var eventFootprints = this.eventRangesToEventFootprints(eventRangeGroup.eventRanges);
 	var i;
@@ -220,14 +219,11 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 Calendar.prototype.parseEventDefToEventRanges = function(eventInput) {
 	var eventPeriod = this.eventManager.currentPeriod;
 	var eventDef = EventDefParser.parse(eventInput, this.eventManager.stickySource);
-	var instanceGroup;
 
 	if (eventPeriod && eventDef) {
-		instanceGroup = new EventInstanceGroup(
+		return eventInstancesToEventRanges(
 			eventDef.buildInstances(eventPeriod.start, eventPeriod.end)
 		);
-
-		return instanceGroup.buildRanges();
 	}
 	else {
 		return [];
