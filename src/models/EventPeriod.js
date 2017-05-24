@@ -15,7 +15,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	eventDefsByInternalId: null,
 	eventDefsById: null,
 	eventInstancesById: null,
-	eventRangesById: null,
+	eventRangeGroupsById: null,
 
 
 	constructor: function(start, end, timezone) {
@@ -26,7 +26,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.eventDefsByInternalId = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
-		this.eventRangesById = {};
+		this.eventRangeGroupsById = {};
 	},
 
 
@@ -142,13 +142,13 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	addEventDef: function(eventDef) {
 		var eventDefsById = this.eventDefsById;
 		var eventDefId = eventDef.id;
+		var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
 		var eventInstances = eventDef.buildInstances(this.start, this.end);
 		var i;
 
-		this.eventDefsByInternalId[eventDef.internalId] = eventDef;
+		eventDefs.push(eventDef);
 
-		(eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []))
-			.push(eventDef);
+		this.eventDefsByInternalId[eventDef.internalId] = eventDef;
 
 		for (i = 0; i < eventInstances.length; i++) {
 			this.addEventInstance(eventInstances[i], eventDefId);
@@ -180,17 +180,26 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.eventDefsByInternalId = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
-		this.eventRangesById = {};
+		this.eventRangeGroupsById = {};
 		this.tryRelease();
 	},
 
 
 	removeEventDef: function(eventDef) {
+		var eventDefsById = this.eventDefsById;
+		var eventDefs = eventDefsById[eventDef.id];
+
 		delete this.eventDefsByInternalId[eventDef.internalId];
 
-		removeExact(this.eventDefsById[eventDef.id] || [], eventDef);
+		if (eventDefs) {
+			removeExact(eventDefs, eventDef);
 
-		this.removeEventInstancesForDef(eventDef);
+			if (!eventDefs.length) {
+				delete eventDefsById[eventDef.id];
+			}
+
+			this.removeEventInstancesForDef(eventDef);
+		}
 	},
 
 
@@ -215,20 +224,30 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	addEventInstance: function(eventInstance, eventDefId) {
 		var eventInstancesById = this.eventInstancesById;
+		var eventInstances = eventInstancesById[eventDefId] ||
+			(eventInstancesById[eventDefId] = []);
 
-		(eventInstancesById[eventDefId] || (eventInstancesById[eventDefId] = []))
-			.push(eventInstance);
+		eventInstances.push(eventInstance);
 
 		this.addEventRange(eventInstance.buildEventRange(), eventDefId);
 	},
 
 
 	removeEventInstancesForDef: function(eventDef) {
-		removeMatching(this.eventInstancesById[eventDef.id] || [], function(currentEventInstance) {
-			return currentEventInstance.def === eventDef;
-		});
+		var eventInstancesById = this.eventInstancesById;
+		var eventInstances = eventInstancesById[eventDef.id];
 
-		this.removeEventRangesForDef(eventDef);
+		if (eventInstances) {
+			removeMatching(eventInstances, function(currentEventInstance) {
+				return currentEventInstance.def === eventDef;
+			});
+
+			if (!eventInstances.length) {
+				delete eventInstancesById[eventDef.id];
+			}
+
+			this.removeEventRangesForDef(eventDef);
+		}
 	},
 
 
@@ -237,34 +256,40 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	getEventRanges: function() { // TODO: consider iterator
-		var eventRangesById = this.eventRangesById;
-		var matchingRanges = [];
+		var eventRangeGroupsById = this.eventRangeGroupsById;
+		var allRanges = [];
 		var id;
 
-		for (id in eventRangesById) {
-			matchingRanges.push.apply(matchingRanges, // append
-				eventRangesById[id]
+		for (id in eventRangeGroupsById) {
+			allRanges.push.apply(allRanges, // append
+				eventRangeGroupsById[id].eventRanges
 			);
 		}
 
-		return matchingRanges;
+		return allRanges;
 	},
 
 
 	getEventRangesWithId: function(eventDefId) {
-		return this.eventRangesById[eventDefId] || [];
+		var eventRangeGroup = this.eventRangeGroupsById[eventDefId];
+
+		if (eventRangeGroup) {
+			return eventRangeGroup.eventRanges;
+		}
+
+		return [];
 	},
 
 
 	getEventRangesWithoutId: function(eventDefId) { // TODO: consider iterator
-		var eventRangesById = this.eventRangesById;
+		var eventRangeGroupsById = this.eventRangeGroupsById;
 		var matchingRanges = [];
 		var id;
 
-		for (id in eventRangesById) {
+		for (id in eventRangeGroupsById) {
 			if (id !== eventDefId) {
 				matchingRanges.push.apply(matchingRanges, // append
-					eventRangesById[id]
+					eventRangeGroupsById[id].eventRanges
 				);
 			}
 		}
@@ -274,22 +299,33 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	addEventRange: function(eventRange, eventDefId) {
-		var eventRangesById = this.eventRangesById;
+		var eventRangeGroupsById = this.eventRangeGroupsById;
+		var eventRangeGroup = eventRangeGroupsById[eventDefId] ||
+			(eventRangeGroupsById[eventDefId] = new EventRangeGroup());
 
-		(eventRangesById[eventDefId] || (eventRangesById[eventDefId] = []))
-			.push(eventRange);
+		eventRangeGroup.eventRanges.push(eventRange);
 
 		this.tryRelease();
 	},
 
 
 	removeEventRangesForDef: function(eventDef) {
-		var removeCnt = removeMatching(this.eventRangesById[eventDef.id] || [], function(currentEventRange) {
-			return currentEventRange.eventInstance.def === eventDef;
-		});
+		var eventRangeGroupsById = this.eventRangeGroupsById;
+		var eventRangeGroup = eventRangeGroupsById[eventDef.id];
+		var removeCnt;
 
-		if (removeCnt) {
-			this.tryRelease();
+		if (eventRangeGroup) {
+			removeCnt = removeMatching(eventRangeGroup.eventRanges, function(currentEventRange) {
+				return currentEventRange.eventInstance.def === eventDef;
+			});
+
+			if (!eventRangeGroup.eventRanges.length) {
+				delete eventRangeGroupsById[eventDef.id];
+			}
+
+			if (removeCnt) {
+				this.tryRelease();
+			}
 		}
 	},
 
@@ -313,7 +349,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	release: function() {
 		this.releaseCnt++;
 		// TODO: dont re-convert to rangegroups
-		this.trigger('release', hashToEventRangeGroups(this.eventRangesById));
+		this.trigger('release', Object.values(this.eventRangeGroupsById)); // TODO: payload
 	},
 
 
@@ -322,7 +358,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		if (this.releaseCnt) {
 			// TODO: dont re-convert to rangegroups
-			return Promise.resolve(hashToEventRangeGroups(this.eventRangesById));
+			return Promise.resolve(Object.values(this.eventRangeGroupsById)); // TODO: payload
 		}
 		else {
 			return Promise.construct(function(onResolve) {
@@ -346,15 +382,3 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	}
 
 });
-
-
-function hashToEventRangeGroups(hash) {
-	var eventRangeGroups = [];
-	var id;
-
-	for (id in hash) {
-		eventRangeGroups.push(new EventRangeGroup(hash[id]));
-	}
-
-	return eventRangeGroups;
-}

@@ -5,7 +5,7 @@ var EventRangeGroup = Class.extend({
 
 
 	constructor: function(eventRanges) {
-		this.eventRanges = eventRanges;
+		this.eventRanges = eventRanges || [];
 	},
 
 
