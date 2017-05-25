@@ -18,8 +18,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	displayEventTime: null,
 	displayEventEnd: null,
 
-	minResizeDuration: null, // TODO: hack. set by subclasses. minumum event resize duration
-
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
 	// of the date areas. if not defined, assumes to be day and time granularity.
 	// TODO: port isTimeScale into same system?

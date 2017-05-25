@@ -825,7 +825,6 @@ Grid.mixin({
 
 
 	// Returns new date-information for an event segment being resized from its start
-	// TODO: what about minResizeDuration?
 	computeEventStartResizeMutation: function(startFootprint, endFootprint, event) {
 		var startDelta = this.diffDates(
 			endFootprint.dateRange.getStart(),
@@ -851,7 +850,6 @@ Grid.mixin({
 
 
 	// Returns new date-information for an event segment being resized from its end
-	// TODO: what about minResizeDuration?
 	computeEventEndResizeMutation: function(startFootprint, endFootprint, event) {
 		var endDelta = this.diffDates(
 			endFootprint.dateRange.getEnd(),

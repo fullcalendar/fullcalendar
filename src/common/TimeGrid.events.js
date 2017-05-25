@@ -137,7 +137,7 @@ TimeGrid.mixin({
 
 
 	renderHighlightSegs: function(segs) {
-		segs = this.renderFillSegEls('highlight', segs); // TODO: old fill system
+		segs = this.renderFillSegEls('highlight', segs); // TODO: instead of calling renderFill directly
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
 		this.highlightSegs = segs;
@@ -154,7 +154,7 @@ TimeGrid.mixin({
 
 
 	renderBusinessSegs: function(segs) {
-		segs = this.renderFillSegEls('businessHours', segs); // TODO: old fill system
+		segs = this.renderFillSegEls('businessHours', segs); // TODO: instead of calling renderFill directly
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.businessContainerEls);
 		this.businessSegs = segs;

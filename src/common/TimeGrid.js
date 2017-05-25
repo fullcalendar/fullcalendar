@@ -122,8 +122,6 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		this.snapDuration = snapDuration;
 		this.snapsPerSlot = slotDuration / snapDuration; // TODO: ensure an integer multiple?
 
-		this.minResizeDuration = snapDuration; // hack
-
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
 		input = this.opt('slotLabelFormat');
