@@ -8,15 +8,26 @@ var EventDef = Class.extend({
 	uid: null, // internal ID. new ID for every definition
 
 	title: null,
+	url: null,
 	rendering: null,
 	constraint: null,
 	overlap: null,
+	editable: null,
+	startEditable: null,
+	durationEditable: null,
+	resourceEditable: null,
+	color: null,
+	backgroundColor: null,
+	borderColor: null,
+	textColor: null,
+
 	className: null, // an array. TODO: rename to className*s* (API breakage)
 	miscProps: null,
 
 
 	constructor: function(source) {
 		this.source = source;
+		this.className = [];
 		this.miscProps = {};
 	},
 
@@ -38,10 +49,9 @@ var EventDef = Class.extend({
 		copy.rawId = this.rawId;
 		copy.uid = this.uid; // not really unique anymore :(
 
-		copy.title = this.title;
-		copy.rendering = this.rendering;
-		copy.constraint = this.constraint;
-		copy.overlap = this.overlap;
+		EventDef.copyVerbatimProps(this, copy);
+
+		copy.className = this.className; // should clone?
 		copy.miscProps = $.extend({}, this.miscProps);
 
 		return copy;
@@ -96,23 +106,18 @@ var EventDef = Class.extend({
 
 
 	toLegacy: function() {
-		var obj = {
-			_id: this.uid,
-			source: this.source,
-			className: this.className // should clone?
-		};
+		var obj = $.extend({}, this.miscProps);
+
+		obj._id = this.uid;
+		obj.source = this.source;
+		obj.className = this.className; // should clone?
+		obj.allDay = this.isAllDay();
 
 		if (this.rawId != null) {
 			obj.id = this.rawId;
 		}
 
-		if (this.title != null) {
-			obj.title = this.title;
-		}
-
-		if (this.rendering != null) {
-			obj.rendering = this.rendering;
-		}
+		EventDef.copyVerbatimProps(this, obj);
 
 		return obj;
 	}
@@ -123,80 +128,79 @@ var EventDef = Class.extend({
 EventDef.uuid = 0;
 
 
-// Reserved Properties
+// Verbatim Properties
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.reservedPropMap = {};
+EventDef.VERBATIM_PROPS = [
+	'title', 'url', 'rendering', 'constraint', 'overlap',
+	'editable', 'startEditable', 'durationEditable', 'resourceEditable',
+	'color', 'backgroundColor', 'borderColor', 'textColor'
+];
 
 
-EventDef.addReservedProps = function(propNames) {
-	var map = {};
-	var i;
-
-	for (i = 0; i < propNames.length; i++) {
-		map[propNames[i]] = true;
-	}
-
-	// won't modify original object. don't want side-effects on superclasses
-	this.reservedPropMap = $.extend({}, this.reservedPropMap, map);
+EventDef.copyVerbatimProps = function(src, dest) {
+	this.VERBATIM_PROPS.forEach(function(propName) {
+		if (src[propName] != null) {
+			dest[propName] = src[propName];
+		}
+	});
 };
-
-
-EventDef.isReservedProp = function(propName) {
-	return this.reservedPropMap[propName] || false;
-};
-
-
-EventDef.addReservedProps([ 'id', 'title', 'rendering', 'constraint', 'overlap' ]);
 
 
 // Parsing
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.parse = function(rawProps, source) {
-	var def = new this(source);
-	var className; // an array
-	var propName;
-	var miscProps = {};
-
+EventDef.parse = function(rawInput, source) {
 	var calendarTransform = source.calendar.opt('eventDataTransform');
 	var sourceTransform = source.eventDataTransform;
 
 	if (calendarTransform) {
-		rawProps = calendarTransform(rawProps);
+		rawInput = calendarTransform(rawInput);
 	}
 	if (sourceTransform) {
-		rawProps = sourceTransform(rawProps);
+		rawInput = sourceTransform(rawInput);
 	}
 
-	className = rawProps.className || [];
-	if (typeof className === 'string') {
-		className = className.split(/\s+/);
-	}
+	return this.pluckAndParse($.extend({}, rawInput), source);
+};
 
-	if (rawProps.id != null) {
-		def.id = EventDef.normalizeId((def.rawId = rawProps.id));
-	}
-	else {
-		def.id = EventDef.generateId();
-	}
+
+EventDef.pluckAndParse = function(rawProps, source) {
+	// pluck
+	var rawId = pluckProp(rawProps, 'id');
+	var className = pluckProp(rawProps, 'className');
+
+	// instantiate and parse...
+	var def = new this(source);
 
 	def.uid = String(EventDef.uuid++);
-	def.title = rawProps.title || '';
-	def.rendering = rawProps.rendering || null;
-	def.constraint = rawProps.constraint || null;
-	def.overlap = rawProps.overlap || null;
-	def.className = className;
 
-	for (propName in rawProps) {
-		if (!this.isReservedProp(propName)) {
-			miscProps[propName] = rawProps[propName];
-		}
+	if (rawId == null) {
+		def.id = EventDef.generateId();
+	}
+	else {
+		def.id = EventDef.normalizeId((def.rawId = rawId));
 	}
 
-	def.miscProps = miscProps;
+	// can make DRY with EventSource
+	if (typeof className === 'string') {
+		def.className = className.split(/\s+/);
+	}
+	else if ($.isArray(className)) {
+		def.className = className;
+	}
+
+	// raw input object might have specified
+	// intercepted earlier
+	delete rawProps.source;
+
+	// transfer all other simple props
+	$.extend(def, pluckProps(rawProps, EventDef.VERBATIM_PROPS));
+
+	// leftovers are misc props
+	def.miscProps = rawProps;
 
 	return def;
 };

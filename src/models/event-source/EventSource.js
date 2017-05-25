@@ -109,14 +109,17 @@ EventSource.parseAndPluck = function(rawProps, calendar) {
 		'eventDataTransform'
 	]);
 
-	// post-process some soon-to-be member variables
+	// post-process some soon-to-be member variables...
+
+	members.id = EventSource.normalizeId(members.id);
+
+	// can make DRY with EventDef
 	if (typeof members.className === 'string') {
 		members.className = members.className.split(/\s+/);
 	}
-	else if (!members.className) {
+	else if (!$.isArray(members.className)) {
 		delete members.className; // don't overwrite the empty array
 	}
-	members.id = EventSource.normalizeId(members.id);
 
 	// apply the member variables
 	$.extend(source, members);

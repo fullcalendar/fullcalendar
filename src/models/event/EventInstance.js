@@ -33,7 +33,6 @@ var EventInstance = Class.extend({
 
 		obj.start = dateProfile.start.clone();
 		obj.end = dateProfile.end ? dateProfile.end.clone() : null;
-		obj.allDay = dateProfile.isAllDay();
 
 		return obj;
 	}

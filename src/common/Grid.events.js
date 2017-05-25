@@ -16,7 +16,7 @@ Grid.mixin({
 
 
 	renderEvents: function(eventsPayload) {
-		var unzonedRange = new UnzonedRange(this.start, this.end);
+		var unzonedRange = new UnzonedRange(this.view.activeRange.start, this.view.activeRange.end);
 		var id, eventRangeGroup;
 		var eventRenderRanges;
 		var eventFootprints;

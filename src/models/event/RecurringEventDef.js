@@ -83,26 +83,29 @@ var RecurringEventDef = EventDef.extend({
 });
 
 
-RecurringEventDef.addReservedProps([ 'start', 'end', 'dow' ]);
-
-
 // Parsing
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-RecurringEventDef.parse = function(rawProps) {
-	var def = EventDef.parse.apply(this, arguments); // a RecurringEventDef
+RecurringEventDef.pluckAndParse = function(rawProps, source) {
+	// pluck from rawProps before sending to super-method
+	var startInput = pluckProp(rawProps, 'start');
+	var endInput = pluckProp(rawProps, 'end');
+	var dow = pluckProp(rawProps, 'dow');
 
-	if (rawProps.start) {
-		def.startTime = moment.duration(rawProps.start);
+	// instantiate and parse...
+	var def = EventDef.pluckAndParse.call(this, rawProps, source); // a RecurringEventDef
+
+	if (startInput) {
+		def.startTime = moment.duration(startInput);
 	}
 
-	if (rawProps.end) {
-		def.endTime = moment.duration(rawProps.end);
+	if (endInput) {
+		def.endTime = moment.duration(endInput);
 	}
 
-	if (rawProps.dow) {
-		def.setDow(rawProps.dow);
+	if (dow) {
+		def.setDow(dow);
 	}
 
 	return def;

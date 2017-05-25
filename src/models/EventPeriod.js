@@ -124,7 +124,13 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	getEventDefsById: function(eventDefId) {
-		return this.eventDefsById[eventDefId] || [];
+		var a = this.eventDefsById[eventDefId];
+
+		if (a) {
+			return a.slice(); // clone
+		}
+
+		return [];
 	},
 
 
@@ -280,7 +286,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var eventRangeGroup = this.eventRangeGroupsById[eventDefId];
 
 		if (eventRangeGroup) {
-			return eventRangeGroup.eventRanges;
+			return eventRangeGroup.eventRanges.slice(); // clone
 		}
 
 		return [];
