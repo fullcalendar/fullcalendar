@@ -4,6 +4,7 @@ var EventSource = Class.extend({
 	calendar: null,
 
 	id: null,
+	uid: null,
 	color: null,
 	backgroundColor: null,
 	borderColor: null,
@@ -23,6 +24,7 @@ var EventSource = Class.extend({
 	constructor: function(calendar) {
 		this.calendar = calendar;
 		this.className = [];
+		this.uid = String(EventSource.uuid++);
 	},
 
 
@@ -64,6 +66,9 @@ var EventSource = Class.extend({
 	}
 
 });
+
+
+EventSource.uuid = 0;
 
 
 EventSource.normalizeId = function(id) {
