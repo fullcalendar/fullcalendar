@@ -1,4 +1,8 @@
 
+/*
+It's expected that there will be at least one EventRange,
+OR that an explicitEventDef is assigned.
+*/
 var EventRangeGroup = Class.extend({
 
 	eventRanges: null,

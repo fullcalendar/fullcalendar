@@ -8,28 +8,44 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 };
 
 
+/*
+See note on buildBusinessRangeGroup about return value.
+*/
 Calendar.prototype.buildCurrentBusinessRangeGroup = function(wholeDay) {
 	var eventPeriod = this.eventManager.currentPeriod;
 
-	return this.buildBusinessRangeGroup(
-		wholeDay,
-		this.opt('businessHours'),
-		eventPeriod.start,
-		eventPeriod.end
-	);
+	if (eventPeriod) {
+		return this.buildBusinessRangeGroup(
+			wholeDay,
+			this.opt('businessHours'),
+			eventPeriod.start,
+			eventPeriod.end
+		);
+	}
 };
 
 
+/*
+If there are business hours, and they are within range, returns populated EventRangeGroup.
+If there are business hours, but they aren't within range, returns a zero-item EventRangeGroup.
+If there are NOT business hours, returns undefined.
+*/
 Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawComplexDef, rangeStart, rangeEnd) {
 	var eventDefs = this.buildBusinessDefs(wholeDay, rawComplexDef);
-	var eventInstances = eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd);
-	var eventRanges = eventInstancesToEventRanges(eventInstances);
-	var eventRangeGroup = new EventRangeGroup(eventRanges);
+	var eventInstances;
+	var eventRanges;
+	var eventRangeGroup;
 
-	// so that inverse-background rendering can happen even when no eventRanges in view
-	eventRangeGroup.explicitEventDef = eventDefs[0];
+	if (eventDefs.length) {
+		eventInstances = eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd);
+		eventRanges = eventInstancesToEventRanges(eventInstances);
+		eventRangeGroup = new EventRangeGroup(eventRanges);
 
-	return eventRangeGroup;
+		// so that inverse-background rendering can happen even when no eventRanges in view
+		eventRangeGroup.explicitEventDef = eventDefs[0];
+
+		return eventRangeGroup;
+	}
 };
 
 

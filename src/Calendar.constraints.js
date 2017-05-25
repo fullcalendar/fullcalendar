@@ -115,10 +115,14 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
+	var eventRangeGroup;
 	var eventRanges = [];
 
 	if (constraintVal === 'businessHours') {
-		eventRanges = this.buildCurrentBusinessRangeGroup(isAllDay).eventRanges;
+		eventRangeGroup = this.buildCurrentBusinessRangeGroup(isAllDay);
+		if (eventRangeGroup) {
+			eventRanges = eventRangeGroup.eventRanges;
+		}
 	}
 	else if (typeof constraintVal === 'object') {
 		eventRanges = this.parseEventDefToEventRanges(constraintVal);

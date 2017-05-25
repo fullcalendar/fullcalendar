@@ -142,6 +142,7 @@ Grid.mixin({
 	// FOR RENDERING
 	buildBusinessHourRanges: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
+		var eventRangeGroup;
 
 		if (businessHours == null) {
 			// fallback
@@ -149,15 +150,21 @@ Grid.mixin({
 			businessHours = calendar.opt('businessHours');
 		}
 
-		return calendar.buildBusinessRangeGroup(
+		eventRangeGroup = calendar.buildBusinessRangeGroup(
 			wholeDay,
 			businessHours,
 			this.start,
 			this.end
-		).sliceRenderRanges(
-			new UnzonedRange(this.start, this.end),
-			calendar
 		);
+
+		if (eventRangeGroup) {
+			return eventRangeGroup.sliceRenderRanges(
+				new UnzonedRange(this.start, this.end),
+				calendar
+			);
+		}
+
+		return [];
 	},
 
 
