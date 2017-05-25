@@ -20,8 +20,8 @@ Calendar.prototype.buildCurrentBusinessRangeGroup = function(wholeDay) {
 };
 
 
-Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawCompoundDef, rangeStart, rangeEnd) {
-	var eventDefs = this.buildBusinessDefs(wholeDay, rawCompoundDef);
+Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawComplexDef, rangeStart, rangeEnd) {
+	var eventDefs = this.buildBusinessDefs(wholeDay, rawComplexDef);
 	var eventInstances = eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd);
 	var eventRanges = eventInstancesToEventRanges(eventInstances);
 	var eventRangeGroup = new EventRangeGroup(eventRanges);
@@ -32,20 +32,20 @@ Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawCompoundDef, 
 };
 
 
-Calendar.prototype.buildBusinessDefs = function(wholeDay, rawCompoundDef) {
+Calendar.prototype.buildBusinessDefs = function(wholeDay, rawComplexDef) {
 	var rawDefs = [];
 	var requireDow = false;
 	var i;
 	var defs = [];
 
-	if (rawCompoundDef === true) {
+	if (rawComplexDef === true) {
 		rawDefs = [ {} ]; // will get BUSINESS_HOUR_EVENT_DEFAULTS verbatim
 	}
-	else if ($.isPlainObject(rawCompoundDef)) {
-		rawDefs = [ rawCompoundDef ];
+	else if ($.isPlainObject(rawComplexDef)) {
+		rawDefs = [ rawComplexDef ];
 	}
-	else if ($.isArray(rawCompoundDef)) {
-		rawDefs = rawCompoundDef;
+	else if ($.isArray(rawComplexDef)) {
+		rawDefs = rawComplexDef;
 		requireDow = true; // every sub-definition NEEDS a day-of-week
 	}
 
