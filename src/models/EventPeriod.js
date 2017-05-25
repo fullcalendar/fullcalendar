@@ -5,7 +5,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	end: null,
 	timezone: null,
 
-	requests: null,
+	requestsByUid: null,
 	pendingCnt: 0,
 
 	freezeDepth: 0,
@@ -22,7 +22,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.start = start;
 		this.end = end;
 		this.timezone = timezone;
-		this.requests = [];
+		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
@@ -55,11 +55,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var _this = this;
 		var request = { source: source, status: 'pending' };
 
-		this.requests.push(request);
+		this.requestsByUid[source.uid] = request;
 		this.pendingCnt += 1;
 
 		source.fetch(this.start, this.end, this.timezone).then(function(eventDefs) {
 			if (request.status !== 'cancelled') {
+				request.status = 'completed';
+				request.eventDefs = eventDefs;
+
 				_this.addEventDefs(eventDefs);
 				_this.pendingCnt--;
 				_this.tryRelease();
@@ -69,34 +72,43 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	purgeSource: function(source) {
-		var _this = this;
+		var request = this.requestsByUid[source.uid];
 
-		var removeCnt = removeMatching(this.requests, function(request) {
-			if (request.source === source) {
-				if (request.status === 'pending') {
-					_this.pendingCnt--; // removeEventBySource might trigger the release
-				}
+		if (request) {
+			delete this.requestsByUid[source.uid];
+
+			if (request.status === 'pending') {
 				request.status = 'cancelled';
-				return true; // remove from the array
+				this.pendingCnt--;
+				this.tryRelease();
 			}
-		});
-
-		if (removeCnt) {
-			this.removeEventDefsBySource(source); // might release
+			else if (request.status === 'completed') {
+				request.eventDefs.forEach(this.removeEventDef.bind(this));
+			}
 		}
-
-		return removeCnt;
 	},
 
 
 	purgeAllSources: function() {
-		if (this.requests.length) {
-			this.requests.forEach(function(request) {
-				request.status = 'cancelled';
-			});
+		var requestsByUid = this.requestsByUid;
+		var uid, request;
+		var completedCnt = 0;
 
-			this.requests = [];
-			this.pendingCnt = 0;
+		for (uid in requestsByUid) {
+			request = requestsByUid[uid];
+
+			if (request.status === 'pending') {
+				request.status = 'cancelled';
+			}
+			else if (request.status === 'completed') {
+				completedCnt++;
+			}
+		}
+
+		this.requestsByUid = {};
+		this.pendingCnt = 0;
+
+		if (completedCnt) {
 			this.removeAllEventDefs(); // might release
 		}
 	},
@@ -165,23 +177,17 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	removeEventDefsBySource: function(source) {
-		var _this = this;
-
-		this.iterEventDefs(function(eventDef) {
-			if (eventDef.source === source) {
-				_this.removeEventDef(eventDef);
-			}
-		});
-	},
-
-
 	removeAllEventDefs: function() {
+		var isEmpty = $.isEmptyObject(this.eventDefsByUid);
+
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
 		this.eventRangeGroupsById = {};
-		this.tryRelease();
+
+		if (!isEmpty) {
+			this.tryRelease();
+		}
 	},
 
 
