@@ -308,7 +308,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		for (id in eventsPayload) {
 			eventRangeGroup = eventsPayload[id];
 
-			if (eventRangeGroup.getEventInstance().dateProfile.isAllDay()) {
+			if (eventRangeGroup.getEventDef().isAllDay()) {
 				dayEventsPayload[id] = eventRangeGroup;
 			}
 			else {

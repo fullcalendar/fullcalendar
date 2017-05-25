@@ -21,6 +21,11 @@ var EventDef = Class.extend({
 	},
 
 
+	isAllDay: function() {
+		// subclasses must implement
+	},
+
+
 	buildInstances: function(start, end) {
 		// subclasses must implement
 	},
@@ -87,8 +92,30 @@ var EventDef = Class.extend({
 		}
 
 		return this.source.calendar.opt('eventOverlap');
-	}
+	},
 
+
+	toLegacy: function() {
+		var obj = {
+			_id: this.internalId,
+			source: this.source,
+			className: this.className // should clone?
+		};
+
+		if (this.rawId != null) {
+			obj.id = this.rawId;
+		}
+
+		if (this.title != null) {
+			obj.title = this.title;
+		}
+
+		if (this.rendering != null) {
+			obj.rendering = this.rendering;
+		}
+
+		return obj;
+	}
 
 });
 

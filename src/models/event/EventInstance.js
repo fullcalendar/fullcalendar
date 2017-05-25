@@ -13,8 +13,9 @@ var EventInstance = Class.extend({
 
 	buildEventRange: function() { // EventRange
 		return new EventRange(
-			this,
-			this.buildDateRange()
+			this.buildDateRange(),
+			this.def,
+			this
 		);
 	},
 
@@ -27,28 +28,12 @@ var EventInstance = Class.extend({
 
 
 	toLegacy: function() {
-		var def = this.def;
 		var dateProfile = this.dateProfile;
-		var obj = {
-			_id: def.internalId,
-			start: dateProfile.start.clone(),
-			end: dateProfile.end ? dateProfile.end.clone() : null,
-			allDay: dateProfile.isAllDay(),
-			source: def.source,
-			className: def.className // should clone?
-		};
+		var obj = this.def.toLegacy();
 
-		if (def.rawId != null) {
-			obj.id = def.rawId;
-		}
-
-		if (def.title != null) {
-			obj.title = def.title;
-		}
-
-		if (def.rendering != null) {
-			obj.rendering = def.rendering;
-		}
+		obj.start = dateProfile.start.clone();
+		obj.end = dateProfile.end ? dateProfile.end.clone() : null;
+		obj.allDay = dateProfile.isAllDay();
 
 		return obj;
 	}

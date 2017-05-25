@@ -6,6 +6,11 @@ var RecurringEventDef = EventDef.extend({
 	dowHash: null, // object hash, or null
 
 
+	isAllDay: function() {
+		return !this.startTime && !this.endTime;
+	},
+
+
 	buildInstances: function(start, end) {
 		var date = start.clone();
 		var instanceStart, instanceEnd;

@@ -248,11 +248,12 @@ Calendar.prototype.eventRangesToEventFootprints = function(eventRanges) {
 Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 	return [
 		new EventFootprint(
-			eventRange.eventInstance,
 			new ComponentFootprint(
 				eventRange.dateRange,
-				eventRange.eventInstance.dateProfile.isAllDay()
-			)
+				eventRange.eventDef.isAllDay()
+			),
+			eventRange.eventDef,
+			eventRange.eventInstance
 		)
 	];
 };

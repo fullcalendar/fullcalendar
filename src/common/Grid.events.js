@@ -1070,11 +1070,12 @@ Grid.mixin({
 	eventRangeToEventFootprints: function(eventRange) {
 		return [
 			new EventFootprint(
-				eventRange.eventInstance,
 				new ComponentFootprint(
 					eventRange.dateRange,
-					eventRange.eventInstance.dateProfile.isAllDay()
-				)
+					eventRange.eventDef.isAllDay()
+				),
+				eventRange.eventDef,
+				eventRange.eventInstance
 			)
 		];
 	},
@@ -1119,7 +1120,7 @@ Grid.mixin({
 				seg.isEnd = false;
 			}
 
-			seg.event = eventFootprint.eventInstance.toLegacy();
+			seg.event = eventFootprint.toLegacy();
 			seg.footprint = eventFootprint;
 			seg.footprintStartMs = dateRange.startMs;
 			seg.footprintDurationMs = dateRange.endMs - dateRange.startMs;

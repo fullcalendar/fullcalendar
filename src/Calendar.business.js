@@ -26,7 +26,8 @@ Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawComplexDef, r
 	var eventRanges = eventInstancesToEventRanges(eventInstances);
 	var eventRangeGroup = new EventRangeGroup(eventRanges);
 
-	eventRangeGroup.forcedDef = eventDefs[0];
+	// so that inverse-background rendering can happen even when no eventRanges in view
+	eventRangeGroup.explicitEventDef = eventDefs[0];
 
 	return eventRangeGroup;
 };

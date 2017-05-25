@@ -1,13 +1,23 @@
 
 var EventFootprint = Class.extend({
 
-	eventInstance: null,
 	componentFootprint: null,
+	eventDef: null,
+	eventInstance: null, // optional
 
 
-	constructor: function(eventInstance, componentFootprint) {
-		this.eventInstance = eventInstance;
+	constructor: function(componentFootprint, eventDef, eventInstance) {
 		this.componentFootprint = componentFootprint;
+		this.eventDef = eventDef;
+
+		if (eventInstance) {
+			this.eventInstance = eventInstance;
+		}
+	},
+
+
+	toLegacy: function() {
+		return (this.eventInstance || this.eventDef).toLegacy();
 	}
 
 });
