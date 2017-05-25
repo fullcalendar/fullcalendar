@@ -5,7 +5,7 @@ var EventDef = Class.extend({
 
 	id: null, // normalized supplied ID
 	rawId: null, // unnormalized supplied ID
-	internalId: null, // internal ID. new ID for every definition
+	uid: null, // internal ID. new ID for every definition
 
 	title: null,
 	rendering: null,
@@ -36,7 +36,7 @@ var EventDef = Class.extend({
 
 		copy.id = this.id;
 		copy.rawId = this.rawId;
-		copy.internalId = this.internalId;
+		copy.uid = this.uid;
 
 		copy.title = this.title;
 		copy.rendering = this.rendering;
@@ -97,7 +97,7 @@ var EventDef = Class.extend({
 
 	toLegacy: function() {
 		var obj = {
-			_id: this.internalId,
+			_id: this.uid,
 			source: this.source,
 			className: this.className // should clone?
 		};
@@ -183,7 +183,7 @@ EventDef.parse = function(rawProps, source) {
 		def.id = EventDef.generateId();
 	}
 
-	def.internalId = String(EventDef.uuid++);
+	def.uid = String(EventDef.uuid++);
 	def.title = rawProps.title || '';
 	def.rendering = rawProps.rendering || null;
 	def.constraint = rawProps.constraint || null;

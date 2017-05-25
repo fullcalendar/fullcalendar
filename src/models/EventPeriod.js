@@ -12,7 +12,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	stuntedReleaseCnt: 0,
 	releaseCnt: 0,
 
-	eventDefsByInternalId: null,
+	eventDefsByUid: null,
 	eventDefsById: null,
 	eventInstancesById: null,
 	eventRangeGroupsById: null,
@@ -23,7 +23,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.end = end;
 		this.timezone = timezone;
 		this.requests = [];
-		this.eventDefsByInternalId = {};
+		this.eventDefsByUid = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
 		this.eventRangeGroupsById = {};
@@ -106,8 +106,8 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getEventDefByInternalId: function(eventDefInternalId) {
-		return this.eventDefsByInternalId[eventDefInternalId];
+	getEventDefByUid: function(eventDefUid) {
+		return this.eventDefsByUid[eventDefUid];
 	},
 
 
@@ -148,7 +148,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		eventDefs.push(eventDef);
 
-		this.eventDefsByInternalId[eventDef.internalId] = eventDef;
+		this.eventDefsByUid[eventDef.uid] = eventDef;
 
 		for (i = 0; i < eventInstances.length; i++) {
 			this.addEventInstance(eventInstances[i], eventDefId);
@@ -177,7 +177,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	removeAllEventDefs: function() {
-		this.eventDefsByInternalId = {};
+		this.eventDefsByUid = {};
 		this.eventDefsById = {};
 		this.eventInstancesById = {};
 		this.eventRangeGroupsById = {};
@@ -189,7 +189,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var eventDefsById = this.eventDefsById;
 		var eventDefs = eventDefsById[eventDef.id];
 
-		delete this.eventDefsByInternalId[eventDef.internalId];
+		delete this.eventDefsByUid[eventDef.uid];
 
 		if (eventDefs) {
 			removeExact(eventDefs, eventDef);

@@ -191,9 +191,9 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getEventDefByInternalId: function(internalId) {
+	getEventDefByUid: function(uid) {
 		if (this.currentPeriod) {
-			return this.currentPeriod.getEventDefByInternalId(internalId);
+			return this.currentPeriod.getEventDefByUid(uid);
 		}
 	},
 

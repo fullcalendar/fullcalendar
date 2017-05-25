@@ -712,7 +712,7 @@ var View = FC.View = ChronoComponent.extend({
 	reportEventDrop: function(legacyEvent, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventManager.getEventDefByInternalId(legacyEvent._id).id,
+			eventManager.getEventDefByUid(legacyEvent._id).id,
 			eventMutation,
 			this.calendar
 		);
@@ -769,7 +769,7 @@ var View = FC.View = ChronoComponent.extend({
 	reportEventResize: function(legacyEvent, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventManager.getEventDefByInternalId(legacyEvent._id).id,
+			eventManager.getEventDefByUid(legacyEvent._id).id,
 			eventMutation,
 			this.calendar
 		);

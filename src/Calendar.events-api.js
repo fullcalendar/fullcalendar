@@ -164,7 +164,7 @@ Calendar.mixin({
 
 
 	updateEvent: function(eventProps) {
-		var eventDef = this.eventManager.getEventDefByInternalId(eventProps._id);
+		var eventDef = this.eventManager.getEventDefByUid(eventProps._id);
 		var eventInstance;
 		var eventDefMutation;
 

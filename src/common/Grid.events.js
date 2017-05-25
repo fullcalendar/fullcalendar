@@ -369,7 +369,7 @@ Grid.mixin({
 						mutatedEventRangeGroup = new EventRangeGroup(
 							eventInstancesToEventRanges(
 								eventManager.buildMutatedEventInstances(
-									eventManager.getEventDefByInternalId(event._id).id,
+									eventManager.getEventDefByUid(event._id).id,
 									eventDefMutation
 								)
 							)
@@ -746,7 +746,7 @@ Grid.mixin({
 						mutatedEventRangeGroup = new EventRangeGroup(
 							eventInstancesToEventRanges(
 								eventManager.buildMutatedEventInstances(
-									eventManager.getEventDefByInternalId(event._id).id,
+									eventManager.getEventDefByUid(event._id).id,
 									resizeMutation
 								)
 							)
