@@ -36,7 +36,7 @@ var EventDef = Class.extend({
 
 		copy.id = this.id;
 		copy.rawId = this.rawId;
-		copy.uid = this.uid;
+		copy.uid = this.uid; // not really unique anymore :(
 
 		copy.title = this.title;
 		copy.rendering = this.rendering;

@@ -8,7 +8,7 @@ var FuncEventSource = EventSource.extend({
 		var _this = this;
 
 		return Promise.construct(function(onResolve) {
-			this.func.call(
+			_this.func.call(
 				this.calendar,
 				start.clone(),
 				end.clone(),
