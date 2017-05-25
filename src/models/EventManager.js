@@ -7,9 +7,9 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	otherSources: null, // does not include sticky source
 
 
-	constructor: function() {
+	constructor: function(calendar) {
 		this.otherSources = [];
-		this.stickySource = new ArrayEventSource();
+		this.stickySource = new ArrayEventSource(calendar);
 	},
 
 

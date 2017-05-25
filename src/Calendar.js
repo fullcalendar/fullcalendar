@@ -280,7 +280,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	initEventManager: function() {
 		var _this = this;
-		var eventManager = new EventManager();
+		var eventManager = new EventManager(this);
 		var rawSources = this.opt('eventSources') || [];
 		var singleRawSource = this.opt('events');
 

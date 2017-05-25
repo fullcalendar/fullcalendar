@@ -5,7 +5,7 @@ var ArrayEventSource = EventSource.extend({
 	eventDefs: null,
 
 
-	constructor: function() {
+	constructor: function(calendar) {
 		EventSource.apply(this, arguments); // super-constructor
 		this.eventDefs = []; // for if setRawEventDefs is never called
 	},
