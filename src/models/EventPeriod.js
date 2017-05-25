@@ -354,7 +354,6 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	release: function() {
 		this.releaseCnt++;
-		// TODO: dont re-convert to rangegroups
 		this.trigger('release', this.eventRangeGroupsById);
 	},
 
@@ -363,7 +362,6 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var _this = this;
 
 		if (this.releaseCnt) {
-			// TODO: dont re-convert to rangegroups
 			return Promise.resolve(this.eventRangeGroupsById);
 		}
 		else {

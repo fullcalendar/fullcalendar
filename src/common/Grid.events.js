@@ -308,7 +308,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event;
+		var event = seg.event; // is a legacy event
 		var isDragging;
 		var mouseFollower; // A clone of the original element that will move with the mouse
 		var eventDefMutation;
@@ -715,7 +715,7 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event;
+		var event = seg.event; // legacy event
 		var isDragging;
 		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
