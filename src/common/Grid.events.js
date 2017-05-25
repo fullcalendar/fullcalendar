@@ -149,15 +149,11 @@ Grid.mixin({
 			businessHours = calendar.opt('businessHours');
 		}
 
-		return new EventRangeGroup(
-			eventInstancesToEventRanges(
-				calendar.buildBusinessInstances(
-					wholeDay,
-					businessHours,
-					this.start,
-					this.end
-				)
-			)
+		return calendar.buildBusinessRangeGroup(
+			wholeDay,
+			businessHours,
+			this.start,
+			this.end
 		).sliceRenderRanges(
 			new UnzonedRange(this.start, this.end),
 			calendar

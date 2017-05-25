@@ -8,75 +8,69 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 };
 
 
-// Return events objects for business hours within the current view.
-// Abuse of our event system :(
-Calendar.prototype.buildCurrentBusinessRanges = function(wholeDay) {
+Calendar.prototype.buildCurrentBusinessRangeGroup = function(wholeDay) {
 	var eventPeriod = this.eventManager.currentPeriod;
 
-	if (eventPeriod) {
-		return eventInstancesToEventRanges(
-			this.buildBusinessInstances(
-				wholeDay,
-				this.opt('businessHours'),
-				eventPeriod.start,
-				eventPeriod.end
-			)
-		);
-	}
-	else {
-		return [];
-	}
+	return this.buildBusinessRangeGroup(
+		wholeDay,
+		this.opt('businessHours'),
+		eventPeriod.start,
+		eventPeriod.end
+	);
 };
 
 
-// Given a raw input value from options, return events objects for business hours within the current view.
-Calendar.prototype.buildBusinessInstances = function(wholeDay, input, rangeStart, rangeEnd) {
-	if (input === true) {
-		return this._buildBusinessInstances(wholeDay, [ {} ], false, rangeStart, rangeEnd);
-	}
-	else if ($.isPlainObject(input)) {
-		return this._buildBusinessInstances(wholeDay, [ input ], false, rangeStart, rangeEnd);
-	}
-	else if ($.isArray(input)) {
-		return this._buildBusinessInstances(wholeDay, input, true, rangeStart, rangeEnd);
-	}
-	else {
-		return [];
-	}
+Calendar.prototype.buildBusinessRangeGroup = function(wholeDay, rawCompoundDef, rangeStart, rangeEnd) {
+	var eventDefs = this.buildBusinessDefs(wholeDay, rawCompoundDef);
+	var eventInstances = eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd);
+	var eventRanges = eventInstancesToEventRanges(eventInstances);
+	var eventRangeGroup = new EventRangeGroup(eventRanges);
+
+	eventRangeGroup.forcedDef = eventDefs[0];
+
+	return eventRangeGroup;
 };
 
 
-Calendar.prototype._buildBusinessInstances = function(wholeDay, rawDefs, ignoreNoDow, rangeStart, rangeEnd) {
+Calendar.prototype.buildBusinessDefs = function(wholeDay, rawCompoundDef) {
+	var rawDefs = [];
+	var requireDow = false;
 	var i;
-	var rawDef;
-	var fullRawDef;
-	var eventDef;
-	var eventInstances = [];
+	var defs = [];
+
+	if (rawCompoundDef === true) {
+		rawDefs = [ {} ]; // will get BUSINESS_HOUR_EVENT_DEFAULTS verbatim
+	}
+	else if ($.isPlainObject(rawCompoundDef)) {
+		rawDefs = [ rawCompoundDef ];
+	}
+	else if ($.isArray(rawCompoundDef)) {
+		rawDefs = rawCompoundDef;
+		requireDow = true; // every sub-definition NEEDS a day-of-week
+	}
 
 	for (i = 0; i < rawDefs.length; i++) {
-		rawDef = rawDefs[i];
-
-		if (ignoreNoDow && !rawDef.dow) {
-			continue;
+		if (!requireDow || rawDefs[i].dow) {
+			defs.push(
+				this.buildBusinessDef(wholeDay, rawDefs[i])
+			);
 		}
-
-		fullRawDef = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDefs[i]);
-
-		if (wholeDay) {
-			fullRawDef.start = null;
-			fullRawDef.end = null;
-		}
-
-		eventDef = RecurringEventDef.parse(
-			fullRawDef,
-			new EventSource(this), // dummy source
-			this // calendar
-		);
-
-		eventInstances.push.apply(eventInstances, // append
-			eventDef.buildInstances(rangeStart, rangeEnd)
-		);
 	}
 
-	return eventInstances;
+	return defs;
+};
+
+
+Calendar.prototype.buildBusinessDef = function(wholeDay, rawDef) {
+	var fullRawDef = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDef);
+
+	if (wholeDay) {
+		fullRawDef.start = null;
+		fullRawDef.end = null;
+	}
+
+	return RecurringEventDef.parse(
+		fullRawDef,
+		new EventSource(this) // dummy source
+	);
 };
