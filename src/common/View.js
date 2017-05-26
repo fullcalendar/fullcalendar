@@ -803,6 +803,18 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
+	renderSelectionFootprint: function(footprint, ev) {
+		if (this.renderSelection) { // legacy method in custom view classes
+			this.renderSelection(
+				convertFootprintToLegacySelection(footprint, this.calendar)
+			);
+		}
+		else {
+			ChronoComponent.prototype.renderSelectionFootprint.apply(this, arguments);
+		}
+	},
+
+
 	// Called when a new selection is made. Updates internal state and triggers handlers.
 	reportSelection: function(footprint, ev) {
 		this.isSelected = true;
@@ -980,4 +992,17 @@ function convertEventsPayloadToLegacyArray(eventsPayload) {
 	}
 
 	return legacyEvents;
+}
+
+
+function convertFootprintToLegacySelection(footprint, calendar) {
+	var start = calendar.moment(footprint.dateRange.startMs);
+	var end = calendar.moment(footprint.dateRange.endMs);
+
+	if (footprint.isAllDay) {
+		start.stripTime();
+		end.stripTime();
+	}
+
+	return { start: start, end: end };
 }
