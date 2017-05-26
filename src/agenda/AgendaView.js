@@ -297,7 +297,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders events onto the view and populates the View's segment array
-	renderEvents: function(eventsPayload) {
+	renderEventsPayload: function(eventsPayload) {
 		var dayEventsPayload = {};
 		var timedEventsPayload = {};
 		var daySegs = [];
@@ -317,9 +317,9 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		// render the events in the subcomponents
-		timedSegs = this.timeGrid.renderEvents(timedEventsPayload);
+		timedSegs = this.timeGrid.renderEventsPayload(timedEventsPayload);
 		if (this.dayGrid) {
-			daySegs = this.dayGrid.renderEvents(dayEventsPayload);
+			daySegs = this.dayGrid.renderEventsPayload(dayEventsPayload);
 		}
 
 		// the all-day area is flexible and might have a lot of events, so shift the height

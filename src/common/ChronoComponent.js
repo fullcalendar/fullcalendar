@@ -166,8 +166,9 @@ var ChronoComponent = Model.extend({
 
 
 	// Renders the events onto the view.
-	renderEvents: function(eventsPayload) {
-		this.callChildren('renderEvents', eventsPayload);
+	// TODO: eventually rename to `renderEvents` once legacy is gone.
+	renderEventsPayload: function(eventsPayload) {
+		this.callChildren('renderEventsPayload', eventsPayload);
 	},
 
 
@@ -176,7 +177,7 @@ var ChronoComponent = Model.extend({
 		this.callChildren('unrenderEvents');
 
 		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
+		// a renderEventsPayload() call always happens after this, which will eventually call updateHeight()
 	},
 
 

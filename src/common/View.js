@@ -616,7 +616,13 @@ var View = FC.View = ChronoComponent.extend({
 
 	executeEventsRender: function(eventsPayload) {
 
-		this.renderEvents(eventsPayload);
+		if (this.renderEvents) { // for legacy custom views
+			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
+		}
+		else {
+			this.renderEventsPayload(eventsPayload);
+		}
+
 		this.isEventsRendered = true;
 
 		this.onEventsRender();
@@ -952,3 +958,26 @@ View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 }, function() {
 	this.requestEventsUnrender();
 });
+
+
+function convertEventsPayloadToLegacyArray(eventsPayload) {
+	var legacyEvents = [];
+	var id;
+
+	function iterRangeGroup(rangeGroup) {
+		var eventRanges = rangeGroup.eventRanges;
+		var i;
+
+		for (i = 0; i < eventRanges.length; i++) {
+			legacyEvents.push(
+				eventRanges[i].eventInstance.toLegacy()
+			);
+		}
+	}
+
+	for (id in eventsPayload) {
+		iterRangeGroup(eventsPayload[id]);
+	}
+
+	return legacyEvents;
+}

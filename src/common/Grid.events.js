@@ -15,7 +15,7 @@ Grid.mixin({
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	renderEvents: function(eventsPayload) {
+	renderEventsPayload: function(eventsPayload) {
 		var unzonedRange = new UnzonedRange(this.view.activeRange.start, this.view.activeRange.end);
 		var id, eventRangeGroup;
 		var eventRenderRanges;
@@ -194,7 +194,7 @@ Grid.mixin({
 		var _this = this;
 
 		el.on(name, this.segSelector, function(ev) {
-			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
+			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
 
 			// only call the handlers if there is not a drag/resize in progress
 			if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
