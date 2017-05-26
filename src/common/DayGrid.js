@@ -327,7 +327,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
+			return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
 		}
 	},
 
@@ -352,7 +352,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
+		return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
 	},
 
 
@@ -368,9 +368,8 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderHelper: function(eventRanges, sourceSeg) {
+	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
 		var helperNodes = [];
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 		var segs = this.eventFootprintsToSegs(eventFootprints);
 		var rowStructs;
 

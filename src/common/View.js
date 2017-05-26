@@ -798,7 +798,7 @@ var View = FC.View = ChronoComponent.extend({
 	// `ev` is the native mouse event that begin the interaction.
 	select: function(footprint, ev) {
 		this.unselect(ev);
-		this.renderSelection(footprint);
+		this.renderSelectionFootprint(footprint);
 		this.reportSelection(footprint, ev);
 	},
 

@@ -368,7 +368,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.renderEventLocationHelper(eventRanges);
+			return this.renderHelperEventRanges(eventRanges);
 		}
 		else { // otherwise, just render a highlight
 
@@ -394,7 +394,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventRanges, seg) {
-		return this.renderEventLocationHelper(eventRanges, seg); // returns mock event elements
+		return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
 	},
 
 
@@ -409,8 +409,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
-	renderHelper: function(eventRanges, sourceSeg) {
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
 		var segs = this.eventFootprintsToSegs(eventFootprints);
 
 		return this.renderHelperSegs( // returns mock event elements
@@ -495,14 +494,14 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(span) {
+	renderSelectionFootprint: function(componentFootprint) {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-
-			// normally acceps an eventLocation, span has a start/end, which is good enough
-			this.renderEventLocationHelper(span);
+			this.renderHelperEventFootprints([
+				this.fabricateEventFootprint(componentFootprint)
+			]);
 		}
 		else {
-			this.renderHighlight(span);
+			this.renderHighlight(componentFootprint);
 		}
 	},
 

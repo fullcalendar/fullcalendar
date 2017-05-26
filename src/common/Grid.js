@@ -396,7 +396,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 					}
 
 					if (selectionFootprint) {
-						_this.renderSelection(selectionFootprint);
+						_this.renderSelectionFootprint(selectionFootprint);
 					}
 					else if (selectionFootprint === false) {
 						disableCursor();
@@ -446,17 +446,17 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event at the given event location, which contains zoned start/end properties.
-	// Returns all mock event elements.
-	renderEventLocationHelper: function(eventRanges, sourceSeg) {
-		return this.renderHelper(eventRanges, sourceSeg); // do the actual rendering
-	},
-
-
 	// Renders a mock event. Given zoned event date properties.
 	// Must return all mock event elements.
 	// TODO: have this in ChronoComponent
-	renderHelper: function(eventRanges, sourceSeg) {
+	renderHelperEventRanges: function(eventRanges, sourceSeg) {
+		return this.renderHelperEventFootprints(
+			this.eventRangesToEventFootprints(eventRanges)
+		);
+	},
+
+
+	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
 		// subclasses must implement
 	},
 
@@ -468,13 +468,32 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
+	fabricateEventFootprint: function(componentFootprint) {
+		var calendar = this.view.calendar;
+		var dummyEvent = new SingleEventDef(new EventSource(calendar));
+		var dummyInstance;
+
+		dummyEvent.start = calendar.moment(componentFootprint.dateRange.startMs);
+		dummyEvent.end = calendar.moment(componentFootprint.dateRange.endMs);
+
+		if (componentFootprint.isAllDay) {
+			dummyEvent.start.stripTime();
+			dummyEvent.end.stripTime();
+		}
+
+		dummyInstance = dummyEvent.buildInstances()[0];
+
+		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
+	},
+
+
 	/* Selection
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
 	// Given a span (unzoned start/end and other misc data)
-	renderSelection: function(componentFootprint) {
+	renderSelectionFootprint: function(componentFootprint) {
 		this.renderHighlight(componentFootprint);
 	},
 
@@ -486,7 +505,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 
 	// Given the first and last date-spans of a selection, returns another date-span object.
-	// Subclasses can override and provide additional data in the span object. Will be passed to renderSelection().
+	// Subclasses can override and provide additional data in the span object. Will be passed to renderSelectionFootprint().
 	// Will return false if the selection is invalid and this should be indicated to the user.
 	// Will return null/undefined if a selection invalid but no error should be reported.
 	computeSelection: function(footprint0, footprint1) {

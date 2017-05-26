@@ -221,8 +221,9 @@ var ChronoComponent = Model.extend({
 
 
 	// Renders a visual indication of the selection
-	renderSelection: function(span) {
-		this.callChildren('renderSelection', span);
+	// TODO: rename to `renderSelection` after legacy is gone
+	renderSelectionFootprint: function(componentFootprint) {
+		this.callChildren('renderSelectionFootprint', componentFootprint);
 	},
 
 

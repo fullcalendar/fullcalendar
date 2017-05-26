@@ -351,12 +351,12 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(span) {
-		if (span.start.hasTime() || span.end.hasTime()) {
-			this.timeGrid.renderSelection(span);
+	renderSelectionFootprint: function(componentFootprint) {
+		if (!componentFootprint.isAllDay) {
+			this.timeGrid.renderSelectionFootprint(componentFootprint);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.renderSelection(span);
+			this.dayGrid.renderSelectionFootprint(componentFootprint);
 		}
 	}
 
