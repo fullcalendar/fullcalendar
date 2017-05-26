@@ -64,7 +64,7 @@ SingleEventDef.pluckAndParse = function(rawProps, source) {
 		return false;
 	}
 
-	if (end && !end.isValid()) {
+	if (end && (!end.isValid() || !end.isAfter(start))) {
 		end = null;
 	}
 

@@ -471,6 +471,7 @@ describe('event constraint', function() {
 						{
 							start: '2014-11-12T01:00:00',
 							end: '2014-11-12T03:00:00',
+							className: 'dragging-event',
 							constraint: 'yo'
 						},
 						{
@@ -479,7 +480,7 @@ describe('event constraint', function() {
 							end: '2014-11-13T05:00:00'
 						}
 					];
-					testEventDrag(options, '2014-11-13T02:00:00', true, done);
+					testEventDrag(options, '2014-11-13T02:00:00', true, done, 'dragging-event');
 				});
 			});
 
@@ -490,7 +491,8 @@ describe('event constraint', function() {
 							{
 								start: '2014-11-12T01:00:00',
 								end: '2014-11-12T03:00:00',
-								constraint: 'yo'
+								constraint: 'yo',
+								className: 'dragging-event'
 							},
 							{
 								id: 'yo',
@@ -498,7 +500,7 @@ describe('event constraint', function() {
 								end: '2014-11-13T04:00:00'
 							}
 						];
-						testEventDrag(options, '2014-11-13T04:00:00', false, done);
+						testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event');
 					});
 				});
 				describe('when an implied end time', function() {
@@ -508,14 +510,15 @@ describe('event constraint', function() {
 							{
 								start: '2014-11-12T01:00:00',
 								end: '2014-11-12T03:00:00',
-								constraint: 'yo'
+								constraint: 'yo',
+								className: 'dragging-event'
 							},
 							{
 								id: 'yo',
 								start: '2014-11-13T01:00:00'
 							}
 						];
-						testEventDrag(options, '2014-11-13T01:00:00', false, done);
+						testEventDrag(options, '2014-11-13T01:00:00', false, done, 'dragging-event');
 					});
 				});
 			});
@@ -526,7 +529,8 @@ describe('event constraint', function() {
 						{
 							start: '2014-11-12T01:00:00',
 							end: '2014-11-12T03:00:00',
-							constraint: 'yo'
+							constraint: 'yo',
+							className: 'dragging-event'
 						},
 						{
 							id: 'yo',
@@ -535,7 +539,7 @@ describe('event constraint', function() {
 							rendering: 'background'
 						}
 					];
-					testEventDrag(options, '2014-11-13T04:00:00', false, done);
+					testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event');
 				});
 			});
 

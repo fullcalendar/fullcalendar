@@ -192,12 +192,12 @@ EventDef.pluckAndParse = function(rawProps, source) {
 		def.className = className;
 	}
 
+	// transfer all other simple props
+	$.extend(def, pluckProps(rawProps, EventDef.VERBATIM_PROPS));
+
 	// raw input object might have specified
 	// intercepted earlier
 	delete rawProps.source;
-
-	// transfer all other simple props
-	$.extend(def, pluckProps(rawProps, EventDef.VERBATIM_PROPS));
 
 	// leftovers are misc props
 	def.miscProps = rawProps;
