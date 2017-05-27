@@ -325,6 +325,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 [
 	'getEventDefsById',
 	'getEventInstances',
+	'getEventInstancesById',
 	'getEventRanges',
 	'getEventRangesWithId',
 	'getEventRangesWithoutId'

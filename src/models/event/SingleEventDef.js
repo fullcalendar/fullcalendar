@@ -82,8 +82,10 @@ SingleEventDef.pluckAndParse = function(rawProps, source) {
 		}
 	}
 	else if (forcedAllDay === false) {
-		start.time(0);
-		if (end) {
+		if (!start.hasTime()) {
+			start.time(0);
+		}
+		if (end && !start.hasTime()) {
 			end.time(0);
 		}
 	}

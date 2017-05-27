@@ -717,13 +717,19 @@ var View = FC.View = ChronoComponent.extend({
 
 	reportEventDrop: function(legacyEvent, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
+		var eventDef = eventManager.getEventDefByUid(legacyEvent._id);
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventManager.getEventDefByUid(legacyEvent._id).id,
+			eventDef.id,
 			eventMutation,
 			this.calendar
 		);
 
-		this.triggerEventDrop(legacyEvent, eventMutation.dateDelta, undoFunc, el, ev);
+		this.triggerEventDrop(
+			eventManager.getEventInstancesById(eventDef.id)[0].toLegacy(),
+			eventMutation.dateMutation.dateDelta,
+			undoFunc,
+			el, ev
+		);
 	},
 
 
@@ -774,13 +780,19 @@ var View = FC.View = ChronoComponent.extend({
 	// Must be called when an event in the view has been resized to a new length
 	reportEventResize: function(legacyEvent, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
+		var eventDef = eventManager.getEventDefByUid(legacyEvent._id);
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventManager.getEventDefByUid(legacyEvent._id).id,
+			eventDef.id,
 			eventMutation,
 			this.calendar
 		);
 
-		this.triggerEventResize(legacyEvent, eventMutation.endDelta, undoFunc, el, ev);
+		this.triggerEventResize(
+			eventManager.getEventInstancesById(eventDef.id)[0].toLegacy(),
+			eventMutation.dateMutation.endDelta,
+			undoFunc,
+			el, ev
+		);
 	},
 
 

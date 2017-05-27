@@ -234,6 +234,17 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
+	getEventInstancesById: function(eventDefId) {
+		var eventInstances = this.eventInstancesById[eventDefId];
+
+		if (eventInstances) {
+			return eventInstances.slice(); // clone
+		}
+
+		return [];
+	},
+
+
 	addEventInstance: function(eventInstance, eventDefId) {
 		var eventInstancesById = this.eventInstancesById;
 		var eventInstances = eventInstancesById[eventDefId] ||

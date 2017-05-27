@@ -62,7 +62,7 @@ Calendar.mixin({
 			eventManager.refetchSource(sources[i]);
 		}
 
-		eventManager.unfreeze();
+		eventManager.thaw();
 	},
 
 
@@ -83,7 +83,7 @@ Calendar.mixin({
 			this.renderEvent(eventInputs[i], isSticky);
 		}
 
-		this.eventManager.unfreeze();
+		this.eventManager.thaw();
 	},
 
 
@@ -113,7 +113,7 @@ Calendar.mixin({
 			eventManager.removeEventDefsById(eventIds[i]);
 		}
 
-		eventManager.unfreeze();
+		eventManager.thaw();
 	},
 
 
@@ -159,7 +159,7 @@ Calendar.mixin({
 			this.updateEvent(eventPropsArray[i]);
 		}
 
-		this.eventManager.unfreeze();
+		this.eventManager.thaw();
 	},
 
 
