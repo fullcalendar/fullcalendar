@@ -16,3 +16,16 @@ var ComponentFootprint = Class.extend({
 	}
 
 });
+
+
+function convertFootprintToLegacySelection(footprint, calendar) {
+	var start = calendar.moment(footprint.dateRange.startMs);
+	var end = calendar.moment(footprint.dateRange.endMs);
+
+	if (footprint.isAllDay) {
+		start.stripTime();
+		end.stripTime();
+	}
+
+	return { start: start, end: end };
+}

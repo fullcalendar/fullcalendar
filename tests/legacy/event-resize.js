@@ -44,7 +44,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toEqualMoment('2014-06-17');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
 
@@ -94,7 +97,10 @@ describe('eventResize', function() {
 
 								expect(event.start).toEqualMoment('2014-06-11');
 								expect(event.end).toEqualMoment('2014-06-17');
+
 								revertFunc();
+								event = $('#cal').fullCalendar('clientEvents')[0];
+
 								expect(event.start).toEqualMoment('2014-06-11');
 								expect(event.end).toBeNull();
 
@@ -151,7 +157,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toEqualMoment('2014-06-14');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
 
@@ -188,7 +197,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
 
@@ -223,7 +235,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
 
@@ -251,7 +266,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-12T09:30:00');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
 
@@ -278,7 +296,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00')); // compate to local moment
 						expect(event.end).toEqualMoment(moment('2014-06-11T09:30:00'));
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00'));
 						expect(event.end).toEqualMoment(moment('2014-06-11T07:00:00'));
 
@@ -305,7 +326,10 @@ describe('eventResize', function() {
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00');
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00+00:00');
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00+00:00');
 

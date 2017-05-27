@@ -85,7 +85,7 @@ SingleEventDef.pluckAndParse = function(rawProps, source) {
 		if (!start.hasTime()) {
 			start.time(0);
 		}
-		if (end && !start.hasTime()) {
+		if (end && !end.hasTime()) {
 			end.time(0);
 		}
 	}

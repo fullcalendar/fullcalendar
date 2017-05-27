@@ -109,7 +109,7 @@ describe('event object creation', function() {
 	it('strips times of dates when event is all-day', function() {
 		init({
 			start: '2014-05-01T01:00:00-12:00',
-			end: '2014-05-02T01:00:00+12:00',
+			end: '2014-05-02T01:00:00-12:00',
 			allDay: true
 		});
 		expect(event.start.hasTime()).toEqual(false);

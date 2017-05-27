@@ -10,6 +10,8 @@ Calendar.prototype.isEventRangeGroupAllowed = function(eventRangeGroup) {
 	var constraintVal = eventDef.getConstraint();
 	var overlapVal = eventDef.getOverlap();
 
+	var eventAllowFunc = this.opt('eventAllow');
+
 	for (i = 0; i < eventFootprints.length; i++) {
 		if (
 			!this.isFootprintAllowed(
@@ -21,6 +23,19 @@ Calendar.prototype.isEventRangeGroupAllowed = function(eventRangeGroup) {
 			)
 		) {
 			return false;
+		}
+	}
+
+	if (eventAllowFunc) {
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (
+				eventAllowFunc(
+					convertFootprintToLegacySelection(eventFootprints[i].componentFootprint, this),
+					eventFootprints[i].toLegacy()
+				) === false
+			) {
+				return false;
+			}
 		}
 	}
 
