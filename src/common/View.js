@@ -987,20 +987,18 @@ View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 function convertEventsPayloadToLegacyArray(eventsPayload) {
 	var legacyEvents = [];
 	var id;
+	var eventRanges;
+	var i;
 
-	function iterRangeGroup(rangeGroup) {
-		var eventRanges = rangeGroup.eventRanges;
-		var i;
+	for (id in eventsPayload) {
+
+		eventRanges = eventsPayload[id].eventRanges;
 
 		for (i = 0; i < eventRanges.length; i++) {
 			legacyEvents.push(
 				eventRanges[i].eventInstance.toLegacy()
 			);
 		}
-	}
-
-	for (id in eventsPayload) {
-		iterRangeGroup(eventsPayload[id]);
 	}
 
 	return legacyEvents;
