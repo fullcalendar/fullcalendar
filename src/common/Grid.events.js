@@ -1041,7 +1041,12 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
+			if (
+				!isRangeWithinRange(
+					eventFootprints[i].componentFootprint.dateRange.getRange(),
+					this.view.validRange
+				)
+			) {
 				return false;
 			}
 		}
@@ -1057,7 +1062,12 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.isFootprintInRange(eventFootprints[i].componentFootprint)) {
+			if (
+				!isRangeWithinRange(
+					eventFootprints[i].componentFootprint.dateRange.getRange(),
+					this.view.validRange
+				)
+			) {
 				return false;
 			}
 		}

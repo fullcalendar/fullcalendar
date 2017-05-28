@@ -26,13 +26,13 @@ var EventDragUtils = {
 		currentCalendar.on('eventDragStop', function() {
 			setTimeout(function() {
 				deferred.resolve({ isSuccess: false }); // won't do anything if already eventDrop
-			}, 20);  // will happen after eventDrop's timeout
+			}, 200);  // will happen after eventDrop's timeout
 		});
 
 		currentCalendar.on('eventDrop', function(event) { // always called after eventDragStop, if success
 			setTimeout(function() {
 				deferred.resolve({ isSuccess: true, event: event });
-			}, 10); // will happen first
+			}, 100); // will happen first
 		});
 
 		return deferred.promise();
