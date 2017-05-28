@@ -3,7 +3,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 	currentPeriod: null,
 
-	stickySource: null,
+	stickySource: null, // TODO: move this into Calendar?
 	otherSources: null, // does not include sticky source
 
 

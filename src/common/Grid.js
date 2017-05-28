@@ -476,9 +476,14 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		dummyEvent.start = calendar.moment(componentFootprint.dateRange.startMs);
 		dummyEvent.end = calendar.moment(componentFootprint.dateRange.endMs);
 
+		// TODO: make DRY with computeExternalDrop!
 		if (componentFootprint.isAllDay) {
 			dummyEvent.start.stripTime();
 			dummyEvent.end.stripTime();
+		}
+		else if (!calendar.opt('timezone')) {
+			dummyEvent.start.stripZone();
+			dummyEvent.end.stripZone();
 		}
 
 		dummyInstance = dummyEvent.buildInstances()[0];

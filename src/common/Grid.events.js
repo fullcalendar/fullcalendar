@@ -656,24 +656,32 @@ Grid.mixin({
 	// DOES NOT consider overlap/constraint.
 	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
+		var isAllDay = componentFootprint.isAllDay;
 		var start = calendar.moment(componentFootprint.dateRange.startMs);
 		var end;
 		var eventDef;
 
 		// if dropped on an all-day span, and element's metadata specified a time, set it
-		if (meta.startTime && componentFootprint.isAllDay) {
+		if (meta.startTime && isAllDay) {
 			start.time(meta.startTime);
+			isAllDay = false;
 		}
 
 		if (meta.duration) {
 			end = start.clone().add(meta.duration);
 		}
 
-		if (componentFootprint.isAllDay) {
+		// TODO: make DRY with fabricateEventFootprint!
+		if (isAllDay) {
 			start.stripTime();
-
 			if (end) {
 				end.stripTime();
+			}
+		}
+		else if (!calendar.opt('timezone')) {
+			start.stripZone();
+			if (end) {
+				end.stripZone();
 			}
 		}
 
@@ -682,7 +690,7 @@ Grid.mixin({
 				start: start,
 				end: end
 			}),
-			calendar
+			calendar.eventManager.stickySource
 		);
 
 		return eventDef;
