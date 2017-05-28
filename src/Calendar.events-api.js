@@ -26,17 +26,29 @@ Calendar.mixin({
 	},
 
 
-	removeEventSources: function(sourceQuery) {
-		if (sourceQuery == null) {
+	removeEventSources: function(sourceMultiQuery) {
+		var eventManager = this.eventManager;
+		var sources;
+		var i;
+
+		if (sourceMultiQuery == null) {
 			this.eventManager.removeAllSources();
 		}
 		else {
-			this.removeEventSource(sourceQuery);
+			sources = eventManager.multiQuerySources(sourceMultiQuery);
+
+			eventManager.freeze();
+
+			for (i = 0; i < sources.length; i++) {
+				eventManager.removeSource(sources[i]);
+			}
+
+			eventManager.thaw();
 		}
 	},
 
 
-	removeEventSource: function(sourceQuery) { // can do multiple
+	removeEventSource: function(sourceQuery) {
 		var eventManager = this.eventManager;
 		var sources = eventManager.querySources(sourceQuery);
 		var i;
@@ -51,9 +63,9 @@ Calendar.mixin({
 	},
 
 
-	refetchEventSources: function(sourceQuery) {
+	refetchEventSources: function(sourceMultiQuery) {
 		var eventManager = this.eventManager;
-		var sources = eventManager.querySources(sourceQuery);
+		var sources = eventManager.multiQuerySources(sourceMultiQuery);
 		var i;
 
 		eventManager.freeze();

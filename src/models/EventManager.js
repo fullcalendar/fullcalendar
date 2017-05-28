@@ -96,8 +96,8 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// like getEventSourcesByMatch, but accepts multple match criteria (like multiple IDs)
-	querySources: function(matchInputs) {
+	// like querySources, but accepts multple match criteria (like multiple IDs)
+	multiQuerySources: function(matchInputs) {
 
 		// coerce into an array
 		if (!matchInputs) {
@@ -114,7 +114,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		for (i = 0; i < matchInputs.length; i++) {
 			matchingSources.push.apply( // append
 				matchingSources,
-				this.querySourceMatch(matchInputs[i])
+				this.querySources(matchInputs[i])
 			);
 		}
 
@@ -124,7 +124,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// matchInput can either by a real event source object, an ID, or the function/URL for the source.
 	// returns an array of matching source objects.
-	querySourceMatch: function(matchInput) {
+	querySources: function(matchInput) {
 		var sources = this.otherSources;
 		var i, source;
 
@@ -144,7 +144,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		// parse as an event source
-		matchInput = EventSourceParser.parse(matchInput);
+		matchInput = EventSourceParser.parse(matchInput, this.stickySource.calendar); // ugh!!!
 		if (matchInput) {
 
 			return $.grep(sources, function(source) {
