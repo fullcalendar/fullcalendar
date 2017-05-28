@@ -657,7 +657,7 @@ Grid.mixin({
 	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
 		var isAllDay = componentFootprint.isAllDay;
-		var start = calendar.moment(componentFootprint.dateRange.startMs);
+		var start = FC.moment.utc(componentFootprint.dateRange.startMs).stripZone();
 		var end;
 		var eventDef;
 
@@ -678,10 +678,16 @@ Grid.mixin({
 				end.stripTime();
 			}
 		}
-		else if (!calendar.opt('timezone')) {
-			start.stripZone();
+		else if (calendar.opt('timezone') === 'local') {
+			start.local();
 			if (end) {
-				end.stripZone();
+				end.local();
+			}
+		}
+		else if (calendar.opt('timezone') === 'UTC') {
+			start.utc();
+			if (end) {
+				end.utc();
 			}
 		}
 

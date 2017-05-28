@@ -470,17 +470,21 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		var dummyEvent = new SingleEventDef(new EventSource(calendar));
 		var dummyInstance;
 
-		dummyEvent.start = calendar.moment(componentFootprint.dateRange.startMs);
-		dummyEvent.end = calendar.moment(componentFootprint.dateRange.endMs);
+		dummyEvent.start = FC.moment.utc(componentFootprint.dateRange.startMs).stripZone();
+		dummyEvent.end = FC.moment.utc(componentFootprint.dateRange.endMs).stripZone();
 
 		// TODO: make DRY with computeExternalDrop!
 		if (componentFootprint.isAllDay) {
 			dummyEvent.start.stripTime();
 			dummyEvent.end.stripTime();
 		}
-		else if (!calendar.opt('timezone')) {
-			dummyEvent.start.stripZone();
-			dummyEvent.end.stripZone();
+		else if (calendar.opt('timezone') === 'local') {
+			dummyEvent.start.local();
+			dummyEvent.end.local();
+		}
+		else if (calendar.opt('timezone') === 'UTC') {
+			dummyEvent.start.utc();
+			dummyEvent.end.utc();
 		}
 
 		dummyInstance = dummyEvent.buildInstances()[0];
