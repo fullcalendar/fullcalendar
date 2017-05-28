@@ -3,6 +3,7 @@ var ArrayEventSource = EventSource.extend({
 
 	rawEventDefs: null, // unparsed
 	eventDefs: null,
+	currentTimezone: null,
 
 
 	constructor: function(calendar) {
@@ -17,11 +18,24 @@ var ArrayEventSource = EventSource.extend({
 	},
 
 
-	/*
-	disregards given start/end arguments
-	*/
-	fetch: function() {
-		return Promise.resolve(this.eventDefs);
+	fetch: function(start, end, timezone) {
+		var eventDefs = this.eventDefs;
+		var i;
+
+		if (
+			this.currentTimezone &&
+			this.currentTimezone !== timezone
+		) {
+			for (i = 0; i < eventDefs.length; i++) {
+				if (eventDefs[i] instanceof SingleEventDef) {
+					eventDefs[i].rezone();
+				}
+			}
+		}
+
+		this.currentTimezone = timezone;
+
+		return Promise.resolve(eventDefs);
 	},
 
 

@@ -134,22 +134,6 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	iterEventDefs: function(func) {
-		var eventDefsById = this.eventDefId;
-		var id;
-		var eventDefs;
-		var i;
-
-		for (id in eventDefsById) {
-			eventDefs = eventDefsById[id];
-
-			for (i = 0; i < eventDefs.length; i++) {
-				func(eventDefs[i]);
-			}
-		}
-	},
-
-
 	addEventDefs: function(eventDefs) {
 		for (var i = 0; i < eventDefs.length; i++) {
 			this.addEventDef(eventDefs[i]);

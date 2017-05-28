@@ -937,6 +937,7 @@ function removeMatching(array, testFunc) {
 	while (i < array.length) {
 		if (testFunc(array[i])) { // truthy value means *remove*
 			array.splice(i, 1);
+			removeCnt++;
 		}
 		else {
 			i++;
@@ -954,6 +955,7 @@ function removeExact(array, exactVal) {
 	while (i < array.length) {
 		if (array[i] === exactVal) {
 			array.splice(i, 1);
+			removeCnt++;
 		}
 		else {
 			i++;

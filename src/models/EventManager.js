@@ -198,13 +198,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	iterEventDefs: function(func) {
-		if (this.currentPeriod) {
-			this.currentPeriod.iterEventDefs(func);
-		}
-	},
-
-
 	addEventDef: function(eventDef, isSticky) {
 		if (isSticky) {
 			this.stickySource.addEventDef(eventDef);
@@ -229,13 +222,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Event Mutating
 	// -----------------------------------------------------------------------------------------------------------------
-
-
-	rezoneEvents: function() {
-		this.iterEventDefs(function(eventDef) {
-			eventDef.rezone();
-		});
-	},
 
 
 	/*
