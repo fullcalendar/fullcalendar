@@ -87,26 +87,21 @@ var RecurringEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-RecurringEventDef.pluckAndParse = function(rawProps, source) {
-	// pluck from rawProps before sending to super-method
-	var startInput = pluckProp(rawProps, 'start');
-	var endInput = pluckProp(rawProps, 'end');
-	var dow = pluckProp(rawProps, 'dow');
+RecurringEventDef.defineStandardPropHandler([
+	'start',
+	'end',
+	'dow'
+], function(rawProps) {
 
-	// instantiate and parse...
-	var def = EventDef.pluckAndParse.call(this, rawProps, source); // a RecurringEventDef
-
-	if (startInput) {
-		def.startTime = moment.duration(startInput);
+	if (rawProps.start) {
+		this.startTime = moment.duration(rawProps.start);
 	}
 
-	if (endInput) {
-		def.endTime = moment.duration(endInput);
+	if (rawProps.end) {
+		this.endTime = moment.duration(rawProps.end);
 	}
 
-	if (dow) {
-		def.setDow(dow);
+	if (rawProps.dow) {
+		this.setDow(rawProps.dow);
 	}
-
-	return def;
-};
+});

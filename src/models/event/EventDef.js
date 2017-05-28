@@ -26,6 +26,7 @@ var EventDef = Class.extend({
 
 
 	constructor: function(source) {
+		this.uid = String(EventDef.uuid++);
 		this.source = source;
 		this.className = [];
 		this.miscProps = {};
@@ -49,7 +50,7 @@ var EventDef = Class.extend({
 		copy.rawId = this.rawId;
 		copy.uid = this.uid; // not really unique anymore :(
 
-		EventDef.copyVerbatimProps(this, copy);
+		EventDef.copyVerbatimStandardProps(this, copy);
 
 		copy.className = this.className; // should clone?
 		copy.miscProps = $.extend({}, this.miscProps);
@@ -117,93 +118,60 @@ var EventDef = Class.extend({
 			obj.id = this.rawId;
 		}
 
-		EventDef.copyVerbatimProps(this, obj);
+		EventDef.copyVerbatimStandardProps(this, obj);
 
 		return obj;
+	},
+
+
+	// Standard Prop Parsing System, for the INSTANCE
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	handledStandardPropMap: {},
+	verbatimStandardPropMap: {},
+	standardPropHandlers: [],
+
+
+	isStandardProp: function(propName) {
+		return this.verbatimStandardPropMap[propName] ||
+			this.handledStandardPropMap[propName];
+	},
+
+
+	applyStandardProps: function(rawProps) {
+		var handlers = this.standardPropHandlers;
+		var rawHandled = {}; // to be handled
+		var propName;
+		var i;
+
+		for (propName in this.handledStandardPropMap) {
+			if (rawProps[propName] != null) {
+				rawHandled[propName] = rawProps[propName];
+			}
+		}
+
+		for (i = 0; i < handlers.length; i++) {
+			if (handlers[i].call(this, rawProps) === false) {
+				return false;
+			}
+		}
+
+		for (propName in this.verbatimStandardPropMap) {
+			if (rawProps[propName] != null) {
+				this[propName] = rawProps[propName];
+			}
+		}
 	}
 
 });
 
 
+// ID
+// ---------------------------------------------------------------------------------------------------------------------
+
+
 EventDef.uuid = 0;
-
-
-// Verbatim Properties
-// ---------------------------------------------------------------------------------------------------------------------
-
-
-EventDef.VERBATIM_PROPS = [
-	'title', 'url', 'rendering', 'constraint', 'overlap',
-	'editable', 'startEditable', 'durationEditable', 'resourceEditable',
-	'color', 'backgroundColor', 'borderColor', 'textColor'
-];
-
-
-EventDef.copyVerbatimProps = function(src, dest) {
-	this.VERBATIM_PROPS.forEach(function(propName) {
-		if (src[propName] != null) {
-			dest[propName] = src[propName];
-		}
-	});
-};
-
-
-// Parsing
-// ---------------------------------------------------------------------------------------------------------------------
-
-
-EventDef.parse = function(rawInput, source) {
-	var calendarTransform = source.calendar.opt('eventDataTransform');
-	var sourceTransform = source.eventDataTransform;
-
-	if (calendarTransform) {
-		rawInput = calendarTransform(rawInput);
-	}
-	if (sourceTransform) {
-		rawInput = sourceTransform(rawInput);
-	}
-
-	return this.pluckAndParse($.extend({}, rawInput), source);
-};
-
-
-EventDef.pluckAndParse = function(rawProps, source) {
-	// pluck
-	var rawId = pluckProp(rawProps, 'id');
-	var className = pluckProp(rawProps, 'className');
-
-	// instantiate and parse...
-	var def = new this(source);
-
-	def.uid = String(EventDef.uuid++);
-
-	if (rawId == null) {
-		def.id = EventDef.generateId();
-	}
-	else {
-		def.id = EventDef.normalizeId((def.rawId = rawId));
-	}
-
-	// can make DRY with EventSource
-	if (typeof className === 'string') {
-		def.className = className.split(/\s+/);
-	}
-	else if ($.isArray(className)) {
-		def.className = className;
-	}
-
-	// transfer all other simple props
-	$.extend(def, pluckProps(rawProps, EventDef.VERBATIM_PROPS));
-
-	// raw input object might have specified
-	// intercepted earlier
-	delete rawProps.source;
-
-	// leftovers are misc props
-	def.miscProps = rawProps;
-
-	return def;
-};
 
 
 EventDef.normalizeId = function(id) {
@@ -214,3 +182,125 @@ EventDef.normalizeId = function(id) {
 EventDef.generateId = function() {
 	return '_fc' + (EventDef.uuid++);
 };
+
+
+// Standard Prop Parsing System, for class self-definition
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+EventDef.defineStandardPropHandler = function(propNames, handler) {
+	var proto = this.prototype;
+	var map = proto.handledStandardPropMap = $.extend({}, proto.handledStandardPropMap);
+	var i;
+
+	for (i = 0; i < propNames.length; i++) {
+		map[propNames[i]] = true;
+	}
+
+	proto.standardPropHandlers = proto.standardPropHandlers.concat(handler);
+};
+
+
+EventDef.defineVerbatimStandardProps = function(propNames) {
+	var proto = this.prototype;
+	var map = proto.verbatimStandardPropMap = $.extend({}, proto.verbatimStandardPropMap);
+	var i;
+
+	for (i = 0; i < propNames.length; i++) {
+		map[propNames[i]] = true;
+	}
+};
+
+
+EventDef.copyVerbatimStandardProps = function(src, dest) {
+	var map = this.prototype.verbatimStandardPropMap;
+	var propName;
+
+	for (propName in map) {
+		if (src[propName] != null) {
+			dest[propName] = src[propName];
+		}
+	}
+};
+
+
+// Parsing
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+EventDef.parse = function(rawInput, source) {
+	var def = new this(source);
+	var calendarTransform = source.calendar.opt('eventDataTransform');
+	var sourceTransform = source.eventDataTransform;
+	var rawStandardProps = {};
+	var miscProps = {};
+	var propName;
+
+	if (calendarTransform) {
+		rawInput = calendarTransform(rawInput);
+	}
+	if (sourceTransform) {
+		rawInput = sourceTransform(rawInput);
+	}
+
+	for (propName in rawInput) {
+		if (def.isStandardProp(propName)) {
+			rawStandardProps[propName] = rawInput[propName];
+		}
+		else {
+			miscProps[propName] = rawInput[propName];
+		}
+	}
+
+	if (def.applyStandardProps(rawStandardProps) === false) {
+		return false;
+	}
+
+	def.miscProps = miscProps;
+
+	return def;
+};
+
+
+// Definitions for this abstract EventDef class
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+EventDef.defineStandardPropHandler([
+	'id',
+	'className',
+	'source' // will ignored
+], function(rawProps) {
+
+	if (rawProps.id == null) {
+		this.id = EventDef.generateId();
+	}
+	else {
+		this.id = EventDef.normalizeId((this.rawId = rawProps.id));
+	}
+
+	// can make DRY with EventSource
+	if ($.isArray(rawProps.className)) {
+		this.className = rawProps.className;
+	}
+	else if (typeof rawProps.className === 'string') {
+		this.className = rawProps.className.split(/\s+/);
+	}
+});
+
+
+EventDef.defineVerbatimStandardProps([
+	'title',
+	'url',
+	'rendering',
+	'constraint',
+	'overlap',
+	'editable',
+	'startEditable',
+	'durationEditable',
+	'resourceEditable',
+	'color',
+	'backgroundColor',
+	'borderColor',
+	'textColor'
+]);

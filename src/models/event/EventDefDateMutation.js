@@ -103,24 +103,10 @@ var EventDefDateMutation = Class.extend({
 });
 
 
-EventDefDateMutation.createFromRawProps = function(eventInstance, newRawProps, largeUnit) {
-	var newDateProfile = EventDateProfile.parse(
-		newRawProps,
-		eventInstance.def.source.calendar
-	);
-
-	return EventDefDateMutation.createFromDiff(
-		eventInstance.dateProfile,
-		newDateProfile,
-		largeUnit
-	);
-};
-
-
-EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile2, largeUnit) {
-	var clearEnd = dateProfile0.end && !dateProfile2.end;
-	var forceTimed = dateProfile0.isAllDay() && !dateProfile2.isAllDay();
-	var forceAllDay = !dateProfile0.isAllDay() && dateProfile2.isAllDay();
+EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile1, largeUnit) {
+	var clearEnd = dateProfile0.end && !dateProfile1.end;
+	var forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay();
+	var forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay();
 	var dateDelta;
 	var endDiff;
 	var endDelta;
@@ -131,7 +117,7 @@ EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile2, large
 		if (largeUnit) {
 			return diffByUnit(date1, date0, largeUnit); // poorly named
 		}
-		else if (dateProfile2.isAllDay()) {
+		else if (dateProfile1.isAllDay()) {
 			return diffDay(date1, date0); // poorly named
 		}
 		else {
@@ -139,10 +125,10 @@ EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile2, large
 		}
 	}
 
-	dateDelta = subtractDates(dateProfile2.start, dateProfile0.start);
+	dateDelta = subtractDates(dateProfile1.start, dateProfile0.start);
 
-	if (dateProfile2.end) {
-		endDiff = subtractDates(dateProfile2.end, dateProfile0.getEnd());
+	if (dateProfile1.end) {
+		endDiff = subtractDates(dateProfile1.end, dateProfile0.getEnd());
 		endDelta = endDiff.subtract(dateDelta);
 	}
 

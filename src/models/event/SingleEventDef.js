@@ -45,20 +45,18 @@ var SingleEventDef = EventDef.extend(EventStartEndMixin, {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-SingleEventDef.pluckAndParse = function(rawProps, source) {
-	// pluck from rawProps before sending to super-method
-	var startInput = pluckProp(rawProps, 'start');
-	var dateInput = pluckProp(rawProps, 'date'); // 'date' is an alias for start
-	var endInput = pluckProp(rawProps, 'end');
-	var forcedAllDay = pluckProp(rawProps, 'allDay');
-
-	// instantiate and parse...
-	var def = EventDef.pluckAndParse.call(this, rawProps, source); // a SingleEventDef
-
+SingleEventDef.defineStandardPropHandler([
+	'start',
+	'date', // alias for 'start'
+	'end',
+	'allDay'
+], function(rawProps) {
+	var source = this.source;
 	var calendar = source.calendar;
-	var start = calendar.moment(startInput || dateInput);
-	var end = endInput ? calendar.moment(endInput) : null;
-	var forceEventDuration;
+	var start = calendar.moment(rawProps.start || rawProps.date);
+	var end = rawProps.end ? calendar.moment(rawProps.end) : null;
+	var forcedAllDay = rawProps.allDay;
+	var forceEventDuration = calendar.opt('forceEventDuration');
 
 	if (!start.isValid()) {
 		return false;
@@ -90,13 +88,10 @@ SingleEventDef.pluckAndParse = function(rawProps, source) {
 		}
 	}
 
-	forceEventDuration = calendar.opt('forceEventDuration');
 	if (!end && forceEventDuration) {
 		end = calendar.getDefaultEventEnd(!start.hasTime(), start);
 	}
 
-	def.start = start;
-	def.end = end;
-
-	return def;
-};
+	this.start = start;
+	this.end = end;
+});

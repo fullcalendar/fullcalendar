@@ -1,14 +1,12 @@
 
 var EventDefMutation = Class.extend({
 
-	newTitle: null,
-	newRendering: null,
-	newConstraint: null,
-	newOverlap: null,
-	newClassName: null, // array or null
-
-	additionalMiscProps: null,
 	dateMutation: null,
+
+	// hacks to get updateEvent/createFromRawProps to work.
+	// not undo-able and not considered in isEmpty.
+	standardProps: null, // raw (pre-parse-like)
+	miscProps: null,
 
 
 	/*
@@ -16,92 +14,70 @@ var EventDefMutation = Class.extend({
 	returns an undo function.
 	*/
 	mutateSingle: function(eventDef) {
-		var origTitle = eventDef.title;
-		var origRendering = eventDef.rendering;
-		var origConstraint = eventDef.constraint;
-		var origOverlap = eventDef.overlap;
-		var origClassName = eventDef.className;
-		var origMiscProps = eventDef.miscProps;
 		var undoDateMutation;
-
-		if (this.newTitle != null) {
-			eventDef.title = this.newTitle;
-		}
-
-		if (this.newRendering != null) {
-			eventDef.rendering = this.newRendering;
-		}
-
-		if (this.newConstraint != null) {
-			eventDef.constraint = this.newConstraint;
-		}
-
-		if (this.newOverlap != null) {
-			eventDef.overlap = this.newOverlap;
-		}
-
-		if (this.newClassName != null) {
-			eventDef.className = this.newClassName;
-		}
-
-		if (this.additionalMiscProps != null) {
-			// create a new object, so that "orig" stays intact
-			eventDef.miscProps = $.extend({}, eventDef.miscProps, this.additionalMiscProps);
-		}
 
 		if (this.dateMutation) {
 			undoDateMutation = this.dateMutation.mutateSingle(eventDef);
 		}
 
-		return function() {
-			eventDef.title = origTitle;
-			eventDef.rendering = origRendering;
-			eventDef.constraint = origConstraint;
-			eventDef.overlap = origOverlap;
-			eventDef.className = origClassName;
-			eventDef.miscProps = origMiscProps;
+		// can't undo
+		if (this.standardProps) {
+			eventDef.applyStandardProps(this.standardProps);
+		}
 
-			if (undoDateMutation) {
-				undoDateMutation();
-			}
-		};
+		// can't undo
+		if (this.miscProps) {
+			eventDef.miscProps = this.miscProps;
+		}
+
+		if (undoDateMutation) {
+			return undoDateMutation;
+		}
+		else {
+			return function() { };
+		}
 	},
 
 
 	isEmpty: function() {
-		return this.newTitle == null &&
-			this.newRendering == null &&
-			this.newConstraint == null &&
-			this.newOverlap == null &&
-			this.newClassName == null &&
-			this.additionalMiscProps == null &&
-			(!this.dateMutation || this.dateMutation.isEmpty());
+		return !this.dateMutation || this.dateMutation.isEmpty();
 	}
 
 });
 
 
 EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, largeUnit) {
-	var additionalMiscProps = {};
+	var eventDef = eventInstance.def;
+	var calendar = eventDef.source.calendar;
+	var standardProps = {};
+	var miscProps = {};
 	var propName;
+	var newDateProfile;
 	var dateMutation;
 	var defMutation;
 
 	for (propName in newRawProps) {
-		if (!eventInstance.def.isStandardProp(propName)) {
-			additionalMiscProps[propName] = newRawProps[propName];
+		if (propName !== 'start' && propName !== 'end') {
+			if (eventDef.isStandardProp(propName)) {
+				standardProps[propName] = newRawProps[propName];
+			}
+			else {
+				miscProps[propName] = newRawProps[propName];
+			}
 		}
 	}
 
-	dateMutation = EventDefDateMutation.createFromRawProps(eventInstance, newRawProps, largeUnit);
+	// the 'start' and 'end' props will be leveraged
+	newDateProfile = EventDateProfile.parse(newRawProps, calendar);
+	dateMutation = EventDefDateMutation.createFromDiff(
+		eventInstance.dateProfile,
+		newDateProfile,
+		largeUnit
+	);
 
 	defMutation = new EventDefMutation();
-	defMutation.newTitle = newRawProps.title;
-	defMutation.newRendering = newRawProps.rendering;
-	defMutation.newConstraint = newRawProps.constraint;
-	defMutation.newOverlap = newRawProps.overlap;
-	defMutation.newClassName = newRawProps.className;
-	defMutation.additionalMiscProps = additionalMiscProps;
+	defMutation.standardProps = standardProps;
+	defMutation.miscProps = miscProps;
 	defMutation.dateMutation = dateMutation;
 
 	return defMutation;
