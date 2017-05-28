@@ -2,6 +2,7 @@
 var GcalEventSource = EventSource.extend({
 
 	// TODO: eventually remove "googleCalendar" prefix (API-breaking)
+	googleCalendarApiKey: null,
 	googleCalendarId: null,
 	googleCalendarError: null, // optional function
 	ajaxSettings: null,
@@ -98,6 +99,7 @@ var GcalEventSource = EventSource.extend({
 
 	buildRequestParams: function(start, end, timezone) {
 		var apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey');
+		var params;
 
 		if (!apiKey) {
 			this.reportError("Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/");
@@ -115,25 +117,23 @@ var GcalEventSource = EventSource.extend({
 			end = end.clone().utc().add(1, 'day');
 		}
 
-		if (timezone === 'local') {
-			timezone = null;
-		}
-		else if (timezone) {
-			// when sending timezone names to Google, only accepts underscores, not spaces
-			timezone = timezone.replace(' ', '_');
-		}
-
-		return $.extend(
+		params = $.extend(
 			this.ajaxSettings.data || {},
 			{
 				key: apiKey,
 				timeMin: start.format(),
 				timeMax: end.format(),
-				timeZone: timezone,
 				singleEvents: true,
 				maxResults: 9999
 			}
 		);
+
+		if (timezone && timezone !== 'local') {
+			// when sending timezone names to Google, only accepts underscores, not spaces
+			params.timeZone = timezone.replace(' ', '_');
+		}
+
+		return params;
 	},
 
 
@@ -175,7 +175,7 @@ GcalEventSource.parse = function(rawInput, calendar) {
 		url = rawInput;
 		rawProps = {};
 	}
-	else if (typeof rawInput.url === 'string') {
+	else if (typeof rawInput === 'object') {
 		rawProps = $.extend({}, rawInput); // clone
 		url = pluckProp(rawProps, 'url');
 		googleCalendarId = pluckProp(rawProps, 'googleCalendarId');
@@ -189,6 +189,7 @@ GcalEventSource.parse = function(rawInput, calendar) {
 		source = EventSource.parseAndPluck.call(this, rawProps, calendar);
 
 		source.googleCalendarId = googleCalendarId;
+		source.googleCalendarApiKey = pluckProp(rawProps, 'googleCalendarApiKey');
 		source.googleCalendarError = pluckProp(rawProps, 'googleCalendarError');
 		source.ajaxSettings = rawProps; // remainder
 

@@ -67,6 +67,13 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				_this.pendingCnt--;
 				_this.tryRelease();
 			}
+		}, function() { // failure
+			if (request.status !== 'cancelled') {
+				request.status = 'failed';
+
+				_this.pendingCnt--;
+				_this.tryRelease();
+			}
 		});
 	},
 

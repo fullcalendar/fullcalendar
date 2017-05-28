@@ -5,7 +5,7 @@ var EventSourceParser = {
 
 
 	registerClass: function(EventSourceClass) {
-		this.sourceClasses.push(EventSourceClass);
+		this.sourceClasses.unshift(EventSourceClass); // give highest priority
 	},
 
 

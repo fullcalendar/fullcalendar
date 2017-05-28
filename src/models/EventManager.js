@@ -128,9 +128,10 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		var sources = this.otherSources;
 		var i, source;
 
-		// given an proper event source object
+		// given a proper event source object
 		for (i = 0; i < sources.length; i++) {
 			source = sources[i];
+
 			if (source === matchInput) {
 				return [ source ];
 			}
@@ -142,9 +143,14 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			return [ source ];
 		}
 
-		return $.grep(sources, function(source) {
-			return isSourcesEquivalent(matchInput, source);
-		});
+		// parse as an event source
+		matchInput = EventSourceParser.parse(matchInput);
+		if (matchInput) {
+
+			return $.grep(sources, function(source) {
+				return isSourcesEquivalent(matchInput, source);
+			});
+		}
 	},
 
 
@@ -329,6 +335,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 });
 
 
-function isSourcesEquivalent(source1, source2) {
-	return source1 && source2 && source1.getPrimitive() == source2.getPrimitive();
+function isSourcesEquivalent(source0, source1) {
+	return source0.getPrimitive() == source1.getPrimitive();
 }
