@@ -57,7 +57,11 @@ EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, large
 	var defMutation;
 
 	for (propName in newRawProps) {
-		if (propName !== 'start' && propName !== 'end') {
+		if (
+			isAtomic(newRawProps[propName]) &&
+			propName !== 'start' && propName !== 'end' && propName !== 'allDay' &&
+			propName !== 'source' && propName !== '_id'
+		) {
 			if (eventDef.isStandardProp(propName)) {
 				standardProps[propName] = newRawProps[propName];
 			}

@@ -244,6 +244,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 			eventDefs = currentPeriod.getEventDefsById(eventDefId);
 			eventDefs.forEach(function(eventDef) {
+				// add/remove esp because id might change
 				currentPeriod.removeEventDef(eventDef);
 				undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
 				currentPeriod.addEventDef(eventDef);

@@ -81,6 +81,11 @@ var EventDefDateMutation = Class.extend({
 			}
 		}
 
+		// TODO: okay to access calendar option?
+		if (!end && calendar.opt('forceEventDuration')) {
+			end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
+		}
+
 		eventDef.start = start;
 		eventDef.end = end;
 

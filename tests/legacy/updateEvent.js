@@ -15,40 +15,59 @@ describe('updateEvent', function() {
 		relatedEvent = null;
 	});
 
-	function init() {
-		$('#cal').fullCalendar(options);
-		var events = $('#cal').fullCalendar('clientEvents');
-		event = events[0];
-		relatedEvent = events[1];
+	function getMainEvent() {
+		return $('#cal').fullCalendar('clientEvents', function(event) {
+			return event.className[0] === 'mainEvent';
+		})[0];
+	}
+
+	function getRelatedEvent() {
+		return $('#cal').fullCalendar('clientEvents', function(event) {
+			return event.className[0] === 'relatedEvent';
+		})[0];
 	}
 
 	describe('when moving an all-day event\'s start', function() {
 		describe('when a related event doesn\'t have an end', function() {
 			it('should move the start by the delta and leave the end as null', function() {
+				var event, relatedEvent;
+
 				options.events = [
-					{ id: '1', start: '2014-05-01', allDay: true },
-					{ id: '1', start: '2014-05-10', allDay: true }
+					{ id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.start.add(2, 'days');
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.start).toEqualMoment('2014-05-03');
 				expect(event.end).toBeNull();
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-12');
 				expect(relatedEvent.end).toBeNull();
 			});
 		});
 		describe('when a related event has an end', function() {
 			it('should move the start and end by the delta', function() {
+				var event, relatedEvent;
+
 				options.events = [
-					{ id: '1', start: '2014-05-01', allDay: true },
-					{ id: '1', start: '2014-05-10', end: '2014-05-12', allDay: true }
+					{ id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', end: '2014-05-12', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.start.add(2, 'days');
 				expect(event.start).toEqualMoment('2014-05-03');
 				expect(event.end).toBeNull();
 				$('#cal').fullCalendar('updateEvent', event);
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-12');
 				expect(relatedEvent.end).toEqualMoment('2014-05-14');
 			});
@@ -58,30 +77,44 @@ describe('updateEvent', function() {
 	describe('when moving an timed event\'s start', function() {
 		describe('when a related event doesn\'t have an end', function() {
 			it('should move the start by the delta and leave the end as null', function() {
+				var event, relatedEvent;
+
 				options.events = [
-					{ id: '1', start: '2014-05-01T12:00:00', allDay: false },
-					{ id: '1', start: '2014-05-10T06:00:00', allDay: false }
+					{ id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10T06:00:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.start.add({ days: 2, hours: 2 });
 				$('#cal').fullCalendar('updateEvent', event);
 				expect(event.start).toEqualMoment('2014-05-03T14:00:00');
 				expect(event.end).toBeNull();
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-12T08:00:00');
 				expect(relatedEvent.end).toBeNull();
 			});
 		});
 		describe('when a related event has an end', function() {
 			it('should move the start and end by the delta', function() {
+				var event, relatedEvent;
+
 				options.events = [
-					{ id: '1', start: '2014-05-01T12:00:00', allDay: false },
-					{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-12T08:00:00', allDay: false }
+					{ id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-12T08:00:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.start.add({ days: 2, hours: 2 });
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.start).toEqualMoment('2014-05-03T14:00:00');
 				expect(event.end).toBeNull();
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-12T08:00:00');
 				expect(relatedEvent.end).toEqualMoment('2014-05-14T10:00:00');
 			});
@@ -91,31 +124,47 @@ describe('updateEvent', function() {
 	describe('when moving an all-day event\'s end', function() {
 		describe('when a related event doesn\'t have an end', function() {
 			it('should give the end a default duration plus the delta', function() {
+				var event, relatedEvent;
+
 				options.defaultAllDayEventDuration = { days: 2 };
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-10', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.end.add(1, 'days');
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.start).toEqualMoment('2014-05-01');
 				expect(event.end).toEqualMoment('2014-05-04');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-10');
 				expect(relatedEvent.end).toEqualMoment('2014-05-13');
 			});
 		});
 		describe('when a related event has an end', function() {
 			it('should move the end by the delta', function() {
+				var event, relatedEvent;
+
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.end.add(1, 'days');
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.start).toEqualMoment('2014-05-01');
 				expect(event.end).toEqualMoment('2014-05-04');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-10');
 				expect(relatedEvent.end).toEqualMoment('2014-05-14');
 			});
@@ -126,45 +175,61 @@ describe('updateEvent', function() {
 		describe('when a related event doesn\'t have an end', function() {
 			describe('when forceEventDuration is off', function() {
 				it('should give the end a default duration plus the delta', function() {
+					var event, relatedEvent;
+
 					options.forceEventDuration = false;
 					options.defaultTimedEventDuration = { hours: 2 };
 					options.events = [
-						{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false },
-						{ id: '1', start: '2014-05-10T16:00:00', allDay: false }
+						{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
+						{ id: '1', start: '2014-05-10T16:00:00', allDay: false, className: 'relatedEvent' }
 					];
-					init();
+					$('#cal').fullCalendar(options);
+
+					event = getMainEvent();
 					event.end.add({ days: 1, hours: 1 });
 					$('#cal').fullCalendar('updateEvent', event);
+
+					event = getMainEvent();
 					expect(event.start).toEqualMoment('2014-05-01T12:00:00');
 					expect(event.end).toEqualMoment('2014-05-02T16:00:00');
+
+					relatedEvent = getRelatedEvent();
 					expect(relatedEvent.start).toEqualMoment('2014-05-10T16:00:00');
 					expect(relatedEvent.end).toEqualMoment('2014-05-11T19:00:00');
 				});
 			});
 			describe('when forceEventDuration is on', function() {
-				it('should give the end a default duration plus the delta', function() {
+				it('should reset end based on defaultTimedEventDuration', function() {
+					var event, relatedEvent;
+
 					options.forceEventDuration = true;
 					options.defaultTimedEventDuration = { hours: 2 };
 					options.events = [
-						{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false },
-						{ id: '1', start: '2014-05-10T16:00:00', allDay: false }
+						{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
+						{ id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
 					];
-					init();
-					event.end.add({ days: 1, hours: 1 });
-					relatedEvent.end = null;
+					$('#cal').fullCalendar(options);
+
+					event = getMainEvent();
+					event.start.add({ days: 1, hours: -12 });
+					event.end = null;
 					$('#cal').fullCalendar('updateEvent', event);
-					expect(event.start).toEqualMoment('2014-05-01T12:00:00');
-					expect(event.end).toEqualMoment('2014-05-02T16:00:00');
-					expect(relatedEvent.start).toEqualMoment('2014-05-10T16:00:00');
-					expect(relatedEvent.end).toEqualMoment('2014-05-11T19:00:00');
+
+					event = getMainEvent();
+					expect(event.start).toEqualMoment('2014-05-02T00:00:00');
+					expect(event.end).toEqualMoment('2014-05-02T02:00:00');
+
+					relatedEvent = getRelatedEvent();
+					expect(relatedEvent.start).toEqualMoment('2014-05-11T04:00:00');
+					expect(relatedEvent.end).toEqualMoment('2014-05-11T06:00:00');
 				});
 			});
 		});
 		describe('when a related event has an end', function() {
 			it('should move the end by the delta', function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false },
-					{ id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false }
+					{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
 				];
 				init();
 				event.end.add({ days: 1, hours: 1 });
@@ -180,8 +245,8 @@ describe('updateEvent', function() {
 	describe('when moving an all-day event\'s start and end', function() {
 		it('should move the start and end of related events', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 			];
 			init();
 			event.start.add(2, 'days');
@@ -197,8 +262,8 @@ describe('updateEvent', function() {
 	describe('when moving a timed event\'s start and end', function() {
 		it('should move the start and end of related events', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false },
-				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false }
+				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
 			init();
 			event.start.add({ days: 2, hours: 1 });
@@ -214,8 +279,8 @@ describe('updateEvent', function() {
 	describe('when giving a time to an all-day event\'s start', function() {
 		it('should erase the start\'s time and keep the event all-day', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 			];
 			init();
 			event.start.time('18:00');
@@ -233,7 +298,7 @@ describe('updateEvent', function() {
 	describe('when accidentally giving a time to an all-day event with moment()', function() {
 		it('should erase the start and end\'s times and keep the event all-day', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true }
+				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' }
 			];
 			init();
 			event.start = moment('2014-05-01'); // won't have an ambig time
@@ -249,8 +314,8 @@ describe('updateEvent', function() {
 		describe('when the event\'s dates remain all-day', function() {
 			it('should make the event and related events allDay=false and 00:00', function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
 				init();
 				event.allDay = false;
@@ -266,8 +331,8 @@ describe('updateEvent', function() {
 		describe('when the event\'s dates are set to a time', function() {
 			it('should adjust the event and related event\'s allDay/start/end', function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
 				init();
 				event.allDay = false;
@@ -284,8 +349,8 @@ describe('updateEvent', function() {
 		describe('when the event\'s start is also moved', function() {
 			it('should adjust the event and related event\'s allDay/start/end', function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
 				init();
 				event.allDay = false;
@@ -304,8 +369,8 @@ describe('updateEvent', function() {
 	describe('when changing an event from timed to all-day', function() {
 		it('should adjust the event and related event\'s allDay/start/end', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false },
-				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false }
+				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
 			init();
 			event.allDay = true;
@@ -319,8 +384,8 @@ describe('updateEvent', function() {
 		});
 		it('should adjust the event and related event\'s allDay/start/end and account for a new start', function() {
 			options.events = [
-				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false },
-				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false }
+				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
 			init();
 			event.allDay = true;
@@ -337,8 +402,8 @@ describe('updateEvent', function() {
 
 	it('should accept moments that have unnormalized start/end', function() {
 		options.events = [
-			{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false },
-			{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false }
+			{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+			{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 		];
 		init();
 		event.start = '2014-05-02T06:00:00'; // move by 1 day
@@ -358,8 +423,8 @@ describe('updateEvent', function() {
 
 	it('should copy color-related properties to related events', function() {
 		options.events = [
-			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 		];
 		init();
 		event.color = 'red';
@@ -369,8 +434,8 @@ describe('updateEvent', function() {
 
 	it('should non-standard properties to related events', function() {
 		options.events = [
-			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true }
+			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 		];
 		init();
 		event.someForeignKey = '123';
@@ -384,8 +449,8 @@ describe('updateEvent', function() {
 		describe('when moving an timed event\'s start', function() {
 			beforeEach(function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false },
-					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false }
+					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
 				init();
 				event.start.add(2, 'hours');
@@ -399,8 +464,8 @@ describe('updateEvent', function() {
 		describe('when moving a timed event\'s end', function() {
 			beforeEach(function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false },
-					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false }
+					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
 				init();
 				event.end.add(2, 'hours');
@@ -414,8 +479,8 @@ describe('updateEvent', function() {
 		describe('when moving an all-day event to timed', function() {
 			beforeEach(function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true },
-					{ id: '1', start: '2014-05-11', end: '2014-05-13', allDay: true }
+					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-11', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
 				init();
 				event.allDay = false;
@@ -429,8 +494,8 @@ describe('updateEvent', function() {
 		describe('when reporting an event that hasn\'t changed', function() {
 			beforeEach(function() {
 				options.events = [
-					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false },
-					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false }
+					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
+					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
 				init();
 				$('#cal').fullCalendar('updateEvent', event);

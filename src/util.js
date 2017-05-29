@@ -966,6 +966,12 @@ function removeExact(array, exactVal) {
 }
 
 
+// TODO: relocate
+function isAtomic(val) {
+	return typeof val !== 'object';
+}
+
+
 function firstDefined() {
 	for (var i=0; i<arguments.length; i++) {
 		if (arguments[i] !== undefined) {

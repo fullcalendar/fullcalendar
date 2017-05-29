@@ -51,10 +51,17 @@ SingleEventDef.defineStandardPropHandler([
 	'end',
 	'allDay'
 ], function(rawProps) {
+	var startInput = rawProps.start || rawProps.date;
+	var endInput = rawProps.end;
+
+	if (!startInput) {
+		return false;
+	}
+
 	var source = this.source;
 	var calendar = source.calendar;
-	var start = calendar.moment(rawProps.start || rawProps.date);
-	var end = rawProps.end ? calendar.moment(rawProps.end) : null;
+	var start = calendar.moment(startInput);
+	var end = endInput ? calendar.moment(endInput) : null;
 	var forcedAllDay = rawProps.allDay;
 	var forceEventDuration = calendar.opt('forceEventDuration');
 

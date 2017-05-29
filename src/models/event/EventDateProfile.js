@@ -37,10 +37,27 @@ var EventDateProfile = Class.extend(EventStartEndMixin, {
 
 /*
 Needs a Calendar object
+TODO: this seems like repeat code :(
 */
 EventDateProfile.parse = function(rawProps, calendar) {
-	return new EventDateProfile(
-		calendar.moment(rawProps.start),
-		rawProps.end ? calendar.moment(rawProps.end) : null
-	);
+	var start = calendar.moment(rawProps.start);
+	var end = rawProps.end ? calendar.moment(rawProps.end) : null;
+
+	if (rawProps.allDay === true) {
+		start.stripTime();
+		if (end) {
+			end.stripTime();
+		}
+	}
+	else if (rawProps.allDay === false) {
+		if (!start.hasTime()) {
+			start.time(0);
+		}
+		if (end && !end.hasTime()) {
+			end.time(0);
+		}
+	}
+
+
+	return new EventDateProfile(start, end);
 };
