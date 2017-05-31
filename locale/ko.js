@@ -8,5 +8,5 @@ $.fullCalendar.locale("ko", {
 	},
 	allDayText: "종일",
 	eventLimitText: "개",
-	noEventsMessage: "일정이 표시 없습니다"
+	noEventsMessage: "일정이 없습니다"
 });
