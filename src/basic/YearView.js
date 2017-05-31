@@ -143,7 +143,7 @@ var YearView = FC.YearView = View.extend({
 		}
 	},
 
-	isEventLocationAllowed(resizeLocation, ev) {
+	isEventLocationAllowed: function(resizeLocation, ev) {
 		if (this.activeGridId != -1) {
 			return this.dayGrids[this.activeGridId].isEventLocationAllowed(resizeLocation, ev);
 		}

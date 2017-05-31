@@ -149,14 +149,6 @@
 	height: 100%; /* strech bg to bottom edge */
 }
 
-.fc-view-container *,
-.fc-view-container *:before,
-.fc-view-container *:after {
-    -webkit-box-sizing: border-box !important;
-       -moz-box-sizing: border-box !important;
-            box-sizing: border-box !important;
-}
-
 .fc td.fc-year-monthly-td,
 .fc td.fc-year-month-separator,
 .fc td.fc-year-month-border {
