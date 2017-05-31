@@ -138,8 +138,8 @@ var YearView = FC.YearView = View.extend({
 	},
 					
 	segResizeStop: function(seg, ev) {
-		if (this.activeGridId != -1) {
-			return this.dayGrids[this.activeGridId].segResizeStop(seg, ev);
+		for (var i = 0; i < this.dayGrids.length; i++) {
+			this.dayGrids[i].segResizeStop(seg, ev);
 		}
 	},
 
@@ -300,7 +300,7 @@ var YearView = FC.YearView = View.extend({
 			var grid = this.dayGrids[i];
 			var boundBox = grid.getBoundBox();
 
-			if ( x > boundBox.left && x < boundBox.right && y > boundBox.top && y < boundBox.bottom) {
+			if (x > boundBox.left && x < boundBox.right && y > boundBox.top && y < boundBox.bottom) {
 				return i;
 			}
 		}
@@ -463,7 +463,8 @@ var YearView = FC.YearView = View.extend({
 		}
 	},
 	releaseHits: function() {
-		for (var i = 0; i < this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].releaseHits();
 		}
 	},
@@ -506,7 +507,6 @@ var YearView = FC.YearView = View.extend({
 
 		if (startId != -1) {
 			if (startId == activeId) {
-				//same
 				return this.dayGrids[startId].getSafeHitSpan(hit);
 			}
 			else {
@@ -530,7 +530,6 @@ var YearView = FC.YearView = View.extend({
 
 		if (startId != -1) {
 			if (startId == activeId) {
-				//same
 				return this.dayGrids[startId].getSafeHitSpan(hit);
 			}
 			else {
