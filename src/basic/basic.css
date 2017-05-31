@@ -67,3 +67,117 @@
 	display: inline-block;
 	min-width: 1.25em;
 }
+
+/* YearView */
+.fc-year-view .fc-body .fc-row {
+	min-height: 4em; /* ensure that all rows are at least this tall */
+}
+
+.fc-year-view .fc-week-number,
+.fc-year-view .fc-day-number {
+	padding: 2px;
+}
+
+.fc-year-view th.fc-week-number,
+.fc-year-view th.fc-day-number {
+	padding: 0 2px; /* column headers can't have as much v space */
+}
+
+.fc-ltr .fc-year-view .fc-day-top .fc-day-number { float: right; }
+.fc-rtl .fc-year-view .fc-day-top .fc-day-number { float: left; }
+
+.fc-ltr .fc-year-view .fc-day-top .fc-week-number { float: left; border-radius: 0 0 3px 0; }
+.fc-rtl .fc-year-view .fc-day-top .fc-week-number { float: right; border-radius: 0 0 0 3px; }
+
+.fc-year-view .fc-day-top .fc-week-number {
+	min-width: 1.5em;
+	text-align: center;
+	background-color: #f2f2f2;
+	color: #808080;
+}
+
+/* when week/day number have own column */
+
+.fc-year-view td.fc-week-number {
+	text-align: center;
+}
+
+.fc-year-view td.fc-week-number > * {
+	/* work around the way we do column resizing and ensure a minimum width */
+	display: inline-block;
+	min-width: 1.25em;
+}
+
+.fc-year-view .fc-row table.fc-year-month-header {
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+}
+
+.fc-year-monthly-name {
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+
+	margin-top: 16px;
+	line-height: 24px;
+}
+
+.fc-year-monthly-name.fc-first {
+	margin-top: 0;
+}
+
+.fc-year-monthly-name a {
+	color: black;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.fc-year-monthly-footer {
+}
+
+.fc-year-view .fc-row .fc-bg table {
+	/* missing borders */
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	height: 100%; /* strech bg to bottom edge */
+}
+
+.fc-year-view .fc-row.fc-last .fc-bg table {
+	/* missing borders */
+	border-bottom: 1px solid #dddddd;
+	height: 100%; /* strech bg to bottom edge */
+}
+
+.fc-view-container *,
+.fc-view-container *:before,
+.fc-view-container *:after {
+    -webkit-box-sizing: border-box !important;
+       -moz-box-sizing: border-box !important;
+            box-sizing: border-box !important;
+}
+
+.fc td.fc-year-monthly-td,
+.fc td.fc-year-month-separator,
+.fc td.fc-year-month-border {
+	border-color: transparent;
+}
+
+.fc-year-monthly-td {
+	text-align: center;
+}
+
+.fc-year-month-border.fc-first {
+	width: 0;
+	max-width: 8px;
+}
+
+.fc-year-month-border.fc-last {
+	width: 0;
+	max-width: 8px;
+}
+
+.fc-year-month-separator {
+	width: 8px;
+}
+
