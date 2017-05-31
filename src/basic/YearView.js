@@ -270,22 +270,20 @@ var YearView = FC.YearView = View.extend({
 		}
 	},
 						
-	computeEventEndResize: function (span0, span1, event) {
-		var startId = this.startGridId;
+	computeEventEndResize: function(span0, span1, event) {
 		var activeId = this.activeGridId;
 		var activeRes = this.dayGrids[activeId].computeEventEndResize(span0, span1, event);
 		return activeRes;
 	},
 	
-	computeEventStartResize: function (span0, span1, event) {
-		var startId = this.startGridId;
+	computeEventStartResize: function(span0, span1, event) {
 		var activeId = this.activeGridId;
 		var activeRes = this.dayGrids[activeId].computeEventStartResize(span0, span1, event);
 		return activeRes;
 	},
 
 	daysInMonth: function(year, month) {
-		return FC.moment([year, month, 0]).date();
+		return FC.moment([ year, month, 0 ]).date();
 	},
 
 	interactionStart: function(ev) {
@@ -302,10 +300,8 @@ var YearView = FC.YearView = View.extend({
 			var grid = this.dayGrids[i];
 			var boundBox = grid.getBoundBox();
 
-			if ( x > boundBox.left && x < boundBox.right
-				&& y > boundBox.top && y < boundBox.bottom) {
+			if ( x > boundBox.left && x < boundBox.right && y > boundBox.top && y < boundBox.bottom) {
 				return i;
-				break;
 			}
 		}
 
@@ -315,20 +311,20 @@ var YearView = FC.YearView = View.extend({
 	drag: function(dx, dy, ev) {
 		var x = getEvX(ev);
 		var y = getEvY(ev);
+		var i;
 
 		var gridId = this.getGridId(x, y);
 
-		var startId = this.startGridId;
 		var activeId = this.activeGridId;
 
 		if (gridId != -1 && gridId != activeId) {
 			if (gridId > activeId) {
-				for (var i = activeId; i <= gridId; i++) {
+				for (i = activeId; i <= gridId; i++) {
 					this.dayGrids[i].unrenderSelection();
 				}
 			}
 			else {
-				for (var i = gridId; i <= activeId; i++) {
+				for (i = gridId; i <= activeId; i++) {
 					this.dayGrids[i].unrenderSelection();
 				}
 			}
@@ -362,7 +358,7 @@ var YearView = FC.YearView = View.extend({
 
 		this.subTables.find('.fc-week:first').addClass('fc-first');
 		this.subTables.find('.fc-week:last').addClass('fc-last');
-		this.subTables.find('.fc-bg').find('td.fc-day:last').addClass('fc-last');
+		this.subTables.find('.fc-bg').find('td .fc-day:last').addClass('fc-last');
 
 		this.subTables.each(function(i, _sub) {
 			if (!_this.curYear) { _this.curYear = _this.renderRange.start; }
@@ -374,12 +370,12 @@ var YearView = FC.YearView = View.extend({
 
 			var lastDateShown = 0;
 
-			$(_sub).find('.fc-bg').find('td.fc-day:first').addClass('fc-first');
+			$(_sub).find('.fc-bg').find('td .fc-day:first').addClass('fc-first');
 
-			_this.otherMonthDays[mi] = [0,0,0,0];
+			_this.otherMonthDays[mi] = [ 0, 0, 0, 0 ];
 			$(_sub).find('.fc-content-skeleton tr').each(function(r, _tr) {
 
-				if (r === 0 && _this.dateInMonth(d,mi)) {
+				if (r === 0 && _this.dateInMonth(d, mi)) {
 					// in current month, but hidden (weekends) at start
 					_this.otherMonthDays[mi][2] = d.date() - 1;
 				}
@@ -389,7 +385,7 @@ var YearView = FC.YearView = View.extend({
 
 					d = _this.dayGrids[i].dayDates[ii + r*_this.colCnt];
 
-					if (!_this.dateInMonth(d,mi)) {
+					if (!_this.dateInMonth(d, mi)) {
 						cell.addClass('fc-other-month');
 						if (d.month() == (mi+11)%12) {
 							// prev month
@@ -416,8 +412,9 @@ var YearView = FC.YearView = View.extend({
 	setHeight: function(totalHeight, isAuto) {
 		var eventLimit = this.opt('eventLimit');
 		var scrollerHeight = totalHeight;
+		var i;
 
-		for (var i = 0; i < this.dayGrids.length; i++) {
+		for (i = 0; i < this.dayGrids.length; i++) {
 			var dayGrid = this.dayGrids[i];
 
 			dayGrid.removeSegPopover(); // kill the "more" popover if displayed
@@ -448,29 +445,29 @@ var YearView = FC.YearView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 	// forward all hit-related method calls to dayGrid
 	hitsNeeded: function() {
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].hitsNeeded();
 		}
 	},
 	hitsNotNeeded: function() {
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].hitsNotNeeded();
 		}
 	},
 	prepareHits: function() {
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].prepareHits();
 		}
 	},
 	releaseHits: function() {
-		for (var i=0; i < this.dayGrids.length; i++) {
+		for (var i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].releaseHits();
 		}
 	},
 	queryHit: function(left, top) {
-		var startId = this.startGridId;
-		var activeId = this.activeGridId;
-
 		var gridId = this.getGridId(left, top);
 
 		if (gridId != -1) {
@@ -479,8 +476,8 @@ var YearView = FC.YearView = View.extend({
 		}
 	},
 	getHitSpan: function(hit) {
-		var hits = [];
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var hits = [], i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			var res = this.dayGrids[i].getHitSpan(hit);
 			if (res) {
 				hits = hits.concat(res);
@@ -489,8 +486,8 @@ var YearView = FC.YearView = View.extend({
 		return hits;
 	},
 	getHitEl: function(hit) {
-		var hits = [];
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var hits = [], i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			var res = this.dayGrids[i].getHitEl(hit);
 			if (res) {
 				hits = hits.concat(res);
@@ -516,10 +513,10 @@ var YearView = FC.YearView = View.extend({
 				if (activeId != -1) {
 					var dayGrid = this.dayGrids[activeId];
 					if (activeId > startId) {
-						return dayGrid.getSafeHitSpan({ row:0, col: 0});
+						return dayGrid.getSafeHitSpan({ row:0, col: 0 });
 					}
 					else if (activeId < startId) {
-						return dayGrid.getSafeHitSpan({ row: dayGrid.rowCnt-1 , col: dayGrid.colCnt-1 });
+						return dayGrid.getSafeHitSpan({ row: dayGrid.rowCnt-1, col: dayGrid.colCnt-1 });
 					}
 					return dayGrid.getSafeHitSpan(hit);
 				}
@@ -548,30 +545,31 @@ var YearView = FC.YearView = View.extend({
 	computeSelection: function(span0, span1) {
 		var startId = this.startGridId;
 		var activeId = this.activeGridId;
+		var first, last, s0, s1, dayGrid;
 
 		if (startId == activeId) {
 			return this.dayGrids[startId].computeSelection(span0, span1);
 		}
 		else {
 			if (startId > activeId) {
-				var first = this.dayGrids[activeId].computeSelection(span0, span1);
+				first = this.dayGrids[activeId].computeSelection(span0, span1);
 
-				var dayGrid = this.dayGrids[startId];
-				var s0 = dayGrid.getSafeHitSpan(this.dragListener.origHit);
-				var s1 = dayGrid.getSafeHitSpan({ row: 0, col: 0 });
-				var last = dayGrid.computeSelection(s0, s1);
+				dayGrid = this.dayGrids[startId];
+				s0 = dayGrid.getSafeHitSpan(this.dragListener.origHit);
+				s1 = dayGrid.getSafeHitSpan({ row: 0, col: 0 });
+				last = dayGrid.computeSelection(s0, s1);
 
 				first.end = last.end;
 				return first;
 			}
 			else {
 				//startId < activeId
-				var first = this.dayGrids[activeId].computeSelection(span0, span1);
+				first = this.dayGrids[activeId].computeSelection(span0, span1);
 
-				var dayGrid = this.dayGrids[startId];
-				var s0 = dayGrid.getSafeHitSpan({ row: dayGrid.rowCnt-1, col: dayGrid.colCnt-1 });
-				var s1 = dayGrid.getSafeHitSpan(this.dragListener.origHit);
-				var last = dayGrid.computeSelection(s0, s1);
+				dayGrid = this.dayGrids[startId];
+				s0 = dayGrid.getSafeHitSpan({ row: dayGrid.rowCnt-1, col: dayGrid.colCnt-1 });
+				s1 = dayGrid.getSafeHitSpan(this.dragListener.origHit);
+				last = dayGrid.computeSelection(s0, s1);
 				first.start = last.start;
 				return first;
 			}
@@ -583,8 +581,8 @@ var YearView = FC.YearView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
-		var eventSeg = [];
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var eventSeg = [], i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			var res = this.dayGrids[i].getEventSegs();
 			if (res) {
 				eventSeg = eventSeg.concat(res);
@@ -595,7 +593,8 @@ var YearView = FC.YearView = View.extend({
 
 	// Renders the given events onto the view and populates the segments array
 	renderEvents: function(events) {
-		for (var i=0; i < this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].renderEvents(events);
 		}
 
@@ -604,7 +603,8 @@ var YearView = FC.YearView = View.extend({
 
 	// Unrenders all event elements and clears internal segment data
 	unrenderEvents: function() {
-		for (var i=0; i<this.dayGrids.length; i++) {
+		var i;
+		for (i = 0; i < this.dayGrids.length; i++) {
 			this.dayGrids[i].unrenderEvents();
 		}
 
@@ -618,6 +618,7 @@ var YearView = FC.YearView = View.extend({
 	renderSelection: function(span) {
 		var startId = this.startGridId;
 		var activeId = this.activeGridId;
+		var i, dayGrid, span0, span1, hit, selectionSpan;
 
 		if (startId != -1) {
 			if (startId == activeId) {
@@ -629,10 +630,8 @@ var YearView = FC.YearView = View.extend({
 			else {
 				if (activeId != -1) {
 					if (startId < activeId) {
-						for (var i = startId; i < activeId; i++) {
-							var dayGrid = this.dayGrids[i];
-							var span0;
-							var span1;
+						for (i = startId; i < activeId; i++) {
+							dayGrid = this.dayGrids[i];
 
 							if (i != startId) {
 								span0 = dayGrid.getSafeHitSpan({ row: 0, col: 0 });
@@ -649,11 +648,9 @@ var YearView = FC.YearView = View.extend({
 						}
 					}
 					else {
-						for (var i = startId; i > activeId; i--) {
-							var dayGrid = this.dayGrids[i];
-							var hit = { row: 0, col: 0 };
-							var span0;
-							var span1;
+						for (i = startId; i > activeId; i--) {
+							dayGrid = this.dayGrids[i];
+							hit = { row: 0, col: 0 };
 
 							if (i != startId)  {
 								span0 = dayGrid.getSafeHitSpan({ row: dayGrid.rowCnt-1, col: dayGrid.colCnt-1 });
@@ -679,14 +676,15 @@ var YearView = FC.YearView = View.extend({
 	unrenderSelection: function() {
 		var startId = this.startGridId;
 		var activeId = this.activeGridId;
+		var i;
 
 		if (activeId > startId) {
-			for (var i = startId; i <= activeId; i++) {
+			for (i = startId; i <= activeId; i++) {
 				this.dayGrids[i].unrenderSelection();
 			}
 		}
 		else {
-			for (var i = activeId; i <= startId; i++) {
+			for (i = activeId; i <= startId; i++) {
 				this.dayGrids[i].unrenderSelection();
 			}
 		}
@@ -761,7 +759,7 @@ var YearView = FC.YearView = View.extend({
 
 		// init days based on 2013-12 (1st is Sunday)
 		for (n=0; n<7; n++) {
-			weekNames[n] = FC.moment([2013,11,1+n]).format('ddd');
+			weekNames[n] = FC.moment([ 2013, 11, 1+n ]).format('ddd');
 		}
 
 		if (this.isBootstrap) {
@@ -779,7 +777,7 @@ var YearView = FC.YearView = View.extend({
 			var m = (this.intervalStart.month() + n);
 			var hiddenMonth = ($.inArray((m % 12), this.hiddenMonths) != -1);
 			var display = (hiddenMonth ? 'display:none;' : '');
-			var di = FC.moment([miYear+(m / 12),(m % 12),1]);
+			var di = FC.moment([ miYear+(m / 12), (m % 12), 1 ]);
 			var monthName = capitaliseFirstLetter(di.format('MMMM'));
 			var monthID = di.format('YYYYMM');
 
@@ -868,7 +866,7 @@ var YearView = FC.YearView = View.extend({
 		this.table = $(s).appendTo(this.el);
 
 		this.bodyRows = this.table.find('.fc-day-grid .fc-week');
-		this.bodyCells = this.bodyRows.find('td.fc-day');
+		this.bodyCells = this.bodyRows.find('td .fc-day');
 		this.bodyFirstCells = this.bodyCells.filter(':first-child');
 
 		this.subTables = this.table.find('.fc-year-monthly-td');
@@ -915,8 +913,8 @@ var YearView = FC.YearView = View.extend({
 			dayGrid.breakOnWeeks = true;
 
 			var renderRange = {
-				start : monthDate.clone().startOf('month'),
-				end: monthDate.clone().endOf('month'),
+				start: monthDate.clone().startOf('month'),
+				end: monthDate.clone().endOf('month')
 			};
 
 			renderRange.start.startOf('week');
@@ -962,15 +960,15 @@ var YearView = FC.YearView = View.extend({
 	// Day clicking and binding
 	dayBind: function(days) {
 		var _this = this;
-		days.click(function(ev){
+		days.click(function(ev) {
 			var self = _this;
 			self.trigger('dayClick',
 				self,
-				FC.moment(this.getAttribute("data-date"))
-				,ev
+				FC.moment(this.getAttribute("data-date")),
+				ev
 			);
 
 		});
 		days.mousedown(this.daySelectionMousedown);
-	},
+	}
 });
