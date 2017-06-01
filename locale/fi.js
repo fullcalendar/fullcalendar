@@ -4,7 +4,11 @@ $.fullCalendar.locale("fi", {
 		month: "Kuukausi",
 		week: "Viikko",
 		day: "Päivä",
-		list: "Tapahtumat"
+		list: "Tapahtumat",
+		listYear: "Vuoden tapahtumat",
+		listMonth: "Kuukauden tapahtumat",
+		listWeek: "Viikon tapahtumat",
+		listDay: "Päivän tapahtumat"
 	},
 	allDayText: "Koko päivä",
 	eventLimitText: "lisää",
