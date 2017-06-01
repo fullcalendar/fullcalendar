@@ -53,4 +53,16 @@ describe('prev button', function() {
 			ToolbarUtils.expectButtonEnabled('prev', true);
 		});
 	});
+
+	describe('when date range is between two weeks', function() {
+		pushOptions({
+			defaultDate: '2017-05-29',
+			defaultView: 'agendaWeek',
+			validRange: { start: '2017-05-24', end: '2017-05-30' }
+		});
+		it('is enabled', function() {
+			initCalendar();
+			ToolbarUtils.expectButtonEnabled('prev', true);
+		});
+	});
 });
