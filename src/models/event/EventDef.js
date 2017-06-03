@@ -128,40 +128,41 @@ var EventDef = Class.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handledStandardPropMap: {},
-	verbatimStandardPropMap: {},
+	standardPropMap: {},
 	standardPropHandlers: [],
 
 
 	isStandardProp: function(propName) {
-		return this.verbatimStandardPropMap[propName] ||
-			this.handledStandardPropMap[propName];
+		return this.standardPropMap[propName];
 	},
 
 
 	applyStandardProps: function(rawProps) {
+		var map = this.standardPropMap;
 		var handlers = this.standardPropHandlers;
 		var rawHandled = {}; // to be handled
+		var success = true;
 		var propName;
 		var i;
 
-		for (propName in this.handledStandardPropMap) {
+		for (propName in map) {
 			if (rawProps[propName] != null) {
-				rawHandled[propName] = rawProps[propName];
+				if (map[propName]) { // has handler?
+					rawHandled[propName] = rawProps[propName];
+				}
+				else { // verbatim
+					this[propName] = rawProps[propName];
+				}
 			}
 		}
 
 		for (i = 0; i < handlers.length; i++) {
 			if (handlers[i].call(this, rawProps) === false) {
-				return false;
+				success = false;
 			}
 		}
 
-		for (propName in this.verbatimStandardPropMap) {
-			if (rawProps[propName] != null) {
-				this[propName] = rawProps[propName];
-			}
-		}
+		return success;
 	}
 
 });
@@ -190,11 +191,11 @@ EventDef.generateId = function() {
 
 EventDef.defineStandardPropHandler = function(propNames, handler) {
 	var proto = this.prototype;
-	var map = proto.handledStandardPropMap = $.extend({}, proto.handledStandardPropMap);
+	var map = proto.standardPropMap = $.extend({}, proto.standardPropMap);
 	var i;
 
 	for (i = 0; i < propNames.length; i++) {
-		map[propNames[i]] = true;
+		map[propNames[i]] = true; // true means "uses handler"
 	}
 
 	proto.standardPropHandlers = proto.standardPropHandlers.concat(handler);
@@ -203,21 +204,24 @@ EventDef.defineStandardPropHandler = function(propNames, handler) {
 
 EventDef.defineVerbatimStandardProps = function(propNames) {
 	var proto = this.prototype;
-	var map = proto.verbatimStandardPropMap = $.extend({}, proto.verbatimStandardPropMap);
+	var map = proto.standardPropMap = $.extend({}, proto.standardPropMap);
 	var i;
 
 	for (i = 0; i < propNames.length; i++) {
-		map[propNames[i]] = true;
+		map[propNames[i]] = false; // false means "copy verbatim"
 	}
 };
 
 
 EventDef.copyVerbatimStandardProps = function(src, dest) {
-	var map = this.prototype.verbatimStandardPropMap;
+	var map = this.prototype.standardPropMap;
 	var propName;
 
 	for (propName in map) {
-		if (src[propName] != null) {
+		if (
+			src[propName] != null &&
+			!map[propName] // falsy means "copy verbatim"
+		) {
 			dest[propName] = src[propName];
 		}
 	}
