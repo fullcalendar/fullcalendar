@@ -133,8 +133,19 @@ function testEventResize(options, resizeDate, expectSuccess, callback, eventClas
 				allowed = !$('body').hasClass('fc-not-allowed');
 			},
 			onRelease: function() {
-				var eventObj = calendar.clientEvents()[0];
-				var successfulDrop = eventObj.end && eventObj.end.format() === resizeDate.format();
+				var eventObj;
+				var successfulDrop;
+
+				if (eventClassName) {
+					eventObj = calendar.clientEvents(function(o) {
+						return o.className.join(' ') === eventClassName;
+					})[0];
+				}
+				else {
+					eventObj = calendar.clientEvents()[0];
+				}
+
+				successfulDrop = eventObj.end && eventObj.end.format() === resizeDate.format();
 
 				expect(allowed).toBe(successfulDrop);
 				expect(allowed).toBe(expectSuccess);
