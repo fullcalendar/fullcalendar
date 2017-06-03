@@ -20,12 +20,14 @@ var EventDefDateMutation = Class.extend({
 		var origEnd = eventDef.end;
 		var start = origStart.clone();
 		var end = null;
+		var shouldRezone = false;
 
 		if (!this.clearEnd && origEnd) {
 			end = origEnd.clone();
 		}
 
 		if (this.forceTimed) {
+			shouldRezone = true;
 
 			if (!start.hasTime()) {
 				start.time(0);
@@ -47,6 +49,7 @@ var EventDefDateMutation = Class.extend({
 		}
 
 		if (this.dateDelta) {
+			shouldRezone = true;
 
 			start.add(this.dateDelta);
 
@@ -57,6 +60,7 @@ var EventDefDateMutation = Class.extend({
 
 		// do this before adding startDelta to start, so we can work off of start
 		if (this.endDelta) {
+			shouldRezone = true;
 
 			if (!end) {
 				end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
@@ -66,18 +70,30 @@ var EventDefDateMutation = Class.extend({
 		}
 
 		if (this.startDelta) {
+			shouldRezone = true;
+
 			start.add(this.startDelta);
 		}
 
-		// clear timezone if any changes
-		if (calendar.getIsAmbigTimezone()) {
-
-			if (start.hasTime() && (this.dateDelta || this.startDelta)) {
-				start.stripZone();
+		// TODO: make more DRY
+		if (shouldRezone) {
+			if (calendar.opt('timezone') === 'UTC') {
+				start.utc();
+				if (end) {
+					end.utc();
+				}
 			}
-
-			if (end && end.hasTime() && (this.dateDelta || this.endDelta)) {
-				end.stripZone();
+			else if (calendar.opt('timezone') === 'local') {
+				start.local();
+				if (end) {
+					end.local();
+				}
+			}
+			else {
+				start.stripZone();
+				if (end) {
+					end.stripZone();
+				}
 			}
 		}
 
