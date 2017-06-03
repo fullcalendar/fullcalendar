@@ -227,15 +227,23 @@ describe('updateEvent', function() {
 		});
 		describe('when a related event has an end', function() {
 			it('should move the end by the delta', function() {
+				var event, relatedEvent;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.end.add({ days: 1, hours: 1 });
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.start).toEqualMoment('2014-05-01T12:00:00');
 				expect(event.end).toEqualMoment('2014-05-02T15:00:00');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.start).toEqualMoment('2014-05-10T16:00:00');
 				expect(relatedEvent.end).toEqualMoment('2014-05-11T20:00:00');
 			});
@@ -244,16 +252,24 @@ describe('updateEvent', function() {
 
 	describe('when moving an all-day event\'s start and end', function() {
 		it('should move the start and end of related events', function() {
+			var event, relatedEvent;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.start.add(2, 'days');
 			event.end.add(3, 'day');
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.start).toEqualMoment('2014-05-03');
 			expect(event.end).toEqualMoment('2014-05-06');
+
+			relatedEvent = getRelatedEvent();
 			expect(relatedEvent.start).toEqualMoment('2014-05-12');
 			expect(relatedEvent.end).toEqualMoment('2014-05-16');
 		});
@@ -261,16 +277,24 @@ describe('updateEvent', function() {
 
 	describe('when moving a timed event\'s start and end', function() {
 		it('should move the start and end of related events', function() {
+			var event, relatedEvent;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
 				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.start.add({ days: 2, hours: 1 });
 			event.end.add({ days: 3, hours: 2 });
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.start).toEqualMoment('2014-05-03T07:00:00');
 			expect(event.end).toEqualMoment('2014-05-06T08:00:00');
+
+			relatedEvent = getRelatedEvent();
 			expect(relatedEvent.start).toEqualMoment('2014-05-12T07:00:00');
 			expect(relatedEvent.end).toEqualMoment('2014-05-16T08:00:00');
 		});
@@ -278,16 +302,24 @@ describe('updateEvent', function() {
 
 	describe('when giving a time to an all-day event\'s start', function() {
 		it('should erase the start\'s time and keep the event all-day', function() {
+			var event, relatedEvent;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 				{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.start.time('18:00');
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-01');
 			expect(event.end).toEqualMoment('2014-05-03');
+
+			relatedEvent = getRelatedEvent();
 			expect(relatedEvent.allDay).toEqual(true);
 			expect(relatedEvent.start).toEqualMoment('2014-05-10');
 			expect(relatedEvent.end).toEqualMoment('2014-05-13');
@@ -297,13 +329,19 @@ describe('updateEvent', function() {
 	// issue 2194
 	describe('when accidentally giving a time to an all-day event with moment()', function() {
 		it('should erase the start and end\'s times and keep the event all-day', function() {
+			var event;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.start = moment('2014-05-01'); // won't have an ambig time
 			event.end = moment('2014-05-03'); // "
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-01');
 			expect(event.end).toEqualMoment('2014-05-03');
@@ -313,16 +351,24 @@ describe('updateEvent', function() {
 	describe('when changing an event from all-day to timed', function() {
 		describe('when the event\'s dates remain all-day', function() {
 			it('should make the event and related events allDay=false and 00:00', function() {
+				var event, relatedEvent;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.allDay = false;
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.allDay).toEqual(false);
 				expect(event.start).toEqualMoment('2014-05-01T00:00:00');
 				expect(event.end).toEqualMoment('2014-05-03T00:00:00');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.allDay).toEqual(false);
 				expect(relatedEvent.start).toEqualMoment('2014-05-10T00:00:00');
 				expect(relatedEvent.end).toEqualMoment('2014-05-13T00:00:00');
@@ -330,17 +376,25 @@ describe('updateEvent', function() {
 		});
 		describe('when the event\'s dates are set to a time', function() {
 			it('should adjust the event and related event\'s allDay/start/end', function() {
+				var event, relatedEvent;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.allDay = false;
 				event.start.time('14:00');
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.allDay).toEqual(false);
 				expect(event.start).toEqualMoment('2014-05-01T14:00:00');
 				expect(event.end).toEqualMoment('2014-05-03T00:00:00');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.allDay).toEqual(false);
 				expect(relatedEvent.start).toEqualMoment('2014-05-10T14:00:00');
 				expect(relatedEvent.end).toEqualMoment('2014-05-13T00:00:00');
@@ -348,17 +402,25 @@ describe('updateEvent', function() {
 		});
 		describe('when the event\'s start is also moved', function() {
 			it('should adjust the event and related event\'s allDay/start/end', function() {
+				var event, relatedEvent;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.allDay = false;
 				event.start.add(1, 'days');
 				$('#cal').fullCalendar('updateEvent', event);
+
+				event = getMainEvent();
 				expect(event.allDay).toEqual(false);
 				expect(event.start).toEqualMoment('2014-05-02T00:00:00');
 				expect(event.end).toEqualMoment('2014-05-03T00:00:00');
+
+				relatedEvent = getRelatedEvent();
 				expect(relatedEvent.allDay).toEqual(false);
 				expect(relatedEvent.start).toEqualMoment('2014-05-11T00:00:00');
 				expect(relatedEvent.end).toEqualMoment('2014-05-13T00:00:00');
@@ -368,32 +430,48 @@ describe('updateEvent', function() {
 
 	describe('when changing an event from timed to all-day', function() {
 		it('should adjust the event and related event\'s allDay/start/end', function() {
+			var event, relatedEvent;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
 				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.allDay = true;
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-01');
 			expect(event.end).toEqualMoment('2014-05-03');
+
+			relatedEvent = getRelatedEvent();
 			expect(relatedEvent.allDay).toEqual(true);
 			expect(relatedEvent.start).toEqualMoment('2014-05-10');
 			expect(relatedEvent.end).toEqualMoment('2014-05-13');
 		});
 		it('should adjust the event and related event\'s allDay/start/end and account for a new start', function() {
+			var event, relatedEvent;
+
 			options.events = [
 				{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
 				{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 			];
-			init();
+			$('#cal').fullCalendar(options);
+
+			event = getMainEvent();
 			event.allDay = true;
 			event.start.add(1, 'days');
 			$('#cal').fullCalendar('updateEvent', event);
+
+			event = getMainEvent();
 			expect(event.allDay).toEqual(true);
 			expect(event.start).toEqualMoment('2014-05-02');
 			expect(event.end).toEqualMoment('2014-05-03');
+
+			relatedEvent = getRelatedEvent();
 			expect(relatedEvent.allDay).toEqual(true);
 			expect(relatedEvent.start).toEqualMoment('2014-05-11');
 			expect(relatedEvent.end).toEqualMoment('2014-05-13');
@@ -401,19 +479,27 @@ describe('updateEvent', function() {
 	});
 
 	it('should accept moments that have unnormalized start/end', function() {
+		var event, relatedEvent;
+
 		options.events = [
 			{ id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
 			{ id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
 		];
-		init();
+		$('#cal').fullCalendar(options);
+
+		event = getMainEvent();
 		event.start = '2014-05-02T06:00:00'; // move by 1 day
 		event.end = '2014-05-05T06:00:00'; // increase duration by 1 day
 		$('#cal').fullCalendar('updateEvent', event);
+
+		event = getMainEvent();
 		expect(event.allDay).toEqual(false);
 		expect(moment.isMoment(event.start)).toEqual(true);
 		expect(event.start).toEqualMoment('2014-05-02T06:00:00');
 		expect(moment.isMoment(event.end)).toEqual(true);
 		expect(event.end).toEqualMoment('2014-05-05T06:00:00');
+
+		relatedEvent = getRelatedEvent();
 		expect(relatedEvent.allDay).toEqual(false);
 		expect(moment.isMoment(relatedEvent.start)).toEqual(true);
 		expect(relatedEvent.start).toEqualMoment('2014-05-11T06:00:00');
@@ -422,25 +508,37 @@ describe('updateEvent', function() {
 	});
 
 	it('should copy color-related properties to related events', function() {
+		var event, relatedEvent;
+
 		options.events = [
 			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 		];
-		init();
+		$('#cal').fullCalendar(options);
+
+		event = getMainEvent();
 		event.color = 'red';
 		$('#cal').fullCalendar('updateEvent', event);
+
+		relatedEvent = getRelatedEvent();
 		expect(relatedEvent.color).toBe('red');
 	});
 
 	it('should non-standard properties to related events', function() {
+		var event, relatedEvent;
+
 		options.events = [
 			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 			{ id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 		];
-		init();
+		$('#cal').fullCalendar(options);
+
+		event = getMainEvent();
 		event.someForeignKey = '123';
 		event.myObj = {};
 		$('#cal').fullCalendar('updateEvent', event);
+
+		relatedEvent = getRelatedEvent();
 		expect(relatedEvent.someForeignKey).toBe('123');
 		expect(relatedEvent.myObj).toBeUndefined();
 	});
@@ -448,11 +546,15 @@ describe('updateEvent', function() {
 	function whenMovingStart(should) {
 		describe('when moving an timed event\'s start', function() {
 			beforeEach(function() {
+				var event;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.start.add(2, 'hours');
 				$('#cal').fullCalendar('updateEvent', event);
 			});
@@ -463,11 +565,15 @@ describe('updateEvent', function() {
 	function whenMovingEnd(should) {
 		describe('when moving a timed event\'s end', function() {
 			beforeEach(function() {
+				var event;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.end.add(2, 'hours');
 				$('#cal').fullCalendar('updateEvent', event);
 			});
@@ -478,11 +584,15 @@ describe('updateEvent', function() {
 	function whenMovingToTimed(should) {
 		describe('when moving an all-day event to timed', function() {
 			beforeEach(function() {
+				var event;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-11', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				event.allDay = false;
 				$('#cal').fullCalendar('updateEvent', event);
 			});
@@ -493,11 +603,15 @@ describe('updateEvent', function() {
 	function whenReportingUnchanged(should) { // not used right now
 		describe('when reporting an event that hasn\'t changed', function() {
 			beforeEach(function() {
+				var event;
+
 				options.events = [
 					{ id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
 					{ id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
 				];
-				init();
+				$('#cal').fullCalendar(options);
+
+				event = getMainEvent();
 				$('#cal').fullCalendar('updateEvent', event);
 			});
 			should();
@@ -506,10 +620,14 @@ describe('updateEvent', function() {
 
 	function shouldBeAmbiguouslyZoned() {
 		it('should make the events ambiguously zoned', function() {
+			var event = getMainEvent();
+			var relatedEvent = getRelatedEvent();
+
 			expect(event.start.hasZone()).toEqual(false);
 			if (event.end) {
 				expect(event.end.hasZone()).toEqual(false);
 			}
+
 			expect(relatedEvent.start.hasZone()).toEqual(false);
 			if (relatedEvent.end) {
 				expect(relatedEvent.end.hasZone()).toEqual(false);
@@ -519,12 +637,16 @@ describe('updateEvent', function() {
 
 	function shouldBeLocal() {
 		it('should make the events local', function() {
+			var event = getMainEvent();
+			var relatedEvent = getRelatedEvent();
+
 			expect(event.start.hasZone()).toEqual(true);
 			expect(event.start._isUTC).toEqual(false);
 			if (event.end) {
 				expect(event.end.hasZone()).toEqual(true);
 				expect(event.end._isUTC).toEqual(false);
 			}
+
 			expect(relatedEvent.start.hasZone()).toEqual(true);
 			expect(relatedEvent.start._isUTC).toEqual(false);
 			if (relatedEvent.end) {
@@ -536,12 +658,16 @@ describe('updateEvent', function() {
 
 	function shouldBeUTC() {
 		it('should make the events UTC', function() {
+			var event = getMainEvent();
+			var relatedEvent = getRelatedEvent();
+
 			expect(event.start.hasZone()).toEqual(true);
 			expect(event.start._isUTC).toEqual(true);
 			if (event.end) {
 				expect(event.end.hasZone()).toEqual(true);
 				expect(event.end._isUTC).toEqual(true);
 			}
+
 			expect(event.start.hasZone()).toEqual(true);
 			expect(event.start._isUTC).toEqual(true);
 			if (relatedEvent.end) {
