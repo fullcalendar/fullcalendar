@@ -133,36 +133,34 @@ var EventDef = Class.extend({
 
 
 	isStandardProp: function(propName) {
-		return this.standardPropMap[propName];
+		return this.standardPropMap[propName] !== undefined;
 	},
 
 
 	applyStandardProps: function(rawProps) {
 		var map = this.standardPropMap;
 		var handlers = this.standardPropHandlers;
-		var rawHandled = {}; // to be handled
-		var success = true;
+		var propsForHandlers = {};
+		var allSuccessful = true;
 		var propName;
 		var i;
 
-		for (propName in map) {
-			if (rawProps[propName] != null) {
-				if (map[propName]) { // has handler?
-					rawHandled[propName] = rawProps[propName];
-				}
-				else { // verbatim
-					this[propName] = rawProps[propName];
-				}
+		for (propName in rawProps) {
+			if (map[propName] === true) { // has handler?
+				propsForHandlers[propName] = rawProps[propName];
+			}
+			else if (map[propName] === false) { // verbatim
+				this[propName] = rawProps[propName];
 			}
 		}
 
 		for (i = 0; i < handlers.length; i++) {
-			if (handlers[i].call(this, rawProps) === false) {
-				success = false;
+			if (handlers[i].call(this, propsForHandlers) === false) {
+				allSuccessful = false; // don't want to break. want to execute all handlers
 			}
 		}
 
-		return success;
+		return allSuccessful;
 	}
 
 });
