@@ -214,8 +214,8 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 		else if (typeof overlapVal === 'function') {
 			if (
 				!overlapVal(
-					subjectEventInstance.toLegacy(),
-					overlapEventInstance.toLegacy()
+					overlapEventInstance.toLegacy(),
+					subjectEventInstance.toLegacy()
 				)
 			) {
 				return false;
