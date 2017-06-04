@@ -449,7 +449,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	renderHelperEventRanges: function(eventRanges, sourceSeg) {
 		return this.renderHelperEventFootprints(
 			this.eventRangesToEventFootprints(eventRanges)
-		).addClass('fc-helper');
+		).addClass('fc-helper'); // TODO: make more DRY
 	},
 
 

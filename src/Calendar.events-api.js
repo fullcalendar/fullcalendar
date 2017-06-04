@@ -207,16 +207,11 @@ function buildEventInstanceMatcher(legacyQuery) {
 			return legacyQuery(eventInstance.toLegacy());
 		};
 	}
-	else if (legacyQuery) { // an event ID
+	else { // an event ID
 		legacyQuery += ''; // normalize to string
 
 		return function(eventInstance) {
 			return eventInstance.def.id === legacyQuery;
-		};
-	}
-	else {
-		return function() {
-			return false;
 		};
 	}
 }

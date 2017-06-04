@@ -23,7 +23,7 @@ var ArrayEventSource = EventSource.extend({
 		var i;
 
 		if (
-			this.currentTimezone &&
+			this.currentTimezone !== null &&
 			this.currentTimezone !== timezone
 		) {
 			for (i = 0; i < eventDefs.length; i++) {

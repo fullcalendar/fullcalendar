@@ -498,7 +498,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
 			this.renderHelperEventFootprints([
 				this.fabricateEventFootprint(componentFootprint)
-			]);
+			]).addClass('fc-helper'); // TODO: make more DRY
 		}
 		else {
 			this.renderHighlight(componentFootprint);
