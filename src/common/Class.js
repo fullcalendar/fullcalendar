@@ -8,12 +8,12 @@ function Class() { }
 // Called on a class to create a subclass.
 // Last argument contains instance methods. Any argument before the last are considered mixins.
 Class.extend = function() {
-	var members = Object.assign.apply( // collapse all object args into one object
-		Object,
-		[ {} ].concat( // prepend empty object, as the destination
-			Array.prototype.slice.call(arguments) // needs to be a true array for concat
-		)
-	);
+	var members = {};
+	var i;
+
+	for (i = 0; i < arguments.length; i++) {
+		copyOwnProps(arguments[i], members);
+	}
 
 	return extendClass(this, members);
 };
