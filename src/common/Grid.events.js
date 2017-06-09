@@ -373,11 +373,9 @@ Grid.mixin({
 					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint);
 
 					if (eventDefMutation) {
-						mutatedEventInstanceGroup = new EventInstanceGroup(
-							eventManager.buildMutatedEventInstances( // TODO: buildMutatedEventInstanceGroup?
-								eventManager.getEventDefByUid(event._id).id,
-								eventDefMutation
-							)
+						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
+							eventManager.getEventDefByUid(event._id).id,
+							eventDefMutation
 						);
 						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
 					}
@@ -760,11 +758,9 @@ Grid.mixin({
 						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, event);
 
 					if (resizeMutation) {
-						mutatedEventInstanceGroup = new EventInstanceGroup(
-							eventManager.buildMutatedEventInstances(
-								eventManager.getEventDefByUid(event._id).id,
-								resizeMutation
-							)
+						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
+							eventManager.getEventDefByUid(event._id).id,
+							resizeMutation
 						);
 						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
 					}

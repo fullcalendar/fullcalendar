@@ -272,7 +272,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	/*
 	copies and then mutates
 	*/
-	buildMutatedEventInstances: function(eventDefId, eventDefMutation) {
+	buildMutatedEventInstanceGroup: function(eventDefId, eventDefMutation) {
 		var eventDefs = this.getEventDefsById(eventDefId);
 		var i;
 		var defCopy;
@@ -290,7 +290,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 		}
 
-		return allInstances;
+		return new EventInstanceGroup(allInstances);
 	},
 
 
