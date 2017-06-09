@@ -1,4 +1,8 @@
 
+/*
+It's expected that there will be at least one EventInstance,
+OR that an explicitEventDef is assigned.
+*/
 var EventInstanceGroup = Class.extend({
 
 	eventInstances: null,
