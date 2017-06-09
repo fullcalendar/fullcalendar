@@ -1,16 +1,17 @@
 
-/*
-It's expected that there will be at least one EventRange,
-OR that an explicitEventDef is assigned.
-*/
-var EventRangeGroup = Class.extend({
+var EventInstanceGroup = Class.extend({
 
-	eventRanges: null,
+	eventInstances: null,
 	explicitEventDef: null, // optional
 
 
-	constructor: function(eventRanges) {
-		this.eventRanges = eventRanges || [];
+	constructor: function(eventInstances) {
+		this.eventInstances = eventInstances || [];
+	},
+
+
+	getAllEventRanges: function() {
+		return eventInstancesToEventRanges(this.eventInstances);
 	},
 
 
@@ -25,22 +26,22 @@ var EventRangeGroup = Class.extend({
 
 
 	sliceNormalRenderRanges: function(constraintRange) {
-		var wholeEventRanges = this.eventRanges;
-		var i, eventRange;
+		var eventInstances = this.eventInstances;
+		var i, eventInstance;
 		var slicedDateRange;
 		var slicedEventRanges = [];
 
-		for (i = 0; i < wholeEventRanges.length; i++) {
-			eventRange = wholeEventRanges[i];
+		for (i = 0; i < eventInstances.length; i++) {
+			eventInstance = eventInstances[i];
 
-			slicedDateRange = eventRange.dateRange.constrainTo(constraintRange);
+			slicedDateRange = eventInstance.dateRange.constrainTo(constraintRange);
 
 			if (slicedDateRange) {
 				slicedEventRanges.push(
 					new EventRange(
 						slicedDateRange,
-						eventRange.eventDef,
-						eventRange.eventInstance
+						eventInstance.def,
+						eventInstance
 					)
 				);
 			}
@@ -51,7 +52,7 @@ var EventRangeGroup = Class.extend({
 
 
 	sliceInverseRenderRanges: function(constraintRange) {
-		var dateRanges = collectDateRangesFromEventRanges(this.eventRanges);
+		var dateRanges = eventInstancesToDateRanges(this.eventInstances);
 		var ownerDef = this.getEventDef();
 
 		dateRanges = invertDateRanges(dateRanges, constraintRange);
@@ -68,7 +69,7 @@ var EventRangeGroup = Class.extend({
 
 
 	getEventDef: function() {
-		return this.explicitEventDef || this.eventRanges[0].eventDef;
+		return this.explicitEventDef || this.eventInstances[0].def;
 	}
 
 });

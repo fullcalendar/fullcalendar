@@ -14,8 +14,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	eventDefsByUid: null,
 	eventDefsById: null,
-	eventInstancesById: null,
-	eventRangeGroupsById: null,
+	eventInstanceGroupsById: null,
 
 
 	constructor: function(start, end, timezone) {
@@ -25,8 +24,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.eventInstancesById = {};
-		this.eventRangeGroupsById = {};
+		this.eventInstanceGroupsById = {};
 	},
 
 
@@ -179,8 +177,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.eventInstancesById = {};
-		this.eventRangeGroupsById = {};
+		this.eventInstanceGroupsById = {};
 
 		if (!isEmpty) {
 			this.tryRelease();
@@ -211,130 +208,71 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	getEventInstances: function() { // TODO: consider iterator
-		var eventInstancesById = this.eventInstancesById;
-		var allInstances = [];
+		var eventInstanceGroupsById = this.eventInstanceGroupsById;
+		var eventInstances = [];
 		var id;
 
-		for (id in eventInstancesById) {
-			allInstances.push.apply(allInstances, // append
-				eventInstancesById[id]
+		for (id in eventInstanceGroupsById) {
+			eventInstances.push.apply(eventInstances, // append
+				eventInstanceGroupsById[id].eventInstances
 			);
 		}
 
-		return allInstances;
+		return eventInstances;
 	},
 
 
-	getEventInstancesById: function(eventDefId) {
-		var eventInstances = this.eventInstancesById[eventDefId];
+	getEventInstancesWithId: function(eventDefId) {
+		var eventInstanceGroup = this.eventInstanceGroupsById[eventDefId];
 
-		if (eventInstances) {
-			return eventInstances.slice(); // clone
+		if (eventInstanceGroup) {
+			return eventInstanceGroup.eventInstances.slice(); // clone
 		}
 
 		return [];
 	},
 
 
-	addEventInstance: function(eventInstance, eventDefId) {
-		var eventInstancesById = this.eventInstancesById;
-		var eventInstances = eventInstancesById[eventDefId] ||
-			(eventInstancesById[eventDefId] = []);
-
-		eventInstances.push(eventInstance);
-
-		this.addEventRange(eventInstance.buildEventRange(), eventDefId);
-	},
-
-
-	removeEventInstancesForDef: function(eventDef) {
-		var eventInstancesById = this.eventInstancesById;
-		var eventInstances = eventInstancesById[eventDef.id];
-
-		if (eventInstances) {
-			removeMatching(eventInstances, function(currentEventInstance) {
-				return currentEventInstance.def === eventDef;
-			});
-
-			if (!eventInstances.length) {
-				delete eventInstancesById[eventDef.id];
-			}
-
-			this.removeEventRangesForDef(eventDef);
-		}
-	},
-
-
-	// Event Ranges
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	getEventRanges: function() { // TODO: consider iterator
-		var eventRangeGroupsById = this.eventRangeGroupsById;
-		var allRanges = [];
+	getEventInstancesWithoutId: function(eventDefId) { // TODO: consider iterator
+		var eventInstanceGroupsById = this.eventInstanceGroupsById;
+		var matchingInstances = [];
 		var id;
 
-		for (id in eventRangeGroupsById) {
-			allRanges.push.apply(allRanges, // append
-				eventRangeGroupsById[id].eventRanges
-			);
-		}
-
-		return allRanges;
-	},
-
-
-	getEventRangesWithId: function(eventDefId) {
-		var eventRangeGroup = this.eventRangeGroupsById[eventDefId];
-
-		if (eventRangeGroup) {
-			return eventRangeGroup.eventRanges.slice(); // clone
-		}
-
-		return [];
-	},
-
-
-	getEventRangesWithoutId: function(eventDefId) { // TODO: consider iterator
-		var eventRangeGroupsById = this.eventRangeGroupsById;
-		var matchingRanges = [];
-		var id;
-
-		for (id in eventRangeGroupsById) {
+		for (id in eventInstanceGroupsById) {
 			if (id !== eventDefId) {
-				matchingRanges.push.apply(matchingRanges, // append
-					eventRangeGroupsById[id].eventRanges
+				matchingInstances.push.apply(matchingInstances, // append
+					eventInstanceGroupsById[id].eventInstances
 				);
 			}
 		}
 
-		return matchingRanges;
+		return matchingInstances;
 	},
 
 
-	addEventRange: function(eventRange, eventDefId) {
-		var eventRangeGroupsById = this.eventRangeGroupsById;
-		var eventRangeGroup = eventRangeGroupsById[eventDefId] ||
-			(eventRangeGroupsById[eventDefId] = new EventRangeGroup());
+	addEventInstance: function(eventInstance, eventDefId) {
+		var eventInstanceGroupsById = this.eventInstanceGroupsById;
+		var eventInstanceGroup = eventInstanceGroupsById[eventDefId] ||
+			(eventInstanceGroupsById[eventDefId] = new EventInstanceGroup());
 
-		eventRangeGroup.eventRanges.push(eventRange);
+		eventInstanceGroup.eventInstances.push(eventInstance);
 
 		this.tryRelease();
 	},
 
 
-	removeEventRangesForDef: function(eventDef) {
-		var eventRangeGroupsById = this.eventRangeGroupsById;
-		var eventRangeGroup = eventRangeGroupsById[eventDef.id];
+	removeEventInstancesForDef: function(eventDef) {
+		var eventInstanceGroupsById = this.eventInstanceGroupsById;
+		var eventInstanceGroup = eventInstanceGroupsById[eventDef.id];
 		var removeCnt;
 
-		if (eventRangeGroup) {
-			removeCnt = removeMatching(eventRangeGroup.eventRanges, function(currentEventRange) {
-				return currentEventRange.eventInstance.def === eventDef;
+		if (eventInstanceGroup) {
+			removeCnt = removeMatching(eventInstanceGroup.eventInstances, function(currentEventInstance) {
+				return currentEventInstance.def === eventDef;
 			});
 
-			if (!eventRangeGroup.eventRanges.length) {
-				delete eventRangeGroupsById[eventDef.id];
+			if (!eventInstanceGroup.eventInstances.length) {
+				delete eventInstanceGroupsById[eventDef.id];
 			}
 
 			if (removeCnt) {
@@ -362,7 +300,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	release: function() {
 		this.releaseCnt++;
-		this.trigger('release', this.eventRangeGroupsById);
+		this.trigger('release', this.eventInstanceGroupsById);
 	},
 
 
@@ -370,7 +308,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var _this = this;
 
 		if (this.releaseCnt) {
-			return Promise.resolve(this.eventRangeGroupsById);
+			return Promise.resolve(this.eventInstanceGroupsById);
 		}
 		else {
 			return Promise.construct(function(onResolve) {

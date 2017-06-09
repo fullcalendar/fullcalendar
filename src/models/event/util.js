@@ -20,9 +20,9 @@ function eventInstancesToEventRanges(eventInstances) {
 }
 
 
-function collectDateRangesFromEventRanges(eventRanges) {
-	return eventRanges.map(function(eventRange) {
-		return eventRange.dateRange;
+function eventInstancesToDateRanges(eventInstances) {
+	return eventInstances.map(function(eventInstance) {
+		return eventInstance.dateRange;
 	});
 }
 

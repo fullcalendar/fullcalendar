@@ -725,7 +725,7 @@ var View = FC.View = ChronoComponent.extend({
 		);
 
 		this.triggerEventDrop(
-			eventManager.getEventInstancesById(eventDef.id)[0].toLegacy(),
+			eventManager.getEventInstancesWithId(eventDef.id)[0].toLegacy(),
 			eventMutation.dateMutation.dateDelta,
 			undoFunc,
 			el, ev
@@ -788,7 +788,7 @@ var View = FC.View = ChronoComponent.extend({
 		);
 
 		this.triggerEventResize(
-			eventManager.getEventInstancesById(eventDef.id)[0].toLegacy(),
+			eventManager.getEventInstancesWithId(eventDef.id)[0].toLegacy(),
 			eventMutation.dateMutation.endDelta,
 			undoFunc,
 			el, ev
@@ -987,16 +987,16 @@ View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 function convertEventsPayloadToLegacyArray(eventsPayload) {
 	var legacyEvents = [];
 	var id;
-	var eventRanges;
+	var eventInstances;
 	var i;
 
 	for (id in eventsPayload) {
 
-		eventRanges = eventsPayload[id].eventRanges;
+		eventInstances = eventsPayload[id].eventInstances;
 
-		for (i = 0; i < eventRanges.length; i++) {
+		for (i = 0; i < eventInstances.length; i++) {
 			legacyEvents.push(
-				eventRanges[i].eventInstance.toLegacy()
+				eventInstances[i].toLegacy()
 			);
 		}
 	}

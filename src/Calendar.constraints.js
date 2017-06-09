@@ -1,10 +1,11 @@
 
-Calendar.prototype.isEventRangeGroupAllowed = function(eventRangeGroup) {
-	var eventDef = eventRangeGroup.getEventDef();
-	var eventFootprints = this.eventRangesToEventFootprints(eventRangeGroup.eventRanges);
+Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
+	var eventDef = eventInstanceGroup.getEventDef();
+	var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 	var i;
 
-	var peerEventRanges = this.eventManager.getEventRangesWithoutId(eventDef.id);
+	var peerEventInstances = this.eventManager.getEventInstancesWithoutId(eventDef.id);
+	var peerEventRanges = eventInstancesToEventRanges(peerEventInstances);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
 	var constraintVal = eventDef.getConstraint();
@@ -44,7 +45,8 @@ Calendar.prototype.isEventRangeGroupAllowed = function(eventRangeGroup) {
 
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
-	var peerEventRanges = this.eventManager.getEventRanges();
+	var peerEventInstances = this.eventManager.getEventInstances();
+	var peerEventRanges = eventInstancesToEventRanges(peerEventInstances);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
 	var selectAllowFunc;
@@ -130,20 +132,23 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
-	var eventRangeGroup;
+	var eventInstanceGroup;
 	var eventRanges = [];
 
 	if (constraintVal === 'businessHours') {
-		eventRangeGroup = this.buildCurrentBusinessRangeGroup(isAllDay);
-		if (eventRangeGroup) {
-			eventRanges = eventRangeGroup.eventRanges;
+		eventInstanceGroup = this.buildCurrentBusinessInstanceGroup(isAllDay);
+
+		if (eventInstanceGroup) {
+			eventRanges = eventInstanceGroup.getAllEventRanges();
 		}
 	}
 	else if (typeof constraintVal === 'object') {
 		eventRanges = this.parseEventDefToEventRanges(constraintVal);
 	}
 	else if (constraintVal != null) { // an ID
-		eventRanges = this.eventManager.getEventRangesWithId(constraintVal);
+		eventRanges = eventInstancesToEventRanges(
+			this.eventManager.getEventInstancesWithId(constraintVal)
+		);
 	}
 
 	return eventFootprintsToComponentFootprints(

@@ -302,17 +302,17 @@ var AgendaView = FC.AgendaView = View.extend({
 		var timedEventsPayload = {};
 		var daySegs = [];
 		var timedSegs;
-		var id, eventRangeGroup;
+		var id, eventInstanceGroup;
 
 		// separate the events into all-day and timed
 		for (id in eventsPayload) {
-			eventRangeGroup = eventsPayload[id];
+			eventInstanceGroup = eventsPayload[id];
 
-			if (eventRangeGroup.getEventDef().isAllDay()) {
-				dayEventsPayload[id] = eventRangeGroup;
+			if (eventInstanceGroup.getEventDef().isAllDay()) {
+				dayEventsPayload[id] = eventInstanceGroup;
 			}
 			else {
-				timedEventsPayload[id] = eventRangeGroup;
+				timedEventsPayload[id] = eventInstanceGroup;
 			}
 		}
 

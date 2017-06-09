@@ -3,26 +3,23 @@ var EventInstance = Class.extend({
 
 	def: null, // EventDef
 	dateProfile: null, // EventDateProfile
+	dateRange: null, // UnzonedRange
 
 
 	constructor: function(def, dateProfile) {
 		this.def = def;
 		this.dateProfile = dateProfile;
+		this.dateRange = dateProfile.buildRange(
+			def.source.calendar
+		);
 	},
 
 
 	buildEventRange: function() { // EventRange
 		return new EventRange(
-			this.buildDateRange(),
+			this.dateRange,
 			this.def,
 			this
-		);
-	},
-
-
-	buildDateRange: function() { // UnzonedRange
-		return this.dateProfile.buildRange(
-			this.def.source.calendar
 		);
 	},
 

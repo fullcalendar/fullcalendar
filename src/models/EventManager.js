@@ -182,8 +182,8 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	bindPeriod: function(eventPeriod) {
-		this.listenTo(eventPeriod, 'release', function(eventRangeGroups) {
-			this.trigger('release', eventRangeGroups);
+		this.listenTo(eventPeriod, 'release', function(eventsPayload) {
+			this.trigger('release', eventsPayload);
 		});
 	},
 
@@ -318,10 +318,8 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 [
 	'getEventDefsById',
 	'getEventInstances',
-	'getEventInstancesById',
-	'getEventRanges',
-	'getEventRangesWithId',
-	'getEventRangesWithoutId'
+	'getEventInstancesWithId',
+	'getEventInstancesWithoutId'
 ].forEach(function(methodName) {
 
 	EventManager.prototype[methodName] = function() {

@@ -290,8 +290,8 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			rawSources.unshift(singleRawSource);
 		}
 
-		eventManager.on('release', function(eventRangeGroups) {
-			_this.trigger('eventsReset', eventRangeGroups);
+		eventManager.on('release', function(eventsPayload) {
+			_this.trigger('eventsReset', eventsPayload);
 		});
 
 		eventManager.freeze();
