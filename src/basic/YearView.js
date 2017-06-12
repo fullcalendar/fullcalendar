@@ -912,8 +912,8 @@ var YearView = FC.YearView = View.extend({
 			dayGrid.breakOnWeeks = true;
 
 			var renderRange = {
-				start: monthDate.clone().startOf('month'),
-				end: monthDate.clone().endOf('month')
+				start: monthDate.clone().startOf('month').stripZone(),
+				end: monthDate.clone().endOf('month').stripZone()
 			};
 
 			renderRange.start.startOf('week');
