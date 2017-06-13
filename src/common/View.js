@@ -702,7 +702,7 @@ var View = FC.View = ChronoComponent.extend({
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
-			if (!event || segs[i].event._id === event._id) {
+			if (!event || segs[i].event.id === event.id) {
 				if (segs[i].el) {
 					func.call(this, segs[i]);
 				}
