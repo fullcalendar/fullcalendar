@@ -368,7 +368,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
+	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
 		var helperNodes = [];
 		var segs = this.eventFootprintsToSegs(eventFootprints);
 		var rowStructs;

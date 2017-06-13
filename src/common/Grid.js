@@ -443,18 +443,23 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event. Given zoned event date properties.
-	// Must return all mock event elements.
-	// TODO: have this in ChronoComponent
+	// just a convenient connector to renderHelperEventFootprints
 	renderHelperEventRanges: function(eventRanges, sourceSeg) {
 		return this.renderHelperEventFootprints(
 			this.eventRangesToEventFootprints(eventRanges)
-		).addClass('fc-helper'); // TODO: make more DRY
+		);
 	},
 
 
 	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
-		// subclasses must implement
+		return this.renderHelperEventFootprintEls(eventFootprints, sourceSeg)
+			.addClass('fc-helper');
+	},
+
+
+	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
+		// Subclasses must implement.
+		// Must return all mock event elements.
 	},
 
 

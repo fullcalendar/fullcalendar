@@ -409,7 +409,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
-	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
+	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
 		var segs = this.eventFootprintsToSegs(eventFootprints);
 
 		return this.renderHelperSegs( // returns mock event elements
@@ -498,7 +498,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
 			this.renderHelperEventFootprints([
 				this.fabricateEventFootprint(componentFootprint)
-			]).addClass('fc-helper'); // TODO: make more DRY
+			]);
 		}
 		else {
 			this.renderHighlight(componentFootprint);
