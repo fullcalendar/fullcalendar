@@ -134,11 +134,11 @@ Calendar.mixin({
 
 
 	footprintToDateProfile: function(componentFootprint, ignoreEnd) {
-		var start = FC.moment.utc(componentFootprint.dateRange.startMs);
+		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs);
 		var end;
 
 		if (!ignoreEnd) {
-			end = FC.moment.utc(componentFootprint.dateRange.endMs);
+			end = FC.moment.utc(componentFootprint.unzonedRange.endMs);
 		}
 
 		if (componentFootprint.isAllDay) {

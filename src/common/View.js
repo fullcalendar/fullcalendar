@@ -837,8 +837,8 @@ var View = FC.View = ChronoComponent.extend({
 	// Triggers handlers to 'select'
 	triggerSelect: function(footprint, ev) {
 		var calendar = this.calendar;
-		var start = calendar.moment(footprint.dateRange.getStart());
-		var end = calendar.moment(footprint.dateRange.getEnd());
+		var start = calendar.moment(footprint.unzonedRange.getStart());
+		var end = calendar.moment(footprint.unzonedRange.getEnd());
 
 		if (footprint.isAllDay) {
 			start.stripTime();
@@ -944,7 +944,7 @@ var View = FC.View = ChronoComponent.extend({
 	// Triggers handlers to 'dayClick'
 	// Span has start/end of the clicked area. Only the start is useful.
 	triggerDayClick: function(footprint, dayEl, ev) {
-		var date = this.calendar.moment(footprint.dateRange.getStart()); // need the calendar's timezone
+		var date = this.calendar.moment(footprint.unzonedRange.getStart()); // need the calendar's timezone
 
 		if (footprint.isAllDay) {
 			date.stripTime();

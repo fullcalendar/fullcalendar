@@ -497,8 +497,8 @@ Grid.mixin({
 
 	// DOES NOT consider overlap/constraint
 	computeEventDropMutation: function(startFootprint, endFootprint) {
-		var date0 = startFootprint.dateRange.getStart();
-		var date1 = endFootprint.dateRange.getStart();
+		var date0 = startFootprint.unzonedRange.getStart();
+		var date1 = endFootprint.unzonedRange.getStart();
 		var clearEnd = false;
 		var forceTimed = false;
 		var forceAllDay = false;
@@ -650,7 +650,7 @@ Grid.mixin({
 	// DOES NOT consider overlap/constraint.
 	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
-		var start = FC.moment.utc(componentFootprint.dateRange.startMs).stripZone();
+		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs).stripZone();
 		var end;
 		var eventDef;
 
@@ -827,8 +827,8 @@ Grid.mixin({
 	// Returns new date-information for an event segment being resized from its start
 	computeEventStartResizeMutation: function(startFootprint, endFootprint, event) {
 		var startDelta = this.diffDates(
-			endFootprint.dateRange.getStart(),
-			startFootprint.dateRange.getStart()
+			endFootprint.unzonedRange.getStart(),
+			startFootprint.unzonedRange.getStart()
 		);
 		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
@@ -852,8 +852,8 @@ Grid.mixin({
 	// Returns new date-information for an event segment being resized from its end
 	computeEventEndResizeMutation: function(startFootprint, endFootprint, event) {
 		var endDelta = this.diffDates(
-			endFootprint.dateRange.getEnd(),
-			startFootprint.dateRange.getEnd()
+			endFootprint.unzonedRange.getEnd(),
+			startFootprint.unzonedRange.getEnd()
 		);
 		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
@@ -1028,7 +1028,7 @@ Grid.mixin({
 		for (i = 0; i < eventFootprints.length; i++) {
 			if (
 				!isRangeWithinRange(
-					eventFootprints[i].componentFootprint.dateRange.getRange(),
+					eventFootprints[i].componentFootprint.unzonedRange.getRange(),
 					this.view.validRange
 				)
 			) {
@@ -1049,7 +1049,7 @@ Grid.mixin({
 		for (i = 0; i < eventFootprints.length; i++) {
 			if (
 				!isRangeWithinRange(
-					eventFootprints[i].componentFootprint.dateRange.getRange(),
+					eventFootprints[i].componentFootprint.unzonedRange.getRange(),
 					this.view.validRange
 				)
 			) {
@@ -1094,7 +1094,7 @@ Grid.mixin({
 		return [
 			new EventFootprint(
 				new ComponentFootprint(
-					eventRange.dateRange,
+					eventRange.unzonedRange,
 					eventRange.eventDef.isAllDay()
 				),
 				eventRange.eventDef,
@@ -1123,12 +1123,12 @@ Grid.mixin({
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	// constraintRange allow additional clipping. optional.
 	eventFootprintToSegs: function(eventFootprint, constraintRange) {
-		var dateRange = eventFootprint.componentFootprint.dateRange;
+		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
 		var segs;
 		var i, seg;
 
 		if (constraintRange) {
-			dateRange = dateRange.constrainTo(constraintRange);
+			unzonedRange = unzonedRange.constrainTo(constraintRange);
 		}
 
 		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
@@ -1136,17 +1136,17 @@ Grid.mixin({
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
-			if (!dateRange.isStart) {
+			if (!unzonedRange.isStart) {
 				seg.isStart = false;
 			}
-			if (!dateRange.isEnd) {
+			if (!unzonedRange.isEnd) {
 				seg.isEnd = false;
 			}
 
 			seg.event = eventFootprint.toLegacy();
 			seg.footprint = eventFootprint;
-			seg.footprintStartMs = dateRange.startMs;
-			seg.footprintDurationMs = dateRange.endMs - dateRange.startMs;
+			seg.footprintStartMs = unzonedRange.startMs;
+			seg.footprintDurationMs = unzonedRange.endMs - unzonedRange.startMs;
 		}
 
 		return segs;

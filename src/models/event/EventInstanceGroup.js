@@ -32,18 +32,18 @@ var EventInstanceGroup = Class.extend({
 	sliceNormalRenderRanges: function(constraintRange) {
 		var eventInstances = this.eventInstances;
 		var i, eventInstance;
-		var slicedDateRange;
+		var slicedRange;
 		var slicedEventRanges = [];
 
 		for (i = 0; i < eventInstances.length; i++) {
 			eventInstance = eventInstances[i];
 
-			slicedDateRange = eventInstance.dateProfile.unzonedRange.constrainTo(constraintRange);
+			slicedRange = eventInstance.dateProfile.unzonedRange.constrainTo(constraintRange);
 
-			if (slicedDateRange) {
+			if (slicedRange) {
 				slicedEventRanges.push(
 					new EventRange(
-						slicedDateRange,
+						slicedRange,
 						eventInstance.def,
 						eventInstance
 					)
@@ -56,13 +56,13 @@ var EventInstanceGroup = Class.extend({
 
 
 	sliceInverseRenderRanges: function(constraintRange) {
-		var dateRanges = eventInstancesToDateRanges(this.eventInstances);
+		var unzonedRanges = eventInstancesToUnzonedRanges(this.eventInstances);
 		var ownerDef = this.getEventDef();
 
-		dateRanges = invertDateRanges(dateRanges, constraintRange);
+		unzonedRanges = invertUnzonedRanges(unzonedRanges, constraintRange);
 
-		return dateRanges.map(function(dateRange) {
-			return new EventRange(dateRange, ownerDef);
+		return unzonedRanges.map(function(unzonedRange) {
+			return new EventRange(unzonedRange, ownerDef); // don't give an EventDef
 		});
 	},
 

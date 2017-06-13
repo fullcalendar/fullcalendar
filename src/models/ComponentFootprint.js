@@ -1,26 +1,26 @@
 
 var ComponentFootprint = Class.extend({
 
-	dateRange: null,
+	unzonedRange: null,
 	isAllDay: false,
 
 
-	constructor: function(dateRange, isAllDay) {
-		this.dateRange = dateRange;
+	constructor: function(unzonedRange, isAllDay) {
+		this.unzonedRange = unzonedRange;
 		this.isAllDay = isAllDay;
 	},
 
 
 	toLegacy: function() {
-		return this.dateRange.getRange();
+		return this.unzonedRange.getRange();
 	}
 
 });
 
 
 function convertFootprintToLegacySelection(footprint, calendar) {
-	var start = calendar.moment(footprint.dateRange.startMs);
-	var end = calendar.moment(footprint.dateRange.endMs);
+	var start = calendar.moment(footprint.unzonedRange.startMs);
+	var end = calendar.moment(footprint.unzonedRange.endMs);
 
 	if (footprint.isAllDay) {
 		start.stripTime();

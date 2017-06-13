@@ -75,7 +75,7 @@ var ListViewGrid = Grid.extend({
 
 		while (dayStart < view.renderRange.end) {
 
-			seg = intersectRanges(footprint.dateRange.getRange(), {
+			seg = intersectRanges(footprint.unzonedRange.getRange(), {
 				start: dayStart,
 				end: dayStart.clone().add(1, 'day')
 			});
@@ -92,9 +92,9 @@ var ListViewGrid = Grid.extend({
 			// and mutate the latest seg to the be the end.
 			if (
 				seg && !seg.isEnd && !footprint.isAllDay &&
-				footprint.dateRange.getEnd() < dayStart.clone().add(view.nextDayThreshold)
+				footprint.unzonedRange.getEnd() < dayStart.clone().add(view.nextDayThreshold)
 			) {
-				seg.end = footprint.dateRange.getEnd();
+				seg.end = footprint.unzonedRange.getEnd();
 				seg.isEnd = true;
 				break;
 			}

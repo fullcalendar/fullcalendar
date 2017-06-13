@@ -273,7 +273,7 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 	return [
 		new EventFootprint(
 			new ComponentFootprint(
-				eventRange.dateRange,
+				eventRange.unzonedRange,
 				eventRange.eventDef.isAllDay()
 			),
 			eventRange.eventDef,
@@ -289,13 +289,13 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 
 Calendar.prototype.footprintContainsFootprint = function(outerFootprint, innerFootprint) {
 	// TODO: use date range utils
-	return innerFootprint.dateRange.startMs >= outerFootprint.dateRange.startMs &&
-		innerFootprint.dateRange.endMs <= outerFootprint.dateRange.endMs;
+	return innerFootprint.unzonedRange.startMs >= outerFootprint.unzonedRange.startMs &&
+		innerFootprint.unzonedRange.endMs <= outerFootprint.unzonedRange.endMs;
 };
 
 
 Calendar.prototype.footprintsIntersect = function(footprint0, footprint1) {
 	// TODO: use date range utils
-	return footprint0.dateRange.startMs < footprint1.dateRange.endMs &&
-		footprint0.dateRange.endMs > footprint1.dateRange.startMs;
+	return footprint0.unzonedRange.startMs < footprint1.unzonedRange.endMs &&
+		footprint0.unzonedRange.endMs > footprint1.unzonedRange.startMs;
 };

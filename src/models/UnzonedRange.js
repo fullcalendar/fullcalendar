@@ -55,17 +55,17 @@ var UnzonedRange = Class.extend({
 SIDEEFFECT: will mutate eventRanges.
 Will return a new array result.
 */
-function invertDateRanges(dateRanges, constraintRange) {
+function invertUnzonedRanges(ranges, constraintRange) {
 	var invertedRanges = [];
 	var startMs = constraintRange.startMs; // the end of the previous range. the start of the new range
 	var i;
 	var dateRange;
 
 	// ranges need to be in order. required for our date-walking algorithm
-	dateRanges.sort(compareUnzonedRanges);
+	ranges.sort(compareUnzonedRanges);
 
-	for (i = 0; i < dateRanges.length; i++) {
-		dateRange = dateRanges[i];
+	for (i = 0; i < ranges.length; i++) {
+		dateRange = ranges[i];
 
 		// add the span of time before the event (if there is any)
 		if (dateRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)

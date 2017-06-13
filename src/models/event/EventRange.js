@@ -1,13 +1,13 @@
 
 var EventRange = Class.extend({
 
-	dateRange: null,
+	unzonedRange: null,
 	eventDef: null,
 	eventInstance: null, // optional
 
 
-	constructor: function(dateRange, eventDef, eventInstance) {
-		this.dateRange = dateRange;
+	constructor: function(unzonedRange, eventDef, eventInstance) {
+		this.unzonedRange = unzonedRange;
 		this.eventDef = eventDef;
 
 		if (eventInstance) {

@@ -24,7 +24,7 @@ function eventInstancesToEventRanges(eventInstances) {
 }
 
 
-function eventInstancesToDateRanges(eventInstances) {
+function eventInstancesToUnzonedRanges(eventInstances) {
 	return eventInstances.map(function(eventInstance) {
 		return eventInstance.dateProfile.unzonedRange;
 	});

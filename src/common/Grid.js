@@ -180,7 +180,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 		if (
 			!isRangeWithinRange(
-				footprint.dateRange.getRange(),
+				footprint.unzonedRange.getRange(),
 				this.view.activeRange
 			)
 		) {
@@ -514,10 +514,10 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
 	computeSelectionFootprint: function(footprint0, footprint1) {
 		var ms = [
-			footprint0.dateRange.startMs,
-			footprint0.dateRange.endMs,
-			footprint1.dateRange.startMs,
-			footprint1.dateRange.endMs
+			footprint0.unzonedRange.startMs,
+			footprint0.unzonedRange.endMs,
+			footprint1.unzonedRange.startMs,
+			footprint1.unzonedRange.endMs
 		];
 
 		ms.sort(compareNumbers);
@@ -531,7 +531,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	isSelectionFootprintAllowed: function(componentFootprint) {
 		return isRangeWithinRange(
-			componentFootprint.dateRange.getRange(),
+			componentFootprint.unzonedRange.getRange(),
 			this.view.validRange
 		) &&
 		this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
