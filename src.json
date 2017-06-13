@@ -50,7 +50,6 @@
     "models/ComponentFootprint.js",
     "models/EventManager.js",
     "models/EventPeriod.js",
-    "models/event/EventStartEndMixin.js",
     "models/event/EventDefParser.js",
     "models/event/EventDef.js",
     "models/event/SingleEventDef.js",

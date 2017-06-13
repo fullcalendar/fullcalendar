@@ -760,7 +760,7 @@ var View = FC.View = ChronoComponent.extend({
 	triggerExternalDrop: function(singleEventDef, isEvent, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
-		this.publiclyTrigger('drop', el[0], singleEventDef.start, ev, ui);
+		this.publiclyTrigger('drop', el[0], singleEventDef.dateProfile.start, ev, ui);
 
 		if (isEvent) {
 			// signal an external event landed

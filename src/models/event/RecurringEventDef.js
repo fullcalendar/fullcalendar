@@ -12,6 +12,7 @@ var RecurringEventDef = EventDef.extend({
 
 
 	buildInstances: function(start, end) {
+		var calendar = this.source.calendar;
 		var date = start.clone();
 		var instanceStart, instanceEnd;
 		var instances = [];
@@ -38,7 +39,7 @@ var RecurringEventDef = EventDef.extend({
 				instances.push(
 					new EventInstance(
 						this, // definition
-						new EventDateProfile(instanceStart, instanceEnd)
+						new EventDateProfile(instanceStart, instanceEnd, calendar)
 					)
 				);
 			}

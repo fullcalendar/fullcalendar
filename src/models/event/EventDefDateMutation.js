@@ -10,20 +10,15 @@ var EventDefDateMutation = Class.extend({
 
 
 	/*
-	eventDef assumed to be a SingleEventDef.
 	returns an undo function.
 	*/
-	mutateSingle: function(eventDef) {
-
-		var calendar = eventDef.source.calendar;
-		var origStart = eventDef.start;
-		var origEnd = eventDef.end;
-		var start = origStart.clone();
+	buildNewDateProfile: function(eventDateProfile, calendar) {
+		var start = eventDateProfile.start.clone();
 		var end = null;
 		var shouldRezone = false;
 
-		if (!this.clearEnd && origEnd) {
-			end = origEnd.clone();
+		if (!this.clearEnd && eventDateProfile.end) {
+			end = eventDateProfile.end.clone();
 		}
 
 		if (this.forceTimed) {
@@ -63,7 +58,7 @@ var EventDefDateMutation = Class.extend({
 			shouldRezone = true;
 
 			if (!end) {
-				end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
+				end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start);
 			}
 
 			end.add(this.endDelta);
@@ -88,13 +83,7 @@ var EventDefDateMutation = Class.extend({
 			end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
 		}
 
-		eventDef.start = start;
-		eventDef.end = end;
-
-		return function() {
-			eventDef.start = origStart;
-			eventDef.end = origEnd;
-		};
+		return new EventDateProfile(start, end, calendar);
 	},
 
 

@@ -1,5 +1,7 @@
 
-var SingleEventDef = EventDef.extend(EventStartEndMixin, {
+var SingleEventDef = EventDef.extend({
+
+	dateProfile: null,
 
 
 	/*
@@ -9,20 +11,21 @@ var SingleEventDef = EventDef.extend(EventStartEndMixin, {
 		return [
 			new EventInstance(
 				this, // definition
-				new EventDateProfile(this.start, this.end)
+				this.dateProfile
 			)
 		];
+	},
+
+
+	isAllDay: function() {
+		return this.dateProfile.isAllDay();
 	},
 
 
 	clone: function() {
 		var def = EventDef.prototype.clone.call(this);
 
-		def.start = this.start.clone();
-
-		if (this.end) {
-			def.end = this.end.clone();
-		}
+		def.dateProfile = this.dateProfile;
 
 		return def;
 	},
@@ -30,12 +33,13 @@ var SingleEventDef = EventDef.extend(EventStartEndMixin, {
 
 	rezone: function() {
 		var calendar = this.source.calendar;
+		var dateProfile = this.dateProfile;
 
-		this.start = calendar.moment(this.start);
-
-		if (this.end) {
-			this.end = calendar.moment(this.end);
-		}
+		this.dateProfile = new EventDateProfile(
+			calendar.moment(dateProfile.start),
+			dateProfile.end ? calendar.moment(dateProfile.end) : null,
+			calendar
+		);
 	}
 
 });
@@ -51,54 +55,12 @@ SingleEventDef.defineStandardPropHandler([
 	'end',
 	'allDay'
 ], function(rawProps) {
-	var startInput = rawProps.start || rawProps.date;
-	var endInput = rawProps.end;
+	var dateProfile = EventDateProfile.parse(rawProps, this.source);
 
-	if (!startInput) {
+	if (dateProfile) { // no failure?
+		this.dateProfile = dateProfile;
+	}
+	else {
 		return false;
 	}
-
-	var source = this.source;
-	var calendar = source.calendar;
-	var start = calendar.moment(startInput);
-	var end = endInput ? calendar.moment(endInput) : null;
-	var forcedAllDay = rawProps.allDay;
-	var forceEventDuration = calendar.opt('forceEventDuration');
-
-	if (!start.isValid()) {
-		return false;
-	}
-
-	if (end && (!end.isValid() || !end.isAfter(start))) {
-		end = null;
-	}
-
-	if (forcedAllDay == null) {
-		forcedAllDay = source.allDayDefault;
-		if (forcedAllDay == null) {
-			forcedAllDay = calendar.opt('allDayDefault');
-		}
-	}
-
-	if (forcedAllDay === true) {
-		start.stripTime();
-		if (end) {
-			end.stripTime();
-		}
-	}
-	else if (forcedAllDay === false) {
-		if (!start.hasTime()) {
-			start.time(0);
-		}
-		if (end && !end.hasTime()) {
-			end.time(0);
-		}
-	}
-
-	if (!end && forceEventDuration) {
-		end = calendar.getDefaultEventEnd(!start.hasTime(), start);
-	}
-
-	this.start = start;
-	this.end = end;
 });

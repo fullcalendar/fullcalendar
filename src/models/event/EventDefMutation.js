@@ -14,10 +14,15 @@ var EventDefMutation = Class.extend({
 	returns an undo function.
 	*/
 	mutateSingle: function(eventDef) {
-		var undoDateMutation;
+		var origDateProfile;
 
 		if (this.dateMutation) {
-			undoDateMutation = this.dateMutation.mutateSingle(eventDef);
+			origDateProfile = eventDef.dateProfile;
+
+			eventDef.dateProfile = this.dateMutation.buildNewDateProfile(
+				origDateProfile,
+				eventDef.source.calendar
+			);
 		}
 
 		// can't undo
@@ -30,8 +35,10 @@ var EventDefMutation = Class.extend({
 			eventDef.miscProps = this.miscProps;
 		}
 
-		if (undoDateMutation) {
-			return undoDateMutation;
+		if (origDateProfile) {
+			return function() {
+				eventDef.dateProfile = origDateProfile;
+			};
 		}
 		else {
 			return function() { };
@@ -48,7 +55,6 @@ var EventDefMutation = Class.extend({
 
 EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, largeUnit) {
 	var eventDef = eventInstance.def;
-	var calendar = eventDef.source.calendar;
 	var standardProps = {};
 	var miscProps = {};
 	var propName;
@@ -71,18 +77,23 @@ EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, large
 		}
 	}
 
-	// the 'start' and 'end' props will be leveraged
-	newDateProfile = EventDateProfile.parse(newRawProps, calendar);
-	dateMutation = EventDefDateMutation.createFromDiff(
-		eventInstance.dateProfile,
-		newDateProfile,
-		largeUnit
-	);
+	newDateProfile = EventDateProfile.parse(newRawProps, eventDef.source);
+
+	if (newDateProfile) { // no failure?
+		dateMutation = EventDefDateMutation.createFromDiff(
+			eventInstance.dateProfile,
+			newDateProfile,
+			largeUnit
+		);
+	}
 
 	defMutation = new EventDefMutation();
 	defMutation.standardProps = standardProps;
 	defMutation.miscProps = miscProps;
-	defMutation.dateMutation = dateMutation;
+
+	if (dateMutation) {
+		defMutation.dateMutation = dateMutation;
+	}
 
 	return defMutation;
 };

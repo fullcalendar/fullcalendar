@@ -471,10 +471,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		var dummyEvent = new SingleEventDef(new EventSource(calendar));
 		var dummyInstance;
 
-		// TODO: have SingleEventDef leverage EventDateProfile and kill EventStartEndMixin?
-		dummyEvent.start = eventDateProfile.start;
-		dummyEvent.end = eventDateProfile.end;
-
+		dummyEvent.dateProfile = eventDateProfile;
 		dummyInstance = dummyEvent.buildInstances()[0];
 
 		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);

@@ -14,15 +14,19 @@ function eventDefsToEventInstances(eventDefs, start, end) {
 
 
 function eventInstancesToEventRanges(eventInstances) {
-	return eventInstances.map(function(instance) {
-		return instance.buildEventRange();
+	return eventInstances.map(function(eventInstance) {
+		return new EventRange(
+			eventInstance.dateProfile.unzonedRange,
+			eventInstance.def,
+			eventInstance
+		);
 	});
 }
 
 
 function eventInstancesToDateRanges(eventInstances) {
 	return eventInstances.map(function(eventInstance) {
-		return eventInstance.dateRange;
+		return eventInstance.dateProfile.unzonedRange;
 	});
 }
 

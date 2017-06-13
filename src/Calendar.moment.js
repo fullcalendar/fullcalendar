@@ -156,7 +156,7 @@ Calendar.mixin({
 			}
 		}
 
-		return new EventDateProfile(start, end);
+		return new EventDateProfile(start, end, this);
 	},
 
 
