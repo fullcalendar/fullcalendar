@@ -679,7 +679,7 @@ Grid.mixin({
 				start: start,
 				end: end
 			}),
-			calendar.eventManager.stickySource
+			new EventSource(calendar)
 		);
 
 		return eventDef;

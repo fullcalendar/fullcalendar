@@ -242,7 +242,7 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 
 Calendar.prototype.parseEventDefToEventRanges = function(eventInput) {
 	var eventPeriod = this.eventManager.currentPeriod;
-	var eventDef = EventDefParser.parse(eventInput, this.eventManager.stickySource);
+	var eventDef = EventDefParser.parse(eventInput, new EventSource(this));
 
 	if (eventPeriod && eventDef) {
 		return eventInstancesToEventRanges(

@@ -3,13 +3,15 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 	currentPeriod: null,
 
-	stickySource: null, // TODO: move this into Calendar?
+	calendar: null,
+	stickySource: null,
 	otherSources: null, // does not include sticky source
 
 
 	constructor: function(calendar) {
-		this.otherSources = [];
+		this.calendar = calendar;
 		this.stickySource = new ArrayEventSource(calendar);
+		this.otherSources = [];
 	},
 
 
@@ -144,7 +146,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		// parse as an event source
-		matchInput = EventSourceParser.parse(matchInput, this.stickySource.calendar); // ugh!!!
+		matchInput = EventSourceParser.parse(matchInput, this.calendar);
 		if (matchInput) {
 
 			return $.grep(sources, function(source) {
