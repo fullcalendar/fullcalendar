@@ -40,7 +40,7 @@ function extendClass(superClass, members) {
 	}
 
 	// build the base prototype for the subclass, which is an new object chained to the superclass's prototype
-	subClass.prototype = createObject(superClass.prototype);
+	subClass.prototype = Object.create(superClass.prototype);
 
 	// copy each member variable/method onto the the subclass's prototype
 	copyOwnProps(members, subClass.prototype);

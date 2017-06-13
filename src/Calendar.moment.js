@@ -27,7 +27,7 @@ Calendar.mixin({
 				weekNumberCalculation = 'ISO'; // normalize
 			}
 
-			var localeData = createObject( // make a cheap copy
+			var localeData = Object.create( // make a cheap copy
 				getMomentLocaleData(opts.locale) // will fall back to en
 			);
 
@@ -48,7 +48,7 @@ Calendar.mixin({
 				firstDay = 1;
 			}
 			if (firstDay != null) {
-				_week = createObject(localeData._week); // _week: { dow: # }
+				_week = Object.create(localeData._week); // _week: { dow: # }
 				_week.dow = firstDay;
 				localeData._week = _week;
 			}

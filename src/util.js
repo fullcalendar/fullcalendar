@@ -862,15 +862,6 @@ function mergeProps(propObjs, complexProps) {
 }
 
 
-// Create an object that has the given prototype. Just like Object.create
-function createObject(proto) {
-	var f = function() {};
-	f.prototype = proto;
-	return new f();
-}
-FC.createObject = createObject;
-
-
 function copyOwnProps(src, dest) {
 	for (var name in src) {
 		if (hasOwnProp(src, name)) {
