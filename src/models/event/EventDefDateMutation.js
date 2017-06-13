@@ -80,7 +80,7 @@ var EventDefDateMutation = Class.extend({
 
 		// TODO: okay to access calendar option?
 		if (!end && calendar.opt('forceEventDuration')) {
-			end = calendar.getDefaultEventEnd(eventDef.isAllDay(), start);
+			end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start);
 		}
 
 		return new EventDateProfile(start, end, calendar);
