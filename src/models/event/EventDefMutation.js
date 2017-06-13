@@ -64,7 +64,9 @@ EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, large
 
 	for (propName in newRawProps) {
 		if (
-			isAtomic(newRawProps[propName]) &&
+			// ignore object-type custom properties and any date-related properties,
+			// as well as any other internal property
+			typeof newRawProps[propName] !== 'object' &&
 			propName !== 'start' && propName !== 'end' && propName !== 'allDay' &&
 			propName !== 'source' && propName !== '_id'
 		) {
