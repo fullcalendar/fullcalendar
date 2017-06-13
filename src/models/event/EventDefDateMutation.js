@@ -75,25 +75,11 @@ var EventDefDateMutation = Class.extend({
 			start.add(this.startDelta);
 		}
 
-		// TODO: make more DRY
 		if (shouldRezone) {
-			if (calendar.opt('timezone') === 'UTC') {
-				start.utc();
-				if (end) {
-					end.utc();
-				}
-			}
-			else if (calendar.opt('timezone') === 'local') {
-				start.local();
-				if (end) {
-					end.local();
-				}
-			}
-			else {
-				start.stripZone();
-				if (end) {
-					end.stripZone();
-				}
+			start = calendar.applyTimezone(start);
+
+			if (end) {
+				end = calendar.applyTimezone(end);
 			}
 		}
 

@@ -133,6 +133,33 @@ Calendar.mixin({
 	},
 
 
+	footprintToDateProfile: function(componentFootprint, ignoreEnd) {
+		var start = FC.moment.utc(componentFootprint.dateRange.startMs);
+		var end;
+
+		if (!ignoreEnd) {
+			end = FC.moment.utc(componentFootprint.dateRange.endMs);
+		}
+
+		if (componentFootprint.isAllDay) {
+			start.stripTime();
+
+			if (end) {
+				end.stripTime();
+			}
+		}
+		else {
+			start = this.applyTimezone(start);
+
+			if (end) {
+				end = this.applyTimezone(end);
+			}
+		}
+
+		return new EventDateProfile(start, end);
+	},
+
+
 	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
 	// Will return an moment with an ambiguous timezone.
 	getNow: function() {

@@ -467,25 +467,13 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	fabricateEventFootprint: function(componentFootprint) {
 		var calendar = this.view.calendar;
+		var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
 		var dummyEvent = new SingleEventDef(new EventSource(calendar));
 		var dummyInstance;
 
-		dummyEvent.start = FC.moment.utc(componentFootprint.dateRange.startMs).stripZone();
-		dummyEvent.end = FC.moment.utc(componentFootprint.dateRange.endMs).stripZone();
-
-		// TODO: make DRY with computeExternalDrop!
-		if (componentFootprint.isAllDay) {
-			dummyEvent.start.stripTime();
-			dummyEvent.end.stripTime();
-		}
-		else if (calendar.opt('timezone') === 'local') {
-			dummyEvent.start.local();
-			dummyEvent.end.local();
-		}
-		else if (calendar.opt('timezone') === 'UTC') {
-			dummyEvent.start.utc();
-			dummyEvent.end.utc();
-		}
+		// TODO: have SingleEventDef leverage EventDateProfile and kill EventStartEndMixin?
+		dummyEvent.start = eventDateProfile.start;
+		dummyEvent.end = eventDateProfile.end;
 
 		dummyInstance = dummyEvent.buildInstances()[0];
 
