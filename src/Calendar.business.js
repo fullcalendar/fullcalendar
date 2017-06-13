@@ -32,12 +32,12 @@ If there are NOT business hours, returns undefined.
 */
 Calendar.prototype.buildBusinessInstanceGroup = function(wholeDay, rawComplexDef, rangeStart, rangeEnd) {
 	var eventDefs = this.buildBusinessDefs(wholeDay, rawComplexDef);
-	var eventInstances;
 	var eventInstanceGroup;
 
 	if (eventDefs.length) {
-		eventInstances = eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd);
-		eventInstanceGroup = new EventInstanceGroup(eventInstances);
+		eventInstanceGroup = new EventInstanceGroup(
+			eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd)
+		);
 
 		// so that inverse-background rendering can happen even when no eventRanges in view
 		eventInstanceGroup.explicitEventDef = eventDefs[0];

@@ -87,7 +87,6 @@ Calendar.mixin({
 	},
 
 
-	// CHANGELOG: note how it does not return objects anymore
 	renderEvents: function(eventInputs, isSticky) {
 		this.eventManager.freeze();
 
@@ -99,7 +98,6 @@ Calendar.mixin({
 	},
 
 
-	// CHANGELOG: note how it does not return objects anymore
 	renderEvent: function(eventInput, isSticky) {
 		var eventManager = this.eventManager;
 		var eventDef = EventDefParser.parse(
