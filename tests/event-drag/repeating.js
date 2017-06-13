@@ -43,15 +43,18 @@ describe('event dragging on repeating events', function() {
 							return $(node).css('visibility') !== 'hidden';
 						}).length
 					).toBe(1);
-				});
+				}, 0);
 			},
 			eventDrop: function() {
-				done();
+				setTimeout(function() {
+					done();
+				}, 10)
 			}
 		});
 
 		$('.fc-event:first').simulate('drag', {
-			dx: 100
+			dx: 100,
+			duration: 100 // ample time for separate eventDragStart/eventDrop
 		});
 	});
 
