@@ -111,54 +111,40 @@ Calendar.mixin({
 	},
 
 
-	// TODO: improve. can do shortcut if given straight IDs
+	// legacyQuery operates on legacy event instance objects
 	removeEvents: function(legacyQuery) {
 		var eventManager = this.eventManager;
-		var eventIds = this.queryEventIdsViaLegacy(legacyQuery);
+		var eventInstances = eventManager.getEventInstances();
+		var legacyInstances = eventInstances.map(function(eventInstance) {
+			return eventInstance.toLegacy();
+		});
+		var idMap = {};
 		var i;
+
+		legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
+
+		for (i = 0; i < legacyInstances.length; i++) {
+			idMap[legacyInstances[i].id] = true; // will implicity normalize id to a string
+		}
 
 		eventManager.freeze();
 
-		for (i = 0; i < eventIds.length; i++) {
-			eventManager.removeEventDefsById(eventIds[i]);
+		for (i in idMap) { // reuse `i` as an "id"
+			eventManager.removeEventDefsById(i);
 		}
 
 		eventManager.thaw();
 	},
 
 
-	// is a utility. not meant to be public
-	queryEventIdsViaLegacy: function(legacyQuery) {
-		var eventInstances = this.eventManager.getEventInstances();
-		var matchFunc = buildEventInstanceMatcher(legacyQuery);
-		var i;
-		var eventIdMap = {}; // to remove
-
-		for (i = 0; i < eventInstances.length; i++) {
-			if (matchFunc(eventInstances[i])) {
-				eventIdMap[
-					eventInstances[i].def.id
-				] = true;
-			}
-		}
-
-		return Object.keys(eventIdMap);
-	},
-
-
+	// legacyQuery operates on legacy event instance objects
 	clientEvents: function(legacyQuery) {
 		var eventInstances = this.eventManager.getEventInstances();
-		var matchFunc = buildEventInstanceMatcher(legacyQuery);
-		var i;
-		var legacyInstances = [];
+		var legacyEventInstances = eventInstances.map(function(eventInstance) {
+			return eventInstance.toLegacy();
+		});
 
-		for (i = 0; i < eventInstances.length; i++) {
-			if (matchFunc(eventInstances[i])) {
-				legacyInstances.push(eventInstances[i].toLegacy()); // TODO: optimimze re-legacyifying
-			}
-		}
-
-		return legacyInstances;
+		return filterLegacyEventInstances(legacyEventInstances, legacyQuery);
 	},
 
 
@@ -194,22 +180,19 @@ Calendar.mixin({
 });
 
 
-function buildEventInstanceMatcher(legacyQuery) {
+function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
 	if (legacyQuery == null) {
-		return function() {
-			return true;
-		};
+		return legacyEventInstances;
 	}
 	else if ($.isFunction(legacyQuery)) {
-		return function(eventInstance) {
-			return legacyQuery(eventInstance.toLegacy());
-		};
+		return legacyEventInstances.filter(legacyQuery);
 	}
 	else { // an event ID
 		legacyQuery += ''; // normalize to string
 
-		return function(eventInstance) {
-			return eventInstance.def.id === legacyQuery;
-		};
+		return legacyEventInstances.filter(function(legacyEventInstance) {
+			// soft comparison because id not be normalized to string
+			return legacyEventInstance.id == legacyQuery;
+		});
 	}
 }
