@@ -224,6 +224,38 @@ describe('updateEvent', function() {
 					expect(relatedEvent.end).toEqualMoment('2014-05-11T06:00:00');
 				});
 			});
+			describe('when forceEventDuration is turned on late', function() {
+				it('should force a duration when updateEvent called', function() {
+					var event;
+
+					options.defaultTimedEventDuration = { hours: 1 };
+					options.events = [
+						{ id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' }
+					];
+					$('#cal').fullCalendar(options);
+
+					event = getMainEvent();
+					expect(event.start).toEqualMoment('2014-05-01T12:00:00');
+					expect(event.end).toBeNull();
+
+					$('#cal').fullCalendar('option', {
+						forceEventDuration: true
+					});
+
+					// should stay the same
+					event = getMainEvent();
+					expect(event.start).toEqualMoment('2014-05-01T12:00:00');
+					expect(event.end).toBeNull();
+
+					event.start.add({ days: 1, hours: -12 });
+					$('#cal').fullCalendar('updateEvent', event);
+
+					// should generate an end
+					event = getMainEvent();
+					expect(event.start).toEqualMoment('2014-05-02T00:00:00');
+					expect(event.end).toEqualMoment('2014-05-02T01:00:00');
+				});
+			});
 		});
 		describe('when a related event has an end', function() {
 			it('should move the end by the delta', function() {
