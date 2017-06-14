@@ -153,7 +153,11 @@ EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile1, large
 	dateDelta = subtractDates(dateProfile1.start, dateProfile0.start);
 
 	if (dateProfile1.end) {
-		endDiff = subtractDates(dateProfile1.end, dateProfile0.getEnd());
+		// use unzonedRanges because dateProfile0.end might be null
+		endDiff = subtractDates(
+			dateProfile1.unzonedRange.getEnd(),
+			dateProfile0.unzonedRange.getEnd()
+		);
 		endDelta = endDiff.subtract(dateDelta);
 	}
 
