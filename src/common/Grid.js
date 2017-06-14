@@ -477,7 +477,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		var dummyInstance;
 
 		dummyEvent.dateProfile = eventDateProfile;
-		dummyInstance = dummyEvent.buildInstances()[0];
+		dummyInstance = dummyEvent.buildInstance();
 
 		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
 	},

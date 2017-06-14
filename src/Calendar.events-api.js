@@ -166,7 +166,7 @@ Calendar.mixin({
 		var eventDefMutation;
 
 		if (eventDef instanceof SingleEventDef) {
-			eventInstance = eventDef.buildInstances()[0];
+			eventInstance = eventDef.buildInstance();
 
 			eventDefMutation = EventDefMutation.createFromRawProps(
 				eventInstance,

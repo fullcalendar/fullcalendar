@@ -8,12 +8,15 @@ var SingleEventDef = EventDef.extend({
 	Will receive start/end params, but will be ignored.
 	*/
 	buildInstances: function() {
-		return [
-			new EventInstance(
-				this, // definition
-				this.dateProfile
-			)
-		];
+		return [ this.buildInstance() ];
+	},
+
+
+	buildInstance: function() {
+		return new EventInstance(
+			this, // definition
+			this.dateProfile
+		);
 	},
 
 

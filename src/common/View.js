@@ -772,7 +772,7 @@ var View = FC.View = ChronoComponent.extend({
 			this.publiclyTrigger(
 				'eventReceive',
 				null,
-				singleEventDef.buildInstances()[0].toLegacy()
+				singleEventDef.buildInstance().toLegacy()
 			);
 		}
 	},
