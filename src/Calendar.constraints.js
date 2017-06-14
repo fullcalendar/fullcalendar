@@ -200,6 +200,7 @@ function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEve
 
 
 function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance) {
+	var subjectLegacyInstance = subjectEventInstance.toLegacy();
 	var i;
 	var overlapEventInstance;
 	var overlapEventDef;
@@ -220,7 +221,7 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 			if (
 				!overlapVal(
 					overlapEventInstance.toLegacy(),
-					subjectEventInstance.toLegacy()
+					subjectLegacyInstance
 				)
 			) {
 				return false;
@@ -277,7 +278,7 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 				eventRange.eventDef.isAllDay()
 			),
 			eventRange.eventDef,
-			eventRange.eventInstance
+			eventRange.eventInstance // might not exist
 		)
 	];
 };

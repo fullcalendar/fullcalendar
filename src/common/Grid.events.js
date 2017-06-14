@@ -1098,7 +1098,7 @@ Grid.mixin({
 					eventRange.eventDef.isAllDay()
 				),
 				eventRange.eventDef,
-				eventRange.eventInstance
+				eventRange.eventInstance // might not exist
 			)
 		];
 	},

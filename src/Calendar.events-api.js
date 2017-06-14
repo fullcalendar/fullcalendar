@@ -123,6 +123,7 @@ Calendar.mixin({
 
 		legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
 
+		// compute unique IDs
 		for (i = 0; i < legacyInstances.length; i++) {
 			idMap[legacyInstances[i].id] = true; // will implicity normalize id to a string
 		}

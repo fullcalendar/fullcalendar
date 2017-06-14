@@ -295,6 +295,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		});
 
 		eventManager.freeze();
+
 		rawSources.forEach(function(rawSource) {
 			var source = EventSourceParser.parse(rawSource, _this);
 
@@ -302,6 +303,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 				eventManager.addSource(source);
 			}
 		});
+
 		eventManager.thaw();
 	},
 

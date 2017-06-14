@@ -5,11 +5,10 @@ var ChronoComponent = Model.extend({
 
 	el: null, // the view's containing element. set by Calendar(?)
 
-	// TODO: move below props to Options object
-	//
-	isRTL: false, // why not use this.opt('isRTL') ?
+	// frequently accessed options
+	isRTL: false,
 	nextDayThreshold: null,
-	//
+
 	// classNames styled by jqui themes
 	widgetHeaderClass: null,
 	widgetContentClass: null,
@@ -487,7 +486,7 @@ var ChronoComponent = Model.extend({
 			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
 		}
 
-		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
+		return formatRange(range.start, end, formatStr, separator, this.isRTL);
 	},
 
 
