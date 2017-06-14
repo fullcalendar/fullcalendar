@@ -1,6 +1,8 @@
 
 var EventDefMutation = Class.extend({
 
+	// won't ever be empty. will be null instead.
+	// callers should use setDateMutation for setting.
 	dateMutation: null,
 
 	// hacks to get updateEvent/createFromRawProps to work.
@@ -46,8 +48,18 @@ var EventDefMutation = Class.extend({
 	},
 
 
+	setDateMutation: function(dateMutation) {
+		if (dateMutation && !dateMutation.isEmpty()) {
+			this.dateMutation = dateMutation;
+		}
+		else {
+			this.dateMutation = null;
+		}
+	},
+
+
 	isEmpty: function() {
-		return !this.dateMutation || this.dateMutation.isEmpty();
+		return !this.dateMutation;
 	}
 
 });

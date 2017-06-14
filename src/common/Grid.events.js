@@ -524,10 +524,10 @@ Grid.mixin({
 		dateMutation.clearEnd = clearEnd;
 		dateMutation.forceTimed = forceTimed;
 		dateMutation.forceAllDay = forceAllDay;
-		dateMutation.dateDelta = dateDelta;
+		dateMutation.setDateDelta(dateDelta);
 
 		eventDefMutation = new EventDefMutation();
-		eventDefMutation.dateMutation = dateMutation;
+		eventDefMutation.setDateMutation(dateMutation);
 
 		return eventDefMutation;
 	},
@@ -837,10 +837,10 @@ Grid.mixin({
 		if (event.start.clone().add(startDelta) < eventEnd) {
 
 			dateMutation = new EventDefDateMutation();
-			dateMutation.startDelta = startDelta;
+			dateMutation.setStartDelta(startDelta);
 
 			eventDefMutation = new EventDefMutation();
-			eventDefMutation.dateMutation = dateMutation;
+			eventDefMutation.setDateMutation(dateMutation);
 
 			return eventDefMutation;
 		}
@@ -862,10 +862,10 @@ Grid.mixin({
 		if (eventEnd.add(endDelta) > event.start) {
 
 			dateMutation = new EventDefDateMutation();
-			dateMutation.endDelta = endDelta;
+			dateMutation.setEndDelta(endDelta);
 
 			eventDefMutation = new EventDefMutation();
-			eventDefMutation.dateMutation = dateMutation;
+			eventDefMutation.setDateMutation(dateMutation);
 
 			return eventDefMutation;
 		}

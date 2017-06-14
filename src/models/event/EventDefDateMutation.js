@@ -4,6 +4,9 @@ var EventDefDateMutation = Class.extend({
 	clearEnd: false,
 	forceTimed: false,
 	forceAllDay: false,
+
+	// Durations. if 0-ms duration, will be null instead.
+	// Callers should not set this directly.
 	dateDelta: null,
 	startDelta: null,
 	endDelta: null,
@@ -87,13 +90,39 @@ var EventDefDateMutation = Class.extend({
 	},
 
 
+	setDateDelta: function(dateDelta) {
+		if (dateDelta && dateDelta.valueOf()) {
+			this.dateDelta = dateDelta;
+		}
+		else {
+			this.dateDelta = null;
+		}
+	},
+
+
+	setStartDelta: function(startDelta) {
+		if (startDelta && startDelta.valueOf()) {
+			this.startDelta = startDelta;
+		}
+		else {
+			this.startDelta = null;
+		}
+	},
+
+
+	setEndDelta: function(endDelta) {
+		if (endDelta && endDelta.valueOf()) {
+			this.endDelta = endDelta;
+		}
+		else {
+			this.endDelta = null;
+		}
+	},
+
+
 	isEmpty: function() {
-		return !this.clearEnd &&
-			!this.forceTimed &&
-			!this.forceAllDay &&
-			(!this.dateDelta || !this.dateDelta.valueOf()) &&
-			(!this.startDelta || !this.startDelta.valueOf()) &&
-			(!this.endDelta || !this.endDelta.valueOf());
+		return !this.clearEnd && !this.forceTimed && !this.forceAllDay &&
+			!this.dateDelta && !this.startDelta && !this.endDelta;
 	}
 
 });
@@ -132,8 +161,8 @@ EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile1, large
 	mutation.clearEnd = clearEnd;
 	mutation.forceTimed = forceTimed;
 	mutation.forceAllDay = forceAllDay;
-	mutation.dateDelta = dateDelta;
-	mutation.endDelta = endDelta;
+	mutation.setDateDelta(dateDelta);
+	mutation.setEndDelta(endDelta);
 
 	return mutation;
 };
