@@ -4,7 +4,7 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 	var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 	var i;
 
-	var peerEventInstances = this.eventManager.getEventInstancesWithoutId(eventDef.id);
+	var peerEventInstances = this.getPeerEventInstances(eventDef);
 	var peerEventRanges = eventInstancesToEventRanges(peerEventInstances);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
@@ -41,6 +41,11 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 	}
 
 	return true;
+};
+
+
+Calendar.prototype.getPeerEventInstances = function(eventDef) {
+	return this.eventManager.getEventInstancesWithoutId(eventDef.id);
 };
 
 
