@@ -1,5 +1,5 @@
 
-var EventDefMutation = Class.extend({
+var EventDefMutation = FC.EventDefMutation = Class.extend({
 
 	// won't ever be empty. will be null instead.
 	// callers should use setDateMutation for setting.

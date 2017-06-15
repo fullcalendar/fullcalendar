@@ -955,6 +955,7 @@ function removeExact(array, exactVal) {
 
 	return removeCnt;
 }
+FC.removeExact = removeExact;
 
 
 

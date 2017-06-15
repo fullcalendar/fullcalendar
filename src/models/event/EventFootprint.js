@@ -1,5 +1,5 @@
 
-var EventFootprint = Class.extend({
+var EventFootprint = FC.EventFootprint = Class.extend({
 
 	componentFootprint: null,
 	eventDef: null,

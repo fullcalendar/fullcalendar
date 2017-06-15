@@ -1,5 +1,5 @@
 
-var EventDef = Class.extend({
+var EventDef = FC.EventDef = Class.extend({
 
 	source: null, // required
 
