@@ -144,34 +144,18 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
+
 	hitsNeeded: function() {
 		if (!(this.hitsNeededDepth++)) {
 			this.prepareHits();
 		}
 	},
 
+
 	hitsNotNeeded: function() {
 		if (this.hitsNeededDepth && !(--this.hitsNeededDepth)) {
 			this.releaseHits();
 		}
-	},
-
-
-	// Called before one or more queryHit calls might happen. Should prepare any cached coordinates for queryHit
-	prepareHits: function() {
-	},
-
-
-	// Called when queryHit calls have subsided. Good place to clear any coordinate caches.
-	releaseHits: function() {
-	},
-
-
-	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
-	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
-	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
-	// The returned object will be processed by getHitFootprint and getHitEl.
-	queryHit: function(leftOffset, topOffset) {
 	},
 
 

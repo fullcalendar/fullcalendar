@@ -246,23 +246,29 @@ var ChronoComponent = Model.extend({
 	},
 
 
+	// Called before one or more queryHit calls might happen. Should prepare any cached coordinates for queryHit
 	prepareHits: function() {
 		this.callChildren('prepareHits');
 	},
 
 
+	// Called when queryHit calls have subsided. Good place to clear any coordinate caches.
 	releaseHits: function() {
 		this.callChildren('releaseHits');
 	},
 
 
-	queryHit: function(left, top) {
+	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
+	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
+	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
+	// The returned object will be processed by getHitFootprint and getHitEl.
+	queryHit: function(leftOffset, topOffset) {
 		var children = this.children;
 		var i;
 		var hit;
 
 		for (i = 0; i < children.length; i++) {
-			hit = children[i].queryHit(left, top);
+			hit = children[i].queryHit(leftOffset, topOffset);
 
 			if (hit) {
 				break;
