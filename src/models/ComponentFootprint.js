@@ -1,8 +1,11 @@
 
+/*
+Meant to be immutable
+*/
 var ComponentFootprint = Class.extend({
 
 	unzonedRange: null,
-	isAllDay: false,
+	isAllDay: false, // component can choose to ignore this
 
 
 	constructor: function(unzonedRange, isAllDay) {
