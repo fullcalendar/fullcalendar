@@ -127,40 +127,46 @@ var EventDef = Class.extend({
 	// Standard Prop Parsing System, for the INSTANCE
 	// -----------------------------------------------------------------------------------------------------------------
 
-
-	standardPropMap: {},
-	standardPropHandlers: [],
+	standardPropMap: {}, // ::defineStandardProps will always clone
 
 
-	isStandardProp: function(propName) {
-		return this.standardPropMap[propName] !== undefined;
-	},
-
-
-	applyStandardProps: function(rawProps) {
-		var map = this.standardPropMap;
-		var handlers = this.standardPropHandlers;
-		var propsForHandlers = {};
-		var allSuccessful = true;
+	/*
+	returns false on failure
+	*/
+	applyRawProps: function(rawProps) {
+		var standardPropMap = this.standardPropMap;
+		var miscProps = {};
 		var propName;
-		var i;
+
+		if (rawProps.id == null) {
+			this.id = EventDef.generateId();
+		}
+		else {
+			this.id = EventDef.normalizeId((this.rawId = rawProps.id));
+		}
+
+		// can make DRY with EventSource
+		if ($.isArray(rawProps.className)) {
+			this.className = rawProps.className;
+		}
+		else if (typeof rawProps.className === 'string') {
+			this.className = rawProps.className.split(/\s+/);
+		}
 
 		for (propName in rawProps) {
-			if (map[propName] === true) { // has handler?
-				propsForHandlers[propName] = rawProps[propName];
+			if (propName in standardPropMap) {
+				if (standardPropMap[propName] === true) { // copy verbatim?
+					this[propName] = rawProps[propName];
+				}
 			}
-			else if (map[propName] === false) { // verbatim
-				this[propName] = rawProps[propName];
-			}
-		}
-
-		for (i = 0; i < handlers.length; i++) {
-			if (handlers[i].call(this, propsForHandlers) === false) {
-				allSuccessful = false; // don't want to break. want to execute all handlers
+			else {
+				miscProps[propName] = rawProps[propName];
 			}
 		}
 
-		return allSuccessful;
+		this.miscProps = miscProps;
+
+		return true;
 	}
 
 });
@@ -183,31 +189,16 @@ EventDef.generateId = function() {
 };
 
 
-// Standard Prop Parsing System, for class self-definition
+// Standard Prop *Parsing* System, for class self-definition
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.defineStandardPropHandler = function(propNames, handler) {
+EventDef.defineStandardProps = function(propDefs) {
 	var proto = this.prototype;
-	var map = proto.standardPropMap = $.extend({}, proto.standardPropMap);
-	var i;
 
-	for (i = 0; i < propNames.length; i++) {
-		map[propNames[i]] = true; // true means "uses handler"
-	}
+	proto.standardPropMap = Object.create(proto.standardPropMap);
 
-	proto.standardPropHandlers = proto.standardPropHandlers.concat(handler);
-};
-
-
-EventDef.defineVerbatimStandardProps = function(propNames) {
-	var proto = this.prototype;
-	var map = proto.standardPropMap = $.extend({}, proto.standardPropMap);
-	var i;
-
-	for (i = 0; i < propNames.length; i++) {
-		map[propNames[i]] = false; // false means "copy verbatim"
-	}
+	copyOwnProps(propDefs, proto.standardPropMap);
 };
 
 
@@ -217,8 +208,8 @@ EventDef.copyVerbatimStandardProps = function(src, dest) {
 
 	for (propName in map) {
 		if (
-			src[propName] != null &&
-			!map[propName] // falsy means "copy verbatim"
+			src[propName] != null && // in the src object?
+			map[propName] === true // false means "copy verbatim"
 		) {
 			dest[propName] = src[propName];
 		}
@@ -234,9 +225,6 @@ EventDef.parse = function(rawInput, source) {
 	var def = new this(source);
 	var calendarTransform = source.calendar.opt('eventDataTransform');
 	var sourceTransform = source.eventDataTransform;
-	var rawStandardProps = {};
-	var miscProps = {};
-	var propName;
 
 	if (calendarTransform) {
 		rawInput = calendarTransform(rawInput);
@@ -245,20 +233,9 @@ EventDef.parse = function(rawInput, source) {
 		rawInput = sourceTransform(rawInput);
 	}
 
-	for (propName in rawInput) {
-		if (def.isStandardProp(propName)) {
-			rawStandardProps[propName] = rawInput[propName];
-		}
-		else {
-			miscProps[propName] = rawInput[propName];
-		}
-	}
-
-	if (def.applyStandardProps(rawStandardProps) === false) {
+	if (def.applyRawProps(rawInput) === false) {
 		return false;
 	}
-
-	def.miscProps = miscProps;
 
 	return def;
 };
@@ -268,41 +245,24 @@ EventDef.parse = function(rawInput, source) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.defineStandardPropHandler([
-	'id',
-	'className',
-	'source' // will ignored
-], function(rawProps) {
+EventDef.defineStandardProps({
+	// not automatically assigned (`false`)
+	id: false,
+	className: false,
+	source: false, // will ignored
 
-	if (rawProps.id == null) {
-		this.id = EventDef.generateId();
-	}
-	else {
-		this.id = EventDef.normalizeId((this.rawId = rawProps.id));
-	}
-
-	// can make DRY with EventSource
-	if ($.isArray(rawProps.className)) {
-		this.className = rawProps.className;
-	}
-	else if (typeof rawProps.className === 'string') {
-		this.className = rawProps.className.split(/\s+/);
-	}
+	// automatically assigned (`true`)
+	title: true,
+	url: true,
+	rendering: true,
+	constraint: true,
+	overlap: true,
+	editable: true,
+	startEditable: true,
+	durationEditable: true,
+	resourceEditable: true,
+	color: true,
+	backgroundColor: true,
+	borderColor: true,
+	textColor: true,
 });
-
-
-EventDef.defineVerbatimStandardProps([
-	'title',
-	'url',
-	'rendering',
-	'constraint',
-	'overlap',
-	'editable',
-	'startEditable',
-	'durationEditable',
-	'resourceEditable',
-	'color',
-	'backgroundColor',
-	'borderColor',
-	'textColor'
-]);

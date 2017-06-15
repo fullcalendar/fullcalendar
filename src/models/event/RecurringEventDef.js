@@ -79,6 +79,28 @@ var RecurringEventDef = EventDef.extend({
 		}
 
 		return def;
+	},
+
+
+	/*
+	NOTE: if super-method fails, should still attempt to apply
+	*/
+	applyRawProps: function(rawProps) {
+		var superSuccess = EventDef.prototype.applyRawProps.apply(this, arguments);
+
+		if (rawProps.start) {
+			this.startTime = moment.duration(rawProps.start);
+		}
+
+		if (rawProps.end) {
+			this.endTime = moment.duration(rawProps.end);
+		}
+
+		if (rawProps.dow) {
+			this.setDow(rawProps.dow);
+		}
+
+		return superSuccess;
 	}
 
 });
@@ -88,21 +110,8 @@ var RecurringEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-RecurringEventDef.defineStandardPropHandler([
-	'start',
-	'end',
-	'dow'
-], function(rawProps) {
-
-	if (rawProps.start) {
-		this.startTime = moment.duration(rawProps.start);
-	}
-
-	if (rawProps.end) {
-		this.endTime = moment.duration(rawProps.end);
-	}
-
-	if (rawProps.dow) {
-		this.setDow(rawProps.dow);
-	}
+RecurringEventDef.defineStandardProps({
+	start: false,
+	end: false,
+	dow: false
 });

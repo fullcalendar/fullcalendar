@@ -43,6 +43,24 @@ var SingleEventDef = EventDef.extend({
 			dateProfile.end ? calendar.moment(dateProfile.end) : null,
 			calendar
 		);
+	},
+
+
+	/*
+	NOTE: if super-method fails, should still attempt to apply
+	*/
+	applyRawProps: function(rawProps) {
+		var superSuccess = EventDef.prototype.applyRawProps.apply(this, arguments);
+		var dateProfile = EventDateProfile.parse(rawProps, this.source); // returns null on failure
+
+		if (dateProfile) {
+			this.dateProfile = dateProfile;
+
+			return superSuccess;
+		}
+		else {
+			return false;
+		}
 	}
 
 });
@@ -52,18 +70,9 @@ var SingleEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-SingleEventDef.defineStandardPropHandler([
-	'start',
-	'date', // alias for 'start'
-	'end',
-	'allDay'
-], function(rawProps) {
-	var dateProfile = EventDateProfile.parse(rawProps, this.source);
-
-	if (dateProfile) { // no failure?
-		this.dateProfile = dateProfile;
-	}
-	else {
-		return false;
-	}
+SingleEventDef.defineStandardProps({
+	start: false,
+	date: false, // alias for 'start'
+	end: false,
+	allDay: false
 });
