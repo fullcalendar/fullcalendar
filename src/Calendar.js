@@ -315,12 +315,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			this.opt('timezone'),
 			this.opt('lazyFetching')
 		);
-	},
-
-
-	// hook for external libs to manipulate event properties upon creation.
-	// should manipulate the event in-place.
-	normalizeEvent: function(event) {
 	}
 
 });
