@@ -333,15 +333,14 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventRanges, seg) {
-		var isAllDay = eventRanges.length &&
-			eventRanges[0].eventInstance.dateProfile.isAllDay();
-
-		if (!isAllDay) {
-			return this.timeGrid.renderDrag(eventRanges, seg);
-		}
-		else if (this.dayGrid) {
-			return this.dayGrid.renderDrag(eventRanges, seg);
+	renderDrag: function(eventFootprints, seg) {
+		if (eventFootprints.length) {
+			if (!eventFootprints[0].componentFootprint.isAllDay) {
+				return this.timeGrid.renderDrag(eventFootprints, seg);
+			}
+			else if (this.dayGrid) {
+				return this.dayGrid.renderDrag(eventFootprints, seg);
+			}
 		}
 	},
 

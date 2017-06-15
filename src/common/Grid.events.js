@@ -129,10 +129,9 @@ Grid.mixin({
 	// Caller must ask if whole-day business hours are needed.
 	// If no `businessHours` configuration value is specified, assumes the calendar default.
 	buildBusinessHourSegs: function(wholeDay, businessHours) {
-		var eventRanges = this.buildBusinessHourRanges(wholeDay, businessHours);
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
-
-		return this.eventFootprintsToSegs(eventFootprints);
+		return this.eventFootprintsToSegs(
+			this.buildBusinessHourEventFootprints(wholeDay, businessHours)
+		);
 	},
 
 
@@ -140,13 +139,14 @@ Grid.mixin({
 	// Caller must ask if whole-day business hours are needed.
 	// If no `businessHours` configuration value is specified, assumes the calendar default.
 	// FOR RENDERING
-	buildBusinessHourRanges: function(wholeDay, businessHours) {
+	buildBusinessHourEventFootprints: function(wholeDay, businessHours) {
 		var calendar = this.view.calendar;
 		var eventInstanceGroup;
+		var eventRanges;
 
 		if (businessHours == null) {
 			// fallback
-			// access from calendawr. don't access from view. doesn't update with dynamic options.
+			// access from calendar. don't access from view. doesn't update with dynamic options.
 			businessHours = calendar.opt('businessHours');
 		}
 
@@ -158,13 +158,16 @@ Grid.mixin({
 		);
 
 		if (eventInstanceGroup) {
-			return eventInstanceGroup.sliceRenderRanges(
+			eventRanges = eventInstanceGroup.sliceRenderRanges(
 				new UnzonedRange(this.start, this.end),
 				calendar
 			);
 		}
+		else {
+			eventRanges = [];
+		}
 
-		return [];
+		return this.eventRangesToEventFootprints(eventRanges);
 	},
 
 
@@ -396,9 +399,11 @@ Grid.mixin({
 				if (
 					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
-						mutatedEventInstanceGroup.sliceRenderRanges(
-							new UnzonedRange(_this.start, _this.end),
-							calendar
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(
+								new UnzonedRange(_this.start, _this.end),
+								calendar
+							)
 						),
 						seg
 					))
@@ -610,9 +615,11 @@ Grid.mixin({
 
 				if (singleEventDef) {
 					_this.renderDrag( // called without a seg parameter
-						mutatedEventInstanceGroup.sliceRenderRanges(
-							new UnzonedRange(_this.start, _this.end),
-							view.calendar
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(
+								new UnzonedRange(_this.start, _this.end),
+								view.calendar
+							)
 						)
 					);
 				}
@@ -692,11 +699,10 @@ Grid.mixin({
 
 
 	// Renders a visual indication of an event or external element being dragged.
-	// `dropLocation` contains hypothetical start/end/allDay values the event would have if dropped. end can be null.
 	// `seg` is the internal segment object that is being dragged. If dragging an external element, `seg` is null.
 	// A truthy returned value indicates this method has rendered a helper element.
 	// Must return elements used for any mock events.
-	renderDrag: function(eventRanges, seg) {
+	renderDrag: function(eventFootprints, seg) {
 		// subclasses must implement
 	},
 
@@ -774,9 +780,11 @@ Grid.mixin({
 					view.hideEvent(event);
 
 					_this.renderEventResize(
-						mutatedEventInstanceGroup.sliceRenderRanges(
-							new UnzonedRange(_this.start, _this.end),
-							calendar
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(
+								new UnzonedRange(_this.start, _this.end),
+								calendar
+							)
 						),
 						seg
 					);
@@ -875,9 +883,8 @@ Grid.mixin({
 
 
 	// Renders a visual indication of an event being resized.
-	// `range` has the updated dates of the event. `seg` is the original segment object involved in the drag.
 	// Must return elements used for any mock events.
-	renderEventResize: function(range, seg) {
+	renderEventResize: function(eventFootprints, seg) {
 		// subclasses must implement
 	},
 

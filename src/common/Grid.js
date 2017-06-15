@@ -443,14 +443,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// just a convenient connector to renderHelperEventFootprints
-	renderHelperEventRanges: function(eventRanges, sourceSeg) {
-		return this.renderHelperEventFootprints(
-			this.eventRangesToEventFootprints(eventRanges)
-		);
-	},
-
-
 	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
 		return this.renderHelperEventFootprintEls(eventFootprints, sourceSeg)
 			.addClass('fc-helper');

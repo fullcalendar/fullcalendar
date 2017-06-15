@@ -317,8 +317,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event or external element being dragged.
 	// `eventLocation` has zoned start and end (optional)
-	renderDrag: function(eventRanges, seg) {
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+	renderDrag: function(eventFootprints, seg) {
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
@@ -327,7 +326,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
+			return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 		}
 	},
 
@@ -344,15 +343,14 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventRanges, seg) {
-		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+	renderEventResize: function(eventFootprints, seg) {
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
+		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 

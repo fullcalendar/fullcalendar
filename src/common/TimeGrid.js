@@ -360,19 +360,16 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventRanges, seg) {
-		var eventFootprints;
+	renderDrag: function(eventFootprints, seg) {
 		var i;
 
 		if (seg) { // if there is event information for this drag, render a helper event
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.renderHelperEventRanges(eventRanges);
+			return this.renderHelperEventFootprints(eventFootprints);
 		}
 		else { // otherwise, just render a highlight
-
-			eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 
 			for (i = 0; i < eventFootprints.length; i++) {
 				this.renderHighlight(eventFootprints[i].componentFootprint);
@@ -393,8 +390,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventRanges, seg) {
-		return this.renderHelperEventRanges(eventRanges, seg); // returns mock event elements
+	renderEventResize: function(eventFootprints, seg) {
+		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
