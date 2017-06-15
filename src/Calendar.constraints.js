@@ -132,27 +132,28 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
-	var eventInstanceGroup;
-	var eventRanges = [];
-
 	if (constraintVal === 'businessHours') {
-		eventInstanceGroup = this.buildCurrentBusinessInstanceGroup(isAllDay);
-
-		if (eventInstanceGroup) {
-			eventRanges = eventInstanceGroup.getAllEventRanges();
-		}
+		return this.buildCurrentBusinessFootprints(isAllDay);
 	}
 	else if (typeof constraintVal === 'object') {
-		eventRanges = this.parseEventDefToEventRanges(constraintVal);
+		return this.eventInstancesToFootprints(
+			this.parseEventDefToInstances(constraintVal)
+		);
 	}
 	else if (constraintVal != null) { // an ID
-		eventRanges = eventInstancesToEventRanges(
+		return this.eventInstancesToFootprints(
 			this.eventManager.getEventInstancesWithId(constraintVal)
 		);
 	}
+};
 
+
+// conversion util
+Calendar.prototype.eventInstancesToFootprints = function(eventInstances) {
 	return eventFootprintsToComponentFootprints(
-		this.eventRangesToEventFootprints(eventRanges)
+		this.eventRangesToEventFootprints(
+			eventInstancesToEventRanges(eventInstances)
+		)
 	);
 };
 
@@ -241,14 +242,12 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 // this more DRY.
 
 
-Calendar.prototype.parseEventDefToEventRanges = function(eventInput) {
+Calendar.prototype.parseEventDefToInstances = function(eventInput) {
 	var eventPeriod = this.eventManager.currentPeriod;
 	var eventDef = EventDefParser.parse(eventInput, new EventSource(this));
 
 	if (eventPeriod && eventDef) {
-		return eventInstancesToEventRanges(
-			eventDef.buildInstances(eventPeriod.start, eventPeriod.end)
-		);
+		return eventDef.buildInstances(eventPeriod.start, eventPeriod.end);
 	}
 	else {
 		return [];
