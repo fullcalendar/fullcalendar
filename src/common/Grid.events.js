@@ -693,26 +693,6 @@ Grid.mixin({
 	},
 
 
-
-	/* Drag Rendering (for both events and an external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of an event or external element being dragged.
-	// `seg` is the internal segment object that is being dragged. If dragging an external element, `seg` is null.
-	// A truthy returned value indicates this method has rendered a helper element.
-	// Must return elements used for any mock events.
-	renderDrag: function(eventFootprints, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event or external element being dragged
-	unrenderDrag: function() {
-		// subclasses must implement
-	},
-
-
 	/* Resizing
 	------------------------------------------------------------------------------------------------------------------*/
 
