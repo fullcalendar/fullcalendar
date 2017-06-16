@@ -2,7 +2,7 @@
 /*
 Meant to be immutable
 */
-var ComponentFootprint = Class.extend({
+var ComponentFootprint = FC.ComponentFootprint = Class.extend({
 
 	unzonedRange: null,
 	isAllDay: false, // component can choose to ignore this

@@ -1,5 +1,5 @@
 
-var UnzonedRange = Class.extend({
+var UnzonedRange = FC.UnzonedRange = Class.extend({
 
 	startMs: null,
 	endMs: null,
