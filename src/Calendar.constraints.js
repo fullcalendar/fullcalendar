@@ -32,7 +32,7 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 			if (
 				eventAllowFunc(
 					eventFootprints[i].componentFootprint.toLegacy(this),
-					eventFootprints[i].toLegacy()
+					eventFootprints[i].getEventLegacy()
 				) === false
 			) {
 				return false;

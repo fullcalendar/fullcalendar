@@ -1129,7 +1129,7 @@ Grid.mixin({
 				seg.isEnd = false;
 			}
 
-			seg.event = eventFootprint.toLegacy();
+			seg.event = eventFootprint.getEventLegacy();
 			seg.footprint = eventFootprint;
 			seg.footprintStartMs = unzonedRange.startMs;
 			seg.footprintDurationMs = unzonedRange.endMs - unzonedRange.startMs;

@@ -16,7 +16,7 @@ var EventFootprint = FC.EventFootprint = Class.extend({
 	},
 
 
-	toLegacy: function() {
+	getEventLegacy: function() {
 		return (this.eventInstance || this.eventDef).toLegacy();
 	}
 
