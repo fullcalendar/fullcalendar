@@ -1076,6 +1076,7 @@ Grid.mixin({
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	// Subclasses can override.
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
+	// TODO: somehow more DRY with Calendar::eventRangeToEventFootprints
 	eventRangeToEventFootprints: function(eventRange) {
 		return [
 			new EventFootprint(

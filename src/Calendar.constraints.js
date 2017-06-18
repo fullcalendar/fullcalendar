@@ -274,6 +274,9 @@ Calendar.prototype.eventRangesToEventFootprints = function(eventRanges) {
 };
 
 
+/*
+TODO: somehow more DRY with Grid::eventRangeToEventFootprints
+*/
 Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 	return [
 		new EventFootprint(
