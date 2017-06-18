@@ -205,17 +205,25 @@ var ChronoComponent = Model.extend({
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(eventFootprints, seg) {
+		var dragEls = null;
 		var children = this.children;
 		var i;
-		var els = $();
+		var childDragEls;
 
 		for (i = 0; i < children.length; i++) {
-			els = els.add(
-				children[i].renderDrag(eventFootprints, seg)
-			);
+			childDragEls = children[i].renderDrag(eventFootprints, seg);
+
+			if (childDragEls) {
+				if (!dragEls) {
+					dragEls = childDragEls;
+				}
+				else {
+					dragEls = dragEls.add(childDragEls);
+				}
+			}
 		}
 
-		return els;
+		return dragEls;
 	},
 
 
