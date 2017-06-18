@@ -14,21 +14,16 @@ var ComponentFootprint = FC.ComponentFootprint = Class.extend({
 	},
 
 
-	toLegacy: function() {
-		return this.unzonedRange.getRange();
+	toLegacy: function(calendar) {
+		var start = calendar.moment(this.unzonedRange.startMs);
+		var end = calendar.moment(this.unzonedRange.endMs);
+
+		if (this.isAllDay) {
+			start.stripTime();
+			end.stripTime();
+		}
+
+		return { start: start, end: end };
 	}
 
 });
-
-
-function convertFootprintToLegacySelection(footprint, calendar) {
-	var start = calendar.moment(footprint.unzonedRange.startMs);
-	var end = calendar.moment(footprint.unzonedRange.endMs);
-
-	if (footprint.isAllDay) {
-		start.stripTime();
-		end.stripTime();
-	}
-
-	return { start: start, end: end };
-}

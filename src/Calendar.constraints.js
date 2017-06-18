@@ -31,7 +31,7 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 		for (i = 0; i < eventFootprints.length; i++) {
 			if (
 				eventAllowFunc(
-					convertFootprintToLegacySelection(eventFootprints[i].componentFootprint, this),
+					eventFootprints[i].componentFootprint.toLegacy(this),
 					eventFootprints[i].toLegacy()
 				) === false
 			) {
@@ -67,7 +67,7 @@ Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
 		selectAllowFunc = this.opt('selectAllow');
 
 		if (selectAllowFunc) {
-			return selectAllowFunc(componentFootprint.toLegacy()) !== false;
+			return selectAllowFunc(componentFootprint.toLegacy(this)) !== false;
 		}
 		else {
 			return true;

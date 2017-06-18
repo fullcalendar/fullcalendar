@@ -823,7 +823,7 @@ var View = FC.View = ChronoComponent.extend({
 	renderSelectionFootprint: function(footprint, ev) {
 		if (this.renderSelection) { // legacy method in custom view classes
 			this.renderSelection(
-				convertFootprintToLegacySelection(footprint, this.calendar)
+				footprint.toLegacy(this.calendar)
 			);
 		}
 		else {
