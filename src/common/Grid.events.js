@@ -127,32 +127,31 @@ Grid.mixin({
 
 	// Compute business hour segs for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
-	// If no `businessHours` configuration value is specified, assumes the calendar default.
-	buildBusinessHourSegs: function(wholeDay, businessHours) {
+	buildBusinessHourSegs: function(wholeDay) {
 		return this.eventFootprintsToSegs(
-			this.buildBusinessHourEventFootprints(wholeDay, businessHours)
+			this.buildBusinessHourEventFootprints(wholeDay)
 		);
 	},
 
 
 	// Compute business hour *events* for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
-	// If no `businessHours` configuration value is specified, assumes the calendar default.
 	// FOR RENDERING
-	buildBusinessHourEventFootprints: function(wholeDay, businessHours) {
+	buildBusinessHourEventFootprints: function(wholeDay) {
+		var calendar = this.view.calendar;
+
+		return this._buildBusinessHourEventFootprints(wholeDay, calendar.opt('businessHours'));
+	},
+
+
+	_buildBusinessHourEventFootprints: function(wholeDay, businessHourDef) {
 		var calendar = this.view.calendar;
 		var eventInstanceGroup;
 		var eventRanges;
 
-		if (businessHours == null) {
-			// fallback
-			// access from calendar. don't access from view. doesn't update with dynamic options.
-			businessHours = calendar.opt('businessHours');
-		}
-
 		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
 			wholeDay,
-			businessHours,
+			businessHourDef,
 			this.start,
 			this.end
 		);

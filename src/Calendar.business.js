@@ -12,17 +12,16 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 returns ComponentFootprint[]
 `businessHourDef` is optional. Use Calendar's setting if omitted.
 */
-Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay, businessHourDef) {
+Calendar.prototype.buildCurrentBusinessFootprints = function(wholeDay) {
+	return this._buildCurrentBusinessFootprints(wholeDay, this.opt('businessHours'));
+};
+
+
+Calendar.prototype._buildCurrentBusinessFootprints = function(wholeDay, businessDefInput) {
 	var eventPeriod = this.eventManager.currentPeriod;
-	var businessDefInput;
 	var businessInstanceGroup;
 
 	if (eventPeriod) {
-
-		if (arguments.length < 2) {
-			businessDefInput = this.opt('businessHours');
-		}
-
 		businessInstanceGroup = this.buildBusinessInstanceGroup(
 			wholeDay,
 			businessDefInput,
