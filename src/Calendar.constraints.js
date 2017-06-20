@@ -294,16 +294,25 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 // Footprint Utils
 // ----------------------------------------------------------------------------------------
 
-
+/*
+Allow footprints that have undefined range, with implies ALL times.
+TODO: use date range utils
+*/
 Calendar.prototype.footprintContainsFootprint = function(outerFootprint, innerFootprint) {
-	// TODO: use date range utils
-	return innerFootprint.unzonedRange.startMs >= outerFootprint.unzonedRange.startMs &&
-		innerFootprint.unzonedRange.endMs <= outerFootprint.unzonedRange.endMs;
+	return !outerFootprint.unzonedRange || (
+		innerFootprint.unzonedRange.startMs >= outerFootprint.unzonedRange.startMs &&
+		innerFootprint.unzonedRange.endMs <= outerFootprint.unzonedRange.endMs
+	);
 };
 
 
+/*
+Allow footprints that have undefined range, with implies ALL times.
+TODO: use date range utils
+*/
 Calendar.prototype.footprintsIntersect = function(footprint0, footprint1) {
-	// TODO: use date range utils
-	return footprint0.unzonedRange.startMs < footprint1.unzonedRange.endMs &&
-		footprint0.unzonedRange.endMs > footprint1.unzonedRange.startMs;
+	return !footprint0.unzonedRange || !footprint1.unzonedRange || (
+		footprint0.unzonedRange.startMs < footprint1.unzonedRange.endMs &&
+		footprint0.unzonedRange.endMs > footprint1.unzonedRange.startMs
+	);
 };
