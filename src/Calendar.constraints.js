@@ -137,18 +137,25 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
+	var eventInstances;
+
 	if (constraintVal === 'businessHours') {
 		return this.buildCurrentBusinessFootprints(isAllDay);
 	}
 	else if (typeof constraintVal === 'object') {
-		return this.eventInstancesToFootprints(
-			this.parseEventDefToInstances(constraintVal)
-		);
+		eventInstances = this.parseEventDefToInstances(constraintVal); // handles recurring events
+
+		if (!eventInstances) { // invalid input. fallback to parsing footprint directly
+			return this.parseFootprints(constraintVal);
+		}
+		else {
+			return this.eventInstancesToFootprints(eventInstances);
+		}
 	}
 	else if (constraintVal != null) { // an ID
-		return this.eventInstancesToFootprints(
-			this.eventManager.getEventInstancesWithId(constraintVal)
-		);
+		eventInstances = this.eventManager.getEventInstancesWithId(constraintVal);
+
+		return this.eventInstancesToFootprints(eventInstances);
 	}
 };
 
@@ -247,11 +254,18 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 // this more DRY.
 
 
+/*
+Returns false on invalid input.
+*/
 Calendar.prototype.parseEventDefToInstances = function(eventInput) {
 	var eventPeriod = this.eventManager.currentPeriod;
 	var eventDef = EventDefParser.parse(eventInput, new EventSource(this));
 
-	if (eventPeriod && eventDef) {
+	if (!eventDef) { // invalid
+		return false;
+	}
+
+	if (eventPeriod) {
 		return eventDef.buildInstances(eventPeriod.start, eventPeriod.end);
 	}
 	else {
