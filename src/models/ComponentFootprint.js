@@ -14,6 +14,9 @@ var ComponentFootprint = FC.ComponentFootprint = Class.extend({
 	},
 
 
+	/*
+	Only works for non-open-ended ranges.
+	*/
 	toLegacy: function(calendar) {
 		var start = calendar.moment(this.unzonedRange.startMs);
 		var end = calendar.moment(this.unzonedRange.endMs);

@@ -133,6 +133,9 @@ Calendar.mixin({
 	},
 
 
+	/*
+	Assumes the footprint is non-open-ended.
+	*/
 	footprintToDateProfile: function(componentFootprint, ignoreEnd) {
 		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs);
 		var end;

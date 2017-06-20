@@ -1,8 +1,11 @@
 
 var UnzonedRange = FC.UnzonedRange = Class.extend({
 
-	startMs: null,
-	endMs: null,
+	startMs: null, // if null, no start constraint
+	endMs: null, // if null, no end constraint
+
+	// TODO: move these into footprint.
+	// Especially, doesn't make sense for null startMs/endMs.
 	isStart: true,
 	isEnd: true,
 
@@ -16,16 +19,39 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 			endInput = endInput.clone().stripZone();
 		}
 
-		this.startMs = startInput.valueOf();
-		this.endMs = endInput.valueOf();
+		if (startInput) {
+			this.startMs = startInput.valueOf();
+		}
+
+		if (endInput) {
+			this.endMs = endInput.valueOf();
+		}
 	},
 
 	constrainTo: function(constraintRange) {
-		var startMs = Math.max(this.startMs, constraintRange.startMs);
-		var endMs = Math.min(this.endMs, constraintRange.endMs);
+		var startMs = this.startMs;
+		var endMs = this.endMs;
 		var newRange = null;
 
-		if (startMs < endMs) {
+		if (constraintRange.startMs !== null) {
+			if (startMs === null) {
+				startMs = constraintRange.startMs;
+			}
+			else {
+				startMs = Math.max(startMs, constraintRange.startMs);
+			}
+		}
+
+		if (constraintRange.endMs !== null) {
+			if (endMs === null) {
+				endMs = constraintRange.endMs;
+			}
+			else {
+				endMs = Math.min(this.endMs, constraintRange.endMs);
+			}
+		}
+
+		if (startMs === null || endMs === null || startMs < endMs) {
 			newRange = new UnzonedRange(startMs, endMs);
 			newRange.isStart = this.isStart && startMs === this.startMs;
 			newRange.isEnd = this.isEnd && endMs === this.endMs;
@@ -34,14 +60,31 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		return newRange;
 	},
 
+
+	contains: function(innerFootprint) {
+		return (this.startMs === null || (innerFootprint.startMs !== null && innerFootprint.startMs >= this.startMs)) &&
+			(this.endMs === null || (innerFootprint.endMs !== null && innerFootprint.endMs <= this.endMs));
+	},
+
+
+	intersectsWith: function(otherFootprint) {
+		return (this.endMs === null || otherFootprint.startMs === null || this.endMs > otherFootprint.startMS) &&
+			(this.startMs === null || otherFootprint.endMs === null || this.startMs < otherFootprint.endMs);
+	},
+
+
 	// hopefully we'll remove these...
 
 	getStart: function() {
-		return FC.moment.utc(this.startMs).stripZone();
+		if (this.startMs !== null) {
+			return FC.moment.utc(this.startMs).stripZone();
+		}
 	},
 
 	getEnd: function() {
-		return FC.moment.utc(this.endMs).stripZone();
+		if (this.endMs !== null) {
+			return FC.moment.utc(this.endMs).stripZone();
+		}
 	},
 
 	getRange: function() {
@@ -54,6 +97,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 /*
 SIDEEFFECT: will mutate eventRanges.
 Will return a new array result.
+Only works for non-open-ended ranges.
 */
 function invertUnzonedRanges(ranges, constraintRange) {
 	var invertedRanges = [];
@@ -90,6 +134,9 @@ function invertUnzonedRanges(ranges, constraintRange) {
 }
 
 
+/*
+Only works for non-open-ended ranges.
+*/
 function compareUnzonedRanges(range1, range2) {
 	return range1.startMs - range2.startMs; // earlier ranges go first
 }

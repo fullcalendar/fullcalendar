@@ -654,6 +654,7 @@ Grid.mixin({
 	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
 	// DOES NOT consider overlap/constraint.
+	// Assumes both footprints are non-open-ended.
 	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
 		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs).stripZone();

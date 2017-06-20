@@ -291,28 +291,47 @@ Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
 };
 
 
-// Footprint Utils
-// ----------------------------------------------------------------------------------------
-
 /*
-Allow footprints that have undefined range, with implies ALL times.
-TODO: use date range utils
+Parses footprints directly.
+Very similar to EventDateProfile::parse :(
 */
-Calendar.prototype.footprintContainsFootprint = function(outerFootprint, innerFootprint) {
-	return !outerFootprint.unzonedRange || (
-		innerFootprint.unzonedRange.startMs >= outerFootprint.unzonedRange.startMs &&
-		innerFootprint.unzonedRange.endMs <= outerFootprint.unzonedRange.endMs
-	);
+Calendar.prototype.parseFootprints = function(rawInput) {
+	var start, end;
+
+	if (rawInput.start) {
+		start = calendar.moment(rawInput.start);
+
+		if (!start.isValid()) {
+			start = null;
+		}
+	}
+
+	if (rawInput.end) {
+		end = calendar.moment(rawInput.end);
+
+		if (!end.isValid()) {
+			end = null;
+		}
+	}
+
+	return [
+		new ComponentFootprint(
+			new UnzonedRange(start, end),
+			(start && !start.hasTime()) || (end && !end.hasTime()) // isAllDay
+		)
+	];
 };
 
 
-/*
-Allow footprints that have undefined range, with implies ALL times.
-TODO: use date range utils
-*/
+// Footprint Utils
+// ----------------------------------------------------------------------------------------
+
+
+Calendar.prototype.footprintContainsFootprint = function(outerFootprint, innerFootprint) {
+	return outerFootprint.unzonedRange.contains(innerFootprint.unzonedRange);
+};
+
+
 Calendar.prototype.footprintsIntersect = function(footprint0, footprint1) {
-	return !footprint0.unzonedRange || !footprint1.unzonedRange || (
-		footprint0.unzonedRange.startMs < footprint1.unzonedRange.endMs &&
-		footprint0.unzonedRange.endMs > footprint1.unzonedRange.startMs
-	);
+	return footprint0.unzonedRange.intersectsWith(footprint1.unzonedRange);
 };

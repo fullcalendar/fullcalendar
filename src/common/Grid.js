@@ -493,6 +493,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Given two spans, must return the combination of the two.
 	// TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
+	// Assumes both footprints are non-open-ended.
 	computeSelectionFootprint: function(footprint0, footprint1) {
 		var ms = [
 			footprint0.unzonedRange.startMs,
