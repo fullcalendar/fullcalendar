@@ -264,5 +264,5 @@ EventDef.defineStandardProps({
 	color: true,
 	backgroundColor: true,
 	borderColor: true,
-	textColor: true,
+	textColor: true
 });

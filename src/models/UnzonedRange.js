@@ -61,15 +61,15 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
-	contains: function(innerFootprint) {
-		return (this.startMs === null || (innerFootprint.startMs !== null && innerFootprint.startMs >= this.startMs)) &&
-			(this.endMs === null || (innerFootprint.endMs !== null && innerFootprint.endMs <= this.endMs));
+	contains: function(innerRange) {
+		return (this.startMs === null || (innerRange.startMs !== null && innerRange.startMs >= this.startMs)) &&
+			(this.endMs === null || (innerRange.endMs !== null && innerRange.endMs <= this.endMs));
 	},
 
 
-	intersectsWith: function(otherFootprint) {
-		return (this.endMs === null || otherFootprint.startMs === null || this.endMs > otherFootprint.startMS) &&
-			(this.startMs === null || otherFootprint.endMs === null || this.startMs < otherFootprint.endMs);
+	intersectsWith: function(otherRange) {
+		return (this.endMs === null || otherRange.startMs === null || this.endMs > otherRange.startMs) &&
+			(this.startMs === null || otherRange.endMs === null || this.startMs < otherRange.endMs);
 	},
 
 

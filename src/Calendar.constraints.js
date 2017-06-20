@@ -313,7 +313,7 @@ Calendar.prototype.parseFootprints = function(rawInput) {
 	var start, end;
 
 	if (rawInput.start) {
-		start = calendar.moment(rawInput.start);
+		start = this.moment(rawInput.start);
 
 		if (!start.isValid()) {
 			start = null;
@@ -321,7 +321,7 @@ Calendar.prototype.parseFootprints = function(rawInput) {
 	}
 
 	if (rawInput.end) {
-		end = calendar.moment(rawInput.end);
+		end = this.moment(rawInput.end);
 
 		if (!end.isValid()) {
 			end = null;
