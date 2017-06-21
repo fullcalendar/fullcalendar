@@ -35,15 +35,6 @@ var ParsableModelMixin = {
 	If subclasses override, they must call this supermethod and return the boolean response.
 	*/
 	applyManualRawProps: function(rawProps) {
-		this.id = EventSource.normalizeId(rawProps.id);
-
-		if ($.isArray(rawProps.className)) {
-			this.className = rawProps.className;
-		}
-		if (typeof rawProps.className === 'string') {
-			this.className = rawProps.className.split(/\s+/);
-		}
-
 		return true;
 	},
 

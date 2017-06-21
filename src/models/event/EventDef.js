@@ -1,5 +1,5 @@
 
-var EventDef = FC.EventDef = Class.extend({
+var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 
 	source: null, // required
 
@@ -124,56 +124,41 @@ var EventDef = FC.EventDef = Class.extend({
 	},
 
 
-	// Standard Prop Parsing System, for the INSTANCE
-	// -----------------------------------------------------------------------------------------------------------------
+	applyManualRawProps: function(rawProps) {
 
-	standardPropMap: {}, // ::defineStandardProps will always clone
-
-
-	/*
-	returns false on failure
-	*/
-	applyRawProps: function(rawProps) {
-		var standardPropMap = this.standardPropMap;
-		var miscProps = {};
-		var propName;
-
-		if (rawProps.id == null) {
-			this.id = EventDef.generateId();
-		}
-		else {
+		if (rawProps.id != null) {
 			this.id = EventDef.normalizeId((this.rawId = rawProps.id));
 		}
+		else {
+			this.id = EventDef.generateId();
+		}
 
-		// can make DRY with EventSource
+		// TODO: converge with EventSource
 		if ($.isArray(rawProps.className)) {
 			this.className = rawProps.className;
 		}
-		else if (typeof rawProps.className === 'string') {
+		if (typeof rawProps.className === 'string') {
 			this.className = rawProps.className.split(/\s+/);
 		}
 
-		for (propName in rawProps) {
-			if (propName in standardPropMap) {
-				if (standardPropMap[propName] === true) { // copy verbatim?
-					this[propName] = rawProps[propName];
-				}
-			}
-			else {
-				miscProps[propName] = rawProps[propName];
-			}
-		}
-
-		this.miscProps = miscProps;
-
 		return true;
+	},
+
+
+	applyOtherRawProps: function(rawProps) {
+		this.miscProps = rawProps;
 	}
 
 });
 
+// finish initializing the mixin
+EventDef.allowRawProps = ParsableModelMixin_allowRawProps;
+EventDef.copyVerbatimStandardProps = ParsableModelMixin_copyVerbatimStandardProps;
 
-// ID
+
+// IDs
 // ---------------------------------------------------------------------------------------------------------------------
+// TODO: converge with EventSource
 
 
 EventDef.uuid = 0;
@@ -189,63 +174,11 @@ EventDef.generateId = function() {
 };
 
 
-// Standard Prop *Parsing* System, for class self-definition
-// ---------------------------------------------------------------------------------------------------------------------
-
-
-EventDef.defineStandardProps = function(propDefs) {
-	var proto = this.prototype;
-
-	proto.standardPropMap = Object.create(proto.standardPropMap);
-
-	copyOwnProps(propDefs, proto.standardPropMap);
-};
-
-
-EventDef.copyVerbatimStandardProps = function(src, dest) {
-	var map = this.prototype.standardPropMap;
-	var propName;
-
-	for (propName in map) {
-		if (
-			src[propName] != null && // in the src object?
-			map[propName] === true // false means "copy verbatim"
-		) {
-			dest[propName] = src[propName];
-		}
-	}
-};
-
-
 // Parsing
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.parse = function(rawInput, source) {
-	var def = new this(source);
-	var calendarTransform = source.calendar.opt('eventDataTransform');
-	var sourceTransform = source.eventDataTransform;
-
-	if (calendarTransform) {
-		rawInput = calendarTransform(rawInput);
-	}
-	if (sourceTransform) {
-		rawInput = sourceTransform(rawInput);
-	}
-
-	if (def.applyRawProps(rawInput) === false) {
-		return false;
-	}
-
-	return def;
-};
-
-
-// Definitions for this abstract EventDef class
-// ---------------------------------------------------------------------------------------------------------------------
-
-
-EventDef.defineStandardProps({
+EventDef.allowRawProps({
 	// not automatically assigned (`false`)
 	id: false,
 	className: false,
@@ -260,9 +193,29 @@ EventDef.defineStandardProps({
 	editable: true,
 	startEditable: true,
 	durationEditable: true,
-	resourceEditable: true,
+	//resourceEditable: true,
 	color: true,
 	backgroundColor: true,
 	borderColor: true,
 	textColor: true
 });
+
+
+EventDef.parse = function(rawInput, source) {
+	var def = new this(source);
+	var calendarTransform = source.calendar.opt('eventDataTransform');
+	var sourceTransform = source.eventDataTransform;
+
+	if (calendarTransform) {
+		rawInput = calendarTransform(rawInput);
+	}
+	if (sourceTransform) {
+		rawInput = sourceTransform(rawInput);
+	}
+
+	if (def.applyRawProps(rawInput)) {
+		return def;
+	}
+
+	return false;
+};

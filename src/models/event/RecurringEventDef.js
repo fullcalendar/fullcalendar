@@ -110,7 +110,7 @@ var RecurringEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-RecurringEventDef.defineStandardProps({
+RecurringEventDef.allowRawProps({ // false = manually process
 	start: false,
 	end: false,
 	dow: false

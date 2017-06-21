@@ -3,7 +3,7 @@ var EventSource = Class.extend(ParsableModelMixin, {
 
 	calendar: null,
 
-	id: null,
+	id: null, // can stay null
 	uid: null,
 	color: null,
 	backgroundColor: null,
@@ -63,6 +63,24 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		}
 
 		return eventDefs;
+	},
+
+
+	applyManualRawProps: function(rawProps) {
+
+		if (rawProps.id != null) {
+			this.id = EventSource.normalizeId(rawProps.id);
+		}
+
+		// TODO: converge with EventDef
+		if ($.isArray(rawProps.className)) {
+			this.className = rawProps.className;
+		}
+		else if (typeof rawProps.className === 'string') {
+			this.className = rawProps.className.split(/\s+/);
+		}
+
+		return true;
 	}
 
 });
@@ -70,6 +88,11 @@ var EventSource = Class.extend(ParsableModelMixin, {
 
 // finish initializing the mixin
 EventSource.allowRawProps = ParsableModelMixin_allowRawProps;
+
+
+// IDs
+// ---------------------------------------------------------------------------------------------------------------------
+// TODO: converge with EventDef
 
 
 EventSource.uuid = 0;

@@ -49,8 +49,8 @@ var SingleEventDef = EventDef.extend({
 	/*
 	NOTE: if super-method fails, should still attempt to apply
 	*/
-	applyRawProps: function(rawProps) {
-		var superSuccess = EventDef.prototype.applyRawProps.apply(this, arguments);
+	applyManualRawProps: function(rawProps) {
+		var superSuccess = EventDef.prototype.applyManualRawProps.apply(this, arguments);
 		var dateProfile = EventDateProfile.parse(rawProps, this.source); // returns null on failure
 
 		if (dateProfile) {
@@ -70,7 +70,7 @@ var SingleEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-SingleEventDef.defineStandardProps({
+SingleEventDef.allowRawProps({ // false = manually process
 	start: false,
 	date: false, // alias for 'start'
 	end: false,
