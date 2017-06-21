@@ -157,6 +157,29 @@ var GcalEventSource = EventSource.extend({
 
 	getPrimitive: function() {
 		return this.googleCalendarId;
+	},
+
+
+	applyManualRawProps: function(rawProps) {
+		var superSuccess = EventSource.prototype.applyManualRawProps.apply(this, arguments);
+		var googleCalendarId = rawProps.googleCalendarId;
+
+		if (googleCalendarId == null && rawProps.url) {
+			googleCalendarId = parseGoogleCalendarId(rawProps.url);
+		}
+
+		if (googleCalendarId != null) {
+			this.googleCalendarId = googleCalendarId;
+
+			return superSuccess;
+		}
+
+		return false;
+	},
+
+
+	applyOtherRawProps: function(rawProps) {
+		this.ajaxSettings = rawProps;
 	}
 
 });
@@ -165,36 +188,32 @@ var GcalEventSource = EventSource.extend({
 GcalEventSource.API_BASE = 'https://www.googleapis.com/calendar/v3/calendars';
 
 
+GcalEventSource.allowRawProps({
+	// manually process...
+	url: false,
+	googleCalendarId: false,
+
+	// automatically transfer...
+	googleCalendarApiKey: true,
+	googleCalendarError: true
+});
+
+
 GcalEventSource.parse = function(rawInput, calendar) {
 	var rawProps;
-	var url;
-	var googleCalendarId;
-	var source;
 
-	if (typeof rawInput === 'string') {
-		url = rawInput;
-		rawProps = {};
+	if (typeof rawInput === 'object') { // long form. might fail in applyManualRawProps
+		rawProps = rawInput;
 	}
-	else if (typeof rawInput === 'object') {
-		rawProps = $.extend({}, rawInput); // clone
-		url = pluckProp(rawProps, 'url');
-		googleCalendarId = pluckProp(rawProps, 'googleCalendarId');
+	else if (typeof rawInput === 'string') { // short form
+		rawProps = { url: rawInput }; // url will be parsed with parseGoogleCalendarId
 	}
 
-	if (!googleCalendarId && url) {
-		googleCalendarId = parseGoogleCalendarId(url);
+	if (rawProps) {
+		return EventSource.parse.call(this, rawProps, calendar);
 	}
 
-	if (googleCalendarId) {
-		source = EventSource.parseAndPluck.call(this, rawProps, calendar);
-
-		source.googleCalendarId = googleCalendarId;
-		source.googleCalendarApiKey = pluckProp(rawProps, 'googleCalendarApiKey');
-		source.googleCalendarError = pluckProp(rawProps, 'googleCalendarError');
-		source.ajaxSettings = rawProps; // remainder
-
-		return source;
-	}
+	return false;
 };
 
 

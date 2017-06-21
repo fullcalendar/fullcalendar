@@ -99,6 +99,13 @@ var JsonFeedEventSource = EventSource.extend({
 
 	getPrimitive: function() {
 		return this.ajaxSettings.url;
+	},
+
+
+	applyOtherRawProps: function(rawProps) {
+		EventSource.prototype.applyOtherRawProps.apply(this, arguments);
+
+		this.ajaxSettings = rawProps;
 	}
 
 });
@@ -110,27 +117,30 @@ JsonFeedEventSource.AJAX_DEFAULTS = {
 };
 
 
+JsonFeedEventSource.allowRawProps({
+	// automatically transfer (true)...
+	startParam: true,
+	endParam: true,
+	timezoneParam: true
+});
+
+
 JsonFeedEventSource.parse = function(rawInput, calendar) {
 	var rawProps;
-	var source;
 
-	if (typeof rawInput === 'string') {
-		rawProps =  { url: rawInput };
+	// normalize raw input
+	if (typeof rawInput.url === 'string') { // extended form
+		rawProps = rawInput;
 	}
-	else if (typeof rawInput.url === 'string') {
-		rawProps = $.extend({}, rawInput); // copy
+	else if (typeof rawInput === 'string') { // short form
+		rawProps = { url: rawInput }; // will end up in ajaxSettings
 	}
 
 	if (rawProps) {
-		source = EventSource.parseAndPluck.call(this, rawProps, calendar);
-
-		source.startParam = pluckProp(rawProps, 'startParam');
-		source.endParam = pluckProp(rawProps, 'endParam');
-		source.timezoneParam = pluckProp(rawProps, 'timezoneParam');
-		source.ajaxSettings = rawProps; // remainder
-
-		return source;
+		return EventSource.parse.call(this, rawProps, calendar);
 	}
+
+	return false;
 };
 
 

@@ -23,31 +23,41 @@ var FuncEventSource = EventSource.extend({
 
 	getPrimitive: function() {
 		return this.func;
+	},
+
+
+	applyManualRawProps: function(rawProps) {
+		var superSuccess = EventSource.prototype.applyManualRawProps.apply(this, arguments);
+
+		this.func = rawProps.events;
+
+		return superSuccess;
 	}
 
 });
 
 
+FuncEventSource.allowRawProps({
+	events: false // don't automatically transfer
+});
+
+
 FuncEventSource.parse = function(rawInput, calendar) {
-	var func;
-	var rawOtherProps;
-	var source;
+	var rawProps;
 
-	if ($.isFunction(rawInput)) {
-		func = rawInput;
-		rawOtherProps = {};
+	// normalize raw input
+	if ($.isFunction(rawInput.events)) { // extended form
+		rawProps = rawInput;
 	}
-	else if ($.isFunction(rawInput.events)) {
-		rawOtherProps = $.extend({}, rawInput); // copy
-		func = pluckProp(rawOtherProps, 'events');
+	else if ($.isFunction(rawInput)) { // short form
+		rawProps = { events: rawInput };
 	}
 
-	if (func) {
-		source = EventSource.parseAndPluck.call(this, rawOtherProps, calendar);
-		source.func = func;
-
-		return source;
+	if (rawProps) {
+		return EventSource.parse.call(this, rawProps, calendar);
 	}
+
+	return false;
 };
 
 

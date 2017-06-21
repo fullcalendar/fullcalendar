@@ -63,6 +63,58 @@ var EventSource = Class.extend({
 		}
 
 		return eventDefs;
+	},
+
+
+	standardPropMap: {}, // will be cloned by allowRawProps
+
+
+	/*
+	Returns true/false for success
+	*/
+	applyRawProps: function(rawProps) {
+		var standardPropMap = this.standardPropMap;
+		var manualProps = {};
+		var otherProps = {};
+		var propName;
+
+		for (propName in rawProps) {
+			if (standardPropMap[propName] === true) { // copy automatically
+				this[propName] = rawProps[propName];
+			}
+			else if (standardPropMap[propName] === false) {
+				manualProps[propName] = rawProps[propName];
+			}
+			else {
+				otherProps[propName] = rawProps[propName];
+			}
+		}
+
+		this.applyOtherRawProps(otherProps);
+
+		return this.applyManualRawProps(manualProps);
+	},
+
+
+	/*
+	If subclasses override, they must call this supermethod and return the boolean response.
+	*/
+	applyManualRawProps: function(rawProps) {
+		this.id = EventSource.normalizeId(rawProps.id);
+
+		if ($.isArray(rawProps.className)) {
+			this.className = rawProps.className;
+		}
+		if (typeof rawProps.className === 'string') {
+			this.className = rawProps.className.split(/\s+/);
+		}
+
+		return true;
+	},
+
+
+	applyOtherRawProps: function(rawProps) {
+		// subclasses can implement
 	}
 
 });
@@ -84,47 +136,49 @@ EventSource.normalizeId = function(id) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventSource.parse = function(rawInput, calendar) {
-	// subclasses must implement
+EventSource.allowRawProps = function(propDefs) {
+	var proto = this.prototype;
+
+	proto.standardPropMap = Object.create(proto.standardPropMap);
+
+	copyOwnProps(propDefs, proto.standardPropMap);
 };
 
 
-EventSource.parseAndPluck = function(rawProps, calendar) {
+EventSource.allowRawProps({
+	// manually process...
+	id: false,
+	className: false,
+
+	// automatically transfer...
+	color: true,
+	backgroundColor: true,
+	borderColor: true,
+	textColor: true,
+	editable: true,
+	startEditable: true,
+	durationEditable: true,
+	rendering: true,
+	overlap: true,
+	constraint: true,
+	allDayDefault: true,
+	eventDataTransform: true
+});
+
+
+/*
+rawInput can be any data type!
+*/
+EventSource.parse = function(rawInput, calendar) {
 	var source = new this(calendar);
-	var members = pluckProps(rawProps, [
-		'id',
-		'color',
-		'backgroundColor',
-		'borderColor',
-		'textColor',
-		'className',
-		'editable',
-		'startEditable',
-		'durationEditable',
-		'resourceEditable',
-		'rendering',
-		'overlap',
-		'constraint',
-		'allDayDefault',
-		'eventDataTransform'
-	]);
 
-	// post-process some soon-to-be member variables...
-
-	members.id = EventSource.normalizeId(members.id);
-
-	// can make DRY with EventDef
-	if (typeof members.className === 'string') {
-		members.className = members.className.split(/\s+/);
-	}
-	else if (!$.isArray(members.className)) {
-		delete members.className; // don't overwrite the empty array
+	if (typeof rawInput === 'object') {
+		if (source.applyRawProps(rawInput)) {
+			return source;
+		}
 	}
 
-	// apply the member variables
-	$.extend(source, members);
-
-	return source;
+	return false;
 };
 
 

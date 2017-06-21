@@ -56,31 +56,41 @@ var ArrayEventSource = EventSource.extend({
 
 	getPrimitive: function() {
 		return this.rawEventDefs;
+	},
+
+
+	applyManualRawProps: function(rawProps) {
+		var superSuccess = EventSource.prototype.applyManualRawProps.apply(this, arguments);
+
+		this.setRawEventDefs(rawProps.events);
+
+		return superSuccess;
 	}
 
 });
 
 
+ArrayEventSource.allowRawProps({
+	events: false // don't automatically transfer
+});
+
+
 ArrayEventSource.parse = function(rawInput, calendar) {
-	var rawEventDefs;
-	var rawOtherProps;
-	var source;
+	var rawProps;
 
-	if ($.isArray(rawInput)) {
-		rawEventDefs = rawInput;
-		rawOtherProps = {};
+	// normalize raw input
+	if ($.isArray(rawInput.events)) { // extended form
+		rawProps = rawInput;
 	}
-	else if ($.isArray(rawInput.events)) {
-		rawOtherProps = $.extend({}, rawInput); // copy
-		rawEventDefs = pluckProp(rawOtherProps, 'events');
+	else if ($.isArray(rawInput)) { // short form
+		rawProps = { events: rawInput };
 	}
 
-	if (rawEventDefs) {
-		source = EventSource.parseAndPluck.call(this, rawOtherProps, calendar);
-		source.setRawEventDefs(rawEventDefs);
-
-		return source;
+	if (rawProps) {
+		return EventSource.parse.call(this, rawProps, calendar);
 	}
+
+	return false;
 };
 
 
