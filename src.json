@@ -8,6 +8,7 @@
     "common/Class.js",
     "common/EmitterMixin.js",
     "common/ListenerMixin.js",
+    "common/ParsableModelMixin.js",
     "common/Model.js",
     "common/Promise.js",
     "common/TaskQueue.js",

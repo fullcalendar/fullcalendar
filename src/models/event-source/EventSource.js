@@ -1,5 +1,5 @@
 
-var EventSource = Class.extend({
+var EventSource = Class.extend(ParsableModelMixin, {
 
 	calendar: null,
 
@@ -63,61 +63,13 @@ var EventSource = Class.extend({
 		}
 
 		return eventDefs;
-	},
-
-
-	standardPropMap: {}, // will be cloned by allowRawProps
-
-
-	/*
-	Returns true/false for success
-	*/
-	applyRawProps: function(rawProps) {
-		var standardPropMap = this.standardPropMap;
-		var manualProps = {};
-		var otherProps = {};
-		var propName;
-
-		for (propName in rawProps) {
-			if (standardPropMap[propName] === true) { // copy automatically
-				this[propName] = rawProps[propName];
-			}
-			else if (standardPropMap[propName] === false) {
-				manualProps[propName] = rawProps[propName];
-			}
-			else {
-				otherProps[propName] = rawProps[propName];
-			}
-		}
-
-		this.applyOtherRawProps(otherProps);
-
-		return this.applyManualRawProps(manualProps);
-	},
-
-
-	/*
-	If subclasses override, they must call this supermethod and return the boolean response.
-	*/
-	applyManualRawProps: function(rawProps) {
-		this.id = EventSource.normalizeId(rawProps.id);
-
-		if ($.isArray(rawProps.className)) {
-			this.className = rawProps.className;
-		}
-		if (typeof rawProps.className === 'string') {
-			this.className = rawProps.className.split(/\s+/);
-		}
-
-		return true;
-	},
-
-
-	applyOtherRawProps: function(rawProps) {
-		// subclasses can implement
 	}
 
 });
+
+
+// finish initializing the mixin
+EventSource.allowRawProps = ParsableModelMixin_allowRawProps;
 
 
 EventSource.uuid = 0;
@@ -134,15 +86,6 @@ EventSource.normalizeId = function(id) {
 
 // Parsing
 // ---------------------------------------------------------------------------------------------------------------------
-
-
-EventSource.allowRawProps = function(propDefs) {
-	var proto = this.prototype;
-
-	proto.standardPropMap = Object.create(proto.standardPropMap);
-
-	copyOwnProps(propDefs, proto.standardPropMap);
-};
 
 
 EventSource.allowRawProps({
