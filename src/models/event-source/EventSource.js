@@ -13,7 +13,6 @@ var EventSource = Class.extend(ParsableModelMixin, {
 	editable: null,
 	startEditable: null,
 	durationEditable: null,
-	resourceEditable: null,
 	rendering: null,
 	overlap: null,
 	constraint: null,
