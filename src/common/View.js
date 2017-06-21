@@ -728,10 +728,11 @@ var View = FC.View = ChronoComponent.extend({
 			eventMutation,
 			this.calendar
 		);
+		var dateMutation = eventMutation.dateMutation;
 
 		this.triggerEventDrop(
 			eventManager.getEventInstancesWithId(eventDef.id)[0].toLegacy(),
-			eventMutation.dateMutation.dateDelta,
+			(dateMutation && dateMutation.dateDelta) || moment.duration(),
 			undoFunc,
 			el, ev
 		);

@@ -372,7 +372,7 @@ Grid.mixin({
 				footprint = hit.component.getSafeHitFootprint(hit);
 
 				if (origFootprint && footprint) {
-					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint);
+					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint, event);
 
 					if (eventDefMutation) {
 						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
@@ -500,7 +500,7 @@ Grid.mixin({
 
 
 	// DOES NOT consider overlap/constraint
-	computeEventDropMutation: function(startFootprint, endFootprint) {
+	computeEventDropMutation: function(startFootprint, endFootprint, legacyEvent) {
 		var date0 = startFootprint.unzonedRange.getStart();
 		var date1 = endFootprint.unzonedRange.getStart();
 		var clearEnd = false;
