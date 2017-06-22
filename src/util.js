@@ -891,36 +891,6 @@ function applyAll(functions, thisObj, args) {
 }
 
 
-function pluckProp(obj, propName) {
-	var res = null;
-
-	if (propName in obj) {
-		res = obj[propName];
-		delete obj[propName];
-	}
-
-	return res;
-}
-FC.pluckProp = pluckProp;
-
-
-function pluckProps(obj, propNames) {
-	var i, propName;
-	var res = {};
-
-	for (i = 0; i < propNames.length; i++) {
-		propName = propNames[i];
-
-		if (propName in obj) {
-			res[propName] = obj[propName];
-			delete obj[propName];
-		}
-	}
-
-	return res;
-}
-
-
 function removeMatching(array, testFunc) {
 	var removeCnt = 0;
 	var i = 0;

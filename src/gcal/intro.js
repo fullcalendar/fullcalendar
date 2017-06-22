@@ -22,5 +22,4 @@ var Promise = FC.Promise;
 var EventSource = FC.EventSource;
 var JsonFeedEventSource = FC.JsonFeedEventSource;
 var EventSourceParser = FC.EventSourceParser;
-var pluckProp = FC.pluckProp;
 var applyAll = FC.applyAll;
