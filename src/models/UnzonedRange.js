@@ -67,6 +67,14 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
+	containsDate: function(mom) { // TODO: rename
+		var ms = mom.valueOf();
+
+		return (this.startMs === null || ms >= this.startMs) &&
+			(this.endMs === null || ms < this.endMs);
+	},
+
+
 	intersectsWith: function(otherRange) {
 		return (this.endMs === null || otherRange.startMs === null || this.endMs > otherRange.startMs) &&
 			(this.startMs === null || otherRange.endMs === null || this.startMs < otherRange.endMs);

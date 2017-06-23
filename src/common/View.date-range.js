@@ -3,8 +3,10 @@ View.mixin({
 
 	// range the view is formally responsible for.
 	// for example, a month view might have 1st-31st, excluding padded dates
-	currentRange: null,
+	currentUnzonedRange: null,
 	currentRangeUnit: null, // name of largest unit being displayed, like "month" or "week"
+
+	isRangeAllDay: false,
 
 	// date range with a rendered skeleton
 	// includes not-active days that need some sort of DOM
@@ -27,8 +29,8 @@ View.mixin({
 	// DEPRECATED
 	start: null, // use activeRange.start
 	end: null, // use activeRange.end
-	intervalStart: null, // use currentRange.start
-	intervalEnd: null, // use currentRange.end
+	intervalStart: null, // use currentUnzonedRange.getStart
+	intervalEnd: null, // use currentUnzonedRange.getEnd
 
 
 	/* Date Range Computation
@@ -36,8 +38,9 @@ View.mixin({
 
 
 	setDateProfileForRendering: function(dateProfile) {
-		this.currentRange = dateProfile.currentRange;
+		this.currentUnzonedRange = new UnzonedRange(dateProfile.currentRange.start, dateProfile.currentRange.end);
 		this.currentRangeUnit = dateProfile.currentRangeUnit;
+		this.isRangeAllDay = dateProfile.isRangeAllDay;
 		this.renderRange = dateProfile.renderRange;
 		this.activeRange = dateProfile.activeRange;
 		this.validRange = dateProfile.validRange;
@@ -108,6 +111,7 @@ View.mixin({
 			validRange: validRange,
 			currentRange: currentInfo.range,
 			currentRangeUnit: currentInfo.unit,
+			isRangeAllDay: /^(year|month|week|day)$/.test(currentInfo.unit),
 			activeRange: activeRange,
 			renderRange: renderRange,
 			minTime: minTime,
@@ -285,7 +289,7 @@ View.mixin({
 
 
 	// Builds a normalized range object for the "visible" range,
-	// which is a way to define the currentRange and activeRange at the same time.
+	// which is a way to define the currentUnzonedRange and activeRange at the same time.
 	buildCustomVisibleRange: function(date) {
 		var visibleRange = this.getRangeOption(
 			'visibleRange',
@@ -341,8 +345,19 @@ View.mixin({
 	// Compute the number of the give units in the "current" range.
 	// Will return a floating-point number. Won't round.
 	currentRangeAs: function(unit) {
-		var currentRange = this.currentRange;
-		return currentRange.end.diff(currentRange.start, unit, true);
+		var currentUnzonedRange = this.currentUnzonedRange;
+
+		return moment.utc(currentUnzonedRange.endMs).diff(
+			moment.utc(currentUnzonedRange.startMs),
+			unit,
+			true
+		);
+	},
+
+
+	// For ChronoComponent::getDayClasses
+	isDateInOtherMonth: function(date) {
+		return false;
 	},
 
 

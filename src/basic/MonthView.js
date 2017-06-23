@@ -36,6 +36,11 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 	isFixedWeeks: function() {
 		return this.opt('fixedWeekCount');
+	},
+
+
+	isDateInOtherMonth: function(date) {
+		return date.month() !== moment.utc(this.currentUnzonedRange.startMs).month(); // TODO: optimize
 	}
 
 });

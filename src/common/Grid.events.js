@@ -896,7 +896,7 @@ Grid.mixin({
 
 		if (this.displayEventTime && range.start.hasTime()) {
 			if (displayEnd && range.end) {
-				return this.view.formatRange(range, formatStr);
+				return this.view.formatRange(range, false, formatStr); // allDay=false
 			}
 			else {
 				return range.start.format(formatStr);

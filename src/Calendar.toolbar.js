@@ -68,7 +68,7 @@ Calendar.mixin({
 		var nextInfo = view.buildNextDateProfile(this.currentDate);
 
 		this.toolbarsManager.proxyCall(
-			(todayInfo.isValid && !isDateWithinRange(now, view.currentRange)) ?
+			(todayInfo.isValid && !view.currentUnzonedRange.containsDate(now)) ?
 				'enableButton' :
 				'disableButton',
 			'today'

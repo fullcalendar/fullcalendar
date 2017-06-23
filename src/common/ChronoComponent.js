@@ -503,10 +503,10 @@ var ChronoComponent = Model.extend({
 	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
 	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
 	// The timezones of the dates within `range` will be respected.
-	formatRange: function(range, formatStr, separator) {
+	formatRange: function(range, isAllDay, formatStr, separator) {
 		var end = range.end;
 
-		if (!end.hasTime()) { // all-day?
+		if (isAllDay) {
 			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
 		}
 
@@ -531,10 +531,7 @@ var ChronoComponent = Model.extend({
 		else {
 			classes.push('fc-' + dayIDs[date.day()]);
 
-			if (
-				view.currentRangeAs('months') == 1 && // TODO: somehow get into MonthView
-				date.month() != view.currentRange.start.month()
-			) {
+			if (view.isDateInOtherMonth(date)) { // TODO: use ChronoComponent subclass somehow
 				classes.push('fc-other-month');
 			}
 

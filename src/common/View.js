@@ -149,7 +149,7 @@ var View = FC.View = ChronoComponent.extend({
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
 		if (/^(year|month)$/.test(this.currentRangeUnit)) {
-			range = this.currentRange;
+			range = this.currentUnzonedRange.getRange();
 		}
 		else { // for day units or smaller, use the actual day range
 			range = this.activeRange;
@@ -157,10 +157,12 @@ var View = FC.View = ChronoComponent.extend({
 
 		return this.formatRange(
 			{
-				// in case currentRange has a time, make sure timezone is correct
+				// in case currentRange has a time, make sure timezone is correct.
+				// TODO: make a utility for zoning an unzoned range.
 				start: this.calendar.applyTimezone(range.start),
 				end: this.calendar.applyTimezone(range.end)
 			},
+			this.isRangeAllDay,
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
 		);
