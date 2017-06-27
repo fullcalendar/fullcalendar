@@ -56,23 +56,13 @@ Calendar.defaults = {
 		day: 'day'
 	},
 
-	buttonIcons: {
-		prev: 'left-single-arrow',
-		next: 'right-single-arrow',
-		prevYear: 'left-double-arrow',
-		nextYear: 'right-double-arrow'
-	},
+	buttonIcons: {},
 
 	allDayText: 'all-day',
 	
 	// jquery-ui theming
 	theme: false,
-	themeButtonIcons: {
-		prev: 'circle-triangle-w',
-		next: 'circle-triangle-e',
-		prevYear: 'seek-prev',
-		nextYear: 'seek-next'
-	},
+	themeButtonIcons: {},
 
 	//eventResizableFromStart: false,
 	dragOpacity: .75,

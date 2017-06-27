@@ -18,6 +18,13 @@ var themes = {
 			buttonGroup: 'fc-button-group',
 			tableHeader: 'fc-widget-header',
 			tableContent: 'fc-widget-content'
+		},
+		iconClasses: {
+			close: 'fc-icon fc-icon-x',
+			prev: 'fc-icon fc-icon-left-single-arrow',
+			next: 'fc-icon fc-icon-right-single-arrow',
+			prevYear: 'fc-icon fc-icon-left-double-arrow',
+			nextYear: 'fc-icon fc-icon-right-double-arrow'
 		}
 	},
 	jQueryUI: {
@@ -39,6 +46,13 @@ var themes = {
 			buttonGroup: 'fc-button-group',
 			tableHeader: 'ui-widget-header',
 			tableContent: 'ui-widget-content'
+		},
+		iconClasses: {
+			close: 'ui-icon ui-icon-closethick',
+			prev: 'ui-icon ui-icon-circle-triangle-w',
+			next: 'ui-icon ui-icon-circle-triangle-e',
+			prevYear: 'ui-icon ui-icon-seek-prev',
+			nextYear: 'ui-icon ui-icon-seek-next'
 		}
 	},
 	bootstrap3: {
@@ -55,6 +69,13 @@ var themes = {
 			tableContent: 'panel-default',
 			tableGrid: 'table-bordered',
 			tableList: 'table'
+		},
+		iconClasses: {
+			close: 'fc-icon fc-icon-x',
+			prev: 'fc-icon fc-icon-left-single-arrow',
+			next: 'fc-icon fc-icon-right-single-arrow',
+			prevYear: 'fc-icon fc-icon-left-double-arrow',
+			nextYear: 'fc-icon fc-icon-right-double-arrow'
 		}
 	}
 };
@@ -76,5 +97,31 @@ FC.Theme = Class.extend({
 
 	getClass: function(key) {
 		return themes[this.theme].classes[key] || '';
+	},
+
+	getIconClass: function(buttonName) {
+		return themes[this.theme].iconClasses[buttonName] || '';
+	},
+
+	getIconClassWithOverride: function(buttonName, customButtonProps, calendar) {
+		if (this.theme === 'builtin') {
+			if (customButtonProps) {
+				return customButtonProps.icon;
+			} else if (!calendar.opt('buttonIcons')) {
+				return undefined;
+			} else if (calendar.opt('buttonIcons')[buttonName]) {
+				return 'fc-icon fc-icon-' + calendar.opt('buttonIcons')[buttonName];
+			}
+		} else if (this.theme === 'jQueryUI') {
+			if (customButtonProps) {
+				return customButtonProps.themeIcon;
+			} else if (!calendar.opt('themeButtonIcons')) {
+				return undefined;
+			} else if (calendar.opt('themeButtonIcons')[buttonName]) {
+				return 'ui-icon ui-icon-' + calendar.opt('themeButtonIcons')[buttonName];
+			}
+		}
+
+		return this.getIconClass(buttonName);
 	}
 });

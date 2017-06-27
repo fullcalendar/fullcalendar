@@ -74,8 +74,7 @@ function Toolbar(calendar, toolbarOptions) {
 					var buttonClick;
 					var overrideText; // text explicitly set by calendar's constructor options. overcomes icons
 					var defaultText;
-					var themeIcon;
-					var normalIcon;
+					var iconClass;
 					var innerHtml;
 					var classes;
 					var button; // the element
@@ -111,25 +110,13 @@ function Toolbar(calendar, toolbarOptions) {
 						}
 
 						if (buttonClick) {
-
-							themeIcon =
-								customButtonProps ?
-									customButtonProps.themeIcon :
-									calendar.opt('themeButtonIcons')[buttonName];
-
-							normalIcon =
-								customButtonProps ?
-									customButtonProps.icon :
-									calendar.opt('buttonIcons')[buttonName];
+							iconClass = calendar.theme.getIconClassWithOverride(buttonName, customButtonProps, calendar);
 
 							if (overrideText) {
 								innerHtml = htmlEscape(overrideText);
 							}
-							else if (themeIcon && calendar.opt('theme')) {
-								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
-							}
-							else if (normalIcon && !calendar.opt('theme')) {
-								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
+							else if (iconClass) {
+								innerHtml = "<span class='" + iconClass + "'></span>";
 							}
 							else {
 								innerHtml = htmlEscape(defaultText);

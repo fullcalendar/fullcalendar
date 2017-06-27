@@ -282,13 +282,10 @@ DayGrid.mixin({
 	// Builds the inner DOM contents of the segment popover
 	renderSegPopoverContent: function(row, col, segs) {
 		var view = this.view;
-		var isTheme = view.opt('theme');
 		var title = this.getCellDate(row, col).format(view.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.calendar.theme.getClass('popoverHeader') + '">' +
-				'<span class="fc-close ' +
-					(isTheme ? 'ui-icon ui-icon-closethick' : 'fc-icon fc-icon-x') +
-				'"></span>' +
+				'<span class="fc-close ' + view.calendar.theme.getIconClass('close') + '"></span>' +
 				'<span class="fc-title">' +
 					htmlEscape(title) +
 				'</span>' +
