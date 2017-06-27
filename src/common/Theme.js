@@ -77,6 +77,29 @@ var themes = {
 			prevYear: 'fc-icon fc-icon-left-double-arrow',
 			nextYear: 'fc-icon fc-icon-right-double-arrow'
 		}
+	},
+	bootstrap3_glyphicons: {
+		classes: {
+			listContent: 'panel-default',
+			popover: 'panel panel-default',
+			popoverHeader: 'panel-heading',
+			popoverContent: 'panel-body',
+			stateActive: 'active',
+			stateDisabled: 'disabled',
+			button: 'btn btn-default',
+			buttonGroup: 'btn-group',
+			tableHeader: 'panel-default',
+			tableContent: 'panel-default',
+			tableGrid: 'table-bordered',
+			tableList: 'table'
+		},
+		iconClasses: {
+			close: 'glyphicon glyphicon-remove',
+			prev: 'glyphicon glyphicon-chevron-left',
+			next: 'glyphicon glyphicon-chevron-right',
+			prevYear: 'glyphicon glyphicon-backward',
+			nextYear: 'glyphicon glyphicon-forward'
+		}
 	}
 };
 
