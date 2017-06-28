@@ -81,6 +81,11 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
+	equals: function(otherRange) { // needed?
+		return this.startMs === otherRange.startMs && this.endMs === otherRange.endMs;
+	},
+
+
 	// hopefully we'll remove these...
 
 	getStart: function() {

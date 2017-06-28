@@ -525,7 +525,7 @@ var ChronoComponent = Model.extend({
 		var classes = [];
 		var today;
 
-		if (!isDateWithinRange(date, view.activeRange)) {
+		if (!view.activeUnzonedRange.containsDate(date)) {
 			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
 		}
 		else {

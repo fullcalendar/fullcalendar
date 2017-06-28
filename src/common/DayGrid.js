@@ -141,7 +141,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	renderNumberCellHtml: function(date) {
 		var view = this.view;
 		var html = '';
-		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = view.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var isDayNumberVisible = view.dayNumbersVisible && isDateValid;
 		var classes;
 		var weekCalcFirstDoW;

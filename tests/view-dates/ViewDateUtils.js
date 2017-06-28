@@ -11,9 +11,10 @@ var ViewDateUtils = {
 
 	expectActiveRange: function(start, end) {
 		var currentView = currentCalendar.getView();
+		var activeRange = currentView.activeUnzonedRange.getZonedRange(currentCalendar, currentView.isRangeAllDay);
 
-		expect(currentView.activeRange.start).toEqualMoment(start);
-		expect(currentView.activeRange.end).toEqualMoment(end);
+		expect(activeRange.start).toEqualMoment(start);
+		expect(activeRange.end).toEqualMoment(end);
 	}
 
 };

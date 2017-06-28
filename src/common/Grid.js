@@ -162,12 +162,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	getSafeHitFootprint: function(hit) {
 		var footprint = this.getHitFootprint(hit);
 
-		if (
-			!isRangeWithinRange(
-				footprint.unzonedRange.getRange(),
-				this.view.activeRange
-			)
-		) {
+		if (!this.view.activeUnzonedRange.contains(footprint.unzonedRange)) {
 			return null;
 		}
 

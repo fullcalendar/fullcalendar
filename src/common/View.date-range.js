@@ -13,7 +13,7 @@ View.mixin({
 	renderUnzonedRange: null, // was renderRange
 
 	// dates that display events and accept drag-n-drop
-	activeRange: null,
+	activeUnzonedRange: null,
 
 	// constraint for where prev/next operations can go and where events can be dragged/resized to.
 	// an object with optional start and end properties.
@@ -24,11 +24,11 @@ View.mixin({
 
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
-	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeRange. Views must opt-in.
+	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
 
 	// DEPRECATED
-	start: null, // use activeRange.start
-	end: null, // use activeRange.end
+	start: null, // use activeUnzonedRange.getStart
+	end: null, // use activeUnzonedRange.getEnd
 	intervalStart: null, // use currentUnzonedRange.getStart
 	intervalEnd: null, // use currentUnzonedRange.getEnd
 
@@ -42,7 +42,7 @@ View.mixin({
 		this.currentRangeUnit = dateProfile.currentRangeUnit;
 		this.isRangeAllDay = dateProfile.isRangeAllDay;
 		this.renderUnzonedRange = new UnzonedRange(dateProfile.renderRange.start, dateProfile.renderRange.end);
-		this.activeRange = dateProfile.activeRange;
+		this.activeUnzonedRange = new UnzonedRange(dateProfile.activeRange.start, dateProfile.activeRange.end);
 		this.validRange = dateProfile.validRange;
 		this.dateIncrement = dateProfile.dateIncrement;
 		this.minTime = dateProfile.minTime;
