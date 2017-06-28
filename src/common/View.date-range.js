@@ -10,7 +10,7 @@ View.mixin({
 
 	// date range with a rendered skeleton
 	// includes not-active days that need some sort of DOM
-	renderRange: null,
+	renderUnzonedRange: null, // was renderRange
 
 	// dates that display events and accept drag-n-drop
 	activeRange: null,
@@ -41,7 +41,7 @@ View.mixin({
 		this.currentUnzonedRange = new UnzonedRange(dateProfile.currentRange.start, dateProfile.currentRange.end);
 		this.currentRangeUnit = dateProfile.currentRangeUnit;
 		this.isRangeAllDay = dateProfile.isRangeAllDay;
-		this.renderRange = dateProfile.renderRange;
+		this.renderUnzonedRange = new UnzonedRange(dateProfile.renderRange.start, dateProfile.renderRange.end);
 		this.activeRange = dateProfile.activeRange;
 		this.validRange = dateProfile.validRange;
 		this.dateIncrement = dateProfile.dateIncrement;

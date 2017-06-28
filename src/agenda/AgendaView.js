@@ -65,10 +65,10 @@ var AgendaView = FC.AgendaView = View.extend({
 	// Renders the view into `this.el`, which has already been assigned
 	renderDates: function() {
 
-		this.timeGrid.setRange(this.renderRange);
+		this.timeGrid.setRange(this.renderUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay));
 
 		if (this.dayGrid) {
-			this.dayGrid.setRange(this.renderRange);
+			this.dayGrid.setRange(this.renderUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay));
 		}
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
