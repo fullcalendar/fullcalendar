@@ -728,23 +728,11 @@ function constrainDate(date, range) {
 }
 
 
-function isDateWithinRange(date, range) {
-	return (!range.start || date >= range.start) &&
-		(!range.end || date < range.end);
-}
-
-
 // TODO: deal with repeat code in intersectRanges
 // constraintRange can have unspecified start/end, an open-ended range.
 function doRangesIntersect(subjectRange, constraintRange) {
 	return (!constraintRange.start || subjectRange.end >= constraintRange.start) &&
 		(!constraintRange.end || subjectRange.start < constraintRange.end);
-}
-
-
-function isRangeWithinRange(innerRange, outerRange) {
-	return (!outerRange.start || innerRange.start >= outerRange.start) &&
-		(!outerRange.end || innerRange.end <= outerRange.end);
 }
 
 

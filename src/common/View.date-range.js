@@ -10,14 +10,14 @@ View.mixin({
 
 	// date range with a rendered skeleton
 	// includes not-active days that need some sort of DOM
-	renderUnzonedRange: null, // was renderRange
+	renderUnzonedRange: null,
 
 	// dates that display events and accept drag-n-drop
 	activeUnzonedRange: null,
 
 	// constraint for where prev/next operations can go and where events can be dragged/resized to.
 	// an object with optional start and end properties.
-	validRange: null,
+	validUnzonedRange: null,
 
 	// how far the current date will move for a prev/next operation
 	dateIncrement: null,
@@ -43,7 +43,7 @@ View.mixin({
 		this.isRangeAllDay = dateProfile.isRangeAllDay;
 		this.renderUnzonedRange = new UnzonedRange(dateProfile.renderRange.start, dateProfile.renderRange.end);
 		this.activeUnzonedRange = new UnzonedRange(dateProfile.activeRange.start, dateProfile.activeRange.end);
-		this.validRange = dateProfile.validRange;
+		this.validUnzonedRange = new UnzonedRange(dateProfile.validRange.start, dateProfile.validRange.end);
 		this.dateIncrement = dateProfile.dateIncrement;
 		this.minTime = dateProfile.minTime;
 		this.maxTime = dateProfile.maxTime;
@@ -422,7 +422,7 @@ View.mixin({
 
 
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
-	// DOES NOT CONSIDER validRange!
+	// DOES NOT CONSIDER validUnzonedRange!
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)

@@ -1012,12 +1012,7 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (
-				!isRangeWithinRange(
-					eventFootprints[i].componentFootprint.unzonedRange.getRange(),
-					this.view.validRange
-				)
-			) {
+			if (!this.view.validUnzonedRange.contains(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}
@@ -1033,12 +1028,7 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (
-				!isRangeWithinRange(
-					eventFootprints[i].componentFootprint.unzonedRange.getRange(),
-					this.view.validRange
-				)
-			) {
+			if (!this.view.validUnzonedRange.contains(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}

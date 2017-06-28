@@ -507,11 +507,8 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 
 	isSelectionFootprintAllowed: function(componentFootprint) {
-		return isRangeWithinRange(
-			componentFootprint.unzonedRange.getRange(),
-			this.view.validRange
-		) &&
-		this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
+		return this.view.validUnzonedRange.contains(componentFootprint.unzonedRange) &&
+			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
 	},
 
 
