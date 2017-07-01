@@ -11,9 +11,10 @@ var RecurringEventDef = EventDef.extend({
 	},
 
 
-	buildInstances: function(start, end) {
+	buildInstances: function(unzonedRange) {
 		var calendar = this.source.calendar;
-		var date = start.clone();
+		var date = unzonedRange.getStart();
+		var end = unzonedRange.getEnd();
 		var instanceStart, instanceEnd;
 		var instances = [];
 

@@ -266,7 +266,7 @@ Calendar.prototype.parseEventDefToInstances = function(eventInput) {
 	}
 
 	if (eventPeriod) {
-		return eventDef.buildInstances(eventPeriod.start, eventPeriod.end);
+		return eventDef.buildInstances(new UnzonedRange(eventPeriod.start, eventPeriod.end));
 	}
 	else {
 		return [];

@@ -8,19 +8,18 @@ var MonthView = FC.MonthView = BasicView.extend({
 	// Computes the date range that will be rendered.
 	buildRenderRange: function() {
 		var renderUnzonedRange = BasicView.prototype.buildRenderRange.apply(this, arguments);
-		var start = renderUnzonedRange.getStart();
-		var end = renderUnzonedRange.getEnd();
+		var zonedRange = renderUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
 		var rowCnt;
 
 		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
 			rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-				end.diff(start, 'weeks', true) // dontRound=true
+				zonedRange.end.diff(zonedRange.start, 'weeks', true) // dontRound=true
 			);
-			end.add(6 - rowCnt, 'weeks');
+			zonedRange.end.add(6 - rowCnt, 'weeks');
 		}
 
-		return new UnzonedRange(start, end);
+		return new UnzonedRange(zonedRange.start, zonedRange.end);
 	},
 
 

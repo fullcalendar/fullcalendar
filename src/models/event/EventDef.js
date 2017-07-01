@@ -37,7 +37,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 	},
 
 
-	buildInstances: function(start, end) {
+	buildInstances: function(unzonedRange) {
 		// subclasses must implement
 	},
 

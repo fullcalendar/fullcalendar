@@ -5,7 +5,7 @@ function eventDefsToEventInstances(eventDefs, start, end) {
 
 	for (i = 0; i < eventDefs.length; i++) {
 		eventInstances.push.apply(eventInstances, // append
-			eventDefs[i].buildInstances(start, end)
+			eventDefs[i].buildInstances(new UnzonedRange(start, end))
 		);
 	}
 
