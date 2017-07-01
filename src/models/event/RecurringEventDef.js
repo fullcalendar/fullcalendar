@@ -23,6 +23,7 @@ var RecurringEventDef = EventDef.extend({
 			// if everyday, or this particular day-of-week
 			if (!this.dowHash || this.dowHash[date.day()]) {
 
+				// TODO: make these same zone as calendar?
 				instanceStart = date.clone();
 				instanceEnd = null;
 

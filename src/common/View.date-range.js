@@ -27,10 +27,10 @@ View.mixin({
 	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
 
 	// DEPRECATED
-	start: null, // use activeUnzonedRange.getStart
-	end: null, // use activeUnzonedRange.getEnd
-	intervalStart: null, // use currentUnzonedRange.getStart
-	intervalEnd: null, // use currentUnzonedRange.getEnd
+	start: null, // use activeUnzonedRange
+	end: null, // use activeUnzonedRange
+	intervalStart: null, // use currentUnzonedRange
+	intervalEnd: null, // use currentUnzonedRange
 
 
 	/* Date Range Computation
@@ -165,7 +165,7 @@ View.mixin({
 			unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount);
 		}
 		else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-			unit = computeGreatestUnit(zonedRange.getStart(), zonedRange.getEnd());
+			unit = computeGreatestUnit(unzonedRange.getStart(), unzonedRange.getEnd());
 		}
 		else {
 			duration = this.getFallbackDuration();
@@ -281,7 +281,7 @@ View.mixin({
 	buildCustomVisibleRange: function(date) {
 		var visibleUnzonedRange = this.getUnzonedRangeOption(
 			'visibleRange',
-			this.calendar.moment(date) // correct zone. also generates new obj that avoids mutations
+			this.calendar.applyTimezone(date) // correct zone. also generates new obj that avoids mutations
 		);
 
 		if (visibleUnzonedRange && (visibleUnzonedRange.startMs === null || visibleUnzonedRange.endMs === null)) {

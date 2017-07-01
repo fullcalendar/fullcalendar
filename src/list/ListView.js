@@ -68,12 +68,14 @@ var ListViewGrid = Grid.extend({
 	// slices by day
 	componentFootprintToSegs: function(footprint) {
 		var view = this.view;
-		var dayStart = this.start.clone().time(0); // timed, so segs get times!
+		var calendar = view.calendar;
+		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs).time(0); // timed, so segs get times!
+		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs);
 		var dayIndex = 0;
 		var seg;
 		var segs = [];
 
-		while (dayStart < this.end) {
+		while (dayStart < viewEnd) {
 
 			seg = intersectRanges(footprint.unzonedRange.getRange(), {
 				start: dayStart,
@@ -152,6 +154,7 @@ var ListViewGrid = Grid.extend({
 
 	// render the event segments in the view
 	renderSegList: function(allSegs) {
+		var calendar = this.view.calendar;
 		var segsByDay = this.groupSegsByDay(allSegs); // sparse array
 		var dayIndex;
 		var daySegs;
@@ -165,7 +168,7 @@ var ListViewGrid = Grid.extend({
 
 				// append a day header
 				tbodyEl.append(this.dayHeaderHtml(
-					this.start.clone().add(dayIndex, 'days')
+					calendar.msToMoment(this.unzonedRange.startMs).add(dayIndex, 'days')
 				));
 
 				this.sortEventSegs(daySegs);

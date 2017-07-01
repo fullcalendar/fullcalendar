@@ -370,15 +370,16 @@ var agendaTimeGridMethods = {
 	// Generates the HTML that will go before the day-of week header cells
 	renderHeadIntroHtml: function() {
 		var view = this.view;
+		var weekStart = view.calendar.msToUtcMoment(this.unzonedRange.startMs);
 		var weekText;
 
 		if (this.opt('weekNumbers')) {
-			weekText = this.start.format(this.opt('smallWeekFormat'));
+			weekText = weekStart.format(this.opt('smallWeekFormat'));
 
 			return '' +
 				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
 					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-						{ date: this.start, type: 'week', forceOff: this.colCnt > 1 },
+						{ date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
 						htmlEscape(weekText) // inner HTML
 					) +
 				'</th>';

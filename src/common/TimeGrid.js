@@ -67,6 +67,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 	renderSlatRowHtml: function() {
 		var view = this.view;
+		var calendar = view.calendar;
 		var isRTL = this.isRTL;
 		var html = '';
 		var slotTime = moment.duration(+this.view.minTime); // wish there was .clone() for durations
@@ -76,7 +77,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.view.maxTime) {
-			slotDate = this.unzonedRange.getStart().time(slotTime); // will have locale problems :(
+			slotDate = calendar.msToUtcMoment(this.unzonedRange.startMs).time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =

@@ -3,18 +3,20 @@ var ViewDateUtils = {
 
 	expectRenderRange: function(start, end) {
 		var currentView = currentCalendar.getView();
-		var renderRange = currentView.renderUnzonedRange.getZonedRange(currentCalendar, currentView.isRangeAllDay);
+		var renderRangeStart = currentCalendar.msToUtcMoment(currentView.renderUnzonedRange.startMs, currentView.isRangeAllDay);
+		var renderRangeEnd = currentCalendar.msToUtcMoment(currentView.renderUnzonedRange.endMs, currentView.isRangeAllDay);
 
-		expect(renderRange.start).toEqualMoment(start);
-		expect(renderRange.end).toEqualMoment(end);
+		expect(renderRangeStart).toEqualMoment(start);
+		expect(renderRangeEnd).toEqualMoment(end);
 	},
 
 	expectActiveRange: function(start, end) {
 		var currentView = currentCalendar.getView();
-		var activeRange = currentView.activeUnzonedRange.getZonedRange(currentCalendar, currentView.isRangeAllDay);
+		var activeRangeStart = currentCalendar.msToUtcMoment(currentView.activeUnzonedRange.startMs, currentView.isRangeAllDay);
+		var activeRangeEnd = currentCalendar.msToUtcMoment(currentView.activeUnzonedRange.endMs, currentView.isRangeAllDay);
 
-		expect(activeRange.start).toEqualMoment(start);
-		expect(activeRange.end).toEqualMoment(end);
+		expect(activeRangeStart).toEqualMoment(start);
+		expect(activeRangeEnd).toEqualMoment(end);
 	}
 
 };
