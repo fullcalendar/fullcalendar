@@ -80,6 +80,7 @@ View.mixin({
 	// Optional direction param indicates whether the date is being incremented/decremented
 	// from its previous value. decremented = -1, incremented = 1 (default).
 	buildDateProfile: function(date, direction, forceToValid) {
+		var dateHadTime = date.hasTime();
 		var validUnzonedRange = this.buildValidRange();
 		var minTime = null;
 		var maxTime = null;
@@ -90,6 +91,7 @@ View.mixin({
 
 		if (forceToValid) {
 			date = validUnzonedRange.constrainDate(date);
+			date = massageMoment(date, this.calendar, !dateHadTime);
 		}
 
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
@@ -105,7 +107,11 @@ View.mixin({
 		activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime);
 
 		activeUnzonedRange = activeUnzonedRange.constrainTo(validUnzonedRange);
-		date = activeUnzonedRange.constrainDate(date);
+
+		if (activeUnzonedRange) {
+			date = activeUnzonedRange.constrainDate(date);
+			date = massageMoment(date, this.calendar, !dateHadTime);
+		}
 
 		// it's invalid if the originally requested date is not contained,
 		// or if the range is completely outside of the valid range.
@@ -157,7 +163,8 @@ View.mixin({
 			unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount);
 		}
 		else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-			unit = computeGreatestUnit(unzonedRange.start, unzonedRange.end);
+			var zonedRange = unzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+			unit = computeGreatestUnit(zonedRange.start, zonedRange.end);
 		}
 		else {
 			duration = this.getFallbackDuration();
@@ -177,7 +184,6 @@ View.mixin({
 	// Returns a new activeUnzonedRange to have time values (un-ambiguate)
 	// minTime or maxTime causes the range to expand.
 	adjustActiveRange: function(unzonedRange, minTime, maxTime) {
-		var hasSpecialTimes = false;
 		var start = unzonedRange.getStart();
 		var end = unzonedRange.getEnd();
 
@@ -185,21 +191,10 @@ View.mixin({
 
 			if (minTime < 0) {
 				start.time(0).add(minTime);
-				hasSpecialTimes = true;
 			}
 
 			if (maxTime > 24 * 60 * 60 * 1000) { // beyond 24 hours?
 				end.time(maxTime - (24 * 60 * 60 * 1000));
-				hasSpecialTimes = true;
-			}
-
-			if (hasSpecialTimes) {
-				if (!start.hasTime()) {
-					start.time(0);
-				}
-				if (!end.hasTime()) {
-					end.time(0);
-				}
 			}
 		}
 

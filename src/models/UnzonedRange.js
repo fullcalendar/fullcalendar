@@ -136,6 +136,10 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 			start.stripTime();
 			end.stripTime();
 		}
+		else if (calendar.getIsAmbigTimezone()) {
+			start.stripZone();
+			end.stripZone();
+		}
 
 		start = calendar.moment(start);
 		end = calendar.moment(end);
@@ -144,6 +148,22 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	}
 
 });
+
+
+function massageMoment(inputDate, calendar, isAllDay) {
+	var date = FC.moment.utc(inputDate.valueOf());
+
+	if (isAllDay) {
+		date.stripTime();
+	}
+	else if (calendar.getIsAmbigTimezone()) {
+		date.stripZone();
+	}
+
+	date = calendar.moment(date);
+
+	return date;
+}
 
 
 /*

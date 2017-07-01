@@ -257,7 +257,10 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	fetchInitialEvents: function(dateProfile) {
-		var zonedRange = dateProfile.activeUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+		var zonedRange = dateProfile.activeUnzonedRange.getZonedRange(
+			this.calendar,
+			dateProfile.isRangeAllDay && !this.usesMinMaxTime
+		);
 
 		return this.calendar.requestEvents(zonedRange.start, zonedRange.end);
 	},
