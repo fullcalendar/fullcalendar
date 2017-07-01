@@ -78,7 +78,7 @@ View.mixin({
 	// Optional direction param indicates whether the date is being incremented/decremented
 	// from its previous value. decremented = -1, incremented = 1 (default).
 	buildDateProfile: function(date, direction, forceToValid) {
-		var dateHadTime = date.hasTime();
+		var isDateAllDay = !date.hasTime();
 		var validUnzonedRange = this.buildValidRange();
 		var minTime = null;
 		var maxTime = null;
@@ -88,8 +88,10 @@ View.mixin({
 		var isValid;
 
 		if (forceToValid) {
-			date = validUnzonedRange.constrainDate(date);
-			date = massageMoment(date, this.calendar, !dateHadTime);
+			date = this.calendar.msToUtcMoment(
+				validUnzonedRange.constrainDate(date.valueOf()),
+				isDateAllDay
+			);
 		}
 
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
@@ -107,8 +109,10 @@ View.mixin({
 		activeUnzonedRange = activeUnzonedRange.constrainTo(validUnzonedRange);
 
 		if (activeUnzonedRange) {
-			date = activeUnzonedRange.constrainDate(date);
-			date = massageMoment(date, this.calendar, !dateHadTime);
+			date = this.calendar.msToUtcMoment(
+				activeUnzonedRange.constrainDate(date.valueOf()),
+				isDateAllDay
+			);
 		}
 
 		// it's invalid if the originally requested date is not contained,

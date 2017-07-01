@@ -93,10 +93,8 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 
 	// If the given date is not within the given range, move it inside.
 	// (If it's past the end, make it one millisecond before the end).
-	// expects a UTC or ambig-time/timezone moment, or MS-time.
-	// returns a UTC moment.
-	constrainDate: function(date) {
-		var ms = date.valueOf();
+	// expects a MS-time, returns a MS-time.
+	constrainDate: function(ms) {
 
 		if (this.startMs !== null && ms < this.startMs) {
 			ms = this.startMs;
@@ -106,7 +104,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 			ms = this.endMs - 1;
 		}
 
-		return FC.moment.utc(ms);
+		return ms;
 	},
 
 
@@ -129,22 +127,6 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	}
 
 });
-
-
-function massageMoment(inputDate, calendar, isAllDay) {
-	var date = FC.moment.utc(inputDate.valueOf());
-
-	if (isAllDay) {
-		date.stripTime();
-	}
-	else if (calendar.getIsAmbigTimezone()) {
-		date.stripZone();
-	}
-
-	date = calendar.moment(date);
-
-	return date;
-}
 
 
 /*
