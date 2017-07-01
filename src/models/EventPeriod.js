@@ -150,7 +150,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var eventDefsById = this.eventDefsById;
 		var eventDefId = eventDef.id;
 		var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
-		var eventInstances = eventDef.buildInstances(this.start, this.end);
+		var eventInstances = eventDef.buildInstances(new UnzonedRange(this.start, this.end));
 		var i;
 
 		eventDefs.push(eventDef);
