@@ -98,6 +98,35 @@ Calendar.mixin({
 	},
 
 
+	msToMoment: function(ms, forceAllDay) {
+		var mom = FC.moment.utc(ms);
+
+		if (forceAllDay) {
+			mom.stripTime();
+		}
+		else {
+			mom = this.applyTimezone(mom); // may or may not apply locale
+		}
+
+		this.localizeMoment(mom);
+
+		return mom;
+	},
+
+
+	msToUtcMoment: function(ms, forceAllDay) {
+		var mom = FC.moment.utc(ms);
+
+		if (forceAllDay) {
+			mom.stripTime();
+		}
+
+		this.localizeMoment(mom);
+
+		return mom;
+	},
+
+
 	// Updates the given moment's locale settings to the current calendar locale settings.
 	localizeMoment: function(mom) {
 		mom._locale = this.localeData;

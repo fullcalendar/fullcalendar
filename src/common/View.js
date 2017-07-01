@@ -145,22 +145,20 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
-		var range;
+		var unzonedRange;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
 		if (/^(year|month)$/.test(this.currentRangeUnit)) {
-			range = this.currentUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+			unzonedRange = this.currentUnzonedRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			range = this.activeUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+			unzonedRange = this.activeUnzonedRange;
 		}
 
 		return this.formatRange(
 			{
-				// in case currentUnzonedRange has a time, make sure timezone is correct.
-				// TODO: make a utility for zoning an unzoned range.
-				start: this.calendar.applyTimezone(range.start),
-				end: this.calendar.applyTimezone(range.end)
+				start: this.calendar.msToMoment(unzonedRange.startMs, this.isRangeAllDay),
+				end: this.calendar.msToMoment(unzonedRange.endMs, this.isRangeAllDay)
 			},
 			this.isRangeAllDay,
 			this.opt('titleFormat') || this.computeTitleFormat(),
@@ -257,12 +255,13 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	fetchInitialEvents: function(dateProfile) {
-		var zonedRange = dateProfile.activeUnzonedRange.getZonedRange(
-			this.calendar,
-			dateProfile.isRangeAllDay && !this.usesMinMaxTime
-		);
+		var calendar = this.calendar;
+		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
 
-		return this.calendar.requestEvents(zonedRange.start, zonedRange.end);
+		return calendar.requestEvents(
+			calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
+			calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
+		);
 	},
 
 

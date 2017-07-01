@@ -38,6 +38,8 @@ View.mixin({
 
 
 	setDateProfileForRendering: function(dateProfile) {
+		var calendar = this.calendar;
+
 		this.currentUnzonedRange = dateProfile.currentUnzonedRange;
 		this.currentRangeUnit = dateProfile.currentRangeUnit;
 		this.isRangeAllDay = dateProfile.isRangeAllDay;
@@ -49,14 +51,10 @@ View.mixin({
 		this.maxTime = dateProfile.maxTime;
 
 		// DEPRECATED, but we need to keep it updated...
-
-		var zonedActiveRange = dateProfile.activeUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
-		this.start = zonedActiveRange.start;
-		this.end = zonedActiveRange.end;
-
-		var zonedCurrentRange = dateProfile.currentUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
-		this.intervalStart = zonedCurrentRange.start;
-		this.intervalEnd = zonedCurrentRange.end;
+		this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, this.isRangeAllDay);
+		this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, this.isRangeAllDay);
+		this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, this.isRangeAllDay);
+		this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, this.isRangeAllDay);
 	},
 
 
@@ -163,8 +161,7 @@ View.mixin({
 			unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount);
 		}
 		else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-			var zonedRange = unzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
-			unit = computeGreatestUnit(zonedRange.start, zonedRange.end);
+			unit = computeGreatestUnit(zonedRange.getStart(), zonedRange.getEnd());
 		}
 		else {
 			duration = this.getFallbackDuration();

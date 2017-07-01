@@ -45,19 +45,20 @@ var BasicView = FC.BasicView = View.extend({
 	// Computes the date range that will be rendered.
 	buildRenderRange: function(currentUnzonedRange, currentRangeUnit) {
 		var renderUnzonedRange = View.prototype.buildRenderRange.apply(this, arguments); // an UnzonedRange
-		var zonedRange = renderUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, this.isRangeAllDay);
+		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, this.isRangeAllDay);
 
 		// year and month views should be aligned with weeks. this is already done for week
 		if (/^(year|month)$/.test(currentRangeUnit)) {
-			zonedRange.start.startOf('week');
+			start.startOf('week');
 
 			// make end-of-week if not already
-			if (zonedRange.end.weekday()) {
-				zonedRange.end.add(1, 'week').startOf('week'); // exclusively move backwards
+			if (end.weekday()) {
+				end.add(1, 'week').startOf('week'); // exclusively move backwards
 			}
 		}
 
-		return this.trimHiddenDays(new UnzonedRange(zonedRange.start, zonedRange.end));
+		return this.trimHiddenDays(new UnzonedRange(start, end));
 	},
 
 

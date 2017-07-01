@@ -126,25 +126,6 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 
 	getRange: function() {
 		return { start: this.getStart(), end: this.getEnd() };
-	},
-
-	getZonedRange: function(calendar, isAllDay) {
-		var start = FC.moment.utc(this.startMs);
-		var end = FC.moment.utc(this.endMs);
-
-		if (isAllDay) {
-			start.stripTime();
-			end.stripTime();
-		}
-		else if (calendar.getIsAmbigTimezone()) {
-			start.stripZone();
-			end.stripZone();
-		}
-
-		start = calendar.moment(start);
-		end = calendar.moment(end);
-
-		return { start: start, end: end };
 	}
 
 });
