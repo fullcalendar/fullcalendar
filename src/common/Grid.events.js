@@ -151,8 +151,7 @@ Grid.mixin({
 		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
 			wholeDay,
 			businessHourDef,
-			this.start,
-			this.end
+			new UnzonedRange(this.start, this.end)
 		);
 
 		if (eventInstanceGroup) {

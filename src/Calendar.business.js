@@ -25,8 +25,7 @@ Calendar.prototype._buildCurrentBusinessFootprints = function(wholeDay, business
 		businessInstanceGroup = this.buildBusinessInstanceGroup(
 			wholeDay,
 			businessDefInput,
-			eventPeriod.start,
-			eventPeriod.end
+			new UnzonedRange(eventPeriod.start, eventPeriod.end)
 		);
 
 		if (businessInstanceGroup) {
@@ -45,13 +44,13 @@ If there are business hours, and they are within range, returns populated EventI
 If there are business hours, but they aren't within range, returns a zero-item EventInstanceGroup.
 If there are NOT business hours, returns undefined.
 */
-Calendar.prototype.buildBusinessInstanceGroup = function(wholeDay, rawComplexDef, rangeStart, rangeEnd) {
+Calendar.prototype.buildBusinessInstanceGroup = function(wholeDay, rawComplexDef, unzonedRange) {
 	var eventDefs = this.buildBusinessDefs(wholeDay, rawComplexDef);
 	var eventInstanceGroup;
 
 	if (eventDefs.length) {
 		eventInstanceGroup = new EventInstanceGroup(
-			eventDefsToEventInstances(eventDefs, rangeStart, rangeEnd)
+			eventDefsToEventInstances(eventDefs, unzonedRange)
 		);
 
 		// so that inverse-background rendering can happen even when no eventRanges in view
