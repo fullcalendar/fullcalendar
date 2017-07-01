@@ -684,12 +684,6 @@ function multiplyDuration(dur, n) {
 }
 
 
-function isRangesEqual(range0, range1) {
-	return ((range0.start && range1.start && range0.start.isSame(range1.start)) || (!range0.start && !range1.start)) &&
-		((range0.end && range1.end && range0.end.isSame(range1.end)) || (!range0.end && !range1.end));
-}
-
-
 // Returns a boolean about whether the given duration has any time parts (hours/minutes/seconds/ms)
 function durationHasTime(dur) {
 	return Boolean(dur.hours() || dur.minutes() || dur.seconds() || dur.milliseconds());

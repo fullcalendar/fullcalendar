@@ -168,7 +168,7 @@ var ListViewGrid = Grid.extend({
 
 				// append a day header
 				tbodyEl.append(this.dayHeaderHtml(
-					calendar.msToMoment(this.unzonedRange.startMs).add(dayIndex, 'days')
+					calendar.msToUtcMoment(this.unzonedRange.startMs).add(dayIndex, 'days')
 				));
 
 				this.sortEventSegs(daySegs);
