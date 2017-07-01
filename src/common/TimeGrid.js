@@ -76,7 +76,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.view.maxTime) {
-			slotDate = this.start.clone().time(slotTime);
+			slotDate = this.unzonedRange.getStart().time(slotTime); // will have locale problems :(
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =

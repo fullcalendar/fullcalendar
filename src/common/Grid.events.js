@@ -151,12 +151,12 @@ Grid.mixin({
 		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
 			wholeDay,
 			businessHourDef,
-			new UnzonedRange(this.start, this.end)
+			this.unzonedRange
 		);
 
 		if (eventInstanceGroup) {
 			eventRanges = eventInstanceGroup.sliceRenderRanges(
-				new UnzonedRange(this.start, this.end),
+				this.unzonedRange,
 				calendar
 			);
 		}
@@ -397,10 +397,7 @@ Grid.mixin({
 					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(
-								new UnzonedRange(_this.start, _this.end),
-								calendar
-							)
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
 						),
 						seg
 					))
@@ -613,10 +610,7 @@ Grid.mixin({
 				if (singleEventDef) {
 					_this.renderDrag( // called without a seg parameter
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(
-								new UnzonedRange(_this.start, _this.end),
-								view.calendar
-							)
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, view.calendar)
 						)
 					);
 				}
@@ -759,10 +753,7 @@ Grid.mixin({
 
 					_this.renderEventResize(
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(
-								new UnzonedRange(_this.start, _this.end),
-								calendar
-							)
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
 						),
 						seg
 					);

@@ -10,8 +10,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
 
-	start: null,
-	end: null,
+	unzonedRange: null,
 
 	// derived from options
 	eventTimeFormat: null,
@@ -83,9 +82,8 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	// Tells the grid about what period of time to display.
 	// Any date-related internal data should be generated.
-	setRange: function(range) {
-		this.start = range.start.clone();
-		this.end = range.end.clone();
+	setRange: function(unzonedRange) {
+		this.unzonedRange = unzonedRange;
 
 		this.rangeUpdated();
 		this.processRangeOptions();

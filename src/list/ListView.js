@@ -43,7 +43,7 @@ var ListView = View.extend({
 	},
 
 	renderDates: function() {
-		this.grid.setRange(this.renderUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay)); // needs to process range-related options
+		this.grid.setRange(this.renderUnzonedRange); // needs to process range-related options
 	},
 
 	isEventResizable: function(event) {

@@ -17,7 +17,8 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Populates internal variables used for date calculation and rendering
 	updateDayTable: function() {
 		var view = this.view;
-		var date = this.start.clone();
+		var date = this.unzonedRange.getStart();
+		var end = this.unzonedRange.getEnd();
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];
@@ -25,7 +26,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		var firstDay;
 		var rowCnt;
 
-		while (date.isBefore(this.end)) { // loop each day from start to end
+		while (date.isBefore(end)) { // loop each day from start to end
 			if (view.isHiddenDay(date)) {
 				dayIndices.push(dayIndex + 0.5); // mark that it's between indices
 			}
@@ -115,7 +116,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
 	getDateDayIndex: function(date) {
 		var dayIndices = this.dayIndices;
-		var dayOffset = date.diff(this.start, 'days');
+		var dayOffset = date.diff(this.unzonedRange.getStart(), 'days');
 
 		if (dayOffset < 0) {
 			return dayIndices[0] - 1;
