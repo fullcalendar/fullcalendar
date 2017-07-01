@@ -684,73 +684,9 @@ function multiplyDuration(dur, n) {
 }
 
 
-function cloneRange(range) {
-	return {
-		start: range.start.clone(),
-		end: range.end.clone()
-	};
-}
-
-
-// Trims the beginning and end of inner range to be completely within outerRange.
-// Returns a new range object.
-function constrainRange(innerRange, outerRange) {
-	innerRange = cloneRange(innerRange);
-
-	if (outerRange.start) {
-		// needs to be inclusively before outerRange's end
-		innerRange.start = constrainDate(innerRange.start, outerRange);
-	}
-
-	if (outerRange.end) {
-		innerRange.end = minMoment(innerRange.end, outerRange.end);
-	}
-
-	return innerRange;
-}
-
-
-// If the given date is not within the given range, move it inside.
-// (If it's past the end, make it one millisecond before the end).
-// Always returns a new moment.
-function constrainDate(date, range) {
-	date = date.clone();
-
-	if (range.start) {
-		date = maxMoment(date, range.start);
-	}
-
-	if (range.end && date >= range.end) {
-		date = range.end.clone().subtract(1);
-	}
-
-	return date;
-}
-
-
-// TODO: deal with repeat code in intersectRanges
-// constraintRange can have unspecified start/end, an open-ended range.
-function doRangesIntersect(subjectRange, constraintRange) {
-	return (!constraintRange.start || subjectRange.end >= constraintRange.start) &&
-		(!constraintRange.end || subjectRange.start < constraintRange.end);
-}
-
-
 function isRangesEqual(range0, range1) {
 	return ((range0.start && range1.start && range0.start.isSame(range1.start)) || (!range0.start && !range1.start)) &&
 		((range0.end && range1.end && range0.end.isSame(range1.end)) || (!range0.end && !range1.end));
-}
-
-
-// Returns the moment that's earlier in time. Always a copy.
-function minMoment(mom1, mom2) {
-	return (mom1.isBefore(mom2) ? mom1 : mom2).clone();
-}
-
-
-// Returns the moment that's later in time. Always a copy.
-function maxMoment(mom1, mom2) {
-	return (mom1.isAfter(mom2) ? mom1 : mom2).clone();
 }
 
 

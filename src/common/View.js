@@ -157,7 +157,7 @@ var View = FC.View = ChronoComponent.extend({
 
 		return this.formatRange(
 			{
-				// in case currentRange has a time, make sure timezone is correct.
+				// in case currentUnzonedRange has a time, make sure timezone is correct.
 				// TODO: make a utility for zoning an unzoned range.
 				start: this.calendar.applyTimezone(range.start),
 				end: this.calendar.applyTimezone(range.end)
@@ -216,7 +216,7 @@ var View = FC.View = ChronoComponent.extend({
 
 		if (
 			!currentDateProfile ||
-			!isRangesEqual(currentDateProfile.activeRange, newDateProfile.activeRange)
+			!currentDateProfile.activeUnzonedRange.equals(newDateProfile.activeUnzonedRange)
 		) {
 			this.set('dateProfile', newDateProfile);
 		}
@@ -257,10 +257,9 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	fetchInitialEvents: function(dateProfile) {
-		return this.calendar.requestEvents(
-			dateProfile.activeRange.start,
-			dateProfile.activeRange.end
-		);
+		var zonedRange = dateProfile.activeUnzonedRange.getZonedRange(this.calendar, this.isRangeAllDay);
+
+		return this.calendar.requestEvents(zonedRange.start, zonedRange.end);
 	},
 
 

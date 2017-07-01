@@ -247,7 +247,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 
 	// will return `null` if invalid range
-	parseRange: function(rangeInput) {
+	parseUnzonedRange: function(rangeInput) {
 		var start = null;
 		var end = null;
 
@@ -267,7 +267,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			return null;
 		}
 
-		return { start: start, end: end };
+		return new UnzonedRange(start, end);
 	},
 
 

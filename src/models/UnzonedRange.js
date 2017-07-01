@@ -81,8 +81,32 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
-	equals: function(otherRange) { // needed?
+	equals: function(otherRange) {
 		return this.startMs === otherRange.startMs && this.endMs === otherRange.endMs;
+	},
+
+
+	clone: function() {
+		return new UnzonedRange(this.startMs, this.endMs);
+	},
+
+
+	// If the given date is not within the given range, move it inside.
+	// (If it's past the end, make it one millisecond before the end).
+	// expects a UTC or ambig-time/timezone moment, or MS-time.
+	// returns a UTC moment.
+	constrainDate: function(date) {
+		var ms = date.valueOf();
+
+		if (this.startMs !== null && ms < this.startMs) {
+			ms = this.startMs;
+		}
+
+		if (this.endMs !== null && ms >= this.endMs) {
+			ms = this.endMs - 1;
+		}
+
+		return FC.moment.utc(ms);
 	},
 
 
