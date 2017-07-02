@@ -237,20 +237,22 @@ var ListViewGrid = Grid.extend({
 		var view = this.view;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
-		var event = seg.event;
-		var url = event.url;
+		var eventFootprint = seg.footprint;
+		var eventDef = eventFootprint.eventDef;
+		var componentFootprint = eventFootprint.componentFootprint;
+		var url = eventDef.url;
 		var timeHtml;
 
-		if (event.allDay) {
+		if (componentFootprint.isAllDay) {
 			timeHtml = view.getAllDayHtml();
 		}
 		// if the event appears to span more than one day
-		else if (view.isMultiDayRange(seg.footprint.componentFootprint.unzonedRange)) {
+		else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
 				timeHtml = htmlEscape(this._getEventTimeText(
 					seg.start,
 					seg.end,
-					seg.footprint.componentFootprint.isAllDay
+					componentFootprint.isAllDay
 				));
 			}
 			else { // inner segment that lasts the whole day
@@ -259,7 +261,7 @@ var ListViewGrid = Grid.extend({
 		}
 		else {
 			// Display the normal time text for the *event's* times
-			timeHtml = htmlEscape(this.getEventTimeText(seg.footprint));
+			timeHtml = htmlEscape(this.getEventTimeText(eventFootprint));
 		}
 
 		if (url) {
@@ -281,7 +283,7 @@ var ListViewGrid = Grid.extend({
 			'</td>' +
 			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
-					htmlEscape(seg.event.title || '') +
+					htmlEscape(eventDef.title || '') +
 				'</a>' +
 			'</td>' +
 		'</tr>';

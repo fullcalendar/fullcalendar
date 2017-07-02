@@ -257,7 +257,7 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var event = seg.event; // TODO: kill
+		var event = seg.event; // TODO: kill, but retrofit isEventSelected first
 		var eventDef = seg.footprint.eventDef;
 		var isSelected = view.isEventSelected(event);
 		var isDraggable = view.isEventDefDraggable(eventDef);

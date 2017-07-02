@@ -21,7 +21,7 @@ var View = FC.View = ChronoComponent.extend({
 	queuedScroll: null,
 
 	isSelected: false, // boolean whether a range of time is user-selected or not
-	selectedEvent: null,
+	selectedEvent: null, // TODO: move away from legacy event!
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 

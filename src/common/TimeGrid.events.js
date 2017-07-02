@@ -248,7 +248,6 @@ TimeGrid.mixin({
 		var view = this.view;
 		var componentFootprint = seg.footprint.componentFootprint;
 		var isAllDay = componentFootprint.isAllDay;
-		var event = seg.event; // TODO: kill
 		var eventDef = seg.footprint.eventDef;
 		var isDraggable = view.isEventDefDraggable(eventDef);
 		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
@@ -280,8 +279,8 @@ TimeGrid.mixin({
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
-			(event.url ?
-				' href="' + htmlEscape(event.url) + '"' :
+			(eventDef.url ?
+				' href="' + htmlEscape(eventDef.url) + '"' :
 				''
 				) +
 			(skinCss ?
@@ -299,9 +298,9 @@ TimeGrid.mixin({
 						'</div>' :
 						''
 						) +
-					(event.title ?
+					(eventDef.title ?
 						'<div class="fc-title">' +
-							htmlEscape(event.title) +
+							htmlEscape(eventDef.title) +
 						'</div>' :
 						''
 						) +

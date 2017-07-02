@@ -91,12 +91,12 @@ DayGrid.mixin({
 	// Builds the HTML to be used for the default element for an individual segment
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var event = seg.event; // TODO: kill
 		var eventDef = seg.footprint.eventDef;
+		var isAllDay = seg.footprint.componentFootprint.isAllDay;
 		var isDraggable = view.isEventDefDraggable(eventDef);
-		var isResizableFromStart = !disableResizing && event.allDay &&
+		var isResizableFromStart = !disableResizing && isAllDay &&
 			seg.isStart && view.isEventDefResizableFromStart(eventDef);
-		var isResizableFromEnd = !disableResizing && event.allDay &&
+		var isResizableFromEnd = !disableResizing && isAllDay &&
 			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
@@ -116,12 +116,12 @@ DayGrid.mixin({
 
 		titleHtml =
 			'<span class="fc-title">' +
-				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
+				(htmlEscape(eventDef.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
 		
 		return '<a class="' + classes.join(' ') + '"' +
-				(event.url ?
-					' href="' + htmlEscape(event.url) + '"' :
+				(eventDef.url ?
+					' href="' + htmlEscape(eventDef.url) + '"' :
 					''
 					) +
 				(skinCss ?
