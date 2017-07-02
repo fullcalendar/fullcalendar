@@ -258,7 +258,8 @@ TimeGrid.mixin({
 
 		classes.unshift('fc-time-grid-event', 'fc-v-event');
 
-		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
+		// if the event appears to span more than one day...
+		if (view.isMultiDayRange(seg.footprint.componentFootprint.unzonedRange)) {
 			// Don't display time text on segments that run entirely through a day.
 			// That would appear as midnight-midnight and would look dumb.
 			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)

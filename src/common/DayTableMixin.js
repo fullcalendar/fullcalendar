@@ -158,11 +158,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Slices up a date range into a segment for every week-row it intersects with
-	sliceRangeByRow: function(range) {
+	sliceRangeByRow: function(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
-		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
-		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
+		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
+		var rangeFirst = this.getDateDayIndex(normalRange.getStart()); // inclusive first index
+		var rangeLast = this.getDateDayIndex(normalRange.getEnd().subtract(1, 'days')); // inclusive last index
 		var segs = [];
 		var row;
 		var rowFirst, rowLast; // inclusive day-index range for current row
@@ -201,11 +201,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	// Slices up a date range into a segment for every day-cell it intersects with.
 	// TODO: make more DRY with sliceRangeByRow somehow.
-	sliceRangeByDay: function(range) {
+	sliceRangeByDay: function(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
-		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
-		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
+		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
+		var rangeFirst = this.getDateDayIndex(normalRange.getStart()); // inclusive first index
+		var rangeLast = this.getDateDayIndex(normalRange.getEnd().subtract(1, 'days')); // inclusive last index
 		var segs = [];
 		var row;
 		var rowFirst, rowLast; // inclusive day-index range for current row

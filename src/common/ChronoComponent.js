@@ -562,9 +562,9 @@ var ChronoComponent = Model.extend({
 
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a new range object.
-	computeDayRange: function(range) {
-		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
-		var end = range.end;
+	computeDayRange: function(unzonedRange) {
+		var startDay = unzonedRange.getStart().stripTime(); // the beginning of the day the range starts
+		var end = unzonedRange.getEnd();
 		var endDay = null;
 		var endTimeMS;
 
@@ -586,15 +586,15 @@ var ChronoComponent = Model.extend({
 			endDay = startDay.clone().add(1, 'days');
 		}
 
-		return { start: startDay, end: endDay };
+		return new UnzonedRange(startDay, endDay);
 	},
 
 
-	// Does the given event visually appear to occupy more than one day?
-	isMultiDayEvent: function(event) {
-		var range = this.computeDayRange(event); // event is range-ish
+	// Does the given range visually appear to occupy more than one day?
+	isMultiDayRange: function(unzonedRange) {
+		var dayRange = this.computeDayRange(unzonedRange);
 
-		return range.end.diff(range.start, 'days') > 1;
+		return dayRange.getEnd().diff(dayRange.getStart(), 'days') > 1;
 	},
 
 

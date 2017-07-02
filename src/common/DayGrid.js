@@ -224,7 +224,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
 	componentFootprintToSegs: function(componentFootprint) {
-		var segs = this.sliceRangeByRow(componentFootprint.unzonedRange.getRange());
+		var segs = this.sliceRangeByRow(componentFootprint.unzonedRange);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {

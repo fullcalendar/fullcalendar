@@ -72,18 +72,28 @@ var ListViewGrid = Grid.extend({
 		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs).time(0); // timed, so segs get times!
 		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs);
 		var dayIndex = 0;
+		var segRange;
 		var seg;
 		var segs = [];
 
 		while (dayStart < viewEnd) {
+			seg = null;
 
-			seg = intersectRanges(footprint.unzonedRange.getRange(), {
-				start: dayStart,
-				end: dayStart.clone().add(1, 'day')
-			});
+			segRange = footprint.unzonedRange.constrainTo(
+				new UnzonedRange(
+					dayStart,
+					dayStart.clone().add(1, 'day')
+				)
+			);
 
-			if (seg) {
-				seg.dayIndex = dayIndex;
+			if (segRange) {
+				seg = {
+					start: segRange.getStart(),
+					end: segRange.getEnd(),
+					isStart: segRange.isStart,
+					isEnd: segRange.isEnd,
+					dayIndex: dayIndex
+				};
 				segs.push(seg);
 			}
 
@@ -234,7 +244,8 @@ var ListViewGrid = Grid.extend({
 		if (event.allDay) {
 			timeHtml = view.getAllDayHtml();
 		}
-		else if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day
+		// if the event appears to span more than one day
+		else if (view.isMultiDayRange(seg.footprint.componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
 				timeHtml = htmlEscape(this.getEventTimeText(seg));
 			}

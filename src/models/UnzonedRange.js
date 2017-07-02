@@ -28,7 +28,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		}
 	},
 
-	constrainTo: function(constraintRange) {
+	constrainTo: function(constraintRange) { // TODO: rename to "intersect"
 		var startMs = this.startMs;
 		var endMs = this.endMs;
 		var newRange = null;
@@ -47,7 +47,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 				endMs = constraintRange.endMs;
 			}
 			else {
-				endMs = Math.min(this.endMs, constraintRange.endMs);
+				endMs = Math.min(endMs, constraintRange.endMs);
 			}
 		}
 
@@ -120,10 +120,6 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		if (this.endMs !== null) {
 			return FC.moment.utc(this.endMs).stripZone();
 		}
-	},
-
-	getRange: function() {
-		return { start: this.getStart(), end: this.getEnd() };
 	}
 
 });

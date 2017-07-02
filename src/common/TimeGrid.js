@@ -256,7 +256,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
 	componentFootprintToSegs: function(componentFootprint) {
-		var segs = this.sliceRangeByTimes(componentFootprint.unzonedRange.getRange());
+		var segs = this.sliceRangeByTimes(componentFootprint.unzonedRange);
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -272,23 +272,31 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	sliceRangeByTimes: function(range) {
+	sliceRangeByTimes: function(unzonedRange) {
 		var segs = [];
-		var seg;
+		var segRange;
 		var dayIndex;
 		var dayDate;
 		var dayRange;
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 			dayDate = this.dayDates[dayIndex].clone().time(0); // TODO: better API for this?
-			dayRange = {
-				start: dayDate.clone().add(this.view.minTime), // don't use .time() because it sux with negatives
-				end: dayDate.clone().add(this.view.maxTime)
-			};
-			seg = intersectRanges(range, dayRange); // both will be ambig timezone
-			if (seg) {
-				seg.dayIndex = dayIndex;
-				segs.push(seg);
+
+			segRange = unzonedRange.constrainTo(
+				new UnzonedRange(
+					dayDate.clone().add(this.view.minTime), // don't use .time() because it sux with negatives
+					dayDate.clone().add(this.view.maxTime)
+				)
+			);
+
+			if (segRange) {
+				segs.push({
+					start: segRange.getStart(),
+					end: segRange.getEnd(),
+					isStart: segRange.isStart,
+					isEnd: segRange.isEnd,
+					dayIndex: dayIndex
+				});
 			}
 		}
 
