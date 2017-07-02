@@ -461,7 +461,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		//  more than once because of columns with the same date (resources columns for example)
 		var segs = this.componentFootprintToSegs(
 			new ComponentFootprint(
-				new UnzonedRange(date, date),
+				new UnzonedRange(date, date.valueOf() + 1), // protect against null range
 				false // all-day
 			)
 		);
