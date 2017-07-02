@@ -107,7 +107,7 @@ DayGrid.mixin({
 
 		// Only display a timed events time if it is the starting segment
 		if (seg.isStart) {
-			timeText = this.getEventTimeText(event);
+			timeText = this.getEventTimeText(seg.footprint);
 			if (timeText) {
 				timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>';
 			}

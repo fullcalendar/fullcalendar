@@ -246,6 +246,8 @@ TimeGrid.mixin({
 	// Renders the HTML for a single event segment's default rendering
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
+		var componentFootprint = seg.footprint.componentFootprint;
+		var isAllDay = componentFootprint.isAllDay;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
 		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
@@ -259,20 +261,21 @@ TimeGrid.mixin({
 		classes.unshift('fc-time-grid-event', 'fc-v-event');
 
 		// if the event appears to span more than one day...
-		if (view.isMultiDayRange(seg.footprint.componentFootprint.unzonedRange)) {
+		if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
 			// Don't display time text on segments that run entirely through a day.
 			// That would appear as midnight-midnight and would look dumb.
 			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
 			if (seg.isStart || seg.isEnd) {
-				timeText = this.getEventTimeText(seg);
-				fullTimeText = this.getEventTimeText(seg, 'LT');
-				startTimeText = this.getEventTimeText(seg, null, false); // displayEnd=false
+				timeText = this._getEventTimeText(seg.start, seg.end, isAllDay);
+				fullTimeText = this._getEventTimeText(seg.start, seg.end, isAllDay, 'LT');
+				startTimeText = this._getEventTimeText(seg.start, seg.end, isAllDay, null, false); // displayEnd=false
 			}
-		} else {
+		}
+		else {
 			// Display the normal time text for the *event's* times
-			timeText = this.getEventTimeText(event);
-			fullTimeText = this.getEventTimeText(event, 'LT');
-			startTimeText = this.getEventTimeText(event, null, false); // displayEnd=false
+			timeText = this.getEventTimeText(seg.footprint);
+			fullTimeText = this.getEventTimeText(seg.footprint, 'LT');
+			startTimeText = this.getEventTimeText(seg.footprint, null, false); // displayEnd=false
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +

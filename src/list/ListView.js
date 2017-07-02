@@ -247,7 +247,11 @@ var ListViewGrid = Grid.extend({
 		// if the event appears to span more than one day
 		else if (view.isMultiDayRange(seg.footprint.componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
-				timeHtml = htmlEscape(this.getEventTimeText(seg));
+				timeHtml = htmlEscape(this._getEventTimeText(
+					seg.start,
+					seg.end,
+					seg.footprint.componentFootprint.isAllDay
+				));
 			}
 			else { // inner segment that lasts the whole day
 				timeHtml = view.getAllDayHtml();
@@ -255,7 +259,7 @@ var ListViewGrid = Grid.extend({
 		}
 		else {
 			// Display the normal time text for the *event's* times
-			timeHtml = htmlEscape(this.getEventTimeText(event));
+			timeHtml = htmlEscape(this.getEventTimeText(seg.footprint));
 		}
 
 		if (url) {

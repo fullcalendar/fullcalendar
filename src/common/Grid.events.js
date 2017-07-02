@@ -873,7 +873,18 @@ Grid.mixin({
 	// If event times are disabled, or the event has no time, will return a blank string.
 	// If not specified, formatStr will default to the eventTimeFormat setting,
 	// and displayEnd will default to the displayEventEnd setting.
-	getEventTimeText: function(range, formatStr, displayEnd) {
+	getEventTimeText: function(eventFootprint, formatStr, displayEnd) {
+		return this._getEventTimeText(
+			eventFootprint.eventInstance.dateProfile.start,
+			eventFootprint.eventInstance.dateProfile.end,
+			eventFootprint.componentFootprint.isAllDay,
+			formatStr,
+			displayEnd
+		);
+	},
+
+
+	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
 
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
@@ -883,12 +894,16 @@ Grid.mixin({
 			displayEnd = this.displayEventEnd;
 		}
 
-		if (this.displayEventTime && range.start.hasTime()) {
-			if (displayEnd && range.end) {
-				return this.view.formatRange(range, false, formatStr); // allDay=false
+		if (this.displayEventTime && !isAllDay) {
+			if (displayEnd && end) {
+				return this.view.formatRange(
+					{ start: start, end: end },
+					false, // allDay
+					formatStr
+				);
 			}
 			else {
-				return range.start.format(formatStr);
+				return start.format(formatStr);
 			}
 		}
 
