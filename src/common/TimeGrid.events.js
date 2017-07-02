@@ -248,10 +248,11 @@ TimeGrid.mixin({
 		var view = this.view;
 		var componentFootprint = seg.footprint.componentFootprint;
 		var isAllDay = componentFootprint.isAllDay;
-		var event = seg.event;
-		var isDraggable = view.isEventDraggable(event);
-		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
-		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventResizableFromEnd(event);
+		var event = seg.event; // TODO: kill
+		var eventDef = seg.footprint.eventDef;
+		var isDraggable = view.isEventDefDraggable(eventDef);
+		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
+		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeText;

@@ -219,7 +219,7 @@ Grid.mixin({
 			!this.mousedOverSeg
 		) {
 			this.mousedOverSeg = seg;
-			if (this.view.isEventResizable(seg.event)) {
+			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.addClass('fc-allow-mouse-resize');
 			}
 			this.view.publiclyTrigger('eventMouseover', seg.el[0], seg.event, ev);
@@ -235,7 +235,7 @@ Grid.mixin({
 		if (this.mousedOverSeg) {
 			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
 			this.mousedOverSeg = null;
-			if (this.view.isEventResizable(seg.event)) {
+			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.removeClass('fc-allow-mouse-resize');
 			}
 			this.view.publiclyTrigger('eventMouseout', seg.el[0], seg.event, ev);
@@ -246,7 +246,7 @@ Grid.mixin({
 	handleSegMousedown: function(seg, ev) {
 		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
 
-		if (!isResizing && this.view.isEventDraggable(seg.event)) {
+		if (!isResizing && this.view.isEventDefDraggable(seg.footprint.eventDef)) {
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -257,10 +257,11 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var event = seg.event;
+		var event = seg.event; // TODO: kill
+		var eventDef = seg.footprint.eventDef;
 		var isSelected = view.isEventSelected(event);
-		var isDraggable = view.isEventDraggable(event);
-		var isResizable = view.isEventResizable(event);
+		var isDraggable = view.isEventDefDraggable(eventDef);
+		var isResizable = view.isEventDefResizable(eventDef);
 		var isResizing = false;
 		var dragListener;
 		var eventLongPressDelay;

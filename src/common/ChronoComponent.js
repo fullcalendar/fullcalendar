@@ -303,34 +303,33 @@ var ChronoComponent = Model.extend({
 
 
 	// Computes if the given event is allowed to be dragged by the user
-	isEventDraggable: function(event) {
-		return this.isEventStartEditable(event);
+	isEventDefDraggable: function(eventDef) {
+		return this.isEventDefStartEditable(eventDef);
 	},
 
 
-	isEventStartEditable: function(event) {
-		var isEditable = event.startEditable;
+	isEventDefStartEditable: function(eventDef) {
+		var isEditable = eventDef.isStartExplicitlyEditable();
+
 		if (isEditable == null) {
-			isEditable = event.source.startEditable;
+			isEditable = this.opt('eventStartEditable');
+
 			if (isEditable == null) {
-				isEditable = this.opt('eventStartEditable');
-				if (isEditable == null) {
-					isEditable = this.isEventGenerallyEditable(event);
-				}
+				isEditable = this.isEventDefGenerallyEditable(eventDef);
 			}
 		}
+
 		return isEditable;
 	},
 
 
-	isEventGenerallyEditable: function(event) {
-		var isEditable = event.editable;
+	isEventDefGenerallyEditable: function(eventDef) {
+		var isEditable = eventDef.isExplicitlyEditable();
+
 		if (isEditable == null) {
-			isEditable = event.source.editable;
-			if (isEditable == null) {
-				isEditable = this.opt('editable');
-			}
+			isEditable = this.opt('editable');
 		}
+
 		return isEditable;
 	},
 
@@ -340,33 +339,26 @@ var ChronoComponent = Model.extend({
 
 
 	// Computes if the given event is allowed to be resized from its starting edge
-	isEventResizableFromStart: function(event) {
-		return this.opt('eventResizableFromStart') && this.isEventResizable(event);
+	isEventDefResizableFromStart: function(eventDef) {
+		return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef);
 	},
 
 
 	// Computes if the given event is allowed to be resized from its ending edge
-	isEventResizableFromEnd: function(event) {
-		return this.isEventResizable(event);
+	isEventDefResizableFromEnd: function(eventDef) {
+		return this.isEventDefResizable(eventDef);
 	},
 
 
 	// Computes if the given event is allowed to be resized by the user at all
-	isEventResizable: function(event) {
-		var isResizable = event.durationEditable;
+	isEventDefResizable: function(eventDef) {
+		var isResizable = eventDef.isDurationExplicitlyEditable();
+
 		if (isResizable == null) {
-			isResizable = event.source.durationEditable;
+			isResizable = this.opt('eventDurationEditable');
+
 			if (isResizable == null) {
-				isResizable = this.opt('eventDurationEditable');
-				if (isResizable == null) {
-					isResizable = event.editable;
-					if (isResizable == null) {
-						isResizable = event.source.editable;
-						if (isResizable == null) {
-							isResizable = this.opt('editable');
-						}
-					}
-				}
+				isResizable = this.isEventDefGenerallyEditable(eventDef);
 			}
 		}
 		return isResizable;

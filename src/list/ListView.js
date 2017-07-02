@@ -46,11 +46,11 @@ var ListView = View.extend({
 		this.grid.setRange(this.renderUnzonedRange); // needs to process range-related options
 	},
 
-	isEventResizable: function(event) {
+	isEventDefResizable: function(eventDef) {
 		return false;
 	},
 
-	isEventDraggable: function(event) {
+	isEventDefDraggable: function(eventDef) {
 		return false;
 	}
 

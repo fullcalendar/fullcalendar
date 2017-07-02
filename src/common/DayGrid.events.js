@@ -91,12 +91,13 @@ DayGrid.mixin({
 	// Builds the HTML to be used for the default element for an individual segment
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var event = seg.event;
-		var isDraggable = view.isEventDraggable(event);
+		var event = seg.event; // TODO: kill
+		var eventDef = seg.footprint.eventDef;
+		var isDraggable = view.isEventDefDraggable(eventDef);
 		var isResizableFromStart = !disableResizing && event.allDay &&
-			seg.isStart && view.isEventResizableFromStart(event);
+			seg.isStart && view.isEventDefResizableFromStart(eventDef);
 		var isResizableFromEnd = !disableResizing && event.allDay &&
-			seg.isEnd && view.isEventResizableFromEnd(event);
+			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeHtml = '';

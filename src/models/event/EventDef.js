@@ -88,7 +88,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 			return this.source.constraint;
 		}
 
-		return this.source.calendar.opt('eventConstraint');
+		return this.source.calendar.opt('eventConstraint'); // what about View option?
 	},
 
 
@@ -101,7 +101,34 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 			return this.source.overlap;
 		}
 
-		return this.source.calendar.opt('eventOverlap');
+		return this.source.calendar.opt('eventOverlap'); // what about View option?
+	},
+
+
+	isStartExplicitlyEditable: function() {
+		if (this.startEditable !== null) {
+			return this.startEditable;
+		}
+
+		return this.source.startEditable;
+	},
+
+
+	isDurationExplicitlyEditable: function() {
+		if (this.durationEditable !== null) {
+			return this.durationEditable;
+		}
+
+		return this.source.durationEditable;
+	},
+
+
+	isExplicitlyEditable: function() {
+		if (this.editable !== null) {
+			return this.editable;
+		}
+
+		return this.source.editable;
 	},
 
 
