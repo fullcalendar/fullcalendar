@@ -277,7 +277,6 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var segRange;
 		var dayIndex;
 		var dayDate;
-		var dayRange;
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 			dayDate = this.dayDates[dayIndex].clone().time(0); // TODO: better API for this?
