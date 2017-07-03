@@ -13,18 +13,19 @@ var RecurringEventDef = EventDef.extend({
 
 	buildInstances: function(unzonedRange) {
 		var calendar = this.source.calendar;
-		var date = unzonedRange.getStart();
-		var end = unzonedRange.getEnd();
+		var unzonedDate = unzonedRange.getStart();
+		var unzonedEnd = unzonedRange.getEnd();
+		var zonedDayStart;
 		var instanceStart, instanceEnd;
 		var instances = [];
 
-		while (date.isBefore(end)) {
+		while (unzonedDate.isBefore(unzonedEnd)) {
 
 			// if everyday, or this particular day-of-week
-			if (!this.dowHash || this.dowHash[date.day()]) {
+			if (!this.dowHash || this.dowHash[unzonedDate.day()]) {
 
-				// TODO: make these same zone as calendar?
-				instanceStart = date.clone();
+				zonedDayStart = calendar.applyTimezone(unzonedDate);
+				instanceStart = zonedDayStart.clone();
 				instanceEnd = null;
 
 				if (this.startTime) {
@@ -35,7 +36,7 @@ var RecurringEventDef = EventDef.extend({
 				}
 
 				if (this.endTime) {
-					instanceEnd = date.clone().time(this.endTime);
+					instanceEnd = zonedDayStart.clone().time(this.endTime);
 				}
 
 				instances.push(
@@ -46,7 +47,7 @@ var RecurringEventDef = EventDef.extend({
 				);
 			}
 
-			date.add(1, 'days');
+			unzonedDate.add(1, 'days');
 		}
 
 		return instances;
