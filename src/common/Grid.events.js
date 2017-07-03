@@ -257,9 +257,9 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var event = seg.event; // TODO: kill, but retrofit isEventSelected first
+		var event = seg.event;
 		var eventDef = seg.footprint.eventDef;
-		var isSelected = view.isEventSelected(event);
+		var isSelected = view.isEventDefSelected(eventDef);
 		var isDraggable = view.isEventDefDraggable(eventDef);
 		var isResizable = view.isEventDefResizable(eventDef);
 		var isResizing = false;
@@ -317,6 +317,8 @@ Grid.mixin({
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
 		var event = seg.event; // is a legacy event
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 		var isDragging;
 		var mouseFollower; // A clone of the original element that will move with the mouse
 		var eventDefMutation;
@@ -345,14 +347,18 @@ Grid.mixin({
 				mouseFollower.start(ev);
 			},
 			dragStart: function(ev) {
-				if (dragListener.isTouch && !view.isEventSelected(event)) {
+				if (
+					dragListener.isTouch &&
+					!view.isEventDefSelected(eventDef) &&
+					eventInstance
+				) {
 					// if not previously selected, will fire after a delay. then, select the event
-					view.selectEvent(event);
+					view.selectEventInstance(eventInstance);
 				}
 				isDragging = true;
 				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segDragStart(seg, ev);
-				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
+				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
@@ -442,7 +448,7 @@ Grid.mixin({
 						view.reportEventDrop(event, eventDefMutation, el, ev);
 					}
 					else {
-						view.showEvent(event);
+						view.showEventsWithId(eventDef.id);
 					}
 				});
 				_this.segDragListener = null;
@@ -460,6 +466,8 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 		var event = seg.event;
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 
 		if (this.segDragListener) {
 			return this.segDragListener;
@@ -467,9 +475,13 @@ Grid.mixin({
 
 		var dragListener = this.segDragListener = new DragListener({
 			dragStart: function(ev) {
-				if (dragListener.isTouch && !view.isEventSelected(event)) {
+				if (
+					dragListener.isTouch &&
+					!view.isEventDefSelected(eventDef) &&
+					eventInstance
+				) {
 					// if not previously selected, will fire after a delay. then, select the event
-					view.selectEvent(event);
+					view.selectEventInstance(eventInstance);
 				}
 			},
 			interactionEnd: function(ev) {
@@ -699,6 +711,7 @@ Grid.mixin({
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
 		var event = seg.event; // legacy event
+		var eventDef = seg.footprint.eventDef;
 		var isDragging;
 		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
@@ -750,7 +763,7 @@ Grid.mixin({
 				}
 
 				if (resizeMutation) {
-					view.hideEvent(event);
+					view.hideEventsWithId(eventDef.id);
 
 					_this.renderEventResize(
 						_this.eventRangesToEventFootprints(
@@ -762,7 +775,7 @@ Grid.mixin({
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				resizeMutation = null;
-				view.showEvent(event); // for when out-of-bounds. show original
+				view.showEventsWithId(eventDef.id); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
 				_this.unrenderEventResize();
@@ -778,7 +791,7 @@ Grid.mixin({
 					view.reportEventResize(event, resizeMutation, el, ev);
 				}
 				else {
-					view.showEvent(event);
+					view.showEventsWithId(eventDef.id);
 				}
 				_this.segResizeListener = null;
 			}
@@ -929,7 +942,7 @@ Grid.mixin({
 		}
 
 		// event is currently selected? attach a className.
-		if (view.isEventSelected(seg.event)) {
+		if (view.isEventDefSelected(seg.footprint.eventDef)) {
 			classes.push('fc-selected');
 		}
 

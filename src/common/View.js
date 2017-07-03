@@ -21,7 +21,7 @@ var View = FC.View = ChronoComponent.extend({
 	queuedScroll: null,
 
 	isSelected: false, // boolean whether a range of time is user-selected or not
-	selectedEvent: null, // TODO: move away from legacy event!
+	selectedEventInstance: null,
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 
@@ -650,12 +650,17 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Signals that all events have been rendered
 	onEventsRender: function() {
+		var _this = this;
+
 		this.applyScreenState();
 
-		this.renderedEventSegEach(function(seg) {
-			var legacy = seg.footprint.getEventLegacy();
+		this.getEventSegs().forEach(function(seg) {
+			var legacy;
 
-			this.publiclyTrigger('eventAfterRender', legacy, legacy, seg.el);
+			if (seg.el) { // necessary?
+				legacy = seg.footprint.getEventLegacy();
+				_this.publiclyTrigger('eventAfterRender', legacy, legacy, seg.el);
+			}
 		});
 
 		this.publiclyTrigger('eventAfterAllRender');
@@ -664,12 +669,17 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Signals that all event elements are about to be removed
 	onBeforeEventsUnrender: function() {
+		var _this = this;
+
 		this.applyScreenState();
 
-		this.renderedEventSegEach(function(seg) {
-			var legacy = seg.footprint.getEventLegacy();
+		this.getEventSegs().forEach(function(seg) {
+			var legacy;
 
-			this.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
+			if (seg.el) { // necessary?
+				legacy = seg.footprint.getEventLegacy();
+				_this.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
+			}
 		});
 	},
 
@@ -687,40 +697,28 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	// Hides all rendered event segments linked to the given event
-	showEvent: function(event) {
-		this.renderedEventSegEach(function(seg) {
-			seg.el.css('visibility', '');
-		}, event);
+	showEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
+			if (
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
+			) {
+				seg.el.css('visibility', '');
+			}
+		});
 	},
 
 
 	// Shows all rendered event segments linked to the given event
-	hideEvent: function(event) {
-		this.renderedEventSegEach(function(seg) {
-			seg.el.css('visibility', 'hidden');
-		}, event);
-	},
-
-
-	// Iterates through event segments that have been rendered (have an el). Goes through all by default.
-	// If the optional `event` argument is specified, only iterates through segments linked to that event.
-	// The `this` value of the callback function will be the view.
-	renderedEventSegEach: function(func, event) {
-		var segs = this.getEventSegs();
-		var i;
-
-		for (i = 0; i < segs.length; i++) {
+	hideEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
 			if (
-				!event || // no specified event means should match ALL events
-				event._id === segs[i].event._id || // the exact instance
-				(event.id != null && event.id == segs[i].event.id) // a related instance
-				// ^ do a soft comparison because id not normalized to string
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
 			) {
-				if (segs[i].el) {
-					func.call(this, segs[i]);
-				}
+				seg.el.css('visibility', 'hidden');
 			}
-		}
+		});
 	},
 
 
@@ -874,31 +872,45 @@ var View = FC.View = ChronoComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	selectEvent: function(event) {
-		if (!this.selectedEvent || this.selectedEvent !== event) {
-			this.unselectEvent();
-			this.renderedEventSegEach(function(seg) {
-				seg.el.addClass('fc-selected');
-			}, event);
-			this.selectedEvent = event;
+	selectEventInstance: function(eventInstance) {
+		if (
+			!this.selectedEventInstance ||
+			this.selectedEventInstance !== eventInstance
+		) {
+			this.unselectEventInstance();
+
+			this.getEventSegs().forEach(function(seg) {
+				if (
+					seg.footprint.eventInstance === eventInstance &&
+					seg.el // necessary?
+				) {
+					seg.el.addClass('fc-selected');
+				}
+			});
+
+			this.selectedEventInstance = eventInstance;
 		}
 	},
 
 
-	unselectEvent: function() {
-		if (this.selectedEvent) {
-			this.renderedEventSegEach(function(seg) {
-				seg.el.removeClass('fc-selected');
-			}, this.selectedEvent);
-			this.selectedEvent = null;
+	unselectEventInstance: function() {
+		if (this.selectedEventInstance) {
+
+			this.getEventSegs().forEach(function(seg) {
+				if (seg.el) { // necessary?
+					seg.el.removeClass('fc-selected');
+				}
+			});
+
+			this.selectedEventInstance = null;
 		}
 	},
 
 
-	isEventSelected: function(event) {
-		// event references might change on refetchEvents(), while selectedEvent doesn't,
+	isEventDefSelected: function(eventDef) {
+		// event references might change on refetchEvents(), while selectedEventInstance doesn't,
 		// so compare IDs
-		return this.selectedEvent && this.selectedEvent._id === event._id;
+		return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id;
 	},
 
 
@@ -936,9 +948,9 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	processEventUnselect: function(ev) {
-		if (this.selectedEvent) {
+		if (this.selectedEventInstance) {
 			if (!$(ev.target).closest('.fc-selected').length) {
-				this.unselectEvent();
+				this.unselectEventInstance();
 			}
 		}
 	},
