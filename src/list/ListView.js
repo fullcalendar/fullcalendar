@@ -62,29 +62,37 @@ Its "el" is the inner-content of the above view's scroller.
 */
 var ListViewGrid = Grid.extend({
 
+	dayRanges: null, // UnzonedRange[], of start-end of each day
 	segSelector: '.fc-list-item', // which elements accept event actions
 	hasDayInteractions: false, // no day selection or day clicking
+
+	rangeUpdated: function() {
+		var dayRanges = [];
+		var dayStart = this.unzonedRange.getStart();
+		var viewEnd = this.unzonedRange.getEnd();
+
+		while (dayStart < viewEnd) {
+			dayRanges.push(new UnzonedRange(
+				dayStart,
+				dayStart.clone().add(1, 'day')
+			));
+			dayStart.add(1, 'day');
+		}
+
+		this.dayRanges = dayRanges;
+	},
 
 	// slices by day
 	componentFootprintToSegs: function(footprint) {
 		var view = this.view;
-		var calendar = view.calendar;
-		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs).time(0); // timed, so segs get times!
-		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs);
-		var dayIndex = 0;
+		var dayRanges = this.dayRanges;
+		var dayIndex;
 		var segRange;
 		var seg;
 		var segs = [];
 
-		while (dayStart < viewEnd) {
-			seg = null;
-
-			segRange = footprint.unzonedRange.constrainTo(
-				new UnzonedRange(
-					dayStart,
-					dayStart.clone().add(1, 'day')
-				)
-			);
+		for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
+			segRange = footprint.unzonedRange.constrainTo(dayRanges[dayIndex]);
 
 			if (segRange) {
 				seg = {
@@ -94,21 +102,19 @@ var ListViewGrid = Grid.extend({
 					isEnd: segRange.isEnd,
 					dayIndex: dayIndex
 				};
+
 				segs.push(seg);
-			}
 
-			dayStart.add(1, 'day');
-			dayIndex++;
-
-			// detect when footprint won't go fully into the next day,
-			// and mutate the latest seg to the be the end.
-			if (
-				seg && !seg.isEnd && !footprint.isAllDay &&
-				footprint.unzonedRange.getEnd() < dayStart.clone().add(view.nextDayThreshold)
-			) {
-				seg.end = footprint.unzonedRange.getEnd();
-				seg.isEnd = true;
-				break;
+				// detect when footprint won't go fully into the next day,
+				// and mutate the latest seg to the be the end.
+				if (
+					!seg.isEnd && !footprint.isAllDay &&
+					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + view.nextDayThreshold
+				) {
+					seg.end = footprint.unzonedRange.getEnd();
+					seg.isEnd = true;
+					break;
+				}
 			}
 		}
 

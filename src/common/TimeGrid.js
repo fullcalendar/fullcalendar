@@ -5,7 +5,7 @@
 
 var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
-	dayRanges: null, // UnzonedRange[], or start-end of each day
+	dayRanges: null, // UnzonedRange[], of start-end of each day
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
 	snapsPerSlot: null,
