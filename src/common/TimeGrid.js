@@ -5,6 +5,7 @@
 
 var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
+	dayRanges: null, // UnzonedRange[], or start-end of each day
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
 	snapsPerSlot: null,
@@ -244,7 +245,16 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	rangeUpdated: function() {
+		var view = this.view;
+
 		this.updateDayTable();
+
+		this.dayRanges = this.dayDates.map(function(dayDate) {
+			return new UnzonedRange(
+				dayDate.clone().add(view.minTime),
+				dayDate.clone().add(view.maxTime)
+			);
+		});
 	},
 
 
@@ -276,17 +286,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var segs = [];
 		var segRange;
 		var dayIndex;
-		var dayDate;
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
-			dayDate = this.dayDates[dayIndex].clone().time(0); // TODO: better API for this?
 
-			segRange = unzonedRange.constrainTo(
-				new UnzonedRange(
-					dayDate.clone().add(this.view.minTime), // don't use .time() because it sux with negatives
-					dayDate.clone().add(this.view.maxTime)
-				)
-			);
+			segRange = unzonedRange.constrainTo(this.dayRanges[dayIndex]);
 
 			if (segRange) {
 				segs.push({
