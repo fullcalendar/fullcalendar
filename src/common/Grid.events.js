@@ -1185,10 +1185,8 @@ Grid.mixin({
 				seg.isEnd = false;
 			}
 
-			seg.event = eventFootprint.getEventLegacy();
 			seg.footprint = eventFootprint;
-			seg.footprintStartMs = unzonedRange.startMs;
-			seg.footprintDurationMs = unzonedRange.endMs - unzonedRange.startMs;
+			// TODO: rename to seg.eventFootprint
 		}
 
 		return segs;
@@ -1202,10 +1200,19 @@ Grid.mixin({
 
 	// A cmp function for determining which segments should take visual priority
 	compareEventSegs: function(seg1, seg2) {
-		return seg1.footprintStartMs - seg2.footprintStartMs || // earlier events go first
-			seg2.footprintDurationMs - seg1.footprintDurationMs || // tie? longer events go first
-			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
-			compareByFieldSpecs(seg1.event, seg2.event, this.view.eventOrderSpecs);
+		var f1 = seg1.footprint.componentFootprint;
+		var r1 = f1.unzonedRange;
+		var f2 = seg2.footprint.componentFootprint;
+		var r2 = f2.unzonedRange;
+
+		return r1.startMs - r2.startMs || // earlier events go first
+			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
+			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
+			compareByFieldSpecs(
+				seg1.footprint.eventDef,
+				seg2.footprint.eventDef,
+				this.view.eventOrderSpecs
+			);
 	}
 
 });
