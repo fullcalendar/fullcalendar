@@ -87,7 +87,7 @@ Grid.mixin({
 
 	// Renders a background event element, given the default rendering. Called by the fill system.
 	bgEventSegEl: function(seg, el) {
-		return this.resolveEventEl(seg.event, el); // will filter through eventRender
+		return this.resolveEventEl(seg.footprint, el); // will filter through eventRender
 	},
 
 

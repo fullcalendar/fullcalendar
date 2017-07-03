@@ -653,8 +653,11 @@ var View = FC.View = ChronoComponent.extend({
 		this.applyScreenState();
 
 		this.renderedEventSegEach(function(seg) {
-			this.publiclyTrigger('eventAfterRender', seg.event, seg.event, seg.el);
+			var legacy = seg.footprint.getEventLegacy();
+
+			this.publiclyTrigger('eventAfterRender', legacy, legacy, seg.el);
 		});
+
 		this.publiclyTrigger('eventAfterAllRender');
 	},
 
@@ -664,7 +667,9 @@ var View = FC.View = ChronoComponent.extend({
 		this.applyScreenState();
 
 		this.renderedEventSegEach(function(seg) {
-			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
+			var legacy = seg.footprint.getEventLegacy();
+
+			this.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
 		});
 	},
 

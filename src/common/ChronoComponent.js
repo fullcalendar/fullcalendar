@@ -401,7 +401,7 @@ var ChronoComponent = Model.extend({
 			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
 			$(html).each(function(i, node) {
 				var seg = segs[i];
-				var el = _this.resolveEventEl(seg.event, $(node));
+				var el = _this.resolveEventEl(seg.footprint, $(node));
 
 				if (el) {
 					el.data('fc-seg', seg); // used by handlers
@@ -423,8 +423,9 @@ var ChronoComponent = Model.extend({
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
-	resolveEventEl: function(event, el) {
-		var custom = this.publiclyTrigger('eventRender', event, event, el);
+	resolveEventEl: function(eventFootprint, el) {
+		var legacy = eventFootprint.getEventLegacy();
+		var custom = this.publiclyTrigger('eventRender', legacy, legacy, el);
 
 		if (custom === false) { // means don't render at all
 			el = null;

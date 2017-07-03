@@ -26,7 +26,7 @@ DayGrid.mixin({
 
 		// don't render timed background events
 		var allDaySegs = $.grep(segs, function(seg) {
-			return seg.event.allDay;
+			return seg.footprint.componentFootprint.isAllDay;
 		});
 
 		return Grid.prototype.renderBgSegs.call(this, allDaySegs); // call the super-method

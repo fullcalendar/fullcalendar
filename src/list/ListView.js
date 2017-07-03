@@ -129,7 +129,8 @@ var ListViewGrid = Grid.extend({
 
 		// not clicking on or within an <a> with an href
 		if (!$(ev.target).closest('a[href]').length) {
-			url = seg.event.url;
+			url = seg.footprint.eventDef.url;
+
 			if (url && !ev.isDefaultPrevented()) { // jsEvent not cancelled in handler
 				window.location.href = url; // simulate link click
 			}

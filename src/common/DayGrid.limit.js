@@ -250,9 +250,14 @@ DayGrid.mixin({
 				// notify events to be removed
 				if (_this.popoverSegs) {
 					var seg;
-					for (var i = 0; i < _this.popoverSegs.length; ++i) {
+					var legacy;
+					var i;
+
+					for (i = 0; i < _this.popoverSegs.length; ++i) {
 						seg = _this.popoverSegs[i];
-						view.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
+						legacy = seg.footprint.getEventLegacy();
+
+						view.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
 					}
 				}
 				_this.segPopover.removeElement();
