@@ -554,7 +554,7 @@ var ChronoComponent = Model.extend({
 
 
 	// Returns the date range of the full days the given range visually appears to occupy.
-	// Returns a new range object.
+	// Returns a plain object with start/end, NOT an UnzonedRange!
 	computeDayRange: function(unzonedRange) {
 		var startDay = unzonedRange.getStart().stripTime(); // the beginning of the day the range starts
 		var end = unzonedRange.getEnd();
@@ -579,7 +579,7 @@ var ChronoComponent = Model.extend({
 			endDay = startDay.clone().add(1, 'days');
 		}
 
-		return new UnzonedRange(startDay, endDay);
+		return { start: startDay, end: endDay };
 	},
 
 
@@ -587,7 +587,7 @@ var ChronoComponent = Model.extend({
 	isMultiDayRange: function(unzonedRange) {
 		var dayRange = this.computeDayRange(unzonedRange);
 
-		return dayRange.getEnd().diff(dayRange.getStart(), 'days') > 1;
+		return dayRange.end.diff(dayRange.start, 'days') > 1;
 	},
 
 
