@@ -5,6 +5,8 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	end: null,
 	timezone: null,
 
+	unzonedRange: null,
+
 	requestsByUid: null,
 	pendingCnt: 0,
 
@@ -21,6 +23,12 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.start = start;
 		this.end = end;
 		this.timezone = timezone;
+
+		this.unzonedRange = new UnzonedRange(
+			start.clone().stripZone(),
+			end.clone().stripZone()
+		);
+
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
@@ -150,7 +158,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var eventDefsById = this.eventDefsById;
 		var eventDefId = eventDef.id;
 		var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
-		var eventInstances = eventDef.buildInstances(new UnzonedRange(this.start, this.end));
+		var eventInstances = eventDef.buildInstances(this.unzonedRange);
 		var i;
 
 		eventDefs.push(eventDef);

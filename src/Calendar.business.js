@@ -25,7 +25,7 @@ Calendar.prototype._buildCurrentBusinessFootprints = function(wholeDay, business
 		businessInstanceGroup = this.buildBusinessInstanceGroup(
 			wholeDay,
 			businessDefInput,
-			new UnzonedRange(eventPeriod.start, eventPeriod.end)
+			eventPeriod.unzonedRange
 		);
 
 		if (businessInstanceGroup) {
