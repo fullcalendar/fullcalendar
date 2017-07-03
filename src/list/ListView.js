@@ -96,8 +96,8 @@ var ListViewGrid = Grid.extend({
 
 			if (segRange) {
 				seg = {
-					start: segRange.getStart(),
-					end: segRange.getEnd(),
+					startMs: segRange.startMs,
+					endMs: segRange.endMs,
 					isStart: segRange.isStart,
 					isEnd: segRange.isEnd,
 					dayIndex: dayIndex
@@ -111,7 +111,7 @@ var ListViewGrid = Grid.extend({
 					!seg.isEnd && !footprint.isAllDay &&
 					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + view.nextDayThreshold
 				) {
-					seg.end = footprint.unzonedRange.getEnd();
+					seg.endMs = footprint.unzonedRange.endMs;
 					seg.isEnd = true;
 					break;
 				}
@@ -242,6 +242,7 @@ var ListViewGrid = Grid.extend({
 	// generates the HTML for a single event row
 	fgSegHtml: function(seg) {
 		var view = this.view;
+		var calendar = view.calendar;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
 		var eventFootprint = seg.footprint;
@@ -257,8 +258,8 @@ var ListViewGrid = Grid.extend({
 		else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
 				timeHtml = htmlEscape(this._getEventTimeText(
-					seg.start,
-					seg.end,
+					calendar.msToMoment(seg.startMs),
+					calendar.msToMoment(seg.endMs),
 					componentFootprint.isAllDay
 				));
 			}
