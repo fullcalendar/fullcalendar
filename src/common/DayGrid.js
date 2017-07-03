@@ -229,6 +229,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
+
 			if (this.isRTL) {
 				seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex;
 				seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex;

@@ -99,7 +99,7 @@ Calendar.mixin({
 
 
 	msToMoment: function(ms, forceAllDay) {
-		var mom = FC.moment.utc(ms);
+		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
 
 		if (forceAllDay) {
 			mom.stripTime();
@@ -115,7 +115,7 @@ Calendar.mixin({
 
 
 	msToUtcMoment: function(ms, forceAllDay) {
-		var mom = FC.moment.utc(ms);
+		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
 
 		if (forceAllDay) {
 			mom.stripTime();
