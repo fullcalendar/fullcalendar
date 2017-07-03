@@ -293,8 +293,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 			if (segRange) {
 				segs.push({
-					start: segRange.getStart(),
-					end: segRange.getEnd(),
+					startMs: segRange.startMs,
+					endMs: segRange.endMs,
 					isStart: segRange.isStart,
 					isEnd: segRange.isEnd,
 					dayIndex: dayIndex
@@ -327,11 +327,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given date.
+	// `ms` can be a millisecond UTC time OR a UTC moment.
 	// A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
-	computeDateTop: function(date, startOfDayDate) {
+	computeDateTop: function(ms, startOfDayDate) {
 		return this.computeTimeTop(
 			moment.duration(
-				date - startOfDayDate.clone().stripTime()
+				ms - startOfDayDate.clone().stripTime()
 			)
 		);
 	},

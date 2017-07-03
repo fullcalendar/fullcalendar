@@ -246,6 +246,7 @@ TimeGrid.mixin({
 	// Renders the HTML for a single event segment's default rendering
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
+		var calendar = view.calendar;
 		var componentFootprint = seg.footprint.componentFootprint;
 		var isAllDay = componentFootprint.isAllDay;
 		var eventDef = seg.footprint.eventDef;
@@ -266,9 +267,11 @@ TimeGrid.mixin({
 			// That would appear as midnight-midnight and would look dumb.
 			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
 			if (seg.isStart || seg.isEnd) {
-				timeText = this._getEventTimeText(seg.start, seg.end, isAllDay);
-				fullTimeText = this._getEventTimeText(seg.start, seg.end, isAllDay, 'LT');
-				startTimeText = this._getEventTimeText(seg.start, seg.end, isAllDay, null, false); // displayEnd=false
+				var zonedStart = calendar.msToMoment(seg.startMs);
+				var zonedEnd = calendar.msToMoment(seg.endMs);
+				timeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay);
+				fullTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
+				startTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
 			}
 		}
 		else {
@@ -341,8 +344,8 @@ TimeGrid.mixin({
 			seg = segs[i];
 			dayDate = this.dayDates[seg.dayIndex];
 
-			seg.top = this.computeDateTop(seg.start, dayDate);
-			seg.bottom = this.computeDateTop(seg.end, dayDate);
+			seg.top = this.computeDateTop(seg.startMs, dayDate);
+			seg.bottom = this.computeDateTop(seg.endMs, dayDate);
 		}
 	},
 
