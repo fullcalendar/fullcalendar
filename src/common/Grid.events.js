@@ -94,12 +94,11 @@ Grid.mixin({
 	// Generates an array of classNames to be used for the default rendering of a background event.
 	// Called by fillSegHtml.
 	bgEventSegClasses: function(seg) {
-		var event = seg.event;
-		var source = event.source || {};
+		var eventDef = seg.footprint.eventDef;
 
 		return [ 'fc-bgevent' ].concat(
-			event.className,
-			source.className || []
+			eventDef.className,
+			eventDef.source.className
 		);
 	},
 
@@ -993,11 +992,11 @@ Grid.mixin({
 
 	// List of classes that were defined by the caller of the API in some way
 	getSegCustomClasses: function(seg) {
-		var event = seg.event;
+		var eventDef = seg.footprint.eventDef;
 
 		return [].concat(
-			event.className, // guaranteed to be an array
-			event.source ? event.source.className : []
+			eventDef.className, // guaranteed to be an array
+			eventDef.source.className
 		);
 	},
 
@@ -1014,14 +1013,16 @@ Grid.mixin({
 
 	// Queries for caller-specified color, then falls back to default
 	getSegBackgroundColor: function(seg) {
-		return seg.event.backgroundColor ||
-			seg.event.color ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.backgroundColor ||
+			eventDef.color ||
 			this.getSegDefaultBackgroundColor(seg);
 	},
 
 
 	getSegDefaultBackgroundColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.backgroundColor ||
 			source.color ||
@@ -1032,14 +1033,16 @@ Grid.mixin({
 
 	// Queries for caller-specified color, then falls back to default
 	getSegBorderColor: function(seg) {
-		return seg.event.borderColor ||
-			seg.event.color ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.borderColor ||
+			eventDef.color ||
 			this.getSegDefaultBorderColor(seg);
 	},
 
 
 	getSegDefaultBorderColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.borderColor ||
 			source.color ||
@@ -1050,13 +1053,15 @@ Grid.mixin({
 
 	// Queries for caller-specified color, then falls back to default
 	getSegTextColor: function(seg) {
-		return seg.event.textColor ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.textColor ||
 			this.getSegDefaultTextColor(seg);
 	},
 
 
 	getSegDefaultTextColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.textColor ||
 			this.opt('eventTextColor');
