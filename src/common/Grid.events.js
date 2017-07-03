@@ -205,7 +205,13 @@ Grid.mixin({
 
 
 	handleSegClick: function(seg, ev) {
-		var res = this.view.publiclyTrigger('eventClick', seg.el[0], seg.event, ev); // can return `false` to cancel
+		var res = this.view.publiclyTrigger( // can return `false` to cancel
+			'eventClick',
+			seg.el[0],
+			seg.footprint.getEventLegacy(),
+			ev
+		);
+
 		if (res === false) {
 			ev.preventDefault();
 		}
@@ -219,10 +225,17 @@ Grid.mixin({
 			!this.mousedOverSeg
 		) {
 			this.mousedOverSeg = seg;
+
 			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.addClass('fc-allow-mouse-resize');
 			}
-			this.view.publiclyTrigger('eventMouseover', seg.el[0], seg.event, ev);
+
+			this.view.publiclyTrigger(
+				'eventMouseover',
+				seg.el[0],
+				seg.footprint.getEventLegacy(),
+				ev
+			);
 		}
 	},
 
@@ -235,10 +248,17 @@ Grid.mixin({
 		if (this.mousedOverSeg) {
 			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
 			this.mousedOverSeg = null;
+
 			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.removeClass('fc-allow-mouse-resize');
 			}
-			this.view.publiclyTrigger('eventMouseout', seg.el[0], seg.event, ev);
+
+			this.view.publiclyTrigger(
+				'eventMouseout',
+				seg.el[0],
+				seg.footprint.getEventLegacy(),
+				ev
+			);
 		}
 	},
 
@@ -257,7 +277,6 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var event = seg.event;
 		var eventDef = seg.footprint.eventDef;
 		var isSelected = view.isEventDefSelected(eventDef);
 		var isDraggable = view.isEventDefDraggable(eventDef);
@@ -316,7 +335,6 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event; // is a legacy event
 		var eventDef = seg.footprint.eventDef;
 		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 		var isDragging;
@@ -377,11 +395,11 @@ Grid.mixin({
 				footprint = hit.component.getSafeHitFootprint(hit);
 
 				if (origFootprint && footprint) {
-					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint, event);
+					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint, eventDef);
 
 					if (eventDefMutation) {
 						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
-							eventManager.getEventDefByUid(event._id).id,
+							eventDef.id,
 							eventDefMutation
 						);
 						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
@@ -445,7 +463,7 @@ Grid.mixin({
 
 					if (eventDefMutation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-						view.reportEventDrop(event, eventDefMutation, el, ev);
+						view.reportEventDrop(eventInstance, eventDefMutation, el, ev);
 					}
 					else {
 						view.showEventsWithId(eventDef.id);
@@ -465,7 +483,6 @@ Grid.mixin({
 	buildSegSelectListener: function(seg) {
 		var _this = this;
 		var view = this.view;
-		var event = seg.event;
 		var eventDef = seg.footprint.eventDef;
 		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 
@@ -496,19 +513,31 @@ Grid.mixin({
 	// Called before event segment dragging starts
 	segDragStart: function(seg, ev) {
 		this.isDraggingSeg = true;
-		this.view.publiclyTrigger('eventDragStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.view.publiclyTrigger(
+			'eventDragStart',
+			seg.el[0],
+			seg.footprint.getEventLegacy(),
+			ev,
+			{} // jqui dummy
+		);
 	},
 
 
 	// Called after event segment dragging stops
 	segDragStop: function(seg, ev) {
 		this.isDraggingSeg = false;
-		this.view.publiclyTrigger('eventDragStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.view.publiclyTrigger(
+			'eventDragStop',
+			seg.el[0],
+			seg.footprint.getEventLegacy(),
+			ev,
+			{} // jqui dummy
+		);
 	},
 
 
 	// DOES NOT consider overlap/constraint
-	computeEventDropMutation: function(startFootprint, endFootprint, legacyEvent) {
+	computeEventDropMutation: function(startFootprint, endFootprint, eventDef) {
 		var date0 = startFootprint.unzonedRange.getStart();
 		var date1 = endFootprint.unzonedRange.getStart();
 		var clearEnd = false;
@@ -710,8 +739,8 @@ Grid.mixin({
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event; // legacy event
 		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance;
 		var isDragging;
 		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
@@ -735,12 +764,12 @@ Grid.mixin({
 
 				if (origHitFootprint && hitFootprint) {
 					resizeMutation = isStart ?
-						_this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, event) :
-						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, event);
+						_this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, seg.footprint) :
+						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, seg.footprint);
 
 					if (resizeMutation) {
 						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
-							eventManager.getEventDefByUid(event._id).id,
+							eventDef.id,
 							resizeMutation
 						);
 						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
@@ -788,7 +817,7 @@ Grid.mixin({
 
 				if (resizeMutation) { // valid date to resize to?
 					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-					view.reportEventResize(event, resizeMutation, el, ev);
+					view.reportEventResize(eventInstance, resizeMutation, el, ev);
 				}
 				else {
 					view.showEventsWithId(eventDef.id);
@@ -804,28 +833,40 @@ Grid.mixin({
 	// Called before event segment resizing starts
 	segResizeStart: function(seg, ev) {
 		this.isResizingSeg = true;
-		this.view.publiclyTrigger('eventResizeStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.view.publiclyTrigger(
+			'eventResizeStart',
+			seg.el[0],
+			seg.footprint.getEventLegacy(),
+			ev,
+			{} // jqui dummy
+		);
 	},
 
 
 	// Called after event segment resizing stops
 	segResizeStop: function(seg, ev) {
 		this.isResizingSeg = false;
-		this.view.publiclyTrigger('eventResizeStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.view.publiclyTrigger(
+			'eventResizeStop',
+			seg.el[0],
+			seg.footprint.getEventLegacy(),
+			ev,
+			{} // jqui dummy
+		);
 	},
 
 
 	// Returns new date-information for an event segment being resized from its start
-	computeEventStartResizeMutation: function(startFootprint, endFootprint, event) {
+	computeEventStartResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+		var origRange = origEventFootprint.componentFootprint.unzonedRange;
 		var startDelta = this.diffDates(
 			endFootprint.unzonedRange.getStart(),
 			startFootprint.unzonedRange.getStart()
 		);
-		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
 		var eventDefMutation;
 
-		if (event.start.clone().add(startDelta) < eventEnd) {
+		if (origRange.getStart().add(startDelta) < origRange.getEnd()) {
 
 			dateMutation = new EventDefDateMutation();
 			dateMutation.setStartDelta(startDelta);
@@ -841,16 +882,16 @@ Grid.mixin({
 
 
 	// Returns new date-information for an event segment being resized from its end
-	computeEventEndResizeMutation: function(startFootprint, endFootprint, event) {
+	computeEventEndResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+		var origRange = origEventFootprint.componentFootprint.unzonedRange;
 		var endDelta = this.diffDates(
 			endFootprint.unzonedRange.getEnd(),
 			startFootprint.unzonedRange.getEnd()
 		);
-		var eventEnd = this.view.calendar.getEventEnd(event);
 		var dateMutation;
 		var eventDefMutation;
 
-		if (eventEnd.add(endDelta) > event.start) {
+		if (origRange.getEnd().add(endDelta) > origRange.getStart()) {
 
 			dateMutation = new EventDefDateMutation();
 			dateMutation.setEndDelta(endDelta);

@@ -726,18 +726,26 @@ var View = FC.View = ChronoComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	reportEventDrop: function(legacyEvent, eventMutation, el, ev) {
+	reportEventDrop: function(eventInstance, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
-		var eventDef = eventManager.getEventDefByUid(legacyEvent._id);
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventDef.id,
+			eventInstance.def.id,
 			eventMutation,
 			this.calendar
 		);
 		var dateMutation = eventMutation.dateMutation;
 
+		// update the EventInstance, for handlers
+		if (dateMutation) {
+			eventInstance.dateProfile = dateMutation.buildNewDateProfile(
+				eventInstance.dateProfile,
+				this.calendar
+			);
+		}
+
 		this.triggerEventDrop(
-			eventManager.getEventInstancesWithId(eventDef.id)[0].toLegacy(),
+			eventInstance,
+			// a drop doesn't necessarily mean a date mutation (ex: resource change)
 			(dateMutation && dateMutation.dateDelta) || moment.duration(),
 			undoFunc,
 			el, ev
@@ -746,8 +754,16 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	// Triggers event-drop handlers that have subscribed via the API
-	triggerEventDrop: function(event, dateDelta, undoFunc, el, ev) {
-		this.publiclyTrigger('eventDrop', el[0], event, dateDelta, undoFunc, ev, {}); // {} = jqui dummy
+	triggerEventDrop: function(eventInstance, dateDelta, undoFunc, el, ev) {
+		this.publiclyTrigger(
+			'eventDrop',
+			el[0],
+			eventInstance.toLegacy(),
+			dateDelta,
+			undoFunc,
+			ev,
+			{} // {} = jqui dummy
+		);
 	},
 
 
@@ -790,17 +806,22 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	// Must be called when an event in the view has been resized to a new length
-	reportEventResize: function(legacyEvent, eventMutation, el, ev) {
+	reportEventResize: function(eventInstance, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
-		var eventDef = eventManager.getEventDefByUid(legacyEvent._id);
 		var undoFunc = eventManager.mutateEventsWithId(
-			eventDef.id,
+			eventInstance.def.id,
 			eventMutation,
 			this.calendar
 		);
 
+		// update the EventInstance, for handlers
+		eventInstance.dateProfile = eventMutation.dateMutation.buildNewDateProfile(
+			eventInstance.dateProfile,
+			this.calendar
+		);
+
 		this.triggerEventResize(
-			eventManager.getEventInstancesWithId(eventDef.id)[0].toLegacy(),
+			eventInstance,
 			eventMutation.dateMutation.endDelta,
 			undoFunc,
 			el, ev
@@ -809,8 +830,16 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	// Triggers event-resize handlers that have subscribed via the API
-	triggerEventResize: function(event, durationDelta, undoFunc, el, ev) {
-		this.publiclyTrigger('eventResize', el[0], event, durationDelta, undoFunc, ev, {}); // {} = jqui dummy
+	triggerEventResize: function(eventInstance, durationDelta, undoFunc, el, ev) {
+		this.publiclyTrigger(
+			'eventResize',
+			el[0],
+			eventInstance.toLegacy(),
+			durationDelta,
+			undoFunc,
+			ev,
+			{} // {} = jqui dummy
+		);
 	},
 
 
