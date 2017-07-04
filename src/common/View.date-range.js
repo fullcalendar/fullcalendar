@@ -99,14 +99,14 @@ View.mixin({
 		activeUnzonedRange = renderUnzonedRange.clone();
 
 		if (!this.opt('showNonCurrentDates')) {
-			activeUnzonedRange = activeUnzonedRange.constrainTo(currentInfo.unzonedRange);
+			activeUnzonedRange = activeUnzonedRange.intersect(currentInfo.unzonedRange);
 		}
 
 		minTime = moment.duration(this.opt('minTime'));
 		maxTime = moment.duration(this.opt('maxTime'));
 		activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime);
 
-		activeUnzonedRange = activeUnzonedRange.constrainTo(validUnzonedRange);
+		activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange);
 
 		if (activeUnzonedRange) {
 			date = this.calendar.msToUtcMoment(

@@ -28,26 +28,26 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		}
 	},
 
-	constrainTo: function(constraintRange) { // TODO: rename to "intersect"
+	intersect: function(otherRange) {
 		var startMs = this.startMs;
 		var endMs = this.endMs;
 		var newRange = null;
 
-		if (constraintRange.startMs !== null) {
+		if (otherRange.startMs !== null) {
 			if (startMs === null) {
-				startMs = constraintRange.startMs;
+				startMs = otherRange.startMs;
 			}
 			else {
-				startMs = Math.max(startMs, constraintRange.startMs);
+				startMs = Math.max(startMs, otherRange.startMs);
 			}
 		}
 
-		if (constraintRange.endMs !== null) {
+		if (otherRange.endMs !== null) {
 			if (endMs === null) {
-				endMs = constraintRange.endMs;
+				endMs = otherRange.endMs;
 			}
 			else {
-				endMs = Math.min(endMs, constraintRange.endMs);
+				endMs = Math.min(endMs, otherRange.endMs);
 			}
 		}
 

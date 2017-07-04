@@ -1170,7 +1170,7 @@ Grid.mixin({
 		var i, seg;
 
 		if (constraintRange) {
-			unzonedRange = unzonedRange.constrainTo(constraintRange);
+			unzonedRange = unzonedRange.intersect(constraintRange);
 		}
 
 		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);

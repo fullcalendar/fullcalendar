@@ -38,7 +38,7 @@ var EventInstanceGroup = Class.extend({
 		for (i = 0; i < eventInstances.length; i++) {
 			eventInstance = eventInstances[i];
 
-			slicedRange = eventInstance.dateProfile.unzonedRange.constrainTo(constraintRange);
+			slicedRange = eventInstance.dateProfile.unzonedRange.intersect(constraintRange);
 
 			if (slicedRange) {
 				slicedEventRanges.push(

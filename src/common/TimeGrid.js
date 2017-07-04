@@ -289,7 +289,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 
-			segRange = unzonedRange.constrainTo(this.dayRanges[dayIndex]);
+			segRange = unzonedRange.intersect(this.dayRanges[dayIndex]);
 
 			if (segRange) {
 				segs.push({

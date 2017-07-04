@@ -92,7 +92,7 @@ var ListViewGrid = Grid.extend({
 		var segs = [];
 
 		for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
-			segRange = footprint.unzonedRange.constrainTo(dayRanges[dayIndex]);
+			segRange = footprint.unzonedRange.intersect(dayRanges[dayIndex]);
 
 			if (segRange) {
 				seg = {
