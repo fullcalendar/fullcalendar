@@ -107,7 +107,12 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 
 
 	clone: function() {
-		return new UnzonedRange(this.startMs, this.endMs);
+		var range = new UnzonedRange(this.startMs, this.endMs);
+
+		range.isStart = this.isStart;
+		range.isEnd = this.isEnd;
+
+		return range;
 	},
 
 
