@@ -61,40 +61,33 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
-	containsRange: function(innerRange) {
-		return (this.startMs === null || (innerRange.startMs !== null && innerRange.startMs >= this.startMs)) &&
-			(this.endMs === null || (innerRange.endMs !== null && innerRange.endMs <= this.endMs));
-	},
-
-
-	containsDate: function(mom) { // TODO: rename
-		var ms = mom.valueOf();
-
-		return (this.startMs === null || ms >= this.startMs) &&
-			(this.endMs === null || ms < this.endMs);
-	},
-
-
 	intersectsWith: function(otherRange) {
 		return (this.endMs === null || otherRange.startMs === null || this.endMs > otherRange.startMs) &&
 			(this.startMs === null || otherRange.endMs === null || this.startMs < otherRange.endMs);
 	},
 
 
-	equals: function(otherRange) {
-		return this.startMs === otherRange.startMs && this.endMs === otherRange.endMs;
+	containsRange: function(innerRange) {
+		return (this.startMs === null || (innerRange.startMs !== null && innerRange.startMs >= this.startMs)) &&
+			(this.endMs === null || (innerRange.endMs !== null && innerRange.endMs <= this.endMs));
 	},
 
 
-	clone: function() {
-		return new UnzonedRange(this.startMs, this.endMs);
+	// `date` can be a moment, a Date, or a millisecond time.
+	containsDate: function(date) {
+		var ms = date.valueOf();
+
+		return (this.startMs === null || ms >= this.startMs) &&
+			(this.endMs === null || ms < this.endMs);
 	},
 
 
 	// If the given date is not within the given range, move it inside.
 	// (If it's past the end, make it one millisecond before the end).
-	// expects a MS-time, returns a MS-time.
-	constrainDate: function(ms) {
+	// `date` can be a moment, a Date, or a millisecond time.
+	// Returns a MS-time.
+	constrainDate: function(date) {
+		var ms = date.valueOf();
 
 		if (this.startMs !== null && ms < this.startMs) {
 			ms = this.startMs;
@@ -105,6 +98,16 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		}
 
 		return ms;
+	},
+
+
+	equals: function(otherRange) {
+		return this.startMs === otherRange.startMs && this.endMs === otherRange.endMs;
+	},
+
+
+	clone: function() {
+		return new UnzonedRange(this.startMs, this.endMs);
 	},
 
 
