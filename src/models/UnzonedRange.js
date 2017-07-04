@@ -108,14 +108,18 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
-	// hopefully we'll remove these...
-
+	// Returns an ambig-zoned moment from startMs.
+	// BEWARE: returned moment is not localized.
+	// Formatting and start-of-week will be default.
 	getStart: function() {
 		if (this.startMs !== null) {
 			return FC.moment.utc(this.startMs).stripZone();
 		}
 	},
 
+	// Returns an ambig-zoned moment from startMs.
+	// BEWARE: returned moment is not localized.
+	// Formatting and start-of-week will be default.
 	getEnd: function() {
 		if (this.endMs !== null) {
 			return FC.moment.utc(this.endMs).stripZone();

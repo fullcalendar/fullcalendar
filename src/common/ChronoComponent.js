@@ -514,7 +514,7 @@ var ChronoComponent = Model.extend({
 
 	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date, noThemeHighlight) {
-		var view = this.view;
+		var view = this.view; // TODO: move away from using!
 		var classes = [];
 		var today;
 
@@ -556,8 +556,9 @@ var ChronoComponent = Model.extend({
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a plain object with start/end, NOT an UnzonedRange!
 	computeDayRange: function(unzonedRange) {
-		var startDay = unzonedRange.getStart().stripTime(); // the beginning of the day the range starts
-		var end = unzonedRange.getEnd();
+		var calendar = this.view.calendar; // TODO: move away from using!
+		var startDay = calendar.msToUtcMoment(unzonedRange.startMs, true); // the beginning of the day the range starts
+		var end = calendar.msToUtcMoment(unzonedRange.endMs, true);
 		var endDay = null;
 		var endTimeMS;
 

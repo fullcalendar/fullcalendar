@@ -117,7 +117,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
 	getDateDayIndex: function(date) {
 		var dayIndices = this.dayIndices;
-		var dayOffset = date.diff(this.unzonedRange.getStart(), 'days');
+		var dayOffset = date.diff(this.dayDates[0], 'days');
 
 		if (dayOffset < 0) {
 			return dayIndices[0] - 1;
