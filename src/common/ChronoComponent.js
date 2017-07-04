@@ -556,7 +556,7 @@ var ChronoComponent = Model.extend({
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a plain object with start/end, NOT an UnzonedRange!
 	computeDayRange: function(unzonedRange) {
-		var calendar = this.view.calendar; // TODO: move away from using!
+		var calendar = this.calendar || this.view.calendar; // TODO: move away from using!
 		var startDay = calendar.msToUtcMoment(unzonedRange.startMs, true); // the beginning of the day the range starts
 		var end = calendar.msToUtcMoment(unzonedRange.endMs, true);
 		var endDay = null;

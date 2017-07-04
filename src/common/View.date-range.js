@@ -89,7 +89,7 @@ View.mixin({
 
 		if (forceToValid) {
 			date = this.calendar.msToUtcMoment(
-				validUnzonedRange.constrainDate(date.valueOf()),
+				validUnzonedRange.constrainDate(date), // returns MS
 				isDateAllDay
 			);
 		}
@@ -110,7 +110,7 @@ View.mixin({
 
 		if (activeUnzonedRange) {
 			date = this.calendar.msToUtcMoment(
-				activeUnzonedRange.constrainDate(date.valueOf()),
+				activeUnzonedRange.constrainDate(date), // returns MS
 				isDateAllDay
 			);
 		}

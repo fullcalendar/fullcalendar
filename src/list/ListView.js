@@ -62,23 +62,31 @@ Its "el" is the inner-content of the above view's scroller.
 */
 var ListViewGrid = Grid.extend({
 
+	dayDates: null, // localized ambig-time moment array
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 	segSelector: '.fc-list-item', // which elements accept event actions
 	hasDayInteractions: false, // no day selection or day clicking
 
 	rangeUpdated: function() {
+		var calendar = this.view.calendar;
+		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs, true);
+		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs, true);
+		var dayDates = [];
 		var dayRanges = [];
-		var dayStart = this.unzonedRange.getStart();
-		var viewEnd = this.unzonedRange.getEnd();
 
 		while (dayStart < viewEnd) {
+
+			dayDates.push(dayStart);
+
 			dayRanges.push(new UnzonedRange(
 				dayStart,
 				dayStart.clone().add(1, 'day')
 			));
+
 			dayStart.add(1, 'day');
 		}
 
+		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
 	},
 
@@ -181,12 +189,11 @@ var ListViewGrid = Grid.extend({
 
 		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
 			daySegs = segsByDay[dayIndex];
+
 			if (daySegs) { // sparse array, so might be undefined
 
 				// append a day header
-				tbodyEl.append(this.dayHeaderHtml(
-					calendar.msToUtcMoment(this.unzonedRange.startMs).add(dayIndex, 'days')
-				));
+				tbodyEl.append(this.dayHeaderHtml(this.dayDates[dayIndex]));
 
 				this.sortEventSegs(daySegs);
 
