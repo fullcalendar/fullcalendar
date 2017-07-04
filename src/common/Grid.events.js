@@ -1077,7 +1077,7 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.view.validUnzonedRange.contains(eventFootprints[i].componentFootprint.unzonedRange)) {
+			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}
@@ -1093,7 +1093,7 @@ Grid.mixin({
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.view.validUnzonedRange.contains(eventFootprints[i].componentFootprint.unzonedRange)) {
+			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}

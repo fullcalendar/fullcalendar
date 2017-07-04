@@ -342,7 +342,7 @@ Calendar.prototype.parseFootprints = function(rawInput) {
 
 
 Calendar.prototype.footprintContainsFootprint = function(outerFootprint, innerFootprint) {
-	return outerFootprint.unzonedRange.contains(innerFootprint.unzonedRange);
+	return outerFootprint.unzonedRange.containsRange(innerFootprint.unzonedRange);
 };
 
 

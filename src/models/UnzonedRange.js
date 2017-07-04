@@ -61,7 +61,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 	},
 
 
-	contains: function(innerRange) {
+	containsRange: function(innerRange) {
 		return (this.startMs === null || (innerRange.startMs !== null && innerRange.startMs >= this.startMs)) &&
 			(this.endMs === null || (innerRange.endMs !== null && innerRange.endMs <= this.endMs));
 	},

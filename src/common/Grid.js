@@ -160,7 +160,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	getSafeHitFootprint: function(hit) {
 		var footprint = this.getHitFootprint(hit);
 
-		if (!this.view.activeUnzonedRange.contains(footprint.unzonedRange)) {
+		if (!this.view.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
 			return null;
 		}
 
@@ -505,7 +505,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 
 	isSelectionFootprintAllowed: function(componentFootprint) {
-		return this.view.validUnzonedRange.contains(componentFootprint.unzonedRange) &&
+		return this.view.validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
 			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
 	},
 
