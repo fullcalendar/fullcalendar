@@ -558,25 +558,19 @@ var ChronoComponent = Model.extend({
 	computeDayRange: function(unzonedRange) {
 		var calendar = this.calendar || this.view.calendar; // TODO: move away from using!
 		var startDay = calendar.msToUtcMoment(unzonedRange.startMs, true); // the beginning of the day the range starts
-		var end = calendar.msToUtcMoment(unzonedRange.endMs, true);
-		var endDay = null;
-		var endTimeMS;
+		var end = calendar.msToUtcMoment(unzonedRange.endMs);
+		var endTimeMS = +end.time(); // # of milliseconds into `endDay`
+		var endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
 
-		if (end) {
-			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
-			endTimeMS = +end.time(); // # of milliseconds into `endDay`
-
-			// If the end time is actually inclusively part of the next day and is equal to or
-			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-			if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
-				endDay.add(1, 'days');
-			}
+		// If the end time is actually inclusively part of the next day and is equal to or
+		// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
+		// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
+		if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
+			endDay.add(1, 'days');
 		}
 
-		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
-		// assign the default duration of one day.
-		if (!end || endDay <= startDay) {
+		// If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
+		if (endDay <= startDay) {
 			endDay = startDay.clone().add(1, 'days');
 		}
 
