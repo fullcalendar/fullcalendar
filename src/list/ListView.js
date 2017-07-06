@@ -179,7 +179,6 @@ var ListViewGrid = Grid.extend({
 
 	// render the event segments in the view
 	renderSegList: function(allSegs) {
-		var calendar = this.view.calendar;
 		var segsByDay = this.groupSegsByDay(allSegs); // sparse array
 		var dayIndex;
 		var daySegs;
