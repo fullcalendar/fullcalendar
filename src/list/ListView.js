@@ -76,7 +76,7 @@ var ListViewGrid = Grid.extend({
 
 		while (dayStart < viewEnd) {
 
-			dayDates.push(dayStart);
+			dayDates.push(dayStart.clone());
 
 			dayRanges.push(new UnzonedRange(
 				dayStart,
