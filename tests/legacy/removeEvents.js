@@ -1,14 +1,5 @@
 describe('removeEvents', function() {
-
 	var options;
-	var eventArray = [
-		{ id: 0, title: 'event zero', start: '2014-06-24', className: 'event-zero' },
-		{ id: 1, title: 'event one', start: '2014-06-24', className: 'event-non-zero event-one' },
-		{ id: 2, title: 'event two', start: '2014-06-24', className: 'event-non-zero event-two' }
-	];
-	var eventFunc = function(start, end, timezone, callback) {
-		callback(eventArray);
-	};
 
 	beforeEach(function() {
 		affix('#cal');
@@ -18,16 +9,34 @@ describe('removeEvents', function() {
 		};
 	});
 
-	$.each({
-		'with an array of events': eventArray,
-		'with an event function': eventFunc
-	}, function(description, events) {
+	function buildEventsWithoutIds() {
+		return [
+			{ title: 'event zero', start: '2014-06-24', className: 'event-zero' },
+			{ title: 'event one', start: '2014-06-24', className: 'event-non-zero event-one' },
+			{ title: 'event two', start: '2014-06-24', className: 'event-non-zero event-two' }
+		];
+	}
 
-		describe(description, function() {
+	function buildEventsWithIds() {
+		var events = buildEventsWithoutIds();
+		var i;
+
+		for (i = 0; i < events.length; i++) {
+			events[i].id = i;
+		}
+
+		return events;
+	}
+
+	$.each({
+		'when events without IDs': buildEventsWithoutIds,
+		'when events with IDs': buildEventsWithIds
+	}, function(desc, eventGenerator) {
+		describe(desc, function() {
 
 			it('can remove all events if no args specified', function(done) {
 				go(
-					events,
+					eventGenerator(),
 					function() {
 						$('#cal').fullCalendar('removeEvents');
 					},
@@ -39,41 +48,9 @@ describe('removeEvents', function() {
 				);
 			});
 
-			it('can remove events with a numeric ID', function(done) {
-				go(
-					events,
-					function() {
-						$('#cal').fullCalendar('removeEvents', 1);
-					},
-					function() {
-						expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
-						expect($('.fc-event').length).toEqual(2);
-						expect($('.event-zero').length).toEqual(1);
-						expect($('.event-two').length).toEqual(1);
-					},
-					done
-				);
-			});
-
-			it('can remove events with a string ID', function(done) {
-				go(
-					events,
-					function() {
-						$('#cal').fullCalendar('removeEvents', '1');
-					},
-					function() {
-						expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
-						expect($('.fc-event').length).toEqual(2);
-						expect($('.event-zero').length).toEqual(1);
-						expect($('.event-two').length).toEqual(1);
-					},
-					done
-				);
-			});
-
 			it('can remove events with a filter function', function(done) {
 				go(
-					events,
+					eventGenerator(),
 					function() {
 						$('#cal').fullCalendar('removeEvents', function(event) {
 							return $.inArray('event-one', event.className) !== -1;
@@ -89,22 +66,55 @@ describe('removeEvents', function() {
 				);
 			});
 
-			it('can remove an event with ID 0', function(done) { // for issue 2082
-				go(
-					events,
-					function() {
-						$('#cal').fullCalendar('removeEvents', 0);
-					},
-					function() {
-						expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
-						expect($('.fc-event').length).toEqual(2);
-						expect($('.event-zero').length).toEqual(0);
-						expect($('.event-non-zero').length).toEqual(2);
-					},
-					done
-				);
-			});
 		});
+	});
+
+	it('can remove events with a numeric ID', function(done) {
+		go(
+			buildEventsWithIds(),
+			function() {
+				$('#cal').fullCalendar('removeEvents', 1);
+			},
+			function() {
+				expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
+				expect($('.fc-event').length).toEqual(2);
+				expect($('.event-zero').length).toEqual(1);
+				expect($('.event-two').length).toEqual(1);
+			},
+			done
+		);
+	});
+
+	it('can remove events with a string ID', function(done) {
+		go(
+			buildEventsWithIds(),
+			function() {
+				$('#cal').fullCalendar('removeEvents', '1');
+			},
+			function() {
+				expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
+				expect($('.fc-event').length).toEqual(2);
+				expect($('.event-zero').length).toEqual(1);
+				expect($('.event-two').length).toEqual(1);
+			},
+			done
+		);
+	});
+
+	it('can remove an event with ID 0', function(done) { // for issue 2082
+		go(
+			buildEventsWithIds(),
+			function() {
+				$('#cal').fullCalendar('removeEvents', 0);
+			},
+			function() {
+				expect($('#cal').fullCalendar('clientEvents').length).toEqual(2);
+				expect($('.fc-event').length).toEqual(2);
+				expect($('.event-zero').length).toEqual(0);
+				expect($('.event-non-zero').length).toEqual(2);
+			},
+			done
+		);
 	});
 
 

@@ -115,26 +115,35 @@ Calendar.mixin({
 	removeEvents: function(legacyQuery) {
 		var eventManager = this.eventManager;
 		var eventInstances = eventManager.getEventInstances();
-		var legacyInstances = eventInstances.map(function(eventInstance) {
-			return eventInstance.toLegacy();
-		});
+		var legacyInstances;
 		var idMap = {};
+		var eventDef;
 		var i;
 
-		legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
-
-		// compute unique IDs
-		for (i = 0; i < legacyInstances.length; i++) {
-			idMap[legacyInstances[i].id] = true; // will implicity normalize id to a string
+		if (legacyQuery == null) { // shortcut for removing all
+			eventManager.removeAllEventDefs();
 		}
+		else {
+			legacyInstances = eventInstances.map(function(eventInstance) {
+				return eventInstance.toLegacy();
+			});
 
-		eventManager.freeze();
+			legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
 
-		for (i in idMap) { // reuse `i` as an "id"
-			eventManager.removeEventDefsById(i);
+			// compute unique IDs
+			for (i = 0; i < legacyInstances.length; i++) {
+				eventDef = this.eventManager.getEventDefByUid(legacyInstances[i]._id);
+				idMap[eventDef.id] = true;
+			}
+
+			eventManager.freeze();
+
+			for (i in idMap) { // reuse `i` as an "id"
+				eventManager.removeEventDefsById(i);
+			}
+
+			eventManager.thaw();
 		}
-
-		eventManager.thaw();
 	},
 
 
