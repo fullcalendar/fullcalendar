@@ -54,6 +54,11 @@ var ArrayEventSource = EventSource.extend({
 	},
 
 
+	removeAllEventDefs: function() {
+		this.eventDefs = [];
+	},
+
+
 	getPrimitive: function() {
 		return this.rawEventDefs;
 	},

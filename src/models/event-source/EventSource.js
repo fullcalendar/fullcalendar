@@ -37,6 +37,11 @@ var EventSource = Class.extend(ParsableModelMixin, {
 	},
 
 
+	removeAllEventDefs: function() {
+		// optional for subclasses to implement
+	},
+
+
 	/*
 	For compairing/matching
 	*/

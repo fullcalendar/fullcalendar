@@ -228,6 +228,17 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	removeAllEventDefs: function() {
+		this.getSources().forEach(function(eventSource) {
+			eventSource.removeAllEventDefs();
+		});
+
+		if (this.currentPeriod) {
+			this.currentPeriod.removeAllEventDefs();
+		}
+	},
+
+
 	// Event Mutating
 	// -----------------------------------------------------------------------------------------------------------------
 
