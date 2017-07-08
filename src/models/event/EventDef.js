@@ -7,6 +7,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 	rawId: null, // unnormalized supplied ID
 	uid: null, // internal ID. new ID for every definition
 
+	// NOTE: eventOrder sorting relies on these
 	title: null,
 	url: null,
 	rendering: null,
