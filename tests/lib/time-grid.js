@@ -17,7 +17,7 @@ function dragTimeGridEvent(eventEl, dropDate) {
 		});
 
 		eventEl.simulate('drag', {
-			localPoint: { left: '50%', top: 0 },
+			localPoint: { left: '50%', top: 1 }, // 1 for zoom
 			end: getTimeGridPoint(dropDate),
 		});
 	});

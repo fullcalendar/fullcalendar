@@ -6,7 +6,7 @@ body {
 	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 }
 
-#calendar {
+.fc {
 	width: 900px;
 	margin: 0 auto;
 }

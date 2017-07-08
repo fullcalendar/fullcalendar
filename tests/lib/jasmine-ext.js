@@ -176,10 +176,11 @@ beforeEach(function() {
 					var otherBounds = getBounds(expected);
 					var result = {
 						pass: subjectBounds && otherBounds &&
-							subjectBounds.right > otherBounds.left &&
-							subjectBounds.left < otherBounds.right &&
-							subjectBounds.bottom > otherBounds.top &&
-							subjectBounds.top < otherBounds.bottom
+							subjectBounds.right - 1 > otherBounds.left &&
+							subjectBounds.left + 1 < otherBounds.right &&
+							subjectBounds.bottom - 1 > otherBounds.top &&
+							subjectBounds.top + 1 < otherBounds.bottom
+							// +/-1 because of zoom
 					};
 					if (!result.pass) {
 						result.message = 'Element does not intersect with other element';

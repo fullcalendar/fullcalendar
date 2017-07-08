@@ -56,17 +56,8 @@
 	}
 
 	function expectHeight(heightVal) {
-		var diff;
-		if (heightProp === 'height') {
-			// Firefox is reporting off-by-one difference sometimes, even when things are good :(
-			diff = Math.abs(heightElm.outerHeight() - heightVal);
-			expect(diff).toBeLessThan(2); // off-by-one or exactly the same
-		}
-		else {
-			expect(
-				Math.round(heightElm.outerHeight())
-			).toBe(heightVal);
-		}
+		var diff = Math.abs(heightElm.outerHeight() - heightVal);
+		expect(diff).toBeLessThan(2); // off-by-one or exactly the same. for zoom, and firefox
 	}
 
 	$.each({
@@ -94,8 +85,10 @@
 
 						describe('when there are no events', function() {
 							it('should be the specified height, with no scrollbars', function() {
+								var diff;
 								init(testInfo.height);
-								expect(Math.round(heightElm.outerHeight())).toBe(600);
+								diff = Math.abs(heightElm.outerHeight() - 600);
+								expect(diff).toBeLessThan(2);
 								expect('.fc-day-grid-container').not.toHaveScrollbars();
 							});
 						});
