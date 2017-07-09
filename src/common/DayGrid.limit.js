@@ -204,13 +204,20 @@ DayGrid.mixin({
 
 				if (typeof clickOption === 'function') {
 					// the returned value can be an atomic option
-					clickOption = view.publiclyTrigger('eventLimitClick', null, {
-						date: date,
-						dayEl: dayEl,
-						moreEl: moreEl,
-						segs: reslicedAllSegs,
-						hiddenSegs: reslicedHiddenSegs
-					}, ev);
+					clickOption = _this.publiclyTrigger('eventLimitClick', {
+						context: view,
+						args: [
+							{
+								date: date.clone(),
+								dayEl: dayEl,
+								moreEl: moreEl,
+								segs: reslicedAllSegs,
+								hiddenSegs: reslicedHiddenSegs
+							},
+							ev,
+							view
+						]
+					});
 				}
 
 				if (clickOption === 'popover') {
@@ -257,7 +264,10 @@ DayGrid.mixin({
 						seg = _this.popoverSegs[i];
 						legacy = seg.footprint.getEventLegacy();
 
-						view.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
+						_this.publiclyTrigger('eventDestroy', {
+							context: legacy,
+							args: [ legacy, seg.el, view ]
+						});
 					}
 				}
 				_this.segPopover.removeElement();

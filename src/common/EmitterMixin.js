@@ -65,6 +65,13 @@ var EmitterMixin = FC.EmitterMixin = {
 		$(this).triggerHandler(types, { context: context, args: args });
 
 		return this; // for chaining
+	},
+
+
+	hasHandlers: function(type) {
+		var hash = $._data(this, 'events'); // http://blog.jquery.com/2012/08/09/jquery-1-8-released/
+
+		return hash && hash[type] && hash[type].length > 0;
 	}
 
 };

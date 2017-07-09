@@ -40,8 +40,17 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	publiclyTrigger: function() {
-		// subclasses must implement
+	publiclyTrigger: function(/**/) {
+		var calendar = this._getCalendar();
+
+		return calendar.publiclyTrigger.apply(calendar, arguments);
+	},
+
+
+	hasPublicHandlers: function(/**/) {
+		var calendar = this._getCalendar();
+
+		return calendar.hasPublicHandlers.apply(calendar, arguments);
 	},
 
 
@@ -386,6 +395,7 @@ var ChronoComponent = Model.extend({
 	// A utility that subclasses may use.
 	renderFgSegEls: function(segs, disableResizing) {
 		var _this = this;
+		var hasEventRenderHandlers = this.hasPublicHandlers('eventRender');
 		var html = '';
 		var renderedSegs = [];
 		var i;
@@ -401,7 +411,11 @@ var ChronoComponent = Model.extend({
 			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
 			$(html).each(function(i, node) {
 				var seg = segs[i];
-				var el = _this.resolveEventEl(seg.footprint, $(node));
+				var el = $(node);
+
+				if (hasEventRenderHandlers) { // optimization
+					el = _this.filterEventRenderEl(seg.footprint, el);
+				}
 
 				if (el) {
 					el.data('fc-seg', seg); // used by handlers
@@ -423,9 +437,13 @@ var ChronoComponent = Model.extend({
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
-	resolveEventEl: function(eventFootprint, el) {
+	filterEventRenderEl: function(eventFootprint, el) {
 		var legacy = eventFootprint.getEventLegacy();
-		var custom = this.publiclyTrigger('eventRender', legacy, legacy, el);
+
+		var custom = this.publiclyTrigger('eventRender', {
+			context: legacy,
+			args: [ legacy, el, this._getView() ]
+		});
 
 		if (custom === false) { // means don't render at all
 			el = null;
@@ -514,7 +532,7 @@ var ChronoComponent = Model.extend({
 
 	// Computes HTML classNames for a single-day element
 	getDayClasses: function(date, noThemeHighlight) {
-		var view = this.view; // TODO: move away from using!
+		var view = this._getView();
 		var classes = [];
 		var today;
 
@@ -556,7 +574,7 @@ var ChronoComponent = Model.extend({
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a plain object with start/end, NOT an UnzonedRange!
 	computeDayRange: function(unzonedRange) {
-		var calendar = this.calendar || this.view.calendar; // TODO: move away from using!
+		var calendar = this._getCalendar();
 		var startDay = calendar.msToUtcMoment(unzonedRange.startMs, true); // the beginning of the day the range starts
 		var end = calendar.msToUtcMoment(unzonedRange.endMs);
 		var endTimeMS = +end.time(); // # of milliseconds into `endDay`
@@ -599,6 +617,16 @@ var ChronoComponent = Model.extend({
 			child = children[i];
 			child[methodName].apply(child, args);
 		}
+	},
+
+
+	_getCalendar: function() { // TODO: strip out. move to generic parent.
+		return this.calendar || this.view.calendar;
+	},
+
+
+	_getView: function() { // TODO: strip out. move to generic parent.
+		return this.view;
 	}
 
 });

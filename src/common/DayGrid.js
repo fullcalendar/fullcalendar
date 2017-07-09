@@ -46,12 +46,14 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		// trigger dayRender with each cell's element
 		for (row = 0; row < rowCnt; row++) {
 			for (col = 0; col < colCnt; col++) {
-				view.publiclyTrigger(
-					'dayRender',
-					null,
-					this.getCellDate(row, col),
-					this.getCellEl(row, col)
-				);
+				this.publiclyTrigger('dayRender', {
+					context: view,
+					args: [
+						this.getCellDate(row, col),
+						this.getCellEl(row, col),
+						view
+					]
+				});
 			}
 		}
 	},

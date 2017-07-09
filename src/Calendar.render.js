@@ -260,7 +260,7 @@ Calendar.mixin({
 			this.view.renderUnzonedRange // view has already been rendered
 		) {
 			if (this.updateSize(true)) {
-				this.view.publiclyTrigger('windowResize', this.el[0]);
+				this.publiclyTrigger('windowResize', [ this.view ]);
 			}
 		}
 	},

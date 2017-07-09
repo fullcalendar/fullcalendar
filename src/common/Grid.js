@@ -46,13 +46,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	publiclyTrigger: function(name, thisObj) {
-		var view = this.view;
-
-		return view.publiclyTrigger.apply(view, arguments);
-	},
-
-
 	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
 

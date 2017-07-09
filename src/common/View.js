@@ -118,20 +118,6 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
-	// Triggers handlers that are view-related. Modifies args before passing to calendar.
-	publiclyTrigger: function(name, thisObj) { // arguments beyond thisObj are passed along
-		var calendar = this.calendar;
-
-		return calendar.publiclyTrigger.apply(
-			calendar,
-			[name, thisObj || this].concat(
-				Array.prototype.slice.call(arguments, 2), // arguments beyond thisObj
-				[ this ] // always make the last argument a reference to the view. TODO: deprecate
-			)
-		);
-	},
-
-
 	/* Title and Date Formatting
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -388,13 +374,19 @@ var View = FC.View = ChronoComponent.extend({
 
 	onBaseRender: function() {
 		this.applyScreenState();
-		this.publiclyTrigger('viewRender', this, this, this.el);
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
 	onBeforeBaseUnrender: function() {
 		this.applyScreenState();
-		this.publiclyTrigger('viewDestroy', this, this, this.el);
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
@@ -651,19 +643,31 @@ var View = FC.View = ChronoComponent.extend({
 	// Signals that all events have been rendered
 	onEventsRender: function() {
 		var _this = this;
+		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
 
-		this.applyScreenState();
+		if (hasSingleHandlers || this.hasPublicHandlers('eventAfterAllRender')) {
+			this.applyScreenState();
+		}
 
-		this.getEventSegs().forEach(function(seg) {
-			var legacy;
+		if (hasSingleHandlers) {
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
 
-			if (seg.el) { // necessary?
-				legacy = seg.footprint.getEventLegacy();
-				_this.publiclyTrigger('eventAfterRender', legacy, legacy, seg.el);
-			}
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
 		});
-
-		this.publiclyTrigger('eventAfterAllRender');
 	},
 
 
@@ -671,16 +675,23 @@ var View = FC.View = ChronoComponent.extend({
 	onBeforeEventsUnrender: function() {
 		var _this = this;
 
-		this.applyScreenState();
+		if (this.hasPublicHandlers('eventDestroy')) {
 
-		this.getEventSegs().forEach(function(seg) {
-			var legacy;
+			this.applyScreenState();
 
-			if (seg.el) { // necessary?
-				legacy = seg.footprint.getEventLegacy();
-				_this.publiclyTrigger('eventDestroy', legacy, legacy, seg.el);
-			}
-		});
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventDestroy', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
 	},
 
 
@@ -755,15 +766,17 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Triggers event-drop handlers that have subscribed via the API
 	triggerEventDrop: function(eventInstance, dateDelta, undoFunc, el, ev) {
-		this.publiclyTrigger(
-			'eventDrop',
-			el[0],
-			eventInstance.toLegacy(),
-			dateDelta,
-			undoFunc,
-			ev,
-			{} // {} = jqui dummy
-		);
+		this.publiclyTrigger('eventDrop', {
+			context: el[0],
+			args: [
+				eventInstance.toLegacy(),
+				dateDelta,
+				undoFunc,
+				ev,
+				{}, // {} = jqui dummy
+				this
+			]
+		});
 	},
 
 
@@ -788,15 +801,25 @@ var View = FC.View = ChronoComponent.extend({
 	triggerExternalDrop: function(singleEventDef, isEvent, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
-		this.publiclyTrigger('drop', el[0], singleEventDef.dateProfile.start, ev, ui);
+		this.publiclyTrigger('drop', {
+			context: el[0],
+			args: [
+				singleEventDef.dateProfile.start.clone(),
+				ev,
+				ui,
+				this
+			]
+		});
 
 		if (isEvent) {
 			// signal an external event landed
-			this.publiclyTrigger(
-				'eventReceive',
-				null,
-				singleEventDef.buildInstance().toLegacy()
-			);
+			this.publiclyTrigger('eventReceive', {
+				context: this,
+				args: [
+					singleEventDef.buildInstance().toLegacy(),
+					this
+				]
+			});
 		}
 	},
 
@@ -831,15 +854,17 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Triggers event-resize handlers that have subscribed via the API
 	triggerEventResize: function(eventInstance, durationDelta, undoFunc, el, ev) {
-		this.publiclyTrigger(
-			'eventResize',
-			el[0],
-			eventInstance.toLegacy(),
-			durationDelta,
-			undoFunc,
-			ev,
-			{} // {} = jqui dummy
-		);
+		this.publiclyTrigger('eventResize', {
+			context: el[0],
+			args: [
+				eventInstance.toLegacy(),
+				durationDelta,
+				undoFunc,
+				ev,
+				{}, // {} = jqui dummy
+				this
+			]
+		});
 	},
 
 
@@ -879,7 +904,15 @@ var View = FC.View = ChronoComponent.extend({
 	triggerSelect: function(footprint, ev) {
 		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
 
-		this.publiclyTrigger('select', null, dateProfile.start, dateProfile.end, ev);
+		this.publiclyTrigger('select', {
+			context: this,
+			args: [
+				dateProfile.start,
+				dateProfile.end,
+				ev,
+				this
+			]
+		});
 	},
 
 
@@ -892,7 +925,10 @@ var View = FC.View = ChronoComponent.extend({
 				this.destroySelection(); // TODO: deprecate
 			}
 			this.unrenderSelection();
-			this.publiclyTrigger('unselect', null, ev);
+			this.publiclyTrigger('unselect', {
+				context: this,
+				args: [ ev, this ]
+			});
 		}
 	},
 
@@ -994,7 +1030,10 @@ var View = FC.View = ChronoComponent.extend({
 	triggerDayClick: function(footprint, dayEl, ev) {
 		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
 
-		this.publiclyTrigger('dayClick', dayEl, dateProfile.start, ev);
+		this.publiclyTrigger('dayClick', {
+			context: dayEl,
+			args: [ dateProfile.start, ev, this ]
+		});
 	}
 
 });

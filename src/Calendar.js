@@ -46,16 +46,38 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
-	publiclyTrigger: function(name, thisObj) {
-		var args = Array.prototype.slice.call(arguments, 2);
+	publiclyTrigger: function(name, triggerInfo) {
 		var optHandler = this.opt(name);
+		var context;
+		var args;
 
-		thisObj = thisObj || this.el[0];
-		this.triggerWith(name, thisObj, args); // Emitter's method
+		if ($.isPlainObject(triggerInfo)) {
+			context = triggerInfo.context;
+			args = triggerInfo.args;
+		}
+		else if ($.isArray(triggerInfo)) {
+			args = triggerInfo;
+		}
+
+		if (context == null) {
+			context = this.el[0]; // fallback context
+		}
+
+		if (!args) {
+			args = [];
+		}
+
+		this.triggerWith(name, context, args); // Emitter's method
 
 		if (optHandler) {
-			return optHandler.apply(thisObj, args);
+			return optHandler.apply(context, args);
 		}
+	},
+
+
+	hasPublicHandlers: function(name) {
+		return this.hasHandlers(name) ||
+			this.opt(name); // handler specified in options
 	},
 
 
@@ -188,7 +210,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// Should be called when any type of async data fetching begins
 	pushLoading: function() {
 		if (!(this.loadingLevel++)) {
-			this.publiclyTrigger('loading', null, true, this.view);
+			this.publiclyTrigger('loading', [ true, this.view ]);
 		}
 	},
 
@@ -196,7 +218,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// Should be called when any type of async data fetching completes
 	popLoading: function() {
 		if (!(--this.loadingLevel)) {
-			this.publiclyTrigger('loading', null, false, this.view);
+			this.publiclyTrigger('loading', [ false, this.view ]);
 		}
 	},
 

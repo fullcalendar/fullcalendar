@@ -87,7 +87,7 @@ Grid.mixin({
 
 	// Renders a background event element, given the default rendering. Called by the fill system.
 	bgEventSegEl: function(seg, el) {
-		return this.resolveEventEl(seg.footprint, el); // will filter through eventRender
+		return this.filterEventRenderEl(seg.footprint, el);
 	},
 
 
@@ -204,12 +204,10 @@ Grid.mixin({
 
 
 	handleSegClick: function(seg, ev) {
-		var res = this.view.publiclyTrigger( // can return `false` to cancel
-			'eventClick',
-			seg.el[0],
-			seg.footprint.getEventLegacy(),
-			ev
-		);
+		var res = this.publiclyTrigger('eventClick', { // can return `false` to cancel
+			context: seg.el[0],
+			args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+		});
 
 		if (res === false) {
 			ev.preventDefault();
@@ -229,12 +227,10 @@ Grid.mixin({
 				seg.el.addClass('fc-allow-mouse-resize');
 			}
 
-			this.view.publiclyTrigger(
-				'eventMouseover',
-				seg.el[0],
-				seg.footprint.getEventLegacy(),
-				ev
-			);
+			this.publiclyTrigger('eventMouseover', {
+				context: seg.el[0],
+				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+			});
 		}
 	},
 
@@ -252,12 +248,10 @@ Grid.mixin({
 				seg.el.removeClass('fc-allow-mouse-resize');
 			}
 
-			this.view.publiclyTrigger(
-				'eventMouseout',
-				seg.el[0],
-				seg.footprint.getEventLegacy(),
-				ev
-			);
+			this.publiclyTrigger('eventMouseout', {
+				context: seg.el[0],
+				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+			});
 		}
 	},
 
@@ -512,26 +506,30 @@ Grid.mixin({
 	// Called before event segment dragging starts
 	segDragStart: function(seg, ev) {
 		this.isDraggingSeg = true;
-		this.view.publiclyTrigger(
-			'eventDragStart',
-			seg.el[0],
-			seg.footprint.getEventLegacy(),
-			ev,
-			{} // jqui dummy
-		);
+		this.publiclyTrigger('eventDragStart', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
 	// Called after event segment dragging stops
 	segDragStop: function(seg, ev) {
 		this.isDraggingSeg = false;
-		this.view.publiclyTrigger(
-			'eventDragStop',
-			seg.el[0],
-			seg.footprint.getEventLegacy(),
-			ev,
-			{} // jqui dummy
-		);
+		this.publiclyTrigger('eventDragStop', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
@@ -832,26 +830,30 @@ Grid.mixin({
 	// Called before event segment resizing starts
 	segResizeStart: function(seg, ev) {
 		this.isResizingSeg = true;
-		this.view.publiclyTrigger(
-			'eventResizeStart',
-			seg.el[0],
-			seg.footprint.getEventLegacy(),
-			ev,
-			{} // jqui dummy
-		);
+		this.publiclyTrigger('eventResizeStart', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
 	// Called after event segment resizing stops
 	segResizeStop: function(seg, ev) {
 		this.isResizingSeg = false;
-		this.view.publiclyTrigger(
-			'eventResizeStop',
-			seg.el[0],
-			seg.footprint.getEventLegacy(),
-			ev,
-			{} // jqui dummy
-		);
+		this.publiclyTrigger('eventResizeStop', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
