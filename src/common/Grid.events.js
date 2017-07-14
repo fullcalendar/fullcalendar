@@ -1,15 +1,6 @@
 
 /* Event-rendering and event-interaction methods for the abstract Grid class
 ----------------------------------------------------------------------------------------------------------------------
-
-Data Types:
-	event - { title, id, start, (end), whatever }
-	location - { start, (end), allDay }
-	rawEventRange - { start, end }
-	eventRange - { start, end, isStart, isEnd }
-	eventSpan - { start, end, isStart, isEnd, whatever }
-	eventSeg - { event, whatever }
-	seg - { whatever }
 */
 
 Grid.mixin({
@@ -24,36 +15,37 @@ Grid.mixin({
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	// Renders the given events onto the grid
-	renderEvents: function(events) {
-		var bgEvents = [];
-		var fgEvents = [];
-		var i;
+	renderEventsPayload: function(eventsPayload) {
+		var id, eventInstanceGroup;
+		var eventRenderRanges;
+		var eventFootprints;
+		var eventSegs;
+		var bgSegs = [];
+		var fgSegs = [];
 
-		for (i = 0; i < events.length; i++) {
-			(isBgEvent(events[i]) ? bgEvents : fgEvents).push(events[i]);
+		for (id in eventsPayload) {
+			eventInstanceGroup = eventsPayload[id];
+
+			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(this.view.activeUnzonedRange);
+			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
+			eventSegs = this.eventFootprintsToSegs(eventFootprints);
+
+			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
+				bgSegs.push.apply(bgSegs, // append
+					eventSegs
+				);
+			}
+			else {
+				fgSegs.push.apply(fgSegs, // append
+					eventSegs
+				);
+			}
 		}
 
 		this.segs = [].concat( // record all segs
-			this.renderBgEvents(bgEvents),
-			this.renderFgEvents(fgEvents)
+			this.renderBgSegs(bgSegs) || bgSegs,
+			this.renderFgSegs(fgSegs) || fgSegs
 		);
-	},
-
-
-	renderBgEvents: function(events) {
-		var segs = this.eventsToSegs(events);
-
-		// renderBgSegs might return a subset of segs, segs that were actually rendered
-		return this.renderBgSegs(segs) || segs;
-	},
-
-
-	renderFgEvents: function(events) {
-		var segs = this.eventsToSegs(events);
-
-		// renderFgSegs might return a subset of segs, segs that were actually rendered
-		return this.renderFgSegs(segs) || segs;
 	},
 
 
@@ -75,64 +67,9 @@ Grid.mixin({
 	},
 
 
-	/* Foreground Segment Rendering
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
-	renderFgSegs: function(segs) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders all currently rendered foreground segments
-	unrenderFgSegs: function() {
-		// subclasses must implement
-	},
-
-
-	// Renders and assigns an `el` property for each foreground event segment.
-	// Only returns segments that successfully rendered.
-	// A utility that subclasses may use.
-	renderFgSegEls: function(segs, disableResizing) {
-		var view = this.view;
-		var html = '';
-		var renderedSegs = [];
-		var i;
-
-		if (segs.length) { // don't build an empty html string
-
-			// build a large concatenation of event segment HTML
-			for (i = 0; i < segs.length; i++) {
-				html += this.fgSegHtml(segs[i], disableResizing);
-			}
-
-			// Grab individual elements from the combined HTML string. Use each as the default rendering.
-			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-			$(html).each(function(i, node) {
-				var seg = segs[i];
-				var el = view.resolveEventEl(seg.event, $(node));
-
-				if (el) {
-					el.data('fc-seg', seg); // used by handlers
-					seg.el = el;
-					renderedSegs.push(seg);
-				}
-			});
-		}
-
-		return renderedSegs;
-	},
-
-
-	// Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
-	fgSegHtml: function(seg, disableResizing) {
-		// subclasses should implement
-	},
-
-
-	/* Background Segment Rendering
-	------------------------------------------------------------------------------------------------------------------*/
+	// Background Segment Rendering
+	// ---------------------------------------------------------------------------------------------------------------
+	// TODO: move this to ChronoComponent, but without fill
 
 
 	// Renders the given background event segments onto the grid.
@@ -150,19 +87,18 @@ Grid.mixin({
 
 	// Renders a background event element, given the default rendering. Called by the fill system.
 	bgEventSegEl: function(seg, el) {
-		return this.view.resolveEventEl(seg.event, el); // will filter through eventRender
+		return this.filterEventRenderEl(seg.footprint, el);
 	},
 
 
 	// Generates an array of classNames to be used for the default rendering of a background event.
 	// Called by fillSegHtml.
 	bgEventSegClasses: function(seg) {
-		var event = seg.event;
-		var source = event.source || {};
+		var eventDef = seg.footprint.eventDef;
 
 		return [ 'fc-bgevent' ].concat(
-			event.className,
-			source.className || []
+			eventDef.className,
+			eventDef.source.className
 		);
 	},
 
@@ -189,43 +125,45 @@ Grid.mixin({
 
 	// Compute business hour segs for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
-	// If no `businessHours` configuration value is specified, assumes the calendar default.
-	buildBusinessHourSegs: function(wholeDay, businessHours) {
-		return this.eventsToSegs(
-			this.buildBusinessHourEvents(wholeDay, businessHours)
+	buildBusinessHourSegs: function(wholeDay) {
+		return this.eventFootprintsToSegs(
+			this.buildBusinessHourEventFootprints(wholeDay)
 		);
 	},
 
 
 	// Compute business hour *events* for the grid's current date range.
 	// Caller must ask if whole-day business hours are needed.
-	// If no `businessHours` configuration value is specified, assumes the calendar default.
-	buildBusinessHourEvents: function(wholeDay, businessHours) {
+	// FOR RENDERING
+	buildBusinessHourEventFootprints: function(wholeDay) {
 		var calendar = this.view.calendar;
-		var events;
 
-		if (businessHours == null) {
-			// fallback
-			// access from calendawr. don't access from view. doesn't update with dynamic options.
-			businessHours = calendar.opt('businessHours');
+		return this._buildBusinessHourEventFootprints(wholeDay, calendar.opt('businessHours'));
+	},
+
+
+	_buildBusinessHourEventFootprints: function(wholeDay, businessHourDef) {
+		var calendar = this.view.calendar;
+		var eventInstanceGroup;
+		var eventRanges;
+
+		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
+			wholeDay,
+			businessHourDef,
+			this.unzonedRange
+		);
+
+		if (eventInstanceGroup) {
+			eventRanges = eventInstanceGroup.sliceRenderRanges(
+				this.unzonedRange,
+				calendar
+			);
+		}
+		else {
+			eventRanges = [];
 		}
 
-		events = calendar.computeBusinessHourEvents(wholeDay, businessHours);
-
-		// HACK. Eventually refactor business hours "events" system.
-		// If no events are given, but businessHours is activated, this means the entire visible range should be
-		// marked as *not* business-hours, via inverse-background rendering.
-		if (!events.length && businessHours) {
-			events = [
-				$.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, {
-					start: this.view.activeRange.end, // guaranteed out-of-range
-					end: this.view.activeRange.end,   // "
-					dow: null
-				})
-			];
-		}
-
-		return events;
+		return this.eventRangesToEventFootprints(eventRanges);
 	},
 
 
@@ -255,7 +193,7 @@ Grid.mixin({
 		var _this = this;
 
 		el.on(name, this.segSelector, function(ev) {
-			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEvents
+			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
 
 			// only call the handlers if there is not a drag/resize in progress
 			if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
@@ -266,7 +204,11 @@ Grid.mixin({
 
 
 	handleSegClick: function(seg, ev) {
-		var res = this.view.publiclyTrigger('eventClick', seg.el[0], seg.event, ev); // can return `false` to cancel
+		var res = this.publiclyTrigger('eventClick', { // can return `false` to cancel
+			context: seg.el[0],
+			args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+		});
+
 		if (res === false) {
 			ev.preventDefault();
 		}
@@ -280,10 +222,15 @@ Grid.mixin({
 			!this.mousedOverSeg
 		) {
 			this.mousedOverSeg = seg;
-			if (this.view.isEventResizable(seg.event)) {
+
+			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.addClass('fc-allow-mouse-resize');
 			}
-			this.view.publiclyTrigger('eventMouseover', seg.el[0], seg.event, ev);
+
+			this.publiclyTrigger('eventMouseover', {
+				context: seg.el[0],
+				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+			});
 		}
 	},
 
@@ -296,10 +243,15 @@ Grid.mixin({
 		if (this.mousedOverSeg) {
 			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
 			this.mousedOverSeg = null;
-			if (this.view.isEventResizable(seg.event)) {
+
+			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.removeClass('fc-allow-mouse-resize');
 			}
-			this.view.publiclyTrigger('eventMouseout', seg.el[0], seg.event, ev);
+
+			this.publiclyTrigger('eventMouseout', {
+				context: seg.el[0],
+				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+			});
 		}
 	},
 
@@ -307,7 +259,7 @@ Grid.mixin({
 	handleSegMousedown: function(seg, ev) {
 		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
 
-		if (!isResizing && this.view.isEventDraggable(seg.event)) {
+		if (!isResizing && this.view.isEventDefDraggable(seg.footprint.eventDef)) {
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -318,10 +270,10 @@ Grid.mixin({
 
 	handleSegTouchStart: function(seg, ev) {
 		var view = this.view;
-		var event = seg.event;
-		var isSelected = view.isEventSelected(event);
-		var isDraggable = view.isEventDraggable(event);
-		var isResizable = view.isEventResizable(event);
+		var eventDef = seg.footprint.eventDef;
+		var isSelected = view.isEventDefSelected(eventDef);
+		var isDraggable = view.isEventDefDraggable(eventDef);
+		var isResizable = view.isEventDefResizable(eventDef);
 		var isResizing = false;
 		var dragListener;
 		var eventLongPressDelay;
@@ -333,9 +285,9 @@ Grid.mixin({
 
 		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
 
-			eventLongPressDelay = view.opt('eventLongPressDelay');
+			eventLongPressDelay = this.opt('eventLongPressDelay');
 			if (eventLongPressDelay == null) {
-				eventLongPressDelay = view.opt('longPressDelay'); // fallback
+				eventLongPressDelay = this.opt('longPressDelay'); // fallback
 			}
 
 			dragListener = isDraggable ?
@@ -373,11 +325,14 @@ Grid.mixin({
 	buildSegDragListener: function(seg) {
 		var _this = this;
 		var view = this.view;
+		var calendar = view.calendar;
+		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event;
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 		var isDragging;
 		var mouseFollower; // A clone of the original element that will move with the mouse
-		var dropLocation; // zoned event date properties
+		var eventDefMutation;
 
 		if (this.segDragListener) {
 			return this.segDragListener;
@@ -386,7 +341,7 @@ Grid.mixin({
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
 		var dragListener = this.segDragListener = new HitDragListener(view, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
 			interactionStart: function(ev) {
@@ -395,27 +350,32 @@ Grid.mixin({
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
 					parentEl: view.el,
-					opacity: dragListener.isTouch ? null : view.opt('dragOpacity'),
-					revertDuration: view.opt('dragRevertDuration'),
+					opacity: dragListener.isTouch ? null : _this.opt('dragOpacity'),
+					revertDuration: _this.opt('dragRevertDuration'),
 					zIndex: 2 // one above the .fc-view
 				});
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
 			},
 			dragStart: function(ev) {
-				if (dragListener.isTouch && !view.isEventSelected(event)) {
+				if (
+					dragListener.isTouch &&
+					!view.isEventDefSelected(eventDef) &&
+					eventInstance
+				) {
 					// if not previously selected, will fire after a delay. then, select the event
-					view.selectEvent(event);
+					view.selectEventInstance(eventInstance);
 				}
 				isDragging = true;
 				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
 				_this.segDragStart(seg, ev);
-				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
+				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var origHitSpan;
-				var hitSpan;
+				var origFootprint;
+				var footprint;
+				var mutatedEventInstanceGroup;
 				var dragHelperEls;
 
 				// starting hit could be forced (DayGrid.limit)
@@ -424,25 +384,42 @@ Grid.mixin({
 				}
 
 				// hit might not belong to this grid, so query origin grid
-				origHitSpan = origHit.component.getSafeHitSpan(origHit);
-				hitSpan = hit.component.getSafeHitSpan(hit);
+				origFootprint = origHit.component.getSafeHitFootprint(origHit);
+				footprint = hit.component.getSafeHitFootprint(hit);
 
-				if (origHitSpan && hitSpan) {
-					dropLocation = _this.computeEventDrop(origHitSpan, hitSpan, event);
-					isAllowed = dropLocation && _this.isEventLocationAllowed(dropLocation, event);
+				if (origFootprint && footprint) {
+					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint, eventDef);
+
+					if (eventDefMutation) {
+						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
+							eventDef.id,
+							eventDefMutation
+						);
+						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
 				}
 
 				if (!isAllowed) {
-					dropLocation = null;
+					eventDefMutation = null;
 					disableCursor();
 				}
 
 				// if a valid drop location, have the subclass render a visual indication
-				if (dropLocation && (dragHelperEls = view.renderDrag(dropLocation, seg))) {
-
+				if (
+					eventDefMutation &&
+					(dragHelperEls = view.renderDrag(
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
+						),
+						seg
+					))
+				) {
 					dragHelperEls.addClass('fc-dragging');
 					if (!dragListener.isTouch) {
 						_this.applyDragOpacity(dragHelperEls);
@@ -455,13 +432,14 @@ Grid.mixin({
 				}
 
 				if (isOrig) {
-					dropLocation = null; // needs to have moved hits to be a valid drop
+					// needs to have moved hits to be a valid drop
+					eventDefMutation = null;
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				view.unrenderDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all hits
-				dropLocation = null;
+				eventDefMutation = null;
 			},
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
@@ -470,18 +448,18 @@ Grid.mixin({
 				delete seg.component; // prevent side effects
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
-				mouseFollower.stop(!dropLocation, function() {
+				mouseFollower.stop(!eventDefMutation, function() {
 					if (isDragging) {
 						view.unrenderDrag();
 						_this.segDragStop(seg, ev);
 					}
 
-					if (dropLocation) {
+					if (eventDefMutation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-						view.reportSegDrop(seg, dropLocation, _this.largeUnit, el, ev);
+						view.reportEventDrop(eventInstance, eventDefMutation, el, ev);
 					}
 					else {
-						view.showEvent(event);
+						view.showEventsWithId(eventDef.id);
 					}
 				});
 				_this.segDragListener = null;
@@ -498,7 +476,8 @@ Grid.mixin({
 	buildSegSelectListener: function(seg) {
 		var _this = this;
 		var view = this.view;
-		var event = seg.event;
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 
 		if (this.segDragListener) {
 			return this.segDragListener;
@@ -506,9 +485,13 @@ Grid.mixin({
 
 		var dragListener = this.segDragListener = new DragListener({
 			dragStart: function(ev) {
-				if (dragListener.isTouch && !view.isEventSelected(event)) {
+				if (
+					dragListener.isTouch &&
+					!view.isEventDefSelected(eventDef) &&
+					eventInstance
+				) {
 					// if not previously selected, will fire after a delay. then, select the event
-					view.selectEvent(event);
+					view.selectEventInstance(eventInstance);
 				}
 			},
 			interactionEnd: function(ev) {
@@ -523,67 +506,74 @@ Grid.mixin({
 	// Called before event segment dragging starts
 	segDragStart: function(seg, ev) {
 		this.isDraggingSeg = true;
-		this.view.publiclyTrigger('eventDragStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.publiclyTrigger('eventDragStart', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
 	// Called after event segment dragging stops
 	segDragStop: function(seg, ev) {
 		this.isDraggingSeg = false;
-		this.view.publiclyTrigger('eventDragStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.publiclyTrigger('eventDragStop', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
-	// Given the spans an event drag began, and the span event was dropped, calculates the new zoned start/end/allDay
-	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
-	// A falsy returned value indicates an invalid drop.
-	// DOES NOT consider overlap/constraint.
-	computeEventDrop: function(startSpan, endSpan, event) {
-		var calendar = this.view.calendar;
-		var dragStart = startSpan.start;
-		var dragEnd = endSpan.start;
-		var delta;
-		var dropLocation; // zoned event date properties
+	// DOES NOT consider overlap/constraint
+	computeEventDropMutation: function(startFootprint, endFootprint, eventDef) {
+		var date0 = startFootprint.unzonedRange.getStart();
+		var date1 = endFootprint.unzonedRange.getStart();
+		var clearEnd = false;
+		var forceTimed = false;
+		var forceAllDay = false;
+		var dateDelta;
+		var dateMutation;
+		var eventDefMutation;
 
-		if (dragStart.hasTime() === dragEnd.hasTime()) {
-			delta = this.diffDates(dragEnd, dragStart);
+		if (startFootprint.isAllDay !== endFootprint.isAllDay) {
+			clearEnd = true;
 
-			// if an all-day event was in a timed area and it was dragged to a different time,
-			// guarantee an end and adjust start/end to have times
-			if (event.allDay && durationHasTime(delta)) {
-				dropLocation = {
-					start: event.start.clone(),
-					end: calendar.getEventEnd(event), // will be an ambig day
-					allDay: false // for normalizeEventTimes
-				};
-				calendar.normalizeEventTimes(dropLocation);
+			if (endFootprint.isAllDay) {
+				forceAllDay = true;
+				date0.stripTime();
 			}
-			// othewise, work off existing values
 			else {
-				dropLocation = pluckEventDateProps(event);
-			}
-
-			dropLocation.start.add(delta);
-			if (dropLocation.end) {
-				dropLocation.end.add(delta);
+				forceTimed = true;
 			}
 		}
-		else {
-			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
-			dropLocation = {
-				start: dragEnd.clone(),
-				end: null, // end should be cleared
-				allDay: !dragEnd.hasTime()
-			};
-		}
 
-		return dropLocation;
+		dateDelta = this.diffDates(date1, date0);
+
+		dateMutation = new EventDefDateMutation();
+		dateMutation.clearEnd = clearEnd;
+		dateMutation.forceTimed = forceTimed;
+		dateMutation.forceAllDay = forceAllDay;
+		dateMutation.setDateDelta(dateDelta);
+
+		eventDefMutation = new EventDefMutation();
+		eventDefMutation.setDateMutation(dateMutation);
+
+		return eventDefMutation;
 	},
 
 
 	// Utility for apply dragOpacity to a jQuery set
 	applyDragOpacity: function(els) {
-		var opacity = this.view.opt('dragOpacity');
+		var opacity = this.opt('dragOpacity');
 
 		if (opacity != null) {
 			els.css('opacity', opacity);
@@ -597,16 +587,15 @@ Grid.mixin({
 
 	// Called when a jQuery UI drag is initiated anywhere in the DOM
 	externalDragStart: function(ev, ui) {
-		var view = this.view;
 		var el;
 		var accept;
 
-		if (view.opt('droppable')) { // only listen if this setting is on
+		if (this.opt('droppable')) { // only listen if this setting is on
 			el = $((ui ? ui.item : null) || ev.target);
 
 			// Test that the dragged element passes the dropAccept selector or filter function.
 			// FYI, the default is "*" (matches all)
-			accept = view.opt('dropAccept');
+			accept = this.opt('dropAccept');
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 				if (!this.isDraggingExternal) { // prevent double-listening if fired twice
 					this.listenToExternalDrag(el, ev, ui);
@@ -621,7 +610,7 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
-		var dropLocation; // a null value signals an unsuccessful drag
+		var singleEventDef; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
 		var dragListener = _this.externalDragListener = new HitDragListener(this, {
@@ -630,36 +619,59 @@ Grid.mixin({
 			},
 			hitOver: function(hit) {
 				var isAllowed = true;
-				var hitSpan = hit.component.getSafeHitSpan(hit); // hit might not belong to this grid
+				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
+				var mutatedEventInstanceGroup;
 
-				if (hitSpan) {
-					dropLocation = _this.computeExternalDrop(hitSpan, meta);
-					isAllowed = dropLocation && _this.isExternalLocationAllowed(dropLocation, meta.eventProps);
+				if (hitFootprint) {
+					singleEventDef = _this.computeExternalDrop(hitFootprint, meta);
+
+					if (singleEventDef) {
+						mutatedEventInstanceGroup = new EventInstanceGroup(
+							singleEventDef.buildInstances()
+						);
+						isAllowed = meta.eventProps ? // isEvent?
+							_this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup) :
+							_this.isExternalInstanceGroupAllowed(mutatedEventInstanceGroup);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
 				}
 
 				if (!isAllowed) {
-					dropLocation = null;
+					singleEventDef = null;
 					disableCursor();
 				}
 
-				if (dropLocation) {
-					_this.renderDrag(dropLocation); // called without a seg parameter
+				if (singleEventDef) {
+					_this.renderDrag( // called without a seg parameter
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, view.calendar)
+						)
+					);
 				}
 			},
 			hitOut: function() {
-				dropLocation = null; // signal unsuccessful
+				singleEventDef = null; // signal unsuccessful
 			},
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 				_this.unrenderDrag();
 			},
 			interactionEnd: function(ev) {
-				if (dropLocation) { // element was dropped on a valid hit
-					view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+
+				if (singleEventDef) { // element was dropped on a valid hit
+					view.reportExternalDrop(
+						singleEventDef,
+						Boolean(meta.eventProps), // isEvent
+						Boolean(meta.stick), // isSticky
+						el, ev, ui
+					);
 				}
+
 				_this.isDraggingExternal = false;
 				_this.externalDragListener = null;
 			}
@@ -673,44 +685,42 @@ Grid.mixin({
 	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
 	// Returning a null value signals an invalid drop hit.
 	// DOES NOT consider overlap/constraint.
-	computeExternalDrop: function(span, meta) {
+	// Assumes both footprints are non-open-ended.
+	computeExternalDrop: function(componentFootprint, meta) {
 		var calendar = this.view.calendar;
-		var dropLocation = {
-			start: calendar.applyTimezone(span.start), // simulate a zoned event start date
-			end: null
-		};
+		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs).stripZone();
+		var end;
+		var eventDef;
 
-		// if dropped on an all-day span, and element's metadata specified a time, set it
-		if (meta.startTime && !dropLocation.start.hasTime()) {
-			dropLocation.start.time(meta.startTime);
+		if (componentFootprint.isAllDay) {
+			// if dropped on an all-day span, and element's metadata specified a time, set it
+			if (meta.startTime) {
+				start.time(meta.startTime);
+			}
+			else {
+				start.stripTime();
+			}
 		}
 
 		if (meta.duration) {
-			dropLocation.end = dropLocation.start.clone().add(meta.duration);
+			end = start.clone().add(meta.duration);
 		}
 
-		return dropLocation;
-	},
+		start = calendar.applyTimezone(start);
 
+		if (end) {
+			end = calendar.applyTimezone(end);
+		}
 
+		eventDef = SingleEventDef.parse(
+			$.extend({}, meta.eventProps, {
+				start: start,
+				end: end
+			}),
+			new EventSource(calendar)
+		);
 
-	/* Drag Rendering (for both events and an external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of an event or external element being dragged.
-	// `dropLocation` contains hypothetical start/end/allDay values the event would have if dropped. end can be null.
-	// `seg` is the internal segment object that is being dragged. If dragging an external element, `seg` is null.
-	// A truthy returned value indicates this method has rendered a helper element.
-	// Must return elements used for any mock events.
-	renderDrag: function(dropLocation, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event or external element being dragged
-	unrenderDrag: function() {
-		// subclasses must implement
+		return eventDef;
 	},
 
 
@@ -724,15 +734,16 @@ Grid.mixin({
 		var _this = this;
 		var view = this.view;
 		var calendar = view.calendar;
+		var eventManager = calendar.eventManager;
 		var el = seg.el;
-		var event = seg.event;
-		var eventEnd = calendar.getEventEnd(event);
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance;
 		var isDragging;
-		var resizeLocation; // zoned event date properties. falsy if invalid resize
+		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
 		var dragListener = this.segResizeListener = new HitDragListener(this, {
-			scroll: view.opt('dragScroll'),
+			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			interactionStart: function() {
 				isDragging = false;
@@ -744,42 +755,53 @@ Grid.mixin({
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var origHitSpan = _this.getSafeHitSpan(origHit);
-				var hitSpan = _this.getSafeHitSpan(hit);
+				var origHitFootprint = _this.getSafeHitFootprint(origHit);
+				var hitFootprint = _this.getSafeHitFootprint(hit);
+				var mutatedEventInstanceGroup;
 
-				if (origHitSpan && hitSpan) {
-					resizeLocation = isStart ?
-						_this.computeEventStartResize(origHitSpan, hitSpan, event) :
-						_this.computeEventEndResize(origHitSpan, hitSpan, event);
+				if (origHitFootprint && hitFootprint) {
+					resizeMutation = isStart ?
+						_this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, seg.footprint) :
+						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, seg.footprint);
 
-					isAllowed = resizeLocation && _this.isEventLocationAllowed(resizeLocation, event);
+					if (resizeMutation) {
+						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
+							eventDef.id,
+							resizeMutation
+						);
+						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
+					}
+					else {
+						isAllowed = false;
+					}
 				}
 				else {
 					isAllowed = false;
 				}
 
 				if (!isAllowed) {
-					resizeLocation = null;
+					resizeMutation = null;
 					disableCursor();
 				}
-				else {
-					if (
-						resizeLocation.start.isSame(event.start.clone().stripZone()) &&
-						resizeLocation.end.isSame(eventEnd.clone().stripZone())
-					) {
-						// no change. (FYI, event dates might have zones)
-						resizeLocation = null;
-					}
+				else if (resizeMutation.isEmpty()) {
+					// no change. (FYI, event dates might have zones)
+					resizeMutation = null;
 				}
 
-				if (resizeLocation) {
-					view.hideEvent(event);
-					_this.renderEventResize(resizeLocation, seg);
+				if (resizeMutation) {
+					view.hideEventsWithId(eventDef.id);
+
+					_this.renderEventResize(
+						_this.eventRangesToEventFootprints(
+							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
+						),
+						seg
+					);
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
-				resizeLocation = null;
-				view.showEvent(event); // for when out-of-bounds. show original
+				resizeMutation = null;
+				view.showEventsWithId(eventDef.id); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
 				_this.unrenderEventResize();
@@ -790,12 +812,12 @@ Grid.mixin({
 					_this.segResizeStop(seg, ev);
 				}
 
-				if (resizeLocation) { // valid date to resize to?
+				if (resizeMutation) { // valid date to resize to?
 					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-					view.reportSegResize(seg, resizeLocation, _this.largeUnit, el, ev);
+					view.reportEventResize(eventInstance, resizeMutation, el, ev);
 				}
 				else {
-					view.showEvent(event);
+					view.showEventsWithId(eventDef.id);
 				}
 				_this.segResizeListener = null;
 			}
@@ -808,78 +830,86 @@ Grid.mixin({
 	// Called before event segment resizing starts
 	segResizeStart: function(seg, ev) {
 		this.isResizingSeg = true;
-		this.view.publiclyTrigger('eventResizeStart', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.publiclyTrigger('eventResizeStart', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
 	// Called after event segment resizing stops
 	segResizeStop: function(seg, ev) {
 		this.isResizingSeg = false;
-		this.view.publiclyTrigger('eventResizeStop', seg.el[0], seg.event, ev, {}); // last argument is jqui dummy
+		this.publiclyTrigger('eventResizeStop', {
+			context: seg.el[0],
+			args: [
+				seg.footprint.getEventLegacy(),
+				ev,
+				{}, // jqui dummy
+				this.view
+			]
+		});
 	},
 
 
 	// Returns new date-information for an event segment being resized from its start
-	computeEventStartResize: function(startSpan, endSpan, event) {
-		return this.computeEventResize('start', startSpan, endSpan, event);
+	computeEventStartResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+		var origRange = origEventFootprint.componentFootprint.unzonedRange;
+		var startDelta = this.diffDates(
+			endFootprint.unzonedRange.getStart(),
+			startFootprint.unzonedRange.getStart()
+		);
+		var dateMutation;
+		var eventDefMutation;
+
+		if (origRange.getStart().add(startDelta) < origRange.getEnd()) {
+
+			dateMutation = new EventDefDateMutation();
+			dateMutation.setStartDelta(startDelta);
+
+			eventDefMutation = new EventDefMutation();
+			eventDefMutation.setDateMutation(dateMutation);
+
+			return eventDefMutation;
+		}
+
+		return false;
 	},
 
 
 	// Returns new date-information for an event segment being resized from its end
-	computeEventEndResize: function(startSpan, endSpan, event) {
-		return this.computeEventResize('end', startSpan, endSpan, event);
-	},
+	computeEventEndResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+		var origRange = origEventFootprint.componentFootprint.unzonedRange;
+		var endDelta = this.diffDates(
+			endFootprint.unzonedRange.getEnd(),
+			startFootprint.unzonedRange.getEnd()
+		);
+		var dateMutation;
+		var eventDefMutation;
 
+		if (origRange.getEnd().add(endDelta) > origRange.getStart()) {
 
-	// Returns new zoned date information for an event segment being resized from its start OR end
-	// `type` is either 'start' or 'end'.
-	// DOES NOT consider overlap/constraint.
-	computeEventResize: function(type, startSpan, endSpan, event) {
-		var calendar = this.view.calendar;
-		var delta = this.diffDates(endSpan[type], startSpan[type]);
-		var resizeLocation; // zoned event date properties
-		var defaultDuration;
+			dateMutation = new EventDefDateMutation();
+			dateMutation.setEndDelta(endDelta);
 
-		// build original values to work from, guaranteeing a start and end
-		resizeLocation = {
-			start: event.start.clone(),
-			end: calendar.getEventEnd(event),
-			allDay: event.allDay
-		};
+			eventDefMutation = new EventDefMutation();
+			eventDefMutation.setDateMutation(dateMutation);
 
-		// if an all-day event was in a timed area and was resized to a time, adjust start/end to have times
-		if (resizeLocation.allDay && durationHasTime(delta)) {
-			resizeLocation.allDay = false;
-			calendar.normalizeEventTimes(resizeLocation);
+			return eventDefMutation;
 		}
 
-		resizeLocation[type].add(delta); // apply delta to start or end
-
-		// if the event was compressed too small, find a new reasonable duration for it
-		if (!resizeLocation.start.isBefore(resizeLocation.end)) {
-
-			defaultDuration =
-				this.minResizeDuration || // TODO: hack
-				(event.allDay ?
-					calendar.defaultAllDayEventDuration :
-					calendar.defaultTimedEventDuration);
-
-			if (type == 'start') { // resizing the start?
-				resizeLocation.start = resizeLocation.end.clone().subtract(defaultDuration);
-			}
-			else { // resizing the end?
-				resizeLocation.end = resizeLocation.start.clone().add(defaultDuration);
-			}
-		}
-
-		return resizeLocation;
+		return false;
 	},
 
 
 	// Renders a visual indication of an event being resized.
-	// `range` has the updated dates of the event. `seg` is the original segment object involved in the drag.
 	// Must return elements used for any mock events.
-	renderEventResize: function(range, seg) {
+	renderEventResize: function(eventFootprints, seg) {
 		// subclasses must implement
 	},
 
@@ -899,7 +929,18 @@ Grid.mixin({
 	// If event times are disabled, or the event has no time, will return a blank string.
 	// If not specified, formatStr will default to the eventTimeFormat setting,
 	// and displayEnd will default to the displayEventEnd setting.
-	getEventTimeText: function(range, formatStr, displayEnd) {
+	getEventTimeText: function(eventFootprint, formatStr, displayEnd) {
+		return this._getEventTimeText(
+			eventFootprint.eventInstance.dateProfile.start,
+			eventFootprint.eventInstance.dateProfile.end,
+			eventFootprint.componentFootprint.isAllDay,
+			formatStr,
+			displayEnd
+		);
+	},
+
+
+	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
 
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
@@ -909,12 +950,16 @@ Grid.mixin({
 			displayEnd = this.displayEventEnd;
 		}
 
-		if (this.displayEventTime && range.start.hasTime()) {
-			if (displayEnd && range.end) {
-				return this.view.formatRange(range, formatStr);
+		if (this.displayEventTime && !isAllDay) {
+			if (displayEnd && end) {
+				return this.view.formatRange(
+					{ start: start, end: end },
+					false, // allDay
+					formatStr
+				);
 			}
 			else {
-				return range.start.format(formatStr);
+				return start.format(formatStr);
 			}
 		}
 
@@ -939,7 +984,7 @@ Grid.mixin({
 		}
 
 		// event is currently selected? attach a className.
-		if (view.isEventSelected(seg.event)) {
+		if (view.isEventDefSelected(seg.footprint.eventDef)) {
 			classes.push('fc-selected');
 		}
 
@@ -949,11 +994,11 @@ Grid.mixin({
 
 	// List of classes that were defined by the caller of the API in some way
 	getSegCustomClasses: function(seg) {
-		var event = seg.event;
+		var eventDef = seg.footprint.eventDef;
 
 		return [].concat(
-			event.className, // guaranteed to be an array
-			event.source ? event.source.className : []
+			eventDef.className, // guaranteed to be an array
+			eventDef.source.className
 		);
 	},
 
@@ -970,52 +1015,58 @@ Grid.mixin({
 
 	// Queries for caller-specified color, then falls back to default
 	getSegBackgroundColor: function(seg) {
-		return seg.event.backgroundColor ||
-			seg.event.color ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.backgroundColor ||
+			eventDef.color ||
 			this.getSegDefaultBackgroundColor(seg);
 	},
 
 
 	getSegDefaultBackgroundColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.backgroundColor ||
 			source.color ||
-			this.view.opt('eventBackgroundColor') ||
-			this.view.opt('eventColor');
+			this.opt('eventBackgroundColor') ||
+			this.opt('eventColor');
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
 	getSegBorderColor: function(seg) {
-		return seg.event.borderColor ||
-			seg.event.color ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.borderColor ||
+			eventDef.color ||
 			this.getSegDefaultBorderColor(seg);
 	},
 
 
 	getSegDefaultBorderColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.borderColor ||
 			source.color ||
-			this.view.opt('eventBorderColor') ||
-			this.view.opt('eventColor');
+			this.opt('eventBorderColor') ||
+			this.opt('eventColor');
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
 	getSegTextColor: function(seg) {
-		return seg.event.textColor ||
+		var eventDef = seg.footprint.eventDef;
+
+		return eventDef.textColor ||
 			this.getSegDefaultTextColor(seg);
 	},
 
 
 	getSegDefaultTextColor: function(seg) {
-		var source = seg.event.source || {};
+		var source = seg.footprint.eventDef.source;
 
 		return source.textColor ||
-			this.view.opt('eventTextColor');
+			this.opt('eventTextColor');
 	},
 
 
@@ -1023,195 +1074,58 @@ Grid.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	isEventLocationAllowed: function(eventLocation, event) {
-		if (this.isEventLocationInRange(eventLocation)) {
-			var calendar = this.view.calendar;
-			var eventSpans = this.eventToSpans(eventLocation);
-			var i;
+	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
+		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
+		var i;
 
-			if (eventSpans.length) {
-				for (i = 0; i < eventSpans.length; i++) {
-					if (!calendar.isEventSpanAllowed(eventSpans[i], event)) {
-						return false;
-					}
-				}
-
-				return true;
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+				return false;
 			}
 		}
 
-		return false;
+		return this.view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
 	},
 
 
-	isExternalLocationAllowed: function(eventLocation, metaProps) { // FOR the external element
-		if (this.isEventLocationInRange(eventLocation)) {
-			var calendar = this.view.calendar;
-			var eventSpans = this.eventToSpans(eventLocation);
-			var i;
+	// when it's a completely anonymous external drag, no event.
+	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
+		var calendar = this.view.calendar;
+		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
+		var i;
 
-			if (eventSpans.length) {
-				for (i = 0; i < eventSpans.length; i++) {
-					if (!calendar.isExternalSpanAllowed(eventSpans[i], eventLocation, metaProps)) {
-						return false;
-					}
-				}
-
-				return true;
+		for (i = 0; i < eventFootprints.length; i++) {
+			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+				return false;
 			}
 		}
 
-		return false;
+		for (i = 0; i < eventFootprints.length; i++) {
+			// treat it as a selection
+			if (!calendar.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
+				return false;
+			}
+		}
+
+		return true;
 	},
 
 
-	isEventLocationInRange: function(eventLocation) {
-		return isRangeWithinRange(
-			this.eventToRawRange(eventLocation),
-			this.view.validRange
-		);
-	},
-
-
-	/* Converting events -> eventRange -> eventSpan -> eventSegs
+	/* Converting eventRange -> eventFootprint -> eventSegs
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Generates an array of segments for the given single event
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	eventToSegs: function(event) {
-		return this.eventsToSegs([ event ]);
-	},
-
-
-	// Generates spans (always unzoned) for the given event.
-	// Does not do any inverting for inverse-background events.
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	eventToSpans: function(event) {
-		var eventRange = this.eventToRange(event); // { start, end, isStart, isEnd }
-
-		if (eventRange) {
-			return this.eventRangeToSpans(eventRange, event);
-		}
-		else { // out of view's valid range
-			return [];
-		}
-	},
-
-
-
-	// Converts an array of event objects into an array of event segment objects.
-	// A custom `segSliceFunc` may be given for arbitrarily slicing up events.
-	// Doesn't guarantee an order for the resulting array.
-	eventsToSegs: function(allEvents, segSliceFunc) {
-		var _this = this;
-		var eventsById = groupEventsById(allEvents);
-		var segs = [];
-
-		$.each(eventsById, function(id, events) {
-			var visibleEvents = [];
-			var eventRanges = [];
-			var eventRange; // { start, end, isStart, isEnd }
-			var i;
-
-			for (i = 0; i < events.length; i++) {
-				eventRange = _this.eventToRange(events[i]); // might be null if completely out of range
-
-				if (eventRange) {
-					eventRanges.push(eventRange);
-					visibleEvents.push(events[i]);
-				}
-			}
-
-			// inverse-background events (utilize only the first event in calculations)
-			if (isInverseBgEvent(events[0])) {
-				eventRanges = _this.invertRanges(eventRanges); // will lose isStart/isEnd
-
-				for (i = 0; i < eventRanges.length; i++) {
-					segs.push.apply(segs, // append to
-						_this.eventRangeToSegs(eventRanges[i], events[0], segSliceFunc)
-					);
-				}
-			}
-			// normal event ranges
-			else {
-				for (i = 0; i < eventRanges.length; i++) {
-					segs.push.apply(segs, // append to
-						_this.eventRangeToSegs(eventRanges[i], visibleEvents[i], segSliceFunc)
-					);
-				}
-			}
-		});
-
-		return segs;
-	},
-
-
-	// Generates the unzoned start/end dates an event appears to occupy
-	// Can accept an event "location" as well (which only has start/end and no allDay)
-	// returns { start, end, isStart, isEnd }
-	// If the event is completely outside of the grid's valid range, will return undefined.
-	eventToRange: function(event) {
-		return this.refineRawEventRange(
-			this.eventToRawRange(event)
-		);
-	},
-
-
-	// Ensures the given range is within the view's activeRange and is correctly localized.
-	// Always returns a result
-	refineRawEventRange: function(rawRange) {
-		var view = this.view;
-		var calendar = view.calendar;
-		var range = intersectRanges(rawRange, view.activeRange);
-
-		if (range) { // otherwise, event doesn't have valid range
-
-			// hack: dynamic locale change forgets to upate stored event localed
-			calendar.localizeMoment(range.start);
-			calendar.localizeMoment(range.end);
-
-			return range;
-		}
-	},
-
-
-	// not constrained to valid dates
-	// not given localizeMoment hack
-	eventToRawRange: function(event) {
-		var calendar = this.view.calendar;
-		var start = event.start.clone().stripZone();
-		var end = (
-				event.end ?
-					event.end.clone() :
-					// derive the end from the start and allDay. compute allDay if necessary
-					calendar.getDefaultEventEnd(
-						event.allDay != null ?
-							event.allDay :
-							!event.start.hasTime(),
-						event.start
-					)
-			).stripZone();
-
-		return { start: start, end: end };
-	},
-
-
-	// Given an event's range (unzoned start/end), and the event itself,
-	// slice into segments (using the segSliceFunc function if specified)
-	// eventRange - { start, end, isStart, isEnd }
-	eventRangeToSegs: function(eventRange, event, segSliceFunc) {
-		var eventSpans = this.eventRangeToSpans(eventRange, event);
-		var segs = [];
+	eventRangesToEventFootprints: function(eventRanges) {
+		var eventFootprints = [];
 		var i;
 
-		for (i = 0; i < eventSpans.length; i++) {
-			segs.push.apply(segs, // append to
-				this.eventSpanToSegs(eventSpans[i], event, segSliceFunc)
+		for (i = 0; i < eventRanges.length; i++) {
+			eventFootprints.push.apply(eventFootprints,
+				this.eventRangeToEventFootprints(eventRanges[i])
 			);
 		}
 
-		return segs;
+		return eventFootprints;
 	},
 
 
@@ -1219,76 +1133,65 @@ Grid.mixin({
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
 	// Subclasses can override.
 	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
-	eventRangeToSpans: function(eventRange, event) {
-		return [ $.extend({}, eventRange) ]; // copy into a single-item array
+	// TODO: somehow more DRY with Calendar::eventRangeToEventFootprints
+	eventRangeToEventFootprints: function(eventRange) {
+		return [
+			new EventFootprint(
+				new ComponentFootprint(
+					eventRange.unzonedRange,
+					eventRange.eventDef.isAllDay()
+				),
+				eventRange.eventDef,
+				eventRange.eventInstance // might not exist
+			)
+		];
 	},
 
 
-	// Given an event's span (unzoned start/end and other misc data), and the event itself,
-	// slices into segments and attaches event-derived properties to them.
-	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventSpanToSegs: function(eventSpan, event, segSliceFunc) {
-		var segs = segSliceFunc ? segSliceFunc(eventSpan) : this.spanToSegs(eventSpan);
-		var i, seg;
+	eventFootprintsToSegs: function(eventFootprints) {
+		var segs = [];
+		var i;
 
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-
-			// the eventSpan's isStart/isEnd takes precedence over the seg's
-			if (!eventSpan.isStart) {
-				seg.isStart = false;
-			}
-			if (!eventSpan.isEnd) {
-				seg.isEnd = false;
-			}
-
-			seg.event = event;
-			seg.eventStartMS = +eventSpan.start; // TODO: not the best name after making spans unzoned
-			seg.eventDurationMS = eventSpan.end - eventSpan.start;
+		for (i = 0; i < eventFootprints.length; i++) {
+			segs.push.apply(segs,
+				this.eventFootprintToSegs(eventFootprints[i])
+			);
 		}
 
 		return segs;
 	},
 
 
-	// Produces a new array of range objects that will cover all the time NOT covered by the given ranges.
-	// SIDE EFFECT: will mutate the given array and will use its date references.
-	invertRanges: function(ranges) {
-		var view = this.view;
-		var viewStart = view.activeRange.start.clone(); // need a copy
-		var viewEnd = view.activeRange.end.clone(); // need a copy
-		var inverseRanges = [];
-		var start = viewStart; // the end of the previous range. the start of the new range
-		var i, range;
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slices into segments and attaches event-derived properties to them.
+	// eventSpan - { start, end, isStart, isEnd, otherthings... }
+	// constraintRange allow additional clipping. optional. eventually remove this.
+	eventFootprintToSegs: function(eventFootprint, constraintRange) {
+		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
+		var segs;
+		var i, seg;
 
-		// ranges need to be in order. required for our date-walking algorithm
-		ranges.sort(compareRanges);
-
-		for (i = 0; i < ranges.length; i++) {
-			range = ranges[i];
-
-			// add the span of time before the event (if there is any)
-			if (range.start > start) { // compare millisecond time (skip any ambig logic)
-				inverseRanges.push({
-					start: start,
-					end: range.start
-				});
-			}
-
-			if (range.end > start) {
-				start = range.end;
-			}
+		if (constraintRange) {
+			unzonedRange = unzonedRange.intersect(constraintRange);
 		}
 
-		// add the span of time after the last event (if there is any)
-		if (start < viewEnd) { // compare millisecond time (skip any ambig logic)
-			inverseRanges.push({
-				start: start,
-				end: viewEnd
-			});
+		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (!unzonedRange.isStart) {
+				seg.isStart = false;
+			}
+			if (!unzonedRange.isEnd) {
+				seg.isEnd = false;
+			}
+
+			seg.footprint = eventFootprint;
+			// TODO: rename to seg.eventFootprint
 		}
 
-		return inverseRanges;
+		return segs;
 	},
 
 
@@ -1299,63 +1202,22 @@ Grid.mixin({
 
 	// A cmp function for determining which segments should take visual priority
 	compareEventSegs: function(seg1, seg2) {
-		return seg1.eventStartMS - seg2.eventStartMS || // earlier events go first
-			seg2.eventDurationMS - seg1.eventDurationMS || // tie? longer events go first
-			seg2.event.allDay - seg1.event.allDay || // tie? put all-day events first (booleans cast to 0/1)
-			compareByFieldSpecs(seg1.event, seg2.event, this.view.eventOrderSpecs);
+		var f1 = seg1.footprint.componentFootprint;
+		var r1 = f1.unzonedRange;
+		var f2 = seg2.footprint.componentFootprint;
+		var r2 = f2.unzonedRange;
+
+		return r1.startMs - r2.startMs || // earlier events go first
+			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
+			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
+			compareByFieldSpecs(
+				seg1.footprint.eventDef,
+				seg2.footprint.eventDef,
+				this.view.eventOrderSpecs
+			);
 	}
 
 });
-
-
-/* Utilities
-----------------------------------------------------------------------------------------------------------------------*/
-
-
-function pluckEventDateProps(event) {
-	return {
-		start: event.start.clone(),
-		end: event.end ? event.end.clone() : null,
-		allDay: event.allDay // keep it the same
-	};
-}
-FC.pluckEventDateProps = pluckEventDateProps;
-
-
-function isBgEvent(event) { // returns true if background OR inverse-background
-	var rendering = getEventRendering(event);
-	return rendering === 'background' || rendering === 'inverse-background';
-}
-FC.isBgEvent = isBgEvent; // export
-
-
-function isInverseBgEvent(event) {
-	return getEventRendering(event) === 'inverse-background';
-}
-
-
-function getEventRendering(event) {
-	return firstDefined((event.source || {}).rendering, event.rendering);
-}
-
-
-function groupEventsById(events) {
-	var eventsById = {};
-	var i, event;
-
-	for (i = 0; i < events.length; i++) {
-		event = events[i];
-		(eventsById[event._id] || (eventsById[event._id] = [])).push(event);
-	}
-
-	return eventsById;
-}
-
-
-// A cmp function for determining which non-inverted "ranges" (see above) happen earlier
-function compareRanges(range1, range2) {
-	return range1.start - range2.start; // earlier ranges go first
-}
 
 
 /* External-Dragging-Element Data

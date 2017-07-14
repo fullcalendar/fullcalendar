@@ -8,25 +8,21 @@ function Class() { }
 // Called on a class to create a subclass.
 // Last argument contains instance methods. Any argument before the last are considered mixins.
 Class.extend = function() {
-	var len = arguments.length;
+	var members = {};
 	var i;
-	var members;
 
-	for (i = 0; i < len; i++) {
-		members = arguments[i];
-		if (i < len - 1) { // not the last argument?
-			mixIntoClass(this, members);
-		}
+	for (i = 0; i < arguments.length; i++) {
+		copyOwnProps(arguments[i], members);
 	}
 
-	return extendClass(this, members || {}); // members will be undefined if no arguments
+	return extendClass(this, members);
 };
 
 
 // Adds new member variables/methods to the class's prototype.
 // Can be called with another class, or a plain object hash containing new members.
 Class.mixin = function(members) {
-	mixIntoClass(this, members);
+	copyOwnProps(members, this.prototype);
 };
 
 
@@ -44,7 +40,7 @@ function extendClass(superClass, members) {
 	}
 
 	// build the base prototype for the subclass, which is an new object chained to the superclass's prototype
-	subClass.prototype = createObject(superClass.prototype);
+	subClass.prototype = Object.create(superClass.prototype);
 
 	// copy each member variable/method onto the the subclass's prototype
 	copyOwnProps(members, subClass.prototype);
@@ -53,9 +49,4 @@ function extendClass(superClass, members) {
 	copyOwnProps(superClass, subClass);
 
 	return subClass;
-}
-
-
-function mixIntoClass(theClass, members) {
-	copyOwnProps(members, theClass.prototype);
 }

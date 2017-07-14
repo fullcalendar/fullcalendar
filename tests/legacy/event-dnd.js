@@ -52,7 +52,10 @@ describe('eventDrop', function() {
 
 								expect(event.start).toEqualMoment('2014-06-20');
 								expect(event.end).toBeNull();
+
 								revertFunc();
+								event = $('#cal').fullCalendar('clientEvents')[0];
+
 								expect(event.start).toEqualMoment('2014-06-11');
 								expect(event.end).toBeNull();
 
@@ -88,7 +91,10 @@ describe('eventDrop', function() {
 
 						expect(event.start).toEqualMoment('2014-06-16T06:00:00');
 						expect(event.end).toBeNull();
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T06:00:00');
 						expect(event.end).toBeNull();
 
@@ -181,7 +187,10 @@ describe('eventDrop', function() {
 
 								expect(event.start).toEqualMoment('2014-06-12T07:30:00');
 								expect(event.end).toBeNull();
+
 								revertFunc();
+								event = $('#cal').fullCalendar('clientEvents')[0];
+
 								expect(event.start).toEqualMoment('2014-06-11T06:00:00');
 								expect(event.end).toBeNull();
 
@@ -216,7 +225,10 @@ describe('eventDrop', function() {
 
 						expect(event.start).toEqualMoment('2014-06-13');
 						expect(event.end).toBeNull();
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
 
@@ -255,7 +267,10 @@ describe('eventDrop', function() {
 						expect(event.start).toEqualMoment('2014-06-10T01:00:00');
 						expect(event.end).toBeNull();
 						expect(event.allDay).toBe(false);
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
 						expect(event.allDay).toBe(true);
@@ -308,7 +323,10 @@ describe('eventDrop', function() {
 						expect(event.start).toEqualMoment('2014-06-10');
 						expect(event.end).toBeNull();
 						expect(event.allDay).toBe(true);
+
 						revertFunc();
+						event = $('#cal').fullCalendar('clientEvents')[0];
+
 						expect(event.start).toEqualMoment('2014-06-11T01:00:00');
 						expect(event.end).toBeNull();
 						expect(event.allDay).toBe(false);

@@ -5,6 +5,7 @@
 
 var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
+	dayRanges: null, // UnzonedRange[], of start-end of each day
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
 	snapsPerSlot: null,
@@ -67,6 +68,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 	renderSlatRowHtml: function() {
 		var view = this.view;
+		var calendar = view.calendar;
 		var isRTL = this.isRTL;
 		var html = '';
 		var slotTime = moment.duration(+this.view.minTime); // wish there was .clone() for durations
@@ -76,7 +78,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.view.maxTime) {
-			slotDate = this.start.clone().time(slotTime);
+			slotDate = calendar.msToUtcMoment(this.unzonedRange.startMs).time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
@@ -111,9 +113,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Parses various options into properties of this object
 	processOptions: function() {
-		var view = this.view;
-		var slotDuration = view.opt('slotDuration');
-		var snapDuration = view.opt('snapDuration');
+		var slotDuration = this.opt('slotDuration');
+		var snapDuration = this.opt('snapDuration');
 		var input;
 
 		slotDuration = moment.duration(slotDuration);
@@ -123,20 +124,17 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		this.snapDuration = snapDuration;
 		this.snapsPerSlot = slotDuration / snapDuration; // TODO: ensure an integer multiple?
 
-		this.minResizeDuration = snapDuration; // hack
-
 		// might be an array value (for TimelineView).
 		// if so, getting the most granular entry (the last one probably).
-		input = view.opt('slotLabelFormat');
+		input = this.opt('slotLabelFormat');
 		if ($.isArray(input)) {
 			input = input[input.length - 1];
 		}
 
-		this.labelFormat =
-			input ||
-			view.opt('smallTimeFormat'); // the computed default
+		this.labelFormat = input ||
+			this.opt('smallTimeFormat'); // the computed default
 
-		input = view.opt('slotLabelInterval');
+		input = this.opt('slotLabelInterval');
 		this.labelInterval = input ?
 			moment.duration(input) :
 			this.computeLabelInterval(slotDuration);
@@ -164,7 +162,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
 	computeEventTimeFormat: function() {
-		return this.view.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
+		return this.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
 	},
 
 
@@ -222,7 +220,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	getHitSpan: function(hit) {
+	getHitFootprint: function(hit) {
 		var start = this.getCellDate(0, hit.col); // row=0
 		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
 		var end;
@@ -230,7 +228,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		start.time(time);
 		end = start.clone().add(this.snapDuration);
 
-		return { start: start, end: end };
+		return new ComponentFootprint(
+			new UnzonedRange(start, end),
+			false // all-day?
+		);
 	},
 
 
@@ -244,7 +245,16 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	rangeUpdated: function() {
+		var view = this.view;
+
 		this.updateDayTable();
+
+		this.dayRanges = this.dayDates.map(function(dayDate) {
+			return new UnzonedRange(
+				dayDate.clone().add(view.minTime),
+				dayDate.clone().add(view.maxTime)
+			);
+		});
 	},
 
 
@@ -255,8 +265,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
-	spanToSegs: function(span) {
-		var segs = this.sliceRangeByTimes(span);
+	componentFootprintToSegs: function(componentFootprint) {
+		var segs = this.sliceRangeByTimes(componentFootprint.unzonedRange);
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -272,23 +282,23 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	sliceRangeByTimes: function(range) {
+	sliceRangeByTimes: function(unzonedRange) {
 		var segs = [];
-		var seg;
+		var segRange;
 		var dayIndex;
-		var dayDate;
-		var dayRange;
 
 		for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
-			dayDate = this.dayDates[dayIndex].clone().time(0); // TODO: better API for this?
-			dayRange = {
-				start: dayDate.clone().add(this.view.minTime), // don't use .time() because it sux with negatives
-				end: dayDate.clone().add(this.view.maxTime)
-			};
-			seg = intersectRanges(range, dayRange); // both will be ambig timezone
-			if (seg) {
-				seg.dayIndex = dayIndex;
-				segs.push(seg);
+
+			segRange = unzonedRange.intersect(this.dayRanges[dayIndex]);
+
+			if (segRange) {
+				segs.push({
+					startMs: segRange.startMs,
+					endMs: segRange.endMs,
+					isStart: segRange.isStart,
+					isEnd: segRange.isEnd,
+					dayIndex: dayIndex
+				});
 			}
 		}
 
@@ -317,11 +327,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given date.
+	// `ms` can be a millisecond UTC time OR a UTC moment.
 	// A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
-	computeDateTop: function(date, startOfDayDate) {
+	computeDateTop: function(ms, startOfDayDate) {
 		return this.computeTimeTop(
 			moment.duration(
-				date - startOfDayDate.clone().stripTime()
+				ms - startOfDayDate.clone().stripTime()
 			)
 		);
 	},
@@ -361,21 +372,19 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventLocation, seg) {
-		var eventSpans;
+	renderDrag: function(eventFootprints, seg) {
 		var i;
 
 		if (seg) { // if there is event information for this drag, render a helper event
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.renderEventLocationHelper(eventLocation, seg);
+			return this.renderHelperEventFootprints(eventFootprints);
 		}
 		else { // otherwise, just render a highlight
-			eventSpans = this.eventToSpans(eventLocation);
 
-			for (i = 0; i < eventSpans.length; i++) {
-				this.renderHighlight(eventSpans[i]);
+			for (i = 0; i < eventFootprints.length; i++) {
+				this.renderHighlight(eventFootprints[i].componentFootprint);
 			}
 		}
 	},
@@ -393,8 +402,8 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventLocation, seg) {
-		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+	renderEventResize: function(eventFootprints, seg) {
+		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
@@ -409,8 +418,13 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
-	renderHelper: function(event, sourceSeg) {
-		return this.renderHelperSegs(this.eventToSegs(event), sourceSeg); // returns mock event elements
+	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		return this.renderHelperSegs( // returns mock event elements
+			segs,
+			sourceSeg
+		);
 	},
 
 
@@ -448,7 +462,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderNowIndicator: function(date) {
 		// seg system might be overkill, but it handles scenario where line needs to be rendered
 		//  more than once because of columns with the same date (resources columns for example)
-		var segs = this.spanToSegs({ start: date, end: date });
+		var segs = this.componentFootprintToSegs(
+			new ComponentFootprint(
+				new UnzonedRange(date, date.valueOf() + 1), // protect against null range
+				false // all-day
+			)
+		);
 		var top = this.computeDateTop(date, date);
 		var nodes = [];
 		var i;
@@ -484,14 +503,14 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(span) {
-		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-
-			// normally acceps an eventLocation, span has a start/end, which is good enough
-			this.renderEventLocationHelper(span);
+	renderSelectionFootprint: function(componentFootprint) {
+		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
+			this.renderHelperEventFootprints([
+				this.fabricateEventFootprint(componentFootprint)
+			]);
 		}
 		else {
-			this.renderHighlight(span);
+			this.renderHighlight(componentFootprint);
 		}
 	},
 
@@ -507,8 +526,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderHighlight: function(span) {
-		this.renderHighlightSegs(this.spanToSegs(span));
+	renderHighlight: function(componentFootprint) {
+		this.renderHighlightSegs(
+			this.componentFootprintToSegs(componentFootprint)
+		);
 	},
 
 

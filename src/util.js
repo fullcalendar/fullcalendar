@@ -1,6 +1,5 @@
 
 // exports
-FC.intersectRanges = intersectRanges;
 FC.applyAll = applyAll;
 FC.debounce = debounce;
 FC.isInt = isInt;
@@ -498,52 +497,6 @@ function flexibleCompare(a, b) {
 }
 
 
-/* FullCalendar-specific Misc Utilities
-----------------------------------------------------------------------------------------------------------------------*/
-
-
-// Computes the intersection of the two ranges. Will return fresh date clones in a range.
-// Returns undefined if no intersection.
-// Expects all dates to be normalized to the same timezone beforehand.
-// TODO: move to date section?
-function intersectRanges(subjectRange, constraintRange) {
-	var subjectStart = subjectRange.start;
-	var subjectEnd = subjectRange.end;
-	var constraintStart = constraintRange.start;
-	var constraintEnd = constraintRange.end;
-	var segStart, segEnd;
-	var isStart, isEnd;
-
-	if (subjectEnd > constraintStart && subjectStart < constraintEnd) { // in bounds at all?
-
-		if (subjectStart >= constraintStart) {
-			segStart = subjectStart.clone();
-			isStart = true;
-		}
-		else {
-			segStart = constraintStart.clone();
-			isStart =  false;
-		}
-
-		if (subjectEnd <= constraintEnd) {
-			segEnd = subjectEnd.clone();
-			isEnd = true;
-		}
-		else {
-			segEnd = constraintEnd.clone();
-			isEnd = false;
-		}
-
-		return {
-			start: segStart,
-			end: segEnd,
-			isStart: isStart,
-			isEnd: isEnd
-		};
-	}
-}
-
-
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -684,88 +637,6 @@ function multiplyDuration(dur, n) {
 }
 
 
-function cloneRange(range) {
-	return {
-		start: range.start.clone(),
-		end: range.end.clone()
-	};
-}
-
-
-// Trims the beginning and end of inner range to be completely within outerRange.
-// Returns a new range object.
-function constrainRange(innerRange, outerRange) {
-	innerRange = cloneRange(innerRange);
-
-	if (outerRange.start) {
-		// needs to be inclusively before outerRange's end
-		innerRange.start = constrainDate(innerRange.start, outerRange);
-	}
-
-	if (outerRange.end) {
-		innerRange.end = minMoment(innerRange.end, outerRange.end);
-	}
-
-	return innerRange;
-}
-
-
-// If the given date is not within the given range, move it inside.
-// (If it's past the end, make it one millisecond before the end).
-// Always returns a new moment.
-function constrainDate(date, range) {
-	date = date.clone();
-
-	if (range.start) {
-		date = maxMoment(date, range.start);
-	}
-
-	if (range.end && date >= range.end) {
-		date = range.end.clone().subtract(1);
-	}
-
-	return date;
-}
-
-
-function isDateWithinRange(date, range) {
-	return (!range.start || date >= range.start) &&
-		(!range.end || date < range.end);
-}
-
-
-// TODO: deal with repeat code in intersectRanges
-// constraintRange can have unspecified start/end, an open-ended range.
-function doRangesIntersect(subjectRange, constraintRange) {
-	return (!constraintRange.start || subjectRange.end >= constraintRange.start) &&
-		(!constraintRange.end || subjectRange.start < constraintRange.end);
-}
-
-
-function isRangeWithinRange(innerRange, outerRange) {
-	return (!outerRange.start || innerRange.start >= outerRange.start) &&
-		(!outerRange.end || innerRange.end <= outerRange.end);
-}
-
-
-function isRangesEqual(range0, range1) {
-	return ((range0.start && range1.start && range0.start.isSame(range1.start)) || (!range0.start && !range1.start)) &&
-		((range0.end && range1.end && range0.end.isSame(range1.end)) || (!range0.end && !range1.end));
-}
-
-
-// Returns the moment that's earlier in time. Always a copy.
-function minMoment(mom1, mom2) {
-	return (mom1.isBefore(mom2) ? mom1 : mom2).clone();
-}
-
-
-// Returns the moment that's later in time. Always a copy.
-function maxMoment(mom1, mom2) {
-	return (mom1.isAfter(mom2) ? mom1 : mom2).clone();
-}
-
-
 // Returns a boolean about whether the given duration has any time parts (hours/minutes/seconds/ms)
 function durationHasTime(dur) {
 	return Boolean(dur.hours() || dur.minutes() || dur.seconds() || dur.milliseconds());
@@ -779,7 +650,8 @@ function isNativeDate(input) {
 
 // Returns a boolean about whether the given input is a time string, like "06:40:00" or "06:00"
 function isTimeString(str) {
-	return /^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
+	return typeof str === 'string' &&
+		/^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
 }
 
 
@@ -861,15 +733,6 @@ function mergeProps(propObjs, complexProps) {
 }
 
 
-// Create an object that has the given prototype. Just like Object.create
-function createObject(proto) {
-	var f = function() {};
-	f.prototype = proto;
-	return new f();
-}
-FC.createObject = createObject;
-
-
 function copyOwnProps(src, dest) {
 	for (var name in src) {
 		if (hasOwnProp(src, name)) {
@@ -881,12 +744,6 @@ function copyOwnProps(src, dest) {
 
 function hasOwnProp(obj, name) {
 	return hasOwnPropMethod.call(obj, name);
-}
-
-
-// Is the given value a non-object non-function value?
-function isAtomic(val) {
-	return /undefined|null|boolean|number|string/.test($.type(val));
 }
 
 
@@ -903,6 +760,44 @@ function applyAll(functions, thisObj, args) {
 		return ret;
 	}
 }
+
+
+function removeMatching(array, testFunc) {
+	var removeCnt = 0;
+	var i = 0;
+
+	while (i < array.length) {
+		if (testFunc(array[i])) { // truthy value means *remove*
+			array.splice(i, 1);
+			removeCnt++;
+		}
+		else {
+			i++;
+		}
+	}
+
+	return removeCnt;
+}
+
+
+function removeExact(array, exactVal) {
+	var removeCnt = 0;
+	var i = 0;
+
+	while (i < array.length) {
+		if (array[i] === exactVal) {
+			array.splice(i, 1);
+			removeCnt++;
+		}
+		else {
+			i++;
+		}
+	}
+
+	return removeCnt;
+}
+FC.removeExact = removeExact;
+
 
 
 function firstDefined() {

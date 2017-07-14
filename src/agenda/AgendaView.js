@@ -28,9 +28,11 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	initialize: function() {
 		this.timeGrid = this.instantiateTimeGrid();
+		this.addChild(this.timeGrid);
 
 		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 			this.dayGrid = this.instantiateDayGrid(); // the all-day subcomponent of this view
+			this.addChild(this.dayGrid);
 		}
 
 		this.scroller = new Scroller({
@@ -63,10 +65,10 @@ var AgendaView = FC.AgendaView = View.extend({
 	// Renders the view into `this.el`, which has already been assigned
 	renderDates: function() {
 
-		this.timeGrid.setRange(this.renderRange);
+		this.timeGrid.setRange(this.renderUnzonedRange);
 
 		if (this.dayGrid) {
-			this.dayGrid.setRange(this.renderRange);
+			this.dayGrid.setRange(this.renderUnzonedRange);
 		}
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
@@ -106,6 +108,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
+	// TODO: move this over to ChronoComponent
 	unrenderDates: function() {
 		this.timeGrid.unrenderDates();
 		this.timeGrid.removeElement();
@@ -153,44 +156,12 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderBusinessHours: function() {
-		this.timeGrid.renderBusinessHours();
-
-		if (this.dayGrid) {
-			this.dayGrid.renderBusinessHours();
-		}
-	},
-
-
-	unrenderBusinessHours: function() {
-		this.timeGrid.unrenderBusinessHours();
-
-		if (this.dayGrid) {
-			this.dayGrid.unrenderBusinessHours();
-		}
-	},
-
-
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	getNowIndicatorUnit: function() {
 		return this.timeGrid.getNowIndicatorUnit();
-	},
-
-
-	renderNowIndicator: function(date) {
-		this.timeGrid.renderNowIndicator(date);
-	},
-
-
-	unrenderNowIndicator: function() {
-		this.timeGrid.unrenderNowIndicator();
 	},
 
 
@@ -309,52 +280,9 @@ var AgendaView = FC.AgendaView = View.extend({
 	// forward all hit-related method calls to the grids (dayGrid might not be defined)
 
 
-	hitsNeeded: function() {
-		this.timeGrid.hitsNeeded();
-		if (this.dayGrid) {
-			this.dayGrid.hitsNeeded();
-		}
-	},
-
-
-	hitsNotNeeded: function() {
-		this.timeGrid.hitsNotNeeded();
-		if (this.dayGrid) {
-			this.dayGrid.hitsNotNeeded();
-		}
-	},
-
-
-	prepareHits: function() {
-		this.timeGrid.prepareHits();
-		if (this.dayGrid) {
-			this.dayGrid.prepareHits();
-		}
-	},
-
-
-	releaseHits: function() {
-		this.timeGrid.releaseHits();
-		if (this.dayGrid) {
-			this.dayGrid.releaseHits();
-		}
-	},
-
-
-	queryHit: function(left, top) {
-		var hit = this.timeGrid.queryHit(left, top);
-
-		if (!hit && this.dayGrid) {
-			hit = this.dayGrid.queryHit(left, top);
-		}
-
-		return hit;
-	},
-
-
-	getHitSpan: function(hit) {
+	getHitFootprint: function(hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
-		return hit.component.getHitSpan(hit);
+		return hit.component.getHitFootprint(hit);
 	},
 
 
@@ -369,53 +297,34 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders events onto the view and populates the View's segment array
-	renderEvents: function(events) {
-		var dayEvents = [];
-		var timedEvents = [];
+	renderEventsPayload: function(eventsPayload) {
+		var dayEventsPayload = {};
+		var timedEventsPayload = {};
 		var daySegs = [];
 		var timedSegs;
-		var i;
+		var id, eventInstanceGroup;
 
 		// separate the events into all-day and timed
-		for (i = 0; i < events.length; i++) {
-			if (events[i].allDay) {
-				dayEvents.push(events[i]);
+		for (id in eventsPayload) {
+			eventInstanceGroup = eventsPayload[id];
+
+			if (eventInstanceGroup.getEventDef().isAllDay()) {
+				dayEventsPayload[id] = eventInstanceGroup;
 			}
 			else {
-				timedEvents.push(events[i]);
+				timedEventsPayload[id] = eventInstanceGroup;
 			}
 		}
 
 		// render the events in the subcomponents
-		timedSegs = this.timeGrid.renderEvents(timedEvents);
+		timedSegs = this.timeGrid.renderEventsPayload(timedEventsPayload);
 		if (this.dayGrid) {
-			daySegs = this.dayGrid.renderEvents(dayEvents);
+			daySegs = this.dayGrid.renderEventsPayload(dayEventsPayload);
 		}
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
+		// TODO: how will ChronoComponent handle this?
 		this.updateHeight();
-	},
-
-
-	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
-		return this.timeGrid.getEventSegs().concat(
-			this.dayGrid ? this.dayGrid.getEventSegs() : []
-		);
-	},
-
-
-	// Unrenders all event elements and clears internal segment data
-	unrenderEvents: function() {
-
-		// unrender the events in the subcomponents
-		this.timeGrid.unrenderEvents();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderEvents();
-		}
-
-		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
 	},
 
 
@@ -424,20 +333,14 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
-		if (dropLocation.start.hasTime()) {
-			return this.timeGrid.renderDrag(dropLocation, seg);
-		}
-		else if (this.dayGrid) {
-			return this.dayGrid.renderDrag(dropLocation, seg);
-		}
-	},
-
-
-	unrenderDrag: function() {
-		this.timeGrid.unrenderDrag();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderDrag();
+	renderDrag: function(eventFootprints, seg) {
+		if (eventFootprints.length) {
+			if (!eventFootprints[0].componentFootprint.isAllDay) {
+				return this.timeGrid.renderDrag(eventFootprints, seg);
+			}
+			else if (this.dayGrid) {
+				return this.dayGrid.renderDrag(eventFootprints, seg);
+			}
 		}
 	},
 
@@ -447,21 +350,12 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(span) {
-		if (span.start.hasTime() || span.end.hasTime()) {
-			this.timeGrid.renderSelection(span);
+	renderSelectionFootprint: function(componentFootprint) {
+		if (!componentFootprint.isAllDay) {
+			this.timeGrid.renderSelectionFootprint(componentFootprint);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.renderSelection(span);
-		}
-	},
-
-
-	// Unrenders a visual indications of a selection
-	unrenderSelection: function() {
-		this.timeGrid.unrenderSelection();
-		if (this.dayGrid) {
-			this.dayGrid.unrenderSelection();
+			this.dayGrid.renderSelectionFootprint(componentFootprint);
 		}
 	}
 
@@ -476,15 +370,16 @@ var agendaTimeGridMethods = {
 	// Generates the HTML that will go before the day-of week header cells
 	renderHeadIntroHtml: function() {
 		var view = this.view;
+		var weekStart = view.calendar.msToUtcMoment(this.unzonedRange.startMs, true);
 		var weekText;
 
-		if (view.opt('weekNumbers')) {
-			weekText = this.start.format(view.opt('smallWeekFormat'));
+		if (this.opt('weekNumbers')) {
+			weekText = weekStart.format(this.opt('smallWeekFormat'));
 
 			return '' +
 				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
 					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-						{ date: this.start, type: 'week', forceOff: this.colCnt > 1 },
+						{ date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
 						htmlEscape(weekText) // inner HTML
 					) +
 				'</th>';

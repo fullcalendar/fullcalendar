@@ -23,6 +23,7 @@ var BasicView = FC.BasicView = View.extend({
 
 	initialize: function() {
 		this.dayGrid = this.instantiateDayGrid();
+		this.addChild(this.dayGrid);
 
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
@@ -42,20 +43,22 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Computes the date range that will be rendered.
-	buildRenderRange: function(currentRange, currentRangeUnit) {
-		var renderRange = View.prototype.buildRenderRange.apply(this, arguments);
+	buildRenderRange: function(currentUnzonedRange, currentRangeUnit) {
+		var renderUnzonedRange = View.prototype.buildRenderRange.apply(this, arguments); // an UnzonedRange
+		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, this.isRangeAllDay);
+		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, this.isRangeAllDay);
 
 		// year and month views should be aligned with weeks. this is already done for week
 		if (/^(year|month)$/.test(currentRangeUnit)) {
-			renderRange.start.startOf('week');
+			start.startOf('week');
 
 			// make end-of-week if not already
-			if (renderRange.end.weekday()) {
-				renderRange.end.add(1, 'week').startOf('week'); // exclusively move backwards
+			if (end.weekday()) {
+				end.add(1, 'week').startOf('week'); // exclusively move backwards
 			}
 		}
 
-		return this.trimHiddenDays(renderRange);
+		return this.trimHiddenDays(new UnzonedRange(start, end));
 	},
 
 
@@ -63,7 +66,7 @@ var BasicView = FC.BasicView = View.extend({
 	renderDates: function() {
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.currentRangeUnit); // do before Grid::setRange
-		this.dayGrid.setRange(this.renderRange);
+		this.dayGrid.setRange(this.renderUnzonedRange);
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		if (this.opt('weekNumbers')) {
@@ -107,16 +110,6 @@ var BasicView = FC.BasicView = View.extend({
 		this.dayGrid.unrenderDates();
 		this.dayGrid.removeElement();
 		this.scroller.destroy();
-	},
-
-
-	renderBusinessHours: function() {
-		this.dayGrid.renderBusinessHours();
-	},
-
-
-	unrenderBusinessHours: function() {
-		this.dayGrid.unrenderBusinessHours();
 	},
 
 
@@ -257,101 +250,17 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	/* Hit Areas
-	------------------------------------------------------------------------------------------------------------------*/
-	// forward all hit-related method calls to dayGrid
-
-
-	hitsNeeded: function() {
-		this.dayGrid.hitsNeeded();
-	},
-
-
-	hitsNotNeeded: function() {
-		this.dayGrid.hitsNotNeeded();
-	},
-
-
-	prepareHits: function() {
-		this.dayGrid.prepareHits();
-	},
-
-
-	releaseHits: function() {
-		this.dayGrid.releaseHits();
-	},
-
-
-	queryHit: function(left, top) {
-		return this.dayGrid.queryHit(left, top);
-	},
-
-
-	getHitSpan: function(hit) {
-		return this.dayGrid.getHitSpan(hit);
-	},
-
-
-	getHitEl: function(hit) {
-		return this.dayGrid.getHitEl(hit);
-	},
-
-
 	/* Events
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders the given events onto the view and populates the segments array
-	renderEvents: function(events) {
-		this.dayGrid.renderEvents(events);
+	renderEventsPayload: function(eventsPayload) {
+		this.dayGrid.renderEventsPayload(eventsPayload);
 
-		this.updateHeight(); // must compensate for events that overflow the row
-	},
-
-
-	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
-		return this.dayGrid.getEventSegs();
-	},
-
-
-	// Unrenders all event elements and clears internal segment data
-	unrenderEvents: function() {
-		this.dayGrid.unrenderEvents();
-
-		// we DON'T need to call updateHeight() because
-		// a renderEvents() call always happens after this, which will eventually call updateHeight()
-	},
-
-
-	/* Dragging (for both events and external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
-		return this.dayGrid.renderDrag(dropLocation, seg);
-	},
-
-
-	unrenderDrag: function() {
-		this.dayGrid.unrenderDrag();
-	},
-
-
-	/* Selection
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of a selection
-	renderSelection: function(span) {
-		this.dayGrid.renderSelection(span);
-	},
-
-
-	// Unrenders a visual indications of a selection
-	unrenderSelection: function() {
-		this.dayGrid.unrenderSelection();
+		// must compensate for events that overflow the row
+		// TODO: how will ChronoComponent handle this?
+		this.updateHeight();
 	}
 
 });
@@ -369,7 +278,7 @@ var basicDayGridMethods = {
 			return '' +
 				'<th class="fc-week-number ' + view.widgetHeaderClass + '" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						htmlEscape(view.opt('weekNumberTitle')) +
+						htmlEscape(this.opt('weekNumberTitle')) +
 					'</span>' +
 				'</th>';
 		}

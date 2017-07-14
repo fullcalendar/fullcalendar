@@ -20,6 +20,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initOptionsInternals(overrides);
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
+		this.initEventManager();
 
 		EventManager.call(this); // needs options immediately
 		this.initialize();
@@ -45,16 +46,38 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
-	publiclyTrigger: function(name, thisObj) {
-		var args = Array.prototype.slice.call(arguments, 2);
+	publiclyTrigger: function(name, triggerInfo) {
 		var optHandler = this.opt(name);
+		var context;
+		var args;
 
-		thisObj = thisObj || this.el[0];
-		this.triggerWith(name, thisObj, args); // Emitter's method
+		if ($.isPlainObject(triggerInfo)) {
+			context = triggerInfo.context;
+			args = triggerInfo.args;
+		}
+		else if ($.isArray(triggerInfo)) {
+			args = triggerInfo;
+		}
+
+		if (context == null) {
+			context = this.el[0]; // fallback context
+		}
+
+		if (!args) {
+			args = [];
+		}
+
+		this.triggerWith(name, context, args); // Emitter's method
 
 		if (optHandler) {
-			return optHandler.apply(thisObj, args);
+			return optHandler.apply(context, args);
 		}
+	},
+
+
+	hasPublicHandlers: function(name) {
+		return this.hasHandlers(name) ||
+			this.opt(name); // handler specified in options
 	},
 
 
@@ -187,7 +210,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// Should be called when any type of async data fetching begins
 	pushLoading: function() {
 		if (!(this.loadingLevel++)) {
-			this.publiclyTrigger('loading', null, true, this.view);
+			this.publiclyTrigger('loading', [ true, this.view ]);
 		}
 	},
 
@@ -195,7 +218,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// Should be called when any type of async data fetching completes
 	popLoading: function() {
 		if (!(--this.loadingLevel)) {
-			this.publiclyTrigger('loading', null, false, this.view);
+			this.publiclyTrigger('loading', [ false, this.view ]);
 		}
 	},
 
@@ -207,7 +230,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// this public method receives start/end dates in any format, with any timezone
 	select: function(zonedStartInput, zonedEndInput) {
 		this.view.select(
-			this.buildSelectSpan.apply(this, arguments)
+			this.buildSelectFootprint.apply(this, arguments)
 		);
 	},
 
@@ -220,7 +243,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 
 	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-	buildSelectSpan: function(zonedStartInput, zonedEndInput) {
+	buildSelectFootprint: function(zonedStartInput, zonedEndInput) {
 		var start = this.moment(zonedStartInput).stripZone();
 		var end;
 
@@ -234,7 +257,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			end = start.clone().add(this.defaultAllDayEventDuration);
 		}
 
-		return { start: start, end: end };
+		return new ComponentFootprint(
+			new UnzonedRange(start, end),
+			!start.hasTime()
+		);
 	},
 
 
@@ -243,7 +269,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 
 	// will return `null` if invalid range
-	parseRange: function(rangeInput) {
+	parseUnzonedRange: function(rangeInput) {
 		var start = null;
 		var end = null;
 
@@ -263,14 +289,54 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			return null;
 		}
 
-		return { start: start, end: end };
+		return new UnzonedRange(start, end);
 	},
 
 
 	rerenderEvents: function() { // API method. destroys old events if previously rendered.
 		if (this.elementVisible()) {
-			this.reportEventChange(); // will re-trasmit events to the view, causing a rerender
+			this.view.flash('displayingEvents');
 		}
+	},
+
+
+	initEventManager: function() {
+		var _this = this;
+		var eventManager = new EventManager(this);
+		var rawSources = this.opt('eventSources') || [];
+		var singleRawSource = this.opt('events');
+
+		this.eventManager = eventManager;
+
+		if (singleRawSource) {
+			rawSources.unshift(singleRawSource);
+		}
+
+		eventManager.on('release', function(eventsPayload) {
+			_this.trigger('eventsReset', eventsPayload);
+		});
+
+		eventManager.freeze();
+
+		rawSources.forEach(function(rawSource) {
+			var source = EventSourceParser.parse(rawSource, _this);
+
+			if (source) {
+				eventManager.addSource(source);
+			}
+		});
+
+		eventManager.thaw();
+	},
+
+
+	requestEvents: function(start, end) {
+		return this.eventManager.requestEvents(
+			start,
+			end,
+			this.opt('timezone'),
+			this.opt('lazyFetching')
+		);
 	}
 
 });

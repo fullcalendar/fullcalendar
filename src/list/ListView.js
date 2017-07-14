@@ -9,6 +9,8 @@ var ListView = View.extend({
 
 	initialize: function() {
 		this.grid = new ListViewGrid(this);
+		this.addChild(this.grid);
+
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
@@ -41,22 +43,14 @@ var ListView = View.extend({
 	},
 
 	renderDates: function() {
-		this.grid.setRange(this.renderRange); // needs to process range-related options
+		this.grid.setRange(this.renderUnzonedRange); // needs to process range-related options
 	},
 
-	renderEvents: function(events) {
-		this.grid.renderEvents(events);
-	},
-
-	unrenderEvents: function() {
-		this.grid.unrenderEvents();
-	},
-
-	isEventResizable: function(event) {
+	isEventDefResizable: function(eventDef) {
 		return false;
 	},
 
-	isEventDraggable: function(event) {
+	isEventDefDraggable: function(eventDef) {
 		return false;
 	}
 
@@ -68,41 +62,67 @@ Its "el" is the inner-content of the above view's scroller.
 */
 var ListViewGrid = Grid.extend({
 
+	dayDates: null, // localized ambig-time moment array
+	dayRanges: null, // UnzonedRange[], of start-end of each day
 	segSelector: '.fc-list-item', // which elements accept event actions
 	hasDayInteractions: false, // no day selection or day clicking
 
+	rangeUpdated: function() {
+		var calendar = this.view.calendar;
+		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs, true);
+		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs, true);
+		var dayDates = [];
+		var dayRanges = [];
+
+		while (dayStart < viewEnd) {
+
+			dayDates.push(dayStart.clone());
+
+			dayRanges.push(new UnzonedRange(
+				dayStart,
+				dayStart.clone().add(1, 'day')
+			));
+
+			dayStart.add(1, 'day');
+		}
+
+		this.dayDates = dayDates;
+		this.dayRanges = dayRanges;
+	},
+
 	// slices by day
-	spanToSegs: function(span) {
+	componentFootprintToSegs: function(footprint) {
 		var view = this.view;
-		var dayStart = view.renderRange.start.clone().time(0); // timed, so segs get times!
-		var dayIndex = 0;
+		var dayRanges = this.dayRanges;
+		var dayIndex;
+		var segRange;
 		var seg;
 		var segs = [];
 
-		while (dayStart < view.renderRange.end) {
+		for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
+			segRange = footprint.unzonedRange.intersect(dayRanges[dayIndex]);
 
-			seg = intersectRanges(span, {
-				start: dayStart,
-				end: dayStart.clone().add(1, 'day')
-			});
+			if (segRange) {
+				seg = {
+					startMs: segRange.startMs,
+					endMs: segRange.endMs,
+					isStart: segRange.isStart,
+					isEnd: segRange.isEnd,
+					dayIndex: dayIndex
+				};
 
-			if (seg) {
-				seg.dayIndex = dayIndex;
 				segs.push(seg);
-			}
 
-			dayStart.add(1, 'day');
-			dayIndex++;
-
-			// detect when span won't go fully into the next day,
-			// and mutate the latest seg to the be the end.
-			if (
-				seg && !seg.isEnd && span.end.hasTime() &&
-				span.end < dayStart.clone().add(this.view.nextDayThreshold)
-			) {
-				seg.end = span.end.clone();
-				seg.isEnd = true;
-				break;
+				// detect when footprint won't go fully into the next day,
+				// and mutate the latest seg to the be the end.
+				if (
+					!seg.isEnd && !footprint.isAllDay &&
+					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + view.nextDayThreshold
+				) {
+					seg.endMs = footprint.unzonedRange.endMs;
+					seg.isEnd = true;
+					break;
+				}
 			}
 		}
 
@@ -111,7 +131,7 @@ var ListViewGrid = Grid.extend({
 
 	// like "4:00am"
 	computeEventTimeFormat: function() {
-		return this.view.opt('mediumTimeFormat');
+		return this.opt('mediumTimeFormat');
 	},
 
 	// for events with a url, the whole <tr> should be clickable,
@@ -123,7 +143,8 @@ var ListViewGrid = Grid.extend({
 
 		// not clicking on or within an <a> with an href
 		if (!$(ev.target).closest('a[href]').length) {
-			url = seg.event.url;
+			url = seg.footprint.eventDef.url;
+
 			if (url && !ev.isDefaultPrevented()) { // jsEvent not cancelled in handler
 				window.location.href = url; // simulate link click
 			}
@@ -149,7 +170,7 @@ var ListViewGrid = Grid.extend({
 			'<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
 			'<div class="fc-list-empty-wrap1">' +
 			'<div class="fc-list-empty">' +
-				htmlEscape(this.view.opt('noEventsMessage')) +
+				htmlEscape(this.opt('noEventsMessage')) +
 			'</div>' +
 			'</div>' +
 			'</div>'
@@ -167,12 +188,11 @@ var ListViewGrid = Grid.extend({
 
 		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
 			daySegs = segsByDay[dayIndex];
+
 			if (daySegs) { // sparse array, so might be undefined
 
 				// append a day header
-				tbodyEl.append(this.dayHeaderHtml(
-					this.view.renderRange.start.clone().add(dayIndex, 'days')
-				));
+				tbodyEl.append(this.dayHeaderHtml(this.dayDates[dayIndex]));
 
 				this.sortEventSegs(daySegs);
 
@@ -202,8 +222,8 @@ var ListViewGrid = Grid.extend({
 	// generates the HTML for the day headers that live amongst the event rows
 	dayHeaderHtml: function(dayDate) {
 		var view = this.view;
-		var mainFormat = view.opt('listDayFormat');
-		var altFormat = view.opt('listDayAltFormat');
+		var mainFormat = this.opt('listDayFormat');
+		var altFormat = this.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
 			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +
@@ -228,18 +248,26 @@ var ListViewGrid = Grid.extend({
 	// generates the HTML for a single event row
 	fgSegHtml: function(seg) {
 		var view = this.view;
+		var calendar = view.calendar;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
-		var event = seg.event;
-		var url = event.url;
+		var eventFootprint = seg.footprint;
+		var eventDef = eventFootprint.eventDef;
+		var componentFootprint = eventFootprint.componentFootprint;
+		var url = eventDef.url;
 		var timeHtml;
 
-		if (event.allDay) {
+		if (componentFootprint.isAllDay) {
 			timeHtml = view.getAllDayHtml();
 		}
-		else if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day
+		// if the event appears to span more than one day
+		else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
-				timeHtml = htmlEscape(this.getEventTimeText(seg));
+				timeHtml = htmlEscape(this._getEventTimeText(
+					calendar.msToMoment(seg.startMs),
+					calendar.msToMoment(seg.endMs),
+					componentFootprint.isAllDay
+				));
 			}
 			else { // inner segment that lasts the whole day
 				timeHtml = view.getAllDayHtml();
@@ -247,7 +275,7 @@ var ListViewGrid = Grid.extend({
 		}
 		else {
 			// Display the normal time text for the *event's* times
-			timeHtml = htmlEscape(this.getEventTimeText(event));
+			timeHtml = htmlEscape(this.getEventTimeText(eventFootprint));
 		}
 
 		if (url) {
@@ -269,7 +297,7 @@ var ListViewGrid = Grid.extend({
 			'</td>' +
 			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
-					htmlEscape(seg.event.title || '') +
+					htmlEscape(eventDef.title || '') +
 				'</a>' +
 			'</td>' +
 		'</tr>';

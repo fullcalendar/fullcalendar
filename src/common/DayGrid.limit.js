@@ -192,7 +192,7 @@ DayGrid.mixin({
 				this.getMoreLinkText(hiddenSegs.length)
 			)
 			.on('click', function(ev) {
-				var clickOption = view.opt('eventLimitClick');
+				var clickOption = _this.opt('eventLimitClick');
 				var date = _this.getCellDate(row, col);
 				var moreEl = $(this);
 				var dayEl = _this.getCellEl(row, col);
@@ -204,13 +204,20 @@ DayGrid.mixin({
 
 				if (typeof clickOption === 'function') {
 					// the returned value can be an atomic option
-					clickOption = view.publiclyTrigger('eventLimitClick', null, {
-						date: date,
-						dayEl: dayEl,
-						moreEl: moreEl,
-						segs: reslicedAllSegs,
-						hiddenSegs: reslicedHiddenSegs
-					}, ev);
+					clickOption = _this.publiclyTrigger('eventLimitClick', {
+						context: view,
+						args: [
+							{
+								date: date.clone(),
+								dayEl: dayEl,
+								moreEl: moreEl,
+								segs: reslicedAllSegs,
+								hiddenSegs: reslicedHiddenSegs
+							},
+							ev,
+							view
+						]
+					});
 				}
 
 				if (clickOption === 'popover') {
@@ -241,18 +248,26 @@ DayGrid.mixin({
 		options = {
 			className: 'fc-more-popover',
 			content: this.renderSegPopoverContent(row, col, segs),
-			parentEl: this.view.el, // attach to root of view. guarantees outside of scrollbars.
+			parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
 			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
-			viewportConstrain: view.opt('popoverViewportConstrain'),
+			viewportConstrain: this.opt('popoverViewportConstrain'),
 			hide: function() {
 				// kill everything when the popover is hidden
 				// notify events to be removed
 				if (_this.popoverSegs) {
 					var seg;
-					for (var i = 0; i < _this.popoverSegs.length; ++i) {
+					var legacy;
+					var i;
+
+					for (i = 0; i < _this.popoverSegs.length; ++i) {
 						seg = _this.popoverSegs[i];
-						view.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
+						legacy = seg.footprint.getEventLegacy();
+
+						_this.publiclyTrigger('eventDestroy', {
+							context: legacy,
+							args: [ legacy, seg.el, view ]
+						});
 					}
 				}
 				_this.segPopover.removeElement();
@@ -282,8 +297,8 @@ DayGrid.mixin({
 	// Builds the inner DOM contents of the segment popover
 	renderSegPopoverContent: function(row, col, segs) {
 		var view = this.view;
-		var isTheme = view.opt('theme');
-		var title = this.getCellDate(row, col).format(view.opt('dayPopoverFormat'));
+		var isTheme = this.opt('theme');
+		var title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
@@ -322,35 +337,29 @@ DayGrid.mixin({
 
 	// Given the events within an array of segment objects, reslice them to be in a single day
 	resliceDaySegs: function(segs, dayDate) {
-
-		// build an array of the original events
-		var events = $.map(segs, function(seg) {
-			return seg.event;
-		});
-
 		var dayStart = dayDate.clone();
 		var dayEnd = dayStart.clone().add(1, 'days');
-		var dayRange = { start: dayStart, end: dayEnd };
+		var dayRange = new UnzonedRange(dayStart, dayEnd);
+		var newSegs = [];
+		var i;
 
-		// slice the events with a custom slicing function
-		segs = this.eventsToSegs(
-			events,
-			function(range) {
-				var seg = intersectRanges(range, dayRange); // undefind if no intersection
-				return seg ? [ seg ] : []; // must return an array of segments
-			}
-		);
+		for (i = 0; i < segs.length; i++) {
+			newSegs.push.apply(newSegs, // append
+				this.eventFootprintToSegs(segs[i].footprint, dayRange)
+			);
+		}
 
 		// force an order because eventsToSegs doesn't guarantee one
-		this.sortEventSegs(segs);
+		// TODO: research if still needed
+		this.sortEventSegs(newSegs);
 
-		return segs;
+		return newSegs;
 	},
 
 
 	// Generates the text that should be inside a "more" link, given the number of events it represents
 	getMoreLinkText: function(num) {
-		var opt = this.view.opt('eventLimitText');
+		var opt = this.opt('eventLimitText');
 
 		if (typeof opt === 'function') {
 			return opt(num);

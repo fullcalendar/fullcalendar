@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = Model.extend({
+var View = FC.View = ChronoComponent.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -11,7 +11,6 @@ var View = FC.View = Model.extend({
 	calendar: null, // owner Calendar object
 	viewSpec: null,
 	options: null, // hash containing all options. already merged with view-specific-options
-	el: null, // the view's containing element. set by Calendar
 
 	renderQueue: null,
 	batchRenderDepth: 0,
@@ -21,19 +20,12 @@ var View = FC.View = Model.extend({
 
 	queuedScroll: null,
 
-	isRTL: false,
 	isSelected: false, // boolean whether a range of time is user-selected or not
-	selectedEvent: null,
+	selectedEventInstance: null,
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
 
-	// classNames styled by jqui themes
-	widgetHeaderClass: null,
-	widgetContentClass: null,
-	highlightStateClass: null,
-
 	// for date utils, computed from options
-	nextDayThreshold: null,
 	isHiddenDayHash: null,
 
 	// now indicator
@@ -45,8 +37,6 @@ var View = FC.View = Model.extend({
 
 
 	constructor: function(calendar, viewSpec) {
-		Model.prototype.constructor.call(this);
-
 		this.calendar = calendar;
 		this.viewSpec = viewSpec;
 
@@ -57,11 +47,9 @@ var View = FC.View = Model.extend({
 		// .name is deprecated
 		this.name = this.type;
 
-		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
-		this.initThemingProps();
-		this.initHiddenDays();
-		this.isRTL = this.opt('isRTL');
+		ChronoComponent.call(this);
 
+		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		this.renderQueue = this.buildRenderQueue();
@@ -130,20 +118,6 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Triggers handlers that are view-related. Modifies args before passing to calendar.
-	publiclyTrigger: function(name, thisObj) { // arguments beyond thisObj are passed along
-		var calendar = this.calendar;
-
-		return calendar.publiclyTrigger.apply(
-			calendar,
-			[name, thisObj || this].concat(
-				Array.prototype.slice.call(arguments, 2), // arguments beyond thisObj
-				[ this ] // always make the last argument a reference to the view. TODO: deprecate
-			)
-		);
-	},
-
-
 	/* Title and Date Formatting
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -157,22 +131,22 @@ var View = FC.View = Model.extend({
 
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
-		var range;
+		var unzonedRange;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
 		if (/^(year|month)$/.test(this.currentRangeUnit)) {
-			range = this.currentRange;
+			unzonedRange = this.currentUnzonedRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			range = this.activeRange;
+			unzonedRange = this.activeUnzonedRange;
 		}
 
 		return this.formatRange(
 			{
-				// in case currentRange has a time, make sure timezone is correct
-				start: this.calendar.applyTimezone(range.start),
-				end: this.calendar.applyTimezone(range.end)
+				start: this.calendar.msToMoment(unzonedRange.startMs, this.isRangeAllDay),
+				end: this.calendar.msToMoment(unzonedRange.endMs, this.isRangeAllDay)
 			},
+			this.isRangeAllDay,
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
 		);
@@ -197,115 +171,22 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
-	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
-	// The timezones of the dates within `range` will be respected.
-	formatRange: function(range, formatStr, separator) {
-		var end = range.end;
-
-		if (!end.hasTime()) { // all-day?
-			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
-		}
-
-		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
-	},
-
-
-	getAllDayHtml: function() {
-		return this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'));
-	},
-
-
-	/* Navigation
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generates HTML for an anchor to another view into the calendar.
-	// Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
-	// `gotoOptions` can either be a moment input, or an object with the form:
-	// { date, type, forceOff }
-	// `type` is a view-type like "day" or "week". default value is "day".
-	// `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
-	buildGotoAnchorHtml: function(gotoOptions, attrs, innerHtml) {
-		var date, type, forceOff;
-		var finalOptions;
-
-		if ($.isPlainObject(gotoOptions)) {
-			date = gotoOptions.date;
-			type = gotoOptions.type;
-			forceOff = gotoOptions.forceOff;
-		}
-		else {
-			date = gotoOptions; // a single moment input
-		}
-		date = FC.moment(date); // if a string, parse it
-
-		finalOptions = { // for serialization into the link
-			date: date.format('YYYY-MM-DD'),
-			type: type || 'day'
-		};
-
-		if (typeof attrs === 'string') {
-			innerHtml = attrs;
-			attrs = null;
-		}
-
-		attrs = attrs ? ' ' + attrsToStr(attrs) : ''; // will have a leading space
-		innerHtml = innerHtml || '';
-
-		if (!forceOff && this.opt('navLinks')) {
-			return '<a' + attrs +
-				' data-goto="' + htmlEscape(JSON.stringify(finalOptions)) + '">' +
-				innerHtml +
-				'</a>';
-		}
-		else {
-			return '<span' + attrs + '>' +
-				innerHtml +
-				'</span>';
-		}
-	},
-
-
-	// Rendering Non-date-related Content
+	// Element
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// Sets the container element that the view should render inside of, does global DOM-related initializations,
-	// and renders all the non-date-related content inside.
 	setElement: function(el) {
-		this.el = el;
-		this.bindGlobalHandlers();
+		ChronoComponent.prototype.setElement.apply(this, arguments);
+
 		this.bindBaseRenderHandlers();
-		this.renderSkeleton();
 	},
 
 
-	// Removes the view's container element from the DOM, clearing any content beforehand.
-	// Undoes any other DOM-related attachments.
 	removeElement: function() {
 		this.unsetDate();
-		this.unrenderSkeleton();
-
-		this.unbindGlobalHandlers();
 		this.unbindBaseRenderHandlers();
 
-		this.el.remove();
-		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-		// We don't null-out the View's other jQuery element references upon destroy,
-		//  so we shouldn't kill this.el either.
-	},
-
-
-	// Renders the basic structure of the view before any content is rendered
-	renderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders the basic structure of the view
-	unrenderSkeleton: function() {
-		// subclasses should implement
+		ChronoComponent.prototype.removeElement.apply(this, arguments);
 	},
 
 
@@ -319,7 +200,7 @@ var View = FC.View = Model.extend({
 
 		if (
 			!currentDateProfile ||
-			!isRangesEqual(currentDateProfile.activeRange, newDateProfile.activeRange)
+			!currentDateProfile.activeUnzonedRange.equals(newDateProfile.activeUnzonedRange)
 		) {
 			this.set('dateProfile', newDateProfile);
 		}
@@ -360,9 +241,12 @@ var View = FC.View = Model.extend({
 
 
 	fetchInitialEvents: function(dateProfile) {
-		return this.calendar.requestEvents(
-			dateProfile.activeRange.start,
-			dateProfile.activeRange.end
+		var calendar = this.calendar;
+		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
+
+		return calendar.requestEvents(
+			calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
+			calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
 		);
 	},
 
@@ -377,8 +261,8 @@ var View = FC.View = Model.extend({
 	},
 
 
-	setEvents: function(events) {
-		this.set('currentEvents', events);
+	setEvents: function(eventsPayload) {
+		this.set('currentEvents', eventsPayload);
 		this.set('hasEvents', true);
 	},
 
@@ -389,10 +273,10 @@ var View = FC.View = Model.extend({
 	},
 
 
-	resetEvents: function(events) {
+	resetEvents: function(eventsPayload) {
 		this.startBatchRender();
 		this.unsetEvents();
-		this.setEvents(events);
+		this.setEvents(eventsPayload);
 		this.stopBatchRender();
 	},
 
@@ -401,11 +285,11 @@ var View = FC.View = Model.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestEventsRender: function(events) {
+	requestEventsRender: function(eventsPayload) {
 		var _this = this;
 
 		this.renderQueue.queue(function() {
-			_this.executeEventsRender(events);
+			_this.executeEventsRender(eventsPayload);
 		}, 'event', 'init');
 	},
 
@@ -466,22 +350,6 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Date Low-level Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// date-cell content only
-	renderDates: function() {
-		// subclasses should implement
-	},
-
-
-	// date-cell content only
-	unrenderDates: function() {
-		// subclasses should override
-	},
-
-
 	// Determing when the "meat" of the view is rendered (aka the base)
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -506,13 +374,19 @@ var View = FC.View = Model.extend({
 
 	onBaseRender: function() {
 		this.applyScreenState();
-		this.publiclyTrigger('viewRender', this, this, this.el);
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
 	onBeforeBaseUnrender: function() {
 		this.applyScreenState();
-		this.publiclyTrigger('viewDestroy', this, this, this.el);
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
@@ -532,32 +406,6 @@ var View = FC.View = Model.extend({
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
 		this.stopListeningTo(GlobalEmitter.get());
-	},
-
-
-	// Initializes internal variables related to theming
-	initThemingProps: function() {
-		var tm = this.opt('theme') ? 'ui' : 'fc';
-
-		this.widgetHeaderClass = tm + '-widget-header';
-		this.widgetContentClass = tm + '-widget-content';
-		this.highlightStateClass = tm + '-state-highlight';
-	},
-
-
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders previously-rendered business-hours
-	unrenderBusinessHours: function() {
-		// subclasses should implement
 	},
 
 
@@ -630,27 +478,9 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Returns a string unit, like 'second' or 'minute' that defined how often the current time indicator
-	// should be refreshed. If something falsy is returned, no time indicator is rendered at all.
-	getNowIndicatorUnit: function() {
-		// subclasses should implement
-	},
-
-
-	// Renders a current time indicator at the given datetime
-	renderNowIndicator: function(date) {
-		// subclasses should implement
-	},
-
-
-	// Undoes the rendering actions from renderNowIndicator
-	unrenderNowIndicator: function() {
-		// subclasses should implement
-	},
-
-
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: move some of these to ChronoComponent
 
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
@@ -779,8 +609,15 @@ var View = FC.View = Model.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventsRender: function(events) {
-		this.renderEvents(events);
+	executeEventsRender: function(eventsPayload) {
+
+		if (this.renderEvents) { // for legacy custom views
+			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
+		}
+		else {
+			this.renderEventsPayload(eventsPayload);
+		}
+
 		this.isEventsRendered = true;
 
 		this.onEventsRender();
@@ -805,22 +642,56 @@ var View = FC.View = Model.extend({
 
 	// Signals that all events have been rendered
 	onEventsRender: function() {
-		this.applyScreenState();
+		var _this = this;
+		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
 
-		this.renderedEventSegEach(function(seg) {
-			this.publiclyTrigger('eventAfterRender', seg.event, seg.event, seg.el);
+		if (hasSingleHandlers || this.hasPublicHandlers('eventAfterAllRender')) {
+			this.applyScreenState();
+		}
+
+		if (hasSingleHandlers) {
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
 		});
-		this.publiclyTrigger('eventAfterAllRender');
 	},
 
 
 	// Signals that all event elements are about to be removed
 	onBeforeEventsUnrender: function() {
-		this.applyScreenState();
+		var _this = this;
 
-		this.renderedEventSegEach(function(seg) {
-			this.publiclyTrigger('eventDestroy', seg.event, seg.event, seg.el);
-		});
+		if (this.hasPublicHandlers('eventDestroy')) {
+
+			this.applyScreenState();
+
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventDestroy', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
 	},
 
 
@@ -831,79 +702,34 @@ var View = FC.View = Model.extend({
 	},
 
 
-	// Event Low-level Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// Renders the events onto the view.
-	renderEvents: function(events) {
-		// subclasses should implement
-	},
-
-
-	// Removes event elements from the view.
-	unrenderEvents: function() {
-		// subclasses should implement
-	},
-
-
 	// Event Rendering Utils
 	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// Given an event and the default element used for rendering, returns the element that should actually be used.
-	// Basically runs events and elements through the eventRender hook.
-	resolveEventEl: function(event, el) {
-		var custom = this.publiclyTrigger('eventRender', event, event, el);
-
-		if (custom === false) { // means don't render at all
-			el = null;
-		}
-		else if (custom && custom !== true) {
-			el = $(custom);
-		}
-
-		return el;
-	},
+	// TODO: move this to ChronoComponent
 
 
 	// Hides all rendered event segments linked to the given event
-	showEvent: function(event) {
-		this.renderedEventSegEach(function(seg) {
-			seg.el.css('visibility', '');
-		}, event);
+	showEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
+			if (
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
+			) {
+				seg.el.css('visibility', '');
+			}
+		});
 	},
 
 
 	// Shows all rendered event segments linked to the given event
-	hideEvent: function(event) {
-		this.renderedEventSegEach(function(seg) {
-			seg.el.css('visibility', 'hidden');
-		}, event);
-	},
-
-
-	// Iterates through event segments that have been rendered (have an el). Goes through all by default.
-	// If the optional `event` argument is specified, only iterates through segments linked to that event.
-	// The `this` value of the callback function will be the view.
-	renderedEventSegEach: function(func, event) {
-		var segs = this.getEventSegs();
-		var i;
-
-		for (i = 0; i < segs.length; i++) {
-			if (!event || segs[i].event._id === event._id) {
-				if (segs[i].el) {
-					func.call(this, segs[i]);
-				}
+	hideEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
+			if (
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
+			) {
+				seg.el.css('visibility', 'hidden');
 			}
-		}
-	},
-
-
-	// Retrieves all the rendered segment objects for the view
-	getEventSegs: function() {
-		// subclasses must implement
-		return [];
+		});
 	},
 
 
@@ -911,49 +737,46 @@ var View = FC.View = Model.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes if the given event is allowed to be dragged by the user
-	isEventDraggable: function(event) {
-		return this.isEventStartEditable(event);
-	},
-
-
-	isEventStartEditable: function(event) {
-		return firstDefined(
-			event.startEditable,
-			(event.source || {}).startEditable,
-			this.opt('eventStartEditable'),
-			this.isEventGenerallyEditable(event)
+	reportEventDrop: function(eventInstance, eventMutation, el, ev) {
+		var eventManager = this.calendar.eventManager;
+		var undoFunc = eventManager.mutateEventsWithId(
+			eventInstance.def.id,
+			eventMutation,
+			this.calendar
 		);
-	},
+		var dateMutation = eventMutation.dateMutation;
 
+		// update the EventInstance, for handlers
+		if (dateMutation) {
+			eventInstance.dateProfile = dateMutation.buildNewDateProfile(
+				eventInstance.dateProfile,
+				this.calendar
+			);
+		}
 
-	isEventGenerallyEditable: function(event) {
-		return firstDefined(
-			event.editable,
-			(event.source || {}).editable,
-			this.opt('editable')
+		this.triggerEventDrop(
+			eventInstance,
+			// a drop doesn't necessarily mean a date mutation (ex: resource change)
+			(dateMutation && dateMutation.dateDelta) || moment.duration(),
+			undoFunc,
+			el, ev
 		);
-	},
-
-
-	// Must be called when an event in the view is dropped onto new location.
-	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportSegDrop: function(seg, dropLocation, largeUnit, el, ev) {
-		var calendar = this.calendar;
-		var mutateResult = calendar.mutateSeg(seg, dropLocation, largeUnit);
-		var undoFunc = function() {
-			mutateResult.undo();
-			calendar.reportEventChange();
-		};
-
-		this.triggerEventDrop(seg.event, mutateResult.dateDelta, undoFunc, el, ev);
-		calendar.reportEventChange(); // will rerender events
 	},
 
 
 	// Triggers event-drop handlers that have subscribed via the API
-	triggerEventDrop: function(event, dateDelta, undoFunc, el, ev) {
-		this.publiclyTrigger('eventDrop', el[0], event, dateDelta, undoFunc, ev, {}); // {} = jqui dummy
+	triggerEventDrop: function(eventInstance, dateDelta, undoFunc, el, ev) {
+		this.publiclyTrigger('eventDrop', {
+			context: el[0],
+			args: [
+				eventInstance.toLegacy(),
+				dateDelta,
+				undoFunc,
+				ev,
+				{}, // {} = jqui dummy
+				this
+			]
+		});
 	},
 
 
@@ -964,48 +787,40 @@ var View = FC.View = Model.extend({
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
 	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
-		var eventProps = meta.eventProps;
-		var eventInput;
-		var event;
+	reportExternalDrop: function(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
-		// Try to build an event object and render it. TODO: decouple the two
-		if (eventProps) {
-			eventInput = $.extend({}, eventProps, dropLocation);
-			event = this.calendar.renderEvent(eventInput, meta.stick)[0]; // renderEvent returns an array
+		if (isEvent) {
+			this.calendar.eventManager.addEventDef(singleEventDef, isSticky);
 		}
 
-		this.triggerExternalDrop(event, dropLocation, el, ev, ui);
+		this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
 	},
 
 
 	// Triggers external-drop handlers that have subscribed via the API
-	triggerExternalDrop: function(event, dropLocation, el, ev, ui) {
+	triggerExternalDrop: function(singleEventDef, isEvent, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
-		this.publiclyTrigger('drop', el[0], dropLocation.start, ev, ui);
+		this.publiclyTrigger('drop', {
+			context: el[0],
+			args: [
+				singleEventDef.dateProfile.start.clone(),
+				ev,
+				ui,
+				this
+			]
+		});
 
-		if (event) {
-			this.publiclyTrigger('eventReceive', null, event); // signal an external event landed
+		if (isEvent) {
+			// signal an external event landed
+			this.publiclyTrigger('eventReceive', {
+				context: this,
+				args: [
+					singleEventDef.buildInstance().toLegacy(),
+					this
+				]
+			});
 		}
-	},
-
-
-	/* Drag-n-Drop Rendering (for both events and external elements)
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of a event or external-element drag over the given drop zone.
-	// If an external-element, seg will be `null`.
-	// Must return elements used for any mock events.
-	renderDrag: function(dropLocation, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event or external-element being dragged.
-	unrenderDrag: function() {
-		// subclasses must implement
 	},
 
 
@@ -1013,50 +828,43 @@ var View = FC.View = Model.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Computes if the given event is allowed to be resized from its starting edge
-	isEventResizableFromStart: function(event) {
-		return this.opt('eventResizableFromStart') && this.isEventResizable(event);
-	},
+	// Must be called when an event in the view has been resized to a new length
+	reportEventResize: function(eventInstance, eventMutation, el, ev) {
+		var eventManager = this.calendar.eventManager;
+		var undoFunc = eventManager.mutateEventsWithId(
+			eventInstance.def.id,
+			eventMutation,
+			this.calendar
+		);
 
+		// update the EventInstance, for handlers
+		eventInstance.dateProfile = eventMutation.dateMutation.buildNewDateProfile(
+			eventInstance.dateProfile,
+			this.calendar
+		);
 
-	// Computes if the given event is allowed to be resized from its ending edge
-	isEventResizableFromEnd: function(event) {
-		return this.isEventResizable(event);
-	},
-
-
-	// Computes if the given event is allowed to be resized by the user at all
-	isEventResizable: function(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.durationEditable,
-			source.durationEditable,
-			this.opt('eventDurationEditable'),
-			event.editable,
-			source.editable,
-			this.opt('editable')
+		this.triggerEventResize(
+			eventInstance,
+			eventMutation.dateMutation.endDelta,
+			undoFunc,
+			el, ev
 		);
 	},
 
 
-	// Must be called when an event in the view has been resized to a new length
-	reportSegResize: function(seg, resizeLocation, largeUnit, el, ev) {
-		var calendar = this.calendar;
-		var mutateResult = calendar.mutateSeg(seg, resizeLocation, largeUnit);
-		var undoFunc = function() {
-			mutateResult.undo();
-			calendar.reportEventChange();
-		};
-
-		this.triggerEventResize(seg.event, mutateResult.durationDelta, undoFunc, el, ev);
-		calendar.reportEventChange(); // will rerender events
-	},
-
-
 	// Triggers event-resize handlers that have subscribed via the API
-	triggerEventResize: function(event, durationDelta, undoFunc, el, ev) {
-		this.publiclyTrigger('eventResize', el[0], event, durationDelta, undoFunc, ev, {}); // {} = jqui dummy
+	triggerEventResize: function(eventInstance, durationDelta, undoFunc, el, ev) {
+		this.publiclyTrigger('eventResize', {
+			context: el[0],
+			args: [
+				eventInstance.toLegacy(),
+				durationDelta,
+				undoFunc,
+				ev,
+				{}, // {} = jqui dummy
+				this
+			]
+		});
 	},
 
 
@@ -1066,35 +874,45 @@ var View = FC.View = Model.extend({
 
 	// Selects a date span on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(span, ev) {
+	select: function(footprint, ev) {
 		this.unselect(ev);
-		this.renderSelection(span);
-		this.reportSelection(span, ev);
+		this.renderSelectionFootprint(footprint);
+		this.reportSelection(footprint, ev);
 	},
 
 
-	// Renders a visual indication of the selection
-	renderSelection: function(span) {
-		// subclasses should implement
+	renderSelectionFootprint: function(footprint, ev) {
+		if (this.renderSelection) { // legacy method in custom view classes
+			this.renderSelection(
+				footprint.toLegacy(this.calendar)
+			);
+		}
+		else {
+			ChronoComponent.prototype.renderSelectionFootprint.apply(this, arguments);
+		}
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(span, ev) {
+	reportSelection: function(footprint, ev) {
 		this.isSelected = true;
-		this.triggerSelect(span, ev);
+		this.triggerSelect(footprint, ev);
 	},
 
 
 	// Triggers handlers to 'select'
-	triggerSelect: function(span, ev) {
-		this.publiclyTrigger(
-			'select',
-			null,
-			this.calendar.applyTimezone(span.start), // convert to calendar's tz for external API
-			this.calendar.applyTimezone(span.end), // "
-			ev
-		);
+	triggerSelect: function(footprint, ev) {
+		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
+
+		this.publiclyTrigger('select', {
+			context: this,
+			args: [
+				dateProfile.start,
+				dateProfile.end,
+				ev,
+				this
+			]
+		});
 	},
 
 
@@ -1107,14 +925,11 @@ var View = FC.View = Model.extend({
 				this.destroySelection(); // TODO: deprecate
 			}
 			this.unrenderSelection();
-			this.publiclyTrigger('unselect', null, ev);
+			this.publiclyTrigger('unselect', {
+				context: this,
+				args: [ ev, this ]
+			});
 		}
-	},
-
-
-	// Unrenders a visual indication of selection
-	unrenderSelection: function() {
-		// subclasses should implement
 	},
 
 
@@ -1122,31 +937,45 @@ var View = FC.View = Model.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	selectEvent: function(event) {
-		if (!this.selectedEvent || this.selectedEvent !== event) {
-			this.unselectEvent();
-			this.renderedEventSegEach(function(seg) {
-				seg.el.addClass('fc-selected');
-			}, event);
-			this.selectedEvent = event;
+	selectEventInstance: function(eventInstance) {
+		if (
+			!this.selectedEventInstance ||
+			this.selectedEventInstance !== eventInstance
+		) {
+			this.unselectEventInstance();
+
+			this.getEventSegs().forEach(function(seg) {
+				if (
+					seg.footprint.eventInstance === eventInstance &&
+					seg.el // necessary?
+				) {
+					seg.el.addClass('fc-selected');
+				}
+			});
+
+			this.selectedEventInstance = eventInstance;
 		}
 	},
 
 
-	unselectEvent: function() {
-		if (this.selectedEvent) {
-			this.renderedEventSegEach(function(seg) {
-				seg.el.removeClass('fc-selected');
-			}, this.selectedEvent);
-			this.selectedEvent = null;
+	unselectEventInstance: function() {
+		if (this.selectedEventInstance) {
+
+			this.getEventSegs().forEach(function(seg) {
+				if (seg.el) { // necessary?
+					seg.el.removeClass('fc-selected');
+				}
+			});
+
+			this.selectedEventInstance = null;
 		}
 	},
 
 
-	isEventSelected: function(event) {
-		// event references might change on refetchEvents(), while selectedEvent doesn't,
+	isEventDefSelected: function(eventDef) {
+		// event references might change on refetchEvents(), while selectedEventInstance doesn't,
 		// so compare IDs
-		return this.selectedEvent && this.selectedEvent._id === event._id;
+		return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id;
 	},
 
 
@@ -1184,9 +1013,9 @@ var View = FC.View = Model.extend({
 
 
 	processEventUnselect: function(ev) {
-		if (this.selectedEvent) {
+		if (this.selectedEventInstance) {
 			if (!$(ev.target).closest('.fc-selected').length) {
-				this.unselectEvent();
+				this.unselectEventInstance();
 			}
 		}
 	},
@@ -1198,55 +1027,13 @@ var View = FC.View = Model.extend({
 
 	// Triggers handlers to 'dayClick'
 	// Span has start/end of the clicked area. Only the start is useful.
-	triggerDayClick: function(span, dayEl, ev) {
-		this.publiclyTrigger(
-			'dayClick',
-			dayEl,
-			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
-			ev
-		);
-	},
+	triggerDayClick: function(footprint, dayEl, ev) {
+		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
 
-
-	/* Date Utils
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Returns the date range of the full days the given range visually appears to occupy.
-	// Returns a new range object.
-	computeDayRange: function(range) {
-		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
-		var end = range.end;
-		var endDay = null;
-		var endTimeMS;
-
-		if (end) {
-			endDay = end.clone().stripTime(); // the beginning of the day the range exclusively ends
-			endTimeMS = +end.time(); // # of milliseconds into `endDay`
-
-			// If the end time is actually inclusively part of the next day and is equal to or
-			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-			if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
-				endDay.add(1, 'days');
-			}
-		}
-
-		// If no end was specified, or if it is within `startDay` but not past nextDayThreshold,
-		// assign the default duration of one day.
-		if (!end || endDay <= startDay) {
-			endDay = startDay.clone().add(1, 'days');
-		}
-
-		return { start: startDay, end: endDay };
-	},
-
-
-	// Does the given event visually appear to occupy more than one day?
-	isMultiDayEvent: function(event) {
-		var range = this.computeDayRange(event); // event is range-ish
-
-		return range.end.diff(range.start, 'days') > 1;
+		this.publiclyTrigger('dayClick', {
+			context: dayEl,
+			args: [ dateProfile.start, ev, this ]
+		});
 	}
 
 });
@@ -1278,3 +1065,24 @@ View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 }, function() {
 	this.requestEventsUnrender();
 });
+
+
+function convertEventsPayloadToLegacyArray(eventsPayload) {
+	var legacyEvents = [];
+	var id;
+	var eventInstances;
+	var i;
+
+	for (id in eventsPayload) {
+
+		eventInstances = eventsPayload[id].eventInstances;
+
+		for (i = 0; i < eventInstances.length; i++) {
+			legacyEvents.push(
+				eventInstances[i].toLegacy()
+			);
+		}
+	}
+
+	return legacyEvents;
+}

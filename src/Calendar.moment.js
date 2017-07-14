@@ -27,7 +27,7 @@ Calendar.mixin({
 				weekNumberCalculation = 'ISO'; // normalize
 			}
 
-			var localeData = createObject( // make a cheap copy
+			var localeData = Object.create( // make a cheap copy
 				getMomentLocaleData(opts.locale) // will fall back to en
 			);
 
@@ -48,7 +48,7 @@ Calendar.mixin({
 				firstDay = 1;
 			}
 			if (firstDay != null) {
-				_week = createObject(localeData._week); // _week: { dow: # }
+				_week = Object.create(localeData._week); // _week: { dow: # }
 				_week.dow = firstDay;
 				localeData._week = _week;
 			}
@@ -98,6 +98,35 @@ Calendar.mixin({
 	},
 
 
+	msToMoment: function(ms, forceAllDay) {
+		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
+
+		if (forceAllDay) {
+			mom.stripTime();
+		}
+		else {
+			mom = this.applyTimezone(mom); // may or may not apply locale
+		}
+
+		this.localizeMoment(mom);
+
+		return mom;
+	},
+
+
+	msToUtcMoment: function(ms, forceAllDay) {
+		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
+
+		if (forceAllDay) {
+			mom.stripTime();
+		}
+
+		this.localizeMoment(mom);
+
+		return mom;
+	},
+
+
 	// Updates the given moment's locale settings to the current calendar locale settings.
 	localizeMoment: function(mom) {
 		mom._locale = this.localeData;
@@ -130,6 +159,36 @@ Calendar.mixin({
 		}
 
 		return zonedDate;
+	},
+
+
+	/*
+	Assumes the footprint is non-open-ended.
+	*/
+	footprintToDateProfile: function(componentFootprint, ignoreEnd) {
+		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs);
+		var end;
+
+		if (!ignoreEnd) {
+			end = FC.moment.utc(componentFootprint.unzonedRange.endMs);
+		}
+
+		if (componentFootprint.isAllDay) {
+			start.stripTime();
+
+			if (end) {
+				end.stripTime();
+			}
+		}
+		else {
+			start = this.applyTimezone(start);
+
+			if (end) {
+				end = this.applyTimezone(end);
+			}
+		}
+
+		return new EventDateProfile(start, end, this);
 	},
 
 

@@ -257,10 +257,10 @@ Calendar.mixin({
 		if (
 			!this.ignoreWindowResize &&
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			this.view.renderRange // view has already been rendered
+			this.view.renderUnzonedRange // view has already been rendered
 		) {
 			if (this.updateSize(true)) {
-				this.view.publiclyTrigger('windowResize', this.el[0]);
+				this.publiclyTrigger('windowResize', [ this.view ]);
 			}
 		}
 	},

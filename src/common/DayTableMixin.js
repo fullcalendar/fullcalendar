@@ -17,7 +17,9 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Populates internal variables used for date calculation and rendering
 	updateDayTable: function() {
 		var view = this.view;
-		var date = this.start.clone();
+		var calendar = view.calendar;
+		var date = calendar.msToUtcMoment(this.unzonedRange.startMs, true);
+		var end = calendar.msToUtcMoment(this.unzonedRange.endMs, true);
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];
@@ -25,7 +27,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		var firstDay;
 		var rowCnt;
 
-		while (date.isBefore(this.end)) { // loop each day from start to end
+		while (date.isBefore(end)) { // loop each day from start to end
 			if (view.isHiddenDay(date)) {
 				dayIndices.push(dayIndex + 0.5); // mark that it's between indices
 			}
@@ -64,7 +66,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols: function() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = this.view.opt('columnFormat') || this.computeColHeadFormat();
+		this.colHeadFormat = this.opt('columnFormat') || this.computeColHeadFormat();
 	},
 
 
@@ -115,7 +117,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
 	getDateDayIndex: function(date) {
 		var dayIndices = this.dayIndices;
-		var dayOffset = date.diff(this.start, 'days');
+		var dayOffset = date.diff(this.dayDates[0], 'days');
 
 		if (dayOffset < 0) {
 			return dayIndices[0] - 1;
@@ -142,7 +144,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 		// multiple days, so full single date string WON'T be in title text
 		else if (this.colCnt > 1) {
-			return this.view.opt('dayOfMonthFormat'); // "Sat 12/10"
+			return this.opt('dayOfMonthFormat'); // "Sat 12/10"
 		}
 		// single day, so full single date string will probably be in title text
 		else {
@@ -156,9 +158,9 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Slices up a date range into a segment for every week-row it intersects with
-	sliceRangeByRow: function(range) {
+	sliceRangeByRow: function(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
+		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
 		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
 		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
 		var segs = [];
@@ -199,9 +201,9 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	// Slices up a date range into a segment for every day-cell it intersects with.
 	// TODO: make more DRY with sliceRangeByRow somehow.
-	sliceRangeByDay: function(range) {
+	sliceRangeByDay: function(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
+		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
 		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
 		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
 		var segs = [];
@@ -294,7 +296,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
-		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = view.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.widgetHeaderClass
@@ -372,7 +374,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	renderBgCellHtml: function(date, otherAttrs) {
 		var view = this.view;
-		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = view.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
 		classes.unshift('fc-day', view.widgetContentClass);

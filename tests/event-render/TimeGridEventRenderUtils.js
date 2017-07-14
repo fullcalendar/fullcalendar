@@ -2,6 +2,13 @@
 var TimeGridEventRenderUtils = {
 
 
+	getTimeTexts: function() {
+		return $('.fc-event').map(function(i, eventEl) {
+			return $(eventEl).find('.fc-time').text();
+		}).get();
+	},
+
+
 	/*
 	Returns a boolean.
 	TODO: check isStart/isEnd.

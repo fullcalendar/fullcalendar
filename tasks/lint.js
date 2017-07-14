@@ -38,8 +38,8 @@ gulp.task('jshint:base', function() {
 gulp.task('jshint:browser', function() {
 	return gulp.src([
 			'src/**/*.js',
-			'!src/intro.js', // exclude
-			'!src/outro.js', // "
+			'!src/**/intro.js', // exclude
+			'!src/**/outro.js', // "
 			'locale/*.js',
 		])
 		.pipe(jshint(jshintBrowser))
@@ -78,8 +78,8 @@ gulp.task('jscs:relaxed', function() {
 			'*.js', // like gulpfile and root configs
 			'tasks/*.js',
 			'src/**/*.js',
-			'!src/intro.js', // exclude
-			'!src/outro.js', // "
+			'!src/**/intro.js', // exclude
+			'!src/**/outro.js', // "
 			'locale/*.js'
 		])
 		.pipe(jscs({

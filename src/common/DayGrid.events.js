@@ -26,7 +26,7 @@ DayGrid.mixin({
 
 		// don't render timed background events
 		var allDaySegs = $.grep(segs, function(seg) {
-			return seg.event.allDay;
+			return seg.footprint.componentFootprint.isAllDay;
 		});
 
 		return Grid.prototype.renderBgSegs.call(this, allDaySegs); // call the super-method
@@ -91,12 +91,13 @@ DayGrid.mixin({
 	// Builds the HTML to be used for the default element for an individual segment
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var event = seg.event;
-		var isDraggable = view.isEventDraggable(event);
-		var isResizableFromStart = !disableResizing && event.allDay &&
-			seg.isStart && view.isEventResizableFromStart(event);
-		var isResizableFromEnd = !disableResizing && event.allDay &&
-			seg.isEnd && view.isEventResizableFromEnd(event);
+		var eventDef = seg.footprint.eventDef;
+		var isAllDay = seg.footprint.componentFootprint.isAllDay;
+		var isDraggable = view.isEventDefDraggable(eventDef);
+		var isResizableFromStart = !disableResizing && isAllDay &&
+			seg.isStart && view.isEventDefResizableFromStart(eventDef);
+		var isResizableFromEnd = !disableResizing && isAllDay &&
+			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeHtml = '';
@@ -107,7 +108,7 @@ DayGrid.mixin({
 
 		// Only display a timed events time if it is the starting segment
 		if (seg.isStart) {
-			timeText = this.getEventTimeText(event);
+			timeText = this.getEventTimeText(seg.footprint);
 			if (timeText) {
 				timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>';
 			}
@@ -115,12 +116,12 @@ DayGrid.mixin({
 
 		titleHtml =
 			'<span class="fc-title">' +
-				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
+				(htmlEscape(eventDef.title || '') || '&nbsp;') + // we always want one line of height
 			'</span>';
 		
 		return '<a class="' + classes.join(' ') + '"' +
-				(event.url ?
-					' href="' + htmlEscape(event.url) + '"' :
+				(eventDef.url ?
+					' href="' + htmlEscape(eventDef.url) + '"' :
 					''
 					) +
 				(skinCss ?

@@ -46,12 +46,14 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		// trigger dayRender with each cell's element
 		for (row = 0; row < rowCnt; row++) {
 			for (col = 0; col < colCnt; col++) {
-				view.publiclyTrigger(
-					'dayRender',
-					null,
-					this.getCellDate(row, col),
-					this.getCellEl(row, col)
-				);
+				this.publiclyTrigger('dayRender', {
+					context: view,
+					args: [
+						this.getCellDate(row, col),
+						this.getCellEl(row, col),
+						view
+					]
+				});
 			}
 		}
 	},
@@ -141,7 +143,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	renderNumberCellHtml: function(date) {
 		var view = this.view;
 		var html = '';
-		var isDateValid = isDateWithinRange(date, view.activeRange); // TODO: called too frequently. cache somehow.
+		var isDateValid = view.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var isDayNumberVisible = view.dayNumbersVisible && isDateValid;
 		var classes;
 		var weekCalcFirstDoW;
@@ -203,7 +205,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
 	computeEventTimeFormat: function() {
-		return this.view.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
+		return this.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
 	},
 
 
@@ -223,12 +225,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
-	spanToSegs: function(span) {
-		var segs = this.sliceRangeByRow(span);
+	componentFootprintToSegs: function(componentFootprint) {
+		var segs = this.sliceRangeByRow(componentFootprint.unzonedRange);
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
+
 			if (this.isRTL) {
 				seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex;
 				seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex;
@@ -272,8 +275,13 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	},
 
 
-	getHitSpan: function(hit) {
-		return this.getCellRange(hit.row, hit.col);
+	getHitFootprint: function(hit) {
+		var range = this.getCellRange(hit.row, hit.col);
+
+		return new ComponentFootprint(
+			new UnzonedRange(range.start, range.end),
+			true // all-day?
+		);
 	},
 
 
@@ -312,18 +320,16 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	// Renders a visual indication of an event or external element being dragged.
 	// `eventLocation` has zoned start and end (optional)
-	renderDrag: function(eventLocation, seg) {
-		var eventSpans = this.eventToSpans(eventLocation);
+	renderDrag: function(eventFootprints, seg) {
 		var i;
 
-		// always render a highlight underneath
-		for (i = 0; i < eventSpans.length; i++) {
-			this.renderHighlight(eventSpans[i]);
+		for (i = 0; i < eventFootprints.length; i++) {
+			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+			return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 		}
 	},
 
@@ -340,15 +346,14 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventLocation, seg) {
-		var eventSpans = this.eventToSpans(eventLocation);
+	renderEventResize: function(eventFootprints, seg) {
 		var i;
 
-		for (i = 0; i < eventSpans.length; i++) {
-			this.renderHighlight(eventSpans[i]);
+		for (i = 0; i < eventFootprints.length; i++) {
+			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.renderEventLocationHelper(eventLocation, seg); // returns mock event elements
+		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
@@ -364,9 +369,9 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderHelper: function(event, sourceSeg) {
+	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
 		var helperNodes = [];
-		var segs = this.eventToSegs(event);
+		var segs = this.eventFootprintsToSegs(eventFootprints);
 		var rowStructs;
 
 		segs = this.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
@@ -432,7 +437,12 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 			nodes.push(skeletonEl[0]);
 		}
 
-		this.elsByFill[type] = $(nodes);
+		if (this.elsByFill[type]) {
+			this.elsByFill[type] = this.elsByFill[type].add(nodes);
+		}
+		else {
+			this.elsByFill[type] = $(nodes);
+		}
 
 		return segs;
 	},

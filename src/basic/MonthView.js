@@ -7,18 +7,20 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 	// Computes the date range that will be rendered.
 	buildRenderRange: function() {
-		var renderRange = BasicView.prototype.buildRenderRange.apply(this, arguments);
+		var renderUnzonedRange = BasicView.prototype.buildRenderRange.apply(this, arguments);
+		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, this.isRangeAllDay);
+		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, this.isRangeAllDay);
 		var rowCnt;
 
 		// ensure 6 weeks
 		if (this.isFixedWeeks()) {
 			rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-				renderRange.end.diff(renderRange.start, 'weeks', true) // dontRound=true
+				end.diff(start, 'weeks', true) // dontRound=true
 			);
-			renderRange.end.add(6 - rowCnt, 'weeks');
+			end.add(6 - rowCnt, 'weeks');
 		}
 
-		return renderRange;
+		return new UnzonedRange(start, end);
 	},
 
 
@@ -36,6 +38,11 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 	isFixedWeeks: function() {
 		return this.opt('fixedWeekCount');
+	},
+
+
+	isDateInOtherMonth: function(date) {
+		return date.month() !== moment.utc(this.currentUnzonedRange.startMs).month(); // TODO: optimize
 	}
 
 });

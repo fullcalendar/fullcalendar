@@ -137,7 +137,7 @@ TimeGrid.mixin({
 
 
 	renderHighlightSegs: function(segs) {
-		segs = this.renderFillSegEls('highlight', segs); // TODO: old fill system
+		segs = this.renderFillSegEls('highlight', segs); // TODO: instead of calling renderFill directly
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
 		this.highlightSegs = segs;
@@ -154,7 +154,7 @@ TimeGrid.mixin({
 
 
 	renderBusinessSegs: function(segs) {
-		segs = this.renderFillSegEls('businessHours', segs); // TODO: old fill system
+		segs = this.renderFillSegEls('businessHours', segs); // TODO: instead of calling renderFill directly
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.businessContainerEls);
 		this.businessSegs = segs;
@@ -246,10 +246,13 @@ TimeGrid.mixin({
 	// Renders the HTML for a single event segment's default rendering
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var event = seg.event;
-		var isDraggable = view.isEventDraggable(event);
-		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
-		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventResizableFromEnd(event);
+		var calendar = view.calendar;
+		var componentFootprint = seg.footprint.componentFootprint;
+		var isAllDay = componentFootprint.isAllDay;
+		var eventDef = seg.footprint.eventDef;
+		var isDraggable = view.isEventDefDraggable(eventDef);
+		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
+		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
 		var timeText;
@@ -258,25 +261,29 @@ TimeGrid.mixin({
 
 		classes.unshift('fc-time-grid-event', 'fc-v-event');
 
-		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
+		// if the event appears to span more than one day...
+		if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
 			// Don't display time text on segments that run entirely through a day.
 			// That would appear as midnight-midnight and would look dumb.
 			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
 			if (seg.isStart || seg.isEnd) {
-				timeText = this.getEventTimeText(seg);
-				fullTimeText = this.getEventTimeText(seg, 'LT');
-				startTimeText = this.getEventTimeText(seg, null, false); // displayEnd=false
+				var zonedStart = calendar.msToMoment(seg.startMs);
+				var zonedEnd = calendar.msToMoment(seg.endMs);
+				timeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay);
+				fullTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
+				startTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
 			}
-		} else {
+		}
+		else {
 			// Display the normal time text for the *event's* times
-			timeText = this.getEventTimeText(event);
-			fullTimeText = this.getEventTimeText(event, 'LT');
-			startTimeText = this.getEventTimeText(event, null, false); // displayEnd=false
+			timeText = this.getEventTimeText(seg.footprint);
+			fullTimeText = this.getEventTimeText(seg.footprint, 'LT');
+			startTimeText = this.getEventTimeText(seg.footprint, null, false); // displayEnd=false
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
-			(event.url ?
-				' href="' + htmlEscape(event.url) + '"' :
+			(eventDef.url ?
+				' href="' + htmlEscape(eventDef.url) + '"' :
 				''
 				) +
 			(skinCss ?
@@ -294,9 +301,9 @@ TimeGrid.mixin({
 						'</div>' :
 						''
 						) +
-					(event.title ?
+					(eventDef.title ?
 						'<div class="fc-title">' +
-							htmlEscape(event.title) +
+							htmlEscape(eventDef.title) +
 						'</div>' :
 						''
 						) +
@@ -337,8 +344,8 @@ TimeGrid.mixin({
 			seg = segs[i];
 			dayDate = this.dayDates[seg.dayIndex];
 
-			seg.top = this.computeDateTop(seg.start, dayDate);
-			seg.bottom = this.computeDateTop(seg.end, dayDate);
+			seg.top = this.computeDateTop(seg.startMs, dayDate);
+			seg.bottom = this.computeDateTop(seg.endMs, dayDate);
 		}
 	},
 
@@ -482,7 +489,7 @@ TimeGrid.mixin({
 	// Generates an object with CSS properties/values that should be applied to an event segment element.
 	// Contains important positioning-related properties that should be applied to any event element, customized or not.
 	generateFgSegHorizontalCss: function(seg) {
-		var shouldOverlap = this.view.opt('slotEventOverlap');
+		var shouldOverlap = this.opt('slotEventOverlap');
 		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
 		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
 		var props = this.generateSegVerticalCss(seg); // get top/bottom first

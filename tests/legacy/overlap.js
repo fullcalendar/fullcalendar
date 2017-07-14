@@ -402,10 +402,10 @@ describe('event overlap', function() {
 							} ]
 						},
 						{
-							overlap: function(otherEvent, thisEvent) {
+							overlap: function(stillEvent, draggingEvent) {
 								// checks that the arguments are correct
-								expect(otherEvent.title).toBe('Event A');
-								expect(thisEvent.title).toBe('Event B');
+								expect(stillEvent.title).toBe('Event B');
+								expect(draggingEvent.title).toBe('Event A');
 								return false;
 							},
 							events: [ {
@@ -548,10 +548,10 @@ describe('event overlap', function() {
 				it('does not allow dragging', function(done) {
 					options.eventSources = [
 						{
-							overlap: function(otherEvent, thisEvent) {
+							overlap: function(stillEvent, draggingEvent) {
 								// checking parameters here
-								expect(otherEvent.title).toBe('Event B');
-								expect(thisEvent.title).toBe('Event A');
+								expect(stillEvent.title).toBe('Event B');
+								expect(draggingEvent.title).toBe('Event A');
 								return false;
 							},
 							events: [ {
