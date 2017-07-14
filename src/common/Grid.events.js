@@ -1196,8 +1196,12 @@ Grid.mixin({
 
 
 	sortEventSegs: function(segs) {
+		if (this.view.options.noSort) {
+			return;
+		}
 		segs.sort(proxy(this, 'compareEventSegs'));
 	},
+	
 
 
 	// A cmp function for determining which segments should take visual priority
@@ -1272,4 +1276,3 @@ function getDraggedElMeta(el) {
 
 	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }
-
