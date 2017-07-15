@@ -45,9 +45,9 @@ var Promise = {
 function attachImmediatelyResolvingThen(promise, val) {
 	promise.then = function(onResolve) {
 		if (typeof onResolve === 'function') {
-			onResolve(val);
+			return Promise.resolve(onResolve(val));
 		}
-		return promise; // for chaining
+		return promise;
 	};
 }
 
@@ -57,7 +57,7 @@ function attachImmediatelyRejectingThen(promise) {
 		if (typeof onReject === 'function') {
 			onReject();
 		}
-		return promise; // for chaining
+		return promise;
 	};
 }
 
