@@ -57,7 +57,7 @@ var Theme = Class.extend({
 
 
 	getClass: function(key) {
-		return this.classes[key];
+		return this.classes[key] || '';
 	},
 
 
@@ -67,6 +67,8 @@ var Theme = Class.extend({
 		if (className) {
 			return this.baseIconClass + ' ' + className;
 		}
+
+		return '';
 	},
 
 
@@ -80,6 +82,8 @@ var Theme = Class.extend({
 				return this.applyIconOverridePrefix(className);
 			}
 		}
+
+		return '';
 	}
 
 });

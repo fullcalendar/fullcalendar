@@ -336,7 +336,7 @@ previous button's border...
 --------------------------------------------------------------------------------------------------*/
 
 .fc-divider {
-	border-color: inherit;
+	border-color: inherit; /* for Bootstrap theme. eventually use instead of hardcoded color above */
 	border-style: solid;
 	border-width: 1px;
 }
