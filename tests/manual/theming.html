@@ -20,6 +20,7 @@ function initCalendar() {
 		},
 		defaultDate: '2014-08-12',
 		weekNumbers: true,
+		navLinks: true, // can click day/week names to navigate views
 		editable: true,
 		eventLimit: true, // allow "more" link when too many events
 		events: [
@@ -87,7 +88,7 @@ $(document).ready(function() {
 	initCalendar();
 	
 	$('#switcher').themeswitcher({
-		imgPath: '../lib/themeswitcher/images/',
+		imgPath: 'themeswitcher/images/',
 		loadTheme: 'Cupertino',
 		height: 400,
 		onSelect: function(theme) {
@@ -101,7 +102,7 @@ $(document).ready(function() {
 
 </script>
 </head>
-<body style='font-size:13px;margin:0'>
+<body style='font-size:14px;margin:0'>
 <div id="switcher" style='position:absolute;top:5px;left:5px'></div>
 <div id='calendar' style='width:900px;margin:50px auto 0;font-family:arial'></div>
 </body>
