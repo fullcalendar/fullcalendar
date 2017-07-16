@@ -58,6 +58,9 @@
   ],
   "fullcalendar.css": [
     "common/common.css",
+    "common/common.standard.css",
+    "common/common.jquery-ui.css",
+    "common/common.bootstrap3.css",
     "main.css",
     "basic/basic.css",
     "agenda/agenda.css",
