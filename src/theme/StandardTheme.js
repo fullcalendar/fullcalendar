@@ -5,21 +5,27 @@ var StandardTheme = Theme.extend({
 		widget: 'fc-unthemed',
 		widgetHeader: 'fc-widget-header',
 		widgetContent: 'fc-widget-content',
-		listContent: 'fc-widget-content',
-		popoverHeader: 'fc-widget-header',
-		popoverContent: 'fc-widget-content',
+
+		buttonGroup: 'fc-button-group',
+		button: 'fc-button',
+		cornerLeft: 'fc-corner-left',
+		cornerRight: 'fc-corner-right',
 		stateHighlight: 'fc-state-highlight',
 		stateDefault: 'fc-state-default',
 		stateActive: 'fc-state-active',
 		stateDisabled: 'fc-state-disabled',
 		stateHover: 'fc-state-hover',
 		stateDown: 'fc-state-down',
-		button: 'fc-button',
-		cornerLeft: 'fc-corner-left',
-		cornerRight: 'fc-corner-right',
-		buttonGroup: 'fc-button-group',
-		tableHeader: 'fc-widget-header',
-		tableContent: 'fc-widget-content'
+
+		popoverHeader: 'fc-widget-header',
+		popoverContent: 'fc-widget-content',
+
+		// day grid
+		headerRow: 'fc-widget-header',
+		dayRow: 'fc-widget-content',
+
+		// list view
+		listView: 'fc-widget-content',
 	},
 
 	baseIconClass: 'fc-icon',

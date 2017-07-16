@@ -18,7 +18,7 @@ var ListView = View.extend({
 	renderSkeleton: function() {
 		this.el.addClass(
 			'fc-list-view ' +
-			this.calendar.theme.getClass('listContent')
+			this.calendar.theme.getClass('listView')
 		);
 
 		this.scroller.render();

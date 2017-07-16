@@ -2,18 +2,26 @@
 var BootstrapTheme = Theme.extend({
 
 	classes: {
-		listContent: 'panel-default',
+		widget: 'fc-bootstrap3',
+
+		tableGrid: 'table-bordered', // avoid `table` class b/c don't want margins. only border color
+		tableList: 'table table-striped', // `table` class creates bottom margin but who cares
+
+		buttonGroup: 'btn-group',
+		button: 'btn btn-default',
+		stateActive: 'active',
+		stateDisabled: 'disabled',
+
 		popover: 'panel panel-default',
 		popoverHeader: 'panel-heading',
 		popoverContent: 'panel-body',
-		stateActive: 'active',
-		stateDisabled: 'disabled',
-		button: 'btn btn-default',
-		buttonGroup: 'btn-group',
-		tableHeader: 'panel-default',
-		tableContent: 'panel-default',
-		tableGrid: 'table-bordered',
-		tableList: 'table'
+
+		// day grid
+		headerRow: 'panel-default', // avoid `panel` class b/c don't want margins/radius. only border color
+		dayRow: 'panel-default', // "
+
+		// list view
+		listView: 'panel panel-default'
 	},
 
 	baseIconClass: 'glyphicon',

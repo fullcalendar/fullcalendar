@@ -5,21 +5,27 @@ var JqueryUiTheme = Theme.extend({
 		widget: 'ui-widget',
 		widgetHeader: 'ui-widget-header',
 		widgetContent: 'ui-widget-content',
-		listContent: 'ui-widget-content',
-		popoverHeader: 'ui-widget-header',
-		popoverContent: 'ui-widget-content',
+
+		buttonGroup: 'fc-button-group',
+		button: 'ui-button',
+		cornerLeft: 'ui-corner-left',
+		cornerRight: 'ui-corner-right',
 		stateHighlight: 'ui-state-highlight',
 		stateDefault: 'ui-state-default',
 		stateActive: 'ui-state-active',
 		stateDisabled: 'ui-state-disabled',
 		stateHover: 'ui-state-hover',
 		stateDown: 'ui-state-down',
-		button: 'ui-button',
-		cornerLeft: 'ui-corner-left',
-		cornerRight: 'ui-corner-right',
-		buttonGroup: 'fc-button-group',
-		tableHeader: 'ui-widget-header',
-		tableContent: 'ui-widget-content'
+
+		popoverHeader: 'ui-widget-header',
+		popoverContent: 'ui-widget-content',
+
+		// day grid
+		headerRow: 'ui-widget-header',
+		dayRow: 'ui-widget-content',
+
+		// list view
+		listView: 'ui-widget-content'
 	},
 
 	baseIconClass: 'ui-icon',
