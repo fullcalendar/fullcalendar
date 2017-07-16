@@ -4,6 +4,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	view: null, // current View object
 	viewsByType: null, // holds all instantiated view instances, current or not
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
+	theme: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
 
@@ -20,8 +21,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initOptionsInternals(overrides);
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
-
-		this.theme = new FC.Theme(this.option('theme'));
 
 		EventManager.call(this); // needs options immediately
 		this.initialize();

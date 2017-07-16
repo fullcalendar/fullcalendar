@@ -48,10 +48,24 @@ Calendar.mixin({
 		});
 
 		// called immediately, and upon option change
-		this.optionsModel.watch('applyingThemeClasses', [ '?theme' ], function(opts) {
-			el.toggleClass('ui-widget', opts.theme);
-			el.toggleClass('fc-unthemed', !opts.theme);
-			_this.theme.setTheme(opts.theme);
+		this.optionsModel.watch('settingTheme', [ '?theme' ], function(opts) {
+			var themeClass = ThemeRegistry.getThemeClass(opts.theme);
+			var theme = new themeClass(_this.optionsModel);
+			var widgetClass = theme.getClass('widget');
+
+			_this.theme = theme;
+
+			if (widgetClass) {
+				el.addClass(widgetClass);
+			}
+		}, function() {
+			var widgetClass = _this.theme.getClass('widget');
+
+			_this.theme = null;
+
+			if (widgetClass) {
+				el.removeClass(widgetClass);
+			}
 		});
 
 		// called immediately, and upon option change.

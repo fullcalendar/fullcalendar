@@ -55,14 +55,13 @@ Calendar.defaults = {
 		week: 'week',
 		day: 'day'
 	},
-
-	buttonIcons: {},
+	//buttonIcons: null,
 
 	allDayText: 'all-day',
 	
 	// jquery-ui theming
 	theme: false,
-	themeButtonIcons: {},
+	//themeButtonIcons: null,
 
 	//eventResizableFromStart: false,
 	dragOpacity: .75,
