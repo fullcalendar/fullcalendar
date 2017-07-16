@@ -91,7 +91,7 @@ function Toolbar(calendar, toolbarOptions) {
 									customButtonProps.click.call(buttonEl[0], ev);
 								}
 							};
-							(buttonIcon = calendar.theme.querySingularIconClass(customButtonProps)) ||
+							(buttonIcon = calendar.theme.getCustomButtonIconClass(customButtonProps)) ||
 							(buttonIcon = calendar.theme.getIconClass(buttonName)) ||
 							(buttonText = customButtonProps.text); // jshint ignore:line
 						}

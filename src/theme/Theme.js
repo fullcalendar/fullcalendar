@@ -4,8 +4,8 @@ var Theme = Class.extend({
 	classes: {},
 	iconClasses: {},
 	baseIconClass: '',
-	iconOverridePluralOption: null,
-	iconOverrideSingularOption: null,
+	iconOverrideOption: null,
+	iconOverrideCustomButtonOption: null,
 	iconOverridePrefix: '',
 
 
@@ -16,9 +16,9 @@ var Theme = Class.extend({
 
 
 	processIconOverride: function() {
-		if (this.iconOverridePluralOption) {
+		if (this.iconOverrideOption) {
 			this.setIconOverride(
-				this.optionsModel.get(this.iconOverridePluralOption)
+				this.optionsModel.get(this.iconOverrideOption)
 			);
 		}
 	},
@@ -72,14 +72,14 @@ var Theme = Class.extend({
 	},
 
 
-	querySingularIconClass: function(hash) {
+	getCustomButtonIconClass: function(customButtonProps) {
 		var className;
 
-		if (this.iconOverrideSingularOption) {
-			className = hash[this.iconOverrideSingularOption];
+		if (this.iconOverrideCustomButtonOption) {
+			className = customButtonProps[this.iconOverrideCustomButtonOption];
 
 			if (className) {
-				return this.applyIconOverridePrefix(className);
+				return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className);
 			}
 		}
 

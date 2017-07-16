@@ -37,8 +37,8 @@ var JqueryUiTheme = Theme.extend({
 		nextYear: 'ui-icon-seek-next'
 	},
 
-	iconOverrideSingularOption: 'themeButtonIcons',
-	iconOverridePluralOption: 'themeButtonIcons',
+	iconOverrideOption: 'themeButtonIcons',
+	iconOverrideCustomButtonOption: 'themeIcon',
 	iconOverridePrefix: 'ui-icon-'
 
 });

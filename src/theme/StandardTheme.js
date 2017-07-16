@@ -37,8 +37,8 @@ var StandardTheme = Theme.extend({
 		nextYear: 'fc-icon-right-double-arrow'
 	},
 
-	iconOverrideSingularOption: 'buttonIcon',
-	iconOverridePluralOption: 'buttonIcons',
+	iconOverrideOption: 'buttonIcons',
+	iconOverrideCustomButtonOption: 'icon',
 	iconOverridePrefix: 'fc-icon-'
 
 });

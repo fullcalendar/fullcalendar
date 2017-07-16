@@ -33,8 +33,8 @@ var BootstrapTheme = Theme.extend({
 		nextYear: 'glyphicon-forward'
 	},
 
-	iconOverrideSingularOption: 'bootstrapGlyphicon',
-	iconOverridePluralOption: 'bootstrapGlyphicons',
+	iconOverrideOption: 'bootstrapGlyphicons',
+	iconOverrideCustomButtonOption: 'bootstrapGlyphicon',
 	iconOverridePrefix: 'glyphicon-'
 
 });
