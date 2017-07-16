@@ -104,7 +104,10 @@ Calendar.mixin({
 
 		this.toolbarsManager.proxyCall('removeElement');
 		this.contentEl.remove();
-		this.el.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
+		this.el.removeClass('fc fc-ltr fc-rtl');
+
+		// removes theme-related root className
+		this.optionsModel.unwatch('settingTheme');
 
 		this.el.off('.fc'); // unbind nav link handlers
 
