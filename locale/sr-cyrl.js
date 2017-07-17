@@ -1,6 +1,8 @@
 
 $.fullCalendar.locale("sr-cyrl", {
 	buttonText: {
+		prev: "Претходна",
+		next: "следећи",
 		month: "Месец",
 		week: "Недеља",
 		day: "Дан",
