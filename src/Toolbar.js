@@ -57,6 +57,7 @@ function Toolbar(calendar, toolbarOptions) {
 
 
 	function renderSection(position) {
+		var theme = calendar.theme;
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = toolbarOptions.layout[position];
 		var calendarCustomButtons = calendar.opt('customButtons') || {};
@@ -91,8 +92,8 @@ function Toolbar(calendar, toolbarOptions) {
 									customButtonProps.click.call(buttonEl[0], ev);
 								}
 							};
-							(buttonIcon = calendar.theme.getCustomButtonIconClass(customButtonProps)) ||
-							(buttonIcon = calendar.theme.getIconClass(buttonName)) ||
+							(buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
 							(buttonText = customButtonProps.text); // jshint ignore:line
 						}
 						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
@@ -101,7 +102,7 @@ function Toolbar(calendar, toolbarOptions) {
 								calendar.changeView(buttonName);
 							};
 							(buttonText = viewSpec.buttonTextOverride) ||
-							(buttonIcon = calendar.theme.getIconClass(buttonName)) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
 							(buttonText = viewSpec.buttonTextDefault); // jshint ignore:line
 						}
 						else if (calendar[buttonName]) { // a calendar method
@@ -109,7 +110,7 @@ function Toolbar(calendar, toolbarOptions) {
 								calendar[buttonName]();
 							};
 							(buttonText = calendarButtonTextOverrides[buttonName]) ||
-							(buttonIcon = calendar.theme.getIconClass(buttonName)) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
 							(buttonText = calendarButtonText[buttonName]); // jshint ignore:line
 							//            ^ everything else is considered default
 						}
@@ -118,8 +119,8 @@ function Toolbar(calendar, toolbarOptions) {
 
 							buttonClasses = [
 								'fc-' + buttonName + '-button',
-								calendar.theme.getClass('button'),
-								calendar.theme.getClass('stateDefault')
+								theme.getClass('button'),
+								theme.getClass('stateDefault')
 							];
 
 							if (buttonText) {
@@ -136,17 +137,17 @@ function Toolbar(calendar, toolbarOptions) {
 								)
 								.click(function(ev) {
 									// don't process clicks for disabled buttons
-									if (!buttonEl.hasClass(calendar.theme.getClass('stateDisabled'))) {
+									if (!buttonEl.hasClass(theme.getClass('stateDisabled'))) {
 
 										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.
 										if (
-											buttonEl.hasClass(calendar.theme.getClass('stateActive')) ||
-											buttonEl.hasClass(calendar.theme.getClass('stateDisabled'))
+											buttonEl.hasClass(theme.getClass('stateActive')) ||
+											buttonEl.hasClass(theme.getClass('stateDisabled'))
 										) {
-											buttonEl.removeClass(calendar.theme.getClass('stateHover'));
+											buttonEl.removeClass(theme.getClass('stateHover'));
 										}
 									}
 								})
@@ -154,28 +155,28 @@ function Toolbar(calendar, toolbarOptions) {
 									// the *down* effect (mouse pressed in).
 									// only on buttons that are not the "active" tab, or disabled
 									buttonEl
-										.not('.' + calendar.theme.getClass('stateActive'))
-										.not('.' + calendar.theme.getClass('stateDisabled'))
-										.addClass(calendar.theme.getClass('stateDown'));
+										.not('.' + theme.getClass('stateActive'))
+										.not('.' + theme.getClass('stateDisabled'))
+										.addClass(theme.getClass('stateDown'));
 								})
 								.mouseup(function() {
 									// undo the *down* effect
-									buttonEl.removeClass(calendar.theme.getClass('stateDown'));
+									buttonEl.removeClass(theme.getClass('stateDown'));
 								})
 								.hover(
 									function() {
 										// the *hover* effect.
 										// only on buttons that are not the "active" tab, or disabled
 										buttonEl
-											.not('.' + calendar.theme.getClass('stateActive'))
-											.not('.' + calendar.theme.getClass('stateDisabled'))
-											.addClass(calendar.theme.getClass('stateHover'));
+											.not('.' + theme.getClass('stateActive'))
+											.not('.' + theme.getClass('stateDisabled'))
+											.addClass(theme.getClass('stateHover'));
 									},
 									function() {
 										// undo the *hover* effect
 										buttonEl
-											.removeClass(calendar.theme.getClass('stateHover'))
-											.removeClass(calendar.theme.getClass('stateDown')); // if mouseleave happens before mouseup
+											.removeClass(theme.getClass('stateHover'))
+											.removeClass(theme.getClass('stateDown')); // if mouseleave happens before mouseup
 									}
 								);
 
@@ -186,14 +187,14 @@ function Toolbar(calendar, toolbarOptions) {
 
 				if (isOnlyButtons) {
 					groupChildren
-						.first().addClass(calendar.theme.getClass('cornerLeft')).end()
-						.last().addClass(calendar.theme.getClass('cornerRight')).end();
+						.first().addClass(theme.getClass('cornerLeft')).end()
+						.last().addClass(theme.getClass('cornerRight')).end();
 				}
 
 				if (groupChildren.length > 1) {
 					groupEl = $('<div/>');
 					if (isOnlyButtons) {
-						groupEl.addClass(calendar.theme.getClass('buttonGroup'));
+						groupEl.addClass(theme.getClass('buttonGroup'));
 					}
 					groupEl.append(groupChildren);
 					sectionEl.append(groupEl);

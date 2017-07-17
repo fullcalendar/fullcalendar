@@ -158,11 +158,12 @@ var ListViewGrid = Grid.extend({
 
 	// render the event segments in the view
 	renderSegList: function(allSegs) {
+		var view = this.view;
 		var segsByDay = this.groupSegsByDay(allSegs); // sparse array
 		var dayIndex;
 		var daySegs;
 		var i;
-		var tableEl = $('<table class="fc-list-table ' + this.view.calendar.theme.getClass('tableList') + '"><tbody/></table>');
+		var tableEl = $('<table class="fc-list-table ' + view.calendar.theme.getClass('tableList') + '"><tbody/></table>');
 		var tbodyEl = tableEl.find('tbody');
 
 		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
@@ -171,7 +172,7 @@ var ListViewGrid = Grid.extend({
 
 				// append a day header
 				tbodyEl.append(this.dayHeaderHtml(
-					this.view.renderRange.start.clone().add(dayIndex, 'days')
+					view.renderRange.start.clone().add(dayIndex, 'days')
 				));
 
 				this.sortEventSegs(daySegs);
@@ -228,6 +229,7 @@ var ListViewGrid = Grid.extend({
 	// generates the HTML for a single event row
 	fgSegHtml: function(seg) {
 		var view = this.view;
+		var theme = view.calendar.theme;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
 		var event = seg.event;
@@ -256,18 +258,18 @@ var ListViewGrid = Grid.extend({
 
 		return '<tr class="' + classes.join(' ') + '">' +
 			(this.displayEventTime ?
-				'<td class="fc-list-item-time ' + view.calendar.theme.getClass('widgetContent') + '">' +
+				'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
 					(timeHtml || '') +
 				'</td>' :
 				'') +
-			'<td class="fc-list-item-marker ' + view.calendar.theme.getClass('widgetContent') + '">' +
+			'<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
 				'<span class="fc-event-dot"' +
 				(bgColor ?
 					' style="background-color:' + bgColor + '"' :
 					'') +
 				'></span>' +
 			'</td>' +
-			'<td class="fc-list-item-title ' + view.calendar.theme.getClass('widgetContent') + '">' +
+			'<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
 					htmlEscape(seg.event.title || '') +
 				'</a>' +

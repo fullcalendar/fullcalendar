@@ -249,11 +249,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	renderHeadHtml: function() {
-		var view = this.view;
+		var theme = this.view.calendar.theme;
 
 		return '' +
-			'<div class="fc-row ' + view.calendar.theme.getClass('headerRow') + '">' +
-				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
+			'<div class="fc-row ' + theme.getClass('headerRow') + '">' +
+				'<table class="' + theme.getClass('tableGrid') + '">' +
 					'<thead>' +
 						this.renderHeadTrHtml() +
 					'</thead>' +

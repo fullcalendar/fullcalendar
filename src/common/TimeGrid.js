@@ -50,14 +50,16 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders the basic HTML skeleton for the grid
 	renderHtml: function() {
+		var theme = this.view.calendar.theme;
+
 		return '' +
 			'<div class="fc-bg">' +
-				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
+				'<table class="' + theme.getClass('tableGrid') + '">' +
 					this.renderBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
-				'<table class="' + this.view.calendar.theme.getClass('tableGrid') + '">' +
+				'<table class="' + theme.getClass('tableGrid') + '">' +
 					this.renderSlatRowHtml() +
 				'</table>' +
 			'</div>';
@@ -67,6 +69,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 	renderSlatRowHtml: function() {
 		var view = this.view;
+		var theme = view.calendar.theme;
 		var isRTL = this.isRTL;
 		var html = '';
 		var slotTime = moment.duration(+this.view.minTime); // wish there was .clone() for durations
@@ -75,12 +78,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var axisHtml;
 
 		// Calculate the time for each slot
-		while (slotTime < this.view.maxTime) {
+		while (slotTime < view.maxTime) {
 			slotDate = this.start.clone().time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
-				'<td class="fc-axis fc-time ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
+				'<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
 					(isLabeled ?
 						'<span>' + // for matchCellWidths
 							htmlEscape(slotDate.format(this.labelFormat)) +
@@ -94,7 +97,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 					(isLabeled ? '' : ' class="fc-minor"') +
 					'>' +
 					(!isRTL ? axisHtml : '') +
-					'<td class="' + view.calendar.theme.getClass('widgetContent') + '"/>' +
+					'<td class="' + theme.getClass('widgetContent') + '"/>' +
 					(isRTL ? axisHtml : '') +
 				"</tr>";
 

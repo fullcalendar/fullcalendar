@@ -239,7 +239,7 @@ DayGrid.mixin({
 		}
 
 		options = {
-			className: 'fc-more-popover ' + this.view.calendar.theme.getClass('popover'),
+			className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
 			content: this.renderSegPopoverContent(row, col, segs),
 			parentEl: this.view.el, // attach to root of view. guarantees outside of scrollbars.
 			top: topEl.offset().top,
@@ -282,16 +282,17 @@ DayGrid.mixin({
 	// Builds the inner DOM contents of the segment popover
 	renderSegPopoverContent: function(row, col, segs) {
 		var view = this.view;
+		var theme = view.calendar.theme;
 		var title = this.getCellDate(row, col).format(view.opt('dayPopoverFormat'));
 		var content = $(
-			'<div class="fc-header ' + view.calendar.theme.getClass('popoverHeader') + '">' +
-				'<span class="fc-close ' + view.calendar.theme.getIconClass('close') + '"></span>' +
+			'<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
+				'<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
 				'<span class="fc-title">' +
 					htmlEscape(title) +
 				'</span>' +
 				'<div class="fc-clear"/>' +
 			'</div>' +
-			'<div class="fc-body ' + view.calendar.theme.getClass('popoverContent') + '">' +
+			'<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
 				'<div class="fc-event-container"></div>' +
 			'</div>'
 		);
