@@ -26,17 +26,17 @@
   "extra": {
     "component": {
       "scripts": [
-        "dist/fullcalendar.js",
-        "dist/gcal.js"
+        "dist/fullcalendar.js"
       ],
       "styles": [
-        "dist/fullcalendar.css",
-        "dist/fullcalendar.print.css"
+        "dist/fullcalendar.css"
       ],
       "files": [
         "dist/fullcalendar.min.js",
         "dist/fullcalendar.min.css",
+        "dist/fullcalendar.print.css",
         "dist/fullcalendar.print.min.css",
+        "dist/gcal.js",
         "dist/gcal.min.js",
         "dist/locale-all.js",
         "dist/locale/*.js"
