@@ -1,5 +1,5 @@
 
-var Theme = Class.extend({
+var Theme = FC.Theme = Class.extend({
 
 	classes: {},
 	iconClasses: {},

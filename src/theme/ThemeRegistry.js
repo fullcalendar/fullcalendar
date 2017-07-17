@@ -1,5 +1,5 @@
 
-var ThemeRegistry = {
+var ThemeRegistry = FC.ThemeRegistry = {
 
 	themeClassHash: {},
 
