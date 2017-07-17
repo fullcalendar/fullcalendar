@@ -55,6 +55,9 @@ View.mixin({
 		this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, this.isRangeAllDay);
 		this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, this.isRangeAllDay);
 		this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, this.isRangeAllDay);
+
+		this.title = this.computeTitle();
+		this.calendar.reportViewDatesChanged(this, dateProfile);
 	},
 
 

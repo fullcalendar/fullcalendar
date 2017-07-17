@@ -164,7 +164,7 @@ Calendar.mixin({
 			}
 
 			if (this.elementVisible()) {
-				this.currentDate = this.view.setDate(this.currentDate);
+				this.view.setDate(this.currentDate);
 			}
 		}
 

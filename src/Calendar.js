@@ -143,6 +143,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	},
 
 
+	reportViewDatesChanged: function(view, dateProfile) {
+		this.currentDate = dateProfile.date; // might have been constrained by view dates
+		this.setToolbarsTitle(view.title);
+		this.updateToolbarButtons();
+	},
+
+
 	prev: function() {
 		var prevInfo = this.view.buildPrevDateProfile(this.currentDate);
 

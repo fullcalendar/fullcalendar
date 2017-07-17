@@ -122,13 +122,6 @@ var View = FC.View = ChronoComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Sets the view's title property to the most updated computed value
-	updateTitle: function() {
-		this.title = this.computeTitle();
-		this.calendar.setToolbarsTitle(this.title);
-	},
-
-
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
 		var unzonedRange;
@@ -311,8 +304,6 @@ var View = FC.View = ChronoComponent.extend({
 	executeDateRender: function(dateProfile, skipScroll) {
 
 		this.setDateProfileForRendering(dateProfile);
-		this.updateTitle();
-		this.calendar.updateToolbarButtons();
 
 		if (this.render) {
 			this.render(); // TODO: deprecate
