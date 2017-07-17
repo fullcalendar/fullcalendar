@@ -7,6 +7,13 @@ var uglify = require('gulp-uglify');
 var fs = require('fs');
 var del = require('del');
 
+// explicit mappings from the "standard" locale codes (the ones the FullCalendar/Moment use),
+// to jQuery UI's sometimes whacky locale codes.
+var DATEPICKER_LOCALE_MAPPINGS = {
+	'sr': 'sr-SR',
+	'sr-cyrl': 'sr'
+};
+
 // global state for locale:each:data
 var localeData; // array of virtual files that gulp-file accepts
 var skippedLocaleCodes;
@@ -197,11 +204,14 @@ function extractMomentLocaleJS(js) {
 
 
 function getDatepickerLocaleJS(localeCode, targetLocaleCode) {
+	var datepickerLocaleCode = DATEPICKER_LOCALE_MAPPINGS[localeCode];
 
-	// convert "en-ca" to "en-CA"
-	var datepickerLocaleCode = localeCode.replace(/\-(\w+)/, function(m0, m1) {
-		return '-' + m1.toUpperCase();
-	});
+	// derive it. convert "en-ca" to "en-CA"
+	if (!datepickerLocaleCode) {
+		datepickerLocaleCode = localeCode.replace(/\-(\w+)/, function(m0, m1) {
+			return '-' + m1.toUpperCase();
+		});
+	}
 
 	var path = 'node_modules/components-jqueryui/ui/i18n/datepicker-' + datepickerLocaleCode + '.js';
 	var js;
