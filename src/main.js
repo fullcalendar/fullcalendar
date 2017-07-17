@@ -20,22 +20,33 @@ $.fn.fullCalendar = function(options) {
 
 		// a method call
 		if (typeof options === 'string') {
-			if (calendar) {
-				if ($.isFunction(calendar[options])) {
-					singleRes = calendar[options].apply(calendar, args);
-					if (!i) {
-						res = singleRes; // record the first method call result
-					}
-					if (options === 'destroy') { // for the destroy method, must remove Calendar object data
-						element.removeData('fullCalendar');
-					}
+
+			if (options === 'getCalendar') {
+				if (!i) { // first element only
+					res = calendar;
 				}
-				else {
-					FC.warn("'" + options + "' is an unknown FullCalendar method.");
+			}
+			else if (options === 'destroy') { // don't warn if no calendar object
+				if (calendar) {
+					calendar.destroy();
+					element.removeData('fullCalendar');
+				}
+			}
+			else if (!calendar) {
+				FC.warn("Attempting to call a FullCalendar method on an element with no calendar.");
+			}
+			else if ($.isFunction(calendar[options])) {
+				singleRes = calendar[options].apply(calendar, args);
+
+				if (!i) {
+					res = singleRes; // record the first method call result
+				}
+				if (options === 'destroy') { // for the destroy method, must remove Calendar object data
+					element.removeData('fullCalendar');
 				}
 			}
 			else {
-				FC.warn("Attempting to call a FullCalendar method on an element with no calendar.");
+				FC.warn("'" + options + "' is an unknown FullCalendar method.");
 			}
 		}
 		// a new calendar initialization

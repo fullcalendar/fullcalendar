@@ -37,11 +37,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getCalendar: function() {
-		return this;
-	},
-
-
 	getView: function() {
 		return this.view;
 	},
