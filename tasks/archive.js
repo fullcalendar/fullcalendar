@@ -54,24 +54,12 @@ gulp.task('archive:misc', function() {
 	.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
-gulp.task('archive:deps', [ 'archive:jqui:theme' ], function() {
+gulp.task('archive:deps', function() {
 	return gulp.src([
 		'node_modules/moment/min/moment.min.js',
 		'node_modules/jquery/dist/jquery.min.js',
 		'node_modules/components-jqueryui/jquery-ui.min.js'
 	])
-	.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
-});
-
-// transfers a single jQuery UI theme
-gulp.task('archive:jqui:theme', function() {
-	return gulp.src([
-		'jquery-ui.min.css',
-		'images/*'
-	], {
-		cwd: 'node_modules/components-jqueryui/themes/cupertino/',
-		base: 'node_modules/components-jqueryui/themes/'
-	})
 	.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
@@ -96,7 +84,6 @@ function transformDemoPath(path) {
 	// reroot 3rd party libs
 	path = path.replace('../node_modules/moment/', '../lib/');
 	path = path.replace('../node_modules/jquery/dist/', '../lib/');
-	path = path.replace('../node_modules/components-jqueryui/themes/cupertino/', '../lib/cupertino/'); // must be first
 	path = path.replace('../node_modules/components-jqueryui/', '../lib/');
 
 	// reroot dist files to archive root
