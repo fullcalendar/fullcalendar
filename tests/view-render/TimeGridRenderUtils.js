@@ -1,9 +1,12 @@
 
 var TimeGridRenderUtils = {
 
-	getTimeAxisText: function() {
+	getTimeAxisInfo: function() {
 		return $('.fc-slats tr[data-time]').map(function(i, tr) {
-			return $(tr).find('.fc-time').text();
+			return {
+				text: $(tr).find('.fc-time').text(),
+				isMajor: !$(tr).hasClass('fc-minor')
+			};
 		}).get();
 	}
 };
