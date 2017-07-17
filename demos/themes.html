@@ -4,7 +4,7 @@
 <meta charset='utf-8' />
 
 <!-- preload the first theme's stylesheet -->
-<link href='https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css' rel='stylesheet' data-theme-stylsheet />
+<link href='https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css' rel='stylesheet' data-theme-stylesheet />
 
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -14,10 +14,11 @@
 <script>
 
 	$(document).ready(function() {
-		var $themeStylesheet = $('link[data-theme-stylsheet]');
+		var $themeStylesheet = $('link[data-theme-stylesheet]');
 		var $themeSystemSelect = $('#theme-system-selector select');
 		var $themeNameSelects = $('#theme-name-selector select');
 		var currentThemeSystem;
+		var calendarObj;
 
 
 		setThemeSystem($themeSystemSelect.val()); // whatever is selected
@@ -93,6 +94,8 @@
 			]
 		});
 
+		calendarObj = $('#calendar').fullCalendar('getCalendar'); // for cleaner API access
+
 
 		$themeSystemSelect.on('change', function() {
 			setThemeSystem(this.value);
@@ -118,8 +121,9 @@
 				clearThemeStylesheet();
 			}
 
-			// won't do anything if calendar not initalized yet
-			$('#calendar').fullCalendar('option', 'theme', newThemeSystem);
+			if (calendarObj) { // if already initialized
+				calendarObj.option('theme', newThemeSystem);
+			}
 		}
 
 
@@ -151,7 +155,6 @@
 
 </script>
 <style>
-	/* excuse the !importants... they prevent the theme from restyling the top UI */
 
 	body {
 		margin: 0;
@@ -159,22 +162,27 @@
 		font-size: 14px;
 	}
 
-	#top, .fc-unthemed {
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif !important;
+	#top,
+	#calendar.fc-unthemed {
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 	}
 
 	#top {
 		background: #eee;
 		border-bottom: 1px solid #ddd;
 		padding: 0 10px;
-		line-height: 40px !important;
-		font-size: 12px !important;
-		color: #000 !important;
+		line-height: 40px;
+		font-size: 12px;
+		color: #000;
 	}
 
 	#top .selector {
 		display: inline-block;
 		margin-right: 10px;
+	}
+
+	#top select {
+		font: inherit; /* mock what Boostrap does, don't compete  */
 	}
 
 	#calendar {
