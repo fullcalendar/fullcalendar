@@ -25,7 +25,7 @@ var StandardTheme = Theme.extend({
 		dayRow: 'fc-widget-content',
 
 		// list view
-		listView: 'fc-widget-content',
+		listView: 'fc-widget-content'
 	},
 
 	baseIconClass: 'fc-icon',
