@@ -10,7 +10,7 @@ var del = require('del');
 // explicit mappings from the "standard" locale codes (the ones the FullCalendar/Moment use),
 // to jQuery UI's sometimes whacky locale codes.
 var DATEPICKER_LOCALE_MAPPINGS = {
-	'sr': 'sr-SR',
+	sr: 'sr-SR',
 	'sr-cyrl': 'sr'
 };
 
