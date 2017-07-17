@@ -347,10 +347,11 @@ temporary rendered events).
 	z-index: 5;
 }
 
-.fc-row .fc-content-skeleton table,
-.fc-row .fc-content-skeleton td,
-.fc-row .fc-helper-skeleton td {
+.fc .fc-row .fc-content-skeleton table,
+.fc .fc-row .fc-content-skeleton td,
+.fc .fc-row .fc-helper-skeleton td {
 	/* see-through to the background below */
+	/* extra precedence to prevent theme-provided backgrounds */
 	background: none; /* in case <td>s are globally styled */
 	border-color: transparent;
 }
