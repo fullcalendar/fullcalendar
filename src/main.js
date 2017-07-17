@@ -20,17 +20,22 @@ $.fn.fullCalendar = function(options) {
 
 		// a method call
 		if (typeof options === 'string') {
-			if (calendar && $.isFunction(calendar[options])) {
-				singleRes = calendar[options].apply(calendar, args);
-				if (!i) {
-					res = singleRes; // record the first method call result
+			if (calendar) {
+				if ($.isFunction(calendar[options])) {
+					singleRes = calendar[options].apply(calendar, args);
+					if (!i) {
+						res = singleRes; // record the first method call result
+					}
+					if (options === 'destroy') { // for the destroy method, must remove Calendar object data
+						element.removeData('fullCalendar');
+					}
 				}
-				if (options === 'destroy') { // for the destroy method, must remove Calendar object data
-					element.removeData('fullCalendar');
+				else {
+					FC.warn("'" + options + "' is an unknown FullCalendar method.");
 				}
 			}
 			else {
-				console.error("'" + options +"' is an unknown FullCalendar method.");
+				FC.warn("Attempting to call a FullCalendar method on an element with no calendar.");
 			}
 		}
 		// a new calendar initialization
