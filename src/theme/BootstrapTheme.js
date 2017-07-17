@@ -12,6 +12,8 @@ var BootstrapTheme = Theme.extend({
 		stateActive: 'active',
 		stateDisabled: 'disabled',
 
+		today: 'warning',
+
 		popover: 'panel panel-default',
 		popoverHeader: 'panel-heading',
 		popoverContent: 'panel-body',

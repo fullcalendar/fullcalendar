@@ -10,7 +10,6 @@ var StandardTheme = Theme.extend({
 		button: 'fc-button',
 		cornerLeft: 'fc-corner-left',
 		cornerRight: 'fc-corner-right',
-		stateHighlight: 'fc-state-highlight',
 		stateDefault: 'fc-state-default',
 		stateActive: 'fc-state-active',
 		stateDisabled: 'fc-state-disabled',

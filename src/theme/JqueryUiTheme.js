@@ -10,12 +10,13 @@ var JqueryUiTheme = Theme.extend({
 		button: 'ui-button',
 		cornerLeft: 'ui-corner-left',
 		cornerRight: 'ui-corner-right',
-		stateHighlight: 'ui-state-highlight',
 		stateDefault: 'ui-state-default',
 		stateActive: 'ui-state-active',
 		stateDisabled: 'ui-state-disabled',
 		stateHover: 'ui-state-hover',
 		stateDown: 'ui-state-down',
+
+		today: 'ui-state-highlight',
 
 		popoverHeader: 'ui-widget-header',
 		popoverContent: 'ui-widget-content',

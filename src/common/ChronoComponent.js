@@ -552,7 +552,7 @@ var ChronoComponent = Model.extend({
 				classes.push('fc-today');
 
 				if (noThemeHighlight !== true) {
-					classes.push(view.calendar.theme.getClass('stateHighlight'));
+					classes.push(view.calendar.theme.getClass('today'));
 				}
 			}
 			else if (date < today) {
