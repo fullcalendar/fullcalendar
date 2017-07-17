@@ -33,10 +33,6 @@
 	text-align: left;
 }
 
-.ui-widget td.fc-axis {
-	font-weight: normal; /* overcome jqui theme making it bold */
-}
-
 
 /* TimeGrid Structure
 --------------------------------------------------------------------------------------------------*/
@@ -119,10 +115,6 @@
 
 .fc-time-grid .fc-slats .fc-minor td {
 	border-top-style: dotted;
-}
-
-.fc-time-grid .fc-slats .ui-widget-content { /* for jqui theme */
-	background: none; /* see through to fc-bg */
 }
 
 

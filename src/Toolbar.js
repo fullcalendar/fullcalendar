@@ -20,7 +20,6 @@ function Toolbar(calendar, toolbarOptions) {
 	// locals
 	var el;
 	var viewsWithButtons = [];
-	var tm;
 
 	// method to update toolbar-specific options, not calendar-wide options
 	function setToolbarOptions(newToolbarOptions) {
@@ -30,8 +29,6 @@ function Toolbar(calendar, toolbarOptions) {
 	// can be called repeatedly and will rerender
 	function render() {
 		var sections = toolbarOptions.layout;
-
-		tm = calendar.opt('theme') ? 'ui' : 'fc';
 
 		if (sections) {
 			if (!el) {
@@ -60,9 +57,11 @@ function Toolbar(calendar, toolbarOptions) {
 
 
 	function renderSection(position) {
+		var theme = calendar.theme;
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = toolbarOptions.layout[position];
 		var calendarCustomButtons = calendar.opt('customButtons') || {};
+		var calendarButtonTextOverrides = calendar.overrides.buttonText || {};
 		var calendarButtonText = calendar.opt('buttonText') || {};
 
 		if (buttonStr) {
@@ -75,140 +74,127 @@ function Toolbar(calendar, toolbarOptions) {
 					var customButtonProps;
 					var viewSpec;
 					var buttonClick;
-					var overrideText; // text explicitly set by calendar's constructor options. overcomes icons
-					var defaultText;
-					var themeIcon;
-					var normalIcon;
-					var innerHtml;
-					var classes;
-					var button; // the element
+					var buttonIcon; // only one of these will be set
+					var buttonText; // "
+					var buttonInnerHtml;
+					var buttonClasses;
+					var buttonEl;
 
 					if (buttonName == 'title') {
 						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
 						isOnlyButtons = false;
 					}
 					else {
+
 						if ((customButtonProps = calendarCustomButtons[buttonName])) {
 							buttonClick = function(ev) {
 								if (customButtonProps.click) {
-									customButtonProps.click.call(button[0], ev);
+									customButtonProps.click.call(buttonEl[0], ev);
 								}
 							};
-							overrideText = ''; // icons will override text
-							defaultText = customButtonProps.text;
+							(buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
+							(buttonText = customButtonProps.text); // jshint ignore:line
 						}
 						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
+							viewsWithButtons.push(buttonName);
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
-							viewsWithButtons.push(buttonName);
-							overrideText = viewSpec.buttonTextOverride;
-							defaultText = viewSpec.buttonTextDefault;
+							(buttonText = viewSpec.buttonTextOverride) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
+							(buttonText = viewSpec.buttonTextDefault); // jshint ignore:line
 						}
 						else if (calendar[buttonName]) { // a calendar method
 							buttonClick = function() {
 								calendar[buttonName]();
 							};
-							overrideText = (calendar.overrides.buttonText || {})[buttonName];
-							defaultText = calendarButtonText[buttonName]; // everything else is considered default
+							(buttonText = calendarButtonTextOverrides[buttonName]) ||
+							(buttonIcon = theme.getIconClass(buttonName)) ||
+							(buttonText = calendarButtonText[buttonName]); // jshint ignore:line
+							//            ^ everything else is considered default
 						}
 
 						if (buttonClick) {
 
-							themeIcon =
-								customButtonProps ?
-									customButtonProps.themeIcon :
-									calendar.opt('themeButtonIcons')[buttonName];
-
-							normalIcon =
-								customButtonProps ?
-									customButtonProps.icon :
-									calendar.opt('buttonIcons')[buttonName];
-
-							if (overrideText) {
-								innerHtml = htmlEscape(overrideText);
-							}
-							else if (themeIcon && calendar.opt('theme')) {
-								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
-							}
-							else if (normalIcon && !calendar.opt('theme')) {
-								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
-							}
-							else {
-								innerHtml = htmlEscape(defaultText);
-							}
-
-							classes = [
+							buttonClasses = [
 								'fc-' + buttonName + '-button',
-								tm + '-button',
-								tm + '-state-default'
+								theme.getClass('button'),
+								theme.getClass('stateDefault')
 							];
 
-							button = $( // type="button" so that it doesn't submit a form
-								'<button type="button" class="' + classes.join(' ') + '">' +
-									innerHtml +
+							if (buttonText) {
+								buttonInnerHtml = htmlEscape(buttonText);
+							}
+							else if (buttonIcon) {
+								buttonInnerHtml = "<span class='" + buttonIcon + "'></span>";
+							}
+
+							buttonEl = $( // type="button" so that it doesn't submit a form
+								'<button type="button" class="' + buttonClasses.join(' ') + '">' +
+									buttonInnerHtml +
 								'</button>'
 								)
 								.click(function(ev) {
 									// don't process clicks for disabled buttons
-									if (!button.hasClass(tm + '-state-disabled')) {
+									if (!buttonEl.hasClass(theme.getClass('stateDisabled'))) {
 
 										buttonClick(ev);
 
 										// after the click action, if the button becomes the "active" tab, or disabled,
 										// it should never have a hover class, so remove it now.
 										if (
-											button.hasClass(tm + '-state-active') ||
-											button.hasClass(tm + '-state-disabled')
+											buttonEl.hasClass(theme.getClass('stateActive')) ||
+											buttonEl.hasClass(theme.getClass('stateDisabled'))
 										) {
-											button.removeClass(tm + '-state-hover');
+											buttonEl.removeClass(theme.getClass('stateHover'));
 										}
 									}
 								})
 								.mousedown(function() {
 									// the *down* effect (mouse pressed in).
 									// only on buttons that are not the "active" tab, or disabled
-									button
-										.not('.' + tm + '-state-active')
-										.not('.' + tm + '-state-disabled')
-										.addClass(tm + '-state-down');
+									buttonEl
+										.not('.' + theme.getClass('stateActive'))
+										.not('.' + theme.getClass('stateDisabled'))
+										.addClass(theme.getClass('stateDown'));
 								})
 								.mouseup(function() {
 									// undo the *down* effect
-									button.removeClass(tm + '-state-down');
+									buttonEl.removeClass(theme.getClass('stateDown'));
 								})
 								.hover(
 									function() {
 										// the *hover* effect.
 										// only on buttons that are not the "active" tab, or disabled
-										button
-											.not('.' + tm + '-state-active')
-											.not('.' + tm + '-state-disabled')
-											.addClass(tm + '-state-hover');
+										buttonEl
+											.not('.' + theme.getClass('stateActive'))
+											.not('.' + theme.getClass('stateDisabled'))
+											.addClass(theme.getClass('stateHover'));
 									},
 									function() {
 										// undo the *hover* effect
-										button
-											.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
+										buttonEl
+											.removeClass(theme.getClass('stateHover'))
+											.removeClass(theme.getClass('stateDown')); // if mouseleave happens before mouseup
 									}
 								);
 
-							groupChildren = groupChildren.add(button);
+							groupChildren = groupChildren.add(buttonEl);
 						}
 					}
 				});
 
 				if (isOnlyButtons) {
 					groupChildren
-						.first().addClass(tm + '-corner-left').end()
-						.last().addClass(tm + '-corner-right').end();
+						.first().addClass(theme.getClass('cornerLeft')).end()
+						.last().addClass(theme.getClass('cornerRight')).end();
 				}
 
 				if (groupChildren.length > 1) {
 					groupEl = $('<div/>');
 					if (isOnlyButtons) {
-						groupEl.addClass('fc-button-group');
+						groupEl.addClass(theme.getClass('buttonGroup'));
 					}
 					groupEl.append(groupChildren);
 					sectionEl.append(groupEl);
@@ -233,7 +219,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function activateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
-				.addClass(tm + '-state-active');
+				.addClass(calendar.theme.getClass('stateActive'));
 		}
 	}
 
@@ -241,7 +227,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function deactivateButton(buttonName) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
-				.removeClass(tm + '-state-active');
+				.removeClass(calendar.theme.getClass('stateActive'));
 		}
 	}
 
@@ -250,7 +236,7 @@ function Toolbar(calendar, toolbarOptions) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', true)
-				.addClass(tm + '-state-disabled');
+				.addClass(calendar.theme.getClass('stateDisabled'));
 		}
 	}
 
@@ -259,7 +245,7 @@ function Toolbar(calendar, toolbarOptions) {
 		if (el) {
 			el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', false)
-				.removeClass(tm + '-state-disabled');
+				.removeClass(calendar.theme.getClass('stateDisabled'));
 		}
 	}
 

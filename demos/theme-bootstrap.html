@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" data-theme-element>
+<script src='../node_modules/moment/moment.js'></script>
+<script src='../node_modules/jquery/dist/jquery.js'></script>
+<script src='../dist/fullcalendar.js'></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+	function bootswatchThemeUrl(name) {
+		return 'http://bootswatch.com/' + name + '/bootstrap.min.css';
+	}
+
+	function $themeButton(name, url) {
+		url = url || $('link[data-theme-element]').prop('href');
+
+		return $('<button type="button" class="btn btn-default">')
+			.text(name)
+			.on('click', function () {
+				$('link[data-theme-element]').prop('href', url);
+				$('#theme-selection-popup').modal('hide');
+				$(this).siblings().removeClass('active').end().addClass('active')
+			});
+	}
+
+	$(document).ready(function() {
+		var themeButtons = [
+			// The default theme
+			$themeButton('Default').addClass('active'),
+
+			// Some additional themes from bootswatch.com
+			$themeButton('Cerulean', bootswatchThemeUrl('cerulean')),
+			$themeButton('Cosmo', bootswatchThemeUrl('cosmo')),
+			$themeButton('Cyborg', bootswatchThemeUrl('cyborg')),
+			$themeButton('Darkly', bootswatchThemeUrl('darkly')),
+			$themeButton('Flatly', bootswatchThemeUrl('flatly')),
+			$themeButton('Journal', bootswatchThemeUrl('journal')),
+			$themeButton('Lumen', bootswatchThemeUrl('lumen')),
+			$themeButton('Paper', bootswatchThemeUrl('paper')),
+			$themeButton('Readable', bootswatchThemeUrl('readable')),
+			$themeButton('Sandstone', bootswatchThemeUrl('sandstone')),
+			$themeButton('Simplex', bootswatchThemeUrl('simplex')),
+			$themeButton('Slate', bootswatchThemeUrl('slate')),
+			$themeButton('Solar', bootswatchThemeUrl('solar')),
+			$themeButton('Spacelab', bootswatchThemeUrl('spacelab')),
+			$themeButton('Superhero', bootswatchThemeUrl('superhero')),
+			$themeButton('United', bootswatchThemeUrl('united')),
+			$themeButton('Yeti', bootswatchThemeUrl('yeti')),
+		];
+
+		for (i = 0; i < themeButtons.length; i++) {
+			$('.btn-group-vertical').append(themeButtons[i]);
+		}
+
+		$('#calendar').fullCalendar({
+			theme: 'bootstrap3',
+			//bootstrapGlyphicons: false,
+			customButtons: {
+				pickTheme: {
+					text: 'Pick Theme',
+					click: function() {
+						$('#theme-selection-popup').modal('show');
+					}
+				},
+			},
+			header: {
+				left: 'prev,next today pickTheme',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,listMonth'
+			},
+			defaultDate: '2017-02-12',
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,
+			eventLimit: true, // allow "more" link when too many events
+			events: [
+				{
+					title: 'All Day Event',
+					start: '2017-02-01'
+				},
+				{
+					title: 'Long Event',
+					start: '2017-02-07',
+					end: '2017-02-10'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2017-02-09T16:00:00'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2017-02-16T16:00:00'
+				},
+				{
+					title: 'Conference',
+					start: '2017-02-11',
+					end: '2017-02-13'
+				},
+				{
+					title: 'Meeting',
+					start: '2017-02-12T10:30:00',
+					end: '2017-02-12T12:30:00'
+				},
+				{
+					title: 'Lunch',
+					start: '2017-02-12T12:00:00'
+				},
+				{
+					title: 'Meeting',
+					start: '2017-02-12T14:30:00'
+				},
+				{
+					title: 'Happy Hour',
+					start: '2017-02-12T17:30:00'
+				},
+				{
+					title: 'Dinner',
+					start: '2017-02-12T20:00:00'
+				},
+				{
+					title: 'Birthday Party',
+					start: '2017-02-13T07:00:00'
+				},
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2017-02-28'
+				}
+			]
+		});
+
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+	#theme-selection-popup .btn-group-vertical {
+		width: 100%;
+	}
+
+</style>
+</head>
+<body>
+
+	<div id="theme-selection-popup" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Pick Theme</h4>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group-vertical" role="group">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id='calendar'></div>
+
+</body>
+</html>

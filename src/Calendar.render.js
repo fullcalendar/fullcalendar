@@ -48,9 +48,24 @@ Calendar.mixin({
 		});
 
 		// called immediately, and upon option change
-		this.optionsModel.watch('applyingThemeClasses', [ '?theme' ], function(opts) {
-			el.toggleClass('ui-widget', opts.theme);
-			el.toggleClass('fc-unthemed', !opts.theme);
+		this.optionsModel.watch('settingTheme', [ '?theme' ], function(opts) {
+			var themeClass = ThemeRegistry.getThemeClass(opts.theme);
+			var theme = new themeClass(_this.optionsModel);
+			var widgetClass = theme.getClass('widget');
+
+			_this.theme = theme;
+
+			if (widgetClass) {
+				el.addClass(widgetClass);
+			}
+		}, function() {
+			var widgetClass = _this.theme.getClass('widget');
+
+			_this.theme = null;
+
+			if (widgetClass) {
+				el.removeClass(widgetClass);
+			}
 		});
 
 		// called immediately, and upon option change.
@@ -89,7 +104,10 @@ Calendar.mixin({
 
 		this.toolbarsManager.proxyCall('removeElement');
 		this.contentEl.remove();
-		this.el.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
+		this.el.removeClass('fc fc-ltr fc-rtl');
+
+		// removes theme-related root className
+		this.optionsModel.unwatch('settingTheme');
 
 		this.el.off('.fc'); // unbind nav link handlers
 

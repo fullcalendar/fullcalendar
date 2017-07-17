@@ -51,14 +51,16 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 
 	// Renders the basic HTML skeleton for the grid
 	renderHtml: function() {
+		var theme = this.view.calendar.theme;
+
 		return '' +
 			'<div class="fc-bg">' +
-				'<table>' +
+				'<table class="' + theme.getClass('tableGrid') + '">' +
 					this.renderBgTrHtml(0) + // row=0
 				'</table>' +
 			'</div>' +
 			'<div class="fc-slats">' +
-				'<table>' +
+				'<table class="' + theme.getClass('tableGrid') + '">' +
 					this.renderSlatRowHtml() +
 				'</table>' +
 			'</div>';
@@ -69,6 +71,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	renderSlatRowHtml: function() {
 		var view = this.view;
 		var calendar = view.calendar;
+		var theme = calendar.theme;
 		var isRTL = this.isRTL;
 		var html = '';
 		var slotTime = moment.duration(+this.view.minTime); // wish there was .clone() for durations
@@ -77,12 +80,12 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var axisHtml;
 
 		// Calculate the time for each slot
-		while (slotTime < this.view.maxTime) {
+		while (slotTime < view.maxTime) {
 			slotDate = calendar.msToUtcMoment(this.unzonedRange.startMs).time(slotTime);
 			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
 
 			axisHtml =
-				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+				'<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
 					(isLabeled ?
 						'<span>' + // for matchCellWidths
 							htmlEscape(slotDate.format(this.labelFormat)) +
@@ -96,7 +99,7 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 					(isLabeled ? '' : ' class="fc-minor"') +
 					'>' +
 					(!isRTL ? axisHtml : '') +
-					'<td class="' + view.widgetContentClass + '"/>' +
+					'<td class="' + theme.getClass('widgetContent') + '"/>' +
 					(isRTL ? axisHtml : '') +
 				"</tr>";
 

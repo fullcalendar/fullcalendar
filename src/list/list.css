@@ -59,10 +59,6 @@
 	cursor: pointer; /* whole row will be clickable */
 }
 
-.fc-list-item:hover td {
-	background-color: #f5f5f5;
-}
-
 .fc-list-item-marker,
 .fc-list-item-time {
 	white-space: nowrap;

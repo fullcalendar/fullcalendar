@@ -49,7 +49,7 @@ Calendar.mixin({
 		var optionCnt = 0;
 		var optionName;
 
-		this.recordOptionOverrides(newOptionHash);
+		this.recordOptionOverrides(newOptionHash); // will trigger optionsModel watchers
 
 		for (optionName in newOptionHash) {
 			optionCnt++;

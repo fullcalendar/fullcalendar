@@ -20,7 +20,7 @@ var ListView = View.extend({
 	renderSkeleton: function() {
 		this.el.addClass(
 			'fc-list-view ' +
-			this.widgetContentClass
+			this.calendar.theme.getClass('listView')
 		);
 
 		this.scroller.render();
@@ -183,7 +183,7 @@ var ListViewGrid = Grid.extend({
 		var dayIndex;
 		var daySegs;
 		var i;
-		var tableEl = $('<table class="fc-list-table"><tbody/></table>');
+		var tableEl = $('<table class="fc-list-table ' + this.view.calendar.theme.getClass('tableList') + '"><tbody/></table>');
 		var tbodyEl = tableEl.find('tbody');
 
 		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
@@ -226,7 +226,7 @@ var ListViewGrid = Grid.extend({
 		var altFormat = this.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-			'<td class="' + view.widgetHeaderClass + '" colspan="3">' +
+			'<td class="' + view.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
 				(mainFormat ?
 					view.buildGotoAnchorHtml(
 						dayDate,
@@ -249,6 +249,7 @@ var ListViewGrid = Grid.extend({
 	fgSegHtml: function(seg) {
 		var view = this.view;
 		var calendar = view.calendar;
+		var theme = calendar.theme;
 		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
 		var bgColor = this.getSegBackgroundColor(seg);
 		var eventFootprint = seg.footprint;
@@ -284,18 +285,18 @@ var ListViewGrid = Grid.extend({
 
 		return '<tr class="' + classes.join(' ') + '">' +
 			(this.displayEventTime ?
-				'<td class="fc-list-item-time ' + view.widgetContentClass + '">' +
+				'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
 					(timeHtml || '') +
 				'</td>' :
 				'') +
-			'<td class="fc-list-item-marker ' + view.widgetContentClass + '">' +
+			'<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
 				'<span class="fc-event-dot"' +
 				(bgColor ?
 					' style="background-color:' + bgColor + '"' :
 					'') +
 				'></span>' +
 			'</td>' +
-			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
+			'<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
 					htmlEscape(eventDef.title || '') +
 				'</a>' +

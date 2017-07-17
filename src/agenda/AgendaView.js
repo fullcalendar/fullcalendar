@@ -83,7 +83,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		this.timeGrid.renderDates();
 
 		// the <hr> that sometimes displays under the time-grid
-		this.bottomRuleEl = $('<hr class="fc-divider ' + this.widgetHeaderClass + '"/>')
+		this.bottomRuleEl = $('<hr class="fc-divider ' + this.calendar.theme.getClass('widgetHeader') + '"/>')
 			.appendTo(this.timeGrid.el); // inject it into the time-grid
 
 		if (this.dayGrid) {
@@ -125,19 +125,21 @@ var AgendaView = FC.AgendaView = View.extend({
 	// Builds the HTML skeleton for the view.
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
 	renderSkeletonHtml: function() {
+		var theme = this.calendar.theme;
+
 		return '' +
-			'<table>' +
+			'<table class="' + theme.getClass('tableGrid') + '">' +
 				'<thead class="fc-head">' +
 					'<tr>' +
-						'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +
+						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '"></td>' +
 					'</tr>' +
 				'</thead>' +
 				'<tbody class="fc-body">' +
 					'<tr>' +
-						'<td class="' + this.widgetContentClass + '">' +
+						'<td class="' + theme.getClass('widgetContent') + '">' +
 							(this.dayGrid ?
 								'<div class="fc-day-grid"/>' +
-								'<hr class="fc-divider ' + this.widgetHeaderClass + '"/>' :
+								'<hr class="fc-divider ' + theme.getClass('widgetHeader') + '"/>' :
 								''
 								) +
 						'</td>' +
@@ -377,7 +379,7 @@ var agendaTimeGridMethods = {
 			weekText = weekStart.format(this.opt('smallWeekFormat'));
 
 			return '' +
-				'<th class="fc-axis fc-week-number ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '>' +
+				'<th class="fc-axis fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +
 					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
 						{ date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
 						htmlEscape(weekText) // inner HTML
@@ -385,7 +387,7 @@ var agendaTimeGridMethods = {
 				'</th>';
 		}
 		else {
-			return '<th class="fc-axis ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '></th>';
+			return '<th class="fc-axis ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '></th>';
 		}
 	},
 
@@ -394,7 +396,7 @@ var agendaTimeGridMethods = {
 	renderBgIntroHtml: function() {
 		var view = this.view;
 
-		return '<td class="fc-axis ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '></td>';
+		return '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '></td>';
 	},
 
 
@@ -418,7 +420,7 @@ var agendaDayGridMethods = {
 		var view = this.view;
 
 		return '' +
-			'<td class="fc-axis ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+			'<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
 				'<span>' + // needed for matchCellWidths
 					view.getAllDayHtml() +
 				'</span>' +

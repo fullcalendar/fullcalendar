@@ -24,6 +24,17 @@ describe('destroy', function() {
 		});
 	});
 
+	describeOptions('theme', {
+		'when jquery-ui theme': 'jquery-ui',
+		'when bootstrap theme': 'bootstrap3'
+	}, function() {
+		it('cleans up all classNames on the root element', function() {
+			initCalendar();
+			$('#cal').fullCalendar('destroy');
+			expect($('#cal')[0].className).toBe('');
+		});
+	});
+
 	[ 'month', 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
 
 		describe('when in ' + viewName + ' view', function() {

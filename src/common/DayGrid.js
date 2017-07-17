@@ -78,8 +78,8 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 	// Generates the HTML for a single row, which is a div that wraps a table.
 	// `row` is the row number.
 	renderDayRowHtml: function(row, isRigid) {
-		var view = this.view;
-		var classes = [ 'fc-row', 'fc-week', view.widgetContentClass ];
+		var theme = this.view.calendar.theme;
+		var classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ];
 
 		if (isRigid) {
 			classes.push('fc-rigid');
@@ -88,7 +88,7 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 		return '' +
 			'<div class="' + classes.join(' ') + '">' +
 				'<div class="fc-bg">' +
-					'<table>' +
+					'<table class="' + theme.getClass('tableGrid') + '">' +
 						this.renderBgTrHtml(row) +
 					'</table>' +
 				'</div>' +
