@@ -41,3 +41,5 @@ var StandardTheme = Theme.extend({
 	iconOverridePrefix: 'fc-icon-'
 
 });
+
+ThemeRegistry.register('standard', StandardTheme);
