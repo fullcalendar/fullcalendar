@@ -12,7 +12,7 @@ var BootstrapTheme = Theme.extend({
 		stateActive: 'active',
 		stateDisabled: 'disabled',
 
-		today: 'warning',
+		today: 'alert alert-warning', // the plain `warning` class requires `.table`, too much to ask
 
 		popover: 'panel panel-default',
 		popoverHeader: 'panel-heading',

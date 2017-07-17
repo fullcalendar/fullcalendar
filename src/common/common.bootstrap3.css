@@ -11,6 +11,10 @@
 	border-color: inherit;
 }
 
+.fc-bootstrap3 .fc-today.alert {
+	border-radius: 0;
+}
+
 
 /* Popover
 --------------------------------------------------------------------------------------------------*/
