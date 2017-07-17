@@ -9,6 +9,7 @@ Features:
 - 25% event rendering performance improvement across the board (#2524)
 - console message for unknown method/calendar (#3253)
 - Serbian cyrilic/latin (#3656)
+- available via Packagist (#2999, #3617)
 
 Bugfixes:
 - slot time label invisible when minTime starts out of alignment (#2786)
