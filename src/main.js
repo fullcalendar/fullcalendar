@@ -29,6 +29,9 @@ $.fn.fullCalendar = function(options) {
 					element.removeData('fullCalendar');
 				}
 			}
+			else {
+				console.error("'" + options +"' is an unknown FullCalendar method.");
+			}
 		}
 		// a new calendar initialization
 		else if (!calendar) { // don't initialize twice
