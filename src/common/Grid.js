@@ -1,6 +1,14 @@
 
 /* An abstract class comprised of a "grid" of areas that each represent a specific datetime
-----------------------------------------------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------------------------------------------
+Contains:
+- day click
+- selection
+- hit system
+- range->footprint->seg pipeline
+- initializing mouse/touch handlers for everything
+- initializing event rendering-related options
+*/
 
 var Grid = FC.Grid = ChronoComponent.extend({
 
@@ -12,15 +20,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	unzonedRange: null,
 
-	// derived from options
-	eventTimeFormat: null,
-	displayEventTime: null,
-	displayEventEnd: null,
-
-	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
-	// of the date areas. if not defined, assumes to be day and time granularity.
-	// TODO: port isTimeScale into same system?
-	largeUnit: null,
+	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
 	dayClickListener: null,
 	daySelectListener: null,
@@ -43,29 +43,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 	opt: function(name) {
 		return this.view.opt(name);
-	},
-
-
-	/* Options
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
-	computeEventTimeFormat: function() {
-		return this.opt('smallTimeFormat');
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventTime'.
-	// Only applies to non-all-day events.
-	computeDisplayEventTime: function() {
-		return true;
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
-	computeDisplayEventEnd: function() {
-		return true;
 	},
 
 
@@ -93,7 +70,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 		var displayEventTime;
 		var displayEventEnd;
 
-		this.eventTimeFormat =
+		this.eventTimeFormat = // for Grid.event-rendering.js
 			this.opt('eventTimeFormat') ||
 			this.opt('timeFormat') || // deprecated
 			this.computeEventTimeFormat();
@@ -113,27 +90,9 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	componentFootprintToSegs: function(componentFootprint) {
-		// subclasses must implement
-	},
-
-
-	// Diffs the two dates, returning a duration, based on granularity of the grid
-	// TODO: port isTimeScale into this system?
-	diffDates: function(a, b) {
-		if (this.largeUnit) {
-			return diffByUnit(a, b, this.largeUnit);
-		}
-		else {
-			return diffDayTime(a, b);
-		}
-	},
-
 
 	/* Hit Area
 	------------------------------------------------------------------------------------------------------------------*/
-
-	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
 
 	hitsNeeded: function() {
@@ -408,43 +367,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	/* Event Helper
-	------------------------------------------------------------------------------------------------------------------*/
-	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
-
-
-	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
-		return this.renderHelperEventFootprintEls(eventFootprints, sourceSeg)
-			.addClass('fc-helper');
-	},
-
-
-	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
-		// Subclasses must implement.
-		// Must return all mock event elements.
-	},
-
-
-	// Unrenders a mock event
-	// TODO: have this in ChronoComponent
-	unrenderHelper: function() {
-		// subclasses must implement
-	},
-
-
-	fabricateEventFootprint: function(componentFootprint) {
-		var calendar = this.view.calendar;
-		var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
-		var dummyEvent = new SingleEventDef(new EventSource(calendar));
-		var dummyInstance;
-
-		dummyEvent.dateProfile = eventDateProfile;
-		dummyInstance = dummyEvent.buildInstance();
-
-		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
-	},
-
-
 	/* Selection
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -516,6 +438,95 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Unrenders the emphasis on a date range
 	unrenderHighlight: function() {
 		this.unrenderFill('highlight');
+	},
+
+
+	/* Converting eventRange -> eventFootprint -> eventSegs
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	eventRangesToEventFootprints: function(eventRanges) {
+		var eventFootprints = [];
+		var i;
+
+		for (i = 0; i < eventRanges.length; i++) {
+			eventFootprints.push.apply(eventFootprints,
+				this.eventRangeToEventFootprints(eventRanges[i])
+			);
+		}
+
+		return eventFootprints;
+	},
+
+
+	// Given an event's unzoned date range, return an array of eventSpan objects.
+	// eventSpan - { start, end, isStart, isEnd, otherthings... }
+	// Subclasses can override.
+	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
+	// TODO: somehow more DRY with Calendar::eventRangeToEventFootprints
+	eventRangeToEventFootprints: function(eventRange) {
+		return [
+			new EventFootprint(
+				new ComponentFootprint(
+					eventRange.unzonedRange,
+					eventRange.eventDef.isAllDay()
+				),
+				eventRange.eventDef,
+				eventRange.eventInstance // might not exist
+			)
+		];
+	},
+
+
+	eventFootprintsToSegs: function(eventFootprints) {
+		var segs = [];
+		var i;
+
+		for (i = 0; i < eventFootprints.length; i++) {
+			segs.push.apply(segs,
+				this.eventFootprintToSegs(eventFootprints[i])
+			);
+		}
+
+		return segs;
+	},
+
+
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slices into segments and attaches event-derived properties to them.
+	// eventSpan - { start, end, isStart, isEnd, otherthings... }
+	// constraintRange allow additional clipping. optional. eventually remove this.
+	eventFootprintToSegs: function(eventFootprint, constraintRange) {
+		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
+		var segs;
+		var i, seg;
+
+		if (constraintRange) {
+			unzonedRange = unzonedRange.intersect(constraintRange);
+		}
+
+		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (!unzonedRange.isStart) {
+				seg.isStart = false;
+			}
+			if (!unzonedRange.isEnd) {
+				seg.isEnd = false;
+			}
+
+			seg.footprint = eventFootprint;
+			// TODO: rename to seg.eventFootprint
+		}
+
+		return segs;
+	},
+
+
+	componentFootprintToSegs: function(componentFootprint) {
+		// subclasses must implement
 	}
 
 });
