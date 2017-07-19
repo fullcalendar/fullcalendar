@@ -18,8 +18,8 @@ var DayTableMixin = FC.DayTableMixin = {
 	updateDayTable: function() {
 		var view = this.view;
 		var calendar = view.calendar;
-		var date = calendar.msToUtcMoment(this.unzonedRange.startMs, true);
-		var end = calendar.msToUtcMoment(this.unzonedRange.endMs, true);
+		var date = calendar.msToUtcMoment(view.renderUnzonedRange.startMs, true);
+		var end = calendar.msToUtcMoment(view.renderUnzonedRange.endMs, true);
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];

@@ -18,8 +18,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	view: null, // a View object
 	isRTL: null, // shortcut to the view's isRTL option
 
-	unzonedRange: null,
-
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
 	dayClickListener: null,
@@ -53,8 +51,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Tells the grid about what period of time to display.
 	// Any date-related internal data should be generated.
 	setRange: function(unzonedRange) {
-		this.unzonedRange = unzonedRange;
-
 		this.rangeUpdated();
 		this.processRangeOptions();
 	},

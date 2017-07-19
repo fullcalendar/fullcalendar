@@ -72,7 +72,7 @@ Grid.mixin({
 				if (singleEventDef) {
 					_this.renderDrag( // called without a seg parameter
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, view.calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, view.calendar)
 						)
 					);
 				}

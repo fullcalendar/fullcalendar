@@ -104,7 +104,7 @@ Grid.mixin({
 					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
 						),
 						seg
 					))

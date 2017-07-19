@@ -68,9 +68,10 @@ var ListViewGrid = Grid.extend({
 	hasDayInteractions: false, // no day selection or day clicking
 
 	rangeUpdated: function() {
-		var calendar = this.view.calendar;
-		var dayStart = calendar.msToUtcMoment(this.unzonedRange.startMs, true);
-		var viewEnd = calendar.msToUtcMoment(this.unzonedRange.endMs, true);
+		var view = this.view;
+		var calendar = view.calendar;
+		var dayStart = calendar.msToUtcMoment(view.renderUnzonedRange.startMs, true);
+		var viewEnd = calendar.msToUtcMoment(view.renderUnzonedRange.endMs, true);
 		var dayDates = [];
 		var dayRanges = [];
 

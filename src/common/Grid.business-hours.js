@@ -28,19 +28,20 @@ Grid.mixin({
 
 
 	_buildBusinessHourEventFootprints: function(wholeDay, businessHourDef) {
-		var calendar = this.view.calendar;
+		var view = this.view;
+		var calendar = view.calendar;
 		var eventInstanceGroup;
 		var eventRanges;
 
 		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
 			wholeDay,
 			businessHourDef,
-			this.unzonedRange
+			view.renderUnzonedRange
 		);
 
 		if (eventInstanceGroup) {
 			eventRanges = eventInstanceGroup.sliceRenderRanges(
-				this.unzonedRange,
+				view.renderUnzonedRange,
 				calendar
 			);
 		}

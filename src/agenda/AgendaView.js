@@ -372,7 +372,7 @@ var agendaTimeGridMethods = {
 	// Generates the HTML that will go before the day-of week header cells
 	renderHeadIntroHtml: function() {
 		var view = this.view;
-		var weekStart = view.calendar.msToUtcMoment(this.unzonedRange.startMs, true);
+		var weekStart = view.calendar.msToUtcMoment(view.renderUnzonedRange.startMs, true);
 		var weekText;
 
 		if (this.opt('weekNumbers')) {

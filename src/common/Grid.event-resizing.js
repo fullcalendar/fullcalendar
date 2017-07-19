@@ -86,7 +86,7 @@ Grid.mixin({
 
 					_this.renderEventResize(
 						_this.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(_this.unzonedRange, calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
 						),
 						seg
 					);
