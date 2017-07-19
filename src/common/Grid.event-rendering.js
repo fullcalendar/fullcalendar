@@ -34,7 +34,7 @@ Grid.mixin({
 		var displayEventTime;
 		var displayEventEnd;
 
-		this.eventTimeFormat = // for Grid.event-rendering.js
+		this.eventTimeFormat =
 			this.opt('eventTimeFormat') ||
 			this.opt('timeFormat') || // deprecated
 			this.computeEventTimeFormat();
@@ -131,22 +131,17 @@ Grid.mixin({
 
 
 	// Generates an array of classNames to be used for the default rendering of a background event.
-	// Called by fillSegHtml.
+	// NEEDED BY FILL SYSTEM, fillSegHtml :(
 	bgEventSegClasses: function(seg) {
-		var eventDef = seg.footprint.eventDef;
-
-		return [ 'fc-bgevent' ].concat(
-			eventDef.className,
-			eventDef.source.className
-		);
+		return this.getBgEventFootprintClasses(seg.footprint);
 	},
 
 
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-	// Called by fillSegHtml.
+	// NEEDED BY FILL SYSTEM,  fillSegHtml :(
 	bgEventSegCss: function(seg) {
 		return {
-			'background-color': this.getSegSkinCss(seg)['background-color']
+			'background-color': this.getEventFootprintSkinCss(seg.footprint)['background-color']
 		};
 	},
 
@@ -205,7 +200,7 @@ Grid.mixin({
 			'fc-event',
 			seg.isStart ? 'fc-start' : 'fc-not-start',
 			seg.isEnd ? 'fc-end' : 'fc-not-end'
-		].concat(this.getSegCustomClasses(seg));
+		].concat(this.getEventFootprintClasses(seg.footprint));
 
 		if (isDraggable) {
 			classes.push('fc-draggable');
@@ -223,9 +218,21 @@ Grid.mixin({
 	},
 
 
-	// List of classes that were defined by the caller of the API in some way
-	getSegCustomClasses: function(seg) {
-		var eventDef = seg.footprint.eventDef;
+
+
+
+
+	getBgEventFootprintClasses: function(eventFootprint) {
+		var classNames = this.getEventFootprintClasses(eventFootprint);
+
+		classNames.push('fc-bgevent');
+
+		return classNames;
+	},
+
+
+	getEventFootprintClasses: function(eventFootprint) {
+		var eventDef = eventFootprint.eventDef;
 
 		return [].concat(
 			eventDef.className, // guaranteed to be an array
@@ -235,27 +242,25 @@ Grid.mixin({
 
 
 	// Utility for generating event skin-related CSS properties
-	getSegSkinCss: function(seg) {
+	getEventFootprintSkinCss: function(eventFootprint) {
 		return {
-			'background-color': this.getSegBackgroundColor(seg),
-			'border-color': this.getSegBorderColor(seg),
-			color: this.getSegTextColor(seg)
+			'background-color': this.getEventFootprintBackgroundColor(eventFootprint),
+			'border-color': this.getEventFootprintBorderColor(eventFootprint),
+			color: this.getEventFootprintTextColor(eventFootprint)
 		};
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getSegBackgroundColor: function(seg) {
-		var eventDef = seg.footprint.eventDef;
-
-		return eventDef.backgroundColor ||
-			eventDef.color ||
-			this.getSegDefaultBackgroundColor(seg);
+	getEventFootprintBackgroundColor: function(eventFootprint) {
+		return eventFootprint.eventDef.backgroundColor ||
+			eventFootprint.eventDef.color ||
+			this.getEventFootprintDefaultBackgroundColor(eventFootprint);
 	},
 
 
-	getSegDefaultBackgroundColor: function(seg) {
-		var source = seg.footprint.eventDef.source;
+	getEventFootprintDefaultBackgroundColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
 
 		return source.backgroundColor ||
 			source.color ||
@@ -265,17 +270,15 @@ Grid.mixin({
 
 
 	// Queries for caller-specified color, then falls back to default
-	getSegBorderColor: function(seg) {
-		var eventDef = seg.footprint.eventDef;
-
-		return eventDef.borderColor ||
-			eventDef.color ||
-			this.getSegDefaultBorderColor(seg);
+	getEventFootprintBorderColor: function(eventFootprint) {
+		return eventFootprint.eventDef.borderColor ||
+			eventFootprint.eventDef.color ||
+			this.getEventFootprintDefaultBorderColor(eventFootprint);
 	},
 
 
-	getSegDefaultBorderColor: function(seg) {
-		var source = seg.footprint.eventDef.source;
+	getEventFootprintDefaultBorderColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
 
 		return source.borderColor ||
 			source.color ||
@@ -285,20 +288,23 @@ Grid.mixin({
 
 
 	// Queries for caller-specified color, then falls back to default
-	getSegTextColor: function(seg) {
-		var eventDef = seg.footprint.eventDef;
-
-		return eventDef.textColor ||
-			this.getSegDefaultTextColor(seg);
+	getEventFootprintTextColor: function(eventFootprint) {
+		return eventFootprint.eventDef.textColor ||
+			this.getEventFootprintDefaultTextColor(eventFootprint);
 	},
 
 
-	getSegDefaultTextColor: function(seg) {
-		var source = seg.footprint.eventDef.source;
+	getEventFootprintDefaultTextColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
 
 		return source.textColor ||
 			this.opt('eventTextColor');
 	},
+
+
+
+
+
 
 
 	sortEventSegs: function(segs) {

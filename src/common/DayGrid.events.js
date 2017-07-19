@@ -99,7 +99,7 @@ DayGrid.mixin({
 		var isResizableFromEnd = !disableResizing && isAllDay &&
 			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getSegSkinCss(seg));
+		var skinCss = cssToStr(this.getEventFootprintSkinCss(seg.footprint));
 		var timeHtml = '';
 		var timeText;
 		var titleHtml;

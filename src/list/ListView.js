@@ -251,12 +251,12 @@ var ListViewGrid = Grid.extend({
 		var view = this.view;
 		var calendar = view.calendar;
 		var theme = calendar.theme;
-		var classes = [ 'fc-list-item' ].concat(this.getSegCustomClasses(seg));
-		var bgColor = this.getSegBackgroundColor(seg);
 		var eventFootprint = seg.footprint;
 		var eventDef = eventFootprint.eventDef;
 		var componentFootprint = eventFootprint.componentFootprint;
 		var url = eventDef.url;
+		var classes = [ 'fc-list-item' ].concat(this.getEventFootprintClasses(seg.footprint));
+		var bgColor = this.getEventFootprintBackgroundColor(seg.footprint);
 		var timeHtml;
 
 		if (componentFootprint.isAllDay) {
