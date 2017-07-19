@@ -290,7 +290,6 @@ var ChronoComponent = Model.extend({
 	},
 
 
-
 	// Event Drag-n-Drop
 	// ---------------------------------------------------------------------------------------------------------------
 
@@ -360,63 +359,6 @@ var ChronoComponent = Model.extend({
 
 	// Foreground Segment Rendering
 	// ---------------------------------------------------------------------------------------------------------------
-
-
-	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
-	renderFgSegs: function(segs) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders all currently rendered foreground segments
-	unrenderFgSegs: function() {
-		// subclasses must implement
-	},
-
-
-	// Renders and assigns an `el` property for each foreground event segment.
-	// Only returns segments that successfully rendered.
-	// A utility that subclasses may use.
-	renderFgSegEls: function(segs, disableResizing) {
-		var _this = this;
-		var hasEventRenderHandlers = this.hasPublicHandlers('eventRender');
-		var html = '';
-		var renderedSegs = [];
-		var i;
-
-		if (segs.length) { // don't build an empty html string
-
-			// build a large concatenation of event segment HTML
-			for (i = 0; i < segs.length; i++) {
-				html += this.fgSegHtml(segs[i], disableResizing);
-			}
-
-			// Grab individual elements from the combined HTML string. Use each as the default rendering.
-			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-			$(html).each(function(i, node) {
-				var seg = segs[i];
-				var el = $(node);
-
-				if (hasEventRenderHandlers) { // optimization
-					el = _this.filterEventRenderEl(seg.footprint, el);
-				}
-
-				if (el) {
-					el.data('fc-seg', seg); // used by handlers
-					seg.el = el;
-					renderedSegs.push(seg);
-				}
-			});
-		}
-
-		return renderedSegs;
-	},
-
-
-	// Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
-	fgSegHtml: function(seg, disableResizing) {
-		// subclasses should implement
-	},
 
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.

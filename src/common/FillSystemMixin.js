@@ -1,16 +1,15 @@
 
-Grid.mixin({
-
-	/* Fill System (highlight, background events, business hours)
-	--------------------------------------------------------------------------------------------------------------------
-	TODO: remove this system. like we did in TimeGrid
-	*/
-
+/*
+Caller must:
+- call initFillSystem
+- implement renderFill
+*/
+var FillSystemMixin = { // use for highlight, background events, business hours
 
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
-	initFillInternals: function() {
+	initFillSystem: function() {
 		this.elsByFill = {};
 	},
 
@@ -96,12 +95,6 @@ Grid.mixin({
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';
-	},
-
-
-	// Generates an array of classNames for rendering the highlight. Used by the fill system.
-	highlightSegClasses: function() {
-		return [ 'fc-highlight' ];
 	}
 
-});
+};

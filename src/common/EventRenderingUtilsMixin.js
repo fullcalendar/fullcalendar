@@ -1,5 +1,13 @@
 
-Grid.mixin({
+/*
+Caller must call:
+- initEventRenderingUtils
+
+This mixin can depend on ChronoComponent:
+- opt
+- _getView
+*/
+var EventRenderingUtilsMixin = {
 
 	// derived from options
 	// TODO: move initialization from Grid.js
@@ -9,7 +17,7 @@ Grid.mixin({
 
 
 	// Updates values that rely on options and also relate to range
-	initEventRenderingOptions: function() {
+	initEventRenderingUtils: function() {
 		var displayEventTime;
 		var displayEventEnd;
 
@@ -69,6 +77,7 @@ Grid.mixin({
 
 
 	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
+		var view = this._getView();
 
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
@@ -80,7 +89,7 @@ Grid.mixin({
 
 		if (this.displayEventTime && !isAllDay) {
 			if (displayEnd && end) {
-				return this.view.formatRange(
+				return view.formatRange(
 					{ start: start, end: end },
 					false, // allDay
 					formatStr
@@ -172,164 +181,6 @@ Grid.mixin({
 
 		return source.textColor ||
 			this.opt('eventTextColor');
-	},
-
-
-
-
-
-
-
-
-
-
-
-
-
-	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
-
-
-	renderEventsPayload: function(eventsPayload) {
-		var id, eventInstanceGroup;
-		var eventRenderRanges;
-		var eventFootprints;
-		var eventSegs;
-		var bgSegs = [];
-		var fgSegs = [];
-
-		for (id in eventsPayload) {
-			eventInstanceGroup = eventsPayload[id];
-
-			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(this.view.activeUnzonedRange);
-			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
-			eventSegs = this.eventFootprintsToSegs(eventFootprints);
-
-			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
-				bgSegs.push.apply(bgSegs, // append
-					eventSegs
-				);
-			}
-			else {
-				fgSegs.push.apply(fgSegs, // append
-					eventSegs
-				);
-			}
-		}
-
-		this.segs = [].concat( // record all segs
-			this.renderBgSegs(bgSegs) || bgSegs,
-			this.renderFgSegs(fgSegs) || fgSegs
-		);
-	},
-
-
-	// Unrenders all events currently rendered on the grid
-	unrenderEvents: function() {
-		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
-		this.clearDragListeners();
-
-		this.unrenderFgSegs();
-		this.unrenderBgSegs();
-
-		this.segs = null;
-	},
-
-
-	// Retrieves all rendered segment objects currently rendered on the grid
-	getEventSegs: function() {
-		return this.segs || [];
-	},
-
-
-	// Background Segment Rendering
-	// ---------------------------------------------------------------------------------------------------------------
-	// TODO: move this to ChronoComponent, but without fill
-
-
-	// Renders the given background event segments onto the grid.
-	// Returns a subset of the segs that were actually rendered.
-	renderBgSegs: function(segs) {
-		return this.renderFill('bgEvent', segs);
-	},
-
-
-	// Unrenders all the currently rendered background event segments
-	unrenderBgSegs: function() {
-		this.unrenderFill('bgEvent');
-	},
-
-
-	// Renders a background event element, given the default rendering. Called by the fill system.
-	bgEventSegEl: function(seg, el) {
-		return this.filterEventRenderEl(seg.footprint, el);
-	},
-
-
-	// Generates an array of classNames to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM, fillSegHtml :(
-	bgEventSegClasses: function(seg) {
-		return this.getBgEventFootprintClasses(seg.footprint);
-	},
-
-
-	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM,  fillSegHtml :(
-	bgEventSegCss: function(seg) {
-		return {
-			'background-color': this.getEventFootprintSkinCss(seg.footprint)['background-color']
-		};
-	},
-
-
-	/* Utils
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Generic utility for generating the HTML classNames for an event segment's element
-	getSegClasses: function(seg, isDraggable, isResizable) {
-		var view = this.view;
-		var classes = [
-			'fc-event',
-			seg.isStart ? 'fc-start' : 'fc-not-start',
-			seg.isEnd ? 'fc-end' : 'fc-not-end'
-		].concat(this.getEventFootprintClasses(seg.footprint));
-
-		if (isDraggable) {
-			classes.push('fc-draggable');
-		}
-		if (isResizable) {
-			classes.push('fc-resizable');
-		}
-
-		// event is currently selected? attach a className.
-		if (view.isEventDefSelected(seg.footprint.eventDef)) {
-			classes.push('fc-selected');
-		}
-
-		return classes;
-	},
-
-
-	sortEventSegs: function(segs) {
-		segs.sort(proxy(this, 'compareEventSegs'));
-	},
-
-
-	// A cmp function for determining which segments should take visual priority
-	compareEventSegs: function(seg1, seg2) {
-		var f1 = seg1.footprint.componentFootprint;
-		var r1 = f1.unzonedRange;
-		var f2 = seg2.footprint.componentFootprint;
-		var r2 = f2.unzonedRange;
-
-		return r1.startMs - r2.startMs || // earlier events go first
-			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
-			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
-			compareByFieldSpecs(
-				seg1.footprint.eventDef,
-				seg2.footprint.eventDef,
-				this.view.eventOrderSpecs
-			);
 	}
 
-});
+};

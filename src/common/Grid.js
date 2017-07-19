@@ -10,7 +10,7 @@ Contains:
 - initializing event rendering-related options
 */
 
-var Grid = FC.Grid = ChronoComponent.extend({
+var Grid = FC.Grid = ChronoComponent.extend(SegChronoComponentMixin, {
 
 	// self-config, overridable by subclasses
 	hasDayInteractions: true, // can user click/select ranges of time?
@@ -28,11 +28,11 @@ var Grid = FC.Grid = ChronoComponent.extend({
 
 
 	constructor: function(view) {
-		this.view = view;
+		this.view = view; // do this first, for opt()
 
 		ChronoComponent.call(this);
 
-		this.initFillInternals();
+		this.initFillSystem(); // TODO: SegChronoComponentMixin should be responsible
 
 		this.dayClickListener = this.buildDayClickListener();
 		this.daySelectListener = this.buildDaySelectListener();
@@ -52,12 +52,25 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Any date-related internal data should be generated.
 	setRange: function(unzonedRange) {
 		this.rangeUpdated();
-		this.initEventRenderingOptions();
+
+		// do after rangeUpdated because initEventRenderingUtils might depend on range-related values
+		// TODO: SegChronoComponentMixin should be responsible
+		this.initEventRenderingUtils();
 	},
 
 
 	// Called when internal variables that rely on the range should be updated
 	rangeUpdated: function() {
+	},
+
+
+	/* Event Rendering
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	unrenderEvents: function() {
+		this.clearDragListeners(); // we wanted to add this action to event rendering teardown
+		SegChronoComponentMixin.unrenderEvents.apply(this, arguments);
 	},
 
 
@@ -240,22 +253,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	/* Highlight
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
-	renderHighlight: function(componentFootprint) {
-		this.renderFill('highlight', this.componentFootprintToSegs(componentFootprint));
-	},
-
-
-	// Unrenders the emphasis on a date range
-	unrenderHighlight: function() {
-		this.unrenderFill('highlight');
-	},
-
-
 	/* Converting eventRange -> eventFootprint
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -290,62 +287,6 @@ var Grid = FC.Grid = ChronoComponent.extend({
 				eventRange.eventInstance // might not exist
 			)
 		];
-	},
-
-
-	/* Converting componentFootprint/eventFootprint -> segs
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	eventFootprintsToSegs: function(eventFootprints) {
-		var segs = [];
-		var i;
-
-		for (i = 0; i < eventFootprints.length; i++) {
-			segs.push.apply(segs,
-				this.eventFootprintToSegs(eventFootprints[i])
-			);
-		}
-
-		return segs;
-	},
-
-
-	// Given an event's span (unzoned start/end and other misc data), and the event itself,
-	// slices into segments and attaches event-derived properties to them.
-	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	// constraintRange allow additional clipping. optional. eventually remove this.
-	eventFootprintToSegs: function(eventFootprint, constraintRange) {
-		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
-		var segs;
-		var i, seg;
-
-		if (constraintRange) {
-			unzonedRange = unzonedRange.intersect(constraintRange);
-		}
-
-		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
-
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-
-			if (!unzonedRange.isStart) {
-				seg.isStart = false;
-			}
-			if (!unzonedRange.isEnd) {
-				seg.isEnd = false;
-			}
-
-			seg.footprint = eventFootprint;
-			// TODO: rename to seg.eventFootprint
-		}
-
-		return segs;
-	},
-
-
-	componentFootprintToSegs: function(componentFootprint) {
-		// subclasses must implement
 	}
 
 });
