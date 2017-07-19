@@ -9,11 +9,6 @@ var ChronoComponent = Model.extend({
 	isRTL: false,
 	nextDayThreshold: null,
 
-	// classNames styled by jqui themes
-	widgetHeaderClass: null,
-	widgetContentClass: null,
-	highlightStateClass: null,
-
 
 	constructor: function() {
 		Model.call(this);
@@ -22,7 +17,6 @@ var ChronoComponent = Model.extend({
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
-		this.initThemingProps();
 	},
 
 
@@ -51,16 +45,6 @@ var ChronoComponent = Model.extend({
 		var calendar = this._getCalendar();
 
 		return calendar.hasPublicHandlers.apply(calendar, arguments);
-	},
-
-
-	// Initializes internal variables related to theming
-	initThemingProps: function() {
-		var tm = this.opt('theme') ? 'ui' : 'fc';
-
-		this.widgetHeaderClass = tm + '-widget-header';
-		this.widgetContentClass = tm + '-widget-content';
-		this.highlightStateClass = tm + '-state-highlight';
 	},
 
 
