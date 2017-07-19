@@ -52,7 +52,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	// Any date-related internal data should be generated.
 	setRange: function(unzonedRange) {
 		this.rangeUpdated();
-		this.processEventRenderingOptions();
+		this.initEventRenderingOptions();
 	},
 
 

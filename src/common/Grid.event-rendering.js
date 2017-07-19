@@ -1,8 +1,6 @@
 
 Grid.mixin({
 
-	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
-
 	// derived from options
 	// TODO: move initialization from Grid.js
 	eventTimeFormat: null,
@@ -10,27 +8,8 @@ Grid.mixin({
 	displayEventEnd: null,
 
 
-	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
-	computeEventTimeFormat: function() {
-		return this.opt('smallTimeFormat');
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventTime'.
-	// Only applies to non-all-day events.
-	computeDisplayEventTime: function() {
-		return true;
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
-	computeDisplayEventEnd: function() {
-		return true;
-	},
-
-
 	// Updates values that rely on options and also relate to range
-	processEventRenderingOptions: function() {
+	initEventRenderingOptions: function() {
 		var displayEventTime;
 		var displayEventEnd;
 
@@ -52,6 +31,162 @@ Grid.mixin({
 		this.displayEventTime = displayEventTime;
 		this.displayEventEnd = displayEventEnd;
 	},
+
+
+	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
+	computeEventTimeFormat: function() {
+		return this.opt('smallTimeFormat');
+	},
+
+
+	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventTime'.
+	// Only applies to non-all-day events.
+	computeDisplayEventTime: function() {
+		return true;
+	},
+
+
+	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
+	computeDisplayEventEnd: function() {
+		return true;
+	},
+
+
+	// Compute the text that should be displayed on an event's element.
+	// `range` can be the Event object itself, or something range-like, with at least a `start`.
+	// If event times are disabled, or the event has no time, will return a blank string.
+	// If not specified, formatStr will default to the eventTimeFormat setting,
+	// and displayEnd will default to the displayEventEnd setting.
+	getEventTimeText: function(eventFootprint, formatStr, displayEnd) {
+		return this._getEventTimeText(
+			eventFootprint.eventInstance.dateProfile.start,
+			eventFootprint.eventInstance.dateProfile.end,
+			eventFootprint.componentFootprint.isAllDay,
+			formatStr,
+			displayEnd
+		);
+	},
+
+
+	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
+
+		if (formatStr == null) {
+			formatStr = this.eventTimeFormat;
+		}
+
+		if (displayEnd == null) {
+			displayEnd = this.displayEventEnd;
+		}
+
+		if (this.displayEventTime && !isAllDay) {
+			if (displayEnd && end) {
+				return this.view.formatRange(
+					{ start: start, end: end },
+					false, // allDay
+					formatStr
+				);
+			}
+			else {
+				return start.format(formatStr);
+			}
+		}
+
+		return '';
+	},
+
+
+	getBgEventFootprintClasses: function(eventFootprint) {
+		var classNames = this.getEventFootprintClasses(eventFootprint);
+
+		classNames.push('fc-bgevent');
+
+		return classNames;
+	},
+
+
+	getEventFootprintClasses: function(eventFootprint) {
+		var eventDef = eventFootprint.eventDef;
+
+		return [].concat(
+			eventDef.className, // guaranteed to be an array
+			eventDef.source.className
+		);
+	},
+
+
+	// Utility for generating event skin-related CSS properties
+	getEventFootprintSkinCss: function(eventFootprint) {
+		return {
+			'background-color': this.getEventFootprintBackgroundColor(eventFootprint),
+			'border-color': this.getEventFootprintBorderColor(eventFootprint),
+			color: this.getEventFootprintTextColor(eventFootprint)
+		};
+	},
+
+
+	// Queries for caller-specified color, then falls back to default
+	getEventFootprintBackgroundColor: function(eventFootprint) {
+		return eventFootprint.eventDef.backgroundColor ||
+			eventFootprint.eventDef.color ||
+			this.getEventFootprintDefaultBackgroundColor(eventFootprint);
+	},
+
+
+	getEventFootprintDefaultBackgroundColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
+
+		return source.backgroundColor ||
+			source.color ||
+			this.opt('eventBackgroundColor') ||
+			this.opt('eventColor');
+	},
+
+
+	// Queries for caller-specified color, then falls back to default
+	getEventFootprintBorderColor: function(eventFootprint) {
+		return eventFootprint.eventDef.borderColor ||
+			eventFootprint.eventDef.color ||
+			this.getEventFootprintDefaultBorderColor(eventFootprint);
+	},
+
+
+	getEventFootprintDefaultBorderColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
+
+		return source.borderColor ||
+			source.color ||
+			this.opt('eventBorderColor') ||
+			this.opt('eventColor');
+	},
+
+
+	// Queries for caller-specified color, then falls back to default
+	getEventFootprintTextColor: function(eventFootprint) {
+		return eventFootprint.eventDef.textColor ||
+			this.getEventFootprintDefaultTextColor(eventFootprint);
+	},
+
+
+	getEventFootprintDefaultTextColor: function(eventFootprint) {
+		var source = eventFootprint.eventDef.source;
+
+		return source.textColor ||
+			this.opt('eventTextColor');
+	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
 	renderEventsPayload: function(eventsPayload) {
@@ -146,51 +281,8 @@ Grid.mixin({
 	},
 
 
-	/* Rendering Utils
+	/* Utils
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Compute the text that should be displayed on an event's element.
-	// `range` can be the Event object itself, or something range-like, with at least a `start`.
-	// If event times are disabled, or the event has no time, will return a blank string.
-	// If not specified, formatStr will default to the eventTimeFormat setting,
-	// and displayEnd will default to the displayEventEnd setting.
-	getEventTimeText: function(eventFootprint, formatStr, displayEnd) {
-		return this._getEventTimeText(
-			eventFootprint.eventInstance.dateProfile.start,
-			eventFootprint.eventInstance.dateProfile.end,
-			eventFootprint.componentFootprint.isAllDay,
-			formatStr,
-			displayEnd
-		);
-	},
-
-
-	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
-
-		if (formatStr == null) {
-			formatStr = this.eventTimeFormat;
-		}
-
-		if (displayEnd == null) {
-			displayEnd = this.displayEventEnd;
-		}
-
-		if (this.displayEventTime && !isAllDay) {
-			if (displayEnd && end) {
-				return this.view.formatRange(
-					{ start: start, end: end },
-					false, // allDay
-					formatStr
-				);
-			}
-			else {
-				return start.format(formatStr);
-			}
-		}
-
-		return '';
-	},
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
@@ -216,95 +308,6 @@ Grid.mixin({
 
 		return classes;
 	},
-
-
-
-
-
-
-	getBgEventFootprintClasses: function(eventFootprint) {
-		var classNames = this.getEventFootprintClasses(eventFootprint);
-
-		classNames.push('fc-bgevent');
-
-		return classNames;
-	},
-
-
-	getEventFootprintClasses: function(eventFootprint) {
-		var eventDef = eventFootprint.eventDef;
-
-		return [].concat(
-			eventDef.className, // guaranteed to be an array
-			eventDef.source.className
-		);
-	},
-
-
-	// Utility for generating event skin-related CSS properties
-	getEventFootprintSkinCss: function(eventFootprint) {
-		return {
-			'background-color': this.getEventFootprintBackgroundColor(eventFootprint),
-			'border-color': this.getEventFootprintBorderColor(eventFootprint),
-			color: this.getEventFootprintTextColor(eventFootprint)
-		};
-	},
-
-
-	// Queries for caller-specified color, then falls back to default
-	getEventFootprintBackgroundColor: function(eventFootprint) {
-		return eventFootprint.eventDef.backgroundColor ||
-			eventFootprint.eventDef.color ||
-			this.getEventFootprintDefaultBackgroundColor(eventFootprint);
-	},
-
-
-	getEventFootprintDefaultBackgroundColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
-
-		return source.backgroundColor ||
-			source.color ||
-			this.opt('eventBackgroundColor') ||
-			this.opt('eventColor');
-	},
-
-
-	// Queries for caller-specified color, then falls back to default
-	getEventFootprintBorderColor: function(eventFootprint) {
-		return eventFootprint.eventDef.borderColor ||
-			eventFootprint.eventDef.color ||
-			this.getEventFootprintDefaultBorderColor(eventFootprint);
-	},
-
-
-	getEventFootprintDefaultBorderColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
-
-		return source.borderColor ||
-			source.color ||
-			this.opt('eventBorderColor') ||
-			this.opt('eventColor');
-	},
-
-
-	// Queries for caller-specified color, then falls back to default
-	getEventFootprintTextColor: function(eventFootprint) {
-		return eventFootprint.eventDef.textColor ||
-			this.getEventFootprintDefaultTextColor(eventFootprint);
-	},
-
-
-	getEventFootprintDefaultTextColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
-
-		return source.textColor ||
-			this.opt('eventTextColor');
-	},
-
-
-
-
-
 
 
 	sortEventSegs: function(segs) {
