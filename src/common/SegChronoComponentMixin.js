@@ -178,6 +178,62 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 	},
 
 
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Compute business hour segs for the grid's current date range.
+	// Caller must ask if whole-day business hours are needed.
+	buildBusinessHourSegs: function(wholeDay) {
+		return this.eventFootprintsToSegs(
+			this.buildBusinessHourEventFootprints(wholeDay)
+		);
+	},
+
+
+	// Compute business hour *events* for the grid's current date range.
+	// Caller must ask if whole-day business hours are needed.
+	// FOR RENDERING
+	buildBusinessHourEventFootprints: function(wholeDay) {
+		var calendar = this.view.calendar;
+
+		return this._buildBusinessHourEventFootprints(wholeDay, calendar.opt('businessHours'));
+	},
+
+
+	_buildBusinessHourEventFootprints: function(wholeDay, businessHourDef) {
+		var view = this.view;
+		var calendar = view.calendar;
+		var eventInstanceGroup;
+		var eventRanges;
+
+		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
+			wholeDay,
+			businessHourDef,
+			view.renderUnzonedRange
+		);
+
+		if (eventInstanceGroup) {
+			eventRanges = eventInstanceGroup.sliceRenderRanges(
+				view.renderUnzonedRange,
+				calendar
+			);
+		}
+		else {
+			eventRanges = [];
+		}
+
+		return this.eventRangesToEventFootprints(eventRanges);
+	},
+
+
+	// Generates an array of classNames to be used for the rendering business hours overlay.
+	// NEEDED BY FILL SYSTEM, fillSegHtml :(
+	businessHoursSegClasses: function(seg) {
+		return [ 'fc-nonbusiness', 'fc-bgevent' ];
+	},
+
+
 	/* Implement Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 

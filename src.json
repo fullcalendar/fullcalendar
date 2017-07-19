@@ -27,7 +27,6 @@
     "common/Grid.js",
     "common/Grid.day-click.js",
     "common/Grid.day-selection.js",
-    "common/Grid.business-hours.js",
     "common/Grid.event-interaction.js",
     "common/Grid.event-dragging.js",
     "common/Grid.event-resizing.js",
