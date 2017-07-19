@@ -1,4 +1,8 @@
 
+/*
+determines if eventInstanceGroup is allowed,
+in relation to other EVENTS and business hours.
+*/
 Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 	var eventDef = eventInstanceGroup.getEventDef();
 	var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());

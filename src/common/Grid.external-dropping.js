@@ -162,6 +162,9 @@ Grid.mixin({
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			// treat it as a selection
+			// TODO: pass in eventInstanceGroup instead
+			//  because we don't want calendar's constraint system to depend on a component's
+			//  determination of footprints.
 			if (!calendar.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
 				return false;
 			}

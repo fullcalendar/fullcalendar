@@ -285,7 +285,7 @@ var Grid = FC.Grid = ChronoComponent.extend({
 	},
 
 
-	/* Converting eventRange -> eventFootprint -> eventSegs
+	/* Converting eventRange -> eventFootprint
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -320,6 +320,10 @@ var Grid = FC.Grid = ChronoComponent.extend({
 			)
 		];
 	},
+
+
+	/* Converting componentFootprint/eventFootprint -> segs
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	eventFootprintsToSegs: function(eventFootprints) {

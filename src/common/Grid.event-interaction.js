@@ -193,12 +193,14 @@ Grid.mixin({
 	},
 
 
+	// is it allowed, in relation to the view's validRange?
 	// NOTE: very similar to isExternalInstanceGroupAllowed
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
+			// TODO: just use getAllEventRanges directly
 			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
