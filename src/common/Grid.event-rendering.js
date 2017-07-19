@@ -29,6 +29,31 @@ Grid.mixin({
 	},
 
 
+	// Updates values that rely on options and also relate to range
+	processEventRenderingOptions: function() {
+		var displayEventTime;
+		var displayEventEnd;
+
+		this.eventTimeFormat = // for Grid.event-rendering.js
+			this.opt('eventTimeFormat') ||
+			this.opt('timeFormat') || // deprecated
+			this.computeEventTimeFormat();
+
+		displayEventTime = this.opt('displayEventTime');
+		if (displayEventTime == null) {
+			displayEventTime = this.computeDisplayEventTime(); // might be based off of range
+		}
+
+		displayEventEnd = this.opt('displayEventEnd');
+		if (displayEventEnd == null) {
+			displayEventEnd = this.computeDisplayEventEnd(); // might be based off of range
+		}
+
+		this.displayEventTime = displayEventTime;
+		this.displayEventEnd = displayEventEnd;
+	},
+
+
 	renderEventsPayload: function(eventsPayload) {
 		var id, eventInstanceGroup;
 		var eventRenderRanges;
