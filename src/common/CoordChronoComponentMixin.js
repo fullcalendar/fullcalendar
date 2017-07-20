@@ -1,5 +1,5 @@
 
-var CoordChronoComponent = ChronoComponent.extend({
+var CoordChronoComponentMixin = {
 
 	// self-config, overridable by subclasses
 	segSelector: '.fc-event-container > *', // what constitutes an event element?
@@ -23,9 +23,7 @@ var CoordChronoComponent = ChronoComponent.extend({
 	hasDayInteractions: true, // can user click/select ranges of time?
 
 
-	constructor: function() {
-		ChronoComponent.apply(this, arguments);
-
+	initCoordChronoComponent: function() {
 		this.dayClickListener = this.buildDayClickListener();
 		this.daySelectListener = this.buildDaySelectListener();
 	},
@@ -452,4 +450,4 @@ var CoordChronoComponent = ChronoComponent.extend({
 	getHitEl: function(hit) {
 	}
 
-});
+};

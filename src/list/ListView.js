@@ -68,7 +68,7 @@ var ListView = View.extend({
 Responsible for event rendering and user-interaction.
 Its "el" is the inner-content of the above view's scroller.
 */
-var ListViewGrid = CoordChronoComponent.extend(SegChronoComponentMixin, { // TODO: just use ChonoComponent!!!
+var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, { // TODO: kill CoordChronoComponentMixin
 
 	view: null, // TODO: make more general and/or remove
 
@@ -79,9 +79,12 @@ var ListViewGrid = CoordChronoComponent.extend(SegChronoComponentMixin, { // TOD
 
 
 	constructor: function(view) {
-		this.view = view; // do first, because CoordChronoComponent calls opt
+		this.view = view; // do first, for opt calls during initialization
 
-		CoordChronoComponent.apply(this, arguments);
+		ChronoComponent.apply(this, arguments);
+
+		// a requirement for CoordChronoComponentMixin
+		this.initCoordChronoComponent();
 
 		// a requirement for SegChronoComponentMixin. TODO: more elegant
 		this.initFillSystem();
@@ -172,7 +175,7 @@ var ListViewGrid = CoordChronoComponent.extend(SegChronoComponentMixin, { // TOD
 	handleSegClick: function(seg, ev) {
 		var url;
 
-		CoordChronoComponent.prototype.handleSegClick.apply(this, arguments); // super. might prevent the default action
+		CoordChronoComponentMixin.handleSegClick.apply(this, arguments); // super. might prevent the default action
 
 		// not clicking on or within an <a> with an href
 		if (!$(ev.target).closest('a[href]').length) {

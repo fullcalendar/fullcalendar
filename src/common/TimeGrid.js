@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = CoordChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
+var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
 	view: null, // TODO: make more general and/or remove
 
@@ -24,9 +24,12 @@ var TimeGrid = FC.TimeGrid = CoordChronoComponent.extend(SegChronoComponentMixin
 
 
 	constructor: function(view) {
-		this.view = view; // do first, because CoordChronoComponent calls opt
+		this.view = view; // do first, for opt calls during initialization
 
-		CoordChronoComponent.apply(this, arguments); // call the super-constructor
+		ChronoComponent.apply(this, arguments); // call the super-constructor
+
+		// a requirement for CoordChronoComponentMixin
+		this.initCoordChronoComponent();
 
 		// a requirement for SegChronoComponentMixin. TODO: more elegant
 		this.initFillSystem();

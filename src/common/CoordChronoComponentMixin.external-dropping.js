@@ -3,7 +3,7 @@
 Wired up by calling
 externalDragStart
 */
-CoordChronoComponent.mixin({
+$.extend(CoordChronoComponentMixin, {
 
 	isDraggingExternal: false, // jqui-dragging an external element? boolean
 

@@ -3,7 +3,7 @@
 Wired up by calling
 startSegResize
 */
-CoordChronoComponent.mixin({
+$.extend(CoordChronoComponentMixin, {
 
 	isResizingSeg: false, // is a segment being resized? boolean
 

@@ -3,7 +3,7 @@
 Wired up by calling
 buildSegDragListener
 */
-CoordChronoComponent.mixin({
+$.extend(CoordChronoComponentMixin, {
 
 	isDraggingSeg: false, // is a segment being dragged? boolean
 

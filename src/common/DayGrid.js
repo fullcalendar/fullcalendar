@@ -2,7 +2,7 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = FC.DayGrid = CoordChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
+var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
 	view: null, // TODO: make more general and/or remove
 
@@ -18,9 +18,12 @@ var DayGrid = FC.DayGrid = CoordChronoComponent.extend(SegChronoComponentMixin, 
 
 
 	constructor: function(view) {
-		this.view = view; // do first, because CoordChronoComponent calls opt
+		this.view = view; // do first, for opt calls during initialization
 
-		CoordChronoComponent.apply(this, arguments);
+		ChronoComponent.apply(this, arguments);
+
+		// a requirement for CoordChronoComponentMixin
+		this.initCoordChronoComponent();
 
 		// a requirement for SegChronoComponentMixin. TODO: more elegant
 		this.initFillSystem();

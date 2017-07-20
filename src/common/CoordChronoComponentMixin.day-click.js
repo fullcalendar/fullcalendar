@@ -1,5 +1,5 @@
 
-CoordChronoComponent.mixin({
+$.extend(CoordChronoComponentMixin, {
 
 	// Creates a listener that tracks the user's drag across day elements, for day clicking.
 	buildDayClickListener: function() {
