@@ -197,7 +197,7 @@ var CoordChronoComponentMixin = {
 
 
 	dayTouchStart: function(ev) {
-		var view = this.view;
+		var view = this._getView();
 		var selectLongPressDelay;
 
 		// On iOS (and Android?) when a new selection is initiated overtop another selection,
@@ -224,9 +224,10 @@ var CoordChronoComponentMixin = {
 
 
 	handleSegClick: function(seg, ev) {
+		var view = this._getView();
 		var res = this.publiclyTrigger('eventClick', { // can return `false` to cancel
 			context: seg.el[0],
-			args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+			args: [ seg.footprint.getEventLegacy(), ev, view ]
 		});
 
 		if (res === false) {
@@ -237,19 +238,21 @@ var CoordChronoComponentMixin = {
 
 	// Updates internal state and triggers handlers for when an event element is moused over
 	handleSegMouseover: function(seg, ev) {
+		var view = this._getView();
+
 		if (
 			!GlobalEmitter.get().shouldIgnoreMouse() &&
 			!this.mousedOverSeg
 		) {
 			this.mousedOverSeg = seg;
 
-			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
+			if (view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.addClass('fc-allow-mouse-resize');
 			}
 
 			this.publiclyTrigger('eventMouseover', {
 				context: seg.el[0],
-				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+				args: [ seg.footprint.getEventLegacy(), ev, view ]
 			});
 		}
 	},
@@ -258,28 +261,31 @@ var CoordChronoComponentMixin = {
 	// Updates internal state and triggers handlers for when an event element is moused out.
 	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
 	handleSegMouseout: function(seg, ev) {
+		var view = this._getView();
+
 		ev = ev || {}; // if given no args, make a mock mouse event
 
 		if (this.mousedOverSeg) {
 			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
 			this.mousedOverSeg = null;
 
-			if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
+			if (view.isEventDefResizable(seg.footprint.eventDef)) {
 				seg.el.removeClass('fc-allow-mouse-resize');
 			}
 
 			this.publiclyTrigger('eventMouseout', {
 				context: seg.el[0],
-				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+				args: [ seg.footprint.getEventLegacy(), ev, view ]
 			});
 		}
 	},
 
 
 	handleSegMousedown: function(seg, ev) {
+		var view = this._getView();
 		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
 
-		if (!isResizing && this.view.isEventDefDraggable(seg.footprint.eventDef)) {
+		if (!isResizing && view.isEventDefDraggable(seg.footprint.eventDef)) {
 			this.buildSegDragListener(seg)
 				.startInteraction(ev, {
 					distance: 5
@@ -289,7 +295,7 @@ var CoordChronoComponentMixin = {
 
 
 	handleSegTouchStart: function(seg, ev) {
-		var view = this.view;
+		var view = this._getView();
 		var eventDef = seg.footprint.eventDef;
 		var isSelected = view.isEventDefSelected(eventDef);
 		var isDraggable = view.isEventDefDraggable(eventDef);
@@ -330,7 +336,7 @@ var CoordChronoComponentMixin = {
 	// Has side effect of setting/unsetting `segDragListener`
 	buildSegSelectListener: function(seg) {
 		var _this = this;
-		var view = this.view;
+		var view = this._getView();
 		var eventDef = seg.footprint.eventDef;
 		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
 
@@ -361,17 +367,18 @@ var CoordChronoComponentMixin = {
 	// is it allowed, in relation to the view's validRange?
 	// NOTE: very similar to isExternalInstanceGroupAllowed
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
+		var view = this._getView();
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			// TODO: just use getAllEventRanges directly
-			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+			if (!view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}
 
-		return this.view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
+		return view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
 	},
 
 
@@ -400,7 +407,8 @@ var CoordChronoComponentMixin = {
 
 
 	fabricateEventFootprint: function(componentFootprint) {
-		var calendar = this.view.calendar;
+		var view = this._getView();
+		var calendar = view.calendar;
 		var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
 		var dummyEvent = new SingleEventDef(new EventSource(calendar));
 		var dummyInstance;
@@ -431,9 +439,10 @@ var CoordChronoComponentMixin = {
 
 
 	getSafeHitFootprint: function(hit) {
+		var view = this._getView();
 		var footprint = this.getHitFootprint(hit);
 
-		if (!this.view.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
+		if (!view.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
 			return null;
 		}
 

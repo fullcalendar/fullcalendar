@@ -1,21 +1,36 @@
 
 /*
-Responsible for the scroller, and forwarding event-related actions into the "grid"
+Responsible for the scroller, and forwarding event-related actions into the "grid".
+TODO: remove CoordChronoComponentMixin
+BUT FIRST... need to decouple event click/mouseover/mouseout handlers
 */
-var ListView = View.extend({
+var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
-	grid: null,
 	scroller: null,
+	contentEl: null,
+
+	dayDates: null, // localized ambig-time moment array
+	dayRanges: null, // UnzonedRange[], of start-end of each day
+	segSelector: '.fc-list-item', // which elements accept event actions
+	hasDayInteractions: false, // no day selection or day clicking
 
 
 	initialize: function() {
-		this.grid = new ListViewGrid(this);
-		this.addChild(this.grid);
+		// a requirement for CoordChronoComponentMixin
+		this.initCoordChronoComponent();
+
+		// a requirement for SegChronoComponentMixin. TODO: more elegant
+		this.initFillSystem();
 
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
 		});
+	},
+
+
+	_getView: function() {
+		return this;
 	},
 
 
@@ -28,7 +43,7 @@ var ListView = View.extend({
 		this.scroller.render();
 		this.scroller.el.appendTo(this.el);
 
-		this.grid.setElement(this.scroller.scrollEl);
+		this.contentEl = this.scroller.scrollEl; // shortcut
 	},
 
 
@@ -49,58 +64,9 @@ var ListView = View.extend({
 
 
 	renderDates: function() {
-		this.grid.rangeUpdated(); // needs to process range-related options
-	},
-
-
-	isEventDefResizable: function(eventDef) {
-		return false;
-	},
-
-
-	isEventDefDraggable: function(eventDef) {
-		return false;
-	}
-
-});
-
-/*
-Responsible for event rendering and user-interaction.
-Its "el" is the inner-content of the above view's scroller.
-*/
-var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, { // TODO: kill CoordChronoComponentMixin
-
-	view: null, // TODO: make more general and/or remove
-
-	dayDates: null, // localized ambig-time moment array
-	dayRanges: null, // UnzonedRange[], of start-end of each day
-	segSelector: '.fc-list-item', // which elements accept event actions
-	hasDayInteractions: false, // no day selection or day clicking
-
-
-	constructor: function(view) {
-		this.view = view; // do first, for opt calls during initialization
-
-		ChronoComponent.apply(this, arguments);
-
-		// a requirement for CoordChronoComponentMixin
-		this.initCoordChronoComponent();
-
-		// a requirement for SegChronoComponentMixin. TODO: more elegant
-		this.initFillSystem();
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
-	},
-
-
-	rangeUpdated: function() {
-		var view = this.view;
-		var calendar = view.calendar;
-		var dayStart = calendar.msToUtcMoment(view.renderUnzonedRange.startMs, true);
-		var viewEnd = calendar.msToUtcMoment(view.renderUnzonedRange.endMs, true);
+		var calendar = this.calendar;
+		var dayStart = calendar.msToUtcMoment(this.renderUnzonedRange.startMs, true);
+		var viewEnd = calendar.msToUtcMoment(this.renderUnzonedRange.endMs, true);
 		var dayDates = [];
 		var dayRanges = [];
 
@@ -124,9 +90,18 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 	},
 
 
+	isEventDefResizable: function(eventDef) {
+		return false;
+	},
+
+
+	isEventDefDraggable: function(eventDef) {
+		return false;
+	},
+
+
 	// slices by day
 	componentFootprintToSegs: function(footprint) {
-		var view = this.view;
 		var dayRanges = this.dayRanges;
 		var dayIndex;
 		var segRange;
@@ -151,7 +126,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 				// and mutate the latest seg to the be the end.
 				if (
 					!seg.isEnd && !footprint.isAllDay &&
-					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + view.nextDayThreshold
+					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + this.nextDayThreshold
 				) {
 					seg.endMs = footprint.unzonedRange.endMs;
 					seg.isEnd = true;
@@ -204,7 +179,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 
 
 	renderEmptyMessage: function() {
-		this.el.html(
+		this.contentEl.html(
 			'<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
 			'<div class="fc-list-empty-wrap1">' +
 			'<div class="fc-list-empty">' +
@@ -222,7 +197,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 		var dayIndex;
 		var daySegs;
 		var i;
-		var tableEl = $('<table class="fc-list-table ' + this.view.calendar.theme.getClass('tableList') + '"><tbody/></table>');
+		var tableEl = $('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody/></table>');
 		var tbodyEl = tableEl.find('tbody');
 
 		for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
@@ -241,7 +216,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 			}
 		}
 
-		this.el.empty().append(tableEl);
+		this.contentEl.empty().append(tableEl);
 	},
 
 
@@ -262,21 +237,20 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 
 	// generates the HTML for the day headers that live amongst the event rows
 	dayHeaderHtml: function(dayDate) {
-		var view = this.view;
 		var mainFormat = this.opt('listDayFormat');
 		var altFormat = this.opt('listDayAltFormat');
 
 		return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-			'<td class="' + view.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
+			'<td class="' + this.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
 				(mainFormat ?
-					view.buildGotoAnchorHtml(
+					this.buildGotoAnchorHtml(
 						dayDate,
 						{ 'class': 'fc-list-heading-main' },
 						htmlEscape(dayDate.format(mainFormat)) // inner HTML
 					) :
 					'') +
 				(altFormat ?
-					view.buildGotoAnchorHtml(
+					this.buildGotoAnchorHtml(
 						dayDate,
 						{ 'class': 'fc-list-heading-alt' },
 						htmlEscape(dayDate.format(altFormat)) // inner HTML
@@ -289,8 +263,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 
 	// generates the HTML for a single event row
 	fgSegHtml: function(seg) {
-		var view = this.view;
-		var calendar = view.calendar;
+		var calendar = this.calendar;
 		var theme = calendar.theme;
 		var eventFootprint = seg.footprint;
 		var eventDef = eventFootprint.eventDef;
@@ -301,10 +274,10 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 		var timeHtml;
 
 		if (componentFootprint.isAllDay) {
-			timeHtml = view.getAllDayHtml();
+			timeHtml = this.getAllDayHtml();
 		}
 		// if the event appears to span more than one day
-		else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
+		else if (this.isMultiDayRange(componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
 				timeHtml = htmlEscape(this._getEventTimeText(
 					calendar.msToMoment(seg.startMs),
@@ -313,7 +286,7 @@ var ListViewGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoCo
 				));
 			}
 			else { // inner segment that lasts the whole day
-				timeHtml = view.getAllDayHtml();
+				timeHtml = this.getAllDayHtml();
 			}
 		}
 		else {

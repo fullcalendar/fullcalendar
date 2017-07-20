@@ -10,7 +10,6 @@ This mixin can depend on ChronoComponent:
 var EventRenderingUtilsMixin = {
 
 	// derived from options
-	// TODO: move initialization from Grid.js
 	eventTimeFormat: null,
 	displayEventTime: null,
 	displayEventEnd: null,
