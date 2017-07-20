@@ -2,7 +2,9 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
+var DayGrid = FC.DayGrid = CoordChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
+
+	view: null, // TODO: make more general and/or remove
 
 	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
@@ -13,6 +15,21 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	rowCoordCache: null,
 	colCoordCache: null,
+
+
+	constructor: function(view) {
+		this.view = view; // do first, because CoordChronoComponent calls opt
+
+		CoordChronoComponent.apply(this, arguments);
+
+		// a requirement for SegChronoComponentMixin. TODO: more elegant
+		this.initFillSystem();
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
@@ -221,6 +238,10 @@ var DayGrid = FC.DayGrid = Grid.extend(DayTableMixin, {
 
 	rangeUpdated: function() {
 		this.updateDayTable();
+
+		// a requirement of SegChronoComponentMixin. TODO: more elegant
+		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
+		this.initEventRenderingUtils();
 	},
 
 

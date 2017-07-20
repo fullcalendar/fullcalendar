@@ -10,13 +10,14 @@ DayGrid.mixin({
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.removeSegPopover(); // removes the "more.." events popover
-		Grid.prototype.unrenderEvents.apply(this, arguments); // calls the super-method
+
+		SegChronoComponentMixin.unrenderEvents.apply(this, arguments);
 	},
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getEventSegs: function() {
-		return Grid.prototype.getEventSegs.call(this) // get the segments from the super-method
+		return SegChronoComponentMixin.getEventSegs.call(this) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 
@@ -29,7 +30,7 @@ DayGrid.mixin({
 			return seg.footprint.componentFootprint.isAllDay;
 		});
 
-		return Grid.prototype.renderBgSegs.call(this, allDaySegs); // call the super-method
+		return SegChronoComponentMixin.renderBgSegs.call(this, allDaySegs); // call the super-method
 	},
 
 

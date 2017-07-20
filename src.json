@@ -30,7 +30,6 @@
     "common/FillSystemMixin.js",
     "common/EventRenderingUtilsMixin.js",
     "common/SegChronoComponentMixin.js",
-    "common/Grid.js",
     "common/DayTableMixin.js",
     "common/DayGrid.js",
     "common/DayGrid.events.js",

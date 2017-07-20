@@ -7,6 +7,7 @@ var ListView = View.extend({
 	grid: null,
 	scroller: null,
 
+
 	initialize: function() {
 		this.grid = new ListViewGrid(this);
 		this.addChild(this.grid);
@@ -16,6 +17,7 @@ var ListView = View.extend({
 			overflowY: 'auto'
 		});
 	},
+
 
 	renderSkeleton: function() {
 		this.el.addClass(
@@ -29,26 +31,32 @@ var ListView = View.extend({
 		this.grid.setElement(this.scroller.scrollEl);
 	},
 
+
 	unrenderSkeleton: function() {
 		this.scroller.destroy(); // will remove the Grid too
 	},
 
+
 	setHeight: function(totalHeight, isAuto) {
 		this.scroller.setHeight(this.computeScrollerHeight(totalHeight));
 	},
+
 
 	computeScrollerHeight: function(totalHeight) {
 		return totalHeight -
 			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
 	},
 
+
 	renderDates: function() {
-		this.grid.setRange(this.renderUnzonedRange); // needs to process range-related options
+		this.grid.rangeUpdated(); // needs to process range-related options
 	},
+
 
 	isEventDefResizable: function(eventDef) {
 		return false;
 	},
+
 
 	isEventDefDraggable: function(eventDef) {
 		return false;
@@ -60,12 +68,30 @@ var ListView = View.extend({
 Responsible for event rendering and user-interaction.
 Its "el" is the inner-content of the above view's scroller.
 */
-var ListViewGrid = Grid.extend({
+var ListViewGrid = CoordChronoComponent.extend(SegChronoComponentMixin, { // TODO: just use ChonoComponent!!!
+
+	view: null, // TODO: make more general and/or remove
 
 	dayDates: null, // localized ambig-time moment array
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 	segSelector: '.fc-list-item', // which elements accept event actions
 	hasDayInteractions: false, // no day selection or day clicking
+
+
+	constructor: function(view) {
+		this.view = view; // do first, because CoordChronoComponent calls opt
+
+		CoordChronoComponent.apply(this, arguments);
+
+		// a requirement for SegChronoComponentMixin. TODO: more elegant
+		this.initFillSystem();
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
 
 	rangeUpdated: function() {
 		var view = this.view;
@@ -89,7 +115,11 @@ var ListViewGrid = Grid.extend({
 
 		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
+
+		// a requirement of SegChronoComponentMixin. TODO: more elegant
+		this.initEventRenderingUtils();
 	},
+
 
 	// slices by day
 	componentFootprintToSegs: function(footprint) {
@@ -130,17 +160,19 @@ var ListViewGrid = Grid.extend({
 		return segs;
 	},
 
+
 	// like "4:00am"
 	computeEventTimeFormat: function() {
 		return this.opt('mediumTimeFormat');
 	},
+
 
 	// for events with a url, the whole <tr> should be clickable,
 	// but it's impossible to wrap with an <a> tag. simulate this.
 	handleSegClick: function(seg, ev) {
 		var url;
 
-		Grid.prototype.handleSegClick.apply(this, arguments); // super. might prevent the default action
+		CoordChronoComponent.prototype.handleSegClick.apply(this, arguments); // super. might prevent the default action
 
 		// not clicking on or within an <a> with an href
 		if (!$(ev.target).closest('a[href]').length) {
@@ -151,6 +183,7 @@ var ListViewGrid = Grid.extend({
 			}
 		}
 	},
+
 
 	// returns list of foreground segs that were actually rendered
 	renderFgSegs: function(segs) {
@@ -166,6 +199,7 @@ var ListViewGrid = Grid.extend({
 		return segs;
 	},
 
+
 	renderEmptyMessage: function() {
 		this.el.html(
 			'<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
@@ -177,6 +211,7 @@ var ListViewGrid = Grid.extend({
 			'</div>'
 		);
 	},
+
 
 	// render the event segments in the view
 	renderSegList: function(allSegs) {
@@ -206,6 +241,7 @@ var ListViewGrid = Grid.extend({
 		this.el.empty().append(tableEl);
 	},
 
+
 	// Returns a sparse array of arrays, segs grouped by their dayIndex
 	groupSegsByDay: function(segs) {
 		var segsByDay = []; // sparse array
@@ -219,6 +255,7 @@ var ListViewGrid = Grid.extend({
 
 		return segsByDay;
 	},
+
 
 	// generates the HTML for the day headers that live amongst the event rows
 	dayHeaderHtml: function(dayDate) {
@@ -245,6 +282,7 @@ var ListViewGrid = Grid.extend({
 			'</td>' +
 		'</tr>';
 	},
+
 
 	// generates the HTML for a single event row
 	fgSegHtml: function(seg) {

@@ -3,7 +3,9 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
+var TimeGrid = FC.TimeGrid = CoordChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
+
+	view: null, // TODO: make more general and/or remove
 
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -21,10 +23,20 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 	slatCoordCache: null,
 
 
-	constructor: function() {
-		Grid.apply(this, arguments); // call the super-constructor
+	constructor: function(view) {
+		this.view = view; // do first, because CoordChronoComponent calls opt
+
+		CoordChronoComponent.apply(this, arguments); // call the super-constructor
+
+		// a requirement for SegChronoComponentMixin. TODO: more elegant
+		this.initFillSystem();
 
 		this.processOptions();
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
 	},
 
 
@@ -253,6 +265,10 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var view = this.view;
 
 		this.updateDayTable();
+
+		// a requirement of SegChronoComponentMixin. TODO: more elegant
+		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
+		this.initEventRenderingUtils();
 
 		this.dayRanges = this.dayDates.map(function(dayDate) {
 			return new UnzonedRange(

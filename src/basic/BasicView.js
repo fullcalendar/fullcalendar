@@ -66,7 +66,7 @@ var BasicView = FC.BasicView = View.extend({
 	renderDates: function() {
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.currentRangeUnit); // do before Grid::setRange
-		this.dayGrid.setRange(this.renderUnzonedRange);
+		this.dayGrid.rangeUpdated();
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		if (this.opt('weekNumbers')) {
