@@ -245,6 +245,8 @@ var ChronoComponent = Model.extend({
 
 	// Hit Areas
 	// ---------------------------------------------------------------------------------------------------------------
+	// just because all ChronoComponents support this interface
+	// doesn't mean they need to have their own internal coord system. they can defer to sub-components.
 
 
 	hitsNeeded: function() {
@@ -490,6 +492,43 @@ var ChronoComponent = Model.extend({
 		}
 
 		return classes;
+	},
+
+
+	/* Converting eventRange -> eventFootprint
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	eventRangesToEventFootprints: function(eventRanges) {
+		var eventFootprints = [];
+		var i;
+
+		for (i = 0; i < eventRanges.length; i++) {
+			eventFootprints.push.apply(eventFootprints,
+				this.eventRangeToEventFootprints(eventRanges[i])
+			);
+		}
+
+		return eventFootprints;
+	},
+
+
+	// Given an event's unzoned date range, return an array of eventSpan objects.
+	// eventSpan - { start, end, isStart, isEnd, otherthings... }
+	// Subclasses can override.
+	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
+	// TODO: somehow more DRY with Calendar::eventRangeToEventFootprints
+	eventRangeToEventFootprints: function(eventRange) {
+		return [
+			new EventFootprint(
+				new ComponentFootprint(
+					eventRange.unzonedRange,
+					eventRange.eventDef.isAllDay()
+				),
+				eventRange.eventDef,
+				eventRange.eventInstance // might not exist
+			)
+		];
 	},
 
 

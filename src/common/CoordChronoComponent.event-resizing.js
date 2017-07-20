@@ -1,9 +1,9 @@
 
 /*
-Wired up via Grid.event-interation.js by calling
+Wired up by calling
 startSegResize
 */
-Grid.mixin({
+CoordChronoComponent.mixin({
 
 	isResizingSeg: false, // is a segment being resized? boolean
 

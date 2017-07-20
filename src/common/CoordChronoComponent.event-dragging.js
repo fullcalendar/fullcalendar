@@ -1,9 +1,9 @@
 
 /*
-Wired up via Grid.event-interation.js by calling
+Wired up by calling
 buildSegDragListener
 */
-Grid.mixin({
+CoordChronoComponent.mixin({
 
 	isDraggingSeg: false, // is a segment being dragged? boolean
 

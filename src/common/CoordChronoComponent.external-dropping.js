@@ -1,9 +1,9 @@
 
 /*
-Wired up via Grid.js by calling
+Wired up by calling
 externalDragStart
 */
-Grid.mixin({
+CoordChronoComponent.mixin({
 
 	isDraggingExternal: false, // jqui-dragging an external element? boolean
 
