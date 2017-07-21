@@ -19,8 +19,8 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		// a requirement for CoordChronoComponentMixin
 		this.initCoordChronoComponent();
 
-		// a requirement for SegChronoComponentMixin. TODO: more elegant
-		this.initFillSystem();
+		// a requirement for SegChronoComponentMixin
+		this.initSegChronoComponent();
 
 		this.scroller = new Scroller({
 			overflowX: 'hidden',

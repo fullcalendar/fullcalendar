@@ -19,10 +19,10 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 
 
-	//initSegChronoComponent: function() {
-	//	this.initEventRenderingUtils();
-	//	this.initFillSystem();
-	//},
+	initSegChronoComponent: function() {
+		//this.initEventRenderingUtils(); // needs to happen after dates
+		this.initFillSystem();
+	},
 
 
 	renderEventsPayload: function(eventsPayload) {

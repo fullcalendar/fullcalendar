@@ -31,8 +31,8 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 		// a requirement for CoordChronoComponentMixin
 		this.initCoordChronoComponent();
 
-		// a requirement for SegChronoComponentMixin. TODO: more elegant
-		this.initFillSystem();
+		// a requirement for SegChronoComponentMixin
+		this.initSegChronoComponent();
 
 		this.processOptions();
 	},

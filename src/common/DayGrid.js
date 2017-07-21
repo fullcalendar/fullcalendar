@@ -26,7 +26,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 		this.initCoordChronoComponent();
 
 		// a requirement for SegChronoComponentMixin. TODO: more elegant
-		this.initFillSystem();
+		this.initSegChronoComponent();
 	},
 
 
