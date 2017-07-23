@@ -28,7 +28,7 @@
     "common/CoordChronoComponentMixin.event-resizing.js",
     "common/CoordChronoComponentMixin.external-dropping.js",
     "common/FillSystem.js",
-    "common/EventRenderingUtilsMixin.js",
+    "common/EventRenderUtils.js",
     "common/SegChronoComponentMixin.js",
     "common/DayTableMixin.js",
     "common/DayGrid.js",
