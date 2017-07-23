@@ -32,9 +32,44 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	},
 
 
+	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
+	componentFootprintToSegs: function(componentFootprint) {
+		var segs = this.sliceRangeByRow(componentFootprint.unzonedRange);
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (this.isRTL) {
+				seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex;
+				seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex;
+			}
+			else {
+				seg.leftCol = seg.firstRowDayIndex;
+				seg.rightCol = seg.lastRowDayIndex;
+			}
+		}
+
+		return segs;
+	},
+
+
+	rangeUpdated: function() {
+		this.updateDayTable();
+
+		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
+		// TODO: easy to forget. use listener.
+		this.eventRenderUtils.rangeUpdated();
+	},
+
+
 	opt: function(name) {
 		return this.view.opt(name);
 	},
+
+
+	/* Date Rendering
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
@@ -83,18 +118,6 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 	unrenderDates: function() {
 		this.removeSegPopover();
-	},
-
-
-	renderBusinessHours: function() {
-		var segs = this.buildBusinessHourSegs(true); // wholeDay=true
-
-		this.fillSystem.render('businessHours', segs, 'bgevent');
-	},
-
-
-	unrenderBusinessHours: function() {
-		this.fillSystem.unrender('businessHours');
 	},
 
 
@@ -222,41 +245,6 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	},
 
 
-	/* Dates
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	rangeUpdated: function() {
-		this.updateDayTable();
-
-		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
-		// TODO: easy to forget. use listener.
-		this.eventRenderUtils.rangeUpdated();
-	},
-
-
-	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
-	componentFootprintToSegs: function(componentFootprint) {
-		var segs = this.sliceRangeByRow(componentFootprint.unzonedRange);
-		var i, seg;
-
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-
-			if (this.isRTL) {
-				seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex;
-				seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex;
-			}
-			else {
-				seg.leftCol = seg.firstRowDayIndex;
-				seg.rightCol = seg.lastRowDayIndex;
-			}
-		}
-
-		return segs;
-	},
-
-
 	/* Hit System
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -357,7 +345,6 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 	/* Event Drag Visualization
 	------------------------------------------------------------------------------------------------------------------*/
-	// TODO: move to DayGrid.event, similar to what we did with Grid's drag methods
 
 
 	// Renders a visual indication of an event or external element being dragged.
@@ -453,6 +440,22 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 			this.helperEls.remove();
 			this.helperEls = null;
 		}
+	},
+
+
+	/* Business Hours
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderBusinessHours: function() {
+		var segs = this.buildBusinessHourSegs(true); // wholeDay=true
+
+		this.fillSystem.render('businessHours', segs, 'bgevent');
+	},
+
+
+	unrenderBusinessHours: function() {
+		this.fillSystem.unrender('businessHours');
 	},
 
 
