@@ -242,9 +242,9 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	rangeUpdated: function() {
 		this.updateDayTable();
 
-		// a requirement of SegChronoComponentMixin. TODO: more elegant
 		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
-		this.initEventRenderingUtils();
+		// TODO: easy to forget. use listener.
+		this.eventRenderUtils.rangeUpdated();
 	},
 
 

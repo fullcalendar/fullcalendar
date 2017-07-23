@@ -247,6 +247,7 @@ TimeGrid.mixin({
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
 		var calendar = view.calendar;
+		var eventRenderUtils = this.eventRenderUtils;
 		var componentFootprint = seg.footprint.componentFootprint;
 		var isAllDay = componentFootprint.isAllDay;
 		var eventDef = seg.footprint.eventDef;
@@ -254,7 +255,7 @@ TimeGrid.mixin({
 		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
 		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getEventFootprintSkinCss(seg.footprint));
+		var skinCss = cssToStr(this.eventRenderUtils.getSkinCss(seg.footprint));
 		var timeText;
 		var fullTimeText; // more verbose time text. for the print stylesheet
 		var startTimeText; // just the start time text
@@ -269,16 +270,16 @@ TimeGrid.mixin({
 			if (seg.isStart || seg.isEnd) {
 				var zonedStart = calendar.msToMoment(seg.startMs);
 				var zonedEnd = calendar.msToMoment(seg.endMs);
-				timeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay);
-				fullTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
-				startTimeText = this._getEventTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
+				timeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay);
+				fullTimeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
+				startTimeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
 			}
 		}
 		else {
 			// Display the normal time text for the *event's* times
-			timeText = this.getEventTimeText(seg.footprint);
-			fullTimeText = this.getEventTimeText(seg.footprint, 'LT');
-			startTimeText = this.getEventTimeText(seg.footprint, null, false); // displayEnd=false
+			timeText = eventRenderUtils.getTimeText(seg.footprint);
+			fullTimeText = eventRenderUtils.getTimeText(seg.footprint, 'LT');
+			startTimeText = eventRenderUtils.getTimeText(seg.footprint, null, false); // displayEnd=false
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +

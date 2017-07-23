@@ -100,7 +100,7 @@ DayGrid.mixin({
 		var isResizableFromEnd = !disableResizing && isAllDay &&
 			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getEventFootprintSkinCss(seg.footprint));
+		var skinCss = cssToStr(this.eventRenderUtils.getSkinCss(seg.footprint));
 		var timeHtml = '';
 		var timeText;
 		var titleHtml;
@@ -109,7 +109,7 @@ DayGrid.mixin({
 
 		// Only display a timed events time if it is the starting segment
 		if (seg.isStart) {
-			timeText = this.getEventTimeText(seg.footprint);
+			timeText = this.eventRenderUtils.getTimeText(seg.footprint);
 			if (timeText) {
 				timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>';
 			}

@@ -1,13 +1,7 @@
 
-/*
-Caller must call:
-- initEventRenderingUtils
+var EventRenderUtils = Class.extend({
 
-This mixin can depend on ChronoComponent:
-- opt
-- _getView
-*/
-var EventRenderingUtilsMixin = {
+	component: null,
 
 	// derived from options
 	eventTimeFormat: null,
@@ -15,47 +9,52 @@ var EventRenderingUtilsMixin = {
 	displayEventEnd: null,
 
 
+	/*
+	component defines:
+		- computeEventTimeFormat (optional, defaults to smallTimeFormat)
+		- computeDisplayEventTime (optional, defaults to true)
+		- computeDisplayEventEnd (optional, defaults to false)
+
+	OTHER REQUIREMENTS:
+		- must call rangeUpdated() when component's range is updated
+	*/
+	constructor: function(component) {
+		this.component = component;
+	},
+
+
 	// Updates values that rely on options and also relate to range
-	initEventRenderingUtils: function() {
+	rangeUpdated: function() {
+		var component = this.component;
 		var displayEventTime;
 		var displayEventEnd;
 
 		this.eventTimeFormat =
-			this.opt('eventTimeFormat') ||
-			this.opt('timeFormat') || // deprecated
-			this.computeEventTimeFormat();
+			component.opt('eventTimeFormat') ||
+			component.opt('timeFormat') || // deprecated
+			(component.computeEventTimeFormat ?
+				component.computeEventTimeFormat() :
+				'') ||
+			component.opt('smallTimeFormat');
 
-		displayEventTime = this.opt('displayEventTime');
+		displayEventTime = component.opt('displayEventTime');
+		if (displayEventTime == null && component.computeDisplayEventTime) {
+			displayEventTime = component.computeDisplayEventTime(); // might be based off of range
+		}
 		if (displayEventTime == null) {
-			displayEventTime = this.computeDisplayEventTime(); // might be based off of range
+			displayEventTime = true;
 		}
 
-		displayEventEnd = this.opt('displayEventEnd');
+		displayEventEnd = component.opt('displayEventEnd');
+		if (displayEventEnd == null && component.computeDisplayEventEnd) {
+			displayEventEnd = component.computeDisplayEventEnd(); // might be based off of range
+		}
 		if (displayEventEnd == null) {
-			displayEventEnd = this.computeDisplayEventEnd(); // might be based off of range
+			displayEventEnd = true;
 		}
 
 		this.displayEventTime = displayEventTime;
 		this.displayEventEnd = displayEventEnd;
-	},
-
-
-	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
-	computeEventTimeFormat: function() {
-		return this.opt('smallTimeFormat');
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventTime'.
-	// Only applies to non-all-day events.
-	computeDisplayEventTime: function() {
-		return true;
-	},
-
-
-	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
-	computeDisplayEventEnd: function() {
-		return true;
 	},
 
 
@@ -64,8 +63,8 @@ var EventRenderingUtilsMixin = {
 	// If event times are disabled, or the event has no time, will return a blank string.
 	// If not specified, formatStr will default to the eventTimeFormat setting,
 	// and displayEnd will default to the displayEventEnd setting.
-	getEventTimeText: function(eventFootprint, formatStr, displayEnd) {
-		return this._getEventTimeText(
+	getTimeText: function(eventFootprint, formatStr, displayEnd) {
+		return this._getTimeText(
 			eventFootprint.eventInstance.dateProfile.start,
 			eventFootprint.eventInstance.dateProfile.end,
 			eventFootprint.componentFootprint.isAllDay,
@@ -75,8 +74,8 @@ var EventRenderingUtilsMixin = {
 	},
 
 
-	_getEventTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
-		var view = this._getView();
+	_getTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
+		var view = this.component._getView();
 
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
@@ -103,8 +102,8 @@ var EventRenderingUtilsMixin = {
 	},
 
 
-	getBgEventFootprintClasses: function(eventFootprint) {
-		var classNames = this.getEventFootprintClasses(eventFootprint);
+	getBgClasses: function(eventFootprint) {
+		var classNames = this.getClasses(eventFootprint);
 
 		classNames.push('fc-bgevent');
 
@@ -112,7 +111,7 @@ var EventRenderingUtilsMixin = {
 	},
 
 
-	getEventFootprintClasses: function(eventFootprint) {
+	getClasses: function(eventFootprint) {
 		var eventDef = eventFootprint.eventDef;
 
 		return [].concat(
@@ -123,63 +122,62 @@ var EventRenderingUtilsMixin = {
 
 
 	// Utility for generating event skin-related CSS properties
-	getEventFootprintSkinCss: function(eventFootprint) {
+	getSkinCss: function(eventFootprint) {
 		return {
-			'background-color': this.getEventFootprintBackgroundColor(eventFootprint),
-			'border-color': this.getEventFootprintBorderColor(eventFootprint),
-			color: this.getEventFootprintTextColor(eventFootprint)
+			'background-color': this.getBgColor(eventFootprint),
+			'border-color': this.getBorderColor(eventFootprint),
+			color: this.getTextColor(eventFootprint)
 		};
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getEventFootprintBackgroundColor: function(eventFootprint) {
+	getBgColor: function(eventFootprint) {
 		return eventFootprint.eventDef.backgroundColor ||
 			eventFootprint.eventDef.color ||
-			this.getEventFootprintDefaultBackgroundColor(eventFootprint);
+			this.getDefaultBgColor(eventFootprint);
 	},
 
 
-	getEventFootprintDefaultBackgroundColor: function(eventFootprint) {
+	getDefaultBgColor: function(eventFootprint) {
 		var source = eventFootprint.eventDef.source;
 
 		return source.backgroundColor ||
 			source.color ||
-			this.opt('eventBackgroundColor') ||
-			this.opt('eventColor');
+			this.component.opt('eventBackgroundColor') ||
+			this.component.opt('eventColor');
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getEventFootprintBorderColor: function(eventFootprint) {
+	getBorderColor: function(eventFootprint) {
 		return eventFootprint.eventDef.borderColor ||
 			eventFootprint.eventDef.color ||
-			this.getEventFootprintDefaultBorderColor(eventFootprint);
+			this.getDefaultBorderColor(eventFootprint);
 	},
 
 
-	getEventFootprintDefaultBorderColor: function(eventFootprint) {
+	getDefaultBorderColor: function(eventFootprint) {
 		var source = eventFootprint.eventDef.source;
 
 		return source.borderColor ||
 			source.color ||
-			this.opt('eventBorderColor') ||
-			this.opt('eventColor');
+			this.component.opt('eventBorderColor') ||
+			this.component.opt('eventColor');
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getEventFootprintTextColor: function(eventFootprint) {
+	getTextColor: function(eventFootprint) {
 		return eventFootprint.eventDef.textColor ||
-			this.getEventFootprintDefaultTextColor(eventFootprint);
+			this.getDefaultTextColor(eventFootprint);
 	},
 
 
-	getEventFootprintDefaultTextColor: function(eventFootprint) {
+	getDefaultTextColor: function(eventFootprint) {
 		var source = eventFootprint.eventDef.source;
 
-		return source.textColor ||
-			this.opt('eventTextColor');
+		return source.textColor || this.component.opt('eventTextColor');
 	}
 
-};
+});

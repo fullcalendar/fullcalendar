@@ -5,7 +5,7 @@ Caller must:
 - implement componentFootprintToSegs
 - implement renderFgSegs
 - implement unrenderFgSegs
-- implement renderFill (FillSystemMixin)
+- implement renderFill
 
 This mixin can depend on ChronoComponent:
 - opt
@@ -14,15 +14,15 @@ This mixin can depend on ChronoComponent:
 - eventRangesToEventFootprints
 - eventFootprintsToSegs
 */
-var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
+var SegChronoComponentMixin = {
 
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
+	eventRenderUtils: null,
 	fillSystem: null,
 
 
 	initSegChronoComponent: function() {
-		//this.initEventRenderingUtils(); // needs to happen after dates
-
+		this.eventRenderUtils = new EventRenderUtils(this);
 		this.fillSystem = new FillSystem(this);
 	},
 
@@ -171,7 +171,7 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
 	// Generates an array of classNames to be used for the default rendering of a background event.
 	// NEEDED BY FILL SYSTEM, FillSystem::buildSegHtml :(
 	bgEventSegClasses: function(seg) {
-		return this.getBgEventFootprintClasses(seg.footprint);
+		return this.eventRenderUtils.getBgClasses(seg.footprint);
 	},
 
 
@@ -179,7 +179,7 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
 	// NEEDED BY FILL SYSTEM,  FillSystem::buildSegHtml :(
 	bgEventSegCss: function(seg) {
 		return {
-			'background-color': this.getEventFootprintSkinCss(seg.footprint)['background-color']
+			'background-color': this.eventRenderUtils.getSkinCss(seg.footprint)['background-color']
 		};
 	},
 
@@ -274,7 +274,7 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
 			'fc-event',
 			seg.isStart ? 'fc-start' : 'fc-not-start',
 			seg.isEnd ? 'fc-end' : 'fc-not-end'
-		].concat(this.getEventFootprintClasses(seg.footprint));
+		].concat(this.eventRenderUtils.getClasses(seg.footprint));
 
 		if (isDraggable) {
 			classes.push('fc-draggable');
@@ -371,4 +371,4 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
 		// subclasses must implement
 	}
 
-});
+};

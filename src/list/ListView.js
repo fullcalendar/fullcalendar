@@ -85,8 +85,9 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
 
-		// a requirement of SegChronoComponentMixin. TODO: more elegant
-		this.initEventRenderingUtils();
+		// a requirement of SegChronoComponentMixin.
+		// TODO: easy to forget. use listener.
+		this.eventRenderUtils.rangeUpdated();
 	},
 
 
@@ -269,8 +270,8 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		var eventDef = eventFootprint.eventDef;
 		var componentFootprint = eventFootprint.componentFootprint;
 		var url = eventDef.url;
-		var classes = [ 'fc-list-item' ].concat(this.getEventFootprintClasses(seg.footprint));
-		var bgColor = this.getEventFootprintBackgroundColor(seg.footprint);
+		var classes = [ 'fc-list-item' ].concat(this.eventRenderUtils.getClasses(seg.footprint));
+		var bgColor = this.eventRenderUtils.getBgColor(seg.footprint);
 		var timeHtml;
 
 		if (componentFootprint.isAllDay) {
@@ -279,7 +280,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		// if the event appears to span more than one day
 		else if (this.isMultiDayRange(componentFootprint.unzonedRange)) {
 			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
-				timeHtml = htmlEscape(this._getEventTimeText(
+				timeHtml = htmlEscape(this.eventRenderUtils._getTimeText(
 					calendar.msToMoment(seg.startMs),
 					calendar.msToMoment(seg.endMs),
 					componentFootprint.isAllDay
@@ -291,7 +292,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		}
 		else {
 			// Display the normal time text for the *event's* times
-			timeHtml = htmlEscape(this.getEventTimeText(eventFootprint));
+			timeHtml = htmlEscape(this.eventRenderUtils.getTimeText(eventFootprint));
 		}
 
 		if (url) {
@@ -299,7 +300,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		}
 
 		return '<tr class="' + classes.join(' ') + '">' +
-			(this.displayEventTime ?
+			(this.eventRenderUtils.displayEventTime ?
 				'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
 					(timeHtml || '') +
 				'</td>' :
