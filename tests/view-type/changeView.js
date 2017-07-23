@@ -27,6 +27,8 @@ describe('changeView', function() {
 	});
 
 	describe('when switching away from view, then back', function() {
+
+		// serves as a smoke test too
 		it('correctly renders original view again', function(done) {
 			var renderCalls = 0;
 
@@ -38,23 +40,39 @@ describe('changeView', function() {
 					switch (renderCalls) {
 						case 1:
 							expect(view.type).toBe('month');
+							checkViewIntegrity();
 							currentCalendar.changeView('agendaWeek');
 							break;
 						case 2:
 							expect(view.type).toBe('agendaWeek');
+							checkViewIntegrity();
 							currentCalendar.changeView('basicWeek');
 							break;
 						case 3:
 							expect(view.type).toBe('basicWeek');
-							currentCalendar.changeView('month');
+							checkViewIntegrity();
+							currentCalendar.changeView('listWeek');
 							break;
 						case 4:
+							expect(view.type).toBe('listWeek');
+							checkViewIntegrity();
+							currentCalendar.changeView('month');
+							break;
+						case 5:
 							expect(view.type).toBe('month');
+							checkViewIntegrity();
 							done();
 							break;
 					}
 				}
 			});
+
+			function checkViewIntegrity() {
+				var $el = $('.fc-view');
+				expect($el).toBeInDOM();
+				expect($el.children().length).toBeGreaterThan(0);
+				expect($el.text()).toBeTruthy();
+			}
 		});
 	});
 });
