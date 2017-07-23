@@ -466,6 +466,36 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	},
 
 
+	renderBusinessSegs: function(segs) {
+		segs = this.fillSystem.buildSegEls('businessHours', segs);
+		this.updateSegVerticals(segs);
+		this.attachSegsByCol(this.groupSegsByCol(segs), this.businessContainerEls);
+		this.businessSegs = segs;
+	},
+
+
+	unrenderBusinessSegs: function() {
+		this.unrenderNamedSegs('businessSegs');
+	},
+
+
+	/* Highlight
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderHighlightSegs: function(segs) {
+		segs = this.fillSystem.buildSegEls('highlight', segs);
+		this.updateSegVerticals(segs);
+		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
+		this.highlightSegs = segs;
+	},
+
+
+	unrenderHighlightSegs: function() {
+		this.unrenderNamedSegs('highlightSegs');
+	},
+
+
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 

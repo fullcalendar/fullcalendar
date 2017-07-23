@@ -402,40 +402,6 @@ TimeGrid.mixin({
 	},
 
 
-	/* Highlight
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderHighlightSegs: function(segs) {
-		segs = this.fillSystem.buildSegEls('highlight', segs);
-		this.updateSegVerticals(segs);
-		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
-		this.highlightSegs = segs;
-	},
-
-
-	unrenderHighlightSegs: function() {
-		this.unrenderNamedSegs('highlightSegs');
-	},
-
-
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderBusinessSegs: function(segs) {
-		segs = this.fillSystem.buildSegEls('businessHours', segs);
-		this.updateSegVerticals(segs);
-		this.attachSegsByCol(this.groupSegsByCol(segs), this.businessContainerEls);
-		this.businessSegs = segs;
-	},
-
-
-	unrenderBusinessSegs: function() {
-		this.unrenderNamedSegs('businessSegs');
-	},
-
-
 	/* Seg Rendering Utils
 	------------------------------------------------------------------------------------------------------------------*/
 
