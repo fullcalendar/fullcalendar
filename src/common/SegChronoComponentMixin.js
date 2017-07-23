@@ -14,14 +14,16 @@ This mixin can depend on ChronoComponent:
 - eventRangesToEventFootprints
 - eventFootprintsToSegs
 */
-var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemMixin, {
+var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, {
 
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
+	fillSystem: null,
 
 
 	initSegChronoComponent: function() {
 		//this.initEventRenderingUtils(); // needs to happen after dates
-		this.initFillSystem();
+
+		this.fillSystem = new FillSystem(this);
 	},
 
 
@@ -74,6 +76,10 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getEventSegs: function() {
 		return this.segs || [];
+	},
+
+
+	renderFill: function() {
 	},
 
 
@@ -151,26 +157,26 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 
 	// Unrenders all the currently rendered background event segments
 	unrenderBgSegs: function() {
-		this.unrenderFill('bgEvent');
+		this.fillSystem.unrender('bgEvent');
 	},
 
 
 	// Renders a background event element, given the default rendering. Called by the fill system.
-	// NEEDED BY FILL SYSTEM, renderFillSegEls :(
+	// NEEDED BY FILL SYSTEM, FillSystem::buildSegEls :(
 	bgEventSegEl: function(seg, el) {
 		return this.filterEventRenderEl(seg.footprint, el);
 	},
 
 
 	// Generates an array of classNames to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM, fillSegHtml :(
+	// NEEDED BY FILL SYSTEM, FillSystem::buildSegHtml :(
 	bgEventSegClasses: function(seg) {
 		return this.getBgEventFootprintClasses(seg.footprint);
 	},
 
 
 	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM,  fillSegHtml :(
+	// NEEDED BY FILL SYSTEM,  FillSystem::buildSegHtml :(
 	bgEventSegCss: function(seg) {
 		return {
 			'background-color': this.getEventFootprintSkinCss(seg.footprint)['background-color']
@@ -228,7 +234,7 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 
 
 	// Generates an array of classNames to be used for the rendering business hours overlay.
-	// NEEDED BY FILL SYSTEM, fillSegHtml :(
+	// NEEDED BY FILL SYSTEM, FillSystem::buildSegHtml :(
 	businessHoursSegClasses: function(seg) {
 		return [ 'fc-nonbusiness', 'fc-bgevent' ];
 	},
@@ -246,12 +252,12 @@ var SegChronoComponentMixin = $.extend({}, EventRenderingUtilsMixin, FillSystemM
 
 	// Unrenders the emphasis on a date range
 	unrenderHighlight: function() {
-		this.unrenderFill('highlight');
+		this.fillSystem.unrender('highlight');
 	},
 
 
 	// Generates an array of classNames for rendering the highlight.
-	// USED BY THE FILL SYSTEM, fillSegHtml
+	// USED BY THE FILL SYSTEM, FillSystem::buildSegHtml
 	highlightSegClasses: function() {
 		return [ 'fc-highlight' ];
 	},

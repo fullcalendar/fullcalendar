@@ -91,7 +91,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 
 	unrenderBusinessHours: function() {
-		this.unrenderFill('businessHours');
+		this.fillSystem.unrender('businessHours');
 	},
 
 
@@ -452,7 +452,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 		var i, seg;
 		var skeletonEl;
 
-		segs = this.renderFillSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+		segs = this.fillSystem.buildSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
@@ -461,12 +461,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 			nodes.push(skeletonEl[0]);
 		}
 
-		if (this.elsByFill[type]) {
-			this.elsByFill[type] = this.elsByFill[type].add(nodes);
-		}
-		else {
-			this.elsByFill[type] = $(nodes);
-		}
+		this.fillSystem.reportEls(type, nodes);
 
 		return segs;
 	},
