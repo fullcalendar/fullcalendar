@@ -384,7 +384,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 		var rowStructs;
 
 		segs = this.eventRenderUtils.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
-		rowStructs = this.renderSegRows(segs);
+		rowStructs = this.eventRenderUtils.renderSegRows(segs);
 
 		// inject each new event skeleton into each associated row
 		this.rowEls.each(function(row, rowNode) {

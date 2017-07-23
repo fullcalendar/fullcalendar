@@ -83,13 +83,13 @@ var SegChronoComponentMixin = {
 
 	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
 	renderFgSegs: function(segs) {
-		// subclasses must implement
+		return this.eventRenderUtils.renderFgSegs(segs);
 	},
 
 
 	// Unrenders all currently rendered foreground segments
 	unrenderFgSegs: function() {
-		// subclasses must implement
+		this.eventRenderUtils.unrenderFgSegs();
 	},
 
 
@@ -235,30 +235,6 @@ var SegChronoComponentMixin = {
 
 
 	eventRenderUtilsClass: EventRenderUtils,
-
-
-	sortEventSegs: function(segs) {
-		segs.sort(proxy(this, 'compareEventSegs'));
-	},
-
-
-	// A cmp function for determining which segments should take visual priority
-	compareEventSegs: function(seg1, seg2) {
-		var view = this._getView(); // TODO: not optimal!
-		var f1 = seg1.footprint.componentFootprint;
-		var r1 = f1.unzonedRange;
-		var f2 = seg2.footprint.componentFootprint;
-		var r2 = f2.unzonedRange;
-
-		return r1.startMs - r2.startMs || // earlier events go first
-			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
-			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
-			compareByFieldSpecs(
-				seg1.footprint.eventDef,
-				seg2.footprint.eventDef,
-				view.eventOrderSpecs
-			);
-	},
 
 
 	/* Converting componentFootprint/eventFootprint -> segs

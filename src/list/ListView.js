@@ -273,7 +273,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 				// append a day header
 				tbodyEl.append(this.dayHeaderHtml(this.dayDates[dayIndex]));
 
-				this.sortEventSegs(daySegs);
+				this.eventRenderUtils.sortEventSegs(daySegs);
 
 				for (i = 0; i < daySegs.length; i++) {
 					tbodyEl.append(daySegs[i].el); // append event row

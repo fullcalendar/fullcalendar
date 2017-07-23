@@ -44,6 +44,18 @@ var EventRenderUtils = Class.extend({
 	},
 
 
+	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
+	renderFgSegs: function(segs) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders all currently rendered foreground segments
+	unrenderFgSegs: function() {
+		// subclasses must implement
+	},
+
+
 	// Renders and assigns an `el` property for each foreground event segment.
 	// Only returns segments that successfully rendered.
 	// A utility that subclasses may use.
@@ -267,6 +279,29 @@ var EventRenderUtils = Class.extend({
 		var source = eventFootprint.eventDef.source;
 
 		return source.textColor || this.opt('eventTextColor');
+	},
+
+
+	sortEventSegs: function(segs) {
+		segs.sort(proxy(this, 'compareEventSegs'));
+	},
+
+
+	// A cmp function for determining which segments should take visual priority
+	compareEventSegs: function(seg1, seg2) {
+		var f1 = seg1.footprint.componentFootprint;
+		var r1 = f1.unzonedRange;
+		var f2 = seg2.footprint.componentFootprint;
+		var r2 = f2.unzonedRange;
+
+		return r1.startMs - r2.startMs || // earlier events go first
+			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
+			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
+			compareByFieldSpecs(
+				seg1.footprint.eventDef,
+				seg2.footprint.eventDef,
+				this.view.eventOrderSpecs
+			);
 	}
 
 });
