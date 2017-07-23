@@ -5,6 +5,8 @@
 
 var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
+	eventRenderUtilsClass: TimeGridEventRenderer,
+
 	view: null, // TODO: make more general and/or remove
 
 	dayRanges: null, // UnzonedRange[], of start-end of each day
@@ -21,6 +23,22 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	colCoordCache: null,
 	slatCoordCache: null,
+
+	colContainerEls: null, // containers for each column
+
+	// inner-containers for each column where different types of segs live
+	fgContainerEls: null,
+	bgContainerEls: null,
+	helperContainerEls: null,
+	highlightContainerEls: null,
+	businessContainerEls: null,
+
+	// arrays of different types of displayed segments
+	fgSegs: null,
+	bgSegs: null,
+	helperSegs: null,
+	highlightSegs: null,
+	businessSegs: null,
 
 
 	constructor: function(view) {
@@ -377,6 +395,79 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	},
 
 
+	// Refreshes the CSS top/bottom coordinates for each segment element.
+	// Works when called after initial render, after a window resize/zoom for example.
+	updateSegVerticals: function(segs) {
+		this.computeSegVerticals(segs);
+		this.assignSegVerticals(segs);
+	},
+
+
+	// For each segment in an array, computes and assigns its top and bottom properties
+	computeSegVerticals: function(segs) {
+		var i, seg;
+		var dayDate;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			dayDate = this.dayDates[seg.dayIndex];
+
+			seg.top = this.computeDateTop(seg.startMs, dayDate);
+			seg.bottom = this.computeDateTop(seg.endMs, dayDate);
+		}
+	},
+
+
+	// Given segments that already have their top/bottom properties computed, applies those values to
+	// the segments' elements.
+	assignSegVerticals: function(segs) {
+		var i, seg;
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			seg.el.css(this.generateSegVerticalCss(seg));
+		}
+	},
+
+
+	// Generates an object with CSS properties for the top/bottom coordinates of a segment element
+	generateSegVerticalCss: function(seg) {
+		return {
+			top: seg.top,
+			bottom: -seg.bottom // flipped because needs to be space beyond bottom edge of event container
+		};
+	},
+
+
+	/* Event Rendering
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderFgSegs: function(segs) {
+		segs = this.eventRenderUtils.renderFgSegsIntoContainers(segs, this.fgContainerEls);
+
+		this.fgSegs = segs;
+
+		return segs; // needed for Grid::renderEvents
+	},
+
+
+	renderBgSegs: function(segs) {
+		segs = this.fillSystem.buildSegEls('bgEvent', segs);
+
+		this.updateSegVerticals(segs);
+		this.attachSegsByCol(this.groupSegsByCol(segs), this.bgContainerEls);
+		this.bgSegs = segs;
+
+		return segs; // needed for Grid::renderEvents
+	},
+
+
+	unrenderBgSegs: function() {
+		this.unrenderNamedSegs('bgSegs');
+	},
+
+
 
 	/* Event Drag Visualization
 	------------------------------------------------------------------------------------------------------------------*/
@@ -446,6 +537,39 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	},
 
 
+	renderHelperSegs: function(segs, sourceSeg) {
+		var helperEls = [];
+		var i, seg;
+		var sourceEl;
+
+		segs = this.eventRenderUtils.renderFgSegsIntoContainers(segs, this.helperContainerEls);
+
+		// Try to make the segment that is in the same row as sourceSeg look the same
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+			if (sourceSeg && sourceSeg.col === seg.col) {
+				sourceEl = sourceSeg.el;
+				seg.el.css({
+					left: sourceEl.css('left'),
+					right: sourceEl.css('right'),
+					'margin-left': sourceEl.css('margin-left'),
+					'margin-right': sourceEl.css('margin-right')
+				});
+			}
+			helperEls.push(seg.el[0]);
+		}
+
+		this.helperSegs = segs;
+
+		return $(helperEls); // must return rendered helpers
+	},
+
+
+	unrenderHelperSegs: function() {
+		this.unrenderNamedSegs('helperSegs');
+	},
+
+
 	/* Business Hours
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -489,6 +613,98 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	unrenderHighlightSegs: function() {
 		this.unrenderNamedSegs('highlightSegs');
+	},
+
+
+	/* Seg Rendering Utils
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders the DOM that the view's content will live in
+	renderContentSkeleton: function() {
+		var cellHtml = '';
+		var i;
+		var skeletonEl;
+
+		for (i = 0; i < this.colCnt; i++) {
+			cellHtml +=
+				'<td>' +
+					'<div class="fc-content-col">' +
+						'<div class="fc-event-container fc-helper-container"></div>' +
+						'<div class="fc-event-container"></div>' +
+						'<div class="fc-highlight-container"></div>' +
+						'<div class="fc-bgevent-container"></div>' +
+						'<div class="fc-business-container"></div>' +
+					'</div>' +
+				'</td>';
+		}
+
+		skeletonEl = $(
+			'<div class="fc-content-skeleton">' +
+				'<table>' +
+					'<tr>' + cellHtml + '</tr>' +
+				'</table>' +
+			'</div>'
+		);
+
+		this.colContainerEls = skeletonEl.find('.fc-content-col');
+		this.helperContainerEls = skeletonEl.find('.fc-helper-container');
+		this.fgContainerEls = skeletonEl.find('.fc-event-container:not(.fc-helper-container)');
+		this.bgContainerEls = skeletonEl.find('.fc-bgevent-container');
+		this.highlightContainerEls = skeletonEl.find('.fc-highlight-container');
+		this.businessContainerEls = skeletonEl.find('.fc-business-container');
+
+		this.bookendCells(skeletonEl.find('tr')); // TODO: do this on string level
+		this.el.append(skeletonEl);
+	},
+
+
+	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
+	groupSegsByCol: function(segs) {
+		var segsByCol = [];
+		var i;
+
+		for (i = 0; i < this.colCnt; i++) {
+			segsByCol.push([]);
+		}
+
+		for (i = 0; i < segs.length; i++) {
+			segsByCol[segs[i].col].push(segs[i]);
+		}
+
+		return segsByCol;
+	},
+
+
+	// Given segments grouped by column, insert the segments' elements into a parallel array of container
+	// elements, each living within a column.
+	attachSegsByCol: function(segsByCol, containerEls) {
+		var col;
+		var segs;
+		var i;
+
+		for (col = 0; col < this.colCnt; col++) { // iterate each column grouping
+			segs = segsByCol[col];
+
+			for (i = 0; i < segs.length; i++) {
+				containerEls.eq(col).append(segs[i].el);
+			}
+		}
+	},
+
+
+	// Given the name of a property of `this` object, assumed to be an array of segments,
+	// loops through each segment and removes from DOM. Will null-out the property afterwards.
+	unrenderNamedSegs: function(propName) {
+		var segs = this[propName];
+		var i;
+
+		if (segs) {
+			for (i = 0; i < segs.length; i++) {
+				segs[i].el.remove();
+			}
+			this[propName] = null;
+		}
 	},
 
 

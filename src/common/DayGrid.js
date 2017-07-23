@@ -4,6 +4,8 @@
 
 var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
+	eventRenderUtilsClass: DayGridEventRenderer,
+
 	view: null, // TODO: make more general and/or remove
 
 	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
@@ -319,6 +321,37 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 	getCellEl: function(row, col) {
 		return this.cellEls.eq(row * this.colCnt + col);
+	},
+
+
+	/* Event Rendering
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders the given background event segments onto the grid
+	renderBgSegs: function(segs) {
+
+		// don't render timed background events
+		var allDaySegs = $.grep(segs, function(seg) {
+			return seg.footprint.componentFootprint.isAllDay;
+		});
+
+		return SegChronoComponentMixin.renderBgSegs.call(this, allDaySegs); // call the super-method
+	},
+
+
+	// Unrenders all events currently rendered on the grid
+	unrenderEvents: function() {
+		this.removeSegPopover(); // removes the "more.." events popover
+
+		SegChronoComponentMixin.unrenderEvents.apply(this, arguments);
+	},
+
+
+	// Retrieves all rendered segment objects currently rendered on the grid
+	getEventSegs: function() {
+		return SegChronoComponentMixin.getEventSegs.call(this) // get the segments from the super-method
+			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 
 
