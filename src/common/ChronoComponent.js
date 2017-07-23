@@ -359,31 +359,6 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	// Foreground Segment Rendering
-	// ---------------------------------------------------------------------------------------------------------------
-
-
-	// Given an event and the default element used for rendering, returns the element that should actually be used.
-	// Basically runs events and elements through the eventRender hook.
-	filterEventRenderEl: function(eventFootprint, el) {
-		var legacy = eventFootprint.getEventLegacy();
-
-		var custom = this.publiclyTrigger('eventRender', {
-			context: legacy,
-			args: [ legacy, el, this._getView() ]
-		});
-
-		if (custom === false) { // means don't render at all
-			el = null;
-		}
-		else if (custom && custom !== true) {
-			el = $(custom);
-		}
-
-		return el;
-	},
-
-
 	// Navigation
 	// ----------------------------------------------------------------------------------------------------------------
 

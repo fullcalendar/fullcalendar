@@ -60,6 +60,27 @@ var EventRenderUtils = Class.extend({
 	},
 
 
+	// Given an event and the default element used for rendering, returns the element that should actually be used.
+	// Basically runs events and elements through the eventRender hook.
+	filterEventRenderEl: function(eventFootprint, el) { // TODO: move this to EventRenderUtils!!!
+		var legacy = eventFootprint.getEventLegacy();
+
+		var custom = this.delegate.publiclyTrigger('eventRender', {
+			context: legacy,
+			args: [ legacy, el, this.delegate._getView() ]
+		});
+
+		if (custom === false) { // means don't render at all
+			el = null;
+		}
+		else if (custom && custom !== true) {
+			el = $(custom);
+		}
+
+		return el;
+	},
+
+
 	// Compute the text that should be displayed on an event's element.
 	// `range` can be the Event object itself, or something range-like, with at least a `start`.
 	// If event times are disabled, or the event has no time, will return a blank string.

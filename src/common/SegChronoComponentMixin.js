@@ -10,7 +10,6 @@ Caller must:
 This mixin can depend on ChronoComponent:
 - opt
 - _getView
-- filterEventRenderEl
 - eventRangesToEventFootprints
 - eventFootprintsToSegs
 */
@@ -124,7 +123,7 @@ var SegChronoComponentMixin = {
 				var el = $(node);
 
 				if (hasEventRenderHandlers) { // optimization
-					el = _this.filterEventRenderEl(seg.footprint, el);
+					el = _this.eventRenderUtils.filterEventRenderEl(seg.footprint, el);
 				}
 
 				if (el) {
@@ -165,7 +164,7 @@ var SegChronoComponentMixin = {
 	// Renders a background event element, given the default rendering. Called by the fill system.
 	// NEEDED BY FILL SYSTEM, FillSystem::buildSegEls :(
 	bgEventSegEl: function(seg, el) {
-		return this.filterEventRenderEl(seg.footprint, el);
+		return this.eventRenderUtils.filterEventRenderEl(seg.footprint, el);
 	},
 
 
