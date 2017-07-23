@@ -44,6 +44,75 @@ var EventRenderUtils = Class.extend({
 	},
 
 
+	// Renders and assigns an `el` property for each foreground event segment.
+	// Only returns segments that successfully rendered.
+	// A utility that subclasses may use.
+	renderFgSegEls: function(segs, disableResizing) {
+		var _this = this;
+		var hasEventRenderHandlers = this.view.hasPublicHandlers('eventRender');
+		var html = '';
+		var renderedSegs = [];
+		var i;
+
+		if (segs.length) { // don't build an empty html string
+
+			// build a large concatenation of event segment HTML
+			for (i = 0; i < segs.length; i++) {
+				html += this.fgSegHtml(segs[i], disableResizing);
+			}
+
+			// Grab individual elements from the combined HTML string. Use each as the default rendering.
+			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
+			$(html).each(function(i, node) {
+				var seg = segs[i];
+				var el = $(node);
+
+				if (hasEventRenderHandlers) { // optimization
+					el = _this.filterEventRenderEl(seg.footprint, el);
+				}
+
+				if (el) {
+					el.data('fc-seg', seg); // used by handlers
+					seg.el = el;
+					renderedSegs.push(seg);
+				}
+			});
+		}
+
+		return renderedSegs;
+	},
+
+
+	// Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
+	fgSegHtml: function(seg, disableResizing) {
+		// subclasses should implement
+	},
+
+
+	// Generic utility for generating the HTML classNames for an event segment's element
+	getSegClasses: function(seg, isDraggable, isResizable) {
+		var classes = [
+			'fc-event',
+			seg.isStart ? 'fc-start' : 'fc-not-start',
+			seg.isEnd ? 'fc-end' : 'fc-not-end'
+		].concat(this.getClasses(seg.footprint));
+
+		if (isDraggable) {
+			classes.push('fc-draggable');
+		}
+		if (isResizable) {
+			classes.push('fc-resizable');
+		}
+
+		// event is currently selected? attach a className.
+		if (this.view.isEventDefSelected(seg.footprint.eventDef)) {
+			classes.push('fc-selected');
+		}
+
+		return classes;
+	},
+
+
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
 	filterEventRenderEl: function(eventFootprint, el) { // TODO: move this to EventRenderUtils!!!

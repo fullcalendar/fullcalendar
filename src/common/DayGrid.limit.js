@@ -315,7 +315,7 @@ DayGrid.mixin({
 		var i;
 
 		// render each seg's `el` and only return the visible segs
-		segs = this.renderFgSegEls(segs, true); // disableResizing=true
+		segs = this.eventRenderUtils.renderFgSegEls(segs, true); // disableResizing=true
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {

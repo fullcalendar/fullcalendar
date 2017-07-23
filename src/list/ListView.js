@@ -145,6 +145,66 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		// like "4:00am"
 		computeEventTimeFormat: function() {
 			return this.opt('mediumTimeFormat');
+		},
+
+
+		// generates the HTML for a single event row
+		fgSegHtml: function(seg) {
+			var view = this.view;
+			var calendar = view.calendar;
+			var theme = calendar.theme;
+			var eventFootprint = seg.footprint;
+			var eventDef = eventFootprint.eventDef;
+			var componentFootprint = eventFootprint.componentFootprint;
+			var url = eventDef.url;
+			var classes = [ 'fc-list-item' ].concat(this.getClasses(seg.footprint));
+			var bgColor = this.getBgColor(seg.footprint);
+			var timeHtml;
+
+			if (componentFootprint.isAllDay) {
+				timeHtml = view.getAllDayHtml();
+			}
+			// if the event appears to span more than one day
+			else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
+				if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
+					timeHtml = htmlEscape(this._getTimeText(
+						calendar.msToMoment(seg.startMs),
+						calendar.msToMoment(seg.endMs),
+						componentFootprint.isAllDay
+					));
+				}
+				else { // inner segment that lasts the whole day
+					timeHtml = view.getAllDayHtml();
+				}
+			}
+			else {
+				// Display the normal time text for the *event's* times
+				timeHtml = htmlEscape(this.getTimeText(eventFootprint));
+			}
+
+			if (url) {
+				classes.push('fc-has-url');
+			}
+
+			return '<tr class="' + classes.join(' ') + '">' +
+				(this.displayEventTime ?
+					'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
+						(timeHtml || '') +
+					'</td>' :
+					'') +
+				'<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
+					'<span class="fc-event-dot"' +
+					(bgColor ?
+						' style="background-color:' + bgColor + '"' :
+						'') +
+					'></span>' +
+				'</td>' +
+				'<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
+					'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
+						htmlEscape(eventDef.title || '') +
+					'</a>' +
+				'</td>' +
+			'</tr>';
 		}
 
 	}),
@@ -170,7 +230,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
 	// returns list of foreground segs that were actually rendered
 	renderFgSegs: function(segs) {
-		segs = this.renderFgSegEls(segs); // might filter away hidden events
+		segs = this.eventRenderUtils.renderFgSegEls(segs); // might filter away hidden events
 
 		if (!segs.length) {
 			this.renderEmptyMessage();
@@ -261,65 +321,6 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 						htmlEscape(dayDate.format(altFormat)) // inner HTML
 					) :
 					'') +
-			'</td>' +
-		'</tr>';
-	},
-
-
-	// generates the HTML for a single event row
-	fgSegHtml: function(seg) {
-		var calendar = this.calendar;
-		var theme = calendar.theme;
-		var eventFootprint = seg.footprint;
-		var eventDef = eventFootprint.eventDef;
-		var componentFootprint = eventFootprint.componentFootprint;
-		var url = eventDef.url;
-		var classes = [ 'fc-list-item' ].concat(this.eventRenderUtils.getClasses(seg.footprint));
-		var bgColor = this.eventRenderUtils.getBgColor(seg.footprint);
-		var timeHtml;
-
-		if (componentFootprint.isAllDay) {
-			timeHtml = this.getAllDayHtml();
-		}
-		// if the event appears to span more than one day
-		else if (this.isMultiDayRange(componentFootprint.unzonedRange)) {
-			if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
-				timeHtml = htmlEscape(this.eventRenderUtils._getTimeText(
-					calendar.msToMoment(seg.startMs),
-					calendar.msToMoment(seg.endMs),
-					componentFootprint.isAllDay
-				));
-			}
-			else { // inner segment that lasts the whole day
-				timeHtml = this.getAllDayHtml();
-			}
-		}
-		else {
-			// Display the normal time text for the *event's* times
-			timeHtml = htmlEscape(this.eventRenderUtils.getTimeText(eventFootprint));
-		}
-
-		if (url) {
-			classes.push('fc-has-url');
-		}
-
-		return '<tr class="' + classes.join(' ') + '">' +
-			(this.eventRenderUtils.displayEventTime ?
-				'<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
-					(timeHtml || '') +
-				'</td>' :
-				'') +
-			'<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
-				'<span class="fc-event-dot"' +
-				(bgColor ?
-					' style="background-color:' + bgColor + '"' :
-					'') +
-				'></span>' +
-			'</td>' +
-			'<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
-				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
-					htmlEscape(eventDef.title || '') +
-				'</a>' +
 			'</td>' +
 		'</tr>';
 	}

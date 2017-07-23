@@ -33,6 +33,86 @@ TimeGrid.mixin({
 		// Computes a default `displayEventEnd` value if one is not expliclty defined
 		computeDisplayEventEnd: function() {
 			return true;
+		},
+
+
+		// Renders the HTML for a single event segment's default rendering
+		fgSegHtml: function(seg, disableResizing) {
+			var view = this.view;
+			var calendar = view.calendar;
+			var componentFootprint = seg.footprint.componentFootprint;
+			var isAllDay = componentFootprint.isAllDay;
+			var eventDef = seg.footprint.eventDef;
+			var isDraggable = view.isEventDefDraggable(eventDef);
+			var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
+			var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
+			var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
+			var skinCss = cssToStr(this.getSkinCss(seg.footprint));
+			var timeText;
+			var fullTimeText; // more verbose time text. for the print stylesheet
+			var startTimeText; // just the start time text
+
+			classes.unshift('fc-time-grid-event', 'fc-v-event');
+
+			// if the event appears to span more than one day...
+			if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
+				// Don't display time text on segments that run entirely through a day.
+				// That would appear as midnight-midnight and would look dumb.
+				// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
+				if (seg.isStart || seg.isEnd) {
+					var zonedStart = calendar.msToMoment(seg.startMs);
+					var zonedEnd = calendar.msToMoment(seg.endMs);
+					timeText = this._getTimeText(zonedStart, zonedEnd, isAllDay);
+					fullTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
+					startTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
+				}
+			}
+			else {
+				// Display the normal time text for the *event's* times
+				timeText = this.getTimeText(seg.footprint);
+				fullTimeText = this.getTimeText(seg.footprint, 'LT');
+				startTimeText = this.getTimeText(seg.footprint, null, false); // displayEnd=false
+			}
+
+			return '<a class="' + classes.join(' ') + '"' +
+				(eventDef.url ?
+					' href="' + htmlEscape(eventDef.url) + '"' :
+					''
+					) +
+				(skinCss ?
+					' style="' + skinCss + '"' :
+					''
+					) +
+				'>' +
+					'<div class="fc-content">' +
+						(timeText ?
+							'<div class="fc-time"' +
+							' data-start="' + htmlEscape(startTimeText) + '"' +
+							' data-full="' + htmlEscape(fullTimeText) + '"' +
+							'>' +
+								'<span>' + htmlEscape(timeText) + '</span>' +
+							'</div>' :
+							''
+							) +
+						(eventDef.title ?
+							'<div class="fc-title">' +
+								htmlEscape(eventDef.title) +
+							'</div>' :
+							''
+							) +
+					'</div>' +
+					'<div class="fc-bg"/>' +
+					/* TODO: write CSS for this
+					(isResizableFromStart ?
+						'<div class="fc-resizer fc-start-resizer" />' :
+						''
+						) +
+					*/
+					(isResizableFromEnd ?
+						'<div class="fc-resizer fc-end-resizer" />' :
+						''
+						) +
+				'</a>';
 		}
 
 	}),
@@ -246,7 +326,7 @@ TimeGrid.mixin({
 		var segsByCol;
 		var col;
 
-		segs = this.renderFgSegEls(segs); // will call fgSegHtml
+		segs = this.eventRenderUtils.renderFgSegEls(segs);
 		segsByCol = this.groupSegsByCol(segs);
 
 		for (col = 0; col < this.colCnt; col++) {
@@ -256,87 +336,6 @@ TimeGrid.mixin({
 		this.attachSegsByCol(segsByCol, containerEls);
 
 		return segs;
-	},
-
-
-	// Renders the HTML for a single event segment's default rendering
-	fgSegHtml: function(seg, disableResizing) {
-		var view = this.view;
-		var calendar = view.calendar;
-		var eventRenderUtils = this.eventRenderUtils;
-		var componentFootprint = seg.footprint.componentFootprint;
-		var isAllDay = componentFootprint.isAllDay;
-		var eventDef = seg.footprint.eventDef;
-		var isDraggable = view.isEventDefDraggable(eventDef);
-		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef);
-		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
-		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.eventRenderUtils.getSkinCss(seg.footprint));
-		var timeText;
-		var fullTimeText; // more verbose time text. for the print stylesheet
-		var startTimeText; // just the start time text
-
-		classes.unshift('fc-time-grid-event', 'fc-v-event');
-
-		// if the event appears to span more than one day...
-		if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
-			// Don't display time text on segments that run entirely through a day.
-			// That would appear as midnight-midnight and would look dumb.
-			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
-			if (seg.isStart || seg.isEnd) {
-				var zonedStart = calendar.msToMoment(seg.startMs);
-				var zonedEnd = calendar.msToMoment(seg.endMs);
-				timeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay);
-				fullTimeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay, 'LT');
-				startTimeText = eventRenderUtils._getTimeText(zonedStart, zonedEnd, isAllDay, null, false); // displayEnd=false
-			}
-		}
-		else {
-			// Display the normal time text for the *event's* times
-			timeText = eventRenderUtils.getTimeText(seg.footprint);
-			fullTimeText = eventRenderUtils.getTimeText(seg.footprint, 'LT');
-			startTimeText = eventRenderUtils.getTimeText(seg.footprint, null, false); // displayEnd=false
-		}
-
-		return '<a class="' + classes.join(' ') + '"' +
-			(eventDef.url ?
-				' href="' + htmlEscape(eventDef.url) + '"' :
-				''
-				) +
-			(skinCss ?
-				' style="' + skinCss + '"' :
-				''
-				) +
-			'>' +
-				'<div class="fc-content">' +
-					(timeText ?
-						'<div class="fc-time"' +
-						' data-start="' + htmlEscape(startTimeText) + '"' +
-						' data-full="' + htmlEscape(fullTimeText) + '"' +
-						'>' +
-							'<span>' + htmlEscape(timeText) + '</span>' +
-						'</div>' :
-						''
-						) +
-					(eventDef.title ?
-						'<div class="fc-title">' +
-							htmlEscape(eventDef.title) +
-						'</div>' :
-						''
-						) +
-				'</div>' +
-				'<div class="fc-bg"/>' +
-				/* TODO: write CSS for this
-				(isResizableFromStart ?
-					'<div class="fc-resizer fc-start-resizer" />' :
-					''
-					) +
-				*/
-				(isResizableFromEnd ?
-					'<div class="fc-resizer fc-end-resizer" />' :
-					''
-					) +
-			'</a>';
 	},
 
 
