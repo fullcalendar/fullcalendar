@@ -22,7 +22,7 @@ var SegChronoComponentMixin = {
 
 	initSegChronoComponent: function() {
 		this.eventRenderUtils = new EventRenderUtils(this);
-		this.fillSystem = new FillSystem(this);
+		this.fillSystem = new this.fillSystemClass(this);
 	},
 
 
@@ -75,11 +75,6 @@ var SegChronoComponentMixin = {
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getEventSegs: function() {
 		return this.segs || [];
-	},
-
-
-	renderFill: function() {
-		// must implement
 	},
 
 
@@ -161,29 +156,6 @@ var SegChronoComponentMixin = {
 	},
 
 
-	// Renders a background event element, given the default rendering. Called by the fill system.
-	// NEEDED BY FILL SYSTEM, FillSystem::buildSegEls :(
-	bgEventSegEl: function(seg, el) {
-		return this.eventRenderUtils.filterEventRenderEl(seg.footprint, el);
-	},
-
-
-	// Generates an array of classNames to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM, FillSystem::buildSegHtml :(
-	bgEventSegClasses: function(seg) {
-		return this.eventRenderUtils.getBgClasses(seg.footprint);
-	},
-
-
-	// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-	// NEEDED BY FILL SYSTEM,  FillSystem::buildSegHtml :(
-	bgEventSegCss: function(seg) {
-		return {
-			'background-color': this.eventRenderUtils.getSkinCss(seg.footprint)['background-color']
-		};
-	},
-
-
 	/* Business Hours
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -233,13 +205,6 @@ var SegChronoComponentMixin = {
 	},
 
 
-	// Generates an array of classNames to be used for the rendering business hours overlay.
-	// NEEDED BY FILL SYSTEM, FillSystem::buildSegHtml :(
-	businessHoursSegClasses: function(seg) {
-		return [ 'fc-nonbusiness', 'fc-bgevent' ];
-	},
-
-
 	/* Implement Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -256,11 +221,59 @@ var SegChronoComponentMixin = {
 	},
 
 
-	// Generates an array of classNames for rendering the highlight.
-	// USED BY THE FILL SYSTEM, FillSystem::buildSegHtml
-	highlightSegClasses: function() {
-		return [ 'fc-highlight' ];
+	/* Fill System
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderFill: function() {
+		// must implement
 	},
+
+
+	fillSystemClass: FillSystem.extend({
+
+		eventRenderUtils: null,
+
+
+		constructor: function(component) {
+			FillSystem.call(this);
+			this.eventRenderUtils = component.eventRenderUtils;
+		},
+
+
+		// Renders a background event element, given the default rendering. Called by the fill system.
+		bgEventSegEl: function(seg, el) {
+			return this.eventRenderUtils.filterEventRenderEl(seg.footprint, el);
+		},
+
+
+		// Generates an array of classNames to be used for the default rendering of a background event.
+		bgEventSegClasses: function(seg) {
+			return this.eventRenderUtils.getBgClasses(seg.footprint);
+		},
+
+
+		// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
+		bgEventSegCss: function(seg) {
+			return {
+				'background-color': this.eventRenderUtils.getSkinCss(seg.footprint)['background-color']
+			};
+		},
+
+
+		// Generates an array of classNames to be used for the rendering business hours overlay.
+		businessHoursSegClasses: function(seg) {
+			return [ 'fc-nonbusiness', 'fc-bgevent' ];
+		},
+
+
+		// Generates an array of classNames for rendering the highlight.
+		// USED BY THE FILL SYSTEM, FillSystem::buildSegHtml
+		highlightSegClasses: function() {
+			return [ 'fc-highlight' ];
+		}
+
+	}),
 
 
 	/* Utils

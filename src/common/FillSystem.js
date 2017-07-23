@@ -1,19 +1,11 @@
 
 var FillSystem = Class.extend({ // use for highlight, background events, business hours
 
-	delegate: null,
+	fillSegTag: 'div',
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
-	/*
-	delegate defines:
-		- fillSegTag (optional, defaults to 'div')
-		- *SegEl
-		- *SegClasses
-		- *SegCss
-	*/
-	constructor: function(delegate) {
-		this.delegate = delegate;
+	constructor: function() {
 		this.elsByFill = {};
 	},
 
@@ -42,8 +34,8 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 	// Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
 	// Only returns segments that successfully rendered.
 	buildSegEls: function(type, segs) {
-		var delegate = this.delegate;
-		var segElMethod = delegate[type + 'SegEl'];
+		var _this = this;
+		var segElMethod = this[type + 'SegEl'];
 		var html = '';
 		var renderedSegs = [];
 		var i;
@@ -63,14 +55,14 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 
 				// allow custom filter methods per-type
 				if (segElMethod) {
-					el = segElMethod.call(delegate, seg, el);
+					el = segElMethod.call(_this, seg, el);
 				}
 
 				if (el) { // custom filters did not cancel the render
 					el = $(el); // allow custom filter to return raw DOM node
 
 					// correct element type? (would be bad if a non-TD were inserted into a table for example)
-					if (el.is(delegate.fillSegTag || 'div')) {
+					if (el.is(_this.fillSegTag)) {
 						seg.el = el;
 						renderedSegs.push(seg);
 					}
@@ -84,16 +76,14 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 
 	// Builds the HTML needed for one fill segment. Generic enough to work with different types.
 	buildSegHtml: function(type, seg) {
-		var delegate = this.delegate;
-
 		// custom hooks per-type
-		var classesMethod = delegate[type + 'SegClasses'];
-		var cssMethod = delegate[type + 'SegCss'];
+		var classesMethod = this[type + 'SegClasses'];
+		var cssMethod = this[type + 'SegCss'];
 
-		var classes = classesMethod ? classesMethod.call(delegate, seg) : [];
-		var css = cssToStr(cssMethod ? cssMethod.call(delegate, seg) : {});
+		var classes = classesMethod ? classesMethod.call(this, seg) : [];
+		var css = cssToStr(cssMethod ? cssMethod.call(this, seg) : {});
 
-		return '<' + (delegate.fillSegTag || 'div') +
+		return '<' + this.fillSegTag +
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';

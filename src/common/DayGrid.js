@@ -442,7 +442,9 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	fillSegTag: 'td', // override the default tag name
+	fillSystemClass: SegChronoComponentMixin.fillSystemClass.extend({
+		fillSegTag: 'td' // override the default tag name
+	}),
 
 
 	// Renders a set of rectangles over the given segments of days.
