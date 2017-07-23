@@ -327,11 +327,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 		if (isResize) {
 			this.updateSegVerticals(
-				[].concat(
-					this.eventRenderUtils.fgSegs || [],
-					this.bgSegs || [],
-					this.businessSegs || []
-				)
+				[].concat(this.fgSegs || [], this.bgSegs || [], this.businessSegs || [])
 			);
 		}
 	},

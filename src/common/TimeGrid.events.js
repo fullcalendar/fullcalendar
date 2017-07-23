@@ -33,15 +33,6 @@ TimeGrid.mixin({
 		},
 
 
-		renderFgSegs: function(segs) {
-			segs = this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls);
-
-			this.fgSegs = segs;
-
-			return segs; // needed for Grid::renderEvents
-		},
-
-
 		// Given an array of foreground segments, render a DOM element for each, computes position,
 		// and attaches to the column inner-container elements.
 		renderFgSegsIntoContainers: function(segs, containerEls) {
@@ -381,6 +372,19 @@ TimeGrid.mixin({
 
 	unrenderHelperSegs: function() {
 		this.unrenderNamedSegs('helperSegs');
+	},
+
+
+	/* Foreground Events
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	renderFgSegs: function(segs) {
+		segs = this.eventRenderUtils.renderFgSegsIntoContainers(segs, this.fgContainerEls);
+
+		this.fgSegs = segs;
+
+		return segs; // needed for Grid::renderEvents
 	},
 
 
