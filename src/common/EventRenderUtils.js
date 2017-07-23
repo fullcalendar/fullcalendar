@@ -1,7 +1,7 @@
 
 var EventRenderUtils = Class.extend({
 
-	component: null,
+	delegate: null,
 
 	// derived from options
 	eventTimeFormat: null,
@@ -10,44 +10,46 @@ var EventRenderUtils = Class.extend({
 
 
 	/*
-	component defines:
+	delegate defines:
+		- opt
+		- _getView
 		- computeEventTimeFormat (optional, defaults to smallTimeFormat)
 		- computeDisplayEventTime (optional, defaults to true)
 		- computeDisplayEventEnd (optional, defaults to false)
 
 	OTHER REQUIREMENTS:
-		- must call rangeUpdated() when component's range is updated
+		- must call rangeUpdated() when delegate's range is updated
 	*/
-	constructor: function(component) {
-		this.component = component;
+	constructor: function(delegate) {
+		this.delegate = delegate;
 	},
 
 
 	// Updates values that rely on options and also relate to range
 	rangeUpdated: function() {
-		var component = this.component;
+		var delegate = this.delegate;
 		var displayEventTime;
 		var displayEventEnd;
 
 		this.eventTimeFormat =
-			component.opt('eventTimeFormat') ||
-			component.opt('timeFormat') || // deprecated
-			(component.computeEventTimeFormat ?
-				component.computeEventTimeFormat() :
+			delegate.opt('eventTimeFormat') ||
+			delegate.opt('timeFormat') || // deprecated
+			(delegate.computeEventTimeFormat ?
+				delegate.computeEventTimeFormat() :
 				'') ||
-			component.opt('smallTimeFormat');
+			delegate.opt('smallTimeFormat');
 
-		displayEventTime = component.opt('displayEventTime');
-		if (displayEventTime == null && component.computeDisplayEventTime) {
-			displayEventTime = component.computeDisplayEventTime(); // might be based off of range
+		displayEventTime = delegate.opt('displayEventTime');
+		if (displayEventTime == null && delegate.computeDisplayEventTime) {
+			displayEventTime = delegate.computeDisplayEventTime(); // might be based off of range
 		}
 		if (displayEventTime == null) {
 			displayEventTime = true;
 		}
 
-		displayEventEnd = component.opt('displayEventEnd');
-		if (displayEventEnd == null && component.computeDisplayEventEnd) {
-			displayEventEnd = component.computeDisplayEventEnd(); // might be based off of range
+		displayEventEnd = delegate.opt('displayEventEnd');
+		if (displayEventEnd == null && delegate.computeDisplayEventEnd) {
+			displayEventEnd = delegate.computeDisplayEventEnd(); // might be based off of range
 		}
 		if (displayEventEnd == null) {
 			displayEventEnd = true;
@@ -75,7 +77,7 @@ var EventRenderUtils = Class.extend({
 
 
 	_getTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
-		var view = this.component._getView();
+		var view = this.delegate._getView();
 
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
@@ -144,8 +146,8 @@ var EventRenderUtils = Class.extend({
 
 		return source.backgroundColor ||
 			source.color ||
-			this.component.opt('eventBackgroundColor') ||
-			this.component.opt('eventColor');
+			this.delegate.opt('eventBackgroundColor') ||
+			this.delegate.opt('eventColor');
 	},
 
 
@@ -162,8 +164,8 @@ var EventRenderUtils = Class.extend({
 
 		return source.borderColor ||
 			source.color ||
-			this.component.opt('eventBorderColor') ||
-			this.component.opt('eventColor');
+			this.delegate.opt('eventBorderColor') ||
+			this.delegate.opt('eventColor');
 	},
 
 
@@ -177,7 +179,7 @@ var EventRenderUtils = Class.extend({
 	getDefaultTextColor: function(eventFootprint) {
 		var source = eventFootprint.eventDef.source;
 
-		return source.textColor || this.component.opt('eventTextColor');
+		return source.textColor || this.delegate.opt('eventTextColor');
 	}
 
 });

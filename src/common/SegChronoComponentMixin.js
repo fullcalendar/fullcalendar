@@ -80,6 +80,7 @@ var SegChronoComponentMixin = {
 
 
 	renderFill: function() {
+		// must implement
 	},
 
 

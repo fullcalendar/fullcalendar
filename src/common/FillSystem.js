@@ -1,19 +1,19 @@
 
 var FillSystem = Class.extend({ // use for highlight, background events, business hours
 
-	component: null,
+	delegate: null,
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
 	/*
-	component defines:
+	delegate defines:
 		- fillSegTag (optional, defaults to 'div')
 		- *SegEl
 		- *SegClasses
 		- *SegCss
 	*/
-	constructor: function(component) {
-		this.component = component;
+	constructor: function(delegate) {
+		this.delegate = delegate;
 		this.elsByFill = {};
 	},
 
@@ -42,8 +42,8 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 	// Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
 	// Only returns segments that successfully rendered.
 	buildSegEls: function(type, segs) {
-		var component = this.component;
-		var segElMethod = component[type + 'SegEl'];
+		var delegate = this.delegate;
+		var segElMethod = delegate[type + 'SegEl'];
 		var html = '';
 		var renderedSegs = [];
 		var i;
@@ -63,14 +63,14 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 
 				// allow custom filter methods per-type
 				if (segElMethod) {
-					el = segElMethod.call(component, seg, el);
+					el = segElMethod.call(delegate, seg, el);
 				}
 
 				if (el) { // custom filters did not cancel the render
 					el = $(el); // allow custom filter to return raw DOM node
 
 					// correct element type? (would be bad if a non-TD were inserted into a table for example)
-					if (el.is(component.fillSegTag || 'div')) {
+					if (el.is(delegate.fillSegTag || 'div')) {
 						seg.el = el;
 						renderedSegs.push(seg);
 					}
@@ -84,16 +84,16 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 
 	// Builds the HTML needed for one fill segment. Generic enough to work with different types.
 	buildSegHtml: function(type, seg) {
-		var component = this.component;
+		var delegate = this.delegate;
 
 		// custom hooks per-type
-		var classesMethod = component[type + 'SegClasses'];
-		var cssMethod = component[type + 'SegCss'];
+		var classesMethod = delegate[type + 'SegClasses'];
+		var cssMethod = delegate[type + 'SegCss'];
 
-		var classes = classesMethod ? classesMethod.call(component, seg) : [];
-		var css = cssToStr(cssMethod ? cssMethod.call(component, seg) : {});
+		var classes = classesMethod ? classesMethod.call(delegate, seg) : [];
+		var css = cssToStr(cssMethod ? cssMethod.call(delegate, seg) : {});
 
-		return '<' + (component.fillSegTag || 'div') +
+		return '<' + (delegate.fillSegTag || 'div') +
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';
