@@ -10,13 +10,12 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 	},
 
 
-	reportEls: function(type, nodes) {
-		if (this.elsByFill[type]) {
-			this.elsByFill[type] = this.elsByFill[type].add(nodes);
-		}
-		else {
-			this.elsByFill[type] = $(nodes);
-		}
+	render: function(type, segs, className) {
+		segs = this.buildSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+
+		this.reportEls(type, this.attachSegEls(type, segs, className));
+
+		return segs;
 	},
 
 
@@ -87,6 +86,22 @@ var FillSystem = Class.extend({ // use for highlight, background events, busines
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';
+	},
+
+
+	// Should return wrapping DOM structure
+	attachSegEls: function(type, segs, className) {
+		// subclasses must implement
+	},
+
+
+	reportEls: function(type, nodes) {
+		if (this.elsByFill[type]) {
+			this.elsByFill[type] = this.elsByFill[type].add(nodes);
+		}
+		else {
+			this.elsByFill[type] = $(nodes);
+		}
 	}
 
 });

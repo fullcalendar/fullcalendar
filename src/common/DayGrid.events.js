@@ -7,6 +7,31 @@ DayGrid.mixin({
 	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
 
+	eventRenderUtilsClass: SegChronoComponentMixin.eventRenderUtilsClass.extend({
+
+		dayGrid: null,
+
+
+		constructor: function(dayGrid) {
+			SegChronoComponentMixin.eventRenderUtilsClass.call(this, dayGrid);
+			this.dayGrid = dayGrid;
+		},
+
+
+		// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+		computeEventTimeFormat: function() {
+			return this.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
+		},
+
+
+		// Computes a default `displayEventEnd` value if one is not expliclty defined
+		computeDisplayEventEnd: function() {
+			return this.dayGrid.colCnt === 1; // we'll likely have space if there's only one day
+		}
+
+	}),
+
+
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.removeSegPopover(); // removes the "more.." events popover

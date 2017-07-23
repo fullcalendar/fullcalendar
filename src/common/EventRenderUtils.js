@@ -1,7 +1,7 @@
 
 var EventRenderUtils = Class.extend({
 
-	delegate: null,
+	view: null,
 
 	// derived from options
 	eventTimeFormat: null,
@@ -9,50 +9,34 @@ var EventRenderUtils = Class.extend({
 	displayEventEnd: null,
 
 
-	/*
-	delegate defines:
-		- opt
-		- _getView
-		- computeEventTimeFormat (optional, defaults to smallTimeFormat)
-		- computeDisplayEventTime (optional, defaults to true)
-		- computeDisplayEventEnd (optional, defaults to false)
+	constructor: function(component) {
+		this.view = component._getView();
+	},
 
-	OTHER REQUIREMENTS:
-		- must call rangeUpdated() when delegate's range is updated
-	*/
-	constructor: function(delegate) {
-		this.delegate = delegate;
+
+	opt: function(name) {
+		return this.view.opt(name);
 	},
 
 
 	// Updates values that rely on options and also relate to range
 	rangeUpdated: function() {
-		var delegate = this.delegate;
 		var displayEventTime;
 		var displayEventEnd;
 
 		this.eventTimeFormat =
-			delegate.opt('eventTimeFormat') ||
-			delegate.opt('timeFormat') || // deprecated
-			(delegate.computeEventTimeFormat ?
-				delegate.computeEventTimeFormat() :
-				'') ||
-			delegate.opt('smallTimeFormat');
+			this.opt('eventTimeFormat') ||
+			this.opt('timeFormat') || // deprecated
+			this.computeEventTimeFormat();
 
-		displayEventTime = delegate.opt('displayEventTime');
-		if (displayEventTime == null && delegate.computeDisplayEventTime) {
-			displayEventTime = delegate.computeDisplayEventTime(); // might be based off of range
-		}
+		displayEventTime = this.opt('displayEventTime');
 		if (displayEventTime == null) {
-			displayEventTime = true;
+			displayEventTime = this.computeDisplayEventTime(); // might be based off of range
 		}
 
-		displayEventEnd = delegate.opt('displayEventEnd');
-		if (displayEventEnd == null && delegate.computeDisplayEventEnd) {
-			displayEventEnd = delegate.computeDisplayEventEnd(); // might be based off of range
-		}
+		displayEventEnd = this.opt('displayEventEnd');
 		if (displayEventEnd == null) {
-			displayEventEnd = true;
+			displayEventEnd = this.computeDisplayEventEnd(); // might be based off of range
 		}
 
 		this.displayEventTime = displayEventTime;
@@ -65,9 +49,9 @@ var EventRenderUtils = Class.extend({
 	filterEventRenderEl: function(eventFootprint, el) { // TODO: move this to EventRenderUtils!!!
 		var legacy = eventFootprint.getEventLegacy();
 
-		var custom = this.delegate.publiclyTrigger('eventRender', {
+		var custom = this.view.publiclyTrigger('eventRender', {
 			context: legacy,
-			args: [ legacy, el, this.delegate._getView() ]
+			args: [ legacy, el, this.view ]
 		});
 
 		if (custom === false) { // means don't render at all
@@ -98,8 +82,6 @@ var EventRenderUtils = Class.extend({
 
 
 	_getTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
-		var view = this.delegate._getView();
-
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
 		}
@@ -110,7 +92,7 @@ var EventRenderUtils = Class.extend({
 
 		if (this.displayEventTime && !isAllDay) {
 			if (displayEnd && end) {
-				return view.formatRange(
+				return this.view.formatRange(
 					{ start: start, end: end },
 					false, // allDay
 					formatStr
@@ -122,6 +104,21 @@ var EventRenderUtils = Class.extend({
 		}
 
 		return '';
+	},
+
+
+	computeEventTimeFormat: function() {
+		return this.opt('smallTimeFormat');
+	},
+
+
+	computeDisplayEventTime: function() {
+		return true;
+	},
+
+
+	computeDisplayEventEnd: function() {
+		return true;
 	},
 
 
@@ -167,8 +164,8 @@ var EventRenderUtils = Class.extend({
 
 		return source.backgroundColor ||
 			source.color ||
-			this.delegate.opt('eventBackgroundColor') ||
-			this.delegate.opt('eventColor');
+			this.opt('eventBackgroundColor') ||
+			this.opt('eventColor');
 	},
 
 
@@ -185,8 +182,8 @@ var EventRenderUtils = Class.extend({
 
 		return source.borderColor ||
 			source.color ||
-			this.delegate.opt('eventBorderColor') ||
-			this.delegate.opt('eventColor');
+			this.opt('eventBorderColor') ||
+			this.opt('eventColor');
 	},
 
 
@@ -200,7 +197,7 @@ var EventRenderUtils = Class.extend({
 	getDefaultTextColor: function(eventFootprint) {
 		var source = eventFootprint.eventDef.source;
 
-		return source.textColor || this.delegate.opt('eventTextColor');
+		return source.textColor || this.opt('eventTextColor');
 	}
 
 });

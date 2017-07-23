@@ -180,18 +180,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	},
 
 
-	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
-	computeEventTimeFormat: function() {
-		return this.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
-	},
-
-
-	// Computes a default `displayEventEnd` value if one is not expliclty defined
-	computeDisplayEventEnd: function() {
-		return true;
-	},
-
-
 	/* Hit System
 	------------------------------------------------------------------------------------------------------------------*/
 

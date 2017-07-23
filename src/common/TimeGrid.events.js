@@ -22,6 +22,22 @@ TimeGrid.mixin({
 	businessSegs: null,
 
 
+	eventRenderUtilsClass: SegChronoComponentMixin.eventRenderUtilsClass.extend({
+
+		// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+		computeEventTimeFormat: function() {
+			return this.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
+		},
+
+
+		// Computes a default `displayEventEnd` value if one is not expliclty defined
+		computeDisplayEventEnd: function() {
+			return true;
+		}
+
+	}),
+
+
 	// Renders the DOM that the view's content will live in
 	renderContentSkeleton: function() {
 		var cellHtml = '';

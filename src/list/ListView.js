@@ -140,10 +140,14 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 	},
 
 
-	// like "4:00am"
-	computeEventTimeFormat: function() {
-		return this.opt('mediumTimeFormat');
-	},
+	eventRenderUtilsClass: SegChronoComponentMixin.eventRenderUtilsClass.extend({
+
+		// like "4:00am"
+		computeEventTimeFormat: function() {
+			return this.opt('mediumTimeFormat');
+		}
+
+	}),
 
 
 	// for events with a url, the whole <tr> should be clickable,

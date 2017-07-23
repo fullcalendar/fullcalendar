@@ -5,7 +5,6 @@ Caller must:
 - implement componentFootprintToSegs
 - implement renderFgSegs
 - implement unrenderFgSegs
-- implement renderFill
 
 This mixin can depend on ChronoComponent:
 - opt
@@ -21,7 +20,7 @@ var SegChronoComponentMixin = {
 
 
 	initSegChronoComponent: function() {
-		this.eventRenderUtils = new EventRenderUtils(this);
+		this.eventRenderUtils = new this.eventRenderUtilsClass(this);
 		this.fillSystem = new this.fillSystemClass(this);
 	},
 
@@ -146,7 +145,7 @@ var SegChronoComponentMixin = {
 	// Renders the given background event segments onto the grid.
 	// Returns a subset of the segs that were actually rendered.
 	renderBgSegs: function(segs) {
-		return this.renderFill('bgEvent', segs);
+		return this.fillSystem.render('bgEvent', segs);
 	},
 
 
@@ -211,7 +210,7 @@ var SegChronoComponentMixin = {
 
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
 	renderHighlight: function(componentFootprint) {
-		this.renderFill('highlight', this.componentFootprintToSegs(componentFootprint));
+		this.fillSystem.render('highlight', this.componentFootprintToSegs(componentFootprint));
 	},
 
 
@@ -225,11 +224,6 @@ var SegChronoComponentMixin = {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderFill: function() {
-		// must implement
-	},
-
-
 	fillSystemClass: FillSystem.extend({
 
 		eventRenderUtils: null,
@@ -238,6 +232,11 @@ var SegChronoComponentMixin = {
 		constructor: function(component) {
 			FillSystem.call(this);
 			this.eventRenderUtils = component.eventRenderUtils;
+		},
+
+
+		attachSegEls: function(segs) {
+			// subclasses must implement
 		},
 
 
@@ -276,8 +275,11 @@ var SegChronoComponentMixin = {
 	}),
 
 
-	/* Utils
+	/* Event Rendering Utils
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	eventRenderUtilsClass: EventRenderUtils,
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element

@@ -86,7 +86,8 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 	renderBusinessHours: function() {
 		var segs = this.buildBusinessHourSegs(true); // wholeDay=true
-		this.renderFill('businessHours', segs, 'bgevent');
+
+		this.fillSystem.render('businessHours', segs, 'bgevent');
 	},
 
 
@@ -216,22 +217,6 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 		html += '</td>';
 
 		return html;
-	},
-
-
-	/* Options
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
-	computeEventTimeFormat: function() {
-		return this.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
-	},
-
-
-	// Computes a default `displayEventEnd` value if one is not expliclty defined
-	computeDisplayEventEnd: function() {
-		return this.colCnt == 1; // we'll likely have space if there's only one day
 	},
 
 
@@ -443,64 +428,66 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 
 	fillSystemClass: SegChronoComponentMixin.fillSystemClass.extend({
-		fillSegTag: 'td' // override the default tag name
-	}),
+
+		fillSegTag: 'td', // override the default tag name
+		dayGrid: null,
 
 
-	// Renders a set of rectangles over the given segments of days.
-	// Only returns segments that successfully rendered.
-	renderFill: function(type, segs, className) {
-		var nodes = [];
-		var i, seg;
-		var skeletonEl;
+		constructor: function(dayGrid) {
+			SegChronoComponentMixin.fillSystemClass.call(this, dayGrid);
+			this.dayGrid = dayGrid;
+		},
 
-		segs = this.fillSystem.buildSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
 
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			skeletonEl = this.renderFillRow(type, seg, className);
-			this.rowEls.eq(seg.row).append(skeletonEl);
-			nodes.push(skeletonEl[0]);
+		attachSegEls: function(type, segs, className) {
+			var nodes = [];
+			var i, seg;
+			var skeletonEl;
+
+			for (i = 0; i < segs.length; i++) {
+				seg = segs[i];
+				skeletonEl = this.renderFillRow(type, seg, className);
+				this.dayGrid.rowEls.eq(seg.row).append(skeletonEl);
+				nodes.push(skeletonEl[0]);
+			}
+
+			return nodes;
+		},
+
+
+		// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
+		renderFillRow: function(type, seg, className) {
+			var colCnt = this.dayGrid.colCnt;
+			var startCol = seg.leftCol;
+			var endCol = seg.rightCol + 1;
+			var skeletonEl;
+			var trEl;
+
+			className = className || type.toLowerCase();
+
+			skeletonEl = $(
+				'<div class="fc-' + className + '-skeleton">' +
+					'<table><tr/></table>' +
+				'</div>'
+			);
+			trEl = skeletonEl.find('tr');
+
+			if (startCol > 0) {
+				trEl.append('<td colspan="' + startCol + '"/>');
+			}
+
+			trEl.append(
+				seg.el.attr('colspan', endCol - startCol)
+			);
+
+			if (endCol < colCnt) {
+				trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
+			}
+
+			this.dayGrid.bookendCells(trEl);
+
+			return skeletonEl;
 		}
-
-		this.fillSystem.reportEls(type, nodes);
-
-		return segs;
-	},
-
-
-	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-	renderFillRow: function(type, seg, className) {
-		var colCnt = this.colCnt;
-		var startCol = seg.leftCol;
-		var endCol = seg.rightCol + 1;
-		var skeletonEl;
-		var trEl;
-
-		className = className || type.toLowerCase();
-
-		skeletonEl = $(
-			'<div class="fc-' + className + '-skeleton">' +
-				'<table><tr/></table>' +
-			'</div>'
-		);
-		trEl = skeletonEl.find('tr');
-
-		if (startCol > 0) {
-			trEl.append('<td colspan="' + startCol + '"/>');
-		}
-
-		trEl.append(
-			seg.el.attr('colspan', endCol - startCol)
-		);
-
-		if (endCol < colCnt) {
-			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
-		}
-
-		this.bookendCells(trEl);
-
-		return skeletonEl;
-	}
+	})
 
 });
