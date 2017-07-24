@@ -1,12 +1,59 @@
 
-$.extend(CoordChronoComponentMixin, {
+var DateClicking = Class.extend({
+
+	view: null,
+	component: null, // CoordComponent
+	dragListener: null,
+
+
+	/*
+	component must implement:
+		- bindDayHandler
+		- registerDragListener
+		- getSafeHitFootprint
+		- getHitEl
+	*/
+	constructor: function(component) {
+		this.view = component.view;
+		this.component = component;
+		this.dragListener = this.buildDragListener();
+
+		this.bind();
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
+
+	bind: function() {
+		var component = this.component;
+		var dragListener = this.dragListener;
+
+		component.bindDayHandler('mousedown', function(ev) {
+			if (!component.shouldIgnoreMouse()) {
+				dragListener.startInteraction(ev);
+			}
+		});
+
+		component.bindDayHandler('touchstart', function(ev) {
+			if (!component.shouldIgnoreTouch()) {
+				dragListener.startInteraction(ev);
+			}
+		});
+
+		component.registerDragListener(dragListener);
+	},
+
 
 	// Creates a listener that tracks the user's drag across day elements, for day clicking.
-	buildDayClickListener: function() {
+	buildDragListener: function() {
 		var _this = this;
+		var component = this.component;
 		var dayClickHit; // null if invalid dayClick
 
-		var dragListener = new HitDragListener(this, {
+		var dragListener = new HitDragListener(component, {
 			scroll: this.opt('dragScroll'),
 			interactionStart: function() {
 				dayClickHit = dragListener.origHit;
@@ -24,16 +71,16 @@ $.extend(CoordChronoComponentMixin, {
 				var componentFootprint;
 
 				if (!isCancelled && dayClickHit) {
-					componentFootprint = _this.getSafeHitFootprint(dayClickHit);
+					componentFootprint = component.getSafeHitFootprint(dayClickHit);
 
 					if (componentFootprint) {
-						_this.view.triggerDayClick(componentFootprint, _this.getHitEl(dayClickHit), ev);
+						_this.view.triggerDayClick(componentFootprint, component.getHitEl(dayClickHit), ev);
 					}
 				}
 			}
 		});
 
-		// because dayClickListener won't be called with any time delay, "dragging" will begin immediately,
+		// because dragListener won't be called with any time delay, "dragging" will begin immediately,
 		// which will kill any touchmoving/scrolling. Prevent this.
 		dragListener.shouldCancelTouchScroll = false;
 

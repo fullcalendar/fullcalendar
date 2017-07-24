@@ -11,8 +11,6 @@ var CoordChronoComponentMixin = {
 	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
-	dayClickListener: null,
-	daySelectListener: null,
 	segDragListener: null,
 	segResizeListener: null,
 	externalDragListener: null,
@@ -22,10 +20,11 @@ var CoordChronoComponentMixin = {
 	// self-config, overridable by subclasses
 	hasDayInteractions: true, // can user click/select ranges of time?
 
+	dragListeners: null,
+
 
 	initCoordChronoComponent: function() {
-		this.dayClickListener = this.buildDayClickListener();
-		this.daySelectListener = this.buildDaySelectListener();
+		this.dragListeners = [];
 	},
 
 
@@ -45,9 +44,14 @@ var CoordChronoComponentMixin = {
 	// Useful for when public API methods that result in re-rendering are invoked during a drag.
 	// Also useful for when touch devices misbehave and don't fire their touchend.
 	clearDragListeners: function() {
-		this.dayClickListener.endInteraction();
-		this.daySelectListener.endInteraction();
+		var dragListeners = this.dragListeners;
+		var i;
 
+		for (i = 0; i < dragListeners.length; i++) {
+			dragListeners[i].endInteraction();
+		}
+
+		// TODO: get these to start using registerDragListener()
 		if (this.segDragListener) {
 			this.segDragListener.endInteraction(); // will clear this.segDragListener
 		}
@@ -70,10 +74,8 @@ var CoordChronoComponentMixin = {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
 		if (this.hasDayInteractions) {
-			preventSelection(el);
-
-			this.bindDayHandler('touchstart', this.dayTouchStart);
-			this.bindDayHandler('mousedown', this.dayMousedown);
+			new DateClicking(this);
+			new DateSelecting(this);
 		}
 
 		// attach event-element-related handlers. in Grid.events
@@ -150,9 +152,11 @@ var CoordChronoComponentMixin = {
 	// Attaches event-element-related handlers to an arbitrary container element. leverages bubbling.
 	bindSegHandlersToEl: function(el) {
 		this.bindSegHandlerToEl(el, 'touchstart', this.handleSegTouchStart);
+		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
+
+		// nothing to do with "coord"component
 		this.bindSegHandlerToEl(el, 'mouseenter', this.handleSegMouseover);
 		this.bindSegHandlerToEl(el, 'mouseleave', this.handleSegMouseout);
-		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
 		this.bindSegHandlerToEl(el, 'click', this.handleSegClick);
 	},
 
@@ -173,54 +177,29 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	/* Handlers
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Process a mousedown on an element that represents a day. For day clicking and selecting.
-	dayMousedown: function(ev) {
-
+	shouldIgnoreMouse: function() {
 		// HACK
 		// This will still work even though bindDayHandler doesn't use GlobalEmitter.
-		if (GlobalEmitter.get().shouldIgnoreMouse()) {
-			return;
-		}
-
-		this.dayClickListener.startInteraction(ev);
-
-		if (this.opt('selectable')) {
-			this.daySelectListener.startInteraction(ev, {
-				distance: this.opt('selectMinDistance')
-			});
-		}
+		return GlobalEmitter.get().shouldIgnoreMouse();
 	},
 
 
-	dayTouchStart: function(ev) {
-		var view = this._getView();
-		var selectLongPressDelay;
-
+	shouldIgnoreTouch: function() {
 		// On iOS (and Android?) when a new selection is initiated overtop another selection,
 		// the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
 		// HACK: simply don't allow this to happen.
 		// ALSO: prevent selection when an *event* is already raised.
-		if (view.isSelected || view.selectedEvent) {
-			return;
-		}
-
-		selectLongPressDelay = this.opt('selectLongPressDelay');
-		if (selectLongPressDelay == null) {
-			selectLongPressDelay = this.opt('longPressDelay'); // fallback
-		}
-
-		this.dayClickListener.startInteraction(ev);
-
-		if (this.opt('selectable')) {
-			this.daySelectListener.startInteraction(ev, {
-				delay: selectLongPressDelay
-			});
-		}
+		return this.view.isSelected || this.view.selectedEvent;
 	},
+
+
+	registerDragListener: function(dragListener) {
+		this.dragListeners.push(dragListener);
+	},
+
+
+	/* Handlers
+	------------------------------------------------------------------------------------------------------------------*/
 
 
 	handleSegClick: function(seg, ev) {
@@ -417,6 +396,23 @@ var CoordChronoComponentMixin = {
 		dummyInstance = dummyEvent.buildInstance();
 
 		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
+	},
+
+
+	/* Selection
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
+	// Given a span (unzoned start/end and other misc data)
+	renderSelectionFootprint: function(componentFootprint) {
+		this.renderHighlight(componentFootprint);
+	},
+
+
+	// Unrenders any visual indications of a selection. Will unrender a highlight by default.
+	unrenderSelection: function() {
+		this.unrenderHighlight();
 	},
 
 

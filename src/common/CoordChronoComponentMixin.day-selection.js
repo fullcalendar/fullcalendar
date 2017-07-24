@@ -1,12 +1,78 @@
 
-$.extend(CoordChronoComponentMixin, {
+var DateSelecting = Class.extend({
+
+	view: null,
+	component: null, // CoordComponent
+	dragListener: null,
+
+
+	/*
+	component must implement:
+		- bindDayHandler
+		- registerDragListener
+		- getSafeHitFootprint
+		- renderHighlight
+		- unrenderHighlight
+	*/
+	constructor: function(component) {
+		this.component = component;
+		this.view = component.view;
+		this.dragListener = this.buildDragListener();
+
+		this.bind();
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
+
+	getDelay: function() {
+		var delay = this.opt('selectLongPressDelay');
+
+		if (delay == null) {
+			delay = this.opt('longPressDelay'); // fallback
+		}
+
+		return delay;
+	},
+
+
+	bind: function() {
+		var _this = this;
+		var component = this.component;
+		var dragListener = this.dragListener;
+
+		component.bindDayHandler('mousedown', function(ev) {
+			if (_this.opt('selectable') && !component.shouldIgnoreMouse()) {
+				dragListener.startInteraction(ev, {
+					distance: _this.opt('selectMinDistance')
+				});
+			}
+		});
+
+		component.bindDayHandler('touchstart', function(ev) {
+			if (_this.opt('selectable') && !component.shouldIgnoreTouch()) {
+				dragListener.startInteraction(ev, {
+					delay: _this.getDelay()
+				});
+			}
+		});
+
+		preventSelection(component.el);
+
+		component.registerDragListener(dragListener);
+	},
+
 
 	// Creates a listener that tracks the user's drag across day elements, for day selecting.
-	buildDaySelectListener: function() {
+	buildDragListener: function() {
 		var _this = this;
+		var component = this.component;
 		var selectionFootprint; // null if invalid selection
 
-		var dragListener = new HitDragListener(this, {
+		var dragListener = new HitDragListener(component, {
 			scroll: this.opt('dragScroll'),
 			interactionStart: function() {
 				selectionFootprint = null;
@@ -20,8 +86,8 @@ $.extend(CoordChronoComponentMixin, {
 
 				if (origHit) { // click needs to have started on a hit
 
-					origHitFootprint = _this.getSafeHitFootprint(origHit);
-					hitFootprint = _this.getSafeHitFootprint(hit);
+					origHitFootprint = component.getSafeHitFootprint(origHit);
+					hitFootprint = component.getSafeHitFootprint(hit);
 
 					if (origHitFootprint && hitFootprint) {
 						selectionFootprint = _this.computeSelection(origHitFootprint, hitFootprint);
@@ -31,7 +97,7 @@ $.extend(CoordChronoComponentMixin, {
 					}
 
 					if (selectionFootprint) {
-						_this.renderSelectionFootprint(selectionFootprint);
+						component.renderSelectionFootprint(selectionFootprint);
 					}
 					else if (selectionFootprint === false) {
 						disableCursor();
@@ -40,7 +106,7 @@ $.extend(CoordChronoComponentMixin, {
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				selectionFootprint = null;
-				_this.unrenderSelection();
+				component.unrenderSelection();
 			},
 			hitDone: function() { // called after a hitOut OR before a dragEnd
 				enableCursor();
@@ -54,19 +120,6 @@ $.extend(CoordChronoComponentMixin, {
 		});
 
 		return dragListener;
-	},
-
-
-	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	// Given a span (unzoned start/end and other misc data)
-	renderSelectionFootprint: function(componentFootprint) {
-		this.renderHighlight(componentFootprint);
-	},
-
-
-	// Unrenders any visual indications of a selection. Will unrender a highlight by default.
-	unrenderSelection: function() {
-		this.unrenderHighlight();
 	},
 
 

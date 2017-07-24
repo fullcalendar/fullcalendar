@@ -63,6 +63,7 @@ var SegChronoComponentMixin = {
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.handleSegMouseout(); // trigger an eventMouseout if user's mouse is over an event
+		// ^ part of CoordChronoComponent :(
 
 		this.unrenderFgSegs();
 		this.unrenderBgSegs();
