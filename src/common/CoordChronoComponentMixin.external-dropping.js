@@ -144,33 +144,6 @@ $.extend(CoordChronoComponentMixin, {
 		);
 
 		return eventDef;
-	},
-
-
-	// NOTE: very similar to isEventInstanceGroupAllowed
-	// when it's a completely anonymous external drag, no event.
-	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
-		var calendar = this.view.calendar;
-		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
-		var i;
-
-		for (i = 0; i < eventFootprints.length; i++) {
-			if (!this.view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
-				return false;
-			}
-		}
-
-		for (i = 0; i < eventFootprints.length; i++) {
-			// treat it as a selection
-			// TODO: pass in eventInstanceGroup instead
-			//  because we don't want calendar's constraint system to depend on a component's
-			//  determination of footprints.
-			if (!calendar.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 });
