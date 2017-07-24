@@ -43,7 +43,11 @@ $.extend(CoordChronoComponentMixin, {
 			},
 			dragStart: function(ev) {
 				isDragging = true;
-				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
+
+				// ensure a mouseout on the manipulated event has been reported
+				// TODO: okay to call this?
+				_this.eventPointing.handleMouseout(seg, ev);
+
 				_this.segResizeStart(seg, ev);
 			},
 			hitOver: function(hit, isOrig, origHit) {

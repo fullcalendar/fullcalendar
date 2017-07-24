@@ -56,7 +56,11 @@ $.extend(CoordChronoComponentMixin, {
 					view.selectEventInstance(eventInstance);
 				}
 				isDragging = true;
-				_this.handleSegMouseout(seg, ev); // ensure a mouseout on the manipulated event has been reported
+
+				// ensure a mouseout on the manipulated event has been reported
+				// TODO: okay to call this?
+				_this.eventPointing.handleMouseout(seg, ev);
+
 				_this.segDragStart(seg, ev);
 				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over
 			},

@@ -4,8 +4,6 @@ var CoordChronoComponentMixin = {
 	// self-config, overridable by subclasses
 	segSelector: '.fc-event-container > *', // what constitutes an event element?
 
-	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
-
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
 	// of the date areas. if not defined, assumes to be day and time granularity.
 	// TODO: port isTimeScale into same system?
@@ -21,6 +19,9 @@ var CoordChronoComponentMixin = {
 	hasDayInteractions: true, // can user click/select ranges of time?
 
 	dragListeners: null,
+
+	eventPointingClass: EventPointing,
+	eventPointing: null,
 
 
 	initCoordChronoComponent: function() {
@@ -78,9 +79,12 @@ var CoordChronoComponentMixin = {
 			new DateSelecting(this);
 		}
 
+		this.eventPointing = new this.eventPointingClass(this);
+
+		// for NON-EventPointing interactions.....
 		// attach event-element-related handlers. in Grid.events
 		// same garbage collection note as above.
-		this.bindSegHandlers();
+		this.bindSegHandlersToEl(this.el);
 	},
 
 
@@ -123,6 +127,7 @@ var CoordChronoComponentMixin = {
 	},
 
 
+	// TODO: move this into Day*Pointing* ?
 	bindDayHandler: function(name, handler) {
 		var _this = this;
 
@@ -143,34 +148,20 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	// Attaches event-element-related handlers for *all* rendered event segments of the view.
-	bindSegHandlers: function() {
-		this.bindSegHandlersToEl(this.el);
-	},
-
-
 	// Attaches event-element-related handlers to an arbitrary container element. leverages bubbling.
 	bindSegHandlersToEl: function(el) {
 		this.bindSegHandlerToEl(el, 'touchstart', this.handleSegTouchStart);
 		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
-
-		// nothing to do with "coord"component
-		this.bindSegHandlerToEl(el, 'mouseenter', this.handleSegMouseover);
-		this.bindSegHandlerToEl(el, 'mouseleave', this.handleSegMouseout);
-		this.bindSegHandlerToEl(el, 'click', this.handleSegClick);
 	},
 
 
-	// Executes a handler for any a user-interaction on a segment.
-	// Handler gets called with (seg, ev), and with the `this` context of the Grid
 	bindSegHandlerToEl: function(el, name, handler) {
 		var _this = this;
 
 		el.on(name, this.segSelector, function(ev) {
 			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
 
-			// only call the handlers if there is not a drag/resize in progress
-			if (seg && !_this.isDraggingSeg && !_this.isResizingSeg) {
+			if (seg && !_this.shouldIgnoreEventPointing()) {
 				return handler.call(_this, seg, ev); // context will be the Grid
 			}
 		});
@@ -193,6 +184,12 @@ var CoordChronoComponentMixin = {
 	},
 
 
+	shouldIgnoreEventPointing: function() {
+		// only call the handlers if there is not a drag/resize in progress
+		return this.isDraggingSeg || this.isResizingSeg;
+	},
+
+
 	registerDragListener: function(dragListener) {
 		this.dragListeners.push(dragListener);
 	},
@@ -200,64 +197,6 @@ var CoordChronoComponentMixin = {
 
 	/* Handlers
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	handleSegClick: function(seg, ev) {
-		var view = this._getView();
-		var res = this.publiclyTrigger('eventClick', { // can return `false` to cancel
-			context: seg.el[0],
-			args: [ seg.footprint.getEventLegacy(), ev, view ]
-		});
-
-		if (res === false) {
-			ev.preventDefault();
-		}
-	},
-
-
-	// Updates internal state and triggers handlers for when an event element is moused over
-	handleSegMouseover: function(seg, ev) {
-		var view = this._getView();
-
-		if (
-			!GlobalEmitter.get().shouldIgnoreMouse() &&
-			!this.mousedOverSeg
-		) {
-			this.mousedOverSeg = seg;
-
-			if (view.isEventDefResizable(seg.footprint.eventDef)) {
-				seg.el.addClass('fc-allow-mouse-resize');
-			}
-
-			this.publiclyTrigger('eventMouseover', {
-				context: seg.el[0],
-				args: [ seg.footprint.getEventLegacy(), ev, view ]
-			});
-		}
-	},
-
-
-	// Updates internal state and triggers handlers for when an event element is moused out.
-	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
-	handleSegMouseout: function(seg, ev) {
-		var view = this._getView();
-
-		ev = ev || {}; // if given no args, make a mock mouse event
-
-		if (this.mousedOverSeg) {
-			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
-			this.mousedOverSeg = null;
-
-			if (view.isEventDefResizable(seg.footprint.eventDef)) {
-				seg.el.removeClass('fc-allow-mouse-resize');
-			}
-
-			this.publiclyTrigger('eventMouseout', {
-				context: seg.el[0],
-				args: [ seg.footprint.getEventLegacy(), ev, view ]
-			});
-		}
-	},
 
 
 	handleSegMousedown: function(seg, ev) {

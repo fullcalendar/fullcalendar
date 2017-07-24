@@ -21,6 +21,7 @@
     "common/GlobalEmitter.js",
     "common/MouseFollower.js",
     "common/ChronoComponent.js",
+    "common/EventPointing.js",
     "common/CoordChronoComponentMixin.js",
     "common/CoordChronoComponentMixin.day-click.js",
     "common/CoordChronoComponentMixin.day-selection.js",
