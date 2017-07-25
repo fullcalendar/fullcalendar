@@ -4,7 +4,7 @@
 
 var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
-	eventRenderUtilsClass: DayGridEventRenderer,
+	eventRendererClass: DayGridEventRenderer,
 
 	view: null, // TODO: make more general and/or remove
 
@@ -59,7 +59,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
 		// TODO: easy to forget. use listener.
-		this.eventRenderUtils.rangeUpdated();
+		this.eventRenderer.rangeUpdated();
 	},
 
 
@@ -403,8 +403,8 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 		var segs = this.eventFootprintsToSegs(eventFootprints);
 		var rowStructs;
 
-		segs = this.eventRenderUtils.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
-		rowStructs = this.eventRenderUtils.renderSegRows(segs);
+		segs = this.eventRenderer.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		rowStructs = this.eventRenderer.renderSegRows(segs);
 
 		// inject each new event skeleton into each associated row
 		this.rowEls.each(function(row, rowNode) {

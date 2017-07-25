@@ -14,15 +14,15 @@ This mixin can depend on ChronoComponent:
 */
 var SegChronoComponentMixin = {
 
-	eventRenderUtilsClass: EventRenderUtils,
+	eventRendererClass: EventRenderer,
 
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
-	eventRenderUtils: null,
+	eventRenderer: null,
 	fillSystem: null,
 
 
 	initSegChronoComponent: function() {
-		this.eventRenderUtils = new this.eventRenderUtilsClass(this);
+		this.eventRenderer = new this.eventRendererClass(this);
 		this.fillSystem = new this.fillSystemClass(this);
 	},
 
@@ -88,13 +88,13 @@ var SegChronoComponentMixin = {
 
 	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
 	renderFgSegs: function(segs) {
-		return this.eventRenderUtils.renderFgSegs(segs);
+		return this.eventRenderer.renderFgSegs(segs);
 	},
 
 
 	// Unrenders all currently rendered foreground segments
 	unrenderFgSegs: function() {
-		this.eventRenderUtils.unrenderFgSegs();
+		this.eventRenderer.unrenderFgSegs();
 	},
 
 
@@ -150,12 +150,12 @@ var SegChronoComponentMixin = {
 
 	fillSystemClass: FillSystem.extend({
 
-		eventRenderUtils: null,
+		eventRenderer: null,
 
 
 		constructor: function(component) {
 			FillSystem.call(this);
-			this.eventRenderUtils = component.eventRenderUtils;
+			this.eventRenderer = component.eventRenderer;
 		},
 
 
@@ -166,20 +166,20 @@ var SegChronoComponentMixin = {
 
 		// Renders a background event element, given the default rendering. Called by the fill system.
 		bgEventSegEl: function(seg, el) {
-			return this.eventRenderUtils.filterEventRenderEl(seg.footprint, el);
+			return this.eventRenderer.filterEventRenderEl(seg.footprint, el);
 		},
 
 
 		// Generates an array of classNames to be used for the default rendering of a background event.
 		bgEventSegClasses: function(seg) {
-			return this.eventRenderUtils.getBgClasses(seg.footprint);
+			return this.eventRenderer.getBgClasses(seg.footprint);
 		},
 
 
 		// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
 		bgEventSegCss: function(seg) {
 			return {
-				'background-color': this.eventRenderUtils.getSkinCss(seg.footprint)['background-color']
+				'background-color': this.eventRenderer.getSkinCss(seg.footprint)['background-color']
 			};
 		},
 

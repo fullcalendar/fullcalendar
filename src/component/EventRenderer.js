@@ -1,5 +1,5 @@
 
-var EventRenderUtils = Class.extend({
+var EventRenderer = Class.extend({
 
 	view: null,
 
@@ -127,7 +127,7 @@ var EventRenderUtils = Class.extend({
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
-	filterEventRenderEl: function(eventFootprint, el) { // TODO: move this to EventRenderUtils!!!
+	filterEventRenderEl: function(eventFootprint, el) {
 		var legacy = eventFootprint.getEventLegacy();
 
 		var custom = this.view.publiclyTrigger('eventRender', {

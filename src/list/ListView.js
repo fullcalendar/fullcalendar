@@ -87,7 +87,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
 		// a requirement of SegChronoComponentMixin.
 		// TODO: easy to forget. use listener.
-		this.eventRenderUtils.rangeUpdated();
+		this.eventRenderer.rangeUpdated();
 	},
 
 
@@ -140,7 +140,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 	},
 
 
-	eventRenderUtilsClass: SegChronoComponentMixin.eventRenderUtilsClass.extend({
+	eventRendererClass: SegChronoComponentMixin.eventRendererClass.extend({
 
 		// like "4:00am"
 		computeEventTimeFormat: function() {
@@ -234,7 +234,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
 	// returns list of foreground segs that were actually rendered
 	renderFgSegs: function(segs) {
-		segs = this.eventRenderUtils.renderFgSegEls(segs); // might filter away hidden events
+		segs = this.eventRenderer.renderFgSegEls(segs); // might filter away hidden events
 
 		if (!segs.length) {
 			this.renderEmptyMessage();
@@ -277,7 +277,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 				// append a day header
 				tbodyEl.append(this.dayHeaderHtml(this.dayDates[dayIndex]));
 
-				this.eventRenderUtils.sortEventSegs(daySegs);
+				this.eventRenderer.sortEventSegs(daySegs);
 
 				for (i = 0; i < daySegs.length; i++) {
 					tbodyEl.append(daySegs[i].el); // append event row

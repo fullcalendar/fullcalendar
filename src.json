@@ -30,7 +30,7 @@
     "component/interaction/EventResizing.js",
     "component/interaction/ExternalDropping.js",
     "component/interaction/EventPointing.js",
-    "component/EventRenderUtils.js",
+    "component/EventRenderer.js",
     "component/ChronoComponent.js",
     "component/CoordChronoComponentMixin.js",
     "component/SegChronoComponentMixin.js",

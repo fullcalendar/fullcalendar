@@ -5,7 +5,7 @@
 
 var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
-	eventRenderUtilsClass: TimeGridEventRenderer,
+	eventRendererClass: TimeGridEventRenderer,
 
 	view: null, // TODO: make more general and/or remove
 
@@ -85,7 +85,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
 		// TODO: easy to forget. use listener.
-		this.eventRenderUtils.rangeUpdated();
+		this.eventRenderer.rangeUpdated();
 
 		this.dayRanges = this.dayDates.map(function(dayDate) {
 			return new UnzonedRange(
@@ -588,7 +588,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 
 	renderFgSegs: function(segs) {
-		segs = this.eventRenderUtils.renderFgSegsIntoContainers(segs, this.fgContainerEls);
+		segs = this.eventRenderer.renderFgSegsIntoContainers(segs, this.fgContainerEls);
 
 		this.fgSegs = segs;
 
@@ -685,7 +685,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 		var i, seg;
 		var sourceEl;
 
-		segs = this.eventRenderUtils.renderFgSegsIntoContainers(segs, this.helperContainerEls);
+		segs = this.eventRenderer.renderFgSegsIntoContainers(segs, this.helperContainerEls);
 
 		// Try to make the segment that is in the same row as sourceSeg look the same
 		for (i = 0; i < segs.length; i++) {

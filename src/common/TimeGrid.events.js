@@ -3,13 +3,13 @@
 Only handles foreground segs.
 Does not own rendering. Use for low-level util methods by TimeGrid.
 */
-var TimeGridEventRenderer = EventRenderUtils.extend({
+var TimeGridEventRenderer = EventRenderer.extend({
 
 	timeGrid: null,
 
 
 	constructor: function(timeGrid) {
-		EventRenderUtils.call(this, timeGrid);
+		EventRenderer.call(this, timeGrid);
 
 		this.timeGrid = timeGrid;
 	},

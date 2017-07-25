@@ -2,14 +2,14 @@
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGridEventRenderer = EventRenderUtils.extend({
+var DayGridEventRenderer = EventRenderer.extend({
 
 	dayGrid: null,
 	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
 
 	constructor: function(dayGrid) {
-		EventRenderUtils.call(this, dayGrid);
+		EventRenderer.call(this, dayGrid);
 
 		this.dayGrid = dayGrid;
 	},

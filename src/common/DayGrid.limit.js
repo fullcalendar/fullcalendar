@@ -19,7 +19,7 @@ DayGrid.mixin({
 	// Limits the number of "levels" (vertically stacking layers of events) for each row of the grid.
 	// `levelLimit` can be false (don't limit), a number, or true (should be computed).
 	limitRows: function(levelLimit) {
-		var rowStructs = this.eventRenderUtils.rowStructs || [];
+		var rowStructs = this.eventRenderer.rowStructs || [];
 		var row; // row #
 		var rowLevelLimit;
 
@@ -49,7 +49,7 @@ DayGrid.mixin({
 	computeRowLevelLimit: function(row) {
 		var rowEl = this.rowEls.eq(row); // the containing "fake" row div
 		var rowHeight = rowEl.height(); // TODO: cache somehow?
-		var trEls = this.eventRenderUtils.rowStructs[row].tbodyEl.children();
+		var trEls = this.eventRenderer.rowStructs[row].tbodyEl.children();
 		var i, trEl;
 		var trHeight;
 
@@ -80,7 +80,7 @@ DayGrid.mixin({
 	// `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
 	limitRow: function(row, levelLimit) {
 		var _this = this;
-		var rowStruct = this.eventRenderUtils.rowStructs[row];
+		var rowStruct = this.eventRenderer.rowStructs[row];
 		var moreNodes = []; // array of "more" <a> links and <td> DOM nodes
 		var col = 0; // col #, left-to-right (not chronologically)
 		var levelSegs; // array of segment objects in the last allowable level, ordered left-to-right
@@ -167,7 +167,7 @@ DayGrid.mixin({
 	// Reveals all levels and removes all "more"-related elements for a grid's row.
 	// `row` is a row number.
 	unlimitRow: function(row) {
-		var rowStruct = this.eventRenderUtils.rowStructs[row];
+		var rowStruct = this.eventRenderer.rowStructs[row];
 
 		if (rowStruct.moreEls) {
 			rowStruct.moreEls.remove();
@@ -315,7 +315,7 @@ DayGrid.mixin({
 		var i;
 
 		// render each seg's `el` and only return the visible segs
-		segs = this.eventRenderUtils.renderFgSegEls(segs, true); // disableResizing=true
+		segs = this.eventRenderer.renderFgSegEls(segs, true); // disableResizing=true
 		this.popoverSegs = segs;
 
 		for (i = 0; i < segs.length; i++) {
@@ -349,7 +349,7 @@ DayGrid.mixin({
 
 		// force an order because eventsToSegs doesn't guarantee one
 		// TODO: research if still needed
-		this.eventRenderUtils.sortEventSegs(newSegs);
+		this.eventRenderer.sortEventSegs(newSegs);
 
 		return newSegs;
 	},
@@ -371,7 +371,7 @@ DayGrid.mixin({
 	// Returns segments within a given cell.
 	// If `startLevel` is specified, returns only events including and below that level. Otherwise returns all segs.
 	getCellSegs: function(row, col, startLevel) {
-		var segMatrix = this.eventRenderUtils.rowStructs[row].segMatrix;
+		var segMatrix = this.eventRenderer.rowStructs[row].segMatrix;
 		var level = startLevel || 0;
 		var segs = [];
 		var seg;
