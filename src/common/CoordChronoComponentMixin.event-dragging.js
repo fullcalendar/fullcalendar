@@ -1,18 +1,118 @@
 
-/*
-Wired up by calling
-buildSegDragListener
-*/
-$.extend(CoordChronoComponentMixin, {
+var EventDragging = Class.extend({
 
-	isDraggingSeg: false, // is a segment being dragged? boolean
+	view: null,
+	component: null,
+	dragListener: null,
+	isDragging: false,
+
+
+	/*
+	component impements:
+		- bindSegHandlerToEl
+		- registerDragListener
+		- unregisterDragListener
+		- publiclyTrigger
+		- diffDates
+		- eventRangesToEventFootprints
+		- isEventInstanceGroupAllowed
+		- eventPointing (!)
+	*/
+	constructor: function(component) {
+		this.view = component._getView();
+		this.component = component;
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
+
+	getSelectionDelay: function() {
+		var delay = this.opt('eventLongPressDelay');
+
+		if (delay == null) {
+			delay = this.opt('longPressDelay'); // fallback
+		}
+
+		return delay;
+	},
+
+
+	bindToEl: function(el) {
+		var component = this.component;
+
+		component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this));
+		component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this));
+	},
+
+
+	handleMousedown: function(seg, ev) {
+		if (this.component.canStartDrag(seg, ev)) {
+			this.buildDragListener(seg).startInteraction(ev, { distance: 5 });
+		}
+	},
+
+
+	handleTouchStart: function(seg, ev) {
+		var component = this.component;
+		var settings = {
+			delay: this.view.isEventDefSelected(seg.footprint.eventDef) ? // already selected?
+				0 : this.getSelectionDelay()
+		};
+
+		if (component.canStartDrag(seg, ev)) {
+			this.buildDragListener(seg).startInteraction(ev, settings);
+		}
+		else if (component.canStartSelection(seg, ev)) {
+			this.buildSelectListener(seg).startInteraction(ev, settings);
+		}
+	},
+
+
+	// seg isn't draggable, but let's use a generic DragListener
+	// simply for the delay, so it can be selected.
+	// Has side effect of setting/unsetting `dragListener`
+	buildSelectListener: function(seg) {
+		var _this = this;
+		var view = this.view;
+		var eventDef = seg.footprint.eventDef;
+		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
+
+		if (this.dragListener) {
+			return this.dragListener;
+		}
+
+		var dragListener = this.dragListener = new DragListener({
+			dragStart: function(ev) {
+				if (
+					dragListener.isTouch &&
+					!view.isEventDefSelected(eventDef) &&
+					eventInstance
+				) {
+					// if not previously selected, will fire after a delay. then, select the event
+					view.selectEventInstance(eventInstance);
+				}
+			},
+			interactionEnd: function(ev) {
+				_this.dragListener = null;
+				_this.component.unregisterDragListener(dragListener);
+			}
+		});
+
+		this.component.registerDragListener(dragListener);
+
+		return dragListener;
+	},
 
 
 	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
-	// Has side effect of setting/unsetting `segDragListener`
-	buildSegDragListener: function(seg) {
+	// Has side effect of setting/unsetting `dragListener`
+	buildDragListener: function(seg) {
 		var _this = this;
+		var component = this.component;
 		var view = this.view;
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
@@ -23,18 +123,18 @@ $.extend(CoordChronoComponentMixin, {
 		var mouseFollower; // A clone of the original element that will move with the mouse
 		var eventDefMutation;
 
-		if (this.segDragListener) {
-			return this.segDragListener;
+		if (this.dragListener) {
+			return this.dragListener;
 		}
 
 		// Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
 		// of the view.
-		var dragListener = this.segDragListener = new HitDragListener(view, {
+		var dragListener = this.dragListener = new HitDragListener(view, {
 			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
 			interactionStart: function(ev) {
-				seg.component = _this; // for renderDrag
+				seg.component = component; // for renderDrag
 				isDragging = false;
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
@@ -59,7 +159,7 @@ $.extend(CoordChronoComponentMixin, {
 
 				// ensure a mouseout on the manipulated event has been reported
 				// TODO: okay to call this?
-				_this.eventPointing.handleMouseout(seg, ev);
+				component.eventPointing.handleMouseout(seg, ev);
 
 				_this.segDragStart(seg, ev);
 				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over
@@ -88,7 +188,7 @@ $.extend(CoordChronoComponentMixin, {
 							eventDef.id,
 							eventDefMutation
 						);
-						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
+						isAllowed = component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
 					}
 					else {
 						isAllowed = false;
@@ -107,7 +207,7 @@ $.extend(CoordChronoComponentMixin, {
 				if (
 					eventDefMutation &&
 					(dragHelperEls = view.renderDrag(
-						_this.eventRangesToEventFootprints(
+						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
 						),
 						seg
@@ -155,9 +255,13 @@ $.extend(CoordChronoComponentMixin, {
 						view.showEventsWithId(eventDef.id);
 					}
 				});
-				_this.segDragListener = null;
+
+				_this.dragListener = null;
+				component.unregisterDragListener(dragListener);
 			}
 		});
+
+		component.registerDragListener(dragListener);
 
 		return dragListener;
 	},
@@ -165,8 +269,8 @@ $.extend(CoordChronoComponentMixin, {
 
 	// Called before event segment dragging starts
 	segDragStart: function(seg, ev) {
-		this.isDraggingSeg = true;
-		this.publiclyTrigger('eventDragStart', {
+		this.isDragging = true;
+		this.component.publiclyTrigger('eventDragStart', {
 			context: seg.el[0],
 			args: [
 				seg.footprint.getEventLegacy(),
@@ -180,8 +284,8 @@ $.extend(CoordChronoComponentMixin, {
 
 	// Called after event segment dragging stops
 	segDragStop: function(seg, ev) {
-		this.isDraggingSeg = false;
-		this.publiclyTrigger('eventDragStop', {
+		this.isDragging = false;
+		this.component.publiclyTrigger('eventDragStop', {
 			context: seg.el[0],
 			args: [
 				seg.footprint.getEventLegacy(),
@@ -216,7 +320,7 @@ $.extend(CoordChronoComponentMixin, {
 			}
 		}
 
-		dateDelta = this.diffDates(date1, date0);
+		dateDelta = this.component.diffDates(date1, date0);
 
 		dateMutation = new EventDefDateMutation();
 		dateMutation.clearEnd = clearEnd;

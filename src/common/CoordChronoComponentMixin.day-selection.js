@@ -8,7 +8,7 @@ var DateSelecting = Class.extend({
 
 	/*
 	component must implement:
-		- bindDayHandler
+		- bindDateHandlerToEl
 		- registerDragListener
 		- getSafeHitFootprint
 		- renderHighlight
@@ -17,9 +17,9 @@ var DateSelecting = Class.extend({
 	constructor: function(component) {
 		this.component = component;
 		this.view = component.view;
-		this.dragListener = this.buildDragListener();
 
-		this.bind();
+		this.dragListener = this.buildDragListener();
+		component.registerDragListener(this.dragListener);
 	},
 
 
@@ -39,12 +39,12 @@ var DateSelecting = Class.extend({
 	},
 
 
-	bind: function() {
+	bindToEl: function(el) {
 		var _this = this;
 		var component = this.component;
 		var dragListener = this.dragListener;
 
-		component.bindDayHandler('mousedown', function(ev) {
+		component.bindDateHandlerToEl(el, 'mousedown', function(ev) {
 			if (_this.opt('selectable') && !component.shouldIgnoreMouse()) {
 				dragListener.startInteraction(ev, {
 					distance: _this.opt('selectMinDistance')
@@ -52,7 +52,7 @@ var DateSelecting = Class.extend({
 			}
 		});
 
-		component.bindDayHandler('touchstart', function(ev) {
+		component.bindDateHandlerToEl(el, 'touchstart', function(ev) {
 			if (_this.opt('selectable') && !component.shouldIgnoreTouch()) {
 				dragListener.startInteraction(ev, {
 					delay: _this.getDelay()
@@ -60,9 +60,7 @@ var DateSelecting = Class.extend({
 			}
 		});
 
-		preventSelection(component.el);
-
-		component.registerDragListener(dragListener);
+		preventSelection(el);
 	},
 
 

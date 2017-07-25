@@ -9,8 +9,6 @@ var CoordChronoComponentMixin = {
 	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
-	segDragListener: null,
-	segResizeListener: null,
 	externalDragListener: null,
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
@@ -22,6 +20,12 @@ var CoordChronoComponentMixin = {
 
 	eventPointingClass: EventPointing,
 	eventPointing: null,
+
+	eventDraggingClass: EventDragging,
+	eventDragging: null,
+
+	eventResizingClass: EventResizing,
+	eventResizing: null,
 
 
 	initCoordChronoComponent: function() {
@@ -53,12 +57,6 @@ var CoordChronoComponentMixin = {
 		}
 
 		// TODO: get these to start using registerDragListener()
-		if (this.segDragListener) {
-			this.segDragListener.endInteraction(); // will clear this.segDragListener
-		}
-		if (this.segResizeListener) {
-			this.segResizeListener.endInteraction(); // will clear this.segResizeListener
-		}
 		if (this.externalDragListener) {
 			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
 		}
@@ -75,16 +73,15 @@ var CoordChronoComponentMixin = {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
 		if (this.hasDayInteractions) {
-			new DateClicking(this);
-			new DateSelecting(this);
+			new DateClicking(this).bindToEl(this.el);
+			new DateSelecting(this).bindToEl(this.el);
 		}
 
 		this.eventPointing = new this.eventPointingClass(this);
+		this.eventDragging = new this.eventDraggingClass(this);
+		this.eventResizing = new this.eventResizingClass(this);
 
-		// for NON-EventPointing interactions.....
-		// attach event-element-related handlers. in Grid.events
-		// same garbage collection note as above.
-		this.bindSegHandlersToEl(this.el);
+		this.bindAllSegHandlersToEl(this.el);
 	},
 
 
@@ -127,8 +124,7 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	// TODO: move this into Day*Pointing* ?
-	bindDayHandler: function(name, handler) {
+	bindDateHandlerToEl: function(el, name, handler) {
 		var _this = this;
 
 		// attach a handler to the grid's root element.
@@ -148,13 +144,6 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	// Attaches event-element-related handlers to an arbitrary container element. leverages bubbling.
-	bindSegHandlersToEl: function(el) {
-		this.bindSegHandlerToEl(el, 'touchstart', this.handleSegTouchStart);
-		this.bindSegHandlerToEl(el, 'mousedown', this.handleSegMousedown);
-	},
-
-
 	bindSegHandlerToEl: function(el, name, handler) {
 		var _this = this;
 
@@ -168,25 +157,63 @@ var CoordChronoComponentMixin = {
 	},
 
 
+	bindAllSegHandlersToEl: function(el) {
+		this.eventPointing.bindToEl(el);
+		this.eventDragging.bindToEl(el);
+		this.eventResizing.bindToEl(el);
+	},
+
+
 	shouldIgnoreMouse: function() {
 		// HACK
-		// This will still work even though bindDayHandler doesn't use GlobalEmitter.
+		// This will still work even though bindDateHandlerToEl doesn't use GlobalEmitter.
 		return GlobalEmitter.get().shouldIgnoreMouse();
 	},
 
 
 	shouldIgnoreTouch: function() {
+		var view = this._getView();
+
 		// On iOS (and Android?) when a new selection is initiated overtop another selection,
 		// the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
 		// HACK: simply don't allow this to happen.
 		// ALSO: prevent selection when an *event* is already raised.
-		return this.view.isSelected || this.view.selectedEvent;
+		return view.isSelected || view.selectedEvent;
 	},
 
 
 	shouldIgnoreEventPointing: function() {
 		// only call the handlers if there is not a drag/resize in progress
-		return this.isDraggingSeg || this.isResizingSeg;
+
+		return this.eventDragging.isDragging || this.eventResizing.isResizing;
+	},
+
+
+	canStartSelection: function(seg, ev) {
+		var view = this._getView();
+
+		return getEvIsTouch(ev) &&
+			!this.canStartResize(seg, ev) &&
+			(view.isEventDefDraggable(seg.footprint.eventDef) ||
+			 view.isEventDefResizable(seg.footprint.eventDef));
+	},
+
+
+	canStartDrag: function(seg, ev) {
+		var view = this._getView();
+
+		return !this.canStartResize(seg, ev) &&
+			view.isEventDefDraggable(seg.footprint.eventDef);
+	},
+
+
+	canStartResize: function(seg, ev) {
+		var view = this._getView();
+		var eventDef = seg.footprint.eventDef;
+
+		return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
+			view.isEventDefResizable(eventDef) &&
+			$(ev.target).is('.fc-resizer');
 	},
 
 
@@ -195,91 +222,13 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	/* Handlers
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	handleSegMousedown: function(seg, ev) {
-		var view = this._getView();
-		var isResizing = this.startSegResize(seg, ev, { distance: 5 });
-
-		if (!isResizing && view.isEventDefDraggable(seg.footprint.eventDef)) {
-			this.buildSegDragListener(seg)
-				.startInteraction(ev, {
-					distance: 5
-				});
-		}
-	},
-
-
-	handleSegTouchStart: function(seg, ev) {
-		var view = this._getView();
-		var eventDef = seg.footprint.eventDef;
-		var isSelected = view.isEventDefSelected(eventDef);
-		var isDraggable = view.isEventDefDraggable(eventDef);
-		var isResizable = view.isEventDefResizable(eventDef);
-		var isResizing = false;
-		var dragListener;
-		var eventLongPressDelay;
-
-		if (isSelected && isResizable) {
-			// only allow resizing of the event is selected
-			isResizing = this.startSegResize(seg, ev);
-		}
-
-		if (!isResizing && (isDraggable || isResizable)) { // allowed to be selected?
-
-			eventLongPressDelay = this.opt('eventLongPressDelay');
-			if (eventLongPressDelay == null) {
-				eventLongPressDelay = this.opt('longPressDelay'); // fallback
-			}
-
-			dragListener = isDraggable ?
-				this.buildSegDragListener(seg) :
-				this.buildSegSelectListener(seg); // seg isn't draggable, but still needs to be selected
-
-			dragListener.startInteraction(ev, { // won't start if already started
-				delay: isSelected ? 0 : eventLongPressDelay // do delay if not already selected
-			});
-		}
+	unregisterDragListener: function(dragListener) {
+		removeExact(this.dragListeners, dragListener);
 	},
 
 
 	/* Misc
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// seg isn't draggable, but let's use a generic DragListener
-	// simply for the delay, so it can be selected.
-	// Has side effect of setting/unsetting `segDragListener`
-	buildSegSelectListener: function(seg) {
-		var _this = this;
-		var view = this._getView();
-		var eventDef = seg.footprint.eventDef;
-		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
-
-		if (this.segDragListener) {
-			return this.segDragListener;
-		}
-
-		var dragListener = this.segDragListener = new DragListener({
-			dragStart: function(ev) {
-				if (
-					dragListener.isTouch &&
-					!view.isEventDefSelected(eventDef) &&
-					eventInstance
-				) {
-					// if not previously selected, will fire after a delay. then, select the event
-					view.selectEventInstance(eventInstance);
-				}
-			},
-			interactionEnd: function(ev) {
-				_this.segDragListener = null;
-			}
-		});
-
-		return dragListener;
-	},
 
 
 	// is it allowed, in relation to the view's validRange?
@@ -362,6 +311,24 @@ var CoordChronoComponentMixin = {
 		dummyInstance = dummyEvent.buildInstance();
 
 		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
+	},
+
+
+	// Event Resizing
+	// ---------------------------------------------------------------------------------------------------------------
+	// TODO: why not move this to ChronoComponent
+
+
+	// Renders a visual indication of an event being resized.
+	// Must return elements used for any mock events.
+	renderEventResize: function(eventFootprints, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event being resized.
+	unrenderEventResize: function() {
+		// subclasses must implement
 	},
 
 

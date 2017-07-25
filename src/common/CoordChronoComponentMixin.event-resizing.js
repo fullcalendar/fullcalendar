@@ -1,30 +1,64 @@
 
-/*
-Wired up by calling
-startSegResize
-*/
-$.extend(CoordChronoComponentMixin, {
+var EventResizing = Class.extend({
 
-	isResizingSeg: false, // is a segment being resized? boolean
+	view: null,
+	component: null,
+	dragListener: null,
+	isResizing: false,
 
 
-	// returns boolean whether resizing actually started or not.
-	// assumes the seg allows resizing.
-	// `dragOptions` are optional.
-	startSegResize: function(seg, ev, dragOptions) {
-		if ($(ev.target).is('.fc-resizer')) {
-			this.buildSegResizeListener(seg, $(ev.target).is('.fc-start-resizer'))
-				.startInteraction(ev, dragOptions);
-			return true;
+	/*
+	component impements:
+		- bindSegHandlerToEl
+		- registerDragListener
+		- unregisterDragListener
+		- publiclyTrigger
+		- diffDates
+		- eventRangesToEventFootprints
+		- isEventInstanceGroupAllowed
+		- getSafeHitFootprint
+		- eventPointing (!)
+	*/
+	constructor: function(component) {
+		this.view = component._getView();
+		this.component = component;
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
+
+	bindToEl: function(el) {
+		var component = this.component;
+
+		component.bindSegHandlerToEl(el, 'mousedown', this.handleMouseDown.bind(this));
+		component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this));
+	},
+
+
+	handleMouseDown: function(seg, ev) {
+		if (this.component.canStartResize(seg, ev)) {
+			this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
+				.startInteraction(ev, { distance: 5 });
 		}
-		return false;
+	},
+
+
+	handleTouchStart: function(seg, ev) {
+		if (this.component.canStartResize(seg, ev)) {
+			this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
+				.startInteraction(ev);
+		}
 	},
 
 
 	// Creates a listener that tracks the user as they resize an event segment.
 	// Generic enough to work with any type of Grid.
-	buildSegResizeListener: function(seg, isStart) {
+	buildDragListener: function(seg, isStart) {
 		var _this = this;
+		var component = this.component;
 		var view = this.view;
 		var calendar = view.calendar;
 		var eventManager = calendar.eventManager;
@@ -35,7 +69,7 @@ $.extend(CoordChronoComponentMixin, {
 		var resizeMutation; // zoned event date properties. falsy if invalid resize
 
 		// Tracks mouse movement over the *grid's* coordinate map
-		var dragListener = this.segResizeListener = new HitDragListener(this, {
+		var dragListener = this.dragListener = new HitDragListener(component, {
 			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			interactionStart: function() {
@@ -46,14 +80,14 @@ $.extend(CoordChronoComponentMixin, {
 
 				// ensure a mouseout on the manipulated event has been reported
 				// TODO: okay to call this?
-				_this.eventPointing.handleMouseout(seg, ev);
+				component.eventPointing.handleMouseout(seg, ev);
 
 				_this.segResizeStart(seg, ev);
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
-				var origHitFootprint = _this.getSafeHitFootprint(origHit);
-				var hitFootprint = _this.getSafeHitFootprint(hit);
+				var origHitFootprint = component.getSafeHitFootprint(origHit);
+				var hitFootprint = component.getSafeHitFootprint(hit);
 				var mutatedEventInstanceGroup;
 
 				if (origHitFootprint && hitFootprint) {
@@ -66,7 +100,7 @@ $.extend(CoordChronoComponentMixin, {
 							eventDef.id,
 							resizeMutation
 						);
-						isAllowed = _this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
+						isAllowed = component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
 					}
 					else {
 						isAllowed = false;
@@ -88,8 +122,8 @@ $.extend(CoordChronoComponentMixin, {
 				if (resizeMutation) {
 					view.hideEventsWithId(eventDef.id);
 
-					_this.renderEventResize(
-						_this.eventRangesToEventFootprints(
+					component.renderEventResize(
+						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
 						),
 						seg
@@ -101,7 +135,7 @@ $.extend(CoordChronoComponentMixin, {
 				view.showEventsWithId(eventDef.id); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
-				_this.unrenderEventResize();
+				component.unrenderEventResize();
 				enableCursor();
 			},
 			interactionEnd: function(ev) {
@@ -116,9 +150,13 @@ $.extend(CoordChronoComponentMixin, {
 				else {
 					view.showEventsWithId(eventDef.id);
 				}
-				_this.segResizeListener = null;
+
+				_this.dragListener = null;
+				component.unregisterDragListener(dragListener);
 			}
 		});
+
+		component.registerDragListener(dragListener);
 
 		return dragListener;
 	},
@@ -126,8 +164,8 @@ $.extend(CoordChronoComponentMixin, {
 
 	// Called before event segment resizing starts
 	segResizeStart: function(seg, ev) {
-		this.isResizingSeg = true;
-		this.publiclyTrigger('eventResizeStart', {
+		this.isResizing = true;
+		this.component.publiclyTrigger('eventResizeStart', {
 			context: seg.el[0],
 			args: [
 				seg.footprint.getEventLegacy(),
@@ -141,8 +179,8 @@ $.extend(CoordChronoComponentMixin, {
 
 	// Called after event segment resizing stops
 	segResizeStop: function(seg, ev) {
-		this.isResizingSeg = false;
-		this.publiclyTrigger('eventResizeStop', {
+		this.isResizing = false;
+		this.component.publiclyTrigger('eventResizeStop', {
 			context: seg.el[0],
 			args: [
 				seg.footprint.getEventLegacy(),
@@ -157,7 +195,7 @@ $.extend(CoordChronoComponentMixin, {
 	// Returns new date-information for an event segment being resized from its start
 	computeEventStartResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
 		var origRange = origEventFootprint.componentFootprint.unzonedRange;
-		var startDelta = this.diffDates(
+		var startDelta = this.component.diffDates(
 			endFootprint.unzonedRange.getStart(),
 			startFootprint.unzonedRange.getStart()
 		);
@@ -182,7 +220,7 @@ $.extend(CoordChronoComponentMixin, {
 	// Returns new date-information for an event segment being resized from its end
 	computeEventEndResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
 		var origRange = origEventFootprint.componentFootprint.unzonedRange;
-		var endDelta = this.diffDates(
+		var endDelta = this.component.diffDates(
 			endFootprint.unzonedRange.getEnd(),
 			startFootprint.unzonedRange.getEnd()
 		);
@@ -201,19 +239,6 @@ $.extend(CoordChronoComponentMixin, {
 		}
 
 		return false;
-	},
-
-
-	// Renders a visual indication of an event being resized.
-	// Must return elements used for any mock events.
-	renderEventResize: function(eventFootprints, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event being resized.
-	unrenderEventResize: function() {
-		// subclasses must implement
 	}
 
 });

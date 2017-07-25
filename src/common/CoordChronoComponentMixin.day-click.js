@@ -8,7 +8,7 @@ var DateClicking = Class.extend({
 
 	/*
 	component must implement:
-		- bindDayHandler
+		- bindDateHandlerToEl
 		- registerDragListener
 		- getSafeHitFootprint
 		- getHitEl
@@ -16,9 +16,9 @@ var DateClicking = Class.extend({
 	constructor: function(component) {
 		this.view = component.view;
 		this.component = component;
-		this.dragListener = this.buildDragListener();
 
-		this.bind();
+		this.dragListener = this.buildDragListener();
+		component.registerDragListener(this.dragListener);
 	},
 
 
@@ -27,23 +27,21 @@ var DateClicking = Class.extend({
 	},
 
 
-	bind: function() {
+	bindToEl: function(el) {
 		var component = this.component;
 		var dragListener = this.dragListener;
 
-		component.bindDayHandler('mousedown', function(ev) {
+		component.bindDateHandlerToEl(el, 'mousedown', function(ev) {
 			if (!component.shouldIgnoreMouse()) {
 				dragListener.startInteraction(ev);
 			}
 		});
 
-		component.bindDayHandler('touchstart', function(ev) {
+		component.bindDateHandlerToEl(el, 'touchstart', function(ev) {
 			if (!component.shouldIgnoreTouch()) {
 				dragListener.startInteraction(ev);
 			}
 		});
-
-		component.registerDragListener(dragListener);
 	},
 
 
