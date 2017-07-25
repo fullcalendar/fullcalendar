@@ -18,7 +18,7 @@ var ExternalDropping = Class.extend(ListenerMixin, {
 		- unrenderDrag
 	*/
 	constructor: function(component) {
-		this.view = component.view;
+		this.view = component._getView();
 		this.component = component;
 	},
 

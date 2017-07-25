@@ -12,7 +12,6 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 	dayDates: null, // localized ambig-time moment array
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 	segSelector: '.fc-list-item', // which elements accept event actions
-	hasDayInteractions: false, // no day selection or day clicking
 
 
 	initialize: function() {

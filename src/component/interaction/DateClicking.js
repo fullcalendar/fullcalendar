@@ -14,7 +14,7 @@ var DateClicking = Class.extend({
 		- getHitEl
 	*/
 	constructor: function(component) {
-		this.view = component.view;
+		this.view = component._getView();
 		this.component = component;
 
 		this.dragListener = this.buildDragListener();

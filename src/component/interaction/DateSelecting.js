@@ -16,7 +16,7 @@ var DateSelecting = Class.extend({
 	*/
 	constructor: function(component) {
 		this.component = component;
-		this.view = component.view;
+		this.view = component._getView();
 
 		this.dragListener = this.buildDragListener();
 		component.registerDragListener(this.dragListener);

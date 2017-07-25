@@ -11,15 +11,8 @@ var EventPointing = Class.extend({
 		- publiclyTrigger
 	*/
 	constructor: function(component) {
-		this.view = component.view;
+		this.view = component._getView();
 		this.component = component;
-
-		this.bind();
-	},
-
-
-	bind: function() {
-		this.bindToEl(this.component.el);
 	},
 
 

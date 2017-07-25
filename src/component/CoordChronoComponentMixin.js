@@ -11,9 +11,6 @@ var CoordChronoComponentMixin = {
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
-	// self-config, overridable by subclasses
-	hasDayInteractions: true, // can user click/select ranges of time?
-
 	dragListeners: null,
 
 	eventPointingClass: EventPointing,
@@ -69,10 +66,8 @@ var CoordChronoComponentMixin = {
 	setElement: function(el) {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
-		if (this.hasDayInteractions) {
-			new DateClicking(this).bindToEl(this.el);
-			new DateSelecting(this).bindToEl(this.el);
-		}
+		new DateClicking(this).bindToEl(this.el);
+		new DateSelecting(this).bindToEl(this.el);
 
 		this.eventPointing = new this.eventPointingClass(this);
 		this.eventDragging = new this.eventDraggingClass(this);
