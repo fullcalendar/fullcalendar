@@ -9,8 +9,6 @@ var CoordChronoComponentMixin = {
 	// TODO: port isTimeScale into same system?
 	largeUnit: null,
 
-	externalDragListener: null,
-
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
 	// self-config, overridable by subclasses
@@ -27,9 +25,13 @@ var CoordChronoComponentMixin = {
 	eventResizingClass: EventResizing,
 	eventResizing: null,
 
+	externalDroppingClass: ExternalDropping,
+	externalDropping: null,
+
 
 	initCoordChronoComponent: function() {
 		this.dragListeners = [];
+		this.externalDropping = new this.externalDroppingClass(this);
 	},
 
 
@@ -54,11 +56,6 @@ var CoordChronoComponentMixin = {
 
 		for (i = 0; i < dragListeners.length; i++) {
 			dragListeners[i].endInteraction();
-		}
-
-		// TODO: get these to start using registerDragListener()
-		if (this.externalDragListener) {
-			this.externalDragListener.endInteraction(); // will clear this.externalDragListener
 		}
 	},
 
@@ -109,10 +106,7 @@ var CoordChronoComponentMixin = {
 	bindGlobalHandlers: function() {
 		ChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
 
-		this.listenTo($(document), {
-			dragstart: this.externalDragStart, // jqui
-			sortstart: this.externalDragStart // jqui
-		});
+		this.externalDropping.bindToDocument();
 	},
 
 
@@ -120,7 +114,7 @@ var CoordChronoComponentMixin = {
 	unbindGlobalHandlers: function() {
 		ChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
 
-		this.stopListeningTo($(document));
+		this.externalDropping.unbindFromDocument();
 	},
 
 

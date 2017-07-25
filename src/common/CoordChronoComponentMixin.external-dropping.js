@@ -1,15 +1,48 @@
 
-/*
-Wired up by calling
-externalDragStart
-*/
-$.extend(CoordChronoComponentMixin, {
+var ExternalDropping = Class.extend(ListenerMixin, {
 
-	isDraggingExternal: false, // jqui-dragging an external element? boolean
+	view: null,
+	component: null, // CoordComponent
+	dragListener: null,
+	isDragging: false, // jqui-dragging an external element? boolean
+
+
+	/*
+	component impements:
+		- registerDragListener
+		- unregisterDragListener
+		- eventRangesToEventFootprints
+		- isEventInstanceGroupAllowed
+		- isExternalInstanceGroupAllowed
+		- renderDrag
+		- unrenderDrag
+	*/
+	constructor: function(component) {
+		this.view = component.view;
+		this.component = component;
+	},
+
+
+	opt: function(name) {
+		return this.view.opt(name);
+	},
+
+
+	bindToDocument: function() {
+		this.listenTo($(document), {
+			dragstart: this.handleDragStart, // jqui
+			sortstart: this.handleDragStart // jqui
+		});
+	},
+
+
+	unbindFromDocument: function() {
+		this.stopListeningTo($(document));
+	},
 
 
 	// Called when a jQuery UI drag is initiated anywhere in the DOM
-	externalDragStart: function(ev, ui) {
+	handleDragStart: function(ev, ui) {
 		var el;
 		var accept;
 
@@ -20,7 +53,7 @@ $.extend(CoordChronoComponentMixin, {
 			// FYI, the default is "*" (matches all)
 			accept = this.opt('dropAccept');
 			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
-				if (!this.isDraggingExternal) { // prevent double-listening if fired twice
+				if (!this.isDragging) { // prevent double-listening if fired twice
 					this.listenToExternalDrag(el, ev, ui);
 				}
 			}
@@ -31,14 +64,15 @@ $.extend(CoordChronoComponentMixin, {
 	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
 	listenToExternalDrag: function(el, ev, ui) {
 		var _this = this;
+		var component = this.component;
 		var view = this.view;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var singleEventDef; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
-		var dragListener = _this.externalDragListener = new HitDragListener(this, {
+		var dragListener = _this.dragListener = new HitDragListener(component, {
 			interactionStart: function() {
-				_this.isDraggingExternal = true;
+				_this.isDragging = true;
 			},
 			hitOver: function(hit) {
 				var isAllowed = true;
@@ -53,8 +87,8 @@ $.extend(CoordChronoComponentMixin, {
 							singleEventDef.buildInstances()
 						);
 						isAllowed = meta.eventProps ? // isEvent?
-							_this.isEventInstanceGroupAllowed(mutatedEventInstanceGroup) :
-							_this.isExternalInstanceGroupAllowed(mutatedEventInstanceGroup);
+							component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup) :
+							component.isExternalInstanceGroupAllowed(mutatedEventInstanceGroup);
 					}
 					else {
 						isAllowed = false;
@@ -70,8 +104,8 @@ $.extend(CoordChronoComponentMixin, {
 				}
 
 				if (singleEventDef) {
-					_this.renderDrag( // called without a seg parameter
-						_this.eventRangesToEventFootprints(
+					component.renderDrag( // called without a seg parameter
+						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, view.calendar)
 						)
 					);
@@ -82,7 +116,7 @@ $.extend(CoordChronoComponentMixin, {
 			},
 			hitDone: function() { // Called after a hitOut OR before a dragEnd
 				enableCursor();
-				_this.unrenderDrag();
+				component.unrenderDrag();
 			},
 			interactionEnd: function(ev) {
 
@@ -95,10 +129,13 @@ $.extend(CoordChronoComponentMixin, {
 					);
 				}
 
-				_this.isDraggingExternal = false;
-				_this.externalDragListener = null;
+				_this.isDragging = false;
+				_this.dragListener = null;
+				component.unregisterDragListener(dragListener);
 			}
 		});
+
+		component.registerDragListener(dragListener);
 
 		dragListener.startDrag(ev); // start listening immediately
 	},
