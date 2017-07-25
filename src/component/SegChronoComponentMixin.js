@@ -14,6 +14,8 @@ This mixin can depend on ChronoComponent:
 */
 var SegChronoComponentMixin = {
 
+	eventRenderUtilsClass: EventRenderUtils,
+
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 	eventRenderUtils: null,
 	fillSystem: null,
@@ -195,13 +197,6 @@ var SegChronoComponentMixin = {
 		}
 
 	}),
-
-
-	/* Event Rendering Utils
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	eventRenderUtilsClass: EventRenderUtils,
 
 
 	/* Converting componentFootprint/eventFootprint -> segs
