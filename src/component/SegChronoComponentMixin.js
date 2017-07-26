@@ -15,14 +15,21 @@ This mixin can depend on ChronoComponent:
 var SegChronoComponentMixin = {
 
 	eventRendererClass: EventRenderer,
+	businessHourRendererClass: null,
 
 	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 	eventRenderer: null,
+	businessHourRenderer: null,
 	fillSystem: null,
 
 
 	initSegChronoComponent: function() {
 		this.eventRenderer = new this.eventRendererClass(this);
+
+		if (this.businessHourRendererClass) {
+			this.businessHourRenderer = new this.businessHourRendererClass(this);
+		}
+
 		this.fillSystem = new this.fillSystemClass(this);
 	},
 
@@ -119,12 +126,17 @@ var SegChronoComponentMixin = {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Compute business hour segs for the grid's current date range.
-	// Caller must ask if whole-day business hours are needed.
-	buildBusinessHourSegs: function(wholeDay) {
-		return this.eventFootprintsToSegs(
-			this.buildBusinessHourEventFootprints(wholeDay)
-		);
+	renderBusinessHours: function() {
+		if (this.businessHourRenderer) {
+			this.businessHourRenderer.render(); // TODO: eventually pass-in eventFootprints
+		}
+	},
+
+
+	unrenderBusinessHours: function() {
+		if (this.businessHourRenderer) {
+			this.businessHourRenderer.unrender();
+		}
 	},
 
 

@@ -153,42 +153,6 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	// Compute business hour *events* for the grid's current date range.
-	// Caller must ask if whole-day business hours are needed.
-	// FOR RENDERING
-	buildBusinessHourEventFootprints: function(wholeDay) {
-		var calendar = this.view.calendar;
-
-		return this._buildBusinessHourEventFootprints(wholeDay, calendar.opt('businessHours'));
-	},
-
-
-	_buildBusinessHourEventFootprints: function(wholeDay, businessHourDef) {
-		var view = this.view;
-		var calendar = view.calendar;
-		var eventInstanceGroup;
-		var eventRanges;
-
-		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
-			wholeDay,
-			businessHourDef,
-			view.renderUnzonedRange
-		);
-
-		if (eventInstanceGroup) {
-			eventRanges = eventInstanceGroup.sliceRenderRanges(
-				view.renderUnzonedRange,
-				calendar
-			);
-		}
-		else {
-			eventRanges = [];
-		}
-
-		return this.eventRangesToEventFootprints(eventRanges);
-	},
-
-
 	// Event Low-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 

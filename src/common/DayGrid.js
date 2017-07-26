@@ -397,16 +397,21 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderBusinessHours: function() {
-		var segs = this.buildBusinessHourSegs(true); // wholeDay=true
+	businessHourRendererClass: BusinessHourRenderer.extend({
 
-		this.fillSystem.render('businessHours', segs, 'bgevent');
-	},
+		isWholeDay: true,
 
 
-	unrenderBusinessHours: function() {
-		this.fillSystem.unrender('businessHours');
-	},
+		renderSegs: function(segs) {
+			this.component.fillSystem.render('businessHours', segs, 'bgevent');
+		},
+
+
+		unrender: function() {
+			this.component.fillSystem.unrender('businessHours');
+		}
+
+	}),
 
 
 	/* Fill System (highlight, background events, business hours)

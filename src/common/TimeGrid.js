@@ -664,29 +664,29 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderBusinessHours: function() {
-		this.renderBusinessSegs(
-			this.buildBusinessHourSegs()
-		);
-	},
+	businessHourRendererClass: BusinessHourRenderer.extend({
 
 
-	unrenderBusinessHours: function() {
-		this.unrenderBusinessSegs();
-	},
+		renderSegs: function(segs) {
+			var component = this.component;
+
+			segs = component.fillSystem.buildSegEls('businessHours', segs);
+
+			component.updateSegVerticals(segs);
+			component.attachSegsByCol(
+				component.groupSegsByCol(segs),
+				component.businessContainerEls
+			);
+
+			component.businessSegs = segs;
+		},
 
 
-	renderBusinessSegs: function(segs) {
-		segs = this.fillSystem.buildSegEls('businessHours', segs);
-		this.updateSegVerticals(segs);
-		this.attachSegsByCol(this.groupSegsByCol(segs), this.businessContainerEls);
-		this.businessSegs = segs;
-	},
+		unrender: function() {
+			this.component.unrenderNamedSegs('businessSegs');
+		}
 
-
-	unrenderBusinessSegs: function() {
-		this.unrenderNamedSegs('businessSegs');
-	},
+	}),
 
 
 	/* Selection
