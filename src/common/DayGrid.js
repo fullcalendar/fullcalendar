@@ -7,13 +7,13 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	eventRendererClass: DayGridEventRenderer,
 
 	view: null, // TODO: make more general and/or remove
+	helperRenderer: null,
 
 	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
 
 	rowEls: null, // set of fake row elements
 	cellEls: null, // set of whole-day elements comprising the row's background
-	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
 
 	rowCoordCache: null,
 	colCoordCache: null,
@@ -26,6 +26,9 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 		// a requirement for SegChronoComponentMixin. TODO: more elegant
 		this.initSegChronoComponent();
+
+		// must happen after eventRender initialized in initSegChronoComponent
+		this.helperRenderer = new DayGridHelperRenderer(this);
 	},
 
 
@@ -355,7 +358,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
+			return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
 		}
 	},
 
@@ -363,7 +366,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	// Unrenders any visual indication of a hovering event
 	unrenderDrag: function() {
 		this.unrenderHighlight();
-		this.unrenderHelper();
+		this.helperRenderer.unrender();
 	},
 
 
@@ -379,64 +382,14 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
+		return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
 	// Unrenders a visual indication of an event being resized
 	unrenderEventResize: function() {
 		this.unrenderHighlight();
-		this.unrenderHelper();
-	},
-
-
-	/* Event Helper
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
-		var helperNodes = [];
-		var segs = this.eventFootprintsToSegs(eventFootprints);
-		var rowStructs;
-
-		segs = this.eventRenderer.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
-		rowStructs = this.eventRenderer.renderSegRows(segs);
-
-		// inject each new event skeleton into each associated row
-		this.rowEls.each(function(row, rowNode) {
-			var rowEl = $(rowNode); // the .fc-row
-			var skeletonEl = $('<div class="fc-helper-skeleton"><table/></div>'); // will be absolutely positioned
-			var skeletonTop;
-
-			// If there is an original segment, match the top position. Otherwise, put it at the row's top level
-			if (sourceSeg && sourceSeg.row === row) {
-				skeletonTop = sourceSeg.el.position().top;
-			}
-			else {
-				skeletonTop = rowEl.find('.fc-content-skeleton tbody').position().top;
-			}
-
-			skeletonEl.css('top', skeletonTop)
-				.find('table')
-					.append(rowStructs[row].tbodyEl);
-
-			rowEl.append(skeletonEl);
-			helperNodes.push(skeletonEl[0]);
-		});
-
-		return ( // must return the elements rendered
-			this.helperEls = $(helperNodes) // array -> jQuery set
-		);
-	},
-
-
-	// Unrenders any visual indication of a mock helper event
-	unrenderHelper: function() {
-		if (this.helperEls) {
-			this.helperEls.remove();
-			this.helperEls = null;
-		}
+		this.helperRenderer.unrender();
 	},
 
 

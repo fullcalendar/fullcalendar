@@ -229,44 +229,6 @@ var CoordChronoComponentMixin = {
 	},
 
 
-	/* Event Helper
-	------------------------------------------------------------------------------------------------------------------*/
-	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
-
-
-	renderHelperEventFootprints: function(eventFootprints, sourceSeg) {
-		return this.renderHelperEventFootprintEls(eventFootprints, sourceSeg)
-			.addClass('fc-helper');
-	},
-
-
-	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
-		// Subclasses must implement.
-		// Must return all mock event elements.
-	},
-
-
-	// Unrenders a mock event
-	// TODO: have this in ChronoComponent
-	unrenderHelper: function() {
-		// subclasses must implement
-	},
-
-
-	fabricateEventFootprint: function(componentFootprint) {
-		var view = this._getView();
-		var calendar = view.calendar;
-		var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
-		var dummyEvent = new SingleEventDef(new EventSource(calendar));
-		var dummyInstance;
-
-		dummyEvent.dateProfile = eventDateProfile;
-		dummyInstance = dummyEvent.buildInstance();
-
-		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
-	},
-
-
 	// Event Resizing
 	// ---------------------------------------------------------------------------------------------------------------
 	// TODO: why not move this to ChronoComponent

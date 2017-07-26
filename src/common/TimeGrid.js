@@ -8,6 +8,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	eventRendererClass: TimeGridEventRenderer,
 
 	view: null, // TODO: make more general and/or remove
+	helperRenderer: null,
 
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -48,6 +49,9 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 		// a requirement for SegChronoComponentMixin
 		this.initSegChronoComponent();
+
+		// must happen after eventRender initialized in initSegChronoComponent
+		this.helperRenderer = new TimeGridHelperRenderer(this);
 
 		this.processOptions();
 	},
@@ -622,7 +626,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.renderHelperEventFootprints(eventFootprints);
+			return this.helperRenderer.renderFootprints(eventFootprints);
 		}
 		else { // otherwise, just render a highlight
 
@@ -635,7 +639,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	// Unrenders any visual indication of an event being dragged
 	unrenderDrag: function() {
-		this.unrenderHelper();
+		this.helperRenderer.unrender();
 		this.unrenderHighlight();
 	},
 
@@ -646,67 +650,13 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventFootprints, seg) {
-		return this.renderHelperEventFootprints(eventFootprints, seg); // returns mock event elements
+		return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
 	// Unrenders any visual indication of an event being resized
 	unrenderEventResize: function() {
-		this.unrenderHelper();
-	},
-
-
-	/* Event Helper
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a mock "helper" event. `sourceSeg` is the original segment object and might be null (an external drag)
-	renderHelperEventFootprintEls: function(eventFootprints, sourceSeg) {
-		var segs = this.eventFootprintsToSegs(eventFootprints);
-
-		return this.renderHelperSegs( // returns mock event elements
-			segs,
-			sourceSeg
-		);
-	},
-
-
-	// Unrenders any mock helper event
-	unrenderHelper: function() {
-		this.unrenderHelperSegs();
-	},
-
-
-	renderHelperSegs: function(segs, sourceSeg) {
-		var helperEls = [];
-		var i, seg;
-		var sourceEl;
-
-		segs = this.eventRenderer.renderFgSegsIntoContainers(segs, this.helperContainerEls);
-
-		// Try to make the segment that is in the same row as sourceSeg look the same
-		for (i = 0; i < segs.length; i++) {
-			seg = segs[i];
-			if (sourceSeg && sourceSeg.col === seg.col) {
-				sourceEl = sourceSeg.el;
-				seg.el.css({
-					left: sourceEl.css('left'),
-					right: sourceEl.css('right'),
-					'margin-left': sourceEl.css('margin-left'),
-					'margin-right': sourceEl.css('margin-right')
-				});
-			}
-			helperEls.push(seg.el[0]);
-		}
-
-		this.helperSegs = segs;
-
-		return $(helperEls); // must return rendered helpers
-	},
-
-
-	unrenderHelperSegs: function() {
-		this.unrenderNamedSegs('helperSegs');
+		this.helperRenderer.unrender();
 	},
 
 
@@ -746,7 +696,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
 	renderSelectionFootprint: function(componentFootprint) {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderHelperEventFootprints([
+			this.helperRenderer.renderFootprints([
 				this.fabricateEventFootprint(componentFootprint)
 			]);
 		}
@@ -758,7 +708,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	// Unrenders any visual indication of a selection
 	unrenderSelection: function() {
-		this.unrenderHelper();
+		this.helperRenderer.unrender();
 		this.unrenderHighlight();
 	},
 
