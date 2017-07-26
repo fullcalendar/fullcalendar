@@ -24,11 +24,6 @@ var CoordChronoComponentMixin = {
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
 
-	initCoordChronoComponent: function() {
-		this.externalDropping = new this.externalDroppingClass(this);
-	},
-
-
 	// Diffs the two dates, returning a duration, based on granularity of the grid
 	// TODO: port isTimeScale into this system?
 	diffDates: function(a, b) {
@@ -62,6 +57,9 @@ var CoordChronoComponentMixin = {
 	setElement: function(el) {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
+		(this.externalDropping = new this.externalDroppingClass(this))
+			.bindToDocument();
+
 		(this.dateClicking = new DateClicking(this)).bindToEl(this.el);
 		(this.dateSelecting = new DateSelecting(this)).bindToEl(this.el);
 
@@ -79,6 +77,7 @@ var CoordChronoComponentMixin = {
 		ChronoComponent.prototype.removeElement.apply(this, arguments);
 
 		this.endInteractions();
+		this.externalDropping.unbindFromDocument();
 	},
 
 
@@ -91,22 +90,6 @@ var CoordChronoComponentMixin = {
 
 	/* Binding
 	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Binds DOM handlers to elements that reside outside the grid, such as the document
-	bindGlobalHandlers: function() {
-		ChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
-
-		this.externalDropping.bindToDocument();
-	},
-
-
-	// Unbinds DOM handlers from elements that reside outside the grid
-	unbindGlobalHandlers: function() {
-		ChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
-
-		this.externalDropping.unbindFromDocument();
-	},
 
 
 	bindDateHandlerToEl: function(el, name, handler) {

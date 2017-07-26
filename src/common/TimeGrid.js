@@ -46,9 +46,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 		ChronoComponent.apply(this, arguments); // call the super-constructor
 
-		// a requirement for CoordChronoComponentMixin
-		this.initCoordChronoComponent();
-
 		// a requirement for SegChronoComponentMixin
 		this.initSegChronoComponent();
 

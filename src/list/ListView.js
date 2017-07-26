@@ -15,8 +15,6 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
 
 	initialize: function() {
-		// a requirement for CoordChronoComponentMixin
-		this.initCoordChronoComponent();
 
 		// a requirement for SegChronoComponentMixin
 		this.initSegChronoComponent();
