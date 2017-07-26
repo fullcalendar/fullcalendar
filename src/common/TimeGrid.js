@@ -626,7 +626,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 			// returns mock event elements
 			// signal that a helper has been rendered
-			return this.helperRenderer.renderFootprints(eventFootprints);
+			return this.helperRenderer.renderEventFootprints(eventFootprints);
 		}
 		else { // otherwise, just render a highlight
 
@@ -650,7 +650,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventFootprints, seg) {
-		return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
+		return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 
@@ -696,9 +696,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
 	renderSelectionFootprint: function(componentFootprint) {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.helperRenderer.renderFootprints([
-				this.fabricateEventFootprint(componentFootprint)
-			]);
+			this.helperRenderer.renderComponentFootprint(componentFootprint);
 		}
 		else {
 			this.renderHighlight(componentFootprint);

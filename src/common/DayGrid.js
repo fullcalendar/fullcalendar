@@ -358,7 +358,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
+			return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
 		}
 	},
 
@@ -382,7 +382,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.helperRenderer.renderFootprints(eventFootprints, seg); // returns mock event elements
+		return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
 	},
 
 

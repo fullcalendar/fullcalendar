@@ -13,7 +13,14 @@ var HelperRenderer = Class.extend({
 	},
 
 
-	renderFootprints: function(eventFootprints, sourceSeg) {
+	renderComponentFootprint: function(componentFootprint) {
+		return this.renderEventFootprints([
+			this.fabricateEventFootprint(componentFootprint)
+		]);
+	},
+
+
+	renderEventFootprints: function(eventFootprints, sourceSeg) {
 		return this.renderFootprintEls(eventFootprints, sourceSeg)
 			.addClass('fc-helper');
 	},
