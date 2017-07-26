@@ -8,14 +8,19 @@ var EventDragging = Interaction.extend({
 	/*
 	component impements:
 		- bindSegHandlerToEl
-		- registerDragListener
-		- unregisterDragListener
 		- publiclyTrigger
 		- diffDates
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
 		- eventPointing (!)
 	*/
+
+
+	end: function() {
+		if (this.dragListener) {
+			this.dragListener.endInteraction();
+		}
+	},
 
 
 	getSelectionDelay: function() {
@@ -86,11 +91,8 @@ var EventDragging = Interaction.extend({
 			},
 			interactionEnd: function(ev) {
 				_this.dragListener = null;
-				_this.component.unregisterDragListener(dragListener);
 			}
 		});
-
-		this.component.registerDragListener(dragListener);
 
 		return dragListener;
 	},
@@ -246,11 +248,8 @@ var EventDragging = Interaction.extend({
 				});
 
 				_this.dragListener = null;
-				component.unregisterDragListener(dragListener);
 			}
 		});
-
-		component.registerDragListener(dragListener);
 
 		return dragListener;
 	},

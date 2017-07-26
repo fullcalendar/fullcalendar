@@ -7,14 +7,19 @@ var ExternalDropping = Interaction.extend(ListenerMixin, {
 
 	/*
 	component impements:
-		- registerDragListener
-		- unregisterDragListener
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
 		- isExternalInstanceGroupAllowed
 		- renderDrag
 		- unrenderDrag
 	*/
+
+
+	end: function() {
+		if (this.dragListener) {
+			this.dragListener.endInteraction();
+		}
+	},
 
 
 	bindToDocument: function() {
@@ -120,11 +125,8 @@ var ExternalDropping = Interaction.extend(ListenerMixin, {
 
 				_this.isDragging = false;
 				_this.dragListener = null;
-				component.unregisterDragListener(dragListener);
 			}
 		});
-
-		component.registerDragListener(dragListener);
 
 		dragListener.startDrag(ev); // start listening immediately
 	},

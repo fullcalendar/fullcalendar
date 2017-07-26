@@ -1,6 +1,18 @@
 
 var CoordChronoComponentMixin = {
 
+	eventPointingClass: EventPointing,
+	eventDraggingClass: EventDragging,
+	eventResizingClass: EventResizing,
+	externalDroppingClass: ExternalDropping,
+
+	dateClicking: null,
+	dateSelecting: null,
+	eventPointing: null,
+	eventDragging: null,
+	eventResizing: null,
+	externalDropping: null,
+
 	// self-config, overridable by subclasses
 	segSelector: '.fc-event-container > *', // what constitutes an event element?
 
@@ -11,23 +23,8 @@ var CoordChronoComponentMixin = {
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
-	dragListeners: null,
-
-	eventPointingClass: EventPointing,
-	eventPointing: null,
-
-	eventDraggingClass: EventDragging,
-	eventDragging: null,
-
-	eventResizingClass: EventResizing,
-	eventResizing: null,
-
-	externalDroppingClass: ExternalDropping,
-	externalDropping: null,
-
 
 	initCoordChronoComponent: function() {
-		this.dragListeners = [];
 		this.externalDropping = new this.externalDroppingClass(this);
 	},
 
@@ -47,13 +44,12 @@ var CoordChronoComponentMixin = {
 	// Kills all in-progress dragging.
 	// Useful for when public API methods that result in re-rendering are invoked during a drag.
 	// Also useful for when touch devices misbehave and don't fire their touchend.
-	clearDragListeners: function() {
-		var dragListeners = this.dragListeners;
-		var i;
-
-		for (i = 0; i < dragListeners.length; i++) {
-			dragListeners[i].endInteraction();
-		}
+	endInteractions: function() {
+		this.dateClicking.end();
+		this.dateSelecting.end();
+		this.eventPointing.end();
+		this.eventDragging.end();
+		this.eventResizing.end();
 	},
 
 
@@ -66,8 +62,8 @@ var CoordChronoComponentMixin = {
 	setElement: function(el) {
 		ChronoComponent.prototype.setElement.apply(this, arguments);
 
-		new DateClicking(this).bindToEl(this.el);
-		new DateSelecting(this).bindToEl(this.el);
+		(this.dateClicking = new DateClicking(this)).bindToEl(this.el);
+		(this.dateSelecting = new DateSelecting(this)).bindToEl(this.el);
 
 		this.eventPointing = new this.eventPointingClass(this);
 		this.eventDragging = new this.eventDraggingClass(this);
@@ -82,14 +78,14 @@ var CoordChronoComponentMixin = {
 	removeElement: function() {
 		ChronoComponent.prototype.removeElement.apply(this, arguments);
 
-		this.clearDragListeners();
+		this.endInteractions();
 	},
 
 
 	unrenderEvents: function() {
 		ChronoComponent.prototype.unrenderEvents.apply(this, arguments);
 
-		this.clearDragListeners(); // we wanted to add this action to event rendering teardown
+		this.endInteractions(); // we wanted to add this action to event rendering teardown
 	},
 
 
@@ -198,16 +194,6 @@ var CoordChronoComponentMixin = {
 		return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
 			this.isEventDefResizable(eventDef) &&
 			$(ev.target).is('.fc-resizer');
-	},
-
-
-	registerDragListener: function(dragListener) {
-		this.dragListeners.push(dragListener);
-	},
-
-
-	unregisterDragListener: function(dragListener) {
-		removeExact(this.dragListeners, dragListener);
 	},
 
 

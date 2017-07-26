@@ -7,7 +7,6 @@ var DateSelecting = Interaction.extend({
 	/*
 	component must implement:
 		- bindDateHandlerToEl
-		- registerDragListener
 		- getSafeHitFootprint
 		- renderHighlight
 		- unrenderHighlight
@@ -16,7 +15,11 @@ var DateSelecting = Interaction.extend({
 		Interaction.call(this, component);
 
 		this.dragListener = this.buildDragListener();
-		component.registerDragListener(this.dragListener);
+	},
+
+
+	end: function() {
+		this.dragListener.endInteraction();
 	},
 
 

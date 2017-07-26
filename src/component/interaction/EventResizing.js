@@ -8,8 +8,6 @@ var EventResizing = Interaction.extend({
 	/*
 	component impements:
 		- bindSegHandlerToEl
-		- registerDragListener
-		- unregisterDragListener
 		- publiclyTrigger
 		- diffDates
 		- eventRangesToEventFootprints
@@ -17,6 +15,13 @@ var EventResizing = Interaction.extend({
 		- getSafeHitFootprint
 		- eventPointing (!)
 	*/
+
+
+	end: function() {
+		if (this.dragListener) {
+			this.dragListener.endInteraction();
+		}
+	},
 
 
 	bindToEl: function(el) {
@@ -141,11 +146,8 @@ var EventResizing = Interaction.extend({
 				}
 
 				_this.dragListener = null;
-				component.unregisterDragListener(dragListener);
 			}
 		});
-
-		component.registerDragListener(dragListener);
 
 		return dragListener;
 	},
