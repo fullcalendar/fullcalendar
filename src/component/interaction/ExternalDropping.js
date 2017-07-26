@@ -1,8 +1,6 @@
 
-var ExternalDropping = Class.extend(ListenerMixin, {
+var ExternalDropping = Interaction.extend(ListenerMixin, {
 
-	view: null,
-	component: null, // CoordComponent
 	dragListener: null,
 	isDragging: false, // jqui-dragging an external element? boolean
 
@@ -17,15 +15,6 @@ var ExternalDropping = Class.extend(ListenerMixin, {
 		- renderDrag
 		- unrenderDrag
 	*/
-	constructor: function(component) {
-		this.view = component._getView();
-		this.component = component;
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
-	},
 
 
 	bindToDocument: function() {

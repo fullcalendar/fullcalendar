@@ -1,8 +1,6 @@
 
-var EventPointing = Class.extend({
+var EventPointing = Interaction.extend({
 
-	view: null,
-	component: null, // CoordComponent
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 
 
@@ -10,10 +8,6 @@ var EventPointing = Class.extend({
 	component must implement:
 		- publiclyTrigger
 	*/
-	constructor: function(component) {
-		this.view = component._getView();
-		this.component = component;
-	},
 
 
 	bindToEl: function(el) {

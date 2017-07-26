@@ -1,8 +1,6 @@
 
-var EventResizing = Class.extend({
+var EventResizing = Interaction.extend({
 
-	view: null,
-	component: null,
 	dragListener: null,
 	isResizing: false,
 
@@ -19,15 +17,6 @@ var EventResizing = Class.extend({
 		- getSafeHitFootprint
 		- eventPointing (!)
 	*/
-	constructor: function(component) {
-		this.view = component._getView();
-		this.component = component;
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
-	},
 
 
 	bindToEl: function(el) {

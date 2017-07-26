@@ -1,8 +1,6 @@
 
-var DateSelecting = Class.extend({
+var DateSelecting = Interaction.extend({
 
-	view: null,
-	component: null, // CoordComponent
 	dragListener: null,
 
 
@@ -15,16 +13,10 @@ var DateSelecting = Class.extend({
 		- unrenderHighlight
 	*/
 	constructor: function(component) {
-		this.component = component;
-		this.view = component._getView();
+		Interaction.call(this, component);
 
 		this.dragListener = this.buildDragListener();
 		component.registerDragListener(this.dragListener);
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
 	},
 
 

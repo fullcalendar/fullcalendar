@@ -1,8 +1,6 @@
 
-var DateClicking = Class.extend({
+var DateClicking = Interaction.extend({
 
-	view: null,
-	component: null, // CoordComponent
 	dragListener: null,
 
 
@@ -14,16 +12,10 @@ var DateClicking = Class.extend({
 		- getHitEl
 	*/
 	constructor: function(component) {
-		this.view = component._getView();
-		this.component = component;
+		Interaction.call(this, component);
 
 		this.dragListener = this.buildDragListener();
 		component.registerDragListener(this.dragListener);
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
 	},
 
 

@@ -1,8 +1,6 @@
 
-var EventDragging = Class.extend({
+var EventDragging = Interaction.extend({
 
-	view: null,
-	component: null,
 	dragListener: null,
 	isDragging: false,
 
@@ -18,15 +16,6 @@ var EventDragging = Class.extend({
 		- isEventInstanceGroupAllowed
 		- eventPointing (!)
 	*/
-	constructor: function(component) {
-		this.view = component._getView();
-		this.component = component;
-	},
-
-
-	opt: function(name) {
-		return this.view.opt(name);
-	},
 
 
 	getSelectionDelay: function() {

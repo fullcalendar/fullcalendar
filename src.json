@@ -24,6 +24,7 @@
     "common/DayTableMixin.js",
     "common/Scroller.js",
     "common/Iterator.js",
+    "component/interaction/Interaction.js",
     "component/interaction/DateClicking.js",
     "component/interaction/DateSelecting.js",
     "component/interaction/EventDragging.js",
