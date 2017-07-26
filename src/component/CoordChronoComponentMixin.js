@@ -173,26 +173,21 @@ var CoordChronoComponentMixin = {
 
 	shouldIgnoreEventPointing: function() {
 		// only call the handlers if there is not a drag/resize in progress
-
 		return this.eventDragging.isDragging || this.eventResizing.isResizing;
 	},
 
 
 	canStartSelection: function(seg, ev) {
-		var view = this._getView();
-
 		return getEvIsTouch(ev) &&
 			!this.canStartResize(seg, ev) &&
-			(view.isEventDefDraggable(seg.footprint.eventDef) ||
-			 view.isEventDefResizable(seg.footprint.eventDef));
+			(this.isEventDefDraggable(seg.footprint.eventDef) ||
+			 this.isEventDefResizable(seg.footprint.eventDef));
 	},
 
 
 	canStartDrag: function(seg, ev) {
-		var view = this._getView();
-
 		return !this.canStartResize(seg, ev) &&
-			view.isEventDefDraggable(seg.footprint.eventDef);
+			this.isEventDefDraggable(seg.footprint.eventDef);
 	},
 
 
@@ -201,7 +196,7 @@ var CoordChronoComponentMixin = {
 		var eventDef = seg.footprint.eventDef;
 
 		return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
-			view.isEventDefResizable(eventDef) &&
+			this.isEventDefResizable(eventDef) &&
 			$(ev.target).is('.fc-resizer');
 	},
 
