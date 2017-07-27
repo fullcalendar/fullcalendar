@@ -72,6 +72,8 @@ var SegChronoComponentMixin = {
 
 	// Unrenders all currently rendered foreground segments
 	unrenderFgEventSegs: function() {
+		this.endInteractions(); // TODO: called too frequently
+
 		this.eventRenderer.unrenderFgSegs();
 	},
 
@@ -79,6 +81,8 @@ var SegChronoComponentMixin = {
 	// Renders the given background event segments onto the grid.
 	// Returns a subset of the segs that were actually rendered.
 	renderBgEventSegs: function(segs) {
+		this.endInteractions(); // TODO: called too frequently
+
 		return this.fillSystem.render('bgEvent', segs);
 	},
 
