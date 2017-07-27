@@ -6,6 +6,7 @@
 var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
+	fillRendererClass: StandardFillRenderer, // still ABSTRACT, but that's okay. used for utils.
 
 	view: null, // TODO: make more general and/or remove
 	helperRenderer: null,
@@ -588,7 +589,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 
 	renderBgEventSegs: function(segs) {
-		segs = this.fillSystem.buildSegEls('bgEvent', segs);
+		segs = this.fillRenderer.buildSegEls('bgEvent', segs);
 
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.bgContainerEls);
@@ -659,7 +660,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 		renderSegs: function(segs) {
 			var component = this.component;
 
-			segs = component.fillSystem.buildSegEls('businessHours', segs);
+			segs = component.fillRenderer.buildSegEls('businessHours', segs);
 
 			component.updateSegVerticals(segs);
 			component.attachSegsByCol(
@@ -717,9 +718,11 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 
 	renderHighlightSegs: function(segs) {
-		segs = this.fillSystem.buildSegEls('highlight', segs);
+		segs = this.fillRenderer.buildSegEls('highlight', segs);
+
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
+
 		this.highlightSegs = segs;
 	},
 

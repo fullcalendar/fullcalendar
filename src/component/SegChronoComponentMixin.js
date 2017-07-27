@@ -14,10 +14,11 @@ var SegChronoComponentMixin = {
 
 	eventRendererClass: EventRenderer,
 	businessHourRendererClass: null,
+	fillRendererClass: null, // subclasses MUST provide this
 
 	eventRenderer: null,
 	businessHourRenderer: null,
-	fillSystem: null,
+	fillRenderer: null,
 
 	bgSegs: null,
 	fgSegs: null,
@@ -30,7 +31,9 @@ var SegChronoComponentMixin = {
 			this.businessHourRenderer = new this.businessHourRendererClass(this);
 		}
 
-		this.fillSystem = new this.fillSystemClass(this);
+		if (this.fillRendererClass) {
+			this.fillRenderer = new this.fillRendererClass(this);
+		}
 	},
 
 
@@ -83,13 +86,19 @@ var SegChronoComponentMixin = {
 	renderBgEventSegs: function(segs) {
 		this.endInteractions(); // TODO: called too frequently
 
-		return this.fillSystem.render('bgEvent', segs);
+		if (this.fillRenderer) {
+			return this.fillRenderer.render('bgEvent', segs);
+		}
+
+		return [];
 	},
 
 
 	// Unrenders all the currently rendered background event segments
 	unrenderBgEventSegs: function() {
-		this.fillSystem.unrender('bgEvent');
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('bgEvent');
+		}
 	},
 
 
@@ -122,70 +131,18 @@ var SegChronoComponentMixin = {
 
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
 	renderHighlight: function(componentFootprint) {
-		this.fillSystem.render('highlight', this.componentFootprintToSegs(componentFootprint));
+		if (this.fillRenderer) {
+			this.fillRenderer.render('highlight', this.componentFootprintToSegs(componentFootprint));
+		}
 	},
 
 
 	// Unrenders the emphasis on a date range
 	unrenderHighlight: function() {
-		this.fillSystem.unrender('highlight');
-	},
-
-
-	/* Fill System
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	fillSystemClass: FillRenderer.extend({
-
-		eventRenderer: null,
-
-
-		constructor: function(component) {
-			FillRenderer.call(this);
-
-			this.eventRenderer = component.eventRenderer;
-		},
-
-
-		attachSegEls: function(segs) {
-			// subclasses must implement
-		},
-
-
-		// Renders a background event element, given the default rendering. Called by the fill system.
-		bgEventSegEl: function(seg, el) {
-			return this.eventRenderer.filterEventRenderEl(seg.footprint, el);
-		},
-
-
-		// Generates an array of classNames to be used for the default rendering of a background event.
-		bgEventSegClasses: function(seg) {
-			return this.eventRenderer.getBgClasses(seg.footprint);
-		},
-
-
-		// Generates a semicolon-separated CSS string to be used for the default rendering of a background event.
-		bgEventSegCss: function(seg) {
-			return {
-				'background-color': this.eventRenderer.getSkinCss(seg.footprint)['background-color']
-			};
-		},
-
-
-		// Generates an array of classNames to be used for the rendering business hours overlay.
-		businessHoursSegClasses: function(seg) {
-			return [ 'fc-nonbusiness', 'fc-bgevent' ];
-		},
-
-
-		// Generates an array of classNames for rendering the highlight.
-		// USED BY THE FILL SYSTEM, FillRenderer::buildSegHtml
-		highlightSegClasses: function() {
-			return [ 'fc-highlight' ];
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('highlight');
 		}
-
-	}),
+	},
 
 
 	/* Converting componentFootprint/eventFootprint -> segs

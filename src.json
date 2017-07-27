@@ -33,6 +33,7 @@
     "component/EventRenderer.js",
     "component/BusinessHourRenderer.js",
     "component/FillRenderer.js",
+    "component/StandardFillRenderer.js",
     "component/HelperRenderer.js",
     "component/ChronoComponent.js",
     "component/CoordChronoComponentMixin.js",

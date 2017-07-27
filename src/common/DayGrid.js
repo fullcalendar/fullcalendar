@@ -402,12 +402,12 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 
 
 		renderSegs: function(segs) {
-			this.component.fillSystem.render('businessHours', segs, 'bgevent');
+			this.component.fillRenderer.render('businessHours', segs, 'bgevent');
 		},
 
 
 		unrender: function() {
-			this.component.fillSystem.unrender('businessHours');
+			this.component.fillRenderer.unrender('businessHours');
 		}
 
 	}),
@@ -417,14 +417,15 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	fillSystemClass: SegChronoComponentMixin.fillSystemClass.extend({
+	fillRendererClass: StandardFillRenderer.extend({
 
 		fillSegTag: 'td', // override the default tag name
 		dayGrid: null,
 
 
 		constructor: function(dayGrid) {
-			SegChronoComponentMixin.fillSystemClass.call(this, dayGrid);
+			StandardFillRenderer.call(this, dayGrid);
+
 			this.dayGrid = dayGrid;
 		},
 
