@@ -15,6 +15,11 @@ var TimeGridEventRenderer = EventRenderer.extend({
 	},
 
 
+	renderFgSegs: function(segs) {
+		return this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls);
+	},
+
+
 	// Given an array of foreground segments, render a DOM element for each, computes position,
 	// and attaches to the column inner-container elements.
 	renderFgSegsIntoContainers: function(segs, containerEls) {

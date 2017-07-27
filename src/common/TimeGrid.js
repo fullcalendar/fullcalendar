@@ -35,8 +35,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 	businessContainerEls: null,
 
 	// arrays of different types of displayed segments
-	fgSegs: null,
-	bgSegs: null,
 	helperSegs: null,
 	highlightSegs: null,
 	businessSegs: null,
@@ -586,25 +584,16 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, S
 
 	/* Event Rendering
 	------------------------------------------------------------------------------------------------------------------*/
+	// fg event rendering happens in TimeGridEventRenderer
 
 
-	renderFgSegs: function(segs) {
-		segs = this.eventRenderer.renderFgSegsIntoContainers(segs, this.fgContainerEls);
-
-		this.fgSegs = segs;
-
-		return segs; // needed for Grid::renderEvents
-	},
-
-
-	renderBgSegs: function(segs) {
+	renderBgEventSegs: function(segs) {
 		segs = this.fillSystem.buildSegEls('bgEvent', segs);
 
 		this.updateSegVerticals(segs);
 		this.attachSegsByCol(this.groupSegsByCol(segs), this.bgContainerEls);
-		this.bgSegs = segs;
 
-		return segs; // needed for Grid::renderEvents
+		return segs;
 	},
 
 

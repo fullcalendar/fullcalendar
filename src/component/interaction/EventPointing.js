@@ -56,8 +56,6 @@ var EventPointing = Interaction.extend({
 	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
 	handleMouseout: function(seg, ev) {
 		if (this.mousedOverSeg) {
-
-			seg = seg || this.mousedOverSeg; // if given no args, use the currently moused-over segment
 			this.mousedOverSeg = null;
 
 			// TODO: move to EventSelecting's responsibility
@@ -73,6 +71,13 @@ var EventPointing = Interaction.extend({
 					this.view
 				]
 			});
+		}
+	},
+
+
+	end: function() {
+		if (this.mousedOverSeg) {
+			this.handleMouseout(this.mousedOverSeg);
 		}
 	}
 

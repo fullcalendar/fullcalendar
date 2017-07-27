@@ -3,8 +3,6 @@
 Caller must:
 - call initSegChronoComponent
 - implement componentFootprintToSegs
-- implement renderFgSegs
-- implement unrenderFgSegs
 
 This mixin can depend on ChronoComponent:
 - opt
@@ -17,10 +15,12 @@ var SegChronoComponentMixin = {
 	eventRendererClass: EventRenderer,
 	businessHourRendererClass: null,
 
-	segs: null, // the *event* segments currently rendered in the grid. TODO: rename to `eventSegs`
 	eventRenderer: null,
 	businessHourRenderer: null,
 	fillSystem: null,
+
+	bgSegs: null,
+	fgSegs: null,
 
 
 	initSegChronoComponent: function() {
@@ -34,91 +34,63 @@ var SegChronoComponentMixin = {
 	},
 
 
-	renderEventsPayload: function(eventsPayload) {
-		var view = this._getView();
-		var id, eventInstanceGroup;
-		var eventRenderRanges;
-		var eventFootprints;
-		var eventSegs;
-		var bgSegs = [];
-		var fgSegs = [];
-
-		for (id in eventsPayload) {
-			eventInstanceGroup = eventsPayload[id];
-
-			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(view.activeUnzonedRange);
-			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
-			eventSegs = this.eventFootprintsToSegs(eventFootprints);
-
-			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
-				bgSegs.push.apply(bgSegs, // append
-					eventSegs
-				);
-			}
-			else {
-				fgSegs.push.apply(fgSegs, // append
-					eventSegs
-				);
-			}
-		}
-
-		this.segs = [].concat( // record all segs
-			this.renderBgSegs(bgSegs) || bgSegs,
-			this.renderFgSegs(fgSegs) || fgSegs
-		);
-	},
-
-
-	// Unrenders all events currently rendered on the grid
-	unrenderEvents: function() {
-
-		// ensure a mouseout on the manipulated event has been reported
-		// TODO: okay to call this?
-		this.eventPointing.handleMouseout();
-
-		this.unrenderFgSegs();
-		this.unrenderBgSegs();
-
-		this.segs = null;
-	},
-
-
-	// Retrieves all rendered segment objects currently rendered on the grid
-	getEventSegs: function() {
-		return this.segs || [];
-	},
-
-
-	// Foreground Segment Rendering
+	// Event Rendering
 	// ---------------------------------------------------------------------------------------------------------------
 
 
+	renderFgEventFootprints: function(eventFootprints) {
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		this.fgSegs = this.renderFgEventSegs(segs) || segs;
+	},
+
+
+	renderBgEventFootprints: function(eventFootprints) {
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		this.bgSegs = this.renderBgEventSegs(segs) || segs;
+	},
+
+
+	unrenderFgEventFootprints: function() {
+		this.unrenderFgEventSegs();
+		this.fgSegs = null;
+	},
+
+
+	unrenderBgEventFootprints: function() {
+		this.unrenderBgEventSegs();
+		this.bgSegs = null;
+	},
+
+
 	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
-	renderFgSegs: function(segs) {
+	renderFgEventSegs: function(segs) {
 		return this.eventRenderer.renderFgSegs(segs);
 	},
 
 
 	// Unrenders all currently rendered foreground segments
-	unrenderFgSegs: function() {
+	unrenderFgEventSegs: function() {
 		this.eventRenderer.unrenderFgSegs();
 	},
 
 
-	/* Background Segment Rendering
-	------------------------------------------------------------------------------------------------------------------*/
-
-
 	// Renders the given background event segments onto the grid.
 	// Returns a subset of the segs that were actually rendered.
-	renderBgSegs: function(segs) {
+	renderBgEventSegs: function(segs) {
 		return this.fillSystem.render('bgEvent', segs);
 	},
 
 
 	// Unrenders all the currently rendered background event segments
-	unrenderBgSegs: function() {
+	unrenderBgEventSegs: function() {
 		this.fillSystem.unrender('bgEvent');
+	},
+
+
+	getEventSegs: function() {
+		return (this.bgSegs || []).concat(this.fgSegs || []);
 	},
 
 

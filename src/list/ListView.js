@@ -26,11 +26,6 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 	},
 
 
-	_getView: function() {
-		return this;
-	},
-
-
 	renderSkeleton: function() {
 		this.el.addClass(
 			'fc-list-view ' +
@@ -230,7 +225,7 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 
 
 	// returns list of foreground segs that were actually rendered
-	renderFgSegs: function(segs) {
+	renderFgEventSegs: function(segs) {
 		segs = this.eventRenderer.renderFgSegEls(segs); // might filter away hidden events
 
 		if (!segs.length) {

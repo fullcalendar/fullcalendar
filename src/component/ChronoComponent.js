@@ -153,23 +153,67 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	// Event Low-level Rendering
+	// Event Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// Renders the events onto the view.
 	// TODO: eventually rename to `renderEvents` once legacy is gone.
 	renderEventsPayload: function(eventsPayload) {
-		this.callChildren('renderEventsPayload', eventsPayload);
+		var view = this._getView();
+		var id, eventInstanceGroup;
+		var eventRenderRanges;
+		var eventFootprints;
+		var bgFootprints = [];
+		var fgFootprints = [];
+
+		for (id in eventsPayload) {
+			eventInstanceGroup = eventsPayload[id];
+			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(view.activeUnzonedRange);
+			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
+
+			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
+				bgFootprints.push.apply(bgFootprints, eventFootprints);
+			}
+			else {
+				fgFootprints.push.apply(fgFootprints, eventFootprints);
+			}
+		}
+
+		this.renderBgEventFootprints(bgFootprints);
+		this.renderFgEventFootprints(fgFootprints);
+	},
+
+
+	// Unrenders all events currently rendered on the grid
+	unrenderEvents: function() {
+
+		this.unrenderFgEventFootprints();
+		this.unrenderBgEventFootprints();
+
+		// we DON'T need to call updateHeight() because
+		// a renderEventsPayload() call always happens after this, which will eventually call updateHeight()
+	},
+
+
+	renderFgEventFootprints: function(segs) {
+		this.callChildren('renderFgEventFootprints', segs);
+	},
+
+
+	renderBgEventFootprints: function(segs) {
+		this.callChildren('renderBgEventFootprints', segs);
 	},
 
 
 	// Removes event elements from the view.
-	unrenderEvents: function() {
-		this.callChildren('unrenderEvents');
+	unrenderFgEventFootprints: function() {
+		this.callChildren('unrenderFgEventFootprints');
+	},
 
-		// we DON'T need to call updateHeight() because
-		// a renderEventsPayload() call always happens after this, which will eventually call updateHeight()
+
+	// Removes event elements from the view.
+	unrenderBgEventFootprints: function() {
+		this.callChildren('unrenderBgEventFootprints');
 	},
 
 

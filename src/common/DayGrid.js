@@ -316,15 +316,14 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the given background event segments onto the grid
-	renderBgSegs: function(segs) {
+	renderBgEventFootprints: function(eventFootprints) {
 
 		// don't render timed background events
-		var allDaySegs = $.grep(segs, function(seg) {
-			return seg.footprint.componentFootprint.isAllDay;
+		var allDayEventFootprints = $.grep(eventFootprints, function(eventFootprint) {
+			return eventFootprint.componentFootprint.isAllDay;
 		});
 
-		return SegChronoComponentMixin.renderBgSegs.call(this, allDaySegs); // call the super-method
+		return SegChronoComponentMixin.renderBgEventFootprints.call(this, allDayEventFootprints);
 	},
 
 
@@ -332,7 +331,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(CoordChronoComponentMixin, Seg
 	unrenderEvents: function() {
 		this.removeSegPopover(); // removes the "more.." events popover
 
-		SegChronoComponentMixin.unrenderEvents.apply(this, arguments);
+		ChronoComponent.prototype.unrenderEvents.apply(this, arguments);
 	},
 
 

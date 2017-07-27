@@ -298,35 +298,34 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders events onto the view and populates the View's segment array
 	renderEventsPayload: function(eventsPayload) {
-		var dayEventsPayload = {};
-		var timedEventsPayload = {};
-		var daySegs = [];
-		var timedSegs;
-		var id, eventInstanceGroup;
-
-		// separate the events into all-day and timed
-		for (id in eventsPayload) {
-			eventInstanceGroup = eventsPayload[id];
-
-			if (eventInstanceGroup.getEventDef().isAllDay()) {
-				dayEventsPayload[id] = eventInstanceGroup;
-			}
-			else {
-				timedEventsPayload[id] = eventInstanceGroup;
-			}
-		}
-
-		// render the events in the subcomponents
-		timedSegs = this.timeGrid.renderEventsPayload(timedEventsPayload);
-		if (this.dayGrid) {
-			daySegs = this.dayGrid.renderEventsPayload(dayEventsPayload);
-		}
+		ChronoComponent.prototype.renderEventsPayload.apply(this, arguments);
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		// TODO: how will ChronoComponent handle this?
 		this.updateHeight();
+	},
+
+
+	renderFgEventFootprints: function(eventFootprints) {
+		var res = sortEventFootprintsByAllDay(eventFootprints);
+
+		this.timeGrid.renderFgEventFootprints(res.timed);
+
+		if (this.dayGrid) {
+			this.dayGrid.renderFgEventFootprints(res.allDay);
+		}
+	},
+
+
+	renderBgEventFootprints: function(eventFootprints) {
+		var res = sortEventFootprintsByAllDay(eventFootprints);
+
+		this.timeGrid.renderBgEventFootprints(res.timed);
+
+		if (this.dayGrid) {
+			this.dayGrid.renderBgEventFootprints(res.allDay);
+		}
 	},
 
 
@@ -437,3 +436,22 @@ var agendaDayGridMethods = {
 	}
 
 };
+
+
+function sortEventFootprintsByAllDay(eventFootprints) {
+	var allDay = [];
+	var timed = [];
+	var i;
+
+	for (i = 0; i < eventFootprints.length; i++) {
+
+		if (eventFootprints[i].componentFootprint.isAllDay) {
+			allDay.push(eventFootprints[i]);
+		}
+		else {
+			timed.push(eventFootprints[i]);
+		}
+	}
+
+	return { allDay: allDay, timed: timed };
+}

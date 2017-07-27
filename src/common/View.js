@@ -59,6 +59,11 @@ var View = FC.View = ChronoComponent.extend({
 	},
 
 
+	_getView: function() {
+		return this;
+	},
+
+
 	buildRenderQueue: function() {
 		var _this = this;
 		var renderQueue = new RenderQueue({
