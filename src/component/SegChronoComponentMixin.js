@@ -136,13 +136,14 @@ var SegChronoComponentMixin = {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	fillSystemClass: FillSystem.extend({
+	fillSystemClass: FillRenderer.extend({
 
 		eventRenderer: null,
 
 
 		constructor: function(component) {
-			FillSystem.call(this);
+			FillRenderer.call(this);
+
 			this.eventRenderer = component.eventRenderer;
 		},
 
@@ -179,7 +180,7 @@ var SegChronoComponentMixin = {
 
 
 		// Generates an array of classNames for rendering the highlight.
-		// USED BY THE FILL SYSTEM, FillSystem::buildSegHtml
+		// USED BY THE FILL SYSTEM, FillRenderer::buildSegHtml
 		highlightSegClasses: function() {
 			return [ 'fc-highlight' ];
 		}
