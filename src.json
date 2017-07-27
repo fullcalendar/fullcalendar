@@ -36,7 +36,6 @@
     "component/StandardFillRenderer.js",
     "component/HelperRenderer.js",
     "component/ChronoComponent.js",
-    "component/CoordChronoComponentMixin.js",
     "component/SegChronoComponentMixin.js",
     "common/DayGridEventRenderer.js",
     "common/DayGridHelperRenderer.js",

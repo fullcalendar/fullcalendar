@@ -3,10 +3,17 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = ChronoComponent.extend(CoordChronoComponentMixin, SegChronoComponentMixin, DayTableMixin, {
+var TimeGrid = FC.TimeGrid = ChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
 	fillRendererClass: StandardFillRenderer, // still ABSTRACT, but that's okay. used for utils.
+
+	dateClickingClass: DateClicking,
+	dateSelectingClass: DateSelecting,
+	eventPointingClass: EventPointing,
+	eventDraggingClass: EventDragging,
+	eventResizingClass: EventResizing,
+	externalDroppingClass: ExternalDropping,
 
 	view: null, // TODO: make more general and/or remove
 	helperRenderer: null,

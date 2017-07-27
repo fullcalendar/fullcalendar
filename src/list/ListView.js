@@ -1,17 +1,17 @@
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
-TODO: remove CoordChronoComponentMixin
-BUT FIRST... need to decouple event click/mouseover/mouseout handlers
 */
-var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
+var ListView = View.extend(SegChronoComponentMixin, {
+
+	segSelector: '.fc-list-item', // which elements accept event actions
+	//eventPointingClass is below
 
 	scroller: null,
 	contentEl: null,
 
 	dayDates: null, // localized ambig-time moment array
 	dayRanges: null, // UnzonedRange[], of start-end of each day
-	segSelector: '.fc-list-item', // which elements accept event actions
 
 
 	initialize: function() {
@@ -80,16 +80,6 @@ var ListView = View.extend(CoordChronoComponentMixin, SegChronoComponentMixin, {
 		// a requirement of SegChronoComponentMixin.
 		// TODO: easy to forget. use listener.
 		this.eventRenderer.rangeUpdated();
-	},
-
-
-	isEventDefResizable: function(eventDef) {
-		return false;
-	},
-
-
-	isEventDefDraggable: function(eventDef) {
-		return false;
 	},
 
 

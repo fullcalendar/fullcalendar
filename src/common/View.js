@@ -392,6 +392,8 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
+		ChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+
 		this.listenTo(GlobalEmitter.get(), {
 			touchstart: this.processUnselect,
 			mousedown: this.handleDocumentMousedown
@@ -401,6 +403,8 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
+		ChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+
 		this.stopListeningTo(GlobalEmitter.get());
 	},
 
