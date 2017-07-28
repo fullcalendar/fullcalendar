@@ -110,7 +110,6 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
-	// TODO: move this over to ChronoComponent
 	unrenderDates: function() {
 		this.timeGrid.unrenderDates();
 		this.timeGrid.removeElement();
@@ -304,7 +303,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		View.prototype.renderEventsPayload.apply(this, arguments);
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
-		// TODO: how will ChronoComponent handle this?
 		this.updateHeight();
 	},
 

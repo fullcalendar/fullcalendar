@@ -263,7 +263,6 @@ var BasicView = FC.BasicView = View.extend({
 		View.prototype.renderEventsPayload.apply(this, arguments);
 
 		// must compensate for events that overflow the row
-		// TODO: how will ChronoComponent handle this?
 		this.updateHeight();
 	}
 

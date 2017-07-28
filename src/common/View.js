@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = InteractiveChronoComponent.extend({
+var View = FC.View = InteractiveDateComponent.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -47,7 +47,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 		// .name is deprecated
 		this.name = this.type;
 
-		InteractiveChronoComponent.call(this);
+		InteractiveDateComponent.call(this);
 
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
@@ -171,7 +171,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 
 
 	setElement: function(el) {
-		InteractiveChronoComponent.prototype.setElement.apply(this, arguments);
+		InteractiveDateComponent.prototype.setElement.apply(this, arguments);
 
 		this.bindBaseRenderHandlers();
 	},
@@ -181,7 +181,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 		this.unsetDate();
 		this.unbindBaseRenderHandlers();
 
-		InteractiveChronoComponent.prototype.removeElement.apply(this, arguments);
+		InteractiveDateComponent.prototype.removeElement.apply(this, arguments);
 	},
 
 
@@ -389,7 +389,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
-		InteractiveChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+		InteractiveDateComponent.prototype.bindGlobalHandlers.apply(this, arguments);
 
 		this.listenTo(GlobalEmitter.get(), {
 			touchstart: this.processUnselect,
@@ -400,7 +400,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
-		InteractiveChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+		InteractiveDateComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
 
 		this.stopListeningTo(GlobalEmitter.get());
 	},
@@ -477,7 +477,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
-	// TODO: move some of these to ChronoComponent
+	// TODO: move some of these to DateComponent
 
 
 	// Refreshes anything dependant upon sizing of the container element of the grid
@@ -701,7 +701,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 
 	// Event Rendering Utils
 	// -----------------------------------------------------------------------------------------------------------------
-	// TODO: move this to ChronoComponent
+	// TODO: move this to DateComponent
 
 
 	// Hides all rendered event segments linked to the given event
@@ -885,7 +885,7 @@ var View = FC.View = InteractiveChronoComponent.extend({
 			);
 		}
 		else {
-			InteractiveChronoComponent.prototype.renderSelectionFootprint.apply(this, arguments);
+			InteractiveDateComponent.prototype.renderSelectionFootprint.apply(this, arguments);
 		}
 	},
 

@@ -1,5 +1,5 @@
 
-ChronoComponent.mixin({
+DateComponent.mixin({
 
 	// Generates HTML for an anchor to another view into the calendar.
 	// Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
@@ -65,7 +65,7 @@ ChronoComponent.mixin({
 		else {
 			classes.push('fc-' + dayIDs[date.day()]);
 
-			if (view.isDateInOtherMonth(date)) { // TODO: use ChronoComponent subclass somehow
+			if (view.isDateInOtherMonth(date)) { // TODO: use DateComponent subclass somehow
 				classes.push('fc-other-month');
 			}
 

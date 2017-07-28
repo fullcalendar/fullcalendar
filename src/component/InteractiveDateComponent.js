@@ -1,5 +1,5 @@
 
-var InteractiveChronoComponent = ChronoComponent.extend({
+var InteractiveDateComponent = DateComponent.extend({
 
 	dateClickingClass: null,
 	dateSelectingClass: null,
@@ -25,7 +25,7 @@ var InteractiveChronoComponent = ChronoComponent.extend({
 
 
 	constructor: function() {
-		ChronoComponent.call(this);
+		DateComponent.call(this);
 
 		if (this.dateSelectingClass) {
 			this.dateClicking = new this.dateClickingClass(this);

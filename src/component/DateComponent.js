@@ -1,5 +1,5 @@
 
-var ChronoComponent = Component.extend({
+var DateComponent = Component.extend({
 
 	children: null,
 	isRTL: false, // frequently accessed options
@@ -346,7 +346,7 @@ var ChronoComponent = Component.extend({
 
 	// Hit Areas
 	// ---------------------------------------------------------------------------------------------------------------
-	// just because all ChronoComponents support this interface
+	// just because all DateComponents support this interface
 	// doesn't mean they need to have their own internal coord system. they can defer to sub-components.
 
 

@@ -349,7 +349,7 @@ View.mixin({
 	},
 
 
-	// For ChronoComponent::getDayClasses
+	// For DateComponent::getDayClasses
 	isDateInOtherMonth: function(date) {
 		return false;
 	},
