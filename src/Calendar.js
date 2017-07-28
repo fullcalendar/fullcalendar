@@ -24,12 +24,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initEventManager();
 
 		EventManager.call(this); // needs options immediately
-		this.initialize();
-	},
-
-
-	// Subclasses can override this for initialization logic after the constructor has been called
-	initialize: function() {
 	},
 
 

@@ -55,7 +55,10 @@ var View = FC.View = InteractiveChronoComponent.extend({
 		this.renderQueue = this.buildRenderQueue();
 		this.initAutoBatchRender();
 
-		this.initialize();
+		// legacy
+		if (this.initialize) {
+			this.initialize();
+		}
 	},
 
 
@@ -108,12 +111,6 @@ var View = FC.View = InteractiveChronoComponent.extend({
 		if (!(--this.batchRenderDepth)) {
 			this.renderQueue.resume();
 		}
-	},
-
-
-	// A good place for subclasses to initialize member variables
-	initialize: function() {
-		// subclasses can implement
 	},
 
 

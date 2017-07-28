@@ -26,7 +26,9 @@ var AgendaView = FC.AgendaView = View.extend({
 	usesMinMaxTime: true,
 
 
-	initialize: function() {
+	constructor: function() {
+		View.apply(this, arguments);
+
 		this.timeGrid = this.instantiateTimeGrid();
 		this.addChild(this.timeGrid);
 

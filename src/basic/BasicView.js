@@ -21,7 +21,9 @@ var BasicView = FC.BasicView = View.extend({
 	headRowEl: null, // the fake row element of the day-of-week header
 
 
-	initialize: function() {
+	constructor: function() {
+		View.apply(this, arguments);
+
 		this.dayGrid = this.instantiateDayGrid();
 		this.addChild(this.dayGrid);
 

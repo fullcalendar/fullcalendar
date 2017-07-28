@@ -15,7 +15,9 @@ var ListView = View.extend({
 	dayRanges: null, // UnzonedRange[], of start-end of each day
 
 
-	initialize: function() {
+	constructor: function() {
+		View.apply(this, arguments);
+
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
