@@ -30,6 +30,7 @@
     "component/interaction/EventResizing.js",
     "component/interaction/ExternalDropping.js",
     "component/interaction/EventPointing.js",
+    "component/interaction/StandardInteractionsMixin.js",
     "component/EventRenderer.js",
     "component/BusinessHourRenderer.js",
     "component/FillRenderer.js",

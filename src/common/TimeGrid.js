@@ -3,19 +3,12 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = InteractiveChronoComponent.extend(DayTableMixin, {
+var TimeGrid = FC.TimeGrid = InteractiveChronoComponent.extend(StandardInteractionsMixin, DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
 	businessHourRendererClass: BusinessHourRenderer,
 	helperRendererClass: TimeGridHelperRenderer,
 	fillRendererClass: TimeGridFillRenderer,
-
-	dateClickingClass: DateClicking,
-	dateSelectingClass: DateSelecting,
-	eventPointingClass: EventPointing,
-	eventDraggingClass: EventDragging,
-	eventResizingClass: EventResizing,
-	externalDroppingClass: ExternalDropping,
 
 	view: null, // TODO: make more general and/or remove
 	helperRenderer: null,

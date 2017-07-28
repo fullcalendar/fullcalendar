@@ -2,17 +2,11 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = FC.DayGrid = InteractiveChronoComponent.extend(DayTableMixin, {
+var DayGrid = FC.DayGrid = InteractiveChronoComponent.extend(StandardInteractionsMixin, DayTableMixin, {
 
-	fillRendererClass: DayGridFillRenderer,
-	helperRendererClass: DayGridHelperRenderer,
-	dateClickingClass: DateClicking,
-	dateSelectingClass: DateSelecting,
 	eventRendererClass: DayGridEventRenderer,
-	eventPointingClass: EventPointing,
-	eventDraggingClass: EventDragging,
-	eventResizingClass: EventResizing,
-	externalDroppingClass: ExternalDropping,
+	helperRendererClass: DayGridHelperRenderer,
+	fillRendererClass: DayGridFillRenderer,
 
 	view: null, // TODO: make more general and/or remove
 	helperRenderer: null,
