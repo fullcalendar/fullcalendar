@@ -109,7 +109,7 @@ var EventRenderer = Class.extend({
 		var _this = this;
 
 		if (this.fillRenderer) {
-			this.fillRenderer.render('bgEvent', segs, {
+			this.fillRenderer.render('bgEvents', segs, {
 				getClasses: function(seg) {
 					return _this.getBgClasses(seg.footprint);
 				},
