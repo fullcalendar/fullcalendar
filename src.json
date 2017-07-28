@@ -34,6 +34,7 @@
     "component/BusinessHourRenderer.js",
     "component/FillRenderer.js",
     "component/HelperRenderer.js",
+    "component/Component.js",
     "component/ChronoComponent.js",
     "common/DayGridFillRenderer.js",
     "common/DayGridEventRenderer.js",

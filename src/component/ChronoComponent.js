@@ -1,7 +1,5 @@
 
-var ChronoComponent = Model.extend({
-
-	el: null, // the view's containing element. set by Calendar(?)
+var ChronoComponent = Component.extend({
 
 	children: null,
 	isRTL: false, // frequently accessed options
@@ -41,7 +39,7 @@ var ChronoComponent = Model.extend({
 
 
 	constructor: function() {
-		Model.call(this);
+		Component.call(this);
 
 		this.children = [];
 
@@ -131,33 +129,17 @@ var ChronoComponent = Model.extend({
 	// Sets the container element that the view should render inside of, does global DOM-related initializations,
 	// and renders all the non-date-related content inside.
 	setElement: function(el) {
-		this.el = el;
-		this.bindGlobalHandlers();
+		Component.prototype.setElement.apply(this, arguments);
 
 		if (this.dateClicking) {
-			this.dateClicking.bindToEl(this.el);
+			this.dateClicking.bindToEl(el);
 		}
 
 		if (this.dateSelecting) {
-			this.dateSelecting.bindToEl(this.el);
+			this.dateSelecting.bindToEl(el);
 		}
 
-		this.bindAllSegHandlersToEl(this.el);
-		this.renderSkeleton();
-	},
-
-
-	// Removes the view's container element from the DOM, clearing any content beforehand.
-	// Undoes any other DOM-related attachments.
-	removeElement: function() {
-		this.endInteractions();
-		this.unrenderSkeleton();
-		this.unbindGlobalHandlers();
-
-		this.el.remove();
-		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
-		// We don't null-out the View's other jQuery element references upon destroy,
-		//  so we shouldn't kill this.el either.
+		this.bindAllSegHandlersToEl(el);
 	},
 
 
@@ -172,6 +154,17 @@ var ChronoComponent = Model.extend({
 		if (this.externalDropping) {
 			this.externalDropping.unbindFromDocument();
 		}
+	},
+
+
+	render: function() {
+		this.renderSkeleton();
+	},
+
+
+	unrender: function() {
+		this.endInteractions();
+		this.unrenderSkeleton();
 	},
 
 
