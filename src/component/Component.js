@@ -7,12 +7,12 @@ var Component = Model.extend({
 	setElement: function(el) {
 		this.el = el;
 		this.bindGlobalHandlers();
-		this.render();
+		this.renderSkeleton();
 	},
 
 
 	removeElement: function() {
-		this.unrender();
+		this.unrenderSkeleton();
 		this.unbindGlobalHandlers();
 
 		this.el.remove();
@@ -30,11 +30,20 @@ var Component = Model.extend({
 	},
 
 
-	render: function() {
+	/*
+	NOTE: Can't have a `render` method. Read the deprecation notice in View::executeDateRender
+	*/
+
+
+	// Renders the basic structure of the view before any content is rendered
+	renderSkeleton: function() {
+		// subclasses should implement
 	},
 
 
-	unrender: function() {
+	// Unrenders the basic structure of the view
+	unrenderSkeleton: function() {
+		// subclasses should implement
 	}
 
 });

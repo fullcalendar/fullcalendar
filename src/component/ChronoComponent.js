@@ -78,36 +78,6 @@ var ChronoComponent = Component.extend({
 	},
 
 
-	// General Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	render: function() {
-		this.renderSkeleton();
-	},
-
-
-	unrender: function() {
-		this.unrenderSkeleton();
-	},
-
-
-	// Skeleton
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// Renders the basic structure of the view before any content is rendered
-	renderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders the basic structure of the view
-	unrenderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
 	// Date Low-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
