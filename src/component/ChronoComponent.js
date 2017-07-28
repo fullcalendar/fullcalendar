@@ -355,10 +355,8 @@ var ChronoComponent = Model.extend({
 		this.endInteractions(); // TODO: called too frequently
 
 		if (this.fillRenderer) {
-			return this.fillRenderer.render('bgEvent', segs);
+			this.fillRenderer.render('bgEvent', segs);
 		}
-
-		return [];
 	},
 
 

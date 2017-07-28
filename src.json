@@ -41,6 +41,7 @@
     "common/DayGrid.js",
     "common/DayGrid.limit.js",
     "common/TimeGridEventRenderer.js",
+    "common/TimeGridFillRenderer.js",
     "common/TimeGridHelperRenderer.js",
     "common/TimeGrid.js",
     "common/View.js",

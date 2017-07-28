@@ -56,6 +56,16 @@ var EventRenderer = Class.extend({
 	},
 
 
+	renderBgSegs: function(segs) {
+		this.fillRenderer.render('bgSegs', segs);
+	},
+
+
+	unrenderBgSegs: function() {
+		this.fillRenderer.unrender('bgSegs');
+	},
+
+
 	// Renders and assigns an `el` property for each foreground event segment.
 	// Only returns segments that successfully rendered.
 	// A utility that subclasses may use.

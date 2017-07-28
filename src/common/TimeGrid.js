@@ -7,7 +7,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
 	helperRendererClass: TimeGridHelperRenderer,
-	fillRendererClass: StandardFillRenderer, // still ABSTRACT, but that's okay. used for utils.
+	fillRendererClass: TimeGridFillRenderer,
 
 	dateClickingClass: DateClicking,
 	dateSelectingClass: DateSelecting,
@@ -345,21 +345,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 	},
 
 
-	// Given the name of a property of `this` object, assumed to be an array of segments,
-	// loops through each segment and removes from DOM. Will null-out the property afterwards.
-	unrenderNamedSegs: function(propName) {
-		var segs = this[propName];
-		var i;
-
-		if (segs) {
-			for (i = 0; i < segs.length; i++) {
-				segs[i].el.remove();
-			}
-			this[propName] = null;
-		}
-	},
-
-
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -585,26 +570,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 	},
 
 
-	/* Event Rendering
-	------------------------------------------------------------------------------------------------------------------*/
-	// fg event rendering happens in TimeGridEventRenderer
-
-
-	renderBgEventSegs: function(segs) {
-		segs = this.fillRenderer.buildSegEls('bgEvent', segs);
-
-		this.updateSegVerticals(segs);
-		this.attachSegsByCol(this.groupSegsByCol(segs), this.bgContainerEls);
-
-		return segs;
-	},
-
-
-	unrenderBgSegs: function() {
-		this.unrenderNamedSegs('bgSegs');
-	},
-
-
 	/* Event Drag Visualization
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -658,24 +623,16 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 
 	businessHourRendererClass: BusinessHourRenderer.extend({
 
+		isWholeDay: false,
+
 
 		renderSegs: function(segs) {
-			var component = this.component;
-
-			segs = component.fillRenderer.buildSegEls('businessHours', segs);
-
-			component.updateSegVerticals(segs);
-			component.attachSegsByCol(
-				component.groupSegsByCol(segs),
-				component.businessContainerEls
-			);
-
-			component.businessSegs = segs;
+			this.component.fillRenderer.render('businessHours', segs);
 		},
 
 
 		unrender: function() {
-			this.component.unrenderNamedSegs('businessSegs');
+			this.component.fillRenderer.unrender('businessHours');
 		}
 
 	}),
@@ -700,37 +657,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 	unrenderSelection: function() {
 		this.helperRenderer.unrender();
 		this.unrenderHighlight();
-	},
-
-
-	/* Highlight
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	renderHighlight: function(componentFootprint) {
-		this.renderHighlightSegs(
-			this.componentFootprintToSegs(componentFootprint)
-		);
-	},
-
-
-	unrenderHighlight: function() {
-		this.unrenderHighlightSegs();
-	},
-
-
-	renderHighlightSegs: function(segs) {
-		segs = this.fillRenderer.buildSegEls('highlight', segs);
-
-		this.updateSegVerticals(segs);
-		this.attachSegsByCol(this.groupSegsByCol(segs), this.highlightContainerEls);
-
-		this.highlightSegs = segs;
-	},
-
-
-	unrenderHighlightSegs: function() {
-		this.unrenderNamedSegs('highlightSegs');
 	}
 
 });

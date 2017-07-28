@@ -40,7 +40,9 @@ var TimeGridEventRenderer = EventRenderer.extend({
 
 
 	unrenderFgSegs: function() {
-		this.timeGrid.unrenderNamedSegs('fgSegs');
+		this.timeGrid.fgSegs.forEach(function(seg) {
+			seg.el.remove();
+		});
 	},
 
 
