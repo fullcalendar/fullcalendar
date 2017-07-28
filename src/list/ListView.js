@@ -2,9 +2,10 @@
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
 */
-var ListView = View.extend(SegChronoComponentMixin, {
+var ListView = View.extend({
 
 	segSelector: '.fc-list-item', // which elements accept event actions
+	//eventRendererClass is below
 	//eventPointingClass is below
 
 	scroller: null,
@@ -15,10 +16,6 @@ var ListView = View.extend(SegChronoComponentMixin, {
 
 
 	initialize: function() {
-
-		// a requirement for SegChronoComponentMixin
-		this.initSegChronoComponent();
-
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
@@ -77,7 +74,6 @@ var ListView = View.extend(SegChronoComponentMixin, {
 		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
 
-		// a requirement of SegChronoComponentMixin.
 		// TODO: easy to forget. use listener.
 		this.eventRenderer.rangeUpdated();
 	},
@@ -122,7 +118,7 @@ var ListView = View.extend(SegChronoComponentMixin, {
 	},
 
 
-	eventRendererClass: SegChronoComponentMixin.eventRendererClass.extend({
+	eventRendererClass: EventRenderer.extend({
 
 		// like "4:00am"
 		computeEventTimeFormat: function() {

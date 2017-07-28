@@ -2,8 +2,9 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = FC.DayGrid = ChronoComponent.extend(SegChronoComponentMixin, DayTableMixin, {
+var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 
+	helperRendererClass: DayGridHelperRenderer,
 	dateClickingClass: DateClicking,
 	dateSelectingClass: DateSelecting,
 	eventRendererClass: DayGridEventRenderer,
@@ -29,12 +30,6 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(SegChronoComponentMixin, DayTa
 		this.view = view; // do first, for opt calls during initialization
 
 		ChronoComponent.apply(this, arguments);
-
-		// a requirement for SegChronoComponentMixin. TODO: more elegant
-		this.initSegChronoComponent();
-
-		// must happen after eventRender initialized in initSegChronoComponent
-		this.helperRenderer = new DayGridHelperRenderer(this);
 	},
 
 
@@ -329,7 +324,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(SegChronoComponentMixin, DayTa
 			return eventFootprint.componentFootprint.isAllDay;
 		});
 
-		return SegChronoComponentMixin.renderBgEventFootprints.call(this, allDayEventFootprints);
+		return ChronoComponent.prototype.renderBgEventFootprints.call(this, allDayEventFootprints);
 	},
 
 
@@ -343,7 +338,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(SegChronoComponentMixin, DayTa
 
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getEventSegs: function() {
-		return SegChronoComponentMixin.getEventSegs.call(this) // get the segments from the super-method
+		return ChronoComponent.prototype.getEventSegs.call(this) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 

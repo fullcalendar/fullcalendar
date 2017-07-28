@@ -7,6 +7,10 @@ var ChronoComponent = Model.extend({
 	isRTL: false, // frequently accessed options
 	nextDayThreshold: null, // "
 
+	eventRendererClass: null,
+	helperRendererClass: null,
+	businessHourRendererClass: null,
+	fillRendererClass: null,
 	dateClickingClass: null,
 	dateSelectingClass: null,
 	eventPointingClass: null,
@@ -14,12 +18,19 @@ var ChronoComponent = Model.extend({
 	eventResizingClass: null,
 	externalDroppingClass: null,
 
+	eventRenderer: null,
+	helperRenderer: null,
+	businessHourRenderer: null,
+	fillRenderer: null,
 	dateClicking: null,
 	dateSelecting: null,
 	eventPointing: null,
 	eventDragging: null,
 	eventResizing: null,
 	externalDropping: null,
+
+	bgSegs: null,
+	fgSegs: null,
 
 	// self-config, overridable by subclasses
 	segSelector: '.fc-event-container > *', // what constitutes an event element?
@@ -39,6 +50,46 @@ var ChronoComponent = Model.extend({
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
+
+		if (this.eventRendererClass) {
+			this.eventRenderer = new this.eventRendererClass(this);
+		}
+
+		if (this.helperRendererClass) {
+			this.helperRenderer = new this.helperRendererClass(this);
+		}
+
+		if (this.businessHourRendererClass) {
+			this.businessHourRenderer = new this.businessHourRendererClass(this);
+		}
+
+		if (this.fillRendererClass) {
+			this.fillRenderer = new this.fillRendererClass(this);
+		}
+
+		if (this.dateSelectingClass) {
+			this.dateClicking = new this.dateClickingClass(this);
+		}
+
+		if (this.dateSelectingClass) {
+			this.dateSelecting = new this.dateSelectingClass(this);
+		}
+
+		if (this.eventPointingClass) {
+			this.eventPointing = new this.eventPointingClass(this);
+		}
+
+		if (this.eventDraggingClass) {
+			this.eventDragging = new this.eventDraggingClass(this);
+		}
+
+		if (this.eventResizingClass) {
+			this.eventResizing = new this.eventResizingClass(this);
+		}
+
+		if (this.externalDroppingClass) {
+			this.externalDropping = new this.externalDroppingClass(this);
+		}
 	},
 
 
@@ -78,36 +129,17 @@ var ChronoComponent = Model.extend({
 	// and renders all the non-date-related content inside.
 	setElement: function(el) {
 		this.el = el;
-
-		if (this.dateSelectingClass) {
-			(this.dateClicking = new this.dateClickingClass(this))
-				.bindToEl(this.el);
-		}
-
-		if (this.dateSelectingClass) {
-			(this.dateSelecting = new this.dateSelectingClass(this))
-				.bindToEl(this.el);
-		}
-
-		if (this.eventPointingClass) {
-			this.eventPointing = new this.eventPointingClass(this);
-		}
-
-		if (this.eventDraggingClass) {
-			this.eventDragging = new this.eventDraggingClass(this);
-		}
-
-		if (this.eventResizingClass) {
-			this.eventResizing = new this.eventResizingClass(this);
-		}
-
-		if (this.externalDroppingClass) {
-			this.externalDropping = new this.externalDroppingClass(this);
-		}
-
 		this.bindGlobalHandlers();
-		this.bindAllSegHandlersToEl(this.el);
 
+		if (this.dateClicking) {
+			this.dateClicking.bindToEl(this.el);
+		}
+
+		if (this.dateSelecting) {
+			this.dateSelecting.bindToEl(this.el);
+		}
+
+		this.bindAllSegHandlersToEl(this.el);
 		this.renderSkeleton();
 	},
 
@@ -201,12 +233,20 @@ var ChronoComponent = Model.extend({
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
 	renderBusinessHours: function() {
+		if (this.businessHourRenderer) {
+			this.businessHourRenderer.render(); // TODO: eventually pass-in eventFootprints
+		}
+
 		this.callChildren('renderBusinessHours');
 	},
 
 
 	// Unrenders previously-rendered business-hours
 	unrenderBusinessHours: function() {
+		if (this.businessHourRenderer) {
+			this.businessHourRenderer.unrender();
+		}
+
 		this.callChildren('unrenderBusinessHours');
 	},
 
@@ -253,32 +293,87 @@ var ChronoComponent = Model.extend({
 	},
 
 
-	renderFgEventFootprints: function(segs) {
-		this.callChildren('renderFgEventFootprints', segs);
+	renderFgEventFootprints: function(eventFootprints) {
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		this.fgSegs = this.renderFgEventSegs(segs) || segs;
+
+		this.callChildren('renderFgEventFootprints', eventFootprints);
 	},
 
 
-	renderBgEventFootprints: function(segs) {
-		this.callChildren('renderBgEventFootprints', segs);
+	renderBgEventFootprints: function(eventFootprints) {
+		var segs = this.eventFootprintsToSegs(eventFootprints);
+
+		this.bgSegs = this.renderBgEventSegs(segs) || segs;
+
+		this.callChildren('renderBgEventFootprints', eventFootprints);
 	},
 
 
 	// Removes event elements from the view.
 	unrenderFgEventFootprints: function() {
+		this.unrenderFgEventSegs();
+		this.fgSegs = null;
+
 		this.callChildren('unrenderFgEventFootprints');
 	},
 
 
 	// Removes event elements from the view.
 	unrenderBgEventFootprints: function() {
+		this.unrenderBgEventSegs();
+		this.bgSegs = null;
+
 		this.callChildren('unrenderBgEventFootprints');
+	},
+
+
+	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
+	renderFgEventSegs: function(segs) {
+		if (this.eventRenderer) {
+			return this.eventRenderer.renderFgSegs(segs);
+		}
+
+		return [];
+	},
+
+
+	// Unrenders all currently rendered foreground segments
+	unrenderFgEventSegs: function() {
+		this.endInteractions(); // TODO: called too frequently
+
+		if (this.eventRenderer) {
+			this.eventRenderer.unrenderFgSegs();
+		}
+	},
+
+
+	// Renders the given background event segments onto the grid.
+	// Returns a subset of the segs that were actually rendered.
+	renderBgEventSegs: function(segs) {
+		this.endInteractions(); // TODO: called too frequently
+
+		if (this.fillRenderer) {
+			return this.fillRenderer.render('bgEvent', segs);
+		}
+
+		return [];
+	},
+
+
+	// Unrenders all the currently rendered background event segments
+	unrenderBgEventSegs: function() {
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('bgEvent');
+		}
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
+		var segs = (this.bgSegs || []).concat(this.fgSegs || []);
 		var children = this.children;
-		var segs = [];
 		var i;
 
 		for (i = 0; i < children.length; i++) {
@@ -540,13 +635,27 @@ var ChronoComponent = Model.extend({
 	},
 
 
+	// Highlight
+	// ---------------------------------------------------------------------------------------------------------------
+
+
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
 	renderHighlight: function(componentFootprint) {
+		if (this.fillRenderer) {
+			this.fillRenderer.render('highlight', this.componentFootprintToSegs(componentFootprint));
+		}
+
+		this.callChildren('renderHighlight', componentFootprint);
 	},
 
 
 	// Unrenders the emphasis on a date range
 	unrenderHighlight: function() {
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('highlight');
+		}
+
+		this.callChildren('unrenderHighlight');
 	},
 
 
@@ -839,6 +948,62 @@ var ChronoComponent = Model.extend({
 				eventRange.eventInstance // might not exist
 			)
 		];
+	},
+
+
+	/* Converting componentFootprint/eventFootprint -> segs
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	eventFootprintsToSegs: function(eventFootprints) {
+		var segs = [];
+		var i;
+
+		for (i = 0; i < eventFootprints.length; i++) {
+			segs.push.apply(segs,
+				this.eventFootprintToSegs(eventFootprints[i])
+			);
+		}
+
+		return segs;
+	},
+
+
+	// Given an event's span (unzoned start/end and other misc data), and the event itself,
+	// slices into segments and attaches event-derived properties to them.
+	// eventSpan - { start, end, isStart, isEnd, otherthings... }
+	// constraintRange allow additional clipping. optional. eventually remove this.
+	eventFootprintToSegs: function(eventFootprint, constraintRange) {
+		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
+		var segs;
+		var i, seg;
+
+		if (constraintRange) {
+			unzonedRange = unzonedRange.intersect(constraintRange);
+		}
+
+		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
+
+		for (i = 0; i < segs.length; i++) {
+			seg = segs[i];
+
+			if (!unzonedRange.isStart) {
+				seg.isStart = false;
+			}
+			if (!unzonedRange.isEnd) {
+				seg.isEnd = false;
+			}
+
+			seg.footprint = eventFootprint;
+			// TODO: rename to seg.eventFootprint
+		}
+
+		return segs;
+	},
+
+
+	componentFootprintToSegs: function(componentFootprint) {
+		return [];
 	},
 
 
