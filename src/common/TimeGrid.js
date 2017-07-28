@@ -6,6 +6,7 @@
 var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
+	businessHourRendererClass: BusinessHourRenderer,
 	helperRendererClass: TimeGridHelperRenderer,
 	fillRendererClass: TimeGridFillRenderer,
 
@@ -615,27 +616,6 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 	unrenderEventResize: function() {
 		this.helperRenderer.unrender();
 	},
-
-
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	businessHourRendererClass: BusinessHourRenderer.extend({
-
-		isWholeDay: false,
-
-
-		renderSegs: function(segs) {
-			this.component.fillRenderer.render('businessHours', segs);
-		},
-
-
-		unrender: function() {
-			this.component.fillRenderer.unrender('businessHours');
-		}
-
-	}),
 
 
 	/* Selection

@@ -2,7 +2,9 @@
 var BusinessHourRenderer = Class.extend({
 
 	isWholeDay: false, // subclasses can config
+
 	component: null,
+	fillRenderer: null,
 
 
 	/*
@@ -12,6 +14,7 @@ var BusinessHourRenderer = Class.extend({
 	*/
 	constructor: function(component) {
 		this.component = component;
+		this.fillRenderer = component.fillRenderer;
 	},
 
 
@@ -29,12 +32,20 @@ var BusinessHourRenderer = Class.extend({
 
 
 	renderSegs: function(segs) {
-		// subclasses must implement
+		if (this.fillRenderer) {
+			this.fillRenderer.render('businessHours', segs, {
+				getClasses: function(seg) {
+					return [ 'fc-nonbusiness', 'fc-bgevent' ];
+				}
+			});
+		}
 	},
 
 
 	unrender: function() {
-		// subclasses must implement
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('businessHours');
+		}
 	},
 
 

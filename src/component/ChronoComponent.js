@@ -58,10 +58,14 @@ var ChronoComponent = Model.extend({
 			this.eventRenderer = new this.eventRendererClass(this);
 		}
 
+		// NOTE: this.eventRenderer needs to already be assigned!
+		// TODO: make ordering not matter
 		if (this.helperRendererClass) {
 			this.helperRenderer = new this.helperRendererClass(this);
 		}
 
+		// NOTE: this.fillRenderer needs to already be assigned!
+		// TODO: make ordering not matter
 		if (this.businessHourRendererClass) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this);
 		}
@@ -608,7 +612,15 @@ var ChronoComponent = Model.extend({
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
 	renderHighlight: function(componentFootprint) {
 		if (this.fillRenderer) {
-			this.fillRenderer.render('highlight', this.componentFootprintToSegs(componentFootprint));
+			this.fillRenderer.render(
+				'highlight',
+				this.componentFootprintToSegs(componentFootprint),
+				{
+					getClasses: function() {
+						return [ 'fc-highlight' ];
+					}
+				}
+			);
 		}
 
 		this.callChildren('renderHighlight', componentFootprint);

@@ -10,10 +10,10 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 	},
 
 
-	render: function(type, segs, className) {
-		segs = this.buildSegEls(type, segs); // assignes `.el` to each seg. returns successfully rendered segs
+	render: function(type, segs, props) {
+		segs = this.buildSegEls(type, segs, props); // assignes `.el` to each seg. returns successfully rendered segs
 
-		this.reportEls(type, this.attachSegEls(type, segs, className));
+		this.reportEls(type, this.attachSegEls(type, segs));
 
 		return segs;
 	},
@@ -32,9 +32,8 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 
 	// Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
 	// Only returns segments that successfully rendered.
-	buildSegEls: function(type, segs) {
+	buildSegEls: function(type, segs, props) {
 		var _this = this;
-		var segElMethod = this[type + 'SegEl'];
 		var html = '';
 		var renderedSegs = [];
 		var i;
@@ -43,7 +42,7 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 
 			// build a large concatenation of segment HTML
 			for (i = 0; i < segs.length; i++) {
-				html += this.buildSegHtml(type, segs[i]);
+				html += this.buildSegHtml(type, segs[i], props);
 			}
 
 			// Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -53,8 +52,8 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 				var el = $(node);
 
 				// allow custom filter methods per-type
-				if (segElMethod) {
-					el = segElMethod.call(_this, seg, el);
+				if (props.filterEl) {
+					el = props.filterEl(seg, el);
 				}
 
 				if (el) { // custom filters did not cancel the render
@@ -74,13 +73,10 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 
 
 	// Builds the HTML needed for one fill segment. Generic enough to work with different types.
-	buildSegHtml: function(type, seg) {
+	buildSegHtml: function(type, seg, props) {
 		// custom hooks per-type
-		var classesMethod = this[type + 'SegClasses'];
-		var cssMethod = this[type + 'SegCss'];
-
-		var classes = classesMethod ? classesMethod.call(this, seg) : [];
-		var css = cssToStr(cssMethod ? cssMethod.call(this, seg) : {});
+		var classes = props.getClasses ? props.getClasses(seg) : [];
+		var css = cssToStr(props.getCss ? props.getCss(seg) : {});
 
 		return '<' + this.fillSegTag +
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
@@ -90,7 +86,7 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 
 
 	// Should return wrapping DOM structure
-	attachSegEls: function(type, segs, className) {
+	attachSegEls: function(type, segs) {
 		// subclasses must implement
 	},
 

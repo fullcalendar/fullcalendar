@@ -1,5 +1,5 @@
 
-var TimeGridFillRenderer = StandardFillRenderer.extend({
+var TimeGridFillRenderer = FillRenderer.extend({
 
 	timeGrid: null,
 
@@ -11,7 +11,7 @@ var TimeGridFillRenderer = StandardFillRenderer.extend({
 	},
 
 
-	attachSegEls: function(type, segs, className) {
+	attachSegEls: function(type, segs) {
 		var timeGrid = this.timeGrid;
 		var containerEls;
 

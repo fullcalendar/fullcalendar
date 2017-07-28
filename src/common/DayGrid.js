@@ -398,19 +398,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 
 
 	businessHourRendererClass: BusinessHourRenderer.extend({
-
-		isWholeDay: true,
-
-
-		renderSegs: function(segs) {
-			this.component.fillRenderer.render('businessHours', segs, 'bgevent');
-		},
-
-
-		unrender: function() {
-			this.component.fillRenderer.unrender('businessHours');
-		}
-
+		isWholeDay: true // TODO: config param on component?
 	}),
 
 
@@ -418,27 +406,27 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	fillRendererClass: StandardFillRenderer.extend({
+	fillRendererClass: FillRenderer.extend({ // TODO: move to separate file?
 
 		fillSegTag: 'td', // override the default tag name
 		dayGrid: null,
 
 
 		constructor: function(dayGrid) {
-			StandardFillRenderer.call(this, dayGrid);
+			FillRenderer.call(this, dayGrid);
 
 			this.dayGrid = dayGrid;
 		},
 
 
-		attachSegEls: function(type, segs, className) {
+		attachSegEls: function(type, segs) {
 			var nodes = [];
 			var i, seg;
 			var skeletonEl;
 
 			for (i = 0; i < segs.length; i++) {
 				seg = segs[i];
-				skeletonEl = this.renderFillRow(type, seg, className);
+				skeletonEl = this.renderFillRow(type, seg);
 				this.dayGrid.rowEls.eq(seg.row).append(skeletonEl);
 				nodes.push(skeletonEl[0]);
 			}
@@ -448,14 +436,20 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 
 
 		// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-		renderFillRow: function(type, seg, className) {
+		renderFillRow: function(type, seg) {
 			var colCnt = this.dayGrid.colCnt;
 			var startCol = seg.leftCol;
 			var endCol = seg.rightCol + 1;
+			var className;
 			var skeletonEl;
 			var trEl;
 
-			className = className || type.toLowerCase();
+			if (type === 'businessHours') {
+				className = 'bgevent';
+			}
+			else {
+				className = type.toLowerCase();
+			}
 
 			skeletonEl = $(
 				'<div class="fc-' + className + '-skeleton">' +

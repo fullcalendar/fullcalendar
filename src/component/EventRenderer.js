@@ -106,8 +106,22 @@ var EventRenderer = Class.extend({
 
 
 	renderBgSegs: function(segs) {
+		var _this = this;
+
 		if (this.fillRenderer) {
-			this.fillRenderer.render('bgEvent', segs);
+			this.fillRenderer.render('bgEvent', segs, {
+				getClasses: function(seg) {
+					return _this.getBgClasses(seg.footprint);
+				},
+				getCss: function(seg) {
+					return {
+						'background-color': _this.getBgColor(seg.footprint)
+					};
+				},
+				filterEl: function(seg, el) {
+					return _this.filterEventRenderEl(seg.footprint, el);
+				}
+			});
 		}
 		else {
 			return false; // signal failure if no fillRenderer
