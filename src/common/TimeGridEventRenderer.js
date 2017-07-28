@@ -16,7 +16,7 @@ var TimeGridEventRenderer = EventRenderer.extend({
 
 
 	renderFgSegs: function(segs) {
-		return this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls);
+		this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls);
 	},
 
 
@@ -26,7 +26,6 @@ var TimeGridEventRenderer = EventRenderer.extend({
 		var segsByCol;
 		var col;
 
-		segs = this.renderFgSegEls(segs);
 		segsByCol = this.timeGrid.groupSegsByCol(segs);
 
 		for (col = 0; col < this.timeGrid.colCnt; col++) {
@@ -34,13 +33,11 @@ var TimeGridEventRenderer = EventRenderer.extend({
 		}
 
 		this.timeGrid.attachSegsByCol(segsByCol, containerEls);
-
-		return segs;
 	},
 
 
 	unrenderFgSegs: function() {
-		this.timeGrid.fgSegs.forEach(function(seg) {
+		this.fgSegs.forEach(function(seg) {
 			seg.el.remove();
 		});
 	},

@@ -10,7 +10,11 @@ var DayGridHelperRenderer = HelperRenderer.extend({
 		var helperNodes = [];
 		var rowStructs;
 
-		segs = this.eventRenderer.renderFgSegEls(segs); // assigns each seg's el and returns a subset of segs that were rendered
+		// assigns each seg's el and returns a subset of segs that were rendered
+		// TODO: not good to call eventRenderer this way
+		segs = this.eventRenderer.renderFgSegEls(segs);
+
+		// TODO: not good to call eventRenderer this way
 		rowStructs = this.eventRenderer.renderSegRows(segs);
 
 		// inject each new event skeleton into each associated row

@@ -402,7 +402,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 
 		if (isResize) {
 			this.updateSegVerticals(
-				[].concat(this.fgSegs || [], this.bgSegs || [], this.businessSegs || [])
+				[].concat(this.eventRenderer.getSegs(), this.businessSegs || [])
 			);
 		}
 	},

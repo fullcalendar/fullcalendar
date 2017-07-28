@@ -20,7 +20,12 @@ var TimeGridHelperRenderer = HelperRenderer.extend({
 		var i, seg;
 		var sourceEl;
 
-		segs = this.eventRenderer.renderFgSegsIntoContainers(
+		// assigns each seg's el and returns a subset of segs that were rendered
+		// TODO: not good to call eventRenderer this way
+		segs = this.eventRenderer.renderFgSegEls(segs);
+
+		// TODO: not good to call eventRenderer this way
+		this.eventRenderer.renderFgSegsIntoContainers(
 			segs,
 			this.component.helperContainerEls
 		);

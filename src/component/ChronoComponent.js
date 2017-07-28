@@ -29,9 +29,6 @@ var ChronoComponent = Model.extend({
 	eventResizing: null,
 	externalDropping: null,
 
-	bgSegs: null,
-	fgSegs: null,
-
 	// self-config, overridable by subclasses
 	segSelector: '.fc-event-container > *', // what constitutes an event element?
 
@@ -51,6 +48,12 @@ var ChronoComponent = Model.extend({
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
 
+		if (this.fillRendererClass) {
+			this.fillRenderer = new this.fillRendererClass(this);
+		}
+
+		// NOTE: this.fillRenderer needs to already be assigned!
+		// TODO: make ordering not matter
 		if (this.eventRendererClass) {
 			this.eventRenderer = new this.eventRendererClass(this);
 		}
@@ -61,10 +64,6 @@ var ChronoComponent = Model.extend({
 
 		if (this.businessHourRendererClass) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this);
-		}
-
-		if (this.fillRendererClass) {
-			this.fillRenderer = new this.fillRendererClass(this);
 		}
 
 		if (this.dateSelectingClass) {
@@ -294,18 +293,18 @@ var ChronoComponent = Model.extend({
 
 
 	renderFgEventFootprints: function(eventFootprints) {
-		var segs = this.eventFootprintsToSegs(eventFootprints);
-
-		this.fgSegs = this.renderFgEventSegs(segs) || segs;
+		if (this.eventRenderer) {
+			this.eventRenderer.renderFgFootprints(eventFootprints);
+		}
 
 		this.callChildren('renderFgEventFootprints', eventFootprints);
 	},
 
 
 	renderBgEventFootprints: function(eventFootprints) {
-		var segs = this.eventFootprintsToSegs(eventFootprints);
-
-		this.bgSegs = this.renderBgEventSegs(segs) || segs;
+		if (this.eventRenderer) {
+			this.eventRenderer.renderBgFootprints(eventFootprints);
+		}
 
 		this.callChildren('renderBgEventFootprints', eventFootprints);
 	},
@@ -313,8 +312,11 @@ var ChronoComponent = Model.extend({
 
 	// Removes event elements from the view.
 	unrenderFgEventFootprints: function() {
-		this.unrenderFgEventSegs();
-		this.fgSegs = null;
+		this.endInteractions(); // TODO: called too frequently
+
+		if (this.eventRenderer) {
+			this.eventRenderer.unrenderFgFootprints();
+		}
 
 		this.callChildren('unrenderFgEventFootprints');
 	},
@@ -322,55 +324,21 @@ var ChronoComponent = Model.extend({
 
 	// Removes event elements from the view.
 	unrenderBgEventFootprints: function() {
-		this.unrenderBgEventSegs();
-		this.bgSegs = null;
+		this.endInteractions(); // TODO: called too frequently
+
+		if (this.eventRenderer) {
+			this.eventRenderer.unrenderBgFootprints();
+		}
 
 		this.callChildren('unrenderBgEventFootprints');
 	},
 
 
-	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
-	renderFgEventSegs: function(segs) {
-		if (this.eventRenderer) {
-			return this.eventRenderer.renderFgSegs(segs);
-		}
-
-		return [];
-	},
-
-
-	// Unrenders all currently rendered foreground segments
-	unrenderFgEventSegs: function() {
-		this.endInteractions(); // TODO: called too frequently
-
-		if (this.eventRenderer) {
-			this.eventRenderer.unrenderFgSegs();
-		}
-	},
-
-
-	// Renders the given background event segments onto the grid.
-	// Returns a subset of the segs that were actually rendered.
-	renderBgEventSegs: function(segs) {
-		this.endInteractions(); // TODO: called too frequently
-
-		if (this.fillRenderer) {
-			this.fillRenderer.render('bgEvent', segs);
-		}
-	},
-
-
-	// Unrenders all the currently rendered background event segments
-	unrenderBgEventSegs: function() {
-		if (this.fillRenderer) {
-			this.fillRenderer.unrender('bgEvent');
-		}
-	},
-
-
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
-		var segs = (this.bgSegs || []).concat(this.fgSegs || []);
+		var segs = this.eventRenderer ?
+			this.eventRenderer.getSegs() :
+			[];
 		var children = this.children;
 		var i;
 

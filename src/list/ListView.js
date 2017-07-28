@@ -120,9 +120,14 @@ var ListView = View.extend({
 
 	eventRendererClass: EventRenderer.extend({
 
-		// like "4:00am"
-		computeEventTimeFormat: function() {
-			return this.opt('mediumTimeFormat');
+
+		renderFgSegs: function(segs) {
+			if (!segs.length) {
+				this.component.renderEmptyMessage();
+			}
+			else {
+				this.component.renderSegList(segs);
+			}
 		},
 
 
@@ -183,6 +188,12 @@ var ListView = View.extend({
 					'</a>' +
 				'</td>' +
 			'</tr>';
+		},
+
+
+		// like "4:00am"
+		computeEventTimeFormat: function() {
+			return this.opt('mediumTimeFormat');
 		}
 
 	}),
@@ -208,21 +219,6 @@ var ListView = View.extend({
 		}
 
 	}),
-
-
-	// returns list of foreground segs that were actually rendered
-	renderFgEventSegs: function(segs) {
-		segs = this.eventRenderer.renderFgSegEls(segs); // might filter away hidden events
-
-		if (!segs.length) {
-			this.renderEmptyMessage();
-		}
-		else {
-			this.renderSegList(segs);
-		}
-
-		return segs;
-	},
 
 
 	renderEmptyMessage: function() {

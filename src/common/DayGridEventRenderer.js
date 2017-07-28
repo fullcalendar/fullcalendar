@@ -17,13 +17,7 @@ var DayGridEventRenderer = EventRenderer.extend({
 
 	// Renders the given foreground event segments onto the grid
 	renderFgSegs: function(segs) {
-		var rowStructs;
-
-		// render an `.el` on each seg
-		// returns a subset of the segs. segs that were actually rendered
-		segs = this.renderFgSegEls(segs);
-
-		rowStructs = this.rowStructs = this.renderSegRows(segs);
+		var rowStructs = this.rowStructs = this.renderSegRows(segs);
 
 		// append to each row's content skeleton
 		this.dayGrid.rowEls.each(function(i, rowNode) {
@@ -31,8 +25,6 @@ var DayGridEventRenderer = EventRenderer.extend({
 				rowStructs[i].tbodyEl
 			);
 		});
-
-		return segs; // return only the segs that were actually rendered
 	},
 
 

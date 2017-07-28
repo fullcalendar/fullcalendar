@@ -2,6 +2,11 @@
 var EventRenderer = Class.extend({
 
 	view: null,
+	component: null,
+	fillRenderer: null,
+
+	fgSegs: null,
+	bgSegs: null,
 
 	// derived from options
 	eventTimeFormat: null,
@@ -11,6 +16,8 @@ var EventRenderer = Class.extend({
 
 	constructor: function(component) {
 		this.view = component._getView();
+		this.component = component;
+		this.fillRenderer = component.fillRenderer;
 	},
 
 
@@ -44,9 +51,51 @@ var EventRenderer = Class.extend({
 	},
 
 
-	// Renders foreground event segments onto the grid. May return a subset of segs that were rendered.
+	renderFgFootprints: function(eventFootprints) {
+		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+
+		// render an `.el` on each seg
+		// returns a subset of the segs. segs that were actually rendered
+		segs = this.renderFgSegEls(segs);
+
+		if (this.renderFgSegs(segs) !== false) { // no failure?
+			this.fgSegs = segs;
+		}
+	},
+
+
+	unrenderFgFootprints: function() {
+		this.unrenderFgSegs();
+		this.fgSegs = null;
+	},
+
+
+	renderBgFootprints: function(eventFootprints) {
+		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+
+		if (this.renderBgSegs(segs) !== false) { // no failure?
+			this.bgSegs = segs;
+		}
+	},
+
+
+	unrenderBgFootprints: function() {
+		this.unrenderBgSegs();
+		this.bgSegs = null;
+	},
+
+
+	getSegs: function() {
+		return (this.bgSegs || []).concat(this.fgSegs || []);
+	},
+
+
+	// Renders foreground event segments onto the grid
 	renderFgSegs: function(segs) {
 		// subclasses must implement
+		// segs already has rendered els, and has been filtered.
+
+		return false; // signal failure if not implemented
 	},
 
 
@@ -57,18 +106,24 @@ var EventRenderer = Class.extend({
 
 
 	renderBgSegs: function(segs) {
-		this.fillRenderer.render('bgSegs', segs);
+		if (this.fillRenderer) {
+			this.fillRenderer.render('bgEvent', segs);
+		}
+		else {
+			return false; // signal failure if no fillRenderer
+		}
 	},
 
 
 	unrenderBgSegs: function() {
-		this.fillRenderer.unrender('bgSegs');
+		if (this.fillRenderer) {
+			this.fillRenderer.unrender('bgEvent');
+		}
 	},
 
 
 	// Renders and assigns an `el` property for each foreground event segment.
 	// Only returns segments that successfully rendered.
-	// A utility that subclasses may use.
 	renderFgSegEls: function(segs, disableResizing) {
 		var _this = this;
 		var hasEventRenderHandlers = this.view.hasPublicHandlers('eventRender');
