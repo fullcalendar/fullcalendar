@@ -36,6 +36,7 @@
     "component/HelperRenderer.js",
     "component/Component.js",
     "component/ChronoComponent.js",
+    "component/ChronoComponent.util.js",
     "common/DayGridFillRenderer.js",
     "common/DayGridEventRenderer.js",
     "common/DayGridHelperRenderer.js",
