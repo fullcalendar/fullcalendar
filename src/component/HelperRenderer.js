@@ -6,10 +6,10 @@ var HelperRenderer = Class.extend({
 	eventRenderer: null,
 
 
-	constructor: function(component) {
+	constructor: function(component, eventRenderer) {
 		this.view = component._getView();
 		this.component = component;
-		this.eventRenderer = component.eventRenderer;
+		this.eventRenderer = eventRenderer;
 	},
 
 

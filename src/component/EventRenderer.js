@@ -3,7 +3,7 @@ var EventRenderer = Class.extend({
 
 	view: null,
 	component: null,
-	fillRenderer: null,
+	fillRenderer: null, // might remain null
 
 	fgSegs: null,
 	bgSegs: null,
@@ -14,10 +14,10 @@ var EventRenderer = Class.extend({
 	displayEventEnd: null,
 
 
-	constructor: function(component) {
+	constructor: function(component, fillRenderer) { // fillRenderer is optional
 		this.view = component._getView();
 		this.component = component;
-		this.fillRenderer = component.fillRenderer;
+		this.fillRenderer = fillRenderer;
 	},
 
 

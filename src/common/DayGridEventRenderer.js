@@ -9,7 +9,7 @@ var DayGridEventRenderer = EventRenderer.extend({
 
 
 	constructor: function(dayGrid) {
-		EventRenderer.call(this, dayGrid);
+		EventRenderer.apply(this, arguments);
 
 		this.dayGrid = dayGrid;
 	},

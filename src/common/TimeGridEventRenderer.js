@@ -9,7 +9,7 @@ var TimeGridEventRenderer = EventRenderer.extend({
 
 
 	constructor: function(timeGrid) {
-		EventRenderer.call(this, timeGrid);
+		EventRenderer.apply(this, arguments);
 
 		this.timeGrid = timeGrid;
 	},

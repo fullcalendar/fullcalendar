@@ -30,22 +30,16 @@ var ChronoComponent = Component.extend({
 			this.fillRenderer = new this.fillRendererClass(this);
 		}
 
-		// NOTE: this.fillRenderer needs to already be assigned!
-		// TODO: make ordering not matter
-		if (this.eventRendererClass) {
-			this.eventRenderer = new this.eventRendererClass(this);
+		if (this.eventRendererClass) { // fillRenderer is optional -----v
+			this.eventRenderer = new this.eventRendererClass(this, this.fillRenderer);
 		}
 
-		// NOTE: this.eventRenderer needs to already be assigned!
-		// TODO: make ordering not matter
-		if (this.helperRendererClass) {
-			this.helperRenderer = new this.helperRendererClass(this);
+		if (this.helperRendererClass && this.eventRenderer) {
+			this.helperRenderer = new this.helperRendererClass(this, this.eventRenderer);
 		}
 
-		// NOTE: this.fillRenderer needs to already be assigned!
-		// TODO: make ordering not matter
-		if (this.businessHourRendererClass) {
-			this.businessHourRenderer = new this.businessHourRendererClass(this);
+		if (this.businessHourRendererClass && this.fillRenderer) {
+			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
 	},
 

@@ -12,9 +12,9 @@ var BusinessHourRenderer = Class.extend({
 		- eventRangesToEventFootprints
 		- eventFootprintsToSegs
 	*/
-	constructor: function(component) {
+	constructor: function(component, fillRenderer) {
 		this.component = component;
-		this.fillRenderer = component.fillRenderer;
+		this.fillRenderer = fillRenderer;
 	},
 
 
