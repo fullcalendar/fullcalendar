@@ -258,7 +258,7 @@ var BasicView = FC.BasicView = View.extend({
 
 	// Renders the given events onto the view and populates the segments array
 	renderEventsPayload: function(eventsPayload) {
-		ChronoComponent.prototype.renderEventsPayload.apply(this, arguments);
+		View.prototype.renderEventsPayload.apply(this, arguments);
 
 		// must compensate for events that overflow the row
 		// TODO: how will ChronoComponent handle this?

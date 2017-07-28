@@ -2,7 +2,7 @@
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
+var DayGrid = FC.DayGrid = InteractiveChronoComponent.extend(DayTableMixin, {
 
 	fillRendererClass: DayGridFillRenderer,
 	helperRendererClass: DayGridHelperRenderer,
@@ -30,7 +30,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 	constructor: function(view) {
 		this.view = view; // do first, for opt calls during initialization
 
-		ChronoComponent.apply(this, arguments);
+		InteractiveChronoComponent.call(this);
 	},
 
 
@@ -325,7 +325,7 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 			return eventFootprint.componentFootprint.isAllDay;
 		});
 
-		return ChronoComponent.prototype.renderBgEventFootprints.call(this, allDayEventFootprints);
+		return InteractiveChronoComponent.prototype.renderBgEventFootprints.call(this, allDayEventFootprints);
 	},
 
 
@@ -333,13 +333,13 @@ var DayGrid = FC.DayGrid = ChronoComponent.extend(DayTableMixin, {
 	unrenderEvents: function() {
 		this.removeSegPopover(); // removes the "more.." events popover
 
-		ChronoComponent.prototype.unrenderEvents.apply(this, arguments);
+		InteractiveChronoComponent.prototype.unrenderEvents.apply(this, arguments);
 	},
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getEventSegs: function() {
-		return ChronoComponent.prototype.getEventSegs.call(this) // get the segments from the super-method
+		return InteractiveChronoComponent.prototype.getEventSegs.call(this) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 

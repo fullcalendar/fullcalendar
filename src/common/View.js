@@ -2,7 +2,7 @@
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = ChronoComponent.extend({
+var View = FC.View = InteractiveChronoComponent.extend({
 
 	type: null, // subclass' view name (string)
 	name: null, // deprecated. use `type` instead
@@ -47,7 +47,7 @@ var View = FC.View = ChronoComponent.extend({
 		// .name is deprecated
 		this.name = this.type;
 
-		ChronoComponent.call(this);
+		InteractiveChronoComponent.call(this);
 
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
@@ -174,7 +174,7 @@ var View = FC.View = ChronoComponent.extend({
 
 
 	setElement: function(el) {
-		ChronoComponent.prototype.setElement.apply(this, arguments);
+		InteractiveChronoComponent.prototype.setElement.apply(this, arguments);
 
 		this.bindBaseRenderHandlers();
 	},
@@ -184,7 +184,7 @@ var View = FC.View = ChronoComponent.extend({
 		this.unsetDate();
 		this.unbindBaseRenderHandlers();
 
-		ChronoComponent.prototype.removeElement.apply(this, arguments);
+		InteractiveChronoComponent.prototype.removeElement.apply(this, arguments);
 	},
 
 
@@ -392,7 +392,7 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
 	bindGlobalHandlers: function() {
-		ChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+		InteractiveChronoComponent.prototype.bindGlobalHandlers.apply(this, arguments);
 
 		this.listenTo(GlobalEmitter.get(), {
 			touchstart: this.processUnselect,
@@ -403,7 +403,7 @@ var View = FC.View = ChronoComponent.extend({
 
 	// Unbinds DOM handlers from elements that reside outside the view container
 	unbindGlobalHandlers: function() {
-		ChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+		InteractiveChronoComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
 
 		this.stopListeningTo(GlobalEmitter.get());
 	},
@@ -888,7 +888,7 @@ var View = FC.View = ChronoComponent.extend({
 			);
 		}
 		else {
-			ChronoComponent.prototype.renderSelectionFootprint.apply(this, arguments);
+			InteractiveChronoComponent.prototype.renderSelectionFootprint.apply(this, arguments);
 		}
 	},
 

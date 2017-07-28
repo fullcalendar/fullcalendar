@@ -299,7 +299,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	renderEventsPayload: function(eventsPayload) {
-		ChronoComponent.prototype.renderEventsPayload.apply(this, arguments);
+		View.prototype.renderEventsPayload.apply(this, arguments);
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		// TODO: how will ChronoComponent handle this?

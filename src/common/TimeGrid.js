@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
+var TimeGrid = FC.TimeGrid = InteractiveChronoComponent.extend(DayTableMixin, {
 
 	eventRendererClass: TimeGridEventRenderer,
 	businessHourRendererClass: BusinessHourRenderer,
@@ -53,7 +53,7 @@ var TimeGrid = FC.TimeGrid = ChronoComponent.extend(DayTableMixin, {
 	constructor: function(view) {
 		this.view = view; // do first, for opt calls during initialization
 
-		ChronoComponent.apply(this, arguments); // call the super-constructor
+		InteractiveChronoComponent.call(this); // call the super-constructor
 
 		this.processOptions();
 	},
