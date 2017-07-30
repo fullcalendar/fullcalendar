@@ -24,7 +24,7 @@ Bugfixes:
 v3.4.0 (2017-04-27)
 -------------------
 
-- composer.js for Composer (PHP package manager) (#3617)
+- composer.json for Composer (PHP package manager) (#3617)
 - fix toISOString for locales with non-trivial postformatting (#3619)
 - fix for nested inverse-background events (#3609)
 - Estonian locale (#3600)
