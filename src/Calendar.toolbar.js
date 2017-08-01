@@ -87,6 +87,20 @@ Calendar.mixin({
 				'disableButton',
 			'next'
 		);
+
+		this.toolbarsManager.proxyCall(
+			prevInfo.isValid ?
+				'enableButton' :
+				'disableButton',
+			'prevYear'
+		);
+
+		this.toolbarsManager.proxyCall(
+			nextInfo.isValid ?
+				'enableButton' :
+				'disableButton',
+			'nextYear'
+		);
 	},
 
 
