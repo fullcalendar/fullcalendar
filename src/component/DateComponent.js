@@ -142,6 +142,7 @@ var DateComponent = Component.extend({
 	// TODO: eventually rename to `renderEvents` once legacy is gone.
 	renderEventsPayload: function(eventsPayload) {
 		var view = this._getView();
+		var dateProfile = view.get('dateProfile');
 		var id, eventInstanceGroup;
 		var eventRenderRanges;
 		var eventFootprints;
@@ -150,7 +151,7 @@ var DateComponent = Component.extend({
 
 		for (id in eventsPayload) {
 			eventInstanceGroup = eventsPayload[id];
-			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(view.get('dateProfile').activeUnzonedRange);
+			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(dateProfile.activeUnzonedRange);
 			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
 
 			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
