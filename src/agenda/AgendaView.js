@@ -334,13 +334,13 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventFootprints, seg) {
+	renderDrag: function(eventFootprints, seg, isTouch) {
 		if (eventFootprints.length) {
 			if (!eventFootprints[0].componentFootprint.isAllDay) {
-				return this.timeGrid.renderDrag(eventFootprints, seg);
+				return this.timeGrid.renderDrag(eventFootprints, seg, isTouch);
 			}
 			else if (this.dayGrid) {
-				return this.dayGrid.renderDrag(eventFootprints, seg);
+				return this.dayGrid.renderDrag(eventFootprints, seg, isTouch);
 			}
 		}
 	},

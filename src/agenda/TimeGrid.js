@@ -570,14 +570,15 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventFootprints, seg) {
+	renderDrag: function(eventFootprints, seg, isTouch) {
 		var i;
 
 		if (seg) { // if there is event information for this drag, render a helper event
 
-			// returns mock event elements
+			this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
+
 			// signal that a helper has been rendered
-			return this.helperRenderer.renderEventFootprints(eventFootprints);
+			return true;
 		}
 		else { // otherwise, just render a highlight
 
@@ -600,8 +601,8 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventFootprints, seg) {
-		return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
+	renderEventResize: function(eventFootprints, seg, isTouch) {
+		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
 	},
 
 

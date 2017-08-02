@@ -11,9 +11,14 @@ var FillRenderer = Class.extend({ // use for highlight, background events, busin
 
 
 	render: function(type, segs, props) {
-		segs = this.buildSegEls(type, segs, props); // assignes `.el` to each seg. returns successfully rendered segs
+		var els;
 
-		this.reportEls(type, this.attachSegEls(type, segs));
+		segs = this.buildSegEls(type, segs, props); // assignes `.el` to each seg. returns successfully rendered segs
+		els = this.attachSegEls(type, segs);
+
+		if (els) {
+			this.reportEls(type, els);
+		}
 
 		return segs;
 	},

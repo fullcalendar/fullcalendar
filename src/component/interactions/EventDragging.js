@@ -160,7 +160,6 @@ var EventDragging = Interaction.extend({
 				var origFootprint;
 				var footprint;
 				var mutatedEventInstanceGroup;
-				var dragHelperEls;
 
 				// starting hit could be forced (DayGrid.limit)
 				if (seg.hit) {
@@ -197,18 +196,14 @@ var EventDragging = Interaction.extend({
 				// if a valid drop location, have the subclass render a visual indication
 				if (
 					eventDefMutation &&
-					(dragHelperEls = view.renderDrag(
+					view.renderDrag( // truthy if rendered something
 						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
 						),
-						seg
-					))
+						seg,
+						dragListener.isTouch
+					)
 				) {
-					dragHelperEls.addClass('fc-dragging');
-					if (!dragListener.isTouch) {
-						_this.applyDragOpacity(dragHelperEls);
-					}
-
 					mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
 				}
 				else {
@@ -320,16 +315,6 @@ var EventDragging = Interaction.extend({
 		eventDefMutation.setDateMutation(dateMutation);
 
 		return eventDefMutation;
-	},
-
-
-	// Utility for apply dragOpacity to a jQuery set
-	applyDragOpacity: function(els) {
-		var opacity = this.opt('dragOpacity');
-
-		if (opacity != null) {
-			els.css('opacity', opacity);
-		}
 	}
 
 });

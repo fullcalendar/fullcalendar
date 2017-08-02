@@ -245,26 +245,8 @@ var DateComponent = Component.extend({
 	// Renders a visual indication of a event or external-element drag over the given drop zone.
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
-	renderDrag: function(eventFootprints, seg) {
-		var dragEls = null;
-		var children = this.children;
-		var i;
-		var childDragEls;
-
-		for (i = 0; i < children.length; i++) {
-			childDragEls = children[i].renderDrag(eventFootprints, seg);
-
-			if (childDragEls) {
-				if (!dragEls) {
-					dragEls = childDragEls;
-				}
-				else {
-					dragEls = dragEls.add(childDragEls);
-				}
-			}
-		}
-
-		return dragEls;
+	renderDrag: function(eventFootprints, seg, isTouch) {
+		this.callChildren('renderDrag', eventFootprints, seg, isTouch);
 	},
 
 
@@ -279,8 +261,7 @@ var DateComponent = Component.extend({
 
 
 	// Renders a visual indication of an event being resized.
-	// Must return elements used for any mock events.
-	renderEventResize: function(eventFootprints, seg) {
+	renderEventResize: function(eventFootprints, seg, isTouch) {
 		// subclasses must implement
 	},
 

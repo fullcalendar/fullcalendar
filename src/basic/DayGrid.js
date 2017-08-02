@@ -344,7 +344,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 	// Renders a visual indication of an event or external element being dragged.
 	// `eventLocation` has zoned start and end (optional)
-	renderDrag: function(eventFootprints, seg) {
+	renderDrag: function(eventFootprints, seg, isTouch) {
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
@@ -353,7 +353,9 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && seg.component !== this) {
-			return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
+			this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
+
+			return true; // signal that a helper was rendered
 		}
 	},
 
@@ -370,14 +372,14 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventFootprints, seg) {
+	renderEventResize: function(eventFootprints, seg, isTouch) {
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		return this.helperRenderer.renderEventFootprints(eventFootprints, seg); // returns mock event elements
+		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
 	},
 
 

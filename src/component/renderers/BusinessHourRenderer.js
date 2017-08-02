@@ -6,6 +6,8 @@ var BusinessHourRenderer = Class.extend({
 	component: null,
 	fillRenderer: null,
 
+	segs: null,
+
 
 	/*
 	component implements:
@@ -25,9 +27,10 @@ var BusinessHourRenderer = Class.extend({
 
 
 	renderFootprints: function(eventFootprints) {
-		this.renderSegs(
-			this.component.eventFootprintsToSegs(eventFootprints)
-		);
+		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+
+		this.renderSegs(segs);
+		this.segs = segs;
 	},
 
 
@@ -46,6 +49,13 @@ var BusinessHourRenderer = Class.extend({
 		if (this.fillRenderer) {
 			this.fillRenderer.unrender('businessHours');
 		}
+
+		this.segs = null;
+	},
+
+
+	getSegs: function() {
+		return this.segs || [];
 	},
 
 

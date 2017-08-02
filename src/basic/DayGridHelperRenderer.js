@@ -1,18 +1,11 @@
 
 var DayGridHelperRenderer = HelperRenderer.extend({
 
-	helperEls: null, // set of cell skeleton elements for rendering the mock event "helper"
-
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderFootprintEls: function(eventFootprints, sourceSeg) {
-		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+	renderSegs: function(segs, sourceSeg) {
 		var helperNodes = [];
 		var rowStructs;
-
-		// assigns each seg's el and returns a subset of segs that were rendered
-		// TODO: not good to call eventRenderer this way
-		segs = this.eventRenderer.renderFgSegEls(segs);
 
 		// TODO: not good to call eventRenderer this way
 		rowStructs = this.eventRenderer.renderSegRows(segs);
@@ -39,18 +32,7 @@ var DayGridHelperRenderer = HelperRenderer.extend({
 			helperNodes.push(skeletonEl[0]);
 		});
 
-		return ( // must return the elements rendered
-			this.helperEls = $(helperNodes) // array -> jQuery set
-		);
-	},
-
-
-	// Unrenders any visual indication of a mock helper event
-	unrender: function() {
-		if (this.helperEls) {
-			this.helperEls.remove();
-			this.helperEls = null;
-		}
+		return $(helperNodes); // must return the elements rendered
 	}
 
 });
