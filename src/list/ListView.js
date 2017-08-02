@@ -56,8 +56,9 @@ var ListView = View.extend({
 
 	renderDates: function() {
 		var calendar = this.calendar;
-		var dayStart = calendar.msToUtcMoment(this.renderUnzonedRange.startMs, true);
-		var viewEnd = calendar.msToUtcMoment(this.renderUnzonedRange.endMs, true);
+		var dateProfile = this.get('dateProfile');
+		var dayStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
+		var viewEnd = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true);
 		var dayDates = [];
 		var dayRanges = [];
 

@@ -126,22 +126,23 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// Computes what the title at the top of the calendar should be for this view
 	computeTitle: function() {
+		var dateProfile = this.get('dateProfile');
 		var unzonedRange;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-		if (/^(year|month)$/.test(this.currentRangeUnit)) {
-			unzonedRange = this.currentUnzonedRange;
+		if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
+			unzonedRange = dateProfile.currentUnzonedRange;
 		}
 		else { // for day units or smaller, use the actual day range
-			unzonedRange = this.activeUnzonedRange;
+			unzonedRange = dateProfile.activeUnzonedRange;
 		}
 
 		return this.formatRange(
 			{
-				start: this.calendar.msToMoment(unzonedRange.startMs, this.isRangeAllDay),
-				end: this.calendar.msToMoment(unzonedRange.endMs, this.isRangeAllDay)
+				start: this.calendar.msToMoment(unzonedRange.startMs, dateProfile.isRangeAllDay),
+				end: this.calendar.msToMoment(unzonedRange.endMs, dateProfile.isRangeAllDay)
 			},
-			this.isRangeAllDay,
+			dateProfile.isRangeAllDay,
 			this.opt('titleFormat') || this.computeTitleFormat(),
 			this.opt('titleRangeSeparator')
 		);
@@ -151,10 +152,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// Generates the format string that should be used to generate the title for the current date range.
 	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
 	computeTitleFormat: function() {
-		if (this.currentRangeUnit == 'year') {
+		var currentRangeUnit = this.get('dateProfile').currentRangeUnit;
+
+		if (currentRangeUnit == 'year') {
 			return 'YYYY';
 		}
-		else if (this.currentRangeUnit == 'month') {
+		else if (currentRangeUnit == 'month') {
 			return this.opt('monthYearFormat'); // like "September 2014"
 		}
 		else if (this.currentRangeAs('days') > 1) {
@@ -338,8 +341,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile, skipScroll) {
-
-		this.setDateProfileForRendering(dateProfile);
 
 		if (this.render) {
 			this.render(); // TODO: deprecate
@@ -1065,6 +1066,21 @@ var View = FC.View = InteractiveDateComponent.extend({
 		});
 	}
 
+});
+
+
+View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
+	var calendar = this.calendar;
+	var dateProfile = deps.dateProfile;
+
+	// DEPRECATED, but we need to keep it updated...
+	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
+	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
+
+	this.title = this.computeTitle();
+	this.calendar.reportViewDatesChanged(this, dateProfile);
 });
 
 

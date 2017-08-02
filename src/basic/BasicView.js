@@ -45,10 +45,10 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Computes the date range that will be rendered.
-	buildRenderRange: function(currentUnzonedRange, currentRangeUnit) {
+	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
 		var renderUnzonedRange = View.prototype.buildRenderRange.apply(this, arguments); // an UnzonedRange
-		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, this.isRangeAllDay);
-		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, this.isRangeAllDay);
+		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
+		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
 
 		// year and month views should be aligned with weeks. this is already done for week
 		if (/^(year|month)$/.test(currentRangeUnit)) {
@@ -66,8 +66,9 @@ var BasicView = FC.BasicView = View.extend({
 
 	// Renders the view into `this.el`, which should already be assigned
 	renderDates: function() {
+		var dateProfile = this.get('dateProfile');
 
-		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.currentRangeUnit); // do before Grid::setRange
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 		this.dayGrid.rangeUpdated();
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible

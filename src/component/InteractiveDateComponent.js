@@ -295,12 +295,13 @@ var InteractiveDateComponent = DateComponent.extend({
 	// NOTE: very similar to isExternalInstanceGroupAllowed
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
+		var dateProfile = view.get('dateProfile');
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
 			// TODO: just use getAllEventRanges directly
-			if (!view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+			if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}
@@ -313,11 +314,12 @@ var InteractiveDateComponent = DateComponent.extend({
 	// when it's a completely anonymous external drag, no event.
 	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
+		var dateProfile = view.get('dateProfile');
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
 		for (i = 0; i < eventFootprints.length; i++) {
-			if (!view.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+			if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
 				return false;
 			}
 		}

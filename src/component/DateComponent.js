@@ -150,7 +150,7 @@ var DateComponent = Component.extend({
 
 		for (id in eventsPayload) {
 			eventInstanceGroup = eventsPayload[id];
-			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(view.activeUnzonedRange);
+			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(view.get('dateProfile').activeUnzonedRange);
 			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
 
 			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
@@ -384,7 +384,7 @@ var DateComponent = Component.extend({
 		var view = this._getView();
 		var footprint = this.getHitFootprint(hit);
 
-		if (!view.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
+		if (!view.get('dateProfile').activeUnzonedRange.containsRange(footprint.unzonedRange)) {
 			return null;
 		}
 

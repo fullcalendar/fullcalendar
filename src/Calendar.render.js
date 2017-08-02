@@ -275,7 +275,7 @@ Calendar.mixin({
 		if (
 			!this.ignoreWindowResize &&
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			this.view.renderUnzonedRange // view has already been rendered
+			this.view.isDatesRendered
 		) {
 			if (this.updateSize(true)) {
 				this.publiclyTrigger('windowResize', [ this.view ]);

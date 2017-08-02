@@ -100,7 +100,7 @@ var ExternalDropping = Interaction.extend(ListenerMixin, {
 				if (singleEventDef) {
 					component.renderDrag( // called without a seg parameter
 						component.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, view.calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(view.get('dateProfile').renderUnzonedRange, view.calendar)
 						)
 					);
 				}

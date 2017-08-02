@@ -1,29 +1,6 @@
 
 View.mixin({
 
-	// range the view is formally responsible for.
-	// for example, a month view might have 1st-31st, excluding padded dates
-	currentUnzonedRange: null,
-	currentRangeUnit: null, // name of largest unit being displayed, like "month" or "week"
-
-	isRangeAllDay: false,
-
-	// date range with a rendered skeleton
-	// includes not-active days that need some sort of DOM
-	renderUnzonedRange: null,
-
-	// dates that display events and accept drag-n-drop
-	activeUnzonedRange: null,
-
-	// constraint for where prev/next operations can go and where events can be dragged/resized to.
-	// an object with optional start and end properties.
-	validUnzonedRange: null,
-
-	// how far the current date will move for a prev/next operation
-	dateIncrement: null,
-
-	minTime: null, // Duration object that denotes the first visible time of any given day
-	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
 	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
 
 	// DEPRECATED
@@ -37,33 +14,11 @@ View.mixin({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	setDateProfileForRendering: function(dateProfile) {
-		var calendar = this.calendar;
-
-		this.currentUnzonedRange = dateProfile.currentUnzonedRange;
-		this.currentRangeUnit = dateProfile.currentRangeUnit;
-		this.isRangeAllDay = dateProfile.isRangeAllDay;
-		this.renderUnzonedRange = dateProfile.renderUnzonedRange;
-		this.activeUnzonedRange = dateProfile.activeUnzonedRange;
-		this.validUnzonedRange = dateProfile.validUnzonedRange;
-		this.dateIncrement = dateProfile.dateIncrement;
-		this.minTime = dateProfile.minTime;
-		this.maxTime = dateProfile.maxTime;
-
-		// DEPRECATED, but we need to keep it updated...
-		this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, this.isRangeAllDay);
-		this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, this.isRangeAllDay);
-		this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, this.isRangeAllDay);
-		this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, this.isRangeAllDay);
-
-		this.title = this.computeTitle();
-		this.calendar.reportViewDatesChanged(this, dateProfile);
-	},
-
-
 	// Builds a structure with info about what the dates/ranges will be for the "prev" view.
 	buildPrevDateProfile: function(date) {
-		var prevDate = date.clone().startOf(this.currentRangeUnit).subtract(this.dateIncrement);
+		var dateProfile = this.get('dateProfile');
+		var prevDate = date.clone().startOf(dateProfile.currentRangeUnit)
+			.subtract(dateProfile.dateIncrement);
 
 		return this.buildDateProfile(prevDate, -1);
 	},
@@ -71,7 +26,9 @@ View.mixin({
 
 	// Builds a structure with info about what the dates/ranges will be for the "next" view.
 	buildNextDateProfile: function(date) {
-		var nextDate = date.clone().startOf(this.currentRangeUnit).add(this.dateIncrement);
+		var dateProfile = this.get('dateProfile');
+		var nextDate = date.clone().startOf(dateProfile.currentRangeUnit)
+			.add(dateProfile.dateIncrement);
 
 		return this.buildDateProfile(nextDate, 1);
 	},
@@ -86,6 +43,7 @@ View.mixin({
 		var minTime = null;
 		var maxTime = null;
 		var currentInfo;
+		var isRangeAllDay;
 		var renderUnzonedRange;
 		var activeUnzonedRange;
 		var isValid;
@@ -98,7 +56,8 @@ View.mixin({
 		}
 
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
-		renderUnzonedRange = this.buildRenderRange(currentInfo.unzonedRange, currentInfo.unit);
+		isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit);
+		renderUnzonedRange = this.buildRenderRange(currentInfo.unzonedRange, currentInfo.unit, isRangeAllDay);
 		activeUnzonedRange = renderUnzonedRange.clone();
 
 		if (!this.opt('showNonCurrentDates')) {
@@ -123,16 +82,37 @@ View.mixin({
 		isValid = currentInfo.unzonedRange.intersectsWith(validUnzonedRange);
 
 		return {
+			// constraint for where prev/next operations can go and where events can be dragged/resized to.
+			// an object with optional start and end properties.
 			validUnzonedRange: validUnzonedRange,
+
+			// range the view is formally responsible for.
+			// for example, a month view might have 1st-31st, excluding padded dates
 			currentUnzonedRange: currentInfo.unzonedRange,
+
+			// name of largest unit being displayed, like "month" or "week"
 			currentRangeUnit: currentInfo.unit,
-			isRangeAllDay: /^(year|month|week|day)$/.test(currentInfo.unit),
+
+			isRangeAllDay: isRangeAllDay,
+
+			// dates that display events and accept drag-n-drop
 			activeUnzonedRange: activeUnzonedRange,
+
+			// date range with a rendered skeleton
+			// includes not-active days that need some sort of DOM
 			renderUnzonedRange: renderUnzonedRange,
+
+			// Duration object that denotes the first visible time of any given day
 			minTime: minTime,
+
+			// Duration object that denotes the exclusive visible end time of any given day
 			maxTime: maxTime,
+
 			isValid: isValid,
+
 			date: date,
+
+			// how far the current date will move for a prev/next operation
 			dateIncrement: this.buildDateIncrement(currentInfo.duration)
 				// pass a fallback (might be null) ^
 		};
@@ -297,7 +277,7 @@ View.mixin({
 
 	// Computes the range that will represent the element/cells for *rendering*,
 	// but which may have voided days/times.
-	buildRenderRange: function(currentUnzonedRange, currentRangeUnit) {
+	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
 		// cut off days in the currentUnzonedRange that are hidden
 		return this.trimHiddenDays(currentUnzonedRange);
 	},
@@ -339,7 +319,7 @@ View.mixin({
 	// Compute the number of the give units in the "current" range.
 	// Will return a floating-point number. Won't round.
 	currentRangeAs: function(unit) {
-		var currentUnzonedRange = this.currentUnzonedRange;
+		var currentUnzonedRange = this.get('dateProfile').currentUnzonedRange;
 
 		return moment.utc(currentUnzonedRange.endMs).diff(
 			moment.utc(currentUnzonedRange.startMs),

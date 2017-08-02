@@ -6,10 +6,10 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 
 	// Computes the date range that will be rendered.
-	buildRenderRange: function() {
+	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
 		var renderUnzonedRange = BasicView.prototype.buildRenderRange.apply(this, arguments);
-		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, this.isRangeAllDay);
-		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, this.isRangeAllDay);
+		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
+		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
 		var rowCnt;
 
 		// ensure 6 weeks
@@ -42,7 +42,9 @@ var MonthView = FC.MonthView = BasicView.extend({
 
 
 	isDateInOtherMonth: function(date) {
-		return date.month() !== moment.utc(this.currentUnzonedRange.startMs).month(); // TODO: optimize
+		var dateProfile = this.get('dateProfile');
+
+		return date.month() !== moment.utc(dateProfile.currentUnzonedRange.startMs).month(); // TODO: optimize
 	}
 
 });

@@ -198,7 +198,7 @@ var EventDragging = Interaction.extend({
 					eventDefMutation &&
 					view.renderDrag( // truthy if rendered something
 						component.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(view.renderUnzonedRange, calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(view.get('dateProfile').renderUnzonedRange, calendar)
 						),
 						seg,
 						dragListener.isTouch

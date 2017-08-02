@@ -152,7 +152,7 @@ var DateSelecting = Interaction.extend({
 
 
 	isSelectionFootprintAllowed: function(componentFootprint) {
-		return this.view.validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
+		return this.view.get('dateProfile').validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
 			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
 	}
 
