@@ -185,7 +185,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	renderNumberCellHtml: function(date) {
 		var view = this.view;
 		var html = '';
-		var isDateValid = view.get('dateProfile').activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
+		var isDateValid = this.get('dateProfile').activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var isDayNumberVisible = view.dayNumbersVisible && isDateValid;
 		var classes;
 		var weekCalcFirstDoW;

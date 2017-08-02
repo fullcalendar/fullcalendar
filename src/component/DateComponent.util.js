@@ -59,7 +59,7 @@ DateComponent.mixin({
 		var classes = [];
 		var today;
 
-		if (!view.get('dateProfile').activeUnzonedRange.containsDate(date)) {
+		if (!this.get('dateProfile').activeUnzonedRange.containsDate(date)) {
 			classes.push('fc-disabled-day'); // TODO: jQuery UI theme?
 		}
 		else {

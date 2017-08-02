@@ -118,7 +118,7 @@ var EventResizing = Interaction.extend({
 
 					component.renderEventResize(
 						component.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(view.get('dateProfile').renderUnzonedRange, calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(component.get('dateProfile').renderUnzonedRange, calendar)
 						),
 						seg
 					);

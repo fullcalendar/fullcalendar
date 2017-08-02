@@ -295,7 +295,7 @@ var InteractiveDateComponent = DateComponent.extend({
 	// NOTE: very similar to isExternalInstanceGroupAllowed
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
-		var dateProfile = view.get('dateProfile');
+		var dateProfile = this.get('dateProfile');
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
@@ -314,7 +314,7 @@ var InteractiveDateComponent = DateComponent.extend({
 	// when it's a completely anonymous external drag, no event.
 	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
-		var dateProfile = view.get('dateProfile');
+		var dateProfile = this.get('dateProfile');
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 

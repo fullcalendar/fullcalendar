@@ -1071,6 +1071,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
 	var calendar = this.calendar;
 	var dateProfile = deps.dateProfile;
+	var children = this.children;
+	var i;
 
 	// DEPRECATED, but we need to keep it updated...
 	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
@@ -1079,7 +1081,11 @@ View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
 	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
 
 	this.title = this.computeTitle(dateProfile);
-	this.calendar.reportViewDatesChanged(this, dateProfile);
+	this.calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse pubsub
+
+	for (i = 0; i < children.length; i++) {
+		children[i].set('dateProfile', dateProfile);
+	}
 });
 
 
