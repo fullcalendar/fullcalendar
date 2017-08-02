@@ -125,8 +125,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Computes what the title at the top of the calendar should be for this view
-	computeTitle: function() {
-		var dateProfile = this.get('dateProfile');
+	computeTitle: function(dateProfile) {
 		var unzonedRange;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -1079,7 +1078,7 @@ View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
 	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
 	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
 
-	this.title = this.computeTitle();
+	this.title = this.computeTitle(dateProfile);
 	this.calendar.reportViewDatesChanged(this, dateProfile);
 });
 
