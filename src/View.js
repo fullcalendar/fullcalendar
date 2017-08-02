@@ -171,15 +171,27 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	setElement: function(el) {
+		var _this = this;
+
 		InteractiveDateComponent.prototype.setElement.apply(this, arguments);
 
 		this.bindBaseRenderHandlers();
+
+		// TODO: not best place for this
+		// TODO: better way of forwarding options from calendar -> view
+		this.calendar.optionsModel.watch('viewRawBusinessHours', [ 'businessHours' ], function(deps) {
+			_this.set('rawBusinessHours', deps.businessHours);
+		}, function() {
+			_this.unset('rawBusinessHours');
+		});
 	},
 
 
 	removeElement: function() {
 		this.unsetDate();
 		this.unbindBaseRenderHandlers();
+
+		this.calendar.optionsModel.unwatch('viewRawBusinessHours');
 
 		InteractiveDateComponent.prototype.removeElement.apply(this, arguments);
 	},
@@ -228,6 +240,28 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.renderQueue.queue(function() {
 			_this.executeDateUnrender();
 		}, 'date', 'destroy');
+	},
+
+
+	// Business Hours Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	requestBusinessHoursRender: function(businessHours) {
+		var _this = this;
+
+		this.renderQueue.queue(function() {
+			_this.renderBusinessHours(businessHours);
+		}, 'businessHours', 'init');
+	},
+
+
+	requestBusinessHoursUnrender: function() {
+		var _this = this;
+
+		this.renderQueue.queue(function() {
+			_this.unrenderBusinessHours();
+		}, 'businessHours', 'destroy');
 	},
 
 
@@ -313,7 +347,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.renderDates();
 		this.updateSize();
-		this.renderBusinessHours(); // might need coordinates, so should go after updateSize()
 		this.startNowIndicator();
 
 		if (!skipScroll) {
@@ -332,7 +365,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.trigger('before:datesUnrendered');
 
-		this.unrenderBusinessHours();
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -1040,6 +1072,22 @@ View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 	this.requestDateRender(deps.dateProfile);
 }, function() {
 	this.requestDateUnrender();
+});
+
+
+View.watch('businessHours', [ 'rawBusinessHours', 'dateProfile' ], function(deps) {
+	return new BusinessHours(
+		deps.rawBusinessHours,
+		deps.dateProfile.activeUnzonedRange,
+		this.calendar
+	);
+});
+
+
+View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
+	this.requestBusinessHoursRender(deps.businessHours);
+}, function() {
+	this.requestBusinessHoursUnrender();
 });
 
 

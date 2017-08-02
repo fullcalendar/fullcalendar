@@ -395,7 +395,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 	businessHourRendererClass: BusinessHourRenderer.extend({
-		isWholeDay: true // TODO: config param on component?
+		isAllDay: true // TODO: config param on component?
 	})
 
 });

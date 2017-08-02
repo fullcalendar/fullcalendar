@@ -1,11 +1,9 @@
 
 var BusinessHourRenderer = Class.extend({
 
-	isWholeDay: false, // subclasses can config
-
+	isAllDay: false, // subclasses can config
 	component: null,
 	fillRenderer: null,
-
 	segs: null,
 
 
@@ -20,13 +18,15 @@ var BusinessHourRenderer = Class.extend({
 	},
 
 
-	// TODO: eventually pass-in eventFootprints
-	render: function() {
-		this.renderFootprints(this.buildEventFootprints());
+	render: function(businessHours) {
+		var eventRanges = businessHours.sliceRenderRanges(this.isAllDay);
+		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
+
+		this.renderEventFootprints(eventFootprints);
 	},
 
 
-	renderFootprints: function(eventFootprints) {
+	renderEventFootprints: function(eventFootprints) {
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
 		this.renderSegs(segs);
@@ -56,32 +56,6 @@ var BusinessHourRenderer = Class.extend({
 
 	getSegs: function() {
 		return this.segs || [];
-	},
-
-
-	buildEventFootprints: function() {
-		var view = this.component.view;
-		var calendar = view.calendar;
-		var eventInstanceGroup;
-		var eventRanges;
-
-		eventInstanceGroup = calendar.buildBusinessInstanceGroup(
-			this.isWholeDay,
-			calendar.opt('businessHours'),
-			view.renderUnzonedRange
-		);
-
-		if (eventInstanceGroup) {
-			eventRanges = eventInstanceGroup.sliceRenderRanges(
-				view.renderUnzonedRange,
-				calendar
-			);
-		}
-		else {
-			eventRanges = [];
-		}
-
-		return this.component.eventRangesToEventFootprints(eventRanges);
 	}
 
 });

@@ -62,7 +62,7 @@ var EventInstanceGroup = Class.extend({
 		unzonedRanges = invertUnzonedRanges(unzonedRanges, constraintRange);
 
 		return unzonedRanges.map(function(unzonedRange) {
-			return new EventRange(unzonedRange, ownerDef); // don't give an EventDef
+			return new EventRange(unzonedRange, ownerDef); // don't give an EventInstance
 		});
 	},
 

@@ -141,10 +141,24 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
+	var businessHours;
 	var eventInstances;
 
 	if (constraintVal === 'businessHours') {
-		return this.buildCurrentBusinessFootprints(isAllDay);
+
+		// TODO: is it good rely on view for this?
+		if (this.view) {
+			businessHours = this.view.get('businessHours');
+			if (businessHours) {
+				return eventFootprintsToComponentFootprints(
+					this.eventRangesToEventFootprints(
+						businessHours.getAllEventRanges(isAllDay)
+					)
+				);
+			}
+		}
+
+		return [];
 	}
 	else if (typeof constraintVal === 'object') {
 		eventInstances = this.parseEventDefToInstances(constraintVal); // handles recurring events

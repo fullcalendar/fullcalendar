@@ -116,12 +116,12 @@ var DateComponent = Component.extend({
 
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function() {
+	renderBusinessHours: function(businessHours) {
 		if (this.businessHourRenderer) {
-			this.businessHourRenderer.render(); // TODO: eventually pass-in eventFootprints
+			this.businessHourRenderer.render(businessHours);
 		}
 
-		this.callChildren('renderBusinessHours');
+		this.callChildren('renderBusinessHours', businessHours);
 	},
 
 

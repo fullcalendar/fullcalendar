@@ -66,11 +66,7 @@ Calendar.mixin({
 				return; // can't change date this way. use gotoDate instead
 			}
 			else if (optionName === 'businessHours') {
-				if (this.view) {
-					this.view.unrenderBusinessHours();
-					this.view.renderBusinessHours();
-				}
-				return;
+				return; // optionsModel already reacts to this
 			}
 			else if (optionName === 'timezone') {
 				this.view.flash('initialEvents');
