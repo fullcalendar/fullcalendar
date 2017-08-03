@@ -65,8 +65,7 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Renders the view into `this.el`, which should already be assigned
-	renderDates: function() {
-		var dateProfile = this.get('dateProfile');
+	renderDates: function(dateProfile) {
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 

@@ -65,7 +65,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders the view into `this.el`, which has already been assigned
-	renderDates: function() {
+	renderDates: function(dateProfile) {
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
 		this.renderHead();

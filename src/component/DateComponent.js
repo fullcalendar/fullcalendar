@@ -108,7 +108,7 @@ var DateComponent = Component.extend({
 
 
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
-		this.renderDates();
+		this.renderDates(dateProfile);
 	},
 
 
@@ -118,7 +118,7 @@ var DateComponent = Component.extend({
 
 
 	// date-cell content only
-	renderDates: function() {
+	renderDates: function(dateProfile) {
 		// subclasses should implement
 	},
 

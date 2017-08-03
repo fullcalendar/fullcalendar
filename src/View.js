@@ -281,8 +281,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.render(); // TODO: deprecate
 		}
 
-		this.renderDates();
-		this.updateSize();
+		this.renderDates(dateProfile);
+		this.updateSize(); // TODO: queue up somehow
 		this.startNowIndicator();
 
 		if (!skipScroll) {
