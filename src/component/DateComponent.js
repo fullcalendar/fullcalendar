@@ -72,8 +72,28 @@ var DateComponent = Component.extend({
 	},
 
 
-	// Date Low-level Rendering
+	// Date
 	// -----------------------------------------------------------------------------------------------------------------
+
+
+	setDateProfileInChildren: function(dateProfile) {
+		this.setInChildren('dateProfile', dateProfile);
+	},
+
+
+	unsetDateProfileInChildren: function() {
+		this.unsetInChildren('dateProfile');
+	},
+
+
+	executeDateRender: function(dateProfile, skipScroll) { // wrapper
+		this.renderDates();
+	},
+
+
+	executeDateUnrender: function() { // wrapper
+		this.unrenderDates();
+	},
 
 
 	// date-cell content only
@@ -115,13 +135,21 @@ var DateComponent = Component.extend({
 	// ---------------------------------------------------------------------------------------------------------------
 
 
+	setBusinessHoursInChildren: function(businessHours) {
+		this.setInChildren('businessHours', businessHours);
+	},
+
+
+	unsetBusinessHoursInChildren: function() {
+		this.unsetInChildren('businessHours');
+	},
+
+
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
 	renderBusinessHours: function(businessHours) {
 		if (this.businessHourRenderer) {
 			this.businessHourRenderer.render(businessHours);
 		}
-
-		this.callChildren('renderBusinessHours', arguments);
 	},
 
 
@@ -130,13 +158,103 @@ var DateComponent = Component.extend({
 		if (this.businessHourRenderer) {
 			this.businessHourRenderer.unrender();
 		}
-
-		this.callChildren('unrenderBusinessHours', arguments);
 	},
 
 
-	// Event Rendering
+	// Events
 	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// initial handling (to be called by initial data receipt)
+
+
+	handleEventsSet: function(eventsPayload) {
+		this.set('currentEvents', eventsPayload);
+		this.set('hasEvents', true);
+		this.setEventsInChildren(eventsPayload);
+	},
+
+
+	handleEventsUnset: function() {
+		this.unset('hasEvents');
+		this.unset('currentEvents');
+		this.unsetEventsInChildren();
+	},
+
+
+	// dynamic handling (to be called by post-binding updates)
+
+
+	handleEventsReset: function(eventsPayload) {
+		this.startBatchRender();
+		this.handleEventsUnset();
+		this.handleEventsSet(eventsPayload);
+		this.stopBatchRender();
+	},
+
+
+	handleEventAddOrUpdate: function(id, eventInstanceGroup) {
+		var currentEvents = this.get('currentEvents');
+
+		currentEvents[id] = eventInstanceGroup;
+		this.set('currentEvents', currentEvents);
+		this.addOrUpdateEventInChildren(id, eventInstanceGroup);
+
+		if (this.get('displayingEvents')) {
+			this.requestRender('event', 'add', this.renderEventAddOrUpdate, arguments);
+		}
+	},
+
+
+	handleEventRemove: function(id) {
+		var currentEvents = this.get('currentEvents');
+
+		if (id in currentEvents) {
+			delete currentEvents[id];
+			this.set('currentEvents', currentEvents);
+			this.removeEventInChildren(id);
+		}
+
+		if (this.get('displayingEvents')) {
+			this.requestRender('event', 'remove', this.renderEventRemove, arguments);
+		}
+	},
+
+
+	// for children
+
+
+	setEventsInChildren: function(eventsPayload) {
+		this.callChildren('handleEventsSet', arguments);
+	},
+
+
+	unsetEventsInChildren: function() {
+		this.callChildren('handleEventsUnset', arguments);
+	},
+
+
+	addOrUpdateEventInChildren: function(id, eventInstanceGroup) {
+		this.callChildren('handleEventAddOrUpdate', arguments);
+	},
+
+
+	removeEventInChildren: function(id) {
+		this.callChildren('handleEventRemove', arguments);
+	},
+
+
+	// rendering
+
+
+	executeEventsRender: function(eventsPayload) { // wrapper
+		this.renderEventsPayload(eventsPayload);
+	},
+
+
+	executeEventsUnrender: function() { // wrapper
+		this.unrenderEvents();
+	},
 
 
 	// TODO: eventually rename to `renderEvents` once legacy is gone.
@@ -177,12 +295,29 @@ var DateComponent = Component.extend({
 	},
 
 
+	renderEventAddOrUpdate: function(id, eventsPayload) {
+		// by default, rerender all
+		this.unrenderEvents();
+		this.renderEventsPayload(this.get('currentEvents'));
+	},
+
+
+	renderEventRemove: function() {
+		// by default, rerender all
+		this.unrenderEvents();
+		this.renderEventsPayload(this.get('currentEvents'));
+	},
+
+
+	// fg & bg delegation
+	// NOTE: parents should never call these
+	// TODO: make EventRenderer responsible for routing FG vs BG?
+
+
 	renderFgEventFootprints: function(eventFootprints) {
 		if (this.eventRenderer) {
 			this.eventRenderer.renderFgFootprints(eventFootprints);
 		}
-
-		this.callChildren('renderFgEventFootprints', arguments);
 	},
 
 
@@ -190,8 +325,6 @@ var DateComponent = Component.extend({
 		if (this.eventRenderer) {
 			this.eventRenderer.renderBgFootprints(eventFootprints);
 		}
-
-		this.callChildren('renderBgEventFootprints', arguments);
 	},
 
 
@@ -202,8 +335,6 @@ var DateComponent = Component.extend({
 		if (this.eventRenderer) {
 			this.eventRenderer.unrenderFgFootprints();
 		}
-
-		this.callChildren('unrenderFgEventFootprints', arguments);
 	},
 
 
@@ -214,8 +345,6 @@ var DateComponent = Component.extend({
 		if (this.eventRenderer) {
 			this.eventRenderer.unrenderBgFootprints();
 		}
-
-		this.callChildren('unrenderBgEventFootprints', arguments);
 	},
 
 
@@ -509,6 +638,26 @@ var DateComponent = Component.extend({
 	},
 
 
+	setInChildren: function(propName, propValue) {
+		var children = this.children;
+		var i;
+
+		for (i = 0; i < children.length; i++) {
+			children[i].set(propName, propValue);
+		}
+	},
+
+
+	unsetInChildren: function(propName) {
+		var children = this.children;
+		var i;
+
+		for (i = 0; i < children.length; i++) {
+			children[i].unset(propName);
+		}
+	},
+
+
 	_getCalendar: function() { // TODO: strip out. move to generic parent.
 		return this.calendar || this.view.calendar;
 	},
@@ -518,4 +667,40 @@ var DateComponent = Component.extend({
 		return this.view;
 	}
 
+});
+
+
+DateComponent.watch('dateProfileInChildren', [ 'dateProfile' ], function(deps) {
+	this.setDateProfileInChildren(deps.dateProfile);
+}, function() {
+	this.unsetDateProfileInChildren();
+});
+
+
+DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(deps) {
+	this.setBusinessHoursInChildren(deps.businessHours);
+}, function() {
+	this.unsetBusinessHoursInChildren();
+});
+
+
+DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
+	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
+}, function() {
+	this.requestRender('date', 'destroy', this.executeDateUnrender);
+});
+
+
+DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
+	this.requestRender('businessHours', 'init', this.renderBusinessHours, [ deps.businessHours ]);
+}, function() {
+	this.requestRender('businessHours', 'destroy', this.unrenderBusinessHours);
+});
+
+
+DateComponent.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
+	// pass currentEvents in case there were event mutations after initialEvents
+	this.requestRender('event', 'init', this.executeEventsRender, [ this.get('currentEvents') ]);
+}, function() {
+	this.requestRender('event', 'destroy', this.executeEventsUnrender);
 });

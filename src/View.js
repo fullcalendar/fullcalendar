@@ -246,32 +246,20 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
+		// can write this shorter?
+		this.listenTo(this.calendar, 'eventsReset', this.handleEventsReset);
+		//this.listenTo(this.calendar, 'eventAdd', this.handleEventAddOrUpdate);
+		//this.listenTo(this.calendar, 'eventUpdate', this.handleEventAddOrUpdate);
+		//this.listenTo(this.calendar, 'eventRemove', this.handleEventRemove);
 	},
 
 
 	unbindEventChanges: function() {
+		// can write this shorter?
 		this.stopListeningTo(this.calendar, 'eventsReset');
-	},
-
-
-	setEvents: function(eventsPayload) {
-		this.set('currentEvents', eventsPayload);
-		this.set('hasEvents', true);
-	},
-
-
-	unsetEvents: function() {
-		this.unset('currentEvents');
-		this.unset('hasEvents');
-	},
-
-
-	resetEvents: function(eventsPayload) {
-		this.startBatchRender();
-		this.unsetEvents();
-		this.setEvents(eventsPayload);
-		this.stopBatchRender();
+		//this.stopListeningTo(this.calendar, 'eventAdd');
+		//this.stopListeningTo(this.calendar, 'eventUpdate');
+		//this.stopListeningTo(this.calendar, 'eventRemove');
 	},
 
 
@@ -1009,32 +997,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 });
 
 
-View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
-	var calendar = this.calendar;
-	var dateProfile = deps.dateProfile;
-	var children = this.children;
-	var i;
-
-	// DEPRECATED, but we need to keep it updated...
-	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
-	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
-	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
-	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
-
-	this.title = this.computeTitle(dateProfile);
-	this.calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse pubsub
-
-	for (i = 0; i < children.length; i++) {
-		children[i].set('dateProfile', dateProfile);
-	}
-});
-
-
-View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
-}, function() {
-	this.requestRender('date', 'destroy', this.executeDateUnrender);
-});
+// responsible for populating data that DateComponent relies on
 
 
 View.watch('businessHours', [ 'rawBusinessHours', 'dateProfile' ], function(deps) {
@@ -1046,32 +1009,35 @@ View.watch('businessHours', [ 'rawBusinessHours', 'dateProfile' ], function(deps
 });
 
 
-View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
-	this.requestRender('businessHours', 'init', this.renderBusinessHours, [ deps.businessHours ]);
-}, function() {
-	this.requestRender('businessHours', 'destroy', this.unrenderBusinessHours);
-});
-
-
 View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
 	return this.fetchInitialEvents(deps.dateProfile);
 });
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	this.setEvents(deps.initialEvents);
+	this.handleEventsSet(deps.initialEvents);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.unsetEvents();
+	this.handleEventsUnset();
 });
 
 
-View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	// pass currentEvents in case there were event mutations after initialEvents
-	this.requestRender('event', 'init', this.executeEventsRender, [ this.get('currentEvents') ]);
-}, function() {
-	this.requestRender('event', 'destroy', this.executeEventsUnrender);
+// misc & legacy conversion
+
+
+View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
+	var calendar = this.calendar;
+	var dateProfile = deps.dateProfile;
+
+	// DEPRECATED, but we need to keep it updated...
+	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
+	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
+
+	this.title = this.computeTitle(dateProfile);
+	calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse the pubsub
 });
 
 
