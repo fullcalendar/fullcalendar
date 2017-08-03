@@ -6,21 +6,21 @@ describe('RenderQueue', function() {
 		var ops = [];
 		var q = new RenderQueue();
 
-		q.queue(function() {
+		q.queue('foo', 'init', function() {
 			ops.push('fooinit');
-		}, 'foo', 'init');
+		});
 
-		q.queue(function() {
+		q.queue('foo', 'add', function() {
 			ops.push('fooremove');
-		}, 'foo', 'add');
+		});
 
-		q.queue(function() {
+		q.queue('foo', 'remove', function() {
 			ops.push('fooadd');
-		}, 'foo', 'remove');
+		});
 
-		q.queue(function() {
+		q.queue('foo', 'destroy', function() {
 			ops.push('foodestroy');
-		}, 'foo', 'destroy');
+		});
 
 		expect(ops).toEqual([ 'fooinit', 'fooremove', 'fooadd', 'foodestroy' ]);
 	});
@@ -34,17 +34,17 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue(function() {
+				q.queue('foo', 'add', function() {
 					ops.push('fooadd');
-				}, 'foo', 'add');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'remove', function() {
 					ops.push('fooremove');
-				}, 'foo', 'remove');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'destroy', function() {
 					ops.push('foodestroy');
-				}, 'foo', 'destroy');
+				});
 
 				expect(ops).toEqual([]);
 				q.resume();
@@ -56,25 +56,25 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue(function() {
+				q.queue('bar', 'init', function() {
 					ops.push('barinit');
-				}, 'bar', 'init');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'init', function() {
 					ops.push('fooinit');
-				}, 'foo', 'init');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'add', function() {
 					ops.push('fooadd');
-				}, 'foo', 'add');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'remove', function() {
 					ops.push('fooadd');
-				}, 'foo', 'remove');
+				});
 
-				q.queue(function() {
+				q.queue('foo', 'destroy', function() {
 					ops.push('fooadd');
-				}, 'foo', 'destroy');
+				});
 
 				expect(ops).toEqual([]);
 				q.resume();
@@ -91,13 +91,13 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
-			q.queue(function() {
+			q.queue('foo', 'add', function() {
 				ops.push('fooadd');
-			}, 'foo', 'add');
+			});
 
 			expect(ops).toEqual([]);
 
@@ -113,14 +113,14 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
  			setTimeout(function() {
-				q.queue(function() {
+				q.queue('foo', 'add', function() {
 					ops.push('fooadd');
-				}, 'foo', 'add');
+				});
 			}, 50);
 
 			setTimeout(function() {
@@ -139,19 +139,19 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
-			q.queue(function() {
+			q.queue('foo', 'add', function() {
 				ops.push('fooadd');
-			}, 'foo', 'add');
+			});
 
 			expect(ops).toEqual([]);
 
-			q.queue(function() {
+			q.queue('bar', 'init', function() {
 				ops.push('barinit');
-			}, 'bar', 'init');
+			});
 
 			expect(ops).toEqual([ 'fooinit', 'fooadd', 'barinit' ]);
 		});
@@ -163,19 +163,19 @@ describe('RenderQueue', function() {
 				bar: 100
 			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
-			q.queue(function() {
+			q.queue('foo', 'add', function() {
 				ops.push('fooadd');
-			}, 'foo', 'add');
+			});
 
 			expect(ops).toEqual([]);
 
-			q.queue(function() {
+			q.queue('bar', 'init', function() {
 				ops.push('barinit');
-			}, 'bar', 'init');
+			});
 
 			expect(ops).toEqual([ 'fooinit', 'fooadd' ]);
 
@@ -193,13 +193,13 @@ describe('RenderQueue', function() {
 
 			q.pause();
 
-			q.queue(function() {
+			q.queue('bar', 'init', function() {
 				ops.push('barinit');
-			}, 'bar', 'init');
+			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
 			q.resume();
 			expect(ops).toEqual([ 'barinit' ]);
@@ -218,23 +218,23 @@ describe('RenderQueue', function() {
 
 			q.pause();
 
-			q.queue(function() {
+			q.queue('foo', 'destroy', function() {
 				ops.push('foodestroy');
-			}, 'foo', 'destroy');
+			});
 
-			q.queue(function() {
+			q.queue('bar', 'destroy', function() {
 				ops.push('bardestroy');
-			}, 'bar', 'destroy');
+			});
 
 			expect(ops).toEqual([]);
 
-			q.queue(function() {
+			q.queue('bar', 'init', function() {
 				ops.push('barinit');
-			}, 'bar', 'init');
+			});
 
-			q.queue(function() {
+			q.queue('foo', 'init', function() {
 				ops.push('fooinit');
-			}, 'foo', 'init');
+			});
 
 			expect(ops).toEqual([]);
 
