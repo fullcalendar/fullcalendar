@@ -713,7 +713,7 @@ DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(dep
 });
 
 
-DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
+DateComponent.watch('displayingDates', [ 'renderedSkeleton', 'dateProfile' ], function(deps) {
 	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
 }, function() {
 	this.requestRender('date', 'destroy', this.executeDateUnrender);
