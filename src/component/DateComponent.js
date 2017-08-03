@@ -51,6 +51,15 @@ var DateComponent = Component.extend({
 	},
 
 
+	requestRender: function(namespace, type, method, args) {
+		var _this = this;
+
+		this._getView().renderQueue.queue(this.uid + ':' + namespace, type, function() {
+			method.apply(_this, args);
+		});
+	},
+
+
 	// Options
 	// -----------------------------------------------------------------------------------------------------------------
 

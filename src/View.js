@@ -114,15 +114,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	requestRender: function(namespace, type, method, args) {
-		var _this = this;
-
-		this.renderQueue.queue(namespace, type, function() {
-			method.apply(_this, args);
-		});
-	},
-
-
 	// Retrieves an option with the given name
 	opt: function(name) {
 		return this.options[name];
