@@ -114,6 +114,15 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
+	requestRender: function(namespace, type, method, args) {
+		var _this = this;
+
+		this.renderQueue.queue(namespace, type, function() {
+			method.apply(_this, args);
+		});
+	},
+
+
 	// Retrieves an option with the given name
 	opt: function(name) {
 		return this.options[name];
@@ -221,50 +230,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	// Date Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	requestDateRender: function(dateProfile) {
-		var _this = this;
-
-		this.renderQueue.queue('date', 'init', function() {
-			_this.executeDateRender(dateProfile);
-		});
-	},
-
-
-	requestDateUnrender: function() {
-		var _this = this;
-
-		this.renderQueue.queue('date', 'destroy', function() {
-			_this.executeDateUnrender();
-		});
-	},
-
-
-	// Business Hours Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	requestBusinessHoursRender: function(businessHours) {
-		var _this = this;
-
-		this.renderQueue.queue('businessHours', 'init', function() {
-			_this.renderBusinessHours(businessHours);
-		});
-	},
-
-
-	requestBusinessHoursUnrender: function() {
-		var _this = this;
-
-		this.renderQueue.queue('businessHours', 'destroy', function() {
-			_this.unrenderBusinessHours();
-		});
-	},
-
-
 	// Event Data
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -307,28 +272,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.unsetEvents();
 		this.setEvents(eventsPayload);
 		this.stopBatchRender();
-	},
-
-
-	// Event Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	requestEventsRender: function(eventsPayload) {
-		var _this = this;
-
-		this.renderQueue.queue('event', 'init', function() {
-			_this.executeEventsRender(eventsPayload);
-		});
-	},
-
-
-	requestEventsUnrender: function() {
-		var _this = this;
-
-		this.renderQueue.queue('event', 'destroy', function() {
-			_this.executeEventsUnrender();
-		});
 	},
 
 
@@ -1088,9 +1031,9 @@ View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
 
 
 View.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestDateRender(deps.dateProfile);
+	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
 }, function() {
-	this.requestDateUnrender();
+	this.requestRender('date', 'destroy', this.executeDateUnrender);
 });
 
 
@@ -1104,9 +1047,9 @@ View.watch('businessHours', [ 'rawBusinessHours', 'dateProfile' ], function(deps
 
 
 View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
-	this.requestBusinessHoursRender(deps.businessHours);
+	this.requestRender('businessHours', 'init', this.renderBusinessHours, [ deps.businessHours ]);
 }, function() {
-	this.requestBusinessHoursUnrender();
+	this.requestRender('businessHours', 'destroy', this.unrenderBusinessHours);
 });
 
 
@@ -1125,9 +1068,10 @@ View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	this.requestEventsRender(this.get('currentEvents')); // if there were event mutations after initialEvents
+	// pass currentEvents in case there were event mutations after initialEvents
+	this.requestRender('event', 'init', this.executeEventsRender, [ this.get('currentEvents') ]);
 }, function() {
-	this.requestEventsUnrender();
+	this.requestRender('event', 'destroy', this.executeEventsUnrender);
 });
 
 
