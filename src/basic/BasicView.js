@@ -64,12 +64,15 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	// Renders the view into `this.el`, which should already be assigned
-	renderDates: function(dateProfile) {
+	handleDateProfileSet: function(dateProfile) {
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 
+		// will populate dayGrid.rowCnt :(
+		View.prototype.handleDateProfileSet.apply(this, arguments);
+
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
+
 		if (this.opt('weekNumbers')) {
 			if (this.opt('weekNumbersWithinDays')) {
 				this.cellWeekNumbersVisible = true;
@@ -80,19 +83,30 @@ var BasicView = FC.BasicView = View.extend({
 				this.colWeekNumbersVisible = true;
 			};
 		}
-		this.dayGrid.numbersVisible = this.dayNumbersVisible ||
-			this.cellWeekNumbersVisible || this.colWeekNumbersVisible;
+
+		this.dayGrid.numbersVisible =
+			this.dayNumbersVisible ||
+			this.cellWeekNumbersVisible ||
+			this.colWeekNumbersVisible;
+
+		this.dayGrid.isRigid = this.hasRigidRows();
+	},
+
+
+	// Renders the view into `this.el`, which should already be assigned
+	renderDates: function(dateProfile) {
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
 		this.renderHead();
 
 		this.scroller.render();
+
 		var dayGridContainerEl = this.scroller.el.addClass('fc-day-grid-container');
 		var dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl);
+
 		this.el.find('.fc-body > tr > td').append(dayGridContainerEl);
 
 		this.dayGrid.setElement(dayGridEl);
-		this.dayGrid.renderDates(this.hasRigidRows());
 	},
 
 
@@ -147,6 +161,7 @@ var BasicView = FC.BasicView = View.extend({
 	// Determines whether each row should have a constant height
 	hasRigidRows: function() {
 		var eventLimit = this.opt('eventLimit');
+
 		return eventLimit && typeof eventLimit !== 'number';
 	},
 

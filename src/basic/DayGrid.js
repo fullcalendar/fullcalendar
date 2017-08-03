@@ -20,6 +20,10 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	rowCoordCache: null,
 	colCoordCache: null,
 
+	// isRigid determines whether the individual rows should ignore the contents and be a constant height.
+	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
+	isRigid: false,
+
 
 	constructor: function(view) {
 		this.view = view; // do first, for opt calls during initialization
@@ -71,9 +75,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
-	// isRigid determins whether the individual rows should ignore the contents and be a constant height.
-	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
-	renderDates: function(isRigid) {
+	renderDates: function(dateProfile) {
 		var view = this.view;
 		var rowCnt = this.rowCnt;
 		var colCnt = this.colCnt;
@@ -82,7 +84,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		var col;
 
 		for (row = 0; row < rowCnt; row++) {
-			html += this.renderDayRowHtml(row, isRigid);
+			html += this.renderDayRowHtml(row, this.isRigid);
 		}
 		this.el.html(html);
 
