@@ -302,13 +302,9 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 Model.watch = function(/* same arguments as this.watch() */) {
-	var proto = this.prototype;
-
-	if (!proto._globalWatchArgs) {
-		proto._globalWatchArgs = [];
-	}
-
-	proto._globalWatchArgs.push(arguments);
+	// creates new array every time, to not mess with subclass prototypes
+	// TODO: make more efficient
+	this.prototype._globalWatchArgs = (this.prototype._globalWatchArgs || []).concat(arguments);
 };
 
 
