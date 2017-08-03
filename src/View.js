@@ -221,6 +221,22 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
+	handleDateProfileSet: function(dateProfile) {
+		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
+
+		var calendar = this.calendar;
+
+		// DEPRECATED, but we need to keep it updated...
+		this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
+		this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
+		this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
+		this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
+
+		this.title = this.computeTitle(dateProfile);
+		calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse the pubsub
+	},
+
+
 	// Event Data
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -1014,22 +1030,7 @@ View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
 });
 
 
-// misc & legacy conversion
-
-
-View.watch('dateProfileMisc', [ 'dateProfile' ], function(deps) {
-	var calendar = this.calendar;
-	var dateProfile = deps.dateProfile;
-
-	// DEPRECATED, but we need to keep it updated...
-	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
-	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
-	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
-	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
-
-	this.title = this.computeTitle(dateProfile);
-	calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse the pubsub
-});
+// legacy
 
 
 function convertEventsPayloadToLegacyArray(eventsPayload) {

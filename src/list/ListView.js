@@ -55,7 +55,7 @@ var ListView = View.extend({
 
 
 	handleDateProfileSet: function(dateProfile) {
-		View.prototype.handleDateProfileSet.call(this, arguments);
+		View.prototype.handleDateProfileSet.apply(this, arguments);
 
 		var calendar = this.calendar;
 		var dayStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);

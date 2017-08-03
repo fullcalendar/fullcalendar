@@ -51,7 +51,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 	handleDateProfileSet: function(dateProfile) {
-		InteractiveDateComponent.prototype.handleDateProfileSet.call(this, arguments);
+		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
 
 		this.updateDayTable();
 
