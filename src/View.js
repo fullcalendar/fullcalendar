@@ -79,6 +79,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		});
 
 		renderQueue.on('stop', function() {
+			_this.calendar.updateViewSize();
 			_this.thawHeight();
 			_this.popScroll();
 		});
@@ -282,8 +283,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		this.renderDates(dateProfile);
-		this.updateSize(); // TODO: queue up somehow
-		this.startNowIndicator();
+		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 
 		if (!skipScroll) {
 			this.addScroll(this.computeInitialDateScroll());
@@ -445,48 +445,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
-	// TODO: move some of these to DateComponent
 
 
-	// Refreshes anything dependant upon sizing of the container element of the grid
-	updateSize: function(isResize) {
-		var scroll;
+	updateSize: function(totalHeight, isAuto, isResize) {
+		InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
 
-		if (isResize) {
-			scroll = this.queryScroll();
-		}
-
-		this.updateHeight(isResize);
-		this.updateWidth(isResize);
 		this.updateNowIndicator();
-
-		if (isResize) {
-			this.applyScroll(scroll);
-		}
-	},
-
-
-	// Refreshes the horizontal dimensions of the calendar
-	updateWidth: function(isResize) {
-		// subclasses should implement
-	},
-
-
-	// Refreshes the vertical dimensions of the calendar
-	updateHeight: function(isResize) {
-		var calendar = this.calendar; // we poll the calendar for height information
-
-		this.setHeight(
-			calendar.getSuggestedViewHeight(),
-			calendar.isHeightAuto()
-		);
-	},
-
-
-	// Updates the vertical dimensions of the calendar to the specified height.
-	// if `isAuto` is set to true, height becomes merely a suggestion and the view should use its "natural" height.
-	setHeight: function(height, isAuto) {
-		// subclasses should implement
 	},
 
 
@@ -661,8 +625,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	applyScreenState: function() {
+
+		// bring to natural height, then freeze again
+		this.calendar.updateViewSize();
 		this.thawHeight();
 		this.freezeHeight();
+
 		this.applyQueuedScroll();
 	},
 

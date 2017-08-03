@@ -220,16 +220,30 @@ Calendar.mixin({
 	},
 
 
-	updateSize: function(shouldRecalc) {
+	updateViewSize: function(isResize) {
+		var view = this.view;
+		var scroll;
+
 		if (this.elementVisible()) {
 
-			if (shouldRecalc) {
+			if (isResize) {
 				this._calcSize();
+				scroll = view.queryScroll();
 			}
 
 			this.ignoreWindowResize++;
-			this.view.updateSize(true); // isResize=true. will poll getSuggestedViewHeight() and isHeightAuto()
+
+			view.updateSize(
+				this.getSuggestedViewHeight(),
+				this.isHeightAuto(),
+				isResize
+			);
+
 			this.ignoreWindowResize--;
+
+			if (isResize) {
+				view.applyScroll(scroll);
+			}
 
 			return true; // signal success
 		}
@@ -277,7 +291,7 @@ Calendar.mixin({
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
 			this.view.isDatesRendered
 		) {
-			if (this.updateSize(true)) {
+			if (this.updateViewSize(true)) { // isResize=true
 				this.publiclyTrigger('windowResize', [ this.view ]);
 			}
 		}

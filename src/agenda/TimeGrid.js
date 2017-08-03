@@ -392,7 +392,9 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	updateSize: function(isResize) { // NOT a standard Grid method
+	updateSize: function(totalHeight, isAuto, isResize) {
+		InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
+
 		this.slatCoordCache.build();
 
 		if (isResize) {

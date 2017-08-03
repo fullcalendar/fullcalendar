@@ -60,6 +60,11 @@ var DateComponent = Component.extend({
 	},
 
 
+	updateSize: function(totalHeight, isAuto, isResize) {
+		this.callChildren('updateSize', arguments);
+	},
+
+
 	// Options
 	// -----------------------------------------------------------------------------------------------------------------
 

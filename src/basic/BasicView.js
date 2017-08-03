@@ -156,7 +156,9 @@ var BasicView = FC.BasicView = View.extend({
 
 
 	// Refreshes the horizontal dimensions of the view
-	updateWidth: function() {
+	updateSize: function(totalHeight, isAuto, isResize) {
+		View.prototype.updateSize.apply(this, arguments);
+
 		if (this.colWeekNumbersVisible) {
 			// Make sure all week number cells running down the side have the same width.
 			// Record the width for cells created later.
@@ -164,11 +166,7 @@ var BasicView = FC.BasicView = View.extend({
 				this.el.find('.fc-week-number')
 			);
 		}
-	},
 
-
-	// Adjusts the vertical dimensions of the view to the specified values
-	setHeight: function(totalHeight, isAuto) {
 		var eventLimit = this.opt('eventLimit');
 		var scrollerHeight;
 		var scrollbarWidths;
@@ -250,19 +248,6 @@ var BasicView = FC.BasicView = View.extend({
 		if (scroll.top !== undefined) {
 			this.scroller.setScrollTop(scroll.top);
 		}
-	},
-
-
-	/* Events
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders the given events onto the view and populates the segments array
-	renderEventsPayload: function(eventsPayload) {
-		View.prototype.renderEventsPayload.apply(this, arguments);
-
-		// must compensate for events that overflow the row
-		this.updateHeight();
 	}
 
 });

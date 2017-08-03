@@ -164,22 +164,13 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	updateSize: function(isResize) {
-		this.timeGrid.updateSize(isResize);
+	// Adjusts the vertical dimensions of the view to the specified values
+	updateSize: function(totalHeight, isAuto, isResize) {
+		View.prototype.updateSize.apply(this, arguments);
 
-		View.prototype.updateSize.call(this, isResize); // call the super-method
-	},
-
-
-	// Refreshes the horizontal dimensions of the view
-	updateWidth: function() {
 		// make all axis cells line up, and record the width so newly created axis cells will have it
 		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
-	},
 
-
-	// Adjusts the vertical dimensions of the view to the specified values
-	setHeight: function(totalHeight, isAuto) {
 		var eventLimit;
 		var scrollerHeight;
 		var scrollbarWidths;
@@ -325,17 +316,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		else if (this.dayGrid) {
 			this.dayGrid.handleEventAddOrUpdate(id, eventInstanceGroup);
 		}
-	},
-
-
-	// rendering
-
-
-	renderEventsPayload: function(eventsPayload) {
-		View.prototype.renderEventsPayload.apply(this, arguments);
-
-		// the all-day area is flexible and might have a lot of events, so shift the height
-		this.updateHeight();
 	},
 
 

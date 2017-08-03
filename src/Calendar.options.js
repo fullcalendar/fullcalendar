@@ -59,7 +59,7 @@ Calendar.mixin({
 		// if only one option change, `optionName` will be its name.
 		if (optionCnt === 1) {
 			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-				this.updateSize(true); // true = allow recalculation of height
+				this.updateViewSize(true); // isResize=true
 				return;
 			}
 			else if (optionName === 'defaultDate') {
