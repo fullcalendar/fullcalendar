@@ -213,8 +213,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		) {
 			this.set('dateProfile', newDateProfile);
 		}
-
-		return newDateProfile.date;
 	},
 
 
