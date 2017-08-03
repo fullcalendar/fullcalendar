@@ -1,6 +1,7 @@
 
 var DateComponent = Component.extend({
 
+	uid: null,
 	children: null,
 	isRTL: false, // frequently accessed options
 	nextDayThreshold: null, // "
@@ -21,6 +22,7 @@ var DateComponent = Component.extend({
 	constructor: function() {
 		Component.call(this);
 
+		this.uid = DateComponent.guid++;
 		this.children = [];
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
@@ -668,6 +670,9 @@ var DateComponent = Component.extend({
 	}
 
 });
+
+
+DateComponent.guid = 0; // TODO: better system for this?
 
 
 DateComponent.watch('dateProfileInChildren', [ 'dateProfile' ], function(deps) {
