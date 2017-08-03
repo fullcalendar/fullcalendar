@@ -101,13 +101,13 @@ var DateComponent = Component.extend({
 
 	// Renders a current time indicator at the given datetime
 	renderNowIndicator: function(date) {
-		this.callChildren('renderNowIndicator', date);
+		this.callChildren('renderNowIndicator', arguments);
 	},
 
 
 	// Undoes the rendering actions from renderNowIndicator
 	unrenderNowIndicator: function() {
-		this.callChildren('unrenderNowIndicator');
+		this.callChildren('unrenderNowIndicator', arguments);
 	},
 
 
@@ -121,7 +121,7 @@ var DateComponent = Component.extend({
 			this.businessHourRenderer.render(businessHours);
 		}
 
-		this.callChildren('renderBusinessHours', businessHours);
+		this.callChildren('renderBusinessHours', arguments);
 	},
 
 
@@ -131,7 +131,7 @@ var DateComponent = Component.extend({
 			this.businessHourRenderer.unrender();
 		}
 
-		this.callChildren('unrenderBusinessHours');
+		this.callChildren('unrenderBusinessHours', arguments);
 	},
 
 
@@ -182,7 +182,7 @@ var DateComponent = Component.extend({
 			this.eventRenderer.renderFgFootprints(eventFootprints);
 		}
 
-		this.callChildren('renderFgEventFootprints', eventFootprints);
+		this.callChildren('renderFgEventFootprints', arguments);
 	},
 
 
@@ -191,7 +191,7 @@ var DateComponent = Component.extend({
 			this.eventRenderer.renderBgFootprints(eventFootprints);
 		}
 
-		this.callChildren('renderBgEventFootprints', eventFootprints);
+		this.callChildren('renderBgEventFootprints', arguments);
 	},
 
 
@@ -203,7 +203,7 @@ var DateComponent = Component.extend({
 			this.eventRenderer.unrenderFgFootprints();
 		}
 
-		this.callChildren('unrenderFgEventFootprints');
+		this.callChildren('unrenderFgEventFootprints', arguments);
 	},
 
 
@@ -215,7 +215,7 @@ var DateComponent = Component.extend({
 			this.eventRenderer.unrenderBgFootprints();
 		}
 
-		this.callChildren('unrenderBgEventFootprints');
+		this.callChildren('unrenderBgEventFootprints', arguments);
 	},
 
 
@@ -246,13 +246,13 @@ var DateComponent = Component.extend({
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(eventFootprints, seg, isTouch) {
-		this.callChildren('renderDrag', eventFootprints, seg, isTouch);
+		this.callChildren('renderDrag', arguments);
 	},
 
 
 	// Unrenders a visual indication of an event or external-element being dragged.
 	unrenderDrag: function() {
-		this.callChildren('unrenderDrag');
+		this.callChildren('unrenderDrag', arguments);
 	},
 
 
@@ -281,7 +281,7 @@ var DateComponent = Component.extend({
 	renderSelectionFootprint: function(componentFootprint) {
 		this.renderHighlight(componentFootprint);
 
-		this.callChildren('renderSelectionFootprint', componentFootprint);
+		this.callChildren('renderSelectionFootprint', arguments);
 	},
 
 
@@ -289,7 +289,7 @@ var DateComponent = Component.extend({
 	unrenderSelection: function() {
 		this.unrenderHighlight();
 
-		this.callChildren('unrenderSelection');
+		this.callChildren('unrenderSelection', arguments);
 	},
 
 
@@ -311,7 +311,7 @@ var DateComponent = Component.extend({
 			);
 		}
 
-		this.callChildren('renderHighlight', componentFootprint);
+		this.callChildren('renderHighlight', arguments);
 	},
 
 
@@ -321,7 +321,7 @@ var DateComponent = Component.extend({
 			this.fillRenderer.unrender('highlight');
 		}
 
-		this.callChildren('unrenderHighlight');
+		this.callChildren('unrenderHighlight', arguments);
 	},
 
 
@@ -336,7 +336,7 @@ var DateComponent = Component.extend({
 			this.prepareHits();
 		}
 
-		this.callChildren('hitsNeeded');
+		this.callChildren('hitsNeeded', arguments);
 	},
 
 
@@ -345,7 +345,7 @@ var DateComponent = Component.extend({
 			this.releaseHits();
 		}
 
-		this.callChildren('hitsNotNeeded');
+		this.callChildren('hitsNotNeeded', arguments);
 	},
 
 
@@ -499,14 +499,12 @@ var DateComponent = Component.extend({
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	callChildren: function(methodName) {
-		var args = Array.prototype.slice.call(arguments, 1);
+	callChildren: function(methodName, args) {
 		var children = this.children;
-		var i, child;
+		var i;
 
 		for (i = 0; i < children.length; i++) {
-			child = children[i];
-			child[methodName].apply(child, args);
+			children[i][methodName].apply(children[i], args);
 		}
 	},
 
