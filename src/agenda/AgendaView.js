@@ -67,12 +67,6 @@ var AgendaView = FC.AgendaView = View.extend({
 	// Renders the view into `this.el`, which has already been assigned
 	renderDates: function() {
 
-		this.timeGrid.rangeUpdated();
-
-		if (this.dayGrid) {
-			this.dayGrid.rangeUpdated();
-		}
-
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
 		this.renderHead();
 
@@ -82,7 +76,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		this.el.find('.fc-body > tr > td').append(timeGridWrapEl);
 
 		this.timeGrid.setElement(timeGridEl);
-		this.timeGrid.renderDates();
 
 		// the <hr> that sometimes displays under the time-grid
 		this.bottomRuleEl = $('<hr class="fc-divider ' + this.calendar.theme.getClass('widgetHeader') + '"/>')
@@ -90,7 +83,6 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		if (this.dayGrid) {
 			this.dayGrid.setElement(this.el.find('.fc-day-grid'));
-			this.dayGrid.renderDates();
 
 			// have the day-grid extend it's coordinate area over the <hr> dividing the two grids
 			this.dayGrid.bottomCoordPadding = this.dayGrid.el.next('hr').outerHeight();

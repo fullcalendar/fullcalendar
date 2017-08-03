@@ -50,7 +50,9 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	},
 
 
-	rangeUpdated: function() {
+	handleDateProfileSet: function(dateProfile) {
+		InteractiveDateComponent.prototype.handleDateProfileSet.call(this, arguments);
+
 		this.updateDayTable();
 
 		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.

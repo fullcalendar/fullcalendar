@@ -87,6 +87,16 @@ var DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	handleDateProfileSet: function(dateProfile) {
+		this.setDateProfileInChildren(dateProfile);
+	},
+
+
+	handleDateProfileUnset: function() {
+		this.unsetDateProfileInChildren();
+	},
+
+
 	setDateProfileInChildren: function(dateProfile) {
 		this.setInChildren('dateProfile', dateProfile);
 	},
@@ -684,10 +694,10 @@ var DateComponent = Component.extend({
 DateComponent.guid = 0; // TODO: better system for this?
 
 
-DateComponent.watch('dateProfileInChildren', [ 'dateProfile' ], function(deps) {
-	this.setDateProfileInChildren(deps.dateProfile);
+DateComponent.watch('handleDateProfile', [ 'dateProfile' ], function(deps) {
+	this.handleDateProfileSet(deps.dateProfile);
 }, function() {
-	this.unsetDateProfileInChildren();
+	this.handleDateProfileUnset();
 });
 
 

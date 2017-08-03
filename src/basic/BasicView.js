@@ -69,7 +69,6 @@ var BasicView = FC.BasicView = View.extend({
 		var dateProfile = this.get('dateProfile');
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
-		this.dayGrid.rangeUpdated();
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		if (this.opt('weekNumbers')) {

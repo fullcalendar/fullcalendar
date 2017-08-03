@@ -74,8 +74,8 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	rangeUpdated: function() {
-		var dateProfile = this.get('dateProfile');
+	handleDateProfileSet: function(dateProfile) {
+		InteractiveDateComponent.prototype.handleDateProfileSet.call(this, arguments);
 
 		this.updateDayTable();
 
