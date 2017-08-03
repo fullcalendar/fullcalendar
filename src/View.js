@@ -228,18 +228,18 @@ var View = FC.View = InteractiveDateComponent.extend({
 	requestDateRender: function(dateProfile) {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('date', 'init', function() {
 			_this.executeDateRender(dateProfile);
-		}, 'date', 'init');
+		});
 	},
 
 
 	requestDateUnrender: function() {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('date', 'destroy', function() {
 			_this.executeDateUnrender();
-		}, 'date', 'destroy');
+		});
 	},
 
 
@@ -250,18 +250,18 @@ var View = FC.View = InteractiveDateComponent.extend({
 	requestBusinessHoursRender: function(businessHours) {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('businessHours', 'init', function() {
 			_this.renderBusinessHours(businessHours);
-		}, 'businessHours', 'init');
+		});
 	},
 
 
 	requestBusinessHoursUnrender: function() {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('businessHours', 'destroy', function() {
 			_this.unrenderBusinessHours();
-		}, 'businessHours', 'destroy');
+		});
 	},
 
 
@@ -317,18 +317,18 @@ var View = FC.View = InteractiveDateComponent.extend({
 	requestEventsRender: function(eventsPayload) {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('event', 'init', function() {
 			_this.executeEventsRender(eventsPayload);
-		}, 'event', 'init');
+		});
 	},
 
 
 	requestEventsUnrender: function() {
 		var _this = this;
 
-		this.renderQueue.queue(function() {
+		this.renderQueue.queue('event', 'destroy', function() {
 			_this.executeEventsUnrender();
-		}, 'event', 'destroy');
+		});
 	},
 
 

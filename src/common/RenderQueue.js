@@ -13,7 +13,7 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
-	queue: function(taskFunc, namespace, type) {
+	queue: function(namespace, type, taskFunc) {
 		var task = {
 			func: taskFunc,
 			namespace: namespace,
