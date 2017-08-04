@@ -471,21 +471,16 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	executeEventsRender: function(eventsPayload) {
-
 		if (this.renderEvents) { // for legacy custom views
 			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
 		}
 		else {
 			this.renderEventsPayload(eventsPayload);
 		}
-
-		this.onEventsRender();
 	},
 
 
 	executeEventsUnrender: function() {
-		this.onBeforeEventsUnrender();
-
 		if (this.destroyEvents) {
 			this.destroyEvents(); // TODO: deprecate
 		}
@@ -498,8 +493,22 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	handleEventsSet: function(eventsPayload) {
+		InteractiveDateComponent.prototype.handleEventsSet.apply(this, arguments);
+
+		this.requestRender('event', 'init-trigger', this.onAllEventsRender);
+	},
+
+
+	handleEventsUnset: function() {
+		this.requestRender('event', 'destroy-trigger', this.onBeforeAllEventsUnrender);
+
+		InteractiveDateComponent.prototype.handleEventsUnset.apply(this, arguments);
+	},
+
+
 	// Signals that all events have been rendered
-	onEventsRender: function() {
+	onAllEventsRender: function() {
 		var _this = this;
 		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
 
@@ -530,7 +539,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Signals that all event elements are about to be removed
-	onBeforeEventsUnrender: function() {
+	onBeforeAllEventsUnrender: function() {
 		var _this = this;
 
 		if (this.hasPublicHandlers('eventDestroy')) {
