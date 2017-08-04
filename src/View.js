@@ -13,8 +13,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	options: null, // hash containing all options. already merged with view-specific-options
 
 	isDatesRendered: false,
-	isEventsRendered: false,
-	isBaseRendered: false, // related to viewRender/viewDestroy triggers
 
 	queuedScroll: null,
 
@@ -480,8 +478,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.renderEventsPayload(eventsPayload);
 		}
 
-		this.isEventsRendered = true;
-
 		this.onEventsRender();
 	},
 
@@ -494,7 +490,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		this.unrenderEvents();
-		this.isEventsRendered = false;
 	},
 
 
