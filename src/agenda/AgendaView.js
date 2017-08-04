@@ -18,9 +18,6 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	headContainerEl: null, // div that hold's the timeGrid's rendered date header
 
-	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
-	bottomRuleEl: null,
-
 	// indicates that minTime/maxTime affects rendering
 	usesMinMaxTime: true,
 
@@ -77,10 +74,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		this.el.find('.fc-body > tr > td').append(timeGridWrapEl);
 
 		this.timeGrid.setElement(timeGridEl);
-
-		// the <hr> that sometimes displays under the time-grid
-		this.bottomRuleEl = $('<hr class="fc-divider ' + this.calendar.theme.getClass('widgetHeader') + '"/>')
-			.appendTo(this.timeGrid.el); // inject it into the time-grid
 
 		if (this.dayGrid) {
 			this.dayGrid.setElement(this.el.find('.fc-day-grid'));
@@ -180,7 +173,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		var scrollbarWidths;
 
 		// reset all dimensions back to the original state
-		this.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
+		this.timeGrid.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
 		this.scroller.clear(); // sets height to 'auto' and clears overflow
 		uncompensateScroll(noScrollRowEls);
 
@@ -220,7 +213,7 @@ var AgendaView = FC.AgendaView = View.extend({
 			// if there's any space below the slats, show the horizontal rule.
 			// this won't cause any new overflow, because lockOverflow already called.
 			if (this.timeGrid.getTotalSlatHeight() < scrollerHeight) {
-				this.bottomRuleEl.show();
+				this.timeGrid.bottomRuleEl.show();
 			}
 		}
 	},

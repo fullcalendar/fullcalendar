@@ -28,6 +28,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	colCoordCache: null,
 	slatCoordCache: null,
 
+	bottomRuleEl: null, // hidden by default
 	colContainerEls: null, // containers for each column
 
 	// inner-containers for each column where different types of segs live
@@ -178,10 +179,36 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	renderSkeleton: function() {
+		var theme = this.view.calendar.theme;
+
+		this.el.html(
+			'<div class="fc-bg"></div>' +
+			'<div class="fc-slats"></div>' +
+			'<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
+		);
+
+		this.bottomRuleEl = this.el.find('hr');
+	},
+
+
 	// Renders the time grid into `this.el`, which should already be assigned.
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
 	renderDates: function(dateProfile) {
-		this.el.html(this.renderHtml());
+		var theme = this.view.calendar.theme;
+
+		this.el.find('> .fc-bg').html(
+			'<table class="' + theme.getClass('tableGrid') + '">' +
+				this.renderBgTrHtml(0) + // row=0
+			'</table>'
+		);
+
+		this.el.find('> .fc-slats').html(
+			'<table class="' + theme.getClass('tableGrid') + '">' +
+				this.renderSlatRowHtml() +
+			'</table>'
+		);
+
 		this.colEls = this.el.find('.fc-day, .fc-disabled-day');
 		this.slatContainerEl = this.el.find('.fc-slats');
 		this.slatEls = this.slatContainerEl.find('tr');
@@ -196,24 +223,6 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		});
 
 		this.renderContentSkeleton();
-	},
-
-
-	// Renders the basic HTML skeleton for the grid
-	renderHtml: function() {
-		var theme = this.view.calendar.theme;
-
-		return '' +
-			'<div class="fc-bg">' +
-				'<table class="' + theme.getClass('tableGrid') + '">' +
-					this.renderBgTrHtml(0) + // row=0
-				'</table>' +
-			'</div>' +
-			'<div class="fc-slats">' +
-				'<table class="' + theme.getClass('tableGrid') + '">' +
-					this.renderSlatRowHtml() +
-				'</table>' +
-			'</div>';
 	},
 
 
