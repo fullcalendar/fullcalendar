@@ -4,6 +4,7 @@ var RenderQueue = TaskQueue.extend({
 	waitsByNamespace: null,
 	waitNamespace: null,
 	waitId: null,
+	isKilled: false, // prevents any new tasks from being added
 
 
 	constructor: function(waitsByNamespace) {
@@ -14,6 +15,11 @@ var RenderQueue = TaskQueue.extend({
 
 
 	queue: function(namespace, type, taskFunc) {
+
+		if (this.isKilled) {
+			return;
+		}
+
 		var task = {
 			func: taskFunc,
 			namespace: namespace,
@@ -44,6 +50,18 @@ var RenderQueue = TaskQueue.extend({
 				this.tryStart();
 			}
 		}
+	},
+
+
+	/*
+	Prevents any new tasks from being added AND clears all tasks related to rendering *new* things,
+	however, keeps destroy-related tasks to allow proper cleanup.
+	*/
+	kill: function() {
+		this.isKilled = true;
+		this.q = this.q.filter(function(task) {
+			return task.type === 'destroy-trigger' || task.type === 'destroy';
+		});
 	},
 
 

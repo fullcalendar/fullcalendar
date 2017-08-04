@@ -94,6 +94,7 @@ Calendar.mixin({
 
 
 	destroy: function() {
+		this.renderQueue.kill();
 
 		if (this.view) {
 			this.view.removeElement();
