@@ -394,7 +394,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	updateSize: function(totalHeight, isAuto, isResize) {
-		InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
+
+		if (this.setHeight) { // for legacy API
+			this.setHeight(totalHeight, isAuto);
+		}
+		else {
+			InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
+		}
 
 		this.updateNowIndicator();
 	},
