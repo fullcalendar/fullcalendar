@@ -495,6 +495,14 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
+	rerenderEvents: function() {
+		if (this.has('currentEvents')) {
+			// re-transmit events to this DateComponent, which will forward on the events to children as well.
+			this.handleEventsReset(this.get('currentEvents'));
+		}
+	},
+
+
 	// Event Rendering Triggers
 	// -----------------------------------------------------------------------------------------------------------------
 

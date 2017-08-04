@@ -69,7 +69,7 @@ Calendar.mixin({
 				return; // optionsModel already reacts to this
 			}
 			else if (optionName === 'timezone') {
-				this.view.flash('initialEvents');
+				this.view.flash('initialEvents'); // refetches and reprocesses events
 				return;
 			}
 		}

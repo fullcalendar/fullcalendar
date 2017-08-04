@@ -295,7 +295,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	rerenderEvents: function() { // API method. destroys old events if previously rendered.
 		if (this.elementVisible()) {
-			this.view.flash('displayingEvents');
+			this.view.rerenderEvents();
 		}
 	},
 
