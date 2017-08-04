@@ -339,8 +339,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 				this.initialNowDate = this.calendar.getNow();
 				this.initialNowQueriedMs = +new Date();
-				this.renderNowIndicator(this.initialNowDate);
-				this.isNowIndicatorRendered = true;
 
 				// wait until the beginning of the next interval
 				delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate;
@@ -352,6 +350,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 					_this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
 				}, delay);
 			}
+
+			// rendering will be initiated in updateSize
 		}
 	},
 
@@ -359,11 +359,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// rerenders the now indicator, computing the new current time from the amount of time that has passed
 	// since the initial getNow call.
 	updateNowIndicator: function() {
-		if (this.isNowIndicatorRendered) {
-			this.unrenderNowIndicator();
+		if (this.nowIndicatorTimeoutID) { // activated?
+			this.unrenderNowIndicator(); // won't unrender if unnecessary
 			this.renderNowIndicator(
 				this.initialNowDate.clone().add(new Date() - this.initialNowQueriedMs) // add ms
 			);
+			this.isNowIndicatorRendered = true;
 		}
 	},
 
