@@ -125,6 +125,69 @@ Calendar.mixin({
 	},
 
 
+	// Render Queue
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	buildRenderQueue: function() {
+		var _this = this;
+		var renderQueue = new RenderQueue({
+			event: this.opt('eventRenderWait')
+		});
+
+		renderQueue.on('start', function() {
+			var view = _this.view;
+
+			_this.freezeContentHeight();
+			view.addScroll(view.queryScroll()); // TODO: move to Calendar
+		});
+
+		renderQueue.on('stop', function() {
+			var view = _this.view;
+
+			_this.updateViewSize();
+			_this.thawContentHeight();
+			view.popScroll(); // TODO: move to Calendar
+		});
+
+		return renderQueue;
+	},
+
+
+	// TODO: evenutally make Calendar a DateComponent
+	initBatchRenderingForView: function(view) {
+		var _this = this;
+
+		view.on('before:change.batchRender', function() {
+			_this.startBatchRender();
+		});
+
+		view.on('change.batchRender', function() {
+			_this.stopBatchRender();
+		});
+	},
+
+
+	// TODO: evenutally make Calendar a DateComponent
+	destroyBatchRenderingForView: function(view) {
+		view.off('.batchRender');
+	},
+
+
+	startBatchRender: function() {
+		if (!(this.batchRenderDepth++)) {
+			this.renderQueue.pause();
+		}
+	},
+
+
+	stopBatchRender: function() {
+		if (!(--this.batchRenderDepth)) {
+			this.renderQueue.resume();
+		}
+	},
+
+
 
 	// View Rendering
 	// -----------------------------------------------------------------------------------
@@ -134,15 +197,16 @@ Calendar.mixin({
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
 	renderView: function(viewType, forcedScroll) {
+		var oldView = this.view;
 
 		this.ignoreWindowResize++;
-
-		var needsClearView = this.view && viewType && this.view.type !== viewType;
+		this.freezeContentHeight(); // wish startBatchRender could do this. troubles with removeElement happening synchronously
+		this.startBatchRender();
 
 		// if viewType is changing, remove the old view's rendering
-		if (needsClearView) {
-			this.freezeContentHeight(); // prevent a scroll jump when view element is removed
+		if (oldView && viewType && oldView.type !== viewType) {
 			this.clearView();
+			this.destroyBatchRenderingForView(oldView); // do AFTER the clear b/c the clear updates lots of props
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
@@ -150,6 +214,8 @@ Calendar.mixin({
 			this.view =
 				this.viewsByType[viewType] ||
 				(this.viewsByType[viewType] = this.instantiateView(viewType));
+
+			this.initBatchRenderingForView(this.view);
 
 			this.view.setElement(
 				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
@@ -168,10 +234,8 @@ Calendar.mixin({
 			}
 		}
 
-		if (needsClearView) {
-			this.thawContentHeight();
-		}
-
+		this.stopBatchRender();
+		this.thawContentHeight();
 		this.ignoreWindowResize--;
 	},
 

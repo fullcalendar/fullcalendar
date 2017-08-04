@@ -63,7 +63,7 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderSkeleton: function() { // can kill skeletonRendered?
+	renderSkeleton: function() {
 		var timeGridWrapEl;
 		var timeGridEl;
 

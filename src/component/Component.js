@@ -8,12 +8,10 @@ var Component = Model.extend({
 		this.el = el;
 		this.bindGlobalHandlers();
 		this.renderSkeleton();
-		this.set('renderedSkeleton', true);
 	},
 
 
 	removeElement: function() {
-		this.unset('renderedSkeleton');
 		this.unrenderSkeleton();
 		this.unbindGlobalHandlers();
 

@@ -54,9 +54,19 @@ var DateComponent = Component.extend({
 	requestRender: function(namespace, type, method, args) {
 		var _this = this;
 
-		this._getView().renderQueue.queue(this.uid + ':' + namespace, type, function() {
+		this._getView().calendar.renderQueue.queue(this.uid + ':' + namespace, type, function() {
 			method.apply(_this, args);
 		});
+	},
+
+
+	startBatchRender: function() {
+		this._getView().calendar.startBatchRender();
+	},
+
+
+	stopBatchRender: function() {
+		this._getView().calendar.stopBatchRender();
 	},
 
 
@@ -713,7 +723,7 @@ DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(dep
 });
 
 
-DateComponent.watch('displayingDates', [ 'renderedSkeleton', 'dateProfile' ], function(deps) {
+DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
 }, function() {
 	this.requestRender('date', 'destroy', this.executeDateUnrender);

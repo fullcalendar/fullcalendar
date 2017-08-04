@@ -7,6 +7,9 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 	theme: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
+	renderQueue: null,
+	batchRenderDepth: 0,
+
 
 	constructor: function(el, overrides) {
 
@@ -22,6 +25,8 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
 		this.initEventManager();
+
+		this.renderQueue = this.buildRenderQueue();
 	},
 
 

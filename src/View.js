@@ -12,8 +12,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	viewSpec: null,
 	options: null, // hash containing all options. already merged with view-specific-options
 
-	renderQueue: null,
-	batchRenderDepth: 0,
 	isDatesRendered: false,
 	isEventsRendered: false,
 	isBaseRendered: false, // related to viewRender/viewDestroy triggers
@@ -52,9 +50,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
-		this.renderQueue = this.buildRenderQueue();
-		this.initAutoBatchRender();
-
 		// legacy
 		if (this.initialize) {
 			this.initialize();
@@ -64,54 +59,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	_getView: function() {
 		return this;
-	},
-
-
-	buildRenderQueue: function() {
-		var _this = this;
-		var renderQueue = new RenderQueue({
-			event: this.opt('eventRenderWait')
-		});
-
-		renderQueue.on('start', function() {
-			_this.freezeHeight();
-			_this.addScroll(_this.queryScroll());
-		});
-
-		renderQueue.on('stop', function() {
-			_this.calendar.updateViewSize();
-			_this.thawHeight();
-			_this.popScroll();
-		});
-
-		return renderQueue;
-	},
-
-
-	initAutoBatchRender: function() {
-		var _this = this;
-
-		this.on('before:change', function() {
-			_this.startBatchRender();
-		});
-
-		this.on('change', function() {
-			_this.stopBatchRender();
-		});
-	},
-
-
-	startBatchRender: function() {
-		if (!(this.batchRenderDepth++)) {
-			this.renderQueue.pause();
-		}
-	},
-
-
-	stopBatchRender: function() {
-		if (!(--this.batchRenderDepth)) {
-			this.renderQueue.resume();
-		}
 	},
 
 
@@ -520,20 +467,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	/* Height Freezing
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	freezeHeight: function() {
-		this.calendar.freezeContentHeight();
-	},
-
-
-	thawHeight: function() {
-		this.calendar.thawContentHeight();
-	},
-
-
 	// Event High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -624,12 +557,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
+	// TODO: move this to Calendar, as well as scroll system
 	applyScreenState: function() {
 
 		// bring to natural height, then freeze again
 		this.calendar.updateViewSize();
-		this.thawHeight();
-		this.freezeHeight();
+		this.calendar.thawContentHeight();
+		this.calendar.freezeContentHeight();
 
 		this.applyQueuedScroll();
 	},
