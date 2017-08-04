@@ -17,7 +17,6 @@ var AgendaView = FC.AgendaView = View.extend({
 	axisWidth: null, // the width of the time axis running down the side
 
 	headContainerEl: null, // div that hold's the timeGrid's rendered date header
-	noScrollRowEls: null, // set of fake row elements that must compensate when scroller has scrollbars
 
 	// when the time-grid isn't tall enough to occupy the given height, we render an <hr> underneath
 	bottomRuleEl: null,
@@ -64,15 +63,17 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the view into `this.el`, which has already been assigned
-	renderDates: function(dateProfile) {
+	renderSkeleton: function() { // can kill skeletonRendered?
+		var timeGridWrapEl;
+		var timeGridEl;
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
-		this.renderHead();
 
 		this.scroller.render();
-		var timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container');
-		var timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl);
+
+		timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container');
+		timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl);
+
 		this.el.find('.fc-body > tr > td').append(timeGridWrapEl);
 
 		this.timeGrid.setElement(timeGridEl);
@@ -87,8 +88,23 @@ var AgendaView = FC.AgendaView = View.extend({
 			// have the day-grid extend it's coordinate area over the <hr> dividing the two grids
 			this.dayGrid.bottomCoordPadding = this.dayGrid.el.next('hr').outerHeight();
 		}
+	},
 
-		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
+
+	unrenderSkeleton: function() {
+		this.timeGrid.removeElement();
+
+		if (this.dayGrid) {
+			this.dayGrid.removeElement();
+		}
+
+		this.scroller.destroy();
+	},
+
+
+	// Renders the view into `this.el`, which has already been assigned
+	renderDates: function(dateProfile) {
+		this.renderHead();
 	},
 
 
@@ -97,21 +113,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		this.headContainerEl =
 			this.el.find('.fc-head-container')
 				.html(this.timeGrid.renderHeadHtml());
-	},
-
-
-	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
-	// always completely kill each grid's rendering.
-	unrenderDates: function() {
-		this.timeGrid.unrenderDates();
-		this.timeGrid.removeElement();
-
-		if (this.dayGrid) {
-			this.dayGrid.unrenderDates();
-			this.dayGrid.removeElement();
-		}
-
-		this.scroller.destroy();
 	},
 
 
@@ -171,6 +172,9 @@ var AgendaView = FC.AgendaView = View.extend({
 		// make all axis cells line up, and record the width so newly created axis cells will have it
 		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
 
+		// set of fake row elements that must compensate when scroller has scrollbars
+		var noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)');
+
 		var eventLimit;
 		var scrollerHeight;
 		var scrollbarWidths;
@@ -178,7 +182,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		// reset all dimensions back to the original state
 		this.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
 		this.scroller.clear(); // sets height to 'auto' and clears overflow
-		uncompensateScroll(this.noScrollRowEls);
+		uncompensateScroll(noScrollRowEls);
 
 		// limit number of events in the all-day area
 		if (this.dayGrid) {
@@ -202,7 +206,7 @@ var AgendaView = FC.AgendaView = View.extend({
 			if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
 				// make the all-day and header rows lines up
-				compensateScroll(this.noScrollRowEls, scrollbarWidths);
+				compensateScroll(noScrollRowEls, scrollbarWidths);
 
 				// the scrollbar compensation might have changed text flow, which might affect height, so recalculate
 				// and reapply the desired height to the scroller.

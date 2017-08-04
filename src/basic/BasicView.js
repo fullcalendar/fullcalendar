@@ -68,7 +68,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 
-		// will populate dayGrid.rowCnt :(
+		// needs breakOnWeeks. will populate dayGrid.rowCnt :(
 		View.prototype.handleDateProfileSet.apply(this, arguments);
 
 		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
@@ -93,20 +93,32 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	// Renders the view into `this.el`, which should already be assigned
-	renderDates: function(dateProfile) {
+	renderSkeleton: function() {
+		var dayGridContainerEl;
+		var dayGridEl;
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
-		this.renderHead();
 
 		this.scroller.render();
 
-		var dayGridContainerEl = this.scroller.el.addClass('fc-day-grid-container');
-		var dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl);
+		dayGridContainerEl = this.scroller.el.addClass('fc-day-grid-container');
+		dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl);
 
 		this.el.find('.fc-body > tr > td').append(dayGridContainerEl);
 
 		this.dayGrid.setElement(dayGridEl);
+	},
+
+
+	unrenderSkeleton: function() {
+		this.dayGrid.removeElement();
+		this.scroller.destroy();
+	},
+
+
+	// Renders the view into `this.el`, which should already be assigned
+	renderDates: function(dateProfile) {
+		this.renderHead();
 	},
 
 
@@ -116,15 +128,6 @@ var BasicView = FC.BasicView = View.extend({
 			this.el.find('.fc-head-container')
 				.html(this.dayGrid.renderHeadHtml());
 		this.headRowEl = this.headContainerEl.find('.fc-row');
-	},
-
-
-	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
-	// always completely kill the dayGrid's rendering.
-	unrenderDates: function() {
-		this.dayGrid.unrenderDates();
-		this.dayGrid.removeElement();
-		this.scroller.destroy();
 	},
 
 
