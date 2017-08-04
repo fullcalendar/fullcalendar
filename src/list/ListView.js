@@ -43,7 +43,7 @@ var ListView = View.extend({
 	},
 
 
-	setHeight: function(totalHeight, isAuto) {
+	updateSize: function(totalHeight, isAuto, isResize) {
 		this.scroller.setHeight(this.computeScrollerHeight(totalHeight));
 	},
 
