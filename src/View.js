@@ -123,8 +123,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		InteractiveDateComponent.prototype.setElement.apply(this, arguments);
 
-		this.bindBaseRenderHandlers();
-
 		// TODO: not best place for this
 		// TODO: better way of forwarding options from calendar -> view
 		this.calendar.optionsModel.watch('viewRawBusinessHours', [ 'businessHours' ], function(deps) {
@@ -137,7 +135,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	removeElement: function() {
 		this.unsetDate();
-		this.unbindBaseRenderHandlers();
 
 		this.calendar.optionsModel.unwatch('viewRawBusinessHours');
 
@@ -220,6 +217,20 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	handleDateProfileSet: function(dateProfile) {
+		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
+
+		this.requestRender('date', 'init-trigger', this.onAfterBaseRender);
+	},
+
+
+	handleDateProfileUnset: function() {
+		this.requestRender('date', 'destroy-trigger', this.onBeforeBaseUnrender);
+
+		InteractiveDateComponent.prototype.handleDateProfileUnset.apply(this, arguments);
+	},
+
+
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile, skipScroll) {
 
@@ -235,7 +246,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		this.isDatesRendered = true;
-		this.trigger('datesRendered');
 	},
 
 
@@ -243,9 +253,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.unselect();
 		this.stopNowIndicator();
-
-		this.trigger('before:datesUnrendered');
-
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -260,25 +267,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindBaseRenderHandlers: function() {
-		var _this = this;
-
-		this.on('datesRendered.baseHandler', function() {
-			_this.onBaseRender();
-		});
-
-		this.on('before:datesUnrendered.baseHandler', function() {
-			_this.onBeforeBaseUnrender();
-		});
-	},
-
-
-	unbindBaseRenderHandlers: function() {
-		this.off('.baseHandler');
-	},
-
-
-	onBaseRender: function() {
+	onAfterBaseRender: function() {
 		this.applyScreenState(); // TODO: only call if hasHandlers
 		this.publiclyTrigger('viewRender', {
 			context: this,
