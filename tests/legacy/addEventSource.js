@@ -72,6 +72,12 @@ describe('addEventSource', function() {
 
 	function go(addFunc, extraTestFunc, doneFunc) {
 		var callCnt = 0;
+		var viewRenderCnt = 0;
+
+		options.viewRender = function() {
+			viewRenderCnt++;
+		};
+
 		options.eventAfterAllRender = function() {
 			callCnt++;
 			if (callCnt == 2) { // once for initial render. second time for addEventSource
@@ -86,14 +92,23 @@ describe('addEventSource', function() {
 				$('#cal').fullCalendar('next');
 				$('#cal').fullCalendar('prev');
 
-				checkAllEvents();
-				if (extraTestFunc) {
-					extraTestFunc();
-				}
+				// otherwise, prev/next would be cancelled out by doneFunc's calendar destroy
+				setTimeout(function() {
 
-				doneFunc();
+					checkAllEvents();
+					if (extraTestFunc) {
+						extraTestFunc();
+					}
+
+					// make sure that the prev/next caused at least one other rerender.
+					// the renderqueue probably pruned away one of the renders.
+					expect(viewRenderCnt).toBeGreaterThan(1);
+
+					doneFunc();
+				}, 0)
 			}
 		};
+
 		$('#cal').fullCalendar(options);
 		addFunc();
 	}
