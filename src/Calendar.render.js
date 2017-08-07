@@ -132,12 +132,40 @@ Calendar.mixin({
 
 	buildRenderQueue: function() {
 		var _this = this;
+
+		var inits = [];
+		var initMap = {};
+		var destroys = [];
+		var destroyMap = {};
+
 		var renderQueue = new RenderQueue({
 			event: this.opt('eventRenderWait')
 		});
 
+		renderQueue.on('push', function(task) {
+			if (task.actionType === 'init') {
+				if (!initMap[task.namespace]) {
+					inits.push(task.namespace);
+					initMap[task.namespace] = true;
+				}
+			}
+			else if (task.actionType === 'destroy') {
+				if (!destroyMap[task.namespace]) {
+					destroys.push(task.namespace);
+					destroyMap[task.namespace] = true;
+				}
+			}
+		});
+
 		renderQueue.on('start', function() {
 			var view = _this.view;
+			var i;
+
+			for (i = 0; i < destroys.length; i++) {
+				_this.trigger('beforeRenderDestroy:' + destroys[i]);
+			}
+			destroys = [];
+			destroyMap = {};
 
 			_this.freezeContentHeight();
 			view.addScroll(view.queryScroll()); // TODO: move to Calendar
@@ -145,12 +173,19 @@ Calendar.mixin({
 
 		renderQueue.on('stop', function() {
 			var view = _this.view;
+			var i;
 
 			if (_this.updateViewSize()) { // success?
 				view.popScroll(); // TODO: move to Calendar
 			}
 
 			_this.thawContentHeight();
+
+			for (i = 0; i < inits.length; i++) {
+				_this.trigger('afterRenderInit:' + inits[i]);
+			}
+			inits = [];
+			initMap = {};
 		});
 
 		return renderQueue;

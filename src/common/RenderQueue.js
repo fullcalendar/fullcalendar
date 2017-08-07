@@ -62,7 +62,7 @@ var RenderQueue = TaskQueue.extend({
 	kill: function() {
 		this.isKilled = true;
 		this.q = this.q.filter(function(task) {
-			return task.actionType === 'destroy-trigger' || task.actionType === 'destroy';
+			return task.actionType === 'destroy';
 		});
 	},
 
@@ -120,12 +120,7 @@ var RenderQueue = TaskQueue.extend({
 						shouldAppend = false;
 					}
 
-					if (task.actionType === 'destroy-trigger' && shouldAppend) {
-						; // a destroy will still happen, so keep this task
-					}
-					else {
-						q.splice(i, 1); // remove task
-					}
+					q.splice(i, 1); // remove task
 				}
 			}
 		}

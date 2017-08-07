@@ -217,20 +217,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestDateRender: function(dateProfile) {
-		InteractiveDateComponent.prototype.requestDateRender.apply(this, arguments);
-
-		this.requestRender('date', 'init-trigger', this.onAfterBaseRender);
-	},
-
-
-	requestDateUnrender: function() {
-		this.requestRender('date', 'destroy-trigger', this.onBeforeBaseUnrender);
-
-		InteractiveDateComponent.prototype.requestDateUnrender.apply(this, arguments);
-	},
-
-
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile, skipScroll) {
 
@@ -463,20 +449,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// Event High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
-
-
-	requestEventsRender: function(eventsPayload) {
-		InteractiveDateComponent.prototype.requestEventsRender.apply(this, arguments);
-
-		this.requestRender('event', 'init-trigger', this.onAfterEventsRender);
-	},
-
-
-	requestEventsUnrender: function() {
-		this.requestRender('event', 'destroy-trigger', this.onBeforeEventsUnrender);
-
-		InteractiveDateComponent.prototype.requestEventsUnrender.apply(this, arguments);
-	},
 
 
 	executeEventsRender: function(eventsPayload) {
