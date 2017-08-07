@@ -22,7 +22,7 @@ var DateComponent = Component.extend({
 	constructor: function() {
 		Component.call(this);
 
-		this.uid = DateComponent.guid++;
+		this.uid = String(DateComponent.guid++);
 		this.children = [];
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
@@ -54,7 +54,7 @@ var DateComponent = Component.extend({
 	requestRender: function(namespace, type, method, args) {
 		var _this = this;
 
-		this._getView().calendar.renderQueue.queue(this.uid + ':' + namespace, type, function() {
+		this._getView().calendar.renderQueue.queue(this.uid, namespace, type, function() {
 			method.apply(_this, args);
 		});
 	},

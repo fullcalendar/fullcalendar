@@ -6,19 +6,19 @@ describe('RenderQueue', function() {
 		var ops = [];
 		var q = new RenderQueue();
 
-		q.queue('foo', 'init', function() {
+		q.queue('ent0', 'foo', 'init', function() {
 			ops.push('fooinit');
 		});
 
-		q.queue('foo', 'add', function() {
+		q.queue('ent0', 'foo', 'add', function() {
 			ops.push('fooremove');
 		});
 
-		q.queue('foo', 'remove', function() {
+		q.queue('ent0', 'foo', 'remove', function() {
 			ops.push('fooadd');
 		});
 
-		q.queue('foo', 'destroy', function() {
+		q.queue('ent0', 'foo', 'destroy', function() {
 			ops.push('foodestroy');
 		});
 
@@ -29,20 +29,20 @@ describe('RenderQueue', function() {
 
 		describe('using clear action', function() {
 
-			it('destroys add/remove operations in same namespace', function() {
+			it('destroys add/remove operations in same entity+namespace', function() {
 				var ops = [];
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('foo', 'add', function() {
+				q.queue('ent0', 'foo', 'add', function() {
 					ops.push('fooadd');
 				});
 
-				q.queue('foo', 'remove', function() {
+				q.queue('ent0', 'foo', 'remove', function() {
 					ops.push('fooremove');
 				});
 
-				q.queue('foo', 'destroy', function() {
+				q.queue('ent0', 'foo', 'destroy', function() {
 					ops.push('foodestroy');
 				});
 
@@ -51,28 +51,58 @@ describe('RenderQueue', function() {
 				expect(ops).toEqual([ 'foodestroy' ]);
 			});
 
-			it('is cancelled out by an init in same namespace', function() {
+			fit('destroys add/remove operations in same entity+namespace, keeping other entities', function() {
 				var ops = [];
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('bar', 'init', function() {
+				q.queue('ent0', 'foo', 'add', function() {
+					ops.push('foo0add');
+				});
+
+				q.queue('ent1', 'foo', 'add', function() {
+					ops.push('foo1add');
+				});
+
+				q.queue('ent0', 'foo', 'remove', function() {
+					ops.push('foo0remove');
+				});
+
+				q.queue('ent1', 'foo', 'remove', function() {
+					ops.push('foo1remove');
+				});
+
+				q.queue('ent0', 'foo', 'destroy', function() {
+					ops.push('foo0destroy');
+				});
+
+				expect(ops).toEqual([]);
+				q.resume();
+				expect(ops).toEqual([ 'foo1add', 'foo1remove', 'foo0destroy' ]);
+			});
+
+			it('is cancelled out by an init in same entity+namespace', function() {
+				var ops = [];
+				var q = new RenderQueue();
+				q.pause();
+
+				q.queue('ent0', 'bar', 'init', function() {
 					ops.push('barinit');
 				});
 
-				q.queue('foo', 'init', function() {
+				q.queue('ent0', 'foo', 'init', function() {
 					ops.push('fooinit');
 				});
 
-				q.queue('foo', 'add', function() {
+				q.queue('ent0', 'foo', 'add', function() {
 					ops.push('fooadd');
 				});
 
-				q.queue('foo', 'remove', function() {
+				q.queue('ent0', 'foo', 'remove', function() {
 					ops.push('fooadd');
 				});
 
-				q.queue('foo', 'destroy', function() {
+				q.queue('ent0', 'foo', 'destroy', function() {
 					ops.push('fooadd');
 				});
 
@@ -91,11 +121,11 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue('foo', 'init', function() {
+			q.queue('ent0', 'foo', 'init', function() {
 				ops.push('fooinit');
 			});
 
-			q.queue('foo', 'add', function() {
+			q.queue('ent0', 'foo', 'add', function() {
 				ops.push('fooadd');
 			});
 
@@ -113,12 +143,12 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue('foo', 'init', function() {
+			q.queue('ent0', 'foo', 'init', function() {
 				ops.push('fooinit');
 			});
 
  			setTimeout(function() {
-				q.queue('foo', 'add', function() {
+				q.queue('ent0', 'foo', 'add', function() {
 					ops.push('fooadd');
 				});
 			}, 50);
@@ -133,56 +163,61 @@ describe('RenderQueue', function() {
 			}, 175);
 		});
 
-		it('synchronously executes queue when sync non-namespace operation happens', function() {
+		it('causes waiting tasks to delay subsequent non-waiting tasks', function(done) {
 			var ops = [];
 			var q = new RenderQueue({
 				foo: 100
 			});
 
-			q.queue('foo', 'init', function() {
+			q.queue('ent0', 'foo', 'init', function() {
 				ops.push('fooinit');
 			});
 
-			q.queue('foo', 'add', function() {
+			q.queue('ent0', 'foo', 'add', function() {
 				ops.push('fooadd');
 			});
 
 			expect(ops).toEqual([]);
 
-			q.queue('bar', 'init', function() {
+			q.queue('ent0', 'bar', 'init', function() {
 				ops.push('barinit');
-			});
-
-			expect(ops).toEqual([ 'fooinit', 'fooadd', 'barinit' ]);
-		});
-
-		it('synchronously executes queue when async non-namespace operation happens', function(done) {
-			var ops = [];
-			var q = new RenderQueue({
-				foo: 100,
-				bar: 100
-			});
-
-			q.queue('foo', 'init', function() {
-				ops.push('fooinit');
-			});
-
-			q.queue('foo', 'add', function() {
-				ops.push('fooadd');
 			});
 
 			expect(ops).toEqual([]);
-
-			q.queue('bar', 'init', function() {
-				ops.push('barinit');
-			});
-
-			expect(ops).toEqual([ 'fooinit', 'fooadd' ]);
 
 			setTimeout(function() {
 				expect(ops).toEqual([ 'fooinit', 'fooadd', 'barinit' ]);
 				done();
-			}, 200);
+			}, 125);
+		});
+
+		it('causes waiting tasks to ignore subsequent waiting tasks\' timeouts', function(done) {
+			var ops = [];
+			var q = new RenderQueue({
+				foo: 100,
+				bar: 1000
+			});
+
+			q.queue('ent0', 'foo', 'init', function() {
+				ops.push('fooinit');
+			});
+
+			q.queue('ent0', 'foo', 'add', function() {
+				ops.push('fooadd');
+			});
+
+			expect(ops).toEqual([]);
+
+			q.queue('ent0', 'bar', 'init', function() {
+				ops.push('barinit');
+			});
+
+			expect(ops).toEqual([]);
+
+			setTimeout(function() {
+				expect(ops).toEqual([ 'fooinit', 'fooadd', 'barinit' ]);
+				done();
+			}, 125);
 		});
 
 		it('resumes non-waiting tasks when unpaused', function(done) {
@@ -193,11 +228,11 @@ describe('RenderQueue', function() {
 
 			q.pause();
 
-			q.queue('bar', 'init', function() {
+			q.queue('ent0', 'bar', 'init', function() {
 				ops.push('barinit');
 			});
 
-			q.queue('foo', 'init', function() {
+			q.queue('ent0', 'foo', 'init', function() {
 				ops.push('fooinit');
 			});
 
@@ -206,43 +241,6 @@ describe('RenderQueue', function() {
 
 			setTimeout(function() {
 				expect(ops).toEqual([ 'barinit', 'fooinit' ]);
-				done();
-			}, 200);
-		});
-
-		it('paused+queued tasks from a previous namespace wait resume immediately', function(done) {
-			var ops = [];
-			var q = new RenderQueue({
-				foo: 100
-			});
-
-			q.pause();
-
-			q.queue('foo', 'destroy', function() {
-				ops.push('foodestroy');
-			});
-
-			q.queue('bar', 'destroy', function() {
-				ops.push('bardestroy');
-			});
-
-			expect(ops).toEqual([]);
-
-			q.queue('bar', 'init', function() {
-				ops.push('barinit');
-			});
-
-			q.queue('foo', 'init', function() {
-				ops.push('fooinit');
-			});
-
-			expect(ops).toEqual([]);
-
-			q.resume();
-			expect(ops).toEqual([ 'foodestroy', 'bardestroy', 'barinit' ]);
-
-			setTimeout(function() {
-				expect(ops).toEqual([ 'foodestroy', 'bardestroy', 'barinit', 'fooinit' ]);
 				done();
 			}, 200);
 		});
