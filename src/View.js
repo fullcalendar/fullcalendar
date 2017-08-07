@@ -568,8 +568,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// TODO: move this to Calendar, as well as scroll system
 	applyScreenState: function() {
 
+		this.calendar.updateViewSize(
+			false, // isResize
+			true // force
+		);
+
 		// bring to natural height, then freeze again
-		this.calendar.updateViewSize();
 		this.calendar.thawContentHeight();
 		this.calendar.freezeContentHeight();
 

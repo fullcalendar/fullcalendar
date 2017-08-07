@@ -4,8 +4,8 @@ Calendar.mixin({
 	el: null,
 	contentEl: null,
 	suggestedViewHeight: null,
+	ignoreUpdateViewSize: 0,
 	windowResizeProxy: null,
-	ignoreWindowResize: 0,
 
 
 	render: function() {
@@ -146,9 +146,11 @@ Calendar.mixin({
 		renderQueue.on('stop', function() {
 			var view = _this.view;
 
-			_this.updateViewSize();
+			if (_this.updateViewSize()) { // success?
+				view.popScroll(); // TODO: move to Calendar
+			}
+
 			_this.thawContentHeight();
-			view.popScroll(); // TODO: move to Calendar
 		});
 
 		return renderQueue;
@@ -200,9 +202,8 @@ Calendar.mixin({
 	renderView: function(viewType, forcedScroll) {
 		var oldView = this.view;
 
-		this.ignoreWindowResize++;
-		this.freezeContentHeight(); // wish startBatchRender could do this. troubles with removeElement happening synchronously
-		this.startBatchRender();
+		this.freezeContentHeight();
+		this.ignoreUpdateViewSize++;
 
 		// if viewType is changing, remove the old view's rendering
 		if (oldView && viewType && oldView.type !== viewType) {
@@ -235,9 +236,10 @@ Calendar.mixin({
 			}
 		}
 
-		this.stopBatchRender();
+		this.ignoreUpdateViewSize--;
+		this.updateViewSize();
 		this.thawContentHeight();
-		this.ignoreWindowResize--;
+		this.view.popScroll();
 	},
 
 
@@ -254,8 +256,8 @@ Calendar.mixin({
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
 	reinitView: function() {
-		this.ignoreWindowResize++;
 		this.freezeContentHeight();
+		this.ignoreUpdateViewSize++;
 
 		var viewType = this.view.type;
 		var scrollState = this.view.queryScroll();
@@ -263,8 +265,9 @@ Calendar.mixin({
 		this.calcSize();
 		this.renderView(viewType, scrollState);
 
+		this.ignoreUpdateViewSize--;
+		this.updateViewSize();
 		this.thawContentHeight();
-		this.ignoreWindowResize--;
 	},
 
 
@@ -285,18 +288,18 @@ Calendar.mixin({
 	},
 
 
-	updateViewSize: function(isResize) {
+	updateViewSize: function(isResize, force) {
 		var view = this.view;
 		var scroll;
 
-		if (this.elementVisible()) {
+		if ((force || !this.ignoreUpdateViewSize) && this.elementVisible()) {
 
 			if (isResize) {
 				this._calcSize();
 				scroll = view.queryScroll();
 			}
 
-			this.ignoreWindowResize++;
+			this.ignoreUpdateViewSize++;
 
 			view.updateSize(
 				this.getSuggestedViewHeight(),
@@ -304,7 +307,7 @@ Calendar.mixin({
 				isResize
 			);
 
-			this.ignoreWindowResize--;
+			this.ignoreUpdateViewSize--;
 
 			if (isResize) {
 				view.applyScroll(scroll);
@@ -352,11 +355,10 @@ Calendar.mixin({
 
 	windowResize: function(ev) {
 		if (
-			!this.ignoreWindowResize &&
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
 			this.view.isDatesRendered
 		) {
-			if (this.updateViewSize(true)) { // isResize=true
+			if (this.updateViewSize(true)) { // isResize=true, returns true on success
 				this.publiclyTrigger('windowResize', [ this.view ]);
 			}
 		}
