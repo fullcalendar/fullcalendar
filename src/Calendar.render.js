@@ -237,11 +237,14 @@ Calendar.mixin({
 	renderView: function(viewType, forcedScroll) {
 		var oldView = this.view;
 
+		if (oldView && oldView.type === viewType) {
+			return;
+		}
+
 		this.freezeContentHeight();
 		this.ignoreUpdateViewSize++;
 
-		// if viewType is changing, remove the old view's rendering
-		if (oldView && viewType && oldView.type !== viewType) {
+		if (oldView) {
 			this.clearView();
 			this.destroyBatchRenderingForView(oldView); // do AFTER the clear b/c the clear updates lots of props
 		}
