@@ -122,6 +122,16 @@ var DateComponent = Component.extend({
 	},
 
 
+	requestDateRender: function(dateProfile) {
+		this.requestRender('date', 'init', this.executeDateRender, [ dateProfile ]);
+	},
+
+
+	requestDateUnrender: function() {
+		this.requestRender('date', 'destroy', this.executeDateUnrender);
+	},
+
+
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
 		this.renderDates(dateProfile);
 	},
@@ -281,6 +291,16 @@ var DateComponent = Component.extend({
 
 
 	// rendering
+
+
+	requestEventsRender: function(eventsPayload) {
+		this.requestRender('event', 'init', this.executeEventsRender, [ eventsPayload ]);
+	},
+
+
+	requestEventsUnrender: function() {
+		this.requestRender('event', 'destroy', this.executeEventsUnrender);
+	},
 
 
 	executeEventsRender: function(eventsPayload) { // wrapper
@@ -724,9 +744,9 @@ DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(dep
 
 
 DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
+	this.requestDateRender(deps.dateProfile);
 }, function() {
-	this.requestRender('date', 'destroy', this.executeDateUnrender);
+	this.requestDateUnrender();
 });
 
 
@@ -739,7 +759,7 @@ DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHou
 
 DateComponent.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 	// pass currentEvents in case there were event mutations after initialEvents
-	this.requestRender('event', 'init', this.executeEventsRender, [ this.get('currentEvents') ]);
+	this.requestEventsRender(this.get('currentEvents'));
 }, function() {
-	this.requestRender('event', 'destroy', this.executeEventsUnrender);
+	this.requestEventsUnrender();
 });

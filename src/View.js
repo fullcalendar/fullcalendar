@@ -217,17 +217,17 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleDateProfileSet: function(dateProfile) {
-		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
+	requestDateRender: function(dateProfile) {
+		InteractiveDateComponent.prototype.requestDateRender.apply(this, arguments);
 
 		this.requestRender('date', 'init-trigger', this.onAfterBaseRender);
 	},
 
 
-	handleDateProfileUnset: function() {
+	requestDateUnrender: function() {
 		this.requestRender('date', 'destroy-trigger', this.onBeforeBaseUnrender);
 
-		InteractiveDateComponent.prototype.handleDateProfileUnset.apply(this, arguments);
+		InteractiveDateComponent.prototype.requestDateUnrender.apply(this, arguments);
 	},
 
 
@@ -465,6 +465,20 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	requestEventsRender: function(eventsPayload) {
+		InteractiveDateComponent.prototype.requestEventsRender.apply(this, arguments);
+
+		this.requestRender('event', 'init-trigger', this.onAfterEventsRender);
+	},
+
+
+	requestEventsUnrender: function() {
+		this.requestRender('event', 'destroy-trigger', this.onBeforeEventsUnrender);
+
+		InteractiveDateComponent.prototype.requestEventsUnrender.apply(this, arguments);
+	},
+
+
 	executeEventsRender: function(eventsPayload) {
 		if (this.renderEvents) { // for legacy custom views
 			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
@@ -496,22 +510,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleEventsSet: function(eventsPayload) {
-		InteractiveDateComponent.prototype.handleEventsSet.apply(this, arguments);
-
-		this.requestRender('event', 'init-trigger', this.onAllEventsRender);
-	},
-
-
-	handleEventsUnset: function() {
-		this.requestRender('event', 'destroy-trigger', this.onBeforeAllEventsUnrender);
-
-		InteractiveDateComponent.prototype.handleEventsUnset.apply(this, arguments);
-	},
-
-
 	// Signals that all events have been rendered
-	onAllEventsRender: function() {
+	onAfterEventsRender: function() {
 		var _this = this;
 		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
 
@@ -542,7 +542,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Signals that all event elements are about to be removed
-	onBeforeAllEventsUnrender: function() {
+	onBeforeEventsUnrender: function() {
 		var _this = this;
 
 		if (this.hasPublicHandlers('eventDestroy')) {
