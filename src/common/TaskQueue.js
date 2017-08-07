@@ -12,7 +12,14 @@ var TaskQueue = Class.extend(EmitterMixin, {
 
 
 	queue: function(/* taskFunc, taskFunc... */) {
+		var i;
+
 		this.q.push.apply(this.q, arguments); // append
+
+		for (i = 0; i < arguments.length; i++) {
+			this.trigger('push', arguments[i]);
+		}
+
 		this.tryStart();
 	},
 
