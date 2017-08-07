@@ -17,7 +17,7 @@ var RenderQueue = TaskQueue.extend({
 	/*
 	all args are required
 	*/
-	queue: function(entityId, namespace, type, taskFunc) {
+	queue: function(entityId, namespace, actionType, taskFunc) {
 
 		if (this.isKilled) {
 			return;
@@ -26,7 +26,7 @@ var RenderQueue = TaskQueue.extend({
 		var task = {
 			entityId: entityId,
 			namespace: namespace,
-			type: type,
+			actionType: actionType,
 			func: taskFunc
 		};
 		var waitMs;
@@ -60,7 +60,7 @@ var RenderQueue = TaskQueue.extend({
 	kill: function() {
 		this.isKilled = true;
 		this.q = this.q.filter(function(task) {
-			return task.type === 'destroy-trigger' || task.type === 'destroy';
+			return task.actionType === 'destroy-trigger' || task.actionType === 'destroy';
 		});
 	},
 
@@ -104,7 +104,7 @@ var RenderQueue = TaskQueue.extend({
 		var shouldAppend = true;
 		var i, task;
 
-		if (newTask.type === 'destroy') {
+		if (newTask.actionType === 'destroy') {
 
 			// remove ops with same entityId and namespace
 			for (i = q.length - 1; i >= 0; i--) {
@@ -114,11 +114,11 @@ var RenderQueue = TaskQueue.extend({
 					task.entityId === newTask.entityId &&
 					task.namespace === newTask.namespace
 				) {
-					if (task.type === 'init') { // cancels out the destroy
+					if (task.actionType === 'init') { // cancels out the destroy
 						shouldAppend = false;
 					}
 
-					if (task.type === 'destroy-trigger' && shouldAppend) {
+					if (task.actionType === 'destroy-trigger' && shouldAppend) {
 						; // a destroy will still happen, so keep this task
 					}
 					else {
