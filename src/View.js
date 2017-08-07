@@ -377,7 +377,9 @@ var View = FC.View = InteractiveDateComponent.extend({
 			InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
 		}
 
-		this.updateNowIndicator();
+		if (this.has('dateProfile')) { // ugh
+			this.updateNowIndicator();
+		}
 	},
 
 
