@@ -260,20 +260,24 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	onAllDateRender: function() {
-		this.applyScreenState(); // TODO: only call if hasHandlers
-		this.publiclyTrigger('viewRender', {
-			context: this,
-			args: [ this, this.el ]
-		});
+		if (this.hasPublicHandlers('viewRender')) {
+			this.applyScreenState();
+			this.publiclyTrigger('viewRender', {
+				context: this,
+				args: [ this, this.el ]
+			});
+		}
 	},
 
 
 	onBeforeAllDateUnrender: function() {
-		this.applyScreenState(); // TODO: only call if hasHandlers
-		this.publiclyTrigger('viewDestroy', {
-			context: this,
-			args: [ this, this.el ]
-		});
+		if (this.hasPublicHandlers('viewDestroy')) {
+			this.applyScreenState(); // TODO: only call if hasHandlers!
+			this.publiclyTrigger('viewDestroy', {
+				context: this,
+				args: [ this, this.el ]
+			});
+		}
 	},
 
 
