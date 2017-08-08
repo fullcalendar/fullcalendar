@@ -130,7 +130,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		// TODO: not best place for this
 		// TODO: better way of forwarding options from calendar -> view
-		this.calendar.optionsModel.watch('viewRawBusinessHours', [ 'businessHours' ], function(deps) {
+		this.calendar.optionsModel.watch('viewRawBusinessHours' + this.uid, [ 'businessHours' ], function(deps) {
 			_this.set('rawBusinessHours', deps.businessHours);
 		}, function() {
 			_this.unset('rawBusinessHours');
@@ -139,7 +139,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	removeElement: function() {
-		this.calendar.optionsModel.unwatch('viewRawBusinessHours');
+		this.calendar.optionsModel.unwatch('viewRawBusinessHours' + this.uid);
 
 		InteractiveDateComponent.prototype.removeElement.apply(this, arguments);
 	},
