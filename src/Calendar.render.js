@@ -203,14 +203,14 @@ Calendar.mixin({
 	renderView: function(viewType, forcedScroll) {
 		var oldView = this.view;
 
-		if (oldView && oldView.type === viewType) {
-			return;
+		if (oldView) {
+			oldView.addScroll(oldView.queryScroll());
 		}
 
 		this.freezeContentHeight();
 		this.ignoreUpdateViewSize++;
 
-		if (oldView) {
+		if (oldView && viewType && oldView.type !== viewType) {
 			this.clearView();
 			this.destroyBatchRenderingForView(oldView); // do AFTER the clear b/c the clear updates lots of props
 		}
@@ -260,6 +260,7 @@ Calendar.mixin({
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
 	reinitView: function() {
+		var scroll = this.view.queryScroll();
 		this.freezeContentHeight();
 		this.ignoreUpdateViewSize++;
 
@@ -272,6 +273,7 @@ Calendar.mixin({
 		this.ignoreUpdateViewSize--;
 		this.updateViewSize();
 		this.thawContentHeight();
+		this.view.applyScroll(scroll);
 	},
 
 
