@@ -51,7 +51,7 @@ describe('RenderQueue', function() {
 				expect(ops).toEqual([ 'foodestroy' ]);
 			});
 
-			fit('destroys add/remove operations in same entity+namespace, keeping other entities', function() {
+			it('destroys add/remove operations in same entity+namespace, keeping other entities', function() {
 				var ops = [];
 				var q = new RenderQueue();
 				q.pause();

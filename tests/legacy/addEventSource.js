@@ -72,11 +72,6 @@ describe('addEventSource', function() {
 
 	function go(addFunc, extraTestFunc, doneFunc) {
 		var callCnt = 0;
-		var viewRenderCnt = 0;
-
-		options.viewRender = function() {
-			viewRenderCnt++;
-		};
 
 		options.eventAfterAllRender = function() {
 			callCnt++;
@@ -99,10 +94,6 @@ describe('addEventSource', function() {
 					if (extraTestFunc) {
 						extraTestFunc();
 					}
-
-					// make sure that the prev/next caused at least one other rerender.
-					// the renderqueue probably pruned away one of the renders.
-					expect(viewRenderCnt).toBeGreaterThan(1);
 
 					doneFunc();
 				}, 0)
