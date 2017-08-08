@@ -304,8 +304,8 @@ Calendar.mixin({
 	},
 
 
-	updateViewSize: function(isResize, force) {
-		var view = this.view;
+	updateViewSize: function(isResize, force, explicitView) {
+		var view = explicitView || this.view;
 		var scroll;
 
 		if ((force || !this.ignoreUpdateViewSize) && this.elementVisible()) {

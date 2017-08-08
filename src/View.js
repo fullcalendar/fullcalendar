@@ -554,7 +554,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.calendar.updateViewSize(
 			false, // isResize
-			true // force
+			true, // force
+			this // view (because Calendar::view might have changed)
 		);
 
 		// bring to natural height, then freeze again
