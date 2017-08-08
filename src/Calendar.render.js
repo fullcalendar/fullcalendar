@@ -203,13 +203,9 @@ Calendar.mixin({
 	renderView: function(viewType, forcedScroll) {
 		var _this = this;
 		var oldView = this.view;
+		var newView;
 
-		if (oldView) {
-			oldView.addScroll(oldView.queryScroll());
-		}
-
-		this.freezeContentHeight();
-		this.ignoreUpdateViewSize++;
+		this.startBatchRender();
 
 		if (oldView && viewType && oldView.type !== viewType) {
 			this.clearView();
@@ -218,15 +214,15 @@ Calendar.mixin({
 
 		// if viewType changed, or the view was never created, create a fresh view
 		if (!this.view && viewType) {
-			this.view =
+			newView = this.view =
 				this.viewsByType[viewType] ||
 				(this.viewsByType[viewType] = this.instantiateView(viewType));
 
-			this.initBatchRenderingForView(this.view);
+			this.initBatchRenderingForView(newView);
 
-			this.view.setElement($("<div class='fc-view fc-" + viewType + "-view' />"));
+			newView.setElement($("<div class='fc-view fc-" + viewType + "-view' />"));
 			this.renderQueue.queue('_calendar', 'el', 'init', function() {
-				_this.view.el.appendTo(_this.contentEl);
+				newView.el.appendTo(_this.contentEl);
 			});
 
 			this.toolbarsManager.proxyCall('activateButton', viewType);
@@ -243,23 +239,20 @@ Calendar.mixin({
 			}
 		}
 
-		this.ignoreUpdateViewSize--;
-		this.updateViewSize();
-		this.thawContentHeight();
-		this.view.popScroll();
+		this.stopBatchRender();
 	},
 
 
 	// Unrenders the current view and reflects this change in the Header.
 	// Unregsiters the `view`, but does not remove from viewByType hash.
 	clearView: function() {
-		var view = this.view;
+		var currentView = this.view;
 
-		this.toolbarsManager.proxyCall('deactivateButton', this.view.type);
+		this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
 
-		view.unsetDate();
+		currentView.unsetDate();
 		this.renderQueue.queue('_calendar', 'el', 'destroy', function() {
-			view.removeElement();
+			currentView.removeElement();
 		});
 
 		this.view = null;
@@ -270,9 +263,7 @@ Calendar.mixin({
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
 	reinitView: function() {
-		var scroll = this.view.queryScroll();
-		this.freezeContentHeight();
-		this.ignoreUpdateViewSize++;
+		this.startBatchRender();
 
 		var viewType = this.view.type;
 		var scrollState = this.view.queryScroll();
@@ -280,10 +271,7 @@ Calendar.mixin({
 		this.calcSize();
 		this.renderView(viewType, scrollState);
 
-		this.ignoreUpdateViewSize--;
-		this.updateViewSize();
-		this.thawContentHeight();
-		this.view.applyScroll(scroll);
+		this.stopBatchRender();
 	},
 
 
@@ -304,11 +292,11 @@ Calendar.mixin({
 	},
 
 
-	updateViewSize: function(isResize, force, explicitView) {
+	updateViewSize: function(isResize, explicitView) {
 		var view = explicitView || this.view;
 		var scroll;
 
-		if ((force || !this.ignoreUpdateViewSize) && this.elementVisible()) {
+		if (!this.ignoreUpdateViewSize && this.elementVisible()) {
 
 			if (isResize) {
 				this._calcSize();
