@@ -27,19 +27,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initEventManager();
 
 		this.renderQueue = this.buildRenderQueue();
-
-		this.on('afterRenderInit:date', function() {
-			this.view.onAfterBaseRender();
-		});
-		this.on('beforeRenderDestroy:date', function() {
-			this.view.onBeforeBaseUnrender();
-		});
-		this.on('afterRenderInit:event', function() {
-			this.view.onAfterEventsRender();
-		});
-		this.on('beforeRenderDestroy:event', function() {
-			this.view.onBeforeEventsUnrender();
-		});
 	},
 
 
