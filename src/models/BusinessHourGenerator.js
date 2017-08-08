@@ -8,7 +8,7 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 };
 
 
-var BusinessHourGenerator = Class.extend({
+var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
 
 	rawComplexDef: null,
 	calendar: null, // for anonymous EventSource
