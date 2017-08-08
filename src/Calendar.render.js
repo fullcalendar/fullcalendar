@@ -201,6 +201,7 @@ Calendar.mixin({
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
 	renderView: function(viewType, forcedScroll) {
+		var _this = this;
 		var oldView = this.view;
 
 		if (oldView) {
@@ -223,9 +224,11 @@ Calendar.mixin({
 
 			this.initBatchRenderingForView(this.view);
 
-			this.view.setElement(
-				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
-			);
+			this.view.setElement($("<div class='fc-view fc-" + viewType + "-view' />"));
+			this.renderQueue.queue('_calendar', 'el', 'init', function() {
+				_this.view.el.appendTo(_this.contentEl);
+			});
+
 			this.toolbarsManager.proxyCall('activateButton', viewType);
 		}
 
@@ -250,8 +253,15 @@ Calendar.mixin({
 	// Unrenders the current view and reflects this change in the Header.
 	// Unregsiters the `view`, but does not remove from viewByType hash.
 	clearView: function() {
+		var view = this.view;
+
 		this.toolbarsManager.proxyCall('deactivateButton', this.view.type);
-		this.view.removeElement();
+
+		view.unsetDate();
+		this.renderQueue.queue('_calendar', 'el', 'destroy', function() {
+			view.removeElement();
+		});
+
 		this.view = null;
 	},
 

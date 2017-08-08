@@ -139,8 +139,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	removeElement: function() {
-		this.unsetDate();
-
 		this.calendar.optionsModel.unwatch('viewRawBusinessHours');
 
 		InteractiveDateComponent.prototype.removeElement.apply(this, arguments);
