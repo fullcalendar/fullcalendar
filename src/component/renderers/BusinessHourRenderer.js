@@ -1,7 +1,6 @@
 
 var BusinessHourRenderer = Class.extend({
 
-	isAllDay: false, // subclasses can config
 	component: null,
 	fillRenderer: null,
 	segs: null,
@@ -15,14 +14,6 @@ var BusinessHourRenderer = Class.extend({
 	constructor: function(component, fillRenderer) {
 		this.component = component;
 		this.fillRenderer = fillRenderer;
-	},
-
-
-	render: function(businessHours) {
-		var eventRanges = businessHours.sliceRenderRanges(this.isAllDay);
-		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
-
-		this.renderEventFootprints(eventFootprints);
 	},
 
 

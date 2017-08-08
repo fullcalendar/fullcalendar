@@ -5,6 +5,7 @@
 var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsMixin, DayTableMixin, {
 
 	eventRendererClass: DayGridEventRenderer,
+	businessHourRendererClass: BusinessHourRenderer,
 	helperRendererClass: DayGridHelperRenderer,
 	fillRendererClass: DayGridFillRenderer,
 
@@ -23,6 +24,8 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	// isRigid determines whether the individual rows should ignore the contents and be a constant height.
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
 	isRigid: false,
+
+	hasAllDayBusinessHours: true,
 
 
 	constructor: function(view) {
@@ -391,15 +394,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	unrenderEventResize: function() {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
-	},
-
-
-	/* Business Hours
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	businessHourRendererClass: BusinessHourRenderer.extend({
-		isAllDay: true // TODO: config param on component?
-	})
+	}
 
 });

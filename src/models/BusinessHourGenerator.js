@@ -8,55 +8,25 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 };
 
 
-var BusinessHours = Class.extend({
+var BusinessHourGenerator = Class.extend({
 
 	rawComplexDef: null,
-	unzonedRange: null,
-	calendar: null, // for eventRangesToEventFootprints AND anonymous EventSource
-	cache: null,
+	calendar: null, // for anonymous EventSource
 
 
-	constructor: function(rawComplexDef, unzonedRange, calendar) {
+	constructor: function(rawComplexDef, calendar) {
 		this.rawComplexDef = rawComplexDef;
-		this.unzonedRange = unzonedRange;
 		this.calendar = calendar;
-		this.cache = {};
 	},
 
 
-	getAllEventRanges: function(isAllDay) {
-		var key = 'getAllEventRanges' + (isAllDay ? 1 : 0);
-		var instanceGroup;
-
-		if (!this.cache[key]) {
-			instanceGroup = this.buildInstanceGroup(isAllDay);
-			this.cache[key] = instanceGroup ? instanceGroup.getAllEventRanges() : [];
-		}
-
-		return this.cache[key];
-	},
-
-
-	sliceRenderRanges: function(isAllDay) {
-		var key = 'sliceRenderRanges' + (isAllDay ? 1 : 0);
-		var instanceGroup;
-
-		if (!this.cache[key]) {
-			instanceGroup = this.buildInstanceGroup(isAllDay);
-			this.cache[key] = instanceGroup ? instanceGroup.sliceRenderRanges(this.unzonedRange) : [];
-		}
-
-		return this.cache[key];
-	},
-
-
-	buildInstanceGroup: function(isAllDay) {
+	buildEventInstanceGroup: function(isAllDay, unzonedRange) {
 		var eventDefs = this.buildEventDefs(isAllDay);
 		var eventInstanceGroup;
 
 		if (eventDefs.length) {
 			eventInstanceGroup = new EventInstanceGroup(
-				eventDefsToEventInstances(eventDefs, this.unzonedRange)
+				eventDefsToEventInstances(eventDefs, unzonedRange)
 			);
 
 			// so that inverse-background rendering can happen even when no eventRanges in view

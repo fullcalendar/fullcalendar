@@ -18,6 +18,8 @@ var DateComponent = Component.extend({
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
+	hasAllDayBusinessHours: false, // TODO: unify with largeUnit and isTimeScale?
+
 	dateMessageAggregator: null,
 	eventMessageAggregator: null,
 
@@ -193,9 +195,27 @@ var DateComponent = Component.extend({
 
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function(businessHours) {
+	renderBusinessHours: function(businessHourPayload) {
+		var dateProfile = this.get('dateProfile');
+		var eventInstanceGroup = businessHourPayload[this.hasAllDayBusinessHours ? 'allDay' : 'timed'];
+		var eventFootprints;
+
+		if (eventInstanceGroup) {
+			eventFootprints = this.eventRangesToEventFootprints(
+				eventInstanceGroup.sliceRenderRanges(dateProfile.activeUnzonedRange)
+			);
+		}
+		else {
+			eventFootprints = [];
+		}
+
+		this.renderBusinessHourEventFootprints(eventFootprints);
+	},
+
+
+	renderBusinessHourEventFootprints: function(eventFootprints) {
 		if (this.businessHourRenderer) {
-			this.businessHourRenderer.render(businessHours);
+			this.businessHourRenderer.renderEventFootprints(eventFootprints);
 		}
 	},
 

@@ -141,24 +141,10 @@ Calendar.prototype.isFootprintWithinConstraints = function(componentFootprint, c
 
 
 Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay) {
-	var businessHours;
 	var eventInstances;
 
 	if (constraintVal === 'businessHours') {
-
-		// TODO: is it good rely on view for this?
-		if (this.view) {
-			businessHours = this.view.get('businessHours');
-			if (businessHours) {
-				return eventFootprintsToComponentFootprints(
-					this.eventRangesToEventFootprints(
-						businessHours.getAllEventRanges(isAllDay)
-					)
-				);
-			}
-		}
-
-		return [];
+		return this.buildCurrentBusinessFootprints(isAllDay);
 	}
 	else if (typeof constraintVal === 'object') {
 		eventInstances = this.parseEventDefToInstances(constraintVal); // handles recurring events
@@ -174,6 +160,23 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay)
 		eventInstances = this.eventManager.getEventInstancesWithId(constraintVal);
 
 		return this.eventInstancesToFootprints(eventInstances);
+	}
+};
+
+
+// returns ComponentFootprint[]
+// uses current view's range
+Calendar.prototype.buildCurrentBusinessFootprints = function(isAllDay) {
+	var view = this.view;
+	var businessHourGenerator = view.get('businessHourGenerator');
+	var unzonedRange = view.get('dateProfile').activeUnzonedRange;
+	var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(isAllDay, unzonedRange);
+
+	if (eventInstanceGroup) {
+		return this.eventInstancesToFootprints(eventInstanceGroup.eventInstances);
+	}
+	else {
+		return [];
 	}
 };
 

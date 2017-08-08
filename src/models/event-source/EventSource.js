@@ -20,6 +20,8 @@ var EventSource = Class.extend(ParsableModelMixin, {
 	eventDataTransform: null, // optional function
 
 
+	// can we do away with calendar? at least for the abstract?
+	// useful for buildEventDef
 	constructor: function(calendar) {
 		this.calendar = calendar;
 		this.className = [];
