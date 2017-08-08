@@ -52,6 +52,11 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (this.initialize) {
 			this.initialize();
 		}
+
+		this.on('all:dateRender', this.onAllDateRender);
+		this.on('before:all:dateUnrender', this.onBeforeAllDateUnrender);
+		this.on('all:eventRender', this.onAllEventRender);
+		this.on('before:all:eventUnrender', this.onBeforeAllEventUnrender);
 	},
 
 
@@ -231,6 +236,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.addScroll(this.computeInitialDateScroll());
 		}
 
+		this.trigger('dateRender');
 		this.isDatesRendered = true;
 	},
 
@@ -239,6 +245,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.unselect();
 		this.stopNowIndicator();
+
+		this.trigger('before:dateUnrender');
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -253,7 +261,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	onAfterBaseRender: function() {
+	onAllDateRender: function() {
 		this.applyScreenState(); // TODO: only call if hasHandlers
 		this.publiclyTrigger('viewRender', {
 			context: this,
@@ -262,7 +270,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	onBeforeBaseUnrender: function() {
+	onBeforeAllDateUnrender: function() {
 		this.applyScreenState(); // TODO: only call if hasHandlers
 		this.publiclyTrigger('viewDestroy', {
 			context: this,
@@ -460,10 +468,14 @@ var View = FC.View = InteractiveDateComponent.extend({
 		else {
 			this.renderEventsPayload(eventsPayload);
 		}
+
+		this.trigger('eventRender');
 	},
 
 
 	executeEventsUnrender: function() {
+		this.trigger('before:eventUnrender');
+
 		if (this.destroyEvents) {
 			this.destroyEvents(); // TODO: deprecate
 		}
@@ -485,7 +497,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Signals that all events have been rendered
-	onAfterEventsRender: function() {
+	onAllEventRender: function() {
 		var _this = this;
 		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
 
@@ -516,7 +528,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Signals that all event elements are about to be removed
-	onBeforeEventsUnrender: function() {
+	onBeforeAllEventUnrender: function() {
 		var _this = this;
 
 		if (this.hasPublicHandlers('eventDestroy')) {

@@ -43,8 +43,6 @@ var RenderQueue = TaskQueue.extend({
 
 		if (this.compoundTask(task)) { // appended to queue?
 
-			this.trigger('push', task);
-
 			if (!this.waitNamespace && waitMs != null) {
 				this.startWait(namespace, waitMs);
 			}

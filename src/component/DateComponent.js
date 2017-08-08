@@ -18,6 +18,9 @@ var DateComponent = Component.extend({
 
 	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
 
+	dateMessageAggregator: null,
+	eventMessageAggregator: null,
+
 
 	constructor: function() {
 		Component.call(this);
@@ -43,11 +46,17 @@ var DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
+
+		this.dateMessageAggregator = buildMessageAggregator(this, 'dateRender', 'dateUnrender');
+		this.eventMessageAggregator = buildMessageAggregator(this, 'eventRender', 'eventUnrender');
 	},
 
 
-	addChild: function(chronoComponent) {
-		this.children.push(chronoComponent);
+	addChild: function(child) {
+		this.children.push(child);
+
+		this.dateMessageAggregator.addChild(child);
+		this.eventMessageAggregator.addChild(child);
 	},
 
 
@@ -124,10 +133,12 @@ var DateComponent = Component.extend({
 
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
 		this.renderDates(dateProfile);
+		this.trigger('dateRender');
 	},
 
 
 	executeDateUnrender: function() { // wrapper
+		this.trigger('before:dateUnrender');
 		this.unrenderDates();
 	},
 
@@ -285,10 +296,12 @@ var DateComponent = Component.extend({
 
 	executeEventsRender: function(eventsPayload) { // wrapper
 		this.renderEventsPayload(eventsPayload);
+		this.trigger('eventRender');
 	},
 
 
 	executeEventsUnrender: function() { // wrapper
+		this.trigger('before:eventUnrender');
 		this.unrenderEvents();
 	},
 
