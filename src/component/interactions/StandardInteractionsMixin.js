@@ -1,5 +1,5 @@
 
-var StandardInteractionsMixin = {
+var StandardInteractionsMixin = FC.StandardInteractionsMixin = {
 	dateClickingClass: DateClicking,
 	dateSelectingClass: DateSelecting,
 	eventPointingClass: EventPointing,
