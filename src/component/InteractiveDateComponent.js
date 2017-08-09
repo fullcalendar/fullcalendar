@@ -1,5 +1,5 @@
 
-var InteractiveDateComponent = DateComponent.extend({
+var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.extend({
 
 	dateClickingClass: null,
 	dateSelectingClass: null,

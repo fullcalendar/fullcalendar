@@ -1,5 +1,5 @@
 
-var BusinessHourRenderer = Class.extend({
+var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 
 	component: null,
 	fillRenderer: null,

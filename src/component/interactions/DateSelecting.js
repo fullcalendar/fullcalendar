@@ -1,5 +1,5 @@
 
-var DateSelecting = Interaction.extend({
+var DateSelecting = FC.DateSelecting = Interaction.extend({
 
 	dragListener: null,
 

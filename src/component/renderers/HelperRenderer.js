@@ -1,5 +1,5 @@
 
-var HelperRenderer = Class.extend({
+var HelperRenderer = FC.HelperRenderer = Class.extend({
 
 	view: null,
 	component: null,

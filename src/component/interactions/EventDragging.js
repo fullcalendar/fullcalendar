@@ -1,5 +1,5 @@
 
-var EventDragging = Interaction.extend({
+var EventDragging = FC.EventDragging = Interaction.extend({
 
 	dragListener: null,
 	isDragging: false,

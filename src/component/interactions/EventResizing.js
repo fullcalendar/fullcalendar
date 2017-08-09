@@ -1,5 +1,5 @@
 
-var EventResizing = Interaction.extend({
+var EventResizing = FC.EventResizing = Interaction.extend({
 
 	dragListener: null,
 	isResizing: false,

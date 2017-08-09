@@ -1,5 +1,5 @@
 
-var EventRenderer = Class.extend({
+var EventRenderer = FC.EventRenderer = Class.extend({
 
 	view: null,
 	component: null,

@@ -1,5 +1,5 @@
 
-var ExternalDropping = Interaction.extend(ListenerMixin, {
+var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 
 	dragListener: null,
 	isDragging: false, // jqui-dragging an external element? boolean

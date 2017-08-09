@@ -1,5 +1,5 @@
 
-var FillRenderer = Class.extend({ // use for highlight, background events, business hours
+var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, background events, business hours
 
 	fillSegTag: 'div',
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
