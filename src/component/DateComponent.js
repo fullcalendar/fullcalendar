@@ -196,13 +196,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
 	renderBusinessHours: function(businessHourPayload) {
-		var dateProfile = this.get('dateProfile');
+		var unzonedRange = this.get('dateProfile').activeUnzonedRange;
 		var eventInstanceGroup = businessHourPayload[this.hasAllDayBusinessHours ? 'allDay' : 'timed'];
 		var eventFootprints;
 
 		if (eventInstanceGroup) {
 			eventFootprints = this.eventRangesToEventFootprints(
-				eventInstanceGroup.sliceRenderRanges(dateProfile.activeUnzonedRange)
+				eventInstanceGroup.sliceRenderRanges(unzonedRange)
 			);
 		}
 		else {
