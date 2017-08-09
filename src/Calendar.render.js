@@ -200,7 +200,7 @@ Calendar.mixin({
 	// Renders a view because of a date change, view-type change, or for the first time.
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
-	renderView: function(viewType, forcedScroll) {
+	renderView: function(viewType) {
 		var _this = this;
 		var oldView = this.view;
 		var newView;
@@ -228,15 +228,8 @@ Calendar.mixin({
 			this.toolbarsManager.proxyCall('activateButton', viewType);
 		}
 
-		if (this.view) {
-
-			if (forcedScroll) {
-				this.view.addForcedScroll(forcedScroll);
-			}
-
-			if (this.elementVisible()) {
-				this.view.setDate(this.currentDate);
-			}
+		if (this.view && this.elementVisible()) {
+			this.view.setDate(this.currentDate);
 		}
 
 		this.stopBatchRender();
@@ -264,13 +257,10 @@ Calendar.mixin({
 	// TODO: maintain any other user-manipulated state.
 	reinitView: function() {
 		this.startBatchRender();
-
-		var viewType = this.view.type;
-		var scrollState = this.view.queryScroll();
+		this.view.addScroll({ isLocked: true });
 		this.clearView();
 		this.calcSize();
-		this.renderView(viewType, scrollState);
-
+		this.renderView();
 		this.stopBatchRender();
 	},
 
