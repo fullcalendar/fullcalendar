@@ -56,7 +56,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	// Sets the container element that the view should render inside of, does global DOM-related initializations,
 	// and renders all the non-date-related content inside.
 	setElement: function(el) {
-		Component.prototype.setElement.apply(this, arguments);
+		DateComponent.prototype.setElement.apply(this, arguments);
 
 		if (this.dateClicking) {
 			this.dateClicking.bindToEl(el);
@@ -73,12 +73,12 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	unrender: function() {
 		this.endInteractions();
 
-		Component.prototype.unrender.apply(this, arguments);
+		DateComponent.prototype.unrender.apply(this, arguments);
 	},
 
 
 	bindGlobalHandlers: function() {
-		Component.prototype.bindGlobalHandlers.apply(this, arguments);
+		DateComponent.prototype.bindGlobalHandlers.apply(this, arguments);
 
 		if (this.externalDropping) {
 			this.externalDropping.bindToDocument();
@@ -87,7 +87,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 
 
 	unbindGlobalHandlers: function() {
-		Component.prototype.unbindGlobalHandlers.apply(this, arguments);
+		DateComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
 
 		if (this.externalDropping) {
 			this.externalDropping.unbindFromDocument();
