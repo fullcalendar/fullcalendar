@@ -31,3 +31,5 @@ function buildMessageAggregator(parent, initName, destroyName) {
 
 	return { addChild: addChild };
 }
+
+FC.buildMessageAggregator = buildMessageAggregator;
