@@ -267,7 +267,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		this.set('currentEvents', currentEvents);
 		this.addOrUpdateEventInChildren(id, eventInstanceGroup);
 
-		if (this.get('displayingEvents')) {
+		if (this.has('displayingEvents')) {
 			this.requestRender('event', 'add', this.renderEventAddOrUpdate, arguments);
 		}
 	},
@@ -282,7 +282,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.removeEventInChildren(id);
 		}
 
-		if (this.get('displayingEvents')) {
+		if (this.has('displayingEvents')) {
 			this.requestRender('event', 'remove', this.renderEventRemove, arguments);
 		}
 	},
@@ -364,7 +364,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	renderEventAddOrUpdate: function(id, eventsPayload) {
+	renderEventAddOrUpdate: function(id, eventInstanceGroup) {
 		// by default, rerender all
 		this.unrenderEvents();
 		this.renderEventsPayload(this.get('currentEvents'));

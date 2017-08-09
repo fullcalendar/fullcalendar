@@ -279,7 +279,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	onBeforeBaseUnrender: function() {
 		if (this.hasPublicHandlers('viewDestroy')) {
-			this.applyScreenState(); // TODO: only call if hasHandlers!
+			this.applyScreenState();
 			this.publiclyTrigger('viewDestroy', {
 				context: this,
 				args: [ this, this.el ]
