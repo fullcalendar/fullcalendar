@@ -426,10 +426,11 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	applyScroll: function(scroll) {
+		if (scroll.isDateInit && !scroll.isLocked && this.isDatesRendered) {
+			$.extend(scroll, this.computeInitialDateScroll());
+		}
+
 		if (this.isDatesRendered) {
-			if (scroll.isDateInit) {
-				$.extend(scroll, this.computeInitialDateScroll());
-			}
 			this.applyDateScroll(scroll);
 		}
 	},

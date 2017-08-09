@@ -256,11 +256,19 @@ Calendar.mixin({
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
 	reinitView: function() {
+		var oldView = this.view;
+		var scroll = oldView.queryScroll(); // wouldn't be so complicated if Calendar owned the scroll
+
 		this.startBatchRender();
-		this.view.addScroll({ isLocked: true });
+
 		this.clearView();
 		this.calcSize();
-		this.renderView();
+		this.renderView(oldView.type); // needs the type to freshly render
+
+		// ensure old scroll is restored exactly
+		scroll.isLocked = true;
+		this.view.addScroll(scroll);
+
 		this.stopBatchRender();
 	},
 
