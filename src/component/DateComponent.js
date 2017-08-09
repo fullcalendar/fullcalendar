@@ -444,7 +444,17 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(eventFootprints, seg, isTouch) {
-		this.callChildren('renderDrag', arguments);
+		var children = this.children;
+		var i;
+		var renderedHelper = false;
+
+		for (i = 0; i < children.length; i++) {
+			if (children[i].renderDrag(eventFootprints, seg, isTouch)) {
+				renderedHelper = true;
+			}
+		}
+
+		return renderedHelper;
 	},
 
 
