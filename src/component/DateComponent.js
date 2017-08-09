@@ -1,5 +1,5 @@
 
-var DateComponent = Component.extend({
+var DateComponent = FC.DateComponent = Component.extend({
 
 	uid: null,
 	children: null,
