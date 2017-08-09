@@ -98,8 +98,10 @@ describe('background events', function() {
 			it('renders "business hours" on whole days', function(done) {
 				options.businessHours = true;
 				options.eventAfterAllRender = function() {
-					expect($('.fc-nonbusiness').length).toBe(12); // there are 6 weeks. 2 weekend days each
-					done();
+					setTimeout(function() { // no trigger when business hours renders. this will have to do.
+						expect($('.fc-nonbusiness').length).toBe(12); // there are 6 weeks. 2 weekend days each
+						done();
+					}, 0)
 				};
 				$('#cal').fullCalendar(options);
 			});

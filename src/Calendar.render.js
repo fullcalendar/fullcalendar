@@ -94,14 +94,12 @@ Calendar.mixin({
 
 
 	destroy: function() {
-		this.renderQueue.kill();
-
 		if (this.view) {
-			this.view.removeElement();
-
-			// NOTE: don't null-out this.view in case API methods are called after destroy.
-			// It is still the "current" view, just not rendered.
+			this.clearView();
 		}
+
+		this.renderQueue.kill();
+		// ^ TODO: should we let all rendering play out?
 
 		this.toolbarsManager.proxyCall('removeElement');
 		this.contentEl.remove();
@@ -220,9 +218,10 @@ Calendar.mixin({
 
 			this.initBatchRenderingForView(newView);
 
-			newView.setElement($("<div class='fc-view fc-" + viewType + "-view' />"));
 			this.renderQueue.queue('_calendar', 'el', 'init', function() {
-				newView.el.appendTo(_this.contentEl);
+				newView.setElement(
+					$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(_this.contentEl)
+				);
 			});
 
 			this.toolbarsManager.proxyCall('activateButton', viewType);
@@ -358,6 +357,7 @@ Calendar.mixin({
 	windowResize: function(ev) {
 		if (
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
+			this.view &&
 			this.view.isDatesRendered
 		) {
 			if (this.updateViewSize(true)) { // isResize=true, returns true on success
