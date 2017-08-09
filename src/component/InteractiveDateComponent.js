@@ -39,12 +39,12 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 			this.eventPointing = new this.eventPointingClass(this);
 		}
 
-		if (this.eventDraggingClass) {
-			this.eventDragging = new this.eventDraggingClass(this);
+		if (this.eventDraggingClass && this.eventPointing) {
+			this.eventDragging = new this.eventDraggingClass(this, this.eventPointing);
 		}
 
-		if (this.eventResizingClass) {
-			this.eventResizing = new this.eventResizingClass(this);
+		if (this.eventResizingClass && this.eventPointing) {
+			this.eventResizing = new this.eventResizingClass(this, this.eventPointing);
 		}
 
 		if (this.externalDroppingClass) {

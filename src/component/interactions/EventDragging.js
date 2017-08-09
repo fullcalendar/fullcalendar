@@ -1,6 +1,7 @@
 
 var EventDragging = FC.EventDragging = Interaction.extend({
 
+	eventPointing: null,
 	dragListener: null,
 	isDragging: false,
 
@@ -12,8 +13,14 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		- diffDates
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
-		- eventPointing (!)
 	*/
+
+
+	constructor: function(component, eventPointing) {
+		Interaction.call(this, component);
+
+		this.eventPointing = eventPointing;
+	},
 
 
 	end: function() {
@@ -149,8 +156,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				isDragging = true;
 
 				// ensure a mouseout on the manipulated event has been reported
-				// TODO: okay to call this?
-				component.eventPointing.handleMouseout(seg, ev);
+				_this.eventPointing.handleMouseout(seg, ev);
 
 				_this.segDragStart(seg, ev);
 				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over

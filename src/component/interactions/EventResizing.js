@@ -1,6 +1,7 @@
 
 var EventResizing = FC.EventResizing = Interaction.extend({
 
+	eventPointing: null,
 	dragListener: null,
 	isResizing: false,
 
@@ -13,8 +14,14 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
 		- getSafeHitFootprint
-		- eventPointing (!)
 	*/
+
+
+	constructor: function(component, eventPointing) {
+		Interaction.call(this, component);
+
+		this.eventPointing = eventPointing;
+	},
 
 
 	end: function() {
@@ -73,8 +80,7 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				isDragging = true;
 
 				// ensure a mouseout on the manipulated event has been reported
-				// TODO: okay to call this?
-				component.eventPointing.handleMouseout(seg, ev);
+				_this.eventPointing.handleMouseout(seg, ev);
 
 				_this.segResizeStart(seg, ev);
 			},
