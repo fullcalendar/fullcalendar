@@ -62,6 +62,25 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	removeChild: function(child) {
+		removeExact(this.children, child); // TODO: use a hash somehow!
+
+		this.dateMessageAggregator.removeChild(child);
+		this.eventMessageAggregator.removeChild(child);
+	},
+
+
+	removeChildren: function() { // all
+		var children = this.children;
+		var i;
+
+		// aggregators can only do one at a time
+		for (i = 0; i < children.length; i++) {
+			this.removeChild(children[i]);
+		}
+	},
+
+
 	requestRender: function(namespace, actionType, method, args) {
 		var _this = this;
 
