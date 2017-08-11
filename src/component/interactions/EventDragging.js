@@ -286,6 +286,17 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 
 	// DOES NOT consider overlap/constraint
 	computeEventDropMutation: function(startFootprint, endFootprint, eventDef) {
+		var eventDefMutation = new EventDefMutation();
+
+		eventDefMutation.setDateMutation(
+			this.computeEventDateMutation(startFootprint, endFootprint)
+		);
+
+		return eventDefMutation;
+	},
+
+
+	computeEventDateMutation: function(startFootprint, endFootprint) {
 		var date0 = startFootprint.unzonedRange.getStart();
 		var date1 = endFootprint.unzonedRange.getStart();
 		var clearEnd = false;
@@ -293,7 +304,6 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		var forceAllDay = false;
 		var dateDelta;
 		var dateMutation;
-		var eventDefMutation;
 
 		if (startFootprint.isAllDay !== endFootprint.isAllDay) {
 			clearEnd = true;
@@ -315,10 +325,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		dateMutation.forceAllDay = forceAllDay;
 		dateMutation.setDateDelta(dateDelta);
 
-		eventDefMutation = new EventDefMutation();
-		eventDefMutation.setDateMutation(dateMutation);
-
-		return eventDefMutation;
+		return dateMutation;
 	}
 
 });
