@@ -114,7 +114,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	opt: function(name) {
-		// subclasses must implement
+		return this._getView().opt(name); // default implementation
 	},
 
 

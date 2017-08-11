@@ -121,11 +121,6 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	opt: function(name) {
-		return this.view.opt(name);
-	},
-
-
 	// Parses various options into properties of this object
 	processOptions: function() {
 		var slotDuration = this.opt('slotDuration');

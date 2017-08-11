@@ -68,11 +68,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	},
 
 
-	opt: function(name) {
-		return this.view.opt(name);
-	},
-
-
 	/* Date Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
