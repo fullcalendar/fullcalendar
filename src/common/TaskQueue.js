@@ -32,7 +32,7 @@ var TaskQueue = Class.extend(EmitterMixin, {
 		if (!this.isRunning && this.canRunNext()) {
 			this.isRunning = true;
 			this.trigger('start');
-			this.runNext();
+			this.runRemaining();
 		}
 	},
 
@@ -42,36 +42,32 @@ var TaskQueue = Class.extend(EmitterMixin, {
 	},
 
 
-	runNext: function() { // does not check canRunNext
-		this.runTask(this.q.shift());
+	runRemaining: function() { // assumes at least one task in queue. does not check canRunNext for first task.
+		var _this = this;
+		var task;
+		var res;
+
+		do {
+			task = this.q.shift(); // always freshly reference q. might have been reassigned.
+			res = this.runTask(task);
+
+			if (res && res.then) {
+				res.then(function() {
+					if (_this.canRunNext()) {
+						_this.runRemaining();
+					}
+				});
+				return; // prevent marking as stopped
+			}
+		} while (this.canRunNext());
+
+		this.isRunning = false;
+		this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
 	},
 
 
 	runTask: function(task) {
-		this.runTaskFunc(task);
-	},
-
-
-	runTaskFunc: function(taskFunc) {
-		var _this = this;
-		var res = taskFunc();
-
-		if (res && res.then) {
-			res.then(done);
-		}
-		else {
-			done();
-		}
-
-		function done() {
-			if (_this.canRunNext()) {
-				_this.runNext();
-			}
-			else {
-				_this.isRunning = false;
-				_this.trigger('stop');
-			}
-		}
+		return task(); // task *is* the function, but subclasses can change the format of a task
 	}
 
 });

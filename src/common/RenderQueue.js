@@ -95,7 +95,7 @@ var RenderQueue = TaskQueue.extend({
 
 
 	runTask: function(task) {
-		this.runTaskFunc(task.func);
+		return task.func();
 	},
 
 
