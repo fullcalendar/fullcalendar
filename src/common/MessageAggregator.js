@@ -1,5 +1,7 @@
 
 function buildMessageAggregator(parent, initName, destroyName) {
+	var childUpEvent = 'all:' + initName;
+	var childDownEvent = 'before:all:' + destroyName;
 	var childCnt = 0;
 	var reportCnt = 0;
 
@@ -9,9 +11,16 @@ function buildMessageAggregator(parent, initName, destroyName) {
 
 
 	function addChild(child) {
-		child.on('all:' + initName, up);
-		child.on('before:all:' + destroyName, down);
+		child.on(childUpEvent, up);
+		child.on(childDownEvent, down);
 		childCnt++;
+	}
+
+
+	function removeChild(child) {
+		child.off(childUpEvent, up);
+		child.off(childDownEvent, down);
+		childCnt--;
 	}
 
 
@@ -29,7 +38,7 @@ function buildMessageAggregator(parent, initName, destroyName) {
 	}
 
 
-	return { addChild: addChild };
+	return { addChild: addChild, removeChild: removeChild };
 }
 
 FC.buildMessageAggregator = buildMessageAggregator;
