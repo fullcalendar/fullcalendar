@@ -17,6 +17,7 @@ function buildMessageAggregator(parent, initName, destroyName) {
 	}
 
 
+	// does not check to verify that it was a past child
 	function removeChild(child) {
 		child.off(childUpEvent, up);
 		child.off(childDownEvent, down);

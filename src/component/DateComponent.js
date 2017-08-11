@@ -2,7 +2,7 @@
 var DateComponent = FC.DateComponent = Component.extend({
 
 	uid: null,
-	children: null,
+	childrenByUid: null,
 	isRTL: false, // frequently accessed options
 	nextDayThreshold: null, // "
 
@@ -28,7 +28,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		Component.call(this);
 
 		this.uid = String(DateComponent.guid++);
-		this.children = [];
+		this.childrenByUid = [];
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
@@ -55,23 +55,27 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	addChild: function(child) {
-		this.children.push(child);
+		if (!this.childrenByUid[child.uid]) {
+			this.childrenByUid[child.uid] = child;
 
-		this.dateMessageAggregator.addChild(child);
-		this.eventMessageAggregator.addChild(child);
+			this.dateMessageAggregator.addChild(child);
+			this.eventMessageAggregator.addChild(child);
+		}
 	},
 
 
 	removeChild: function(child) {
-		removeExact(this.children, child); // TODO: use a hash somehow!
+		if (this.childrenByUid[child.uid]) {
+			delete this.childrenByUid[child.uid];
 
-		this.dateMessageAggregator.removeChild(child);
-		this.eventMessageAggregator.removeChild(child);
+			this.dateMessageAggregator.removeChild(child);
+			this.eventMessageAggregator.removeChild(child);
+		}
 	},
 
 
 	removeChildren: function() { // all
-		var children = this.children;
+		var children = Object.values(this.childrenByUid); // because childrenByUid will mutate while iterating
 		var i;
 
 		// aggregators can only do one at a time
@@ -434,16 +438,14 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Retrieves all segment objects that are rendered in the view
 	getEventSegs: function() {
-		var segs = this.eventRenderer ?
-			this.eventRenderer.getSegs() :
-			[];
-		var children = this.children;
-		var i;
+		var segs = this.eventRenderer ? this.eventRenderer.getSegs() : [];
+		var childrenByUid = this.childrenByUid;
+		var uid;
 
-		for (i = 0; i < children.length; i++) {
+		for (uid in childrenByUid) {
 			segs.push.apply( // append
 				segs,
-				children[i].getEventSegs()
+				childrenByUid[uid].getEventSegs()
 			);
 		}
 
@@ -459,12 +461,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(eventFootprints, seg, isTouch) {
-		var children = this.children;
-		var i;
+		var childrenByUid = this.childrenByUid;
+		var uid;
 		var renderedHelper = false;
 
-		for (i = 0; i < children.length; i++) {
-			if (children[i].renderDrag(eventFootprints, seg, isTouch)) {
+		for (uid in childrenByUid) {
+			if (childrenByUid[uid].renderDrag(eventFootprints, seg, isTouch)) {
 				renderedHelper = true;
 			}
 		}
@@ -587,12 +589,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
 	// The returned object will be processed by getHitFootprint and getHitEl.
 	queryHit: function(leftOffset, topOffset) {
-		var children = this.children;
-		var i;
+		var childrenByUid = this.childrenByUid;
+		var uid;
 		var hit;
 
-		for (i = 0; i < children.length; i++) {
-			hit = children[i].queryHit(leftOffset, topOffset);
+		for (uid in childrenByUid) {
+			hit = childrenByUid[uid].queryHit(leftOffset, topOffset);
 
 			if (hit) {
 				break;
@@ -723,31 +725,31 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	callChildren: function(methodName, args) {
-		var children = this.children;
-		var i;
+		var childrenByUid = this.childrenByUid;
+		var uid;
 
-		for (i = 0; i < children.length; i++) {
-			children[i][methodName].apply(children[i], args);
+		for (uid in childrenByUid) {
+			childrenByUid[uid][methodName].apply(childrenByUid[uid], args);
 		}
 	},
 
 
 	setInChildren: function(propName, propValue) {
-		var children = this.children;
-		var i;
+		var childrenByUid = this.childrenByUid;
+		var uid;
 
-		for (i = 0; i < children.length; i++) {
-			children[i].set(propName, propValue);
+		for (uid in childrenByUid) {
+			childrenByUid[uid].set(propName, propValue);
 		}
 	},
 
 
 	unsetInChildren: function(propName) {
-		var children = this.children;
-		var i;
+		var childrenByUid = this.childrenByUid;
+		var uid;
 
-		for (i = 0; i < children.length; i++) {
-			children[i].unset(propName);
+		for (uid in childrenByUid) {
+			childrenByUid[uid].unset(propName);
 		}
 	},
 
