@@ -77,6 +77,13 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	},
 
 
+	unrenderEvents: function() {
+		this.endInteractions();
+
+		DateComponent.prototype.unrenderEvents.apply(this, arguments);
+	},
+
+
 	bindGlobalHandlers: function() {
 		DateComponent.prototype.bindGlobalHandlers.apply(this, arguments);
 

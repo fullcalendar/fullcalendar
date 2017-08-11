@@ -418,8 +418,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Removes event elements from the view.
 	unrenderFgEventFootprints: function() {
-		this.endInteractions(); // TODO: called too frequently
-
 		if (this.eventRenderer) {
 			this.eventRenderer.unrenderFgFootprints();
 		}
@@ -428,8 +426,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Removes event elements from the view.
 	unrenderBgEventFootprints: function() {
-		this.endInteractions(); // TODO: called too frequently
-
 		if (this.eventRenderer) {
 			this.eventRenderer.unrenderBgFootprints();
 		}
