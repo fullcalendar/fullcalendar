@@ -2,15 +2,26 @@
 var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, background events, business hours
 
 	fillSegTag: 'div',
+	component: null,
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
 
 
-	constructor: function() {
+	constructor: function(component) {
+		this.component = component;
 		this.elsByFill = {};
 	},
 
 
-	render: function(type, segs, props) {
+	renderFootprint: function(type, componentFootprint, props) {
+		this.renderSegs(
+			type,
+			this.component.componentFootprintToSegs(componentFootprint),
+			props
+		);
+	},
+
+
+	renderSegs: function(type, segs, props) {
 		var els;
 
 		segs = this.buildSegEls(type, segs, props); // assignes `.el` to each seg. returns successfully rendered segs

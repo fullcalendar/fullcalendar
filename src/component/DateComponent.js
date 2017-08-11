@@ -525,9 +525,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
 	renderHighlight: function(componentFootprint) {
 		if (this.fillRenderer) {
-			this.fillRenderer.render(
+			this.fillRenderer.renderFootprint(
 				'highlight',
-				this.componentFootprintToSegs(componentFootprint),
+				componentFootprint,
 				{
 					getClasses: function() {
 						return [ 'fc-highlight' ];

@@ -109,7 +109,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		var _this = this;
 
 		if (this.fillRenderer) {
-			this.fillRenderer.render('bgEvents', segs, {
+			this.fillRenderer.renderSegs('bgEvents', segs, {
 				getClasses: function(seg) {
 					return _this.getBgClasses(seg.footprint);
 				},

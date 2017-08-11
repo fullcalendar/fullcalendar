@@ -1,18 +1,9 @@
 
 var TimeGridFillRenderer = FillRenderer.extend({
 
-	timeGrid: null,
-
-
-	constructor: function(timeGrid) {
-		FillRenderer.call(this);
-
-		this.timeGrid = timeGrid;
-	},
-
 
 	attachSegEls: function(type, segs) {
-		var timeGrid = this.timeGrid;
+		var timeGrid = this.component;
 		var containerEls;
 
 		// TODO: more efficient lookup

@@ -2,14 +2,6 @@
 var DayGridFillRenderer = FillRenderer.extend({
 
 	fillSegTag: 'td', // override the default tag name
-	dayGrid: null,
-
-
-	constructor: function(dayGrid) {
-		FillRenderer.call(this, dayGrid);
-
-		this.dayGrid = dayGrid;
-	},
 
 
 	attachSegEls: function(type, segs) {
@@ -20,7 +12,7 @@ var DayGridFillRenderer = FillRenderer.extend({
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 			skeletonEl = this.renderFillRow(type, seg);
-			this.dayGrid.rowEls.eq(seg.row).append(skeletonEl);
+			this.component.rowEls.eq(seg.row).append(skeletonEl);
 			nodes.push(skeletonEl[0]);
 		}
 
@@ -30,7 +22,7 @@ var DayGridFillRenderer = FillRenderer.extend({
 
 	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
 	renderFillRow: function(type, seg) {
-		var colCnt = this.dayGrid.colCnt;
+		var colCnt = this.component.colCnt;
 		var startCol = seg.leftCol;
 		var endCol = seg.rightCol + 1;
 		var className;
@@ -63,7 +55,7 @@ var DayGridFillRenderer = FillRenderer.extend({
 			trEl.append('<td colspan="' + (colCnt - endCol) + '"/>');
 		}
 
-		this.dayGrid.bookendCells(trEl);
+		this.component.bookendCells(trEl);
 
 		return skeletonEl;
 	}

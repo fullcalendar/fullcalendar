@@ -27,7 +27,7 @@ var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 
 	renderSegs: function(segs) {
 		if (this.fillRenderer) {
-			this.fillRenderer.render('businessHours', segs, {
+			this.fillRenderer.renderSegs('businessHours', segs, {
 				getClasses: function(seg) {
 					return [ 'fc-nonbusiness', 'fc-bgevent' ];
 				}
