@@ -34,9 +34,9 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('ent0','add', function() {
+				q.queue(function() {
 					ops.push('fooadd');
-				},  'foo');
+				}, 'ent0', 'foo', 'add');
 
 				q.queue(function() {
 					ops.push('fooremove');
@@ -60,17 +60,17 @@ describe('RenderQueue', function() {
 					ops.push('foo0add');
 				}, 'ent0', 'foo', 'add');
 
-				q.queue('ent1', 'foo', 'add', function() {
+				q.queue(function() {
 					ops.push('foo1add');
-				});
+				}, 'ent1', 'foo', 'add');
 
 				q.queue(function() {
 					ops.push('foo0remove');
 				}, 'ent0', 'foo', 'remove');
 
-				q.queue('ent1', 'foo', 'remove', function() {
+				q.queue(function() {
 					ops.push('foo1remove');
-				});
+				}, 'ent1', 'foo', 'remove');
 
 				q.queue(function() {
 					ops.push('foo0destroy');
@@ -228,9 +228,9 @@ describe('RenderQueue', function() {
 
 			q.pause();
 
-			q.queue('ent0','init', function() {
+			q.queue(function() {
 				ops.push('barinit');
-			},  'bar');
+			}, 'ent0', 'bar', 'init');
 
 			q.queue(function() {
 				ops.push('fooinit');
