@@ -218,7 +218,7 @@ Calendar.mixin({
 
 			this.initBatchRenderingForView(newView);
 
-			this.renderQueue.queue('_calendar', 'el', 'init', function() {
+			this.renderQueue.queue(function() {
 				newView.setElement(
 					$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(_this.contentEl)
 				);
@@ -243,7 +243,7 @@ Calendar.mixin({
 		this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
 
 		currentView.unsetDate();
-		this.renderQueue.queue('_calendar', 'el', 'destroy', function() {
+		this.renderQueue.queue(function() {
 			currentView.removeElement();
 		});
 

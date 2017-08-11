@@ -15,19 +15,19 @@ var RenderQueue = TaskQueue.extend({
 
 
 	/*
-	all args are required
+	entityId, namespace, actionType are optional
 	*/
-	queue: function(entityId, namespace, actionType, taskFunc) {
+	queue: function(taskFunc, entityId, namespace, actionType) {
 
 		if (this.isKilled) {
 			return;
 		}
 
 		var task = {
+			func: taskFunc,
 			entityId: entityId,
 			namespace: namespace,
-			actionType: actionType,
-			func: taskFunc
+			actionType: actionType
 		};
 		var waitMs;
 
@@ -90,7 +90,7 @@ var RenderQueue = TaskQueue.extend({
 	canRunNext: function() {
 		return TaskQueue.prototype.canRunNext.apply(this, arguments) &&
 			!this.isKilled &&
-			(!this.waitNamespace || this.q[0].namespace !== this.waitNamespace);
+			(!this.waitNamespace || this.waitNamespace !== this.q[0].namespace);
 	},
 
 
@@ -104,7 +104,7 @@ var RenderQueue = TaskQueue.extend({
 		var shouldAppend = true;
 		var i, task;
 
-		if (newTask.actionType === 'destroy') {
+		if (newTask.entityId && newTask.namespace && newTask.actionType === 'destroy') {
 
 			// remove ops with same entityId and namespace
 			for (i = q.length - 1; i >= 0; i--) {

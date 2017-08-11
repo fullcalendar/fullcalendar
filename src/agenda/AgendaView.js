@@ -298,20 +298,20 @@ var AgendaView = FC.AgendaView = View.extend({
 			}
 		}
 
-		this.timeGrid.handleEventsSet(timedPayload);
+		this.timeGrid.setEvents(timedPayload);
 
 		if (this.dayGrid) {
-			this.dayGrid.handleEventsSet(allDayPayload);
+			this.dayGrid.setEvents(allDayPayload);
 		}
 	},
 
 
 	addOrUpdateEventInChildren: function(id, eventInstanceGroup) {
 		if (!eventInstanceGroup.getEventDef().isAllDay()) {
-			this.timeGrid.handleEventAddOrUpdate(id, eventInstanceGroup);
+			this.timeGrid.addOrUpdateEvent(id, eventInstanceGroup);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.handleEventAddOrUpdate(id, eventInstanceGroup);
+			this.dayGrid.addOrUpdateEvent(id, eventInstanceGroup);
 		}
 	},
 

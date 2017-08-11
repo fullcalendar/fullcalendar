@@ -85,12 +85,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	requestRender: function(namespace, actionType, method, args) {
+	requestRender: function(method, args, namespace, actionType) {
 		var _this = this;
 
-		this._getView().calendar.renderQueue.queue(this.uid, namespace, actionType, function() {
+		this._getView().calendar.renderQueue.queue(function() {
 			method.apply(_this, args);
-		});
+		}, this.uid, namespace, actionType);
 	},
 
 
@@ -258,14 +258,14 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// initial handling (to be called by initial data receipt)
 
 
-	handleEventsSet: function(eventsPayload) {
+	setEvents: function(eventsPayload) {
 		this.set('currentEvents', eventsPayload);
 		this.set('hasEvents', true);
 		this.setEventsInChildren(eventsPayload);
 	},
 
 
-	handleEventsUnset: function() {
+	unsetEvents: function() {
 		this.unset('hasEvents');
 		this.unset('currentEvents');
 		this.unsetEventsInChildren();
@@ -275,15 +275,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// dynamic handling (to be called by post-binding updates)
 
 
-	handleEventsReset: function(eventsPayload) {
+	resetEvents: function(eventsPayload) {
 		this.startBatchRender();
-		this.handleEventsUnset();
-		this.handleEventsSet(eventsPayload);
+		this.unsetEvents();
+		this.setEvents(eventsPayload);
 		this.stopBatchRender();
 	},
 
 
-	handleEventAddOrUpdate: function(id, eventInstanceGroup) {
+	addOrUpdateEvent: function(id, eventInstanceGroup) {
 		var currentEvents = this.get('currentEvents');
 
 		currentEvents[id] = eventInstanceGroup;
@@ -291,12 +291,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 		this.addOrUpdateEventInChildren(id, eventInstanceGroup);
 
 		if (this.has('displayingEvents')) {
-			this.requestRender('event', 'add', this.renderEventAddOrUpdate, arguments);
+			this.requestRender(this.renderEventAddOrUpdate, arguments, 'event', 'add');
 		}
 	},
 
 
-	handleEventRemove: function(id) {
+	removeEvent: function(id) {
 		var currentEvents = this.get('currentEvents');
 
 		if (id in currentEvents) {
@@ -306,7 +306,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		if (this.has('displayingEvents')) {
-			this.requestRender('event', 'remove', this.renderEventRemove, arguments);
+			this.requestRender(this.renderEventRemove, arguments, 'event', 'remove');
 		}
 	},
 
@@ -315,22 +315,22 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	setEventsInChildren: function(eventsPayload) {
-		this.callChildren('handleEventsSet', arguments);
+		this.callChildren('setEvents', arguments);
 	},
 
 
 	unsetEventsInChildren: function() {
-		this.callChildren('handleEventsUnset', arguments);
+		this.callChildren('unsetEvents', arguments);
 	},
 
 
 	addOrUpdateEventInChildren: function(id, eventInstanceGroup) {
-		this.callChildren('handleEventAddOrUpdate', arguments);
+		this.callChildren('addOrUpdateEvent', arguments);
 	},
 
 
 	removeEventInChildren: function(id) {
-		this.callChildren('handleEventRemove', arguments);
+		this.callChildren('removeEvent', arguments);
 	},
 
 
@@ -784,22 +784,22 @@ DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(dep
 
 
 DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestRender('date', 'init', this.executeDateRender, [ deps.dateProfile ]);
+	this.requestRender(this.executeDateRender, [ deps.dateProfile ], 'date', 'init');
 }, function() {
-	this.requestRender('date', 'destroy', this.executeDateUnrender);
+	this.requestRender(this.executeDateUnrender, null, 'date', 'destroy');
 });
 
 
 DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
-	this.requestRender('businessHours', 'init', this.renderBusinessHours, [ deps.businessHours ]);
+	this.requestRender(this.renderBusinessHours, [ deps.businessHours ], 'businessHours', 'init');
 }, function() {
-	this.requestRender('businessHours', 'destroy', this.unrenderBusinessHours);
+	this.requestRender(this.unrenderBusinessHours, null, 'businessHours', 'destroy');
 });
 
 
 DateComponent.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 	// pass currentEvents in case there were event mutations after initialEvents
-	this.requestRender('event', 'init', this.executeEventsRender, [ this.get('currentEvents') ]);
+	this.requestRender(this.executeEventsRender, [ this.get('currentEvents') ], 'event', 'init');
 }, function() {
-	this.requestRender('event', 'destroy', this.executeEventsUnrender);
+	this.requestRender(this.executeEventsUnrender, null, 'event', 'destroy');
 });

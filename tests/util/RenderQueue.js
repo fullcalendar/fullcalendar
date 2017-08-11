@@ -6,21 +6,21 @@ describe('RenderQueue', function() {
 		var ops = [];
 		var q = new RenderQueue();
 
-		q.queue('ent0', 'foo', 'init', function() {
+		q.queue(function() {
 			ops.push('fooinit');
-		});
+		}, 'ent0', 'foo', 'init');
 
-		q.queue('ent0', 'foo', 'add', function() {
+		q.queue(function() {
 			ops.push('fooremove');
-		});
+		}, 'ent0', 'foo', 'add');
 
-		q.queue('ent0', 'foo', 'remove', function() {
+		q.queue(function() {
 			ops.push('fooadd');
-		});
+		}, 'ent0', 'foo', 'remove');
 
-		q.queue('ent0', 'foo', 'destroy', function() {
+		q.queue(function() {
 			ops.push('foodestroy');
-		});
+		}, 'ent0', 'foo', 'destroy');
 
 		expect(ops).toEqual([ 'fooinit', 'fooremove', 'fooadd', 'foodestroy' ]);
 	});
@@ -34,17 +34,17 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('ent0', 'foo', 'add', function() {
+				q.queue('ent0','add', function() {
 					ops.push('fooadd');
-				});
+				},  'foo');
 
-				q.queue('ent0', 'foo', 'remove', function() {
+				q.queue(function() {
 					ops.push('fooremove');
-				});
+				}, 'ent0', 'foo', 'remove');
 
-				q.queue('ent0', 'foo', 'destroy', function() {
+				q.queue(function() {
 					ops.push('foodestroy');
-				});
+				}, 'ent0', 'foo', 'destroy');
 
 				expect(ops).toEqual([]);
 				q.resume();
@@ -56,25 +56,25 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('ent0', 'foo', 'add', function() {
+				q.queue(function() {
 					ops.push('foo0add');
-				});
+				}, 'ent0', 'foo', 'add');
 
 				q.queue('ent1', 'foo', 'add', function() {
 					ops.push('foo1add');
 				});
 
-				q.queue('ent0', 'foo', 'remove', function() {
+				q.queue(function() {
 					ops.push('foo0remove');
-				});
+				}, 'ent0', 'foo', 'remove');
 
 				q.queue('ent1', 'foo', 'remove', function() {
 					ops.push('foo1remove');
 				});
 
-				q.queue('ent0', 'foo', 'destroy', function() {
+				q.queue(function() {
 					ops.push('foo0destroy');
-				});
+				}, 'ent0', 'foo', 'destroy');
 
 				expect(ops).toEqual([]);
 				q.resume();
@@ -86,25 +86,25 @@ describe('RenderQueue', function() {
 				var q = new RenderQueue();
 				q.pause();
 
-				q.queue('ent0', 'bar', 'init', function() {
+				q.queue(function() {
 					ops.push('barinit');
-				});
+				}, 'ent0', 'bar', 'init');
 
-				q.queue('ent0', 'foo', 'init', function() {
+				q.queue(function() {
 					ops.push('fooinit');
-				});
+				}, 'ent0', 'foo', 'init');
 
-				q.queue('ent0', 'foo', 'add', function() {
+				q.queue(function() {
 					ops.push('fooadd');
-				});
+				}, 'ent0', 'foo', 'add');
 
-				q.queue('ent0', 'foo', 'remove', function() {
+				q.queue(function() {
 					ops.push('fooadd');
-				});
+				}, 'ent0', 'foo', 'remove');
 
-				q.queue('ent0', 'foo', 'destroy', function() {
+				q.queue(function() {
 					ops.push('fooadd');
-				});
+				}, 'ent0', 'foo', 'destroy');
 
 				expect(ops).toEqual([]);
 				q.resume();
@@ -121,13 +121,13 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue('ent0', 'foo', 'init', function() {
+			q.queue(function() {
 				ops.push('fooinit');
-			});
+			}, 'ent0', 'foo', 'init');
 
-			q.queue('ent0', 'foo', 'add', function() {
+			q.queue(function() {
 				ops.push('fooadd');
-			});
+			}, 'ent0', 'foo', 'add');
 
 			expect(ops).toEqual([]);
 
@@ -143,14 +143,14 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue('ent0', 'foo', 'init', function() {
+			q.queue(function() {
 				ops.push('fooinit');
-			});
+			}, 'ent0', 'foo', 'init');
 
  			setTimeout(function() {
-				q.queue('ent0', 'foo', 'add', function() {
+				q.queue(function() {
 					ops.push('fooadd');
-				});
+				}, 'ent0', 'foo', 'add');
 			}, 50);
 
 			setTimeout(function() {
@@ -169,19 +169,19 @@ describe('RenderQueue', function() {
 				foo: 100
 			});
 
-			q.queue('ent0', 'foo', 'init', function() {
+			q.queue(function() {
 				ops.push('fooinit');
-			});
+			}, 'ent0', 'foo', 'init');
 
-			q.queue('ent0', 'foo', 'add', function() {
+			q.queue(function() {
 				ops.push('fooadd');
-			});
+			}, 'ent0', 'foo', 'add');
 
 			expect(ops).toEqual([]);
 
-			q.queue('ent0', 'bar', 'init', function() {
+			q.queue(function() {
 				ops.push('barinit');
-			});
+			}, 'ent0', 'bar', 'init');
 
 			expect(ops).toEqual([]);
 
@@ -198,19 +198,19 @@ describe('RenderQueue', function() {
 				bar: 1000
 			});
 
-			q.queue('ent0', 'foo', 'init', function() {
+			q.queue(function() {
 				ops.push('fooinit');
-			});
+			}, 'ent0', 'foo', 'init');
 
-			q.queue('ent0', 'foo', 'add', function() {
+			q.queue(function() {
 				ops.push('fooadd');
-			});
+			}, 'ent0', 'foo', 'add');
 
 			expect(ops).toEqual([]);
 
-			q.queue('ent0', 'bar', 'init', function() {
+			q.queue(function() {
 				ops.push('barinit');
-			});
+			}, 'ent0', 'bar', 'init');
 
 			expect(ops).toEqual([]);
 
@@ -228,13 +228,13 @@ describe('RenderQueue', function() {
 
 			q.pause();
 
-			q.queue('ent0', 'bar', 'init', function() {
+			q.queue('ent0','init', function() {
 				ops.push('barinit');
-			});
+			},  'bar');
 
-			q.queue('ent0', 'foo', 'init', function() {
+			q.queue(function() {
 				ops.push('fooinit');
-			});
+			}, 'ent0', 'foo', 'init');
 
 			q.resume();
 			expect(ops).toEqual([ 'barinit' ]);

@@ -200,10 +200,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	bindEventChanges: function() {
 		// can write this shorter?
-		this.listenTo(this.calendar, 'eventsReset', this.handleEventsReset);
-		//this.listenTo(this.calendar, 'eventAdd', this.handleEventAddOrUpdate);
-		//this.listenTo(this.calendar, 'eventUpdate', this.handleEventAddOrUpdate);
-		//this.listenTo(this.calendar, 'eventRemove', this.handleEventRemove);
+		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
+		//this.listenTo(this.calendar, 'eventAdd', this.addOrUpdateEvent);
+		//this.listenTo(this.calendar, 'eventUpdate', this.addOrUpdateEvent);
+		//this.listenTo(this.calendar, 'eventRemove', this.removeEvent);
 	},
 
 
@@ -491,7 +491,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	rerenderEvents: function() {
 		if (this.has('currentEvents')) {
 			// re-transmit events to this DateComponent, which will forward on the events to children as well.
-			this.handleEventsReset(this.get('currentEvents'));
+			this.resetEvents(this.get('currentEvents'));
 		}
 	},
 
@@ -936,11 +936,11 @@ View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	this.handleEventsSet(deps.initialEvents);
+	this.setEvents(deps.initialEvents);
 	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.handleEventsUnset();
+	this.unsetEvents();
 });
 
 
