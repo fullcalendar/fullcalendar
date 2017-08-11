@@ -9,6 +9,11 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		this._watchers = {};
 		this._props = {};
 		this.applyGlobalWatchers();
+		this.constructed();
+	},
+
+	// useful for monkeypatching. TODO: BaseClass?
+	constructed: function() {
 	},
 
 	applyGlobalWatchers: function() {

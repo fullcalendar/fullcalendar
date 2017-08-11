@@ -27,6 +27,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initEventManager();
 
 		this.renderQueue = this.buildRenderQueue();
+
+		this.constructed();
+	},
+
+
+	// useful for monkeypatching. TODO: BaseClass?
+	constructed: function() {
 	},
 
 
