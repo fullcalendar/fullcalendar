@@ -7,15 +7,13 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 
 
 	/*
-	component impements:
+	component implements:
 		- bindSegHandlerToEl
 		- publiclyTrigger
 		- diffDates
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
 	*/
-
-
 	constructor: function(component, eventPointing) {
 		Interaction.call(this, component);
 

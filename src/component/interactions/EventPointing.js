@@ -1,5 +1,5 @@
 
-var EventPointing = Interaction.extend({
+var EventPointing = FC.EventPointing = Interaction.extend({
 
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 
