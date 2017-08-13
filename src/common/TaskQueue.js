@@ -52,7 +52,7 @@ var TaskQueue = Class.extend(EmitterMixin, {
 			res = this.runTask(task);
 
 			if (res && res.then) {
-				res.then(function() {
+				res.then(function() { // jshint ignore:line
 					if (_this.canRunNext()) {
 						_this.runRemaining();
 					}
