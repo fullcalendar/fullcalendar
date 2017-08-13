@@ -206,6 +206,38 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	getEventDefsById: function(eventDefId) {
+		if (this.currentPeriod) {
+			return this.currentPeriod.getEventDefsById(eventDefId);
+		}
+		return [];
+	},
+
+
+	getEventInstances: function() {
+		if (this.currentPeriod) {
+			return this.currentPeriod.instanceRepo.getEventInstances();
+		}
+		return [];
+	},
+
+
+	getEventInstancesWithId: function(eventDefId) {
+		if (this.currentPeriod) {
+			return this.currentPeriod.instanceRepo.getEventInstancesWithId(eventDefId);
+		}
+		return [];
+	},
+
+
+	getEventInstancesWithoutId: function(eventDefId) {
+		if (this.currentPeriod) {
+			return this.currentPeriod.instanceRepo.getEventInstancesWithoutId(eventDefId);
+		}
+		return [];
+	},
+
+
 	addEventDef: function(eventDef, isSticky) {
 		if (isSticky) {
 			this.stickySource.addEventDef(eventDef);
@@ -324,26 +356,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 	}
 
-});
-
-
-// Methods that straight-up query the current EventPeriod for an array of results.
-[
-	'getEventDefsById',
-	'getEventInstances',
-	'getEventInstancesWithId',
-	'getEventInstancesWithoutId'
-].forEach(function(methodName) {
-
-	EventManager.prototype[methodName] = function() {
-		var currentPeriod = this.currentPeriod;
-
-		if (currentPeriod) {
-			return currentPeriod[methodName].apply(currentPeriod, arguments);
-		}
-
-		return [];
-	};
 });
 
 

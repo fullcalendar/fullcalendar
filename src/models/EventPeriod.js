@@ -16,7 +16,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	eventDefsByUid: null,
 	eventDefsById: null,
-	eventInstanceGroupsById: null,
+	instanceRepo: null,
 
 
 	constructor: function(start, end, timezone) {
@@ -32,7 +32,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.eventInstanceGroupsById = {};
+		this.instanceRepo = new EventInstanceRepo();
 	},
 
 
@@ -157,17 +157,16 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	addEventDef: function(eventDef) {
 		var eventDefsById = this.eventDefsById;
 		var eventDefId = eventDef.id;
-		var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
+		var bucket = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
 		var eventInstances = eventDef.buildInstances(this.unzonedRange);
-		var i;
 
-		eventDefs.push(eventDef);
+		bucket.push(eventDef);
 
 		this.eventDefsByUid[eventDef.uid] = eventDef;
 
-		for (i = 0; i < eventInstances.length; i++) {
-			this.addEventInstance(eventInstances[i], eventDefId);
-		}
+		this.applyChangeset(
+			new EventInstanceChangeset(null, eventInstances)
+		);
 	},
 
 
@@ -185,7 +184,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.eventInstanceGroupsById = {};
+		this.instanceRepo.clear();
 
 		if (!isEmpty) {
 			this.tryRelease();
@@ -195,103 +194,33 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	removeEventDef: function(eventDef) {
 		var eventDefsById = this.eventDefsById;
-		var eventDefs = eventDefsById[eventDef.id];
+		var bucket = eventDefsById[eventDef.id];
 
 		delete this.eventDefsByUid[eventDef.uid];
 
-		if (eventDefs) {
-			removeExact(eventDefs, eventDef);
+		if (bucket) {
+			removeExact(bucket, eventDef);
 
-			if (!eventDefs.length) {
+			if (!bucket.length) {
 				delete eventDefsById[eventDef.id];
 			}
 
-			this.removeEventInstancesForDef(eventDef);
-		}
-	},
-
-
-	// Event Instances
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	getEventInstances: function() { // TODO: consider iterator
-		var eventInstanceGroupsById = this.eventInstanceGroupsById;
-		var eventInstances = [];
-		var id;
-
-		for (id in eventInstanceGroupsById) {
-			eventInstances.push.apply(eventInstances, // append
-				eventInstanceGroupsById[id].eventInstances
-			);
-		}
-
-		return eventInstances;
-	},
-
-
-	getEventInstancesWithId: function(eventDefId) {
-		var eventInstanceGroup = this.eventInstanceGroupsById[eventDefId];
-
-		if (eventInstanceGroup) {
-			return eventInstanceGroup.eventInstances.slice(); // clone
-		}
-
-		return [];
-	},
-
-
-	getEventInstancesWithoutId: function(eventDefId) { // TODO: consider iterator
-		var eventInstanceGroupsById = this.eventInstanceGroupsById;
-		var matchingInstances = [];
-		var id;
-
-		for (id in eventInstanceGroupsById) {
-			if (id !== eventDefId) {
-				matchingInstances.push.apply(matchingInstances, // append
-					eventInstanceGroupsById[id].eventInstances
-				);
-			}
-		}
-
-		return matchingInstances;
-	},
-
-
-	addEventInstance: function(eventInstance, eventDefId) {
-		var eventInstanceGroupsById = this.eventInstanceGroupsById;
-		var eventInstanceGroup = eventInstanceGroupsById[eventDefId] ||
-			(eventInstanceGroupsById[eventDefId] = new EventInstanceGroup());
-
-		eventInstanceGroup.eventInstances.push(eventInstance);
-
-		this.tryRelease();
-	},
-
-
-	removeEventInstancesForDef: function(eventDef) {
-		var eventInstanceGroupsById = this.eventInstanceGroupsById;
-		var eventInstanceGroup = eventInstanceGroupsById[eventDef.id];
-		var removeCnt;
-
-		if (eventInstanceGroup) {
-			removeCnt = removeMatching(eventInstanceGroup.eventInstances, function(currentEventInstance) {
-				return currentEventInstance.def === eventDef;
-			});
-
-			if (!eventInstanceGroup.eventInstances.length) {
-				delete eventInstanceGroupsById[eventDef.id];
-			}
-
-			if (removeCnt) {
-				this.tryRelease();
-			}
+			this.applyChangeset(new EventInstanceChangeset(
+				this.instanceRepo.getEventInstancesForDef(eventDef) // removal
+			));
 		}
 	},
 
 
 	// Releasing and Freezing
 	// -----------------------------------------------------------------------------------------------------------------
+
+
+	applyChangeset: function(changeset) {
+		this.instanceRepo.applyChangeset(changeset);
+
+		this.tryRelease();
+	},
 
 
 	tryRelease: function() {
@@ -308,7 +237,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	release: function() {
 		this.releaseCnt++;
-		this.trigger('release', this.eventInstanceGroupsById);
+		this.trigger('release', this.buildPayload());
 	},
 
 
@@ -316,13 +245,26 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var _this = this;
 
 		if (this.releaseCnt) {
-			return Promise.resolve(this.eventInstanceGroupsById);
+			return Promise.resolve(this.buildPayload());
 		}
 		else {
 			return Promise.construct(function(onResolve) {
 				_this.one('release', onResolve);
 			});
 		}
+	},
+
+
+	buildPayload: function() { // temporary
+		var instancesById = this.instanceRepo.byDefId;
+		var instanceGroupsById = {};
+		var id;
+
+		for (id in instancesById) {
+			instanceGroupsById[id] = new EventInstanceGroup(instancesById[id]);
+		}
+
+		return instanceGroupsById;
 	},
 
 
