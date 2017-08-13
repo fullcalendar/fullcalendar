@@ -30,7 +30,13 @@ var EventInstanceRepo = Class.extend({
 
 
 	getEventInstancesWithId: function(eventDefId) {
-		return (this.byDefId[eventDefId] || []).slice(); // returns a copy
+		var bucket = this.byDefId[eventDefId];
+
+		if (bucket) {
+			bucket.slice(); // clone
+		}
+
+		return [];
 	},
 
 

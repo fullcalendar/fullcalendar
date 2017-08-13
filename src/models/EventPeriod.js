@@ -8,11 +8,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	unzonedRange: null,
 
 	requestsByUid: null,
-	pendingCnt: 0,
+	pendingSourceCnt: 0,
 
 	freezeDepth: 0,
-	stuntedReleaseCnt: 0,
-	releaseCnt: 0,
+	changeCnt: 0,
 
 	eventDefsByUid: null,
 	eventDefsById: null,
@@ -62,7 +61,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		var request = { source: source, status: 'pending' };
 
 		this.requestsByUid[source.uid] = request;
-		this.pendingCnt += 1;
+		this.pendingSourceCnt += 1;
 
 		source.fetch(this.start, this.end, this.timezone).then(function(eventDefs) {
 			if (request.status !== 'cancelled') {
@@ -70,15 +69,13 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				request.eventDefs = eventDefs;
 
 				_this.addEventDefs(eventDefs);
-				_this.pendingCnt--;
-				_this.tryRelease();
+				_this.reportSourceDone();
 			}
 		}, function() { // failure
 			if (request.status !== 'cancelled') {
 				request.status = 'failed';
 
-				_this.pendingCnt--;
-				_this.tryRelease();
+				_this.reportSourceDone();
 			}
 		});
 	},
@@ -92,8 +89,8 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 			if (request.status === 'pending') {
 				request.status = 'cancelled';
-				this.pendingCnt--;
-				this.tryRelease();
+
+				this.decrementPending();
 			}
 			else if (request.status === 'completed') {
 				request.eventDefs.forEach(this.removeEventDef.bind(this));
@@ -119,7 +116,6 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		this.requestsByUid = {};
-		this.pendingCnt = 0;
 
 		if (completedCnt) {
 			this.removeAllEventDefs(); // might release
@@ -137,10 +133,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	getEventDefsById: function(eventDefId) {
-		var a = this.eventDefsById[eventDefId];
+		var bucket = this.eventDefsById[eventDefId];
 
-		if (a) {
-			return a.slice(); // clone
+		if (bucket) {
+			return bucket.slice(); // clone
 		}
 
 		return [];
@@ -187,7 +183,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.instanceRepo.clear();
 
 		if (!isEmpty) {
-			this.tryRelease();
+			this.clear();
 		}
 	},
 
@@ -216,68 +212,71 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	applyChangeset: function(changeset) {
-		this.instanceRepo.applyChangeset(changeset);
-
-		this.tryRelease();
-	},
-
-
-	tryRelease: function() {
-		if (!this.pendingCnt) {
-			if (!this.freezeDepth) {
-				this.release();
-			}
-			else {
-				this.stuntedReleaseCnt++;
-			}
-		}
-	},
-
-
-	release: function() {
-		this.releaseCnt++;
-		this.trigger('release', this.buildPayload());
-	},
-
-
-	whenReleased: function() {
-		var _this = this;
-
-		if (this.releaseCnt) {
-			return Promise.resolve(this.buildPayload());
-		}
-		else {
-			return Promise.construct(function(onResolve) {
-				_this.one('release', onResolve);
-			});
-		}
-	},
-
-
-	buildPayload: function() { // temporary
-		var instancesById = this.instanceRepo.byDefId;
-		var instanceGroupsById = {};
-		var id;
-
-		for (id in instancesById) {
-			instanceGroupsById[id] = new EventInstanceGroup(instancesById[id]);
-		}
-
-		return instanceGroupsById;
+	clear: function() {
+		this.pendingSourceCnt = 0;
+		this.freezeDepth = 0;
+		this.trigger('clear');
 	},
 
 
 	freeze: function() {
-		if (!(this.freezeDepth++)) {
-			this.stuntedReleaseCnt = 0;
-		}
+		this.freezeDepth++;
 	},
 
 
 	thaw: function() {
-		if (!(--this.freezeDepth) && this.stuntedReleaseCnt && !this.pendingCnt) {
-			this.release();
+		var queuedChangeset = this.queuedChangeset;
+
+		// protect against lower than zero in case clear() was called before thawing
+		this.freezeDepth = Math.max(this.freezeDepth - 1, 0);
+
+		if (queuedChangeset && !this.pendingSourceCnt && !this.freezeDepth) {
+			this.queuedChangeset = null;
+			this.changeCnt++;
+			this.trigger('change', queuedChangeset);
+		}
+	},
+
+
+	applyChangeset: function(changeset) {
+		this.instanceRepo.applyChangeset(changeset);
+
+		if (!this.pendingSourceCnt && !this.freezeDepth) {
+			this.changeCnt++;
+			this.trigger('change', changeset);
+		}
+		else if (!this.queuedChangeset) {
+			this.queuedChangeset = changeset;
+		}
+		else {
+			this.queuedChangeset.applyChangeset(changeset);
+		}
+	},
+
+
+	reportSourceDone: function() {
+		var queuedChangeset = this.queuedChangeset;
+
+		this.pendingSourceCnt--;
+
+		if (queuedChangeset && !this.pendingSourceCnt && !this.freezeDepth) {
+			this.queuedChangeset = null;
+			this.changeCnt++;
+			this.trigger('change', queuedChangeset);
+		}
+	},
+
+
+	whenReceived: function() {
+		var _this = this;
+
+		if (this.changeCnt) {
+			return Promise.resolve(this.instanceRepo); // instanceRep IS a changeset
+		}
+		else {
+			return Promise.construct(function(onResolve) { // wait for first reported change
+				_this.one('change', onResolve);
+			});
 		}
 	}
 

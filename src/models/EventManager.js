@@ -26,7 +26,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			);
 		}
 
-		return this.currentPeriod.whenReleased();
+		return this.currentPeriod.whenReceived();
 	},
 
 
