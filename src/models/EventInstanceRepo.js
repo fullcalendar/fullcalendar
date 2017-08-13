@@ -1,10 +1,12 @@
 
-var EventInstanceRepo = Class.extend({
+var EventInstanceChangeset = Class.extend({
 
+	removals: null,
 	byDefId: null,
 
 
-	constructor: function() {
+	constructor: function(removals, adds) {
+		this.removals = removals || [];
 		this.byDefId = {};
 	},
 

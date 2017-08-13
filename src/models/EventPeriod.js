@@ -31,7 +31,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.instanceRepo = new EventInstanceRepo();
+		this.instanceRepo = new EventInstanceChangeset();
 	},
 
 
