@@ -59,7 +59,6 @@
     "models/ComponentFootprint.js",
     "models/EventManager.js",
     "models/EventPeriod.js",
-    "models/EventInstanceRepo.js",
     "models/EventInstanceChangeset.js",
     "models/BusinessHourGenerator.js",
     "models/event/EventDefParser.js",
