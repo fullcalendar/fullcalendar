@@ -85,6 +85,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	afterSizing: function(method, args) {
+		var _this = this;
+
+		this._getView().calendar.afterSizing(function() {
+			method.apply(_this, args);
+		});
+	},
+
+
 	startBatchRender: function() {
 		this._getView().calendar.startBatchRender();
 	},

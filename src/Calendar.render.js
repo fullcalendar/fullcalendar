@@ -144,12 +144,17 @@ Calendar.mixin({
 
 		renderQueue.on('stop', function() {
 			var view = _this.view;
+			var func;
 
 			if (_this.updateViewSize()) { // success?
 				view.popScroll(); // TODO: move to Calendar
 			}
 
 			_this.thawContentHeight();
+
+			while ((func = _this.afterSizingQueue.shift())) {
+				func();
+			}
 		});
 
 		return renderQueue;
@@ -187,6 +192,11 @@ Calendar.mixin({
 		if (!(--this.batchRenderDepth)) {
 			this.renderQueue.resume();
 		}
+	},
+
+
+	afterSizing: function(func) {
+		this.afterSizingQueue.push(func);
 	},
 
 

@@ -9,6 +9,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 	renderQueue: null,
 	batchRenderDepth: 0,
+	afterSizingQueue: null,
 
 
 	constructor: function(el, overrides) {
@@ -27,6 +28,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initEventManager();
 
 		this.renderQueue = this.buildRenderQueue();
+		this.afterSizingQueue = [];
 
 		this.constructed();
 	},
