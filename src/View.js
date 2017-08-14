@@ -12,8 +12,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	viewSpec: null,
 	options: null, // hash containing all options. already merged with view-specific-options
 
-	isDatesRendered: false,
-
 	queuedScroll: null,
 
 	isSelected: false, // boolean whether a range of time is user-selected or not
@@ -182,7 +180,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	fetchInitialEvents: function(dateProfile) {
+	// returns existing state at time of request
+	requestEvents: function(dateProfile) {
 		var calendar = this.calendar;
 		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
 
@@ -194,20 +193,15 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	bindEventChanges: function() {
-		// can write this shorter?
-		this.listenTo(this.calendar, 'eventsReset', this.resetEvents);
-		//this.listenTo(this.calendar, 'eventAdd', this.addOrUpdateEvent);
-		//this.listenTo(this.calendar, 'eventUpdate', this.addOrUpdateEvent);
-		//this.listenTo(this.calendar, 'eventRemove', this.removeEvent);
+		this.listenTo(this.calendar.eventManager, {
+			change: this.handleEventChangeset,
+			clear: this.handleEventClear
+		});
 	},
 
 
 	unbindEventChanges: function() {
-		// can write this shorter?
-		this.stopListeningTo(this.calendar, 'eventsReset');
-		//this.stopListeningTo(this.calendar, 'eventAdd');
-		//this.stopListeningTo(this.calendar, 'eventUpdate');
-		//this.stopListeningTo(this.calendar, 'eventRemove');
+		this.stopListeningTo(this.calendar.eventManager);
 	},
 
 
@@ -810,39 +804,18 @@ View.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function
 });
 
 
-View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
-	return this.fetchInitialEvents(deps.dateProfile);
-});
+View.watch('bindingEvents', [ 'dateProfile' ], function(deps) {
+	var current;
 
+	this.requestEvents(deps.dateProfile);
+	current = this.calendar.eventManager.getCurrent();
 
-View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-	this.setEvents(deps.initialEvents);
-	this.bindEventChanges();
-}, function() {
-	this.unbindEventChanges();
-	this.unsetEvents();
-});
-
-
-// legacy
-
-
-function convertEventsPayloadToLegacyArray(eventsPayload) {
-	var legacyEvents = [];
-	var id;
-	var eventInstances;
-	var i;
-
-	for (id in eventsPayload) {
-
-		eventInstances = eventsPayload[id].eventInstances;
-
-		for (i = 0; i < eventInstances.length; i++) {
-			legacyEvents.push(
-				eventInstances[i].toLegacy()
-			);
-		}
+	if (current) {
+		this.handleEventChangeset(current);
 	}
 
-	return legacyEvents;
-}
+	this.bindEventChanges(); // bind after current events, in case requestEvents fires 'change'
+}, function() {
+	this.unbindEventChanges();
+	this.handleEventClear();
+});

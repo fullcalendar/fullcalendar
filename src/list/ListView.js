@@ -77,9 +77,6 @@ var ListView = View.extend({
 
 		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
-
-		// TODO: easy to forget. use listener.
-		this.eventRenderer.rangeUpdated();
 	},
 
 

@@ -61,10 +61,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
 
 		this.updateDayTable();
-
-		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
-		// TODO: easy to forget. use listener.
-		this.eventRenderer.rangeUpdated();
 	},
 
 

@@ -20,8 +20,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	hasAllDayBusinessHours: false, // TODO: unify with largeUnit and isTimeScale?
 
-	dateMessageAggregator: null,
-	eventMessageAggregator: null,
+	isDatesRendered: false,
+	isEventsRendered: false,
+	eventChangeset: null,
 
 
 	constructor: function() {
@@ -253,205 +254,164 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	// Events
+	// Event Data Handling
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// initial handling (to be called by initial data receipt)
+	handleEventChangeset: function(changeset) {
+		if (this.hasOwnEventRendering()) {
 
-
-	setEvents: function(eventsPayload) {
-		this.set('currentEvents', eventsPayload);
-		this.set('hasEvents', true);
-		this.setEventsInChildren(eventsPayload);
-	},
-
-
-	unsetEvents: function() {
-		this.unset('hasEvents');
-		this.unset('currentEvents');
-		this.unsetEventsInChildren();
-	},
-
-
-	// dynamic handling (to be called by post-binding updates)
-
-
-	resetEvents: function(eventsPayload) {
-		this.startBatchRender();
-		this.unsetEvents();
-		this.setEvents(eventsPayload);
-		this.stopBatchRender();
-	},
-
-
-	addOrUpdateEvent: function(id, eventInstanceGroup) {
-		var currentEvents = this.get('currentEvents');
-
-		currentEvents[id] = eventInstanceGroup;
-		this.set('currentEvents', currentEvents);
-		this.addOrUpdateEventInChildren(id, eventInstanceGroup);
-
-		if (this.has('displayingEvents')) {
-			this.requestRender(this.renderEventAddOrUpdate, arguments, 'event', 'add');
-		}
-	},
-
-
-	removeEvent: function(id) {
-		var currentEvents = this.get('currentEvents');
-
-		if (id in currentEvents) {
-			delete currentEvents[id];
-			this.set('currentEvents', currentEvents);
-			this.removeEventInChildren(id);
-		}
-
-		if (this.has('displayingEvents')) {
-			this.requestRender(this.renderEventRemove, arguments, 'event', 'remove');
-		}
-	},
-
-
-	// for children
-
-
-	setEventsInChildren: function(eventsPayload) {
-		this.callChildren('setEvents', arguments);
-	},
-
-
-	unsetEventsInChildren: function() {
-		this.callChildren('unsetEvents', arguments);
-	},
-
-
-	addOrUpdateEventInChildren: function(id, eventInstanceGroup) {
-		this.callChildren('addOrUpdateEvent', arguments);
-	},
-
-
-	removeEventInChildren: function(id) {
-		this.callChildren('removeEvent', arguments);
-	},
-
-
-	// rendering
-
-
-	executeEventsRender: function(eventsPayload) { // wrapper
-		this.renderEventsPayload(eventsPayload);
-		this.trigger('eventRender');
-	},
-
-
-	executeEventsUnrender: function() { // wrapper
-		this.trigger('before:eventUnrender');
-		this.unrenderEvents();
-	},
-
-
-	// TODO: eventually rename to `renderEvents` once legacy is gone.
-	renderEventsPayload: function(eventsPayload) {
-		var dateProfile = this.get('dateProfile');
-		var id, eventInstanceGroup;
-		var eventRenderRanges;
-		var eventFootprints;
-		var bgFootprints = [];
-		var fgFootprints = [];
-
-		for (id in eventsPayload) {
-			eventInstanceGroup = eventsPayload[id];
-			eventRenderRanges = eventInstanceGroup.sliceRenderRanges(dateProfile.activeUnzonedRange);
-			eventFootprints = this.eventRangesToEventFootprints(eventRenderRanges);
-
-			if (eventInstanceGroup.getEventDef().hasBgRendering()) {
-				bgFootprints.push.apply(bgFootprints, eventFootprints);
+			if (!this.eventInstanceRepo) {
+				this.eventInstanceRepo = new EventInstanceChangeset();
 			}
-			else {
-				fgFootprints.push.apply(fgFootprints, eventFootprints);
+			this.eventInstanceRepo.applyChangeset(changeset);
+
+			if (this.has('displayingEvents')) {
+				this.requestRenderEventChangeset(changeset);
 			}
 		}
 
-		this.renderBgEventFootprints(bgFootprints);
-		this.renderFgEventFootprints(fgFootprints);
+		this.callChildren('handleEventChangeset', [ changeset ]);
 	},
 
 
-	// Unrenders all events currently rendered on the grid
-	unrenderEvents: function() {
+	handleEventClear: function() {
+		if (this.hasOwnEventRendering()) {
 
-		this.unrenderFgEventFootprints();
-		this.unrenderBgEventFootprints();
+			if (this.eventInstanceRepo) {
+				this.eventInstanceRepo.clear();
+				this.eventInstanceRepo = null;
+			}
 
-		// we DON'T need to call updateHeight() because
-		// a renderEventsPayload() call always happens after this, which will eventually call updateHeight()
+			if (this.has('displayingEvents')) {
+				this.requestRenderEventClear();
+			}
+		}
+
+		this.callChildren('handleEventClear', arguments);
 	},
 
 
-	renderEventAddOrUpdate: function(id, eventInstanceGroup) {
-		// by default, rerender all
-		this.unrenderEvents();
-		this.renderEventsPayload(this.get('currentEvents'));
+	// Event Displaying
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	hasOwnEventRendering: function() {
+		return this.eventRenderer || this.renderEvents; // or legacy function
 	},
 
 
-	renderEventRemove: function() {
-		// by default, rerender all
-		this.unrenderEvents();
-		this.renderEventsPayload(this.get('currentEvents'));
-	},
-
-
-	// fg & bg delegation
-	// NOTE: parents should never call these
-	// TODO: make EventRenderer responsible for routing FG vs BG?
-
-
-	renderFgEventFootprints: function(eventFootprints) {
+	startDisplayingEvents: function() {
 		if (this.eventRenderer) {
-			this.eventRenderer.renderFgFootprints(eventFootprints);
+			this.eventRenderer.rangeUpdated();
+		}
+
+		if (this.eventInstanceRepo) {
+			this.requestRenderEventChangeset(this.eventInstanceRepo);
 		}
 	},
 
 
-	renderBgEventFootprints: function(eventFootprints) {
+	stopDisplayingEvents: function() {
+		if (this.eventInstanceRepo) {
+			this.requestRenderEventClear();
+		}
+	},
+
+
+	requestRenderEventChangeset: function(changeset) {
+		this.requestRender(this.renderEventChangeset, [ changeset ], 'event', 'change');
+	},
+
+
+	requestRenderEventClear: function() {
+		this.requestRender(this.renderEventClear, null, 'event', 'clear');
+	},
+
+
+	renderEventChangeset: function(changeset) {
+		this.renderEventClear();
+		this.renderEventsss(this.eventInstanceRepo.byDefId);
+		this.afterSizing(this.triggerAfterEventsRender);
+		this.isEventsRendered = true;
+	},
+
+
+	renderEventClear: function() {
+		if (this.isEventsRendered) {
+			this.triggerBeforeEventsUnrender();
+			this.unrenderEventsss();
+			this.isEventsRendered = false;
+		}
+	},
+
+
+	// TODO: rename once legacy `renderEvents` is out of the way
+	renderEventsss: function(eventInstanceHash) {
 		if (this.eventRenderer) {
-			this.eventRenderer.renderBgFootprints(eventFootprints);
+			this.eventRenderer.renderInstanceHash(eventInstanceHash);
+		}
+		else if (this.renderEvents) { // legacy
+			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceHash));
 		}
 	},
 
 
-	// Removes event elements from the view.
-	unrenderFgEventFootprints: function() {
+	// TODO: rename once legacy `renderEvents` is out of the way
+	unrenderEventsss: function() {
 		if (this.eventRenderer) {
-			this.eventRenderer.unrenderFgFootprints();
+			this.eventRenderer.unrender();
+		}
+		else if (this.destroyEvents) { // legacy
+			this.destroyEvents();
 		}
 	},
 
 
-	// Removes event elements from the view.
-	unrenderBgEventFootprints: function() {
+	triggerBeforeEventsUnrender: function() {
+		if (this.hasPublicHandlers('eventDestroy')) {
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventDestroy', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+	},
+
+
+	triggerAfterEventsRender: function() {
+		if (this.hasPublicHandlers('eventAfterRender')) {
+			this.getEventSegs().forEach(function(segs) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.trigger('after:events:render');
+	},
+
+
+	getEventSegs: function() { // just for itself
 		if (this.eventRenderer) {
-			this.eventRenderer.unrenderBgFootprints();
-		}
-	},
-
-
-	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
-		var segs = this.eventRenderer ? this.eventRenderer.getSegs() : [];
-		var childrenByUid = this.childrenByUid;
-		var uid;
-
-		for (uid in childrenByUid) {
-			segs.push.apply( // append
-				segs,
-				childrenByUid[uid].getEventSegs()
-			);
+			this.eventRenderer.getSegs();
 		}
 
-		return segs;
+		return [];
 	},
 
 
@@ -799,9 +759,30 @@ DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHou
 });
 
 
-DateComponent.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	// pass currentEvents in case there were event mutations after initialEvents
-	this.requestRender(this.executeEventsRender, [ this.get('currentEvents') ], 'event', 'init');
+DateComponent.watch('displayingEvents', [ 'displayingDates' ], function() {
+	this.startDisplayingEvents();
 }, function() {
-	this.requestRender(this.executeEventsUnrender, null, 'event', 'destroy');
+	this.stopDisplayingEvents();
 });
+
+
+// legacy
+
+function convertEventInstanceHashToLegacyArray(eventInstancesByDefId) {
+	var eventDefId;
+	var eventInstances;
+	var legacyEvents = [];
+	var i;
+
+	for (eventDefId in eventInstancesByDefId) {
+		eventInstances = eventInstancesByDefId[eventDefId];
+
+		for (i = 0; i < eventInstances.length; i++) {
+			legacyEvents.push(
+				eventInstances[i].toLegacy()
+			);
+		}
+	}
+
+	return legacyEvents;
+}

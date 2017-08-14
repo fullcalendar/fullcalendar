@@ -321,10 +321,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			rawSources.unshift(singleRawSource);
 		}
 
-		eventManager.on('release', function(eventsPayload) {
-			_this.trigger('eventsReset', eventsPayload);
-		});
-
 		eventManager.freeze();
 
 		rawSources.forEach(function(rawSource) {
@@ -340,7 +336,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 
 
 	requestEvents: function(start, end) {
-		return this.eventManager.requestEvents(
+		this.eventManager.requestEvents(
 			start,
 			end,
 			this.opt('timezone'),

@@ -279,39 +279,32 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// routing
+	handleEventChangeset: function(eventChangeset) {
+		var allDayChangeset = new EventInstanceChangeset();
+		var timedChangeset = new EventInstanceChangeset();
 
-
-	setEventsInChildren: function(eventsPayload) {
-		var allDayPayload = {};
-		var timedPayload = {};
-		var id, eventInstanceGroup;
-
-		for (id in eventsPayload) {
-			eventInstanceGroup = eventsPayload[id];
-
-			if (eventInstanceGroup.getEventDef().isAllDay()) {
-				allDayPayload[id] = eventInstanceGroup;
+		eventChangeset.removals.forEach(function(instance) {
+			if (instance.def.isAllDay()) {
+				allDayChangeset.removals.push(instance);
 			}
 			else {
-				timedPayload[id] = eventInstanceGroup;
+				timedChangeset.removals.push(instance);
 			}
-		}
+		});
 
-		this.timeGrid.setEvents(timedPayload);
+		eventChangeset.iterEventInstances(function(instance) {
+			if (instance.def.isAllDay()) {
+				allDayChangeset.addEventInstance(instance);
+			}
+			else {
+				timedChangeset.addEventInstance(instance);
+			}
+		});
+
+		this.timeGrid.handleEventChangeset(timedChangeset);
 
 		if (this.dayGrid) {
-			this.dayGrid.setEvents(allDayPayload);
-		}
-	},
-
-
-	addOrUpdateEventInChildren: function(id, eventInstanceGroup) {
-		if (!eventInstanceGroup.getEventDef().isAllDay()) {
-			this.timeGrid.addOrUpdateEvent(id, eventInstanceGroup);
-		}
-		else if (this.dayGrid) {
-			this.dayGrid.addOrUpdateEvent(id, eventInstanceGroup);
+			this.dayGrid.handleEventChangeset(allDayChangeset);
 		}
 	},
 

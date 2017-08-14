@@ -80,10 +80,6 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		this.updateDayTable();
 
-		// needs to go after updateDayTable because computeEventTimeFormat/computeDisplayEventEnd depends on colCnt.
-		// TODO: easy to forget. use listener.
-		this.eventRenderer.rangeUpdated();
-
 		this.dayRanges = this.dayDates.map(function(dayDate) {
 			return new UnzonedRange(
 				dayDate.clone().add(dateProfile.minTime),
