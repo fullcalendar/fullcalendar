@@ -51,8 +51,42 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	},
 
 
-	renderFgFootprints: function(eventFootprints) {
-		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+	renderInstanceHash: function(instanceHash) {
+		var dateProfile = this.component.get('dateProfile');
+		var eventDefId;
+		var instanceGroup;
+		var eventRanges;
+		var bgRanges = [];
+		var fgRanges = [];
+
+		for (eventDefId in instanceHash) {
+
+			// TODO: eventually kill EventInstanceGroup and do slicing in the renderer
+			instanceGroup = new EventInstanceGroup(instanceHash[eventDefId]);
+
+			eventRanges = instanceGroup.sliceRenderRanges(dateProfile.activeUnzonedRange);
+
+			if (instanceGroup.getEventDef().hasBgRendering()) {
+				bgRanges.push.apply(bgRanges, eventRanges);
+			}
+			else {
+				fgRanges.push.apply(fgRanges, eventRanges);
+			}
+		}
+
+		this.renderBgRanges(bgRanges);
+		this.renderFgRanges(fgRanges);
+	},
+
+
+	unrender: function() {
+		this.unrenderBgRanges();
+		this.unrenderFgRanges();
+	},
+
+
+	renderFgRanges: function(eventRanges) {
+		var segs = []; //this.component.eventRangesToSegs(eventRanges);
 
 		// render an `.el` on each seg
 		// returns a subset of the segs. segs that were actually rendered
@@ -64,14 +98,14 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	},
 
 
-	unrenderFgFootprints: function() {
+	unrenderFgRanges: function() {
 		this.unrenderFgSegs();
 		this.fgSegs = null;
 	},
 
 
-	renderBgFootprints: function(eventFootprints) {
-		var segs = this.component.eventFootprintsToSegs(eventFootprints);
+	renderBgRanges: function(eventRanges) {
+		var segs = []; //this.component.eventRangesToSegs(eventRanges);
 
 		if (this.renderBgSegs(segs) !== false) { // no failure?
 			this.bgSegs = segs;
@@ -79,7 +113,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	},
 
 
-	unrenderBgFootprints: function() {
+	unrenderBgRanges: function() {
 		this.unrenderBgSegs();
 		this.bgSegs = null;
 	},
