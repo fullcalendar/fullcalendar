@@ -52,11 +52,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (this.initialize) {
 			this.initialize();
 		}
-
-		this.on('all:dateRender', this.onAllDateRender);
-		this.on('before:all:dateUnrender', this.onBeforeAllDateUnrender);
-		this.on('all:eventRender', this.onAllEventRender);
-		this.on('before:all:eventUnrender', this.onBeforeAllEventUnrender);
 	},
 
 
@@ -231,8 +226,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 
-		this.trigger('dateRender');
 		this.isDatesRendered = true;
+		this.trigger('after:date:render');
 	},
 
 
@@ -241,7 +236,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.unselect();
 		this.stopNowIndicator();
 
-		this.trigger('before:dateUnrender');
+		this.trigger('before:date:unrender');
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -254,37 +249,32 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// Determing when the "meat" of the view is rendered (aka the base)
 	// -----------------------------------------------------------------------------------------------------------------
+	// not hooked up anymore
 
 
-	onAllDateRender: function() {
-		this.onBaseRender();
+	triggerAfterDateRender: function() {
+		this.triggerAfterBaseRender();
 	},
 
 
-	onBeforeAllDateUnrender: function() {
-		this.onBeforeBaseUnrender();
+	triggerBeforeDateUnrender: function() {
+		this.triggerBeforeBaseUnrender();
 	},
 
 
-	onBaseRender: function() {
-		if (this.hasPublicHandlers('viewRender')) {
-			this.applyScreenState();
-			this.publiclyTrigger('viewRender', {
-				context: this,
-				args: [ this, this.el ]
-			});
-		}
+	triggerAfterBaseRender: function() {
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
-	onBeforeBaseUnrender: function() {
-		if (this.hasPublicHandlers('viewDestroy')) {
-			this.applyScreenState();
-			this.publiclyTrigger('viewDestroy', {
-				context: this,
-				args: [ this, this.el ]
-			});
-		}
+	triggerBeforeBaseUnrender: function() {
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
 	},
 
 
@@ -458,116 +448,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	applyDateScroll: function(scroll) {
 		; // subclasses must implement
-	},
-
-
-	// Event High-level Rendering
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	executeEventsRender: function(eventsPayload) {
-		if (this.renderEvents) { // for legacy custom views
-			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
-		}
-		else {
-			this.renderEventsPayload(eventsPayload);
-		}
-
-		this.trigger('eventRender');
-	},
-
-
-	executeEventsUnrender: function() {
-		this.trigger('before:eventUnrender');
-
-		if (this.destroyEvents) {
-			this.destroyEvents(); // TODO: deprecate
-		}
-
-		this.unrenderEvents();
-	},
-
-
-	rerenderEvents: function() {
-		if (this.has('currentEvents')) {
-			// re-transmit events to this DateComponent, which will forward on the events to children as well.
-			this.resetEvents(this.get('currentEvents'));
-		}
-	},
-
-
-	// Event Rendering Triggers
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	// Signals that all events have been rendered
-	onAllEventRender: function() {
-		var _this = this;
-		var hasSingleHandlers = this.hasPublicHandlers('eventAfterRender');
-
-		if (hasSingleHandlers || this.hasPublicHandlers('eventAfterAllRender')) {
-			this.applyScreenState();
-		}
-
-		if (hasSingleHandlers) {
-			this.getEventSegs().forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventAfterRender', {
-						context: legacy,
-						args: [ legacy, seg.el, _this ]
-					});
-				}
-			});
-		}
-
-		this.publiclyTrigger('eventAfterAllRender', {
-			context: this,
-			args: [ this ]
-		});
-	},
-
-
-	// Signals that all event elements are about to be removed
-	onBeforeAllEventUnrender: function() {
-		var _this = this;
-
-		if (this.hasPublicHandlers('eventDestroy')) {
-
-			this.applyScreenState();
-
-			this.getEventSegs().forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventDestroy', {
-						context: legacy,
-						args: [ legacy, seg.el, _this ]
-					});
-				}
-			});
-		}
-	},
-
-
-	// TODO: move this to Calendar, as well as scroll system
-	applyScreenState: function() {
-
-		this.calendar.updateViewSize(
-			false, // isResize
-			this // view (because Calendar::view might have changed)
-		);
-
-		// bring to natural height, then freeze again
-		this.calendar.thawContentHeight();
-		this.calendar.freezeContentHeight();
-
-		this.applyQueuedScroll();
 	},
 
 

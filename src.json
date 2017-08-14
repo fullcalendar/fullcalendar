@@ -22,7 +22,6 @@
     "common/MouseFollower.js",
     "common/Scroller.js",
     "common/Iterator.js",
-    "common/MessageAggregator.js",
     "component/interactions/Interaction.js",
     "component/interactions/DateClicking.js",
     "component/interactions/DateSelecting.js",

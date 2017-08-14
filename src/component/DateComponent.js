@@ -48,18 +48,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
-
-		this.dateMessageAggregator = buildMessageAggregator(this, 'dateRender', 'dateUnrender');
-		this.eventMessageAggregator = buildMessageAggregator(this, 'eventRender', 'eventUnrender');
 	},
 
 
 	addChild: function(child) {
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
-
-			this.dateMessageAggregator.addChild(child);
-			this.eventMessageAggregator.addChild(child);
 		}
 	},
 
@@ -67,9 +61,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	removeChild: function(child) {
 		if (this.childrenByUid[child.uid]) {
 			delete this.childrenByUid[child.uid];
-
-			this.dateMessageAggregator.removeChild(child);
-			this.eventMessageAggregator.removeChild(child);
 		}
 	},
 
@@ -158,13 +149,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
 		this.renderDates(dateProfile);
-		this.trigger('dateRender');
+		this.trigger('after:date:render');
+		this.isDatesRendered = true;
 	},
 
 
 	executeDateUnrender: function() { // wrapper
-		this.trigger('before:dateUnrender');
+		this.trigger('before:date:unrender');
 		this.unrenderDates();
+		this.isDatesRendered = false;
 	},
 
 
