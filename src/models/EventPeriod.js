@@ -9,12 +9,12 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	requestsByUid: null,
 	pendingSourceCnt: 0,
-
 	freezeDepth: 0,
-	changeCnt: 0,
 
 	eventDefsByUid: null,
 	eventDefsById: null,
+
+	outboundChangeset: null,
 	instanceRepo: null,
 
 
@@ -90,10 +90,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 			if (request.status === 'pending') {
 				request.status = 'cancelled';
 
-				this.decrementPending();
+				this.reportSourceDone();
 			}
 			else if (request.status === 'completed') {
+				this.freeze();
+
 				request.eventDefs.forEach(this.removeEventDef.bind(this));
+
+				this.thaw();
 			}
 		}
 	},
@@ -115,10 +119,11 @@ var EventPeriod = Class.extend(EmitterMixin, {
 			}
 		}
 
+		this.pendingSourceCnt = 0;
 		this.requestsByUid = {};
 
 		if (completedCnt) {
-			this.removeAllEventDefs(); // might release
+			this.removeAllEventDefs();
 		}
 	},
 
@@ -176,15 +181,9 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	removeAllEventDefs: function() {
-		var isEmpty = $.isEmptyObject(this.eventDefsByUid);
-
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.instanceRepo.clear();
-
-		if (!isEmpty) {
-			this.clear();
-		}
+		this.applyClear();
 	},
 
 
@@ -208,13 +207,29 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	// Releasing and Freezing
+	// Reporting and Triggering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	clear: function() {
-		this.pendingSourceCnt = 0;
-		this.freezeDepth = 0;
+	applyChangeset: function(changeset) {
+		this.instanceRepo.applyChangeset(changeset); // internally record immediately
+
+		if (!this.outboundChangeset) {
+			this.outboundChangeset = changeset;
+		}
+		else {
+			this.outboundChangeset.applyChangeset(changeset);
+		}
+
+		this.trySendOutbound();
+	},
+
+
+	// assumes no pendingSourceCnt, so allowed to trigger immediately
+	applyClear: function() {
+		this.instanceRepo.clear();
+		this.outboundChangeset = null;
+		this.freezeDepth = 0; // thaw
 		this.trigger('clear');
 	},
 
@@ -225,59 +240,48 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	thaw: function() {
-		var queuedChangeset = this.queuedChangeset;
-
 		// protect against lower than zero in case clear() was called before thawing
 		this.freezeDepth = Math.max(this.freezeDepth - 1, 0);
 
-		if (queuedChangeset && !this.pendingSourceCnt && !this.freezeDepth) {
-			this.queuedChangeset = null;
-			this.changeCnt++;
-			this.trigger('change', queuedChangeset);
-		}
-	},
-
-
-	applyChangeset: function(changeset) {
-		this.instanceRepo.applyChangeset(changeset);
-
-		if (!this.pendingSourceCnt && !this.freezeDepth) {
-			this.changeCnt++;
-			this.trigger('change', changeset);
-		}
-		else if (!this.queuedChangeset) {
-			this.queuedChangeset = changeset;
-		}
-		else {
-			this.queuedChangeset.applyChangeset(changeset);
-		}
+		this.trySendOutbound();
 	},
 
 
 	reportSourceDone: function() {
-		var queuedChangeset = this.queuedChangeset;
-
 		this.pendingSourceCnt--;
 
-		if (queuedChangeset && !this.pendingSourceCnt && !this.freezeDepth) {
-			this.queuedChangeset = null;
-			this.changeCnt++;
-			this.trigger('change', queuedChangeset);
+		this.trySendOutbound();
+	},
+
+
+	trySendOutbound: function() {
+		var outboundChangeset = this.outboundChangeset;
+
+		if (outboundChangeset && this.isFinalized()) {
+			this.outboundChangeset = null;
+			this.trigger('change', outboundChangeset);
 		}
 	},
 
 
-	whenReceived: function() {
-		var _this = this;
+	tryReset: function() {
+		if (this.isFinalized()) {
+			this.trigger('clear');
+			this.trigger('change', this.instanceRepo);
+		}
+	},
 
-		if (this.changeCnt) {
-			return Promise.resolve(this.instanceRepo); // instanceRep IS a changeset
+
+	// returns undefined if none finalized
+	getFinalized: function() {
+		if (this.isFinalized()) {
+			return this.instanceRepo;
 		}
-		else {
-			return Promise.construct(function(onResolve) { // wait for first reported change
-				_this.one('change', onResolve);
-			});
-		}
+	},
+
+
+	isFinalized: function() {
+		return !this.pendingSourceCnt && !this.freezeDepth;
 	}
 
 });

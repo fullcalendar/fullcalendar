@@ -6,8 +6,11 @@ var EventInstanceChangeset = Class.extend({
 
 
 	constructor: function(removals, adds) {
-		this.removals = removals || [];
 		this.byDefId = {};
+
+		this.removals = removals || [];
+
+		(adds || []).forEach(this.addEventInstance.bind(this));
 	},
 
 

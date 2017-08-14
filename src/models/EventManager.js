@@ -25,8 +25,20 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 				new EventPeriod(start, end, timezone)
 			);
 		}
+	},
 
-		return this.currentPeriod.whenReceived();
+
+	getCurrent: function() {
+		if (this.currentPeriod) {
+			return this.currentPeriod.getFinalized();
+		}
+	},
+
+
+	tryReset: function() {
+		if (this.currentPeriod) {
+			this.currentPeriod.tryReset();
+		}
 	},
 
 
@@ -184,8 +196,13 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	bindPeriod: function(eventPeriod) {
-		this.listenTo(eventPeriod, 'release', function(eventsPayload) {
-			this.trigger('release', eventsPayload);
+		this.listenTo(eventPeriod, { // forward on these messages. TODO: more standard way to do this?
+			change: function(changeset) {
+				this.trigger('change', changeset);
+			},
+			clear: function() {
+				this.trigger('clear');
+			}
 		});
 	},
 
