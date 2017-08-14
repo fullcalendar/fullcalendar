@@ -231,6 +231,13 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	iterEventsInstances: function(func) {
+		if (this.currentPeriod) {
+			this.currentPeriod.instanceRepo.iterEventsInstances(func);
+		}
+	},
+
+
 	getEventInstances: function() {
 		if (this.currentPeriod) {
 			return this.currentPeriod.instanceRepo.getEventInstances();

@@ -114,8 +114,7 @@ Calendar.mixin({
 	// legacyQuery operates on legacy event instance objects
 	removeEvents: function(legacyQuery) {
 		var eventManager = this.eventManager;
-		var eventInstances = eventManager.getEventInstances();
-		var legacyInstances;
+		var legacyInstances = [];
 		var idMap = {};
 		var eventDef;
 		var i;
@@ -124,8 +123,8 @@ Calendar.mixin({
 			eventManager.removeAllEventDefs();
 		}
 		else {
-			legacyInstances = eventInstances.map(function(eventInstance) {
-				return eventInstance.toLegacy();
+			eventManager.iterEventInstances(function(eventInstance) {
+				legacyInstances.push(eventInstance.toLegacy());
 			});
 
 			legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
@@ -149,9 +148,10 @@ Calendar.mixin({
 
 	// legacyQuery operates on legacy event instance objects
 	clientEvents: function(legacyQuery) {
-		var eventInstances = this.eventManager.getEventInstances();
-		var legacyEventInstances = eventInstances.map(function(eventInstance) {
-			return eventInstance.toLegacy();
+		var legacyEventInstances = [];
+
+		this.eventManager.iterEventInstances(function(eventInstance) {
+			legacyEventInstances.push(eventInstance.toLegacy());
 		});
 
 		return filterLegacyEventInstances(legacyEventInstances, legacyQuery);

@@ -21,7 +21,7 @@ var EventInstanceChangeset = Class.extend({
 	},
 
 
-	getEventInstances: function() { // TODO: use iterator?
+	getEventInstances: function() {
 		var byDefId = this.byDefId;
 		var a = [];
 		var id;
@@ -31,6 +31,21 @@ var EventInstanceChangeset = Class.extend({
 		}
 
 		return a;
+	},
+
+
+	iterEventInstances: function(func) {
+		var byDefId = this.byDefId;
+		var defId, instances;
+		var i;
+
+		for (defId in byDefId) {
+			instances = byDefId[defId];
+
+			for (i = 0; i < instances.length; i++) {
+				func(instances[i]);
+			}
+		}
 	},
 
 
