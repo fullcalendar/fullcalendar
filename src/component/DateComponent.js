@@ -598,31 +598,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 		var i;
 
 		for (i = 0; i < eventRanges.length; i++) {
-			eventFootprints.push.apply(eventFootprints,
-				this.eventRangeToEventFootprints(eventRanges[i])
+			eventFootprints.push(
+				eventRangeToEventFootprint(eventRanges[i])
 			);
 		}
 
 		return eventFootprints;
-	},
-
-
-	// Given an event's unzoned date range, return an array of eventSpan objects.
-	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	// Subclasses can override.
-	// Subclasses are obligated to forward eventRange.isStart/isEnd to the resulting spans.
-	// TODO: somehow more DRY with Calendar::eventRangeToEventFootprints
-	eventRangeToEventFootprints: function(eventRange) {
-		return [
-			new EventFootprint(
-				new ComponentFootprint(
-					eventRange.unzonedRange,
-					eventRange.eventDef.isAllDay()
-				),
-				eventRange.eventDef,
-				eventRange.eventInstance // might not exist
-			)
-		];
 	},
 
 

@@ -300,29 +300,12 @@ Calendar.prototype.eventRangesToEventFootprints = function(eventRanges) {
 	var eventFootprints = [];
 
 	for (i = 0; i < eventRanges.length; i++) {
-		eventFootprints.push.apply(eventFootprints, // append
-			this.eventRangeToEventFootprints(eventRanges[i])
+		eventFootprints.push(
+			eventRangeToEventFootprint(eventRanges[i])
 		);
 	}
 
 	return eventFootprints;
-};
-
-
-/*
-TODO: somehow more DRY with Grid::eventRangeToEventFootprints
-*/
-Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
-	return [
-		new EventFootprint(
-			new ComponentFootprint(
-				eventRange.unzonedRange,
-				eventRange.eventDef.isAllDay()
-			),
-			eventRange.eventDef,
-			eventRange.eventInstance // might not exist
-		)
-	];
 };
 
 

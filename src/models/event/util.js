@@ -24,6 +24,18 @@ function eventInstancesToEventRanges(eventInstances) {
 }
 
 
+function eventRangeToEventFootprint(eventRange) {
+	return new EventFootprint(
+		new ComponentFootprint(
+			eventRange.unzonedRange,
+			eventRange.eventDef.isAllDay()
+		),
+		eventRange.eventDef,
+		eventRange.eventInstance // might not exist
+	);
+}
+
+
 function eventInstancesToUnzonedRanges(eventInstances) {
 	return eventInstances.map(function(eventInstance) {
 		return eventInstance.dateProfile.unzonedRange;

@@ -16,7 +16,7 @@ var EventDateProfile = Class.extend({
 	},
 
 
-	isAllDay: function() {
+	isAllDay: function() { // why recompute this every time?
 		return !(this.start.hasTime() || (this.end && this.end.hasTime()));
 	},
 
