@@ -445,37 +445,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	// Event Rendering Utils
-	// -----------------------------------------------------------------------------------------------------------------
-	// TODO: move this to DateComponent
-
-
-	// Hides all rendered event segments linked to the given event
-	showEventsWithId: function(eventDefId) {
-		this.getEventSegs().forEach(function(seg) {
-			if (
-				seg.footprint.eventDef.id === eventDefId &&
-				seg.el // necessary?
-			) {
-				seg.el.css('visibility', '');
-			}
-		});
-	},
-
-
-	// Shows all rendered event segments linked to the given event
-	hideEventsWithId: function(eventDefId) {
-		this.getEventSegs().forEach(function(seg) {
-			if (
-				seg.footprint.eventDef.id === eventDefId &&
-				seg.el // necessary?
-			) {
-				seg.el.css('visibility', 'hidden');
-			}
-		});
-	},
-
-
 	/* Event Drag-n-Drop
 	------------------------------------------------------------------------------------------------------------------*/
 

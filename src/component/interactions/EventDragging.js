@@ -157,7 +157,6 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				_this.eventPointing.handleMouseout(seg, ev);
 
 				_this.segDragStart(seg, ev);
-				view.hideEventsWithId(eventDef.id); // hide all event segments. our mouseFollower will take over
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
@@ -220,7 +219,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				}
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
-				view.unrenderDrag(); // unrender whatever was done in renderDrag
+				view.unrenderDrag(seg); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all hits
 				eventDefMutation = null;
 			},
@@ -233,16 +232,13 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!eventDefMutation, function() {
 					if (isDragging) {
-						view.unrenderDrag();
+						view.unrenderDrag(seg);
 						_this.segDragStop(seg, ev);
 					}
 
 					if (eventDefMutation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
 						view.reportEventDrop(eventInstance, eventDefMutation, el, ev);
-					}
-					else {
-						view.showEventsWithId(eventDef.id);
 					}
 				});
 

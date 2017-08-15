@@ -579,10 +579,14 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		if (seg) { // if there is event information for this drag, render a helper event
 
-			this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
+			this.hideEventsWithId(seg.footprint.eventDef.id);
 
-			// signal that a helper has been rendered
-			return true;
+			if (eventFootprints.length) {
+				this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
+
+				// signal that a helper has been rendered
+				return true;
+			}
 		}
 		else { // otherwise, just render a highlight
 
@@ -594,9 +598,13 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Unrenders any visual indication of an event being dragged
-	unrenderDrag: function() {
-		this.helperRenderer.unrender();
+	unrenderDrag: function(seg) {
 		this.unrenderHighlight();
+		this.helperRenderer.unrender();
+
+		if (seg) {
+			this.showEventsWithId(seg.footprint.eventDef.id);
+		}
 	},
 
 
@@ -606,13 +614,15 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 	// Renders a visual indication of an event being resized
 	renderEventResize: function(eventFootprints, seg, isTouch) {
+		this.hideEventsWithId(seg.footprint.eventDef.id);
 		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
 	},
 
 
 	// Unrenders any visual indication of an event being resized
-	unrenderEventResize: function() {
+	unrenderEventResize: function(seg) {
 		this.helperRenderer.unrender();
+		this.showEventsWithId(seg.footprint.eventDef.id);
 	},
 
 

@@ -120,9 +120,7 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				}
 
 				if (resizeMutation) {
-					view.hideEventsWithId(eventDef.id);
-
-					component.renderEventResize(
+					view.renderEventResize(
 						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(component.get('dateProfile').renderUnzonedRange, calendar)
 						),
@@ -132,10 +130,9 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 			},
 			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
 				resizeMutation = null;
-				view.showEventsWithId(eventDef.id); // for when out-of-bounds. show original
 			},
 			hitDone: function() { // resets the rendering to show the original event
-				component.unrenderEventResize();
+				view.unrenderEventResize(seg);
 				enableCursor();
 			},
 			interactionEnd: function(ev) {
@@ -146,9 +143,6 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				if (resizeMutation) { // valid date to resize to?
 					// no need to re-show original, will rerender all anyways. esp important if eventRenderWait
 					view.reportEventResize(eventInstance, resizeMutation, el, ev);
-				}
-				else {
-					view.showEventsWithId(eventDef.id);
 				}
 
 				_this.dragListener = null;

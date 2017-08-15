@@ -349,19 +349,27 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		// if a segment from the same calendar but another component is being dragged, render a helper event
-		if (seg && seg.component !== this) {
+		if (seg) {
+			this.hideEventsWithId(seg.footprint.eventDef.id);
+		}
+
+		// render drags from OTHER components as helpers
+		if (eventFootprints.length && seg.component !== this) {
 			this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
 
-			return true; // signal that a helper was rendered
+			return true; // signal helpers rendered
 		}
 	},
 
 
 	// Unrenders any visual indication of a hovering event
-	unrenderDrag: function() {
+	unrenderDrag: function(seg) {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
+
+		if (seg) {
+			this.showEventsWithId(seg.footprint.eventDef.id);
+		}
 	},
 
 
@@ -377,14 +385,16 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
+		this.hideEventsWithId(seg.footprint.eventDef.id);
 		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
 	},
 
 
 	// Unrenders a visual indication of an event being resized
-	unrenderEventResize: function() {
+	unrenderEventResize: function(seg) {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
+		this.showEventsWithId(seg.footprint.eventDef.id);
 	}
 
 });

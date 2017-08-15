@@ -408,10 +408,40 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	getEventSegs: function() { // just for itself
 		if (this.eventRenderer) {
-			this.eventRenderer.getSegs();
+			return this.eventRenderer.getSegs();
 		}
 
 		return [];
+	},
+
+
+	// Event Rendering Utils
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// Hides all rendered event segments linked to the given event
+	showEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
+			if (
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
+			) {
+				seg.el.css('visibility', '');
+			}
+		});
+	},
+
+
+	// Shows all rendered event segments linked to the given event
+	hideEventsWithId: function(eventDefId) {
+		this.getEventSegs().forEach(function(seg) {
+			if (
+				seg.footprint.eventDef.id === eventDefId &&
+				seg.el // necessary?
+			) {
+				seg.el.css('visibility', 'hidden');
+			}
+		});
 	},
 
 
@@ -449,13 +479,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Renders a visual indication of an event being resized.
 	renderEventResize: function(eventFootprints, seg, isTouch) {
-		// subclasses must implement
+		this.callChildren('renderEventResize', arguments);
 	},
 
 
 	// Unrenders a visual indication of an event being resized.
 	unrenderEventResize: function() {
-		// subclasses must implement
+		this.callChildren('unrenderEventResize', arguments);
 	},
 
 
