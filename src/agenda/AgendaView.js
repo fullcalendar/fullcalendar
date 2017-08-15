@@ -330,15 +330,12 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	renderEventResize: function(eventFootprints, seg, isTouch) {
 		var groups = groupEventFootprintsByAllDay(eventFootprints);
-		var renderedHelper = false;
 
-		renderedHelper = this.timeGrid.renderEventResize(groups.timed, seg, isTouch);
+		this.timeGrid.renderEventResize(groups.timed, seg, isTouch);
 
 		if (this.dayGrid) {
-			renderedHelper = this.dayGrid.renderEventResize(groups.allDay, seg, isTouch) || renderedHelper;
+			this.dayGrid.renderEventResize(groups.allDay, seg, isTouch);
 		}
-
-		return renderedHelper;
 	},
 
 
