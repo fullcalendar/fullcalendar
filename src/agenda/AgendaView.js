@@ -275,7 +275,7 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	/* Events
+	/* Event Routing
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -309,30 +309,19 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	/* Dragging (for events and external elements) and Resizing
+	/* Dragging/Resizing Routing
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
 	renderDrag: function(eventFootprints, seg, isTouch) {
-		var allDayFootprints = [];
-		var timedFootprints = [];
-		var i;
+		var groups = groupEventFootprintsByAllDay(eventFootprints);
 		var renderedHelper = false;
 
-		for (i = 0; i < eventFootprints.length; i++) {
-			if (eventFootprints[i].componentFootprint.isAllDay) {
-				allDayFootprints.push(eventFootprints[i]);
-			}
-			else {
-				timedFootprints.push(eventFootprints[i]);
-			}
-		}
-
-		renderedHelper = this.timeGrid.renderDrag(timedFootprints, seg, isTouch);
+		renderedHelper = this.timeGrid.renderDrag(groups.timed, seg, isTouch);
 
 		if (this.dayGrid) {
-			renderedHelper = this.dayGrid.renderDrag(allDayFootprints, seg, isTouch) || renderedHelper;
+			renderedHelper = this.dayGrid.renderDrag(groups.allDay, seg, isTouch) || renderedHelper;
 		}
 
 		return renderedHelper;
@@ -340,24 +329,13 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	renderEventResize: function(eventFootprints, seg, isTouch) {
-		var allDayFootprints = [];
-		var timedFootprints = [];
-		var i;
+		var groups = groupEventFootprintsByAllDay(eventFootprints);
 		var renderedHelper = false;
 
-		for (i = 0; i < eventFootprints.length; i++) {
-			if (eventFootprints[i].componentFootprint.isAllDay) {
-				allDayFootprints.push(eventFootprints[i]);
-			}
-			else {
-				timedFootprints.push(eventFootprints[i]);
-			}
-		}
-
-		renderedHelper = this.timeGrid.renderEventResize(timedFootprints, seg, isTouch);
+		renderedHelper = this.timeGrid.renderEventResize(groups.timed, seg, isTouch);
 
 		if (this.dayGrid) {
-			renderedHelper = this.dayGrid.renderEventResize(allDayFootprints, seg, isTouch) || renderedHelper;
+			renderedHelper = this.dayGrid.renderEventResize(groups.allDay, seg, isTouch) || renderedHelper;
 		}
 
 		return renderedHelper;
@@ -456,3 +434,21 @@ var agendaDayGridMethods = {
 	}
 
 };
+
+
+function groupEventFootprintsByAllDay(eventFootprints) {
+	var allDay = [];
+	var timed = [];
+	var i;
+
+	for (i = 0; i < eventFootprints.length; i++) {
+		if (eventFootprints[i].componentFootprint.isAllDay) {
+			allDay.push(eventFootprints[i]);
+		}
+		else {
+			timed.push(eventFootprints[i]);
+		}
+	}
+
+	return { allDay: allDay, timed: timed };
+}
