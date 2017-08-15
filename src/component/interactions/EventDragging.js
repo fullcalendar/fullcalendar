@@ -157,6 +157,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				_this.eventPointing.handleMouseout(seg, ev);
 
 				_this.segDragStart(seg, ev);
+				view.hideEventsWithId(seg.footprint.eventDef.id);
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var isAllowed = true;
@@ -235,6 +236,8 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 						view.unrenderDrag(seg);
 						_this.segDragStop(seg, ev);
 					}
+
+					view.showEventsWithId(seg.footprint.eventDef.id);
 
 					if (eventDefMutation) {
 						// no need to re-show original, will rerender all anyways. esp important if eventRenderWait

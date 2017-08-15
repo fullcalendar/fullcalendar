@@ -120,6 +120,7 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				}
 
 				if (resizeMutation) {
+					view.hideEventsWithId(seg.footprint.eventDef.id);
 					view.renderEventResize(
 						component.eventRangesToEventFootprints(
 							mutatedEventInstanceGroup.sliceRenderRanges(component.get('dateProfile').renderUnzonedRange, calendar)
@@ -133,6 +134,7 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 			},
 			hitDone: function() { // resets the rendering to show the original event
 				view.unrenderEventResize(seg);
+				view.showEventsWithId(seg.footprint.eventDef.id);
 				enableCursor();
 			},
 			interactionEnd: function(ev) {

@@ -349,12 +349,8 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		if (seg) {
-			this.hideEventsWithId(seg.footprint.eventDef.id);
-		}
-
 		// render drags from OTHER components as helpers
-		if (eventFootprints.length && seg.component !== this) {
+		if (eventFootprints.length && seg && seg.component !== this) {
 			this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch);
 
 			return true; // signal helpers rendered
@@ -366,10 +362,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	unrenderDrag: function(seg) {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
-
-		if (seg) {
-			this.showEventsWithId(seg.footprint.eventDef.id);
-		}
 	},
 
 
@@ -385,7 +377,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 			this.renderHighlight(eventFootprints[i].componentFootprint);
 		}
 
-		this.hideEventsWithId(seg.footprint.eventDef.id);
 		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
 	},
 
@@ -394,7 +385,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	unrenderEventResize: function(seg) {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
-		this.showEventsWithId(seg.footprint.eventDef.id);
 	}
 
 });

@@ -409,6 +409,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	// Hides all rendered event segments linked to the given event
+	// RECURSIVE with subcomponents
 	showEventsWithId: function(eventDefId) {
 		this.getEventSegs().forEach(function(seg) {
 			if (
@@ -418,10 +419,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 				seg.el.css('visibility', '');
 			}
 		});
+
+		this.callChildren('showEventsWithId', arguments);
 	},
 
 
 	// Shows all rendered event segments linked to the given event
+	// RECURSIVE with subcomponents
 	hideEventsWithId: function(eventDefId) {
 		this.getEventSegs().forEach(function(seg) {
 			if (
@@ -431,6 +435,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 				seg.el.css('visibility', 'hidden');
 			}
 		});
+
+		this.callChildren('hideEventsWithId', arguments);
 	},
 
 
