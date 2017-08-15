@@ -134,7 +134,6 @@ Calendar.mixin({
 
 
 	buildRenderQueue: function() {
-		var _this = this;
 		var renderQueue = new RenderQueue({
 			event: this.opt('eventRenderWait')
 		});

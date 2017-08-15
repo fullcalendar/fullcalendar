@@ -53,8 +53,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	addChild: function(child) {
-		var _this = this;
-
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
 		}
@@ -378,6 +376,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 	triggerBeforeEventsUnrender: function() {
 		var _this = this;
 
+		this.trigger('before:entity:unrender', 'events');
+
 		if (this.hasPublicHandlers('eventDestroy')) {
 			this.getEventSegs().forEach(function(seg) {
 				var legacy;
@@ -392,8 +392,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 				}
 			});
 		}
-
-		this.trigger('before:entity:unrender', 'events');
 	},
 
 
