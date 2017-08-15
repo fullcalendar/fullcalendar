@@ -39,6 +39,21 @@ var ListenerMixin = FC.ListenerMixin = (function() {
 		},
 
 		/*
+		Assumes this object has EmitterMixin
+		*/
+		listenToAndEmit: function(other, eventName) {
+			var _this = this;
+
+			this.listenTo(other, eventName, function() {
+				var args = Array.prototype.slice.call(arguments);
+
+				args.unshift(eventName);
+
+				_this.trigger.apply(_this, args);
+			});
+		},
+
+		/*
 		Causes the current object to stop listening to events on the `other` object.
 		`eventName` is optional. If omitted, will stop listening to ALL events on `other`.
 		*/
