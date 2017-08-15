@@ -53,7 +53,7 @@ var EventInstanceChangeset = Class.extend({
 		var bucket = this.byDefId[eventDefId];
 
 		if (bucket) {
-			bucket.slice(); // clone
+			return bucket.slice(); // clone
 		}
 
 		return [];
@@ -83,16 +83,17 @@ var EventInstanceChangeset = Class.extend({
 	},
 
 
+	// returns true/false if removed
 	removeEventInstance: function(eventInstance) {
 		var id = eventInstance.def.id;
 		var bucket = this.byDefId[id];
 
 		if (bucket) {
 			removeExact(bucket, eventInstance);
-		}
 
-		if (!bucket.length) {
-			delete this.byDefId[id];
+			if (!bucket.length) {
+				delete this.byDefId[id];
+			}
 		}
 	},
 
@@ -105,14 +106,19 @@ var EventInstanceChangeset = Class.extend({
 	applyChangeset: function(changeset) {
 		var ourHash = this.byDefId;
 		var theirHash = changeset.byDefId;
-		var id;
+		var theirRemovals = changeset.removals;
+		var i;
 		var ourBucket;
 
-		changeset.removals.forEach(this.removeEventInstance.bind(this));
+		for (i = 0; i < theirRemovals.length; i++) {
+			if (!this.removeEventInstance(theirRemovals[i])) { // not removed?
+				this.removals.push(theirRemovals[i]); // then record as an action
+			}
+		}
 
-		for (id in theirHash) {
-			ourBucket = (ourHash[id] || (ourHash[id] = []));
-			ourBucket.push.apply(ourBucket, theirHash[id]);
+		for (i in theirHash) { // `i` is actually an EventDef id
+			ourBucket = (ourHash[i] || (ourHash[i] = []));
+			ourBucket.push.apply(ourBucket, theirHash[i]);
 		}
 	}
 

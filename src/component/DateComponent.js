@@ -369,6 +369,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	triggerBeforeEventsUnrender: function() {
+		var _this = this;
+
 		if (this.hasPublicHandlers('eventDestroy')) {
 			this.getEventSegs().forEach(function(seg) {
 				var legacy;
@@ -387,8 +389,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	triggerAfterEventsRender: function() {
+		var _this = this;
+
 		if (this.hasPublicHandlers('eventAfterRender')) {
-			this.getEventSegs().forEach(function(segs) {
+			this.getEventSegs().forEach(function(seg) {
 				var legacy;
 
 				if (seg.el) { // necessary?
