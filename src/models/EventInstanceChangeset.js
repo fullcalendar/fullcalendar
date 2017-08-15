@@ -104,6 +104,7 @@ var EventInstanceChangeset = Class.extend({
 
 
 	applyChangeset: function(changeset) {
+		var changeCnt = 0;
 		var ourHash = this.byDefId;
 		var theirHash = changeset.byDefId;
 		var theirRemovals = changeset.removals;
@@ -114,12 +115,16 @@ var EventInstanceChangeset = Class.extend({
 			if (!this.removeEventInstance(theirRemovals[i])) { // not removed?
 				this.removals.push(theirRemovals[i]); // then record as an action
 			}
+			changeCnt++;
 		}
 
 		for (i in theirHash) { // `i` is actually an EventDef id
 			ourBucket = (ourHash[i] || (ourHash[i] = []));
 			ourBucket.push.apply(ourBucket, theirHash[i]);
+			changeCnt++;
 		}
+
+		return changeCnt;
 	}
 
 });
