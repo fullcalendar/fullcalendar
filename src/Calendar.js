@@ -1,15 +1,11 @@
 
-var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
+var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	view: null, // current View object
 	viewsByType: null, // holds all instantiated view instances, current or not
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
 	theme: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
-
-	renderQueue: null,
-	batchRenderDepth: 0,
-	afterSizingQueue: null,
 
 
 	constructor: function(el, overrides) {
@@ -28,7 +24,12 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 		this.initEventManager();
 
 		this.renderQueue = this.buildRenderQueue();
-		this.afterSizingQueue = [];
+		this.queuedEntityRenderMap = {};
+		this.queuedEntityUnrenderMap = {};
+
+		this.on('after:date:render', this.onAfterDateRender);
+		this.on('before:date:unrender', this.onBeforeDateUnrender);
+		this.on('after:events:render', this.onAfterEventsRender);
 
 		this.constructed();
 	},

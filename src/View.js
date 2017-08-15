@@ -221,7 +221,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 
 		this.isDatesRendered = true;
-		this.trigger('after:date:render');
+		this.trigger('after:entity:render', 'date');
 	},
 
 
@@ -230,7 +230,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.unselect();
 		this.stopNowIndicator();
 
-		this.trigger('before:date:unrender');
+		this.trigger('before:entity:unrender', 'date');
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -238,37 +238,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		this.isDatesRendered = false;
-	},
-
-
-	// Determing when the "meat" of the view is rendered (aka the base)
-	// -----------------------------------------------------------------------------------------------------------------
-	// not hooked up anymore
-
-
-	triggerAfterDateRender: function() {
-		this.triggerAfterBaseRender();
-	},
-
-
-	triggerBeforeDateUnrender: function() {
-		this.triggerBeforeBaseUnrender();
-	},
-
-
-	triggerAfterBaseRender: function() {
-		this.publiclyTrigger('viewRender', {
-			context: this,
-			args: [ this, this.el ]
-		});
-	},
-
-
-	triggerBeforeBaseUnrender: function() {
-		this.publiclyTrigger('viewDestroy', {
-			context: this,
-			args: [ this, this.el ]
-		});
 	},
 
 

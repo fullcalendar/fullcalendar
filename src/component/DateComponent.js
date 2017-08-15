@@ -53,15 +53,22 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	addChild: function(child) {
+		var _this = this;
+
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
 		}
+
+		this.listenToAndEmit(child, 'after:entity:render');
+		this.listenToAndEmit(child, 'before:entity:unrender');
 	},
 
 
 	removeChild: function(child) {
 		if (this.childrenByUid[child.uid]) {
 			delete this.childrenByUid[child.uid];
+
+			this.stopListeningTo(child);
 		}
 	},
 
@@ -83,15 +90,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 		this._getView().calendar.renderQueue.queue(function() {
 			method.apply(_this, args);
 		}, this.uid, namespace, actionType);
-	},
-
-
-	afterSizing: function(method, args) {
-		var _this = this;
-
-		this._getView().calendar.afterSizing(function() {
-			method.apply(_this, args);
-		});
 	},
 
 
@@ -159,13 +157,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
 		this.renderDates(dateProfile);
-		this.trigger('after:date:render');
+		this.trigger('after:entity:render', 'date');
 		this.isDatesRendered = true;
 	},
 
 
 	executeDateUnrender: function() { // wrapper
-		this.trigger('before:date:unrender');
+		this.trigger('before:entity:unrender', 'date');
 		this.unrenderDates();
 		this.isDatesRendered = false;
 	},
@@ -332,7 +330,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	renderEventChangeset: function(changeset) {
 		this.renderEventClear();
 		this.renderEventsss(this.eventInstanceRepo.byDefId);
-		this.afterSizing(this.triggerAfterEventsRender);
+		this.triggerAfterEventsRender();
 		this.isEventsRendered = true;
 	},
 
@@ -368,6 +366,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	triggerAfterEventsRender: function() {
+		this.trigger('after:entity:render', 'events', this.getEventSegs());
+
+		// triggers that rely on positioning from updateSize happen in Calendar, via renderQueue
+	},
+
+
 	triggerBeforeEventsUnrender: function() {
 		var _this = this;
 
@@ -385,28 +390,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 				}
 			});
 		}
-	},
 
-
-	triggerAfterEventsRender: function() {
-		var _this = this;
-
-		if (this.hasPublicHandlers('eventAfterRender')) {
-			this.getEventSegs().forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventAfterRender', {
-						context: legacy,
-						args: [ legacy, seg.el, _this ]
-					});
-				}
-			});
-		}
-
-		this.trigger('after:events:render');
+		this.trigger('before:entity:unrender', 'events');
 	},
 
 

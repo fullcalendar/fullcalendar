@@ -7,6 +7,11 @@ Calendar.mixin({
 	ignoreUpdateViewSize: 0,
 	windowResizeProxy: null,
 
+	renderQueue: null,
+	batchRenderDepth: 0,
+	queuedEntityRenderMap: null,
+	queuedEntityUnrenderMap: null,
+
 
 	render: function() {
 		if (!this.contentEl) {
@@ -134,50 +139,10 @@ Calendar.mixin({
 			event: this.opt('eventRenderWait')
 		});
 
-		renderQueue.on('start', function() {
-			var view = _this.view;
-
-			_this.freezeContentHeight();
-
-			view.addScroll(view.queryScroll()); // TODO: move to Calendar
-		});
-
-		renderQueue.on('stop', function() {
-			var view = _this.view;
-			var func;
-
-			if (_this.updateViewSize()) { // success?
-				view.popScroll(); // TODO: move to Calendar
-			}
-
-			_this.thawContentHeight();
-
-			while ((func = _this.afterSizingQueue.shift())) {
-				func();
-			}
-		});
+		this.listenTo(renderQueue, 'start', this.onRenderQueueStart);
+		this.listenTo(renderQueue, 'stop', this.onRenderQueueStop);
 
 		return renderQueue;
-	},
-
-
-	// TODO: evenutally make Calendar a DateComponent
-	initBatchRenderingForView: function(view) {
-		var _this = this;
-
-		view.on('before:change.batchRender', function() {
-			_this.startBatchRender();
-		});
-
-		view.on('change.batchRender', function() {
-			_this.stopBatchRender();
-		});
-	},
-
-
-	// TODO: evenutally make Calendar a DateComponent
-	destroyBatchRenderingForView: function(view) {
-		view.off('.batchRender');
 	},
 
 
@@ -195,10 +160,118 @@ Calendar.mixin({
 	},
 
 
-	afterSizing: function(func) {
-		this.afterSizingQueue.push(func);
+	onRenderQueueStart: function() {
+		this.freezeContentHeight();
+
+		this.view.addScroll(this.view.queryScroll()); // TODO: move to Calendar
+
+		this.queuedEntityRenderMap = {};
 	},
 
+
+	onRenderQueueStop: function() {
+		var map = this.queuedEntityRenderMap;
+		var entityType;
+
+		if (this.updateViewSize()) { // success?
+			this.view.popScroll(); // TODO: move to Calendar
+		}
+
+		this.thawContentHeight();
+
+		for (entityType in map) {
+			this.trigger('after:' + entityType + ':render', map[entityType]);
+		}
+	},
+
+
+	// TODO: evenutally make Calendar a DateComponent
+	initBatchRenderingForView: function(view) {
+		this.listenTo(view, 'before:change', this.startBatchRender);
+		this.listenTo(view, 'change', this.stopBatchRender);
+
+		this.listenTo(view, 'after:entity:render', this.onAfterEntityRender);
+		this.listenTo(view, 'before:entity:unrender', this.onBeforeEntityUnrender);
+	},
+
+
+	// TODO: evenutally make Calendar a DateComponent
+	destroyBatchRenderingForView: function(view) {
+		this.stopListeningTo(view);
+	},
+
+
+	onAfterEntityRender: function(entityType, arg) {
+		var map = this.queuedEntityRenderMap;
+
+		map[entityType] = (map[entityType] || []).concat(arg || []);
+	},
+
+
+	onBeforeEntityUnrender: function(entityType) {
+		var map = this.queuedEntityUnrenderMap;
+
+		if (!map[entityType]) {
+			map[entityType] = true;
+			this.trigger('before:' + entityType + ':unrender');
+		}
+	},
+
+
+	// Specific Entity Rendering Handling
+	// -----------------------------------------------------------------------------------
+	// (initialized in constructor)
+
+
+	onAfterDateRender: function() {
+		this.onAfterBaseRender();
+	},
+
+
+	onBeforeDateUnrender: function() {
+		this.onBeforeBaseUnrender();
+	},
+
+
+	onAfterBaseRender: function() {
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	onBeforeBaseUnrender: function() {
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	onAfterEventsRender: function(segs) {
+		var _this = this;
+
+		if (this.hasPublicHandlers('eventAfterRender')) {
+			segs.forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
+		});
+	},
 
 
 	// View Rendering
