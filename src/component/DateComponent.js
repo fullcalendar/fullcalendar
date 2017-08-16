@@ -55,10 +55,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 	addChild: function(child) {
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
-		}
 
-		this.listenToAndEmit(child, 'after:entity:render');
-		this.listenToAndEmit(child, 'before:entity:unrender');
+			this.listenToAndEmit(child, 'after:entity:render');
+			this.listenToAndEmit(child, 'before:entity:unrender');
+		}
 	},
 
 
@@ -75,7 +75,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 		var children = Object.values(this.childrenByUid); // because childrenByUid will mutate while iterating
 		var i;
 
-		// aggregators can only do one at a time
 		for (i = 0; i < children.length; i++) {
 			this.removeChild(children[i]);
 		}
@@ -374,12 +373,17 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	triggerBeforeEventsUnrender: function() {
-		var _this = this;
-
 		this.trigger('before:entity:unrender', 'events');
 
+		this.triggerEventDestroyForSegs(this.getEventSegs());
+	},
+
+
+	triggerEventDestroyForSegs: function(segs) {
+		var _this = this;
+
 		if (this.hasPublicHandlers('eventDestroy')) {
-			this.getEventSegs().forEach(function(seg) {
+			segs.forEach(function(seg) {
 				var legacy;
 
 				if (seg.el) { // necessary?

@@ -256,19 +256,7 @@ DayGrid.mixin({
 				// kill everything when the popover is hidden
 				// notify events to be removed
 				if (_this.popoverSegs) {
-					var seg;
-					var legacy;
-					var i;
-
-					for (i = 0; i < _this.popoverSegs.length; ++i) {
-						seg = _this.popoverSegs[i];
-						legacy = seg.footprint.getEventLegacy();
-
-						_this.publiclyTrigger('eventDestroy', {
-							context: legacy,
-							args: [ legacy, seg.el, view ]
-						});
-					}
+					_this.triggerEventDestroyForSegs(_this.popoverSegs);
 				}
 				_this.segPopover.removeElement();
 				_this.segPopover = null;
@@ -291,6 +279,8 @@ DayGrid.mixin({
 		// the popover doesn't live within the grid's container element, and thus won't get the event
 		// delegated-handlers for free. attach event-related handlers to the popover.
 		this.bindAllSegHandlersToEl(this.segPopover.el);
+
+		this.trigger('after:entity:render', 'events', segs);
 	},
 
 

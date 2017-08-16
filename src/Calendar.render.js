@@ -11,6 +11,7 @@ Calendar.mixin({
 	batchRenderDepth: 0,
 	queuedEntityRenderMap: null,
 	queuedEntityUnrenderMap: null,
+	isViewEventsRendered: false, // hack for eventAfterAllRender
 
 
 	render: function() {
@@ -164,23 +165,17 @@ Calendar.mixin({
 
 		this.view.addScroll(this.view.queryScroll()); // TODO: move to Calendar
 
-		this.queuedEntityRenderMap = {};
+		this.queuedEntityUnrenderMap = {};
 	},
 
 
 	onRenderQueueStop: function() {
-		var map = this.queuedEntityRenderMap;
-		var entityType;
-
 		if (this.updateViewSize()) { // success?
 			this.view.popScroll(); // TODO: move to Calendar
 		}
 
 		this.thawContentHeight();
-
-		for (entityType in map) {
-			this.trigger('after:' + entityType + ':render', map[entityType]);
-		}
+		this.releaseQueuedEntityRenders();
 	},
 
 
@@ -204,6 +199,10 @@ Calendar.mixin({
 		var map = this.queuedEntityRenderMap;
 
 		map[entityType] = (map[entityType] || []).concat(arg || []);
+
+		if (!this.renderQueue.isRunning) {
+			this.releaseQueuedEntityRenders();
+		}
 	},
 
 
@@ -214,6 +213,18 @@ Calendar.mixin({
 			map[entityType] = true;
 			this.trigger('before:' + entityType + ':unrender');
 		}
+	},
+
+
+	releaseQueuedEntityRenders: function() {
+		var map = this.queuedEntityRenderMap;
+		var entityType;
+
+		for (entityType in map) {
+			this.trigger('after:' + entityType + ':render', map[entityType]);
+		}
+
+		this.queuedEntityRenderMap = {};
 	},
 
 
@@ -245,13 +256,14 @@ Calendar.mixin({
 			context: this,
 			args: [ this, this.el ]
 		});
+		this.isViewEventsRendered = false;
 	},
 
 
 	onAfterEventsRender: function(segs) {
 		var _this = this;
 
-		if (this.hasPublicHandlers('eventAfterRender')) {
+		if (this.hasPublicHandlers('eventAfterRender')) { // optimize. because getEventLegacy is expensive
 			segs.forEach(function(seg) {
 				var legacy;
 
@@ -266,10 +278,14 @@ Calendar.mixin({
 			});
 		}
 
-		this.publiclyTrigger('eventAfterAllRender', {
-			context: this,
-			args: [ this ]
-		});
+		if (!this.isViewEventsRendered) { // ensure only first for initial view event render
+			this.isViewEventsRendered = true;
+
+			this.publiclyTrigger('eventAfterAllRender', {
+				context: this,
+				args: [ this ]
+			});
+		}
 	},
 
 
@@ -289,7 +305,6 @@ Calendar.mixin({
 
 		if (oldView && viewType && oldView.type !== viewType) {
 			this.clearView();
-			this.destroyBatchRenderingForView(oldView); // do AFTER the clear b/c the clear updates lots of props
 		}
 
 		// if viewType changed, or the view was never created, create a fresh view
@@ -314,6 +329,11 @@ Calendar.mixin({
 		}
 
 		this.stopBatchRender();
+
+		if (oldView && newView) { // old view was unrendered?
+			// renderqueue might have teardown triggers, so unbind after
+			this.destroyBatchRenderingForView(oldView);
+		}
 	},
 
 
