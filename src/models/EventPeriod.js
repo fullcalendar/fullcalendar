@@ -128,6 +128,26 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
+	tryReset: function() {
+		var instanceRepo = this.getFinalizedEvents();
+
+		if (instanceRepo) {
+			this.freeze();
+			this.addClear();
+			this.addChangeset(instanceRepo);
+			this.thaw();
+		}
+	},
+
+
+	// returns undefined if none finalized
+	getFinalizedEvents: function() {
+		if (this.isFinalized()) {
+			return this.instanceRepo;
+		}
+	},
+
+
 	// Event Definitions
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -165,8 +185,8 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		this.eventDefsByUid[eventDef.uid] = eventDef;
 
-		this.applyChangeset(
-			new EventInstanceChangeset(null, eventInstances)
+		this.addChangeset(
+			new EventInstanceChangeset(false, null, eventInstances)
 		);
 	},
 
@@ -183,7 +203,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	removeAllEventDefs: function() {
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.applyClear();
+		this.addClear();
 	},
 
 
@@ -200,9 +220,12 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				delete eventDefsById[eventDef.id];
 			}
 
-			this.applyChangeset(new EventInstanceChangeset(
-				this.instanceRepo.getEventInstancesForDef(eventDef) // removal
-			));
+			this.addChangeset(
+				new EventInstanceChangeset(
+					false, // isClear
+					this.instanceRepo.getEventInstancesForDef(eventDef) // removals
+				)
+			);
 		}
 	},
 
@@ -211,26 +234,23 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	applyChangeset: function(changeset) {
-		this.instanceRepo.applyChangeset(changeset); // internally record immediately
-
-		if (!this.outboundChangeset) {
-			this.outboundChangeset = changeset;
-		}
-		else {
-			this.outboundChangeset.applyChangeset(changeset);
-		}
-
+	addChangeset: function(changeset) {
+		this.instanceRepo.addChangeset(changeset); // internally record immediately
+		this.ensureOutboundChangeset().addChangeset(changeset);
 		this.trySendOutbound();
 	},
 
 
-	// assumes no pendingSourceCnt, so allowed to trigger immediately
-	applyClear: function() {
-		this.instanceRepo.clear();
-		this.outboundChangeset = null;
-		this.freezeDepth = 0; // thaw
-		this.trigger('clear');
+	addClear: function() {
+		this.instanceRepo.addClear(); // internally record immediately
+		this.ensureOutboundChangeset().addClear();
+		this.trySendOutbound();
+	},
+
+
+	ensureOutboundChangeset: function() {
+		return this.outboundChangeset ||
+			(this.outboundChangeset = new EventInstanceChangeset());
 	},
 
 
@@ -240,16 +260,13 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	thaw: function() {
-		// protect against lower than zero in case clear() was called before thawing
-		this.freezeDepth = Math.max(this.freezeDepth - 1, 0);
-
+		this.freezeDepth--;
 		this.trySendOutbound();
 	},
 
 
 	reportSourceDone: function() {
 		this.pendingSourceCnt--;
-
 		this.trySendOutbound();
 	},
 
@@ -257,25 +274,9 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	trySendOutbound: function() {
 		var outboundChangeset = this.outboundChangeset;
 
-		if (outboundChangeset && this.isFinalized()) {
+		if (this.isFinalized() && outboundChangeset) {
 			this.outboundChangeset = null;
 			this.trigger('change', outboundChangeset);
-		}
-	},
-
-
-	tryReset: function() {
-		if (this.isFinalized()) {
-			this.trigger('clear');
-			this.trigger('change', this.instanceRepo);
-		}
-	},
-
-
-	// returns undefined if none finalized
-	getFinalized: function() {
-		if (this.isFinalized()) {
-			return this.instanceRepo;
 		}
 	},
 

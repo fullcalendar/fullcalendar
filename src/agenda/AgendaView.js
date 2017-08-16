@@ -283,6 +283,11 @@ var AgendaView = FC.AgendaView = View.extend({
 		var allDayChangeset = new EventInstanceChangeset();
 		var timedChangeset = new EventInstanceChangeset();
 
+		if (eventChangeset.isClear) {
+			allDayChangeset.addClear();
+			timedChangeset.addClear();
+		}
+
 		eventChangeset.removals.forEach(function(instance) {
 			if (instance.dateProfile.isAllDay()) { // important to access the dateProfile and not the def
 				allDayChangeset.removals.push(instance);

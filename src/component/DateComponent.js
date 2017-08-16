@@ -49,6 +49,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
+
+		this.eventInstanceRepo = new EventInstanceChangeset();
 	},
 
 
@@ -255,37 +257,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	handleEventChangeset: function(changeset) {
 		if (this.hasOwnEventRendering()) {
-
-			if (!this.eventInstanceRepo) {
-				this.eventInstanceRepo = new EventInstanceChangeset();
-			}
-
 			if (
-				this.eventInstanceRepo.applyChangeset(changeset) && // any changes?
-				this.has('displayingEvents')
+				this.eventInstanceRepo.addChangeset(changeset) && // any changes?
+				this.has('displayingEvents') // ready to display events?
 			) {
 				this.requestRenderEventChangeset(changeset);
 			}
 		}
 
 		this.callChildren('handleEventChangeset', [ changeset ]);
-	},
-
-
-	handleEventClear: function() {
-		if (this.hasOwnEventRendering()) {
-
-			if (this.eventInstanceRepo) {
-				this.eventInstanceRepo.clear();
-				this.eventInstanceRepo = null;
-			}
-
-			if (this.has('displayingEvents')) {
-				this.requestRenderEventClear();
-			}
-		}
-
-		this.callChildren('handleEventClear', arguments);
 	},
 
 
@@ -303,42 +283,43 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.eventRenderer.rangeUpdated();
 		}
 
-		if (this.eventInstanceRepo) {
+		if (this.hasOwnEventRendering()) {
 			this.requestRenderEventChangeset(this.eventInstanceRepo);
 		}
 	},
 
 
 	stopDisplayingEvents: function() {
-		if (this.eventInstanceRepo) {
-			this.requestRenderEventClear();
+		if (this.hasOwnEventRendering()) {
+			this.requestRenderEventChangeset(new EventInstanceChangeset(true)); // isClear=true
 		}
 	},
 
 
 	requestRenderEventChangeset: function(changeset) {
-		this.requestRender(this.renderEventChangeset, [ changeset ], 'event', 'change');
-	},
-
-
-	requestRenderEventClear: function() {
-		this.requestRender(this.renderEventClear, null, 'event', 'clear');
+		this.requestRender(this.renderEventChangeset, [ changeset ], 'event', 'destroy');
 	},
 
 
 	renderEventChangeset: function(changeset) {
-		this.renderEventClear();
-		this.renderEventsss(this.eventInstanceRepo.byDefId);
-		this.triggerAfterEventsRender();
-		this.isEventsRendered = true;
-	},
-
-
-	renderEventClear: function() {
 		if (this.isEventsRendered) {
 			this.triggerBeforeEventsUnrender();
 			this.unrenderEventsss();
 			this.isEventsRendered = false;
+		}
+
+		// for now, even if there are no event instances to render, but we know an event source was received,
+		// we still want to render in order to fire eventAfterAllRender
+		if (
+			changeset.hasAddsOrRemoves() && // something other than just a clear
+			(
+				this.eventInstanceRepo.addChangesetCnt || // TODO: eventually remove
+				this.eventInstanceRepo.instanceCnt // any events to render?
+			)
+		) {
+			this.renderEventsss(this.eventInstanceRepo.byDefId);
+			this.triggerAfterEventsRender();
+			this.isEventsRendered = true;
 		}
 	},
 

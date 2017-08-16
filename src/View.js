@@ -193,15 +193,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar.eventManager, {
-			change: this.handleEventChangeset,
-			clear: this.handleEventClear
-		});
+		this.listenTo(this.calendar.eventManager, 'change', this.handleEventChangeset);
 	},
 
 
 	unbindEventChanges: function() {
-		this.stopListeningTo(this.calendar.eventManager);
+		this.stopListeningTo(this.calendar.eventManager, 'change');
 	},
 
 
@@ -743,17 +740,10 @@ View.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function
 
 
 View.watch('bindingEvents', [ 'dateProfile' ], function(deps) {
-	var current;
-
 	this.requestEvents(deps.dateProfile);
-	current = this.calendar.eventManager.getCurrent();
-
-	if (current) {
-		this.handleEventChangeset(current);
-	}
-
+	this.handleEventChangeset(this.calendar.eventManager.getCurrentEvents());
 	this.bindEventChanges(); // bind after current events, in case requestEvents fires 'change'
 }, function() {
 	this.unbindEventChanges();
-	this.handleEventClear();
+	this.handleEventChangeset(new EventInstanceChangeset(true)); // clear=true
 });

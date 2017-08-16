@@ -28,16 +28,19 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	getCurrent: function() {
+	tryReset: function() {
 		if (this.currentPeriod) {
-			return this.currentPeriod.getFinalized();
+			this.currentPeriod.tryReset();
 		}
 	},
 
 
-	tryReset: function() {
+	getCurrentEvents: function() {
 		if (this.currentPeriod) {
-			this.currentPeriod.tryReset();
+			return this.currentPeriod.getFinalizedEvents();
+		}
+		else {
+			return new EventInstanceChangeset();
 		}
 	},
 
@@ -231,9 +234,9 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	iterEventsInstances: function(func) {
+	iterEventInstances: function(func) {
 		if (this.currentPeriod) {
-			this.currentPeriod.instanceRepo.iterEventsInstances(func);
+			this.currentPeriod.instanceRepo.iterEventInstances(func);
 		}
 	},
 
