@@ -35,13 +35,15 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	getCurrentEvents: function() {
-		if (this.currentPeriod) {
-			return this.currentPeriod.getFinalizedEvents();
+	getFinalizedEvents: function() {
+		if (this.isFinalized()) {
+			return this.currentPeriod.instanceRepo;
 		}
-		else {
-			return new EventInstanceChangeset();
-		}
+	},
+
+
+	isFinalized: function() {
+		return this.currentPeriod && this.currentPeriod.isFinalized();
 	},
 
 
@@ -199,14 +201,8 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	bindPeriod: function(eventPeriod) {
-		this.listenTo(eventPeriod, { // forward on these messages. TODO: more standard way to do this?
-			change: function(changeset) {
-				this.trigger('change', changeset);
-			},
-			clear: function() {
-				this.trigger('clear');
-			}
-		});
+		this.listenToAndEmit(eventPeriod, 'receive');
+		this.listenToAndEmit(eventPeriod, 'clear');
 	},
 
 

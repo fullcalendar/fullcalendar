@@ -2,23 +2,24 @@
 var EventInstanceChangeset = Class.extend({
 
 	isClear: false,
-	removals: null,
 	byDefId: null,
+	removalsByDefId: null,
 	instanceCnt: 0,
-	addChangesetCnt: 0, // TODO: eventually remove
+	removalCnt: 0,
 
 
 	constructor: function(isClear, removals, adds) {
 		this.isClear = isClear || false;
-		this.removals = removals || [];
+		this.removalsByDefId = {};
 		this.byDefId = {};
 
+		(removals || []).forEach(this.removeEventInstance.bind(this));
 		(adds || []).forEach(this.addEventInstance.bind(this));
 	},
 
 
-	hasAddsOrRemoves: function() {
-		return this.instanceCnt || this.removals.length;
+	isEmpty: function() {
+		return !this.isClear && !this.removalCnt && !this.instanceCnt;
 	},
 
 
@@ -84,64 +85,69 @@ var EventInstanceChangeset = Class.extend({
 
 
 	addEventInstance: function(eventInstance) {
-		var id = eventInstance.def.id;
-
-		(this.byDefId[id] || (this.byDefId[id] = []))
-			.push(eventInstance);
-
-		this.instanceCnt++;
+		this._addEventInstances(eventInstance.def.id, [ eventInstance ]);
 	},
 
 
-	// returns true/false if removed
 	removeEventInstance: function(eventInstance) {
-		var id = eventInstance.def.id;
+		this._removeEventInstances(eventInstance.def.id, [ eventInstance ]);
+	},
+
+
+	_addEventInstances: function(id, eventInstances) {
+		var bucket = (this.byDefId[id] || (this.byDefId[id] = []));
+
+		bucket.push.apply(bucket, eventInstances);
+
+		this.instanceCnt += eventInstances.length;
+	},
+
+
+	_removeEventInstances: function(id, eventInstances) {
 		var bucket = this.byDefId[id];
+		var i;
 
-		if (bucket && removeExact(bucket, eventInstance)) {
+		for (i = 0; i < eventInstances.length; i++) {
+			if (bucket && removeExact(bucket, eventInstances[i])) {
 
-			if (!bucket.length) {
-				delete this.byDefId[id];
+				if (!bucket.length) {
+					delete this.byDefId[id];
+				}
+
+				this.instanceCnt--;
 			}
+			else {
 
-			this.instanceCnt--;
+				(this.removalsByDefId[id] || (this.removalsByDefId[id] = []))
+					.push(eventInstances[i]);
 
-			return true;
+				this.removalCnt++;
+			}
 		}
-
-		return false;
 	},
 
 
 	// returns true/false if resulted in changes
 	addChangeset: function(changeset) {
-		var theirHash = changeset.byDefId;
-		var theirRemovals = changeset.removals;
+		var theirRemoveHash = changeset.removalsByDefId;
+		var theirAddHash = changeset.byDefId;
 		var anyChanges = false;
-		var i;
-		var ourBucket;
+		var id;
 
 		if (changeset.isClear) {
 			this.addClear();
 			anyChanges = true;
 		}
 
-		for (i = 0; i < theirRemovals.length; i++) {
-			if (!this.removeEventInstance(theirRemovals[i])) { // not removed?
-				this.removals.push(theirRemovals[i]); // then record as a future action
-			}
+		for (id in theirRemoveHash) {
+			this._removeEventInstances(id, theirRemoveHash[id]);
 			anyChanges = true;
 		}
 
-		for (i in theirHash) { // `i` is actually an EventDef id
-			ourBucket = (this.byDefId[i] || (this.byDefId[i] = []));
-			ourBucket.push.apply(ourBucket, theirHash[i]);
-
-			this.instanceCnt += theirHash[i].length;
+		for (id in theirAddHash) {
+			this._addEventInstances(id, theirAddHash[id]);
 			anyChanges = true;
 		}
-
-		this.addChangesetCnt++;
 
 		return anyChanges;
 	},
@@ -149,8 +155,9 @@ var EventInstanceChangeset = Class.extend({
 
 	addClear: function() {
 		this.isClear = true;
-		this.removals = [];
+		this.removalsByDefId = {};
 		this.byDefId = {};
+		this.removalCnt = 0;
 		this.instanceCnt = 0;
 	}
 

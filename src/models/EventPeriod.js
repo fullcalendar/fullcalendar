@@ -129,21 +129,16 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	tryReset: function() {
-		var instanceRepo = this.getFinalizedEvents();
-
-		if (instanceRepo) {
-			this.freeze();
-			this.addClear();
-			this.addChangeset(instanceRepo);
-			this.thaw();
-		}
-	},
-
-
-	// returns undefined if none finalized
-	getFinalizedEvents: function() {
 		if (this.isFinalized()) {
-			return this.instanceRepo;
+			this.freeze();
+
+			// ugly
+			var changeset = new EventInstanceChangeset(true); // isClear=true
+			changeset.byDefId = this.instanceRepo.byDefId;
+			changeset.instanceCnt = this.instanceRepo.instanceCnt;
+
+			this.addChangeset(changeset);
+			this.thaw();
 		}
 	},
 
@@ -276,7 +271,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 		if (this.isFinalized() && outboundChangeset) {
 			this.outboundChangeset = null;
-			this.trigger('change', outboundChangeset);
+			this.trigger('receive', outboundChangeset);
 		}
 	},
 

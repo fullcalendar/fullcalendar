@@ -29,6 +29,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
 	nowIndicatorIntervalID: null, // "
 
+	isEventsDefined: false,
+
 
 	constructor: function(calendar, viewSpec) {
 		this.calendar = calendar;
@@ -193,12 +195,24 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	bindEventChanges: function() {
-		this.listenTo(this.calendar.eventManager, 'change', this.handleEventChangeset);
+		this.listenTo(this.calendar.eventManager, 'receive', this.handleEventsReceived);
 	},
 
 
 	unbindEventChanges: function() {
-		this.stopListeningTo(this.calendar.eventManager, 'change');
+		this.stopListeningTo(this.calendar.eventManager, 'receive');
+	},
+
+
+	handleEventsReceived: function(changeset) {
+		if (!this.isEventsDefined) {
+			this.isEventsDefined = true;
+			this.handleEventsDefined();
+		}
+
+		if (!changeset.isEmpty()) {
+			this.handleEventsChanged(changeset);
+		}
 	},
 
 
@@ -741,9 +755,17 @@ View.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function
 
 View.watch('bindingEvents', [ 'dateProfile' ], function(deps) {
 	this.requestEvents(deps.dateProfile);
-	this.handleEventChangeset(this.calendar.eventManager.getCurrentEvents());
-	this.bindEventChanges(); // bind after current events, in case requestEvents fires 'change'
+
+	if (this.calendar.eventManager.isFinalized()) {
+		this.handleEventsReceived(this.calendar.eventManager.getFinalizedEvents());
+	}
+
+	this.bindEventChanges();
 }, function() {
 	this.unbindEventChanges();
-	this.handleEventChangeset(new EventInstanceChangeset(true)); // clear=true
+
+	if (this.isEventsDefined) {
+		this.isEventsDefined = false;
+		this.handleEventsUndefined();
+	}
 });

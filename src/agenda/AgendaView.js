@@ -279,7 +279,7 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	handleEventChangeset: function(eventChangeset) {
+	handleEventsChanged: function(eventChangeset) {
 		var allDayChangeset = new EventInstanceChangeset();
 		var timedChangeset = new EventInstanceChangeset();
 
@@ -288,14 +288,22 @@ var AgendaView = FC.AgendaView = View.extend({
 			timedChangeset.addClear();
 		}
 
-		eventChangeset.removals.forEach(function(instance) {
-			if (instance.dateProfile.isAllDay()) { // important to access the dateProfile and not the def
-				allDayChangeset.removals.push(instance);
+		// reference dateProfile.isAllDay() instead of the eventDef
+		// because eventDef might have updated
+
+		// ugly
+		for (var id in eventChangeset.removalsByDefId) {
+			for (var i = 0; i < eventChangeset.removalsByDefId[id].length; i++) {
+				var instance = eventChangeset.removalsByDefId[id][i];
+
+				if (instance.dateProfile.isAllDay()) {
+					allDayChangeset.removeEventInstance(instance);
+				}
+				else {
+					timedChangeset.removeEventInstance(instance);
+				}
 			}
-			else {
-				timedChangeset.removals.push(instance);
-			}
-		});
+		}
 
 		eventChangeset.iterEventInstances(function(instance) {
 			if (instance.dateProfile.isAllDay()) {
@@ -306,10 +314,10 @@ var AgendaView = FC.AgendaView = View.extend({
 			}
 		});
 
-		this.timeGrid.handleEventChangeset(timedChangeset);
+		this.timeGrid.handleEventsChanged(timedChangeset);
 
 		if (this.dayGrid) {
-			this.dayGrid.handleEventChangeset(allDayChangeset);
+			this.dayGrid.handleEventsChanged(allDayChangeset);
 		}
 	},
 

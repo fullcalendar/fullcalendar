@@ -49,8 +49,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
-
-		this.eventInstanceRepo = new EventInstanceChangeset();
 	},
 
 
@@ -255,17 +253,38 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleEventChangeset: function(changeset) {
+	handleEventsDefined: function() {
+		this.eventInstanceRepo = new EventInstanceChangeset();
+
 		if (this.hasOwnEventRendering()) {
-			if (
-				this.eventInstanceRepo.addChangeset(changeset) && // any changes?
-				this.has('displayingEvents') // ready to display events?
-			) {
-				this.requestRenderEventChangeset(changeset);
+			if (this.has('displayingEvents')) {
+				this.requestEventRender(this.eventInstanceRepo); // render empty
 			}
 		}
 
-		this.callChildren('handleEventChangeset', [ changeset ]);
+		this.callChildren('handleEventsDefined', arguments);
+	},
+
+
+	handleEventsChanged: function(changeset) {
+		if (this.hasOwnEventRendering()) {
+			this.eventInstanceRepo.addChangeset(changeset);
+
+			if (this.has('displayingEvents')) {
+				this.requestEventRender(this.eventInstanceRepo);
+			}
+		}
+
+		this.callChildren('handleEventsChanged', arguments);
+	},
+
+
+	handleEventsUndefined: function() {
+		this.eventInstanceRepo = null;
+
+		// stopDisplayingEvents handles the unrender
+
+		this.callChildren('handleEventsUndefined', arguments);
 	},
 
 
@@ -283,54 +302,53 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.eventRenderer.rangeUpdated();
 		}
 
-		if (this.hasOwnEventRendering()) {
-			this.requestRenderEventChangeset(this.eventInstanceRepo);
+		if (this.eventInstanceRepo) { // events defined yet?
+			this.requestEventRender(this.eventInstanceRepo);
 		}
 	},
 
 
 	stopDisplayingEvents: function() {
-		if (this.hasOwnEventRendering()) {
-			this.requestRenderEventChangeset(new EventInstanceChangeset(true)); // isClear=true
+		if (this.eventInstanceRepo) { // events ever defined?
+			this.requestEventUnrender();
 		}
 	},
 
 
-	requestRenderEventChangeset: function(changeset) {
-		this.requestRender(this.renderEventChangeset, [ changeset ], 'event', 'destroy');
+	requestEventRender: function(eventInstanceRepo) {
+		this.requestRender(this.executeEventRender, [ eventInstanceRepo ], 'event', 'destroy');
 	},
 
 
-	renderEventChangeset: function(changeset) {
+	requestEventUnrender: function() {
+		this.requestRender(this.executeEventUnrender, null, 'event', 'destroy');
+	},
+
+
+	executeEventRender: function(eventInstanceRepo) {
+		this.executeEventUnrender();
+		this.renderEventsss(eventInstanceRepo);
+		this.triggerAfterEventsRender();
+		this.isEventsRendered = true;
+	},
+
+
+	executeEventUnrender: function() {
 		if (this.isEventsRendered) {
 			this.triggerBeforeEventsUnrender();
 			this.unrenderEventsss();
 			this.isEventsRendered = false;
 		}
-
-		// for now, even if there are no event instances to render, but we know an event source was received,
-		// we still want to render in order to fire eventAfterAllRender
-		if (
-			changeset.hasAddsOrRemoves() && // something other than just a clear
-			(
-				this.eventInstanceRepo.addChangesetCnt || // TODO: eventually remove
-				this.eventInstanceRepo.instanceCnt // any events to render?
-			)
-		) {
-			this.renderEventsss(this.eventInstanceRepo.byDefId);
-			this.triggerAfterEventsRender();
-			this.isEventsRendered = true;
-		}
 	},
 
 
 	// TODO: rename once legacy `renderEvents` is out of the way
-	renderEventsss: function(eventInstanceHash) {
+	renderEventsss: function(eventInstanceRepo) {
 		if (this.eventRenderer) {
-			this.eventRenderer.renderInstanceHash(eventInstanceHash);
+			this.eventRenderer.renderInstanceHash(eventInstanceRepo.byDefId);
 		}
 		else if (this.renderEvents) { // legacy
-			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceHash));
+			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceRepo.byDefId));
 		}
 	},
 
