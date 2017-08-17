@@ -23,7 +23,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	isDatesRendered: false,
 	isEventsRendered: false,
-	eventChangeset: null,
+	eventInstanceRepo: null,
 
 
 	constructor: function() {
@@ -261,21 +261,18 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleEventsDefined: function() {
-		this.eventInstanceRepo = new EventInstanceChangeset();
-
-		if (this.hasOwnEventRendering()) {
-			if (this.has('displayingEvents')) {
-				this.requestEventRender(this.eventInstanceRepo); // render empty
-			}
-		}
-
-		this.callChildren('handleEventsDefined', arguments);
+	handleEventsBound: function() {
+		this.callChildren('handleEventsBound', arguments);
 	},
 
 
 	handleEventsChanged: function(changeset) {
 		if (this.hasOwnEventRendering()) {
+
+			if (!this.eventInstanceRepo) {
+				this.eventInstanceRepo = new EventInstanceChangeset();
+			}
+
 			this.eventInstanceRepo.addChangeset(changeset);
 
 			if (this.has('displayingEvents')) {
@@ -287,12 +284,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	handleEventsUndefined: function() {
+	handleEventsUnbound: function() {
 		this.eventInstanceRepo = null;
 
-		// stopDisplayingEvents handles the unrender
-
-		this.callChildren('handleEventsUndefined', arguments);
+		this.callChildren('handleEventsUnbound', arguments);
 	},
 
 
@@ -310,14 +305,14 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.eventRenderer.rangeUpdated();
 		}
 
-		if (this.eventInstanceRepo) { // events defined yet?
+		if (this.eventInstanceRepo) {
 			this.requestEventRender(this.eventInstanceRepo);
 		}
 	},
 
 
 	stopDisplayingEvents: function() {
-		if (this.eventInstanceRepo) { // events ever defined?
+		if (this.eventInstanceRepo) {
 			this.requestEventUnrender();
 		}
 	},

@@ -269,9 +269,16 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	trySendOutbound: function() {
 		var outboundChangeset = this.outboundChangeset;
 
-		if (this.isFinalized() && outboundChangeset) {
-			this.outboundChangeset = null;
-			this.trigger('receive', outboundChangeset);
+		if (this.isFinalized()) {
+			if (outboundChangeset) {
+				this.outboundChangeset = null;
+				this.trigger('receive', outboundChangeset);
+			}
+			else {
+				// hack for eventAfterAllRender
+				// also for DateComponents to know an empy, but populated, state
+				this.trigger('receive', new EventInstanceChangeset());
+			}
 		}
 	},
 
