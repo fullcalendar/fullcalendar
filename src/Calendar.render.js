@@ -11,7 +11,6 @@ Calendar.mixin({
 	batchRenderDepth: 0,
 	queuedEntityRenderMap: null,
 	queuedEntityUnrenderMap: null,
-	isViewEventsRendered: false, // hack for eventAfterAllRender
 
 
 	render: function() {
@@ -244,24 +243,28 @@ Calendar.mixin({
 
 
 	onAfterBaseRender: function() {
+		var view = this.view;
+
 		this.publiclyTrigger('viewRender', {
-			context: this,
-			args: [ this, this.el ]
+			context: view,
+			args: [ view, view.el ]
 		});
 	},
 
 
 	onBeforeBaseUnrender: function() {
+		var view = this.view;
+
 		this.publiclyTrigger('viewDestroy', {
-			context: this,
-			args: [ this, this.el ]
+			context: view,
+			args: [ view, view.el ]
 		});
-		this.isViewEventsRendered = false;
 	},
 
 
 	onAfterEventsRender: function(segs) {
 		var _this = this;
+		var view = this.view;
 
 		if (this.hasPublicHandlers('eventAfterRender')) { // optimize. because getEventLegacy is expensive
 			segs.forEach(function(seg) {
@@ -272,20 +275,16 @@ Calendar.mixin({
 
 					_this.publiclyTrigger('eventAfterRender', {
 						context: legacy,
-						args: [ legacy, seg.el, _this ]
+						args: [ legacy, seg.el, view ]
 					});
 				}
 			});
 		}
 
-		if (!this.isViewEventsRendered) { // ensure only first for initial view event render
-			this.isViewEventsRendered = true;
-
-			this.publiclyTrigger('eventAfterAllRender', {
-				context: this,
-				args: [ this ]
-			});
-		}
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: view,
+			args: [ view ]
+		});
 	},
 
 
