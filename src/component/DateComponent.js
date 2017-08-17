@@ -5,6 +5,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	childrenByUid: null,
 	isRTL: false, // frequently accessed options
 	nextDayThreshold: null, // "
+	dateProfile: null, // hack
 
 	eventRendererClass: null,
 	helperRendererClass: null,
@@ -49,6 +50,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
+	},
+
+
+	removeElement: function() {
+		Component.prototype.removeElement.apply(this, arguments);
+
+		this.dateProfile = null; // render guaranteed to be over
 	},
 
 
@@ -217,7 +225,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
 	renderBusinessHours: function(businessHourPayload) {
-		var unzonedRange = this.get('dateProfile').activeUnzonedRange;
+		var unzonedRange = this.dateProfile.activeUnzonedRange;
 		var eventInstanceGroup = businessHourPayload[this.hasAllDayBusinessHours ? 'allDay' : 'timed'];
 		var eventFootprints;
 
@@ -609,10 +617,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	getSafeHitFootprint: function(hit) {
-		var dateProfile = this.get('dateProfile');
 		var footprint = this.getHitFootprint(hit);
 
-		if (!dateProfile.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
+		if (!this.dateProfile.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
 			return null;
 		}
 
@@ -754,6 +761,7 @@ DateComponent.guid = 0; // TODO: better system for this?
 
 
 DateComponent.watch('handleDateProfile', [ 'dateProfile' ], function(deps) {
+	this.dateProfile = deps.dateProfile; // needed for rendering
 	this.handleDateProfileSet(deps.dateProfile);
 }, function() {
 	this.handleDateProfileUnset();

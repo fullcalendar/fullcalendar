@@ -378,8 +378,7 @@ var agendaTimeGridMethods = {
 	renderHeadIntroHtml: function() {
 		var view = this.view;
 		var calendar = view.calendar;
-		var dateProfile = this.get('dateProfile');
-		var weekStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
+		var weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
 		var weekText;
 
 		if (this.opt('weekNumbers')) {

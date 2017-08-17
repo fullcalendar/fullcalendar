@@ -97,7 +97,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// Generates the format string that should be used to generate the title for the current date range.
 	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
 	computeTitleFormat: function() {
-		var currentRangeUnit = this.get('dateProfile').currentRangeUnit;
+		var currentRangeUnit = this.dateProfile.currentRangeUnit;
 
 		if (currentRangeUnit == 'year') {
 			return 'YYYY';
@@ -145,7 +145,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	setDate: function(date) {
-		var currentDateProfile = this.get('dateProfile');
+		var currentDateProfile = this.dateProfile;
 		var newDateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
 
 		if (

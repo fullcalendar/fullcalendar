@@ -3,7 +3,7 @@ var ViewDateUtils = {
 
 	expectRenderRange: function(start, end) {
 		var currentView = currentCalendar.getView();
-		var dateProfile = currentView.get('dateProfile');
+		var dateProfile = currentView.dateProfile;
 
 		var renderRangeStart = currentCalendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, dateProfile.isRangeAllDay);
 		var renderRangeEnd = currentCalendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, dateProfile.isRangeAllDay);
@@ -14,7 +14,7 @@ var ViewDateUtils = {
 
 	expectActiveRange: function(start, end) {
 		var currentView = currentCalendar.getView();
-		var dateProfile = currentView.get('dateProfile');
+		var dateProfile = currentView.dateProfile;
 
 		var activeRangeStart = currentCalendar.msToUtcMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
 		var activeRangeEnd = currentCalendar.msToUtcMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);

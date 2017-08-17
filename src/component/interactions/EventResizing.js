@@ -123,7 +123,7 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 					view.hideEventsWithId(seg.footprint.eventDef.id);
 					view.renderEventResize(
 						component.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(component.get('dateProfile').renderUnzonedRange, calendar)
+							mutatedEventInstanceGroup.sliceRenderRanges(component.dateProfile.renderUnzonedRange, calendar)
 						),
 						seg
 					);

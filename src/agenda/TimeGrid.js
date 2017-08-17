@@ -223,7 +223,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		var calendar = view.calendar;
 		var theme = calendar.theme;
 		var isRTL = this.isRTL;
-		var dateProfile = this.get('dateProfile');
+		var dateProfile = this.dateProfile;
 		var html = '';
 		var slotTime = moment.duration(+dateProfile.minTime); // wish there was .clone() for durations
 		var slotIterator = moment.duration(0);
@@ -425,7 +425,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
 	computeTimeTop: function(time) {
 		var len = this.slatEls.length;
-		var dateProfile = this.get('dateProfile');
+		var dateProfile = this.dateProfile;
 		var slatCoverage = (time - dateProfile.minTime) / this.slotDuration; // floating-point value of # of slots covered
 		var slatIndex;
 		var slatRemainder;
@@ -559,7 +559,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
 	computeSnapTime: function(snapIndex) {
-		return moment.duration(this.get('dateProfile').minTime + this.snapDuration * snapIndex);
+		return moment.duration(this.dateProfile.minTime + this.snapDuration * snapIndex);
 	},
 
 

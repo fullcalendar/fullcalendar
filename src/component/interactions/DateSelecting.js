@@ -152,7 +152,7 @@ var DateSelecting = FC.DateSelecting = Interaction.extend({
 
 
 	isSelectionFootprintAllowed: function(componentFootprint) {
-		return this.component.get('dateProfile').validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
+		return this.component.dateProfile.validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
 			this.view.calendar.isSelectionFootprintAllowed(componentFootprint);
 	}
 

@@ -302,7 +302,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	// NOTE: very similar to isExternalInstanceGroupAllowed
 	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
-		var dateProfile = this.get('dateProfile');
+		var dateProfile = this.dateProfile;
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 
@@ -321,7 +321,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	// when it's a completely anonymous external drag, no event.
 	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
 		var view = this._getView();
-		var dateProfile = this.get('dateProfile');
+		var dateProfile = this.dateProfile;
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
 

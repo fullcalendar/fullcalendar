@@ -169,7 +169,7 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay)
 Calendar.prototype.buildCurrentBusinessFootprints = function(isAllDay) {
 	var view = this.view;
 	var businessHourGenerator = view.get('businessHourGenerator');
-	var unzonedRange = view.get('dateProfile').activeUnzonedRange;
+	var unzonedRange = view.dateProfile.activeUnzonedRange;
 	var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(isAllDay, unzonedRange);
 
 	if (eventInstanceGroup) {

@@ -18,9 +18,8 @@ var DayTableMixin = FC.DayTableMixin = {
 	updateDayTable: function() {
 		var view = this.view;
 		var calendar = view.calendar;
-		var dateProfile = this.get('dateProfile');
-		var date = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
-		var end = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true);
+		var date = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
+		var end = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.endMs, true);
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];
@@ -297,7 +296,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// (colspan should be no different)
 	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
 		var view = this.view;
-		var isDateValid = this.get('dateProfile').activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
+		var isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.calendar.theme.getClass('widgetHeader')
@@ -375,7 +374,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	renderBgCellHtml: function(date, otherAttrs) {
 		var view = this.view;
-		var isDateValid = this.get('dateProfile').activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
+		var isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var classes = this.getDayClasses(date);
 
 		classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'));
