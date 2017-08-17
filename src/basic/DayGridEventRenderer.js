@@ -15,6 +15,16 @@ var DayGridEventRenderer = EventRenderer.extend({
 	},
 
 
+	renderBgRanges: function(eventRanges) {
+		// don't render timed background events
+		eventRanges = $.grep(eventRanges, function(eventRange) {
+			return eventRange.eventDef.isAllDay();
+		});
+
+		EventRenderer.prototype.renderBgRanges.call(this, eventRanges);
+	},
+
+
 	// Renders the given foreground event segments onto the grid
 	renderFgSegs: function(segs) {
 		var rowStructs = this.rowStructs = this.renderSegRows(segs);

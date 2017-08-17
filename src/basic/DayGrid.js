@@ -310,17 +310,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderBgEventFootprints: function(eventFootprints) {
-
-		// don't render timed background events
-		var allDayEventFootprints = $.grep(eventFootprints, function(eventFootprint) {
-			return eventFootprint.componentFootprint.isAllDay;
-		});
-
-		return InteractiveDateComponent.prototype.renderBgEventFootprints.call(this, allDayEventFootprints);
-	},
-
-
 	// Unrenders all events currently rendered on the grid
 	unrenderEvents: function() {
 		this.removeSegPopover(); // removes the "more.." events popover
