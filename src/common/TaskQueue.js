@@ -61,8 +61,9 @@ var TaskQueue = Class.extend(EmitterMixin, {
 			}
 		} while (this.canRunNext());
 
-		this.isRunning = false;
 		this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
+		this.isRunning = false;
+		this.tryStart(); // if 'stop' handler added more tasks.... TODO: write test for this
 	},
 
 
