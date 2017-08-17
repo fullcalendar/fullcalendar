@@ -622,7 +622,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		) {
 			this.unselectEventInstance();
 
-			this.getEventSegs().forEach(function(seg) {
+			this.getRecursiveEventSegs().forEach(function(seg) {
 				if (
 					seg.footprint.eventInstance === eventInstance &&
 					seg.el // necessary?
@@ -639,7 +639,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	unselectEventInstance: function() {
 		if (this.selectedEventInstance) {
 
-			this.getEventSegs().forEach(function(seg) {
+			this.getRecursiveEventSegs().forEach(function(seg) {
 				if (seg.el) { // necessary?
 					seg.el.removeClass('fc-selected');
 				}

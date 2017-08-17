@@ -380,6 +380,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	getRecursiveEventSegs: function() {
+		var childrenByUid = this.childrenByUid;
+		var segs = this.getEventSegs();
+		var id;
+
+		for (id in childrenByUid) {
+			segs.push.apply(segs, childrenByUid[id].getRecursiveEventSegs());
+		}
+
+		return segs;
+	},
+
+
 	getEventSegs: function() { // just for itself
 		if (this.eventRenderer) {
 			return this.eventRenderer.getSegs();
