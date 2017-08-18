@@ -152,11 +152,11 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			else {
 				_this.set(name, res);
 			}
-		}, function() {
+		}, function(deps) {
 			_this.unset(name);
 
 			if (stopFunc) {
-				stopFunc.call(_this);
+				stopFunc.call(_this, deps);
 			}
 		});
 	},
@@ -184,7 +184,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			if (queuedChangeCnt === 1) { // first change to cause a "stop" ?
 				if (satisfyCnt === depCnt) { // all deps previously satisfied?
 					isCallingStop = true;
-					stopFunc();
+					stopFunc(values);
 					isCallingStop = false;
 				}
 			}
