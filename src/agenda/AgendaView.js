@@ -284,33 +284,28 @@ var AgendaView = FC.AgendaView = View.extend({
 		var timedChangeset = new EventInstanceChangeset();
 
 		if (eventChangeset.isClear) {
-			allDayChangeset.addClear();
-			timedChangeset.addClear();
+			allDayChangeset.isClear = true;
+			timedChangeset.isClear = true;
 		}
 
 		// reference dateProfile.isAllDay() instead of the eventDef
 		// because eventDef might have updated
 
-		// ugly
-		for (var id in eventChangeset.removalsByDefId) {
-			for (var i = 0; i < eventChangeset.removalsByDefId[id].length; i++) {
-				var instance = eventChangeset.removalsByDefId[id][i];
-
-				if (instance.dateProfile.isAllDay()) {
-					allDayChangeset.removeEventInstance(instance);
-				}
-				else {
-					timedChangeset.removeEventInstance(instance);
-				}
-			}
-		}
-
-		eventChangeset.iterEventInstances(function(instance) {
+		eventChangeset.removalsRepo.iterEventInstances(function(instance) {
 			if (instance.dateProfile.isAllDay()) {
-				allDayChangeset.addEventInstance(instance);
+				allDayChangeset.removalsRepo.addEventInstance(instance);
 			}
 			else {
-				timedChangeset.addEventInstance(instance);
+				timedChangeset.removalsRepo.addEventInstance(instance);
+			}
+		});
+
+		eventChangeset.additionsRepo.iterEventInstances(function(instance) {
+			if (instance.dateProfile.isAllDay()) {
+				allDayChangeset.additionsRepo.addEventInstance(instance);
+			}
+			else {
+				timedChangeset.additionsRepo.addEventInstance(instance);
 			}
 		});
 

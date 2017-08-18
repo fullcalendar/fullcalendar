@@ -31,7 +31,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.instanceRepo = new EventInstanceChangeset();
+		this.instanceRepo = new EventInstanceRepo();
 	},
 
 
@@ -130,15 +130,11 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 	tryReset: function() {
 		if (this.isFinalized()) {
-			this.freeze();
-
-			// ugly
-			var changeset = new EventInstanceChangeset(true); // isClear=true
-			changeset.byDefId = this.instanceRepo.byDefId;
-			changeset.instanceCnt = this.instanceRepo.instanceCnt;
-
-			this.addChangeset(changeset);
-			this.thaw();
+			this.trigger('receive', new EventInstanceChangeset(
+				true, // isClear
+				null, // removals
+				this.instanceRepo // additions
+			));
 		}
 	},
 
@@ -181,7 +177,11 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.eventDefsByUid[eventDef.uid] = eventDef;
 
 		this.addChangeset(
-			new EventInstanceChangeset(false, null, eventInstances)
+			new EventInstanceChangeset(
+				false, // isClear
+				null, // removals
+				new EventInstanceRepo(eventInstances) // additions
+			)
 		);
 	},
 
@@ -198,7 +198,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	removeAllEventDefs: function() {
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.addClear();
+
+		this.addChangeset(
+			new EventInstanceChangeset(true) // isClear=true
+		);
 	},
 
 
@@ -218,7 +221,9 @@ var EventPeriod = Class.extend(EmitterMixin, {
 			this.addChangeset(
 				new EventInstanceChangeset(
 					false, // isClear
-					this.instanceRepo.getEventInstancesForDef(eventDef) // removals
+					new EventInstanceRepo( // removals
+						this.instanceRepo.getEventInstancesForDef(eventDef)
+					)
 				)
 			);
 		}
@@ -230,22 +235,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 
 	addChangeset: function(changeset) {
-		this.instanceRepo.addChangeset(changeset); // internally record immediately
-		this.ensureOutboundChangeset().addChangeset(changeset);
+		if (!this.outboundChangeset) {
+			this.outboundChangeset = new EventInstanceChangeset();
+		}
+
+		changeset.applyToRepo(this.instanceRepo); // internally record immediately
+		changeset.applyToChangeset(this.outboundChangeset);
+
 		this.trySendOutbound();
-	},
-
-
-	addClear: function() {
-		this.instanceRepo.addClear(); // internally record immediately
-		this.ensureOutboundChangeset().addClear();
-		this.trySendOutbound();
-	},
-
-
-	ensureOutboundChangeset: function() {
-		return this.outboundChangeset ||
-			(this.outboundChangeset = new EventInstanceChangeset());
 	},
 
 

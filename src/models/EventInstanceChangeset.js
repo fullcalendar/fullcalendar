@@ -1,25 +1,14 @@
 
-var EventInstanceChangeset = Class.extend({
+var EventInstanceRepo = Class.extend({
 
-	isClear: false,
 	byDefId: null,
-	removalsByDefId: null,
-	instanceCnt: 0,
-	removalCnt: 0,
+	cnt: 0,
 
 
-	constructor: function(isClear, removals, adds) {
-		this.isClear = isClear || false;
-		this.removalsByDefId = {};
+	constructor: function(eventInstances) {
 		this.byDefId = {};
 
-		(removals || []).forEach(this.removeEventInstance.bind(this));
-		(adds || []).forEach(this.addEventInstance.bind(this));
-	},
-
-
-	isEmpty: function() {
-		return !this.isClear && !this.removalCnt && !this.instanceCnt;
+		(eventInstances || []).forEach(this.addEventInstance.bind(this));
 	},
 
 
@@ -85,80 +74,121 @@ var EventInstanceChangeset = Class.extend({
 
 
 	addEventInstance: function(eventInstance) {
-		this._addEventInstances(eventInstance.def.id, [ eventInstance ]);
+		this._addEventInstance(eventInstance.def.id, eventInstance);
 	},
 
 
 	removeEventInstance: function(eventInstance) {
-		this._removeEventInstances(eventInstance.def.id, [ eventInstance ]);
+		return this._removeEventInstance(eventInstance.def.id, eventInstance);
 	},
 
 
-	_addEventInstances: function(id, eventInstances) {
-		var bucket = (this.byDefId[id] || (this.byDefId[id] = []));
+	_addEventInstance: function(id, eventInstance) {
+		(this.byDefId[id] || (this.byDefId[id] = []))
+			.push(eventInstance);
 
-		bucket.push.apply(bucket, eventInstances);
-
-		this.instanceCnt += eventInstances.length;
+		this.cnt++;
 	},
 
 
-	_removeEventInstances: function(id, eventInstances) {
+	_removeEventInstance: function(id, eventInstance) {
 		var bucket = this.byDefId[id];
+
+		if (bucket && removeExact(bucket, eventInstance)) {
+
+			if (!bucket.length) {
+				delete this.byDefId[id];
+			}
+
+			this.cnt--;
+
+			return true;
+		}
+
+		return false;
+	},
+
+
+	clear: function() {
+		this.byDefId = {};
+		this.cnt = 0;
+	}
+
+
+});
+
+
+var EventInstanceChangeset = Class.extend({
+
+	isClear: false,
+	removalsRepo: null,
+	additionsRepo: null,
+
+
+	constructor: function(isClear, removalsRepo, additionsRepo) {
+		this.isClear = isClear || false;
+		this.removalsRepo = removalsRepo || new EventInstanceRepo();
+		this.additionsRepo = additionsRepo || new EventInstanceRepo();
+	},
+
+
+	applyToRepo: function(repo) {
+		var removalsHash = this.removalsRepo.byDefId;
+		var additionsHash = this.additionsRepo.byDefId;
+		var id, instances;
 		var i;
 
-		for (i = 0; i < eventInstances.length; i++) {
-			if (bucket && removeExact(bucket, eventInstances[i])) {
+		if (this.isClear) {
+			repo.clear();
+		}
 
-				if (!bucket.length) {
-					delete this.byDefId[id];
+		for (id in removalsHash) {
+			instances = removalsHash[id];
+
+			for (i = 0; i < instances.length; i++) {
+				repo._removeEventInstance(id, instances[i]);
+			}
+		}
+
+		for (id in additionsHash) {
+			instances = additionsHash[id];
+
+			for (i = 0; i < instances.length; i++) {
+				repo._addEventInstance(id, instances[i]);
+			}
+		}
+	},
+
+
+	applyToChangeset: function(changeset) {
+		var removalsHash = this.removalsRepo.byDefId;
+		var additionsHash = this.additionsRepo.byDefId;
+		var id, instances;
+		var i;
+
+		if (this.isClear) {
+			changeset.isClear = true;
+			changeset.removalsRepo.clear();
+			changeset.additionsRepo.clear();
+		}
+
+		for (id in removalsHash) {
+			instances = removalsHash[id];
+
+			for (i = 0; i < instances.length; i++) {
+				if (!changeset.additionsRepo._removeEventInstance(id, instances[i])) {
+					changeset.removalsRepo._addEventInstance(id, instances[i]);
 				}
-
-				this.instanceCnt--;
-			}
-			else {
-
-				(this.removalsByDefId[id] || (this.removalsByDefId[id] = []))
-					.push(eventInstances[i]);
-
-				this.removalCnt++;
 			}
 		}
-	},
 
+		for (id in additionsHash) {
+			instances = additionsHash[id];
 
-	// returns true/false if resulted in changes
-	addChangeset: function(changeset) {
-		var theirRemoveHash = changeset.removalsByDefId;
-		var theirAddHash = changeset.byDefId;
-		var anyChanges = false;
-		var id;
-
-		if (changeset.isClear) {
-			this.addClear();
-			anyChanges = true;
+			for (i = 0; i < instances.length; i++) {
+				changeset.additionsRepo._addEventInstance(id, instances[i]);
+			}
 		}
-
-		for (id in theirRemoveHash) {
-			this._removeEventInstances(id, theirRemoveHash[id]);
-			anyChanges = true;
-		}
-
-		for (id in theirAddHash) {
-			this._addEventInstances(id, theirAddHash[id]);
-			anyChanges = true;
-		}
-
-		return anyChanges;
-	},
-
-
-	addClear: function() {
-		this.isClear = true;
-		this.removalsByDefId = {};
-		this.byDefId = {};
-		this.removalCnt = 0;
-		this.instanceCnt = 0;
 	}
 
 });

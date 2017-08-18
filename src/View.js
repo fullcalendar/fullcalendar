@@ -751,7 +751,13 @@ View.watch('bindingEvents', [ 'dateProfile' ], function(deps) {
 	this.requestEvents(deps.dateProfile);
 
 	if (this.calendar.eventManager.isFinalized()) {
-		this._handleEventsChanged(this.calendar.eventManager.getFinalizedEvents());
+		this._handleEventsChanged(
+			new EventInstanceChangeset(
+				false, // isClear
+				null, // removals
+				this.calendar.eventManager.getEventInstanceRepo() // additions
+			)
+		);
 	}
 
 	this.bindEventChanges();

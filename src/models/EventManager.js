@@ -35,7 +35,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	getFinalizedEvents: function() {
+	getEventInstanceRepo: function() {
 		if (this.isFinalized()) {
 			return this.currentPeriod.instanceRepo;
 		}

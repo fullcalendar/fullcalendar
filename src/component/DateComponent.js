@@ -270,10 +270,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.hasOwnEventRendering()) {
 
 			if (!this.eventInstanceRepo) {
-				this.eventInstanceRepo = new EventInstanceChangeset();
+				this.eventInstanceRepo = new EventInstanceRepo();
 			}
 
-			this.eventInstanceRepo.addChangeset(changeset);
+			changeset.applyToRepo(this.eventInstanceRepo);
 
 			if (this.has('displayingEvents')) {
 				this.requestEventRender(this.eventInstanceRepo);
