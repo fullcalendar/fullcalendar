@@ -57,6 +57,7 @@
     "models/UnzonedRange.js",
     "models/ComponentFootprint.js",
     "models/EventManager.js",
+    "models/EventInstanceDataSource.js",
     "models/EventPeriod.js",
     "models/EventInstanceChangeset.js",
     "models/BusinessHourGenerator.js",
