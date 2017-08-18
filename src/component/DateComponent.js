@@ -282,7 +282,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.eventRenderer.rangeUpdated();
 		}
 
-		if (eventDataSource.isFinalized()) {
+		if (eventDataSource.isPopulated) {
 			this.requestEventRender(eventDataSource.instanceRepo);
 		}
 

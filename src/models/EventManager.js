@@ -38,11 +38,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	isFinalized: function() {
-		return this.currentPeriod && this.currentPeriod.isFinalized();
-	},
-
-
 	// Source Adding/Removing
 	// -----------------------------------------------------------------------------------------------------------------
 

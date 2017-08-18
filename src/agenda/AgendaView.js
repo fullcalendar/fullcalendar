@@ -296,7 +296,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		// initial event instances. simulate a changeset
-		if (eventDataSource.isFinalized()) {
+		if (eventDataSource.isPopulated) {
 			processChangeset(
 				new EventInstanceChangeset(false, null, eventDataSource.instanceRepo),
 				true // isInitial=true

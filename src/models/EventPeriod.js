@@ -4,6 +4,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 	instanceRepo: null,
 	freezeDepth: 0,
 	outboundChangeset: null,
+	isPopulated: false,
 
 
 	constructor: function() {
@@ -12,7 +13,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 
 
 	tryReset: function() {
-		if (this.isFinalized()) {
+		if (this.canTrigger()) {
 			this.triggerChangeset(new EventInstanceChangeset(
 				true, // isClear
 				null, // removals
@@ -31,7 +32,6 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 			this.outboundChangeset = new EventInstanceChangeset();
 		}
 
-		changeset.applyToRepo(this.instanceRepo); // internally record immediately
 		changeset.applyToChangeset(this.outboundChangeset);
 
 		this.trySendOutbound();
@@ -49,11 +49,15 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 	},
 
 
-	trySendOutbound: function() {
+	trySendOutbound: function() { // also might apply outbound changes to INTERNAL data
 		var outboundChangeset = this.outboundChangeset;
 
-		if (this.isFinalized()) {
+		if (this.canTrigger()) {
+			this.isPopulated = true; // event if empty result, consider populated
+
 			if (outboundChangeset) {
+				outboundChangeset.applyToRepo(this.instanceRepo); // finally internally record
+
 				this.outboundChangeset = null;
 				this.triggerChangeset(outboundChangeset);
 			}
@@ -66,7 +70,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 	},
 
 
-	isFinalized: function() {
+	canTrigger: function() {
 		return !this.freezeDepth;
 	},
 
@@ -344,8 +348,8 @@ var EventPeriod = EventInstanceDataSource.extend({
 	},
 
 
-	isFinalized: function() {
-		return EventInstanceDataSource.prototype.isFinalized.apply(this, arguments) &&
+	canTrigger: function() {
+		return EventInstanceDataSource.prototype.canTrigger.apply(this, arguments) &&
 			!this.pendingSourceCnt;
 	}
 
