@@ -257,37 +257,17 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	// Event Data Handling
-	// -----------------------------------------------------------------------------------------------------------------
+	// Event Data
+	// ---------------------------------------------------------------------------------------------------------------
 
 
-	handleEventsBound: function() {
-		this.callChildren('handleEventsBound', arguments);
+	setEventDataSourceInChildren: function(eventDataSource) {
+		this.setInChildren('eventDataSource', eventDataSource);
 	},
 
 
-	handleEventsChanged: function(changeset) {
-		if (this.hasOwnEventRendering()) {
-
-			if (!this.eventInstanceRepo) {
-				this.eventInstanceRepo = new EventInstanceRepo();
-			}
-
-			changeset.applyToRepo(this.eventInstanceRepo);
-
-			if (this.has('displayingEvents')) {
-				this.requestEventRender(this.eventInstanceRepo);
-			}
-		}
-
-		this.callChildren('handleEventsChanged', arguments);
-	},
-
-
-	handleEventsUnbound: function() {
-		this.eventInstanceRepo = null;
-
-		this.callChildren('handleEventsUnbound', arguments);
+	unsetEventDataSourceInChildren: function() {
+		this.unsetInChildren('eventDataSource');
 	},
 
 
@@ -295,26 +275,27 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	hasOwnEventRendering: function() {
-		return this.eventRenderer || this.renderEvents; // or legacy function
-	},
+	startDisplayingEvents: function(eventDataSource) {
+		var _this = this;
 
-
-	startDisplayingEvents: function() {
 		if (this.eventRenderer) {
 			this.eventRenderer.rangeUpdated();
 		}
 
-		if (this.eventInstanceRepo) {
-			this.requestEventRender(this.eventInstanceRepo);
+		if (eventDataSource.isFinalized()) {
+			this.requestEventRender(eventDataSource.instanceRepo);
 		}
+
+		this.listenTo(eventDataSource, 'receive', function(eventInstanceChangeset) {
+			_this.requestEventRender(eventDataSource.instanceRepo);
+		});
 	},
 
 
-	stopDisplayingEvents: function() {
-		if (this.eventInstanceRepo) {
-			this.requestEventUnrender();
-		}
+	stopDisplayingEvents: function(eventDataSource) {
+		this.stopListeningTo(eventDataSource);
+
+		this.requestEventUnrender();
 	},
 
 
@@ -784,10 +765,17 @@ DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHou
 });
 
 
-DateComponent.watch('displayingEvents', [ 'displayingDates' ], function() {
-	this.startDisplayingEvents();
-}, function() {
-	this.stopDisplayingEvents();
+DateComponent.watch('displayingEvents', [ 'displayingDates', 'eventDataSource' ], function(deps) {
+	this.startDisplayingEvents(deps.eventDataSource);
+}, function(deps) {
+	this.stopDisplayingEvents(deps.eventDataSource);
+});
+
+
+DateComponent.watch('settingEventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
+	this.setEventDataSourceInChildren(deps.eventDataSource);
+}, function(deps) {
+	this.unsetEventDataSourceInChildren(deps.eventDataSource);
 });
 
 

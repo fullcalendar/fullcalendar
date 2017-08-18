@@ -15,6 +15,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// returns an EventInstanceDataSource
 	requestEvents: function(start, end, timezone, force) {
 		if (
 			force ||
@@ -25,19 +26,14 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 				new EventPeriod(start, end, timezone)
 			);
 		}
+
+		return this.currentPeriod;
 	},
 
 
 	tryReset: function() {
 		if (this.currentPeriod) {
 			this.currentPeriod.tryReset();
-		}
-	},
-
-
-	getEventInstanceRepo: function() {
-		if (this.isFinalized()) {
-			return this.currentPeriod.instanceRepo;
 		}
 	},
 

@@ -180,7 +180,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// returns existing state at time of request
+	// returns an EventInstanceDataSource
 	requestEvents: function(dateProfile) {
 		var calendar = this.calendar;
 		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
@@ -189,23 +189,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 			calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
 			calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
 		);
-	},
-
-
-	bindEventChanges: function() {
-		this.listenTo(this.calendar.eventManager, 'receive', this._handleEventsChanged);
-	},
-
-
-	_handleEventsChanged: function(changeset) {
-		this.startBatchRender();
-		this.handleEventsChanged(changeset);
-		this.stopBatchRender();
-	},
-
-
-	unbindEventChanges: function() {
-		this.stopListeningTo(this.calendar.eventManager);
 	},
 
 
@@ -746,22 +729,6 @@ View.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function
 });
 
 
-View.watch('bindingEvents', [ 'dateProfile' ], function(deps) {
-	this.handleEventsBound();
-	this.requestEvents(deps.dateProfile);
-
-	if (this.calendar.eventManager.isFinalized()) {
-		this._handleEventsChanged(
-			new EventInstanceChangeset(
-				false, // isClear
-				null, // removals
-				this.calendar.eventManager.getEventInstanceRepo() // additions
-			)
-		);
-	}
-
-	this.bindEventChanges();
-}, function() {
-	this.unbindEventChanges();
-	this.handleEventsUnbound();
+View.watch('eventDataSource', [ 'dateProfile' ], function(deps) {
+	return this.requestEvents(deps.dateProfile);
 });

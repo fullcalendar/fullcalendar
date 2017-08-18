@@ -132,6 +132,11 @@ var EventInstanceChangeset = Class.extend({
 	},
 
 
+	isEmpty: function() {
+		return !this.isClear && !this.removalsRepo.cnt && !this.additionsRepo.cnt;
+	},
+
+
 	applyToRepo: function(repo) {
 		var removalsHash = this.removalsRepo.byDefId;
 		var additionsHash = this.additionsRepo.byDefId;

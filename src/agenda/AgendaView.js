@@ -279,41 +279,45 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	handleEventsChanged: function(eventChangeset) {
-		var allDayChangeset = new EventInstanceChangeset();
-		var timedChangeset = new EventInstanceChangeset();
+	setEventDataSourceInChildren: function(eventDataSource) {
+		var allDayEventSource = new EventInstanceDataSource();
+		var timedEventSource = new EventInstanceDataSource();
 
-		if (eventChangeset.isClear) {
-			allDayChangeset.isClear = true;
-			timedChangeset.isClear = true;
+		function processChangeset(changeset, isInitial) {
+			var split = splitEventChangesetByAllDay(changeset);
+
+			if (isInitial || !split.allDay.isEmpty()) {
+				allDayEventSource.addChangeset(split.allDay);
+			}
+
+			if (isInitial || !split.timed.isEmpty()) {
+				timedEventSource.addChangeset(split.timed);
+			}
 		}
 
-		// reference dateProfile.isAllDay() instead of the eventDef
-		// because eventDef might have updated
+		// initial event instances. simulate a changeset
+		if (eventDataSource.isFinalized()) {
+			processChangeset(
+				new EventInstanceChangeset(false, null, eventDataSource.instanceRepo),
+				true // isInitial=true
+			);
+		}
 
-		eventChangeset.removalsRepo.iterEventInstances(function(instance) {
-			if (instance.dateProfile.isAllDay()) {
-				allDayChangeset.removalsRepo.addEventInstance(instance);
-			}
-			else {
-				timedChangeset.removalsRepo.addEventInstance(instance);
-			}
-		});
+		// listen for further changes
+		this.listenTo(eventDataSource, 'receive', processChangeset);
 
-		eventChangeset.additionsRepo.iterEventInstances(function(instance) {
-			if (instance.dateProfile.isAllDay()) {
-				allDayChangeset.additionsRepo.addEventInstance(instance);
-			}
-			else {
-				timedChangeset.additionsRepo.addEventInstance(instance);
-			}
-		});
-
-		this.timeGrid.handleEventsChanged(timedChangeset);
-
+		// finally, install into the children...
 		if (this.dayGrid) {
-			this.dayGrid.handleEventsChanged(allDayChangeset);
+			this.dayGrid.set('eventDataSource', allDayEventSource);
 		}
+		this.timeGrid.set('eventDataSource', timedEventSource);
+	},
+
+
+	unsetEventDataSourceInChildren: function(eventDataSource) {
+		this.stopListeningTo(eventDataSource);
+
+		View.prototype.unsetEventDataSourceInChildren.apply(this, arguments);
 	},
 
 
@@ -438,6 +442,40 @@ var agendaDayGridMethods = {
 	}
 
 };
+
+
+function splitEventChangesetByAllDay(eventChangeset) {
+	var allDayChangeset = new EventInstanceChangeset();
+	var timedChangeset = new EventInstanceChangeset();
+
+	if (eventChangeset.isClear) {
+		allDayChangeset.isClear = true;
+		timedChangeset.isClear = true;
+	}
+
+	// reference dateProfile.isAllDay() instead of the eventDef
+	// because eventDef might have updated
+
+	eventChangeset.removalsRepo.iterEventInstances(function(instance) {
+		if (instance.dateProfile.isAllDay()) {
+			allDayChangeset.removalsRepo.addEventInstance(instance);
+		}
+		else {
+			timedChangeset.removalsRepo.addEventInstance(instance);
+		}
+	});
+
+	eventChangeset.additionsRepo.iterEventInstances(function(instance) {
+		if (instance.dateProfile.isAllDay()) {
+			allDayChangeset.additionsRepo.addEventInstance(instance);
+		}
+		else {
+			timedChangeset.additionsRepo.addEventInstance(instance);
+		}
+	});
+
+	return { allDay: allDayChangeset, timed: timedChangeset };
+}
 
 
 function groupEventFootprintsByAllDay(eventFootprints) {

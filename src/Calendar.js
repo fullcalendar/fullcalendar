@@ -336,8 +336,9 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// returns an EventInstanceDataSource
 	requestEvents: function(start, end) {
-		this.eventManager.requestEvents(
+		return this.eventManager.requestEvents(
 			start,
 			end,
 			this.opt('timezone'),
