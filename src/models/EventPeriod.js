@@ -13,7 +13,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 
 	tryReset: function() {
 		if (this.isFinalized()) {
-			this.trigger('receive', new EventInstanceChangeset(
+			this.triggerChangeset(new EventInstanceChangeset(
 				true, // isClear
 				null, // removals
 				this.instanceRepo // additions
@@ -55,12 +55,12 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 		if (this.isFinalized()) {
 			if (outboundChangeset) {
 				this.outboundChangeset = null;
-				this.trigger('receive', outboundChangeset);
+				this.triggerChangeset(outboundChangeset);
 			}
 			else {
 				// hack for eventAfterAllRender
 				// also for DateComponents to know an empy, but populated, state
-				this.trigger('receive', new EventInstanceChangeset());
+				this.triggerChangeset(new EventInstanceChangeset());
 			}
 		}
 	},
@@ -68,6 +68,13 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 
 	isFinalized: function() {
 		return !this.freezeDepth;
+	},
+
+
+	triggerChangeset: function(changeset) {
+		this.trigger('before:receive');
+		this.trigger('receive', changeset);
+		this.trigger('after:receive');
 	}
 
 });

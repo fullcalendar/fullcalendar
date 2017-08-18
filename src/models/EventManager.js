@@ -197,8 +197,16 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	bindPeriod: function(eventPeriod) {
-		this.listenToAndEmit(eventPeriod, 'receive');
-		this.listenToAndEmit(eventPeriod, 'clear');
+		var _this = this;
+
+		this.listenToAndEmit(eventPeriod, {
+			'before:receive': function() {
+				_this.calendar.startBatchRender();
+			},
+			'after:receive': function() {
+				_this.calendar.stopBatchRender();
+			}
+		});
 	},
 
 
