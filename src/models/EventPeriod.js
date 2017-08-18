@@ -230,6 +230,40 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
+	/*
+	Returns an undo function.
+	*/
+	mutateEventsWithId: function(eventDefId, eventDefMutation) {
+		var _this = this;
+		var eventDefs;
+		var undoFuncs = [];
+
+		this.freeze();
+
+		eventDefs = this.getEventDefsById(eventDefId);
+		eventDefs.forEach(function(eventDef) {
+			// add/remove esp because id might change
+			_this.removeEventDef(eventDef);
+			undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
+			_this.addEventDef(eventDef);
+		});
+
+		this.thaw();
+
+		return function() {
+			_this.freeze();
+
+			for (var i = 0; i < eventDefs.length; i++) {
+				_this.removeEventDef(eventDefs[i]);
+				undoFuncs[i]();
+				_this.addEventDef(eventDefs[i]);
+			}
+
+			_this.thaw();
+		};
+	},
+
+
 	// Reporting and Triggering
 	// -----------------------------------------------------------------------------------------------------------------
 

@@ -303,34 +303,9 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	*/
 	mutateEventsWithId: function(eventDefId, eventDefMutation) {
 		var currentPeriod = this.currentPeriod;
-		var eventDefs;
-		var undoFuncs = [];
 
 		if (currentPeriod) {
-
-			currentPeriod.freeze();
-
-			eventDefs = currentPeriod.getEventDefsById(eventDefId);
-			eventDefs.forEach(function(eventDef) {
-				// add/remove esp because id might change
-				currentPeriod.removeEventDef(eventDef);
-				undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
-				currentPeriod.addEventDef(eventDef);
-			});
-
-			currentPeriod.thaw();
-
-			return function() {
-				currentPeriod.freeze();
-
-				for (var i = 0; i < eventDefs.length; i++) {
-					currentPeriod.removeEventDef(eventDefs[i]);
-					undoFuncs[i]();
-					currentPeriod.addEventDef(eventDefs[i]);
-				}
-
-				currentPeriod.thaw();
-			};
+			return currentPeriod.mutateEventsWithId(eventDefId, eventDefMutation);
 		}
 
 		return function() { };
