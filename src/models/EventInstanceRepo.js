@@ -106,13 +106,6 @@ var EventInstanceRepo = Class.extend({
 		}
 
 		return false;
-	},
-
-
-	clear: function() {
-		this.byDefId = {};
-		this.cnt = 0;
 	}
-
 
 });

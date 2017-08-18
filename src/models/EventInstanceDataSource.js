@@ -4,7 +4,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 	instanceRepo: null,
 	freezeDepth: 0,
 	outboundChangeset: null,
-	isPopulated: false,
+	isPopulated: false, // can remove after we remove eventAfterAllRender
 
 
 	constructor: function() {
@@ -15,8 +15,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 	tryReset: function() {
 		if (this.isPopulated && this.canTrigger()) {
 			this.triggerChangeset(new EventInstanceChangeset(
-				true, // isClear
-				null, // removals
+				this.instanceRepo, // removals
 				this.instanceRepo // additions
 			));
 		}

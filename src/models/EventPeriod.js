@@ -153,7 +153,6 @@ var EventPeriod = EventInstanceDataSource.extend({
 
 		this.addChangeset(
 			new EventInstanceChangeset(
-				false, // isClear
 				null, // removals
 				new EventInstanceRepo( // additions
 					eventDef.buildInstances(this.unzonedRange)
@@ -185,12 +184,13 @@ var EventPeriod = EventInstanceDataSource.extend({
 
 
 	removeAllEventDefs: function() {
-		this.eventDefsByUid = {};
-		this.eventDefsById = {};
+		this.freeze();
 
-		this.addChangeset(
-			new EventInstanceChangeset(true) // isClear=true
+		Object.values(this.eventDefsByUid).forEach(
+			this.removeEventDef.bind(this)
 		);
+
+		this.thaw();
 	},
 
 
@@ -209,7 +209,6 @@ var EventPeriod = EventInstanceDataSource.extend({
 
 			this.addChangeset(
 				new EventInstanceChangeset(
-					false, // isClear
 					new EventInstanceRepo( // removals
 						this.instanceRepo.getEventInstancesForDef(eventDef)
 					)

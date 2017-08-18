@@ -1,20 +1,13 @@
 
 var EventInstanceChangeset = Class.extend({
 
-	isClear: false,
 	removalsRepo: null,
 	additionsRepo: null,
 
 
-	constructor: function(isClear, removalsRepo, additionsRepo) {
-		this.isClear = isClear || false;
+	constructor: function(removalsRepo, additionsRepo) {
 		this.removalsRepo = removalsRepo || new EventInstanceRepo();
 		this.additionsRepo = additionsRepo || new EventInstanceRepo();
-	},
-
-
-	isEmpty: function() {
-		return !this.isClear && !this.removalsRepo.cnt && !this.additionsRepo.cnt;
 	},
 
 
@@ -23,10 +16,6 @@ var EventInstanceChangeset = Class.extend({
 		var additionsHash = this.additionsRepo.byDefId;
 		var id, instances;
 		var i;
-
-		if (this.isClear) {
-			repo.clear();
-		}
 
 		for (id in removalsHash) {
 			instances = removalsHash[id];
@@ -51,12 +40,6 @@ var EventInstanceChangeset = Class.extend({
 		var additionsHash = this.additionsRepo.byDefId;
 		var id, instances;
 		var i;
-
-		if (this.isClear) {
-			changeset.isClear = true;
-			changeset.removalsRepo.clear();
-			changeset.additionsRepo.clear();
-		}
 
 		for (id in removalsHash) {
 			instances = removalsHash[id];

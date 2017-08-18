@@ -12,10 +12,6 @@ var EventInstanceDataSourceSplitter = Class.extend(EmitterMixin, ListenerMixin, 
 	buildSubSource: function(key) {
 		var subDataSource = new EventInstanceDataSource();
 
-		this.on('clear', function() {
-			subDataSource.addChangeset(new EventInstanceChangeset(true));
-		});
-
 		this.on('receive:' + key, function(changeset) {
 			subDataSource.addChangeset(changeset);
 		});
@@ -34,7 +30,7 @@ var EventInstanceDataSourceSplitter = Class.extend(EmitterMixin, ListenerMixin, 
 		this.listenTo(dataSource, 'receive', this.processChangeset);
 
 		if (dataSource.isPopulated) {
-			this.processChangeset(new EventInstanceChangeset(false, null, dataSource.instanceRepo));
+			this.processChangeset(new EventInstanceChangeset(null, dataSource.instanceRepo));
 		}
 	},
 
@@ -51,10 +47,6 @@ var EventInstanceDataSourceSplitter = Class.extend(EmitterMixin, ListenerMixin, 
 		var getChangeset = function(key) {
 			return (changesetsByKey[key] || (changesetsByKey[key] = new EventInstanceChangeset()));
 		};
-
-		if (changeset.isClear) {
-			this.trigger('clear');
-		}
 
 		changeset.removalsRepo.iterEventInstances(function(eventInstance) {
 			keysFunc(eventInstance).forEach(function(key) {
