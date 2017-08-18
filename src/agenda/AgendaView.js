@@ -14,6 +14,8 @@ var AgendaView = FC.AgendaView = View.extend({
 	dayGridClass: DayGrid, // class used to instantiate the dayGrid. subclasses can override
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
 
+	eventDataSourceSplitter: null,
+
 	axisWidth: null, // the width of the time axis running down the side
 
 	headContainerEl: null, // div that hold's the timeGrid's rendered date header
@@ -280,42 +282,23 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	setEventDataSourceInChildren: function(eventDataSource) {
-		var allDayEventSource = new EventInstanceDataSource();
-		var timedEventSource = new EventInstanceDataSource();
+		var splitter = this.eventDataSourceSplitter =
+			new EventInstanceDataSourceSplitter(function(eventInstance) {
+				return [ eventInstance.dateProfile.isAllDay() ];
+			});
 
-		function processChangeset(changeset, isInitial) {
-			var split = splitEventChangesetByAllDay(changeset);
+		this.timeGrid.set('eventDataSource', splitter.buildSubSource(false));
 
-			if (isInitial || !split.allDay.isEmpty()) {
-				allDayEventSource.addChangeset(split.allDay);
-			}
-
-			if (isInitial || !split.timed.isEmpty()) {
-				timedEventSource.addChangeset(split.timed);
-			}
-		}
-
-		// initial event instances. simulate a changeset
-		if (eventDataSource.isPopulated) {
-			processChangeset(
-				new EventInstanceChangeset(false, null, eventDataSource.instanceRepo),
-				true // isInitial=true
-			);
-		}
-
-		// listen for further changes
-		this.listenTo(eventDataSource, 'receive', processChangeset);
-
-		// finally, install into the children...
 		if (this.dayGrid) {
-			this.dayGrid.set('eventDataSource', allDayEventSource);
+			this.dayGrid.set('eventDataSource', splitter.buildSubSource(true));
 		}
-		this.timeGrid.set('eventDataSource', timedEventSource);
+
+		splitter.addSource(eventDataSource);
 	},
 
 
 	unsetEventDataSourceInChildren: function(eventDataSource) {
-		this.stopListeningTo(eventDataSource);
+		this.eventDataSourceSplitter.removeSource(eventDataSource);
 
 		View.prototype.unsetEventDataSourceInChildren.apply(this, arguments);
 	},
@@ -442,40 +425,6 @@ var agendaDayGridMethods = {
 	}
 
 };
-
-
-function splitEventChangesetByAllDay(eventChangeset) {
-	var allDayChangeset = new EventInstanceChangeset();
-	var timedChangeset = new EventInstanceChangeset();
-
-	if (eventChangeset.isClear) {
-		allDayChangeset.isClear = true;
-		timedChangeset.isClear = true;
-	}
-
-	// reference dateProfile.isAllDay() instead of the eventDef
-	// because eventDef might have updated
-
-	eventChangeset.removalsRepo.iterEventInstances(function(instance) {
-		if (instance.dateProfile.isAllDay()) {
-			allDayChangeset.removalsRepo.addEventInstance(instance);
-		}
-		else {
-			timedChangeset.removalsRepo.addEventInstance(instance);
-		}
-	});
-
-	eventChangeset.additionsRepo.iterEventInstances(function(instance) {
-		if (instance.dateProfile.isAllDay()) {
-			allDayChangeset.additionsRepo.addEventInstance(instance);
-		}
-		else {
-			timedChangeset.additionsRepo.addEventInstance(instance);
-		}
-	});
-
-	return { allDay: allDayChangeset, timed: timedChangeset };
-}
 
 
 function groupEventFootprintsByAllDay(eventFootprints) {

@@ -58,6 +58,7 @@
     "models/ComponentFootprint.js",
     "models/EventManager.js",
     "models/EventInstanceDataSource.js",
+    "models/EventInstanceDataSourceSplitter.js",
     "models/EventPeriod.js",
     "models/EventInstanceRepo.js",
     "models/EventInstanceChangeset.js",
