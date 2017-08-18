@@ -13,7 +13,7 @@ var EventInstanceDataSource = Class.extend(EmitterMixin, {
 
 
 	tryReset: function() {
-		if (this.canTrigger()) {
+		if (this.isPopulated && this.canTrigger()) {
 			this.triggerChangeset(new EventInstanceChangeset(
 				true, // isClear
 				null, // removals

@@ -23,7 +23,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	isDatesRendered: false,
 	isEventsRendered: false,
-	eventInstanceRepo: null,
 
 
 	constructor: function() {
@@ -772,7 +771,7 @@ DateComponent.watch('displayingEvents', [ 'displayingDates', 'eventDataSource' ]
 });
 
 
-DateComponent.watch('settingEventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
+DateComponent.watch('eventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
 	this.setEventDataSourceInChildren(deps.eventDataSource);
 }, function(deps) {
 	this.unsetEventDataSourceInChildren(deps.eventDataSource);
