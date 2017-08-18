@@ -1,37 +1,103 @@
 
-var EventPeriod = Class.extend(EmitterMixin, {
+var EventInstanceDataSource = Class.extend(EmitterMixin, {
+
+	instanceRepo: null,
+	freezeDepth: 0,
+	outboundChangeset: null,
+
+
+	constructor: function() {
+		this.instanceRepo = new EventInstanceRepo();
+	},
+
+
+	tryReset: function() {
+		if (this.isFinalized()) {
+			this.trigger('receive', new EventInstanceChangeset(
+				true, // isClear
+				null, // removals
+				this.instanceRepo // additions
+			));
+		}
+	},
+
+
+	// Reporting and Triggering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	addChangeset: function(changeset) {
+		if (!this.outboundChangeset) {
+			this.outboundChangeset = new EventInstanceChangeset();
+		}
+
+		changeset.applyToRepo(this.instanceRepo); // internally record immediately
+		changeset.applyToChangeset(this.outboundChangeset);
+
+		this.trySendOutbound();
+	},
+
+
+	freeze: function() {
+		this.freezeDepth++;
+	},
+
+
+	thaw: function() {
+		this.freezeDepth--;
+		this.trySendOutbound();
+	},
+
+
+	trySendOutbound: function() {
+		var outboundChangeset = this.outboundChangeset;
+
+		if (this.isFinalized()) {
+			if (outboundChangeset) {
+				this.outboundChangeset = null;
+				this.trigger('receive', outboundChangeset);
+			}
+			else {
+				// hack for eventAfterAllRender
+				// also for DateComponents to know an empy, but populated, state
+				this.trigger('receive', new EventInstanceChangeset());
+			}
+		}
+	},
+
+
+	isFinalized: function() {
+		return !this.freezeDepth;
+	}
+
+});
+
+
+var EventPeriod = EventInstanceDataSource.extend({
 
 	start: null,
 	end: null,
 	timezone: null,
-
 	unzonedRange: null,
-
 	requestsByUid: null,
 	pendingSourceCnt: 0,
-	freezeDepth: 0,
-
 	eventDefsByUid: null,
 	eventDefsById: null,
 
-	outboundChangeset: null,
-	instanceRepo: null,
-
 
 	constructor: function(start, end, timezone) {
+		EventInstanceDataSource.call(this);
+
 		this.start = start;
 		this.end = end;
 		this.timezone = timezone;
-
 		this.unzonedRange = new UnzonedRange(
 			start.clone().stripZone(),
 			end.clone().stripZone()
 		);
-
 		this.requestsByUid = {};
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
-		this.instanceRepo = new EventInstanceRepo();
 	},
 
 
@@ -41,7 +107,7 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	// Requesting and Purging
+	// Sources
 	// -----------------------------------------------------------------------------------------------------------------
 
 
@@ -128,17 +194,6 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
-	tryReset: function() {
-		if (this.isFinalized()) {
-			this.trigger('receive', new EventInstanceChangeset(
-				true, // isClear
-				null, // removals
-				this.instanceRepo // additions
-			));
-		}
-	},
-
-
 	// Event Definitions
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -166,23 +221,31 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	},
 
 
+	// generates and stores instances as well
 	addEventDef: function(eventDef) {
-		var eventDefsById = this.eventDefsById;
-		var eventDefId = eventDef.id;
-		var bucket = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
-		var eventInstances = eventDef.buildInstances(this.unzonedRange);
-
-		bucket.push(eventDef);
-
-		this.eventDefsByUid[eventDef.uid] = eventDef;
+		this.storeEventDef(eventDef);
 
 		this.addChangeset(
 			new EventInstanceChangeset(
 				false, // isClear
 				null, // removals
-				new EventInstanceRepo(eventInstances) // additions
+				new EventInstanceRepo( // additions
+					eventDef.buildInstances(this.unzonedRange)
+				)
 			)
 		);
+	},
+
+
+	// does NOT add any instances
+	storeEventDef: function(eventDef) {
+		var eventDefsById = this.eventDefsById;
+		var id = eventDef.id;
+
+		(eventDefsById[id] || (eventDefsById[id] = []))
+			.push(eventDef);
+
+		this.eventDefsByUid[eventDef.uid] = eventDef;
 	},
 
 
@@ -268,54 +331,15 @@ var EventPeriod = Class.extend(EmitterMixin, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	addChangeset: function(changeset) {
-		if (!this.outboundChangeset) {
-			this.outboundChangeset = new EventInstanceChangeset();
-		}
-
-		changeset.applyToRepo(this.instanceRepo); // internally record immediately
-		changeset.applyToChangeset(this.outboundChangeset);
-
-		this.trySendOutbound();
-	},
-
-
-	freeze: function() {
-		this.freezeDepth++;
-	},
-
-
-	thaw: function() {
-		this.freezeDepth--;
-		this.trySendOutbound();
-	},
-
-
 	reportSourceDone: function() {
 		this.pendingSourceCnt--;
 		this.trySendOutbound();
 	},
 
 
-	trySendOutbound: function() {
-		var outboundChangeset = this.outboundChangeset;
-
-		if (this.isFinalized()) {
-			if (outboundChangeset) {
-				this.outboundChangeset = null;
-				this.trigger('receive', outboundChangeset);
-			}
-			else {
-				// hack for eventAfterAllRender
-				// also for DateComponents to know an empy, but populated, state
-				this.trigger('receive', new EventInstanceChangeset());
-			}
-		}
-	},
-
-
 	isFinalized: function() {
-		return !this.pendingSourceCnt && !this.freezeDepth;
+		return EventInstanceDataSource.prototype.isFinalized.apply(this, arguments) &&
+			!this.pendingSourceCnt;
 	}
 
 });
