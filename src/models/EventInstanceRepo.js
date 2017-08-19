@@ -34,15 +34,10 @@ var EventInstanceRepo = Class.extend({
 
 	iterEventInstances: function(func) {
 		var byDefId = this.byDefId;
-		var defId, instances;
-		var i;
+		var defId;
 
 		for (defId in byDefId) {
-			instances = byDefId[defId];
-
-			for (i = 0; i < instances.length; i++) {
-				func(instances[i]);
-			}
+			byDefId[defId].forEach(func);
 		}
 	},
 

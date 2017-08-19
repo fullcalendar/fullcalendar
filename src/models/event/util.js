@@ -13,14 +13,12 @@ function eventDefsToEventInstances(eventDefs, unzonedRange) {
 }
 
 
-function eventInstancesToEventRanges(eventInstances) {
-	return eventInstances.map(function(eventInstance) {
-		return new EventRange(
-			eventInstance.dateProfile.unzonedRange,
-			eventInstance.def,
-			eventInstance
-		);
-	});
+function eventInstanceToEventRange(eventInstance) {
+	return new EventRange(
+		eventInstance.dateProfile.unzonedRange,
+		eventInstance.def,
+		eventInstance
+	);
 }
 
 
@@ -36,15 +34,11 @@ function eventRangeToEventFootprint(eventRange) {
 }
 
 
-function eventInstancesToUnzonedRanges(eventInstances) {
-	return eventInstances.map(function(eventInstance) {
-		return eventInstance.dateProfile.unzonedRange;
-	});
+function eventInstanceToUnzonedRange(eventInstance) {
+	return eventInstance.dateProfile.unzonedRange;
 }
 
 
-function eventFootprintsToComponentFootprints(eventFootprints) {
-	return eventFootprints.map(function(eventFootprint) {
-		return eventFootprint.componentFootprint;
-	});
+function eventFootprintToComponentFootprint(eventFootprint) {
+	return eventFootprint.componentFootprint;
 }

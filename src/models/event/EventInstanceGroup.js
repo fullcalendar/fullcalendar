@@ -15,7 +15,7 @@ var EventInstanceGroup = Class.extend({
 
 
 	getAllEventRanges: function() {
-		return eventInstancesToEventRanges(this.eventInstances);
+		return this.eventInstances.map(eventInstanceToEventRange);
 	},
 
 
@@ -56,7 +56,7 @@ var EventInstanceGroup = Class.extend({
 
 
 	sliceInverseRenderRanges: function(constraintRange) {
-		var unzonedRanges = eventInstancesToUnzonedRanges(this.eventInstances);
+		var unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange);
 		var ownerDef = this.getEventDef();
 
 		unzonedRanges = invertUnzonedRanges(unzonedRanges, constraintRange);

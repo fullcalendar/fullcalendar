@@ -9,7 +9,7 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 	var i;
 
 	var peerEventInstances = this.getPeerEventInstances(eventDef);
-	var peerEventRanges = eventInstancesToEventRanges(peerEventInstances);
+	var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
 	var constraintVal = eventDef.getConstraint();
@@ -55,7 +55,7 @@ Calendar.prototype.getPeerEventInstances = function(eventDef) {
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
 	var peerEventInstances = this.eventManager.getEventInstances();
-	var peerEventRanges = eventInstancesToEventRanges(peerEventInstances);
+	var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
 	var selectAllowFunc;
@@ -183,11 +183,10 @@ Calendar.prototype.buildCurrentBusinessFootprints = function(isAllDay) {
 
 // conversion util
 Calendar.prototype.eventInstancesToFootprints = function(eventInstances) {
-	return eventFootprintsToComponentFootprints(
-		this.eventRangesToEventFootprints(
-			eventInstancesToEventRanges(eventInstances)
-		)
-	);
+	var eventRanges = eventInstances.map(eventInstanceToEventRange);
+	var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+
+	return eventFootprints.map(eventFootprintToComponentFootprint);
 };
 
 
