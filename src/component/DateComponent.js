@@ -621,12 +621,18 @@ var DateComponent = FC.DateComponent = Component.extend({
 		var i;
 
 		for (i = 0; i < eventRanges.length; i++) {
-			eventFootprints.push(
-				eventRangeToEventFootprint(eventRanges[i])
+			eventFootprints.push.apply( // append
+				eventFootprints,
+				this.eventRangeToEventFootprints(eventRanges[i])
 			);
 		}
 
 		return eventFootprints;
+	},
+
+
+	eventRangeToEventFootprints: function(eventRange) {
+		return [ eventRangeToEventFootprint(eventRange) ];
 	},
 
 
