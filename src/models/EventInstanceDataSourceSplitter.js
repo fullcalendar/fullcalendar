@@ -23,17 +23,22 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 			subDataSource.isPopulated = true;
 		}
 
-		this.on('receive:' + key, function(changeset) {
+		subDataSource.listenTo(this, 'receive:' + key, function(changeset) {
 			subDataSource.addChangeset(changeset);
 		});
 
-		this.on('after:receive', function() {
+		subDataSource.listenTo(this, 'after:receive', function() {
 			if (!subDataSource.isPopulated) {
 				subDataSource.addChangeset(new EventInstanceChangeset());
 			}
 		});
 
 		return subDataSource;
+	},
+
+
+	releaseSubResource: function(subDataSource) {
+		subDataSource.stopListeningTo(this);
 	},
 
 

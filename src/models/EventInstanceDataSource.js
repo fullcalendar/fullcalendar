@@ -1,5 +1,5 @@
 
-var EventInstanceDataSource = Class.extend(EmitterMixin, {
+var EventInstanceDataSource = Class.extend(EmitterMixin, ListenerMixin, {
 
 	instanceRepo: null,
 	freezeDepth: 0,
