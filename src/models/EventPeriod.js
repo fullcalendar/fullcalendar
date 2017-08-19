@@ -219,35 +219,30 @@ var EventPeriod = EventInstanceDataSource.extend({
 
 
 	/*
+	Will emit TWO SEPARATE CHANGESETS. This is due to EventDef's being mutable.
 	Returns an undo function.
 	*/
 	mutateEventsWithId: function(eventDefId, eventDefMutation) {
 		var _this = this;
-		var eventDefs;
-		var undoFuncs = [];
+		var eventDefs = this.getEventDefsById(eventDefId);
+		var undoFuncs;
 
-		this.freeze();
+		eventDefs.forEach(this.removeEventDef.bind(this));
 
-		eventDefs = this.getEventDefsById(eventDefId);
-		eventDefs.forEach(function(eventDef) {
-			// add/remove esp because id might change
-			_this.removeEventDef(eventDef);
-			undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
-			_this.addEventDef(eventDef);
+		undoFuncs = eventDefs.map(function(eventDef) {
+			return eventDefMutation.mutateSingle(eventDef);
 		});
 
-		this.thaw();
+		eventDefs.forEach(this.addEventDef.bind(this));
 
 		return function() {
-			_this.freeze();
+			eventDefs.forEach(_this.removeEventDef.bind(_this));
 
-			for (var i = 0; i < eventDefs.length; i++) {
-				_this.removeEventDef(eventDefs[i]);
-				undoFuncs[i]();
-				_this.addEventDef(eventDefs[i]);
-			}
+			undoFuncs.forEach(function(undoFunc) {
+				undoFunc();
+			});
 
-			_this.thaw();
+			eventDefs.forEach(_this.addEventDef.bind(_this));
 		};
 	},
 

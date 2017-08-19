@@ -301,10 +301,22 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	Returns an undo function.
 	*/
 	mutateEventsWithId: function(eventDefId, eventDefMutation) {
+		var calendar = this.calendar;
 		var currentPeriod = this.currentPeriod;
+		var undoFunc;
 
 		if (currentPeriod) {
-			return currentPeriod.mutateEventsWithId(eventDefId, eventDefMutation);
+
+			// emits two separate changesets, so make sure rendering happens only once
+			calendar.startBatchRender();
+			undoFunc = currentPeriod.mutateEventsWithId(eventDefId, eventDefMutation);
+			calendar.stopBatchRender();
+
+			return function() {
+				calendar.startBatchRender();
+				undoFunc();
+				calendar.stopBatchRender();
+			};
 		}
 
 		return function() { };
