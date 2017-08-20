@@ -43,16 +43,20 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 
 
 	addSource: function(dataSource) {
-		this.listenTo(dataSource, 'receive', this.processChangeset);
-
 		if (dataSource.isPopulated) {
-			this.processChangeset(new EventInstanceChangeset(null, dataSource.instanceRepo));
+			this.processChangeset(new EventInstanceChangeset(null, dataSource.instanceRepo)); // add all
 		}
+
+		this.listenTo(dataSource, 'receive', this.processChangeset);
 	},
 
 
 	removeSource: function(dataSource) {
 		this.stopListeningTo(dataSource);
+
+		if (dataSource.isPopulated) {
+			this.processChangeset(new EventInstanceChangeset(dataSource.instanceRepo)); // remove all
+		}
 	},
 
 
