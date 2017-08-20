@@ -85,7 +85,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 
 	renderFgRanges: function(eventRanges) {
-		var eventFootprints = eventRanges.map(eventRangeToEventFootprint);
+		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
 		// render an `.el` on each seg
@@ -105,7 +105,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 
 	renderBgRanges: function(eventRanges) {
-		var eventFootprints = eventRanges.map(eventRangeToEventFootprint);
+		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
 		if (this.renderBgSegs(segs) !== false) { // no failure?
