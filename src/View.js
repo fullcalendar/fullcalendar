@@ -123,7 +123,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		// TODO: not best place for this
 		// TODO: better way of forwarding options from calendar -> view
-		this.calendar.optionsModel.watch('viewRawBusinessHours' + this.uid, [ '?businessHours' ], function(deps) {
+		this.calendar.optionsModel.watch('viewRawBusinessHours' + this.uid, [ 'businessHours' ], function(deps) {
 			_this.set('rawBusinessHours', deps.businessHours);
 		}, function() {
 			_this.unset('rawBusinessHours');
@@ -715,17 +715,6 @@ View.watch('businessHourGenerator', [ 'rawBusinessHours' ], function(deps) {
 		deps.rawBusinessHours,
 		this.calendar // TODO: untangle
 	);
-});
-
-
-View.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function(deps) {
-	var businessHourGenerator = deps.businessHourGenerator;
-	var unzonedRange = deps.dateProfile.activeUnzonedRange;
-
-	return {
-		allDay: businessHourGenerator.buildEventInstanceGroup(true, unzonedRange),
-		timed: businessHourGenerator.buildEventInstanceGroup(false, unzonedRange)
-	};
 });
 
 

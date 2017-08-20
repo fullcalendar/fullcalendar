@@ -71,8 +71,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 			if (this.has('dateProfile')) {
 				child.set('dateProfile', this.get('dateProfile'));
 			}
-			if (this.has('businessHours')) {
-				child.set('businessHours', this.get('businessHours'));
+			if (this.has('businessHourGenerator')) {
+				this.setBusinessHourGeneratorInChild(this.get('businessHourGenerator'), child);
 			}
 		}
 	},
@@ -221,13 +221,23 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	setBusinessHoursInChildren: function(businessHours) {
-		this.setInChildren('businessHours', businessHours);
+	setBusinessHourGeneratorInChildren: function(businessHourGenerator) {
+		this.iterChildren(this.setBusinessHourGeneratorInChild.bind(this, businessHourGenerator));
 	},
 
 
-	unsetBusinessHoursInChildren: function() {
-		this.unsetInChildren('businessHours');
+	unsetBusinessHourGeneratorInChildren: function() {
+		this.iterChildren(this.unsetBusinessHourGeneratorInChild.bind(this));
+	},
+
+
+	setBusinessHourGeneratorInChild: function(businessHourGenerator, child) {
+		child.set('businessHourGenerator', businessHourGenerator);
+	},
+
+
+	unsetBusinessHourGeneratorInChild: function(child) {
+		child.unset('businessHourGenerator');
 	},
 
 
@@ -390,14 +400,23 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	getRecursiveEventSegs: function() {
-		var childrenByUid = this.childrenByUid;
+	getRecursiveEventSegs: function() { // TODO: get rid of
 		var segs = this.getEventSegs();
-		var id;
 
-		for (id in childrenByUid) {
-			segs.push.apply(segs, childrenByUid[id].getRecursiveEventSegs());
-		}
+		this.iterChildren(function(child) {
+			segs.push.apply(segs, child.getRecursiveEventSegs());
+		});
+
+		return segs;
+	},
+
+
+	getRecursiveBusinessHourSegs: function() { // TODO: get rid of
+		var segs = this.businessHourRenderer ? this.businessHourRenderer.getSegs() : [];
+
+		this.iterChildren(function(child) {
+			segs.push.apply(segs, child.getRecursiveBusinessHourSegs());
+		});
 
 		return segs;
 	},
@@ -456,15 +475,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
 	renderDrag: function(eventFootprints, seg, isTouch) {
-		var childrenByUid = this.childrenByUid;
-		var uid;
 		var renderedHelper = false;
 
-		for (uid in childrenByUid) {
-			if (childrenByUid[uid].renderDrag(eventFootprints, seg, isTouch)) {
+		this.iterChildren(function(child) {
+			if (child.renderDrag(eventFootprints, seg, isTouch)) {
 				renderedHelper = true;
 			}
-		}
+		});
 
 		return renderedHelper;
 	},
@@ -706,31 +723,32 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	callChildren: function(methodName, args) {
-		var childrenByUid = this.childrenByUid;
-		var uid;
-
-		for (uid in childrenByUid) {
-			childrenByUid[uid][methodName].apply(childrenByUid[uid], args);
-		}
+		this.iterChildren(function(child) {
+			child[methodName].apply(child, args);
+		});
 	},
 
 
 	setInChildren: function(propName, propValue) {
-		var childrenByUid = this.childrenByUid;
-		var uid;
-
-		for (uid in childrenByUid) {
-			childrenByUid[uid].set(propName, propValue);
-		}
+		this.iterChildren(function(child) {
+			child.set(propName, propValue);
+		});
 	},
 
 
 	unsetInChildren: function(propName) {
+		this.iterChildren(function(child) {
+			child.unset(propName);
+		});
+	},
+
+
+	iterChildren: function(func) {
 		var childrenByUid = this.childrenByUid;
 		var uid;
 
 		for (uid in childrenByUid) {
-			childrenByUid[uid].unset(propName);
+			func(childrenByUid[uid]);
 		}
 	},
 
@@ -758,10 +776,21 @@ DateComponent.watch('handleDateProfile', [ 'dateProfile' ], function(deps) {
 });
 
 
-DateComponent.watch('businessHoursInChildren', [ 'businessHours' ], function(deps) {
-	this.setBusinessHoursInChildren(deps.businessHours);
+DateComponent.watch('businessHourGeneratorInChildren', [ 'businessHourGenerator' ], function(deps) {
+	this.setBusinessHourGeneratorInChildren(deps.businessHourGenerator);
 }, function() {
-	this.unsetBusinessHoursInChildren();
+	this.unsetBusinessHourGeneratorInChildren();
+});
+
+
+DateComponent.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function(deps) {
+	var businessHourGenerator = deps.businessHourGenerator;
+	var unzonedRange = deps.dateProfile.activeUnzonedRange;
+
+	return {
+		allDay: businessHourGenerator.buildEventInstanceGroup(true, unzonedRange),
+		timed: businessHourGenerator.buildEventInstanceGroup(false, unzonedRange)
+	};
 });
 
 
