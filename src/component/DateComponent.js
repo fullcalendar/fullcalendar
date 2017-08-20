@@ -65,6 +65,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 			this.listenToAndEmit(child, 'after:entity:render');
 			this.listenToAndEmit(child, 'before:entity:unrender');
+
+			// make new children catch up with old props
+			// TODO: what about eventDataSource? better system for this?
+			if (this.has('dateProfile')) {
+				child.set('dateProfile', this.get('dateProfile'));
+			}
+			if (this.has('businessHours')) {
+				child.set('businessHours', this.get('businessHours'));
+			}
 		}
 	},
 
