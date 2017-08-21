@@ -69,7 +69,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
-	renderDates: function(dateProfile) {
+	renderGrid: function() {
 		var view = this.view;
 		var rowCnt = this.rowCnt;
 		var colCnt = this.colCnt;
@@ -107,11 +107,6 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 				});
 			}
 		}
-	},
-
-
-	unrenderDates: function() {
-		this.removeSegPopover();
 	},
 
 
@@ -376,4 +371,11 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		this.helperRenderer.unrender();
 	}
 
+});
+
+
+DayGrid.watch('displayingDates', [ 'dateProfile' ], function(deps) {
+	this.requestRender(this.renderGrid, null, 'grid', 'destroy');
+}, function() {
+	this.requestRender(this.removeSegPopover);
 });

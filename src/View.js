@@ -29,6 +29,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
 	nowIndicatorIntervalID: null, // "
 
+	renderedEventSegs: null,
+
 
 	constructor: function(calendar, viewSpec) {
 		this.calendar = calendar;
@@ -50,6 +52,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (this.initialize) {
 			this.initialize();
 		}
+
+		this.on('after:events:render', this.onAfterEventsRender);
 	},
 
 
@@ -198,7 +202,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile) {
-
 		if (this.render) {
 			this.render(); // TODO: deprecate
 		}
@@ -208,16 +211,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 
 		this.isDatesRendered = true;
-		this.trigger('after:entity:render', 'date');
 	},
 
 
 	executeDateUnrender: function() {
-
 		this.unselect();
 		this.stopNowIndicator();
-
-		this.trigger('before:entity:unrender', 'date');
 		this.unrenderDates();
 
 		if (this.destroy) {
@@ -689,8 +688,65 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	/* Day Click
+	/* Triggers
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	onAfterEventsRender: function(segs) { // could be an empty array, which is fine
+		var renderedEventSegs = this.renderedEventSegs;
+
+		if (renderedEventSegs) { // triggerEventsRendered already queued to run?
+			renderedEventSegs.push.apply(renderedEventSegs, segs); // append
+		}
+		else {
+			this.renderedEventSegs = [].concat(segs);
+			this.whenSizeUpdated(this.triggerEventsRendered);
+		}
+	},
+
+
+	triggerBaseRendered: function() {
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	triggerBaseUnrendered: function() {
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	triggerEventsRendered: function() {
+		var _this = this;
+
+		// an optimization, because getEventLegacy is expensive
+		if (this.hasPublicHandlers('eventAfterRender')) {
+			this.renderedEventSegs.forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.renderedEventSegs = null;
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
+		});
+	},
 
 
 	// Triggers handlers to 'dayClick'
@@ -704,6 +760,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 		});
 	}
 
+});
+
+
+View.watch('displayingBase', [ 'displayingDates' ], function(deps) {
+	this.whenSizeUpdated(this.triggerBaseRendered);
+}, function() {
+	this.triggerBaseUnrendered();
 });
 
 

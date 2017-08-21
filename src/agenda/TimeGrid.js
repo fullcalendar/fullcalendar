@@ -183,37 +183,22 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
-	// Renders the time grid into `this.el`, which should already be assigned.
-	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
-	renderDates: function(dateProfile) {
+	renderSlats: function() {
 		var theme = this.view.calendar.theme;
 
-		this.el.find('> .fc-bg').html(
-			'<table class="' + theme.getClass('tableGrid') + '">' +
-				this.renderBgTrHtml(0) + // row=0
-			'</table>'
-		);
+		this.slatContainerEl = this.el.find('> .fc-slats')
+			.html(
+				'<table class="' + theme.getClass('tableGrid') + '">' +
+					this.renderSlatRowHtml() +
+				'</table>'
+			);
 
-		this.el.find('> .fc-slats').html(
-			'<table class="' + theme.getClass('tableGrid') + '">' +
-				this.renderSlatRowHtml() +
-			'</table>'
-		);
-
-		this.colEls = this.el.find('.fc-day, .fc-disabled-day');
-		this.slatContainerEl = this.el.find('.fc-slats');
 		this.slatEls = this.slatContainerEl.find('tr');
 
-		this.colCoordCache = new CoordCache({
-			els: this.colEls,
-			isHorizontal: true
-		});
 		this.slatCoordCache = new CoordCache({
 			els: this.slatEls,
 			isVertical: true
 		});
-
-		this.renderContentSkeleton();
 	},
 
 
@@ -260,6 +245,24 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return html;
+	},
+
+
+	renderColumns: function() {
+		var theme = this.view.calendar.theme;
+
+		this.el.find('> .fc-bg').html(
+			'<table class="' + theme.getClass('tableGrid') + '">' +
+				this.renderBgTrHtml(0) + // row=0
+			'</table>'
+		);
+
+		this.colEls = this.el.find('.fc-day, .fc-disabled-day');
+
+		this.colCoordCache = new CoordCache({
+			els: this.colEls,
+			isHorizontal: true
+		});
 	},
 
 
@@ -639,4 +642,19 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		this.unrenderHighlight();
 	}
 
+});
+
+
+TimeGrid.watch('displayingSlats', [ 'dateProfile' ], function(deps) {
+	this.requestRender(this.renderSlats, null, 'slats', 'destroy');
+});
+
+
+TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
+	this.requestRender(this.renderColumns, null, 'columns', 'destroy');
+});
+
+
+TimeGrid.watch('displayingDates', [ 'displayingSlats', 'displayingColumns' ], function(deps) {
+	this.requestRender(this.renderContentSkeleton, null, 'content-skeleton', 'destroy');
 });

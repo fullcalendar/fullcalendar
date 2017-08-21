@@ -63,8 +63,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
 
-			this.listenToAndEmit(child, 'after:entity:render');
-			this.listenToAndEmit(child, 'before:entity:unrender');
+			this.listenToAndEmit(child, 'after:events:render');
 
 			// make new children catch up with old props
 			// TODO: what about eventDataSource? better system for this?
@@ -103,6 +102,18 @@ var DateComponent = FC.DateComponent = Component.extend({
 		this._getView().calendar.renderQueue.queue(function() {
 			method.apply(_this, args);
 		}, this.uid, namespace, actionType);
+	},
+
+
+	whenSizeUpdated: function(func) {
+		var renderQueue = this._getView().calendar.renderQueue;
+
+		if (!renderQueue.isRunning && !renderQueue.isPaused) {
+			func.call(this);
+		}
+		else {
+			renderQueue.one('stop', func.bind(this));
+		}
 	},
 
 
@@ -171,14 +182,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
 		this.executeDateUnrender();
 		this.renderDates(dateProfile);
-		this.trigger('after:entity:render', 'date');
 		this.isDatesRendered = true;
 	},
 
 
 	executeDateUnrender: function() { // wrapper
 		if (this.isDatesRendered) {
-			this.trigger('before:entity:unrender', 'date');
 			this.unrenderDates();
 			this.isDatesRendered = false;
 		}
@@ -370,15 +379,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	triggerAfterEventsRender: function() {
-		this.trigger('after:entity:render', 'events', this.getEventSegs());
-
-		// triggers that rely on positioning from updateSize happen in Calendar, via renderQueue
+		this.trigger('after:events:render', this.getEventSegs());
 	},
 
 
 	triggerBeforeEventsUnrender: function() {
-		this.trigger('before:entity:unrender', 'events');
-
 		this.triggerEventDestroyForSegs(this.getEventSegs());
 	},
 
@@ -798,7 +803,7 @@ DateComponent.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ],
 
 
 DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.executeDateRender, [ deps.dateProfile ], 'date', 'init');
+	this.requestRender(this.executeDateRender, [ deps.dateProfile ], 'date', 'destroy');
 }, function() {
 	this.requestRender(this.executeDateUnrender, null, 'date', 'destroy');
 });

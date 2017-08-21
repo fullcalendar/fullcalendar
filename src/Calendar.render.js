@@ -9,8 +9,6 @@ Calendar.mixin({
 
 	renderQueue: null,
 	batchRenderDepth: 0,
-	queuedEntityRenderMap: null,
-	queuedEntityUnrenderMap: null,
 
 
 	render: function() {
@@ -163,8 +161,6 @@ Calendar.mixin({
 		this.freezeContentHeight();
 
 		this.view.addScroll(this.view.queryScroll()); // TODO: move to Calendar
-
-		this.queuedEntityUnrenderMap = {};
 	},
 
 
@@ -174,7 +170,6 @@ Calendar.mixin({
 		}
 
 		this.thawContentHeight();
-		this.releaseQueuedEntityRenders();
 	},
 
 
@@ -182,109 +177,12 @@ Calendar.mixin({
 	initBatchRenderingForView: function(view) {
 		this.listenTo(view, 'before:change', this.startBatchRender);
 		this.listenTo(view, 'change', this.stopBatchRender);
-
-		this.listenTo(view, 'after:entity:render', this.onAfterEntityRender);
-		this.listenTo(view, 'before:entity:unrender', this.onBeforeEntityUnrender);
 	},
 
 
 	// TODO: evenutally make Calendar a DateComponent
 	destroyBatchRenderingForView: function(view) {
 		this.stopListeningTo(view);
-	},
-
-
-	onAfterEntityRender: function(entityType, arg) {
-		var map = this.queuedEntityRenderMap;
-
-		map[entityType] = (map[entityType] || []).concat(arg || []);
-
-		if (!this.renderQueue.isRunning) {
-			this.releaseQueuedEntityRenders();
-		}
-	},
-
-
-	onBeforeEntityUnrender: function(entityType) {
-		var map = this.queuedEntityUnrenderMap;
-
-		if (!map[entityType]) {
-			map[entityType] = true;
-			this.trigger('before:' + entityType + ':unrender');
-		}
-	},
-
-
-	releaseQueuedEntityRenders: function() {
-		var map = this.queuedEntityRenderMap;
-		var entityType;
-
-		for (entityType in map) {
-			this.trigger('after:' + entityType + ':render', map[entityType]);
-		}
-
-		this.queuedEntityRenderMap = {};
-	},
-
-
-	// Specific Entity Rendering Handling
-	// -----------------------------------------------------------------------------------
-	// (initialized in constructor)
-
-
-	onAfterDateRender: function() {
-		this.onAfterBaseRender();
-	},
-
-
-	onBeforeDateUnrender: function() {
-		this.onBeforeBaseUnrender();
-	},
-
-
-	onAfterBaseRender: function() {
-		var view = this.view;
-
-		this.publiclyTrigger('viewRender', {
-			context: view,
-			args: [ view, view.el ]
-		});
-	},
-
-
-	onBeforeBaseUnrender: function() {
-		var view = this.view;
-
-		this.publiclyTrigger('viewDestroy', {
-			context: view,
-			args: [ view, view.el ]
-		});
-	},
-
-
-	onAfterEventsRender: function(segs) {
-		var _this = this;
-		var view = this.view;
-
-		if (this.hasPublicHandlers('eventAfterRender')) { // optimize. because getEventLegacy is expensive
-			segs.forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventAfterRender', {
-						context: legacy,
-						args: [ legacy, seg.el, view ]
-					});
-				}
-			});
-		}
-
-		this.publiclyTrigger('eventAfterAllRender', {
-			context: view,
-			args: [ view ]
-		});
 	},
 
 

@@ -280,7 +280,7 @@ DayGrid.mixin({
 		// delegated-handlers for free. attach event-related handlers to the popover.
 		this.bindAllSegHandlersToEl(this.segPopover.el);
 
-		this.trigger('after:entity:render', 'events', segs);
+		this.trigger('after:events:render', segs);
 	},
 
 
