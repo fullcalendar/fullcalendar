@@ -98,6 +98,7 @@ var BasicView = FC.BasicView = View.extend({
 		var dayGridEl;
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
+		this.headContainerEl = this.el.find('.fc-head-container');
 
 		this.scroller.render();
 
@@ -124,9 +125,7 @@ var BasicView = FC.BasicView = View.extend({
 
 	// render the day-of-week headers
 	renderHead: function() {
-		this.headContainerEl =
-			this.el.find('.fc-head-container')
-				.html(this.dayGrid.renderHeadHtml());
+		this.headContainerEl.html(this.dayGrid.renderHeadHtml());
 		this.headRowEl = this.headContainerEl.find('.fc-row');
 	},
 
@@ -140,7 +139,7 @@ var BasicView = FC.BasicView = View.extend({
 			'<table class="' + theme.getClass('tableGrid') + '">' +
 				'<thead class="fc-head">' +
 					'<tr>' +
-						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '"></td>' +
+						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
 					'</tr>' +
 				'</thead>' +
 				'<tbody class="fc-body">' +

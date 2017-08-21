@@ -120,7 +120,7 @@ var AgendaView = FC.AgendaView = View.extend({
 			'<table class="' + theme.getClass('tableGrid') + '">' +
 				'<thead class="fc-head">' +
 					'<tr>' +
-						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '"></td>' +
+						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
 					'</tr>' +
 				'</thead>' +
 				'<tbody class="fc-body">' +
