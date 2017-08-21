@@ -162,6 +162,18 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	// Adjusts the vertical dimensions of the view to the specified values
 	updateSize: function(totalHeight, isAuto, isResize) {
+		var eventLimit;
+		var scrollerHeight;
+		var scrollbarWidths;
+
+		if (!this.isDatesRendered) { // hack
+			if (!isAuto) {
+				scrollerHeight = this.computeScrollerHeight(totalHeight);
+				this.scroller.setHeight(scrollerHeight);
+			}
+			return;
+		}
+
 		View.prototype.updateSize.apply(this, arguments);
 
 		// make all axis cells line up, and record the width so newly created axis cells will have it
@@ -169,10 +181,6 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		// set of fake row elements that must compensate when scroller has scrollbars
 		var noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)');
-
-		var eventLimit;
-		var scrollerHeight;
-		var scrollbarWidths;
 
 		// reset all dimensions back to the original state
 		this.timeGrid.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary

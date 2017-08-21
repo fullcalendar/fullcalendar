@@ -175,6 +175,18 @@ var BasicView = FC.BasicView = View.extend({
 
 	// Refreshes the horizontal dimensions of the view
 	updateSize: function(totalHeight, isAuto, isResize) {
+		var eventLimit = this.opt('eventLimit');
+		var scrollerHeight;
+		var scrollbarWidths;
+
+		if (!this.isDatesRendered) { // hack
+			if (!isAuto) {
+				scrollerHeight = this.computeScrollerHeight(totalHeight);
+				this.scroller.setHeight(scrollerHeight);
+			}
+			return;
+		}
+
 		View.prototype.updateSize.apply(this, arguments);
 
 		if (this.colWeekNumbersVisible) {
@@ -184,10 +196,6 @@ var BasicView = FC.BasicView = View.extend({
 				this.el.find('.fc-week-number')
 			);
 		}
-
-		var eventLimit = this.opt('eventLimit');
-		var scrollerHeight;
-		var scrollbarWidths;
 
 		// reset all heights to be natural
 		this.scroller.clear();
