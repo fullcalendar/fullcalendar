@@ -169,6 +169,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	executeDateRender: function(dateProfile, skipScroll) { // wrapper
+		this.executeDateUnrender();
 		this.renderDates(dateProfile);
 		this.trigger('after:entity:render', 'date');
 		this.isDatesRendered = true;
@@ -176,9 +177,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	executeDateUnrender: function() { // wrapper
-		this.trigger('before:entity:unrender', 'date');
-		this.unrenderDates();
-		this.isDatesRendered = false;
+		if (this.isDatesRendered) {
+			this.trigger('before:entity:unrender', 'date');
+			this.unrenderDates();
+			this.isDatesRendered = false;
+		}
 	},
 
 
