@@ -3,7 +3,7 @@
 It's expected that there will be at least one EventInstance,
 OR that an explicitEventDef is assigned.
 */
-var EventInstanceGroup = Class.extend({
+var EventInstanceGroup = FC.EventInstanceGroup = Class.extend({
 
 	eventInstances: null,
 	explicitEventDef: null, // optional
@@ -14,8 +14,13 @@ var EventInstanceGroup = Class.extend({
 	},
 
 
-	getAllEventRanges: function() {
-		return this.eventInstances.map(eventInstanceToEventRange);
+	getAllEventRanges: function(constraintRange) {
+		if (constraintRange) {
+			return this.sliceNormalRenderRanges(constraintRange);
+		}
+		else {
+			return this.eventInstances.map(eventInstanceToEventRange);
+		}
 	},
 
 
