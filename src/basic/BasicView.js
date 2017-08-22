@@ -13,9 +13,6 @@ var BasicView = FC.BasicView = View.extend({
 
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 
-	headContainerEl: null, // div that hold's the dayGrid's rendered date header
-	headRowEl: null, // the fake row element of the day-of-week header
-
 
 	constructor: function() {
 		View.apply(this, arguments);
@@ -85,7 +82,6 @@ var BasicView = FC.BasicView = View.extend({
 		var dayGridEl;
 
 		this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml());
-		this.headContainerEl = this.el.find('.fc-head-container');
 
 		this.scroller.render();
 
@@ -94,6 +90,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		this.el.find('.fc-body > tr > td').append(dayGridContainerEl);
 
+		this.dayGrid.headContainerEl = this.el.find('.fc-head-container');
 		this.dayGrid.setElement(dayGridEl);
 	},
 
@@ -101,19 +98,6 @@ var BasicView = FC.BasicView = View.extend({
 	unrenderSkeleton: function() {
 		this.dayGrid.removeElement();
 		this.scroller.destroy();
-	},
-
-
-	// Renders the view into `this.el`, which should already be assigned
-	renderDates: function(dateProfile) {
-		this.renderHead();
-	},
-
-
-	// render the day-of-week headers
-	renderHead: function() {
-		this.headContainerEl.html(this.dayGrid.renderHeadHtml());
-		this.headRowEl = this.headContainerEl.find('.fc-row');
 	},
 
 
@@ -162,6 +146,7 @@ var BasicView = FC.BasicView = View.extend({
 	// Refreshes the horizontal dimensions of the view
 	updateSize: function(totalHeight, isAuto, isResize) {
 		var eventLimit = this.opt('eventLimit');
+		var headRowEl = this.dayGrid.headContainerEl.find('.fc-row')
 		var scrollerHeight;
 		var scrollbarWidths;
 
@@ -185,7 +170,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		// reset all heights to be natural
 		this.scroller.clear();
-		uncompensateScroll(this.headRowEl);
+		uncompensateScroll(headRowEl);
 
 		this.dayGrid.removeSegPopover(); // kill the "more" popover if displayed
 
@@ -211,7 +196,7 @@ var BasicView = FC.BasicView = View.extend({
 
 			if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
-				compensateScroll(this.headRowEl, scrollbarWidths);
+				compensateScroll(headRowEl, scrollbarWidths);
 
 				// doing the scrollbar compensation might have created text overflow which created more height. redo
 				scrollerHeight = this.computeScrollerHeight(totalHeight);

@@ -20,6 +20,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	labelFormat: null, // formatting string for times running along vertical axis
 	labelInterval: null, // duration of how often a label should be displayed for a slot
 
+	headContainerEl: null, // div that hold's the date header
 	colEls: null, // cells elements in the day-row background
 	slatContainerEl: null, // div that wraps all the slat rows
 	slatEls: null, // elements running horizontally across all columns
@@ -248,6 +249,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				dayDate.clone().add(dateProfile.maxTime)
 			);
 		});
+
+		if (this.headContainerEl) {
+			this.headContainerEl.html(this.renderHeadHtml());
+		}
 
 		this.el.find('> .fc-bg').html(
 			'<table class="' + theme.getClass('tableGrid') + '">' +

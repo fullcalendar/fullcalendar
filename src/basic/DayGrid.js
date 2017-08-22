@@ -16,6 +16,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
 
+	headContainerEl: null, // div that hold's the date header
 	rowEls: null, // set of fake row elements
 	cellEls: null, // set of whole-day elements comprising the row's background
 
@@ -73,6 +74,10 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		var html = '';
 		var row;
 		var col;
+
+		if (this.headContainerEl) {
+			this.headContainerEl.html(this.renderHeadHtml());
+		}
 
 		for (row = 0; row < rowCnt; row++) {
 			html += this.renderDayRowHtml(row, this.isRigid);

@@ -18,8 +18,6 @@ var AgendaView = FC.AgendaView = View.extend({
 
 	axisWidth: null, // the width of the time axis running down the side
 
-	headContainerEl: null, // div that hold's the timeGrid's rendered date header
-
 	// indicates that minTime/maxTime affects rendering
 	usesMinMaxTime: true,
 
@@ -75,6 +73,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		this.el.find('.fc-body > tr > td').append(timeGridWrapEl);
 
+		this.timeGrid.headContainerEl = this.el.find('.fc-head-container');
 		this.timeGrid.setElement(timeGridEl);
 
 		if (this.dayGrid) {
@@ -94,20 +93,6 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		this.scroller.destroy();
-	},
-
-
-	// Renders the view into `this.el`, which has already been assigned
-	renderDates: function(dateProfile) {
-		this.renderHead();
-	},
-
-
-	// render the day-of-week headers
-	renderHead: function() {
-		this.headContainerEl =
-			this.el.find('.fc-head-container')
-				.html(this.timeGrid.renderHeadHtml());
 	},
 
 
