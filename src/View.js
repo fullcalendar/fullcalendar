@@ -186,28 +186,28 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile) {
+		DateComponent.prototype.executeDateRender.apply(this, arguments);
+
 		if (this.render) {
 			this.render(); // TODO: deprecate
 		}
 
-		this.renderDates(dateProfile);
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
-
-		this.isDatesRendered = true;
 	},
 
 
 	executeDateUnrender: function() {
-		this.unselect();
-		this.stopNowIndicator();
-		this.unrenderDates();
+		if (this.isDatesRendered) {
+			this.unselect();
+			this.stopNowIndicator();
 
-		if (this.destroy) {
-			this.destroy(); // TODO: deprecate
+			if (this.destroy) {
+				this.destroy(); // TODO: deprecate
+			}
 		}
 
-		this.isDatesRendered = false;
+		DateComponent.prototype.executeDateUnrender.apply(this, arguments);
 	},
 
 
