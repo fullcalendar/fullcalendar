@@ -266,6 +266,8 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 			els: this.colEls,
 			isHorizontal: true
 		});
+
+		this.renderContentSkeleton();
 	},
 
 
@@ -659,5 +661,4 @@ TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
 
 
 TimeGrid.watch('displayingDates', [ 'displayingSlats', 'displayingColumns' ], function(deps) {
-	this.requestRender(this.renderContentSkeleton, null, 'content-skeleton', 'destroy');
 });
