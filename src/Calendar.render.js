@@ -173,15 +173,25 @@ Calendar.mixin({
 	},
 
 
-	// TODO: evenutally make Calendar a DateComponent
-	initBatchRenderingForView: function(view) {
+	bindViewHandlers: function(view) {
 		this.listenTo(view, 'before:change', this.startBatchRender);
 		this.listenTo(view, 'change', this.stopBatchRender);
+
+		this.listenTo(view, 'change:title', function(title) {
+			if (view === this.view && title) { // hack
+				this.setToolbarsTitle(title);
+			}
+		});
+		this.listenTo(view, 'change:dateProfile', function(dateProfile) {
+			if (view === this.view && dateProfile) { // hack
+				this.currentDate = dateProfile.date; // might have been constrained by view dates
+				this.updateToolbarButtons(dateProfile);
+			}
+		});
 	},
 
 
-	// TODO: evenutally make Calendar a DateComponent
-	destroyBatchRenderingForView: function(view) {
+	unbindViewHandlers: function(view) {
 		this.stopListeningTo(view);
 	},
 
@@ -210,7 +220,7 @@ Calendar.mixin({
 				this.viewsByType[viewType] ||
 				(this.viewsByType[viewType] = this.instantiateView(viewType));
 
-			this.initBatchRenderingForView(newView);
+			this.bindViewHandlers(newView);
 
 			this.renderQueue.queue(function() {
 				newView.setElement(
@@ -226,11 +236,6 @@ Calendar.mixin({
 		}
 
 		this.stopBatchRender();
-
-		if (oldView && newView) { // old view was unrendered?
-			// renderqueue might have teardown triggers, so unbind after
-			this.destroyBatchRenderingForView(oldView);
-		}
 	},
 
 
@@ -242,6 +247,8 @@ Calendar.mixin({
 		this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
 
 		currentView.unsetDate();
+		this.unbindViewHandlers(currentView);
+
 		this.renderQueue.queue(function() {
 			currentView.removeElement();
 		});

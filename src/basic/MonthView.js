@@ -41,8 +41,8 @@ var MonthView = FC.MonthView = BasicView.extend({
 	},
 
 
-	isDateInOtherMonth: function(date) {
-		return date.month() !== moment.utc(this.dateProfile.currentUnzonedRange.startMs).month(); // TODO: optimize
+	isDateInOtherMonth: function(date, dateProfile) {
+		return date.month() !== moment.utc(dateProfile.currentUnzonedRange.startMs).month(); // TODO: optimize
 	}
 
 });

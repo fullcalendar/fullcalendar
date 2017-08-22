@@ -52,13 +52,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	removeElement: function() {
-		Component.prototype.removeElement.apply(this, arguments);
-
-		this.dateProfile = null; // render guaranteed to be over
-	},
-
-
 	addChild: function(child) {
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
@@ -159,16 +152,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	handleDateProfileSet: function(dateProfile) {
-		this.setDateProfileInChildren(dateProfile);
-	},
-
-
-	handleDateProfileUnset: function() {
-		this.unsetDateProfileInChildren();
-	},
-
-
 	setDateProfileInChildren: function(dateProfile) {
 		this.setInChildren('dateProfile', dateProfile);
 	},
@@ -179,8 +162,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	executeDateRender: function(dateProfile, skipScroll) { // wrapper
+	executeDateRender: function(dateProfile) {
 		this.executeDateUnrender();
+		this.dateProfile = dateProfile; // for rendering
 		this.renderDates(dateProfile);
 		this.isDatesRendered = true;
 	},
@@ -188,6 +172,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	executeDateUnrender: function() { // wrapper
 		if (this.isDatesRendered) {
+			this.dateProfile = null;
 			this.unrenderDates();
 			this.isDatesRendered = false;
 		}
@@ -308,10 +293,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	startDisplayingEvents: function(eventDataSource) {
 		var _this = this;
 
-		if (this.eventRenderer) {
-			this.eventRenderer.rangeUpdated();
-		}
-
 		if (eventDataSource.isPopulated) {
 			this.requestEventRender(eventDataSource.instanceRepo);
 		}
@@ -359,6 +340,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// TODO: rename once legacy `renderEvents` is out of the way
 	renderEventsss: function(eventInstanceRepo) {
 		if (this.eventRenderer) {
+			this.eventRenderer.rangeUpdated(); // poorly named now
 			this.eventRenderer.renderInstanceHash(eventInstanceRepo.byDefId);
 		}
 		else if (this.renderEvents) { // legacy
@@ -776,11 +758,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 DateComponent.guid = 0; // TODO: better system for this?
 
 
-DateComponent.watch('handleDateProfile', [ 'dateProfile' ], function(deps) {
-	this.dateProfile = deps.dateProfile; // needed for rendering
-	this.handleDateProfileSet(deps.dateProfile);
+DateComponent.watch('dateProfileInChildren', [ 'dateProfile' ], function(deps) {
+	this.setDateProfileInChildren(deps.dateProfile);
 }, function() {
-	this.handleDateProfileUnset();
+	this.unsetDateProfileInChildren();
 });
 
 

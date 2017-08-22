@@ -54,9 +54,7 @@ var ListView = View.extend({
 	},
 
 
-	handleDateProfileSet: function(dateProfile) {
-		View.prototype.handleDateProfileSet.apply(this, arguments);
-
+	renderDates: function(dateProfile) {
 		var calendar = this.calendar;
 		var dayStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
 		var viewEnd = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true);
@@ -77,6 +75,8 @@ var ListView = View.extend({
 
 		this.dayDates = dayDates;
 		this.dayRanges = dayRanges;
+
+		// all real rendering happens in EventRenderer
 	},
 
 

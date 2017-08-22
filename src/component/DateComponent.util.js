@@ -65,7 +65,7 @@ DateComponent.mixin({
 		else {
 			classes.push('fc-' + dayIDs[date.day()]);
 
-			if (view.isDateInOtherMonth(date)) { // TODO: use DateComponent subclass somehow
+			if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
 				classes.push('fc-other-month');
 			}
 
@@ -101,6 +101,19 @@ DateComponent.mixin({
 		}
 
 		return formatRange(range.start, end, formatStr, separator, this.isRTL);
+	},
+
+
+	// Compute the number of the give units in the "current" range.
+	// Will return a floating-point number. Won't round.
+	currentRangeAs: function(unit) {
+		var currentUnzonedRange = this.get('dateProfile').currentUnzonedRange;
+
+		return moment.utc(currentUnzonedRange.endMs).diff(
+			moment.utc(currentUnzonedRange.startMs),
+			unit,
+			true
+		);
 	},
 
 

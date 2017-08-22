@@ -75,20 +75,6 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	handleDateProfileSet: function(dateProfile) {
-		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
-
-		this.updateDayTable();
-
-		this.dayRanges = this.dayDates.map(function(dayDate) {
-			return new UnzonedRange(
-				dayDate.clone().add(dateProfile.minTime),
-				dayDate.clone().add(dateProfile.maxTime)
-			);
-		});
-	},
-
-
 	sliceRangeByTimes: function(unzonedRange) {
 		var segs = [];
 		var segRange;
@@ -183,8 +169,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
-	renderSlats: function() {
+	renderSlats: function(dateProfile) {
 		var theme = this.view.calendar.theme;
+
+		this.dateProfile = dateProfile;
 
 		this.slatContainerEl = this.el.find('> .fc-slats')
 			.html(
@@ -248,8 +236,18 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
-	renderColumns: function() {
+	renderColumns: function(dateProfile) {
 		var theme = this.view.calendar.theme;
+
+		this.dateProfile = dateProfile;
+		this.updateDayTable(dateProfile);
+
+		this.dayRanges = this.dayDates.map(function(dayDate) {
+			return new UnzonedRange(
+				dayDate.clone().add(dateProfile.minTime),
+				dayDate.clone().add(dateProfile.maxTime)
+			);
+		});
 
 		this.el.find('> .fc-bg').html(
 			'<table class="' + theme.getClass('tableGrid') + '">' +
@@ -646,12 +644,12 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 TimeGrid.watch('displayingSlats', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.renderSlats, null, 'slats', 'destroy');
+	this.requestRender(this.renderSlats, [ deps.dateProfile ], 'slats', 'destroy');
 });
 
 
 TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.renderColumns, null, 'columns', 'destroy');
+	this.requestRender(this.renderColumns, [ deps.dateProfile ], 'columns', 'destroy');
 });
 
 

@@ -16,8 +16,9 @@ View.mixin({
 
 	// Builds a structure with info about what the dates/ranges will be for the "prev" view.
 	buildPrevDateProfile: function(date) {
-		var prevDate = date.clone().startOf(this.dateProfile.currentRangeUnit)
-			.subtract(this.dateProfile.dateIncrement);
+		var dateProfile = this.get('dateProfile');
+		var prevDate = date.clone().startOf(dateProfile.currentRangeUnit)
+			.subtract(dateProfile.dateIncrement);
 
 		return this.buildDateProfile(prevDate, -1);
 	},
@@ -25,8 +26,9 @@ View.mixin({
 
 	// Builds a structure with info about what the dates/ranges will be for the "next" view.
 	buildNextDateProfile: function(date) {
-		var nextDate = date.clone().startOf(this.dateProfile.currentRangeUnit)
-			.add(this.dateProfile.dateIncrement);
+		var dateProfile = this.get('dateProfile');
+		var nextDate = date.clone().startOf(dateProfile.currentRangeUnit)
+			.add(dateProfile.dateIncrement);
 
 		return this.buildDateProfile(nextDate, 1);
 	},
@@ -314,21 +316,8 @@ View.mixin({
 	},
 
 
-	// Compute the number of the give units in the "current" range.
-	// Will return a floating-point number. Won't round.
-	currentRangeAs: function(unit) {
-		var currentUnzonedRange = this.dateProfile.currentUnzonedRange;
-
-		return moment.utc(currentUnzonedRange.endMs).diff(
-			moment.utc(currentUnzonedRange.startMs),
-			unit,
-			true
-		);
-	},
-
-
 	// For DateComponent::getDayClasses
-	isDateInOtherMonth: function(date) {
+	isDateInOtherMonth: function(date, dateProfile) {
 		return false;
 	},
 

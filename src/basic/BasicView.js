@@ -11,10 +11,6 @@ var BasicView = FC.BasicView = View.extend({
 	dayGridClass: DayGrid, // class the dayGrid will be instantiated from (overridable by subclasses)
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
-	dayNumbersVisible: false, // display day numbers on each day cell?
-	colWeekNumbersVisible: false, // display week numbers along the side?
-	cellWeekNumbersVisible: false, // display week numbers in day cell?
-
 	weekNumberWidth: null, // width of all the week-number cells running down the side
 
 	headContainerEl: null, // div that hold's the dayGrid's rendered date header
@@ -25,6 +21,19 @@ var BasicView = FC.BasicView = View.extend({
 		View.apply(this, arguments);
 
 		this.dayGrid = this.instantiateDayGrid();
+		this.dayGrid.isRigid = this.hasRigidRows();
+
+		if (this.opt('weekNumbers')) {
+			if (this.opt('weekNumbersWithinDays')) {
+				this.dayGrid.cellWeekNumbersVisible = true;
+				this.dayGrid.colWeekNumbersVisible = false;
+			}
+			else {
+				this.dayGrid.cellWeekNumbersVisible = false;
+				this.dayGrid.colWeekNumbersVisible = true;
+			};
+		}
+
 		this.addChild(this.dayGrid);
 
 		this.scroller = new Scroller({
@@ -64,32 +73,10 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	handleDateProfileSet: function(dateProfile) {
-
+	setDateProfileInChildren: function(dateProfile) {
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 
-		// needs breakOnWeeks. will populate dayGrid.rowCnt :(
-		View.prototype.handleDateProfileSet.apply(this, arguments);
-
-		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
-
-		if (this.opt('weekNumbers')) {
-			if (this.opt('weekNumbersWithinDays')) {
-				this.cellWeekNumbersVisible = true;
-				this.colWeekNumbersVisible = false;
-			}
-			else {
-				this.cellWeekNumbersVisible = false;
-				this.colWeekNumbersVisible = true;
-			};
-		}
-
-		this.dayGrid.numbersVisible =
-			this.dayNumbersVisible ||
-			this.cellWeekNumbersVisible ||
-			this.colWeekNumbersVisible;
-
-		this.dayGrid.isRigid = this.hasRigidRows();
+		View.prototype.setDateProfileInChildren.apply(this, arguments);
 	},
 
 
@@ -188,7 +175,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		View.prototype.updateSize.apply(this, arguments);
 
-		if (this.colWeekNumbersVisible) {
+		if (this.dayGrid.colWeekNumbersVisible) {
 			// Make sure all week number cells running down the side have the same width.
 			// Record the width for cells created later.
 			this.weekNumberWidth = matchCellWidths(
@@ -279,14 +266,17 @@ var BasicView = FC.BasicView = View.extend({
 
 
 // Methods that will customize the rendering behavior of the BasicView's dayGrid
-var basicDayGridMethods = {
+var basicDayGridMethods = { // not relly methods anymore
+
+
+	colWeekNumbersVisible: false, // display week numbers along the side?
 
 
 	// Generates the HTML that will go before the day-of week header cells
 	renderHeadIntroHtml: function() {
 		var view = this.view;
 
-		if (view.colWeekNumbersVisible) {
+		if (this.colWeekNumbersVisible) {
 			return '' +
 				'<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
@@ -304,7 +294,7 @@ var basicDayGridMethods = {
 		var view = this.view;
 		var weekStart = this.getCellDate(row, 0);
 
-		if (view.colWeekNumbersVisible) {
+		if (this.colWeekNumbersVisible) {
 			return '' +
 				'<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
 					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
@@ -322,7 +312,7 @@ var basicDayGridMethods = {
 	renderBgIntroHtml: function() {
 		var view = this.view;
 
-		if (view.colWeekNumbersVisible) {
+		if (this.colWeekNumbersVisible) {
 			return '<td class="fc-week-number ' + view.calendar.theme.getClass('widgetContent') + '" ' +
 				view.weekNumberStyleAttr() + '></td>';
 		}
@@ -336,11 +326,16 @@ var basicDayGridMethods = {
 	renderIntroHtml: function() {
 		var view = this.view;
 
-		if (view.colWeekNumbersVisible) {
+		if (this.colWeekNumbersVisible) {
 			return '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '></td>';
 		}
 
 		return '';
+	},
+
+
+	getIsNumbersVisible: function() {
+		return DayGrid.prototype.getIsNumbersVisible.apply(this, arguments) || this.colWeekNumbersVisible;
 	}
 
 };

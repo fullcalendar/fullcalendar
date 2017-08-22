@@ -12,7 +12,8 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	view: null, // TODO: make more general and/or remove
 	helperRenderer: null,
 
-	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
+	cellWeekNumbersVisible: false, // display week numbers in day cell?
+
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
 
 	rowEls: null, // set of fake row elements
@@ -57,19 +58,15 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 	},
 
 
-	handleDateProfileSet: function(dateProfile) {
-		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
-
-		this.updateDayTable();
-	},
-
-
 	/* Date Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders the rows and columns into the component's `this.el`, which should already be assigned.
-	renderGrid: function() {
+	renderGrid: function(dateProfile) {
+		this.dateProfile = dateProfile;
+		this.updateDayTable(dateProfile);
+
 		var view = this.view;
 		var rowCnt = this.rowCnt;
 		var colCnt = this.colCnt;
@@ -129,7 +126,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 				'</div>' +
 				'<div class="fc-content-skeleton">' +
 					'<table>' +
-						(this.numbersVisible ?
+						(this.getIsNumbersVisible() ?
 							'<thead>' +
 								this.renderNumberTrHtml(row) +
 							'</thead>' :
@@ -138,6 +135,16 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 					'</table>' +
 				'</div>' +
 			'</div>';
+	},
+
+
+	getIsNumbersVisible: function() {
+		return this.getIsDayNumbersVisible() || this.cellWeekNumbersVisible;
+	},
+
+
+	getIsDayNumbersVisible: function() {
+		return this.rowCnt > 1;
 	},
 
 
@@ -179,11 +186,11 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		var view = this.view;
 		var html = '';
 		var isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
-		var isDayNumberVisible = view.dayNumbersVisible && isDateValid;
+		var isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid;
 		var classes;
 		var weekCalcFirstDoW;
 
-		if (!isDayNumberVisible && !view.cellWeekNumbersVisible) {
+		if (!isDayNumberVisible && !this.cellWeekNumbersVisible) {
 			// no numbers in day cell (week number must be along the side)
 			return '<td/>'; //  will create an empty space above events :(
 		}
@@ -191,7 +198,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 		classes = this.getDayClasses(date);
 		classes.unshift('fc-day-top');
 
-		if (view.cellWeekNumbersVisible) {
+		if (this.cellWeekNumbersVisible) {
 			// To determine the day of week number change under ISO, we cannot
 			// rely on moment.js methods such as firstDayOfWeek() or weekday(),
 			// because they rely on the locale's dow (possibly overridden by
@@ -212,7 +219,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 				) +
 			'>';
 
-		if (view.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
+		if (this.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
 			html += view.buildGotoAnchorHtml(
 				{ date: date, type: 'week' },
 				{ 'class': 'fc-week-number' },
@@ -375,7 +382,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 
 DayGrid.watch('displayingDates', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.renderGrid, null, 'grid', 'destroy');
+	this.requestRender(this.renderGrid, [ deps.dateProfile ], 'grid', 'destroy');
 }, function() {
 	this.requestRender(this.removeSegPopover);
 });

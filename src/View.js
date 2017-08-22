@@ -90,7 +90,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 				end: this.calendar.msToMoment(unzonedRange.endMs, dateProfile.isRangeAllDay)
 			},
 			dateProfile.isRangeAllDay,
-			this.opt('titleFormat') || this.computeTitleFormat(),
+			this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
 			this.opt('titleRangeSeparator')
 		);
 	},
@@ -98,8 +98,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// Generates the format string that should be used to generate the title for the current date range.
 	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-	computeTitleFormat: function() {
-		var currentRangeUnit = this.dateProfile.currentRangeUnit;
+	computeTitleFormat: function(dateProfile) {
+		var currentRangeUnit = dateProfile.currentRangeUnit;
 
 		if (currentRangeUnit == 'year') {
 			return 'YYYY';
@@ -147,7 +147,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	setDate: function(date) {
-		var currentDateProfile = this.dateProfile;
+		var currentDateProfile = this.get('dateProfile');
 		var newDateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
 
 		if (
@@ -161,22 +161,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	unsetDate: function() {
 		this.unset('dateProfile');
-	},
-
-
-	handleDateProfileSet: function(dateProfile) {
-		InteractiveDateComponent.prototype.handleDateProfileSet.apply(this, arguments);
-
-		var calendar = this.calendar;
-
-		// DEPRECATED, but we need to keep it updated...
-		this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
-		this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
-		this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
-		this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
-
-		this.title = this.computeTitle(dateProfile);
-		calendar.reportViewDatesChanged(this, dateProfile); // TODO: reverse the pubsub
 	},
 
 
@@ -760,6 +744,23 @@ var View = FC.View = InteractiveDateComponent.extend({
 		});
 	}
 
+});
+
+
+View.watch('title', [ 'dateProfile' ], function(deps) {
+	return (this.title = this.computeTitle(deps.dateProfile)); // assign to View for legacy reasons
+});
+
+
+View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
+	var calendar = this.calendar;
+	var dateProfile = deps.dateProfile;
+
+	// DEPRECATED, but we need to keep it updated...
+	this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
+	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
+	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
 });
 
 
