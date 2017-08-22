@@ -3,7 +3,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 	_props: null,
 	_watchers: null,
-	_globalWatchArgs: null,
+	_globalWatchArgs: {}, // mutation protection in Model.watch
 
 	constructor: function() {
 		this._watchers = {};
@@ -17,11 +17,11 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 	applyGlobalWatchers: function() {
-		var argSets = this._globalWatchArgs || [];
-		var i;
+		var map = this._globalWatchArgs;
+		var name;
 
-		for (i = 0; i < argSets.length; i++) {
-			this.watch.apply(this, argSets[i]);
+		for (name in map) {
+			this.watch.apply(this, map[name]);
 		}
 	},
 
@@ -306,10 +306,15 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 });
 
 
-Model.watch = function(/* same arguments as this.watch() */) {
-	// creates new array every time, to not mess with subclass prototypes
-	// TODO: make more efficient
-	this.prototype._globalWatchArgs = (this.prototype._globalWatchArgs || []).concat(arguments);
+Model.watch = function(name /* , depList, startFunc, stopFunc */) {
+
+	// subclasses should make a masked-copy of the superclass's map
+	// TODO: write test
+	if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
+		this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs);
+	}
+
+	this.prototype._globalWatchArgs[name] = arguments;
 };
 
 

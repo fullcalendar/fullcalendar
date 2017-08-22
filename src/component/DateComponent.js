@@ -29,7 +29,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		Component.call(this);
 
 		this.uid = String(DateComponent.guid++);
-		this.childrenByUid = [];
+		this.childrenByUid = {};
 
 		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
 		this.isRTL = this.opt('isRTL');
