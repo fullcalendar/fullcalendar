@@ -394,4 +394,7 @@ DayGrid.watch('displayingGrid', [ 'dateProfile' ], function(deps) {
 
 
 DayGrid.watch('displayingDates', [ 'displayingGrid' ], function(deps) {
+	this.isDatesRendered = true;
+}, function() {
+	this.isDatesRendered = false;
 });

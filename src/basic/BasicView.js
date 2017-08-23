@@ -146,11 +146,13 @@ var BasicView = FC.BasicView = View.extend({
 	// Refreshes the horizontal dimensions of the view
 	updateSize: function(totalHeight, isAuto, isResize) {
 		var eventLimit = this.opt('eventLimit');
-		var headRowEl = this.dayGrid.headContainerEl.find('.fc-row')
+		var headRowEl = this.dayGrid.headContainerEl.find('.fc-row');
 		var scrollerHeight;
 		var scrollbarWidths;
 
-		if (!this.isDatesRendered) { // hack
+		// hack to give the view some height prior to dayGrid's columns being rendered
+		// TODO: separate setting height from scroller VS dayGrid.
+		if (!this.dayGrid.isDatesRendered) {
 			if (!isAuto) {
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
 				this.scroller.setHeight(scrollerHeight);

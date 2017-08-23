@@ -151,18 +151,20 @@ var AgendaView = FC.AgendaView = View.extend({
 		var scrollerHeight;
 		var scrollbarWidths;
 
-		if (!this.isDatesRendered) { // hack
+		View.prototype.updateSize.apply(this, arguments);
+
+		// make all axis cells line up, and record the width so newly created axis cells will have it
+		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
+
+		// hack to give the view some height prior to timeGrid's columns being rendered
+		// TODO: separate setting height from scroller VS timeGrid.
+		if (!this.timeGrid.isDatesRendered) {
 			if (!isAuto) {
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
 				this.scroller.setHeight(scrollerHeight);
 			}
 			return;
 		}
-
-		View.prototype.updateSize.apply(this, arguments);
-
-		// make all axis cells line up, and record the width so newly created axis cells will have it
-		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
 
 		// set of fake row elements that must compensate when scroller has scrollbars
 		var noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)');

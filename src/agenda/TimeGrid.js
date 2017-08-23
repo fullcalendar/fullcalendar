@@ -661,4 +661,7 @@ TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
 
 
 TimeGrid.watch('displayingDates', [ 'displayingSlats', 'displayingColumns' ], function(deps) {
+	this.isDatesRendered = true;
+}, function() {
+	this.isDatesRendered = false;
 });
