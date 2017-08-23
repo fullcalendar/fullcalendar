@@ -650,7 +650,15 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 });
 
 
-TimeGrid.watch('displayingDates', [ 'dateProfile' ], function(deps) {
+TimeGrid.watch('displayingSlats', [ 'dateProfile' ], function(deps) {
 	this.requestRender(this.renderSlats, [ deps.dateProfile ], 'slats', 'destroy');
+});
+
+
+TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
 	this.requestRender(this.renderColumns, [ deps.dateProfile ], 'columns', 'destroy');
+});
+
+
+TimeGrid.watch('displayingDates', [ 'displayingSlats', 'displayingColumns' ], function(deps) {
 });

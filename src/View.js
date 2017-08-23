@@ -764,9 +764,13 @@ View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('displayingBase', [ 'displayingDates' ], function(deps) {
+View.watch('displayingBase', [ 'dateProfile' ], function(deps) {
+	// consider the base rendered when it has received the date profile and an updateSize
+	// (which happens after the rendering queue is drained) has happened.
+	// it's hard to track when every subcomponent has rendered their dates.
 	this.whenSizeUpdated(this.triggerBaseRendered);
 }, function() {
+	// as soon as the view looses it's dateComponent, we know it will soon after unrender its dates.
 	this.triggerBaseUnrendered();
 });
 

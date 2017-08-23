@@ -783,6 +783,13 @@ DateComponent.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ],
 });
 
 
+DateComponent.watch('eventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
+	this.setEventDataSourceInChildren(deps.eventDataSource);
+}, function(deps) {
+	this.unsetEventDataSourceInChildren(deps.eventDataSource);
+});
+
+
 DateComponent.watch('displayingDates', [ 'dateProfile' ], function(deps) {
 	this.requestRender(this.executeDateRender, [ deps.dateProfile ], 'date', 'destroy');
 }, function() {
@@ -801,13 +808,6 @@ DateComponent.watch('displayingEvents', [ 'displayingDates', 'eventDataSource' ]
 	this.startDisplayingEvents(deps.eventDataSource);
 }, function(deps) {
 	this.stopDisplayingEvents(deps.eventDataSource);
-});
-
-
-DateComponent.watch('eventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
-	this.setEventDataSourceInChildren(deps.eventDataSource);
-}, function(deps) {
-	this.unsetEventDataSourceInChildren(deps.eventDataSource);
 });
 
 

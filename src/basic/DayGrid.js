@@ -386,8 +386,12 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 });
 
 
-DayGrid.watch('displayingDates', [ 'dateProfile' ], function(deps) {
+DayGrid.watch('displayingGrid', [ 'dateProfile' ], function(deps) {
 	this.requestRender(this.renderGrid, [ deps.dateProfile ], 'grid', 'destroy');
 }, function() {
 	this.requestRender(this.removeSegPopover);
+});
+
+
+DayGrid.watch('displayingDates', [ 'displayingGrid' ], function(deps) {
 });
