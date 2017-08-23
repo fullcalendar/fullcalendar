@@ -141,8 +141,8 @@ var ListView = View.extend({
 			var eventDef = eventFootprint.eventDef;
 			var componentFootprint = eventFootprint.componentFootprint;
 			var url = eventDef.url;
-			var classes = [ 'fc-list-item' ].concat(this.getClasses(seg.footprint));
-			var bgColor = this.getBgColor(seg.footprint);
+			var classes = [ 'fc-list-item' ].concat(this.getClasses(eventDef));
+			var bgColor = this.getBgColor(eventDef);
 			var timeHtml;
 
 			if (componentFootprint.isAllDay) {

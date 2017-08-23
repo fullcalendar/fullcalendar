@@ -238,7 +238,7 @@ var DayGridEventRenderer = EventRenderer.extend({
 		var isResizableFromEnd = !disableResizing && isAllDay &&
 			seg.isEnd && view.isEventDefResizableFromEnd(eventDef);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
-		var skinCss = cssToStr(this.getSkinCss(seg.footprint));
+		var skinCss = cssToStr(this.getSkinCss(eventDef));
 		var timeHtml = '';
 		var timeText;
 		var titleHtml;

@@ -146,11 +146,11 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		if (this.fillRenderer) {
 			this.fillRenderer.renderSegs('bgEvents', segs, {
 				getClasses: function(seg) {
-					return _this.getBgClasses(seg.footprint);
+					return _this.getBgClasses(seg.footprint.eventDef);
 				},
 				getCss: function(seg) {
 					return {
-						'background-color': _this.getBgColor(seg.footprint)
+						'background-color': _this.getBgColor(seg.footprint.eventDef)
 					};
 				},
 				filterEl: function(seg, el) {
@@ -221,7 +221,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 			'fc-event',
 			seg.isStart ? 'fc-start' : 'fc-not-start',
 			seg.isEnd ? 'fc-end' : 'fc-not-end'
-		].concat(this.getClasses(seg.footprint));
+		].concat(this.getClasses(seg.footprint.eventDef));
 
 		if (isDraggable) {
 			classes.push('fc-draggable');
@@ -317,82 +317,105 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	},
 
 
-	getBgClasses: function(eventFootprint) {
-		var classNames = this.getClasses(eventFootprint);
-
+	getBgClasses: function(eventDef) {
+		var classNames = this.getClasses(eventDef);
 		classNames.push('fc-bgevent');
+		return classNames;
+	},
+
+
+	getClasses: function(eventDef) {
+		var objs = this.getStylingObjs(eventDef);
+		var i;
+		var classNames = [];
+
+		for (i = 0; i < objs.length; i++) {
+			classNames.push.apply( // append
+				classNames,
+				objs[i].eventClassName || objs[i].className || []
+			);
+		}
 
 		return classNames;
 	},
 
 
-	getClasses: function(eventFootprint) {
-		var eventDef = eventFootprint.eventDef;
-
-		return [].concat(
-			eventDef.className, // guaranteed to be an array
-			eventDef.source.className
-		);
-	},
-
-
 	// Utility for generating event skin-related CSS properties
-	getSkinCss: function(eventFootprint) {
+	getSkinCss: function(eventDef) {
 		return {
-			'background-color': this.getBgColor(eventFootprint),
-			'border-color': this.getBorderColor(eventFootprint),
-			color: this.getTextColor(eventFootprint)
+			'background-color': this.getBgColor(eventDef),
+			'border-color': this.getBorderColor(eventDef),
+			color: this.getTextColor(eventDef)
 		};
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getBgColor: function(eventFootprint) {
-		return eventFootprint.eventDef.backgroundColor ||
-			eventFootprint.eventDef.color ||
-			this.getDefaultBgColor(eventFootprint);
-	},
+	getBgColor: function(eventDef) {
+		var objs = this.getStylingObjs(eventDef);
+		var i;
+		var val;
 
+		for (i = 0; i < objs.length && !val; i++) {
+			val = objs[i].eventBackgroundColor || objs[i].eventColor ||
+				objs[i].backgroundColor || objs[i].color;
+		}
 
-	getDefaultBgColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
+		if (!val) {
+			val = this.opt('eventBackgroundColor') || this.opt('eventColor');
+		}
 
-		return source.backgroundColor ||
-			source.color ||
-			this.opt('eventBackgroundColor') ||
-			this.opt('eventColor');
-	},
-
-
-	// Queries for caller-specified color, then falls back to default
-	getBorderColor: function(eventFootprint) {
-		return eventFootprint.eventDef.borderColor ||
-			eventFootprint.eventDef.color ||
-			this.getDefaultBorderColor(eventFootprint);
-	},
-
-
-	getDefaultBorderColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
-
-		return source.borderColor ||
-			source.color ||
-			this.opt('eventBorderColor') ||
-			this.opt('eventColor');
+		return val;
 	},
 
 
 	// Queries for caller-specified color, then falls back to default
-	getTextColor: function(eventFootprint) {
-		return eventFootprint.eventDef.textColor ||
-			this.getDefaultTextColor(eventFootprint);
+	getBorderColor: function(eventDef) {
+		var objs = this.getStylingObjs(eventDef);
+		var i;
+		var val;
+
+		for (i = 0; i < objs.length && !val; i++) {
+			val = objs[i].eventBorderColor || objs[i].eventColor ||
+				objs[i].borderColor || objs[i].color;
+		}
+
+		if (!val) {
+			val = this.opt('eventBorderColor') || this.opt('eventColor');
+		}
+
+		return val;
 	},
 
 
-	getDefaultTextColor: function(eventFootprint) {
-		var source = eventFootprint.eventDef.source;
+	// Queries for caller-specified color, then falls back to default
+	getTextColor: function(eventDef) {
+		var objs = this.getStylingObjs(eventDef);
+		var i;
+		var val;
 
-		return source.textColor || this.opt('eventTextColor');
+		for (i = 0; i < objs.length && !val; i++) {
+			val = objs[i].eventTextColor ||
+				objs[i].textColor;
+		}
+
+		if (!val) {
+			val = this.opt('eventTextColor');
+		}
+
+		return val;
+	},
+
+
+	getStylingObjs: function(eventDef) {
+		var objs = this.getFallbackStylingObjs(eventDef);
+		objs.unshift(eventDef);
+		return objs;
+	},
+
+
+	getFallbackStylingObjs: function(eventDef) {
+		return [ eventDef.source ];
 	},
 
 
