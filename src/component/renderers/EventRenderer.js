@@ -184,6 +184,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 			// build a large concatenation of event segment HTML
 			for (i = 0; i < segs.length; i++) {
+				this.beforeFgSegHtml(segs[i]);
 				html += this.fgSegHtml(segs[i], disableResizing);
 			}
 
@@ -206,6 +207,10 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return renderedSegs;
+	},
+
+
+	beforeFgSegHtml: function(seg) { // hack
 	},
 
 
