@@ -322,9 +322,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	executeEventRender: function(eventInstanceRepo) {
 		this.executeEventUnrender();
-		this.renderEventsss(eventInstanceRepo);
-		this.triggerAfterEventsRender();
-		this.isEventsRendered = true;
+		if (this.renderEventsss(eventInstanceRepo) !== false) {
+			this.triggerAfterEventsRender();
+			this.isEventsRendered = true;
+		}
 	},
 
 
@@ -338,6 +339,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	// TODO: rename once legacy `renderEvents` is out of the way
+	// returning `false` indicates that nothing happened
 	renderEventsss: function(eventInstanceRepo) {
 		if (this.eventRenderer) {
 			this.eventRenderer.rangeUpdated(); // poorly named now
@@ -345,6 +347,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 		else if (this.renderEvents) { // legacy
 			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceRepo.byDefId));
+		}
+		else {
+			return false;
 		}
 	},
 
