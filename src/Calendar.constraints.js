@@ -299,12 +299,18 @@ Calendar.prototype.eventRangesToEventFootprints = function(eventRanges) {
 	var eventFootprints = [];
 
 	for (i = 0; i < eventRanges.length; i++) {
-		eventFootprints.push(
-			eventRangeToEventFootprint(eventRanges[i])
+		eventFootprints.push.apply( // footprints
+			eventFootprints,
+			this.eventRangeToEventFootprints(eventRanges[i])
 		);
 	}
 
 	return eventFootprints;
+};
+
+
+Calendar.prototype.eventRangeToEventFootprints = function(eventRange) {
+	return [ eventRangeToEventFootprint(eventRange) ];
 };
 
 
