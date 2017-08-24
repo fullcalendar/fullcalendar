@@ -91,8 +91,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	requestRender: function(method, args, namespace, actionType) {
 		var _this = this;
+		var renderQueue = this._getView().calendar.renderQueue;
 
-		this._getView().calendar.renderQueue.queue(function() {
+		renderQueue.queue(function() {
 			method.apply(_this, args);
 		}, this.uid, namespace, actionType);
 	},

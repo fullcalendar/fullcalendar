@@ -676,14 +676,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	onAfterEventsRender: function(segs) { // could be an empty array, which is fine
-		var renderedEventSegs = this.renderedEventSegs;
+	onAfterEventsRender: function(segs) {
+		var notYetQueued = !this.renderedEventSegs;
+		var renderedEventSegs = notYetQueued ? (this.renderedEventSegs = []) : this.renderedEventSegs;
 
-		if (renderedEventSegs) { // triggerEventsRendered already queued to run?
-			renderedEventSegs.push.apply(renderedEventSegs, segs); // append
-		}
-		else {
-			this.renderedEventSegs = [].concat(segs);
+		renderedEventSegs.push.apply(renderedEventSegs, segs); // append
+
+		if (notYetQueued) {
 			this.whenSizeUpdated(this.triggerEventsRendered);
 		}
 	},
