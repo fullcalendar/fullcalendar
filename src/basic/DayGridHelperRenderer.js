@@ -14,6 +14,7 @@ var DayGridHelperRenderer = HelperRenderer.extend({
 		this.component.rowEls.each(function(row, rowNode) {
 			var rowEl = $(rowNode); // the .fc-row
 			var skeletonEl = $('<div class="fc-helper-skeleton"><table/></div>'); // will be absolutely positioned
+			var skeletonTopEl;
 			var skeletonTop;
 
 			// If there is an original segment, match the top position. Otherwise, put it at the row's top level
@@ -21,7 +22,12 @@ var DayGridHelperRenderer = HelperRenderer.extend({
 				skeletonTop = sourceSeg.el.position().top;
 			}
 			else {
-				skeletonTop = rowEl.find('.fc-content-skeleton tbody').position().top;
+				skeletonTopEl = rowEl.find('.fc-content-skeleton tbody');
+				if (!skeletonTopEl.length) { // when no events
+					skeletonTopEl = rowEl.find('.fc-content-skeleton table');
+				}
+
+				skeletonTop = skeletonTopEl.position().top;
 			}
 
 			skeletonEl.css('top', skeletonTop)
