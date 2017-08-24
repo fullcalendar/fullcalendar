@@ -706,10 +706,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	triggerEventsRendered: function() {
 		var _this = this;
+		var renderedEventSegs = this.renderedEventSegs;
+
+		this.renderedEventSegs = null;
 
 		// an optimization, because getEventLegacy is expensive
 		if (this.hasPublicHandlers('eventAfterRender')) {
-			this.renderedEventSegs.forEach(function(seg) {
+			renderedEventSegs.forEach(function(seg) {
 				var legacy;
 
 				if (seg.el) { // necessary?
@@ -723,12 +726,14 @@ var View = FC.View = InteractiveDateComponent.extend({
 			});
 		}
 
-		this.renderedEventSegs = null;
+		if (this.needsEventAfterAllRender) {
+			delete this.needsEventAfterAllRender;
 
-		this.publiclyTrigger('eventAfterAllRender', {
-			context: this,
-			args: [ this ]
-		});
+			this.publiclyTrigger('eventAfterAllRender', {
+				context: this,
+				args: [ this ]
+			});
+		}
 	},
 
 
@@ -771,6 +776,30 @@ View.watch('displayingBase', [ 'dateProfile' ], function(deps) {
 }, function() {
 	// as soon as the view looses it's dateComponent, we know it will soon after unrender its dates.
 	this.triggerBaseUnrendered();
+});
+
+
+View.watch('reportingEventsResolved', [ 'eventDataSource' ], function(deps) {
+	var eventDataSource = deps.eventDataSource;
+
+	if (eventDataSource.isResolved) {
+		this.reportEventsResolved();
+	}
+
+	this.listenTo(eventDataSource, 'resolved', this.reportEventsResolved);
+}, function(deps) {
+	this.stopListeningTo(deps.eventDataSource, 'resolved', this.reportEventsResolved);
+});
+
+
+View.prototype.reportEventsResolved = function() {
+	this.set('eventsResolvedId', Math.random());
+};
+
+
+View.watch('displayingBaseEvents', [ 'displayingBase', 'eventsResolvedId' ], function() {
+	this.needsEventAfterAllRender = true;
+	this.onAfterEventsRender([]);
 });
 
 

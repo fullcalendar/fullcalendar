@@ -102,11 +102,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 	whenSizeUpdated: function(func) {
 		var renderQueue = this._getView().calendar.renderQueue;
 
-		if (!renderQueue.isRunning && !renderQueue.isPaused) {
+		if (renderQueue.getIsIdle()) {
 			func.call(this);
 		}
 		else {
-			renderQueue.one('stop', func.bind(this));
+			renderQueue.one('idle', func.bind(this));
 		}
 	},
 
@@ -292,7 +292,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	startDisplayingEvents: function(eventDataSource) {
-		if (eventDataSource.isPopulated) {
+		if (eventDataSource.instanceRepo.cnt) {
 			this.requestEventRender(eventDataSource.instanceRepo);
 		}
 

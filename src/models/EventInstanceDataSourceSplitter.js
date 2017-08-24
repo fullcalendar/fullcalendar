@@ -3,7 +3,6 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 
 	keysFunc: null,
 	repoHash: null,
-	isPopulated: false, // hack for eventAfterAllRender
 
 
 	constructor: function(keysFunc) {
@@ -19,18 +18,9 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 		if (initialRepo) {
 			subDataSource.addChangeset(new EventInstanceChangeset(null, initialRepo));
 		}
-		else if (this.isPopulated) {
-			subDataSource.isPopulated = true;
-		}
 
 		subDataSource.listenTo(this, 'receive:' + key, function(changeset) {
 			subDataSource.addChangeset(changeset);
-		});
-
-		subDataSource.listenTo(this, 'after:receive', function() {
-			if (!subDataSource.isPopulated) {
-				subDataSource.addChangeset(new EventInstanceChangeset());
-			}
 		});
 
 		return subDataSource;
@@ -43,7 +33,8 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 
 
 	addSource: function(dataSource) {
-		if (dataSource.isPopulated) {
+
+		if (dataSource.instanceRepo.cnt) {
 			this.processChangeset(new EventInstanceChangeset(null, dataSource.instanceRepo)); // add all
 		}
 
@@ -54,7 +45,7 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 	removeSource: function(dataSource) {
 		this.stopListeningTo(dataSource);
 
-		if (dataSource.isPopulated) {
+		if (dataSource.instanceRepo.cnt) {
 			this.processChangeset(new EventInstanceChangeset(dataSource.instanceRepo)); // remove all
 		}
 	},
@@ -85,9 +76,6 @@ var EventInstanceDataSourceSplitter = FC.EventInstanceDataSourceSplitter = Class
 
 			this.trigger('receive:' + key, changesetsByKey[key]);
 		}
-
-		this.trigger('after:receive');
-		this.isPopulated = true;
 	},
 
 
