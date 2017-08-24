@@ -7,7 +7,7 @@ var TimeGridFillRenderer = FillRenderer.extend({
 		var containerEls;
 
 		// TODO: more efficient lookup
-		if (type === 'bgEvents') {
+		if (type === 'bgEvent') {
 			containerEls = timeGrid.bgContainerEls;
 		}
 		else if (type === 'businessHours') {

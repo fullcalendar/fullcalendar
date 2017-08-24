@@ -291,14 +291,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	startDisplayingEvents: function(eventDataSource) {
-		var _this = this;
-
 		if (eventDataSource.isPopulated) {
 			this.requestEventRender(eventDataSource.instanceRepo);
 		}
 
 		this.listenTo(eventDataSource, 'receive', function(eventInstanceChangeset) {
-			_this.requestEventRender(eventDataSource.instanceRepo);
+			this.requestEventRender(eventDataSource.instanceRepo);
 		});
 	},
 
