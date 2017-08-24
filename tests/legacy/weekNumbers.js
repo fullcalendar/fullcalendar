@@ -90,7 +90,6 @@ describe('weekNumbers', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 6?
-					expect(counts.allWeekNumbers).toEqual(19);
 					expect(counts.colWeekNumbers).toEqual(6);
 					expect(counts.cellWeekNumbers).toEqual(0);
 					expect(counts.cornerWeekNumbers).toEqual(0);
@@ -103,7 +102,6 @@ describe('weekNumbers', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 6?
-					expect(counts.allWeekNumbers).toEqual(19);
 					expect(counts.colWeekNumbers).toEqual(6);
 					expect(counts.cellWeekNumbers).toEqual(0);
 					expect(counts.cornerWeekNumbers).toEqual(0);
@@ -114,7 +112,6 @@ describe('weekNumbers', function() {
 				it('should display week numbers in the day cells only', function() {
 					options.weekNumbersWithinDays = true;
 					counts = getCounts();
-					expect(counts.allWeekNumbers).toEqual(6);
 					expect(counts.colWeekNumbers).toEqual(0);
 					expect(counts.cellWeekNumbers).toEqual(6);
 					expect(counts.cornerWeekNumbers).toEqual(0);
@@ -200,7 +197,6 @@ describe('weekNumbers', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 1?
-					expect(counts.allWeekNumbers).toEqual(4);
 					expect(counts.colWeekNumbers).toEqual(1);
 					expect(counts.cellWeekNumbers).toEqual(0);
 					expect(counts.cornerWeekNumbers).toEqual(0);
@@ -213,7 +209,6 @@ describe('weekNumbers', function() {
 					counts = getCounts();
 					// TODO: Is it possible to remove class fc-week-number from
 					// headers and fillers, bringing allWeekNumbers down to 1?
-					expect(counts.allWeekNumbers).toEqual(4);
 					expect(counts.colWeekNumbers).toEqual(1);
 					expect(counts.cellWeekNumbers).toEqual(0);
 					expect(counts.cornerWeekNumbers).toEqual(0);
@@ -224,7 +219,6 @@ describe('weekNumbers', function() {
 				it('should display week numbers in the day cells only', function() {
 					options.weekNumbersWithinDays = true;
 					counts = getCounts();
-					expect(counts.allWeekNumbers).toEqual(1);
 					expect(counts.colWeekNumbers).toEqual(0);
 					expect(counts.cellWeekNumbers).toEqual(1);
 					expect(counts.cornerWeekNumbers).toEqual(0);
