@@ -23,6 +23,7 @@ var browserConfig = Object.assign({}, baseConfig, { // extends the base config
 		module: false,
 		require: false,
 		moment: false,
+		ICAL: false,
 		jQuery: false,
 		JSON: false // esversion:3 complains, but IE9 has this
 	}

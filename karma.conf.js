@@ -12,6 +12,7 @@ module.exports = function(config) {
 		files: [
 
 			// dependencies for main lib
+			'node_modules/ical.js/build/ical.js',
 			'node_modules/moment/moment.js',
 			'node_modules/jquery/dist/jquery.js',
 			'node_modules/components-jqueryui/jquery-ui.js',
@@ -21,6 +22,7 @@ module.exports = function(config) {
 			'dist/fullcalendar.js',
 			'dist/fullcalendar.css',
 			'dist/gcal.js',
+			'dist/ical.js',
 			'dist/locale-all.js',
 
 			// For testing if scheduler's JS, even when not actived, screws anything up

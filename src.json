@@ -117,5 +117,10 @@
     "gcal/intro.js",
     "gcal/GcalEventSource.js",
     "gcal/outro.js"
+  ],
+  "ical.js": [
+    "ical/intro.js",
+    "ical/IcalEventSource.js",
+    "ical/outro.js"
   ]
 }
