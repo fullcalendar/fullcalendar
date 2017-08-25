@@ -18,7 +18,7 @@ var IcalEventSource = EventSource.extend({
 				{
 					url: url,
 					success: function(responseData) {
-						rawEventDefs = _this.icalItemsToRawEventDefs(responseData, start, end);
+						rawEventDefs = _this.icalItemsToRawEventDefs(responseData, start, end, timezone);
 
 						successRes = applyAll(
 							onSuccess,
@@ -38,88 +38,53 @@ var IcalEventSource = EventSource.extend({
 		});
 	},
 
-	icalItemsToRawEventDefs: function(icalString, start, end) {
+	icalItemsToRawEventDefs: function(icalString, start, end, timezone) {
 		var _this = this;
 
-		var jcalData;
-		try {
-			jcalData = ICAL.parse(icalString);
-		} catch (icalerr) {
-			FC.warn.apply(null, icalerr);
-			return false;
-		}
+		var icalExpander = new IcalExpander({ics: icalString});
 		
-		var comp = new ICAL.Component(jcalData);
-		var vevents = comp.getAllSubcomponents("vevent");
+		// adjust start and end date to ensure that we will really include all
+		// relevant events even if we're in a timezone far away
+		var startJsDate = start.toDate();
+		startJsDate.setDate(startJsDate.getDate()-1);
+		var endJsDate = end.toDate();
+		endJsDate.setDate(endJsDate.getDate()+1);
 		
-		var rawEvents = [];
+		var theExpanse = icalExpander.between(startJsDate, endJsDate);
 		
-		vevents.forEach(function (vevent) {
-			var veventRawEvents = _this.generateRawEventsFromVevent(vevent, start, end);
-			veventRawEvents.forEach(function (rawEvent) { this.push(rawEvent); }, rawEvents);			
-		});
-		
-		return rawEvents;
-	},
-
-
-	generateRawEventsFromVevent: function(vevent, start, end) {
-		/*
-		var url = item.htmlLink || null;
-
-		// make the URLs for each event show times in the correct timezone
-		if (url && gcalTimezone) {
-			url = injectQsComponent(url, 'ctz=' + gcalTimezone);
-		}
-		*/
-		
-		var veventComp = new ICAL.Event(vevent);
-		
-		if(!veventComp.isRecurring()) {
-			return [this.veventAndTimeToRawEvent(veventComp, veventComp.startDate, veventComp.endDate)];
-		}
-		
-		var requestedStartIcalMoment = ICAL.Time.fromJSDate(start.toDate());
-		var earliestEventIcalMoment = veventComp.startDate;
-		
-		var iterationStartIcalMoment;
-		if(requestedStartIcalMoment.compare(earliestEventIcalMoment) < 0) {
-			iterationStartIcalMoment = earliestEventIcalMoment;
-		} else {
-			iterationStartIcalMoment = requestedStartIcalMoment;
-		}
-		
-		var iterator = veventComp.iterator(iterationStartIcalMoment);
-		
-		var result = [];
-		
-		var startIcalMoment;
-		while(startIcalMoment = iterator.next()) {
-			if(startIcalMoment.toJSDate() > end.toDate())
-				break;
-
-			var endIcalMoment = startIcalMoment.clone();
-			endIcalMoment.addDuration(veventComp.duration);
-			result.push(this.veventAndTimeToRawEvent(veventComp, startIcalMoment, endIcalMoment));
-		}
-		
-		return result
+		const mappedEvents = theExpanse.events.map(function (e) {return _this.expandedEventAndTimeToRawEvent(e, e.startDate, e.endDate, timezone);});
+		const mappedOccurrences = theExpanse.occurrences.map(function (o) {return _this.expandedEventAndTimeToRawEvent(o.item, o.startDate, o.endDate, timezone);});
+		return [].concat(mappedEvents, mappedOccurrences);
 	},
 	
-	veventAndTimeToRawEvent: function(veventComp, startIcalMoment, endIcalMoment) {
+	expandedEventAndTimeToRawEvent: function(expandedEvent, startIcalMoment, endIcalMoment, timezone) {
 		return {
-			id: veventComp.uid,
-			title: veventComp.summary,
+			id: expandedEvent.uid,
+			title: expandedEvent.summary,
 			//url: url, // TODO: handle URL
-			location: veventComp.location,
-			description: veventComp.description,
-			start: this.icalMomentToString(startIcalMoment), // TODO: handle all-day events properly
-			end: this.icalMomentToString(endIcalMoment) // TODO: handle all-day events properly
+			location: expandedEvent.location,
+			description: expandedEvent.description,
+			start: this.icalMomentToString(startIcalMoment, timezone), // TODO: handle all-day events properly
+			end: this.icalMomentToString(endIcalMoment, timezone) // TODO: handle all-day events properly
 		};
 	},
 	
-	icalMomentToString: function(icalMoment) {
-		return icalMoment.toString();
+	icalMomentToString: function(icalMoment, timezone) {
+		switch(timezone) {
+			case 'local':
+				return icalMoment.convertToZone(ICAL.Timezone.localTimezone).toString();
+			case 'UTC':
+				return icalMoment.convertToZone(ICAL.Timezone.utcTimezone).toString();
+			default:
+				var tz = ICAL.TimezoneService.get(timezone);
+				if(tz)
+				{
+					return icalMoment.convertToZone(tz).toString()
+				}
+				//else: fall through
+			case false:
+				return icalMoment.toString();
+		}
 	},
 
 	getPrimitive: function() {

@@ -24,7 +24,7 @@
   "dependencies": {
     "jquery": "2 - 3",
     "moment": "^2.9.0",
-	"ical.js": "^1.2.2"
+    "ical-expander": "github:haukepribnow/ical-expander"
   },
   "main": [
     "dist/fullcalendar.js",

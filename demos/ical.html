@@ -5,6 +5,7 @@
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/ical.js/build/ical.js'></script>
+<script src='../node_modules/ical-expander/dist/ical-expander.js'></script>
 <script src='../node_modules/moment/moment.js'></script>
 <script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../dist/fullcalendar.js'></script>
@@ -22,13 +23,6 @@
 			},
 
 			events: 'ical/calendar.ics',
-			
-			/*			
-			eventClick: function(event) {
-				// opens events in a popup window
-				window.open(event.url, 'gcalevent', 'width=700,height=600');
-				return false;
-			},*/
 			
 			loading: function(bool) {
 				$('#loading').toggle(bool);

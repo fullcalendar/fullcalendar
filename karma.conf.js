@@ -13,6 +13,7 @@ module.exports = function(config) {
 
 			// dependencies for main lib
 			'node_modules/ical.js/build/ical.js',
+			'node_modules/ical-expander/dist/ical-expander.js',
 			'node_modules/moment/moment.js',
 			'node_modules/jquery/dist/jquery.js',
 			'node_modules/components-jqueryui/jquery-ui.js',

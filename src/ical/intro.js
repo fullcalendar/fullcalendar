@@ -6,15 +6,15 @@
 
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'ical.js' ], factory);
+		define([ 'jquery', 'ical-expander' ], factory);
 	}
 	else if (typeof exports === 'object') { // Node/CommonJS
-		module.exports = factory(require('jquery'), require('ical.js'));
+		module.exports = factory(require('jquery'), require('ical-expander'));
 	}
 	else {
-		factory(jQuery, ICAL);
+		factory(jQuery, IcalExpander);
 	}
-})(function($, ICAL) {
+})(function($, IcalExpander) {
 
 
 var FC = $.fullCalendar;

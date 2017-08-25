@@ -18,11 +18,25 @@
     }
   ],
   "minimum-stability": "stable",
+  "repositories": [
+      {
+          "type":"package",
+          "package": {
+            "name": "haukepribnow/ical-expander",
+            "version":"master",
+            "source": {
+                "url": "https://github.com/haukepribnow/ical-expander.git",
+                "type": "git",
+                "reference":"master"
+              }
+          }
+      }
+  ],
   "require": {
     "robloach/component-installer": "*",
     "components/jquery": "2 - 3",
     "moment/moment": "^2.9.0",
-	"mozilla-comm/ical.js": "^1.2.2"
+    "haukepribnow/ical-expander": "^1.1.1"
   },
   "extra": {
     "component": {
