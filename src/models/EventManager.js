@@ -1,7 +1,5 @@
 
-var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
-
-	currentPeriod: null,
+var EventManager = RequestableEventDataSource.extend({
 
 	calendar: null,
 	stickySource: null,
@@ -9,32 +7,18 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	constructor: function(calendar) {
+		RequestableEventDataSource.call(this);
+
 		this.calendar = calendar;
 		this.stickySource = new ArrayEventSource(calendar);
 		this.otherSources = [];
-	},
 
-
-	// returns an EventInstanceDataSource
-	requestEvents: function(start, end, timezone, force) {
-		if (
-			force ||
-			!this.currentPeriod ||
-			!this.currentPeriod.isWithinRange(start, end)
-		) {
-			this.setPeriod( // will change this.currentPeriod
-				new EventPeriod(start, end, timezone)
-			);
-		}
-
-		return this.currentPeriod;
-	},
-
-
-	tryReset: function() {
-		if (this.currentPeriod) {
-			this.currentPeriod.tryReset();
-		}
+		this.on('before:receive', function() {
+			calendar.startBatchRender();
+		});
+		this.on('after:receive', function() {
+			calendar.stopBatchRender();
+		});
 	},
 
 
@@ -45,55 +29,21 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	addSource: function(eventSource) {
 		this.otherSources.push(eventSource);
 
-		if (this.currentPeriod) {
-			this.currentPeriod.requestSource(eventSource); // might release
+		if (this.currentUnzonedRange) {
+			this.requestSource(eventSource);
 		}
 	},
 
 
 	removeSource: function(doomedSource) {
 		removeExact(this.otherSources, doomedSource);
-
-		if (this.currentPeriod) {
-			this.currentPeriod.purgeSource(doomedSource); // might release
-		}
+		this.purgeSource(doomedSource);
 	},
 
 
 	removeAllSources: function() {
 		this.otherSources = [];
-
-		if (this.currentPeriod) {
-			this.currentPeriod.purgeAllSources(); // might release
-		}
-	},
-
-
-	// Source Refetching
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	refetchSource: function(eventSource) {
-		var currentPeriod = this.currentPeriod;
-
-		if (currentPeriod) {
-			currentPeriod.freeze();
-			currentPeriod.purgeSource(eventSource);
-			currentPeriod.requestSource(eventSource);
-			currentPeriod.thaw();
-		}
-	},
-
-
-	refetchAllSources: function() {
-		var currentPeriod = this.currentPeriod;
-
-		if (currentPeriod) {
-			currentPeriod.freeze();
-			currentPeriod.purgeAllSources();
-			currentPeriod.requestSources(this.getSources());
-			currentPeriod.thaw();
-		}
+		this.purgeAllSources();
 	},
 
 
@@ -174,120 +124,38 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
-	// Event-Period
+	// Event Adding/Removing needs to have side-effects in the sources
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setPeriod: function(eventPeriod) {
-		if (this.currentPeriod) {
-			this.unbindPeriod(this.currentPeriod);
-			this.currentPeriod = null;
-		}
-
-		this.currentPeriod = eventPeriod;
-		this.bindPeriod(eventPeriod);
-
-		eventPeriod.requestSources(this.getSources());
-	},
-
-
-	bindPeriod: function(eventPeriod) {
-		this.listenTo(eventPeriod, {
-			'before:receive': function() {
-				this.calendar.startBatchRender();
-			},
-			'after:receive': function() {
-				this.calendar.stopBatchRender();
-			}
-		});
-	},
-
-
-	unbindPeriod: function(eventPeriod) {
-		this.stopListeningTo(eventPeriod);
-	},
-
-
-	// Event Getting/Adding/Removing
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	getEventDefByUid: function(uid) {
-		if (this.currentPeriod) {
-			return this.currentPeriod.getEventDefByUid(uid);
-		}
-	},
-
-
-	getEventDefsById: function(eventDefId) {
-		if (this.currentPeriod) {
-			return this.currentPeriod.getEventDefsById(eventDefId);
-		}
-		return [];
-	},
-
-
-	iterEventInstances: function(func) {
-		if (this.currentPeriod) {
-			this.currentPeriod.instanceRepo.iterEventInstances(func);
-		}
-	},
-
-
-	getEventInstances: function() {
-		if (this.currentPeriod) {
-			return this.currentPeriod.instanceRepo.getEventInstances();
-		}
-		return [];
-	},
-
-
-	getEventInstancesWithId: function(eventDefId) {
-		if (this.currentPeriod) {
-			return this.currentPeriod.instanceRepo.getEventInstancesWithId(eventDefId);
-		}
-		return [];
-	},
-
-
-	getEventInstancesWithoutId: function(eventDefId) {
-		if (this.currentPeriod) {
-			return this.currentPeriod.instanceRepo.getEventInstancesWithoutId(eventDefId);
-		}
-		return [];
-	},
-
-
-	addEventDef: function(eventDef, isSticky) {
-		if (isSticky) {
+	addEventDef: function(eventDef, persist) {
+		if (persist) {
 			this.stickySource.addEventDef(eventDef);
 		}
 
-		if (this.currentPeriod) {
-			this.currentPeriod.addEventDef(eventDef); // might release
-		}
+		RequestableEventDataSource.prototype.addEventDef.apply(this, arguments);
 	},
 
 
-	removeEventDefsById: function(eventId) {
-		this.getSources().forEach(function(eventSource) {
-			eventSource.removeEventDefsById(eventId);
-		});
-
-		if (this.currentPeriod) {
-			this.currentPeriod.removeEventDefsById(eventId); // might release
+	removeEventDefsById: function(eventId, persist) {
+		if (persist) {
+			this.getSources().forEach(function(eventSource) {
+				eventSource.removeEventDefsById(eventId);
+			});
 		}
+
+		RequestableEventDataSource.prototype.removeEventDefsById.apply(this, arguments);
 	},
 
 
-	removeAllEventDefs: function() {
-		this.getSources().forEach(function(eventSource) {
-			eventSource.removeAllEventDefs();
-		});
-
-		if (this.currentPeriod) {
-			this.currentPeriod.removeAllEventDefs();
+	removeAllEventDefs: function(persist) {
+		if (persist) {
+			this.getSources().forEach(function(eventSource) {
+				eventSource.removeAllEventDefs();
+			});
 		}
+
+		RequestableEventDataSource.prototype.removeAllEventDefs.apply(this, arguments);
 	},
 
 
@@ -300,24 +168,18 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	*/
 	mutateEventsWithId: function(eventDefId, eventDefMutation) {
 		var calendar = this.calendar;
-		var currentPeriod = this.currentPeriod;
 		var undoFunc;
 
-		if (currentPeriod) {
+		// emits two separate changesets, so make sure rendering happens only once
+		calendar.startBatchRender();
+		undoFunc = RequestableEventDataSource.prototype.mutateEventsWithId.apply(this, arguments);
+		calendar.stopBatchRender();
 
-			// emits two separate changesets, so make sure rendering happens only once
+		return function() {
 			calendar.startBatchRender();
-			undoFunc = currentPeriod.mutateEventsWithId(eventDefId, eventDefMutation);
+			undoFunc();
 			calendar.stopBatchRender();
-
-			return function() {
-				calendar.startBatchRender();
-				undoFunc();
-				calendar.stopBatchRender();
-			};
-		}
-
-		return function() { };
+		};
 	},
 
 
@@ -343,24 +205,6 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return new EventInstanceGroup(allInstances);
-	},
-
-
-	// Freezing
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	freeze: function() {
-		if (this.currentPeriod) {
-			this.currentPeriod.freeze();
-		}
-	},
-
-
-	thaw: function() {
-		if (this.currentPeriod) {
-			this.currentPeriod.thaw();
-		}
 	}
 
 });

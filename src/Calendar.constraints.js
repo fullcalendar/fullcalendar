@@ -49,12 +49,12 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 
 
 Calendar.prototype.getPeerEventInstances = function(eventDef) {
-	return this.eventManager.getEventInstancesWithoutId(eventDef.id);
+	return this.eventManager.instanceRepo.getEventInstancesWithoutId(eventDef.id);
 };
 
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
-	var peerEventInstances = this.eventManager.getEventInstances();
+	var peerEventInstances = this.eventManager.instanceRepo.getEventInstances();
 	var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
@@ -157,7 +157,7 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay)
 		}
 	}
 	else if (constraintVal != null) { // an ID
-		eventInstances = this.eventManager.getEventInstancesWithId(constraintVal);
+		eventInstances = this.eventManager.instanceRepo.getEventInstancesWithId(constraintVal);
 
 		return this.eventInstancesToFootprints(eventInstances);
 	}
@@ -278,19 +278,14 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
 Returns false on invalid input.
 */
 Calendar.prototype.parseEventDefToInstances = function(eventInput) {
-	var eventPeriod = this.eventManager.currentPeriod;
+	var eventManager = this.eventManager;
 	var eventDef = EventDefParser.parse(eventInput, new EventSource(this));
 
 	if (!eventDef) { // invalid
 		return false;
 	}
 
-	if (eventPeriod) {
-		return eventDef.buildInstances(eventPeriod.unzonedRange);
-	}
-	else {
-		return [];
-	}
+	return eventDef.buildInstances(eventManager.currentUnzonedRange);
 };
 
 

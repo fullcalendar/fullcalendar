@@ -144,14 +144,14 @@ Calendar.mixin({
 
 
 	startBatchRender: function() {
-		if (!(this.batchRenderDepth++)) {
+		if (!(this.batchRenderDepth++) && this.renderQueue) {
 			this.renderQueue.pause();
 		}
 	},
 
 
 	stopBatchRender: function() {
-		if (!(--this.batchRenderDepth)) {
+		if (!(--this.batchRenderDepth) && this.renderQueue) {
 			this.renderQueue.resume();
 		}
 	},

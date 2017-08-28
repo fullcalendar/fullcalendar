@@ -309,8 +309,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			rawSources.unshift(singleRawSource);
 		}
 
-		eventManager.freeze();
-
 		rawSources.forEach(function(rawSource) {
 			var source = EventSourceParser.parse(rawSource, _this);
 
@@ -318,19 +316,19 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				eventManager.addSource(source);
 			}
 		});
-
-		eventManager.thaw();
 	},
 
 
 	// returns an EventInstanceDataSource
 	requestEvents: function(start, end) {
-		return this.eventManager.requestEvents(
+		this.eventManager.request(
 			start,
 			end,
 			this.opt('timezone'),
-			this.opt('lazyFetching')
+			!this.opt('lazyFetching')
 		);
+
+		return this.eventManager;
 	}
 
 });

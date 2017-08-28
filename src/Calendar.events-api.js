@@ -120,10 +120,10 @@ Calendar.mixin({
 		var i;
 
 		if (legacyQuery == null) { // shortcut for removing all
-			eventManager.removeAllEventDefs();
+			eventManager.removeAllEventDefs(true); // persist=true
 		}
 		else {
-			eventManager.iterEventInstances(function(eventInstance) {
+			eventManager.instanceRepo.iterEventInstances(function(eventInstance) {
 				legacyInstances.push(eventInstance.toLegacy());
 			});
 
@@ -138,7 +138,7 @@ Calendar.mixin({
 			eventManager.freeze();
 
 			for (i in idMap) { // reuse `i` as an "id"
-				eventManager.removeEventDefsById(i);
+				eventManager.removeEventDefsById(i, true); // persist=true
 			}
 
 			eventManager.thaw();
@@ -150,7 +150,7 @@ Calendar.mixin({
 	clientEvents: function(legacyQuery) {
 		var legacyEventInstances = [];
 
-		this.eventManager.iterEventInstances(function(eventInstance) {
+		this.eventManager.instanceRepo.iterEventInstances(function(eventInstance) {
 			legacyEventInstances.push(eventInstance.toLegacy());
 		});
 
