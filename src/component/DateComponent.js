@@ -66,7 +66,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 			if (this.has('businessHourGenerator')) {
 				this.setBusinessHourGeneratorInChild(this.get('businessHourGenerator'), child);
 			}
+
+			return true;
 		}
+
+		return false;
 	},
 
 
@@ -75,7 +79,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 			delete this.childrenByUid[child.uid];
 
 			this.stopListeningTo(child);
+
+			return true;
 		}
+
+		return false;
 	},
 
 
