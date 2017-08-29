@@ -132,6 +132,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	// TODO: only do if isInDom?
+	// TODO: make part of Component, along with children/batch-render system?
 	updateSize: function(totalHeight, isAuto, isResize) {
 		this.callChildren('updateSize', arguments);
 	},

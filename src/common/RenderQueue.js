@@ -53,18 +53,6 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
-	/*
-	Prevents any new tasks from being added AND clears all tasks related to rendering *new* things,
-	however, keeps destroy-related tasks to allow proper cleanup.
-	*/
-	kill: function() {
-		this.isKilled = true;
-		this.q = this.q.filter(function(task) {
-			return task.actionType === 'destroy';
-		});
-	},
-
-
 	startWait: function(namespace, waitMs) {
 		this.waitNamespace = namespace;
 		this.spawnWait(waitMs);

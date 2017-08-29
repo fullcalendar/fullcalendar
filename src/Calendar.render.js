@@ -101,9 +101,6 @@ Calendar.mixin({
 			this.clearView();
 		}
 
-		this.renderQueue.kill();
-		// ^ TODO: should we let all rendering play out?
-
 		this.toolbarsManager.proxyCall('removeElement');
 		this.contentEl.remove();
 		this.el.removeClass('fc fc-ltr fc-rtl');
@@ -210,7 +207,6 @@ Calendar.mixin({
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
 	renderView: function(viewType) {
-		var _this = this;
 		var oldView = this.view;
 		var newView;
 
@@ -228,11 +224,9 @@ Calendar.mixin({
 
 			this.bindViewHandlers(newView);
 
-			this.renderQueue.queue(function() {
-				newView.setElement(
-					$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(_this.contentEl)
-				);
-			});
+			newView.setElement(
+				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
+			);
 
 			this.toolbarsManager.proxyCall('activateButton', viewType);
 		}
@@ -254,9 +248,7 @@ Calendar.mixin({
 
 		this.unbindViewHandlers(currentView);
 
-		this.renderQueue.queue(function() {
-			currentView.removeElement();
-		});
+		currentView.removeElement();
 
 		this.view = null;
 	},
