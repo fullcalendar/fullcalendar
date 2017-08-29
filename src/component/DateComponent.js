@@ -28,8 +28,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	constructor: function() {
 		Component.call(this);
 
-		this.defineDisplayingEvents();
-		this.defineEventDataSourceInChildren();
+		this.defineLateWatchers();
 
 		this.uid = String(DateComponent.guid++);
 		this.childrenByUid = {};
@@ -52,6 +51,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
+	},
+
+
+	defineLateWatchers: function() {
+		this.defineDisplayingEvents();
+		this.defineEventDataSourceInChildren();
 	},
 
 
