@@ -4,3 +4,13 @@ dist
 # npm
 node_modules
 npm-debug.log
+package-lock.json
+
+# yarn
+yarn.lock
+
+# JetBrains
+.idea/
+
+# osx
+.DS_Store

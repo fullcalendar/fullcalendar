@@ -174,7 +174,9 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		// reset all dimensions back to the original state
 		this.timeGrid.bottomRuleEl.hide(); // .show() will be called later if this <hr> is necessary
-		this.scroller.clear(); // sets height to 'auto' and clears overflow
+		if (!this.options.globalForcedScroll) { // if the globalForcedScroll option is set to true
+			this.scroller.clear(); // sets height to 'auto' and clears overflow
+		}
 		uncompensateScroll(noScrollRowEls);
 
 		// limit number of events in the all-day area
