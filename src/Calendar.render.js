@@ -230,8 +230,9 @@ Calendar.mixin({
 
 		if (this.view) {
 
-			if (forcedScroll) {
-				this.view.addForcedScroll(forcedScroll);
+			var forced = forcedScroll || (this.optionsModel.get().globalForcedScroll);
+			if (forced) {
+				this.view.addForcedScroll(forced);
 			}
 
 			if (this.elementVisible()) {
