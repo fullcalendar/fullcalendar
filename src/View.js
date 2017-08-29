@@ -768,7 +768,7 @@ View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('displayingBase', [ 'dateProfile' ], function(deps) {
+View.watch('displayingBase', [ 'isInDom', 'dateProfile' ], function(deps) {
 	// consider the base rendered when it has received the date profile and an updateSize
 	// (which happens after the rendering queue is drained) has happened.
 	// it's hard to track when every subcomponent has rendered their dates.
@@ -793,7 +793,7 @@ View.watch('reportingEventsResolved', [ 'eventDataSource' ], function(deps) {
 
 
 View.prototype.reportEventsResolved = function() {
-	this.set('eventsResolvedId', Math.random());
+	this.set('eventsResolvedId', Math.random()); // TODO: eventually use formalized system for this
 };
 
 

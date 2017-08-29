@@ -157,6 +157,14 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	------------------------------------------------------------------------------------------------------------------*/
 
 
+	renderDates: function(dateProfile) {
+		this.dateProfile = dateProfile;
+		this.updateDayTable();
+		this.renderSlats();
+		this.renderColumns();
+	},
+
+
 	renderSkeleton: function() {
 		var theme = this.view.calendar.theme;
 
@@ -170,10 +178,8 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
-	renderSlats: function(dateProfile) {
+	renderSlats: function() {
 		var theme = this.view.calendar.theme;
-
-		this.dateProfile = dateProfile;
 
 		this.slatContainerEl = this.el.find('> .fc-slats')
 			.html(
@@ -237,11 +243,9 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
-	renderColumns: function(dateProfile) {
+	renderColumns: function() {
+		var dateProfile = this.dateProfile;
 		var theme = this.view.calendar.theme;
-
-		this.dateProfile = dateProfile;
-		this.updateDayTable(dateProfile);
 
 		this.dayRanges = this.dayDates.map(function(dayDate) {
 			return new UnzonedRange(
@@ -647,21 +651,4 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		this.unrenderHighlight();
 	}
 
-});
-
-
-TimeGrid.watch('displayingSlats', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.renderSlats, [ deps.dateProfile ], 'slats', 'destroy');
-});
-
-
-TimeGrid.watch('displayingColumns', [ 'dateProfile' ], function(deps) {
-	this.requestRender(this.renderColumns, [ deps.dateProfile ], 'columns', 'destroy');
-});
-
-
-TimeGrid.watch('displayingDates', [ 'displayingSlats', 'displayingColumns' ], function(deps) {
-	this.isDatesRendered = true;
-}, function() {
-	this.isDatesRendered = false;
 });

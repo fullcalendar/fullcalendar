@@ -8,10 +8,12 @@ var Component = Model.extend({
 		this.el = el;
 		this.bindGlobalHandlers();
 		this.renderSkeleton();
+		this.set('isInDom', true);
 	},
 
 
 	removeElement: function() {
+		this.unset('isInDom');
 		this.unrenderSkeleton();
 		this.unbindGlobalHandlers();
 

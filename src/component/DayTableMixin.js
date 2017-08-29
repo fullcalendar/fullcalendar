@@ -15,11 +15,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Populates internal variables used for date calculation and rendering
-	updateDayTable: function(dateProfile) {
+	updateDayTable: function() {
 		var view = this.view;
 		var calendar = view.calendar;
-		var date = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
-		var end = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true);
+		var date = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
+		var end = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.endMs, true);
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];

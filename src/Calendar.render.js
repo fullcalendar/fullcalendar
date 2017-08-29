@@ -174,18 +174,21 @@ Calendar.mixin({
 
 
 	bindViewHandlers: function(view) {
+		var _this = this;
+
 		this.listenTo(view, 'before:change', this.startBatchRender);
 		this.listenTo(view, 'change', this.stopBatchRender);
 
-		this.listenTo(view, 'change:title', function(title) {
-			if (view === this.view && title) { // hack
-				this.setToolbarsTitle(title);
+		view.watch('titleForCalendar', [ 'title' ], function(deps) { // TODO: better system
+			if (view === _this.view) { // hack
+				_this.setToolbarsTitle(deps.title);
 			}
 		});
-		this.listenTo(view, 'change:dateProfile', function(dateProfile) {
-			if (view === this.view && dateProfile) { // hack
-				this.currentDate = dateProfile.date; // might have been constrained by view dates
-				this.updateToolbarButtons(dateProfile);
+
+		view.watch('dateProfileForCalendar', [ 'dateProfile' ], function(deps) {
+			if (view === _this.view) { // hack
+				_this.currentDate = deps.dateProfile.date; // might have been constrained by view dates
+				_this.updateToolbarButtons(deps.dateProfile);
 			}
 		});
 	},
@@ -193,6 +196,9 @@ Calendar.mixin({
 
 	unbindViewHandlers: function(view) {
 		this.stopListeningTo(view);
+
+		view.unwatch('titleForCalendar');
+		view.unwatch('dateProfileForCalendar');
 	},
 
 
@@ -246,7 +252,6 @@ Calendar.mixin({
 
 		this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
 
-		currentView.unsetDate();
 		this.unbindViewHandlers(currentView);
 
 		this.renderQueue.queue(function() {
