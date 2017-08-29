@@ -249,6 +249,7 @@ Calendar.mixin({
 		this.unbindViewHandlers(currentView);
 
 		currentView.removeElement();
+		currentView.unsetDate(); // wish we could just leave the date
 
 		this.view = null;
 	},
