@@ -4,12 +4,13 @@ v3.5.0
 
 Features:
 - Bootstrap support (#2334, #3566)
-- jQuery UI (and Bootstrap) theme switcher on demo page (#1436)
-  (jQuery UI "Cupertino" theme no longer included in zip archive)
+- deprecated `theme` setting, renamed to `themeSystem`
 - 25% event rendering performance improvement across the board (#2524)
 - console message for unknown method/calendar (#3253)
 - Serbian cyrilic/latin (#3656)
 - available via Packagist (#2999, #3617)
+- improved theme switcher on demo page (#1436)
+- jQuery UI "Cupertino" theme no longer included in zip archive
 
 Bugfixes:
 - slot time label invisible when minTime starts out of alignment (#2786)
