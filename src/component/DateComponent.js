@@ -55,6 +55,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	defineLateWatchers: function() {
+		this.defineDisplayingBusinessHours();
+		this.defineBusinessHourGeneratorInChildren();
 		this.defineDisplayingEvents();
 		this.defineEventDataSourceInChildren();
 	},
@@ -809,18 +811,22 @@ DateComponent.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ],
 });
 
 
-DateComponent.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
-	this.requestRender(this.renderBusinessHours, [ deps.businessHours ], 'businessHours', 'init');
-}, function() {
-	this.requestRender(this.unrenderBusinessHours, null, 'businessHours', 'destroy');
-});
+DateComponent.prototype.defineDisplayingBusinessHours = function() {
+	this.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
+		this.requestRender(this.renderBusinessHours, [ deps.businessHours ], 'businessHours', 'init');
+	}, function() {
+		this.requestRender(this.unrenderBusinessHours, null, 'businessHours', 'destroy');
+	});
+};
 
 
-DateComponent.watch('businessHourGeneratorInChildren', [ 'businessHourGenerator' ], function(deps) {
-	this.setBusinessHourGeneratorInChildren(deps.businessHourGenerator);
-}, function() {
-	this.unsetBusinessHourGeneratorInChildren();
-});
+DateComponent.prototype.defineBusinessHourGeneratorInChildren = function() {
+	this.watch('businessHourGeneratorInChildren', [ 'businessHourGenerator' ], function(deps) {
+		this.setBusinessHourGeneratorInChildren(deps.businessHourGenerator);
+	}, function() {
+		this.unsetBusinessHourGeneratorInChildren();
+	});
+};
 
 
 // wrapped in a function so subclasses can more easily override, considering the necessary ordering
