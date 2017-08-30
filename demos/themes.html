@@ -16,7 +16,7 @@
 
 			init: function(themeSystem) {
 				$('#calendar').fullCalendar({
-					theme: themeSystem,
+					themeSystem: themeSystem,
 					header: {
 						left: 'prev,next today',
 						center: 'title',
@@ -87,7 +87,7 @@
 			},
 
 			change: function(themeSystem) {
-				$('#calendar').fullCalendar('option', 'theme', themeSystem);
+				$('#calendar').fullCalendar('option', 'themeSystem', themeSystem);
 			}
 
 		});

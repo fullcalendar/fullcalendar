@@ -1,6 +1,6 @@
 
 describe('bootstrap3 theme', function() {
-	pushOptions({ theme: 'bootstrap3' });
+	pushOptions({ themeSystem: 'bootstrap3' });
 
 	describe('glyphicons', function() {
 		pushOptions({
