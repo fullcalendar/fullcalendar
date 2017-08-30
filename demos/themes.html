@@ -4,7 +4,7 @@
 <meta charset='utf-8' />
 
 <!-- preload the first theme's stylesheet -->
-<link href='https://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css' rel='stylesheet' data-theme-stylesheet />
+<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' data-theme-stylesheet />
 
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -107,7 +107,7 @@
 
 
 		function setThemeSystem(newThemeSystem) {
-			var $nameSelector = $('#theme-name-selector select').hide() // hide all
+			var $nameSelector = $('#theme-name-selector select').hide() // hide all selects
 				.filter('[data-theme-type="' + newThemeSystem + '"]').show(); // then show new select
 
 			currentThemeSystem = newThemeSystem;
@@ -201,13 +201,13 @@
 			Theme System:
 
 			<select>
-				<option value='jquery-ui' selected>jQuery UI</option>
-				<option value='bootstrap3'>Bootstrap 3</option>
+				<option value='bootstrap3' selected>Bootstrap 3</option>
+				<option value='jquery-ui'>jQuery UI</option>
 				<option value='standard'>unthemed</option>
 			</select>
 		</div>
 
-		<div id='theme-name-selector' class='selector'>
+		<div id='theme-name-selector' class='selector' style='display:none'>
 			Theme Name:
 
 			<select data-theme-type='jquery-ui'>
@@ -237,8 +237,8 @@
 				<option value='vader'>Vader</option>
 			</select>
 
-			<select data-theme-type='bootstrap3'>
-				<option value=''>Default</option>
+			<select data-theme-type='bootstrap3' style='display:none'>
+				<option value='' selected>Default</option>
 				<option value='cerulean'>Cerulean</option>
 				<option value='cosmo'>Cosmo</option>
 				<option value='cyborg'>Cyborg</option>
