@@ -64,7 +64,7 @@ function initThemeChooser(settings) {
 		}
 		else if (themeSystem === 'bootstrap3') {
 			if (themeName) {
-				return 'http://bootswatch.com/' + themeName + '/bootstrap.min.css';
+				return 'https://bootswatch.com/' + themeName + '/bootstrap.min.css';
 			}
 			else { // the default bootstrap theme
 				return 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
