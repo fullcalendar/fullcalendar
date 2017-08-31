@@ -1,10 +1,10 @@
 
-v3.5.0
-------
+v3.5.0 (2017-08-30)
+-------------------
 
 Features:
-- Bootstrap support (#2334, #3566)
-	- deprecated `theme` setting, renamed to `themeSystem`
+- Bootstrap 3 theme support (#2334, #3566)
+	- via `themeSystem: 'bootstrap3'` (the `theme` option is deprecated)
 	- new `bootstrapGlyphicons` option
 	- jQuery UI "Cupertino" theme no longer included in zip archive
 	- improved theme switcher on demo page (#1436)
