@@ -23,6 +23,10 @@ Bugfixes:
 - Promise then method doesn't forward result (#3744)
 - Korean typo (#3693)
 
+Incompatibilities:
+- Event Objects obtained from clientEvents or various callbacks are no longer
+  references to internally used objects. Rather, they are static object copies.
+
 
 v3.4.0 (2017-04-27)
 -------------------
