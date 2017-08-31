@@ -12,7 +12,7 @@ function initThemeChooser(settings) {
 
 
 	function setThemeSystem(themeSystem) {
-		var $allSelectWraps = $('[data-theme-system]').hide();
+		var $allSelectWraps = $('.selector[data-theme-system]').hide();
 		var $selectWrap = $allSelectWraps.filter('[data-theme-system="' + themeSystem +'"]').show();
 		var $select = $selectWrap.find('select')
 			.off('change') // avoid duplicate handlers :(
@@ -36,6 +36,8 @@ function initThemeChooser(settings) {
 			else {
 				settings.change(themeSystem);
 			}
+
+			showCredits(themeSystem, themeName);
 		}
 
 		if (stylesheetUrl) {
@@ -68,6 +70,26 @@ function initThemeChooser(settings) {
 				return 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
 			}
 		}
+	}
+
+
+	function showCredits(themeSystem, themeName) {
+		var creditId;
+
+		if (themeSystem === 'jquery-ui') {
+			creditId = 'jquery-ui';
+		}
+		else if (themeSystem === 'bootstrap3') {
+			if (themeName) {
+				creditId = 'bootstrap-custom';
+			}
+			else {
+				creditId = 'bootstrap-standard';
+			}
+		}
+
+		$('.credits').hide()
+			.filter('[data-credit-id="' + creditId + '"]').show();
 	}
 
 
