@@ -2,6 +2,10 @@
 theme
 =====
 
+<div class='removed-notice' markdown='1'>
+This setting has been deprecated. To use jQuery UI theming, set the [themeSystem]() setting to `'jquery-ui'` instead.
+</div>
+
 Enables/disables use of jQuery UI theming.
 
 <div class='spec' markdown='1'>

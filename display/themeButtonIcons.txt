@@ -2,7 +2,7 @@
 themeButtonIcons
 ================
 
-Determines which icons are displayed in buttons of the header when theming is on.
+Determines which icons are displayed in buttons of the header when jQuery UI theming is on.
 
 <div class='spec' markdown='1'>
 Object, *default:*
@@ -15,7 +15,7 @@ Object, *default:*
 	}
 </div>
 
-This option only applies to calendars that have jQuery UI theming enabled with the [theme]() option.
+This option only applies to calendars that have [themeSystem]() set to `'jquery-ui'`.
 
 A hash must be supplied that maps button names (from the [header]()) to icon strings.
 The icon strings determine the CSS class that will be used on the button. For example, the

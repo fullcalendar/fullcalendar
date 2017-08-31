@@ -7,8 +7,9 @@ General Display
 <li>footer</li>
 <li>customButtons</li>
 <li>buttonIcons</li>
-<li>theme</li>
+<li>themeSystem</li>
 <li>themeButtonIcons</li>
+<li>bootstrapGlyphicons</li>
 <li>firstDay</li>
 <li>isRTL</li>
 <li>weekends</li>

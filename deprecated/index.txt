@@ -2,4 +2,5 @@
 Deprecated
 ==========
 
+- [theme](../display/theme)
 - [eventResourceField](../resource_data/eventResourceField)

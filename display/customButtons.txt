@@ -36,3 +36,5 @@ Each `customButton` entry accepts the following properties:
 - `icon` - see [buttonIcons](). optional
 
 - `themeIcon` - see [themeButtonIcons](). optional
+
+- `bootstrapGlyphicon` - see [bootstrapGlyphicons](). optional
