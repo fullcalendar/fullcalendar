@@ -119,4 +119,19 @@ describe('events as a json feed', function() {
 		$('#cal').fullCalendar(options);
 	});
 
+	it('calls loading callback', function(done) {
+		var loadingCallArgs = [];
+
+		initCalendar({
+			events: { url: 'my-feed.php' },
+			loading: function(bool) {
+				loadingCallArgs.push(bool);
+			},
+			eventAfterAllRender: function() {
+				expect(loadingCallArgs).toEqual([ true, false ]);
+				done();
+			}
+		});
+	});
+
 });
