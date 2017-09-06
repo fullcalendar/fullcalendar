@@ -1,4 +1,13 @@
 
+v3.5.1 (2017-09-06)
+-------------------
+
+- fixed loading trigger not firing (#3810)
+- fixed overaggressively fetching events, on option changes (#3820)
+- fixed event object `date` property being discarded (tho still parsed) (#3819)
+- fixed event object `_id` property being discarded (#3811)
+
+
 v3.5.0 (2017-08-30)
 -------------------
 
