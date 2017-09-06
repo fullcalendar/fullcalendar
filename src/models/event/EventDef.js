@@ -26,7 +26,6 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 
 
 	constructor: function(source) {
-		this.uid = String(EventDef.uuid++);
 		this.source = source;
 		this.className = [];
 		this.miscProps = {};
@@ -160,6 +159,13 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 			this.id = EventDef.generateId();
 		}
 
+		if (rawProps._id != null) { // accept this prop, even tho somewhat internal
+			this.uid = String(rawProps._id);
+		}
+		else {
+			this.uid = EventDef.generateId();
+		}
+
 		// TODO: converge with EventSource
 		if ($.isArray(rawProps.className)) {
 			this.className = rawProps.className;
@@ -207,6 +213,7 @@ EventDef.generateId = function() {
 
 EventDef.allowRawProps({
 	// not automatically assigned (`false`)
+	_id: false,
 	id: false,
 	className: false,
 	source: false, // will ignored
