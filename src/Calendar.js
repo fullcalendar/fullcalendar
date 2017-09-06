@@ -338,7 +338,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, {
 			start,
 			end,
 			this.opt('timezone'),
-			this.opt('lazyFetching')
+			!this.opt('lazyFetching')
 		);
 	}
 
