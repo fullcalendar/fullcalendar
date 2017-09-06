@@ -19,7 +19,8 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		if (
 			force ||
 			!this.currentPeriod ||
-			!this.currentPeriod.isWithinRange(start, end)
+			!this.currentPeriod.isWithinRange(start, end) ||
+			timezone !== this.currentPeriod.timezone
 		) {
 			this.setPeriod( // will change this.currentPeriod
 				new EventPeriod(start, end, timezone)
