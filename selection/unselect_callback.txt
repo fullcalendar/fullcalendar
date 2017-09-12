@@ -5,7 +5,7 @@ unselect
 A callback that will fire when the current selection is cleared.
 
 <div class='spec' markdown='1'>
-function( *view*, *jsEvent* )
+function( *jsEvent*, *view* )
 </div>
 
 A selection might be cleared for a number of reasons:
