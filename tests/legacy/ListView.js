@@ -358,6 +358,10 @@ describe('ListView rendering', function() {
 		expect($('.fc-list-item').length).toBe(0);
 	});
 
+	it('is available for use as a custom view', function() {
+		expect($.fullCalendar.ListView).toBeDefined();
+	});
+
 	function getDayInfo() {
 		return $('.fc-list-heading').map(function(i, el) {
 			el = $(el);
