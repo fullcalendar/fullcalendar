@@ -373,8 +373,14 @@ var EventRenderer = Class.extend({
 		var f2 = seg2.footprint.componentFootprint;
 		var r2 = f2.unzonedRange;
 
+        var durationLonger = -1;
+
+        if (this.opt('isDurationSort')) {
+            durationLonger = (r2.endMs - r2.startMs) - (r1.endMs - r1.startMs)
+        }
+
 		return r1.startMs - r2.startMs || // earlier events go first
-			(r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
+            durationLonger || // tie? longer events go first
 			f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
 			compareByFieldSpecs(
 				seg1.footprint.eventDef,

@@ -20,6 +20,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	selectedEventInstance: null,
 
 	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
+	isDurationSort: null,  // boolean whether to sort events on durations
 
 	// for date utils, computed from options
 	isHiddenDayHash: null,

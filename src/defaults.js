@@ -76,6 +76,7 @@ Calendar.defaults = {
 
 	eventOrder: 'title',
 	//eventRenderWait: null,
+	isDurtionSort:true,
 
 	eventLimit: false,
 	eventLimitText: 'more',
