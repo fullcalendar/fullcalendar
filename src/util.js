@@ -661,7 +661,7 @@ function isTimeString(str) {
 FC.log = function() {
 	var console = window.console;
 
-	if (console && console.log) {
+	if (console && console.log && console.log.apply) {
 		return console.log.apply(console, arguments);
 	}
 };
@@ -669,7 +669,7 @@ FC.log = function() {
 FC.warn = function() {
 	var console = window.console;
 
-	if (console && console.warn) {
+	if (console && console.warn && console.warn.apply) {
 		return console.warn.apply(console, arguments);
 	}
 	else {
