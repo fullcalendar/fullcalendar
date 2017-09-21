@@ -276,6 +276,70 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
+	// Event Rendering Triggering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	triggerAfterEventsRendered: function() {
+		this.triggerAfterEventSegsRendered(
+			this.getEventSegs()
+		);
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
+		});
+	},
+
+
+	triggerAfterEventSegsRendered: function(segs) {
+		var _this = this;
+
+		// an optimization, because getEventLegacy is expensive
+		if (this.hasPublicHandlers('eventAfterRender')) {
+			segs.forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+	},
+
+
+	triggerBeforeEventsDestroyed: function() {
+		this.triggerBeforeEventSegsDestroyed(
+			this.getEventSegs()
+		);
+	},
+
+
+	triggerBeforeEventSegsDestroyed: function(segs) {
+		var _this = this;
+
+		if (this.hasPublicHandlers('eventDestroy')) {
+			segs.forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventDestroy', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+	},
+
+
 	// Event Rendering Utils
 	// -----------------------------------------------------------------------------------------------------------------
 
