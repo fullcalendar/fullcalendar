@@ -252,13 +252,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 	bindBaseRenderHandlers: function() {
 		var _this = this;
 
-		this.on('datesRendered.baseHandler', function() {
+		this.on('datesRendered', function() {
 			_this.whenSizeUpdated(
 				_this.onBaseRender.bind(_this)
 			);
 		});
 
-		this.on('before:datesUnrendered.baseHandler', function() {
+		this.on('before:datesUnrendered', function() {
 			_this.onBeforeBaseUnrender();
 		});
 	},
