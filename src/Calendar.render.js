@@ -377,22 +377,33 @@ Calendar.mixin({
 
 	freezeContentHeight: function() {
 		if (!(this.freezeContentHeightDepth++)) {
-			this.contentEl.css({
-				width: '100%',
-				height: this.contentEl.height(),
-				overflow: 'hidden'
-			});
+			this.forceFreezeContentHeight();
 		}
 	},
 
 
+	forceFreezeContentHeight: function() {
+		this.contentEl.css({
+			width: '100%',
+			height: this.contentEl.height(),
+			overflow: 'hidden'
+		});
+	},
+
+
 	thawContentHeight: function() {
-		if (!(--this.freezeContentHeightDepth)) {
-			this.contentEl.css({
-				width: '',
-				height: '',
-				overflow: ''
-			});
+		this.freezeContentHeightDepth--;
+
+		// always bring back to natural height
+		this.contentEl.css({
+			width: '',
+			height: '',
+			overflow: ''
+		});
+
+		// but if there are future thaws, re-freeze
+		if (this.freezeContentHeightDepth) {
+			this.forceFreezeContentHeight();
 		}
 	}
 
