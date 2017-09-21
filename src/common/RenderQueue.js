@@ -4,7 +4,6 @@ var RenderQueue = TaskQueue.extend({
 	waitsByNamespace: null,
 	waitNamespace: null,
 	waitId: null,
-	isKilled: false, // prevents any new tasks from being added
 
 
 	constructor: function(waitsByNamespace) {
@@ -14,20 +13,11 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
-	/*
-	entityId, namespace, actionType are optional
-	*/
-	queue: function(taskFunc, entityId, namespace, actionType) {
-
-		if (this.isKilled) {
-			return;
-		}
-
+	queue: function(taskFunc, namespace, type) {
 		var task = {
 			func: taskFunc,
-			entityId: entityId,
 			namespace: namespace,
-			actionType: actionType
+			type: type
 		};
 		var waitMs;
 
@@ -38,6 +28,10 @@ var RenderQueue = TaskQueue.extend({
 		if (this.waitNamespace) {
 			if (namespace === this.waitNamespace && waitMs != null) {
 				this.delayWait(waitMs);
+			}
+			else {
+				this.clearWait();
+				this.tryStart();
 			}
 		}
 
@@ -75,15 +69,41 @@ var RenderQueue = TaskQueue.extend({
 	},
 
 
+	clearWait: function() {
+		if (this.waitNamespace) {
+			clearTimeout(this.waitId);
+			this.waitId = null;
+			this.waitNamespace = null;
+		}
+	},
+
+
 	canRunNext: function() {
-		return TaskQueue.prototype.canRunNext.apply(this, arguments) &&
-			!this.isKilled &&
-			(!this.waitNamespace || this.waitNamespace !== this.q[0].namespace);
+		if (!TaskQueue.prototype.canRunNext.apply(this, arguments)) {
+			return false;
+		}
+
+		// waiting for a certain namespace to stop receiving tasks?
+		if (this.waitNamespace) {
+
+			// if there was a different namespace task in the meantime,
+			// that forces all previously-waiting tasks to suddenly execute.
+			// TODO: find a way to do this in constant time.
+			for (var q = this.q, i = 0; i < q.length; i++) {
+				if (q[i].namespace !== this.waitNamespace) {
+					return true; // allow execution
+				}
+			}
+
+			return false;
+		}
+
+		return true;
 	},
 
 
 	runTask: function(task) {
-		return task.func();
+		task.func();
 	},
 
 
@@ -92,21 +112,54 @@ var RenderQueue = TaskQueue.extend({
 		var shouldAppend = true;
 		var i, task;
 
-		if (newTask.entityId && newTask.namespace && newTask.actionType === 'destroy') {
+		if (newTask.namespace) {
 
-			// remove ops with same entityId and namespace
-			for (i = q.length - 1; i >= 0; i--) {
-				task = q[i];
+			if (newTask.type === 'destroy' || newTask.type === 'init') {
 
-				if (
-					task.entityId === newTask.entityId &&
-					task.namespace === newTask.namespace
-				) {
-					if (task.actionType === 'init') { // cancels out the destroy
-						shouldAppend = false;
+				// remove all add/remove ops with same namespace, regardless of order
+				for (i = q.length - 1; i >= 0; i--) {
+					task = q[i];
+
+					if (
+						task.namespace === newTask.namespace &&
+						(task.type === 'add' || task.type === 'remove')
+					) {
+						q.splice(i, 1); // remove task
 					}
+				}
 
-					q.splice(i, 1); // remove task
+				if (newTask.type === 'destroy') {
+					// eat away final init/destroy operation
+					if (q.length) {
+						task = q[q.length - 1]; // last task
+
+						if (task.namespace === newTask.namespace) {
+
+							// the init and our destroy cancel each other out
+							if (task.type === 'init') {
+								shouldAppend = false;
+								q.pop();
+							}
+							// prefer to use the destroy operation that's already present
+							else if (task.type === 'destroy') {
+								shouldAppend = false;
+							}
+						}
+					}
+				}
+				else if (newTask.type === 'init') {
+					// eat away final init operation
+					if (q.length) {
+						task = q[q.length - 1]; // last task
+
+						if (
+							task.namespace === newTask.namespace &&
+							task.type === 'init'
+						) {
+							// our init operation takes precedence
+							q.pop();
+						}
+					}
 				}
 			}
 		}

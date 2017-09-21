@@ -72,7 +72,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	requestRender: function(func, namespace, actionType) {
 		var renderQueue = this.calendar.renderQueue;
 
-		renderQueue.queue(func, '', namespace, actionType); // TODO: has UID!!!???
+		renderQueue.queue(func, namespace, actionType);
 	},
 
 
