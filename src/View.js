@@ -334,6 +334,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	triggerBeforeEventsDestroyed: function() {
+		var _this = this;
+
 		if (this.hasPublicHandlers('eventDestroy')) {
 			this.getEventSegs().forEach(function(seg) {
 				var legacy;

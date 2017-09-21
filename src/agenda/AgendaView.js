@@ -296,6 +296,11 @@ var AgendaView = FC.AgendaView = View.extend({
 		if (this.dayGrid) {
 			this.dayGrid.executeEventRender(dayEventsPayload);
 		}
+
+		// hack! not DRY
+		this.whenSizeUpdated(
+			this.triggerAfterEventsRendered.bind(this)
+		);
 	},
 
 
