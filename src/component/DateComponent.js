@@ -225,13 +225,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventRender: function(eventInstanceRepo) { // TODO: review paypload
+	executeEventRender: function(eventsPayload) {
 		if (this.eventRenderer) {
 			this.eventRenderer.rangeUpdated(); // poorly named now
-			this.eventRenderer.renderInstanceHash(eventInstanceRepo.byDefId);
+			this.eventRenderer.render(eventsPayload);
 		}
 		else if (this.renderEvents) { // legacy
-			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceRepo.byDefId));
+			this.renderEvents(convertEventInstanceHashToLegacyArray(eventsPayload));
 		}
 
 		this.callChildren('executeEventRender', arguments);

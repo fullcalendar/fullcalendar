@@ -274,15 +274,29 @@ var AgendaView = FC.AgendaView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	executeEventRender: function() {
-		// TODO: route
+	executeEventRender: function(eventsPayload) {
+		var dayEventsPayload = {};
+		var timedEventsPayload = {};
+		var id, eventInstanceGroup;
+
+		// separate the events into all-day and timed
+		for (id in eventsPayload) {
+			eventInstanceGroup = eventsPayload[id];
+
+			if (eventInstanceGroup.getEventDef().isAllDay()) {
+				dayEventsPayload[id] = eventInstanceGroup;
+			}
+			else {
+				timedEventsPayload[id] = eventInstanceGroup;
+			}
+		}
+
+		this.timeGrid.executeEventRender(timedEventsPayload);
+
+		if (this.dayGrid) {
+			this.dayGrid.executeEventRender(dayEventsPayload);
+		}
 	},
-
-
-	executeEventUnrender: function() {
-		// TODO: route
-	},
-
 
 
 	/* Dragging/Resizing Routing

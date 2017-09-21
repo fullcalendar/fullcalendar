@@ -336,7 +336,7 @@ var DayGrid = FC.DayGrid = InteractiveDateComponent.extend(StandardInteractionsM
 
 	// Retrieves all rendered segment objects currently rendered on the grid
 	getOwnEventSegs: function() {
-		return InteractiveDateComponent.prototype.getEventSegs.call(this) // get the segments from the super-method
+		return InteractiveDateComponent.prototype.getOwnEventSegs.apply(this, arguments) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 

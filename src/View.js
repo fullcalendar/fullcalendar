@@ -89,12 +89,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	startBatchRender: function() {
-		this.calendar.renderQueue.startBatchRender()
+		this.calendar.startBatchRender()
 	},
 
 
 	stopBatchRender: function() {
-		this.calendar.renderQueue.stopBatchRender()
+		this.calendar.stopBatchRender()
 	},
 
 
@@ -291,7 +291,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventRender: function() {
+	executeEventRender: function(eventsPayload) {
 		DateComponent.prototype.executeEventRender.apply(this, arguments);
 
 		this.whenSizeUpdated(
@@ -879,13 +879,13 @@ View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
 	var _this = this;
 
 	this.requestRender(function() {
-		////_this.executeEventRender(_this.get('currentEvents')); // TODO: audit payload
+		_this.executeEventRender(_this.get('currentEvents'));
 	}, 'event', 'init');
 }, function() {
 	var _this = this;
 
 	this.requestRender(function() {
-		////_this.executeEventUnrender();
+		_this.executeEventUnrender();
 	}, 'event', 'destroy');
 });
 

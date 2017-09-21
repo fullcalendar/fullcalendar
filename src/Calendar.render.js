@@ -157,13 +157,13 @@ Calendar.mixin({
 	onRenderQueueStart: function() {
 		this.freezeContentHeight();
 
-		this.view.addScroll(this.view.queryScroll()); // TODO: move to Calendar
+		this.view.addScroll(this.view.queryScroll());
 	},
 
 
 	onRenderQueueStop: function() {
 		if (this.updateViewSize()) { // success?
-			this.view.popScroll(); // TODO: move to Calendar
+			this.view.popScroll();
 		}
 
 		this.thawContentHeight();

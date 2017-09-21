@@ -123,7 +123,7 @@ Calendar.mixin({
 			eventManager.removeAllEventDefs(true); // persist=true
 		}
 		else {
-			eventManager.instanceRepo.iterEventInstances(function(eventInstance) {
+			eventManager.getEventInstances().forEach(function(eventInstance) {
 				legacyInstances.push(eventInstance.toLegacy());
 			});
 
@@ -150,7 +150,7 @@ Calendar.mixin({
 	clientEvents: function(legacyQuery) {
 		var legacyEventInstances = [];
 
-		this.eventManager.instanceRepo.iterEventInstances(function(eventInstance) {
+		this.eventManager.getEventInstances().forEach(function(eventInstance) {
 			legacyEventInstances.push(eventInstance.toLegacy());
 		});
 

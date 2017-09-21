@@ -292,7 +292,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	rerenderEvents: function() { // API method. destroys old events if previously rendered.
 		if (this.elementVisible()) {
-			this.eventManager.tryReset();
+			this.view.flash('displayingEvents');
 		}
 	},
 
@@ -309,6 +309,12 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			rawSources.unshift(singleRawSource);
 		}
 
+		eventManager.on('release', function(eventsPayload) {
+			_this.trigger('eventsReset', eventsPayload);
+		});
+
+		eventManager.freeze();
+
 		rawSources.forEach(function(rawSource) {
 			var source = EventSourceParser.parse(rawSource, _this);
 
@@ -316,19 +322,18 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				eventManager.addSource(source);
 			}
 		});
+
+		eventManager.thaw();
 	},
 
 
-	// returns an EventInstanceDataSource
 	requestEvents: function(start, end) {
-		this.eventManager.request(
+		return this.eventManager.requestEvents(
 			start,
 			end,
 			this.opt('timezone'),
 			!this.opt('lazyFetching')
 		);
-
-		return this.eventManager;
 	}
 
 });

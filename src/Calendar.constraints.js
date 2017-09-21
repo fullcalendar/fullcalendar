@@ -49,12 +49,12 @@ Calendar.prototype.isEventInstanceGroupAllowed = function(eventInstanceGroup) {
 
 
 Calendar.prototype.getPeerEventInstances = function(eventDef) {
-	return this.eventManager.instanceRepo.getEventInstancesWithoutId(eventDef.id);
+	return this.eventManager.getEventInstancesWithoutId(eventDef.id);
 };
 
 
 Calendar.prototype.isSelectionFootprintAllowed = function(componentFootprint) {
-	var peerEventInstances = this.eventManager.instanceRepo.getEventInstances();
+	var peerEventInstances = this.eventManager.getEventInstances();
 	var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
 	var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
 
@@ -157,7 +157,7 @@ Calendar.prototype.constraintValToFootprints = function(constraintVal, isAllDay)
 		}
 	}
 	else if (constraintVal != null) { // an ID
-		eventInstances = this.eventManager.instanceRepo.getEventInstancesWithId(constraintVal);
+		eventInstances = this.eventManager.getEventInstancesWithId(constraintVal);
 
 		return this.eventInstancesToFootprints(eventInstances);
 	}
@@ -285,7 +285,7 @@ Calendar.prototype.parseEventDefToInstances = function(eventInput) {
 		return false;
 	}
 
-	return eventDef.buildInstances(eventManager.currentUnzonedRange);
+	return eventDef.buildInstances(eventManager.currentPeriod.unzonedRange);
 };
 
 

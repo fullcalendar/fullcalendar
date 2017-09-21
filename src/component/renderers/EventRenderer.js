@@ -51,17 +51,15 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	},
 
 
-	renderInstanceHash: function(instanceHash) {
+	render: function(eventsPayload) {
 		var eventDefId;
 		var instanceGroup;
 		var eventRanges;
 		var bgRanges = [];
 		var fgRanges = [];
 
-		for (eventDefId in instanceHash) {
-
-			// TODO: eventually kill EventInstanceGroup and do slicing in the renderer
-			instanceGroup = new EventInstanceGroup(instanceHash[eventDefId]);
+		for (eventDefId in eventsPayload) {
+			instanceGroup = eventsPayload[eventDefId];
 
 			eventRanges = instanceGroup.sliceRenderRanges(this.component.dateProfile.activeUnzonedRange);
 
