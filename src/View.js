@@ -301,11 +301,23 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	triggerAfterEventsRendered: function() {
+		this.triggerAfterEventSegsRendered(
+			this.getEventSegs()
+		);
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
+		});
+	},
+
+
+	triggerAfterEventSegsRendered: function(segs) {
 		var _this = this;
 
 		// an optimization, because getEventLegacy is expensive
 		if (this.hasPublicHandlers('eventAfterRender')) {
-			this.getEventSegs().forEach(function(seg) {
+			segs.forEach(function(seg) {
 				var legacy;
 
 				if (seg.el) { // necessary?
@@ -318,19 +330,21 @@ var View = FC.View = InteractiveDateComponent.extend({
 				}
 			});
 		}
-
-		this.publiclyTrigger('eventAfterAllRender', {
-			context: this,
-			args: [ this ]
-		});
 	},
 
 
 	triggerBeforeEventsDestroyed: function() {
+		this.triggerBeforeEventSegsDestroyed(
+			this.getEventSegs()
+		);
+	},
+
+
+	triggerBeforeEventSegsDestroyed: function(segs) {
 		var _this = this;
 
 		if (this.hasPublicHandlers('eventDestroy')) {
-			this.getEventSegs().forEach(function(seg) {
+			segs.forEach(function(seg) {
 				var legacy;
 
 				if (seg.el) { // necessary?
