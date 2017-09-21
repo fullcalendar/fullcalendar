@@ -217,7 +217,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 			this.eventRenderer.render(eventsPayload);
 		}
 		else if (this.renderEvents) { // legacy
-			this.renderEvents(convertEventInstanceHashToLegacyArray(eventsPayload));
+			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
 		}
 
 		this.callChildren('executeEventRender', arguments);
@@ -603,14 +603,14 @@ DateComponent.guid = 0; // TODO: better system for this?
 
 // legacy
 
-function convertEventInstanceHashToLegacyArray(eventInstancesByDefId) {
+function convertEventsPayloadToLegacyArray(eventsPayload) {
 	var eventDefId;
 	var eventInstances;
 	var legacyEvents = [];
 	var i;
 
-	for (eventDefId in eventInstancesByDefId) {
-		eventInstances = eventInstancesByDefId[eventDefId];
+	for (eventDefId in eventsPayload) {
+		eventInstances = eventsPayload[eventDefId].eventInstances;
 
 		for (i = 0; i < eventInstances.length; i++) {
 			legacyEvents.push(
