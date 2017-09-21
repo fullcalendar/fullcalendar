@@ -72,6 +72,16 @@ Calendar.mixin({
 			}
 		});
 
+		this.optionsModel.watch('settingBusinessHourGenerator', [ '?businessHours' ], function(deps) {
+			_this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, _this);
+
+			if (_this.view) {
+				_this.view.set('businessHourGenerator', _this.businessHourGenerator)
+			}
+		}, function() {
+			_this.businessHourGenerator = null;
+		});
+
 		// called immediately, and upon option change.
 		// HACK: locale often affects isRTL, so we explicitly listen to that too.
 		this.optionsModel.watch('applyingDirClasses', [ '?isRTL', '?locale' ], function(opts) {
@@ -108,6 +118,7 @@ Calendar.mixin({
 
 		// removes theme-related root className
 		this.optionsModel.unwatch('settingTheme');
+		this.optionsModel.unwatch('settingBusinessHourGenerator');
 
 		this.el.off('.fc'); // unbind nav link handlers
 
@@ -233,6 +244,12 @@ Calendar.mixin({
 		}
 
 		if (this.view && this.elementVisible()) {
+
+			// prevent unnecessary change firing
+			if (this.view.get('businessHourGenerator') !== this.businessHourGenerator) {
+				this.view.set('businessHourGenerator', this.businessHourGenerator);
+			}
+
 			this.view.setDate(this.currentDate);
 		}
 

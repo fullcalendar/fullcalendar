@@ -225,13 +225,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.render(); // TODO: deprecate
 		}
 
-		// this.renderBusinessHours()
-		//// TODO: business hours
-		// new BusinessHourGenerator(
-		// 	deps.rawBusinessHours,
-		// 	this.calendar // TODO: untangle
-		// );
-
 		this.trigger('datesRendered');
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
@@ -860,6 +853,13 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 	this.requestRender(function() {
 		_this.executeDateUnrender();
 	}, 'date', 'destroy');
+});
+
+
+View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function() {
+	;
+}, function() {
+	;
 });
 
 

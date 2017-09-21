@@ -55,15 +55,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
 
-			// make new children catch up with old props
-			// TODO: what about eventDataSource? better system for this?
-			if (this.has('dateProfile')) {
-				child.set('dateProfile', this.get('dateProfile'));
-			}
-			if (this.has('businessHourGenerator')) {
-				this.setBusinessHourGeneratorInChild(this.get('businessHourGenerator'), child);
-			}
-
 			return true;
 		}
 
@@ -74,8 +65,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	removeChild: function(child) {
 		if (this.childrenByUid[child.uid]) {
 			delete this.childrenByUid[child.uid];
-
-			this.stopListeningTo(child);
 
 			return true;
 		}

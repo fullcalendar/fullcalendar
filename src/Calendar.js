@@ -5,6 +5,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	viewsByType: null, // holds all instantiated view instances, current or not
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
 	theme: null,
+	businessHourGenerator: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
 
