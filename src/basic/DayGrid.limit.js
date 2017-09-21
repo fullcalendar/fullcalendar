@@ -256,7 +256,7 @@ DayGrid.mixin({
 				// kill everything when the popover is hidden
 				// notify events to be removed
 				if (_this.popoverSegs) {
-					_this.triggerEventDestroyForSegs(_this.popoverSegs);
+					_this.triggerBeforeEventSegsDestroyed(_this.popoverSegs);
 				}
 				_this.segPopover.removeElement();
 				_this.segPopover = null;
@@ -279,6 +279,8 @@ DayGrid.mixin({
 		// the popover doesn't live within the grid's container element, and thus won't get the event
 		// delegated-handlers for free. attach event-related handlers to the popover.
 		this.bindAllSegHandlersToEl(this.segPopover.el);
+
+		this.triggerAfterEventSegsRendered(segs);
 	},
 
 
