@@ -77,10 +77,10 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 	},
 
 
-	unrenderEventsss: function() {
+	executeEventUnrender: function() {
 		this.endInteractions();
 
-		DateComponent.prototype.unrenderEventsss.apply(this, arguments);
+		DateComponent.prototype.executeEventUnrender.apply(this, arguments);
 	},
 
 
