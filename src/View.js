@@ -284,6 +284,24 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	requestEventsRender: function(eventsPayload) {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.executeEventRender(eventsPayload);
+		}, 'event', 'init');
+	},
+
+
+	requestEventsUnrender: function() {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.executeEventUnrender();
+		}, 'event', 'destroy');
+	},
+
+
 	executeEventRender: function(eventsPayload) {
 		DateComponent.prototype.executeEventRender.apply(this, arguments);
 
@@ -297,6 +315,27 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.triggerBeforeEventsDestroyed();
 
 		DateComponent.prototype.executeEventUnrender.apply(this, arguments);
+	},
+
+
+	// Business Hour High-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	requestBusinessHoursRender: function(businessHourGenerator) {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.renderBusinessHours(businessHourGenerator);
+		}, 'businessHours', 'init');
+	},
+
+	requestBusinessHoursUnrender: function() {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.unrenderBusinessHours();
+		}, 'businessHours', 'destroy');
 	},
 
 
@@ -811,17 +850,9 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 
 
 View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function(deps) {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.renderBusinessHours(deps.businessHourGenerator);
-	}, 'businessHours', 'init');
+	this.requestBusinessHoursRender(deps.businessHourGenerator);
 }, function() {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.unrenderBusinessHours();
-	}, 'businessHours', 'destroy');
+	this.requestBusinessHoursUnrender();
 });
 
 
@@ -840,17 +871,9 @@ View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.executeEventRender(_this.get('currentEvents'));
-	}, 'event', 'init');
+	this.requestEventsRender(this.get('currentEvents'));
 }, function() {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.executeEventUnrender();
-	}, 'event', 'destroy');
+	this.requestEventsUnrender();
 });
 
 
