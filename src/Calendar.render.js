@@ -9,6 +9,7 @@ Calendar.mixin({
 
 	renderQueue: null,
 	batchRenderDepth: 0,
+	freezeContentHeightDepth: 0,
 
 
 	render: function() {
@@ -375,20 +376,24 @@ Calendar.mixin({
 
 
 	freezeContentHeight: function() {
-		this.contentEl.css({
-			width: '100%',
-			height: this.contentEl.height(),
-			overflow: 'hidden'
-		});
+		if (!(this.freezeContentHeightDepth++)) {
+			this.contentEl.css({
+				width: '100%',
+				height: this.contentEl.height(),
+				overflow: 'hidden'
+			});
+		}
 	},
 
 
 	thawContentHeight: function() {
-		this.contentEl.css({
-			width: '',
-			height: '',
-			overflow: ''
-		});
+		if (!(--this.freezeContentHeightDepth)) {
+			this.contentEl.css({
+				width: '',
+				height: '',
+				overflow: ''
+			});
+		}
 	}
 
 });
