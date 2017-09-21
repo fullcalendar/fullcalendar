@@ -856,10 +856,18 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 });
 
 
-View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function() {
-	;
+View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function(deps) {
+	var _this = this;
+
+	this.requestRender(function() {
+		_this.renderBusinessHours(deps.businessHourGenerator);
+	}, 'businessHours', 'init');
 }, function() {
-	;
+	var _this = this;
+
+	this.requestRender(function() {
+		_this.unrenderBusinessHours();
+	}, 'businessHours', 'destroy');
 });
 
 

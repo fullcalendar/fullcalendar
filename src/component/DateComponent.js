@@ -172,31 +172,28 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function(businessHourPayload) { // TODO: review payload
+	renderBusinessHours: function(businessHourGenerator) {
 		var unzonedRange = this.dateProfile.activeUnzonedRange;
-		var eventInstanceGroup = businessHourPayload[this.hasAllDayBusinessHours ? 'allDay' : 'timed'];
+		var eventInstanceGroup;
 		var eventFootprints;
 
-		if (eventInstanceGroup) {
-			eventFootprints = this.eventRangesToEventFootprints(
-				eventInstanceGroup.sliceRenderRanges(unzonedRange)
-			);
-		}
-		else {
-			eventFootprints = [];
-		}
-
-		this.renderBusinessHourEventFootprints(eventFootprints);
-
-		this.callChildren('renderBusinessHours', arguments);
-	},
-
-
-	renderBusinessHourEventFootprints: function(eventFootprints) {
 		if (this.businessHourRenderer) {
+
+			eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
+				this.hasAllDayBusinessHours,
+				unzonedRange
+			);
+
+			eventFootprints = eventInstanceGroup ?
+				this.eventRangesToEventFootprints(
+					eventInstanceGroup.sliceRenderRanges(unzonedRange)
+				) :
+				[];
+
 			this.businessHourRenderer.renderEventFootprints(eventFootprints);
 		}
+
+		this.callChildren('renderBusinessHours', arguments);
 	},
 
 
