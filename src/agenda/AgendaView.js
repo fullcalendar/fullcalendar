@@ -14,8 +14,6 @@ var AgendaView = FC.AgendaView = View.extend({
 	dayGridClass: DayGrid, // class used to instantiate the dayGrid. subclasses can override
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
 
-	eventDataSourceSplitter: null,
-
 	axisWidth: null, // the width of the time axis running down the side
 
 	// indicates that minTime/maxTime affects rendering
@@ -272,31 +270,19 @@ var AgendaView = FC.AgendaView = View.extend({
 	},
 
 
-	/* Event Routing
+	/* Event Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	setEventDataSourceInChildren: function(eventDataSource) {
-		var splitter = this.eventDataSourceSplitter =
-			new EventInstanceDataSourceSplitter(function(eventInstance) {
-				return [ eventInstance.dateProfile.isAllDay() ];
-			});
-
-		this.timeGrid.set('eventDataSource', splitter.buildSubSource(false));
-
-		if (this.dayGrid) {
-			this.dayGrid.set('eventDataSource', splitter.buildSubSource(true));
-		}
-
-		splitter.addSource(eventDataSource);
+	executeEventRender: function() {
+		// TODO: route
 	},
 
 
-	unsetEventDataSourceInChildren: function(eventDataSource) {
-		this.eventDataSourceSplitter.removeSource(eventDataSource);
-
-		View.prototype.unsetEventDataSourceInChildren.apply(this, arguments);
+	executeEventUnrender: function() {
+		// TODO: route
 	},
+
 
 
 	/* Dragging/Resizing Routing

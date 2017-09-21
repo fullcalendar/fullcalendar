@@ -279,8 +279,6 @@ DayGrid.mixin({
 		// the popover doesn't live within the grid's container element, and thus won't get the event
 		// delegated-handlers for free. attach event-related handlers to the popover.
 		this.bindAllSegHandlersToEl(this.segPopover.el);
-
-		this.trigger('after:events:render', segs);
 	},
 
 

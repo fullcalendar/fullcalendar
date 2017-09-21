@@ -22,13 +22,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 	hasAllDayBusinessHours: false, // TODO: unify with largeUnit and isTimeScale?
 
 	isDatesRendered: false,
-	isEventsRendered: false,
 
 
 	constructor: function() {
 		Component.call(this);
-
-		this.defineLateWatchers();
 
 		this.uid = String(DateComponent.guid++);
 		this.childrenByUid = {};
@@ -54,19 +51,9 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	defineLateWatchers: function() {
-		this.defineDisplayingBusinessHours();
-		this.defineBusinessHourGeneratorInChildren();
-		this.defineDisplayingEvents();
-		this.defineEventDataSourceInChildren();
-	},
-
-
 	addChild: function(child) {
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
-
-			this.listenToAndEmit(child, 'after:events:render');
 
 			// make new children catch up with old props
 			// TODO: what about eventDataSource? better system for this?
@@ -107,38 +94,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	requestRender: function(method, args, namespace, actionType) {
-		var _this = this;
-		var renderQueue = this._getView().calendar.renderQueue;
-
-		renderQueue.queue(function() {
-			method.apply(_this, args);
-		}, this.uid, namespace, actionType);
-	},
-
-
-	whenSizeUpdated: function(func) {
-		var renderQueue = this._getView().calendar.renderQueue;
-
-		if (renderQueue.getIsIdle()) {
-			func.call(this);
-		}
-		else {
-			renderQueue.one('idle', func.bind(this));
-		}
-	},
-
-
-	startBatchRender: function() {
-		this._getView().calendar.startBatchRender();
-	},
-
-
-	stopBatchRender: function() {
-		this._getView().calendar.stopBatchRender();
-	},
-
-
 	// TODO: only do if isInDom?
 	// TODO: make part of Component, along with children/batch-render system?
 	updateSize: function(totalHeight, isAuto, isResize) {
@@ -173,30 +128,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setDateProfileInChildren: function(dateProfile) {
-		this.setInChildren('dateProfile', dateProfile);
-	},
-
-
-	unsetDateProfileInChildren: function() {
-		this.unsetInChildren('dateProfile');
-	},
-
-
 	executeDateRender: function(dateProfile) {
-		this.executeDateUnrender();
 		this.dateProfile = dateProfile; // for rendering
 		this.renderDates(dateProfile);
 		this.isDatesRendered = true;
+		this.callChildren('executeDateRender', arguments)
 	},
 
 
 	executeDateUnrender: function() { // wrapper
-		if (this.isDatesRendered) {
-			this.dateProfile = null;
-			this.unrenderDates();
-			this.isDatesRendered = false;
-		}
+		this.callChildren('executeDateUnrender', arguments);
+		this.dateProfile = null;
+		this.unrenderDates();
+		this.isDatesRendered = false;
 	},
 
 
@@ -239,28 +183,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	setBusinessHourGeneratorInChildren: function(businessHourGenerator) {
-		this.iterChildren(this.setBusinessHourGeneratorInChild.bind(this, businessHourGenerator));
-	},
-
-
-	unsetBusinessHourGeneratorInChildren: function() {
-		this.iterChildren(this.unsetBusinessHourGeneratorInChild.bind(this));
-	},
-
-
-	setBusinessHourGeneratorInChild: function(businessHourGenerator, child) {
-		child.set('businessHourGenerator', businessHourGenerator);
-	},
-
-
-	unsetBusinessHourGeneratorInChild: function(child) {
-		child.unset('businessHourGenerator');
-	},
-
-
 	// Renders business-hours onto the view. Assumes updateSize has already been called.
-	renderBusinessHours: function(businessHourPayload) {
+	renderBusinessHours: function(businessHourPayload) { // TODO: review payload
 		var unzonedRange = this.dateProfile.activeUnzonedRange;
 		var eventInstanceGroup = businessHourPayload[this.hasAllDayBusinessHours ? 'allDay' : 'timed'];
 		var eventFootprints;
@@ -275,6 +199,8 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		this.renderBusinessHourEventFootprints(eventFootprints);
+
+		this.callChildren('renderBusinessHours', arguments);
 	},
 
 
@@ -287,23 +213,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Unrenders previously-rendered business-hours
 	unrenderBusinessHours: function() {
+		this.callChildren('unrenderBusinessHours', arguments);
+
 		if (this.businessHourRenderer) {
 			this.businessHourRenderer.unrender();
 		}
-	},
-
-
-	// Event Data
-	// ---------------------------------------------------------------------------------------------------------------
-
-
-	setEventDataSourceInChildren: function(eventDataSource) {
-		this.setInChildren('eventDataSource', eventDataSource);
-	},
-
-
-	unsetEventDataSourceInChildren: function() {
-		this.unsetInChildren('eventDataSource');
 	},
 
 
@@ -311,55 +225,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	startDisplayingEvents: function(eventDataSource) {
-		if (eventDataSource.instanceRepo.cnt) {
-			this.requestEventRender(eventDataSource.instanceRepo);
-		}
-
-		this.listenTo(eventDataSource, 'receive', function(eventInstanceChangeset) {
-			this.requestEventRender(eventDataSource.instanceRepo);
-		});
-	},
-
-
-	stopDisplayingEvents: function(eventDataSource) {
-		this.stopListeningTo(eventDataSource);
-
-		this.requestEventUnrender();
-	},
-
-
-	requestEventRender: function(eventInstanceRepo) {
-		this.requestRender(this.executeEventRender, [ eventInstanceRepo ], 'event', 'destroy');
-	},
-
-
-	requestEventUnrender: function() {
-		this.requestRender(this.executeEventUnrender, null, 'event', 'destroy');
-	},
-
-
-	executeEventRender: function(eventInstanceRepo) {
-		this.executeEventUnrender();
-		if (this.renderEventsss(eventInstanceRepo) !== false) {
-			this.triggerAfterEventsRender();
-			this.isEventsRendered = true;
-		}
-	},
-
-
-	executeEventUnrender: function() {
-		if (this.isEventsRendered) {
-			this.triggerBeforeEventsUnrender();
-			this.unrenderEventsss();
-			this.isEventsRendered = false;
-		}
-	},
-
-
-	// TODO: rename once legacy `renderEvents` is out of the way
-	// returning `false` indicates that nothing happened
-	renderEventsss: function(eventInstanceRepo) {
+	executeEventRender: function(eventInstanceRepo) { // TODO: review paypload
 		if (this.eventRenderer) {
 			this.eventRenderer.rangeUpdated(); // poorly named now
 			this.eventRenderer.renderInstanceHash(eventInstanceRepo.byDefId);
@@ -367,14 +233,14 @@ var DateComponent = FC.DateComponent = Component.extend({
 		else if (this.renderEvents) { // legacy
 			this.renderEvents(convertEventInstanceHashToLegacyArray(eventInstanceRepo.byDefId));
 		}
-		else {
-			return false;
-		}
+
+		this.callChildren('executeEventRender', arguments);
 	},
 
 
-	// TODO: rename once legacy `renderEvents` is out of the way
-	unrenderEventsss: function() {
+	executeEventUnrender: function() {
+		this.callChildren('executeEventUnrender', arguments);
+
 		if (this.eventRenderer) {
 			this.eventRenderer.unrender();
 		}
@@ -384,59 +250,38 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	triggerAfterEventsRender: function() {
-		this.trigger('after:events:render', this.getEventSegs());
+	getBusinessHourSegs: function() { // recursive
+		var segs = this.getOwnBusinessHourSegs()
+
+		this.iterChildren(function(child) {
+			segs.push.apply(segs, child.getBusinessHourSegs());
+		});
+
+		return segs;
 	},
 
 
-	triggerBeforeEventsUnrender: function() {
-		this.triggerEventDestroyForSegs(this.getEventSegs());
-	},
-
-
-	triggerEventDestroyForSegs: function(segs) {
-		var _this = this;
-
-		if (this.hasPublicHandlers('eventDestroy')) {
-			segs.forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventDestroy', {
-						context: legacy,
-						args: [ legacy, seg.el, _this ]
-					});
-				}
-			});
+	getOwnBusinessHourSegs: function() {
+		if (this.businessHourRenderer) {
+			return this.businessHourRenderer.getSegs();
 		}
+
+		return [];
 	},
 
 
-	getRecursiveEventSegs: function() { // TODO: get rid of
-		var segs = this.getEventSegs();
+	getEventSegs: function() { // recursive
+		var segs = this.getOwnEventSegs();
 
 		this.iterChildren(function(child) {
-			segs.push.apply(segs, child.getRecursiveEventSegs());
+			segs.push.apply(segs, child.getEventSegs());
 		});
 
 		return segs;
 	},
 
 
-	getRecursiveBusinessHourSegs: function() { // TODO: get rid of
-		var segs = this.businessHourRenderer ? this.businessHourRenderer.getSegs() : [];
-
-		this.iterChildren(function(child) {
-			segs.push.apply(segs, child.getRecursiveBusinessHourSegs());
-		});
-
-		return segs;
-	},
-
-
-	getEventSegs: function() { // just for itself
+	getOwnEventSegs: function() { // just for itself
 		if (this.eventRenderer) {
 			return this.eventRenderer.getSegs();
 		}
@@ -452,6 +297,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Hides all rendered event segments linked to the given event
 	// RECURSIVE with subcomponents
 	showEventsWithId: function(eventDefId) {
+
 		this.getEventSegs().forEach(function(seg) {
 			if (
 				seg.footprint.eventDef.id === eventDefId &&
@@ -468,6 +314,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Shows all rendered event segments linked to the given event
 	// RECURSIVE with subcomponents
 	hideEventsWithId: function(eventDefId) {
+
 		this.getEventSegs().forEach(function(seg) {
 			if (
 				seg.footprint.eventDef.id === eventDefId &&
@@ -743,20 +590,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	setInChildren: function(propName, propValue) {
-		this.iterChildren(function(child) {
-			child.set(propName, propValue);
-		});
-	},
-
-
-	unsetInChildren: function(propName) {
-		this.iterChildren(function(child) {
-			child.unset(propName);
-		});
-	},
-
-
 	iterChildren: function(func) {
 		var childrenByUid = this.childrenByUid;
 		var uid;
@@ -780,73 +613,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 DateComponent.guid = 0; // TODO: better system for this?
-
-
-// ordering matters :(
-// update children after updating self, because child rendering of dates/events/etc might rely on corresponding parent rendering.
-
-
-DateComponent.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
-	this.requestRender(this.executeDateRender, [ deps.dateProfile ], 'date', 'destroy');
-}, function() {
-	this.requestRender(this.executeDateUnrender, null, 'date', 'destroy');
-});
-
-
-DateComponent.watch('dateProfileInChildren', [ 'dateProfile' ], function(deps) {
-	this.setDateProfileInChildren(deps.dateProfile);
-}, function() {
-	this.unsetDateProfileInChildren();
-});
-
-
-DateComponent.watch('businessHours', [ 'businessHourGenerator', 'dateProfile' ], function(deps) {
-	var businessHourGenerator = deps.businessHourGenerator;
-	var unzonedRange = deps.dateProfile.activeUnzonedRange;
-
-	return {
-		allDay: businessHourGenerator.buildEventInstanceGroup(true, unzonedRange),
-		timed: businessHourGenerator.buildEventInstanceGroup(false, unzonedRange)
-	};
-});
-
-
-DateComponent.prototype.defineDisplayingBusinessHours = function() {
-	this.watch('displayingBusinessHours', [ 'displayingDates', 'businessHours' ], function(deps) {
-		this.requestRender(this.renderBusinessHours, [ deps.businessHours ], 'businessHours', 'init');
-	}, function() {
-		this.requestRender(this.unrenderBusinessHours, null, 'businessHours', 'destroy');
-	});
-};
-
-
-DateComponent.prototype.defineBusinessHourGeneratorInChildren = function() {
-	this.watch('businessHourGeneratorInChildren', [ 'businessHourGenerator' ], function(deps) {
-		this.setBusinessHourGeneratorInChildren(deps.businessHourGenerator);
-	}, function() {
-		this.unsetBusinessHourGeneratorInChildren();
-	});
-};
-
-
-// wrapped in a function so subclasses can more easily override, considering the necessary ordering
-DateComponent.prototype.defineDisplayingEvents = function() {
-	this.watch('displayingEvents', [ 'displayingDates', 'eventDataSource' ], function(deps) {
-		this.startDisplayingEvents(deps.eventDataSource);
-	}, function(deps) {
-		this.stopDisplayingEvents(deps.eventDataSource);
-	});
-};
-
-
-// wrapped in a function so subclasses can more easily override, considering the necessary ordering
-DateComponent.prototype.defineEventDataSourceInChildren = function() {
-	this.watch('eventDataSourceInChildren', [ 'eventDataSource' ], function(deps) {
-		this.setEventDataSourceInChildren(deps.eventDataSource);
-	}, function(deps) {
-		this.unsetEventDataSourceInChildren(deps.eventDataSource);
-	});
-};
 
 
 // legacy

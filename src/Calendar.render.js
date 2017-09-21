@@ -210,7 +210,7 @@ Calendar.mixin({
 		var oldView = this.view;
 		var newView;
 
-		this.startBatchRender();
+		this.freezeContentHeight();
 
 		if (oldView && viewType && oldView.type !== viewType) {
 			this.clearView();
@@ -235,7 +235,7 @@ Calendar.mixin({
 			this.view.setDate(this.currentDate);
 		}
 
-		this.stopBatchRender();
+		this.thawContentHeight();
 	},
 
 
@@ -249,7 +249,6 @@ Calendar.mixin({
 		this.unbindViewHandlers(currentView);
 
 		currentView.removeElement();
-		currentView.unsetDate(); // wish we could just leave the date
 
 		this.view = null;
 	},

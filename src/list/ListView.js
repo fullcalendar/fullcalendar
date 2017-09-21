@@ -119,18 +119,6 @@ var ListView = View.extend({
 	},
 
 
-	startDisplayingEvents: function() {
-
-		// need to initially display the no-events message,
-		// because if there are no events, they will never be received.
-		// if events are received synchronously right after this,
-		// the render queue will cancel this.
-		this.requestEventRender(new EventInstanceRepo());
-
-		View.prototype.startDisplayingEvents.apply(this, arguments);
-	},
-
-
 	eventRendererClass: EventRenderer.extend({
 
 

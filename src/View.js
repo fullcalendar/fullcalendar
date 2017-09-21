@@ -29,8 +29,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
 	nowIndicatorIntervalID: null, // "
 
-	renderedEventSegs: null,
-
 
 	constructor: function(calendar, viewSpec) {
 		this.calendar = calendar;
@@ -45,6 +43,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		InteractiveDateComponent.call(this);
 
+		this.bindBaseRenderHandlers();
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
@@ -52,8 +51,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (this.initialize) {
 			this.initialize();
 		}
-
-		this.on('after:events:render', this.onAfterEventsRender);
 	},
 
 
@@ -65,6 +62,39 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// Retrieves an option with the given name
 	opt: function(name) {
 		return this.options[name];
+	},
+
+
+	/* Render Queue
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	requestRender: function(func, namespace, actionType) {
+		var renderQueue = this.calendar.renderQueue;
+
+		renderQueue.queue(func, '', namespace, actionType); // TODO: has UID!!!???
+	},
+
+
+	whenSizeUpdated: function(func) { // TODO: use for events-after-all-render
+		var renderQueue = this.calendar.renderQueue;
+
+		if (renderQueue.getIsIdle()) {
+			func()
+		}
+		else {
+			renderQueue.one('idle', func);
+		}
+	},
+
+
+	startBatchRender: function() {
+		this.calendar.renderQueue.startBatchRender()
+	},
+
+
+	stopBatchRender: function() {
+		this.calendar.renderQueue.stopBatchRender()
 	},
 
 
@@ -116,32 +146,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	// Element
-	// -----------------------------------------------------------------------------------------------------------------
-
-
-	setElement: function(el) {
-		var _this = this;
-
-		InteractiveDateComponent.prototype.setElement.apply(this, arguments);
-
-		// TODO: not best place for this
-		// TODO: better way of forwarding options from calendar -> view
-		this.calendar.optionsModel.watch('viewRawBusinessHours' + this.uid, [ 'businessHours' ], function(deps) {
-			_this.set('rawBusinessHours', deps.businessHours);
-		}, function() {
-			_this.unset('rawBusinessHours');
-		});
-	},
-
-
-	removeElement: function() {
-		this.calendar.optionsModel.unwatch('viewRawBusinessHours' + this.uid);
-
-		InteractiveDateComponent.prototype.removeElement.apply(this, arguments);
-	},
-
-
 	// Date Setting/Unsetting
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -168,8 +172,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	// returns an EventInstanceDataSource
-	requestEvents: function(dateProfile) {
+	fetchInitialEvents: function(dateProfile) {
 		var calendar = this.calendar;
 		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
 
@@ -177,6 +180,36 @@ var View = FC.View = InteractiveDateComponent.extend({
 			calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
 			calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
 		);
+	},
+
+
+	bindEventChanges: function() {
+		this.listenTo(this.calendar, 'eventsReset', this.resetEvents); // TODO: make this a real event
+	},
+
+
+	unbindEventChanges: function() {
+		this.stopListeningTo(this.calendar, 'eventsReset');
+	},
+
+
+	setEvents: function(eventsPayload) {
+		this.set('currentEvents', eventsPayload);
+		this.set('hasEvents', true);
+	},
+
+
+	unsetEvents: function() {
+		this.unset('currentEvents');
+		this.unset('hasEvents');
+	},
+
+
+	resetEvents: function(eventsPayload) {
+		this.startBatchRender();
+		this.unsetEvents();
+		this.setEvents(eventsPayload);
+		this.stopBatchRender();
 	},
 
 
@@ -192,22 +225,129 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.render(); // TODO: deprecate
 		}
 
+		// this.renderBusinessHours()
+		//// TODO: business hours
+		// new BusinessHourGenerator(
+		// 	deps.rawBusinessHours,
+		// 	this.calendar // TODO: untangle
+		// );
+
+		this.trigger('datesRendered');
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 	},
 
 
 	executeDateUnrender: function() {
-		if (this.isDatesRendered) {
-			this.unselect();
-			this.stopNowIndicator();
+		this.unselect();
+		this.stopNowIndicator();
 
-			if (this.destroy) {
-				this.destroy(); // TODO: deprecate
-			}
+		this.trigger('before:datesUnrendered');
+
+		if (this.destroy) {
+			this.destroy(); // TODO: deprecate
 		}
 
 		DateComponent.prototype.executeDateUnrender.apply(this, arguments);
+	},
+
+
+	// "Base" rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	bindBaseRenderHandlers: function() {
+		var _this = this;
+
+		this.on('datesRendered.baseHandler', function() {
+			_this.whenSizeUpdated(
+				_this.onBaseRender.bind(_this)
+			);
+		});
+
+		this.on('before:datesUnrendered.baseHandler', function() {
+			_this.onBeforeBaseUnrender();
+		});
+	},
+
+
+	onBaseRender: function() {
+		this.publiclyTrigger('viewRender', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	onBeforeBaseUnrender: function() {
+		this.publiclyTrigger('viewDestroy', {
+			context: this,
+			args: [ this, this.el ]
+		});
+	},
+
+
+	// Event High-level Rendering
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	executeEventRender: function() {
+		DateComponent.prototype.executeEventRender.apply(this, arguments);
+
+		this.whenSizeUpdated(
+			this.triggerAfterEventsRendered.bind(this)
+		);
+	},
+
+
+	executeEventUnrender: function() {
+		this.triggerBeforeEventsDestroyed();
+
+		DateComponent.prototype.executeEventUnrender.apply(this, arguments);
+	},
+
+
+	triggerAfterEventsRendered: function() {
+		var _this = this;
+
+		// an optimization, because getEventLegacy is expensive
+		if (this.hasPublicHandlers('eventAfterRender')) {
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventAfterRender', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
+
+		this.publiclyTrigger('eventAfterAllRender', {
+			context: this,
+			args: [ this ]
+		});
+	},
+
+
+	triggerBeforeEventsDestroyed: function() {
+		if (this.hasPublicHandlers('eventDestroy')) {
+			this.getEventSegs().forEach(function(seg) {
+				var legacy;
+
+				if (seg.el) { // necessary?
+					legacy = seg.footprint.getEventLegacy();
+
+					_this.publiclyTrigger('eventDestroy', {
+						context: legacy,
+						args: [ legacy, seg.el, _this ]
+					});
+				}
+			});
+		}
 	},
 
 
@@ -595,7 +735,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		) {
 			this.unselectEventInstance();
 
-			this.getRecursiveEventSegs().forEach(function(seg) {
+			this.getEventSegs().forEach(function(seg) {
 				if (
 					seg.footprint.eventInstance === eventInstance &&
 					seg.el // necessary?
@@ -612,7 +752,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	unselectEventInstance: function() {
 		if (this.selectedEventInstance) {
 
-			this.getRecursiveEventSegs().forEach(function(seg) {
+			this.getEventSegs().forEach(function(seg) {
 				if (seg.el) { // necessary?
 					seg.el.removeClass('fc-selected');
 				}
@@ -676,18 +816,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	onAfterEventsRender: function(segs) {
-		var notYetQueued = !this.renderedEventSegs;
-		var renderedEventSegs = notYetQueued ? (this.renderedEventSegs = []) : this.renderedEventSegs;
-
-		renderedEventSegs.push.apply(renderedEventSegs, segs); // append
-
-		if (notYetQueued) {
-			this.whenSizeUpdated(this.triggerEventsRendered);
-		}
-	},
-
-
 	triggerBaseRendered: function() {
 		this.publiclyTrigger('viewRender', {
 			context: this,
@@ -701,39 +829,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 			context: this,
 			args: [ this, this.el ]
 		});
-	},
-
-
-	triggerEventsRendered: function() {
-		var _this = this;
-		var renderedEventSegs = this.renderedEventSegs;
-
-		this.renderedEventSegs = null;
-
-		// an optimization, because getEventLegacy is expensive
-		if (this.hasPublicHandlers('eventAfterRender')) {
-			renderedEventSegs.forEach(function(seg) {
-				var legacy;
-
-				if (seg.el) { // necessary?
-					legacy = seg.footprint.getEventLegacy();
-
-					_this.publiclyTrigger('eventAfterRender', {
-						context: legacy,
-						args: [ legacy, seg.el, _this ]
-					});
-				}
-			});
-		}
-
-		if (this.needsEventAfterAllRender) {
-			delete this.needsEventAfterAllRender;
-
-			this.publiclyTrigger('eventAfterAllRender', {
-				context: this,
-				args: [ this ]
-			});
-		}
 	},
 
 
@@ -751,6 +846,50 @@ var View = FC.View = InteractiveDateComponent.extend({
 });
 
 
+View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
+	var _this = this;
+
+	this.requestRender(function() {
+		_this.executeDateRender(deps.dateProfile);
+	}, 'date', 'init');
+}, function() {
+	var _this = this;
+
+	this.requestRender(function() {
+		_this.executeDateUnrender();
+	}, 'date', 'destroy');
+});
+
+
+View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
+	return this.fetchInitialEvents(deps.dateProfile);
+});
+
+
+View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
+	this.setEvents(deps.initialEvents);
+	this.bindEventChanges();
+}, function() {
+	this.unbindEventChanges();
+	this.unsetEvents();
+});
+
+
+View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
+	var _this = this;
+
+	this.requestRender(function() {
+		////_this.executeEventRender(_this.get('currentEvents')); // TODO: audit payload
+	}, 'event', 'init');
+}, function() {
+	var _this = this;
+
+	this.requestRender(function() {
+		////_this.executeEventUnrender();
+	}, 'event', 'destroy');
+});
+
+
 View.watch('title', [ 'dateProfile' ], function(deps) {
 	return (this.title = this.computeTitle(deps.dateProfile)); // assign to View for legacy reasons
 });
@@ -765,55 +904,4 @@ View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
 	this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
 	this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
 	this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
-});
-
-
-View.watch('displayingBase', [ 'isInDom', 'dateProfile' ], function(deps) {
-	// consider the base rendered when it has received the date profile and an updateSize
-	// (which happens after the rendering queue is drained) has happened.
-	// it's hard to track when every subcomponent has rendered their dates.
-	this.whenSizeUpdated(this.triggerBaseRendered);
-}, function() {
-	// as soon as the view looses it's dateComponent, we know it will soon after unrender its dates.
-	this.triggerBaseUnrendered();
-});
-
-
-View.watch('reportingEventsResolved', [ 'eventDataSource' ], function(deps) {
-	var eventDataSource = deps.eventDataSource;
-
-	if (eventDataSource.isResolved) {
-		this.reportEventsResolved();
-	}
-
-	this.listenTo(eventDataSource, 'resolved', this.reportEventsResolved);
-}, function(deps) {
-	this.stopListeningTo(deps.eventDataSource, 'resolved', this.reportEventsResolved);
-});
-
-
-View.prototype.reportEventsResolved = function() {
-	this.set('eventsResolvedId', Math.random()); // TODO: eventually use formalized system for this
-};
-
-
-View.watch('displayingBaseEvents', [ 'displayingBase', 'eventsResolvedId' ], function() {
-	this.needsEventAfterAllRender = true;
-	this.onAfterEventsRender([]);
-});
-
-
-// responsible for populating data that DateComponent relies on
-
-
-View.watch('businessHourGenerator', [ 'rawBusinessHours' ], function(deps) {
-	return new BusinessHourGenerator(
-		deps.rawBusinessHours,
-		this.calendar // TODO: untangle
-	);
-});
-
-
-View.watch('eventDataSource', [ 'dateProfile' ], function(deps) {
-	return this.requestEvents(deps.dateProfile);
 });

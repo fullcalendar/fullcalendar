@@ -70,10 +70,10 @@ var BasicView = FC.BasicView = View.extend({
 	},
 
 
-	setDateProfileInChildren: function(dateProfile) {
+	executeDateRender: function(dateProfile) {
 		this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit);
 
-		View.prototype.setDateProfileInChildren.apply(this, arguments);
+		View.prototype.executeDateRender.apply(this, arguments);
 	},
 
 
