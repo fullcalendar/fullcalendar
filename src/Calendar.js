@@ -24,8 +24,6 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.initCurrentDate();
 		this.initEventManager();
 
-		this.renderQueue = this.buildRenderQueue();
-
 		this.constructed();
 	},
 

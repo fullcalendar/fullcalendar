@@ -12,6 +12,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	viewSpec: null,
 	options: null, // hash containing all options. already merged with view-specific-options
 
+	renderQueue: null,
+	batchRenderDepth: 0,
 	queuedScroll: null,
 
 	isSelected: false, // boolean whether a range of time is user-selected or not
@@ -44,6 +46,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		InteractiveDateComponent.call(this);
 
 		this.bindBaseRenderHandlers();
+		this.initRenderQueue();
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
@@ -69,32 +72,59 @@ var View = FC.View = InteractiveDateComponent.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	requestRender: function(func, namespace, actionType) {
-		var renderQueue = this.calendar.renderQueue;
+	initRenderQueue: function() {
+		this.renderQueue = new RenderQueue({
+			event: this.opt('eventRenderWait')
+		});
 
-		renderQueue.queue(func, namespace, actionType);
+		this.renderQueue.on('start', this.onRenderQueueStart.bind(this));
+		this.renderQueue.on('stop', this.onRenderQueueStop.bind(this));
+
+		this.on('before:change', this.startBatchRender);
+		this.on('change', this.stopBatchRender);
 	},
 
 
-	whenSizeUpdated: function(func) { // TODO: use for events-after-all-render
-		var renderQueue = this.calendar.renderQueue;
+	onRenderQueueStart: function() {
+		this.calendar.freezeContentHeight();
+		this.addScroll(this.queryScroll());
+	},
 
-		if (renderQueue.getIsIdle()) {
-			func()
+
+	onRenderQueueStop: function() {
+		if (this.calendar.updateViewSize()) { // success?
+			this.popScroll();
 		}
-		else {
-			renderQueue.one('idle', func);
-		}
+		this.calendar.thawContentHeight();
 	},
 
 
 	startBatchRender: function() {
-		this.calendar.startBatchRender()
+		if (!(this.batchRenderDepth++)) {
+			this.renderQueue.pause();
+		}
 	},
 
 
 	stopBatchRender: function() {
-		this.calendar.stopBatchRender()
+		if (!(--this.batchRenderDepth)) {
+			this.renderQueue.resume();
+		}
+	},
+
+
+	requestRender: function(func, namespace, actionType) {
+		this.renderQueue.queue(func, namespace, actionType);
+	},
+
+
+	whenSizeUpdated: function(func) {
+		if (this.renderQueue.getIsIdle()) {
+			func()
+		}
+		else {
+			this.renderQueue.one('idle', func);
+		}
 	},
 
 
@@ -456,9 +486,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	addScroll: function(scroll) {
 		var queuedScroll = this.queuedScroll || (this.queuedScroll = {});
 
-		if (!queuedScroll.isLocked) {
-			$.extend(queuedScroll, scroll);
-		}
+		$.extend(queuedScroll, scroll);
 	},
 
 
@@ -487,7 +515,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	applyScroll: function(scroll) {
-		if (scroll.isDateInit && !scroll.isLocked && this.isDatesRendered) {
+		if (scroll.isDateInit && this.isDatesRendered) {
 			$.extend(scroll, this.computeInitialDateScroll());
 		}
 

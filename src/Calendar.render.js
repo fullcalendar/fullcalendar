@@ -5,11 +5,8 @@ Calendar.mixin({
 	contentEl: null,
 	suggestedViewHeight: null,
 	ignoreUpdateViewSize: 0,
-	windowResizeProxy: null,
-
-	renderQueue: null,
-	batchRenderDepth: 0,
 	freezeContentHeightDepth: 0,
+	windowResizeProxy: null,
 
 
 	render: function() {
@@ -140,53 +137,8 @@ Calendar.mixin({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	buildRenderQueue: function() {
-		var renderQueue = new RenderQueue({
-			event: this.opt('eventRenderWait')
-		});
-
-		this.listenTo(renderQueue, 'start', this.onRenderQueueStart);
-		this.listenTo(renderQueue, 'stop', this.onRenderQueueStop);
-
-		return renderQueue;
-	},
-
-
-	startBatchRender: function() {
-		if (!(this.batchRenderDepth++) && this.renderQueue) {
-			this.renderQueue.pause();
-		}
-	},
-
-
-	stopBatchRender: function() {
-		if (!(--this.batchRenderDepth) && this.renderQueue) {
-			this.renderQueue.resume();
-		}
-	},
-
-
-	onRenderQueueStart: function() {
-		this.freezeContentHeight();
-
-		this.view.addScroll(this.view.queryScroll());
-	},
-
-
-	onRenderQueueStop: function() {
-		if (this.updateViewSize()) { // success?
-			this.view.popScroll();
-		}
-
-		this.thawContentHeight();
-	},
-
-
 	bindViewHandlers: function(view) {
 		var _this = this;
-
-		this.listenTo(view, 'before:change', this.startBatchRender);
-		this.listenTo(view, 'change', this.stopBatchRender);
 
 		view.watch('titleForCalendar', [ 'title' ], function(deps) { // TODO: better system
 			if (view === _this.view) { // hack
@@ -278,18 +230,14 @@ Calendar.mixin({
 	reinitView: function() {
 		var oldView = this.view;
 		var scroll = oldView.queryScroll(); // wouldn't be so complicated if Calendar owned the scroll
-
-		this.startBatchRender();
+		this.freezeContentHeight();
 
 		this.clearView();
 		this.calcSize();
 		this.renderView(oldView.type); // needs the type to freshly render
 
-		// ensure old scroll is restored exactly
-		scroll.isLocked = true;
-		this.view.addScroll(scroll);
-
-		this.stopBatchRender();
+		this.view.applyScroll(scroll);
+		this.thawContentHeight();
 	},
 
 
