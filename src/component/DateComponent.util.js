@@ -107,7 +107,7 @@ DateComponent.mixin({
 	// Compute the number of the give units in the "current" range.
 	// Will return a floating-point number. Won't round.
 	currentRangeAs: function(unit) {
-		var currentUnzonedRange = this.get('dateProfile').currentUnzonedRange;
+		var currentUnzonedRange = this._getView().get('dateProfile').currentUnzonedRange;
 
 		return moment.utc(currentUnzonedRange.endMs).diff(
 			moment.utc(currentUnzonedRange.startMs),
