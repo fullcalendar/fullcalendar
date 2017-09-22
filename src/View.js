@@ -319,6 +319,9 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.requestRender(function() {
 			_this.executeEventRender(eventsPayload);
+			_this.whenSizeUpdated(
+				_this.triggerAfterEventsRendered.bind(_this)
+			);
 		}, 'event', 'init');
 	},
 
@@ -327,24 +330,9 @@ var View = FC.View = InteractiveDateComponent.extend({
 		var _this = this;
 
 		this.requestRender(function() {
+			_this.triggerBeforeEventsDestroyed();
 			_this.executeEventUnrender();
 		}, 'event', 'destroy');
-	},
-
-
-	executeEventRender: function(eventsPayload) {
-		DateComponent.prototype.executeEventRender.apply(this, arguments);
-
-		this.whenSizeUpdated(
-			this.triggerAfterEventsRendered.bind(this)
-		);
-	},
-
-
-	executeEventUnrender: function() {
-		this.triggerBeforeEventsDestroyed();
-
-		DateComponent.prototype.executeEventUnrender.apply(this, arguments);
 	},
 
 
