@@ -45,7 +45,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		InteractiveDateComponent.call(this);
 
-		this.bindBaseRenderHandlers();
 		this.initRenderQueue();
 		this.initHiddenDays();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
@@ -255,7 +254,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.render(); // TODO: deprecate
 		}
 
-		this.trigger('datesRendered');
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 	},
@@ -264,8 +262,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	executeDateUnrender: function() {
 		this.unselect();
 		this.stopNowIndicator();
-
-		this.trigger('before:datesUnrendered');
 
 		if (this.destroy) {
 			this.destroy(); // TODO: deprecate
@@ -279,22 +275,19 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindBaseRenderHandlers: function() {
-		var _this = this;
-
-		this.on('datesRendered', function() {
-			_this.whenSizeUpdated(
-				_this.onBaseRender.bind(_this)
-			);
-		});
-
-		this.on('before:datesUnrendered', function() {
-			_this.onBeforeBaseUnrender();
-		});
+	afterBaseDisplay: function() {
+		this.whenSizeUpdated(
+			this.triggerViewRender.bind(this)
+		);
 	},
 
 
-	onBaseRender: function() {
+	beforeBaseClear: function() {
+		this.triggerViewDestroy();
+	},
+
+
+	triggerViewRender: function() {
 		this.publiclyTrigger('viewRender', {
 			context: this,
 			args: [ this, this.el ]
@@ -302,7 +295,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
-	onBeforeBaseUnrender: function() {
+	triggerViewDestroy: function() {
 		this.publiclyTrigger('viewDestroy', {
 			context: this,
 			args: [ this, this.el ]
@@ -862,6 +855,13 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 	this.requestRender(function() {
 		_this.executeDateUnrender();
 	}, 'date', 'destroy');
+});
+
+
+View.watch('displayingBase', [ 'displayingDates' ], function() {
+	this.afterBaseDisplay();
+}, function() {
+	this.beforeBaseClear();
 });
 
 
