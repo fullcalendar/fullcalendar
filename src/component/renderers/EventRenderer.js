@@ -61,7 +61,9 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		for (eventDefId in eventsPayload) {
 			instanceGroup = eventsPayload[eventDefId];
 
-			eventRanges = instanceGroup.sliceRenderRanges(this.component.dateProfile.activeUnzonedRange);
+			eventRanges = instanceGroup.sliceRenderRanges(
+				this.component._getView().get('dateProfile').activeUnzonedRange // :(
+			);
 
 			if (instanceGroup.getEventDef().hasBgRendering()) {
 				bgRanges.push.apply(bgRanges, eventRanges);
