@@ -419,7 +419,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// rerenders the now indicator, computing the new current time from the amount of time that has passed
 	// since the initial getNow call.
 	updateNowIndicator: function() {
-		if (this.nowIndicatorTimeoutID) { // activated?
+		if (
+			this.isDatesRendered &&
+			this.initialNowDate // activated before?
+		) {
 			this.unrenderNowIndicator(); // won't unrender if unnecessary
 			this.renderNowIndicator(
 				this.initialNowDate.clone().add(new Date() - this.initialNowQueriedMs) // add ms
