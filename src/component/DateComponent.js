@@ -173,28 +173,14 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	renderBusinessHours: function(businessHourGenerator) {
-		var unzonedRange = this.dateProfile.activeUnzonedRange;
-		var eventInstanceGroup;
-		var eventFootprints;
-
 		if (this.businessHourRenderer) {
-
-			eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
-				this.hasAllDayBusinessHours,
-				unzonedRange
-			);
-
-			eventFootprints = eventInstanceGroup ?
-				this.eventRangesToEventFootprints(
-					eventInstanceGroup.sliceRenderRanges(unzonedRange)
-				) :
-				[];
-
-			this.businessHourRenderer.renderEventFootprints(eventFootprints);
+			this.businessHourRenderer.render(businessHourGenerator);
 		}
 
 		this.callChildren('renderBusinessHours', arguments);
 	},
+
+
 
 
 	// Unrenders previously-rendered business-hours

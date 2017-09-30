@@ -17,6 +17,25 @@ var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 	},
 
 
+	render: function(businessHourGenerator) {
+		var component = this.component;
+		var unzonedRange = component._getView().get('dateProfile').activeUnzonedRange;
+
+		var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
+			component.hasAllDayBusinessHours,
+			unzonedRange
+		);
+
+		var eventFootprints = eventInstanceGroup ?
+			component.eventRangesToEventFootprints(
+				eventInstanceGroup.sliceRenderRanges(unzonedRange)
+			) :
+			[];
+
+		this.renderEventFootprints(eventFootprints);
+	},
+
+
 	renderEventFootprints: function(eventFootprints) {
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
