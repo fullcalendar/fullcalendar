@@ -156,7 +156,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		// hack to give the view some height prior to timeGrid's columns being rendered
 		// TODO: separate setting height from scroller VS timeGrid.
-		if (!this.timeGrid.isDatesRendered) {
+		if (!this.timeGrid.colEls) {
 			if (!isAuto) {
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
 				this.scroller.setHeight(scrollerHeight);

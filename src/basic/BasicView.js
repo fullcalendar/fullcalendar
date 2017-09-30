@@ -152,7 +152,7 @@ var BasicView = FC.BasicView = View.extend({
 
 		// hack to give the view some height prior to dayGrid's columns being rendered
 		// TODO: separate setting height from scroller VS dayGrid.
-		if (!this.dayGrid.isDatesRendered) {
+		if (!this.dayGrid.rowEls) {
 			if (!isAuto) {
 				scrollerHeight = this.computeScrollerHeight(totalHeight);
 				this.scroller.setHeight(scrollerHeight);
