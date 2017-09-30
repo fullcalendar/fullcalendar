@@ -119,11 +119,11 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	whenSizeUpdated: function(func) {
-		if (this.renderQueue.getIsIdle()) {
-			func()
+		if (this.renderQueue.isRunning) {
+			this.renderQueue.one('stop', func);
 		}
 		else {
-			this.renderQueue.one('idle', func);
+			func();
 		}
 	},
 

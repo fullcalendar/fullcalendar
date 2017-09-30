@@ -24,13 +24,7 @@ var TaskQueue = Class.extend(EmitterMixin, {
 
 	resume: function() {
 		this.isPaused = false;
-
-		if (!this.isRunning && !this.q.length) {
-			this.trigger('idle'); // TODO: write tests
-		}
-		else {
-			this.tryStart();
-		}
+		this.tryStart();
 	},
 
 
@@ -75,12 +69,8 @@ var TaskQueue = Class.extend(EmitterMixin, {
 		this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
 		this.isRunning = false;
 
-		if (!this.isPaused && !this.q.length) {
-			this.trigger('idle'); // TODO: write tests
-		}
-		else {
-			this.tryStart(); // if 'stop' handler added more tasks.... TODO: write test for this
-		}
+		// if 'stop' handler added more tasks.... TODO: write test for this
+		this.tryStart();
 	},
 
 
