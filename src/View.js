@@ -47,6 +47,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.initRenderQueue();
 		this.initHiddenDays();
+		this.bindBaseRenderHandlers();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		// legacy
@@ -254,6 +255,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.render(); // TODO: deprecate
 		}
 
+		this.trigger('datesRendered');
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
 	},
@@ -262,6 +264,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	executeDateUnrender: function() {
 		this.unselect();
 		this.stopNowIndicator();
+		this.trigger('before:datesUnrendered');
 
 		if (this.destroy) {
 			this.destroy(); // TODO: deprecate
@@ -275,15 +278,18 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	afterBaseDisplay: function() {
-		this.whenSizeUpdated(
-			this.triggerViewRender.bind(this)
-		);
-	},
+	bindBaseRenderHandlers: function() {
+		var _this = this;
 
+		this.on('datesRendered', function() {
+			_this.whenSizeUpdated(
+				_this.triggerViewRender.bind(_this)
+			);
+		});
 
-	beforeBaseClear: function() {
-		this.triggerViewDestroy();
+		this.on('before:datesUnrendered', function() {
+			_this.triggerViewDestroy();
+		});
 	},
 
 
@@ -855,13 +861,6 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 	this.requestRender(function() {
 		_this.executeDateUnrender();
 	}, 'date', 'destroy');
-});
-
-
-View.watch('displayingBase', [ 'displayingDates' ], function() {
-	this.afterBaseDisplay();
-}, function() {
-	this.beforeBaseClear();
 });
 
 
