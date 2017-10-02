@@ -181,8 +181,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-
-
 	// Unrenders previously-rendered business-hours
 	unrenderBusinessHours: function() {
 		this.callChildren('unrenderBusinessHours', arguments);
@@ -643,6 +641,11 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	_getView: function() { // TODO: strip out. move to generic parent.
 		return this.view;
+	},
+
+
+	_getDateProfile: function() {
+		return this._getView().get('dateProfile');
 	}
 
 });

@@ -168,7 +168,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		else if (currentRangeUnit == 'month') {
 			return this.opt('monthYearFormat'); // like "September 2014"
 		}
-		else if (this.currentRangeAs('days') > 1) {
+		else if (dateProfile.currentUnzonedRange.as('days') > 1) {
 			return 'll'; // multi-day range. shorter, like "Sep 9 - 10 2014"
 		}
 		else {

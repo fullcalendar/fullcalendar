@@ -19,7 +19,7 @@ var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 
 	render: function(businessHourGenerator) {
 		var component = this.component;
-		var unzonedRange = component._getView().get('dateProfile').activeUnzonedRange;
+		var unzonedRange = component._getDateProfile().activeUnzonedRange;
 
 		var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
 			component.hasAllDayBusinessHours,

@@ -132,6 +132,15 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		if (this.endMs !== null) {
 			return FC.moment.utc(this.endMs).stripZone();
 		}
+	},
+
+
+	as: function(unit) {
+		return moment.utc(this.endMs).diff(
+			moment.utc(this.startMs),
+			unit,
+			true
+		);
 	}
 
 });
