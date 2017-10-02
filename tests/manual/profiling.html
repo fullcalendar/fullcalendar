@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../../node_modules/moment/moment.js'></script>
+<script src='../../node_modules/jquery/dist/jquery.js'></script>
+<script src='../../dist/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+		var isOneTime = false;
+
+		function initProfilingAction(containerEl, execFunc, teardownFunc) {
+			containerEl.find('.profiling-action__button').on('click', function() {
+				if (isOneTime) {
+					containerEl.find('.profiling-action__result')
+						.text(executeOneTime(execFunc) + 'ms');
+				}
+				else {
+					executeTimes(execFunc, teardownFunc, 100).then(function(res) {
+						containerEl.find('.profiling-action__result')
+							.text(res + 'ms ave');
+					});
+				}
+			});
+		}
+
+		function executeOneTime(execFunc) {
+			var startMs;
+			var totalMs;
+
+			execFunc(function() {
+				startMs = new Date().valueOf();
+			}, function() {
+				totalMs = new Date().valueOf() - startMs;
+			});
+
+			return totalMs;
+		}
+
+		function executeTimes(execFunc, teardownFunc, times) {
+			var deferred = $.Deferred();
+			var totalTotalMs = 0;
+			var i = 0;
+
+			function next() {
+				if (i < times) {
+					setTimeout(function() {
+						var startMs;
+						var totalMs;
+
+						if (i && teardownFunc) {
+							teardownFunc();
+						}
+						execFunc(function() {
+							startMs = new Date().valueOf();
+						}, function() {
+							totalMs = new Date().valueOf() - startMs;
+						});
+						totalTotalMs += totalMs;
+
+						i++;
+						next();
+					}, 0);
+				}
+				else {
+					deferred.resolve(totalTotalMs / times);
+				}
+			}
+
+			next();
+
+			return deferred.promise();
+		}
+
+		function initCalendar() {
+			$('#calendar').fullCalendar({
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay,listWeek'
+				},
+				defaultDate: '2017-07-01',
+				navLinks: true, // can click day/week names to navigate views
+				editable: true
+			});
+		}
+
+		function destroyCalendar() {
+			$('#calendar').fullCalendar('destroy');
+		}
+
+		initProfilingAction($('#init-calendar'), function(start, stop) {
+			start();
+			initCalendar();
+			stop();
+		}, destroyCalendar);
+
+		initProfilingAction($('#render-month-events'), function(start, stop) {
+			initCalendar();
+
+			var calendar = $('#calendar').fullCalendar('getCalendar');
+			calendar.changeView('month');
+
+			var date = calendar.getView().start.clone();
+			var end = calendar.getView().end.clone();
+			var events = [];
+
+			while (date.isBefore(end)) {
+				events.push({
+					title: '3 day event',
+					start: date.clone(),
+					end: date.clone().add(3, 'days')
+				}, {
+					title: '2 day timed event',
+					start: date.clone().time('03:00'),
+					end: date.clone().add(1, 'day').time('20:00').format()
+				}, {
+					title: 'timed event',
+					start: date.clone().time('16:00')
+				}, {
+					title: 'timed event',
+					start: date.clone().time('16:00')
+				}, {
+					title: 'timed event',
+					start: date.clone().time('16:00')
+				}, {
+					title: 'timed event',
+					start: date.clone().time('16:00')
+				}, {
+					title: 'timed event',
+					start: date.clone().time('16:00')
+				});
+				date.add(1, 'day');
+			}
+
+			start();
+			calendar.renderEvents(events);
+			stop();
+			//console.log('rendered ' + events.length + ' events');
+		}, destroyCalendar);
+
+		initProfilingAction($('#render-agenda-events'), function(start, stop) {
+			initCalendar();
+
+			var calendar = $('#calendar').fullCalendar('getCalendar');
+			calendar.changeView('agendaWeek');
+
+			var date = calendar.getView().start.clone();
+			var end = calendar.getView().end.clone();
+			var events = [];
+			var time;
+			var calendar;
+
+			while (date.isBefore(end)) {
+				time = moment.duration(0);
+
+				while (time < moment.duration('24:00')) {
+					events.push({
+						title: 'event',
+						start: date.clone().time(time)
+					});
+
+					time.add(30, 'minutes');
+				}
+
+				date.add(1, 'day');
+			}
+
+			start();
+			calendar.renderEvents(events);
+			stop();
+			//console.log('rendered ' + events.length + ' events');
+		}, destroyCalendar);
+
+		initProfilingAction($('#clear-events'), function(start, stop) {
+			var calendar = $('#calendar').fullCalendar('getCalendar');
+
+			start();
+			calendar.removeEvents();
+			stop();
+		});
+		
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 10px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+		overflow: scroll;
+	}
+
+	#profiling-area {
+		float: right;
+		text-align: right;
+	}
+
+	#calendar {
+		max-width: 900px;
+		float: left;
+	}
+
+</style>
+</head>
+<body>
+
+	<div id='profiling-area'>
+
+		<div class='profiling-action' id='init-calendar'>
+			<span class='profiling-action__result'></span>
+			<button class='profiling-action__button'>init calendar</button>
+		</div>
+
+		<div class='profiling-action' id='render-month-events'>
+			<span class='profiling-action__result'></span>
+			<button class='profiling-action__button'>render events for month</button>
+		</div>
+
+		<div class='profiling-action' id='render-agenda-events'>
+			<span class='profiling-action__result'></span>
+			<button class='profiling-action__button'>render events for agenda</button>
+		</div>
+
+		<div class='profiling-action' id='clear-events'>
+			<span class='profiling-action__result'></span>
+			<button class='profiling-action__button'>clear events</button>
+		</div>
+
+	</div>
+
+	<div id='calendar'></div>
+
+	<div style='clear:both'></div>
+
+</body>
+</html>

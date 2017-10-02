@@ -1,0 +1,30 @@
+
+# v3.5.0
+
+## Chrome
+
+27.71ms ave   init calendar             (4% improvement)
+102.29ms ave  render events for month   (22% improvement)
+112.77ms ave  render events for agenda  (29% improvement)
+
+## IE11
+
+72.79ms ave   init calendar             (10% improvement)
+418.35ms ave  render events for month   (10% improvement)
+393.8ms ave   render events for agenda  (28% improvement)
+
+
+
+# v3.4.0
+
+## Chrome
+
+28.9ms ave    init calendar
+131.7ms ave   render events for month
+157.91ms ave  render events for agenda
+
+## IE11
+
+80.49ms ave   init calendar 
+464.73ms ave  render events for month 
+550.13ms ave  render events for agenda

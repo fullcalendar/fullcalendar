@@ -25,7 +25,7 @@ describe('customButtons', function() {
 
 	it('can specify a jquery-ui icon', function() {
 		initCalendar({
-			theme: 'jquery-ui',
+			themeSystem: 'jquery-ui',
 			customButtons: {
 				mybutton: { themeIcon: 'asdf' }
 			},
@@ -37,7 +37,7 @@ describe('customButtons', function() {
 
 	it('can specify a bootstrap glyphicon', function() {
 		initCalendar({
-			theme: 'bootstrap3',
+			themeSystem: 'bootstrap3',
 			customButtons: {
 				mybutton: { bootstrapGlyphicon: 'asdf' }
 			},

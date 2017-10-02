@@ -7,6 +7,8 @@ var FuncEventSource = EventSource.extend({
 	fetch: function(start, end, timezone) {
 		var _this = this;
 
+		this.calendar.pushLoading();
+
 		return Promise.construct(function(onResolve) {
 			_this.func.call(
 				this.calendar,
@@ -14,6 +16,8 @@ var FuncEventSource = EventSource.extend({
 				end.clone(),
 				timezone,
 				function(rawEventDefs) {
+					_this.calendar.popLoading();
+
 					onResolve(_this.parseEventDefs(rawEventDefs));
 				}
 			);

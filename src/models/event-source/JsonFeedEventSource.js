@@ -19,6 +19,8 @@ var JsonFeedEventSource = EventSource.extend({
 		// don't intercept success/error
 		// tho will be a breaking API change
 
+		this.calendar.pushLoading();
+
 		return Promise.construct(function(onResolve, onReject) {
 			$.ajax($.extend(
 				{}, // avoid mutation
@@ -28,6 +30,8 @@ var JsonFeedEventSource = EventSource.extend({
 					data: requestParams,
 					success: function(rawEventDefs) {
 						var callbackRes;
+
+						_this.calendar.popLoading();
 
 						if (rawEventDefs) {
 							callbackRes = applyAll(onSuccess, this, arguments); // redirect `this`
@@ -43,6 +47,8 @@ var JsonFeedEventSource = EventSource.extend({
 						}
 					},
 					error: function() {
+						_this.calendar.popLoading();
+
 						applyAll(onError, this, arguments); // redirect `this`
 						onReject();
 					}

@@ -49,8 +49,8 @@ Calendar.mixin({
 		});
 
 		// called immediately, and upon option change
-		this.optionsModel.watch('settingTheme', [ '?theme' ], function(opts) {
-			var themeClass = ThemeRegistry.getThemeClass(opts.theme);
+		this.optionsModel.watch('settingTheme', [ '?theme', '?themeSystem' ], function(opts) {
+			var themeClass = ThemeRegistry.getThemeClass(opts.themeSystem || opts.theme);
 			var theme = new themeClass(_this.optionsModel);
 			var widgetClass = theme.getClass('widget');
 

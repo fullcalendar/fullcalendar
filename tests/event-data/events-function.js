@@ -53,4 +53,51 @@ describe('events as a function', function() {
 			}
 		});
 	});
+
+	it('calls loading callback', function(done) {
+		var loadingCallArgs = [];
+
+		initCalendar({
+			loading: function(bool) {
+				loadingCallArgs.push(bool);
+			},
+			events: function(start, end, timezone, callback) {
+				setTimeout(function() {
+					expect(loadingCallArgs).toEqual([ true ]);
+					callback([]);
+					setTimeout(function() {
+						expect(loadingCallArgs).toEqual([ true, false ]);
+						done();
+					}, 0);
+				}, 0);
+			}
+		});
+	});
+
+	it('calls loading callback only once for multiple sources', function(done) {
+		var loadingCallArgs = [];
+
+		initCalendar({
+			loading: function(bool) {
+				loadingCallArgs.push(bool);
+			},
+			eventSources: [
+				function(start, end, timezone, callback) {
+					setTimeout(function() {
+						callback([]);
+					}, 0);
+				},
+				function(start, end, timezone, callback) {
+					setTimeout(function() {
+						callback([]);
+					}, 10);
+				}
+			]
+		});
+
+		setTimeout(function() {
+			expect(loadingCallArgs).toEqual([ true, false ]);
+			done();
+		}, 20);
+	});
 });

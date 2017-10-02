@@ -56,6 +56,11 @@ var SingleEventDef = EventDef.extend({
 		if (dateProfile) {
 			this.dateProfile = dateProfile;
 
+			// make sure `date` shows up in the legacy event objects as-is
+			if (rawProps.date != null) {
+				this.miscProps.date = rawProps.date;
+			}
+
 			return superSuccess;
 		}
 		else {

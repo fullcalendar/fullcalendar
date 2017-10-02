@@ -91,6 +91,7 @@ function transformDemoPath(path) {
 
 	if (
 		!/\.min\.(js|css)$/.test(path) && // not already minified
+		!/^\w/.test(path) && // reference to demo util js/css file
 		path !== '../locale-all.js' // this file is already minified
 	) {
 		// use minified
