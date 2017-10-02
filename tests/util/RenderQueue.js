@@ -50,36 +50,6 @@ describe('RenderQueue', function() {
 				q.resume();
 				expect(ops).toEqual([ 'foodestroy' ]);
 			});
-
-			it('is cancelled out by an init in same namespace', function() {
-				var ops = [];
-				var q = new RenderQueue();
-				q.pause();
-
-				q.queue(function() {
-					ops.push('barinit');
-				}, 'bar', 'init');
-
-				q.queue(function() {
-					ops.push('fooinit');
-				}, 'foo', 'init');
-
-				q.queue(function() {
-					ops.push('fooadd');
-				}, 'foo', 'add');
-
-				q.queue(function() {
-					ops.push('fooadd');
-				}, 'foo', 'remove');
-
-				q.queue(function() {
-					ops.push('fooadd');
-				}, 'foo', 'destroy');
-
-				expect(ops).toEqual([]);
-				q.resume();
-				expect(ops).toEqual([ 'barinit' ]);
-			});
 		});
 	});
 
