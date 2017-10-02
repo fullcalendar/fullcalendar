@@ -120,7 +120,8 @@ var RenderQueue = TaskQueue.extend({
 
 				switch (task.type) {
 					case 'init':
-						shouldAppend = false; // the latest destroy is cancelled out by not doing the init
+						shouldAppend = false; // jshint ignore:line
+						// the latest destroy is cancelled out by not doing the init
 						// and fallthrough....
 					case 'add':
 					case 'remove':

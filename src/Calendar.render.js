@@ -73,7 +73,7 @@ Calendar.mixin({
 			_this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, _this);
 
 			if (_this.view) {
-				_this.view.set('businessHourGenerator', _this.businessHourGenerator)
+				_this.view.set('businessHourGenerator', _this.businessHourGenerator);
 			}
 		}, function() {
 			_this.businessHourGenerator = null;

@@ -121,7 +121,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		this.dateProfile = dateProfile; // for rendering
 		this.renderDates(dateProfile);
 		this.isDatesRendered = true;
-		this.callChildren('executeDateRender', arguments)
+		this.callChildren('executeDateRender', arguments);
 	},
 
 
@@ -223,7 +223,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	getBusinessHourSegs: function() { // recursive
-		var segs = this.getOwnBusinessHourSegs()
+		var segs = this.getOwnBusinessHourSegs();
 
 		this.iterChildren(function(child) {
 			segs.push.apply(segs, child.getBusinessHourSegs());
