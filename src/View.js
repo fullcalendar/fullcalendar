@@ -118,12 +118,13 @@ var View = FC.View = InteractiveDateComponent.extend({
 	},
 
 
+	// given func will auto-bind to `this`
 	whenSizeUpdated: function(func) {
 		if (this.renderQueue.isRunning) {
-			this.renderQueue.one('stop', func);
+			this.renderQueue.one('stop', func.bind(this));
 		}
 		else {
-			func();
+			func.call(this);
 		}
 	},
 
@@ -283,7 +284,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.on('datesRendered', function() {
 			_this.whenSizeUpdated(
-				_this.triggerViewRender.bind(_this)
+				_this.triggerViewRender
 			);
 		});
 
@@ -319,7 +320,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.requestRender(function() {
 			_this.executeEventRender(eventsPayload);
 			_this.whenSizeUpdated(
-				_this.triggerAfterEventsRendered.bind(_this)
+				_this.triggerAfterEventsRendered
 			);
 		}, 'event', 'init');
 	},
