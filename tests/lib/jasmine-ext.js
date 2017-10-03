@@ -206,21 +206,23 @@ beforeEach(function() {
 	}
 
 	function getBounds(node) {
-		var el = $(node);
-		var offset = el.offset();
-
-		if (!offset) {
-			return false;
-		}
-
-		return {
-			top: offset.top,
-			left: offset.left,
-			right: offset.left + el.outerWidth(),
-			bottom: offset.top + el.outerHeight()
-		};
+		return $(node)[0].getBoundingClientRect();
 	}
 
+});
+
+// fix bug with jQuery 3 returning 0 height for <td> elements in the IE's
+[ 'height', 'outerHeight' ].forEach(function(methodName) {
+	var orig = $.fn[methodName];
+
+	$.fn[methodName] = function() {
+		if (!arguments.length && this.is('td')) {
+			return this[0].getBoundingClientRect().height;
+		}
+		else {
+			return orig.apply(this, arguments);
+		}
+	};
 });
 
 // Destroy all calendars afterwards, to prevent memory leaks
