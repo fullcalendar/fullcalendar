@@ -195,7 +195,7 @@ Calendar.mixin({
 			this.toolbarsManager.proxyCall('activateButton', viewType);
 		}
 
-		if (this.view && this.elementVisible()) {
+		if (this.view) {
 
 			// prevent unnecessary change firing
 			if (this.view.get('businessHourGenerator') !== this.businessHourGenerator) {
@@ -262,10 +262,10 @@ Calendar.mixin({
 		var view = this.view;
 		var scroll;
 
-		if (!this.ignoreUpdateViewSize && this.elementVisible()) {
+		if (!this.ignoreUpdateViewSize && view) {
 
 			if (isResize) {
-				this._calcSize();
+				this.calcSize();
 				scroll = view.queryScroll();
 			}
 
