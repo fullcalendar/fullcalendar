@@ -73,16 +73,6 @@ var DateComponent = FC.DateComponent = Component.extend({
 	},
 
 
-	removeChildren: function() { // all
-		var children = Object.values(this.childrenByUid); // because childrenByUid will mutate while iterating
-		var i;
-
-		for (i = 0; i < children.length; i++) {
-			this.removeChild(children[i]);
-		}
-	},
-
-
 	// TODO: only do if isInDom?
 	// TODO: make part of Component, along with children/batch-render system?
 	updateSize: function(totalHeight, isAuto, isResize) {
