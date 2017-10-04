@@ -151,4 +151,24 @@ describe('validRange', function() {
 			});
 		});
 	});
+
+	describe('when hiddenDays causes no days to be active', function() {
+		pushOptions({
+			defaultView: 'agendaWeek',
+			defaultDate: '2017-10-04',
+			hiddenDays: [ 6 ], // Sunday, last day within natural week range
+			validRange: {
+				start: '2036-05-03',
+				end: '2036-06-01'
+			}
+		});
+
+		it('pushes view to nearest valid range', function() {
+			initCalendar();
+			ViewDateUtils.expectRenderRange('2036-05-04', '2036-05-10');
+			ViewDateUtils.expectActiveRange('2036-05-04', '2036-05-10');
+		});
+
+	});
+
 });

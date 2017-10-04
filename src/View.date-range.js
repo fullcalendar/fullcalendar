@@ -39,7 +39,7 @@ View.mixin({
 	// from its previous value. decremented = -1, incremented = 1 (default).
 	buildDateProfile: function(date, direction, forceToValid) {
 		var isDateAllDay = !date.hasTime();
-		var validUnzonedRange = this.buildValidRange();
+		var validUnzonedRange;
 		var minTime = null;
 		var maxTime = null;
 		var currentInfo;
@@ -47,6 +47,9 @@ View.mixin({
 		var renderUnzonedRange;
 		var activeUnzonedRange;
 		var isValid;
+
+		validUnzonedRange = this.buildValidRange();
+		validUnzonedRange = this.trimHiddenDays(validUnzonedRange);
 
 		if (forceToValid) {
 			date = this.calendar.msToUtcMoment(
@@ -57,7 +60,12 @@ View.mixin({
 
 		currentInfo = this.buildCurrentRangeInfo(date, direction);
 		isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit);
-		renderUnzonedRange = this.buildRenderRange(currentInfo.unzonedRange, currentInfo.unit, isRangeAllDay);
+		renderUnzonedRange = this.buildRenderRange(
+			this.trimHiddenDays(currentInfo.unzonedRange),
+			currentInfo.unit,
+			isRangeAllDay
+		);
+		renderUnzonedRange = this.trimHiddenDays(renderUnzonedRange);
 		activeUnzonedRange = renderUnzonedRange.clone();
 
 		if (!this.opt('showNonCurrentDates')) {
@@ -67,8 +75,7 @@ View.mixin({
 		minTime = moment.duration(this.opt('minTime'));
 		maxTime = moment.duration(this.opt('maxTime'));
 		activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime);
-
-		activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange);
+		activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange); // might return null
 
 		if (activeUnzonedRange) {
 			date = this.calendar.msToUtcMoment(
@@ -96,6 +103,7 @@ View.mixin({
 			isRangeAllDay: isRangeAllDay,
 
 			// dates that display events and accept drag-n-drop
+			// will be `null` if no dates accept events
 			activeUnzonedRange: activeUnzonedRange,
 
 			// date range with a rendered skeleton
@@ -121,6 +129,7 @@ View.mixin({
 
 	// Builds an object with optional start/end properties.
 	// Indicates the minimum/maximum dates to display.
+	// not responsible for trimming hidden days.
 	buildValidRange: function() {
 		return this.getUnzonedRangeOption('validRange', this.calendar.getNow()) ||
 			new UnzonedRange(); // completely open-ended
@@ -277,9 +286,9 @@ View.mixin({
 
 	// Computes the range that will represent the element/cells for *rendering*,
 	// but which may have voided days/times.
+	// not responsible for trimming hidden days.
 	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-		// cut off days in the currentUnzonedRange that are hidden
-		return this.trimHiddenDays(currentUnzonedRange);
+		return currentUnzonedRange.clone();
 	},
 
 
@@ -309,8 +318,13 @@ View.mixin({
 		var start = inputUnzonedRange.getStart();
 		var end = inputUnzonedRange.getEnd();
 
-		start = this.skipHiddenDays(start);
-		end = this.skipHiddenDays(end, -1, true);
+		if (start) {
+			start = this.skipHiddenDays(start);
+		}
+
+		if (end) {
+			end = this.skipHiddenDays(end, -1, true);
+		}
 
 		return new UnzonedRange(start, end);
 	},

@@ -66,7 +66,7 @@ var BasicView = FC.BasicView = View.extend({
 			}
 		}
 
-		return this.trimHiddenDays(new UnzonedRange(start, end));
+		return new UnzonedRange(start, end);
 	},
 
 
