@@ -306,4 +306,38 @@ describe('eventLimit popover', function() {
 
 	});
 
+
+	it('calls event render handlers', function() {
+		options.eventRender = function() {};
+		options.eventAfterRender = function() {};
+		options.eventAfterAllRender = function() {};
+		options.eventDestroy = function() {};
+
+		spyOn(options, 'eventRender');
+		spyOn(options, 'eventAfterRender');
+		spyOn(options, 'eventAfterAllRender');
+		spyOn(options, 'eventDestroy');
+
+		$('#cal').fullCalendar(options);
+
+		expect(options.eventRender.calls.count()).toBe(4);
+		expect(options.eventAfterRender.calls.count()).toBe(4);
+		expect(options.eventAfterAllRender.calls.count()).toBe(1);
+		expect(options.eventDestroy.calls.count()).toBe(0);
+
+		$('.fc-more').simulate('click');
+
+		expect(options.eventRender.calls.count()).toBe(8); // +4
+		expect(options.eventAfterRender.calls.count()).toBe(8); // +4
+		expect(options.eventAfterAllRender.calls.count()).toBe(1); // stays same!
+		expect(options.eventDestroy.calls.count()).toBe(0);
+
+		$('.fc-more-popover .fc-close').simulate('click');
+
+		expect(options.eventRender.calls.count()).toBe(8);
+		expect(options.eventAfterRender.calls.count()).toBe(8);
+		expect(options.eventAfterAllRender.calls.count()).toBe(1);
+		expect(options.eventDestroy.calls.count()).toBe(4); // +4
+	})
+
 });
