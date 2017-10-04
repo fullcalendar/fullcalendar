@@ -134,4 +134,16 @@ describe('events as a json feed', function() {
 		});
 	});
 
+	it('has and Event Source object with certain props', function() {
+		var url = 'my-feed.php';
+		var source;
+
+		initCalendar({
+			events: { url: url }
+		});
+
+		source = currentCalendar.getEventSources()[0];
+		expect(source.url).toBe(url);
+	});
+
 });

@@ -2,10 +2,11 @@
 var JsonFeedEventSource = EventSource.extend({
 
 	// these props must all be manually set before calling fetch
+	url: null,
 	startParam: null,
 	endParam: null,
 	timezoneParam: null,
-	ajaxSettings: null,
+	ajaxSettings: null, // does not include url
 
 
 	fetch: function(start, end, timezone) {
@@ -23,9 +24,9 @@ var JsonFeedEventSource = EventSource.extend({
 
 		return Promise.construct(function(onResolve, onReject) {
 			$.ajax($.extend(
-				{}, // avoid mutation
+				{ url: this.url },
 				JsonFeedEventSource.AJAX_DEFAULTS,
-				ajaxSettings, // should have a `url`
+				ajaxSettings,
 				{
 					data: requestParams,
 					success: function(rawEventDefs) {
@@ -104,7 +105,7 @@ var JsonFeedEventSource = EventSource.extend({
 
 
 	getPrimitive: function() {
-		return this.ajaxSettings.url;
+		return this.url;
 	},
 
 
@@ -125,6 +126,7 @@ JsonFeedEventSource.AJAX_DEFAULTS = {
 
 JsonFeedEventSource.allowRawProps({
 	// automatically transfer (true)...
+	url: true,
 	startParam: true,
 	endParam: true,
 	timezoneParam: true
@@ -139,7 +141,7 @@ JsonFeedEventSource.parse = function(rawInput, calendar) {
 		rawProps = rawInput;
 	}
 	else if (typeof rawInput === 'string') { // short form
-		rawProps = { url: rawInput }; // will end up in ajaxSettings
+		rawProps = { url: rawInput };
 	}
 
 	if (rawProps) {
