@@ -1,4 +1,13 @@
 
+v3.6.0
+------
+
+Incompatibilities:
+- The `viewRender` callback might now be fired AFTER events have been rendered
+  to the DOM. However, the eventRender/eventAfterRender/eventAfterAllRender callbacks
+  will always be fired after `viewRender`, just as before.
+
+
 v3.5.1 (2017-09-06)
 -------------------
 
@@ -35,6 +44,8 @@ Bugfixes:
 Incompatibilities:
 - Event Objects obtained from clientEvents or various callbacks are no longer
   references to internally used objects. Rather, they are static object copies.
+- `clientEvents` method no longer returns events in same order as received.
+  Do not depend on order.
 
 
 v3.4.0 (2017-04-27)
