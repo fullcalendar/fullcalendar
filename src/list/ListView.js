@@ -106,6 +106,7 @@ var ListView = FC.ListView = View.extend({
 				// and mutate the latest seg to the be the end.
 				if (
 					!seg.isEnd && !footprint.isAllDay &&
+					dayIndex + 1 < dayRanges.length &&
 					footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + this.nextDayThreshold
 				) {
 					seg.endMs = footprint.unzonedRange.endMs;

@@ -162,6 +162,9 @@ describe('ListView rendering', function() {
 		describe('when multi-day', function() {
 			beforeEach(function() {
 				options.nextDayThreshold = '00:00';
+			});
+
+			it('renders partial and full days', function() {
 				options.events = [
 					{
 						title: 'event 1',
@@ -169,9 +172,6 @@ describe('ListView rendering', function() {
 						end: '2016-08-17T11:00'
 					}
 				];
-			});
-
-			it('renders partial and full days', function() {
 				$('#cal').fullCalendar(options);
 
 				var events = getEventInfo();
@@ -183,6 +183,48 @@ describe('ListView rendering', function() {
 				expect(events[1].timeText).toBe('all-day');
 				expect(events[2].title).toBe('event 1');
 				expect(events[2].timeText).toBe('12:00am - 11:00am');
+			});
+
+			it('truncates an out-of-range start', function() {
+				options.events = [
+					{
+						title: 'event 1',
+						start: '2016-08-13T07:00',
+						end: '2016-08-16T11:00'
+					}
+				];
+				$('#cal').fullCalendar(options);
+
+				var events = getEventInfo();
+
+				expect(events.length).toBe(3);
+				expect(events[0].title).toBe('event 1');
+				expect(events[0].timeText).toBe('all-day');
+				expect(events[1].title).toBe('event 1');
+				expect(events[1].timeText).toBe('all-day');
+				expect(events[2].title).toBe('event 1');
+				expect(events[2].timeText).toBe('12:00am - 11:00am');
+			});
+
+			it('truncates an out-of-range start', function() {
+				options.events = [
+					{
+						title: 'event 1',
+						start: '2016-08-18T07:00',
+						end: '2016-08-21T11:00'
+					}
+				];
+				$('#cal').fullCalendar(options);
+
+				var events = getEventInfo();
+
+				expect(events.length).toBe(3);
+				expect(events[0].title).toBe('event 1');
+				expect(events[0].timeText).toBe('7:00am - 12:00am');
+				expect(events[1].title).toBe('event 1');
+				expect(events[1].timeText).toBe('all-day');
+				expect(events[2].title).toBe('event 1');
+				expect(events[2].timeText).toBe('all-day');
 			});
 		});
 
