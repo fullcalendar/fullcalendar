@@ -211,6 +211,27 @@ beforeEach(function() {
 
 });
 
+
+function spyOnMethod(Class, methodName) {
+	var origMethod = Class.prototype.hasOwnProperty(methodName) ?
+		Class.prototype[methodName] :
+		null;
+
+	var spy = spyOn(Class.prototype, methodName).and.callThrough();
+
+	spy.restore = function() {
+		if (origMethod) {
+			Class.prototype[methodName] = origMethod;
+		}
+		else {
+			delete Class.prototype[methodName];
+		}
+	};
+
+	return spy;
+}
+
+
 // fix bug with jQuery 3 returning 0 height for <td> elements in the IE's
 [ 'height', 'outerHeight' ].forEach(function(methodName) {
 	var orig = $.fn[methodName];
