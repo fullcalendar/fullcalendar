@@ -65,7 +65,9 @@ TODO: devise a better system
 var ParsableModelMixin_defineStandardProps = function(propDefs) {
 	var proto = this.prototype;
 
-	proto.standardPropMap = Object.create(proto.standardPropMap);
+	if (!proto.hasOwnProperty('standardPropMap')) {
+		proto.standardPropMap = Object.create(proto.standardPropMap);
+	}
 
 	copyOwnProps(propDefs, proto.standardPropMap);
 };
