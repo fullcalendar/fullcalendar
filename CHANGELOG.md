@@ -6,6 +6,8 @@ Incompatibilities:
 - The `viewRender` callback might now be fired AFTER events have been rendered
   to the DOM. However, the eventRender/eventAfterRender/eventAfterAllRender callbacks
   will always be fired after `viewRender`, just as before.
+- The internal `Grid` class (accessed via `$.fullCalendar.Grid`) has been removed.
+  For monkeypatching, use DayGrid/TimeGrid directly.
 
 
 v3.5.1 (2017-09-06)
