@@ -117,6 +117,22 @@ describe('removeEvents', function() {
 		);
 	});
 
+	it('can remove an event with an internal _id', function() {
+		var event;
+
+		initCalendar({
+			defaultDate: '2014-06-24',
+			events: [ { title: 'event0', start: '2014-06-24' } ]
+		});
+
+		event = currentCalendar.clientEvents()[0];
+		expect(typeof event).toBe('object');
+
+		currentCalendar.removeEvents(event._id);
+		expect(
+			currentCalendar.clientEvents().length
+		).toBe(0);
+	});
 
 	// Verifies the actions in removeFunc executed correctly by calling checkFunc.
 	function go(events, removeFunc, checkFunc, doneFunc) {
