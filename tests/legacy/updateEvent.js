@@ -556,8 +556,9 @@ describe('updateEvent', function() {
 		expect(relatedEvent.color).toBe('red');
 	});
 
-	it('should non-standard properties to related events', function() {
+	it('should copy non-standard properties to related events', function() {
 		var event, relatedEvent;
+		var specialObj = {};
 
 		options.events = [
 			{ id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
@@ -567,12 +568,12 @@ describe('updateEvent', function() {
 
 		event = getMainEvent();
 		event.someForeignKey = '123';
-		event.myObj = {};
+		event.myObj = specialObj;
 		$('#cal').fullCalendar('updateEvent', event);
 
 		relatedEvent = getRelatedEvent();
 		expect(relatedEvent.someForeignKey).toBe('123');
-		expect(relatedEvent.myObj).toBeUndefined();
+		expect(relatedEvent.myObj).toBe(specialObj);
 	});
 
 	function whenMovingStart(should) {

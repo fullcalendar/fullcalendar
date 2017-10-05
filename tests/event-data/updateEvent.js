@@ -113,4 +113,120 @@ describe('updateEvent', function() {
 			});
 		});
 	});
+
+	describe('when adding a new misc object property', function() {
+
+		it('accepts the new property', function() {
+			var event;
+
+			initCalendar({
+				now: '2017-10-05',
+				events: [
+					{ title: 'event 0', start: '2017-10-05' }
+				]
+			});
+
+			event = currentCalendar.clientEvents()[0];
+			event.user = { fname: 'Adam' };
+			currentCalendar.updateEvent(event);
+
+			event = currentCalendar.clientEvents()[0];
+			expect(typeof event.user).toBe('object');
+			expect(event.user.fname).toBe('Adam');
+		})
+	});
+
+	describe('when modifying an existing misc object property', function() {
+
+		it('accepts the new property', function() {
+			var event;
+
+			initCalendar({
+				now: '2017-10-05',
+				events: [
+					{ title: 'event 0', start: '2017-10-05', user: { fname: 'Adam' } }
+				]
+			});
+
+			event = currentCalendar.clientEvents()[0];
+			expect(typeof event.user).toBe('object');
+			expect(event.user.fname).toBe('Adam');
+
+			event.user = { fname: 'John' };
+			currentCalendar.updateEvent(event);
+
+			event = currentCalendar.clientEvents()[0];
+			expect(typeof event.user).toBe('object');
+			expect(event.user.fname).toBe('John');
+		})
+	});
+
+	describe('with className', function() {
+
+		describe('when not modified', function() {
+			it('maintains classNames for individual event defs', function() {
+				var eventA, eventB;
+
+				initCalendar({
+					now: '2017-10-05',
+					events: [
+						{ id: '1', title: 'event1', start: '2017-10-05', otherId: 'a', customProp: 'asdf', className: 'myclassA' },
+						{ id: '1', title: 'event1', start: '2017-10-12', otherId: 'b', customProp: 'asdf', className: 'myclassB' }
+					]
+				});
+
+				eventA = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'a';
+				})[0];
+
+				eventA.customProp = 'qwer';
+				currentCalendar.updateEvent(eventA);
+
+				eventA = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'a';
+				})[0];
+
+				eventB = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'b';
+				})[0];
+
+				expect(eventA.customProp).toBe('qwer');
+				expect(eventA.className).toEqual([ 'myclassA' ]);
+				expect(eventB.customProp).toBe('qwer');
+				expect(eventB.className).toEqual([ 'myclassB' ]);
+			});
+		});
+
+		describe('when modified', function() {
+			it('changes classNames for all similar event defs', function() {
+				var eventA, eventB;
+
+				initCalendar({
+					now: '2017-10-05',
+					events: [
+						{ id: '1', title: 'event1', start: '2017-10-05', otherId: 'a', className: 'myclassA' },
+						{ id: '1', title: 'event1', start: '2017-10-12', otherId: 'b', className: 'myclassB' }
+					]
+				});
+
+				eventA = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'a';
+				})[0];
+
+				eventA.className = [ 'otherClass' ];
+				currentCalendar.updateEvent(eventA);
+
+				eventA = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'a';
+				})[0];
+
+				eventB = currentCalendar.clientEvents(function(eventDef) {
+					return eventDef.otherId === 'b';
+				})[0];
+
+				expect(eventA.className).toEqual([ 'otherClass' ]);
+				expect(eventB.className).toEqual([ 'otherClass' ]);
+			});
+		});
+	});
 });
