@@ -88,8 +88,8 @@ var RecurringEventDef = EventDef.extend({
 	/*
 	NOTE: if super-method fails, should still attempt to apply
 	*/
-	applyRawProps: function(rawProps) {
-		var superSuccess = EventDef.prototype.applyRawProps.apply(this, arguments);
+	applyProps: function(rawProps) {
+		var superSuccess = EventDef.prototype.applyProps.apply(this, arguments);
 
 		if (rawProps.start) {
 			this.startTime = moment.duration(rawProps.start);
@@ -113,7 +113,7 @@ var RecurringEventDef = EventDef.extend({
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-RecurringEventDef.allowRawProps({ // false = manually process
+RecurringEventDef.defineStandardProps({ // false = manually process
 	start: false,
 	end: false,
 	dow: false

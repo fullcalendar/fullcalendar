@@ -72,7 +72,7 @@ var EventSource = Class.extend(ParsableModelMixin, {
 	},
 
 
-	applyManualRawProps: function(rawProps) {
+	applyManualStandardProps: function(rawProps) {
 
 		if (rawProps.id != null) {
 			this.id = EventSource.normalizeId(rawProps.id);
@@ -93,7 +93,7 @@ var EventSource = Class.extend(ParsableModelMixin, {
 
 
 // finish initializing the mixin
-EventSource.allowRawProps = ParsableModelMixin_allowRawProps;
+EventSource.defineStandardProps = ParsableModelMixin_defineStandardProps;
 
 
 // IDs
@@ -117,7 +117,7 @@ EventSource.normalizeId = function(id) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventSource.allowRawProps({
+EventSource.defineStandardProps({
 	// manually process...
 	id: false,
 	className: false,
@@ -145,7 +145,7 @@ EventSource.parse = function(rawInput, calendar) {
 	var source = new this(calendar);
 
 	if (typeof rawInput === 'object') {
-		if (source.applyRawProps(rawInput)) {
+		if (source.applyProps(rawInput)) {
 			return source;
 		}
 	}

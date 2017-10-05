@@ -30,8 +30,8 @@ var FuncEventSource = EventSource.extend({
 	},
 
 
-	applyManualRawProps: function(rawProps) {
-		var superSuccess = EventSource.prototype.applyManualRawProps.apply(this, arguments);
+	applyManualStandardProps: function(rawProps) {
+		var superSuccess = EventSource.prototype.applyManualStandardProps.apply(this, arguments);
 
 		this.func = rawProps.events;
 
@@ -41,7 +41,7 @@ var FuncEventSource = EventSource.extend({
 });
 
 
-FuncEventSource.allowRawProps({
+FuncEventSource.defineStandardProps({
 	events: false // don't automatically transfer
 });
 

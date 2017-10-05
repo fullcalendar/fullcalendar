@@ -1,45 +1,45 @@
 
 var ParsableModelMixin = {
 
-	standardPropMap: {}, // will be cloned by allowRawProps
+	standardPropMap: {}, // will be cloned by defineStandardProps
 
 
 	/*
 	Returns true/false for success
 	*/
-	applyRawProps: function(rawProps) {
+	applyProps: function(rawProps) {
 		var standardPropMap = this.standardPropMap;
 		var manualProps = {};
-		var otherProps = {};
+		var miscProps = {};
 		var propName;
 
 		for (propName in rawProps) {
-			if (standardPropMap[propName] === true) { // copy automatically
+			if (standardPropMap[propName] === true) { // copy verbatim
 				this[propName] = rawProps[propName];
 			}
 			else if (standardPropMap[propName] === false) {
 				manualProps[propName] = rawProps[propName];
 			}
 			else {
-				otherProps[propName] = rawProps[propName];
+				miscProps[propName] = rawProps[propName];
 			}
 		}
 
-		this.applyOtherRawProps(otherProps);
+		this.applyMiscProps(miscProps);
 
-		return this.applyManualRawProps(manualProps);
+		return this.applyManualStandardProps(manualProps);
 	},
 
 
 	/*
 	If subclasses override, they must call this supermethod and return the boolean response.
 	*/
-	applyManualRawProps: function(rawProps) {
+	applyManualStandardProps: function(rawProps) {
 		return true;
 	},
 
 
-	applyOtherRawProps: function(rawProps) {
+	applyMiscProps: function(rawProps) {
 		// subclasses can implement
 	}
 
@@ -49,7 +49,7 @@ var ParsableModelMixin = {
 /*
 TODO: devise a better system
 */
-var ParsableModelMixin_allowRawProps = function(propDefs) {
+var ParsableModelMixin_defineStandardProps = function(propDefs) {
 	var proto = this.prototype;
 
 	proto.standardPropMap = Object.create(proto.standardPropMap);

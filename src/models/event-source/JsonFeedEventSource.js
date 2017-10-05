@@ -109,8 +109,8 @@ var JsonFeedEventSource = EventSource.extend({
 	},
 
 
-	applyOtherRawProps: function(rawProps) {
-		EventSource.prototype.applyOtherRawProps.apply(this, arguments);
+	applyMiscProps: function(rawProps) {
+		EventSource.prototype.applyMiscProps.apply(this, arguments);
 
 		this.ajaxSettings = rawProps;
 	}
@@ -124,7 +124,7 @@ JsonFeedEventSource.AJAX_DEFAULTS = {
 };
 
 
-JsonFeedEventSource.allowRawProps({
+JsonFeedEventSource.defineStandardProps({
 	// automatically transfer (true)...
 	url: true,
 	startParam: true,

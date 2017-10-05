@@ -28,7 +28,7 @@ var EventDefMutation = FC.EventDefMutation = Class.extend({
 
 		// can't undo
 		if (this.rawProps) {
-			eventDef.applyRawProps(this.rawProps);
+			eventDef.applyProps(this.rawProps);
 		}
 
 		if (origDateProfile) {

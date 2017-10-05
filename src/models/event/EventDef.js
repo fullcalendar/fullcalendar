@@ -150,7 +150,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 	},
 
 
-	applyManualRawProps: function(rawProps) {
+	applyManualStandardProps: function(rawProps) {
 
 		if (rawProps.id != null) {
 			this.id = EventDef.normalizeId((this.rawId = rawProps.id));
@@ -178,14 +178,14 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 	},
 
 
-	applyOtherRawProps: function(rawProps) {
-		this.miscProps = rawProps;
+	applyMiscProps: function(rawProps) {
+		$.extend(this.miscProps, rawProps);
 	}
 
 });
 
 // finish initializing the mixin
-EventDef.allowRawProps = ParsableModelMixin_allowRawProps;
+EventDef.defineStandardProps = ParsableModelMixin_defineStandardProps;
 EventDef.copyVerbatimStandardProps = ParsableModelMixin_copyVerbatimStandardProps;
 
 
@@ -211,7 +211,7 @@ EventDef.generateId = function() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-EventDef.allowRawProps({
+EventDef.defineStandardProps({
 	// not automatically assigned (`false`)
 	_id: false,
 	id: false,
@@ -246,7 +246,7 @@ EventDef.parse = function(rawInput, source) {
 		rawInput = sourceTransform(rawInput);
 	}
 
-	if (def.applyRawProps(rawInput)) {
+	if (def.applyProps(rawInput)) {
 		return def;
 	}
 

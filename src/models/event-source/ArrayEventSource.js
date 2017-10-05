@@ -64,8 +64,8 @@ var ArrayEventSource = EventSource.extend({
 	},
 
 
-	applyManualRawProps: function(rawProps) {
-		var superSuccess = EventSource.prototype.applyManualRawProps.apply(this, arguments);
+	applyManualStandardProps: function(rawProps) {
+		var superSuccess = EventSource.prototype.applyManualStandardProps.apply(this, arguments);
 
 		this.setRawEventDefs(rawProps.events);
 
@@ -75,7 +75,7 @@ var ArrayEventSource = EventSource.extend({
 });
 
 
-ArrayEventSource.allowRawProps({
+ArrayEventSource.defineStandardProps({
 	events: false // don't automatically transfer
 });
 
