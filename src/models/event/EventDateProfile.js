@@ -48,6 +48,11 @@ var EventDateProfile = Class.extend({
 });
 
 
+EventDateProfile.isStandardProp = function(propName) {
+	return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay';
+};
+
+
 /*
 Needs an EventSource object
 */

@@ -51,7 +51,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 
 		EventDef.copyVerbatimStandardProps(this, copy);
 
-		copy.className = this.className; // should clone?
+		copy.className = this.className.slice(); // copy
 		copy.miscProps = $.extend({}, this.miscProps);
 
 		return copy;
@@ -137,7 +137,7 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 
 		obj._id = this.uid;
 		obj.source = this.source;
-		obj.className = this.className; // should clone?
+		obj.className = this.className.slice(); // copy
 		obj.allDay = this.isAllDay();
 
 		if (this.rawId != null) {

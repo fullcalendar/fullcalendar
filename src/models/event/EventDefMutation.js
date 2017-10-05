@@ -5,9 +5,12 @@ var EventDefMutation = FC.EventDefMutation = Class.extend({
 	// callers should use setDateMutation for setting.
 	dateMutation: null,
 
-	// hack to get updateEvent/createFromRawProps to work.
+	// hacks to get updateEvent/createFromRawProps to work.
 	// not undo-able and not considered in isEmpty.
-	rawProps: null, // raw (pre-parse-like)
+	eventDefId: null, // standard manual props
+	className: null, // "
+	verbatimStandardProps: null,
+	miscProps: null,
 
 
 	/*
@@ -27,8 +30,28 @@ var EventDefMutation = FC.EventDefMutation = Class.extend({
 		}
 
 		// can't undo
-		if (this.rawProps) {
-			eventDef.applyProps(this.rawProps);
+		// TODO: more DRY with EventDef::applyManualStandardProps
+		if (this.eventDefId != null) {
+			eventDef.id = EventDef.normalizeId((eventDef.rawId = this.eventDefId));
+		}
+
+		// can't undo
+		// TODO: more DRY with EventDef::applyManualStandardProps
+		if (this.className) {
+			eventDef.className = this.className;
+		}
+
+		// can't undo
+		if (this.verbatimStandardProps) {
+			SingleEventDef.copyVerbatimStandardProps(
+				this.verbatimStandardProps, // src
+				eventDef // dest
+			);
+		}
+
+		// can't undo
+		if (this.miscProps) {
+			eventDef.applyMiscProps(this.miscProps);
 		}
 
 		if (origDateProfile) {
@@ -59,38 +82,59 @@ var EventDefMutation = FC.EventDefMutation = Class.extend({
 });
 
 
-EventDefMutation.createFromRawProps = function(eventInstance, newRawProps, largeUnit) {
+EventDefMutation.createFromRawProps = function(eventInstance, rawProps, largeUnit) {
 	var eventDef = eventInstance.def;
-	var applicableRawProps = {};
+	var dateProps = {};
+	var standardProps = {};
+	var miscProps = {};
+	var verbatimStandardProps = {};
+	var eventDefId = null;
+	var className = null;
 	var propName;
-	var newDateProfile;
+	var dateProfile;
 	var dateMutation;
 	var defMutation;
 
-	for (propName in newRawProps) {
-		if (
-			// ignore object-type custom properties and any date-related properties,
-			// as well as any other internal property
-			typeof newRawProps[propName] !== 'object' &&
-			propName !== 'start' && propName !== 'end' && propName !== 'allDay' &&
-			propName !== 'source' && propName !== '_id'
-		) {
-			applicableRawProps[propName] = newRawProps[propName];
+	for (propName in rawProps) {
+		if (EventDateProfile.isStandardProp(propName)) {
+			dateProps[propName] = rawProps[propName];
+		}
+		else if (eventDef.isStandardProp(propName)) {
+			standardProps[propName] = rawProps[propName];
+		}
+		else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
+			miscProps[propName] = rawProps[propName];
 		}
 	}
 
-	newDateProfile = EventDateProfile.parse(newRawProps, eventDef.source);
+	dateProfile = EventDateProfile.parse(dateProps, eventDef.source);
 
-	if (newDateProfile) { // no failure?
+	if (dateProfile) { // no failure?
 		dateMutation = EventDefDateMutation.createFromDiff(
 			eventInstance.dateProfile,
-			newDateProfile,
+			dateProfile,
 			largeUnit
 		);
 	}
 
+	if (standardProps.id !== eventDef.id) {
+		eventDefId = standardProps.id; // only apply if there's a change
+	}
+
+	if (!isArraysEqual(standardProps.className, eventDef.className)) {
+		className = standardProps.className; // only apply if there's a change
+	}
+
+	EventDef.copyVerbatimStandardProps(
+		standardProps, // src
+		verbatimStandardProps // dest
+	);
+
 	defMutation = new EventDefMutation();
-	defMutation.rawProps = applicableRawProps;
+	defMutation.eventDefId = eventDefId;
+	defMutation.className = className;
+	defMutation.verbatimStandardProps = verbatimStandardProps;
+	defMutation.miscProps = miscProps;
 
 	if (dateMutation) {
 		defMutation.dateMutation = dateMutation;

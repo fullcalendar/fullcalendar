@@ -5,7 +5,8 @@ var ParsableModelMixin = {
 
 
 	/*
-	Returns true/false for success
+	Returns true/false for success.
+	Meant to be only called ONCE, at object creation.
 	*/
 	applyProps: function(rawProps) {
 		var standardPropMap = this.standardPropMap;
@@ -33,14 +34,26 @@ var ParsableModelMixin = {
 
 	/*
 	If subclasses override, they must call this supermethod and return the boolean response.
+	Meant to be only called ONCE, at object creation.
 	*/
 	applyManualStandardProps: function(rawProps) {
 		return true;
 	},
 
 
+	/*
+	Can be called even after initial object creation.
+	*/
 	applyMiscProps: function(rawProps) {
 		// subclasses can implement
+	},
+
+
+	/*
+	TODO: why is this a method when defineStandardProps is static
+	*/
+	isStandardProp: function(propName) {
+		return propName in this.standardPropMap;
 	}
 
 };
