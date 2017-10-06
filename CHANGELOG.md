@@ -2,6 +2,18 @@
 v3.6.0
 ------
 
+Features:
+- export all View classes (#2851)
+- updateEvent, update complex attributes (#2864)
+
+Bugfixes:
+- objects used as non-standard Event properties ignored by `updateEvent` (#3839)
+- listDay error if event goes over period (#3843)
+- validDays with hiddenDays, js error when no days active (#3846)
+- json feed Event Source object no longer has `url` property (#3845)
+- updateEvent, allDay to timed, when no end, wrong end date (#3144)
+- removeEvents by `_id` stopped working (#3828)
+
 Incompatibilities:
 - The `viewRender` callback might now be fired AFTER events have been rendered
   to the DOM. However, the eventRender/eventAfterRender/eventAfterAllRender callbacks
@@ -42,6 +54,7 @@ Bugfixes:
 - updateEvent doesn't support ID changes (#2928)
 - Promise then method doesn't forward result (#3744)
 - Korean typo (#3693)
+- fixed switching from any view to listview, eventAfterRender isn't called (#3751)
 
 Incompatibilities:
 - Event Objects obtained from clientEvents or various callbacks are no longer
