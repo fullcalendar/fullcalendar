@@ -114,6 +114,38 @@ describe('updateEvent', function() {
 		});
 	});
 
+	describe('when changing an event from all-day to timed', function() {
+
+		it('accepts all new properties as-is', function() {
+			var event;
+
+			initCalendar({
+				defaultView: 'month',
+				defaultDate: '2016-04-29',
+				events: [
+					{
+						title: 'Test event',
+						start: '2016-04-29'
+					}
+				]
+			});
+
+			event = currentCalendar.clientEvents()[0];
+
+			event.allDay = false;
+			event.start = '2016-04-29T12:00:00'; // 12 noon
+			event.end = '2016-04-29T14:00:00'; // 2pm
+			currentCalendar.updateEvent(event);
+
+			event = currentCalendar.clientEvents()[0];
+			expect(event.allDay).toBe(false);
+			expect(moment.isMoment(event.start)).toBe(true);
+			expect(moment.isMoment(event.end)).toBe(true);
+			expect(event.start).toEqualMoment('2016-04-29T12:00:00');
+			expect(event.end).toEqualMoment('2016-04-29T14:00:00');
+		});
+	});
+
 	describe('when adding a new misc object property', function() {
 
 		it('accepts the new property', function() {

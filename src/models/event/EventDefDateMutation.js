@@ -20,8 +20,13 @@ var EventDefDateMutation = Class.extend({
 		var end = null;
 		var shouldRezone = false;
 
-		if (!this.clearEnd && eventDateProfile.end) {
+		if (eventDateProfile.end && !this.clearEnd) {
 			end = eventDateProfile.end.clone();
+		}
+		// if there will be an end-date mutation, guarantee an end,
+		// ambigously-zoned according to the original allDay
+		else if (this.endDelta && !end) {
+			end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start);
 		}
 
 		if (this.forceTimed) {
@@ -59,10 +64,6 @@ var EventDefDateMutation = Class.extend({
 		// do this before adding startDelta to start, so we can work off of start
 		if (this.endDelta) {
 			shouldRezone = true;
-
-			if (!end) {
-				end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start);
-			}
 
 			end.add(this.endDelta);
 		}
