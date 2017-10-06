@@ -474,13 +474,14 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	computeSegVerticals: function(segs) {
 		var i, seg;
 		var dayDate;
+		var agendaEventMinHeight = this.view.opt('agendaEventMinHeight');
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 			dayDate = this.dayDates[seg.dayIndex];
 
 			seg.top = this.computeDateTop(seg.startMs, dayDate);
-			seg.bottom = this.computeDateTop(seg.endMs, dayDate);
+			seg.bottom = Math.max(seg.top + agendaEventMinHeight, this.computeDateTop(seg.endMs, dayDate));
 		}
 	},
 
