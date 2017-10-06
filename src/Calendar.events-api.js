@@ -203,7 +203,7 @@ function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
 		return legacyEventInstances.filter(function(legacyEventInstance) {
 			// soft comparison because id not be normalized to string
 			return legacyEventInstance.id == legacyQuery ||
-				legacyEventInstance._id === legacyQuery // can specify internal id, but must exactly match
+				legacyEventInstance._id === legacyQuery; // can specify internal id, but must exactly match
 		});
 	}
 }
