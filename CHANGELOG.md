@@ -3,7 +3,9 @@ v3.6.0
 ------
 
 Features:
-- export all View classes (#2851)
+- `agendaEventMinHeight` for guaranteeing height (#961, #3788) thx @Stafie
+- `columnHeader` can be set to `false` to hide headings (#3438, #3787) thx @caseyjhol
+- export all View classes (#2851, #3831)
 - updateEvent, update complex attributes (#2864)
 - Albanian locale (#3847) thx @alensaqe
 
