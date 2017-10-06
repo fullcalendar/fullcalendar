@@ -108,11 +108,14 @@ var BasicView = FC.BasicView = View.extend({
 
 		return '' +
 			'<table class="' + theme.getClass('tableGrid') + '">' +
-				'<thead class="fc-head">' +
-					'<tr>' +
-						'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
-					'</tr>' +
-				'</thead>' +
+				(this.opt('columnHead') ?
+					'<thead class="fc-head">' +
+						'<tr>' +
+							'<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
+						'</tr>' +
+					'</thead>' :
+					''
+					) +
 				'<tbody class="fc-body">' +
 					'<tr>' +
 						'<td class="' + theme.getClass('widgetContent') + '"></td>' +
