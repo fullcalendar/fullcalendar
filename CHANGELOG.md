@@ -5,6 +5,7 @@ v3.6.0
 Features:
 - export all View classes (#2851)
 - updateEvent, update complex attributes (#2864)
+- Albanian locale (#3847) thx @alensaqe
 
 Bugfixes:
 - objects used as non-standard Event properties ignored by `updateEvent` (#3839)
@@ -13,6 +14,8 @@ Bugfixes:
 - json feed Event Source object no longer has `url` property (#3845)
 - updateEvent, allDay to timed, when no end, wrong end date (#3144)
 - removeEvents by `_id` stopped working (#3828)
+- correct `this` context in FuncEventSource (#3848) thx @declspec
+- js event not received in unselect callback when selecting another cell (#3832)
 
 Incompatibilities:
 - The `viewRender` callback might now be fired AFTER events have been rendered
