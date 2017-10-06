@@ -35,7 +35,7 @@ describe('short event rendering with agendaEventMinHeight', function() {
 			expect(el2.css('left')).not.toEqual('0px');
 		});
 
-		fit('prevents the events to overlap when we pass the slotEventOverlap: false option', function() {
+		it('prevents the events to overlap when we pass the slotEventOverlap: false option', function() {
 			initCalendar({
 				slotEventOverlap: false
 			});

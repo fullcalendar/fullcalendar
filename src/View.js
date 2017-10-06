@@ -31,8 +31,6 @@ var View = FC.View = InteractiveDateComponent.extend({
 	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
 	nowIndicatorIntervalID: null, // "
 
-	agendaEventMinHeight: 0, // allows setting a min-height to the event segment to prevent short events overlapping each other
-
 	constructor: function(calendar, viewSpec) {
 		this.calendar = calendar;
 		this.viewSpec = viewSpec;
