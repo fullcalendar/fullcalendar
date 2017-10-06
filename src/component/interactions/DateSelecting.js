@@ -70,8 +70,8 @@ var DateSelecting = FC.DateSelecting = Interaction.extend({
 			interactionStart: function() {
 				selectionFootprint = null;
 			},
-			dragStart: function() {
-				_this.view.unselect(); // since we could be rendering a new selection, we want to clear any old one
+			dragStart: function(ev) {
+				_this.view.unselect(ev); // since we could be rendering a new selection, we want to clear any old one
 			},
 			hitOver: function(hit, isOrig, origHit) {
 				var origHitFootprint;
