@@ -248,6 +248,24 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// -----------------------------------------------------------------------------------------------------------------
 
 
+	requestDateRender: function(dateProfile) {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.executeDateRender(dateProfile);
+		}, 'date', 'init');
+	},
+
+
+	requestDateUnrender: function() {
+		var _this = this;
+
+		this.requestRender(function() {
+			_this.executeDateUnrender();
+		}, 'date', 'destroy');
+	},
+
+
 	// if dateProfile not specified, uses current
 	executeDateRender: function(dateProfile) {
 		DateComponent.prototype.executeDateRender.apply(this, arguments);
@@ -854,17 +872,9 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.executeDateRender(deps.dateProfile);
-	}, 'date', 'init');
+	this.requestDateRender(deps.dateProfile);
 }, function() {
-	var _this = this;
-
-	this.requestRender(function() {
-		_this.executeDateUnrender();
-	}, 'date', 'destroy');
+	this.requestDateUnrender();
 });
 
 
