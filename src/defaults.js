@@ -10,7 +10,7 @@ Calendar.defaults = {
 	nextDayThreshold: '09:00:00', // 9am
 
 	// display
-	columnHead: true,
+	columnHeader: true,
 	defaultView: 'month',
 	aspectRatio: 1.35,
 	header: {

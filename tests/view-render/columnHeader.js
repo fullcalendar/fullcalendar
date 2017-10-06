@@ -1,5 +1,5 @@
 
-describe('columnHead', function() {
+describe('columnHeader', function() {
 	pushOptions({
 		defaultDate: '2014-05-11'
 	});
@@ -12,7 +12,7 @@ describe('columnHead', function() {
 
 		describe('when off', function() {
 			pushOptions({
-				columnHead: true
+				columnHeader: true
 			});
 
 			it('should show header', function() {
@@ -23,7 +23,7 @@ describe('columnHead', function() {
 
 		describe('when on', function() {
 			pushOptions({
-				columnHead: false
+				columnHeader: false
 			});
 
 			it('should not show header', function() {
