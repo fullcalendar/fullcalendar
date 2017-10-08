@@ -135,7 +135,7 @@ function Toolbar(calendar, toolbarOptions) {
 									buttonInnerHtml +
 								'</button>'
 								)
-								.click(function(ev) {
+								.on("click", function(ev) {
 									// don't process clicks for disabled buttons
 									if (!buttonEl.hasClass(theme.getClass('stateDisabled'))) {
 
@@ -151,7 +151,7 @@ function Toolbar(calendar, toolbarOptions) {
 										}
 									}
 								})
-								.mousedown(function() {
+								.on("mousedown", function() {
 									// the *down* effect (mouse pressed in).
 									// only on buttons that are not the "active" tab, or disabled
 									buttonEl
@@ -159,26 +159,24 @@ function Toolbar(calendar, toolbarOptions) {
 										.not('.' + theme.getClass('stateDisabled'))
 										.addClass(theme.getClass('stateDown'));
 								})
-								.mouseup(function() {
+								.on("mouseup", function() {
 									// undo the *down* effect
 									buttonEl.removeClass(theme.getClass('stateDown'));
 								})
-								.hover(
-									function() {
-										// the *hover* effect.
-										// only on buttons that are not the "active" tab, or disabled
-										buttonEl
-											.not('.' + theme.getClass('stateActive'))
-											.not('.' + theme.getClass('stateDisabled'))
-											.addClass(theme.getClass('stateHover'));
-									},
-									function() {
-										// undo the *hover* effect
-										buttonEl
-											.removeClass(theme.getClass('stateHover'))
-											.removeClass(theme.getClass('stateDown')); // if mouseleave happens before mouseup
-									}
-								);
+								.on("mouseenter", function() {
+									// the *hover* effect.
+									// only on buttons that are not the "active" tab, or disabled
+									buttonEl
+										.not('.' + theme.getClass('stateActive'))
+										.not('.' + theme.getClass('stateDisabled'))
+										.addClass(theme.getClass('stateHover'));
+                                })
+								.on("mouseleave", function() {
+									// undo the *hover* effect
+									buttonEl
+										.removeClass(theme.getClass('stateHover'))
+										.removeClass(theme.getClass('stateDown')); // if mouseleave happens before mouseup
+								});
 
 							groupChildren = groupChildren.add(buttonEl);
 						}

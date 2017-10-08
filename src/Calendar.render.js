@@ -94,7 +94,7 @@ Calendar.mixin({
 		this.renderView(this.opt('defaultView'));
 
 		if (this.opt('handleWindowResize')) {
-			$(window).resize(
+			$(window).on("resize",
 				this.windowResizeProxy = debounce( // prevents rapid calls
 					this.windowResize.bind(this),
 					this.opt('windowResizeDelay')
