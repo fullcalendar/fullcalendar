@@ -100,7 +100,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 
 	unrenderFgRanges: function() {
-		this.unrenderFgSegs();
+		this.unrenderFgSegs(this.fgSegs || []);
 		this.fgSegs = null;
 	},
 
@@ -136,7 +136,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 
 	// Unrenders all currently rendered foreground segments
-	unrenderFgSegs: function() {
+	unrenderFgSegs: function(segs) {
 		// subclasses must implement
 	},
 
