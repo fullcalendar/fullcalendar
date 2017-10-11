@@ -568,15 +568,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	// constraintRange allow additional clipping. optional. eventually remove this.
-	eventFootprintToSegs: function(eventFootprint, constraintRange) {
+	eventFootprintToSegs: function(eventFootprint) {
 		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
 		var segs;
 		var i, seg;
-
-		if (constraintRange) {
-			unzonedRange = unzonedRange.intersect(constraintRange);
-		}
 
 		segs = this.componentFootprintToSegs(eventFootprint.componentFootprint);
 

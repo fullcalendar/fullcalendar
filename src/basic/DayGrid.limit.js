@@ -329,12 +329,29 @@ DayGrid.mixin({
 		var dayEnd = dayStart.clone().add(1, 'days');
 		var dayRange = new UnzonedRange(dayStart, dayEnd);
 		var newSegs = [];
-		var i;
+		var i, seg;
+		var slicedRange;
 
 		for (i = 0; i < segs.length; i++) {
-			newSegs.push.apply(newSegs, // append
-				this.eventFootprintToSegs(segs[i].footprint, dayRange)
-			);
+			seg = segs[i];
+			slicedRange = seg.footprint.componentFootprint.unzonedRange.intersect(dayRange);
+
+			if (slicedRange) {
+				newSegs.push(
+					$.extend({}, seg, {
+						footprint: new EventFootprint(
+							new ComponentFootprint(
+								slicedRange,
+								seg.footprint.componentFootprint.isAllDay
+							),
+							seg.footprint.eventDef,
+							seg.footprint.eventInstance
+						),
+						isStart: seg.isStart && slicedRange.isStart,
+						isEnd: seg.isEnd && slicedRange.isEnd
+					})
+				);
+			}
 		}
 
 		// force an order because eventsToSegs doesn't guarantee one

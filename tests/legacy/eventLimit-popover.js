@@ -156,6 +156,58 @@ describe('eventLimit popover', function() {
 				'event01', 'event05', 'event07', 'event03', 'event02', 'event08', 'event04'
 			]);
 		});
+
+		// https://github.com/fullcalendar/fullcalendar/issues/3856
+		it('displays multi-day events only once', function() {
+			options.defaultDate = '2017-10-04';
+			options.events = [
+				{
+					title: 'Long event',
+					className: 'long-event',
+					start: '2017-10-03',
+					end: '2017-10-20'
+				},
+				{
+					title: 'Meeting',
+					className: 'meeting-event',
+					start: '2017-10-04T10:00:00',
+					end: '2017-10-04T12:00:00'
+				},
+				{
+					title: 'Lunch 1',
+					className: 'lunch1-event',
+					start: '2017-10-04T12:00:00'
+				},
+				{
+					title: 'Lunch 2',
+					className: 'lunch2-event',
+					start: '2017-10-04T14:00:00'
+				}
+			]
+
+			init();
+
+			expect($('.fc-popover .fc-event').length).toBe(4);
+
+			var longEventEl = $('.fc-popover .long-event');
+			expect(longEventEl.length).toBe(1);
+			expect(longEventEl).toHaveClass('fc-not-start');
+			expect(longEventEl).toHaveClass('fc-not-end');
+			expect(longEventEl).not.toHaveClass('fc-start');
+			expect(longEventEl).not.toHaveClass('fc-end');
+
+			[
+				$('.fc-popover .meeting-event'),
+				$('.fc-popover .lunch1-event'),
+				$('.fc-popover .lunch2-event')
+			].forEach(function(el) {
+				expect(el.length).toBe(1);
+				expect(el).toHaveClass('fc-start');
+				expect(el).toHaveClass('fc-end');
+				expect(el).not.toHaveClass('fc-not-start');
+				expect(el).not.toHaveClass('fc-not-end');
+			});
+		});
 	});
 
 	[ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
