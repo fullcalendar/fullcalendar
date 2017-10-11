@@ -1,21 +1,21 @@
 
-v3.6.0
-------
+v3.6.0 (2017-10-10)
+-------------------
 
 Features:
 - `agendaEventMinHeight` for guaranteeing height (#961, #3788) thx @Stafie
 - `columnHeader` can be set to `false` to hide headings (#3438, #3787) thx @caseyjhol
 - export all View classes (#2851, #3831)
-- updateEvent, update complex attributes (#2864)
+- `updateEvent`, update complex attributes (#2864)
 - Albanian locale (#3847) thx @alensaqe
 
 Bugfixes:
 - objects used as non-standard Event properties ignored by `updateEvent` (#3839)
 - listDay error if event goes over period (#3843)
-- validDays with hiddenDays, js error when no days active (#3846)
+- `validDays` with `hiddenDays`, js error when no days active (#3846)
 - json feed Event Source object no longer has `url` property (#3845)
-- updateEvent, allDay to timed, when no end, wrong end date (#3144)
-- removeEvents by `_id` stopped working (#3828)
+- `updateEvent`, allDay to timed, when no end, wrong end date (#3144)
+- `removeEvents` by `_id` stopped working (#3828)
 - correct `this` context in FuncEventSource (#3848) thx @declspec
 - js event not received in unselect callback when selecting another cell (#3832)
 
