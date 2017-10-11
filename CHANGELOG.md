@@ -2,8 +2,9 @@
 v3.6.1 (2017-10-11)
 -------------------
 
-Hotfix release to address #3865
-(JSON feed event sources always requesting current page)
+Bugfixes:
+- JSON feed event sources always requesting current page (#3865)
+- multi-day events appearing multiple times in more+ popover (#3856)
 
 
 v3.6.0 (2017-10-10)
