@@ -24,10 +24,11 @@ var JsonFeedEventSource = EventSource.extend({
 
 		return Promise.construct(function(onResolve, onReject) {
 			$.ajax($.extend(
-				{ url: this.url },
+				{}, // destination
 				JsonFeedEventSource.AJAX_DEFAULTS,
 				ajaxSettings,
 				{
+					url: _this.url,
 					data: requestParams,
 					success: function(rawEventDefs) {
 						var callbackRes;
