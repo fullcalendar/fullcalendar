@@ -1,4 +1,11 @@
 
+v3.6.1 (2017-10-11)
+-------------------
+
+Hotfix release to address #3865
+(JSON feed event sources always requesting current page)
+
+
 v3.6.0 (2017-10-10)
 -------------------
 
