@@ -496,7 +496,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
-			seg.el.css(this.generateSegVerticalCss(seg));
+			seg.el && seg.el.css(this.generateSegVerticalCss(seg));
 		}
 	},
 
