@@ -165,6 +165,50 @@ describe('businessHours', function() {
 				{ start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
 			])).toBe(true);
 		});
+
+		it('with event filter', function() {
+			$('#cal').fullCalendar({
+				defaultDate: '2014-12-07',
+				defaultView: 'agendaWeek',
+				businessHours: [
+					{
+						dow: [ 1, 2, 3 ], // mon, tue, wed
+						start: '08:00',
+						end: '18:00'
+					},
+					{
+						dow: [ 4, 5 ], // thu, fri
+						start: '10:00',
+						end: '16:00'
+					}
+				],
+				businessHourEventFilter: function (events) {
+					return events.filter(function (event) { return event.dateProfile.start.date() != 10; });
+				}
+			});
+
+			// timed area
+			expect(isTimeGridNonBusinessSegsRendered([
+				// sun
+				{ start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
+				// mon
+				{ start: '2014-12-08T00:00', end: '2014-12-08T08:00' },
+				{ start: '2014-12-08T18:00', end: '2014-12-09T00:00' },
+				// tue
+				{ start: '2014-12-09T00:00', end: '2014-12-09T08:00' },
+				{ start: '2014-12-09T18:00', end: '2014-12-10T00:00' },
+				// wed
+				{ start: '2014-12-10T00:00', end: '2014-12-11T00:00' },
+				// thu
+				{ start: '2014-12-11T00:00', end: '2014-12-11T10:00' },
+				{ start: '2014-12-11T16:00', end: '2014-12-12T00:00' },
+				// fri
+				{ start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
+				{ start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
+				// sat
+				{ start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
+			])).toBe(true);
+		});
 	});
 
 

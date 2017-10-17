@@ -23,11 +23,19 @@ var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
 	buildEventInstanceGroup: function(isAllDay, unzonedRange) {
 		var eventDefs = this.buildEventDefs(isAllDay);
 		var eventInstanceGroup;
+		var eventInstances;
 
 		if (eventDefs.length) {
-			eventInstanceGroup = new EventInstanceGroup(
-				eventDefsToEventInstances(eventDefs, unzonedRange)
-			);
+			eventInstances = eventDefsToEventInstances(eventDefs, unzonedRange);
+
+			if (this.calendar.hasPublicHandlers('businessHourEventFilter')) {
+				eventInstances = this.calendar.publiclyTrigger('businessHourEventFilter', {
+					context: this.calendar,
+					args: [ eventInstances ]
+				});
+            }
+
+			eventInstanceGroup = new EventInstanceGroup(eventInstances);
 
 			// so that inverse-background rendering can happen even when no eventRanges in view
 			eventInstanceGroup.explicitEventDef = eventDefs[0];
