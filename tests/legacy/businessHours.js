@@ -182,8 +182,13 @@ describe('businessHours', function() {
 						end: '16:00'
 					}
 				],
-				businessHourEventFilter: function (events) {
-					return events.filter(function (event) { return event.dateProfile.start.date() != 10; });
+				businessHourEventFilter: function (eventInstances, buildInstancesFunc) {
+					Array.prototype.push.apply(eventInstances,
+						buildInstancesFunc({ date: '2014-12-13', start: '12:00', end: '16:00' }));
+					return eventInstances.filter(function (eventInstance) {
+						// 10th of every month are non-businessday
+						return eventInstance.dateProfile.start.date() != 10;
+					});
 				}
 			});
 
@@ -206,7 +211,8 @@ describe('businessHours', function() {
 				{ start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
 				{ start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
 				// sat
-				{ start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
+				{ start: '2014-12-13T00:00', end: '2014-12-13T12:00' },
+				{ start: '2014-12-13T16:00', end: '2014-12-14T00:00' }
 			])).toBe(true);
 		});
 	});
