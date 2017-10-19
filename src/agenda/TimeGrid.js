@@ -385,7 +385,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		if (segs.length > 0) { // is the current time in view?
 			nodes.push($('<div class="fc-now-indicator fc-now-indicator-arrow"></div>')
 				.css('top', top)
-				.appendTo(this.el.find('.fc-content-skeleton'))[0]);
+				.appendTo(this.el.find('.fc-content-skeleton')[0]));
 		}
 
 		this.nowIndicatorEls = $(nodes);
