@@ -1,3 +1,7 @@
+v3.6.2
+
+Bugfixes:
+- Fixed issue where the now indicator arrow didn't get cleaned up (#3882)
 
 v3.6.1 (2017-10-11)
 -------------------
