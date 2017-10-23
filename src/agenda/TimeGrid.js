@@ -30,6 +30,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	slatCoordCache: null,
 
 	bottomRuleEl: null, // hidden by default
+	contentSkeletonEl: null,
 	colContainerEls: null, // containers for each column
 
 	// inner-containers for each column where different types of segs live
@@ -165,6 +166,12 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
+	unrenderDates: function() {
+		//this.unrenderSlats(); // don't need this because repeated .html() calls clear
+		this.unrenderColumns();
+	},
+
+
 	renderSkeleton: function() {
 		var theme = this.view.calendar.theme;
 
@@ -182,7 +189,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		var theme = this.view.calendar.theme;
 
 		this.slatContainerEl = this.el.find('> .fc-slats')
-			.html(
+			.html( // avoids needing ::unrenderSlats()
 				'<table class="' + theme.getClass('tableGrid') + '">' +
 					this.renderSlatRowHtml() +
 				'</table>'
@@ -275,6 +282,11 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 	},
 
 
+	unrenderColumns: function() {
+		this.unrenderContentSkeleton();
+	},
+
+
 	/* Content Skeleton
 	------------------------------------------------------------------------------------------------------------------*/
 
@@ -298,7 +310,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				'</td>';
 		}
 
-		skeletonEl = $(
+		skeletonEl = this.contentSkeletonEl = $(
 			'<div class="fc-content-skeleton">' +
 				'<table>' +
 					'<tr>' + cellHtml + '</tr>' +
@@ -315,6 +327,18 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		this.bookendCells(skeletonEl.find('tr')); // TODO: do this on string level
 		this.el.append(skeletonEl);
+	},
+
+
+	unrenderContentSkeleton: function() {
+		this.contentSkeletonEl.remove();
+		this.contentSkeletonEl = null;
+		this.colContainerEls = null;
+		this.helperContainerEls = null;
+		this.fgContainerEls = null;
+		this.bgContainerEls = null;
+		this.highlightContainerEls = null;
+		this.businessContainerEls = null;
 	},
 
 
