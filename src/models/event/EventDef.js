@@ -236,15 +236,6 @@ EventDef.defineStandardProps({
 
 EventDef.parse = function(rawInput, source) {
 	var def = new this(source);
-	var calendarTransform = source.calendar.opt('eventDataTransform');
-	var sourceTransform = source.eventDataTransform;
-
-	if (calendarTransform) {
-		rawInput = calendarTransform(rawInput);
-	}
-	if (sourceTransform) {
-		rawInput = sourceTransform(rawInput);
-	}
 
 	if (def.applyProps(rawInput)) {
 		return def;

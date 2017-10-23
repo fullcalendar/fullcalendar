@@ -196,16 +196,28 @@ describe('event constraint', function() {
 					});
 				});
 				describe('using eventConstraint', function() {
-					it('does not allow a drag', function(done) {
+					it('does not allow a drag and doesnt call eventDataTransform', function(done) {
+
 						options.events = [ {
 							start: '2014-11-10T01:00:00',
 							end: '2014-11-10T02:00:00'
 						} ];
+
 						options.eventConstraint = {
 							start: '2014-11-10T03:00:00',
 							end: '2014-11-10T06:00:00'
 						};
-						testEventDrag(options, '2014-11-10T06:00:00', false, done);
+
+						options.eventDataTransform = function(inData) {
+							return inData;
+						};
+
+						spyOn(options, 'eventDataTransform').and.callThrough();
+
+						testEventDrag(options, '2014-11-10T06:00:00', false, function() {
+							expect(options.eventDataTransform.calls.count()).toBe(1); // only initial parse
+							done();
+						});
 					});
 				});
 			});

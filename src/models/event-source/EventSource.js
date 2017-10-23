@@ -58,10 +58,7 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		var eventDefs = [];
 
 		for (i = 0; i < rawEventDefs.length; i++) {
-			eventDef = EventDefParser.parse(
-				rawEventDefs[i],
-				this // source
-			);
+			eventDef = this.parseEventDef(rawEventDefs[i]);
 
 			if (eventDef) {
 				eventDefs.push(eventDef);
@@ -69,6 +66,21 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		}
 
 		return eventDefs;
+	},
+
+
+	parseEventDef: function(rawInput) {
+		var calendarTransform = this.calendar.opt('eventDataTransform');
+		var sourceTransform = this.eventDataTransform;
+
+		if (calendarTransform) {
+			rawInput = calendarTransform(rawInput);
+		}
+		if (sourceTransform) {
+			rawInput = sourceTransform(rawInput);
+		}
+
+		return EventDefParser.parse(rawInput, this);
 	},
 
 
