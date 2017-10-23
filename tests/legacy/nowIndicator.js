@@ -1,4 +1,5 @@
 describe('now indicator', function() {
+	var FC = $.fullCalendar;
 	var options;
 
 	beforeEach(function() {
@@ -60,6 +61,25 @@ describe('now indicator', function() {
 					});
 				});
 			});
+		});
+
+		// https://github.com/fullcalendar/fullcalendar/issues/3872
+		it('doesnt double render indicator arrow', function(done) {
+
+			// force the indicator to update every second
+			var getNowIndicatorUnit = spyOnMethod(FC.TimeGrid, 'getNowIndicatorUnit', true)
+				.and.returnValue('second');
+
+			options.defaultDate = '2016-01-01'; // does NOT have "now" in view
+			options.nowIndicator = true;
+			$('#cal').fullCalendar(options);
+			$('#cal').fullCalendar('today'); // the bug only happens after navigate
+
+			setTimeout(function() {
+				expect($('.fc-now-indicator-arrow').length).toBe(1);
+				getNowIndicatorUnit.restore();
+				done();
+			}, 2100); // allows for more than 1 update
 		});
 	});
 

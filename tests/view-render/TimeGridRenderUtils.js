@@ -8,5 +8,11 @@ var TimeGridRenderUtils = {
 				isMajor: !$(tr).hasClass('fc-minor')
 			};
 		}).get();
+	},
+
+	// for https://github.com/fullcalendar/fullcalendar-scheduler/issues/363
+	isStructureValid: function() {
+		return $('.fc-time-grid .fc-content-skeleton').length === 1;
 	}
+
 };

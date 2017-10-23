@@ -46,6 +46,7 @@ describe('changeView', function() {
 						case 2:
 							expect(view.type).toBe('agendaWeek');
 							checkViewIntegrity();
+							expect(TimeGridRenderUtils.isStructureValid()).toBe(true);
 							currentCalendar.changeView('basicWeek');
 							break;
 						case 3:
