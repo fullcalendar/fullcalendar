@@ -156,8 +156,6 @@ Calendar.mixin({
 
 
 	unbindViewHandlers: function(view) {
-		this.stopListeningTo(view);
-
 		view.unwatch('titleForCalendar');
 		view.unwatch('dateProfileForCalendar');
 	},
