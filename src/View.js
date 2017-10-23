@@ -460,7 +460,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 				this.nowIndicatorTimeoutID = null;
 			}
 			if (this.nowIndicatorIntervalID) {
-				clearTimeout(this.nowIndicatorIntervalID);
+				clearInterval(this.nowIndicatorIntervalID);
 				this.nowIndicatorIntervalID = null;
 			}
 
