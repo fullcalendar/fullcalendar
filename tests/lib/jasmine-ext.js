@@ -212,12 +212,16 @@ beforeEach(function() {
 });
 
 
-function spyOnMethod(Class, methodName) {
+function spyOnMethod(Class, methodName, dontCallThrough) {
 	var origMethod = Class.prototype.hasOwnProperty(methodName) ?
 		Class.prototype[methodName] :
 		null;
 
-	var spy = spyOn(Class.prototype, methodName).and.callThrough();
+	var spy = spyOn(Class.prototype, methodName);
+
+	if (!dontCallThrough) {
+		spy = spy.and.callThrough();
+	}
 
 	spy.restore = function() {
 		if (origMethod) {
