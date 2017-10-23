@@ -219,6 +219,7 @@ Calendar.mixin({
 		this.unbindViewHandlers(currentView);
 
 		currentView.removeElement();
+		currentView.unsetDate(); // so bindViewHandlers doesn't fire with old values next time
 
 		this.view = null;
 	},

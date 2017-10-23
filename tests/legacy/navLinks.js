@@ -28,6 +28,17 @@ describe('navLinks', function() {
 			expect(options.dayClick).not.toHaveBeenCalled();
 		});
 
+		// https://github.com/fullcalendar/fullcalendar/issues/3869
+		it('moves to two different days', function() {
+			$('#cal').fullCalendar(options);
+			$.simulateMouseClick(getDayGridNumberEl('2016-08-09'));
+			expectDayView('agendaDay', '2016-08-09');
+			expect(options.dayClick).not.toHaveBeenCalled();
+			$('#cal').fullCalendar('changeView', 'month');
+			$.simulateMouseClick(getDayGridNumberEl('2016-08-10'));
+			expectDayView('agendaDay', '2016-08-10');
+		});
+
 		it('moves to agendaDay specifically', function() {
 			options.navLinkDayClick = 'agendaDay';
 			$('#cal').fullCalendar(options);
