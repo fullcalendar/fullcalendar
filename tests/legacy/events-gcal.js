@@ -298,6 +298,27 @@ describe('Google Calendar plugin', function() {
 		$('#cal').fullCalendar(options);
 	});
 
+	it('calls loading with true then false', function(done) {
+		var cmds = [];
+
+		options.googleCalendarApiKey = API_KEY;
+		options.events =
+			'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events';
+
+		options.loading = function(bool) {
+			cmds.push(bool);
+
+			if (cmds.length === 1) {
+				expect(cmds).toEqual([ true ]);
+			}
+			else if (cmds.length == 2) {
+				expect(cmds).toEqual([ true, false ]);
+				done();
+			}
+		};
+		$('#cal').fullCalendar(options);
+	});
+
 	describe('removeEventSource', function() {
 
 		it('works when specifying only the Google Calendar ID', function(done) {

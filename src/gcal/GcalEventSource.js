@@ -25,6 +25,8 @@ var GcalEventSource = EventSource.extend({
 			return Promise.reject();
 		}
 
+		this.calendar.pushLoading();
+
 		return Promise.construct(function(onResolve, onReject) {
 			$.ajax($.extend(
 				{}, // destination
@@ -36,6 +38,8 @@ var GcalEventSource = EventSource.extend({
 					success: function(responseData) {
 						var rawEventDefs;
 						var successRes;
+
+						_this.calendar.popLoading();
 
 						if (responseData.error) {
 							_this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors);
