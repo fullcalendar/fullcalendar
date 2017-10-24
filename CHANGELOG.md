@@ -1,4 +1,15 @@
 
+v3.6.2 (2017-10-23)
+-------------------
+
+Bugfixes:
+- Google Calendar event sources not calling `loading` callback (#3884)
+- `eventDataTransform` w/ eventConstraint shouldn't be called during event resizing (#3859)
+- `navLinks` would go to the previously navigated date (#3869)
+- `nowIndicator` arrow would repeatedly render (#3872)
+- fc-content-skeleton DOM element would repeatedly render on navigation in agenda view
+
+
 v3.6.1 (2017-10-11)
 -------------------
 
