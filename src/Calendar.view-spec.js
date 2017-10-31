@@ -1,7 +1,22 @@
 
-Calendar.mixin({
+var ViewSpecManager = Class.extend({
 
+	_calendar: null, // avoid
+	optionsManager: null,
 	viewSpecCache: null, // cache of view definitions (initialized in Calendar.js)
+
+
+	constructor: function(optionsManager, _calendar) {
+		this.optionsManager = optionsManager;
+		this._calendar = _calendar;
+
+		this.clearCache();
+	},
+
+
+	clearCache: function() {
+		this.viewSpecCache = {};
+	},
 
 
 	// Gets information about how to create a view. Will use a cache.
@@ -22,7 +37,7 @@ Calendar.mixin({
 		if ($.inArray(unit, unitsDesc) != -1) {
 
 			// put views that have buttons first. there will be duplicates, but oh well
-			viewTypes = this.header.getViewsWithButtons(); // TODO: include footer as well?
+			viewTypes = this._calendar.header.getViewsWithButtons(); // TODO: include footer as well?
 			$.each(FC.views, function(viewType) { // all views
 				viewTypes.push(viewType);
 			});
@@ -160,7 +175,7 @@ Calendar.mixin({
 			queryButtonText(optionsManager.dirDefaults) ||
 			spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
 			queryButtonText(Calendar.defaults) ||
-			(spec.duration ? this.humanizeDuration(spec.duration) : null) || // like "3 days"
+			(spec.duration ? this._calendar.humanizeDuration(spec.duration) : null) || // like "3 days"
 			requestedViewType; // fall back to given view name
 	}
 

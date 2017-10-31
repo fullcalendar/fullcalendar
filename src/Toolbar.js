@@ -59,6 +59,7 @@ function Toolbar(calendar, toolbarOptions) {
 	function renderSection(position) {
 		var theme = calendar.theme;
 		var optionsManager = calendar.optionsManager;
+		var viewSpecManager = calendar.viewSpecManager;
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = toolbarOptions.layout[position];
 		var calendarCustomButtons = optionsManager.get('customButtons') || {};
@@ -97,7 +98,7 @@ function Toolbar(calendar, toolbarOptions) {
 							(buttonIcon = theme.getIconClass(buttonName)) ||
 							(buttonText = customButtonProps.text); // jshint ignore:line
 						}
-						else if ((viewSpec = calendar.getViewSpec(buttonName))) {
+						else if ((viewSpec = viewSpecManager.getViewSpec(buttonName))) {
 							viewsWithButtons.push(buttonName);
 							buttonClick = function() {
 								calendar.changeView(buttonName);

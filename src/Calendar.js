@@ -7,6 +7,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	theme: null,
 	constraints: null,
 	optionsManager: null,
+	viewSpecManager: null,
 	businessHourGenerator: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
@@ -19,9 +20,9 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.el = el;
 		this.viewsByType = {};
-		this.viewSpecCache = {};
 
 		this.optionsManager = new OptionsManager(this, overrides);
+		this.viewSpecManager = new ViewSpecManager(this.optionsManager, this);
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
 		this.initEventManager();
@@ -116,7 +117,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
 	instantiateView: function(viewType) {
-		var spec = this.getViewSpec(viewType);
+		var spec = this.viewSpecManager.getViewSpec(viewType);
 
 		return new spec['class'](this, spec);
 	},
@@ -124,7 +125,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	// Returns a boolean about whether the view is okay to instantiate at some point
 	isValidViewType: function(viewType) {
-		return Boolean(this.getViewSpec(viewType));
+		return Boolean(this.viewSpecManager.getViewSpec(viewType));
 	},
 
 
@@ -152,7 +153,8 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		var spec;
 
 		viewType = viewType || 'day'; // day is default zoom
-		spec = this.getViewSpec(viewType) || this.getUnitViewSpec(viewType);
+		spec = this.viewSpecManager.getViewSpec(viewType) ||
+			this.viewSpecManager.getUnitViewSpec(viewType);
 
 		this.currentDate = newDate.clone();
 		this.renderView(spec ? spec.type : null);

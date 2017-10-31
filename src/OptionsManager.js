@@ -108,7 +108,7 @@ var OptionsManager = Model.extend({
 			this.dynamicOverrides[optionName] = newOptionHash[optionName];
 		}
 
-		this._calendar.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		this._calendar.viewSpecManager.clearCache(); // the dynamic override invalidates the options in this cache, so just clear it
 		this.compute(); // this.options needs to be recomputed after the dynamic override
 	}
 
