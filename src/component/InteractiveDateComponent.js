@@ -313,7 +313,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 			}
 		}
 
-		return view.calendar.isEventInstanceGroupAllowed(eventInstanceGroup);
+		return view.calendar.constraints.isEventInstanceGroupAllowed(eventInstanceGroup);
 	},
 
 
@@ -336,7 +336,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 			// TODO: pass in eventInstanceGroup instead
 			//  because we don't want calendar's constraint system to depend on a component's
 			//  determination of footprints.
-			if (!view.calendar.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
+			if (!view.calendar.constraints.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
 				return false;
 			}
 		}
