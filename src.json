@@ -49,7 +49,6 @@
     "Calendar.moment.js",
     "Calendar.render.js",
     "Calendar.toolbar.js",
-    "Calendar.business.js",
     "Calendar.events-api.js",
     "defaults.js",
     "locale.js",
