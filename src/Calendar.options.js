@@ -1,55 +1,28 @@
-/*
-Options binding/triggering system.
-*/
-Calendar.mixin({
 
+var OptionsManager = Model.extend({
+
+	_calendar: null, // avoid
 	dirDefaults: null, // option defaults related to LTR or RTL
 	localeDefaults: null, // option defaults related to current locale
 	overrides: null, // option overrides given to the fullCalendar constructor
 	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
-	optionsModel: null, // all defaults combined with overrides
 
 
-	initOptionsInternals: function(overrides) {
+	constructor: function(_calendar, overrides) {
+		Model.call(this); // super
+
+		this._calendar = _calendar;
 		this.overrides = $.extend({}, overrides); // make a copy
 		this.dynamicOverrides = {};
-		this.optionsModel = new Model();
-
-		this.populateOptionsHash();
+		this.compute();
 	},
 
 
-	// public getter/setter
-	option: function(name, value) {
-		var newOptionHash;
-
-		if (typeof name === 'string') {
-			if (value === undefined) { // getter
-				return this.optionsModel.get(name);
-			}
-			else { // setter for individual option
-				newOptionHash = {};
-				newOptionHash[name] = value;
-				this.setOptions(newOptionHash);
-			}
-		}
-		else if (typeof name === 'object') { // compound setter with object input
-			this.setOptions(name);
-		}
-	},
-
-
-	// private getter
-	opt: function(name) {
-		return this.optionsModel.get(name);
-	},
-
-
-	setOptions: function(newOptionHash) {
+	add: function(newOptionHash) { // was setOptions
 		var optionCnt = 0;
 		var optionName;
 
-		this.recordOptionOverrides(newOptionHash); // will trigger optionsModel watchers
+		this.recordOverrides(newOptionHash); // will trigger this model's watchers
 
 		for (optionName in newOptionHash) {
 			optionCnt++;
@@ -59,36 +32,36 @@ Calendar.mixin({
 		// if only one option change, `optionName` will be its name.
 		if (optionCnt === 1) {
 			if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-				this.updateViewSize(true); // isResize=true
+				this._calendar.updateViewSize(true); // isResize=true
 				return;
 			}
 			else if (optionName === 'defaultDate') {
 				return; // can't change date this way. use gotoDate instead
 			}
 			else if (optionName === 'businessHours') {
-				return; // optionsModel already reacts to this
+				return; // this model already reacts to this
 			}
 			else if (optionName === 'timezone') {
-				this.view.flash('initialEvents');
+				this._calendar.view.flash('initialEvents');
 				return;
 			}
 		}
 
 		// catch-all. rerender the header and footer and rebuild/rerender the current view
-		this.renderHeader();
-		this.renderFooter();
+		this._calendar.renderHeader();
+		this._calendar.renderFooter();
 
 		// even non-current views will be affected by this option change. do before rerender
 		// TODO: detangle
-		this.viewsByType = {};
+		this._calendar.viewsByType = {};
 
-		this.reinitView();
+		this._calendar.reinitView();
 	},
 
 
 	// Computes the flattened options hash for the calendar and assigns to `this.options`.
 	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
-	populateOptionsHash: function() {
+	compute: function() {
 		var locale, localeDefaults;
 		var isRTL, dirDefaults;
 		var rawOptions;
@@ -123,20 +96,21 @@ Calendar.mixin({
 		]);
 		populateInstanceComputableOptions(rawOptions); // fill in gaps with computed options
 
-		this.optionsModel.reset(rawOptions);
+		this.reset(rawOptions);
 	},
 
 
 	// stores the new options internally, but does not rerender anything.
-	recordOptionOverrides: function(newOptionHash) {
+	recordOverrides: function(newOptionHash) {
 		var optionName;
 
 		for (optionName in newOptionHash) {
 			this.dynamicOverrides[optionName] = newOptionHash[optionName];
 		}
 
-		this.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
-		this.populateOptionsHash(); // this.options needs to be recomputed after the dynamic override
+		this._calendar.viewSpecCache = {}; // the dynamic override invalidates the options in this cache, so just clear it
+		this.compute(); // this.options needs to be recomputed after the dynamic override
 	}
+
 
 });

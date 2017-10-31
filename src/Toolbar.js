@@ -58,11 +58,12 @@ function Toolbar(calendar, toolbarOptions) {
 
 	function renderSection(position) {
 		var theme = calendar.theme;
+		var optionsManager = calendar.optionsManager;
 		var sectionEl = $('<div class="fc-' + position + '"/>');
 		var buttonStr = toolbarOptions.layout[position];
-		var calendarCustomButtons = calendar.opt('customButtons') || {};
-		var calendarButtonTextOverrides = calendar.overrides.buttonText || {};
-		var calendarButtonText = calendar.opt('buttonText') || {};
+		var calendarCustomButtons = optionsManager.get('customButtons') || {};
+		var calendarButtonTextOverrides = optionsManager.overrides.buttonText || {};
+		var calendarButtonText = optionsManager.get('buttonText') || {};
 
 		if (buttonStr) {
 			$.each(buttonStr.split(' '), function(i) {

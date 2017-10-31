@@ -49,9 +49,9 @@ Calendar.mixin({
 		});
 
 		// called immediately, and upon option change
-		this.optionsModel.watch('settingTheme', [ '?theme', '?themeSystem' ], function(opts) {
+		this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], function(opts) {
 			var themeClass = ThemeRegistry.getThemeClass(opts.themeSystem || opts.theme);
-			var theme = new themeClass(_this.optionsModel);
+			var theme = new themeClass(_this.optionsManager);
 			var widgetClass = theme.getClass('widget');
 
 			_this.theme = theme;
@@ -69,7 +69,7 @@ Calendar.mixin({
 			}
 		});
 
-		this.optionsModel.watch('settingBusinessHourGenerator', [ '?businessHours' ], function(deps) {
+		this.optionsManager.watch('settingBusinessHourGenerator', [ '?businessHours' ], function(deps) {
 			_this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, _this);
 
 			if (_this.view) {
@@ -81,7 +81,7 @@ Calendar.mixin({
 
 		// called immediately, and upon option change.
 		// HACK: locale often affects isRTL, so we explicitly listen to that too.
-		this.optionsModel.watch('applyingDirClasses', [ '?isRTL', '?locale' ], function(opts) {
+		this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], function(opts) {
 			el.toggleClass('fc-ltr', !opts.isRTL);
 			el.toggleClass('fc-rtl', opts.isRTL);
 		});
@@ -114,8 +114,8 @@ Calendar.mixin({
 		this.el.removeClass('fc fc-ltr fc-rtl');
 
 		// removes theme-related root className
-		this.optionsModel.unwatch('settingTheme');
-		this.optionsModel.unwatch('settingBusinessHourGenerator');
+		this.optionsManager.unwatch('settingTheme');
+		this.optionsManager.unwatch('settingBusinessHourGenerator');
 
 		this.el.off('.fc'); // unbind nav link handlers
 

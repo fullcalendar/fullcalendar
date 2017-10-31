@@ -6,6 +6,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	currentDate: null, // unzoned moment. private (public API should use getDate instead)
 	theme: null,
 	constraints: null,
+	optionsManager: null,
 	businessHourGenerator: null,
 	loadingLevel: 0, // number of simultaneous loading tasks
 
@@ -20,7 +21,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.viewsByType = {};
 		this.viewSpecCache = {};
 
-		this.initOptionsInternals(overrides);
+		this.optionsManager = new OptionsManager(this, overrides);
 		this.initMomentInternals(); // needs to happen after options hash initialized
 		this.initCurrentDate();
 		this.initEventManager();
@@ -79,6 +80,36 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	},
 
 
+	// Options Public API
+	// -----------------------------------------------------------------------------------------------------------------
+
+
+	// public getter/setter
+	option: function(name, value) {
+		var newOptionHash;
+
+		if (typeof name === 'string') {
+			if (value === undefined) { // getter
+				return this.optionsManager.get(name);
+			}
+			else { // setter for individual option
+				newOptionHash = {};
+				newOptionHash[name] = value;
+				this.optionsManager.add(newOptionHash);
+			}
+		}
+		else if (typeof name === 'object') { // compound setter with object input
+			this.optionsManager.add(name);
+		}
+	},
+
+
+	// private getter
+	opt: function(name) {
+		return this.optionsManager.get(name);
+	},
+
+
 	// View
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -102,7 +133,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (dateOrRange) {
 
 			if (dateOrRange.start && dateOrRange.end) { // a range
-				this.recordOptionOverrides({ // will not rerender
+				this.optionsManager.recordOverrides({ // will not rerender
 					visibleRange: dateOrRange
 				});
 			}

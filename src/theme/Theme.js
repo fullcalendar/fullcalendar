@@ -1,6 +1,7 @@
 
 var Theme = FC.Theme = Class.extend({
 
+	optionsManager: null,
 	classes: {},
 	iconClasses: {},
 	baseIconClass: '',
@@ -9,8 +10,8 @@ var Theme = FC.Theme = Class.extend({
 	iconOverridePrefix: '',
 
 
-	constructor: function(optionsModel) {
-		this.optionsModel = optionsModel;
+	constructor: function(optionsManager) {
+		this.optionsManager = optionsManager;
 		this.processIconOverride();
 	},
 
@@ -18,7 +19,7 @@ var Theme = FC.Theme = Class.extend({
 	processIconOverride: function() {
 		if (this.iconOverrideOption) {
 			this.setIconOverride(
-				this.optionsModel.get(this.iconOverrideOption)
+				this.optionsManager.get(this.iconOverrideOption)
 			);
 		}
 	},

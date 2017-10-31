@@ -41,7 +41,7 @@ Calendar.mixin({
 
 	// Builds an object with information on how to create a given view
 	buildViewSpec: function(requestedViewType) {
-		var viewOverrides = this.overrides.views || {};
+		var viewOverrides = this.optionsManager.overrides.views || {};
 		var specChain = []; // for the view. lowest to highest priority
 		var defaultsChain = []; // for the view. lowest to highest priority
 		var overridesChain = []; // for the view. lowest to highest priority
@@ -84,8 +84,8 @@ Calendar.mixin({
 
 		// fall back to top-level `duration` option
 		durationInput = durationInput ||
-			this.dynamicOverrides.duration ||
-			this.overrides.duration;
+			this.optionsManager.dynamicOverrides.duration ||
+			this.optionsManager.overrides.duration;
 
 		if (durationInput) {
 			duration = moment.duration(durationInput);
@@ -118,14 +118,16 @@ Calendar.mixin({
 
 	// Builds and assigns a view spec's options object from its already-assigned defaults and overrides
 	buildViewSpecOptions: function(spec) {
+		var optionsManager = this.optionsManager;
+
 		spec.options = mergeOptions([ // lowest to highest priority
 			Calendar.defaults, // global defaults
 			spec.defaults, // view's defaults (from ViewSubclass.defaults)
-			this.dirDefaults,
-			this.localeDefaults, // locale and dir take precedence over view's defaults!
-			this.overrides, // calendar's overrides (options given to constructor)
+			optionsManager.dirDefaults,
+			optionsManager.localeDefaults, // locale and dir take precedence over view's defaults!
+			optionsManager.overrides, // calendar's overrides (options given to constructor)
 			spec.overrides, // view's overrides (view-specific options)
-			this.dynamicOverrides // dynamically set via setter. highest precedence
+			optionsManager.dynamicOverrides // dynamically set via setter. highest precedence
 		]);
 		populateInstanceComputableOptions(spec.options);
 	},
@@ -133,6 +135,7 @@ Calendar.mixin({
 
 	// Computes and assigns a view spec's buttonText-related options
 	buildViewSpecButtonText: function(spec, requestedViewType) {
+		var optionsManager = this.optionsManager;
 
 		// given an options object with a possible `buttonText` hash, lookup the buttonText for the
 		// requested view, falling back to a generic unit entry like "week" or "day"
@@ -147,14 +150,14 @@ Calendar.mixin({
 
 		// highest to lowest priority
 		spec.buttonTextOverride =
-			queryButtonText(this.dynamicOverrides) ||
-			queryButtonText(this.overrides) || // constructor-specified buttonText lookup hash takes precedence
+			queryButtonText(optionsManager.dynamicOverrides) ||
+			queryButtonText(optionsManager.overrides) || // constructor-specified buttonText lookup hash takes precedence
 			spec.overrides.buttonText; // `buttonText` for view-specific options is a string
 
 		// highest to lowest priority. mirrors buildViewSpecOptions
 		spec.buttonTextDefault =
-			queryButtonText(this.localeDefaults) ||
-			queryButtonText(this.dirDefaults) ||
+			queryButtonText(optionsManager.localeDefaults) ||
+			queryButtonText(optionsManager.dirDefaults) ||
 			spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
 			queryButtonText(Calendar.defaults) ||
 			(spec.duration ? this.humanizeDuration(spec.duration) : null) || // like "3 days"

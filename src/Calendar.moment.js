@@ -14,7 +14,7 @@ Calendar.mixin({
 
 		// Called immediately, and when any of the options change.
 		// Happens before any internal objects rebuild or rerender, because this is very core.
-		this.optionsModel.watch('buildingMomentLocale', [
+		this.optionsManager.watch('buildingMomentLocale', [
 			'?locale', '?monthNames', '?monthNamesShort', '?dayNames', '?dayNamesShort',
 			'?firstDay', '?weekNumberCalculation'
 		], function(opts) {
