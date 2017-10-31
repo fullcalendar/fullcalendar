@@ -31,6 +31,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
 	nowIndicatorIntervalID: null, // "
 
+	dateProfileGeneratorClass: DateProfileGenerator,
+	dateProfileGenerator: null,
+	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
+
 	// DEPRECATED
 	start: null, // use activeUnzonedRange
 	end: null, // use activeUnzonedRange
@@ -53,6 +57,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.initRenderQueue();
 		this.initHiddenDays();
+		this.dateProfileGenerator = new this.dateProfileGeneratorClass(this);
 		this.bindBaseRenderHandlers();
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
@@ -189,7 +194,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	setDate: function(date) {
 		var currentDateProfile = this.get('dateProfile');
-		var newDateProfile = this.buildDateProfile(date, null, true); // forceToValid=true
+		var newDateProfile = this.dateProfileGenerator.build(date, null, true); // forceToValid=true
 
 		if (
 			!currentDateProfile ||

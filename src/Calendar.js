@@ -180,7 +180,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	prev: function() {
 		var view = this.view;
-		var prevInfo = view.buildPrevDateProfile(view.get('dateProfile'));
+		var prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'));
 
 		if (prevInfo.isValid) {
 			this.currentDate = prevInfo.date;
@@ -191,7 +191,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 	next: function() {
 		var view = this.view;
-		var nextInfo = view.buildNextDateProfile(view.get('dateProfile'));
+		var nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'));
 
 		if (nextInfo.isValid) {
 			this.currentDate = nextInfo.date;

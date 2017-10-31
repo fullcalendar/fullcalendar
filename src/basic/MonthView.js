@@ -2,18 +2,18 @@
 /* A month view with day cells running in rows (one-per-week) and columns
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var MonthView = FC.MonthView = BasicView.extend({
 
+var MonthViewDateProfileGenerator = BasicViewDateProfileGenerator.extend({
 
 	// Computes the date range that will be rendered.
 	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-		var renderUnzonedRange = BasicView.prototype.buildRenderRange.apply(this, arguments);
-		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
-		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
+		var renderUnzonedRange = BasicViewDateProfileGenerator.prototype.buildRenderRange.apply(this, arguments);
+		var start = this.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
+		var end = this.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
 		var rowCnt;
 
 		// ensure 6 weeks
-		if (this.isFixedWeeks()) {
+		if (this.opt('fixedWeekCount')) {
 			rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
 				end.diff(start, 'weeks', true) // dontRound=true
 			);
@@ -21,7 +21,14 @@ var MonthView = FC.MonthView = BasicView.extend({
 		}
 
 		return new UnzonedRange(start, end);
-	},
+	}
+
+});
+
+
+var MonthView = FC.MonthView = BasicView.extend({
+
+	dateProfileGeneratorClass: MonthViewDateProfileGenerator,
 
 
 	// Overrides the default BasicView behavior to have special multi-week auto-height logic
@@ -33,11 +40,6 @@ var MonthView = FC.MonthView = BasicView.extend({
 		}
 
 		distributeHeight(this.dayGrid.rowEls, height, !isAuto); // if auto, don't compensate for height-hogging rows
-	},
-
-
-	isFixedWeeks: function() {
-		return this.opt('fixedWeekCount');
 	},
 
 

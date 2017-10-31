@@ -6,6 +6,8 @@
 
 var BasicView = FC.BasicView = View.extend({
 
+	dateProfileGeneratorClass: BasicViewDateProfileGenerator,
+
 	scroller: null,
 
 	dayGridClass: DayGrid, // class the dayGrid will be instantiated from (overridable by subclasses)
@@ -47,26 +49,6 @@ var BasicView = FC.BasicView = View.extend({
 		var subclass = this.dayGridClass.extend(basicDayGridMethods);
 
 		return new subclass(this);
-	},
-
-
-	// Computes the date range that will be rendered.
-	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-		var renderUnzonedRange = View.prototype.buildRenderRange.apply(this, arguments); // an UnzonedRange
-		var start = this.calendar.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
-		var end = this.calendar.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
-
-		// year and month views should be aligned with weeks. this is already done for week
-		if (/^(year|month)$/.test(currentRangeUnit)) {
-			start.startOf('week');
-
-			// make end-of-week if not already
-			if (end.weekday()) {
-				end.add(1, 'week').startOf('week'); // exclusively move backwards
-			}
-		}
-
-		return new UnzonedRange(start, end);
 	},
 
 

@@ -63,9 +63,9 @@ Calendar.mixin({
 	updateToolbarButtons: function(dateProfile) {
 		var now = this.getNow();
 		var view = this.view;
-		var todayInfo = view.buildDateProfile(now);
-		var prevInfo = view.buildPrevDateProfile(view.get('dateProfile'));
-		var nextInfo = view.buildNextDateProfile(view.get('dateProfile'));
+		var todayInfo = view.dateProfileGenerator.build(now);
+		var prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'));
+		var nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'));
 
 		this.toolbarsManager.proxyCall(
 			(todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?
