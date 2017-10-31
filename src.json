@@ -36,7 +36,6 @@
     "component/renderers/HelperRenderer.js",
     "component/Component.js",
     "component/DateComponent.js",
-    "component/DateComponent.util.js",
     "component/InteractiveDateComponent.js",
     "component/DayTableMixin.js",
     "DateProfileGenerator.js",
