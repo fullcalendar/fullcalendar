@@ -16,7 +16,6 @@
     "common/Popover.js",
     "common/CoordCache.js",
     "common/DragListener.js",
-    "common/DragListener.autoscroll.js",
     "common/HitDragListener.js",
     "common/GlobalEmitter.js",
     "common/MouseFollower.js",
