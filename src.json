@@ -39,7 +39,7 @@
     "component/DateComponent.util.js",
     "component/InteractiveDateComponent.js",
     "component/DayTableMixin.js",
-    "View.date-range.js",
+    "DateProfileGenerator.js",
     "View.js",
     "Toolbar.js",
     "Constraints.js",
