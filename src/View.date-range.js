@@ -9,20 +9,20 @@ View.mixin({
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "prev" view.
-	buildPrevDateProfile: function(date) {
-		var dateProfile = this.get('dateProfile');
-		var prevDate = date.clone().startOf(dateProfile.currentRangeUnit)
-			.subtract(dateProfile.dateIncrement);
+	buildPrevDateProfile: function(currentDateProfile) {
+		var prevDate = currentDateProfile.date.clone()
+			.startOf(currentDateProfile.currentRangeUnit)
+			.subtract(currentDateProfile.dateIncrement);
 
 		return this.buildDateProfile(prevDate, -1);
 	},
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "next" view.
-	buildNextDateProfile: function(date) {
-		var dateProfile = this.get('dateProfile');
-		var nextDate = date.clone().startOf(dateProfile.currentRangeUnit)
-			.add(dateProfile.dateIncrement);
+	buildNextDateProfile: function(currentDateProfile) {
+		var nextDate = currentDateProfile.date.clone()
+			.startOf(currentDateProfile.currentRangeUnit)
+			.add(currentDateProfile.dateIncrement);
 
 		return this.buildDateProfile(nextDate, 1);
 	},

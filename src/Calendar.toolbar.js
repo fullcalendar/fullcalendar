@@ -64,8 +64,8 @@ Calendar.mixin({
 		var now = this.getNow();
 		var view = this.view;
 		var todayInfo = view.buildDateProfile(now);
-		var prevInfo = view.buildPrevDateProfile(this.currentDate);
-		var nextInfo = view.buildNextDateProfile(this.currentDate);
+		var prevInfo = view.buildPrevDateProfile(view.get('dateProfile'));
+		var nextInfo = view.buildNextDateProfile(view.get('dateProfile'));
 
 		this.toolbarsManager.proxyCall(
 			(todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?
