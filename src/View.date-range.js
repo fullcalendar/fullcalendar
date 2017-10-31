@@ -3,12 +3,6 @@ View.mixin({
 
 	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
 
-	// DEPRECATED
-	start: null, // use activeUnzonedRange
-	end: null, // use activeUnzonedRange
-	intervalStart: null, // use currentUnzonedRange
-	intervalEnd: null, // use currentUnzonedRange
-
 
 	/* Date Range Computation
 	------------------------------------------------------------------------------------------------------------------*/
@@ -310,106 +304,6 @@ View.mixin({
 		else {
 			return moment.duration({ days: 1 });
 		}
-	},
-
-
-	// Remove days from the beginning and end of the range that are computed as hidden.
-	trimHiddenDays: function(inputUnzonedRange) {
-		var start = inputUnzonedRange.getStart();
-		var end = inputUnzonedRange.getEnd();
-
-		if (start) {
-			start = this.skipHiddenDays(start);
-		}
-
-		if (end) {
-			end = this.skipHiddenDays(end, -1, true);
-		}
-
-		return new UnzonedRange(start, end);
-	},
-
-
-	// For DateComponent::getDayClasses
-	isDateInOtherMonth: function(date, dateProfile) {
-		return false;
-	},
-
-
-	// Arguments after name will be forwarded to a hypothetical function value
-	// WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
-	// Always clone your objects if you fear mutation.
-	getUnzonedRangeOption: function(name) {
-		var val = this.opt(name);
-
-		if (typeof val === 'function') {
-			val = val.apply(
-				null,
-				Array.prototype.slice.call(arguments, 1)
-			);
-		}
-
-		if (val) {
-			return this.calendar.parseUnzonedRange(val);
-		}
-	},
-
-
-	/* Hidden Days
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Initializes internal variables related to calculating hidden days-of-week
-	initHiddenDays: function() {
-		var hiddenDays = this.opt('hiddenDays') || []; // array of day-of-week indices that are hidden
-		var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-		var dayCnt = 0;
-		var i;
-
-		if (this.opt('weekends') === false) {
-			hiddenDays.push(0, 6); // 0=sunday, 6=saturday
-		}
-
-		for (i = 0; i < 7; i++) {
-			if (
-				!(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
-			) {
-				dayCnt++;
-			}
-		}
-
-		if (!dayCnt) {
-			throw 'invalid hiddenDays'; // all days were hidden? bad.
-		}
-
-		this.isHiddenDayHash = isHiddenDayHash;
-	},
-
-
-	// Is the current day hidden?
-	// `day` is a day-of-week index (0-6), or a Moment
-	isHiddenDay: function(day) {
-		if (moment.isMoment(day)) {
-			day = day.day();
-		}
-		return this.isHiddenDayHash[day];
-	},
-
-
-	// Incrementing the current day until it is no longer a hidden day, returning a copy.
-	// DOES NOT CONSIDER validUnzonedRange!
-	// If the initial value of `date` is not a hidden day, don't do anything.
-	// Pass `isExclusive` as `true` if you are dealing with an end date.
-	// `inc` defaults to `1` (increment one day forward each time)
-	skipHiddenDays: function(date, inc, isExclusive) {
-		var out = date.clone();
-		inc = inc || 1;
-		while (
-			this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
-		) {
-			out.add(inc, 'days');
-		}
-		return out;
 	}
 
 });
