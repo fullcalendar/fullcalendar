@@ -327,9 +327,11 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 		if (typeof t.opt('columnHeadHtml') === 'function') {
 			innerHtml = t.opt('columnHeadHtml')(date);
-		} else if (typeof t.opt('columnHeadText') === 'function') {
+		}
+		else if (typeof t.opt('columnHeadText') === 'function') {
 			innerHtml = htmlEscape(t.opt('columnHeadText')(date));
-		} else {
+		}
+		else {
 			innerHtml = htmlEscape(date.format(t.colHeadFormat));
 		}
 
