@@ -84,7 +84,10 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
 	updateDayTableCols() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = (this as any).opt('columnFormat') || this.computeColHeadFormat();
+		this.colHeadFormat =
+			(this as any).opt('columnHeadFormat') ||
+			(this as any).opt('columnFormat') || // deprecated
+			this.computeColHeadFormat();
 	}
 
 
@@ -320,7 +323,15 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 			'fc-day-header',
 			view.calendar.theme.getClass('widgetHeader')
 		];
-		var innerHtml = htmlEscape(date.format(t.colHeadFormat));
+		var innerHtml;
+
+		if (typeof t.opt('columnHeadHtml') === 'function') {
+			innerHtml = t.opt('columnHeadHtml')(date);
+		} else if (typeof t.opt('columnHeadText') === 'function') {
+			innerHtml = htmlEscape(t.opt('columnHeadText')(date));
+		} else {
+			innerHtml = htmlEscape(date.format(t.colHeadFormat));
+		}
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
 		if (t.rowCnt === 1) {
