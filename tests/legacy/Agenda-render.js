@@ -1,22 +1,16 @@
 
 describe('Agenda view rendering', function() {
-	var options;
-
-	beforeEach(function() {
-		affix('#cal');
-		options = {
-			defaultView: 'agendaWeek'
-		};
+	pushOptions({
+		defaultView: 'agendaWeek'
 	});
 
 	describe('when LTR', function() {
-
-		beforeEach(function() {
-			options.isRTL = false;
+		pushOptions({
+			isRTL: false
 		});
 
 		it('renders the axis on the left', function() {
-			$('#cal').fullCalendar(options);
+			initCalendar();
 			var header = $('.fc-view > table > thead');
 			var firstSlat = $('.fc-slats tr:first');
 			expect(header.find('.fc-axis')).toBeLeftOf(header.find('.fc-day-header:first'));
@@ -26,13 +20,12 @@ describe('Agenda view rendering', function() {
 	});
 
 	describe('when RTL', function() {
-
-		beforeEach(function() {
-			options.isRTL = true;
+		pushOptions({
+			isRTL: true
 		});
 
 		it('renders the axis on the right', function() {
-			$('#cal').fullCalendar(options);
+			initCalendar();
 			var header = $('.fc-view > table > thead');
 			var firstSlat = $('.fc-slats tr:first');
 			expect(header.find('.fc-axis')).toBeRightOf(header.find('.fc-day-header:first'));
