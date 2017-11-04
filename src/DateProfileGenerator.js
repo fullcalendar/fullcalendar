@@ -215,18 +215,11 @@ var DateProfileGenerator = Class.extend({
 	// TODO: accept a MS-time instead of a moment `date`?
 	buildRangeFromDuration: function(date, direction, duration, unit) {
 		var alignment = this.opt('dateAlignment');
-		var start = date.clone();
-		var end;
 		var dateIncrementInput;
 		var dateIncrementDuration;
-
-		// if the view displays a single day or smaller
-		if (duration.as('days') <= 1) {
-			if (this._view.isHiddenDay(start)) {
-				start = this._view.skipHiddenDays(start, direction);
-				start.startOf('day');
-			}
-		}
+		var start;
+		var end;
+		var res;
 
 		// compute what the alignment should be
 		if (!alignment) {
@@ -248,10 +241,29 @@ var DateProfileGenerator = Class.extend({
 			}
 		}
 
-		start.startOf(alignment);
-		end = start.clone().add(duration);
+		// if the view displays a single day or smaller
+		if (duration.as('days') <= 1) {
+			if (this._view.isHiddenDay(start)) {
+				start = this._view.skipHiddenDays(start, direction);
+				start.startOf('day');
+			}
+		}
 
-		return new UnzonedRange(start, end);
+		function computeRes() {
+			start = date.clone().startOf(alignment);
+			end = start.clone().add(duration);
+			res = new UnzonedRange(start, end);
+		}
+
+		computeRes();
+
+		// if range is completely enveloped by hidden days, go past the hidden days
+		if (!this.trimHiddenDays(res)) {
+			date = this._view.skipHiddenDays(date, direction);
+			computeRes();
+		}
+
+		return res;
 	},
 
 

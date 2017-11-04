@@ -127,4 +127,19 @@ describe('next', function() {
 			});
 		});
 	});
+
+	describe('when in a custom two day view and weekends:false', function() {
+		pushOptions({
+			weekends: false,
+			defaultView: 'agenda',
+			duration: { days: 2 }
+		});
+
+		it('skips over weekends if there would be alignment with weekend', function() {
+			initCalendar({
+				defaultDate: '2017-11-09'
+			});
+			currentCalendar.next();
+		});
+	});
 });

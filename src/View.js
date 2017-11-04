@@ -941,6 +941,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Remove days from the beginning and end of the range that are computed as hidden.
+	// If the whole range is trimmed off, returns null
 	trimHiddenDays: function(inputUnzonedRange) {
 		var start = inputUnzonedRange.getStart();
 		var end = inputUnzonedRange.getEnd();
@@ -953,7 +954,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 			end = this.skipHiddenDays(end, -1, true);
 		}
 
-		return new UnzonedRange(start, end);
+		if (start === null || end === null || start < end) {
+			return new UnzonedRange(start, end);
+		}
+		return null;
 	},
 
 

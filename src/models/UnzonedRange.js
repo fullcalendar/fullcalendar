@@ -123,6 +123,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		if (this.startMs !== null) {
 			return FC.moment.utc(this.startMs).stripZone();
 		}
+		return null;
 	},
 
 	// Returns an ambig-zoned moment from startMs.
@@ -132,6 +133,7 @@ var UnzonedRange = FC.UnzonedRange = Class.extend({
 		if (this.endMs !== null) {
 			return FC.moment.utc(this.endMs).stripZone();
 		}
+		return null;
 	},
 
 
