@@ -88,6 +88,8 @@
     "agenda/TimeGrid.js",
     "agenda/AgendaView.js",
     "agenda/config.js",
+    "list/ListEventRenderer.js",
+    "list/ListEventPointing.js",
     "list/ListView.js",
     "list/config.js",
     "outro.js"
