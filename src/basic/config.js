@@ -20,3 +20,11 @@ fcViews.month = {
 		fixedWeekCount: true
 	}
 };
+
+fcViews.year = {
+	'class': YearView,
+	duration: { year: 1 },
+	defaults: {
+		fixedWeekCount: true
+	}
+};

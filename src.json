@@ -81,6 +81,7 @@
     "basic/BasicViewDateProfileGenerator.js",
     "basic/BasicView.js",
     "basic/MonthView.js",
+    "basic/YearView.js",
     "basic/config.js",
     "agenda/TimeGridFillRenderer.js",
     "agenda/TimeGridEventRenderer.js",
