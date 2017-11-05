@@ -1,4 +1,5 @@
 describe('removeEventSource', function() {
+	var request;
 	var options;
 
 	beforeEach(function() {
@@ -6,20 +7,20 @@ describe('removeEventSource', function() {
 		options = {
 			defaultDate: '2014-08-01'
 		};
-		$.mockjax({
-			url: '*',
-			contentType: 'text/json',
-			responseText: buildEventArray()
-		});
-		$.mockjaxSettings.log = function() { }; // don't console.log
+
+		// mock xhr
+		window.xhr = function(options, callback) {
+			request = options
+			callback(null, buildEventArray())
+		}
 	});
 
 	afterEach(function() {
-		$.mockjax.clear();
+		request = null
 	});
 
 	describe('with a URL', function() {
-		testInput('/myscript.php'); // will go to mockjax
+		testInput('/myscript.php'); // will be mocked
 	});
 
 	describe('with an array', function() {
@@ -34,7 +35,7 @@ describe('removeEventSource', function() {
 
 	describe('with an object+url', function() {
 		testInput({
-			url: '/myscript.php' // will go to mockjax
+			url: '/myscript.php' // will be mocked
 		});
 	});
 

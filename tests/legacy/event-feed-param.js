@@ -1,5 +1,5 @@
 describe('event feed params', function() {
-
+	var request;
 	var options;
 
 	beforeEach(function() {
@@ -10,21 +10,20 @@ describe('event feed params', function() {
 			defaultView: 'month'
 		};
 
-		$.mockjax({
-			url: '*',
-			contentType: 'text/json',
-			responseText: [
+		// mock xhr
+		window.xhr = function(options, callback) {
+			request = options
+			callback(null, [
 				{
 					title: 'my event',
-					start: '2014-05-21'
-				}
-			]
-		});
-		$.mockjaxSettings.log = function() { }; // don't console.log
+					start: '2014-05-21',
+				},
+			])
+		}
 	});
 
 	afterEach(function() {
-		$.mockjax.clear();
+		request = null
 	});
 
 	it('utilizes custom startParam, endParam, and timezoneParam names', function() {
@@ -34,7 +33,6 @@ describe('event feed params', function() {
 		options.endParam = 'myend';
 		options.timezoneParam = 'currtz';
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toBeUndefined();
 		expect(request.data.end).toBeUndefined();
 		expect(request.data.timezone).toBeUndefined();
@@ -57,7 +55,6 @@ describe('event feed params', function() {
 			}
 		];
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toBeUndefined();
 		expect(request.data.end).toBeUndefined();
 		expect(request.data.timezone).toBeUndefined();

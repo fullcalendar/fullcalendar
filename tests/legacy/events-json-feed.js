@@ -1,6 +1,6 @@
 
 describe('events as a json feed', function() {
-
+	var request;
 	var options;
 
 	beforeEach(function() {
@@ -11,27 +11,25 @@ describe('events as a json feed', function() {
 			defaultView: 'month'
 		};
 
-		$.mockjax({
-			url: '/my-feed.php',
-			contentType: 'text/json',
-			responseText: [
+		// mock xhr
+		window.xhr = function(options, callback) {
+			request = options
+			callback(null, [
 				{
 					title: 'my event',
-					start: '2014-05-21'
-				}
-			]
-		});
-		$.mockjaxSettings.log = function() { }; // don't console.log
+					start: '2014-05-21',
+				},
+			])
+		}
 	});
 
 	afterEach(function() {
-		$.mockjax.clear();
+		request = null
 	});
 
 	it('requests correctly when no timezone', function() {
 		options.events = '/my-feed.php';
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toEqual('2014-04-27');
 		expect(request.data.end).toEqual('2014-06-08');
 		expect(request.data.timezone).toBeUndefined();
@@ -41,7 +39,6 @@ describe('events as a json feed', function() {
 		options.events = '/my-feed.php';
 		options.timezone = 'local';
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toEqual('2014-04-27');
 		expect(request.data.end).toEqual('2014-06-08');
 		expect(request.data.timezone).toBeUndefined();
@@ -51,7 +48,6 @@ describe('events as a json feed', function() {
 		options.events = '/my-feed.php';
 		options.timezone = 'UTC';
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toEqual('2014-04-27');
 		expect(request.data.end).toEqual('2014-06-08');
 		expect(request.data.timezone).toEqual('UTC');
@@ -61,7 +57,6 @@ describe('events as a json feed', function() {
 		options.events = '/my-feed.php';
 		options.timezone = 'America/Chicago';
 		$('#cal').fullCalendar(options);
-		var request = $.mockjax.mockedAjaxCalls()[0];
 		expect(request.data.start).toEqual('2014-04-27');
 		expect(request.data.end).toEqual('2014-06-08');
 		expect(request.data.timezone).toEqual('America/Chicago');
@@ -75,7 +70,6 @@ describe('events as a json feed', function() {
 		options.eventSources = [ eventSource ];
 		options.timezone = 'America/Chicago';
 		options.eventRender = function(eventObj, eventElm) {
-			var request = $.mockjax.mockedAjaxCalls()[0];
 			expect(request.data.start).toEqual('2014-04-27');
 			expect(request.data.end).toEqual('2014-06-08');
 			expect(request.data.timezone).toEqual('America/Chicago');
@@ -92,7 +86,6 @@ describe('events as a json feed', function() {
 				customParam: 'yes'
 			},
 			success: function() {
-				var request = $.mockjax.mockedAjaxCalls()[0];
 				expect(request.data.customParam).toMatch('yes');
 				done();
 			}
@@ -112,7 +105,6 @@ describe('events as a json feed', function() {
 		};
 		options.eventSources = [ eventSource ];
 		options.eventAfterAllRender = function() {
-			var request = $.mockjax.mockedAjaxCalls()[0];
 			expect(request.data.customParam).toMatch('heckyeah');
 			done();
 		};
