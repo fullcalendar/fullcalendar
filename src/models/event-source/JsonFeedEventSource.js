@@ -23,39 +23,39 @@ var JsonFeedEventSource = EventSource.extend({
 		this.calendar.pushLoading();
 
 		return Promise.construct(function(onResolve, onReject) {
-			$.ajax($.extend(
+			xhr($.extend(
 				{}, // destination
 				JsonFeedEventSource.AJAX_DEFAULTS,
 				ajaxSettings,
 				{
 					url: _this.url,
 					data: requestParams,
-					success: function(rawEventDefs) {
-						var callbackRes;
-
-						_this.calendar.popLoading();
-
-						if (rawEventDefs) {
-							callbackRes = applyAll(onSuccess, this, arguments); // redirect `this`
-
-							if ($.isArray(callbackRes)) {
-								rawEventDefs = callbackRes;
-							}
-
-							onResolve(_this.parseEventDefs(rawEventDefs));
-						}
-						else {
-							onReject();
-						}
-					},
-					error: function() {
-						_this.calendar.popLoading();
-
-						applyAll(onError, this, arguments); // redirect `this`
-						onReject();
-					}
 				}
-			));
+			), function(error, rawEventDefs) {
+				if (error) {
+					_this.calendar.popLoading();
+				
+					applyAll(onError, this, arguments); // redirect `this`
+					return onReject();
+				}
+
+				var callbackRes;
+				
+				_this.calendar.popLoading();
+
+				if (rawEventDefs) {
+					callbackRes = applyAll(onSuccess, this, arguments); // redirect `this`
+
+					if ($.isArray(callbackRes)) {
+						rawEventDefs = callbackRes;
+					}
+
+					onResolve(_this.parseEventDefs(rawEventDefs));
+				}
+				else {
+					onReject();
+				}
+			});
 		});
 	},
 

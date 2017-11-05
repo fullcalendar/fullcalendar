@@ -1,6 +1,7 @@
 {
   "fullcalendar.js": [
-    "intro.js",
+		"intro.js",
+		"xhr/xhr.js",
     "main.js",
     "util.js",
     "moment-ext.js",
@@ -113,8 +114,8 @@
     "common/print.css"
   ],
   "gcal.js": [
-    "gcal/intro.js",
+		"gcal/intro.js",
     "gcal/GcalEventSource.js",
     "gcal/outro.js"
-  ]
+	]
 }
