@@ -23,7 +23,8 @@
   "copyright": "2017 Adam Shaw",
   "dependencies": {
     "jquery": "2 - 3",
-    "moment": "^2.9.0"
+    "moment": "^2.9.0",
+    "xhr": "^2.4.0"
   },
   "version": "0.0.0",
   "releaseDate": "1970-01-01",
@@ -32,6 +33,7 @@
     "components-jqueryui": "github:components/jqueryui",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
     "gulp-cssmin": "^0.1.7",
     "gulp-file": "^0.3.0",
