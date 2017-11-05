@@ -3,6 +3,7 @@ var plumber = require('gulp-plumber');
 var concat = require('gulp-concat');
 var template = require('gulp-template');
 var sourcemaps = require('gulp-sourcemaps');
+var browserify = require('gulp-browserify');
 var del = require('del');
 var _ = require('lodash');
 
@@ -59,5 +60,15 @@ _.forEach(srcConf, function(srcFiles, distFile) {
 	// generates dev files first, then watches
 	gulp.task('modules:watch:' + distFile, [ 'modules:dev:' + distFile ], function() {
 		return gulp.watch(srcFiles, { cwd: 'src/' }, [ 'modules:dev:' + distFile ]);
+	});
+
+	gulp.task('modules:xhr', function() {
+		return gulp.src('xhr.js', { cwd: 'src', base: 'src' })
+		.pipe(plumber()) // affects future streams
+		.pipe(browserify({
+			insertGlobals : true,
+			debug : !gulp.env.production
+		  }))
+		.pipe(gulp.dest('src/xhr'));
 	});
 });
