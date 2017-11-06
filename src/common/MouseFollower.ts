@@ -1,40 +1,50 @@
+import {
+	getEvY,
+	getEvX,
+	getEvIsTouch
+} from '../util'
+import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var MouseFollower = Class.extend(ListenerMixin, {
+export default class MouseFollower {
 
-	options: null,
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
 
-	sourceEl: null, // the element that will be cloned and made to look like it is dragging
-	el: null, // the clone of `sourceEl` that will track the mouse
-	parentEl: null, // the element that `el` (the clone) will be attached to
+	options: any
+
+	sourceEl: any // the element that will be cloned and made to look like it is dragging
+	el: any // the clone of `sourceEl` that will track the mouse
+	parentEl: any // the element that `el` (the clone) will be attached to
 
 	// the initial position of el, relative to the offset parent. made to match the initial offset of sourceEl
-	top0: null,
-	left0: null,
+	top0: any
+	left0: any
 
 	// the absolute coordinates of the initiating touch/mouse action
-	y0: null,
-	x0: null,
+	y0: any
+	x0: any
 
 	// the number of pixels the mouse has moved from its initial position
-	topDelta: null,
-	leftDelta: null,
+	topDelta: any
+	leftDelta: any
 
-	isFollowing: false,
-	isHidden: false,
-	isAnimating: false, // doing the revert animation?
+	isFollowing: boolean = false
+	isHidden: boolean = false
+	isAnimating: boolean = false // doing the revert animation?
 
-	constructor: function(sourceEl, options) {
+
+	constructor(sourceEl, options) {
 		this.options = options = options || {};
 		this.sourceEl = sourceEl;
 		this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
-	},
+	}
 
 
 	// Causes the element to start following the mouse
-	start: function(ev) {
+	start(ev) {
 		if (!this.isFollowing) {
 			this.isFollowing = true;
 
@@ -54,20 +64,19 @@ var MouseFollower = Class.extend(ListenerMixin, {
 				this.listenTo($(document), 'mousemove', this.handleMove);
 			}
 		}
-	},
+	}
 
 
 	// Causes the element to stop following the mouse. If shouldRevert is true, will animate back to original position.
 	// `callback` gets invoked when the animation is complete. If no animation, it is invoked immediately.
-	stop: function(shouldRevert, callback) {
-		var _this = this;
+	stop(shouldRevert, callback) {
 		var revertDuration = this.options.revertDuration;
 
-		function complete() { // might be called by .animate(), which might change `this` context
-			_this.isAnimating = false;
-			_this.removeElement();
+		const complete = () => { // might be called by .animate(), which might change `this` context
+			this.isAnimating = false;
+			this.removeElement();
 
-			_this.top0 = _this.left0 = null; // reset state for future updatePosition calls
+			this.top0 = this.left0 = null; // reset state for future updatePosition calls
 
 			if (callback) {
 				callback();
@@ -93,11 +102,11 @@ var MouseFollower = Class.extend(ListenerMixin, {
 				complete();
 			}
 		}
-	},
+	}
 
 
 	// Gets the tracking element. Create it if necessary
-	getEl: function() {
+	getEl() {
 		var el = this.el;
 
 		if (!el) {
@@ -124,27 +133,27 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		}
 
 		return el;
-	},
+	}
 
 
 	// Removes the tracking element if it has already been created
-	removeElement: function() {
+	removeElement() {
 		if (this.el) {
 			this.el.remove();
 			this.el = null;
 		}
-	},
+	}
 
 
 	// Update the CSS position of the tracking element
-	updatePosition: function() {
+	updatePosition() {
 		var sourceOffset;
 		var origin;
 
 		this.getEl(); // ensure this.el
 
 		// make sure origin info was computed
-		if (this.top0 === null) {
+		if (this.top0 == null) {
 			sourceOffset = this.sourceEl.offset();
 			origin = this.el.offsetParent().offset();
 			this.top0 = sourceOffset.top - origin.top;
@@ -155,33 +164,33 @@ var MouseFollower = Class.extend(ListenerMixin, {
 			top: this.top0 + this.topDelta,
 			left: this.left0 + this.leftDelta
 		});
-	},
+	}
 
 
 	// Gets called when the user moves the mouse
-	handleMove: function(ev) {
+	handleMove(ev) {
 		this.topDelta = getEvY(ev) - this.y0;
 		this.leftDelta = getEvX(ev) - this.x0;
 
 		if (!this.isHidden) {
 			this.updatePosition();
 		}
-	},
+	}
 
 
 	// Temporarily makes the tracking element invisible. Can be called before following starts
-	hide: function() {
+	hide() {
 		if (!this.isHidden) {
 			this.isHidden = true;
 			if (this.el) {
 				this.el.hide();
 			}
 		}
-	},
+	}
 
 
 	// Show the tracking element after it has been temporarily hidden
-	show: function() {
+	show() {
 		if (this.isHidden) {
 			this.isHidden = false;
 			this.updatePosition();
@@ -189,4 +198,6 @@ var MouseFollower = Class.extend(ListenerMixin, {
 		}
 	}
 
-});
+}
+
+ListenerMixin.mixInto(MouseFollower)

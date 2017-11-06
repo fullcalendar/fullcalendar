@@ -1,27 +1,41 @@
+import * as moment from 'moment'
+import * as $ from 'jquery'
+import {
+	matchCellWidths,
+	uncompensateScroll,
+	compensateScroll,
+	subtractInnerElHeight,
+	htmlEscape
+} from '../util'
+import Scroller from '../common/Scroller'
+import View from '../View'
+import TimeGrid from './TimeGrid'
+import DayGrid from '../basic/DayGrid'
+
+const AGENDA_ALL_DAY_EVENT_LIMIT = 5;
+
 
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
 ----------------------------------------------------------------------------------------------------------------------*/
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-var AgendaView = FC.AgendaView = View.extend({
+export default class AgendaView extends View {
 
-	scroller: null,
+	// initialized after class
+	timeGridClass: any // class used to instantiate the timeGrid. subclasses can override
+	dayGridClass: any // class used to instantiate the dayGrid. subclasses can override
 
-	timeGridClass: TimeGrid, // class used to instantiate the timeGrid. subclasses can override
-	timeGrid: null, // the main time-grid subcomponent of this view
+	timeGrid: any // the main time-grid subcomponent of this view
+	dayGrid: any // the "all-day" subcomponent. if all-day is turned off, this will be null
 
-	dayGridClass: DayGrid, // class used to instantiate the dayGrid. subclasses can override
-	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
-
-	axisWidth: null, // the width of the time axis running down the side
-
-	// indicates that minTime/maxTime affects rendering
-	usesMinMaxTime: true,
+	scroller: any
+	axisWidth: any // the width of the time axis running down the side
+	usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
 
-	constructor: function() {
-		View.apply(this, arguments);
+	constructor(calendar, viewSpec) {
+		super(calendar, viewSpec);
 
 		this.timeGrid = this.instantiateTimeGrid();
 		this.addChild(this.timeGrid);
@@ -35,30 +49,30 @@ var AgendaView = FC.AgendaView = View.extend({
 			overflowX: 'hidden',
 			overflowY: 'auto'
 		});
-	},
+	}
 
 
 	// Instantiates the TimeGrid object this view needs. Draws from this.timeGridClass
-	instantiateTimeGrid: function() {
-		var subclass = this.timeGridClass.extend(agendaTimeGridMethods);
+	instantiateTimeGrid() {
+		var SubClass: any = makeTimeGridSubclass(this.timeGridClass);
 
-		return new subclass(this);
-	},
+		return new SubClass(this);
+	}
 
 
 	// Instantiates the DayGrid object this view might need. Draws from this.dayGridClass
-	instantiateDayGrid: function() {
-		var subclass = this.dayGridClass.extend(agendaDayGridMethods);
+	instantiateDayGrid() {
+		var SubClass: any = makeDayGridSubclass(this.dayGridClass);
 
-		return new subclass(this);
-	},
+		return new SubClass(this);
+	}
 
 
 	/* Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderSkeleton: function() {
+	renderSkeleton() {
 		var timeGridWrapEl;
 		var timeGridEl;
 
@@ -80,10 +94,10 @@ var AgendaView = FC.AgendaView = View.extend({
 			// have the day-grid extend it's coordinate area over the <hr> dividing the two grids
 			this.dayGrid.bottomCoordPadding = this.dayGrid.el.next('hr').outerHeight();
 		}
-	},
+	}
 
 
-	unrenderSkeleton: function() {
+	unrenderSkeleton() {
 		this.timeGrid.removeElement();
 
 		if (this.dayGrid) {
@@ -91,12 +105,12 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		this.scroller.destroy();
-	},
+	}
 
 
 	// Builds the HTML skeleton for the view.
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
-	renderSkeletonHtml: function() {
+	renderSkeletonHtml() {
 		var theme = this.calendar.theme;
 
 		return '' +
@@ -121,25 +135,25 @@ var AgendaView = FC.AgendaView = View.extend({
 					'</tr>' +
 				'</tbody>' +
 			'</table>';
-	},
+	}
 
 
 	// Generates an HTML attribute string for setting the width of the axis, if it is known
-	axisStyleAttr: function() {
-		if (this.axisWidth !== null) {
+	axisStyleAttr() {
+		if (this.axisWidth != null) {
 			 return 'style="width:' + this.axisWidth + 'px"';
 		}
 		return '';
-	},
+	}
 
 
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getNowIndicatorUnit: function() {
+	getNowIndicatorUnit() {
 		return this.timeGrid.getNowIndicatorUnit();
-	},
+	}
 
 
 	/* Dimensions
@@ -147,12 +161,12 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Adjusts the vertical dimensions of the view to the specified values
-	updateSize: function(totalHeight, isAuto, isResize) {
+	updateSize(totalHeight, isAuto, isResize) {
 		var eventLimit;
 		var scrollerHeight;
 		var scrollbarWidths;
 
-		View.prototype.updateSize.apply(this, arguments);
+		super.updateSize(totalHeight, isAuto, isResize);
 
 		// make all axis cells line up, and record the width so newly created axis cells will have it
 		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
@@ -214,14 +228,14 @@ var AgendaView = FC.AgendaView = View.extend({
 				this.timeGrid.bottomRuleEl.show();
 			}
 		}
-	},
+	}
 
 
 	// given a desired total height of the view, returns what the height of the scroller should be
-	computeScrollerHeight: function(totalHeight) {
+	computeScrollerHeight(totalHeight) {
 		return totalHeight -
 			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
-	},
+	}
 
 
 	/* Scroll
@@ -229,7 +243,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it
-	computeInitialDateScroll: function() {
+	computeInitialDateScroll() {
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
 
@@ -241,19 +255,19 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		return { top: top };
-	},
+	}
 
 
-	queryDateScroll: function() {
+	queryDateScroll() {
 		return { top: this.scroller.getScrollTop() };
-	},
+	}
 
 
-	applyDateScroll: function(scroll) {
+	applyDateScroll(scroll) {
 		if (scroll.top !== undefined) {
 			this.scroller.setScrollTop(scroll.top);
 		}
-	},
+	}
 
 
 	/* Hit Areas
@@ -261,23 +275,23 @@ var AgendaView = FC.AgendaView = View.extend({
 	// forward all hit-related method calls to the grids (dayGrid might not be defined)
 
 
-	getHitFootprint: function(hit) {
+	getHitFootprint(hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
 		return hit.component.getHitFootprint(hit);
-	},
+	}
 
 
-	getHitEl: function(hit) {
+	getHitEl(hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
 		return hit.component.getHitEl(hit);
-	},
+	}
 
 
 	/* Event Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	executeEventRender: function(eventsPayload) {
+	executeEventRender(eventsPayload) {
 		var dayEventsPayload = {};
 		var timedEventsPayload = {};
 		var id, eventInstanceGroup;
@@ -299,7 +313,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		if (this.dayGrid) {
 			this.dayGrid.executeEventRender(dayEventsPayload);
 		}
-	},
+	}
 
 
 	/* Dragging/Resizing Routing
@@ -307,7 +321,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventFootprints, seg, isTouch) {
+	renderDrag(eventFootprints, seg, isTouch) {
 		var groups = groupEventFootprintsByAllDay(eventFootprints);
 		var renderedHelper = false;
 
@@ -318,10 +332,10 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 
 		return renderedHelper;
-	},
+	}
 
 
-	renderEventResize: function(eventFootprints, seg, isTouch) {
+	renderEventResize(eventFootprints, seg, isTouch) {
 		var groups = groupEventFootprintsByAllDay(eventFootprints);
 
 		this.timeGrid.renderEventResize(groups.timed, seg, isTouch);
@@ -329,7 +343,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		if (this.dayGrid) {
 			this.dayGrid.renderEventResize(groups.allDay, seg, isTouch);
 		}
-	},
+	}
 
 
 	/* Selection
@@ -337,7 +351,7 @@ var AgendaView = FC.AgendaView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelectionFootprint: function(componentFootprint) {
+	renderSelectionFootprint(componentFootprint) {
 		if (!componentFootprint.isAllDay) {
 			this.timeGrid.renderSelectionFootprint(componentFootprint);
 		}
@@ -346,82 +360,89 @@ var AgendaView = FC.AgendaView = View.extend({
 		}
 	}
 
-});
+}
 
 
-// Methods that will customize the rendering behavior of the AgendaView's timeGrid
-// TODO: move into TimeGrid
-var agendaTimeGridMethods = {
+AgendaView.prototype.timeGridClass = TimeGrid;
+AgendaView.prototype.dayGridClass = DayGrid;
 
 
-	// Generates the HTML that will go before the day-of week header cells
-	renderHeadIntroHtml: function() {
-		var view = this.view;
-		var calendar = view.calendar;
-		var weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
-		var weekText;
+// Will customize the rendering behavior of the AgendaView's timeGrid
+function makeTimeGridSubclass(SuperClass) {
 
-		if (this.opt('weekNumbers')) {
-			weekText = weekStart.format(this.opt('smallWeekFormat'));
+	return class SubClass extends SuperClass {
 
-			return '' +
-				'<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +
-					view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-						{ date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
-						htmlEscape(weekText) // inner HTML
-					) +
-				'</th>';
+		// Generates the HTML that will go before the day-of week header cells
+		renderHeadIntroHtml() {
+			var view = this.view;
+			var calendar = view.calendar;
+			var weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
+			var weekText;
+
+			if (this.opt('weekNumbers')) {
+				weekText = weekStart.format(this.opt('smallWeekFormat'));
+
+				return '' +
+					'<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +
+						view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
+							{ date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
+							htmlEscape(weekText) // inner HTML
+						) +
+					'</th>';
+			}
+			else {
+				return '<th class="fc-axis ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '></th>';
+			}
 		}
-		else {
-			return '<th class="fc-axis ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '></th>';
+
+
+		// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
+		renderBgIntroHtml() {
+			var view = this.view;
+
+			return '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '></td>';
 		}
-	},
 
 
-	// Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
-	renderBgIntroHtml: function() {
-		var view = this.view;
+		// Generates the HTML that goes before all other types of cells.
+		// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+		renderIntroHtml() {
+			var view = this.view;
 
-		return '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '></td>';
-	},
+			return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
+		}
 
-
-	// Generates the HTML that goes before all other types of cells.
-	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-	renderIntroHtml: function() {
-		var view = this.view;
-
-		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
 	}
-
 };
 
 
-// Methods that will customize the rendering behavior of the AgendaView's dayGrid
-var agendaDayGridMethods = {
+// Will customize the rendering behavior of the AgendaView's dayGrid
+function makeDayGridSubclass(SuperClass) {
+
+	return class SubClass extends SuperClass {
+
+		// Generates the HTML that goes before the all-day cells
+		renderBgIntroHtml() {
+			var view = this.view;
+
+			return '' +
+				'<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
+					'<span>' + // needed for matchCellWidths
+						view.getAllDayHtml() +
+					'</span>' +
+				'</td>';
+		}
 
 
-	// Generates the HTML that goes before the all-day cells
-	renderBgIntroHtml: function() {
-		var view = this.view;
+		// Generates the HTML that goes before all other types of cells.
+		// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+		renderIntroHtml() {
+			var view = this.view;
 
-		return '' +
-			'<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
-				'<span>' + // needed for matchCellWidths
-					view.getAllDayHtml() +
-				'</span>' +
-			'</td>';
-	},
+			return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
+		}
 
-
-	// Generates the HTML that goes before all other types of cells.
-	// Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-	renderIntroHtml: function() {
-		var view = this.view;
-
-		return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>';
 	}
-
 };
 
 

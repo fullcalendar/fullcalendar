@@ -1,23 +1,23 @@
 
-var EventFootprint = FC.EventFootprint = Class.extend({
+export default class EventFootprint {
 
-	componentFootprint: null,
-	eventDef: null,
-	eventInstance: null, // optional
+	componentFootprint: any
+	eventDef: any
+	eventInstance: any // optional
 
 
-	constructor: function(componentFootprint, eventDef, eventInstance) {
+	constructor(componentFootprint, eventDef, eventInstance) {
 		this.componentFootprint = componentFootprint;
 		this.eventDef = eventDef;
 
 		if (eventInstance) {
 			this.eventInstance = eventInstance;
 		}
-	},
+	}
 
 
-	getEventLegacy: function() {
+	getEventLegacy() {
 		return (this.eventInstance || this.eventDef).toLegacy();
 	}
 
-});
+}

@@ -1,25 +1,38 @@
-
-var EventPeriod = Class.extend(EmitterMixin, {
-
-	start: null,
-	end: null,
-	timezone: null,
-
-	unzonedRange: null,
-
-	requestsByUid: null,
-	pendingCnt: 0,
-
-	freezeDepth: 0,
-	stuntedReleaseCnt: 0,
-	releaseCnt: 0,
-
-	eventDefsByUid: null,
-	eventDefsById: null,
-	eventInstanceGroupsById: null,
+import { removeExact, removeMatching } from '../util'
+import Promise from '../common/Promise'
+import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
+import UnzonedRange from './UnzonedRange'
+import EventInstanceGroup from './event/EventInstanceGroup'
 
 
-	constructor: function(start, end, timezone) {
+export default class EventPeriod {
+
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+
+	start: any
+	end: any
+	timezone: any
+
+	unzonedRange: any
+
+	requestsByUid: any
+	pendingCnt: number = 0
+
+	freezeDepth: number = 0
+	stuntedReleaseCnt: number = 0
+	releaseCnt: number = 0
+
+	eventDefsByUid: any
+	eventDefsById: any
+	eventInstanceGroupsById: any
+
+
+	constructor(start, end, timezone) {
 		this.start = start;
 		this.end = end;
 		this.timezone = timezone;
@@ -33,20 +46,20 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		this.eventDefsByUid = {};
 		this.eventDefsById = {};
 		this.eventInstanceGroupsById = {};
-	},
+	}
 
 
-	isWithinRange: function(start, end) {
+	isWithinRange(start, end) {
 		// TODO: use a range util function?
 		return !start.isBefore(this.start) && !end.isAfter(this.end);
-	},
+	}
 
 
 	// Requesting and Purging
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestSources: function(sources) {
+	requestSources(sources) {
 		this.freeze();
 
 		for (var i = 0; i < sources.length; i++) {
@@ -54,37 +67,36 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		this.thaw();
-	},
+	}
 
 
-	requestSource: function(source) {
-		var _this = this;
-		var request = { source: source, status: 'pending' };
+	requestSource(source) {
+		var request = { source: source, status: 'pending', eventDefs: null };
 
 		this.requestsByUid[source.uid] = request;
 		this.pendingCnt += 1;
 
-		source.fetch(this.start, this.end, this.timezone).then(function(eventDefs) {
+		source.fetch(this.start, this.end, this.timezone).then((eventDefs) => {
 			if (request.status !== 'cancelled') {
 				request.status = 'completed';
 				request.eventDefs = eventDefs;
 
-				_this.addEventDefs(eventDefs);
-				_this.pendingCnt--;
-				_this.tryRelease();
+				this.addEventDefs(eventDefs);
+				this.pendingCnt--;
+				this.tryRelease();
 			}
-		}, function() { // failure
+		}, () => { // failure
 			if (request.status !== 'cancelled') {
 				request.status = 'failed';
 
-				_this.pendingCnt--;
-				_this.tryRelease();
+				this.pendingCnt--;
+				this.tryRelease();
 			}
 		});
-	},
+	}
 
 
-	purgeSource: function(source) {
+	purgeSource(source) {
 		var request = this.requestsByUid[source.uid];
 
 		if (request) {
@@ -99,10 +111,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				request.eventDefs.forEach(this.removeEventDef.bind(this));
 			}
 		}
-	},
+	}
 
 
-	purgeAllSources: function() {
+	purgeAllSources() {
 		var requestsByUid = this.requestsByUid;
 		var uid, request;
 		var completedCnt = 0;
@@ -124,19 +136,19 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		if (completedCnt) {
 			this.removeAllEventDefs(); // might release
 		}
-	},
+	}
 
 
 	// Event Definitions
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getEventDefByUid: function(eventDefUid) {
+	getEventDefByUid(eventDefUid) {
 		return this.eventDefsByUid[eventDefUid];
-	},
+	}
 
 
-	getEventDefsById: function(eventDefId) {
+	getEventDefsById(eventDefId) {
 		var a = this.eventDefsById[eventDefId];
 
 		if (a) {
@@ -144,17 +156,17 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		return [];
-	},
+	}
 
 
-	addEventDefs: function(eventDefs) {
+	addEventDefs(eventDefs) {
 		for (var i = 0; i < eventDefs.length; i++) {
 			this.addEventDef(eventDefs[i]);
 		}
-	},
+	}
 
 
-	addEventDef: function(eventDef) {
+	addEventDef(eventDef) {
 		var eventDefsById = this.eventDefsById;
 		var eventDefId = eventDef.id;
 		var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
@@ -168,19 +180,17 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		for (i = 0; i < eventInstances.length; i++) {
 			this.addEventInstance(eventInstances[i], eventDefId);
 		}
-	},
+	}
 
 
-	removeEventDefsById: function(eventDefId) {
-		var _this = this;
-
-		this.getEventDefsById(eventDefId).forEach(function(eventDef) {
-			_this.removeEventDef(eventDef);
+	removeEventDefsById(eventDefId) {
+		this.getEventDefsById(eventDefId).forEach((eventDef) => {
+			this.removeEventDef(eventDef);
 		});
-	},
+	}
 
 
-	removeAllEventDefs: function() {
+	removeAllEventDefs() {
 		var isEmpty = $.isEmptyObject(this.eventDefsByUid);
 
 		this.eventDefsByUid = {};
@@ -190,10 +200,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		if (!isEmpty) {
 			this.tryRelease();
 		}
-	},
+	}
 
 
-	removeEventDef: function(eventDef) {
+	removeEventDef(eventDef) {
 		var eventDefsById = this.eventDefsById;
 		var eventDefs = eventDefsById[eventDef.id];
 
@@ -208,14 +218,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 
 			this.removeEventInstancesForDef(eventDef);
 		}
-	},
+	}
 
 
 	// Event Instances
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getEventInstances: function() { // TODO: consider iterator
+	getEventInstances() { // TODO: consider iterator
 		var eventInstanceGroupsById = this.eventInstanceGroupsById;
 		var eventInstances = [];
 		var id;
@@ -227,10 +237,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		return eventInstances;
-	},
+	}
 
 
-	getEventInstancesWithId: function(eventDefId) {
+	getEventInstancesWithId(eventDefId) {
 		var eventInstanceGroup = this.eventInstanceGroupsById[eventDefId];
 
 		if (eventInstanceGroup) {
@@ -238,10 +248,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		return [];
-	},
+	}
 
 
-	getEventInstancesWithoutId: function(eventDefId) { // TODO: consider iterator
+	getEventInstancesWithoutId(eventDefId) { // TODO: consider iterator
 		var eventInstanceGroupsById = this.eventInstanceGroupsById;
 		var matchingInstances = [];
 		var id;
@@ -255,10 +265,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		}
 
 		return matchingInstances;
-	},
+	}
 
 
-	addEventInstance: function(eventInstance, eventDefId) {
+	addEventInstance(eventInstance, eventDefId) {
 		var eventInstanceGroupsById = this.eventInstanceGroupsById;
 		var eventInstanceGroup = eventInstanceGroupsById[eventDefId] ||
 			(eventInstanceGroupsById[eventDefId] = new EventInstanceGroup());
@@ -266,10 +276,10 @@ var EventPeriod = Class.extend(EmitterMixin, {
 		eventInstanceGroup.eventInstances.push(eventInstance);
 
 		this.tryRelease();
-	},
+	}
 
 
-	removeEventInstancesForDef: function(eventDef) {
+	removeEventInstancesForDef(eventDef) {
 		var eventInstanceGroupsById = this.eventInstanceGroupsById;
 		var eventInstanceGroup = eventInstanceGroupsById[eventDef.id];
 		var removeCnt;
@@ -287,14 +297,14 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				this.tryRelease();
 			}
 		}
-	},
+	}
 
 
 	// Releasing and Freezing
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	tryRelease: function() {
+	tryRelease() {
 		if (!this.pendingCnt) {
 			if (!this.freezeDepth) {
 				this.release();
@@ -303,40 +313,40 @@ var EventPeriod = Class.extend(EmitterMixin, {
 				this.stuntedReleaseCnt++;
 			}
 		}
-	},
+	}
 
 
-	release: function() {
+	release() {
 		this.releaseCnt++;
 		this.trigger('release', this.eventInstanceGroupsById);
-	},
+	}
 
 
-	whenReleased: function() {
-		var _this = this;
-
+	whenReleased() {
 		if (this.releaseCnt) {
 			return Promise.resolve(this.eventInstanceGroupsById);
 		}
 		else {
-			return Promise.construct(function(onResolve) {
-				_this.one('release', onResolve);
+			return Promise.construct((onResolve) => {
+				this.one('release', onResolve);
 			});
 		}
-	},
+	}
 
 
-	freeze: function() {
+	freeze() {
 		if (!(this.freezeDepth++)) {
 			this.stuntedReleaseCnt = 0;
 		}
-	},
+	}
 
 
-	thaw: function() {
+	thaw() {
 		if (!(--this.freezeDepth) && this.stuntedReleaseCnt && !this.pendingCnt) {
 			this.release();
 		}
 	}
 
-});
+}
+
+EmitterMixin.mixInto(EventPeriod)

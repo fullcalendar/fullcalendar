@@ -1,17 +1,22 @@
-
-var RecurringEventDef = EventDef.extend({
-
-	startTime: null, // duration
-	endTime: null, // duration, or null
-	dowHash: null, // object hash, or null
+import * as moment from 'moment'
+import EventDef from './EventDef'
+import EventInstance from './EventInstance'
+import EventDateProfile from './EventDateProfile'
 
 
-	isAllDay: function() {
+export default class RecurringEventDef extends EventDef {
+
+	startTime: any // duration
+	endTime: any // duration, or null
+	dowHash: any // object hash, or null
+
+
+	isAllDay() {
 		return !this.startTime && !this.endTime;
-	},
+	}
 
 
-	buildInstances: function(unzonedRange) {
+	buildInstances(unzonedRange) {
 		var calendar = this.source.calendar;
 		var unzonedDate = unzonedRange.getStart();
 		var unzonedEnd = unzonedRange.getEnd();
@@ -51,10 +56,10 @@ var RecurringEventDef = EventDef.extend({
 		}
 
 		return instances;
-	},
+	}
 
 
-	setDow: function(dowNumbers) {
+	setDow(dowNumbers) {
 
 		if (!this.dowHash) {
 			this.dowHash = {};
@@ -63,11 +68,11 @@ var RecurringEventDef = EventDef.extend({
 		for (var i = 0; i < dowNumbers.length; i++) {
 			this.dowHash[dowNumbers[i]] = true;
 		}
-	},
+	}
 
 
-	clone: function() {
-		var def = EventDef.prototype.clone.call(this);
+	clone() {
+		var def = super.clone();
 
 		if (def.startTime) {
 			def.startTime = moment.duration(this.startTime);
@@ -82,31 +87,32 @@ var RecurringEventDef = EventDef.extend({
 		}
 
 		return def;
-	},
-
-
-	/*
-	NOTE: if super-method fails, should still attempt to apply
-	*/
-	applyProps: function(rawProps) {
-		var superSuccess = EventDef.prototype.applyProps.apply(this, arguments);
-
-		if (rawProps.start) {
-			this.startTime = moment.duration(rawProps.start);
-		}
-
-		if (rawProps.end) {
-			this.endTime = moment.duration(rawProps.end);
-		}
-
-		if (rawProps.dow) {
-			this.setDow(rawProps.dow);
-		}
-
-		return superSuccess;
 	}
 
-});
+}
+
+
+/*
+HACK to work with TypeScript mixins
+NOTE: if super-method fails, should still attempt to apply
+*/
+RecurringEventDef.prototype.applyProps = function(rawProps) {
+	var superSuccess = EventDef.prototype.applyProps.call(this, rawProps);
+
+	if (rawProps.start) {
+		this.startTime = moment.duration(rawProps.start);
+	}
+
+	if (rawProps.end) {
+		this.endTime = moment.duration(rawProps.end);
+	}
+
+	if (rawProps.dow) {
+		this.setDow(rawProps.dow);
+	}
+
+	return superSuccess;
+}
 
 
 // Parsing

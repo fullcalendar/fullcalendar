@@ -1,19 +1,24 @@
+import namespaceHooks from '../namespace-hooks'
+import BasicView from './BasicView'
+import MonthView from './MonthView'
 
-fcViews.basic = {
+const views = namespaceHooks.views as any
+
+views.basic = {
 	'class': BasicView
 };
 
-fcViews.basicDay = {
+views.basicDay = {
 	type: 'basic',
 	duration: { days: 1 }
 };
 
-fcViews.basicWeek = {
+views.basicWeek = {
 	type: 'basic',
 	duration: { weeks: 1 }
 };
 
-fcViews.month = {
+views.month = {
 	'class': MonthView,
 	duration: { months: 1 }, // important for prev/next
 	defaults: {

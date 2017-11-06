@@ -1,23 +1,23 @@
 
-var Interaction = Class.extend({
+export default class Interaction {
 
-	view: null,
-	component: null,
+	view: any
+	component: any
 
 
-	constructor: function(component) {
+	constructor(component) {
 		this.view = component._getView();
 		this.component = component;
-	},
+	}
 
 
-	opt: function(name) {
+	opt(name) {
 		return this.view.opt(name);
-	},
+	}
 
 
-	end: function() {
+	end() {
 		// subclasses can implement
 	}
 
-});
+}

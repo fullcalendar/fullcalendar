@@ -1,12 +1,5 @@
-
-// exports
-FC.applyAll = applyAll;
-FC.debounce = debounce;
-FC.isInt = isInt;
-FC.htmlEscape = htmlEscape;
-FC.cssToStr = cssToStr;
-FC.proxy = proxy;
-FC.capitaliseFirstLetter = capitaliseFirstLetter;
+import * as moment from 'moment'
+import * as $ from 'jquery'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -15,7 +8,7 @@ FC.capitaliseFirstLetter = capitaliseFirstLetter;
 
 // Given the scrollbar widths of some other container, create borders/margins on rowEls in order to match the left
 // and right space that was offset by the scrollbars. A 1-pixel border first, then margin beyond that.
-function compensateScroll(rowEls, scrollbarWidths) {
+export function compensateScroll(rowEls, scrollbarWidths) {
 	if (scrollbarWidths.left) {
 		rowEls.css({
 			'border-left-width': 1,
@@ -32,7 +25,7 @@ function compensateScroll(rowEls, scrollbarWidths) {
 
 
 // Undoes compensateScroll and restores all borders/margins
-function uncompensateScroll(rowEls) {
+export function uncompensateScroll(rowEls) {
 	rowEls.css({
 		'margin-left': '',
 		'margin-right': '',
@@ -43,13 +36,13 @@ function uncompensateScroll(rowEls) {
 
 
 // Make the mouse cursor express that an event is not allowed in the current area
-function disableCursor() {
+export function disableCursor() {
 	$('body').addClass('fc-not-allowed');
 }
 
 
 // Returns the mouse cursor to its original look
-function enableCursor() {
+export function enableCursor() {
 	$('body').removeClass('fc-not-allowed');
 }
 
@@ -58,7 +51,7 @@ function enableCursor() {
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
 // any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and 
 // reduces the available height.
-function distributeHeight(els, availableHeight, shouldRedistribute) {
+export function distributeHeight(els, availableHeight, shouldRedistribute) {
 
 	// *FLOORING NOTE*: we floor in certain places because zoom can give inaccurate floating-point dimensions,
 	// and it is better to be shorter than taller, to avoid creating unnecessary scrollbars.
@@ -111,7 +104,7 @@ function distributeHeight(els, availableHeight, shouldRedistribute) {
 
 
 // Undoes distrubuteHeight, restoring all els to their natural height
-function undistributeHeight(els) {
+export function undistributeHeight(els) {
 	els.height('');
 }
 
@@ -119,7 +112,7 @@ function undistributeHeight(els) {
 // Given `els`, a jQuery set of <td> cells, find the cell with the largest natural width and set the widths of all the
 // cells to be that width.
 // PREREQUISITE: if you want a cell to take up width, it needs to have a single inner element w/ display:inline
-function matchCellWidths(els) {
+export function matchCellWidths(els) {
 	var maxInnerWidth = 0;
 
 	els.find('> *').each(function(i, innerEl) {
@@ -139,7 +132,7 @@ function matchCellWidths(els) {
 
 // Given one element that resides inside another,
 // Subtracts the height of the inner element from the outer element.
-function subtractInnerElHeight(outerEl, innerEl) {
+export function subtractInnerElHeight(outerEl, innerEl) {
 	var both = outerEl.add(innerEl);
 	var diff;
 
@@ -158,14 +151,9 @@ function subtractInnerElHeight(outerEl, innerEl) {
 /* Element Geom Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.getOuterRect = getOuterRect;
-FC.getClientRect = getClientRect;
-FC.getContentRect = getContentRect;
-FC.getScrollbarWidths = getScrollbarWidths;
-
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
-function getScrollParent(el) {
+export function getScrollParent(el) {
 	var position = el.css('position'),
 		scrollParent = el.parents().filter(function() {
 			var parent = $(this);
@@ -181,7 +169,7 @@ function getScrollParent(el) {
 // Queries the outer bounding area of a jQuery element.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
-function getOuterRect(el, origin) {
+export function getOuterRect(el, origin?) {
 	var offset = el.offset();
 	var left = offset.left - (origin ? origin.left : 0);
 	var top = offset.top - (origin ? origin.top : 0);
@@ -200,7 +188,7 @@ function getOuterRect(el, origin) {
 // Origin is optional.
 // WARNING: given element can't have borders
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-function getClientRect(el, origin) {
+export function getClientRect(el, origin?) {
 	var offset = el.offset();
 	var scrollbarWidths = getScrollbarWidths(el);
 	var left = offset.left + getCssFloat(el, 'border-left-width') + scrollbarWidths.left - (origin ? origin.left : 0);
@@ -218,7 +206,7 @@ function getClientRect(el, origin) {
 // Queries the area within the margin/border/padding of a jQuery element. Assumed not to have scrollbars.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
-function getContentRect(el, origin) {
+export function getContentRect(el, origin) {
 	var offset = el.offset(); // just outside of border, margin not included
 	var left = offset.left + getCssFloat(el, 'border-left-width') + getCssFloat(el, 'padding-left') -
 		(origin ? origin.left : 0);
@@ -237,7 +225,7 @@ function getContentRect(el, origin) {
 // Returns the computed left/right/top/bottom scrollbar widths for the given jQuery element.
 // WARNING: given element can't have borders (which will cause offsetWidth/offsetHeight to be larger).
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-function getScrollbarWidths(el) {
+export function getScrollbarWidths(el) {
 	var leftRightWidth = el[0].offsetWidth - el[0].clientWidth;
 	var bottomWidth = el[0].offsetHeight - el[0].clientHeight;
 	var widths;
@@ -307,16 +295,14 @@ function getCssFloat(el, prop) {
 /* Mouse / Touch Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.preventDefault = preventDefault;
-
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
-function isPrimaryMouseButton(ev) {
+export function isPrimaryMouseButton(ev) {
 	return ev.which == 1 && !ev.ctrlKey;
 }
 
 
-function getEvX(ev) {
+export function getEvX(ev) {
 	var touches = ev.originalEvent.touches;
 
 	// on mobile FF, pageX for touch events is present, but incorrect,
@@ -329,7 +315,7 @@ function getEvX(ev) {
 }
 
 
-function getEvY(ev) {
+export function getEvY(ev) {
 	var touches = ev.originalEvent.touches;
 
 	// on mobile FF, pageX for touch events is present, but incorrect,
@@ -342,25 +328,25 @@ function getEvY(ev) {
 }
 
 
-function getEvIsTouch(ev) {
+export function getEvIsTouch(ev) {
 	return /^touch/.test(ev.type);
 }
 
 
-function preventSelection(el) {
+export function preventSelection(el) {
 	el.addClass('fc-unselectable')
 		.on('selectstart', preventDefault);
 }
 
 
-function allowSelection(el) {
+export function allowSelection(el) {
 	el.removeClass('fc-unselectable')
 		.off('selectstart', preventDefault);
 }
 
 
 // Stops a mouse/touch event from doing it's native browser action
-function preventDefault(ev) {
+export function preventDefault(ev) {
 	ev.preventDefault();
 }
 
@@ -368,10 +354,9 @@ function preventDefault(ev) {
 /* General Geometry Utils
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.intersectRects = intersectRects;
 
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
-function intersectRects(rect1, rect2) {
+export function intersectRects(rect1, rect2) {
 	var res = {
 		left: Math.max(rect1.left, rect2.left),
 		right: Math.min(rect1.right, rect2.right),
@@ -387,7 +372,7 @@ function intersectRects(rect1, rect2) {
 
 
 // Returns a new point that will have been moved to reside within the given rectangle
-function constrainPoint(point, rect) {
+export function constrainPoint(point, rect) {
 	return {
 		left: Math.min(Math.max(point.left, rect.left), rect.right),
 		top: Math.min(Math.max(point.top, rect.top), rect.bottom)
@@ -396,7 +381,7 @@ function constrainPoint(point, rect) {
 
 
 // Returns a point that is the center of the given rectangle
-function getRectCenter(rect) {
+export function getRectCenter(rect) {
 	return {
 		left: (rect.left + rect.right) / 2,
 		top: (rect.top + rect.bottom) / 2
@@ -405,7 +390,7 @@ function getRectCenter(rect) {
 
 
 // Subtracts point2's coordinates from point1's coordinates, returning a delta
-function diffPoints(point1, point2) {
+export function diffPoints(point1, point2) {
 	return {
 		left: point1.left - point2.left,
 		top: point1.top - point2.top
@@ -416,13 +401,7 @@ function diffPoints(point1, point2) {
 /* Object Ordering by Field
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.parseFieldSpecs = parseFieldSpecs;
-FC.compareByFieldSpecs = compareByFieldSpecs;
-FC.compareByFieldSpec = compareByFieldSpec;
-FC.flexibleCompare = flexibleCompare;
-
-
-function parseFieldSpecs(input) {
+export function parseFieldSpecs(input) {
 	var specs = [];
 	var tokens = [];
 	var i, token;
@@ -456,7 +435,7 @@ function parseFieldSpecs(input) {
 }
 
 
-function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
+export function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
 	var i;
 	var cmp;
 
@@ -471,7 +450,7 @@ function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
 }
 
 
-function compareByFieldSpec(obj1, obj2, fieldSpec) {
+export function compareByFieldSpec(obj1, obj2, fieldSpec) {
 	if (fieldSpec.func) {
 		return fieldSpec.func(obj1, obj2);
 	}
@@ -480,7 +459,7 @@ function compareByFieldSpec(obj1, obj2, fieldSpec) {
 }
 
 
-function flexibleCompare(a, b) {
+export function flexibleCompare(a, b) {
 	if (!a && !b) {
 		return 0;
 	}
@@ -500,19 +479,13 @@ function flexibleCompare(a, b) {
 /* Date Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.computeGreatestUnit = computeGreatestUnit;
-FC.divideRangeByDuration = divideRangeByDuration;
-FC.divideDurationByDuration = divideDurationByDuration;
-FC.multiplyDuration = multiplyDuration;
-FC.durationHasTime = durationHasTime;
-
-var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
-var unitsDesc = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ]; // descending
+export const dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
+export const unitsDesc = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ]; // descending
 
 
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
 // Moments will have their timezones normalized.
-function diffDayTime(a, b) {
+export function diffDayTime(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days'),
 		ms: a.time() - b.time() // time-of-day from day start. disregards timezone
@@ -521,7 +494,7 @@ function diffDayTime(a, b) {
 
 
 // Diffs the two moments via their start-of-day (regardless of timezone). Produces whole-day durations.
-function diffDay(a, b) {
+export function diffDay(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
 	});
@@ -529,7 +502,7 @@ function diffDay(a, b) {
 
 
 // Diffs two moments, producing a duration, made of a whole-unit-increment of the given unit. Uses rounding.
-function diffByUnit(a, b, unit) {
+export function diffByUnit(a, b, unit) {
 	return moment.duration(
 		Math.round(a.diff(b, unit, true)), // returnFloat=true
 		unit
@@ -540,7 +513,7 @@ function diffByUnit(a, b, unit) {
 // Computes the unit name of the largest whole-unit period of time.
 // For example, 48 hours will be "days" whereas 49 hours will be "hours".
 // Accepts start/end, a range object, or an original duration object.
-function computeGreatestUnit(start, end) {
+export function computeGreatestUnit(start, end?) {
 	var i, unit;
 	var val;
 
@@ -558,7 +531,7 @@ function computeGreatestUnit(start, end) {
 
 
 // like computeGreatestUnit, but has special abilities to interpret the source input for clues
-function computeDurationGreatestUnit(duration, durationInput) {
+export function computeDurationGreatestUnit(duration, durationInput) {
 	var unit = computeGreatestUnit(duration);
 
 	// prevent days:7 from being interpreted as a week
@@ -589,7 +562,7 @@ function computeRangeAs(unit, start, end) {
 
 
 // Intelligently divides a range (specified by a start/end params) by a duration
-function divideRangeByDuration(start, end, dur) {
+export function divideRangeByDuration(start, end, dur) {
 	var months;
 
 	if (durationHasTime(dur)) {
@@ -604,7 +577,7 @@ function divideRangeByDuration(start, end, dur) {
 
 
 // Intelligently divides one duration by another
-function divideDurationByDuration(dur1, dur2) {
+export function divideDurationByDuration(dur1, dur2) {
 	var months1, months2;
 
 	if (durationHasTime(dur1) || durationHasTime(dur2)) {
@@ -623,7 +596,7 @@ function divideDurationByDuration(dur1, dur2) {
 
 
 // Intelligently multiplies a duration by a number
-function multiplyDuration(dur, n) {
+export function multiplyDuration(dur, n) {
 	var months;
 
 	if (durationHasTime(dur)) {
@@ -638,18 +611,18 @@ function multiplyDuration(dur, n) {
 
 
 // Returns a boolean about whether the given duration has any time parts (hours/minutes/seconds/ms)
-function durationHasTime(dur) {
+export function durationHasTime(dur) {
 	return Boolean(dur.hours() || dur.minutes() || dur.seconds() || dur.milliseconds());
 }
 
 
-function isNativeDate(input) {
+export function isNativeDate(input) {
 	return  Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
 }
 
 
 // Returns a boolean about whether the given input is a time string, like "06:40:00" or "06:00"
-function isTimeString(str) {
+export function isTimeString(str) {
 	return typeof str === 'string' &&
 		/^\d+\:\d+(?:\:\d+\.?(?:\d{3})?)?$/.test(str);
 }
@@ -658,35 +631,36 @@ function isTimeString(str) {
 /* Logging and Debug
 ----------------------------------------------------------------------------------------------------------------------*/
 
-FC.log = function() {
+
+export function log(...args) {
 	var console = window.console;
 
 	if (console && console.log) {
-		return console.log.apply(console, arguments);
+		return console.log.apply(console, args);
 	}
-};
+}
 
-FC.warn = function() {
+export function warn(...args) {
 	var console = window.console;
 
 	if (console && console.warn) {
-		return console.warn.apply(console, arguments);
+		return console.warn.apply(console, args);
 	}
 	else {
-		return FC.log.apply(FC, arguments);
+		return log.apply(null, args);
 	}
-};
+}
 
 
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var hasOwnPropMethod = {}.hasOwnProperty;
+const hasOwnPropMethod = {}.hasOwnProperty;
 
 
 // Merges an array of objects into a single object.
 // The second argument allows for an array of property names who's object values will be merged together.
-function mergeProps(propObjs, complexProps) {
+export function mergeProps(propObjs, complexProps?) {
 	var dest = {};
 	var i, name;
 	var complexObjs;
@@ -733,7 +707,7 @@ function mergeProps(propObjs, complexProps) {
 }
 
 
-function copyOwnProps(src, dest) {
+export function copyOwnProps(src, dest) {
 	for (var name in src) {
 		if (hasOwnProp(src, name)) {
 			dest[name] = src[name];
@@ -742,12 +716,12 @@ function copyOwnProps(src, dest) {
 }
 
 
-function hasOwnProp(obj, name) {
+export function hasOwnProp(obj, name) {
 	return hasOwnPropMethod.call(obj, name);
 }
 
 
-function applyAll(functions, thisObj, args) {
+export function applyAll(functions, thisObj, args) {
 	if ($.isFunction(functions)) {
 		functions = [ functions ];
 	}
@@ -762,7 +736,7 @@ function applyAll(functions, thisObj, args) {
 }
 
 
-function removeMatching(array, testFunc) {
+export function removeMatching(array, testFunc) {
 	var removeCnt = 0;
 	var i = 0;
 
@@ -780,7 +754,7 @@ function removeMatching(array, testFunc) {
 }
 
 
-function removeExact(array, exactVal) {
+export function removeExact(array, exactVal) {
 	var removeCnt = 0;
 	var i = 0;
 
@@ -796,10 +770,9 @@ function removeExact(array, exactVal) {
 
 	return removeCnt;
 }
-FC.removeExact = removeExact;
 
 
-function isArraysEqual(a0, a1) {
+export function isArraysEqual(a0, a1) {
 	var len = a0.length;
 	var i;
 
@@ -818,16 +791,16 @@ function isArraysEqual(a0, a1) {
 
 
 
-function firstDefined() {
-	for (var i=0; i<arguments.length; i++) {
-		if (arguments[i] !== undefined) {
-			return arguments[i];
+export function firstDefined(...args) {
+	for (var i=0; i<args.length; i++) {
+		if (args[i] !== undefined) {
+			return args[i];
 		}
 	}
 }
 
 
-function htmlEscape(s) {
+export function htmlEscape(s) {
 	return (s + '').replace(/&/g, '&amp;')
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
@@ -837,14 +810,14 @@ function htmlEscape(s) {
 }
 
 
-function stripHtmlEntities(text) {
+export function stripHtmlEntities(text) {
 	return text.replace(/&.*?;/g, '');
 }
 
 
 // Given a hash of CSS properties, returns a string of CSS.
 // Uses property names as-is (no camel-case conversion). Will not make statements for null/undefined values.
-function cssToStr(cssProps) {
+export function cssToStr(cssProps) {
 	var statements = [];
 
 	$.each(cssProps, function(name, val) {
@@ -859,7 +832,7 @@ function cssToStr(cssProps) {
 
 // Given an object hash of HTML attribute names to values,
 // generates a string that can be injected between < > in HTML
-function attrsToStr(attrs) {
+export function attrsToStr(attrs) {
 	var parts = [];
 
 	$.each(attrs, function(name, val) {
@@ -872,17 +845,17 @@ function attrsToStr(attrs) {
 }
 
 
-function capitaliseFirstLetter(str) {
+export function capitaliseFirstLetter(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 
-function compareNumbers(a, b) { // for .sort()
+export function compareNumbers(a, b) { // for .sort()
 	return a - b;
 }
 
 
-function isInt(n) {
+export function isInt(n) {
 	return n % 1 === 0;
 }
 
@@ -890,7 +863,7 @@ function isInt(n) {
 // Returns a method bound to the given object context.
 // Just like one of the jQuery.proxy signatures, but without the undesired behavior of treating the same method with
 // different contexts as identical when binding/unbinding events.
-function proxy(obj, methodName) {
+export function proxy(obj, methodName) {
 	var method = obj[methodName];
 
 	return function() {
@@ -904,7 +877,7 @@ function proxy(obj, methodName) {
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
 // https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
-function debounce(func, wait, immediate) {
+export function debounce(func, wait, immediate=false) {
 	var timeout, args, context, timestamp, result;
 
 	var later = function() {

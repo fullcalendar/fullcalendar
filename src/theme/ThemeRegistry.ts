@@ -1,5 +1,7 @@
+import StandardTheme from './StandardTheme'
+import JqueryUiTheme from './JqueryUiTheme'
 
-var ThemeRegistry = FC.ThemeRegistry = {
+export default {
 
 	themeClassHash: {},
 
@@ -21,4 +23,4 @@ var ThemeRegistry = FC.ThemeRegistry = {
 		}
 	}
 
-};
+}

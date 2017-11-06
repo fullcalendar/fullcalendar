@@ -1,3 +1,14 @@
+import {
+	getEvX,
+	getEvY,
+	getOuterRect,
+	constrainPoint,
+	intersectRects,
+	getRectCenter,
+	diffPoints
+} from '../util'
+import DragListener from './DragListener'
+
 
 /* Tracks mouse movements over a component and raises events about which hit the mouse is over.
 ------------------------------------------------------------------------------------------------------------------------
@@ -6,26 +17,24 @@ options:
 - subjectCenter
 */
 
-var HitDragListener = DragListener.extend({
+export default class HitDragListener extends DragListener {
 
-	component: null, // converts coordinates to hits
+	component: any // converts coordinates to hits
 		// methods: hitsNeeded, hitsNotNeeded, queryHit
 
-	origHit: null, // the hit the mouse was over when listening started
-	hit: null, // the hit the mouse is over
-	coordAdjust: null, // delta that will be added to the mouse coordinates when computing collisions
+	origHit: any // the hit the mouse was over when listening started
+	hit: any // the hit the mouse is over
+	coordAdjust: any // delta that will be added to the mouse coordinates when computing collisions
 
 
-	constructor: function(component, options) {
-		DragListener.call(this, options); // call the super-constructor
-
+	constructor(component, options) {
+		super(options);
 		this.component = component;
-	},
-
+	}
 
 	// Called when drag listening starts (but a real drag has not necessarily began).
 	// ev might be undefined if dragging was started manually.
-	handleInteractionStart: function(ev) {
+	handleInteractionStart(ev) {
 		var subjectEl = this.subjectEl;
 		var subjectRect;
 		var origPoint;
@@ -67,15 +76,15 @@ var HitDragListener = DragListener.extend({
 		}
 
 		// call the super-method. do it after origHit has been computed
-		DragListener.prototype.handleInteractionStart.apply(this, arguments);
-	},
+		super.handleInteractionStart(ev);
+	}
 
 
 	// Called when the actual drag has started
-	handleDragStart: function(ev) {
+	handleDragStart(ev) {
 		var hit;
 
-		DragListener.prototype.handleDragStart.apply(this, arguments); // call the super-method
+		super.handleDragStart(ev);
 
 		// might be different from this.origHit if the min-distance is large
 		hit = this.queryHit(getEvX(ev), getEvY(ev));
@@ -85,14 +94,14 @@ var HitDragListener = DragListener.extend({
 		if (hit) {
 			this.handleHitOver(hit);
 		}
-	},
+	}
 
 
 	// Called when the drag moves
-	handleDrag: function(dx, dy, ev) {
+	handleDrag(dx, dy, ev) {
 		var hit;
 
-		DragListener.prototype.handleDrag.apply(this, arguments); // call the super-method
+		super.handleDrag(dx, dy, ev);
 
 		hit = this.queryHit(getEvX(ev), getEvY(ev));
 
@@ -104,58 +113,58 @@ var HitDragListener = DragListener.extend({
 				this.handleHitOver(hit);
 			}
 		}
-	},
+	}
 
 
 	// Called when dragging has been stopped
-	handleDragEnd: function() {
+	handleDragEnd(ev) {
 		this.handleHitDone();
-		DragListener.prototype.handleDragEnd.apply(this, arguments); // call the super-method
-	},
+		super.handleDragEnd(ev);
+	}
 
 
 	// Called when a the mouse has just moved over a new hit
-	handleHitOver: function(hit) {
+	handleHitOver(hit) {
 		var isOrig = isHitsEqual(hit, this.origHit);
 
 		this.hit = hit;
 
 		this.trigger('hitOver', this.hit, isOrig, this.origHit);
-	},
+	}
 
 
 	// Called when the mouse has just moved out of a hit
-	handleHitOut: function() {
+	handleHitOut() {
 		if (this.hit) {
 			this.trigger('hitOut', this.hit);
 			this.handleHitDone();
 			this.hit = null;
 		}
-	},
+	}
 
 
 	// Called after a hitOut. Also called before a dragStop
-	handleHitDone: function() {
+	handleHitDone() {
 		if (this.hit) {
 			this.trigger('hitDone', this.hit);
 		}
-	},
+	}
 
 
 	// Called when the interaction ends, whether there was a real drag or not
-	handleInteractionEnd: function() {
-		DragListener.prototype.handleInteractionEnd.apply(this, arguments); // call the super-method
+	handleInteractionEnd(ev, isCancelled) {
+		super.handleInteractionEnd(ev, isCancelled);
 
 		this.origHit = null;
 		this.hit = null;
 
 		this.component.hitsNotNeeded();
-	},
+	}
 
 
 	// Called when scrolling has stopped, whether through auto scroll, or the user scrolling
-	handleScrollEnd: function() {
-		DragListener.prototype.handleScrollEnd.apply(this, arguments); // call the super-method
+	handleScrollEnd() {
+		super.handleScrollEnd();
 
 		// hits' absolute positions will be in new places after a user's scroll.
 		// HACK for recomputing.
@@ -163,11 +172,11 @@ var HitDragListener = DragListener.extend({
 			this.component.releaseHits();
 			this.component.prepareHits();
 		}
-	},
+	}
 
 
 	// Gets the hit underneath the coordinates for the given mouse event
-	queryHit: function(left, top) {
+	queryHit(left, top) {
 
 		if (this.coordAdjust) {
 			left += this.coordAdjust.left;
@@ -177,7 +186,7 @@ var HitDragListener = DragListener.extend({
 		return this.component.queryHit(left, top);
 	}
 
-});
+}
 
 
 // Returns `true` if the hits are identically equal. `false` otherwise. Must be from the same component.

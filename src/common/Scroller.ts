@@ -1,61 +1,64 @@
+import { getScrollbarWidths } from '../util'
+import Class from '../common/Class'
 
 /*
 Embodies a div that has potential scrollbars
 */
-var Scroller = FC.Scroller = Class.extend({
+export default class Scroller extends Class {
 
-	el: null, // the guaranteed outer element
-	scrollEl: null, // the element with the scrollbars
-	overflowX: null,
-	overflowY: null,
+	el: any // the guaranteed outer element
+	scrollEl: any // the element with the scrollbars
+	overflowX: any
+	overflowY: any
 
 
-	constructor: function(options) {
+	constructor(options?) {
+		super();
 		options = options || {};
 		this.overflowX = options.overflowX || options.overflow || 'auto';
 		this.overflowY = options.overflowY || options.overflow || 'auto';
-	},
+	}
 
 
-	render: function() {
+	render() {
 		this.el = this.renderEl();
 		this.applyOverflow();
-	},
+	}
 
 
-	renderEl: function() {
+	renderEl() {
 		return (this.scrollEl = $('<div class="fc-scroller"></div>'));
-	},
+	}
 
 
 	// sets to natural height, unlocks overflow
-	clear: function() {
+	clear() {
 		this.setHeight('auto');
 		this.applyOverflow();
-	},
+	}
 
 
-	destroy: function() {
+	destroy() {
 		this.el.remove();
-	},
+	}
 
 
 	// Overflow
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	applyOverflow: function() {
+	applyOverflow() {
 		this.scrollEl.css({
 			'overflow-x': this.overflowX,
 			'overflow-y': this.overflowY
 		});
-	},
+	}
 
 
 	// Causes any 'auto' overflow values to resolves to 'scroll' or 'hidden'.
 	// Useful for preserving scrollbar widths regardless of future resizes.
 	// Can pass in scrollbarWidths for optimization.
-	lockOverflow: function(scrollbarWidths) {
+	lockOverflow(scrollbarWidths) {
 		var overflowX = this.overflowX;
 		var overflowY = this.overflowY;
 
@@ -80,40 +83,40 @@ var Scroller = FC.Scroller = Class.extend({
 		}
 
 		this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY });
-	},
+	}
 
 
 	// Getters / Setters
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setHeight: function(height) {
+	setHeight(height) {
 		this.scrollEl.height(height);
-	},
+	}
 
 
-	getScrollTop: function() {
+	getScrollTop() {
 		return this.scrollEl.scrollTop();
-	},
+	}
 
 
-	setScrollTop: function(top) {
+	setScrollTop(top) {
 		this.scrollEl.scrollTop(top);
-	},
+	}
 
 
-	getClientWidth: function() {
+	getClientWidth() {
 		return this.scrollEl[0].clientWidth;
-	},
+	}
 
 
-	getClientHeight: function() {
+	getClientHeight() {
 		return this.scrollEl[0].clientHeight;
-	},
+	}
 
 
-	getScrollbarWidths: function() {
+	getScrollbarWidths() {
 		return getScrollbarWidths(this.scrollEl);
 	}
 
-});
+}

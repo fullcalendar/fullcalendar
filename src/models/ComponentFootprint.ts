@@ -2,26 +2,26 @@
 /*
 Meant to be immutable
 */
-var ComponentFootprint = FC.ComponentFootprint = Class.extend({
+export default class ComponentFootprint {
 
-	unzonedRange: null,
-	isAllDay: false, // component can choose to ignore this
+	unzonedRange: any
+	isAllDay: boolean = false // component can choose to ignore this
 
 
-	constructor: function(unzonedRange, isAllDay) {
+	constructor(unzonedRange, isAllDay) {
 		this.unzonedRange = unzonedRange;
 		this.isAllDay = isAllDay;
-	},
+	}
 
 
 	/*
 	Only works for non-open-ended ranges.
 	*/
-	toLegacy: function(calendar) {
+	toLegacy(calendar) {
 		return {
 			start: calendar.msToMoment(this.unzonedRange.startMs, this.isAllDay),
 			end: calendar.msToMoment(this.unzonedRange.endMs, this.isAllDay)
 		};
 	}
 
-});
+}

@@ -1,43 +1,57 @@
+import Class from './Class'
+import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
+import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
-var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
-	_props: null,
-	_watchers: null,
-	_globalWatchArgs: {}, // mutation protection in Model.watch
+export default class Model extends Class {
 
-	constructor: function() {
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
+
+	_props: any
+	_watchers: any
+	_globalWatchArgs: any // initialized after class
+
+	constructor() {
+		super()
 		this._watchers = {};
 		this._props = {};
 		this.applyGlobalWatchers();
 		this.constructed();
-	},
+	}
 
 	// useful for monkeypatching. TODO: BaseClass?
-	constructed: function() {
-	},
+	constructed() {
+	}
 
-	applyGlobalWatchers: function() {
+	applyGlobalWatchers() {
 		var map = this._globalWatchArgs;
 		var name;
 
 		for (name in map) {
-			this.watch.apply(this, map[name]);
+			this.watch.apply(this, [ name ].concat(map[name]));
 		}
-	},
+	}
 
-	has: function(name) {
+	has(name) {
 		return name in this._props;
-	},
+	}
 
-	get: function(name) {
+	get(name) {
 		if (name === undefined) {
 			return this._props;
 		}
 
 		return this._props[name];
-	},
+	}
 
-	set: function(name, val) {
+	set(name, val) {
 		var newProps;
 
 		if (typeof name === 'string') {
@@ -49,9 +63,9 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.setProps(newProps);
-	},
+	}
 
-	reset: function(newProps) {
+	reset(newProps) {
 		var oldProps = this._props;
 		var changeset = {}; // will have undefined's to signal unsets
 		var name;
@@ -65,9 +79,9 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.setProps(changeset);
-	},
+	}
 
-	unset: function(name) { // accepts a string or array of strings
+	unset(name) { // accepts a string or array of strings
 		var newProps = {};
 		var names;
 		var i;
@@ -84,9 +98,9 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.setProps(newProps);
-	},
+	}
 
-	setProps: function(newProps) {
+	setProps(newProps) {
 		var changedProps = {};
 		var changedCnt = 0;
 		var name, val;
@@ -133,45 +147,42 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 
 			this.trigger('batchChange', changedProps);
 		}
-	},
+	}
 
-	watch: function(name, depList, startFunc, stopFunc) {
-		var _this = this;
-
+	watch(name, depList, startFunc, stopFunc) {
 		this.unwatch(name);
 
-		this._watchers[name] = this._watchDeps(depList, function(deps) {
-			var res = startFunc.call(_this, deps);
+		this._watchers[name] = this._watchDeps(depList, (deps) => {
+			var res = startFunc.call(this, deps);
 
 			if (res && res.then) {
-				_this.unset(name); // put in an unset state while resolving
-				res.then(function(val) {
-					_this.set(name, val);
+				this.unset(name); // put in an unset state while resolving
+				res.then((val) => {
+					this.set(name, val);
 				});
 			}
 			else {
-				_this.set(name, res);
+				this.set(name, res);
 			}
-		}, function(deps) {
-			_this.unset(name);
+		}, (deps) => {
+			this.unset(name);
 
 			if (stopFunc) {
-				stopFunc.call(_this, deps);
+				stopFunc.call(this, deps);
 			}
 		});
-	},
+	}
 
-	unwatch: function(name) {
+	unwatch(name) {
 		var watcher = this._watchers[name];
 
 		if (watcher) {
 			delete this._watchers[name];
 			watcher.teardown();
 		}
-	},
+	}
 
-	_watchDeps: function(depList, startFunc, stopFunc) {
-		var _this = this;
+	_watchDeps(depList, startFunc, stopFunc) {
 		var queuedChangeCnt = 0;
 		var depCnt = depList.length;
 		var satisfyCnt = 0;
@@ -179,7 +190,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		var bindTuples = []; // array of [ eventName, handlerFunc ] arrays
 		var isCallingStop = false;
 
-		function onBeforeDepChange(depName, val, isOptional) {
+		const onBeforeDepChange = (depName, val, isOptional) => {
 			queuedChangeCnt++;
 			if (queuedChangeCnt === 1) { // first change to cause a "stop" ?
 				if (satisfyCnt === depCnt) { // all deps previously satisfied?
@@ -190,7 +201,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 			}
 		}
 
-		function onDepChange(depName, val, isOptional) {
+		const onDepChange = (depName, val, isOptional) => {
 
 			if (val === undefined) { // unsetting a value?
 
@@ -227,13 +238,13 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		// intercept for .on() that remembers handlers
-		function bind(eventName, handler) {
-			_this.on(eventName, handler);
+		const bind = (eventName, handler) => {
+			this.on(eventName, handler);
 			bindTuples.push([ eventName, handler ]);
 		}
 
 		// listen to dependency changes
-		depList.forEach(function(depName) {
+		depList.forEach((depName) => {
 			var isOptional = false;
 
 			if (depName.charAt(0) === '?') { // TODO: more DRY
@@ -251,7 +262,7 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		});
 
 		// process current dependency values
-		depList.forEach(function(depName) {
+		depList.forEach((depName) => {
 			var isOptional = false;
 
 			if (depName.charAt(0) === '?') { // TODO: more DRY
@@ -259,8 +270,8 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 				isOptional = true;
 			}
 
-			if (_this.has(depName)) {
-				values[depName] = _this.get(depName);
+			if (this.has(depName)) {
+				values[depName] = this.get(depName);
 				satisfyCnt++;
 			}
 			else if (isOptional) {
@@ -274,10 +285,10 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return {
-			teardown: function() {
+			teardown: () => {
 				// remove all handlers
 				for (var i = 0; i < bindTuples.length; i++) {
-					_this.off(bindTuples[i][0], bindTuples[i][1]);
+					this.off(bindTuples[i][0], bindTuples[i][1]);
 				}
 				bindTuples = null;
 
@@ -286,16 +297,16 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 					stopFunc();
 				}
 			},
-			flash: function() {
+			flash: () => {
 				if (satisfyCnt === depCnt) {
 					stopFunc();
 					startFunc(values);
 				}
 			}
 		};
-	},
+	}
 
-	flash: function(name) {
+	flash(name) {
 		var watcher = this._watchers[name];
 
 		if (watcher) {
@@ -303,20 +314,19 @@ var Model = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 	}
 
-});
 
+	static watch(name, ...args) {
+		// subclasses should make a masked-copy of the superclass's map
+		// TODO: write test
+		if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
+			this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs);
+		}
 
-Model.watch = function(name /* , depList, startFunc, stopFunc */) {
-
-	// subclasses should make a masked-copy of the superclass's map
-	// TODO: write test
-	if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
-		this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs);
+		this.prototype._globalWatchArgs[name] = args;
 	}
+}
 
-	this.prototype._globalWatchArgs[name] = arguments;
-};
+Model.prototype._globalWatchArgs = {}; // mutation protection in Model.watch
 
-
-FC.Model = Model;
-
+EmitterMixin.mixInto(Model)
+ListenerMixin.mixInto(Model)

@@ -1,78 +1,79 @@
+import * as $ from 'jquery'
+import { htmlEscape } from './util'
+
 
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function Toolbar(calendar, toolbarOptions) {
-	var t = this;
+export default class Toolbar {
 
-	// exports
-	t.setToolbarOptions = setToolbarOptions;
-	t.render = render;
-	t.removeElement = removeElement;
-	t.updateTitle = updateTitle;
-	t.activateButton = activateButton;
-	t.deactivateButton = deactivateButton;
-	t.disableButton = disableButton;
-	t.enableButton = enableButton;
-	t.getViewsWithButtons = getViewsWithButtons;
-	t.el = null; // mirrors local `el`
+	calendar: any
+	toolbarOptions: any
+	el: any = null // mirrors local `el`
+	viewsWithButtons: any = []
 
-	// locals
-	var el;
-	var viewsWithButtons = [];
 
-	// method to update toolbar-specific options, not calendar-wide options
-	function setToolbarOptions(newToolbarOptions) {
-		toolbarOptions = newToolbarOptions;
+	constructor(calendar, toolbarOptions) {
+		this.calendar = calendar
+		this.toolbarOptions = toolbarOptions
 	}
 
+
+	// method to update toolbar-specific options, not calendar-wide options
+	setToolbarOptions(newToolbarOptions) {
+		this.toolbarOptions = newToolbarOptions;
+	}
+
+
 	// can be called repeatedly and will rerender
-	function render() {
-		var sections = toolbarOptions.layout;
+	render() {
+		let sections = this.toolbarOptions.layout
+		let el = this.el
 
 		if (sections) {
 			if (!el) {
-				el = this.el = $("<div class='fc-toolbar "+ toolbarOptions.extraClasses + "'/>");
+				el = this.el = $("<div class='fc-toolbar " + this.toolbarOptions.extraClasses + "'/>");
 			}
 			else {
 				el.empty();
 			}
-			el.append(renderSection('left'))
-				.append(renderSection('right'))
-				.append(renderSection('center'))
+			el.append(this.renderSection('left'))
+				.append(this.renderSection('right'))
+				.append(this.renderSection('center'))
 				.append('<div class="fc-clear"/>');
 		}
 		else {
-			removeElement();
+			this.removeElement();
 		}
 	}
 
 
-	function removeElement() {
-		if (el) {
-			el.remove();
-			el = t.el = null;
+	removeElement() {
+		if (this.el) {
+			this.el.remove();
+			this.el = null;
 		}
 	}
 
 
-	function renderSection(position) {
+	renderSection(position) {
+		var calendar = this.calendar
 		var theme = calendar.theme;
 		var optionsManager = calendar.optionsManager;
 		var viewSpecManager = calendar.viewSpecManager;
 		var sectionEl = $('<div class="fc-' + position + '"/>');
-		var buttonStr = toolbarOptions.layout[position];
+		var buttonStr = this.toolbarOptions.layout[position];
 		var calendarCustomButtons = optionsManager.get('customButtons') || {};
 		var calendarButtonTextOverrides = optionsManager.overrides.buttonText || {};
 		var calendarButtonText = optionsManager.get('buttonText') || {};
 
 		if (buttonStr) {
-			$.each(buttonStr.split(' '), function(i) {
+			$.each(buttonStr.split(' '), (i, buttonGroupStr) => {
 				var groupChildren = $();
 				var isOnlyButtons = true;
 				var groupEl;
 
-				$.each(this.split(','), function(j, buttonName) {
+				$.each(buttonGroupStr.split(','), (j, buttonName) => {
 					var customButtonProps;
 					var viewSpec;
 					var buttonClick;
@@ -96,16 +97,16 @@ function Toolbar(calendar, toolbarOptions) {
 							};
 							(buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
 							(buttonIcon = theme.getIconClass(buttonName)) ||
-							(buttonText = customButtonProps.text); // jshint ignore:line
+							(buttonText = customButtonProps.text);
 						}
 						else if ((viewSpec = viewSpecManager.getViewSpec(buttonName))) {
-							viewsWithButtons.push(buttonName);
+							this.viewsWithButtons.push(buttonName);
 							buttonClick = function() {
 								calendar.changeView(buttonName);
 							};
 							(buttonText = viewSpec.buttonTextOverride) ||
 							(buttonIcon = theme.getIconClass(buttonName)) ||
-							(buttonText = viewSpec.buttonTextDefault); // jshint ignore:line
+							(buttonText = viewSpec.buttonTextDefault);
 						}
 						else if (calendar[buttonName]) { // a calendar method
 							buttonClick = function() {
@@ -113,7 +114,7 @@ function Toolbar(calendar, toolbarOptions) {
 							};
 							(buttonText = calendarButtonTextOverrides[buttonName]) ||
 							(buttonIcon = theme.getIconClass(buttonName)) ||
-							(buttonText = calendarButtonText[buttonName]); // jshint ignore:line
+							(buttonText = calendarButtonText[buttonName]);
 							//            ^ everything else is considered default
 						}
 
@@ -211,49 +212,49 @@ function Toolbar(calendar, toolbarOptions) {
 	}
 
 
-	function updateTitle(text) {
-		if (el) {
-			el.find('h2').text(text);
+	updateTitle(text) {
+		if (this.el) {
+			this.el.find('h2').text(text);
 		}
 	}
 
 
-	function activateButton(buttonName) {
-		if (el) {
-			el.find('.fc-' + buttonName + '-button')
-				.addClass(calendar.theme.getClass('stateActive'));
+	activateButton(buttonName) {
+		if (this.el) {
+			this.el.find('.fc-' + buttonName + '-button')
+				.addClass(this.calendar.theme.getClass('stateActive'));
 		}
 	}
 
 
-	function deactivateButton(buttonName) {
-		if (el) {
-			el.find('.fc-' + buttonName + '-button')
-				.removeClass(calendar.theme.getClass('stateActive'));
+	deactivateButton(buttonName) {
+		if (this.el) {
+			this.el.find('.fc-' + buttonName + '-button')
+				.removeClass(this.calendar.theme.getClass('stateActive'));
 		}
 	}
 
 
-	function disableButton(buttonName) {
-		if (el) {
-			el.find('.fc-' + buttonName + '-button')
+	disableButton(buttonName) {
+		if (this.el) {
+			this.el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', true)
-				.addClass(calendar.theme.getClass('stateDisabled'));
+				.addClass(this.calendar.theme.getClass('stateDisabled'));
 		}
 	}
 
 
-	function enableButton(buttonName) {
-		if (el) {
-			el.find('.fc-' + buttonName + '-button')
+	enableButton(buttonName) {
+		if (this.el) {
+			this.el.find('.fc-' + buttonName + '-button')
 				.prop('disabled', false)
-				.removeClass(calendar.theme.getClass('stateDisabled'));
+				.removeClass(this.calendar.theme.getClass('stateDisabled'));
 		}
 	}
 
 
-	function getViewsWithButtons() {
-		return viewsWithButtons;
+	getViewsWithButtons() {
+		return this.viewsWithButtons;
 	}
 
 }

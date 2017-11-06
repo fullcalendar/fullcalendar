@@ -1,8 +1,10 @@
+import * as $ from 'jquery'
+import HelperRenderer from '../component/renderers/HelperRenderer'
 
-var TimeGridHelperRenderer = HelperRenderer.extend({
 
+export default class TimeGridHelperRenderer extends HelperRenderer {
 
-	renderSegs: function(segs, sourceSeg) {
+	renderSegs(segs, sourceSeg) {
 		var helperNodes = [];
 		var i, seg;
 		var sourceEl;
@@ -33,4 +35,4 @@ var TimeGridHelperRenderer = HelperRenderer.extend({
 		return $(helperNodes); // must return the elements rendered
 	}
 
-});
+}

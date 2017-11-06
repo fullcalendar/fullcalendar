@@ -1,29 +1,60 @@
+var del = require('del');
+var _ = require('lodash');
 var gulp = require('gulp');
 var plumber = require('gulp-plumber');
 var concat = require('gulp-concat');
 var template = require('gulp-template');
 var sourcemaps = require('gulp-sourcemaps');
-var del = require('del');
-var _ = require('lodash');
+var babel = require('gulp-babel');
+var webpack = require('webpack-stream'); // for fullcalendar.js, use webpack
 
 // project configs
 var packageConf = require('../package.json');
 var srcConf = require('../src.json');
+var webpackConf = require('../webpack.config.js');
 
 // generates js/css files in dist directory
 gulp.task('modules', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:' + distFile; // generates an array of task names
-}));
+}), function() {
+	return gulp.src('src/main.ts')
+		.pipe(
+			webpack(Object.assign({}, webpackConf, {
+				output: { filename: 'fullcalendar.js' }
+			})
+		))
+		.pipe(babel()) // will output ES5
+		.pipe(gulp.dest('dist/'));
+});
 
 // generates js/css/sourcemap files in dist directory
 gulp.task('modules:dev', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:dev:' + distFile; // generates an array of task names
-}));
+}), function() {
+	return gulp.src('src/main.ts')
+		.pipe(
+			webpack(Object.assign({}, webpackConf, {
+				output: { filename: 'fullcalendar.js' },
+				devtool: 'source-map' // also 'inline-source-map'
+			})
+		))
+		.pipe(gulp.dest('dist/')); // will output ES6 and must be run in a newer browser
+});
 
 // watches source files and generates js/css/sourcemaps
 gulp.task('modules:watch', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:watch:' + distFile; // generates an array of task names
-}));
+}), function() {
+	return gulp.src('src/main.ts')
+		.pipe(
+			webpack(Object.assign({}, webpackConf, {
+				output: { filename: 'fullcalendar.js' },
+				devtool: 'source-map', // also 'inline-source-map'
+				watch: true
+			})
+		))
+		.pipe(gulp.dest('dist/')); // will output ES6 and must be run in a newer browser
+});
 
 // deletes all generated js/css files in the dist directory
 gulp.task('modules:clean', function() {

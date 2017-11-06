@@ -1,28 +1,29 @@
+import { htmlEscape, cssToStr, proxy } from '../util'
+import EventRenderer from '../component/renderers/EventRenderer'
 
 /*
 Only handles foreground segs.
 Does not own rendering. Use for low-level util methods by TimeGrid.
 */
-var TimeGridEventRenderer = EventRenderer.extend({
+export default class TimeGridEventRenderer extends EventRenderer {
 
-	timeGrid: null,
+	timeGrid: any
 
 
-	constructor: function(timeGrid) {
-		EventRenderer.apply(this, arguments);
-
+	constructor(timeGrid, fillRenderer) {
+		super(timeGrid, fillRenderer);
 		this.timeGrid = timeGrid;
-	},
+	}
 
 
-	renderFgSegs: function(segs) {
+	renderFgSegs(segs) {
 		this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls);
-	},
+	}
 
 
 	// Given an array of foreground segments, render a DOM element for each, computes position,
 	// and attaches to the column inner-container elements.
-	renderFgSegsIntoContainers: function(segs, containerEls) {
+	renderFgSegsIntoContainers(segs, containerEls) {
 		var segsByCol;
 		var col;
 
@@ -33,32 +34,32 @@ var TimeGridEventRenderer = EventRenderer.extend({
 		}
 
 		this.timeGrid.attachSegsByCol(segsByCol, containerEls);
-	},
+	}
 
 
-	unrenderFgSegs: function() {
+	unrenderFgSegs() {
 		if (this.fgSegs) { // hack
 			this.fgSegs.forEach(function(seg) {
 				seg.el.remove();
 			});
 		}
-	},
+	}
 
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
-	computeEventTimeFormat: function() {
+	computeEventTimeFormat() {
 		return this.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
-	},
+	}
 
 
 	// Computes a default `displayEventEnd` value if one is not expliclty defined
-	computeDisplayEventEnd: function() {
+	computeDisplayEventEnd() {
 		return true;
-	},
+	}
 
 
 	// Renders the HTML for a single event segment's default rendering
-	fgSegHtml: function(seg, disableResizing) {
+	fgSegHtml(seg, disableResizing) {
 		var view = this.view;
 		var calendar = view.calendar;
 		var componentFootprint = seg.footprint.componentFootprint;
@@ -134,22 +135,22 @@ var TimeGridEventRenderer = EventRenderer.extend({
 					''
 					) +
 			'</a>';
-	},
+	}
 
 
 	// Given segments that are assumed to all live in the *same column*,
 	// compute their verical/horizontal coordinates and assign to their elements.
-	updateFgSegCoords: function(segs) {
+	updateFgSegCoords(segs) {
 		this.timeGrid.computeSegVerticals(segs); // horizontals relies on this
 		this.computeFgSegHorizontals(segs); // compute horizontal coordinates, z-index's, and reorder the array
 		this.timeGrid.assignSegVerticals(segs);
 		this.assignFgSegHorizontals(segs);
-	},
+	}
 
 
 	// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
 	// NOTE: Also reorders the given array by date!
-	computeFgSegHorizontals: function(segs) {
+	computeFgSegHorizontals(segs) {
 		var levels;
 		var level0;
 		var i;
@@ -168,7 +169,7 @@ var TimeGridEventRenderer = EventRenderer.extend({
 				this.computeFgSegForwardBack(level0[i], 0, 0);
 			}
 		}
-	},
+	}
 
 
 	// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
@@ -179,7 +180,7 @@ var TimeGridEventRenderer = EventRenderer.extend({
 	// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
 	// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
 	// coordinate of the first segment in the series.
-	computeFgSegForwardBack: function(seg, seriesBackwardPressure, seriesBackwardCoord) {
+	computeFgSegForwardBack(seg, seriesBackwardPressure, seriesBackwardCoord) {
 		var forwardSegs = seg.forwardSegs;
 		var i;
 
@@ -212,28 +213,28 @@ var TimeGridEventRenderer = EventRenderer.extend({
 				this.computeFgSegForwardBack(forwardSegs[i], 0, seg.forwardCoord);
 			}
 		}
-	},
+	}
 
 
-	sortForwardSegs: function(forwardSegs) {
+	sortForwardSegs(forwardSegs) {
 		forwardSegs.sort(proxy(this, 'compareForwardSegs'));
-	},
+	}
 
 
 	// A cmp function for determining which forward segment to rely on more when computing coordinates.
-	compareForwardSegs: function(seg1, seg2) {
+	compareForwardSegs(seg1, seg2) {
 		// put higher-pressure first
 		return seg2.forwardPressure - seg1.forwardPressure ||
 			// put segments that are closer to initial edge first (and favor ones with no coords yet)
 			(seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
 			// do normal sorting...
 			this.compareEventSegs(seg1, seg2);
-	},
+	}
 
 
 	// Given foreground event segments that have already had their position coordinates computed,
 	// assigns position-related CSS values to their elements.
-	assignFgSegHorizontals: function(segs) {
+	assignFgSegHorizontals(segs) {
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
@@ -245,16 +246,17 @@ var TimeGridEventRenderer = EventRenderer.extend({
 				seg.el.addClass('fc-short');
 			}
 		}
-	},
+	}
 
 
 	// Generates an object with CSS properties/values that should be applied to an event segment element.
 	// Contains important positioning-related properties that should be applied to any event element, customized or not.
-	generateFgSegHorizontalCss: function(seg) {
+	generateFgSegHorizontalCss(seg) {
 		var shouldOverlap = this.opt('slotEventOverlap');
 		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
 		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
 		var props = this.timeGrid.generateSegVerticalCss(seg); // get top/bottom first
+		var isRTL = this.timeGrid.isRTL;
 		var left; // amount of space from left edge, a fraction of the total width
 		var right; // amount of space from right edge, a fraction of the total width
 
@@ -263,7 +265,7 @@ var TimeGridEventRenderer = EventRenderer.extend({
 			forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2);
 		}
 
-		if (this.timeGrid.isRTL) {
+		if (isRTL) {
 			left = 1 - forwardCoord;
 			right = backwardCoord;
 		}
@@ -278,13 +280,13 @@ var TimeGridEventRenderer = EventRenderer.extend({
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
-			props[this.isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
+			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
 		}
 
 		return props;
 	}
 
-});
+}
 
 
 // Builds an array of segments "levels". The first level will be the leftmost tier of segments if the calendar is
@@ -365,8 +367,7 @@ function computeSlotSegPressures(seg) {
 
 // Find all the segments in `otherSegs` that vertically collide with `seg`.
 // Append into an optionally-supplied `results` array and return.
-function computeSlotSegCollisions(seg, otherSegs, results) {
-	results = results || [];
+function computeSlotSegCollisions(seg, otherSegs, results=[]) {
 
 	for (var i=0; i<otherSegs.length; i++) {
 		if (isSlotSegCollision(seg, otherSegs[i])) {

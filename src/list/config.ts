@@ -1,5 +1,9 @@
+import namespaceHooks from '../namespace-hooks'
+import ListView from './ListView'
 
-fcViews.list = {
+const views = namespaceHooks.views as any
+
+views.list = {
 	'class': ListView,
 	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
@@ -9,7 +13,7 @@ fcViews.list = {
 	}
 };
 
-fcViews.listDay = {
+views.listDay = {
 	type: 'list',
 	duration: { days: 1 },
 	defaults: {
@@ -17,7 +21,7 @@ fcViews.listDay = {
 	}
 };
 
-fcViews.listWeek = {
+views.listWeek = {
 	type: 'list',
 	duration: { weeks: 1 },
 	defaults: {
@@ -26,7 +30,7 @@ fcViews.listWeek = {
 	}
 };
 
-fcViews.listMonth = {
+views.listMonth = {
 	type: 'list',
 	duration: { month: 1 },
 	defaults: {
@@ -34,7 +38,7 @@ fcViews.listMonth = {
 	}
 };
 
-fcViews.listYear = {
+views.listYear = {
 	type: 'list',
 	duration: { year: 1 },
 	defaults: {

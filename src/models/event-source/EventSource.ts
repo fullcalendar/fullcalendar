@@ -1,58 +1,71 @@
+import {
+	default as ParsableModelMixin,
+	ParsableModelInterface
+} from '../../common/ParsableModelMixin'
+import Class from '../../common/Class'
+import EventDefParser from '../event/EventDefParser'
 
-var EventSource = Class.extend(ParsableModelMixin, {
 
-	calendar: null,
+export default class EventSource extends Class {
 
-	id: null, // can stay null
-	uid: null,
-	color: null,
-	backgroundColor: null,
-	borderColor: null,
-	textColor: null,
-	className: null, // array
-	editable: null,
-	startEditable: null,
-	durationEditable: null,
-	rendering: null,
-	overlap: null,
-	constraint: null,
-	allDayDefault: null,
-	eventDataTransform: null, // optional function
+	applyProps: ParsableModelInterface['applyProps']
+	isStandardProp: ParsableModelInterface['isStandardProp']
+	static defineStandardProps = ParsableModelMixin.defineStandardProps
+	static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+
+	calendar: any
+
+	id: any // can stay null
+	uid: any
+	color: any
+	backgroundColor: any
+	borderColor: any
+	textColor: any
+	className: any // array
+	editable: any
+	startEditable: any
+	durationEditable: any
+	rendering: any
+	overlap: any
+	constraint: any
+	allDayDefault: any
+	eventDataTransform: any // optional function
 
 
 	// can we do away with calendar? at least for the abstract?
 	// useful for buildEventDef
-	constructor: function(calendar) {
+	constructor(calendar) {
+		super();
 		this.calendar = calendar;
 		this.className = [];
 		this.uid = String(EventSource.uuid++);
-	},
+	}
 
 
-	fetch: function(start, end, timezone) {
+	fetch(start, end, timezone) {
 		// subclasses must implement. must return a promise.
-	},
+	}
 
 
-	removeEventDefsById: function(eventDefId) {
+	removeEventDefsById(eventDefId) {
 		// optional for subclasses to implement
-	},
+	}
 
 
-	removeAllEventDefs: function() {
+	removeAllEventDefs() {
 		// optional for subclasses to implement
-	},
+	}
 
 
 	/*
 	For compairing/matching
 	*/
-	getPrimitive: function(otherSource) {
+	getPrimitive(otherSource) {
 		// subclasses must implement
-	},
+	}
 
 
-	parseEventDefs: function(rawEventDefs) {
+	parseEventDefs(rawEventDefs) {
 		var i;
 		var eventDef;
 		var eventDefs = [];
@@ -66,10 +79,10 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		}
 
 		return eventDefs;
-	},
+	}
 
 
-	parseEventDef: function(rawInput) {
+	parseEventDef(rawInput) {
 		var calendarTransform = this.calendar.opt('eventDataTransform');
 		var sourceTransform = this.eventDataTransform;
 
@@ -81,10 +94,10 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		}
 
 		return EventDefParser.parse(rawInput, this);
-	},
+	}
 
 
-	applyManualStandardProps: function(rawProps) {
+	applyManualStandardProps(rawProps) {
 
 		if (rawProps.id != null) {
 			this.id = EventSource.normalizeId(rawProps.id);
@@ -101,28 +114,41 @@ var EventSource = Class.extend(ParsableModelMixin, {
 		return true;
 	}
 
-});
 
+	/*
+	rawInput can be any data type!
+	*/
+	static parse(rawInput, calendar) {
+		var source = new this(calendar);
 
-// finish initializing the mixin
-EventSource.defineStandardProps = ParsableModelMixin_defineStandardProps;
+		if (typeof rawInput === 'object') {
+			if (source.applyProps(rawInput)) {
+				return source;
+			}
+		}
 
-
-// IDs
-// ---------------------------------------------------------------------------------------------------------------------
-// TODO: converge with EventDef
-
-
-EventSource.uuid = 0;
-
-
-EventSource.normalizeId = function(id) {
-	if (id) {
-		return String(id);
+		return false;
 	}
 
-	return null;
-};
+
+	// IDs
+	// -----------------------------------------------------------------------------------------------------------------
+	// TODO: converge with EventDef
+
+	static uuid: number = 0
+
+	static normalizeId(id) {
+		if (id) {
+			return String(id);
+		}
+
+		return null;
+	}
+
+}
+
+
+ParsableModelMixin.mixInto(EventSource)
 
 
 // Parsing
@@ -148,22 +174,3 @@ EventSource.defineStandardProps({
 	allDayDefault: true,
 	eventDataTransform: true
 });
-
-
-/*
-rawInput can be any data type!
-*/
-EventSource.parse = function(rawInput, calendar) {
-	var source = new this(calendar);
-
-	if (typeof rawInput === 'object') {
-		if (source.applyProps(rawInput)) {
-			return source;
-		}
-	}
-
-	return false;
-};
-
-
-FC.EventSource = EventSource;

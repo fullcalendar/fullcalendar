@@ -1,35 +1,42 @@
+import * as moment from 'moment'
+import * as $ from 'jquery'
+import namespaceHooks from './namespace-hooks'
+import { mergeProps, unitsDesc, computeDurationGreatestUnit } from './util'
+import { mergeOptions, globalDefaults } from './options'
+import { populateInstanceComputableOptions } from './locale'
 
-var ViewSpecManager = Class.extend({
 
-	_calendar: null, // avoid
-	optionsManager: null,
-	viewSpecCache: null, // cache of view definitions (initialized in Calendar.js)
+export default class ViewSpecManager {
+
+	_calendar: any // avoid
+	optionsManager: any
+	viewSpecCache: any // cache of view definitions (initialized in Calendar.js)
 
 
-	constructor: function(optionsManager, _calendar) {
+	constructor(optionsManager, _calendar) {
 		this.optionsManager = optionsManager;
 		this._calendar = _calendar;
 
 		this.clearCache();
-	},
+	}
 
 
-	clearCache: function() {
+	clearCache() {
 		this.viewSpecCache = {};
-	},
+	}
 
 
 	// Gets information about how to create a view. Will use a cache.
-	getViewSpec: function(viewType) {
+	getViewSpec(viewType) {
 		var cache = this.viewSpecCache;
 
 		return cache[viewType] || (cache[viewType] = this.buildViewSpec(viewType));
-	},
+	}
 
 
 	// Given a duration singular unit, like "week" or "day", finds a matching view spec.
 	// Preference is given to views that have corresponding buttons.
-	getUnitViewSpec: function(unit) {
+	getUnitViewSpec(unit) {
 		var viewTypes;
 		var i;
 		var spec;
@@ -38,7 +45,7 @@ var ViewSpecManager = Class.extend({
 
 			// put views that have buttons first. there will be duplicates, but oh well
 			viewTypes = this._calendar.header.getViewsWithButtons(); // TODO: include footer as well?
-			$.each(FC.views, function(viewType) { // all views
+			$.each(namespaceHooks.views, function(viewType) { // all views
 				viewTypes.push(viewType);
 			});
 
@@ -51,11 +58,11 @@ var ViewSpecManager = Class.extend({
 				}
 			}
 		}
-	},
+	}
 
 
 	// Builds an object with information on how to create a given view
-	buildViewSpec: function(requestedViewType) {
+	buildViewSpec(requestedViewType) {
 		var viewOverrides = this.optionsManager.overrides.views || {};
 		var specChain = []; // for the view. lowest to highest priority
 		var defaultsChain = []; // for the view. lowest to highest priority
@@ -69,7 +76,7 @@ var ViewSpecManager = Class.extend({
 
 		// iterate from the specific view definition to a more general one until we hit an actual View class
 		while (viewType) {
-			spec = fcViews[viewType];
+			spec = namespaceHooks.views[viewType];
 			overrides = viewOverrides[viewType];
 			viewType = null; // clear. might repopulate for another iteration
 
@@ -128,15 +135,15 @@ var ViewSpecManager = Class.extend({
 		this.buildViewSpecButtonText(spec, requestedViewType);
 
 		return spec;
-	},
+	}
 
 
 	// Builds and assigns a view spec's options object from its already-assigned defaults and overrides
-	buildViewSpecOptions: function(spec) {
+	buildViewSpecOptions(spec) {
 		var optionsManager = this.optionsManager;
 
 		spec.options = mergeOptions([ // lowest to highest priority
-			Calendar.defaults, // global defaults
+			globalDefaults,
 			spec.defaults, // view's defaults (from ViewSubclass.defaults)
 			optionsManager.dirDefaults,
 			optionsManager.localeDefaults, // locale and dir take precedence over view's defaults!
@@ -145,11 +152,11 @@ var ViewSpecManager = Class.extend({
 			optionsManager.dynamicOverrides // dynamically set via setter. highest precedence
 		]);
 		populateInstanceComputableOptions(spec.options);
-	},
+	}
 
 
 	// Computes and assigns a view spec's buttonText-related options
-	buildViewSpecButtonText: function(spec, requestedViewType) {
+	buildViewSpecButtonText(spec, requestedViewType) {
 		var optionsManager = this.optionsManager;
 
 		// given an options object with a possible `buttonText` hash, lookup the buttonText for the
@@ -174,9 +181,9 @@ var ViewSpecManager = Class.extend({
 			queryButtonText(optionsManager.localeDefaults) ||
 			queryButtonText(optionsManager.dirDefaults) ||
 			spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
-			queryButtonText(Calendar.defaults) ||
+			queryButtonText(globalDefaults) ||
 			(spec.duration ? this._calendar.humanizeDuration(spec.duration) : null) || // like "3 days"
 			requestedViewType; // fall back to given view name
 	}
 
-});
+}

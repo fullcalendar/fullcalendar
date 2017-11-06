@@ -1,49 +1,55 @@
+import {
+	default as ParsableModelMixin,
+	ParsableModelInterface
+} from '../../common/ParsableModelMixin'
 
-var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 
-	source: null, // required
+export default abstract class EventDef {
 
-	id: null, // normalized supplied ID
-	rawId: null, // unnormalized supplied ID
-	uid: null, // internal ID. new ID for every definition
+	applyProps: ParsableModelInterface['applyProps']
+	isStandardProp: ParsableModelInterface['isStandardProp']
+	static defineStandardProps = ParsableModelMixin.defineStandardProps
+	static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+
+	source: any // required
+
+	id: any // normalized supplied ID
+	rawId: any // unnormalized supplied ID
+	uid: any // internal ID. new ID for every definition
 
 	// NOTE: eventOrder sorting relies on these
-	title: null,
-	url: null,
-	rendering: null,
-	constraint: null,
-	overlap: null,
-	editable: null,
-	startEditable: null,
-	durationEditable: null,
-	color: null,
-	backgroundColor: null,
-	borderColor: null,
-	textColor: null,
+	title: any
+	url: any
+	rendering: any
+	constraint: any
+	overlap: any
+	editable: any
+	startEditable: any
+	durationEditable: any
+	color: any
+	backgroundColor: any
+	borderColor: any
+	textColor: any
 
-	className: null, // an array. TODO: rename to className*s* (API breakage)
-	miscProps: null,
+	className: any // an array. TODO: rename to className*s* (API breakage)
+	miscProps: any
 
 
-	constructor: function(source) {
+	constructor(source) {
 		this.source = source;
 		this.className = [];
 		this.miscProps = {};
-	},
+	}
 
 
-	isAllDay: function() {
-		// subclasses must implement
-	},
+	abstract isAllDay() // subclasses must implement
 
 
-	buildInstances: function(unzonedRange) {
-		// subclasses must implement
-	},
+	abstract buildInstances(unzonedRange) // subclasses must implement
 
 
-	clone: function() {
-		var copy = new this.constructor(this.source);
+	clone() {
+		var copy = new (this.constructor as any)(this.source);
 
 		copy.id = this.id;
 		copy.rawId = this.rawId;
@@ -55,31 +61,31 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 		copy.miscProps = $.extend({}, this.miscProps);
 
 		return copy;
-	},
+	}
 
 
-	hasInverseRendering: function() {
+	hasInverseRendering() {
 		return this.getRendering() === 'inverse-background';
-	},
+	}
 
 
-	hasBgRendering: function() {
+	hasBgRendering() {
 		var rendering = this.getRendering();
 
 		return rendering === 'inverse-background' || rendering === 'background';
-	},
+	}
 
 
-	getRendering: function() {
+	getRendering() {
 		if (this.rendering != null) {
 			return this.rendering;
 		}
 
 		return this.source.rendering;
-	},
+	}
 
 
-	getConstraint: function() {
+	getConstraint() {
 		if (this.constraint != null) {
 			return this.constraint;
 		}
@@ -89,10 +95,10 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 		}
 
 		return this.source.calendar.opt('eventConstraint'); // what about View option?
-	},
+	}
 
 
-	getOverlap: function() {
+	getOverlap() {
 		if (this.overlap != null) {
 			return this.overlap;
 		}
@@ -102,37 +108,37 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 		}
 
 		return this.source.calendar.opt('eventOverlap'); // what about View option?
-	},
+	}
 
 
-	isStartExplicitlyEditable: function() {
-		if (this.startEditable !== null) {
+	isStartExplicitlyEditable() {
+		if (this.startEditable != null) {
 			return this.startEditable;
 		}
 
 		return this.source.startEditable;
-	},
+	}
 
 
-	isDurationExplicitlyEditable: function() {
-		if (this.durationEditable !== null) {
+	isDurationExplicitlyEditable() {
+		if (this.durationEditable != null) {
 			return this.durationEditable;
 		}
 
 		return this.source.durationEditable;
-	},
+	}
 
 
-	isExplicitlyEditable: function() {
-		if (this.editable !== null) {
+	isExplicitlyEditable() {
+		if (this.editable != null) {
 			return this.editable;
 		}
 
 		return this.source.editable;
-	},
+	}
 
 
-	toLegacy: function() {
+	toLegacy() {
 		var obj = $.extend({}, this.miscProps);
 
 		obj._id = this.uid;
@@ -147,10 +153,10 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 		EventDef.copyVerbatimStandardProps(this, obj);
 
 		return obj;
-	},
+	}
 
 
-	applyManualStandardProps: function(rawProps) {
+	applyManualStandardProps(rawProps) {
 
 		if (rawProps.id != null) {
 			this.id = EventDef.normalizeId((this.rawId = rawProps.id));
@@ -175,36 +181,46 @@ var EventDef = FC.EventDef = Class.extend(ParsableModelMixin, {
 		}
 
 		return true;
-	},
+	}
 
 
-	applyMiscProps: function(rawProps) {
+	applyMiscProps(rawProps) {
 		$.extend(this.miscProps, rawProps);
 	}
 
-});
 
-// finish initializing the mixin
-EventDef.defineStandardProps = ParsableModelMixin_defineStandardProps;
-EventDef.copyVerbatimStandardProps = ParsableModelMixin_copyVerbatimStandardProps;
-
-
-// IDs
-// ---------------------------------------------------------------------------------------------------------------------
-// TODO: converge with EventSource
-
-
-EventDef.uuid = 0;
+	static parse(rawInput, source) {
+		var def = new (this as any)(source);
+	
+		if (def.applyProps(rawInput)) {
+			return def;
+		}
+	
+		return false;
+	}
 
 
-EventDef.normalizeId = function(id) {
-	return String(id);
-};
+	// IDs
+	// ---------------------------------------------------------------------------------------------------------------------
+	// TODO: converge with EventSource
 
 
-EventDef.generateId = function() {
-	return '_fc' + (EventDef.uuid++);
-};
+	static uuid: number = 0
+
+
+	static normalizeId(id) {
+		return String(id);
+	}
+
+
+	static generateId() {
+		return '_fc' + (EventDef.uuid++);
+	}
+
+}
+
+
+ParsableModelMixin.mixInto(EventDef)
 
 
 // Parsing
@@ -232,14 +248,3 @@ EventDef.defineStandardProps({
 	borderColor: true,
 	textColor: true
 });
-
-
-EventDef.parse = function(rawInput, source) {
-	var def = new this(source);
-
-	if (def.applyProps(rawInput)) {
-		return def;
-	}
-
-	return false;
-};

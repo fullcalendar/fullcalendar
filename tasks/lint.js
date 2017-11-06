@@ -16,7 +16,6 @@ jshintBuilt.lookup = false;
 gulp.task('lint', [
 	'jshint:base',
 	'jshint:browser',
-	'jshint:built',
 	'jscs:strict',
 	'jscs:relaxed'
 ]);
@@ -24,7 +23,6 @@ gulp.task('lint', [
 // for non-browser JS
 gulp.task('jshint:base', function() {
 	return gulp.src([
-			'*.js', // like gulpfile and root configs
 			'tasks/*.js',
 			'tests/automated/*.js',
 			'tests/automated-better/*.js'
@@ -43,18 +41,6 @@ gulp.task('jshint:browser', function() {
 			'locale/*.js',
 		])
 		.pipe(jshint(jshintBrowser))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
-});
-
-// for browser JS, after concat
-gulp.task('jshint:built', [ 'modules', 'locale:all' ], function() {
-	return gulp.src([
-			'dist/*.js',
-			'!dist/*.min.js', // exclude
-			'!dist/locale-all.js' // "
-		])
-		.pipe(jshint(jshintBuilt))
 		.pipe(jshint.reporter('default'))
 		.pipe(jshint.reporter('fail'));
 });

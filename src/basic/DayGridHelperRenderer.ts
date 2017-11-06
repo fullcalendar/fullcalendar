@@ -1,9 +1,11 @@
+import * as $ from 'jquery'
+import HelperRenderer from '../component/renderers/HelperRenderer'
 
-var DayGridHelperRenderer = HelperRenderer.extend({
 
+export default class DayGridHelperRenderer extends HelperRenderer {
 
 	// Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-	renderSegs: function(segs, sourceSeg) {
+	renderSegs(segs, sourceSeg) {
 		var helperNodes = [];
 		var rowStructs;
 
@@ -41,4 +43,4 @@ var DayGridHelperRenderer = HelperRenderer.extend({
 		return $(helperNodes); // must return the elements rendered
 	}
 
-});
+}

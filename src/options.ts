@@ -1,5 +1,7 @@
+import { mergeProps } from './util'
 
-Calendar.defaults = {
+
+export const globalDefaults = {
 
 	titleRangeSeparator: ' \u2013 ', // en dash
 	monthYearFormat: 'MMMM YYYY', // required for en. other locales rely on datepicker computable option
@@ -44,6 +46,7 @@ Calendar.defaults = {
 	//allDayDefault: undefined,
 
 	// locale
+	locale: null,
 	isRTL: false,
 	buttonText: {
 		prev: "prev",
@@ -94,12 +97,12 @@ Calendar.defaults = {
 };
 
 
-Calendar.englishDefaults = { // used by locale.js
+export const englishDefaults = { // used by locale.js
 	dayPopoverFormat: 'dddd, MMMM D'
 };
 
 
-Calendar.rtlDefaults = { // right-to-left defaults
+export const rtlDefaults = { // right-to-left defaults
 	header: { // TODO: smarter solution (first/center/last ?)
 		left: 'next,prev today',
 		center: '',
@@ -118,3 +121,18 @@ Calendar.rtlDefaults = { // right-to-left defaults
 		prevYear: 'seek-next'
 	}
 };
+
+
+var complexOptions = [ // names of options that are objects whose properties should be combined
+	'header',
+	'footer',
+	'buttonText',
+	'buttonIcons',
+	'themeButtonIcons'
+];
+
+
+// Merges an array of option objects into a single object
+export function mergeOptions(optionObjs) {
+	return mergeProps(optionObjs, complexOptions);
+}

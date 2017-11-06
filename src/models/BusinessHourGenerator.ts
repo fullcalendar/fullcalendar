@@ -1,3 +1,8 @@
+import { eventDefsToEventInstances } from '../models/event/util'
+import EventInstanceGroup from './event/EventInstanceGroup'
+import RecurringEventDef from './event/RecurringEventDef'
+import EventSource from './event-source/EventSource'
+
 
 var BUSINESS_HOUR_EVENT_DEFAULTS = {
 	start: '09:00',
@@ -8,19 +13,19 @@ var BUSINESS_HOUR_EVENT_DEFAULTS = {
 };
 
 
-var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
+export default class BusinessHourGenerator {
 
-	rawComplexDef: null,
-	calendar: null, // for anonymous EventSource
+	rawComplexDef: any
+	calendar: any // for anonymous EventSource
 
 
-	constructor: function(rawComplexDef, calendar) {
+	constructor(rawComplexDef, calendar) {
 		this.rawComplexDef = rawComplexDef;
 		this.calendar = calendar;
-	},
+	}
 
 
-	buildEventInstanceGroup: function(isAllDay, unzonedRange) {
+	buildEventInstanceGroup(isAllDay, unzonedRange) {
 		var eventDefs = this.buildEventDefs(isAllDay);
 		var eventInstanceGroup;
 
@@ -34,10 +39,10 @@ var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
 
 			return eventInstanceGroup;
 		}
-	},
+	}
 
 
-	buildEventDefs: function(isAllDay) {
+	buildEventDefs(isAllDay) {
 		var rawComplexDef = this.rawComplexDef;
 		var rawDefs = [];
 		var requireDow = false;
@@ -64,10 +69,10 @@ var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
 		}
 
 		return defs;
-	},
+	}
 
 
-	buildEventDef: function(isAllDay, rawDef) {
+	buildEventDef(isAllDay, rawDef) {
 		var fullRawDef = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDef);
 
 		if (isAllDay) {
@@ -81,4 +86,4 @@ var BusinessHourGenerator = FC.BusinessHourGenerator = Class.extend({
 		);
 	}
 
-});
+}

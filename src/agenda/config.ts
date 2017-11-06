@@ -1,17 +1,9 @@
+import namespaceHooks from '../namespace-hooks'
+import AgendaView from './AgendaView'
 
-var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
+const views = namespaceHooks.views as any
 
-// potential nice values for the slot-duration and interval-duration
-// from largest to smallest
-var AGENDA_STOCK_SUB_DURATIONS = [
-	{ hours: 1 },
-	{ minutes: 30 },
-	{ minutes: 15 },
-	{ seconds: 30 },
-	{ seconds: 15 }
-];
-
-fcViews.agenda = {
+views.agenda = {
 	'class': AgendaView,
 	defaults: {
 		allDaySlot: true,
@@ -20,12 +12,12 @@ fcViews.agenda = {
 	}
 };
 
-fcViews.agendaDay = {
+views.agendaDay = {
 	type: 'agenda',
 	duration: { days: 1 }
 };
 
-fcViews.agendaWeek = {
+views.agendaWeek = {
 	type: 'agenda',
 	duration: { weeks: 1 }
 };

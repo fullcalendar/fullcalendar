@@ -1,5 +1,10 @@
+import * as moment from 'moment'
+import { isTimeString } from '../../util'
+import SingleEventDef from './SingleEventDef'
+import RecurringEventDef from './RecurringEventDef'
 
-var EventDefParser = {
+
+export default {
 
 	parse: function(eventInput, source) {
 		if (
@@ -13,4 +18,4 @@ var EventDefParser = {
 		}
 	}
 
-};
+}

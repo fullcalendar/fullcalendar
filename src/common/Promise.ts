@@ -1,5 +1,5 @@
 
-var Promise = {
+const PromiseStub = {
 
 	construct: function(executor) {
 		var deferred = $.Deferred();
@@ -39,13 +39,15 @@ var Promise = {
 		return promise;
 	}
 
-};
+}
+
+export default PromiseStub
 
 
 function attachImmediatelyResolvingThen(promise, val) {
 	promise.then = function(onResolve) {
 		if (typeof onResolve === 'function') {
-			return Promise.resolve(onResolve(val));
+			return PromiseStub.resolve(onResolve(val));
 		}
 		return promise;
 	};
@@ -60,6 +62,3 @@ function attachImmediatelyRejectingThen(promise) {
 		return promise;
 	};
 }
-
-
-FC.Promise = Promise;

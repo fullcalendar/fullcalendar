@@ -1,26 +1,36 @@
+import UnzonedRange from './models/UnzonedRange'
+import ComponentFootprint from './models/ComponentFootprint'
+import EventDefParser from './models/event/EventDefParser'
+import EventSource from './models/event-source/EventSource'
+import {
+	eventInstanceToEventRange,
+	eventFootprintToComponentFootprint,
+	eventRangeToEventFootprint
+} from './models/event/util'
 
-var Constraints = FC.Constraints = Class.extend({
 
-	eventManager: null,
-	_calendar: null, // discourage
+export default class Constraints {
+
+	eventManager: any
+	_calendar: any // discourage
 
 
-	constructor: function(eventManager, _calendar) {
+	constructor(eventManager, _calendar) {
 		this.eventManager = eventManager;
 		this._calendar = _calendar;
-	},
+	}
 
 
-	opt: function(name) {
+	opt(name) {
 		return this._calendar.opt(name);
-	},
+	}
 
 
 	/*
 	determines if eventInstanceGroup is allowed,
 	in relation to other EVENTS and business hours.
 	*/
-	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
+	isEventInstanceGroupAllowed(eventInstanceGroup) {
 		var eventDef = eventInstanceGroup.getEventDef();
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
 		var i;
@@ -62,15 +72,15 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return true;
-	},
+	}
 
 
-	getPeerEventInstances: function(eventDef) {
+	getPeerEventInstances(eventDef) {
 		return this.eventManager.getEventInstancesWithoutId(eventDef.id);
-	},
+	}
 
 
-	isSelectionFootprintAllowed: function(componentFootprint) {
+	isSelectionFootprintAllowed(componentFootprint) {
 		var peerEventInstances = this.eventManager.getEventInstances();
 		var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
 		var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
@@ -96,15 +106,15 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return false;
-	},
+	}
 
 
-	isFootprintAllowed: function(
+	isFootprintAllowed(
 		componentFootprint,
 		peerEventFootprints,
 		constraintVal,
 		overlapVal,
-		subjectEventInstance // optional
+		subjectEventInstance? // optional
 	) {
 		var constraintFootprints; // ComponentFootprint[]
 		var overlapEventFootprints; // EventFootprint[]
@@ -137,14 +147,14 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return true;
-	},
+	}
 
 
 	// Constraint
 	// ------------------------------------------------------------------------------------------------
 
 
-	isFootprintWithinConstraints: function(componentFootprint, constraintFootprints) {
+	isFootprintWithinConstraints(componentFootprint, constraintFootprints) {
 		var i;
 
 		for (i = 0; i < constraintFootprints.length; i++) {
@@ -154,10 +164,10 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return false;
-	},
+	}
 
 
-	constraintValToFootprints: function(constraintVal, isAllDay) {
+	constraintValToFootprints(constraintVal, isAllDay) {
 		var eventInstances;
 
 		if (constraintVal === 'businessHours') {
@@ -178,12 +188,12 @@ var Constraints = FC.Constraints = Class.extend({
 
 			return this.eventInstancesToFootprints(eventInstances);
 		}
-	},
+	}
 
 
 	// returns ComponentFootprint[]
 	// uses current view's range
-	buildCurrentBusinessFootprints: function(isAllDay) {
+	buildCurrentBusinessFootprints(isAllDay) {
 		var view = this._calendar.view;
 		var businessHourGenerator = view.get('businessHourGenerator');
 		var unzonedRange = view.dateProfile.activeUnzonedRange;
@@ -195,23 +205,23 @@ var Constraints = FC.Constraints = Class.extend({
 		else {
 			return [];
 		}
-	},
+	}
 
 
 	// conversion util
-	eventInstancesToFootprints: function(eventInstances) {
+	eventInstancesToFootprints(eventInstances) {
 		var eventRanges = eventInstances.map(eventInstanceToEventRange);
 		var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
 
 		return eventFootprints.map(eventFootprintToComponentFootprint);
-	},
+	}
 
 
 	// Overlap
 	// ------------------------------------------------------------------------------------------------
 
 
-	collectOverlapEventFootprints: function(peerEventFootprints, targetFootprint) {
+	collectOverlapEventFootprints(peerEventFootprints, targetFootprint) {
 		var overlapEventFootprints = [];
 		var i;
 
@@ -227,7 +237,7 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return overlapEventFootprints;
-	},
+	}
 
 
 	// Conversion: eventDefs -> eventInstances -> eventRanges -> eventFootprints -> componentFootprints
@@ -241,7 +251,7 @@ var Constraints = FC.Constraints = Class.extend({
 	/*
 	Returns false on invalid input.
 	*/
-	parseEventDefToInstances: function(eventInput) {
+	parseEventDefToInstances(eventInput) {
 		var eventManager = this.eventManager;
 		var eventDef = EventDefParser.parse(eventInput, new EventSource(this._calendar));
 
@@ -250,10 +260,10 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return eventDef.buildInstances(eventManager.currentPeriod.unzonedRange);
-	},
+	}
 
 
-	eventRangesToEventFootprints: function(eventRanges) {
+	eventRangesToEventFootprints(eventRanges) {
 		var i;
 		var eventFootprints = [];
 
@@ -265,19 +275,19 @@ var Constraints = FC.Constraints = Class.extend({
 		}
 
 		return eventFootprints;
-	},
+	}
 
 
-	eventRangeToEventFootprints: function(eventRange) {
+	eventRangeToEventFootprints(eventRange) {
 		return [ eventRangeToEventFootprint(eventRange) ];
-	},
+	}
 
 
 	/*
 	Parses footprints directly.
 	Very similar to EventDateProfile::parse :(
 	*/
-	parseFootprints: function(rawInput) {
+	parseFootprints(rawInput) {
 		var start, end;
 
 		if (rawInput.start) {
@@ -302,24 +312,24 @@ var Constraints = FC.Constraints = Class.extend({
 				(start && !start.hasTime()) || (end && !end.hasTime()) // isAllDay
 			)
 		];
-	},
+	}
 
 
 	// Footprint Utils
 	// ----------------------------------------------------------------------------------------
 
 
-	footprintContainsFootprint: function(outerFootprint, innerFootprint) {
+	footprintContainsFootprint(outerFootprint, innerFootprint) {
 		return outerFootprint.unzonedRange.containsRange(innerFootprint.unzonedRange);
-	},
+	}
 
 
-	footprintsIntersect: function(footprint0, footprint1) {
+	footprintsIntersect(footprint0, footprint1) {
 		return footprint0.unzonedRange.intersectsWith(footprint1.unzonedRange);
 	}
 
 
-});
+}
 
 
 // optional subjectEventInstance

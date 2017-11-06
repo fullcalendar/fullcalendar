@@ -1,17 +1,17 @@
 
-var EventInstance = Class.extend({
+export default class EventInstance {
 
-	def: null, // EventDef
-	dateProfile: null, // EventDateProfile
+	def: any // EventDef
+	dateProfile: any // EventDateProfile
 
 
-	constructor: function(def, dateProfile) {
+	constructor(def, dateProfile) {
 		this.def = def;
 		this.dateProfile = dateProfile;
-	},
+	}
 
 
-	toLegacy: function() {
+	toLegacy() {
 		var dateProfile = this.dateProfile;
 		var obj = this.def.toLegacy();
 
@@ -21,4 +21,4 @@ var EventInstance = Class.extend({
 		return obj;
 	}
 
-});
+}

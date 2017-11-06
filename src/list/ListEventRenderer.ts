@@ -1,17 +1,19 @@
+import { htmlEscape } from '../util'
+import EventRenderer from '../component/renderers/EventRenderer'
 
-var ListEventRenderer = EventRenderer.extend({
+export default class ListEventRenderer extends EventRenderer {
 
-    renderFgSegs: function(segs) {
+    renderFgSegs(segs) {
         if (!segs.length) {
             this.component.renderEmptyMessage();
         }
         else {
             this.component.renderSegList(segs);
         }
-    },
+    }
 
     // generates the HTML for a single event row
-    fgSegHtml: function(seg) {
+    fgSegHtml(seg) {
         var view = this.view;
         var calendar = view.calendar;
         var theme = calendar.theme;
@@ -67,12 +69,12 @@ var ListEventRenderer = EventRenderer.extend({
                 '</a>' +
             '</td>' +
         '</tr>';
-    },
+    }
 
 
     // like "4:00am"
-    computeEventTimeFormat: function() {
+    computeEventTimeFormat() {
         return this.opt('mediumTimeFormat');
     }
 
-});
+}

@@ -1,7 +1,10 @@
+import GlobalEmitter from '../../common/GlobalEmitter'
+import Interaction from './Interaction'
 
-var EventPointing = FC.EventPointing = Interaction.extend({
 
-	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
+export default class EventPointing extends Interaction {
+
+	mousedOverSeg: any // the segment object the user's mouse is over. null if over nothing
 
 
 	/*
@@ -10,16 +13,16 @@ var EventPointing = FC.EventPointing = Interaction.extend({
 	*/
 
 
-	bindToEl: function(el) {
+	bindToEl(el) {
 		var component = this.component;
 
 		component.bindSegHandlerToEl(el, 'click', this.handleClick.bind(this));
 		component.bindSegHandlerToEl(el, 'mouseenter', this.handleMouseover.bind(this));
 		component.bindSegHandlerToEl(el, 'mouseleave', this.handleMouseout.bind(this));
-	},
+	}
 
 
-	handleClick: function(seg, ev) {
+	handleClick(seg, ev) {
 		var res = this.component.publiclyTrigger('eventClick', { // can return `false` to cancel
 			context: seg.el[0],
 			args: [ seg.footprint.getEventLegacy(), ev, this.view ]
@@ -28,11 +31,11 @@ var EventPointing = FC.EventPointing = Interaction.extend({
 		if (res === false) {
 			ev.preventDefault();
 		}
-	},
+	}
 
 
 	// Updates internal state and triggers handlers for when an event element is moused over
-	handleMouseover: function(seg, ev) {
+	handleMouseover(seg, ev) {
 		if (
 			!GlobalEmitter.get().shouldIgnoreMouse() &&
 			!this.mousedOverSeg
@@ -49,12 +52,12 @@ var EventPointing = FC.EventPointing = Interaction.extend({
 				args: [ seg.footprint.getEventLegacy(), ev, this.view ]
 			});
 		}
-	},
+	}
 
 
 	// Updates internal state and triggers handlers for when an event element is moused out.
 	// Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
-	handleMouseout: function(seg, ev) {
+	handleMouseout(seg, ev?) {
 		if (this.mousedOverSeg) {
 			this.mousedOverSeg = null;
 
@@ -72,13 +75,13 @@ var EventPointing = FC.EventPointing = Interaction.extend({
 				]
 			});
 		}
-	},
+	}
 
 
-	end: function() {
+	end() {
 		if (this.mousedOverSeg) {
 			this.handleMouseout(this.mousedOverSeg);
 		}
 	}
 
-});
+}

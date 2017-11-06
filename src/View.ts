@@ -1,59 +1,66 @@
+import * as moment from 'moment'
+import { parseFieldSpecs, proxy, isPrimaryMouseButton } from './util'
+import RenderQueue from './common/RenderQueue'
+import DateProfileGenerator from './DateProfileGenerator'
+import InteractiveDateComponent from './component/InteractiveDateComponent'
+import GlobalEmitter from './common/GlobalEmitter'
+import UnzonedRange from './models/UnzonedRange'
+
 
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var View = FC.View = InteractiveDateComponent.extend({
+export default abstract class View extends InteractiveDateComponent {
 
-	type: null, // subclass' view name (string)
-	name: null, // deprecated. use `type` instead
-	title: null, // the text that will be displayed in the header's title
+	type: any // subclass' view name (string)
+	name: any // deprecated. use `type` instead
+	title: any // the text that will be displayed in the header's title
 
-	calendar: null, // owner Calendar object
-	viewSpec: null,
-	options: null, // hash containing all options. already merged with view-specific-options
+	calendar: any // owner Calendar object
+	viewSpec: any
+	options: any // hash containing all options. already merged with view-specific-options
 
-	renderQueue: null,
-	batchRenderDepth: 0,
-	queuedScroll: null,
+	renderQueue: any
+	batchRenderDepth: number = 0
+	queuedScroll: any
 
-	isSelected: false, // boolean whether a range of time is user-selected or not
-	selectedEventInstance: null,
+	isSelected: boolean = false // boolean whether a range of time is user-selected or not
+	selectedEventInstance: any
 
-	eventOrderSpecs: null, // criteria for ordering events when they have same date/time
+	eventOrderSpecs: any // criteria for ordering events when they have same date/time
 
 	// for date utils, computed from options
-	isHiddenDayHash: null,
+	isHiddenDayHash: any
 
 	// now indicator
-	isNowIndicatorRendered: null,
-	initialNowDate: null, // result first getNow call
-	initialNowQueriedMs: null, // ms time the getNow was called
-	nowIndicatorTimeoutID: null, // for refresh timing of now indicator
-	nowIndicatorIntervalID: null, // "
+	isNowIndicatorRendered: any
+	initialNowDate: any // result first getNow call
+	initialNowQueriedMs: any // ms time the getNow was called
+	nowIndicatorTimeoutID: any // for refresh timing of now indicator
+	nowIndicatorIntervalID: any // "
 
-	dateProfileGeneratorClass: DateProfileGenerator,
-	dateProfileGenerator: null,
-	usesMinMaxTime: false, // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
+	dateProfileGeneratorClass: any // initialized after class
+	dateProfileGenerator: any
+	usesMinMaxTime: boolean = false // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
 
 	// DEPRECATED
-	start: null, // use activeUnzonedRange
-	end: null, // use activeUnzonedRange
-	intervalStart: null, // use currentUnzonedRange
-	intervalEnd: null, // use currentUnzonedRange
+	start: any // use activeUnzonedRange
+	end: any // use activeUnzonedRange
+	intervalStart: any // use currentUnzonedRange
+	intervalEnd: any // use currentUnzonedRange
 
 
-	constructor: function(calendar, viewSpec) {
+	constructor(calendar, viewSpec) {
+		super(null, viewSpec.options);
+
 		this.calendar = calendar;
 		this.viewSpec = viewSpec;
 
 		// shortcuts
 		this.type = viewSpec.type;
-		this.options = viewSpec.options;
 
 		// .name is deprecated
 		this.name = this.type;
-
-		InteractiveDateComponent.call(this);
 
 		this.initRenderQueue();
 		this.initHiddenDays();
@@ -62,28 +69,28 @@ var View = FC.View = InteractiveDateComponent.extend({
 		this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
 
 		// legacy
-		if (this.initialize) {
-			this.initialize();
+		if (this['initialize']) {
+			this['initialize']();
 		}
-	},
+	}
 
 
-	_getView: function() {
+	_getView() {
 		return this;
-	},
+	}
 
 
 	// Retrieves an option with the given name
-	opt: function(name) {
+	opt(name) {
 		return this.options[name];
-	},
+	}
 
 
 	/* Render Queue
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	initRenderQueue: function() {
+	initRenderQueue() {
 		this.renderQueue = new RenderQueue({
 			event: this.opt('eventRenderWait')
 		});
@@ -93,51 +100,51 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 		this.on('before:change', this.startBatchRender);
 		this.on('change', this.stopBatchRender);
-	},
+	}
 
 
-	onRenderQueueStart: function() {
+	onRenderQueueStart() {
 		this.calendar.freezeContentHeight();
 		this.addScroll(this.queryScroll());
-	},
+	}
 
 
-	onRenderQueueStop: function() {
+	onRenderQueueStop() {
 		if (this.calendar.updateViewSize()) { // success?
 			this.popScroll();
 		}
 		this.calendar.thawContentHeight();
-	},
+	}
 
 
-	startBatchRender: function() {
+	startBatchRender() {
 		if (!(this.batchRenderDepth++)) {
 			this.renderQueue.pause();
 		}
-	},
+	}
 
 
-	stopBatchRender: function() {
+	stopBatchRender() {
 		if (!(--this.batchRenderDepth)) {
 			this.renderQueue.resume();
 		}
-	},
+	}
 
 
-	requestRender: function(func, namespace, actionType) {
+	requestRender(func, namespace, actionType) {
 		this.renderQueue.queue(func, namespace, actionType);
-	},
+	}
 
 
 	// given func will auto-bind to `this`
-	whenSizeUpdated: function(func) {
+	whenSizeUpdated(func) {
 		if (this.renderQueue.isRunning) {
 			this.renderQueue.one('stop', func.bind(this));
 		}
 		else {
 			func.call(this);
 		}
-	},
+	}
 
 
 	/* Title and Date Formatting
@@ -145,7 +152,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Computes what the title at the top of the calendar should be for this view
-	computeTitle: function(dateProfile) {
+	computeTitle(dateProfile) {
 		var unzonedRange;
 
 		// for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -165,12 +172,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
 			this.opt('titleRangeSeparator')
 		);
-	},
+	}
 
 
 	// Generates the format string that should be used to generate the title for the current date range.
 	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-	computeTitleFormat: function(dateProfile) {
+	computeTitleFormat(dateProfile) {
 		var currentRangeUnit = dateProfile.currentRangeUnit;
 
 		if (currentRangeUnit == 'year') {
@@ -185,16 +192,16 @@ var View = FC.View = InteractiveDateComponent.extend({
 		else {
 			return 'LL'; // one day. longer, like "September 9 2014"
 		}
-	},
+	}
 
 
 	// Date Setting/Unsetting
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setDate: function(date) {
+	setDate(date) {
 		var currentDateProfile = this.get('dateProfile');
-		var newDateProfile = this.dateProfileGenerator.build(date, null, true); // forceToValid=true
+		var newDateProfile = this.dateProfileGenerator.build(date, undefined, true); // forceToValid=true
 
 		if (
 			!currentDateProfile ||
@@ -202,19 +209,19 @@ var View = FC.View = InteractiveDateComponent.extend({
 		) {
 			this.set('dateProfile', newDateProfile);
 		}
-	},
+	}
 
 
-	unsetDate: function() {
+	unsetDate() {
 		this.unset('dateProfile');
-	},
+	}
 
 
 	// Event Data
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	fetchInitialEvents: function(dateProfile) {
+	fetchInitialEvents(dateProfile) {
 		var calendar = this.calendar;
 		var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
 
@@ -222,168 +229,154 @@ var View = FC.View = InteractiveDateComponent.extend({
 			calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
 			calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
 		);
-	},
+	}
 
 
-	bindEventChanges: function() {
+	bindEventChanges() {
 		this.listenTo(this.calendar, 'eventsReset', this.resetEvents); // TODO: make this a real event
-	},
+	}
 
 
-	unbindEventChanges: function() {
+	unbindEventChanges() {
 		this.stopListeningTo(this.calendar, 'eventsReset');
-	},
+	}
 
 
-	setEvents: function(eventsPayload) {
+	setEvents(eventsPayload) {
 		this.set('currentEvents', eventsPayload);
 		this.set('hasEvents', true);
-	},
+	}
 
 
-	unsetEvents: function() {
+	unsetEvents() {
 		this.unset('currentEvents');
 		this.unset('hasEvents');
-	},
+	}
 
 
-	resetEvents: function(eventsPayload) {
+	resetEvents(eventsPayload) {
 		this.startBatchRender();
 		this.unsetEvents();
 		this.setEvents(eventsPayload);
 		this.stopBatchRender();
-	},
+	}
 
 
 	// Date High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestDateRender: function(dateProfile) {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.executeDateRender(dateProfile);
+	requestDateRender(dateProfile) {
+		this.requestRender(() => {
+			this.executeDateRender(dateProfile);
 		}, 'date', 'init');
-	},
+	}
 
 
-	requestDateUnrender: function() {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.executeDateUnrender();
+	requestDateUnrender() {
+		this.requestRender(() => {
+			this.executeDateUnrender();
 		}, 'date', 'destroy');
-	},
+	}
 
 
 	// if dateProfile not specified, uses current
-	executeDateRender: function(dateProfile) {
-		DateComponent.prototype.executeDateRender.apply(this, arguments);
+	executeDateRender(dateProfile) {
+		super.executeDateRender(dateProfile);
 
-		if (this.render) {
-			this.render(); // TODO: deprecate
+		if (this['render']) {
+			this['render'](); // TODO: deprecate
 		}
 
 		this.trigger('datesRendered');
 		this.addScroll({ isDateInit: true });
 		this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
-	},
+	}
 
 
-	executeDateUnrender: function() {
+	executeDateUnrender() {
 		this.unselect();
 		this.stopNowIndicator();
 		this.trigger('before:datesUnrendered');
 
-		if (this.destroy) {
-			this.destroy(); // TODO: deprecate
+		if (this['destroy']) {
+			this['destroy'](); // TODO: deprecate
 		}
 
-		DateComponent.prototype.executeDateUnrender.apply(this, arguments);
-	},
+		super.executeDateUnrender();
+	}
 
 
 	// "Base" rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindBaseRenderHandlers: function() {
-		var _this = this;
-
-		this.on('datesRendered', function() {
-			_this.whenSizeUpdated(
-				_this.triggerViewRender
+	bindBaseRenderHandlers() {
+		this.on('datesRendered', () => {
+			this.whenSizeUpdated(
+				this.triggerViewRender
 			);
 		});
 
-		this.on('before:datesUnrendered', function() {
-			_this.triggerViewDestroy();
+		this.on('before:datesUnrendered', () => {
+			this.triggerViewDestroy();
 		});
-	},
+	}
 
 
-	triggerViewRender: function() {
+	triggerViewRender() {
 		this.publiclyTrigger('viewRender', {
 			context: this,
 			args: [ this, this.el ]
 		});
-	},
+	}
 
 
-	triggerViewDestroy: function() {
+	triggerViewDestroy() {
 		this.publiclyTrigger('viewDestroy', {
 			context: this,
 			args: [ this, this.el ]
 		});
-	},
+	}
 
 
 	// Event High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestEventsRender: function(eventsPayload) {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.executeEventRender(eventsPayload);
-			_this.whenSizeUpdated(
-				_this.triggerAfterEventsRendered
+	requestEventsRender(eventsPayload) {
+		this.requestRender(() => {
+			this.executeEventRender(eventsPayload);
+			this.whenSizeUpdated(
+				this.triggerAfterEventsRendered
 			);
 		}, 'event', 'init');
-	},
+	}
 
 
-	requestEventsUnrender: function() {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.triggerBeforeEventsDestroyed();
-			_this.executeEventUnrender();
+	requestEventsUnrender() {
+		this.requestRender(() => {
+			this.triggerBeforeEventsDestroyed();
+			this.executeEventUnrender();
 		}, 'event', 'destroy');
-	},
+	}
 
 
 	// Business Hour High-level Rendering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	requestBusinessHoursRender: function(businessHourGenerator) {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.renderBusinessHours(businessHourGenerator);
+	requestBusinessHoursRender(businessHourGenerator) {
+		this.requestRender(() => {
+			this.renderBusinessHours(businessHourGenerator);
 		}, 'businessHours', 'init');
-	},
+	}
 
-	requestBusinessHoursUnrender: function() {
-		var _this = this;
-
-		this.requestRender(function() {
-			_this.unrenderBusinessHours();
+	requestBusinessHoursUnrender() {
+		this.requestRender(() => {
+			this.unrenderBusinessHours();
 		}, 'businessHours', 'destroy');
-	},
+	}
 
 
 	// Misc view rendering utils
@@ -391,22 +384,22 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Binds DOM handlers to elements that reside outside the view container, such as the document
-	bindGlobalHandlers: function() {
-		InteractiveDateComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+	bindGlobalHandlers() {
+		super.bindGlobalHandlers();
 
 		this.listenTo(GlobalEmitter.get(), {
 			touchstart: this.processUnselect,
 			mousedown: this.handleDocumentMousedown
 		});
-	},
+	}
 
 
 	// Unbinds DOM handlers from elements that reside outside the view container
-	unbindGlobalHandlers: function() {
-		InteractiveDateComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+	unbindGlobalHandlers() {
+		super.unbindGlobalHandlers();
 
 		this.stopListeningTo(GlobalEmitter.get());
-	},
+	}
 
 
 	/* Now Indicator
@@ -416,8 +409,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// Immediately render the current time indicator and begins re-rendering it at an interval,
 	// which is defined by this.getNowIndicatorUnit().
 	// TODO: somehow do this for the current whole day's background too
-	startNowIndicator: function() {
-		var _this = this;
+	startNowIndicator() {
 		var unit;
 		var update;
 		var delay; // ms wait value
@@ -432,39 +424,39 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 				// wait until the beginning of the next interval
 				delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate;
-				this.nowIndicatorTimeoutID = setTimeout(function() {
-					_this.nowIndicatorTimeoutID = null;
+				this.nowIndicatorTimeoutID = setTimeout(() => {
+					this.nowIndicatorTimeoutID = null;
 					update();
 					delay = +moment.duration(1, unit);
 					delay = Math.max(100, delay); // prevent too frequent
-					_this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
+					this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
 				}, delay);
 			}
 
 			// rendering will be initiated in updateSize
 		}
-	},
+	}
 
 
 	// rerenders the now indicator, computing the new current time from the amount of time that has passed
 	// since the initial getNow call.
-	updateNowIndicator: function() {
+	updateNowIndicator() {
 		if (
 			this.isDatesRendered &&
 			this.initialNowDate // activated before?
 		) {
 			this.unrenderNowIndicator(); // won't unrender if unnecessary
 			this.renderNowIndicator(
-				this.initialNowDate.clone().add(new Date() - this.initialNowQueriedMs) // add ms
+				this.initialNowDate.clone().add(new Date().valueOf() - this.initialNowQueriedMs) // add ms
 			);
 			this.isNowIndicatorRendered = true;
 		}
-	},
+	}
 
 
 	// Immediately unrenders the view's current time indicator and stops any re-rendering timers.
 	// Won't cause side effects if indicator isn't rendered.
-	stopNowIndicator: function() {
+	stopNowIndicator() {
 		if (this.isNowIndicatorRendered) {
 
 			if (this.nowIndicatorTimeoutID) {
@@ -479,51 +471,51 @@ var View = FC.View = InteractiveDateComponent.extend({
 			this.unrenderNowIndicator();
 			this.isNowIndicatorRendered = false;
 		}
-	},
+	}
 
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	updateSize: function(totalHeight, isAuto, isResize) {
+	updateSize(totalHeight, isAuto, isResize) {
 
-		if (this.setHeight) { // for legacy API
-			this.setHeight(totalHeight, isAuto);
+		if (this['setHeight']) { // for legacy API
+			this['setHeight'](totalHeight, isAuto);
 		}
 		else {
-			InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
+			super.updateSize(totalHeight, isAuto, isResize);
 		}
 
 		this.updateNowIndicator();
-	},
+	}
 
 
 	/* Scroller
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	addScroll: function(scroll) {
+	addScroll(scroll) {
 		var queuedScroll = this.queuedScroll || (this.queuedScroll = {});
 
 		$.extend(queuedScroll, scroll);
-	},
+	}
 
 
-	popScroll: function() {
+	popScroll() {
 		this.applyQueuedScroll();
 		this.queuedScroll = null;
-	},
+	}
 
 
-	applyQueuedScroll: function() {
+	applyQueuedScroll() {
 		if (this.queuedScroll) {
 			this.applyScroll(this.queuedScroll);
 		}
-	},
+	}
 
 
-	queryScroll: function() {
+	queryScroll() {
 		var scroll = {};
 
 		if (this.isDatesRendered) {
@@ -531,10 +523,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		return scroll;
-	},
+	}
 
 
-	applyScroll: function(scroll) {
+	applyScroll(scroll) {
 		if (scroll.isDateInit && this.isDatesRendered) {
 			$.extend(scroll, this.computeInitialDateScroll());
 		}
@@ -542,29 +534,29 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (this.isDatesRendered) {
 			this.applyDateScroll(scroll);
 		}
-	},
+	}
 
 
-	computeInitialDateScroll: function() {
+	computeInitialDateScroll() {
 		return {}; // subclasses must implement
-	},
+	}
 
 
-	queryDateScroll: function() {
+	queryDateScroll() {
 		return {}; // subclasses must implement
-	},
+	}
 
 
-	applyDateScroll: function(scroll) {
+	applyDateScroll(scroll) {
 		; // subclasses must implement
-	},
+	}
 
 
 	/* Event Drag-n-Drop
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	reportEventDrop: function(eventInstance, eventMutation, el, ev) {
+	reportEventDrop(eventInstance, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
 		var undoFunc = eventManager.mutateEventsWithId(
 			eventInstance.def.id,
@@ -588,11 +580,11 @@ var View = FC.View = InteractiveDateComponent.extend({
 			undoFunc,
 			el, ev
 		);
-	},
+	}
 
 
 	// Triggers event-drop handlers that have subscribed via the API
-	triggerEventDrop: function(eventInstance, dateDelta, undoFunc, el, ev) {
+	triggerEventDrop(eventInstance, dateDelta, undoFunc, el, ev) {
 		this.publiclyTrigger('eventDrop', {
 			context: el[0],
 			args: [
@@ -604,7 +596,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 				this
 			]
 		});
-	},
+	}
 
 
 	/* External Element Drag-n-Drop
@@ -614,18 +606,18 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
 	// `meta` is the parsed data that has been embedded into the dragging event.
 	// `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-	reportExternalDrop: function(singleEventDef, isEvent, isSticky, el, ev, ui) {
+	reportExternalDrop(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
 		if (isEvent) {
 			this.calendar.eventManager.addEventDef(singleEventDef, isSticky);
 		}
 
 		this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
-	},
+	}
 
 
 	// Triggers external-drop handlers that have subscribed via the API
-	triggerExternalDrop: function(singleEventDef, isEvent, el, ev, ui) {
+	triggerExternalDrop(singleEventDef, isEvent, el, ev, ui) {
 
 		// trigger 'drop' regardless of whether element represents an event
 		this.publiclyTrigger('drop', {
@@ -648,7 +640,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 				]
 			});
 		}
-	},
+	}
 
 
 	/* Event Resizing
@@ -656,7 +648,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Must be called when an event in the view has been resized to a new length
-	reportEventResize: function(eventInstance, eventMutation, el, ev) {
+	reportEventResize(eventInstance, eventMutation, el, ev) {
 		var eventManager = this.calendar.eventManager;
 		var undoFunc = eventManager.mutateEventsWithId(
 			eventInstance.def.id,
@@ -676,11 +668,11 @@ var View = FC.View = InteractiveDateComponent.extend({
 			undoFunc,
 			el, ev
 		);
-	},
+	}
 
 
 	// Triggers event-resize handlers that have subscribed via the API
-	triggerEventResize: function(eventInstance, durationDelta, undoFunc, el, ev) {
+	triggerEventResize(eventInstance, durationDelta, undoFunc, el, ev) {
 		this.publiclyTrigger('eventResize', {
 			context: el[0],
 			args: [
@@ -692,7 +684,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 				this
 			]
 		});
-	},
+	}
 
 
 	/* Selection (time range)
@@ -701,34 +693,34 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 	// Selects a date span on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(footprint, ev) {
+	select(footprint, ev) {
 		this.unselect(ev);
 		this.renderSelectionFootprint(footprint);
 		this.reportSelection(footprint, ev);
-	},
+	}
 
 
-	renderSelectionFootprint: function(footprint, ev) {
-		if (this.renderSelection) { // legacy method in custom view classes
-			this.renderSelection(
+	renderSelectionFootprint(footprint) {
+		if (this['renderSelection']) { // legacy method in custom view classes
+			this['renderSelection'](
 				footprint.toLegacy(this.calendar)
 			);
 		}
 		else {
-			InteractiveDateComponent.prototype.renderSelectionFootprint.apply(this, arguments);
+			super.renderSelectionFootprint(footprint);
 		}
-	},
+	}
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(footprint, ev) {
+	reportSelection(footprint, ev) {
 		this.isSelected = true;
 		this.triggerSelect(footprint, ev);
-	},
+	}
 
 
 	// Triggers handlers to 'select'
-	triggerSelect: function(footprint, ev) {
+	triggerSelect(footprint, ev) {
 		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
 
 		this.publiclyTrigger('select', {
@@ -740,16 +732,16 @@ var View = FC.View = InteractiveDateComponent.extend({
 				this
 			]
 		});
-	},
+	}
 
 
 	// Undoes a selection. updates in the internal state and triggers handlers.
 	// `ev` is the native mouse event that began the interaction.
-	unselect: function(ev) {
+	unselect(ev=null) {
 		if (this.isSelected) {
 			this.isSelected = false;
-			if (this.destroySelection) {
-				this.destroySelection(); // TODO: deprecate
+			if (this['destroySelection']) {
+				this['destroySelection'](); // TODO: deprecate
 			}
 			this.unrenderSelection();
 			this.publiclyTrigger('unselect', {
@@ -757,14 +749,14 @@ var View = FC.View = InteractiveDateComponent.extend({
 				args: [ ev, this ]
 			});
 		}
-	},
+	}
 
 
 	/* Event Selection
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	selectEventInstance: function(eventInstance) {
+	selectEventInstance(eventInstance) {
 		if (
 			!this.selectedEventInstance ||
 			this.selectedEventInstance !== eventInstance
@@ -782,10 +774,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 			this.selectedEventInstance = eventInstance;
 		}
-	},
+	}
 
 
-	unselectEventInstance: function() {
+	unselectEventInstance() {
 		if (this.selectedEventInstance) {
 
 			this.getEventSegs().forEach(function(seg) {
@@ -796,14 +788,14 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 			this.selectedEventInstance = null;
 		}
-	},
+	}
 
 
-	isEventDefSelected: function(eventDef) {
+	isEventDefSelected(eventDef) {
 		// event references might change on refetchEvents(), while selectedEventInstance doesn't,
 		// so compare IDs
 		return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id;
-	},
+	}
 
 
 	/* Mouse / Touch Unselecting (time range & event unselection)
@@ -812,20 +804,20 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// TODO: don't kill previous selection if touch scrolling
 
 
-	handleDocumentMousedown: function(ev) {
+	handleDocumentMousedown(ev) {
 		if (isPrimaryMouseButton(ev)) {
 			this.processUnselect(ev);
 		}
-	},
+	}
 
 
-	processUnselect: function(ev) {
+	processUnselect(ev) {
 		this.processRangeUnselect(ev);
 		this.processEventUnselect(ev);
-	},
+	}
 
 
-	processRangeUnselect: function(ev) {
+	processRangeUnselect(ev) {
 		var ignore;
 
 		// is there a time-range selection?
@@ -836,48 +828,48 @@ var View = FC.View = InteractiveDateComponent.extend({
 				this.unselect(ev);
 			}
 		}
-	},
+	}
 
 
-	processEventUnselect: function(ev) {
+	processEventUnselect(ev) {
 		if (this.selectedEventInstance) {
 			if (!$(ev.target).closest('.fc-selected').length) {
 				this.unselectEventInstance();
 			}
 		}
-	},
+	}
 
 
 	/* Triggers
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	triggerBaseRendered: function() {
+	triggerBaseRendered() {
 		this.publiclyTrigger('viewRender', {
 			context: this,
 			args: [ this, this.el ]
 		});
-	},
+	}
 
 
-	triggerBaseUnrendered: function() {
+	triggerBaseUnrendered() {
 		this.publiclyTrigger('viewDestroy', {
 			context: this,
 			args: [ this, this.el ]
 		});
-	},
+	}
 
 
 	// Triggers handlers to 'dayClick'
 	// Span has start/end of the clicked area. Only the start is useful.
-	triggerDayClick: function(footprint, dayEl, ev) {
+	triggerDayClick(footprint, dayEl, ev) {
 		var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
 
 		this.publiclyTrigger('dayClick', {
 			context: dayEl,
 			args: [ dateProfile.start, ev, this ]
 		});
-	},
+	}
 
 
 	/* Date Utils
@@ -885,15 +877,15 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// For DateComponent::getDayClasses
-	isDateInOtherMonth: function(date, dateProfile) {
+	isDateInOtherMonth(date, dateProfile) {
 		return false;
-	},
+	}
 
 
 	// Arguments after name will be forwarded to a hypothetical function value
 	// WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
 	// Always clone your objects if you fear mutation.
-	getUnzonedRangeOption: function(name) {
+	getUnzonedRangeOption(name) {
 		var val = this.opt(name);
 
 		if (typeof val === 'function') {
@@ -906,7 +898,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 		if (val) {
 			return this.calendar.parseUnzonedRange(val);
 		}
-	},
+	}
 
 
 	/* Hidden Days
@@ -914,7 +906,7 @@ var View = FC.View = InteractiveDateComponent.extend({
 
 
 	// Initializes internal variables related to calculating hidden days-of-week
-	initHiddenDays: function() {
+	initHiddenDays() {
 		var hiddenDays = this.opt('hiddenDays') || []; // array of day-of-week indices that are hidden
 		var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
 		var dayCnt = 0;
@@ -937,12 +929,12 @@ var View = FC.View = InteractiveDateComponent.extend({
 		}
 
 		this.isHiddenDayHash = isHiddenDayHash;
-	},
+	}
 
 
 	// Remove days from the beginning and end of the range that are computed as hidden.
 	// If the whole range is trimmed off, returns null
-	trimHiddenDays: function(inputUnzonedRange) {
+	trimHiddenDays(inputUnzonedRange) {
 		var start = inputUnzonedRange.getStart();
 		var end = inputUnzonedRange.getEnd();
 
@@ -958,17 +950,17 @@ var View = FC.View = InteractiveDateComponent.extend({
 			return new UnzonedRange(start, end);
 		}
 		return null;
-	},
+	}
 
 
 	// Is the current day hidden?
 	// `day` is a day-of-week index (0-6), or a Moment
-	isHiddenDay: function(day) {
+	isHiddenDay(day) {
 		if (moment.isMoment(day)) {
 			day = day.day();
 		}
 		return this.isHiddenDayHash[day];
-	},
+	}
 
 
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
@@ -976,9 +968,8 @@ var View = FC.View = InteractiveDateComponent.extend({
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)
-	skipHiddenDays: function(date, inc, isExclusive) {
+	skipHiddenDays(date, inc=1, isExclusive=false) {
 		var out = date.clone();
-		inc = inc || 1;
 		while (
 			this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
@@ -987,7 +978,10 @@ var View = FC.View = InteractiveDateComponent.extend({
 		return out;
 	}
 
-});
+}
+
+
+View.prototype.dateProfileGeneratorClass = DateProfileGenerator;
 
 
 View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {

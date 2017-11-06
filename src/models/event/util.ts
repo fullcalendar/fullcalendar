@@ -1,5 +1,9 @@
+import EventRange from './EventRange'
+import EventFootprint from './EventFootprint'
+import ComponentFootprint from '../ComponentFootprint'
 
-function eventDefsToEventInstances(eventDefs, unzonedRange) {
+
+export function eventDefsToEventInstances(eventDefs, unzonedRange) {
 	var eventInstances = [];
 	var i;
 
@@ -13,7 +17,7 @@ function eventDefsToEventInstances(eventDefs, unzonedRange) {
 }
 
 
-function eventInstanceToEventRange(eventInstance) {
+export function eventInstanceToEventRange(eventInstance) {
 	return new EventRange(
 		eventInstance.dateProfile.unzonedRange,
 		eventInstance.def,
@@ -22,7 +26,7 @@ function eventInstanceToEventRange(eventInstance) {
 }
 
 
-function eventRangeToEventFootprint(eventRange) {
+export function eventRangeToEventFootprint(eventRange) {
 	return new EventFootprint(
 		new ComponentFootprint(
 			eventRange.unzonedRange,
@@ -34,11 +38,11 @@ function eventRangeToEventFootprint(eventRange) {
 }
 
 
-function eventInstanceToUnzonedRange(eventInstance) {
+export function eventInstanceToUnzonedRange(eventInstance) {
 	return eventInstance.dateProfile.unzonedRange;
 }
 
 
-function eventFootprintToComponentFootprint(eventFootprint) {
+export function eventFootprintToComponentFootprint(eventFootprint) {
 	return eventFootprint.componentFootprint;
 }

@@ -1,15 +1,23 @@
+import * as $ from 'jquery'
+import namespaceHooks from './namespace-hooks'
+import * as namespaceExports from './namespace-exports'
+import { warn } from './util'
+import Calendar from './Calendar'
 
-var FC = $.fullCalendar = {
-	version: "<%= version %>",
-	// When introducing internal API incompatibilities (where fullcalendar plugins would break),
-	// the minor version of the calendar should be upped (ex: 2.7.2 -> 2.8.0)
-	// and the below integer should be incremented.
-	internalApiVersion: 11
-};
-var fcViews = FC.views = {};
+// for intentional side-effects
+import './moment-ext'
+import './date-formatting'
+import './models/event-source/config'
+import './theme/config'
+import './basic/config'
+import './agenda/config'
+import './list/config'
 
 
-$.fn.fullCalendar = function(options) {
+($ as any).fullCalendar = $.extend(namespaceHooks, namespaceExports); // graft over the original hooks object
+
+
+($ as any).fn.fullCalendar = function(options) {
 	var args = Array.prototype.slice.call(arguments, 1); // for a possible method call
 	var res = this; // what this function will return (this jQuery object by default)
 
@@ -33,7 +41,7 @@ $.fn.fullCalendar = function(options) {
 				}
 			}
 			else if (!calendar) {
-				FC.warn("Attempting to call a FullCalendar method on an element with no calendar.");
+				warn("Attempting to call a FullCalendar method on an element with no calendar.");
 			}
 			else if ($.isFunction(calendar[options])) {
 				singleRes = calendar[options].apply(calendar, args);
@@ -46,7 +54,7 @@ $.fn.fullCalendar = function(options) {
 				}
 			}
 			else {
-				FC.warn("'" + options + "' is an unknown FullCalendar method.");
+				warn("'" + options + "' is an unknown FullCalendar method.");
 			}
 		}
 		// a new calendar initialization
@@ -59,18 +67,3 @@ $.fn.fullCalendar = function(options) {
 
 	return res;
 };
-
-
-var complexOptions = [ // names of options that are objects whose properties should be combined
-	'header',
-	'footer',
-	'buttonText',
-	'buttonIcons',
-	'themeButtonIcons'
-];
-
-
-// Merges an array of option objects into a single object
-function mergeOptions(optionObjs) {
-	return mergeProps(optionObjs, complexOptions);
-}

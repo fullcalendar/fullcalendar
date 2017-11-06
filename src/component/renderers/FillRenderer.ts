@@ -1,27 +1,29 @@
-
-var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, background events, business hours
-
-	fillSegTag: 'div',
-	component: null,
-	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
+import { cssToStr } from '../../util'
 
 
-	constructor: function(component) {
+export default class FillRenderer { // use for highlight, background events, business hours
+
+	fillSegTag: string = 'div'
+	component: any
+	elsByFill: any // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
+
+
+	constructor(component) {
 		this.component = component;
 		this.elsByFill = {};
-	},
+	}
 
 
-	renderFootprint: function(type, componentFootprint, props) {
+	renderFootprint(type, componentFootprint, props) {
 		this.renderSegs(
 			type,
 			this.component.componentFootprintToSegs(componentFootprint),
 			props
 		);
-	},
+	}
 
 
-	renderSegs: function(type, segs, props) {
+	renderSegs(type, segs, props) {
 		var els;
 
 		segs = this.buildSegEls(type, segs, props); // assignes `.el` to each seg. returns successfully rendered segs
@@ -32,24 +34,23 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 		}
 
 		return segs;
-	},
+	}
 
 
 	// Unrenders a specific type of fill that is currently rendered on the grid
-	unrender: function(type) {
+	unrender(type) {
 		var el = this.elsByFill[type];
 
 		if (el) {
 			el.remove();
 			delete this.elsByFill[type];
 		}
-	},
+	}
 
 
 	// Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
 	// Only returns segments that successfully rendered.
-	buildSegEls: function(type, segs, props) {
-		var _this = this;
+	buildSegEls(type, segs, props) {
 		var html = '';
 		var renderedSegs = [];
 		var i;
@@ -63,7 +64,7 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 
 			// Grab individual elements from the combined HTML string. Use each as the default rendering.
 			// Then, compute the 'el' for each segment.
-			$(html).each(function(i, node) {
+			$(html).each((i, node) => {
 				var seg = segs[i];
 				var el = $(node);
 
@@ -76,7 +77,7 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 					el = $(el); // allow custom filter to return raw DOM node
 
 					// correct element type? (would be bad if a non-TD were inserted into a table for example)
-					if (el.is(_this.fillSegTag)) {
+					if (el.is(this.fillSegTag)) {
 						seg.el = el;
 						renderedSegs.push(seg);
 					}
@@ -85,11 +86,11 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 		}
 
 		return renderedSegs;
-	},
+	}
 
 
 	// Builds the HTML needed for one fill segment. Generic enough to work with different types.
-	buildSegHtml: function(type, seg, props) {
+	buildSegHtml(type, seg, props) {
 		// custom hooks per-type
 		var classes = props.getClasses ? props.getClasses(seg) : [];
 		var css = cssToStr(props.getCss ? props.getCss(seg) : {});
@@ -98,16 +99,16 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 			(classes.length ? ' class="' + classes.join(' ') + '"' : '') +
 			(css ? ' style="' + css + '"' : '') +
 			' />';
-	},
+	}
 
 
 	// Should return wrapping DOM structure
-	attachSegEls: function(type, segs) {
+	attachSegEls(type, segs) {
 		// subclasses must implement
-	},
+	}
 
 
-	reportEls: function(type, nodes) {
+	reportEls(type, nodes) {
 		if (this.elsByFill[type]) {
 			this.elsByFill[type] = this.elsByFill[type].add(nodes);
 		}
@@ -116,4 +117,4 @@ var FillRenderer = FC.FillRenderer = Class.extend({ // use for highlight, backgr
 		}
 	}
 
-});
+}

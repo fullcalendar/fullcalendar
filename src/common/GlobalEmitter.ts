@@ -1,3 +1,10 @@
+import * as $ from 'jquery'
+import namespaceHooks from '../namespace-hooks'
+import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
+import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
+
+var globalEmitter = null;
+var neededCount = 0;
 
 /*
 Listens to document and window-level user-interaction events, like touch events and mouse events,
@@ -8,19 +15,24 @@ Normalizes mouse/touch events. For examples:
 - ignores the the simulated mouse events that happen after a quick tap: mousemove+mousedown+mouseup+click
 - compensates for various buggy scenarios where a touchend does not fire
 */
+export default class GlobalEmitter {
 
-FC.touchMouseIgnoreWait = 500;
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
 
-var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
+	isTouching: boolean = false
+	mouseIgnoreDepth: number = 0
+	handleScrollProxy: (ev) => void;
+	handleTouchMoveProxy: (ev) => void;
 
-	isTouching: false,
-	mouseIgnoreDepth: 0,
-	handleScrollProxy: null,
 
-
-	bind: function() {
-		var _this = this;
-
+	bind() {
 		this.listenTo($(document), {
 			touchstart: this.handleTouchStart,
 			touchcancel: this.handleTouchCancel,
@@ -38,10 +50,10 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 		// TODO: investigate performance because this is a global handler
 		window.addEventListener(
 			'touchmove',
-			this.handleTouchMoveProxy = function(ev) {
-				_this.handleTouchMove($.Event(ev));
+			this.handleTouchMoveProxy = (ev) => {
+				this.handleTouchMove($.Event(ev));
 			},
-			{ passive: false } // allows preventDefault()
+			{ passive: false } as any // allows preventDefault()
 		);
 
 		// attach a handler to get called when ANY scroll action happens on the page.
@@ -49,14 +61,14 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 		// http://stackoverflow.com/a/32954565/96342
 		window.addEventListener(
 			'scroll',
-			this.handleScrollProxy = function(ev) {
-				_this.handleScroll($.Event(ev));
+			this.handleScrollProxy = (ev) => {
+				this.handleScroll($.Event(ev));
 			},
 			true // useCapture
 		);
-	},
+	}
 
-	unbind: function() {
+	unbind() {
 		this.stopListeningTo($(document));
 
 		window.removeEventListener(
@@ -69,13 +81,13 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 			this.handleScrollProxy,
 			true // useCapture
 		);
-	},
+	}
 
 
 	// Touch Handlers
 	// -----------------------------------------------------------------------------------------------------------------
 
-	handleTouchStart: function(ev) {
+	handleTouchStart(ev) {
 
 		// if a previous touch interaction never ended with a touchend, then implicitly end it,
 		// but since a new touch interaction is about to begin, don't start the mouse ignore period.
@@ -83,15 +95,15 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 
 		this.isTouching = true;
 		this.trigger('touchstart', ev);
-	},
+	}
 
-	handleTouchMove: function(ev) {
+	handleTouchMove(ev) {
 		if (this.isTouching) {
 			this.trigger('touchmove', ev);
 		}
-	},
+	}
 
-	handleTouchCancel: function(ev) {
+	handleTouchCancel(ev) {
 		if (this.isTouching) {
 			this.trigger('touchcancel', ev);
 
@@ -99,61 +111,61 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 			// If touchend fires later, it won't have any effect b/c isTouching will be false.
 			this.stopTouch(ev);
 		}
-	},
+	}
 
-	handleTouchEnd: function(ev) {
+	handleTouchEnd(ev) {
 		this.stopTouch(ev);
-	},
+	}
 
 
 	// Mouse Handlers
 	// -----------------------------------------------------------------------------------------------------------------
 
-	handleMouseDown: function(ev) {
+	handleMouseDown(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mousedown', ev);
 		}
-	},
+	}
 
-	handleMouseMove: function(ev) {
+	handleMouseMove(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mousemove', ev);
 		}
-	},
+	}
 
-	handleMouseUp: function(ev) {
+	handleMouseUp(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('mouseup', ev);
 		}
-	},
+	}
 
-	handleClick: function(ev) {
+	handleClick(ev) {
 		if (!this.shouldIgnoreMouse()) {
 			this.trigger('click', ev);
 		}
-	},
+	}
 
 
 	// Misc Handlers
 	// -----------------------------------------------------------------------------------------------------------------
 
-	handleSelectStart: function(ev) {
-		this.trigger('selectstart', ev);
-	},
+	handleSelectStart(ev) {
+		this.trigger('selectstart', ev)
+	}
 
-	handleContextMenu: function(ev) {
+	handleContextMenu(ev) {
 		this.trigger('contextmenu', ev);
-	},
+	}
 
-	handleScroll: function(ev) {
+	handleScroll(ev) {
 		this.trigger('scroll', ev);
-	},
+	}
 
 
 	// Utils
 	// -----------------------------------------------------------------------------------------------------------------
 
-	stopTouch: function(ev, skipMouseIgnore) {
+	stopTouch(ev, skipMouseIgnore=false) {
 		if (this.isTouching) {
 			this.isTouching = false;
 			this.trigger('touchend', ev);
@@ -162,62 +174,57 @@ var GlobalEmitter = Class.extend(ListenerMixin, EmitterMixin, {
 				this.startTouchMouseIgnore();
 			}
 		}
-	},
+	}
 
-	startTouchMouseIgnore: function() {
-		var _this = this;
-		var wait = FC.touchMouseIgnoreWait;
+	startTouchMouseIgnore() {
+		var wait = namespaceHooks.touchMouseIgnoreWait;
 
 		if (wait) {
 			this.mouseIgnoreDepth++;
-			setTimeout(function() {
-				_this.mouseIgnoreDepth--;
+			setTimeout(() => {
+				this.mouseIgnoreDepth--;
 			}, wait);
 		}
-	},
+	}
 
-	shouldIgnoreMouse: function() {
+	shouldIgnoreMouse() {
 		return this.isTouching || Boolean(this.mouseIgnoreDepth);
 	}
 
-});
 
-
-// Singleton
-// ---------------------------------------------------------------------------------------------------------------------
-
-(function() {
-	var globalEmitter = null;
-	var neededCount = 0;
+	// Singleton
+	// -----------------------------------------------------------------------------------------------------------------
 
 
 	// gets the singleton
-	GlobalEmitter.get = function() {
-
+	static get() {
 		if (!globalEmitter) {
 			globalEmitter = new GlobalEmitter();
 			globalEmitter.bind();
 		}
 
 		return globalEmitter;
-	};
+	}
 
 
 	// called when an object knows it will need a GlobalEmitter in the near future.
-	GlobalEmitter.needed = function() {
+	static needed() {
 		GlobalEmitter.get(); // ensures globalEmitter
 		neededCount++;
-	};
+	}
 
 
 	// called when the object that originally called needed() doesn't need a GlobalEmitter anymore.
-	GlobalEmitter.unneeded = function() {
+	static unneeded() {
 		neededCount--;
 
 		if (!neededCount) { // nobody else needs it
 			globalEmitter.unbind();
 			globalEmitter = null;
 		}
-	};
+	}
 
-})();
+}
+
+ListenerMixin.mixInto(GlobalEmitter)
+EmitterMixin.mixInto(GlobalEmitter)

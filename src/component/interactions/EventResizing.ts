@@ -1,9 +1,15 @@
+import { disableCursor, enableCursor } from '../../util'
+import EventDefMutation from '../../models/event/EventDefMutation'
+import EventDefDateMutation from '../../models/event/EventDefDateMutation'
+import HitDragListener from '../../common/HitDragListener'
+import Interaction from './Interaction'
 
-var EventResizing = FC.EventResizing = Interaction.extend({
 
-	eventPointing: null,
-	dragListener: null,
-	isResizing: false,
+export default class EventResizing extends Interaction {
+
+	eventPointing: any
+	dragListener: any
+	isResizing: boolean = false
 
 
 	/*
@@ -17,48 +23,46 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 	*/
 
 
-	constructor: function(component, eventPointing) {
-		Interaction.call(this, component);
-
+	constructor(component, eventPointing) {
+		super(component);
 		this.eventPointing = eventPointing;
-	},
+	}
 
 
-	end: function() {
+	end() {
 		if (this.dragListener) {
 			this.dragListener.endInteraction();
 		}
-	},
+	}
 
 
-	bindToEl: function(el) {
+	bindToEl(el) {
 		var component = this.component;
 
 		component.bindSegHandlerToEl(el, 'mousedown', this.handleMouseDown.bind(this));
 		component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this));
-	},
+	}
 
 
-	handleMouseDown: function(seg, ev) {
+	handleMouseDown(seg, ev) {
 		if (this.component.canStartResize(seg, ev)) {
 			this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
 				.startInteraction(ev, { distance: 5 });
 		}
-	},
+	}
 
 
-	handleTouchStart: function(seg, ev) {
+	handleTouchStart(seg, ev) {
 		if (this.component.canStartResize(seg, ev)) {
 			this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
 				.startInteraction(ev);
 		}
-	},
+	}
 
 
 	// Creates a listener that tracks the user as they resize an event segment.
 	// Generic enough to work with any type of Grid.
-	buildDragListener: function(seg, isStart) {
-		var _this = this;
+	buildDragListener(seg, isStart) {
 		var component = this.component;
 		var view = this.view;
 		var calendar = view.calendar;
@@ -73,18 +77,18 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 		var dragListener = this.dragListener = new HitDragListener(component, {
 			scroll: this.opt('dragScroll'),
 			subjectEl: el,
-			interactionStart: function() {
+			interactionStart: () => {
 				isDragging = false;
 			},
-			dragStart: function(ev) {
+			dragStart: (ev) => {
 				isDragging = true;
 
 				// ensure a mouseout on the manipulated event has been reported
-				_this.eventPointing.handleMouseout(seg, ev);
+				this.eventPointing.handleMouseout(seg, ev);
 
-				_this.segResizeStart(seg, ev);
+				this.segResizeStart(seg, ev);
 			},
-			hitOver: function(hit, isOrig, origHit) {
+			hitOver: (hit, isOrig, origHit) => {
 				var isAllowed = true;
 				var origHitFootprint = component.getSafeHitFootprint(origHit);
 				var hitFootprint = component.getSafeHitFootprint(hit);
@@ -92,8 +96,8 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 
 				if (origHitFootprint && hitFootprint) {
 					resizeMutation = isStart ?
-						_this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, seg.footprint) :
-						_this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, seg.footprint);
+						this.computeEventStartResizeMutation(origHitFootprint, hitFootprint, seg.footprint) :
+						this.computeEventEndResizeMutation(origHitFootprint, hitFootprint, seg.footprint);
 
 					if (resizeMutation) {
 						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
@@ -129,17 +133,17 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 					);
 				}
 			},
-			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
+			hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
 				resizeMutation = null;
 			},
-			hitDone: function() { // resets the rendering to show the original event
+			hitDone: () => { // resets the rendering to show the original event
 				view.unrenderEventResize(seg);
 				view.showEventsWithId(seg.footprint.eventDef.id);
 				enableCursor();
 			},
-			interactionEnd: function(ev) {
+			interactionEnd: (ev) => {
 				if (isDragging) {
-					_this.segResizeStop(seg, ev);
+					this.segResizeStop(seg, ev);
 				}
 
 				if (resizeMutation) { // valid date to resize to?
@@ -147,16 +151,16 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 					view.reportEventResize(eventInstance, resizeMutation, el, ev);
 				}
 
-				_this.dragListener = null;
+				this.dragListener = null;
 			}
 		});
 
 		return dragListener;
-	},
+	}
 
 
 	// Called before event segment resizing starts
-	segResizeStart: function(seg, ev) {
+	segResizeStart(seg, ev) {
 		this.isResizing = true;
 		this.component.publiclyTrigger('eventResizeStart', {
 			context: seg.el[0],
@@ -167,11 +171,11 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				this.view
 			]
 		});
-	},
+	}
 
 
 	// Called after event segment resizing stops
-	segResizeStop: function(seg, ev) {
+	segResizeStop(seg, ev) {
 		this.isResizing = false;
 		this.component.publiclyTrigger('eventResizeStop', {
 			context: seg.el[0],
@@ -182,11 +186,11 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 				this.view
 			]
 		});
-	},
+	}
 
 
 	// Returns new date-information for an event segment being resized from its start
-	computeEventStartResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+	computeEventStartResizeMutation(startFootprint, endFootprint, origEventFootprint) {
 		var origRange = origEventFootprint.componentFootprint.unzonedRange;
 		var startDelta = this.component.diffDates(
 			endFootprint.unzonedRange.getStart(),
@@ -207,11 +211,11 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 		}
 
 		return false;
-	},
+	}
 
 
 	// Returns new date-information for an event segment being resized from its end
-	computeEventEndResizeMutation: function(startFootprint, endFootprint, origEventFootprint) {
+	computeEventEndResizeMutation(startFootprint, endFootprint, origEventFootprint) {
 		var origRange = origEventFootprint.componentFootprint.unzonedRange;
 		var endDelta = this.component.diffDates(
 			endFootprint.unzonedRange.getEnd(),
@@ -234,4 +238,4 @@ var EventResizing = FC.EventResizing = Interaction.extend({
 		return false;
 	}
 
-});
+}

@@ -1,7 +1,10 @@
+import HitDragListener from '../../common/HitDragListener'
+import Interaction from './Interaction'
 
-var DateClicking = Interaction.extend({
 
-	dragListener: null,
+export default class DateClicking extends Interaction {
+
+	dragListener: any
 
 
 	/*
@@ -10,19 +13,18 @@ var DateClicking = Interaction.extend({
 		- getSafeHitFootprint
 		- getHitEl
 	*/
-	constructor: function(component) {
-		Interaction.call(this, component);
-
+	constructor(component) {
+		super(component)
 		this.dragListener = this.buildDragListener();
-	},
+	}
 
 
-	end: function() {
+	end() {
 		this.dragListener.endInteraction();
-	},
+	}
 
 
-	bindToEl: function(el) {
+	bindToEl(el) {
 		var component = this.component;
 		var dragListener = this.dragListener;
 
@@ -37,37 +39,36 @@ var DateClicking = Interaction.extend({
 				dragListener.startInteraction(ev);
 			}
 		});
-	},
+	}
 
 
 	// Creates a listener that tracks the user's drag across day elements, for day clicking.
-	buildDragListener: function() {
-		var _this = this;
+	buildDragListener() {
 		var component = this.component;
 		var dayClickHit; // null if invalid dayClick
 
 		var dragListener = new HitDragListener(component, {
 			scroll: this.opt('dragScroll'),
-			interactionStart: function() {
+			interactionStart: () => {
 				dayClickHit = dragListener.origHit;
 			},
-			hitOver: function(hit, isOrig, origHit) {
+			hitOver: (hit, isOrig, origHit) => {
 				// if user dragged to another cell at any point, it can no longer be a dayClick
 				if (!isOrig) {
 					dayClickHit = null;
 				}
 			},
-			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
+			hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
 				dayClickHit = null;
 			},
-			interactionEnd: function(ev, isCancelled) {
+			interactionEnd: (ev, isCancelled) => {
 				var componentFootprint;
 
 				if (!isCancelled && dayClickHit) {
 					componentFootprint = component.getSafeHitFootprint(dayClickHit);
 
 					if (componentFootprint) {
-						_this.view.triggerDayClick(componentFootprint, component.getHitEl(dayClickHit), ev);
+						this.view.triggerDayClick(componentFootprint, component.getHitEl(dayClickHit), ev);
 					}
 				}
 			}
@@ -82,4 +83,4 @@ var DateClicking = Interaction.extend({
 		return dragListener;
 	}
 
-});
+}

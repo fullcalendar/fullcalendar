@@ -1,32 +1,34 @@
+import { htmlEscape, cssToStr } from '../util'
+import EventRenderer from '../component/renderers/EventRenderer'
+
 
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-var DayGridEventRenderer = EventRenderer.extend({
+export default class DayGridEventRenderer extends EventRenderer {
 
-	dayGrid: null,
-	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
+	dayGrid: any
+	rowStructs: any // an array of objects, each holding information about a row's foreground event-rendering
 
 
-	constructor: function(dayGrid) {
-		EventRenderer.apply(this, arguments);
-
+	constructor(dayGrid, fillRenderer) {
+		super(dayGrid, fillRenderer);
 		this.dayGrid = dayGrid;
-	},
+	}
 
 
-	renderBgRanges: function(eventRanges) {
+	renderBgRanges(eventRanges) {
 		// don't render timed background events
-		eventRanges = $.grep(eventRanges, function(eventRange) {
+		eventRanges = $.grep(eventRanges, function(eventRange:any) {
 			return eventRange.eventDef.isAllDay();
 		});
 
-		EventRenderer.prototype.renderBgRanges.call(this, eventRanges);
-	},
+		super.renderBgRanges(eventRanges);
+	}
 
 
 	// Renders the given foreground event segments onto the grid
-	renderFgSegs: function(segs) {
+	renderFgSegs(segs) {
 		var rowStructs = this.rowStructs = this.renderSegRows(segs);
 
 		// append to each row's content skeleton
@@ -35,11 +37,11 @@ var DayGridEventRenderer = EventRenderer.extend({
 				rowStructs[i].tbodyEl
 			);
 		});
-	},
+	}
 
 
 	// Unrenders all currently rendered foreground event segments
-	unrenderFgSegs: function() {
+	unrenderFgSegs() {
 		var rowStructs = this.rowStructs || [];
 		var rowStruct;
 
@@ -48,13 +50,13 @@ var DayGridEventRenderer = EventRenderer.extend({
 		}
 
 		this.rowStructs = null;
-	},
+	}
 
 
 	// Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
 	// Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
 	// PRECONDITION: each segment shoud already have a rendered and assigned `.el`
-	renderSegRows: function(segs) {
+	renderSegRows(segs) {
 		var rowStructs = [];
 		var segRows;
 		var row;
@@ -69,13 +71,13 @@ var DayGridEventRenderer = EventRenderer.extend({
 		}
 
 		return rowStructs;
-	},
+	}
 
 
 	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 	// the segments. Returns object with a bunch of internal data about how the render was calculated.
 	// NOTE: modifies rowSegs
-	renderSegRow: function(row, rowSegs) {
+	renderSegRow(row, rowSegs) {
 		var colCnt = this.dayGrid.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
 		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
@@ -159,12 +161,12 @@ var DayGridEventRenderer = EventRenderer.extend({
 			segLevels: segLevels,
 			segs: rowSegs
 		};
-	},
+	}
 
 
 	// Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
 	// NOTE: modifies segs
-	buildSegLevels: function(segs) {
+	buildSegLevels(segs) {
 		var levels = [];
 		var i, seg;
 		var j;
@@ -195,11 +197,11 @@ var DayGridEventRenderer = EventRenderer.extend({
 		}
 
 		return levels;
-	},
+	}
 
 
 	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
-	groupSegRows: function(segs) {
+	groupSegRows(segs) {
 		var segRows = [];
 		var i;
 
@@ -212,23 +214,23 @@ var DayGridEventRenderer = EventRenderer.extend({
 		}
 
 		return segRows;
-	},
+	}
 
 
 	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
-	computeEventTimeFormat: function() {
+	computeEventTimeFormat() {
 		return this.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
-	},
+	}
 
 
 	// Computes a default `displayEventEnd` value if one is not expliclty defined
-	computeDisplayEventEnd: function() {
+	computeDisplayEventEnd() {
 		return this.dayGrid.colCnt === 1; // we'll likely have space if there's only one day
-	},
+	}
 
 
 	// Builds the HTML to be used for the default element for an individual segment
-	fgSegHtml: function(seg, disableResizing) {
+	fgSegHtml(seg, disableResizing) {
 		var view = this.view;
 		var eventDef = seg.footprint.eventDef;
 		var isAllDay = seg.footprint.componentFootprint.isAllDay;
@@ -269,7 +271,7 @@ var DayGridEventRenderer = EventRenderer.extend({
 					) +
 			'>' +
 				'<div class="fc-content">' +
-					(this.isRTL ?
+					(this.dayGrid.isRTL ?
 						titleHtml + ' ' + timeHtml : // put a natural space in between
 						timeHtml + ' ' + titleHtml   //
 						) +
@@ -285,7 +287,7 @@ var DayGridEventRenderer = EventRenderer.extend({
 			'</a>';
 	}
 
-});
+}
 
 
 // Computes whether two segments' columns collide. They are assumed to be in the same row.

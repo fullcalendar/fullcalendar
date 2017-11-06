@@ -1,31 +1,35 @@
+import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
+import DateComponent from './DateComponent'
+import GlobalEmitter from '../common/GlobalEmitter'
 
-var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.extend({
 
-	dateClickingClass: null,
-	dateSelectingClass: null,
-	eventPointingClass: null,
-	eventDraggingClass: null,
-	eventResizingClass: null,
-	externalDroppingClass: null,
+export default abstract class InteractiveDateComponent extends DateComponent {
 
-	dateClicking: null,
-	dateSelecting: null,
-	eventPointing: null,
-	eventDragging: null,
-	eventResizing: null,
-	externalDropping: null,
+	dateClickingClass: any
+	dateSelectingClass: any
+	eventPointingClass: any
+	eventDraggingClass: any
+	eventResizingClass: any
+	externalDroppingClass: any
+
+	dateClicking: any
+	dateSelecting: any
+	eventPointing: any
+	eventDragging: any
+	eventResizing: any
+	externalDropping: any
 
 	// self-config, overridable by subclasses
-	segSelector: '.fc-event-container > *', // what constitutes an event element?
+	segSelector: string = '.fc-event-container > *' // what constitutes an event element?
 
 	// if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
 	// of the date areas. if not defined, assumes to be day and time granularity.
 	// TODO: port isTimeScale into same system?
-	largeUnit: null,
+	largeUnit: any
 
 
-	constructor: function() {
-		DateComponent.call(this);
+	constructor(_view?, _options?) {
+		super(_view, _options)
 
 		if (this.dateSelectingClass) {
 			this.dateClicking = new this.dateClickingClass(this);
@@ -50,13 +54,13 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		if (this.externalDroppingClass) {
 			this.externalDropping = new this.externalDroppingClass(this);
 		}
-	},
+	}
 
 
 	// Sets the container element that the view should render inside of, does global DOM-related initializations,
 	// and renders all the non-date-related content inside.
-	setElement: function(el) {
-		DateComponent.prototype.setElement.apply(this, arguments);
+	setElement(el) {
+		super.setElement(el)
 
 		if (this.dateClicking) {
 			this.dateClicking.bindToEl(el);
@@ -67,62 +71,60 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		}
 
 		this.bindAllSegHandlersToEl(el);
-	},
+	}
 
 
-	unrender: function() {
+	removeElement() {
 		this.endInteractions();
 
-		DateComponent.prototype.unrender.apply(this, arguments);
-	},
+		super.removeElement();
+	}
 
 
-	executeEventUnrender: function() {
+	executeEventUnrender() {
 		this.endInteractions();
 
-		DateComponent.prototype.executeEventUnrender.apply(this, arguments);
-	},
+		super.executeEventUnrender()
+	}
 
 
-	bindGlobalHandlers: function() {
-		DateComponent.prototype.bindGlobalHandlers.apply(this, arguments);
+	bindGlobalHandlers() {
+		super.bindGlobalHandlers();
 
 		if (this.externalDropping) {
 			this.externalDropping.bindToDocument();
 		}
-	},
+	}
 
 
-	unbindGlobalHandlers: function() {
-		DateComponent.prototype.unbindGlobalHandlers.apply(this, arguments);
+	unbindGlobalHandlers() {
+		super.unbindGlobalHandlers();
 
 		if (this.externalDropping) {
 			this.externalDropping.unbindFromDocument();
 		}
-	},
+	}
 
 
-	bindDateHandlerToEl: function(el, name, handler) {
-		var _this = this;
-
+	bindDateHandlerToEl(el, name, handler) {
 		// attach a handler to the grid's root element.
 		// jQuery will take care of unregistering them when removeElement gets called.
-		this.el.on(name, function(ev) {
+		this.el.on(name, (ev) => {
 			if (
 				!$(ev.target).is(
-					_this.segSelector + ',' + // directly on an event element
-					_this.segSelector + ' *,' + // within an event element
+					this.segSelector + ',' + // directly on an event element
+					this.segSelector + ' *,' + // within an event element
 					'.fc-more,' + // a "more.." link
 					'a[data-goto]' // a clickable nav link
 				)
 			) {
-				return handler.call(_this, ev);
+				return handler.call(this, ev);
 			}
 		});
-	},
+	}
 
 
-	bindAllSegHandlersToEl: function(el) {
+	bindAllSegHandlersToEl(el) {
 		[
 			this.eventPointing,
 			this.eventDragging,
@@ -132,30 +134,28 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 				eventInteraction.bindToEl(el);
 			}
 		});
-	},
+	}
 
 
-	bindSegHandlerToEl: function(el, name, handler) {
-		var _this = this;
+	bindSegHandlerToEl(el, name, handler) {
+		el.on(name, this.segSelector, (ev) => {
+			var seg = $(ev.currentTarget).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
 
-		el.on(name, this.segSelector, function(ev) {
-			var seg = $(this).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
-
-			if (seg && !_this.shouldIgnoreEventPointing()) {
-				return handler.call(_this, seg, ev); // context will be the Grid
+			if (seg && !this.shouldIgnoreEventPointing()) {
+				return handler.call(this, seg, ev); // context will be the Grid
 			}
 		});
-	},
+	}
 
 
-	shouldIgnoreMouse: function() {
+	shouldIgnoreMouse() {
 		// HACK
 		// This will still work even though bindDateHandlerToEl doesn't use GlobalEmitter.
 		return GlobalEmitter.get().shouldIgnoreMouse();
-	},
+	}
 
 
-	shouldIgnoreTouch: function() {
+	shouldIgnoreTouch() {
 		var view = this._getView();
 
 		// On iOS (and Android?) when a new selection is initiated overtop another selection,
@@ -163,44 +163,44 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		// HACK: simply don't allow this to happen.
 		// ALSO: prevent selection when an *event* is already raised.
 		return view.isSelected || view.selectedEvent;
-	},
+	}
 
 
-	shouldIgnoreEventPointing: function() {
+	shouldIgnoreEventPointing() {
 		// only call the handlers if there is not a drag/resize in progress
 		return (this.eventDragging && this.eventDragging.isDragging) ||
 			(this.eventResizing && this.eventResizing.isResizing);
-	},
+	}
 
 
-	canStartSelection: function(seg, ev) {
+	canStartSelection(seg, ev) {
 		return getEvIsTouch(ev) &&
 			!this.canStartResize(seg, ev) &&
 			(this.isEventDefDraggable(seg.footprint.eventDef) ||
 			 this.isEventDefResizable(seg.footprint.eventDef));
-	},
+	}
 
 
-	canStartDrag: function(seg, ev) {
+	canStartDrag(seg, ev) {
 		return !this.canStartResize(seg, ev) &&
 			this.isEventDefDraggable(seg.footprint.eventDef);
-	},
+	}
 
 
-	canStartResize: function(seg, ev) {
+	canStartResize(seg, ev) {
 		var view = this._getView();
 		var eventDef = seg.footprint.eventDef;
 
 		return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
 			this.isEventDefResizable(eventDef) &&
 			$(ev.target).is('.fc-resizer');
-	},
+	}
 
 
 	// Kills all in-progress dragging.
 	// Useful for when public API methods that result in re-rendering are invoked during a drag.
 	// Also useful for when touch devices misbehave and don't fire their touchend.
-	endInteractions: function() {
+	endInteractions() {
 		[
 			this.dateClicking,
 			this.dateSelecting,
@@ -212,7 +212,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 				interaction.end();
 			}
 		});
-	},
+	}
 
 
 	// Event Drag-n-Drop
@@ -220,12 +220,12 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 
 
 	// Computes if the given event is allowed to be dragged by the user
-	isEventDefDraggable: function(eventDef) {
+	isEventDefDraggable(eventDef) {
 		return this.isEventDefStartEditable(eventDef);
-	},
+	}
 
 
-	isEventDefStartEditable: function(eventDef) {
+	isEventDefStartEditable(eventDef) {
 		var isEditable = eventDef.isStartExplicitlyEditable();
 
 		if (isEditable == null) {
@@ -237,10 +237,10 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		}
 
 		return isEditable;
-	},
+	}
 
 
-	isEventDefGenerallyEditable: function(eventDef) {
+	isEventDefGenerallyEditable(eventDef) {
 		var isEditable = eventDef.isExplicitlyEditable();
 
 		if (isEditable == null) {
@@ -248,7 +248,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		}
 
 		return isEditable;
-	},
+	}
 
 
 	// Event Resizing
@@ -256,19 +256,19 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 
 
 	// Computes if the given event is allowed to be resized from its starting edge
-	isEventDefResizableFromStart: function(eventDef) {
+	isEventDefResizableFromStart(eventDef) {
 		return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef);
-	},
+	}
 
 
 	// Computes if the given event is allowed to be resized from its ending edge
-	isEventDefResizableFromEnd: function(eventDef) {
+	isEventDefResizableFromEnd(eventDef) {
 		return this.isEventDefResizable(eventDef);
-	},
+	}
 
 
 	// Computes if the given event is allowed to be resized by the user at all
-	isEventDefResizable: function(eventDef) {
+	isEventDefResizable(eventDef) {
 		var isResizable = eventDef.isDurationExplicitlyEditable();
 
 		if (isResizable == null) {
@@ -279,7 +279,7 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 			}
 		}
 		return isResizable;
-	},
+	}
 
 
 	// Event Mutation / Constraints
@@ -288,19 +288,19 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 
 	// Diffs the two dates, returning a duration, based on granularity of the grid
 	// TODO: port isTimeScale into this system?
-	diffDates: function(a, b) {
+	diffDates(a, b) {
 		if (this.largeUnit) {
 			return diffByUnit(a, b, this.largeUnit);
 		}
 		else {
 			return diffDayTime(a, b);
 		}
-	},
+	}
 
 
 	// is it allowed, in relation to the view's validRange?
 	// NOTE: very similar to isExternalInstanceGroupAllowed
-	isEventInstanceGroupAllowed: function(eventInstanceGroup) {
+	isEventInstanceGroupAllowed(eventInstanceGroup) {
 		var view = this._getView();
 		var dateProfile = this.dateProfile;
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
@@ -314,12 +314,12 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		}
 
 		return view.calendar.constraints.isEventInstanceGroupAllowed(eventInstanceGroup);
-	},
+	}
 
 
 	// NOTE: very similar to isEventInstanceGroupAllowed
 	// when it's a completely anonymous external drag, no event.
-	isExternalInstanceGroupAllowed: function(eventInstanceGroup) {
+	isExternalInstanceGroupAllowed(eventInstanceGroup) {
 		var view = this._getView();
 		var dateProfile = this.dateProfile;
 		var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
@@ -344,4 +344,4 @@ var InteractiveDateComponent = FC.InteractiveDateComponent = DateComponent.exten
 		return true;
 	}
 
-});
+}

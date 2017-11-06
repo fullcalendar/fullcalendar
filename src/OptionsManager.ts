@@ -1,24 +1,28 @@
-
-var OptionsManager = Model.extend({
-
-	_calendar: null, // avoid
-	dirDefaults: null, // option defaults related to LTR or RTL
-	localeDefaults: null, // option defaults related to current locale
-	overrides: null, // option overrides given to the fullCalendar constructor
-	dynamicOverrides: null, // options set with dynamic setter method. higher precedence than view overrides.
+import { firstDefined } from './util'
+import { globalDefaults, rtlDefaults, mergeOptions } from './options'
+import { localeOptionHash, populateInstanceComputableOptions } from  './locale'
+import Model from './common/Model'
 
 
-	constructor: function(_calendar, overrides) {
-		Model.call(this); // super
+export default class OptionsManager extends Model {
 
+	_calendar: any // avoid
+	dirDefaults: any // option defaults related to LTR or RTL
+	localeDefaults: any // option defaults related to current locale
+	overrides: any // option overrides given to the fullCalendar constructor
+	dynamicOverrides: any // options set with dynamic setter method. higher precedence than view overrides.
+
+
+	constructor(_calendar, overrides) {
+		super()
 		this._calendar = _calendar;
 		this.overrides = $.extend({}, overrides); // make a copy
 		this.dynamicOverrides = {};
 		this.compute();
-	},
+	}
 
 
-	add: function(newOptionHash) { // was setOptions
+	add(newOptionHash) { // was setOptions
 		var optionCnt = 0;
 		var optionName;
 
@@ -56,12 +60,12 @@ var OptionsManager = Model.extend({
 		this._calendar.viewsByType = {};
 
 		this._calendar.reinitView();
-	},
+	}
 
 
 	// Computes the flattened options hash for the calendar and assigns to `this.options`.
 	// Assumes this.overrides and this.dynamicOverrides have already been initialized.
-	compute: function() {
+	compute() {
 		var locale, localeDefaults;
 		var isRTL, dirDefaults;
 		var rawOptions;
@@ -72,7 +76,7 @@ var OptionsManager = Model.extend({
 		);
 		localeDefaults = localeOptionHash[locale];
 		if (!localeDefaults) { // explicit locale option not given or invalid?
-			locale = Calendar.defaults.locale;
+			locale = globalDefaults.locale;
 			localeDefaults = localeOptionHash[locale] || {};
 		}
 
@@ -80,15 +84,15 @@ var OptionsManager = Model.extend({
 			this.dynamicOverrides.isRTL,
 			this.overrides.isRTL,
 			localeDefaults.isRTL,
-			Calendar.defaults.isRTL
+			globalDefaults.isRTL
 		);
-		dirDefaults = isRTL ? Calendar.rtlDefaults : {};
+		dirDefaults = isRTL ? rtlDefaults : {};
 
 		this.dirDefaults = dirDefaults;
 		this.localeDefaults = localeDefaults;
 
 		rawOptions = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
-			Calendar.defaults, // global defaults
+			globalDefaults, // global defaults
 			dirDefaults,
 			localeDefaults,
 			this.overrides,
@@ -97,11 +101,11 @@ var OptionsManager = Model.extend({
 		populateInstanceComputableOptions(rawOptions); // fill in gaps with computed options
 
 		this.reset(rawOptions);
-	},
+	}
 
 
 	// stores the new options internally, but does not rerender anything.
-	recordOverrides: function(newOptionHash) {
+	recordOverrides(newOptionHash) {
 		var optionName;
 
 		for (optionName in newOptionHash) {
@@ -113,4 +117,4 @@ var OptionsManager = Model.extend({
 	}
 
 
-});
+}

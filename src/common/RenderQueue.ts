@@ -1,19 +1,20 @@
-
-var RenderQueue = TaskQueue.extend({
-
-	waitsByNamespace: null,
-	waitNamespace: null,
-	waitId: null,
+import TaskQueue from './TaskQueue'
 
 
-	constructor: function(waitsByNamespace) {
-		TaskQueue.call(this); // super-constructor
+export default class RenderQueue extends TaskQueue {
 
+	waitsByNamespace: any
+	waitNamespace: any
+	waitId: any
+
+
+	constructor(waitsByNamespace) {
+		super()
 		this.waitsByNamespace = waitsByNamespace || {};
-	},
+	}
 
 
-	queue: function(taskFunc, namespace, type) {
+	queue(taskFunc, namespace, type) {
 		var task = {
 			func: taskFunc,
 			namespace: namespace,
@@ -44,42 +45,40 @@ var RenderQueue = TaskQueue.extend({
 				this.tryStart();
 			}
 		}
-	},
+	}
 
 
-	startWait: function(namespace, waitMs) {
+	startWait(namespace, waitMs) {
 		this.waitNamespace = namespace;
 		this.spawnWait(waitMs);
-	},
+	}
 
 
-	delayWait: function(waitMs) {
+	delayWait(waitMs) {
 		clearTimeout(this.waitId);
 		this.spawnWait(waitMs);
-	},
+	}
 
 
-	spawnWait: function(waitMs) {
-		var _this = this;
-
-		this.waitId = setTimeout(function() {
-			_this.waitNamespace = null;
-			_this.tryStart();
+	spawnWait(waitMs) {
+		this.waitId = setTimeout(() => {
+			this.waitNamespace = null;
+			this.tryStart();
 		}, waitMs);
-	},
+	}
 
 
-	clearWait: function() {
+	clearWait() {
 		if (this.waitNamespace) {
 			clearTimeout(this.waitId);
 			this.waitId = null;
 			this.waitNamespace = null;
 		}
-	},
+	}
 
 
-	canRunNext: function() {
-		if (!TaskQueue.prototype.canRunNext.apply(this, arguments)) {
+	canRunNext() {
+		if (!super.canRunNext()) {
 			return false;
 		}
 
@@ -99,15 +98,15 @@ var RenderQueue = TaskQueue.extend({
 		}
 
 		return true;
-	},
+	}
 
 
-	runTask: function(task) {
+	runTask(task) {
 		task.func();
-	},
+	}
 
 
-	compoundTask: function(newTask) {
+	compoundTask(newTask) {
 		var q = this.q;
 		var shouldAppend = true;
 		var i, task;
@@ -120,7 +119,7 @@ var RenderQueue = TaskQueue.extend({
 
 				switch (task.type) {
 					case 'init':
-						shouldAppend = false; // jshint ignore:line
+						shouldAppend = false;
 						// the latest destroy is cancelled out by not doing the init
 						// and fallthrough....
 					case 'add':
@@ -137,6 +136,4 @@ var RenderQueue = TaskQueue.extend({
 		return shouldAppend;
 	}
 
-});
-
-FC.RenderQueue = RenderQueue;
+}

@@ -1,33 +1,74 @@
-
-var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
-
-	view: null, // current View object
-	viewsByType: null, // holds all instantiated view instances, current or not
-	currentDate: null, // unzoned moment. private (public API should use getDate instead)
-	theme: null,
-	constraints: null,
-	optionsManager: null,
-	viewSpecManager: null,
-	businessHourGenerator: null,
-	loadingLevel: 0, // number of simultaneous loading tasks
-
-	defaultAllDayEventDuration: null,
-	defaultTimedEventDuration: null,
-	localeData: null,
-
-	el: null,
-	contentEl: null,
-	suggestedViewHeight: null,
-	ignoreUpdateViewSize: 0,
-	freezeContentHeightDepth: 0,
-	windowResizeProxy: null,
-
-	header: null,
-	footer: null,
-	toolbarsManager: null,
+import * as $ from 'jquery'
+import * as moment from 'moment'
+import { capitaliseFirstLetter, debounce } from './util'
+import Iterator from './common/Iterator'
+import GlobalEmitter from './common/GlobalEmitter'
+import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
+import { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
+import Toolbar from './Toolbar'
+import OptionsManager from './OptionsManager'
+import ViewSpecManager from './ViewSpecManager'
+import Constraints from './Constraints'
+import { getMomentLocaleData } from './locale'
+import momentExt from './moment-ext'
+import UnzonedRange from './models/UnzonedRange'
+import ComponentFootprint from './models/ComponentFootprint'
+import EventDateProfile from './models/event/EventDateProfile'
+import EventManager from './models/EventManager'
+import BusinessHourGenerator from './models/BusinessHourGenerator'
+import EventSourceParser from './models/event-source/EventSourceParser'
+import EventDefParser from './models/event/EventDefParser'
+import SingleEventDef from './models/event/SingleEventDef'
+import EventDefMutation from './models/event/EventDefMutation'
+import EventSource from './models/event-source/EventSource'
+import ThemeRegistry from './theme/ThemeRegistry'
 
 
-	constructor: function(el, overrides) {
+export default class Calendar {
+
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
+
+	// will be assigned by namespace-exports
+	// not for internal use. use options module directly instead.
+	static defaults
+	static englishDefaults
+	static rtlDefaults
+
+	view: any // current View object
+	viewsByType: any // holds all instantiated view instances, current or not
+	currentDate: any // unzoned moment. private (public API should use getDate instead)
+	theme: any
+	eventManager: any
+	constraints: any
+	optionsManager: any
+	viewSpecManager: any
+	businessHourGenerator: any
+	loadingLevel: number = 0 // number of simultaneous loading tasks
+
+	defaultAllDayEventDuration: any
+	defaultTimedEventDuration: any
+	localeData: any
+
+	el: any
+	contentEl: any
+	suggestedViewHeight: any
+	ignoreUpdateViewSize: number = 0
+	freezeContentHeightDepth: number = 0
+	windowResizeProxy: any
+
+	header: any
+	footer: any
+	toolbarsManager: any
+
+
+	constructor(el, overrides) {
 
 		// declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
 		// unneeded() is called in destroy.
@@ -44,20 +85,20 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.constraints = new Constraints(this.eventManager, this);
 
 		this.constructed();
-	},
+	}
 
 
-	// useful for monkeypatching. TODO: BaseClass?
-	constructed: function() {
-	},
+	// useful for monkeypatching. used?
+	constructed() {
+	}
 
 
-	getView: function() {
+	getView() {
 		return this.view;
-	},
+	}
 
 
-	publiclyTrigger: function(name, triggerInfo) {
+	publiclyTrigger(name, triggerInfo) {
 		var optHandler = this.opt(name);
 		var context;
 		var args;
@@ -83,13 +124,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (optHandler) {
 			return optHandler.apply(context, args);
 		}
-	},
+	}
 
 
-	hasPublicHandlers: function(name) {
+	hasPublicHandlers(name) {
 		return this.hasHandlers(name) ||
 			this.opt(name); // handler specified in options
-	},
+	}
 
 
 	// Options Public API
@@ -97,7 +138,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// public getter/setter
-	option: function(name, value) {
+	option(name, value) {
 		var newOptionHash;
 
 		if (typeof name === 'string') {
@@ -113,13 +154,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		else if (typeof name === 'object') { // compound setter with object input
 			this.optionsManager.add(name);
 		}
-	},
+	}
 
 
 	// private getter
-	opt: function(name) {
+	opt(name) {
 		return this.optionsManager.get(name);
-	},
+	}
 
 
 	// View
@@ -127,20 +168,20 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
-	instantiateView: function(viewType) {
+	instantiateView(viewType) {
 		var spec = this.viewSpecManager.getViewSpec(viewType);
 
 		return new spec['class'](this, spec);
-	},
+	}
 
 
 	// Returns a boolean about whether the view is okay to instantiate at some point
-	isValidViewType: function(viewType) {
+	isValidViewType(viewType) {
 		return Boolean(this.viewSpecManager.getViewSpec(viewType));
-	},
+	}
 
 
-	changeView: function(viewName, dateOrRange) {
+	changeView(viewName, dateOrRange) {
 
 		if (dateOrRange) {
 
@@ -155,12 +196,12 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.renderView(viewName);
-	},
+	}
 
 
 	// Forces navigation to a view for the given date.
 	// `viewType` can be a specific view name or a generic one like "week" or "day".
-	zoomTo: function(newDate, viewType) {
+	zoomTo(newDate, viewType) {
 		var spec;
 
 		viewType = viewType || 'day'; // day is default zoom
@@ -169,14 +210,14 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.currentDate = newDate.clone();
 		this.renderView(spec ? spec.type : null);
-	},
+	}
 
 
 	// Current Date
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	initCurrentDate: function() {
+	initCurrentDate() {
 		var defaultDateInput = this.opt('defaultDate');
 
 		// compute the initial ambig-timezone date
@@ -186,10 +227,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		else {
 			this.currentDate = this.getNow(); // getNow already returns unzoned
 		}
-	},
+	}
 
 
-	prev: function() {
+	prev() {
 		var view = this.view;
 		var prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'));
 
@@ -197,10 +238,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			this.currentDate = prevInfo.date;
 			this.renderView();
 		}
-	},
+	}
 
 
-	next: function() {
+	next() {
 		var view = this.view;
 		var nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'));
 
@@ -208,43 +249,43 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			this.currentDate = nextInfo.date;
 			this.renderView();
 		}
-	},
+	}
 
 
-	prevYear: function() {
+	prevYear() {
 		this.currentDate.add(-1, 'years');
 		this.renderView();
-	},
+	}
 
 
-	nextYear: function() {
+	nextYear() {
 		this.currentDate.add(1, 'years');
 		this.renderView();
-	},
+	}
 
 
-	today: function() {
+	today() {
 		this.currentDate = this.getNow(); // should deny like prev/next?
 		this.renderView();
-	},
+	}
 
 
-	gotoDate: function(zonedDateInput) {
+	gotoDate(zonedDateInput) {
 		this.currentDate = this.moment(zonedDateInput).stripZone();
 		this.renderView();
-	},
+	}
 
 
-	incrementDate: function(delta) {
+	incrementDate(delta) {
 		this.currentDate.add(moment.duration(delta));
 		this.renderView();
-	},
+	}
 
 
 	// for external API
-	getDate: function() {
+	getDate() {
 		return this.applyTimezone(this.currentDate); // infuse the calendar's timezone
-	},
+	}
 
 
 	// Loading Triggering
@@ -252,26 +293,26 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// Should be called when any type of async data fetching begins
-	pushLoading: function() {
+	pushLoading() {
 		if (!(this.loadingLevel++)) {
 			this.publiclyTrigger('loading', [ true, this.view ]);
 		}
-	},
+	}
 
 
 	// Should be called when any type of async data fetching completes
-	popLoading: function() {
+	popLoading() {
 		if (!(--this.loadingLevel)) {
 			this.publiclyTrigger('loading', [ false, this.view ]);
 		}
-	},
+	}
 
 
 	// High-level Rendering
 	// -----------------------------------------------------------------------------------
 
 
-	render: function() {
+	render() {
 		if (!this.contentEl) {
 			this.initialRender();
 		}
@@ -280,24 +321,23 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			this.calcSize();
 			this.renderView();
 		}
-	},
+	}
 
 
-	initialRender: function() {
-		var _this = this;
+	initialRender() {
 		var el = this.el;
 
 		el.addClass('fc');
 
 		// event delegation for nav links
-		el.on('click.fc', 'a[data-goto]', function(ev) {
-			var anchorEl = $(this);
+		el.on('click.fc', 'a[data-goto]', (ev) => {
+			var anchorEl = $(ev.currentTarget);
 			var gotoOptions = anchorEl.data('goto'); // will automatically parse JSON
-			var date = _this.moment(gotoOptions.date);
+			var date = this.moment(gotoOptions.date);
 			var viewType = gotoOptions.type;
 
 			// property like "navLinkDayClick". might be a string or a function
-			var customAction = _this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
+			var customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
 
 			if (typeof customAction === 'function') {
 				customAction(date, ev);
@@ -306,44 +346,44 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				if (typeof customAction === 'string') {
 					viewType = customAction;
 				}
-				_this.zoomTo(date, viewType);
+				this.zoomTo(date, viewType);
 			}
 		});
 
 		// called immediately, and upon option change
-		this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], function(opts) {
+		this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
 			var themeClass = ThemeRegistry.getThemeClass(opts.themeSystem || opts.theme);
-			var theme = new themeClass(_this.optionsManager);
+			var theme = new themeClass(this.optionsManager);
 			var widgetClass = theme.getClass('widget');
 
-			_this.theme = theme;
+			this.theme = theme;
 
 			if (widgetClass) {
 				el.addClass(widgetClass);
 			}
-		}, function() {
-			var widgetClass = _this.theme.getClass('widget');
+		}, () => {
+			var widgetClass = this.theme.getClass('widget');
 
-			_this.theme = null;
+			this.theme = null;
 
 			if (widgetClass) {
 				el.removeClass(widgetClass);
 			}
 		});
 
-		this.optionsManager.watch('settingBusinessHourGenerator', [ '?businessHours' ], function(deps) {
-			_this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, _this);
+		this.optionsManager.watch('settingBusinessHourGenerator', [ '?businessHours' ], (deps) => {
+			this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, this);
 
-			if (_this.view) {
-				_this.view.set('businessHourGenerator', _this.businessHourGenerator);
+			if (this.view) {
+				this.view.set('businessHourGenerator', this.businessHourGenerator);
 			}
-		}, function() {
-			_this.businessHourGenerator = null;
+		}, () => {
+			this.businessHourGenerator = null;
 		});
 
 		// called immediately, and upon option change.
 		// HACK: locale often affects isRTL, so we explicitly listen to that too.
-		this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], function(opts) {
+		this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
 			el.toggleClass('fc-ltr', !opts.isRTL);
 			el.toggleClass('fc-rtl', opts.isRTL);
 		});
@@ -363,10 +403,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				)
 			);
 		}
-	},
+	}
 
 
-	destroy: function() {
+	destroy() {
 		if (this.view) {
 			this.clearView();
 		}
@@ -387,40 +427,39 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		GlobalEmitter.unneeded();
-	},
+	}
 
 
-	elementVisible: function() {
+	elementVisible() {
 		return this.el.is(':visible');
-	},
+	}
 
 
 	// Render Queue
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	bindViewHandlers: function(view) {
-		var _this = this;
+	bindViewHandlers(view) {
 
-		view.watch('titleForCalendar', [ 'title' ], function(deps) { // TODO: better system
-			if (view === _this.view) { // hack
-				_this.setToolbarsTitle(deps.title);
+		view.watch('titleForCalendar', [ 'title' ], (deps) => { // TODO: better system
+			if (view === this.view) { // hack
+				this.setToolbarsTitle(deps.title);
 			}
 		});
 
-		view.watch('dateProfileForCalendar', [ 'dateProfile' ], function(deps) {
-			if (view === _this.view) { // hack
-				_this.currentDate = deps.dateProfile.date; // might have been constrained by view dates
-				_this.updateToolbarButtons(deps.dateProfile);
+		view.watch('dateProfileForCalendar', [ 'dateProfile' ], (deps) => {
+			if (view === this.view) { // hack
+				this.currentDate = deps.dateProfile.date; // might have been constrained by view dates
+				this.updateToolbarButtons(deps.dateProfile);
 			}
 		});
-	},
+	}
 
 
-	unbindViewHandlers: function(view) {
+	unbindViewHandlers(view) {
 		view.unwatch('titleForCalendar');
 		view.unwatch('dateProfileForCalendar');
-	},
+	}
 
 
 	// View Rendering
@@ -430,7 +469,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	// Renders a view because of a date change, view-type change, or for the first time.
 	// If not given a viewType, keep the current view but render different dates.
 	// Accepts an optional scroll state to restore to.
-	renderView: function(viewType) {
+	renderView(viewType?) {
 		var oldView = this.view;
 		var newView;
 
@@ -466,12 +505,12 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.thawContentHeight();
-	},
+	}
 
 
 	// Unrenders the current view and reflects this change in the Header.
 	// Unregsiters the `view`, but does not remove from viewByType hash.
-	clearView: function() {
+	clearView() {
 		var currentView = this.view;
 
 		this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
@@ -482,13 +521,13 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		currentView.unsetDate(); // so bindViewHandlers doesn't fire with old values next time
 
 		this.view = null;
-	},
+	}
 
 
 	// Destroys the view, including the view object. Then, re-instantiates it and renders it.
 	// Maintains the same scroll state.
 	// TODO: maintain any other user-manipulated state.
-	reinitView: function() {
+	reinitView() {
 		var oldView = this.view;
 		var scroll = oldView.queryScroll(); // wouldn't be so complicated if Calendar owned the scroll
 		this.freezeContentHeight();
@@ -499,27 +538,27 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 		this.view.applyScroll(scroll);
 		this.thawContentHeight();
-	},
+	}
 
 
 	// Resizing
 	// -----------------------------------------------------------------------------------
 
 
-	getSuggestedViewHeight: function() {
-		if (this.suggestedViewHeight === null) {
+	getSuggestedViewHeight() {
+		if (this.suggestedViewHeight == null) {
 			this.calcSize();
 		}
 		return this.suggestedViewHeight;
-	},
+	}
 
 
-	isHeightAuto: function() {
+	isHeightAuto() {
 		return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto';
-	},
+	}
 
 
-	updateViewSize: function(isResize) {
+	updateViewSize(isResize) {
 		var view = this.view;
 		var scroll;
 
@@ -546,17 +585,17 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 			return true; // signal success
 		}
-	},
+	}
 
 
-	calcSize: function() {
+	calcSize() {
 		if (this.elementVisible()) {
 			this._calcSize();
 		}
-	},
+	}
 
 
-	_calcSize: function() { // assumes elementVisible
+	_calcSize() { // assumes elementVisible
 		var contentHeightInput = this.opt('contentHeight');
 		var heightInput = this.opt('height');
 
@@ -581,10 +620,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				Math.max(this.opt('aspectRatio'), .5)
 			);
 		}
-	},
+	}
 
 
-	windowResize: function(ev) {
+	windowResize(ev) {
 		if (
 			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
 			this.view &&
@@ -594,30 +633,30 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				this.publiclyTrigger('windowResize', [ this.view ]);
 			}
 		}
-	},
+	}
 
 
 	/* Height "Freezing"
 	-----------------------------------------------------------------------------*/
 
 
-	freezeContentHeight: function() {
+	freezeContentHeight() {
 		if (!(this.freezeContentHeightDepth++)) {
 			this.forceFreezeContentHeight();
 		}
-	},
+	}
 
 
-	forceFreezeContentHeight: function() {
+	forceFreezeContentHeight() {
 		this.contentEl.css({
 			width: '100%',
 			height: this.contentEl.height(),
 			overflow: 'hidden'
 		});
-	},
+	}
 
 
-	thawContentHeight: function() {
+	thawContentHeight() {
 		this.freezeContentHeightDepth--;
 
 		// always bring back to natural height
@@ -631,38 +670,38 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (this.freezeContentHeightDepth) {
 			this.forceFreezeContentHeight();
 		}
-	},
+	}
 
 
 	// Toolbar
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	initToolbars: function() {
+	initToolbars() {
 		this.header = new Toolbar(this, this.computeHeaderOptions());
 		this.footer = new Toolbar(this, this.computeFooterOptions());
 		this.toolbarsManager = new Iterator([ this.header, this.footer ]);
-	},
+	}
 
 
-	computeHeaderOptions: function() {
+	computeHeaderOptions() {
 		return {
 			extraClasses: 'fc-header-toolbar',
 			layout: this.opt('header')
 		};
-	},
+	}
 
 
-	computeFooterOptions: function() {
+	computeFooterOptions() {
 		return {
 			extraClasses: 'fc-footer-toolbar',
 			layout: this.opt('footer')
 		};
-	},
+	}
 
 
 	// can be called repeatedly and Header will rerender
-	renderHeader: function() {
+	renderHeader() {
 		var header = this.header;
 
 		header.setToolbarOptions(this.computeHeaderOptions());
@@ -671,11 +710,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (header.el) {
 			this.el.prepend(header.el);
 		}
-	},
+	}
 
 
 	// can be called repeatedly and Footer will rerender
-	renderFooter: function() {
+	renderFooter() {
 		var footer = this.footer;
 
 		footer.setToolbarOptions(this.computeFooterOptions());
@@ -684,15 +723,15 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (footer.el) {
 			this.el.append(footer.el);
 		}
-	},
+	}
 
 
-	setToolbarsTitle: function(title) {
+	setToolbarsTitle(title) {
 		this.toolbarsManager.proxyCall('updateTitle', title);
-	},
+	}
 
 
-	updateToolbarButtons: function(dateProfile) {
+	updateToolbarButtons(dateProfile) {
 		var now = this.getNow();
 		var view = this.view;
 		var todayInfo = view.dateProfileGenerator.build(now);
@@ -719,15 +758,15 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				'disableButton',
 			'next'
 		);
-	},
+	}
 
 
-	queryToolbarsHeight: function() {
+	queryToolbarsHeight() {
 		return this.toolbarsManager.items.reduce(function(accumulator, toolbar) {
 			var toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0; // includes margin
 			return accumulator + toolbarHeight;
 		}, 0);
-	},
+	}
 
 
 	// Selection
@@ -735,22 +774,22 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 
 	// this public method receives start/end dates in any format, with any timezone
-	select: function(zonedStartInput, zonedEndInput) {
+	select(zonedStartInput, zonedEndInput) {
 		this.view.select(
 			this.buildSelectFootprint.apply(this, arguments)
 		);
-	},
+	}
 
 
-	unselect: function() { // safe to be called before renderView
+	unselect() { // safe to be called before renderView
 		if (this.view) {
 			this.view.unselect();
 		}
-	},
+	}
 
 
 	// Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-	buildSelectFootprint: function(zonedStartInput, zonedEndInput) {
+	buildSelectFootprint(zonedStartInput, zonedEndInput) {
 		var start = this.moment(zonedStartInput).stripZone();
 		var end;
 
@@ -768,15 +807,14 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			new UnzonedRange(start, end),
 			!start.hasTime()
 		);
-	},
+	}
 
 
 	// Date Utils
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	initMomentInternals: function() {
-		var _this = this;
+	initMomentInternals() {
 
 		this.defaultAllDayEventDuration = moment.duration(this.opt('defaultAllDayEventDuration'));
 		this.defaultTimedEventDuration = moment.duration(this.opt('defaultTimedEventDuration'));
@@ -786,7 +824,7 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.optionsManager.watch('buildingMomentLocale', [
 			'?locale', '?monthNames', '?monthNamesShort', '?dayNames', '?dayNamesShort',
 			'?firstDay', '?weekNumberCalculation'
-		], function(opts) {
+		], (opts) => {
 			var weekNumberCalculation = opts.weekNumberCalculation;
 			var firstDay = opts.firstDay;
 			var _week;
@@ -830,45 +868,45 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 				localeData._fullCalendar_weekCalc = weekNumberCalculation; // moment-ext will know what to do with it
 			}
 
-			_this.localeData = localeData;
+			this.localeData = localeData;
 
 			// If the internal current date object already exists, move to new locale.
 			// We do NOT need to do this technique for event dates, because this happens when converting to "segments".
-			if (_this.currentDate) {
-				_this.localizeMoment(_this.currentDate); // sets to localeData
+			if (this.currentDate) {
+				this.localizeMoment(this.currentDate); // sets to localeData
 			}
 		});
-	},
+	}
 
 
 	// Builds a moment using the settings of the current calendar: timezone and locale.
 	// Accepts anything the vanilla moment() constructor accepts.
-	moment: function() {
+	moment(...args) {
 		var mom;
 
 		if (this.opt('timezone') === 'local') {
-			mom = FC.moment.apply(null, arguments);
+			mom = momentExt.apply(null, args);
 
-			// Force the moment to be local, because FC.moment doesn't guarantee it.
+			// Force the moment to be local, because momentExt doesn't guarantee it.
 			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
 				mom.local();
 			}
 		}
 		else if (this.opt('timezone') === 'UTC') {
-			mom = FC.moment.utc.apply(null, arguments); // process as UTC
+			mom = momentExt.utc.apply(null, args); // process as UTC
 		}
 		else {
-			mom = FC.moment.parseZone.apply(null, arguments); // let the input decide the zone
+			mom = momentExt.parseZone.apply(null, args); // let the input decide the zone
 		}
 
 		this.localizeMoment(mom); // TODO
 
 		return mom;
-	},
+	}
 
 
-	msToMoment: function(ms, forceAllDay) {
-		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
+	msToMoment(ms, forceAllDay) {
+		var mom = momentExt.utc(ms); // TODO: optimize by using Date.UTC
 
 		if (forceAllDay) {
 			mom.stripTime();
@@ -880,11 +918,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.localizeMoment(mom);
 
 		return mom;
-	},
+	}
 
 
-	msToUtcMoment: function(ms, forceAllDay) {
-		var mom = FC.moment.utc(ms); // TODO: optimize by using Date.UTC
+	msToUtcMoment(ms, forceAllDay) {
+		var mom = momentExt.utc(ms); // TODO: optimize by using Date.UTC
 
 		if (forceAllDay) {
 			mom.stripTime();
@@ -893,24 +931,24 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		this.localizeMoment(mom);
 
 		return mom;
-	},
+	}
 
 
 	// Updates the given moment's locale settings to the current calendar locale settings.
-	localizeMoment: function(mom) {
+	localizeMoment(mom) {
 		mom._locale = this.localeData;
-	},
+	}
 
 
 	// Returns a boolean about whether or not the calendar knows how to calculate
 	// the timezone offset of arbitrary dates in the current timezone.
-	getIsAmbigTimezone: function() {
+	getIsAmbigTimezone() {
 		return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC';
-	},
+	}
 
 
 	// Returns a copy of the given date in the current timezone. Has no effect on dates without times.
-	applyTimezone: function(date) {
+	applyTimezone(date) {
 		if (!date.hasTime()) {
 			return date.clone();
 		}
@@ -928,18 +966,18 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return zonedDate;
-	},
+	}
 
 
 	/*
 	Assumes the footprint is non-open-ended.
 	*/
-	footprintToDateProfile: function(componentFootprint, ignoreEnd) {
-		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs);
+	footprintToDateProfile(componentFootprint, ignoreEnd) {
+		var start = momentExt.utc(componentFootprint.unzonedRange.startMs);
 		var end;
 
 		if (!ignoreEnd) {
-			end = FC.moment.utc(componentFootprint.unzonedRange.endMs);
+			end = momentExt.utc(componentFootprint.unzonedRange.endMs);
 		}
 
 		if (componentFootprint.isAllDay) {
@@ -958,29 +996,29 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return new EventDateProfile(start, end, this);
-	},
+	}
 
 
 	// Returns a moment for the current date, as defined by the client's computer or from the `now` option.
 	// Will return an moment with an ambiguous timezone.
-	getNow: function() {
+	getNow() {
 		var now = this.opt('now');
 		if (typeof now === 'function') {
 			now = now();
 		}
 		return this.moment(now).stripZone();
-	},
+	}
 
 
 	// Produces a human-readable string for the given duration.
 	// Side-effect: changes the locale of the given duration.
-	humanizeDuration: function(duration) {
+	humanizeDuration(duration) {
 		return duration.locale(this.opt('locale')).humanize();
-	},
+	}
 
 
 	// will return `null` if invalid range
-	parseUnzonedRange: function(rangeInput) {
+	parseUnzonedRange(rangeInput) {
 		var start = null;
 		var end = null;
 
@@ -1001,15 +1039,14 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return new UnzonedRange(start, end);
-	},
+	}
 
 
 	// Event-Date Utilities
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	initEventManager: function() {
-		var _this = this;
+	initEventManager() {
 		var eventManager = new EventManager(this);
 		var rawSources = this.opt('eventSources') || [];
 		var singleRawSource = this.opt('events');
@@ -1020,14 +1057,14 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 			rawSources.unshift(singleRawSource);
 		}
 
-		eventManager.on('release', function(eventsPayload) {
-			_this.trigger('eventsReset', eventsPayload);
+		eventManager.on('release', (eventsPayload) => {
+			this.trigger('eventsReset', eventsPayload);
 		});
 
 		eventManager.freeze();
 
-		rawSources.forEach(function(rawSource) {
-			var source = EventSourceParser.parse(rawSource, _this);
+		rawSources.forEach((rawSource) => {
+			var source = EventSourceParser.parse(rawSource, this);
 
 			if (source) {
 				eventManager.addSource(source);
@@ -1035,33 +1072,33 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		});
 
 		eventManager.thaw();
-	},
+	}
 
 
-	requestEvents: function(start, end) {
+	requestEvents(start, end) {
 		return this.eventManager.requestEvents(
 			start,
 			end,
 			this.opt('timezone'),
 			!this.opt('lazyFetching')
 		);
-	},
+	}
 
 
 	// Get an event's normalized end date. If not present, calculate it from the defaults.
-	getEventEnd: function(event) {
+	getEventEnd(event) {
 		if (event.end) {
 			return event.end.clone();
 		}
 		else {
 			return this.getDefaultEventEnd(event.allDay, event.start);
 		}
-	},
+	}
 
 
 	// Given an event's allDay status and start date, return what its fallback end date should be.
 	// TODO: rename to computeDefaultEventEnd
-	getDefaultEventEnd: function(allDay, zonedStart) {
+	getDefaultEventEnd(allDay, zonedStart) {
 		var end = zonedStart.clone();
 
 		if (allDay) {
@@ -1076,24 +1113,24 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return end;
-	},
+	}
 
 
 	// Public Events API
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	rerenderEvents: function() { // API method. destroys old events if previously rendered.
+	rerenderEvents() { // API method. destroys old events if previously rendered.
 		this.view.flash('displayingEvents');
-	},
+	}
 
 
-	refetchEvents: function() {
+	refetchEvents() {
 		this.eventManager.refetchAllSources();
-	},
+	}
 
 
-	renderEvents: function(eventInputs, isSticky) {
+	renderEvents(eventInputs, isSticky) {
 		this.eventManager.freeze();
 
 		for (var i = 0; i < eventInputs.length; i++) {
@@ -1101,10 +1138,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.eventManager.thaw();
-	},
+	}
 
 
-	renderEvent: function(eventInput, isSticky) {
+	renderEvent(eventInput, isSticky) {
 		var eventManager = this.eventManager;
 		var eventDef = EventDefParser.parse(
 			eventInput,
@@ -1114,11 +1151,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		if (eventDef) {
 			eventManager.addEventDef(eventDef, isSticky);
 		}
-	},
+	}
 
 
 	// legacyQuery operates on legacy event instance objects
-	removeEvents: function(legacyQuery) {
+	removeEvents(legacyQuery) {
 		var eventManager = this.eventManager;
 		var legacyInstances = [];
 		var idMap = {};
@@ -1149,11 +1186,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 			eventManager.thaw();
 		}
-	},
+	}
 
 
 	// legacyQuery operates on legacy event instance objects
-	clientEvents: function(legacyQuery) {
+	clientEvents(legacyQuery) {
 		var legacyEventInstances = [];
 
 		this.eventManager.getEventInstances().forEach(function(eventInstance) {
@@ -1161,10 +1198,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		});
 
 		return filterLegacyEventInstances(legacyEventInstances, legacyQuery);
-	},
+	}
 
 
-	updateEvents: function(eventPropsArray) {
+	updateEvents(eventPropsArray) {
 		this.eventManager.freeze();
 
 		for (var i = 0; i < eventPropsArray.length; i++) {
@@ -1172,10 +1209,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		this.eventManager.thaw();
-	},
+	}
 
 
-	updateEvent: function(eventProps) {
+	updateEvent(eventProps) {
 		var eventDef = this.eventManager.getEventDefByUid(eventProps._id);
 		var eventInstance;
 		var eventDefMutation;
@@ -1191,35 +1228,35 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 			this.eventManager.mutateEventsWithId(eventDef.id, eventDefMutation); // will release
 		}
-	},
+	}
 
 
 	// Public Event Sources API
 	// ------------------------------------------------------------------------------------
 
 
-	getEventSources: function() {
+	getEventSources() {
 		return this.eventManager.otherSources.slice(); // clone
-	},
+	}
 
 
-	getEventSourceById: function(id) {
+	getEventSourceById(id) {
 		return this.eventManager.getSourceById(
 			EventSource.normalizeId(id)
 		);
-	},
+	}
 
 
-	addEventSource: function(sourceInput) {
+	addEventSource(sourceInput) {
 		var source = EventSourceParser.parse(sourceInput, this);
 
 		if (source) {
 			this.eventManager.addSource(source);
 		}
-	},
+	}
 
 
-	removeEventSources: function(sourceMultiQuery) {
+	removeEventSources(sourceMultiQuery) {
 		var eventManager = this.eventManager;
 		var sources;
 		var i;
@@ -1238,10 +1275,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 
 			eventManager.thaw();
 		}
-	},
+	}
 
 
-	removeEventSource: function(sourceQuery) {
+	removeEventSource(sourceQuery) {
 		var eventManager = this.eventManager;
 		var sources = eventManager.querySources(sourceQuery);
 		var i;
@@ -1253,10 +1290,10 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		eventManager.thaw();
-	},
+	}
 
 
-	refetchEventSources: function(sourceMultiQuery) {
+	refetchEventSources(sourceMultiQuery) {
 		var eventManager = this.eventManager;
 		var sources = eventManager.multiQuerySources(sourceMultiQuery);
 		var i;
@@ -1271,7 +1308,11 @@ var Calendar = FC.Calendar = Class.extend(EmitterMixin, ListenerMixin, {
 	}
 
 
-});
+}
+
+
+EmitterMixin.mixInto(Calendar)
+ListenerMixin.mixInto(Calendar)
 
 
 function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {

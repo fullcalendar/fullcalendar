@@ -1,21 +1,40 @@
+import { removeExact } from '../util'
+import EventPeriod from './EventPeriod'
+import ArrayEventSource from './event-source/ArrayEventSource'
+import EventSource from './event-source/EventSource'
+import EventSourceParser from './event-source/EventSourceParser'
+import SingleEventDef from './event/SingleEventDef'
+import EventInstanceGroup from './event/EventInstanceGroup'
+import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
+import { default as ListenerMixin, ListenerInterface } from '../common/ListenerMixin'
 
-var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 
-	currentPeriod: null,
+export default class EventManager {
 
-	calendar: null,
-	stickySource: null,
-	otherSources: null, // does not include sticky source
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
+
+	currentPeriod: any
+
+	calendar: any
+	stickySource: any
+	otherSources: any // does not include sticky source
 
 
-	constructor: function(calendar) {
+	constructor(calendar) {
 		this.calendar = calendar;
 		this.stickySource = new ArrayEventSource(calendar);
 		this.otherSources = [];
-	},
+	}
 
 
-	requestEvents: function(start, end, timezone, force) {
+	requestEvents(start, end, timezone, force) {
 		if (
 			force ||
 			!this.currentPeriod ||
@@ -28,45 +47,45 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return this.currentPeriod.whenReleased();
-	},
+	}
 
 
 	// Source Adding/Removing
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	addSource: function(eventSource) {
+	addSource(eventSource) {
 		this.otherSources.push(eventSource);
 
 		if (this.currentPeriod) {
 			this.currentPeriod.requestSource(eventSource); // might release
 		}
-	},
+	}
 
 
-	removeSource: function(doomedSource) {
+	removeSource(doomedSource) {
 		removeExact(this.otherSources, doomedSource);
 
 		if (this.currentPeriod) {
 			this.currentPeriod.purgeSource(doomedSource); // might release
 		}
-	},
+	}
 
 
-	removeAllSources: function() {
+	removeAllSources() {
 		this.otherSources = [];
 
 		if (this.currentPeriod) {
 			this.currentPeriod.purgeAllSources(); // might release
 		}
-	},
+	}
 
 
 	// Source Refetching
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	refetchSource: function(eventSource) {
+	refetchSource(eventSource) {
 		var currentPeriod = this.currentPeriod;
 
 		if (currentPeriod) {
@@ -75,10 +94,10 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			currentPeriod.requestSource(eventSource);
 			currentPeriod.thaw();
 		}
-	},
+	}
 
 
-	refetchAllSources: function() {
+	refetchAllSources() {
 		var currentPeriod = this.currentPeriod;
 
 		if (currentPeriod) {
@@ -87,20 +106,20 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 			currentPeriod.requestSources(this.getSources());
 			currentPeriod.thaw();
 		}
-	},
+	}
 
 
 	// Source Querying
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getSources: function() {
+	getSources() {
 		return [ this.stickySource ].concat(this.otherSources);
-	},
+	}
 
 
 	// like querySources, but accepts multple match criteria (like multiple IDs)
-	multiQuerySources: function(matchInputs) {
+	multiQuerySources(matchInputs) {
 
 		// coerce into an array
 		if (!matchInputs) {
@@ -122,12 +141,12 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return matchingSources;
-	},
+	}
 
 
 	// matchInput can either by a real event source object, an ID, or the function/URL for the source.
 	// returns an array of matching source objects.
-	querySources: function(matchInput) {
+	querySources(matchInput) {
 		var sources = this.otherSources;
 		var i, source;
 
@@ -154,24 +173,24 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 				return isSourcesEquivalent(matchInput, source);
 			});
 		}
-	},
+	}
 
 
 	/*
 	ID assumed to already be normalized
 	*/
-	getSourceById: function(id) {
-		return $.grep(this.otherSources, function(source) {
+	getSourceById(id) {
+		return $.grep(this.otherSources, function(source:any) {
 			return source.id && source.id === id;
 		})[0];
-	},
+	}
 
 
 	// Event-Period
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	setPeriod: function(eventPeriod) {
+	setPeriod(eventPeriod) {
 		if (this.currentPeriod) {
 			this.unbindPeriod(this.currentPeriod);
 			this.currentPeriod = null;
@@ -181,33 +200,33 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		this.bindPeriod(eventPeriod);
 
 		eventPeriod.requestSources(this.getSources());
-	},
+	}
 
 
-	bindPeriod: function(eventPeriod) {
+	bindPeriod(eventPeriod) {
 		this.listenTo(eventPeriod, 'release', function(eventsPayload) {
 			this.trigger('release', eventsPayload);
 		});
-	},
+	}
 
 
-	unbindPeriod: function(eventPeriod) {
+	unbindPeriod(eventPeriod) {
 		this.stopListeningTo(eventPeriod);
-	},
+	}
 
 
 	// Event Getting/Adding/Removing
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	getEventDefByUid: function(uid) {
+	getEventDefByUid(uid) {
 		if (this.currentPeriod) {
 			return this.currentPeriod.getEventDefByUid(uid);
 		}
-	},
+	}
 
 
-	addEventDef: function(eventDef, isSticky) {
+	addEventDef(eventDef, isSticky) {
 		if (isSticky) {
 			this.stickySource.addEventDef(eventDef);
 		}
@@ -215,10 +234,10 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		if (this.currentPeriod) {
 			this.currentPeriod.addEventDef(eventDef); // might release
 		}
-	},
+	}
 
 
-	removeEventDefsById: function(eventId) {
+	removeEventDefsById(eventId) {
 		this.getSources().forEach(function(eventSource) {
 			eventSource.removeEventDefsById(eventId);
 		});
@@ -226,10 +245,10 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		if (this.currentPeriod) {
 			this.currentPeriod.removeEventDefsById(eventId); // might release
 		}
-	},
+	}
 
 
-	removeAllEventDefs: function() {
+	removeAllEventDefs() {
 		this.getSources().forEach(function(eventSource) {
 			eventSource.removeAllEventDefs();
 		});
@@ -237,7 +256,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		if (this.currentPeriod) {
 			this.currentPeriod.removeAllEventDefs();
 		}
-	},
+	}
 
 
 	// Event Mutating
@@ -247,7 +266,7 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 	/*
 	Returns an undo function.
 	*/
-	mutateEventsWithId: function(eventDefId, eventDefMutation) {
+	mutateEventsWithId(eventDefId, eventDefMutation) {
 		var currentPeriod = this.currentPeriod;
 		var eventDefs;
 		var undoFuncs = [];
@@ -280,13 +299,13 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return function() { };
-	},
+	}
 
 
 	/*
 	copies and then mutates
 	*/
-	buildMutatedEventInstanceGroup: function(eventDefId, eventDefMutation) {
+	buildMutatedEventInstanceGroup(eventDefId, eventDefMutation) {
 		var eventDefs = this.getEventDefsById(eventDefId);
 		var i;
 		var defCopy;
@@ -305,47 +324,50 @@ var EventManager = Class.extend(EmitterMixin, ListenerMixin, {
 		}
 
 		return new EventInstanceGroup(allInstances);
-	},
+	}
 
 
 	// Freezing
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	freeze: function() {
+	freeze() {
 		if (this.currentPeriod) {
 			this.currentPeriod.freeze();
 		}
-	},
+	}
 
 
-	thaw: function() {
+	thaw() {
 		if (this.currentPeriod) {
 			this.currentPeriod.thaw();
 		}
 	}
 
-});
+
+	// methods that simply forward to EventPeriod
+
+	getEventDefsById(eventDefId) {
+		return this.currentPeriod.getEventDefsById(eventDefId)
+	}
+
+	getEventInstances() {
+		return this.currentPeriod.getEventInstances()
+	}
+
+	getEventInstancesWithId(eventDefId) {
+		return this.currentPeriod.getEventInstancesWithId(eventDefId)
+	}
+
+	getEventInstancesWithoutId(eventDefId) {
+		return this.currentPeriod.getEventInstancesWithoutId(eventDefId)
+	}
+
+}
 
 
-// Methods that straight-up query the current EventPeriod for an array of results.
-[
-	'getEventDefsById',
-	'getEventInstances',
-	'getEventInstancesWithId',
-	'getEventInstancesWithoutId'
-].forEach(function(methodName) {
-
-	EventManager.prototype[methodName] = function() {
-		var currentPeriod = this.currentPeriod;
-
-		if (currentPeriod) {
-			return currentPeriod[methodName].apply(currentPeriod, arguments);
-		}
-
-		return [];
-	};
-});
+EmitterMixin.mixInto(EventManager)
+ListenerMixin.mixInto(EventManager)
 
 
 function isSourcesEquivalent(source0, source1) {

@@ -1,62 +1,85 @@
+import * as moment from 'moment'
+import { isInt, divideDurationByDuration, htmlEscape } from '../util'
+import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
+import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
+import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
+import CoordCache from '../common/CoordCache'
+import UnzonedRange from '../models/UnzonedRange'
+import ComponentFootprint from '../models/ComponentFootprint'
+import TimeGridEventRenderer from './TimeGridEventRenderer'
+import TimeGridHelperRenderer from './TimeGridHelperRenderer'
+import TimeGridFillRenderer from './TimeGridFillRenderer'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 // We mixin DayTable, even though there is only a single row of days
 
-var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteractionsMixin, DayTableMixin, {
+// potential nice values for the slot-duration and interval-duration
+// from largest to smallest
+var AGENDA_STOCK_SUB_DURATIONS = [
+	{ hours: 1 },
+	{ minutes: 30 },
+	{ minutes: 15 },
+	{ seconds: 30 },
+	{ seconds: 15 }
+];
 
-	eventRendererClass: TimeGridEventRenderer,
-	businessHourRendererClass: BusinessHourRenderer,
-	helperRendererClass: TimeGridHelperRenderer,
-	fillRendererClass: TimeGridFillRenderer,
+export default class TimeGrid extends InteractiveDateComponent {
 
-	view: null, // TODO: make more general and/or remove
-	helperRenderer: null,
+	dayDates: DayTableInterface['dayDates']
+	daysPerRow: DayTableInterface['daysPerRow']
+	colCnt: DayTableInterface['colCnt']
+	updateDayTable: DayTableInterface['updateDayTable']
+	renderHeadHtml: DayTableInterface['renderHeadHtml']
+	renderBgTrHtml: DayTableInterface['renderBgTrHtml']
+	bookendCells: DayTableInterface['bookendCells']
+	getCellDate: DayTableInterface['getCellDate']
 
-	dayRanges: null, // UnzonedRange[], of start-end of each day
-	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
-	snapDuration: null, // granularity of time for dragging and selecting
-	snapsPerSlot: null,
-	labelFormat: null, // formatting string for times running along vertical axis
-	labelInterval: null, // duration of how often a label should be displayed for a slot
+	view: any // TODO: make more general and/or remove
+	helperRenderer: any
 
-	headContainerEl: null, // div that hold's the date header
-	colEls: null, // cells elements in the day-row background
-	slatContainerEl: null, // div that wraps all the slat rows
-	slatEls: null, // elements running horizontally across all columns
-	nowIndicatorEls: null,
+	dayRanges: any // UnzonedRange[], of start-end of each day
+	slotDuration: any // duration of a "slot", a distinct time segment on given day, visualized by lines
+	snapDuration: any // granularity of time for dragging and selecting
+	snapsPerSlot: any
+	labelFormat: any // formatting string for times running along vertical axis
+	labelInterval: any // duration of how often a label should be displayed for a slot
 
-	colCoordCache: null,
-	slatCoordCache: null,
+	headContainerEl: any // div that hold's the date header
+	colEls: any // cells elements in the day-row background
+	slatContainerEl: any // div that wraps all the slat rows
+	slatEls: any // elements running horizontally across all columns
+	nowIndicatorEls: any
 
-	bottomRuleEl: null, // hidden by default
-	contentSkeletonEl: null,
-	colContainerEls: null, // containers for each column
+	colCoordCache: any
+	slatCoordCache: any
+
+	bottomRuleEl: any // hidden by default
+	contentSkeletonEl: any
+	colContainerEls: any // containers for each column
 
 	// inner-containers for each column where different types of segs live
-	fgContainerEls: null,
-	bgContainerEls: null,
-	helperContainerEls: null,
-	highlightContainerEls: null,
-	businessContainerEls: null,
+	fgContainerEls: any
+	bgContainerEls: any
+	helperContainerEls: any
+	highlightContainerEls: any
+	businessContainerEls: any
 
 	// arrays of different types of displayed segments
-	helperSegs: null,
-	highlightSegs: null,
-	businessSegs: null,
+	helperSegs: any
+	highlightSegs: any
+	businessSegs: any
 
 
-	constructor: function(view) {
-		this.view = view; // do first, for opt calls during initialization
-
-		InteractiveDateComponent.call(this); // call the super-constructor
-
+	constructor(view) {
+		super(view);
 		this.processOptions();
-	},
+	}
 
 
 	// Slices up the given span (unzoned start/end with other misc data) into an array of segments
-	componentFootprintToSegs: function(componentFootprint) {
+	componentFootprintToSegs(componentFootprint) {
 		var segs = this.sliceRangeByTimes(componentFootprint.unzonedRange);
 		var i;
 
@@ -70,14 +93,14 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return segs;
-	},
+	}
 
 
 	/* Date Handling
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	sliceRangeByTimes: function(unzonedRange) {
+	sliceRangeByTimes(unzonedRange) {
 		var segs = [];
 		var segRange;
 		var dayIndex;
@@ -98,7 +121,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return segs;
-	},
+	}
 
 
 	/* Options
@@ -106,7 +129,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Parses various options into properties of this object
-	processOptions: function() {
+	processOptions() {
 		var slotDuration = this.opt('slotDuration');
 		var snapDuration = this.opt('snapDuration');
 		var input;
@@ -132,11 +155,11 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		this.labelInterval = input ?
 			moment.duration(input) :
 			this.computeLabelInterval(slotDuration);
-	},
+	}
 
 
 	// Computes an automatic value for slotLabelInterval
-	computeLabelInterval: function(slotDuration) {
+	computeLabelInterval(slotDuration) {
 		var i;
 		var labelInterval;
 		var slotsPerLabel;
@@ -151,28 +174,28 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return moment.duration(slotDuration); // fall back. clone
-	},
+	}
 
 
 	/* Date Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderDates: function(dateProfile) {
+	renderDates(dateProfile) {
 		this.dateProfile = dateProfile;
 		this.updateDayTable();
 		this.renderSlats();
 		this.renderColumns();
-	},
+	}
 
 
-	unrenderDates: function() {
+	unrenderDates() {
 		//this.unrenderSlats(); // don't need this because repeated .html() calls clear
 		this.unrenderColumns();
-	},
+	}
 
 
-	renderSkeleton: function() {
+	renderSkeleton() {
 		var theme = this.view.calendar.theme;
 
 		this.el.html(
@@ -182,10 +205,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		);
 
 		this.bottomRuleEl = this.el.find('hr');
-	},
+	}
 
 
-	renderSlats: function() {
+	renderSlats() {
 		var theme = this.view.calendar.theme;
 
 		this.slatContainerEl = this.el.find('> .fc-slats')
@@ -201,11 +224,11 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 			els: this.slatEls,
 			isVertical: true
 		});
-	},
+	}
 
 
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
-	renderSlatRowHtml: function() {
+	renderSlatRowHtml() {
 		var view = this.view;
 		var calendar = view.calendar;
 		var theme = calendar.theme;
@@ -247,10 +270,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return html;
-	},
+	}
 
 
-	renderColumns: function() {
+	renderColumns() {
 		var dateProfile = this.dateProfile;
 		var theme = this.view.calendar.theme;
 
@@ -279,12 +302,12 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		});
 
 		this.renderContentSkeleton();
-	},
+	}
 
 
-	unrenderColumns: function() {
+	unrenderColumns() {
 		this.unrenderContentSkeleton();
-	},
+	}
 
 
 	/* Content Skeleton
@@ -292,7 +315,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Renders the DOM that the view's content will live in
-	renderContentSkeleton: function() {
+	renderContentSkeleton() {
 		var cellHtml = '';
 		var i;
 		var skeletonEl;
@@ -327,10 +350,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		this.bookendCells(skeletonEl.find('tr')); // TODO: do this on string level
 		this.el.append(skeletonEl);
-	},
+	}
 
 
-	unrenderContentSkeleton: function() {
+	unrenderContentSkeleton() {
 		this.contentSkeletonEl.remove();
 		this.contentSkeletonEl = null;
 		this.colContainerEls = null;
@@ -339,11 +362,11 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		this.bgContainerEls = null;
 		this.highlightContainerEls = null;
 		this.businessContainerEls = null;
-	},
+	}
 
 
 	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
-	groupSegsByCol: function(segs) {
+	groupSegsByCol(segs) {
 		var segsByCol = [];
 		var i;
 
@@ -356,12 +379,12 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		return segsByCol;
-	},
+	}
 
 
 	// Given segments grouped by column, insert the segments' elements into a parallel array of container
 	// elements, each living within a column.
-	attachSegsByCol: function(segsByCol, containerEls) {
+	attachSegsByCol(segsByCol, containerEls) {
 		var col;
 		var segs;
 		var i;
@@ -373,19 +396,19 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				containerEls.eq(col).append(segs[i].el);
 			}
 		}
-	},
+	}
 
 
 	/* Now Indicator
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getNowIndicatorUnit: function() {
+	getNowIndicatorUnit() {
 		return 'minute'; // will refresh on the minute
-	},
+	}
 
 
-	renderNowIndicator: function(date) {
+	renderNowIndicator(date) {
 		// seg system might be overkill, but it handles scenario where line needs to be rendered
 		//  more than once because of columns with the same date (resources columns for example)
 		var segs = this.componentFootprintToSegs(
@@ -413,23 +436,23 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 		}
 
 		this.nowIndicatorEls = $(nodes);
-	},
+	}
 
 
-	unrenderNowIndicator: function() {
+	unrenderNowIndicator() {
 		if (this.nowIndicatorEls) {
 			this.nowIndicatorEls.remove();
 			this.nowIndicatorEls = null;
 		}
-	},
+	}
 
 
 	/* Coordinates
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	updateSize: function(totalHeight, isAuto, isResize) {
-		InteractiveDateComponent.prototype.updateSize.apply(this, arguments);
+	updateSize(totalHeight, isAuto, isResize) {
+		super.updateSize(totalHeight, isAuto, isResize);
 
 		this.slatCoordCache.build();
 
@@ -438,28 +461,28 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				[].concat(this.eventRenderer.getSegs(), this.businessSegs || [])
 			);
 		}
-	},
+	}
 
 
-	getTotalSlatHeight: function() {
+	getTotalSlatHeight() {
 		return this.slatContainerEl.outerHeight();
-	},
+	}
 
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given date.
 	// `ms` can be a millisecond UTC time OR a UTC moment.
 	// A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
-	computeDateTop: function(ms, startOfDayDate) {
+	computeDateTop(ms, startOfDayDate) {
 		return this.computeTimeTop(
 			moment.duration(
 				ms - startOfDayDate.clone().stripTime()
 			)
 		);
-	},
+	}
 
 
 	// Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
-	computeTimeTop: function(time) {
+	computeTimeTop(time) {
 		var len = this.slatEls.length;
 		var dateProfile = this.dateProfile;
 		var slatCoverage = (time - dateProfile.minTime) / this.slotDuration; // floating-point value of # of slots covered
@@ -483,19 +506,19 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 		return this.slatCoordCache.getTopPosition(slatIndex) +
 			this.slatCoordCache.getHeight(slatIndex) * slatRemainder;
-	},
+	}
 
 
 	// Refreshes the CSS top/bottom coordinates for each segment element.
 	// Works when called after initial render, after a window resize/zoom for example.
-	updateSegVerticals: function(segs) {
+	updateSegVerticals(segs) {
 		this.computeSegVerticals(segs);
 		this.assignSegVerticals(segs);
-	},
+	}
 
 
 	// For each segment in an array, computes and assigns its top and bottom properties
-	computeSegVerticals: function(segs) {
+	computeSegVerticals(segs) {
 		var eventMinHeight = this.opt('agendaEventMinHeight');
 		var i, seg;
 		var dayDate;
@@ -510,47 +533,47 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				this.computeDateTop(seg.endMs, dayDate)
 			);
 		}
-	},
+	}
 
 
 	// Given segments that already have their top/bottom properties computed, applies those values to
 	// the segments' elements.
-	assignSegVerticals: function(segs) {
+	assignSegVerticals(segs) {
 		var i, seg;
 
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 			seg.el.css(this.generateSegVerticalCss(seg));
 		}
-	},
+	}
 
 
 	// Generates an object with CSS properties for the top/bottom coordinates of a segment element
-	generateSegVerticalCss: function(seg) {
+	generateSegVerticalCss(seg) {
 		return {
 			top: seg.top,
 			bottom: -seg.bottom // flipped because needs to be space beyond bottom edge of event container
 		};
-	},
+	}
 
 
 	/* Hit System
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	prepareHits: function() {
+	prepareHits() {
 		this.colCoordCache.build();
 		this.slatCoordCache.build();
-	},
+	}
 
 
-	releaseHits: function() {
+	releaseHits() {
 		this.colCoordCache.clear();
 		// NOTE: don't clear slatCoordCache because we rely on it for computeTimeTop
-	},
+	}
 
 
-	queryHit: function(leftOffset, topOffset) {
+	queryHit(leftOffset, topOffset) {
 		var snapsPerSlot = this.snapsPerSlot;
 		var colCoordCache = this.colCoordCache;
 		var slatCoordCache = this.slatCoordCache;
@@ -579,10 +602,10 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				};
 			}
 		}
-	},
+	}
 
 
-	getHitFootprint: function(hit) {
+	getHitFootprint(hit) {
 		var start = this.getCellDate(0, hit.col); // row=0
 		var time = this.computeSnapTime(hit.snap); // pass in the snap-index
 		var end;
@@ -594,18 +617,18 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 			new UnzonedRange(start, end),
 			false // all-day?
 		);
-	},
+	}
 
 
 	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
-	computeSnapTime: function(snapIndex) {
+	computeSnapTime(snapIndex) {
 		return moment.duration(this.dateProfile.minTime + this.snapDuration * snapIndex);
-	},
+	}
 
 
-	getHitEl: function(hit) {
+	getHitEl(hit) {
 		return this.colEls.eq(hit.col);
-	},
+	}
 
 
 	/* Event Drag Visualization
@@ -614,7 +637,7 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(eventFootprints, seg, isTouch) {
+	renderDrag(eventFootprints, seg, isTouch) {
 		var i;
 
 		if (seg) { // if there is event information for this drag, render a helper event
@@ -632,14 +655,14 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 				this.renderHighlight(eventFootprints[i].componentFootprint);
 			}
 		}
-	},
+	}
 
 
 	// Unrenders any visual indication of an event being dragged
-	unrenderDrag: function(seg) {
+	unrenderDrag() {
 		this.unrenderHighlight();
 		this.helperRenderer.unrender();
-	},
+	}
 
 
 	/* Event Resize Visualization
@@ -647,15 +670,15 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Renders a visual indication of an event being resized
-	renderEventResize: function(eventFootprints, seg, isTouch) {
+	renderEventResize(eventFootprints, seg, isTouch) {
 		this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch);
-	},
+	}
 
 
 	// Unrenders any visual indication of an event being resized
-	unrenderEventResize: function(seg) {
+	unrenderEventResize() {
 		this.helperRenderer.unrender();
-	},
+	}
 
 
 	/* Selection
@@ -663,20 +686,28 @@ var TimeGrid = FC.TimeGrid = InteractiveDateComponent.extend(StandardInteraction
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelectionFootprint: function(componentFootprint) {
+	renderSelectionFootprint(componentFootprint) {
 		if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
 			this.helperRenderer.renderComponentFootprint(componentFootprint);
 		}
 		else {
 			this.renderHighlight(componentFootprint);
 		}
-	},
+	}
 
 
 	// Unrenders any visual indication of a selection
-	unrenderSelection: function() {
+	unrenderSelection() {
 		this.helperRenderer.unrender();
 		this.unrenderHighlight();
 	}
 
-});
+}
+
+TimeGrid.prototype.eventRendererClass = TimeGridEventRenderer
+TimeGrid.prototype.businessHourRendererClass = BusinessHourRenderer
+TimeGrid.prototype.helperRendererClass = TimeGridHelperRenderer
+TimeGrid.prototype.fillRendererClass = TimeGridFillRenderer
+
+StandardInteractionsMixin.mixInto(TimeGrid)
+DayTableMixin.mixInto(TimeGrid)

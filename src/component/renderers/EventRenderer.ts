@@ -1,33 +1,34 @@
+import { compareByFieldSpecs, proxy } from '../../util'
 
-var EventRenderer = FC.EventRenderer = Class.extend({
+export default class EventRenderer {
 
-	view: null,
-	component: null,
-	fillRenderer: null, // might remain null
+	view: any
+	component: any
+	fillRenderer: any // might remain null
 
-	fgSegs: null,
-	bgSegs: null,
+	fgSegs: any
+	bgSegs: any
 
 	// derived from options
-	eventTimeFormat: null,
-	displayEventTime: null,
-	displayEventEnd: null,
+	eventTimeFormat: any
+	displayEventTime: any
+	displayEventEnd: any
 
 
-	constructor: function(component, fillRenderer) { // fillRenderer is optional
+	constructor(component, fillRenderer) { // fillRenderer is optional
 		this.view = component._getView();
 		this.component = component;
 		this.fillRenderer = fillRenderer;
-	},
+	}
 
 
-	opt: function(name) {
+	opt(name) {
 		return this.view.opt(name);
-	},
+	}
 
 
 	// Updates values that rely on options and also relate to range
-	rangeUpdated: function() {
+	rangeUpdated() {
 		var displayEventTime;
 		var displayEventEnd;
 
@@ -48,10 +49,10 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 		this.displayEventTime = displayEventTime;
 		this.displayEventEnd = displayEventEnd;
-	},
+	}
 
 
-	render: function(eventsPayload) {
+	render(eventsPayload) {
 		var dateProfile = this.component._getDateProfile();
 		var eventDefId;
 		var instanceGroup;
@@ -76,16 +77,16 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 		this.renderBgRanges(bgRanges);
 		this.renderFgRanges(fgRanges);
-	},
+	}
 
 
-	unrender: function() {
+	unrender() {
 		this.unrenderBgRanges();
 		this.unrenderFgRanges();
-	},
+	}
 
 
-	renderFgRanges: function(eventRanges) {
+	renderFgRanges(eventRanges) {
 		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
@@ -96,86 +97,83 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		if (this.renderFgSegs(segs) !== false) { // no failure?
 			this.fgSegs = segs;
 		}
-	},
+	}
 
 
-	unrenderFgRanges: function() {
+	unrenderFgRanges() {
 		this.unrenderFgSegs(this.fgSegs || []);
 		this.fgSegs = null;
-	},
+	}
 
 
-	renderBgRanges: function(eventRanges) {
+	renderBgRanges(eventRanges) {
 		var eventFootprints = this.component.eventRangesToEventFootprints(eventRanges);
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
 		if (this.renderBgSegs(segs) !== false) { // no failure?
 			this.bgSegs = segs;
 		}
-	},
+	}
 
 
-	unrenderBgRanges: function() {
+	unrenderBgRanges() {
 		this.unrenderBgSegs();
 		this.bgSegs = null;
-	},
+	}
 
 
-	getSegs: function() {
+	getSegs() {
 		return (this.bgSegs || []).concat(this.fgSegs || []);
-	},
+	}
 
 
 	// Renders foreground event segments onto the grid
-	renderFgSegs: function(segs) {
+	renderFgSegs(segs): (boolean|void) {
 		// subclasses must implement
 		// segs already has rendered els, and has been filtered.
 
 		return false; // signal failure if not implemented
-	},
+	}
 
 
 	// Unrenders all currently rendered foreground segments
-	unrenderFgSegs: function(segs) {
+	unrenderFgSegs(segs) {
 		// subclasses must implement
-	},
+	}
 
 
-	renderBgSegs: function(segs) {
-		var _this = this;
-
+	renderBgSegs(segs) {
 		if (this.fillRenderer) {
 			this.fillRenderer.renderSegs('bgEvent', segs, {
-				getClasses: function(seg) {
-					return _this.getBgClasses(seg.footprint.eventDef);
+				getClasses: (seg) => {
+					return this.getBgClasses(seg.footprint.eventDef);
 				},
-				getCss: function(seg) {
+				getCss: (seg) => {
 					return {
-						'background-color': _this.getBgColor(seg.footprint.eventDef)
+						'background-color': this.getBgColor(seg.footprint.eventDef)
 					};
 				},
-				filterEl: function(seg, el) {
-					return _this.filterEventRenderEl(seg.footprint, el);
+				filterEl: (seg, el) => {
+					return this.filterEventRenderEl(seg.footprint, el);
 				}
 			});
 		}
 		else {
 			return false; // signal failure if no fillRenderer
 		}
-	},
+	}
 
 
-	unrenderBgSegs: function() {
+	unrenderBgSegs() {
 		if (this.fillRenderer) {
 			this.fillRenderer.unrender('bgEvent');
 		}
-	},
+	}
 
 
 	// Renders and assigns an `el` property for each foreground event segment.
 	// Only returns segments that successfully rendered.
-	renderFgSegEls: function(segs, disableResizing) {
-		var _this = this;
+	renderFgSegEls(segs, disableResizing=false) {
 		var hasEventRenderHandlers = this.view.hasPublicHandlers('eventRender');
 		var html = '';
 		var renderedSegs = [];
@@ -191,12 +189,12 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 
 			// Grab individual elements from the combined HTML string. Use each as the default rendering.
 			// Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-			$(html).each(function(i, node) {
+			$(html).each((i, node) => {
 				var seg = segs[i];
 				var el = $(node);
 
 				if (hasEventRenderHandlers) { // optimization
-					el = _this.filterEventRenderEl(seg.footprint, el);
+					el = this.filterEventRenderEl(seg.footprint, el);
 				}
 
 				if (el) {
@@ -208,21 +206,21 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return renderedSegs;
-	},
+	}
 
 
-	beforeFgSegHtml: function(seg) { // hack
-	},
+	beforeFgSegHtml(seg) { // hack
+	}
 
 
 	// Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
-	fgSegHtml: function(seg, disableResizing) {
+	fgSegHtml(seg, disableResizing) {
 		// subclasses should implement
-	},
+	}
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
-	getSegClasses: function(seg, isDraggable, isResizable) {
+	getSegClasses(seg, isDraggable, isResizable) {
 		var classes = [
 			'fc-event',
 			seg.isStart ? 'fc-start' : 'fc-not-start',
@@ -242,12 +240,12 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return classes;
-	},
+	}
 
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
-	filterEventRenderEl: function(eventFootprint, el) {
+	filterEventRenderEl(eventFootprint, el) {
 		var legacy = eventFootprint.getEventLegacy();
 
 		var custom = this.view.publiclyTrigger('eventRender', {
@@ -263,7 +261,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return el;
-	},
+	}
 
 
 	// Compute the text that should be displayed on an event's element.
@@ -271,7 +269,7 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 	// If event times are disabled, or the event has no time, will return a blank string.
 	// If not specified, formatStr will default to the eventTimeFormat setting,
 	// and displayEnd will default to the displayEventEnd setting.
-	getTimeText: function(eventFootprint, formatStr, displayEnd) {
+	getTimeText(eventFootprint, formatStr?, displayEnd?) {
 		return this._getTimeText(
 			eventFootprint.eventInstance.dateProfile.start,
 			eventFootprint.eventInstance.dateProfile.end,
@@ -279,10 +277,10 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 			formatStr,
 			displayEnd
 		);
-	},
+	}
 
 
-	_getTimeText: function(start, end, isAllDay, formatStr, displayEnd) {
+	_getTimeText(start, end, isAllDay, formatStr?, displayEnd?) {
 		if (formatStr == null) {
 			formatStr = this.eventTimeFormat;
 		}
@@ -305,32 +303,32 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return '';
-	},
+	}
 
 
-	computeEventTimeFormat: function() {
+	computeEventTimeFormat() {
 		return this.opt('smallTimeFormat');
-	},
+	}
 
 
-	computeDisplayEventTime: function() {
+	computeDisplayEventTime() {
 		return true;
-	},
+	}
 
 
-	computeDisplayEventEnd: function() {
+	computeDisplayEventEnd() {
 		return true;
-	},
+	}
 
 
-	getBgClasses: function(eventDef) {
+	getBgClasses(eventDef) {
 		var classNames = this.getClasses(eventDef);
 		classNames.push('fc-bgevent');
 		return classNames;
-	},
+	}
 
 
-	getClasses: function(eventDef) {
+	getClasses(eventDef) {
 		var objs = this.getStylingObjs(eventDef);
 		var i;
 		var classNames = [];
@@ -343,21 +341,21 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return classNames;
-	},
+	}
 
 
 	// Utility for generating event skin-related CSS properties
-	getSkinCss: function(eventDef) {
+	getSkinCss(eventDef) {
 		return {
 			'background-color': this.getBgColor(eventDef),
 			'border-color': this.getBorderColor(eventDef),
 			color: this.getTextColor(eventDef)
 		};
-	},
+	}
 
 
 	// Queries for caller-specified color, then falls back to default
-	getBgColor: function(eventDef) {
+	getBgColor(eventDef) {
 		var objs = this.getStylingObjs(eventDef);
 		var i;
 		var val;
@@ -372,11 +370,11 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return val;
-	},
+	}
 
 
 	// Queries for caller-specified color, then falls back to default
-	getBorderColor: function(eventDef) {
+	getBorderColor(eventDef) {
 		var objs = this.getStylingObjs(eventDef);
 		var i;
 		var val;
@@ -391,11 +389,11 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return val;
-	},
+	}
 
 
 	// Queries for caller-specified color, then falls back to default
-	getTextColor: function(eventDef) {
+	getTextColor(eventDef) {
 		var objs = this.getStylingObjs(eventDef);
 		var i;
 		var val;
@@ -410,28 +408,28 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 		}
 
 		return val;
-	},
+	}
 
 
-	getStylingObjs: function(eventDef) {
+	getStylingObjs(eventDef) {
 		var objs = this.getFallbackStylingObjs(eventDef);
 		objs.unshift(eventDef);
 		return objs;
-	},
+	}
 
 
-	getFallbackStylingObjs: function(eventDef) {
+	getFallbackStylingObjs(eventDef) {
 		return [ eventDef.source ];
-	},
+	}
 
 
-	sortEventSegs: function(segs) {
+	sortEventSegs(segs) {
 		segs.sort(proxy(this, 'compareEventSegs'));
-	},
+	}
 
 
 	// A cmp function for determining which segments should take visual priority
-	compareEventSegs: function(seg1, seg2) {
+	compareEventSegs(seg1, seg2) {
 		var f1 = seg1.footprint.componentFootprint;
 		var r1 = f1.unzonedRange;
 		var f2 = seg2.footprint.componentFootprint;
@@ -447,4 +445,4 @@ var EventRenderer = FC.EventRenderer = Class.extend({
 			);
 	}
 
-});
+}

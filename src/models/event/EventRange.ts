@@ -1,12 +1,12 @@
 
-var EventRange = Class.extend({
+export default class EventRange {
 
-	unzonedRange: null,
-	eventDef: null,
-	eventInstance: null, // optional
+	unzonedRange: any
+	eventDef: any
+	eventInstance: any // optional
 
 
-	constructor: function(unzonedRange, eventDef, eventInstance) {
+	constructor(unzonedRange, eventDef, eventInstance?) {
 		this.unzonedRange = unzonedRange;
 		this.eventDef = eventDef;
 
@@ -15,4 +15,4 @@ var EventRange = Class.extend({
 		}
 	}
 
-});
+}

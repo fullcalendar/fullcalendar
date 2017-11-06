@@ -1,31 +1,48 @@
-
-var DateComponent = FC.DateComponent = Component.extend({
-
-	uid: null,
-	childrenByUid: null,
-	isRTL: false, // frequently accessed options
-	nextDayThreshold: null, // "
-	dateProfile: null, // hack
-
-	eventRendererClass: null,
-	helperRendererClass: null,
-	businessHourRendererClass: null,
-	fillRendererClass: null,
-
-	eventRenderer: null,
-	helperRenderer: null,
-	businessHourRenderer: null,
-	fillRenderer: null,
-
-	hitsNeededDepth: 0, // necessary because multiple callers might need the same hits
-
-	hasAllDayBusinessHours: false, // TODO: unify with largeUnit and isTimeScale?
-
-	isDatesRendered: false,
+import * as moment from 'moment'
+import { attrsToStr, htmlEscape, dayIDs } from '../util'
+import momentExt from '../moment-ext'
+import { formatRange } from '../date-formatting'
+import Component from './Component'
+import { eventRangeToEventFootprint } from '../models/event/util'
 
 
-	constructor: function() {
-		Component.call(this);
+export default abstract class DateComponent extends Component {
+
+	static guid: number = 0 // TODO: better system for this?
+
+	eventRendererClass: any
+	helperRendererClass: any
+	businessHourRendererClass: any
+	fillRendererClass: any
+
+	uid: any
+	childrenByUid: any
+	isRTL: boolean = false // frequently accessed options
+	nextDayThreshold: any // "
+	dateProfile: any // hack
+
+	eventRenderer: any
+	helperRenderer: any
+	businessHourRenderer: any
+	fillRenderer: any
+
+	hitsNeededDepth: number = 0 // necessary because multiple callers might need the same hits
+
+	hasAllDayBusinessHours: boolean = false // TODO: unify with largeUnit and isTimeScale?
+
+	isDatesRendered: boolean = false
+
+
+	constructor(_view?, _options?) {
+		super()
+
+		// hack to set options prior to the this.opt calls
+		if (_view) {
+			this['view'] = _view
+		}
+		if (_options) {
+			this['options'] = _options
+		}
 
 		this.uid = String(DateComponent.guid++);
 		this.childrenByUid = {};
@@ -48,10 +65,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 		if (this.businessHourRendererClass && this.fillRenderer) {
 			this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer);
 		}
-	},
+	}
 
 
-	addChild: function(child) {
+	addChild(child) {
 		if (!this.childrenByUid[child.uid]) {
 			this.childrenByUid[child.uid] = child;
 
@@ -59,10 +76,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return false;
-	},
+	}
 
 
-	removeChild: function(child) {
+	removeChild(child) {
 		if (this.childrenByUid[child.uid]) {
 			delete this.childrenByUid[child.uid];
 
@@ -70,69 +87,69 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return false;
-	},
+	}
 
 
 	// TODO: only do if isInDom?
 	// TODO: make part of Component, along with children/batch-render system?
-	updateSize: function(totalHeight, isAuto, isResize) {
+	updateSize(totalHeight, isAuto, isResize) {
 		this.callChildren('updateSize', arguments);
-	},
+	}
 
 
 	// Options
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	opt: function(name) {
+	opt(name) {
 		return this._getView().opt(name); // default implementation
-	},
+	}
 
 
-	publiclyTrigger: function(/**/) {
+	publiclyTrigger(...args) {
 		var calendar = this._getCalendar();
 
-		return calendar.publiclyTrigger.apply(calendar, arguments);
-	},
+		return calendar.publiclyTrigger.apply(calendar, args);
+	}
 
 
-	hasPublicHandlers: function(/**/) {
+	hasPublicHandlers(...args) {
 		var calendar = this._getCalendar();
 
-		return calendar.hasPublicHandlers.apply(calendar, arguments);
-	},
+		return calendar.hasPublicHandlers.apply(calendar, args);
+	}
 
 
 	// Date
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeDateRender: function(dateProfile) {
+	executeDateRender(dateProfile) {
 		this.dateProfile = dateProfile; // for rendering
 		this.renderDates(dateProfile);
 		this.isDatesRendered = true;
 		this.callChildren('executeDateRender', arguments);
-	},
+	}
 
 
-	executeDateUnrender: function() { // wrapper
+	executeDateUnrender() { // wrapper
 		this.callChildren('executeDateUnrender', arguments);
 		this.dateProfile = null;
 		this.unrenderDates();
 		this.isDatesRendered = false;
-	},
+	}
 
 
 	// date-cell content only
-	renderDates: function(dateProfile) {
+	renderDates(dateProfile) {
 		// subclasses should implement
-	},
+	}
 
 
 	// date-cell content only
-	unrenderDates: function() {
+	unrenderDates() {
 		// subclasses should override
-	},
+	}
 
 
 	// Now-Indicator
@@ -141,76 +158,76 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Returns a string unit, like 'second' or 'minute' that defined how often the current time indicator
 	// should be refreshed. If something falsy is returned, no time indicator is rendered at all.
-	getNowIndicatorUnit: function() {
+	getNowIndicatorUnit() {
 		// subclasses should implement
-	},
+	}
 
 
 	// Renders a current time indicator at the given datetime
-	renderNowIndicator: function(date) {
+	renderNowIndicator(date) {
 		this.callChildren('renderNowIndicator', arguments);
-	},
+	}
 
 
 	// Undoes the rendering actions from renderNowIndicator
-	unrenderNowIndicator: function() {
+	unrenderNowIndicator() {
 		this.callChildren('unrenderNowIndicator', arguments);
-	},
+	}
 
 
 	// Business Hours
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	renderBusinessHours: function(businessHourGenerator) {
+	renderBusinessHours(businessHourGenerator) {
 		if (this.businessHourRenderer) {
 			this.businessHourRenderer.render(businessHourGenerator);
 		}
 
 		this.callChildren('renderBusinessHours', arguments);
-	},
+	}
 
 
 	// Unrenders previously-rendered business-hours
-	unrenderBusinessHours: function() {
+	unrenderBusinessHours() {
 		this.callChildren('unrenderBusinessHours', arguments);
 
 		if (this.businessHourRenderer) {
 			this.businessHourRenderer.unrender();
 		}
-	},
+	}
 
 
 	// Event Displaying
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	executeEventRender: function(eventsPayload) {
+	executeEventRender(eventsPayload) {
 		if (this.eventRenderer) {
 			this.eventRenderer.rangeUpdated(); // poorly named now
 			this.eventRenderer.render(eventsPayload);
 		}
-		else if (this.renderEvents) { // legacy
-			this.renderEvents(convertEventsPayloadToLegacyArray(eventsPayload));
+		else if (this['renderEvents']) { // legacy
+			this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload));
 		}
 
 		this.callChildren('executeEventRender', arguments);
-	},
+	}
 
 
-	executeEventUnrender: function() {
+	executeEventUnrender() {
 		this.callChildren('executeEventUnrender', arguments);
 
 		if (this.eventRenderer) {
 			this.eventRenderer.unrender();
 		}
-		else if (this.destroyEvents) { // legacy
-			this.destroyEvents();
+		else if (this['destroyEvents']) { // legacy
+			this['destroyEvents']();
 		}
-	},
+	}
 
 
-	getBusinessHourSegs: function() { // recursive
+	getBusinessHourSegs() { // recursive
 		var segs = this.getOwnBusinessHourSegs();
 
 		this.iterChildren(function(child) {
@@ -218,19 +235,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 		});
 
 		return segs;
-	},
+	}
 
 
-	getOwnBusinessHourSegs: function() {
+	getOwnBusinessHourSegs() {
 		if (this.businessHourRenderer) {
 			return this.businessHourRenderer.getSegs();
 		}
 
 		return [];
-	},
+	}
 
 
-	getEventSegs: function() { // recursive
+	getEventSegs() { // recursive
 		var segs = this.getOwnEventSegs();
 
 		this.iterChildren(function(child) {
@@ -238,23 +255,23 @@ var DateComponent = FC.DateComponent = Component.extend({
 		});
 
 		return segs;
-	},
+	}
 
 
-	getOwnEventSegs: function() { // just for itself
+	getOwnEventSegs() { // just for itself
 		if (this.eventRenderer) {
 			return this.eventRenderer.getSegs();
 		}
 
 		return [];
-	},
+	}
 
 
 	// Event Rendering Triggering
 	// -----------------------------------------------------------------------------------------------------------------
 
 
-	triggerAfterEventsRendered: function() {
+	triggerAfterEventsRendered() {
 		this.triggerAfterEventSegsRendered(
 			this.getEventSegs()
 		);
@@ -263,55 +280,51 @@ var DateComponent = FC.DateComponent = Component.extend({
 			context: this,
 			args: [ this ]
 		});
-	},
+	}
 
 
-	triggerAfterEventSegsRendered: function(segs) {
-		var _this = this;
-
+	triggerAfterEventSegsRendered(segs) {
 		// an optimization, because getEventLegacy is expensive
 		if (this.hasPublicHandlers('eventAfterRender')) {
-			segs.forEach(function(seg) {
+			segs.forEach((seg) => {
 				var legacy;
 
 				if (seg.el) { // necessary?
 					legacy = seg.footprint.getEventLegacy();
 
-					_this.publiclyTrigger('eventAfterRender', {
+					this.publiclyTrigger('eventAfterRender', {
 						context: legacy,
-						args: [ legacy, seg.el, _this ]
+						args: [ legacy, seg.el, this ]
 					});
 				}
 			});
 		}
-	},
+	}
 
 
-	triggerBeforeEventsDestroyed: function() {
+	triggerBeforeEventsDestroyed() {
 		this.triggerBeforeEventSegsDestroyed(
 			this.getEventSegs()
 		);
-	},
+	}
 
 
-	triggerBeforeEventSegsDestroyed: function(segs) {
-		var _this = this;
-
+	triggerBeforeEventSegsDestroyed(segs) {
 		if (this.hasPublicHandlers('eventDestroy')) {
-			segs.forEach(function(seg) {
+			segs.forEach((seg) => {
 				var legacy;
 
 				if (seg.el) { // necessary?
 					legacy = seg.footprint.getEventLegacy();
 
-					_this.publiclyTrigger('eventDestroy', {
+					this.publiclyTrigger('eventDestroy', {
 						context: legacy,
-						args: [ legacy, seg.el, _this ]
+						args: [ legacy, seg.el, this ]
 					});
 				}
 			});
 		}
-	},
+	}
 
 
 	// Event Rendering Utils
@@ -320,7 +333,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Hides all rendered event segments linked to the given event
 	// RECURSIVE with subcomponents
-	showEventsWithId: function(eventDefId) {
+	showEventsWithId(eventDefId) {
 
 		this.getEventSegs().forEach(function(seg) {
 			if (
@@ -332,12 +345,12 @@ var DateComponent = FC.DateComponent = Component.extend({
 		});
 
 		this.callChildren('showEventsWithId', arguments);
-	},
+	}
 
 
 	// Shows all rendered event segments linked to the given event
 	// RECURSIVE with subcomponents
-	hideEventsWithId: function(eventDefId) {
+	hideEventsWithId(eventDefId) {
 
 		this.getEventSegs().forEach(function(seg) {
 			if (
@@ -349,7 +362,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		});
 
 		this.callChildren('hideEventsWithId', arguments);
-	},
+	}
 
 
 	// Drag-n-Drop Rendering (for both events and external elements)
@@ -359,7 +372,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// Renders a visual indication of a event or external-element drag over the given drop zone.
 	// If an external-element, seg will be `null`.
 	// Must return elements used for any mock events.
-	renderDrag: function(eventFootprints, seg, isTouch) {
+	renderDrag(eventFootprints, seg, isTouch) {
 		var renderedHelper = false;
 
 		this.iterChildren(function(child) {
@@ -369,13 +382,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 		});
 
 		return renderedHelper;
-	},
+	}
 
 
 	// Unrenders a visual indication of an event or external-element being dragged.
-	unrenderDrag: function() {
+	unrenderDrag() {
 		this.callChildren('unrenderDrag', arguments);
-	},
+	}
 
 
 	// Event Resizing
@@ -383,15 +396,15 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	// Renders a visual indication of an event being resized.
-	renderEventResize: function(eventFootprints, seg, isTouch) {
+	renderEventResize(eventFootprints, seg, isTouch) {
 		this.callChildren('renderEventResize', arguments);
-	},
+	}
 
 
 	// Unrenders a visual indication of an event being resized.
-	unrenderEventResize: function() {
+	unrenderEventResize() {
 		this.callChildren('unrenderEventResize', arguments);
-	},
+	}
 
 
 	// Selection
@@ -400,19 +413,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 	// Renders a visual indication of the selection
 	// TODO: rename to `renderSelection` after legacy is gone
-	renderSelectionFootprint: function(componentFootprint) {
+	renderSelectionFootprint(componentFootprint) {
 		this.renderHighlight(componentFootprint);
 
 		this.callChildren('renderSelectionFootprint', arguments);
-	},
+	}
 
 
 	// Unrenders a visual indication of selection
-	unrenderSelection: function() {
+	unrenderSelection() {
 		this.unrenderHighlight();
 
 		this.callChildren('unrenderSelection', arguments);
-	},
+	}
 
 
 	// Highlight
@@ -420,13 +433,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 
 
 	// Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
-	renderHighlight: function(componentFootprint) {
+	renderHighlight(componentFootprint) {
 		if (this.fillRenderer) {
 			this.fillRenderer.renderFootprint(
 				'highlight',
 				componentFootprint,
 				{
-					getClasses: function() {
+					getClasses() {
 						return [ 'fc-highlight' ];
 					}
 				}
@@ -434,17 +447,17 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		this.callChildren('renderHighlight', arguments);
-	},
+	}
 
 
 	// Unrenders the emphasis on a date range
-	unrenderHighlight: function() {
+	unrenderHighlight() {
 		if (this.fillRenderer) {
 			this.fillRenderer.unrender('highlight');
 		}
 
 		this.callChildren('unrenderHighlight', arguments);
-	},
+	}
 
 
 	// Hit Areas
@@ -453,39 +466,39 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// doesn't mean they need to have their own internal coord system. they can defer to sub-components.
 
 
-	hitsNeeded: function() {
+	hitsNeeded() {
 		if (!(this.hitsNeededDepth++)) {
 			this.prepareHits();
 		}
 
 		this.callChildren('hitsNeeded', arguments);
-	},
+	}
 
 
-	hitsNotNeeded: function() {
+	hitsNotNeeded() {
 		if (this.hitsNeededDepth && !(--this.hitsNeededDepth)) {
 			this.releaseHits();
 		}
 
 		this.callChildren('hitsNotNeeded', arguments);
-	},
+	}
 
 
-	prepareHits: function() {
+	prepareHits() {
 		// subclasses can implement
-	},
+	}
 
 
-	releaseHits: function() {
+	releaseHits() {
 		// subclasses can implement
-	},
+	}
 
 
 	// Given coordinates from the topleft of the document, return data about the date-related area underneath.
 	// Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
 	// Must have a `grid` property, a reference to this current grid. TODO: avoid this
 	// The returned object will be processed by getHitFootprint and getHitEl.
-	queryHit: function(leftOffset, topOffset) {
+	queryHit(leftOffset, topOffset) {
 		var childrenByUid = this.childrenByUid;
 		var uid;
 		var hit;
@@ -499,10 +512,10 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return hit;
-	},
+	}
 
 
-	getSafeHitFootprint: function(hit) {
+	getSafeHitFootprint(hit) {
 		var footprint = this.getHitFootprint(hit);
 
 		if (!this.dateProfile.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
@@ -510,24 +523,26 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return footprint;
-	},
+	}
 
 
-	getHitFootprint: function(hit) {
-	},
+	getHitFootprint(hit): any {
+		// what about being abstract!?
+	}
 
 
 	// Given position-level information about a date-related area within the grid,
 	// should return a jQuery element that best represents it. passed to dayClick callback.
-	getHitEl: function(hit) {
-	},
+	getHitEl(hit): any {
+		// what about being abstract!?
+	}
 
 
 	/* Converting eventRange -> eventFootprint
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	eventRangesToEventFootprints: function(eventRanges) {
+	eventRangesToEventFootprints(eventRanges) {
 		var eventFootprints = [];
 		var i;
 
@@ -539,19 +554,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return eventFootprints;
-	},
+	}
 
 
-	eventRangeToEventFootprints: function(eventRange) {
+	eventRangeToEventFootprints(eventRange) {
 		return [ eventRangeToEventFootprint(eventRange) ];
-	},
+	}
 
 
 	/* Converting componentFootprint/eventFootprint -> segs
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	eventFootprintsToSegs: function(eventFootprints) {
+	eventFootprintsToSegs(eventFootprints) {
 		var segs = [];
 		var i;
 
@@ -562,13 +577,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return segs;
-	},
+	}
 
 
 	// Given an event's span (unzoned start/end and other misc data), and the event itself,
 	// slices into segments and attaches event-derived properties to them.
 	// eventSpan - { start, end, isStart, isEnd, otherthings... }
-	eventFootprintToSegs: function(eventFootprint) {
+	eventFootprintToSegs(eventFootprint) {
 		var unzonedRange = eventFootprint.componentFootprint.unzonedRange;
 		var segs;
 		var i, seg;
@@ -590,48 +605,49 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return segs;
-	},
+	}
 
 
-	componentFootprintToSegs: function(componentFootprint) {
+	componentFootprintToSegs(componentFootprint) {
 		return [];
-	},
+	}
 
 
 	// Utils
 	// ---------------------------------------------------------------------------------------------------------------
 
 
-	callChildren: function(methodName, args) {
+	callChildren(methodName, args) {
 		this.iterChildren(function(child) {
 			child[methodName].apply(child, args);
 		});
-	},
+	}
 
 
-	iterChildren: function(func) {
+	iterChildren(func) {
 		var childrenByUid = this.childrenByUid;
 		var uid;
 
 		for (uid in childrenByUid) {
 			func(childrenByUid[uid]);
 		}
-	},
+	}
 
 
-	_getCalendar: function() { // TODO: strip out. move to generic parent.
-		return this.calendar || this.view.calendar;
-	},
+	_getCalendar() { // TODO: strip out. move to generic parent.
+		let t = (this as any)
+		return t.calendar || t.view.calendar;
+	}
 
 
-	_getView: function() { // TODO: strip out. move to generic parent.
-		return this.view;
-	},
+	_getView() { // TODO: strip out. move to generic parent.
+		return (this as any).view;
+	}
 
 
-	_getDateProfile: function() {
+	_getDateProfile() {
 		return this._getView().get('dateProfile');
-	},
+	}
 
 
 	// Generates HTML for an anchor to another view into the calendar.
@@ -640,7 +656,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 	// { date, type, forceOff }
 	// `type` is a view-type like "day" or "week". default value is "day".
 	// `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
-	buildGotoAnchorHtml: function(gotoOptions, attrs, innerHtml) {
+	buildGotoAnchorHtml(gotoOptions, attrs, innerHtml) {
 		var date, type, forceOff;
 		var finalOptions;
 
@@ -652,7 +668,7 @@ var DateComponent = FC.DateComponent = Component.extend({
 		else {
 			date = gotoOptions; // a single moment input
 		}
-		date = FC.moment(date); // if a string, parse it
+		date = momentExt(date); // if a string, parse it
 
 		finalOptions = { // for serialization into the link
 			date: date.format('YYYY-MM-DD'),
@@ -678,16 +694,16 @@ var DateComponent = FC.DateComponent = Component.extend({
 				innerHtml +
 				'</span>';
 		}
-	},
+	}
 
 
-	getAllDayHtml: function() {
+	getAllDayHtml() {
 		return this.opt('allDayHtml') || htmlEscape(this.opt('allDayText'));
-	},
+	}
 
 
 	// Computes HTML classNames for a single-day element
-	getDayClasses: function(date, noThemeHighlight) {
+	getDayClasses(date, noThemeHighlight?) {
 		var view = this._getView();
 		var classes = [];
 		var today;
@@ -720,13 +736,13 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return classes;
-	},
+	}
 
 
 	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
 	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
 	// The timezones of the dates within `range` will be respected.
-	formatRange: function(range, isAllDay, formatStr, separator) {
+	formatRange(range, isAllDay, formatStr, separator) {
 		var end = range.end;
 
 		if (isAllDay) {
@@ -734,19 +750,19 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return formatRange(range.start, end, formatStr, separator, this.isRTL);
-	},
+	}
 
 
 	// Compute the number of the give units in the "current" range.
 	// Will return a floating-point number. Won't round.
-	currentRangeAs: function(unit) {
+	currentRangeAs(unit) {
 		return this._getDateProfile().currentUnzonedRange.as(unit);
-	},
+	}
 
 
 	// Returns the date range of the full days the given range visually appears to occupy.
 	// Returns a plain object with start/end, NOT an UnzonedRange!
-	computeDayRange: function(unzonedRange) {
+	computeDayRange(unzonedRange) {
 		var calendar = this._getCalendar();
 		var startDay = calendar.msToUtcMoment(unzonedRange.startMs, true); // the beginning of the day the range starts
 		var end = calendar.msToUtcMoment(unzonedRange.endMs);
@@ -766,20 +782,17 @@ var DateComponent = FC.DateComponent = Component.extend({
 		}
 
 		return { start: startDay, end: endDay };
-	},
+	}
 
 
 	// Does the given range visually appear to occupy more than one day?
-	isMultiDayRange: function(unzonedRange) {
+	isMultiDayRange(unzonedRange) {
 		var dayRange = this.computeDayRange(unzonedRange);
 
 		return dayRange.end.diff(dayRange.start, 'days') > 1;
 	}
 
-});
-
-
-DateComponent.guid = 0; // TODO: better system for this?
+}
 
 
 // legacy

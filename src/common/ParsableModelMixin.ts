@@ -1,14 +1,36 @@
+/*
+USAGE:
+	import { default as ParsableModelMixin, ParsableModelInterface } from './ParsableModelMixin'
+in class:
+	applyProps: ParsableModelInterface['applyProps']
+	applyManualStandardProps: ParsableModelInterface['applyManualStandardProps']
+	applyMiscProps: ParsableModelInterface['applyMiscProps']
+	isStandardProp: ParsableModelInterface['isStandardProp']
+	static defineStandardProps = ParsableModelMixin.defineStandardProps
+	static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+after class:
+	ParsableModelMixin.mixInto(TheClass)
+*/
 
-var ParsableModelMixin = {
+import { copyOwnProps } from '../util'
+import Mixin from './Mixin'
 
-	standardPropMap: {}, // will be cloned by defineStandardProps
+export interface ParsableModelInterface {
+	applyProps(rawProps)
+	applyManualStandardProps(rawProps)
+	applyMiscProps(rawProps)
+	isStandardProp(propName)
+}
 
+export default class ParsableModelMixin extends Mixin implements ParsableModelInterface {
+
+	standardPropMap: any
 
 	/*
 	Returns true/false for success.
 	Meant to be only called ONCE, at object creation.
 	*/
-	applyProps: function(rawProps) {
+	applyProps(rawProps) {
 		var standardPropMap = this.standardPropMap;
 		var manualProps = {};
 		var miscProps = {};
@@ -29,63 +51,59 @@ var ParsableModelMixin = {
 		this.applyMiscProps(miscProps);
 
 		return this.applyManualStandardProps(manualProps);
-	},
+	}
 
 
 	/*
 	If subclasses override, they must call this supermethod and return the boolean response.
 	Meant to be only called ONCE, at object creation.
 	*/
-	applyManualStandardProps: function(rawProps) {
+	applyManualStandardProps(rawProps) {
 		return true;
-	},
+	}
 
 
 	/*
 	Can be called even after initial object creation.
 	*/
-	applyMiscProps: function(rawProps) {
+	applyMiscProps(rawProps) {
 		// subclasses can implement
-	},
+	}
 
 
 	/*
 	TODO: why is this a method when defineStandardProps is static
 	*/
-	isStandardProp: function(propName) {
+	isStandardProp(propName) {
 		return propName in this.standardPropMap;
 	}
 
-};
 
+	static defineStandardProps(propDefs) {
+		var proto = this.prototype;
 
-/*
-TODO: devise a better system
-*/
-var ParsableModelMixin_defineStandardProps = function(propDefs) {
-	var proto = this.prototype;
+		if (!proto.hasOwnProperty('standardPropMap')) {
+			proto.standardPropMap = Object.create(proto.standardPropMap);
+		}
 
-	if (!proto.hasOwnProperty('standardPropMap')) {
-		proto.standardPropMap = Object.create(proto.standardPropMap);
+		copyOwnProps(propDefs, proto.standardPropMap);
 	}
 
-	copyOwnProps(propDefs, proto.standardPropMap);
-};
 
+	static copyVerbatimStandardProps(src, dest) {
+		var map = this.prototype.standardPropMap;
+		var propName;
 
-/*
-TODO: devise a better system
-*/
-var ParsableModelMixin_copyVerbatimStandardProps = function(src, dest) {
-	var map = this.prototype.standardPropMap;
-	var propName;
-
-	for (propName in map) {
-		if (
-			src[propName] != null && // in the src object?
-			map[propName] === true // false means "copy verbatim"
-		) {
-			dest[propName] = src[propName];
+		for (propName in map) {
+			if (
+				src[propName] != null && // in the src object?
+				map[propName] === true // false means "copy verbatim"
+			) {
+				dest[propName] = src[propName];
+			}
 		}
 	}
-};
+
+}
+
+ParsableModelMixin.prototype.standardPropMap = {} // will be cloned by defineStandardProps

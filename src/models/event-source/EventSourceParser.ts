@@ -1,5 +1,5 @@
 
-var EventSourceParser = {
+export default {
 
 	sourceClasses: [],
 
@@ -23,7 +23,4 @@ var EventSourceParser = {
 		}
 	}
 
-};
-
-
-FC.EventSourceParser = EventSourceParser;
+}

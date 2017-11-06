@@ -1,46 +1,50 @@
-
-var HelperRenderer = FC.HelperRenderer = Class.extend({
-
-	view: null,
-	component: null,
-	eventRenderer: null,
-	helperEls: null,
+import SingleEventDef from '../../models/event/SingleEventDef'
+import EventFootprint from '../../models/event/EventFootprint'
+import EventSource from '../../models/event-source/EventSource'
 
 
-	constructor: function(component, eventRenderer) {
+export default class HelperRenderer {
+
+	view: any
+	component: any
+	eventRenderer: any
+	helperEls: any
+
+
+	constructor(component, eventRenderer) {
 		this.view = component._getView();
 		this.component = component;
 		this.eventRenderer = eventRenderer;
-	},
+	}
 
 
-	renderComponentFootprint: function(componentFootprint) {
+	renderComponentFootprint(componentFootprint) {
 		this.renderEventFootprints([
 			this.fabricateEventFootprint(componentFootprint)
 		]);
-	},
+	}
 
 
-	renderEventDraggingFootprints: function(eventFootprints, sourceSeg, isTouch) {
+	renderEventDraggingFootprints(eventFootprints, sourceSeg, isTouch) {
 		this.renderEventFootprints(
 			eventFootprints,
 			sourceSeg,
 			'fc-dragging',
 			isTouch ? null : this.view.opt('dragOpacity')
 		);
-	},
+	}
 
 
-	renderEventResizingFootprints: function(eventFootprints, sourceSeg, isTouch) {
+	renderEventResizingFootprints(eventFootprints, sourceSeg, isTouch) {
 		this.renderEventFootprints(
 			eventFootprints,
 			sourceSeg,
 			'fc-resizing'
 		);
-	},
+	}
 
 
-	renderEventFootprints: function(eventFootprints, sourceSeg, extraClassNames, opacity) {
+	renderEventFootprints(eventFootprints, sourceSeg?, extraClassNames?, opacity?) {
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 		var classNames = 'fc-helper ' + (extraClassNames || '');
 		var i;
@@ -59,26 +63,26 @@ var HelperRenderer = FC.HelperRenderer = Class.extend({
 		}
 
 		this.helperEls = this.renderSegs(segs, sourceSeg);
-	},
+	}
 
 
 	/*
 	Must return all mock event elements
 	*/
-	renderSegs: function(segs, sourceSeg) {
+	renderSegs(segs, sourceSeg?) {
 		// Subclasses must implement
-	},
+	}
 
 
-	unrender: function() {
+	unrender() {
 		if (this.helperEls) {
 			this.helperEls.remove();
 			this.helperEls = null;
 		}
-	},
+	}
 
 
-	fabricateEventFootprint: function(componentFootprint) {
+	fabricateEventFootprint(componentFootprint) {
 		var calendar = this.view.calendar;
 		var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
 		var dummyEvent = new SingleEventDef(new EventSource(calendar));
@@ -90,4 +94,4 @@ var HelperRenderer = FC.HelperRenderer = Class.extend({
 		return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
 	}
 
-});
+}

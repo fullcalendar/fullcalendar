@@ -1,21 +1,24 @@
+import { diffByUnit, diffDay, diffDayTime } from '../../util'
+import EventDateProfile from './EventDateProfile'
 
-var EventDefDateMutation = Class.extend({
 
-	clearEnd: false,
-	forceTimed: false,
-	forceAllDay: false,
+export default class EventDefDateMutation {
+
+	clearEnd: boolean = false
+	forceTimed: boolean = false
+	forceAllDay: boolean = false
 
 	// Durations. if 0-ms duration, will be null instead.
 	// Callers should not set this directly.
-	dateDelta: null,
-	startDelta: null,
-	endDelta: null,
+	dateDelta: any
+	startDelta: any
+	endDelta: any
 
 
 	/*
 	returns an undo function.
 	*/
-	buildNewDateProfile: function(eventDateProfile, calendar) {
+	buildNewDateProfile(eventDateProfile, calendar) {
 		var start = eventDateProfile.start.clone();
 		var end = null;
 		var shouldRezone = false;
@@ -88,86 +91,86 @@ var EventDefDateMutation = Class.extend({
 		}
 
 		return new EventDateProfile(start, end, calendar);
-	},
+	}
 
 
-	setDateDelta: function(dateDelta) {
+	setDateDelta(dateDelta) {
 		if (dateDelta && dateDelta.valueOf()) {
 			this.dateDelta = dateDelta;
 		}
 		else {
 			this.dateDelta = null;
 		}
-	},
+	}
 
 
-	setStartDelta: function(startDelta) {
+	setStartDelta(startDelta) {
 		if (startDelta && startDelta.valueOf()) {
 			this.startDelta = startDelta;
 		}
 		else {
 			this.startDelta = null;
 		}
-	},
+	}
 
 
-	setEndDelta: function(endDelta) {
+	setEndDelta(endDelta) {
 		if (endDelta && endDelta.valueOf()) {
 			this.endDelta = endDelta;
 		}
 		else {
 			this.endDelta = null;
 		}
-	},
+	}
 
 
-	isEmpty: function() {
+	isEmpty() {
 		return !this.clearEnd && !this.forceTimed && !this.forceAllDay &&
 			!this.dateDelta && !this.startDelta && !this.endDelta;
 	}
 
-});
 
+	static createFromDiff(dateProfile0, dateProfile1, largeUnit) {
+		var clearEnd = dateProfile0.end && !dateProfile1.end;
+		var forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay();
+		var forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay();
+		var dateDelta;
+		var endDiff;
+		var endDelta;
+		var mutation;
 
-EventDefDateMutation.createFromDiff = function(dateProfile0, dateProfile1, largeUnit) {
-	var clearEnd = dateProfile0.end && !dateProfile1.end;
-	var forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay();
-	var forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay();
-	var dateDelta;
-	var endDiff;
-	var endDelta;
-	var mutation;
+		// subtracts the dates in the appropriate way, returning a duration
+		function subtractDates(date1, date0) { // date1 - date0
+			if (largeUnit) {
+				return diffByUnit(date1, date0, largeUnit); // poorly named
+			}
+			else if (dateProfile1.isAllDay()) {
+				return diffDay(date1, date0); // poorly named
+			}
+			else {
+				return diffDayTime(date1, date0); // poorly named
+			}
+		}
 
-	// subtracts the dates in the appropriate way, returning a duration
-	function subtractDates(date1, date0) { // date1 - date0
-		if (largeUnit) {
-			return diffByUnit(date1, date0, largeUnit); // poorly named
+		dateDelta = subtractDates(dateProfile1.start, dateProfile0.start);
+
+		if (dateProfile1.end) {
+			// use unzonedRanges because dateProfile0.end might be null
+			endDiff = subtractDates(
+				dateProfile1.unzonedRange.getEnd(),
+				dateProfile0.unzonedRange.getEnd()
+			);
+			endDelta = endDiff.subtract(dateDelta);
 		}
-		else if (dateProfile1.isAllDay()) {
-			return diffDay(date1, date0); // poorly named
-		}
-		else {
-			return diffDayTime(date1, date0); // poorly named
-		}
+
+		mutation = new EventDefDateMutation();
+		mutation.clearEnd = clearEnd;
+		mutation.forceTimed = forceTimed;
+		mutation.forceAllDay = forceAllDay;
+		mutation.setDateDelta(dateDelta);
+		mutation.setEndDelta(endDelta);
+
+		return mutation;
 	}
 
-	dateDelta = subtractDates(dateProfile1.start, dateProfile0.start);
-
-	if (dateProfile1.end) {
-		// use unzonedRanges because dateProfile0.end might be null
-		endDiff = subtractDates(
-			dateProfile1.unzonedRange.getEnd(),
-			dateProfile0.unzonedRange.getEnd()
-		);
-		endDelta = endDiff.subtract(dateDelta);
-	}
-
-	mutation = new EventDefDateMutation();
-	mutation.clearEnd = clearEnd;
-	mutation.forceTimed = forceTimed;
-	mutation.forceAllDay = forceAllDay;
-	mutation.setDateDelta(dateDelta);
-	mutation.setEndDelta(endDelta);
-
-	return mutation;
-};
+}

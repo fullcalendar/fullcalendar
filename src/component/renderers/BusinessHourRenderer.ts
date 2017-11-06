@@ -1,9 +1,9 @@
 
-var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
+export default class BusinessHourRenderer {
 
-	component: null,
-	fillRenderer: null,
-	segs: null,
+	component: any
+	fillRenderer: any
+	segs: any
 
 
 	/*
@@ -11,13 +11,13 @@ var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 		- eventRangesToEventFootprints
 		- eventFootprintsToSegs
 	*/
-	constructor: function(component, fillRenderer) {
+	constructor(component, fillRenderer) {
 		this.component = component;
 		this.fillRenderer = fillRenderer;
-	},
+	}
 
 
-	render: function(businessHourGenerator) {
+	render(businessHourGenerator) {
 		var component = this.component;
 		var unzonedRange = component._getDateProfile().activeUnzonedRange;
 
@@ -33,39 +33,39 @@ var BusinessHourRenderer = FC.BusinessHourRenderer = Class.extend({
 			[];
 
 		this.renderEventFootprints(eventFootprints);
-	},
+	}
 
 
-	renderEventFootprints: function(eventFootprints) {
+	renderEventFootprints(eventFootprints) {
 		var segs = this.component.eventFootprintsToSegs(eventFootprints);
 
 		this.renderSegs(segs);
 		this.segs = segs;
-	},
+	}
 
 
-	renderSegs: function(segs) {
+	renderSegs(segs) {
 		if (this.fillRenderer) {
 			this.fillRenderer.renderSegs('businessHours', segs, {
-				getClasses: function(seg) {
+				getClasses(seg) {
 					return [ 'fc-nonbusiness', 'fc-bgevent' ];
 				}
 			});
 		}
-	},
+	}
 
 
-	unrender: function() {
+	unrender() {
 		if (this.fillRenderer) {
 			this.fillRenderer.unrender('businessHours');
 		}
 
 		this.segs = null;
-	},
+	}
 
 
-	getSegs: function() {
+	getSegs() {
 		return this.segs || [];
 	}
 
-});
+}

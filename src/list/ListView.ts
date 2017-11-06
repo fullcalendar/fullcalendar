@@ -1,32 +1,39 @@
+import { htmlEscape, subtractInnerElHeight } from '../util'
+import UnzonedRange from '../models/UnzonedRange'
+import View from '../View'
+import Scroller from '../common/Scroller'
+import ListEventRenderer from './ListEventRenderer'
+import ListEventPointing from './ListEventPointing'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
 */
-var ListView = FC.ListView = View.extend({
+export default class ListView extends View {
 
-	eventRendererClass: ListEventRenderer,
-	eventPointingClass: ListEventPointing,
+	// initialized after the class
+	eventRendererClass: any
+	eventPointingClass: any
 
-	segSelector: '.fc-list-item', // which elements accept event actions
+	segSelector: any = '.fc-list-item' // which elements accept event actions
 
-	scroller: null,
-	contentEl: null,
+	scroller: any
+	contentEl: any
 
-	dayDates: null, // localized ambig-time moment array
-	dayRanges: null, // UnzonedRange[], of start-end of each day
+	dayDates: any // localized ambig-time moment array
+	dayRanges: any // UnzonedRange[], of start-end of each day
 
 
-	constructor: function() {
-		View.apply(this, arguments);
+	constructor(calendar, viewSpec) {
+		super(calendar, viewSpec);
 
 		this.scroller = new Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
 		});
-	},
+	}
 
 
-	renderSkeleton: function() {
+	renderSkeleton() {
 		this.el.addClass(
 			'fc-list-view ' +
 			this.calendar.theme.getClass('listView')
@@ -36,26 +43,26 @@ var ListView = FC.ListView = View.extend({
 		this.scroller.el.appendTo(this.el);
 
 		this.contentEl = this.scroller.scrollEl; // shortcut
-	},
+	}
 
 
-	unrenderSkeleton: function() {
+	unrenderSkeleton() {
 		this.scroller.destroy(); // will remove the Grid too
-	},
+	}
 
 
-	updateSize: function(totalHeight, isAuto, isResize) {
+	updateSize(totalHeight, isAuto, isResize) {
 		this.scroller.setHeight(this.computeScrollerHeight(totalHeight));
-	},
+	}
 
 
-	computeScrollerHeight: function(totalHeight) {
+	computeScrollerHeight(totalHeight) {
 		return totalHeight -
 			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
-	},
+	}
 
 
-	renderDates: function(dateProfile) {
+	renderDates(dateProfile) {
 		var calendar = this.calendar;
 		var dayStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true);
 		var viewEnd = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true);
@@ -78,11 +85,11 @@ var ListView = FC.ListView = View.extend({
 		this.dayRanges = dayRanges;
 
 		// all real rendering happens in EventRenderer
-	},
+	}
 
 
 	// slices by day
-	componentFootprintToSegs: function(footprint) {
+	componentFootprintToSegs(footprint) {
 		var dayRanges = this.dayRanges;
 		var dayIndex;
 		var segRange;
@@ -118,10 +125,10 @@ var ListView = FC.ListView = View.extend({
 		}
 
 		return segs;
-	},
+	}
 
 
-	renderEmptyMessage: function() {
+	renderEmptyMessage() {
 		this.contentEl.html(
 			'<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
 			'<div class="fc-list-empty-wrap1">' +
@@ -131,11 +138,11 @@ var ListView = FC.ListView = View.extend({
 			'</div>' +
 			'</div>'
 		);
-	},
+	}
 
 
 	// render the event segments in the view
-	renderSegList: function(allSegs) {
+	renderSegList(allSegs) {
 		var segsByDay = this.groupSegsByDay(allSegs); // sparse array
 		var dayIndex;
 		var daySegs;
@@ -160,11 +167,11 @@ var ListView = FC.ListView = View.extend({
 		}
 
 		this.contentEl.empty().append(tableEl);
-	},
+	}
 
 
 	// Returns a sparse array of arrays, segs grouped by their dayIndex
-	groupSegsByDay: function(segs) {
+	groupSegsByDay(segs) {
 		var segsByDay = []; // sparse array
 		var i, seg;
 
@@ -175,11 +182,11 @@ var ListView = FC.ListView = View.extend({
 		}
 
 		return segsByDay;
-	},
+	}
 
 
 	// generates the HTML for the day headers that live amongst the event rows
-	dayHeaderHtml: function(dayDate) {
+	dayHeaderHtml(dayDate) {
 		var mainFormat = this.opt('listDayFormat');
 		var altFormat = this.opt('listDayAltFormat');
 
@@ -203,4 +210,7 @@ var ListView = FC.ListView = View.extend({
 		'</tr>';
 	}
 
-});
+}
+
+ListView.prototype.eventRendererClass = ListEventRenderer
+ListView.prototype.eventPointingClass = ListEventPointing

@@ -1,40 +1,44 @@
+import EventDef from './EventDef'
+import EventInstance from './EventInstance'
+import EventDateProfile from './EventDateProfile'
 
-var SingleEventDef = EventDef.extend({
 
-	dateProfile: null,
+export default class SingleEventDef extends EventDef {
+
+	dateProfile: any
 
 
 	/*
 	Will receive start/end params, but will be ignored.
 	*/
-	buildInstances: function() {
+	buildInstances() {
 		return [ this.buildInstance() ];
-	},
+	}
 
 
-	buildInstance: function() {
+	buildInstance() {
 		return new EventInstance(
 			this, // definition
 			this.dateProfile
 		);
-	},
+	}
 
 
-	isAllDay: function() {
+	isAllDay() {
 		return this.dateProfile.isAllDay();
-	},
+	}
 
 
-	clone: function() {
-		var def = EventDef.prototype.clone.call(this);
+	clone() {
+		var def = super.clone();
 
 		def.dateProfile = this.dateProfile;
 
 		return def;
-	},
+	}
 
 
-	rezone: function() {
+	rezone() {
 		var calendar = this.source.calendar;
 		var dateProfile = this.dateProfile;
 
@@ -43,14 +47,14 @@ var SingleEventDef = EventDef.extend({
 			dateProfile.end ? calendar.moment(dateProfile.end) : null,
 			calendar
 		);
-	},
+	}
 
 
 	/*
 	NOTE: if super-method fails, should still attempt to apply
 	*/
-	applyManualStandardProps: function(rawProps) {
-		var superSuccess = EventDef.prototype.applyManualStandardProps.apply(this, arguments);
+	applyManualStandardProps(rawProps) {
+		var superSuccess = super.applyManualStandardProps(rawProps);
 		var dateProfile = EventDateProfile.parse(rawProps, this.source); // returns null on failure
 
 		if (dateProfile) {
@@ -68,7 +72,7 @@ var SingleEventDef = EventDef.extend({
 		}
 	}
 
-});
+}
 
 
 // Parsing

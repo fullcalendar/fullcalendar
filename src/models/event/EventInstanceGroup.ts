@@ -1,40 +1,43 @@
+import UnzonedRange from '../UnzonedRange'
+import { eventInstanceToEventRange, eventInstanceToUnzonedRange } from './util'
+import EventRange from './EventRange'
 
 /*
 It's expected that there will be at least one EventInstance,
 OR that an explicitEventDef is assigned.
 */
-var EventInstanceGroup = FC.EventInstanceGroup = Class.extend({
+export default class EventInstanceGroup {
 
-	eventInstances: null,
-	explicitEventDef: null, // optional
+	eventInstances: any
+	explicitEventDef: any // optional
 
 
-	constructor: function(eventInstances) {
+	constructor(eventInstances?) {
 		this.eventInstances = eventInstances || [];
-	},
+	}
 
 
-	getAllEventRanges: function(constraintRange) {
+	getAllEventRanges(constraintRange) {
 		if (constraintRange) {
 			return this.sliceNormalRenderRanges(constraintRange);
 		}
 		else {
 			return this.eventInstances.map(eventInstanceToEventRange);
 		}
-	},
+	}
 
 
-	sliceRenderRanges: function(constraintRange) {
+	sliceRenderRanges(constraintRange) {
 		if (this.isInverse()) {
 			return this.sliceInverseRenderRanges(constraintRange);
 		}
 		else {
 			return this.sliceNormalRenderRanges(constraintRange);
 		}
-	},
+	}
 
 
-	sliceNormalRenderRanges: function(constraintRange) {
+	sliceNormalRenderRanges(constraintRange) {
 		var eventInstances = this.eventInstances;
 		var i, eventInstance;
 		var slicedRange;
@@ -57,28 +60,28 @@ var EventInstanceGroup = FC.EventInstanceGroup = Class.extend({
 		}
 
 		return slicedEventRanges;
-	},
+	}
 
 
-	sliceInverseRenderRanges: function(constraintRange) {
+	sliceInverseRenderRanges(constraintRange) {
 		var unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange);
 		var ownerDef = this.getEventDef();
 
-		unzonedRanges = invertUnzonedRanges(unzonedRanges, constraintRange);
+		unzonedRanges = UnzonedRange.invertRanges(unzonedRanges, constraintRange);
 
 		return unzonedRanges.map(function(unzonedRange) {
 			return new EventRange(unzonedRange, ownerDef); // don't give an EventInstance
 		});
-	},
+	}
 
 
-	isInverse: function() {
+	isInverse() {
 		return this.getEventDef().hasInverseRendering();
-	},
+	}
 
 
-	getEventDef: function() {
+	getEventDef() {
 		return this.explicitEventDef || this.eventInstances[0].def;
 	}
 
-});
+}

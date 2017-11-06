@@ -1,23 +1,29 @@
+import { isArraysEqual } from '../../util'
+import EventDateProfile from './EventDateProfile'
+import EventDef from './EventDef'
+import EventDefDateMutation from './EventDefDateMutation'
+import SingleEventDef from './SingleEventDef'
 
-var EventDefMutation = FC.EventDefMutation = Class.extend({
+
+export default class EventDefMutation {
 
 	// won't ever be empty. will be null instead.
 	// callers should use setDateMutation for setting.
-	dateMutation: null,
+	dateMutation: any
 
 	// hacks to get updateEvent/createFromRawProps to work.
 	// not undo-able and not considered in isEmpty.
-	eventDefId: null, // standard manual props
-	className: null, // "
-	verbatimStandardProps: null,
-	miscProps: null,
+	eventDefId: any // standard manual props
+	className: any // "
+	verbatimStandardProps: any
+	miscProps: any
 
 
 	/*
 	eventDef assumed to be a SingleEventDef.
 	returns an undo function.
 	*/
-	mutateSingle: function(eventDef) {
+	mutateSingle(eventDef) {
 		var origDateProfile;
 
 		if (this.dateMutation) {
@@ -62,83 +68,83 @@ var EventDefMutation = FC.EventDefMutation = Class.extend({
 		else {
 			return function() { };
 		}
-	},
+	}
 
 
-	setDateMutation: function(dateMutation) {
+	setDateMutation(dateMutation) {
 		if (dateMutation && !dateMutation.isEmpty()) {
 			this.dateMutation = dateMutation;
 		}
 		else {
 			this.dateMutation = null;
 		}
-	},
+	}
 
 
-	isEmpty: function() {
+	isEmpty() {
 		return !this.dateMutation;
 	}
 
-});
 
+	static createFromRawProps(eventInstance, rawProps, largeUnit) {
+		var eventDef = eventInstance.def;
+		var dateProps: any = {};
+		var standardProps: any = {};
+		var miscProps: any = {};
+		var verbatimStandardProps: any = {};
+		var eventDefId = null;
+		var className = null;
+		var propName;
+		var dateProfile;
+		var dateMutation;
+		var defMutation;
 
-EventDefMutation.createFromRawProps = function(eventInstance, rawProps, largeUnit) {
-	var eventDef = eventInstance.def;
-	var dateProps = {};
-	var standardProps = {};
-	var miscProps = {};
-	var verbatimStandardProps = {};
-	var eventDefId = null;
-	var className = null;
-	var propName;
-	var dateProfile;
-	var dateMutation;
-	var defMutation;
-
-	for (propName in rawProps) {
-		if (EventDateProfile.isStandardProp(propName)) {
-			dateProps[propName] = rawProps[propName];
+		for (propName in rawProps) {
+			if (EventDateProfile.isStandardProp(propName)) {
+				dateProps[propName] = rawProps[propName];
+			}
+			else if (eventDef.isStandardProp(propName)) {
+				standardProps[propName] = rawProps[propName];
+			}
+			else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
+				miscProps[propName] = rawProps[propName];
+			}
 		}
-		else if (eventDef.isStandardProp(propName)) {
-			standardProps[propName] = rawProps[propName];
-		}
-		else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
-			miscProps[propName] = rawProps[propName];
-		}
-	}
 
-	dateProfile = EventDateProfile.parse(dateProps, eventDef.source);
+		dateProfile = EventDateProfile.parse(dateProps, eventDef.source);
 
-	if (dateProfile) { // no failure?
-		dateMutation = EventDefDateMutation.createFromDiff(
-			eventInstance.dateProfile,
-			dateProfile,
-			largeUnit
+		if (dateProfile) { // no failure?
+			dateMutation = EventDefDateMutation.createFromDiff(
+				eventInstance.dateProfile,
+				dateProfile,
+				largeUnit
+			);
+		}
+
+		if (standardProps.id !== eventDef.id) {
+			eventDefId = standardProps.id; // only apply if there's a change
+		}
+
+		if (!isArraysEqual(standardProps.className, eventDef.className)) {
+			className = standardProps.className; // only apply if there's a change
+		}
+
+		EventDef.copyVerbatimStandardProps(
+			standardProps, // src
+			verbatimStandardProps // dest
 		);
+
+		defMutation = new EventDefMutation();
+		defMutation.eventDefId = eventDefId;
+		defMutation.className = className;
+		defMutation.verbatimStandardProps = verbatimStandardProps;
+		defMutation.miscProps = miscProps;
+
+		if (dateMutation) {
+			defMutation.dateMutation = dateMutation;
+		}
+
+		return defMutation;
 	}
 
-	if (standardProps.id !== eventDef.id) {
-		eventDefId = standardProps.id; // only apply if there's a change
-	}
-
-	if (!isArraysEqual(standardProps.className, eventDef.className)) {
-		className = standardProps.className; // only apply if there's a change
-	}
-
-	EventDef.copyVerbatimStandardProps(
-		standardProps, // src
-		verbatimStandardProps // dest
-	);
-
-	defMutation = new EventDefMutation();
-	defMutation.eventDefId = eventDefId;
-	defMutation.className = className;
-	defMutation.verbatimStandardProps = verbatimStandardProps;
-	defMutation.miscProps = miscProps;
-
-	if (dateMutation) {
-		defMutation.dateMutation = dateMutation;
-	}
-
-	return defMutation;
-};
+}

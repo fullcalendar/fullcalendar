@@ -1,54 +1,56 @@
+import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
 
-var TaskQueue = Class.extend(EmitterMixin, {
+export default class TaskQueue {
 
-	q: null,
-	isPaused: false,
-	isRunning: false,
+	on: EmitterInterface['on']
+	one: EmitterInterface['one']
+	off: EmitterInterface['off']
+	trigger: EmitterInterface['trigger']
+	triggerWith: EmitterInterface['triggerWith']
+	hasHandlers: EmitterInterface['hasHandlers']
+
+	q: any = []
+	isPaused: boolean = false
+	isRunning: boolean = false
 
 
-	constructor: function() {
-		this.q = [];
-	},
-
-
-	queue: function(/* taskFunc, taskFunc... */) {
-		this.q.push.apply(this.q, arguments); // append
+	queue(...args) {
+		this.q.push.apply(this.q, args); // append
 		this.tryStart();
-	},
+	}
 
 
-	pause: function() {
+	pause() {
 		this.isPaused = true;
-	},
+	}
 
 
-	resume: function() {
+	resume() {
 		this.isPaused = false;
 		this.tryStart();
-	},
+	}
 
 
-	getIsIdle: function() {
+	getIsIdle() {
 		return !this.isRunning && !this.isPaused;
-	},
+	}
 
 
-	tryStart: function() {
+	tryStart() {
 		if (!this.isRunning && this.canRunNext()) {
 			this.isRunning = true;
 			this.trigger('start');
 			this.runRemaining();
 		}
-	},
+	}
 
 
-	canRunNext: function() {
+	canRunNext() {
 		return !this.isPaused && this.q.length;
-	},
+	}
 
 
-	runRemaining: function() { // assumes at least one task in queue. does not check canRunNext for first task.
-		var _this = this;
+	runRemaining() { // assumes at least one task in queue. does not check canRunNext for first task.
 		var task;
 		var res;
 
@@ -57,9 +59,9 @@ var TaskQueue = Class.extend(EmitterMixin, {
 			res = this.runTask(task);
 
 			if (res && res.then) {
-				res.then(function() { // jshint ignore:line
-					if (_this.canRunNext()) {
-						_this.runRemaining();
+				res.then(() => {
+					if (this.canRunNext()) {
+						this.runRemaining();
 					}
 				});
 				return; // prevent marking as stopped
@@ -71,13 +73,13 @@ var TaskQueue = Class.extend(EmitterMixin, {
 
 		// if 'stop' handler added more tasks.... TODO: write test for this
 		this.tryStart();
-	},
+	}
 
 
-	runTask: function(task) {
+	runTask(task) {
 		return task(); // task *is* the function, but subclasses can change the format of a task
 	}
 
-});
+}
 
-FC.TaskQueue = TaskQueue;
+EmitterMixin.mixInto(TaskQueue)

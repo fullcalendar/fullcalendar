@@ -1,31 +1,33 @@
 
-var Theme = FC.Theme = Class.extend({
+export default class Theme {
 
-	optionsManager: null,
-	classes: {},
-	iconClasses: {},
-	baseIconClass: '',
-	iconOverrideOption: null,
-	iconOverrideCustomButtonOption: null,
-	iconOverridePrefix: '',
+	optionsManager: any
+
+	// settings. default values are set after the class
+	classes: any
+	iconClasses: any
+	baseIconClass: string
+	iconOverrideOption: any
+	iconOverrideCustomButtonOption: any
+	iconOverridePrefix: string
 
 
-	constructor: function(optionsManager) {
+	constructor(optionsManager) {
 		this.optionsManager = optionsManager;
 		this.processIconOverride();
-	},
+	}
 
 
-	processIconOverride: function() {
+	processIconOverride() {
 		if (this.iconOverrideOption) {
 			this.setIconOverride(
 				this.optionsManager.get(this.iconOverrideOption)
 			);
 		}
-	},
+	}
 
 
-	setIconOverride: function(iconOverrideHash) {
+	setIconOverride(iconOverrideHash) {
 		var iconClassesCopy;
 		var buttonName;
 
@@ -43,10 +45,10 @@ var Theme = FC.Theme = Class.extend({
 		else if (iconOverrideHash === false) {
 			this.iconClasses = {};
 		}
-	},
+	}
 
 
-	applyIconOverridePrefix: function(className) {
+	applyIconOverridePrefix(className) {
 		var prefix = this.iconOverridePrefix;
 
 		if (prefix && className.indexOf(prefix) !== 0) { // if not already present
@@ -54,15 +56,15 @@ var Theme = FC.Theme = Class.extend({
 		}
 
 		return className;
-	},
+	}
 
 
-	getClass: function(key) {
+	getClass(key) {
 		return this.classes[key] || '';
-	},
+	}
 
 
-	getIconClass: function(buttonName) {
+	getIconClass(buttonName) {
 		var className = this.iconClasses[buttonName];
 
 		if (className) {
@@ -70,10 +72,10 @@ var Theme = FC.Theme = Class.extend({
 		}
 
 		return '';
-	},
+	}
 
 
-	getCustomButtonIconClass: function(customButtonProps) {
+	getCustomButtonIconClass(customButtonProps) {
 		var className;
 
 		if (this.iconOverrideCustomButtonOption) {
@@ -87,4 +89,9 @@ var Theme = FC.Theme = Class.extend({
 		return '';
 	}
 
-});
+}
+
+Theme.prototype.classes = {}
+Theme.prototype.iconClasses = {}
+Theme.prototype.baseIconClass = ''
+Theme.prototype.iconOverridePrefix = ''

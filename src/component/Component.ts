@@ -1,18 +1,19 @@
+import Model from '../common/Model'
 
-var Component = Model.extend({
+export default class Component extends Model {
 
-	el: null,
+	el: any
 
 
-	setElement: function(el) {
+	setElement(el) {
 		this.el = el;
 		this.bindGlobalHandlers();
 		this.renderSkeleton();
 		this.set('isInDom', true);
-	},
+	}
 
 
-	removeElement: function() {
+	removeElement() {
 		this.unset('isInDom');
 		this.unrenderSkeleton();
 		this.unbindGlobalHandlers();
@@ -21,15 +22,15 @@ var Component = Model.extend({
 		// NOTE: don't null-out this.el in case the View was destroyed within an API callback.
 		// We don't null-out the View's other jQuery element references upon destroy,
 		//  so we shouldn't kill this.el either.
-	},
+	}
 
 
-	bindGlobalHandlers: function() {
-	},
+	bindGlobalHandlers() {
+	}
 
 
-	unbindGlobalHandlers: function() {
-	},
+	unbindGlobalHandlers() {
+	}
 
 
 	/*
@@ -38,14 +39,14 @@ var Component = Model.extend({
 
 
 	// Renders the basic structure of the view before any content is rendered
-	renderSkeleton: function() {
-		// subclasses should implement
-	},
-
-
-	// Unrenders the basic structure of the view
-	unrenderSkeleton: function() {
+	renderSkeleton() {
 		// subclasses should implement
 	}
 
-});
+
+	// Unrenders the basic structure of the view
+	unrenderSkeleton() {
+		// subclasses should implement
+	}
+
+}

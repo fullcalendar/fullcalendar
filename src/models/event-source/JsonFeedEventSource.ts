@@ -1,16 +1,24 @@
+import { applyAll } from '../../util'
+import Promise from '../../common/Promise'
+import EventSource from './EventSource'
 
-var JsonFeedEventSource = EventSource.extend({
+
+export default class JsonFeedEventSource extends EventSource {
+
+	static AJAX_DEFAULTS = {
+		dataType: 'json',
+		cache: false
+	}
 
 	// these props must all be manually set before calling fetch
-	url: null,
-	startParam: null,
-	endParam: null,
-	timezoneParam: null,
-	ajaxSettings: null, // does not include url
+	url: any
+	startParam: any
+	endParam: any
+	timezoneParam: any
+	ajaxSettings: any // does not include url
 
 
-	fetch: function(start, end, timezone) {
-		var _this = this;
+	fetch(start, end, timezone) {
 		var ajaxSettings = this.ajaxSettings;
 		var onSuccess = ajaxSettings.success;
 		var onError = ajaxSettings.error;
@@ -22,18 +30,18 @@ var JsonFeedEventSource = EventSource.extend({
 
 		this.calendar.pushLoading();
 
-		return Promise.construct(function(onResolve, onReject) {
+		return Promise.construct((onResolve, onReject) => {
 			$.ajax($.extend(
 				{}, // destination
 				JsonFeedEventSource.AJAX_DEFAULTS,
 				ajaxSettings,
 				{
-					url: _this.url,
+					url: this.url,
 					data: requestParams,
-					success: function(rawEventDefs) {
+					success: (rawEventDefs) => {
 						var callbackRes;
 
-						_this.calendar.popLoading();
+						this.calendar.popLoading();
 
 						if (rawEventDefs) {
 							callbackRes = applyAll(onSuccess, this, arguments); // redirect `this`
@@ -42,14 +50,14 @@ var JsonFeedEventSource = EventSource.extend({
 								rawEventDefs = callbackRes;
 							}
 
-							onResolve(_this.parseEventDefs(rawEventDefs));
+							onResolve(this.parseEventDefs(rawEventDefs));
 						}
 						else {
 							onReject();
 						}
 					},
-					error: function() {
-						_this.calendar.popLoading();
+					error: () => {
+						this.calendar.popLoading();
 
 						applyAll(onError, this, arguments); // redirect `this`
 						onReject();
@@ -57,10 +65,10 @@ var JsonFeedEventSource = EventSource.extend({
 				}
 			));
 		});
-	},
+	}
 
 
-	buildRequestParams: function(start, end, timezone) {
+	buildRequestParams(start, end, timezone) {
 		var calendar = this.calendar;
 		var ajaxSettings = this.ajaxSettings;
 		var startParam, endParam, timezoneParam;
@@ -102,27 +110,38 @@ var JsonFeedEventSource = EventSource.extend({
 		}
 
 		return params;
-	},
+	}
 
 
-	getPrimitive: function() {
+	getPrimitive() {
 		return this.url;
-	},
+	}
 
 
-	applyMiscProps: function(rawProps) {
-		EventSource.prototype.applyMiscProps.apply(this, arguments);
-
+	applyMiscProps(rawProps) {
 		this.ajaxSettings = rawProps;
 	}
 
-});
 
+	static parse(rawInput, calendar) {
+		var rawProps;
 
-JsonFeedEventSource.AJAX_DEFAULTS = {
-	dataType: 'json',
-	cache: false
-};
+		// normalize raw input
+		if (typeof rawInput.url === 'string') { // extended form
+			rawProps = rawInput;
+		}
+		else if (typeof rawInput === 'string') { // short form
+			rawProps = { url: rawInput };
+		}
+
+		if (rawProps) {
+			return EventSource.parse.call(this, rawProps, calendar);
+		}
+
+		return false;
+	}
+
+}
 
 
 JsonFeedEventSource.defineStandardProps({
@@ -132,27 +151,3 @@ JsonFeedEventSource.defineStandardProps({
 	endParam: true,
 	timezoneParam: true
 });
-
-
-JsonFeedEventSource.parse = function(rawInput, calendar) {
-	var rawProps;
-
-	// normalize raw input
-	if (typeof rawInput.url === 'string') { // extended form
-		rawProps = rawInput;
-	}
-	else if (typeof rawInput === 'string') { // short form
-		rawProps = { url: rawInput };
-	}
-
-	if (rawProps) {
-		return EventSource.parse.call(this, rawProps, calendar);
-	}
-
-	return false;
-};
-
-
-EventSourceParser.registerClass(JsonFeedEventSource);
-
-FC.JsonFeedEventSource = JsonFeedEventSource;

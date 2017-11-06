@@ -1,10 +1,12 @@
-
-var DayGridFillRenderer = FillRenderer.extend({
-
-	fillSegTag: 'td', // override the default tag name
+import FillRenderer from '../component/renderers/FillRenderer'
 
 
-	attachSegEls: function(type, segs) {
+export default class DayGridFillRenderer extends FillRenderer {
+
+	fillSegTag: string = 'td' // override the default tag name
+
+
+	attachSegEls(type, segs) {
 		var nodes = [];
 		var i, seg;
 		var skeletonEl;
@@ -17,11 +19,11 @@ var DayGridFillRenderer = FillRenderer.extend({
 		}
 
 		return nodes;
-	},
+	}
 
 
 	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-	renderFillRow: function(type, seg) {
+	renderFillRow(type, seg) {
 		var colCnt = this.component.colCnt;
 		var startCol = seg.leftCol;
 		var endCol = seg.rightCol + 1;
@@ -59,4 +61,5 @@ var DayGridFillRenderer = FillRenderer.extend({
 
 		return skeletonEl;
 	}
-});
+
+}

@@ -1,8 +1,9 @@
+import FillRenderer from '../component/renderers/FillRenderer'
 
-var TimeGridFillRenderer = FillRenderer.extend({
 
+export default class TimeGridFillRenderer extends FillRenderer {
 
-	attachSegEls: function(type, segs) {
+	attachSegEls(type, segs) {
 		var timeGrid = this.component;
 		var containerEls;
 
@@ -25,4 +26,4 @@ var TimeGridFillRenderer = FillRenderer.extend({
 		});
 	}
 
-});
+}

@@ -1,27 +1,31 @@
+import * as moment from 'moment'
+import { computeGreatestUnit, computeDurationGreatestUnit } from './util'
+import UnzonedRange from './models/UnzonedRange'
 
-var DateProfileGenerator = Class.extend({
 
-	_view: null, // avoid
+export default class DateProfileGenerator {
+
+	_view: any // discourage
 
 
-	constructor: function(_view) {
+	constructor(_view) {
 		this._view = _view;
-	},
+	}
 
 
-	opt: function(name) {
+	opt(name) {
 		return this._view.opt(name);
-	},
+	}
 
 
-	trimHiddenDays: function(unzonedRange) {
+	trimHiddenDays(unzonedRange) {
 		return this._view.trimHiddenDays(unzonedRange);
-	},
+	}
 
 
-	msToUtcMoment: function(ms, forceAllDay) {
+	msToUtcMoment(ms, forceAllDay) {
 		return this._view.calendar.msToUtcMoment(ms, forceAllDay);
-	},
+	}
 
 
 	/* Date Range Computation
@@ -29,29 +33,29 @@ var DateProfileGenerator = Class.extend({
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "prev" view.
-	buildPrev: function(currentDateProfile) {
+	buildPrev(currentDateProfile) {
 		var prevDate = currentDateProfile.date.clone()
 			.startOf(currentDateProfile.currentRangeUnit)
 			.subtract(currentDateProfile.dateIncrement);
 
 		return this.build(prevDate, -1);
-	},
+	}
 
 
 	// Builds a structure with info about what the dates/ranges will be for the "next" view.
-	buildNext: function(currentDateProfile) {
+	buildNext(currentDateProfile) {
 		var nextDate = currentDateProfile.date.clone()
 			.startOf(currentDateProfile.currentRangeUnit)
 			.add(currentDateProfile.dateIncrement);
 
 		return this.build(nextDate, 1);
-	},
+	}
 
 
 	// Builds a structure holding dates/ranges for rendering around the given date.
 	// Optional direction param indicates whether the date is being incremented/decremented
 	// from its previous value. decremented = -1, incremented = 1 (default).
-	build: function(date, direction, forceToValid) {
+	build(date, direction, forceToValid=false) {
 		var isDateAllDay = !date.hasTime();
 		var validUnzonedRange;
 		var minTime = null;
@@ -138,16 +142,16 @@ var DateProfileGenerator = Class.extend({
 			dateIncrement: this.buildDateIncrement(currentInfo.duration)
 				// pass a fallback (might be null) ^
 		};
-	},
+	}
 
 
 	// Builds an object with optional start/end properties.
 	// Indicates the minimum/maximum dates to display.
 	// not responsible for trimming hidden days.
-	buildValidRange: function() {
+	buildValidRange() {
 		return this._view.getUnzonedRangeOption('validRange', this._view.calendar.getNow()) ||
 			new UnzonedRange(); // completely open-ended
-	},
+	}
 
 
 	// Builds a structure with info about the "current" range, the range that is
@@ -155,7 +159,7 @@ var DateProfileGenerator = Class.extend({
 	// See build() for a description of `direction`.
 	// Guaranteed to have `range` and `unit` properties. `duration` is optional.
 	// TODO: accept a MS-time instead of a moment `date`?
-	buildCurrentRangeInfo: function(date, direction) {
+	buildCurrentRangeInfo(date, direction) {
 		var viewSpec = this._view.viewSpec;
 		var duration = null;
 		var unit = null;
@@ -181,17 +185,17 @@ var DateProfileGenerator = Class.extend({
 		}
 
 		return { duration: duration, unit: unit, unzonedRange: unzonedRange };
-	},
+	}
 
 
-	getFallbackDuration: function() {
+	getFallbackDuration() {
 		return moment.duration({ days: 1 });
-	},
+	}
 
 
 	// Returns a new activeUnzonedRange to have time values (un-ambiguate)
 	// minTime or maxTime causes the range to expand.
-	adjustActiveRange: function(unzonedRange, minTime, maxTime) {
+	adjustActiveRange(unzonedRange, minTime, maxTime) {
 		var start = unzonedRange.getStart();
 		var end = unzonedRange.getEnd();
 
@@ -207,13 +211,13 @@ var DateProfileGenerator = Class.extend({
 		}
 
 		return new UnzonedRange(start, end);
-	},
+	}
 
 
 	// Builds the "current" range when it is specified as an explicit duration.
 	// `unit` is the already-computed computeGreatestUnit value of duration.
 	// TODO: accept a MS-time instead of a moment `date`?
-	buildRangeFromDuration: function(date, direction, duration, unit) {
+	buildRangeFromDuration(date, direction, duration, unit) {
 		var alignment = this.opt('dateAlignment');
 		var dateIncrementInput;
 		var dateIncrementDuration;
@@ -264,12 +268,12 @@ var DateProfileGenerator = Class.extend({
 		}
 
 		return res;
-	},
+	}
 
 
 	// Builds the "current" range when a dayCount is specified.
 	// TODO: accept a MS-time instead of a moment `date`?
-	buildRangeFromDayCount: function(date, direction, dayCount) {
+	buildRangeFromDayCount(date, direction, dayCount) {
 		var customAlignment = this.opt('dateAlignment');
 		var runningCount = 0;
 		var start = date.clone();
@@ -291,37 +295,37 @@ var DateProfileGenerator = Class.extend({
 		} while (runningCount < dayCount);
 
 		return new UnzonedRange(start, end);
-	},
+	}
 
 
 	// Builds a normalized range object for the "visible" range,
 	// which is a way to define the currentUnzonedRange and activeUnzonedRange at the same time.
 	// TODO: accept a MS-time instead of a moment `date`?
-	buildCustomVisibleRange: function(date) {
+	buildCustomVisibleRange(date) {
 		var visibleUnzonedRange = this._view.getUnzonedRangeOption(
 			'visibleRange',
 			this._view.calendar.applyTimezone(date) // correct zone. also generates new obj that avoids mutations
 		);
 
-		if (visibleUnzonedRange && (visibleUnzonedRange.startMs === null || visibleUnzonedRange.endMs === null)) {
+		if (visibleUnzonedRange && (visibleUnzonedRange.startMs == null || visibleUnzonedRange.endMs == null)) {
 			return null;
 		}
 
 		return visibleUnzonedRange;
-	},
+	}
 
 
 	// Computes the range that will represent the element/cells for *rendering*,
 	// but which may have voided days/times.
 	// not responsible for trimming hidden days.
-	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
+	buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
 		return currentUnzonedRange.clone();
-	},
+	}
 
 
 	// Compute the duration value that should be added/substracted to the current date
 	// when a prev/next operation happens.
-	buildDateIncrement: function(fallback) {
+	buildDateIncrement(fallback) {
 		var dateIncrementInput = this.opt('dateIncrement');
 		var customAlignment;
 
@@ -339,4 +343,4 @@ var DateProfileGenerator = Class.extend({
 		}
 	}
 
-});
+}

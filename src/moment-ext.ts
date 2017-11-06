@@ -1,3 +1,6 @@
+import * as moment from 'moment'
+import * as $ from 'jquery'
+import { isNativeDate } from './util'
 
 /*
 GENERAL NOTE on moments throughout the *entire rest* of the codebase:
@@ -9,14 +12,23 @@ Ambiguously-TIMED moments are assumed to be ambiguously-zoned by nature.
 var ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/;
 var ambigTimeOrZoneRegex =
 	/^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/;
-var newMomentProto = moment.fn; // where we will attach our new methods
+var newMomentProto: any = moment.fn; // where we will attach our new methods
 var oldMomentProto = $.extend({}, newMomentProto); // copy of original moment methods
 
 // tell momentjs to transfer these properties upon clone
-var momentProperties = moment.momentProperties;
+var momentProperties = (moment as any).momentProperties;
 momentProperties.push('_fullCalendar');
 momentProperties.push('_ambigTime');
 momentProperties.push('_ambigZone');
+
+/*
+Call this if you want Moment's original format method to be used
+*/
+function oldMomentFormat(mom, formatStr?) {
+	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
+}
+
+export { newMomentProto, oldMomentProto, oldMomentFormat }
 
 
 // Creating
@@ -26,12 +38,14 @@ momentProperties.push('_ambigZone');
 // extra features (ambiguous time, enhanced formatting). When given an existing moment,
 // it will function as a clone (and retain the zone of the moment). Anything else will
 // result in a moment in the local zone.
-FC.moment = function() {
+const momentExt: any = function() {
 	return makeMoment(arguments);
 };
 
-// Sames as FC.moment, but forces the resulting moment to be in the UTC timezone.
-FC.moment.utc = function() {
+export default momentExt
+
+// Sames as momentExt, but forces the resulting moment to be in the UTC timezone.
+momentExt.utc = function() {
 	var mom = makeMoment(arguments, true);
 
 	// Force it into UTC because makeMoment doesn't guarantee it
@@ -43,9 +57,9 @@ FC.moment.utc = function() {
 	return mom;
 };
 
-// Same as FC.moment, but when given an ISO8601 string, the timezone offset is preserved.
+// Same as momentExt, but when given an ISO8601 string, the timezone offset is preserved.
 // ISO8601 strings with no timezone offset will become ambiguously zoned.
-FC.moment.parseZone = function() {
+momentExt.parseZone = function() {
 	return makeMoment(arguments, true, true);
 };
 
@@ -54,7 +68,7 @@ FC.moment.parseZone = function() {
 // Anything else needs to be "parsed" (a string or an array), and will be affected by:
 //    parseAsUTC - if there is no zone information, should we parse the input in UTC?
 //    parseZone - if there is zone information, should we force the zone of the moment?
-function makeMoment(args, parseAsUTC, parseZone) {
+function makeMoment(args, parseAsUTC=false, parseZone=false) {
 	var input = args[0];
 	var isSingleString = args.length == 1 && typeof input === 'string';
 	var isAmbigTime;
@@ -291,50 +305,3 @@ newMomentProto.utcOffset = function(tzo) {
 
 	return oldMomentProto.utcOffset.apply(this, arguments);
 };
-
-
-// Formatting
-// -------------------------------------------------------------------------------------------------
-
-newMomentProto.format = function() {
-
-	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
-		return formatDate(this, arguments[0]); // our extended formatting
-	}
-	if (this._ambigTime) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
-	}
-	if (this._ambigZone) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
-	}
-	if (this._fullCalendar) { // enhanced non-ambig moment?
-		// moment.format() doesn't ensure english, but we want to.
-		return oldMomentFormat(englishMoment(this));
-	}
-
-	return oldMomentProto.format.apply(this, arguments);
-};
-
-newMomentProto.toISOString = function() {
-
-	if (this._ambigTime) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
-	}
-	if (this._ambigZone) {
-		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
-	}
-	if (this._fullCalendar) { // enhanced non-ambig moment?
-		// depending on browser, moment might not output english. ensure english.
-		// https://github.com/moment/moment/blob/2.18.1/src/lib/moment/format.js#L22
-		return oldMomentProto.toISOString.apply(englishMoment(this), arguments);
-	}
-
-	return oldMomentProto.toISOString.apply(this, arguments);
-};
-
-function englishMoment(mom) {
-	if (mom.locale() !== 'en') {
-		return mom.clone().locale('en');
-	}
-	return mom;
-}

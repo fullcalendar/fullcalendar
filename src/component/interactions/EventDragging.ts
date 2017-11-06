@@ -1,9 +1,17 @@
+import { enableCursor, disableCursor } from '../../util'
+import EventDefMutation from '../../models/event/EventDefMutation'
+import EventDefDateMutation from '../../models/event/EventDefDateMutation'
+import DragListener from '../../common/DragListener'
+import HitDragListener from '../../common/HitDragListener'
+import MouseFollower from '../../common/MouseFollower'
+import Interaction from './Interaction'
 
-var EventDragging = FC.EventDragging = Interaction.extend({
 
-	eventPointing: null,
-	dragListener: null,
-	isDragging: false,
+export default class EventDragging extends Interaction {
+
+	eventPointing: any
+	dragListener: any
+	isDragging: boolean = false
 
 
 	/*
@@ -14,21 +22,20 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		- eventRangesToEventFootprints
 		- isEventInstanceGroupAllowed
 	*/
-	constructor: function(component, eventPointing) {
-		Interaction.call(this, component);
-
+	constructor(component, eventPointing) {
+		super(component)
 		this.eventPointing = eventPointing;
-	},
+	}
 
 
-	end: function() {
+	end() {
 		if (this.dragListener) {
 			this.dragListener.endInteraction();
 		}
-	},
+	}
 
 
-	getSelectionDelay: function() {
+	getSelectionDelay() {
 		var delay = this.opt('eventLongPressDelay');
 
 		if (delay == null) {
@@ -36,25 +43,25 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		}
 
 		return delay;
-	},
+	}
 
 
-	bindToEl: function(el) {
+	bindToEl(el) {
 		var component = this.component;
 
 		component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this));
 		component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this));
-	},
+	}
 
 
-	handleMousedown: function(seg, ev) {
+	handleMousedown(seg, ev) {
 		if (this.component.canStartDrag(seg, ev)) {
 			this.buildDragListener(seg).startInteraction(ev, { distance: 5 });
 		}
-	},
+	}
 
 
-	handleTouchStart: function(seg, ev) {
+	handleTouchStart(seg, ev) {
 		var component = this.component;
 		var settings = {
 			delay: this.view.isEventDefSelected(seg.footprint.eventDef) ? // already selected?
@@ -67,14 +74,13 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		else if (component.canStartSelection(seg, ev)) {
 			this.buildSelectListener(seg).startInteraction(ev, settings);
 		}
-	},
+	}
 
 
 	// seg isn't draggable, but let's use a generic DragListener
 	// simply for the delay, so it can be selected.
 	// Has side effect of setting/unsetting `dragListener`
-	buildSelectListener: function(seg) {
-		var _this = this;
+	buildSelectListener(seg) {
 		var view = this.view;
 		var eventDef = seg.footprint.eventDef;
 		var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
@@ -84,7 +90,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		}
 
 		var dragListener = this.dragListener = new DragListener({
-			dragStart: function(ev) {
+			dragStart: (ev) => {
 				if (
 					dragListener.isTouch &&
 					!view.isEventDefSelected(eventDef) &&
@@ -94,20 +100,19 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 					view.selectEventInstance(eventInstance);
 				}
 			},
-			interactionEnd: function(ev) {
-				_this.dragListener = null;
+			interactionEnd: (ev) => {
+				this.dragListener = null;
 			}
 		});
 
 		return dragListener;
-	},
+	}
 
 
 	// Builds a listener that will track user-dragging on an event segment.
 	// Generic enough to work with any type of Grid.
 	// Has side effect of setting/unsetting `dragListener`
-	buildDragListener: function(seg) {
-		var _this = this;
+	buildDragListener(seg) {
 		var component = this.component;
 		var view = this.view;
 		var calendar = view.calendar;
@@ -129,20 +134,20 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 			scroll: this.opt('dragScroll'),
 			subjectEl: el,
 			subjectCenter: true,
-			interactionStart: function(ev) {
+			interactionStart: (ev) => {
 				seg.component = component; // for renderDrag
 				isDragging = false;
 				mouseFollower = new MouseFollower(seg.el, {
 					additionalClass: 'fc-dragging',
 					parentEl: view.el,
-					opacity: dragListener.isTouch ? null : _this.opt('dragOpacity'),
-					revertDuration: _this.opt('dragRevertDuration'),
+					opacity: dragListener.isTouch ? null : this.opt('dragOpacity'),
+					revertDuration: this.opt('dragRevertDuration'),
 					zIndex: 2 // one above the .fc-view
 				});
 				mouseFollower.hide(); // don't show until we know this is a real drag
 				mouseFollower.start(ev);
 			},
-			dragStart: function(ev) {
+			dragStart: (ev) => {
 				if (
 					dragListener.isTouch &&
 					!view.isEventDefSelected(eventDef) &&
@@ -154,12 +159,12 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				isDragging = true;
 
 				// ensure a mouseout on the manipulated event has been reported
-				_this.eventPointing.handleMouseout(seg, ev);
+				this.eventPointing.handleMouseout(seg, ev);
 
-				_this.segDragStart(seg, ev);
+				this.segDragStart(seg, ev);
 				view.hideEventsWithId(seg.footprint.eventDef.id);
 			},
-			hitOver: function(hit, isOrig, origHit) {
+			hitOver: (hit, isOrig, origHit) => {
 				var isAllowed = true;
 				var origFootprint;
 				var footprint;
@@ -175,7 +180,7 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				footprint = hit.component.getSafeHitFootprint(hit);
 
 				if (origFootprint && footprint) {
-					eventDefMutation = _this.computeEventDropMutation(origFootprint, footprint, eventDef);
+					eventDefMutation = this.computeEventDropMutation(origFootprint, footprint, eventDef);
 
 					if (eventDefMutation) {
 						mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
@@ -219,22 +224,22 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 					eventDefMutation = null;
 				}
 			},
-			hitOut: function() { // called before mouse moves to a different hit OR moved out of all hits
+			hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
 				view.unrenderDrag(seg); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all hits
 				eventDefMutation = null;
 			},
-			hitDone: function() { // Called after a hitOut OR before a dragEnd
+			hitDone: () => { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 			},
-			interactionEnd: function(ev) {
+			interactionEnd: (ev) => {
 				delete seg.component; // prevent side effects
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
-				mouseFollower.stop(!eventDefMutation, function() {
+				mouseFollower.stop(!eventDefMutation, () => {
 					if (isDragging) {
 						view.unrenderDrag(seg);
-						_this.segDragStop(seg, ev);
+						this.segDragStop(seg, ev);
 					}
 
 					view.showEventsWithId(seg.footprint.eventDef.id);
@@ -245,16 +250,16 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 					}
 				});
 
-				_this.dragListener = null;
+				this.dragListener = null;
 			}
 		});
 
 		return dragListener;
-	},
+	}
 
 
 	// Called before event segment dragging starts
-	segDragStart: function(seg, ev) {
+	segDragStart(seg, ev) {
 		this.isDragging = true;
 		this.component.publiclyTrigger('eventDragStart', {
 			context: seg.el[0],
@@ -265,11 +270,11 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				this.view
 			]
 		});
-	},
+	}
 
 
 	// Called after event segment dragging stops
-	segDragStop: function(seg, ev) {
+	segDragStop(seg, ev) {
 		this.isDragging = false;
 		this.component.publiclyTrigger('eventDragStop', {
 			context: seg.el[0],
@@ -280,11 +285,11 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 				this.view
 			]
 		});
-	},
+	}
 
 
 	// DOES NOT consider overlap/constraint
-	computeEventDropMutation: function(startFootprint, endFootprint, eventDef) {
+	computeEventDropMutation(startFootprint, endFootprint, eventDef) {
 		var eventDefMutation = new EventDefMutation();
 
 		eventDefMutation.setDateMutation(
@@ -292,10 +297,10 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		);
 
 		return eventDefMutation;
-	},
+	}
 
 
-	computeEventDateMutation: function(startFootprint, endFootprint) {
+	computeEventDateMutation(startFootprint, endFootprint) {
 		var date0 = startFootprint.unzonedRange.getStart();
 		var date1 = endFootprint.unzonedRange.getStart();
 		var clearEnd = false;
@@ -327,4 +332,4 @@ var EventDragging = FC.EventDragging = Interaction.extend({
 		return dateMutation;
 	}
 
-});
+}

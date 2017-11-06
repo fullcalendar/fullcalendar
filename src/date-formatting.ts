@@ -1,10 +1,56 @@
-(function() {
+import {
+	default as momentExt,
+	newMomentProto,
+	oldMomentProto,
+	oldMomentFormat
+} from './moment-ext'
 
-// exports
-FC.formatDate = formatDate;
-FC.formatRange = formatRange;
-FC.oldMomentFormat = oldMomentFormat;
-FC.queryMostGranularFormatUnit = queryMostGranularFormatUnit;
+
+// Plugin
+// -------------------------------------------------------------------------------------------------
+
+newMomentProto.format = function() {
+
+	if (this._fullCalendar && arguments[0]) { // an enhanced moment? and a format string provided?
+		return formatDate(this, arguments[0]); // our extended formatting
+	}
+	if (this._ambigTime) {
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
+	}
+	if (this._ambigZone) {
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+	}
+	if (this._fullCalendar) { // enhanced non-ambig moment?
+		// moment.format() doesn't ensure english, but we want to.
+		return oldMomentFormat(englishMoment(this));
+	}
+
+	return oldMomentProto.format.apply(this, arguments);
+};
+
+newMomentProto.toISOString = function() {
+
+	if (this._ambigTime) {
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD');
+	}
+	if (this._ambigZone) {
+		return oldMomentFormat(englishMoment(this), 'YYYY-MM-DD[T]HH:mm:ss');
+	}
+	if (this._fullCalendar) { // enhanced non-ambig moment?
+		// depending on browser, moment might not output english. ensure english.
+		// https://github.com/moment/moment/blob/2.18.1/src/lib/moment/format.js#L22
+		return oldMomentProto.toISOString.apply(englishMoment(this), arguments);
+	}
+
+	return oldMomentProto.toISOString.apply(this, arguments);
+};
+
+function englishMoment(mom) {
+	if (mom.locale() !== 'en') {
+		return mom.clone().locale('en');
+	}
+	return mom;
+}
 
 
 // Config
@@ -63,18 +109,11 @@ var largeTokenMap = {
 /*
 Formats `date` with a Moment formatting string, but allow our non-zero areas and special token
 */
-function formatDate(date, formatStr) {
+export function formatDate(date, formatStr) {
 	return renderFakeFormatString(
 		getParsedFormatString(formatStr).fakeFormatString,
 		date
 	);
-}
-
-/*
-Call this if you want Moment's original format method to be used
-*/
-function oldMomentFormat(mom, formatStr) {
-	return oldMomentProto.format.call(mom, formatStr); // oldMomentProto defined in moment-ext.js
 }
 
 
@@ -88,11 +127,11 @@ Using a formatting string meant for a single date, generate a range string, like
 If the dates are the same as far as the format string is concerned, just return a single
 rendering of one date, without any separator.
 */
-function formatRange(date1, date2, formatStr, separator, isRTL) {
+export function formatRange(date1, date2, formatStr, separator, isRTL) {
 	var localeData;
 
-	date1 = FC.moment.parseZone(date1);
-	date2 = FC.moment.parseZone(date2);
+	date1 = momentExt.parseZone(date1);
+	date2 = momentExt.parseZone(date2);
 
 	localeData = date1.localeData();
 
@@ -382,7 +421,7 @@ function processMaybeMarkers(s) {
 /*
 Returns a unit string, either 'year', 'month', 'day', or null for the most granular formatting token in the string.
 */
-function queryMostGranularFormatUnit(formatStr) {
+export function queryMostGranularFormatUnit(formatStr) {
 	var chunks = chunkFormatString(formatStr);
 	var i, chunk;
 	var candidate;
@@ -406,11 +445,4 @@ function queryMostGranularFormatUnit(formatStr) {
 	}
 
 	return null;
-};
-
-})();
-
-// quick local references
-var formatDate = FC.formatDate;
-var formatRange = FC.formatRange;
-var oldMomentFormat = FC.oldMomentFormat;
+}

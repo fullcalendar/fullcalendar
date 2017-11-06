@@ -1,25 +1,43 @@
+import { htmlEscape, dayIDs } from '../util'
+import Mixin from '../common/Mixin'
+
+export interface DayTableInterface {
+	dayDates: any
+	daysPerRow: any
+	rowCnt: any
+	colCnt: any
+	updateDayTable()
+	renderHeadHtml()
+	renderBgTrHtml(row)
+	bookendCells(trEl)
+	getCellDate(row, col)
+	getCellRange(row, col)
+	sliceRangeByRow(unzonedRange)
+	renderIntroHtml()
+}
 
 /*
 A set of rendering and date-related methods for a visual component comprised of one or more rows of day columns.
 Prerequisite: the object being mixed into needs to be a *Grid*
 */
-var DayTableMixin = FC.DayTableMixin = {
+export default class DayTableMixin extends Mixin implements DayTableInterface {
 
-	breakOnWeeks: false, // should create a new row for each week?
-	dayDates: null, // whole-day dates for each column. left to right
-	dayIndices: null, // for each day from start, the offset
-	daysPerRow: null,
-	rowCnt: null,
-	colCnt: null,
-	colHeadFormat: null,
+	breakOnWeeks: boolean = false // should create a new row for each week?
+	dayDates: any // whole-day dates for each column. left to right
+	dayIndices: any // for each day from start, the offset
+	daysPerRow: any
+	rowCnt: any
+	colCnt: any
+	colHeadFormat: any
 
 
 	// Populates internal variables used for date calculation and rendering
-	updateDayTable: function() {
-		var view = this.view;
+	updateDayTable() {
+		var t = (this as any);
+		var view = t.view;
 		var calendar = view.calendar;
-		var date = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true);
-		var end = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.endMs, true);
+		var date = calendar.msToUtcMoment(t.dateProfile.renderUnzonedRange.startMs, true);
+		var end = calendar.msToUtcMoment(t.dateProfile.renderUnzonedRange.endMs, true);
 		var dayIndex = -1;
 		var dayIndices = [];
 		var dayDates = [];
@@ -60,54 +78,54 @@ var DayTableMixin = FC.DayTableMixin = {
 		this.rowCnt = rowCnt;
 
 		this.updateDayTableCols();
-	},
+	}
 
 
 	// Computes and assigned the colCnt property and updates any options that may be computed from it
-	updateDayTableCols: function() {
+	updateDayTableCols() {
 		this.colCnt = this.computeColCnt();
-		this.colHeadFormat = this.opt('columnFormat') || this.computeColHeadFormat();
-	},
+		this.colHeadFormat = (this as any).opt('columnFormat') || this.computeColHeadFormat();
+	}
 
 
 	// Determines how many columns there should be in the table
-	computeColCnt: function() {
+	computeColCnt() {
 		return this.daysPerRow;
-	},
+	}
 
 
 	// Computes the ambiguously-timed moment for the given cell
-	getCellDate: function(row, col) {
+	getCellDate(row, col) {
 		return this.dayDates[
 				this.getCellDayIndex(row, col)
 			].clone();
-	},
+	}
 
 
 	// Computes the ambiguously-timed date range for the given cell
-	getCellRange: function(row, col) {
+	getCellRange(row, col) {
 		var start = this.getCellDate(row, col);
 		var end = start.clone().add(1, 'days');
 
 		return { start: start, end: end };
-	},
+	}
 
 
 	// Returns the number of day cells, chronologically, from the first of the grid (0-based)
-	getCellDayIndex: function(row, col) {
+	getCellDayIndex(row, col) {
 		return row * this.daysPerRow + this.getColDayIndex(col);
-	},
+	}
 
 
 	// Returns the numner of day cells, chronologically, from the first cell in *any given row*
-	getColDayIndex: function(col) {
-		if (this.isRTL) {
+	getColDayIndex(col) {
+		if ((this as any).isRTL) {
 			return this.colCnt - 1 - col;
 		}
 		else {
 			return col;
 		}
-	},
+	}
 
 
 	// Given a date, returns its chronolocial cell-index from the first cell of the grid.
@@ -115,7 +133,7 @@ var DayTableMixin = FC.DayTableMixin = {
 	// If before the first offset, returns a negative number.
 	// If after the last offset, returns an offset past the last cell offset.
 	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
-	getDateDayIndex: function(date) {
+	getDateDayIndex(date) {
 		var dayIndices = this.dayIndices;
 		var dayOffset = date.diff(this.dayDates[0], 'days');
 
@@ -128,7 +146,7 @@ var DayTableMixin = FC.DayTableMixin = {
 		else {
 			return dayIndices[dayOffset];
 		}
-	},
+	}
 
 
 	/* Options
@@ -136,7 +154,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Computes a default column header formatting string if `colFormat` is not explicitly defined
-	computeColHeadFormat: function() {
+	computeColHeadFormat() {
 		// if more than one week row, or if there are a lot of columns with not much space,
 		// put just the day numbers will be in each cell
 		if (this.rowCnt > 1 || this.colCnt > 10) {
@@ -144,13 +162,13 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 		// multiple days, so full single date string WON'T be in title text
 		else if (this.colCnt > 1) {
-			return this.opt('dayOfMonthFormat'); // "Sat 12/10"
+			return (this as any).opt('dayOfMonthFormat'); // "Sat 12/10"
 		}
 		// single day, so full single date string will probably be in title text
 		else {
 			return 'dddd'; // "Saturday"
 		}
-	},
+	}
 
 
 	/* Slicing
@@ -158,9 +176,9 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Slices up a date range into a segment for every week-row it intersects with
-	sliceRangeByRow: function(unzonedRange) {
+	sliceRangeByRow(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
+		var normalRange = (this as any).view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
 		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
 		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
 		var segs = [];
@@ -196,14 +214,14 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 
 		return segs;
-	},
+	}
 
 
 	// Slices up a date range into a segment for every day-cell it intersects with.
 	// TODO: make more DRY with sliceRangeByRow somehow.
-	sliceRangeByDay: function(unzonedRange) {
+	sliceRangeByDay(unzonedRange) {
 		var daysPerRow = this.daysPerRow;
-		var normalRange = this.view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
+		var normalRange = (this as any).view.computeDayRange(unzonedRange); // make whole-day range, considering nextDayThreshold
 		var rangeFirst = this.getDateDayIndex(normalRange.start); // inclusive first index
 		var rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')); // inclusive last index
 		var segs = [];
@@ -243,15 +261,15 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 
 		return segs;
-	},
+	}
 
 
 	/* Header Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderHeadHtml: function() {
-		var theme = this.view.calendar.theme;
+	renderHeadHtml() {
+		var theme = (this as any).view.calendar.theme;
 
 		return '' +
 			'<div class="fc-row ' + theme.getClass('headerRow') + '">' +
@@ -261,54 +279,55 @@ var DayTableMixin = FC.DayTableMixin = {
 					'</thead>' +
 				'</table>' +
 			'</div>';
-	},
+	}
 
 
-	renderHeadIntroHtml: function() {
+	renderHeadIntroHtml() {
 		return this.renderIntroHtml(); // fall back to generic
-	},
+	}
 
 
-	renderHeadTrHtml: function() {
+	renderHeadTrHtml() {
 		return '' +
 			'<tr>' +
-				(this.isRTL ? '' : this.renderHeadIntroHtml()) +
+				((this as any).isRTL ? '' : this.renderHeadIntroHtml()) +
 				this.renderHeadDateCellsHtml() +
-				(this.isRTL ? this.renderHeadIntroHtml() : '') +
+				((this as any).isRTL ? this.renderHeadIntroHtml() : '') +
 			'</tr>';
-	},
+	}
 
 
-	renderHeadDateCellsHtml: function() {
+	renderHeadDateCellsHtml() {
 		var htmls = [];
 		var col, date;
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(0, col);
-			htmls.push(this.renderHeadDateCellHtml(date));
+			htmls.push((this as any).renderHeadDateCellHtml(date));
 		}
 
 		return htmls.join('');
-	},
+	}
 
 
 	// TODO: when internalApiVersion, accept an object for HTML attributes
 	// (colspan should be no different)
-	renderHeadDateCellHtml: function(date, colspan, otherAttrs) {
-		var view = this.view;
-		var isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
+	renderHeadDateCellHtml(date, colspan, otherAttrs) {
+		var t = (this as any);
+		var view = t.view;
+		var isDateValid = t.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
 		var classNames = [
 			'fc-day-header',
 			view.calendar.theme.getClass('widgetHeader')
 		];
-		var innerHtml = htmlEscape(date.format(this.colHeadFormat));
+		var innerHtml = htmlEscape(date.format(t.colHeadFormat));
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
-		if (this.rowCnt === 1) {
+		if (t.rowCnt === 1) {
 			classNames = classNames.concat(
 				// includes the day-of-week class
 				// noThemeHighlight=true (don't highlight the header)
-				this.getDayClasses(date, true)
+				t.getDayClasses(date, true)
 			);
 		}
 		else {
@@ -317,7 +336,7 @@ var DayTableMixin = FC.DayTableMixin = {
 
 		return '' +
             '<th class="' + classNames.join(' ') + '"' +
-				((isDateValid && this.rowCnt) === 1 ?
+				((isDateValid && t.rowCnt) === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +
 				(colspan > 1 ?
@@ -330,52 +349,53 @@ var DayTableMixin = FC.DayTableMixin = {
 				(isDateValid ?
 					// don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
 					view.buildGotoAnchorHtml(
-						{ date: date, forceOff: this.rowCnt > 1 || this.colCnt === 1 },
+						{ date: date, forceOff: t.rowCnt > 1 || t.colCnt === 1 },
 						innerHtml
 					) :
 					// if not valid, display text, but no link
 					innerHtml
 				) +
 			'</th>';
-	},
+	}
 
 
 	/* Background Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderBgTrHtml: function(row) {
+	renderBgTrHtml(row) {
 		return '' +
 			'<tr>' +
-				(this.isRTL ? '' : this.renderBgIntroHtml(row)) +
+				((this as any).isRTL ? '' : this.renderBgIntroHtml(row)) +
 				this.renderBgCellsHtml(row) +
-				(this.isRTL ? this.renderBgIntroHtml(row) : '') +
+				((this as any).isRTL ? this.renderBgIntroHtml(row) : '') +
 			'</tr>';
-	},
+	}
 
 
-	renderBgIntroHtml: function(row) {
+	renderBgIntroHtml(row) {
 		return this.renderIntroHtml(); // fall back to generic
-	},
+	}
 
 
-	renderBgCellsHtml: function(row) {
+	renderBgCellsHtml(row) {
 		var htmls = [];
 		var col, date;
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(row, col);
-			htmls.push(this.renderBgCellHtml(date));
+			htmls.push((this as any).renderBgCellHtml(date));
 		}
 
 		return htmls.join('');
-	},
+	}
 
 
-	renderBgCellHtml: function(date, otherAttrs) {
-		var view = this.view;
-		var isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
-		var classes = this.getDayClasses(date);
+	renderBgCellHtml(date, otherAttrs) {
+		var t = (this as any);
+		var view = t.view;
+		var isDateValid = t.dateProfile.activeUnzonedRange.containsDate(date); // TODO: called too frequently. cache somehow.
+		var classes = t.getDayClasses(date);
 
 		classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'));
 
@@ -387,7 +407,7 @@ var DayTableMixin = FC.DayTableMixin = {
 				' ' + otherAttrs :
 				'') +
 			'></td>';
-	},
+	}
 
 
 	/* Generic
@@ -395,8 +415,8 @@ var DayTableMixin = FC.DayTableMixin = {
 
 
 	// Generates the default HTML intro for any row. User classes should override
-	renderIntroHtml: function() {
-	},
+	renderIntroHtml() {
+	}
 
 
 	// TODO: a generic method for dealing with <tr>, RTL, intro
@@ -410,11 +430,11 @@ var DayTableMixin = FC.DayTableMixin = {
 
 	// Applies the generic "intro" and "outro" HTML to the given cells.
 	// Intro means the leftmost cell when the calendar is LTR and the rightmost cell when RTL. Vice-versa for outro.
-	bookendCells: function(trEl) {
+	bookendCells(trEl) {
 		var introHtml = this.renderIntroHtml();
 
 		if (introHtml) {
-			if (this.isRTL) {
+			if ((this as any).isRTL) {
 				trEl.append(introHtml);
 			}
 			else {
@@ -423,4 +443,4 @@ var DayTableMixin = FC.DayTableMixin = {
 		}
 	}
 
-};
+}

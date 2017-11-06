@@ -1,8 +1,22 @@
+import * as moment from 'moment'
+import namespaceHooks from '../../namespace-hooks'
+import { disableCursor, enableCursor } from '../../util'
+import momentExt from '../../moment-ext'
+import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
+import HitDragListener from '../../common/HitDragListener'
+import SingleEventDef from '../../models/event/SingleEventDef'
+import EventInstanceGroup from '../../models/event/EventInstanceGroup'
+import EventSource from '../../models/event-source/EventSource'
+import Interaction from './Interaction'
 
-var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 
-	dragListener: null,
-	isDragging: false, // jqui-dragging an external element? boolean
+export default class ExternalDropping extends Interaction {
+
+	listenTo: ListenerInterface['listenTo']
+	stopListeningTo: ListenerInterface['stopListeningTo']
+
+	dragListener: any
+	isDragging: boolean = false // jqui-dragging an external element? boolean
 
 
 	/*
@@ -15,28 +29,28 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 	*/
 
 
-	end: function() {
+	end() {
 		if (this.dragListener) {
 			this.dragListener.endInteraction();
 		}
-	},
+	}
 
 
-	bindToDocument: function() {
+	bindToDocument() {
 		this.listenTo($(document), {
 			dragstart: this.handleDragStart, // jqui
 			sortstart: this.handleDragStart // jqui
 		});
-	},
+	}
 
 
-	unbindFromDocument: function() {
+	unbindFromDocument() {
 		this.stopListeningTo($(document));
-	},
+	}
 
 
 	// Called when a jQuery UI drag is initiated anywhere in the DOM
-	handleDragStart: function(ev, ui) {
+	handleDragStart(ev, ui) {
 		var el;
 		var accept;
 
@@ -52,29 +66,28 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 				}
 			}
 		}
-	},
+	}
 
 
 	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
-	listenToExternalDrag: function(el, ev, ui) {
-		var _this = this;
+	listenToExternalDrag(el, ev, ui) {
 		var component = this.component;
 		var view = this.view;
 		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
 		var singleEventDef; // a null value signals an unsuccessful drag
 
 		// listener that tracks mouse movement over date-associated pixel regions
-		var dragListener = _this.dragListener = new HitDragListener(component, {
-			interactionStart: function() {
-				_this.isDragging = true;
+		var dragListener = this.dragListener = new HitDragListener(component, {
+			interactionStart: () => {
+				this.isDragging = true;
 			},
-			hitOver: function(hit) {
+			hitOver: (hit) => {
 				var isAllowed = true;
 				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
 				var mutatedEventInstanceGroup;
 
 				if (hitFootprint) {
-					singleEventDef = _this.computeExternalDrop(hitFootprint, meta);
+					singleEventDef = this.computeExternalDrop(hitFootprint, meta);
 
 					if (singleEventDef) {
 						mutatedEventInstanceGroup = new EventInstanceGroup(
@@ -105,14 +118,14 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 					);
 				}
 			},
-			hitOut: function() {
+			hitOut: () => {
 				singleEventDef = null; // signal unsuccessful
 			},
-			hitDone: function() { // Called after a hitOut OR before a dragEnd
+			hitDone: () => { // Called after a hitOut OR before a dragEnd
 				enableCursor();
 				component.unrenderDrag();
 			},
-			interactionEnd: function(ev) {
+			interactionEnd: (ev) => {
 
 				if (singleEventDef) { // element was dropped on a valid hit
 					view.reportExternalDrop(
@@ -123,13 +136,13 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 					);
 				}
 
-				_this.isDragging = false;
-				_this.dragListener = null;
+				this.isDragging = false;
+				this.dragListener = null;
 			}
 		});
 
 		dragListener.startDrag(ev); // start listening immediately
-	},
+	}
 
 
 	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
@@ -137,9 +150,9 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 	// Returning a null value signals an invalid drop hit.
 	// DOES NOT consider overlap/constraint.
 	// Assumes both footprints are non-open-ended.
-	computeExternalDrop: function(componentFootprint, meta) {
+	computeExternalDrop(componentFootprint, meta) {
 		var calendar = this.view.calendar;
-		var start = FC.moment.utc(componentFootprint.unzonedRange.startMs).stripZone();
+		var start = momentExt.utc(componentFootprint.unzonedRange.startMs).stripZone();
 		var end;
 		var eventDef;
 
@@ -174,21 +187,19 @@ var ExternalDropping = FC.ExternalDropping = Interaction.extend(ListenerMixin, {
 		return eventDef;
 	}
 
-});
+}
+
+ListenerMixin.mixInto(ExternalDropping)
 
 
 /* External-Dragging-Element Data
 ----------------------------------------------------------------------------------------------------------------------*/
 
-// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
-// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
-FC.dataAttrPrefix = '';
-
 // Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
 // to be used for Event Object creation.
 // A defined `.eventProps`, even when empty, indicates that an event should be created.
 function getDraggedElMeta(el) {
-	var prefix = FC.dataAttrPrefix;
+	var prefix = namespaceHooks.dataAttrPrefix;
 	var eventProps; // properties for creating the event, not related to date/time
 	var startTime; // a Duration
 	var duration;

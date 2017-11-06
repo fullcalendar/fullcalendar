@@ -1,9 +1,12 @@
+import UnzonedRange from '../models/UnzonedRange'
+import DateProfileGenerator from '../DateProfileGenerator'
 
-var BasicViewDateProfileGenerator = DateProfileGenerator.extend({
+
+export default class BasicViewDateProfileGenerator extends DateProfileGenerator {
 
 	// Computes the date range that will be rendered.
-	buildRenderRange: function(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-		var renderUnzonedRange = DateProfileGenerator.prototype.buildRenderRange.apply(this, arguments); // an UnzonedRange
+	buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
+		var renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay); // an UnzonedRange
 		var start = this.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay);
 		var end = this.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay);
 
@@ -20,4 +23,4 @@ var BasicViewDateProfileGenerator = DateProfileGenerator.extend({
 		return new UnzonedRange(start, end);
 	}
 
-});
+}
