@@ -192,11 +192,11 @@ export default abstract class EventDef {
 
 	static parse(rawInput, source) {
 		var def = new (this as any)(source);
-	
+
 		if (def.applyProps(rawInput)) {
 			return def;
 		}
-	
+
 		return false;
 	}
 

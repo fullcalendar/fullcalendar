@@ -43,7 +43,7 @@ export default class FuncEventSource extends EventSource {
 
 	static parse(rawInput, calendar) {
 		var rawProps;
-	
+
 		// normalize raw input
 		if ($.isFunction(rawInput.events)) { // extended form
 			rawProps = rawInput;
@@ -51,11 +51,11 @@ export default class FuncEventSource extends EventSource {
 		else if ($.isFunction(rawInput)) { // short form
 			rawProps = { events: rawInput };
 		}
-	
+
 		if (rawProps) {
 			return EventSource.parse.call(this, rawProps, calendar);
 		}
-	
+
 		return false;
 	}
 

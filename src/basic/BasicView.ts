@@ -267,7 +267,7 @@ function makeDayGridSubclass(SuperClass) {
 		// Generates the HTML that will go before the day-of week header cells
 		renderHeadIntroHtml() {
 			var view = this.view;
-	
+
 			if (this.colWeekNumbersVisible) {
 				return '' +
 					'<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
@@ -276,7 +276,7 @@ function makeDayGridSubclass(SuperClass) {
 						'</span>' +
 					'</th>';
 			}
-	
+
 			return '';
 		}
 

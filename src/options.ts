@@ -25,7 +25,7 @@ export const globalDefaults = {
 
 	weekNumberTitle: 'W',
 	weekNumberCalculation: 'local',
-	
+
 	//editable: false,
 
 	//nowIndicator: false,
@@ -34,7 +34,7 @@ export const globalDefaults = {
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
 	showNonCurrentDates: true,
-	
+
 	// event ajax
 	lazyFetching: true,
 	startParam: 'start',
@@ -65,7 +65,7 @@ export const globalDefaults = {
 
 	// allows setting a min-height to the event segment to prevent short events overlapping each other
 	agendaEventMinHeight: 0,
-	
+
 	// jquery-ui theming
 	theme: false,
 	//themeButtonIcons: null,
@@ -74,11 +74,11 @@ export const globalDefaults = {
 	dragOpacity: .75,
 	dragRevertDuration: 500,
 	dragScroll: true,
-	
+
 	//selectable: false,
 	unselectAuto: true,
 	//selectMinDistance: 0,
-	
+
 	dropAccept: '*',
 
 	eventOrder: 'title',
@@ -88,12 +88,12 @@ export const globalDefaults = {
 	eventLimitText: 'more',
 	eventLimitClick: 'popover',
 	dayPopoverFormat: 'LL',
-	
+
 	handleWindowResize: true,
 	windowResizeDelay: 100, // milliseconds before an updateSize happens
 
 	longPressDelay: 1000
-	
+
 };
 
 

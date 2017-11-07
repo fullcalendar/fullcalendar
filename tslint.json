@@ -4,6 +4,8 @@
     "no-console": true,
     "no-debugger": true,
     "no-unused-variable": true,
-    "no-implicit-dependencies": true
+    "no-implicit-dependencies": true,
+    "no-irregular-whitespace": true,
+    "no-trailing-whitespace": true
   }
 }

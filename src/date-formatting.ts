@@ -240,7 +240,7 @@ Parses a format string into the following:
 */
 function parseFormatString(formatStr) {
 	var chunks = chunkFormatString(formatStr);
-	
+
 	return {
 		fakeFormatString: buildFakeFormatString(chunks),
 		sameUnits: buildSameUnits(chunks)
