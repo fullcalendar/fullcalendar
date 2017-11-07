@@ -113,7 +113,7 @@ function insertLocaleData(localeCode, js) {
 
 
 function getLocaleJs(localeCode, momentContent) {
-	
+
 	var shortLocaleCode;
 	var momentLocaleJS;
 	var datepickerLocaleJS;

@@ -6,7 +6,7 @@ var karmaConf = path.join(__dirname, '../karma.conf.js'); // was getting confuse
 
 // runs a server, outputs a URL to visit.
 // we want sourcemaps (modules:dev).
-gulp.task('test', [ 'modules:dev', 'locale' ], function(done) {
+gulp.task('test', [ 'modules:dev', 'locale' ], function() {
 	new KarmaServer({
 		configFile: karmaConf,
 		singleRun: false,
@@ -17,7 +17,7 @@ gulp.task('test', [ 'modules:dev', 'locale' ], function(done) {
 });
 
 // runs headlessly and continuously, watching files
-gulp.task('test:headless', [ 'modules', 'locale' ], function(done) {
+gulp.task('test:headless', [ 'modules', 'locale' ], function() {
 	new KarmaServer({
 		configFile: karmaConf,
 		browsers: [ 'PhantomJS_custom' ],

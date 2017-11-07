@@ -335,7 +335,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 		}
 
 		return '' +
-            '<th class="' + classNames.join(' ') + '"' +
+			'<th class="' + classNames.join(' ') + '"' +
 				((isDateValid && t.rowCnt) === 1 ?
 					' data-date="' + date.format('YYYY-MM-DD') + '"' :
 					'') +

@@ -178,7 +178,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 		return getEvIsTouch(ev) &&
 			!this.canStartResize(seg, ev) &&
 			(this.isEventDefDraggable(seg.footprint.eventDef) ||
-			 this.isEventDefResizable(seg.footprint.eventDef));
+				this.isEventDefResizable(seg.footprint.eventDef));
 	}
 
 
