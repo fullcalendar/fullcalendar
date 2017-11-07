@@ -38,13 +38,13 @@ export default class JsonFeedEventSource extends EventSource {
 				{
 					url: this.url,
 					data: requestParams,
-					success: (rawEventDefs) => {
+					success: (rawEventDefs, status, xhr) => {
 						var callbackRes;
 
 						this.calendar.popLoading();
 
 						if (rawEventDefs) {
-							callbackRes = applyAll(onSuccess, this, arguments); // redirect `this`
+							callbackRes = applyAll(onSuccess, this, [ rawEventDefs, status, xhr ]); // redirect `this`
 
 							if ($.isArray(callbackRes)) {
 								rawEventDefs = callbackRes;
@@ -56,10 +56,10 @@ export default class JsonFeedEventSource extends EventSource {
 							onReject();
 						}
 					},
-					error: () => {
+					error: (data, status, xhr) => {
 						this.calendar.popLoading();
 
-						applyAll(onError, this, arguments); // redirect `this`
+						applyAll(onError, this, [ data, status, xhr ]); // redirect `this`
 						onReject();
 					}
 				}
