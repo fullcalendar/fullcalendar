@@ -1,4 +1,4 @@
-import { copyOwnProps, hasOwnProp } from '../util'
+import { copyOwnProps } from '../util'
 
 
 // Class that all other classes will inherit from

@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { getScrollbarWidths } from '../util'
 import Class from '../common/Class'
 
