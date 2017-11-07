@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "noUnusedLocals": true,
     "noImplicitUseStrict": true,
     "importHelpers": true
   }

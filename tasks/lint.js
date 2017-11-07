@@ -1,6 +1,11 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
+var tslint = require("gulp-tslint");
+var tsLintLib = require("tslint");
+
+var webpackConfig = require('../webpack.config');
+var tslintProgram = tsLintLib.Linter.createProgram("./tsconfig.json")
 
 // different types of jshint configs
 var jshintConfig = require('../.jshint.js');
@@ -17,7 +22,8 @@ gulp.task('lint', [
 	'jshint:base',
 	'jshint:browser',
 	'jscs:strict',
-	'jscs:relaxed'
+	'jscs:relaxed',
+	'tslint'
 ]);
 
 // for non-browser JS
@@ -43,6 +49,18 @@ gulp.task('jshint:browser', function() {
 		.pipe(jshint(jshintBrowser))
 		.pipe(jshint.reporter('default'))
 		.pipe(jshint.reporter('fail'));
+});
+
+// for typescript
+gulp.task('tslint', function() {
+	return gulp.src(webpackConfig.entry)
+		.pipe(
+			tslint({ // will use tslint.json
+				formatter: 'verbose',
+				program: tslintProgram // for type-checking rules
+			})
+		)
+		.pipe(tslint.report())
 });
 
 // files we want to lint to a higher standard

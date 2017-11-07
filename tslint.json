@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "curly": true,
+    "no-console": true,
+    "no-debugger": true
+  }
+}
