@@ -8,15 +8,15 @@ describe('agenda view rendering', function () {
 
 		it('should have have days ordered sun to sat', function () {
 			initCalendar();
-			var headers = $('.fc-view > table > thead th');
-			expect(headers[0]).toHaveClass('fc-axis');
-			expect(headers[1]).toHaveClass('fc-sun');
-			expect(headers[2]).toHaveClass('fc-mon');
-			expect(headers[3]).toHaveClass('fc-tue');
-			expect(headers[4]).toHaveClass('fc-wed');
-			expect(headers[5]).toHaveClass('fc-thu');
-			expect(headers[6]).toHaveClass('fc-fri');
-			expect(headers[7]).toHaveClass('fc-sat');
+			var headers = document.querySelectorAll('.fc-view > table > thead th');
+			expect(headers[0].classList.contains('fc-axis')).toBeTruthy();
+			expect(headers[1].classList.contains('fc-sun')).toBeTruthy();
+			expect(headers[2].classList.contains('fc-mon')).toBeTruthy();
+			expect(headers[3].classList.contains('fc-tue')).toBeTruthy();
+			expect(headers[4].classList.contains('fc-wed')).toBeTruthy();
+			expect(headers[5].classList.contains('fc-thu')).toBeTruthy();
+			expect(headers[6].classList.contains('fc-fri')).toBeTruthy();
+			expect(headers[7].classList.contains('fc-sat')).toBeTruthy();
 		});
 	});
 
@@ -28,16 +28,15 @@ describe('agenda view rendering', function () {
 
 		it('should have have days ordered sat to sun', function () {
 			initCalendar();
-			var headers = $('.fc-view > table > thead th');
-			// var fc = $('#cal').find('.fc-view > table > thead th');
-			expect(headers[0]).toHaveClass('fc-sat');
-			expect(headers[1]).toHaveClass('fc-fri');
-			expect(headers[2]).toHaveClass('fc-thu');
-			expect(headers[3]).toHaveClass('fc-wed');
-			expect(headers[4]).toHaveClass('fc-tue');
-			expect(headers[5]).toHaveClass('fc-mon');
-			expect(headers[6]).toHaveClass('fc-sun');
-			expect(headers[7]).toHaveClass('fc-axis');
+			var headers = document.querySelectorAll('.fc-view > table > thead th');
+			expect(headers[0].classList.contains('fc-sat')).toBeTruthy();
+			expect(headers[1].classList.contains('fc-fri')).toBeTruthy();
+			expect(headers[2].classList.contains('fc-thu')).toBeTruthy();
+			expect(headers[3].classList.contains('fc-wed')).toBeTruthy();
+			expect(headers[4].classList.contains('fc-tue')).toBeTruthy();
+			expect(headers[5].classList.contains('fc-mon')).toBeTruthy();
+			expect(headers[6].classList.contains('fc-sun')).toBeTruthy();
+			expect(headers[7].classList.contains('fc-axis')).toBeTruthy();
 		});
 	});
 
