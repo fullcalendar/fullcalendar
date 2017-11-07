@@ -34,7 +34,6 @@
     "components-jqueryui": "github:components/jqueryui",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
     "gulp-concat": "^2.6.0",
     "gulp-cssmin": "^0.1.7",
     "gulp-file": "^0.3.0",

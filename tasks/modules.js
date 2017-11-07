@@ -5,7 +5,6 @@ var plumber = require('gulp-plumber');
 var concat = require('gulp-concat');
 var template = require('gulp-template');
 var sourcemaps = require('gulp-sourcemaps');
-var babel = require('gulp-babel');
 var webpack = require('webpack-stream'); // for fullcalendar.js, use webpack
 
 // project configs
