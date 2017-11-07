@@ -1,59 +1,20 @@
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
-var jscs = require('gulp-jscs');
-var tslint = require("gulp-tslint");
-var tsLintLib = require("tslint");
+var tslint = require('gulp-tslint');
+var tsLintLib = require('tslint');
+var eslint = require('gulp-eslint');
 
 var webpackConfig = require('../webpack.config');
 var tslintProgram = tsLintLib.Linter.createProgram("./tsconfig.json");
-
-// different types of jshint configs
-var jshintConfig = require('../.jshint.js');
-var jshintBase = jshintConfig.base;
-var jshintBrowser = jshintConfig.browser;
-var jshintBuilt = jshintConfig.built;
-
-// don't let gulp-jshint search for .jshintrc files
-jshintBase.lookup = false;
-jshintBrowser.lookup = false;
-jshintBuilt.lookup = false;
+var eslintConfig = require('../eslint.json');
 
 gulp.task('lint', [
-	'jshint:base',
-	'jshint:browser',
-	'jscs:strict',
-	'jscs:relaxed',
-	'tslint'
+	'lint:src',
+	'lint:built',
+	'lint:tasks',
+	'lint:legacy'
 ]);
 
-// for non-browser JS
-gulp.task('jshint:base', function() {
-	return gulp.src([
-			'tasks/*.js',
-			'tests/automated/*.js',
-			'tests/automated-better/*.js'
-		])
-		.pipe(jshint(jshintBase))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
-});
-
-// for browser JS, before concat
-gulp.task('jshint:browser', function() {
-	return gulp.src([
-			'src/**/*.js',
-			'!src/**/intro.js', // exclude
-			'!src/**/outro.js', // "
-			'!src/tslib-lite.js', // "
-			'locale/*.js',
-		])
-		.pipe(jshint(jshintBrowser))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
-});
-
-// for typescript
-gulp.task('tslint', function() {
+gulp.task('lint:src', function() {
 	return gulp.src(webpackConfig.entry)
 		.pipe(
 			tslint({ // will use tslint.json
@@ -64,33 +25,54 @@ gulp.task('tslint', function() {
 		.pipe(tslint.report());
 });
 
-// files we want to lint to a higher standard
-gulp.task('jscs:strict', function() {
+gulp.task('lint:built', [ 'modules', 'locale' ], function() {
 	return gulp.src([
-			'tests/automated/*.js',
-			'tests/automated-better/*.js'
-		])
-		.pipe(jscs({
-			configPath: '.jscs.strict.js' // needs to be an external config
-		}))
-		.pipe(jscs.reporter())
-		.pipe(jscs.reporter('fail'));
+		'dist/*.js',
+		'!dist/*.min.js'
+	])
+		.pipe(
+			eslint({ // only checks that globals are properly accessed
+				parserOptions: { 'ecmaVersion': 3 }, // for IE9
+				envs: [ 'browser', 'commonjs', 'amd' ],
+				rules: { 'no-undef': 2 }
+			})
+		)
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError());
 });
 
-// more relaxed linting. eventually move these to strict
-gulp.task('jscs:relaxed', function() {
+gulp.task('lint:tasks', function() {
 	return gulp.src([
-			'*.js', // like gulpfile and root configs
-			'tasks/*.js',
-			'src/**/*.js',
-			'!src/**/intro.js', // exclude
-			'!src/**/outro.js', // "
-			'!src/tslib-lite.js', // "
-			'locale/*.js'
-		])
-		.pipe(jscs({
-			configPath: '.jscs.js' // needs to be an external config
-		}))
-		.pipe(jscs.reporter())
-		.pipe(jscs.reporter('fail'));
+		'tasks/**/*.js'
+	])
+		.pipe(
+			eslint(Object.assign({}, eslintConfig, {
+				// tailor main config for node
+				envs: [ 'node' ]
+			}))
+		)
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError());
+});
+
+gulp.task('lint:legacy', function() {
+	return gulp.src([
+		'src/**/*.js',
+		'!src/**/intro.js',
+		'!src/**/outro.js',
+		'!src/**/tslib-lite.js',
+		'tests/**/*.js',
+		'!tests/manual/**'
+	])
+		.pipe(
+			eslint({ // lenient config from scratch
+				extends: 'eslint:recommended',
+				envs: [ 'browser' ],
+				rules: {
+					curly: 2
+				}
+			})
+		)
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError());
 });
