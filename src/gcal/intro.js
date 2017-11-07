@@ -12,7 +12,7 @@
 		module.exports = factory(require('jquery'));
 	}
 	else {
-		factory(jQuery);
+		factory(window.jQuery);
 	}
 })(function($) {
 

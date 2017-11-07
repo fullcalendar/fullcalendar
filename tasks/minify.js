@@ -20,11 +20,11 @@ gulp.task('minify:js', [ 'modules' ], function() {
 		'!dist/*.min.js', // avoid double minify
 		'!dist/locale-all.js' // already minified
 	])
-	.pipe(uglify({
-		preserveComments: 'some' // keep comments starting with !
-	}))
-	.pipe(rename({ extname: '.min.js' }))
-	.pipe(gulp.dest('dist/'));
+		.pipe(uglify({
+			preserveComments: 'some' // keep comments starting with !
+		}))
+		.pipe(rename({ extname: '.min.js' }))
+		.pipe(gulp.dest('dist/'));
 });
 
 // minifies the core modules's css
@@ -33,7 +33,7 @@ gulp.task('minify:css', [ 'modules' ], function() {
 		'dist/*.css',
 		'!dist/*.min.css' // avoid double minify
 	])
-	.pipe(cssmin())
-	.pipe(rename({ extname: '.min.css' }))
-	.pipe(gulp.dest('dist/'));
+		.pipe(cssmin())
+		.pipe(rename({ extname: '.min.css' }))
+		.pipe(gulp.dest('dist/'));
 });

@@ -33,8 +33,8 @@ gulp.task('modules:dev', _.map(srcConf, function(srcFiles, distFile) {
 		.pipe(
 			webpack(Object.assign({}, webpackConf, {
 				devtool: 'source-map' // also 'inline-source-map'
-			})
-		))
+			}))
+		)
 		.pipe(
 			gulp.dest(webpackConf.output.path)
 		);
@@ -49,8 +49,8 @@ gulp.task('modules:watch', _.map(srcConf, function(srcFiles, distFile) {
 			webpack(Object.assign({}, webpackConf, {
 				devtool: 'source-map', // also 'inline-source-map'
 				watch: true
-			})
-		))
+			}))
+		)
 		.pipe(
 			gulp.dest(webpackConf.output.path)
 		);

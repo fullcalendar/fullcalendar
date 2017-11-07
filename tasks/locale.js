@@ -164,7 +164,7 @@ function wrapWithUMD(body) {
 		'        module.exports = factory(require("jquery"), require("moment"));',
 		'    }',
 		'    else {',
-		'        factory(jQuery, moment);',
+		'        factory(window.jQuery, window.moment);',
 		'    }',
 		'})(function($, moment) {',
 		'',
