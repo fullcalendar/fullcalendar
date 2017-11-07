@@ -17,43 +17,44 @@ var webpackConf = require('../webpack.config.js');
 gulp.task('modules', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:' + distFile; // generates an array of task names
 }), function() {
-	return gulp.src('src/main.ts')
+	return gulp.src(webpackConf.entry)
 		.pipe(
-			webpack(Object.assign({}, webpackConf, {
-				output: { filename: 'fullcalendar.js' }
-			})
-		))
-		.pipe(babel()) // will output ES5
-		.pipe(gulp.dest('dist/'));
+			webpack(webpackConf)
+		)
+		.pipe(
+			gulp.dest(webpackConf.output.path)
+		);
 });
 
 // generates js/css/sourcemap files in dist directory
 gulp.task('modules:dev', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:dev:' + distFile; // generates an array of task names
 }), function() {
-	return gulp.src('src/main.ts')
+	return gulp.src(webpackConf.entry)
 		.pipe(
 			webpack(Object.assign({}, webpackConf, {
-				output: { filename: 'fullcalendar.js' },
 				devtool: 'source-map' // also 'inline-source-map'
 			})
 		))
-		.pipe(gulp.dest('dist/')); // will output ES6 and must be run in a newer browser
+		.pipe(
+			gulp.dest(webpackConf.output.path)
+		);
 });
 
 // watches source files and generates js/css/sourcemaps
 gulp.task('modules:watch', _.map(srcConf, function(srcFiles, distFile) {
 	return 'modules:watch:' + distFile; // generates an array of task names
 }), function() {
-	return gulp.src('src/main.ts')
+	return gulp.src(webpackConf.entry)
 		.pipe(
 			webpack(Object.assign({}, webpackConf, {
-				output: { filename: 'fullcalendar.js' },
 				devtool: 'source-map', // also 'inline-source-map'
 				watch: true
 			})
 		))
-		.pipe(gulp.dest('dist/')); // will output ES6 and must be run in a newer browser
+		.pipe(
+			gulp.dest(webpackConf.output.path)
+		);
 });
 
 // deletes all generated js/css files in the dist directory

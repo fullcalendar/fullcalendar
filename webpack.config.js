@@ -7,11 +7,14 @@ const { CheckerPlugin } = require('awesome-typescript-loader')
 
 module.exports = {
 
+	entry: './src/main.ts',
+
 	resolve: {
 		extensions: ['.ts', '.js'],
 		alias: {
-			jquery: path.resolve(__dirname, 'src/jquery-shim.js'),
-			moment: path.resolve(__dirname, 'src/moment-shim.js')
+			// use our slimmed down version
+			// still need to npm-install the original though, for typescript transpiler
+			tslib: path.resolve(__dirname, 'src/tslib-lite.js')
 		}
 	},
 
@@ -26,6 +29,22 @@ module.exports = {
 
 	plugins: [
 		new CheckerPlugin()
-	]
+	],
+
+	externals: {
+		jquery: {
+			commonjs: 'jquery',
+			commonjs2: 'jquery', // ?, needed
+			amd: 'jquery',
+			root: 'jQuery' // on the window
+		},
+		moment: 'moment'
+	},
+
+	output: {
+		libraryTarget: 'umd',
+		filename: 'fullcalendar.js',
+		path: path.resolve(__dirname, 'dist/')
+	}
 
 };
