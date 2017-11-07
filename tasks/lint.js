@@ -3,7 +3,6 @@ var tslint = require('gulp-tslint');
 var tsLintLib = require('tslint');
 var eslint = require('gulp-eslint');
 
-var webpackConfig = require('../webpack.config');
 var tslintProgram = tsLintLib.Linter.createProgram("./tsconfig.json");
 var eslintConfig = require('../eslint.json');
 
@@ -15,7 +14,7 @@ gulp.task('lint', [
 ]);
 
 gulp.task('lint:src', function() {
-	return gulp.src(webpackConfig.entry)
+	return gulp.src('src/**/*.ts')
 		.pipe(
 			tslint({ // will use tslint.json
 				formatter: 'verbose',
@@ -42,9 +41,7 @@ gulp.task('lint:built', [ 'modules', 'locale' ], function() {
 });
 
 gulp.task('lint:tasks', function() {
-	return gulp.src([
-		'tasks/**/*.js'
-	])
+	return gulp.src('tasks/**/*.js')
 		.pipe(
 			eslint(Object.assign({}, eslintConfig, {
 				// tailor main config for node
