@@ -6,6 +6,13 @@
   },
   "rules": {
     "no-undef": 2,
-    "indent": ["error", "tab"]
+
+    "indent": ["error", "tab"],
+    "no-trailing-spaces": 2,
+    "no-irregular-whitespace": 2,
+    "curly": 2,
+    "no-console": 2,
+    "no-debugger": 2,
+    "no-unused-vars": 2
   }
 }
