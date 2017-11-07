@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { htmlEscape, cssToStr } from '../util'
 import EventRenderer from '../component/renderers/EventRenderer'
 

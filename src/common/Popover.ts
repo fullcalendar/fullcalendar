@@ -13,6 +13,7 @@ Options:
 	- hide (callback)
 */
 
+import * as $ from 'jquery'
 import { getScrollParent } from '../util'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 

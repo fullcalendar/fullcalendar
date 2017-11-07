@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { htmlEscape } from '../util'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'

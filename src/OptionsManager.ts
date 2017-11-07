@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { firstDefined } from './util'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
 import { localeOptionHash, populateInstanceComputableOptions } from  './locale'

@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { disableCursor, enableCursor } from '../../util'
 import EventDefMutation from '../../models/event/EventDefMutation'
 import EventDefDateMutation from '../../models/event/EventDefDateMutation'

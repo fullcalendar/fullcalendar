@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import Promise from '../../common/Promise'
 import EventSource from './EventSource'
 

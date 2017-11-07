@@ -11,6 +11,7 @@ after class:
 	ListenerMixin.mixInto(TheClass)
 */
 
+import * as $ from 'jquery'
 import Mixin from './Mixin'
 
 export interface ListenerInterface {

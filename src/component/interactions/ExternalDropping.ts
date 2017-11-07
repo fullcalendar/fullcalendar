@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import namespaceHooks from '../../namespace-hooks'
 import { disableCursor, enableCursor } from '../../util'

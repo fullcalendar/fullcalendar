@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import { isInt, divideDurationByDuration, htmlEscape } from '../util'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'

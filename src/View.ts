@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import { parseFieldSpecs, proxy, isPrimaryMouseButton } from './util'
 import RenderQueue from './common/RenderQueue'

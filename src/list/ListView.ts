@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { htmlEscape, subtractInnerElHeight } from '../util'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'

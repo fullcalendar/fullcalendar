@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { compareByFieldSpecs, proxy } from '../../util'
 
 export default class EventRenderer {

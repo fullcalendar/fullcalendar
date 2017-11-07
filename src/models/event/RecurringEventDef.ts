@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import EventDef from './EventDef'
 import EventInstance from './EventInstance'

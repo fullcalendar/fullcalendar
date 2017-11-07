@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'

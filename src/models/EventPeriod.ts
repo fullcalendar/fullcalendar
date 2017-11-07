@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { removeExact, removeMatching } from '../util'
 import Promise from '../common/Promise'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'

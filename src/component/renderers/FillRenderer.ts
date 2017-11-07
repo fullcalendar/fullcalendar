@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { cssToStr } from '../../util'
 
 

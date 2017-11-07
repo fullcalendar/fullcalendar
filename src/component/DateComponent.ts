@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import { attrsToStr, htmlEscape, dayIDs } from '../util'
 import momentExt from '../moment-ext'

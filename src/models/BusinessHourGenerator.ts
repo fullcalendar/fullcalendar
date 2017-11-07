@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { eventDefsToEventInstances } from '../models/event/util'
 import EventInstanceGroup from './event/EventInstanceGroup'
 import RecurringEventDef from './event/RecurringEventDef'
