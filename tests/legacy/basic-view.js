@@ -2,7 +2,7 @@
 describe('basic view rendering', function() {
 
 	pushOptions({
-		defaultView: 'month',
+		defaultView: 'month'
 	});
 
 	describe('when isRTL is false', function() {
