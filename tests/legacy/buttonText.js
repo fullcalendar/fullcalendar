@@ -1,16 +1,11 @@
 describe('button text', function() {
 
-	var settings;
-
-	beforeEach(function() {
-		affix('#cal');
-		settings = {
-			header: {
-				left: 'prevYear,prev,today,next,nextYear',
-				center: '',
-				right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
-			}
-		};
+	pushOptions({
+		header: {
+			left: 'prevYear,prev,today,next,nextYear',
+			center: '',
+			right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
+		}
 	});
 
 	describe('with default locale', function() {
@@ -18,7 +13,7 @@ describe('button text', function() {
 		describe('with default buttonIcons', function() {
 
 			it('should contain default text values', function() {
-				$('#cal').fullCalendar(settings);
+				initCalendar();
 
 				// will have button icons, to text will be empty
 				expect($('.fc-next-button')).toHaveText('');
@@ -35,17 +30,18 @@ describe('button text', function() {
 			});
 
 			it('should contain specified text values', function() {
-				settings.buttonText = {
-					prev: '<-',
-					next: '->',
-					prevYear: '<--',
-					nextYear: '-->',
-					today: 'tidei',
-					month: 'mun',
-					week: 'wiki',
-					day: 'dei'
-				};
-				$('#cal').fullCalendar(settings);
+				initCalendar({
+					buttonText: {
+						prev: '<-',
+						next: '->',
+						prevYear: '<--',
+						nextYear: '-->',
+						today: 'tidei',
+						month: 'mun',
+						week: 'wiki',
+						day: 'dei'
+					}
+				});
 
 				expect($('.fc-next-button')).toHaveText('->');
 				expect($('.fc-nextYear-button')).toHaveText('-->');
@@ -64,12 +60,12 @@ describe('button text', function() {
 
 		describe('with buttonIcons turned off', function() {
 
-			beforeEach(function() {
-				settings.buttonIcons = false;
+			pushOptions({
+				buttonIcons: false
 			});
 
 			it('should contain default text values', function() {
-				$('#cal').fullCalendar(settings);
+				initCalendar();
 
 				// will have actual text now
 				expect($('.fc-next-button')).toHaveText('next');
@@ -86,17 +82,18 @@ describe('button text', function() {
 			});
 
 			it('should contain specified text values', function() {
-				settings.buttonText = {
-					prev: '<-',
-					next: '->',
-					prevYear: '<--',
-					nextYear: '-->',
-					today: 'tidei',
-					month: 'mun',
-					week: 'wiki',
-					day: 'dei'
-				};
-				$('#cal').fullCalendar(settings);
+				initCalendar({
+					buttonText: {
+						prev: '<-',
+						next: '->',
+						prevYear: '<--',
+						nextYear: '-->',
+						today: 'tidei',
+						month: 'mun',
+						week: 'wiki',
+						day: 'dei'
+					}
+				});
 
 				expect($('.fc-next-button')).toHaveText('->');
 				expect($('.fc-nextYear-button')).toHaveText('-->');
@@ -117,14 +114,14 @@ describe('button text', function() {
 
 	describe('when locale is not default', function() {
 
-		beforeEach(function() {
-			settings.locale = 'fr';
+		pushOptions({
+			locale: 'fr'
 		});
 
 		describe('with default buttonIcons', function() {
 
 			it('should contain default text values', function() {
-				$('#cal').fullCalendar(settings);
+				initCalendar();
 
 				// will contain icons, so will contain no text
 				expect($('.fc-next-button')).toHaveText('');
@@ -141,17 +138,18 @@ describe('button text', function() {
 			});
 
 			it('should contain specified text values', function() {
-				settings.buttonText = {
-					prev: '<-',
-					next: '->',
-					prevYear: '<--',
-					nextYear: '-->',
-					today: 'tidei',
-					month: 'mun',
-					week: 'wiki',
-					day: 'dei'
-				};
-				$('#cal').fullCalendar(settings);
+				initCalendar({
+					buttonText: {
+						prev: '<-',
+						next: '->',
+						prevYear: '<--',
+						nextYear: '-->',
+						today: 'tidei',
+						month: 'mun',
+						week: 'wiki',
+						day: 'dei'
+					}
+				});
 
 				expect($('.fc-next-button')).toHaveText('->');
 				expect($('.fc-nextYear-button')).toHaveText('-->');
@@ -170,12 +168,12 @@ describe('button text', function() {
 
 		describe('with buttonIcons turned off', function() {
 
-			beforeEach(function() {
-				settings.buttonIcons = false;
+			pushOptions({
+				buttonIcons: false
 			});
 
 			it('should contain default text values', function() {
-				$('#cal').fullCalendar(settings);
+				initCalendar();
 
 				// will have the locale's actual text now
 				expect($('.fc-next-button')).toHaveText('Suivant');
@@ -193,17 +191,18 @@ describe('button text', function() {
 			});
 
 			it('should contain specified text values', function() {
-				settings.buttonText = {
-					prev: '<-',
-					next: '->',
-					prevYear: '<--',
-					nextYear: '-->',
-					today: 'tidei',
-					month: 'mun',
-					week: 'wiki',
-					day: 'dei'
-				};
-				$('#cal').fullCalendar(settings);
+				initCalendar({
+					buttonText: {
+						prev: '<-',
+						next: '->',
+						prevYear: '<--',
+						nextYear: '-->',
+						today: 'tidei',
+						month: 'mun',
+						week: 'wiki',
+						day: 'dei'
+					}
+				});
 
 				expect($('.fc-next-button')).toHaveText('->');
 				expect($('.fc-nextYear-button')).toHaveText('-->');
