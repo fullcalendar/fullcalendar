@@ -11,7 +11,7 @@ describe('basic view rendering', function() {
 			isRTL: false
 		});
 
-		it('should have have days ordered sun to sat', function() {
+		it('should have days ordered sun to sat', function() {
 			initCalendar();
 			var fc = $(currentCalendar.el).find('.fc-day-header');
 			expect(fc[0]).toHaveClass('fc-sun');
@@ -30,7 +30,7 @@ describe('basic view rendering', function() {
 			isRTL: true
 		});
 
-		it('should have have days ordered sat to sun', function() {
+		it('should have days ordered sat to sun', function() {
 			initCalendar();
 			var fc = $(currentCalendar.el).find('.fc-day-header');
 			expect(fc[0]).toHaveClass('fc-sat');
