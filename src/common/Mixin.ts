@@ -9,4 +9,13 @@ export default class Mixin {
 		});
 	}
 
+	/*
+	will override existing methods
+	*/
+	static mixOver(destClass) {
+		Object.getOwnPropertyNames(this.prototype).forEach((name) => { // copy methods
+			destClass.prototype[name] = this.prototype[name];
+		});
+	}
+
 }
