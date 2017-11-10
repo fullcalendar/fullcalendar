@@ -42,7 +42,10 @@ export default abstract class View extends InteractiveDateComponent {
 
 	dateProfileGeneratorClass: any // initialized after class
 	dateProfileGenerator: any
-	usesMinMaxTime: boolean = false // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
+
+	// whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
+	// initialized after class
+	usesMinMaxTime: boolean
 
 	// DEPRECATED
 	start: any // use activeUnzonedRange
@@ -982,6 +985,7 @@ export default abstract class View extends InteractiveDateComponent {
 }
 
 
+View.prototype.usesMinMaxTime = false;
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator;
 
 
