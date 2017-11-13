@@ -487,6 +487,7 @@ export default class Calendar {
 
 			this.bindViewHandlers(newView);
 
+			newView.startBatchRender(); // so that setElement+setDate rendering are joined
 			newView.setElement(
 				$("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
 			);
@@ -502,6 +503,10 @@ export default class Calendar {
 			}
 
 			this.view.setDate(this.currentDate);
+
+			if (newView) {
+				newView.stopBatchRender();
+			}
 		}
 
 		this.thawContentHeight();
