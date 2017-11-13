@@ -319,7 +319,7 @@ export default class Calendar {
 		else if (this.elementVisible()) {
 			// mainly for the public API
 			this.calcSize();
-			this.renderView();
+			this.updateViewSize();
 		}
 	}
 
@@ -563,7 +563,7 @@ export default class Calendar {
 	}
 
 
-	updateViewSize(isResize) {
+	updateViewSize(isResize=false) {
 		var view = this.view;
 		var scroll;
 
