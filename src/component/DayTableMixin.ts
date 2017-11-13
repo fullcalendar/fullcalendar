@@ -85,7 +85,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 	updateDayTableCols() {
 		this.colCnt = this.computeColCnt();
 		this.colHeadFormat =
-			(this as any).opt('columnHeadFormat') ||
+			(this as any).opt('columnHeaderFormat') ||
 			(this as any).opt('columnFormat') || // deprecated
 			this.computeColHeadFormat();
 	}
@@ -325,14 +325,14 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 		];
 		var innerHtml;
 
-		if (typeof t.opt('columnHeadHtml') === 'function') {
-			innerHtml = t.opt('columnHeadHtml')(date);
+		if (typeof t.opt('columnHeaderHtml') === 'function') {
+			innerHtml = t.opt('columnHeaderHtml')(date);
 		}
-		else if (typeof t.opt('columnHeadText') === 'function') {
-			innerHtml = htmlEscape(t.opt('columnHeadText')(date));
+		else if (typeof t.opt('columnHeaderText') === 'function') {
+			innerHtml = htmlEscape(t.opt('columnHeaderText')(date));
 		}
 		else {
-			innerHtml = htmlEscape(date.format(t.colHeadFormat));
+			innerHtml = htmlEscape(date.format(t.colHeaderFormat));
 		}
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath

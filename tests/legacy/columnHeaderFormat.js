@@ -1,10 +1,10 @@
 
-describe('columnHeadFormat', function() {
+describe('columnHeaderFormat', function() {
     beforeEach(function() {
         affix('#cal');
     });
 
-    describe('when columnHeadFormat is not set', function() {
+    describe('when columnHeaderFormat is not set', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'Sun', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: 'Sun 5/11', selector: 'th.fc-day-header.fc-sun' },
@@ -29,7 +29,7 @@ describe('columnHeadFormat', function() {
         });
     });
 
-    describe('when columnHeadFormat is set on a per-view basis', function() {
+    describe('when columnHeaderFormat is set on a per-view basis', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'Sunday', selector: 'th.fc-day-header.fc-sun' },
             { view: 'basicWeek', expected: 'Sunday 11 - 5', selector: 'th.fc-day-header.fc-sun' },
@@ -41,11 +41,11 @@ describe('columnHeadFormat', function() {
             $('#cal').fullCalendar({
                 defaultDate: '2014-05-11',
                 views: {
-                    month: { columnHeadFormat: 'dddd' },
-                    agendaDay: { columnHeadFormat: 'dddd M/D' },
-                    agendaWeek: { columnHeadFormat: 'dddd D , M' },
-                    basicDay: { columnHeadFormat: 'dddd D | M' },
-                    basicWeek: { columnHeadFormat: 'dddd D - M' }
+                    month: { columnHeaderFormat: 'dddd' },
+                    agendaDay: { columnHeaderFormat: 'dddd M/D' },
+                    agendaWeek: { columnHeaderFormat: 'dddd D , M' },
+                    basicDay: { columnHeaderFormat: 'dddd D | M' },
+                    basicWeek: { columnHeaderFormat: 'dddd D - M' }
                 }
             });
         });
@@ -128,7 +128,7 @@ describe('columnHeadFormat', function() {
             });
         });
 
-        it('should have the translated dates and columnHeadFormat should be computed differently', function() {
+        it('should have the translated dates and columnHeaderFormat should be computed differently', function() {
             var cal = $('#cal');
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
