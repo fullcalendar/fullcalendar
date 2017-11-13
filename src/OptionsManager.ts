@@ -23,7 +23,7 @@ export default class OptionsManager extends Model {
 	}
 
 
-	add(newOptionHash) { // was setOptions
+	add(newOptionHash) {
 		var optionCnt = 0;
 		var optionName;
 
