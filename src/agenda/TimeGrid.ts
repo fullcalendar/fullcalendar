@@ -410,6 +410,12 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
 	renderNowIndicator(date) {
+
+		// HACK: if date columns not ready for some reason (scheduler)
+		if (!this.colContainerEls) {
+			return;
+		}
+
 		// seg system might be overkill, but it handles scenario where line needs to be rendered
 		//  more than once because of columns with the same date (resources columns for example)
 		var segs = this.componentFootprintToSegs(
