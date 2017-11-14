@@ -1,5 +1,6 @@
 import UnzonedRange from './models/UnzonedRange'
 import ComponentFootprint from './models/ComponentFootprint'
+import EventFootprint from './models/event/EventFootprint'
 import EventDefParser from './models/event/EventDefParser'
 import EventSource from './models/event-source/EventSource'
 import {
@@ -278,7 +279,7 @@ export default class Constraints {
 	}
 
 
-	eventRangeToEventFootprints(eventRange) {
+	eventRangeToEventFootprints(eventRange): EventFootprint[] {
 		return [ eventRangeToEventFootprint(eventRange) ];
 	}
 

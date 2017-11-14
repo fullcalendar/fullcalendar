@@ -1,4 +1,5 @@
 import * as $ from 'jquery'
+import * as moment from 'moment'
 import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
@@ -289,7 +290,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 	// Diffs the two dates, returning a duration, based on granularity of the grid
 	// TODO: port isTimeScale into this system?
-	diffDates(a, b) {
+	diffDates(a, b): moment.Duration {
 		if (this.largeUnit) {
 			return diffByUnit(a, b, this.largeUnit);
 		}

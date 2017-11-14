@@ -326,7 +326,7 @@ export default class DayGrid extends InteractiveDateComponent {
 	// FYI: the first column is the leftmost column, regardless of date
 
 
-	getCellHit(row, col) {
+	getCellHit(row, col): any {
 		return {
 			row: row,
 			col: col,
@@ -455,7 +455,7 @@ export default class DayGrid extends InteractiveDateComponent {
 	// Computes the number of levels a row will accomodate without going outside its bounds.
 	// Assumes the row is "rigid" (maintains a constant height regardless of what is inside).
 	// `row` is the row number.
-	computeRowLevelLimit(row) {
+	computeRowLevelLimit(row): (number | false) {
 		var rowEl = this.rowEls.eq(row); // the containing "fake" row div
 		var rowHeight = rowEl.height(); // TODO: cache somehow?
 		var trEls = this.eventRenderer.rowStructs[row].tbodyEl.children();

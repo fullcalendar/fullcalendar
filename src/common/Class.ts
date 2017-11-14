@@ -6,7 +6,7 @@ export default class Class {
 
 	// Called on a class to create a subclass.
 	// LIMITATION: cannot provide a constructor!
-	static extend(members) {
+	static extend(members): any {
 		class SubClass extends this {};
 
 		copyOwnProps(members, SubClass.prototype);

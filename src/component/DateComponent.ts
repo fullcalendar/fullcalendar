@@ -5,6 +5,7 @@ import momentExt from '../moment-ext'
 import { formatRange } from '../date-formatting'
 import Component from './Component'
 import { eventRangeToEventFootprint } from '../models/event/util'
+import EventFootprint from '../models/event/EventFootprint'
 
 
 export default abstract class DateComponent extends Component {
@@ -558,7 +559,7 @@ export default abstract class DateComponent extends Component {
 	}
 
 
-	eventRangeToEventFootprints(eventRange) {
+	eventRangeToEventFootprints(eventRange): EventFootprint[] {
 		return [ eventRangeToEventFootprint(eventRange) ];
 	}
 

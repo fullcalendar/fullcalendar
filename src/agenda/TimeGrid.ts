@@ -580,7 +580,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 	}
 
 
-	queryHit(leftOffset, topOffset) {
+	queryHit(leftOffset, topOffset): any {
 		var snapsPerSlot = this.snapsPerSlot;
 		var colCoordCache = this.colCoordCache;
 		var slatCoordCache = this.slatCoordCache;
