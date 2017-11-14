@@ -14,10 +14,21 @@ import './agenda/config'
 import './list/config'
 
 
-($ as any).fullCalendar = $.extend(namespaceHooks, namespaceExports); // graft over the original hooks object
+declare global {
+	interface JQuery {
+		fullCalendar(...args): (JQuery | any)
+	}
+	interface JQueryStatic {
+		fullCalendar: object
+	}
+}
 
 
-($ as any).fn.fullCalendar = function(options) {
+($ as JQueryStatic).fullCalendar =
+	$.extend(namespaceHooks, namespaceExports); // graft over the original hooks object
+
+
+$.fn.fullCalendar = function(options?): (JQuery | any) {
 	var args = Array.prototype.slice.call(arguments, 1); // for a possible method call
 	var res = this; // what this function will return (this jQuery object by default)
 

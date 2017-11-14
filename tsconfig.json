@@ -5,5 +5,8 @@
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
     "importHelpers": true
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }

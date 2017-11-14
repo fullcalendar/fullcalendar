@@ -10,7 +10,8 @@ gulp.task('lint', [
 	'lint:src',
 	'lint:built',
 	'lint:tasks',
-	'lint:legacy'
+	'lint:legacy',
+	'ts-types' // make sure typescript defs compile without errors
 ]);
 
 gulp.task('lint:src', function() {

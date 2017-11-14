@@ -33,6 +33,7 @@
     "bootstrap": "^3.3.7",
     "components-jqueryui": "github:components/jqueryui",
     "del": "^2.2.1",
+    "dts-generator": "^2.1.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-cssmin": "^0.1.7",
@@ -70,9 +71,11 @@
     "yargs": "^4.8.1"
   },
   "main": "dist/fullcalendar.js",
+  "types": "dist/fullcalendar.d.ts",
   "files": [
     "dist/*.js",
     "dist/*.css",
+    "dist/*.d.ts",
     "dist/locale/*.js",
     "README.*",
     "LICENSE.*",

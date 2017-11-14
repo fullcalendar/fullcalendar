@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var del = require('del');
 
 require('./tasks/modules');
+require('./tasks/ts-types');
 require('./tasks/minify');
 require('./tasks/archive');
 require('./tasks/locale');
@@ -28,7 +29,8 @@ gulp.task('watch', [
 gulp.task('dist', [
 	'modules',
 	'locale',
-	'minify'
+	'minify',
+	'ts-types'
 ]);
 
 // like dist, but runs tests and linting, and generates archive
