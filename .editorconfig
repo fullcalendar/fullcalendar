@@ -10,6 +10,10 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = false
 
+[*.json]
+indent_style = space
+indent_size = 2
+
 [tests/]
 indent_style = ignore
 end_of_line = ignore
