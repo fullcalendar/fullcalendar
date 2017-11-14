@@ -13,6 +13,7 @@ trim_trailing_whitespace = false
 [*.json]
 indent_style = space
 indent_size = 2
+insert_final_newline = false
 
 [tests/]
 indent_style = ignore
