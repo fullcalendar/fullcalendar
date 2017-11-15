@@ -14,4 +14,4 @@ A full-sized drag & drop event calendar (jQuery plugin).
 
 # Error in Displaying events as Progressbar
 		
-		-[Fiddle for Reference] (http://jsfiddle.net/Manoj_89/tda7obtb/2/)
+-[Fiddle for Reference] (http://jsfiddle.net/Manoj_89/tda7obtb/2/)
