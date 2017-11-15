@@ -1,4 +1,11 @@
-﻿(function ($) {
+
+
+// CHECK THE FIDDLE BELOW   // HOW CAN WE RENDER EVENTS AS PROGRESS BAR  OR  SHOW PROGRESS OF EVENTS
+
+//     http://jsfiddle.net/Manoj_89/tda7obtb/2/
+
+
+(function ($) {
     $(document).ready(function () {
 
         // page is now ready, initialize the calendar...
@@ -33,134 +40,7 @@
                 value: $el.data("progress-value")
             });
         });
-      
-        $('#fromTime').timepicker({
-            // dateFormat:'yy-mm-dd',
-            timeFormat: 'H:i:s',
-            'disableTimeRanges': [
-                ['1pm', '1:30pm'],
-            ],
-            'minTime': '09:00am',
-            'maxTime': '06:00pm',
-            'showDuration': true
-        });
-        $('#toTime').timepicker({
-            twentyFour: false,
-            'timeFormat': 'H:i:s',
-            'minTime': '09:00am',
-            'maxTime': '06:00pm',
-            'showDuration': true
-        });
-        //  $('#toTime').wickedpicker();
-        //   var options = {
-        //hh:mm 24 hour format only, defaults to current time
-        /*    twentyFour: true,  //Display 24 hour format, defaults to false
-            upArrow: 'wickedpicker__controls__control-up',  //The up arrow class selector to use, for custom CSS
-            downArrow: 'wickedpicker__controls__control-down', //The down arrow class selector to use, for custom CSS
-            close: 'wickedpicker__close', //The close class selector to use, for custom CSS
-            hoverState: 'hover-state', //The hover state class to use, for custom CSS
-            title: 'Timepicker', //The Wickedpicker's title,
-            showSeconds: true, //Whether or not to show seconds,
-            timeSeparator: ' : ', // The string to put in between hours and minutes (and seconds)
-            secondsInterval: 1, //Change interval for seconds, defaults to 1,
-            minutesInterval: 1, //Change interval for minutes, defaults to 1
-            beforeShow: null, //A function to be called before the Wickedpicker is shown
-            afterShow: null, //A function to be called after the Wickedpicker is closed/hidden
-            show: null, //A function to be called when the Wickedpicker is shown  */
-        //     clearable: false, //Make the picker's input clearable (has clickable "x")
-        //  };
-        //  $('#toTime').wickedpicker(options);
-       
-        /// Date picker drop-down
-        $(function () {
-            /// Include holidays date wise
-            var holiday = [[12, 25, 2017], [1, 1, 2018], [1, 26, 2018], [8, 15, 2018]];
-            var dateFormat = "yy-mm-dd",
-                from = $("#from")
-                    .datepicker({
-                        beforeShowDay: nonWorkingDays,
-                        dateFormat: "yy-mm-dd",
-                        defaultDate: "+1d",
-                        changeMonth: true,
-                        numberOfMonths: 1,
-                        minDate: 0,
-                    })
-                    .on("change", function () {
-                        to.datepicker("option", "minDate", getDate(this));
-                    }),
-                to = $("#to").datepicker({
-                    beforeShowDay: nonWorkingDays,
-                    dateFormat: "yy-mm-dd",
-                    defaultDate: "+1d",
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                    .on("change", function () {
-                        from.datepicker("option", "maxDate", getDate(this));
-                    });
-            $("#dtCrtd").datepicker({
-                beforeShowDay: nonWorkingDays,
-                dateFormat: "yy-mm-dd",
-                defaultDate: "+1d",
-                changeMonth: true,
-                numberOfMonths: 1,
-                minDate:0
-            });
-
-            function getDate(element) {
-                var date;
-                try {
-                    date = $.datepicker.parseDate(dateFormat, element.value);
-                } catch (error) {
-                    date = null;
-                }
-                return date;
-            }
-
-            function nonWorkingDays(date) {
-
-                var day = date.getDay(), Sunday = 0, Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6;
-                var week = 0 | date.getDate() / 7 //get the week
-
-                //check if it's second week or fourth week
-                if (week == 0 || week == 2) {
-                    if (day == 6) { //check for satruday
-                        return [false];
-                    }
-                }
-
-                //check for sunday
-                if (day == 0) {
-                    return [false];
-                }
-
-                //check for holidays
-                for (i = 0; i < holiday.length; i++) {
-                    if (date.getMonth() == holiday[i][0] - 1 &&
-                        date.getDate() == holiday[i][1] &&
-                        date.getFullYear() == holiday[i][2]) {
-                        return [false];
-                    }
-                }
-                return [true];
-            }
-
-        });
-
-        /*   $(function () {
-
-               $(".datepicker").datepicker({
-                   dateFormat: "yy-mm-dd",
-                   showStatus: true,
-                   showWeeks: true,
-                   minDate:0,
-               });
-               $("#fadeIn").on("change", function () {
-                   $("#datepicker").datepicker("option", "minDate", date);
-               });
-           }); */
-
-        $('#calendr').fullCalendar({
+     $('#calendr').fullCalendar({
             customButtons: {
                 addAnEvent: {
                     text: 'Add Order',
@@ -229,20 +109,7 @@
                 }
             },
           //  events: '/Events/GetCalDispEvents/',
-           /* eventSources: [
-                {
-                    url: '@Url.Action("GetCalDispEvents")',
-                    type: 'POST',
-                    backgroundColor: 'red',
-                    success: function (doc) {
-                        events.push(doc); 
-                        alert('we got the events!');
-                    },
-                    error: function () {
-                        alert('there was an error while fetching events!');
-                    },
-                }],*/
-             events:
+        events:
                [{
                    title: 'Booked',
                    start: '2017-11-07T15:30:00',
