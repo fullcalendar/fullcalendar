@@ -8,3 +8,10 @@ A full-sized drag & drop event calendar (jQuery plugin).
 - [Contributing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE.txt)
+
+
+# Forked from fullcalendar.io
+
+# Error in Displaying events as Progressbar
+		
+		-[Fiddle for Reference] (http://jsfiddle.net/Manoj_89/tda7obtb/2/)
