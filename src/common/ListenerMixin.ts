@@ -23,7 +23,7 @@ let guid = 0;
 
 export default class ListenerMixin extends Mixin implements ListenerInterface {
 
-	listenerId: any = null
+	listenerId: any
 
 	/*
 	Given an `other` object that has on/off methods, bind the given `callback` to an event by the given name.

@@ -22,7 +22,7 @@ Prerequisite: the object being mixed into needs to be a *Grid*
 */
 export default class DayTableMixin extends Mixin implements DayTableInterface {
 
-	breakOnWeeks: boolean = false // should create a new row for each week?
+	breakOnWeeks: boolean // should create a new row for each week? not specified, so default is FALSY
 	dayDates: any // whole-day dates for each column. left to right
 	dayIndices: any // for each day from start, the offset
 	daysPerRow: any

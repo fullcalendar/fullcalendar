@@ -11,6 +11,7 @@ export default class Mixin {
 
 	/*
 	will override existing methods
+	TODO: remove! not used anymore
 	*/
 	static mixOver(destClass) {
 		Object.getOwnPropertyNames(this.prototype).forEach((name) => { // copy methods
