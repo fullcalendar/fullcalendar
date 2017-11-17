@@ -56,9 +56,9 @@ gulp.task('lint:tasks', function() {
 gulp.task('lint:legacy', function() {
 	return gulp.src([
 		'src/**/*.js',
+		'!src/tslib-lite.js',
 		'!src/**/intro.js',
 		'!src/**/outro.js',
-		'!src/**/tslib-lite.js',
 		'tests/**/*.js',
 		'!tests/manual/**'
 	])
