@@ -1,9 +1,7 @@
-import namespaceHooks from '../namespace-hooks'
+import { register } from '../ViewRegistry'
 import ListView from './ListView'
 
-const views = namespaceHooks.views as any
-
-views.list = {
+register('list', {
 	'class': ListView,
 	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
@@ -11,37 +9,37 @@ views.list = {
 		listDayFormat: 'LL', // like "January 1, 2016"
 		noEventsMessage: 'No events to display'
 	}
-};
+});
 
-views.listDay = {
+register('listDay', {
 	type: 'list',
 	duration: { days: 1 },
 	defaults: {
 		listDayFormat: 'dddd' // day-of-week is all we need. full date is probably in header
 	}
-};
+});
 
-views.listWeek = {
+register('listWeek', {
 	type: 'list',
 	duration: { weeks: 1 },
 	defaults: {
 		listDayFormat: 'dddd', // day-of-week is more important
 		listDayAltFormat: 'LL'
 	}
-};
+});
 
-views.listMonth = {
+register('listMonth', {
 	type: 'list',
 	duration: { month: 1 },
 	defaults: {
 		listDayAltFormat: 'dddd' // day-of-week is nice-to-have
 	}
-};
+});
 
-views.listYear = {
+register('listYear', {
 	type: 'list',
 	duration: { year: 1 },
 	defaults: {
 		listDayAltFormat: 'dddd' // day-of-week is nice-to-have
 	}
-};
+});

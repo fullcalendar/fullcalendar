@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
-import namespaceHooks from '../../namespace-hooks'
+import * as exportHooks from '../../exports'
 import { disableCursor, enableCursor } from '../../util'
 import momentExt from '../../moment-ext'
 import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
@@ -190,17 +190,21 @@ export default class ExternalDropping extends Interaction {
 
 }
 
-ListenerMixin.mixInto(ExternalDropping)
+ListenerMixin.mixInto(ExternalDropping);
 
 
 /* External-Dragging-Element Data
 ----------------------------------------------------------------------------------------------------------------------*/
 
+// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
+// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
+(exportHooks as any).dataAttrPrefix = '';
+
 // Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
 // to be used for Event Object creation.
 // A defined `.eventProps`, even when empty, indicates that an event should be created.
 function getDraggedElMeta(el) {
-	var prefix = namespaceHooks.dataAttrPrefix;
+	var prefix = (exportHooks as any).dataAttrPrefix;
 	var eventProps; // properties for creating the event, not related to date/time
 	var startTime; // a Duration
 	var duration;

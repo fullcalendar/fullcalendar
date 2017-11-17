@@ -1,7 +1,9 @@
 import * as $ from 'jquery'
-import namespaceHooks from '../namespace-hooks'
+import * as exportHooks from '../exports'
 import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
+
+(exportHooks as any).touchMouseIgnoreWait = 500;
 
 var globalEmitter = null;
 var neededCount = 0;
@@ -177,7 +179,7 @@ export default class GlobalEmitter {
 	}
 
 	startTouchMouseIgnore() {
-		var wait = namespaceHooks.touchMouseIgnoreWait;
+		var wait = (exportHooks as any).touchMouseIgnoreWait;
 
 		if (wait) {
 			this.mouseIgnoreDepth++;

@@ -1,6 +1,5 @@
 import * as $ from 'jquery'
-import namespaceHooks from './namespace-hooks'
-import * as namespaceExports from './namespace-exports'
+import * as exportHooks from './exports'
 import { warn } from './util'
 import Calendar from './Calendar'
 
@@ -15,17 +14,17 @@ import './list/config'
 
 
 declare global {
-	interface JQuery {
-		fullCalendar(...args): (JQuery | any)
-	}
 	interface JQueryStatic {
 		fullCalendar: object
+	}
+	interface JQuery {
+		fullCalendar(...args): (JQuery | any)
 	}
 }
 
 
-($ as JQueryStatic).fullCalendar =
-	$.extend(namespaceHooks, namespaceExports); // graft over the original hooks object
+($ as JQueryStatic).fullCalendar = exportHooks;
+export = exportHooks;
 
 
 $.fn.fullCalendar = function(options?): (JQuery | any) {

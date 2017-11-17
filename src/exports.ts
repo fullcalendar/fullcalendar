@@ -1,22 +1,10 @@
-// TODO: linter?
-// after merge: put MonthViewDateProfileGenerator after
-// "abstract" issue
-// ensure $ always gets a local module reference
-// better UMD solution
 
-import Calendar from './Calendar'
+export const version = "<%= version %>";
 
-import {
-	globalDefaults,
-	englishDefaults,
-	rtlDefaults
-} from './options'
-
-Calendar.defaults = globalDefaults
-Calendar.englishDefaults = englishDefaults
-Calendar.rtlDefaults = rtlDefaults
-
-export { Calendar }
+// When introducing internal API incompatibilities (where fullcalendar plugins would break),
+// the minor version of the calendar should be upped (ex: 2.7.2 -> 2.8.0)
+// and the below integer should be incremented.
+export const internalApiVersion = 12;
 
 export {
 	applyAll,
@@ -86,6 +74,7 @@ export { default as Scroller } from './common/Scroller'
 export { default as Theme } from './theme/Theme'
 export { default as DateComponent } from './component/DateComponent'
 export { default as InteractiveDateComponent } from './component/InteractiveDateComponent'
+export { default as Calendar } from './Calendar'
 export { default as View } from './View'
 export { default as DayTableMixin } from './component/DayTableMixin'
 export { default as BusinessHourRenderer } from './component/renderers/BusinessHourRenderer'

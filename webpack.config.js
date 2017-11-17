@@ -42,6 +42,7 @@ module.exports = {
 	},
 
 	output: {
+		library: 'FullCalendar',
 		libraryTarget: 'umd',
 		filename: 'fullcalendar.js',
 		path: path.resolve(__dirname, 'dist/')

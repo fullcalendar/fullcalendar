@@ -1,13 +1,11 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
-import namespaceHooks from './namespace-hooks'
+import * as exportHooks from './exports'
 import { mergeOptions, globalDefaults, englishDefaults } from './options'
 import { stripHtmlEntities } from './util'
 
-
-const localeOptionHash = namespaceHooks.locales;
-export { localeOptionHash }
-
+export const localeOptionHash = {};
+(exportHooks as any).locales = localeOptionHash;
 
 // Initialize jQuery UI datepicker translations while using some of the translations
 // Will set this as the default locales for datepicker.

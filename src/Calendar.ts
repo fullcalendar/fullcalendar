@@ -1,6 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
+import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
@@ -35,11 +36,10 @@ export default class Calendar {
 	listenTo: ListenerInterface['listenTo']
 	stopListeningTo: ListenerInterface['stopListeningTo']
 
-	// will be assigned by namespace-exports
 	// not for internal use. use options module directly instead.
-	static defaults
-	static englishDefaults
-	static rtlDefaults
+	static defaults = globalDefaults
+	static englishDefaults = englishDefaults
+	static rtlDefaults = rtlDefaults
 
 	view: any // current View object
 	viewsByType: any // holds all instantiated view instances, current or not

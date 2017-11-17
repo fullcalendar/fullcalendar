@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import * as $ from 'jquery'
-import namespaceHooks from './namespace-hooks'
+import { viewHash } from './ViewRegistry'
 import { mergeProps, unitsDesc, computeDurationGreatestUnit } from './util'
 import { mergeOptions, globalDefaults } from './options'
 import { populateInstanceComputableOptions } from './locale'
@@ -45,7 +45,7 @@ export default class ViewSpecManager {
 
 			// put views that have buttons first. there will be duplicates, but oh well
 			viewTypes = this._calendar.header.getViewsWithButtons(); // TODO: include footer as well?
-			$.each(namespaceHooks.views, function(viewType) { // all views
+			$.each(viewHash, function(viewType) { // all views
 				viewTypes.push(viewType);
 			});
 
@@ -76,7 +76,7 @@ export default class ViewSpecManager {
 
 		// iterate from the specific view definition to a more general one until we hit an actual View class
 		while (viewType) {
-			spec = namespaceHooks.views[viewType];
+			spec = viewHash[viewType];
 			overrides = viewOverrides[viewType];
 			viewType = null; // clear. might repopulate for another iteration
 

@@ -1,27 +1,25 @@
-import namespaceHooks from '../namespace-hooks'
+import { register } from '../ViewRegistry'
 import BasicView from './BasicView'
 import MonthView from './MonthView'
 
-const views = namespaceHooks.views as any
-
-views.basic = {
+register('basic', {
 	'class': BasicView
-};
+});
 
-views.basicDay = {
+register('basicDay', {
 	type: 'basic',
 	duration: { days: 1 }
-};
+});
 
-views.basicWeek = {
+register('basicWeek', {
 	type: 'basic',
 	duration: { weeks: 1 }
-};
+});
 
-views.month = {
+register('month', {
 	'class': MonthView,
 	duration: { months: 1 }, // important for prev/next
 	defaults: {
 		fixedWeekCount: true
 	}
-};
+});
