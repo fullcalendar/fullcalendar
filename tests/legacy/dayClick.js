@@ -1,34 +1,20 @@
-describe('dayClick', function() {
-	var options;
-
-	beforeEach(function() {
-		affix('#cal');
-		options = {
-			defaultDate: '2014-05-27',
-			selectable: false
-		};
-	});
-
-	afterEach(function() {
-		$('#cal').fullCalendar('destroy');
-	});
-
+describe('dayClick', function() {	
+	pushOptions({
+		defaultDate: '2014-05-27',
+		selectable: false
+	});	
 	[ false, true ].forEach(function(isRTL) {
 		describe('when isRTL is ' + isRTL, function() {
-			beforeEach(function() {
-				options.isRTL = isRTL;
-			});
+			
+			pushOptions({isRTL:isRTL});
+			
 			[ false, true ].forEach(function(selectable) {
-				describe('when selectable is ' + selectable, function() {
-					beforeEach(function() {
-						options.selectable = selectable;
-					});
-
-					describe('when in month view', function() {
-						beforeEach(function() {
-							options.defaultView = 'month';
-						});
+				describe('when selectable is ' + selectable, function() {					
+					pushOptions({selectable:selectable})					
+					describe('when in month view', function() {						
+						pushOptions({defaultView:'month'});
 						it('fires correctly when clicking on a cell', function(done) {
+							var options = {};
 							options.dayClick = function(date, jsEvent, view) {
 								expect(moment.isMoment(date)).toEqual(true);
 								expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
@@ -37,7 +23,7 @@ describe('dayClick', function() {
 								expect(date).toEqualMoment('2014-05-07');
 							};
 							spyOn(options, 'dayClick').and.callThrough();
-							$('#cal').fullCalendar(options);
+							initCalendar(options)
 
 							var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
 
@@ -51,11 +37,10 @@ describe('dayClick', function() {
 						});
 					});
 
-					describe('when in agendaWeek view', function() {
-						beforeEach(function() {
-							options.defaultView = 'agendaWeek';
-						});
+					describe('when in agendaWeek view', function() {						
+						pushOptions({defaultView:'agendaWeek'});
 						it('fires correctly when clicking on an all-day slot', function(done) {
+							var options = {};
 							options.dayClick = function(date, jsEvent, view) {
 								expect(moment.isMoment(date)).toEqual(true);
 								expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
@@ -64,7 +49,7 @@ describe('dayClick', function() {
 								expect(date).toEqualMoment('2014-05-28');
 							};
 							spyOn(options, 'dayClick').and.callThrough();
-							$('#cal').fullCalendar(options);
+							initCalendar(options);
 
 							// 2014-05-28 (regardless of isRTL)
 							var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)');
@@ -78,7 +63,7 @@ describe('dayClick', function() {
 							});
 						});
 						it('fires correctly when clicking on a timed slot', function(done) {
-
+							var options = {};
 							// make sure the click slot will be in scroll view
 							options.contentHeight = 500;
 							options.scrollTime = '07:00:00';
@@ -91,7 +76,7 @@ describe('dayClick', function() {
 								expect(date).toEqualMoment('2014-05-28T09:00:00');
 							};
 							spyOn(options, 'dayClick').and.callThrough();
-							$('#cal').fullCalendar(options);
+							initCalendar(options);
 
 							// the middle is 2014-05-28T09:00:00 (regardless of isRTL)
 							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)');
@@ -107,7 +92,7 @@ describe('dayClick', function() {
 
 						// issue 2217
 						it('fires correctly when clicking on a timed slot, with minTime set', function(done) {
-
+							var options = {};
 							// make sure the click slot will be in scroll view
 							options.contentHeight = 500;
 							options.scrollTime = '07:00:00';
@@ -121,7 +106,7 @@ describe('dayClick', function() {
 								expect(date).toEqualMoment('2014-05-28T11:00:00');
 							};
 							spyOn(options, 'dayClick').and.callThrough();
-							$('#cal').fullCalendar(options);
+							initCalendar(options);
 
 							// the middle is 2014-05-28T11:00:00 (regardless of isRTL)
 							var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)');
@@ -143,6 +128,7 @@ describe('dayClick', function() {
 	describe('when touch', function() {
 
 		it('fires correctly when simulated short drag on a cell', function(done) {
+			var options = {};
 			options.dayClick = function(date, jsEvent, view) {
 				expect(moment.isMoment(date)).toEqual(true);
 				expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
@@ -151,7 +137,7 @@ describe('dayClick', function() {
 				expect(date).toEqualMoment('2014-05-07');
 			};
 			spyOn(options, 'dayClick').and.callThrough();
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
 
@@ -166,10 +152,11 @@ describe('dayClick', function() {
 		});
 
 		it('won\'t fire if touch moves outside of date cell', function(done) {
+			var options = {};
 			options.dayClick = function(date, jsEvent, view) {};
 			spyOn(options, 'dayClick').and.callThrough();
 
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var startCell = $('.fc-day[data-date="2014-05-07"]');
 			var endCell = $('.fc-day[data-date="2014-05-08"]');
@@ -187,6 +174,7 @@ describe('dayClick', function() {
 		});
 
 		it('fires correctly when simulated click on a cell', function(done) {
+			var options = {}; 
 			options.dayClick = function(date, jsEvent, view) {
 				expect(moment.isMoment(date)).toEqual(true);
 				expect(typeof jsEvent).toEqual('object'); // TODO: more descrimination
@@ -195,7 +183,7 @@ describe('dayClick', function() {
 				expect(date).toEqualMoment('2014-05-07');
 			};
 			spyOn(options, 'dayClick').and.callThrough();
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var dayCell = $('.fc-day:eq(10)'); // 2014-05-07 (regardless of isRTL)
 
@@ -205,5 +193,4 @@ describe('dayClick', function() {
 			done();
 		});
 	});
-
 });
