@@ -1,10 +1,6 @@
 
 describe('dayRender', function() {
 
-	beforeEach(function() {
-		affix('#cal');
-	});
-
 	it('is triggered upon initialization of a view, with correct parameters', function() {
 		var options = {
 			defaultView: 'month',
@@ -19,7 +15,7 @@ describe('dayRender', function() {
 		};
 
 		spyOn(options, 'dayRender').and.callThrough();
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 		expect(options.dayRender.calls.count()).toEqual(42);
 	});
 
@@ -32,9 +28,9 @@ describe('dayRender', function() {
 		};
 
 		spyOn(options, 'dayRender').and.callThrough();
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 		options.dayRender.calls.reset();
-		$('#cal').fullCalendar('changeView', 'basicWeek');
+		currentCalendar.changeView('basicWeek');
 		expect(options.dayRender.calls.count()).toEqual(7);
 	});
 
@@ -47,9 +43,9 @@ describe('dayRender', function() {
 		};
 
 		spyOn(options, 'dayRender').and.callThrough();
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 		options.dayRender.calls.reset();
-		$('#cal').fullCalendar('gotoDate', '2014-05-04'); // a day in the next week
+		currentCalendar.gotoDate('2014-05-04'); // a day in the next week
 		expect(options.dayRender.calls.count()).toEqual(7);
 	});
 
@@ -61,9 +57,9 @@ describe('dayRender', function() {
 		};
 
 		spyOn(options, 'dayRender').and.callThrough();
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 		options.dayRender.calls.reset();
-		$('#cal').fullCalendar('gotoDate', '2014-05-02'); // a day in the same week
+		currentCalendar.gotoDate('2014-05-02'); // a day in the same week
 		expect(options.dayRender.calls.count()).toEqual(0);
 	});
 
@@ -79,8 +75,8 @@ describe('dayRender', function() {
 			}
 		};
 
-		$('#cal').fullCalendar(options);
-		expect($('#cal td[data-date="2014-05-01"]')).toHaveClass('mycustomclass');
+		initCalendar(options);
+		expect($(currentCalendar.el).find('td[data-date="2014-05-01"]')).toHaveClass('mycustomclass');
 	});
 
 });
