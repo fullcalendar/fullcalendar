@@ -9,3 +9,7 @@ gulp.task('ts-types', function() {
 		main: 'fullcalendar/src/main'
 	});
 });
+
+gulp.task('ts-types:watch', [ 'ts-types' ], function() {
+	return gulp.watch('src/**/*.ts', [ 'ts-types' ]);
+});
