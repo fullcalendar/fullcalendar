@@ -5,7 +5,7 @@ import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
 
 
-export default abstract class InteractiveDateComponent extends DateComponent {
+export abstract class InteractiveDateComponent extends DateComponent { // also exported as default. see note below
 
 	dateClickingClass: any
 	dateSelectingClass: any
@@ -347,3 +347,5 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 	}
 
 }
+
+export default InteractiveDateComponent; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080

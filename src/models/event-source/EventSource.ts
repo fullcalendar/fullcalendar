@@ -7,7 +7,7 @@ import Class from '../../common/Class'
 import EventDefParser from '../event/EventDefParser'
 
 
-export default class EventSource extends Class {
+export class EventSource extends Class { // also exported as default. see note below
 
 	applyProps: ParsableModelInterface['applyProps']
 	isStandardProp: ParsableModelInterface['isStandardProp']
@@ -148,8 +148,9 @@ export default class EventSource extends Class {
 
 }
 
+export default EventSource; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
-ParsableModelMixin.mixInto(EventSource)
+ParsableModelMixin.mixInto(EventSource);
 
 
 // Parsing

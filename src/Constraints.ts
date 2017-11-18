@@ -10,7 +10,7 @@ import {
 } from './models/event/util'
 
 
-export default class Constraints {
+export class Constraints { // also exported as default. see note below
 
 	eventManager: any
 	_calendar: any // discourage
@@ -329,8 +329,9 @@ export default class Constraints {
 		return footprint0.unzonedRange.intersectsWith(footprint1.unzonedRange);
 	}
 
-
 }
+
+export default Constraints; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
 
 // optional subjectEventInstance
