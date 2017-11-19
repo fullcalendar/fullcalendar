@@ -1,32 +1,26 @@
 describe('ListView rendering', function() {
-	var options;
-
-	beforeEach(function() {
-		affix('#cal');
-		options = {
-			defaultView: 'listWeek',
-			now: '2016-08-20'
-		};
+	pushOptions({
+		defaultView: 'listWeek',
+		now: '2016-08-20'
 	});
 
 	describe('with all-day events', function() {
 
 		describe('when single-day', function() {
-			beforeEach(function() {
-				options.events = [
-					{
-						title: 'event 1',
-						start: '2016-08-15'
-					},
-					{
-						title: 'event 2',
-						start: '2016-08-17'
-					}
-				];
-			});
+			pushOptions({
+				events: [
+				{
+					title: 'event 1',
+					start: '2016-08-15'
+				},
+				{
+					title: 'event 2',
+					start: '2016-08-17'
+				}
+			]});
 
 			it('renders only days with events', function() {
-				$('#cal').fullCalendar(options);
+				initCalendar();
 
 				var days = getDayInfo();
 				var events = getEventInfo();
@@ -43,29 +37,29 @@ describe('ListView rendering', function() {
 			});
 
 			it('filters events through eventRender', function() {
+				var options = {};
 				options.eventRender = function(event, el) {
 					el.find('.fc-event-dot').replaceWith('<span class="custom-icon" />');
 				};
 
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				expect($('.custom-icon').length).toBe(2);
 			});
 		});
 
 		describe('when multi-day', function() {
-			beforeEach(function() {
-				options.events = [
-					{
-						title: 'event 1',
-						start: '2016-08-15',
-						end: '2016-08-18' // 3 days
-					}
-				];
-			});
+			pushOptions({
+				events: [
+				{
+					title: 'event 1',
+					start: '2016-08-15',
+					end: '2016-08-18' // 3 days
+				}
+			]})
 
 			it('renders all-day for every day', function() {
-				$('#cal').fullCalendar(options);
+				initCalendar();
 
 				var events = getEventInfo();
 
@@ -83,22 +77,21 @@ describe('ListView rendering', function() {
 	describe('with timed events', function() {
 
 		describe('when single-day', function() {
-			beforeEach(function() {
-				options.events = [
-					{
-						title: 'event 1',
-						start: '2016-08-15T07:00'
-					},
-					{
-						title: 'event 2',
-						start: '2016-08-17T09:00',
-						end: '2016-08-17T11:00'
-					}
-				];
-			});
+			pushOptions({
+				events: [
+				{
+					title: 'event 1',
+					start: '2016-08-15T07:00'
+				},
+				{
+					title: 'event 2',
+					start: '2016-08-17T09:00',
+					end: '2016-08-17T11:00'
+				}
+			]});
 
 			it('renders times', function() {
-				$('#cal').fullCalendar(options);
+				initCalendar();
 
 				var events = getEventInfo();
 
@@ -110,8 +103,9 @@ describe('ListView rendering', function() {
 			});
 
 			it('doesn\'t render times when displayEventTime is false', function() {
+				var options = {};
 				options.displayEventTime = false;
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var events = getEventInfo();
 
@@ -123,8 +117,9 @@ describe('ListView rendering', function() {
 			});
 
 			it('doesn\'t render end times when displayEventEnd is false', function() {
+				var options = {};
 				options.displayEventEnd = false;
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var events = getEventInfo();
 
@@ -137,8 +132,9 @@ describe('ListView rendering', function() {
 
 			// regression test for when localized event dates get unlocalized and leak into view rendering
 			it('renders dates and times in locale', function() {
+				var options = {};
 				options.locale = 'fr';
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var days = getDayInfo();
 				var events = getEventInfo();
@@ -160,11 +156,12 @@ describe('ListView rendering', function() {
 		});
 
 		describe('when multi-day', function() {
-			beforeEach(function() {
-				options.nextDayThreshold = '00:00';
+			pushOptions({
+				nextDayThreshold: '00:00'
 			});
 
 			it('renders partial and full days', function() {
+				var options = {};
 				options.events = [
 					{
 						title: 'event 1',
@@ -172,7 +169,7 @@ describe('ListView rendering', function() {
 						end: '2016-08-17T11:00'
 					}
 				];
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var events = getEventInfo();
 
@@ -186,6 +183,7 @@ describe('ListView rendering', function() {
 			});
 
 			it('truncates an out-of-range start', function() {
+				var options = {};
 				options.events = [
 					{
 						title: 'event 1',
@@ -193,7 +191,7 @@ describe('ListView rendering', function() {
 						end: '2016-08-16T11:00'
 					}
 				];
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var events = getEventInfo();
 
@@ -207,6 +205,7 @@ describe('ListView rendering', function() {
 			});
 
 			it('truncates an out-of-range start', function() {
+				var options = {};
 				options.events = [
 					{
 						title: 'event 1',
@@ -214,7 +213,7 @@ describe('ListView rendering', function() {
 						end: '2016-08-21T11:00'
 					}
 				];
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 
 				var events = getEventInfo();
 
@@ -229,6 +228,7 @@ describe('ListView rendering', function() {
 		});
 
 		it('renders same days when equal to nextDayThreshold', function() {
+			var options = {};
 			options.nextDayThreshold = '09:00';
 			options.events = [
 				{
@@ -238,7 +238,7 @@ describe('ListView rendering', function() {
 				}
 			];
 
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var events = getEventInfo();
 
@@ -252,6 +252,7 @@ describe('ListView rendering', function() {
 		});
 
 		it('renders fewer days when before nextDayThreshold', function() {
+			var options = {};
 			options.nextDayThreshold = '09:00';
 			options.events = [
 				{
@@ -261,7 +262,7 @@ describe('ListView rendering', function() {
 				}
 			];
 
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var events = getEventInfo();
 
@@ -275,12 +276,13 @@ describe('ListView rendering', function() {
 
 	describe('when an event has no title', function() {
 		it('renders no text for its title', function() {
+			var options = {};
 			options.events = [
 				{
 					start: '2016-08-15'
 				}
 			];
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 
 			var events = getEventInfo();
 
@@ -292,12 +294,13 @@ describe('ListView rendering', function() {
 
 	describe('when no events', function() {
 		it('renders an empty message', function() {
-			$('#cal').fullCalendar(options);
+			initCalendar();
 			expect(getIsEmptyMessage()).toBe(true);
 		});
 	});
 
 	it('sorts events correctly', function() {
+		var options = {};
 		options.now = '2016-08-29';
 		options.events = [
 			{
@@ -340,7 +343,7 @@ describe('ListView rendering', function() {
 			}
 		];
 
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 
 		var days = getDayInfo();
 		var events = getEventInfo();
@@ -384,18 +387,19 @@ describe('ListView rendering', function() {
 	});
 
 	it('updates rendered events despite fetch range being lazy', function() {
+		var options = {};
 		options.now = '2016-09-12';
 		options.defaultView = 'month';
 		options.events = [
 			{ title: 'event1', start: '2016-09-12' }
 		];
 
-		$('#cal').fullCalendar(options);
-		$('#cal').fullCalendar('changeView', 'listWeek');
+		initCalendar(options);
+		currentCalendar.changeView('listWeek');
 
 		expect($('.fc-list-item').length).toBe(1);
 
-		$('#cal').fullCalendar('prev');
+		currentCalendar.prev();
 
 		expect($('.fc-list-item').length).toBe(0);
 	});
