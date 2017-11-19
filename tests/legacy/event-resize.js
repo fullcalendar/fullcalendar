@@ -1,26 +1,16 @@
-describe('eventResize', function() {
-	var options;
-
-	beforeEach(function() {
-		options = {
-			defaultDate: '2014-06-11',
-			editable: true,
-			longPressDelay: 100
-		};
-		affix('#cal');
-	});
-
-	afterEach(function() {
-		$('#cal').fullCalendar('destroy');
-	});
-
-	describe('when in month view', function() {
-		beforeEach(function() {
-			options.defaultView = 'month';
-		});
+describe('eventResize', function() {	
+	pushOptions({
+		defaultDate: '2014-06-11',
+		editable: true,
+		longPressDelay: 100
+	});			
+	
+	describe('when in month view', function() {		
+		pushOptions({defaultView:'month'});			
 
 		describe('when resizing an all-day event with mouse', function() {
 			it('should have correct arguments with a whole-day delta', function(done) {
+				var options = {};
 				options.events = [ {
 					title: 'all-day event',
 					start: '2014-06-11',
@@ -28,6 +18,7 @@ describe('eventResize', function() {
 				} ];
 
 				init(
+					options, 
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -46,7 +37,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-17');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
@@ -61,12 +52,11 @@ describe('eventResize', function() {
 
 			// for https://github.com/fullcalendar/fullcalendar/issues/3118
 			[ true, false ].forEach(function(eventStartEditable) {
-				describe('when eventStartEditable is ' + eventStartEditable, function() {
-					beforeEach(function() {
-						options.eventStartEditable = eventStartEditable;
-					});
+				describe('when eventStartEditable is ' + eventStartEditable, function() {					
+					pushOptions({eventStartEditable:eventStartEditable});
 
 					it('should have correct arguments with a whole-day delta', function(done) {
+						var options = {};
 						options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
 						options.events = [ {
 							title: 'all-day event',
@@ -75,6 +65,7 @@ describe('eventResize', function() {
 						} ];
 
 						init(
+							options,
 							function() {
 								$('.fc-event').simulate('drag', {
 									isTouch: true,
@@ -99,7 +90,7 @@ describe('eventResize', function() {
 								expect(event.end).toEqualMoment('2014-06-17');
 
 								revertFunc();
-								event = $('#cal').fullCalendar('clientEvents')[0];
+								event = currentCalendar.clientEvents()[0];
 
 								expect(event.start).toEqualMoment('2014-06-11');
 								expect(event.end).toBeNull();
@@ -114,6 +105,7 @@ describe('eventResize', function() {
 
 		describe('when rendering a timed event', function() {
 			it('should not have resize capabilities', function(done) {
+				var options = {};
 				options.events = [ {
 					title: 'timed event',
 					start: '2014-06-11T08:00:00',
@@ -123,18 +115,17 @@ describe('eventResize', function() {
 					expect($('.fc-event .fc-resizer').length).toBe(0);
 					done();
 				};
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 			});
 		});
 	});
 
-	describe('when in agenda view', function() {
-		beforeEach(function() {
-			options.defaultView = 'agendaWeek';
-		});
-
+	describe('when in agenda view', function() {		
+		pushOptions({defaultView:'agendaWeek'})
+	
 		describe('when resizing an all-day event', function() {
 			it('should have correct arguments with a whole-day delta', function(done) {
+				var options = {};
 				options.events = [ {
 					title: 'all-day event',
 					start: '2014-06-11',
@@ -142,6 +133,7 @@ describe('eventResize', function() {
 				} ];
 
 				init(
+					options,
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -159,7 +151,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-14');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11');
 						expect(event.end).toBeNull();
@@ -170,18 +162,20 @@ describe('eventResize', function() {
 			});
 		});
 
-		describe('when resizing a timed event with an end', function() {
-			beforeEach(function() {
-				options.events = [ {
+		describe('when resizing a timed event with an end', function() {			
+			pushOptions({
+				events:[ {
 					title: 'timed event event',
 					start: '2014-06-11T05:00:00',
 					end: '2014-06-11T07:00:00',
 					allDay: false
-				} ];
+				} ]
 			});
-
+		
 			it('should have correct arguments with a timed delta', function(done) {
-				init(
+				var options = {};
+				init(					
+					options,
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -199,7 +193,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
@@ -210,8 +204,10 @@ describe('eventResize', function() {
 			});
 
 			it('should have correct arguments with a timed delta via touch', function(done) {
+				var options = {};
 				options.dragRevertDuration = 0; // so that eventDragStop happens immediately after touchend
 				init(
+					options,
 					function() {
 						setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
 							$('.fc-event').simulate('drag', {
@@ -237,7 +233,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
@@ -249,7 +245,9 @@ describe('eventResize', function() {
 
 			// TODO: test RTL
 			it('should have correct arguments with a timed delta when resized to a different day', function(done) {
+				var options = {};
 				init(
+					options,
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -268,7 +266,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-12T09:30:00');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00');
@@ -279,8 +277,10 @@ describe('eventResize', function() {
 			});
 
 			it('should have correct arguments with a timed delta, when timezone is local', function(done) {
+				var options = {};
 				options.timezone = 'local';
 				init(
+					options,
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -298,7 +298,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment(moment('2014-06-11T09:30:00'));
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00'));
 						expect(event.end).toEqualMoment(moment('2014-06-11T07:00:00'));
@@ -309,8 +309,10 @@ describe('eventResize', function() {
 			});
 
 			it('should have correct arguments with a timed delta, when timezone is UTC', function(done) {
+				var options = {};
 				options.timezone = 'UTC';
 				init(
+					options,
 					function() {
 						$('.fc-event').simulate('mouseover'); // for revealing resizer
 						$('.fc-event .fc-resizer').simulate('drag', {
@@ -328,7 +330,7 @@ describe('eventResize', function() {
 						expect(event.end).toEqualMoment('2014-06-11T09:30:00+00:00');
 
 						revertFunc();
-						event = $('#cal').fullCalendar('clientEvents')[0];
+						event = currentCalendar.clientEvents()[0];
 
 						expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00');
 						expect(event.end).toEqualMoment('2014-06-11T07:00:00+00:00');
@@ -339,7 +341,7 @@ describe('eventResize', function() {
 			});
 
 			it('should display the correct time text while resizing', function(done) {
-
+				var options = {};
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
@@ -364,11 +366,11 @@ describe('eventResize', function() {
 					}, 0); // idk
 				};
 
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 			});
 
 			it('should run the temporarily rendered event through eventRender', function(done) {
-
+				var options = {};
 				options.eventRender = function(event, element) {
 					element.addClass('didEventRender');
 				};
@@ -395,7 +397,7 @@ describe('eventResize', function() {
 					}, 0); // idk
 				};
 
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 			});
 
 			it('should not fire the windowResize handler', function(done) { // bug 1116
@@ -404,7 +406,7 @@ describe('eventResize', function() {
 				var alreadyRendered = false;
 				var isDragging = false;
 				var calledWhileDragging = false;
-
+				var options = {};
 				options.windowResizeDelay = 0;
 				options.windowResize = function(ev) {
 					if (isDragging) {
@@ -433,21 +435,21 @@ describe('eventResize', function() {
 					}, 100); // hack for PhantomJS. after any initial false window resizes
 				};
 
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 			});
 		});
 
-		describe('when resizing a timed event without an end', function() {
-			beforeEach(function() {
-				options.events = [ {
+		describe('when resizing a timed event without an end', function() {			
+			pushOptions({
+				events:[ {
 					title: 'timed event event',
 					start: '2014-06-11T05:00:00',
 					allDay: false
-				} ];
-			});
-
+				} ]
+			})
+	
 			it('should display the correct time text while resizing', function(done) {
-
+				var options = {};
 				options.eventAfterAllRender = function() {
 					setTimeout(function() {
 						var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
@@ -472,14 +474,14 @@ describe('eventResize', function() {
 					}, 0); // idk
 				};
 
-				$('#cal').fullCalendar(options);
+				initCalendar(options);
 			});
 		});
 	});
 
 	// Initialize a calendar, run a resize, and do type-checking of all arguments for all handlers.
 	// TODO: more descrimination instead of just checking for 'object'
-	function init(resizeStartFunc, resizeDoneFunc) {
+	function init(options, resizeStartFunc, resizeDoneFunc) {
 		var eventsRendered = false;
 
 		options.eventAfterAllRender = function() {
@@ -525,7 +527,7 @@ describe('eventResize', function() {
 		spyOn(options, 'eventResizeStop').and.callThrough();
 
 		setTimeout(function() { // hack. agenda view scroll state would get messed up between tests
-			$('#cal').fullCalendar(options);
+			initCalendar(options);
 		}, 0);
 	}
 });
