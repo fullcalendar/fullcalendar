@@ -3,7 +3,7 @@ describe('emitter', function() {
 	var EmitterMixin = $.fullCalendar.EmitterMixin;
 
 	it('calls a handler', function() {
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something: function(arg1, arg2) {
 				expect(arg1).toBe(7);
@@ -19,7 +19,7 @@ describe('emitter', function() {
 
 	it('calls a handler with context and args', function() {
 		var customContext = {};
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something: function(arg1, arg2) {
 				expect(this).toBe(customContext);
@@ -35,7 +35,7 @@ describe('emitter', function() {
 	});
 
 	it('unbinds with an exact reference', function() {
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something: function() {}
 		};
@@ -51,7 +51,7 @@ describe('emitter', function() {
 	});
 
 	it('unbinds all when no reference', function() {
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something1: function() {},
 			something2: function() {}
@@ -73,7 +73,7 @@ describe('emitter', function() {
 	});
 
 	it('unbinds all', function() {
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something: function() {},
 			another: function() {}
@@ -98,7 +98,7 @@ describe('emitter', function() {
 	});
 
 	it('unbinds with a namespace', function() {
-		var o = $.extend({}, EmitterMixin);
+		var o = new EmitterMixin();
 		var handlers = {
 			something: function() {},
 			another: function() {}

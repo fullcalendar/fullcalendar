@@ -1,0 +1,18 @@
+{
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-undef": 2,
+
+    "indent": ["error", "tab"],
+    "no-trailing-spaces": 2,
+    "no-irregular-whitespace": 2,
+    "curly": 2,
+    "no-console": 2,
+    "no-debugger": 2,
+    "no-unused-vars": 2
+  }
+}

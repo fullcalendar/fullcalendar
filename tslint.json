@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "no-implicit-dependencies": true,
+
+    "indent": [true, "tabs"],
+    "no-trailing-whitespace": true,
+    "no-irregular-whitespace": true,
+    "curly": true,
+    "no-console": true,
+    "no-debugger": true,
+    "no-unused-variable": true
+  }
+}

@@ -41,7 +41,7 @@ gulp.task('archive:locale', [ 'locale' ], function() {
 	], {
 		base: 'dist/'
 	})
-	.pipe(gulp.dest('tmp/' + packageId + '/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:misc', function() {
@@ -50,8 +50,8 @@ gulp.task('archive:misc', function() {
 		'CHANGELOG.*',
 		'CONTRIBUTING.*'
 	])
-	.pipe(rename({ extname: '.txt' }))
-	.pipe(gulp.dest('tmp/' + packageId + '/'));
+		.pipe(rename({ extname: '.txt' }))
+		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
 gulp.task('archive:deps', function() {
@@ -60,7 +60,7 @@ gulp.task('archive:deps', function() {
 		'node_modules/jquery/dist/jquery.min.js',
 		'node_modules/components-jqueryui/jquery-ui.min.js'
 	])
-	.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
+		.pipe(gulp.dest('tmp/' + packageId + '/lib/'));
 });
 
 // transfers demo files, transforming their paths to dependencies

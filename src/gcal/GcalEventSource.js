@@ -8,17 +8,11 @@ var GcalEventSource = EventSource.extend({
 	ajaxSettings: null,
 
 
-	constructor: function() {
-		EventSource.apply(this, arguments);
-		this.ajaxSettings = {};
-	},
-
-
 	fetch: function(start, end, timezone) {
 		var _this = this;
 		var url = this.buildUrl();
 		var requestParams = this.buildRequestParams(start, end, timezone);
-		var ajaxSettings = this.ajaxSettings;
+		var ajaxSettings = this.ajaxSettings || {};
 		var onSuccess = ajaxSettings.success;
 
 		if (!requestParams) { // could have failed
@@ -189,6 +183,9 @@ var GcalEventSource = EventSource.extend({
 
 
 	applyMiscProps: function(rawProps) {
+		if (!this.ajaxSettings) {
+			this.ajaxSettings = {};
+		}
 		$.extend(this.ajaxSettings, rawProps);
 	}
 
