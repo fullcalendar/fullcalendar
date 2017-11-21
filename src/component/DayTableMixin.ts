@@ -332,7 +332,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 			innerHtml = htmlEscape(t.opt('columnHeaderText')(date));
 		}
 		else {
-			innerHtml = htmlEscape(date.format(t.colHeaderFormat));
+			innerHtml = htmlEscape(date.format(t.colHeadFormat));
 		}
 
 		// if only one row of days, the classNames on the header can represent the specific days beneath
