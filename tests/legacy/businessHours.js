@@ -1,23 +1,17 @@
 // most other businessHours tests are in background-events.js
 
-describe('businessHours', function() {
-	var options;
-
-	beforeEach(function() {
-		options = {
-			defaultDate: '2014-11-25',
-			defaultView: 'month',
-			businessHours: true
-		};
-		affix('#cal');
-	});
-
+describe('businessHours', function() {	
+	pushOptions({
+		defaultDate: '2014-11-25',
+		defaultView: 'month',
+		businessHours: true
+	});			
 
 	it('doesn\'t break when starting out in a larger month time range', function() {
-		$('#cal').fullCalendar(options); // start out in the month range
-		$('#cal').fullCalendar('changeView', 'agendaWeek');
-		$('#cal').fullCalendar('next'); // move out of the original month range...
-		$('#cal').fullCalendar('next'); // ... out. should render correctly.
+		initCalendar(); // start out in the month range
+		currentCalendar.changeView('agendaWeek');
+		currentCalendar.next(); // move out of the original month range...
+		currentCalendar.next(); // ... out. should render correctly.
 
 		// whole days
 		expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2); // each multi-day stretch is one element
@@ -51,7 +45,7 @@ describe('businessHours', function() {
 		[ 'agendaWeek', 'month' ].forEach(function(viewName) {
 
 			it('allows dynamic turning on', function() {
-				$('#cal').fullCalendar({
+				initCalendar({
 					defaultView: viewName,
 					businessHours: false
 				});
@@ -59,14 +53,14 @@ describe('businessHours', function() {
 				expect(rootEl.length).toBe(1);
 
 				expect(queryNonBusinessSegs().length).toBe(0);
-				$('#cal').fullCalendar('option', 'businessHours', true);
+				currentCalendar.option('businessHours', true);
 				expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
 
 				expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
 			});
 
 			it('allows dynamic turning off', function() {
-				$('#cal').fullCalendar({
+				initCalendar({
 					defaultView: viewName,
 					businessHours: true
 				});
@@ -74,7 +68,7 @@ describe('businessHours', function() {
 				expect(rootEl.length).toBe(1);
 
 				expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
-				$('#cal').fullCalendar('option', 'businessHours', false);
+				currentCalendar.option('businessHours', false);
 				expect(queryNonBusinessSegs().length).toBe(0);
 
 				expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
@@ -86,7 +80,7 @@ describe('businessHours', function() {
 	describe('for multiple day-of-week definitions', function() {
 
 		it('rendes two day-of-week groups', function() {
-			$('#cal').fullCalendar({
+			initCalendar({
 				defaultDate: '2014-12-07',
 				defaultView: 'agendaWeek',
 				businessHours: [
@@ -128,7 +122,7 @@ describe('businessHours', function() {
 		});
 
 		it('wont\'t process businessHour items that omit dow', function() {
-			$('#cal').fullCalendar({
+			initCalendar({
 				defaultDate: '2014-12-07',
 				defaultView: 'agendaWeek',
 				businessHours: [
@@ -169,7 +163,7 @@ describe('businessHours', function() {
 
 
 	it('will grey-out a totally non-business-hour view', function() {
-		$('#cal').fullCalendar({
+		initCalendar({
 			defaultDate: '2016-07-23', // sat
 			defaultView: 'agendaDay',
 			businessHours: true

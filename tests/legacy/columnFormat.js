@@ -1,9 +1,6 @@
 
 describe('columnFormat', function() {
-    beforeEach(function() {
-        affix('#cal');
-    });
-
+    
     describe('when columnFormat is not set', function() {
 
         var viewWithFormat = [ { view: 'month', expected: 'Sun', selector: 'th.fc-day-header.fc-sun' },
@@ -13,18 +10,17 @@ describe('columnFormat', function() {
             { view: 'agendaDay', expected: 'Sunday', selector: 'th.fc-widget-header.fc-sun' } ];
 
         beforeEach(function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 defaultDate: '2014-05-11'
             });
         });
 
-        it('should have default values', function() {
-            var cal = $('#cal');
+        it('should have default values', function() {            
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
-                cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+                currentCalendar.changeView(crtView.view);
+                expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected);
             };
         });
     });
@@ -38,7 +34,7 @@ describe('columnFormat', function() {
             { view: 'agendaDay', expected: 'Sunday 5/11', selector: 'th.fc-widget-header.fc-sun' } ];
 
         beforeEach(function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 defaultDate: '2014-05-11',
                 views: {
                     month: { columnFormat: 'dddd' },
@@ -50,13 +46,12 @@ describe('columnFormat', function() {
             });
         });
 
-        it('should have the correct values', function() {
-            var cal = $('#cal');
+        it('should have the correct values', function() {            
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
-                cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+                currentCalendar.changeView(crtView.view);
+                expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected);
             };
         });
     });
@@ -70,19 +65,18 @@ describe('columnFormat', function() {
             { view: 'agendaDay', expected: 'dimanche', selector: 'th.fc-widget-header.fc-sun' } ];
 
         beforeEach(function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 defaultDate: '2014-05-11',
                 locale: 'fr'
             });
         });
 
-        it('should have the translated dates', function() {
-            var cal = $('#cal');
+        it('should have the translated dates', function() {            
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
-                cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+                currentCalendar.changeView(crtView.view);
+                expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected);
             };
         });
     });
@@ -96,19 +90,18 @@ describe('columnFormat', function() {
             { view: 'agendaDay', expected: 'Sunday', selector: 'th.fc-widget-header.fc-sun' } ];
 
         beforeEach(function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 defaultDate: '2014-05-11',
                 locale: 'en-gb'
             });
         });
 
-        it('should have the translated dates', function() {
-            var cal = $('#cal');
+        it('should have the translated dates', function() {            
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
-                cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+                currentCalendar.changeView(crtView.view);
+                expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected);
             };
         });
     });
@@ -122,19 +115,18 @@ describe('columnFormat', function() {
             { view: 'agendaDay', expected: '일요일', selector: 'th.fc-widget-header.fc-sun' } ];
 
         beforeEach(function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 defaultDate: '2014-05-11',
                 locale: 'ko'
             });
         });
 
-        it('should have the translated dates and columnFormat should be computed differently', function() {
-            var cal = $('#cal');
+        it('should have the translated dates and columnFormat should be computed differently', function() {            
 
             for (var i = 0; i <  viewWithFormat.length; i++) {
                 var crtView = viewWithFormat[i];
-                cal.fullCalendar('changeView', crtView.view);
-                expect(cal.find(crtView.selector).text()).toBe(crtView.expected);
+                currentCalendar.changeView(crtView.view);
+                expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected);
             };
         });
     });
@@ -142,7 +134,7 @@ describe('columnFormat', function() {
     describe('using custom views', function() {
 
         it('multi-year default only displays day-of-week', function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 views: {
                     multiYear: {
                         type: 'basic',
@@ -156,7 +148,7 @@ describe('columnFormat', function() {
         });
 
         it('multi-month default only displays day-of-week', function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 views: {
                     multiMonth: {
                         type: 'basic',
@@ -170,7 +162,7 @@ describe('columnFormat', function() {
         });
 
         it('multi-week default only displays day-of-week', function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 views: {
                     multiWeek: {
                         type: 'basic',
@@ -184,7 +176,7 @@ describe('columnFormat', function() {
         });
 
         it('multi-day default displays short full date', function() {
-            $('#cal').fullCalendar({
+            initCalendar({
                 views: {
                     multiDay: {
                         type: 'basic',

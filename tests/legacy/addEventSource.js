@@ -1,24 +1,20 @@
-describe('addEventSource', function() {
-
-	var options;
+describe('addEventSource', function() {	
 	var eventArray = [
 		{ id: 0, title: 'event zero', start: '2014-06-24', className: 'event-zero' },
 		{ id: 1, title: 'event one', start: '2014-06-24', className: 'event-non-zero event-one' },
 		{ id: 2, title: 'event two', start: '2014-06-24', className: 'event-non-zero event-two' }
 	];
 
-	beforeEach(function() {
-		affix('#cal');
-		options = {
-			defaultDate: '2014-06-24',
-			defaultView: 'month'
-		};
+	pushOptions({
+		defaultDate: '2014-06-24',
+		defaultView: 'month'
 	});
+
 
 	it('correctly adds an array source', function(done) {
 		go(
 			function() {
-				$('#cal').fullCalendar('addEventSource', eventArray);
+				currentCalendar.addEventSource(eventArray);
 			},
 			null,
 			done
@@ -28,7 +24,7 @@ describe('addEventSource', function() {
 	it('correctly adds a function source', function(done) {
 		go(
 			function() {
-				$('#cal').fullCalendar('addEventSource', function(start, end, timezone, callback) {
+				currentCalendar.addEventSource(function(start, end, timezone, callback) {
 					callback(eventArray);
 				});
 			},
@@ -40,7 +36,7 @@ describe('addEventSource', function() {
 	it('correctly adds an extended array source', function(done) {
 		go(
 			function() {
-				$('#cal').fullCalendar('addEventSource', {
+				currentCalendar.addEventSource({
 					className: 'arraysource',
 					events: eventArray
 				});
@@ -55,7 +51,7 @@ describe('addEventSource', function() {
 	it('correctly adds an extended array source', function(done) {
 		go(
 			function() {
-				$('#cal').fullCalendar('addEventSource', {
+				currentCalendar.addEventSource({
 					className: 'funcsource',
 					events: function(start, end, timezone, callback) {
 						callback(eventArray);
@@ -72,7 +68,7 @@ describe('addEventSource', function() {
 
 	function go(addFunc, extraTestFunc, doneFunc) {
 		var callCnt = 0;
-
+		var options = {};
 		options.eventAfterAllRender = function() {
 			callCnt++;
 			if (callCnt == 2) { // once for initial render. second time for addEventSource
@@ -84,8 +80,8 @@ describe('addEventSource', function() {
 				}
 
 				// move the calendar back out of view, then back in (for issue 2191)
-				$('#cal').fullCalendar('next');
-				$('#cal').fullCalendar('prev');
+				currentCalendar.next();
+				currentCalendar.prev();
 
 				// otherwise, prev/next would be cancelled out by doneFunc's calendar destroy
 				setTimeout(function() {
@@ -100,14 +96,14 @@ describe('addEventSource', function() {
 			}
 		};
 
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 		addFunc();
 	}
 
 	// Checks to make sure all events have been rendered and that the calendar
 	// has internal info on all the events.
 	function checkAllEvents() {
-		expect($('#cal').fullCalendar('clientEvents').length).toEqual(3);
+		expect(currentCalendar.clientEvents().length).toEqual(3);
 		expect($('.fc-event').length).toEqual(3);
 	}
 
