@@ -10,7 +10,7 @@ import {
 } from './models/event/util'
 
 
-export class Constraints { // also exported as default. see note below
+export default class Constraints {
 
 	eventManager: any
 	_calendar: any // discourage
@@ -330,8 +330,6 @@ export class Constraints { // also exported as default. see note below
 	}
 
 }
-
-export default Constraints; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
 
 // optional subjectEventInstance

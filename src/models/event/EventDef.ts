@@ -5,7 +5,7 @@ import {
 } from '../../common/ParsableModelMixin'
 
 
-export abstract class EventDef { // also exported as default. see note below
+export default abstract class EventDef {
 
 	applyProps: ParsableModelInterface['applyProps']
 	isStandardProp: ParsableModelInterface['isStandardProp']
@@ -219,8 +219,6 @@ export abstract class EventDef { // also exported as default. see note below
 	}
 
 }
-
-export default EventDef; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
 ParsableModelMixin.mixInto(EventDef)
 

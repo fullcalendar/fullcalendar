@@ -8,7 +8,7 @@ import { eventRangeToEventFootprint } from '../models/event/util'
 import EventFootprint from '../models/event/EventFootprint'
 
 
-export abstract class DateComponent extends Component { // also exported as default. see note below
+export default abstract class DateComponent extends Component {
 
 	static guid: number = 0 // TODO: better system for this?
 
@@ -795,8 +795,6 @@ export abstract class DateComponent extends Component { // also exported as defa
 	}
 
 }
-
-export default DateComponent; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
 
 // legacy

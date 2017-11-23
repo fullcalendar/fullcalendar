@@ -5,7 +5,7 @@ import EventDefDateMutation from './EventDefDateMutation'
 import SingleEventDef from './SingleEventDef'
 
 
-export class EventDefMutation { // also exported as default. see note below
+export default class EventDefMutation {
 
 	// won't ever be empty. will be null instead.
 	// callers should use setDateMutation for setting.
@@ -148,5 +148,3 @@ export class EventDefMutation { // also exported as default. see note below
 	}
 
 }
-
-export default EventDefMutation; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080

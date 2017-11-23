@@ -984,7 +984,6 @@ export default abstract class View extends InteractiveDateComponent {
 
 }
 
-
 View.prototype.usesMinMaxTime = false;
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator;
 

@@ -25,7 +25,7 @@ import EventSource from './models/event-source/EventSource'
 import ThemeRegistry from './theme/ThemeRegistry'
 
 
-export class Calendar { // also exported as default. see note below
+export default class Calendar {
 
 	on: EmitterInterface['on']
 	one: EmitterInterface['one']
@@ -1314,8 +1314,6 @@ export class Calendar { // also exported as default. see note below
 
 
 }
-
-export default Calendar; // would just export default if not for https://github.com/Microsoft/TypeScript/issues/14080
 
 EmitterMixin.mixInto(Calendar)
 ListenerMixin.mixInto(Calendar)
