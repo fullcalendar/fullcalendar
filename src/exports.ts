@@ -46,8 +46,8 @@ export {
 } from './locale'
 
 export { default as moment } from './moment-ext';
-export { default as EmitterMixin } from './common/EmitterMixin'
-export { default as ListenerMixin } from './common/ListenerMixin'
+export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
+export { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
 export { default as Model } from './common/Model'
 export { default as Constraints } from './Constraints'
 export { default as UnzonedRange } from './models/UnzonedRange'

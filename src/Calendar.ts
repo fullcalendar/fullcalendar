@@ -37,9 +37,9 @@ export default class Calendar {
 	stopListeningTo: ListenerInterface['stopListeningTo']
 
 	// not for internal use. use options module directly instead.
-	static defaults = globalDefaults
-	static englishDefaults = englishDefaults
-	static rtlDefaults = rtlDefaults
+	static defaults: any = globalDefaults
+	static englishDefaults: any = englishDefaults
+	static rtlDefaults: any = rtlDefaults
 
 	view: any // current View object
 	viewsByType: any // holds all instantiated view instances, current or not
