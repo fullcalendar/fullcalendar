@@ -155,7 +155,7 @@ export default class EventRenderer {
 					};
 				},
 				filterEl: (seg, el) => {
-					return this.filterEventRenderEl(seg.footprint, el);
+					return this.filterEventRenderEl(seg, el);
 				}
 			});
 		}
@@ -195,7 +195,7 @@ export default class EventRenderer {
 				var el = $(node);
 
 				if (hasEventRenderHandlers) { // optimization
-					el = this.filterEventRenderEl(seg.footprint, el);
+					el = this.filterEventRenderEl(seg, el);
 				}
 
 				if (el) {
@@ -246,12 +246,12 @@ export default class EventRenderer {
 
 	// Given an event and the default element used for rendering, returns the element that should actually be used.
 	// Basically runs events and elements through the eventRender hook.
-	filterEventRenderEl(eventFootprint, el) {
-		var legacy = eventFootprint.getEventLegacy();
+	filterEventRenderEl(seg, el) {
+		var legacy = seg.footprint.getEventLegacy();
 
 		var custom = this.view.publiclyTrigger('eventRender', {
 			context: legacy,
-			args: [ legacy, el, this.view ]
+			args: [ legacy, el, this.view, seg ]
 		});
 
 		if (custom === false) { // means don't render at all
