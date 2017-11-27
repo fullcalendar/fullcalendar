@@ -1,9 +1,5 @@
 describe('custom view class', function() {
 
-	beforeEach(function() {
-		affix('#cal');
-	});
-
 	it('calls all standard methods with correct parameters', function() {
 		var FC = $.fullCalendar;
 		var View = FC.View;
@@ -46,7 +42,7 @@ describe('custom view class', function() {
 		CustomView = View.extend(methods);
 		FC.views.custom = CustomView;
 
-		$('#cal').fullCalendar({
+		initCalendar({
 			defaultView: 'custom',
 			defaultDate: '2014-12-25',
 			events: [
@@ -63,15 +59,15 @@ describe('custom view class', function() {
 		expect(methods.setHeight).toHaveBeenCalled();
 		expect(methods.renderEvents).toHaveBeenCalled();
 
-		$('#cal').fullCalendar('rerenderEvents');
+		currentCalendar.rerenderEvents();
 
 		expect(methods.destroyEvents).toHaveBeenCalled();
 
-		$('#cal').fullCalendar('select', '2014-12-25', '2014-01-01');
+		currentCalendar.select('2014-12-25', '2014-01-01');
 
 		expect(methods.renderSelection).toHaveBeenCalled();
 
-		$('#cal').fullCalendar('unselect');
+		currentCalendar.unselect();
 
 		expect(methods.destroySelection).toHaveBeenCalled();
 
