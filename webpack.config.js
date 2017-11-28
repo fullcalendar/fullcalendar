@@ -45,7 +45,8 @@ module.exports = {
 		library: 'FullCalendar',
 		libraryTarget: 'umd',
 		filename: 'fullcalendar.js',
-		path: path.resolve(__dirname, 'dist/')
+		path: path.resolve(__dirname, 'dist/'),
+		devtoolModuleFilenameTemplate: "webpack:///fullcalendar/[resource-path]?[loaders]"
 	}
 
 };
