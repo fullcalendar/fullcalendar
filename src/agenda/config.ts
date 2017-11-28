@@ -1,7 +1,7 @@
-import { register } from '../ViewRegistry'
+import { defineView } from '../ViewRegistry'
 import AgendaView from './AgendaView'
 
-register('agenda', {
+defineView('agenda', {
 	'class': AgendaView,
 	defaults: {
 		allDaySlot: true,
@@ -10,12 +10,12 @@ register('agenda', {
 	}
 });
 
-register('agendaDay', {
+defineView('agendaDay', {
 	type: 'agenda',
 	duration: { days: 1 }
 });
 
-register('agendaWeek', {
+defineView('agendaWeek', {
 	type: 'agenda',
 	duration: { weeks: 1 }
 });

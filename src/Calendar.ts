@@ -22,7 +22,7 @@ import EventDefParser from './models/event/EventDefParser'
 import SingleEventDef from './models/event/SingleEventDef'
 import EventDefMutation from './models/event/EventDefMutation'
 import EventSource from './models/event-source/EventSource'
-import ThemeRegistry from './theme/ThemeRegistry'
+import { getThemeSystemClass } from './theme/ThemeRegistry'
 
 
 export default class Calendar {
@@ -352,7 +352,7 @@ export default class Calendar {
 
 		// called immediately, and upon option change
 		this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
-			var themeClass = ThemeRegistry.getThemeClass(opts.themeSystem || opts.theme);
+			var themeClass = getThemeSystemClass(opts.themeSystem || opts.theme);
 			var theme = new themeClass(this.optionsManager);
 			var widgetClass = theme.getClass('widget');
 

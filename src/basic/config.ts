@@ -1,22 +1,22 @@
-import { register } from '../ViewRegistry'
+import { defineView } from '../ViewRegistry'
 import BasicView from './BasicView'
 import MonthView from './MonthView'
 
-register('basic', {
+defineView('basic', {
 	'class': BasicView
 });
 
-register('basicDay', {
+defineView('basicDay', {
 	type: 'basic',
 	duration: { days: 1 }
 });
 
-register('basicWeek', {
+defineView('basicWeek', {
 	type: 'basic',
 	duration: { weeks: 1 }
 });
 
-register('month', {
+defineView('month', {
 	'class': MonthView,
 	duration: { months: 1 }, // important for prev/next
 	defaults: {

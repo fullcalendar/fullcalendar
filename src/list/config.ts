@@ -1,7 +1,7 @@
-import { register } from '../ViewRegistry'
+import { defineView } from '../ViewRegistry'
 import ListView from './ListView'
 
-register('list', {
+defineView('list', {
 	'class': ListView,
 	buttonTextKey: 'list', // what to lookup in locale files
 	defaults: {
@@ -11,7 +11,7 @@ register('list', {
 	}
 });
 
-register('listDay', {
+defineView('listDay', {
 	type: 'list',
 	duration: { days: 1 },
 	defaults: {
@@ -19,7 +19,7 @@ register('listDay', {
 	}
 });
 
-register('listWeek', {
+defineView('listWeek', {
 	type: 'list',
 	duration: { weeks: 1 },
 	defaults: {
@@ -28,7 +28,7 @@ register('listWeek', {
 	}
 });
 
-register('listMonth', {
+defineView('listMonth', {
 	type: 'list',
 	duration: { month: 1 },
 	defaults: {
@@ -36,7 +36,7 @@ register('listMonth', {
 	}
 });
 
-register('listYear', {
+defineView('listYear', {
 	type: 'list',
 	duration: { year: 1 },
 	defaults: {
