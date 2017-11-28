@@ -3,7 +3,7 @@ var tslint = require('gulp-tslint');
 var tsLintLib = require('tslint');
 var eslint = require('gulp-eslint');
 
-var tslintProgram = tsLintLib.Linter.createProgram("./tsconfig.json");
+var tslintProgram = tsLintLib.Linter.createProgram('./tsconfig.json');
 var eslintConfig = require('../eslint.json');
 
 gulp.task('lint', [
