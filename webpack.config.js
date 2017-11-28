@@ -1,4 +1,6 @@
 const path = require('path')
+const StringReplacePlugin = require('string-replace-webpack-plugin')
+const packageConf = require('./package.json')
 
 // `CheckerPlugin` is optional. Use it if you want async error reporting.
 // We need this plugin to detect a `--watch` mode. It may be removed later
@@ -23,12 +25,26 @@ module.exports = {
 			{
 				test: /\.ts$/,
 				loader: 'awesome-typescript-loader'
+			},
+			{
+				test: /\.ts$/,
+				loader: StringReplacePlugin.replace({
+					replacements: [
+						{
+							pattern: /<%=\s*(\w+)\s*%>/g,
+							replacement: function(match, p1, offset, string) {
+								return packageConf[p1];
+							}
+						}
+					]
+				})
 			}
 		]
 	},
 
 	plugins: [
-		new CheckerPlugin()
+		new CheckerPlugin(),
+		new StringReplacePlugin()
 	],
 
 	externals: {
