@@ -29,6 +29,7 @@ export default class DayGrid extends InteractiveDateComponent {
 	renderBgTrHtml: DayTableInterface['renderBgTrHtml']
 	renderIntroHtml: DayTableInterface['renderIntroHtml']
 	getCellRange: DayTableInterface['getCellRange']
+	sliceRangeByDay: DayTableInterface['sliceRangeByDay']
 
 	view: any // TODO: make more general and/or remove
 	helperRenderer: any

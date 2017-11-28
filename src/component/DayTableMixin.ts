@@ -12,6 +12,7 @@ export interface DayTableInterface {
 	bookendCells(trEl)
 	getCellDate(row, col)
 	getCellRange(row, col)
+	sliceRangeByDay(unzonedRange)
 	sliceRangeByRow(unzonedRange)
 	renderIntroHtml()
 }
