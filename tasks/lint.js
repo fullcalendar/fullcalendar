@@ -3,23 +3,36 @@ var tslint = require('gulp-tslint');
 var tsLintLib = require('tslint');
 var eslint = require('gulp-eslint');
 
-var tslintProgram = tsLintLib.Linter.createProgram('./tsconfig.json');
+var tslintCoreProgram = tsLintLib.Linter.createProgram('./tsconfig.json');
+var tslintPluginsProgram = tsLintLib.Linter.createProgram('./plugins/tsconfig.json');
 var eslintConfig = require('../eslint.json');
 
 gulp.task('lint', [
-	'lint:src',
+	'lint:core',
+	'lint:plugins',
 	'lint:built',
 	'lint:tasks',
 	'lint:legacy',
 	'ts-types' // make sure typescript defs compile without errors
 ]);
 
-gulp.task('lint:src', function() {
+gulp.task('lint:core', function() {
 	return gulp.src('src/**/*.ts')
 		.pipe(
 			tslint({ // will use tslint.json
 				formatter: 'verbose',
-				program: tslintProgram // for type-checking rules
+				program: tslintCoreProgram // for type-checking rules
+			})
+		)
+		.pipe(tslint.report());
+});
+
+gulp.task('lint:plugins', function() {
+	return gulp.src('plugins/**/*.ts')
+		.pipe(
+			tslint({ // will use tslint.json
+				formatter: 'verbose',
+				program: tslintPluginsProgram // for type-checking rules
 			})
 		)
 		.pipe(tslint.report());

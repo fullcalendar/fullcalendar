@@ -1,15 +1,19 @@
+import * as $ from 'jquery';
+import { EventSource, Promise, JsonFeedEventSource, warn, applyAll } from 'fullcalendar';
 
-var GcalEventSource = EventSource.extend({
+
+export default class GcalEventSource extends EventSource {
+
+	static API_BASE = 'https://www.googleapis.com/calendar/v3/calendars';
 
 	// TODO: eventually remove "googleCalendar" prefix (API-breaking)
-	googleCalendarApiKey: null,
-	googleCalendarId: null,
-	googleCalendarError: null, // optional function
-	ajaxSettings: null,
+	googleCalendarApiKey: any
+	googleCalendarId: any
+	googleCalendarError: any // optional function
+	ajaxSettings: any
 
 
-	fetch: function(start, end, timezone) {
-		var _this = this;
+	fetch(start, end, timezone) {
 		var url = this.buildUrl();
 		var requestParams = this.buildRequestParams(start, end, timezone);
 		var ajaxSettings = this.ajaxSettings || {};
@@ -21,7 +25,7 @@ var GcalEventSource = EventSource.extend({
 
 		this.calendar.pushLoading();
 
-		return Promise.construct(function(onResolve, onReject) {
+		return Promise.construct((onResolve, onReject) => {
 			$.ajax($.extend(
 				{}, // destination
 				JsonFeedEventSource.AJAX_DEFAULTS,
@@ -29,52 +33,45 @@ var GcalEventSource = EventSource.extend({
 				{
 					url: url,
 					data: requestParams,
-					success: function(responseData) {
+					success: (responseData, status, xhr) => {
 						var rawEventDefs;
 						var successRes;
 
-						_this.calendar.popLoading();
+						this.calendar.popLoading();
 
 						if (responseData.error) {
-							_this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors);
+							this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors);
 							onReject();
 						}
 						else if (responseData.items) {
-							rawEventDefs = _this.gcalItemsToRawEventDefs(
+							rawEventDefs = this.gcalItemsToRawEventDefs(
 								responseData.items,
 								requestParams.timeZone
 							);
 
-							successRes = applyAll(
-								onSuccess,
-								this, // forward `this`
-								// call the success handler(s) and allow it to return a new events array
-								[ rawEventDefs ].concat(Array.prototype.slice.call(arguments, 1))
-							);
+							successRes = applyAll(onSuccess, this, [ responseData, status, xhr ]); // passthru
 
 							if ($.isArray(successRes)) {
 								rawEventDefs = successRes;
 							}
 
-							onResolve(_this.parseEventDefs(rawEventDefs));
+							onResolve(this.parseEventDefs(rawEventDefs));
 						}
 					}
 				}
 			));
 		});
-	},
+	}
 
 
-	gcalItemsToRawEventDefs: function(items, gcalTimezone) {
-		var _this = this;
-
-		return items.map(function(item) {
-			return _this.gcalItemToRawEventDef(item, gcalTimezone);
+	gcalItemsToRawEventDefs(items, gcalTimezone) {
+		return items.map((item) => {
+			return this.gcalItemToRawEventDef(item, gcalTimezone);
 		});
-	},
+	}
 
 
-	gcalItemToRawEventDef: function(item, gcalTimezone) {
+	gcalItemToRawEventDef(item, gcalTimezone) {
 		var url = item.htmlLink || null;
 
 		// make the URLs for each event show times in the correct timezone
@@ -91,17 +88,17 @@ var GcalEventSource = EventSource.extend({
 			location: item.location,
 			description: item.description
 		};
-	},
+	}
 
 
-	buildUrl: function() {
+	buildUrl() {
 		return GcalEventSource.API_BASE + '/' +
 			encodeURIComponent(this.googleCalendarId) +
 			'/events?callback=?'; // jsonp
-	},
+	}
 
 
-	buildRequestParams: function(start, end, timezone) {
+	buildRequestParams(start, end, timezone) {
 		var apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey');
 		var params;
 
@@ -138,10 +135,10 @@ var GcalEventSource = EventSource.extend({
 		}
 
 		return params;
-	},
+	}
 
 
-	reportError: function(message, apiErrorObjs) {
+	reportError(message, apiErrorObjs?) {
 		var calendar = this.calendar;
 		var calendarOnError = calendar.opt('googleCalendarError');
 		var errorObjs = apiErrorObjs || [ { message: message } ]; // to be passed into error handlers
@@ -155,16 +152,16 @@ var GcalEventSource = EventSource.extend({
 		}
 
 		// print error to debug console
-		FC.warn.apply(null, [ message ].concat(apiErrorObjs || []));
-	},
+		warn.apply(null, [ message ].concat(apiErrorObjs || []));
+	}
 
 
-	getPrimitive: function() {
+	getPrimitive() {
 		return this.googleCalendarId;
-	},
+	}
 
 
-	applyManualStandardProps: function(rawProps) {
+	applyManualStandardProps(rawProps) {
 		var superSuccess = EventSource.prototype.applyManualStandardProps.apply(this, arguments);
 		var googleCalendarId = rawProps.googleCalendarId;
 
@@ -179,20 +176,35 @@ var GcalEventSource = EventSource.extend({
 		}
 
 		return false;
-	},
+	}
 
 
-	applyMiscProps: function(rawProps) {
+	applyMiscProps(rawProps) {
 		if (!this.ajaxSettings) {
 			this.ajaxSettings = {};
 		}
 		$.extend(this.ajaxSettings, rawProps);
 	}
 
-});
 
+	static parse(rawInput, calendar) {
+		var rawProps;
 
-GcalEventSource.API_BASE = 'https://www.googleapis.com/calendar/v3/calendars';
+		if (typeof rawInput === 'object') { // long form. might fail in applyManualStandardProps
+			rawProps = rawInput;
+		}
+		else if (typeof rawInput === 'string') { // short form
+			rawProps = { url: rawInput }; // url will be parsed with parseGoogleCalendarId
+		}
+
+		if (rawProps) {
+			return EventSource.parse.call(this, rawProps, calendar);
+		}
+
+		return false;
+	}
+
+}
 
 
 GcalEventSource.defineStandardProps({
@@ -204,24 +216,6 @@ GcalEventSource.defineStandardProps({
 	googleCalendarApiKey: true,
 	googleCalendarError: true
 });
-
-
-GcalEventSource.parse = function(rawInput, calendar) {
-	var rawProps;
-
-	if (typeof rawInput === 'object') { // long form. might fail in applyManualStandardProps
-		rawProps = rawInput;
-	}
-	else if (typeof rawInput === 'string') { // short form
-		rawProps = { url: rawInput }; // url will be parsed with parseGoogleCalendarId
-	}
-
-	if (rawProps) {
-		return EventSource.parse.call(this, rawProps, calendar);
-	}
-
-	return false;
-};
 
 
 function parseGoogleCalendarId(url) {
@@ -249,10 +243,3 @@ function injectQsComponent(url, component) {
 		return (qs ? qs + '&' : '?') + component + hash;
 	});
 }
-
-
-// expose
-
-EventSourceParser.registerClass(GcalEventSource);
-
-FC.GcalEventSource = GcalEventSource;

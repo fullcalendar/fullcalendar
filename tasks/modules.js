@@ -1,84 +1,107 @@
-var del = require('del');
-var _ = require('lodash');
-var gulp = require('gulp');
-var plumber = require('gulp-plumber');
-var concat = require('gulp-concat');
-var template = require('gulp-template');
-var sourcemaps = require('gulp-sourcemaps');
-var webpack = require('webpack-stream'); // for fullcalendar.js, use webpack
+const del = require('del');
+const _ = require('lodash'); // TODO: kill
+const gulp = require('gulp');
+const plumber = require('gulp-plumber'); // TODO: kill
+const concat = require('gulp-concat'); // TODO: kill
+const template = require('gulp-template'); // TODO: kill
+const sourcemaps = require('gulp-sourcemaps'); // TODO: kill
+const webpack = require('webpack-stream');
 
-// project configs
-var packageConf = require('../package.json');
-var srcConf = require('../src.json');
-var webpackConf = require('../webpack.config.js');
+// configs
+const packageConf = require('../package.json'); // TODO: kill
+const srcConf = require('../src.json'); // TODO: kill
+const createCoreConfig = require('./webpack/createCoreConfig');
+const createPluginsConfig = require('./webpack/createPluginsConfig');
 
-// generates js/css files in dist directory
-gulp.task('modules', _.map(srcConf, function(srcFiles, distFile) {
-	return 'modules:' + distFile; // generates an array of task names
-}), function() {
-	return gulp.src(webpackConf.entry)
-		.pipe(
-			webpack(webpackConf)
-		)
-		.pipe(
-			gulp.dest(webpackConf.output.path)
-		);
-});
 
-// generates js/css/sourcemap files in dist directory
-gulp.task('modules:dev', _.map(srcConf, function(srcFiles, distFile) {
-	return 'modules:dev:' + distFile; // generates an array of task names
-}), function() {
-	return gulp.src(webpackConf.entry)
-		.pipe(
-			webpack(Object.assign({}, webpackConf, {
-				devtool: 'source-map' // also 'inline-source-map'
-			}))
-		)
-		.pipe(
-			gulp.dest(webpackConf.output.path)
-		);
-});
-
-// watches source files and generates js/css/sourcemaps
-gulp.task('modules:watch', _.map(srcConf, function(srcFiles, distFile) {
-	return 'modules:watch:' + distFile; // generates an array of task names
-}), function() {
-	return gulp.src(webpackConf.entry)
-		.pipe(
-			webpack(Object.assign({}, webpackConf, {
-				devtool: 'source-map', // also 'inline-source-map'
-				watch: true
-			}))
-		)
-		.pipe(
-			gulp.dest(webpackConf.output.path)
-		);
-});
+gulp.task('modules', [ 'core', 'plugins', 'css' ]);
+gulp.task('modules:dev', [ 'core:dev', 'plugins:dev', 'css:dev' ]);
+gulp.task('modules:watch', [ 'core:watch', 'plugins:watch', 'css:watch' ]);
 
 // deletes all generated js/css files in the dist directory
 gulp.task('modules:clean', function() {
-	return del('dist/*.{js,css,map}');
+	return del('dist/*.{js,ts,css,map}');
 });
+
+// core
+
+gulp.task('core', function() {
+	const config = createCoreConfig();
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+gulp.task('core:dev', function() {
+	const config = createCoreConfig({ debug: true });
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+gulp.task('core:watch', function() {
+	const config = createCoreConfig({ debug: true, watch: true });
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+// plugins
+
+gulp.task('plugins', [ 'ts-types' ], function() {
+	const config = createPluginsConfig();
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+gulp.task('plugins:dev', [ 'ts-types' ], function() {
+	const config = createPluginsConfig({ debug: true });
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+gulp.task('plugins:watch', [ 'ts-types' ], function() {
+	const config = createPluginsConfig({ debug: true, watch: true });
+	return gulp.src([])
+		.pipe(webpack(config))
+		.pipe(gulp.dest(config.output.path));
+});
+
+// css (TODO: kill)
+
+// generates js/css/sourcemap files in dist directory
+gulp.task('css', _.map(srcConf, function(srcFiles, distFile) {
+	return 'css:' + distFile; // generates an array of task names
+}));
+
+// generates js/css/sourcemap files in dist directory
+gulp.task('css:dev', _.map(srcConf, function(srcFiles, distFile) {
+	return 'css:dev:' + distFile; // generates an array of task names
+}));
+
+// watches source files and generates js/css/sourcemaps
+gulp.task('css:watch', _.map(srcConf, function(srcFiles, distFile) {
+	return 'css:watch:' + distFile; // generates an array of task names
+}));
 
 // loop the distFile:srcFiles map
 _.forEach(srcConf, function(srcFiles, distFile) {
-	var isJs = /\.js$/.test(distFile);
-	var separator = isJs ? '\n;;\n' : '\n\n'; // inserted between concated files
 
-	gulp.task('modules:' + distFile, function() {
+	gulp.task('css:' + distFile, function() {
 		return gulp.src(srcFiles, { cwd: 'src/', base: 'src/' })
 			.pipe(plumber()) // affects future streams
-			.pipe(concat(distFile, { newLine: separator }))
+			.pipe(concat(distFile, { newLine: '\n\n' }))
 			.pipe(template(packageConf)) // replaces <%= %> variables
 			.pipe(gulp.dest('dist/'));
 	});
 
-	gulp.task('modules:dev:' + distFile, function() {
+	gulp.task('css:dev:' + distFile, function() {
 		return gulp.src(srcFiles, { cwd: 'src/', base: 'src/' })
 			.pipe(plumber()) // affects future streams
 			.pipe(sourcemaps.init())
-			.pipe(concat(distFile, { newLine: separator }))
+			.pipe(concat(distFile, { newLine: '\n\n' }))
 			.pipe(template(packageConf)) // replaces <%= %> variables
 			.pipe(sourcemaps.write('.', {
 				includeContent: false, // because we'll reference the src files
@@ -88,7 +111,7 @@ _.forEach(srcConf, function(srcFiles, distFile) {
 	});
 
 	// generates dev files first, then watches
-	gulp.task('modules:watch:' + distFile, [ 'modules:dev:' + distFile ], function() {
-		return gulp.watch(srcFiles, { cwd: 'src/' }, [ 'modules:dev:' + distFile ]);
+	gulp.task('css:watch:' + distFile, [ 'css:dev:' + distFile ], function() {
+		return gulp.watch(srcFiles, { cwd: 'src/' }, [ 'css:dev:' + distFile ]);
 	});
 });

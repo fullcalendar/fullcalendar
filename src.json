@@ -11,10 +11,5 @@
   ],
   "fullcalendar.print.css": [
     "common/print.css"
-  ],
-  "gcal.js": [
-    "gcal/intro.js",
-    "gcal/GcalEventSource.js",
-    "gcal/outro.js"
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "fullcalendar": ["../dist/fullcalendar"]
+    }
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

@@ -1,7 +1,5 @@
 {
   "rules": {
-    "no-implicit-dependencies": true,
-
     "indent": [true, "tabs"],
     "no-trailing-whitespace": true,
     "no-irregular-whitespace": true,
