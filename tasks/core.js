@@ -22,6 +22,6 @@ function createStream(settings) {
 	return gulp.src([]) // don't pass in any files. webpack handles that
 		.pipe(webpack(config))
 		.pipe(gulpIgnore.exclude('*.css.js*'))
-			// ^ ignore the bogus .css.js(.map) files webpack creates for standlone css outputs
+			// ^ don't write bogus .css.js(.map) files webpack creates for standlone css outputs
 		.pipe(gulp.dest(config.output.path));
 }

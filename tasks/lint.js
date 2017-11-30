@@ -13,7 +13,7 @@ gulp.task('lint', [
 	'lint:built',
 	'lint:tasks',
 	'lint:legacy',
-	'ts-types' // make sure typescript defs compile without errors
+	'core:types' // make sure typescript defs compile without errors
 ]);
 
 gulp.task('lint:core', function() {
@@ -79,9 +79,7 @@ gulp.task('lint:legacy', function() {
 			eslint({ // lenient config from scratch
 				extends: 'eslint:recommended',
 				envs: [ 'browser' ],
-				rules: {
-					curly: 2
-				}
+				rules: { curly: 2 }
 			})
 		)
 		.pipe(eslint.format())

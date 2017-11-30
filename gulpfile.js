@@ -2,8 +2,8 @@ var gulp = require('gulp');
 var del = require('del');
 
 require('./tasks/core');
+require('./tasks/core-types');
 require('./tasks/plugins');
-require('./tasks/ts-types');
 require('./tasks/minify');
 require('./tasks/archive');
 require('./tasks/locale');
@@ -17,26 +17,26 @@ gulp.task('default', [ 'dist' ]);
 // everything needed for running demos and developing
 gulp.task('dev', [
 	'core:dev',
+	'core:types',
 	'plugins:dev',
-	'locale',
-	'ts-types'
+	'locale'
 ]);
 
 // watch anything that needs to be built
 gulp.task('watch', [
 	'core:watch',
+	'core:types:watch',
 	'plugins:watch',
-	'locale:watch',
-	'ts-types:watch'
+	'locale:watch'
 ]);
 
 // generates all files that end up in package manager release
 gulp.task('dist', [
 	'core',
+	'core:types',
 	'plugins',
 	'locale',
-	'minify',
-	'ts-types'
+	'minify'
 ]);
 
 // like dist, but runs tests and linting, and generates archive
