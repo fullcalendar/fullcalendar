@@ -18,7 +18,7 @@ gulp.task('core:types:raw', function() {
 	});
 });
 
-gulp.task('core:types:watch', [ 'core:types' ], function() {
+gulp.task('core:types:watch', [ 'webpack:watch' ], function() {
 	// HACK
 	// if we watched src/**/*.js files,
 	// it blocked webpack compilation until dts-generator finished for some reason.

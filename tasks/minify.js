@@ -2,23 +2,19 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
-var del = require('del');
+
 
 gulp.task('minify', [
-	'minify:js',
+	'minify:non-locale',
+	'minify:locale',
 	'minify:css'
 ]);
 
-gulp.task('minify:clean', function() {
-	return del('dist/*.min.{js,css}');
-});
 
-// minifies the core modules's js
-gulp.task('minify:js', [ 'core', 'plugins' ], function() {
+gulp.task('minify:non-locale', [ 'webpack' ], function() {
 	return gulp.src([
 		'dist/*.js',
-		'!dist/*.min.js', // avoid double minify
-		'!dist/locale-all.js' // already minified
+		'!dist/locale-all.js' // another task handles locale
 	])
 		.pipe(uglify({
 			preserveComments: 'some' // keep comments starting with !
@@ -27,8 +23,18 @@ gulp.task('minify:js', [ 'core', 'plugins' ], function() {
 		.pipe(gulp.dest('dist/'));
 });
 
-// minifies the core modules's css
-gulp.task('minify:css', [ 'core', 'plugins' ], function() {
+
+gulp.task('minify:locale', [ 'webpack' ], function() {
+	return gulp.src([
+		'dist/locale-all.js',
+		'dist/locale/*.js'
+	], { base: 'dist/' })
+		.pipe(uglify())
+		.pipe(gulp.dest('dist/')); // overwrite original files
+});
+
+
+gulp.task('minify:css', [ 'webpack' ], function() {
 	return gulp.src([
 		'dist/*.css',
 		'!dist/*.min.css' // avoid double minify

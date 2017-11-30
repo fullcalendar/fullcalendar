@@ -3,7 +3,6 @@ var rename = require('gulp-rename');
 var filter = require('gulp-filter');
 var replace = require('gulp-replace');
 var zip = require('gulp-zip');
-var del = require('del');
 
 // determines the name of the ZIP file
 var packageConf = require('../package.json');
@@ -20,13 +19,6 @@ gulp.task('archive', [
 	return gulp.src('tmp/' + packageId + '/**/*', { base: 'tmp/' })
 		.pipe(zip(packageId + '.zip'))
 		.pipe(gulp.dest('dist/'));
-});
-
-gulp.task('archive:clean', function() {
-	return del([
-		'tmp/' + packageId + '/',
-		'dist/' + packageId + '.zip'
-	]);
 });
 
 gulp.task('archive:dist', [ 'core', 'plugins', 'minify' ], function() {
