@@ -1,5 +1,6 @@
 const path = require('path')
 const StringReplacePlugin = require('string-replace-webpack-plugin')
+const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 // `CheckerPlugin` is optional. Use it if you want async error reporting.
 // We need this plugin to detect a `--watch` mode. It may be removed later
@@ -78,13 +79,20 @@ module.exports = function(/* settings, settings, settings */) {
 							}
 						]
 					})
+				},
+				{
+					test: /\.css$/,
+					loader: ExtractTextPlugin.extract({
+						use: 'css-loader'
+					})
 				}
 			]
 		},
 
 		plugins: [
 			new CheckerPlugin(),
-			new StringReplacePlugin()
+			new StringReplacePlugin(),
+			new ExtractTextPlugin('[name].css')
 		],
 
 		externals: externals,
