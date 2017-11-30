@@ -12,16 +12,6 @@ import './basic/config'
 import './agenda/config'
 import './list/config'
 
-// css
-import "./common/common.css"
-import "./common/common.standard.css"
-import "./common/common.jquery-ui.css"
-import "./common/common.bootstrap3.css"
-import "./main.css"
-import "./basic/basic.css"
-import "./agenda/agenda.css"
-import "./list/list.css"
-
 declare global {
 	interface JQueryStatic {
 		fullCalendar: object

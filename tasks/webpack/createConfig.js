@@ -7,13 +7,13 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin")
 // after https://github.com/webpack/webpack/issues/3460 will be resolved.
 const { CheckerPlugin } = require('awesome-typescript-loader')
 
-// external configs
-const packageConf = require('../../package.json')
-
 /*
 settings:
+	packageConf: object (loaded from package.json)
+	context: string
+	outputDir: string
 	entry: { modulename: path }
-	tsconfig: string
+	tsconfig: string (can be full path)
 	useExternalCore: true / false (default)
 	debug: true / false (default)
 */
@@ -31,8 +31,8 @@ module.exports = function(/* settings, settings, settings */) {
 	const output = {
 		libraryTarget: 'umd',
 		filename: '[name].js',
-		path: path.resolve(__dirname, '../../dist/'),
-		devtoolModuleFilenameTemplate: 'webpack:///' + packageConf.name + '/[resource-path]'
+		path: settings.outputDir,
+		devtoolModuleFilenameTemplate: 'webpack:///' + settings.packageConf.name + '/[resource-path]'
 	}
 
 	if (!settings.useExternalCore) {
@@ -47,6 +47,7 @@ module.exports = function(/* settings, settings, settings */) {
 	}
 
 	return {
+		context: settings.context,
 		entry: settings.entry || {},
 
 		resolve: {
@@ -59,7 +60,7 @@ module.exports = function(/* settings, settings, settings */) {
 		},
 
 		module: {
-			loaders: [
+			rules: [
 				{
 					test: /\.ts$/,
 					loader: 'awesome-typescript-loader',
@@ -74,7 +75,7 @@ module.exports = function(/* settings, settings, settings */) {
 							{
 								pattern: /<%=\s*(\w+)\s*%>/g,
 								replacement: function(match, p1) {
-									return packageConf[p1];
+									return settings.packageConf[p1];
 								}
 							}
 						]
@@ -82,9 +83,11 @@ module.exports = function(/* settings, settings, settings */) {
 				},
 				{
 					test: /\.css$/,
-					loader: ExtractTextPlugin.extract({
-						use: 'css-loader'
-					})
+					loader: ExtractTextPlugin.extract([ 'css-loader' ])
+				},
+				{
+					test: /\.(sass|scss)$/,
+					loader: ExtractTextPlugin.extract([ 'css-loader', 'sass-loader' ])
 				}
 			]
 		},
@@ -92,7 +95,10 @@ module.exports = function(/* settings, settings, settings */) {
 		plugins: [
 			new CheckerPlugin(),
 			new StringReplacePlugin(),
-			new ExtractTextPlugin('[name].css')
+			new ExtractTextPlugin({
+				filename: '[name]', // the module name should already have .css in it!
+				allChunks: true
+			})
 		],
 
 		externals: externals,

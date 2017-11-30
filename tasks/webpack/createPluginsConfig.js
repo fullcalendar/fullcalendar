@@ -3,10 +3,13 @@ const createConfig = require('./createConfig')
 
 module.exports = function(settings) {
 	return createConfig(settings, {
+		packageConf: require('../../package.json'),
+		outputDir: path.resolve(__dirname, '../../dist'),
 		tsconfig: path.resolve(__dirname, '../../plugins/tsconfig.json'),
+		context: path.resolve(__dirname, '../../plugins'),
+		useExternalCore: true,
 		entry: {
-			gcal: path.resolve(__dirname, '../../plugins/gcal/main.ts')
-		},
-		useExternalCore: true
+			gcal: './gcal/main.ts'
+		}
 	});
 }
