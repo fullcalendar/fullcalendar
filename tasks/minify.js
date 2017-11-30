@@ -14,7 +14,7 @@ gulp.task('minify:clean', function() {
 });
 
 // minifies the core modules's js
-gulp.task('minify:js', [ 'modules' ], function() {
+gulp.task('minify:js', [ 'core', 'plugins' ], function() {
 	return gulp.src([
 		'dist/*.js',
 		'!dist/*.min.js', // avoid double minify
@@ -28,7 +28,7 @@ gulp.task('minify:js', [ 'modules' ], function() {
 });
 
 // minifies the core modules's css
-gulp.task('minify:css', [ 'modules' ], function() {
+gulp.task('minify:css', [ 'core', 'plugins' ], function() {
 	return gulp.src([
 		'dist/*.css',
 		'!dist/*.min.css' // avoid double minify

@@ -1,7 +1,8 @@
 var gulp = require('gulp');
 var del = require('del');
 
-require('./tasks/modules');
+require('./tasks/core');
+require('./tasks/plugins');
 require('./tasks/ts-types');
 require('./tasks/minify');
 require('./tasks/archive');
@@ -15,21 +16,24 @@ gulp.task('default', [ 'dist' ]);
 
 // everything needed for running demos and developing
 gulp.task('dev', [
-	'modules:dev',
+	'core:dev',
+	'plugins:dev',
 	'locale',
 	'ts-types'
 ]);
 
 // watch anything that needs to be built
 gulp.task('watch', [
-	'modules:watch',
+	'core:watch',
+	'plugins:watch',
 	'locale:watch',
 	'ts-types:watch'
 ]);
 
 // generates all files that end up in package manager release
 gulp.task('dist', [
-	'modules',
+	'core',
+	'plugins',
 	'locale',
 	'minify',
 	'ts-types'
@@ -44,7 +48,6 @@ gulp.task('release', [
 ]);
 
 gulp.task('clean', [
-	'modules:clean',
 	'locale:clean',
 	'minify:clean',
 	'archive:clean'

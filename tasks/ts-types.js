@@ -18,7 +18,11 @@ gulp.task('ts-types-raw', function() {
 });
 
 gulp.task('ts-types:watch', [ 'ts-types' ], function() {
-	return gulp.watch('src/**/*.ts', [ 'ts-types' ]);
+	// HACK
+	// if we watched src/**/*.js files,
+	// it blocked webpack compilation until dts-generator finished for some reason.
+	// instead, wait until we know core compilation has finished before rerunning dts-generator.
+	gulp.watch('dist/fullcalendar.js', [ 'ts-types' ]);
 });
 
 

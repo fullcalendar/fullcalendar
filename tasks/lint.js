@@ -38,7 +38,7 @@ gulp.task('lint:plugins', function() {
 		.pipe(tslint.report());
 });
 
-gulp.task('lint:built', [ 'modules', 'locale' ], function() {
+gulp.task('lint:built', [ 'core', 'plugins', 'locale' ], function() {
 	return gulp.src([
 		'dist/*.js',
 		'!dist/*.min.js'

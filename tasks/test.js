@@ -17,7 +17,7 @@ gulp.task('test', [ 'modules:dev', 'locale' ], function() {
 });
 
 // runs headlessly and continuously, watching files
-gulp.task('test:headless', [ 'modules', 'locale' ], function() {
+gulp.task('test:headless', [ 'core', 'plugins', 'locale' ], function() {
 	new KarmaServer({
 		configFile: karmaConf,
 		browsers: [ 'PhantomJS_custom' ],
@@ -29,7 +29,7 @@ gulp.task('test:headless', [ 'modules', 'locale' ], function() {
 });
 
 // runs headlessly once, then exits
-gulp.task('test:single', [ 'modules', 'locale' ], function(done) {
+gulp.task('test:single', [ 'core', 'plugins', 'locale' ], function(done) {
 	new KarmaServer({
 		configFile: karmaConf,
 		browsers: [ 'PhantomJS_custom' ],

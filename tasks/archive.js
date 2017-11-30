@@ -29,7 +29,7 @@ gulp.task('archive:clean', function() {
 	]);
 });
 
-gulp.task('archive:dist', [ 'modules', 'minify' ], function() {
+gulp.task('archive:dist', [ 'core', 'plugins', 'minify' ], function() {
 	return gulp.src('dist/*.{js,css}') // matches unminified and minified files
 		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
