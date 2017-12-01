@@ -13,6 +13,7 @@ gulp.task('minify', [
 gulp.task('minify:js', [ 'webpack' ], function() {
 	return gulp.src([
 		'dist/*.js',
+		'!dist/*.min.js', // avoid double minify
 		'!dist/locale-all.js' // already minified by webpack task
 	])
 		.pipe(uglify({
