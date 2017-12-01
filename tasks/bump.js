@@ -16,7 +16,7 @@ gulp.task('bump', function(done) {
 	else {
 		return gulp.src('package.json')
 			.pipe(
-				modify(function(content, path, file) {
+				modify(function(content) {
 					var obj = JSON.parse(content);
 
 					obj.releaseDate = moment().format('YYYY-MM-DD'); // always do current date
