@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const webpack = require('webpack')
 const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('./package.json')
@@ -14,6 +15,11 @@ const MODULES = {
 	'fullcalendar.print.css': './src/common/print.scss',
 	'gcal': './plugins/gcal/main.ts'
 }
+
+const BANNER =
+	"<%= title %> v<%= version %>\n" +
+	"Docs & License: <%= homepage %>\n" +
+	"(c) <%= copyright %>";
 
 module.exports = {
 
@@ -72,7 +78,8 @@ module.exports = {
 		new ExtractTextPlugin({
 			filename: '[name]', // the module name should already have .css in it!
 			allChunks: true
-		})
+		}),
+		new webpack.BannerPlugin(BANNER)
 	],
 
 	output: {
