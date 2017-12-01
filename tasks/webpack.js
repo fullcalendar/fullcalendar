@@ -1,7 +1,7 @@
 const gulp = require('gulp')
 const webpack = require('webpack-stream')
-const gulpIgnore = require('gulp-ignore')
-const modify = require('gulp-modify')
+const filter = require('gulp-filter')
+const modify = require('gulp-modify-file')
 const webpackConfig = require('../webpack.config')
 
 
@@ -28,30 +28,28 @@ function createStream(enableSourceMaps, enableWatch) {
 		)
 		.pipe(
 			// don't write bogus .css.js(.map) files webpack created for standlone css outputs
-			gulpIgnore.exclude('*.css.js*')
+			filter([ '**', '!**/*.css.js*' ])
 		)
 		.pipe(
-			modify({
-				fileModifier: function(file, content) {
+			modify(function(content, path, file) {
 
-					// for modules that plug into the core, webpack produces files that overwrite
-					// the `FullCalendar` browser global each time. strip it out.
-					if (file.relative !== 'fullcalendar.js') {
-						content = content.replace(
-							/(root|exports)\[['"]FullCalendar['"]\]\s*=\s*/g,
-							function(m) {
-								// replace with spaces of same length to maintain sourcemap integrity
-								return new Array(m.length + 1).join(' ')
-							}
-						)
-					}
-
-					// strip out "use strict", which moment and webpack harmony generates.
-					// replace with spaces of same length to maintain sourcemap integrity.
-					content = content.replace(/['"]use strict['"]/g, '            ');
-
-					return content
+				// for modules that plug into the core, webpack produces files that overwrite
+				// the `FullCalendar` browser global each time. strip it out.
+				if (file.relative !== 'fullcalendar.js') {
+					content = content.replace(
+						/(root|exports)\[['"]FullCalendar['"]\]\s*=\s*/g,
+						function(m) {
+							// replace with spaces of same length to maintain sourcemap integrity
+							return new Array(m.length + 1).join(' ')
+						}
+					)
 				}
+
+				// strip out "use strict", which moment and webpack harmony generates.
+				// replace with spaces of same length to maintain sourcemap integrity.
+				content = content.replace(/['"]use strict['"]/g, '            ');
+
+				return content
 			})
 		)
 		.pipe(

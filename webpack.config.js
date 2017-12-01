@@ -1,8 +1,8 @@
 const fs = require('fs')
 const path = require('path')
+const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
 const StringReplacePlugin = require('string-replace-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
 const packageConf = require('./package.json')
 
 /*

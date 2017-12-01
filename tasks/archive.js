@@ -1,12 +1,12 @@
-var gulp = require('gulp');
-var rename = require('gulp-rename');
-var filter = require('gulp-filter');
-var replace = require('gulp-replace');
-var zip = require('gulp-zip');
+const gulp = require('gulp');
+const rename = require('gulp-rename');
+const filter = require('gulp-filter');
+const modify = require('gulp-modify-file');
+const zip = require('gulp-zip');
 
 // determines the name of the ZIP file
-var packageConf = require('../package.json');
-var packageId = packageConf.name + '-' + packageConf.version;
+const packageConf = require('../package.json');
+const packageId = packageConf.name + '-' + packageConf.version;
 
 gulp.task('archive', [
 	'archive:dist',
@@ -21,12 +21,12 @@ gulp.task('archive', [
 		.pipe(gulp.dest('dist/'));
 });
 
-gulp.task('archive:dist', [ 'core', 'plugins', 'minify' ], function() {
+gulp.task('archive:dist', [ 'webpack', 'minify' ], function() {
 	return gulp.src('dist/*.{js,css}') // matches unminified and minified files
 		.pipe(gulp.dest('tmp/' + packageId + '/'));
 });
 
-gulp.task('archive:locale', [ 'locale' ], function() {
+gulp.task('archive:locale', [ 'webpack' ], function() {
 	return gulp.src([
 		'dist/locale-all.js',
 		'dist/locale/*.js'
@@ -59,18 +59,20 @@ gulp.task('archive:deps', function() {
 gulp.task('archive:demos', function() {
 	return gulp.src('**/*', { cwd: 'demos/', base: 'demos/' })
 		.pipe(htmlFileFilter)
-		.pipe(demoPathReplace)
+		.pipe(demoPathModify)
 		.pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
 		.pipe(gulp.dest('tmp/' + packageId + '/demos/'));
 });
 
-var htmlFileFilter = filter('*.html', { restore: true });
-var demoPathReplace = replace(
-	/((?:src|href)=['"])([^'"]*)(['"])/g,
-	function(m0, m1, m2, m3) {
-		return m1 + transformDemoPath(m2) + m3;
-	}
-);
+const htmlFileFilter = filter('*.html', { restore: true });
+const demoPathModify = modify(function(content) {
+	return content.replace(
+		/((?:src|href)=['"])([^'"]*)(['"])/g,
+		function(m0, m1, m2, m3) {
+			return m1 + transformDemoPath(m2) + m3;
+		}
+	);
+});
 
 function transformDemoPath(path) {
 	// reroot 3rd party libs

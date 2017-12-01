@@ -1,12 +1,18 @@
-var gulp = require('gulp');
-var generateDts = require('dts-generator').default;
-var replace = require('gulp-replace');
+const gulp = require('gulp');
+const generateDts = require('dts-generator').default;
+const modify = require('gulp-modify-file');
 
 
-gulp.task('core:types', [ 'core:types:raw' ], function() {
+gulp.task('core:types', [ 'core:types:raw' ], function() { // TODO: rename to core-types
 	return gulp.src('tmp/fullcalendar.d.ts')
-		.pipe(replace(moduleDeclarationRegex, filterModuleDeclaration))
-		.pipe(gulp.dest('dist/'));
+		.pipe(
+			modify(function(content) {
+				return filterModuleDeclaration(content);
+			})
+		)
+		.pipe(
+			gulp.dest('dist/')
+		);
 });
 
 gulp.task('core:types:raw', function() {
@@ -30,11 +36,13 @@ gulp.task('core:types:watch', [ 'webpack:watch' ], function() {
 // Typedef Source Code Transformation Hacks
 // ----------------------------------------
 
-var moduleDeclarationRegex = /^declare module '([^']*)' \{([\S\s]*?)[\n\r]+\}/mg;
-var importFromRegex = /from '([^']*)'/g;
-
-function filterModuleDeclaration(whole, id, body) {
-	return "declare module '" + filterModuleId(id) + "' {" + filterModuleBody(body) + "\n}";
+function filterModuleDeclaration(s) {
+	return s.replace(
+		/^declare module '([^']*)' \{([\S\s]*?)[\n\r]+\}/mg,
+		function(whole, id, body) {
+			return "declare module '" + filterModuleId(id) + "' {" + filterModuleBody(body) + "\n}";
+		}
+	);
 }
 
 function filterModuleId(id) {
@@ -64,7 +72,7 @@ function filterModuleBody(s) {
 		s += "\n\texport default Default;";
 	}
 
-	s = s.replace(importFromRegex, function(whole, id) {
+	s = s.replace(/from '([^']*)'/g, function(whole, id) {
 		return "from '" + filterModuleId(id) + "'";
 	});
 

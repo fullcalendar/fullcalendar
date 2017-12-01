@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var modify = require('gulp-modify');
+var modify = require('gulp-modify-file');
 var moment = require('moment');
 
 // parsed command line arguments
@@ -15,16 +15,18 @@ gulp.task('bump', function(done) {
 	}
 	else {
 		return gulp.src('package.json')
-			.pipe(modify({
-				fileModifier: function(file, content) {
+			.pipe(
+				modify(function(content, path, file) {
 					var obj = JSON.parse(content);
 
 					obj.releaseDate = moment().format('YYYY-MM-DD'); // always do current date
 					obj.version = argv.version; // from command line
 
 					return JSON.stringify(obj, null, '  '); // indent using two spaces
-				}
-			}))
-			.pipe(gulp.dest('./')); // overwrite itself!
+				})
+			)
+			.pipe(
+				gulp.dest('./') // overwrite itself!
+			);
 	}
 });
