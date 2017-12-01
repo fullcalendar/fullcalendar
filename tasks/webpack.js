@@ -3,6 +3,7 @@ const webpack = require('webpack-stream')
 const filter = require('gulp-filter')
 const modify = require('gulp-modify-file')
 const uglify = require('gulp-uglify')
+const packageConfig = require('../package.json')
 const webpackConfig = require('../webpack.config')
 
 
@@ -35,6 +36,14 @@ function createStream(enableSourceMaps, enableWatch) {
 		)
 		.pipe(
 			modify(function(content, path, file) {
+
+				// populate <%= %> variables in source code
+				content = content.replace(
+					/<%=\s*(\w+)\s*%>/g,
+					function(match, p1) {
+						return packageConfig[p1]
+					}
+				)
 
 				// for modules that plug into the core, webpack produces files that overwrite
 				// the `FullCalendar` browser global each time. strip it out.

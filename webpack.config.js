@@ -1,9 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
-const StringReplacePlugin = require('string-replace-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const packageConf = require('./package.json')
+const packageConfig = require('./package.json')
 
 /*
 NOTE: js and typescript module names shouldn't have a .js extention,
@@ -58,19 +57,6 @@ module.exports = {
 				loader: 'awesome-typescript-loader'
 			},
 			{
-				test: /\.(ts|js)$/,
-				loader: StringReplacePlugin.replace({
-					replacements: [
-						{
-							pattern: /<%=\s*(\w+)\s*%>/g,
-							replacement: function(match, p1) {
-								return packageConf[p1]
-							}
-						}
-					]
-				})
-			},
-			{
 				test: /\.css$/,
 				loader: ExtractTextPlugin.extract([ 'css-loader' ])
 			},
@@ -83,7 +69,6 @@ module.exports = {
 
 	plugins: [
 		new CheckerPlugin(),
-		new StringReplacePlugin(),
 		new ExtractTextPlugin({
 			filename: '[name]', // the module name should already have .css in it!
 			allChunks: true
@@ -95,7 +80,7 @@ module.exports = {
 		libraryTarget: 'umd',
 		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist/'),
-		devtoolModuleFilenameTemplate: 'webpack:///' + packageConf.name + '/[resource-path]'
+		devtoolModuleFilenameTemplate: 'webpack:///' + packageConfig.name + '/[resource-path]'
 	}
 
 }
