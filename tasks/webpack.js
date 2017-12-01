@@ -31,19 +31,25 @@ function createStream(enableSourceMaps, enableWatch) {
 			gulpIgnore.exclude('*.css.js*')
 		)
 		.pipe(
-			// for modules that plug into the core, webpack produces files that overwrite
-			// the `FullCalendar` browser global each time. strip it out.
 			modify({
 				fileModifier: function(file, content) {
+
+					// for modules that plug into the core, webpack produces files that overwrite
+					// the `FullCalendar` browser global each time. strip it out.
 					if (file.relative !== 'fullcalendar.js') {
 						content = content.replace(
 							/(root|exports)\[['"]FullCalendar['"]\]\s*=\s*/g,
 							function(m) {
-								// replace with spaces of same length, to keep integrity of sourcemaps
+								// replace with spaces of same length to maintain sourcemap integrity
 								return new Array(m.length + 1).join(' ')
 							}
 						)
 					}
+
+					// strip out "use strict", which moment and webpack harmony generates.
+					// replace with spaces of same length to maintain sourcemap integrity.
+					content = content.replace(/['"]use strict['"]/g, '            ');
+
 					return content
 				}
 			})
