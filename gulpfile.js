@@ -15,19 +15,19 @@ gulp.task('default', [ 'dist' ]);
 // everything needed for running demos and developing
 gulp.task('dev', [
 	'webpack:dev',
-	'core:types'
+	'core-types'
 ]);
 
 // watch anything that needs to be built
 gulp.task('watch', [
 	'webpack:watch',
-	'core:types:watch'
+	'core-types:watch'
 ]);
 
 // generates all files that end up in package manager release
 gulp.task('dist', [
 	'webpack',
-	'core:types',
+	'core-types',
 	'minify'
 ]);
 
