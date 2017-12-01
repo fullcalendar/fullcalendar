@@ -5,12 +5,11 @@ const modify = require('gulp-modify-file');
 const zip = require('gulp-zip');
 
 // determines the name of the ZIP file
-const packageConf = require('../package.json');
-const packageId = packageConf.name + '-' + packageConf.version;
+const packageConfig = require('../package.json');
+const packageId = packageConfig.name + '-' + packageConfig.version;
 
 gulp.task('archive', [
 	'archive:dist',
-	'archive:locale',
 	'archive:misc',
 	'archive:deps',
 	'archive:demos'
@@ -21,13 +20,9 @@ gulp.task('archive', [
 		.pipe(gulp.dest('dist/'));
 });
 
-gulp.task('archive:dist', [ 'webpack', 'minify' ], function() {
-	return gulp.src('dist/*.{js,css}') // matches unminified and minified files
-		.pipe(gulp.dest('tmp/' + packageId + '/'));
-});
-
-gulp.task('archive:locale', [ 'webpack' ], function() {
+gulp.task('archive:dist', [ 'dist' ], function() {
 	return gulp.src([
+		'dist/*.{js,css}',
 		'dist/locale-all.js',
 		'dist/locale/*.js'
 	], {
