@@ -3,7 +3,7 @@ const generateDts = require('dts-generator').default;
 const modify = require('gulp-modify-file');
 
 
-gulp.task('core-types', [ 'core-types:raw' ], function() {
+gulp.task('ts-types', [ 'ts-types:raw' ], function() {
 	return gulp.src('tmp/fullcalendar.d.ts')
 		.pipe(
 			modify(function(content) {
@@ -15,7 +15,7 @@ gulp.task('core-types', [ 'core-types:raw' ], function() {
 		);
 });
 
-gulp.task('core-types:raw', function() {
+gulp.task('ts-types:raw', function() {
 	return generateDts({
 		project: '.', // where the tsconfig is
 		name: 'fullcalendar',
@@ -24,12 +24,12 @@ gulp.task('core-types:raw', function() {
 	});
 });
 
-gulp.task('core-types:watch', [ 'webpack:watch' ], function() {
+gulp.task('ts-types:watch', [ 'webpack:watch' ], function() {
 	// HACK
 	// if we watched src/**/*.js files,
 	// it blocked webpack compilation until dts-generator finished for some reason.
 	// instead, wait until we know core compilation has finished before rerunning dts-generator.
-	gulp.watch('dist/fullcalendar.js', [ 'core-types' ]);
+	gulp.watch('dist/fullcalendar.js', [ 'ts-types' ]);
 });
 
 

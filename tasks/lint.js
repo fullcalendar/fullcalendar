@@ -13,7 +13,7 @@ gulp.task('lint', [
 	'lint:built',
 	'lint:tasks',
 	'lint:legacy',
-	'core-types' // make sure typescript defs compile without errors
+	'ts-types' // make sure typescript defs compile without errors
 ]);
 
 gulp.task('lint:core', function() {
