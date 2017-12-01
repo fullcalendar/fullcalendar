@@ -2,6 +2,7 @@ const gulp = require('gulp')
 const webpack = require('webpack-stream')
 const filter = require('gulp-filter')
 const modify = require('gulp-modify-file')
+const uglify = require('gulp-uglify')
 const webpackConfig = require('../webpack.config')
 
 
@@ -17,6 +18,8 @@ gulp.task('webpack:watch', function() {
 	return createStream(true, true)
 })
 
+
+const localeFilter = filter([ '**/locale-all.js', '**/locale/*.js' ], { restore: true })
 
 function createStream(enableSourceMaps, enableWatch) {
 	return gulp.src([]) // don't pass in any files. webpack handles that
@@ -52,6 +55,9 @@ function createStream(enableSourceMaps, enableWatch) {
 				return content
 			})
 		)
+		.pipe(localeFilter)
+		.pipe(uglify()) // uglify only the locale files, then bring back other files to stream
+		.pipe(localeFilter.restore)
 		.pipe(
 			gulp.dest(webpackConfig.output.path)
 		)

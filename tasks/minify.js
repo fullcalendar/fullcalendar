@@ -5,32 +5,21 @@ var rename = require('gulp-rename');
 
 
 gulp.task('minify', [
-	'minify:non-locale',
-	'minify:locale',
+	'minify:js',
 	'minify:css'
 ]);
 
 
-gulp.task('minify:non-locale', [ 'webpack' ], function() {
+gulp.task('minify:js', [ 'webpack' ], function() {
 	return gulp.src([
 		'dist/*.js',
-		'!dist/locale-all.js' // another task handles locale
+		'!dist/locale-all.js' // already minified by webpack task
 	])
 		.pipe(uglify({
 			preserveComments: 'some' // keep comments starting with !
 		}))
 		.pipe(rename({ extname: '.min.js' }))
 		.pipe(gulp.dest('dist/'));
-});
-
-
-gulp.task('minify:locale', [ 'webpack' ], function() {
-	return gulp.src([
-		'dist/locale-all.js',
-		'dist/locale/*.js'
-	], { base: 'dist/' })
-		.pipe(uglify())
-		.pipe(gulp.dest('dist/')); // overwrite original files
 });
 
 
