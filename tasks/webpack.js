@@ -32,7 +32,7 @@ function createStream(enableSourceMaps, enableWatch) {
 			}))
 		)
 		.pipe(
-			// don't write bogus .css.js(.map) files webpack created for standlone css outputs
+			// don't write bogus .css.js(.map) files webpack created for standalone css outputs
 			filter([ '**', '!**/*.css.js*' ])
 		)
 		.pipe(
