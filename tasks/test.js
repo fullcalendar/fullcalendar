@@ -1,14 +1,17 @@
-var gulp = require('gulp');
-var path = require('path');
-var KarmaServer = require('karma').Server;
+const gulp = require('gulp');
+const path = require('path');
+const webpack = require('webpack-stream');
+const KarmaServer = require('karma').Server;
 
-var karmaConf = path.join(__dirname, '../karma.conf.js'); // was getting confused with relative URLs
+const karmaConfigPath = path.join(__dirname, '../karma.conf.js');
+const webpackConfig = require('../webpack.tests.config')
 
 // runs a server, outputs a URL to visit.
 // we want sourcemaps (webpack:dev).
 gulp.task('test', [ 'webpack:dev' ], function() {
+	createStream(true, true); // don't block
 	new KarmaServer({
-		configFile: karmaConf,
+		configFile: karmaConfigPath,
 		singleRun: false,
 		autoWatch: true
 	}, function(exitCode) { // plays best with developing from command line
@@ -18,8 +21,9 @@ gulp.task('test', [ 'webpack:dev' ], function() {
 
 // runs headlessly and continuously, watching files
 gulp.task('test:headless', [ 'webpack' ], function() {
+	createStream(true, true); // don't block
 	new KarmaServer({
-		configFile: karmaConf,
+		configFile: karmaConfigPath,
 		browsers: [ 'PhantomJS_custom' ],
 		singleRun: false,
 		autoWatch: true
@@ -29,9 +33,9 @@ gulp.task('test:headless', [ 'webpack' ], function() {
 });
 
 // runs headlessly once, then exits
-gulp.task('test:single', [ 'webpack' ], function(done) {
+gulp.task('test:single', [ 'webpack', 'test:compile' ], function(done) {
 	new KarmaServer({
-		configFile: karmaConf,
+		configFile: karmaConfigPath,
 		browsers: [ 'PhantomJS_custom' ],
 		singleRun: true,
 		autoWatch: false
@@ -39,3 +43,18 @@ gulp.task('test:single', [ 'webpack' ], function(done) {
 		done(results.exitCode);
 	}).start();
 });
+
+gulp.task('test:compile', function(done) {
+	return createStream(true);
+});
+
+function createStream(enableSourceMaps, enableWatch) {
+	return gulp.src([]) // don't pass in any files. webpack handles that
+		.pipe(
+			webpack(Object.assign({}, webpackConfig, {
+				devtool: enableSourceMaps ? 'source-map' : false, // also 'inline-source-map'
+				watch: enableWatch || false,
+			}))
+		)
+		.pipe(gulp.dest(webpackConfig.output.path))
+}

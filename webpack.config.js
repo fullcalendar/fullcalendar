@@ -1,4 +1,5 @@
 const fs = require('fs')
+const glob = require('glob')
 const path = require('path')
 const webpack = require('webpack')
 const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460

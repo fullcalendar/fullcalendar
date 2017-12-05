@@ -35,8 +35,7 @@ module.exports = function(config) {
 			'node_modules/jquery-simulate/jquery.simulate.js',
 
 			'tests/lib/**/*.js',
-			'tests/**/*.js',
-
+			'tmp/compiled-tests.js',
 			'tests/base.css',
 
 			// serve misc files, but don't watch
