@@ -1,6 +1,5 @@
-const fs = require('fs')
-const glob = require('glob')
 const path = require('path')
+const glob = require('glob')
 const webpack = require('webpack')
 const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -94,22 +93,15 @@ module.exports = {
 }
 
 /*
-TODO: prevent output of all "use strict"
 TODO: try https://webpack.js.org/plugins/module-concatenation-plugin/
 */
 function generateLocaleMap() {
 	const map = {}
 
-	fs.readdirSync(
-		path.resolve(__dirname, 'locale/')
-	).forEach(function(filename) {
-		if (
-			!filename.match(/^[\._]/) && // skip hidden files or filenames starting with _
-			filename.match(/\.js$/) // must be js
-		) {
-			map[
-				'locale/' + filename.replace(/\.js$/, '') // strip file extension
-			] = './locale/' + filename
+	glob.sync('locale/*.js').forEach(function(path) {
+		if (path !== 'locale/_reset.js') {
+			// strip out .js to get module name. also, path must start with ./
+			map[path.replace(/\.js$/, '')] = './' + path;
 		}
 	})
 
