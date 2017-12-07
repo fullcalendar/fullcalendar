@@ -1,3 +1,4 @@
+import { getRectCenter, getRectTopLeft, subtractPoints, addPoints } from '../lib/geom';
 
 var EventResizeUtils = {
 
@@ -8,14 +9,14 @@ var EventResizeUtils = {
 
 		var resizerEl = eventEl.find('.fc-resizer');
 		var resizerRect = resizerEl[0].getBoundingClientRect();
-		var resizerCenter = Geom.getRectCenter(resizerRect);
+		var resizerCenter = getRectCenter(resizerRect);
 
-		var vector = Geom.subtractPoints(
+		var vector = subtractPoints(
 			resizerCenter,
-			Geom.getRectTopLeft(rect0)
+			getRectTopLeft(rect0)
 		);
-		var point1 = Geom.addPoints(
-			Geom.getRectTopLeft(rect1),
+		var point1 = addPoints(
+			getRectTopLeft(rect1),
 			vector
 		);
 		var deferred = $.Deferred();

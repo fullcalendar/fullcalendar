@@ -1,3 +1,4 @@
+import { getRectCenter, intersectRects } from '../lib/geom';
 
 /*
 TODO: Don't rely on legacy simulateDrag
@@ -11,10 +12,10 @@ var EventDragUtils = {
 	drag: function(rect0, rect1, debug) {
 		var el = EventRenderUtils.getSingleEl();
 		var elRect = el[0].getBoundingClientRect();
-		var point0 = Geom.getRectCenter(
-			Geom.intersectRects(elRect, rect0)
+		var point0 = getRectCenter(
+			intersectRects(elRect, rect0)
 		);
-		var point1 = Geom.getRectCenter(rect1);
+		var point1 = getRectCenter(rect1);
 		var deferred = $.Deferred();
 
 		el.simulate('drag', {
