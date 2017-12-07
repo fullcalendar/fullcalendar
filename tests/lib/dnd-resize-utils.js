@@ -1,6 +1,6 @@
 
 // this function has been mangled to work with external jqui draggables as well
-function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
+export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
 	var eventsRendered = false;
 
 	options.editable = true;
@@ -87,7 +87,7 @@ function testEventDrag(options, dropDate, expectSuccess, callback, eventClassNam
 }
 
 
-function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName) {
+export function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName) {
 	var eventsRendered = false;
 
 	options.editable = true;
@@ -159,7 +159,7 @@ function testEventResize(options, resizeDate, expectSuccess, callback, eventClas
 
 
 // always starts at 2014-11-12
-function testSelection(options, startTime, end, expectSuccess, callback) {
+export function testSelection(options, startTime, end, expectSuccess, callback) {
 	var successfulSelection = false;
 	var calendar;
 	var firstDayEl, lastDayEl;

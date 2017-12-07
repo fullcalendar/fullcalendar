@@ -1,3 +1,4 @@
+import { testEventDrag } from '../lib/dnd-resize-utils';
 
 describe('advanced external dnd', function() {
 	var options;

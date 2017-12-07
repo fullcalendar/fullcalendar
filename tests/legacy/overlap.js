@@ -1,3 +1,4 @@
+import { testEventDrag, testEventResize, testSelection } from '../lib/dnd-resize-utils';
 
 describe('event overlap', function() {
 	var options;
