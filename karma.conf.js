@@ -34,9 +34,8 @@ module.exports = function(config) {
 			'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
 			'node_modules/jquery-simulate/jquery.simulate.js',
 
-			'tests/lib/**/*.js',
-			'tmp/compiled-tests.js',
 			'tests/base.css',
+			'tmp/compiled-tests.js',
 
 			// serve misc files, but don't watch
 			{
@@ -46,13 +45,11 @@ module.exports = function(config) {
 				pattern: '{' + [
 					'dist', // for sourcemap files
 					'src', // for files referenced by sourcemaps
+					'tmp', // for compiled-tests sourcemap
 					'node_modules' // 3rd party lib dependencies, like jquery-ui theme images
 				].join(',') + '}/**/*'
 			}
 		],
-
-		// list of files to exclude
-		exclude: [],
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
