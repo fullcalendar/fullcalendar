@@ -1,3 +1,4 @@
+import * as DayGridEventDragUtils from './DayGridEventDragUtils';
 
 describe('showNonCurrentDates event dragging', function() {
 	pushOptions({

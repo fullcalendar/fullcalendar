@@ -1,15 +1,11 @@
 
-var DayGridEventDragUtils = {
+export function drag(startDate, endDate, debug) {
+	var el0 = DayGridRenderUtils.getSingleDayEl(startDate);
+	var el1 = DayGridRenderUtils.getSingleDayEl(endDate);
 
-	drag: function(startDate, endDate, debug) {
-		var el0 = DayGridRenderUtils.getSingleDayEl(startDate);
-		var el1 = DayGridRenderUtils.getSingleDayEl(endDate);
-
-		return EventDragUtils.drag(
-			el0[0].getBoundingClientRect(),
-			el1[0].getBoundingClientRect(),
-			debug
-		);
-	}
-
-};
+	return EventDragUtils.drag(
+		el0[0].getBoundingClientRect(),
+		el1[0].getBoundingClientRect(),
+		debug
+	);
+}
