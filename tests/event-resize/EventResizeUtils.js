@@ -1,4 +1,6 @@
 import { getRectCenter, getRectTopLeft, subtractPoints, addPoints } from '../lib/geom';
+import * as EventRenderUtils from '../event-render/EventRenderUtils';
+
 
 var EventResizeUtils = {
 

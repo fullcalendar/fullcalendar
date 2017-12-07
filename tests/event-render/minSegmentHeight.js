@@ -1,3 +1,5 @@
+import * as EventRenderUtils from './EventRenderUtils';
+
 describe('short event rendering with agendaEventMinHeight', function() {
 	pushOptions({
 		defaultView: 'agendaWeek',
