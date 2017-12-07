@@ -1,4 +1,3 @@
-(function($) {
 
 /* General Utils
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -295,6 +294,3 @@ function isPoint(input) {
 	return typeof input === 'object' && // `in` operator only works on objects
 		'left' in input && 'top' in input;
 }
-
-
-})(jQuery);
