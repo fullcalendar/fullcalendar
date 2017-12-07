@@ -1,3 +1,4 @@
+import { getTimeTexts } from './TimeGridEventRenderUtils';
 
 describe('the time text on events', function() {
 
@@ -18,7 +19,7 @@ describe('the time text on events', function() {
 			});
 
 			expect(
-				TimeGridEventRenderUtils.getTimeTexts()
+				getTimeTexts()
 			).toEqual([
 				moment('2017-07-03T23:00:00').format('h:mm Z') + ' - ' +
 				moment('2017-07-04T00:00:00').format('h:mm Z'),

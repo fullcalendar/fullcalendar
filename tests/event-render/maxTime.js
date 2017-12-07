@@ -1,3 +1,4 @@
+import { checkEventRendering } from './TimeGridEventRenderUtils';
 
 describe('event rendering with maxTime', function() {
 	pushOptions({
@@ -16,7 +17,7 @@ describe('event rendering with maxTime', function() {
 
 		it('renders two event elements in the correct places', function() {
 			initCalendar();
-			var res = TimeGridEventRenderUtils.checkEventRendering(
+			var res = checkEventRendering(
 				'2017-03-22T00:00:00',
 				'2017-03-22T02:00:00'
 			);
