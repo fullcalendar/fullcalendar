@@ -1,3 +1,5 @@
+import * as EventResizeUtils from './EventResizeUtils';
+
 
 describe('validRange event resizing', function() {
 
