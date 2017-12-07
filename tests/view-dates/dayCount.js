@@ -1,3 +1,4 @@
+import { expectActiveRange } from './ViewDateUtils';
 
 describe('dayCount', function() {
 	pushOptions({
@@ -22,7 +23,7 @@ describe('dayCount', function() {
 	}, function() {
 		it('renders the exact day count', function() {
 			initCalendar();
-			ViewDateUtils.expectActiveRange('2017-03-15', '2017-03-22');
+			expectActiveRange('2017-03-15', '2017-03-22');
 			ViewRenderUtils.expectDay('2017-03-15', true);
 			ViewRenderUtils.expectDay('2017-03-16', true);
 			ViewRenderUtils.expectDay('2017-03-17', true);
@@ -38,7 +39,7 @@ describe('dayCount', function() {
 			defaultView: 'agenda',
 			dayCount: 9
 		});
-		ViewDateUtils.expectActiveRange('2017-03-15', '2017-03-28');
+		expectActiveRange('2017-03-15', '2017-03-28');
 		ViewRenderUtils.expectDay('2017-03-15', true);
 		ViewRenderUtils.expectDay('2017-03-16', true);
 		ViewRenderUtils.expectDay('2017-03-17', true);

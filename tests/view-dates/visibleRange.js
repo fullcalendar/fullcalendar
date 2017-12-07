@@ -1,3 +1,4 @@
+import { expectActiveRange } from './ViewDateUtils';
 
 describe('visibleRange', function() {
 
@@ -34,7 +35,7 @@ describe('visibleRange', function() {
 			}, function() {
 				it('gets set to the given range', function() {
 					initCalendar();
-					ViewDateUtils.expectActiveRange(startInput, endInput);
+					expectActiveRange(startInput, endInput);
 				});
 			});
 
@@ -51,7 +52,7 @@ describe('visibleRange', function() {
 					},
 					defaultView: 'myCustomView'
 				});
-				ViewDateUtils.expectActiveRange(startInput, endInput);
+				expectActiveRange(startInput, endInput);
 			});
 
 			it('ignores dateAlignment', function() {
@@ -62,7 +63,7 @@ describe('visibleRange', function() {
 						end: endInput
 					}
 				});
-				ViewDateUtils.expectActiveRange(startInput, endInput);
+				expectActiveRange(startInput, endInput);
 			});
 
 			it('works as a dynamic option', function() {
@@ -73,7 +74,7 @@ describe('visibleRange', function() {
 					start: startInput,
 					end: endInput
 				});
-				ViewDateUtils.expectActiveRange(startInput, endInput);
+				expectActiveRange(startInput, endInput);
 			});
 		});
 
@@ -144,7 +145,7 @@ describe('visibleRange', function() {
 					initCalendar({
 						defaultDate: '2017-08-01'
 					})
-					ViewDateUtils.expectActiveRange('2017-08-01', '2017-08-02');
+					expectActiveRange('2017-08-01', '2017-08-02');
 				});
 			});
 		});
@@ -160,7 +161,7 @@ describe('visibleRange', function() {
 					}
 				});
 				currentCalendar.changeView('agendaDay');
-				ViewDateUtils.expectActiveRange('2017-06-26', '2017-06-27');
+				expectActiveRange('2017-06-26', '2017-06-27');
 			});
 
 			it('constrains the current date to the end of visibleRange', function() {
@@ -172,7 +173,7 @@ describe('visibleRange', function() {
 					}
 				});
 				currentCalendar.changeView('agendaDay');
-				ViewDateUtils.expectActiveRange('2017-06-28', '2017-06-29');
+				expectActiveRange('2017-06-28', '2017-06-29');
 			});
 		});
 	});
@@ -191,7 +192,7 @@ describe('visibleRange', function() {
 
 		it('respects the given range', function() {
 			initCalendar();
-			ViewDateUtils.expectActiveRange('2017-06-07', '2017-06-10');
+			expectActiveRange('2017-06-07', '2017-06-10');
 		});
 	});
 
@@ -209,7 +210,7 @@ describe('visibleRange', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewDateUtils.expectActiveRange('2015-06-08', '2015-06-11');
+			expectActiveRange('2015-06-08', '2015-06-11');
 		});
 	});
 
@@ -226,7 +227,7 @@ describe('visibleRange', function() {
 					end: '2017-07-04'
 				}
 			});
-			ViewDateUtils.expectActiveRange('2015-06-07', '2015-06-14');
+			expectActiveRange('2015-06-07', '2015-06-14');
 		});
 	});
 });

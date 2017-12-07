@@ -1,3 +1,4 @@
+import { expectActiveRange } from './ViewDateUtils';
 
 describe('next', function() {
 	pushOptions({
@@ -13,7 +14,7 @@ describe('next', function() {
 			it('moves forward by one week', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectActiveRange('2017-06-11', '2017-06-18');
+				expectActiveRange('2017-06-11', '2017-06-18');
 			});
 		})
 
@@ -25,7 +26,7 @@ describe('next', function() {
 			it('moves forward by two weeks', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectActiveRange('2017-06-18', '2017-06-25');
+				expectActiveRange('2017-06-18', '2017-06-25');
 			});
 		});
 
@@ -46,7 +47,7 @@ describe('next', function() {
 			it('moves forward by one month', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectActiveRange('2017-06-25', '2017-08-06');
+				expectActiveRange('2017-06-25', '2017-08-06');
 			});
 		});
 
@@ -58,7 +59,7 @@ describe('next', function() {
 			it('moves forward by two months', function() {
 				initCalendar();
 				currentCalendar.next();
-				ViewDateUtils.expectActiveRange('2017-07-30', '2017-09-10');
+				expectActiveRange('2017-07-30', '2017-09-10');
 			});
 		});
 	});
@@ -75,7 +76,7 @@ describe('next', function() {
 				it('moves forward three days', function() {
 					initCalendar();
 					currentCalendar.next();
-					ViewDateUtils.expectActiveRange('2017-06-11', '2017-06-14');
+					expectActiveRange('2017-06-11', '2017-06-14');
 				});
 			});
 
@@ -86,7 +87,7 @@ describe('next', function() {
 				it('moves forward two days', function() {
 					initCalendar();
 					currentCalendar.next();
-					ViewDateUtils.expectActiveRange('2017-06-10', '2017-06-13');
+					expectActiveRange('2017-06-10', '2017-06-13');
 				});
 			});
 		})
@@ -100,7 +101,7 @@ describe('next', function() {
 				it('moves forward one week', function() {
 					initCalendar();
 					currentCalendar.next();
-					ViewDateUtils.expectActiveRange('2017-06-11', '2017-06-14');
+					expectActiveRange('2017-06-11', '2017-06-14');
 				});
 			});
 
@@ -121,7 +122,7 @@ describe('next', function() {
 					called = false;
 					currentCalendar.next();
 
-					ViewDateUtils.expectActiveRange('2017-06-04', '2017-06-07'); // the same as how it started
+					expectActiveRange('2017-06-04', '2017-06-07'); // the same as how it started
 					expect(called).toBe(false);
 				});
 			});

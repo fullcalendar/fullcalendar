@@ -1,3 +1,4 @@
+import { expectActiveRange } from './ViewDateUtils';
 
 /*
 SEE ALSO: next/prev
@@ -16,7 +17,7 @@ describe('dateAlignment', function() {
 
 		it('aligns with the week', function() {
 			initCalendar();
-			ViewDateUtils.expectActiveRange('2017-06-11', '2017-06-14');
+			expectActiveRange('2017-06-11', '2017-06-14');
 		});
 	});
 
@@ -28,7 +29,7 @@ describe('dateAlignment', function() {
 
 		it('aligns with first visible day of the week', function() {
 			initCalendar();
-			ViewDateUtils.expectActiveRange('2017-06-12', '2017-06-17');
+			expectActiveRange('2017-06-12', '2017-06-17');
 		});
 	});
 });
