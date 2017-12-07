@@ -5,6 +5,9 @@ TODO:
 SEE ALSO:
 - visibleRange, dateAlignment, dateIncrement
 */
+
+import { expectButtonEnabled } from './ToolbarUtils';
+
 describe('next button', function() {
 	pushOptions({
 		defaultView: 'agendaWeek',
@@ -14,7 +17,7 @@ describe('next button', function() {
 	describe('when there is no validRange', function() {
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', true);
+			expectButtonEnabled('next', true);
 		});
 	});
 
@@ -25,7 +28,7 @@ describe('next button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', true);
+			expectButtonEnabled('next', true);
 		});
 	});
 
@@ -36,7 +39,7 @@ describe('next button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', true);
+			expectButtonEnabled('next', true);
 		});
 	});
 
@@ -47,7 +50,7 @@ describe('next button', function() {
 		});
 		it('is disabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', false);
+			expectButtonEnabled('next', false);
 		});
 	});
 
@@ -60,7 +63,7 @@ describe('next button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', true);
+			expectButtonEnabled('next', true);
 		});
 	});
 
@@ -72,7 +75,7 @@ describe('next button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('next', true);
+			expectButtonEnabled('next', true);
 		});
 	});
 });

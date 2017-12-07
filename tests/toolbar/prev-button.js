@@ -5,6 +5,9 @@ TODO:
 SEE ALSO:
 - other range intersection tests handled by next-button
 */
+
+import { expectButtonEnabled } from './ToolbarUtils';
+
 describe('prev button', function() {
 	pushOptions({
 		defaultView: 'agendaWeek',
@@ -14,7 +17,7 @@ describe('prev button', function() {
 	describe('when there is no specified validRange', function() {
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('prev', true);
+			expectButtonEnabled('prev', true);
 		});
 	});
 
@@ -25,7 +28,7 @@ describe('prev button', function() {
 		});
 		it('is disabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('prev', false);
+			expectButtonEnabled('prev', false);
 		});
 	});
 
@@ -39,7 +42,7 @@ describe('prev button', function() {
 
 		it('when prev date range is partially before validRange', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('prev', false);
+			expectButtonEnabled('prev', false);
 		});
 	});
 
@@ -52,7 +55,7 @@ describe('prev button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('prev', true);
+			expectButtonEnabled('prev', true);
 		});
 	});
 
@@ -64,7 +67,7 @@ describe('prev button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('prev', true);
+			expectButtonEnabled('prev', true);
 		});
 	});
 });

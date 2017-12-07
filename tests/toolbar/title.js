@@ -1,3 +1,4 @@
+import { getTitleText } from './ToolbarUtils';
 
 describe('calendar title', function() {
 	pushOptions({
@@ -9,11 +10,11 @@ describe('calendar title', function() {
 			initCalendar({
 				defaultView: 'month'
 			});
-			expect(ToolbarUtils.getTitleText()).toBe('March 2017');
+			expect(getTitleText()).toBe('March 2017');
 			currentCalendar.changeView('agendaWeek');
-			expect(ToolbarUtils.getTitleText()).toBe('Mar 26 – Apr 1, 2017');
+			expect(getTitleText()).toBe('Mar 26 – Apr 1, 2017');
 			currentCalendar.changeView('month');
-			expect(ToolbarUtils.getTitleText()).toBe('March 2017');
+			expect(getTitleText()).toBe('March 2017');
 		});
 	});
 });

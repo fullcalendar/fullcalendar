@@ -5,6 +5,9 @@ TODO:
 SEE ALSO:
 - other range intersection tests handled by next-button
 */
+
+import { expectButtonEnabled } from './ToolbarUtils';
+
 describe('today button', function() {
 	pushOptions({
 		defaultView: 'month',
@@ -17,7 +20,7 @@ describe('today button', function() {
 		});
 		it('is disabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('today', false);
+			expectButtonEnabled('today', false);
 		});
 	})
 
@@ -27,7 +30,7 @@ describe('today button', function() {
 		});
 		it('is enabled', function() {
 			initCalendar();
-			ToolbarUtils.expectButtonEnabled('today', true);
+			expectButtonEnabled('today', true);
 		});
 	});
 
@@ -39,7 +42,7 @@ describe('today button', function() {
 		describe('when no specified validRange', function() {
 			it('is enabled', function() {
 				initCalendar();
-				ToolbarUtils.expectButtonEnabled('today', true);
+				expectButtonEnabled('today', true);
 			});
 		});
 
@@ -49,7 +52,7 @@ describe('today button', function() {
 			});
 			it('is disabled', function() {
 				initCalendar();
-				ToolbarUtils.expectButtonEnabled('today', false);
+				expectButtonEnabled('today', false);
 			});
 		});
 	});
