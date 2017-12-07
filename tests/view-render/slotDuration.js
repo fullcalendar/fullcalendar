@@ -1,3 +1,5 @@
+import * as TimeGridRenderUtils from './TimeGridRenderUtils';
+
 
 describe('slotDuration', function() {
 	pushOptions({

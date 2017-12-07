@@ -1,4 +1,6 @@
 import { expectActiveRange } from './ViewDateUtils';
+import * as TimeGridRenderUtils from '../view-render/TimeGridRenderUtils';
+
 
 describe('next', function() {
 	pushOptions({
