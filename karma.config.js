@@ -37,7 +37,7 @@ module.exports = function(config) {
 			'tests/base.css',
 			'tests/globals.js',
 			'tests/jasmine-ext.js',
-			'tmp/compiled-tests.js',
+			'tmp/tests-compiled.js',
 
 			// serve misc files, but don't watch
 			{

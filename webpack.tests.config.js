@@ -1,3 +1,4 @@
+const path = require('path');
 const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
 
 module.exports = {
@@ -32,7 +33,8 @@ module.exports = {
 
 	output: {
 		libraryTarget: 'umd',
-		filename: 'compiled-tests.js',
+		filename: 'tests-compiled.js',
+		path: path.resolve(__dirname, 'tmp/'),
 		devtoolModuleFilenameTemplate: 'webpack:///tests/[resource-path]'
 	}
 

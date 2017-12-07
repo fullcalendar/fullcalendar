@@ -1,4 +1,4 @@
-import { expectActiveRange } from './ViewDateUtils';
+import { expectActiveRange } from '../view-dates/ViewDateUtils';
 import * as TimeGridRenderUtils from '../view-render/TimeGridRenderUtils';
 
 
