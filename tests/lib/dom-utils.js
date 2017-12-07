@@ -51,6 +51,11 @@ function getHandlerHash(el) {
 }
 
 
+export function isElWithinRtl(el) {
+	return el.closest('.fc').hasClass('fc-rtl');
+}
+
+
 /* copied from other proj
 ----------------------------------------------------------------------------------------------------------------------*/
 

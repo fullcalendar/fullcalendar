@@ -2,7 +2,8 @@
 
 import { getBoundingRect } from '../lib/dom-utils';
 
-function dragTimeGridEvent(eventEl, dropDate) {
+
+export function dragTimeGridEvent(eventEl, dropDate) {
 	return new Promise(function(resolve) {
 		var calendar = $('#cal').fullCalendar('getCalendar');
 		var modifiedEvent = null;
@@ -24,7 +25,7 @@ function dragTimeGridEvent(eventEl, dropDate) {
 }
 
 
-function selectTimeGrid(start, inclusiveEnd) {
+export function selectTimeGrid(start, inclusiveEnd) {
 	return new Promise(function(resolve) {
 		var calendar = $('#cal').fullCalendar('getCalendar');
 		var selectInfo = null;
@@ -62,7 +63,7 @@ function getTimeGridPoint(date) {
 }
 
 
-function getTimeGridLine(date) { // not in Scheduler
+export function getTimeGridLine(date) { // not in Scheduler
 	var date = $.fullCalendar.moment.parseZone(date);
 	var top = getTimeGridTop(date.time());
 	var dayEls = getTimeGridDayEls(date);
@@ -80,7 +81,7 @@ function getTimeGridLine(date) { // not in Scheduler
 }
 
 
-function getTimeGridTop(time) {
+export function getTimeGridTop(time) {
 	var time = moment.duration(time);
 	var slotEls = getTimeGridSlotEls(time);
 
@@ -90,32 +91,16 @@ function getTimeGridTop(time) {
 }
 
 
-function getTimeGridDayEls(date) {
+export function getTimeGridDayEls(date) {
 	var date = $.fullCalendar.moment.parseZone(date);
 
 	return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]');
 }
 
 
-function getTimeGridSlotEls(timeDuration) {
+export function getTimeGridSlotEls(timeDuration) {
 	var timeDuration = moment.duration(timeDuration);
 	var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration);
 
 	return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]');
-}
-
-
-function isElWithinRtl(el) {
-	return el.closest('.fc').hasClass('fc-rtl');
-}
-
-
-function getBoundingRect(el) {
-	var el = $(el);
-	expect(el.length).toBe(1);
-	var rect = el.offset();
-	rect.right = rect.left + el.outerWidth();
-	rect.bottom = rect.top + el.outerHeight();
-	rect.node = el[0]; // very useful for debugging
-	return rect;
 }

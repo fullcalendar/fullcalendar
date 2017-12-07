@@ -1,3 +1,5 @@
+import { dragTimeGridEvent } from '../lib/time-grid';
+
 describe('eventAllow', function() {
 	var options;
 

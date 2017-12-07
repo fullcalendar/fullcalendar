@@ -1,3 +1,5 @@
+import { selectTimeGrid } from '../lib/time-grid';
+
 describe('selectAllow', function() {
 	var options;
 

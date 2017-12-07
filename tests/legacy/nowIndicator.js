@@ -1,4 +1,5 @@
-import { getBoundingRect } from '../lib/dom-utils';
+import { getBoundingRect, isElWithinRtl } from '../lib/dom-utils';
+import { getTimeGridLine } from '../lib/time-grid';
 
 describe('now indicator', function() {
 	var FC = $.fullCalendar;

@@ -172,10 +172,6 @@ function describeTimezone(name, callback) {
 // Misc
 // ---------------------------------------------------------------------------------------------------------------------
 
-function isElWithinRtl(el) {
-	return el.closest('.fc').hasClass('fc-rtl');
-}
-
 function oneCall(func) {
 	var called;
 	called = false;
