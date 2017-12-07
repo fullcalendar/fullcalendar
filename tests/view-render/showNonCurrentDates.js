@@ -1,3 +1,5 @@
+import { expectDayRange } from './ViewRenderUtils';
+
 
 describe('showNonCurrentDates', function() {
 	pushOptions({
@@ -12,7 +14,7 @@ describe('showNonCurrentDates', function() {
 
 		it('does not render other months\' dates', function() {
 			initCalendar();
-			ViewRenderUtils.expectDayRange('2017-06-01', '2017-07-01');
+			expectDayRange('2017-06-01', '2017-07-01');
 		});
 	});
 
@@ -24,7 +26,7 @@ describe('showNonCurrentDates', function() {
 
 		it('has no effect', function() {
 			initCalendar();
-			ViewRenderUtils.expectDayRange('2017-05-28', '2017-06-04');
+			expectDayRange('2017-05-28', '2017-06-04');
 		});
 	});
 });

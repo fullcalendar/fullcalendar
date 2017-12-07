@@ -1,3 +1,5 @@
+import { expectDayRange } from './ViewRenderUtils';
+
 
 describe('validRange rendering', function() {
 
@@ -12,7 +14,7 @@ describe('validRange rendering', function() {
 
 			it('does not render days before', function() {
 				initCalendar();
-				ViewRenderUtils.expectDayRange('2017-06-07', '2017-07-09');
+				expectDayRange('2017-06-07', '2017-07-09');
 			});
 		});
 
@@ -25,7 +27,7 @@ describe('validRange rendering', function() {
 
 			it('does not render days before', function() {
 				initCalendar();
-				ViewRenderUtils.expectDayRange('2017-06-06', '2017-06-11');
+				expectDayRange('2017-06-06', '2017-06-11');
 			});
 		});
 	});
@@ -41,7 +43,7 @@ describe('validRange rendering', function() {
 
 			it('does not render days on or after', function() {
 				initCalendar();
-				ViewRenderUtils.expectDayRange('2017-05-28', '2017-06-07');
+				expectDayRange('2017-05-28', '2017-06-07');
 			});
 		});
 
@@ -54,7 +56,7 @@ describe('validRange rendering', function() {
 
 			it('does not render days on or after', function() {
 				initCalendar();
-				ViewRenderUtils.expectDayRange('2017-06-04', '2017-06-06');
+				expectDayRange('2017-06-04', '2017-06-06');
 			});
 		});
 	});

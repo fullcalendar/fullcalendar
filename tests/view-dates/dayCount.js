@@ -1,4 +1,5 @@
 import { expectActiveRange } from './ViewDateUtils';
+import { expectDay } from '../view-render/ViewRenderUtils';
 
 describe('dayCount', function() {
 	pushOptions({
@@ -24,13 +25,13 @@ describe('dayCount', function() {
 		it('renders the exact day count', function() {
 			initCalendar();
 			expectActiveRange('2017-03-15', '2017-03-22');
-			ViewRenderUtils.expectDay('2017-03-15', true);
-			ViewRenderUtils.expectDay('2017-03-16', true);
-			ViewRenderUtils.expectDay('2017-03-17', true);
-			ViewRenderUtils.expectDay('2017-03-18', false); // sat
-			ViewRenderUtils.expectDay('2017-03-19', false); // sun
-			ViewRenderUtils.expectDay('2017-03-20', true);
-			ViewRenderUtils.expectDay('2017-03-21', true);
+			expectDay('2017-03-15', true);
+			expectDay('2017-03-16', true);
+			expectDay('2017-03-17', true);
+			expectDay('2017-03-18', false); // sat
+			expectDay('2017-03-19', false); // sun
+			expectDay('2017-03-20', true);
+			expectDay('2017-03-21', true);
 		});
 	});
 
@@ -40,18 +41,18 @@ describe('dayCount', function() {
 			dayCount: 9
 		});
 		expectActiveRange('2017-03-15', '2017-03-28');
-		ViewRenderUtils.expectDay('2017-03-15', true);
-		ViewRenderUtils.expectDay('2017-03-16', true);
-		ViewRenderUtils.expectDay('2017-03-17', true);
-		ViewRenderUtils.expectDay('2017-03-18', false); // sat
-		ViewRenderUtils.expectDay('2017-03-19', false); // sun
-		ViewRenderUtils.expectDay('2017-03-20', true);
-		ViewRenderUtils.expectDay('2017-03-21', true);
-		ViewRenderUtils.expectDay('2017-03-22', true);
-		ViewRenderUtils.expectDay('2017-03-23', true);
-		ViewRenderUtils.expectDay('2017-03-24', true);
-		ViewRenderUtils.expectDay('2017-03-25', false); // sat
-		ViewRenderUtils.expectDay('2017-03-26', false); // sun
-		ViewRenderUtils.expectDay('2017-03-27', true);
+		expectDay('2017-03-15', true);
+		expectDay('2017-03-16', true);
+		expectDay('2017-03-17', true);
+		expectDay('2017-03-18', false); // sat
+		expectDay('2017-03-19', false); // sun
+		expectDay('2017-03-20', true);
+		expectDay('2017-03-21', true);
+		expectDay('2017-03-22', true);
+		expectDay('2017-03-23', true);
+		expectDay('2017-03-24', true);
+		expectDay('2017-03-25', false); // sat
+		expectDay('2017-03-26', false); // sun
+		expectDay('2017-03-27', true);
 	});
 });
