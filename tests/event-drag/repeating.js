@@ -1,3 +1,4 @@
+import * as EventDragUtils from './EventDragUtils';
 import * as TimeGridEventDragUtils from './TimeGridEventDragUtils';
 
 describe('event dragging on repeating events', function() {

@@ -1,3 +1,5 @@
+import * as EventDragUtils from './EventDragUtils';
+
 
 export function drag(startDate, endDate, debug) {
 	var el0 = DayGridRenderUtils.getSingleDayEl(startDate);
