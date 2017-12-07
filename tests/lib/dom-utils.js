@@ -1,10 +1,10 @@
 
-var RED_REGEX = /red|rgb\(255,\s*0,\s*0\)/;
-var GREEN_REGEX = /green|rgb\(0,\s*255,\s*0\)/;
-var BLUE_REGEX = /blue|rgb\(0,\s*0,\s*255\)/;
+export const RED_REGEX = /red|rgb\(255,\s*0,\s*0\)/;
+export const GREEN_REGEX = /green|rgb\(0,\s*255,\s*0\)/;
+export const BLUE_REGEX = /blue|rgb\(0,\s*0,\s*255\)/;
 
 
-function getStockScrollbarWidths(dir) {
+export function getStockScrollbarWidths(dir) {
 	var el = $('<div><div style="position:relative"/></div>')
 		.css({
 			position: 'absolute',
@@ -34,7 +34,7 @@ function getStockScrollbarWidths(dir) {
 }
 
 
-function countHandlers(el) {
+export function countHandlers(el) {
 	var hash = getHandlerHash(el);
 	var cnt = 0;
 
@@ -54,7 +54,7 @@ function getHandlerHash(el) {
 /* copied from other proj
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function doElsMatchSegs(els, segs, segToRectFunc) {
+export function doElsMatchSegs(els, segs, segToRectFunc) {
 	var elRect, found, i, j, k, len, len1, seg, segRect, unmatchedRects;
 	unmatchedRects = getBoundingRects(els);
 	if (unmatchedRects.length !== segs.length) {
@@ -92,7 +92,7 @@ function getBoundingRects(els) {
 	})();
 }
 
-function getBoundingRect(el) {
+export function getBoundingRect(el) {
 	var rect;
 	el = $(el);
 	expect(el.length).toBe(1);

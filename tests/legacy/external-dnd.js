@@ -1,3 +1,4 @@
+import { countHandlers } from '../lib/dom-utils';
 
 describe('external drag and drop', function() {
 

@@ -1,3 +1,4 @@
+import { RED_REGEX } from '../lib/dom-utils';
 
 describe('background events', function() {
 

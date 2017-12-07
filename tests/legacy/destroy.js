@@ -1,3 +1,5 @@
+import { countHandlers } from '../lib/dom-utils';
+
 describe('destroy', function() {
 
 	beforeEach(function() {

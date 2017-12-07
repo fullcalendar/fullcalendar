@@ -1,5 +1,7 @@
 // most other businessHours tests are in background-events.js
 
+import { doElsMatchSegs, getBoundingRect } from '../lib/dom-utils';
+
 describe('businessHours', function() {
 	var options;
 

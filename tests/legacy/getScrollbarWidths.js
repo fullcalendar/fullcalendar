@@ -1,3 +1,4 @@
+import { getStockScrollbarWidths } from '../lib/dom-utils';
 
 describe('getScrollbarWidths', function() {
 

@@ -1,3 +1,5 @@
+import { getBoundingRect } from '../lib/dom-utils';
+
 describe('now indicator', function() {
 	var FC = $.fullCalendar;
 	var options;

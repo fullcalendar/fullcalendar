@@ -1,6 +1,6 @@
-
 // TODO: consolidate with scheduler
 
+import { getBoundingRect } from '../lib/dom-utils';
 
 function dragTimeGridEvent(eventEl, dropDate) {
 	return new Promise(function(resolve) {
