@@ -6,7 +6,10 @@ const webpack = require('webpack-stream');
 const KarmaServer = require('karma').Server;
 
 const karmaConfigPath = path.join(__dirname, '../karma.config.js');
-const webpackConfig = require('../webpack.tests.config')
+const webpackConfig = require('../webpack.tests.config');
+
+// NOTE: top-level JS files in tests/ will be executed first
+const TEST_GLOB = 'tests/*/*.{js,ts}';
 
 // runs a server, outputs a URL to visit.
 // expects dist to be compiled or watcher to be running.
@@ -47,8 +50,6 @@ gulp.task('test:single', [ 'webpack', 'test:sync-compile' ], function(done) {
 
 
 // compilation
-
-const TEST_GLOB = 'tests/**/*.{js,ts}';
 
 gulp.task('test:sync-compile', [ 'test:index' ], function() {
 	return createStream();
