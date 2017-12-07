@@ -5,7 +5,7 @@ const gulp = require('gulp');
 const webpack = require('webpack-stream');
 const KarmaServer = require('karma').Server;
 
-const karmaConfigPath = path.join(__dirname, '../karma.conf.js'); // TODO: rename to .config.js
+const karmaConfigPath = path.join(__dirname, '../karma.config.js');
 const webpackConfig = require('../webpack.tests.config')
 
 // runs a server, outputs a URL to visit.
