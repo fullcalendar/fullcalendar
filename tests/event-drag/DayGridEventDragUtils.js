@@ -1,4 +1,5 @@
 import * as EventDragUtils from './EventDragUtils';
+import * as DayGridRenderUtils from '../view-render/DayGridRenderUtils';
 
 
 export function drag(startDate, endDate, debug) {

@@ -1,4 +1,5 @@
 import * as EventResizeUtils from './EventResizeUtils'
+import * as DayGridRenderUtils from '../view-render/DayGridRenderUtils';
 
 
 export function resize(startDate, endDate, debug) {
