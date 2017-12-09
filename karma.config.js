@@ -1,3 +1,5 @@
+const path = require('path');
+const { CheckerPlugin } = require('awesome-typescript-loader'); // for https://github.com/webpack/webpack/issues/3460
 
 module.exports = function(config) {
 	config.set({
@@ -37,7 +39,7 @@ module.exports = function(config) {
 			'tests/base.css',
 			'tests/globals.js',
 			'tests/jasmine-ext.js',
-			'tmp/tests-compiled.js',
+			'tests/index.js',
 
 			// serve misc files, but don't watch
 			{
@@ -47,11 +49,43 @@ module.exports = function(config) {
 				pattern: '{' + [
 					'dist', // for sourcemap files
 					'src', // for files referenced by sourcemaps
-					'tmp', // for compiled-tests sourcemap
 					'node_modules' // 3rd party lib dependencies, like jquery-ui theme images
 				].join(',') + '}/**/*'
 			}
 		],
+
+		preprocessors: {
+			'tests/index.js': [ 'webpack', 'sourcemap' ]
+		},
+
+		webpack: {
+			devtool: 'inline-source-map',
+			resolve: {
+				extensions: ['.js', '.ts'],
+			},
+			externals: {
+				fullcalendar: {
+					commonjs: 'fullcalendar',
+					commonjs2: 'fullcalendar',
+					amd: 'fullcalendar',
+					root: 'FullCalendar'
+				}
+			},
+			module: {
+				rules: [
+					{
+						test: /\.(js|ts)$/,
+						loader: 'awesome-typescript-loader',
+						options: {
+							configFileName: path.resolve(__dirname, 'tests/tsconfig.json')
+						}
+					}
+				]
+			},
+			plugins: [
+				new CheckerPlugin()
+			]
+		},
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
