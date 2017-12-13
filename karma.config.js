@@ -76,8 +76,8 @@ module.exports = function(config) {
 		},
 
 		// test results reporter to use
-		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-		reporters: [ 'dots' ],
+		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'verbose'
+		reporters: [ 'verbose' ],
 
 		// web server port
 		port: 9876,
