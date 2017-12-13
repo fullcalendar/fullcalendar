@@ -33,5 +33,5 @@ FullCalendar.locale("af", {
 	},
 	allDayHtml: "Heeldag",
 	eventLimitText: "Addisionele",
-	noEventsMessage: "Daar is geen gebeurtenis"
+	noEventsMessage: "Daar is geen gebeurtenisse nie"
 });
