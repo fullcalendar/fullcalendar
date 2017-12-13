@@ -57,10 +57,10 @@ export default class JsonFeedEventSource extends EventSource {
 							onReject();
 						}
 					},
-					error: (data, status, xhr) => {
+					error: (xhr, statusText, errorThrown) => {
 						this.calendar.popLoading();
 
-						applyAll(onError, this, [ data, status, xhr ]); // redirect `this`
+						applyAll(onError, this, [ xhr, statusText, errorThrown ]); // redirect `this`
 						onReject();
 					}
 				}

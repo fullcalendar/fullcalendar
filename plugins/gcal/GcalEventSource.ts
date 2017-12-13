@@ -57,6 +57,14 @@ export default class GcalEventSource extends EventSource {
 
 							onResolve(this.parseEventDefs(rawEventDefs));
 						}
+					},
+					error: (xhr, statusText, errorThrown) => {
+						this.reportError(
+							'Google Calendar network failure: ' + statusText,
+							[ xhr, errorThrown ]
+						);
+						this.calendar.popLoading();
+						onReject();
 					}
 				}
 			));
