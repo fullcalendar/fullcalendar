@@ -1,21 +1,19 @@
 
 describe('basic view rendering', function() {
 
-	beforeEach(function() {
-		affix('#cal');
+	pushOptions({
+		defaultView: 'month'
 	});
 
 	describe('when isRTL is false', function() {
 
-		beforeEach(function() {
-			$('#cal').fullCalendar({
-				defaultView: 'month',
-				isRTL: false
-			});
+		pushOptions({
+			isRTL: false
 		});
 
-		it('should have have days ordered sun to sat', function() {
-			var fc = $('#cal').find('.fc-day-header');
+		it('should have days ordered sun to sat', function() {
+			initCalendar();
+			var fc = $(currentCalendar.el).find('.fc-day-header');
 			expect(fc[0]).toHaveClass('fc-sun');
 			expect(fc[1]).toHaveClass('fc-mon');
 			expect(fc[2]).toHaveClass('fc-tue');
@@ -28,15 +26,13 @@ describe('basic view rendering', function() {
 
 	describe('when isRTL is true', function() {
 
-		beforeEach(function() {
-			$('#cal').fullCalendar({
-				defaultView: 'month',
-				isRTL: true
-			});
+		pushOptions({
+			isRTL: true
 		});
 
-		it('should have have days ordered sat to sun', function() {
-			var fc = $('#cal').find('.fc-day-header');
+		it('should have days ordered sat to sun', function() {
+			initCalendar();
+			var fc = $(currentCalendar.el).find('.fc-day-header');
 			expect(fc[0]).toHaveClass('fc-sat');
 			expect(fc[1]).toHaveClass('fc-fri');
 			expect(fc[2]).toHaveClass('fc-thu');

@@ -1,23 +1,19 @@
 describe('weekViewRender', function() {
 
-	beforeEach(function() {
-		affix('#cal');
+	var nowStr = $.fullCalendar.moment(new Date()).format('YYYY-MM-DD');
+
+	pushOptions({
+		defaultDate: nowStr,
+		defaultView: 'agendaWeek'
 	});
 
 	describe('verify th class for today', function() {
-		var nowStr = $.fullCalendar.moment(new Date()).format('YYYY-MM-DD');
-
-		beforeEach(function() {
-			$('#cal').fullCalendar({
-				defaultDate: nowStr,
-				defaultView: 'agendaWeek'
-			});
-		});
 
 		it('should have fc-today class only on "today"', function() {
+			initCalendar();
 			var foundToday = false;
 
-			$('#cal th.fc-day-header').each(function(i, headerNode) {
+			$('th.fc-day-header', currentCalendar.el).each(function(i, headerNode) {
 				var headerEl = $(headerNode);
 				var dateMatchesToday = headerEl.data('date') === nowStr;
 				var hasTodayClass = headerEl.hasClass('fc-today');
