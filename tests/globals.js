@@ -3,29 +3,29 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 // like `it`, but with the ability to return a promise
-function pit(description, runFunc) {
+window.pit = function(description, runFunc) {
 	it(description, function(done) {
 		runFunc().then(done);
 	});
-}
+};
 
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
 
-var optionsStack = null;
-var currentCalendar = null;
+window.optionsStack = null;
+window.currentCalendar = null;
 
 
 beforeEach(function() {
-	optionsStack = [];
+	window.optionsStack = [];
 });
 
 afterEach(function() {
-	optionsStack = null;
-	if (currentCalendar) {
-		currentCalendar.destroy();
-		currentCalendar = null;
+	window.optionsStack = null;
+	if (window.currentCalendar) {
+		window.currentCalendar.destroy();
+		window.currentCalendar = null;
 	}
 	$('#calendar').remove();
 });
@@ -34,30 +34,30 @@ afterEach(function() {
 // Calendar Options and Initialization
 // ---------------------------------------------------------------------------------------------------------------------
 
-function pushOptions(options) {
+window.pushOptions = function(options) {
 	beforeEach(function() {
-		return optionsStack.push(options);
+		return window.optionsStack.push(options);
 	});
-}
+};
 
 // called within an `it`
-function spyOnCalendarCallback(name, func) {
+window.spyOnCalendarCallback = function(name, func) {
 	var options = {};
 
 	options[name] = func;
 	spyOn(options, name).and.callThrough();
 
-	optionsStack.push(options);
+	window.optionsStack.push(options);
 
 	return options[name];
-}
+};
 
-function initCalendar(options, el) {
+window.initCalendar = function(options, el) {
 	var Calendar = $.fullCalendar.Calendar;
 	var $el;
 
 	if (options) {
-		optionsStack.push(options);
+		window.optionsStack.push(options);
 	}
 
 	if (el) {
@@ -67,14 +67,14 @@ function initCalendar(options, el) {
 		$el = $('<div id="calendar">').appendTo('body');
 	}
 
-	currentCalendar = new Calendar($el, getCurrentOptions()); // set the global
+	window.currentCalendar = new Calendar($el, getCurrentOptions()); // set the global
 
-	return currentCalendar.render();
-}
+	return window.currentCalendar.render();
+};
 
-function getCurrentOptions() {
-	return $.extend.apply($, [ {} ].concat(optionsStack));
-}
+window.getCurrentOptions = function() {
+	return $.extend.apply($, [ {} ].concat(window.optionsStack));
+};
 
 
 // Categorizing Tests
@@ -84,7 +84,7 @@ function getCurrentOptions() {
 describeOptions(optionName, descriptionAndValueHash, callback)
 describeOptions(descriptionAndOptionsHash, callback)
  */
-function describeOptions(optName, hash, callback) {
+window.describeOptions = function(optName, hash, callback) {
 	if ($.type(optName) === 'object') {
 		callback = hash;
 		hash = optName;
@@ -108,21 +108,21 @@ function describeOptions(optName, hash, callback) {
 			callback(val);
 		});
 	});
-}
+};
 
-function describeValues(hash, callback) {
+window.describeValues = function(hash, callback) {
 	$.each(hash, function(desc, val) {
 		describe(desc, function() {
 			callback(val);
 		});
 	});
-}
+};
 
 
 // Timezone Tests (needed?)
 // ---------------------------------------------------------------------------------------------------------------------
 
-var timezoneScenarios = {
+const timezoneScenarios = {
 	none: {
 		description: 'when no timezone',
 		value: null,
@@ -146,7 +146,7 @@ var timezoneScenarios = {
 	}
 };
 
-function describeTimezones(callback) {
+window.describeTimezones = function(callback) {
 	$.each(timezoneScenarios, function(name, scenario) {
 		describe(scenario.description, function() {
 			pushOptions({
@@ -155,9 +155,9 @@ function describeTimezones(callback) {
 			callback(scenario);
 		});
 	});
-}
+};
 
-function describeTimezone(name, callback) {
+window.describeTimezone = function(name, callback) {
 	var scenario = timezoneScenarios[name];
 
 	describe(scenario.description, function() {
@@ -166,13 +166,13 @@ function describeTimezone(name, callback) {
 		});
 		callback(scenario);
 	});
-}
+};
 
 
 // Misc
 // ---------------------------------------------------------------------------------------------------------------------
 
-function oneCall(func) {
+window.oneCall = function(func) {
 	var called;
 	called = false;
 	return function() {
@@ -181,4 +181,4 @@ function oneCall(func) {
 			return func.apply(this, arguments);
 		}
 	};
-}
+};

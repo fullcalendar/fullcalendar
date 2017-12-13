@@ -50,7 +50,7 @@ module.exports = function(config) {
 		],
 
 		preprocessors: {
-			'tests/index.js': [ 'webpack', 'sourcemap' ]
+			'tests/*.js': [ 'webpack', 'sourcemap' ]
 		},
 
 		webpack: {

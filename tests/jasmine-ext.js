@@ -212,7 +212,7 @@ beforeEach(function() {
 });
 
 
-function spyOnMethod(Class, methodName, dontCallThrough) {
+window.spyOnMethod = function(Class, methodName, dontCallThrough) {
 	var origMethod = Class.prototype.hasOwnProperty(methodName) ?
 		Class.prototype[methodName] :
 		null;
@@ -233,7 +233,7 @@ function spyOnMethod(Class, methodName, dontCallThrough) {
 	};
 
 	return spy;
-}
+};
 
 
 // fix bug with jQuery 3 returning 0 height for <td> elements in the IE's
