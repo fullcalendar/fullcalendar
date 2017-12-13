@@ -5,7 +5,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
 
 	options.editable = true;
 	options.eventAfterAllRender = function() {
-		var calendar = $('#cal').fullCalendar('getCalendar');
+		var calendar = currentCalendar;
 		var isDraggingExternal = false;
 		var dayEl;
 		var eventEl;
@@ -83,7 +83,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
 			}
 		});
 	};
-	$('#cal').fullCalendar(options);
+	initCalendar(options);
 }
 
 
@@ -92,7 +92,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 
 	options.editable = true;
 	options.eventAfterAllRender = function() {
-		var calendar = $('#cal').fullCalendar('getCalendar');
+		var calendar = currentCalendar;
 		var lastDayEl;
 		var lastSlatIndex;
 		var lastSlatEl;
@@ -154,7 +154,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 			}
 		});
 	};
-	$('#cal').fullCalendar(options);
+	initCalendar(options);
 }
 
 
@@ -176,9 +176,9 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
 				selectionEnd.format() === end.format();
 	};
 	spyOn(options, 'select').and.callThrough();
-	$('#cal').fullCalendar(options);
+	initCalendar(options);
 
-	calendar = $('#cal').fullCalendar('getCalendar');
+	calendar = currentCalendar;
 	start = calendar.moment('2014-11-12');
 	end = calendar.moment(end);
 

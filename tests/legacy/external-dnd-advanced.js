@@ -1,14 +1,8 @@
 import { testEventDrag } from '../lib/dnd-resize-utils';
 
-describe('advanced external dnd', function() {
-	var options;
+describe('advanced external dnd', function() {	
 
-	beforeEach(function() {
-		options = {
-			defaultDate: '2014-11-13',
-			scrollTime: '00:00:00',
-			droppable: true
-		};
+	beforeEach(function(){
 		affix('.drag');
 		$('.drag')
 			.text('yo')
@@ -18,25 +12,20 @@ describe('advanced external dnd', function() {
 				color: 'white'
 			})
 			.draggable();
-		affix('#cal');
-		$('#cal').width(1200);
+	})
+	pushOptions({
+		defaultDate: '2014-11-13',
+		scrollTime: '00:00:00',
+		droppable: true
 	});
 
-
-	describe('in agenda slots', function() {
-		beforeEach(function() {
-			options.defaultView = 'agendaWeek';
-		});
-
+	describe('in agenda slots', function() {		
+		pushOptions({defaultView:'agendaWeek'});
 		describe('when no element event data', function() {
-
-			describe('when given duration through defaultTimedEventDuration', function() {
-				beforeEach(function() {
-					options.defaultTimedEventDuration = '2:30';
-				});
+			describe('when given duration through defaultTimedEventDuration', function() {				
+				pushOptions({defaultTimedEventDuration:'2:30'});				
 				defineTests();
 			});
-
 			describe('when given duration through data-duration', function() {
 				beforeEach(function() {
 					$('.drag').data('duration', '2:30');
@@ -46,9 +35,11 @@ describe('advanced external dnd', function() {
 
 			function defineTests() {
 				it('fires correctly', function(done) {
+					var options = {};
 					testExternalElDrag(options, '2014-11-13T03:00:00', true, done);
 				});
 				it('is not affected by eventOverlap:false', function(done) {
+					var options = {};
 					options.eventOverlap = false;
 					options.events = [ {
 						start: '2014-11-13T01:00:00',
@@ -57,6 +48,7 @@ describe('advanced external dnd', function() {
 					testExternalElDrag(options, '2014-11-13T03:00:00', true, done);
 				});
 				it('is not affected by an event object\'s overlap:false', function(done) {
+					var options = {};
 					options.events = [ {
 						start: '2014-11-13T01:00:00',
 						end: '2014-11-13T05:00:00',
@@ -65,6 +57,8 @@ describe('advanced external dnd', function() {
 					testExternalElDrag(options, '2014-11-13T03:00:00', true, done);
 				});
 				it('is not affected by eventConstraint', function(done) {
+					var options = {};
+					
 					options.eventConstraint = {
 						start: '03:00',
 						end: '10:00'
@@ -72,28 +66,33 @@ describe('advanced external dnd', function() {
 					testExternalElDrag(options, '2014-11-13T02:00:00', true, done);
 				});
 				describe('with selectOverlap:false', function() {
-					beforeEach(function() {
-						options.selectOverlap = false;
-						options.events = [ {
+					pushOptions({
+						selectOverlap: false,
+						events: [ {
 							start: '2014-11-13T04:00:00',
 							end: '2014-11-13T08:00:00'
-						} ];
+						}]
 					});
 					it('is not allowed to overlap an event', function(done) {
+						var options = {};
 						testExternalElDrag(options, '2014-11-13T02:00:00', false, done);
 					});
 				});
 				describe('with a selectConstraint', function() {
-					beforeEach(function() {
-						options.selectConstraint = {
+					pushOptions({
+						selectConstraint :{
 							start: '04:00',
-							end: '08:00'
-						};
-					});
+							end: '08:00',
+						}
+					})				
 					it('can be dropped within', function(done) {
+						var options = {};
+					
 						testExternalElDrag(options, '2014-11-13T05:30:00', true, done);
 					});
 					it('cannot be dropped when not fully contained', function(done) {
+						var options = {};
+					
 						testExternalElDrag(options, '2014-11-13T06:00:00', false, done);
 					});
 				});
@@ -103,6 +102,8 @@ describe('advanced external dnd', function() {
 		describe('when event data is given', function() {
 
 			it('fires correctly', function(done) {
+				var options = {};
+				
 				$('.drag').data('event', { title: 'hey' });
 				testExternalEventDrag(options, '2014-11-13T02:00:00', true, done);
 			});
@@ -136,6 +137,8 @@ describe('advanced external dnd', function() {
 				});
 				function defineTests() {
 					it('voids the given time when dropped on a timed slot', function(done) {
+						var options = {};
+					
 						testExternalEventDrag(options, '2014-11-13T02:00:00', true, done);
 							// will test the resulting event object's start
 					});
@@ -158,8 +161,10 @@ describe('advanced external dnd', function() {
 				});
 				function defineTests() {
 					it('accepts the given duration when dropped on a timed slot', function(done) {
+						var options = {};
+					
 						testExternalEventDrag(options, '2014-11-13T02:00:00', true, function() {
-							var event = $('#cal').fullCalendar('clientEvents')[0];
+							var event = currentCalendar.clientEvents()[0];
 							expect(event.start).toEqualMoment('2014-11-13T02:00:00');
 							expect(event.end).toEqualMoment('2014-11-13T07:00:00');
 							done();
@@ -184,12 +189,14 @@ describe('advanced external dnd', function() {
 				});
 				function defineTests() {
 					it('keeps the event when navigating away and back', function(done) {
+						var options = {};
+					
 						testExternalEventDrag(options, '2014-11-13T02:00:00', true, function() {
 							setTimeout(function() { // make sure to escape handlers
 								expect($('.fc-event').length).toBe(1);
-								$('#cal').fullCalendar('next');
+								currentCalendar.next();
 								expect($('.fc-event').length).toBe(0);
-								$('#cal').fullCalendar('prev');
+								currentCalendar.prev();
 								expect($('.fc-event').length).toBe(1);
 								done();
 							}, 0);
@@ -200,22 +207,26 @@ describe('advanced external dnd', function() {
 
 			describe('when an overlap is specified', function() {
 				describe('via eventOverlap', function() {
-					beforeEach(function() {
-						options.eventOverlap = false;
-						options.events = [ {
+					pushOptions({
+						eventOverlap: false,
+						events: [ {
 							start: '2014-11-13T05:00:00',
 							end: '2014-11-13T08:00:00'
-						} ];
+						} ]
+					})
+					beforeEach(function(){
 						$('.drag').data('event', true);
 					});
 					defineTests();
 				});
 				describe('via an overlap on this event', function() {
-					beforeEach(function() {
-						options.events = [ {
+					pushOptions({
+						events: [{
 							start: '2014-11-13T05:00:00',
 							end: '2014-11-13T08:00:00'
-						} ];
+						}]
+					});
+					beforeEach(function() {						
 						$('.drag').data('event', {
 							overlap: false
 						});
@@ -223,21 +234,25 @@ describe('advanced external dnd', function() {
 					defineTests();
 				});
 				describe('via an overlap on the other event', function() {
-					beforeEach(function() {
-						options.events = [ {
+					pushOptions({
+						events: [{
 							start: '2014-11-13T05:00:00',
 							end: '2014-11-13T08:00:00',
 							overlap: false
-						} ];
+						}]
+					});
+					beforeEach(function() {						
 						$('.drag').data('event', true);
 					});
 					defineTests();
 				});
 				function defineTests() {
 					it('allows a drop when not colliding with the other event', function(done) {
+						var options = {};
 						testExternalEventDrag(options, '2014-11-13T08:00:00', true, done);
 					});
 					it('prevents a drop when colliding with the other event', function(done) {
+						var options = {};						
 						testExternalEventDrag(options, '2014-11-13T06:00:00', false, done);
 					});
 				}
@@ -245,11 +260,13 @@ describe('advanced external dnd', function() {
 
 			describe('when a constraint is specified', function() {
 				describe('via eventConstraint', function() {
-					beforeEach(function() {
-						options.eventConstraint = {
+					pushOptions({
+						eventConstraint: {
 							start: '04:00',
 							end: '08:00'
-						};
+						}
+					});
+					beforeEach(function() {						
 						$('.drag').data('event', { duration: '02:00' });
 					});
 					defineTests();
@@ -268,9 +285,11 @@ describe('advanced external dnd', function() {
 				});
 				function defineTests() {
 					it('allows a drop when inside the constraint', function(done) {
+						var options = {};
 						testExternalEventDrag(options, '2014-11-13T05:00:00', true, done);
 					});
 					it('disallows a drop when partially outside of the constraint', function(done) {
+						var options = {};						
 						testExternalEventDrag(options, '2014-11-13T07:00:00', false, done);
 					});
 				}
@@ -280,14 +299,16 @@ describe('advanced external dnd', function() {
 
 	// TODO: write more tests for DayGrid!
 
-	describe('in month whole-days', function() {
-		beforeEach(function() {
-			options.defaultView = 'month';
+	describe('in month whole-days', function() {		
+		pushOptions({
+			defaultView: 'month'
 		});
 
 		describe('when event data is given', function() {
 
 			it('fires correctly', function(done) {
+				var options = {};
+				
 				$('.drag').data('event', { title: 'hey' });
 				testExternalEventDrag(options, '2014-11-13', true, done);
 			});
@@ -321,9 +342,11 @@ describe('advanced external dnd', function() {
 				});
 				function defineTests() {
 					it('accepts the given start time for the dropped day', function(done) {
+						var options = {};
+						
 						testExternalEventDrag(options, '2014-11-13', true, function() {
 							// the whole-day start was already checked. we still need to check the exact time
-							var event = $('#cal').fullCalendar('clientEvents')[0];
+							var event = currentCalendar.clientEvents()[0];
 							expect(event.start).toEqualMoment('2014-11-13T05:00:00');
 							done();
 						});
@@ -390,3 +413,4 @@ describe('advanced external dnd', function() {
 	}
 
 });
+

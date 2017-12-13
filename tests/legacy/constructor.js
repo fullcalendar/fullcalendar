@@ -1,12 +1,10 @@
 
-describe('constructor', function() {
-
-	beforeEach(function() {
-		affix('#calendar');
-	});
-
+describe('constructor', function() {	
+	beforeEach(function(){
+		initCalendar();
+	})
 	it('should return a jQuery object for chaining', function() {
-		var res = $('#calendar').fullCalendar();
+		var res = $(currentCalendar.el);
 		expect(res instanceof jQuery).toBe(true);
 	});
 
@@ -17,7 +15,7 @@ describe('constructor', function() {
 			slotDuration: { minutes: 45 }
 		};
 		var optionsCopy = $.extend({}, options, true);
-		$('#calendar').fullCalendar(options);
+		initCalendar(options);
 		expect(options).toEqual(optionsCopy);
 	});
 
@@ -33,7 +31,7 @@ describe('constructor', function() {
 			]
 		};
 		var optionsCopy = $.extend(true, {}, options); // recursive copy
-		$('#calendar').fullCalendar(options);
+		initCalendar(options);
 		expect(options).toEqual(optionsCopy);
 	});
 
@@ -51,35 +49,33 @@ describe('constructor', function() {
 			]
 		};
 		var optionsCopy = $.extend(true, {}, options); // recursive copy
-		$('#calendar').fullCalendar(options);
+		initCalendar(options);
 		expect(options).toEqual(optionsCopy);
 	});
 
-	describe('when called on a div', function() {
-
-		beforeEach(function() {
-			$('#calendar').fullCalendar();
-		});
-
+	describe('when called on a div', function() {		
+		beforeEach(function(){
+			initCalendar();
+		})
 		it('should contain a table fc-toolbar', function() {
-			var header = $('#calendar > .fc-toolbar');
+			var header = $(currentCalendar.el).find('.fc-toolbar');
 			expect(header[0]).not.toBeUndefined();
 		});
 
 		it('should contain a div fc-view-container', function() {
-			var content = ($('#calendar > .fc-view-container'));
+			var content = $(currentCalendar.el).find('.fc-view-container');
 			expect(content[0]).not.toBeUndefined();
 		});
 
 		it('should only contain 2 elements', function() {
-			var calenderNodeCount = $('#calendar >').length;
+			var calenderNodeCount = $(currentCalendar.el).find('>').length;
 			expect(calenderNodeCount).toEqual(2);
 		});
 
 		describe('and then called again', function() {
 			it('should still only have a single set of calendar [header,content]', function() {
-				$('#calendar').fullCalendar();
-				var count = $('#calendar >').length;
+				initCalendar();
+				var count = $(currentCalendar.el).find('>').length;
 				expect(count).toEqual(2);
 			});
 		});
