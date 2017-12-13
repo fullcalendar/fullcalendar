@@ -1,12 +1,8 @@
-const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 const gulp = require('gulp');
-const webpack = require('webpack-stream');
 const KarmaServer = require('karma').Server;
 
 const karmaConfigPath = path.join(__dirname, '../karma.config.js');
-
 
 // runs a server, outputs a URL to visit.
 // expects dist to be compiled or watcher to be running.
