@@ -11,7 +11,7 @@
     }
   },
   "include": [
-    "src/**/*.ts",
-    "plugins/**/*.ts"
+    "src/main.ts",
+    "plugins/**/main.ts"
   ]
 }

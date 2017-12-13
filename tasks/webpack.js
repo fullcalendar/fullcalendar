@@ -16,7 +16,7 @@ gulp.task('webpack:dev', function() {
 })
 
 gulp.task('webpack:watch', function() {
-	return createStream(true, true)
+	createStream(true, true)
 })
 
 
