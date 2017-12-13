@@ -1,5 +1,5 @@
 
-describe('Google Calendar plugin', function() {
+xdescribe('Google Calendar plugin', function() {
 
 	var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE';
 	var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com';
