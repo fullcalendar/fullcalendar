@@ -1,15 +1,12 @@
 
-describe('eventClick', function() {
-	var options;
-
-	beforeEach(function() {
-		affix('#cal');
-		options = {
-			defaultDate: '2014-08-01'
-		};
+describe('eventClick', function() {	
+	
+	pushOptions({
+		defaultDate: '2014-08-01'
 	});
 
 	it('works in month view', function(done) {
+		var options = {};
 		options.events = [
 			{ start: '2014-08-01', title: 'event1', className: 'event1' }
 		];
@@ -19,10 +16,11 @@ describe('eventClick', function() {
 		options.eventClick = function() {
 			done();
 		};
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 	});
 
 	it('works in month view via touch', function(done) {
+		var options = {};
 		options.events = [
 			{ start: '2014-08-01', title: 'event1', className: 'event1' }
 		];
@@ -32,7 +30,7 @@ describe('eventClick', function() {
 		options.eventClick = function() {
 			done();
 		};
-		$('#cal').fullCalendar(options);
+		initCalendar(options);
 	});
 
 });
