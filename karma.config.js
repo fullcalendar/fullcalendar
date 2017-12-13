@@ -41,16 +41,11 @@ module.exports = function(config) {
 			'tests/jasmine-ext.js',
 			'tests/index.js',
 
-			// serve misc files, but don't watch
-			{
+			{ // serve all other files
+				pattern: '**/*',
 				included: false, // don't immediately execute
 				nocache: true, // don't let the webserver cache
-				watched: false, // don't let changes trigger tests to restart
-				pattern: '{' + [
-					'dist', // for sourcemap files
-					'src', // for files referenced by sourcemaps
-					'node_modules' // 3rd party lib dependencies, like jquery-ui theme images
-				].join(',') + '}/**/*'
+				watched: false // don't let changes trigger tests to restart
 			}
 		],
 
@@ -59,17 +54,8 @@ module.exports = function(config) {
 		},
 
 		webpack: {
-			devtool: 'inline-source-map',
 			resolve: {
-				extensions: ['.js', '.ts'],
-			},
-			externals: {
-				fullcalendar: {
-					commonjs: 'fullcalendar',
-					commonjs2: 'fullcalendar',
-					amd: 'fullcalendar',
-					root: 'FullCalendar'
-				}
+				extensions: [ '.js', '.ts' ],
 			},
 			module: {
 				rules: [
@@ -82,9 +68,11 @@ module.exports = function(config) {
 					}
 				]
 			},
-			plugins: [
-				new CheckerPlugin()
-			]
+			plugins: [ new CheckerPlugin() ],
+			externals: {
+				fullcalendar: { root: 'FullCalendar' }
+			},
+			devtool: 'inline-source-map'
 		},
 
 		// test results reporter to use
