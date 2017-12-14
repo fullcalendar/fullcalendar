@@ -11,8 +11,8 @@ cd "`dirname $0`/.."
 read -p "Enter the version you want to publish, with no 'v' (for example '1.0.1'): " version
 if [[ ! "$version" ]]
 then
-	echo "Aborting."
-	exit 1
+  echo "Aborting."
+  exit 1
 fi
 
 # push the current branch (assumes tracking is set up) and the tag
@@ -28,7 +28,7 @@ current_branch=$(git symbolic-ref --quiet --short HEAD)
 git checkout --quiet "v$version"
 if npm publish
 then
-	success=1
+  success=1
 fi
 
 # return to branch
@@ -40,9 +40,9 @@ git reset --quiet -- dist
 
 if [[ "$success" == "1" ]]
 then
-	./bin/verify-npm.sh
-	echo "Success."
+  ./bin/verify-npm.sh
+  echo "Success."
 else
-	echo "Failure."
-	exit 1
+  echo "Failure."
+  exit 1
 fi
