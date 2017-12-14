@@ -1,17 +1,17 @@
 describe('refetchEventSources', function() {
-  var calendarEl;
-  var options;
+  var calendarEl
+  var options
 
   // used by createEventGenerator
-  var eventCount;
-  var fetchId;
-  var fetchDelay;
+  var eventCount
+  var fetchId
+  var fetchDelay
 
   beforeEach(function() {
-    affix('#cal');
-    calendarEl = $('#cal');
-    eventCount = 1;
-    fetchId = 7;
+    affix('#cal')
+    calendarEl = $('#cal')
+    eventCount = 1
+    fetchId = 7
     options = {
       now: '2015-08-07',
       defaultView: 'agendaDay',
@@ -33,131 +33,131 @@ describe('refetchEventSources', function() {
           color: 'green'
         }
       ]
-    };
-  });
+    }
+  })
 
   describe('with a single event source passed in', function() {
     it('only refetches events for the specified event source', function(done) {
-      calendarEl.fullCalendar(options);
+      calendarEl.fullCalendar(options)
 
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source2-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source2-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
-      var allEventSources = calendarEl.fullCalendar('getEventSources');
+      var allEventSources = calendarEl.fullCalendar('getEventSources')
       var blueEventSource = $.grep(allEventSources, function(eventSource) {
-        return eventSource.color === 'blue';
-      })[0];
+        return eventSource.color === 'blue'
+      })[0]
 
       // increase the number of events for the refetched source
-      eventCount = 2;
-      fetchId = 8;
+      eventCount = 2
+      fetchId = 8
 
-      calendarEl.fullCalendar('refetchEventSources', blueEventSource);
+      calendarEl.fullCalendar('refetchEventSources', blueEventSource)
 
       // events from unaffected sources remain
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
       // events from old fetch were cleared
-      expect($('.source2-7').length).toEqual(0);
+      expect($('.source2-7').length).toEqual(0)
 
       // events from new fetch were rendered
-      expect($('.source2-8').length).toEqual(2);
+      expect($('.source2-8').length).toEqual(2)
 
-      done();
-    });
-  });
+      done()
+    })
+  })
   describe('with a single event source ID passed in', function() {
     it('only refetches events for the specified event source', function(done) {
-      calendarEl.fullCalendar(options);
+      calendarEl.fullCalendar(options)
 
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source2-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source2-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
       // increase the number of events for the refetched source
-      eventCount = 2;
-      fetchId = 8;
+      eventCount = 2
+      fetchId = 8
 
-      calendarEl.fullCalendar('refetchEventSources', 2);
+      calendarEl.fullCalendar('refetchEventSources', 2)
 
       // events from unaffected sources remain
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
       // events from old fetch were cleared
-      expect($('.source2-7').length).toEqual(0);
+      expect($('.source2-7').length).toEqual(0)
 
       // events from new fetch were rendered
-      expect($('.source2-8').length).toEqual(2);
+      expect($('.source2-8').length).toEqual(2)
 
-      done();
-    });
-  });
+      done()
+    })
+  })
 
   describe('with an array of multiple event sources passed in', function() {
     it('only refetches events for the specified event sources', function(done) {
-      calendarEl.fullCalendar(options);
+      calendarEl.fullCalendar(options)
 
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source2-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source2-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
-      var allEventSources = calendarEl.fullCalendar('getEventSources');
+      var allEventSources = calendarEl.fullCalendar('getEventSources')
       var greenEventSources = $.grep(allEventSources, function(eventSource) {
-        return eventSource.color === 'green';
-      });
+        return eventSource.color === 'green'
+      })
 
       // increase the number of events for the refetched sources
-      eventCount = 2;
-      fetchId = 8;
+      eventCount = 2
+      fetchId = 8
 
-      calendarEl.fullCalendar('refetchEventSources', greenEventSources);
+      calendarEl.fullCalendar('refetchEventSources', greenEventSources)
 
       // events from unaffected sources remain
-      expect($('.source2-7').length).toEqual(1);
+      expect($('.source2-7').length).toEqual(1)
 
       // events from old fetch were cleared
-      expect($('.source1-7').length).toEqual(0);
-      expect($('.source3-7').length).toEqual(0);
+      expect($('.source1-7').length).toEqual(0)
+      expect($('.source3-7').length).toEqual(0)
 
       // events from new fetch were rendered
-      expect($('.source1-8').length).toEqual(2);
-      expect($('.source3-8').length).toEqual(2);
+      expect($('.source1-8').length).toEqual(2)
+      expect($('.source3-8').length).toEqual(2)
 
-      done();
-    });
-  });
+      done()
+    })
+  })
 
   describe('with an array of multiple event source IDs passed in', function() {
     it('only refetches events for the specified event sources', function(done) {
-      calendarEl.fullCalendar(options);
+      calendarEl.fullCalendar(options)
 
-      expect($('.source1-7').length).toEqual(1);
-      expect($('.source2-7').length).toEqual(1);
-      expect($('.source3-7').length).toEqual(1);
+      expect($('.source1-7').length).toEqual(1)
+      expect($('.source2-7').length).toEqual(1)
+      expect($('.source3-7').length).toEqual(1)
 
       // increase the number of events for the refetched sources
-      eventCount = 2;
-      fetchId = 8;
+      eventCount = 2
+      fetchId = 8
 
-      calendarEl.fullCalendar('refetchEventSources', [ 1, 3 ]);
+      calendarEl.fullCalendar('refetchEventSources', [ 1, 3 ])
 
       // events from unaffected sources remain
-      expect($('.source2-7').length).toEqual(1);
+      expect($('.source2-7').length).toEqual(1)
 
       // events from old fetch were cleared
-      expect($('.source1-7').length).toEqual(0);
-      expect($('.source3-7').length).toEqual(0);
+      expect($('.source1-7').length).toEqual(0)
+      expect($('.source3-7').length).toEqual(0)
 
       // events from new fetch were rendered
-      expect($('.source1-8').length).toEqual(2);
-      expect($('.source3-8').length).toEqual(2);
+      expect($('.source1-8').length).toEqual(2)
+      expect($('.source3-8').length).toEqual(2)
 
-      done();
-    });
-  });
+      done()
+    })
+  })
 
   describe('when called while initial fetch is still pending', function() {
     it('keeps old events and rerenders new', function(done) {
@@ -165,38 +165,38 @@ describe('refetchEventSources', function() {
       options.eventAfterAllRender = function() {
 
         // events from unaffected sources remain
-        expect($('.source2-7').length).toEqual(1);
+        expect($('.source2-7').length).toEqual(1)
 
         // events from old fetch were cleared
-        expect($('.source1-7').length).toEqual(0);
-        expect($('.source3-7').length).toEqual(0);
+        expect($('.source1-7').length).toEqual(0)
+        expect($('.source3-7').length).toEqual(0)
 
         // events from new fetch were rendered
-        expect($('.source1-8').length).toEqual(2);
-        expect($('.source3-8').length).toEqual(2);
+        expect($('.source1-8').length).toEqual(2)
+        expect($('.source3-8').length).toEqual(2)
 
-        done();
-      };
+        done()
+      }
 
-      fetchDelay = 100;
-      calendarEl.fullCalendar(options);
+      fetchDelay = 100
+      calendarEl.fullCalendar(options)
 
-      var allEventSources = calendarEl.fullCalendar('getEventSources');
+      var allEventSources = calendarEl.fullCalendar('getEventSources')
       var greenEventSources = $.grep(allEventSources, function(eventSource) { // source 1 and 3
-        return eventSource.color === 'green';
-      });
+        return eventSource.color === 'green'
+      })
 
       // increase the number of events for the refetched sources
-      eventCount = 2;
-      fetchId = 8;
+      eventCount = 2
+      fetchId = 8
 
-      calendarEl.fullCalendar('refetchEventSources', greenEventSources);
-    });
-  });
+      calendarEl.fullCalendar('refetchEventSources', greenEventSources)
+    })
+  })
 
   function createEventGenerator(classNamePrefix) {
     return function(start, end, timezone, callback) {
-      var events = [];
+      var events = []
 
       for (var i = 0; i < eventCount; i++) {
         events.push({
@@ -204,17 +204,16 @@ describe('refetchEventSources', function() {
           end: '2015-08-07T03:00:00',
           className: classNamePrefix + fetchId,
           title: classNamePrefix + fetchId // also make it the title
-        });
+        })
       }
 
       if (fetchDelay) {
         setTimeout(function() {
-          callback(events);
-        }, fetchDelay);
+          callback(events)
+        }, fetchDelay)
+      } else {
+        callback(events)
       }
-      else {
-        callback(events);
-      }
-    };
+    }
   }
-});
+})

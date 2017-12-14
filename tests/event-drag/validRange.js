@@ -1,5 +1,5 @@
-import * as EventDragUtils from './EventDragUtils';
-import * as DayGridEventDragUtils from './DayGridEventDragUtils';
+import * as EventDragUtils from './EventDragUtils'
+import * as DayGridEventDragUtils from './DayGridEventDragUtils'
 
 
 describe('validRange event dragging', function() {
@@ -15,17 +15,17 @@ describe('validRange event dragging', function() {
           { start: '2017-06-07', end: '2017-06-10' }
         ],
         editable: true
-      });
+      })
 
       pit('won\'t go before validRange', function() {
-        initCalendar();
+        initCalendar()
         return DayGridEventDragUtils.drag('2017-06-08', '2017-06-06')
           .then(function(res) {
-            expect(res.isSuccess).toBe(false);
-          });
-      });
-    });
-  });
+            expect(res.isSuccess).toBe(false)
+          })
+      })
+    })
+  })
 
   describe('when end constraint', function() {
 
@@ -38,15 +38,15 @@ describe('validRange event dragging', function() {
           { start: '2017-06-04', end: '2017-06-07' }
         ],
         editable: true
-      });
+      })
 
       pit('won\'t go after validRange', function() {
-        initCalendar();
+        initCalendar()
         return DayGridEventDragUtils.drag('2017-06-05', '2017-06-08')
           .then(function(res) {
-            expect(res.isSuccess).toBe(false);
-          });
-      });
-    });
-  });
-});
+            expect(res.isSuccess).toBe(false)
+          })
+      })
+    })
+  })
+})

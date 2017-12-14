@@ -1,7 +1,7 @@
-import { dragTimeGridEvent } from '../lib/time-grid';
+import { dragTimeGridEvent } from '../lib/time-grid'
 
 describe('eventAllow', function() {
-  var options;
+  var options
 
   beforeEach(function() {
     options = {
@@ -15,44 +15,44 @@ describe('eventAllow', function() {
           start: '2016-09-04T01:00'
         }
       ]
-    };
-    affix('#cal');
-  });
+    }
+    affix('#cal')
+  })
 
   it('disallows dragging when returning false', function(done) { // and given correct params
     options.eventAllow = function(dropInfo, event) {
-      expect(typeof dropInfo).toBe('object');
-      expect(moment.isMoment(dropInfo.start)).toBe(true);
-      expect(moment.isMoment(dropInfo.end)).toBe(true);
-      expect(typeof event).toBe('object');
-      expect(event.title).toBe('event 1');
-      return false;
-    };
-    spyOn(options, 'eventAllow').and.callThrough();
+      expect(typeof dropInfo).toBe('object')
+      expect(moment.isMoment(dropInfo.start)).toBe(true)
+      expect(moment.isMoment(dropInfo.end)).toBe(true)
+      expect(typeof event).toBe('object')
+      expect(event.title).toBe('event 1')
+      return false
+    }
+    spyOn(options, 'eventAllow').and.callThrough()
 
-    $('#cal').fullCalendar(options);
+    $('#cal').fullCalendar(options)
 
     dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00')
       .then(function(modifiedEvent) {
-        expect(modifiedEvent).toBeFalsy(); // drop failure?
-        expect(options.eventAllow).toHaveBeenCalled();
-        done();
-      });
-  });
+        expect(modifiedEvent).toBeFalsy() // drop failure?
+        expect(options.eventAllow).toHaveBeenCalled()
+        done()
+      })
+  })
 
   it('allows dragging when returning true', function(done) {
     options.eventAllow = function(dropInfo, event) {
-      return true;
-    };
-    spyOn(options, 'eventAllow').and.callThrough();
+      return true
+    }
+    spyOn(options, 'eventAllow').and.callThrough()
 
-    $('#cal').fullCalendar(options);
+    $('#cal').fullCalendar(options)
 
     dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00')
       .then(function(modifiedEvent) {
-        expect(modifiedEvent.start.format()).toBe('2016-09-04T03:00:00');
-        expect(options.eventAllow).toHaveBeenCalled();
-        done();
-      });
-  });
-});
+        expect(modifiedEvent.start.format()).toBe('2016-09-04T03:00:00')
+        expect(options.eventAllow).toHaveBeenCalled()
+        done()
+      })
+  })
+})

@@ -23,18 +23,18 @@ describe('getEventSource', function() {
         id: 'source3'
       }
     ]
-  });
+  })
 
   it('retreives the queried event source', function(done) {
-    initCalendar();
+    initCalendar()
 
-    var eventSource1 = currentCalendar.getEventSourceById('source1');
-    var eventSource2 = currentCalendar.getEventSourceById('source2');
+    var eventSource1 = currentCalendar.getEventSourceById('source1')
+    var eventSource2 = currentCalendar.getEventSourceById('source2')
 
-    expect(eventSource1.id).toBe('source1');
-    expect(eventSource2.id).toBe('source2');
+    expect(eventSource1.id).toBe('source1')
+    expect(eventSource2.id).toBe('source2')
 
-    done();
-  });
+    done()
+  })
 
-});
+})

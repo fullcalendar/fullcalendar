@@ -1,4 +1,4 @@
-import { getTimeTexts } from './TimeGridEventRenderUtils';
+import { getTimeTexts } from './TimeGridEventRenderUtils'
 
 describe('the time text on events', function() {
 
@@ -7,7 +7,7 @@ describe('the time text on events', function() {
       defaultView: 'agendaWeek',
       defaultDate: '2017-07-03',
       scrollTime: '00:00'
-    });
+    })
 
     it('renders segs with correct local timezone', function() {
       initCalendar({
@@ -16,7 +16,7 @@ describe('the time text on events', function() {
         events: [
           { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' }
         ]
-      });
+      })
 
       expect(
         getTimeTexts()
@@ -24,9 +24,9 @@ describe('the time text on events', function() {
         moment('2017-07-03T23:00:00').format('h:mm Z') + ' - ' +
         moment('2017-07-04T00:00:00').format('h:mm Z'),
         moment('2017-07-04T00:00:00').format('h:mm Z') + ' - ' +
-        moment('2017-07-04T13:00:00').format('h:mm Z'),
-      ]);
+        moment('2017-07-04T13:00:00').format('h:mm Z')
+      ])
     })
-  });
+  })
 
-});
+})

@@ -1,23 +1,23 @@
 // most other businessHours tests are in background-events.js
 
-import { doElsMatchSegs, getBoundingRect } from '../lib/dom-utils';
-import { getTimeGridTop, getTimeGridDayEls, getTimeGridSlotEls } from '../lib/time-grid';
+import { doElsMatchSegs, getBoundingRect } from '../lib/dom-utils'
+import { getTimeGridTop, getTimeGridDayEls, getTimeGridSlotEls } from '../lib/time-grid'
 
-describe('businessHours', function() {  
+describe('businessHours', function() {
   pushOptions({
     defaultDate: '2014-11-25',
     defaultView: 'month',
     businessHours: true
-  });     
+  })
 
   it('doesn\'t break when starting out in a larger month time range', function() {
-    initCalendar(); // start out in the month range
-    currentCalendar.changeView('agendaWeek');
-    currentCalendar.next(); // move out of the original month range...
-    currentCalendar.next(); // ... out. should render correctly.
+    initCalendar() // start out in the month range
+    currentCalendar.changeView('agendaWeek')
+    currentCalendar.next() // move out of the original month range...
+    currentCalendar.next() // ... out. should render correctly.
 
     // whole days
-    expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2); // each multi-day stretch is one element
+    expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2) // each multi-day stretch is one element
 
     // timed area
     expect(isTimeGridNonBusinessSegsRendered([
@@ -40,8 +40,8 @@ describe('businessHours', function() {
       { start: '2014-12-12T17:00', end: '2014-12-13T00:00' },
       // sat
       { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
-    ])).toBe(true);
-  });
+    ])).toBe(true)
+  })
 
 
   describe('when used as a dynamic option', function() {
@@ -51,33 +51,33 @@ describe('businessHours', function() {
         initCalendar({
           defaultView: viewName,
           businessHours: false
-        });
-        var rootEl = $('.fc-view > *:first');
-        expect(rootEl.length).toBe(1);
+        })
+        var rootEl = $('.fc-view > *:first')
+        expect(rootEl.length).toBe(1)
 
-        expect(queryNonBusinessSegs().length).toBe(0);
-        currentCalendar.option('businessHours', true);
-        expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
+        expect(queryNonBusinessSegs().length).toBe(0)
+        currentCalendar.option('businessHours', true)
+        expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
 
-        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
-      });
+        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // same element. didn't completely rerender
+      })
 
       it('allows dynamic turning off', function() {
         initCalendar({
           defaultView: viewName,
           businessHours: true
-        });
-        var rootEl = $('.fc-view > *:first');
-        expect(rootEl.length).toBe(1);
+        })
+        var rootEl = $('.fc-view > *:first')
+        expect(rootEl.length).toBe(1)
 
-        expect(queryNonBusinessSegs().length).toBeGreaterThan(0);
-        currentCalendar.option('businessHours', false);
-        expect(queryNonBusinessSegs().length).toBe(0);
+        expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
+        currentCalendar.option('businessHours', false)
+        expect(queryNonBusinessSegs().length).toBe(0)
 
-        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]); // same element. didn't completely rerender
-      });
-    });
-  });
+        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // same element. didn't completely rerender
+      })
+    })
+  })
 
 
   describe('for multiple day-of-week definitions', function() {
@@ -98,7 +98,7 @@ describe('businessHours', function() {
             end: '16:00'
           }
         ]
-      });
+      })
 
       // timed area
       expect(isTimeGridNonBusinessSegsRendered([
@@ -121,8 +121,8 @@ describe('businessHours', function() {
         { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
         { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
-      ])).toBe(true);
-    });
+      ])).toBe(true)
+    })
 
     it('wont\'t process businessHour items that omit dow', function() {
       initCalendar({
@@ -140,7 +140,7 @@ describe('businessHours', function() {
             end: '16:00'
           }
         ]
-      });
+      })
 
       // timed area
       expect(isTimeGridNonBusinessSegsRendered([
@@ -160,9 +160,9 @@ describe('businessHours', function() {
         { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
         { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
-      ])).toBe(true);
-    });
-  });
+      ])).toBe(true)
+    })
+  })
 
 
   it('will grey-out a totally non-business-hour view', function() {
@@ -170,108 +170,104 @@ describe('businessHours', function() {
       defaultDate: '2016-07-23', // sat
       defaultView: 'agendaDay',
       businessHours: true
-    });
+    })
 
     // timed area
     expect(isTimeGridNonBusinessSegsRendered([
       { start: '2016-07-23T00:00', end: '2016-07-24T00:00' }
-    ])).toBe(true);
-  });
+    ])).toBe(true)
+  })
 
 
   function queryNonBusinessSegs() {
-    return $('.fc-nonbusiness');
+    return $('.fc-nonbusiness')
   }
 
   /* inspired by other proj...
-  ------------------------------------------------------------------------------------------------------------------*/
+  ------------------------------------------------------------------------------------------------------------------ */
 
   function isTimeGridNonBusinessSegsRendered(segs) {
-    return doElsMatchSegs($('.fc-time-grid .fc-nonbusiness'), segs, getTimeGridRect);
+    return doElsMatchSegs($('.fc-time-grid .fc-nonbusiness'), segs, getTimeGridRect)
   }
 
   function getTimeGridRect(start, end) {
-    var obj;
+    var obj
     if (typeof start === 'object') {
-      obj = start;
-      start = obj.start;
-      end = obj.end;
+      obj = start
+      start = obj.start
+      end = obj.end
     }
 
-    start = $.fullCalendar.moment.parseZone(start);
-    end = $.fullCalendar.moment.parseZone(end);
+    start = $.fullCalendar.moment.parseZone(start)
+    end = $.fullCalendar.moment.parseZone(end)
 
-    var startTime = start.time();
-    var endTime;
+    var startTime = start.time()
+    var endTime
     if (end.isSame(start, 'day')) {
-      endTime = end.time();
-    }
-    else if (end < start) {
-      endTime = startTime;
-    }
-    else {
-      endTime = moment.duration({ hours: 24 });
+      endTime = end.time()
+    } else if (end < start) {
+      endTime = startTime
+    } else {
+      endTime = moment.duration({ hours: 24 })
     }
 
-    var dayEls = getTimeGridDayEls(start);
-    var dayRect = getBoundingRect(dayEls);
+    var dayEls = getTimeGridDayEls(start)
+    var dayRect = getBoundingRect(dayEls)
     return {
       left: dayRect.left,
       right: dayRect.right,
       top: getTimeGridTop(startTime),
       bottom: getTimeGridTop(endTime)
-    };
+    }
   }
 
   /* copied from other proj...
-  ------------------------------------------------------------------------------------------------------------------*/
+  ------------------------------------------------------------------------------------------------------------------ */
 
   function getTimeGridTop(targetTime) {
-    var i, j, len, prevSlotEl, prevSlotTime, slotEl, slotEls, slotMsDuration, slotTime, topBorderWidth;
-    targetTime = moment.duration(targetTime);
-    slotEls = getTimeGridSlotEls(targetTime);
-    topBorderWidth = 1;
+    var i, j, len, prevSlotEl, prevSlotTime, slotEl, slotEls, slotMsDuration, slotTime, topBorderWidth
+    targetTime = moment.duration(targetTime)
+    slotEls = getTimeGridSlotEls(targetTime)
+    topBorderWidth = 1
     if (slotEls.length === 1) {
-      return slotEls.eq(0).offset().top + topBorderWidth;
+      return slotEls.eq(0).offset().top + topBorderWidth
     }
-    slotEls = $('.fc-time-grid .fc-slats tr[data-time]');
-    slotTime = null;
-    prevSlotTime = null;
+    slotEls = $('.fc-time-grid .fc-slats tr[data-time]')
+    slotTime = null
+    prevSlotTime = null
     for (i = j = 0, len = slotEls.length; j < len; i = ++j) {
-      slotEl = slotEls[i];
-      slotEl = $(slotEl);
-      prevSlotTime = slotTime;
-      slotTime = moment.duration(slotEl.data('time'));
+      slotEl = slotEls[i]
+      slotEl = $(slotEl)
+      prevSlotTime = slotTime
+      slotTime = moment.duration(slotEl.data('time'))
       if (targetTime < slotTime) {
         if (!prevSlotTime) {
-          return slotEl.offset().top + topBorderWidth;
-        }
-        else {
-          prevSlotEl = slotEls.eq(i - 1);
+          return slotEl.offset().top + topBorderWidth
+        } else {
+          prevSlotEl = slotEls.eq(i - 1)
           return prevSlotEl.offset().top + topBorderWidth +
-            prevSlotEl.outerHeight() * ((targetTime - prevSlotTime) / (slotTime - prevSlotTime));
+            prevSlotEl.outerHeight() * ((targetTime - prevSlotTime) / (slotTime - prevSlotTime))
         }
       }
     }
-    slotMsDuration = slotTime - prevSlotTime;
+    slotMsDuration = slotTime - prevSlotTime
     return slotEl.offset().top + topBorderWidth +
-      slotEl.outerHeight() * Math.min(1, (targetTime - slotTime) / slotMsDuration);
+      slotEl.outerHeight() * Math.min(1, (targetTime - slotTime) / slotMsDuration)
   }
 
   function getTimeGridDayEls(date) {
-    date = $.fullCalendar.moment.parseZone(date);
-    return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]');
+    date = $.fullCalendar.moment.parseZone(date)
+    return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
   }
 
   function getTimeGridSlotEls(timeDuration) {
-    timeDuration = moment.duration(timeDuration);
-    var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration);
+    timeDuration = moment.duration(timeDuration)
+    var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
     if (date.date() == 1) { // ensure no time overflow/underflow
-      return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]');
-    }
-    else {
-      return $();
+      return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]')
+    } else {
+      return $()
     }
   }
 
-});
+})

@@ -10,15 +10,15 @@ describe('eventMouseover', function() {
 
       pushOptions({
         defaultView: viewName
-      });
+      })
 
       it('will trigger a eventMouseout with updateEvent', function(done) {
 
         var eventMouseoutSpy = spyOnCalendarCallback('eventMouseout', function(event, ev) {
-          expect(typeof event).toBe('object');
-          expect(typeof ev).toBe('object');
-          done();
-        });
+          expect(typeof event).toBe('object')
+          expect(typeof ev).toBe('object')
+          done()
+        })
 
         initCalendar({
           events: [ {
@@ -27,16 +27,16 @@ describe('eventMouseover', function() {
             className: 'event'
           } ],
           eventMouseover: function(event, ev) {
-            expect(typeof event).toBe('object');
-            expect(typeof ev).toBe('object');
-            event.title = 'YO';
-            currentCalendar.updateEvent(event);
+            expect(typeof event).toBe('object')
+            expect(typeof ev).toBe('object')
+            event.title = 'YO'
+            currentCalendar.updateEvent(event)
           }
-        });
+        })
 
-        $('.event').simulate('mouseover');
+        $('.event').simulate('mouseover')
 
-      });
-    });
-  });
-});
+      })
+    })
+  })
+})

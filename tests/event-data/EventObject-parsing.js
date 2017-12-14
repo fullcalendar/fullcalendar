@@ -8,11 +8,11 @@ describe('Event Object parsing', function() {
       events: [
         { _id: 'a', start: '2017-09-05' }
       ]
-    });
+    })
 
-    var events = currentCalendar.clientEvents();
-    expect(events[0]._id).toBe('a');
-  });
+    var events = currentCalendar.clientEvents()
+    expect(events[0]._id).toBe('a')
+  })
 
   it('leaves an existing date prop unparsed and untouched', function() {
     initCalendar({
@@ -21,10 +21,10 @@ describe('Event Object parsing', function() {
       events: [
         { date: '2017-09-05' }
       ]
-    });
+    })
 
-    var events = currentCalendar.clientEvents();
-    expect(events[0].date).toBe('2017-09-05');
-  });
+    var events = currentCalendar.clientEvents()
+    expect(events[0].date).toBe('2017-09-05')
+  })
 
-});
+})

@@ -3,11 +3,11 @@ describe('refetchEvents', function() {
   // there IS a similar test in automated-better, but does month view
   describe('when agenda events are rerendered', function() {
     beforeEach(function() {
-      affix('#cal');
-    });
+      affix('#cal')
+    })
 
     it('keeps scroll after refetchEvents', function(done) {
-      var renderCalls = 0;
+      var renderCalls = 0
 
       $('#cal').fullCalendar({
         now: '2015-08-07',
@@ -22,38 +22,37 @@ describe('refetchEvents', function() {
               { id: '3', resourceId: 'd', start: '2015-08-06', end: '2015-08-08', title: 'event 3' },
               { id: '4', resourceId: 'e', start: '2015-08-07T03:00:00', end: '2015-08-07T08:00:00', title: 'event 4' },
               { id: '5', resourceId: 'f', start: '2015-08-07T00:30:00', end: '2015-08-07T02:30:00', title: 'event 5' }
-            ]);
-          }, 100);
+            ])
+          }, 100)
         },
         eventAfterAllRender: function() {
-          var scrollEl = $('.fc-time-grid-container.fc-scroller');
-          renderCalls++;
+          var scrollEl = $('.fc-time-grid-container.fc-scroller')
+          renderCalls++
           if (renderCalls == 1) {
             setTimeout(function() {
-              scrollEl.scrollTop(100);
+              scrollEl.scrollTop(100)
               setTimeout(function() {
-                $('#cal').fullCalendar('refetchEvents');
-              }, 100);
-            }, 100);
-          }
-          else if (renderCalls == 2) {
-            expect(scrollEl.scrollTop()).toBe(100);
-            done();
+                $('#cal').fullCalendar('refetchEvents')
+              }, 100)
+            }, 100)
+          } else if (renderCalls == 2) {
+            expect(scrollEl.scrollTop()).toBe(100)
+            done()
           }
         }
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('when there are multiple event sources', function() {
-    var options;
-    var fetchCount; // affects events created in createEventGenerator
-    var calendarEl;
+    var options
+    var fetchCount // affects events created in createEventGenerator
+    var calendarEl
 
     beforeEach(function() {
-      affix('#cal');
-      fetchCount = 0;
-      calendarEl = $('#cal');
+      affix('#cal')
+      fetchCount = 0
+      calendarEl = $('#cal')
       options = {
         now: '2015-08-07',
         defaultView: 'agendaWeek',
@@ -74,19 +73,19 @@ describe('refetchEvents', function() {
             id: 'source3'
           }
         ]
-      };
-    });
+      }
+    })
 
     describe('and all events are fetched synchronously', function() {
       it('all events are immediately updated', function(done) {
-        calendarEl.fullCalendar(options);
-        fetchCount++;
-        calendarEl.fullCalendar('refetchEvents');
-        expect($('.fetch0').length).toEqual(0);
-        expect($('.fetch1').length).toEqual(3);
-        done();
-      });
-    });
+        calendarEl.fullCalendar(options)
+        fetchCount++
+        calendarEl.fullCalendar('refetchEvents')
+        expect($('.fetch0').length).toEqual(0)
+        expect($('.fetch1').length).toEqual(3)
+        done()
+      })
+    })
 
     describe('and one event source is asynchronous', function() {
       it('original events remain on the calendar until all events have been refetched', function(done) {
@@ -96,34 +95,35 @@ describe('refetchEvents', function() {
             { id: '1',
               start: '2015-08-07T02:00:00',
               end: '2015-08-07T03:00:00',
-              title: 'event A', className: 'fetch' + fetchCount
+              title: 'event A',
+              className: 'fetch' + fetchCount
             }
-          ];
+          ]
 
           setTimeout(function() {
-            callback(events);
-          }, 100);
-        };
+            callback(events)
+          }, 100)
+        }
         options.eventAfterAllRender = function() {
-          fetchCount++;
+          fetchCount++
           if (fetchCount === 1) {
             // after the initial rendering of events, call refetchEvents
-            calendarEl.fullCalendar('refetchEvents');
+            calendarEl.fullCalendar('refetchEvents')
 
-            expect($('.fetch0').length).toEqual(3); // original events still on the calendar
-            expect($('.fetch1').length).toEqual(0); // new events not yet refetched
+            expect($('.fetch0').length).toEqual(3) // original events still on the calendar
+            expect($('.fetch1').length).toEqual(0) // new events not yet refetched
 
             setTimeout(function() { // wait until refetch+rerender is over
-              expect($('.fetch0').length).toEqual(0);
-              expect($('.fetch1').length).toEqual(3);
-              done();
-            }, 200);
+              expect($('.fetch0').length).toEqual(0)
+              expect($('.fetch1').length).toEqual(3)
+              done()
+            }, 200)
           }
-        };
+        }
 
-        calendarEl.fullCalendar(options);
-      });
-    });
+        calendarEl.fullCalendar(options)
+      })
+    })
 
     // relies on fetchCount
     function createEventGenerator() {
@@ -136,10 +136,10 @@ describe('refetchEvents', function() {
             title: 'event A',
             className: 'fetch' + fetchCount
           }
-        ];
+        ]
 
-        callback(events);
-      };
+        callback(events)
+      }
     }
-  });
-});
+  })
+})

@@ -1,6 +1,6 @@
 
 describe('rerender performance', function() {
-  var FC = $.fullCalendar;
+  var FC = $.fullCalendar
 
   pushOptions({
     defaultDate: '2017-10-04',
@@ -29,55 +29,55 @@ describe('rerender performance', function() {
   ].forEach(function(settings) {
     settings.classes.forEach(function(className) {
       describe('for ' + className + ' in ' + settings.defaultView + ' view', function() {
-        var Class = FC[className];
+        var Class = FC[className]
 
         it('calls methods a limited number of times', function(done) {
-          var executeDateRender = spyOnMethod(Class, 'executeDateRender');
-          var executeEventRender = spyOnMethod(Class, 'executeEventRender');
-          var updateSize = spyOnMethod(Class, 'updateSize');
+          var executeDateRender = spyOnMethod(Class, 'executeDateRender')
+          var executeEventRender = spyOnMethod(Class, 'executeEventRender')
+          var updateSize = spyOnMethod(Class, 'updateSize')
 
           initCalendar({
-            defaultView: settings.defaultView,
-          });
+            defaultView: settings.defaultView
+          })
 
-          expect(executeDateRender.calls.count()).toBe(1);
-          expect(executeEventRender.calls.count()).toBe(1);
-          expect(updateSize.calls.count()).toBe(1);
+          expect(executeDateRender.calls.count()).toBe(1)
+          expect(executeEventRender.calls.count()).toBe(1)
+          expect(updateSize.calls.count()).toBe(1)
 
-          currentCalendar.changeView(settings.changeToView);
+          currentCalendar.changeView(settings.changeToView)
 
-          expect(executeDateRender.calls.count()).toBe(1);
-          expect(executeEventRender.calls.count()).toBe(1);
-          expect(updateSize.calls.count()).toBe(2); // +1
+          expect(executeDateRender.calls.count()).toBe(1)
+          expect(executeEventRender.calls.count()).toBe(1)
+          expect(updateSize.calls.count()).toBe(2) // +1
 
-          currentCalendar.changeView(settings.defaultView);
+          currentCalendar.changeView(settings.defaultView)
 
-          expect(executeDateRender.calls.count()).toBe(2); // +1
-          expect(executeEventRender.calls.count()).toBe(2); // +1
-          expect(updateSize.calls.count()).toBe(3); // +1
+          expect(executeDateRender.calls.count()).toBe(2) // +1
+          expect(executeEventRender.calls.count()).toBe(2) // +1
+          expect(updateSize.calls.count()).toBe(3) // +1
 
-          currentCalendar.rerenderEvents();
+          currentCalendar.rerenderEvents()
 
-          expect(executeDateRender.calls.count()).toBe(2);
-          expect(executeEventRender.calls.count()).toBe(3); // +1
-          expect(updateSize.calls.count()).toBe(5); // +2, TODO: get to just +1
+          expect(executeDateRender.calls.count()).toBe(2)
+          expect(executeEventRender.calls.count()).toBe(3) // +1
+          expect(updateSize.calls.count()).toBe(5) // +2, TODO: get to just +1
 
-          $(window).trigger('resize');
+          $(window).trigger('resize')
 
           setTimeout(function() {
 
-            expect(executeDateRender.calls.count()).toBe(2);
-            expect(executeEventRender.calls.count()).toBe(3);
-            expect(updateSize.calls.count()).toBe(6); // +1
+            expect(executeDateRender.calls.count()).toBe(2)
+            expect(executeEventRender.calls.count()).toBe(3)
+            expect(updateSize.calls.count()).toBe(6) // +1
 
-            executeDateRender.restore();
-            executeEventRender.restore();
-            updateSize.restore();
+            executeDateRender.restore()
+            executeEventRender.restore()
+            updateSize.restore()
 
-            done();
+            done()
           }, 1) // more than windowResizeDelay
-        });
-      });
-    });
-  });
-});
+        })
+      })
+    })
+  })
+})

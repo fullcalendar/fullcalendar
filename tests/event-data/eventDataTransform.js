@@ -3,8 +3,8 @@ describe('eventDataTransform', function() {
   var transform = function(raw) {
     return $.extend({}, raw, {
       was_processed: true
-    });
-  };
+    })
+  }
 
   describeOptions({
     'when on the calendar': {
@@ -23,10 +23,10 @@ describe('eventDataTransform', function() {
     }
   }, function() {
     it('affects parsing of the event', function() {
-      initCalendar();
-      var eventObj = currentCalendar.clientEvents()[0];
-      expect(eventObj.was_processed).toBe(true);
-    });
-  });
+      initCalendar()
+      var eventObj = currentCalendar.clientEvents()[0]
+      expect(eventObj.was_processed).toBe(true)
+    })
+  })
 
-});
+})

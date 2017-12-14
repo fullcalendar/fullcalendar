@@ -6,8 +6,8 @@ describe('nextDayThreshold', function() {
   //   TODO: detect 2 or more different types of Duration-ish parsing
 
   beforeEach(function() {
-    affix('#cal');
-  });
+    affix('#cal')
+  })
 
   it('renders an event before the threshold', function() {
     $('#cal').fullCalendar({
@@ -21,9 +21,9 @@ describe('nextDayThreshold', function() {
           end: '2014-06-10T09:00:00'
         }
       ]
-    });
-    expect(renderedDayCount()).toBe(2);
-  });
+    })
+    expect(renderedDayCount()).toBe(2)
+  })
 
   it('renders an event equal to the threshold', function() {
     $('#cal').fullCalendar({
@@ -37,9 +37,9 @@ describe('nextDayThreshold', function() {
           end: '2014-06-10T10:00:00'
         }
       ]
-    });
-    expect(renderedDayCount()).toBe(3);
-  });
+    })
+    expect(renderedDayCount()).toBe(3)
+  })
 
   it('renders an event after the threshold', function() {
     $('#cal').fullCalendar({
@@ -53,18 +53,18 @@ describe('nextDayThreshold', function() {
           end: '2014-06-10T11:00:00'
         }
       ]
-    });
-    expect(renderedDayCount()).toBe(3);
-  });
+    })
+    expect(renderedDayCount()).toBe(3)
+  })
 
 
   function renderedDayCount() { // assumes only one event on the calendar
-    var cellWidth = $('.fc-sun').outerWidth(); // works with basic and agenda
-    var totalWidth = 0;
+    var cellWidth = $('.fc-sun').outerWidth() // works with basic and agenda
+    var totalWidth = 0
     $('.fc-event').each(function() {
-      totalWidth += $(this).outerWidth();
-    });
-    return Math.round(totalWidth / cellWidth);
+      totalWidth += $(this).outerWidth()
+    })
+    return Math.round(totalWidth / cellWidth)
   }
 
-});
+})

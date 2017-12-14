@@ -1,10 +1,10 @@
 
 describe('eventLimit popover', function() {
 
-  var options;
+  var options
 
   beforeEach(function() {
-    affix('#cal');
+    affix('#cal')
     options = {
       defaultView: 'month',
       defaultDate: '2014-08-01',
@@ -17,65 +17,65 @@ describe('eventLimit popover', function() {
       ],
       popoverViewportConstrain: false, // because PhantomJS window is small, don't do smart repositioning
       handleWindowResize: false // because showing the popover causes scrollbars and fires resize
-    };
-  });
+    }
+  })
 
   function init() {
-    $('.fc-more').simulate('click');
+    $('.fc-more').simulate('click')
   }
 
   it('closes when user clicks the X and trigger eventDestroy for every render', function() {
-    var eventsRendered = {};
-    var renderCount = 0;
-    var activated = false;
+    var eventsRendered = {}
+    var renderCount = 0
+    var activated = false
     options.eventRender = function(eventObject, element, view) {
       if (activated) {
-        eventsRendered[eventObject.title] = eventObject;
-        ++renderCount;
+        eventsRendered[eventObject.title] = eventObject
+        ++renderCount
       }
-    };
+    }
     options.eventDestroy = function(eventObject, element, view) {
-      delete eventsRendered[eventObject.title];
-      --renderCount;
-    };
-    //Create calendar
-    $('#cal').fullCalendar(options);
-    //Activate flags and pop event limit popover
-    activated = true;
-    $('.fc-more').simulate('click');
+      delete eventsRendered[eventObject.title]
+      --renderCount
+    }
+    // Create calendar
+    $('#cal').fullCalendar(options)
+    // Activate flags and pop event limit popover
+    activated = true
+    $('.fc-more').simulate('click')
 
-    expect($('.fc-more-popover')).toBeVisible();
+    expect($('.fc-more-popover')).toBeVisible()
     $('.fc-more-popover .fc-close')
-      .simulate('click');
-    expect($('.fc-more-popover')).not.toBeVisible();
-    expect(Object.keys(eventsRendered).length).toEqual(0);
-    expect(renderCount).toEqual(0);
-  });
+      .simulate('click')
+    expect($('.fc-more-popover')).not.toBeVisible()
+    expect(Object.keys(eventsRendered).length).toEqual(0)
+    expect(renderCount).toEqual(0)
+  })
 
   it('closes when user clicks outside of the popover and trigger eventDestroy for every render', function() {
-    var eventsRendered = {};
-    var renderCount = 0;
-    var activated = false;
+    var eventsRendered = {}
+    var renderCount = 0
+    var activated = false
     options.eventRender = function(eventObject, element, view) {
       if (activated) {
-        eventsRendered[eventObject.title] = eventObject;
-        ++renderCount;
+        eventsRendered[eventObject.title] = eventObject
+        ++renderCount
       }
-    };
+    }
     options.eventDestroy = function(eventObject, element, view) {
-      delete eventsRendered[eventObject.title];
-      --renderCount;
-    };
-    //Create calendar
-    $('#cal').fullCalendar(options);
-    //Activate flags and pop event limit popover
-    activated = true;
-    $('.fc-more').simulate('click');
+      delete eventsRendered[eventObject.title]
+      --renderCount
+    }
+    // Create calendar
+    $('#cal').fullCalendar(options)
+    // Activate flags and pop event limit popover
+    activated = true
+    $('.fc-more').simulate('click')
 
-    expect($('.fc-more-popover')).toBeVisible();
-    $('body').simulate('mousedown').simulate('click');
-    expect($('.fc-more-popover')).not.toBeVisible();
-    expect(Object.keys(eventsRendered).length).toEqual(0);
-    expect(renderCount).toEqual(0);
-  });
-});
+    expect($('.fc-more-popover')).toBeVisible()
+    $('body').simulate('mousedown').simulate('click')
+    expect($('.fc-more-popover')).not.toBeVisible()
+    expect(Object.keys(eventsRendered).length).toEqual(0)
+    expect(renderCount).toEqual(0)
+  })
+})

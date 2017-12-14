@@ -7,10 +7,10 @@ describe('customButtons', function() {
         mybutton: { text: 'asdf' }
       },
       header: { left: 'mybutton', center: '', right: '' }
-    });
-    
-    expect($('.fc-mybutton-button')).toHaveText('asdf');
-  });
+    })
+
+    expect($('.fc-mybutton-button')).toHaveText('asdf')
+  })
 
   it('can specify an icon', function() {
     initCalendar({
@@ -18,10 +18,10 @@ describe('customButtons', function() {
         mybutton: { icon: 'asdf' }
       },
       header: { left: 'mybutton', center: '', right: '' }
-    });
+    })
 
-    expect($('.fc-mybutton-button .fc-icon')).toHaveClass('fc-icon-asdf');
-  });
+    expect($('.fc-mybutton-button .fc-icon')).toHaveClass('fc-icon-asdf')
+  })
 
   it('can specify a jquery-ui icon', function() {
     initCalendar({
@@ -30,10 +30,10 @@ describe('customButtons', function() {
         mybutton: { themeIcon: 'asdf' }
       },
       header: { left: 'mybutton', center: '', right: '' }
-    });
+    })
 
-    expect($('.fc-mybutton-button .ui-icon')).toHaveClass('ui-icon-asdf');
-  });
+    expect($('.fc-mybutton-button .ui-icon')).toHaveClass('ui-icon-asdf')
+  })
 
   it('can specify a bootstrap glyphicon', function() {
     initCalendar({
@@ -42,8 +42,8 @@ describe('customButtons', function() {
         mybutton: { bootstrapGlyphicon: 'asdf' }
       },
       header: { left: 'mybutton', center: '', right: '' }
-    });
+    })
 
-    expect($('.fc-mybutton-button .glyphicon')).toHaveClass('glyphicon-asdf');
-  });
-});
+    expect($('.fc-mybutton-button .glyphicon')).toHaveClass('glyphicon-asdf')
+  })
+})

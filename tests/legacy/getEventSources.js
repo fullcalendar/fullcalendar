@@ -20,19 +20,19 @@ describe('getEventSources', function() {
         ]
       }
     ]
-  });
+  })
 
   it('does not mutate when removeEventSource is called', function(done) {
-    initCalendar();
-    var eventSources = currentCalendar.getEventSources();
-    expect(eventSources.length).toBe(3);
+    initCalendar()
+    var eventSources = currentCalendar.getEventSources()
+    expect(eventSources.length).toBe(3)
 
     // prove that eventSources is a copy, and wasn't mutated
-    currentCalendar.removeEventSource(eventSources[0]);
-    expect(eventSources.length).toBe(3);
+    currentCalendar.removeEventSource(eventSources[0])
+    expect(eventSources.length).toBe(3)
 
-    done();
-  });
+    done()
+  })
 
-});
+})
 
