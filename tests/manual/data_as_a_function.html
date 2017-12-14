@@ -8,43 +8,43 @@
 <script src='../../dist/fullcalendar.js'></script>
 <script>
 
-	$(document).ready(function() {
-		
-		$('#calendar').fullCalendar({
-			year: 2010,
-			month: 0,
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
-			},
-			editable: true,
-			events: {
-				url: "many_events_json.txt",
-				data: function() {
-					var custom_data = { q: 'custom data value' }; // should see this in Networking
-					console.log('setting custom_data as part of the eventSource fetch');
-					return custom_data;
-				}
-			}
-		});
-		
-	});
+  $(document).ready(function() {
+    
+    $('#calendar').fullCalendar({
+      year: 2010,
+      month: 0,
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+      },
+      editable: true,
+      events: {
+        url: "many_events_json.txt",
+        data: function() {
+          var custom_data = { q: 'custom data value' }; // should see this in Networking
+          console.log('setting custom_data as part of the eventSource fetch');
+          return custom_data;
+        }
+      }
+    });
+    
+  });
 
 </script>
 <style>
 
-	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 13px;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+  body {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
 
-	#calendar {
-		width: 900px;
-		margin: 0 auto;
-		}
+  #calendar {
+    width: 900px;
+    margin: 0 auto;
+    }
 
 </style>
 </head>

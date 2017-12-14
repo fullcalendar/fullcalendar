@@ -9,86 +9,86 @@
 <script src='../../dist/fullcalendar.js'></script>
 <script>
 
-	$(document).ready(function() {
+  $(document).ready(function() {
 
-		$('#calendar').fullCalendar({
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay,listWeek'
-			},
-			defaultDate: '2014-06-12',
-			weekNumberCalculation: 'ISO',
-			weekNumbersWithinDays: true,
-			weekNumbers: true,
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,listWeek'
+      },
+      defaultDate: '2014-06-12',
+      weekNumberCalculation: 'ISO',
+      weekNumbersWithinDays: true,
+      weekNumbers: true,
 
-			navLinks: true,
-			//navLinks: {
-			//	day: 'agendaDay'
-			//},
+      navLinks: true,
+      //navLinks: {
+      //  day: 'agendaDay'
+      //},
 
-			dayClick: function() {
-				alert('dayClick!!!'); // should not fire
-			},
+      dayClick: function() {
+        alert('dayClick!!!'); // should not fire
+      },
 
-			editable: true,
-			events: [
-				{
-					title: 'All Day Event',
-					start: '2014-06-01'
-				},
-				{
-					title: 'Long Event',
-					start: '2014-06-07',
-					end: '2014-06-10'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2014-06-09T16:00:00'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2014-06-16T16:00:00'
-				},
-				{
-					title: 'Meeting',
-					start: '2014-06-12T10:30:00',
-					end: '2014-06-12T12:30:00'
-				},
-				{
-					title: 'Lunch',
-					start: '2014-06-12T12:00:00'
-				},
-				{
-					title: 'Birthday Party',
-					start: '2014-06-13T07:00:00'
-				},
-				{
-					title: 'Click for Google',
-					url: 'http://google.com/',
-					start: '2014-06-28'
-				}
-			]
-		});
+      editable: true,
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2014-06-01'
+        },
+        {
+          title: 'Long Event',
+          start: '2014-06-07',
+          end: '2014-06-10'
+        },
+        {
+          id: 999,
+          title: 'Repeating Event',
+          start: '2014-06-09T16:00:00'
+        },
+        {
+          id: 999,
+          title: 'Repeating Event',
+          start: '2014-06-16T16:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2014-06-12T10:30:00',
+          end: '2014-06-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2014-06-12T12:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2014-06-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2014-06-28'
+        }
+      ]
+    });
 
-	});
+  });
 
 </script>
 <style>
 
-	body {
-		margin: 0;
-		padding: 0;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		font-size: 14px;
-	}
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+  }
 
-	#calendar {
-		width: 900px;
-		margin: 40px auto;
-	}
+  #calendar {
+    width: 900px;
+    margin: 40px auto;
+  }
 
 </style>
 </head>

@@ -4,9 +4,9 @@
 
 // like `it`, but with the ability to return a promise
 window.pit = function(description, runFunc) {
-	it(description, function(done) {
-		runFunc().then(done);
-	});
+  it(description, function(done) {
+    runFunc().then(done);
+  });
 };
 
 
@@ -18,16 +18,16 @@ window.currentCalendar = null;
 
 
 beforeEach(function() {
-	window.optionsStack = [];
+  window.optionsStack = [];
 });
 
 afterEach(function() {
-	window.optionsStack = null;
-	if (window.currentCalendar) {
-		window.currentCalendar.destroy();
-		window.currentCalendar = null;
-	}
-	$('#calendar').remove();
+  window.optionsStack = null;
+  if (window.currentCalendar) {
+    window.currentCalendar.destroy();
+    window.currentCalendar = null;
+  }
+  $('#calendar').remove();
 });
 
 
@@ -35,45 +35,45 @@ afterEach(function() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 window.pushOptions = function(options) {
-	beforeEach(function() {
-		return window.optionsStack.push(options);
-	});
+  beforeEach(function() {
+    return window.optionsStack.push(options);
+  });
 };
 
 // called within an `it`
 window.spyOnCalendarCallback = function(name, func) {
-	var options = {};
+  var options = {};
 
-	options[name] = func;
-	spyOn(options, name).and.callThrough();
+  options[name] = func;
+  spyOn(options, name).and.callThrough();
 
-	window.optionsStack.push(options);
+  window.optionsStack.push(options);
 
-	return options[name];
+  return options[name];
 };
 
 window.initCalendar = function(options, el) {
-	var Calendar = $.fullCalendar.Calendar;
-	var $el;
+  var Calendar = $.fullCalendar.Calendar;
+  var $el;
 
-	if (options) {
-		window.optionsStack.push(options);
-	}
+  if (options) {
+    window.optionsStack.push(options);
+  }
 
-	if (el) {
-		$el = $(el);
-	}
-	else {
-		$el = $('<div id="calendar">').appendTo('body');
-	}
+  if (el) {
+    $el = $(el);
+  }
+  else {
+    $el = $('<div id="calendar">').appendTo('body');
+  }
 
-	window.currentCalendar = new Calendar($el, getCurrentOptions()); // set the global
+  window.currentCalendar = new Calendar($el, getCurrentOptions()); // set the global
 
-	return window.currentCalendar.render();
+  return window.currentCalendar.render();
 };
 
 window.getCurrentOptions = function() {
-	return $.extend.apply($, [ {} ].concat(window.optionsStack));
+  return $.extend.apply($, [ {} ].concat(window.optionsStack));
 };
 
 
@@ -85,37 +85,37 @@ describeOptions(optionName, descriptionAndValueHash, callback)
 describeOptions(descriptionAndOptionsHash, callback)
  */
 window.describeOptions = function(optName, hash, callback) {
-	if ($.type(optName) === 'object') {
-		callback = hash;
-		hash = optName;
-		optName = null;
-	}
+  if ($.type(optName) === 'object') {
+    callback = hash;
+    hash = optName;
+    optName = null;
+  }
 
-	$.each(hash, function(desc, val) {
-		var opts;
+  $.each(hash, function(desc, val) {
+    var opts;
 
-		if (optName) {
-			opts = {};
-			opts[optName] = val;
-		}
-		else {
-			opts = val;
-		}
-		opts = $.extend(true, {}, opts);
+    if (optName) {
+      opts = {};
+      opts[optName] = val;
+    }
+    else {
+      opts = val;
+    }
+    opts = $.extend(true, {}, opts);
 
-		describe(desc, function() {
-			pushOptions(opts);
-			callback(val);
-		});
-	});
+    describe(desc, function() {
+      pushOptions(opts);
+      callback(val);
+    });
+  });
 };
 
 window.describeValues = function(hash, callback) {
-	$.each(hash, function(desc, val) {
-		describe(desc, function() {
-			callback(val);
-		});
-	});
+  $.each(hash, function(desc, val) {
+    describe(desc, function() {
+      callback(val);
+    });
+  });
 };
 
 
@@ -123,49 +123,49 @@ window.describeValues = function(hash, callback) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 const timezoneScenarios = {
-	none: {
-		description: 'when no timezone',
-		value: null,
-		moment: function(str) {
-			return $.fullCalendar.moment.parseZone(str);
-		}
-	},
-	local: {
-		description: 'when local timezone',
-		value: 'local',
-		moment: function(str) {
-			return moment(str);
-		}
-	},
-	UTC: {
-		description: 'when UTC timezone',
-		value: 'UTC',
-		moment: function(str) {
-			return moment.utc(str);
-		}
-	}
+  none: {
+    description: 'when no timezone',
+    value: null,
+    moment: function(str) {
+      return $.fullCalendar.moment.parseZone(str);
+    }
+  },
+  local: {
+    description: 'when local timezone',
+    value: 'local',
+    moment: function(str) {
+      return moment(str);
+    }
+  },
+  UTC: {
+    description: 'when UTC timezone',
+    value: 'UTC',
+    moment: function(str) {
+      return moment.utc(str);
+    }
+  }
 };
 
 window.describeTimezones = function(callback) {
-	$.each(timezoneScenarios, function(name, scenario) {
-		describe(scenario.description, function() {
-			pushOptions({
-				timezone: name
-			});
-			callback(scenario);
-		});
-	});
+  $.each(timezoneScenarios, function(name, scenario) {
+    describe(scenario.description, function() {
+      pushOptions({
+        timezone: name
+      });
+      callback(scenario);
+    });
+  });
 };
 
 window.describeTimezone = function(name, callback) {
-	var scenario = timezoneScenarios[name];
+  var scenario = timezoneScenarios[name];
 
-	describe(scenario.description, function() {
-		pushOptions({
-			timezone: name
-		});
-		callback(scenario);
-	});
+  describe(scenario.description, function() {
+    pushOptions({
+      timezone: name
+    });
+    callback(scenario);
+  });
 };
 
 
@@ -173,12 +173,12 @@ window.describeTimezone = function(name, callback) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 window.oneCall = function(func) {
-	var called;
-	called = false;
-	return function() {
-		if (!called) {
-			called = true;
-			return func.apply(this, arguments);
-		}
-	};
+  var called;
+  called = false;
+  return function() {
+    if (!called) {
+      called = true;
+      return func.apply(this, arguments);
+    }
+  };
 };

@@ -1,27 +1,27 @@
 ddescribe('', function() {
 
-	var options;
+  var options;
 
-	beforeEach(function() {
-		//affix('#cal');
-		$('body').append('<div id="cal"></div>');
-		options = {
-			defaultDate: ''
-		};
-	});
+  beforeEach(function() {
+    //affix('#cal');
+    $('body').append('<div id="cal"></div>');
+    options = {
+      defaultDate: ''
+    };
+  });
 
-	afterEach(function() {
-		//$('#cal').fullCalendar('destroy');
-	});
+  afterEach(function() {
+    //$('#cal').fullCalendar('destroy');
+  });
 
-	describe('', function() {
-		beforeEach(function() {
-			options.defaultView = '';
-		});
+  describe('', function() {
+    beforeEach(function() {
+      options.defaultView = '';
+    });
 
-		iit('', function() {
-			$('#cal').fullCalendar(options);
-		});
-	});
+    iit('', function() {
+      $('#cal').fullCalendar(options);
+    });
+  });
 
 });
