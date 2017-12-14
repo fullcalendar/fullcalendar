@@ -11,14 +11,14 @@ export default class EventDateProfile {
 
 
   constructor(start, end, calendar) {
-    this.start = start;
-    this.end = end || null;
-    this.unzonedRange = this.buildUnzonedRange(calendar);
+    this.start = start
+    this.end = end || null
+    this.unzonedRange = this.buildUnzonedRange(calendar)
   }
 
 
   isAllDay() { // why recompute this every time?
-    return !(this.start.hasTime() || (this.end && this.end.hasTime()));
+    return !(this.start.hasTime() || (this.end && this.end.hasTime()))
   }
 
 
@@ -26,10 +26,10 @@ export default class EventDateProfile {
   Needs a Calendar object
   */
   buildUnzonedRange(calendar) {
-    var startMs = this.start.clone().stripZone().valueOf();
-    var endMs = this.getEnd(calendar).stripZone().valueOf();
+    let startMs = this.start.clone().stripZone().valueOf()
+    let endMs = this.getEnd(calendar).stripZone().valueOf()
 
-    return new UnzonedRange(startMs, endMs);
+    return new UnzonedRange(startMs, endMs)
   }
 
 
@@ -43,12 +43,12 @@ export default class EventDateProfile {
       calendar.getDefaultEventEnd(
         this.isAllDay(),
         this.start
-      );
+      )
   }
 
 
   static isStandardProp(propName) {
-    return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay';
+    return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay'
   }
 
 
@@ -56,54 +56,53 @@ export default class EventDateProfile {
   Needs an EventSource object
   */
   static parse(rawProps, source) {
-    var startInput = rawProps.start || rawProps.date;
-    var endInput = rawProps.end;
+    let startInput = rawProps.start || rawProps.date
+    let endInput = rawProps.end
 
     if (!startInput) {
-      return false;
+      return false
     }
 
-    var calendar = source.calendar;
-    var start = calendar.moment(startInput);
-    var end = endInput ? calendar.moment(endInput) : null;
-    var forcedAllDay = rawProps.allDay;
-    var forceEventDuration = calendar.opt('forceEventDuration');
+    let calendar = source.calendar
+    let start = calendar.moment(startInput)
+    let end = endInput ? calendar.moment(endInput) : null
+    let forcedAllDay = rawProps.allDay
+    let forceEventDuration = calendar.opt('forceEventDuration')
 
     if (!start.isValid()) {
-      return false;
+      return false
     }
 
     if (end && (!end.isValid() || !end.isAfter(start))) {
-      end = null;
+      end = null
     }
 
     if (forcedAllDay == null) {
-      forcedAllDay = source.allDayDefault;
+      forcedAllDay = source.allDayDefault
       if (forcedAllDay == null) {
-        forcedAllDay = calendar.opt('allDayDefault');
+        forcedAllDay = calendar.opt('allDayDefault')
       }
     }
 
     if (forcedAllDay === true) {
-      start.stripTime();
+      start.stripTime()
       if (end) {
-        end.stripTime();
+        end.stripTime()
       }
-    }
-    else if (forcedAllDay === false) {
+    } else if (forcedAllDay === false) {
       if (!start.hasTime()) {
-        start.time(0);
+        start.time(0)
       }
       if (end && !end.hasTime()) {
-        end.time(0);
+        end.time(0)
       }
     }
 
     if (!end && forceEventDuration) {
-      end = calendar.getDefaultEventEnd(!start.hasTime(), start);
+      end = calendar.getDefaultEventEnd(!start.hasTime(), start)
     }
 
-    return new EventDateProfile(start, end, calendar);
+    return new EventDateProfile(start, end, calendar)
   }
 
 }

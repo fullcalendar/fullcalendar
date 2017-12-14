@@ -12,16 +12,16 @@ export default class HelperRenderer {
 
 
   constructor(component, eventRenderer) {
-    this.view = component._getView();
-    this.component = component;
-    this.eventRenderer = eventRenderer;
+    this.view = component._getView()
+    this.component = component
+    this.eventRenderer = eventRenderer
   }
 
 
   renderComponentFootprint(componentFootprint) {
     this.renderEventFootprints([
       this.fabricateEventFootprint(componentFootprint)
-    ]);
+    ])
   }
 
 
@@ -31,7 +31,7 @@ export default class HelperRenderer {
       sourceSeg,
       'fc-dragging',
       isTouch ? null : this.view.opt('dragOpacity')
-    );
+    )
   }
 
 
@@ -40,29 +40,29 @@ export default class HelperRenderer {
       eventFootprints,
       sourceSeg,
       'fc-resizing'
-    );
+    )
   }
 
 
   renderEventFootprints(eventFootprints, sourceSeg?, extraClassNames?, opacity?) {
-    var segs = this.component.eventFootprintsToSegs(eventFootprints);
-    var classNames = 'fc-helper ' + (extraClassNames || '');
-    var i;
+    let segs = this.component.eventFootprintsToSegs(eventFootprints)
+    let classNames = 'fc-helper ' + (extraClassNames || '')
+    let i
 
     // assigns each seg's el and returns a subset of segs that were rendered
-    segs = this.eventRenderer.renderFgSegEls(segs);
+    segs = this.eventRenderer.renderFgSegEls(segs)
 
     for (i = 0; i < segs.length; i++) {
-      segs[i].el.addClass(classNames);
+      segs[i].el.addClass(classNames)
     }
 
     if (opacity != null) {
       for (i = 0; i < segs.length; i++) {
-        segs[i].el.css('opacity', opacity);
+        segs[i].el.css('opacity', opacity)
       }
     }
 
-    this.helperEls = this.renderSegs(segs, sourceSeg);
+    this.helperEls = this.renderSegs(segs, sourceSeg)
   }
 
 
@@ -76,22 +76,22 @@ export default class HelperRenderer {
 
   unrender() {
     if (this.helperEls) {
-      this.helperEls.remove();
-      this.helperEls = null;
+      this.helperEls.remove()
+      this.helperEls = null
     }
   }
 
 
   fabricateEventFootprint(componentFootprint) {
-    var calendar = this.view.calendar;
-    var eventDateProfile = calendar.footprintToDateProfile(componentFootprint);
-    var dummyEvent = new SingleEventDef(new EventSource(calendar));
-    var dummyInstance;
+    let calendar = this.view.calendar
+    let eventDateProfile = calendar.footprintToDateProfile(componentFootprint)
+    let dummyEvent = new SingleEventDef(new EventSource(calendar))
+    let dummyInstance
 
-    dummyEvent.dateProfile = eventDateProfile;
-    dummyInstance = dummyEvent.buildInstance();
+    dummyEvent.dateProfile = eventDateProfile
+    dummyInstance = dummyEvent.buildInstance()
 
-    return new EventFootprint(componentFootprint, dummyEvent, dummyInstance);
+    return new EventFootprint(componentFootprint, dummyEvent, dummyInstance)
   }
 
 }

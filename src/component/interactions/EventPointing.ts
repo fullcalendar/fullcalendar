@@ -14,22 +14,22 @@ export default class EventPointing extends Interaction {
 
 
   bindToEl(el) {
-    var component = this.component;
+    let component = this.component
 
-    component.bindSegHandlerToEl(el, 'click', this.handleClick.bind(this));
-    component.bindSegHandlerToEl(el, 'mouseenter', this.handleMouseover.bind(this));
-    component.bindSegHandlerToEl(el, 'mouseleave', this.handleMouseout.bind(this));
+    component.bindSegHandlerToEl(el, 'click', this.handleClick.bind(this))
+    component.bindSegHandlerToEl(el, 'mouseenter', this.handleMouseover.bind(this))
+    component.bindSegHandlerToEl(el, 'mouseleave', this.handleMouseout.bind(this))
   }
 
 
   handleClick(seg, ev) {
-    var res = this.component.publiclyTrigger('eventClick', { // can return `false` to cancel
+    let res = this.component.publiclyTrigger('eventClick', { // can return `false` to cancel
       context: seg.el[0],
       args: [ seg.footprint.getEventLegacy(), ev, this.view ]
-    });
+    })
 
     if (res === false) {
-      ev.preventDefault();
+      ev.preventDefault()
     }
   }
 
@@ -40,17 +40,17 @@ export default class EventPointing extends Interaction {
       !GlobalEmitter.get().shouldIgnoreMouse() &&
       !this.mousedOverSeg
     ) {
-      this.mousedOverSeg = seg;
+      this.mousedOverSeg = seg
 
       // TODO: move to EventSelecting's responsibility
       if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
-        seg.el.addClass('fc-allow-mouse-resize');
+        seg.el.addClass('fc-allow-mouse-resize')
       }
 
       this.component.publiclyTrigger('eventMouseover', {
         context: seg.el[0],
         args: [ seg.footprint.getEventLegacy(), ev, this.view ]
-      });
+      })
     }
   }
 
@@ -59,11 +59,11 @@ export default class EventPointing extends Interaction {
   // Can be given no arguments, in which case it will mouseout the segment that was previously moused over.
   handleMouseout(seg, ev?) {
     if (this.mousedOverSeg) {
-      this.mousedOverSeg = null;
+      this.mousedOverSeg = null
 
       // TODO: move to EventSelecting's responsibility
       if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
-        seg.el.removeClass('fc-allow-mouse-resize');
+        seg.el.removeClass('fc-allow-mouse-resize')
       }
 
       this.component.publiclyTrigger('eventMouseout', {
@@ -73,14 +73,14 @@ export default class EventPointing extends Interaction {
           ev || {}, // if given no arg, make a mock mouse event
           this.view
         ]
-      });
+      })
     }
   }
 
 
   end() {
     if (this.mousedOverSeg) {
-      this.handleMouseout(this.mousedOverSeg);
+      this.handleMouseout(this.mousedOverSeg)
     }
   }
 

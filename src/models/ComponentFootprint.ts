@@ -9,8 +9,8 @@ export default class ComponentFootprint {
 
 
   constructor(unzonedRange, isAllDay) {
-    this.unzonedRange = unzonedRange;
-    this.isAllDay = isAllDay;
+    this.unzonedRange = unzonedRange
+    this.isAllDay = isAllDay
   }
 
 
@@ -21,7 +21,7 @@ export default class ComponentFootprint {
     return {
       start: calendar.msToMoment(this.unzonedRange.startMs, this.isAllDay),
       end: calendar.msToMoment(this.unzonedRange.endMs, this.isAllDay)
-    };
+    }
   }
 
 }

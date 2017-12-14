@@ -28,32 +28,32 @@ export default class HitDragListener extends DragListener {
 
 
   constructor(component, options) {
-    super(options);
-    this.component = component;
+    super(options)
+    this.component = component
   }
 
   // Called when drag listening starts (but a real drag has not necessarily began).
   // ev might be undefined if dragging was started manually.
   handleInteractionStart(ev) {
-    var subjectEl = this.subjectEl;
-    var subjectRect;
-    var origPoint;
-    var point;
+    let subjectEl = this.subjectEl
+    let subjectRect
+    let origPoint
+    let point
 
-    this.component.hitsNeeded();
-    this.computeScrollBounds(); // for autoscroll
+    this.component.hitsNeeded()
+    this.computeScrollBounds() // for autoscroll
 
     if (ev) {
-      origPoint = { left: getEvX(ev), top: getEvY(ev) };
-      point = origPoint;
+      origPoint = { left: getEvX(ev), top: getEvY(ev) }
+      point = origPoint
 
       // constrain the point to bounds of the element being dragged
       if (subjectEl) {
-        subjectRect = getOuterRect(subjectEl); // used for centering as well
-        point = constrainPoint(point, subjectRect);
+        subjectRect = getOuterRect(subjectEl) // used for centering as well
+        point = constrainPoint(point, subjectRect)
       }
 
-      this.origHit = this.queryHit(point.left, point.top);
+      this.origHit = this.queryHit(point.left, point.top)
 
       // treat the center of the subject as the collision point?
       if (subjectEl && this.options.subjectCenter) {
@@ -62,55 +62,54 @@ export default class HitDragListener extends DragListener {
         // TODO: skip this if hit didn't supply left/right/top/bottom
         if (this.origHit) {
           subjectRect = intersectRects(this.origHit, subjectRect) ||
-            subjectRect; // in case there is no intersection
+            subjectRect // in case there is no intersection
         }
 
-        point = getRectCenter(subjectRect);
+        point = getRectCenter(subjectRect)
       }
 
-      this.coordAdjust = diffPoints(point, origPoint); // point - origPoint
-    }
-    else {
-      this.origHit = null;
-      this.coordAdjust = null;
+      this.coordAdjust = diffPoints(point, origPoint) // point - origPoint
+    } else {
+      this.origHit = null
+      this.coordAdjust = null
     }
 
     // call the super-method. do it after origHit has been computed
-    super.handleInteractionStart(ev);
+    super.handleInteractionStart(ev)
   }
 
 
   // Called when the actual drag has started
   handleDragStart(ev) {
-    var hit;
+    let hit
 
-    super.handleDragStart(ev);
+    super.handleDragStart(ev)
 
     // might be different from this.origHit if the min-distance is large
-    hit = this.queryHit(getEvX(ev), getEvY(ev));
+    hit = this.queryHit(getEvX(ev), getEvY(ev))
 
     // report the initial hit the mouse is over
     // especially important if no min-distance and drag starts immediately
     if (hit) {
-      this.handleHitOver(hit);
+      this.handleHitOver(hit)
     }
   }
 
 
   // Called when the drag moves
   handleDrag(dx, dy, ev) {
-    var hit;
+    let hit
 
-    super.handleDrag(dx, dy, ev);
+    super.handleDrag(dx, dy, ev)
 
-    hit = this.queryHit(getEvX(ev), getEvY(ev));
+    hit = this.queryHit(getEvX(ev), getEvY(ev))
 
     if (!isHitsEqual(hit, this.hit)) { // a different hit than before?
       if (this.hit) {
-        this.handleHitOut();
+        this.handleHitOut()
       }
       if (hit) {
-        this.handleHitOver(hit);
+        this.handleHitOver(hit)
       }
     }
   }
@@ -118,27 +117,27 @@ export default class HitDragListener extends DragListener {
 
   // Called when dragging has been stopped
   handleDragEnd(ev) {
-    this.handleHitDone();
-    super.handleDragEnd(ev);
+    this.handleHitDone()
+    super.handleDragEnd(ev)
   }
 
 
   // Called when a the mouse has just moved over a new hit
   handleHitOver(hit) {
-    var isOrig = isHitsEqual(hit, this.origHit);
+    let isOrig = isHitsEqual(hit, this.origHit)
 
-    this.hit = hit;
+    this.hit = hit
 
-    this.trigger('hitOver', this.hit, isOrig, this.origHit);
+    this.trigger('hitOver', this.hit, isOrig, this.origHit)
   }
 
 
   // Called when the mouse has just moved out of a hit
   handleHitOut() {
     if (this.hit) {
-      this.trigger('hitOut', this.hit);
-      this.handleHitDone();
-      this.hit = null;
+      this.trigger('hitOut', this.hit)
+      this.handleHitDone()
+      this.hit = null
     }
   }
 
@@ -146,31 +145,31 @@ export default class HitDragListener extends DragListener {
   // Called after a hitOut. Also called before a dragStop
   handleHitDone() {
     if (this.hit) {
-      this.trigger('hitDone', this.hit);
+      this.trigger('hitDone', this.hit)
     }
   }
 
 
   // Called when the interaction ends, whether there was a real drag or not
   handleInteractionEnd(ev, isCancelled) {
-    super.handleInteractionEnd(ev, isCancelled);
+    super.handleInteractionEnd(ev, isCancelled)
 
-    this.origHit = null;
-    this.hit = null;
+    this.origHit = null
+    this.hit = null
 
-    this.component.hitsNotNeeded();
+    this.component.hitsNotNeeded()
   }
 
 
   // Called when scrolling has stopped, whether through auto scroll, or the user scrolling
   handleScrollEnd() {
-    super.handleScrollEnd();
+    super.handleScrollEnd()
 
     // hits' absolute positions will be in new places after a user's scroll.
     // HACK for recomputing.
     if (this.isDragging) {
-      this.component.releaseHits();
-      this.component.prepareHits();
+      this.component.releaseHits()
+      this.component.prepareHits()
     }
   }
 
@@ -179,11 +178,11 @@ export default class HitDragListener extends DragListener {
   queryHit(left, top) {
 
     if (this.coordAdjust) {
-      left += this.coordAdjust.left;
-      top += this.coordAdjust.top;
+      left += this.coordAdjust.left
+      top += this.coordAdjust.top
     }
 
-    return this.component.queryHit(left, top);
+    return this.component.queryHit(left, top)
   }
 
 }
@@ -194,27 +193,27 @@ export default class HitDragListener extends DragListener {
 function isHitsEqual(hit0, hit1) {
 
   if (!hit0 && !hit1) {
-    return true;
+    return true
   }
 
   if (hit0 && hit1) {
     return hit0.component === hit1.component &&
       isHitPropsWithin(hit0, hit1) &&
-      isHitPropsWithin(hit1, hit0); // ensures all props are identical
+      isHitPropsWithin(hit1, hit0) // ensures all props are identical
   }
 
-  return false;
+  return false
 }
 
 
 // Returns true if all of subHit's non-standard properties are within superHit
 function isHitPropsWithin(subHit, superHit) {
-  for (var propName in subHit) {
+  for (let propName in subHit) {
     if (!/^(component|left|right|top|bottom)$/.test(propName)) {
       if (subHit[propName] !== superHit[propName]) {
-        return false;
+        return false
       }
     }
   }
-  return true;
+  return true
 }

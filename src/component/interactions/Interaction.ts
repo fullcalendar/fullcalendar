@@ -6,13 +6,13 @@ export default class Interaction {
 
 
   constructor(component) {
-    this.view = component._getView();
-    this.component = component;
+    this.view = component._getView()
+    this.component = component
   }
 
 
   opt(name) {
-    return this.view.opt(name);
+    return this.view.opt(name)
   }
 
 

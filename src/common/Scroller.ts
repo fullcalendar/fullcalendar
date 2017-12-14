@@ -14,33 +14,33 @@ export default class Scroller extends Class {
 
 
   constructor(options?) {
-    super();
-    options = options || {};
-    this.overflowX = options.overflowX || options.overflow || 'auto';
-    this.overflowY = options.overflowY || options.overflow || 'auto';
+    super()
+    options = options || {}
+    this.overflowX = options.overflowX || options.overflow || 'auto'
+    this.overflowY = options.overflowY || options.overflow || 'auto'
   }
 
 
   render() {
-    this.el = this.renderEl();
-    this.applyOverflow();
+    this.el = this.renderEl()
+    this.applyOverflow()
   }
 
 
   renderEl() {
-    return (this.scrollEl = $('<div class="fc-scroller"></div>'));
+    return (this.scrollEl = $('<div class="fc-scroller"></div>'))
   }
 
 
   // sets to natural height, unlocks overflow
   clear() {
-    this.setHeight('auto');
-    this.applyOverflow();
+    this.setHeight('auto')
+    this.applyOverflow()
   }
 
 
   destroy() {
-    this.el.remove();
+    this.el.remove()
   }
 
 
@@ -52,7 +52,7 @@ export default class Scroller extends Class {
     this.scrollEl.css({
       'overflow-x': this.overflowX,
       'overflow-y': this.overflowY
-    });
+    })
   }
 
 
@@ -60,10 +60,10 @@ export default class Scroller extends Class {
   // Useful for preserving scrollbar widths regardless of future resizes.
   // Can pass in scrollbarWidths for optimization.
   lockOverflow(scrollbarWidths) {
-    var overflowX = this.overflowX;
-    var overflowY = this.overflowY;
+    let overflowX = this.overflowX
+    let overflowY = this.overflowY
 
-    scrollbarWidths = scrollbarWidths || this.getScrollbarWidths();
+    scrollbarWidths = scrollbarWidths || this.getScrollbarWidths()
 
     if (overflowX === 'auto') {
       overflowX = (
@@ -71,7 +71,7 @@ export default class Scroller extends Class {
           // OR scrolling pane with massless scrollbars?
           this.scrollEl[0].scrollWidth - 1 > this.scrollEl[0].clientWidth
             // subtract 1 because of IE off-by-one issue
-        ) ? 'scroll' : 'hidden';
+        ) ? 'scroll' : 'hidden'
     }
 
     if (overflowY === 'auto') {
@@ -80,10 +80,10 @@ export default class Scroller extends Class {
           // OR scrolling pane with massless scrollbars?
           this.scrollEl[0].scrollHeight - 1 > this.scrollEl[0].clientHeight
             // subtract 1 because of IE off-by-one issue
-        ) ? 'scroll' : 'hidden';
+        ) ? 'scroll' : 'hidden'
     }
 
-    this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY });
+    this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY })
   }
 
 
@@ -92,32 +92,32 @@ export default class Scroller extends Class {
 
 
   setHeight(height) {
-    this.scrollEl.height(height);
+    this.scrollEl.height(height)
   }
 
 
   getScrollTop() {
-    return this.scrollEl.scrollTop();
+    return this.scrollEl.scrollTop()
   }
 
 
   setScrollTop(top) {
-    this.scrollEl.scrollTop(top);
+    this.scrollEl.scrollTop(top)
   }
 
 
   getClientWidth() {
-    return this.scrollEl[0].clientWidth;
+    return this.scrollEl[0].clientWidth
   }
 
 
   getClientHeight() {
-    return this.scrollEl[0].clientHeight;
+    return this.scrollEl[0].clientHeight
   }
 
 
   getScrollbarWidths() {
-    return getScrollbarWidths(this.scrollEl);
+    return getScrollbarWidths(this.scrollEl)
   }
 
 }

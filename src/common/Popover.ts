@@ -30,7 +30,7 @@ export default class Popover {
 
 
   constructor(options) {
-    this.options = options || {};
+    this.options = options || {}
   }
 
 
@@ -38,12 +38,12 @@ export default class Popover {
   show() {
     if (this.isHidden) {
       if (!this.el) {
-        this.render();
+        this.render()
       }
-      this.el.show();
-      this.position();
-      this.isHidden = false;
-      this.trigger('show');
+      this.el.show()
+      this.position()
+      this.isHidden = false
+      this.trigger('show')
     }
   }
 
@@ -51,16 +51,16 @@ export default class Popover {
   // Hides the popover, through CSS, but does not remove it from the DOM
   hide() {
     if (!this.isHidden) {
-      this.el.hide();
-      this.isHidden = true;
-      this.trigger('hide');
+      this.el.hide()
+      this.isHidden = true
+      this.trigger('hide')
     }
   }
 
 
   // Creates `this.el` and renders content inside of it
   render() {
-    var options = this.options;
+    let options = this.options
 
     this.el = $('<div class="fc-popover"/>')
       .addClass(options.className || '')
@@ -70,15 +70,15 @@ export default class Popover {
         left: 0
       })
       .append(options.content)
-      .appendTo(options.parentEl);
+      .appendTo(options.parentEl)
 
     // when a click happens on anything inside with a 'fc-close' className, hide the popover
     this.el.on('click', '.fc-close', () => {
-      this.hide();
-    });
+      this.hide()
+    })
 
     if (options.autoHide) {
-      this.listenTo($(document), 'mousedown', this.documentMousedown);
+      this.listenTo($(document), 'mousedown', this.documentMousedown)
     }
   }
 
@@ -87,77 +87,74 @@ export default class Popover {
   documentMousedown(ev) {
     // only hide the popover if the click happened outside the popover
     if (this.el && !$(ev.target).closest(this.el).length) {
-      this.hide();
+      this.hide()
     }
   }
 
 
   // Hides and unregisters any handlers
   removeElement() {
-    this.hide();
+    this.hide()
 
     if (this.el) {
-      this.el.remove();
-      this.el = null;
+      this.el.remove()
+      this.el = null
     }
 
-    this.stopListeningTo($(document), 'mousedown');
+    this.stopListeningTo($(document), 'mousedown')
   }
 
 
   // Positions the popover optimally, using the top/left/right options
   position() {
-    var options = this.options;
-    var origin = this.el.offsetParent().offset();
-    var width = this.el.outerWidth();
-    var height = this.el.outerHeight();
-    var windowEl = $(window);
-    var viewportEl = getScrollParent(this.el);
-    var viewportTop;
-    var viewportLeft;
-    var viewportOffset;
-    var top; // the "position" (not "offset") values for the popover
-    var left; //
+    let options = this.options
+    let origin = this.el.offsetParent().offset()
+    let width = this.el.outerWidth()
+    let height = this.el.outerHeight()
+    let windowEl = $(window)
+    let viewportEl = getScrollParent(this.el)
+    let viewportTop
+    let viewportLeft
+    let viewportOffset
+    let top // the "position" (not "offset") values for the popover
+    let left //
 
     // compute top and left
-    top = options.top || 0;
+    top = options.top || 0
     if (options.left !== undefined) {
-      left = options.left;
-    }
-    else if (options.right !== undefined) {
-      left = options.right - width; // derive the left value from the right value
-    }
-    else {
-      left = 0;
+      left = options.left
+    } else if (options.right !== undefined) {
+      left = options.right - width // derive the left value from the right value
+    } else {
+      left = 0
     }
 
     if (viewportEl.is(window) || viewportEl.is(document)) { // normalize getScrollParent's result
-      viewportEl = windowEl;
-      viewportTop = 0; // the window is always at the top left
-      viewportLeft = 0; // (and .offset() won't work if called here)
-    }
-    else {
-      viewportOffset = viewportEl.offset();
-      viewportTop = viewportOffset.top;
-      viewportLeft = viewportOffset.left;
+      viewportEl = windowEl
+      viewportTop = 0 // the window is always at the top left
+      viewportLeft = 0 // (and .offset() won't work if called here)
+    } else {
+      viewportOffset = viewportEl.offset()
+      viewportTop = viewportOffset.top
+      viewportLeft = viewportOffset.left
     }
 
     // if the window is scrolled, it causes the visible area to be further down
-    viewportTop += windowEl.scrollTop();
-    viewportLeft += windowEl.scrollLeft();
+    viewportTop += windowEl.scrollTop()
+    viewportLeft += windowEl.scrollLeft()
 
     // constrain to the view port. if constrained by two edges, give precedence to top/left
     if (options.viewportConstrain !== false) {
-      top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin);
-      top = Math.max(top, viewportTop + this.margin);
-      left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin);
-      left = Math.max(left, viewportLeft + this.margin);
+      top = Math.min(top, viewportTop + viewportEl.outerHeight() - height - this.margin)
+      top = Math.max(top, viewportTop + this.margin)
+      left = Math.min(left, viewportLeft + viewportEl.outerWidth() - width - this.margin)
+      left = Math.max(left, viewportLeft + this.margin)
     }
 
     this.el.css({
       top: top - origin.top,
       left: left - origin.left
-    });
+    })
   }
 
 
@@ -166,7 +163,7 @@ export default class Popover {
   // TODO: better code reuse for this. Repeat code
   trigger(name) {
     if (this.options[name]) {
-      this.options[name].apply(this, Array.prototype.slice.call(arguments, 1));
+      this.options[name].apply(this, Array.prototype.slice.call(arguments, 1))
     }
   }
 

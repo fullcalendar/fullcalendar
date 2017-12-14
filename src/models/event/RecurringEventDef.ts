@@ -13,36 +13,35 @@ export default class RecurringEventDef extends EventDef {
 
 
   isAllDay() {
-    return !this.startTime && !this.endTime;
+    return !this.startTime && !this.endTime
   }
 
 
   buildInstances(unzonedRange) {
-    var calendar = this.source.calendar;
-    var unzonedDate = unzonedRange.getStart();
-    var unzonedEnd = unzonedRange.getEnd();
-    var zonedDayStart;
-    var instanceStart, instanceEnd;
-    var instances = [];
+    let calendar = this.source.calendar
+    let unzonedDate = unzonedRange.getStart()
+    let unzonedEnd = unzonedRange.getEnd()
+    let zonedDayStart
+    let instanceStart, instanceEnd
+    let instances = []
 
     while (unzonedDate.isBefore(unzonedEnd)) {
 
       // if everyday, or this particular day-of-week
       if (!this.dowHash || this.dowHash[unzonedDate.day()]) {
 
-        zonedDayStart = calendar.applyTimezone(unzonedDate);
-        instanceStart = zonedDayStart.clone();
-        instanceEnd = null;
+        zonedDayStart = calendar.applyTimezone(unzonedDate)
+        instanceStart = zonedDayStart.clone()
+        instanceEnd = null
 
         if (this.startTime) {
-          instanceStart.time(this.startTime);
-        }
-        else {
-          instanceStart.stripTime();
+          instanceStart.time(this.startTime)
+        } else {
+          instanceStart.stripTime()
         }
 
         if (this.endTime) {
-          instanceEnd = zonedDayStart.clone().time(this.endTime);
+          instanceEnd = zonedDayStart.clone().time(this.endTime)
         }
 
         instances.push(
@@ -50,44 +49,44 @@ export default class RecurringEventDef extends EventDef {
             this, // definition
             new EventDateProfile(instanceStart, instanceEnd, calendar)
           )
-        );
+        )
       }
 
-      unzonedDate.add(1, 'days');
+      unzonedDate.add(1, 'days')
     }
 
-    return instances;
+    return instances
   }
 
 
   setDow(dowNumbers) {
 
     if (!this.dowHash) {
-      this.dowHash = {};
+      this.dowHash = {}
     }
 
-    for (var i = 0; i < dowNumbers.length; i++) {
-      this.dowHash[dowNumbers[i]] = true;
+    for (let i = 0; i < dowNumbers.length; i++) {
+      this.dowHash[dowNumbers[i]] = true
     }
   }
 
 
   clone() {
-    var def = super.clone();
+    let def = super.clone()
 
     if (def.startTime) {
-      def.startTime = moment.duration(this.startTime);
+      def.startTime = moment.duration(this.startTime)
     }
 
     if (def.endTime) {
-      def.endTime = moment.duration(this.endTime);
+      def.endTime = moment.duration(this.endTime)
     }
 
     if (this.dowHash) {
-      def.dowHash = $.extend({}, this.dowHash);
+      def.dowHash = $.extend({}, this.dowHash)
     }
 
-    return def;
+    return def
   }
 
 }
@@ -98,21 +97,21 @@ HACK to work with TypeScript mixins
 NOTE: if super-method fails, should still attempt to apply
 */
 RecurringEventDef.prototype.applyProps = function(rawProps) {
-  var superSuccess = EventDef.prototype.applyProps.call(this, rawProps);
+  let superSuccess = EventDef.prototype.applyProps.call(this, rawProps)
 
   if (rawProps.start) {
-    this.startTime = moment.duration(rawProps.start);
+    this.startTime = moment.duration(rawProps.start)
   }
 
   if (rawProps.end) {
-    this.endTime = moment.duration(rawProps.end);
+    this.endTime = moment.duration(rawProps.end)
   }
 
   if (rawProps.dow) {
-    this.setDow(rawProps.dow);
+    this.setDow(rawProps.dow)
   }
 
-  return superSuccess;
+  return superSuccess
 }
 
 
@@ -124,4 +123,4 @@ RecurringEventDef.defineStandardProps({ // false = manually process
   start: false,
   end: false,
   dow: false
-});
+})

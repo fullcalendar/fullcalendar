@@ -12,35 +12,35 @@ export default class BusinessHourRenderer {
     - eventFootprintsToSegs
   */
   constructor(component, fillRenderer) {
-    this.component = component;
-    this.fillRenderer = fillRenderer;
+    this.component = component
+    this.fillRenderer = fillRenderer
   }
 
 
   render(businessHourGenerator) {
-    var component = this.component;
-    var unzonedRange = component._getDateProfile().activeUnzonedRange;
+    let component = this.component
+    let unzonedRange = component._getDateProfile().activeUnzonedRange
 
-    var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
+    let eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
       component.hasAllDayBusinessHours,
       unzonedRange
-    );
+    )
 
-    var eventFootprints = eventInstanceGroup ?
+    let eventFootprints = eventInstanceGroup ?
       component.eventRangesToEventFootprints(
         eventInstanceGroup.sliceRenderRanges(unzonedRange)
       ) :
-      [];
+      []
 
-    this.renderEventFootprints(eventFootprints);
+    this.renderEventFootprints(eventFootprints)
   }
 
 
   renderEventFootprints(eventFootprints) {
-    var segs = this.component.eventFootprintsToSegs(eventFootprints);
+    let segs = this.component.eventFootprintsToSegs(eventFootprints)
 
-    this.renderSegs(segs);
-    this.segs = segs;
+    this.renderSegs(segs)
+    this.segs = segs
   }
 
 
@@ -48,24 +48,24 @@ export default class BusinessHourRenderer {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs('businessHours', segs, {
         getClasses(seg) {
-          return [ 'fc-nonbusiness', 'fc-bgevent' ];
+          return [ 'fc-nonbusiness', 'fc-bgevent' ]
         }
-      });
+      })
     }
   }
 
 
   unrender() {
     if (this.fillRenderer) {
-      this.fillRenderer.unrender('businessHours');
+      this.fillRenderer.unrender('businessHours')
     }
 
-    this.segs = null;
+    this.segs = null
   }
 
 
   getSegs() {
-    return this.segs || [];
+    return this.segs || []
   }
 
 }

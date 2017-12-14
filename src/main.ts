@@ -22,57 +22,51 @@ declare global {
 }
 
 
-($ as JQueryStatic).fullCalendar = exportHooks;
-export = exportHooks;
+($).fullCalendar = exportHooks
+export = exportHooks
 
 
 $.fn.fullCalendar = function(options?): (JQuery | any) {
-  var args = Array.prototype.slice.call(arguments, 1); // for a possible method call
-  var res = this; // what this function will return (this jQuery object by default)
+  let args = Array.prototype.slice.call(arguments, 1) // for a possible method call
+  let res = this // what this function will return (this jQuery object by default)
 
   this.each(function(i, _element) { // loop each DOM element involved
-    var element = $(_element);
-    var calendar = element.data('fullCalendar'); // get the existing calendar object (if any)
-    var singleRes; // the returned value of this single method call
+    let element = $(_element)
+    let calendar = element.data('fullCalendar') // get the existing calendar object (if any)
+    let singleRes // the returned value of this single method call
 
     // a method call
     if (typeof options === 'string') {
 
       if (options === 'getCalendar') {
         if (!i) { // first element only
-          res = calendar;
+          res = calendar
         }
-      }
-      else if (options === 'destroy') { // don't warn if no calendar object
+      } else if (options === 'destroy') { // don't warn if no calendar object
         if (calendar) {
-          calendar.destroy();
-          element.removeData('fullCalendar');
+          calendar.destroy()
+          element.removeData('fullCalendar')
         }
-      }
-      else if (!calendar) {
-        warn("Attempting to call a FullCalendar method on an element with no calendar.");
-      }
-      else if ($.isFunction(calendar[options])) {
-        singleRes = calendar[options].apply(calendar, args);
+      } else if (!calendar) {
+        warn('Attempting to call a FullCalendar method on an element with no calendar.')
+      } else if ($.isFunction(calendar[options])) {
+        singleRes = calendar[options].apply(calendar, args)
 
         if (!i) {
-          res = singleRes; // record the first method call result
+          res = singleRes // record the first method call result
         }
         if (options === 'destroy') { // for the destroy method, must remove Calendar object data
-          element.removeData('fullCalendar');
+          element.removeData('fullCalendar')
         }
+      } else {
+        warn("'" + options + "' is an unknown FullCalendar method.")
       }
-      else {
-        warn("'" + options + "' is an unknown FullCalendar method.");
-      }
+    } else if (!calendar) { // don't initialize twice
+      calendar = new Calendar(element, options)
+      element.data('fullCalendar', calendar)
+      calendar.render()
     }
-    // a new calendar initialization
-    else if (!calendar) { // don't initialize twice
-      calendar = new Calendar(element, options);
-      element.data('fullCalendar', calendar);
-      calendar.render();
-    }
-  });
+  })
 
-  return res;
-};
+  return res
+}

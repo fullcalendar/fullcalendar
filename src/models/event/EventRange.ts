@@ -7,11 +7,11 @@ export default class EventRange {
 
 
   constructor(unzonedRange, eventDef, eventInstance?) {
-    this.unzonedRange = unzonedRange;
-    this.eventDef = eventDef;
+    this.unzonedRange = unzonedRange
+    this.eventDef = eventDef
 
     if (eventInstance) {
-      this.eventInstance = eventInstance;
+      this.eventInstance = eventInstance
     }
   }
 

@@ -14,19 +14,19 @@ export default class ArrayEventSource extends EventSource {
 
   constructor(calendar) {
     super(calendar)
-    this.eventDefs = []; // for if setRawEventDefs is never called
+    this.eventDefs = [] // for if setRawEventDefs is never called
   }
 
 
   setRawEventDefs(rawEventDefs) {
-    this.rawEventDefs = rawEventDefs;
-    this.eventDefs = this.parseEventDefs(rawEventDefs);
+    this.rawEventDefs = rawEventDefs
+    this.eventDefs = this.parseEventDefs(rawEventDefs)
   }
 
 
   fetch(start, end, timezone) {
-    var eventDefs = this.eventDefs;
-    var i;
+    let eventDefs = this.eventDefs
+    let i
 
     if (
       this.currentTimezone != null &&
@@ -34,19 +34,19 @@ export default class ArrayEventSource extends EventSource {
     ) {
       for (i = 0; i < eventDefs.length; i++) {
         if (eventDefs[i] instanceof SingleEventDef) {
-          eventDefs[i].rezone();
+          eventDefs[i].rezone()
         }
       }
     }
 
-    this.currentTimezone = timezone;
+    this.currentTimezone = timezone
 
-    return Promise.resolve(eventDefs);
+    return Promise.resolve(eventDefs)
   }
 
 
   addEventDef(eventDef) {
-    this.eventDefs.push(eventDef);
+    this.eventDefs.push(eventDef)
   }
 
 
@@ -55,46 +55,45 @@ export default class ArrayEventSource extends EventSource {
   */
   removeEventDefsById(eventDefId) {
     return removeMatching(this.eventDefs, function(eventDef) {
-      return eventDef.id === eventDefId;
-    });
+      return eventDef.id === eventDefId
+    })
   }
 
 
   removeAllEventDefs() {
-    this.eventDefs = [];
+    this.eventDefs = []
   }
 
 
   getPrimitive() {
-    return this.rawEventDefs;
+    return this.rawEventDefs
   }
 
 
   applyManualStandardProps(rawProps) {
-    var superSuccess = super.applyManualStandardProps(rawProps);
+    let superSuccess = super.applyManualStandardProps(rawProps)
 
-    this.setRawEventDefs(rawProps.events);
+    this.setRawEventDefs(rawProps.events)
 
-    return superSuccess;
+    return superSuccess
   }
 
 
   static parse(rawInput, calendar) {
-    var rawProps;
+    let rawProps
 
     // normalize raw input
     if ($.isArray(rawInput.events)) { // extended form
-      rawProps = rawInput;
-    }
-    else if ($.isArray(rawInput)) { // short form
-      rawProps = { events: rawInput };
+      rawProps = rawInput
+    } else if ($.isArray(rawInput)) { // short form
+      rawProps = { events: rawInput }
     }
 
     if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar);
+      return EventSource.parse.call(this, rawProps, calendar)
     }
 
-    return false;
+    return false
   }
 
 }
@@ -102,4 +101,4 @@ export default class ArrayEventSource extends EventSource {
 
 ArrayEventSource.defineStandardProps({
   events: false // don't automatically transfer
-});
+})

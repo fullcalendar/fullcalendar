@@ -13,40 +13,38 @@ export default class EventInstanceGroup {
 
 
   constructor(eventInstances?) {
-    this.eventInstances = eventInstances || [];
+    this.eventInstances = eventInstances || []
   }
 
 
   getAllEventRanges(constraintRange) {
     if (constraintRange) {
-      return this.sliceNormalRenderRanges(constraintRange);
-    }
-    else {
-      return this.eventInstances.map(eventInstanceToEventRange);
+      return this.sliceNormalRenderRanges(constraintRange)
+    } else {
+      return this.eventInstances.map(eventInstanceToEventRange)
     }
   }
 
 
   sliceRenderRanges(constraintRange) {
     if (this.isInverse()) {
-      return this.sliceInverseRenderRanges(constraintRange);
-    }
-    else {
-      return this.sliceNormalRenderRanges(constraintRange);
+      return this.sliceInverseRenderRanges(constraintRange)
+    } else {
+      return this.sliceNormalRenderRanges(constraintRange)
     }
   }
 
 
   sliceNormalRenderRanges(constraintRange) {
-    var eventInstances = this.eventInstances;
-    var i, eventInstance;
-    var slicedRange;
-    var slicedEventRanges = [];
+    let eventInstances = this.eventInstances
+    let i, eventInstance
+    let slicedRange
+    let slicedEventRanges = []
 
     for (i = 0; i < eventInstances.length; i++) {
-      eventInstance = eventInstances[i];
+      eventInstance = eventInstances[i]
 
-      slicedRange = eventInstance.dateProfile.unzonedRange.intersect(constraintRange);
+      slicedRange = eventInstance.dateProfile.unzonedRange.intersect(constraintRange)
 
       if (slicedRange) {
         slicedEventRanges.push(
@@ -55,33 +53,33 @@ export default class EventInstanceGroup {
             eventInstance.def,
             eventInstance
           )
-        );
+        )
       }
     }
 
-    return slicedEventRanges;
+    return slicedEventRanges
   }
 
 
   sliceInverseRenderRanges(constraintRange) {
-    var unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange);
-    var ownerDef = this.getEventDef();
+    let unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange)
+    let ownerDef = this.getEventDef()
 
-    unzonedRanges = UnzonedRange.invertRanges(unzonedRanges, constraintRange);
+    unzonedRanges = UnzonedRange.invertRanges(unzonedRanges, constraintRange)
 
     return unzonedRanges.map(function(unzonedRange) {
-      return new EventRange(unzonedRange, ownerDef); // don't give an EventInstance
-    });
+      return new EventRange(unzonedRange, ownerDef) // don't give an EventInstance
+    })
   }
 
 
   isInverse() {
-    return this.getEventDef().hasInverseRendering();
+    return this.getEventDef().hasInverseRendering()
   }
 
 
   getEventDef() {
-    return this.explicitEventDef || this.eventInstances[0].def;
+    return this.explicitEventDef || this.eventInstances[0].def
   }
 
 }

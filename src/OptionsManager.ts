@@ -16,69 +16,66 @@ export default class OptionsManager extends Model {
 
   constructor(_calendar, overrides) {
     super()
-    this._calendar = _calendar;
-    this.overrides = $.extend({}, overrides); // make a copy
-    this.dynamicOverrides = {};
-    this.compute();
+    this._calendar = _calendar
+    this.overrides = $.extend({}, overrides) // make a copy
+    this.dynamicOverrides = {}
+    this.compute()
   }
 
 
   add(newOptionHash) {
-    var optionCnt = 0;
-    var optionName;
+    let optionCnt = 0
+    let optionName
 
-    this.recordOverrides(newOptionHash); // will trigger this model's watchers
+    this.recordOverrides(newOptionHash) // will trigger this model's watchers
 
     for (optionName in newOptionHash) {
-      optionCnt++;
+      optionCnt++
     }
 
     // special-case handling of single option change.
     // if only one option change, `optionName` will be its name.
     if (optionCnt === 1) {
       if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-        this._calendar.updateViewSize(true); // isResize=true
-        return;
-      }
-      else if (optionName === 'defaultDate') {
-        return; // can't change date this way. use gotoDate instead
-      }
-      else if (optionName === 'businessHours') {
-        return; // this model already reacts to this
-      }
-      else if (optionName === 'timezone') {
-        this._calendar.view.flash('initialEvents');
-        return;
+        this._calendar.updateViewSize(true) // isResize=true
+        return
+      } else if (optionName === 'defaultDate') {
+        return // can't change date this way. use gotoDate instead
+      } else if (optionName === 'businessHours') {
+        return // this model already reacts to this
+      } else if (optionName === 'timezone') {
+        this._calendar.view.flash('initialEvents')
+        return
       }
     }
 
     // catch-all. rerender the header and footer and rebuild/rerender the current view
-    this._calendar.renderHeader();
-    this._calendar.renderFooter();
+    this._calendar.renderHeader()
+    this._calendar.renderFooter()
 
     // even non-current views will be affected by this option change. do before rerender
     // TODO: detangle
-    this._calendar.viewsByType = {};
+    this._calendar.viewsByType = {}
 
-    this._calendar.reinitView();
+    this._calendar.reinitView()
   }
 
 
   // Computes the flattened options hash for the calendar and assigns to `this.options`.
   // Assumes this.overrides and this.dynamicOverrides have already been initialized.
   compute() {
-    var locale, localeDefaults;
-    var isRTL, dirDefaults;
-    var rawOptions;
+    let locale, localeDefaults
+    let isRTL, dirDefaults
+    let rawOptions
 
     locale = firstDefined( // explicit locale option given?
       this.dynamicOverrides.locale,
       this.overrides.locale
-    );
-    localeDefaults = localeOptionHash[locale];
+    )
+    localeDefaults = localeOptionHash[locale]
     if (!localeDefaults) { // explicit locale option not given or invalid?
-      locale = globalDefaults.locale;
-      localeDefaults = localeOptionHash[locale] || {};
+      locale = globalDefaults.locale
+      localeDefaults = localeOptionHash[locale] || {}
     }
 
     isRTL = firstDefined( // based on options computed so far, is direction RTL?
@@ -86,11 +83,11 @@ export default class OptionsManager extends Model {
       this.overrides.isRTL,
       localeDefaults.isRTL,
       globalDefaults.isRTL
-    );
-    dirDefaults = isRTL ? rtlDefaults : {};
+    )
+    dirDefaults = isRTL ? rtlDefaults : {}
 
-    this.dirDefaults = dirDefaults;
-    this.localeDefaults = localeDefaults;
+    this.dirDefaults = dirDefaults
+    this.localeDefaults = localeDefaults
 
     rawOptions = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
       globalDefaults, // global defaults
@@ -98,23 +95,23 @@ export default class OptionsManager extends Model {
       localeDefaults,
       this.overrides,
       this.dynamicOverrides
-    ]);
-    populateInstanceComputableOptions(rawOptions); // fill in gaps with computed options
+    ])
+    populateInstanceComputableOptions(rawOptions) // fill in gaps with computed options
 
-    this.reset(rawOptions);
+    this.reset(rawOptions)
   }
 
 
   // stores the new options internally, but does not rerender anything.
   recordOverrides(newOptionHash) {
-    var optionName;
+    let optionName
 
     for (optionName in newOptionHash) {
-      this.dynamicOverrides[optionName] = newOptionHash[optionName];
+      this.dynamicOverrides[optionName] = newOptionHash[optionName]
     }
 
-    this._calendar.viewSpecManager.clearCache(); // the dynamic override invalidates the options in this cache, so just clear it
-    this.compute(); // this.options needs to be recomputed after the dynamic override
+    this._calendar.viewSpecManager.clearCache() // the dynamic override invalidates the options in this cache, so just clear it
+    this.compute() // this.options needs to be recomputed after the dynamic override
   }
 
 

@@ -1,10 +1,10 @@
 
-export const version = "<%= version %>";
+export const version = '<%= version %>'
 
 // When introducing internal API incompatibilities (where fullcalendar plugins would break),
 // the minor version of the calendar should be upped (ex: 2.7.2 -> 2.8.0)
 // and the below integer should be incremented.
-export const internalApiVersion = 12;
+export const internalApiVersion = 12
 
 export {
   applyAll,
@@ -45,7 +45,7 @@ export {
   locale
 } from './locale'
 
-export { default as moment } from './moment-ext';
+export { default as moment } from './moment-ext'
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 export { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
 export { default as Model } from './common/Model'

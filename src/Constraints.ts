@@ -17,13 +17,13 @@ export default class Constraints {
 
 
   constructor(eventManager, _calendar) {
-    this.eventManager = eventManager;
-    this._calendar = _calendar;
+    this.eventManager = eventManager
+    this._calendar = _calendar
   }
 
 
   opt(name) {
-    return this._calendar.opt(name);
+    return this._calendar.opt(name)
   }
 
 
@@ -32,18 +32,18 @@ export default class Constraints {
   in relation to other EVENTS and business hours.
   */
   isEventInstanceGroupAllowed(eventInstanceGroup) {
-    var eventDef = eventInstanceGroup.getEventDef();
-    var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
-    var i;
+    let eventDef = eventInstanceGroup.getEventDef()
+    let eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges())
+    let i
 
-    var peerEventInstances = this.getPeerEventInstances(eventDef);
-    var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
-    var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
+    let peerEventInstances = this.getPeerEventInstances(eventDef)
+    let peerEventRanges = peerEventInstances.map(eventInstanceToEventRange)
+    let peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges)
 
-    var constraintVal = eventDef.getConstraint();
-    var overlapVal = eventDef.getOverlap();
+    let constraintVal = eventDef.getConstraint()
+    let overlapVal = eventDef.getOverlap()
 
-    var eventAllowFunc = this.opt('eventAllow');
+    let eventAllowFunc = this.opt('eventAllow')
 
     for (i = 0; i < eventFootprints.length; i++) {
       if (
@@ -55,7 +55,7 @@ export default class Constraints {
           eventFootprints[i].eventInstance
         )
       ) {
-        return false;
+        return false
       }
     }
 
@@ -67,26 +67,26 @@ export default class Constraints {
             eventFootprints[i].getEventLegacy()
           ) === false
         ) {
-          return false;
+          return false
         }
       }
     }
 
-    return true;
+    return true
   }
 
 
   getPeerEventInstances(eventDef) {
-    return this.eventManager.getEventInstancesWithoutId(eventDef.id);
+    return this.eventManager.getEventInstancesWithoutId(eventDef.id)
   }
 
 
   isSelectionFootprintAllowed(componentFootprint) {
-    var peerEventInstances = this.eventManager.getEventInstances();
-    var peerEventRanges = peerEventInstances.map(eventInstanceToEventRange);
-    var peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges);
+    let peerEventInstances = this.eventManager.getEventInstances()
+    let peerEventRanges = peerEventInstances.map(eventInstanceToEventRange)
+    let peerEventFootprints = this.eventRangesToEventFootprints(peerEventRanges)
 
-    var selectAllowFunc;
+    let selectAllowFunc
 
     if (
       this.isFootprintAllowed(
@@ -96,17 +96,16 @@ export default class Constraints {
         this.opt('selectOverlap')
       )
     ) {
-      selectAllowFunc = this.opt('selectAllow');
+      selectAllowFunc = this.opt('selectAllow')
 
       if (selectAllowFunc) {
-        return selectAllowFunc(componentFootprint.toLegacy(this._calendar)) !== false;
-      }
-      else {
-        return true;
+        return selectAllowFunc(componentFootprint.toLegacy(this._calendar)) !== false
+      } else {
+        return true
       }
     }
 
-    return false;
+    return false
   }
 
 
@@ -117,37 +116,36 @@ export default class Constraints {
     overlapVal,
     subjectEventInstance? // optional
   ) {
-    var constraintFootprints; // ComponentFootprint[]
-    var overlapEventFootprints; // EventFootprint[]
+    let constraintFootprints // ComponentFootprint[]
+    let overlapEventFootprints // EventFootprint[]
 
     if (constraintVal != null) {
-      constraintFootprints = this.constraintValToFootprints(constraintVal, componentFootprint.isAllDay);
+      constraintFootprints = this.constraintValToFootprints(constraintVal, componentFootprint.isAllDay)
 
       if (!this.isFootprintWithinConstraints(componentFootprint, constraintFootprints)) {
-        return false;
+        return false
       }
     }
 
-    overlapEventFootprints = this.collectOverlapEventFootprints(peerEventFootprints, componentFootprint);
+    overlapEventFootprints = this.collectOverlapEventFootprints(peerEventFootprints, componentFootprint)
 
     if (overlapVal === false) {
       if (overlapEventFootprints.length) {
-        return false;
+        return false
       }
-    }
-    else if (typeof overlapVal === 'function') {
+    } else if (typeof overlapVal === 'function') {
       if (!isOverlapsAllowedByFunc(overlapEventFootprints, overlapVal, subjectEventInstance)) {
-        return false;
+        return false
       }
     }
 
     if (subjectEventInstance) {
       if (!isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance)) {
-        return false;
+        return false
       }
     }
 
-    return true;
+    return true
   }
 
 
@@ -156,38 +154,35 @@ export default class Constraints {
 
 
   isFootprintWithinConstraints(componentFootprint, constraintFootprints) {
-    var i;
+    let i
 
     for (i = 0; i < constraintFootprints.length; i++) {
       if (this.footprintContainsFootprint(constraintFootprints[i], componentFootprint)) {
-        return true;
+        return true
       }
     }
 
-    return false;
+    return false
   }
 
 
   constraintValToFootprints(constraintVal, isAllDay) {
-    var eventInstances;
+    let eventInstances
 
     if (constraintVal === 'businessHours') {
-      return this.buildCurrentBusinessFootprints(isAllDay);
-    }
-    else if (typeof constraintVal === 'object') {
-      eventInstances = this.parseEventDefToInstances(constraintVal); // handles recurring events
+      return this.buildCurrentBusinessFootprints(isAllDay)
+    } else if (typeof constraintVal === 'object') {
+      eventInstances = this.parseEventDefToInstances(constraintVal) // handles recurring events
 
       if (!eventInstances) { // invalid input. fallback to parsing footprint directly
-        return this.parseFootprints(constraintVal);
+        return this.parseFootprints(constraintVal)
+      } else {
+        return this.eventInstancesToFootprints(eventInstances)
       }
-      else {
-        return this.eventInstancesToFootprints(eventInstances);
-      }
-    }
-    else if (constraintVal != null) { // an ID
-      eventInstances = this.eventManager.getEventInstancesWithId(constraintVal);
+    } else if (constraintVal != null) { // an ID
+      eventInstances = this.eventManager.getEventInstancesWithId(constraintVal)
 
-      return this.eventInstancesToFootprints(eventInstances);
+      return this.eventInstancesToFootprints(eventInstances)
     }
   }
 
@@ -195,26 +190,25 @@ export default class Constraints {
   // returns ComponentFootprint[]
   // uses current view's range
   buildCurrentBusinessFootprints(isAllDay) {
-    var view = this._calendar.view;
-    var businessHourGenerator = view.get('businessHourGenerator');
-    var unzonedRange = view.dateProfile.activeUnzonedRange;
-    var eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(isAllDay, unzonedRange);
+    let view = this._calendar.view
+    let businessHourGenerator = view.get('businessHourGenerator')
+    let unzonedRange = view.dateProfile.activeUnzonedRange
+    let eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(isAllDay, unzonedRange)
 
     if (eventInstanceGroup) {
-      return this.eventInstancesToFootprints(eventInstanceGroup.eventInstances);
-    }
-    else {
-      return [];
+      return this.eventInstancesToFootprints(eventInstanceGroup.eventInstances)
+    } else {
+      return []
     }
   }
 
 
   // conversion util
   eventInstancesToFootprints(eventInstances) {
-    var eventRanges = eventInstances.map(eventInstanceToEventRange);
-    var eventFootprints = this.eventRangesToEventFootprints(eventRanges);
+    let eventRanges = eventInstances.map(eventInstanceToEventRange)
+    let eventFootprints = this.eventRangesToEventFootprints(eventRanges)
 
-    return eventFootprints.map(eventFootprintToComponentFootprint);
+    return eventFootprints.map(eventFootprintToComponentFootprint)
   }
 
 
@@ -223,8 +217,8 @@ export default class Constraints {
 
 
   collectOverlapEventFootprints(peerEventFootprints, targetFootprint) {
-    var overlapEventFootprints = [];
-    var i;
+    let overlapEventFootprints = []
+    let i
 
     for (i = 0; i < peerEventFootprints.length; i++) {
       if (
@@ -233,11 +227,11 @@ export default class Constraints {
           peerEventFootprints[i].componentFootprint
         )
       ) {
-        overlapEventFootprints.push(peerEventFootprints[i]);
+        overlapEventFootprints.push(peerEventFootprints[i])
       }
     }
 
-    return overlapEventFootprints;
+    return overlapEventFootprints
   }
 
 
@@ -253,34 +247,34 @@ export default class Constraints {
   Returns false on invalid input.
   */
   parseEventDefToInstances(eventInput) {
-    var eventManager = this.eventManager;
-    var eventDef = EventDefParser.parse(eventInput, new EventSource(this._calendar));
+    let eventManager = this.eventManager
+    let eventDef = EventDefParser.parse(eventInput, new EventSource(this._calendar))
 
     if (!eventDef) { // invalid
-      return false;
+      return false
     }
 
-    return eventDef.buildInstances(eventManager.currentPeriod.unzonedRange);
+    return eventDef.buildInstances(eventManager.currentPeriod.unzonedRange)
   }
 
 
   eventRangesToEventFootprints(eventRanges) {
-    var i;
-    var eventFootprints = [];
+    let i
+    let eventFootprints = []
 
     for (i = 0; i < eventRanges.length; i++) {
       eventFootprints.push.apply( // footprints
         eventFootprints,
         this.eventRangeToEventFootprints(eventRanges[i])
-      );
+      )
     }
 
-    return eventFootprints;
+    return eventFootprints
   }
 
 
   eventRangeToEventFootprints(eventRange): EventFootprint[] {
-    return [ eventRangeToEventFootprint(eventRange) ];
+    return [ eventRangeToEventFootprint(eventRange) ]
   }
 
 
@@ -289,21 +283,21 @@ export default class Constraints {
   Very similar to EventDateProfile::parse :(
   */
   parseFootprints(rawInput) {
-    var start, end;
+    let start, end
 
     if (rawInput.start) {
-      start = this._calendar.moment(rawInput.start);
+      start = this._calendar.moment(rawInput.start)
 
       if (!start.isValid()) {
-        start = null;
+        start = null
       }
     }
 
     if (rawInput.end) {
-      end = this._calendar.moment(rawInput.end);
+      end = this._calendar.moment(rawInput.end)
 
       if (!end.isValid()) {
-        end = null;
+        end = null
       }
     }
 
@@ -312,7 +306,7 @@ export default class Constraints {
         new UnzonedRange(start, end),
         (start && !start.hasTime()) || (end && !end.hasTime()) // isAllDay
       )
-    ];
+    ]
   }
 
 
@@ -321,12 +315,12 @@ export default class Constraints {
 
 
   footprintContainsFootprint(outerFootprint, innerFootprint) {
-    return outerFootprint.unzonedRange.containsRange(innerFootprint.unzonedRange);
+    return outerFootprint.unzonedRange.containsRange(innerFootprint.unzonedRange)
   }
 
 
   footprintsIntersect(footprint0, footprint1) {
-    return footprint0.unzonedRange.intersectsWith(footprint1.unzonedRange);
+    return footprint0.unzonedRange.intersectsWith(footprint1.unzonedRange)
   }
 
 }
@@ -334,7 +328,7 @@ export default class Constraints {
 
 // optional subjectEventInstance
 function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEventInstance) {
-  var i;
+  let i
 
   for (i = 0; i < overlapEventFootprints.length; i++) {
     if (
@@ -343,44 +337,43 @@ function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEve
         subjectEventInstance ? subjectEventInstance.toLegacy() : null
       )
     ) {
-      return false;
+      return false
     }
   }
 
-  return true;
+  return true
 }
 
 
 function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance) {
-  var subjectLegacyInstance = subjectEventInstance.toLegacy();
-  var i;
-  var overlapEventInstance;
-  var overlapEventDef;
-  var overlapVal;
+  let subjectLegacyInstance = subjectEventInstance.toLegacy()
+  let i
+  let overlapEventInstance
+  let overlapEventDef
+  let overlapVal
 
   for (i = 0; i < overlapEventFootprints.length; i++) {
-    overlapEventInstance = overlapEventFootprints[i].eventInstance;
-    overlapEventDef = overlapEventInstance.def;
+    overlapEventInstance = overlapEventFootprints[i].eventInstance
+    overlapEventDef = overlapEventInstance.def
 
     // don't need to pass in calendar, because don't want to consider global eventOverlap property,
     // because we already considered that earlier in the process.
-    overlapVal = overlapEventDef.getOverlap();
+    overlapVal = overlapEventDef.getOverlap()
 
     if (overlapVal === false) {
-      return false;
-    }
-    else if (typeof overlapVal === 'function') {
+      return false
+    } else if (typeof overlapVal === 'function') {
       if (
         !overlapVal(
           overlapEventInstance.toLegacy(),
           subjectLegacyInstance
         )
       ) {
-        return false;
+        return false
       }
     }
   }
 
-  return true;
+  return true
 }
 

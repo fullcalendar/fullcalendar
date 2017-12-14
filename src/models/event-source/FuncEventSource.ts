@@ -9,7 +9,7 @@ export default class FuncEventSource extends EventSource {
 
 
   fetch(start, end, timezone) {
-    this.calendar.pushLoading();
+    this.calendar.pushLoading()
 
     return Promise.construct((onResolve) => {
       this.func.call(
@@ -18,49 +18,48 @@ export default class FuncEventSource extends EventSource {
         end.clone(),
         timezone,
         (rawEventDefs) => {
-          this.calendar.popLoading();
+          this.calendar.popLoading()
 
-          onResolve(this.parseEventDefs(rawEventDefs));
+          onResolve(this.parseEventDefs(rawEventDefs))
         }
-      );
-    });
+      )
+    })
   }
 
 
   getPrimitive() {
-    return this.func;
+    return this.func
   }
 
 
   applyManualStandardProps(rawProps) {
-    var superSuccess = super.applyManualStandardProps(rawProps);
+    let superSuccess = super.applyManualStandardProps(rawProps)
 
-    this.func = rawProps.events;
+    this.func = rawProps.events
 
-    return superSuccess;
+    return superSuccess
   }
 
 
   static parse(rawInput, calendar) {
-    var rawProps;
+    let rawProps
 
     // normalize raw input
     if ($.isFunction(rawInput.events)) { // extended form
-      rawProps = rawInput;
-    }
-    else if ($.isFunction(rawInput)) { // short form
-      rawProps = { events: rawInput };
+      rawProps = rawInput
+    } else if ($.isFunction(rawInput)) { // short form
+      rawProps = { events: rawInput }
     }
 
     if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar);
+      return EventSource.parse.call(this, rawProps, calendar)
     }
 
-    return false;
+    return false
   }
 
 }
 
 FuncEventSource.defineStandardProps({
   events: false // don't automatically transfer
-});
+})

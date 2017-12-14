@@ -12,7 +12,7 @@ export default class SingleEventDef extends EventDef {
   Will receive start/end params, but will be ignored.
   */
   buildInstances() {
-    return [ this.buildInstance() ];
+    return [ this.buildInstance() ]
   }
 
 
@@ -20,33 +20,33 @@ export default class SingleEventDef extends EventDef {
     return new EventInstance(
       this, // definition
       this.dateProfile
-    );
+    )
   }
 
 
   isAllDay() {
-    return this.dateProfile.isAllDay();
+    return this.dateProfile.isAllDay()
   }
 
 
   clone() {
-    var def = super.clone();
+    let def = super.clone()
 
-    def.dateProfile = this.dateProfile;
+    def.dateProfile = this.dateProfile
 
-    return def;
+    return def
   }
 
 
   rezone() {
-    var calendar = this.source.calendar;
-    var dateProfile = this.dateProfile;
+    let calendar = this.source.calendar
+    let dateProfile = this.dateProfile
 
     this.dateProfile = new EventDateProfile(
       calendar.moment(dateProfile.start),
       dateProfile.end ? calendar.moment(dateProfile.end) : null,
       calendar
-    );
+    )
   }
 
 
@@ -54,21 +54,20 @@ export default class SingleEventDef extends EventDef {
   NOTE: if super-method fails, should still attempt to apply
   */
   applyManualStandardProps(rawProps) {
-    var superSuccess = super.applyManualStandardProps(rawProps);
-    var dateProfile = EventDateProfile.parse(rawProps, this.source); // returns null on failure
+    let superSuccess = super.applyManualStandardProps(rawProps)
+    let dateProfile = EventDateProfile.parse(rawProps, this.source) // returns null on failure
 
     if (dateProfile) {
-      this.dateProfile = dateProfile;
+      this.dateProfile = dateProfile
 
       // make sure `date` shows up in the legacy event objects as-is
       if (rawProps.date != null) {
-        this.miscProps.date = rawProps.date;
+        this.miscProps.date = rawProps.date
       }
 
-      return superSuccess;
-    }
-    else {
-      return false;
+      return superSuccess
+    } else {
+      return false
     }
   }
 
@@ -84,4 +83,4 @@ SingleEventDef.defineStandardProps({ // false = manually process
   date: false, // alias for 'start'
   end: false,
   allDay: false
-});
+})

@@ -29,9 +29,9 @@ export default class EventManager {
 
 
   constructor(calendar) {
-    this.calendar = calendar;
-    this.stickySource = new ArrayEventSource(calendar);
-    this.otherSources = [];
+    this.calendar = calendar
+    this.stickySource = new ArrayEventSource(calendar)
+    this.otherSources = []
   }
 
 
@@ -44,10 +44,10 @@ export default class EventManager {
     ) {
       this.setPeriod( // will change this.currentPeriod
         new EventPeriod(start, end, timezone)
-      );
+      )
     }
 
-    return this.currentPeriod.whenReleased();
+    return this.currentPeriod.whenReleased()
   }
 
 
@@ -56,28 +56,28 @@ export default class EventManager {
 
 
   addSource(eventSource) {
-    this.otherSources.push(eventSource);
+    this.otherSources.push(eventSource)
 
     if (this.currentPeriod) {
-      this.currentPeriod.requestSource(eventSource); // might release
+      this.currentPeriod.requestSource(eventSource) // might release
     }
   }
 
 
   removeSource(doomedSource) {
-    removeExact(this.otherSources, doomedSource);
+    removeExact(this.otherSources, doomedSource)
 
     if (this.currentPeriod) {
-      this.currentPeriod.purgeSource(doomedSource); // might release
+      this.currentPeriod.purgeSource(doomedSource) // might release
     }
   }
 
 
   removeAllSources() {
-    this.otherSources = [];
+    this.otherSources = []
 
     if (this.currentPeriod) {
-      this.currentPeriod.purgeAllSources(); // might release
+      this.currentPeriod.purgeAllSources() // might release
     }
   }
 
@@ -87,25 +87,25 @@ export default class EventManager {
 
 
   refetchSource(eventSource) {
-    var currentPeriod = this.currentPeriod;
+    let currentPeriod = this.currentPeriod
 
     if (currentPeriod) {
-      currentPeriod.freeze();
-      currentPeriod.purgeSource(eventSource);
-      currentPeriod.requestSource(eventSource);
-      currentPeriod.thaw();
+      currentPeriod.freeze()
+      currentPeriod.purgeSource(eventSource)
+      currentPeriod.requestSource(eventSource)
+      currentPeriod.thaw()
     }
   }
 
 
   refetchAllSources() {
-    var currentPeriod = this.currentPeriod;
+    let currentPeriod = this.currentPeriod
 
     if (currentPeriod) {
-      currentPeriod.freeze();
-      currentPeriod.purgeAllSources();
-      currentPeriod.requestSources(this.getSources());
-      currentPeriod.thaw();
+      currentPeriod.freeze()
+      currentPeriod.purgeAllSources()
+      currentPeriod.requestSources(this.getSources())
+      currentPeriod.thaw()
     }
   }
 
@@ -115,7 +115,7 @@ export default class EventManager {
 
 
   getSources() {
-    return [ this.stickySource ].concat(this.otherSources);
+    return [ this.stickySource ].concat(this.otherSources)
   }
 
 
@@ -124,55 +124,54 @@ export default class EventManager {
 
     // coerce into an array
     if (!matchInputs) {
-      matchInputs = [];
-    }
-    else if (!$.isArray(matchInputs)) {
-      matchInputs = [ matchInputs ];
+      matchInputs = []
+    } else if (!$.isArray(matchInputs)) {
+      matchInputs = [ matchInputs ]
     }
 
-    var matchingSources = [];
-    var i;
+    let matchingSources = []
+    let i
 
     // resolve raw inputs to real event source objects
     for (i = 0; i < matchInputs.length; i++) {
       matchingSources.push.apply( // append
         matchingSources,
         this.querySources(matchInputs[i])
-      );
+      )
     }
 
-    return matchingSources;
+    return matchingSources
   }
 
 
   // matchInput can either by a real event source object, an ID, or the function/URL for the source.
   // returns an array of matching source objects.
   querySources(matchInput) {
-    var sources = this.otherSources;
-    var i, source;
+    let sources = this.otherSources
+    let i, source
 
     // given a proper event source object
     for (i = 0; i < sources.length; i++) {
-      source = sources[i];
+      source = sources[i]
 
       if (source === matchInput) {
-        return [ source ];
+        return [ source ]
       }
     }
 
     // an ID match
-    source = this.getSourceById(EventSource.normalizeId(matchInput));
+    source = this.getSourceById(EventSource.normalizeId(matchInput))
     if (source) {
-      return [ source ];
+      return [ source ]
     }
 
     // parse as an event source
-    matchInput = EventSourceParser.parse(matchInput, this.calendar);
+    matchInput = EventSourceParser.parse(matchInput, this.calendar)
     if (matchInput) {
 
       return $.grep(sources, function(source) {
-        return isSourcesEquivalent(matchInput, source);
-      });
+        return isSourcesEquivalent(matchInput, source)
+      })
     }
   }
 
@@ -181,9 +180,9 @@ export default class EventManager {
   ID assumed to already be normalized
   */
   getSourceById(id) {
-    return $.grep(this.otherSources, function(source:any) {
-      return source.id && source.id === id;
-    })[0];
+    return $.grep(this.otherSources, function(source: any) {
+      return source.id && source.id === id
+    })[0]
   }
 
 
@@ -193,26 +192,26 @@ export default class EventManager {
 
   setPeriod(eventPeriod) {
     if (this.currentPeriod) {
-      this.unbindPeriod(this.currentPeriod);
-      this.currentPeriod = null;
+      this.unbindPeriod(this.currentPeriod)
+      this.currentPeriod = null
     }
 
-    this.currentPeriod = eventPeriod;
-    this.bindPeriod(eventPeriod);
+    this.currentPeriod = eventPeriod
+    this.bindPeriod(eventPeriod)
 
-    eventPeriod.requestSources(this.getSources());
+    eventPeriod.requestSources(this.getSources())
   }
 
 
   bindPeriod(eventPeriod) {
     this.listenTo(eventPeriod, 'release', function(eventsPayload) {
-      this.trigger('release', eventsPayload);
-    });
+      this.trigger('release', eventsPayload)
+    })
   }
 
 
   unbindPeriod(eventPeriod) {
-    this.stopListeningTo(eventPeriod);
+    this.stopListeningTo(eventPeriod)
   }
 
 
@@ -222,40 +221,40 @@ export default class EventManager {
 
   getEventDefByUid(uid) {
     if (this.currentPeriod) {
-      return this.currentPeriod.getEventDefByUid(uid);
+      return this.currentPeriod.getEventDefByUid(uid)
     }
   }
 
 
   addEventDef(eventDef, isSticky) {
     if (isSticky) {
-      this.stickySource.addEventDef(eventDef);
+      this.stickySource.addEventDef(eventDef)
     }
 
     if (this.currentPeriod) {
-      this.currentPeriod.addEventDef(eventDef); // might release
+      this.currentPeriod.addEventDef(eventDef) // might release
     }
   }
 
 
   removeEventDefsById(eventId) {
     this.getSources().forEach(function(eventSource) {
-      eventSource.removeEventDefsById(eventId);
-    });
+      eventSource.removeEventDefsById(eventId)
+    })
 
     if (this.currentPeriod) {
-      this.currentPeriod.removeEventDefsById(eventId); // might release
+      this.currentPeriod.removeEventDefsById(eventId) // might release
     }
   }
 
 
   removeAllEventDefs() {
     this.getSources().forEach(function(eventSource) {
-      eventSource.removeAllEventDefs();
-    });
+      eventSource.removeAllEventDefs()
+    })
 
     if (this.currentPeriod) {
-      this.currentPeriod.removeAllEventDefs();
+      this.currentPeriod.removeAllEventDefs()
     }
   }
 
@@ -268,38 +267,38 @@ export default class EventManager {
   Returns an undo function.
   */
   mutateEventsWithId(eventDefId, eventDefMutation) {
-    var currentPeriod = this.currentPeriod;
-    var eventDefs;
-    var undoFuncs = [];
+    let currentPeriod = this.currentPeriod
+    let eventDefs
+    let undoFuncs = []
 
     if (currentPeriod) {
 
-      currentPeriod.freeze();
+      currentPeriod.freeze()
 
-      eventDefs = currentPeriod.getEventDefsById(eventDefId);
+      eventDefs = currentPeriod.getEventDefsById(eventDefId)
       eventDefs.forEach(function(eventDef) {
         // add/remove esp because id might change
-        currentPeriod.removeEventDef(eventDef);
-        undoFuncs.push(eventDefMutation.mutateSingle(eventDef));
-        currentPeriod.addEventDef(eventDef);
-      });
+        currentPeriod.removeEventDef(eventDef)
+        undoFuncs.push(eventDefMutation.mutateSingle(eventDef))
+        currentPeriod.addEventDef(eventDef)
+      })
 
-      currentPeriod.thaw();
+      currentPeriod.thaw()
 
       return function() {
-        currentPeriod.freeze();
+        currentPeriod.freeze()
 
-        for (var i = 0; i < eventDefs.length; i++) {
-          currentPeriod.removeEventDef(eventDefs[i]);
-          undoFuncs[i]();
-          currentPeriod.addEventDef(eventDefs[i]);
+        for (let i = 0; i < eventDefs.length; i++) {
+          currentPeriod.removeEventDef(eventDefs[i])
+          undoFuncs[i]()
+          currentPeriod.addEventDef(eventDefs[i])
         }
 
-        currentPeriod.thaw();
-      };
+        currentPeriod.thaw()
+      }
     }
 
-    return function() { };
+    return function() { }
   }
 
 
@@ -307,24 +306,24 @@ export default class EventManager {
   copies and then mutates
   */
   buildMutatedEventInstanceGroup(eventDefId, eventDefMutation) {
-    var eventDefs = this.getEventDefsById(eventDefId);
-    var i;
-    var defCopy;
-    var allInstances = [];
+    let eventDefs = this.getEventDefsById(eventDefId)
+    let i
+    let defCopy
+    let allInstances = []
 
     for (i = 0; i < eventDefs.length; i++) {
-      defCopy = eventDefs[i].clone();
+      defCopy = eventDefs[i].clone()
 
       if (defCopy instanceof SingleEventDef) {
-        eventDefMutation.mutateSingle(defCopy);
+        eventDefMutation.mutateSingle(defCopy)
 
         allInstances.push.apply(allInstances, // append
           defCopy.buildInstances()
-        );
+        )
       }
     }
 
-    return new EventInstanceGroup(allInstances);
+    return new EventInstanceGroup(allInstances)
   }
 
 
@@ -334,14 +333,14 @@ export default class EventManager {
 
   freeze() {
     if (this.currentPeriod) {
-      this.currentPeriod.freeze();
+      this.currentPeriod.freeze()
     }
   }
 
 
   thaw() {
     if (this.currentPeriod) {
-      this.currentPeriod.thaw();
+      this.currentPeriod.thaw()
     }
   }
 
@@ -372,5 +371,5 @@ ListenerMixin.mixInto(EventManager)
 
 
 function isSourcesEquivalent(source0, source1) {
-  return source0.getPrimitive() == source1.getPrimitive();
+  return source0.getPrimitive() == source1.getPrimitive()
 }

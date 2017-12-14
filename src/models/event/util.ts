@@ -4,16 +4,16 @@ import ComponentFootprint from '../ComponentFootprint'
 
 
 export function eventDefsToEventInstances(eventDefs, unzonedRange) {
-  var eventInstances = [];
-  var i;
+  let eventInstances = []
+  let i
 
   for (i = 0; i < eventDefs.length; i++) {
     eventInstances.push.apply(eventInstances, // append
       eventDefs[i].buildInstances(unzonedRange)
-    );
+    )
   }
 
-  return eventInstances;
+  return eventInstances
 }
 
 
@@ -22,7 +22,7 @@ export function eventInstanceToEventRange(eventInstance) {
     eventInstance.dateProfile.unzonedRange,
     eventInstance.def,
     eventInstance
-  );
+  )
 }
 
 
@@ -34,15 +34,15 @@ export function eventRangeToEventFootprint(eventRange) {
     ),
     eventRange.eventDef,
     eventRange.eventInstance // might not exist
-  );
+  )
 }
 
 
 export function eventInstanceToUnzonedRange(eventInstance) {
-  return eventInstance.dateProfile.unzonedRange;
+  return eventInstance.dateProfile.unzonedRange
 }
 
 
 export function eventFootprintToComponentFootprint(eventFootprint) {
-  return eventFootprint.componentFootprint;
+  return eventFootprint.componentFootprint
 }

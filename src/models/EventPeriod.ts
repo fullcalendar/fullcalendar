@@ -34,25 +34,25 @@ export default class EventPeriod {
 
 
   constructor(start, end, timezone) {
-    this.start = start;
-    this.end = end;
-    this.timezone = timezone;
+    this.start = start
+    this.end = end
+    this.timezone = timezone
 
     this.unzonedRange = new UnzonedRange(
       start.clone().stripZone(),
       end.clone().stripZone()
-    );
+    )
 
-    this.requestsByUid = {};
-    this.eventDefsByUid = {};
-    this.eventDefsById = {};
-    this.eventInstanceGroupsById = {};
+    this.requestsByUid = {}
+    this.eventDefsByUid = {}
+    this.eventDefsById = {}
+    this.eventInstanceGroupsById = {}
   }
 
 
   isWithinRange(start, end) {
     // TODO: use a range util function?
-    return !start.isBefore(this.start) && !end.isAfter(this.end);
+    return !start.isBefore(this.start) && !end.isAfter(this.end)
   }
 
 
@@ -61,81 +61,79 @@ export default class EventPeriod {
 
 
   requestSources(sources) {
-    this.freeze();
+    this.freeze()
 
-    for (var i = 0; i < sources.length; i++) {
-      this.requestSource(sources[i]);
+    for (let i = 0; i < sources.length; i++) {
+      this.requestSource(sources[i])
     }
 
-    this.thaw();
+    this.thaw()
   }
 
 
   requestSource(source) {
-    var request = { source: source, status: 'pending', eventDefs: null };
+    let request = { source: source, status: 'pending', eventDefs: null }
 
-    this.requestsByUid[source.uid] = request;
-    this.pendingCnt += 1;
+    this.requestsByUid[source.uid] = request
+    this.pendingCnt += 1
 
     source.fetch(this.start, this.end, this.timezone).then((eventDefs) => {
       if (request.status !== 'cancelled') {
-        request.status = 'completed';
-        request.eventDefs = eventDefs;
+        request.status = 'completed'
+        request.eventDefs = eventDefs
 
-        this.addEventDefs(eventDefs);
-        this.pendingCnt--;
-        this.tryRelease();
+        this.addEventDefs(eventDefs)
+        this.pendingCnt--
+        this.tryRelease()
       }
     }, () => { // failure
       if (request.status !== 'cancelled') {
-        request.status = 'failed';
+        request.status = 'failed'
 
-        this.pendingCnt--;
-        this.tryRelease();
+        this.pendingCnt--
+        this.tryRelease()
       }
-    });
+    })
   }
 
 
   purgeSource(source) {
-    var request = this.requestsByUid[source.uid];
+    let request = this.requestsByUid[source.uid]
 
     if (request) {
-      delete this.requestsByUid[source.uid];
+      delete this.requestsByUid[source.uid]
 
       if (request.status === 'pending') {
-        request.status = 'cancelled';
-        this.pendingCnt--;
-        this.tryRelease();
-      }
-      else if (request.status === 'completed') {
-        request.eventDefs.forEach(this.removeEventDef.bind(this));
+        request.status = 'cancelled'
+        this.pendingCnt--
+        this.tryRelease()
+      } else if (request.status === 'completed') {
+        request.eventDefs.forEach(this.removeEventDef.bind(this))
       }
     }
   }
 
 
   purgeAllSources() {
-    var requestsByUid = this.requestsByUid;
-    var uid, request;
-    var completedCnt = 0;
+    let requestsByUid = this.requestsByUid
+    let uid, request
+    let completedCnt = 0
 
     for (uid in requestsByUid) {
-      request = requestsByUid[uid];
+      request = requestsByUid[uid]
 
       if (request.status === 'pending') {
-        request.status = 'cancelled';
-      }
-      else if (request.status === 'completed') {
-        completedCnt++;
+        request.status = 'cancelled'
+      } else if (request.status === 'completed') {
+        completedCnt++
       }
     }
 
-    this.requestsByUid = {};
-    this.pendingCnt = 0;
+    this.requestsByUid = {}
+    this.pendingCnt = 0
 
     if (completedCnt) {
-      this.removeAllEventDefs(); // might release
+      this.removeAllEventDefs() // might release
     }
   }
 
@@ -145,79 +143,79 @@ export default class EventPeriod {
 
 
   getEventDefByUid(eventDefUid) {
-    return this.eventDefsByUid[eventDefUid];
+    return this.eventDefsByUid[eventDefUid]
   }
 
 
   getEventDefsById(eventDefId) {
-    var a = this.eventDefsById[eventDefId];
+    let a = this.eventDefsById[eventDefId]
 
     if (a) {
-      return a.slice(); // clone
+      return a.slice() // clone
     }
 
-    return [];
+    return []
   }
 
 
   addEventDefs(eventDefs) {
-    for (var i = 0; i < eventDefs.length; i++) {
-      this.addEventDef(eventDefs[i]);
+    for (let i = 0; i < eventDefs.length; i++) {
+      this.addEventDef(eventDefs[i])
     }
   }
 
 
   addEventDef(eventDef) {
-    var eventDefsById = this.eventDefsById;
-    var eventDefId = eventDef.id;
-    var eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = []);
-    var eventInstances = eventDef.buildInstances(this.unzonedRange);
-    var i;
+    let eventDefsById = this.eventDefsById
+    let eventDefId = eventDef.id
+    let eventDefs = eventDefsById[eventDefId] || (eventDefsById[eventDefId] = [])
+    let eventInstances = eventDef.buildInstances(this.unzonedRange)
+    let i
 
-    eventDefs.push(eventDef);
+    eventDefs.push(eventDef)
 
-    this.eventDefsByUid[eventDef.uid] = eventDef;
+    this.eventDefsByUid[eventDef.uid] = eventDef
 
     for (i = 0; i < eventInstances.length; i++) {
-      this.addEventInstance(eventInstances[i], eventDefId);
+      this.addEventInstance(eventInstances[i], eventDefId)
     }
   }
 
 
   removeEventDefsById(eventDefId) {
     this.getEventDefsById(eventDefId).forEach((eventDef) => {
-      this.removeEventDef(eventDef);
-    });
+      this.removeEventDef(eventDef)
+    })
   }
 
 
   removeAllEventDefs() {
-    var isEmpty = $.isEmptyObject(this.eventDefsByUid);
+    let isEmpty = $.isEmptyObject(this.eventDefsByUid)
 
-    this.eventDefsByUid = {};
-    this.eventDefsById = {};
-    this.eventInstanceGroupsById = {};
+    this.eventDefsByUid = {}
+    this.eventDefsById = {}
+    this.eventInstanceGroupsById = {}
 
     if (!isEmpty) {
-      this.tryRelease();
+      this.tryRelease()
     }
   }
 
 
   removeEventDef(eventDef) {
-    var eventDefsById = this.eventDefsById;
-    var eventDefs = eventDefsById[eventDef.id];
+    let eventDefsById = this.eventDefsById
+    let eventDefs = eventDefsById[eventDef.id]
 
-    delete this.eventDefsByUid[eventDef.uid];
+    delete this.eventDefsByUid[eventDef.uid]
 
     if (eventDefs) {
-      removeExact(eventDefs, eventDef);
+      removeExact(eventDefs, eventDef)
 
       if (!eventDefs.length) {
-        delete eventDefsById[eventDef.id];
+        delete eventDefsById[eventDef.id]
       }
 
-      this.removeEventInstancesForDef(eventDef);
+      this.removeEventInstancesForDef(eventDef)
     }
   }
 
@@ -227,75 +225,75 @@ export default class EventPeriod {
 
 
   getEventInstances() { // TODO: consider iterator
-    var eventInstanceGroupsById = this.eventInstanceGroupsById;
-    var eventInstances = [];
-    var id;
+    let eventInstanceGroupsById = this.eventInstanceGroupsById
+    let eventInstances = []
+    let id
 
     for (id in eventInstanceGroupsById) {
       eventInstances.push.apply(eventInstances, // append
         eventInstanceGroupsById[id].eventInstances
-      );
+      )
     }
 
-    return eventInstances;
+    return eventInstances
   }
 
 
   getEventInstancesWithId(eventDefId) {
-    var eventInstanceGroup = this.eventInstanceGroupsById[eventDefId];
+    let eventInstanceGroup = this.eventInstanceGroupsById[eventDefId]
 
     if (eventInstanceGroup) {
-      return eventInstanceGroup.eventInstances.slice(); // clone
+      return eventInstanceGroup.eventInstances.slice() // clone
     }
 
-    return [];
+    return []
   }
 
 
   getEventInstancesWithoutId(eventDefId) { // TODO: consider iterator
-    var eventInstanceGroupsById = this.eventInstanceGroupsById;
-    var matchingInstances = [];
-    var id;
+    let eventInstanceGroupsById = this.eventInstanceGroupsById
+    let matchingInstances = []
+    let id
 
     for (id in eventInstanceGroupsById) {
       if (id !== eventDefId) {
         matchingInstances.push.apply(matchingInstances, // append
           eventInstanceGroupsById[id].eventInstances
-        );
+        )
       }
     }
 
-    return matchingInstances;
+    return matchingInstances
   }
 
 
   addEventInstance(eventInstance, eventDefId) {
-    var eventInstanceGroupsById = this.eventInstanceGroupsById;
-    var eventInstanceGroup = eventInstanceGroupsById[eventDefId] ||
-      (eventInstanceGroupsById[eventDefId] = new EventInstanceGroup());
+    let eventInstanceGroupsById = this.eventInstanceGroupsById
+    let eventInstanceGroup = eventInstanceGroupsById[eventDefId] ||
+      (eventInstanceGroupsById[eventDefId] = new EventInstanceGroup())
 
-    eventInstanceGroup.eventInstances.push(eventInstance);
+    eventInstanceGroup.eventInstances.push(eventInstance)
 
-    this.tryRelease();
+    this.tryRelease()
   }
 
 
   removeEventInstancesForDef(eventDef) {
-    var eventInstanceGroupsById = this.eventInstanceGroupsById;
-    var eventInstanceGroup = eventInstanceGroupsById[eventDef.id];
-    var removeCnt;
+    let eventInstanceGroupsById = this.eventInstanceGroupsById
+    let eventInstanceGroup = eventInstanceGroupsById[eventDef.id]
+    let removeCnt
 
     if (eventInstanceGroup) {
       removeCnt = removeMatching(eventInstanceGroup.eventInstances, function(currentEventInstance) {
-        return currentEventInstance.def === eventDef;
-      });
+        return currentEventInstance.def === eventDef
+      })
 
       if (!eventInstanceGroup.eventInstances.length) {
-        delete eventInstanceGroupsById[eventDef.id];
+        delete eventInstanceGroupsById[eventDef.id]
       }
 
       if (removeCnt) {
-        this.tryRelease();
+        this.tryRelease()
       }
     }
   }
@@ -308,43 +306,41 @@ export default class EventPeriod {
   tryRelease() {
     if (!this.pendingCnt) {
       if (!this.freezeDepth) {
-        this.release();
-      }
-      else {
-        this.stuntedReleaseCnt++;
+        this.release()
+      } else {
+        this.stuntedReleaseCnt++
       }
     }
   }
 
 
   release() {
-    this.releaseCnt++;
-    this.trigger('release', this.eventInstanceGroupsById);
+    this.releaseCnt++
+    this.trigger('release', this.eventInstanceGroupsById)
   }
 
 
   whenReleased() {
     if (this.releaseCnt) {
-      return Promise.resolve(this.eventInstanceGroupsById);
-    }
-    else {
+      return Promise.resolve(this.eventInstanceGroupsById)
+    } else {
       return Promise.construct((onResolve) => {
-        this.one('release', onResolve);
-      });
+        this.one('release', onResolve)
+      })
     }
   }
 
 
   freeze() {
     if (!(this.freezeDepth++)) {
-      this.stuntedReleaseCnt = 0;
+      this.stuntedReleaseCnt = 0
     }
   }
 
 
   thaw() {
     if (!(--this.freezeDepth) && this.stuntedReleaseCnt && !this.pendingCnt) {
-      this.release();
+      this.release()
     }
   }
 

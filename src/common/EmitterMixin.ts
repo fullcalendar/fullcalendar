@@ -31,14 +31,14 @@ export default class EmitterMixin extends Mixin implements EmitterInterface {
 
 
   on(types, handler) {
-    $(this).on(types, this._prepareIntercept(handler));
-    return this; // for chaining
+    $(this).on(types, this._prepareIntercept(handler))
+    return this // for chaining
   }
 
 
   one(types, handler) {
-    $(this).one(types, this._prepareIntercept(handler));
-    return this; // for chaining
+    $(this).one(types, this._prepareIntercept(handler))
+    return this // for chaining
   }
 
 
@@ -46,38 +46,38 @@ export default class EmitterMixin extends Mixin implements EmitterInterface {
     // handlers are always called with an "event" object as their first param.
     // sneak the `this` context and arguments into the extra parameter object
     // and forward them on to the original handler.
-    var intercept = function(ev, extra) {
+    let intercept = function(ev, extra) {
       return handler.apply(
         extra.context || this,
         extra.args || []
-      );
-    };
+      )
+    }
 
     // mimick jQuery's internal "proxy" system (risky, I know)
     // causing all functions with the same .guid to appear to be the same.
     // https://github.com/jquery/jquery/blob/2.2.4/src/core.js#L448
     // this is needed for calling .off with the original non-intercept handler.
     if (!handler.guid) {
-      handler.guid = ($ as any).guid++;
+      handler.guid = ($ as any).guid++
     }
-    (intercept as any).guid = handler.guid;
+    (intercept as any).guid = handler.guid
 
-    return intercept;
+    return intercept
   }
 
 
   off(types, handler) {
-    $(this).off(types, handler);
+    $(this).off(types, handler)
 
-    return this; // for chaining
+    return this // for chaining
   }
 
 
   trigger(types, ...args) {
     // pass in "extra" info to the intercept
-    $(this).triggerHandler(types, { args: args });
+    $(this).triggerHandler(types, { args: args })
 
-    return this; // for chaining
+    return this // for chaining
   }
 
 
@@ -85,16 +85,16 @@ export default class EmitterMixin extends Mixin implements EmitterInterface {
 
     // `triggerHandler` is less reliant on the DOM compared to `trigger`.
     // pass in "extra" info to the intercept.
-    $(this).triggerHandler(types, { context: context, args: args });
+    $(this).triggerHandler(types, { context: context, args: args })
 
-    return this; // for chaining
+    return this // for chaining
   }
 
 
   hasHandlers(type) {
-    var hash = ($ as any)._data(this, 'events'); // http://blog.jquery.com/2012/08/09/jquery-1-8-released/
+    let hash = ($ as any)._data(this, 'events') // http://blog.jquery.com/2012/08/09/jquery-1-8-released/
 
-    return hash && hash[type] && hash[type].length > 0;
+    return hash && hash[type] && hash[type].length > 0
   }
 
 }

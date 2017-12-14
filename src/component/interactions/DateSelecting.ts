@@ -18,104 +18,102 @@ export default class DateSelecting extends Interaction {
     - unrenderHighlight
   */
   constructor(component) {
-    super(component);
-    this.dragListener = this.buildDragListener();
+    super(component)
+    this.dragListener = this.buildDragListener()
   }
 
 
   end() {
-    this.dragListener.endInteraction();
+    this.dragListener.endInteraction()
   }
 
 
   getDelay() {
-    var delay = this.opt('selectLongPressDelay');
+    let delay = this.opt('selectLongPressDelay')
 
     if (delay == null) {
-      delay = this.opt('longPressDelay'); // fallback
+      delay = this.opt('longPressDelay') // fallback
     }
 
-    return delay;
+    return delay
   }
 
 
   bindToEl(el) {
-    var component = this.component;
-    var dragListener = this.dragListener;
+    let component = this.component
+    let dragListener = this.dragListener
 
     component.bindDateHandlerToEl(el, 'mousedown', (ev) => {
       if (this.opt('selectable') && !component.shouldIgnoreMouse()) {
         dragListener.startInteraction(ev, {
           distance: this.opt('selectMinDistance')
-        });
+        })
       }
-    });
+    })
 
     component.bindDateHandlerToEl(el, 'touchstart', (ev) => {
       if (this.opt('selectable') && !component.shouldIgnoreTouch()) {
         dragListener.startInteraction(ev, {
           delay: this.getDelay()
-        });
+        })
       }
-    });
+    })
 
-    preventSelection(el);
+    preventSelection(el)
   }
 
 
   // Creates a listener that tracks the user's drag across day elements, for day selecting.
   buildDragListener() {
-    var component = this.component;
-    var selectionFootprint; // null if invalid selection
+    let component = this.component
+    let selectionFootprint // null if invalid selection
 
-    var dragListener = new HitDragListener(component, {
+    let dragListener = new HitDragListener(component, {
       scroll: this.opt('dragScroll'),
       interactionStart: () => {
-        selectionFootprint = null;
+        selectionFootprint = null
       },
       dragStart: (ev) => {
-        this.view.unselect(ev); // since we could be rendering a new selection, we want to clear any old one
+        this.view.unselect(ev) // since we could be rendering a new selection, we want to clear any old one
       },
       hitOver: (hit, isOrig, origHit) => {
-        var origHitFootprint;
-        var hitFootprint;
+        let origHitFootprint
+        let hitFootprint
 
         if (origHit) { // click needs to have started on a hit
 
-          origHitFootprint = component.getSafeHitFootprint(origHit);
-          hitFootprint = component.getSafeHitFootprint(hit);
+          origHitFootprint = component.getSafeHitFootprint(origHit)
+          hitFootprint = component.getSafeHitFootprint(hit)
 
           if (origHitFootprint && hitFootprint) {
-            selectionFootprint = this.computeSelection(origHitFootprint, hitFootprint);
-          }
-          else {
-            selectionFootprint = null;
+            selectionFootprint = this.computeSelection(origHitFootprint, hitFootprint)
+          } else {
+            selectionFootprint = null
           }
 
           if (selectionFootprint) {
-            component.renderSelectionFootprint(selectionFootprint);
-          }
-          else if (selectionFootprint === false) {
-            disableCursor();
+            component.renderSelectionFootprint(selectionFootprint)
+          } else if (selectionFootprint === false) {
+            disableCursor()
           }
         }
       },
       hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
-        selectionFootprint = null;
-        component.unrenderSelection();
+        selectionFootprint = null
+        component.unrenderSelection()
       },
       hitDone: () => { // called after a hitOut OR before a dragEnd
-        enableCursor();
+        enableCursor()
       },
       interactionEnd: (ev, isCancelled) => {
         if (!isCancelled && selectionFootprint) {
           // the selection will already have been rendered. just report it
-          this.view.reportSelection(selectionFootprint, ev);
+          this.view.reportSelection(selectionFootprint, ev)
         }
       }
-    });
+    })
 
-    return dragListener;
+    return dragListener
   }
 
 
@@ -124,13 +122,13 @@ export default class DateSelecting extends Interaction {
   // Will return false if the selection is invalid and this should be indicated to the user.
   // Will return null/undefined if a selection invalid but no error should be reported.
   computeSelection(footprint0, footprint1) {
-    var wholeFootprint = this.computeSelectionFootprint(footprint0, footprint1);
+    let wholeFootprint = this.computeSelectionFootprint(footprint0, footprint1)
 
     if (wholeFootprint && !this.isSelectionFootprintAllowed(wholeFootprint)) {
-      return false;
+      return false
     }
 
-    return wholeFootprint;
+    return wholeFootprint
   }
 
 
@@ -138,25 +136,25 @@ export default class DateSelecting extends Interaction {
   // TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
   // Assumes both footprints are non-open-ended.
   computeSelectionFootprint(footprint0, footprint1) {
-    var ms = [
+    let ms = [
       footprint0.unzonedRange.startMs,
       footprint0.unzonedRange.endMs,
       footprint1.unzonedRange.startMs,
       footprint1.unzonedRange.endMs
-    ];
+    ]
 
-    ms.sort(compareNumbers);
+    ms.sort(compareNumbers)
 
     return new ComponentFootprint(
       new UnzonedRange(ms[0], ms[3]),
       footprint0.isAllDay
-    );
+    )
   }
 
 
   isSelectionFootprintAllowed(componentFootprint) {
     return this.component.dateProfile.validUnzonedRange.containsRange(componentFootprint.unzonedRange) &&
-      this.view.calendar.constraints.isSelectionFootprintAllowed(componentFootprint);
+      this.view.calendar.constraints.isSelectionFootprintAllowed(componentFootprint)
   }
 
 }

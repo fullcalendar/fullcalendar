@@ -9,22 +9,22 @@ export default class DateProfileGenerator {
 
 
   constructor(_view) {
-    this._view = _view;
+    this._view = _view
   }
 
 
   opt(name) {
-    return this._view.opt(name);
+    return this._view.opt(name)
   }
 
 
   trimHiddenDays(unzonedRange) {
-    return this._view.trimHiddenDays(unzonedRange);
+    return this._view.trimHiddenDays(unzonedRange)
   }
 
 
   msToUtcMoment(ms, forceAllDay) {
-    return this._view.calendar.msToUtcMoment(ms, forceAllDay);
+    return this._view.calendar.msToUtcMoment(ms, forceAllDay)
   }
 
 
@@ -34,77 +34,77 @@ export default class DateProfileGenerator {
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
   buildPrev(currentDateProfile) {
-    var prevDate = currentDateProfile.date.clone()
+    let prevDate = currentDateProfile.date.clone()
       .startOf(currentDateProfile.currentRangeUnit)
-      .subtract(currentDateProfile.dateIncrement);
+      .subtract(currentDateProfile.dateIncrement)
 
-    return this.build(prevDate, -1);
+    return this.build(prevDate, -1)
   }
 
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
   buildNext(currentDateProfile) {
-    var nextDate = currentDateProfile.date.clone()
+    let nextDate = currentDateProfile.date.clone()
       .startOf(currentDateProfile.currentRangeUnit)
-      .add(currentDateProfile.dateIncrement);
+      .add(currentDateProfile.dateIncrement)
 
-    return this.build(nextDate, 1);
+    return this.build(nextDate, 1)
   }
 
 
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
-  build(date, direction, forceToValid=false) {
-    var isDateAllDay = !date.hasTime();
-    var validUnzonedRange;
-    var minTime = null;
-    var maxTime = null;
-    var currentInfo;
-    var isRangeAllDay;
-    var renderUnzonedRange;
-    var activeUnzonedRange;
-    var isValid;
+  build(date, direction, forceToValid= false) {
+    let isDateAllDay = !date.hasTime()
+    let validUnzonedRange
+    let minTime = null
+    let maxTime = null
+    let currentInfo
+    let isRangeAllDay
+    let renderUnzonedRange
+    let activeUnzonedRange
+    let isValid
 
-    validUnzonedRange = this.buildValidRange();
-    validUnzonedRange = this.trimHiddenDays(validUnzonedRange);
+    validUnzonedRange = this.buildValidRange()
+    validUnzonedRange = this.trimHiddenDays(validUnzonedRange)
 
     if (forceToValid) {
       date = this.msToUtcMoment(
         validUnzonedRange.constrainDate(date), // returns MS
         isDateAllDay
-      );
+      )
     }
 
-    currentInfo = this.buildCurrentRangeInfo(date, direction);
-    isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit);
+    currentInfo = this.buildCurrentRangeInfo(date, direction)
+    isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit)
     renderUnzonedRange = this.buildRenderRange(
       this.trimHiddenDays(currentInfo.unzonedRange),
       currentInfo.unit,
       isRangeAllDay
-    );
-    renderUnzonedRange = this.trimHiddenDays(renderUnzonedRange);
-    activeUnzonedRange = renderUnzonedRange.clone();
+    )
+    renderUnzonedRange = this.trimHiddenDays(renderUnzonedRange)
+    activeUnzonedRange = renderUnzonedRange.clone()
 
     if (!this.opt('showNonCurrentDates')) {
-      activeUnzonedRange = activeUnzonedRange.intersect(currentInfo.unzonedRange);
+      activeUnzonedRange = activeUnzonedRange.intersect(currentInfo.unzonedRange)
     }
 
-    minTime = moment.duration(this.opt('minTime'));
-    maxTime = moment.duration(this.opt('maxTime'));
-    activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime);
-    activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange); // might return null
+    minTime = moment.duration(this.opt('minTime'))
+    maxTime = moment.duration(this.opt('maxTime'))
+    activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime)
+    activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange) // might return null
 
     if (activeUnzonedRange) {
       date = this.msToUtcMoment(
         activeUnzonedRange.constrainDate(date), // returns MS
         isDateAllDay
-      );
+      )
     }
 
     // it's invalid if the originally requested date is not contained,
     // or if the range is completely outside of the valid range.
-    isValid = currentInfo.unzonedRange.intersectsWith(validUnzonedRange);
+    isValid = currentInfo.unzonedRange.intersectsWith(validUnzonedRange)
 
     return {
       // constraint for where prev/next operations can go and where events can be dragged/resized to.
@@ -141,7 +141,7 @@ export default class DateProfileGenerator {
       // how far the current date will move for a prev/next operation
       dateIncrement: this.buildDateIncrement(currentInfo.duration)
         // pass a fallback (might be null) ^
-    };
+    }
   }
 
 
@@ -150,7 +150,7 @@ export default class DateProfileGenerator {
   // not responsible for trimming hidden days.
   buildValidRange() {
     return this._view.getUnzonedRangeOption('validRange', this._view.calendar.getNow()) ||
-      new UnzonedRange(); // completely open-ended
+      new UnzonedRange() // completely open-ended
   }
 
 
@@ -160,57 +160,54 @@ export default class DateProfileGenerator {
   // Guaranteed to have `range` and `unit` properties. `duration` is optional.
   // TODO: accept a MS-time instead of a moment `date`?
   buildCurrentRangeInfo(date, direction) {
-    var viewSpec = this._view.viewSpec;
-    var duration = null;
-    var unit = null;
-    var unzonedRange = null;
-    var dayCount;
+    let viewSpec = this._view.viewSpec
+    let duration = null
+    let unit = null
+    let unzonedRange = null
+    let dayCount
 
     if (viewSpec.duration) {
-      duration = viewSpec.duration;
-      unit = viewSpec.durationUnit;
-      unzonedRange = this.buildRangeFromDuration(date, direction, duration, unit);
-    }
-    else if ((dayCount = this.opt('dayCount'))) {
-      unit = 'day';
-      unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount);
-    }
-    else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-      unit = computeGreatestUnit(unzonedRange.getStart(), unzonedRange.getEnd());
-    }
-    else {
-      duration = this.getFallbackDuration();
-      unit = computeGreatestUnit(duration);
-      unzonedRange = this.buildRangeFromDuration(date, direction, duration, unit);
+      duration = viewSpec.duration
+      unit = viewSpec.durationUnit
+      unzonedRange = this.buildRangeFromDuration(date, direction, duration, unit)
+    } else if ((dayCount = this.opt('dayCount'))) {
+      unit = 'day'
+      unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount)
+    } else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
+      unit = computeGreatestUnit(unzonedRange.getStart(), unzonedRange.getEnd())
+    } else {
+      duration = this.getFallbackDuration()
+      unit = computeGreatestUnit(duration)
+      unzonedRange = this.buildRangeFromDuration(date, direction, duration, unit)
     }
 
-    return { duration: duration, unit: unit, unzonedRange: unzonedRange };
+    return { duration: duration, unit: unit, unzonedRange: unzonedRange }
   }
 
 
   getFallbackDuration() {
-    return moment.duration({ days: 1 });
+    return moment.duration({ days: 1 })
   }
 
 
   // Returns a new activeUnzonedRange to have time values (un-ambiguate)
   // minTime or maxTime causes the range to expand.
   adjustActiveRange(unzonedRange, minTime, maxTime) {
-    var start = unzonedRange.getStart();
-    var end = unzonedRange.getEnd();
+    let start = unzonedRange.getStart()
+    let end = unzonedRange.getEnd()
 
     if (this._view.usesMinMaxTime) {
 
       if (minTime < 0) {
-        start.time(0).add(minTime);
+        start.time(0).add(minTime)
       }
 
       if (maxTime > 24 * 60 * 60 * 1000) { // beyond 24 hours?
-        end.time(maxTime - (24 * 60 * 60 * 1000));
+        end.time(maxTime - (24 * 60 * 60 * 1000))
       }
     }
 
-    return new UnzonedRange(start, end);
+    return new UnzonedRange(start, end)
   }
 
 
@@ -218,83 +215,81 @@ export default class DateProfileGenerator {
   // `unit` is the already-computed computeGreatestUnit value of duration.
   // TODO: accept a MS-time instead of a moment `date`?
   buildRangeFromDuration(date, direction, duration, unit) {
-    var alignment = this.opt('dateAlignment');
-    var dateIncrementInput;
-    var dateIncrementDuration;
-    var start;
-    var end;
-    var res;
+    let alignment = this.opt('dateAlignment')
+    let dateIncrementInput
+    let dateIncrementDuration
+    let start
+    let end
+    let res
 
     // compute what the alignment should be
     if (!alignment) {
-      dateIncrementInput = this.opt('dateIncrement');
+      dateIncrementInput = this.opt('dateIncrement')
 
       if (dateIncrementInput) {
-        dateIncrementDuration = moment.duration(dateIncrementInput);
+        dateIncrementDuration = moment.duration(dateIncrementInput)
 
         // use the smaller of the two units
         if (dateIncrementDuration < duration) {
-          alignment = computeDurationGreatestUnit(dateIncrementDuration, dateIncrementInput);
+          alignment = computeDurationGreatestUnit(dateIncrementDuration, dateIncrementInput)
+        } else {
+          alignment = unit
         }
-        else {
-          alignment = unit;
-        }
-      }
-      else {
-        alignment = unit;
+      } else {
+        alignment = unit
       }
     }
 
     // if the view displays a single day or smaller
     if (duration.as('days') <= 1) {
       if (this._view.isHiddenDay(start)) {
-        start = this._view.skipHiddenDays(start, direction);
-        start.startOf('day');
+        start = this._view.skipHiddenDays(start, direction)
+        start.startOf('day')
       }
     }
 
     function computeRes() {
-      start = date.clone().startOf(alignment);
-      end = start.clone().add(duration);
-      res = new UnzonedRange(start, end);
+      start = date.clone().startOf(alignment)
+      end = start.clone().add(duration)
+      res = new UnzonedRange(start, end)
     }
 
-    computeRes();
+    computeRes()
 
     // if range is completely enveloped by hidden days, go past the hidden days
     if (!this.trimHiddenDays(res)) {
-      date = this._view.skipHiddenDays(date, direction);
-      computeRes();
+      date = this._view.skipHiddenDays(date, direction)
+      computeRes()
     }
 
-    return res;
+    return res
   }
 
 
   // Builds the "current" range when a dayCount is specified.
   // TODO: accept a MS-time instead of a moment `date`?
   buildRangeFromDayCount(date, direction, dayCount) {
-    var customAlignment = this.opt('dateAlignment');
-    var runningCount = 0;
-    var start = date.clone();
-    var end;
+    let customAlignment = this.opt('dateAlignment')
+    let runningCount = 0
+    let start = date.clone()
+    let end
 
     if (customAlignment) {
-      start.startOf(customAlignment);
+      start.startOf(customAlignment)
     }
 
-    start.startOf('day');
-    start = this._view.skipHiddenDays(start, direction);
+    start.startOf('day')
+    start = this._view.skipHiddenDays(start, direction)
 
-    end = start.clone();
+    end = start.clone()
     do {
-      end.add(1, 'day');
+      end.add(1, 'day')
       if (!this._view.isHiddenDay(end)) {
-        runningCount++;
+        runningCount++
       }
-    } while (runningCount < dayCount);
+    } while (runningCount < dayCount)
 
-    return new UnzonedRange(start, end);
+    return new UnzonedRange(start, end)
   }
 
 
@@ -302,16 +297,16 @@ export default class DateProfileGenerator {
   // which is a way to define the currentUnzonedRange and activeUnzonedRange at the same time.
   // TODO: accept a MS-time instead of a moment `date`?
   buildCustomVisibleRange(date) {
-    var visibleUnzonedRange = this._view.getUnzonedRangeOption(
+    let visibleUnzonedRange = this._view.getUnzonedRangeOption(
       'visibleRange',
       this._view.calendar.applyTimezone(date) // correct zone. also generates new obj that avoids mutations
-    );
+    )
 
     if (visibleUnzonedRange && (visibleUnzonedRange.startMs == null || visibleUnzonedRange.endMs == null)) {
-      return null;
+      return null
     }
 
-    return visibleUnzonedRange;
+    return visibleUnzonedRange
   }
 
 
@@ -319,27 +314,24 @@ export default class DateProfileGenerator {
   // but which may have voided days/times.
   // not responsible for trimming hidden days.
   buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-    return currentUnzonedRange.clone();
+    return currentUnzonedRange.clone()
   }
 
 
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
   buildDateIncrement(fallback) {
-    var dateIncrementInput = this.opt('dateIncrement');
-    var customAlignment;
+    let dateIncrementInput = this.opt('dateIncrement')
+    let customAlignment
 
     if (dateIncrementInput) {
-      return moment.duration(dateIncrementInput);
-    }
-    else if ((customAlignment = this.opt('dateAlignment'))) {
-      return moment.duration(1, customAlignment);
-    }
-    else if (fallback) {
-      return fallback;
-    }
-    else {
-      return moment.duration({ days: 1 });
+      return moment.duration(dateIncrementInput)
+    } else if ((customAlignment = this.opt('dateAlignment'))) {
+      return moment.duration(1, customAlignment)
+    } else if (fallback) {
+      return fallback
+    } else {
+      return moment.duration({ days: 1 })
     }
   }
 

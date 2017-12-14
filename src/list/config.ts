@@ -9,7 +9,7 @@ defineView('list', {
     listDayFormat: 'LL', // like "January 1, 2016"
     noEventsMessage: 'No events to display'
   }
-});
+})
 
 defineView('listDay', {
   type: 'list',
@@ -17,7 +17,7 @@ defineView('listDay', {
   defaults: {
     listDayFormat: 'dddd' // day-of-week is all we need. full date is probably in header
   }
-});
+})
 
 defineView('listWeek', {
   type: 'list',
@@ -26,7 +26,7 @@ defineView('listWeek', {
     listDayFormat: 'dddd', // day-of-week is more important
     listDayAltFormat: 'LL'
   }
-});
+})
 
 defineView('listMonth', {
   type: 'list',
@@ -34,7 +34,7 @@ defineView('listMonth', {
   defaults: {
     listDayAltFormat: 'dddd' // day-of-week is nice-to-have
   }
-});
+})
 
 defineView('listYear', {
   type: 'list',
@@ -42,4 +42,4 @@ defineView('listYear', {
   defaults: {
     listDayAltFormat: 'dddd' // day-of-week is nice-to-have
   }
-});
+})

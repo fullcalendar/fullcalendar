@@ -14,46 +14,46 @@ export default class ViewSpecManager {
 
 
   constructor(optionsManager, _calendar) {
-    this.optionsManager = optionsManager;
-    this._calendar = _calendar;
+    this.optionsManager = optionsManager
+    this._calendar = _calendar
 
-    this.clearCache();
+    this.clearCache()
   }
 
 
   clearCache() {
-    this.viewSpecCache = {};
+    this.viewSpecCache = {}
   }
 
 
   // Gets information about how to create a view. Will use a cache.
   getViewSpec(viewType) {
-    var cache = this.viewSpecCache;
+    let cache = this.viewSpecCache
 
-    return cache[viewType] || (cache[viewType] = this.buildViewSpec(viewType));
+    return cache[viewType] || (cache[viewType] = this.buildViewSpec(viewType))
   }
 
 
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
   getUnitViewSpec(unit) {
-    var viewTypes;
-    var i;
-    var spec;
+    let viewTypes
+    let i
+    let spec
 
     if ($.inArray(unit, unitsDesc) != -1) {
 
       // put views that have buttons first. there will be duplicates, but oh well
-      viewTypes = this._calendar.header.getViewsWithButtons(); // TODO: include footer as well?
+      viewTypes = this._calendar.header.getViewsWithButtons() // TODO: include footer as well?
       $.each(viewHash, function(viewType) { // all views
-        viewTypes.push(viewType);
-      });
+        viewTypes.push(viewType)
+      })
 
       for (i = 0; i < viewTypes.length; i++) {
-        spec = this.getViewSpec(viewTypes[i]);
+        spec = this.getViewSpec(viewTypes[i])
         if (spec) {
           if (spec.singleUnit == unit) {
-            return spec;
+            return spec
           }
         }
       }
@@ -63,84 +63,84 @@ export default class ViewSpecManager {
 
   // Builds an object with information on how to create a given view
   buildViewSpec(requestedViewType) {
-    var viewOverrides = this.optionsManager.overrides.views || {};
-    var specChain = []; // for the view. lowest to highest priority
-    var defaultsChain = []; // for the view. lowest to highest priority
-    var overridesChain = []; // for the view. lowest to highest priority
-    var viewType = requestedViewType;
-    var spec; // for the view
-    var overrides; // for the view
-    var durationInput;
-    var duration;
-    var unit;
+    let viewOverrides = this.optionsManager.overrides.views || {}
+    let specChain = [] // for the view. lowest to highest priority
+    let defaultsChain = [] // for the view. lowest to highest priority
+    let overridesChain = [] // for the view. lowest to highest priority
+    let viewType = requestedViewType
+    let spec // for the view
+    let overrides // for the view
+    let durationInput
+    let duration
+    let unit
 
     // iterate from the specific view definition to a more general one until we hit an actual View class
     while (viewType) {
-      spec = viewHash[viewType];
-      overrides = viewOverrides[viewType];
-      viewType = null; // clear. might repopulate for another iteration
+      spec = viewHash[viewType]
+      overrides = viewOverrides[viewType]
+      viewType = null // clear. might repopulate for another iteration
 
       if (typeof spec === 'function') { // TODO: deprecate
-        spec = { 'class': spec };
+        spec = { 'class': spec }
       }
 
       if (spec) {
-        specChain.unshift(spec);
-        defaultsChain.unshift(spec.defaults || {});
-        durationInput = durationInput || spec.duration;
-        viewType = viewType || spec.type;
+        specChain.unshift(spec)
+        defaultsChain.unshift(spec.defaults || {})
+        durationInput = durationInput || spec.duration
+        viewType = viewType || spec.type
       }
 
       if (overrides) {
-        overridesChain.unshift(overrides); // view-specific option hashes have options at zero-level
-        durationInput = durationInput || overrides.duration;
-        viewType = viewType || overrides.type;
+        overridesChain.unshift(overrides) // view-specific option hashes have options at zero-level
+        durationInput = durationInput || overrides.duration
+        viewType = viewType || overrides.type
       }
     }
 
-    spec = mergeProps(specChain);
-    spec.type = requestedViewType;
+    spec = mergeProps(specChain)
+    spec.type = requestedViewType
     if (!spec['class']) {
-      return false;
+      return false
     }
 
     // fall back to top-level `duration` option
     durationInput = durationInput ||
       this.optionsManager.dynamicOverrides.duration ||
-      this.optionsManager.overrides.duration;
+      this.optionsManager.overrides.duration
 
     if (durationInput) {
-      duration = moment.duration(durationInput);
+      duration = moment.duration(durationInput)
 
       if (duration.valueOf()) { // valid?
 
-        unit = computeDurationGreatestUnit(duration, durationInput);
+        unit = computeDurationGreatestUnit(duration, durationInput)
 
-        spec.duration = duration;
-        spec.durationUnit = unit;
+        spec.duration = duration
+        spec.durationUnit = unit
 
         // view is a single-unit duration, like "week" or "day"
         // incorporate options for this. lowest priority
         if (duration.as(unit) === 1) {
-          spec.singleUnit = unit;
-          overridesChain.unshift(viewOverrides[unit] || {});
+          spec.singleUnit = unit
+          overridesChain.unshift(viewOverrides[unit] || {})
         }
       }
     }
 
-    spec.defaults = mergeOptions(defaultsChain);
-    spec.overrides = mergeOptions(overridesChain);
+    spec.defaults = mergeOptions(defaultsChain)
+    spec.overrides = mergeOptions(overridesChain)
 
-    this.buildViewSpecOptions(spec);
-    this.buildViewSpecButtonText(spec, requestedViewType);
+    this.buildViewSpecOptions(spec)
+    this.buildViewSpecButtonText(spec, requestedViewType)
 
-    return spec;
+    return spec
   }
 
 
   // Builds and assigns a view spec's options object from its already-assigned defaults and overrides
   buildViewSpecOptions(spec) {
-    var optionsManager = this.optionsManager;
+    let optionsManager = this.optionsManager
 
     spec.options = mergeOptions([ // lowest to highest priority
       globalDefaults,
@@ -150,31 +150,31 @@ export default class ViewSpecManager {
       optionsManager.overrides, // calendar's overrides (options given to constructor)
       spec.overrides, // view's overrides (view-specific options)
       optionsManager.dynamicOverrides // dynamically set via setter. highest precedence
-    ]);
-    populateInstanceComputableOptions(spec.options);
+    ])
+    populateInstanceComputableOptions(spec.options)
   }
 
 
   // Computes and assigns a view spec's buttonText-related options
   buildViewSpecButtonText(spec, requestedViewType) {
-    var optionsManager = this.optionsManager;
+    let optionsManager = this.optionsManager
 
     // given an options object with a possible `buttonText` hash, lookup the buttonText for the
     // requested view, falling back to a generic unit entry like "week" or "day"
     function queryButtonText(options) {
-      var buttonText = options.buttonText || {};
+      let buttonText = options.buttonText || {}
       return buttonText[requestedViewType] ||
         // view can decide to look up a certain key
         (spec.buttonTextKey ? buttonText[spec.buttonTextKey] : null) ||
         // a key like "month"
-        (spec.singleUnit ? buttonText[spec.singleUnit] : null);
+        (spec.singleUnit ? buttonText[spec.singleUnit] : null)
     }
 
     // highest to lowest priority
     spec.buttonTextOverride =
       queryButtonText(optionsManager.dynamicOverrides) ||
       queryButtonText(optionsManager.overrides) || // constructor-specified buttonText lookup hash takes precedence
-      spec.overrides.buttonText; // `buttonText` for view-specific options is a string
+      spec.overrides.buttonText // `buttonText` for view-specific options is a string
 
     // highest to lowest priority. mirrors buildViewSpecOptions
     spec.buttonTextDefault =
@@ -183,7 +183,7 @@ export default class ViewSpecManager {
       spec.defaults.buttonText || // a single string. from ViewSubclass.defaults
       queryButtonText(globalDefaults) ||
       (spec.duration ? this._calendar.humanizeDuration(spec.duration) : null) || // like "3 days"
-      requestedViewType; // fall back to given view name
+      requestedViewType // fall back to given view name
   }
 
 }

@@ -72,19 +72,19 @@ export default class Calendar {
 
     // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
     // unneeded() is called in destroy.
-    GlobalEmitter.needed();
+    GlobalEmitter.needed()
 
-    this.el = el;
-    this.viewsByType = {};
+    this.el = el
+    this.viewsByType = {}
 
-    this.optionsManager = new OptionsManager(this, overrides);
-    this.viewSpecManager = new ViewSpecManager(this.optionsManager, this);
-    this.initMomentInternals(); // needs to happen after options hash initialized
-    this.initCurrentDate();
-    this.initEventManager();
-    this.constraints = new Constraints(this.eventManager, this);
+    this.optionsManager = new OptionsManager(this, overrides)
+    this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
+    this.initMomentInternals() // needs to happen after options hash initialized
+    this.initCurrentDate()
+    this.initEventManager()
+    this.constraints = new Constraints(this.eventManager, this)
 
-    this.constructed();
+    this.constructed()
   }
 
 
@@ -94,42 +94,41 @@ export default class Calendar {
 
 
   getView() {
-    return this.view;
+    return this.view
   }
 
 
   publiclyTrigger(name, triggerInfo) {
-    var optHandler = this.opt(name);
-    var context;
-    var args;
+    let optHandler = this.opt(name)
+    let context
+    let args
 
     if ($.isPlainObject(triggerInfo)) {
-      context = triggerInfo.context;
-      args = triggerInfo.args;
-    }
-    else if ($.isArray(triggerInfo)) {
-      args = triggerInfo;
+      context = triggerInfo.context
+      args = triggerInfo.args
+    } else if ($.isArray(triggerInfo)) {
+      args = triggerInfo
     }
 
     if (context == null) {
-      context = this.el[0]; // fallback context
+      context = this.el[0] // fallback context
     }
 
     if (!args) {
-      args = [];
+      args = []
     }
 
-    this.triggerWith(name, context, args); // Emitter's method
+    this.triggerWith(name, context, args) // Emitter's method
 
     if (optHandler) {
-      return optHandler.apply(context, args);
+      return optHandler.apply(context, args)
     }
   }
 
 
   hasPublicHandlers(name) {
     return this.hasHandlers(name) ||
-      this.opt(name); // handler specified in options
+      this.opt(name) // handler specified in options
   }
 
 
@@ -139,27 +138,25 @@ export default class Calendar {
 
   // public getter/setter
   option(name, value) {
-    var newOptionHash;
+    let newOptionHash
 
     if (typeof name === 'string') {
       if (value === undefined) { // getter
-        return this.optionsManager.get(name);
+        return this.optionsManager.get(name)
+      } else { // setter for individual option
+        newOptionHash = {}
+        newOptionHash[name] = value
+        this.optionsManager.add(newOptionHash)
       }
-      else { // setter for individual option
-        newOptionHash = {};
-        newOptionHash[name] = value;
-        this.optionsManager.add(newOptionHash);
-      }
-    }
-    else if (typeof name === 'object') { // compound setter with object input
-      this.optionsManager.add(name);
+    } else if (typeof name === 'object') { // compound setter with object input
+      this.optionsManager.add(name)
     }
   }
 
 
   // private getter
   opt(name) {
-    return this.optionsManager.get(name);
+    return this.optionsManager.get(name)
   }
 
 
@@ -169,15 +166,15 @@ export default class Calendar {
 
   // Given a view name for a custom view or a standard view, creates a ready-to-go View object
   instantiateView(viewType) {
-    var spec = this.viewSpecManager.getViewSpec(viewType);
+    let spec = this.viewSpecManager.getViewSpec(viewType)
 
-    return new spec['class'](this, spec);
+    return new spec['class'](this, spec)
   }
 
 
   // Returns a boolean about whether the view is okay to instantiate at some point
   isValidViewType(viewType) {
-    return Boolean(this.viewSpecManager.getViewSpec(viewType));
+    return Boolean(this.viewSpecManager.getViewSpec(viewType))
   }
 
 
@@ -188,28 +185,27 @@ export default class Calendar {
       if (dateOrRange.start && dateOrRange.end) { // a range
         this.optionsManager.recordOverrides({ // will not rerender
           visibleRange: dateOrRange
-        });
-      }
-      else { // a date
-        this.currentDate = this.moment(dateOrRange).stripZone(); // just like gotoDate
+        })
+      } else { // a date
+        this.currentDate = this.moment(dateOrRange).stripZone() // just like gotoDate
       }
     }
 
-    this.renderView(viewName);
+    this.renderView(viewName)
   }
 
 
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
   zoomTo(newDate, viewType) {
-    var spec;
+    let spec
 
-    viewType = viewType || 'day'; // day is default zoom
+    viewType = viewType || 'day' // day is default zoom
     spec = this.viewSpecManager.getViewSpec(viewType) ||
-      this.viewSpecManager.getUnitViewSpec(viewType);
+      this.viewSpecManager.getUnitViewSpec(viewType)
 
-    this.currentDate = newDate.clone();
-    this.renderView(spec ? spec.type : null);
+    this.currentDate = newDate.clone()
+    this.renderView(spec ? spec.type : null)
   }
 
 
@@ -218,73 +214,72 @@ export default class Calendar {
 
 
   initCurrentDate() {
-    var defaultDateInput = this.opt('defaultDate');
+    let defaultDateInput = this.opt('defaultDate')
 
     // compute the initial ambig-timezone date
     if (defaultDateInput != null) {
-      this.currentDate = this.moment(defaultDateInput).stripZone();
-    }
-    else {
-      this.currentDate = this.getNow(); // getNow already returns unzoned
+      this.currentDate = this.moment(defaultDateInput).stripZone()
+    } else {
+      this.currentDate = this.getNow() // getNow already returns unzoned
     }
   }
 
 
   prev() {
-    var view = this.view;
-    var prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'));
+    let view = this.view
+    let prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'))
 
     if (prevInfo.isValid) {
-      this.currentDate = prevInfo.date;
-      this.renderView();
+      this.currentDate = prevInfo.date
+      this.renderView()
     }
   }
 
 
   next() {
-    var view = this.view;
-    var nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'));
+    let view = this.view
+    let nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'))
 
     if (nextInfo.isValid) {
-      this.currentDate = nextInfo.date;
-      this.renderView();
+      this.currentDate = nextInfo.date
+      this.renderView()
     }
   }
 
 
   prevYear() {
-    this.currentDate.add(-1, 'years');
-    this.renderView();
+    this.currentDate.add(-1, 'years')
+    this.renderView()
   }
 
 
   nextYear() {
-    this.currentDate.add(1, 'years');
-    this.renderView();
+    this.currentDate.add(1, 'years')
+    this.renderView()
   }
 
 
   today() {
-    this.currentDate = this.getNow(); // should deny like prev/next?
-    this.renderView();
+    this.currentDate = this.getNow() // should deny like prev/next?
+    this.renderView()
   }
 
 
   gotoDate(zonedDateInput) {
-    this.currentDate = this.moment(zonedDateInput).stripZone();
-    this.renderView();
+    this.currentDate = this.moment(zonedDateInput).stripZone()
+    this.renderView()
   }
 
 
   incrementDate(delta) {
-    this.currentDate.add(moment.duration(delta));
-    this.renderView();
+    this.currentDate.add(moment.duration(delta))
+    this.renderView()
   }
 
 
   // for external API
   getDate() {
-    return this.applyTimezone(this.currentDate); // infuse the calendar's timezone
+    return this.applyTimezone(this.currentDate) // infuse the calendar's timezone
   }
 
 
@@ -295,7 +290,7 @@ export default class Calendar {
   // Should be called when any type of async data fetching begins
   pushLoading() {
     if (!(this.loadingLevel++)) {
-      this.publiclyTrigger('loading', [ true, this.view ]);
+      this.publiclyTrigger('loading', [ true, this.view ])
     }
   }
 
@@ -303,7 +298,7 @@ export default class Calendar {
   // Should be called when any type of async data fetching completes
   popLoading() {
     if (!(--this.loadingLevel)) {
-      this.publiclyTrigger('loading', [ false, this.view ]);
+      this.publiclyTrigger('loading', [ false, this.view ])
     }
   }
 
@@ -314,86 +309,84 @@ export default class Calendar {
 
   render() {
     if (!this.contentEl) {
-      this.initialRender();
-    }
-    else if (this.elementVisible()) {
+      this.initialRender()
+    } else if (this.elementVisible()) {
       // mainly for the public API
-      this.calcSize();
-      this.updateViewSize();
+      this.calcSize()
+      this.updateViewSize()
     }
   }
 
 
   initialRender() {
-    var el = this.el;
+    let el = this.el
 
-    el.addClass('fc');
+    el.addClass('fc')
 
     // event delegation for nav links
     el.on('click.fc', 'a[data-goto]', (ev) => {
-      var anchorEl = $(ev.currentTarget);
-      var gotoOptions = anchorEl.data('goto'); // will automatically parse JSON
-      var date = this.moment(gotoOptions.date);
-      var viewType = gotoOptions.type;
+      let anchorEl = $(ev.currentTarget)
+      let gotoOptions = anchorEl.data('goto') // will automatically parse JSON
+      let date = this.moment(gotoOptions.date)
+      let viewType = gotoOptions.type
 
       // property like "navLinkDayClick". might be a string or a function
-      var customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click');
+      let customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
 
       if (typeof customAction === 'function') {
-        customAction(date, ev);
-      }
-      else {
+        customAction(date, ev)
+      } else {
         if (typeof customAction === 'string') {
-          viewType = customAction;
+          viewType = customAction
         }
-        this.zoomTo(date, viewType);
+        this.zoomTo(date, viewType)
       }
-    });
+    })
 
     // called immediately, and upon option change
     this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
-      var themeClass = getThemeSystemClass(opts.themeSystem || opts.theme);
-      var theme = new themeClass(this.optionsManager);
-      var widgetClass = theme.getClass('widget');
+      let themeClass = getThemeSystemClass(opts.themeSystem || opts.theme)
+      let theme = new themeClass(this.optionsManager)
+      let widgetClass = theme.getClass('widget')
 
-      this.theme = theme;
+      this.theme = theme
 
       if (widgetClass) {
-        el.addClass(widgetClass);
+        el.addClass(widgetClass)
       }
     }, () => {
-      var widgetClass = this.theme.getClass('widget');
+      let widgetClass = this.theme.getClass('widget')
 
-      this.theme = null;
+      this.theme = null
 
       if (widgetClass) {
-        el.removeClass(widgetClass);
+        el.removeClass(widgetClass)
       }
-    });
+    })
 
     this.optionsManager.watch('settingBusinessHourGenerator', [ '?businessHours' ], (deps) => {
-      this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, this);
+      this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, this)
 
       if (this.view) {
-        this.view.set('businessHourGenerator', this.businessHourGenerator);
+        this.view.set('businessHourGenerator', this.businessHourGenerator)
       }
     }, () => {
-      this.businessHourGenerator = null;
-    });
+      this.businessHourGenerator = null
+    })
 
     // called immediately, and upon option change.
     // HACK: locale often affects isRTL, so we explicitly listen to that too.
     this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
-      el.toggleClass('fc-ltr', !opts.isRTL);
-      el.toggleClass('fc-rtl', opts.isRTL);
-    });
+      el.toggleClass('fc-ltr', !opts.isRTL)
+      el.toggleClass('fc-rtl', opts.isRTL)
+    })
 
-    this.contentEl = $("<div class='fc-view-container'/>").prependTo(el);
+    this.contentEl = $("<div class='fc-view-container'/>").prependTo(el)
 
-    this.initToolbars();
-    this.renderHeader();
-    this.renderFooter();
-    this.renderView(this.opt('defaultView'));
+    this.initToolbars()
+    this.renderHeader()
+    this.renderFooter()
+    this.renderView(this.opt('defaultView'))
 
     if (this.opt('handleWindowResize')) {
       $(window).resize(
@@ -401,37 +394,37 @@ export default class Calendar {
           this.windowResize.bind(this),
           this.opt('windowResizeDelay')
         )
-      );
+      )
     }
   }
 
 
   destroy() {
     if (this.view) {
-      this.clearView();
+      this.clearView()
     }
 
-    this.toolbarsManager.proxyCall('removeElement');
-    this.contentEl.remove();
-    this.el.removeClass('fc fc-ltr fc-rtl');
+    this.toolbarsManager.proxyCall('removeElement')
+    this.contentEl.remove()
+    this.el.removeClass('fc fc-ltr fc-rtl')
 
     // removes theme-related root className
-    this.optionsManager.unwatch('settingTheme');
-    this.optionsManager.unwatch('settingBusinessHourGenerator');
+    this.optionsManager.unwatch('settingTheme')
+    this.optionsManager.unwatch('settingBusinessHourGenerator')
 
-    this.el.off('.fc'); // unbind nav link handlers
+    this.el.off('.fc') // unbind nav link handlers
 
     if (this.windowResizeProxy) {
-      $(window).unbind('resize', this.windowResizeProxy);
-      this.windowResizeProxy = null;
+      $(window).unbind('resize', this.windowResizeProxy)
+      this.windowResizeProxy = null
     }
 
-    GlobalEmitter.unneeded();
+    GlobalEmitter.unneeded()
   }
 
 
   elementVisible() {
-    return this.el.is(':visible');
+    return this.el.is(':visible')
   }
 
 
@@ -443,22 +436,22 @@ export default class Calendar {
 
     view.watch('titleForCalendar', [ 'title' ], (deps) => { // TODO: better system
       if (view === this.view) { // hack
-        this.setToolbarsTitle(deps.title);
+        this.setToolbarsTitle(deps.title)
       }
-    });
+    })
 
     view.watch('dateProfileForCalendar', [ 'dateProfile' ], (deps) => {
       if (view === this.view) { // hack
-        this.currentDate = deps.dateProfile.date; // might have been constrained by view dates
-        this.updateToolbarButtons(deps.dateProfile);
+        this.currentDate = deps.dateProfile.date // might have been constrained by view dates
+        this.updateToolbarButtons(deps.dateProfile)
       }
-    });
+    })
   }
 
 
   unbindViewHandlers(view) {
-    view.unwatch('titleForCalendar');
-    view.unwatch('dateProfileForCalendar');
+    view.unwatch('titleForCalendar')
+    view.unwatch('dateProfileForCalendar')
   }
 
 
@@ -470,62 +463,62 @@ export default class Calendar {
   // If not given a viewType, keep the current view but render different dates.
   // Accepts an optional scroll state to restore to.
   renderView(viewType?) {
-    var oldView = this.view;
-    var newView;
+    let oldView = this.view
+    let newView
 
-    this.freezeContentHeight();
+    this.freezeContentHeight()
 
     if (oldView && viewType && oldView.type !== viewType) {
-      this.clearView();
+      this.clearView()
     }
 
     // if viewType changed, or the view was never created, create a fresh view
     if (!this.view && viewType) {
       newView = this.view =
         this.viewsByType[viewType] ||
-        (this.viewsByType[viewType] = this.instantiateView(viewType));
+        (this.viewsByType[viewType] = this.instantiateView(viewType))
 
-      this.bindViewHandlers(newView);
+      this.bindViewHandlers(newView)
 
-      newView.startBatchRender(); // so that setElement+setDate rendering are joined
+      newView.startBatchRender() // so that setElement+setDate rendering are joined
       newView.setElement(
         $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
-      );
+      )
 
-      this.toolbarsManager.proxyCall('activateButton', viewType);
+      this.toolbarsManager.proxyCall('activateButton', viewType)
     }
 
     if (this.view) {
 
       // prevent unnecessary change firing
       if (this.view.get('businessHourGenerator') !== this.businessHourGenerator) {
-        this.view.set('businessHourGenerator', this.businessHourGenerator);
+        this.view.set('businessHourGenerator', this.businessHourGenerator)
       }
 
-      this.view.setDate(this.currentDate);
+      this.view.setDate(this.currentDate)
 
       if (newView) {
-        newView.stopBatchRender();
+        newView.stopBatchRender()
       }
     }
 
-    this.thawContentHeight();
+    this.thawContentHeight()
   }
 
 
   // Unrenders the current view and reflects this change in the Header.
   // Unregsiters the `view`, but does not remove from viewByType hash.
   clearView() {
-    var currentView = this.view;
+    let currentView = this.view
 
-    this.toolbarsManager.proxyCall('deactivateButton', currentView.type);
+    this.toolbarsManager.proxyCall('deactivateButton', currentView.type)
 
-    this.unbindViewHandlers(currentView);
+    this.unbindViewHandlers(currentView)
 
-    currentView.removeElement();
-    currentView.unsetDate(); // so bindViewHandlers doesn't fire with old values next time
+    currentView.removeElement()
+    currentView.unsetDate() // so bindViewHandlers doesn't fire with old values next time
 
-    this.view = null;
+    this.view = null
   }
 
 
@@ -533,16 +526,16 @@ export default class Calendar {
   // Maintains the same scroll state.
   // TODO: maintain any other user-manipulated state.
   reinitView() {
-    var oldView = this.view;
-    var scroll = oldView.queryScroll(); // wouldn't be so complicated if Calendar owned the scroll
-    this.freezeContentHeight();
+    let oldView = this.view
+    let scroll = oldView.queryScroll() // wouldn't be so complicated if Calendar owned the scroll
+    this.freezeContentHeight()
 
-    this.clearView();
-    this.calcSize();
-    this.renderView(oldView.type); // needs the type to freshly render
+    this.clearView()
+    this.calcSize()
+    this.renderView(oldView.type) // needs the type to freshly render
 
-    this.view.applyScroll(scroll);
-    this.thawContentHeight();
+    this.view.applyScroll(scroll)
+    this.thawContentHeight()
   }
 
 
@@ -552,78 +545,73 @@ export default class Calendar {
 
   getSuggestedViewHeight() {
     if (this.suggestedViewHeight == null) {
-      this.calcSize();
+      this.calcSize()
     }
-    return this.suggestedViewHeight;
+    return this.suggestedViewHeight
   }
 
 
   isHeightAuto() {
-    return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto';
+    return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto'
   }
 
 
-  updateViewSize(isResize=false) {
-    var view = this.view;
-    var scroll;
+  updateViewSize(isResize= false) {
+    let view = this.view
+    let scroll
 
     if (!this.ignoreUpdateViewSize && view) {
 
       if (isResize) {
-        this.calcSize();
-        scroll = view.queryScroll();
+        this.calcSize()
+        scroll = view.queryScroll()
       }
 
-      this.ignoreUpdateViewSize++;
+      this.ignoreUpdateViewSize++
 
       view.updateSize(
         this.getSuggestedViewHeight(),
         this.isHeightAuto(),
         isResize
-      );
+      )
 
-      this.ignoreUpdateViewSize--;
+      this.ignoreUpdateViewSize--
 
       if (isResize) {
-        view.applyScroll(scroll);
+        view.applyScroll(scroll)
       }
 
-      return true; // signal success
+      return true // signal success
     }
   }
 
 
   calcSize() {
     if (this.elementVisible()) {
-      this._calcSize();
+      this._calcSize()
     }
   }
 
 
   _calcSize() { // assumes elementVisible
-    var contentHeightInput = this.opt('contentHeight');
-    var heightInput = this.opt('height');
+    let contentHeightInput = this.opt('contentHeight')
+    let heightInput = this.opt('height')
 
     if (typeof contentHeightInput === 'number') { // exists and not 'auto'
-      this.suggestedViewHeight = contentHeightInput;
-    }
-    else if (typeof contentHeightInput === 'function') { // exists and is a function
-      this.suggestedViewHeight = contentHeightInput();
-    }
-    else if (typeof heightInput === 'number') { // exists and not 'auto'
-      this.suggestedViewHeight = heightInput - this.queryToolbarsHeight();
-    }
-    else if (typeof heightInput === 'function') { // exists and is a function
-      this.suggestedViewHeight = heightInput() - this.queryToolbarsHeight();
-    }
-    else if (heightInput === 'parent') { // set to height of parent element
-      this.suggestedViewHeight = this.el.parent().height() - this.queryToolbarsHeight();
-    }
-    else {
+      this.suggestedViewHeight = contentHeightInput
+    } else if (typeof contentHeightInput === 'function') { // exists and is a function
+      this.suggestedViewHeight = contentHeightInput()
+    } else if (typeof heightInput === 'number') { // exists and not 'auto'
+      this.suggestedViewHeight = heightInput - this.queryToolbarsHeight()
+    } else if (typeof heightInput === 'function') { // exists and is a function
+      this.suggestedViewHeight = heightInput() - this.queryToolbarsHeight()
+    } else if (heightInput === 'parent') { // set to height of parent element
+      this.suggestedViewHeight = this.el.parent().height() - this.queryToolbarsHeight()
+    } else {
       this.suggestedViewHeight = Math.round(
         this.contentEl.width() /
         Math.max(this.opt('aspectRatio'), .5)
-      );
+      )
     }
   }
 
@@ -635,7 +623,7 @@ export default class Calendar {
       this.view.isDatesRendered
     ) {
       if (this.updateViewSize(true)) { // isResize=true, returns true on success
-        this.publiclyTrigger('windowResize', [ this.view ]);
+        this.publiclyTrigger('windowResize', [ this.view ])
       }
     }
   }
@@ -647,7 +635,7 @@ export default class Calendar {
 
   freezeContentHeight() {
     if (!(this.freezeContentHeightDepth++)) {
-      this.forceFreezeContentHeight();
+      this.forceFreezeContentHeight()
     }
   }
 
@@ -657,23 +645,23 @@ export default class Calendar {
       width: '100%',
       height: this.contentEl.height(),
       overflow: 'hidden'
-    });
+    })
   }
 
 
   thawContentHeight() {
-    this.freezeContentHeightDepth--;
+    this.freezeContentHeightDepth--
 
     // always bring back to natural height
     this.contentEl.css({
       width: '',
       height: '',
       overflow: ''
-    });
+    })
 
     // but if there are future thaws, re-freeze
     if (this.freezeContentHeightDepth) {
-      this.forceFreezeContentHeight();
+      this.forceFreezeContentHeight()
     }
   }
 
@@ -683,9 +671,9 @@ export default class Calendar {
 
 
   initToolbars() {
-    this.header = new Toolbar(this, this.computeHeaderOptions());
-    this.footer = new Toolbar(this, this.computeFooterOptions());
-    this.toolbarsManager = new Iterator([ this.header, this.footer ]);
+    this.header = new Toolbar(this, this.computeHeaderOptions())
+    this.footer = new Toolbar(this, this.computeFooterOptions())
+    this.toolbarsManager = new Iterator([ this.header, this.footer ])
   }
 
 
@@ -693,7 +681,7 @@ export default class Calendar {
     return {
       extraClasses: 'fc-header-toolbar',
       layout: this.opt('header')
-    };
+    }
   }
 
 
@@ -701,76 +689,76 @@ export default class Calendar {
     return {
       extraClasses: 'fc-footer-toolbar',
       layout: this.opt('footer')
-    };
+    }
   }
 
 
   // can be called repeatedly and Header will rerender
   renderHeader() {
-    var header = this.header;
+    let header = this.header
 
-    header.setToolbarOptions(this.computeHeaderOptions());
-    header.render();
+    header.setToolbarOptions(this.computeHeaderOptions())
+    header.render()
 
     if (header.el) {
-      this.el.prepend(header.el);
+      this.el.prepend(header.el)
     }
   }
 
 
   // can be called repeatedly and Footer will rerender
   renderFooter() {
-    var footer = this.footer;
+    let footer = this.footer
 
-    footer.setToolbarOptions(this.computeFooterOptions());
-    footer.render();
+    footer.setToolbarOptions(this.computeFooterOptions())
+    footer.render()
 
     if (footer.el) {
-      this.el.append(footer.el);
+      this.el.append(footer.el)
     }
   }
 
 
   setToolbarsTitle(title) {
-    this.toolbarsManager.proxyCall('updateTitle', title);
+    this.toolbarsManager.proxyCall('updateTitle', title)
   }
 
 
   updateToolbarButtons(dateProfile) {
-    var now = this.getNow();
-    var view = this.view;
-    var todayInfo = view.dateProfileGenerator.build(now);
-    var prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'));
-    var nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'));
+    let now = this.getNow()
+    let view = this.view
+    let todayInfo = view.dateProfileGenerator.build(now)
+    let prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'))
+    let nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'))
 
     this.toolbarsManager.proxyCall(
       (todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?
         'enableButton' :
         'disableButton',
       'today'
-    );
+    )
 
     this.toolbarsManager.proxyCall(
       prevInfo.isValid ?
         'enableButton' :
         'disableButton',
       'prev'
-    );
+    )
 
     this.toolbarsManager.proxyCall(
       nextInfo.isValid ?
         'enableButton' :
         'disableButton',
       'next'
-    );
+    )
   }
 
 
   queryToolbarsHeight() {
     return this.toolbarsManager.items.reduce(function(accumulator, toolbar) {
-      var toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0; // includes margin
-      return accumulator + toolbarHeight;
-    }, 0);
+      let toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0 // includes margin
+      return accumulator + toolbarHeight
+    }, 0)
   }
 
 
@@ -782,36 +770,34 @@ export default class Calendar {
   select(zonedStartInput, zonedEndInput) {
     this.view.select(
       this.buildSelectFootprint.apply(this, arguments)
-    );
+    )
   }
 
 
   unselect() { // safe to be called before renderView
     if (this.view) {
-      this.view.unselect();
+      this.view.unselect()
     }
   }
 
 
   // Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
   buildSelectFootprint(zonedStartInput, zonedEndInput) {
-    var start = this.moment(zonedStartInput).stripZone();
-    var end;
+    let start = this.moment(zonedStartInput).stripZone()
+    let end
 
     if (zonedEndInput) {
-      end = this.moment(zonedEndInput).stripZone();
-    }
-    else if (start.hasTime()) {
-      end = start.clone().add(this.defaultTimedEventDuration);
-    }
-    else {
-      end = start.clone().add(this.defaultAllDayEventDuration);
+      end = this.moment(zonedEndInput).stripZone()
+    } else if (start.hasTime()) {
+      end = start.clone().add(this.defaultTimedEventDuration)
+    } else {
+      end = start.clone().add(this.defaultAllDayEventDuration)
     }
 
     return new ComponentFootprint(
       new UnzonedRange(start, end),
       !start.hasTime()
-    );
+    )
   }
 
 
@@ -821,8 +807,8 @@ export default class Calendar {
 
   initMomentInternals() {
 
-    this.defaultAllDayEventDuration = moment.duration(this.opt('defaultAllDayEventDuration'));
-    this.defaultTimedEventDuration = moment.duration(this.opt('defaultTimedEventDuration'));
+    this.defaultAllDayEventDuration = moment.duration(this.opt('defaultAllDayEventDuration'))
+    this.defaultTimedEventDuration = moment.duration(this.opt('defaultTimedEventDuration'))
 
     // Called immediately, and when any of the options change.
     // Happens before any internal objects rebuild or rerender, because this is very core.
@@ -830,39 +816,39 @@ export default class Calendar {
       '?locale', '?monthNames', '?monthNamesShort', '?dayNames', '?dayNamesShort',
       '?firstDay', '?weekNumberCalculation'
     ], (opts) => {
-      var weekNumberCalculation = opts.weekNumberCalculation;
-      var firstDay = opts.firstDay;
-      var _week;
+      let weekNumberCalculation = opts.weekNumberCalculation
+      let firstDay = opts.firstDay
+      let _week
 
       // normalize
       if (weekNumberCalculation === 'iso') {
-        weekNumberCalculation = 'ISO'; // normalize
+        weekNumberCalculation = 'ISO' // normalize
       }
 
-      var localeData = Object.create( // make a cheap copy
+      let localeData = Object.create( // make a cheap copy
         getMomentLocaleData(opts.locale) // will fall back to en
-      );
+      )
 
       if (opts.monthNames) {
-        localeData._months = opts.monthNames;
+        localeData._months = opts.monthNames
       }
       if (opts.monthNamesShort) {
-        localeData._monthsShort = opts.monthNamesShort;
+        localeData._monthsShort = opts.monthNamesShort
       }
       if (opts.dayNames) {
-        localeData._weekdays = opts.dayNames;
+        localeData._weekdays = opts.dayNames
       }
       if (opts.dayNamesShort) {
-        localeData._weekdaysShort = opts.dayNamesShort;
+        localeData._weekdaysShort = opts.dayNamesShort
       }
 
       if (firstDay == null && weekNumberCalculation === 'ISO') {
-        firstDay = 1;
+        firstDay = 1
       }
       if (firstDay != null) {
-        _week = Object.create(localeData._week); // _week: { dow: # }
-        _week.dow = firstDay;
-        localeData._week = _week;
+        _week = Object.create(localeData._week) // _week: { dow: # }
+        _week.dow = firstDay
+        localeData._week = _week
       }
 
       if ( // whitelist certain kinds of input
@@ -870,107 +856,104 @@ export default class Calendar {
         weekNumberCalculation === 'local' ||
         typeof weekNumberCalculation === 'function'
       ) {
-        localeData._fullCalendar_weekCalc = weekNumberCalculation; // moment-ext will know what to do with it
+        localeData._fullCalendar_weekCalc = weekNumberCalculation // moment-ext will know what to do with it
       }
 
-      this.localeData = localeData;
+      this.localeData = localeData
 
       // If the internal current date object already exists, move to new locale.
       // We do NOT need to do this technique for event dates, because this happens when converting to "segments".
       if (this.currentDate) {
-        this.localizeMoment(this.currentDate); // sets to localeData
+        this.localizeMoment(this.currentDate) // sets to localeData
       }
-    });
+    })
   }
 
 
   // Builds a moment using the settings of the current calendar: timezone and locale.
   // Accepts anything the vanilla moment() constructor accepts.
   moment(...args) {
-    var mom;
+    let mom
 
     if (this.opt('timezone') === 'local') {
-      mom = momentExt.apply(null, args);
+      mom = momentExt.apply(null, args)
 
       // Force the moment to be local, because momentExt doesn't guarantee it.
       if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
-        mom.local();
+        mom.local()
       }
-    }
-    else if (this.opt('timezone') === 'UTC') {
-      mom = momentExt.utc.apply(null, args); // process as UTC
-    }
-    else {
-      mom = momentExt.parseZone.apply(null, args); // let the input decide the zone
+    } else if (this.opt('timezone') === 'UTC') {
+      mom = momentExt.utc.apply(null, args) // process as UTC
+    } else {
+      mom = momentExt.parseZone.apply(null, args) // let the input decide the zone
     }
 
-    this.localizeMoment(mom); // TODO
+    this.localizeMoment(mom) // TODO
 
-    return mom;
+    return mom
   }
 
 
   msToMoment(ms, forceAllDay) {
-    var mom = momentExt.utc(ms); // TODO: optimize by using Date.UTC
+    let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
 
     if (forceAllDay) {
-      mom.stripTime();
-    }
-    else {
-      mom = this.applyTimezone(mom); // may or may not apply locale
+      mom.stripTime()
+    } else {
+      mom = this.applyTimezone(mom) // may or may not apply locale
     }
 
-    this.localizeMoment(mom);
+    this.localizeMoment(mom)
 
-    return mom;
+    return mom
   }
 
 
   msToUtcMoment(ms, forceAllDay) {
-    var mom = momentExt.utc(ms); // TODO: optimize by using Date.UTC
+    let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
 
     if (forceAllDay) {
-      mom.stripTime();
+      mom.stripTime()
     }
 
-    this.localizeMoment(mom);
+    this.localizeMoment(mom)
 
-    return mom;
+    return mom
   }
 
 
   // Updates the given moment's locale settings to the current calendar locale settings.
   localizeMoment(mom) {
-    mom._locale = this.localeData;
+    mom._locale = this.localeData
   }
 
 
   // Returns a boolean about whether or not the calendar knows how to calculate
   // the timezone offset of arbitrary dates in the current timezone.
   getIsAmbigTimezone() {
-    return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC';
+    return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC'
   }
 
 
   // Returns a copy of the given date in the current timezone. Has no effect on dates without times.
   applyTimezone(date) {
     if (!date.hasTime()) {
-      return date.clone();
+      return date.clone()
     }
 
-    var zonedDate = this.moment(date.toArray());
-    var timeAdjust = date.time() - zonedDate.time();
-    var adjustedZonedDate;
+    let zonedDate = this.moment(date.toArray())
+    let timeAdjust = date.time() - zonedDate.time()
+    let adjustedZonedDate
 
     // Safari sometimes has problems with this coersion when near DST. Adjust if necessary. (bug #2396)
     if (timeAdjust) { // is the time result different than expected?
-      adjustedZonedDate = zonedDate.clone().add(timeAdjust); // add milliseconds
+      adjustedZonedDate = zonedDate.clone().add(timeAdjust) // add milliseconds
       if (date.time() - adjustedZonedDate.time() === 0) { // does it match perfectly now?
-        zonedDate = adjustedZonedDate;
+        zonedDate = adjustedZonedDate
       }
     }
 
-    return zonedDate;
+    return zonedDate
   }
 
 
@@ -978,72 +961,71 @@ export default class Calendar {
   Assumes the footprint is non-open-ended.
   */
   footprintToDateProfile(componentFootprint, ignoreEnd) {
-    var start = momentExt.utc(componentFootprint.unzonedRange.startMs);
-    var end;
+    let start = momentExt.utc(componentFootprint.unzonedRange.startMs)
+    let end
 
     if (!ignoreEnd) {
-      end = momentExt.utc(componentFootprint.unzonedRange.endMs);
+      end = momentExt.utc(componentFootprint.unzonedRange.endMs)
     }
 
     if (componentFootprint.isAllDay) {
-      start.stripTime();
+      start.stripTime()
 
       if (end) {
-        end.stripTime();
+        end.stripTime()
       }
-    }
-    else {
-      start = this.applyTimezone(start);
+    } else {
+      start = this.applyTimezone(start)
 
       if (end) {
-        end = this.applyTimezone(end);
+        end = this.applyTimezone(end)
       }
     }
 
-    return new EventDateProfile(start, end, this);
+    return new EventDateProfile(start, end, this)
   }
 
 
   // Returns a moment for the current date, as defined by the client's computer or from the `now` option.
   // Will return an moment with an ambiguous timezone.
   getNow() {
-    var now = this.opt('now');
+    let now = this.opt('now')
     if (typeof now === 'function') {
-      now = now();
+      now = now()
     }
-    return this.moment(now).stripZone();
+    return this.moment(now).stripZone()
   }
 
 
   // Produces a human-readable string for the given duration.
   // Side-effect: changes the locale of the given duration.
   humanizeDuration(duration) {
-    return duration.locale(this.opt('locale')).humanize();
+    return duration.locale(this.opt('locale')).humanize()
   }
 
 
   // will return `null` if invalid range
   parseUnzonedRange(rangeInput) {
-    var start = null;
-    var end = null;
+    let start = null
+    let end = null
 
     if (rangeInput.start) {
-      start = this.moment(rangeInput.start).stripZone();
+      start = this.moment(rangeInput.start).stripZone()
     }
 
     if (rangeInput.end) {
-      end = this.moment(rangeInput.end).stripZone();
+      end = this.moment(rangeInput.end).stripZone()
     }
 
     if (!start && !end) {
-      return null;
+      return null
     }
 
     if (start && end && end.isBefore(start)) {
-      return null;
+      return null
     }
 
-    return new UnzonedRange(start, end);
+    return new UnzonedRange(start, end)
   }
 
 
@@ -1052,31 +1034,31 @@ export default class Calendar {
 
 
   initEventManager() {
-    var eventManager = new EventManager(this);
-    var rawSources = this.opt('eventSources') || [];
-    var singleRawSource = this.opt('events');
+    let eventManager = new EventManager(this)
+    let rawSources = this.opt('eventSources') || []
+    let singleRawSource = this.opt('events')
 
-    this.eventManager = eventManager;
+    this.eventManager = eventManager
 
     if (singleRawSource) {
-      rawSources.unshift(singleRawSource);
+      rawSources.unshift(singleRawSource)
     }
 
     eventManager.on('release', (eventsPayload) => {
-      this.trigger('eventsReset', eventsPayload);
-    });
+      this.trigger('eventsReset', eventsPayload)
+    })
 
-    eventManager.freeze();
+    eventManager.freeze()
 
     rawSources.forEach((rawSource) => {
-      var source = EventSourceParser.parse(rawSource, this);
+      let source = EventSourceParser.parse(rawSource, this)
 
       if (source) {
-        eventManager.addSource(source);
+        eventManager.addSource(source)
       }
-    });
+    })
 
-    eventManager.thaw();
+    eventManager.thaw()
   }
 
 
@@ -1086,17 +1068,16 @@ export default class Calendar {
       end,
       this.opt('timezone'),
       !this.opt('lazyFetching')
-    );
+    )
   }
 
 
   // Get an event's normalized end date. If not present, calculate it from the defaults.
   getEventEnd(event) {
     if (event.end) {
-      return event.end.clone();
-    }
-    else {
-      return this.getDefaultEventEnd(event.allDay, event.start);
+      return event.end.clone()
+    } else {
+      return this.getDefaultEventEnd(event.allDay, event.start)
     }
   }
 
@@ -1104,20 +1085,19 @@ export default class Calendar {
   // Given an event's allDay status and start date, return what its fallback end date should be.
   // TODO: rename to computeDefaultEventEnd
   getDefaultEventEnd(allDay, zonedStart) {
-    var end = zonedStart.clone();
+    let end = zonedStart.clone()
 
     if (allDay) {
-      end.stripTime().add(this.defaultAllDayEventDuration);
-    }
-    else {
-      end.add(this.defaultTimedEventDuration);
+      end.stripTime().add(this.defaultAllDayEventDuration)
+    } else {
+      end.add(this.defaultTimedEventDuration)
     }
 
     if (this.getIsAmbigTimezone()) {
-      end.stripZone(); // we don't know what the tzo should be
+      end.stripZone() // we don't know what the tzo should be
     }
 
-    return end;
+    return end
   }
 
 
@@ -1126,112 +1106,111 @@ export default class Calendar {
 
 
   rerenderEvents() { // API method. destroys old events if previously rendered.
-    this.view.flash('displayingEvents');
+    this.view.flash('displayingEvents')
   }
 
 
   refetchEvents() {
-    this.eventManager.refetchAllSources();
+    this.eventManager.refetchAllSources()
   }
 
 
   renderEvents(eventInputs, isSticky) {
-    this.eventManager.freeze();
+    this.eventManager.freeze()
 
-    for (var i = 0; i < eventInputs.length; i++) {
-      this.renderEvent(eventInputs[i], isSticky);
+    for (let i = 0; i < eventInputs.length; i++) {
+      this.renderEvent(eventInputs[i], isSticky)
     }
 
-    this.eventManager.thaw();
+    this.eventManager.thaw()
   }
 
 
   renderEvent(eventInput, isSticky) {
-    var eventManager = this.eventManager;
-    var eventDef = EventDefParser.parse(
+    let eventManager = this.eventManager
+    let eventDef = EventDefParser.parse(
       eventInput,
       eventInput.source || eventManager.stickySource
-    );
+    )
 
     if (eventDef) {
-      eventManager.addEventDef(eventDef, isSticky);
+      eventManager.addEventDef(eventDef, isSticky)
     }
   }
 
 
   // legacyQuery operates on legacy event instance objects
   removeEvents(legacyQuery) {
-    var eventManager = this.eventManager;
-    var legacyInstances = [];
-    var idMap = {};
-    var eventDef;
-    var i;
+    let eventManager = this.eventManager
+    let legacyInstances = []
+    let idMap = {}
+    let eventDef
+    let i
 
     if (legacyQuery == null) { // shortcut for removing all
-      eventManager.removeAllEventDefs(true); // persist=true
-    }
-    else {
+      eventManager.removeAllEventDefs(true) // persist=true
+    } else {
       eventManager.getEventInstances().forEach(function(eventInstance) {
-        legacyInstances.push(eventInstance.toLegacy());
-      });
+        legacyInstances.push(eventInstance.toLegacy())
+      })
 
-      legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery);
+      legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery)
 
       // compute unique IDs
       for (i = 0; i < legacyInstances.length; i++) {
-        eventDef = this.eventManager.getEventDefByUid(legacyInstances[i]._id);
-        idMap[eventDef.id] = true;
+        eventDef = this.eventManager.getEventDefByUid(legacyInstances[i]._id)
+        idMap[eventDef.id] = true
       }
 
-      eventManager.freeze();
+      eventManager.freeze()
 
       for (i in idMap) { // reuse `i` as an "id"
-        eventManager.removeEventDefsById(i, true); // persist=true
+        eventManager.removeEventDefsById(i, true) // persist=true
       }
 
-      eventManager.thaw();
+      eventManager.thaw()
     }
   }
 
 
   // legacyQuery operates on legacy event instance objects
   clientEvents(legacyQuery) {
-    var legacyEventInstances = [];
+    let legacyEventInstances = []
 
     this.eventManager.getEventInstances().forEach(function(eventInstance) {
-      legacyEventInstances.push(eventInstance.toLegacy());
-    });
+      legacyEventInstances.push(eventInstance.toLegacy())
+    })
 
-    return filterLegacyEventInstances(legacyEventInstances, legacyQuery);
+    return filterLegacyEventInstances(legacyEventInstances, legacyQuery)
   }
 
 
   updateEvents(eventPropsArray) {
-    this.eventManager.freeze();
+    this.eventManager.freeze()
 
-    for (var i = 0; i < eventPropsArray.length; i++) {
-      this.updateEvent(eventPropsArray[i]);
+    for (let i = 0; i < eventPropsArray.length; i++) {
+      this.updateEvent(eventPropsArray[i])
     }
 
-    this.eventManager.thaw();
+    this.eventManager.thaw()
   }
 
 
   updateEvent(eventProps) {
-    var eventDef = this.eventManager.getEventDefByUid(eventProps._id);
-    var eventInstance;
-    var eventDefMutation;
+    let eventDef = this.eventManager.getEventDefByUid(eventProps._id)
+    let eventInstance
+    let eventDefMutation
 
     if (eventDef instanceof SingleEventDef) {
-      eventInstance = eventDef.buildInstance();
+      eventInstance = eventDef.buildInstance()
 
       eventDefMutation = EventDefMutation.createFromRawProps(
         eventInstance,
         eventProps, // raw props
         null // largeUnit -- who uses it?
-      );
+      )
 
-      this.eventManager.mutateEventsWithId(eventDef.id, eventDefMutation); // will release
+      this.eventManager.mutateEventsWithId(eventDef.id, eventDefMutation) // will release
     }
   }
 
@@ -1241,75 +1220,74 @@ export default class Calendar {
 
 
   getEventSources() {
-    return this.eventManager.otherSources.slice(); // clone
+    return this.eventManager.otherSources.slice() // clone
   }
 
 
   getEventSourceById(id) {
     return this.eventManager.getSourceById(
       EventSource.normalizeId(id)
-    );
+    )
   }
 
 
   addEventSource(sourceInput) {
-    var source = EventSourceParser.parse(sourceInput, this);
+    let source = EventSourceParser.parse(sourceInput, this)
 
     if (source) {
-      this.eventManager.addSource(source);
+      this.eventManager.addSource(source)
     }
   }
 
 
   removeEventSources(sourceMultiQuery) {
-    var eventManager = this.eventManager;
-    var sources;
-    var i;
+    let eventManager = this.eventManager
+    let sources
+    let i
 
     if (sourceMultiQuery == null) {
-      this.eventManager.removeAllSources();
-    }
-    else {
-      sources = eventManager.multiQuerySources(sourceMultiQuery);
+      this.eventManager.removeAllSources()
+    } else {
+      sources = eventManager.multiQuerySources(sourceMultiQuery)
 
-      eventManager.freeze();
+      eventManager.freeze()
 
       for (i = 0; i < sources.length; i++) {
-        eventManager.removeSource(sources[i]);
+        eventManager.removeSource(sources[i])
       }
 
-      eventManager.thaw();
+      eventManager.thaw()
     }
   }
 
 
   removeEventSource(sourceQuery) {
-    var eventManager = this.eventManager;
-    var sources = eventManager.querySources(sourceQuery);
-    var i;
+    let eventManager = this.eventManager
+    let sources = eventManager.querySources(sourceQuery)
+    let i
 
-    eventManager.freeze();
+    eventManager.freeze()
 
     for (i = 0; i < sources.length; i++) {
-      eventManager.removeSource(sources[i]);
+      eventManager.removeSource(sources[i])
     }
 
-    eventManager.thaw();
+    eventManager.thaw()
   }
 
 
   refetchEventSources(sourceMultiQuery) {
-    var eventManager = this.eventManager;
-    var sources = eventManager.multiQuerySources(sourceMultiQuery);
-    var i;
+    let eventManager = this.eventManager
+    let sources = eventManager.multiQuerySources(sourceMultiQuery)
+    let i
 
-    eventManager.freeze();
+    eventManager.freeze()
 
     for (i = 0; i < sources.length; i++) {
-      eventManager.refetchSource(sources[i]);
+      eventManager.refetchSource(sources[i])
     }
 
-    eventManager.thaw();
+    eventManager.thaw()
   }
 
 
@@ -1321,18 +1299,16 @@ ListenerMixin.mixInto(Calendar)
 
 function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
   if (legacyQuery == null) {
-    return legacyEventInstances;
-  }
-  else if ($.isFunction(legacyQuery)) {
-    return legacyEventInstances.filter(legacyQuery);
-  }
-  else { // an event ID
-    legacyQuery += ''; // normalize to string
+    return legacyEventInstances
+  } else if ($.isFunction(legacyQuery)) {
+    return legacyEventInstances.filter(legacyQuery)
+  } else { // an event ID
+    legacyQuery += '' // normalize to string
 
     return legacyEventInstances.filter(function(legacyEventInstance) {
       // soft comparison because id not be normalized to string
       return legacyEventInstance.id == legacyQuery ||
-        legacyEventInstance._id === legacyQuery; // can specify internal id, but must exactly match
-    });
+        legacyEventInstance._id === legacyQuery // can specify internal id, but must exactly match
+    })
   }
 }

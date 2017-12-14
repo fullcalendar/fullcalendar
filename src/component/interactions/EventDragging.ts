@@ -24,55 +24,54 @@ export default class EventDragging extends Interaction {
   */
   constructor(component, eventPointing) {
     super(component)
-    this.eventPointing = eventPointing;
+    this.eventPointing = eventPointing
   }
 
 
   end() {
     if (this.dragListener) {
-      this.dragListener.endInteraction();
+      this.dragListener.endInteraction()
     }
   }
 
 
   getSelectionDelay() {
-    var delay = this.opt('eventLongPressDelay');
+    let delay = this.opt('eventLongPressDelay')
 
     if (delay == null) {
-      delay = this.opt('longPressDelay'); // fallback
+      delay = this.opt('longPressDelay') // fallback
     }
 
-    return delay;
+    return delay
   }
 
 
   bindToEl(el) {
-    var component = this.component;
+    let component = this.component
 
-    component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this));
-    component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this));
+    component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this))
+    component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this))
   }
 
 
   handleMousedown(seg, ev) {
     if (this.component.canStartDrag(seg, ev)) {
-      this.buildDragListener(seg).startInteraction(ev, { distance: 5 });
+      this.buildDragListener(seg).startInteraction(ev, { distance: 5 })
     }
   }
 
 
   handleTouchStart(seg, ev) {
-    var component = this.component;
-    var settings = {
+    let component = this.component
+    let settings = {
       delay: this.view.isEventDefSelected(seg.footprint.eventDef) ? // already selected?
         0 : this.getSelectionDelay()
-    };
+    }
 
     if (component.canStartDrag(seg, ev)) {
-      this.buildDragListener(seg).startInteraction(ev, settings);
-    }
-    else if (component.canStartSelection(seg, ev)) {
-      this.buildSelectListener(seg).startInteraction(ev, settings);
+      this.buildDragListener(seg).startInteraction(ev, settings)
+    } else if (component.canStartSelection(seg, ev)) {
+      this.buildSelectListener(seg).startInteraction(ev, settings)
     }
   }
 
@@ -81,15 +80,15 @@ export default class EventDragging extends Interaction {
   // simply for the delay, so it can be selected.
   // Has side effect of setting/unsetting `dragListener`
   buildSelectListener(seg) {
-    var view = this.view;
-    var eventDef = seg.footprint.eventDef;
-    var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
+    let view = this.view
+    let eventDef = seg.footprint.eventDef
+    let eventInstance = seg.footprint.eventInstance // null for inverse-background events
 
     if (this.dragListener) {
-      return this.dragListener;
+      return this.dragListener
     }
 
-    var dragListener = this.dragListener = new DragListener({
+    let dragListener = this.dragListener = new DragListener({
       dragStart: (ev) => {
         if (
           dragListener.isTouch &&
@@ -97,15 +96,15 @@ export default class EventDragging extends Interaction {
           eventInstance
         ) {
           // if not previously selected, will fire after a delay. then, select the event
-          view.selectEventInstance(eventInstance);
+          view.selectEventInstance(eventInstance)
         }
       },
       interactionEnd: (ev) => {
-        this.dragListener = null;
+        this.dragListener = null
       }
-    });
+    })
 
-    return dragListener;
+    return dragListener
   }
 
 
@@ -113,39 +112,39 @@ export default class EventDragging extends Interaction {
   // Generic enough to work with any type of Grid.
   // Has side effect of setting/unsetting `dragListener`
   buildDragListener(seg) {
-    var component = this.component;
-    var view = this.view;
-    var calendar = view.calendar;
-    var eventManager = calendar.eventManager;
-    var el = seg.el;
-    var eventDef = seg.footprint.eventDef;
-    var eventInstance = seg.footprint.eventInstance; // null for inverse-background events
-    var isDragging;
-    var mouseFollower; // A clone of the original element that will move with the mouse
-    var eventDefMutation;
+    let component = this.component
+    let view = this.view
+    let calendar = view.calendar
+    let eventManager = calendar.eventManager
+    let el = seg.el
+    let eventDef = seg.footprint.eventDef
+    let eventInstance = seg.footprint.eventInstance // null for inverse-background events
+    let isDragging
+    let mouseFollower // A clone of the original element that will move with the mouse
+    let eventDefMutation
 
     if (this.dragListener) {
-      return this.dragListener;
+      return this.dragListener
     }
 
     // Tracks mouse movement over the *view's* coordinate map. Allows dragging and dropping between subcomponents
     // of the view.
-    var dragListener = this.dragListener = new HitDragListener(view, {
+    let dragListener = this.dragListener = new HitDragListener(view, {
       scroll: this.opt('dragScroll'),
       subjectEl: el,
       subjectCenter: true,
       interactionStart: (ev) => {
-        seg.component = component; // for renderDrag
-        isDragging = false;
+        seg.component = component // for renderDrag
+        isDragging = false
         mouseFollower = new MouseFollower(seg.el, {
           additionalClass: 'fc-dragging',
           parentEl: view.el,
           opacity: dragListener.isTouch ? null : this.opt('dragOpacity'),
           revertDuration: this.opt('dragRevertDuration'),
           zIndex: 2 // one above the .fc-view
-        });
-        mouseFollower.hide(); // don't show until we know this is a real drag
-        mouseFollower.start(ev);
+        })
+        mouseFollower.hide() // don't show until we know this is a real drag
+        mouseFollower.start(ev)
       },
       dragStart: (ev) => {
         if (
@@ -154,52 +153,50 @@ export default class EventDragging extends Interaction {
           eventInstance
         ) {
           // if not previously selected, will fire after a delay. then, select the event
-          view.selectEventInstance(eventInstance);
+          view.selectEventInstance(eventInstance)
         }
-        isDragging = true;
+        isDragging = true
 
         // ensure a mouseout on the manipulated event has been reported
-        this.eventPointing.handleMouseout(seg, ev);
+        this.eventPointing.handleMouseout(seg, ev)
 
-        this.segDragStart(seg, ev);
-        view.hideEventsWithId(seg.footprint.eventDef.id);
+        this.segDragStart(seg, ev)
+        view.hideEventsWithId(seg.footprint.eventDef.id)
       },
       hitOver: (hit, isOrig, origHit) => {
-        var isAllowed = true;
-        var origFootprint;
-        var footprint;
-        var mutatedEventInstanceGroup;
+        let isAllowed = true
+        let origFootprint
+        let footprint
+        let mutatedEventInstanceGroup
 
         // starting hit could be forced (DayGrid.limit)
         if (seg.hit) {
-          origHit = seg.hit;
+          origHit = seg.hit
         }
 
         // hit might not belong to this grid, so query origin grid
-        origFootprint = origHit.component.getSafeHitFootprint(origHit);
-        footprint = hit.component.getSafeHitFootprint(hit);
+        origFootprint = origHit.component.getSafeHitFootprint(origHit)
+        footprint = hit.component.getSafeHitFootprint(hit)
 
         if (origFootprint && footprint) {
-          eventDefMutation = this.computeEventDropMutation(origFootprint, footprint, eventDef);
+          eventDefMutation = this.computeEventDropMutation(origFootprint, footprint, eventDef)
 
           if (eventDefMutation) {
             mutatedEventInstanceGroup = eventManager.buildMutatedEventInstanceGroup(
               eventDef.id,
               eventDefMutation
-            );
-            isAllowed = component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup);
+            )
+            isAllowed = component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup)
+          } else {
+            isAllowed = false
           }
-          else {
-            isAllowed = false;
-          }
-        }
-        else {
-          isAllowed = false;
+        } else {
+          isAllowed = false
         }
 
         if (!isAllowed) {
-          eventDefMutation = null;
-          disableCursor();
+          eventDefMutation = null
+          disableCursor()
         }
 
         // if a valid drop location, have the subclass render a visual indication
@@ -213,54 +210,53 @@ export default class EventDragging extends Interaction {
             dragListener.isTouch
           )
         ) {
-          mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
-        }
-        else {
-          mouseFollower.show(); // otherwise, have the helper follow the mouse (no snapping)
+          mouseFollower.hide() // if the subclass is already using a mock event "helper", hide our own
+        } else {
+          mouseFollower.show() // otherwise, have the helper follow the mouse (no snapping)
         }
 
         if (isOrig) {
           // needs to have moved hits to be a valid drop
-          eventDefMutation = null;
+          eventDefMutation = null
         }
       },
       hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
-        view.unrenderDrag(seg); // unrender whatever was done in renderDrag
-        mouseFollower.show(); // show in case we are moving out of all hits
-        eventDefMutation = null;
+        view.unrenderDrag(seg) // unrender whatever was done in renderDrag
+        mouseFollower.show() // show in case we are moving out of all hits
+        eventDefMutation = null
       },
       hitDone: () => { // Called after a hitOut OR before a dragEnd
-        enableCursor();
+        enableCursor()
       },
       interactionEnd: (ev) => {
-        delete seg.component; // prevent side effects
+        delete seg.component // prevent side effects
 
         // do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
         mouseFollower.stop(!eventDefMutation, () => {
           if (isDragging) {
-            view.unrenderDrag(seg);
-            this.segDragStop(seg, ev);
+            view.unrenderDrag(seg)
+            this.segDragStop(seg, ev)
           }
 
-          view.showEventsWithId(seg.footprint.eventDef.id);
+          view.showEventsWithId(seg.footprint.eventDef.id)
 
           if (eventDefMutation) {
             // no need to re-show original, will rerender all anyways. esp important if eventRenderWait
-            view.reportEventDrop(eventInstance, eventDefMutation, el, ev);
+            view.reportEventDrop(eventInstance, eventDefMutation, el, ev)
           }
-        });
+        })
 
-        this.dragListener = null;
+        this.dragListener = null
       }
-    });
+    })
 
-    return dragListener;
+    return dragListener
   }
 
 
   // Called before event segment dragging starts
   segDragStart(seg, ev) {
-    this.isDragging = true;
+    this.isDragging = true
     this.component.publiclyTrigger('eventDragStart', {
       context: seg.el[0],
       args: [
@@ -269,13 +265,13 @@ export default class EventDragging extends Interaction {
         {}, // jqui dummy
         this.view
       ]
-    });
+    })
   }
 
 
   // Called after event segment dragging stops
   segDragStop(seg, ev) {
-    this.isDragging = false;
+    this.isDragging = false
     this.component.publiclyTrigger('eventDragStop', {
       context: seg.el[0],
       args: [
@@ -284,52 +280,51 @@ export default class EventDragging extends Interaction {
         {}, // jqui dummy
         this.view
       ]
-    });
+    })
   }
 
 
   // DOES NOT consider overlap/constraint
   computeEventDropMutation(startFootprint, endFootprint, eventDef) {
-    var eventDefMutation = new EventDefMutation();
+    let eventDefMutation = new EventDefMutation()
 
     eventDefMutation.setDateMutation(
       this.computeEventDateMutation(startFootprint, endFootprint)
-    );
+    )
 
-    return eventDefMutation;
+    return eventDefMutation
   }
 
 
   computeEventDateMutation(startFootprint, endFootprint) {
-    var date0 = startFootprint.unzonedRange.getStart();
-    var date1 = endFootprint.unzonedRange.getStart();
-    var clearEnd = false;
-    var forceTimed = false;
-    var forceAllDay = false;
-    var dateDelta;
-    var dateMutation;
+    let date0 = startFootprint.unzonedRange.getStart()
+    let date1 = endFootprint.unzonedRange.getStart()
+    let clearEnd = false
+    let forceTimed = false
+    let forceAllDay = false
+    let dateDelta
+    let dateMutation
 
     if (startFootprint.isAllDay !== endFootprint.isAllDay) {
-      clearEnd = true;
+      clearEnd = true
 
       if (endFootprint.isAllDay) {
-        forceAllDay = true;
-        date0.stripTime();
-      }
-      else {
-        forceTimed = true;
+        forceAllDay = true
+        date0.stripTime()
+      } else {
+        forceTimed = true
       }
     }
 
-    dateDelta = this.component.diffDates(date1, date0);
+    dateDelta = this.component.diffDates(date1, date0)
 
-    dateMutation = new EventDefDateMutation();
-    dateMutation.clearEnd = clearEnd;
-    dateMutation.forceTimed = forceTimed;
-    dateMutation.forceAllDay = forceAllDay;
-    dateMutation.setDateDelta(dateDelta);
+    dateMutation = new EventDefDateMutation()
+    dateMutation.clearEnd = clearEnd
+    dateMutation.forceTimed = forceTimed
+    dateMutation.forceAllDay = forceAllDay
+    dateMutation.setDateDelta(dateDelta)
 
-    return dateMutation;
+    return dateMutation
   }
 
 }

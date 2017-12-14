@@ -24,27 +24,27 @@ export default class EventDefMutation {
   returns an undo function.
   */
   mutateSingle(eventDef) {
-    var origDateProfile;
+    let origDateProfile
 
     if (this.dateMutation) {
-      origDateProfile = eventDef.dateProfile;
+      origDateProfile = eventDef.dateProfile
 
       eventDef.dateProfile = this.dateMutation.buildNewDateProfile(
         origDateProfile,
         eventDef.source.calendar
-      );
+      )
     }
 
     // can't undo
     // TODO: more DRY with EventDef::applyManualStandardProps
     if (this.eventDefId != null) {
-      eventDef.id = EventDef.normalizeId((eventDef.rawId = this.eventDefId));
+      eventDef.id = EventDef.normalizeId((eventDef.rawId = this.eventDefId))
     }
 
     // can't undo
     // TODO: more DRY with EventDef::applyManualStandardProps
     if (this.className) {
-      eventDef.className = this.className;
+      eventDef.className = this.className
     }
 
     // can't undo
@@ -52,99 +52,95 @@ export default class EventDefMutation {
       SingleEventDef.copyVerbatimStandardProps(
         this.verbatimStandardProps, // src
         eventDef // dest
-      );
+      )
     }
 
     // can't undo
     if (this.miscProps) {
-      eventDef.applyMiscProps(this.miscProps);
+      eventDef.applyMiscProps(this.miscProps)
     }
 
     if (origDateProfile) {
       return function() {
-        eventDef.dateProfile = origDateProfile;
-      };
-    }
-    else {
-      return function() { };
+        eventDef.dateProfile = origDateProfile
+      }
+    } else {
+      return function() { }
     }
   }
 
 
   setDateMutation(dateMutation) {
     if (dateMutation && !dateMutation.isEmpty()) {
-      this.dateMutation = dateMutation;
-    }
-    else {
-      this.dateMutation = null;
+      this.dateMutation = dateMutation
+    } else {
+      this.dateMutation = null
     }
   }
 
 
   isEmpty() {
-    return !this.dateMutation;
+    return !this.dateMutation
   }
 
 
   static createFromRawProps(eventInstance, rawProps, largeUnit) {
-    var eventDef = eventInstance.def;
-    var dateProps: any = {};
-    var standardProps: any = {};
-    var miscProps: any = {};
-    var verbatimStandardProps: any = {};
-    var eventDefId = null;
-    var className = null;
-    var propName;
-    var dateProfile;
-    var dateMutation;
-    var defMutation;
+    let eventDef = eventInstance.def
+    let dateProps: any = {}
+    let standardProps: any = {}
+    let miscProps: any = {}
+    let verbatimStandardProps: any = {}
+    let eventDefId = null
+    let className = null
+    let propName
+    let dateProfile
+    let dateMutation
+    let defMutation
 
     for (propName in rawProps) {
       if (EventDateProfile.isStandardProp(propName)) {
-        dateProps[propName] = rawProps[propName];
-      }
-      else if (eventDef.isStandardProp(propName)) {
-        standardProps[propName] = rawProps[propName];
-      }
-      else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
-        miscProps[propName] = rawProps[propName];
+        dateProps[propName] = rawProps[propName]
+      } else if (eventDef.isStandardProp(propName)) {
+        standardProps[propName] = rawProps[propName]
+      } else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
+        miscProps[propName] = rawProps[propName]
       }
     }
 
-    dateProfile = EventDateProfile.parse(dateProps, eventDef.source);
+    dateProfile = EventDateProfile.parse(dateProps, eventDef.source)
 
     if (dateProfile) { // no failure?
       dateMutation = EventDefDateMutation.createFromDiff(
         eventInstance.dateProfile,
         dateProfile,
         largeUnit
-      );
+      )
     }
 
     if (standardProps.id !== eventDef.id) {
-      eventDefId = standardProps.id; // only apply if there's a change
+      eventDefId = standardProps.id // only apply if there's a change
     }
 
     if (!isArraysEqual(standardProps.className, eventDef.className)) {
-      className = standardProps.className; // only apply if there's a change
+      className = standardProps.className // only apply if there's a change
     }
 
     EventDef.copyVerbatimStandardProps(
       standardProps, // src
       verbatimStandardProps // dest
-    );
+    )
 
-    defMutation = new EventDefMutation();
-    defMutation.eventDefId = eventDefId;
-    defMutation.className = className;
-    defMutation.verbatimStandardProps = verbatimStandardProps;
-    defMutation.miscProps = miscProps;
+    defMutation = new EventDefMutation()
+    defMutation.eventDefId = eventDefId
+    defMutation.className = className
+    defMutation.verbatimStandardProps = verbatimStandardProps
+    defMutation.miscProps = miscProps
 
     if (dateMutation) {
-      defMutation.dateMutation = dateMutation;
+      defMutation.dateMutation = dateMutation
     }
 
-    return defMutation;
+    return defMutation
   }
 
 }

@@ -4,17 +4,17 @@ import MonthView from './MonthView'
 
 defineView('basic', {
   'class': BasicView
-});
+})
 
 defineView('basicDay', {
   type: 'basic',
   duration: { days: 1 }
-});
+})
 
 defineView('basicWeek', {
   type: 'basic',
   duration: { weeks: 1 }
-});
+})
 
 defineView('month', {
   'class': MonthView,
@@ -22,4 +22,4 @@ defineView('month', {
   defaults: {
     fixedWeekCount: true
   }
-});
+})

@@ -15,8 +15,8 @@ export default class Theme {
 
 
   constructor(optionsManager) {
-    this.optionsManager = optionsManager;
-    this.processIconOverride();
+    this.optionsManager = optionsManager
+    this.processIconOverride()
   }
 
 
@@ -24,71 +24,70 @@ export default class Theme {
     if (this.iconOverrideOption) {
       this.setIconOverride(
         this.optionsManager.get(this.iconOverrideOption)
-      );
+      )
     }
   }
 
 
   setIconOverride(iconOverrideHash) {
-    var iconClassesCopy;
-    var buttonName;
+    let iconClassesCopy
+    let buttonName
 
     if ($.isPlainObject(iconOverrideHash)) {
-      iconClassesCopy = $.extend({}, this.iconClasses);
+      iconClassesCopy = $.extend({}, this.iconClasses)
 
       for (buttonName in iconOverrideHash) {
         iconClassesCopy[buttonName] = this.applyIconOverridePrefix(
           iconOverrideHash[buttonName]
-        );
+        )
       }
 
-      this.iconClasses = iconClassesCopy;
-    }
-    else if (iconOverrideHash === false) {
-      this.iconClasses = {};
+      this.iconClasses = iconClassesCopy
+    } else if (iconOverrideHash === false) {
+      this.iconClasses = {}
     }
   }
 
 
   applyIconOverridePrefix(className) {
-    var prefix = this.iconOverridePrefix;
+    let prefix = this.iconOverridePrefix
 
     if (prefix && className.indexOf(prefix) !== 0) { // if not already present
-      className = prefix + className;
+      className = prefix + className
     }
 
-    return className;
+    return className
   }
 
 
   getClass(key) {
-    return this.classes[key] || '';
+    return this.classes[key] || ''
   }
 
 
   getIconClass(buttonName) {
-    var className = this.iconClasses[buttonName];
+    let className = this.iconClasses[buttonName]
 
     if (className) {
-      return this.baseIconClass + ' ' + className;
+      return this.baseIconClass + ' ' + className
     }
 
-    return '';
+    return ''
   }
 
 
   getCustomButtonIconClass(customButtonProps) {
-    var className;
+    let className
 
     if (this.iconOverrideCustomButtonOption) {
-      className = customButtonProps[this.iconOverrideCustomButtonOption];
+      className = customButtonProps[this.iconOverrideCustomButtonOption]
 
       if (className) {
-        return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className);
+        return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className)
       }
     }
 
-    return '';
+    return ''
   }
 
 }

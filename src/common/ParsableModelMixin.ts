@@ -31,26 +31,24 @@ export default class ParsableModelMixin extends Mixin implements ParsableModelIn
   Meant to be only called ONCE, at object creation.
   */
   applyProps(rawProps) {
-    var standardPropMap = this.standardPropMap;
-    var manualProps = {};
-    var miscProps = {};
-    var propName;
+    let standardPropMap = this.standardPropMap
+    let manualProps = {}
+    let miscProps = {}
+    let propName
 
     for (propName in rawProps) {
       if (standardPropMap[propName] === true) { // copy verbatim
-        this[propName] = rawProps[propName];
-      }
-      else if (standardPropMap[propName] === false) {
-        manualProps[propName] = rawProps[propName];
-      }
-      else {
-        miscProps[propName] = rawProps[propName];
+        this[propName] = rawProps[propName]
+      } else if (standardPropMap[propName] === false) {
+        manualProps[propName] = rawProps[propName]
+      } else {
+        miscProps[propName] = rawProps[propName]
       }
     }
 
-    this.applyMiscProps(miscProps);
+    this.applyMiscProps(miscProps)
 
-    return this.applyManualStandardProps(manualProps);
+    return this.applyManualStandardProps(manualProps)
   }
 
 
@@ -59,7 +57,7 @@ export default class ParsableModelMixin extends Mixin implements ParsableModelIn
   Meant to be only called ONCE, at object creation.
   */
   applyManualStandardProps(rawProps) {
-    return true;
+    return true
   }
 
 
@@ -75,31 +73,31 @@ export default class ParsableModelMixin extends Mixin implements ParsableModelIn
   TODO: why is this a method when defineStandardProps is static
   */
   isStandardProp(propName) {
-    return propName in this.standardPropMap;
+    return propName in this.standardPropMap
   }
 
 
   static defineStandardProps(propDefs) {
-    var proto = this.prototype;
+    let proto = this.prototype
 
     if (!proto.hasOwnProperty('standardPropMap')) {
-      proto.standardPropMap = Object.create(proto.standardPropMap);
+      proto.standardPropMap = Object.create(proto.standardPropMap)
     }
 
-    copyOwnProps(propDefs, proto.standardPropMap);
+    copyOwnProps(propDefs, proto.standardPropMap)
   }
 
 
   static copyVerbatimStandardProps(src, dest) {
-    var map = this.prototype.standardPropMap;
-    var propName;
+    let map = this.prototype.standardPropMap
+    let propName
 
     for (propName in map) {
       if (
         src[propName] != null && // in the src object?
         map[propName] === true // false means "copy verbatim"
       ) {
-        dest[propName] = src[propName];
+        dest[propName] = src[propName]
       }
     }
   }

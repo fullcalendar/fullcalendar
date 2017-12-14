@@ -49,10 +49,10 @@ export const globalDefaults = {
   locale: null,
   isRTL: false,
   buttonText: {
-    prev: "prev",
-    next: "next",
-    prevYear: "prev year",
-    nextYear: "next year",
+    prev: 'prev',
+    next: 'next',
+    prevYear: 'prev year',
+    nextYear: 'next year',
     year: 'year', // TODO: locale files need to specify this
     today: 'today',
     month: 'month',
@@ -94,12 +94,12 @@ export const globalDefaults = {
 
   longPressDelay: 1000
 
-};
+}
 
 
 export const englishDefaults = { // used by locale.js
   dayPopoverFormat: 'dddd, MMMM D'
-};
+}
 
 
 export const rtlDefaults = { // right-to-left defaults
@@ -120,19 +120,19 @@ export const rtlDefaults = { // right-to-left defaults
     nextYear: 'seek-prev',
     prevYear: 'seek-next'
   }
-};
+}
 
 
-var complexOptions = [ // names of options that are objects whose properties should be combined
+let complexOptions = [ // names of options that are objects whose properties should be combined
   'header',
   'footer',
   'buttonText',
   'buttonIcons',
   'themeButtonIcons'
-];
+]
 
 
 // Merges an array of option objects into a single object
 export function mergeOptions(optionObjs) {
-  return mergeProps(optionObjs, complexOptions);
+  return mergeProps(optionObjs, complexOptions)
 }

@@ -36,10 +36,10 @@ export default class EventSource extends Class {
   // can we do away with calendar? at least for the abstract?
   // useful for buildEventDef
   constructor(calendar) {
-    super();
-    this.calendar = calendar;
-    this.className = [];
-    this.uid = String(EventSource.uuid++);
+    super()
+    this.calendar = calendar
+    this.className = []
+    this.uid = String(EventSource.uuid++)
   }
 
 
@@ -67,52 +67,51 @@ export default class EventSource extends Class {
 
 
   parseEventDefs(rawEventDefs) {
-    var i;
-    var eventDef;
-    var eventDefs = [];
+    let i
+    let eventDef
+    let eventDefs = []
 
     for (i = 0; i < rawEventDefs.length; i++) {
-      eventDef = this.parseEventDef(rawEventDefs[i]);
+      eventDef = this.parseEventDef(rawEventDefs[i])
 
       if (eventDef) {
-        eventDefs.push(eventDef);
+        eventDefs.push(eventDef)
       }
     }
 
-    return eventDefs;
+    return eventDefs
   }
 
 
   parseEventDef(rawInput) {
-    var calendarTransform = this.calendar.opt('eventDataTransform');
-    var sourceTransform = this.eventDataTransform;
+    let calendarTransform = this.calendar.opt('eventDataTransform')
+    let sourceTransform = this.eventDataTransform
 
     if (calendarTransform) {
-      rawInput = calendarTransform(rawInput);
+      rawInput = calendarTransform(rawInput)
     }
     if (sourceTransform) {
-      rawInput = sourceTransform(rawInput);
+      rawInput = sourceTransform(rawInput)
     }
 
-    return EventDefParser.parse(rawInput, this);
+    return EventDefParser.parse(rawInput, this)
   }
 
 
   applyManualStandardProps(rawProps) {
 
     if (rawProps.id != null) {
-      this.id = EventSource.normalizeId(rawProps.id);
+      this.id = EventSource.normalizeId(rawProps.id)
     }
 
     // TODO: converge with EventDef
     if ($.isArray(rawProps.className)) {
-      this.className = rawProps.className;
-    }
-    else if (typeof rawProps.className === 'string') {
-      this.className = rawProps.className.split(/\s+/);
+      this.className = rawProps.className
+    } else if (typeof rawProps.className === 'string') {
+      this.className = rawProps.className.split(/\s+/)
     }
 
-    return true;
+    return true
   }
 
 
@@ -120,15 +119,15 @@ export default class EventSource extends Class {
   rawInput can be any data type!
   */
   static parse(rawInput, calendar) {
-    var source = new this(calendar);
+    let source = new this(calendar)
 
     if (typeof rawInput === 'object') {
       if (source.applyProps(rawInput)) {
-        return source;
+        return source
       }
     }
 
-    return false;
+    return false
   }
 
 
@@ -140,15 +139,15 @@ export default class EventSource extends Class {
 
   static normalizeId(id) {
     if (id) {
-      return String(id);
+      return String(id)
     }
 
-    return null;
+    return null
   }
 
 }
 
-ParsableModelMixin.mixInto(EventSource);
+ParsableModelMixin.mixInto(EventSource)
 
 
 // Parsing
@@ -173,4 +172,4 @@ EventSource.defineStandardProps({
   constraint: true,
   allDayDefault: true,
   eventDataTransform: true
-});
+})

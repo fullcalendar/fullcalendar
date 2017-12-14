@@ -37,9 +37,9 @@ export default abstract class EventDef {
 
 
   constructor(source) {
-    this.source = source;
-    this.className = [];
-    this.miscProps = {};
+    this.source = source
+    this.className = []
+    this.miscProps = {}
   }
 
 
@@ -50,154 +50,152 @@ export default abstract class EventDef {
 
 
   clone() {
-    var copy = new (this.constructor as any)(this.source);
+    let copy = new (this.constructor as any)(this.source)
 
-    copy.id = this.id;
-    copy.rawId = this.rawId;
-    copy.uid = this.uid; // not really unique anymore :(
+    copy.id = this.id
+    copy.rawId = this.rawId
+    copy.uid = this.uid // not really unique anymore :(
 
-    EventDef.copyVerbatimStandardProps(this, copy);
+    EventDef.copyVerbatimStandardProps(this, copy)
 
-    copy.className = this.className.slice(); // copy
-    copy.miscProps = $.extend({}, this.miscProps);
+    copy.className = this.className.slice() // copy
+    copy.miscProps = $.extend({}, this.miscProps)
 
-    return copy;
+    return copy
   }
 
 
   hasInverseRendering() {
-    return this.getRendering() === 'inverse-background';
+    return this.getRendering() === 'inverse-background'
   }
 
 
   hasBgRendering() {
-    var rendering = this.getRendering();
+    let rendering = this.getRendering()
 
-    return rendering === 'inverse-background' || rendering === 'background';
+    return rendering === 'inverse-background' || rendering === 'background'
   }
 
 
   getRendering() {
     if (this.rendering != null) {
-      return this.rendering;
+      return this.rendering
     }
 
-    return this.source.rendering;
+    return this.source.rendering
   }
 
 
   getConstraint() {
     if (this.constraint != null) {
-      return this.constraint;
+      return this.constraint
     }
 
     if (this.source.constraint != null) {
-      return this.source.constraint;
+      return this.source.constraint
     }
 
-    return this.source.calendar.opt('eventConstraint'); // what about View option?
+    return this.source.calendar.opt('eventConstraint') // what about View option?
   }
 
 
   getOverlap() {
     if (this.overlap != null) {
-      return this.overlap;
+      return this.overlap
     }
 
     if (this.source.overlap != null) {
-      return this.source.overlap;
+      return this.source.overlap
     }
 
-    return this.source.calendar.opt('eventOverlap'); // what about View option?
+    return this.source.calendar.opt('eventOverlap') // what about View option?
   }
 
 
   isStartExplicitlyEditable() {
     if (this.startEditable != null) {
-      return this.startEditable;
+      return this.startEditable
     }
 
-    return this.source.startEditable;
+    return this.source.startEditable
   }
 
 
   isDurationExplicitlyEditable() {
     if (this.durationEditable != null) {
-      return this.durationEditable;
+      return this.durationEditable
     }
 
-    return this.source.durationEditable;
+    return this.source.durationEditable
   }
 
 
   isExplicitlyEditable() {
     if (this.editable != null) {
-      return this.editable;
+      return this.editable
     }
 
-    return this.source.editable;
+    return this.source.editable
   }
 
 
   toLegacy() {
-    var obj = $.extend({}, this.miscProps);
+    let obj = $.extend({}, this.miscProps)
 
-    obj._id = this.uid;
-    obj.source = this.source;
-    obj.className = this.className.slice(); // copy
-    obj.allDay = this.isAllDay();
+    obj._id = this.uid
+    obj.source = this.source
+    obj.className = this.className.slice() // copy
+    obj.allDay = this.isAllDay()
 
     if (this.rawId != null) {
-      obj.id = this.rawId;
+      obj.id = this.rawId
     }
 
-    EventDef.copyVerbatimStandardProps(this, obj);
+    EventDef.copyVerbatimStandardProps(this, obj)
 
-    return obj;
+    return obj
   }
 
 
   applyManualStandardProps(rawProps) {
 
     if (rawProps.id != null) {
-      this.id = EventDef.normalizeId((this.rawId = rawProps.id));
-    }
-    else {
-      this.id = EventDef.generateId();
+      this.id = EventDef.normalizeId((this.rawId = rawProps.id))
+    } else {
+      this.id = EventDef.generateId()
     }
 
     if (rawProps._id != null) { // accept this prop, even tho somewhat internal
-      this.uid = String(rawProps._id);
-    }
-    else {
-      this.uid = EventDef.generateId();
+      this.uid = String(rawProps._id)
+    } else {
+      this.uid = EventDef.generateId()
     }
 
     // TODO: converge with EventSource
     if ($.isArray(rawProps.className)) {
-      this.className = rawProps.className;
+      this.className = rawProps.className
     }
     if (typeof rawProps.className === 'string') {
-      this.className = rawProps.className.split(/\s+/);
+      this.className = rawProps.className.split(/\s+/)
     }
 
-    return true;
+    return true
   }
 
 
   applyMiscProps(rawProps) {
-    $.extend(this.miscProps, rawProps);
+    $.extend(this.miscProps, rawProps)
   }
 
 
   static parse(rawInput, source) {
-    var def = new (this as any)(source);
+    let def = new (this as any)(source)
 
     if (def.applyProps(rawInput)) {
-      return def;
+      return def
     }
 
-    return false;
+    return false
   }
 
 
@@ -210,12 +208,12 @@ export default abstract class EventDef {
 
 
   static normalizeId(id) {
-    return String(id);
+    return String(id)
   }
 
 
   static generateId() {
-    return '_fc' + (EventDef.uuid++);
+    return '_fc' + (EventDef.uuid++)
   }
 
 }
@@ -247,4 +245,4 @@ EventDef.defineStandardProps({
   backgroundColor: true,
   borderColor: true,
   textColor: true
-});
+})

@@ -19,7 +19,7 @@ export interface ListenerInterface {
   stopListeningTo(other, eventName?)
 }
 
-let guid = 0;
+let guid = 0
 
 export default class ListenerMixin extends Mixin implements ListenerInterface {
 
@@ -38,19 +38,18 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
   */
   listenTo(other, arg, callback?) {
     if (typeof arg === 'object') { // given dictionary of callbacks
-      for (var eventName in arg) {
+      for (let eventName in arg) {
         if (arg.hasOwnProperty(eventName)) {
-          this.listenTo(other, eventName, arg[eventName]);
+          this.listenTo(other, eventName, arg[eventName])
         }
       }
-    }
-    else if (typeof arg === 'string') {
+    } else if (typeof arg === 'string') {
       other.on(
         arg + '.' + this.getListenerNamespace(), // use event namespacing to identify this object
         $.proxy(callback, this) // always use `this` context
           // the usually-undesired jQuery guid behavior doesn't matter,
           // because we always unbind via namespace
-      );
+      )
     }
   }
 
@@ -59,7 +58,7 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
   `eventName` is optional. If omitted, will stop listening to ALL events on `other`.
   */
   stopListeningTo(other, eventName?) {
-    other.off((eventName || '') + '.' + this.getListenerNamespace());
+    other.off((eventName || '') + '.' + this.getListenerNamespace())
   }
 
   /*
@@ -67,9 +66,9 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
   */
   getListenerNamespace() {
     if (this.listenerId == null) {
-      this.listenerId = guid++;
+      this.listenerId = guid++
     }
-    return '_listener' + this.listenerId;
+    return '_listener' + this.listenerId
   }
 
 }

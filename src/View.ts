@@ -55,38 +55,38 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   constructor(calendar, viewSpec) {
-    super(null, viewSpec.options);
+    super(null, viewSpec.options)
 
-    this.calendar = calendar;
-    this.viewSpec = viewSpec;
+    this.calendar = calendar
+    this.viewSpec = viewSpec
 
     // shortcuts
-    this.type = viewSpec.type;
+    this.type = viewSpec.type
 
     // .name is deprecated
-    this.name = this.type;
+    this.name = this.type
 
-    this.initRenderQueue();
-    this.initHiddenDays();
-    this.dateProfileGenerator = new this.dateProfileGeneratorClass(this);
-    this.bindBaseRenderHandlers();
-    this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'));
+    this.initRenderQueue()
+    this.initHiddenDays()
+    this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
+    this.bindBaseRenderHandlers()
+    this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
 
     // legacy
     if (this['initialize']) {
-      this['initialize']();
+      this['initialize']()
     }
   }
 
 
   _getView() {
-    return this;
+    return this
   }
 
 
   // Retrieves an option with the given name
   opt(name) {
-    return this.options[name];
+    return this.options[name]
   }
 
 
@@ -97,56 +97,55 @@ export default abstract class View extends InteractiveDateComponent {
   initRenderQueue() {
     this.renderQueue = new RenderQueue({
       event: this.opt('eventRenderWait')
-    });
+    })
 
-    this.renderQueue.on('start', this.onRenderQueueStart.bind(this));
-    this.renderQueue.on('stop', this.onRenderQueueStop.bind(this));
+    this.renderQueue.on('start', this.onRenderQueueStart.bind(this))
+    this.renderQueue.on('stop', this.onRenderQueueStop.bind(this))
 
-    this.on('before:change', this.startBatchRender);
-    this.on('change', this.stopBatchRender);
+    this.on('before:change', this.startBatchRender)
+    this.on('change', this.stopBatchRender)
   }
 
 
   onRenderQueueStart() {
-    this.calendar.freezeContentHeight();
-    this.addScroll(this.queryScroll());
+    this.calendar.freezeContentHeight()
+    this.addScroll(this.queryScroll())
   }
 
 
   onRenderQueueStop() {
     if (this.calendar.updateViewSize()) { // success?
-      this.popScroll();
+      this.popScroll()
     }
-    this.calendar.thawContentHeight();
+    this.calendar.thawContentHeight()
   }
 
 
   startBatchRender() {
     if (!(this.batchRenderDepth++)) {
-      this.renderQueue.pause();
+      this.renderQueue.pause()
     }
   }
 
 
   stopBatchRender() {
     if (!(--this.batchRenderDepth)) {
-      this.renderQueue.resume();
+      this.renderQueue.resume()
     }
   }
 
 
   requestRender(func, namespace, actionType) {
-    this.renderQueue.queue(func, namespace, actionType);
+    this.renderQueue.queue(func, namespace, actionType)
   }
 
 
   // given func will auto-bind to `this`
   whenSizeUpdated(func) {
     if (this.renderQueue.isRunning) {
-      this.renderQueue.one('stop', func.bind(this));
-    }
-    else {
-      func.call(this);
+      this.renderQueue.one('stop', func.bind(this))
+    } else {
+      func.call(this)
     }
   }
 
@@ -157,14 +156,13 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Computes what the title at the top of the calendar should be for this view
   computeTitle(dateProfile) {
-    var unzonedRange;
+    let unzonedRange
 
     // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
     if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-      unzonedRange = dateProfile.currentUnzonedRange;
-    }
-    else { // for day units or smaller, use the actual day range
-      unzonedRange = dateProfile.activeUnzonedRange;
+      unzonedRange = dateProfile.currentUnzonedRange
+    } else { // for day units or smaller, use the actual day range
+      unzonedRange = dateProfile.activeUnzonedRange
     }
 
     return this.formatRange(
@@ -175,26 +173,23 @@ export default abstract class View extends InteractiveDateComponent {
       dateProfile.isRangeAllDay,
       this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
       this.opt('titleRangeSeparator')
-    );
+    )
   }
 
 
   // Generates the format string that should be used to generate the title for the current date range.
   // Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
   computeTitleFormat(dateProfile) {
-    var currentRangeUnit = dateProfile.currentRangeUnit;
+    let currentRangeUnit = dateProfile.currentRangeUnit
 
     if (currentRangeUnit == 'year') {
-      return 'YYYY';
-    }
-    else if (currentRangeUnit == 'month') {
-      return this.opt('monthYearFormat'); // like "September 2014"
-    }
-    else if (dateProfile.currentUnzonedRange.as('days') > 1) {
-      return 'll'; // multi-day range. shorter, like "Sep 9 - 10 2014"
-    }
-    else {
-      return 'LL'; // one day. longer, like "September 9 2014"
+      return 'YYYY'
+    } else if (currentRangeUnit == 'month') {
+      return this.opt('monthYearFormat') // like "September 2014"
+    } else if (dateProfile.currentUnzonedRange.as('days') > 1) {
+      return 'll' // multi-day range. shorter, like "Sep 9 - 10 2014"
+    } else {
+      return 'LL' // one day. longer, like "September 9 2014"
     }
   }
 
@@ -204,20 +199,20 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   setDate(date) {
-    var currentDateProfile = this.get('dateProfile');
-    var newDateProfile = this.dateProfileGenerator.build(date, undefined, true); // forceToValid=true
+    let currentDateProfile = this.get('dateProfile')
+    let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 
     if (
       !currentDateProfile ||
       !currentDateProfile.activeUnzonedRange.equals(newDateProfile.activeUnzonedRange)
     ) {
-      this.set('dateProfile', newDateProfile);
+      this.set('dateProfile', newDateProfile)
     }
   }
 
 
   unsetDate() {
-    this.unset('dateProfile');
+    this.unset('dateProfile')
   }
 
 
@@ -226,43 +221,43 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   fetchInitialEvents(dateProfile) {
-    var calendar = this.calendar;
-    var forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime;
+    let calendar = this.calendar
+    let forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime
 
     return calendar.requestEvents(
       calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
       calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
-    );
+    )
   }
 
 
   bindEventChanges() {
-    this.listenTo(this.calendar, 'eventsReset', this.resetEvents); // TODO: make this a real event
+    this.listenTo(this.calendar, 'eventsReset', this.resetEvents) // TODO: make this a real event
   }
 
 
   unbindEventChanges() {
-    this.stopListeningTo(this.calendar, 'eventsReset');
+    this.stopListeningTo(this.calendar, 'eventsReset')
   }
 
 
   setEvents(eventsPayload) {
-    this.set('currentEvents', eventsPayload);
-    this.set('hasEvents', true);
+    this.set('currentEvents', eventsPayload)
+    this.set('hasEvents', true)
   }
 
 
   unsetEvents() {
-    this.unset('currentEvents');
-    this.unset('hasEvents');
+    this.unset('currentEvents')
+    this.unset('hasEvents')
   }
 
 
   resetEvents(eventsPayload) {
-    this.startBatchRender();
-    this.unsetEvents();
-    this.setEvents(eventsPayload);
-    this.stopBatchRender();
+    this.startBatchRender()
+    this.unsetEvents()
+    this.setEvents(eventsPayload)
+    this.stopBatchRender()
   }
 
 
@@ -272,42 +267,42 @@ export default abstract class View extends InteractiveDateComponent {
 
   requestDateRender(dateProfile) {
     this.requestRender(() => {
-      this.executeDateRender(dateProfile);
-    }, 'date', 'init');
+      this.executeDateRender(dateProfile)
+    }, 'date', 'init')
   }
 
 
   requestDateUnrender() {
     this.requestRender(() => {
-      this.executeDateUnrender();
-    }, 'date', 'destroy');
+      this.executeDateUnrender()
+    }, 'date', 'destroy')
   }
 
 
   // if dateProfile not specified, uses current
   executeDateRender(dateProfile) {
-    super.executeDateRender(dateProfile);
+    super.executeDateRender(dateProfile)
 
     if (this['render']) {
-      this['render'](); // TODO: deprecate
+      this['render']() // TODO: deprecate
     }
 
-    this.trigger('datesRendered');
-    this.addScroll({ isDateInit: true });
-    this.startNowIndicator(); // shouldn't render yet because updateSize will be called soon
+    this.trigger('datesRendered')
+    this.addScroll({ isDateInit: true })
+    this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
   }
 
 
   executeDateUnrender() {
-    this.unselect();
-    this.stopNowIndicator();
-    this.trigger('before:datesUnrendered');
+    this.unselect()
+    this.stopNowIndicator()
+    this.trigger('before:datesUnrendered')
 
     if (this['destroy']) {
-      this['destroy'](); // TODO: deprecate
+      this['destroy']() // TODO: deprecate
     }
 
-    super.executeDateUnrender();
+    super.executeDateUnrender()
   }
 
 
@@ -319,12 +314,12 @@ export default abstract class View extends InteractiveDateComponent {
     this.on('datesRendered', () => {
       this.whenSizeUpdated(
         this.triggerViewRender
-      );
-    });
+      )
+    })
 
     this.on('before:datesUnrendered', () => {
-      this.triggerViewDestroy();
-    });
+      this.triggerViewDestroy()
+    })
   }
 
 
@@ -332,7 +327,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('viewRender', {
       context: this,
       args: [ this, this.el ]
-    });
+    })
   }
 
 
@@ -340,7 +335,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('viewDestroy', {
       context: this,
       args: [ this, this.el ]
-    });
+    })
   }
 
 
@@ -350,19 +345,19 @@ export default abstract class View extends InteractiveDateComponent {
 
   requestEventsRender(eventsPayload) {
     this.requestRender(() => {
-      this.executeEventRender(eventsPayload);
+      this.executeEventRender(eventsPayload)
       this.whenSizeUpdated(
         this.triggerAfterEventsRendered
-      );
-    }, 'event', 'init');
+      )
+    }, 'event', 'init')
   }
 
 
   requestEventsUnrender() {
     this.requestRender(() => {
-      this.triggerBeforeEventsDestroyed();
-      this.executeEventUnrender();
-    }, 'event', 'destroy');
+      this.triggerBeforeEventsDestroyed()
+      this.executeEventUnrender()
+    }, 'event', 'destroy')
   }
 
 
@@ -372,14 +367,14 @@ export default abstract class View extends InteractiveDateComponent {
 
   requestBusinessHoursRender(businessHourGenerator) {
     this.requestRender(() => {
-      this.renderBusinessHours(businessHourGenerator);
-    }, 'businessHours', 'init');
+      this.renderBusinessHours(businessHourGenerator)
+    }, 'businessHours', 'init')
   }
 
   requestBusinessHoursUnrender() {
     this.requestRender(() => {
-      this.unrenderBusinessHours();
-    }, 'businessHours', 'destroy');
+      this.unrenderBusinessHours()
+    }, 'businessHours', 'destroy')
   }
 
 
@@ -389,20 +384,20 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Binds DOM handlers to elements that reside outside the view container, such as the document
   bindGlobalHandlers() {
-    super.bindGlobalHandlers();
+    super.bindGlobalHandlers()
 
     this.listenTo(GlobalEmitter.get(), {
       touchstart: this.processUnselect,
       mousedown: this.handleDocumentMousedown
-    });
+    })
   }
 
 
   // Unbinds DOM handlers from elements that reside outside the view container
   unbindGlobalHandlers() {
-    super.unbindGlobalHandlers();
+    super.unbindGlobalHandlers()
 
-    this.stopListeningTo(GlobalEmitter.get());
+    this.stopListeningTo(GlobalEmitter.get())
   }
 
 
@@ -414,27 +409,27 @@ export default abstract class View extends InteractiveDateComponent {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   startNowIndicator() {
-    var unit;
-    var update;
-    var delay; // ms wait value
+    let unit
+    let update
+    let delay // ms wait value
 
     if (this.opt('nowIndicator')) {
-      unit = this.getNowIndicatorUnit();
+      unit = this.getNowIndicatorUnit()
       if (unit) {
-        update = proxy(this, 'updateNowIndicator'); // bind to `this`
+        update = proxy(this, 'updateNowIndicator') // bind to `this`
 
-        this.initialNowDate = this.calendar.getNow();
-        this.initialNowQueriedMs = +new Date();
+        this.initialNowDate = this.calendar.getNow()
+        this.initialNowQueriedMs = +new Date()
 
         // wait until the beginning of the next interval
-        delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate;
+        delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate
         this.nowIndicatorTimeoutID = setTimeout(() => {
-          this.nowIndicatorTimeoutID = null;
-          update();
-          delay = +moment.duration(1, unit);
-          delay = Math.max(100, delay); // prevent too frequent
-          this.nowIndicatorIntervalID = setInterval(update, delay); // update every interval
-        }, delay);
+          this.nowIndicatorTimeoutID = null
+          update()
+          delay = +moment.duration(1, unit)
+          delay = Math.max(100, delay) // prevent too frequent
+          this.nowIndicatorIntervalID = setInterval(update, delay) // update every interval
+        }, delay)
       }
 
       // rendering will be initiated in updateSize
@@ -449,11 +444,11 @@ export default abstract class View extends InteractiveDateComponent {
       this.isDatesRendered &&
       this.initialNowDate // activated before?
     ) {
-      this.unrenderNowIndicator(); // won't unrender if unnecessary
+      this.unrenderNowIndicator() // won't unrender if unnecessary
       this.renderNowIndicator(
         this.initialNowDate.clone().add(new Date().valueOf() - this.initialNowQueriedMs) // add ms
-      );
-      this.isNowIndicatorRendered = true;
+      )
+      this.isNowIndicatorRendered = true
     }
   }
 
@@ -464,16 +459,16 @@ export default abstract class View extends InteractiveDateComponent {
     if (this.isNowIndicatorRendered) {
 
       if (this.nowIndicatorTimeoutID) {
-        clearTimeout(this.nowIndicatorTimeoutID);
-        this.nowIndicatorTimeoutID = null;
+        clearTimeout(this.nowIndicatorTimeoutID)
+        this.nowIndicatorTimeoutID = null
       }
       if (this.nowIndicatorIntervalID) {
-        clearInterval(this.nowIndicatorIntervalID);
-        this.nowIndicatorIntervalID = null;
+        clearInterval(this.nowIndicatorIntervalID)
+        this.nowIndicatorIntervalID = null
       }
 
-      this.unrenderNowIndicator();
-      this.isNowIndicatorRendered = false;
+      this.unrenderNowIndicator()
+      this.isNowIndicatorRendered = false
     }
   }
 
@@ -485,13 +480,12 @@ export default abstract class View extends InteractiveDateComponent {
   updateSize(totalHeight, isAuto, isResize) {
 
     if (this['setHeight']) { // for legacy API
-      this['setHeight'](totalHeight, isAuto);
-    }
-    else {
-      super.updateSize(totalHeight, isAuto, isResize);
+      this['setHeight'](totalHeight, isAuto)
+    } else {
+      super.updateSize(totalHeight, isAuto, isResize)
     }
 
-    this.updateNowIndicator();
+    this.updateNowIndicator()
   }
 
 
@@ -500,59 +494,59 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   addScroll(scroll) {
-    var queuedScroll = this.queuedScroll || (this.queuedScroll = {});
+    let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
 
-    $.extend(queuedScroll, scroll);
+    $.extend(queuedScroll, scroll)
   }
 
 
   popScroll() {
-    this.applyQueuedScroll();
-    this.queuedScroll = null;
+    this.applyQueuedScroll()
+    this.queuedScroll = null
   }
 
 
   applyQueuedScroll() {
     if (this.queuedScroll) {
-      this.applyScroll(this.queuedScroll);
+      this.applyScroll(this.queuedScroll)
     }
   }
 
 
   queryScroll() {
-    var scroll = {};
+    let scroll = {}
 
     if (this.isDatesRendered) {
-      $.extend(scroll, this.queryDateScroll());
+      $.extend(scroll, this.queryDateScroll())
     }
 
-    return scroll;
+    return scroll
   }
 
 
   applyScroll(scroll) {
     if (scroll.isDateInit && this.isDatesRendered) {
-      $.extend(scroll, this.computeInitialDateScroll());
+      $.extend(scroll, this.computeInitialDateScroll())
     }
 
     if (this.isDatesRendered) {
-      this.applyDateScroll(scroll);
+      this.applyDateScroll(scroll)
     }
   }
 
 
   computeInitialDateScroll() {
-    return {}; // subclasses must implement
+    return {} // subclasses must implement
   }
 
 
   queryDateScroll() {
-    return {}; // subclasses must implement
+    return {} // subclasses must implement
   }
 
 
   applyDateScroll(scroll) {
-    ; // subclasses must implement
+     // subclasses must implement
   }
 
 
@@ -561,20 +555,20 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   reportEventDrop(eventInstance, eventMutation, el, ev) {
-    var eventManager = this.calendar.eventManager;
-    var undoFunc = eventManager.mutateEventsWithId(
+    let eventManager = this.calendar.eventManager
+    let undoFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
       eventMutation,
       this.calendar
-    );
-    var dateMutation = eventMutation.dateMutation;
+    )
+    let dateMutation = eventMutation.dateMutation
 
     // update the EventInstance, for handlers
     if (dateMutation) {
       eventInstance.dateProfile = dateMutation.buildNewDateProfile(
         eventInstance.dateProfile,
         this.calendar
-      );
+      )
     }
 
     this.triggerEventDrop(
@@ -583,7 +577,7 @@ export default abstract class View extends InteractiveDateComponent {
       (dateMutation && dateMutation.dateDelta) || moment.duration(),
       undoFunc,
       el, ev
-    );
+    )
   }
 
 
@@ -599,7 +593,7 @@ export default abstract class View extends InteractiveDateComponent {
         {}, // {} = jqui dummy
         this
       ]
-    });
+    })
   }
 
 
@@ -613,10 +607,10 @@ export default abstract class View extends InteractiveDateComponent {
   reportExternalDrop(singleEventDef, isEvent, isSticky, el, ev, ui) {
 
     if (isEvent) {
-      this.calendar.eventManager.addEventDef(singleEventDef, isSticky);
+      this.calendar.eventManager.addEventDef(singleEventDef, isSticky)
     }
 
-    this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui);
+    this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui)
   }
 
 
@@ -632,7 +626,7 @@ export default abstract class View extends InteractiveDateComponent {
         ui,
         this
       ]
-    });
+    })
 
     if (isEvent) {
       // signal an external event landed
@@ -642,7 +636,7 @@ export default abstract class View extends InteractiveDateComponent {
           singleEventDef.buildInstance().toLegacy(),
           this
         ]
-      });
+      })
     }
   }
 
@@ -653,25 +647,25 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Must be called when an event in the view has been resized to a new length
   reportEventResize(eventInstance, eventMutation, el, ev) {
-    var eventManager = this.calendar.eventManager;
-    var undoFunc = eventManager.mutateEventsWithId(
+    let eventManager = this.calendar.eventManager
+    let undoFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
       eventMutation,
       this.calendar
-    );
+    )
 
     // update the EventInstance, for handlers
     eventInstance.dateProfile = eventMutation.dateMutation.buildNewDateProfile(
       eventInstance.dateProfile,
       this.calendar
-    );
+    )
 
     this.triggerEventResize(
       eventInstance,
       eventMutation.dateMutation.endDelta,
       undoFunc,
       el, ev
-    );
+    )
   }
 
 
@@ -687,7 +681,7 @@ export default abstract class View extends InteractiveDateComponent {
         {}, // {} = jqui dummy
         this
       ]
-    });
+    })
   }
 
 
@@ -698,9 +692,9 @@ export default abstract class View extends InteractiveDateComponent {
   // Selects a date span on the view. `start` and `end` are both Moments.
   // `ev` is the native mouse event that begin the interaction.
   select(footprint, ev) {
-    this.unselect(ev);
-    this.renderSelectionFootprint(footprint);
-    this.reportSelection(footprint, ev);
+    this.unselect(ev)
+    this.renderSelectionFootprint(footprint)
+    this.reportSelection(footprint, ev)
   }
 
 
@@ -708,24 +702,23 @@ export default abstract class View extends InteractiveDateComponent {
     if (this['renderSelection']) { // legacy method in custom view classes
       this['renderSelection'](
         footprint.toLegacy(this.calendar)
-      );
-    }
-    else {
-      super.renderSelectionFootprint(footprint);
+      )
+    } else {
+      super.renderSelectionFootprint(footprint)
     }
   }
 
 
   // Called when a new selection is made. Updates internal state and triggers handlers.
   reportSelection(footprint, ev) {
-    this.isSelected = true;
-    this.triggerSelect(footprint, ev);
+    this.isSelected = true
+    this.triggerSelect(footprint, ev)
   }
 
 
   // Triggers handlers to 'select'
   triggerSelect(footprint, ev) {
-    var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
+    let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('select', {
       context: this,
@@ -735,23 +728,23 @@ export default abstract class View extends InteractiveDateComponent {
         ev,
         this
       ]
-    });
+    })
   }
 
 
   // Undoes a selection. updates in the internal state and triggers handlers.
   // `ev` is the native mouse event that began the interaction.
-  unselect(ev=null) {
+  unselect(ev= null) {
     if (this.isSelected) {
-      this.isSelected = false;
+      this.isSelected = false
       if (this['destroySelection']) {
-        this['destroySelection'](); // TODO: deprecate
+        this['destroySelection']() // TODO: deprecate
       }
-      this.unrenderSelection();
+      this.unrenderSelection()
       this.publiclyTrigger('unselect', {
         context: this,
         args: [ ev, this ]
-      });
+      })
     }
   }
 
@@ -765,18 +758,18 @@ export default abstract class View extends InteractiveDateComponent {
       !this.selectedEventInstance ||
       this.selectedEventInstance !== eventInstance
     ) {
-      this.unselectEventInstance();
+      this.unselectEventInstance()
 
       this.getEventSegs().forEach(function(seg) {
         if (
           seg.footprint.eventInstance === eventInstance &&
           seg.el // necessary?
         ) {
-          seg.el.addClass('fc-selected');
+          seg.el.addClass('fc-selected')
         }
-      });
+      })
 
-      this.selectedEventInstance = eventInstance;
+      this.selectedEventInstance = eventInstance
     }
   }
 
@@ -786,11 +779,11 @@ export default abstract class View extends InteractiveDateComponent {
 
       this.getEventSegs().forEach(function(seg) {
         if (seg.el) { // necessary?
-          seg.el.removeClass('fc-selected');
+          seg.el.removeClass('fc-selected')
         }
-      });
+      })
 
-      this.selectedEventInstance = null;
+      this.selectedEventInstance = null
     }
   }
 
@@ -798,7 +791,7 @@ export default abstract class View extends InteractiveDateComponent {
   isEventDefSelected(eventDef) {
     // event references might change on refetchEvents(), while selectedEventInstance doesn't,
     // so compare IDs
-    return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id;
+    return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id
   }
 
 
@@ -810,26 +803,26 @@ export default abstract class View extends InteractiveDateComponent {
 
   handleDocumentMousedown(ev) {
     if (isPrimaryMouseButton(ev)) {
-      this.processUnselect(ev);
+      this.processUnselect(ev)
     }
   }
 
 
   processUnselect(ev) {
-    this.processRangeUnselect(ev);
-    this.processEventUnselect(ev);
+    this.processRangeUnselect(ev)
+    this.processEventUnselect(ev)
   }
 
 
   processRangeUnselect(ev) {
-    var ignore;
+    let ignore
 
     // is there a time-range selection?
     if (this.isSelected && this.opt('unselectAuto')) {
       // only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
-      ignore = this.opt('unselectCancel');
+      ignore = this.opt('unselectCancel')
       if (!ignore || !$(ev.target).closest(ignore).length) {
-        this.unselect(ev);
+        this.unselect(ev)
       }
     }
   }
@@ -838,7 +831,7 @@ export default abstract class View extends InteractiveDateComponent {
   processEventUnselect(ev) {
     if (this.selectedEventInstance) {
       if (!$(ev.target).closest('.fc-selected').length) {
-        this.unselectEventInstance();
+        this.unselectEventInstance()
       }
     }
   }
@@ -852,7 +845,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('viewRender', {
       context: this,
       args: [ this, this.el ]
-    });
+    })
   }
 
 
@@ -860,19 +853,19 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('viewDestroy', {
       context: this,
       args: [ this, this.el ]
-    });
+    })
   }
 
 
   // Triggers handlers to 'dayClick'
   // Span has start/end of the clicked area. Only the start is useful.
   triggerDayClick(footprint, dayEl, ev) {
-    var dateProfile = this.calendar.footprintToDateProfile(footprint); // abuse of "Event"DateProfile?
+    let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('dayClick', {
       context: dayEl,
       args: [ dateProfile.start, ev, this ]
-    });
+    })
   }
 
 
@@ -882,7 +875,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // For DateComponent::getDayClasses
   isDateInOtherMonth(date, dateProfile) {
-    return false;
+    return false
   }
 
 
@@ -890,17 +883,17 @@ export default abstract class View extends InteractiveDateComponent {
   // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
   // Always clone your objects if you fear mutation.
   getUnzonedRangeOption(name) {
-    var val = this.opt(name);
+    let val = this.opt(name)
 
     if (typeof val === 'function') {
       val = val.apply(
         null,
         Array.prototype.slice.call(arguments, 1)
-      );
+      )
     }
 
     if (val) {
-      return this.calendar.parseUnzonedRange(val);
+      return this.calendar.parseUnzonedRange(val)
     }
   }
 
@@ -911,49 +904,49 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Initializes internal variables related to calculating hidden days-of-week
   initHiddenDays() {
-    var hiddenDays = this.opt('hiddenDays') || []; // array of day-of-week indices that are hidden
-    var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-    var dayCnt = 0;
-    var i;
+    let hiddenDays = this.opt('hiddenDays') || [] // array of day-of-week indices that are hidden
+    let isHiddenDayHash = [] // is the day-of-week hidden? (hash with day-of-week-index -> bool)
+    let dayCnt = 0
+    let i
 
     if (this.opt('weekends') === false) {
-      hiddenDays.push(0, 6); // 0=sunday, 6=saturday
+      hiddenDays.push(0, 6) // 0=sunday, 6=saturday
     }
 
     for (i = 0; i < 7; i++) {
       if (
         !(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
       ) {
-        dayCnt++;
+        dayCnt++
       }
     }
 
     if (!dayCnt) {
-      throw 'invalid hiddenDays'; // all days were hidden? bad.
+      throw new Error('invalid hiddenDays') // all days were hidden? bad.
     }
 
-    this.isHiddenDayHash = isHiddenDayHash;
+    this.isHiddenDayHash = isHiddenDayHash
   }
 
 
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
   trimHiddenDays(inputUnzonedRange) {
-    var start = inputUnzonedRange.getStart();
-    var end = inputUnzonedRange.getEnd();
+    let start = inputUnzonedRange.getStart()
+    let end = inputUnzonedRange.getEnd()
 
     if (start) {
-      start = this.skipHiddenDays(start);
+      start = this.skipHiddenDays(start)
     }
 
     if (end) {
-      end = this.skipHiddenDays(end, -1, true);
+      end = this.skipHiddenDays(end, -1, true)
     }
 
     if (start === null || end === null || start < end) {
-      return new UnzonedRange(start, end);
+      return new UnzonedRange(start, end)
     }
-    return null;
+    return null
   }
 
 
@@ -961,9 +954,9 @@ export default abstract class View extends InteractiveDateComponent {
   // `day` is a day-of-week index (0-6), or a Moment
   isHiddenDay(day) {
     if (moment.isMoment(day)) {
-      day = day.day();
+      day = day.day()
     }
-    return this.isHiddenDayHash[day];
+    return this.isHiddenDayHash[day]
   }
 
 
@@ -972,69 +965,69 @@ export default abstract class View extends InteractiveDateComponent {
   // If the initial value of `date` is not a hidden day, don't do anything.
   // Pass `isExclusive` as `true` if you are dealing with an end date.
   // `inc` defaults to `1` (increment one day forward each time)
-  skipHiddenDays(date, inc=1, isExclusive=false) {
-    var out = date.clone();
+  skipHiddenDays(date, inc= 1, isExclusive= false) {
+    let out = date.clone()
     while (
       this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
     ) {
-      out.add(inc, 'days');
+      out.add(inc, 'days')
     }
-    return out;
+    return out
   }
 
 }
 
-View.prototype.usesMinMaxTime = false;
-View.prototype.dateProfileGeneratorClass = DateProfileGenerator;
+View.prototype.usesMinMaxTime = false
+View.prototype.dateProfileGeneratorClass = DateProfileGenerator
 
 
 View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
-  this.requestDateRender(deps.dateProfile);
+  this.requestDateRender(deps.dateProfile)
 }, function() {
-  this.requestDateUnrender();
-});
+  this.requestDateUnrender()
+})
 
 
 View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function(deps) {
-  this.requestBusinessHoursRender(deps.businessHourGenerator);
+  this.requestBusinessHoursRender(deps.businessHourGenerator)
 }, function() {
-  this.requestBusinessHoursUnrender();
-});
+  this.requestBusinessHoursUnrender()
+})
 
 
 View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
-  return this.fetchInitialEvents(deps.dateProfile);
-});
+  return this.fetchInitialEvents(deps.dateProfile)
+})
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-  this.setEvents(deps.initialEvents);
-  this.bindEventChanges();
+  this.setEvents(deps.initialEvents)
+  this.bindEventChanges()
 }, function() {
-  this.unbindEventChanges();
-  this.unsetEvents();
-});
+  this.unbindEventChanges()
+  this.unsetEvents()
+})
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-  this.requestEventsRender(this.get('currentEvents'));
+  this.requestEventsRender(this.get('currentEvents'))
 }, function() {
-  this.requestEventsUnrender();
-});
+  this.requestEventsUnrender()
+})
 
 
 View.watch('title', [ 'dateProfile' ], function(deps) {
-  return (this.title = this.computeTitle(deps.dateProfile)); // assign to View for legacy reasons
-});
+  return (this.title = this.computeTitle(deps.dateProfile)) // assign to View for legacy reasons
+})
 
 
 View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
-  var calendar = this.calendar;
-  var dateProfile = deps.dateProfile;
+  let calendar = this.calendar
+  let dateProfile = deps.dateProfile
 
   // DEPRECATED, but we need to keep it updated...
-  this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay);
-  this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay);
-  this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay);
-  this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay);
-});
+  this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay)
+  this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay)
+  this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay)
+  this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay)
+})

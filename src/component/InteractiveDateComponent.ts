@@ -34,27 +34,27 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     super(_view, _options)
 
     if (this.dateSelectingClass) {
-      this.dateClicking = new this.dateClickingClass(this);
+      this.dateClicking = new this.dateClickingClass(this)
     }
 
     if (this.dateSelectingClass) {
-      this.dateSelecting = new this.dateSelectingClass(this);
+      this.dateSelecting = new this.dateSelectingClass(this)
     }
 
     if (this.eventPointingClass) {
-      this.eventPointing = new this.eventPointingClass(this);
+      this.eventPointing = new this.eventPointingClass(this)
     }
 
     if (this.eventDraggingClass && this.eventPointing) {
-      this.eventDragging = new this.eventDraggingClass(this, this.eventPointing);
+      this.eventDragging = new this.eventDraggingClass(this, this.eventPointing)
     }
 
     if (this.eventResizingClass && this.eventPointing) {
-      this.eventResizing = new this.eventResizingClass(this, this.eventPointing);
+      this.eventResizing = new this.eventResizingClass(this, this.eventPointing)
     }
 
     if (this.externalDroppingClass) {
-      this.externalDropping = new this.externalDroppingClass(this);
+      this.externalDropping = new this.externalDroppingClass(this)
     }
   }
 
@@ -65,45 +65,45 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     super.setElement(el)
 
     if (this.dateClicking) {
-      this.dateClicking.bindToEl(el);
+      this.dateClicking.bindToEl(el)
     }
 
     if (this.dateSelecting) {
-      this.dateSelecting.bindToEl(el);
+      this.dateSelecting.bindToEl(el)
     }
 
-    this.bindAllSegHandlersToEl(el);
+    this.bindAllSegHandlersToEl(el)
   }
 
 
   removeElement() {
-    this.endInteractions();
+    this.endInteractions()
 
-    super.removeElement();
+    super.removeElement()
   }
 
 
   executeEventUnrender() {
-    this.endInteractions();
+    this.endInteractions()
 
     super.executeEventUnrender()
   }
 
 
   bindGlobalHandlers() {
-    super.bindGlobalHandlers();
+    super.bindGlobalHandlers()
 
     if (this.externalDropping) {
-      this.externalDropping.bindToDocument();
+      this.externalDropping.bindToDocument()
     }
   }
 
 
   unbindGlobalHandlers() {
-    super.unbindGlobalHandlers();
+    super.unbindGlobalHandlers()
 
     if (this.externalDropping) {
-      this.externalDropping.unbindFromDocument();
+      this.externalDropping.unbindFromDocument()
     }
   }
 
@@ -120,9 +120,9 @@ export default abstract class InteractiveDateComponent extends DateComponent {
           'a[data-goto]' // a clickable nav link
         )
       ) {
-        return handler.call(this, ev);
+        return handler.call(this, ev)
       }
-    });
+    })
   }
 
 
@@ -133,45 +133,45 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       this.eventResizing
     ].forEach(function(eventInteraction) {
       if (eventInteraction) {
-        eventInteraction.bindToEl(el);
+        eventInteraction.bindToEl(el)
       }
-    });
+    })
   }
 
 
   bindSegHandlerToEl(el, name, handler) {
     el.on(name, this.segSelector, (ev) => {
-      var seg = $(ev.currentTarget).data('fc-seg'); // grab segment data. put there by View::renderEventsPayload
+      let seg = $(ev.currentTarget).data('fc-seg') // grab segment data. put there by View::renderEventsPayload
 
       if (seg && !this.shouldIgnoreEventPointing()) {
-        return handler.call(this, seg, ev); // context will be the Grid
+        return handler.call(this, seg, ev) // context will be the Grid
       }
-    });
+    })
   }
 
 
   shouldIgnoreMouse() {
     // HACK
     // This will still work even though bindDateHandlerToEl doesn't use GlobalEmitter.
-    return GlobalEmitter.get().shouldIgnoreMouse();
+    return GlobalEmitter.get().shouldIgnoreMouse()
   }
 
 
   shouldIgnoreTouch() {
-    var view = this._getView();
+    let view = this._getView()
 
     // On iOS (and Android?) when a new selection is initiated overtop another selection,
     // the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
     // HACK: simply don't allow this to happen.
     // ALSO: prevent selection when an *event* is already raised.
-    return view.isSelected || view.selectedEvent;
+    return view.isSelected || view.selectedEvent
   }
 
 
   shouldIgnoreEventPointing() {
     // only call the handlers if there is not a drag/resize in progress
     return (this.eventDragging && this.eventDragging.isDragging) ||
-      (this.eventResizing && this.eventResizing.isResizing);
+      (this.eventResizing && this.eventResizing.isResizing)
   }
 
 
@@ -179,23 +179,23 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     return getEvIsTouch(ev) &&
       !this.canStartResize(seg, ev) &&
       (this.isEventDefDraggable(seg.footprint.eventDef) ||
-        this.isEventDefResizable(seg.footprint.eventDef));
+        this.isEventDefResizable(seg.footprint.eventDef))
   }
 
 
   canStartDrag(seg, ev) {
     return !this.canStartResize(seg, ev) &&
-      this.isEventDefDraggable(seg.footprint.eventDef);
+      this.isEventDefDraggable(seg.footprint.eventDef)
   }
 
 
   canStartResize(seg, ev) {
-    var view = this._getView();
-    var eventDef = seg.footprint.eventDef;
+    let view = this._getView()
+    let eventDef = seg.footprint.eventDef
 
     return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
       this.isEventDefResizable(eventDef) &&
-      $(ev.target).is('.fc-resizer');
+      $(ev.target).is('.fc-resizer')
   }
 
 
@@ -211,9 +211,9 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       this.eventResizing
     ].forEach(function(interaction) {
       if (interaction) {
-        interaction.end();
+        interaction.end()
       }
-    });
+    })
   }
 
 
@@ -223,33 +223,33 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
   // Computes if the given event is allowed to be dragged by the user
   isEventDefDraggable(eventDef) {
-    return this.isEventDefStartEditable(eventDef);
+    return this.isEventDefStartEditable(eventDef)
   }
 
 
   isEventDefStartEditable(eventDef) {
-    var isEditable = eventDef.isStartExplicitlyEditable();
+    let isEditable = eventDef.isStartExplicitlyEditable()
 
     if (isEditable == null) {
-      isEditable = this.opt('eventStartEditable');
+      isEditable = this.opt('eventStartEditable')
 
       if (isEditable == null) {
-        isEditable = this.isEventDefGenerallyEditable(eventDef);
+        isEditable = this.isEventDefGenerallyEditable(eventDef)
       }
     }
 
-    return isEditable;
+    return isEditable
   }
 
 
   isEventDefGenerallyEditable(eventDef) {
-    var isEditable = eventDef.isExplicitlyEditable();
+    let isEditable = eventDef.isExplicitlyEditable()
 
     if (isEditable == null) {
-      isEditable = this.opt('editable');
+      isEditable = this.opt('editable')
     }
 
-    return isEditable;
+    return isEditable
   }
 
 
@@ -259,28 +259,28 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
   // Computes if the given event is allowed to be resized from its starting edge
   isEventDefResizableFromStart(eventDef) {
-    return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef);
+    return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef)
   }
 
 
   // Computes if the given event is allowed to be resized from its ending edge
   isEventDefResizableFromEnd(eventDef) {
-    return this.isEventDefResizable(eventDef);
+    return this.isEventDefResizable(eventDef)
   }
 
 
   // Computes if the given event is allowed to be resized by the user at all
   isEventDefResizable(eventDef) {
-    var isResizable = eventDef.isDurationExplicitlyEditable();
+    let isResizable = eventDef.isDurationExplicitlyEditable()
 
     if (isResizable == null) {
-      isResizable = this.opt('eventDurationEditable');
+      isResizable = this.opt('eventDurationEditable')
 
       if (isResizable == null) {
-        isResizable = this.isEventDefGenerallyEditable(eventDef);
+        isResizable = this.isEventDefGenerallyEditable(eventDef)
       }
     }
-    return isResizable;
+    return isResizable
   }
 
 
@@ -292,10 +292,9 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   // TODO: port isTimeScale into this system?
   diffDates(a, b): moment.Duration {
     if (this.largeUnit) {
-      return diffByUnit(a, b, this.largeUnit);
-    }
-    else {
-      return diffDayTime(a, b);
+      return diffByUnit(a, b, this.largeUnit)
+    } else {
+      return diffDayTime(a, b)
     }
   }
 
@@ -303,33 +302,33 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   // is it allowed, in relation to the view's validRange?
   // NOTE: very similar to isExternalInstanceGroupAllowed
   isEventInstanceGroupAllowed(eventInstanceGroup) {
-    var view = this._getView();
-    var dateProfile = this.dateProfile;
-    var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
-    var i;
+    let view = this._getView()
+    let dateProfile = this.dateProfile
+    let eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges())
+    let i
 
     for (i = 0; i < eventFootprints.length; i++) {
       // TODO: just use getAllEventRanges directly
       if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
-        return false;
+        return false
       }
     }
 
-    return view.calendar.constraints.isEventInstanceGroupAllowed(eventInstanceGroup);
+    return view.calendar.constraints.isEventInstanceGroupAllowed(eventInstanceGroup)
   }
 
 
   // NOTE: very similar to isEventInstanceGroupAllowed
   // when it's a completely anonymous external drag, no event.
   isExternalInstanceGroupAllowed(eventInstanceGroup) {
-    var view = this._getView();
-    var dateProfile = this.dateProfile;
-    var eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges());
-    var i;
+    let view = this._getView()
+    let dateProfile = this.dateProfile
+    let eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges())
+    let i
 
     for (i = 0; i < eventFootprints.length; i++) {
       if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
-        return false;
+        return false
       }
     }
 
@@ -339,11 +338,11 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       //  because we don't want calendar's constraint system to depend on a component's
       //  determination of footprints.
       if (!view.calendar.constraints.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
-        return false;
+        return false
       }
     }
 
-    return true;
+    return true
   }
 
 }

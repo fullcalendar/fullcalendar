@@ -7,17 +7,17 @@ export default class EventFootprint {
 
 
   constructor(componentFootprint, eventDef, eventInstance) {
-    this.componentFootprint = componentFootprint;
-    this.eventDef = eventDef;
+    this.componentFootprint = componentFootprint
+    this.eventDef = eventDef
 
     if (eventInstance) {
-      this.eventInstance = eventInstance;
+      this.eventInstance = eventInstance
     }
   }
 
 
   getEventLegacy() {
-    return (this.eventInstance || this.eventDef).toLegacy();
+    return (this.eventInstance || this.eventDef).toLegacy()
   }
 
 }
