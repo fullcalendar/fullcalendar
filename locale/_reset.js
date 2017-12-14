@@ -5,5 +5,5 @@ moment.locale('en');
 FullCalendar.locale('en');
 
 if (window.jQuery.datepicker) {
-	window.jQuery.datepicker.setDefaults(window.jQuery.datepicker.regional['']);
+  window.jQuery.datepicker.setDefaults(window.jQuery.datepicker.regional['']);
 }
