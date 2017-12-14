@@ -17,41 +17,6 @@ export default class EventDateProfile {
   }
 
 
-  isAllDay() { // why recompute this every time?
-    return !(this.start.hasTime() || (this.end && this.end.hasTime()))
-  }
-
-
-  /*
-  Needs a Calendar object
-  */
-  buildUnzonedRange(calendar) {
-    let startMs = this.start.clone().stripZone().valueOf()
-    let endMs = this.getEnd(calendar).stripZone().valueOf()
-
-    return new UnzonedRange(startMs, endMs)
-  }
-
-
-  /*
-  Needs a Calendar object
-  */
-  getEnd(calendar) {
-    return this.end ?
-      this.end.clone() :
-      // derive the end from the start and allDay. compute allDay if necessary
-      calendar.getDefaultEventEnd(
-        this.isAllDay(),
-        this.start
-      )
-  }
-
-
-  static isStandardProp(propName) {
-    return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay'
-  }
-
-
   /*
   Needs an EventSource object
   */
@@ -103,6 +68,41 @@ export default class EventDateProfile {
     }
 
     return new EventDateProfile(start, end, calendar)
+  }
+
+
+  static isStandardProp(propName) {
+    return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay'
+  }
+
+
+  isAllDay() { // why recompute this every time?
+    return !(this.start.hasTime() || (this.end && this.end.hasTime()))
+  }
+
+
+  /*
+  Needs a Calendar object
+  */
+  buildUnzonedRange(calendar) {
+    let startMs = this.start.clone().stripZone().valueOf()
+    let endMs = this.getEnd(calendar).stripZone().valueOf()
+
+    return new UnzonedRange(startMs, endMs)
+  }
+
+
+  /*
+  Needs a Calendar object
+  */
+  getEnd(calendar) {
+    return this.end ?
+      this.end.clone() :
+      // derive the end from the start and allDay. compute allDay if necessary
+      calendar.getDefaultEventEnd(
+        this.isAllDay(),
+        this.start
+      )
   }
 
 }

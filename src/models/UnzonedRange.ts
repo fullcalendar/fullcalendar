@@ -30,6 +30,47 @@ export default class UnzonedRange {
     }
   }
 
+
+  /*
+  SIDEEFFECT: will mutate eventRanges.
+  Will return a new array result.
+  Only works for non-open-ended ranges.
+  */
+  static invertRanges(ranges, constraintRange) {
+    let invertedRanges = []
+    let startMs = constraintRange.startMs // the end of the previous range. the start of the new range
+    let i
+    let dateRange
+
+    // ranges need to be in order. required for our date-walking algorithm
+    ranges.sort(compareUnzonedRanges)
+
+    for (i = 0; i < ranges.length; i++) {
+      dateRange = ranges[i]
+
+      // add the span of time before the event (if there is any)
+      if (dateRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)
+        invertedRanges.push(
+          new UnzonedRange(startMs, dateRange.startMs)
+        )
+      }
+
+      if (dateRange.endMs > startMs) {
+        startMs = dateRange.endMs
+      }
+    }
+
+    // add the span of time after the last event (if there is any)
+    if (startMs < constraintRange.endMs) { // compare millisecond time (skip any ambig logic)
+      invertedRanges.push(
+        new UnzonedRange(startMs, constraintRange.endMs)
+      )
+    }
+
+    return invertedRanges
+  }
+
+
   intersect(otherRange) {
     let startMs = this.startMs
     let endMs = this.endMs
@@ -143,46 +184,6 @@ export default class UnzonedRange {
       unit,
       true
     )
-  }
-
-
-  /*
-  SIDEEFFECT: will mutate eventRanges.
-  Will return a new array result.
-  Only works for non-open-ended ranges.
-  */
-  static invertRanges(ranges, constraintRange) {
-    let invertedRanges = []
-    let startMs = constraintRange.startMs // the end of the previous range. the start of the new range
-    let i
-    let dateRange
-
-    // ranges need to be in order. required for our date-walking algorithm
-    ranges.sort(compareUnzonedRanges)
-
-    for (i = 0; i < ranges.length; i++) {
-      dateRange = ranges[i]
-
-      // add the span of time before the event (if there is any)
-      if (dateRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)
-        invertedRanges.push(
-          new UnzonedRange(startMs, dateRange.startMs)
-        )
-      }
-
-      if (dateRange.endMs > startMs) {
-        startMs = dateRange.endMs
-      }
-    }
-
-    // add the span of time after the last event (if there is any)
-    if (startMs < constraintRange.endMs) { // compare millisecond time (skip any ambig logic)
-      invertedRanges.push(
-        new UnzonedRange(startMs, constraintRange.endMs)
-      )
-    }
-
-    return invertedRanges
   }
 
 }

@@ -19,6 +19,66 @@ export default class EventDefMutation {
   miscProps: any
 
 
+  static createFromRawProps(eventInstance, rawProps, largeUnit) {
+    let eventDef = eventInstance.def
+    let dateProps: any = {}
+    let standardProps: any = {}
+    let miscProps: any = {}
+    let verbatimStandardProps: any = {}
+    let eventDefId = null
+    let className = null
+    let propName
+    let dateProfile
+    let dateMutation
+    let defMutation
+
+    for (propName in rawProps) {
+      if (EventDateProfile.isStandardProp(propName)) {
+        dateProps[propName] = rawProps[propName]
+      } else if (eventDef.isStandardProp(propName)) {
+        standardProps[propName] = rawProps[propName]
+      } else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
+        miscProps[propName] = rawProps[propName]
+      }
+    }
+
+    dateProfile = EventDateProfile.parse(dateProps, eventDef.source)
+
+    if (dateProfile) { // no failure?
+      dateMutation = EventDefDateMutation.createFromDiff(
+        eventInstance.dateProfile,
+        dateProfile,
+        largeUnit
+      )
+    }
+
+    if (standardProps.id !== eventDef.id) {
+      eventDefId = standardProps.id // only apply if there's a change
+    }
+
+    if (!isArraysEqual(standardProps.className, eventDef.className)) {
+      className = standardProps.className // only apply if there's a change
+    }
+
+    EventDef.copyVerbatimStandardProps(
+      standardProps, // src
+      verbatimStandardProps // dest
+    )
+
+    defMutation = new EventDefMutation()
+    defMutation.eventDefId = eventDefId
+    defMutation.className = className
+    defMutation.verbatimStandardProps = verbatimStandardProps
+    defMutation.miscProps = miscProps
+
+    if (dateMutation) {
+      defMutation.dateMutation = dateMutation
+    }
+
+    return defMutation
+  }
+
+
   /*
   eventDef assumed to be a SingleEventDef.
   returns an undo function.
@@ -81,66 +141,6 @@ export default class EventDefMutation {
 
   isEmpty() {
     return !this.dateMutation
-  }
-
-
-  static createFromRawProps(eventInstance, rawProps, largeUnit) {
-    let eventDef = eventInstance.def
-    let dateProps: any = {}
-    let standardProps: any = {}
-    let miscProps: any = {}
-    let verbatimStandardProps: any = {}
-    let eventDefId = null
-    let className = null
-    let propName
-    let dateProfile
-    let dateMutation
-    let defMutation
-
-    for (propName in rawProps) {
-      if (EventDateProfile.isStandardProp(propName)) {
-        dateProps[propName] = rawProps[propName]
-      } else if (eventDef.isStandardProp(propName)) {
-        standardProps[propName] = rawProps[propName]
-      } else if (eventDef.miscProps[propName] !== rawProps[propName]) { // only if changed
-        miscProps[propName] = rawProps[propName]
-      }
-    }
-
-    dateProfile = EventDateProfile.parse(dateProps, eventDef.source)
-
-    if (dateProfile) { // no failure?
-      dateMutation = EventDefDateMutation.createFromDiff(
-        eventInstance.dateProfile,
-        dateProfile,
-        largeUnit
-      )
-    }
-
-    if (standardProps.id !== eventDef.id) {
-      eventDefId = standardProps.id // only apply if there's a change
-    }
-
-    if (!isArraysEqual(standardProps.className, eventDef.className)) {
-      className = standardProps.className // only apply if there's a change
-    }
-
-    EventDef.copyVerbatimStandardProps(
-      standardProps, // src
-      verbatimStandardProps // dest
-    )
-
-    defMutation = new EventDefMutation()
-    defMutation.eventDefId = eventDefId
-    defMutation.className = className
-    defMutation.verbatimStandardProps = verbatimStandardProps
-    defMutation.miscProps = miscProps
-
-    if (dateMutation) {
-      defMutation.dateMutation = dateMutation
-    }
-
-    return defMutation
   }
 
 }

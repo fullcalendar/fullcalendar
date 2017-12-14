@@ -7,10 +7,12 @@ import {
 
 export default abstract class EventDef {
 
-  applyProps: ParsableModelInterface['applyProps']
-  isStandardProp: ParsableModelInterface['isStandardProp']
+  static uuid: number = 0
   static defineStandardProps = ParsableModelMixin.defineStandardProps
   static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+
+  applyProps: ParsableModelInterface['applyProps']
+  isStandardProp: ParsableModelInterface['isStandardProp']
 
   source: any // required
 
@@ -43,8 +45,28 @@ export default abstract class EventDef {
   }
 
 
-  abstract isAllDay() // subclasses must implement
+  static parse(rawInput, source) {
+    let def = new (this as any)(source)
 
+    if (def.applyProps(rawInput)) {
+      return def
+    }
+
+    return false
+  }
+
+
+  static normalizeId(id) { // TODO: converge with EventSource
+    return String(id)
+  }
+
+
+  static generateId() {
+    return '_fc' + (EventDef.uuid++)
+  }
+
+
+  abstract isAllDay() // subclasses must implement
 
   abstract buildInstances(unzonedRange) // subclasses must implement
 
@@ -187,43 +209,9 @@ export default abstract class EventDef {
     $.extend(this.miscProps, rawProps)
   }
 
-
-  static parse(rawInput, source) {
-    let def = new (this as any)(source)
-
-    if (def.applyProps(rawInput)) {
-      return def
-    }
-
-    return false
-  }
-
-
-  // IDs
-  // ---------------------------------------------------------------------------------------------------------------------
-  // TODO: converge with EventSource
-
-
-  static uuid: number = 0
-
-
-  static normalizeId(id) {
-    return String(id)
-  }
-
-
-  static generateId() {
-    return '_fc' + (EventDef.uuid++)
-  }
-
 }
 
 ParsableModelMixin.mixInto(EventDef)
-
-
-// Parsing
-// ---------------------------------------------------------------------------------------------------------------------
-
 
 EventDef.defineStandardProps({
   // not automatically assigned (`false`)

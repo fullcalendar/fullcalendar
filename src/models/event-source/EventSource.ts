@@ -9,10 +9,12 @@ import EventDefParser from '../event/EventDefParser'
 
 export default class EventSource extends Class {
 
-  applyProps: ParsableModelInterface['applyProps']
-  isStandardProp: ParsableModelInterface['isStandardProp']
+  static uuid: number = 0
   static defineStandardProps = ParsableModelMixin.defineStandardProps
   static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+
+  applyProps: ParsableModelInterface['applyProps']
+  isStandardProp: ParsableModelInterface['isStandardProp']
 
   calendar: any
 
@@ -40,6 +42,31 @@ export default class EventSource extends Class {
     this.calendar = calendar
     this.className = []
     this.uid = String(EventSource.uuid++)
+  }
+
+
+  /*
+  rawInput can be any data type!
+  */
+  static parse(rawInput, calendar) {
+    let source = new this(calendar)
+
+    if (typeof rawInput === 'object') {
+      if (source.applyProps(rawInput)) {
+        return source
+      }
+    }
+
+    return false
+  }
+
+
+  static normalizeId(id) { // TODO: converge with EventDef
+    if (id) {
+      return String(id)
+    }
+
+    return null
   }
 
 
@@ -112,37 +139,6 @@ export default class EventSource extends Class {
     }
 
     return true
-  }
-
-
-  /*
-  rawInput can be any data type!
-  */
-  static parse(rawInput, calendar) {
-    let source = new this(calendar)
-
-    if (typeof rawInput === 'object') {
-      if (source.applyProps(rawInput)) {
-        return source
-      }
-    }
-
-    return false
-  }
-
-
-  // IDs
-  // -----------------------------------------------------------------------------------------------------------------
-  // TODO: converge with EventDef
-
-  static uuid: number = 0
-
-  static normalizeId(id) {
-    if (id) {
-      return String(id)
-    }
-
-    return null
   }
 
 }

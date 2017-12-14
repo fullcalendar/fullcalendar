@@ -18,6 +18,24 @@ export default class ArrayEventSource extends EventSource {
   }
 
 
+  static parse(rawInput, calendar) {
+    let rawProps
+
+    // normalize raw input
+    if ($.isArray(rawInput.events)) { // extended form
+      rawProps = rawInput
+    } else if ($.isArray(rawInput)) { // short form
+      rawProps = { events: rawInput }
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar)
+    }
+
+    return false
+  }
+
+
   setRawEventDefs(rawEventDefs) {
     this.rawEventDefs = rawEventDefs
     this.eventDefs = this.parseEventDefs(rawEventDefs)
@@ -76,24 +94,6 @@ export default class ArrayEventSource extends EventSource {
     this.setRawEventDefs(rawProps.events)
 
     return superSuccess
-  }
-
-
-  static parse(rawInput, calendar) {
-    let rawProps
-
-    // normalize raw input
-    if ($.isArray(rawInput.events)) { // extended form
-      rawProps = rawInput
-    } else if ($.isArray(rawInput)) { // short form
-      rawProps = { events: rawInput }
-    }
-
-    if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar)
-    }
-
-    return false
   }
 
 }

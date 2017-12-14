@@ -19,6 +19,24 @@ export default class JsonFeedEventSource extends EventSource {
   ajaxSettings: any // does not include url
 
 
+  static parse(rawInput, calendar) {
+    let rawProps
+
+    // normalize raw input
+    if (typeof rawInput.url === 'string') { // extended form
+      rawProps = rawInput
+    } else if (typeof rawInput === 'string') { // short form
+      rawProps = { url: rawInput }
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar)
+    }
+
+    return false
+  }
+
+
   fetch(start, end, timezone) {
     let ajaxSettings = this.ajaxSettings
     let onSuccess = ajaxSettings.success
@@ -121,24 +139,6 @@ export default class JsonFeedEventSource extends EventSource {
 
   applyMiscProps(rawProps) {
     this.ajaxSettings = rawProps
-  }
-
-
-  static parse(rawInput, calendar) {
-    let rawProps
-
-    // normalize raw input
-    if (typeof rawInput.url === 'string') { // extended form
-      rawProps = rawInput
-    } else if (typeof rawInput === 'string') { // short form
-      rawProps = { url: rawInput }
-    }
-
-    if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar)
-    }
-
-    return false
   }
 
 }

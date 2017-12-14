@@ -7,6 +7,125 @@ import { stripHtmlEntities } from './util'
 export const localeOptionHash = {};
 (exportHooks as any).locales = localeOptionHash
 
+
+// NOTE: can't guarantee any of these computations will run because not every locale has datepicker
+// configs, so make sure there are English fallbacks for these in the defaults file.
+const dpComputableOptions = {
+
+  buttonText: function(dpOptions) {
+    return {
+      // the translations sometimes wrongly contain HTML entities
+      prev: stripHtmlEntities(dpOptions.prevText),
+      next: stripHtmlEntities(dpOptions.nextText),
+      today: stripHtmlEntities(dpOptions.currentText)
+    }
+  },
+
+  // Produces format strings like "MMMM YYYY" -> "September 2014"
+  monthYearFormat: function(dpOptions) {
+    return dpOptions.showMonthAfterYear ?
+      'YYYY[' + dpOptions.yearSuffix + '] MMMM' :
+      'MMMM YYYY[' + dpOptions.yearSuffix + ']'
+  }
+
+}
+
+
+const momComputableOptions = {
+
+  // Produces format strings like "ddd M/D" -> "Fri 9/15"
+  dayOfMonthFormat: function(momOptions, fcOptions) {
+    let format = momOptions.longDateFormat('l') // for the format like "M/D/YYYY"
+
+    // strip the year off the edge, as well as other misc non-whitespace chars
+    format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, '')
+
+    if (fcOptions.isRTL) {
+      format += ' ddd' // for RTL, add day-of-week to end
+    } else {
+      format = 'ddd ' + format // for LTR, add day-of-week to beginning
+    }
+    return format
+  },
+
+  // Produces format strings like "h:mma" -> "6:00pm"
+  mediumTimeFormat: function(momOptions) { // can't be called `timeFormat` because collides with option
+    return momOptions.longDateFormat('LT')
+      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+  },
+
+  // Produces format strings like "h(:mm)a" -> "6pm" / "6:30pm"
+  smallTimeFormat: function(momOptions) {
+    return momOptions.longDateFormat('LT')
+      .replace(':mm', '(:mm)')
+      .replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
+      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+  },
+
+  // Produces format strings like "h(:mm)t" -> "6p" / "6:30p"
+  extraSmallTimeFormat: function(momOptions) {
+    return momOptions.longDateFormat('LT')
+      .replace(':mm', '(:mm)')
+      .replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
+      .replace(/\s*a$/i, 't') // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
+  },
+
+  // Produces format strings like "ha" / "H" -> "6pm" / "18"
+  hourFormat: function(momOptions) {
+    return momOptions.longDateFormat('LT')
+      .replace(':mm', '')
+      .replace(/(\Wmm)$/, '') // like above, but for foreign locales
+      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+  },
+
+  // Produces format strings like "h:mm" -> "6:30" (with no AM/PM)
+  noMeridiemTimeFormat: function(momOptions) {
+    return momOptions.longDateFormat('LT')
+      .replace(/\s*a$/i, '') // remove trailing AM/PM
+  }
+
+}
+
+
+// options that should be computed off live calendar options (considers override options)
+// TODO: best place for this? related to locale?
+// TODO: flipping text based on isRTL is a bad idea because the CSS `direction` might want to handle it
+const instanceComputableOptions = {
+
+  // Produces format strings for results like "Mo 16"
+  smallDayDateFormat: function(options) {
+    return options.isRTL ?
+      'D dd' :
+      'dd D'
+  },
+
+  // Produces format strings for results like "Wk 5"
+  weekFormat: function(options) {
+    return options.isRTL ?
+      'w[ ' + options.weekNumberTitle + ']' :
+      '[' + options.weekNumberTitle + ' ]w'
+  },
+
+  // Produces format strings for results like "Wk5"
+  smallWeekFormat: function(options) {
+    return options.isRTL ?
+      'w[' + options.weekNumberTitle + ']' :
+      '[' + options.weekNumberTitle + ']w'
+  }
+
+}
+
+
+// TODO: make these computable properties in optionsManager
+export function populateInstanceComputableOptions(options) {
+  $.each(instanceComputableOptions, function(name, func) {
+    if (options[name] == null) {
+      options[name] = func(options)
+    }
+  })
+}
+
+
 // Initialize jQuery UI datepicker translations while using some of the translations
 // Will set this as the default locales for datepicker.
 export function datepickerLocale(localeCode, dpLocaleCode, dpOptions) {
@@ -70,122 +189,6 @@ export function locale(localeCode, newFcOptions) {
 
   // set it as the default locale for FullCalendar
   globalDefaults.locale = localeCode
-}
-
-
-// NOTE: can't guarantee any of these computations will run because not every locale has datepicker
-// configs, so make sure there are English fallbacks for these in the defaults file.
-let dpComputableOptions = {
-
-  buttonText: function(dpOptions) {
-    return {
-      // the translations sometimes wrongly contain HTML entities
-      prev: stripHtmlEntities(dpOptions.prevText),
-      next: stripHtmlEntities(dpOptions.nextText),
-      today: stripHtmlEntities(dpOptions.currentText)
-    }
-  },
-
-  // Produces format strings like "MMMM YYYY" -> "September 2014"
-  monthYearFormat: function(dpOptions) {
-    return dpOptions.showMonthAfterYear ?
-      'YYYY[' + dpOptions.yearSuffix + '] MMMM' :
-      'MMMM YYYY[' + dpOptions.yearSuffix + ']'
-  }
-
-}
-
-let momComputableOptions = {
-
-  // Produces format strings like "ddd M/D" -> "Fri 9/15"
-  dayOfMonthFormat: function(momOptions, fcOptions) {
-    let format = momOptions.longDateFormat('l') // for the format like "M/D/YYYY"
-
-    // strip the year off the edge, as well as other misc non-whitespace chars
-    format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, '')
-
-    if (fcOptions.isRTL) {
-      format += ' ddd' // for RTL, add day-of-week to end
-    } else {
-      format = 'ddd ' + format // for LTR, add day-of-week to beginning
-    }
-    return format
-  },
-
-  // Produces format strings like "h:mma" -> "6:00pm"
-  mediumTimeFormat: function(momOptions) { // can't be called `timeFormat` because collides with option
-    return momOptions.longDateFormat('LT')
-      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-  },
-
-  // Produces format strings like "h(:mm)a" -> "6pm" / "6:30pm"
-  smallTimeFormat: function(momOptions) {
-    return momOptions.longDateFormat('LT')
-      .replace(':mm', '(:mm)')
-      .replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
-      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-  },
-
-  // Produces format strings like "h(:mm)t" -> "6p" / "6:30p"
-  extraSmallTimeFormat: function(momOptions) {
-    return momOptions.longDateFormat('LT')
-      .replace(':mm', '(:mm)')
-      .replace(/(\Wmm)$/, '($1)') // like above, but for foreign locales
-      .replace(/\s*a$/i, 't') // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
-  },
-
-  // Produces format strings like "ha" / "H" -> "6pm" / "18"
-  hourFormat: function(momOptions) {
-    return momOptions.longDateFormat('LT')
-      .replace(':mm', '')
-      .replace(/(\Wmm)$/, '') // like above, but for foreign locales
-      .replace(/\s*a$/i, 'a') // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-  },
-
-  // Produces format strings like "h:mm" -> "6:30" (with no AM/PM)
-  noMeridiemTimeFormat: function(momOptions) {
-    return momOptions.longDateFormat('LT')
-      .replace(/\s*a$/i, '') // remove trailing AM/PM
-  }
-
-}
-
-
-// options that should be computed off live calendar options (considers override options)
-// TODO: best place for this? related to locale?
-// TODO: flipping text based on isRTL is a bad idea because the CSS `direction` might want to handle it
-let instanceComputableOptions = {
-
-  // Produces format strings for results like "Mo 16"
-  smallDayDateFormat: function(options) {
-    return options.isRTL ?
-      'D dd' :
-      'dd D'
-  },
-
-  // Produces format strings for results like "Wk 5"
-  weekFormat: function(options) {
-    return options.isRTL ?
-      'w[ ' + options.weekNumberTitle + ']' :
-      '[' + options.weekNumberTitle + ' ]w'
-  },
-
-  // Produces format strings for results like "Wk5"
-  smallWeekFormat: function(options) {
-    return options.isRTL ?
-      'w[' + options.weekNumberTitle + ']' :
-      '[' + options.weekNumberTitle + ']w'
-  }
-
-}
-
-// TODO: make these computable properties in optionsManager
-export function populateInstanceComputableOptions(options) {
-  $.each(instanceComputableOptions, function(name, func) {
-    if (options[name] == null) {
-      options[name] = func(options)
-    }
-  })
 }
 
 

@@ -26,6 +26,16 @@ export default class Model extends Class {
     this.constructed()
   }
 
+  static watch(name, ...args) {
+    // subclasses should make a masked-copy of the superclass's map
+    // TODO: write test
+    if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
+      this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs)
+    }
+
+    this.prototype._globalWatchArgs[name] = args
+  }
+
   constructed() {
     // useful for monkeypatching. TODO: BaseClass?
   }
@@ -309,16 +319,6 @@ export default class Model extends Class {
     }
   }
 
-
-  static watch(name, ...args) {
-    // subclasses should make a masked-copy of the superclass's map
-    // TODO: write test
-    if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
-      this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs)
-    }
-
-    this.prototype._globalWatchArgs[name] = args
-  }
 }
 
 Model.prototype._globalWatchArgs = {} // mutation protection in Model.watch

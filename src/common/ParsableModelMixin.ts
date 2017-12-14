@@ -26,6 +26,33 @@ export default class ParsableModelMixin extends Mixin implements ParsableModelIn
 
   standardPropMap: any
 
+
+  static defineStandardProps(propDefs) {
+    let proto = this.prototype
+
+    if (!proto.hasOwnProperty('standardPropMap')) {
+      proto.standardPropMap = Object.create(proto.standardPropMap)
+    }
+
+    copyOwnProps(propDefs, proto.standardPropMap)
+  }
+
+
+  static copyVerbatimStandardProps(src, dest) {
+    let map = this.prototype.standardPropMap
+    let propName
+
+    for (propName in map) {
+      if (
+        src[propName] != null && // in the src object?
+        map[propName] === true // false means "copy verbatim"
+      ) {
+        dest[propName] = src[propName]
+      }
+    }
+  }
+
+
   /*
   Returns true/false for success.
   Meant to be only called ONCE, at object creation.
@@ -74,32 +101,6 @@ export default class ParsableModelMixin extends Mixin implements ParsableModelIn
   */
   isStandardProp(propName) {
     return propName in this.standardPropMap
-  }
-
-
-  static defineStandardProps(propDefs) {
-    let proto = this.prototype
-
-    if (!proto.hasOwnProperty('standardPropMap')) {
-      proto.standardPropMap = Object.create(proto.standardPropMap)
-    }
-
-    copyOwnProps(propDefs, proto.standardPropMap)
-  }
-
-
-  static copyVerbatimStandardProps(src, dest) {
-    let map = this.prototype.standardPropMap
-    let propName
-
-    for (propName in map) {
-      if (
-        src[propName] != null && // in the src object?
-        map[propName] === true // false means "copy verbatim"
-      ) {
-        dest[propName] = src[propName]
-      }
-    }
   }
 
 }

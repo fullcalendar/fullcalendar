@@ -8,6 +8,24 @@ export default class FuncEventSource extends EventSource {
   func: any
 
 
+  static parse(rawInput, calendar) {
+    let rawProps
+
+    // normalize raw input
+    if ($.isFunction(rawInput.events)) { // extended form
+      rawProps = rawInput
+    } else if ($.isFunction(rawInput)) { // short form
+      rawProps = { events: rawInput }
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar)
+    }
+
+    return false
+  }
+
+
   fetch(start, end, timezone) {
     this.calendar.pushLoading()
 
@@ -38,24 +56,6 @@ export default class FuncEventSource extends EventSource {
     this.func = rawProps.events
 
     return superSuccess
-  }
-
-
-  static parse(rawInput, calendar) {
-    let rawProps
-
-    // normalize raw input
-    if ($.isFunction(rawInput.events)) { // extended form
-      rawProps = rawInput
-    } else if ($.isFunction(rawInput)) { // short form
-      rawProps = { events: rawInput }
-    }
-
-    if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar)
-    }
-
-    return false
   }
 
 }

@@ -15,6 +15,48 @@ export default class EventDefDateMutation {
   endDelta: any
 
 
+  static createFromDiff(dateProfile0, dateProfile1, largeUnit) {
+    let clearEnd = dateProfile0.end && !dateProfile1.end
+    let forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay()
+    let forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay()
+    let dateDelta
+    let endDiff
+    let endDelta
+    let mutation
+
+    // subtracts the dates in the appropriate way, returning a duration
+    function subtractDates(date1, date0) { // date1 - date0
+      if (largeUnit) {
+        return diffByUnit(date1, date0, largeUnit) // poorly named
+      } else if (dateProfile1.isAllDay()) {
+        return diffDay(date1, date0) // poorly named
+      } else {
+        return diffDayTime(date1, date0) // poorly named
+      }
+    }
+
+    dateDelta = subtractDates(dateProfile1.start, dateProfile0.start)
+
+    if (dateProfile1.end) {
+      // use unzonedRanges because dateProfile0.end might be null
+      endDiff = subtractDates(
+        dateProfile1.unzonedRange.getEnd(),
+        dateProfile0.unzonedRange.getEnd()
+      )
+      endDelta = endDiff.subtract(dateDelta)
+    }
+
+    mutation = new EventDefDateMutation()
+    mutation.clearEnd = clearEnd
+    mutation.forceTimed = forceTimed
+    mutation.forceAllDay = forceAllDay
+    mutation.setDateDelta(dateDelta)
+    mutation.setEndDelta(endDelta)
+
+    return mutation
+  }
+
+
   /*
   returns an undo function.
   */
@@ -120,48 +162,6 @@ export default class EventDefDateMutation {
   isEmpty() {
     return !this.clearEnd && !this.forceTimed && !this.forceAllDay &&
       !this.dateDelta && !this.startDelta && !this.endDelta
-  }
-
-
-  static createFromDiff(dateProfile0, dateProfile1, largeUnit) {
-    let clearEnd = dateProfile0.end && !dateProfile1.end
-    let forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay()
-    let forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay()
-    let dateDelta
-    let endDiff
-    let endDelta
-    let mutation
-
-    // subtracts the dates in the appropriate way, returning a duration
-    function subtractDates(date1, date0) { // date1 - date0
-      if (largeUnit) {
-        return diffByUnit(date1, date0, largeUnit) // poorly named
-      } else if (dateProfile1.isAllDay()) {
-        return diffDay(date1, date0) // poorly named
-      } else {
-        return diffDayTime(date1, date0) // poorly named
-      }
-    }
-
-    dateDelta = subtractDates(dateProfile1.start, dateProfile0.start)
-
-    if (dateProfile1.end) {
-      // use unzonedRanges because dateProfile0.end might be null
-      endDiff = subtractDates(
-        dateProfile1.unzonedRange.getEnd(),
-        dateProfile0.unzonedRange.getEnd()
-      )
-      endDelta = endDiff.subtract(dateDelta)
-    }
-
-    mutation = new EventDefDateMutation()
-    mutation.clearEnd = clearEnd
-    mutation.forceTimed = forceTimed
-    mutation.forceAllDay = forceAllDay
-    mutation.setDateDelta(dateDelta)
-    mutation.setEndDelta(endDelta)
-
-    return mutation
   }
 
 }

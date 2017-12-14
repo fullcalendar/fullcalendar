@@ -34,6 +34,35 @@ export default class GlobalEmitter {
   handleTouchMoveProxy: (ev) => void
 
 
+  // gets the singleton
+  static get() {
+    if (!globalEmitter) {
+      globalEmitter = new GlobalEmitter()
+      globalEmitter.bind()
+    }
+
+    return globalEmitter
+  }
+
+
+  // called when an object knows it will need a GlobalEmitter in the near future.
+  static needed() {
+    GlobalEmitter.get() // ensures globalEmitter
+    neededCount++
+  }
+
+
+  // called when the object that originally called needed() doesn't need a GlobalEmitter anymore.
+  static unneeded() {
+    neededCount--
+
+    if (!neededCount) { // nobody else needs it
+      globalEmitter.unbind()
+      globalEmitter = null
+    }
+  }
+
+
   bind() {
     this.listenTo($(document), {
       touchstart: this.handleTouchStart,
@@ -191,39 +220,6 @@ export default class GlobalEmitter {
 
   shouldIgnoreMouse() {
     return this.isTouching || Boolean(this.mouseIgnoreDepth)
-  }
-
-
-  // Singleton
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // gets the singleton
-  static get() {
-    if (!globalEmitter) {
-      globalEmitter = new GlobalEmitter()
-      globalEmitter.bind()
-    }
-
-    return globalEmitter
-  }
-
-
-  // called when an object knows it will need a GlobalEmitter in the near future.
-  static needed() {
-    GlobalEmitter.get() // ensures globalEmitter
-    neededCount++
-  }
-
-
-  // called when the object that originally called needed() doesn't need a GlobalEmitter anymore.
-  static unneeded() {
-    neededCount--
-
-    if (!neededCount) { // nobody else needs it
-      globalEmitter.unbind()
-      globalEmitter = null
-    }
   }
 
 }

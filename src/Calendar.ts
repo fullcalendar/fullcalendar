@@ -27,6 +27,11 @@ import { getThemeSystemClass } from './theme/ThemeRegistry'
 
 export default class Calendar {
 
+  // not for internal use. use options module directly instead.
+  static defaults: any = globalDefaults
+  static englishDefaults: any = englishDefaults
+  static rtlDefaults: any = rtlDefaults
+
   on: EmitterInterface['on']
   one: EmitterInterface['one']
   off: EmitterInterface['off']
@@ -35,11 +40,6 @@ export default class Calendar {
   hasHandlers: EmitterInterface['hasHandlers']
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
-
-  // not for internal use. use options module directly instead.
-  static defaults: any = globalDefaults
-  static englishDefaults: any = englishDefaults
-  static rtlDefaults: any = rtlDefaults
 
   view: any // current View object
   viewsByType: any // holds all instantiated view instances, current or not
