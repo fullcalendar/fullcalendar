@@ -1,4 +1,3 @@
-import * as EventDragUtils from './EventDragUtils'
 import * as DayGridEventDragUtils from './DayGridEventDragUtils'
 
 

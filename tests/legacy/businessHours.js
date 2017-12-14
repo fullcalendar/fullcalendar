@@ -1,7 +1,6 @@
 // most other businessHours tests are in background-events.js
 
 import { doElsMatchSegs, getBoundingRect } from '../lib/dom-utils'
-import { getTimeGridTop, getTimeGridDayEls, getTimeGridSlotEls } from '../lib/time-grid'
 
 describe('businessHours', function() {
   pushOptions({
@@ -263,7 +262,7 @@ describe('businessHours', function() {
   function getTimeGridSlotEls(timeDuration) {
     timeDuration = moment.duration(timeDuration)
     var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
-    if (date.date() == 1) { // ensure no time overflow/underflow
+    if (date.date() === 1) { // ensure no time overflow/underflow
       return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]')
     } else {
       return $()

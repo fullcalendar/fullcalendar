@@ -20,10 +20,6 @@ describe('eventLimit popover', function() {
     }
   })
 
-  function init() {
-    $('.fc-more').simulate('click')
-  }
-
   it('closes when user clicks the X and trigger eventDestroy for every render', function() {
     var eventsRendered = {}
     var renderCount = 0

@@ -66,10 +66,10 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
           }
 
           if (dropDate.hasTime()) { // dropped on a slot
-            successfulDrop = eventObj.start.format() == dropDate.format() // compare exact times
+            successfulDrop = eventObj.start.format() === dropDate.format() // compare exact times
           } else { // dropped on a whole day
             // only compare days
-            successfulDrop = eventObj.start.format('YYYY-MM-DD') == dropDate.format('YYYY-MM-DD')
+            successfulDrop = eventObj.start.format('YYYY-MM-DD') === dropDate.format('YYYY-MM-DD')
           }
 
           expect(successfulDrop).toBe(allowed)
@@ -157,6 +157,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 export function testSelection(options, startTime, end, expectSuccess, callback) {
   var successfulSelection = false
   var calendar
+  var start
   var firstDayEl, lastDayEl
   var firstSlatIndex, lastSlatIndex
   var firstSlatEl, lastSlatEl

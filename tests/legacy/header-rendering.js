@@ -79,7 +79,6 @@ describe('header rendering', function() {
     [ true, false ].forEach(function(isRTL) {
       describe('when isRTL is ' + isRTL, function() {
         beforeEach(function() {
-          var options = {}
           $('#calendar').fullCalendar({
             header: {
               left: 'prev',

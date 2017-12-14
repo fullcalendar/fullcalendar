@@ -39,6 +39,7 @@ describe('lazyFetching', function() {
     })
 
     it('will fetch each new week range', function() {
+      var args
       var options = {
         events: function(start, end, timezone, callback) {
           callback([])

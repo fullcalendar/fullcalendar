@@ -166,7 +166,7 @@ describe('navLinks', function() {
   }
 
   function getCurrentViewName() {
-    return $('.fc-view').attr('class').match(/fc\-(\w+)\-view/)[1]
+    return $('.fc-view').attr('class').match(/fc-(\w+)-view/)[1]
   }
 
   // day headers (for both day grid and time grid)

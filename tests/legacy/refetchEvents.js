@@ -28,14 +28,14 @@ describe('refetchEvents', function() {
         eventAfterAllRender: function() {
           var scrollEl = $('.fc-time-grid-container.fc-scroller')
           renderCalls++
-          if (renderCalls == 1) {
+          if (renderCalls === 1) {
             setTimeout(function() {
               scrollEl.scrollTop(100)
               setTimeout(function() {
                 $('#cal').fullCalendar('refetchEvents')
               }, 100)
             }, 100)
-          } else if (renderCalls == 2) {
+          } else if (renderCalls === 2) {
             expect(scrollEl.scrollTop()).toBe(100)
             done()
           }

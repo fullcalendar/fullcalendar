@@ -208,7 +208,7 @@ describe('current date', function() {
         options.now = options.defaultDate = '2014-06-01' // a Sunday
         options.weekends = false
         initCalendar(options)
-        view = currentCalendar.getView()
+        var view = currentCalendar.getView()
         expect(view.start).toEqualMoment('2014-06-02')
         expect(view.end).toEqualMoment('2014-06-03')
         expect(view.intervalStart).toEqualMoment('2014-06-02')

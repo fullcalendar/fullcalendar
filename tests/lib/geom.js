@@ -21,8 +21,8 @@ export function buildRectViaDims(left, top, width, height) {
     top: top,
     width: width,
     height: height,
-    right: x + width,
-    bottom: y + height
+    right: left + width,
+    bottom: top + height
   }
 }
 

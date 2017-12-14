@@ -53,7 +53,7 @@ describe('month name', function() {
 
               settings.defaultDate = $.fullCalendar.moment(referenceDate).add(index, 'months')
               settings.eventAfterAllRender = function() {
-                if (viewClass == 'month') { // with month view check for occurence of the monthname in the title
+                if (viewClass === 'month') { // with month view check for occurence of the monthname in the title
                   expect($('.fc-toolbar h2')).toContainText(localeMonth)
                 } else { // with day views ensure that title contains the properly formatted phrase
                   expect($('.fc-toolbar h2')).toHaveText(settings.defaultDate.format('LL'))

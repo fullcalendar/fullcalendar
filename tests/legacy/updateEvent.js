@@ -1,9 +1,6 @@
 
 describe('updateEvent', function() {
-
   var options
-  var event
-  var relatedEvent
 
   beforeEach(function() {
     affix('#cal')
@@ -11,8 +8,6 @@ describe('updateEvent', function() {
       defaultDate: '2014-05-01',
       defaultView: 'month'
     }
-    event = null
-    relatedEvent = null
   })
 
   function getMainEvent() {
@@ -627,24 +622,6 @@ describe('updateEvent', function() {
 
         event = getMainEvent()
         event.allDay = false
-        $('#cal').fullCalendar('updateEvent', event)
-      })
-      should()
-    })
-  }
-
-  function whenReportingUnchanged(should) { // not used right now
-    describe('when reporting an event that hasn\'t changed', function() {
-      beforeEach(function() {
-        var event
-
-        options.events = [
-          { id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
-
-        event = getMainEvent()
         $('#cal').fullCalendar('updateEvent', event)
       })
       should()

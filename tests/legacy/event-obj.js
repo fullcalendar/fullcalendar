@@ -87,8 +87,8 @@ describe('event object creation', function() {
 
   it('allows ASP dates for start', function() {
     init({
-      start: '\/Date(1239018869048)\/',
-      end: '\/Date(1239105269048)\/'
+      start: '/Date(1239018869048)/',
+      end: '/Date(1239105269048)/'
     })
     expect(moment.isMoment(event.start)).toBe(true)
     expect(+event.start).toBe(1239018869048)
@@ -98,8 +98,8 @@ describe('event object creation', function() {
 
   it('produces null end when given an invalid ASP date end', function() {
     init({
-      start: '\/Date(1239018869048)\/',
-      end: '\/Date(1239018869048)\/' // same as start
+      start: '/Date(1239018869048)/',
+      end: '/Date(1239018869048)/' // same as start
     })
     expect(moment.isMoment(event.start)).toBe(true)
     expect(+event.start).toBe(1239018869048)

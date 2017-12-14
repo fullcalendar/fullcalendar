@@ -14,7 +14,7 @@ describe('eventMouseover', function() {
 
       it('will trigger a eventMouseout with updateEvent', function(done) {
 
-        var eventMouseoutSpy = spyOnCalendarCallback('eventMouseout', function(event, ev) {
+        spyOnCalendarCallback('eventMouseout', function(event, ev) {
           expect(typeof event).toBe('object')
           expect(typeof ev).toBe('object')
           done()

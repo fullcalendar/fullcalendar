@@ -40,7 +40,6 @@ describe('buttonIcons', function() {
       initCalendar()
       var $cal = $(currentCalendar.el)
       var prevBtn = $cal.find('.fc-prev-button')
-      var nextBtn = $cal.find('.fc-next-button')
       var prevYearBtn = $cal.find('.fc-prevYear-button')
       var nextYearBtn = $cal.find('.fc-nextYear-button')
 
@@ -60,10 +59,6 @@ describe('buttonIcons', function() {
     it('buttonIcons is ignored', function() {
       initCalendar()
       var $cal = $(currentCalendar.el)
-      var prevBtn = $cal.find('.fc-prev-button')
-      var nextBtn = $cal.find('.fc-next-button')
-      var prevYearBtn = $cal.find('.fc-prevYear-button')
-      var nextYearBtn = $cal.find('.fc-nextYear-button')
       var classesToSearch = [ '.fc-icon-left-single-arrow', '.fc-icon-right-double-arrow',
         '.fc-icon-right-single-arrow', '.fc-icon-left-double-arrow' ]
 

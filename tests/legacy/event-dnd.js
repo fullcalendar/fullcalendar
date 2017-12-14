@@ -340,7 +340,6 @@ describe('eventDrop', function() {
     describe('when dragging a timed event with no end time', function() {
       it('should continue to only show the updated start time', function(done) {
         var dragged = false
-        var eventElm
 
         options.scrollTime = '01:00:00'
         options.height = 400 // short enough to make scrolling happen
@@ -352,7 +351,7 @@ describe('eventDrop', function() {
 
         init(
           function() {
-            eventElm = $('.fc-event .fc-time').simulate('drag', {
+            $('.fc-event .fc-time').simulate('drag', {
               dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
               onBeforeRelease: function() {
                 dragged = true
@@ -371,7 +370,6 @@ describe('eventDrop', function() {
     describe('when dragging a timed event with an end time', function() {
       it('should continue to show the updated start and end time', function(done) {
         var dragged = false
-        var eventElm
 
         options.scrollTime = '01:00:00'
         options.height = 400 // short enough to make scrolling happen
@@ -384,7 +382,7 @@ describe('eventDrop', function() {
 
         init(
           function() {
-            eventElm = $('.fc-event .fc-time').simulate('drag', {
+            $('.fc-event .fc-time').simulate('drag', {
               dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
               onBeforeRelease: function() {
                 dragged = true

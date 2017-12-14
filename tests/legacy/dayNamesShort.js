@@ -50,7 +50,6 @@ describe('short day names', function() {
             $('#cal').fullCalendar(settings)
 
             moment.locale(locale)
-            var dow = moment.localeData(locale)._week.dow
             var weekdays = moment.weekdaysShort()
 
             dayClasses.forEach(function(cls, index, classes) {

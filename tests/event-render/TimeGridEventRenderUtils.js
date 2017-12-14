@@ -33,7 +33,7 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
   var i, expectedRect
   var elRect
 
-  if (eventEls.length != expectedLength) {
+  if (eventEls.length !== expectedLength) {
     console.log('does not match element count')
     return false
   }
@@ -63,6 +63,8 @@ export function computeSpanRects(start, end) {
   var slotStructs = computeSlots()
   var dayI, dayStruct
   var slotI, slotStruct
+  var slotStart
+  var slotEnd
   var coverage
   var startTop = null
   var endTop = null

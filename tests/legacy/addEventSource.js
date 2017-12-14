@@ -71,8 +71,7 @@ describe('addEventSource', function() {
     var options = {}
     options.eventAfterAllRender = function() {
       callCnt++
-      if (callCnt == 2) { // once for initial render. second time for addEventSource
-        called = true
+      if (callCnt === 2) { // once for initial render. second time for addEventSource
 
         checkAllEvents()
         if (extraTestFunc) {

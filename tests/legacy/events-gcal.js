@@ -313,7 +313,7 @@ xdescribe('Google Calendar plugin', function() {
 
       if (cmds.length === 1) {
         expect(cmds).toEqual([ true ])
-      } else if (cmds.length == 2) {
+      } else if (cmds.length === 2) {
         expect(cmds).toEqual([ true, false ])
         done()
       }
@@ -324,7 +324,6 @@ xdescribe('Google Calendar plugin', function() {
   describe('removeEventSource', function() {
 
     it('works when specifying only the Google Calendar ID', function(done) {
-      var CALENDAR_ID = HOLIDAY_CALENDAR_ID
       var called = false
 
       options.googleCalendarApiKey = API_KEY
