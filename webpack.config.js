@@ -10,86 +10,86 @@ NOTE: js and typescript module names shouldn't have a .js extention,
 however, all other types of modules should.
 */
 const MODULES = {
-	'dist/fullcalendar': './src/main.ts',
-	'dist/fullcalendar.css': './src/main.scss',
-	'dist/fullcalendar.print.css': './src/common/print.scss',
-	'dist/gcal': './plugins/gcal/main.ts',
-	'tmp/compiled-tests': './tests/index'
+  'dist/fullcalendar': './src/main.ts',
+  'dist/fullcalendar.css': './src/main.scss',
+  'dist/fullcalendar.print.css': './src/common/print.scss',
+  'dist/gcal': './plugins/gcal/main.ts',
+  'tmp/compiled-tests': './tests/index'
 }
 
 const BANNER =
-	"<%= title %> v<%= version %>\n" +
-	"Docs & License: <%= homepage %>\n" +
-	"(c) <%= copyright %>";
+  "<%= title %> v<%= version %>\n" +
+  "Docs & License: <%= homepage %>\n" +
+  "(c) <%= copyright %>";
 
 module.exports = {
 
-	entry: Object.assign({}, MODULES, generateLocaleMap()),
+  entry: Object.assign({}, MODULES, generateLocaleMap()),
 
-	externals: {
-		jquery: {
-			commonjs: 'jquery',
-			commonjs2: 'jquery',
-			amd: 'jquery',
-			root: 'jQuery'
-		},
-		moment: 'moment',
+  externals: {
+    jquery: {
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      amd: 'jquery',
+      root: 'jQuery'
+    },
+    moment: 'moment',
 
-		// moment locale files reference the moment lib with a relative require.
-		// use our external reference instead.
-		'../moment': 'moment',
+    // moment locale files reference the moment lib with a relative require.
+    // use our external reference instead.
+    '../moment': 'moment',
 
-		// plugins reference the root 'fullcalendar' namespace
-		fullcalendar: {
-			commonjs: 'fullcalendar',
-			commonjs2: 'fullcalendar',
-			amd: 'fullcalendar',
-			root: 'FullCalendar'
-		}
-	},
+    // plugins reference the root 'fullcalendar' namespace
+    fullcalendar: {
+      commonjs: 'fullcalendar',
+      commonjs2: 'fullcalendar',
+      amd: 'fullcalendar',
+      root: 'FullCalendar'
+    }
+  },
 
-	resolve: {
-		extensions: [ '.ts', '.js' ],
-		alias: {
-			// use our slimmed down version
-			// still need to npm-install the original though, for typescript transpiler
-			tslib: path.resolve(__dirname, 'src/tslib-lite.js')
-		}
-	},
+  resolve: {
+    extensions: [ '.ts', '.js' ],
+    alias: {
+      // use our slimmed down version
+      // still need to npm-install the original though, for typescript transpiler
+      tslib: path.resolve(__dirname, 'src/tslib-lite.js')
+    }
+  },
 
-	module: {
-		rules: [
-			{
-				test: /\.(ts|js)$/,
-				loader: 'awesome-typescript-loader'
-			},
-			{
-				test: /\.css$/,
-				loader: ExtractTextPlugin.extract([ 'css-loader' ])
-			},
-			{
-				test: /\.(sass|scss)$/,
-				loader: ExtractTextPlugin.extract([ 'css-loader', 'sass-loader' ])
-			}
-		]
-	},
+  module: {
+    rules: [
+      {
+        test: /\.(ts|js)$/,
+        loader: 'awesome-typescript-loader'
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract([ 'css-loader' ])
+      },
+      {
+        test: /\.(sass|scss)$/,
+        loader: ExtractTextPlugin.extract([ 'css-loader', 'sass-loader' ])
+      }
+    ]
+  },
 
-	plugins: [
-		new CheckerPlugin(),
-		new ExtractTextPlugin({
-			filename: '[name]', // the module name should already have .css in it!
-			allChunks: true
-		}),
-		new webpack.BannerPlugin(BANNER)
-	],
+  plugins: [
+    new CheckerPlugin(),
+    new ExtractTextPlugin({
+      filename: '[name]', // the module name should already have .css in it!
+      allChunks: true
+    }),
+    new webpack.BannerPlugin(BANNER)
+  ],
 
-	output: {
-		library: 'FullCalendar', // gulp will strip this out for plugins
-		libraryTarget: 'umd',
-		filename: '[name].js',
-		path: __dirname,
-		devtoolModuleFilenameTemplate: 'webpack:///' + packageConfig.name + '/[resource-path]'
-	}
+  output: {
+    library: 'FullCalendar', // gulp will strip this out for plugins
+    libraryTarget: 'umd',
+    filename: '[name].js',
+    path: __dirname,
+    devtoolModuleFilenameTemplate: 'webpack:///' + packageConfig.name + '/[resource-path]'
+  }
 
 }
 
@@ -97,17 +97,17 @@ module.exports = {
 TODO: try https://webpack.js.org/plugins/module-concatenation-plugin/
 */
 function generateLocaleMap() {
-	const map = {}
+  const map = {}
 
-	glob.sync('locale/*.js').forEach(function(path) {
-		if (path !== 'locale/_reset.js') {
-			// strip out .js to get module name. also, path must start with ./
-			map['dist/' + path.replace(/\.js$/, '')] = './' + path;
-		}
-	})
+  glob.sync('locale/*.js').forEach(function(path) {
+    if (path !== 'locale/_reset.js') {
+      // strip out .js to get module name. also, path must start with ./
+      map['dist/' + path.replace(/\.js$/, '')] = './' + path;
+    }
+  })
 
-	map['dist/locale-all'] = Object.values(map) // all locales combined
-		.concat([ './locale/_reset.js' ]) // for resetting back to English
+  map['dist/locale-all'] = Object.values(map) // all locales combined
+    .concat([ './locale/_reset.js' ]) // for resetting back to English
 
-	return map
+  return map
 }
