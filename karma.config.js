@@ -1,5 +1,3 @@
-const path = require('path');
-const { CheckerPlugin } = require('awesome-typescript-loader'); // for https://github.com/webpack/webpack/issues/3460
 
 module.exports = function(config) {
 	config.set({
@@ -37,9 +35,7 @@ module.exports = function(config) {
 			'node_modules/jquery-simulate/jquery.simulate.js',
 
 			'tests/base.css',
-			'tests/globals.js',
-			'tests/jasmine-ext.js',
-			'tests/index.js',
+			'tmp/compiled-tests.js',
 
 			{ // serve all other files
 				pattern: '**/*',
@@ -48,32 +44,6 @@ module.exports = function(config) {
 				watched: false // don't let changes trigger tests to restart
 			}
 		],
-
-		preprocessors: {
-			'tests/*.js': [ 'webpack', 'sourcemap' ]
-		},
-
-		webpack: {
-			resolve: {
-				extensions: [ '.js', '.ts' ],
-			},
-			module: {
-				rules: [
-					{
-						test: /\.(js|ts)$/,
-						loader: 'awesome-typescript-loader',
-						options: {
-							configFileName: path.resolve(__dirname, 'tests/tsconfig.json')
-						}
-					}
-				]
-			},
-			plugins: [ new CheckerPlugin() ],
-			externals: {
-				fullcalendar: { root: 'FullCalendar' }
-			},
-			devtool: 'inline-source-map'
-		},
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'verbose'

@@ -10,10 +10,11 @@ NOTE: js and typescript module names shouldn't have a .js extention,
 however, all other types of modules should.
 */
 const MODULES = {
-	'fullcalendar': './src/main.ts',
-	'fullcalendar.css': './src/main.scss',
-	'fullcalendar.print.css': './src/common/print.scss',
-	'gcal': './plugins/gcal/main.ts'
+	'dist/fullcalendar': './src/main.ts',
+	'dist/fullcalendar.css': './src/main.scss',
+	'dist/fullcalendar.print.css': './src/common/print.scss',
+	'dist/gcal': './plugins/gcal/main.ts',
+	'tmp/compiled-tests': './tests/index'
 }
 
 const BANNER =
@@ -48,7 +49,7 @@ module.exports = {
 	},
 
 	resolve: {
-		extensions: ['.ts', '.js'],
+		extensions: [ '.ts', '.js' ],
 		alias: {
 			// use our slimmed down version
 			// still need to npm-install the original though, for typescript transpiler
@@ -59,7 +60,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.ts$/,
+				test: /\.(ts|js)$/,
 				loader: 'awesome-typescript-loader'
 			},
 			{
@@ -86,7 +87,7 @@ module.exports = {
 		library: 'FullCalendar', // gulp will strip this out for plugins
 		libraryTarget: 'umd',
 		filename: '[name].js',
-		path: path.resolve(__dirname, 'dist/'),
+		path: __dirname,
 		devtoolModuleFilenameTemplate: 'webpack:///' + packageConfig.name + '/[resource-path]'
 	}
 
@@ -101,11 +102,11 @@ function generateLocaleMap() {
 	glob.sync('locale/*.js').forEach(function(path) {
 		if (path !== 'locale/_reset.js') {
 			// strip out .js to get module name. also, path must start with ./
-			map[path.replace(/\.js$/, '')] = './' + path;
+			map['dist/' + path.replace(/\.js$/, '')] = './' + path;
 		}
 	})
 
-	map['locale-all'] = Object.values(map) // all locales combined
+	map['dist/locale-all'] = Object.values(map) // all locales combined
 		.concat([ './locale/_reset.js' ]) // for resetting back to English
 
 	return map

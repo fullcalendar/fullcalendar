@@ -1,4 +1,7 @@
 
+require('./globals');
+require('./jasmine-ext');
+
 var context = require.context(
 	'.',
 	true, // recursive?
