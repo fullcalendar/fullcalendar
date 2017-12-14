@@ -1,4 +1,4 @@
-import * as TimeGridRenderUtils from './TimeGridRenderUtils';
+import * as TimeGridRenderUtils from './TimeGridRenderUtils'
 
 
 describe('slotDuration', function() {
@@ -7,58 +7,58 @@ describe('slotDuration', function() {
     defaultView: 'agendaDay',
     scrollTime: 0,
     slotLabelFormat: 'HH:mm'
-  });
+  })
 
   describe('when only major slots', function() {
     pushOptions({
       slotDuration: '01:00',
       slotLabelInterval: '01:00'
-    });
+    })
 
     describe('when in alignment with minTime', function() {
       pushOptions({
         minTime: '00:00',
         maxTime: '03:00'
-      });
+      })
       it('render slots correctly', function() {
-        initCalendar();
+        initCalendar()
         expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
           { text: '00:00', isMajor: true },
           { text: '01:00', isMajor: true },
           { text: '02:00', isMajor: true }
-        ]);
-      });
-    });
+        ])
+      })
+    })
 
     describe('when out of alignment with minTime', function() {
       pushOptions({
         minTime: '00:20',
         maxTime: '03:20'
-      });
+      })
       it('render slots correctly', function() {
-        initCalendar();
+        initCalendar()
         expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
           { text: '00:20', isMajor: true },
           { text: '01:20', isMajor: true },
           { text: '02:20', isMajor: true }
-        ]);
-      });
-    });
-  });
+        ])
+      })
+    })
+  })
 
   describe('when major and minor slots', function() {
     pushOptions({
       slotDuration: '00:30',
       slotLabelInterval: '01:00'
-    });
+    })
 
     describe('when in alignment with minTime', function() {
       pushOptions({
         minTime: '00:00',
         maxTime: '03:00'
-      });
+      })
       it('render slots correctly', function() {
-        initCalendar();
+        initCalendar()
         expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
           { text: '00:00', isMajor: true },
           { text: '', isMajor: false },
@@ -66,17 +66,17 @@ describe('slotDuration', function() {
           { text: '', isMajor: false },
           { text: '02:00', isMajor: true },
           { text: '', isMajor: false }
-        ]);
-      });
-    });
+        ])
+      })
+    })
 
     describe('when out of alignment with minTime', function() {
       pushOptions({
         minTime: '00:20',
         maxTime: '03:20'
-      });
+      })
       it('render slots correctly', function() {
-        initCalendar();
+        initCalendar()
         expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
           { text: '00:20', isMajor: true },
           { text: '', isMajor: false },
@@ -84,9 +84,9 @@ describe('slotDuration', function() {
           { text: '', isMajor: false },
           { text: '02:20', isMajor: true },
           { text: '', isMajor: false }
-        ]);
-      });
-    });
-  });
+        ])
+      })
+    })
+  })
 
-});
+})
