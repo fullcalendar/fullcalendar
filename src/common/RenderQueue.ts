@@ -83,10 +83,12 @@ export default class RenderQueue extends TaskQueue {
     // waiting for a certain namespace to stop receiving tasks?
     if (this.waitNamespace) {
 
+      const { q } = this
+
       // if there was a different namespace task in the meantime,
       // that forces all previously-waiting tasks to suddenly execute.
       // TODO: find a way to do this in constant time.
-      for (let q = this.q, i = 0; i < q.length; i++) {
+      for (let i = 0; i < q.length; i++) {
         if (q[i].namespace !== this.waitNamespace) {
           return true // allow execution
         }
@@ -107,7 +109,8 @@ export default class RenderQueue extends TaskQueue {
   compoundTask(newTask) {
     let q = this.q
     let shouldAppend = true
-    let i, task
+    let i
+    let task
 
     if (newTask.namespace && newTask.type === 'destroy') {
 
@@ -119,8 +122,9 @@ export default class RenderQueue extends TaskQueue {
           case 'init':
             shouldAppend = false
             // the latest destroy is cancelled out by not doing the init
-            // and fallthrough....
+            /* falls through */
           case 'add':
+            /* falls through */
           case 'remove':
             q.splice(i, 1) // remove task
         }

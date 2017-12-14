@@ -586,7 +586,8 @@ export default abstract class DateComponent extends Component {
   eventFootprintToSegs(eventFootprint) {
     let unzonedRange = eventFootprint.componentFootprint.unzonedRange
     let segs
-    let i, seg
+    let i
+    let seg
 
     segs = this.componentFootprintToSegs(eventFootprint.componentFootprint)
 
@@ -657,7 +658,9 @@ export default abstract class DateComponent extends Component {
   // `type` is a view-type like "day" or "week". default value is "day".
   // `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
   buildGotoAnchorHtml(gotoOptions, attrs, innerHtml) {
-    let date, type, forceOff
+    let date
+    let type
+    let forceOff
     let finalOptions
 
     if ($.isPlainObject(gotoOptions)) {

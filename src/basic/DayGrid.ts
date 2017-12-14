@@ -63,7 +63,8 @@ export default class DayGrid extends InteractiveDateComponent {
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   componentFootprintToSegs(componentFootprint) {
     let segs = this.sliceRangeByRow(componentFootprint.unzonedRange)
-    let i, seg
+    let i
+    let seg
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
@@ -205,7 +206,8 @@ export default class DayGrid extends InteractiveDateComponent {
 
   renderNumberCellsHtml(row) {
     let htmls = []
-    let col, date
+    let col
+    let date
 
     for (col = 0; col < this.colCnt; col++) {
       date = this.getCellDate(row, col)
@@ -254,7 +256,7 @@ export default class DayGrid extends InteractiveDateComponent {
         ) +
       '>'
 
-    if (this.cellWeekNumbersVisible && (date.day() == weekCalcFirstDoW)) {
+    if (this.cellWeekNumbersVisible && (date.day() === weekCalcFirstDoW)) {
       html += view.buildGotoAnchorHtml(
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
@@ -456,7 +458,8 @@ export default class DayGrid extends InteractiveDateComponent {
     let rowEl = this.rowEls.eq(row) // the containing "fake" row div
     let rowHeight = rowEl.height() // TODO: cache somehow?
     let trEls = this.eventRenderer.rowStructs[row].tbodyEl.children()
-    let i, trEl
+    let i
+    let trEl
     let trHeight
 
     function iterInnerHeights(i, childNode) {
@@ -491,14 +494,18 @@ export default class DayGrid extends InteractiveDateComponent {
     let levelSegs // array of segment objects in the last allowable level, ordered left-to-right
     let cellMatrix // a matrix (by level, then column) of all <td> jQuery elements in the row
     let limitedNodes // array of temporarily hidden level <tr> and segment <td> DOM nodes
-    let i, seg
+    let i
+    let seg
     let segsBelow // array of segment objects below `seg` in the current `col`
     let totalSegsBelow // total number of segments below `seg` in any of the columns `seg` occupies
     let colSegsBelow // array of segment arrays, below seg, one for each column (offset from segs's first column)
-    let td, rowspan
+    let td
+    let rowspan
     let segMoreNodes // array of "more" <td> cells that will stand-in for the current seg's cell
     let j
-    let moreTd, moreWrap, moreLink
+    let moreTd
+    let moreWrap
+    let moreLink
 
     // Iterates through empty level cells and places "more" links inside if need be
     let emptyCellsUntil = (endCol) => { // goes from current `col` to `endCol`
@@ -640,7 +647,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let topEl // the element we want to match the top coordinate of
     let options
 
-    if (this.rowCnt == 1) {
+    if (this.rowCnt === 1) {
       topEl = view.el // will cause the popover to cover any sort of header
     } else {
       topEl = this.rowEls.eq(row) // will align with top of row
@@ -729,7 +736,8 @@ export default class DayGrid extends InteractiveDateComponent {
     let dayEnd = dayStart.clone().add(1, 'days')
     let dayRange = new UnzonedRange(dayStart, dayEnd)
     let newSegs = []
-    let i, seg
+    let i
+    let seg
     let slicedRange
 
     for (i = 0; i < segs.length; i++) {

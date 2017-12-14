@@ -26,8 +26,8 @@ export default class Model extends Class {
     this.constructed()
   }
 
-  // useful for monkeypatching. TODO: BaseClass?
   constructed() {
+    // useful for monkeypatching. TODO: BaseClass?
   }
 
   applyGlobalWatchers() {
@@ -101,7 +101,8 @@ export default class Model extends Class {
   setProps(newProps) {
     let changedProps = {}
     let changedCnt = 0
-    let name, val
+    let name
+    let val
 
     for (name in newProps) {
       val = newProps[name]

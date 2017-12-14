@@ -9,7 +9,8 @@ export default class DayGridFillRenderer extends FillRenderer {
 
   attachSegEls(type, segs) {
     let nodes = []
-    let i, seg
+    let i
+    let seg
     let skeletonEl
 
     for (i = 0; i < segs.length; i++) {

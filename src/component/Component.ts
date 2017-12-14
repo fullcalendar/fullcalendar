@@ -26,10 +26,12 @@ export default class Component extends Model {
 
 
   bindGlobalHandlers() {
+    // subclasses can override
   }
 
 
   unbindGlobalHandlers() {
+    // subclasses can override
   }
 
 

@@ -88,8 +88,8 @@ export default class Calendar {
   }
 
 
-  // useful for monkeypatching. used?
   constructed() {
+    // useful for monkeypatching. used?
   }
 
 
@@ -1307,6 +1307,7 @@ function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
 
     return legacyEventInstances.filter(function(legacyEventInstance) {
       // soft comparison because id not be normalized to string
+      // tslint:disable-next-line
       return legacyEventInstance.id == legacyQuery ||
         legacyEventInstance._id === legacyQuery // can specify internal id, but must exactly match
     })

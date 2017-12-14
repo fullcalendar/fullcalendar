@@ -81,7 +81,7 @@ export default class Toolbar {
           let buttonClasses
           let buttonEl
 
-          if (buttonName == 'title') {
+          if (buttonName === 'title') {
             groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')) // we always want it to take up height
             isOnlyButtons = false
           } else {

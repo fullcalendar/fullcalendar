@@ -26,9 +26,9 @@ export const globalDefaults = {
   weekNumberTitle: 'W',
   weekNumberCalculation: 'local',
 
-  //editable: false,
+  // editable: false,
 
-  //nowIndicator: false,
+  // nowIndicator: false,
 
   scrollTime: '06:00:00',
   minTime: '00:00:00',
@@ -43,7 +43,7 @@ export const globalDefaults = {
 
   timezone: false,
 
-  //allDayDefault: undefined,
+  // allDayDefault: undefined,
 
   // locale
   locale: null,
@@ -59,7 +59,7 @@ export const globalDefaults = {
     week: 'week',
     day: 'day'
   },
-  //buttonIcons: null,
+  // buttonIcons: null,
 
   allDayText: 'all-day',
 
@@ -68,21 +68,21 @@ export const globalDefaults = {
 
   // jquery-ui theming
   theme: false,
-  //themeButtonIcons: null,
+  // themeButtonIcons: null,
 
-  //eventResizableFromStart: false,
+  // eventResizableFromStart: false,
   dragOpacity: .75,
   dragRevertDuration: 500,
   dragScroll: true,
 
-  //selectable: false,
+  // selectable: false,
   unselectAuto: true,
-  //selectMinDistance: 0,
+  // selectMinDistance: 0,
 
   dropAccept: '*',
 
   eventOrder: 'title',
-  //eventRenderWait: null,
+  // eventRenderWait: null,
 
   eventLimit: false,
   eventLimitText: 'more',

@@ -190,7 +190,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   unrenderDates() {
-    //this.unrenderSlats(); // don't need this because repeated .html() calls clear
+    // this.unrenderSlats(); // don't need this because repeated .html() calls clear
     this.unrenderColumns()
   }
 
@@ -526,7 +526,8 @@ export default class TimeGrid extends InteractiveDateComponent {
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
     let eventMinHeight = this.opt('agendaEventMinHeight')
-    let i, seg
+    let i
+    let seg
     let dayDate
 
     for (i = 0; i < segs.length; i++) {
@@ -545,7 +546,8 @@ export default class TimeGrid extends InteractiveDateComponent {
   // Given segments that already have their top/bottom properties computed, applies those values to
   // the segments' elements.
   assignSegVerticals(segs) {
-    let i, seg
+    let i
+    let seg
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]

@@ -294,7 +294,8 @@ characters that will eventually be given to moment for formatting, and then post
 */
 function buildFakeFormatString(chunks) {
   let parts = []
-  let i, chunk
+  let i
+  let chunk
 
   for (i = 0; i < chunks.length; i++) {
     chunk = chunks[i]
@@ -329,7 +330,8 @@ The `chunks` can be nested (because of "maybe" chunks), however, the returned ar
 */
 function buildSameUnits(chunks) {
   let units = []
-  let i, chunk
+  let i
+  let chunk
   let tokenInfo
 
   for (i = 0; i < chunks.length; i++) {
@@ -370,7 +372,8 @@ function renderFakeFormatStringParts(fakeFormatString, date) {
   let parts = []
   let fakeRender = oldMomentFormat(date, fakeFormatString)
   let fakeParts = fakeRender.split(PART_SEPARATOR)
-  let i, fakePart
+  let i
+  let fakePart
 
   for (i = 0; i < fakeParts.length; i++) {
     fakePart = fakeParts[i]
@@ -411,7 +414,8 @@ Returns a unit string, either 'year', 'month', 'day', or null for the most granu
 */
 export function queryMostGranularFormatUnit(formatStr) {
   let chunks = chunkFormatString(formatStr)
-  let i, chunk
+  let i
+  let chunk
   let candidate
   let best
 

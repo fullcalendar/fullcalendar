@@ -375,8 +375,10 @@ export default class DragListener {
   updateAutoScroll(ev) {
     let sensitivity = this.scrollSensitivity
     let bounds = this.scrollBounds
-    let topCloseness, bottomCloseness
-    let leftCloseness, rightCloseness
+    let topCloseness
+    let bottomCloseness
+    let leftCloseness
+    let rightCloseness
     let topVel = 0
     let leftVel = 0
 
@@ -494,8 +496,8 @@ export default class DragListener {
   }
 
 
-  // Called when scrolling has stopped, whether through auto scroll, or the user scrolling
   handleScrollEnd() {
+    // Called when scrolling has stopped, whether through auto scroll, or the user scrolling
   }
 
 }

@@ -70,7 +70,7 @@ momentExt.parseZone = function() {
 //    parseZone - if there is zone information, should we force the zone of the moment?
 function makeMoment(args, parseAsUTC= false, parseZone= false) {
   let input = args[0]
-  let isSingleString = args.length == 1 && typeof input === 'string'
+  let isSingleString = args.length === 1 && typeof input === 'string'
   let isAmbigTime
   let isAmbigZone
   let ambigMatch

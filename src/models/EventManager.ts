@@ -148,7 +148,8 @@ export default class EventManager {
   // returns an array of matching source objects.
   querySources(matchInput) {
     let sources = this.otherSources
-    let i, source
+    let i
+    let source
 
     // given a proper event source object
     for (i = 0; i < sources.length; i++) {
@@ -298,7 +299,7 @@ export default class EventManager {
       }
     }
 
-    return function() { }
+    return function() { /* nothing to undo */ }
   }
 
 
@@ -371,5 +372,5 @@ ListenerMixin.mixInto(EventManager)
 
 
 function isSourcesEquivalent(source0, source1) {
-  return source0.getPrimitive() == source1.getPrimitive()
+  return source0.getPrimitive() === source1.getPrimitive()
 }

@@ -174,7 +174,8 @@ export default class ListView extends View {
   // Returns a sparse array of arrays, segs grouped by their dayIndex
   groupSegsByDay(segs) {
     let segsByDay = [] // sparse array
-    let i, seg
+    let i
+    let seg
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i];

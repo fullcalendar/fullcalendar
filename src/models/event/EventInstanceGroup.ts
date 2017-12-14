@@ -37,7 +37,8 @@ export default class EventInstanceGroup {
 
   sliceNormalRenderRanges(constraintRange) {
     let eventInstances = this.eventInstances
-    let i, eventInstance
+    let i
+    let eventInstance
     let slicedRange
     let slicedEventRanges = []
 

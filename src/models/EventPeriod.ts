@@ -116,7 +116,8 @@ export default class EventPeriod {
 
   purgeAllSources() {
     let requestsByUid = this.requestsByUid
-    let uid, request
+    let uid
+    let request
     let completedCnt = 0
 
     for (uid in requestsByUid) {

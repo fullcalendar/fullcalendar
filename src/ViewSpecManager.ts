@@ -41,7 +41,7 @@ export default class ViewSpecManager {
     let i
     let spec
 
-    if ($.inArray(unit, unitsDesc) != -1) {
+    if ($.inArray(unit, unitsDesc) !== -1) {
 
       // put views that have buttons first. there will be duplicates, but oh well
       viewTypes = this._calendar.header.getViewsWithButtons() // TODO: include footer as well?
@@ -52,7 +52,7 @@ export default class ViewSpecManager {
       for (i = 0; i < viewTypes.length; i++) {
         spec = this.getViewSpec(viewTypes[i])
         if (spec) {
-          if (spec.singleUnit == unit) {
+          if (spec.singleUnit === unit) {
             return spec
           }
         }

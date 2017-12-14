@@ -22,7 +22,8 @@ export default class RecurringEventDef extends EventDef {
     let unzonedDate = unzonedRange.getStart()
     let unzonedEnd = unzonedRange.getEnd()
     let zonedDayStart
-    let instanceStart, instanceEnd
+    let instanceStart
+    let instanceEnd
     let instances = []
 
     while (unzonedDate.isBefore(unzonedEnd)) {

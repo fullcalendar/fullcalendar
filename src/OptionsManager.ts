@@ -1,7 +1,7 @@
 import * as $ from 'jquery'
 import { firstDefined } from './util'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
-import { localeOptionHash, populateInstanceComputableOptions } from  './locale'
+import { localeOptionHash, populateInstanceComputableOptions } from './locale'
 import Model from './common/Model'
 
 
@@ -64,8 +64,10 @@ export default class OptionsManager extends Model {
   // Computes the flattened options hash for the calendar and assigns to `this.options`.
   // Assumes this.overrides and this.dynamicOverrides have already been initialized.
   compute() {
-    let locale, localeDefaults
-    let isRTL, dirDefaults
+    let locale
+    let localeDefaults
+    let isRTL
+    let dirDefaults
     let rawOptions
 
     locale = firstDefined( // explicit locale option given?

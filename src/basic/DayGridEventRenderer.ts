@@ -86,10 +86,12 @@ export default class DayGridEventRenderer extends EventRenderer {
     let segMatrix = [] // lookup for which segments are rendered into which level+col cells
     let cellMatrix = [] // lookup for all <td> elements of the level+col matrix
     let loneCellMatrix = [] // lookup for <td> elements that only take up a single column
-    let i, levelSegs
+    let i
+    let levelSegs
     let col
     let tr
-    let j, seg
+    let j
+    let seg
     let td
 
     // populates empty cells from the current column (`col`) to `endCol`
@@ -131,7 +133,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
           // create a container that occupies or more columns. append the event element.
           td = $('<td class="fc-event-container"/>').append(seg.el)
-          if (seg.leftCol != seg.rightCol) {
+          if (seg.leftCol !== seg.rightCol) {
             td.attr('colspan', seg.rightCol - seg.leftCol + 1)
           } else { // a single-column segment
             loneCellMatrix[i][col] = td
@@ -167,7 +169,8 @@ export default class DayGridEventRenderer extends EventRenderer {
   // NOTE: modifies segs
   buildSegLevels(segs) {
     let levels = []
-    let i, seg
+    let i
+    let seg
     let j
 
     // Give preference to elements with certain criteria, so they have
@@ -291,7 +294,8 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 // Computes whether two segments' columns collide. They are assumed to be in the same row.
 function isDaySegCollision(seg, otherSegs) {
-  let i, otherSeg
+  let i
+  let otherSeg
 
   for (i = 0; i < otherSegs.length; i++) {
     otherSeg = otherSegs[i]

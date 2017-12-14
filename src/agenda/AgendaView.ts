@@ -294,7 +294,8 @@ export default class AgendaView extends View {
   executeEventRender(eventsPayload) {
     let dayEventsPayload = {}
     let timedEventsPayload = {}
-    let id, eventInstanceGroup
+    let id
+    let eventInstanceGroup
 
     // separate the events into all-day and timed
     for (id in eventsPayload) {

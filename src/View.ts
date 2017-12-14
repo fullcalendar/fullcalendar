@@ -182,9 +182,9 @@ export default abstract class View extends InteractiveDateComponent {
   computeTitleFormat(dateProfile) {
     let currentRangeUnit = dateProfile.currentRangeUnit
 
-    if (currentRangeUnit == 'year') {
+    if (currentRangeUnit === 'year') {
       return 'YYYY'
-    } else if (currentRangeUnit == 'month') {
+    } else if (currentRangeUnit === 'month') {
       return this.opt('monthYearFormat') // like "September 2014"
     } else if (dateProfile.currentUnzonedRange.as('days') > 1) {
       return 'll' // multi-day range. shorter, like "Sep 9 - 10 2014"

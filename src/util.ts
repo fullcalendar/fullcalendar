@@ -153,13 +153,13 @@ export function subtractInnerElHeight(outerEl, innerEl) {
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
 export function getScrollParent(el) {
-  let position = el.css('position'),
-    scrollParent = el.parents().filter(function() {
-      let parent = $(this)
-      return (/(auto|scroll)/).test(
-        parent.css('overflow') + parent.css('overflow-y') + parent.css('overflow-x')
-      )
-    }).eq(0)
+  let position = el.css('position')
+  let scrollParent = el.parents().filter(function() {
+    let parent = $(this)
+    return (/(auto|scroll)/).test(
+      parent.css('overflow') + parent.css('overflow-y') + parent.css('overflow-x')
+    )
+  }).eq(0)
 
   return position === 'fixed' || !scrollParent.length ? $(el[0].ownerDocument || document) : scrollParent
 }
@@ -234,7 +234,7 @@ export function getScrollbarWidths(el) {
 
   widths = { left: 0, right: 0, top: 0, bottom: bottomWidth }
 
-  if (getIsLeftRtlScrollbars() && el.css('direction') == 'rtl') { // is the scrollbar on the left side?
+  if (getIsLeftRtlScrollbars() && el.css('direction') === 'rtl') { // is the scrollbar on the left side?
     widths.left = leftRightWidth
   } else {
     widths.right = leftRightWidth
@@ -296,7 +296,7 @@ function getCssFloat(el, prop) {
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
 export function isPrimaryMouseButton(ev) {
-  return ev.which == 1 && !ev.ctrlKey
+  return ev.which === 1 && !ev.ctrlKey
 }
 
 
@@ -402,7 +402,8 @@ export function diffPoints(point1, point2) {
 export function parseFieldSpecs(input) {
   let specs = []
   let tokens = []
-  let i, token
+  let i
+  let token
 
   if (typeof input === 'string') {
     tokens = input.split(/\s*,\s*/)
@@ -417,7 +418,7 @@ export function parseFieldSpecs(input) {
 
     if (typeof token === 'string') {
       specs.push(
-        token.charAt(0) == '-' ?
+        token.charAt(0) === '-' ?
           { field: token.substring(1), order: -1 } :
           { field: token, order: 1 }
       )
@@ -509,7 +510,8 @@ export function diffByUnit(a, b, unit) {
 // For example, 48 hours will be "days" whereas 49 hours will be "hours".
 // Accepts start/end, a range object, or an original duration object.
 export function computeGreatestUnit(start, end?) {
-  let i, unit
+  let i
+  let unit
   let val
 
   for (i = 0; i < unitsDesc.length; i++) {
@@ -571,7 +573,8 @@ export function divideRangeByDuration(start, end, dur) {
 
 // Intelligently divides one duration by another
 export function divideDurationByDuration(dur1, dur2) {
-  let months1, months2
+  let months1
+  let months2
 
   if (durationHasTime(dur1) || durationHasTime(dur2)) {
     return dur1 / dur2
@@ -610,7 +613,7 @@ export function durationHasTime(dur) {
 
 
 export function isNativeDate(input) {
-  return  Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date
+  return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date
 }
 
 
@@ -654,9 +657,11 @@ const hasOwnPropMethod = {}.hasOwnProperty
 // The second argument allows for an array of property names who's object values will be merged together.
 export function mergeProps(propObjs, complexProps?) {
   let dest = {}
-  let i, name
+  let i
+  let name
   let complexObjs
-  let j, val
+  let j
+  let val
   let props
 
   if (complexProps) {
@@ -867,7 +872,11 @@ export function proxy(obj, methodName) {
 // leading edge, instead of the trailing.
 // https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
 export function debounce(func, wait, immediate= false) {
-  let timeout, args, context, timestamp, result
+  let timeout
+  let args
+  let context
+  let timestamp
+  let result
 
   let later = function() {
     let last = +new Date() - timestamp

@@ -71,7 +71,9 @@ export default class JsonFeedEventSource extends EventSource {
   buildRequestParams(start, end, timezone) {
     let calendar = this.calendar
     let ajaxSettings = this.ajaxSettings
-    let startParam, endParam, timezoneParam
+    let startParam
+    let endParam
+    let timezoneParam
     let customRequestParams
     let params = {}
 

@@ -61,7 +61,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
       // count columns until the day-of-week repeats
       firstDay = dayDates[0].day()
       for (daysPerRow = 1; daysPerRow < dayDates.length; daysPerRow++) {
-        if (dayDates[daysPerRow].day() == firstDay) {
+        if (dayDates[daysPerRow].day() === firstDay) {
           break
         }
       }
@@ -178,8 +178,10 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')) // inclusive last index
     let segs = []
     let row
-    let rowFirst, rowLast // inclusive day-index range for current row
-    let segFirst, segLast // inclusive day-index range for segment
+    let rowFirst
+    let rowLast // inclusive day-index range for current row
+    let segFirst
+    let segLast // inclusive day-index range for segment
 
     for (row = 0; row < this.rowCnt; row++) {
       rowFirst = row * daysPerRow
@@ -221,9 +223,11 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let rangeLast = this.getDateDayIndex(normalRange.end.clone().subtract(1, 'days')) // inclusive last index
     let segs = []
     let row
-    let rowFirst, rowLast // inclusive day-index range for current row
+    let rowFirst
+    let rowLast // inclusive day-index range for current row
     let i
-    let segFirst, segLast // inclusive day-index range for segment
+    let segFirst
+    let segLast // inclusive day-index range for segment
 
     for (row = 0; row < this.rowCnt; row++) {
       rowFirst = row * daysPerRow
@@ -294,7 +298,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
   renderHeadDateCellsHtml() {
     let htmls = []
-    let col, date
+    let col
+    let date
 
     for (col = 0; col < this.colCnt; col++) {
       date = this.getCellDate(0, col)
@@ -382,7 +387,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
   renderBgCellsHtml(row) {
     let htmls = []
-    let col, date
+    let col
+    let date
 
     for (col = 0; col < this.colCnt; col++) {
       date = this.getCellDate(row, col)
@@ -416,8 +422,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Generates the default HTML intro for any row. User classes should override
   renderIntroHtml() {
+    // Generates the default HTML intro for any row. User classes should override
   }
 
 

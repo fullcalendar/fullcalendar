@@ -233,7 +233,8 @@ export default class TimeGridEventRenderer extends EventRenderer {
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
   assignFgSegHorizontals(segs) {
-    let i, seg
+    let i
+    let seg
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
@@ -290,7 +291,8 @@ export default class TimeGridEventRenderer extends EventRenderer {
 // left-to-right, or the rightmost if the calendar is right-to-left. Assumes the segments are already ordered by date.
 function buildSlotSegLevels(segs) {
   let levels = []
-  let i, seg
+  let i
+  let seg
   let j
 
   for (i = 0; i < segs.length; i++) {
@@ -315,8 +317,10 @@ function buildSlotSegLevels(segs) {
 // For every segment, figure out the other segments that are in subsequent
 // levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
 function computeForwardSlotSegs(levels) {
-  let i, level
-  let j, seg
+  let i
+  let level
+  let j
+  let seg
   let k
 
   for (i = 0; i < levels.length; i++) {
@@ -339,7 +343,8 @@ function computeForwardSlotSegs(levels) {
 function computeSlotSegPressures(seg) {
   let forwardSegs = seg.forwardSegs
   let forwardPressure = 0
-  let i, forwardSeg
+  let i
+  let forwardSeg
 
   if (seg.forwardPressure === undefined) { // not already computed
 

@@ -283,7 +283,8 @@ export default class Constraints {
   Very similar to EventDateProfile::parse :(
   */
   parseFootprints(rawInput) {
-    let start, end
+    let start
+    let end
 
     if (rawInput.start) {
       start = this._calendar.moment(rawInput.start)

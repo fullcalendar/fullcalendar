@@ -6,7 +6,8 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
 
   renderSegs(segs, sourceSeg) {
     let helperNodes = []
-    let i, seg
+    let i
+    let seg
     let sourceEl
 
     // TODO: not good to call eventRenderer this way

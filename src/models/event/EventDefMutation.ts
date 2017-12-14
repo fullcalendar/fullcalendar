@@ -65,7 +65,7 @@ export default class EventDefMutation {
         eventDef.dateProfile = origDateProfile
       }
     } else {
-      return function() { }
+      return function() { /* nothing to undo */ }
     }
   }
 
