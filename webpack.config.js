@@ -18,9 +18,9 @@ const MODULES = {
 }
 
 const BANNER =
-  "<%= title %> v<%= version %>\n" +
-  "Docs & License: <%= homepage %>\n" +
-  "(c) <%= copyright %>";
+  '<%= title %> v<%= version %>\n' +
+  'Docs & License: <%= homepage %>\n' +
+  '(c) <%= copyright %>'
 
 module.exports = {
 
@@ -102,7 +102,7 @@ function generateLocaleMap() {
   glob.sync('locale/*.js').forEach(function(path) {
     if (path !== 'locale/_reset.js') {
       // strip out .js to get module name. also, path must start with ./
-      map['dist/' + path.replace(/\.js$/, '')] = './' + path;
+      map['dist/' + path.replace(/\.js$/, '')] = './' + path
     }
   })
 

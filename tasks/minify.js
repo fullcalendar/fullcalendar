@@ -1,13 +1,13 @@
-var gulp = require('gulp');
-var uglify = require('gulp-uglify');
-var cssmin = require('gulp-cssmin');
-var rename = require('gulp-rename');
+var gulp = require('gulp')
+var uglify = require('gulp-uglify')
+var cssmin = require('gulp-cssmin')
+var rename = require('gulp-rename')
 
 
 gulp.task('minify', [
   'minify:js',
   'minify:css'
-]);
+])
 
 
 gulp.task('minify:js', [ 'webpack' ], function() {
@@ -20,8 +20,8 @@ gulp.task('minify:js', [ 'webpack' ], function() {
       preserveComments: 'some' // keep comments starting with !
     }))
     .pipe(rename({ extname: '.min.js' }))
-    .pipe(gulp.dest('dist/'));
-});
+    .pipe(gulp.dest('dist/'))
+})
 
 
 gulp.task('minify:css', [ 'webpack' ], function() {
@@ -31,5 +31,5 @@ gulp.task('minify:css', [ 'webpack' ], function() {
   ])
     .pipe(cssmin())
     .pipe(rename({ extname: '.min.css' }))
-    .pipe(gulp.dest('dist/'));
-});
+    .pipe(gulp.dest('dist/'))
+})

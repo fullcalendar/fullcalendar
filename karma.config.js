@@ -24,8 +24,8 @@ module.exports = function(config) {
       'dist/locale-all.js',
 
       // For testing if scheduler's JS, even when not actived, screws anything up
-      //'../fullcalendar-scheduler/dist/scheduler.js',
-      //'../fullcalendar-scheduler/dist/scheduler.css',
+      // '../fullcalendar-scheduler/dist/scheduler.js',
+      // '../fullcalendar-scheduler/dist/scheduler.css',
 
       // dependencies for tests
       'node_modules/native-promise-only/lib/npo.src.js',
@@ -77,5 +77,5 @@ module.exports = function(config) {
         }
       }
     }
-  });
-};
+  })
+}

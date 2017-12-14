@@ -28,7 +28,7 @@ function createStream(enableDev, enableWatch) {
     .pipe(
       webpack(Object.assign({}, webpackConfig, {
         devtool: enableDev ? 'source-map' : false, // also 'inline-source-map'
-        watch: enableWatch || false,
+        watch: enableWatch || false
       }))
     )
     .pipe(
@@ -56,11 +56,11 @@ function createStream(enableDev, enableWatch) {
       }
 
       // strip out "use strict", which moment and webpack harmony generates.
-      content = content.replace(/['"]use strict['"]/g, '');
+      content = content.replace(/['"]use strict['"]/g, '')
 
       return content
     }))
-    .pipe(jsFilter.restore);
+    .pipe(jsFilter.restore)
 
   if (!enableDev) {
     stream = stream
@@ -71,5 +71,5 @@ function createStream(enableDev, enableWatch) {
 
   return stream.pipe(
     gulp.dest(webpackConfig.output.path)
-  );
+  )
 }
