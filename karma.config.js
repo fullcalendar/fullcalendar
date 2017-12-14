@@ -23,9 +23,8 @@ module.exports = function(config) {
       'dist/gcal.js',
       'dist/locale-all.js',
 
-      // For testing if scheduler's JS, even when not actived, screws anything up
-      // '../fullcalendar-scheduler/dist/scheduler.js',
-      // '../fullcalendar-scheduler/dist/scheduler.css',
+      // so plugins can dump files into here and test side effects
+      'tmp/test-side-effects/*.js',
 
       // dependencies for tests
       'node_modules/native-promise-only/lib/npo.src.js',
